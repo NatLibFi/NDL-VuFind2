@@ -13,7 +13,7 @@
 <?= $this->translate('Title'); ?>: <?= !empty($title) ? $title : $this->translate('Title not available'); ?>
 <?php if (!$this->translationEmpty('Archive Repository')): ?><?= $this->transEsc('Archive Repository')?>:<?php endif; ?>
 <?= PHP_EOL . $this->escapeHtml($this->organisationDisplayName($this->driver)) ?>
-<?php if ($originations = $this->driver->trymethod('getOriginations', [], $this->driver->getOrigination())): ?>
+<?php if ($originations = $this->driver->tryMethod('getOriginations', [], $this->driver->getOrigination())): ?>
 <?= PHP_EOL . $this->transEsc('Archive Origination')?>: <?=implode(', ', array_map($this->escapeHtml, (array)$originations))?>
 <?php endif; ?>
 <?php if (!($fondsOrCollection = in_array('Document/ArchiveFonds', $formats) || in_array('Document/ArchiveCollection', $formats))): ?>

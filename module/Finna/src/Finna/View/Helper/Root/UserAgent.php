@@ -72,10 +72,12 @@ class UserAgent extends \Laminas\View\Helper\AbstractHelper
         if (null === $this->isBot) {
             $headers = $this->request->getHeaders();
             if (!$headers->has('User-Agent')) {
-                return;
+                $this->isBot = false;
+            } else {
+                $agent = $headers->get('User-Agent')->toString();
+                $crawlerDetect = new \Jaybizzle\CrawlerDetect\CrawlerDetect();
+                $this->isBot = $crawlerDetect->isCrawler($agent);
             }
-            $agent = $headers->get('User-Agent')->toString();
-            $this->isBot = preg_match('/bot|crawl|slurp|spider/i', $agent);
         }
         return $this->isBot;
     }

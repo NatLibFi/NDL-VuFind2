@@ -35,19 +35,17 @@ $this->headScript()->prependScript("var listId = {$list->id}; var publicList = 1
       </div>
     </div>
 </div>
-<div class="search-controls">
-    <div class="control-container text-right hidden-print mylist-controls">
-      <div>
-        <?=$this->render('search/controls/view.phtml')?>
-        <?=$this->render('search/controls/sort.phtml')?>
-        <?=$this->render('search/controls/limit.phtml')?>
-      </div>
-      <div class="save-list-wrapper">
-        <a class="btn btn-primary btn-sm btn-block" data-lightbox role="button" href="<?= $this->url('list-save', [ 'id' => $list->id ]) ?>"><?=$this->transEsc('import_favorites_from_list')?></a>
-      </div>
-    </div>
+<div class="mylist-controls search-controls">
     <div class="pagination-container">
-        <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results]) ?>
+      <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results]) ?>
+    </div>
+    <div class="save-list-wrapper">
+      <a class="btn btn-primary btn-sm btn-block" data-lightbox role="button" href="<?= $this->url('list-save', [ 'id' => $list->id ]) ?>"><i class="fa fa-files-o" aria-hidden="true"></i> <span class="hidden-xs hidden-sm"><?=$this->transEsc('import_favorites_from_list')?></span></a>
+    </div>
+    <div class="control-container text-right hidden-print">
+      <?=$this->render('search/controls/sort.phtml')?>
+      <?=$this->render('search/controls/limit.phtml')?>
+      <?=$this->render('search/controls/view.phtml')?>
     </div>
 </div>
 <div class="public-list-view results result-view-<?=$this->escapeHtmlAttr($this->params->getView())?>">

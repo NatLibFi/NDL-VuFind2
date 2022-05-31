@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2018.
+ * Copyright (C) The National Library of Finland 2018-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -73,7 +73,7 @@ class AbstractOnlinePaymentActionFactory
             $container->get(\VuFind\Session\Settings::class),
             $container->get(\VuFind\ILS\Connection::class),
             $tablePluginManager->get(\Finna\Db\Table\Transaction::class),
-            $tablePluginManager->get(\VuFind\Db\Table\UserCard::class),
+            $tablePluginManager->get(\VuFind\Db\Table\User::class),
             $container->get(\Finna\OnlinePayment\OnlinePayment::class),
             $container->get('Finna\OnlinePayment\Session')
         );

@@ -23,7 +23,7 @@
 $(document).ready(function() {
     var holder = $('#combined_$searchClassIdHtmlEscaped');
     var url = VuFind.path + '/Combined/Result?id=$searchClassIdEncoded&lookfor=$lookforEncoded&type=$handlerEncoded$searchIds';
-    holder.load(url, '', function(responseText) {
+    VuFind.loadHtml(holder, url, '', function(responseText) {
         if (responseText.length == 0) {
             holder.hide();
         } else {
@@ -42,7 +42,7 @@ JS;
 
 <div>
   <div class="combined-search-results">
-    <p><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> <?=$this->transEsc("Loading")?>...</p>
+    <p><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> <?=$this->transEsc('loading_ellipsis')?></p>
   </div>
 </div>
 

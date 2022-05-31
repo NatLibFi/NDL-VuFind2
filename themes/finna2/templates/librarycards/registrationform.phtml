@@ -41,7 +41,7 @@
     <?php endforeach; ?>
     <div class="form-group">
       <input id="acceptTerms" type="checkbox" name="acceptTerms" required>
-      <label for="acceptTerms" class="control-label"><?=$this->translate('new_ils_account_terms_accept_html', ['%%url%%' => $this->termsUrl])?></label>
+      <label for="acceptTerms" class="control-label"><?=$this->translate('new_ils_account_terms_accept_html', ['%%url%%' => $this->escapeHtmlAttr($this->termsUrl)])?></label>
     </div>
     <div class="form-group">
       <input class="btn btn-primary" name="submit" type="submit" value="<?=$this->transEscAttr('Submit') ?>"/>

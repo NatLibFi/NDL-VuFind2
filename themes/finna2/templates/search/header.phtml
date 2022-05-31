@@ -38,9 +38,13 @@
         <?php endif; ?>
         <div id="searchForm" class="hidden-print">
           <div class="adv_search_links">
-            <a href="<?=$this->url($advSearch)?>?edit=<?=$this->escapeHtmlAttr($searchId)?>"><i class="fa fa-lg fa-pen"></i> <?=$this->transEsc("Edit this search")?></a>
+            <?php if ($advSearch): ?>
+              <a href="<?=$this->url($advSearch)?>?edit=<?=$this->escapeHtmlAttr($searchId)?>"><i class="fa fa-lg fa-pen"></i> <?=$this->transEsc("Edit this search")?></a>
+            <?php endif; ?>
             <div class="adv-search-menu hidden-xs">
-              <a href="<?=$this->url($advSearch)?>"><i class="fa fa-lg icon-adv-search"></i> <?=$this->transEsc("Start a new Advanced Search")?></a>
+              <?php if ($advSearch): ?>
+                <a href="<?=$this->url($advSearch)?>"><i class="fa fa-lg icon-adv-search"></i> <?=$this->transEsc("Start a new Advanced Search")?></a>
+              <?php endif; ?>
               <a href="<?=$this->url($searchHome)?>"><i class="fa fa-lg icon-basic-search"></i> <?=$this->transEsc("Start a new Basic Search")?></a>
             </div>
             <span class="visible-xs adv-search-menu-toggle"><?=$this->transEsc("adv_search_menu")?> <b class="caret"></b></span>

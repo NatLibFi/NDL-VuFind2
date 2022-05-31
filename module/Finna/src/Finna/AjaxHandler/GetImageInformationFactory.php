@@ -78,6 +78,9 @@ class GetImageInformationFactory
             $container->get(\VuFind\Auth\Manager::class)->isLoggedIn(),
             $container->get('ViewRenderer')->plugin('record')
         );
+        $result->setStatisticsEventHandler(
+            $container->get(\Finna\Statistics\EventHandler::class)
+        );
         return $result;
     }
 }

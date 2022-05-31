@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2019.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -24,6 +24,7 @@
  * @category VuFind
  * @package  Controller
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -38,6 +39,7 @@ use VuFind\Log\LoggerAwareTrait;
  * @category VuFind
  * @package  Controller
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -45,31 +47,6 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
     implements \Laminas\Log\LoggerAwareInterface
 {
     use LoggerAwareTrait;
-
-    /**
-     * True if form was submitted successfully.
-     *
-     * @var bool
-     */
-    protected $submitOk = false;
-
-    /**
-     * Show response after form submit.
-     *
-     * @param View    $view     View
-     * @param Form    $form     Form
-     * @param boolean $success  Was email sent successfully?
-     * @param string  $errorMsg Error message (optional)
-     *
-     * @return void
-     */
-    protected function showResponse($view, $form, $success, $errorMsg = null)
-    {
-        if ($success) {
-            $this->submitOk = true;
-        }
-        parent::showResponse($view, $form, $success, $errorMsg);
-    }
 
     /**
      * Handles rendering and submit of dynamic forms.
@@ -108,19 +85,6 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
         }
         $view->form->populateValues($data);
 
-        if (!$this->submitOk) {
-            return $view;
-        }
-
-        // Reset flashmessages set by VuFind
-        $msg = $this->flashMessenger();
-        $namespaces = ['error', 'info', 'success'];
-        foreach ($namespaces as $ns) {
-            $msg->setNamespace($ns);
-            $msg->clearCurrentMessages();
-        }
-
-        $view->setTemplate('feedback/response');
         return $view;
     }
 
@@ -165,9 +129,15 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
         if (!$formId) {
             $formId = 'FeedbackSite';
         }
-        // Clone the form object to avoid messing with the existing instance:
-        $form = clone $this->serviceLocator->get(\VuFind\Form\Form::class);
-        $form->setFormId($formId);
+        $form = $this->serviceLocator->get(\VuFind\Form\Form::class);
+        $params = [];
+        if ($refererHeader = $this->getRequest()->getHeader('Referer')) {
+            $params['referrer'] = $refererHeader->getFieldValue();
+        }
+        if ($userAgentHeader = $this->getRequest()->getHeader('User-Agent')) {
+            $params['userAgent'] = $userAgentHeader->getFieldValue();
+        }
+        $form->setFormId($formId, $params);
 
         if ($formId === 'FeedbackRecord') {
             // Resolve recipient email from datasource configuration
@@ -194,7 +164,17 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
         }
 
         if ($form->getSendMethod() === Form::HANDLER_EMAIL) {
-            return parent::sendEmail(...func_get_args());
+            // We may have modified the params, so state them explicitly:
+            return parent::sendEmail(
+                $recipientName,
+                $recipientEmail,
+                $senderName,
+                $senderEmail,
+                $replyToName,
+                $replyToEmail,
+                $emailSubject,
+                $emailMessage
+            );
         } elseif ($form->getSendMethod() === Form::HANDLER_DATABASE) {
             $this->saveToDatabase(
                 $form,
@@ -235,16 +215,7 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
         $url = rtrim($this->getServerUrl('home'), '/');
         $url = substr($url, strpos($url, '://') + 3);
 
-        $formFields = $form->getFormFields();
-
-        $save = [];
-        $params = (array)$this->params()->fromPost();
-        foreach ($params as $key => $val) {
-            if (!in_array($key, $formFields)) {
-                continue;
-            }
-            $save[$key] = $val;
-        }
+        $save = $form->getContentsAsArray((array)$this->params()->fromPost());
         $save['emailSubject'] = $subject;
         $messageJson = json_encode($save);
 
@@ -274,24 +245,101 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
         $userId = $user ? $user->id : null;
 
         $url = rtrim($this->getServerUrl('home'), '/');
-        $url = substr($url, strpos($url, '://') + 3);
 
-        $formFields = $form->getFormFields();
+        $recordParamMap = [
+            'record' => 'record',
+            'record_id' => 'recordId',
+            'record_info' => 'recordInfo'
+        ];
 
-        $message = [];
-        $params = (array)$this->params()->fromPost();
-        foreach ($params as $key => $val) {
-            if (!in_array($key, $formFields)) {
+        $postParams = (array)$this->params()->fromPost();
+        $message = $form->getContentsAsArray($postParams);
+        foreach ($form->mapRequestParamsToFieldValues($postParams) as $field) {
+            if (in_array($field['name'], array_keys($recordParamMap))) {
                 continue;
             }
-            $message[$key] = $val;
+            $details = [
+                'type' => $field['type'],
+                'label' => $field['label'] ?? '',
+                'labelTranslated' => $this->translate($field['label'] ?? ''),
+                'value' => $field['value'] ?? '',
+            ];
+            if (isset($field['valueLabel'])) {
+                $details['valueLabel'] = $field['valueLabel'];
+                $details['valueLabelTranslated'] = is_array($field['valueLabel'])
+                    ? array_map([$this, 'translate'], $field['valueLabel'])
+                    : $this->translate($field['valueLabel']);
+            }
+            $message['fields'][$field['name']] = $details;
+        }
+        foreach ($recordParamMap as $from => $to) {
+            if (isset($message[$from])) {
+                $message[$to] = $message[$from];
+                unset($message[$from]);
+            }
         }
         $message['emailSubject'] = $subject;
         $message['internalUserId'] = $userId;
-        $messageJson = json_encode($message);
+        $message['viewBaseUrl'] = $url;
+        if (!empty($message['recordId'])) {
+            [$recordSource, $recordId] = explode('|', $message['recordId'], 2);
+            $driver = $this->getRecordLoader()->load($recordId, $recordSource);
+            $message['recordMetadata'] = [
+                'title' => $driver->tryMethod('getTitle'),
+                'authors' => $driver->tryMethod('getAuthorsWithRoles'),
+                'publicationDates' => $driver->tryMethod('getPublicationDates'),
+                'formats' => array_values(
+                    array_unique(
+                        array_map(
+                            function ($s) {
+                                if ($s instanceof \VuFind\I18n\TranslatableString) {
+                                    return $s->getDisplayString();
+                                }
+                                return strval($s);
+                            },
+                            $driver->tryMethod('getFormats', [], [])
+                        )
+                    )
+                ),
+                'formatsRaw' => array_values(
+                    array_unique(
+                        array_map(
+                            'strval',
+                            $driver->tryMethod('getFormats', [], [])
+                        )
+                    )
+                ),
+                'isbns' => $driver->tryMethod('getISBNs'),
+                'issns' => $driver->tryMethod('getISSNs'),
+            ];
+            if ($openUrl = $driver->tryMethod('getOpenUrl')) {
+                parse_str($openUrl, $openUrlFields);
+                $message['recordMetadata']['openurl'] = $openUrlFields;
+            }
+            if ($rawData = $driver->getRawData()) {
+                if ($holdings = $rawData['holdings_txtP_mv'] ?? []) {
+                    $message['recordHoldingsSummary'] = (array)$holdings;
+                }
+            }
+        }
 
         $apiSettings = $form->getApiSettings();
-
+        if ('test' === $apiSettings['url']) {
+            if ($this->inLightbox()) {
+                $this->flashMessenger()->addErrorMessage(
+                    json_encode($message, JSON_PRETTY_PRINT)
+                );
+                return [
+                    false,
+                    'Simulated API request not sent'
+                ];
+            } else {
+                header('Content-type: application/json');
+                echo json_encode($message, JSON_PRETTY_PRINT);
+                exit(0);
+            }
+        }
+        $messageJson = json_encode($message);
         $httpService = $this->serviceLocator->get(\VuFindHttp\HttpService::class);
         $client = $httpService->createClient(
             $apiSettings['url'],

@@ -43,13 +43,7 @@ use VuFind\Solr\Utils;
 class Params extends \VuFind\Search\Solr\Params
 {
     use \Finna\Search\FinnaParams;
-
-    /**
-     * Search handler for browse actions
-     *
-     * @var string
-     */
-    protected $browseHandler;
+    use ParamsSharedTrait;
 
     /**
      * Date converter
@@ -166,45 +160,6 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Support method for initSearch() -- handle basic settings.
-     *
-     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
-     * request.
-     *
-     * @return boolean True if search settings were found, false if not.
-     */
-    protected function initBasicSearch($request)
-    {
-        if ($handler = $request->get('browseHandler')) {
-            $this->setBrowseHandler($handler);
-        }
-        return parent::initBasicSearch($request);
-    }
-
-    /**
-     * Return the selected search handler (null for complex searches which have no
-     * single handler)
-     *
-     * @return string|null
-     */
-    public function getSearchHandler()
-    {
-        return $this->browseHandler ?: parent::getSearchHandler();
-    }
-
-    /**
-     * Set search handler for browse actions
-     *
-     * @param string $handler Hander
-     *
-     * @return string|null
-     */
-    public function setBrowseHandler($handler)
-    {
-        return $this->browseHandler = $handler;
-    }
-
-    /**
      * Does the object already contain the specified filter?
      *
      * @param string $filter A filter string from url : "field:value"
@@ -242,6 +197,32 @@ class Params extends \VuFind\Search\Solr\Params
             }
         }
         return false;
+    }
+
+    /**
+     * Format a Solr date for display
+     *
+     * @param string $date   Date
+     * @param string $domain Translation domain
+     *
+     * @return string
+     */
+    protected function formatNewItemsDateForDisplay($date, $domain)
+    {
+        if ($date == '' || $date == '*') {
+            return ['', true];
+        }
+        if (preg_match('/^NOW-(\w+)/', $date, $matches)) {
+            return [
+                $this->translate("$domain::new_items_" . strtolower($matches[1])),
+                false
+            ];
+        }
+        $date = substr($date, 0, 10);
+        return [
+            $this->dateConverter->convertToDisplayDate('Y-m-d', $date),
+            true
+        ];
     }
 
     /**
@@ -693,6 +674,9 @@ class Params extends \VuFind\Search\Solr\Params
         if ($field === AuthorityHelper::AUTHOR2_ID_FACET) {
             return 'authority_id_label';
         }
+        if (strpos($field, '{!geofilt ') === 0) {
+            return 'Geographical Area';
+        }
         return parent::getFacetLabel($field, $value, $default);
     }
 
@@ -715,100 +699,6 @@ class Params extends \VuFind\Search\Solr\Params
             }
         }
         return false;
-    }
-
-    /**
-     * Format display text for a author-id filter entry.
-     *
-     * @param array  $filter Filter
-     * @param string $field  Filter field
-     * @param string $value  Filter value
-     *
-     * @return array
-     */
-    protected function formatAuthorIdFilterListEntry($filter, $field, $value)
-    {
-        $displayText = $filter['displayText'];
-        if ($id = $this->parseAuthorIdFilter($value)) {
-            // Author id filter  (OR query with <field>:<author-id> pairs)
-            $displayText = $this->authorityHelper->formatFacet($id);
-        } elseif (in_array(
-            $filter['field'],
-            $this->authorityHelper->getAuthorIdFacets()
-        )
-        ) {
-            $displayText = $this->authorityHelper->formatFacet($displayText);
-        }
-        $filter['displayText'] = $displayText;
-        return $filter;
-    }
-
-    /**
-     * Attempt to parse author id from a author-id filter.
-     *
-     * @param array $filter Filter
-     *
-     * @return mixed null|string
-     */
-    protected function parseAuthorIdFilter($filter)
-    {
-        $pat = sprintf('/%s:"([a-z0-9_.:]*)"/', AuthorityHelper::AUTHOR2_ID_FACET);
-
-        if (!preg_match($pat, $filter, $matches)) {
-            return null;
-        }
-        return $matches[1];
-    }
-
-    /**
-     * Translate a hierarchical facet filter
-     *
-     * Translates each facet level and concatenates the result
-     *
-     * @param string $field    Field name
-     * @param string $value    Field value
-     * @param string $operator Operator (AND/OR/NOT)
-     *
-     * @return array
-     */
-    protected function translateHierarchicalFacetFilter($field, $value, $operator)
-    {
-        $domain = $this->getOptions()->getTextDomainForTranslatedFacet($field);
-        $parts = explode('/', $value);
-        $result = [];
-        for ($i = 0; $i <= $parts[0]; $i++) {
-            $part = array_slice($parts, 1, $i + 1);
-            $key = $i . '/' . implode('/', $part) . '/';
-            $result[] = $this->translate($key, null, end($part));
-        }
-        $displayText = implode(' > ', $result);
-        return compact('value', 'displayText', 'field', 'operator');
-    }
-
-    /**
-     * Format a Solr date for display
-     *
-     * @param string $date   Date
-     * @param string $domain Translation domain
-     *
-     * @return string
-     */
-    protected function formatNewItemsDateForDisplay($date, $domain)
-    {
-        if ($date == '' || $date == '*') {
-            return ['', true];
-        }
-        if (preg_match('/^NOW-(\w+)/', $date, $matches)) {
-            return [
-                $this->translate("$domain::new_items_" . strtolower($matches[1])),
-                false
-            ];
-        }
-        $date = substr($date, 0, 10);
-        return [
-            $this->dateConverter->convertToDisplayDate('Y-m-d', $date),
-            true
-        ];
     }
 
     /**
@@ -847,5 +737,36 @@ class Params extends \VuFind\Search\Solr\Params
                 = $this->buildFullDateRangeFilter('first_indexed', $from, '*');
             $this->addFilter($rangeFacet);
         }
+    }
+
+    /**
+     * Set the sorting value (note: sort will be set to default if an illegal
+     * or empty value is passed in).
+     *
+     * @param string $sort  New sort value (null for default)
+     * @param bool   $force Set sort value without validating it?
+     *
+     * @return void
+     */
+    public function setSort($sort, $force = false)
+    {
+        if (!$force) {
+            // Check if we need to convert the sort to a currently valid option
+            // (it must be a prefix of a currently valid option):
+            $validOptions = array_keys($this->getOptions()->getSortOptions());
+            if (!empty($sort) && !in_array($sort, $validOptions)) {
+                $sortLen = strlen($sort);
+                foreach ($validOptions as $valid) {
+                    if (strlen($valid) > $sortLen
+                        && strncmp($sort, $valid, $sortLen) === 0
+                    ) {
+                        $sort = $valid;
+                        break;
+                    }
+                }
+            }
+        }
+
+        parent::setSort($sort, $force);
     }
 }

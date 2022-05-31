@@ -20,7 +20,7 @@
           <i class="fa fa-lg fa-user"></i> <?=$this->transEsc('R2_register')?>
         </a>
       </p>
-      <p><?=$this->translate('R2_register_read_more_html', ['%%url%%' => $this->url('content-page', ['page' => 'tutkijasali'])])?></p>
+      <p><?=$this->translate('R2_register_read_more_html', ['%%url%%' => $this->escapeHtmlAttr($this->url('content-page', ['page' => 'tutkijasali']))])?></p>
     </div>
   </div>
 </div>

@@ -122,6 +122,7 @@ class ThemeCompilerTest extends \PHPUnit\Framework\TestCase
                     'xyzzy' => 'Xyzzy',
                 ]
             ],
+            'doctype' => 'HTML5',
         ];
         $mergedConfig = include "{$this->targetPath}/theme.config.php";
         $this->assertEquals($expectedConfig, $mergedConfig);
@@ -173,13 +174,14 @@ class ThemeCompilerTest extends \PHPUnit\Framework\TestCase
             'js' => ['hello.js', 'extra.js', 'mixin.js'],
             'helpers' => [
                 'factories' => [
-                    'foo' => 'fooOverrideFactory',
+                    'foo' => 'fooMixinFactory',
                     'bar' => 'barFactory',
                 ],
                 'aliases' => [
                     'xyzzy' => 'Xyzzy',
                 ]
             ],
+            'doctype' => 'HTML5',
         ];
         $mergedConfig = include "{$this->targetPath}/theme.config.php";
         $this->assertEquals($expectedConfig, $mergedConfig);

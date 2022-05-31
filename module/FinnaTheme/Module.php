@@ -45,13 +45,7 @@ class Module
      */
     public function getAutoloaderConfig()
     {
-        return [
-            'Laminas\Loader\StandardAutoloader' => [
-                'namespaces' => [
-                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-                ],
-            ],
-        ];
+        return [];
     }
 
     /**
@@ -61,46 +55,6 @@ class Module
      */
     public function getServiceConfig()
     {
-        return [
-            'factories' => [
-                'VuFindTheme\ThemeInfo' => 'FinnaTheme\Module::getThemeInfo',
-            ],
-        ];
-    }
-
-    /**
-     * Factory function for ThemeInfo object.
-     *
-     * @return ThemeInfo
-     */
-    public static function getThemeInfo()
-    {
-        return new \VuFindTheme\ThemeInfo(
-            realpath(APPLICATION_PATH . '/themes'),
-            'bootprint3'
-        );
-    }
-
-    /**
-     * Get view helper configuration.
-     *
-     * @return array
-     */
-    public function getViewHelperConfig()
-    {
-        return [
-            'factories' => [
-                View\Helper\HeadScript::class =>
-                    \VuFindTheme\View\Helper\PipelineInjectorFactory::class,
-                View\Helper\InlineScript::class =>
-                    \VuFindTheme\View\Helper\PipelineInjectorFactory::class,
-            ],
-            'aliases' => [
-                \VuFindTheme\View\Helper\HeadScript::class
-                    => View\Helper\HeadScript::class,
-                \VuFindTheme\View\Helper\InlineScript::class =>
-                    View\Helper\InlineScript::class,
-            ],
-        ];
+        return [];
     }
 }

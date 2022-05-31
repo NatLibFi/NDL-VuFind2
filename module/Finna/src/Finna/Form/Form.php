@@ -22,6 +22,7 @@
  * @category VuFind
  * @package  Form
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
@@ -35,6 +36,7 @@ use VuFind\Exception\BadConfig;
  * @category VuFind
  * @package  Form
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
@@ -90,35 +92,42 @@ class Form extends \VuFind\Form\Form
      *
      * @var string
      */
-    protected $formId;
+    protected $formId = '';
 
     /**
      * Institution name
      *
      * @var string
      */
-    protected $institution;
+    protected $institution = '';
 
     /**
      * Institution email
      *
      * @var string
      */
-    protected $institutionEmail;
+    protected $institutionEmail = '';
 
     /**
      * User
      *
      * @var User
      */
-    protected $user;
+    protected $user = null;
+
+    /**
+     * ILS Patron
+     *
+     * @var array
+     */
+    protected $ilsPatron = null;
 
     /**
      * User roles
      *
      * @var array
      */
-    protected $userRoles;
+    protected $userRoles = [];
 
     /**
      * User library card barcode.
@@ -154,7 +163,7 @@ class Form extends \VuFind\Form\Form
      *
      * @var \VuFind\RecordDriver\AbstractRecordDriver
      */
-    protected $record;
+    protected $record = null;
 
     /**
      * Form settings (from YAML without parsing)
@@ -195,11 +204,6 @@ class Form extends \VuFind\Form\Form
 
         // Validate form settings
         if ($this->formSettings['includeBarcode'] ?? false) {
-            if (!$this->isRecordRequestFormWithBarcode()) {
-                throw new \VuFind\Exception\BadConfig(
-                    'Library card barcode can not be used with this form.'
-                );
-            }
             $handler = $this->formSettings['sendMethod'] ?? Form::HANDLER_EMAIL;
             if (!in_array($handler, $this->secureHandlers)) {
                 throw new \VuFind\Exception\BadConfig(
@@ -208,30 +212,13 @@ class Form extends \VuFind\Form\Form
                     . implode(', ', $this->secureHandlers)
                 );
             }
-            if (!($this->formSettings['onlyForLoggedUsers'] ?? false)) {
-                throw new \VuFind\Exception\BadConfig(
-                    'Enable \'onlyForLoggedUsers\' when'
-                    . ' \'includeBarcode\' is enabled'
-                );
-            }
             if ($this->user && ($catUsername = $this->user->cat_username)) {
                 [, $barcode] = explode('.', $catUsername);
                 $this->userCatUsername = $barcode;
             }
         }
         if ($this->formSettings['includePatronId'] ?? false) {
-            if (!$this->isRecordRequestFormWithBarcode()) {
-                throw new \VuFind\Exception\BadConfig(
-                    'Patron identifier can not be used with this form.'
-                );
-            }
-            if (!($this->formSettings['onlyForLoggedUsers'] ?? false)) {
-                throw new \VuFind\Exception\BadConfig(
-                    'Enable \'onlyForLoggedUsers\' when'
-                    . ' \'includePatronId\' is enabled'
-                );
-            }
-            if ($this->user && ($catId = $this->user->cat_id)) {
+            if ($this->ilsPatron && ($catId = $this->ilsPatron['id'] ?? '')) {
                 [, $id] = explode('.', $catId);
                 $this->userCatId = $id;
             }
@@ -244,6 +231,7 @@ class Form extends \VuFind\Form\Form
                 );
             }
             if (strpos($this->formSettings['apiSettings']['url'], 'https://') !== 0
+                && $this->formSettings['apiSettings']['url'] !== 'test'
                 && 'development' !== APPLICATION_ENV
             ) {
                 throw new \VuFind\Exception\BadConfig(
@@ -280,15 +268,17 @@ class Form extends \VuFind\Form\Form
     /**
      * Set user
      *
-     * @param User  $user  User
-     * @param array $roles User roles
+     * @param User  $user      User
+     * @param array $roles     User roles
+     * @param array $ilsPatron ILS patron account
      *
      * @return void
      */
-    public function setUser($user, $roles)
+    public function setUser($user, $roles, ?array $ilsPatron)
     {
         $this->user = $user;
         $this->userRoles = $roles;
+        $this->ilsPatron = $ilsPatron;
     }
 
     /**
@@ -392,38 +382,14 @@ class Form extends \VuFind\Form\Form
             return null;
         }
 
-        $recipientValue = $postParams[$recipientField] ?? null;
-        if ($recipientValue === null) {
-            return null;
-        }
+        $params = $this->mapRequestParamsToFieldValues($postParams);
 
-        foreach ($this->formSettings['fields'] ?? [] as $el) {
-            if (($el['name'] ?? null) !== $recipientField) {
-                continue;
-            }
-
-            // Selected recipient is posted as a numeric index.
-            // Find the related option element.
-            $selected = (int)$recipientValue;
-            $option = null;
-            if (isset($el['options'])) {
-                $option = $el['options'][$selected];
-            } elseif (isset($el['optionGroups'])) {
-                $ind = 0;
-                foreach ($el['optionGroups'] as $group => $groupData) {
-                    foreach ($groupData['options'] as $opt) {
-                        if ($selected === $ind++) {
-                            $option = $opt;
-                            break;
-                        }
-                    }
-                }
-            }
-            $recipientName = $option['label'] ?? null;
-            $recipientEmail = $option['value'] ?? null;
-            if ($recipientName && $recipientEmail) {
-                return
-                    ['email' => $recipientEmail, 'name' => $recipientName];
+        foreach ($params as $param) {
+            if ($recipientField === $param['name']) {
+                return [
+                    'email' => $param['value'],
+                    'name' => $this->translate($param['valueLabel'])
+                ];
             }
         }
 
@@ -535,20 +501,20 @@ class Form extends \VuFind\Form\Form
             || $this->isRecordRequestFormWithBarcode())
         ) {
             $preParagraphs[] = '<strong>'
-                . $transEsc('repository_library_request_material') . '</strong>:<br>'
+                . $transEsc('feedback_material') . '</strong>:<br>'
                 . $escapeHtml($this->record->getTitle());
         }
 
         if ($this->userCatUsername) {
             $preParagraphs[] = $this->translate(
                 'feedback_library_card_barcode_html',
-                ['%%barcode%%' => $this->userCatUsername]
+                ['%%barcode%%' => $escapeHtml($this->userCatUsername)]
             );
         }
         if ($this->userCatId) {
             $postParagraphs[] = $this->translate(
                 'feedback_library_patron_id_html',
-                ['%%id%%' => $this->userCatId]
+                ['%%id%%' => $escapeHtml($this->userCatId)]
             );
         }
 
@@ -561,42 +527,15 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Format email message.
+     * Map request parameters to field values
      *
      * @param array $requestParams Request parameters
      *
-     * @return array Array with template parameters and template name.
+     * @return array
      */
-    public function formatEmailMessage(array $requestParams = [])
+    public function mapRequestParamsToFieldValues(array $requestParams): array
     {
-        if ($this->formId === self::RECORD_FEEDBACK_FORM
-            || $this->isRecordRequestFormWithBarcode()
-        ) {
-            foreach (['record', 'record_id'] as $key) {
-                unset($requestParams[$key]);
-            }
-        }
-
-        if ($recipientField = $this->getRecipientField(
-            $this->formSettings['fields'] ?? []
-        )
-        ) {
-            $recipient = $this->getRecipientFromFormData($requestParams);
-            if (!$recipientName = $recipient['name'] ?? null) {
-                unset($requestParams[$recipientField]);
-            } else {
-                // Convert posted recipient value from a numerical index to
-                // configured label.
-                foreach ($requestParams as $key => &$val) {
-                    if ($key === $recipientField) {
-                        $val = $this->translate($recipientName);
-                        break;
-                    }
-                }
-            }
-        }
-
-        [$params, $tpl] = parent::formatEmailMessage($requestParams);
+        $params = parent::mapRequestParamsToFieldValues($requestParams);
 
         $params = array_filter(
             $params,
@@ -610,6 +549,7 @@ class Form extends \VuFind\Form\Form
             // Append library card barcode
             $field = [
                 'type' => 'text',
+                'name' => 'userCatUsername',
                 'label' => $this->translate('Library Catalog Username'),
                 'value' => $this->userCatUsername
             ];
@@ -624,6 +564,7 @@ class Form extends \VuFind\Form\Form
             // Append patron's id in library
             $field = [
                 'type' => 'text',
+                'name' => 'userCatId',
                 'label' => $this->translate('Unique patron identifier'),
                 'value' => $this->userCatId
             ];
@@ -644,18 +585,39 @@ class Form extends \VuFind\Form\Form
                 ) : $this->translate('feedback_user_anonymous');
 
             $label = $this->translate('feedback_user_login_method');
-            $params[$label]
-                = ['type' => 'text', 'label' => $label, 'value' => $loginMethod];
+            $params[] = [
+                'name' => 'userLoginMethod',
+                'type' => 'text',
+                'label' => $label,
+                'value' => $loginMethod
+            ];
 
             if ($this->user) {
                 $label = $this->translate('feedback_user_roles');
-                $params[$label]
-                    = ['type' => 'text', 'label' => $label,
-                       'value' => implode(', ', $this->userRoles)];
+                $params[] = [
+                    'name' => 'userRoles',
+                    'type' => 'text',
+                    'label' => $label,
+                    'value' => implode(', ', $this->userRoles)
+                ];
             }
         }
 
-        return [$params, $tpl];
+        return $params;
+    }
+
+    /**
+     * Get form contents as an array
+     *
+     * @param array $requestParams Request parameters
+     *
+     * @return array
+     */
+    public function getContentsAsArray(array $requestParams): array
+    {
+        $params = $this->mapRequestParamsToFieldValues($requestParams);
+        $result = array_column($params, 'value', 'name');
+        return $result;
     }
 
     /**
@@ -761,8 +723,11 @@ class Form extends \VuFind\Form\Form
         if (!empty($this->formConfig['hideSenderInfo'])) {
             // Remove default sender info fields
             $filtered = [];
+            $configFieldNames = array_column($config['fields'] ?? [], 'name');
             foreach ($elements as $el) {
-                if (isset($el['group']) && $el['group'] === '__sender__') {
+                if (isset($el['group']) && $el['group'] === '__sender__'
+                    && !in_array($el['name'] ?? '', $configFieldNames)
+                ) {
                     continue;
                 }
                 $filtered[] = $el;
@@ -776,38 +741,6 @@ class Form extends \VuFind\Form\Form
                     if (isset($el['group']) && $el['group'] === '__sender__') {
                         $el['help'] = $help;
                         break;
-                    }
-                }
-            }
-        }
-
-        if ($recipientField = $this->getRecipientField($config['fields'])) {
-            // Form recipient email address is taken from a select element value.
-            // Change element option values to numeric indexes so that email
-            // addresses are not exposed in the UI.
-            foreach ($elements as &$el) {
-                if ($el['name'] === $recipientField) {
-                    $ind = 0;
-                    if (isset($el['options'])) {
-                        // Select element with options
-                        foreach ($el['options'] as &$opt) {
-                            if (empty($opt['label']) || empty($opt['value'])) {
-                                continue;
-                            }
-                            $opt['value'] = $ind++;
-                        }
-                    } elseif (isset($el['optionGroups'])) {
-                        // Select element with option-groups
-                        $optionGroups = [];
-                        foreach ($el['optionGroups'] as $label => $groupData) {
-                            $groupOptions = [];
-                            foreach ($groupData['options'] as $key => $val) {
-                                $groupOptions[$ind++] = $val;
-                            }
-                            $optionGroups[$label] = $groupData;
-                            $optionGroups[$label]['options'] = $groupOptions;
-                        }
-                        $el['optionGroups'] = $optionGroups;
                     }
                 }
             }

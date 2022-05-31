@@ -38,7 +38,7 @@
         <small>
           <?php $commenter = $this->driver->tryMethod('getUserById', [$comment->user_id]); ?>
           <strong><?=null === $comment->user_id ? $this->transEsc('comment_anonymous_user') : $this->escapeHtml(trim($this->userPublicName($commenter)))?></strong>
-          <?=$this->escapeHtml($comment->created)?>
+          <?=$this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $comment->created))?>
           <?php if ($own): ?>
             <a href="#" class="edit"><?=$this->transEsc('Edit')?></a>
             <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'DeleteComment'))?>?delete=<?=urlencode($comment->id)?>" id="recordComment<?=$this->escapeHtml($comment->id)?>" class="delete text-danger"><?=$this->transEsc('Delete')?></a>

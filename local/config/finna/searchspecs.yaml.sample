@@ -67,7 +67,7 @@
 #
 # GlobalExtraParams:
 #   - param: bf
-#     value: "recip(rord(publishDateSort),1,1000,1000)"
+#     value: "recip(ms(NOW/DAY,main_date),1,1000,1000)^20000"
 #     conditions:
 #       - NoDismaxParams
 #         - bf
@@ -94,7 +94,7 @@
 #
 # GlobalExtraParams:
 #   - param: bf
-#     value: "recip(ms(NOW/DAY,publishDateSort),1,1000,1000)"
+#     value: "recip(ms(NOW/DAY,main_date),1,1000,1000)^20000"
 #     conditions:
 #       - SearchTypeIn:
 #         - AllFields

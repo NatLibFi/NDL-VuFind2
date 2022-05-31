@@ -3,7 +3,7 @@ finna.itemStatus = (function finnaItemStatus() {
   function initDedupRecordSelection(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
-    holder.find('.dedup-select').on('change', function onChangeDedupSelection() {
+    $(holder).find('.dedup-select').on('change', function onChangeDedupSelection() {
       var id = $(this).val();
       var source = $(this).find('option:selected').data('source');
       finna.common.setCookie('preferredRecordSource', source);
@@ -30,7 +30,7 @@ finna.itemStatus = (function finnaItemStatus() {
       // Item statuses
       var $loading = $('<span/>')
         .addClass('location ajax-availability hidden')
-        .html('<i class="fa fa-spinner fa-spin"></i> ' + VuFind.translate('loading') + '...<br>');
+        .html(VuFind.loading());
       recordContainer.find('.callnumAndLocation')
         .empty()
         .append($loading);
@@ -42,7 +42,7 @@ finna.itemStatus = (function finnaItemStatus() {
       // Online URLs
       var $recordUrls = recordContainer.find('.available-online-links');
       if ($recordUrls.length) {
-        $recordUrls.html('<i class="fa fa-spinner fa-spin"></i> ' + VuFind.translate('loading') + '...<br>');
+        $recordUrls.html(VuFind.loading());
         $.getJSON(
           VuFind.path + '/AJAX/JSON',
           {
@@ -52,7 +52,7 @@ finna.itemStatus = (function finnaItemStatus() {
             id: recordContainer.find('.hiddenId')[0].value
           }
         ).done(function onGetRecordLinksDone(response) {
-          $recordUrls.replaceWith(response.data.html);
+          $recordUrls.replaceWith(VuFind.updateCspNonce(response.data.html));
           finna.layout.initTruncate(recordContainer);
           VuFind.openurl.embedOpenUrlLinks(recordContainer.find('.openUrlEmbed a'));
         }).fail(function onGetRecordLinksFail() {

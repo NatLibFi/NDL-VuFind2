@@ -21,7 +21,7 @@ finna.favorites = (function finnaFavorites() {
   function showInfo(response) {
     dialog.siblings('h1').remove();
     form.remove();
-    dialog.append(response.data.html);
+    dialog.append(VuFind.updateCspNonce(response.data.html));
   }
 
   function upload() {

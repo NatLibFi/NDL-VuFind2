@@ -77,9 +77,9 @@
       <?php if ($saveSupported): ?>
         <td class="history-save">
         <?php if ($this->showSaved): ?>
-          <a href="<?=$this->url('myresearch-savesearch')?>?delete=<?=urlencode($info->getSearchId())?>&amp;mode=history"><span class="sr-only"><?=$this->transEsc('Delete');?></span><i class="fa fa-remove fa-button" aria-hidden="true"></i></a>
+          <a href="<?=$this->url('myresearch-savesearch')?>?delete=<?=urlencode($info->getSearchId())?>&amp;mode=history"><span class="sr-only"><?=$this->transEsc('save_search_remove');?></span><i class="fa fa-remove fa-button" aria-hidden="true"></i></a>
         <?php else: ?>
-          <a href="<?=$this->url('myresearch-savesearch')?>?save=<?=urlencode($info->getSearchId())?>&amp;mode=history"><span class="sr-only"><?=$this->transEsc('Save');?></span><i class="fa fa-plus-big" aria-hidden="true"></i></a>
+          <a href="<?=$this->url('myresearch-savesearch')?>?save=<?=urlencode($info->getSearchId())?>&amp;mode=history"><span class="sr-only"><?=$this->transEsc('save_search');?></span><i class="fa fa-plus-big" aria-hidden="true"></i></a>
         <?php endif; ?>
         </td>
       <?php endif; ?>

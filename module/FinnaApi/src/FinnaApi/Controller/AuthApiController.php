@@ -72,9 +72,7 @@ class AuthApiController extends \VuFindApi\Controller\ApiController
 
             return $this->output(null, 204);
         }
-        if (null !== $request->getQuery('swagger')) {
-            return $this->createSwaggerSpec();
-        }
+
         return parent::onDispatch($e);
     }
 
@@ -216,10 +214,217 @@ class AuthApiController extends \VuFindApi\Controller\ApiController
      *
      * @return string
      */
-    public function getSwaggerSpecFragment()
+    public function getApiSpecFragment()
     {
-        // Auth API endpoints are not published
-        return '{}';
+        $spec = [];
+        if (!$this->isAccessDenied('access.finna.api.auth.backendlist')) {
+            $spec['paths']['/auth/getLoginTargets']['get'] = [
+                'summary' => 'Get login targets',
+                'description' => 'Lists the possible login targets.',
+                'parameters' => [],
+                'tags' => ['auth'],
+                'responses' => [
+                    '200' => [
+                        'description' => 'List of targets',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    'properties' => [
+                                        'targets' => [
+                                            'description' => 'Login targets',
+                                            'type' => 'array',
+                                            'items' => [
+                                                'type' => 'object',
+                                                'properties' => [
+                                                    'id' => [
+                                                        'description'
+                                                            => 'Target identifier',
+                                                        'type' => 'string'
+                                                    ],
+                                                    'name' => [
+                                                        'description'
+                                                            => 'Target name',
+                                                        'type' => 'string'
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                        'status' => [
+                                            'description' => 'Status code',
+                                            'type' => 'string',
+                                            'enum' => ['OK']
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'required' => ['resultCount', 'status']
+                        ]
+                    ],
+                    'default' => [
+                        'description' => 'Error',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/Error'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+        }
+        if (!$this->isAccessDenied('access.finna.api.auth.backendlist')) {
+            $spec['paths']['/auth/getLoginTargets']['get'] = [
+                'summary' => 'Get login targets',
+                'description' => 'Lists the possible login targets.',
+                'parameters' => [],
+                'tags' => ['auth'],
+                'responses' => [
+                    '200' => [
+                        'description' => 'List of targets',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    'properties' => [
+                                        'targets' => [
+                                            'description' => 'Login targets',
+                                            'type' => 'array',
+                                            'items' => [
+                                                'type' => 'object',
+                                                'properties' => [
+                                                    'id' => [
+                                                        'description'
+                                                            => 'Target identifier',
+                                                        'type' => 'string'
+                                                    ],
+                                                    'name' => [
+                                                        'description'
+                                                            => 'Target name',
+                                                        'type' => 'string'
+                                                    ],
+                                                ],
+                                            ]
+                                        ],
+                                        'status' => [
+                                            'description' => 'Status code',
+                                            'type' => 'string',
+                                            'enum' => ['OK']
+                                        ]
+                                    ],
+                                    'required' => ['resultCount', 'status']
+                                ]
+                            ]
+                        ]
+                    ],
+                    'default' => [
+                        'description' => 'Error',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/Error'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+        }
+
+        if (!$this->isAccessDenied('access.finna.api.auth.librarycardlogin')) {
+            $spec['paths']['/auth/libraryCardLogin']['post'] = [
+                'summary' => 'Check login with a library card',
+                'description'
+                    => 'Returns a success or failure for given credentials',
+                'requestBody' => [
+                    'required' => true,
+                    'content' => [
+                        'application/x-www-form-urlencoded' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'target' => [
+                                        'type' => 'string',
+                                        'description' => 'Login target (backend'
+                                            . ' from getLoginTargets)',
+                                    ],
+                                    'username' => [
+                                        'type' => 'string',
+                                        'description' => 'Library card number',
+                                    ],
+                                    'password' => [
+                                        'type' => 'string',
+                                        'description' => 'Password',
+                                    ],
+                                ],
+                                'required' => [
+                                    'target',
+                                    'username',
+                                    'password',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'tags' => ['auth'],
+                'responses' => [
+                    '200' => [
+                        'description' => 'List of targets',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    'properties' => [
+                                        'result' => [
+                                            'description' => 'Login result',
+                                            'type' => 'string',
+                                            'enum' => ['success', 'failure'],
+                                        ],
+                                        'status' => [
+                                            'description' => 'Status code',
+                                            'type' => 'string',
+                                            'enum' => ['OK']
+                                        ]
+                                    ],
+                                    'required' => ['resultCount', 'status']
+                                ]
+                            ]
+                        ]
+                    ],
+                    '500' => [
+                        'description' => 'Processing of the login request failed',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/Error'
+                                ]
+                            ]
+                        ]
+                    ],
+                    '503' => [
+                        'description'
+                            => 'Connection to the backend system (ILS) failed',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/Error'
+                                ]
+                            ]
+                        ]
+                    ],
+                    'default' => [
+                        'description' => 'Error',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/Error'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+        }
+
+        return json_encode($spec);
     }
 
     /**

@@ -46,5 +46,5 @@ class R2recordController extends RecordController
      *
      * @var string
      */
-    protected $searchClassId = 'R2';
+    protected $sourceId = 'R2';
 }

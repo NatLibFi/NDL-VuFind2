@@ -11,7 +11,7 @@
 
   if ($deduplicated): ?>
     <div class="dedupInformation">
-      <select class="dedup-select form-control" aria-haspopup="true" title="<?=$this->transEsc('select_dedup_organisation');?>" aria-label="<?=$this->transEsc('select_dedup_organisation');?>">
+      <select class="dedup-select form-control" role="listbox" aria-haspopup="true" title="<?=$this->transEsc('select_dedup_organisation');?>" aria-label="<?=$this->transEsc('select_dedup_organisation');?>">
         <?php foreach ($dedupData as $source => $current): ?>
           <option value="<?=$this->escapeHtmlAttr($current['id']) ?>" class="dedup-data-id" data-source="<?=$this->escapeHtmlAttr($source) ?>"<?php if ($recordSource === $source): ?> selected="selected"<?php endif; ?>><?=$this->transEsc("source_$source", null, $source) ?></option>
         <?php endforeach; ?>
@@ -27,7 +27,7 @@
     <?php if ($this->driver->supportsAjaxStatus()): ?>
       <span class="callnumber ajax-availability hidden"></span>
       <span class="location ajax-availability hidden">
-        <i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('Loading')?>...
+        <i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('loading_ellipsis')?>
       </span>
       <div class="locationDetails"></div>
     <?php else: ?>

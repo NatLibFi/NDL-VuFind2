@@ -52,7 +52,7 @@ class LuceneSyntaxHelper extends \VuFindSearch\Backend\Solr\LuceneSyntaxHelper
     /**
      * Search filters
      *
-     * @var string
+     * @var array
      */
     protected $searchFilters;
 
@@ -87,14 +87,9 @@ class LuceneSyntaxHelper extends \VuFindSearch\Backend\Solr\LuceneSyntaxHelper
     {
         $searchString = parent::normalizeSearchString($searchString);
         $searchString = $this->normalizeUnicodeForm($searchString);
+        $searchString = $this->normalizeISBN($searchString);
 
-        // Don't normalize ISBN when targeting 'identifier' field
-        // (required for GetRecordDriverRelatedRecords to work).
-        if (!preg_match('/identifier:.+/', $searchString)) {
-            $searchString = $this->normalizeISBN($searchString);
-        }
-
-        foreach ($this->searchFilters as $i => $filter) {
+        foreach ($this->searchFilters as $filter) {
             if (preg_match("/$filter/", $searchString)) {
                 throw new BackendException(
                     "Search string '$searchString' matched filter '$filter'"
@@ -122,11 +117,13 @@ class LuceneSyntaxHelper extends \VuFindSearch\Backend\Solr\LuceneSyntaxHelper
      *
      * @param string $searchString The query string
      *
-     * @return valid ISBN-13 or the original string
+     * @return string valid ISBN-13 or the original string
      */
     protected function normalizeISBN($searchString)
     {
-        if (!ISBN::isValidISBN10($searchString)) {
+        if (!preg_match('/^\d{9}[\dxX]$/', $searchString)
+            || !ISBN::isValidISBN10($searchString)
+        ) {
             return $searchString;
         }
 

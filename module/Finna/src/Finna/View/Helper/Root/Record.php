@@ -92,11 +92,11 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $recordLinkHelper;
 
     /**
-     * Image cache
+     * Local cache
      *
      * @var array
      */
-    protected $cachedImages = [];
+    protected $cache = [];
 
     /**
      * Tab Manager
@@ -104,6 +104,13 @@ class Record extends \VuFind\View\Helper\Root\Record
      * @var \VuFind\RecordTab\TabManager
      */
     protected $tabManager;
+
+    /**
+     * Form
+     *
+     * @var \Finna\Form\Form
+     */
+    protected $form;
 
     /**
      * Constructor
@@ -117,6 +124,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      * @param \VuFind\View\Helper\Root\RecordLink $recordLinkHelper Record link
      * helper
      * @param \VuFind\RecordTab\TabManager        $tabManager       Tab manager
+     * @param \Finna\Form\Form                    $form             Form
      */
     public function __construct(
         \Laminas\Config\Config $config,
@@ -125,7 +133,8 @@ class Record extends \VuFind\View\Helper\Root\Record
         \Finna\Search\Solr\AuthorityHelper $authorityHelper,
         \VuFind\View\Helper\Root\Url $urlHelper,
         \VuFind\View\Helper\Root\RecordLink $recordLinkHelper,
-        \VuFind\RecordTab\TabManager $tabManager
+        \VuFind\RecordTab\TabManager $tabManager,
+        \Finna\Form\Form $form
     ) {
         parent::__construct($config);
         $this->loader = $loader;
@@ -134,6 +143,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $this->urlHelper = $urlHelper;
         $this->recordLinkHelper = $recordLinkHelper;
         $this->tabManager = $tabManager;
+        $this->form = $form;
     }
 
     /**
@@ -199,17 +209,35 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Is repository library request form enabled for this record.
      *
-     * @return boolean
+     * @param string $context Context
+     *
+     * @return bool
      */
-    public function repositoryLibraryRequestEnabled() : bool
+    public function repositoryLibraryRequestEnabled(string $context = '') : bool
     {
         if (!isset($this->config->Record->repository_library_request_sources)) {
             return false;
         }
-        return in_array(
-            $this->driver->getDataSource(),
+        $enabled = in_array(
+            $this->driver->tryMethod('getDataSource'),
             $this->config->Record->repository_library_request_sources->toArray()
-        );
+        ) && $this->getRepositoryLibraryRequestFormId();
+
+        if (!$enabled) {
+            return false;
+        }
+        if (!$context) {
+            // Context not specified, check for any:
+            foreach (['holdings', 'organisation_info', 'results'] as $ctx) {
+                $setting = "repository_library_request_in_$ctx";
+                if ($this->config->Record->$setting ?? false) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        $setting = "repository_library_request_in_$context";
+        return $this->config->Record->$setting ?? false;
     }
 
     /**
@@ -219,7 +247,20 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getRepositoryLibraryRequestFormId()
     {
-        return $this->config->Record->repository_library_request_form ?? null;
+        $formId = $this->config->Record->repository_library_request_form ?? null;
+        if ($formId) {
+            try {
+                if ($this->form->getFormId() !== $formId) {
+                    $this->form->setFormId($formId);
+                }
+                if (!$this->form->isEnabled()) {
+                    $formId = null;
+                }
+            } catch (\VuFind\Exception\RecordMissing $e) {
+                $formId = null;
+            }
+        }
+        return $formId;
     }
 
     /**
@@ -567,36 +608,19 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Return all record image urls as array keys.
-     *
-     * @return array
-     */
-    public function getAllRecordImageUrls()
-    {
-        $images = $this->driver->tryMethod('getAllImages', ['']);
-        if (empty($images)) {
-            return [];
-        }
-        $urls = [];
-        foreach ($images as $image) {
-            $urls[] = $image['urls']['small'];
-            $urls[] = $image['urls']['medium'];
-            if (isset($image['urls']['large'])) {
-                $urls[] = $image['urls']['large'];
-            }
-        }
-        return array_flip($urls);
-    }
-
-    /**
      * Return if image popup zoom has been enabled in config
      *
      * @return boolean
      */
     public function getImagePopupZoom()
     {
-        return isset($this->config->Content->enableImagePopupZoom)
-            && $this->config->Content->enableImagePopupZoom === '1';
+        if (!($this->config->Content->enableImagePopupZoom ?? false)) {
+            return false;
+        }
+        return in_array(
+            $this->driver->tryMethod('getRecordFormat'),
+            explode(':', $this->config->Content->zoomFormats ?? '')
+        );
     }
 
     /**
@@ -655,10 +679,10 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         $recordId = $this->driver->getUniqueID();
 
-        $cacheKey = "$recordId\t" . ($thumbnails ? '1' : '0')
+        $cacheKey = __FUNCTION__ . "$recordId\t" . ($thumbnails ? '1' : '0')
             . ($includePdf ? '1' : '0');
-        if (isset($this->cachedImages[$cacheKey])) {
-            return $this->cachedImages[$cacheKey];
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
         }
 
         $sizes = ['small', 'medium', 'large', 'master'];
@@ -698,23 +722,23 @@ class Record extends \VuFind\View\Helper\Root\Record
                     ];
                     $image['urls'][$size] = $params;
                 }
-                if (isset($image['highResolution'])
-                    && !empty($image['highResolution'])
-                ) {
+                if (!empty($image['highResolution'])) {
                     foreach ($image['highResolution'] as $size => &$values) {
-                        foreach ($values as $format => &$data) {
+                        foreach ($values as $key => &$data) {
                             $data['params'] = [
                                 'id' => $recordId,
                                 'index' => $idx,
                                 'size' => $size,
-                                'format' => $format ?? 'jpg'
+                                'format' => $data['format'] ?? 'jpg',
+                                'key' => $key,
+                                'type' => 'highresimg'
                             ];
                         }
                     }
                 }
             }
         }
-        return $this->cachedImages[$cacheKey] = $images;
+        return $this->cache[$cacheKey] = $images;
     }
 
     /**
@@ -779,6 +803,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * This is here for backwards compability.
      * Check if the given array of URLs contain URLs that
      * are not record images.
      *
@@ -799,6 +824,22 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
         return false;
+    }
+
+    /**
+     * This is here for backwards compability.
+     * Return all record image urls as array keys.
+     *
+     * @return array
+     */
+    public function getAllRecordImageUrls()
+    {
+        $images = $this->driver->tryMethod('getAllImages', ['', false]);
+        $urls = [];
+        foreach ($images as $image) {
+            $urls = [...$urls, ...array_values($image['urls'])];
+        }
+        return array_flip($urls);
     }
 
     /**
@@ -859,16 +900,12 @@ class Record extends \VuFind\View\Helper\Root\Record
      * Render a source id element if necessary
      *
      * @return string
+     *
+     * @deprecated Use getLabelList instead
      */
     public function getSourceIdElement()
     {
-        $view = $this->getView();
-        if (isset($view->results) && is_callable([$view->results, 'getBackendId'])) {
-            if ($view->results->getBackendId() === 'Blender') {
-                return $this->renderTemplate('source-id-label.phtml');
-            }
-        }
-        return '';
+        return $this->getLabelList();
     }
 
     /**
@@ -1066,5 +1103,71 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
         return $label;
+    }
+
+    /**
+     * Check if large image layout should be used for the record
+     *
+     * @return bool
+     */
+    public function hasLargeImageLayout(): bool
+    {
+        $language = $this->getView()->layout()->userLang;
+
+        $imageTypes = ['small', 'medium', 'large', 'master'];
+        $images = $this->getAllImages($language, false, false, false);
+        $hasValidImages = false;
+        foreach ($images as $image) {
+            if (array_intersect(array_keys($image['urls'] ?? []), $imageTypes)) {
+                $hasValidImages = true;
+                break;
+            }
+        }
+        if (!$hasValidImages) {
+            return false;
+        }
+
+        // Check for record formats that always use large image layout:
+        $largeImageRecordFormats
+            = isset($this->config->Record->large_image_record_formats)
+            ? $this->config->Record->large_image_record_formats->toArray()
+            : ['lido', 'forward', 'forwardAuthority'];
+        $recordFormat = $this->driver->tryMethod('getRecordFormat');
+        if (in_array($recordFormat, $largeImageRecordFormats)) {
+            return true;
+        }
+
+        // Check for formats that use large image layout:
+        $largeImageFormats
+            = isset($this->config->Record->large_image_formats)
+            ? $this->config->Record->large_image_formats->toArray()
+            : [
+                '0/Image/',
+                '0/PhysicalObject/',
+                '0/WorkOfArt/',
+                '0/Video/',
+            ];
+        $formats = $this->driver->tryMethod('getFormats');
+        if (array_intersect($formats, $largeImageFormats)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the organisation menu position for the record
+     *
+     * @return string|false 'sidebar', 'inline' or false for no menu
+     */
+    public function getOrganisationMenuPosition()
+    {
+        $localSources = ['Solr', 'SolrAuth', 'L1', 'R2'];
+        $source = $this->driver->getSourceIdentifier();
+        if (!in_array($source, $localSources)) {
+            return false;
+        }
+        return ('SolrAuth' === $source || $this->hasLargeImageLayout())
+            ? 'inline' : 'sidebar';
     }
 }

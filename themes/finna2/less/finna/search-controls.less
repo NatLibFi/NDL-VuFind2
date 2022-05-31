@@ -1,15 +1,19 @@
 // All search control buttons
 .search-controls {
-  margin-bottom: 0.5em;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  .alert {
+    margin-bottom: 0;
+  }
+  .update-location-button {
+    margin-top: 15px;
+  }
   .button-label {
     padding: 3px;
-  }
-  @media(max-width:@screen-xs-max) {
-    margin-top: -5px;
-    & > div {
-      text-align: center;
-    }
-
   }
   @media (max-width: @screen-xxs) {
     & .view-options, & .view-dropdown, & .sort-button {
@@ -31,23 +35,16 @@
     }
   }
   .control-container{
-    margin: auto;
-    text-align: left;
     font-size: 0.9em;
-    @media(max-width: @screen-sm-min) {
-      margin-top: 10px;
-    }
-    @media(min-width: @screen-sm) {
-      flex-grow: 1;
-    }
+    margin-bottom: 5px;
+    margin-top: 5px;
   }
   .pagination-container {
-    text-align: left;
-    margin: auto;
-    margin-right: 20px;
+    margin-right: 1rem;
     .paginationSimple{
       text-align:left;
-      margin-bottom: 0px;
+      margin-top: 5px;
+      margin-bottom: 5px;
     }
   }
   .sort-option-container, .limit-option-container, .view-option-container{
@@ -80,7 +77,7 @@
     border-radius: @border-radius-small;
     font-size: 1em;
     padding: 5px;
-    margin-bottom: 3px;
+
     display: inline-block;
     white-space: nowrap;
     & span {
@@ -120,10 +117,6 @@
       float: right;
     }
   }
-  @media(max-width:@screen-xs-max) {
-    margin-right: 0;
-    margin-bottom: 10px;
-  }
   @media(min-width: @screen-lg-min){
     display: inline-block;
   }
@@ -135,7 +128,6 @@
 }
 
 .view-option-container {
-  float: right;
   .view-button {
     display: inline-block;
     padding: 2px 5px;

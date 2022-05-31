@@ -1,7 +1,7 @@
 <?php //Don't add START and END comments ?>
 <?php if (!(in_array('Document/ArchiveFonds', $this->driver->getFormats()) || in_array('Document/ArchiveCollection', $this->driver->getFormats()))): ?>
   <?php $parentSource = $this->driver->getSourceIdentifier(); ?>
-  <?php if ($this->driver->isPartOfArchiveSeries()): ?>
+  <?php if ($this->driver->tryMethod('isPartOfArchiveSeries')): ?>
     <?php $topIds = $this->driver->getHierarchyTopId(); $topTitles = $this->driver->getHierarchyTopTitle(); ?>
   <?php else: ?>
     <?php $topIds = $this->driver->getHierarchyParentId(); $topTitles = $this->driver->getHierarchyParentTitle(); ?>

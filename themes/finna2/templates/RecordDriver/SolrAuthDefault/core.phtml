@@ -13,11 +13,13 @@
         'img' => $img, 'imageClick' => 'none', 'imageRightsLabel' => 'Image Rights Authority',
         'numOfImages' => ['mobile' => 4, 'normal' => 4]
       ]);?>
-      <?php if ($this->resolver('record/record-organisation-menu.phtml')): ?>
-      <div class="organisation-menu">
-        <?=$this->render('record/record-organisation-menu.phtml') ?>
-      </div>
+
+      <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
+        <div class="organisation-menu">
+          <?=$this->render('record/record-organisation-menu.phtml') ?>
+        </div>
       <?php endif; ?>
+
       <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
     </div>
     <?php $thumbnail = ob_get_contents(); ?>

@@ -138,6 +138,7 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase
             );
         }
 
+        $html = '';
         $minSO = $search->getSearchObject();
         $savedSearch = $minSO->deminify($this->resultsManager);
         $searchParams = $savedSearch->getParams();
@@ -148,16 +149,16 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase
             || $searchClass == 'Combined'
             || $searchParams->getSearchType() != 'basic'
         ) {
-            return $this->formatResponse('');
+            return $this->formatResponse(compact('html'));
         }
 
         $query = $searchParams->getQuery();
         if (!($query instanceof \VuFindSearch\Query\Query)) {
-            return $this->formatResponse('');
+            return $this->formatResponse(compact('html'));
         }
         $lookfor = $query->getString();
         if (!$lookfor) {
-            return $this->formatResponse('');
+            return $this->formatResponse(compact('html'));
         }
 
         $view = $this->renderer;
@@ -170,7 +171,6 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase
             $searchParams->getQuery()->getHandler()
         );
 
-        $html = '';
         $recommendations = array_map(
             'trim',
             explode(',', $recommendationsConfig[$searchClass])

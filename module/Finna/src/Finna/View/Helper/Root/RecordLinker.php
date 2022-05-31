@@ -124,7 +124,7 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
                 . '?lookfor=' . urlencode($link['value'])
                 . '&type=Identifier&jumpto=1';
         } else {
-            $result = parent::related($link, false, $source);
+            $result = parent::related($link, $source);
         }
 
         $driver = $this->getView()->plugin('record')->getDriver();

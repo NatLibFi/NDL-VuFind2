@@ -33,7 +33,7 @@ VuFind.register('itemStatuses', function ItemStatuses() {
           && $item.find('.callnumAndLocation').length > 0
     ) {
       // Full status mode is on -- display the HTML and hide extraneous junk:
-      $item.find('.callnumAndLocation').empty().append(result.full_status);
+      $item.find('.callnumAndLocation').empty().append(VuFind.updateCspNonce(result.full_status));
       $item.find('.callnumber,.hideIfDetailed,.location,.status').addClass('hidden');
     } else if (typeof(result.missing_data) !== 'undefined'
           && result.missing_data
@@ -47,18 +47,27 @@ VuFind.register('itemStatuses', function ItemStatuses() {
       for (var x = 0; x < result.locationList.length; x++) {
         locationListHTML += '<div class="groupLocation">';
         if (result.locationList[x].availability) {
-          locationListHTML += '<span class="text-success"><i class="fa fa-ok" aria-hidden="true"></i> '
-                      + result.locationList[x].location + '</span> ';
+          locationListHTML +=
+            '<span class="text-success">' +
+              VuFind.icon("ui-success") + " " +
+              result.locationList[x].location +
+            '</span> ';
         } else if (typeof(result.locationList[x].status_unknown) !== 'undefined'
                   && result.locationList[x].status_unknown
         ) {
           if (result.locationList[x].location) {
-            locationListHTML += '<span class="text-warning"><i class="fa fa-status-unknown" aria-hidden="true"></i> '
-                          + result.locationList[x].location + '</span> ';
+            locationListHTML +=
+              '<span class="text-warning">' +
+                VuFind.icon("status-indicator") + " " +
+                result.locationList[x].location +
+              '</span> ';
           }
         } else {
-          locationListHTML += '<span class="text-danger"><i class="fa fa-remove" aria-hidden="true"></i> '
-                      + result.locationList[x].location + '</span> ';
+          locationListHTML +=
+            '<span class="text-danger">' +
+              VuFind.icon('ui-failure') + " " +
+              result.locationList[x].location +
+            '</span> ';
         }
         locationListHTML += '</div>';
         locationListHTML += '<div class="groupCallnumber">';

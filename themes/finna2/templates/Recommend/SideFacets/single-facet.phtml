@@ -6,9 +6,6 @@
   $hasSubLinks = $this->exclude && !$this->facet['isApplied'];
 
   $classList = ['facet', 'js-facet-item'];
-  if (!empty($this->moreClass)) {
-    $classList[] = $this->moreClass;
-  }
   if ($this->facet['isApplied']) {
     $classList[] = 'active';
   }
@@ -19,26 +16,29 @@
   } elseif (!empty($this->facet['value'])) {
     $displayText = $this->escapeHtml($this->facet['value']);
   }
+
+  $displayCount = $this->localizedNumber($this->facet['count'])
 ?>
 <?php if ($hasSubLinks): ?>
   <li class="<?=implode(' ', $classList) ?>">
 <?php else: ?>
-  <a href="<?=$toggleUrl ?>" class="<?=implode(' ', $classList) ?>" data-title="<?=$this->escapeHtmlAttr($this->facet['displayText']) ?>" data-count="<?=$this->facet['count'] ?>"<?php if($this->facet['isApplied']): ?> title="<?=$this->transEsc('applied_filter') ?>"<?php endif;?> data-lightbox-ignore>
+  <a href="<?=$toggleUrl ?>" class="<?=implode(' ', $classList) ?>" data-title="<?=$this->escapeHtmlAttr($this->facet['displayText']) ?>" data-count="<?=$this->facet['count'] ?>"<?php if($this->facet['isApplied']): ?> title="<?=$this->transEscAttr('applied_filter') ?>"<?php endif;?> data-lightbox-ignore>
 <?php endif; ?>
 
   <?php if ($hasSubLinks): ?>
-    <a class="text" href="<?=$toggleUrl ?>" data-lightbox-ignore data-title="<?=$this->escapeHtmlAttr($this->facet['displayText']) ?>" data-count="<?=$this->facet['count'] ?>"<?php if($this->facet['isApplied']): ?> title="<?=$this->transEsc('applied_filter') ?>"<?php endif;?>>
+    <a class="text" href="<?=$toggleUrl ?>" data-lightbox-ignore data-title="<?=$this->escapeHtmlAttr($this->facet['displayText']) ?>" data-count="<?=$this->facet['count'] ?>"<?php if($this->facet['isApplied']): ?> title="<?=$this->transEscAttr('applied_filter') ?>"<?php endif;?>>
       <?=$displayText ?>
     </a>
   <?php else: ?>
     <span class="text">
       <?=$displayText ?>
+      <span class="sr-only">, <?=$this->transEsc('result_count', ['%%count%%' => $displayCount]) ?></span>
     </span>
   <?php endif; ?>
 
   <?php if (!$this->facet['isApplied']): ?>
-    <span class="badge">
-      <?=$this->localizedNumber($this->facet['count']) ?>
+    <span class="badge" aria-hidden="true">
+      <?=$displayCount ?>
     </span>
   <?php else: ?>
     <span class="status">

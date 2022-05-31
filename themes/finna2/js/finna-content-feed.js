@@ -13,7 +13,6 @@ finna.contentFeed = (function finnaContentFeed() {
 
     // Append spinner
     contentHolder.append('<i class="fa fa-spin fa-spinner"></i>');
-    contentHolder.find('.fa-spin').fadeOut(0).delay(1000).fadeIn(100);
 
     var url = VuFind.path + '/AJAX/JSON';
     var params = {method: 'getContentFeed', id: id, element: element};
@@ -27,7 +26,7 @@ finna.contentFeed = (function finnaContentFeed() {
           var data = response.data;
           if (typeof data.item !== 'undefined' && typeof data.item.html !== 'undefined') {
             var item = data.item;
-            contentHolder.html(item.html);
+            contentHolder.html(VuFind.updateCspNonce(item.html));
             var title = item.title;
             if (!modal) {
               $('.content-header').text(title);
@@ -69,7 +68,7 @@ finna.contentFeed = (function finnaContentFeed() {
 
           if (!modal) {
             if (typeof data.navigation != 'undefined') {
-              $('.article-navigation-wrapper').html(data.navigation);
+              $('.article-navigation-wrapper').html(VuFind.updateCspNonce(data.navigation));
               $('.article-navigation-header').show();
             }
           }

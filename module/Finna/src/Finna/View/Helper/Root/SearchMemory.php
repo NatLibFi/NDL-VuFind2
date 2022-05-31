@@ -102,7 +102,7 @@ class SearchMemory extends \VuFind\View\Helper\Root\SearchMemory
     public function getLastSearchParams($searchClassId)
     {
         $lastUrl = $this->getLastSearchUrl();
-        $queryParams = $lastUrl ? parse_url($lastUrl, PHP_URL_QUERY) : '';
+        $queryParams = $lastUrl ? (parse_url($lastUrl, PHP_URL_QUERY) ?? '') : '';
         $request = new \Laminas\Stdlib\Parameters();
         $request->fromString($queryParams);
         $paramsPlugin = $this->getView()->plugin('searchParams');

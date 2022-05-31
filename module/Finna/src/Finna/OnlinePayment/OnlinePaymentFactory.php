@@ -5,7 +5,7 @@
  * PHP version 7
  *
  * Copyright (C) Villanova University 2019.
- * Copyright (C) The National Library of Finland 2019.
+ * Copyright (C) The National Library of Finland 2019-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -70,8 +70,7 @@ class OnlinePaymentFactory implements FactoryInterface
             throw new \Exception('Unexpected options passed to factory.');
         }
         return new $requestedName(
-            $container->get(\VuFind\Db\Table\PluginManager::class),
-            $container->get(\VuFind\Log\Logger::class),
+            $container->get(\Finna\OnlinePayment\Handler\PluginManager::class),
             $container->get(\VuFind\Config\PluginManager::class)->get('datasources')
         );
     }

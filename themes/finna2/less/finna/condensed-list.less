@@ -74,12 +74,21 @@
         }
         .condensed-body {
             width: 50%;
+            @media (max-width: @screen-xs-max) {
+                width: 100%;
+            }
         }
         .condensed-links {
             width: 50%;
+            @media (max-width: @screen-xs-max) {
+                width: 100%;
+            }
         }
         .condensed-col-title {
             width: 50%;
+            @media (max-width: @screen-xs-max) {
+                width: 100%;
+            }
         }
         .condensed-col-link {
              width: 50%;
@@ -91,6 +100,9 @@
             width: 25%;
             .hierarchyTreeLink {
                 margin-top: 0;
+            }
+            @media (max-width: @screen-xs-max) {
+                width: 100%;
             }
         }
     }

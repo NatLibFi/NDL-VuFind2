@@ -25,6 +25,7 @@
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
@@ -41,6 +42,7 @@ use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
@@ -76,12 +78,12 @@ class RecordDataFormatterFactory
 
         foreach ($this->getDefaultCoreFields() as $key => $data) {
             if ($data[0] === true) {
-                [$multiLine, $dataMethod, $callback] = $data;
+                [$multiLine, $dataMethod, $callback, $options] = $data;
             } else {
                 [$multiLine, $dataMethod, $template, $options] = $data;
             }
             if ($multiLine) {
-                $spec->setMultiLine($key, $dataMethod, $callback);
+                $spec->setMultiLine($key, $dataMethod, $callback, $options);
             } else {
                 $spec->setTemplateLine($key, $dataMethod, $template, $options);
             }
@@ -110,11 +112,16 @@ class RecordDataFormatterFactory
             };
 
         $setMultiTemplateLine
-            = function ($key, $dataMethod, $callback) use (&$lines, &$pos) {
+            = function (
+                $key,
+                $dataMethod,
+                $callback,
+                $options = []
+            ) use (&$lines, &$pos) {
                 $pos += 100;
-                $lines[$key] = [true, $dataMethod, $callback];
+                $options['pos'] = $pos;
+                $lines[$key] = [true, $dataMethod, $callback, $options];
             };
-
         $setTemplateLine(
             'Genre',
             'getGenres',
@@ -123,7 +130,6 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordGenres']
             ]
         );
-
         $setTemplateLine(
             'Age Limit',
             'getAgeLimit',
@@ -201,6 +207,14 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Identifiers',
+            'getOtherIdentifiers',
+            'data-lines-with-detail.phtml',
+            [
+                'context' => ['class' => 'recordIdentifiers']
+            ]
+        );
+        $setTemplateLine(
             'Press Reviews',
             'getPressReview',
             'data-forwardFields.phtml',
@@ -271,7 +285,7 @@ class RecordDataFormatterFactory
         );
         $setTemplateLine(
             'Archive Origination',
-            'getOrigination',
+            'getOriginationExtended',
             'data-origination.phtml',
             [
                 'context' => ['class' => 'record-origination']
@@ -308,6 +322,14 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Physical Medium',
+            'getPhysicalMediums',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'physical-medium']
+            ]
+        );
+        $setTemplateLine(
             'Physical Description',
             'getPhysicalDescriptions',
             'data-escapeHtml.phtml',
@@ -326,7 +348,7 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Language',
             'getLanguages',
-            'data-transEsc.phtml',
+            'data-transEscLangcode.phtml',
             [
                 'context' => ['class' => 'recordLanguage']
             ]
@@ -334,7 +356,7 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'original_work_language',
             'getOriginalLanguages',
-            'data-transEsc.phtml',
+            'data-transEscLangcode.phtml',
             [
                 'context' => ['class' => 'originalLanguage']
             ]
@@ -347,39 +369,6 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordDescription']
             ]
         );
-        $setTemplateLine(
-            'Subject Detail',
-            'getSubjectDetails',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordSubjects']
-            ]
-        );
-        $setTemplateLine(
-            'Subject Place',
-            'getSubjectPlaces',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordSubjects']
-            ]
-        );
-        $setTemplateLine(
-            'Subject Date',
-            'getSubjectDates',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordSubjects']
-            ]
-        );
-        $setTemplateLine(
-            'Subject Actor',
-            'getSubjectActors',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordSubjects']
-            ]
-        );
-
         $setTemplateLine(
             'Organisation',
             'getInstitutions',
@@ -451,14 +440,34 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordIdentifiers']
             ]
         );
-        $setTemplateLine(
+
+        $getEvents = function ($data, $options) {
+            $final = [];
+            $pos = $options['pos'];
+            foreach ($data as $eventType => $events) {
+                $final[] = [
+                    'values' => $events,
+                    'options' => [
+                        'pos' => $pos++,
+                        'renderType' => 'RecordDriverTemplate',
+                        'template' => 'data-mainFormat.phtml',
+                        'context' => ['class' => 'recordEvents'],
+                        'labelFunction'
+                            => function ($data, $driver) use ($eventType) {
+                                $mainFormat = $driver->getMainFormat();
+                                return "lido_event_type_{$mainFormat}_$eventType";
+                            },
+                    ],
+                ];
+            }
+            return $final;
+        };
+        $setMultiTemplateLine(
             'Events',
             'getEvents',
-            'data-mainFormat.phtml',
-            [
-                'context' => ['class' => 'recordEvents', 'title' => ""]
-            ]
+            $getEvents
         );
+
         $setTemplateLine(
             'Unit ID',
             'getUnitID',
@@ -537,6 +546,46 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'lido_editions',
+            'getEditions',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordDisplayEdition']
+            ]
+        );
+        $setTemplateLine(
+            'Subject Detail',
+            'getSubjectDetails',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        $setTemplateLine(
+            'Subject Place',
+            'getSubjectPlaces',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        $setTemplateLine(
+            'Subject Date',
+            'getSubjectDates',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        $setTemplateLine(
+            'Subject Actor',
+            'getSubjectActors',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        $setTemplateLine(
             'Subjects',
             'getAllSubjectHeadings',
             'data-allSubjectHeadings.phtml',
@@ -550,6 +599,14 @@ class RecordDataFormatterFactory
             'data-allSubjectHeadingsExtended.phtml',
             [
                 'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        $setTemplateLine(
+            'Methodology',
+            'getMethodology',
+            'data-methodology-links.phtml',
+            [
+                'context' => ['class' => 'recordMethodology']
             ]
         );
         $setTemplateLine(
@@ -568,6 +625,14 @@ class RecordDataFormatterFactory
                 'context' => [
                     'class' => 'recordClassifications', 'title' => 'Classification'
                 ]
+            ]
+        );
+        $setTemplateLine(
+            'Introduction',
+            'getIntroduction',
+            'data-markdown.phtml',
+            [
+                'context' => ['class' => 'record-introduction']
             ]
         );
         $setTemplateLine(
@@ -636,6 +701,14 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Number of Viewers',
+            'getAmountOfViewers',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'record-number-of-viewers']
+            ]
+        );
+        $setTemplateLine(
             'Film Festivals',
             'getFestivalInfo',
             'data-festival-info.phtml',
@@ -665,6 +738,17 @@ class RecordDataFormatterFactory
             'data-other-screenings.phtml',
             [
                'context' => ['class' => 'record-other-screenings']
+            ]
+        );
+        $setTemplateLine(
+            'Movie Thanks',
+            'getMovieThanks',
+            'data-escapeHtml.phtml',
+            [
+               'context' => [
+                   'class' => 'record-thanks',
+                   'title' => 'movie_thanks'
+                ]
             ]
         );
         $setTemplateLine(
@@ -994,39 +1078,6 @@ class RecordDataFormatterFactory
             ]
         );
 
-        $getAccessRestrictions = function ($data, $options) use (&$pos) {
-            $final = [];
-            // Check whether the first restriction element is an array. If so,
-            // restrictions are grouped under subheadings.
-            $useSubHeadings = is_array(array_values($data)[0]);
-            foreach ($data as $type => $values) {
-                $values = $useSubHeadings && $values
-                  ? array_values($values) : $values;
-                $label = $useSubHeadings ? "access_restrictions_$type" : null;
-                $final[] = [
-                    'label' => $label,
-                    'values' => $values,
-                    'options' => [
-                        'pos' => $pos++,
-                        'renderType' => 'RecordDriverTemplate',
-                        'template' => 'data-escapeHtml.phtml',
-                        'context' => [
-                            'class' => 'extendedAccess',
-                            'type' => "access_restrictions_$type",
-                            'schemaLabel' => null,
-                        ],
-                    ],
-                ];
-            }
-            return $final;
-        };
-
-        $setMultiTemplateLine(
-            'Access Restrictions Extended',
-            'getExtendedAccessRestrictions',
-            $getAccessRestrictions
-        );
-
         $setTemplateLine(
             'Terms of Use',
             'getTermsOfUse',
@@ -1084,6 +1135,62 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Material Condition',
+            'getMaterialCondition',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'materialCondition']
+            ]
+        );
+        $setTemplateLine(
+            'Contained In',
+            'getAllRecordLinks',
+            'data-containedIn.phtml',
+            [
+                'context' => ['class' => 'isPartOf']
+            ]
+        );
+
+        $getAccessRestrictions = function ($data, $options) {
+            $final = [];
+            $pos = $options['pos'];
+            // Check whether the first restriction element is an array. If so,
+            // restrictions are grouped under subheadings.
+            $useSubHeadings = is_array(array_values($data)[0]);
+            foreach ($data as $type => $values) {
+                $values = $useSubHeadings && $values
+                    ? array_values($values) : $values;
+                $label = $useSubHeadings ? "access_restrictions_$type" : null;
+                if ($useSubHeadings
+                    && isset($options['hideSubheadings'])
+                    && in_array($label, $options['hideSubheadings'])
+                ) {
+                    $label = null;
+                }
+                $final[] = [
+                    'label' => $label,
+                    'values' => $values,
+                    'options' => [
+                        'pos' => $pos++,
+                        'renderType' => 'RecordDriverTemplate',
+                        'template' => 'data-escapeHtml.phtml',
+                        'context' => [
+                            'class' => 'extendedAccess',
+                            'type' => "access_restrictions_$type",
+                            'schemaLabel' => null,
+                        ],
+                    ],
+                ];
+            }
+            return $final;
+        };
+        $setMultiTemplateLine(
+            'Access Restrictions Extended',
+            'getExtendedAccessRestrictions',
+            $getAccessRestrictions
+        );
+
+        $setTemplateLine(
             'Source of Acquisition',
             'getAcquisitionSource',
             'data-escapeHtml.phtml',
@@ -1099,6 +1206,35 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'record-composition']
             ]
         );
+
+        $getExtendedMusicCompositions = function ($data, $options) {
+            $final = [];
+            $pos = $options['pos'];
+            foreach ($data as $field) {
+                $label = $field['partial']
+                    ? 'Partial Medium of Performance'
+                    : 'Medium of Performance';
+                $final[] = [
+                    'label' => $label,
+                    'values' => $field['items'],
+                    'options' => [
+                        'pos' => $pos++,
+                        'renderType' => 'RecordDriverTemplate',
+                        'template' => 'data-music-composition.phtml',
+                        'context' => [
+                            'class' => 'record-composition',
+                        ],
+                    ],
+                ];
+            }
+            return $final;
+        };
+        $setMultiTemplateLine(
+            'Music Compositions Extended',
+            'getExtendedMusicCompositions',
+            $getExtendedMusicCompositions
+        );
+
         $setTemplateLine(
             'Notated Music Format',
             'getNotatedMusicFormat',
@@ -1129,14 +1265,6 @@ class RecordDataFormatterFactory
             'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordTradeNote']
-            ]
-        );
-        $setTemplateLine(
-            'Methodology',
-            'getMethodology',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordMethodology']
             ]
         );
         $setTemplateLine(
@@ -1250,14 +1378,14 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Uncontrolled Title',
             'getUncontrolledTitle',
-            'data-transEsc.phtml',
+            'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'record-uncontrolled-title']
             ]
         );
 
         // Add arcrole-relations as multiple fields with role as field header
-        $getRelations = function ($data, $options) use (&$pos) {
+        $getRelations = function ($data, $options) {
             // Group relations by role
             $relationsByRole = [];
             foreach ($data as $relation) {
@@ -1272,6 +1400,7 @@ class RecordDataFormatterFactory
                 $relationsByRole[$role][] = $relation;
             }
             $final = [];
+            $pos = $options['pos'];
             // Add one record field for each role (might include several relations).
             foreach ($relationsByRole as $role => $relations) {
                 $final[] = [
@@ -1321,6 +1450,30 @@ class RecordDataFormatterFactory
             'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordMaterialArrangement']
+            ]
+        );
+        $setTemplateLine(
+            'Other Related Material',
+            'getOtherRelatedMaterial',
+            'data-otherRelatedMaterial.phtml',
+            [
+                'context' => ['class' => 'other-related-material']
+            ]
+        );
+        $setTemplateLine(
+            'Audience Characteristics',
+            'getAudienceCharacteristics',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'audience-characteristics']
+            ]
+        );
+        $setTemplateLine(
+            'Creator Characteristics',
+            'getCreatorCharacteristics',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'creator-characteristics']
             ]
         );
 

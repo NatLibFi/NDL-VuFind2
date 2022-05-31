@@ -42,12 +42,12 @@
           <br/>
         <?php endif; ?>
         <div class="part-authors<?=empty($part['id']) || !empty($part['uniformTitle']) ? '-padded' : '' ?>" title="<?=$this->escapeHtmlAttr(implode(' ; ', $part['otherAuthors'])) ?>">
-	        <?=$this->escapeHtml(implode(' ; ', array_slice($part['otherAuthors'], 0, 3)) . (count($part['otherAuthors']) > 3 ? '...' : '')) ?>
+	        <?=$this->escapeHtml(implode(' ; ', array_slice($part['otherAuthors'], 0, 3)) . (count($part['otherAuthors']) > 3 ? $this->transEsc('eol_ellipsis') : '')) ?>
 	      </div>
 	    </td>
 	    <?php if ($havePresenters): ?>
         <td title="<?=$this->escapeHtmlAttr(implode(' ; ', $part['presenters'])) ?>">
-	        <?=$this->escapeHtml(implode(' ; ', array_slice($part['presenters'], 0, 3)) . (count($part['presenters']) > 3 ? '...' : '')) ?>
+	        <?=$this->escapeHtml(implode(' ; ', array_slice($part['presenters'], 0, 3)) . (count($part['presenters']) > 3 ? $this->transEsc('eol_ellipsis') : '')) ?>
         </td>
       <?php endif; ?>
       <?php if ($haveDuration): ?>

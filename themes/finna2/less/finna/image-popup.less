@@ -132,7 +132,8 @@
         width: 40px;
         text-align: center;
         vertical-align: top;
-        line-height: 40px;
+        line-height: 36px;
+        padding: 0;
         appearance: none;
         -webkit-appearance: none;
         font-size: @font-size-icon-large;
@@ -145,7 +146,6 @@
             height: 48px;
             width: 48px;
             font-size: 24px;
-            line-height: 48px;
         }
         &:last-child {
             border-bottom: none;
@@ -261,7 +261,7 @@
                     #adadad,
                     #adadad 11px,
                     #eee 10px,
-                    #eee 20px /* determines size */
+                    #eee 20px
                     );
                 animation: move 1s linear infinite;
                 background-size: 28px 28px;
@@ -318,11 +318,12 @@
         padding: 10px;
         overflow-y: auto;
         width: 100%;
-        .record-online-link {
+        .popup-link-buttons {
             margin: 2px 0px;
-            .videourl {
+            .videourl.btn {
                 text-transform: uppercase;
                 font-weight: bold;
+                margin: 2px 0;
             }
         }
         .collapse-content-holder {
@@ -453,8 +454,17 @@
     padding: 10px;
     text-align: center;
     white-space: normal;
+    overflow-wrap: anywhere;
     &:hover {
         color: inherit;
+    }
+    span {
+        text-align: left;
+        display: inline-block;
+    }
+    a span {
+        text-align: center;
+        display: inline;
     }
 }
 
@@ -541,7 +551,7 @@
             flex: 0 0 auto;
             .finna-element-track {
                 a {
-                    background-color: #2e2e2ecc;
+                    background-color: #efefefcc;
                     @media (min-width: @screen-sm-min) {
                         height: 96px;
                         max-width: 96px;
