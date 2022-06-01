@@ -58,3 +58,4 @@ themes/custom/css/finna.css
 *.diff
 vufind.bat
 public/swagger-ui
+public/robots.txt

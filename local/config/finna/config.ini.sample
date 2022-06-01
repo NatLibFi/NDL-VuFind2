@@ -1740,8 +1740,15 @@ cacheTime = 604800
 ; (may contain Markdown, see https://spec.commonmark.org/):
 description = "Finna REST API is a read-only interface to Finna's search index.
 
-Most methods return the data as UTF-8 encoded JSON, served using the application/json MIME type.
+; Most methods return the data as UTF-8 encoded JSON, served using the application/json MIME type.
 
-The API supports Cross-Origin Resource Sharing by setting the Access-Control-Allow-Origin HTTP header to "*" for all requests."
+; The API supports Cross-Origin Resource Sharing by setting the Access-Control-Allow-Origin HTTP header to "*" for all requests."
 ; URL pointing to a Terms of Service page (optional, default is none):
 termsOfServiceUrl = "https://www.kiwi.fi/display/Finna/Finna+API+Terms+of+Use"
+
+; This section controls which paths are allowed or disallowed in the robots.txt file
+[Robots]
+;allow[] = /Record/
+;allow[] = /*/Record/
+
+;disallow[] = /Path/to/disallow/

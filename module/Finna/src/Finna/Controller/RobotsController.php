@@ -49,6 +49,20 @@ class RobotsController extends \VuFind\Controller\AbstractBase
     protected $config;
 
     /**
+     * Allowed paths
+     *
+     * @var array
+     */
+    protected $allow = [];
+
+    /**
+     * Disallowed paths
+     *
+     * @var array
+     */
+    protected $disallow = [];
+
+    /**
      * Possible sitemap index file names
      *
      * @var array
@@ -70,6 +84,12 @@ class RobotsController extends \VuFind\Controller\AbstractBase
         parent::__construct($sm);
 
         $this->config = $config;
+        if (!empty($this->config->Robots->allow)) {
+            $this->allow = $this->config->Robots->allow->toArray();
+        }
+        if (!empty($this->config->Robots->disallow)) {
+            $this->disallow = $this->config->Robots->disallow->toArray();
+        }
     }
 
     /**
@@ -91,15 +111,14 @@ class RobotsController extends \VuFind\Controller\AbstractBase
             return $response;
         }
         $robots = file_get_contents($robotsTxtFile);
-
+        $parsed = $this->parseRobotsTxt($robots);
         foreach ($this->indexFileNames as $indexFileName) {
             if (file_exists(getcwd() . '/' . $indexFileName)) {
-                $parsed = $this->parseRobotsTxt($robots);
                 $parsed['*'][] = "Sitemap: $requestPath/$indexFileName";
-                $robots = $this->renderRobotsTxt($parsed);
                 break;
             }
         }
+        $robots = $this->renderRobotsTxt($parsed);
         $response->setContent($robots);
         return $response;
     }
@@ -116,6 +135,7 @@ class RobotsController extends \VuFind\Controller\AbstractBase
         $lines = mb_split('\r\n|\n|\r', $str);
         $currentAgent = '*';
         $parsed = [];
+        $found = [];
         $empty = false;
         foreach ($lines as $line) {
             $line = trim($line);
@@ -139,7 +159,28 @@ class RobotsController extends \VuFind\Controller\AbstractBase
                 $currentAgent = $matches[1];
                 continue;
             }
+
+            if (!$empty) {
+                $exploded = explode(': ', $line);
+                if (count($exploded) === 2) {
+                    $rule = $exploded[0];
+                    $path = $exploded[1];
+                    if ('Disallow' === $rule) {
+                        if (in_array($path, $this->allow)) {
+                            continue;
+                        }
+                        $found[$currentAgent][] = $path;
+                    }
+                }
+            }
             $parsed[$currentAgent][] = $line;
+        }
+        foreach ($this->disallow as $path) {
+            foreach ($found as $agent => $paths) {
+                if (!in_array($path, $paths)) {
+                    $parsed[$agent][] = "Disallow: $path";
+                }
+            }
         }
         return $parsed;
     }
