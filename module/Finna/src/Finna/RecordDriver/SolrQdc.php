@@ -384,6 +384,23 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get identifier
+     *
+     * @return array
+     */
+    public function getIdentifier()
+    {
+        $xml = $this->getXmlRecord();
+        foreach ($xml->identifier ?? [] as $identifier) {
+            // Inventory number
+            if ((string)$identifier['type'] === 'wikidata:P217') {
+                return [$identifier];
+            }
+        }
+        return [];
+    }
+
+    /**
      * Get identifiers as an array
      *
      * @return array
