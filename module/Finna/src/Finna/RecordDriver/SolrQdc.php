@@ -394,7 +394,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         foreach ($xml->identifier ?? [] as $identifier) {
             // Inventory number
             if ((string)$identifier['type'] === 'wikidata:P217') {
-                return [$identifier];
+                return [trim((string)$identifier)];
             }
         }
         return [];
