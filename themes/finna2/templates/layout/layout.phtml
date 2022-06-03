@@ -183,8 +183,8 @@ JS;
                     $filterArray = explode(':', $value, 2);
                     $filterKey = $filterArray[0];
                     $filterValue = trim($filterArray[1], '"');
-                    if (isset($filters[$filterKey])) {
-                      $filters[$filterKey][] = $filterValue;
+                    if (array_key_exists($filterKey, $filters)) {
+                      array_push($filters[$filterKey], $filterValue);
                     } else {
                       $filters[$filterKey] = [$filterValue];
                     }
