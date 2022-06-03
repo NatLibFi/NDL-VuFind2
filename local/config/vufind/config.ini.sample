@@ -5,7 +5,7 @@
 ; Inherit main configuration
 [Parent_Config]
 relative_path = ../finna/config.ini
-override_full_sections = "Languages,AlphaBrowse_Types,SearchTabs"
+override_full_sections = "Languages,AlphaBrowse_Types,SearchTabs,SearchTabsFilters"
 
 ; This section will need to be customized for your installation
 [Site]
@@ -96,3 +96,12 @@ token_auth =
 ;allow[] = /*/Record/
 
 ;disallow[] = /Path/to/disallow/
+
+;[SearchTabs]
+;Solr = tabs_local
+;Blender = tabs_combined
+;Blender:articles = tabs_articles
+
+;[SearchTabsFilters]
+;Blender:articles[] = 'finna.sources:jyx_art,journalfi,arto'
+;Blender:articles[] = 'finna.deduplication:0'

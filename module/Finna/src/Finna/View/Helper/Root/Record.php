@@ -703,6 +703,16 @@ class Record extends \VuFind\View\Helper\Root\Record
                 }
             }
             if ($urls) {
+                // Make sure we have all sizes:
+                if (!isset($urls['small'])) {
+                    $urls['small'] = $urls['medium']
+                        ?? $urls['large'];
+                }
+                if (!isset($urls['medium'])) {
+                    $urls['medium'] = $urls['large']
+                        ?? $urls['small'];
+                }
+
                 $images[] = [
                     'urls' => $urls,
                     'description' => '',

@@ -49,6 +49,7 @@ class FinnaPageViewStats extends \VuFind\Db\Row\RowGateway
             [
                 'institution',
                 'view',
+                'crawler',
                 'date'
             ],
             'finna_page_view_stats',
