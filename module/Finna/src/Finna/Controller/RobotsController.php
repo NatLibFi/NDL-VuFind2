@@ -84,10 +84,11 @@ class RobotsController extends \VuFind\Controller\AbstractBase
         parent::__construct($sm);
 
         $this->config = $config;
-        if (!empty($this->config->Robots->allow)) {
+        $isProduction = 'production' === APPLICATION_ENV;
+        if ($isProduction && !empty($this->config->Robots->allow)) {
             $this->allow = $this->config->Robots->allow->toArray();
         }
-        if (!empty($this->config->Robots->disallow)) {
+        if ($isProduction && !empty($this->config->Robots->disallow)) {
             $this->disallow = $this->config->Robots->disallow->toArray();
         }
     }
