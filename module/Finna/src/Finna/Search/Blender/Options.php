@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2019.
+ * Copyright (C) The National Library of Finland 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,8 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Search_Solr
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @package  Search_Blender
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
@@ -32,14 +31,20 @@ namespace Finna\Search\Blender;
  * Blender Search Options
  *
  * @category VuFind
- * @package  Search_Solr
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @package  Search_Blender
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
-class Options extends \Finna\Search\Solr\Options
+class Options extends \VuFind\Search\Blender\Options
 {
+    /**
+     * Date range visualization settings
+     *
+     * @var string
+     */
+    protected $dateRangeVis;
+
     /**
      * Constructor
      *
@@ -47,28 +52,20 @@ class Options extends \Finna\Search\Solr\Options
      */
     public function __construct(\VuFind\Config\PluginManager $configLoader)
     {
-        $this->facetsIni = $this->searchIni = 'Blender';
         parent::__construct($configLoader);
+
+        $facetSettings = $this->configLoader->get($this->facetsIni);
+        $this->dateRangeVis = $facetSettings->SpecialFacets->dateRangeVis ?? '';
     }
 
     /**
-     * Return the route name for the search results action.
+     * Get the field used for date range search
      *
      * @return string
      */
-    public function getSearchAction()
+    public function getDateRangeSearchField()
     {
-        return 'search-blended';
-    }
-
-    /**
-     * Return the route name of the action used for performing advanced searches.
-     * Returns false if the feature is not supported.
-     *
-     * @return string|bool
-     */
-    public function getAdvancedSearchAction()
-    {
-        return false;
+        [$field] = explode(':', $this->dateRangeVis);
+        return $field;
     }
 }

@@ -180,8 +180,9 @@ JS;
                 if (strpos($key, 'filter') !== false) {
                   //used filters to filterArray
                   foreach ($filter as $value) {
-                    [$filterKey, $filterValue] = explode(':', $value, 2);
-                    $filterValue = trim($filterValue, '"');
+                    $filterArray = explode(':', $value, 2);
+                    $filterKey = $filterArray[0];
+                    $filterValue = trim($filterArray[1], '"');
                     if (isset($filters[$filterKey])) {
                       $filters[$filterKey][] = $filterValue;
                     } else {
@@ -214,7 +215,7 @@ JS;
       <?php if (!$this->cookie()->get('cookieConsent')): ?>
         <?=$this->partial('Helpers/cookie-consent.phtml');?>
       <?php endif; ?>
-      <?php if (!empty($_SERVER['HTTP_USER_AGENT']) && preg_match('/(?i)msie [5-8]/', $_SERVER['HTTP_USER_AGENT'])): ?>
+      <?php if (!empty($_SERVER['HTTP_USER_AGENT']) && preg_match('/(?i)Trident\/[0-7]/', $_SERVER['HTTP_USER_AGENT'])): ?>
         <div class="container-fluid system-messages">
           <?=$this->translate('outdated_browser_message_html');?>
         </div>
@@ -291,7 +292,7 @@ JS;
       <?=$this->render($template)?>
     <?php endif; ?>
     </section>
-    <?php if (!empty($this->layout()->showBreadcrumbs) && !empty($this->layout()->breadcrumbs)): ?>
+    <?php if (!empty($this->layout()->showBreadcrumbs ?? true) && !empty($this->layout()->breadcrumbs)): ?>
       <nav class="breadcrumbs hidden-print" aria-label="<?=$this->transEsc('Breadcrumbs') ?>">
         <div class="container">
           <ul class="breadcrumb"><?=$this->layout()->breadcrumbs ?></ul>
@@ -360,7 +361,9 @@ JS;
       $url = $this->followup()->retrieveAndClear('postLoginLightbox', null);
       if ($url && $this->layout()->getTemplate() !== 'layout/lightbox') {
         $script = <<<EOT
-          finna.layout.showPostLoginLightbox('{$url}');
+$(document).ready(function handlePostLoginLightbox() {
+  finna.layout.showPostLoginLightbox('{$url}');
+});
 EOT;
           echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
       }

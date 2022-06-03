@@ -13,7 +13,6 @@ finna.contentFeed = (function finnaContentFeed() {
 
     // Append spinner
     contentHolder.append('<i class="fa fa-spin fa-spinner"></i>');
-    contentHolder.find('.fa-spin').fadeOut(0).delay(1000).fadeIn(100);
 
     var url = VuFind.path + '/AJAX/JSON';
     var params = {method: 'getContentFeed', id: id, element: element};

@@ -277,7 +277,7 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                 if ($isRecord) {
                     $content[] = trim(
                         $recordHelper($rec)->getFormatList() . ' ' .
-                        $recordHelper($rec)->getSourceIdElement()
+                        implode(' ', $rec->tryMethod('getLabels', [], []))
                     );
                 }
                 if (!empty($author)) {

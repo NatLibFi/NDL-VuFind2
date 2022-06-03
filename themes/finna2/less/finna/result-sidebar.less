@@ -78,6 +78,21 @@
 .sidebar > h1,
 .sidebar > h2 {
   margin-bottom: 5px;
+  @media (max-width: @screen-xs-max) {
+    position: sticky;
+    top:0;
+    z-index: 1000;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0;
+    .tooltip-facet {
+      margin-right: auto;
+    }
+    .fa-close {
+      margin-left: auto;
+    }
+  }
 }
 
 .list-group {

@@ -110,7 +110,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAbstracts()
     {
-        $abstractValues = [];
         $abstracts = [];
         $abstract = '';
         $lang = '';
@@ -125,6 +124,16 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         }
 
         return $abstracts;
+    }
+
+    /**
+     * Get an array of alternative titles for the record.
+     *
+     * @return array
+     */
+    public function getAlternativeTitles()
+    {
+        return $this->fields['title_alt'] ?? [];
     }
 
     /**
@@ -198,7 +207,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAllImages($language = 'fi', $includePdf = true)
     {
-        $cacheKey = __FUNCTION__ . "/$language" . $includePdf ? '/1' : '/0';
+        $cacheKey = __FUNCTION__ . "/$language" . ($includePdf ? '/1' : '/0');
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
@@ -284,7 +293,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                 ]
             );
         }
-
         // Attempt to find a PDF file to be converted to a coverimage
         if ($includePdf && empty($results)) {
             $urls = [];
@@ -432,6 +440,49 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             }
         }
         return array_values(array_unique($result));
+    }
+
+    /**
+     * Get all record links related to the current record. Each link is returned as
+     * array.
+     * Format:
+     * array(
+     *        array(
+     *               'title' => label_for_title
+     *               'value' => link_name
+     *               'link'  => link_URI
+     *        ),
+     *        ...
+     * )
+     *
+     * @return null|array
+     */
+    public function getAllRecordLinks()
+    {
+        $xml = $this->getXmlRecord();
+        $relations = [];
+        foreach ($xml->isPartOf ?? [] as $isPartOf) {
+            $relations[] = [
+                'value' => (string)$isPartOf,
+                'link' => [
+                    'value' => (string)$isPartOf,
+                    'type' => 'allFields'
+                ]
+            ];
+        }
+        foreach ($xml->relation ?? [] as $relation) {
+            $attrs = $relation->attributes();
+            if ('ispartof' === (string)($attrs->type ?? '')) {
+                $relations[] = [
+                    'value' => (string)$relation,
+                    'link' => [
+                        'value' => (string)$relation,
+                        'type' => 'allFields'
+                    ]
+                ];
+            }
+        }
+        return $relations;
     }
 
     /**

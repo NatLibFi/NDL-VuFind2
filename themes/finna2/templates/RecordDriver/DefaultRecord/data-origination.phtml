@@ -1,5 +1,5 @@
-<?php $originationExt = $this->driver->tryMethod('getOriginationExtended'); //Don't add START and END comments ?>
-<?php foreach ($originationExt ?? [['name' => $data]] as $idx => $origination): ?>
+<?php //Don't add START and END comments ?>
+<?php foreach ($data as $idx => $origination): ?>
   <?php
     $description = $origination['detail'] ?? '';
     if ($date = $origination['date'] ?? '') {

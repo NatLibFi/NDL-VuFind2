@@ -146,6 +146,20 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
     ];
 
     /**
+     * Status codes indicating that a hold is available for pickup
+     *
+     * @var array
+     */
+    protected $holdAvailableCodes = ['b', 'j', 'i'];
+
+    /**
+     * Status codes indicating that a hold is in transit
+     *
+     * @var array
+     */
+    protected $holdInTransitCodes = ['t'];
+
+    /**
      * Available API version
      *
      * Functionality requiring a specific minimum version:
@@ -819,7 +833,10 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
                 $title = $bib['title'] ?? '';
                 $publicationYear = $bib['publishYear'] ?? '';
             }
-            $available = in_array($entry['status']['code'], ['b', 'j', 'i']);
+            $available
+                = in_array($entry['status']['code'], $this->holdAvailableCodes);
+            $inTransit
+                = in_array($entry['status']['code'], $this->holdInTransitCodes);
             if ($entry['priority'] >= $entry['priorityQueueLength']) {
                 // This can happen, no idea why
                 $position = $entry['priorityQueueLength'] . ' / '
@@ -833,14 +850,12 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
                     'Y-m-d',
                     $entry['pickupByDate']
                 ) : '';
-            $inTransit = $entry['status']['code'] === 't';
             $requestId = $this->extractId($entry['id']);
             // Allow the user to attempt update if freezing is enabled or the hold
             // is not available or in transit. Checking if the hold can be freezed
             // up front is slow, so defer it to when update is requested.
-            if ($freezeEnabled || (!$available && !$inTransit)) {
-                $updateDetails = $requestId;
-            }
+            $updateDetails = ($freezeEnabled || (!$available && !$inTransit))
+                ? $requestId : '';
             $cancelDetails = $this->allowCancelingAvailableRequests
                 || (!$available && !$inTransit) ? $requestId : '';
             $holds[] = [
@@ -946,8 +961,10 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
                 'GET',
                 $patron
             );
-            $available = in_array($hold['status']['code'], ['b', 'j', 'i']);
-            $inTransit = $hold['status']['code'] === 't';
+            $available
+                = in_array($hold['status']['code'], $this->holdAvailableCodes);
+            $inTransit
+                = in_array($hold['status']['code'], $this->holdInTransitCodes);
 
             // Check if we can do the requested changes:
             $updateFields = [];
@@ -987,17 +1004,15 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
                             $result['description'] ?? $result['name']
                         )
                     ];
+                } elseif ($fieldsSkipped) {
+                    $results[$requestId] = [
+                        'success' => false,
+                        'status' => 'hold_error_update_blocked_status'
+                    ];
                 } else {
-                    if ($fieldsSkipped) {
-                        $results[$requestId] = [
-                            'success' => false,
-                            'status' => 'hold_error_update_blocked_status'
-                        ];
-                    } else {
-                        $results[$requestId] = [
-                            'success' => true
-                        ];
-                    }
+                    $results[$requestId] = [
+                        'success' => true
+                    ];
                 }
             }
         }

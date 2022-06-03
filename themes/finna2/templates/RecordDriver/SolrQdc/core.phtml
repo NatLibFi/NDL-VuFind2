@@ -2,25 +2,18 @@
 <?php
 
   $openUrl = $this->openUrl($this->driver, 'record');
+  $recordHelper = $this->record($this->driver);
   $openUrlActive = $openUrl->isActive();
   // Account for replace_other_urls setting
   $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
-  $onlineURLs = $this->driver->getOnlineURLs();
+  $onlineURLs = $this->driver->getOnlineURLs(false, ['image']);
   $mergedData = $this->driver->tryMethod('getMergedRecordData');
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
   $img = $this->recordImage($this->record($this->driver));
-  $images = $img->getAllImagesAsCoverLinks(
-      $this->layout()->userLang,
-      $params
-  );
   $audioUrls = [];
   $videoUrls = [];
   $otherUrls = [];
-  $hasOnlineURLs =
-      $this->record($this->driver)->containsNonImageURL($urls, $images)
-      || $this->record($this->driver)->containsNonImageURL($onlineURLs, $images)
-      || !empty($mergedData['urls']) && $this->record($this->driver)->containsNonImageURL($mergedData['urls'], $images)
-  ;
+  $hasOnlineURLs = !empty($urls) || !empty($onlineURLs) || !empty($mergedData['urls']);
 
   if (!empty($urls)) {
     foreach ($urls as $url) {
@@ -81,6 +74,11 @@
   <?php endif; ?>
   <div class="media-body record-information">
       <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+      <?php if ($results = $this->driver->getAlternativeTitles()): ?>
+        <div class="recordAltTitles record-alt-titles">
+          <?=implode('<br>', array_map([$this, 'escapeHtml'], $results))?>
+        </div>
+      <?php endif; ?>
 
       <?php if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
         <?php if ($hasOnlineURLs || $openUrlActive): ?>

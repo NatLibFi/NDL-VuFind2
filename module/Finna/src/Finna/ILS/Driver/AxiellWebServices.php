@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2021.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -2301,17 +2301,14 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 $amount = str_replace(',', '.', $debt->debtAmountFormatted) * 100;
             }
             $description = $debt->debtType . ' - ' . $debt->debtNote;
-            $payable = true;
-            foreach ($blockedTypes as $blockedType) {
-                if (strncmp($blockedType, '/', 1) === 0
-                    && substr_compare($blockedType, '/', -1) === 0
-                ) {
-                    if (preg_match($blockedType, $description)) {
-                        $payable = false;
-                        break;
-                    }
-                } else {
-                    if ($blockedType === $description) {
+            $payable = $amount > 0;
+            if ($payable) {
+                foreach ($blockedTypes as $blockedType) {
+                    if ($blockedType === $description
+                        || (strncmp($blockedType, '/', 1) === 0
+                        && substr_compare($blockedType, '/', -1) === 0
+                        && preg_match($blockedType, $description))
+                    ) {
                         $payable = false;
                         break;
                     }
@@ -3229,47 +3226,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             $b['location'] = $b['journalInfo']['location'];
             return $this->defaultHoldingsSortFunction($a, $b);
         } else {
-            $a = $this->parseJournalIssue($editionA);
-            $b = $this->parseJournalIssue($editionB);
-
-            if (empty($a)) {
-                return 1;
-            }
-            if (empty($b)) {
-                return -1;
-            }
-
-            if ($a === $b) {
-                return 0;
-            }
-
-            $cnt = min(count($a), count($b));
-            $a = array_slice($a, 0, $cnt);
-            $b = array_slice($b, 0, $cnt);
-
-            $f = function ($str) {
-                $parts = explode('-', $str);
-                return reset($parts);
-            };
-
-            $a = array_map($f, $a);
-            $b = array_map($f, $b);
-
-            return $a > $b ? -1 : 1;
+            return strnatcasecmp($editionB, $editionA);
         }
-    }
-
-    /**
-     * Utility function for parsing journal issue.
-     *
-     * @param string $issue Journal issue.
-     *
-     * @return array
-     */
-    protected function parseJournalIssue($issue)
-    {
-        $parts = explode(':', $issue);
-        return array_map('trim', $parts);
     }
 
     /**

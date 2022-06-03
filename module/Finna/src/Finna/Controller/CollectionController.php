@@ -40,6 +40,8 @@ namespace Finna\Controller;
  */
 class CollectionController extends \VuFind\Controller\CollectionController
 {
+    use \Finna\Statistics\ReporterTrait;
+
     /**
      * Display a particular tab.
      *
@@ -61,5 +63,17 @@ class CollectionController extends \VuFind\Controller\CollectionController
 
         $this->getSearchMemory()->rememberScrollData($view->scrollData);
         return $view;
+    }
+
+    /**
+     * Home (default) action -- forward to requested (or default) tab.
+     *
+     * @return mixed
+     */
+    public function homeAction()
+    {
+        $result = parent::homeAction();
+        $this->triggerStatsRecordView($result->driver ?? null);
+        return $result;
     }
 }

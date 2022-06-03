@@ -58,7 +58,7 @@
           </div>
         <?php endif; ?>
         <?php $markdown = $list ? $this->markdown()->replaceDeprecatedTags($list->description ?? '') : ''; ?>
-        <?= $this->render('components/organisms/widgets/finna-md-editable/finna-md-editable.phtml', [
+        <?= $this->render('components/organisms/widgets/finna-md-editable', [
             'attributes' => ['class' => 'list-description'],
             'markdown' => $markdown,
             'html' => $markdown ? $this->markdown()->toHtml($markdown, false) : '',

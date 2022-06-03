@@ -1,0 +1,31 @@
+<?php // No start or end tags
+    $from =
+        [
+            'information' => 'information',
+            'vertices' => 'vertices',
+            'triangles' => 'triangles',
+            'desktop help' => 'desktop_help_html',
+            'mobile help' => 'mobile_help_html',
+            'loading file' => 'loading_file',
+            'view model' => 'view_model',
+            'lights' => 'lights',
+            'materials' => 'materials',
+            'file' => 'file',
+            'intensity' => 'intensity',
+            'name' => 'name',
+            'type' => 'type',
+            'save' => 'save',
+            'spotlight' => 'spotlight',
+            'directionallight' => 'directional_light',
+            'add light' => 'add_light',
+            'export .glb' => 'export_glb',
+            'toggle mode' => 'toggle_mode',
+            'metalness' => 'metalness',
+            'roughness' => 'roughness',
+            'envmapintensity' => 'env_map_intensity'
+        ];
+    $translations = [];
+    foreach ($from as $k => $t) {
+        $translations[$k] = $this->translate("model_{$t}");
+    }
+    echo json_encode($translations);

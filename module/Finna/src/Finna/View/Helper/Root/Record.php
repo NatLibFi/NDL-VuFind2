@@ -92,11 +92,11 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $recordLinkHelper;
 
     /**
-     * Image cache
+     * Local cache
      *
      * @var array
      */
-    protected $cachedImages = [];
+    protected $cache = [];
 
     /**
      * Tab Manager
@@ -608,28 +608,6 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Return all record image urls as array keys.
-     *
-     * @return array
-     */
-    public function getAllRecordImageUrls()
-    {
-        $images = $this->driver->tryMethod('getAllImages', ['']);
-        if (empty($images)) {
-            return [];
-        }
-        $urls = [];
-        foreach ($images as $image) {
-            $urls[] = $image['urls']['small'];
-            $urls[] = $image['urls']['medium'];
-            if (isset($image['urls']['large'])) {
-                $urls[] = $image['urls']['large'];
-            }
-        }
-        return array_flip($urls);
-    }
-
-    /**
      * Return if image popup zoom has been enabled in config
      *
      * @return boolean
@@ -701,10 +679,10 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         $recordId = $this->driver->getUniqueID();
 
-        $cacheKey = "$recordId\t" . ($thumbnails ? '1' : '0')
+        $cacheKey = __FUNCTION__ . "$recordId\t" . ($thumbnails ? '1' : '0')
             . ($includePdf ? '1' : '0');
-        if (isset($this->cachedImages[$cacheKey])) {
-            return $this->cachedImages[$cacheKey];
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
         }
 
         $sizes = ['small', 'medium', 'large', 'master'];
@@ -760,7 +738,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                 }
             }
         }
-        return $this->cachedImages[$cacheKey] = $images;
+        return $this->cache[$cacheKey] = $images;
     }
 
     /**
@@ -825,6 +803,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * This is here for backwards compability.
      * Check if the given array of URLs contain URLs that
      * are not record images.
      *
@@ -845,6 +824,22 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
         return false;
+    }
+
+    /**
+     * This is here for backwards compability.
+     * Return all record image urls as array keys.
+     *
+     * @return array
+     */
+    public function getAllRecordImageUrls()
+    {
+        $images = $this->driver->tryMethod('getAllImages', ['', false]);
+        $urls = [];
+        foreach ($images as $image) {
+            $urls = [...$urls, ...array_values($image['urls'])];
+        }
+        return array_flip($urls);
     }
 
     /**
@@ -905,16 +900,12 @@ class Record extends \VuFind\View\Helper\Root\Record
      * Render a source id element if necessary
      *
      * @return string
+     *
+     * @deprecated Use getLabelList instead
      */
     public function getSourceIdElement()
     {
-        $view = $this->getView();
-        if (isset($view->results) && is_callable([$view->results, 'getBackendId'])) {
-            if ($view->results->getBackendId() === 'Blender') {
-                return $this->renderTemplate('source-id-label.phtml');
-            }
-        }
-        return '';
+        return $this->getLabelList();
     }
 
     /**

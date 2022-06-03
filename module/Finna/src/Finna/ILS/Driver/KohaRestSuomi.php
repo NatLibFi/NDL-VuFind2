@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2017-2021.
+ * Copyright (C) The National Library of Finland 2017-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -225,7 +225,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     {
         $fines = parent::getMyFines($patron);
         foreach ($fines as &$fine) {
-            $fine['payableOnline'] = true;
+            $fine['payableOnline'] = $fine['balance'] > 0;
         }
         return $fines;
     }
@@ -713,7 +713,9 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
         if (!empty($fines)) {
             $amount = 0;
             foreach ($fines as $fine) {
-                $amount += $fine['balance'];
+                if ($fine['payableOnline']) {
+                    $amount += $fine['balance'];
+                }
             }
             $config = $this->getConfig('onlinePayment');
             $nonPayableReason = false;

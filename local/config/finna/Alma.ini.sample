@@ -23,6 +23,10 @@ loginMethod = email
 ; translationPrefix = "Alma::"
 ;translationPrefix = "Alma::"
 
+; Days before account expiration to start displaying a notification for the user.
+; Default is 30.
+;daysBeforeAccountExpirationNotification = 30
+
 [Holds]
 ; HMACKeys - A list of hold form element names that will be analyzed for consistency
 ; during hold form processing. Most users should not need to change this setting.

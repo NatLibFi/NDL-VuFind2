@@ -47,6 +47,8 @@ use VuFind\View\Helper\Root\Record;
  */
 class GetImageInformation extends \VuFind\AjaxHandler\AbstractBase
 {
+    use \Finna\Statistics\ReporterTrait;
+
     /**
      * Config
      *
@@ -172,6 +174,8 @@ class GetImageInformation extends \VuFind\AjaxHandler\AbstractBase
                 $context['listUser'] = $user;
             }
         }
+
+        $this->triggerStatsRecordView($driver);
 
         $html = ($this->recordPlugin)($driver)
             ->renderTemplate('record-image-popup-information.phtml', $context);

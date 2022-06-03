@@ -39,4 +39,50 @@ namespace Finna\Search\EDS;
 class Params extends \VuFind\Search\EDS\Params
 {
     use \Finna\Search\FinnaParams;
+
+    /**
+     * Whether to request checkbox facet counts
+     *
+     * @var bool
+     */
+    protected $checkboxFacetCounts = false;
+
+    /**
+     * Whether to request checkbox facet counts
+     *
+     * @return bool
+     */
+    public function getCheckboxFacetCounts()
+    {
+        return $this->checkboxFacetCounts;
+    }
+
+    /**
+     * Whether to request checkbox facet counts
+     *
+     * @param bool $value Enable or disable
+     *
+     * @return void
+     */
+    public function setCheckboxFacetCounts($value)
+    {
+        $this->checkboxFacetCounts = $value;
+    }
+
+    /**
+     * Get the full facet settings stored by addFacet -- these may include extra
+     * parameters needed by the search results class.
+     *
+     * @return array
+     */
+    public function getFullFacetSettings()
+    {
+        $result = $this->fullFacetSettings;
+
+        if ($this->checkboxFacetCounts && !empty($this->checkboxFacets)) {
+            $result = array_merge($result, array_keys($this->checkboxFacets));
+        }
+
+        return $result;
+    }
 }

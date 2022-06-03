@@ -64,10 +64,6 @@ class PrimoBackendFactory
     {
         $connector = parent::createConnector();
 
-        $connector->setCacheManager(
-            $this->serviceLocator->get(\VuFind\Cache\Manager::class)
-        );
-
         if ($this->primoConfig->HiddenFilters) {
             $connector->setHiddenFilters(
                 $this->primoConfig->HiddenFilters->toArray()

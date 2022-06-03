@@ -1,1 +1,3 @@
-<?php // No ending line feed ?><?=$this->url($this->searchAction ?: $this->searchOptions($this->driver->getSourceIdentifier())->getSearchAction())?>?lookfor=<?=urlencode($this->lookfor)?>&amp;type=Author
+<?php // No ending line feed ?>
+<?php $searchRoute = $this->searchAction ?: $this->searchOptions($this->driver->getSearchBackendIdentifier())->getSearchAction(); ?>
+<?=$this->url($searchRoute)?>?lookfor=%22<?=urlencode($this->lookfor)?>%22&amp;type=Author

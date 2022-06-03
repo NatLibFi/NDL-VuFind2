@@ -61,6 +61,13 @@ trait SolrFinnaTrait
     protected $cache = [];
 
     /**
+     * An array of non-displayable formats
+     *
+     * @var array
+     */
+    protected $undisplayableFormats;
+
+    /**
      * Return an array of image URLs associated with this record with keys:
      * - urls        Image URLs
      *   - small     Small image (mandatory)
@@ -476,21 +483,34 @@ trait SolrFinnaTrait
     /**
      * Get online URLs
      *
-     * @param bool $raw Whether to return raw data
+     * @param bool  $raw          Whether to return raw data
+     * @param array $excludeTypes If set, will remove types of urls from result
      *
      * @return array
      */
-    public function getOnlineURLs($raw = false)
+    public function getOnlineURLs($raw = false, $excludeTypes = ['image'])
     {
         if (!isset($this->fields['online_urls_str_mv'])) {
             return [];
         }
-        return $raw ? $this->fields['online_urls_str_mv'] : $this->resolveUrlTypes(
+
+        if ($raw) {
+            return $this->fields['online_urls_str_mv'];
+        }
+        $merged = $this->resolveUrlTypes(
             $this->mergeURLArray(
                 $this->fields['online_urls_str_mv'],
                 true
             )
         );
+        if (!$excludeTypes) {
+            return $merged;
+        }
+
+        $filterFunc = function (array $obj) use ($excludeTypes): bool {
+            return !in_array($obj['type'] ?? '', $excludeTypes);
+        };
+        return array_filter($merged, $filterFunc);
     }
 
     /**
@@ -761,6 +781,25 @@ trait SolrFinnaTrait
     public function isAuthorityRecord()
     {
         return false;
+    }
+
+    /**
+     * Can the format not be properly displayed?
+     *
+     * @param string $format Format to check.
+     *
+     * @return bool
+     */
+    public function isUndisplayableFormat(string $format): bool
+    {
+        if (!isset($this->undisplayableFormats)) {
+            $this->undisplayableFormats = explode(
+                ':',
+                $this->mainConfig->Record->undisplayable_file_formats
+                ?? 'tif:tiff:3d-pdf:3d model:glb:obj:gltf'
+            );
+        }
+        return in_array($format, $this->undisplayableFormats);
     }
 
     /**

@@ -7,7 +7,8 @@
 
 #Sorting:
 #  Fields:
-#    relevance: "relevance,id asc"
-#    scdate: "main_date_str desc"
-#    screator: author
-#    title: title
+#    author:
+#      Mappings:
+#        Primo: screator
+#        Solr: author
+#        solrAuth: heading

@@ -150,7 +150,7 @@
                   $loopLimit = (isset($setQueries[$group])) ? count($setQueries[$group]) : 3;
 
                   $this->htmlElement()->addAttributeTemplate('input-text', [
-                    'placeholder' => $msgSearchWords . '...',
+                    'placeholder' => $msgSearchWords . $this->translate('eol_ellipsis'),
                     'title' => $msgSearchWords,
                     'type' => 'text',
                     'aria-label' => $msgSearchWords,
