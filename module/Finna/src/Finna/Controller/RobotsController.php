@@ -105,8 +105,6 @@ class RobotsController extends \VuFind\Controller\AbstractBase
         $headers = $response->getHeaders();
         $headers->addHeaderLine('Content-type', 'text/plain; charset=UTF-8');
         $robotsTxtFile = getcwd() . '/robots.txt';
-        var_dump(getcwd());
-        die();
         if (!file_exists($robotsTxtFile)) {
             $response->setStatusCode(404);
             $response->setContent('404 Not Found');
