@@ -48,7 +48,17 @@ class FinnaList extends AbstractBase
     {
         parent::__construct($name, $options, true);
 
-        $this->setTemplate('CustomElement/finna-list');
+        $this->setTemplate(self::getTemplateName());
+    }
+
+    /**
+     * Get the template name or null if a default template should be used.
+     *
+     * @return string|null
+     */
+    public static function getTemplateName(): ?string
+    {
+        return 'CustomElement/finna-list';
     }
 
     /**
@@ -56,7 +66,7 @@ class FinnaList extends AbstractBase
      *
      * @return array
      */
-    protected function getDefaultVariables(): array
+    public static function getDefaultVariables(): array
     {
         return [
             'id'           => null,

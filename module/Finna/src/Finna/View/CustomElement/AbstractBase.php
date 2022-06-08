@@ -216,6 +216,16 @@ abstract class AbstractBase implements CustomElementInterface
     }
 
     /**
+     * Get the template name or null if a default template should be used.
+     *
+     * @return string|null
+     */
+    public static function getTemplateName(): ?string
+    {
+        return null;
+    }
+
+    /**
      * Get the view model for server-side rendering the element.
      *
      * @return ModelInterface
@@ -230,7 +240,7 @@ abstract class AbstractBase implements CustomElementInterface
      *
      * @return array
      */
-    protected function getDefaultVariables(): array
+    public static function getDefaultVariables(): array
     {
         return [];
     }

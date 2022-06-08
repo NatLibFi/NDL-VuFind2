@@ -109,7 +109,7 @@ class Markdown extends \VuFind\View\Helper\Root\Markdown
             $this->getTagContentRegex('summary', ' markdown="1"'),
             function ($matches) {
                 $heading = str_replace('**', '', $matches[1]);
-                return "  <h3 slot=\"heading\">$heading</h3>\n";
+                return "  <h3 slot=\"heading\">$heading</h3>\n\n";
             },
             $markdown
         );
