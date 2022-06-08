@@ -1412,8 +1412,8 @@ links[subject] = "search_as_subject:search-subject-mixed|search_as_keyword:keywo
 links[place] = "search_as_subject:search-place-mixed|search_as_keyword:keyword"
 ; Whether to display enriched term information from Finto:
 skosmos = true
-; Finto base url:
-skosmos_base_url = "https://api.finto.fi/rest/v1"
+; Finto base url (without api version such as "/v1"):
+skosmos_base_url = "https://api.finto.fi/rest/"
 ; Allowed id prefixes for enrichment:
 skosmos_id_prefix_allowed_list[] = "http://www.yso.fi/"
 ; Allowed id prefixes for exact matches of a term in other vocabularies:

@@ -245,7 +245,7 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase
         if (substr($url, -1) !== '/') {
             $url .= '/';
         }
-        $url .= 'data?format=application/json&uri=' . urlencode($id);
+        $url .= 'v1/data?format=application/json&uri=' . urlencode($id);
         try {
             $response = $this->httpService->get(
                 $url,
