@@ -393,11 +393,6 @@ finna.record = (function finnaRecord() {
       });
     });
 
-    var toggleHandle = function onToggleHandle(handle, open) {
-      handle
-        .removeClass(open ? 'fa-handle-open' : 'fa-handle-close')
-        .addClass(open ? 'fa-handle-close' : 'fa-handle-open');
-    };
     var fixPosition = function fixPosition(container) {
       // Check container position and move to the left as necessary:
       let infoBounds = container.getBoundingClientRect();
@@ -413,57 +408,62 @@ finna.record = (function finnaRecord() {
       }
     };
 
-    $('.inline-linked-field').each(function initLink() {
-      var $field = $(this);
-      $field.find('a.show-info').on('click', function onClickShowInfo() {
-        if (!$field.hasClass('open')) {
-          var $fieldInfo = $field.find('.field-info .dynamic-content');
-          if (!$fieldInfo.hasClass('loaded')) {
-            $fieldInfo.addClass('loaded');
-            $.getJSON(
-              VuFind.path + '/AJAX/JSON',
-              {
-                method: 'getFieldInfo',
-                id: $field.data('id'),
-                authId: $field.data('authId'),
-                type: $field.data('type'),
-                source: $field.data('recordSource'),
-                recordId: $field.data('recordId')
-              }
-            )
-              .done(function onGetAuthorityInfoDone(response) {
-                $fieldInfo.find('.fa-spinner').remove();
-                var desc = typeof response.data.html !== 'undefined' ? response.data.html : null;
-                if (desc && desc.trim()) {
-                  $fieldInfo.html(VuFind.updateCspNonce(desc));
-                  finna.layout.initTruncate($fieldInfo);
-                } else {
-                  $fieldInfo.find('.no-info').removeClass('hide');
-                }
-                fixPosition($field.find('.field-info')[0]);
-              })
-              .fail(function onGetFieldInfoFail() {
-                $fieldInfo.text(VuFind.translate('error_occurred'));
-              });
-          }
-          $field.addClass('open');
-          fixPosition($field.find('.field-info')[0]);
+    document.addEventListener('click', (event) => {
+      let field = event.target.closest('.inline-linked-field');
+      if (null === field) {
+        return;
+      }
+      let parentLink = event.target.closest('a');
+      if (!parentLink) {
+        return;
+      }
+      if (parentLink.classList.contains('hide-info')) {
+        field.classList.remove('open');
+        event.preventDefault();
+        return;
+      }
+      if (!parentLink.classList.contains('show-info')) {
+        return;
+      }
+      if (field.classList.contains('open')) {
+        field.classList.remove('open');
+        event.preventDefault();
+        return;
+      }
 
-          // trigger parent collapsed area open so that authority info is not hidden
-          $field.closest('.truncate-field.truncated').next('.more-link').click();
-          toggleHandle($(this).parent().find('i.handle'), true);
-        } else {
-          $field.removeClass('open');
-          toggleHandle($(this).parent().find('i.handle'), false);
+      event.preventDefault();
+      field.classList.add('open');
+      fixPosition(field.querySelector('.field-info'));
+
+      let fieldInfo = field.querySelector('.field-info .dynamic-content');
+      if (!fieldInfo || fieldInfo.classList.contains('loaded')) {
+        return;
+      }
+      fieldInfo.classList.add('loaded');
+      let params = new URLSearchParams(
+        {
+          method: 'getFieldInfo',
+          id: field.dataset.id,
+          authId: field.dataset.authId,
+          type: field.dataset.type,
+          source: field.dataset.recordSource,
+          recordId: field.dataset.recordId,
+          label: field.querySelector('.field-label').textContent
         }
-        return false;
-      });
-
-      $field.find('a.hide-info').on('click', function onClickHideInfo() {
-        $field.removeClass('open');
-        toggleHandle($field.find('i.handle'), false);
-        return false;
-      });
+      );
+      fetch(VuFind.path + '/AJAX/JSON?' + params)
+        .then(data => data.json())
+        .then((response) => {
+          fieldInfo.textContent = '';
+          var desc = typeof response.data.html !== 'undefined' ? response.data.html : null;
+          if (desc && desc.trim()) {
+            fieldInfo.innerHTML = VuFind.updateCspNonce(desc);
+            finna.layout.initTruncate(fieldInfo);
+          }
+          fixPosition(field.querySelector('.field-info'));
+        }).catch(function handleError() {
+          fieldInfo.textContent = VuFind.translate('error_occurred');
+        });
     });
   }
 

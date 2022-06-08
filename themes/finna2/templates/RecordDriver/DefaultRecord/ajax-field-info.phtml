@@ -37,6 +37,34 @@
   </table>
 <?php endif; ?>
 
+<?php if (!empty($this->enrichmentData['altLabels'])): ?>
+  <div class="alt-labels">
+    <h3><?=$this->transEsc('field_info_alt_labels')?></h3>
+    <ul>
+      <?php foreach($this->enrichmentData['altLabels'] as $label): ?>
+        <li>
+          <?=$this->record($this->driver)->getLinkedFieldElement($this->type ?? 'subject', $label, ['name' => $label], ['class' => ['backlink']])?>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+  </div>
+<?php endif; ?>
+
+<?php if (!empty($this->enrichmentData['otherLanguageLabels']) || !empty($this->enrichmentData['otherLanguageAltLabels'])): ?>
+  <div class="alt-labels">
+    <h3><?=$this->transEsc('field_info_other_language_alt_labels')?></h3>
+    <ul>
+      <?php foreach([...array_values($this->enrichmentData['otherLanguageLabels'] ?? []), ...array_values($this->enrichmentData['otherLanguageAltLabels'] ?? [])] as $labels): ?>
+        <?php foreach ($labels as $label): ?>
+          <li>
+            <?=$this->record($this->driver)->getLinkedFieldElement($this->type ?? 'subject', $label, ['name' => $label], ['class' => ['backlink']])?>
+          </li>
+        <?php endforeach; ?>
+      <?php endforeach; ?>
+    </ul>
+  </div>
+<?php endif; ?>
+
 <?php if (preg_match('/^\((mjr|rpr)\)(.+)/', $this->id, $matches)): ?>
   <div class="additional-content">
     <a href="https://www.kyppi.fi/palveluikkuna/mjreki/read/asp/r_kohde_det.aspx?KOHDE_ID=<?=$this->escapeHtmlAttr($matches[2])?>" target="_blank" aria-label="Kulttuuriympäristön palveluikkuna (<?=$this->transEscAttr('external_link')?>, <?=$this->transEscAttr('Open in a new window')?>)">

@@ -418,23 +418,25 @@ class Record extends \VuFind\View\Helper\Root\Record
         array $data,
         array $params = []
     ): string {
-        if (empty($this->config->Record->popovers)) {
+        if (empty($this->config->LinkPopovers->enabled)) {
             return $this->getAuthorityLinkElement($type, $lookfor, $data, $params);
         }
 
         $id = $data['id'] ?? '';
-        $links = $this->config->Record->popover_links->{$type}
-            ?? $this->config->Record->popover_links->{'*'}
+        $links = $this->config->LinkPopovers->links->{$type}
+            ?? $this->config->LinkPopovers->links->{'*'}
             ?? 'keyword';
 
         $fieldLinks = [];
         foreach ($links ? explode('|', $links) : [] as $linkDefinition) {
             [$linkText, $linkType] = explode(':', "$linkDefinition:");
-            // Discard search tabs hiddenFilters when jumping to Authority page
-            $preserveSearchTabsFilters = 'authority-page' !== $linkType;
+            // Early bypass of authority-page if we don't have an id to avoid all the
+            // getLink processing:
             if (!$id && 'authority-page' === $linkType) {
                 continue;
             }
+            // Discard search tabs hiddenFilters when jumping to Authority page
+            $preserveSearchTabsFilters = 'authority-page' !== $linkType;
 
             [$escapedUrl, $urlType] = $this->getLink(
                 $linkType,

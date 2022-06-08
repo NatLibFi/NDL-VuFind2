@@ -68,10 +68,14 @@ class GetFieldInfoFactory
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
+        $tableManager = $container->get(\VuFind\Db\Table\PluginManager::class);
         $result = new $requestedName(
+            $container->get(\VuFind\Config\PluginManager::class)->get('config'),
             $container->get(\VuFind\Session\Settings::class),
             $container->get(\VuFind\Record\Loader::class),
-            $container->get('ViewRenderer')->plugin('record')
+            $container->get('ViewRenderer')->plugin('record'),
+            $container->get(\VuFindHttp\HttpService::class),
+            $tableManager->get(\Finna\Db\Table\FinnaCache::class)
         );
         return $result;
     }

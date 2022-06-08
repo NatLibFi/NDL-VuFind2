@@ -1390,19 +1390,42 @@ repository_library_request_in_organisation_info = true
 ;large_image_formats[] = "0/Image/"
 ;large_image_formats[] = "0/Map/"
 
+; Record link popover configuration
+[LinkPopovers]
 ; Whether to enable popovers for lateral links in record metadata
-popovers = true
+enabled = true
 ; Links to display in the popover per search type. A pipe-separated list of
 ; translation keys and link templates.
 ; Potentially useful link templates:
 ; - author
-; - subject
+; - authority-page
 ; - authority-search
-; - authority-search-mixed
 ; - authority-search-subject
 ; - authority-search-subject-id
 ; - keyword
-popover_links[author] = "More Information:authority-page|search_as_author:authority-search|search_as_subject:authority-search-subject,keyword,search-id,search-author-mixed,search-topic-mixed"
+; - search-author-id
+; - search-author-mixed
+; - search-place-id
+; - search-place-mixed
+; - search-subject-id
+; - search-subject-mixed
+; - subject
+links[author] = "More Information:authority-page|search_as_author:search-author-mixed|search_as_subject:search-subject-mixed"
+links[subject] = "search_as_subject:search-subject-mixed|search_as_keyword:keyword"
+links[place] = "search_as_subject:search-place-mixed|search_as_keyword:keyword"
+; Whether to display enriched term information from Finto:
+skosmos = true
+; Finto base url:
+skosmos_base_url = "https://api.finto.fi/rest/v1"
+; Allowed id prefixes for enrichment:
+skosmos_id_prefix_allowed_list[] = "http://www.yso.fi/"
+; Allowed id prefixes for exact matches of a term in other vocabularies:
+skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/ysa/"
+skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/yso/"
+skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/allars/"
+skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/yso-paikat/"
+skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/koko/"
+skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/kauno/"
 
 ; The following two sections control the Alphabetic Browse module.
 [AlphaBrowse]

@@ -1,7 +1,7 @@
 <?php // No ending line feed
 $searchRoute = $this->searchAction ?: $this->searchOptions($this->driver->getSearchBackendIdentifier())->getSearchAction();
 if (!($id = $this->id ?: $this->localId)) {
-    echo $this->url($searchRoute, [], ['query' => ['lookfor' => $this->lookfor, 'type' => 'Author']]);
+    echo $this->url($searchRoute, [], ['query' => ['lookfor' => '"' . $this->lookfor . '"', 'type' => 'Author']]);
 } else {
     echo $this->url(
         $searchRoute,
