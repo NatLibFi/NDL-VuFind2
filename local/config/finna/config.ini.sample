@@ -1397,20 +1397,17 @@ enabled = true
 ; Links to display in the popover per search type. A pipe-separated list of
 ; translation keys and link templates.
 ; Potentially useful link templates:
-; - author
-; - authority-page
-; - authority-search
-; - authority-search-subject
-; - authority-search-subject-id
-; - keyword
-; - search-author-id
-; - search-author-mixed
-; - search-place-id
-; - search-place-mixed
-; - search-subject-id
-; - search-subject-mixed
-; - subject
-links[author] = "More Information:authority-page|search_as_author:search-author-mixed|search_as_subject:search-subject-mixed"
+; - author                        Search for author
+; - authority-page                Link to authority page
+; - keyword                       Keyword search
+; - search-author-id              Search for author id
+; - search-author-mixed           Search for author id (boosted) or string
+; - search-place-id               Search for place id (geographic)
+; - search-place-mixed            Search for place id (geographic, boosted) or string
+; - search-subject-id             Search for subject id
+; - search-subject-mixed          Search for subject id (boosted) or string
+; - subject                       Search for subject string
+;links[author] = "More Information:authority-page|search_as_author:search-author-mixed|search_as_subject:search-subject-mixed"
 links[subject] = "search_as_subject:search-subject-mixed|search_as_keyword:keyword"
 links[place] = "search_as_subject:search-place-mixed|search_as_keyword:keyword"
 ; Whether to display enriched term information from Finto:
