@@ -180,20 +180,20 @@ class Loader extends \VuFind\Cover\Loader
     /**
      * Load a record image.
      *
-     * @param \Vufind\RecordDriver\SolrDefault $driver Record
-     * @param int                              $index  Image index
-     * @param string                           $size   Requested size
+     * @param \Vufind\RecordDriver\DefaultRecord $driver Record
+     * @param int                                $index  Image index
+     * @param string                             $size   Requested size
      *
      * @return void
      */
     public function loadRecordImage(
-        \VuFind\RecordDriver\SolrDefault $driver,
+        \VuFind\RecordDriver\DefaultRecord $driver,
         $index,
         $size
     ) {
         $this->index = $index;
 
-        $params = $driver->getRecordImage($size, $index);
+        $params = $driver->tryMethod('getRecordImage', [$size, $index]);
         if (isset($params['url'])) {
             $this->id = $driver->getUniqueID();
             $this->url = $params['url'];

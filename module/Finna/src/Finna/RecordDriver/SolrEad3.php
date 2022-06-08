@@ -787,7 +787,7 @@ class SolrEad3 extends SolrEad
                     continue;
                 }
                 $attr = $set->attributes();
-                $descId = (string)($daoset->descriptivenote->p ?? null);
+                $descId = (string)($set->descriptivenote->p ?? '');
                 $additional = $descId
                     ? $this->getAlternativeItems($descId)
                     : [];

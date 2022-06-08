@@ -171,26 +171,12 @@ class SolrExtensionsListener
      */
     protected function addDataSourceFilter(EventInterface $event)
     {
-        $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class);
-        $searchConfig = $config->get($this->searchConfig);
-        if (isset($searchConfig->Records->sources)
-            && $searchConfig->Records->sources
-        ) {
-            $sources = explode(',', $searchConfig->Records->sources);
-            if (isset($_ENV['VUFIND_API_CALL']) && $_ENV['VUFIND_API_CALL']
-                && isset($searchConfig->Records->apiExcludedSources)
-            ) {
-                $sources = array_diff(
-                    $sources,
-                    explode(',', $searchConfig->Records->apiExcludedSources)
-                );
-            }
-
+        if ($recordSources = $this->getActiveSources($event)) {
             $sources = array_map(
                 function ($input) {
                     return '"' . addcslashes($input, '"') . '"';
                 },
-                $sources
+                $recordSources
             );
             $params = $event->getParam('command')->getSearchParameters();
             if ($params) {
@@ -200,6 +186,56 @@ class SolrExtensionsListener
                 );
             }
         }
+    }
+
+    /**
+     * Get a list of active sources
+     *
+     * @param EventInterface $event Event
+     *
+     * @return array
+     */
+    protected function getActiveSources(EventInterface $event): array
+    {
+        $sources = null;
+        // Check for a filter in params first:
+        $params = $event->getParam('command')->getSearchParameters();
+        if ($fq = $params->get('fq')) {
+            foreach ($fq as $key => $filter) {
+                $parts = explode(':', $filter);
+                if ('finna.sources' === $parts[0]) {
+                    $sources = $parts[1] ?? null;
+                    unset($fq[$key]);
+                    $params->set('fq', $fq);
+                    break;
+                }
+            }
+        }
+        // Not in params, check config:
+        if (null === $sources) {
+            $config = $this->serviceLocator
+                ->get(\VuFind\Config\PluginManager::class);
+            $searchConfig = $config->get($this->searchConfig);
+            $sources = $searchConfig->Records->sources ?? null;
+        }
+
+        if (!$sources) {
+            return [];
+        }
+
+        $sources = explode(',', $sources);
+
+        // Finally, check for an API exclusion list:
+        if (isset($_ENV['VUFIND_API_CALL']) && $_ENV['VUFIND_API_CALL']
+            && isset($searchConfig->Records->apiExcludedSources)
+        ) {
+            $sources = array_diff(
+                $sources,
+                explode(',', $searchConfig->Records->apiExcludedSources)
+            );
+        }
+
+        return $sources;
     }
 
     /**
