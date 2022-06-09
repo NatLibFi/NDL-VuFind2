@@ -1407,6 +1407,7 @@ enabled = true
 ; - search-subject-id             Search for subject id
 ; - search-subject-mixed          Search for subject id (boosted) or string
 ; - subject                       Search for subject string
+links[author] = "search_as_author:search-author-mixed|search_as_subject:search-subject-mixed"
 ;links[author] = "More Information:authority-page|search_as_author:search-author-mixed|search_as_subject:search-subject-mixed"
 links[subject] = "search_as_subject:search-subject-mixed|search_as_keyword:keyword"
 links[place] = "search_as_subject:search-place-mixed|search_as_keyword:keyword"

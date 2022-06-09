@@ -443,8 +443,8 @@ finna.record = (function finnaRecord() {
       let params = new URLSearchParams(
         {
           method: 'getFieldInfo',
-          id: field.dataset.id,
-          authId: field.dataset.authId,
+          ids: field.dataset.ids,
+          authIds: field.dataset.authIds,
           type: field.dataset.type,
           source: field.dataset.recordSource,
           recordId: field.dataset.recordId,

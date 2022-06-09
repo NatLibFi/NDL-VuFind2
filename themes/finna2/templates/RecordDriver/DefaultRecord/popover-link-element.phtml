@@ -4,7 +4,7 @@ $aAttributes->add('class', 'show-info');
 $aAttributes->add('title', $this->title ?: $this->translate('field_info_link_title'));
 $additionalDataElem = !empty($this->additionalData) ? "<span class=\"field-additional-data\">{$this->additionalDataHtml}</span>" : '';
 ?>
-<div class="inline-linked-field" data-id="<?=$this->escapeHtmlAttr($this->id)?>" data-auth-id="<?=$this->escapeHtmlAttr($this->authId)?>" data-type="<?=$this->escapeHtmlAttr($this->type)?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
+<div class="inline-linked-field" data-ids="<?=$this->escapeHtmlAttr(json_encode($this->ids))?>" data-auth-ids="<?=$this->escapeHtmlAttr(json_encode($this->authIds))?>" data-type="<?=$this->escapeHtmlAttr($this->type)?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
   <a<?=$aAttributes?>>
     <span class="field-label"><?=$this->escapeHtml($this->label)?></span>
     <i class="fa fa-caret-down expand"></i><i class="fa fa-caret-up collapse"></i>
@@ -15,7 +15,7 @@ $additionalDataElem = !empty($this->additionalData) ? "<span class=\"field-addit
       <?php foreach ($this->fieldLinks as $link): ?>
         <a href="<?=$link['escapedUrl']?>"><?=$this->transEsc($link['linkText'])?></a><br>
       <?php endforeach; ?>
-      <?php if ($this->id): ?>
+      <?php if ($this->ids): ?>
         <div class="dynamic-content">
           <i class="fa fa-spin fa-spinner"></i>
         </div>

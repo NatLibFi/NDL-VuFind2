@@ -124,14 +124,14 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase
     {
         $this->disableSessionWrites(); // avoid session write timing bug
 
-        $id = $params->fromQuery('id');
-        $authId = $params->fromQuery('authId');
+        $ids = json_decode($params->fromQuery('ids', '{}'), true);
+        $authIds = json_decode($params->fromQuery('authIds', '{}'), true);
         $source = $params->fromQuery('source');
         $recordId = $params->fromQuery('recordId');
         $type = $params->fromQuery('type');
         $label = $params->fromQuery('label') ?? '';
 
-        if (!$id || !$type) {
+        if (!$ids || !$type) {
             return $this->formatResponse('', self::STATUS_HTTP_BAD_REQUEST);
         }
 
@@ -159,12 +159,19 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase
             return $this->formatResponse('');
         }
 
-        // Fetch any enrichment data:
-        $enrichmentData = $this->getEnrichmentData($id, $label);
+        // Fetch any enrichment data by the first ID:
+        $enrichmentData = $this->getEnrichmentData($ids[0], $label);
 
         $html = ($this->recordPlugin)($driver)->renderTemplate(
             'ajax-field-info.phtml',
-            compact('id', 'authId', 'authority', 'type', 'enrichmentData', 'driver')
+            compact(
+                'ids',
+                'authIds',
+                'authority',
+                'type',
+                'enrichmentData',
+                'driver'
+            )
         );
 
         return $this->formatResponse(compact('html'));

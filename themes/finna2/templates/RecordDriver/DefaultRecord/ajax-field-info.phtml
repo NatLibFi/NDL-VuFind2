@@ -12,6 +12,18 @@
   } else {
       $coreFields = [];
   }
+
+  $kyppiLinks = [];
+  foreach ($this->ids as $id) {
+      if (preg_match('/^\((mjr|rpr)\)(.+)/', $id, $matches)) {
+          $register = 'rpr' === $matches[1] ? 'rapea' : 'mjreki';
+          $kyppiLinks[] = [
+            'id' => $matches[2],
+            'type' => $matches[1],
+            'link' => "https://www.kyppi.fi/palveluikkuna/$register/read/asp/r_kohde_det.aspx?KOHDE_ID=" . urlencode($matches[2])
+          ];
+      }
+  }
 ?>
 
 <?php if ($this->authority): ?>
@@ -65,10 +77,12 @@
   </div>
 <?php endif; ?>
 
-<?php if (preg_match('/^\((mjr|rpr)\)(.+)/', $this->id, $matches)): ?>
+<?php if ($kyppiLinks): ?>
   <div class="additional-content">
-    <a href="https://www.kyppi.fi/palveluikkuna/mjreki/read/asp/r_kohde_det.aspx?KOHDE_ID=<?=$this->escapeHtmlAttr($matches[2])?>" target="_blank" aria-label="Kulttuuriympäristön palveluikkuna (<?=$this->transEscAttr('external_link')?>, <?=$this->transEscAttr('Open in a new window')?>)">
-      <i class="fa fa-external-link"></i> <?=$this->transEsc('external_link_kyppi')?>
-    </a>
-  </div>
+    <?php foreach ($kyppiLinks as $link): ?>
+      <a href="<?=$this->escapeHtmlAttr($link['link'])?>" target="_blank" aria-label="Kulttuuriympäristön palveluikkuna (<?=$this->transEscAttr('external_link')?>, <?=$this->transEscAttr('Open in a new window')?>)">
+        <i class="fa fa-external-link"></i> <?=$this->transEsc('external_link_kyppi_' . $link['type'])?>
+      </a>
+    </div>
+  <?php endforeach; ?>
 <?php endif; ?>

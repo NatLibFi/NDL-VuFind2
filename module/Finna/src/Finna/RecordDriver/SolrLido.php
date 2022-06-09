@@ -1535,8 +1535,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      * - type: heading type
      * - source: source vocabulary
      * - id: authority id (if defined)
+     * - ids: multiple authority ids (if defined)
      * - authType: authority type (if id is defined)
-     * - externalId: ID in an external system
      *
      * @return array
      */
@@ -1554,16 +1554,21 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $place = [
                     'heading' => [$displayPlace],
                 ];
-                if ($placeId = ($subjectPlace->place->placeID ?? null)) {
-                    $type = (string)($placeId->attributes()->type ?? '');
+                // Collect all ids but use only the first for type etc:
+                foreach ($subjectPlace->place->placeID ?? [] as $placeId) {
                     $id = (string)$placeId;
+                    $type = (string)($placeId->attributes()->type ?? '');
                     if ($type) {
                         $id = "($type)$id";
                     }
+                    if (isset($place['type'])) {
+                        $place['ids'][] = $id;
+                        continue;
+                    }
                     $place['type'] = $type;
                     $place['id'] = $id;
+                    $place['ids'][] = $id;
                     $place['authType'] = 'Place';
-                    $place['externalId'] = $id;
                 }
                 $results[] = $place;
             } else {

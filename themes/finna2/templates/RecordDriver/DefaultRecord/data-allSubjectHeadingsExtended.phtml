@@ -12,13 +12,14 @@
     <?php $i = 0; foreach ($field['heading'] as $subfield): ?>
       <?php
         $first = $i++ === 0;
-        $authId = $first && isset($field['id']) ? $field['id'] : null;
+        $id = $first && isset($field['id']) ? $field['id'] : null;
+        $ids = $first && isset($field['ids']) ? $field['ids'] : null;
         $authType = $field['authType'] ?? null;
         $detail = $first ? ($field['detail'] ?? null) : null;
       ?>
       <?= $first ? '' : ' &#8594; '?>
       <?php $subject = trim($subject . ' ' . $subfield); ?>
-      <?=$this->record($this->driver)->getLinkedFieldElement($this->headingType ?? 'subject', $subfield, ['name' => $subject, 'id' => $authId, 'description' => $detail], ['authorityType' => $authType, 'class' => ['backlink']])?>
+      <?=$this->record($this->driver)->getLinkedFieldElement($this->headingType ?? 'subject', $subfield, ['name' => $subject, 'id' => $id, 'ids' => $ids, 'description' => $detail], ['authorityType' => $authType, 'class' => ['backlink']])?>
     <?php endforeach; ?>
   </div>
   <?php endforeach; ?>

@@ -423,9 +423,10 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
 
         $id = $data['id'] ?? '';
+        $ids = $data['ids'] ?? [$id];
         $links = $this->config->LinkPopovers->links->{$type}
             ?? $this->config->LinkPopovers->links->{'*'}
-            ?? 'keyword';
+            ?? 'search_as_keyword:keyword';
 
         $fieldLinks = [];
         foreach ($links ? explode('|', $links) : [] as $linkDefinition) {
@@ -441,7 +442,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             [$escapedUrl, $urlType] = $this->getLink(
                 $linkType,
                 $lookfor,
-                $params + compact('id', 'linkType'),
+                $params + compact('id', 'ids', 'linkType'),
                 true,
                 $preserveSearchTabsFilters,
                 false
@@ -459,17 +460,23 @@ class Record extends \VuFind\View\Helper\Root\Record
             = $this->config->Authority->typeMap->{$authorityType} ?? $authorityType;
 
         $elementParams = [
-           'driver' => $this->driver,
-           'searchAction' => $params['searchAction'] ?? null,
-           'label' => $lookfor,
-           'id' => $id,
-           'authId' => $this->driver->tryMethod('getAuthorityId', [$id, $type], ''),
-           'authorityLink' => $id && $this->isAuthorityLinksEnabled(),
-           'type' => $type,
-           'authorityType' => $authorityType,
-           'title' => $params['title'] ?? null,
-           'classes' => $params['class'] ?? [],
-           'fieldLinks' => $fieldLinks,
+            'driver' => $this->driver,
+            'searchAction' => $params['searchAction'] ?? null,
+            'label' => $lookfor,
+            'ids' => $ids,
+            'authIds' => array_map(
+                function ($s) use ($type) {
+                    return $this->driver
+                        ->tryMethod('getAuthorityId', [$s, $type], '');
+                },
+                $ids
+            ),
+            'authorityLink' => $id && $this->isAuthorityLinksEnabled(),
+            'type' => $type,
+            'authorityType' => $authorityType,
+            'title' => $params['title'] ?? null,
+            'classes' => $params['class'] ?? [],
+            'fieldLinks' => $fieldLinks,
         ];
         if ($additionalData = $this->composeAdditionalData($data, $params)) {
             $elementParams['additionalDataHtml'] = $additionalData;
