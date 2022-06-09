@@ -79,10 +79,15 @@
 
 <?php if ($kyppiLinks): ?>
   <div class="additional-content">
-    <?php foreach ($kyppiLinks as $link): ?>
+    <?php foreach ($kyppiLinks as $i => $link): ?>
+      <?=($i > 0) ? '<br>' : ''?>
       <a href="<?=$this->escapeHtmlAttr($link['link'])?>" target="_blank" aria-label="Kulttuuriympäristön palveluikkuna (<?=$this->transEscAttr('external_link')?>, <?=$this->transEscAttr('Open in a new window')?>)">
         <i class="fa fa-external-link"></i> <?=$this->transEsc('external_link_kyppi_' . $link['type'])?>
       </a>
-    </div>
+      <br>
+      <span class="kyppi-identifier">
+        <?=$this->transEsc('Inventory ID')?>: <?=$this->escapeHtml($link['id'])?>
+      </span>
   <?php endforeach; ?>
+  </div>
 <?php endif; ?>
