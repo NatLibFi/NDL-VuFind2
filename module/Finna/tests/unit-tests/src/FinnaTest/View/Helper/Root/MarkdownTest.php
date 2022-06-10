@@ -52,6 +52,8 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
 {
     use \VuFindTest\Feature\ViewTrait;
 
+    protected Markdown $helper;
+
     /**
      * Get view helper to test.
      *
@@ -59,6 +61,10 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
      */
     protected function getHelper()
     {
+        if (isset($this->helper)) {
+            return $this->helper;
+        }
+
         $elements = [
             'finna-panel' => FinnaPanel::class,
             'finna-truncate' => FinnaTruncate::class,
@@ -94,6 +100,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
         // Create markdown helper.
         $markdown = new Markdown(new MarkdownConverter($environment));
         $markdown->setView($view);
+        $this->helper = $markdown;
 
         return $markdown;
     }
@@ -131,21 +138,39 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
      */
     public function testFinnaPanel()
     {
-        $markdown = "<finna-panel heading-id=\"hid\" collapse-id=\"cid\">\n<h3 slot=\"heading\">Heading</h3>\n\nContent\n</finna-panel>";
+        $markdown = <<<EOT
+            <finna-panel heading-id="hid" collapse-id="cid">
+              <h3 slot="heading">Heading</h3>
+              
+              **Content**
+            </finna-panel>
+            EOT;
         $converted = $this->getHelper()->toHtml($markdown);
-        $expected
-            = $this->getHelper()->getView()->render(
-                FinnaPanel::getTemplateName(),
-                array_merge(
-                    FinnaPanel::getDefaultVariables(),
-                    [
-                        'headingId' => 'hid',
-                        'collapseId' => 'cid',
-                        'heading' => 'Heading',
-                        'content' => "\n\n<p>Content</p>\n"
-                    ]
-                )
-            ) . "\n";
+        $expected = $this->getExpectedFinnaPanel("\n  \n<p><strong>Content</strong></p>\n");
+        $this->assertEquals($expected, $converted);
+    }
+
+    /**
+     * Test Markdown support for nested finna-panel custom elements.
+     *
+     * @return void
+     */
+    public function testNestedFinnaPanels()
+    {
+        $markdown = <<<EOT
+            <finna-panel heading-id="hid" collapse-id="cid">
+             <h3 slot="heading">Heading</h3>
+              
+             <finna-panel heading-id="hid" collapse-id="cid">
+              <h3 slot="heading">Heading</h3>
+
+              **Content**
+             </finna-panel>
+            </finna-panel>
+            EOT;
+        $converted = $this->getHelper()->toHtml($markdown);
+        $expected = $this->getExpectedFinnaPanel("\n  \n<p><strong>Content</strong></p>\n");
+        $expected = $this->getExpectedFinnaPanel("\n \n$expected");
         $this->assertEquals($expected, $converted);
     }
 
@@ -156,7 +181,13 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
      */
     public function testFinnaTruncate()
     {
-        $markdown = "<finna-truncate>\n<span slot=\"label\">Label</span>\n\nContent\n</finna-truncate>";
+        $markdown = <<<EOT
+            <finna-truncate>
+              <span slot="label">Label</span>
+              
+              **Content**
+            </finna-truncate>
+            EOT;
         $converted = $this->getHelper()->toHtml($markdown);
         $expected
             = $this->getHelper()->getView()->render(
@@ -165,10 +196,26 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
                     FinnaTruncate::getDefaultVariables(),
                     [
                         'label' => 'Label',
-                        'content' => "\n\n<p>Content</p>\n"
+                        'content' => "\n\n<p><strong>Content</strong></p>\n"
                     ]
                 )
             ) . "\n";
         $this->assertEquals($expected, $converted);
+    }
+
+    protected function getExpectedFinnaPanel(string $content): string
+    {
+        return $this->getHelper()->getView()->render(
+            FinnaPanel::getTemplateName(),
+            array_merge(
+                FinnaPanel::getDefaultVariables(),
+                [
+                    'headingId' => 'hid',
+                    'collapseId' => 'cid',
+                    'heading' => 'Heading',
+                    'content' => $content,
+                ]
+            )
+        ) . "\n";
     }
 }
