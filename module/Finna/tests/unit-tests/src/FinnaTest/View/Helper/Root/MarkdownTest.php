@@ -28,6 +28,8 @@
  */
 namespace FinnaTest\View\Helper\Root;
 
+use Finna\Service\CommonMark\MarkdownBlockRenderer;
+use Finna\Service\CommonMark\MarkdownHeadingRenderer;
 use Finna\View\CustomElement\CommonMark\CustomElementExtension;
 use Finna\View\CustomElement\FinnaPanel;
 use Finna\View\CustomElement\FinnaTruncate;
@@ -85,6 +87,14 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
         $environment->mergeConfig([
             'html_input' => 'allow',
         ]);
+        $environment->addBlockRenderer(
+            'League\CommonMark\Block\Element\HtmlBlock',
+            new MarkdownBlockRenderer()
+        );
+        $environment->addBlockRenderer(
+            'League\CommonMark\Block\Element\Heading',
+            new MarkdownHeadingRenderer()
+        );
         $pluginManager = $this->createMock(PluginManager::class);
         $pluginManager
             ->method('get')
@@ -103,6 +113,19 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
         $this->helper = $markdown;
 
         return $markdown;
+    }
+
+    /**
+     * Test default heading level adjustment of +1.
+     *
+     * @return void
+     */
+    public function testDefaultHeadingLevelAdjustment()
+    {
+        $markdown = "# One\n## Two\n### Three\n#### Four\n##### Five\n###### Six\n####### Seven";
+        $converted = $this->getHelper()->toHtml($markdown);
+        $expected = "<h2>One</h2>\n<h3>Two</h3>\n<h4>Three</h4>\n<h5>Four</h5>\n<h6>Five</h6>\n<h7>Six</h7>\n<p>####### Seven</p>\n";
+        $this->assertEquals($expected, $converted);
     }
 
     /**
