@@ -86,6 +86,10 @@
           </div>
         </div>
       <?php endif; ?>
+      <?php if ($this->testviewhelper()->get('source')): ?>
+        <a href="<?=$this->url('home')?>api/v1/select/send?id=<?=$this->escapeHtml($this->driver->getUniqueId())?>" class="btn btn-primary feedback-record"><?=$this->transEsc('selection')?></a>
+        <p><br></p>
+      <?php endif; ?>
       <?= $this->record($this->driver)->getMaterialDisclaimer() ?>
       <?php if (!empty($summary)): ?>
         <div class="material-description">
