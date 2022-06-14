@@ -425,7 +425,7 @@ finna.record = (function finnaRecord() {
       }
       if (parentLink.classList.contains('hide-info')) {
         field.classList.remove('open');
-        parentLink.setAttribute('aria-expanded','false');
+        parentLink.setAttribute('aria-expanded', 'false');
         event.preventDefault();
         return;
       }
@@ -434,14 +434,14 @@ finna.record = (function finnaRecord() {
       }
       if (field.classList.contains('open')) {
         field.classList.remove('open');
-        parentLink.setAttribute('aria-expanded','false');
+        parentLink.setAttribute('aria-expanded', 'false');
         event.preventDefault();
         return;
       }
 
       event.preventDefault();
       field.classList.add('open');
-      parentLink.setAttribute('aria-expanded','true');
+      parentLink.setAttribute('aria-expanded', 'true');
       fixPosition(field.querySelector('.field-info'));
 
       let fieldInfo = field.querySelector('.field-info .dynamic-content');
@@ -449,7 +449,7 @@ finna.record = (function finnaRecord() {
         return;
       }
       fieldInfo.classList.add('loaded');
-      field.querySelector('.field-info').setAttribute('aria-busy','false');
+      field.querySelector('.field-info').setAttribute('aria-busy', 'false');
       let params = new URLSearchParams(
         {
           method: 'getFieldInfo',
