@@ -1,10 +1,10 @@
 <?php
 /**
- * Test helper factory.
+ * Factory for BazaarApiController.
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2020.
+ * Copyright (C) The National Library of Finland 2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,12 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  View_Helpers
+ * @package  Controller
  * @author   Aida Luuppala <aida.luuppala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
-namespace Finna\View\Helper\Root;
+namespace FinnaApi\Controller;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
@@ -34,15 +34,15 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
 /**
- * Test helper factory.
+ * Factory for BazaarApiController.
  *
  * @category VuFind
- * @package  View_Helpers
+ * @package  Controller
  * @author   Aida Luuppala <aida.luuppala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
-class TestViewHelperFactory implements FactoryInterface
+class BazaarApiControllerFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -56,7 +56,7 @@ class TestViewHelperFactory implements FactoryInterface
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
-     * @throws ContainerException if any other error occurs
+     * @throws ContainerException&\Throwable if any other error occurs
      */
     public function __invoke(
         ContainerInterface $container,
@@ -66,12 +66,6 @@ class TestViewHelperFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        return new $requestedName(
-            $container->get(\VuFind\Config\PluginManager::class)->get('testviewhelper'),
-            new \Laminas\Session\Container(
-                TestViewHelper::SESSION_NAME, 
-                $container->get(\Laminas\Session\SessionManager::class)
-            ),
-        );
+        return new $requestedName($container);
     }
 }

@@ -504,4 +504,28 @@ class SearchController extends \VuFind\Controller\SearchController
 
         return $view;
     }
+
+    /**
+     * Get values from finna_cache table and store them to session
+     *
+     * @return mixed
+     */
+    public function bazaarAction()
+    {
+        $uuid = $this->getRequest()->getQuery('uuid');
+
+        $finnaCache = $this->getTable('FinnaCache');
+        $recoveryRecord = $finnaCache->getByResourceId($uuid);
+
+        $session = new \Laminas\Session\Container(
+            \Finna\View\Helper\Root\Session::SESSION_NAME,
+            $this->serviceLocator->get(\Laminas\Session\SessionManager::class)
+        );
+
+        $session['resource_uid'] = $recoveryRecord['resource_id'];
+        $session['return_url'] = $recoveryRecord['data'];
+
+        $url = $this->url()->fromRoute('search-home');
+        return $this->redirect()->toUrl($url);
+    }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Selection API Controller
+ * Bazaar API Controller
  *
  * PHP version 7
  *
@@ -27,21 +27,14 @@
  */
 namespace FinnaApi\Controller;
 
-use Finna\Controller\L1RecordController;
-use Laminas\Http\Response;
-use Laminas\ServiceManager\ServiceLocatorInterface;
-use Laminas\Stdlib\Parameters;
-use Laminas\Config\Config;
-use Laminas\Session\Container as SessionContainer;
-use VuFind\Config\PluginManager;
+use VuFindApi\Controller\ApiController;
 use VuFindApi\Controller\ApiInterface;
 use VuFindApi\Controller\ApiTrait;
-use VuFindApi\Formatter\RecordFormatter;
 
 /**
- * Selection API Controller
+ * Bazaar API Controller
  *
- * Controls the Selection API functionality
+ * Controls the Bazaar API functionality
  *
  * @category VuFind
  * @package  Service
@@ -49,20 +42,9 @@ use VuFindApi\Formatter\RecordFormatter;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
-class SelectionApiController extends L1RecordController implements ApiInterface
+class BazaarApiController extends ApiController implements ApiInterface
 {
     use ApiTrait;
-
-    /**
-     * Constructor
-     *
-     * @param ServiceLocatorInterface $sm Service manager
-     * @param Config $config Configuration
-     */
-    public function __construct(ServiceLocatorInterface $sm, Config $config)
-    {
-        parent::__construct($sm, $config);
-    }
 
     /**
      * Execute the request
@@ -80,8 +62,14 @@ class SelectionApiController extends L1RecordController implements ApiInterface
         $response = $this->getResponse();
         $headers = $response->getHeaders();
         $headers->addHeaderLine('Access-Control-Allow-Origin', '*');
-        $headers->addHeaderLine('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-        $headers->addHeaderLine('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+        $headers->addHeaderLine(
+            'Access-Control-Allow-Methods', 
+            'GET, POST, OPTIONS'
+        );
+        $headers->addHeaderLine(
+            'Access-Control-Allow-Headers', 
+            'Content-Type, Authorization, X-Requested-With'
+        );
         $request = $this->getRequest();
         if ($request->getMethod() == 'OPTIONS') {
             return $this->output(null, 204);
@@ -90,55 +78,28 @@ class SelectionApiController extends L1RecordController implements ApiInterface
     }
 
     /**
-     * Save info to session.
+     * Save request data to finna_cache table.
      *
      * @return \Laminas\Http\Response
      */
-    public function startAction()
+    public function handshakeAction()
     {
         $requestParams = json_decode($this->getRequest()->getContent(), true);
 
-        $session = new \Laminas\Session\Container(
-            \Finna\View\Helper\Root\TestViewHelper::SESSION_NAME,
-            $this->serviceLocator->get(\Laminas\Session\SessionManager::class)
+        $finnaCache = $this->getTable('FinnaCache');
+        $finnaCache->insert(
+            ['resource_id' => $requestParams['resource_uid'],
+            'mtime' => time(),
+            'data' => $requestParams['return_url']]
         );
 
-        $session['source'] = $requestParams['source'];
-        $session['returnLink'] = $requestParams['return_link'];
+        // ALLI-7524 TODO: Get base url dynamically
+        $viewUrl = 'http://localhost:8080/vufind2/Search/Bazaar?uuid=';
+        $response = [
+            'view_url' => $viewUrl . $requestParams['resource_uid']
+        ];
 
-        return $this->output([],self::STATUS_OK);
-    }
-
-    /**
-     * Send selected record.
-     *
-     * @return \Laminas\Http\Response
-     */
-    public function sendAction()
-    {
-        $requestParams = $this->getRequest()->getQuery()->toArray()
-            + $this->getRequest()->getPost()->toArray();
-
-        if (!isset($requestParams['id'])) {
-            return $this->output([], self::STATUS_ERROR, 400, 'Missing id');
-        }
-        try {
-            $driver = $this->loadRecord();
-            $raw_data = $driver->getRawData();
-            $fullrecord = $raw_data['fullrecord'];
-
-            // ALLI-7524 TODO: Select sendable data and send it to moodle / javascript from view side
-
-            $response = [
-                'id' => $requestParams['id'],
-                'fullrecord' => $fullrecord,
-            ];
-
-            return $this->output($response, self::STATUS_OK);
-        } catch (RecordMissingException $e) {
-            return $this->output([], self::STATUS_ERROR, 404, 'Record not found');
-        }
-
+        return $this->output($response, self::STATUS_OK);
     }
 
     /**
@@ -208,5 +169,4 @@ class SelectionApiController extends L1RecordController implements ApiInterface
 
         return json_encode($spec);
     }
-
 }

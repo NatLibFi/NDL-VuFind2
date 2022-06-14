@@ -1,6 +1,6 @@
 <?php
 /**
- * Test view helper
+ * Session view helper
  *
  * PHP version 7
  *
@@ -28,7 +28,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Test view helper
+ * Session view helper
  *
  * @category VuFind
  * @package  View_Helpers
@@ -36,10 +36,10 @@ namespace Finna\View\Helper\Root;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class TestViewHelper extends \Laminas\View\Helper\AbstractHelper
+class Session extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Test configuration
+     * Session configuration
      *
      * @var \Laminas\Config\Config
      */
@@ -57,15 +57,18 @@ class TestViewHelper extends \Laminas\View\Helper\AbstractHelper
      *
      * @var string
      */
-    public const SESSION_NAME = 'RedirectionInfo';
+    public const SESSION_NAME = 'BazaarSession';
 
     /**
      * Constructor
      *
-     * @param \Laminas\Config\Config $config Test configuration
+     * @param \Laminas\Config\Config     $config  Session configuration
+     * @param \Laminas\Session\Container $session Session container
      */
-    public function __construct(\Laminas\Config\Config $config, \Laminas\Session\Container $session)
-    {
+    public function __construct(
+        \Laminas\Config\Config $config,
+        \Laminas\Session\Container $session
+    ) {
         $this->config = $config;
         $this->session = $session;
     }
@@ -74,10 +77,11 @@ class TestViewHelper extends \Laminas\View\Helper\AbstractHelper
      * Get value from this session container by key name.
      *
      * @param string $name Session variable's key name
+     *
+     * @return mixed
      */
     public function get($name)
     {
         return $this->session[$name];
     }
-
 }

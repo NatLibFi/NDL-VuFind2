@@ -86,8 +86,11 @@
           </div>
         </div>
       <?php endif; ?>
-      <?php if ($this->testviewhelper()->get('source')): ?>
-        <a href="<?=$this->url('home')?>api/v1/select/send?id=<?=$this->escapeHtml($this->driver->getUniqueId())?>" class="btn btn-primary feedback-record"><?=$this->transEsc('selection')?></a>
+      <?php if ($this->session()->get('resource_uid')): ?>
+        <form action="<?=$this->session()->get('return_url')?>" method="POST">
+          <input type="hidden" name="params" value="ALLI-7524 TODO: BASE64 encoded JSON">
+          <input type="submit" name="submit" value="<?=$this->transEsc('selection')?>" class="btn btn-primary feedback-record">
+          </form>
         <p><br></p>
       <?php endif; ?>
       <?= $this->record($this->driver)->getMaterialDisclaimer() ?>
