@@ -385,11 +385,13 @@ finna.record = (function finnaRecord() {
   }
 
   function initPopovers() {
-    var closeField = function (field) {
+    var closeField = function (field, setFocus = false) {
       field.classList.remove('open');
       let link = field.querySelector('a.show-info');
       link.setAttribute('aria-expanded', 'false');
-      link.focus();
+      if (setFocus) {
+        link.focus();
+      }
     };
     var fixPosition = function (container) {
       // Check container position and move to the left as necessary:
@@ -416,7 +418,7 @@ finna.record = (function finnaRecord() {
       const keyName = e.code;
       if ( keyName === "Escape") {
         document.querySelectorAll('.inline-linked-field.open').forEach((element) => {
-          closeField(element);
+          closeField(element, true);
         });
       }
     });
@@ -430,7 +432,7 @@ finna.record = (function finnaRecord() {
         return;
       }
       if (parentLink.classList.contains('hide-info')) {
-        closeField(field);
+        closeField(field, true);
         event.preventDefault();
         return;
       }
