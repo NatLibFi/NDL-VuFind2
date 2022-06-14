@@ -141,7 +141,9 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase
         $authority = null;
         $authorityFields = $this->config->LinkPopovers->authority_fields
             ? $this->config->LinkPopovers->authority_fields->toArray() : [];
-        if ($authIds && $authIds[0] && $authorityFields) {
+        if ($authIds && $authIds[0] && preg_match('/^[\w_-]+\./', $authIds[0])
+            && $authorityFields
+        ) {
             try {
                 $authority = $this->loader->load(
                     $authIds[0],
@@ -150,7 +152,7 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase
                     $params
                 );
             } catch (\VuFind\Exception\RecordMissing $e) {
-                return $this->formatResponse('');
+                // Ignore a missing authority record
             }
         }
         try {
