@@ -385,22 +385,13 @@ finna.record = (function finnaRecord() {
   }
 
   function initPopovers() {
-    document.addEventListener('mouseup', function onMouseUp(e) {
-      document.querySelectorAll('.inline-linked-field.open').forEach((element) => {
-        if (!element.contains(e.target)) {
-          element.classList.remove('open');
-        }
-      });
-    });
-    document.addEventListener('keyup', function onKeyUp(e) {
-      const keyName = e.code;
-      if ( keyName === "Escape") {
-        document.querySelectorAll('.inline-linked-field.open').forEach((element) => {
-          element.classList.remove('open');
-        });
-      }
-    });
-    var fixPosition = function fixPosition(container) {
+    var closeField = function (field) {
+      field.classList.remove('open');
+      let link = field.querySelector('a.show-info');
+      link.setAttribute('aria-expanded', 'false');
+      link.focus();
+    };
+    var fixPosition = function (container) {
       // Check container position and move to the left as necessary:
       let infoBounds = container.getBoundingClientRect();
       let maxWidth = window.innerWidth - 36;
@@ -414,6 +405,21 @@ finna.record = (function finnaRecord() {
       }
     };
 
+    document.addEventListener('mouseup', function onMouseUp(e) {
+      document.querySelectorAll('.inline-linked-field.open').forEach((element) => {
+        if (!element.contains(e.target)) {
+          closeField(element);
+        }
+      });
+    });
+    document.addEventListener('keyup', function onKeyUp(e) {
+      const keyName = e.code;
+      if ( keyName === "Escape") {
+        document.querySelectorAll('.inline-linked-field.open').forEach((element) => {
+          closeField(element);
+        });
+      }
+    });
     document.addEventListener('click', (event) => {
       let field = event.target.closest('.inline-linked-field');
       if (null === field) {
@@ -424,8 +430,7 @@ finna.record = (function finnaRecord() {
         return;
       }
       if (parentLink.classList.contains('hide-info')) {
-        field.classList.remove('open');
-        parentLink.setAttribute('aria-expanded', 'false');
+        closeField(field);
         event.preventDefault();
         return;
       }
@@ -433,8 +438,7 @@ finna.record = (function finnaRecord() {
         return;
       }
       if (field.classList.contains('open')) {
-        field.classList.remove('open');
-        parentLink.setAttribute('aria-expanded', 'false');
+        closeField(field);
         event.preventDefault();
         return;
       }
