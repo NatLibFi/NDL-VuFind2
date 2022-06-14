@@ -392,7 +392,14 @@ finna.record = (function finnaRecord() {
         }
       });
     });
-
+    document.addEventListener('keyup', function onKeyUp(e) {
+      const keyName = e.code;
+      if ( keyName === "Escape") {
+        document.querySelectorAll('.inline-linked-field.open').forEach((element) => {
+          element.classList.remove('open');
+        });
+      }
+    });
     var fixPosition = function fixPosition(container) {
       // Check container position and move to the left as necessary:
       let infoBounds = container.getBoundingClientRect();
@@ -418,6 +425,7 @@ finna.record = (function finnaRecord() {
       }
       if (parentLink.classList.contains('hide-info')) {
         field.classList.remove('open');
+        parentLink.setAttribute('aria-expanded','false');
         event.preventDefault();
         return;
       }
@@ -426,12 +434,14 @@ finna.record = (function finnaRecord() {
       }
       if (field.classList.contains('open')) {
         field.classList.remove('open');
+        parentLink.setAttribute('aria-expanded','false');
         event.preventDefault();
         return;
       }
 
       event.preventDefault();
       field.classList.add('open');
+      parentLink.setAttribute('aria-expanded','true');
       fixPosition(field.querySelector('.field-info'));
 
       let fieldInfo = field.querySelector('.field-info .dynamic-content');
@@ -439,6 +449,7 @@ finna.record = (function finnaRecord() {
         return;
       }
       fieldInfo.classList.add('loaded');
+      field.querySelector('.field-info').setAttribute('aria-busy','false');
       let params = new URLSearchParams(
         {
           method: 'getFieldInfo',

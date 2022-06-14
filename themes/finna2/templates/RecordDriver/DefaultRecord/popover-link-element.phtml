@@ -1,12 +1,24 @@
 <?php
-$aAttributes = $this->htmlAttributes(['class' => $this->classes, 'href' => '#']);
+static $idIndex = 0;
+++$idIndex;
+$safeId = preg_replace('/[^a-zA-Z0-9]/', '', $this->driver->getUniqueId());
+$fieldId = "$safeId-$idIndex";
+$aAttrsBase = [
+  'class' => $this->classes,
+  'href' => '#',
+  'id' => "field-anchor-$fieldId",
+  'aria-expanded' => 'false',
+  'aria-haspopup' => 'true',
+  'aria-controls' => "field-popover-$fieldId",
+];
+$aAttributes = $this->htmlAttributes($aAttrsBase);
 $aAttributes->add('class', 'show-info');
 $aAttributes->add('title', $this->title ?: $this->translate('field_info_link_title'));
 $additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-additional-data\">{$this->additionalDataHtml}</span>" : '';
 ?>
 <div class="inline-linked-field" data-ids="<?=$this->escapeHtmlAttr(json_encode($this->ids))?>" data-auth-ids="<?=$this->escapeHtmlAttr(json_encode($this->authIds))?>" data-type="<?=$this->escapeHtmlAttr($this->type)?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
-  <a<?=$aAttributes?>><span class="field-label"><?=$this->escapeHtml($this->label)?></span> <i class="fa fa-caret-down expand"></i><i class="fa fa-caret-up collapse"></i></a><?=$additionalDataElem?>
-  <div class="field-info field-popover">
+  <a<?=$aAttributes?>><span class="field-label"><?=$this->escapeHtml($this->label)?></span> <i class="fa fa-caret-down expand" aria-hidden="true"></i><i class="fa fa-caret-up collapse" aria-hidden="true"></i></a><?=$additionalDataElem?>
+  <div class="field-info field-popover" aria-live="polite" aria-busy="true" id="field-popover-<?=$this->escapeHtmlAttr($fieldId)?>">
     <div class="content">
       <h2><?=$this->escapeHtml($this->label)?></h2>
       <?php foreach ($this->fieldLinks as $link): ?>
@@ -14,7 +26,7 @@ $additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-a
       <?php endforeach; ?>
       <?php if ($this->ids): ?>
         <div class="dynamic-content">
-          <i class="fa fa-spin fa-spinner"></i>
+          <i class="fa fa-spin fa-spinner" aria-hidden="true"></i>
         </div>
         <?php if ($this->externalLinks): ?>
           <div class="popover-external-links">
