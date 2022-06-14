@@ -1282,7 +1282,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getIdentifier()
     {
-        return $this->fields['identifier'] ?? [];
+        foreach ($this->getIdentifiersByType(true) as $identifier) {
+            return [$identifier];
+        }
+        return [];
     }
 
     /**
@@ -1361,10 +1364,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getLocalIdentifiers()
     {
-        return $this->getIdentifiersByType(
-            "@type != 'isbn' and @type != 'issn'",
-            true
-        );
+        $results = [];
+        $identifiers = $this->getIdentifiersByType(true, [], ['isbn', 'issn']);
+        $primaryID = $this->getIdentifier();
+        foreach ($identifiers as $identifier) {
+            if (!in_array($identifier, $primaryID)) {
+                $results[] = $identifier;
+            }
+        }
+        return $results;
     }
 
     /**
@@ -1374,7 +1382,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getISBNs()
     {
-        return $this->getIdentifiersByType("@type = 'isbn'", false);
+        return $this->getIdentifiersByType(false, ['isbn']);
     }
 
     /**
@@ -1384,7 +1392,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getISSNs()
     {
-        return $this->getIdentifiersByType("@type = 'issn'", false);
+        return $this->getIdentifiersByType(false, ['issn']);
     }
 
     /**
@@ -1674,29 +1682,35 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Get identifiers by type
      *
-     * @param string $xpathRule   XPath rule
-     * @param bool   $includeType Whether to include identifier type in parenthesis
+     * @param bool  $includeType Whether to include identifier type in parenthesis
+     * @param array $include     Type attributes to include
+     * @param array $exclude     Type attributes to exclude
      *
      * @return array
      */
     protected function getIdentifiersByType(
-        string $xpathRule,
-        bool $includeType
+        bool $includeType,
+        array $include = [],
+        array $exclude = []
     ): array {
         $results = [];
-        foreach ($this->getXmlRecord()->xpath(
-            'lido/descriptiveMetadata/objectIdentificationWrap/repositoryWrap/'
-            . "repositorySet/workID[$xpathRule]"
-        ) as $node) {
-            $attributes = $node->attributes();
-            $type = $attributes->type ?? '';
-            // sometimes type exists with empty value or space(s)
-            $identifier = trim($node);
-            if ($identifier) {
-                if ($type && $includeType) {
-                    $identifier .= " ($type)";
+        foreach ($this->getXmlRecord()->lido->descriptiveMetadata
+            ->objectIdentificationWrap->repositoryWrap
+            ->repositorySet ?? [] as $repository
+        ) {
+            foreach ($repository->workID ?? [] as $node) {
+                $type = $node->attributes()->type ?? '';
+                if (($include && !in_array($type, $include))
+                    || ($exclude && in_array($type, $exclude))
+                ) {
+                    continue;
                 }
-                $results[] = $identifier;
+                if ($identifier = trim((string)$node ?? '')) {
+                    if ($type && $includeType) {
+                        $identifier .= " ($type)";
+                    }
+                    $results[] = $identifier;
+                }
             }
         }
         return $results;
