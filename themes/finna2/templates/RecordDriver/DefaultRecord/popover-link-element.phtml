@@ -2,13 +2,10 @@
 $aAttributes = $this->htmlAttributes(['class' => $this->classes, 'href' => '#']);
 $aAttributes->add('class', 'show-info');
 $aAttributes->add('title', $this->title ?: $this->translate('field_info_link_title'));
-$additionalDataElem = !empty($this->additionalData) ? "<span class=\"field-additional-data\">{$this->additionalDataHtml}</span>" : '';
+$additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-additional-data\">{$this->additionalDataHtml}</span>" : '';
 ?>
 <div class="inline-linked-field" data-ids="<?=$this->escapeHtmlAttr(json_encode($this->ids))?>" data-auth-ids="<?=$this->escapeHtmlAttr(json_encode($this->authIds))?>" data-type="<?=$this->escapeHtmlAttr($this->type)?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
-  <a<?=$aAttributes?>>
-    <span class="field-label"><?=$this->escapeHtml($this->label)?></span>
-    <i class="fa fa-caret-down expand"></i><i class="fa fa-caret-up collapse"></i>
-  </a><?=$additionalDataElem?>
+  <a<?=$aAttributes?>><span class="field-label"><?=$this->escapeHtml($this->label)?></span> <i class="fa fa-caret-down expand"></i><i class="fa fa-caret-up collapse"></i></a><?=$additionalDataElem?>
   <div class="field-info field-popover">
     <div class="content">
       <h2><?=$this->escapeHtml($this->label)?></h2>
@@ -19,6 +16,22 @@ $additionalDataElem = !empty($this->additionalData) ? "<span class=\"field-addit
         <div class="dynamic-content">
           <i class="fa fa-spin fa-spinner"></i>
         </div>
+        <?php if ($this->externalLinks): ?>
+          <div class="popover-external-links">
+            <?php foreach ($this->externalLinks as $i => $link): ?>
+              <?=($i > 0) ? '<br>' : ''?>
+              <a href="<?=$this->escapeHtmlAttr($link['url'])?>" target="_blank" aria-label="<?=$this->transEscAttr($link['title'])?> (<?=$this->transEscAttr('external_link')?>; <?=$this->transEscAttr('Open in a new window')?>)">
+                <i class="fa fa-external-link"></i> <?=$this->transEsc($link['text'])?>
+              </a>
+              <?php if ($link['displayId']): ?>
+                <br>
+                <span class="external-link-identifier">
+                  <?=$this->transEsc('Inventory ID')?>: <?=$this->escapeHtml($link['displayId'])?>
+                </span>
+              <?php endif; ?>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
       <?php endif; ?>
     </div>
     <a href="#" class="hide-info"><span class="link-text"><?=$this->translate('field_hide_info')?></a>

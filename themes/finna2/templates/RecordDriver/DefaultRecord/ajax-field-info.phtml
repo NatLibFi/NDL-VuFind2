@@ -1,28 +1,12 @@
 <?php //Don't add START and END comments
-  $fields = [
-    'Date of birth' => true,
-    'Other Forms of Name' => true,
-    'Identifiers' => true,
-  ];
-
-  if ($this->authority) {
+  $coreFields = [];
+  if ($this->authority && $this->authorityFields) {
       $formatter = $this->recordDataFormatter();
-      $fieldSpec = array_intersect_key($formatter->getDefaults('authority'), $fields);
-      $coreFields = $formatter->getData($this->authority, $fieldSpec);
-  } else {
-      $coreFields = [];
-  }
-
-  $kyppiLinks = [];
-  foreach ($this->ids as $id) {
-      if (preg_match('/^\((mjr|rpr)\)(.+)/', $id, $matches)) {
-          $register = 'rpr' === $matches[1] ? 'rapea' : 'mjreki';
-          $kyppiLinks[] = [
-            'id' => $matches[2],
-            'type' => $matches[1],
-            'link' => "https://www.kyppi.fi/palveluikkuna/$register/read/asp/r_kohde_det.aspx?KOHDE_ID=" . urlencode($matches[2])
-          ];
+      $fieldSpec = $formatter->getDefaults('authority');
+      if (!in_array('*', $this->authorityFields)) {
+          $fieldSpec = array_intersect_key($fieldSpec, array_flip($this->authorityFields));
       }
+      $coreFields = $formatter->getData($this->authority, $fieldSpec);
   }
 ?>
 
@@ -74,20 +58,5 @@
         <?php endforeach; ?>
       <?php endforeach; ?>
     </ul>
-  </div>
-<?php endif; ?>
-
-<?php if ($kyppiLinks): ?>
-  <div class="additional-content">
-    <?php foreach ($kyppiLinks as $i => $link): ?>
-      <?=($i > 0) ? '<br>' : ''?>
-      <a href="<?=$this->escapeHtmlAttr($link['link'])?>" target="_blank" aria-label="Kulttuuriympäristön palveluikkuna (<?=$this->transEscAttr('external_link')?>, <?=$this->transEscAttr('Open in a new window')?>)">
-        <i class="fa fa-external-link"></i> <?=$this->transEsc('external_link_kyppi_' . $link['type'])?>
-      </a>
-      <br>
-      <span class="kyppi-identifier">
-        <?=$this->transEsc('Inventory ID')?>: <?=$this->escapeHtml($link['id'])?>
-      </span>
-  <?php endforeach; ?>
   </div>
 <?php endif; ?>

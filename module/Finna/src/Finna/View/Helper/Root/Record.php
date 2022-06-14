@@ -459,6 +459,43 @@ class Record extends \VuFind\View\Helper\Root\Record
         $authorityType
             = $this->config->Authority->typeMap->{$authorityType} ?? $authorityType;
 
+        $externalLinks = [];
+        $language = $this->getView()->layout()->userLang;
+        foreach ($this->config->LinkPopovers->external_links ?? [] as $link) {
+            $linkConfig = explode('||', $link);
+            if (!isset($linkConfig[4])) {
+                continue;
+            }
+            foreach ($ids as $id) {
+                if (preg_match('/' . $linkConfig[2] . '/', $id, $matches)) {
+                    $url = preg_replace_callback(
+                        '/\{\d\}/',
+                        function ($m) use ($matches) {
+                            $index = intval(trim($m[0], '{}'));
+                            return $matches[$index] ?? '';
+                        },
+                        $linkConfig[3]
+                    );
+                    $url = str_replace('{lang}', $language, $url);
+                    $displayId = '';
+                    if ($linkConfig[4]) {
+                        if ('full' === $linkConfig[4]) {
+                            $displayId = $id;
+                        } else {
+                            $index = intval(trim($linkConfig[4], '{}'));
+                            $displayId = $matches[$index] ?? '';
+                        }
+                    }
+                    $externalLinks[] = [
+                        'text' => $linkConfig[0],
+                        'title' => $linkConfig[1],
+                        'url' => $url,
+                        'displayId' => $displayId
+                    ];
+                }
+            }
+        }
+
         $elementParams = [
             'driver' => $this->driver,
             'searchAction' => $params['searchAction'] ?? null,
@@ -477,6 +514,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             'title' => $params['title'] ?? null,
             'classes' => $params['class'] ?? [],
             'fieldLinks' => $fieldLinks,
+            'externalLinks' => $externalLinks,
         ];
         if ($additionalData = $this->composeAdditionalData($data, $params)) {
             $elementParams['additionalDataHtml'] = $additionalData;
@@ -573,7 +611,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Composer additional data string for a link
+     * Compose additional data string for a link
      *
      * @param array $data   Link data
      * @param array $params Link params

@@ -1583,7 +1583,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    public function getSubjectPlacesExtended()
+    public function getSubjectPlacesExtended(): array
     {
         return $this->getSubjectPlaces(true);
     }

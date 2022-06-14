@@ -1424,6 +1424,22 @@ skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/allars/"
 skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/yso-paikat/"
 skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/koko/"
 skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/kauno/"
+; The following setting controls authority information in the popover. It is disabled
+; by default. Use "*" to include all fields or specify the fields to show.
+;authority_fields[] = "Date of birth"
+;authority_fields[] = "Other Forms of Name"
+;authority_fields[] = "Identifiers"
+; External link templates. Templates consist of the following elements separated by a
+; double pipe:
+; 1. Link name (translation key)
+; 2. Link title (translation key)
+; 3. Regexp to match an ID
+; 4. Link template - use {1}...{9} to include a match from the regexp above
+;    (urlencoded) or {lang} for language code
+; 5. What to display as an identifier - a match from the regexp as {1}...{9}, 'full'
+;    or empty for none
+external_links[] = "external_link_kyppi_mjr||external_link_kyppi_mjr||\(mjr\)(.+)||https://www.kyppi.fi/palveluikkuna/mjreki/read/asp/r_kohde_det.aspx?KOHDE_ID={1}||{1}"
+external_links[] = "external_link_kyppi_rpr||external_link_kyppi_rpr||\(rpr\)(.+)||https://www.kyppi.fi/palveluikkuna/rapea/read/asp/r_kohde_det.aspx?KOHDE_ID={1}||{1}"
 
 ; The following two sections control the Alphabetic Browse module.
 [AlphaBrowse]

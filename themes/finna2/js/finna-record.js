@@ -402,7 +402,6 @@ finna.record = (function finnaRecord() {
       }
       infoBounds = container.getBoundingClientRect();
       if (infoBounds.right > window.innerWidth - 8) {
-        //let marginLeft = -(container.clientWidth - Math.ceil(infoBounds.right - window.innerWidth)) - 8;
         let marginLeft = window.innerWidth - infoBounds.right - 8;
         container.style.marginLeft = marginLeft + 'px';
       }

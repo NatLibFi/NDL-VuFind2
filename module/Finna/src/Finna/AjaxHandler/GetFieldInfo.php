@@ -139,12 +139,12 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase
         $params->set('authorityType', $type);
         $params->set('recordSource', $source);
         $authority = null;
-        // Uncomment the following if support for displaying authority info is
-        // needed:
-        /*if ($authId) {
+        $authorityFields = $this->config->LinkPopovers->authority_fields
+            ? $this->config->LinkPopovers->authority_fields->toArray() : [];
+        if ($authIds && $authIds[0] && $authorityFields) {
             try {
                 $authority = $this->loader->load(
-                    $authId,
+                    $authIds[0],
                     'SolrAuth',
                     false,
                     $params
@@ -152,7 +152,7 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase
             } catch (\VuFind\Exception\RecordMissing $e) {
                 return $this->formatResponse('');
             }
-        }*/
+        }
         try {
             $driver = $this->loader->load($recordId, $source);
         } catch (\VuFind\Exception\RecordMissing $e) {
@@ -168,6 +168,7 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase
                 'ids',
                 'authIds',
                 'authority',
+                'authorityFields',
                 'type',
                 'enrichmentData',
                 'driver'
@@ -240,7 +241,7 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase
     }
 
     /**
-     * Fetch data for and identifier from Skosmos
+     * Fetch data for an identifier from Skosmos
      *
      * @param string $id Identifier
      *
