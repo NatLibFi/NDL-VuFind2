@@ -1527,6 +1527,43 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get all subject headings associated with this record apart from geographic
+     * places.  Each heading is returned as an array of chunks, increasing from least
+     * specific to most specific.
+     *
+     * @param bool $extended Whether to return a keyed array with the following
+     * keys:
+     * - heading: the actual subject heading chunks
+     * - type: heading type
+     * - source: source vocabulary
+     * - id: first authority id (if defined)
+     * - ids: multiple authority ids (if defined)
+     * - authType: authority type (if id is defined)
+     *
+     * @return array
+     */
+    public function getAllSubjectHeadingsWithoutPlaces($extended = false)
+    {
+        $headings = [];
+        foreach (['topic', 'genre', 'era'] as $field) {
+            if (isset($this->fields[$field])) {
+                $headings = array_merge($headings, (array)$this->fields[$field]);
+            }
+        }
+
+        // The default index schema doesn't currently store subject headings in a
+        // broken-down format, so we'll just send each value as a single chunk.
+        // Other record drivers (i.e. SolrMarc) can offer this data in a more
+        // granular format.
+        $callback = function ($i) use ($extended) {
+            return $extended
+                ? ['heading' => [$i], 'type' => '', 'source' => '']
+                : [$i];
+        };
+        return array_map($callback, array_unique($headings));
+    }
+
+    /**
      * Get subject places
      *
      * @param bool $extended Whether to return a keyed array with the following
@@ -1574,10 +1611,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $place['type'] = $type;
                     $place['id'] = $id;
                     $place['ids'][] = $id;
-                    $place['authType'] = 'Place';
                 }
                 if ($details) {
-                    $place['detail'] = '(' . implode(', ', $details) . ')';
+                    $place['detail'] = implode(', ', $details);
                 }
                 $results[] = $place;
             } else {

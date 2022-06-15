@@ -597,6 +597,14 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'SubjectsWithoutPlaces',
+            'getAllSubjectHeadingsWithoutPlaces',
+            'data-allSubjectHeadings.phtml',
+            [
+                'context' => ['class' => 'recordSubjects', 'title' => 'Subjects']
+            ]
+        );
+        $setTemplateLine(
             'subjects_extended',
             'getAllSubjectHeadingsExtended',
             'data-allSubjectHeadingsExtended.phtml',
