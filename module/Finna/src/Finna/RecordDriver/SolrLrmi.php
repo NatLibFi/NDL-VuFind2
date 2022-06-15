@@ -425,20 +425,36 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Get base64 encoded string of the materials
+     * Get base64 encoded json string
+     *
+     * @param string $uid Uid string
      *
      * @return string
      */
-    public function getBase64EncodedMaterials()
+    public function getBase64EncodedMaterials($uid)
     {
-        $base64 = '';
+        $xml = $this->getXmlRecord();
+        $breaks = ["\r\n", "\n", "\r"];
+        $desctiption = str_replace($breaks, '', $xml->description[0]);
+        $desctiption = str_replace('"', '\"', $desctiption);
+        $jsonString = '{"name": "' . $xml->title[0] . '",';
+        $jsonString .= '"description": "' . $desctiption . '",';
+        $jsonString .= '"uid": "' . $uid . '",';
+        $jsonString .= '"materials": [';
         $materials = $this->getMaterials();
+        $i = 0;
         foreach ($materials as $material) {
-            $downloadUrl = $material['url'];
-            $format = $this->getFileFormat($downloadUrl);
-            $base64 .= 'data:' . $format . ';base64:' . base64_encode($downloadUrl);
+            $jsonString .= '{"url": "' . $material['url'] . '",';
+            $format = $this->getFileFormat($material['url']);
+            if ($i + 1 == count($materials)) {
+                $jsonString .= '"format": "' . $format . '"}';
+            } else {
+                $jsonString .= '"format": "' . $format . '"},';
+            }
+            $i++;
         }
-        return $base64;
+        $jsonString .= ']}';
+        return base64_encode($jsonString);
     }
 
     /**
