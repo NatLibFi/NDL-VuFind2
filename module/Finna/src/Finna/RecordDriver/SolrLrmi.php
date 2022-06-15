@@ -434,27 +434,25 @@ class SolrLrmi extends SolrQdc
     public function getBase64EncodedMaterials($uid)
     {
         $xml = $this->getXmlRecord();
-        $breaks = ["\r\n", "\n", "\r"];
-        $desctiption = str_replace($breaks, '', $xml->description[0]);
-        $desctiption = str_replace('"', '\"', $desctiption);
-        $jsonString = '{"name": "' . $xml->title[0] . '",';
-        $jsonString .= '"description": "' . $desctiption . '",';
-        $jsonString .= '"uid": "' . $uid . '",';
-        $jsonString .= '"materials": [';
+
+        $materialsArray = [];
         $materials = $this->getMaterials();
-        $i = 0;
         foreach ($materials as $material) {
-            $jsonString .= '{"url": "' . $material['url'] . '",';
-            $format = $this->getFileFormat($material['url']);
-            if ($i + 1 == count($materials)) {
-                $jsonString .= '"format": "' . $format . '"}';
-            } else {
-                $jsonString .= '"format": "' . $format . '"},';
-            }
-            $i++;
+            $materialData = [
+                'url' => $material['url'],
+                'format' => $this->getFileFormat($material['url']),
+            ];
+            $materialsArray[] = $materialData;
         }
-        $jsonString .= ']}';
-        return base64_encode($jsonString);
+
+        $data = [
+            'name' => strval($xml->title[0]),
+            'description' => strval($xml->description[0]),
+            'uid' => $uid,
+            'materials' => $materialsArray,
+        ];
+
+        return base64_encode(json_encode($data, JSON_UNESCAPED_UNICODE));
     }
 
     /**
