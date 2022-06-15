@@ -18,6 +18,7 @@ $additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-a
 ?>
 <div class="inline-linked-field" data-ids="<?=$this->escapeHtmlAttr(json_encode($this->ids))?>" data-auth-ids="<?=$this->escapeHtmlAttr(json_encode($this->authIds))?>" data-type="<?=$this->escapeHtmlAttr($this->type)?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
   <a<?=$aAttributes?>><span class="field-label"><?=$this->escapeHtml($this->label)?></span> <i class="fa fa-caret-down expand" aria-hidden="true"></i><i class="fa fa-caret-up collapse" aria-hidden="true"></i></a><?=$additionalDataElem?>
+  <?=$this->escapeHtmlAttr($this->description ?? '')?>
   <div class="field-info field-popover" id="field-popover-<?=$this->escapeHtmlAttr($fieldId)?>">
     <div class="content">
       <h2><?=$this->escapeHtml($this->label)?></h2>

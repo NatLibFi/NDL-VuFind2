@@ -1533,6 +1533,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      * keys:
      * - heading: the actual subject heading chunks
      * - type: heading type
+     * - detail: addition details
      * - source: source vocabulary
      * - id: authority id (if defined)
      * - ids: multiple authority ids (if defined)
@@ -1555,11 +1556,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     'heading' => [$displayPlace],
                 ];
                 // Collect all ids but use only the first for type etc:
+                $details = [];
                 foreach ($subjectPlace->place->placeID ?? [] as $placeId) {
                     $id = (string)$placeId;
                     $type = (string)($placeId->attributes()->type ?? '');
                     if ($type) {
                         $id = "($type)$id";
+                    }
+                    $typeDesc = $this->translate('place_id_type_' . $type, [], '');
+                    if ($typeDesc) {
+                        $details[] = $typeDesc;
                     }
                     if (isset($place['type'])) {
                         $place['ids'][] = $id;
@@ -1569,6 +1575,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $place['id'] = $id;
                     $place['ids'][] = $id;
                     $place['authType'] = 'Place';
+                }
+                if ($details) {
+                    $place['detail'] = '(' . implode(', ', $details) . ')';
                 }
                 $results[] = $place;
             } else {
