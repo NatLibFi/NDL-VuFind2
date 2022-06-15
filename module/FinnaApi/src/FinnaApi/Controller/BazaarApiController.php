@@ -63,11 +63,11 @@ class BazaarApiController extends ApiController implements ApiInterface
         $headers = $response->getHeaders();
         $headers->addHeaderLine('Access-Control-Allow-Origin', '*');
         $headers->addHeaderLine(
-            'Access-Control-Allow-Methods', 
+            'Access-Control-Allow-Methods',
             'GET, POST, OPTIONS'
         );
         $headers->addHeaderLine(
-            'Access-Control-Allow-Headers', 
+            'Access-Control-Allow-Headers',
             'Content-Type, Authorization, X-Requested-With'
         );
         $request = $this->getRequest();

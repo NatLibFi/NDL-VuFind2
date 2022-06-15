@@ -425,6 +425,23 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
+     * Get base64 encoded string of the materials
+     *
+     * @return string
+     */
+    public function getBase64EncodedMaterials()
+    {
+        $base64 = '';
+        $materials = $this->getMaterials();
+        foreach ($materials as $material) {
+            $downloadUrl = $material['url'];
+            $format = $this->getFileFormat($downloadUrl);
+            $base64 .= 'data:' . $format . ';base64:' . base64_encode($downloadUrl);
+        }
+        return $base64;
+    }
+
+    /**
      * Get material titles in an assoc array
      *
      * @param object $names to look for
