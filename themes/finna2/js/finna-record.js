@@ -449,6 +449,10 @@ finna.record = (function finnaRecord() {
       field.classList.add('open');
       parentLink.setAttribute('aria-expanded', 'true');
       fixPosition(field.querySelector('.field-info'));
+      let firstLink = field.querySelector('.field-info a');
+      if (firstLink) {
+        firstLink.focus();
+      }
 
       let fieldInfo = field.querySelector('.field-info .dynamic-content');
       if (!fieldInfo || fieldInfo.classList.contains('loaded')) {
