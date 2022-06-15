@@ -557,7 +557,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             $preserveSearchTabsFilters
         );
 
-        $authId = $this->driver->getAuthorityId($id, $type);
+        $authId = $this->driver->tryMethod('getAuthorityId', [$id, $type], '');
         $authorityType = $params['authorityType'] ?? '';
         $authorityType
             = $this->config->Authority->typeMap->{$authorityType} ?? $authorityType;
