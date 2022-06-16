@@ -43,6 +43,7 @@ use VuFind\Solr\Utils;
 class Params extends \VuFind\Search\Solr\Params
 {
     use \Finna\Search\FinnaParams;
+    use ParamsSharedTrait;
 
     /**
      * Date converter
@@ -196,6 +197,32 @@ class Params extends \VuFind\Search\Solr\Params
             }
         }
         return false;
+    }
+
+    /**
+     * Format a Solr date for display
+     *
+     * @param string $date   Date
+     * @param string $domain Translation domain
+     *
+     * @return string
+     */
+    protected function formatNewItemsDateForDisplay($date, $domain)
+    {
+        if ($date == '' || $date == '*') {
+            return ['', true];
+        }
+        if (preg_match('/^NOW-(\w+)/', $date, $matches)) {
+            return [
+                $this->translate("$domain::new_items_" . strtolower($matches[1])),
+                false
+            ];
+        }
+        $date = substr($date, 0, 10);
+        return [
+            $this->dateConverter->convertToDisplayDate('Y-m-d', $date),
+            true
+        ];
     }
 
     /**
@@ -672,100 +699,6 @@ class Params extends \VuFind\Search\Solr\Params
             }
         }
         return false;
-    }
-
-    /**
-     * Format display text for a author-id filter entry.
-     *
-     * @param array  $filter Filter
-     * @param string $field  Filter field
-     * @param string $value  Filter value
-     *
-     * @return array
-     */
-    protected function formatAuthorIdFilterListEntry($filter, $field, $value)
-    {
-        $displayText = $filter['displayText'];
-        if ($id = $this->parseAuthorIdFilter($value)) {
-            // Author id filter  (OR query with <field>:<author-id> pairs)
-            $displayText = $this->authorityHelper->formatFacet($id);
-        } elseif (in_array(
-            $filter['field'],
-            $this->authorityHelper->getAuthorIdFacets()
-        )
-        ) {
-            $displayText = $this->authorityHelper->formatFacet($displayText);
-        }
-        $filter['displayText'] = $displayText;
-        return $filter;
-    }
-
-    /**
-     * Attempt to parse author id from a author-id filter.
-     *
-     * @param array $filter Filter
-     *
-     * @return mixed null|string
-     */
-    protected function parseAuthorIdFilter($filter)
-    {
-        $pat = sprintf('/%s:"([a-z0-9_.:]*)"/', AuthorityHelper::AUTHOR2_ID_FACET);
-
-        if (!preg_match($pat, $filter, $matches)) {
-            return null;
-        }
-        return $matches[1];
-    }
-
-    /**
-     * Translate a hierarchical facet filter
-     *
-     * Translates each facet level and concatenates the result
-     *
-     * @param string $field    Field name
-     * @param string $value    Field value
-     * @param string $operator Operator (AND/OR/NOT)
-     *
-     * @return array
-     */
-    protected function translateHierarchicalFacetFilter($field, $value, $operator)
-    {
-        $domain = $this->getOptions()->getTextDomainForTranslatedFacet($field);
-        $parts = explode('/', $value);
-        $result = [];
-        for ($i = 0; $i <= $parts[0]; $i++) {
-            $part = array_slice($parts, 1, $i + 1);
-            $key = $i . '/' . implode('/', $part) . '/';
-            $result[] = $this->translate($key, null, end($part));
-        }
-        $displayText = implode(' > ', $result);
-        return compact('value', 'displayText', 'field', 'operator');
-    }
-
-    /**
-     * Format a Solr date for display
-     *
-     * @param string $date   Date
-     * @param string $domain Translation domain
-     *
-     * @return string
-     */
-    protected function formatNewItemsDateForDisplay($date, $domain)
-    {
-        if ($date == '' || $date == '*') {
-            return ['', true];
-        }
-        if (preg_match('/^NOW-(\w+)/', $date, $matches)) {
-            return [
-                $this->translate("$domain::new_items_" . strtolower($matches[1])),
-                false
-            ];
-        }
-        $date = substr($date, 0, 10);
-        return [
-            $this->dateConverter->convertToDisplayDate('Y-m-d', $date),
-            true
-        ];
     }
 
     /**

@@ -285,7 +285,7 @@ class RecordDataFormatterFactory
         );
         $setTemplateLine(
             'Archive Origination',
-            'getOrigination',
+            'getOriginationExtended',
             'data-origination.phtml',
             [
                 'context' => ['class' => 'record-origination']
@@ -348,7 +348,7 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Language',
             'getLanguages',
-            'data-transEsc.phtml',
+            'data-transEscLangcode.phtml',
             [
                 'context' => ['class' => 'recordLanguage']
             ]
@@ -356,7 +356,7 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'original_work_language',
             'getOriginalLanguages',
-            'data-transEsc.phtml',
+            'data-transEscLangcode.phtml',
             [
                 'context' => ['class' => 'originalLanguage']
             ]
@@ -546,6 +546,14 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'lido_editions',
+            'getEditions',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordDisplayEdition']
+            ]
+        );
+        $setTemplateLine(
             'Subject Detail',
             'getSubjectDetails',
             'data-escapeHtml.phtml',
@@ -555,10 +563,13 @@ class RecordDataFormatterFactory
         );
         $setTemplateLine(
             'Subject Place',
-            'getSubjectPlaces',
-            'data-escapeHtml.phtml',
+            'getSubjectPlacesExtended',
+            'data-allSubjectHeadingsExtended.phtml',
             [
-                'context' => ['class' => 'recordSubjects']
+                'context' => [
+                    'class' => 'recordSubjects',
+                    'headingType' => 'place',
+                ]
             ]
         );
         $setTemplateLine(
@@ -583,6 +594,14 @@ class RecordDataFormatterFactory
             'data-allSubjectHeadings.phtml',
             [
                 'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        $setTemplateLine(
+            'SubjectsWithoutPlaces',
+            'getAllSubjectHeadingsWithoutPlaces',
+            'data-allSubjectHeadings.phtml',
+            [
+                'context' => ['class' => 'recordSubjects', 'title' => 'Subjects']
             ]
         );
         $setTemplateLine(
@@ -730,6 +749,17 @@ class RecordDataFormatterFactory
             'data-other-screenings.phtml',
             [
                'context' => ['class' => 'record-other-screenings']
+            ]
+        );
+        $setTemplateLine(
+            'Movie Thanks',
+            'getMovieThanks',
+            'data-escapeHtml.phtml',
+            [
+               'context' => [
+                   'class' => 'record-thanks',
+                   'title' => 'movie_thanks'
+                ]
             ]
         );
         $setTemplateLine(
@@ -1123,6 +1153,14 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'materialCondition']
             ]
         );
+        $setTemplateLine(
+            'Contained In',
+            'getAllRecordLinks',
+            'data-containedIn.phtml',
+            [
+                'context' => ['class' => 'isPartOf']
+            ]
+        );
 
         $getAccessRestrictions = function ($data, $options) {
             $final = [];
@@ -1351,7 +1389,7 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Uncontrolled Title',
             'getUncontrolledTitle',
-            'data-transEsc.phtml',
+            'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'record-uncontrolled-title']
             ]

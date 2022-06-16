@@ -39,11 +39,23 @@ namespace Finna\RecordDriver;
 class R2Ead3 extends SolrEad3
 {
     /**
-     * Used for identifying search backends
+     * Constructor
      *
-     * @var string
+     * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
+     * for built-in defaults)
+     * @param \Laminas\Config\Config $recordConfig   Record-specific configuration
+     * file (omit to use $mainConfig as $recordConfig)
+     * @param \Laminas\Config\Config $searchSettings Search-specific configuration
+     * file
      */
-    protected $sourceIdentifier = 'R2';
+    public function __construct(
+        $mainConfig = null,
+        $recordConfig = null,
+        $searchSettings = null
+    ) {
+        parent::__construct($mainConfig, $recordConfig, $searchSettings);
+        $this->setSourceIdentifiers('R2');
+    }
 
     /**
      * Does this record contain restricted metadata?

@@ -113,7 +113,7 @@ class Transaction extends \VuFind\Db\Row\RowGateway
      */
     public function setPaid(int $timestamp = null): void
     {
-        $this->paid = date('Y-m-d H:i:s', $timestamp);
+        $this->paid = date('Y-m-d H:i:s', $timestamp ?: time());
         $this->complete = TransactionTable::STATUS_PAID;
         $this->status = 'paid';
         $this->save();

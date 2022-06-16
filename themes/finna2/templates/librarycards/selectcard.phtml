@@ -48,7 +48,7 @@
                 if (strstr($username, '.')) {
                   [$target, $username] = explode('.', $username, 2);
                 }
-                $display = $this->transEsc($card->card_name ? $card->card_name : $username);
+                $display = $this->escapeHtml($card->card_name ? $card->card_name : $username);
                 if ($display == "$target.$username") {
                   $display = $username;
                 }

@@ -1,5 +1,5 @@
-<?php $originationExt = $this->driver->tryMethod('getOriginationExtended'); //Don't add START and END comments ?>
-<?php foreach ($originationExt ?? [['name' => $data]] as $idx => $origination): ?>
+<?php //Don't add START and END comments ?>
+<?php foreach ($data as $idx => $origination): ?>
   <?php
     $description = $origination['detail'] ?? '';
     if ($date = $origination['date'] ?? '') {
@@ -12,5 +12,5 @@
     unset($origination['date']);
   ?>
   <?=$idx > 0 ? '<br/>' : ''?>
-  <?=$this->record($this->driver)->getAuthorityLinkElement('author', $origination['name'], $origination, ['showInlineInfo' => true, 'authorityType' => $author['type'] ?? null, 'description' => true])?>
+  <?=$this->record($this->driver)->getLinkedFieldElement('author', $origination['name'], $origination, ['authorityType' => $author['type'] ?? null, 'description' => true])?>
 <?php endforeach; ?>

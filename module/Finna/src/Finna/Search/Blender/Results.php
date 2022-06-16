@@ -27,8 +27,6 @@
  */
 namespace Finna\Search\Blender;
 
-use FinnaSearch\Command\SearchCommand;
-
 /**
  * Blender aspect of the Search Multi-class (Results)
  *
@@ -38,72 +36,7 @@ use FinnaSearch\Command\SearchCommand;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
-class Results extends \Finna\Search\Solr\Results
+class Results extends \VuFind\Search\Blender\Results
 {
-    /**
-     * Search backend identifiers.
-     *
-     * @var string
-     */
-    protected $backendId = 'Blender';
-
-    /**
-     * Support method for performAndProcessSearch -- perform a search based on the
-     * parameters passed to the object.
-     *
-     * @return void
-     */
-    protected function performSearch()
-    {
-        $query  = $this->getParams()->getQuery();
-        $limit  = $this->getParams()->getLimit();
-        $offset = $this->getStartRecord() - 1;
-        $params = $this->getParams()->getBackendParameters();
-        $searchService = $this->getSearchService();
-
-        try {
-            $command = new SearchCommand(
-                $this->backendId,
-                $query,
-                $offset,
-                $limit,
-                $params
-            );
-            $searchService->invoke($command);
-            $collection = $command->getResult();
-        } catch (\VuFindSearch\Backend\Exception\BackendException $e) {
-            // If the query caused a parser error, see if we can clean it up:
-            if ($e->hasTag('VuFind\Search\ParserError')
-                && $newQuery = $this->fixBadQuery($query)
-            ) {
-                // We need to get a fresh command, since the previous one was
-                // manipulated by the previous search.
-                $command = new SearchCommand(
-                    $this->backendId,
-                    $newQuery,
-                    $offset,
-                    $limit,
-                    $params
-                );
-                $searchService->invoke($command);
-                $collection = $command->getResult();
-            } else {
-                throw $e;
-            }
-        }
-
-        $this->responseFacets = $collection->getFacets();
-        $this->resultTotal = $collection->getTotal();
-
-        // Process spelling suggestions
-        $spellcheck = $collection->getSpellcheck();
-        $this->spellingQuery = $spellcheck->getQuery();
-        $this->suggestions = $this->getSpellingProcessor()
-            ->getSuggestions($spellcheck, $this->getParams()->getQuery());
-
-        // Construct record drivers for all the items in the response:
-        $this->results = $collection->getRecords();
-
-        $this->errors = $collection->getErrors();
-    }
+    use \Finna\Search\Results\SearchResultsTrait;
 }

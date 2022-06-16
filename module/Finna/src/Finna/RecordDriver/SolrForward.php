@@ -224,11 +224,15 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     ],
                     'avustajat' => [
                         'credited' => 'assistant'
+                    ],
+                    'no_role' => [
+                        'credited' => 'other'
                     ]
                 ]
             ],
             'skipTags' => [
-                'elotekijakokoonpano' => true
+                'elotekijakokoonpano' => true,
+                'muuttekijat' => true
             ]
         ],
         'nonPresenterSecondaryAuthors' => [
@@ -276,6 +280,11 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         'uncredited' => 'uncredited'
                     ]
                 ],
+                'no_type' => [
+                    'no_role' => [
+                        'credited' => 'credited'
+                    ]
+                ],
                 'default' => [
                     'default' => [
                         'credited' => 'credited',
@@ -320,6 +329,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             'elokuva_sisakuvat' => 'interiors',
             'elokuva_studiot' => 'studios',
             'elokuva_kuvauspaikkahuomautus' => 'locationNotes',
+            'elokuva_kiitokset' => 'thanks'
         ],
         'broadcastingInfoMappings' => [
             'elokuva-elotelevisioesitys-esitysaika' => 'time',
@@ -1185,6 +1195,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             $eventAttrs = $production->attributes();
             $url = (string)$eventAttrs->{'elokuva-elonet-materiaali-video-url'};
             $vimeoID = (string)$eventAttrs->{'vimeo-id'};
+            if (!$url && !$vimeoID) {
+                continue;
+            }
             foreach ($xml->Title as $title) {
                 if (!isset($title->TitleText)) {
                     continue;
@@ -1212,7 +1225,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         }
                     }
                 }
-
                 $videos[] = [
                     'id' => $vimeoID,
                     'url' => $videoURL,
@@ -1336,6 +1348,17 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     {
         $events = $this->getProductionEvents();
         return $events['inspectionDetails'] ?? [];
+    }
+
+    /**
+     * Return Movie Thanks
+     *
+     * @return array
+     */
+    public function getMovieThanks(): array
+    {
+        $events = $this->getProductionEvents();
+        return $events['thanks'] ?? [];
     }
 
     /**

@@ -3226,47 +3226,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             $b['location'] = $b['journalInfo']['location'];
             return $this->defaultHoldingsSortFunction($a, $b);
         } else {
-            $a = $this->parseJournalIssue($editionA);
-            $b = $this->parseJournalIssue($editionB);
-
-            if (empty($a)) {
-                return 1;
-            }
-            if (empty($b)) {
-                return -1;
-            }
-
-            if ($a === $b) {
-                return 0;
-            }
-
-            $cnt = min(count($a), count($b));
-            $a = array_slice($a, 0, $cnt);
-            $b = array_slice($b, 0, $cnt);
-
-            $f = function ($str) {
-                $parts = explode('-', $str);
-                return reset($parts);
-            };
-
-            $a = array_map($f, $a);
-            $b = array_map($f, $b);
-
-            return $a > $b ? -1 : 1;
+            return strnatcasecmp($editionB, $editionA);
         }
-    }
-
-    /**
-     * Utility function for parsing journal issue.
-     *
-     * @param string $issue Journal issue.
-     *
-     * @return array
-     */
-    protected function parseJournalIssue($issue)
-    {
-        $parts = explode(':', $issue);
-        return array_map('trim', $parts);
     }
 
     /**

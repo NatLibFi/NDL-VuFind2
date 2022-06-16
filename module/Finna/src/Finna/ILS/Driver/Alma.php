@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2019-2020.
+ * Copyright (C) The National Library of Finland 2019-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -608,17 +608,18 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         if ($expiryDate = (string)$xml->expiry_date) {
             $parsed = $this->parseDate($expiryDate);
             $profile['expiration_date'] = $parsed;
-            if ($this->daysBeforeAccountExpirationNotification) {
-                $date = \DateTime::createFromFormat(
-                    'Y-m-d',
-                    $this->dateConverter->convertFromDisplayDate('Y-m-d', $parsed)
-                );
-                $diff = $date->diff(new \Datetime());
-                if ($diff->invert
-                    && $diff->days <= $this->daysBeforeAccountExpirationNotification
-                ) {
-                    $profile['expiration_soon'] = true;
-                }
+            $date = \DateTime::createFromFormat(
+                'Y-m-d',
+                $this->dateConverter->convertFromDisplayDate('Y-m-d', $parsed)
+            );
+            $diff = $date->diff(new \Datetime());
+            if (!$diff->invert && $diff->days > 0) {
+                $profile['expired'] = true;
+            } elseif ($this->daysBeforeAccountExpirationNotification
+                && $diff->invert
+                && $diff->days <= $this->daysBeforeAccountExpirationNotification
+            ) {
+                $profile['expiration_soon'] = true;
             }
         }
 
@@ -686,13 +687,9 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             return false;
         }
 
-        $userBlocks = $xml->user_blocks->user_block;
-        if ($userBlocks == null || empty($userBlocks)) {
-            return false;
-        }
-
         $blocks = [];
-        foreach ($userBlocks as $block) {
+        $userBlocks = $xml->user_blocks->user_block;
+        foreach ($userBlocks ?? [] as $block) {
             $blockStatus = (string)$block->block_status;
             if ($blockStatus === 'ACTIVE') {
                 $blocks[] = 'Borrowing Block Message';

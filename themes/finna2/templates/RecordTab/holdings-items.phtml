@@ -129,8 +129,13 @@
                 <?=$this->translate('status_Ordered')?>: <?=$row['availabilityInfo']['ordered']?>
               </div>
             <?php endif; ?>
-            <?php if (!empty($row['availabilityInfo']['available'])): ?>
-              <div class="available"><?=$this->translate('Available items')?>: <?=$row['availabilityInfo']['available']?> / <?=$row['availabilityInfo']['total']?></div>
+            <?php if (isset($row['availabilityInfo']['available'])): ?>
+              <div class="available">
+                <?=$this->translate('Available items')?>: <?=$row['availabilityInfo']['available']?>
+                <?php if (isset($row['availabilityInfo']['total'])): ?>
+                  / <?=$row['availabilityInfo']['total']?>
+                <?php endif; ?>
+              </div>
             <?php endif; ?>
           </div>
         <?php endif; ?>
@@ -142,7 +147,7 @@
       <button class="more-link load-more-items-ajax" type="button">
         <?=$this->transEsc('show_more')?> <i class="fa fa-arrow-down"></i>
       </button>
-      <span class="load-more-indicator-ajax hidden"><i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('Loading')?>...</span>
+      <span class="load-more-indicator-ajax hidden"><i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('loading_ellipsis')?></span>
     </div>
     <div class="holdings-items-ajax hidden"></div>
   <?php endif; ?>

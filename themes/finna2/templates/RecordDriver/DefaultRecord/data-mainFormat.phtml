@@ -4,7 +4,9 @@
   <?php if ($event != $data[0]): ?><br/><?php endif; ?>
   <?php if (!empty($event['name'])): ?><?=$this->escapeHtml($event['name'])?><br/><?php endif; ?>
   <?php if (!empty($event['date'])): ?><?=$this->escapeHtml($event['date'])?><br/><?php endif; ?>
-  <?php if (!empty($event['method'])): ?><?=$this->escapeHtml($event['method'])?><br/><?php endif; ?>
+  <?php if (!empty($event['methods'])): ?>
+    <?=implode('<br/>', array_map([$this, 'escapeHtml'], $event['methods']))?><br/>
+  <?php endif; ?>
   <?php if (!empty($event['materials'])): ?>
     <?=implode('<br/>', array_map([$this, 'escapeHtml'], $event['materials']))?><br/>
   <?php endif; ?>
@@ -31,6 +33,8 @@
     <?=implode(' ; ', $displayActors); ?>
     <br>
   <?php endif; ?>
-  <?php if (!empty($event['description'])): ?><?=$this->escapeHtml($event['description'])?><br/><?php endif; ?>
+  <?php if (!empty($event['descriptions'])): ?>
+    <?=implode('<br/>', array_map([$this, 'escapeHtml'], $event['descriptions']))?><br/>
+  <?php endif; ?>
 <?php endforeach; ?>
 </div>

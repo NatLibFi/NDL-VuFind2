@@ -81,9 +81,7 @@ class FinnaPanel extends AbstractBase
             $this->setVariable('content', $this->dom->firstChild()->innerHTML());
         }
 
-        $this->setTemplate(
-            'components/molecules/containers/finna-panel/finna-panel'
-        );
+        $this->setTemplate(self::getTemplateName());
     }
 
     /**
@@ -140,11 +138,21 @@ class FinnaPanel extends AbstractBase
     }
 
     /**
+     * Get the template name or null if a default template should be used.
+     *
+     * @return string|null
+     */
+    public static function getTemplateName(): ?string
+    {
+        return 'components/molecules/containers/finna-panel/finna-panel';
+    }
+
+    /**
      * Get default values for view model variables.
      *
      * @return array
      */
-    protected function getDefaultVariables(): array
+    public static function getDefaultVariables(): array
     {
         return [
             'attributes'   => ['class' => 'finna-panel-default'],

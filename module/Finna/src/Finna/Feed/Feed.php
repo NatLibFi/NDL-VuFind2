@@ -323,14 +323,15 @@ EOT;
                 }
             } else {
                 // Local file
-                if (!is_file($url)) {
-                    $this->logError("File $url could not be found");
+                $file = APPLICATION_PATH . '/' . ltrim($url, '/');
+                if (!is_file($file)) {
+                    $this->logError("File $file (from $url) could not be found");
                 }
                 try {
-                    $channel = Reader::importFile($url);
+                    $channel = Reader::importFile($file);
                 } catch (\Exception $e) {
                     $this->logError(
-                        "Error importing feed from file $url: " . $e->getMessage()
+                        "Error importing feed from file $file: " . $e->getMessage()
                     );
                 }
             }

@@ -358,7 +358,7 @@
     <div class="clearfix"></div>
     <?php if (isset($holding['items'][0]['detailsGroupKey'])): ?>
       <div class="<?=$this->escapeHtmlAttr($holdingsDetails)?>GetDetails <?=$this->escapeHtmlAttr($holdingsDetails)?> hidden" data-key="<?=$this->escapeHtmlAttr($holding['items'][0]['detailsGroupKey'])?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
-        <i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('Loading')?>...
+        <i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('loading_ellipsis')?>
       </div>
     <?php endif; ?>
     <?php if (!$this->holdings()->showDetailsAfterLocationGroup()): ?>

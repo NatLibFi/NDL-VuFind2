@@ -289,37 +289,8 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         }
 
         $patron = null;
-        $matches = false;
-        foreach ($user->getLibraryCards() as $card) {
-            $card = $user->getLibraryCard($card['id']);
-
-            $match = mb_strtolower($card['cat_username'], 'UTF-8')
-                === mb_strtolower($t->cat_username, 'UTF-8');
-            if ($match) {
-                $matches = true;
-                try {
-                    $cardUser = $this->userTable->createRow();
-                    $cardUser->cat_username = $card['cat_username'];
-                    $cardUser->cat_pass_enc = $card['cat_pass_enc'];
-                    $patron = $this->catalog->patronLogin(
-                        $card['cat_username'],
-                        $cardUser->getCatPassword()
-                    );
-
-                    if ($patron) {
-                        break;
-                    }
-                } catch (\Exception $e) {
-                    $this->err(
-                        'Patron login error: ' . $e->getMessage(),
-                        'Patron login failed for a user'
-                    );
-                    $this->logException($e);
-                }
-            }
-        }
-
-        if (!$matches) {
+        $cards = $user->getLibraryCardsByUserName($t->cat_username);
+        if (!$cards) {
             $this->warn(
                 "Library card not found for user {$user->username}"
                 . " (id {$user->id}), card {$t->cat_username}"
@@ -327,6 +298,24 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
             $t->setRegistrationFailed('card not found');
             $failedCnt++;
             return false;
+        }
+        // Make sure to try all cards with a matching user name:
+        foreach ($cards as $card) {
+            // Read the card with a separate call to decrypt password:
+            $card = $user->getLibraryCard($card->id);
+            try {
+                $patron = $this->catalog
+                    ->patronLogin($card->cat_username, $card->cat_password);
+                if ($patron) {
+                    break;
+                }
+            } catch (\Exception $e) {
+                $this->err(
+                    'Patron login error: ' . $e->getMessage(),
+                    'Patron login failed for a user'
+                );
+                $this->logException($e);
+            }
         }
 
         if (!$patron) {
@@ -371,10 +360,10 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
     /**
      * Process an unresolved transaction.
      *
-     * @param Transaction $t         Transaction
-     * @param array       $report    Transactions to be reported.
-     * @param int         $remindCnt Number of transactions to be
-     *                               reported as unresolved.
+     * @param \Finna\Db\Row\Transaction $t         Transaction
+     * @param array                     $report    Transactions to be reported.
+     * @param int                       $remindCnt Number of transactions to be
+     * reported as unresolved.
      *
      * @return void
      */
@@ -382,13 +371,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
     {
         $this->msg("  Transaction id {$t->transaction_id} still unresolved.");
 
-        if (!$this->transactionTable->setTransactionReported($t->transaction_id)) {
-            $this->err(
-                '    Failed to update transaction ' . $t->transaction_id
-                    . ' as reported',
-                'Failed to update a transaction as reported'
-            );
-        }
+        $t->setReportedAndExpired();
         if (!isset($report[$t->driver])) {
             $report[$t->driver] = 0;
         }

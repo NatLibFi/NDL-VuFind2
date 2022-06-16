@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2021.
+ * Copyright (C) The National Library of Finland 2021-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -27,12 +27,9 @@
  */
 namespace Finna\Service;
 
-use Finna\Service\CommonMark\MarkdownBlockRenderer;
-use Finna\Service\CommonMark\MarkdownHeadingRenderer;
-use Finna\View\CustomElement\CommonMark\CustomElementExtension;
+use Finna\CommonMark\Extension\CustomElementExtension;
 use Interop\Container\ContainerInterface;
-use Laminas\Config\Config;
-use League\CommonMark\ConfigurableEnvironmentInterface;
+use League\CommonMark\Environment\EnvironmentBuilderInterface;
 
 /**
  * Finna Markdown Service factory
@@ -76,27 +73,13 @@ class MarkdownFactory extends \VuFind\Service\MarkdownFactory
     }
 
     /**
-     * Add extensions to Markdown environment.
+     * Get Markdown environment.
      *
-     * @param $environment    ConfigurableEnvironmentInterface Markdown environment
-     * @param $markdownConfig Config                           VuFind Markdown config
-     *
-     * @return void
+     * @return EnvironmentBuilderInterface
      */
-    protected function addExtensions(
-        ConfigurableEnvironmentInterface $environment,
-        Config $markdownConfig
-    ): void {
-        parent::addExtensions($environment, $markdownConfig);
-
-        $environment->addBlockRenderer(
-            'League\CommonMark\Block\Element\HtmlBlock',
-            new MarkdownBlockRenderer()
-        );
-        $environment->addBlockRenderer(
-            'League\CommonMark\Block\Element\Heading',
-            new MarkdownHeadingRenderer()
-        );
+    protected function getEnvironment(): EnvironmentBuilderInterface
+    {
+        $environment = parent::getEnvironment();
 
         $config = $this->container->get('config');
         $customElementConfig
@@ -110,5 +93,7 @@ class MarkdownFactory extends \VuFind\Service\MarkdownFactory
                 )
             );
         }
+
+        return $environment;
     }
 }

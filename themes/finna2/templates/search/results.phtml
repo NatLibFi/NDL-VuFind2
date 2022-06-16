@@ -93,6 +93,12 @@
     && ($this->showBulkOptions || !$this->cart()->isActiveInSearch());
   // Enable bulk options if appropriate:
   $this->showCheckboxes = $this->showCartControls || $this->showBulkOptions;
+  // Create a css class for results from the search class:
+  $searchClass = $this->params->getSearchClassId();
+  if (!ctype_upper($searchClass)) {
+    $searchClass = preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1-', $searchClass);
+  }
+  $this->resultsClass = 'search-results-' . strtolower($searchClass);
 
   // Load Javascript dependencies into header:
   $this->headScript()->appendFile("check_save_statuses.js");

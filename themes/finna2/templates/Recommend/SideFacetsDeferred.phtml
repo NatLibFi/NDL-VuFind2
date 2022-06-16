@@ -111,7 +111,7 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
     <div class="list-group facet<?= $daterangeFacet ? ' daterange-facet' : '' ?> facet-group" id="side-panel-<?=$escAttrTitle?>">
       <button class="list-group-item title<?= $isCollapsed ? ' collapsed' : '' ?>" data-toggle="collapse" data-target="#<?=$dataTarget?>" aria-controls="<?=$dataTarget?>" aria-expanded="<?= !$isCollapsed ? 'true' : 'false';?>"><?=$this->transEsc($facetName)?></button>
       <div id="<?=$dataTarget?>" class="collapse<?= !$isCollapsed ? ' in' : '';?>" data-facet="<?=$escAttrTitle?>" aria-expanded="<?= !$isCollapsed ? 'true' : 'false';?>">
-        <span class="facet-load-indicator"><?=$this->icon('spinner') ?> <?=$msgLoading?>...</span>
+        <span class="facet-load-indicator"><?=$this->icon('spinner') ?> <?=$msgLoading?></span>
         <span class="facet-load-failed hidden"><?=$msgFailed?></span>
         <?php if (in_array($title, $hierarchicalFacets)): ?>
           <div id="facet_<?=$escTitle?>" class="jstree-facet"
