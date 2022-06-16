@@ -1542,7 +1542,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    public function getAllSubjectHeadingsWithoutPlaces($extended = false)
+    public function getAllSubjectHeadingsWithoutPlaces(bool $extended = false): array
     {
         $headings = [];
         foreach (['topic', 'genre', 'era'] as $field) {
