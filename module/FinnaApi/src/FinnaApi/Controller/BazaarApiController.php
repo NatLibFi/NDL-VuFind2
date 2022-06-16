@@ -93,8 +93,8 @@ class BazaarApiController extends ApiController implements ApiInterface
             'data' => $requestParams['return_url']]
         );
 
-        // ALLI-7524 TODO: Get base url dynamically
-        $viewUrl = 'http://localhost:8080/vufind2/Search/Bazaar?uuid=';
+        $baseUrl = $this->getServerUrl('home');
+        $viewUrl = $baseUrl . 'Search/Bazaar?uuid=';
         $response = [
             'view_url' => $viewUrl . $requestParams['resource_uid']
         ];
