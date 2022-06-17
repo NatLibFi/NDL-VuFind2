@@ -515,15 +515,15 @@ class SearchController extends \VuFind\Controller\SearchController
         $uuid = $this->getRequest()->getQuery('uuid');
 
         $finnaCache = $this->getTable('FinnaCache');
-        $recoveryRecord = $finnaCache->getByResourceId($uuid);
+        $cacheRow = $finnaCache->getByResourceId($uuid);
 
         $session = new \Laminas\Session\Container(
             \Finna\View\Helper\Root\Session::SESSION_NAME,
             $this->serviceLocator->get(\Laminas\Session\SessionManager::class)
         );
 
-        $session['resource_uid'] = $recoveryRecord['resource_id'];
-        $session['return_url'] = $recoveryRecord['data'];
+        $session['resource_uid'] = $cacheRow['resource_id'];
+        $session['return_url'] = $cacheRow['data'];
 
         $url = $this->url()->fromRoute('search-home');
         return $this->redirect()->toUrl($url);

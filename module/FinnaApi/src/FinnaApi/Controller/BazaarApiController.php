@@ -86,20 +86,26 @@ class BazaarApiController extends ApiController implements ApiInterface
     {
         $requestParams = json_decode($this->getRequest()->getContent(), true);
 
-        $finnaCache = $this->getTable('FinnaCache');
-        $finnaCache->insert(
-            ['resource_id' => $requestParams['resource_uid'],
-            'mtime' => time(),
-            'data' => $requestParams['return_url']]
-        );
+        $uuid = $this->getConfig()->Bazaar->uuid['moodle'];
 
-        $baseUrl = $this->getServerUrl('home');
-        $viewUrl = $baseUrl . 'Search/Bazaar?uuid=';
-        $response = [
-            'view_url' => $viewUrl . $requestParams['resource_uid']
-        ];
+        if ($uuid == $requestParams['resource_uid']) {
+            $finnaCache = $this->getTable('FinnaCache');
+            $finnaCache->insert(
+                ['resource_id' => $requestParams['resource_uid'],
+                'mtime' => time(),
+                'data' => $requestParams['return_url']]
+            );
 
-        return $this->output($response, self::STATUS_OK);
+            $baseUrl = $this->getServerUrl('home');
+            $viewUrl = $baseUrl . 'Search/Bazaar?uuid=';
+            $response = [
+                'view_url' => $viewUrl . $requestParams['resource_uid']
+            ];
+
+            return $this->output($response, self::STATUS_OK);
+        } else {
+            return $this->output([], self::STATUS_ERROR, 403, 'Unauthorized');
+        }
     }
 
     /**
