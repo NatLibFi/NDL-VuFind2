@@ -10,6 +10,12 @@
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   $formats = $this->driver->getFormats();
+
+  if ($this->session()->get('resource_uid')) {
+    $this->layout()->currentRecordId = $this->driver->getUniqueId();
+    $this->layout()->base64EncodedMaterials = $this->driver->getBase64EncodedMaterials($this->session()->get('resource_uid'));
+  }
+
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment?>">
     <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'displayIcon' => true, 'source' => 'L1', 'imageClick' => 'none']);?>
@@ -85,14 +91,6 @@
             </ul>
           </div>
         </div>
-      <?php endif; ?>
-      <?php if ($this->session()->get('resource_uid')): ?>
-        <?php $base64EncodedMaterials = $this->driver->getBase64EncodedMaterials($this->session()->get('resource_uid')); ?>
-        <form action="<?=$this->session()->get('return_url')?>" method="POST">
-          <input type="hidden" name="params" value="<?=$base64EncodedMaterials?>">
-          <input type="submit" name="submit" value="<?=$this->transEsc('selection')?>" class="btn btn-primary feedback-record">
-          </form>
-        <p><br></p>
       <?php endif; ?>
       <?= $this->record($this->driver)->getMaterialDisclaimer() ?>
       <?php if (!empty($summary)): ?>
