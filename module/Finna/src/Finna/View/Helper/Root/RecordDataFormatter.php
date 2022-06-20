@@ -77,7 +77,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Location', 'Manufacturer', 'Measurements',
             'Methodology', 'Music Compositions Extended', 'New Title',
             'Notated Music Format', 'Notes', 'Objective and Content',
-            'original_work_language', 'Other Classification',
+            'original_work_language',  'Original Version Notes', 'Other Classification',
             'Other Classifications', 'Other ID',
             'Other Links', 'Other Screenings',
             'Other Titles', 'Physical Description', 'Place of Origin',

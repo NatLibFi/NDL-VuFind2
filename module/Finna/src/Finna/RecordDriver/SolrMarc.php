@@ -479,6 +479,26 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
+     * Get original version notes from fields 534.
+     *
+     * @return array
+     */
+    public function getOriginalVersionNotes(): array
+    {
+        $results = [];
+        foreach ($this->getMarcReader()->getFields('534') as $field) {
+            if ($subfields = $this->getSubfieldArray(
+                $field,
+                ['p', 'c']
+            )
+            ) {
+                $results[] = implode(' ', $subfields);
+            }
+        }
+        return $results;
+    }
+
+    /**
      * Get an array of embedded component parts
      *
      * @return array Component parts
@@ -2025,7 +2045,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     public function getNotes()
     {
         $results = [];
-        foreach (['515', '550'] as $fieldCode) {
+        foreach (['515', '534', '550'] as $fieldCode) {
             foreach ($this->getMarcReader()->getFields($fieldCode) as $field) {
                 if ($subfield = $this->getSubfield($field, 'a')) {
                     $results[] = $this->stripTrailingPunctuation($subfield);
