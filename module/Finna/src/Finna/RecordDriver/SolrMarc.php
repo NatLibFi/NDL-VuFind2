@@ -497,7 +497,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             ) {
                 $result['notes'] = implode(' ', $subfields);
             }
-            $results[] = $result;
+            if ($result) {
+                $results[] = $result;
+            }
         }
         return $results;
     }
