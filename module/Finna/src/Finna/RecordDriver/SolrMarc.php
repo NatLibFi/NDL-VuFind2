@@ -2278,7 +2278,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         $results = [];
         foreach ($this->getMarcReader()->getFields('753') as $field) {
             if ($subfield = $this->getSubfield($field, 'a')) {
-                $results[] = $this->stripTrailingPunctuation($subfield);
+                $subfield = $this->stripTrailingPunctuation($subfield);
+                if (!in_array($subfield, $results)) {
+                    $results[] = $subfield;
+                }
             }
         }
         return $results;
