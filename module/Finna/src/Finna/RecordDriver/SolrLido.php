@@ -1425,7 +1425,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         foreach ($this->getXmlRecord()->lido->descriptiveMetadata
             ->eventWrap->eventSet ?? [] as $set
         ) {
-            if (!($event = $set->event)) {
+            if (!($event = $set->event ?? '')) {
                 continue;
             }
             $eventType = (string)($event->eventType->term ?? '');
