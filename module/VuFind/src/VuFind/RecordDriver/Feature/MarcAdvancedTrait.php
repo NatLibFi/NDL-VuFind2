@@ -550,10 +550,9 @@ trait MarcAdvancedTrait
                 // reliable way to split up a table of contents.
                 $str = '';
                 foreach ($field['subfields'] as $subfield) {
-                    if ('8' === $subfield['code']) {
-                        continue;
+                    if ('8' !== $subfield['code']) {
+                        $str .= trim($subfield['data']) . ' ';
                     }
-                    $str .= trim($subfield['data']) . ' ';
                 }
                 $toc = array_merge(
                     $toc,
