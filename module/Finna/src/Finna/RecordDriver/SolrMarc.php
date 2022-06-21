@@ -2267,4 +2267,20 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         }
         return $results;
     }
+
+    /**
+     * Get hardware information from fields 753.
+     *
+     * @return array
+     */
+    public function getHardwares(): array
+    {
+        $results = [];
+        foreach ($this->getMarcReader()->getFields('753') as $field) {
+            if ($subfield = $this->getSubfield($field, 'a')) {
+                $results[] = $this->stripTrailingPunctuation($subfield);
+            }
+        }
+        return $results;
+    }
 }
