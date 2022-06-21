@@ -104,7 +104,7 @@ class BazaarApiController extends ApiController implements ApiInterface
 
             return $this->output($response, self::STATUS_OK);
         } else {
-            return $this->output([], self::STATUS_ERROR, 403, 'Unauthorized');
+            return $this->output([], self::STATUS_ERROR, 401, 'Unauthorized');
         }
     }
 

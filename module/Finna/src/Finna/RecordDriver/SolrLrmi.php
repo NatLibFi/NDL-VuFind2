@@ -445,6 +445,34 @@ class SolrLrmi extends SolrQdc
             $materialsArray[] = $materialData;
         }
 
+        /*
+        Array ( 
+            [0] => Array ( 
+                [urls] => Array ( 
+                    [small] => https://aoe.fi/api/thumbnail/thumbnail-1655379778275.png 
+                    [medium] => https://aoe.fi/api/thumbnail/thumbnail-1655379778275.png 
+                    [large] => https://aoe.fi/api/thumbnail/thumbnail-1655379778275.png 
+                ) 
+                [description] => 
+                [rights] => Array ( ) 
+            )
+        )
+
+        $result[] = [
+            'urls' => [
+                'small' => $url,
+                'medium' => $url,
+                'large' => $url
+            ],
+            'description' => '',
+            'rights' => []
+        ];
+         */
+
+        $allImages = $this->getAllImages()[0]['urls'];
+
+        
+
         $data = [
             'name' => strval($xml->title[0]),
             'description' => strval($xml->description[0]),
