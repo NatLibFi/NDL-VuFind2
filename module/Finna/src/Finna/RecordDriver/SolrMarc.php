@@ -2045,7 +2045,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     public function getNotes()
     {
         $results = [];
-        foreach (['515', '534', '550'] as $fieldCode) {
+        foreach (['515', '550'] as $fieldCode) {
             foreach ($this->getMarcReader()->getFields($fieldCode) as $field) {
                 if ($subfield = $this->getSubfield($field, 'a')) {
                     $results[] = $this->stripTrailingPunctuation($subfield);
