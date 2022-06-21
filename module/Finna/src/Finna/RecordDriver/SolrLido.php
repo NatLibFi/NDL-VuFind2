@@ -1422,27 +1422,29 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     {
         $authors = [];
         $index = 0;
-        foreach ($this->getXmlRecord()->xpath(
-            '/lidoWrap/lido/descriptiveMetadata/eventWrap/eventSet/event'
-        ) as $node) {
-            $eventType = (string)($node->eventType->term ?? '');
-            $priority = $this->authorEvents[$eventType] ?? null;
-            if (null === $priority || !isset($node->eventActor)) {
+        foreach ($this->getXmlRecord()->lido->descriptiveMetadata
+            ->eventWrap->eventSet ?? [] as $set
+        ) {
+            if (!($event = $set->event)) {
                 continue;
             }
-            ++$index;
-            foreach ($node->eventActor as $actor) {
-                if (isset($actor->actorInRole->actor->nameActorSet->appellationValue)
-                    && trim(
-                        $actor->actorInRole->actor->nameActorSet->appellationValue
-                    ) != ''
-                ) {
+            $eventType = (string)($event->eventType->term ?? '');
+            $priority = $this->authorEvents[$eventType] ?? null;
+            if (null === $priority) {
+                continue;
+            }
+            foreach ($event->eventActor ?? [] as $actor) {
+                $name
+                    = (string)($actor->actorInRole->actor->nameActorSet
+                        ->appellationValue
+                        ?? '');
+                if (trim($name)) {
                     $role = $actor->actorInRole->roleActor->term ?? '';
-                    $authors["$priority/$index"] = [
-                        'name' => $actor->actorInRole->actor->nameActorSet
-                            ->appellationValue,
-                        'role' => $role
-                    ];
+                    ++$index;
+                    $authors["$priority/{$index}"] = compact(
+                        'name',
+                        'role'
+                    );
                 }
             }
         }
