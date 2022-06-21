@@ -69,7 +69,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Event Notice', 'Events', 'Exterior Images',
             'Film Copies', 'Film Festivals', 'Filming Date',
             'Filming Location Notes', 'Finding Aid', 'First Lyrics',
-            'Foreign Distribution', 'Funding', 'Genre', 'Hardwares',
+            'Foreign Distribution', 'Funding', 'Genre', 'Hardware',
             'Inscriptions', 'Inspection Details', 'Interior Images',
             'Inventory ID', 'ISBN', 'ISSN',
             'Item Description', 'Item History', 'Keywords',

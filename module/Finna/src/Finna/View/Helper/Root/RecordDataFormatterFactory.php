@@ -1001,11 +1001,11 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Hardwares',
-            'getHardwares',
-            'data-escapeHtml.phtml',
+            'Hardware',
+            'getHardwareRequirements',
+            'data-hardwareRequirements.phtml',
             [
-                'context' => ['class' => 'record-hardwares']
+                'context' => ['class' => 'record-hardware']
             ]
         );
         $setTemplateLine(

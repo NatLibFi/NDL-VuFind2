@@ -2269,19 +2269,23 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
-     * Get hardware information from fields 753.
+     * Get hardware requirements.
      *
      * @return array
      */
-    public function getHardwares(): array
+    public function getHardwareRequirements(): array
     {
         $results = [];
         foreach ($this->getMarcReader()->getFields('753') as $field) {
+            $result = [];
             if ($subfield = $this->getSubfield($field, 'a')) {
                 $subfield = $this->stripTrailingPunctuation($subfield);
-                if (!in_array($subfield, $results)) {
-                    $results[] = $subfield;
+                if (!in_array($subfield, array_column($results, 'make_model'))) {
+                    $result['make_model'] = $subfield;
                 }
+            }
+            if ($result) {
+                $results[] = $result;
             }
         }
         return $results;
