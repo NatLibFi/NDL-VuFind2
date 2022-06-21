@@ -479,7 +479,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
-     * Get original version notes from field 534 as an associative array.
+     * Get original version notes from field 534.
+     * Each entry contains key:
      * - notes => Notes found
      *
      * @return array
