@@ -479,7 +479,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
-     * Get original version notes from fields 534.
+     * Get original version notes from field 534 as an associative array.
+     * - notes => Notes found
      *
      * @return array
      */
@@ -487,13 +488,15 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     {
         $results = [];
         foreach ($this->getMarcReader()->getFields('534') as $field) {
+            $result = [];
             if ($subfields = $this->getSubfieldArray(
                 $field,
                 ['p', 'c']
             )
             ) {
-                $results[] = implode(' ', $subfields);
+                $result['notes'] = implode(' ', $subfields);
             }
+            $results[] = $result;
         }
         return $results;
     }

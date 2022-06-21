@@ -1316,9 +1316,11 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Original Version Notes',
             'getOriginalVersionNotes',
-            'data-transEsc.phtml',
+            'data-originalVersionNotes.phtml',
             [
-                'context' => ['class' => 'record-original-version-notes']
+                'context' => [
+                    'class' => 'record-original-version-notes',
+                ],
             ]
         );
         $setTemplateLine(
