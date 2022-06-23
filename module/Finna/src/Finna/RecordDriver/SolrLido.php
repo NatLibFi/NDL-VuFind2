@@ -1435,9 +1435,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
             foreach ($event->eventActor ?? [] as $actor) {
                 $name
-                    = trim((string)($actor->actorInRole->actor->nameActorSet
-                        ->appellationValue
-                        ?? ''));
+                    = trim(
+                        (string)($actor->actorInRole->actor->nameActorSet
+                            ->appellationValue
+                        ?? '')
+                    );
                 if ($name) {
                     $role = $actor->actorInRole->roleActor->term ?? '';
                     ++$index;
