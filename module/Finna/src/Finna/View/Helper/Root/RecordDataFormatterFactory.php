@@ -409,6 +409,15 @@ class RecordDataFormatterFactory
         );
 
         $setTemplateLine(
+            'Other ID',
+            'getLocalIdentifiers',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordIdentifiers']
+            ]
+        );
+
+        $setTemplateLine(
             'Measurements',
             'getMeasurements',
             'data-escapeHtml.phtml',
@@ -430,14 +439,6 @@ class RecordDataFormatterFactory
             'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordClassifications']
-            ]
-        );
-        $setTemplateLine(
-            'Other ID',
-            'getLocalIdentifiers',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordIdentifiers']
             ]
         );
 
