@@ -1,0 +1,11 @@
+<?php // No ending line feed
+$searchRoute = $this->searchAction ?: $this->searchOptions($this->driver->getSearchBackendIdentifier())->getSearchAction();
+if (!($id = $this->id ?: $this->localId)) {
+    echo $this->url($searchRoute, [], ['query' => ['lookfor' => '"' . $this->lookfor . '"', 'type' => 'Author']]);
+} else {
+    echo $this->url(
+        $searchRoute,
+        [],
+        ['query' => ['lookfor' => sprintf('author:("%s") OR %s:("%s")^100000', $this->lookfor, \Finna\Search\Solr\AuthorityHelper::AUTHOR2_ID_FACET, $id)]]
+    );
+}

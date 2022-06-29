@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2016.
+ * Copyright (C) The National Library of Finland 2016-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -64,7 +64,10 @@ class Markdown extends \VuFind\View\Helper\Root\Markdown
         // Clean HTML while in Markdown format, since HTML from server-side rendered
         // custom tags should not be cleaned.
         $cleanHtml = $this->getView()->plugin('cleanHtml');
-        $text = $this->converter->convertToHtml($cleanHtml($markdown));
+        $text = $this->converter->convert($cleanHtml($markdown));
+
+        // Adjust heading level by +1.
+        $text = $this->getView()->plugin('adjustHeadingLevel')($text, 1);
 
         if (!$replaceDeprecatedTags) {
             // Fix for Markdown processed deprecated tags.
@@ -79,7 +82,7 @@ class Markdown extends \VuFind\View\Helper\Root\Markdown
      *
      * Finna: back-compatibility with default param and call logic
      *
-     * @param string $markdown Markdown formatted text
+     * @param ?string $markdown Markdown formatted text
      *
      * @return string
      */

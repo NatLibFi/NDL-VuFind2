@@ -1,10 +1,10 @@
 <?php
 /**
- * Factory for GetAuthorityInfo AJAX handler.
+ * Factory for GetFieldInfo AJAX handler.
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2018-2019.
+ * Copyright (C) The National Library of Finland 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -33,7 +33,7 @@ use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 
 /**
- * Factory for GetAuthorityInfo AJAX handler.
+ * Factory for GetFieldInfo AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -41,7 +41,7 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class GetAuthorityInfoFactory
+class GetFieldInfoFactory
     implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
@@ -68,10 +68,14 @@ class GetAuthorityInfoFactory
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
+        $tableManager = $container->get(\VuFind\Db\Table\PluginManager::class);
         $result = new $requestedName(
+            $container->get(\VuFind\Config\PluginManager::class)->get('config'),
             $container->get(\VuFind\Session\Settings::class),
             $container->get(\VuFind\Record\Loader::class),
-            $container->get('ViewRenderer')
+            $container->get('ViewRenderer')->plugin('record'),
+            $container->get(\VuFindHttp\HttpService::class),
+            $tableManager->get(\Finna\Db\Table\FinnaCache::class)
         );
         return $result;
     }

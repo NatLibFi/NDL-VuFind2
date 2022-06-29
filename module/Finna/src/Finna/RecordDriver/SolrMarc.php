@@ -479,6 +479,32 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
+     * Get original version notes.
+     * Each result contains:
+     * - notes => Notes found
+     *
+     * @return array
+     */
+    public function getOriginalVersionNotes(): array
+    {
+        $results = [];
+        foreach ($this->getMarcReader()->getFields('534') as $field) {
+            $result = [];
+            if ($subfields = $this->getSubfieldArray(
+                $field,
+                ['p', 'c']
+            )
+            ) {
+                $result['notes'] = implode(' ', $subfields);
+            }
+            if ($result) {
+                $results[] = $result;
+            }
+        }
+        return $results;
+    }
+
+    /**
      * Get an array of embedded component parts
      *
      * @return array Component parts
@@ -2263,6 +2289,29 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                 } else {
                     $results[] = $this->stripTrailingPunctuation($subfield);
                 }
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Get hardware requirements.
+     *
+     * @return array
+     */
+    public function getHardwareRequirements(): array
+    {
+        $results = [];
+        foreach ($this->getMarcReader()->getFields('753') as $field) {
+            $result = [];
+            if ($subfield = $this->getSubfield($field, 'a')) {
+                $subfield = $this->stripTrailingPunctuation($subfield);
+                if (!in_array($subfield, array_column($results, 'make_model'))) {
+                    $result['make_model'] = $subfield;
+                }
+            }
+            if ($result) {
+                $results[] = $result;
             }
         }
         return $results;

@@ -3,6 +3,7 @@ $config = [
     'extends' => 'bootstrap3',
     'helpers' => [
         'factories' => [
+            'Finna\View\Helper\Root\AdjustHeadingLevel' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\Auth' => 'Finna\View\Helper\Root\AuthFactory',
             'Finna\View\Helper\Root\AuthorizationNotification' => 'Finna\View\Helper\Root\AuthorizationNotificationFactory',
             'Finna\View\Helper\Root\Authority' => 'Finna\View\Helper\Root\AuthorityFactory',
@@ -71,6 +72,7 @@ $config = [
             'VuFind\View\Helper\Root\Linkify' => 'Finna\View\Helper\Root\LinkifyFactory',
         ],
         'aliases' => [
+            'adjustHeadingLevel' => 'Finna\View\Helper\Root\AdjustHeadingLevel',
             'auth' => 'Finna\View\Helper\Root\Auth',
             'authority' => 'Finna\View\Helper\Root\Authority',
             'authorizationNote' => 'Finna\View\Helper\Root\AuthorizationNotification',

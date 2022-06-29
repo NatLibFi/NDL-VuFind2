@@ -1,10 +1,10 @@
 <?php
 /**
- * Custom element renderer base class
+ * Abstract base class for classes that are capable of rendering custom elements
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2021.
+ * Copyright (C) The National Library of Finland 2021-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,39 +23,37 @@
  * @package  CustomElements
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\View\CustomElement\CommonMark;
-
-use Finna\View\CustomElement\CustomElementRendererInterface;
+namespace Finna\View\CustomElement;
 
 /**
- * Custom element renderer base class
+ * Abstract base class for classes that are capable of rendering custom elements
  *
  * @category VuFind
  * @package  CustomElements
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
-class CustomElementRendererBase
+abstract class AbstractCustomElementEnabledBase
 {
     /**
      * Names of elements to render
      *
      * @var array
      */
-    protected $customElements;
+    protected array $customElements;
 
     /**
      * Renderer
      *
      * @var CustomElementRendererInterface
      */
-    protected $customElementRenderer;
+    protected CustomElementRendererInterface $customElementRenderer;
 
     /**
-     * Constructor
+     * AbstractCustomElementRendererBase constructor.
      *
      * @param array                          $elements Names of elements to render
      * @param CustomElementRendererInterface $renderer Renderer

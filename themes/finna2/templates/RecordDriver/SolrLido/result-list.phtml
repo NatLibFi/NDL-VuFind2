@@ -87,6 +87,20 @@ if ($img):
         <?=$recordHelper->getOnlineUrls('results');?>
         <?=$recordHelper->getPreviews();?>
         <?=$this->render('list/list-notes.phtml')?>
+        <?php /* Hierarchy tree link */ ?>
+        <?php $hierarchySource = $this->driver->getSourceIdentifier() ?>
+        <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
+          <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
+            <div class="hierarchyTreeLink hidden-print">
+              <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId" />
+              <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchySource)?>" class="hiddenHierarchySource" />
+              <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID, 'source' => $hierarchySource]))?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>" data-lightbox-href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID]))?>" data-lightbox-post="tab=hierarchytree">
+                <i class="fa fa-sitemap"></i>
+                <?=$this->transEsc('hierarchy_view_collection_structure')?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?>
+              </a>
+            </div>
+          <?php endforeach; ?>
+        <?php endif; ?>
 
         <?php /* Saved lists */ ?>
         <div class="savedLists">

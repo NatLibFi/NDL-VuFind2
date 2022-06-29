@@ -384,6 +384,108 @@ finna.record = (function finnaRecord() {
     }
   }
 
+  function initPopovers() {
+    var closeField = function (field, setFocus = false) {
+      field.classList.remove('open');
+      let link = field.querySelector('a.show-info');
+      link.setAttribute('aria-expanded', 'false');
+      if (setFocus) {
+        link.focus();
+      }
+    };
+    var fixPosition = function (container) {
+      // Check container position and move to the left as necessary:
+      let infoBounds = container.getBoundingClientRect();
+      let maxWidth = window.innerWidth - 36;
+      if (infoBounds.width > window.innerWidth - 36) {
+        container.style.width = Math.max(200, maxWidth) + 'px';
+      }
+      infoBounds = container.getBoundingClientRect();
+      if (infoBounds.right > window.innerWidth - 8) {
+        let marginLeft = window.innerWidth - infoBounds.right - 8;
+        container.style.marginLeft = marginLeft + 'px';
+      }
+    };
+
+    document.addEventListener('mouseup', function onMouseUp(e) {
+      document.querySelectorAll('.inline-linked-field.open').forEach((element) => {
+        if (!element.contains(e.target)) {
+          closeField(element);
+        }
+      });
+    });
+    document.addEventListener('keyup', function onKeyUp(e) {
+      const keyName = e.code;
+      if ( keyName === "Escape") {
+        document.querySelectorAll('.inline-linked-field.open').forEach((element) => {
+          closeField(element, true);
+        });
+      }
+    });
+    document.addEventListener('click', (event) => {
+      let field = event.target.closest('.inline-linked-field');
+      if (null === field) {
+        return;
+      }
+      let parentLink = event.target.closest('a');
+      if (!parentLink) {
+        return;
+      }
+      if (parentLink.classList.contains('hide-info')) {
+        closeField(field, true);
+        event.preventDefault();
+        return;
+      }
+      if (!parentLink.classList.contains('show-info')) {
+        return;
+      }
+      if (field.classList.contains('open')) {
+        closeField(field);
+        event.preventDefault();
+        return;
+      }
+
+      event.preventDefault();
+      field.classList.add('open');
+      parentLink.setAttribute('aria-expanded', 'true');
+      fixPosition(field.querySelector('.field-info'));
+      let firstLink = field.querySelector('.field-info a');
+      if (firstLink) {
+        firstLink.focus();
+      }
+
+      let fieldInfo = field.querySelector('.field-info .dynamic-content');
+      if (!fieldInfo || fieldInfo.classList.contains('loaded')) {
+        return;
+      }
+      fieldInfo.classList.add('loaded');
+      let params = new URLSearchParams(
+        {
+          method: 'getFieldInfo',
+          ids: field.dataset.ids,
+          authIds: field.dataset.authIds,
+          type: field.dataset.type,
+          source: field.dataset.recordSource,
+          recordId: field.dataset.recordId,
+          label: field.querySelector('.field-label').textContent
+        }
+      );
+      fetch(VuFind.path + '/AJAX/JSON?' + params)
+        .then(data => data.json())
+        .then((response) => {
+          fieldInfo.textContent = '';
+          var desc = typeof response.data.html !== 'undefined' ? response.data.html : null;
+          if (desc && desc.trim()) {
+            fieldInfo.innerHTML = VuFind.updateCspNonce(desc);
+            finna.layout.initTruncate(fieldInfo);
+          }
+          fixPosition(field.querySelector('.field-info'));
+        }).catch(function handleError() {
+          fieldInfo.textContent = VuFind.translate('error_occurred');
+        });
+    });
+  }
+
   function init() {
     initHideDetails();
     initDescription();
@@ -395,6 +497,7 @@ finna.record = (function finnaRecord() {
     loadSimilarRecords();
     loadRecordDriverRelatedRecords();
     finna.authority.initAuthorityResultInfo();
+    initPopovers();
   }
 
   var my = {

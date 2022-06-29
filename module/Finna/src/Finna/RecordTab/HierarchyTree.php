@@ -1,0 +1,187 @@
+<?php
+/**
+ * HierarchyTree tab
+ *
+ * PHP version 7
+ *
+ * Copyright (C) The National Library of Finland 2022.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * @category VuFind
+ * @package  RecordTabs
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
+ */
+namespace Finna\RecordTab;
+
+/**
+ * HierarchyTree tab
+ *
+ * @category VuFind
+ * @package  RecordTabs
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
+ */
+class HierarchyTree extends \VuFind\RecordTab\HierarchyTree
+{
+    /**
+     * Get the on-screen description for this tab.
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->getRecordDriver() instanceof \Finna\RecordDriver\SolrEad
+            ? 'hierarchy_tree_archive' : 'hierarchy_tree_collection';
+    }
+
+    /**
+     * Is this tab active?
+     *
+     * @return bool
+     */
+    public function isActive()
+    {
+        $trees = $this->getTreeList();
+        return !empty($trees);
+    }
+
+    /**
+     * Get the ID of the active tree (false if none)
+     *
+     * @return string|bool
+     */
+    public function getActiveTree()
+    {
+        $treeList = $this->getTreeList();
+        $hierarchySetting = ($request = $this->getRequest())
+            ? $request->getPost('hierarchy', $request->getQuery('hierarchy', false))
+            : false;
+        if (count($treeList) == 1 || !$hierarchySetting) {
+            $keys = array_keys($treeList);
+            return $keys[0];
+        } else {
+            return $hierarchySetting;
+        }
+    }
+
+    /**
+     * Get an array of tree data
+     *
+     * @return array
+     */
+    public function getTreeList()
+    {
+        if (null === $this->treeList) {
+            $this->treeList
+                = $this->getRecordDriver()->tryMethod('getHierarchyTrees');
+            if (null === $this->treeList) {
+                $this->treeList = [];
+            }
+        }
+        return $this->treeList;
+    }
+
+    /**
+     * Should we display the full tree, or just a partial tree?
+     *
+     * @return bool
+     */
+    public function isFullHierarchyVisible()
+    {
+        // Get hierarchy driver:
+        $recordDriver = $this->getRecordDriver();
+        $hierarchyDriver = $recordDriver->tryMethod('getHierarchyDriver');
+
+        // We need a driver to proceed:
+        if (is_object($hierarchyDriver)) {
+            // No setting, or true setting -- use default setting:
+            $settings = $hierarchyDriver->getTreeSettings();
+            if (!isset($settings['fullHierarchyRecordView'])
+                || $settings['fullHierarchyRecordView']
+            ) {
+                return true;
+            }
+        }
+
+        // Currently displaying top of tree?  Disable partial hierarchy:
+        if ($this->getActiveTree() == $recordDriver->getUniqueId()) {
+            return true;
+        }
+
+        // Only if we got this far is it appropriate to use a partial hierarchy:
+        return false;
+    }
+
+    /**
+     * Render a hierarchy tree
+     *
+     * @param string $baseUrl Base URL to use in links within tree
+     * @param string $id      Hierarchy ID (omit to use active tree)
+     * @param string $context Context for use by renderer
+     *
+     * @return string
+     */
+    public function renderTree($baseUrl, $id = null, $context = 'Record')
+    {
+        $id = $id ?? $this->getActiveTree();
+        $recordDriver = $this->getRecordDriver();
+        $hierarchyDriver = $recordDriver->tryMethod('getHierarchyDriver');
+        if (is_object($hierarchyDriver)) {
+            $tree = $hierarchyDriver->render($recordDriver, $context, 'List', $id);
+            return str_replace(
+                '%%%%VUFIND-BASE-URL%%%%',
+                rtrim($baseUrl, '/'),
+                $tree
+            );
+        }
+        return '';
+    }
+
+    /**
+     * Is tree searching active?
+     *
+     * @return bool
+     */
+    public function searchActive()
+    {
+        $config = $this->getConfig();
+        return !isset($config->Hierarchy->search) || $config->Hierarchy->search;
+    }
+
+    /**
+     * Get the tree search result limit.
+     *
+     * @return int
+     */
+    public function getSearchLimit()
+    {
+        $config = $this->getConfig();
+        return $config->Hierarchy->treeSearchLimit ?? -1;
+    }
+
+    /**
+     * Can this tab be loaded via AJAX?
+     *
+     * @return bool
+     */
+    public function supportsAjax()
+    {
+        // No, special width adjustment needed.
+        return false;
+    }
+}

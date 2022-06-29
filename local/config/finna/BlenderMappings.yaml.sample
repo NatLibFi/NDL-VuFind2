@@ -226,6 +226,11 @@ Facets:
             web_resources: "1/Other/Electronic/"
         Solr:
           Field: format_ext_str_mv
+    free_online:
+      Type: boolean
+      Mappings:
+        Solr:
+          Field: free_online_boolean
     fulltext:
       Type: boolean
       Mappings:

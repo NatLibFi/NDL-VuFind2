@@ -28,7 +28,6 @@
  */
 namespace FinnaTest\View\Helper\Root;
 
-use Finna\Service\CommonMark\RecordFieldMarkdownExtension;
 use Finna\View\Helper\Root\CleanHtml;
 use Finna\View\Helper\Root\RecordFieldMarkdown;
 
@@ -57,9 +56,7 @@ class RecordFieldMarkdownTest extends \PHPUnit\Framework\TestCase
             'finna2'
         );
         $markdown = new RecordFieldMarkdown(
-            new \Finna\Service\RecordFieldMarkdown(
-                RecordFieldMarkdownExtension::createRecordFieldMarkdownEnvironment()
-            )
+            new \Finna\Service\RecordFieldMarkdown()
         );
         $markdown->setView($view);
         return $markdown;

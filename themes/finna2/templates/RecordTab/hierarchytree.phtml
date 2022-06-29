@@ -19,7 +19,7 @@
   echo $this->inlineScript();
 ?>
 <?php if ($this->layout()->getTemplate() == 'layout/lightbox'): ?>
-  <h2><?=$this->transEsc('hierarchy_tree') ?></h2>
+  <h2><?=$this->transEsc($this->tab->getDescription())?></h2>
 <?php endif; ?>
 <?php if (count($hierarchyTreeList) > 1): ?>
   <div id="treeSelector">

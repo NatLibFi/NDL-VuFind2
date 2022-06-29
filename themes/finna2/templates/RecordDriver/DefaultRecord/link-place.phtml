@@ -1,0 +1,12 @@
+<?php // No ending line feed
+$searchRoute = $this->searchAction ?: $this->searchOptions($this->driver->getSearchBackendIdentifier())->getSearchAction();
+echo $this->url(
+    $searchRoute,
+    [],
+    [
+        'query' => [
+            'lookfor' => '"' . $this->lookfor . '"',
+            'type' => 'geographic',
+        ]
+    ]
+);

@@ -640,7 +640,7 @@ class Form extends \VuFind\Form\Form
     /**
      * Return API settings
      *
-     * @return string
+     * @return array
      */
     public function getApiSettings(): array
     {

@@ -1,0 +1,13 @@
+<?php
+    $options = $this->searchOptions($this->searchClassId);
+    $searchHome = $options->getSearchHomeAction();
+    $advSearch = $options->getAdvancedSearchAction();
+?>
+<div class="adv-search-header versions-search-header">
+  <div class="adv_search_links">
+    <?php if ($advSearch): ?>
+      <a href="<?=$this->url($advSearch)?>"><i class="fa fa-lg icon-adv-search"></i> <?=$this->transEsc("Start a new Advanced Search")?></a>
+    <?php endif; ?>
+    <a href="<?=$this->url($searchHome)?>"><i class="fa fa-lg icon-basic-search"></i> <?=$this->transEsc("Start a new Basic Search")?></a>
+  </div>
+</div>

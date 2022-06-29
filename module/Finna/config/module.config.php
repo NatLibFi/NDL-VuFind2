@@ -347,7 +347,7 @@ $config = [
             'Finna\Search\Solr\AuthorityHelper' => 'Finna\Search\Solr\AuthorityHelperFactory',
             'Finna\Search\Solr\HierarchicalFacetHelper' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\Service\R2SupportService' => 'Finna\Service\R2SupportServiceFactory',
-            'Finna\Service\RecordFieldMarkdown' => 'Finna\Service\RecordFieldMarkdownFactory',
+            'Finna\Service\RecordFieldMarkdown' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\Statistics\Driver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Statistics\EventHandler' => 'Finna\Statistics\EventHandlerFactory',
             'Finna\Favorites\FavoritesService' => 'Finna\Favorites\FavoritesServiceFactory',
@@ -358,7 +358,7 @@ $config = [
 
             'VuFindHttp\HttpService' => 'Finna\Service\HttpServiceFactory',
 
-            'League\CommonMark\MarkdownConverterInterface' => 'Finna\Service\MarkdownFactory',
+            'League\CommonMark\ConverterInterface' => 'Finna\Service\MarkdownFactory',
             'Finna\View\Resolver\AggregateResolver' => 'Finna\View\Resolver\AggregateResolverFactory',
         ],
         'aliases' => [
@@ -427,6 +427,8 @@ $config = [
                         'Finna\AjaxHandler\GetFacetDataFactory',
                     'Finna\AjaxHandler\GetFeed' =>
                         'Finna\AjaxHandler\GetFeedFactory',
+                    'Finna\AjaxHandler\GetFieldInfo' =>
+                        'Finna\AjaxHandler\GetFieldInfoFactory',
                     'Finna\AjaxHandler\GetHoldingsDetails' =>
                         'Finna\AjaxHandler\GetHoldingsDetailsFactory',
                     'Finna\AjaxHandler\GetImageInformation' =>
@@ -481,6 +483,7 @@ $config = [
                     'getModel' => 'Finna\AjaxHandler\GetModel',
                     'getDateRangeVisual' => 'Finna\AjaxHandler\GetDateRangeVisual',
                     'getFeed' => 'Finna\AjaxHandler\GetFeed',
+                    'getFieldInfo' => 'Finna\AjaxHandler\GetFieldInfo',
                     'getHoldingsDetails' => 'Finna\AjaxHandler\GetHoldingsDetails',
                     'getImageInformation' => 'Finna\AjaxHandler\GetImageInformation',
                     'getLinkedEvents' => 'Finna\AjaxHandler\GetLinkedEvents',
@@ -879,6 +882,7 @@ $config = [
                     'Finna\RecordTab\AuthorityRecordsAuthor' => 'Finna\RecordTab\AuthorityRecordsFactory',
                     'Finna\RecordTab\AuthorityRecordsTopic' => 'Finna\RecordTab\AuthorityRecordsFactory',
                     'Finna\RecordTab\ExternalData' => 'Finna\RecordTab\Factory::getExternalData',
+                    'Finna\RecordTab\HierarchyTree' => 'VuFind\RecordTab\HierarchyTreeFactory',
                     'Finna\RecordTab\Map' => 'Finna\RecordTab\Factory::getMap',
                     'Finna\RecordTab\R2CollectionList' => 'VuFind\RecordTab\CollectionListFactory',
                     'Finna\RecordTab\UserComments' => 'Finna\RecordTab\Factory::getUserComments',
@@ -894,6 +898,7 @@ $config = [
                     'r2collectionlist' => 'Finna\RecordTab\R2CollectionList',
 
                     // Overrides:
+                    'VuFind\RecordTab\HierarchyTree' => 'Finna\RecordTab\HierarchyTree',
                     'VuFind\RecordTab\Map' => 'Finna\RecordTab\Map',
                     'VuFind\RecordTab\UserComments' => 'Finna\RecordTab\UserComments',
                 ]

@@ -1391,6 +1391,57 @@ repository_library_request_in_organisation_info = true
 ;large_image_formats[] = "0/Image/"
 ;large_image_formats[] = "0/Map/"
 
+; Record link popover configuration
+[LinkPopovers]
+; Whether to enable popovers for lateral links in record metadata
+enabled = true
+; Links to display in the popover per search type. A pipe-separated list of
+; translation keys and link templates.
+; Potentially useful link templates:
+; - author                        Search for author
+; - authority-page                Link to authority page
+; - keyword                       Keyword search
+; - search-author-id              Search for author id
+; - search-author-mixed           Search for author id (boosted) or string
+; - search-place-id               Search for place id (geographic)
+; - search-place-mixed            Search for place id (geographic, boosted) or string
+; - search-subject-id             Search for subject id
+; - search-subject-mixed          Search for subject id (boosted) or string
+; - subject                       Search for subject string
+links[author] = "search_as_author:search-author-mixed|search_as_subject:search-subject-mixed"
+;links[author] = "More Information:authority-page|search_as_author:search-author-mixed|search_as_subject:search-subject-mixed"
+links[subject] = "search_as_subject:search-subject-mixed|search_as_keyword:keyword"
+links[place] = "search_as_subject:search-place-mixed|search_as_keyword:keyword"
+; Whether to display enriched term information from Finto:
+skosmos = true
+; Finto base url (without api version such as "/v1"):
+skosmos_base_url = "https://api.finto.fi/rest/"
+; Allowed id prefixes for enrichment:
+skosmos_id_prefix_allowed_list[] = "http://www.yso.fi/"
+; Allowed id prefixes for exact matches of a term in other vocabularies:
+skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/ysa/"
+skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/yso/"
+skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/allars/"
+skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/yso-paikat/"
+skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/koko/"
+skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/kauno/"
+; The following setting controls authority information in the popover. It is disabled
+; by default. Use "*" to include all fields or specify the fields to show.
+;authority_fields[] = "Date of birth"
+;authority_fields[] = "Other Forms of Name"
+;authority_fields[] = "Identifiers"
+; External link templates. Templates consist of the following elements separated by a
+; double pipe:
+; 1. Link name (translation key)
+; 2. Link title (translation key)
+; 3. Regexp to match an ID
+; 4. Link template - use {1}...{9} to include a match from the regexp above
+;    (urlencoded) or {lang} for language code
+; 5. What to display as an identifier - a match from the regexp as {1}...{9}, 'full'
+;    or empty for none
+external_links[] = "external_link_kyppi_mjr||external_link_kyppi_mjr||\(mjr\)(.+)||https://www.kyppi.fi/palveluikkuna/mjreki/read/asp/r_kohde_det.aspx?KOHDE_ID={1}||{1}"
+external_links[] = "external_link_kyppi_rpr||external_link_kyppi_rpr||\(rpr\)(.+)||https://www.kyppi.fi/palveluikkuna/rapea/read/asp/r_kohde_det.aspx?KOHDE_ID={1}||{1}"
+
 ; The following two sections control the Alphabetic Browse module.
 [AlphaBrowse]
 ; This setting controls how many headings are displayed on each page of results:
@@ -1699,7 +1750,7 @@ url = "https://my.surveypal.com/Finnasurvey"
 
 ; Whether to change author-search links to authority-links.
 ; The link type is one of:
-;   - author         links to the authority page
+;   - page           links to the authority page
 ;   - search         performs a search filtered by authority ID
 ;   - search-subject performs an OR search by topic_id_str_mv and topic
 ; authority_links[*] can be used to set the link type for all authority types.
@@ -1707,9 +1758,6 @@ url = "https://my.surveypal.com/Finnasurvey"
 ; (author or subject), for example: authority_links[author] = page
 
 ; authority_links[*] = page
-
-; Uncomment to enable Authority info (displayed beside author links on record page)
-;authority_info = true
 
 ; Mapping to Finna authority record types
 ; typeMap[elonet_henkilo] = Personal Name

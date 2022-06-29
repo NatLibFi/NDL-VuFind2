@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2021.
+ * Copyright (C) The National Library of Finland 2021-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,14 +22,18 @@
  * @category VuFind
  * @package  VuFind\Service
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
 namespace Finna\Service;
 
-use Finna\Service\CommonMark\FlexibleNewlineRenderer;
-use League\CommonMark\Inline\Element\Newline;
+use Finna\CommonMark\Extension\RecordFieldMarkdownExtension;
+use League\CommonMark\ConverterInterface;
+use League\CommonMark\Environment\Environment;
 use League\CommonMark\MarkdownConverter;
+use League\CommonMark\Output\RenderedContentInterface;
+use League\CommonMark\Util\HtmlFilter;
 
 /**
  * Finna record field Markdown service
@@ -37,53 +41,92 @@ use League\CommonMark\MarkdownConverter;
  * @category VuFind
  * @package  VuFind\Service
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class RecordFieldMarkdown extends MarkdownConverter
+class RecordFieldMarkdown implements ConverterInterface
 {
     /**
-     * Flexible newline renderer.
+     * Default string for rendering soft breaks.
      *
-     * @var FlexibleNewlineRenderer
+     * @var string
      */
-    protected $flexibleNewlineRenderer = null;
+    public const DEFAULT_SOFT_BREAK = '<br>';
+
+    /**
+     * Markdown converter factory.
+     *
+     * @var callable
+     */
+    protected $converterFactory;
+
+    /**
+     * Converter for default soft breaks.
+     *
+     * @var ?MarkdownConverter
+     */
+    protected ?MarkdownConverter $defaultConverter = null;
+
+    /**
+     * Array of converters for different soft breaks.
+     *
+     * @var array
+     */
+    protected array $converters = [];
+
+    /**
+     * RecordFieldMarkdown constructor.
+     */
+    public function __construct()
+    {
+        $this->converterFactory = function ($softBreak = null) {
+            $config = [
+                'html_input' => HtmlFilter::ESCAPE,
+                'allow_unsafe_links' => false
+            ];
+            $config['renderer']['soft_break']
+                = $softBreak ?? self::DEFAULT_SOFT_BREAK;
+
+            $environment = new Environment($config);
+            $environment->addExtension(new RecordFieldMarkdownExtension());
+            return new MarkdownConverter($environment);
+        };
+    }
 
     /**
      * Converts Markdown to HTML.
      *
-     * @param string  $markdown  Markdown
-     * @param ?string $softBreak Alternative string to use for rendering soft breaks
-     *                           (optional)
+     * @param string  $input     The Markdown to convert
+     * @param ?string $softBreak String to use for rendering soft breaks (optional)
      *
-     * @return string
+     * @return RenderedContentInterface
      */
-    public function convertToHtml(string $markdown, ?string $softBreak = null)
-        : string
+    public function convert(string $input, ?string $softBreak = null)
+        : RenderedContentInterface
     {
-        if (isset($softBreak) && !$this->flexibleNewlineRenderer) {
-            $renderers = $this->getEnvironment()
-                ->getInlineRenderersForClass(Newline::class);
-            foreach ($renderers as $renderer) {
-                if ($renderer instanceof FlexibleNewlineRenderer) {
-                    $this->flexibleNewlineRenderer = $renderer;
-                    break;
-                }
+        $converter = $this->getConverter($softBreak);
+        return $converter->convert($input);
+    }
+
+    /**
+     * Get a Markdown converter for the given soft break.
+     *
+     * @param ?string $softBreak Soft break
+     *
+     * @return MarkdownConverter
+     */
+    protected function getConverter(?string $softBreak): MarkdownConverter
+    {
+        if (null === $softBreak) {
+            if (null === $this->defaultConverter) {
+                $this->defaultConverter = ($this->converterFactory)();
             }
+            return $this->defaultConverter;
         }
-        $isNonDefault
-            = isset($softBreak)
-                && $this->flexibleNewlineRenderer
-                && ($softBreak !== FlexibleNewlineRenderer::DEFAULT_SOFT_BREAK);
-        if ($isNonDefault) {
-            $this->flexibleNewlineRenderer->setSoftBreak($softBreak);
+        if (!isset($this->converters[$softBreak])) {
+            $this->converters[$softBreak] = ($this->converterFactory)($softBreak);
         }
-        $html = parent::convertToHtml($markdown);
-        if ($isNonDefault) {
-            $this->flexibleNewlineRenderer->setSoftBreak(
-                FlexibleNewlineRenderer::DEFAULT_SOFT_BREAK
-            );
-        }
-        return $html;
+        return $this->converters[$softBreak];
     }
 }
