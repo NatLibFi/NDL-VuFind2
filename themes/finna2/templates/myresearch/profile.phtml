@@ -55,14 +55,19 @@
         </div>
       <?php endif; ?>
       <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
-      <?php if (!empty($this->profile['expiration_soon']) && !empty($this->profile['expiration_date'])): ?>
-        <div class="flash-message alert alert-warning">
-          <?=$this->transEsc('patron_status_card_expires_soon', ['%%expirationDate%%' => $this->profile['expiration_date']])?>
-        </div>
-      <?php elseif (!empty($this->profile['expired']) && !empty($this->profile['expiration_date'])): ?>
-        <div class="flash-message alert alert-danger">
-          <?=$this->transEsc('patron_status_card_expired', ['%%expirationDate%%' => $this->profile['expiration_date']])?>
-        </div>
+      <?php if (!empty($this->profile['expiration_date'])): ?>
+        <?php
+          $cardExpired = !empty($this->profile['expired']) || !empty($this->profile['full_data']['blocks']['Patron::CardExpired'])
+        ?>
+        <?php if (!empty($this->profile['expiration_soon']) && !$cardExpired): ?>
+          <div class="flash-message alert alert-warning">
+            <?=$this->transEsc('patron_status_card_expires_soon', ['%%expirationDate%%' => $this->profile['expiration_date']])?>
+          </div>
+        <?php elseif ($cardExpired): ?>
+          <div class="flash-message alert alert-danger">
+            <?=$this->transEsc('patron_status_card_expired', ['%%expirationDate%%' => $this->profile['expiration_date']])?>
+          </div>
+        <?php endif; ?>
       <?php endif; ?>
       <?=$this->partial('myresearch/profile-messages.phtml', ['messages' => $this->profile['messages'] ?? []]); ?>
       <?php if (is_array($this->profile)): ?>
