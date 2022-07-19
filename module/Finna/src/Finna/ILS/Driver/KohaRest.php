@@ -1768,6 +1768,12 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 $reason = 'Patron::DebarredWithReason';
             }
             break;
+        case 'Patron::CardExpired':
+            $params = [
+                '%%expirationDate%%'
+                    => $this->convertDate($details['expiration_date'])
+            ];
+            break;
         }
         return $this->translate($this->patronStatusMappings[$reason] ?? '', $params);
     }
