@@ -208,4 +208,12 @@
     </ul>
   <?php endif; ?>
 </div>
+<?php
+  $script = <<<JS
+    $(document).ready(function() {
+      finna.layout.initNavibar();
+    });
+JS;
+?>
+<?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET') ?>
 <!-- END of: finna - navibar.phtml -->
