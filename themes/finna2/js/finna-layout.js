@@ -831,7 +831,6 @@ finna.layout = (function finnaLayout() {
     loadScripts: loadScripts,
     initToolTips: initToolTips,
     initImagePaginators: initImagePaginators,
-    initNavibar: initNavibar,
     init: function init() {
       initResizeListener();
       initScrollRecord();
@@ -866,6 +865,7 @@ finna.layout = (function finnaLayout() {
       initImagePaginators();
       initHelpTabs();
       initPrintTriggers();
+      initNavibar();
     },
     showPostLoginLightbox: showPostLoginLightbox
   };
