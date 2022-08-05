@@ -803,17 +803,6 @@ finna.layout = (function finnaLayout() {
     );
   }
 
-  function initNavibar() {
-    var menuitems = $("[role=menuitem]");
-    for (var i = 0; i < menuitems.length; i++) {
-      var menuitem = menuitems[i];
-      var menuitemPath = menuitem.getAttribute("href");
-      if (menuitemPath === window.location.pathname) {
-        menuitem.setAttribute('aria-current', 'page');
-      }
-    }
-  }
-
   var my = {
     getOrganisationPageLink: getOrganisationPageLink,
     isTouchDevice: isTouchDevice,
@@ -865,7 +854,6 @@ finna.layout = (function finnaLayout() {
       initImagePaginators();
       initHelpTabs();
       initPrintTriggers();
-      initNavibar();
     },
     showPostLoginLightbox: showPostLoginLightbox
   };
