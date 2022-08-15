@@ -849,6 +849,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             $title = '';
             $reference = '';
             $publishingInfo = '';
+            $author = '';
             foreach ($this->getAllSubfields($field) as $subfield) {
                 $data = $subfield['data'];
                 switch ($subfield['code']) {
@@ -866,6 +867,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                 case 'd':
                     $publishingInfo = $this->stripTrailingPunctuation($data, '.-');
                     break;
+                case 'a':
+                    $author = $this->stripTrailingPunctuation($data, '.-');
+                    break;
                 }
             }
 
@@ -882,7 +886,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             $result[] = [
                 'id' => $id,
                 'sourceId' => $sourceId,
-                'title' => $title,
+                'title' => (($title != '') ? $title : $author),
                 'reference' => $reference,
                 'publishingInfo' => $publishingInfo
             ];
