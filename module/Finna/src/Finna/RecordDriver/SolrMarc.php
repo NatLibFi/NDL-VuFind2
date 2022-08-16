@@ -889,7 +889,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                 'title' => $title,
                 'reference' => $reference,
                 'publishingInfo' => $publishingInfo,
-                'mainHeading' => (($title !== '') ? $title : $author),
+                'mainHeading' => $author,
             ];
         }
         return $result;
