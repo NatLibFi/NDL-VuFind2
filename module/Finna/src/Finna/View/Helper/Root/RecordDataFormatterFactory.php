@@ -291,27 +291,26 @@ class RecordDataFormatterFactory
         );
         $setTemplateLine(
             'Archive',
-            true,
-            'data-archive.phtml',
+            'getParentArchives',
+            'data-hierarchyLinks.phtml',
             [
                 'context' => ['class' => 'recordHierarchyLinks']
             ]
         );
         $setTemplateLine(
             'Archive Series',
-            'isPartOfArchiveSeries',
-            'data-archiveSeries.phtml',
+            'getParentSeries',
+            'data-hierarchyLinks.phtml',
             [
                 'context' => [
                     'class' => 'recordSeries',
-                    'levels' => \Finna\RecordDriver\SolrEad::SERIES_LEVELS
                 ]
             ]
         );
         $setTemplateLine(
             'Archive File',
-            'isPartOfArchiveSeries',
-            'data-archiveSeries.phtml',
+            'getParentFiles',
+            'data-hierarchyLinks.phtml',
             [
                 'context' => [
                     'class' => 'recordFile',

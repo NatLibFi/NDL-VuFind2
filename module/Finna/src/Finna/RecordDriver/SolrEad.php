@@ -582,6 +582,21 @@ class SolrEad extends SolrDefault
     }
 
     /**
+     * Check if the record is a fonds or a collection by format
+     *
+     * @return bool
+     */
+    public function isFondsOrCollection(): bool
+    {
+        return !empty(
+            array_intersect(
+                ['Document/ArchiveFonds', 'Document/ArchiveCollection'],
+                $this->getFormats()
+            )
+        );
+    }
+
+    /**
      * Check if record is digitized.
      *
      * @return boolean True if the record is digitized
@@ -607,6 +622,61 @@ class SolrEad extends SolrDefault
             && $this->fields['hierarchy_parent_id'][0]
                 != $this->fields['hierarchy_top_id'][0]
             && $this->fields['hierarchy_top_id'] != $this->fields['id'];
+    }
+
+    /**
+     * Get parent archives
+     *
+     * @return array
+     */
+    public function getParentArchives(): array
+    {
+        // A fonds or a collection never belongs to an archive:
+        if ($this->isFondsOrCollection()) {
+            return [];
+        }
+        if ($this->isPartOfArchiveSeries()) {
+            $topIds = $this->getHierarchyTopId();
+            $topTitles = $this->getHierarchyTopTitle();
+        } else {
+            $topIds = $this->getHierarchyParentId();
+            $topTitles = $this->getHierarchyParentTitle();
+        }
+        return $this->buildHierarchicalRecordArray($topIds, $topTitles);
+    }
+
+    /**
+     * Get parent series
+     *
+     * @return array
+     */
+    public function getParentSeries(): array
+    {
+        // A fonds or a collection never belongs to a series:
+        if ($this->isFondsOrCollection()) {
+            return [];
+        }
+        return $this->buildHierarchicalRecordArray(
+            $this->getHierarchyParentId(self::SERIES_LEVELS),
+            $this->getHierarchyParentTitle(self::SERIES_LEVELS)
+        );
+    }
+
+    /**
+     * Get parent files
+     *
+     * @return array
+     */
+    public function getParentFiles(): array
+    {
+        // A fonds or a collection never belongs to a file:
+        if ($this->isFondsOrCollection()) {
+            return [];
+        }
+        return $this->buildHierarchicalRecordArray(
+            $this->getHierarchyParentId(self::FILE_LEVELS),
+            $this->getHierarchyParentTitle(self::FILE_LEVELS)
+        );
     }
 
     /**
@@ -654,34 +724,6 @@ class SolrEad extends SolrDefault
     {
         parent::setRawData($data);
         $this->lazyXmlRecord = null;
-    }
-
-    /**
-     * Replace placeholders in the URL with the values from the record
-     *
-     * @param string $url URL
-     *
-     * @return string URL with placeholders replaced
-     */
-    protected function replaceURLPlaceholders($url)
-    {
-        $originationId = $this->getOriginationId();
-        [$id] = $this->getIdentifier();
-        [, $nonPrefixedOriginationId] = explode('-', $originationId, 2);
-        $url = str_replace(
-            [
-                '{id}',
-                '{originationId}',
-                '{nonPrefixedOriginationId}'
-            ],
-            [
-                urlencode($id),
-                urlencode($originationId),
-                urlencode($nonPrefixedOriginationId),
-            ],
-            $url
-        );
-        return $url;
     }
 
     /**
@@ -742,5 +784,54 @@ class SolrEad extends SolrDefault
             return $this->fields['fullrecord'];
         }
         return parent::getXML($format, $baseUrl, $recordLink);
+    }
+
+    /**
+     * Replace placeholders in the URL with the values from the record
+     *
+     * @param string $url URL
+     *
+     * @return string URL with placeholders replaced
+     */
+    protected function replaceURLPlaceholders($url)
+    {
+        $originationId = $this->getOriginationId();
+        [$id] = $this->getIdentifier();
+        [, $nonPrefixedOriginationId] = explode('-', $originationId, 2);
+        $url = str_replace(
+            [
+                '{id}',
+                '{originationId}',
+                '{nonPrefixedOriginationId}'
+            ],
+            [
+                urlencode($id),
+                urlencode($originationId),
+                urlencode($nonPrefixedOriginationId),
+            ],
+            $url
+        );
+        return $url;
+    }
+
+    /**
+     * Build a record array for hierarchy display
+     *
+     * @param array $ids    Record IDs
+     * @param array $titles Record titles
+     *
+     * @return array
+     */
+    protected function buildHierarchicalRecordArray(array $ids, array $titles): array
+    {
+        $sourceId = $this->getSourceIdentifier();
+        $result = [];
+        while ($ids) {
+            $result[] = [
+                'id' => "$sourceId|" . array_shift($ids),
+                'title' => $titles ? array_shift($titles) : '',
+            ];
+        }
+        return $result;
     }
 }
