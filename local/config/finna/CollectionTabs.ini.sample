@@ -6,6 +6,14 @@ tabs[CollectionList] = CollectionList
 tabs[HierarchyTree] = CollectionHierarchyTree
 defaultTab = null
 
+[Finna\RecordDriver\SolrLido]
+tabs[CollectionList] = CollectionList
+tabs[HierarchyTree] = CollectionHierarchyTree
+tabs[ExternalData] = ExternalData
+tabs[UserComments] = UserComments
+tabs[Details] = StaffViewArray
+defaultTab = null
+
 [Finna\RecordDriver\SolrEad]
 tabs[CollectionList] = CollectionList
 tabs[HierarchyTree] = CollectionHierarchyTree
