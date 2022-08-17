@@ -171,7 +171,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      * @var array
      */
     protected $relatedWorkTypeMap = [
-        'archive' => ['archive', 'arkisto', 'yhteisöarkisto'],
+        'archive' => ['archive', 'arkisto', 'henkilöarkisto', 'yhteisöarkisto'],
         'collection' => ['collection', 'kokoelma'],
         'subcollection' => ['subcollection', 'alakokoelma'],
         'series' => ['series', 'sarja'],
