@@ -5,7 +5,7 @@
  * PHP version 7
  *
  * Copyright (C) Villanova University 2016.
- * Copyright (C) The National Library of Finland 2017-2021.
+ * Copyright (C) The National Library of Finland 2017-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -24,6 +24,7 @@
  * @package  View_Helpers
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
@@ -40,6 +41,7 @@ use VuFind\RecordDriver\AbstractBase as RecordDriver;
  * @package  View_Helpers
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
@@ -112,7 +114,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Accessibility Feature', 'Accessibility Hazard',
             'Access Restrictions Extended', 'Additional Information',
             'Age Limit', 'Archive Films',
-            'Archive Origination', 'Archive Series', 'Aspect Ratio',
+            'Aspect Ratio',
             'Audience', 'Author Notes', 'Available Online',
             'Awards', 'Bibliography', 'Broadcasting Dates',
             'child_records', 'Classification', 'Collection',
@@ -134,12 +136,16 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Notated Music Format', 'Notes', 'Objective and Content',
             'Organisation', 'original_work_language', 'Other Classification',
             'Other Classifications', 'Other ID', 'Other Links',
-            'Other Screenings', 'Physical Description', 'Place of Origin',
+            'Other Screenings', 'Parent Archive', 'Parent Collection',
+            'Parent Purchase Batch', 'Parent Series',
+            'Parent Unclassified Entity', 'Parent Work',
+            'Physical Description', 'Place of Origin',
             'Playing Time', 'Premiere Night', 'Premiere Theaters',
             'Presenters', 'Previous Title', 'Production',
             'Production Costs', 'Production Credits', 'Projected Publication Date',
             'Publication Frequency', 'Publications', 'Publication_Place',
-            'Published in', 'Publisher or Distributor Number', 'Record Links',
+            'Published in', 'Publisher or Distributor Number',
+            'Record Links',
             'Related Items', 'Related Places', 'Scale',
             'Secondary Authors', 'Series', 'Sound',
             'Source of Acquisition', 'Standard Codes', 'Studios',

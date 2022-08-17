@@ -5,7 +5,7 @@
  * PHP version 7
  *
  * Copyright (C) Villanova University 2016.
- * Copyright (C) The National Library of Finland 2017-2020.
+ * Copyright (C) The National Library of Finland 2017-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -26,6 +26,7 @@
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
@@ -43,6 +44,7 @@ use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
@@ -281,6 +283,80 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordFormat']
             ]
         );
+
+        // Note: "Parent..." fields are similar to archive fields further down, but
+        // use a less archive-specific terminology.
+        $setTemplateLine(
+            'Parent Archive',
+            'getParentArchives',
+            'data-hierarchyLinks.phtml',
+            [
+                'context' => [
+                    'class' => 'recordHierarchyLinks',
+                ]
+            ]
+        );
+        $setTemplateLine(
+            'Parent Collection',
+            'getParentCollections',
+            'data-hierarchyLinks.phtml',
+            [
+                'context' => [
+                    'class' => 'recordHierarchyLinks',
+                ]
+            ]
+        );
+        $setTemplateLine(
+            'Parent Subcollection',
+            'getParentSubcollections',
+            'data-hierarchyLinks.phtml',
+            [
+                'context' => [
+                    'class' => 'recordHierarchyLinks',
+                ]
+            ]
+        );
+        $setTemplateLine(
+            'Parent Series',
+            'getParentSeries',
+            'data-hierarchyLinks.phtml',
+            [
+                'context' => [
+                    'class' => 'recordHierarchyLinks',
+                ]
+            ]
+        );
+        $setTemplateLine(
+            'Parent Purchase Batch',
+            'getParentPurchaseBatches',
+            'data-hierarchyLinks.phtml',
+            [
+                'context' => [
+                    'class' => 'recordHierarchyLinks',
+                ]
+            ]
+        );
+        $setTemplateLine(
+            'Parent Work',
+            'getParentWorks',
+            'data-hierarchyLinks.phtml',
+            [
+                'context' => [
+                    'class' => 'recordHierarchyLinks',
+                ]
+            ]
+        );
+        $setTemplateLine(
+            'Parent Unclassified Entity',
+            'getParentUnclassifiedEntities',
+            'data-hierarchyLinks.phtml',
+            [
+                'context' => [
+                    'class' => 'recordHierarchyLinks',
+                ]
+            ]
+        );
+
         $setTemplateLine(
             'Archive Origination',
             'getOriginationExtended',
