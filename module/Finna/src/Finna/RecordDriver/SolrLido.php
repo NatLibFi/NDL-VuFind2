@@ -1283,6 +1283,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getIdentifier()
     {
         foreach ($this->getIdentifiersByType(true) as $identifier) {
+            // Take only the first identifier here
+            // since others are included in getLocalIdentifiers
             return [$identifier];
         }
         return [];
