@@ -683,7 +683,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         }
 
         $xml = $this->makeRequest('/users/' . rawurlencode($patronId));
-        if ($xml == null || empty($xml)) {
+        if ($xml === null) {
             return false;
         }
 
@@ -2229,6 +2229,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         [$holdingId, $libraryCode, $locationCode] = explode('||', $groupKey);
 
         // Summary holdings
+        $holding = null;
         if ($holdingId) {
             $holding = $this->makeRequest(
                 '/bibs/' . rawurlencode($id) . '/holdings/'
@@ -2245,7 +2246,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         }
 
         $marcDetails = [];
-        if ($params['page'] == 1) {
+        if ($holding && $params['page'] == 1) {
             $marc = $holding->record;
 
             // Get Notes

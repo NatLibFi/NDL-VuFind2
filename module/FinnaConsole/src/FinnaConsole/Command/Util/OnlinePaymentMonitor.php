@@ -303,6 +303,9 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         foreach ($cards as $card) {
             // Read the card with a separate call to decrypt password:
             $card = $user->getLibraryCard($card->id);
+            if (!$card) {
+                continue;
+            }
             try {
                 $patron = $this->catalog
                     ->patronLogin($card->cat_username, $card->cat_password);
@@ -321,8 +324,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         if (!$patron) {
             $this->warn(
                 "Catalog login failed for user {$user->username}"
-                . " (id {$user->id}), card {$card->cat_username}"
-                . " (id {$card->id})"
+                . " (id {$user->id}), card {$t->cat_username}"
             );
             $t->setRegistrationFailed('patron login error');
             $failedCnt++;
@@ -342,8 +344,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
             $this->err(
                 '    Registration of transaction '
                     . $t->transaction_id . " failed for user {$user->username}"
-                    . " (id {$user->id}), card {$card->cat_username}"
-                    . " (id {$card->id})",
+                    . " (id {$user->id}), card {$t->cat_username}",
                 ''
             );
             $this->err('      ' . $e->getMessage());
@@ -404,8 +405,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
                         $this->warn(
                             "  No error email for expired transactions defined for "
                             . "driver $driver, using feedback email ($cnt expired "
-                            . "transactions)",
-                            '='
+                            . "transactions)"
                         );
                     } else {
                         $this->err(

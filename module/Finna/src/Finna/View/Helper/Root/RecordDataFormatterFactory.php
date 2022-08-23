@@ -78,13 +78,11 @@ class RecordDataFormatterFactory
 
         foreach ($this->getDefaultCoreFields() as $key => $data) {
             if ($data[0] === true) {
-                [$multiLine, $dataMethod, $callback, $options] = $data;
-            } else {
-                [$multiLine, $dataMethod, $template, $options] = $data;
-            }
-            if ($multiLine) {
+                // Multi-line
+                [, $dataMethod, $callback, $options] = $data;
                 $spec->setMultiLine($key, $dataMethod, $callback, $options);
             } else {
+                [, $dataMethod, $template, $options] = $data;
                 $spec->setTemplateLine($key, $dataMethod, $template, $options);
             }
         }
@@ -409,6 +407,15 @@ class RecordDataFormatterFactory
         );
 
         $setTemplateLine(
+            'Other ID',
+            'getLocalIdentifiers',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordIdentifiers']
+            ]
+        );
+
+        $setTemplateLine(
             'Measurements',
             'getMeasurements',
             'data-escapeHtml.phtml',
@@ -432,14 +439,6 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordClassifications']
             ]
         );
-        $setTemplateLine(
-            'Other ID',
-            'getLocalIdentifiers',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordIdentifiers']
-            ]
-        );
 
         $getEvents = function ($data, $options) {
             $final = [];
@@ -455,7 +454,9 @@ class RecordDataFormatterFactory
                         'labelFunction'
                             => function ($data, $driver) use ($eventType) {
                                 $mainFormat = $driver->getMainFormat();
-                                return "lido_event_type_{$mainFormat}_$eventType";
+                                return $eventType
+                                    ? "lido_event_type_{$mainFormat}_$eventType"
+                                    : '';
                             },
                     ],
                 ];
@@ -563,10 +564,13 @@ class RecordDataFormatterFactory
         );
         $setTemplateLine(
             'Subject Place',
-            'getSubjectPlaces',
-            'data-escapeHtml.phtml',
+            'getSubjectPlacesExtended',
+            'data-allSubjectHeadingsExtended.phtml',
             [
-                'context' => ['class' => 'recordSubjects']
+                'context' => [
+                    'class' => 'recordSubjects',
+                    'headingType' => 'place',
+                ]
             ]
         );
         $setTemplateLine(
@@ -591,6 +595,14 @@ class RecordDataFormatterFactory
             'data-allSubjectHeadings.phtml',
             [
                 'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        $setTemplateLine(
+            'SubjectsWithoutPlaces',
+            'getAllSubjectHeadingsWithoutPlaces',
+            'data-allSubjectHeadings.phtml',
+            [
+                'context' => ['class' => 'recordSubjects', 'title' => 'Subjects']
             ]
         );
         $setTemplateLine(
@@ -990,6 +1002,14 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Hardware',
+            'getHardwareRequirements',
+            'data-hardwareRequirements.phtml',
+            [
+                'context' => ['class' => 'record-hardware']
+            ]
+        );
+        $setTemplateLine(
             'System Format',
             'getSystemDetails',
             'data-escapeHtml',
@@ -1300,6 +1320,16 @@ class RecordDataFormatterFactory
             'data-transEsc.phtml',
             [
                 'context' => ['class' => 'record-notes']
+            ]
+        );
+        $setTemplateLine(
+            'Original Version Notes',
+            'getOriginalVersionNotes',
+            'data-originalVersionNotes.phtml',
+            [
+                'context' => [
+                    'class' => 'record-original-version-notes',
+                ],
             ]
         );
         $setTemplateLine(

@@ -19,21 +19,15 @@ function buildFacetNodes(data, currentPath, allowExclude, excludeTitle, counts)
     }
     item.setAttribute('title', facet.displayText);
     item.setAttribute('role', 'menuitem');
-    var icon = document.createElement('span');
-    icon.className = "hierarchy-facet-icon";
     if (facet.operator === 'OR') {
-      if (facet.isApplied) {
-        icon.innerHTML = VuFind.icon("facet-checked");
-      } else {
-        icon.innerHTML = VuFind.icon("facet-unchecked");
-      }
-    } else if (facet.isApplied) {
-      icon.innerHTML = VuFind.icon("facet-checked", { class: "pull-right", title: selected });
+      var icon = document.createElement('span');
+      icon.className = "hierarchy-facet-icon";
+      icon.innerHTML = facet.isApplied ? VuFind.icon("facet-checked", { title: selected }) : VuFind.icon("facet-unchecked");
+      item.appendChild(icon);
     }
     var description = document.createElement('span');
     description.className = 'facet-value';
     description.appendChild(document.createTextNode(facet.displayText));
-    item.appendChild(icon);
     item.appendChild(description);
     html.appendChild(item);
 
@@ -91,6 +85,11 @@ function buildFacetTree(treeNode, facetData, inSidebar) {
       treeNode.find('ul.jstree-container-ul > li.jstree-node').addClass('list-group-item');
       treeNode.find('a.exclude').click(VuFind.sideFacets.showLoadingOverlay);
     });
+    if (treeNode.parent().hasClass('truncate-hierarchy')) {
+      treeNode.on('loaded.jstree', function initHierarchyTruncate(/*e, data*/) {
+        VuFind.truncate.initTruncate(treeNode.parent(), '.list-group-item');
+      });
+    }
   }
   treeNode.jstree({
     'core': {
@@ -99,7 +98,7 @@ function buildFacetTree(treeNode, facetData, inSidebar) {
   });
 }
 
-function initFacetTree(treeNode, inSidebar)
+function loadFacetTree(treeNode, inSidebar)
 {
   var loaded = treeNode.data('loaded');
   if (loaded) {
@@ -108,7 +107,7 @@ function initFacetTree(treeNode, inSidebar)
   treeNode.data('loaded', true);
 
   if (inSidebar) {
-    treeNode.prepend('<li class="list-group-item">' + VuFind.loading() + '</li>');
+    treeNode.prepend('<li class="jstree-node list-group-item facet-load-indicator">' + VuFind.loading() + '</li>');
   } else {
     treeNode.prepend('<div>' + VuFind.loading() + '<div>');
   }
@@ -130,6 +129,20 @@ function initFacetTree(treeNode, inSidebar)
   );
 }
 
+function initFacetTree(treeNode, inSidebar)
+{
+  // Defer init if the facet is collapsed:
+  let $collapse = treeNode.parents('.facet-group').find('.collapse');
+  if (!$collapse.hasClass('in')) {
+    $collapse.on('show.bs.collapse', function onExpand() {
+      loadFacetTree(treeNode, inSidebar);
+    });
+    return;
+  } else {
+    loadFacetTree(treeNode, inSidebar);
+  }
+}
+
 /* --- Side Facets --- */
 VuFind.register('sideFacets', function SideFacets() {
   function showLoadingOverlay(e, data) {
@@ -139,6 +152,10 @@ VuFind.register('sideFacets', function SideFacets() {
       + VuFind.loading()
       + "</span></div>";
     $(this).closest(".collapse").append(overlay);
+    if (typeof data !== "undefined") {
+      // Remove jstree-clicked class from JSTree links to avoid the color change:
+      data.instance.get_node(data.node, true).children().removeClass('jstree-clicked');
+    }
     // This callback operates both as a click handler and a JSTree callback;
     // if the data element is undefined, we assume we are handling a click.
     var href = typeof data === "undefined" || typeof data.node.data.url === "undefined"

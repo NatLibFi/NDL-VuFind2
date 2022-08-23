@@ -115,8 +115,7 @@ class EditListResource extends \VuFind\AjaxHandler\AbstractBase
         if ($this->user === false) {
             return $this->formatResponse(
                 $this->translate('You must be logged in first'),
-                self::STATUS_HTTP_NEED_AUTH,
-                401
+                self::STATUS_HTTP_NEED_AUTH
             );
         }
 

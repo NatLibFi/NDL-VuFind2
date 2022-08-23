@@ -557,7 +557,7 @@ EOT;
             }
         }
 
-        if ($xpath && !empty($xpathContent)) {
+        if ($xpath) {
             if ($xpathItem = $xpath->query('//item/content:encoded')->item(0)) {
                 $contentSearch = isset($config->htmlContentSearch)
                     ? $config->htmlContentSearch->toArray() : [];

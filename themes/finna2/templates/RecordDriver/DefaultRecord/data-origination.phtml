@@ -12,5 +12,5 @@
     unset($origination['date']);
   ?>
   <?=$idx > 0 ? '<br/>' : ''?>
-  <?=$this->record($this->driver)->getAuthorityLinkElement('author', $origination['name'], $origination, ['showInlineInfo' => true, 'authorityType' => $author['type'] ?? null, 'description' => true])?>
+  <?=$this->record($this->driver)->getLinkedFieldElement('author', $origination['name'], $origination, ['authorityType' => $author['type'] ?? null, 'description' => true])?>
 <?php endforeach; ?>

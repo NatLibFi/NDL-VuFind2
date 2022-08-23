@@ -49,7 +49,7 @@ VuFind.register('itemStatuses', function ItemStatuses() {
         if (result.locationList[x].availability) {
           locationListHTML +=
             '<span class="text-success">' +
-              VuFind.icon("ui-success") + " " +
+              VuFind.icon("status-available") + " " +
               result.locationList[x].location +
             '</span> ';
         } else if (typeof(result.locationList[x].status_unknown) !== 'undefined'
@@ -65,7 +65,7 @@ VuFind.register('itemStatuses', function ItemStatuses() {
         } else {
           locationListHTML +=
             '<span class="text-danger">' +
-              VuFind.icon('ui-failure') + " " +
+              VuFind.icon('status-unavailable') + " " +
               result.locationList[x].location +
             '</span> ';
         }
@@ -166,6 +166,7 @@ VuFind.register('itemStatuses', function ItemStatuses() {
         .fail( this.itemStatusFail)
         .always(function queueAjaxAlways() {
           this.itemStatusRunning = false;
+          VuFind.emit("item-status-done");
         });
     }//end runItemAjaxForQueue
   };
@@ -189,7 +190,7 @@ VuFind.register('itemStatuses', function ItemStatuses() {
       return;
     }
     if ($item.find('.hiddenId').length === 0) {
-      return false;
+      return;
     }
     var id = $item.find('.hiddenId').val();
     var handlerName = 'ils';
@@ -214,7 +215,7 @@ VuFind.register('itemStatuses', function ItemStatuses() {
     }
   }
   function init(_container) {
-    if (typeof Hunt === 'undefined') {
+    if (typeof Hunt === 'undefined' || VuFind.isPrinting()) {
       checkItemStatuses(_container);
     } else {
       var container = typeof _container === 'undefined'

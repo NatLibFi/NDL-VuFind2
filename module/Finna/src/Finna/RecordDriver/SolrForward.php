@@ -760,6 +760,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 'idx' => ''
             ];
 
+            $primary = false;
             if (!empty($agent->Activity)) {
                 $activity = $agent->Activity;
                 $relator = (string)$activity;

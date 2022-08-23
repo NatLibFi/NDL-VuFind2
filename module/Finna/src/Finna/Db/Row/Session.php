@@ -38,6 +38,8 @@ use VuFind\Log\LoggerAwareTrait;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
+ *
+ * @property int $id
  */
 class Session extends \VuFind\Db\Row\Session implements LoggerAwareInterface
 {

@@ -55,6 +55,7 @@
       if ($finnaSurvey) {
         $this->headScript()->appendFile('finna-survey.js');
       }
+      $isLandingPage = $this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search';
     ?>
     <?=$this->headLink()?>
     <?=$this->headStyle()?>
@@ -142,8 +143,8 @@ JS;
       // this covers case 1.  Cases 2 and 3 are then covered by logic below.
       if (!isset($this->layout()->searchbox)) {
         $url = $this->searchMemory()->getLastSearchUrl();
-        if ($this->layout()->templateDir != 'record' && $this->layout()->templateDir != 'collection' || !$url) {
-            $this->layout()->searchbox = $this->context($this)->renderInContext("search/searchbox.phtml", ['ignoreHiddenFilterMemory' => isset($this->layout()->ignoreHiddenFilterMemory) ? $this->layout()->ignoreHiddenFilterMemory : false]);
+        if (!in_array($this->layout()->templateDir, ['record', 'collection']) || !$url) {
+            $this->layout()->searchbox = $this->context($this)->renderInContext("search/searchbox.phtml", ['ignoreHiddenFilterMemory' => $this->layout()->ignoreHiddenFilterMemory ?? false]);
         } else {
           $searchId = $this->searchMemory()->getLastSearchId();
           $searchType = $this->searchMemory()->getLastSearchType();
@@ -158,7 +159,7 @@ JS;
                 "search/searchbox.phtml",
                 [
                   'searchType' => "advanced",
-                  'ignoreHiddenFilterMemory' => isset($this->layout()->ignoreHiddenFilterMemory) ? $this->layout()->ignoreHiddenFilterMemory : false
+                  'ignoreHiddenFilterMemory' => $this->layout()->ignoreHiddenFilterMemory ?? false
                 ]
             );
 
@@ -202,7 +203,7 @@ JS;
                 [
                   'lookfor' => $lookfor ?? '',
                   'filterList' => $filters ?? [],
-                  'ignoreHiddenFilterMemory' => isset($this->layout()->ignoreHiddenFilterMemory) ? $this->layout()->ignoreHiddenFilterMemory : false,
+                  'ignoreHiddenFilterMemory' => $this->layout()->ignoreHiddenFilterMemory ?? false,
                   'searchIndex' => $type ?? ''
                 ]
             );
@@ -250,7 +251,7 @@ JS;
     </header>
     <section class="searchContent<?=$currentTabClass?>">
       <h1 class="sr-only"><?=$this->transEsc('Search')?></h1>
-      <?php if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search'): ?>
+      <?php if ($isLandingPage): ?>
         <a class="btn btn-primary btn-uppercase floating-feedback-btn" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
       <?php endif; ?>
       <?php if (!empty($this->layout()->infoMessage)): ?>
@@ -262,7 +263,7 @@ JS;
       <?php endif; ?>
       <div class="search-form-container <?= ($this->searchMemory()->getLastSearchType() === 'advanced' ? 'advanced-container' : '') ?>">
         <div class="container">
-          <?php if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search'): ?>
+          <?php if ($isLandingPage): ?>
             <div class="logo clearfix">
               <?=$this->render('search/logosection.phtml') ?>
             </div>
@@ -275,21 +276,21 @@ JS;
         </div>
         <?php endif; ?>
 
-        <?php if (!empty($this->layout()->searchbox) && $this->layout()->searchbox !== false): ?>
+        <?php if (!empty($this->layout()->searchbox)): ?>
             <?=$this->layout()->searchbox ?>
         <?php endif; ?>
       </div>
     </div>
-    <?php if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search' && !$this->translationEmpty('search_bg_image_info_html')): ?>
+    <?php if ($isLandingPage && !$this->translationEmpty('search_bg_image_info_html')): ?>
         <div aria-hidden="true" class="search-bg-image-info">
           <div class="search-bg-image-info-content">
             <?=$this->translate('search_bg_image_info_html')?>
           </div>
         </div>
     <?php endif; ?>
-      <?php if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search' && $template = $this->content()->findTemplateForLng('search/home/browsebar')): ?>
-        <?=$this->render($template)?>
-      <?php endif; ?>
+    <?php if ($isLandingPage && $template = $this->content()->findTemplateForLng('search/home/browsebar')): ?>
+      <?=$this->render($template)?>
+    <?php endif; ?>
     </section>
     <?php if (!empty($this->layout()->showBreadcrumbs ?? true) && !empty($this->layout()->breadcrumbs)): ?>
       <nav class="breadcrumbs hidden-print" aria-label="<?=$this->transEsc('Breadcrumbs') ?>">

@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2018.
+ * Copyright (C) The National Library of Finland 2018-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,15 +22,16 @@
  * @category VuFind
  * @package  Config
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
 namespace Finna\Form;
 
-use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Psr\Container\ContainerExceptionInterface as ContainerException;
+use Psr\Container\ContainerInterface;
 
 /**
  * Factory for configurable forms.
@@ -38,6 +39,7 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
  * @category VuFind
  * @package  Config
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
@@ -62,8 +64,8 @@ class FormFactory extends \VuFind\Form\FormFactory
         $requestedName,
         array $options = null
     ) {
-        $config = $container->get(\VuFind\Config\PluginManager::class)
-            ->get('config')->toArray();
+        $configManager = $container->get(\VuFind\Config\PluginManager::class);
+        $config = $configManager->get('config')->toArray();
 
         $form = parent::__invoke($container, $requestedName, $options);
         if (isset($config['Site']['institution'])) {
@@ -83,10 +85,10 @@ class FormFactory extends \VuFind\Form\FormFactory
             }
             $form->setUser($user, $roles, $patron ?: []);
         }
-        $form->setViewHelperManager($container->get('ViewHelperManager'));
         $form->setRecordRequestFormsWithBarcode(
             (array)($config['Record']['repository_library_request_form'] ?? null)
         );
+        $form->setDataSourceConfig($configManager->get('datasources')->toArray());
         return $form;
     }
 }

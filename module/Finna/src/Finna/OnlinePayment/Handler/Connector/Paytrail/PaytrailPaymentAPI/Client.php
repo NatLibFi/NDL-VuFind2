@@ -53,13 +53,11 @@ class Client extends \Paytrail\SDK\Client
      * @param int    $merchantId   The merchant.
      * @param string $secretKey    The secret key.
      * @param string $platformName Platform name.
-     * @param array  $args         Optional. Array of additional arguments.
      */
     public function __construct(
         int $merchantId,
         string $secretKey,
-        string $platformName,
-        $args = []
+        string $platformName
     ) {
         // N.B. Do not call parent constructor to avoid creating a Guzzle client
         $this->setMerchantId($merchantId);

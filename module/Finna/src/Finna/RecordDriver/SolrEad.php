@@ -357,8 +357,7 @@ class SolrEad extends SolrDefault
         foreach ($record->did->origination as $origination) {
             $name = (string)($origination->corpname
                 ?? $origination->persname
-                ?? $origination
-                ?? '');
+                ?? $origination);
             if ($name) {
                 $result[] = [
                     'name' => $name,

@@ -53,11 +53,18 @@ class AuthorityHelper
     public const AUTHOR_ID_ROLE_FACET = 'author2_id_role_str_mv';
 
     /**
-     * Index field for author2-ids.
+     * Index field for topic ids.
      *
      * @var string
      */
     public const TOPIC_ID_FACET = 'topic_id_str_mv';
+
+    /**
+     * Index field for place ids.
+     *
+     * @var string
+     */
+    public const GEOGRAPHIC_ID_FACET = 'geographic_id_str_mv';
 
     /**
      * Delimiter used to separate author id and role.

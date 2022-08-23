@@ -15,7 +15,7 @@
         }
         $additional = $this->record($this->driver)->getAuthorityLinkAdditionalData($additional, $format);
       ?>
-      <li><?=$this->record($this->driver)->getAuthorityLinkElement('author', $item['name'], $item, ['authorityType' => $item['type'] ?? null, 'additionalData' => $additional, 'showInlineInfo' => true])?></li>
+      <li><?=$this->record($this->driver)->getLinkedFieldElement('author', $item['name'], $item, ['authorityType' => $item['type'] ?? null, 'additionalData' => $additional])?></li>
     <?php endforeach; ?>
   </ul>
 <?php endif; ?>

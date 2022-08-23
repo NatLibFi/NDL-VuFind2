@@ -114,10 +114,14 @@ class Bootstrapper
                 return;
             }
             // Check if the action should be prevented
+            $ajaxAllowed = [
+                'onlinepaymentnotify',
+                'systemstatus',
+            ];
             $routeMatch = $event->getRouteMatch();
             $controller = strtolower($routeMatch->getParam('controller'));
             $action = strtolower($routeMatch->getParam('action'));
-            if (($controller == 'ajax' && $action != 'systemstatus')
+            if (($controller == 'ajax' && !in_array($action, $ajaxAllowed))
                 || ($controller == 'record' && $action == 'ajaxtab')
                 || ($controller == 'record' && $action == 'holdings')
                 || ($controller == 'record' && $action == 'details')

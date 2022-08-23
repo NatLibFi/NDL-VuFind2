@@ -31,7 +31,7 @@
     <?php if ($scheduledSearches): ?>
       <?php if ($this->alertemail): ?>
         <div class="alert alert-info alert-email-notification">
-          <?=$this->transEsc("alert_email_address") . ': ' . $this->alertemail . ' (';?><a href="<?=$this->url('myresearch-profile', [], ['fragment' => 'profile-settings']);?>"><?=$this->transEsc("edit");?></a>)
+          <?=$this->transEsc("alert_email_address") . ': ' . $this->escapeHtml($this->alertemail) . ' (';?><a href="<?=$this->url('myresearch-profile', [], ['fragment' => 'profile-settings']);?>"><?=$this->transEsc("edit");?></a>)
         </div>
       <?php elseif ($this->auth()->isLoggedIn()): ?>
         <div class="alert alert-danger alert-email-notification">

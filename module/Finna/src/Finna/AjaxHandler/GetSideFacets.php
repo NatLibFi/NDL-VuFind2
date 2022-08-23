@@ -52,6 +52,8 @@ class GetSideFacets extends \VuFind\AjaxHandler\GetSideFacets
     protected function getCheckboxFacetCount($facet, Results $results)
     {
         $checkboxFacets = $results->getParams()->getCheckboxFacets();
+        $delimitedFacets = $results->getParams()->getOptions()
+            ->getDelimitedFacets(true);
         foreach ($checkboxFacets as $checkboxFacet) {
             if ($facet !== $checkboxFacet['filter']) {
                 continue;
@@ -61,7 +63,7 @@ class GetSideFacets extends \VuFind\AjaxHandler\GetSideFacets
                 [$field => $value]
             );
             if (!isset($checkboxResults[$field]['list'])) {
-                return 0;
+                return null;
             }
             $count = 0;
             $truncate = substr($value, -1) === '*';
@@ -69,7 +71,11 @@ class GetSideFacets extends \VuFind\AjaxHandler\GetSideFacets
                 $value = substr($value, 0, -1);
             }
             foreach ($checkboxResults[$field]['list'] as $item) {
-                if ($item['value'] == $value
+                $itemValue = $item['value'];
+                if ($delimiter = $delimitedFacets[$field] ?? '') {
+                    [$itemValue] = explode($delimiter, $itemValue);
+                }
+                if ($itemValue == $value
                     || ($truncate
                     && preg_match('/^' . $value . '/', $item['value']))
                     || ($item['value'] == 'true' && $value == '1')
@@ -80,7 +86,7 @@ class GetSideFacets extends \VuFind\AjaxHandler\GetSideFacets
             }
             return $count;
         }
-        return 0;
+        return null;
     }
 
     /**

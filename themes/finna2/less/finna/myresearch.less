@@ -741,14 +741,58 @@
       }
     }
   }
-  // remove exclamation mark from fines row
-  .fines-status .badge.overdue {
-    &:before {
-      content:"";
+}
+
+// Status badges
+.myresearch-menu, #my-info-dropdown-menu {
+  a {
+    display: block;
+    &.flex {
+      display: flex;
+    }
+    &:hover {
+      background-color: @gray-lighter;
+    }
+    &:focus {
+      background-color: @nav-link-hover-bg;
+    }
+    &.user-list-link i {
+      margin-left: 0.5rem;
+    }
+    &.active {
+      background-color: @brand-primary;
+      color: #fff;
+    }
+  }
+
+  .status {
+    float: right;
+    display: flex;
+    flex: none;
+    .badge {
+      border-radius: 2px;
+      margin: 0 2px;
+      border: 1px solid; /* color inherited from bootstrap */
+      height: 22px;
+      padding: 0 7px;
+
+      &.account-info {
+        color: @state-success-text;
+        background-color: @state-success-bg;
+      }
+      &.account-warning {
+        color: @state-warning-text;
+        background-color: @state-warning-bg;
+      }
+      &.account-alert {
+        color: @state-danger-text;
+        background-color: @state-danger-bg;
+      }
     }
   }
 }
 
+// Search history
 .history-holder {
   @media (min-width: @screen-xs-max) {
     h2 {

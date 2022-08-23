@@ -38,6 +38,8 @@ namespace Finna\Db\Row;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
+ *
+ * @property int $finna_due_date_reminder
  */
 class PrivateUser extends \VuFind\Db\Row\PrivateUser
 {
