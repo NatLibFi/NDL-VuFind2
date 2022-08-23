@@ -105,6 +105,10 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
       $daterangeFacet = $title == $daterangeFacetField;
       $escTitle = $this->escapeHtml($title);
       $escAttrTitle = $this->escapeHtmlAttr($title);
+      $areaInFilters = array_key_exists('Geographical Area', $filterList);
+      if ($areaInFilters && ($key = array_search('geographic_facet', $collapsedFacets)) !== false) {
+        unset($collapsedFacets[$key]);
+      }
       $isCollapsed = in_array($title, $collapsedFacets);
       $dataTarget = 'side-collapse-' . $escAttrTitle;
     ?>
