@@ -1,63 +1,83 @@
 /*global VuFind, finna */
 finna.itemStatus = (function finnaItemStatus() {
   function initDedupRecordSelection(_holder) {
-    var holder = typeof _holder === 'undefined' ? $(document) : _holder;
+    let holder = document;
+    if (typeof _holder !== 'undefined' && _holder instanceof jQuery) {
+      holder = _holder[0];
+    }
+    const selects = holder.querySelectorAll('.dedup-select');
+    selects.forEach(select => {
+      select.addEventListener('change', function onChangeDedupSelection() {
+        const id = this.value;
+        const selected = this.querySelector('option:checked');
+        const source = selected ? selected.dataset.source : '';
 
-    $(holder).find('.dedup-select').on('change', function onChangeDedupSelection() {
-      var id = $(this).val();
-      var source = $(this).find('option:selected').data('source');
-      finna.common.setCookie('preferredRecordSource', source);
+        const placeholder = this.querySelector('.js-dedup-placeholder');
+        if (placeholder) {
+          placeholder.remove();
+        }
 
-      var recordContainer = $(this).closest('.record-container');
-      recordContainer.data('ajaxAvailabilityDone', 0);
-      var oldRecordId = recordContainer.find('.hiddenId')[0].value;
+        finna.common.setCookie('preferredRecordSource', source);
+        const recordContainer = this.closest('.record-container');
+        if (recordContainer) {
+          const hiddenID = recordContainer.querySelector('.hiddenId');
+          const hiddenSource = recordContainer.querySelector('.hiddenSource');
+          if (hiddenID) {
+            const oldRecordId = hiddenID.value;
+            hiddenID.value = id;
+            recordContainer.querySelectorAll(`[id="${oldRecordId}"]`).forEach(el => {
+              el.attr('id', id);
+            });
+            recordContainer.querySelectorAll('a[href]').forEach(link => {
+              link.setAttribute('href', link.getAttribute('href').replace(oldRecordId, id));
+            });
+          }
 
-      // Update IDs of elements
-      recordContainer.find('.hiddenId').val(id);
+          const callnumAndLocation = recordContainer.querySelector('.callnumAndLocation');
+          const callnumber = recordContainer.querySelector('.callnumber');
+          if (callnumber) {
+            callnumber.classList.remove('hidden');
+          }
 
-      // Update IDs of elements
-      recordContainer.find('[id="' + oldRecordId + '"]').each(function updateElemId() {
-        $(this).attr('id', id);
-      });
-
-      // Update links as well
-      recordContainer.find('a').each(function updateLinks() {
-        if (typeof $(this).attr('href') !== 'undefined') {
-          $(this).attr('href', $(this).attr('href').replace(oldRecordId, id));
+          if (callnumAndLocation) {
+            const loading = document.createElement('span');
+            loading.className = 'location ajax-availability';
+            loading.innerHTML = VuFind.loading();
+            callnumAndLocation.innerHTML = '';
+            callnumAndLocation.appendChild(loading);
+          }
+          recordContainer.classList.remove('js-item-done');
+          VuFind.itemStatuses.checkRecord(recordContainer);
+          const recordUrls = recordContainer.querySelector('.available-online-links');
+          if (recordUrls && hiddenID && hiddenSource) {
+            recordUrls.innerHtml = VuFind.loading();
+            const params = new URLSearchParams({
+              method: 'getRecordData',
+              data: 'onlineUrls',
+              id: hiddenID.value,
+              source: hiddenSource.value
+            });
+            fetch(`${VuFind.path}/AJAX/JSON?${params}`)
+              .then(response => response.json())
+              .then((jsonResponse) => {
+                if (!jsonResponse.data && !jsonResponse.data.html) {
+                  return;
+                }
+                recordUrls.innerHTML = VuFind.updateCspNonce(jsonResponse.data.html);
+                finna.layout.initTruncate(recordContainer);
+                recordContainer.querySelectorAll('.openUrlEmbed a').forEach(url => {
+                  VuFind.openurl.embedOpenUrlLinks(url);
+                });
+              });
+          }
         }
       });
-
-      // Item statuses
-      var $loading = $('<span/>')
-        .addClass('location ajax-availability hidden')
-        .html(VuFind.loading());
-      recordContainer.find('.callnumAndLocation')
-        .empty()
-        .append($loading);
-      recordContainer.find('.callnumber').removeClass('hidden');
-      recordContainer.find('.location').removeClass('hidden');
-      recordContainer.removeClass('js-item-done');
-      VuFind.itemStatuses.checkRecord(recordContainer);
-
-      // Online URLs
-      var $recordUrls = recordContainer.find('.available-online-links');
-      if ($recordUrls.length) {
-        $recordUrls.html(VuFind.loading());
-        $.getJSON(
-          VuFind.path + '/AJAX/JSON',
-          {
-            method: 'getRecordData',
-            data: 'onlineUrls',
-            source: recordContainer.find('.hiddenSource')[0].value,
-            id: recordContainer.find('.hiddenId')[0].value
-          }
-        ).done(function onGetRecordLinksDone(response) {
-          $recordUrls.replaceWith(VuFind.updateCspNonce(response.data.html));
-          finna.layout.initTruncate(recordContainer);
-          VuFind.openurl.embedOpenUrlLinks(recordContainer.find('.openUrlEmbed a'));
-        }).fail(function onGetRecordLinksFail() {
-          $recordUrls.html(VuFind.translate('error_occurred'));
-        });
+    }); 
+    selects.forEach(select => {
+      if (typeof select.dataset.overrideid !== 'undefined') {
+        select.value = select.dataset.overrideid;
+        const event = new Event('change');
+        select.dispatchEvent(event);
       }
     });
   }
@@ -65,7 +85,7 @@ finna.itemStatus = (function finnaItemStatus() {
   var my = {
     initDedupRecordSelection: initDedupRecordSelection,
     init: function init() {
-      if (!$('.results').hasClass('result-view-condensed')) {
+      if (!document.querySelector('.results.result-view-condensed')) {
         initDedupRecordSelection();
       }
     }

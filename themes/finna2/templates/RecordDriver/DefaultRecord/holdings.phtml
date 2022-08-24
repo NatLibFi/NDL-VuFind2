@@ -11,9 +11,18 @@
 
   if ($deduplicated): ?>
     <div class="dedupInformation">
-      <select class="dedup-select form-control" role="listbox" aria-haspopup="true" title="<?=$this->transEsc('select_dedup_organisation');?>" aria-label="<?=$this->transEsc('select_dedup_organisation');?>">
+      <?php
+        $patron = $this->auth()->getILSPatron();
+        $overrideID = !empty($patron['source']) ? $dedupData[$patron['source']]['id'] ?? '' : '';
+        $attrID = "{$this->driver->getUniqueID()}-dedup-select";
+      ?>
+      <label for="<?=$this->escapeHtmlAttr($attrID)?>"><?=$this->transEsc('Holdings')?>:</label>
+      <select id="<?=$this->escapeHtmlAttr($attrID)?>" class="dedup-select form-control" role="listbox" aria-haspopup="true" title="<?=$this->transEsc('select_dedup_organisation');?>" aria-label="<?=$this->transEsc('select_dedup_organisation');?>" <?php if (!empty($overrideID)):?>data-overrideid="<?=$this->escapeHtmlAttr($overrideID)?>"<?php endif;?>>
+        <?php if (empty($overrideID) ||  !isset($dedupData[$patron['source']])):?>
+          <option class="js-dedup-placeholder" value="" disabled selected><?= $this->transEsc('Choose library')?></option>
+        <?php endif;?>
         <?php foreach ($dedupData as $source => $current): ?>
-          <option value="<?=$this->escapeHtmlAttr($current['id']) ?>" class="dedup-data-id" data-source="<?=$this->escapeHtmlAttr($source) ?>"<?php if ($recordSource === $source): ?> selected="selected"<?php endif; ?>><?=$this->transEsc("source_$source", null, $source) ?></option>
+          <option value="<?=$this->escapeHtmlAttr($current['id']) ?>" class="dedup-data-id" data-source="<?=$this->escapeHtmlAttr($source) ?>"><?=$this->transEsc("source_$source", null, $source) ?></option>
         <?php endforeach; ?>
       </select>
     </div>
