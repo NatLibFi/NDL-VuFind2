@@ -57,6 +57,13 @@ class RecordDataFormatterFactory
     extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
 {
     /**
+     * Translator
+     *
+     * @var \Laminas\I18n\Translator\TranslatorInterface
+     */
+    protected $translator = null;
+
+    /**
      * Create an object
      *
      * @param ContainerInterface $container     Service manager
@@ -77,6 +84,10 @@ class RecordDataFormatterFactory
         $requestedName,
         array $options = null
     ) {
+        $this->translator = $container->get(
+            \Laminas\I18n\Translator\TranslatorInterface::class
+        );
+
         $helper = parent::__invoke($container, $requestedName, $options);
 
         $helper->setDefaults('authority', [$this, 'getDefaultAuthoritySpecs']);
@@ -546,10 +557,21 @@ class RecordDataFormatterFactory
                         'context' => ['class' => 'recordEvents'],
                         'labelFunction'
                             => function ($data, $driver) use ($eventType) {
+                                if (!$eventType) {
+                                    return '';
+                                }
                                 $mainFormat = $driver->getMainFormat();
-                                return $eventType
-                                    ? "lido_event_type_{$mainFormat}_$eventType"
-                                    : '';
+                                $keys = [
+                                    "lido_event_type_{$mainFormat}_$eventType",
+                                    "lido_event_type_$eventType",
+                                ];
+                                foreach ($keys as $key) {
+                                    $label = $this->translator->translate($key);
+                                    if ($key !== $label) {
+                                        return $key;
+                                    }
+                                }
+                                return '';
                             },
                     ],
                 ];
