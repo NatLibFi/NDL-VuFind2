@@ -18,7 +18,7 @@
       ?>
       <label for="<?=$this->escapeHtmlAttr($attrID)?>"><?=$this->transEsc('Holdings')?>:</label>
       <select id="<?=$this->escapeHtmlAttr($attrID)?>" class="dedup-select form-control" role="listbox" aria-haspopup="true" title="<?=$this->transEsc('select_dedup_organisation');?>" aria-label="<?=$this->transEsc('select_dedup_organisation');?>" <?php if (!empty($overrideID)):?>data-overrideid="<?=$this->escapeHtmlAttr($overrideID)?>"<?php endif;?>>
-        <?php if (empty($overrideID) ||  !isset($dedupData[$patron['source']])):?>
+        <?php if (empty($overrideID) || !isset($dedupData[$patron['source']])):?>
           <option class="js-dedup-placeholder" value="" disabled selected><?= $this->transEsc('Choose Library')?></option>
         <?php endif;?>
         <?php foreach ($dedupData as $source => $current): ?>
