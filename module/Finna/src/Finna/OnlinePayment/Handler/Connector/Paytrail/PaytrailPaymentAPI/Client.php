@@ -73,6 +73,7 @@ class Client extends \Paytrail\SDK\Client
      * @return PaymentResponse
      * @throws HmacException       Thrown if HMAC calculation fails for responses.
      * @throws ValidationException Thrown if payment validation fails.
+     * @throws \Exception          Thrown if the HTTP request fails.
      */
     public function createPayment(PaymentRequest $payment)
     {
@@ -90,6 +91,9 @@ class Client extends \Paytrail\SDK\Client
             [],
             $headers
         );
+        if (!$response) {
+            throw new \Exception('Request failed');
+        }
 
         $body = $response['response'];
 

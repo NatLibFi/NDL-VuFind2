@@ -1691,6 +1691,31 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Get notes with URLs on finding aids related to the record
+     *
+     * @return array
+     */
+    public function getFindingAidsExtended()
+    {
+        $xml = $this->getXmlRecord();
+        $result = $localeResult = [];
+        foreach ($xml->otherfindaid ?? [] as $aid) {
+            foreach ($aid->p as $p) {
+                $data = [
+                    'label' => (string)$p,
+                    'url' => (string)($p->ref->attributes()->href ?? '')
+                ];
+                $result[] = $data;
+                $lang = $this->detectNodeLanguage($p);
+                if ($lang['preferred'] ?? false) {
+                    $localeResult[] = $data;
+                }
+            }
+        }
+        return $localeResult ?: $result;
+    }
+
+    /**
      * Get container information.
      *
      * @return string

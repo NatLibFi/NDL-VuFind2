@@ -207,7 +207,7 @@ class TurkuPaytrailE2 extends PaytrailE2
                 exit();
             }
         }
-        return $response['response'];
+        return $response['response'] ?? 'Request failed';
     }
 
     /**

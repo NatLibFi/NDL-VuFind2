@@ -166,6 +166,20 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
+     * Mapping from related work type to possible type attributes
+     *
+     * @var array
+     */
+    protected $relatedWorkTypeMap = [
+        'archive' => ['archive', 'arkisto', 'henkilöarkisto', 'yhteisöarkisto'],
+        'collection' => ['collection', 'kokoelma'],
+        'subcollection' => ['subcollection', 'alakokoelma'],
+        'series' => ['series', 'sarja'],
+        'purchaseBatch' => ['purchase batch', 'hankintaerä', 'hankintaerä (lapsi)'],
+        'work' => ['work', 'teos'],
+    ];
+
+    /**
      * Return access restriction notes for the record.
      *
      * @param string $language Optional primary language to look for
@@ -1466,6 +1480,78 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get hierarchy parent archives
+     *
+     * @return array
+     */
+    public function getParentArchives()
+    {
+        return $this->getParentLinksByType('archive');
+    }
+
+    /**
+     * Get hierarchy parent collections
+     *
+     * @return array
+     */
+    public function getParentCollections()
+    {
+        return $this->getParentLinksByType('collection');
+    }
+
+    /**
+     * Get hierarchy parent subcollections
+     *
+     * @return array
+     */
+    public function getParentSubcollections()
+    {
+        return $this->getParentLinksByType('subcollection');
+    }
+
+    /**
+     * Get hierarchy parent series
+     *
+     * @return array
+     */
+    public function getParentSeries()
+    {
+        return $this->getParentLinksByType('series');
+    }
+
+    /**
+     * Get hierarchy parent purchase batches
+     *
+     * @return array
+     */
+    public function getParentPurchaseBatches()
+    {
+        return $this->getParentLinksByType('purchaseBatch');
+    }
+
+    /**
+     * Get hierarchy parent unclassified entities
+     *
+     * Returns entities not belonging to any of the separately handled classes.
+     *
+     * @return array
+     */
+    public function getParentUnclassifiedEntities()
+    {
+        return $this->getParentLinksByType('');
+    }
+
+    /**
+     * Get hierarchy parent works
+     *
+     * @return array
+     */
+    public function getParentWorks()
+    {
+        return $this->getParentLinksByType('work');
+    }
+
+    /**
      * Get an array of dates for results list display
      *
      * @return array
@@ -1945,5 +2031,56 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             $results[] = (string)$edition;
         }
         return $results;
+    }
+
+    /**
+     * Get hierarchy parent links by type
+     *
+     * @param string $relatedWorkType Related work type to include, empty string for
+     * "others"
+     *
+     * @return array
+     */
+    protected function getParentLinksByType(string $relatedWorkType): array
+    {
+        $allowedTypes = $relatedWorkType
+            ? $this->relatedWorkTypeMap[$relatedWorkType] : [];
+        $disallowedTypes = $allowedTypes
+            ? [] : call_user_func_array(
+                'array_merge',
+                array_values($this->relatedWorkTypeMap)
+            );
+        $sets = $this->getXmlRecord()->lido->descriptiveMetadata->objectRelationWrap
+            ->relatedWorksWrap->relatedWorkSet;
+        $sourceId = $this->getSource();
+        $result = [];
+        foreach ($sets as $set) {
+            if ('is part of' !== (string)($set->relatedWorkRelType->term ?? '')) {
+                continue;
+            }
+            $workType = '';
+            foreach ($set->relatedWork->object->objectNote ?? [] as $note) {
+                if ('objectWorkType' === (string)($note['type'] ?? '')) {
+                    $workType = mb_strtolower(trim((string)$note), 'UTF-8');
+                    break;
+                }
+            }
+            if (($allowedTypes && !in_array($workType, $allowedTypes))
+                || ($disallowedTypes && in_array($workType, $disallowedTypes))
+            ) {
+                continue;
+            }
+            if ($id = (string)($set->relatedWork->object->objectID ?? '')) {
+                $id = "$sourceId.$id";
+            }
+            $title = (string)($set->relatedWork->displayObject ?? '');
+            if ($id && $title && $id !== $this->getUniqueID()
+                && !in_array($id, array_column($result, 'id'))
+            ) {
+                $result[] = compact('id', 'title');
+            }
+        }
+
+        return $result;
     }
 }
