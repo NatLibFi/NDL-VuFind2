@@ -182,7 +182,10 @@ FinnaMdEditable.prototype.openEditable = function openEditable() {
         editable.closeEditable();
       },
       className: 'fa fa-times editor-toolbar-close',
-      title: VuFind.translate('editor_close_editor')
+      title: VuFind.translate('editor_close_editor'),
+      attributes: {
+        'aria-label': VuFind.translate('save_and_close_editing')
+      }
     }
   ];
   var promptTexts = {
