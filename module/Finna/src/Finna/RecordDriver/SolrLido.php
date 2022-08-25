@@ -2051,7 +2051,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 array_values($this->relatedWorkTypeMap)
             );
         $sets = $this->getXmlRecord()->lido->descriptiveMetadata->objectRelationWrap
-            ->relatedWorksWrap->relatedWorkSet;
+            ->relatedWorksWrap->relatedWorkSet ?? [];
         $sourceId = $this->getSource();
         $result = [];
         foreach ($sets as $set) {
