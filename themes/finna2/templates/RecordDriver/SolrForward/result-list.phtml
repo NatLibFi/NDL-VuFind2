@@ -159,8 +159,7 @@ if ($img):
         <?php endif; ?>
 
         <?php $recordHelper = $this->record($this->driver); ?>
-        <?php $holdingsTemplate = count($this->driver->getDedupData()) > 0 ? 'holdings-deduplicated.phtml' : 'holdings.phtml'; ?>
-        <?=$recordHelper->renderTemplate($holdingsTemplate);?>
+        <?=$recordHelper->renderHoldings();?>
         <?=$recordHelper->getOnlineUrls('results');?>
         <?=$recordHelper->getPreviews();?>
 

@@ -1293,4 +1293,37 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
         return true;
     }
+
+    /**
+     * Function to render holdings template
+     *
+     * @return string
+     */
+    public function renderHoldings(): string
+    {
+        $holdingsTemplate = count($this->driver->getDedupData()) > 0
+            ? 'holdings-deduplicated'
+            : 'holdings';
+
+        $params = [];
+        if ('holdings-deduplicated' === $holdingsTemplate) {
+            $fetchHoldingsOnLoad = $this->fetchDedupHoldingsOnLoad();
+            $params['fetchHoldingsOnLoad']
+                = $fetchHoldingsOnLoad = $this->fetchDedupHoldingsOnLoad();
+            $params['dedupData'] = $dedupData = $this->driver->getDedupData();
+            if (!$fetchHoldingsOnLoad) {
+                $patron = $this->getView()->plugin('auth')->getILSPatron();
+                $preferredRecordSource = $this->getView()
+                    ->plugin('cookie')->get('preferredRecordSource');
+                if (empty($preferredRecordSource)) {
+                    $preferredRecordSource = $patron['source'] ?? '';
+                }
+                $params['overrideID'] = !empty($preferredRecordSource)
+                    ? $dedupData[$preferredRecordSource]['id'] ?? ''
+                    : '';
+            }
+        }
+        $params['recordSource'] = $this->driver->tryMethod('getDataSource');
+        return $this->renderTemplate("$holdingsTemplate.phtml", $params);
+    }
 }

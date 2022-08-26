@@ -1,6 +1,6 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/holdings.phtml -->
 <div class="holding-details">
-  <?php if ($recordSource = $this->driver->tryMethod('getDataSource')): ?>
+  <?php if ($this->recordSource): ?>
     <div class="dedupInformation">
       <strong><?=$this->transEsc("source_$recordSource", null, $recordSource) ?></strong>
     </div>
