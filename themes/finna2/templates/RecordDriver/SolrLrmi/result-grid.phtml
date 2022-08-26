@@ -10,7 +10,7 @@ $openUrlActive = $openUrl->isActive();
 $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
 ?>
 
-<div class="grid-result<?=$this->driver->supportsAjaxStatus()?' ajaxItem':''?>">
+<div class="grid-result<?=$this->record($this->driver)->fetchDedupHoldingsOnLoad() && $this->driver->supportsAjaxStatus()?' ajaxItem':''?>">
   <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
   <div class="grid-body">
     <?php if (!isset($this->hideCartControls) && $this->cart()->isActive()): ?>

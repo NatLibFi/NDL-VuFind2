@@ -6,6 +6,7 @@ finna.itemStatus = (function finnaItemStatus() {
     selects.on('change', function onChangeDedupSelection() {
       var id = $(this).val();
       var source = $(this).find('option:selected').data('source');
+      console.log(source);
       finna.common.setCookie('preferredRecordSource', source);
 
       const placeholder = $(this).find('.js-dedup-placeholder');

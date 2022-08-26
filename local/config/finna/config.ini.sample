@@ -1197,6 +1197,10 @@ hide_holdings[] = "World Wide Web"
 ;                            always collapse journals
 ;holdings_details = "expand-first,collapse-journals"
 
+; Uncomment to prevent deduplicated holdings from being fetched immediatly.
+; Will display choose library placeholder in the deduplicated select elements.
+;select_dedup_holdings_library = true
+
 ; This array controls which Related modules are used to display sidebars on the
 ; record view page.
 ;

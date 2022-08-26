@@ -744,9 +744,6 @@ trait SolrFinnaTrait
     public function supportsAjaxStatus()
     {
         if (parent::supportsAjaxStatus()) {
-            if ($this->getDedupData()) {
-                return false;
-            }
             if (!empty($this->ils)) {
                 $driver = $this->ils->getDriver(false);
                 if ($driver instanceof \VuFind\ILS\Driver\MultiBackend) {

@@ -1277,4 +1277,20 @@ class Record extends \VuFind\View\Helper\Root\Record
         return ('SolrAuth' === $source || $this->hasLargeImageLayout())
             ? 'inline' : 'sidebar';
     }
+
+    /**
+     * If deduplication selections are allowed to fetch holdings
+     * immediately when the page has loaded
+     *
+     * @return bool
+     */
+    public function fetchDedupHoldingsOnLoad(): bool
+    {
+        if (!empty($this->config->Record->select_dedup_holdings_library)) {
+            if ($this->driver->getDedupData()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
