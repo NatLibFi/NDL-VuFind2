@@ -1307,7 +1307,6 @@ class Record extends \VuFind\View\Helper\Root\Record
 
         $params = [];
         if ('holdings-deduplicated' === $holdingsTemplate) {
-            $fetchHoldingsOnLoad = $this->fetchDedupHoldingsOnLoad();
             $params['fetchHoldingsOnLoad']
                 = $fetchHoldingsOnLoad = $this->fetchDedupHoldingsOnLoad();
             $params['dedupData'] = $dedupData = $this->driver->getDedupData();

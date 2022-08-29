@@ -1197,7 +1197,7 @@ hide_holdings[] = "World Wide Web"
 ;                            always collapse journals
 ;holdings_details = "expand-first,collapse-journals"
 
-; Uncomment to prevent deduplicated holdings from being fetched immediatly.
+; Uncomment to prevent deduplicated holdings from being fetched immediately.
 ; Will display choose library placeholder in the deduplicated select elements.
 ;select_dedup_holdings_library = true
 
