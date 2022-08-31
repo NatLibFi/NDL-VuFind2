@@ -53,13 +53,11 @@ class Client extends \Paytrail\SDK\Client
      * @param int    $merchantId   The merchant.
      * @param string $secretKey    The secret key.
      * @param string $platformName Platform name.
-     * @param array  $args         Optional. Array of additional arguments.
      */
     public function __construct(
         int $merchantId,
         string $secretKey,
-        string $platformName,
-        $args = []
+        string $platformName
     ) {
         // N.B. Do not call parent constructor to avoid creating a Guzzle client
         $this->setMerchantId($merchantId);
@@ -75,6 +73,7 @@ class Client extends \Paytrail\SDK\Client
      * @return PaymentResponse
      * @throws HmacException       Thrown if HMAC calculation fails for responses.
      * @throws ValidationException Thrown if payment validation fails.
+     * @throws \Exception          Thrown if the HTTP request fails.
      */
     public function createPayment(PaymentRequest $payment)
     {
@@ -92,6 +91,9 @@ class Client extends \Paytrail\SDK\Client
             [],
             $headers
         );
+        if (!$response) {
+            throw new \Exception('Request failed');
+        }
 
         $body = $response['response'];
 

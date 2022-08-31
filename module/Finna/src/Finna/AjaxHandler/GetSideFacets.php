@@ -63,7 +63,7 @@ class GetSideFacets extends \VuFind\AjaxHandler\GetSideFacets
                 [$field => $value]
             );
             if (!isset($checkboxResults[$field]['list'])) {
-                return 0;
+                return null;
             }
             $count = 0;
             $truncate = substr($value, -1) === '*';
@@ -86,7 +86,7 @@ class GetSideFacets extends \VuFind\AjaxHandler\GetSideFacets
             }
             return $count;
         }
-        return 0;
+        return null;
     }
 
     /**

@@ -43,6 +43,9 @@ use VuFind\Exception\ILS as ILSException;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
+ *
+ * @method bool  supportsMethod(string $method, array $params)
+ * @method array getLoginDrivers()
  */
 class Connection extends \VuFind\ILS\Connection
 {

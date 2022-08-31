@@ -361,6 +361,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             'category' => $result['category_id'] ?? '',
             'expiration_date' => $expirationDate,
             'expiration_soon' => !empty($result['expiry_date_near']),
+            'expired' => !empty($result['blocks']['Patron::CardExpired']),
             'hold_identifier' => $result['other_name'],
             'guarantors' => $guarantors,
             'guarantees' => $guarantees,
@@ -1094,7 +1095,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 if ($holding['suppressed'] || !empty($holding['_hasItems'])) {
                     continue;
                 }
-                $holdingData = $this->getHoldingData($holding, true);
+                $holdingData = $this->getHoldingData($holding);
                 $i++;
                 $entry = $this->createHoldingsEntry($id, $holding, $i);
                 $entry += $holdingData;
@@ -1766,6 +1767,12 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 ];
                 $reason = 'Patron::DebarredWithReason';
             }
+            break;
+        case 'Patron::CardExpired':
+            $params = [
+                '%%expirationDate%%'
+                    => $this->convertDate($details['expiration_date'])
+            ];
             break;
         }
         return $this->translate($this->patronStatusMappings[$reason] ?? '', $params);

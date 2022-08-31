@@ -24,15 +24,17 @@
       '',
       '&amp;'
   );
+  $moreUrl = '#';
+  if ($facetLightbox) {
+    $moreUrl = $this->url($facetLightbox) . $results->getUrlQuery()->getParams() . "&amp;$facetLightboxParams";
+    if (!empty($this->baseUriExtra)) {
+      $moreUrl .= '&amp;baseUriExtra=' . urlencode($this->baseUriExtra);
+    }
+  }
 ?>
 <div<?php if ($truncateSettings): ?> class="truncate-facets" data-truncate="<?=$this->escapeHtml(json_encode($truncateSettings))?>"<?php endif; ?>>
   <?php foreach ($this->cluster['list'] as $i => $thisFacet): ?>
     <?php if ($i == $this->facets_before_more): ?>
-      <?php
-        $moreUrl = $facetLightbox
-          ? $this->url($facetLightbox) . $results->getUrlQuery()->getParams() . "&amp;$facetLightboxParams"
-          : '#';
-      ?>
       <?php if ($alwaysUseLightbox): ?>
         <a class="facet narrow-toggle more-facets" data-lightbox href="<?=$moreUrl ?>" rel="nofollow">
           <span class="text"><?=$this->transEsc('more_ellipsis')?></span>
@@ -52,12 +54,6 @@
   <?php /* LESS and SEE MORE links */ ?>
   <?php if (isset($i) && $i >= $this->facets_before_more): ?>
     <?php if ($this->showMoreInLightbox === 'more' && $facetLightbox = $options->getFacetListAction()): ?>
-      <?php
-        $moreUrl = $this->url($facetLightbox) . $results->getUrlQuery()->getParams() . "&amp;$facetLightboxParams";
-        if (!empty($this->baseUriExtra)) {
-          $moreUrl .= '&amp;baseUriExtra=' . urlencode($this->baseUriExtra);
-        }
-      ?>
       <a class="facet narrow-toggle more-narrow-toggle" data-lightbox href="<?=$moreUrl ?>" rel="nofollow">
         <span class="text"><i class="fa fa-list" aria-hidden="true"></i> <?=$this->transEsc('see all')?></span>
       </a>

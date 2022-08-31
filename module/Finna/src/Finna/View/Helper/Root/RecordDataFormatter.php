@@ -5,7 +5,7 @@
  * PHP version 7
  *
  * Copyright (C) Villanova University 2016.
- * Copyright (C) The National Library of Finland 2017-2021.
+ * Copyright (C) The National Library of Finland 2017-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -24,6 +24,7 @@
  * @package  View_Helpers
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
@@ -40,6 +41,7 @@ use VuFind\RecordDriver\AbstractBase as RecordDriver;
  * @package  View_Helpers
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
@@ -78,7 +80,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Methodology', 'Music Compositions Extended', 'New Title',
             'Notated Music Format', 'Notes', 'Objective and Content',
             'Original Version Notes', 'original_work_language',
-            'Other Classification', 'Other Classifications', 'Other ID',
+            'Other Classification', 'Other Classifications',
             'Other Links', 'Other Screenings',
             'Other Titles', 'Physical Description', 'Place of Origin',
             'Playing Time', 'Premiere Night', 'Premiere Theaters',
@@ -112,7 +114,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Accessibility Feature', 'Accessibility Hazard',
             'Access Restrictions Extended', 'Additional Information',
             'Age Limit', 'Archive Films',
-            'Archive Origination', 'Archive Series', 'Aspect Ratio',
+            'Aspect Ratio',
             'Audience', 'Author Notes', 'Available Online',
             'Awards', 'Bibliography', 'Broadcasting Dates',
             'child_records', 'Classification', 'Collection',
@@ -134,12 +136,16 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Notated Music Format', 'Notes', 'Objective and Content',
             'Organisation', 'original_work_language', 'Other Classification',
             'Other Classifications', 'Other ID', 'Other Links',
-            'Other Screenings', 'Physical Description', 'Place of Origin',
+            'Other Screenings', 'Parent Archive', 'Parent Collection',
+            'Parent Purchase Batch', 'Parent Series',
+            'Parent Unclassified Entity', 'Parent Work',
+            'Physical Description', 'Place of Origin',
             'Playing Time', 'Premiere Night', 'Premiere Theaters',
             'Presenters', 'Previous Title', 'Production',
             'Production Costs', 'Production Credits', 'Projected Publication Date',
             'Publication Frequency', 'Publications', 'Publication_Place',
-            'Published in', 'Publisher or Distributor Number', 'Record Links',
+            'Published in', 'Publisher or Distributor Number',
+            'Record Links',
             'Related Items', 'Related Places', 'Scale',
             'Secondary Authors', 'Series', 'Sound',
             'Source of Acquisition', 'Standard Codes', 'Studios',
@@ -186,8 +192,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Medium of Performance', 'Methodology', 'New Title',
             'Notated Music Format', 'Notes', 'Objective and Content',
             'original_work_language', 'Other Classification',
-            'Other Classifications', 'Other ID',
-            'Other Links', 'Other Screenings',
+            'Other Classifications', 'Other Links', 'Other Screenings',
             'Physical Description', 'Physical Medium',
             'Place of Origin', 'Playing Time',
             'Premiere Night', 'Premiere Theaters', 'Presenters',
@@ -244,7 +249,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'New Title', 'Notated Music Format', 'Notes',
             'Objective and Content', 'Online Access', 'Original Work',
             'original_work_language', 'Other Classification',
-            'Other Classifications', 'Other ID', 'Other Links', 'Other Screenings',
+            'Other Classifications', 'Other Links', 'Other Screenings',
             'Other Titles', 'Physical Description', 'Place of Origin',
             'Playing Time', 'Premiere Night', 'Premiere Theaters',
             'Presenters', 'Press Reviews', 'Previous Title',
@@ -299,7 +304,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Medium of Performance', 'Methodology', 'Music',
             'New Title', 'Notated Music Format', 'Notes',
             'Objective and Content', 'Original Work', 'original_work_language',
-            'Other Classification', 'Other Classifications', 'Other ID',
+            'Other Classification', 'Other Classifications',
             'Other Links', 'Other Screenings', 'Other Titles',
             'Place of Origin', 'Playing Time', 'Premiere Night',
             'Premiere Theaters', 'Presenters', 'Press Reviews',
@@ -347,7 +352,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Education Programs', 'Event Notice', 'Events',
             'Extent', 'Exterior Images', 'Film Copies',
             'Film Festivals', 'Filming Date', 'Filming Location Notes',
-            'Finding Aid', 'First Lyrics', 'Foreign Distribution',
+            'Finding Aid Extended', 'First Lyrics', 'Foreign Distribution',
             'Format', 'Funding', 'Genre',
             'Inscriptions', 'Inspection Details', 'Interior Images',
             'ISBN', 'ISSN', 'Item Description',
@@ -358,7 +363,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Medium of Performance', 'Methodology', 'Music', 'New Title',
             'Notated Music Format', 'Notes', 'Objective and Content',
             'Original Work', 'original_work_language', 'Other Classification',
-            'Other Classifications', 'Other ID', 'Other Links',
+            'Other Classifications', 'Other Links',
             'Other Related Material', 'Other Screenings', 'Other Titles',
             'Place of Origin', 'Playing Time', 'Premiere Night',
             'Premiere Theaters', 'Presenters', 'Press Reviews', 'Previous Title',
@@ -412,8 +417,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Music', 'New Title', 'Notated Music Format',
             'Notes', 'Objective and Content', 'Original Work',
             'original_work_language', 'Other Classification',
-            'Other Classifications', 'Other ID',
-            'Other Links', 'Other Screenings',
+            'Other Classifications', 'Other Links', 'Other Screenings',
             'Other Titles', 'Physical Description', 'Place of Origin',
             'Playing Time', 'Premiere Night', 'Premiere Theaters',
             'Presenters', 'Press Reviews', 'Previous Title',
@@ -468,8 +472,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'New Title', 'Notated Music Format', 'Notes', 'Number of Viewers',
             'Objective and Content', 'Online Access', 'Original Work',
             'original_work_language', 'Other Classification',
-            'Other Classifications', 'Other ID',
-            'Other Links', 'Other Screenings',
+            'Other Classifications', 'Other Links', 'Other Screenings',
             'Physical Description', 'Place of Origin', 'Playing Time',
             'Premiere Night', 'Premiere Theaters', 'Press Reviews',
             'Previous Title', 'Production', 'Production Costs',
@@ -527,7 +530,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Music', 'New Title', 'Notated Music Format',
             'Notes', 'Objective and Content', 'Organisation',
             'Original Work', 'original_work_language', 'Other Classification',
-            'Other Classifications', 'Other ID', 'Other Links',
+            'Other Classifications', 'Other Links',
             'Other Related Material', 'Other Screenings', 'Other Titles',
             'Place of Origin', 'Playing Time', 'Premiere Night',
             'Premiere Theaters', 'Presenters', 'Press Reviews', 'Previous Title',

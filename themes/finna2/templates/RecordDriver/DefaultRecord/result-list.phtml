@@ -92,7 +92,7 @@
                     <?=$i > 0 ? '<br/>' : ''?>
                     <?php if ($hostRecord['id'] || $hostRecord['title']): ?>
                       <?php $link = $hostRecord['id'] ? $this->recordLinker()->getUrl($hostRecord['sourceId'] . '|' . $hostRecord['id']) : $this->record($this->driver)->getLink('title', $hostRecord['title']); ?>
-                      <a href="<?=$this->escapeHtmlAttr($link)?>"><?=$hostRecord['title']?></a>
+                      <a href="<?=$this->escapeHtmlAttr($link)?>"><?=$hostRecord['title'] !== '' ? $hostRecord['title'] : $hostRecord['mainHeading']?></a>
                     <?php endif; ?>
                     <?=$this->escapeHtml($hostRecord['reference']); ?>
                   <?php endforeach; ?>

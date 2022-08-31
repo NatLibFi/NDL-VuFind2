@@ -63,8 +63,12 @@ class Markdown extends \VuFind\View\Helper\Root\Markdown
 
         // Clean HTML while in Markdown format, since HTML from server-side rendered
         // custom tags should not be cleaned.
+        /*
+        TODO: Disabled cleanHtml due to it removing whitespace on certain
+        circumstances.
         $cleanHtml = $this->getView()->plugin('cleanHtml');
-        $text = $this->converter->convert($cleanHtml($markdown));
+        $text = $this->converter->convert($cleanHtml($markdown));*/
+        $text = $this->converter->convert($markdown);
 
         // Adjust heading level by +1.
         $text = $this->getView()->plugin('adjustHeadingLevel')($text, 1);

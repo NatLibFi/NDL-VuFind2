@@ -69,7 +69,6 @@ class AuthorityRecordsFactory
             throw new \Exception('Unexpected options passed to factory.');
         }
         return new $requestedName(
-            $container->get(\VuFind\Config\PluginManager::class)->get('config'),
             $container->get(\Finna\Search\Solr\AuthorityHelper::class)
         );
     }

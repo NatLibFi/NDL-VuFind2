@@ -28,8 +28,6 @@
  */
 namespace FinnaApi\Controller;
 
-use Finna\View\Helper\Root\RecordDataFormatterFactory;
-
 /**
  * Provides web api for different admin tasks.
  *
@@ -53,8 +51,7 @@ class AdminApiController extends \VuFindApi\Controller\AdminApiController
         $this->disableSessionWrites();
         $this->determineOutputMode();
 
-        $factory = new RecordDataFormatterFactory();
-        $formatter = $factory();
+        $formatter = $this->getViewRenderer()->plugin('recordDataFormatter');
         $fields = $formatter->getDefaults('core');
 
         $data = [];

@@ -412,7 +412,7 @@ trait FinnaOnlinePaymentControllerTrait
             if ($this->logger instanceof \VuFind\Log\Logger) {
                 $this->logger->logException($e, new Parameters());
             }
-        } else {
+        } elseif (is_callable([$this, 'logException'])) {
             $this->logException($e);
         }
     }

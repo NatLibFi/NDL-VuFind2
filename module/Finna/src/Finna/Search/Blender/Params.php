@@ -127,6 +127,24 @@ class Params extends \VuFind\Search\Blender\Params
     }
 
     /**
+     * Return current date range filter.
+     *
+     * @return mixed false|array Filter
+     */
+    public function getDateRangeFilter()
+    {
+        $filterList = $this->getFilterList();
+        foreach ($filterList as $filters) {
+            foreach ($filters as $filter) {
+                if ($this->isDateRangeFilter($filter['field'])) {
+                    return $filter;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Add filters to the object based on values found in the request object.
      *
      * @param \Laminas\Stdlib\Parameters $request Parameter object representing user

@@ -125,7 +125,7 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
         if ($commentId = $params->fromPost('commentId')) {
             // Edit existing comment
             $comment = $params->fromPost('comment');
-            if (empty($commentId) || empty($comment)) {
+            if (empty($comment)) {
                 return $this->formatResponse(
                     $this->translate('An error has occurred'),
                     self::STATUS_HTTP_BAD_REQUEST

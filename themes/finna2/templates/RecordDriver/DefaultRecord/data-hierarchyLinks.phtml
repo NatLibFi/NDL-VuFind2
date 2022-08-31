@@ -1,0 +1,12 @@
+<?php //Don't add START and END comments ?>
+<?php foreach ($data ?: [] as $index => $entry): ?>
+  <?php
+    try {
+      $recordUrl = $this->recordLinker()->getUrl($entry['id']);
+    } catch (\Exception $e) {
+      $recordUrl = '';
+    }
+  ?>
+  <?=($index > 0 ? '<br>' : '')?>
+  <a href="<?=$this->escapeHtmlAttr($recordUrl)?>"><?=$this->escapeHtml($this->truncate($entry['title'], 180))?></a>
+<?php endforeach; ?>

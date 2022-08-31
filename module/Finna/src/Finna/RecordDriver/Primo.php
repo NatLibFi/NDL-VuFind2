@@ -187,11 +187,8 @@ class Primo extends \VuFind\RecordDriver\Primo
             if ('' === $url && !empty($this->fields['resource_urls'][$link])) {
                 $url = (string)$this->fields['resource_urls'][$link];
                 $urlParts = parse_url($url);
-                if (empty($urlParts['host'])) {
-                    $url = '';
-                }
             }
-            if (empty($url)) {
+            if (empty($url) || empty($urlParts['host'])) {
                 continue;
             }
             $urls[] = [

@@ -75,7 +75,7 @@ class GetFacetDataFactory implements \Laminas\ServiceManager\Factory\FactoryInte
             $container->get(\VuFind\Search\Solr\HierarchicalFacetHelper::class),
             $container->get(\VuFind\Search\Results\PluginManager::class),
             $container->get(\VuFind\Config\PluginManager::class)->get('browse'),
-            $container->get(\VuFind\Config\PluginManager::class)->get('facet')
+            $container->get(\VuFind\Config\PluginManager::class)->get('facets')
         );
     }
 }

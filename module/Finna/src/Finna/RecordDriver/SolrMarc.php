@@ -519,6 +519,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             $uniformTitle = '';
             $duration = '';
             $partTitle = '';
+            $partId = '';
             foreach ($this->getAllSubfields($field) as $subfield) {
                 $data = trim($subfield['data']);
                 if ('' === $data) {
@@ -852,13 +853,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         ) {
             // Can't use 773 fields since they don't represent the actual links
             foreach ($this->fields['hierarchy_parent_id'] as $key => $parentId) {
-                if (isset($this->fields['hierarchy_parent_title'][$key])) {
-                    $title = $this->fields['hierarchy_parent_title'][$key];
-                } elseif (isset($this->fields['hierarchy_parent_title'][0])) {
-                    $this->fields['hierarchy_parent_title'][0];
-                } else {
-                    $title = 'Title not available';
-                }
+                $title = $this->fields['hierarchy_parent_title'][$key]
+                    ?? $this->fields['hierarchy_parent_title'][0]
+                    ?? 'Title not available';
                 $result[] = [
                     'id' => $parentId,
                     'sourceId' => $sourceId,
@@ -875,6 +872,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             $title = '';
             $reference = '';
             $publishingInfo = '';
+            $author = '';
             foreach ($this->getAllSubfields($field) as $subfield) {
                 $data = $subfield['data'];
                 switch ($subfield['code']) {
@@ -891,6 +889,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                     break;
                 case 'd':
                     $publishingInfo = $this->stripTrailingPunctuation($data, '.-');
+                    break;
+                case 'a':
+                    $author = $this->stripTrailingPunctuation($data, '.-');
                     break;
                 }
             }
@@ -910,7 +911,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                 'sourceId' => $sourceId,
                 'title' => $title,
                 'reference' => $reference,
-                'publishingInfo' => $publishingInfo
+                'publishingInfo' => $publishingInfo,
+                'mainHeading' => $author,
             ];
         }
         return $result;

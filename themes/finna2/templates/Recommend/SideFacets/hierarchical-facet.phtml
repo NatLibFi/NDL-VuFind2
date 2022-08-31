@@ -13,26 +13,8 @@
   // of the suppressed query:
   $extraUrlFields = $this->results->getUrlQuery()->getParamsWithConfiguredDefaults();
 ?>
-<?php if (!in_array($title, $collapsedFacets)): ?>
-    <?php
-    $script = <<<JS
-$(document).ready(function() {
-  finna.layout.initHierarchicalFacet($('#facet_{$this->escapeHtml($title)}'), true);
-});
-JS;
-    ?>
-    <?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET'); ?>
-<?php else: ?>
-    <?php
-    $script = <<<JS
-$('#side-collapse-{$this->escapeHtmlAttr($title)}').on('show.bs.collapse', function() {
-  finna.layout.initHierarchicalFacet($('#facet_{$this->escapeHtml($title)}'), true);
-});
-JS;
-    ?>
-    <?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET'); ?>
-<?php endif; ?>
 <div id="facet_<?=$this->escapeHtml($title)?>" class="jstree-facet"
+    data-source="<?=$this->escapeHtml($this->searchClassId)?>"
     data-facet="<?=$this->escapeHtmlAttr($title)?>"
     data-path=""
     data-exclude="<?=$allowExclude?>"
@@ -43,3 +25,11 @@ JS;
     data-query-suppressed="<?=$querySuppressed ? '1' : '0' ?>"
     data-extra-fields="<?=$this->escapeHtml(implode(',', $extraUrlFields))?>">
 </div>
+<?php
+  $script = <<<JS
+$(document).ready(function () {
+  finna.layout.initHierarchicalFacet($('#facet_{$this->escapeHtml($this->title)}'), true);
+});
+JS;
+?>
+<?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET'); ?>

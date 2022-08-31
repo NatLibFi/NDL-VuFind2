@@ -303,7 +303,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @param string $type              Link type
      * @param string $lookfor           String to search for at link
-     * @param array  $params            Optional array of parameters for the
+     * @param ?array $params            Optional array of parameters for the
      * link template
      * @param bool   $withInfo          return an array with link HTML and
      * returned linktype.
@@ -1222,7 +1222,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $language = $this->getView()->layout()->userLang;
 
         $imageTypes = ['small', 'medium', 'large', 'master'];
-        $images = $this->getAllImages($language, false, false, false);
+        $images = $this->getAllImages($language, false, false);
         $hasValidImages = false;
         foreach ($images as $image) {
             if (array_intersect(array_keys($image['urls'] ?? []), $imageTypes)) {

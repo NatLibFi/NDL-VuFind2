@@ -4,7 +4,7 @@
     $results = $view->results;
     $params = $results->getParams();
     $lookfor = $params->getDisplayQuery();
-    $handler = $params->getSearchHandler();
+    $handler = $params->getSearchHandler() ?? '';
 
     $searchIds = null;
     if ($ids = $params->getCombinedSearchIds()) {
