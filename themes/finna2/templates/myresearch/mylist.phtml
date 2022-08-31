@@ -50,7 +50,7 @@
     <div>
       <?php if ($list): ?>
         <div class="useraccount-header">
-          <h2 class="list-title"><i class="list-title-edit fa fa-pen" aria-label="<?=$this->transEsc('edit')?>"></i><span><?=$this->escapeHtml($list->title)?></span></h2>
+          <h2 class="list-title"><i class="list-title-edit fa fa-pen" aria-label="<?=$this->transEscAttr('edit')?>"></i><span><?=$this->escapeHtml($list->title)?></span></h2>
         </div>
         <?php if ($list && $user && $list->user_id === $user->id && $list->public): ?>
           <div class="list-public-indicator">
