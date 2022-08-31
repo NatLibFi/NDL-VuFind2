@@ -1219,6 +1219,9 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function hasLargeImageLayout(): bool
     {
+        if ($this->driver->tryMethod('getModels')) {
+            return true;
+        }
         $language = $this->getView()->layout()->userLang;
 
         $imageTypes = ['small', 'medium', 'large', 'master'];
