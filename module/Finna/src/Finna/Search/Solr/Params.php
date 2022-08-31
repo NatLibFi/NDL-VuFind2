@@ -77,6 +77,9 @@ class Params extends \VuFind\Search\Solr\Params
     public const SPATIAL_DATERANGE_FIELD_VF1 = 'search_sdaterange_mv';
     public const SPATIAL_DATERANGE_FIELD_TYPE_VF1 = 'search_sdaterange_mvtype';
 
+    // Default daterange type value
+    public const DATERANGE_DEFAULT_TYPE = 'overlap';
+
     /**
      * Hierarchical facet limit when facets are requested.
      *
@@ -408,12 +411,11 @@ class Params extends \VuFind\Search\Solr\Params
             $type = $request->get(self::SPATIAL_DATERANGE_FIELD_TYPE_VF1);
         }
         if (!$type) {
-            $type = 'overlap';
+            $type = self::DATERANGE_DEFAULT_TYPE;
         }
 
         $from = $to = null;
         $found = false;
-
         // Date range filter
         if (($reqFilters = $request->get('filter')) && is_array($reqFilters)) {
             foreach ($reqFilters as $f) {
@@ -424,7 +426,9 @@ class Params extends \VuFind\Search\Solr\Params
                     if ($range = $this->parseDateRangeFilter($f)) {
                         $from = $range['from'];
                         $to = $range['to'];
-                        if (isset($range['type'])) {
+                        if (isset($range['type'])
+                            && $range['type'] !== self::DATERANGE_DEFAULT_TYPE
+                        ) {
                             $type = $range['type'];
                         }
                         $found = true;

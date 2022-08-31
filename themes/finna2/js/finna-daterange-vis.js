@@ -327,17 +327,10 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
       from: fromElement,
       to: toElement
     };
-    const url = new URL(window.location.href);
-    const rangeType = url.searchParams.get('search_daterange_mv_type');
     var typeElements = form.find('input[type=radio][name=type]');
     fromElement.change(params, updateFieldLimits);
     toElement.change(params, updateFieldLimits);
     typeElements.change(params, updateFieldLimits);
-    if (null !== rangeType) {
-      typeElements.each((i, el) => {
-        el.checked = el.value === rangeType;
-      });
-    }
     updateFieldLimits({data: params});
 
     form.on('submit', function formSubmit(e) {
