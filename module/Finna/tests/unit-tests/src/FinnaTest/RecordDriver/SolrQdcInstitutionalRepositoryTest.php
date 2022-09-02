@@ -66,17 +66,19 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
                         ],
                         'pdf' => true
                     ]
-                ],
-                'getRelations',
+                ]
+            ],
+            [
+                'getAllRecordLinks',
                 [
                     0 => [
-                        'value' => 'Tielaitoksen selvityksiä',
+                        'value' => 'Animals of Earth',
                         'link' => [
-                            'value' => 'Tielaitoksen selvityksiä',
+                            'value' => 'Animals of Earth',
                             'type' => 'allFields'
                         ]
                     ]
-                ]
+                ],
             ],
             [
                 'getSeries',
