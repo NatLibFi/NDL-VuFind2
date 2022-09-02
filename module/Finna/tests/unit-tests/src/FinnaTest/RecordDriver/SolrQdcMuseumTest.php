@@ -2,7 +2,7 @@
 /**
  * SolrQdc Museum Test Class
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2022.
  *
@@ -30,7 +30,7 @@ namespace FinnaTest\RecordDriver;
 use Finna\RecordDriver\SolrQdc;
 
 /**
- * SolrQdc Institutional Repository Record Driver Test Class
+ * SolrQdc Museum Test Class
  *
  * @category VuFind
  * @package  Tests
@@ -186,7 +186,7 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
      * @param array $overrides    Fixture fields to override
      * @param array $searchConfig Search configuration
      *
-     * @return SolrLido
+     * @return SolrQdc
      */
     protected function getDriver($overrides = [], $searchConfig = []): SolrQdc
     {
