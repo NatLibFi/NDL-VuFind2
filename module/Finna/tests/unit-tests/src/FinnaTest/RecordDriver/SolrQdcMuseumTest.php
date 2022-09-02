@@ -43,7 +43,7 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\FixtureTrait;
 
     /**
-     * Function to get expected representations data
+     * Function to get expected function data
      *
      * @return array
      */

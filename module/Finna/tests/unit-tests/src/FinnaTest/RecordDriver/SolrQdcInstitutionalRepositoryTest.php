@@ -43,7 +43,7 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\FixtureTrait;
 
     /**
-     * Function to get expected representations data
+     * Function to get expected function data
      *
      * @return array
      */
@@ -140,7 +140,7 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
      * Test functions
      *
      * @param string $function Function of the driver to test
-     * @param array  $expected Result to be expected
+     * @param mixed  $expected Result to be expected
      *
      * @dataProvider getTestFunctionsData
      *
