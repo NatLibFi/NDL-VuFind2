@@ -10,7 +10,7 @@
 ?>
 <button<?= $__attributes->add('class', 'finna-btn') ?>><?php
   if (isset($iconClass) || isset($label)): ?><?php
-    if (isset($iconClass)): ?><i class="<?= $iconClass ?>" aria-hidden="true" aria-label="<?= $ariaLabel ?>"></i><?php endif; ?><?php
+    if (isset($iconClass)): ?><i class="<?= $iconClass ?>" aria-hidden="true"></i><?php endif; ?><?php
     if (isset($iconClass) && isset($label)): ?> <?php endif; ?><?=
     $label ?? '' ?><?php
   endif;
