@@ -120,7 +120,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
-     * Role conversion mappings
+     * Array of roles to convert
      *
      * @var array
      */
