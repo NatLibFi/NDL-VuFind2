@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<qualifieddc schemaLocation="http://kk/1.0/qdcfinna.xsd">
+  <title lang="-">SolrQdc Institutional Repository test</title>
+  <subject lang="-">Duck</subject>
+  <subject lang="-">Tasmanian Devil</subject>
+  <available>2017-06-27T09:23:48Z</available>
+  <issued>1992</issued>
+  <type lang="-">julkaisu</type>
+  <identifier>123-4-245-6</identifier>
+  <identifier>https://www.this.is.identifier.com/animals</identifier>
+  <language type="iso" lang="-">fi</language>
+  <relation type="ispartof" lang="-">Animals of Earth</relation>
+  <relation type="numberofseries" lang="-">11/2022</relation>
+  <relation type="issn" lang="-">1234-5678</relation>
+  <rights>CC BY 4.0</rights>
+  <publisher lang="-">Tielaitos</publisher>
+  <file bundle="ORIGINAL" href="https://www.animals.of.earth.fi/duck.pdf" name="duck.pdf" type="application/pdf" length="41070954" sequence="1"/>
+  <recordID>10024_138404</recordID>
+</qualifieddc>

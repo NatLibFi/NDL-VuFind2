@@ -837,12 +837,17 @@ class ModelViewerClass extends HTMLElement {
       'webkitRequestFullscreen',
       'webkitEneterFullscreen'
     ];
+    const fullscreenChangeEvents = [
+      'fullscreenchange',
+      'mozfullscreenchange',
+      'MSFullscreenChange',
+      'webkitfullscreenchange'
+    ];
 
     this.fullscreenBtn.addEventListener('click', () => {
       if (this.classList.contains('fullscreen')) {
         exitFullscreens.some((func) => {
           if (document[func]) {
-            this.classList.remove('fullscreen');
             document[func]();
             return true;
           }
@@ -856,6 +861,18 @@ class ModelViewerClass extends HTMLElement {
           }
         });
       }
+    });
+    fullscreenChangeEvents.forEach(event => {
+      document.addEventListener(event, () => {
+        if (!document.fullscreenElement &&
+          !document.mozFullScreenElement &&
+          !document.webkitFullscreenElement
+        ) {
+          this.classList.remove('fullscreen');
+          this.getSize();
+          this.updateScale();
+        }
+      });
     });
   }
 

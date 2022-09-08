@@ -63,25 +63,28 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
             }
         }
 
-        $view = parent::formAction();
-
-        if ($this->params()->fromPost('forcingLogin', false)) {
-            // Parent response is a forced login for a non-logged user. Return it.
-            return $view;
+        // Copy any record_id from query params to post params so that it's available
+        // for the form:
+        $request = $this->getRequest();
+        if (null === $request->getPost('record_id')
+            && $recordId = $request->getQuery('record_id')
+        ) {
+            $request->getPost()->set('record_id', $recordId);
         }
-
-        // Set record driver (used by FeedbackRecord form)
-        $data = $this->getRequest()->getQuery('data', []);
-
-        $recordId = $this->getRequest()->getPost('record_id')
-            ?? $this->getRequest()->getQuery('record_id');
-        if ($recordId) {
+        // Copy record data:
+        if ($recordId = $request->getPost('record_id')) {
             [$source, $recId] = explode('|', $recordId, 2);
-            $view->form->setRecord($this->getRecordLoader()->load($recId, $source));
-            $data['record_id'] = $recordId;
+            $driver = $this->getRecordLoader()->load($recId, $source);
+            if (null === $request->getPost('record_info')) {
+                $recordPlugin = $this->getViewRenderer()->plugin('record');
+                $request->getPost()
+                    ->set('record_info', $recordPlugin($driver)->getEmail());
+            }
+            if (null === $request->getPost('record')) {
+                $request->getPost()->set('record', $driver->getBreadcrumb());
+            }
         }
-        $view->form->populateValues($data);
 
-        return $view;
+        return parent::formAction();
     }
 }

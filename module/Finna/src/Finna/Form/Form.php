@@ -140,6 +140,13 @@ class Form extends \VuFind\Form\Form
     protected $record = null;
 
     /**
+     * Record loader
+     *
+     * @var \VuFind\Record\Loader
+     */
+    protected $recordLoader = null;
+
+    /**
      * Form settings (from YAML without parsing)
      *
      * @var array
@@ -186,6 +193,33 @@ class Form extends \VuFind\Form\Form
         }
 
         $this->setName($formId);
+    }
+
+    /**
+     * Set data to validate and/or populate elements
+     *
+     * Typically, also passes data on to the composed input filter.
+     *
+     * @param iterable $data Data
+     *
+     * @return $this
+     * @throws Exception\InvalidArgumentException
+     */
+    public function setData(iterable $data)
+    {
+        if ($data instanceof \Traversable) {
+            $data = \Laminas\Stdlib\ArrayUtils::iteratorToArray($data);
+        }
+        if (!empty($data['record_id'])) {
+            if (!$this->recordLoader) {
+                throw new \Exception('Record loader not set');
+            }
+            // Set record driver used by FeedbackRecord form:
+            [$source, $recId] = explode('|', $data['record_id'], 2);
+            $driver = $this->recordLoader->load($recId, $source);
+            $this->setRecord($driver);
+        }
+        return parent::setData($data);
     }
 
     /**
@@ -245,7 +279,7 @@ class Form extends \VuFind\Form\Form
      *
      * @return void
      */
-    public function setRecord(\VuFind\RecordDriver\DefaultRecord $record): void
+    protected function setRecord(\VuFind\RecordDriver\DefaultRecord $record): void
     {
         $this->record = $record;
     }
@@ -276,6 +310,18 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
+     * Set record loader
+     *
+     * @param \VuFind\Record\Loader $loader Record loader
+     *
+     * @return void
+     */
+    public function setRecordLoader(\VuFind\Record\Loader $loader): void
+    {
+        $this->recordLoader = $loader;
+    }
+
+    /**
      * Check if the form should report patron's barcode
      *
      * @return bool
@@ -296,9 +342,12 @@ class Form extends \VuFind\Form\Form
     {
         // Get recipient email address for feedback form from data source
         // configuration:
-        if ($this->getFormId() === 'FeedbackRecord' && $this->record) {
+        if ($this->getFormId() === 'FeedbackRecord') {
+            if (!$this->record) {
+                throw new \Exception('Record not set for FeedbackRecord form');
+            }
             $dataSource = $this->record->tryMethod('getDataSource');
-            $inst = $this->datasourceConfig[$dataSource] ?? null;
+            $inst = $this->dataSourceConfig[$dataSource] ?? null;
             if (!($recipientEmail = $inst['feedbackEmail'] ?? null)) {
                 throw new \Exception(
                     'Error sending record feedback: Recipient email for'
@@ -306,7 +355,10 @@ class Form extends \VuFind\Form\Form
                 );
             }
             return [
-                ['email' => $recipientEmail]
+                [
+                    'name' => '',
+                    'email' => $recipientEmail
+                ]
             ];
         }
 
@@ -324,26 +376,6 @@ class Form extends \VuFind\Form\Form
         unset($recipient);
 
         return $recipients;
-    }
-
-    /**
-     * Return form email message subject.
-     *
-     * @param array $postParams Posted form data
-     *
-     * @return string
-     */
-    public function getEmailSubject($postParams)
-    {
-        if (!$recipient = $this->getRecipientFromFormData($postParams)) {
-            return parent::getEmailSubject($postParams);
-        }
-
-        // Replace posted recipient field value with label
-        $recipientField = $this->getRecipientField($this->formElementConfig);
-        $postParams[$recipientField] = $recipient['name'];
-
-        return parent::getEmailSubject($postParams);
     }
 
     /**

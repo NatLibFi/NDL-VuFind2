@@ -89,6 +89,7 @@ class FormFactory extends \VuFind\Form\FormFactory
             (array)($config['Record']['repository_library_request_form'] ?? null)
         );
         $form->setDataSourceConfig($configManager->get('datasources')->toArray());
+        $form->setRecordLoader($container->get(\VuFind\Record\Loader::class));
         return $form;
     }
 }
