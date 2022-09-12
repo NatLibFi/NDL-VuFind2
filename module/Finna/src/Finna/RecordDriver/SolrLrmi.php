@@ -425,65 +425,6 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Get base64 encoded json string
-     *
-     * @param string $uid Uid string
-     *
-     * @return string
-     */
-    public function getBase64EncodedMaterials($uid)
-    {
-        $xml = $this->getXmlRecord();
-
-        $materialsArray = [];
-        $materials = $this->getMaterials();
-        foreach ($materials as $material) {
-            $materialData = [
-                'url' => $material['url'],
-                'format' => $this->getFileFormat($material['url']),
-            ];
-            $materialsArray[] = $materialData;
-        }
-
-        /*
-        Array ( 
-            [0] => Array ( 
-                [urls] => Array ( 
-                    [small] => https://aoe.fi/api/thumbnail/thumbnail-1655379778275.png 
-                    [medium] => https://aoe.fi/api/thumbnail/thumbnail-1655379778275.png 
-                    [large] => https://aoe.fi/api/thumbnail/thumbnail-1655379778275.png 
-                ) 
-                [description] => 
-                [rights] => Array ( ) 
-            )
-        )
-
-        $result[] = [
-            'urls' => [
-                'small' => $url,
-                'medium' => $url,
-                'large' => $url
-            ],
-            'description' => '',
-            'rights' => []
-        ];
-         */
-
-        $allImages = $this->getAllImages()[0]['urls'];
-
-        
-
-        $data = [
-            'name' => strval($xml->title[0]),
-            'description' => strval($xml->description[0]),
-            'uid' => $uid,
-            'materials' => $materialsArray,
-        ];
-
-        return base64_encode(json_encode($data, JSON_UNESCAPED_UNICODE));
-    }
-
-    /**
      * Get material titles in an assoc array
      *
      * @param object $names to look for

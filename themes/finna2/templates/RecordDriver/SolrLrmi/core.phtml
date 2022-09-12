@@ -11,9 +11,8 @@
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   $formats = $this->driver->getFormats();
 
-  if ($this->session()->get('resource_uid')) {
+  if ($this->session()->get('uuid')) {
     $this->layout()->currentRecordId = $this->driver->getUniqueId();
-    $this->layout()->base64EncodedMaterials = $this->driver->getBase64EncodedMaterials($this->session()->get('resource_uid'));
   }
 
   ob_start(); ?>

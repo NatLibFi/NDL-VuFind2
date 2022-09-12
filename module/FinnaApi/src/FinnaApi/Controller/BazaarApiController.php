@@ -78,7 +78,7 @@ class BazaarApiController extends ApiController implements ApiInterface
     }
 
     /**
-     * Save request data to finna_cache table.
+     * Save request data to auth_hash table.
      *
      * @return \Laminas\Http\Response
      */
@@ -88,18 +88,27 @@ class BazaarApiController extends ApiController implements ApiInterface
 
         $uuid = $this->getConfig()->Bazaar->uuid['moodle'];
 
-        if ($uuid == $requestParams['resource_uid']) {
-            $finnaCache = $this->getTable('FinnaCache');
-            $finnaCache->insert(
-                ['resource_id' => $requestParams['resource_uid'],
-                'mtime' => time(),
-                'data' => $requestParams['return_url']]
+        $csrf = $this->serviceLocator->get(\VuFind\Validator\CsrfInterface::class);
+        if ($uuid == $requestParams['uuid']) {
+            $hash = $csrf->getHash(true);
+            $data = [
+                'uuid' => $requestParams['uuid'],
+                'return_url' => $requestParams['return_url'],
+            ];
+            $authHash = $this->serviceLocator
+                ->get(\VuFind\Db\Table\PluginManager::class)
+                ->get(\VuFind\Db\Table\AuthHash::class);
+            $authHash->insert(
+                ['hash' => $hash,
+                'type' => 'bazaar',
+                'data' => json_encode($data, JSON_UNESCAPED_UNICODE)
+                ]
             );
 
             $baseUrl = $this->getServerUrl('home');
-            $viewUrl = $baseUrl . 'Search/Bazaar?uuid=';
+            $viewUrl = $baseUrl . 'Search/Bazaar?hash=';
             $response = [
-                'view_url' => $viewUrl . $requestParams['resource_uid']
+                'view_url' => $viewUrl . $hash
             ];
 
             return $this->output($response, self::STATUS_OK);
@@ -116,38 +125,49 @@ class BazaarApiController extends ApiController implements ApiInterface
      */
     public function getApiSpecFragment()
     {
-        // ALLI-7524 TODO: Update api spec to match selection api
         $spec = [];
-        $spec['paths']['/selection']['get'] = [
-            'summary' => 'Get something',
-            'description' => 'Lists the possible login targets.',
+        $spec['paths']['/bazaar']['get'] = [
+            'summary' => 'Get view url for selection',
+            'description' => 'Returns a view url for selection',
             'parameters' => [],
-            'tags' => ['select'],
+            'tags' => ['bazaar'],
+            'requestBody' => [
+                'required' => true,
+                'content' => [
+                    'application/json' => [
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'uuid' => [
+                                    'type' => 'string',
+                                    'description' => 'Predefined uuid '
+                                    . 'that matches config uuid',
+                                ],
+                                'return_url' => [
+                                    'type' => 'string',
+                                    'description' => 'Return url for exiting '
+                                    . 'selection and sending selected id',
+                                ],
+                            ],
+                            'required' => [
+                                'uuid',
+                                'return_url',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
             'responses' => [
                 '200' => [
-                    'description' => 'List of targets',
+                    'description' => 'View url',
                     'content' => [
                         'application/json' => [
                             'schema' => [
                                 'properties' => [
-                                    'targets' => [
-                                        'description' => 'Login targets',
-                                        'type' => 'array',
-                                        'items' => [
-                                            'type' => 'object',
-                                            'properties' => [
-                                                'id' => [
-                                                    'description'
-                                                        => 'Target identifier',
-                                                    'type' => 'string'
-                                                ],
-                                                'name' => [
-                                                    'description'
-                                                        => 'Target name',
-                                                    'type' => 'string'
-                                                ],
-                                            ],
-                                        ],
+                                    'view_url' => [
+                                        'description' => 'View url for '
+                                        . 'the selection view',
+                                        'type' => 'string'
                                     ],
                                     'status' => [
                                         'description' => 'Status code',
@@ -157,7 +177,7 @@ class BazaarApiController extends ApiController implements ApiInterface
                                 ],
                             ],
                         ],
-                        'required' => ['resultCount', 'status']
+                        'required' => ['status']
                     ]
                 ],
                 'default' => [

@@ -6,7 +6,7 @@
   <div class="nav navbar-nav nav-absolute cookie-consent-button">
     <?php if ($this->layout()->currentRecordId): ?>
         <form action="<?=$this->session()->get('return_url')?>" method="POST">
-            <input type="hidden" name="params" value="<?=$this->layout()->base64EncodedMaterials?>">
+            <input type="hidden" name="params" value="<?=$this->layout()->currentRecordId?>">
             <input type="submit" name="submit" value="<?=$this->transEsc('selection')?>" class="btn btn-primary feedback-record">
         </form>
     <?php endif; ?>
