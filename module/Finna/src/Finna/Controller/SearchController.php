@@ -532,7 +532,7 @@ class SearchController extends \VuFind\Controller\SearchController
         }
 
         $session = new \Laminas\Session\Container(
-            \Finna\View\Helper\Root\Session::SESSION_NAME,
+            \Finna\View\Helper\Root\BazaarSession::SESSION_NAME,
             $this->serviceLocator->get(\Laminas\Session\SessionManager::class)
         );
 

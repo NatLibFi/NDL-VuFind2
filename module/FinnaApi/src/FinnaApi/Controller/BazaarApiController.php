@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2021.
+ * Copyright (C) The National Library of Finland 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -84,31 +84,49 @@ class BazaarApiController extends ApiController implements ApiInterface
      */
     public function handshakeAction()
     {
-        $requestParams = json_decode($this->getRequest()->getContent(), true);
+        $requestParams = null;
+        $requestUuid = null;
+        $requestReturnUrl = null;
+        try {
+            $requestParams = json_decode($this->getRequest()->getContent(), true);
+            $requestUuid = $requestParams['uuid'];
+            $requestReturnUrl = $requestParams['return_url'];
+            if ($requestReturnUrl == null) {
+                throw new \Exception();
+            }
+        } catch (\Exception $e) {
+            return $this->output([], self::STATUS_ERROR, 400, 'Bad Request');
+        }
 
-        $uuid = $this->getConfig()->Bazaar->uuid['moodle'];
+        $configUuid = null;
+        try {
+            $configUuid = $this->getConfig()->Bazaar->uuid['moodle'];
+        } catch (\Exception $e) {
+            return $this->output([], self::STATUS_ERROR, 401, 'Unauthorized');
+        }
 
         $csrf = $this->serviceLocator->get(\VuFind\Validator\CsrfInterface::class);
-        if ($uuid == $requestParams['uuid']) {
+        if ($configUuid == $requestUuid) {
             $hash = $csrf->getHash(true);
             $data = [
-                'uuid' => $requestParams['uuid'],
-                'return_url' => $requestParams['return_url'],
+                'uuid' => $requestUuid,
+                'return_url' => $requestReturnUrl,
             ];
             $authHash = $this->serviceLocator
                 ->get(\VuFind\Db\Table\PluginManager::class)
                 ->get(\VuFind\Db\Table\AuthHash::class);
             $authHash->insert(
-                ['hash' => $hash,
-                'type' => 'bazaar',
-                'data' => json_encode($data, JSON_UNESCAPED_UNICODE)
+                [
+                    'hash' => $hash,
+                    'type' => 'bazaar',
+                    'data' => json_encode($data, JSON_UNESCAPED_UNICODE)
                 ]
             );
 
             $baseUrl = $this->getServerUrl('home');
             $viewUrl = $baseUrl . 'Search/Bazaar?hash=';
             $response = [
-                'view_url' => $viewUrl . $hash
+                'view_url' => $viewUrl . urlencode($hash)
             ];
 
             return $this->output($response, self::STATUS_OK);

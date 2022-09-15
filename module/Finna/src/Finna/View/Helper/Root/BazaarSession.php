@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2020.
+ * Copyright (C) The National Library of Finland 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -36,7 +36,7 @@ namespace Finna\View\Helper\Root;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class Session extends \Laminas\View\Helper\AbstractHelper
+class BazaarSession extends \Laminas\View\Helper\AbstractHelper
 {
     /**
      * Session configuration
@@ -83,5 +83,15 @@ class Session extends \Laminas\View\Helper\AbstractHelper
     public function get($name)
     {
         return $this->session[$name];
+    }
+
+    /**
+     * Checks if uuid is set to session.
+     *
+     * @return bool
+     */
+    public function isSelectionOngoing()
+    {
+        return ($this->get('uuid')) ? true : false;
     }
 }

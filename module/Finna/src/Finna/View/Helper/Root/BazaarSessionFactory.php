@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2020.
+ * Copyright (C) The National Library of Finland 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -42,7 +42,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class SessionFactory implements FactoryInterface
+class BazaarSessionFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -69,7 +69,7 @@ class SessionFactory implements FactoryInterface
         return new $requestedName(
             $container->get(\VuFind\Config\PluginManager::class)->get('session'),
             new \Laminas\Session\Container(
-                Session::SESSION_NAME,
+                BazaarSession::SESSION_NAME,
                 $container->get(\Laminas\Session\SessionManager::class)
             ),
         );

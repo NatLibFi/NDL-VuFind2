@@ -1,18 +1,19 @@
 <!-- START of: finna - Helpers/selection-view.phtml -->
-<div class="container-fluid cookie-consent">
-  <div class="cookie-consent-text">
-    <?=$this->transEsc('selection_view')?>
+<div class="container-fluid bazaar-selection">
+  <div class="bazaar-selection-text">
+    <?=$this->transEscAttr('selection_view')?>
   </div>
-  <div class="nav navbar-nav nav-absolute cookie-consent-button">
-    <?php if ($this->layout()->currentRecordId): ?>
-        <form action="<?=$this->session()->get('return_url')?>" method="POST">
-            <input type="hidden" name="params" value="<?=$this->layout()->currentRecordId?>">
-            <input type="submit" name="submit" value="<?=$this->transEsc('selection')?>" class="btn btn-primary feedback-record">
+  <div class="nav navbar-nav nav-absolute bazaar-selection-button">
+    <?php if ($this->layout()->bazaarRecordId): ?>
+        <form action="<?=$this->escapeHtmlAttr($this->bazaarSession()->get('return_url'))?>" method="POST">
+            <input type="hidden" name="params" value="<?=$this->escapeHtmlAttr($this->layout()->bazaarRecordId)?>">
+            <input type="submit" name="submit" value="<?=$this->transEscAttr('selection')?>" class="btn btn-primary bazaar-record">
         </form>
     <?php endif; ?>
   </div>
-  <div class="nav navbar-nav nav-absolute cookie-consent-button">
-    <a href="<?=$this->session()->get('return_url')?>" class="btn btn-primary feedback-record"><?=$this->transEsc('selection_cancel')?></a>
+  <div class="nav navbar-nav nav-absolute bazaar-selection-button">
+    <a href="<?=$this->escapeHtmlAttr($this->bazaarSession()->get('return_url'))?>" class="btn btn-primary bazaar-record"><?=$this->transEscAttr('selection_cancel')?></a>
   </div>
 </div>
 <!-- END of: finna - Helpers/selection-view.phtml -->
+

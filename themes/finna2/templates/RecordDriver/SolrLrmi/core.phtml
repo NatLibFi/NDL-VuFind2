@@ -11,8 +11,8 @@
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   $formats = $this->driver->getFormats();
 
-  if ($this->session()->get('uuid')) {
-    $this->layout()->currentRecordId = $this->driver->getUniqueId();
+  if ($this->bazaarSession()->isSelectionOngoing()) {
+    $this->layout()->bazaarRecordId = $this->driver->getUniqueId();
   }
 
   ob_start(); ?>
