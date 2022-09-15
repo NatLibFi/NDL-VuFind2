@@ -211,11 +211,26 @@ trait FinnaOnlinePaymentControllerTrait
         $view->registerPayment = false;
 
         $trTable = $this->getTable('transaction');
+        $paymentInProgress = $trTable->isPaymentInProgress($patron['cat_username']);
         $transactionIdParam = 'finna_payment_id';
         $pay = $this->formWasSubmitted('pay-confirm');
         if ($pay && $session && $payableOnline
             && $payableOnline['payable'] && $payableOnline['amount']
+            && !$paymentInProgress
         ) {
+            // Check CSRF:
+            $csrfValidator = $this->serviceLocator
+                ->get(\VuFind\Validator\CsrfInterface::class);
+            $csrf = $this->getRequest()->getPost()->get('csrf');
+            if (!$csrfValidator->isValid($csrf)) {
+                $this->flashMessenger()->addErrorMessage('online_payment_failed');
+                header("Location: " . $this->getServerUrl('myresearch-fines'));
+                exit();
+            }
+            // After successful token verification, clear list to shrink session and
+            // ensure that the form is not re-sent:
+            $csrfValidator->trimTokenList(0);
+
             // Payment requested, do preliminary checks:
             if ($trTable->isPaymentInProgress($patron['cat_username'])) {
                 $this->flashMessenger()->addErrorMessage('online_payment_failed');
@@ -309,8 +324,6 @@ trait FinnaOnlinePaymentControllerTrait
         }
 
         if (!$view->registerPayment) {
-            $paymentInProgress
-                = $trTable->isPaymentInProgress($patron['cat_username']);
             if ($paymentInProgress) {
                 $this->flashMessenger()
                     ->addErrorMessage('online_payment_registration_failed');
