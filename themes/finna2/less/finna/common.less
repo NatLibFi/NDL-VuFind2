@@ -189,6 +189,39 @@
   border: 2px dotted red;
 }
 
+/* Bazaar Selection */
+.bazaar-selection {
+  background-color: @bazaar-selection-background-color;
+  color: @bazaar-selection-color;
+  display: flex;
+  align-items: center;
+  z-index: 1;
+  .bazaar-selection-text {
+    flex: 1;
+    margin-right: 19px;
+    padding-top: 0.6em;
+    padding-bottom: 0.6em;
+    a {
+      color: @bazaar-selection-link-color;
+      text-decoration: underline;
+    }
+  }
+  .bazaar-selection-button {
+    position: relative;
+    right: 15px;
+    a {
+      border: @bazaar-selection-button-border;
+    }
+  }
+  @media (max-width: @grid-float-breakpoint) {
+    position: relative;
+    top: @navbar-height;
+    .bazaar-selection-button {
+      right: 0;
+    }
+  }
+}
+
 /* TABLES */
 table.content-table {
   font-size: @content-font-size-base;

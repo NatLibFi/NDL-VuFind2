@@ -10,6 +10,11 @@
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   $formats = $this->driver->getFormats();
+
+  if ($this->bazaarSession()->isSelectionOngoing()) {
+    $this->layout()->bazaarRecordId = $this->driver->getUniqueId();
+  }
+
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment?>">
     <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'displayIcon' => true, 'source' => 'L1', 'imageClick' => 'none']);?>
