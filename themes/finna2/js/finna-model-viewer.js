@@ -115,7 +115,7 @@ class ModelViewerClass extends HTMLElement {
           'opacity', 'premultipliedAlpha', 'roughness', 'side', 'toneMapped',
           'transparent', 'visible', 'wireframe', 'wireframeLinewidth', 'gammaFactor',
           'physicallyCorrectLights',
-          'shininess', 'rotation', 'texts', 'renderOrder', 'scale', 'clearcoat',
+          'shininess', 'rotation', 'texts', 'renderOrder', 'scale', '_clearcoat',
           'clearcoatRoughness', 'normalScale', 'ior', 'sheen', 'sheenRoughness', 'sheenColor',
           'transmission', 'bumpScale', 'envMapIntensity'
         ],
