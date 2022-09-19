@@ -1,6 +1,13 @@
 /*global VuFind, finna */
 finna.itemStatus = (function finnaItemStatus() {
 
+  /**
+   * Finds the closest record-container and sets element ids to match
+   * desired record id.
+   *
+   * @param {HTMLSelectElement} element 
+   * @returns void
+   */
   function updateElement(element) {
     var id = $(element).val();
     if (!id) {
@@ -29,6 +36,11 @@ finna.itemStatus = (function finnaItemStatus() {
     });
   }
 
+  /**
+   * Finds all the elements with dedup-select class and updates their ids.
+   *
+   * @param {HTMLElement} holder 
+   */
   function updateElementIDs(holder) {
     var selects = $(holder).find('.dedup-select');
     selects.each((ind, element) => {
@@ -36,6 +48,11 @@ finna.itemStatus = (function finnaItemStatus() {
     });
   }
 
+  /**
+   * Assigns a change eventlistener to all elements with class dedup-select
+   *
+   * @param {HTMLElement|null} _holder 
+   */
   function initDedupRecordSelection(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
     var selects = $(holder).find('.dedup-select');
@@ -58,7 +75,7 @@ finna.itemStatus = (function finnaItemStatus() {
       cookie.unshift(source);
       finna.common.setCookie('preferredRecordSourceArray', JSON.stringify(cookie));
 
-      selects.not(this).each(function setOverrideID() {
+      selects.each(function setOverrideID() {
         var elem = $(this).find(`option[data-source='${source}']`);
         if (elem.length) {
           $(this).val(elem.val());
@@ -69,9 +86,6 @@ finna.itemStatus = (function finnaItemStatus() {
       if (placeholder) {
         placeholder.remove();
       }
-
-      updateElement($(this));
-
 
       // Item statuses
       var $loading = $('<span/>')
