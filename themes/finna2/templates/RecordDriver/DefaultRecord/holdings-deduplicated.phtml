@@ -1,17 +1,17 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/holdings-deduplicated.phtml -->
 <?php
-  $selectID = "{$this->driver->getUniqueID()}-dedup-select";
+  $selectID = "dedup-select-{$this->dedupCounter}";
 ?>
 
 <div class="holding-details deduplicated">
   <div class="dedupInformation">
     <label for="<?=$this->escapeHtmlAttr($selectID)?>"><?=$this->transEsc('Holdings')?>:</label>
-    <select id="<?=$this->escapeHtmlAttr($selectID)?>" class="dedup-select form-control" role="listbox" aria-haspopup="true" title="<?=$this->transEsc('select_dedup_organisation');?>" aria-label="<?=$this->transEsc('select_dedup_organisation');?>" <?php if (!empty($this->overrideID)):?>data-overrideid="<?=$this->escapeHtmlAttr($overrideID)?>"<?php endif;?>>
-      <?php if (!$this->fetchHoldingsOnLoad && empty($this->overrideID)):?>
+    <select id="<?=$this->escapeHtmlAttr($selectID)?>" class="dedup-select form-control" role="listbox" aria-haspopup="true" title="<?=$this->escapeHtmlAttr('select_dedup_organisation');?>" aria-label="<?=$this->escapeHtmlAttr('select_dedup_organisation');?>">
+      <?php if (!$this->recordSource):?>
         <option class="js-dedup-placeholder" value="" disabled selected><?= $this->transEsc('Choose Library')?></option>
       <?php endif;?>
       <?php foreach ($dedupData as $source => $current): ?>
-        <option value="<?=$this->escapeHtmlAttr($current['id']) ?>" class="dedup-data-id" data-source="<?=$this->escapeHtmlAttr($source) ?>" <?php if ($this->fetchHoldingsOnLoad && $this->recordSource === $source): ?> selected="selected"<?php endif; ?>><?=$this->transEsc("source_$source", null, $source) ?></option>
+        <option value="<?=$this->escapeHtmlAttr($current['id']) ?>" class="dedup-data-id" data-source="<?=$this->escapeHtmlAttr($source) ?>" <?php if ($this->recordSource === $source): ?> selected="selected"<?php endif; ?>><?=$this->transEsc("source_$source", null, $source) ?></option>
       <?php endforeach; ?>
     </select>
   </div>

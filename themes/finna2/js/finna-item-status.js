@@ -1,37 +1,77 @@
 /*global VuFind, finna */
 finna.itemStatus = (function finnaItemStatus() {
+
+  function updateElement(element) {
+    var id = $(element).val();
+    if (!id) {
+      return;
+    }
+    var recordContainer = $(element).closest('.record-container');
+    recordContainer.data('ajaxAvailabilityDone', 0);
+    var oldRecordId = recordContainer.find('.hiddenId')[0].value;
+    if (id === oldRecordId) {
+      return;
+    }
+    // Update IDs of elements
+    recordContainer.find('.hiddenId').val(id);
+    var hiddenId = recordContainer.find('.hiddenId');
+    hiddenId.val(id);
+    // Update IDs of elements
+    recordContainer.find('[id="' + oldRecordId + '"]').each(function updateElemId() {
+      $(this).attr('id', id);
+    });
+
+    // Update links as well
+    recordContainer.find('a').each(function updateLinks() {
+      if (typeof $(this).attr('href') !== 'undefined') {
+        $(this).attr('href', $(this).attr('href').replace(oldRecordId, id));
+      }
+    });
+  }
+
+  function updateElementIDs(holder) {
+    var selects = $(holder).find('.dedup-select');
+    selects.each((ind, element) => {
+      updateElement(element);
+    });
+  }
+
   function initDedupRecordSelection(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
     var selects = $(holder).find('.dedup-select');
-    selects.on('change', function onChangeDedupSelection() {
-      var id = $(this).val();
-      var source = $(this).find('option:selected').data('source');
 
-      finna.common.setCookie('preferredRecordSource', source);
+    selects.on('change', function onChangeDedupSelection() {
+      var source = $(this).find('option:selected').data('source');
+      var recordContainer = $(this).closest('.record-container');
+      var hiddenId = recordContainer.find('.hiddenId');
+      // prefer 3 latest sources
+      var cookie = finna.common.getCookie('preferredRecordSourceArray');
+      if (cookie) {
+        cookie = JSON.parse(cookie);
+      }
+      if (!Array.isArray(cookie)) {
+        // If no cookie is set, assign the source as a default for all dedups
+        cookie = [];
+      } else if (cookie.length > 2) {
+        cookie.pop();
+      }
+      cookie.unshift(source);
+      finna.common.setCookie('preferredRecordSourceArray', JSON.stringify(cookie));
+
+      selects.not(this).each(function setOverrideID() {
+        var elem = $(this).find(`option[data-source='${source}']`);
+        if (elem.length) {
+          $(this).val(elem.val());
+        }
+      });
 
       const placeholder = $(this).find('.js-dedup-placeholder');
       if (placeholder) {
         placeholder.remove();
       }
 
-      var recordContainer = $(this).closest('.record-container');
-      recordContainer.data('ajaxAvailabilityDone', 0);
-      var oldRecordId = recordContainer.find('.hiddenId')[0].value;
+      updateElement($(this));
 
-      // Update IDs of elements
-      recordContainer.find('.hiddenId').val(id);
-
-      // Update IDs of elements
-      recordContainer.find('[id="' + oldRecordId + '"]').each(function updateElemId() {
-        $(this).attr('id', id);
-      });
-
-      // Update links as well
-      recordContainer.find('a').each(function updateLinks() {
-        if (typeof $(this).attr('href') !== 'undefined') {
-          $(this).attr('href', $(this).attr('href').replace(oldRecordId, id));
-        }
-      });
 
       // Item statuses
       var $loading = $('<span/>')
@@ -44,7 +84,6 @@ finna.itemStatus = (function finnaItemStatus() {
       recordContainer.find('.location').removeClass('hidden');
       recordContainer.removeClass('js-item-done');
       VuFind.itemStatuses.checkRecord(recordContainer);
-
       // Online URLs
       var $recordUrls = recordContainer.find('.available-online-links');
       if ($recordUrls.length) {
@@ -55,7 +94,7 @@ finna.itemStatus = (function finnaItemStatus() {
             method: 'getRecordData',
             data: 'onlineUrls',
             source: recordContainer.find('.hiddenSource')[0].value,
-            id: recordContainer.find('.hiddenId')[0].value
+            id: hiddenId.val()
           }
         ).done(function onGetRecordLinksDone(response) {
           $recordUrls.replaceWith(VuFind.updateCspNonce(response.data.html));
@@ -66,15 +105,12 @@ finna.itemStatus = (function finnaItemStatus() {
         });
       }
     });
-    selects.each(function setOverrideID() {
-      if (typeof $(this).data('overrideid') !== 'undefined') {
-        $(this).val($(this).data('overrideid')).change();
-      }
-    });
+
   }
 
   var my = {
     initDedupRecordSelection: initDedupRecordSelection,
+    updateElementIDs: updateElementIDs,
     init: function init() {
       if (!$('.results').hasClass('result-view-condensed')) {
         initDedupRecordSelection();

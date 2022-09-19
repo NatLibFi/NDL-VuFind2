@@ -1163,6 +1163,10 @@ show_details_after_location_group = false
 ; Set this to false (or comment out) to disable truncating.
 truncate_limit = 5
 
+; Uncomment to prevent deduplicated holdings from being fetched immediately.
+; Display a "Choose library" placeholder in the record source select elements.
+;select_dedup_holdings_library = true
+
 ; This section controls the behavior of the Record module.
 [Record]
 ; Set this to true in order to enable "next" and "previous" links to navigate
@@ -1196,10 +1200,6 @@ hide_holdings[] = "World Wide Web"
 ;    "collapse-journals"   - Used with other options (separated with a comma) to
 ;                            always collapse journals
 ;holdings_details = "expand-first,collapse-journals"
-
-; Uncomment to prevent deduplicated holdings from being fetched immediately.
-; Will display choose library placeholder in the deduplicated select elements.
-;select_dedup_holdings_library = true
 
 ; This array controls which Related modules are used to display sidebars on the
 ; record view page.

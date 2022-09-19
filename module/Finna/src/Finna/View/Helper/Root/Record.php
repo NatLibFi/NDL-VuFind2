@@ -113,6 +113,13 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $form;
 
     /**
+     * Counter for deduplication elements
+     *
+     * @var int
+     */
+    protected static $dedupCounter = 0;
+
+    /**
      * Constructor
      *
      * @param \Laminas\Config\Config              $config           VuFind config
@@ -1282,19 +1289,48 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * If deduplication selections are allowed to fetch holdings
-     * immediately when the page has loaded
+     * Get preferred record source for deduplicated records.
      *
-     * @return bool
+     * @return string
      */
-    public function fetchDedupHoldingsOnLoad(): bool
+    public function getPreferredSource(): string
     {
+        if (null === $this->driver) {
+            return '';
+        }
+        // Is selecting a datasource mandatory?
         if (!empty($this->config->Record->select_dedup_holdings_library)) {
-            if ($this->driver->getDedupData()) {
-                return false;
+            return $this->driver->tryMethod('getDataSource', [], '');
+        }
+        if (!$this->driver->supportsAjaxStatus()) {
+            return '';
+        }
+        $params = $this->getView()->params;
+        if (!empty($params)) {
+            $filterList = $params->getFilterList();
+            if (!empty($filterList['Organisation'])) {
+                return $this->driver->tryMethod('getDataSource', [], '');
             }
         }
-        return true;
+        $dedupData = $this->driver->getDedupData();
+        $preferredRecordSource = $this->getView()
+            ->plugin('cookie')->get('preferredRecordSourceArray');
+
+        if (!empty($preferredRecordSource)) {
+            $preferredRecordSource = json_decode($preferredRecordSource);
+        } else {
+            $preferredRecordSource = [];
+        }
+        $patron = $this->getView()->plugin('auth')->getILSPatron();
+        if (!empty($patron['source'])) {
+            $preferredRecordSource[] = $patron['source'];
+        }
+        foreach ($preferredRecordSource as $source) {
+            if (!empty($dedupData[$source])) {
+                return $source;
+            }
+        }
+        return '';
     }
 
     /**
@@ -1309,23 +1345,13 @@ class Record extends \VuFind\View\Helper\Root\Record
             : 'holdings';
 
         $params = [];
+        $recordSource = $this->driver->tryMethod('getDataSource');
         if ('holdings-deduplicated' === $holdingsTemplate) {
-            $params['fetchHoldingsOnLoad']
-                = $fetchHoldingsOnLoad = $this->fetchDedupHoldingsOnLoad();
-            $params['dedupData'] = $dedupData = $this->driver->getDedupData();
-            if (!$fetchHoldingsOnLoad) {
-                $patron = $this->getView()->plugin('auth')->getILSPatron();
-                $preferredRecordSource = $this->getView()
-                    ->plugin('cookie')->get('preferredRecordSource');
-                if (empty($preferredRecordSource)) {
-                    $preferredRecordSource = $patron['source'] ?? '';
-                }
-                $params['overrideID'] = !empty($preferredRecordSource)
-                    ? $dedupData[$preferredRecordSource]['id'] ?? ''
-                    : '';
-            }
+            $recordSource = $this->getPreferredSource();
+            $params['dedupCounter'] = self::$dedupCounter++;
+            $params['dedupData'] = $this->driver->getDedupData();
         }
-        $params['recordSource'] = $this->driver->tryMethod('getDataSource');
+        $params['recordSource'] = $recordSource;
         return $this->renderTemplate("$holdingsTemplate.phtml", $params);
     }
 }

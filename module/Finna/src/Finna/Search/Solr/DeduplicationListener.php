@@ -255,12 +255,19 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
         $cookieManager
             = $this->serviceLocator->get(\VuFind\Cookie\CookieManager::class);
         if ($cookieManager) {
-            $preferred = $cookieManager->get('preferredRecordSource');
-            // array_search may return 0, but that's fine since it means the source
-            // already has highest priority
-            if ($preferred && $key = array_search($preferred, $recordSources)) {
-                unset($recordSources[$key]);
-                array_unshift($recordSources, $preferred);
+            $preferred = $cookieManager->get('preferredRecordSourceArray');
+            if (!empty($preferred)) {
+                $preferred = json_decode($preferred);
+            }
+
+            foreach (array_reverse($preferred ?? []) as $source) {
+                $key = array_search($source, $recordSources);
+                // array_search may return 0, but that's fine since it means
+                // the source already has highest priority
+                if ($key !== false) {
+                    unset($recordSources[$key]);
+                    array_unshift($recordSources, $source);
+                }
             }
         }
 
