@@ -18,7 +18,7 @@ finna.searchTabsRecommendations = (() => {
           finna.layout.initTruncate(holder);
           finna.openUrl.initLinks();
           VuFind.lightbox.bind(holder);
-
+          VuFind.itemStatuses.check(holder);
           finna.itemStatus.initDedupRecordSelection(holder);
           checkSaveStatuses($(holder));
         }
