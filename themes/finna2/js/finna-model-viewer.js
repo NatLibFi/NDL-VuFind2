@@ -224,8 +224,8 @@ class ModelViewerClass extends HTMLElement {
       ],
       onAttributeChanged: () => {
         this.scene.traverse((child) => {
-          if (child.materal) {
-            child.materal.needsUpdate = true;
+          if (child.material) {
+            child.material.needsUpdate = true;
           }
         });
       },
@@ -292,6 +292,7 @@ class ModelViewerClass extends HTMLElement {
               if (child.type === 'Mesh') {
                 child.material.userData.envMapIntensity = child.material.envMapIntensity;
                 child.material.userData.normalScale = child.material.normalScale;
+                child.material.userData.depthWrite = child.material.depthWrite;
               }
             });
             const exporter = new THREE.GLTFExporter();
@@ -699,14 +700,22 @@ class ModelViewerClass extends HTMLElement {
     this.scene.traverse((obj) => {
       if (obj.type === 'Mesh') {
         obj.material.envMap = this.background;
-        if (typeof obj.material.userData.envMapIntensity !== 'undefined') {
-          obj.material.envMapIntensity = obj.material.userData.envMapIntensity;
+        const userData = obj.material.userData;
+        if (typeof userData.envMapIntensity !== 'undefined') {
+          obj.material.envMapIntensity = userData.envMapIntensity;
         } else {
           obj.material.envMapIntensity = 0.2;
         }
-        if (obj.material.userData.normalScale) {
-          obj.material.normalScale.x = obj.material.userData.normalScale.x;
-          obj.material.normalScale.y = obj.material.userData.normalScale.y;
+        if (typeof userData.depthWrite !== 'undefined'
+          && userData.depthWrite === false
+        ) {
+          obj.material.depthWrite = userData.depthWrite;
+        } else {
+          obj.material.depthWrite = true;
+        }
+        if (userData.normalScale) {
+          obj.material.normalScale.x = userData.normalScale.x;
+          obj.material.normalScale.y = userData.normalScale.y;
         }
 
         if (obj.material.emissiveMap) obj.material.emissiveMap.encoding = this.encoding;
