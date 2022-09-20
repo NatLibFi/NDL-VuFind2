@@ -234,13 +234,13 @@ class ModelViewerClass extends HTMLElement {
           if (typeof pointers[2] !== 'undefined') {
             switch (pointers[2]) {
             case '_x':
-              object.rotation.x = THREE.Math.degToRad(value);
+              object.rotation.x = THREE.MathUtils.degToRad(value);
               break;
             case '_y':
-              object.rotation.y = THREE.Math.degToRad(value);
+              object.rotation.y = THREE.MathUtils.degToRad(value);
               break;
             case '_z':
-              object.rotation.z = THREE.Math.degToRad(value);
+              object.rotation.z = THREE.MathUtils.degToRad(value);
               break;
             }
           }
