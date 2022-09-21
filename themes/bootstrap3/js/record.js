@@ -312,6 +312,13 @@ function removeCheckRouteParam() {
 
 function recordDocReady() {
   removeCheckRouteParam();
+  $('.record-tabs .nav-tabs li').attr('aria-selected', 'false');
+  $('.record-tabs .nav-tabs .initiallyActive').attr('aria-selected', 'true');
+  // update aria-selected attributes after a tab has been shown
+  $('.record-tabs .nav-tabs a').on('shown.bs.tab', function shownTab(e) {
+    $('.record-tabs .nav-tabs li').attr('aria-selected', 'false');
+    $(e.target).parent().attr('aria-selected', 'true');
+  });
   $('.record-tabs .nav-tabs a').click(function recordTabsClick() {
     var $li = $(this).parent();
     // If it's an active tab, click again to follow to a shareable link.
@@ -355,6 +362,8 @@ function recordDocReady() {
     backgroundLoadTab(el.dataset.tab);
   });
 
+  VuFind.truncate.initTruncate('.truncate-subjects', '.subject-line');
+  VuFind.truncate.initTruncate('table.truncate-field', 'tr[typeof="Offer"]', function createTd(m) { return '<td colspan="2">' + m + '</td>'; });
   registerTabEvents();
   applyRecordTabHash(false);
 }

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<dcterms schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dcterms/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+  <title comment="Wikidata Label">Ducks living in harmony</title>
+  <title lang="fi" comment="Wikidata Label">Ankat elävät harmoniassa</title>
+  <title lang="en" comment="Wikidata Label">Ducks living in harmony</title>
+  <description comment="Wikidata description">maalaus: Kuoma, Juha</description>
+  <description lang="fi" comment="Wikidata description">maalaus: Kuoma, Juha</description>
+  <description lang="sv" comment="Wikidata description">m&#xE5;lning av Juha Kuoma</description>
+  <description lang="en" comment="Wikidata description">painting by Juha Kuoma</description>
+  <creator href="http://www.wikidata.org/entity/Q11868768" comment="">Juha Kuoma</creator>
+  <publisher href="http://www.wikidata.org/entity/Q4412746" comment="P276 (location)">Savannin taidepaja</publisher>
+  <date comment="P571 (inception)&#13;&#10;">2022</date>
+  <type href="http://www.wikidata.org/entity/Q3305213" comment="P31 (instance of)">maalaus</type>
+  <identifier href="http://www.wikidata.org/entity/Q92385465" type="wikidata" comment="QID">Q123456789</identifier>
+  <identifier type="wikidata:P217" comment="P217 (collection)">TM 1234</identifier>
+  <isPartOf href="http://www.wikidata.org/entity/Q86443703" comment="P1234 (Collection)">Ducks in the universe</isPartOf>
+  <file bundle="large">https://www.savanni.art.collection.org/large/ducksinharmony.jpg</file>
+  <file bundle="medium">https://www.savanni.art.collection.org/medium/ducksinharmony.jpg</file>
+  <file bundle="square">https://www.savanni.art.collection.org/square/ducksinharmony.jpg</file>
+  <file bundle="original" sha256="2232ad129bf4d7bdc243a05a407f3cdda4cd45bee4c36538a8d87c20e8df1269" mimetype="image/jpeg">https://www.savanni.art.collection.org/original/ducksinharmony.jpg</file>
+  <file bundle="ORIGINAL" href="https://poriartmuseumcollections.pori.fi/files/original/000d586c8b9d30681001a554e1eaf3c5401e4714.jpg"/>
+  <medium href="http://www.wikidata.org/entity/Q296955" type="wikidata:P186" comment="P12345 (made from material)">Akryyli</medium>
+  <medium href="http://www.wikidata.org/entity/Q1397443" type="wikidata:P186" comment="P12345 (made from material)">Kangas</medium>
+  <format width="2.1 cm" height="2.3 cm" comment="P2049, P2048">2.1 cm x 2.3 cm</format>
+  <recordID>Q123456789</recordID>
+</dcterms>

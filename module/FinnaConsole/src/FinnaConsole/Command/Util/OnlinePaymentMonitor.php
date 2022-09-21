@@ -33,6 +33,7 @@ use Finna\Db\Table\Transaction;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -104,7 +105,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
     protected $expireHours = 3;
 
     /**
-     * Send eamil address for notification of expired transactions.
+     * Sender email address for notification of expired transactions.
      *
      * @var string
      */
@@ -172,6 +173,12 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
                 "Minimum age of transactions in 'paid' status until they are"
                     . 'considered failed (seconds, default 120)',
                 120
+            )
+            ->addOption(
+                'no-email',
+                null,
+                InputOption::VALUE_NONE,
+                'Disable sending of any email messages'
             );
     }
 
@@ -189,6 +196,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         $this->fromEmail = $input->getArgument('from_email');
         $reportIntervalHours = $input->getArgument('report_interval_hours');
         $minimumPaidAge = intval($input->getArgument('minimum_paid_age'));
+        $disableEmail = $input->getOption('no-email') ?: false;
 
         // Abort if we have an invalid minimum paid age.
         if ($minimumPaidAge < 10) {
@@ -233,7 +241,9 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
             $this->msg("  Total to be reminded: $remindCnt");
         }
 
-        $this->sendReports($report);
+        if (!$disableEmail) {
+            $this->sendReports($report);
+        }
 
         $this->msg('OnlinePayment monitor completed');
 
@@ -303,6 +313,9 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         foreach ($cards as $card) {
             // Read the card with a separate call to decrypt password:
             $card = $user->getLibraryCard($card->id);
+            if (!$card) {
+                continue;
+            }
             try {
                 $patron = $this->catalog
                     ->patronLogin($card->cat_username, $card->cat_password);
@@ -321,8 +334,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         if (!$patron) {
             $this->warn(
                 "Catalog login failed for user {$user->username}"
-                . " (id {$user->id}), card {$card->cat_username}"
-                . " (id {$card->id})"
+                . " (id {$user->id}), card {$t->cat_username}"
             );
             $t->setRegistrationFailed('patron login error');
             $failedCnt++;
@@ -342,8 +354,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
             $this->err(
                 '    Registration of transaction '
                     . $t->transaction_id . " failed for user {$user->username}"
-                    . " (id {$user->id}), card {$card->cat_username}"
-                    . " (id {$card->id})",
+                    . " (id {$user->id}), card {$t->cat_username}",
                 ''
             );
             $this->err('      ' . $e->getMessage());
@@ -404,8 +415,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
                         $this->warn(
                             "  No error email for expired transactions defined for "
                             . "driver $driver, using feedback email ($cnt expired "
-                            . "transactions)",
-                            '='
+                            . "transactions)"
                         );
                     } else {
                         $this->err(

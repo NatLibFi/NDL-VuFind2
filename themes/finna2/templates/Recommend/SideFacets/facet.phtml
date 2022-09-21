@@ -99,6 +99,10 @@
     'results' => $results
   ]; ?>
   <?php if (in_array($facet, $hierarchicalFacets)): ?>
+    <?php
+      // Allow hierarchical facets to be untruncated with showMore setting < 1
+      $contextVars['facets_before_more'] = $this->recommend->getShowMoreSetting($facet, 0);
+    ?>
     <?=$this->context($this)->renderInContext('Recommend/SideFacets/hierarchical-facet.phtml', $contextVars); ?>
   <?php elseif ($facet === 'geographic_facet' && isset($geographicFacet['map_selection']) && $geographicFacet['map_selection']): ?>
     <div class="geofacet-header">

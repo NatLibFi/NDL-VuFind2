@@ -41,6 +41,8 @@ use Laminas\Db\Sql\Expression;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
+ *
+ * @property string $finna_due_date_reminder
  */
 class User extends \VuFind\Db\Row\User
 {

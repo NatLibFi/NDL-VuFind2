@@ -72,7 +72,7 @@ trait EmailWithRetryTrait
             $this->mailer->send($to, $from, $subject, $body, $cc, $replyTo);
             return;
         } catch (\Exception $e) {
-            $this->warn("First SMTP send attempt to $to failed, resetting", '');
+            $this->warn("First SMTP send attempt to $to failed, resetting");
         }
 
         $this->mailer->resetConnection();
@@ -83,6 +83,6 @@ trait EmailWithRetryTrait
             // throw as en exception
             throw new \Exception($e->getMessage());
         }
-        $this->warn("SMTP send to $to succeeded on second attempt", '');
+        $this->warn("SMTP send to $to succeeded on second attempt");
     }
 }

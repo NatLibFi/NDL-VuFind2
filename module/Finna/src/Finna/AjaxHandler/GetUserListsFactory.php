@@ -27,7 +27,7 @@
  */
 namespace Finna\AjaxHandler;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Factory for GetUserLists AJAX handler.

@@ -303,7 +303,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @param string $type              Link type
      * @param string $lookfor           String to search for at link
-     * @param array  $params            Optional array of parameters for the
+     * @param ?array $params            Optional array of parameters for the
      * link template
      * @param bool   $withInfo          return an array with link HTML and
      * returned linktype.
@@ -500,13 +500,15 @@ class Record extends \VuFind\View\Helper\Root\Record
             'driver' => $this->driver,
             'searchAction' => $params['searchAction'] ?? null,
             'label' => $lookfor,
-            'ids' => $ids,
-            'authIds' => array_map(
-                function ($s) use ($type) {
-                    return $this->driver
-                        ->tryMethod('getAuthorityId', [$s, $type], '');
-                },
-                $ids
+            'ids' => array_filter($ids),
+            'authIds' => array_filter(
+                array_map(
+                    function ($s) use ($type) {
+                        return $this->driver
+                            ->tryMethod('getAuthorityId', [$s, $type], '');
+                    },
+                    $ids
+                )
             ),
             'authorityLink' => $id && $this->isAuthorityLinksEnabled(),
             'type' => $type,
@@ -1219,10 +1221,13 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function hasLargeImageLayout(): bool
     {
+        if ($this->driver->tryMethod('getModels')) {
+            return true;
+        }
         $language = $this->getView()->layout()->userLang;
 
         $imageTypes = ['small', 'medium', 'large', 'master'];
-        $images = $this->getAllImages($language, false, false, false);
+        $images = $this->getAllImages($language, false, false);
         $hasValidImages = false;
         foreach ($images as $image) {
             if (array_intersect(array_keys($image['urls'] ?? []), $imageTypes)) {

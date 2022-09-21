@@ -97,24 +97,24 @@ class Finto implements LoggerAwareInterface
     /**
      * Finto configuration.
      *
-     * @var \Laminas\Config\Config
+     * @var Config
      */
     protected $config;
 
     /**
      * HTTP client.
      *
-     * @var \Laminas\Http\Client
+     * @var Client
      */
     protected $client;
 
     /**
      * Finto constructor.
      *
-     * @param Config $config Finto configuration
-     * @param Client $client HTTP client
+     * @param ?Config $config Finto configuration
+     * @param Client  $client HTTP client
      */
-    public function __construct($config, Client $client)
+    public function __construct(?Config $config, Client $client)
     {
         $this->config = $config ?? new Config([]);
         $this->client = $client;

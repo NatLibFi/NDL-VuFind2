@@ -250,7 +250,7 @@ class Loader extends \VuFind\Cover\Loader
             }
         }
 
-        if (empty($keys)) {
+        if (!$keys) {
             if (isset($ids['recordid'])) {
                 $keys['recordid'] = $ids['recordid'];
             }
@@ -280,23 +280,41 @@ class Loader extends \VuFind\Cover\Loader
         if (empty($ids)) {
             return false;
         }
-        $datasourceProviders = isset($this->datasourceCoverConfig)
+        $datasourceProviders = !empty($this->datasourceCoverConfig)
             ? explode(',', $this->datasourceCoverConfig) : [];
-        $commonProviders = isset($this->config->Content->coverimages)
+        $commonProviders = !empty($this->config->Content->coverimages)
             ? explode(',', $this->config->Content->coverimages) : [];
-        $providers = array_merge($datasourceProviders, $commonProviders);
+        $providers = array_filter(
+            array_merge($datasourceProviders, $commonProviders)
+        );
 
         // Try to find provider-specific cache file
         foreach ($providers as $provider) {
             $provider = explode(':', trim($provider));
             $apiName = strtolower(trim($provider[0]));
-            $localFile = $this->determineLocalFile($ids, $apiName);
+            $key = isset($provider[1]) ? trim($provider[1]) : null;
+            try {
+                $handler = $this->apiManager->get($apiName);
 
-            if (is_readable($localFile)) {
-                // Load local cache if available
-                $this->contentType = 'image/jpeg';
-                $this->image = file_get_contents($localFile);
-                return true;
+                // Is the current provider appropriate for the available data?
+                if (!$handler->supports($ids)
+                    || !$handler->getUrl($key, $this->size, $ids)
+                ) {
+                    continue;
+                }
+
+                $localFile = $this->determineLocalFile($ids, $apiName);
+                if (is_readable($localFile)) {
+                    // Load local cache if available
+                    $this->contentType = 'image/jpeg';
+                    $this->image = file_get_contents($localFile);
+                    return true;
+                }
+            } catch (\Exception $e) {
+                $this->debug(
+                    get_class($e) . ' during cache processing of ' . $apiName
+                    . ': ' . $e->getMessage()
+                );
             }
         }
         // Try to fetch from providers

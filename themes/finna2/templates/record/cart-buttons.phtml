@@ -13,15 +13,5 @@
         <span class="hidden-sm hidden-md hidden-lg"><?=$this->transEsc('Remove from Book Bag') ?></span>
         <?= $this->layout()->templateDir == 'record' ? $this->transEsc('Remove from Book Bag') : ''?>
     </a>
-    <noscript>
-      <form method="post" name="addForm" action="<?=$this->url('cart-processor')?>">
-        <input type="hidden" name="ids[]" value="<?=$this->escapeHtmlAttr($cartId)?>" />
-          <?php if ($cart->contains($cartId)): ?>
-              <input class="btn btn-default" type="submit" name="delete" value="<?=$this->transEscAttr('Remove from Book Bag')?>"/>
-          <?php else: ?>
-              <input class="btn btn-default" type="submit" name="add" value="<?=$this->transEscAttr('Add to Book Bag')?>"/>
-          <?php endif; ?>
-      </form>
-    </noscript>
   </div>
 <?php endif; ?>

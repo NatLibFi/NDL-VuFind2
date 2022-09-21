@@ -575,7 +575,7 @@ class SolrEad3 extends SolrEad
             if ($label && !in_array($label, self::UNIT_IDS)) {
                 continue;
             }
-            $displayLabel = null;
+            $displayLabel = '';
             if ($label) {
                 $displayLabel = "Unit ID:$label";
             } elseif ($manyIds) {
@@ -652,7 +652,7 @@ class SolrEad3 extends SolrEad
     /**
      * Get item history
      *
-     * @return null|string
+     * @return string
      */
     public function getItemHistory()
     {
@@ -670,7 +670,7 @@ class SolrEad3 extends SolrEad
                 }
             }
         }
-        return null;
+        return '';
     }
 
     /**
@@ -799,7 +799,7 @@ class SolrEad3 extends SolrEad
                     }
                 }
                 // localtype could be defined for daoset or for dao-element
-                $parentType = (string)($attr->localtype ?? null);
+                $parentType = (string)($attr->localtype ?? '');
                 $parentType = self::IMAGE_MAP[$parentType] ?? self::IMAGE_LARGE;
                 $parentSize = $parentType === self::IMAGE_FULLRES
                         ? self::IMAGE_LARGE : $parentType;
@@ -812,7 +812,7 @@ class SolrEad3 extends SolrEad
                     ) {
                         continue;
                     }
-                    $type = (string)($attr->localtype ?? $parentType ?? 'none');
+                    $type = (string)($attr->localtype ?? $parentType ?: 'none');
                     $role = (string)($attr->linkrole ?? '');
                     $sort = (string)($attr->label ?? '');
 
@@ -1691,6 +1691,33 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Get notes with URLs on finding aids related to the record
+     *
+     * @return array
+     */
+    public function getFindingAidsExtended()
+    {
+        $xml = $this->getXmlRecord();
+        $result = $localeResult = [];
+        foreach ($xml->otherfindaid ?? [] as $aid) {
+            foreach ($aid->p as $p) {
+                $data = [
+                    'label' => (string)$p,
+                    'url' => $p->ref
+                        ? (string)($p->ref->attributes()->href ?? '')
+                        : ''
+                ];
+                $result[] = $data;
+                $lang = $this->detectNodeLanguage($p);
+                if ($lang['preferred'] ?? false) {
+                    $localeResult[] = $data;
+                }
+            }
+        }
+        return $localeResult ?: $result;
+    }
+
+    /**
      * Get container information.
      *
      * @return string
@@ -1864,7 +1891,7 @@ class SolrEad3 extends SolrEad
                         $lang = $this->detectNodeLanguage($p);
                         $url = isset($p->ref)
                             ? (string)$p->ref->attributes()->href : null;
-                        if ($this->urlBlocked($url, $text)) {
+                        if ($url && $this->urlBlocked($url, $text)) {
                             $url = null;
                         }
                         $data = compact('text', 'lang', 'url');

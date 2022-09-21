@@ -1095,7 +1095,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 if ($holding['suppressed'] || !empty($holding['_hasItems'])) {
                     continue;
                 }
-                $holdingData = $this->getHoldingData($holding, true);
+                $holdingData = $this->getHoldingData($holding);
                 $i++;
                 $entry = $this->createHoldingsEntry($id, $holding, $i);
                 $entry += $holdingData;

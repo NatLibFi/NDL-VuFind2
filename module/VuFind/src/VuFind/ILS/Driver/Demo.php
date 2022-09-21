@@ -51,8 +51,10 @@ use VuFindSearch\Service as SearchService;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
-class Demo extends AbstractBase
+class Demo extends AbstractBase implements \VuFind\I18n\HasSorterInterface
 {
+    use \VuFind\I18n\HasSorterTrait;
+
     /**
      * Catalog ID used to distinquish between multiple Demo driver instances with the
      * MultiBackend driver
@@ -784,7 +786,7 @@ class Demo extends AbstractBase
         if ($options['itemLimit'] ?? null) {
             // For sensible pagination, we need to sort by location:
             $callback = function ($a, $b) {
-                return strcmp($a['location'], $b['location']);
+                return $this->getSorter()->compare($a['location'], $b['location']);
             };
             usort($status, $callback);
             $slice = array_slice(
@@ -891,6 +893,9 @@ class Demo extends AbstractBase
     public function getMyProfile($patron)
     {
         $this->checkIntermittentFailure();
+        $age = rand(13, 113);
+        $birthDate = new \DateTime();
+        $birthDate->sub(new \DateInterval("P{$age}Y"));
         $patron = [
             'firstname'       => 'Lib-' . $patron['cat_username'],
             'lastname'        => 'Rarian',
@@ -902,7 +907,8 @@ class Demo extends AbstractBase
             'phone'           => '1900 CALL ME',
             'mobile_phone'    => '1234567890',
             'group'           => 'Library Staff',
-            'expiration_date' => 'Someday'
+            'expiration_date' => 'Someday',
+            'birthdate'       => $birthDate->format('Y-m-d')
         ];
         return $patron;
     }
@@ -1177,7 +1183,10 @@ class Demo extends AbstractBase
                 $transactions,
                 function ($a, $b) use ($sort, $descending) {
                     if ('title' === $sort[0]) {
-                        $cmp = strcmp($a['title'] ?? '', $b['title'] ?? '');
+                        $cmp = $this->getSorter()->compare(
+                            $a['title'] ?? '',
+                            $b['title'] ?? ''
+                        );
                     } else {
                         $cmp = $a['rawduedate'] - $b['rawduedate'];
                     }
@@ -2479,7 +2488,7 @@ class Demo extends AbstractBase
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getConfig($function, $params = null)
+    public function getConfig($function, $params = [])
     {
         $this->checkIntermittentFailure();
         if ($function == 'Holds') {

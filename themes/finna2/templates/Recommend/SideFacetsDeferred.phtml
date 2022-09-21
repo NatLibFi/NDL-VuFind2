@@ -22,6 +22,7 @@
   }
 
   $resultsTotal = $results->getResultTotal();
+  $params = $results->getParams();
 ?>
 <?php if ($resultsTotal > 0): ?>
   <?php
@@ -39,7 +40,7 @@
   ?>
   <div class="side-facets-container-ajax" data-search-class-id="<?=$this->escapeHtmlAttr($this->searchClassId) ?>" data-location="<?=$this->escapeHtmlAttr($this->location) ?>" data-config-index="<?=$this->escapeHtmlAttr($this->configIndex)?>" data-query="<?=$this->escapeHtmlAttr($urlQuery)?>" data-query-suppressed="<?=$querySuppressed ? '1' : '0' ?>" data-extra-fields="<?=$this->escapeHtml(implode(',', $extraUrlFields))?>">
   <h1><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?><?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?><span class="tooltip-facet pull-right" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transEsc('tooltip_facet_html')?>"><i class="fa fa-info-big" aria-hidden="true"></i></span><?php endif; ?><span role="button" class="visible-xs sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><i class="fa fa-lg fa-times icon-close" aria-hidden="true"></i></span></h1><?php endif; ?>
-<?php $checkboxFilters = $results->getParams()->getCheckboxFacets(); ?>
+<?php $checkboxFilters = $params->getCheckboxFacets(); ?>
 <?php $checkboxesShown = false; ?>
 <?php if (count($checkboxFilters) > 0):
     foreach ($checkboxFilters as $current) {
@@ -62,7 +63,7 @@
 <?php $collapsedFacets = $this->recommend->getCollapsedFacets(); ?>
 <?php $hierarchicalFacetSortOptions = $this->recommend->getHierarchicalFacetSortOptions(); ?>
 <?php $hierarchicalFacets = $this->recommend->getHierarchicalFacets(); ?>
-<?php $filterList = array_merge($results->getParams()->getFilterList(true), $extraFilters); ?>
+<?php $filterList = array_merge($params->getFilterList(true), $extraFilters); ?>
 <?php $module = $this->layout()->templateDir; ?>
 <?php
   $plotFrom = null;
@@ -77,12 +78,6 @@
     }
   }
 ?>
-<?=$this->context($this)->renderInContext('Recommend/SideFacets/filter-list.phtml', [
-    'collapsedFacets' => $collapsedFacets,
-    'extraFilters' => $extraFilters,
-    'filterList' => $filterList,
-    'results' => $results,
-]); ?>
 <?php
 if ($this->fromStreetSearch) {
   if (($key = array_search('geographic_facet', $collapsedFacets)) !== false) {
@@ -95,32 +90,37 @@ if ($this->fromStreetSearch) {
 $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
 <?php if (!empty($activeFacets) && $resultsTotal > 0): ?>
   <?php
-    $msgLoading = $this->transEsc('Loading');
     $msgFailed = $this->transEsc('ajax_load_interrupted');
-    $msgExcludeFacet = $this->transEsc('exclude_facet');
   ?>
-  <?php foreach ($activeFacets as $title => $facetName): ?>
+  <?php foreach ($activeFacets as $field => $facetName): ?>
     <?php
-      $allowExclude = $this->recommend->excludeAllowed($title);
-      $daterangeFacet = $title == $daterangeFacetField;
-      $escTitle = $this->escapeHtml($title);
-      $escAttrTitle = $this->escapeHtmlAttr($title);
-      $isCollapsed = in_array($title, $collapsedFacets);
-      $dataTarget = 'side-collapse-' . $escAttrTitle;
+      $daterangeFacet = $field == $daterangeFacetField;
+      $escAttrField = $this->escapeHtmlAttr($field);
+      $isCollapsed = in_array($field, $collapsedFacets);
+      $dataTarget = 'side-collapse-' . $escAttrField;
     ?>
-    <div class="list-group facet<?= $daterangeFacet ? ' daterange-facet' : '' ?> facet-group" id="side-panel-<?=$escAttrTitle?>">
+    <div class="list-group facet<?= $daterangeFacet ? ' daterange-facet' : '' ?> facet-group" id="side-panel-<?=$escAttrField?>">
       <button class="list-group-item title<?= $isCollapsed ? ' collapsed' : '' ?>" data-toggle="collapse" data-target="#<?=$dataTarget?>" aria-controls="<?=$dataTarget?>" aria-expanded="<?= !$isCollapsed ? 'true' : 'false';?>"><?=$this->transEsc($facetName)?></button>
-      <div id="<?=$dataTarget?>" class="collapse<?= !$isCollapsed ? ' in' : '';?>" data-facet="<?=$escAttrTitle?>" aria-expanded="<?= !$isCollapsed ? 'true' : 'false';?>">
-        <span class="facet-load-indicator"><?=$this->icon('spinner') ?> <?=$msgLoading?></span>
+      <div id="<?=$dataTarget?>" class="collapse<?= !$isCollapsed ? ' in' : '';?>"<?php if (!in_array($field, $hierarchicalFacets)):?> data-facet="<?=$escAttrField ?>"<?php endif ?> aria-expanded="<?= !$isCollapsed ? 'true' : 'false';?>">
         <span class="facet-load-failed hidden"><?=$msgFailed?></span>
-        <?php if (in_array($title, $hierarchicalFacets)): ?>
-          <div id="facet_<?=$escTitle?>" class="jstree-facet"
-            data-facet="<?=$escAttrTitle?>"
-            data-path=""
-            data-exclude="<?=$allowExclude?>"
-            data-operator="<?=$this->recommend->getFacetOperator($title)?>"
-            data-exclude-title="<?=$msgExcludeFacet?>"
-            data-sort="<?=$hierarchicalFacetSortOptions[$title] ?? ''?>">
+        <?php if (in_array($field, $hierarchicalFacets)): ?>
+          <?=
+            $this->context($this)->renderInContext(
+                'Recommend/SideFacets/hierarchical-facet.phtml',
+                [
+                  'allowExclude' => $this->recommend->excludeAllowed($field),
+                  // Allow hierarchical facets to be untruncated with showMore setting < 1
+                  'facets_before_more' => $this->recommend->getShowMoreSetting($field, 0),
+                  'title' => $field,
+                  'sortOptions' => $hierarchicalFacetSortOptions[$field] ?? $hierarchicalFacetSortOptions['*'] ?? null,
+                  'collapsedFacets' => $collapsedFacets,
+                  'results' => $this->results
+                ]
+            );
+          ?>
+        <?php else: ?>
+          <div class="facet-load-indicator hidden">
+            <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
           </div>
         <?php endif; ?>
       </div>

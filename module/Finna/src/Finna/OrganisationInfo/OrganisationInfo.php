@@ -284,8 +284,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                 $buildings,
                 $target,
                 $startDate,
-                $endDate,
-                $params
+                $endDate
             );
             if ($response) {
                 $response['id'] = $id;
@@ -794,8 +793,8 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             if (!empty($item['address'])) {
                 foreach ($mapUrlConf as $map => $mapConf) {
                     $mapUrl = $mapConf['base'];
+                    $replace = [];
                     if (!empty($mapConf['params'])) {
-                        $replace = [];
                         foreach ($mapConf['params'] as $param) {
                             $val = $item['address'][$param];
                             if (!empty($val)) {

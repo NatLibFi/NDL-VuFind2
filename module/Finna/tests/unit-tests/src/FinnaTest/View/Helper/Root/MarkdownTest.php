@@ -154,15 +154,9 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
      */
     public function testFinnaPanel()
     {
-        $markdown = <<<EOT
-            <finna-panel heading-id="hid" collapse-id="cid">
-              <h2 slot="heading">Heading</h2>
-              
-              **Content**
-            </finna-panel>
-            EOT;
+        $markdown = $this->getFinnaPanelMarkdown();
         $converted = $this->getHelper()->toHtml($markdown);
-        $expected = $this->getExpectedFinnaPanel("\n  \n<p><strong>Content</strong></p>\n");
+        $expected = $this->getExpectedFinnaPanel();
         $this->assertEquals($expected, $converted);
     }
 
@@ -173,20 +167,10 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
      */
     public function testNestedFinnaPanels()
     {
-        $markdown = <<<EOT
-            <finna-panel heading-id="hid" collapse-id="cid">
-             <h2 slot="heading">Heading</h2>
-              
-             <finna-panel heading-id="hid" collapse-id="cid">
-              <h2 slot="heading">Heading</h2>
-
-              **Content**
-             </finna-panel>
-            </finna-panel>
-            EOT;
+        $markdown = $this->getFinnaPanelMarkdown($this->getFinnaPanelMarkdown());
         $converted = $this->getHelper()->toHtml($markdown);
-        $expected = $this->getExpectedFinnaPanel("\n  \n<p><strong>Content</strong></p>\n");
-        $expected = $this->getExpectedFinnaPanel("\n \n$expected");
+        $expected = $this->getExpectedFinnaPanel();
+        $expected = $this->getExpectedFinnaPanel("\n  \n$expected");
         $this->assertEquals($expected, $converted);
     }
 
@@ -197,25 +181,24 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
      */
     public function testFinnaTruncate()
     {
-        $markdown = <<<EOT
-            <finna-truncate>
-              <span slot="label">Label</span>
-              
-              **Content**
-            </finna-truncate>
-            EOT;
+        $markdown = $this->getFinnaTruncateMarkdown();
         $converted = $this->getHelper()->toHtml($markdown);
-        $expected
-            = $this->getHelper()->getView()->render(
-                FinnaTruncate::getTemplateName(),
-                array_merge(
-                    FinnaTruncate::getDefaultVariables(),
-                    [
-                        'label' => 'Label',
-                        'content' => "\n\n<p><strong>Content</strong></p>\n"
-                    ]
-                )
-            ) . "\n";
+        $expected = $this->getExpectedFinnaTruncate();
+        $this->assertEquals($expected, $converted);
+    }
+
+    /**
+     * Test Markdown support for subsequent custom elements.
+     *
+     * @return void
+     */
+    public function testSubsequentCustomElements()
+    {
+        $markdown = $this->getFinnaPanelMarkdown() . "\n\n"
+            . $this->getFinnaTruncateMarkdown();
+        $converted = $this->getHelper()->toHtml($markdown);
+        $expected = $this->getExpectedFinnaPanel()
+            . $this->getExpectedFinnaTruncate();
         $this->assertEquals($expected, $converted);
     }
 
@@ -233,8 +216,30 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $converted);
     }
 
+    protected function getFinnaPanelMarkdown($content = '**Content**')
+    {
+        return <<<EOT
+            <finna-panel heading-id="hid" collapse-id="cid">
+              <h2 slot="heading">Heading</h2>
+              
+              $content
+            </finna-panel>
+            EOT;
+    }
+
+    protected function getFinnaTruncateMarkdown()
+    {
+        return <<<EOT
+            <finna-truncate>
+              <span slot="label">Label</span>
+              
+              **Content**
+            </finna-truncate>
+            EOT;
+    }
+
     protected function getExpectedFinnaPanel(
-        ?string $content,
+        ?string $content = "\n  \n<p><strong>Content</strong></p>\n",
         ?string $heading = 'Heading'
     ): string {
         return $this->getHelper()->getView()->render(
@@ -246,6 +251,20 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
                     'collapseId' => 'cid',
                     'heading' => $heading,
                     'content' => $content,
+                ]
+            )
+        ) . "\n";
+    }
+
+    protected function getExpectedFinnaTruncate()
+    {
+        return $this->getHelper()->getView()->render(
+            FinnaTruncate::getTemplateName(),
+            array_merge(
+                FinnaTruncate::getDefaultVariables(),
+                [
+                    'label' => 'Label',
+                    'content' => "\n\n<p><strong>Content</strong></p>\n"
                 ]
             )
         ) . "\n";

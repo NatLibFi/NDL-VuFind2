@@ -316,6 +316,7 @@ $config = [
     'service_manager' => [
         'allow_override' => true,
         'factories' => [
+            'Finna\AppBootstrapListener' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\Autocomplete\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Auth\ILSAuthenticator' => 'VuFind\Auth\ILSAuthenticatorFactory',
             'Finna\Auth\Manager' => 'VuFind\Auth\ManagerFactory',
@@ -345,7 +346,7 @@ $config = [
             'Finna\Role\PermissionManager' => 'VuFind\Role\PermissionManagerFactory',
             'Finna\Search\Memory' => 'VuFind\Search\MemoryFactory',
             'Finna\Search\Solr\AuthorityHelper' => 'Finna\Search\Solr\AuthorityHelperFactory',
-            'Finna\Search\Solr\HierarchicalFacetHelper' => 'Laminas\ServiceManager\Factory\InvokableFactory',
+            'Finna\Search\Solr\HierarchicalFacetHelper' => 'VuFind\Search\Solr\HierarchicalFacetHelperFactory',
             'Finna\Service\R2SupportService' => 'Finna\Service\R2SupportServiceFactory',
             'Finna\Service\RecordFieldMarkdown' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\Statistics\Driver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
@@ -388,6 +389,9 @@ $config = [
         'template_path_stack' => [
             APPLICATION_PATH . '/vendor/natlibfi/finna-ui-components/source',
         ],
+    ],
+    'listeners' => [
+        \Finna\AppBootstrapListener::class,
     ],
     // This section contains all VuFind-specific settings (i.e. configurations
     // unrelated to specific framework components).
@@ -543,8 +547,8 @@ $config = [
                     'Finna\Db\Row\CommentsRecord' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\DueDateReminder' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\Fee' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\Feedback' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\FinnaCache' => 'VuFind\Db\Row\RowGatewayFactory',
+                    'Finna\Db\Row\FinnaFeedback' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\FinnaPageViewStats' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\FinnaRecordStats' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\FinnaRecordStatsLog' => 'VuFind\Db\Row\RowGatewayFactory',
@@ -585,8 +589,8 @@ $config = [
                     'Finna\Db\Table\CommentsRecord' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\DueDateReminder' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\Fee' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\Feedback' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\FinnaCache' => 'VuFind\Db\Table\GatewayFactory',
+                    'Finna\Db\Table\FinnaFeedback' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\FinnaPageViewStats' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\FinnaRecordStats' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\FinnaRecordStatsLog' => 'VuFind\Db\Table\GatewayFactory',
@@ -612,7 +616,7 @@ $config = [
                     'commentsrecord' => 'Finna\Db\Table\CommentsRecord',
                     'duedatereminder' => 'Finna\Db\Table\DueDateReminder',
                     'fee' => 'Finna\Db\Table\Fee',
-                    'feedback' => 'Finna\Db\Table\Feedback',
+                    'finnafeedback' => 'Finna\Db\Table\FinnaFeedback',
                     'finnacache' => 'Finna\Db\Table\FinnaCache',
                     'finnapageviewstats' => 'Finna\Db\Table\FinnaPageViewStats',
                     'finnarecordstats' => 'Finna\Db\Table\FinnaRecordStats',
@@ -620,6 +624,19 @@ $config = [
                     'finnasessionstats' => 'Finna\Db\Table\FinnaSessionStats',
                     'transaction' => 'Finna\Db\Table\Transaction',
                 ]
+            ],
+            'form_handler' => [
+                'factories' => [
+                    'Finna\Form\Handler\Api' => 'Finna\Form\Handler\ApiFactory',
+                    'Finna\Form\Handler\Database' => 'Finna\Form\Handler\DatabaseFactory',
+                    'Finna\Form\Handler\Email' => 'VuFind\Form\Handler\EmailFactory',
+                ],
+                'aliases' => [
+                    'api' => 'Finna\Form\Handler\Api',
+
+                    'VuFind\Form\Handler\Database' => 'Finna\Form\Handler\Database',
+                    'VuFind\Form\Handler\Email' => 'Finna\Form\Handler\Email',
+                ],
             ],
             'ils_driver' => [
                 'factories' => [
@@ -881,6 +898,7 @@ $config = [
                 'factories' => [
                     'Finna\RecordTab\AuthorityRecordsAuthor' => 'Finna\RecordTab\AuthorityRecordsFactory',
                     'Finna\RecordTab\AuthorityRecordsTopic' => 'Finna\RecordTab\AuthorityRecordsFactory',
+                    'Finna\RecordTab\CollectionHierarchyTree' => 'VuFind\RecordTab\CollectionHierarchyTreeFactory',
                     'Finna\RecordTab\ExternalData' => 'Finna\RecordTab\Factory::getExternalData',
                     'Finna\RecordTab\HierarchyTree' => 'VuFind\RecordTab\HierarchyTreeFactory',
                     'Finna\RecordTab\Map' => 'Finna\RecordTab\Factory::getMap',
@@ -898,6 +916,7 @@ $config = [
                     'r2collectionlist' => 'Finna\RecordTab\R2CollectionList',
 
                     // Overrides:
+                    'VuFind\RecordTab\CollectionHierarchyTree' => 'Finna\RecordTab\CollectionHierarchyTree',
                     'VuFind\RecordTab\HierarchyTree' => 'Finna\RecordTab\HierarchyTree',
                     'VuFind\RecordTab\Map' => 'Finna\RecordTab\Map',
                     'VuFind\RecordTab\UserComments' => 'Finna\RecordTab\UserComments',

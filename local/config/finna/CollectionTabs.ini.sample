@@ -4,11 +4,6 @@
 [VuFind\RecordDriver\AbstractBase]
 tabs[CollectionList] = CollectionList
 tabs[HierarchyTree] = CollectionHierarchyTree
-defaultTab = null
-
-[Finna\RecordDriver\SolrEad]
-tabs[CollectionList] = CollectionList
-tabs[HierarchyTree] = CollectionHierarchyTree
 tabs[ExternalData] = ExternalData
 tabs[UserComments] = UserComments
 tabs[Details] = StaffViewArray

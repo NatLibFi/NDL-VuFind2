@@ -227,8 +227,8 @@ class InstallController extends AbstractBase
             return false;
         }
 
-        // We need at least PHP v7.3.0:
-        return PHP_VERSION_ID >= 70300;
+        // We need at least PHP version as defined in composer.json file:
+        return PHP_VERSION_ID >= $this->getMinimalPhpVersionId();
     }
 
     /**
@@ -241,7 +241,8 @@ class InstallController extends AbstractBase
         $requiredFunctionsExist
             = function_exists('mb_substr') && is_callable('imagecreatefromstring')
               && function_exists('openssl_encrypt')
-              && class_exists('XSLTProcessor');
+              && class_exists('XSLTProcessor')
+              && defined('SODIUM_LIBRARY_VERSION');
 
         return [
             'title' => 'Dependencies',
@@ -261,8 +262,9 @@ class InstallController extends AbstractBase
 
         // Is our version new enough?
         if (!$this->phpVersionIsNewEnough()) {
-            $msg = "VuFind requires PHP version 7.2 or newer; you are running "
-                . phpversion() . ".  Please upgrade.";
+            $msg = "VuFind requires PHP version " . $this->getMinimalPhpVersion()
+                . " or newer; you are running " . phpversion()
+                . ".  Please upgrade.";
             $this->flashMessenger()->addMessage($msg, 'error');
             $problems++;
         }
@@ -307,6 +309,17 @@ class InstallController extends AbstractBase
         if (!class_exists('XSLTProcessor')) {
             $msg
                 = "Your PHP installation appears to be missing the XSL plug-in."
+                . " For details on how to do this, see "
+                . "https://vufind.org/wiki/installation "
+                . "and look at the PHP installation instructions for your platform.";
+            $this->flashMessenger()->addMessage($msg, 'error');
+            $problems++;
+        }
+
+        // Is the sodium extension missing?
+        if (!defined('SODIUM_LIBRARY_VERSION')) {
+            $msg
+                = "Your PHP installation appears to be missing the sodium plug-in."
                 . " For details on how to do this, see "
                 . "https://vufind.org/wiki/installation "
                 . "and look at the PHP installation instructions for your platform.";
@@ -921,5 +934,57 @@ class InstallController extends AbstractBase
             }
         }
         return $this->createViewModel(['checks' => $checks]);
+    }
+
+    /**
+     * Get minimal PHP version required for VuFind to run.
+     *
+     * @return string
+     */
+    protected function getMinimalPhpVersion(): string
+    {
+        $composer = $this->getComposerJson();
+        if (empty($composer)) {
+            throw new \Exception('Cannot find composer.json');
+        }
+        $rawVersion = $composer['require']['php']
+            ?? $composer['config']['platform']['php']
+            ?? '';
+        $version = preg_replace('/[^0-9. ]/', '', $rawVersion);
+        if (empty($version) || !preg_match('/^[0-9]/', $version)) {
+            throw new \Exception('Cannot parse PHP version from composer.json');
+        }
+        $versionParts = preg_split('/[. ]/', $version);
+        $versionParts = array_pad($versionParts, 3, '0');
+        return sprintf('%d.%d.%d', ...$versionParts);
+    }
+
+    /**
+     * Get minimal PHP version ID required for VuFind to run.
+     *
+     * @return int
+     */
+    protected function getMinimalPhpVersionId(): int
+    {
+        $version = explode('.', $this->getMinimalPhpVersion());
+        return $version[0] * 10000 + $version[1] * 100 + $version[2];
+    }
+
+    /**
+     * Get composer.json data as array
+     *
+     * @return array
+     */
+    protected function getComposerJson(): array
+    {
+        try {
+            $composerJsonFileName = APPLICATION_PATH . '/composer.json';
+            if (file_exists($composerJsonFileName)) {
+                return json_decode(file_get_contents($composerJsonFileName), true);
+            }
+        } catch (\Throwable $exception) {
+            return [];
+        }
+        return [];
     }
 }

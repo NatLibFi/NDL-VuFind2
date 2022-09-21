@@ -181,6 +181,7 @@ $config = [
         'cart.js',
         'check_item_statuses.js',
         'check_save_statuses.js',
+        'checkouts.js',
         'collection_record.js',
         'combined-search.js',
         'embedded_record.js',

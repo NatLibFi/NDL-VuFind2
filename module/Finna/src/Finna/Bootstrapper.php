@@ -151,31 +151,6 @@ class Bootstrapper
     }
 
     /**
-     * Initialize the base url for the application from an environment variable
-     *
-     * @return void
-     */
-    protected function initBaseUrl()
-    {
-        if (PHP_SAPI === 'cli') {
-            return;
-        }
-        $callback = function ($event) {
-            $application = $event->getApplication();
-            $request = $application->getRequest();
-            $baseUrl = $request->getServer('FINNA_BASE_URL');
-
-            if (!empty($baseUrl)) {
-                $baseUrl = '/' . trim($baseUrl, '/');
-                $router = $application->getServiceManager()->get('Router');
-                $router->setBaseUrl($baseUrl);
-                $request->setBaseUrl($baseUrl);
-            }
-        };
-        $this->events->attach('route', $callback, 9000);
-    }
-
-    /**
      * Set up Suomifi login listener.
      *
      * @return void

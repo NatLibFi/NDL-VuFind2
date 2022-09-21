@@ -148,7 +148,7 @@
             <?php endif; ?>
             <?php if (!empty($this->profile['phone']) || $updatePhone): ?>
               <?php if ($updatePhone): ?>
-                <div class="my-profile-col profile-title"><?=$this->transEsc('Phone') ?>:</div>
+                <div class="my-profile-col profile-title"><label for="profile_tel"><?=$this->transEsc('Phone') ?>:</label></div>
                 <div>
                   <input class="form-control" type="tel" name="profile_tel" value="<?=empty($this->profile['phone']) ? '' : $this->escapeHtmlAttr($this->profile['phone']) ?>" title="<?=$this->transEscAttr('Phone') ?>" />
                 </div>
@@ -159,7 +159,7 @@
             <?php endif; ?>
             <?php if (!empty($this->profile['smsnumber']) || $updateSmsNumber): ?>
               <?php if ($updateSmsNumber): ?>
-                <div class="my-profile-col profile-title"><?=$this->transEsc('SMS Number') ?>:</div>
+                <div class="my-profile-col profile-title"><label for="profile_sms_number"><?=$this->transEsc('SMS Number') ?>:</label></div>
                 <div>
                   <input class="form-control" type="tel" name="profile_sms_number" value="<?=empty($this->profile['smsnumber']) ? '' : $this->escapeHtmlAttr($this->profile['smsnumber']) ?>" title="<?=$this->transEscAttr('SMS Number') ?>" />
                 </div>
@@ -169,7 +169,7 @@
               <?php endif; ?>
             <?php endif; ?>
             <?php if (!empty($this->profile['email']) || $updateEmail): ?>
-              <div class="my-profile-col profile-title"><?=$this->transEsc('Email') ?>:</div>
+              <div class="my-profile-col profile-title"><label for="profile_email"><?=$this->transEsc('Email') ?>:</label></div>
               <?php if ($updateEmail): ?>
                 <div>
                   <input class="form-control" type="email" name="profile_email" value="<?=empty($this->profile['email']) ? '' : $this->escapeHtmlAttr($this->profile['email']) ?>" title="<?=$this->transEscAttr('Email') ?>" />

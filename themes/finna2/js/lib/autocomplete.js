@@ -64,6 +64,9 @@
       } else if (type === 'handler') {
         var handler = item.data('handler');
         form.find('input[name=type]').val(handler);
+      } else if (type === 'isbn') {
+        window.location.href = item.attr('href');
+        return;
       } else {
         input.val(value);
       }
@@ -73,6 +76,19 @@
 
     function getPreserveFiltersMode(input) {
       return $(input).closest('form').find('.applied-filter[name=dfApplied]').is(':checked');
+    }
+
+    function coverCallback(response) {
+      if (response.data !== undefined) {
+        var img = $('#ac-recordcover');
+        img[0].src = response.data.url;
+        img[0].onload = function onImgLoad() {
+          if (this.naturalWidth && this.naturalWidth !== 10 && this.naturalHeight !== 10) { 
+            img.toggleClass('hidden');
+            $('.ac-isbn .iconlabel').toggleClass('hidden');
+          }
+        };
+      }
     }
 
     function createList(data, input) {
@@ -120,6 +136,32 @@
           }
         } else if (type === 'facet' || type === 'filter') {
           item.attr('data-filters', data[i].filters);
+        } else if (type === 'isbn') {
+          item.attr('data-title', data[i].match.title);
+          item.attr('href', data[i].match.url);
+          item.append('<br />');
+          item.append(document.createTextNode('ISBN: ' + data[i].match.isbn));
+          item.wrapInner($('<span>'));
+          item.prepend('<div class="iconlabel format-1bookbook"></div>');
+          item.prepend($('<img />')
+            .attr('id', 'ac-recordcover')
+            .attr('data-recordid', data[i].match.recordId)
+            .addClass('hidden'));
+          item.wrapInner($('<div class="ac-isbn">'));
+  
+          var url = VuFind.path + '/AJAX/JSON?method=' + 'getRecordCover';
+          var imgdata = {
+            recordId: data[i].match.recordId,
+            size: 'small'
+          };
+          $.ajax({
+            dataType: "json",
+            url: url,
+            method: "GET",
+            data: imgdata,
+            success: coverCallback
+          });
+
         }
 
         if (typeof data[i].description !== 'undefined') {
@@ -135,7 +177,7 @@
         return;
       }
 
-      $(['suggestion', 'facet', 'filter', 'phrase', 'handler']).each(function eachSection(ind, obj) {
+      $(['isbn', 'suggestion', 'facet', 'filter', 'phrase', 'handler']).each(function eachSection(ind, obj) {
         var label = 'autocomplete_section_' + obj;
         var translated = VuFind.translate(label);
         var wrapper = $('<div/>').addClass('group ' + obj);
@@ -160,6 +202,10 @@
     var parseResponse = function parseResponse(data, filters, handlers, phraseSearch) {
       var datums = [];
       if (data.length) {
+        // ISBN match
+        if (data[2].length !== 0) {
+          datums.push({label: data[2].title, type: 'isbn', css: 'isbn', match: data[2]});
+        }
         // Suggestions
         if (typeof data[0] === 'string') {
           // Basic suggestions
