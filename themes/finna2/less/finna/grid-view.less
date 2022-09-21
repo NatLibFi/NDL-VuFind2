@@ -87,10 +87,13 @@
     h2.title {
       font-size: 1.15em;
       display: inline-block;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-      width: 99%;
+      width: 250px;
+      > a {
+        display: block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
     }
     a.fulltext {
       width: 100%;
