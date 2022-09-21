@@ -106,6 +106,8 @@ class ModelViewerClass extends HTMLElement {
 
     this.menuOptions = {
       owner: this,
+      // Properties are THREEjs object keys. To display the property,
+      // it must be written the same way as they are declared in the object.
       allowedProperties: {
         advanced: [
           'uuid', 'name', 'type', 'position', 'color', 'groundColor',
