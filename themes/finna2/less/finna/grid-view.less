@@ -87,12 +87,10 @@
     h2.title {
       font-size: 1.15em;
       text-overflow: ellipsis;
+      // Position: relative makes ellipsis work with absolute elements in Chrome
+      position: relative;
       white-space: nowrap;
       overflow: hidden;
-      .sr-only {
-        // Absolute elements breaks ellipsis in Chrome.
-        position: static;
-      }
     }
     a.fulltext {
       width: 100%;
