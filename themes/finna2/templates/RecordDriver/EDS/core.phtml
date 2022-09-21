@@ -75,7 +75,7 @@
 
     <?/* Display Main Details */?>
     <div class="record-details">
-      <table class="table table-condensed table-finna-record" summary="<?=$this->transEsc('Bibliographic Details')?>">
+      <table class="table table-condensed table-finna-record" summary="<?=$this->transEsc('Bibliographic Details')?>" role="presentation">
         <?php foreach ($this->driver->getItems('core') as $key => $item): ?>
           <?php if (!empty($item['Data']) && !in_array($item['Label'], $ignoreDetailsFields)): ?>
           <tr class="record-<?=strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $item['Label']))?>">
