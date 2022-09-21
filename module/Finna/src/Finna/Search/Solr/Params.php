@@ -733,7 +733,7 @@ class Params extends \VuFind\Search\Solr\Params
     {
         // first_indexed filter automatically included, no query param required
         // (compatible with Finna 1 implementation)
-        $from = $request->get('first_indexedfrom');
+        $from = $request->get('first_indexedfrom', '');
         $from = $this->formatDateForFullDateRange($from);
 
         if ($from != '*') {

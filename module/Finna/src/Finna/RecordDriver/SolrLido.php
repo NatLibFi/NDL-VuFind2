@@ -1153,41 +1153,37 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
 
             $places = [];
-            $place = isset($node->eventPlace->displayPlace)
-                ? (string)$node->eventPlace->displayPlace : '';
-            if (!$place) {
-                if (isset($node->eventPlace->place->namePlaceSet)) {
+            foreach ($node->eventPlace ?? [] as $placenode) {
+                $place = trim((string)$placenode->displayPlace ?? '');
+                if (!$place) {
                     $eventPlace = [];
-                    foreach ($node->eventPlace->place->namePlaceSet as $namePlaceSet
-                    ) {
-                        $value = trim($namePlaceSet->appellationValue ?? '');
-                        if ('' !== $value) {
+                    foreach ($placenode->place->namePlaceSet ?? [] as $nameSet) {
+                        $value = trim((string)$nameSet->appellationValue ?? '');
+                        if ($value) {
                             $eventPlace[] = $value;
                         }
                     }
                     if ($eventPlace) {
                         $places[] = implode(', ', $eventPlace);
                     }
-                }
-                if (isset($node->eventPlace->place->partOfPlace)) {
-                    foreach ($node->eventPlace->place->partOfPlace as $partOfPlace) {
+                    foreach ($placenode->place->partOfPlace ?? [] as $part) {
                         $partOfPlaceName = [];
-                        while (isset($partOfPlace->namePlaceSet)) {
+                        while ($part->namePlaceSet ?? false) {
                             $appellationValue = trim(
-                                $partOfPlace->namePlaceSet->appellationValue ?? ''
+                                (string)$part->namePlaceSet->appellationValue ?? ''
                             );
-                            if ($appellationValue !== '') {
+                            if ($appellationValue) {
                                 $partOfPlaceName[] = $appellationValue;
                             }
-                            $partOfPlace = $partOfPlace->partOfPlace;
+                            $part = $part->partOfPlace;
                         }
                         if ($partOfPlaceName) {
                             $places[] = implode(', ', $partOfPlaceName);
                         }
                     }
+                } else {
+                    $places[] = $place;
                 }
-            } else {
-                $places[] = $place;
             }
             $actors = [];
             if (isset($node->eventActor)) {

@@ -292,6 +292,9 @@ class ObjectEditor {
     } else if (pointers.length === 2) {
       object[pointers[1]] = this.castValueTo(object[pointers[1]], value);
     }
+    if (typeof this.options.onAttributeChanged === 'function') {
+      this.options.onAttributeChanged();
+    }
   }
 
   castValueTo(to, from)

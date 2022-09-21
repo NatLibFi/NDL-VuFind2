@@ -575,7 +575,7 @@ class SolrEad3 extends SolrEad
             if ($label && !in_array($label, self::UNIT_IDS)) {
                 continue;
             }
-            $displayLabel = null;
+            $displayLabel = '';
             if ($label) {
                 $displayLabel = "Unit ID:$label";
             } elseif ($manyIds) {
@@ -652,7 +652,7 @@ class SolrEad3 extends SolrEad
     /**
      * Get item history
      *
-     * @return null|string
+     * @return string
      */
     public function getItemHistory()
     {
@@ -670,7 +670,7 @@ class SolrEad3 extends SolrEad
                 }
             }
         }
-        return null;
+        return '';
     }
 
     /**
@@ -1703,7 +1703,9 @@ class SolrEad3 extends SolrEad
             foreach ($aid->p as $p) {
                 $data = [
                     'label' => (string)$p,
-                    'url' => (string)($p->ref->attributes()->href ?? '')
+                    'url' => $p->ref
+                        ? (string)($p->ref->attributes()->href ?? '')
+                        : ''
                 ];
                 $result[] = $data;
                 $lang = $this->detectNodeLanguage($p);
@@ -1889,7 +1891,7 @@ class SolrEad3 extends SolrEad
                         $lang = $this->detectNodeLanguage($p);
                         $url = isset($p->ref)
                             ? (string)$p->ref->attributes()->href : null;
-                        if ($this->urlBlocked($url, $text)) {
+                        if ($url && $this->urlBlocked($url, $text)) {
                             $url = null;
                         }
                         $data = compact('text', 'lang', 'url');

@@ -500,13 +500,15 @@ class Record extends \VuFind\View\Helper\Root\Record
             'driver' => $this->driver,
             'searchAction' => $params['searchAction'] ?? null,
             'label' => $lookfor,
-            'ids' => $ids,
-            'authIds' => array_map(
-                function ($s) use ($type) {
-                    return $this->driver
-                        ->tryMethod('getAuthorityId', [$s, $type], '');
-                },
-                $ids
+            'ids' => array_filter($ids),
+            'authIds' => array_filter(
+                array_map(
+                    function ($s) use ($type) {
+                        return $this->driver
+                            ->tryMethod('getAuthorityId', [$s, $type], '');
+                    },
+                    $ids
+                )
             ),
             'authorityLink' => $id && $this->isAuthorityLinksEnabled(),
             'type' => $type,

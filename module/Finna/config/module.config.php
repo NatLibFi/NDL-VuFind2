@@ -316,6 +316,7 @@ $config = [
     'service_manager' => [
         'allow_override' => true,
         'factories' => [
+            'Finna\AppBootstrapListener' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\Autocomplete\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Auth\ILSAuthenticator' => 'VuFind\Auth\ILSAuthenticatorFactory',
             'Finna\Auth\Manager' => 'VuFind\Auth\ManagerFactory',
@@ -388,6 +389,9 @@ $config = [
         'template_path_stack' => [
             APPLICATION_PATH . '/vendor/natlibfi/finna-ui-components/source',
         ],
+    ],
+    'listeners' => [
+        \Finna\AppBootstrapListener::class,
     ],
     // This section contains all VuFind-specific settings (i.e. configurations
     // unrelated to specific framework components).
