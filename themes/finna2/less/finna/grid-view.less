@@ -86,10 +86,12 @@
     }
     h2.title {
       font-size: 1.15em;
-      position: relative;
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
+      .sr-only {
+        position: static;
+      }
     }
     a.fulltext {
       width: 100%;
