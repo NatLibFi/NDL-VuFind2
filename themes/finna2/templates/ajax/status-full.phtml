@@ -329,7 +329,7 @@ if (!$disableTitleHold
         <a href="<?=$this->url('editLibraryCard', ['id' => 'NEW'])?>" class="btn btn-primary login-link hidden-print"><?=$this->transEsc('repository_library_request_add_library_card')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
       <?php endif; ?>
     <?php else: ?>
-      <!-- Login target might be different than the record driver. Prompt for default login target. -->
+      <!-- Login target might be different than the source from record driver. Prompt for default login target. -->
       <?php
         $loginSource = $this->ils()->checkCapability('getDefaultLoginDriver') ? $this->ils()->getDefaultLoginDriver() : $source;
       ?>
