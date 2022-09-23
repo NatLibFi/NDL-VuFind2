@@ -132,6 +132,7 @@ VuFind.setCspNonce('{$cspNonce}');
 JS;
       $this->headScript()->appendScript(implode("\n", $appendScripts));
     ?>
+    <?=$this->cookieConsent()->render()?>
     <?=$this->headScript()?>
     <?php if ($template = $this->content()->findTemplateForLng("content/Additions/general-post-head")): ?>
       <?=$this->render($template)?>
