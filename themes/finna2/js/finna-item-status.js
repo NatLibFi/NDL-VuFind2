@@ -34,6 +34,9 @@ finna.itemStatus = (function finnaItemStatus() {
         $(this).attr('href', $(this).attr('href').replace(oldRecordId, id));
       }
     });
+    if (recordContainer.hasClass('js-item-done')) {
+      $(element).trigger('change', [true]);
+    }
   }
 
   /**
@@ -57,7 +60,7 @@ finna.itemStatus = (function finnaItemStatus() {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
     var selects = $(holder).find('.dedup-select');
 
-    selects.on('change', function onChangeDedupSelection() {
+    selects.on('change', function onChangeDedupSelection(e, auto_selected) {
       var source = $(this).find('option:selected').data('source');
       var recordContainer = $(this).closest('.record-container');
       var hiddenId = recordContainer.find('.hiddenId');
@@ -75,7 +78,7 @@ finna.itemStatus = (function finnaItemStatus() {
       cookie.unshift(source);
       finna.common.setCookie('preferredRecordSourceArray', JSON.stringify(cookie));
 
-      selects.each(function setOverrideID() {
+      selects.each(function setValues() {
         var elem = $(this).find(`option[data-source='${source}']`);
         if (elem.length) {
           $(this).val(elem.val());
@@ -86,7 +89,10 @@ finna.itemStatus = (function finnaItemStatus() {
       if (placeholder) {
         placeholder.remove();
       }
-
+      // Update deduplication elements to match only if done with user input
+      if (!auto_selected) {
+        updateElementIDs(holder);
+      }
       // Item statuses
       var $loading = $('<span/>')
         .addClass('location ajax-availability hidden')

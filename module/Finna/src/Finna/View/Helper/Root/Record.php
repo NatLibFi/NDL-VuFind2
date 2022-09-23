@@ -117,7 +117,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @var int
      */
-    protected static $dedupCounter = 0;
+    public static $dedupCounter = 0;
 
     /**
      * Constructor
@@ -1331,27 +1331,5 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
         return '';
-    }
-
-    /**
-     * Function to render holdings template
-     *
-     * @return string
-     */
-    public function renderHoldings(): string
-    {
-        $holdingsTemplate = count($this->driver->getDedupData()) > 0
-            ? 'holdings-deduplicated'
-            : 'holdings';
-
-        $params = [];
-        $recordSource = $this->driver->tryMethod('getDataSource');
-        if ('holdings-deduplicated' === $holdingsTemplate) {
-            $recordSource = $this->getPreferredSource();
-            $params['dedupCounter'] = self::$dedupCounter++;
-            $params['dedupData'] = $this->driver->getDedupData();
-        }
-        $params['recordSource'] = $recordSource;
-        return $this->renderTemplate("$holdingsTemplate.phtml", $params);
     }
 }

@@ -160,7 +160,7 @@
         <?php endif; ?>
 
         <?php $recordHelper = $this->record($this->driver); ?>
-        <?=$recordHelper->renderHoldings();?>
+        <?=$recordHelper->renderTemplate('holdings.phtml');?>
         <?=$recordHelper->getOnlineUrls('results');?>
         <?=$recordHelper->getPreviews();?>
         <?=$this->render('list/list-notes.phtml')?>
