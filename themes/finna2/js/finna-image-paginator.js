@@ -626,7 +626,7 @@ FinnaPaginator.prototype.loadPage = function loadPage(direction, openImageIndex,
       cur = $('<div/>');
       _.appendTracks(cur);
     }
-    var image = _.createImagePopup(_.images[currentImage]);
+    var image = _.createImagePopup(_.images[currentImage], currentImage);
     if (typeof image !== 'undefined') {
       cur.append(image);
       column = (column === _.settings.imagesPerRow) ? 1 : column + 1;
@@ -779,15 +779,16 @@ FinnaPaginator.prototype.loadBookDescription = function loadBookDescription() {
  * Function to create small images for popup track consuming the data from image object
  *
  * @param {object} image
+ * @param {number} index
  */
-FinnaPaginator.prototype.createImagePopup = function createImagePopup(image) {
+FinnaPaginator.prototype.createImagePopup = function createImagePopup(image, index) {
   var _ = this;
   var holder = $(_.imagePopup).clone(true);
   if (_.images.length > 1) {
-    if (image.small) {
+    if (image.urls.small) {
       var img = new Image();
-      img.src = image.small;
-      img.alt = image.alt;
+      img.src = image.urls.small;
+      img.alt = image.description;
       img.title = image.title;
       holder.append(img, $('<i class="fa fa-spinner fa-spin"/>'));
       img.onload = function onLoad() {
@@ -801,13 +802,13 @@ FinnaPaginator.prototype.createImagePopup = function createImagePopup(image) {
     }
   }
   holder.attr({
-    'index': image.index,
-    'data-large': image.large,
-    'data-master': image.master,
+    'index': index,
+    'data-large': image.urls.large,
+    'data-master': image.urls.master,
     'data-description': image.description,
     'data-type': image.type,
-    'href': (!_.settings.isList) ? image.large : image.medium,
-    'data-alt': image.alt
+    'href': (!_.settings.isList) ? image.urls.large : image.urls.medium,
+    'data-alt': image.description
   });
 
   if (image.type === 'model') {
@@ -1050,11 +1051,11 @@ FinnaPaginator.prototype.zoomButtonState = function zoomButtonState() {
 FinnaPaginator.prototype.setListTrigger = function setListTrigger(image) {
   var _ = this;
   var tmpImg = $(_.imagePopup).clone(true);
-  tmpImg.find('img').data('src', image.small);
+  tmpImg.find('img').data('src', image.urls.small);
   tmpImg.attr({
-    'index': image.index,
-    'href': image.medium,
-    'data-alt': image.alt
+    'index': _.offSet,
+    'href': image.urls.medium,
+    'data-alt': image.description
   });
   tmpImg.click();
 };
