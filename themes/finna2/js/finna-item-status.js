@@ -125,7 +125,6 @@ finna.itemStatus = (function finnaItemStatus() {
         });
       }
     });
-
   }
 
   var my = {
