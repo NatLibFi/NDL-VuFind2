@@ -347,7 +347,8 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             $images = $this->mergeModelDataToImages($images);
         }
         if ($images && $view->layout()->templateDir === 'combined') {
-            $images = reset($images);
+            // Limit combined results to a single image
+            $images = [reset($images)];
         }
         $context = [
             'type' => $type,
