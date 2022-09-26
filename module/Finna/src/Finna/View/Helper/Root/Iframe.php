@@ -86,7 +86,8 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper
         string $templateName = 'Helpers/iframe.phtml'
     ): string {
         $serviceBaseUrl = $this->getServiceBaseUrl($serviceUrl);
-        $consentCategoriesTranslated = $this->getTranslatedConsentCategories($consentCategories);
+        $consentCategoriesTranslated
+            = $this->getTranslatedConsentCategories($consentCategories);
         $embed = $this->hasConcent($consentCategories);
 
         return $this->getView()->render(
@@ -97,6 +98,38 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper
                 'title',
                 'src',
                 'attributes',
+                'serviceUrl',
+                'consentCategories',
+                'consentCategoriesTranslated',
+                'serviceBaseUrl'
+            )
+        );
+    }
+
+    /**
+     * Render a link box to a service
+     *
+     * @param string $serviceUrl        URL to the service's own interface
+     * @param array  $consentCategories Required cookie consent categories
+     * @param string $style             Element style for the link box
+     *
+     * @return string
+     */
+    public function renderLinkBox(
+        string $serviceUrl,
+        array $consentCategories,
+        string $style = ''
+    ): string {
+        $serviceBaseUrl = $this->getServiceBaseUrl($serviceUrl);
+        $consentCategoriesTranslated
+            = $this->getTranslatedConsentCategories($consentCategories);
+        $embed = false;
+
+        return $this->getView()->render(
+            'Helpers/iframe.phtml',
+            compact(
+                'embed',
+                'style',
                 'serviceUrl',
                 'consentCategories',
                 'consentCategoriesTranslated',
@@ -161,7 +194,8 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper
         ?int $width = null,
         ?int $height = null
     ): string {
-        $consentCategoriesTranslated = $this->getTranslatedConsentCategories($consentCategories);
+        $consentCategoriesTranslated
+            = $this->getTranslatedConsentCategories($consentCategories);
         $styleParts = [];
         if ($width) {
             $styleParts[] = "width: {$width}px;";
