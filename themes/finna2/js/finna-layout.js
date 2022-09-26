@@ -707,6 +707,7 @@ finna.layout = (function finnaLayout() {
       });
       $('.cookie-consent').removeClass('hidden');
     }
+    VuFind.listen('cookie-consent-change', VuFind.refreshPage);
   }
 
   // The accordion has a delicate relationship with the tabs. Handle with care!
