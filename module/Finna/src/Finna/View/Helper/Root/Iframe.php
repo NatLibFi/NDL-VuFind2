@@ -139,6 +139,45 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
+     * Render a Vimeo iframe or link box depending on cookie consent
+     *
+     * @param string  $videoId           Video ID
+     * @param array   $consentCategories Required cookie consent categories
+     * @param ?string $width             Element width (e.g. 512px)
+     * @param ?string $height            Element height (e.g. 384px)
+     * @param array   $attributes        Other iframe attributes (if this contains
+     * style, it overrides the style from the $style parameter for the iframe)
+     *
+     * @return string
+     */
+    public function vimeo(
+        string $videoId,
+        array $consentCategories,
+        string $width = null,
+        string $height = null,
+        array $attributes = []
+    ): string {
+        if (!isset($attributes['allow'])) {
+            $attributes['allow'] = 'autoplay; fullscreen; picture-in-picture';
+        }
+        $styleParts = [];
+        if ($width) {
+            $styleParts[] = "width: $width;";
+        }
+        if ($height) {
+            $styleParts[] = "height: $height;";
+        }
+        return $this->render(
+            implode(' ', $styleParts),
+            'Vimeo',
+            'https://player.vimeo.com/video/' . urlencode($videoId),
+            $attributes,
+            'https://vimeo.com/?v=' . urlencode($videoId),
+            $consentCategories
+        );
+    }
+
+    /**
      * Render a YouTube iframe or link box depending on cookie consent
      *
      * @param string  $videoId           Video ID
