@@ -1,4 +1,3 @@
-<!-- START of: finna - Helpers/cookie-consent.phtml -->
 <?php
   // Render the new cookie consent initialization script if necessary:
  if (!empty($this->consentDialogConfig)) {
@@ -20,12 +19,16 @@
   return;
 }
 ?>
-<div class="container-fluid cookie-consent">
-  <div class="cookie-consent-text">
-    <?=$this->translate('cookie_consent_html', ['%%link%%' => $this->escapeHtmlAttr($this->url('content-page', ['page' => 'privacy']) . '#cookies')])?>
+<?php // Render old cookie banner only if new cookie consent dialog is disabled: ?>
+<?php if (!$this->cookieConsent()->isEnabled()): ?>
+<!-- START of: finna - Helpers/cookie-consent.phtml -->
+  <div class="container-fluid cookie-consent">
+    <div class="cookie-consent-text">
+      <?=$this->translate('cookie_consent_html', ['%%link%%' => $this->escapeHtmlAttr($this->url('content-page', ['page' => 'privacy']) . '#cookies')])?>
+    </div>
+    <div class="nav navbar-nav nav-absolute cookie-consent-button">
+      <button class="btn btn-primary cookie-consent-dismiss" aria-label="<?=$this->transEsc('Accept cookies')?>"><?=$this->transEsc('OK')?></button>
+    </div>
   </div>
-  <div class="nav navbar-nav nav-absolute cookie-consent-button">
-    <button class="btn btn-primary cookie-consent-dismiss" aria-label="<?=$this->transEsc('Accept cookies')?>"><?=$this->transEsc('OK')?></button>
-  </div>
-</div>
+<?php endif; ?>
 <!-- END of: finna - Helpers/cookie-consent.phtml -->
