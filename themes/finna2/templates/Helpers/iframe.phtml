@@ -1,15 +1,3 @@
-<?php
-  $cookieConsent = $this->cookieConsent();
-  $embed = true;
-  if ($cookieConsent->isEnabled()) {
-    foreach ($this->consentCategories as $category) {
-      if (!$cookieConsent->isCategoryAccepted($category)) {
-        $embed = false;
-        break;
-      }
-    }
-  }
-?>
 <?php if ($embed): ?>
   <?php
     $attrs = $this->attributes;

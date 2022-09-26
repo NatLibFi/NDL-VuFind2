@@ -72,6 +72,7 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper
      * style, it overrides the style from the $style parameter for the iframe)
      * @param string $serviceUrl        URL to the service's own interface
      * @param array  $consentCategories Required cookie consent categories
+     * @param string $templateName      Template name (overrides the default)
      *
      * @return string
      */
@@ -81,32 +82,17 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper
         string $src,
         array $attributes,
         string $serviceUrl,
-        array $consentCategories
+        array $consentCategories,
+        string $templateName = 'Helpers/iframe.phtml'
     ): string {
-        if ($urlParts = parse_url($serviceUrl)) {
-            $serviceBaseUrl = '';
-            if ($scheme = $urlParts['scheme'] ?? '') {
-                $serviceBaseUrl = "$scheme://";
-            }
-            $serviceBaseUrl .= $urlParts['host'];
-            if ($port = $urlParts['port'] ?? '') {
-                $serviceBaseUrl = ":$port";
-            }
-        } else {
-            $serviceBaseUrl = $serviceUrl;
-        }
-        $consentCategoriesTranslated = [];
-        foreach ($consentCategories as $category) {
-            $consentCategoriesTranslated[]
-                = $this->translate(
-                    $this->consentConfig['Categories'][$category]['Title']
-                    ?? 'Unknown'
-                );
-        }
+        $serviceBaseUrl = $this->getServiceBaseUrl($serviceUrl);
+        $consentCategoriesTranslated = $this->getTranslatedConsentCategories($consentCategories);
+        $embed = $this->hasConcent($consentCategories);
 
         return $this->getView()->render(
             'Helpers/iframe.phtml',
             compact(
+                'embed',
                 'style',
                 'title',
                 'src',
@@ -122,11 +108,11 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper
     /**
      * Render a YouTube iframe or link box depending on cookie consent
      *
-     * @param string $videoId           Video ID
-     * @param array  $consentCategories Required cookie consent categories
-     * @param string $width             Element width (e.g. 512px)
-     * @param string $height            Element height (e.g. 384px)
-     * @param array  $attributes        Other iframe attributes (if this contains
+     * @param string  $videoId           Video ID
+     * @param array   $consentCategories Required cookie consent categories
+     * @param ?string $width             Element width (e.g. 512px)
+     * @param ?string $height            Element height (e.g. 384px)
+     * @param array   $attributes        Other iframe attributes (if this contains
      * style, it overrides the style from the $style parameter for the iframe)
      *
      * @return string
@@ -134,21 +120,131 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper
     public function youtube(
         string $videoId,
         array $consentCategories,
-        string $width,
-        string $height,
+        string $width = null,
+        string $height = null,
         array $attributes = []
     ): string {
         if (!isset($attributes['allow'])) {
             $attributes['allow'] = 'accelerometer; autoplay; clipboard-write;'
                 . ' encrypted-media; gyroscope; picture-in-picture';
         }
+        $styleParts = [];
+        if ($width) {
+            $styleParts[] = "width: $width;";
+        }
+        if ($height) {
+            $styleParts[] = "height: $height;";
+        }
         return $this->render(
-            "width: $width; height: $height;",
+            implode(' ', $styleParts),
             'YouTube video player',
             'https://www.youtube.com/embed/' . urlencode($videoId),
             $attributes,
             'https://www.youtube.com/watch?v=' . urlencode($videoId),
             $consentCategories
         );
+    }
+
+    /**
+     * Render a Twitter timeline iframe or link box depending on cookie consent
+     *
+     * @param string $screenName        User's screen name
+     * @param array  $consentCategories Required cookie consent categories
+     * @param ?int   $width             Element width (e.g. 512)
+     * @param ?int   $height            Element height (e.g. 384)
+     *
+     * @return string
+     */
+    public function twitterTimeline(
+        string $screenName,
+        array $consentCategories,
+        ?int $width = null,
+        ?int $height = null
+    ): string {
+        $consentCategoriesTranslated = $this->getTranslatedConsentCategories($consentCategories);
+        $styleParts = [];
+        if ($width) {
+            $styleParts[] = "width: {$width}px;";
+        }
+        if ($height) {
+            $styleParts[] = "height: {$height}px;";
+        }
+        $style = implode(' ', $styleParts);
+        $embed = $this->hasConcent($consentCategories);
+        return  $this->getView()->render(
+            'Helpers/twitter-timeline.phtml',
+            compact(
+                'embed',
+                'screenName',
+                'consentCategories',
+                'consentCategoriesTranslated',
+                'width',
+                'height',
+                'style'
+            )
+        );
+    }
+
+    /**
+     * Get base URL for a service
+     *
+     * @param string $serviceUrl Service URL
+     *
+     * @return string
+     */
+    protected function getServiceBaseUrl(string $serviceUrl): string
+    {
+        if (!($urlParts = parse_url($serviceUrl))) {
+            return $serviceUrl;
+        }
+        $result = '';
+        if ($scheme = $urlParts['scheme'] ?? '') {
+            $result = "$scheme://";
+        }
+        $result .= $urlParts['host'];
+        if ($port = $urlParts['port'] ?? '') {
+            $result = ":$port";
+        }
+        return $result;
+    }
+
+    /**
+     * Get translated consent categories
+     *
+     * @param array $categories Categories to translate
+     *
+     * @return array
+     */
+    protected function getTranslatedConsentCategories(array $categories): array
+    {
+        $result = [];
+        foreach ($categories as $category) {
+            $result[]
+                = $this->translate(
+                    $this->consentConfig['Categories'][$category]['Title']
+                    ?? 'Unknown'
+                );
+        }
+        return $result;
+    }
+
+    /**
+     * Check if user has concented to given categories
+     *
+     * @param array $categories Categories
+     *
+     * @return bool
+     */
+    protected function hasConcent(array $categories): bool
+    {
+        $cookieConsent = $this->getView()->plugin('cookieConsent');
+        if ($cookieConsent->isEnabled()) {
+            foreach ($categories as $category) {
+                if (!$cookieConsent->isCategoryAccepted($category)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
