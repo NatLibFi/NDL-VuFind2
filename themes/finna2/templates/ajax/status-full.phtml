@@ -329,11 +329,7 @@ if (!$disableTitleHold
         <a href="<?=$this->url('editLibraryCard', ['id' => 'NEW'])?>" class="btn btn-primary login-link hidden-print"><?=$this->transEsc('repository_library_request_add_library_card')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
       <?php endif; ?>
     <?php else: ?>
-      <?php
-        //Login target might be different than the source from record driver. Prompt for default login target.
-        $loginSource = $this->ils()->checkCapability('getDefaultLoginDriver') ? $this->ils()->getDefaultLoginDriver() : $source;
-      ?>
-      <a href="<?=$this->escapeHtmlAttr($holdingsLink . '?login=true&catalogLogin=true&target=' . urlencode($loginSource))?>" class="btn btn-primary login-link hidden-print" data-lightbox><?=$this->transEsc('repository_library_request_login')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
+      <a href="<?=$this->escapeHtmlAttr($holdingsLink . '?login=true&catalogLogin=true')?>" class="btn btn-primary login-link hidden-print" data-lightbox><?=$this->transEsc('repository_library_request_login')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
     <?php endif; ?>
   </div>
   <div class="clearfix"></div>
