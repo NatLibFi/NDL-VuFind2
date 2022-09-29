@@ -686,7 +686,7 @@ noCoverAvailableImage = images/noCover2.gif
 
 ; URL of a service that is used to convert PDF files to jpg.
 ; The service receives the URL of the pdf file as a GET parameter and outputs a jpg file.
-; convertPdfToCoverImageService = "http://127.0.0.1:9999"
+; convertPdfToCoverImageService = "http://127.0.0.1:9999?url=%%url%%"
 
 ; Comma separated list of record formats whose PDF converted record images may be downloaded.
 pdfCoverImageDownload = "0/Map/"
