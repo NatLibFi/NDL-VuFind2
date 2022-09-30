@@ -68,6 +68,8 @@ class CookieConsent extends \VuFind\View\Helper\Root\CookieConsent
                     $enabled ? explode(',', $enabled) : ['essential']
                 );
 
+                sort($categories);
+                sort($cookieCategories);
                 if ($categories != $cookieCategories) {
                     // Categories differ, invalidate current consent:
                     $consent['revision'] = (int)($consent['revision']) - 1;

@@ -1,18 +1,11 @@
 <?php
 $data = $this->driver->getExternalData();
-$digitized = $data['digitized'];
 $items = $data['items'] ?? [];
 $fullResImages = $items['fullResImages'] ?? null;
 $ocrImages = $items['OCRImages'] ?? null;
 $physicalItems = $items['physicalItems'] ?? null;
 $collection = $this->driver->tryMethod('isCollection');
 ?>
-<?php if (!$digitized && !$collection): ?>
-  <span><?=$this->transEsc('external_data_not_digitized')?></span>
-  <div class="external-data-feedback inline"><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Feedback'))?>" data-lightbox class="btn btn-primary"><?=$this->transEsc('Send feedback on record')?></a></div>
-<?php else: ?>
-  <div class="external-data-feedback"><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Feedback'))?>" data-lightbox class="btn btn-primary"><?=$this->transEsc('external_data_contact_provider')?></a></div>
-<?php endif; ?>
 
 <?php if ($fullResImages): ?>
   <?= $this->partial('RecordTab/external_data_table.phtml', ['type' => 'fullres_images', 'data' => $fullResImages]); ?>
@@ -86,7 +79,10 @@ $collection = $this->driver->tryMethod('isCollection');
       <div class="tbl-row" role="row">
         <div role="cell" class="tbl-cell tbl-left"><span><?=$this->transEsc('external_data_tab_physical_service_info')?></span></div>
         <?php if (!empty($item['service'])): ?>
-          <div role="cell" class="tbl-cell tbl-right"><?=$this->icon('service-available')?> <span><?=$this->transEsc('external_data_tab_physical_service')?></span></div>
+          <div role="cell" class="tbl-cell tbl-right">
+            <?=$this->icon('service-available')?> <span><?=$this->transEsc('external_data_tab_physical_service')?></span>
+            <div class="external-data-feedback"><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Feedback'))?>" data-lightbox class="btn btn-primary"><?=$this->transEsc('external_data_contact_provider')?></a></div>
+          </div>
         <?php else: ?>
           <div role="cell" class="tbl-cell tbl-right"><?=$this->icon('service-unavailable')?> <span><?=$this->transEsc('external_data_tab_no_service')?></span></div>
         <?php endif; ?>
