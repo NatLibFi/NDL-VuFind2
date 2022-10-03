@@ -64,8 +64,19 @@ class R2Ead3 extends SolrEad3
      */
     public function hasRestrictedMetadata()
     {
-        $xml = $this->getXmlRecord();
-        return isset($xml->accessrestrict);
+        // Recursively check the access restrictions:
+        $hasAI24 = function ($elem, $checkFunc) {
+            foreach ($elem->accessrestrict ?? [] as $accessrestrict) {
+                if ('ahaa:AI24' === (string)$accessrestrict['encodinganalog']
+                    || $checkFunc($accessrestrict, $checkFunc)
+                ) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        return $hasAI24($this->getXmlRecord(), $hasAI24);
     }
 
     /**

@@ -17,6 +17,7 @@ $config = [
             'Finna\View\Helper\Root\Config' => 'VuFind\View\Helper\Root\ConfigFactory',
             'Finna\View\Helper\Root\Content' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\Cookie' => 'Finna\View\Helper\Root\CookieFactory',
+            'Finna\View\Helper\Root\CookieConsent' => 'VuFind\View\Helper\Root\CookieConsentFactory',
             'Finna\View\Helper\Root\Counter' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\CustomElement' => 'Finna\View\Helper\Root\CustomElementFactory',
             'Finna\View\Helper\Root\EDS' => 'Finna\View\Helper\Root\EDSFactory',
@@ -28,6 +29,7 @@ $config = [
             'Finna\View\Helper\Root\Followup' => 'Finna\View\Helper\Root\FollowupFactory',
             'Finna\View\Helper\Root\HtmlElement' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\Holdings' => 'Finna\View\Helper\Root\HelperWithMainConfigFactory',
+            'Finna\View\Helper\Root\Iframe' => 'Finna\View\Helper\Root\IframeFactory',
             'Finna\View\Helper\Root\ImageSrc' => 'Finna\View\Helper\Root\HelperWithThemeInfoFactory',
             'Finna\View\Helper\Root\LayoutClass' => 'VuFind\View\Helper\Bootstrap3\LayoutClassFactory',
             'Finna\View\Helper\Root\LinkedEventsTabs' => 'Laminas\ServiceManager\Factory\InvokableFactory',
@@ -84,6 +86,7 @@ $config = [
             'combined' => 'Finna\View\Helper\Root\Combined',
             'content' => 'Finna\View\Helper\Root\Content',
             'cookie' => 'Finna\View\Helper\Root\Cookie',
+            'cookieConsent' => 'Finna\View\Helper\Root\CookieConsent',
             'counter' => 'Finna\View\Helper\Root\Counter',
             'customElement' => 'Finna\View\Helper\Root\CustomElement',
             'eds' => 'Finna\View\Helper\Root\EDS',
@@ -99,6 +102,7 @@ $config = [
             'htmlElement' => 'Finna\View\Helper\Root\HtmlElement',
             //use root highlight so search results use span instead of mark
             'highlight' => 'VuFind\View\Helper\Root\Highlight',
+            'iframe' => 'Finna\View\Helper\Root\Iframe',
             'imageSrc' => 'Finna\View\Helper\Root\ImageSrc',
             'indexedTotal' => 'Finna\View\Helper\Root\TotalIndexed',
             'linkedEventsTabs' => 'Finna\View\Helper\Root\LinkedEventsTabs',
@@ -260,6 +264,12 @@ $config = [
         'active' => false
     ],
     'favicon' => 'favicon.ico',
+    'icons' => [
+        'aliases' => [
+            'service-available' => 'FontAwesome:ok',
+            'service-unavailable' => 'FontAwesome:remove'
+        ]
+    ]
 ];
 include 'components.config.php';
 return $config;

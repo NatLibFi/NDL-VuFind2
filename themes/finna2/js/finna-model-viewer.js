@@ -106,6 +106,8 @@ class ModelViewerClass extends HTMLElement {
 
     this.menuOptions = {
       owner: this,
+      // Properties are THREEjs object keys. To display the property,
+      // it must be written the same way as they are declared in the object.
       allowedProperties: {
         advanced: [
           'uuid', 'name', 'type', 'position', 'color', 'groundColor',
@@ -115,7 +117,7 @@ class ModelViewerClass extends HTMLElement {
           'opacity', 'premultipliedAlpha', 'roughness', 'side', 'toneMapped',
           'transparent', 'visible', 'wireframe', 'wireframeLinewidth', 'gammaFactor',
           'physicallyCorrectLights',
-          'shininess', 'rotation', 'texts', 'renderOrder', 'scale', 'clearcoat',
+          'shininess', 'rotation', 'texts', 'renderOrder', 'scale', '_clearcoat',
           'clearcoatRoughness', 'normalScale', 'ior', 'sheen', 'sheenRoughness', 'sheenColor',
           'transmission', 'bumpScale', 'envMapIntensity'
         ],
@@ -224,8 +226,8 @@ class ModelViewerClass extends HTMLElement {
       ],
       onAttributeChanged: () => {
         this.scene.traverse((child) => {
-          if (child.materal) {
-            child.materal.needsUpdate = true;
+          if (child.material) {
+            child.material.needsUpdate = true;
           }
         });
       },
@@ -234,13 +236,13 @@ class ModelViewerClass extends HTMLElement {
           if (typeof pointers[2] !== 'undefined') {
             switch (pointers[2]) {
             case '_x':
-              object.rotation.x = THREE.Math.degToRad(value);
+              object.rotation.x = THREE.MathUtils.degToRad(value);
               break;
             case '_y':
-              object.rotation.y = THREE.Math.degToRad(value);
+              object.rotation.y = THREE.MathUtils.degToRad(value);
               break;
             case '_z':
-              object.rotation.z = THREE.Math.degToRad(value);
+              object.rotation.z = THREE.MathUtils.degToRad(value);
               break;
             }
           }
@@ -292,6 +294,7 @@ class ModelViewerClass extends HTMLElement {
               if (child.type === 'Mesh') {
                 child.material.userData.envMapIntensity = child.material.envMapIntensity;
                 child.material.userData.normalScale = child.material.normalScale;
+                child.material.userData.depthWrite = child.material.depthWrite;
               }
             });
             const exporter = new THREE.GLTFExporter();
@@ -699,14 +702,22 @@ class ModelViewerClass extends HTMLElement {
     this.scene.traverse((obj) => {
       if (obj.type === 'Mesh') {
         obj.material.envMap = this.background;
-        if (typeof obj.material.userData.envMapIntensity !== 'undefined') {
-          obj.material.envMapIntensity = obj.material.userData.envMapIntensity;
+        const userData = obj.material.userData;
+        if (typeof userData.envMapIntensity !== 'undefined') {
+          obj.material.envMapIntensity = userData.envMapIntensity;
         } else {
           obj.material.envMapIntensity = 0.2;
         }
-        if (obj.material.userData.normalScale) {
-          obj.material.normalScale.x = obj.material.userData.normalScale.x;
-          obj.material.normalScale.y = obj.material.userData.normalScale.y;
+        if (typeof userData.depthWrite !== 'undefined'
+          && userData.depthWrite === false
+        ) {
+          obj.material.depthWrite = userData.depthWrite;
+        } else {
+          obj.material.depthWrite = true;
+        }
+        if (userData.normalScale) {
+          obj.material.normalScale.x = userData.normalScale.x;
+          obj.material.normalScale.y = userData.normalScale.y;
         }
 
         if (obj.material.emissiveMap) obj.material.emissiveMap.encoding = this.encoding;

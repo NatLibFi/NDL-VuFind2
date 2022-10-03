@@ -47,10 +47,10 @@ if ($img):
             <?=$this->record($this->driver)->getLabelList() ?>
           </div>
           <?=$this->render('record/labels.phtml', ['driver' => $this->driver]); ?>
-          <?php $summAuthors = $this->driver->getPrimaryAuthorsWithHighlighting(); if (!empty($summAuthors)): ?>
+          <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles'); if (!empty($authors)): ?>
             <div class="truncate-field" data-rows="1">
-              <?php $authorCount = count($summAuthors); foreach ($summAuthors as $i => $summAuthor): ?>
-                <a href="<?=$this->record($this->driver)->getLink('author', $this->highlight($summAuthor, null, true, false))?>"><?=$this->highlight($summAuthor)?></a><?=$i + 1 < $authorCount ? ' ; ' : ''?>
+              <?php foreach($authors as $index => $author): ?>
+                <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
               <?php endforeach; ?>
             </div>
           <?php endif; ?>
@@ -58,10 +58,11 @@ if ($img):
             <?php // The funky comparison below is due to Laminas translator not supporting empty values (see ExtendedIniReader) ?>
             <?php if (!$this->translationEmpty('Archive Repository')): ?><span class="small"><?=$this->transEsc('Archive Repository')?>:</span><?php endif; ?>
             <?=$this->escapeHtml($this->organisationDisplayName($this->driver)) ?>
-            <?php $originations = $this->driver->tryMethod('getOriginations', [], $this->driver->getOrigination()); if ($originations): ?>
-                <br/><span class="archive-label"><?=$this->transEsc('Archive Origination')?>:</span>
-              <?php $originations = (array)$originations; foreach ($originations as $i => $origination): ?>
-                <?=$i > 0 ? ' ; ' : ''?><a href="<?=$this->escapeHtmlAttr($this->url('search-results', [], ['query' => ['lookfor' => $origination, 'type' => 'Author']]))?>"><?=$this->escapeHtml($origination)?></a>
+            <?php if ($originations = $this->driver->tryMethod('getOriginationExtended', [])): ?>
+              <br/><span class="archive-label"><?=$this->transEsc('Archive Origination')?>:</span>
+              <?php foreach ($originations as $i => $origination): ?>
+                <?=$i > 0 ? ' ; ' : ''?>
+                <?=$this->record($this->driver)->getLinkedFieldElement('author', $origination['name'], $origination, ['authorityType' => $origination['type'] ?? null, 'description' => false])?>
               <?php endforeach; ?>
             <?php endif; ?>
             <?php if (!($fondsOrCollection = in_array('Document/ArchiveFonds', $this->driver->getFormats()) || in_array('Document/ArchiveCollection', $this->driver->getFormats()))): ?>

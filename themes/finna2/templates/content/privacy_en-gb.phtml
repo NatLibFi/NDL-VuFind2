@@ -70,5 +70,23 @@
   <h2 id="cookies">Use of cookies</h2>
   <p>Use of the site is monitored in order to improve the service. Cookies are used for tracking purposes. The cookies do not contain any data that could be used to single out or identify users. Cookies do not affect information security, and they cannot spread viruses or malware. By visiting this site, you agree to the use of cookies.
   </p>
+  <?php if ($this->cookieConsent()->isEnabled()): ?>
+    <h3>Cookie Consent</h3>
+    <?php if ($consent = $this->cookieConsent()->getConsentInformation()): ?>
+      <p>Your current cookie consent:</p>
+      <ul>
+        <li>Domain: <?=$this->escapeHtml($consent['domain'] . ('/' !== $consent['path'] ? $consent['path'] : ''))?></li>
+        <li>State: Allow (<?=implode(', ', array_map([$this, 'escapeHtml'], $consent['categoriesTranslated']))?>)</li>
+        <li>Consent ID: <?=$this->escapeHtml($consent['consentId'])?>
+        <li>Consent date: <?=$this->escapeHtml($consent['lastConsentDateTime'])?>
+      </ul>
+    <?php else: ?>
+      <p>You have not yet given consent.</p>
+    <?php endif; ?>
+    <p>
+      <a class="btn btn-default" href="#" type="button" data-cc="show-preferencesModal" aria-haspopup="dialog"><?=$this->transEsc('Cookie Settings')?></a>
+    </p>
+  <?php endif; ?>
+
 </div>
 <!-- END of: finna - content/privacy_en-gb.phtml -->

@@ -416,7 +416,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ]
         ];
 
-        if ($this->defaultPickUpLocation == '0') {
+        if ($this->defaultPickUpLocation == '0'
+            || $this->defaultPickUpLocation === 'user-selected'
+        ) {
             $this->defaultPickUpLocation = false;
         }
 

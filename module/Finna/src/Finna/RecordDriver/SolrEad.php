@@ -751,13 +751,27 @@ class SolrEad extends SolrDefault
         // Main title might be already normalized, but do it again to make sure:
         $mainTitle = \Normalizer::normalize($this->getTitle(), \Normalizer::FORM_KC);
         $xml = $this->getXmlRecord();
+        // Get unit id for comparison with it:
+        $unitId = '';
+        foreach ($xml->did->unitid ?? [] as $id) {
+            if ('Analoginen' === (string)$id['label']) {
+                $unitId = (string)$id . ' ';
+                break;
+            }
+        }
+
         foreach ($xml->did->unittitle ?? [] as $title) {
             $title = trim((string)$title);
             $normalized = \Normalizer::normalize($title, \Normalizer::FORM_KC);
+            $normalizedWithId
+                = \Normalizer::normalize($unitId . $title, \Normalizer::FORM_KC);
             // Compare with the beginning of main title since it may have additional
             // information appended to it:
             $len = mb_strlen($normalized, 'UTF-8');
-            if (mb_substr($mainTitle, 0, $len, 'UTF-8') !== $normalized) {
+            $lenId = mb_strlen($normalizedWithId, 'UTF-8');
+            if (mb_substr($mainTitle, 0, $len, 'UTF-8') !== $normalized
+                && mb_substr($mainTitle, 0, $lenId, 'UTF-8') !== $normalizedWithId
+            ) {
                 $results[] = $title;
             }
         }

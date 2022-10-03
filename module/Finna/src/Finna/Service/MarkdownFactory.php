@@ -28,8 +28,8 @@
 namespace Finna\Service;
 
 use Finna\CommonMark\Extension\CustomElementExtension;
-use Interop\Container\ContainerInterface;
 use League\CommonMark\Environment\EnvironmentBuilderInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Finna Markdown Service factory

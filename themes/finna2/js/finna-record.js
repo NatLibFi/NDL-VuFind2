@@ -223,6 +223,12 @@ finna.record = (function finnaRecord() {
     });
   }
 
+  function setupExternalDataTab() {
+    $('.external-data-heading').on('click', function onClickHeading() {
+      $(this).toggleClass('collapsed');
+    });
+  }
+
   function initRecordNaviHashUpdate() {
     $(window).on('hashchange', function onHashChange() {
       $('.pager a').each(function updateHash(i, a) {
@@ -505,6 +511,7 @@ finna.record = (function finnaRecord() {
     init: init,
     setupHoldingsTab: setupHoldingsTab,
     setupLocationsEad3Tab: setupLocationsEad3Tab,
+    setupExternalDataTab: setupExternalDataTab,
     initRecordVersions: initRecordVersions,
     handleRedirect: handleRedirect
   };

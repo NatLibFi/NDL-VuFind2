@@ -316,6 +316,7 @@ $config = [
     'service_manager' => [
         'allow_override' => true,
         'factories' => [
+            'Finna\AppBootstrapListener' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\Autocomplete\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Auth\ILSAuthenticator' => 'VuFind\Auth\ILSAuthenticatorFactory',
             'Finna\Auth\Manager' => 'VuFind\Auth\ManagerFactory',
@@ -388,6 +389,9 @@ $config = [
         'template_path_stack' => [
             APPLICATION_PATH . '/vendor/natlibfi/finna-ui-components/source',
         ],
+    ],
+    'listeners' => [
+        \Finna\AppBootstrapListener::class,
     ],
     // This section contains all VuFind-specific settings (i.e. configurations
     // unrelated to specific framework components).
@@ -514,12 +518,14 @@ $config = [
             ],
             'auth' => [
                 'factories' => [
+                    'Finna\Auth\Database' => 'Laminas\ServiceManager\Factory\InvokableFactory',
                     'Finna\Auth\ILS' => 'VuFind\Auth\ILSFactory',
                     'Finna\Auth\MultiILS' => 'VuFind\Auth\ILSFactory',
                     'Finna\Auth\Shibboleth' => 'Finna\Auth\ShibbolethFactory',
                     'Finna\Auth\Suomifi' => 'Finna\Auth\SuomifiFactory',
                 ],
                 'aliases' => [
+                    'VuFind\Auth\Database' => 'Finna\Auth\Database',
                     'VuFind\Auth\ILS' => 'Finna\Auth\ILS',
                     'VuFind\Auth\MultiILS' => 'Finna\Auth\MultiILS',
                     'VuFind\Auth\Shibboleth' => 'Finna\Auth\Shibboleth',
@@ -720,7 +726,7 @@ $config = [
                 'factories' => [
                     'Finna\Search\Blender\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\Combined\Options' => 'VuFind\Search\Options\OptionsFactory',
-                    'Finna\Search\EDS\Options' => 'VuFind\Search\EDS\Options\OptionsFactory',
+                    'Finna\Search\EDS\Options' => 'VuFind\Search\EDS\OptionsFactory',
                     'Finna\Search\R2\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\Primo\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\Solr\Options' => 'VuFind\Search\Options\OptionsFactory',

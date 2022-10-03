@@ -63,7 +63,7 @@ if ($this->searchbox()->autocompleteEnabled($this->searchClassId ?? 'Solr')) {
       $activeTab = $searchTabs['selected']['id'];
     }
 
-    foreach (['suggestion','facet','handler', 'filter', 'phrase'] as $section) {
+    foreach (['suggestion','facet','handler', 'filter', 'phrase', 'isbn'] as $section) {
       $section = "autocomplete_section_$section";
       if ($this->translationEmpty($section)) {
         continue;

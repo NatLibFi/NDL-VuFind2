@@ -27,6 +27,8 @@
  */
 namespace Finna\Autocomplete;
 
+use VuFindCode\ISBN;
+
 /**
  * Solr Autocomplete Module
  *
@@ -100,16 +102,25 @@ class Solr extends \VuFind\Autocomplete\Solr
     protected $request = null;
 
     /**
+     * Url helper
+     *
+     * @var Url
+     */
+    protected $urlHelper;
+
+    /**
      * Constructor
      *
      * @param PluginManager          $results      Results plugin manager
      * @param \Laminas\Config\Config $facetConfig  Facet configuration
      * @param \Laminas\Config\Config $searchConfig Search configuration
+     * @param Url                    $urlHelper    Url helper
      */
     public function __construct(
         \VuFind\Search\Results\PluginManager $results,
         $facetConfig,
-        $searchConfig
+        $searchConfig,
+        $urlHelper
     ) {
         $settings = [];
         $facets = isset($searchConfig->Autocomplete_Sections->facets)
@@ -126,6 +137,7 @@ class Solr extends \VuFind\Autocomplete\Solr
                 $this->checkboxFacets[] = $field;
             }
         }
+        $this->urlHelper = $urlHelper;
         $pos = 0;
         foreach ($facets as $data) {
             $data = explode('|', $data);
@@ -203,11 +215,13 @@ class Solr extends \VuFind\Autocomplete\Solr
         $suggestionsLimit = $this->searchConfig->Autocomplete->suggestions ?? 5;
 
         $suggestions = parent::getSuggestions($query);
+
         if (!empty($suggestions)) {
             $suggestions = array_splice($suggestions, 0, $suggestionsLimit);
         }
 
         $facets = [];
+        $isbnMatch = [];
         if (!$this->request->onlySuggestions) {
             $getFacetValues = function ($facet) {
                 return [$facet['value'], $facet['count']];
@@ -260,12 +274,56 @@ class Solr extends \VuFind\Autocomplete\Solr
                 }
             }
             $facets = $facetResults;
+
+            if (!empty($this->searchConfig->Autocomplete_Sections->isbn)) {
+                $isbnMatch = $this->getIsbnMatch($query);
+            }
         }
 
         ksort($facets);
         $facets = array_values($facets);
 
-        $result = compact('suggestions', 'facets');
+        $result = compact('suggestions', 'facets', 'isbnMatch');
+        return $result;
+    }
+
+    /**
+     * Get a record from the search results if the
+     * query matches record ISBN
+     *
+     * @param $query search query
+     *
+     * @return array
+     */
+    protected function getIsbnMatch($query)
+    {
+        $result = [];
+        $isbnObj = new ISBN($query);
+        if ($isbnObj->isValid()) {
+            $q = str_replace('-', '', $query);
+            $searchResults = $this->searchObject->getResults();
+            foreach ($searchResults as $object) {
+                $current = $object->getRawData();
+                if (isset($current['isbn'])) {
+                    $bestMatch = $this->pickBestMatch(
+                        $current['isbn'],
+                        $q,
+                        true
+                    );
+                    if ($bestMatch) {
+                        $result = [
+                            'isbn' => $current['isbn'],
+                            'title' => $current['title'],
+                            'url' => ($this->urlHelper)(
+                                'record',
+                                ['id' => $current['id']]
+                            ),
+                            'recordId' => $current['id']
+                        ];
+                    }
+                }
+            }
+        }
         return $result;
     }
 

@@ -111,7 +111,7 @@ class LocationService
         ];
 
         foreach ($params as $key => $val) {
-            $url = str_replace('{' . $key . '}', urlencode($val), $url);
+            $url = str_replace('{' . $key . '}', urlencode($val ?? ''), $url);
         }
 
         return [

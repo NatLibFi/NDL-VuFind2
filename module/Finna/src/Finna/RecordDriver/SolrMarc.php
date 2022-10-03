@@ -1173,11 +1173,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     /**
      * Get the estimated publication date of the record.
      *
-     * @return array
+     * @return string
      */
     public function getProjectedPublicationDate()
     {
-        $dateString = $this->getFirstFieldValue('263', ['a']);
+        $dateString = $this->getFirstFieldValue('263', ['a']) ?? '';
         if (strlen($dateString) === 8) {
             $year = intval(substr($dateString, 0, 4));
             $month = intval(substr($dateString, 4, 2));
@@ -1252,7 +1252,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
         if (empty($matches)) {
             // Now check 490 and display it only if 440/800/830 were empty:
-            $secondaryFields = ['490' => ['a', 'x']];
+            $secondaryFields = ['490' => ['a', 'v', 'x']];
             $matches = $this->getSeriesFromMARC($secondaryFields);
         }
 

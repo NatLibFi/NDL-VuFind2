@@ -27,10 +27,10 @@
  */
 namespace Finna\View\Resolver;
 
-use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Laminas\View\Resolver as ViewResolver;
 use Laminas\View\Resolver\ResolverInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Finna aggregate resolver factory.

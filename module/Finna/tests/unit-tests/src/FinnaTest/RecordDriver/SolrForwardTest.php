@@ -114,7 +114,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                         [
                             'tag' => 'elonayttelija',
                             'name' => 'Ami Kunkka',
-                            'role' => 'act',
+                            'role' => '',
                             'id' => 'elonet_henkilo_255464',
                             'type' => 'elonet_henkilo',
                             'roleName' => 'Debug Duck',
@@ -135,7 +135,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                         [
                             'tag' => 'elokreditoimatonnayttelija',
                             'name' => 'Kreditoimaton näyttelijä',
-                            'role' => 'act',
+                            'role' => '',
                             'id' => 'elonet_henkilo_164393',
                             'type' => 'elonet_henkilo',
                             'roleName' => 'vankilavieras',

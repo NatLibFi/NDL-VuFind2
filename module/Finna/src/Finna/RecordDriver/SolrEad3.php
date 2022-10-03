@@ -74,13 +74,22 @@ class SolrEad3 extends SolrEad
 
     // Altformavail labels
     public const ALTFORM_LOCATION = 'location';
+    public const ALTFORM_LOCATION_TYPE = 'locationType';
+    public const ALTFORM_LOCATION_OFFICE = 'locationOffice';
     public const ALTFORM_PHYSICAL_LOCATION = 'physicalLocation';
     public const ALTFORM_TYPE = 'type';
     public const ALTFORM_DIGITAL_TYPE = 'digitalType';
     public const ALTFORM_FORMAT = 'format';
     public const ALTFORM_ACCESS = 'access';
     public const ALTFORM_ONLINE = 'online';
+    public const ALTFORM_ORIGINAL = "original";
     public const ALTFORM_CONDITION = 'condition';
+    public const ALTFORM_IMAGE_SIZE = 'imageSize';
+    public const ALTFORM_IMAGE_AREA = 'imageArea';
+    public const ALTFORM_IMAGE_TYPE = 'imageType';
+    public const ALTFORM_MICROFILM_COPY_TYPE = 'microfilmCopyType';
+    public const ALTFORM_MICROFILM_SERIES = 'microfilmSeries';
+    public const ALTFORM_MAP_SCALE = "mapScale";
 
     // Altformavail label map
     public const ALTFORM_MAP = [
@@ -95,7 +104,16 @@ class SolrEad3 extends SolrEad
         'Bruk av manifestationen har begränsats pga' => self::ALTFORM_ACCESS,
         'Internet - ei fyysistä toimipaikkaa' => self::ALTFORM_ONLINE,
         'Lisätietoa kunnosta' => self::ALTFORM_CONDITION,
+        'Säilytysyksikön tekninen tunniste' => self::ALTFORM_LOCATION_TYPE,
         'Säilytysyksikön tunniste' => self::ALTFORM_PHYSICAL_LOCATION,
+        'Säilyttävä toimipiste' => self::ALTFORM_LOCATION_OFFICE,
+        'Ilmentymän kuva-alan koko' => self::ALTFORM_IMAGE_AREA,
+        'Valokuvan kuvakoko' => self::ALTFORM_IMAGE_SIZE,
+        'Valokuvan kuvatyyppi' => self::ALTFORM_IMAGE_TYPE,
+        'Mikrofilmin kopiotyyppi' => self::ALTFORM_MICROFILM_COPY_TYPE,
+        'Mikrofilmin jakso' => self::ALTFORM_MICROFILM_SERIES,
+        'Kartan mittakaava' => self::ALTFORM_MAP_SCALE,
+        'Alkuperäisyys' => self::ALTFORM_ORIGINAL
     ];
 
     // Accessrestrict types and their order in the UI
@@ -514,8 +532,26 @@ class SolrEad3 extends SolrEad
                         $result['service'] = true;
                     }
                     break;
+                case self::ALTFORM_LOCATION_TYPE:
+                    $result['locationType'] = $val;
+                    break;
                 case self::ALTFORM_PHYSICAL_LOCATION:
                     $result['physicalLocation'] = $val;
+                    break;
+                case self::ALTFORM_LOCATION_OFFICE:
+                    $result['locationOffice'] = $val;
+                    break;
+                case self::ALTFORM_IMAGE_SIZE:
+                    $result['imageSize'] = $val;
+                    break;
+                case self::ALTFORM_IMAGE_AREA:
+                    $result['imageArea'] = $val;
+                    break;
+                case self::ALTFORM_MAP_SCALE:
+                    $result['mapScale'] = $val;
+                    break;
+                case self::ALTFORM_MICROFILM_SERIES:
+                    $result['microfilmSeries'] = $val;
                     break;
                 case self::ALTFORM_TYPE:
                     $result['type'] = $val;
@@ -525,6 +561,15 @@ class SolrEad3 extends SolrEad
                     break;
                 case self::ALTFORM_FORMAT:
                     $result['format'] = $val;
+                    break;
+                case self::ALTFORM_ORIGINAL:
+                    $result['original'] = $val;
+                    break;
+                case self::ALTFORM_MICROFILM_COPY_TYPE:
+                    $result['microfilmCopyType'] = $val;
+                    break;
+                case self::ALTFORM_IMAGE_TYPE:
+                    $result['imageType'] = $val;
                     break;
                 case self::ALTFORM_ACCESS:
                     $lang = (string)$defitem->item->attributes()->lang ?? 'fin';
@@ -575,7 +620,7 @@ class SolrEad3 extends SolrEad
             if ($label && !in_array($label, self::UNIT_IDS)) {
                 continue;
             }
-            $displayLabel = null;
+            $displayLabel = '';
             if ($label) {
                 $displayLabel = "Unit ID:$label";
             } elseif ($manyIds) {
@@ -652,7 +697,7 @@ class SolrEad3 extends SolrEad
     /**
      * Get item history
      *
-     * @return null|string
+     * @return string
      */
     public function getItemHistory()
     {
@@ -670,7 +715,7 @@ class SolrEad3 extends SolrEad
                 }
             }
         }
-        return null;
+        return '';
     }
 
     /**
@@ -1703,7 +1748,9 @@ class SolrEad3 extends SolrEad
             foreach ($aid->p as $p) {
                 $data = [
                     'label' => (string)$p,
-                    'url' => (string)($p->ref->attributes()->href ?? '')
+                    'url' => $p->ref
+                        ? (string)($p->ref->attributes()->href ?? '')
+                        : ''
                 ];
                 $result[] = $data;
                 $lang = $this->detectNodeLanguage($p);
@@ -1889,7 +1936,7 @@ class SolrEad3 extends SolrEad
                         $lang = $this->detectNodeLanguage($p);
                         $url = isset($p->ref)
                             ? (string)$p->ref->attributes()->href : null;
-                        if ($this->urlBlocked($url, $text)) {
+                        if ($url && $this->urlBlocked($url, $text)) {
                             $url = null;
                         }
                         $data = compact('text', 'lang', 'url');

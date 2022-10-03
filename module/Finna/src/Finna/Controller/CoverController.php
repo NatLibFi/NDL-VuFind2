@@ -109,11 +109,12 @@ class CoverController extends \VuFind\Controller\CoverController
         $this->loader->setParams($width, $height, $size);
 
         // Cover image configuration for current datasource
-        $recordId = $params->fromQuery('recordid');
-        $datasourceId = strtok($recordId, '.');
-        $datasourceCovers
-            = $this->datasourceConfig->$datasourceId->coverimages
-                ?? null;
+        $datasourceCovers = '';
+        if ($recordId = $params->fromQuery('recordid')) {
+            $datasourceId = strtok($recordId, '.');
+            $datasourceCovers = $this->datasourceConfig->$datasourceId->coverimages
+                ?? '';
+        }
         $this->loader->setDatasourceConfig($datasourceCovers);
 
         if ($id = $params->fromQuery('id')) {

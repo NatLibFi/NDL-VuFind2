@@ -280,11 +280,13 @@ class Loader extends \VuFind\Cover\Loader
         if (empty($ids)) {
             return false;
         }
-        $datasourceProviders = isset($this->datasourceCoverConfig)
+        $datasourceProviders = !empty($this->datasourceCoverConfig)
             ? explode(',', $this->datasourceCoverConfig) : [];
-        $commonProviders = isset($this->config->Content->coverimages)
+        $commonProviders = !empty($this->config->Content->coverimages)
             ? explode(',', $this->config->Content->coverimages) : [];
-        $providers = array_merge($datasourceProviders, $commonProviders);
+        $providers = array_filter(
+            array_merge($datasourceProviders, $commonProviders)
+        );
 
         // Try to find provider-specific cache file
         foreach ($providers as $provider) {

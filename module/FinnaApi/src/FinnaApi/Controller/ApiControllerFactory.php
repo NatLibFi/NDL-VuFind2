@@ -27,7 +27,7 @@
  */
 namespace FinnaApi\Controller;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Factory for ApiController.

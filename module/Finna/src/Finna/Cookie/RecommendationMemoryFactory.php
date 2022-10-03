@@ -27,8 +27,8 @@
  */
 namespace Finna\Cookie;
 
-use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Cookie memory factory.

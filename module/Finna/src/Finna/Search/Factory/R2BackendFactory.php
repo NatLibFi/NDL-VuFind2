@@ -29,8 +29,8 @@
 namespace Finna\Search\Factory;
 
 use Finna\Search\R2\AuthenticationListener;
-use Interop\Container\ContainerInterface;
 use Laminas\EventManager\EventManager;
+use Psr\Container\ContainerInterface;
 use VuFindSearch\Backend\Solr\Backend;
 
 use VuFindSearch\Backend\Solr\Connector;
@@ -129,9 +129,22 @@ class R2BackendFactory extends SolrDefaultBackendFactory
         );
         $connector->setRems($this->rems);
         $connector->setEventManager($this->events);
-        $connector->setHttpOptions($this->r2Config->Http->toArray());
 
         return $connector;
+    }
+
+    /**
+     * Get HTTP options for the client
+     *
+     * @param string $url URL being requested
+     *
+     * @return array
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function getHttpOptions(string $url): array
+    {
+        return $this->r2Config->Http ? $this->r2Config->Http->toArray() : [];
     }
 
     /**
