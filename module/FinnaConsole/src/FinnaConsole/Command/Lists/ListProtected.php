@@ -50,7 +50,7 @@ class ListProtected extends Command
     protected static $defaultName = 'lists/list_protected';
 
     /**
-     * User table
+     * UserList table
      *
      * @var \VuFind\Db\Table\UserList
      */

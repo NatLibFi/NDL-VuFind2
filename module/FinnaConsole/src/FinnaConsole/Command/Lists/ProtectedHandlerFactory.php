@@ -1,6 +1,6 @@
 <?php
 /**
- * Factory for the "list protected users" task.
+ * Factory for the "list protected lists" task.
  *
  * PHP version 7
  *
@@ -34,7 +34,7 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Factory for the "list protected users" task.
+ * Factory for the "list protected lists" task.
  *
  * @category VuFind
  * @package  Service
