@@ -34,8 +34,9 @@ finna.itemStatus = (function finnaItemStatus() {
         $(this).attr('href', $(this).attr('href').replace(oldRecordId, id));
       }
     });
-    if (recordContainer.hasClass('js-item-done')) {
-      $(element).trigger('change', [true]);
+    if (recordContainer.hasClass('js-sourceless')) {
+      recordContainer.removeClass('js-sourceless');
+      VuFind.itemStatuses.init(recordContainer);
     }
   }
 
@@ -65,7 +66,7 @@ finna.itemStatus = (function finnaItemStatus() {
       var recordContainer = $(this).closest('.record-container');
       var hiddenId = recordContainer.find('.hiddenId');
       // prefer 3 latest sources
-      var cookie = finna.common.getCookie('preferredRecordSourceArray');
+      var cookie = finna.common.getCookie('preferredRecordSource');
       if (cookie) {
         cookie = JSON.parse(cookie);
       }
@@ -73,10 +74,10 @@ finna.itemStatus = (function finnaItemStatus() {
         // If no cookie is set, assign the source as a default for all dedups
         cookie = [];
       } else if (cookie.length > 2) {
-        cookie.pop();
+        cookie.slice(0, 2);
       }
       cookie.unshift(source);
-      finna.common.setCookie('preferredRecordSourceArray', JSON.stringify(cookie));
+      finna.common.setCookie('preferredRecordSource', JSON.stringify(cookie));
 
       selects.each(function setValues() {
         var elem = $(this).find(`option[data-source='${source}']`);

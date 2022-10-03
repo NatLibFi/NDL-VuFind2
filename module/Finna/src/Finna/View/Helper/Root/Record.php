@@ -1302,9 +1302,6 @@ class Record extends \VuFind\View\Helper\Root\Record
         if (!empty($this->config->Record->select_dedup_holdings_library)) {
             return $this->driver->tryMethod('getDataSource', [], '');
         }
-        if (!$this->driver->supportsAjaxStatus()) {
-            return '';
-        }
         $params = $this->getView()->params;
         if (!empty($params)) {
             $filterList = $params->getFilterList();
@@ -1314,7 +1311,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
         $dedupData = $this->driver->getDedupData();
         $preferredRecordSource = $this->getView()
-            ->plugin('cookie')->get('preferredRecordSourceArray');
+            ->plugin('cookie')->get('preferredRecordSource');
 
         if (!empty($preferredRecordSource)) {
             $preferredRecordSource = json_decode($preferredRecordSource);

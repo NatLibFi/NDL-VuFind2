@@ -10,7 +10,7 @@ VuFind.itemStatuses.init = function init(_container) {
     VuFind.itemStatuses.check(container);
   } else {
     new Hunt(
-      $(container).find('.ajaxItem').toArray(),
+      $(container).find('.ajaxItem:not(.js-sourceless)').toArray(),
       { enter: VuFind.itemStatuses.checkRecord }
     );
   }
