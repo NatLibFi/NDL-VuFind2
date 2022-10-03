@@ -34,9 +34,8 @@ finna.itemStatus = (function finnaItemStatus() {
         $(this).attr('href', $(this).attr('href').replace(oldRecordId, id));
       }
     });
-    if (recordContainer.hasClass('js-sourceless')) {
-      recordContainer.removeClass('js-sourceless');
-      VuFind.itemStatuses.init(recordContainer);
+    if (recordContainer.hasClass('js-item-done')) {
+      $(element).trigger('change', [true]);
     }
   }
 

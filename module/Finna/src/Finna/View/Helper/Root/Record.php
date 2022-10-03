@@ -1301,9 +1301,10 @@ class Record extends \VuFind\View\Helper\Root\Record
             return '';
         }
         // Is selecting a datasource mandatory?
-        if (!empty($this->config->Record->select_dedup_holdings_library)) {
+        if (empty($this->config->Record->select_dedup_holdings_library)) {
             return $this->driver->tryMethod('getDataSource', [], '');
         }
+
         $params = $this->getView()->params;
         if (!empty($params)) {
             $filterList = $params->getFilterList();
