@@ -114,10 +114,14 @@ class Bootstrapper
                 return;
             }
             // Check if the action should be prevented
+            $ajaxAllowed = [
+                'onlinepaymentnotify',
+                'systemstatus',
+            ];
             $routeMatch = $event->getRouteMatch();
             $controller = strtolower($routeMatch->getParam('controller'));
             $action = strtolower($routeMatch->getParam('action'));
-            if (($controller == 'ajax' && $action != 'systemstatus')
+            if (($controller == 'ajax' && !in_array($action, $ajaxAllowed))
                 || ($controller == 'record' && $action == 'ajaxtab')
                 || ($controller == 'record' && $action == 'holdings')
                 || ($controller == 'record' && $action == 'details')
@@ -144,31 +148,6 @@ class Bootstrapper
 
         // Attach with a high priority
         $this->events->attach('dispatch', $callback, 11000);
-    }
-
-    /**
-     * Initialize the base url for the application from an environment variable
-     *
-     * @return void
-     */
-    protected function initBaseUrl()
-    {
-        if (PHP_SAPI === 'cli') {
-            return;
-        }
-        $callback = function ($event) {
-            $application = $event->getApplication();
-            $request = $application->getRequest();
-            $baseUrl = $request->getServer('FINNA_BASE_URL');
-
-            if (!empty($baseUrl)) {
-                $baseUrl = '/' . trim($baseUrl, '/');
-                $router = $application->getServiceManager()->get('Router');
-                $router->setBaseUrl($baseUrl);
-                $request->setBaseUrl($baseUrl);
-            }
-        };
-        $this->events->attach('route', $callback, 9000);
     }
 
     /**

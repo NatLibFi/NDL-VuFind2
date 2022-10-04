@@ -76,7 +76,7 @@ class SearchSpecsReader extends \VuFind\Config\SearchSpecsReader
             $cacheKey = $filename . '-'
                 . (file_exists($fullpath) ? filemtime($fullpath) : 0);
             if ($useLocalConfig && !empty($finna)) {
-                $cacheKey .= '-finna-' . filemtime($local);
+                $cacheKey .= '-finna-' . filemtime($finna);
             }
             if ($useLocalConfig && !empty($local)) {
                 $cacheKey .= '-local-' . filemtime($local);

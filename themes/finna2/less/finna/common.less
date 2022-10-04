@@ -388,3 +388,67 @@ ol {
 .switcher-line-xxxs {
   .switcher-line-layout(280px);
 }
+
+// Cookie Consent Dialog
+.disable--interaction #cc-main .cm-wrapper::before,
+.show--preferences #cc-main .c--anim.pm-wrapper::before {
+  opacity: @modal-backdrop-opacity;
+}
+
+#cc-main {
+  a {
+    &:hover {
+      color: @link-hover-color;
+      text-decoration: @link-hover-decoration;
+      background-size: 0%;
+    }
+  }
+
+  .c--anim .cm__close,
+  .c--anim .cm__btn,
+  .pm__btn {
+    transition: none;
+  }
+  .cm--bar .cm__btn, .pm__btn {
+    font-size: 14px;
+    &:hover {
+      color: @btn-primary-color;
+      background: darken(@btn-primary-bg, 5%);
+    }
+    padding: @padding-base-vertical @padding-base-horizontal;
+  }
+  .cm--bar .cm__btn {
+    flex: none;
+  }
+
+  .pm__section--expandable .pm__section-arrow {
+    background: none;
+  }
+
+  .pm__section--toggle {
+    background: transparent;
+  }
+  .pm__header {
+    color: @modal-header-color;
+    background: @modal-header-background;
+    font-size: @content-headings-font-size-h4;
+    padding: 8px 1em;
+  }
+  .pm__body, .pm__footer {
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+  .pm__close-btn {
+    background: transparent;
+    border: none;
+    &:hover {
+      background: transparent;
+      border: none;
+    }
+    &::after, &::before {
+      background: @modal-header-color;
+      height: 1.2em;
+      width: 5.5px;
+    }
+  }
+}

@@ -311,4 +311,33 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
             $record->setRawData($fields);
         }
     }
+
+    /**
+     * Get currently active record sources.
+     *
+     * @param EventInterface $event Event
+     *
+     * @return array
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function getActiveRecordSources($event): array
+    {
+        // Check for active sources first in the search params:
+        $params = $event->getParam('command')->getSearchParameters();
+        foreach ($params->get('fq') ?? [] as $filter) {
+            if (preg_match('/^source_str_mv:\((.+)\)$/', $filter, $matches)) {
+                $recordSources = array_map(
+                    function ($s) {
+                        return trim($s, '\\"');
+                    },
+                    explode(' OR ', $matches[1])
+                );
+                return $recordSources;
+            }
+        }
+
+        // Fall back to configuration:
+        return parent::getActiveRecordSources($event);
+    }
 }

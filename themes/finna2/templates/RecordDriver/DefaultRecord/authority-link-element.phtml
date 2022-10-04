@@ -1,31 +1,19 @@
-<?php if ($id && $showInlineInfo): ?>
-  <div class="authority ajax-content" data-authority="<?=$this->escapeHtmlAttr($this->id)?>" data-source="<?=$this->escapeHtmlAttr($this->recordSource)?>" data-type="<?=$this->escapeHtmlAttr($this->type)?>">
-<?php endif ?>
-  <?php
-    $linkClasses = $this->classes;
-    if ($this->authorityLink) {
-      $linkClasses[] = 'authority-link';
-    }
-    $linkClasses = implode(' ', array_map([$this, 'escapeHtmlAttr'], $linkClasses));
-    $linkClassesAttr = $linkClasses ? " class=\"{$linkClasses}\"" : '';
-    $titleAttr = $this->title ? (' title="' . $this->escapeHtmlAttr($this->title) . '"') : '';
-    $additionalDataEl = !empty($this->additionalData) ? "<span class=\"authority-additional-data\">{$this->additionalData}</span>" : '';
-    $srLabel = $authorityIcon = '';
-    $isAuthorityLink = $this->authorityLink && $this->authorityType;
-    $srLabel = $this->transEscAttr($this->authorityType);
-    $authorityIcon = 'fa-authority-' . $this->escapeHtmlAttr($this->record($this->record)->getFormatClass($this->authorityType));
-  ?>
-  <a<?=$titleAttr?> href="<?=$this->escapedUrl?>"<?=$linkClassesAttr?>><?php if ($isAuthorityLink && !$this->showInlineInfo): ?><i class="fa <?=$authorityIcon?>"></i><span class="sr-only"><?=$srLabel?></span> <?php endif; ?>
-    <span class="authority-label"><?=$this->escapeHtml($this->label)?></span>
-  </a><?= $additionalDataEl?><?php if (!empty($this->description)): ?> <span class="authority-description"><?="({$this->escapeHtml($this->description)})"?></span><?php endif; ?>
-  <?php if ($this->showInlineInfo): ?>
-    <a href="#" class="show-info"><i class="fa <?=$authorityIcon?>"> </i><span class="link-text"><?=$this->translate('authority_show_info')?></span> <i class="fa fa-handle-open handle"></i></a>
-    <div class="authority-info">
-      <div class="content">
-        <i class="fa fa-spin fa-spinner"></i>
-        <div class="no-info hide alert alert-info"><?=$this->translate('authority_no_info') ?></div>
-      </div>
-      <a href="#" class="hide-info"><span class="link-text"><?=$this->translate('authority_hide_info')?> <i class="fa fa-handle-close handle"></i></a>
-    </div>
-  </div>
+<?php
+  $linkClasses = $this->classes;
+  if ($this->authorityLink) {
+    $linkClasses[] = 'authority-link';
+  }
+  $linkClasses = implode(' ', array_map([$this, 'escapeHtmlAttr'], $linkClasses));
+  $linkClassesAttr = $linkClasses ? " class=\"{$linkClasses}\"" : '';
+  $titleAttr = $this->title ? (' title="' . $this->escapeHtmlAttr($this->title) . '"') : '';
+  $additionalDataEl = !empty($this->additionalData) ? "<span class=\"authority-additional-data\">{$this->additionalData}</span>" : '';
+  $srLabel = $authorityIcon = '';
+  $isAuthorityLink = $this->authorityLink && $this->authorityType;
+  $srLabel = $this->transEscAttr($this->authorityType);
+  $authorityIcon = 'fa-authority-' . $this->escapeHtmlAttr($this->record($this->record)->getFormatClass($this->authorityType));
+?>
+<a<?=$titleAttr?> href="<?=$this->escapedUrl?>"<?=$linkClassesAttr?>><?php if ($isAuthorityLink): ?><i class="fa <?=$authorityIcon?>"></i><span class="sr-only"><?=$srLabel?></span> <?php endif; ?>
+  <span class="authority-label"><?=$this->escapeHtml($this->label)?></span></a><?=$additionalDataEl?>
+<?php if (!empty($this->description)): ?>
+  <span class="authority-description"><?="({$this->escapeHtml($this->description)})"?></span>
 <?php endif; ?>

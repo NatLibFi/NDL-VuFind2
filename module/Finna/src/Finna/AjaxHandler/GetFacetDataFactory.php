@@ -29,10 +29,10 @@
  */
 namespace Finna\AjaxHandler;
 
-use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Psr\Container\ContainerExceptionInterface as ContainerException;
+use Psr\Container\ContainerInterface;
 
 /**
  * Factory for GetFacetData AJAX handler.
@@ -75,7 +75,7 @@ class GetFacetDataFactory implements \Laminas\ServiceManager\Factory\FactoryInte
             $container->get(\VuFind\Search\Solr\HierarchicalFacetHelper::class),
             $container->get(\VuFind\Search\Results\PluginManager::class),
             $container->get(\VuFind\Config\PluginManager::class)->get('browse'),
-            $container->get(\VuFind\Config\PluginManager::class)->get('facet')
+            $container->get(\VuFind\Config\PluginManager::class)->get('facets')
         );
     }
 }

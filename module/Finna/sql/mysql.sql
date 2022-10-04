@@ -24,6 +24,7 @@ ALTER TABLE comments ADD INDEX `finna_rating` (`finna_rating`);
 ALTER TABLE `user` ADD COLUMN `finna_due_date_reminder` int(11) NOT NULL DEFAULT 0;
 ALTER TABLE `user` ADD COLUMN `finna_last_expiration_reminder` datetime NOT NULL DEFAULT '2000-01-01 00:00:00';
 ALTER TABLE `user` ADD COLUMN `finna_nickname` varchar(255) DEFAULT NULL UNIQUE;
+ALTER TABLE `user` ADD COLUMN `finna_protected` tinyint(1) DEFAULT '0' NOT NULL;
 CREATE INDEX `finna_user_due_date_reminder_key` ON user (`finna_due_date_reminder`);
 CREATE INDEX `finna_user_email` ON user (`email`);
 
@@ -37,6 +38,7 @@ ALTER TABLE `user_card` ADD COLUMN `finna_due_date_reminder` int(11) NOT NULL DE
 -- Additional columns for user_list
 --
 ALTER TABLE user_list ADD COLUMN `finna_updated` datetime DEFAULT NULL;
+ALTER TABLE user_list ADD COLUMN `finna_protected` tinyint(1) DEFAULT '0' NOT NULL;
 
 --
 -- Additional columns for user_resource
@@ -217,7 +219,7 @@ CREATE TABLE `finna_record_stats_log` (
   `online` tinyint(1) NOT NULL,
   `extra_metadata` mediumtext DEFAULT NULL,
   `count` int(11) NOT NULL DEFAULT 1,
-  PRIMARY KEY (`institution`, `view`, `crawler`, `date`, `record_id`),
+  PRIMARY KEY (`institution`, `view`(128), `crawler`, `date`, `backend`(32), `source`(64), `record_id`),
   KEY `record_source` (`source`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;

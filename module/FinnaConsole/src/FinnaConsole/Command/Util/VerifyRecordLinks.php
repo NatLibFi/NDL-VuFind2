@@ -29,6 +29,7 @@
 namespace FinnaConsole\Command\Util;
 
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use VuFind\Db\Row\Resource;
 
@@ -94,6 +95,13 @@ class VerifyRecordLinks extends AbstractUtilCommand
     protected $searchConfig;
 
     /**
+     * Record batch size to process at a time
+     *
+     * @var int
+     */
+    protected $batchSize = 1000;
+
+    /**
      * Constructor
      *
      * @param \VuFind\Db\Table\Comments          $comments       Comments table
@@ -129,7 +137,21 @@ class VerifyRecordLinks extends AbstractUtilCommand
      */
     protected function configure()
     {
-        $this->setDescription('Verify and update record links in the database');
+        $this->setDescription('Verify and update record links in the database')
+            ->addOption(
+                'resources',
+                null,
+                InputOption::VALUE_NEGATABLE,
+                'Whether to process saved resources (records) -- default is true',
+                true
+            )
+            ->addOption(
+                'comments',
+                null,
+                InputOption::VALUE_NEGATABLE,
+                'Whether to process comments -- default is true',
+                true
+            );
     }
 
     /**
@@ -166,53 +188,101 @@ class VerifyRecordLinks extends AbstractUtilCommand
             );
         }
 
+        if ($input->getOption('resources')) {
+            $this->checkResources();
+        }
+        if ($input->getOption('comments')) {
+            $this->checkComments();
+        }
+
+        return 0;
+    }
+
+    /**
+     * Check resources (records)
+     *
+     * @return void
+     */
+    protected function checkResources(): void
+    {
         $this->msg('Checking saved Solr resources for moved records');
         $count = $fixed = 0;
-        $resources = $this->resourceTable->select(['source' => 'Solr']);
-        foreach ($resources as $resource) {
-            if ($this->verifyResourceId($resource)) {
-                ++$fixed;
+        $lastId = null;
+        do {
+            $callback = function ($select) use ($lastId) {
+                $select->where->equalTo('source', 'Solr');
+                if (null !== $lastId) {
+                    $select->where->greaterThan('id', $lastId);
+                }
+                $select->order('id');
+                $select->limit($this->batchSize);
+            };
+            $lastId = null;
+            $resources = $this->resourceTable->select($callback);
+            foreach ($resources as $resource) {
+                $lastId = $resource->id;
+                if ($this->verifyResourceId($resource)) {
+                    ++$fixed;
+                }
+                ++$count;
+                $msg = "$count resources checked, $fixed id's updated";
+                if ($count % 1000 == 0) {
+                    $this->msg($msg);
+                } else {
+                    $this->msg($msg, OutputInterface::VERBOSITY_VERY_VERBOSE);
+                }
             }
-            ++$count;
-            $msg = "$count resources checked, $fixed id's updated";
-            if ($count % 1000 == 0) {
-                $this->msg($msg);
-            } else {
-                $this->msg($msg, OutputInterface::VERBOSITY_VERY_VERBOSE);
-            }
-        }
+        } while (null !== $lastId);
         $this->msg(
             "Resource checking completed with $count resources checked, $fixed"
             . " id's fixed"
         );
+    }
 
+    /**
+     * Check comments
+     *
+     * @return void
+     */
+    protected function checkComments(): void
+    {
         $this->msg('Checking comments');
         $count = $fixed = 0;
-        $comments = $this->commentsTable->select();
-        foreach ($comments as $comment) {
-            $resource = $this->resourceTable
-                ->select(['id' => $comment->resource_id])->current();
-            if (!$resource || 'Solr' !== $resource->source) {
-                continue;
+        $lastId = null;
+        do {
+            $callback = function ($select) use ($lastId) {
+                if (null !== $lastId) {
+                    $select->where->greaterThan('id', $lastId);
+                }
+                $select->order('id');
+                $select->limit($this->batchSize);
+                $select->columns(['id', 'resource_id']);
+            };
+            $lastId = null;
+            $comments = $this->commentsTable->select($callback);
+            foreach ($comments as $comment) {
+                $lastId = $comment->id;
+                $resource = $this->resourceTable
+                    ->select(['id' => $comment->resource_id])->current();
+                if (!$resource || 'Solr' !== $resource->source) {
+                    continue;
+                }
+                if ($this->verifyLinks($comment->id, $resource->record_id)) {
+                    ++$fixed;
+                }
+                ++$count;
+                $msg = "$count comments checked, $fixed links fixed";
+                if ($count % 1000 == 0) {
+                    $this->msg($msg);
+                } else {
+                    $this->msg($msg, OutputInterface::VERBOSITY_VERY_VERBOSE);
+                }
             }
-            $commentId = $comment->id;
-            if ($this->verifyLinks($commentId, $resource->record_id)) {
-                ++$fixed;
-            }
-            ++$count;
-            $msg = "$count comments checked, $fixed links fixed";
-            if ($count % 1000 == 0) {
-                $this->msg($msg);
-            } else {
-                $this->msg($msg, OutputInterface::VERBOSITY_VERY_VERBOSE);
-            }
-        }
+        } while (null !== $lastId);
         $this->msg(
             "Comment checking completed with $count comments checked, $fixed"
             . ' links fixed'
         );
-
-        return 0;
     }
 
     /**

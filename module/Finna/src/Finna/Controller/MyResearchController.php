@@ -804,7 +804,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $patron = $this->catalogLogin();
 
         if (is_array($patron) && $this->formWasSubmitted('saveLibraryProfile')) {
-            if ($this->processLibraryDataUpdate($patron, $values, $user)) {
+            if ($this->processLibraryDataUpdate($patron, $values)) {
                 $this->flashMessenger()->setNamespace('info')
                     ->addMessage('profile_update');
             }
@@ -1567,7 +1567,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $messageJson = json_encode($mergedArrays);
 
         $messageString = $this->getMessageString($userData, $message, $oldMessage);
-        $feedback = $this->getTable('feedback');
+        $feedback = $this->getTable('FinnaFeedback');
         $feedback->saveFeedback(
             $url,
             $formId,

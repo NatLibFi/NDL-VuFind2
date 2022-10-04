@@ -12,7 +12,7 @@
             <button class="btn btn-default dropdown-toggle download" type="button" id="downloadMenu-<?=$index?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <?=$this->transEsc('Download the image')?> <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu download" aira-labelledby="downloadMenu-<?=$index?>">
+            <ul class="dropdown-menu download" aria-labelledby="downloadMenu-<?=$index?>">
                 <?php if (isset($urls['large'])): ?>
                     <li class="display-image"><a href="<?=$this->escapeHtmlAttr($urls['large']['url'] ?? $urls['large'])?>" download target="_blank" rel="nofollow"><?=$this->transEsc('display_image') ?> <span class="image-dimensions"></span> jpg</a></li>
                 <?php endif; ?>

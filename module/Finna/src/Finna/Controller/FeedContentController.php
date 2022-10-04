@@ -59,7 +59,7 @@ class FeedContentController extends ContentController
             ->get($feedUrl ? 'rss-organisation-page' : 'rss');
 
         if (!isset($rssConfig[$page])) {
-            return $this->notFoundAction($this->getResponse());
+            return $this->notFoundAction();
         }
 
         $config = $rssConfig[$page];

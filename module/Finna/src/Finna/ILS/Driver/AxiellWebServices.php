@@ -416,7 +416,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ]
         ];
 
-        if ($this->defaultPickUpLocation == '0') {
+        if ($this->defaultPickUpLocation == '0'
+            || $this->defaultPickUpLocation === 'user-selected'
+        ) {
             $this->defaultPickUpLocation = false;
         }
 
@@ -1076,7 +1078,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 }
             }
         } else {
-            $result = $this->parseHoldings($holdings, $id, '', '');
+            $result = $this->parseHoldings($holdings, $id);
         }
 
         if (!empty($result)) {
@@ -1448,19 +1450,18 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
         $serviceSendMethod
             = $this->config['updateMessagingSettings']['method'] ?? 'none';
-        $infoServices = $info->messageServices->messageService ?? [];
 
         switch ($serviceSendMethod) {
         case 'database':
             $userCached['messagingServices']
                 = $this->parseEmailMessagingSettings(
-                    $info->messageServices->messageService ?? []
+                    $info->messageServices->messageService ?? null
                 );
             break;
         case 'driver':
             $userCached['messagingServices']
                 = $this->parseDriverMessagingSettings(
-                    $info->messageServices->messageService ?? [],
+                    $info->messageServices->messageService ?? null,
                     $user
                 );
             break;
@@ -1477,7 +1478,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     /**
      * Function to create an array for using email to change messaging services
      *
-     * @param object $infoServices to parse
+     * @param ?object $infoServices Services to parse
      *
      * @return array parsed services
      */
@@ -1527,9 +1528,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             $services[$service] = $data;
         }
 
-        if (!empty($infoServices)) {
+        if (null !== $infoServices) {
             foreach ($infoServices as $service) {
-                $methods = [];
                 $serviceType = $service->serviceType;
                 $numOfDays = $service->nofDays->value ?? 'none';
                 $active = $service->isActive === 'yes';
@@ -1581,8 +1581,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     /**
      * Function to create an array for using driver to change messaging services
      *
-     * @param object $infoServices to parse
-     * @param array  $user         data
+     * @param ?object $infoServices Services to parse
+     * @param array   $user         User data
      *
      * @return array parsed services
      */
@@ -1591,15 +1591,17 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $services = [];
         $messagingSettings = [];
 
-        foreach ($infoServices as $service => $options) {
-            $current = [
-                'transport_type' =>
-                    (string)$options->sendMethods->sendMethod->value,
-            ];
-            if (isset($options->nofDays)) {
-                $current['nofDays'] = $options->nofDays->value;
+        if (null !== $infoServices) {
+            foreach ($infoServices as $service => $options) {
+                $current = [
+                    'transport_type' =>
+                        (string)$options->sendMethods->sendMethod->value,
+                ];
+                if (isset($options->nofDays)) {
+                    $current['nofDays'] = $options->nofDays->value;
+                }
+                $services[$options->serviceType] = $current;
             }
-            $services[$options->serviceType] = $current;
         }
 
         // We need to find proper options for current service

@@ -70,5 +70,22 @@
   <h2 id="cookies">Kakor</h2>
   <p>Användningen av webbplatsen följs upp för att förbättra tjänsterna. För uppföljningen används kakor (cookies). Kakorna lagrar ingen information som gör det möjligt att identifiera användaren. Kakorna innebär ingen datasäkerhetsrisk och de kan inte sprida virus eller sabotageprogram.  När du besöker webbplatsen godkänner du användningen av kakor.
   </p>
+  <?php if ($this->cookieConsent()->isEnabled()): ?>
+    <h3>Kakinställningar</h3>
+    <?php if ($consent = $this->cookieConsent()->getConsentInformation()): ?>
+      <p>Dina kakinställningar:</p>
+      <ul>
+        <li>Verksamhetsområde: <?=$this->escapeHtml($consent['domain'] . ('/' !== $consent['path'] ? $consent['path'] : ''))?></li>
+        <li>Tillstånd: Tillåt (<?=implode(', ', array_map([$this, 'escapeHtml'], $consent['categoriesTranslated']))?>)</li>
+        <li>Samtyckes-ID: <?=$this->escapeHtml($consent['consentId'])?>
+        <li>Samtyckesdatum: <?=$this->escapeHtml($consent['lastConsentDateTime'])?>
+      </ul>
+    <?php else: ?>
+      <p>Du har inte gett ditt samtycke.</p>
+    <?php endif; ?>
+    <p>
+      <a class="btn btn-default" href="#" type="button" data-cc="show-preferencesModal" aria-haspopup="dialog"><?=$this->transEsc('Cookie Settings')?></a>
+    </p>
+  <?php endif; ?>
 </div>
 <!-- END of: finna - content/privacy_sv.phtml -->

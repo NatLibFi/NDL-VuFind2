@@ -46,7 +46,7 @@
 #
 #   response (string) Reponse after form submit (translation key)
 #
-#   sendMethod (string) Determines how submitted form data is handled:
+#   primaryHandler (string) Determines how submitted form data is handled (formerly known as sendMethod):
 #     email    Form data is sent via email to 'recipient'
 #     database Form data is saved to the database.
 #     api      Form data is sent as a JSON message to an external API

@@ -60,8 +60,25 @@
   </p>
   <p>Jos Finna-palvelun aineistojen käyttäjäkommenteissa on henkilötietoa, jota on tarpeen esim. oikaista tai vaatia poistettavaksi, voi pyynnön esittää kommenttien yhteydestä löytyvällä lomakkeella.
   </p>
-  <h2 id="cookies">Eväs­tei­den käyt­tö</h2>
+  <h2 id="cookies">Evästeiden käyttö</h2>
   <p>Sivuston käyttöä seurataan, jotta palvelua voidaan parantaa. Seurannassa käytetään evästeitä (cookies). Evästeet eivät sisällä mitään sellaista tietoa, jolla käyttäjän voisi yksilöidä tai tunnistaa. Eväste ei vaikuta tietoturvaan, eikä se voi levittää viruksia tai haittaohjelmia. Vierailemalla sivustolla hyväksyt evästeiden käytön.
   </p>
+  <?php if ($this->cookieConsent()->isEnabled()): ?>
+    <h3>Evästeasetukset</h3>
+    <?php if ($consent = $this->cookieConsent()->getConsentInformation()): ?>
+      <p>Nykyiset asetuksesi:</p>
+      <ul>
+        <li>Toimialue: <?=$this->escapeHtml($consent['domain'] . ('/' !== $consent['path'] ? $consent['path'] : ''))?></li>
+        <li>Tila: Sallittu (<?=implode(', ', array_map([$this, 'escapeHtml'], $consent['categoriesTranslated']))?>)</li>
+        <li>Hyväksymistunnus: <?=$this->escapeHtml($consent['consentId'])?>
+        <li>Hyväksymispäivämäärä: <?=$this->escapeHtml($consent['lastConsentDateTime'])?>
+      </ul>
+    <?php else: ?>
+      <p>Et ole vielä hyväksynyt evästeiden käyttöä.</p>
+    <?php endif; ?>
+    <p>
+      <a class="btn btn-default" href="#" type="button" data-cc="show-preferencesModal" aria-haspopup="dialog"><?=$this->transEsc('Cookie Settings')?></a>
+    </p>
+  <?php endif; ?>
 </div>
 <!-- END of: finna - content/privacy_fi.phtml -->

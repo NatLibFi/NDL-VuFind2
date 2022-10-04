@@ -276,7 +276,7 @@ FinnaMdEditable.prototype._insertElement = function _insertElement(element, curs
 FinnaMdEditable.prototype._insertPanel = function _insertPanel() {
   var headingPlaceholder = VuFind.translate('details_summary_placeholder');
   var panelElement = '\n<finna-panel>\n'
-    + '  <h3 slot="heading">' + headingPlaceholder + '</h3>\n\n'
+    + '  <h2 slot="heading">' + headingPlaceholder + '</h2>\n\n'
     + '  ' + VuFind.translate('details_text_placeholder') + '\n'
     + '</finna-panel>\n';
   this._insertElement(panelElement, -4, 21 + headingPlaceholder.length);

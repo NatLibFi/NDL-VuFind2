@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2021.
+ * Copyright (C) The National Library of Finland 2021-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -50,7 +50,7 @@ class RecordFieldMarkdown extends \VuFind\View\Helper\Root\Markdown
     public function toHtml(string $markdown, ?string $softBreak = null): string
     {
         $cleanHtml = $this->getView()->plugin('cleanHtml');
-        return $this->converter->convertToHtml($cleanHtml($markdown), $softBreak);
+        return (string)$this->converter->convert($cleanHtml($markdown), $softBreak);
     }
 
     /**

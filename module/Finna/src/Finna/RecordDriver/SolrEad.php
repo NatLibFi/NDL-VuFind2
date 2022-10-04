@@ -357,8 +357,7 @@ class SolrEad extends SolrDefault
         foreach ($record->did->origination as $origination) {
             $name = (string)($origination->corpname
                 ?? $origination->persname
-                ?? $origination
-                ?? '');
+                ?? $origination);
             if ($name) {
                 $result[] = [
                     'name' => $name,
@@ -583,6 +582,21 @@ class SolrEad extends SolrDefault
     }
 
     /**
+     * Check if the record is a fonds or a collection by format
+     *
+     * @return bool
+     */
+    public function isFondsOrCollection(): bool
+    {
+        return !empty(
+            array_intersect(
+                ['Document/ArchiveFonds', 'Document/ArchiveCollection'],
+                $this->getFormats()
+            )
+        );
+    }
+
+    /**
      * Check if record is digitized.
      *
      * @return boolean True if the record is digitized
@@ -608,6 +622,61 @@ class SolrEad extends SolrDefault
             && $this->fields['hierarchy_parent_id'][0]
                 != $this->fields['hierarchy_top_id'][0]
             && $this->fields['hierarchy_top_id'] != $this->fields['id'];
+    }
+
+    /**
+     * Get parent archives
+     *
+     * @return array
+     */
+    public function getParentArchives(): array
+    {
+        // A fonds or a collection never belongs to an archive:
+        if ($this->isFondsOrCollection()) {
+            return [];
+        }
+        if ($this->isPartOfArchiveSeries()) {
+            $topIds = $this->getHierarchyTopId();
+            $topTitles = $this->getHierarchyTopTitle();
+        } else {
+            $topIds = $this->getHierarchyParentId();
+            $topTitles = $this->getHierarchyParentTitle();
+        }
+        return $this->buildHierarchicalRecordArray($topIds, $topTitles);
+    }
+
+    /**
+     * Get parent series
+     *
+     * @return array
+     */
+    public function getParentSeries(): array
+    {
+        // A fonds or a collection never belongs to a series:
+        if ($this->isFondsOrCollection()) {
+            return [];
+        }
+        return $this->buildHierarchicalRecordArray(
+            $this->getHierarchyParentId(self::SERIES_LEVELS),
+            $this->getHierarchyParentTitle(self::SERIES_LEVELS)
+        );
+    }
+
+    /**
+     * Get parent files
+     *
+     * @return array
+     */
+    public function getParentFiles(): array
+    {
+        // A fonds or a collection never belongs to a file:
+        if ($this->isFondsOrCollection()) {
+            return [];
+        }
+        return $this->buildHierarchicalRecordArray(
+            $this->getHierarchyParentId(self::FILE_LEVELS),
+            $this->getHierarchyParentTitle(self::FILE_LEVELS)
+        );
     }
 
     /**
@@ -658,6 +727,80 @@ class SolrEad extends SolrDefault
     }
 
     /**
+     * Get the unitdate field.
+     *
+     * @return string
+     */
+    public function getUnitDate()
+    {
+        $unitdate = $this->getXmlRecord()->xpath('did/unitdate');
+        if (isset($unitdate[0])) {
+            return (string)$unitdate[0];
+        }
+        return '';
+    }
+
+    /**
+     * Get an array of alternative titles for the record.
+     *
+     * @return array
+     */
+    public function getAlternativeTitles()
+    {
+        $results = [];
+        // Main title might be already normalized, but do it again to make sure:
+        $mainTitle = \Normalizer::normalize($this->getTitle(), \Normalizer::FORM_KC);
+        $xml = $this->getXmlRecord();
+        // Get unit id for comparison with it:
+        $unitId = '';
+        foreach ($xml->did->unitid ?? [] as $id) {
+            if ('Analoginen' === (string)$id['label']) {
+                $unitId = (string)$id . ' ';
+                break;
+            }
+        }
+
+        foreach ($xml->did->unittitle ?? [] as $title) {
+            $title = trim((string)$title);
+            $normalized = \Normalizer::normalize($title, \Normalizer::FORM_KC);
+            $normalizedWithId
+                = \Normalizer::normalize($unitId . $title, \Normalizer::FORM_KC);
+            // Compare with the beginning of main title since it may have additional
+            // information appended to it:
+            $len = mb_strlen($normalized, 'UTF-8');
+            $lenId = mb_strlen($normalizedWithId, 'UTF-8');
+            if (mb_substr($mainTitle, 0, $len, 'UTF-8') !== $normalized
+                && mb_substr($mainTitle, 0, $lenId, 'UTF-8') !== $normalizedWithId
+            ) {
+                $results[] = $title;
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Return an XML representation of the record using the specified format.
+     * Return false if the format is unsupported.
+     *
+     * @param string     $format     Name of format to use (corresponds with OAI-PMH
+     * metadataPrefix parameter).
+     * @param string     $baseUrl    Base URL of host containing VuFind (optional;
+     * may be used to inject record URLs into XML when appropriate).
+     * @param RecordLink $recordLink Record link helper (optional; may be used to
+     * inject record URLs into XML when appropriate).
+     *
+     * @return mixed         XML, or false if format unsupported.
+     */
+    public function getXML($format, $baseUrl = null, $recordLink = null)
+    {
+        if ('oai_ead' === $format) {
+            return $this->fields['fullrecord'];
+        }
+        return parent::getXML($format, $baseUrl, $recordLink);
+    }
+
+    /**
      * Replace placeholders in the URL with the values from the record
      *
      * @param string $url URL
@@ -686,62 +829,23 @@ class SolrEad extends SolrDefault
     }
 
     /**
-     * Get the unitdate field.
+     * Build a record array for hierarchy display
      *
-     * @return string
-     */
-    public function getUnitDate()
-    {
-        $unitdate = $this->getXmlRecord()->xpath('did/unitdate');
-        if (isset($unitdate[0])) {
-            return (string)$unitdate[0];
-        }
-        return '';
-    }
-
-    /**
-     * Get an array of alternative titles for the record.
+     * @param array $ids    Record IDs
+     * @param array $titles Record titles
      *
      * @return array
      */
-    public function getAlternativeTitles()
+    protected function buildHierarchicalRecordArray(array $ids, array $titles): array
     {
-        $results = [];
-        // Main title might be already normalized, but do it again to make sure:
-        $mainTitle = \Normalizer::normalize($this->getTitle(), \Normalizer::FORM_KC);
-        $xml = $this->getXmlRecord();
-        foreach ($xml->did->unittitle ?? [] as $title) {
-            $title = trim((string)$title);
-            $normalized = \Normalizer::normalize($title, \Normalizer::FORM_KC);
-            // Compare with the beginning of main title since it may have additional
-            // information appended to it:
-            $len = mb_strlen($normalized, 'UTF-8');
-            if (mb_substr($mainTitle, 0, $len, 'UTF-8') !== $normalized) {
-                $results[] = $title;
-            }
+        $sourceId = $this->getSourceIdentifier();
+        $result = [];
+        while ($ids) {
+            $result[] = [
+                'id' => "$sourceId|" . array_shift($ids),
+                'title' => $titles ? array_shift($titles) : '',
+            ];
         }
-
-        return $results;
-    }
-
-    /**
-     * Return an XML representation of the record using the specified format.
-     * Return false if the format is unsupported.
-     *
-     * @param string     $format     Name of format to use (corresponds with OAI-PMH
-     * metadataPrefix parameter).
-     * @param string     $baseUrl    Base URL of host containing VuFind (optional;
-     * may be used to inject record URLs into XML when appropriate).
-     * @param RecordLink $recordLink Record link helper (optional; may be used to
-     * inject record URLs into XML when appropriate).
-     *
-     * @return mixed         XML, or false if format unsupported.
-     */
-    public function getXML($format, $baseUrl = null, $recordLink = null)
-    {
-        if ('oai_ead' === $format) {
-            return $this->fields['fullrecord'];
-        }
-        return parent::getXML($format, $baseUrl, $recordLink);
+        return $result;
     }
 }

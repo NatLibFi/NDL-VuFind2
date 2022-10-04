@@ -30,6 +30,7 @@
  */
 namespace Finna\Auth;
 
+use VuFind\Auth\Shibboleth\ConfigurationLoaderInterface;
 use VuFind\Exception\Auth as AuthException;
 
 /**
@@ -45,6 +46,37 @@ use VuFind\Exception\Auth as AuthException;
  */
 class Shibboleth extends \VuFind\Auth\Shibboleth
 {
+    /**
+     * ILS connection
+     *
+     * @var \Finna\ILS\Connection
+     */
+    protected $ils;
+
+    /**
+     * Constructor
+     *
+     * @param \Laminas\Session\ManagerInterface    $sessionManager      Session
+     * manager
+     * @param ConfigurationLoaderInterface         $configurationLoader Configuration
+     * loader
+     * @param \Laminas\Http\PhpEnvironment\Request $request             Http
+     * request object
+     * @param \Finna\ILS\Connection                $ils                 ILS
+     * connection
+     */
+    public function __construct(
+        \Laminas\Session\ManagerInterface $sessionManager,
+        ConfigurationLoaderInterface $configurationLoader,
+        \Laminas\Http\PhpEnvironment\Request $request,
+        \Finna\ILS\Connection $ils
+    ) {
+        $this->sessionManager = $sessionManager;
+        $this->configurationLoader = $configurationLoader;
+        $this->request = $request;
+        $this->ils = $ils;
+    }
+
     /**
      * Attempt to authenticate the current user.  Throws exception if login fails.
      *
@@ -107,11 +139,31 @@ class Shibboleth extends \VuFind\Auth\Shibboleth
         $idpParam = $shib->idpserverparam ?? self::DEFAULT_IDPSERVERPARAM;
         $idp = $this->getServerParam($request, $idpParam);
         if (!empty($shib->idp_to_ils_map[$idp])) {
-            $parts = explode(':', $shib->idp_to_ils_map[$idp]);
-            $username = $this->getServerParam($request, $parts[0]);
-            $driver = $parts[1] ?? '';
-            if ($username && $driver) {
-                $user->cat_username = "$driver.$username";
+            foreach (explode('|', $shib->idp_to_ils_map[$idp]) as $mapping) {
+                $parts = explode(':', $mapping);
+                $catUsername = $this->getServerParam($request, $parts[0]);
+                $driver = $parts[1] ?? '';
+                if (!$catUsername || !$driver) {
+                    continue;
+                }
+                // Check whether the credentials work:
+                $catUsername = "$driver.$catUsername";
+                try {
+                    if ($this->ils->patronLogin($catUsername, null)) {
+                        $user->cat_username = $catUsername;
+                        $this->debug(
+                            "ILS account '$catUsername' linked to user '$username'"
+                        );
+                        break;
+                    }
+                    $this->debug(
+                        "ILS account '$catUsername' not valid for user '$username'"
+                    );
+                } catch (\Exception $e) {
+                    $this->logError(
+                        'Failed to check username validity: ' . (string)$e
+                    );
+                }
             }
         }
 

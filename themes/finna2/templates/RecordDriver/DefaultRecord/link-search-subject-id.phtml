@@ -1,0 +1,9 @@
+<?php // No ending line feed
+if (!($id = $this->id ?: $this->localId)) {
+    return;
+}
+echo $this->url(
+    $this->searchAction ?: $this->searchOptions($this->driver->getSourceIdentifier())->getSearchAction(),
+    [],
+    ['query' => ['filter[]' => sprintf('%s:"%s"', \Finna\Search\Solr\AuthorityHelper::TOPIC_ID_FACET, $id)]]
+);

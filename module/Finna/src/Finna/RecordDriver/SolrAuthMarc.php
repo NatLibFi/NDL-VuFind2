@@ -69,6 +69,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     public function getRelations()
     {
         $result = [];
+        $sourceId = $this->getDataSource();
         foreach (['500', '510'] as $code) {
             foreach ($this->getMarcReader()->getFields($code) as $field) {
                 $id = $this->getSubfield($field, '0');
@@ -84,7 +85,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
                     continue;
                 }
                 $result[] = [
-                    'id' => $id,
+                    'id' => "$sourceId.$id",
                     'name' => $this->stripTrailingPunctuation($name, '. '),
                     'role' => $role,
                     'type' => $code === '500' ? 'Personal Name' : 'Corporate Name'

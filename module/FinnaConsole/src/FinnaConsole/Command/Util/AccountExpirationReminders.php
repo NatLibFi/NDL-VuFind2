@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2021.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -37,7 +37,6 @@ use Laminas\View\Resolver\AggregateResolver;
 use Laminas\View\Resolver\TemplatePathStack;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use VuFind\Mailer\Mailer;
 
@@ -208,8 +207,8 @@ class AccountExpirationReminders extends AbstractUtilCommand
      * Constructor
      *
      * @param \VuFind\Db\Table\User              $userTable   User table
-     * @param \VuFind\Db\Table\Search            $searchTable User table
-     * @param \VuFind\Db\Table\Resource          $resTable    User table
+     * @param \VuFind\Db\Table\Search            $searchTable Search table
+     * @param \VuFind\Db\Table\Resource          $resTable    Resource table
      * @param \Laminas\View\Renderer\PhpRenderer $renderer    View renderer
      * @param \Laminas\Config\Config             $dsConfig    Data source config
      * @param Mailer                             $mailer      Mailer
@@ -276,7 +275,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
             ->addOption(
                 'report',
                 null,
-                InputOption::VALUE_NONE,
+                null,
                 'If set, only a report of messages to be sent is generated'
             );
     }
@@ -319,7 +318,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
             return 1;
         }
 
-        $this->reportOnly = (bool)$input->getOption('report');
+        $this->reportOnly = $input->getOption('report');
 
         try {
             $users = $this->getUsersToRemind(
@@ -388,13 +387,19 @@ class AccountExpirationReminders extends AbstractUtilCommand
 
         $initialReminderThreshold = time() + $frequency * 86400;
 
+        $listSelect = new Select('user_list');
+        $listSelect->columns(['user_id']);
+        $listSelect->where->equalTo('finna_protected', 1);
+
         $users = $this->userTable->select(
-            function (Select $select) use ($limitDate) {
+            function (Select $select) use ($limitDate, $listSelect) {
                 $select->where->lessThan('last_login', $limitDate);
                 $select->where->notEqualTo(
                     'last_login',
                     '2000-01-01 00:00:00'
                 );
+                $select->where->equalTo('finna_protected', 0);
+                $select->where->notIn('id', $listSelect);
             }
         );
 

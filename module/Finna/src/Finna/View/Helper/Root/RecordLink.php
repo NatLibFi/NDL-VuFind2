@@ -52,10 +52,9 @@ class RecordLink extends \VuFind\View\Helper\Root\RecordLink
     /**
      * Constructor
      *
-     * @param \VuFind\Record\Router $router Record router
-     * @param array                 $config Configuration for search box
+     * @param array $config Configuration for search box
      */
-    public function __construct(\VuFind\Record\Router $router, $config)
+    public function __construct($config)
     {
         // parent no longer has a constructor that uses $router
         $this->datasourceConfig = $config;
@@ -179,5 +178,18 @@ class RecordLink extends \VuFind\View\Helper\Root\RecordLink
             return str_replace('%%id%%', $id, $url);
         }
         return '';
+    }
+
+    /**
+     * Given a record source ID, return the route name for searching its backend.
+     *
+     * @param string $source Record source identifier.
+     *
+     * @return string
+     */
+    protected function getSearchActionForSource($source)
+    {
+        $optionsHelper = $this->getView()->plugin('searchOptions');
+        return $optionsHelper($source)->getSearchAction();
     }
 }

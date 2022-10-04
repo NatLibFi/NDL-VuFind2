@@ -49,7 +49,10 @@ class FinnaRecordStatsLog extends \VuFind\Db\Row\RowGateway
             [
                 'institution',
                 'view',
+                'crawler',
                 'date',
+                'backend',
+                'source',
                 'record_id'
             ],
             'finna_record_stats_log',

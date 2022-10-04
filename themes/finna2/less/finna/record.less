@@ -1031,3 +1031,67 @@ finna-model-viewer .object-editor {
     }
   }
 }
+
+.inline-linked-field {
+  display: inline-block;
+
+  .show-info {
+    i {
+      font-size: 1.0rem;
+      vertical-align: middle;
+    }
+    i.expand {
+      display: inline-block;
+    }
+    i.collapse {
+      display: none;
+    }
+  }
+
+  .field-popover {
+    display: none;
+    position: absolute;
+    z-index: @zindex-tooltip;
+    .reset-text();
+    font-size: @font-size-base;
+    background-color: @modal-content-bg;
+    padding: 10px;
+    min-width: 200px;
+    max-width: 400px;
+    margin-left: 8px;
+    margin-right: 8px;
+    border: 1px solid @modal-content-border-color;
+    border-radius: @border-radius-base;
+    box-shadow: 0px 0px 20px -10px @gray-light;
+
+    .content {
+      margin-bottom: 1.5rem;
+    }
+    h2 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+    h3 {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .popover-external-links {
+      margin-top: 1.5rem;
+    }
+  }
+  // Note: there can be nested popovers, so make sure to match the immediate child:
+  &.open > .field-popover {
+    display: block;
+  }
+  &.open > .show-info {
+    i.expand {
+      display: none;
+    }
+    i.collapse {
+      display: inline-block;
+    }
+  }
+}

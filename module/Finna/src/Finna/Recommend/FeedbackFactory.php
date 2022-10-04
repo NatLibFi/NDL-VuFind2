@@ -27,8 +27,8 @@
  */
 namespace Finna\Recommend;
 
-use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Feedback recommendation module factory.

@@ -46,15 +46,6 @@ class RecordDriverRelated implements \VuFind\Related\RelatedInterface
     protected $driver = null;
 
     /**
-     * Constructor
-     *
-     * @param \VuFind\Search\RecordLoader $recordLoader Record loader
-     */
-    public function __construct(\VuFind\Record\Loader $recordLoader)
-    {
-    }
-
-    /**
      * Establishes base settings for retrieving results..
      *
      * @param string                            $settings Settings from config.ini

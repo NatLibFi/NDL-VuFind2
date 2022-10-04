@@ -55,7 +55,7 @@ class YamlReader extends \VuFind\Config\YamlReader
         if ($ignoreFileCache || !isset($this->files[$filename])) {
             if ($useLocalConfig) {
                 $localFile = Locator::getLocalConfigPath($filename);
-                if (!file_exists($localFile)) {
+                if (null === $localFile) {
                     $localFile
                         = Locator::getLocalConfigPath($filename, 'config/finna');
                 }

@@ -30,10 +30,10 @@
  */
 namespace Finna\Autocomplete;
 
-use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Psr\Container\ContainerExceptionInterface as ContainerException;
+use Psr\Container\ContainerInterface;
 
 /**
  * Factory for Solr-driven autocomplete plugins. Works for \VuFind\Autocomplete\Solr
@@ -73,7 +73,8 @@ class SolrFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
         return new $requestedName(
             $container->get(\VuFind\Search\Results\PluginManager::class),
             $config->get('facets'),
-            $config->get('searches')
+            $config->get('searches'),
+            $container->get('ViewHelperManager')->get('url'),
         );
     }
 }
