@@ -2192,15 +2192,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      */
     public function getStandardReportNumbers()
     {
-        $results = [];
-        foreach ($this->getMarcReader()->getFields('027') as $field) {
-            $subfields = [];
-            if ($a = $this->getSubfield($field, 'a')) {
-                $subfields[] = $this->stripTrailingPunctuation($a);
-            }
-            $results[] = implode(' ', $subfields);
-        }
-        return $results;
+        return $this->stripTrailingPunctuation(
+            $this->getFieldArray('027', ['a'])
+        );
     }
 
     /**

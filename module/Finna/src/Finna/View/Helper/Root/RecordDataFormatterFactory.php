@@ -1504,7 +1504,7 @@ class RecordDataFormatterFactory
             'getStandardReportNumbers',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'recordStandardReportNumber']
+                'context' => ['class' => 'record-standard-report-number']
             ]
         );
         $setTemplateLine(
