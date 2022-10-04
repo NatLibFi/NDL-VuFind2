@@ -100,6 +100,18 @@ CookieConsent:
           Domain: '{{vufind_cookie_domain}}'
           Description: CookieConsent::cookie_description_search_open_html
           Expiration: session
+        - Name: collapseAuthorityInfo
+          Domain: '{{vufind_cookie_domain}}'
+          Description: CookieConsent::cookie_description_collapse_authority_info_html
+          Expiration: session
+        - Name: finnaSurvey
+          Domain: '{{vufind_cookie_domain}}'
+          Description: CookieConsent::cookie_description_finna_survey_html
+          Expiration: session
+        - Name: preferredRecordSource
+          Domain: '{{vufind_cookie_domain}}'
+          Description: CookieConsent::cookie_description_preferred_record_source_info_html
+          Expiration: session
 #        - Name: '*_KEY'
 #          Domain: '{{vufind_cookie_domain}}'
 #          Description: CookieConsent::cookie_description_secure_key_html

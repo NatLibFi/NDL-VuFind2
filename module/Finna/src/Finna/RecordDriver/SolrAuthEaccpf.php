@@ -206,6 +206,8 @@ class SolrAuthEacCpf extends SolrAuthDefault
     {
         $record = $this->getXmlRecord();
         $result = [];
+        $sourceId = $this->getDataSource();
+
         foreach ($record->cpfDescription->relations->cpfRelation ?? []
             as $relation
         ) {
@@ -214,7 +216,7 @@ class SolrAuthEacCpf extends SolrAuthDefault
             $name = (string)$relation->relationEntry;
             if ($id && $name) {
                 $result[] = [
-                    'id' => $id,
+                    'id' => "$sourceId.$id",
                     'name' => $name,
                     'role' => (string)$attr->title,
                 ];

@@ -1,10 +1,10 @@
 <?php
 /**
- * Factory for the "expire users" task.
+ * Factory for the "list protected lists" task.
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2020.
+ * Copyright (C) The National Library of Finland 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,12 +21,11 @@
  *
  * @category VuFind
  * @package  Service
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-namespace FinnaConsole\Command\Util;
+namespace FinnaConsole\Command\Lists;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
@@ -35,16 +34,15 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Factory for the "expire users" task.
+ * Factory for the "list protected lists" task.
  *
  * @category VuFind
  * @package  Service
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class ExpireUsersFactory implements FactoryInterface
+class ProtectedHandlerFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -66,9 +64,6 @@ class ExpireUsersFactory implements FactoryInterface
         array $options = null
     ) {
         $tableManager = $container->get(\VuFind\Db\Table\PluginManager::class);
-        return new $requestedName(
-            $tableManager->get('User'),
-            $container->get(\VuFind\Config\PluginManager::class)->get('config')
-        );
+        return new $requestedName($tableManager->get('UserList'));
     }
 }

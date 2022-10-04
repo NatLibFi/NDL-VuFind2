@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2020.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,6 +23,7 @@
  * @package  Service
  * @author   Riikka Kalliomäki <riikka.kalliomaki@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
@@ -43,6 +44,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package  Service
  * @author   Riikka Kalliomäki <riikka.kalliomaki@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
@@ -106,6 +108,12 @@ class ExpireUsers extends AbstractUtilCommand
                 InputArgument::OPTIONAL,
                 'the age (in days) of users to expire',
                 $this->minAge
+            )
+            ->addOption(
+                'report',
+                null,
+                null,
+                'do not write any changes to the database'
             );
     }
 
@@ -121,6 +129,7 @@ class ExpireUsers extends AbstractUtilCommand
     {
         // Collect arguments/options:
         $daysOld = floatval($input->getArgument('age'));
+        $reportOnly = $input->getOption('report');
 
         // Abort if we have an invalid expiration age.
         if ($daysOld < $this->minAge) {
@@ -134,12 +143,20 @@ class ExpireUsers extends AbstractUtilCommand
             return 1;
         }
 
+        if ($reportOnly) {
+            $output->writeln('Dry run -- changes will not be made');
+        }
+
         try {
             $count = 0;
             $users = $this->getExpiredUsers($daysOld);
             foreach ($users as $user) {
-                $this->msg("Removing user: " . $user->username);
-                $user->delete($this->removeComments);
+                $this->msg(
+                    'Removing user: ' . $user->username . ' (' . $user->id . ')'
+                );
+                if (!$reportOnly) {
+                    $user->delete($this->removeComments);
+                }
                 $count++;
             }
 
@@ -159,6 +176,10 @@ class ExpireUsers extends AbstractUtilCommand
             return 1;
         }
 
+        if ($reportOnly) {
+            $output->writeln('Dry run -- changes were not made');
+        }
+
         return 0;
     }
 
@@ -173,13 +194,19 @@ class ExpireUsers extends AbstractUtilCommand
     {
         $expireDate = date('Y-m-d', strtotime(sprintf('-%d days', (int)$days)));
 
+        $listSelect = new Select('user_list');
+        $listSelect->columns(['user_id']);
+        $listSelect->where->equalTo('finna_protected', 1);
+
         return $this->table->select(
-            function (Select $select) use ($expireDate) {
+            function (Select $select) use ($expireDate, $listSelect) {
                 $select->where->lessThan('last_login', $expireDate);
                 $select->where->notEqualTo(
                     'last_login',
                     '2000-01-01 00:00:00'
                 );
+                $select->where->equalTo('finna_protected', 0);
+                $select->where->notIn('id', $listSelect);
             }
         );
     }

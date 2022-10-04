@@ -1,0 +1,57 @@
+---
+# See local/config/finna/CookieConsent.yaml for more information.
+
+"@parent_yaml": "../finna/CookieConsent.yaml"
+"@merge_sections":
+  - [CookieConsent, Categories]
+
+# Make your changes below.
+
+CookieConsent:
+  Categories:
+    video:
+      Title: CookieConsent::video_cookies_title_html
+      Description: CookieConsent::video_cookies_description_html
+      DefaultEnabled: false
+      Essential: false
+      Cookies:
+        - Name: yt-player-bandwidth
+          Domain: youtube.com
+          ThirdParty: true
+          Description: Used to estimate bandwidth.
+          Expiration: session
+        - Name: yt-player-headers-readable
+          Domain: youtube.com
+          ThirdParty: true
+          Description: Used to store user's preferences.
+          Expiration: session
+        - Name: GPS
+          Domain: youtube.com
+          ThirdParty: true
+          Description: Used to store user's location.
+          Expiration: session
+        - Name: VISITOR_INFO1_LIVE
+          Domain: youtube.com
+          ThirdParty: true
+          Description: Used to estimate bandwidth.
+          Expiration: 6
+          ExpirationUnit: months
+        - Name: PREF, __Secure-YEC
+          Domain: youtube.com
+          ThirdParty: true
+          Description: Used to store user's preferences.
+          Expiration: 8
+          ExpirationUnit: months
+        - Name: YSC, CONSENT, SOCS
+          Domain: youtube.com
+          ThirdParty: true
+          Description: Used to track user's actions for marketing purposes.
+          Expiration: 8
+          ExpirationUnit: months
+      AutoClearCookies:
+        - Name: '/^(yt-player-.*|GPS|VISITOR_INFO1_LIVE|PREF|__Secure-YEC|YSC|CONSENT|SOCS)$/'
+    social_media:
+      Title: CookieConsent::social_media_cookies_title_html
+      Description: CookieConsent::social_media_cookies_description_html
+      DefaultEnabled: false
+      Essential: false

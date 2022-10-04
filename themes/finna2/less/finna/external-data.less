@@ -56,6 +56,20 @@
                 width: 60%;
             }
         }
+        .tbl-row:not(.external-data-headers) {
+            .tbl-left, .tbl-right {
+                @media (max-width: @screen-xs-max) {
+                    width: 100%;
+                }
+            }
+        }
+        .tbl-row.external-data-headers {
+            .tbl-left, .tbl-right {
+                @media (max-width: @screen-xs-max) {
+                    width: 50%;
+                }
+            }
+        }
     }
 
     .headers {
@@ -105,9 +119,10 @@
     }
 }
 .external-data-feedback {
-    text-align: right;
     margin: 5px 0 5px 5px;
-    &.inline {
-        display: inline-block;
+    a.btn {
+        text-align: left;
+        white-space: normal;
+        padding: 6px 12px;
     }
 }

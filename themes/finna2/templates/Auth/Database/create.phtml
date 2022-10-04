@@ -18,7 +18,8 @@
   </div>
   <div class="form-group">
     <label class="control-label" for="account_username"><?=$this->transEsc('Desired Username')?>:</label>
-    <input id="account_username" type="text" name="username" required aria-required="true" value="<?=$this->escapeHtmlAttr($this->request->get('username'))?>" class="form-control"/>
+    <input id="account_username" type="text" name="username" required aria-required="true" value="<?=$this->escapeHtmlAttr($this->request->get('username'))?>" class="form-control" pattern="^(?!.*[._\-\s]{2})[A-ZÅÄÖa-zåäö0-9._\-\s]{3,50}$"/>
+    <div class="help-block"><?=$this->transEsc('finna_username_restrictions') ?></div>
     <div class="help-block with-errors"></div>
   </div>
   <div class="form-group">
