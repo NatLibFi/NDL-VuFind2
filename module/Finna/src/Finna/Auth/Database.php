@@ -53,7 +53,7 @@ class Database extends \VuFind\Auth\Database
 
         // Check that the username only contains allowed characters:
         $valid = preg_match(
-            '/^(?!.*[._\-]{2})[A-ZÅÄÖa-zåäö0-9._\-]{3,50}$/',
+            '/^(?!.*[._\-]{2})[A-ZÅÄÖa-zåäö0-9._\-:]{3,50}$/',
             $params['username']
         );
         if (!$valid) {

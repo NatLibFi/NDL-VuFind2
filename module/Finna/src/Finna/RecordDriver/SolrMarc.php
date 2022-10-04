@@ -2186,6 +2186,18 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
+     * Get standard report numbers from field 027, subfield a.
+     *
+     * @return array
+     */
+    public function getStandardReportNumbers()
+    {
+        return $this->stripTrailingPunctuation(
+            $this->getFieldArray('027', ['a'])
+        );
+    }
+
+    /**
      * Get publisher or distributor number from field 028, subfields b and a.
      *
      * @return array

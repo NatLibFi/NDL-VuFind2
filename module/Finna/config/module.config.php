@@ -245,6 +245,9 @@ $config = [
             'Finna\Controller\RobotsController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\SearchController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\ShibbolethLogoutNotificationController' => 'Finna\Controller\ShibbolethLogoutNotificationControllerFactory',
+
+            // Override factory for OAuth2Controller:
+            'VuFind\Controller\OAuth2Controller' => 'Finna\Controller\OAuth2ControllerFactory',
         ],
         'aliases' => [
             'AuthorityRecord' => 'Finna\Controller\AuthorityRecordController',
