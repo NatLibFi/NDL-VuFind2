@@ -32,6 +32,7 @@ $config = [
     'vufind_api' => [
         'register_controllers' => [
             \FinnaApi\Controller\AuthApiController::class,
+            \FinnaApi\Controller\ListApiController::class,
         ]
     ],
     'router' => [

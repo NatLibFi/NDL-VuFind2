@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2021.
+ * Copyright (C) The National Library of Finland 2021-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -69,6 +69,13 @@ class ListApiController extends ListController implements ApiInterface
     protected $defaultRecordFields = [];
 
     /**
+     * Max limit of list records in API response (default 100);
+     *
+     * @var int
+     */
+    protected $maxLimit = 100;
+
+    /**
      * Constructor
      *
      * @param ServiceLocatorInterface $sm Service manager
@@ -103,10 +110,12 @@ class ListApiController extends ListController implements ApiInterface
             'recordFields' => $this->recordFormatter->getRecordFieldSpec(),
             'defaultFields' => $this->defaultRecordFields,
             'sortOptions' => $options->getSortOptions(),
+            'defaultSort' => $options->getDefaultSortByHandler(),
+            'maxLimit' => $this->maxLimit,
         ];
 
         return $this->getViewRenderer()->render(
-            'listapi/swagger',
+            'listapi/openapi',
             $viewParams
         );
     }
@@ -119,17 +128,24 @@ class ListApiController extends ListController implements ApiInterface
      */
     public function listAction(): Response
     {
-        $requestParams = $this->getRequest()->getQuery()->toArray()
+        $request = $this->getRequest()->getQuery()->toArray()
             + $this->getRequest()->getPost()->toArray();
 
-        if (!isset($requestParams['id'])) {
+        if (!isset($request['id'])) {
             return $this->output([], self::STATUS_ERROR, 400, 'Missing id');
+        }
+
+        if (isset($request['limit'])
+            && (!ctype_digit($request['limit'])
+            || $request['limit'] < 0 || $request['limit'] > $this->maxLimit)
+        ) {
+            return $this->output([], self::STATUS_ERROR, 400, 'Invalid limit');
         }
 
         try {
             $results = $this->serviceLocator
                 ->get(PluginManager::class)->get('Favorites');
-            $results->getParams()->initFromRequest(new Parameters($requestParams));
+            $results->getParams()->initFromRequest(new Parameters($request));
             $results->performAndProcessSearch();
             $listObj = $results->getListObject();
 
@@ -156,7 +172,7 @@ class ListApiController extends ListController implements ApiInterface
 
             if ($results->getResultTotal() > 0) {
                 $response['records'] = [];
-                $requestedFields = $this->getFieldList($requestParams);
+                $requestedFields = $this->getFieldList($request);
 
                 foreach ($results->getResults() as $result) {
                     $record = [
