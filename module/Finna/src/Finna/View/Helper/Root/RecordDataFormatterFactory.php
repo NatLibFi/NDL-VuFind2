@@ -1500,6 +1500,14 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Standard Report Number',
+            'getStandardReportNumbers',
+            'data-transEsc.phtml',
+            [
+                'context' => ['class' => 'record-standard-report-number']
+            ]
+        );
+        $setTemplateLine(
             'Publisher or Distributor Number',
             'getPubDistNumber',
             'data-transEsc.phtml',
