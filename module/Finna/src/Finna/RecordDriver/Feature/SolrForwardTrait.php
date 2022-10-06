@@ -94,7 +94,8 @@ trait SolrForwardTrait
                         'large' => $url
                     ],
                     'description' => $desc,
-                    'rights' => $rights
+                    'rights' => $rights,
+                    'downloadable' => false
                 ];
             }
         }

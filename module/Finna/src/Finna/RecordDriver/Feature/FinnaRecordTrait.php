@@ -261,13 +261,30 @@ trait FinnaRecordTrait
     /**
      * Allow record image to be downloaded?
      *
-     * @return boolean
+     * @param array $rights Copyrights from an individual representation
+     *
+     * @return bool
      */
-    public function allowRecordImageDownload()
+    public function allowRecordImageDownload(array $rights = []): bool
     {
-        $rights = $this->tryMethod('getUsageRights');
-        if (empty($rights) || in_array('usage_F', $rights)) {
+        // Check rights from index if they would not allow the download
+        $indexRights = $this->tryMethod('getUsageRights', [], []);
+        if (empty($indexRights) || in_array('usage_F', $indexRights)) {
             return false;
+        }
+        // If rights from index would not deny the download, allow it
+        // if no comparison can be made
+        $copyright = $rights['copyright'] ?? '';
+        if (!isset($this->mainConfig->FileDownload->excludeRights)
+            || '' === $copyright
+        ) {
+            return true;
+        }
+        $restrictions = $this->mainConfig->FileDownload->excludeRights->toArray();
+        foreach ($restrictions as $restriction) {
+            if (mb_strtoupper($copyright, 'UTF-8') === $restriction) {
+                return false;
+            }
         }
         return true;
     }

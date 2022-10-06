@@ -194,7 +194,9 @@ class SolrEad extends SolrDefault
             $result[] = [
                 'urls' => $urls,
                 'description' => (string)$description,
-                'rights' => $rights
+                'rights' => $rights,
+                'downloadable'
+                    => $this->allowRecordImageDownload($rights)
             ];
         }
 

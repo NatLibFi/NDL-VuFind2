@@ -1739,11 +1739,11 @@ CCBYNC4.0 = CC BY-NC-SA 4.0
 PUBLIC DOMAIN = PDM
 PUBLIC DOMAIN 1.0 = PDM
 
-; Restrictions for files which prevents them from being downloaded.
-; Rights are written in uppercase.
-[RestrictedFileDownload]
-rights[] = "INC"
-rights[] = "CNE"
+; Settings for file downloads
+[FileDownload]
+; Excluded rights prevents a file from being downloaded.
+excludeRights[] = "INC"
+excludeRights[] = "CNE"
 
 ; Finna survey
 [FinnaSurvey]

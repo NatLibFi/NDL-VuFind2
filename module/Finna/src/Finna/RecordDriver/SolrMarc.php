@@ -241,6 +241,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                     ],
                     'description' => '',
                     'rights' => [],
+                    'downloadable' => false,
                     'pdf' => $pdf
                 ];
             }

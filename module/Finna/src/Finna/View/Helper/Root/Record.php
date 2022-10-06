@@ -743,37 +743,6 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Allow record image to be downloaded?
-     * If record image is converted from PDF, downloading is allowed only
-     * for configured record formats.
-     *
-     * @param string $copyright Copyright to check against restrictions
-     *
-     * @return boolean
-     */
-    public function allowRecordImageDownload(string $copyright = ''): bool
-    {
-        if ($copyright) {
-            $restrictions = $this->config->RestrictedFileDownload->rights ?? [];
-            foreach ($restrictions as $restriction) {
-                if (mb_strtoupper($copyright) === $restriction) {
-                    return false;
-                }
-            }
-        }
-        if (!$this->driver->tryMethod('allowRecordImageDownload', [], true)) {
-            return false;
-        }
-        $master = $this->recordImageHelper->getMasterImageWithInfo(0);
-        if (!$master['pdf']) {
-            return true;
-        }
-        $formats = $this->config->Content->pdfCoverImageDownload ?? '';
-        $formats = explode(',', $formats);
-        return array_intersect($formats, $this->driver->getFormats());
-    }
-
-    /**
      * Return an array of all record images in all sizes
      *
      * @param string $language   Language for description and rights

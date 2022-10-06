@@ -560,6 +560,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     'urls' => $imageUrls,
                     'description' => '',
                     'rights' => $rights,
+                    'downloadable'
+                        => $this->allowRecordImageDownload($rights),
                     'highResolution' => $highResolution
                 ];
 
