@@ -271,7 +271,7 @@ class Params extends \VuFind\Search\Solr\Params
         }
 
         // Restore original sort if we have geographic filters
-        $sort = $this->normalizeSort($this->getSort());
+        $sort = $this->normalizeSort($this->getSort() ?? '');
         $newSort = $result->get('sort');
         if ($newSort && $newSort[0] != $sort) {
             $filters = $result->get('fq');
