@@ -360,28 +360,4 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
 
         return $this->record->renderTemplate('record-image.phtml', $context);
     }
-
-    /**
-     * Allow record image to be downloaded?
-     * If record image is converted from PDF, downloading is allowed only
-     * for configured record formats.
-     * 
-     * @deprecated Please use downloadable variable found in image array
-     *             returned from record->getAllImages().
-     *
-     * @return bool
-     */
-    public function allowRecordImageDownload()
-    {
-        if (!$this->driver->tryMethod('allowRecordImageDownload', [], true)) {
-            return false;
-        }
-        $master = $this->recordImageHelper->getMasterImageWithInfo(0);
-        if (!$master['pdf']) {
-            return true;
-        }
-        $formats = $this->config->Content->pdfCoverImageDownload ?? '';
-        $formats = explode(',', $formats);
-        return array_intersect($formats, $this->driver->getFormats());
-    }
 }
