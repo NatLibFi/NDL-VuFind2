@@ -1,6 +1,6 @@
 <!-- START of Finna - RecordDriver/DefaultRecord/image-download.phtml -->
 <?php
-    if (!($image['downloadable'] ?? false)) {
+    if (empty($image['downloadable'])) {
         return;
     }
 ?>
