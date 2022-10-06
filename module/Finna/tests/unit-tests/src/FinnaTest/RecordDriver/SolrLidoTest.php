@@ -103,7 +103,8 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 ]
                             ]
                         ],
-                        'identifier' => '607642'
+                        'identifier' => '607642',
+                        'downloadable' => true
                     ],
                     [
                         'urls' => [
@@ -115,7 +116,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         ],
                         'description' => '',
                         'rights' => [
-                            'copyright' => 'CC BY 4.0',
+                            'copyright' => 'InC',
                             'description' => [
                                 0 => 'Tässä on kuvien copyright.'
                             ]
@@ -151,7 +152,8 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 ]
                             ]
                         ],
-                        'identifier' => '607643'
+                        'identifier' => '607643',
+                        'downloadable' => false
                     ]
                 ]
             ],
@@ -231,14 +233,28 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         $config = [
             'Record' => [
                 'allowed_external_hosts_mode' => 'disable',
+            ],
+            'FileDownload' => [
+                'excludeRights' => [
+                    'INC'
+                ]
             ]
         ];
+        $config = new \Laminas\Config\Config($config);
         $record = new SolrLido(
             $config,
             $config,
             new \Laminas\Config\Config($searchConfig)
         );
-        $record->setRawData(['id' => 'knp-247394', 'fullrecord' => $fixture]);
+        $record->setRawData(
+            [
+                'id' => 'knp-247394',
+                'fullrecord' => $fixture,
+                'usage_rights_str_mv' => [
+                    'usage_A'
+                ]
+            ]
+        );
         return $record;
     }
 }

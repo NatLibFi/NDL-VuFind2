@@ -272,17 +272,11 @@ trait FinnaRecordTrait
         if (empty($indexRights) || in_array('usage_F', $indexRights)) {
             return false;
         }
-        // If rights from index would not deny the download, allow it
-        // if no comparison can be made
-        $copyright = $rights['copyright'] ?? '';
-        if (!isset($this->mainConfig->FileDownload->excludeRights)
-            || '' === $copyright
-        ) {
-            return true;
-        }
-        $restrictions = $this->mainConfig->FileDownload->excludeRights->toArray();
-        foreach ($restrictions as $restriction) {
-            if (mb_strtoupper($copyright, 'UTF-8') === $restriction) {
+        $copyright = mb_strtoupper($rights['copyright'] ?? '', 'UTF-8');
+        if (!empty($this->mainConfig->FileDownload->excludeRights)) {
+            $restrictions
+                = $this->mainConfig->FileDownload->excludeRights->toArray();
+            if (in_array($copyright, $restrictions)) {
                 return false;
             }
         }

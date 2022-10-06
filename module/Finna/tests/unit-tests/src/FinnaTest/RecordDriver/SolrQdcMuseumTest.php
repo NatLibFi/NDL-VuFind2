@@ -74,6 +74,7 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
                                 ]
                             ]
                         ],
+                        'downloadable' => false
                     ]
                 ],
             ],
