@@ -190,14 +190,13 @@ class SolrEad extends SolrDefault
             } else {
                 $description = '';
             }
-
-            $result[] = [
+            $image = [
                 'urls' => $urls,
                 'description' => (string)$description,
                 'rights' => $rights,
-                'downloadable'
-                    => $this->allowRecordImageDownload($rights)
             ];
+            $image['downloadable'] = $this->allowRecordImageDownload($image);
+            $result[] = $image;
         }
 
         $this->cache[$cacheKey] = $result;

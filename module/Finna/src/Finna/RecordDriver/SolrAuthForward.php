@@ -195,11 +195,11 @@ class SolrAuthForward extends SolrAuthDefault
     /**
      * Allow record image to be downloaded?
      *
-     * @param array $rights Copyrights from an individual representation
+     * @param array $image Image to check
      *
      * @return boolean
      */
-    public function allowRecordImageDownload(array $rights = []): bool
+    public function allowRecordImageDownload(array $image = []): bool
     {
         return false;
     }

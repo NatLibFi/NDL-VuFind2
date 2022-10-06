@@ -417,6 +417,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 if (!isset($images['urls']['medium'])) {
                     $images['urls']['medium'] = $images['urls']['small'];
                 }
+                $images['downloadable'] = $this->allowRecordImageDownload($images);
             }
             $results[] = compact(
                 'images',
@@ -560,8 +561,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     'urls' => $imageUrls,
                     'description' => '',
                     'rights' => $rights,
-                    'downloadable'
-                        => $this->allowRecordImageDownload($rights),
                     'highResolution' => $highResolution
                 ];
 

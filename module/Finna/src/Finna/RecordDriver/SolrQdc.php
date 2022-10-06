@@ -234,6 +234,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             if (!isset($imageData['urls']['medium'])) {
                 $imageData['urls']['medium'] = $imageData['urls']['small'];
             }
+            $imageData['downloadable'] = $this->allowRecordImageDownload($imageData);
             $results[] = $imageData;
         };
 
@@ -274,15 +275,13 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             }
         }
 
-        $downloadable = $this->allowRecordImageDownload($rights);
         if ($thumbnails && !$otherSizes) {
             foreach ($thumbnails as $url) {
                 $addToResults(
                     [
                         'urls' => ['large' => $url],
                         'description' => '',
-                        'rights' => $rights,
-                        'downloadable' => $downloadable
+                        'rights' => $rights
                     ]
                 );
             }
@@ -292,7 +291,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                     'urls' => $otherSizes,
                     'description' => '',
                     'rights' => $rights,
-                    'downloadable' => $downloadable,
                     'highResolution' => $highResolution
                 ]
             );

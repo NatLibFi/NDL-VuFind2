@@ -811,6 +811,7 @@ class SolrEad3 extends SolrEad
                     }
                 }
             }
+            $formatted['downloadable'] = $this->allowRecordImageDownload($formatted);
             $result['displayImages'][] = $formatted;
         };
         $isExcludedFromOCR = function ($title) {
@@ -932,8 +933,6 @@ class SolrEad3 extends SolrEad
                 }
                 if (!empty($displayImage)) {
                     $displayImage['highResolution'] = $highResolution;
-                    $displayImage['downloadable']
-                        = $this->allowRecordImageDownload($rights);
                     $images[] = $displayImage;
                     $displayImage = [];
                     $highResolution = [];
