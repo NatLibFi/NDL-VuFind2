@@ -60,9 +60,10 @@ if (is_array($series)) {
     }
 }
 
-$authors = $this->driver->tryMethod('getNonPresenterAuthors', [], []);
-if (empty($authors)) {
+if (is_a($this->driver, '\\VuFind\\RecordDriver\\Primo')) {
     $authors = $this->driver->tryMethod('getPrimaryAuthors', [], []);
+} else {
+    $authors = $this->driver->tryMethod('getNonPresenterAuthors', [], []);
 }
 foreach ($authors as $author) {
     $name = $author['name'] ?? $author;
