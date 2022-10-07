@@ -3,9 +3,13 @@
   $clickableElement = !$this->touchDevice && !isset($this->linkText);
   $clickableLink = !$clickableElement;
 ?>
+<?php if ($item['icon']['type'] === 'image'): ?>
+  <?=$this->partial('Helpers/company-icon.phtml', ['icon' => $item['icon'], 'wrapper' => true]);?>
+<?php endif; ?>
 <?php if (isset($item['title']) || isset($item['dateFull'])): ?>
   <div class="carousel-slide-header">
     <p>
+      <?php if ($item['icon']['type'] === 'title'): ?><?=$this->partial('Helpers/company-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?> 
       <?php if (isset($item['title'])): ?>
         <?=$this->escapeHtml($this->truncate($item['title'], 70));?>
       <?php endif; ?>

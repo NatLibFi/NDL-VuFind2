@@ -704,6 +704,10 @@ summarycachetime = 1440
 ; Set this to 0 to disable caching.
 feedcachetime = 10
 
+; Array of hosts and their name values, seperated by a semicolon
+; Host is the same as from parse_url
+;feedHostToNameMappings[] = 'www.instagram.com;instagram'
+
 ; You can select from Syndetics, SyndeticsPlus, Amazon Editorial, Amazon, Booksite
 ; and/or the Guardian
 ;   Note: Guardian reviews contain embedded advertisements. If the API key is not

@@ -278,7 +278,7 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
         $httpClient->setOptions(['timeout' => 30]);
         Reader::setHttpClient($httpClient);
 
-        if ($maxAge) {
+        if (!$maxAge) {
             if (is_readable($localFile)
                 && time() - filemtime($localFile) < $maxAge * 60
             ) {
@@ -388,6 +388,7 @@ EOT;
 
         $itemsCnt = $config->items ?? null;
         $elements = $config->content ?? [];
+        $showIcons = $config->showIcons ?? false;
         $allowXcal = $elements['xcal'] ?? true;
         $timeRegex = '/^(.*?)([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/';
 
@@ -549,7 +550,32 @@ EOT;
             if (!$accept) {
                 continue;
             }
-
+            $data['icon'] = [
+                'type' => 'none'
+            ];
+            if ($showIcons
+                && !empty($data['link'])
+                && !empty($this->mainConfig->Content->feedHostToNameMappings)
+            ) {
+                // Parse the link to know the origin
+                $comparisons
+                    = $this->mainConfig->Content->feedHostToNameMappings->toArray();
+                $parsed = parse_url($data['link']);
+                if (!empty($parsed['host'])) {
+                    foreach ($comparisons as $comparison) {
+                        [$from, $to] = explode(';', $comparison, 2);
+                        if ($parsed['host'] === $from) {
+                            $data['icon'] = [
+                                'name' => $to,
+                                'type' => !empty($data['image']['url'])
+                                    ? 'image'
+                                    : 'title'
+                            ];
+                            break;
+                        }
+                    }
+                }
+            }
             $items[] = $data;
             $cnt++;
             if ($itemsCnt !== null && $cnt == $itemsCnt) {
