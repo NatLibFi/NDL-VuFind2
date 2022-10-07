@@ -60,11 +60,10 @@ if (is_array($series)) {
     }
 }
 
-if (is_a($this->driver, '\\VuFind\\RecordDriver\\Primo')) {
-    $authors = $this->driver->tryMethod('getPrimaryAuthors', [], []);
-} else {
-    $authors = $this->driver->tryMethod('getNonPresenterAuthors', [], []);
-}
+$authors = $this->driver->tryMethod('getNonPresenterAuthors')
+    ?? $this->driver->tryMethod('getPrimaryAuthors')
+    ?? [];
+
 foreach ($authors as $author) {
     $name = $author['name'] ?? $author;
     echo "AU  - {$name}\r\n";
