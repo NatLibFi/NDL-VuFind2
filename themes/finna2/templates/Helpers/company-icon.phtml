@@ -1,8 +1,8 @@
 <?php // Do not add start and end comments ?>
 <?php if ($this->wrapper): ?>
     <div class="company-icon-wrapper <?=$this->class?>">
-      <i class="company-icon fa <?="fa-{$this->escapeHtml($icon['name'])}"?>" aria-label="<?=$this->transEscAttr('logo_for_companies', ['%%company%%' => $icon['name']])?>"></i>
+      <i class="company-icon fa <?="fa-{$this->escapeHtmlAttr($icon['name'])}"?>" aria-label="<?=$this->transEscAttr('logo_for_companies', ['%%company%%' => $icon['name']])?>"></i>
     </div>
 <?php else: ?>
-    <i class="company-icon fa <?="fa-{$this->escapeHtml($icon['name'])}"?>" aria-label="<?=$this->transEscAttr('logo_for_companies', ['%%company%%' => $icon['name']])?>"></i>
+    <i class="company-icon fa <?="fa-{$this->escapeHtmlAttr($icon['name'])}"?>" aria-label="<?=$this->transEscAttr('logo_for_companies', ['%%company%%' => $icon['name']])?>"></i>
 <?php endif; ?>
