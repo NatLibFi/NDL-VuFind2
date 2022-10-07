@@ -278,7 +278,7 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
         $httpClient->setOptions(['timeout' => 30]);
         Reader::setHttpClient($httpClient);
 
-        if (!$maxAge) {
+        if ($maxAge) {
             if (is_readable($localFile)
                 && time() - filemtime($localFile) < $maxAge * 60
             ) {
