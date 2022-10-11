@@ -283,12 +283,12 @@ trait FinnaRecordTrait
                 return false;
             }
         }
-        if (!empty($image['pdf'])) {
-            $formats = $this->mainConfig->Content->pdfCoverImageDownload ?? [];
-            $formats = explode(',', $formats);
+        if (!empty($image['pdf'])
+            && !empty($this->mainConfig->Content->pdfCoverImageDownload)
+        ) {
             return !empty(
                 array_intersect(
-                    $formats,
+                    explode(',', $this->mainConfig->Content->pdfCoverImageDownload),
                     $this->getFormats()
                 )
             );
