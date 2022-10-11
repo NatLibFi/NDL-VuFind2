@@ -156,7 +156,7 @@ class ListApiController extends ListController implements ApiInterface
             ];
 
             $description = $listObj->description;
-            if (strlen($description) > 0) {
+            if ('' !== $description) {
                 $response['description'] = $description;
             }
 
@@ -188,7 +188,7 @@ class ListApiController extends ListController implements ApiInterface
                     if ($this->tagsEnabled()) {
                         $tags = $result->getTags($listObj->id);
                         if ($tags->count() > 0) {
-                            $response['tags'] = [];
+                            $record['tags'] = [];
                             foreach ($tags as $tag) {
                                 $record['tags'][] = $tag->tag;
                             }
