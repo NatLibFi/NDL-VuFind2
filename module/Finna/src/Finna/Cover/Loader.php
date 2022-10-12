@@ -414,7 +414,13 @@ class Loader extends \VuFind\Cover\Loader
 
         if ($pdfFile) {
             // Convert pdf to jpg
-            $url = "$convertPdfService?url=" . urlencode($url);
+            $encodedUrl = urlencode($url);
+            if (str_contains($convertPdfService, '%%url%%')) {
+                $url = str_replace('%%url%%', $encodedUrl, $convertPdfService);
+            } else {
+                // BC
+                $url = "$convertPdfService?url=$encodedUrl";
+            }
         }
 
         $host = parse_url($url, PHP_URL_HOST);
