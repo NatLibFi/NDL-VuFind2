@@ -109,7 +109,7 @@ class TurkuSignature
         string $signature = '',
         string $secretKey = '',
         string $timeStamp = '',
-        string $platformName = '',
+        string $platformName = ''
     ) {
         $hash = static::calculcateHash(
             $params,
