@@ -132,7 +132,7 @@ class Client extends FinnaPaytrailClient
     }
 
     /**
-     * Get the oId.
+     * Get the timestamp.
      *
      * @return ?string
      */
@@ -142,7 +142,7 @@ class Client extends FinnaPaytrailClient
     }
 
     /**
-     * Set the oId.
+     * Generate a timestamp.
      *
      * @return void
      */
@@ -152,7 +152,7 @@ class Client extends FinnaPaytrailClient
     }
 
     /**
-     * Set Api endpoint.
+     * Set url
      *
      * @param string $url Api endpoint.
      *
@@ -164,7 +164,7 @@ class Client extends FinnaPaytrailClient
     }
 
     /**
-     * Get Api endpoint.
+     * Get url
      *
      * @return ?string
      */
@@ -232,9 +232,9 @@ class Client extends FinnaPaytrailClient
             [],
             $body,
             $responseHeaders['Authorization'] ?? '',
-            $this->getSecretKey(),
+            $this->secretKey,
             $responseHeaders['X-TURKU-TS'],
-            $responseHeaders['X-TURKU-SP']
+            $this->platformName
         );
         // Create response:
         $decoded = json_decode($body);
