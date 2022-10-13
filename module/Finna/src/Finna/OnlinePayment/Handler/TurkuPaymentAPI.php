@@ -1,6 +1,6 @@
 <?php
 /**
- * Turku Payment API handler module
+ * Turku Payment API handler
  *
  * PHP version 7
  *
@@ -36,7 +36,7 @@ use Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI\TurkuSignature;
 use Paytrail\SDK\Model\CallbackUrl;
 
 /**
- * Turku Payment API handler module
+ * Turku Payment API handler
  *
  * @category VuFind
  * @package  OnlinePayment
@@ -44,7 +44,6 @@ use Paytrail\SDK\Model\CallbackUrl;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
- * @link     http://docs.paytrail.com/ Paytrail API documentation
  */
 class TurkuPaymentAPI extends AbstractBase
 {
@@ -143,7 +142,6 @@ class TurkuPaymentAPI extends AbstractBase
             $organizationProductCodeMappings
                 = $this->getOrganizationProductCodeMappings();
             $items = [];
-            // Only novat is supported atm.
             $sapProduct = [
                 'sapCode' => $this->config->sapCode ?? '',
                 'sapOfficeCode' => $this->config->sapOfficeCode ?? ''

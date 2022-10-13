@@ -1,6 +1,6 @@
 <?php
 /**
- * Turku online payment request class
+ * Turku Payment API PaymentRequest
  *
  * PHP version 7
  *
@@ -30,7 +30,7 @@ namespace Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI;
 use Paytrail\SDK\Exception\ValidationException;
 
 /**
- * Turku online payment request class
+ * Turku Payment API PaymentRequest
  *
  * @category VuFind
  * @package  OnlinePayment

@@ -1,6 +1,6 @@
 <?php
 /**
- * Paytrail Payment API client
+ * Paytrail Payment API Client
  *
  * PHP version 7
  *
@@ -34,7 +34,7 @@ use Paytrail\SDK\Request\PaymentRequest;
 use Paytrail\SDK\Response\PaymentResponse;
 
 /**
- * Paytrail Payment API client
+ * Paytrail Payment API Client
  *
  * @category VuFind
  * @package  OnlinePayment
