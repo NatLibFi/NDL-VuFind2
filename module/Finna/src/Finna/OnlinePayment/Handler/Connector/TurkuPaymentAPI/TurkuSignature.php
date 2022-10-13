@@ -1,6 +1,6 @@
 <?php
 /**
- * Turku Payment signature class
+ * Turku Payment API Signature
  *
  * PHP version 7
  *
@@ -25,12 +25,12 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-namespace Finna\OnlinePayment\Handler\Connector\TurkuPayment;
+namespace Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI;
 
 use Paytrail\SDK\Exception\HmacException;
 
 /**
- * Turku Payment signature class.
+ * Turku Payment API Signature
  *
  * @category VuFind
  * @package  OnlinePayment
@@ -42,8 +42,6 @@ class TurkuSignature
 {
     /**
      * Calculate TurkuPayment hash
-     *
-     * For more information about the signature headers:
      *
      * @param array[] $params       HTTP headers in an associative array.
      * @param string  $body         HTTP request body,
@@ -92,9 +90,7 @@ class TurkuSignature
     }
 
     /**
-     * Evaluate a response signature validity.
-     *
-     * For more information about the signature headers:
+     * Evaluate a response authorization validity.
      *
      * @param array  $params       The response parameters.
      * @param string $body         The response body.

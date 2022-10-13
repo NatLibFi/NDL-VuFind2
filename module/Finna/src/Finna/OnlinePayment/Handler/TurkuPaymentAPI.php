@@ -1,6 +1,6 @@
 <?php
 /**
- * Turku payment handler module for Paytrail API
+ * Turku Payment API handler module
  *
  * PHP version 7
  *
@@ -22,29 +22,31 @@
  * @category VuFind
  * @package  OnlinePayment
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 namespace Finna\OnlinePayment\Handler;
 
 use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailPaymentAPI\Customer;
-use Finna\OnlinePayment\Handler\Connector\TurkuPayment\Client;
-use Finna\OnlinePayment\Handler\Connector\TurkuPayment\Item;
-use Finna\OnlinePayment\Handler\Connector\TurkuPayment\PaymentRequest;
-use Finna\OnlinePayment\Handler\Connector\TurkuPayment\TurkuSignature;
+use Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI\Client;
+use Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI\Item;
+use Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI\PaymentRequest;
+use Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI\TurkuSignature;
 use Paytrail\SDK\Model\CallbackUrl;
 
 /**
- * Turku Payment handler module for Paytrail API.
+ * Turku Payment API handler module
  *
  * @category VuFind
  * @package  OnlinePayment
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  * @link     http://docs.paytrail.com/ Paytrail API documentation
  */
-class TurkuPaymentApi extends AbstractBase
+class TurkuPaymentAPI extends AbstractBase
 {
     /**
      * Mappings from VuFind language codes to Paytrail

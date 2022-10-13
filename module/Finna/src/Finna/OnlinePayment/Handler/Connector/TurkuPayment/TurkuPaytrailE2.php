@@ -40,7 +40,7 @@ use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailE2;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  *
- * @deprecated Use TurkuPaymentApi
+ * @deprecated Use TurkuPaymentAPI
  */
 class TurkuPaytrailE2 extends PaytrailE2
 {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Turku online payment client class
+ * Turku Payment API client
  *
  * PHP version 7
  *
@@ -26,7 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-namespace Finna\OnlinePayment\Handler\Connector\TurkuPayment;
+namespace Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI;
 
 use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailPaymentAPI\Client
     as FinnaPaytrailClient;
@@ -34,7 +34,7 @@ use Paytrail\SDK\Request\PaymentRequest;
 use Paytrail\SDK\Response\PaymentResponse;
 
 /**
- * Turku online payment client class
+ * Turku Payment API client
  *
  * @category VuFind
  * @package  OnlinePayment
