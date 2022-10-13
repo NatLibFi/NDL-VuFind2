@@ -48,6 +48,7 @@ onlinePayment['handler'] = 'Paytrail'
 
 ; ### Turku Payment API (Current interface)
 onlinePayment['handler'] = 'TurkuPaymentAPI'
+;onlinePayment['url'] = '...'
 ;onlinePayment['oId'] = '...'
 ;onlinePayment['platformName'] = '...'
 ;onlinePayment['sapCode'] = "..."
