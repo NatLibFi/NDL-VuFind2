@@ -270,23 +270,13 @@ class Client extends FinnaPaytrailClient
             'X-TURKU-OID' => $this->getOId(),
             'X-MERCHANT-ID' => $this->getMerchantIdString(),
             'Content-Type' => 'application/json',
-            'Authorization' => $this->generateHash()
+            'Authorization' => TurkuSignature::calculcateHash(
+                [],
+                $this->requestBody,
+                $this->secretKey,
+                $this->timeStamp,
+                $this->platformName
+            )
         ];
-    }
-
-    /**
-     * Generate authorization hash
-     *
-     * @return string
-     */
-    protected function generateHash(): string
-    {
-        return hash(
-            'sha256',
-            $this->platformName .
-            $this->timeStamp .
-            $this->requestBody .
-            $this->secretKey
-        );
     }
 }
