@@ -104,7 +104,7 @@ CookieConsent:
           ExpirationUnit: months
       AutoClearCookies:
         - Name: ’sc_anonymous_id'
-    vimeo: # Can be own Vimeo category or included in video category.
+    vimeo: # Can be own vimeo category or included in video category.
       Title: CookieConsent::vimeo_cookies_title_html
       Description: CookieConsent::vimeo_cookies_description_html
       DefaultEnabled: false
