@@ -106,7 +106,6 @@ class TurkuPaymentAPI extends AbstractBase
             ->setSuccess($notifyUrl)
             ->setCancel($notifyUrl);
 
-        $names = $this->extractUserNames($user);
         $customer = (new Customer())
             ->setEmail(trim($user->email));
 
@@ -118,6 +117,8 @@ class TurkuPaymentAPI extends AbstractBase
         ];
         $reference = preg_replace('/\PL/u', '', "{$transactionId}{$patronId}");
         $paymentRequest = (new PaymentRequest())
+            ->setUsePricesWithoutVat(true)
+            ->setSapOrganizationDetails($sapOrganization)
             ->setStamp($transactionId)
             ->setRedirectUrls($returnUrls)
             ->setCallbackUrls($callbackUrls)
@@ -125,9 +126,8 @@ class TurkuPaymentAPI extends AbstractBase
             ->setCurrency('EUR')
             ->setLanguage($language)
             ->setAmount($amount + $transactionFee)
-            ->setCustomer($customer)
-            ->setUsePricesWithoutVat(true)
-            ->setSapOrganizationDetails($sapOrganization);
+            ->setCustomer($customer);
+
         // Payment description in $this->config->paymentDescription is not supported
 
         if (isset($this->config->productCode)
@@ -184,26 +184,26 @@ class TurkuPaymentAPI extends AbstractBase
                     $fineDesc .= " ($title)";
                 }
                 $item = (new Item())
+                    ->setSapProduct($sapProduct)
                     ->setDescription($fineDesc)
                     ->setProductCode($code)
                     ->setUnitPrice($fine['balance'])
                     ->setUnits(1)
-                    ->setVatPercentage(0)
-                    ->setSapProduct($sapProduct);
+                    ->setVatPercentage(0);
 
                 $items[] = $item;
             }
             if ($transactionFee) {
                 $code = $this->config->transactionFeeProductCode ?? $productCode;
                 $item = (new Item())
+                    ->setSapProduct($sapProduct)
                     ->setDescription(
                         'Palvelumaksu / Serviceavgift / Transaction fee'
                     )
                     ->setProductCode($code)
                     ->setUnitPrice($transactionFee)
                     ->setUnits(1)
-                    ->setVatPercentage(0)
-                    ->setSapProduct($sapProduct);
+                    ->setVatPercentage(0);
 
                 $items[] = $item;
             }

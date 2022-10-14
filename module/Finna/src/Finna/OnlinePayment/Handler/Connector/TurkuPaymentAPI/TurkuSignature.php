@@ -60,6 +60,7 @@ class TurkuSignature
         string $platformName = ''
     ) {
         // Keep only checkout- params, more relevant for response validation.
+        // PlatformName and timeStamp will be prepended to the resulting string below
         $includedKeys = array_filter(
             array_keys($params),
             function ($key) {

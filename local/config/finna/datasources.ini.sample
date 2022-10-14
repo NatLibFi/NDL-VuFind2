@@ -47,7 +47,7 @@ onlinePayment['handler'] = 'Paytrail'
 ;onlinePayment['e2url'] = '...'
 
 ; ### Turku Payment API (Current interface)
-onlinePayment['handler'] = "TurkuPaymentAPI"
+;onlinePayment['handler'] = "TurkuPaymentAPI"
 ;onlinePayment['url'] = "..."
 ;onlinePayment['oId'] = "..."
 ;onlinePayment['platformName'] = "..."

@@ -1,4 +1,4 @@
-<!-- START of: finna - Helpers/OnlinePayment/terms-TurkuPayment.phtml -->
+<!-- START of: finna - Helpers/OnlinePayment/terms-TurkuPaymentAPI.phtml -->
 <h2><?=$this->transEsc('online_payment_go_to_pay', ['%%amount%%' => ''])?></h2>
 <form id="paytrail-form" class="online-payment-form" action="<?=$this->url('myresearch-fines')?>" method="post" data-lightbox-ignore>
   <input type="hidden" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>" name="csrf"/>
@@ -25,4 +25,4 @@ $(document).ready(function() {
 JS;
   echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
 ?>
-<!-- END of: finna - Helpers/OnlinePayment/terms-TurkuPayment.phtml -->
+<!-- END of: finna - Helpers/OnlinePayment/terms-TurkuPaymentAPI.phtml -->
