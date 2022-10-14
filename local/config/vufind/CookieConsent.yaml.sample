@@ -55,13 +55,13 @@ CookieConsent:
       Description: CookieConsent::social_media_cookies_description_html
       DefaultEnabled: false
       Essential: false
-    chat:
+    chat: # Following settings are for tawk.to
       Title: CookieConsent::chat_cookies_title_html
       Description: CookieConsent::chat_cookies_description_html
       DefaultEnabled: false
       Essential: false
       Cookies:
-        - Name: tawk_uuid_*
+        - Name: twk_uuid_*
           Domain: tawk.to
           ThirdParty: true
           Description: Used to tracks unique visitors.
@@ -89,7 +89,7 @@ CookieConsent:
           Description: Used to manage visitor connection.
           Expiration: session
       AutoClearCookies:
-        - Name: '/^(tawk_uuid_.*|twk_idm_key|/^(twk_token_.*|TawkConnectionTime'
+        - Name: '/^(twk_uuid_.*|twk_idm_key|TawkConnectionTime)'
     audio:
       Title: CookieConsent::audio_cookies_title_html
       Description: CookieConsent::audio_cookies_description_html
@@ -104,7 +104,7 @@ CookieConsent:
           ExpirationUnit: months
       AutoClearCookies:
         - Name: ’sc_anonymous_id'
-    vimeo: # Can be own Vimeo category or inlcuded in Video category.
+    vimeo: # Can be own Vimeo category or included in video category.
       Title: CookieConsent::vimeo_cookies_title_html
       Description: CookieConsent::vimeo_cookies_description_html
       DefaultEnabled: false
