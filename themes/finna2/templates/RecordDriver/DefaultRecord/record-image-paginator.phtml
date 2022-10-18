@@ -37,8 +37,8 @@
         <button class="next-image right" type="button"><i class="fa fa-chevron-right"></i><span class="sr-only"><?= $this->transEsc('next_image') ?></span></button>
       </div>
     <?php endif; ?>
-  <?php else: ?>
-    <a href="<?=$this->escapeHtmlAttr($img['urls']['large'] ?? $img['urls']['medium']) ?>">1</a>
+  <?php elseif (!empty($images[0]['urls'])): ?>
+    <a href="<?=$this->escapeHtmlAttr($images[0]['urls']['large'] ?? $images[0]['urls']['medium']) ?>">1</a>
   <?php endif; ?>
   <div class="recordcover-image-detail">
     <p class="image-description">
