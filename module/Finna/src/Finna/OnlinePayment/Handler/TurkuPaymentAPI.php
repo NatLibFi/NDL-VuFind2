@@ -290,6 +290,7 @@ class TurkuPaymentAPI extends AbstractBase
     {
         $params = [];
         $required = [];
+        // Payment response is a get request and notify is a post request
         if ($request->isGet()) {
             $params = $request->getQuery()->toArray();
             $required = [
