@@ -839,6 +839,8 @@ $config = [
             ],
             'recorddriver' => [
                 'factories' => [
+                    'Finna\RecordDriver\AipaLrmi' =>
+                        'Finna\RecordDriver\AipaLrmiFactory',
                     'Finna\RecordDriver\EDS' =>
                         'VuFind\RecordDriver\NameBasedConfigFactory',
                     'Finna\RecordDriver\R2Ead3' =>
@@ -847,6 +849,8 @@ $config = [
                         'VuFind\RecordDriver\NameBasedConfigFactory',
                     'Finna\RecordDriver\SolrDefault' =>
                         'Finna\RecordDriver\SolrDefaultFactory',
+                    'Finna\RecordDriver\SolrAipa' =>
+                        'Finna\RecordDriver\SolrAipaFactory',
                     'Finna\RecordDriver\SolrAuthEaccpf' =>
                         'Finna\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrAuthForward' =>
@@ -874,6 +878,8 @@ $config = [
                     'r2ead3' => 'Finna\RecordDriver\R2Ead3',
                     'r2ead3missing' => 'Finna\RecordDriver\R2Ead3Missing',
 
+                    'AipaLrmi' => 'Finna\RecordDriver\AipaLrmi',
+                    'SolrAipa' => 'Finna\RecordDriver\SolrAipa',
                     'SolrAuthEaccpf' => 'Finna\RecordDriver\SolrAuthEaccpf',
                     'SolrAuthForwardAuthority' => 'Finna\RecordDriver\SolrAuthForward',
                     'SolrAuthMarcAuthority' => 'Finna\RecordDriver\SolrAuthMarc',
