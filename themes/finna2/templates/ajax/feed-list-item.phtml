@@ -5,7 +5,6 @@
     <?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon'], 'wrapper' => true]);?>
   <?php endif; ?>
 <?php endif; ?>
-
 <span class="title"><?php if ($item['icon']['type'] === 'title'): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?> <?=$this->escapeHtml($item['title']) ?></span>
 <?php if ($item['xcal'] ?? []): ?>
   <div class="xcal-fields">
