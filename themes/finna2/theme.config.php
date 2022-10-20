@@ -264,7 +264,10 @@ $config = [
     'icons' => [
         'aliases' => [
             'service-available' => 'FontAwesome:ok',
-            'service-unavailable' => 'FontAwesome:remove'
+            'service-unavailable' => 'FontAwesome:remove',
+            'instagram' => 'FontAwesome:instagram',
+            'twitter' => 'FontAwesome:twitter',
+            'facebook' => 'FontAwesome:facebook'
         ]
     ]
 ];

@@ -2,11 +2,11 @@
 <?php if (isset($item['image']) && isset($item['image']['url'])): ?>
   <img src="<?=$this->escapeHtmlAttr($item['image']['url']) ?>" alt="" />
   <?php if ($item['icon']['type'] === 'image'): ?>
-    <?=$this->partial('Helpers/social-icon.phtml', ['icon' => $item['icon'], 'wrapper' => true]);?>
+    <?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon'], 'wrapper' => true]);?>
   <?php endif; ?>
 <?php endif; ?>
 
-<span class="title"><?php if ($item['icon']['type'] === 'title'): ?><?=$this->partial('Helpers/social-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?> <?=$this->escapeHtml($item['title']) ?></span>
+<span class="title"><?php if ($item['icon']['type'] === 'title'): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?> <?=$this->escapeHtml($item['title']) ?></span>
 <?php if ($item['xcal'] ?? []): ?>
   <div class="xcal-fields">
     <?php if (!empty($xcal['startDate'])): ?>

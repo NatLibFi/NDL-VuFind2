@@ -8,7 +8,7 @@
     <?php endif; ?>
   </span>
   <?php if ($item['icon']['type'] === 'image'): ?>
-    <?=$this->partial('Helpers/social-icon.phtml', ['class' => 'smaller', 'icon' => $item['icon'], 'wrapper' => true]);?>
+    <?=$this->partial('Helpers/feed-icon.phtml', ['class' => 'smaller', 'icon' => $item['icon'], 'wrapper' => true]);?>
   <?php endif; ?>
 <?php endif; ?>
 <span class="grid-info">
@@ -16,7 +16,7 @@
     <div><?=$this->escapeHtml($item['dateFull']) ?></div>
   <?php endif; ?>
   <div class="title">
-    <p><?php if ($item['icon']['type'] === 'title'): ?><?=$this->partial('Helpers/social-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?> <?=$this->escapeHtml($this->truncate($item['title'], 40)) ?></p>
+    <p><?php if ($item['icon']['type'] === 'title'): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?> <?=$this->escapeHtml($this->truncate($item['title'], 40)) ?></p>
   </div>
   <?php if ($xcal = $item['xcal'] ?? []): ?>
     <?php if (!empty($xcal['startDate'])): ?>

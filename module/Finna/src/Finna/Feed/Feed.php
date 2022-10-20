@@ -33,6 +33,7 @@ use Laminas\Feed\Reader\Entry\AbstractEntry;
 use Laminas\Feed\Reader\Feed\AbstractFeed;
 use Laminas\Feed\Reader\Reader;
 use Laminas\Mvc\Controller\Plugin\Url;
+use SerialsSolutions\Summon\Laminas;
 use VuFind\Cache\Manager as CacheManager;
 use VuFindTheme\View\Helper\ImageLink;
 
@@ -388,7 +389,6 @@ EOT;
 
         $itemsCnt = $config->items ?? null;
         $elements = $config->content ?? [];
-        $showIcons = $config->showIcons ?? false;
         $allowXcal = $elements['xcal'] ?? true;
         $timeRegex = '/^(.*?)([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/';
 
@@ -550,32 +550,7 @@ EOT;
             if (!$accept) {
                 continue;
             }
-            $data['icon'] = [
-                'type' => 'none'
-            ];
-            if ($showIcons
-                && !empty($data['link'])
-                && !empty($this->mainConfig->Content->feedHostToNameMappings)
-            ) {
-                // Parse the link to know the origin
-                $comparisons
-                    = $this->mainConfig->Content->feedHostToNameMappings->toArray();
-                $parsed = parse_url($data['link']);
-                if (!empty($parsed['host'])) {
-                    foreach ($comparisons as $comparison) {
-                        [$from, $to] = explode(';', $comparison, 2);
-                        if ($parsed['host'] === $from) {
-                            $data['icon'] = [
-                                'name' => $to,
-                                'type' => !empty($data['image']['url'])
-                                    ? 'image'
-                                    : 'title'
-                            ];
-                            break;
-                        }
-                    }
-                }
-            }
+            $this->populateIcon($data, $config);
             $items[] = $data;
             $cnt++;
             if ($itemsCnt !== null && $cnt == $itemsCnt) {
@@ -644,5 +619,47 @@ EOT;
             }
         }
         return compact('channel', 'items', 'config', 'modal', 'contentPage');
+    }
+
+    /**
+     * Populate icon data for feed slide.
+     *
+     * @param array                  $data   Data for slide
+     * @param \Laminas\Config\Config $config Config for feed
+     *
+     * @return void
+     */
+    protected function populateIcon(
+        array &$data,
+        \Laminas\Config\Config $config
+    ): void {
+        $data['icon'] = [
+            'type' => 'none'
+        ];
+        if (empty($config->showIcons)
+            || empty($data['link'])
+            || empty($this->mainConfig->Content->feedHostToNameMappings)
+        ) {
+            return;
+        }
+
+        // Parse the link to know the origin
+        $comparisons
+            = $this->mainConfig->Content->feedHostToNameMappings->toArray();
+        $parsed = parse_url($data['link']);
+        if (!empty($parsed['host'])) {
+            foreach ($comparisons as $comparison) {
+                [$from, $to] = explode(';', $comparison, 2);
+                if ($parsed['host'] === $from) {
+                    $data['icon'] = [
+                        'name' => $to,
+                        'type' => !empty($data['image']['url'])
+                            ? 'image'
+                            : 'title'
+                    ];
+                    return;
+                }
+            }
+        }
     }
 }
