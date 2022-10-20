@@ -518,14 +518,12 @@ $config = [
             ],
             'auth' => [
                 'factories' => [
-                    'Finna\Auth\Database' => 'Laminas\ServiceManager\Factory\InvokableFactory',
                     'Finna\Auth\ILS' => 'VuFind\Auth\ILSFactory',
                     'Finna\Auth\MultiILS' => 'VuFind\Auth\ILSFactory',
                     'Finna\Auth\Shibboleth' => 'Finna\Auth\ShibbolethFactory',
                     'Finna\Auth\Suomifi' => 'Finna\Auth\SuomifiFactory',
                 ],
                 'aliases' => [
-                    'VuFind\Auth\Database' => 'Finna\Auth\Database',
                     'VuFind\Auth\ILS' => 'Finna\Auth\ILS',
                     'VuFind\Auth\MultiILS' => 'Finna\Auth\MultiILS',
                     'VuFind\Auth\Shibboleth' => 'Finna\Auth\Shibboleth',

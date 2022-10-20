@@ -1069,4 +1069,25 @@ i.bigger {
 .datatables-sort-both:before {
     font-family: finnaicons;
     content: "\e8bf";
-  }
+}
+
+.feed-icon-wrapper {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    font-size: 30px;
+    &.smaller {
+        width: 30px;
+        height: 30px;
+        font-size: 25px;
+    }
+    background-color: #FFFFFF;
+    border-bottom-right-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    .feed-icon {
+        color: #121212;
+    }
+}

@@ -282,7 +282,7 @@ class TurkuPaymentAPI extends AbstractBase
     /**
      * Validate and return payment response parameters.
      *
-     * @param Laminas\Http\Request $request Request
+     * @param \Laminas\Http\Request $request Request
      *
      * @return array|false
      */
@@ -290,6 +290,7 @@ class TurkuPaymentAPI extends AbstractBase
     {
         $params = [];
         $required = [];
+        $body = '';
         // Payment response is a get request and notify is a post request
         if ($request->isGet()) {
             $params = $request->getQuery()->toArray();
@@ -306,9 +307,10 @@ class TurkuPaymentAPI extends AbstractBase
             ];
         } elseif ($request->isPost()) {
             $params = $request->getHeaders()->toArray();
+            $body = $request->getContent();
             $required = [
-                'X-TURKU-SP',
-                'X-TURKU-TS',
+                'X-Turku-Sp',
+                'X-Turku-Ts',
                 'Authorization'
             ];
         } else {
@@ -330,10 +332,10 @@ class TurkuPaymentAPI extends AbstractBase
         try {
             TurkuSignature::validateHash(
                 $params,
-                '',
+                $body,
                 $params['Authorization'],
                 $this->config['secret'] ?? '',
-                $params['X-TURKU-TS'],
+                $params['X-TURKU-TS'] ?? $params['X-Turku-Ts'] ?? '',
                 $this->config['platformName']
             );
         } catch (\Exception $e) {
@@ -343,8 +345,8 @@ class TurkuPaymentAPI extends AbstractBase
             );
             return false;
         }
-
-        return $params;
+        // For POST notify request, the params needed to check are in the body
+        return $request->isGet() ? $params : json_decode($body, true);
     }
 
     /**
