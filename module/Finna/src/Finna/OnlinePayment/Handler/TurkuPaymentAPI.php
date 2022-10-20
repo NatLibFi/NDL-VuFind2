@@ -345,6 +345,7 @@ class TurkuPaymentAPI extends AbstractBase
             );
             return false;
         }
+        // For POST notify request, the params needed to check are in the body
         return $request->isGet() ? $params : json_decode($body, true);
     }
 
