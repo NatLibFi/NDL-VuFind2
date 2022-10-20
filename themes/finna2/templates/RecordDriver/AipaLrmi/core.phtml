@@ -1,45 +1,117 @@
 <!-- START of: finna - RecordDriver/AipaLrmi/core.phtml -->
 <div style="border: 1px solid lightgray; padding: 1em;">
-<h2><?= $driver->getTitle() ?></h2>
-<?php if ($descriptions = $driver->getDescriptions()): ?>
-  <div class="truncate-field wide summary recordSummary">
-    <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", $descriptions), '<br>') ?>
-  </div>
-<?php endif; ?>
-
-<?/* Display Main Details */?>
 <?php
-  $formatter = $this->recordDataFormatter();
-  $filteredFields = $formatter->filterLrmiFields($formatter->getDefaults('core'));
-  $coreFields = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
-    ['lines' => [
-      'Educational Role',
-      'Educational Level',
-      'Learning Resource Type',
-      'Educational Subject',
-      'Objective and Content',
-      'Subjects',
-      'Language',
-    ]]
-  ], $filteredFields, null, null, ['skipGroup' => true]));
-?>
-<?php if (!empty($coreFields)): ?>
-  <table class="table table-finna-record record-details record-field-groups" role="presentation">
-    <?=$this->record($driver)->renderTemplate('core-field-groups.phtml', ['data' => $coreFields]);?>
-  </table>
-<?php endif; ?>
-<?/* End Main Details */?>
+  $rights = $this->driver->getAccessRestrictionsType($this->layout()->userLang);
+  $summary = $this->driver->getSummary();
+  $externalLink = $this->driver->getExternalLink();
+  $materials = $this->driver->getMaterials($this->layout()->userLang);
+  $dateCreated = $this->driver->getDateCreated();
+  $dateModified = $this->driver->getDateModified();
+  $img = $this->recordImage($this->record($this->driver));
+  $thumbnail = false;
+  $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
+  $formats = $this->driver->getFormats();
+  ob_start(); ?>
+  <div class="media-<?=$thumbnailAlignment?>">
+    <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'displayIcon' => true, 'source' => 'L1', 'imageClick' => 'none']);?>
 
-<?php $materials = $driver->getMaterials() ?>
-<?php foreach ($materials as $material): ?>
-  <div style="border: 1px solid lightgray; padding: 1em;">
-  <?php if (isset($material['driver'])): ?>
-    <h3><?= $this->escapeHtml($material['driver']->getTitle()) ?></h3>
-    <p><?= $this->escapeHtml($material['notes']) ?></p>
-  <?php else: ?>
-    Tietuetta <?= $material['id'] ?> ei löytynyt.
-  <?php endif; ?>
+    <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
+      <div class="organisation-menu">
+        <?=$this->render('record/record-organisation-menu.phtml') ?>
+      </div>
+    <?php endif; ?>
+
+    <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
   </div>
-<?php endforeach; ?>
+  <?php $thumbnail = ob_get_contents(); ?>
+<?php ob_end_clean(); ?>
+<div class="media" vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
+  <h1 property="name" class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+  <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
+    <?=$thumbnail ?>
+  <?php endif; ?>
+  <div class="media-body record-information">
+    <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+    <?php if (!empty($formats)): ?>
+      <span class="recordFormat"><?=$this->record($this->driver)->getFormatList()?></span>
+    <?php endif; ?>
+    <div class="record-core-metadata">
+      <?php if ($results = $this->driver->getNonPresenterAuthors()): ?>
+        <div class="truncate-field recordAuthors">
+          <span property="author">
+            <?php foreach ($results as $index => $author): ?>
+              <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?><?php if (!empty($author['affiliation'])): ?>, <?= $this->escapeHtml($author['affiliation']) ?><?php endif;?></a>
+            <?php endforeach; ?>
+          </span>
+        </div>
+        <div class="date-created date-modified">
+          <span><?= $dateCreated ? $this->transEsc('Created') . ': ' . $dateCreated : '';?><?= $dateCreated && $dateModified ? ', ' : ''?><?= $dateModified ? $this->transEsc('modified') . ': ' . $dateModified : '';?></span>
+        </div>
+      <?php endif; ?>
+      <?/* Display Main Details */?>
+      <?php
+        $formatter = $this->recordDataFormatter();
+        $filteredFields = $formatter->filterLrmiFields($formatter->getDefaults('core'));
+        $coreFields = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
+            ['lines' => [
+              'Educational Role',
+              'Educational Level',
+              'Learning Resource Type',
+              'Educational Subject',
+              'Objective and Content',
+              'Subjects',
+              'Language',
+            ]]
+        ], $filteredFields, null, null, ['skipGroup' => true]));
+      ?>
+      <?php if ($rights || !empty($coreFields)): ?>
+        <table class="table table-finna-record record-details record-field-groups" role="presentation">
+          <?php if ($rights): ?>
+            <?=
+              $this->record($this->driver)->renderTemplate(
+                  'core-field-group-fields.phtml',
+                  [
+                      'data' => [
+                          [
+                              'label' => 'Image Rights',
+                              'value' => $this->partial('Helpers/copyright-field-value.phtml', ['data' => $rights])
+                          ]
+                      ]
+                  ]
+              )
+            ?>
+          <?php endif; ?>
+          <?=$this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $coreFields]);?>
+        </table>
+      <?php endif; ?>
+      <?/* End Main Details */?>
+    </div>
+
+    <?php $materials = $driver->getMaterials() ?>
+    <?php foreach ($materials as $material): ?>
+      <div style="border: 1px solid lightgray; padding: 1em;">
+      <?php if (isset($material['driver'])): ?>
+        <h3><?= $this->escapeHtml($material['driver']->getTitle()) ?></h3>
+        <p><?= $this->escapeHtml($material['notes']) ?></p>
+      <?php else: ?>
+        Tietuetta <?= $material['id'] ?> ei löytynyt.
+      <?php endif; ?>
+      </div>
+    <?php endforeach; ?>
+    <?= $this->record($this->driver)->getMaterialDisclaimer() ?>
+    <?php if (!empty($summary)): ?>
+      <div class="material-description">
+        <?= $this->escapeHtml(implode('<br>', $summary)); ?>
+      </div>
+    <?php endif; ?>
+
+    <?php if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>
+      <div>
+        <?=$this->render($template)?>
+      </div>
+    <?php endif; ?>
+  </div>
+</div>
+
 </div>
 <!-- END of: finna - RecordDriver/AipaLrmi/core.phtml -->

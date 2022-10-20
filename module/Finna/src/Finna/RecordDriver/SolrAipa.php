@@ -87,12 +87,36 @@ class SolrAipa extends SolrQdc
     protected function getLrmiDriver(\SimpleXMLElement $item): AipaLrmi
     {
         $driver = $this->driverManager->get('AipaLrmi');
-        $driver->setRawData(
-            [
-                'title' => (string)$item->title,
-                'fullrecord' => $item->asXML(),
-            ]
+
+        $data = [
+            'title' => (string)$item->title,
+            'fullrecord' => $item->asXML(),
+        ];
+
+        // Facets
+        foreach ($item->educationalAudience as $audience) {
+            $data['educational_audience_str_mv'][]
+                = (string)$audience->educationalRole;
+        }
+        $data['educational_level_str_mv'] = array_map(
+            'strval',
+            (array)($item->learningResource->educationalLevel ?? [])
         );
+        $data['educational_aim_str_mv'] = array_map(
+            'strval',
+            (array)($item->learningResource->teaches ?? [])
+        );
+        foreach ($item->learningResource->educationalAlignment ?? [] as $alignment) {
+            if ($subject = $alignment->educationalSubject ?? null) {
+                $data['educational_subject_str_mv'][] = (string)$subject;
+            }
+        }
+
+        foreach ($item->type as $type) {
+            $data['educational_material_type_str_mv'][] = (string)$type;
+        }
+
+        $driver->setRawData($data);
 
         return $driver;
     }

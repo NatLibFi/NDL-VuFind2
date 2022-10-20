@@ -61,6 +61,40 @@ class AipaLrmi extends SolrLrmi
     }
 
     /**
+     * Return the unique identifier of this record within the index;
+     * useful for retrieving additional information (like tags and user
+     * comments) from the external MySQL database.
+     *
+     * @return string Unique identifier.
+     */
+    public function getUniqueID()
+    {
+        // Not applicable to encapsulated records
+        return null;
+    }
+
+    /**
+     * Return an array of image URLs associated with this record with keys:
+     * - url         Image URL
+     * - description Description text
+     * - rights      Rights
+     *   - copyright   Copyright (e.g. 'CC BY 4.0') (optional)
+     *   - description Human readable description (array)
+     *   - link        Link to copyright info
+     *
+     * @param string $language   Language for copyright information
+     * @param bool   $includePdf Whether to include first PDF file when no image
+     * links are found
+     *
+     * @return mixed
+     */
+    public function getAllImages($language = 'fi', $includePdf = true)
+    {
+        // TODO
+        return [];
+    }
+
+    /**
      * Return array of materials with keys:
      * - id: record id
      * - driver: record driver

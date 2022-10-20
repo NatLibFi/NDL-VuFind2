@@ -63,6 +63,7 @@ class AipaLrmiFactory extends \VuFind\RecordDriver\AbstractBaseFactory
         array $options = null
     ) {
         $driver = parent::__invoke($container, $requestedName, $options);
+        $driver->attachDateConverter($container->get(\VuFind\Date\Converter::class));
         $driver->attachRecordLoader($container->get(\Finna\Record\Loader::class));
 
         return $driver;
