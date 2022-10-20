@@ -33,7 +33,6 @@ use Laminas\Feed\Reader\Entry\AbstractEntry;
 use Laminas\Feed\Reader\Feed\AbstractFeed;
 use Laminas\Feed\Reader\Reader;
 use Laminas\Mvc\Controller\Plugin\Url;
-use SerialsSolutions\Summon\Laminas;
 use VuFind\Cache\Manager as CacheManager;
 use VuFindTheme\View\Helper\ImageLink;
 
