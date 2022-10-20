@@ -632,9 +632,7 @@ EOT;
         array &$data,
         \Laminas\Config\Config $config
     ): void {
-        $data['icon'] = [
-            'type' => 'none'
-        ];
+        $data['icon'] = '';
         if (empty($config->showIcons)
             || empty($data['link'])
             || empty($this->mainConfig->Content->feedHostToNameMappings)
@@ -650,12 +648,7 @@ EOT;
             foreach ($comparisons as $comparison) {
                 [$from, $to] = explode(':', $comparison, 2);
                 if ($parsed['host'] === $from) {
-                    $data['icon'] = [
-                        'name' => $to,
-                        'type' => !empty($data['image']['url'])
-                            ? 'image'
-                            : 'title'
-                    ];
+                    $data['icon'] = $to;
                     return;
                 }
             }
