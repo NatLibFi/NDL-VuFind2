@@ -2,16 +2,16 @@
 <?php
   $clickableElement = !$this->touchDevice && !isset($this->linkText);
   $clickableLink = !$clickableElement;
-  $hasIcon = !empty($item['icon']);
+  $hasIcon = !empty($item['icon']['name']);
   $hasImg = !empty($item['image']['url']);
 ?>
-<?php if ($hasIcon && !$hasImg): ?>
+<?php if ($hasIcon && $hasImg): ?>
   <?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon'], 'wrapper' => true]);?>
 <?php endif; ?>
 <?php if (isset($item['title']) || isset($item['dateFull'])): ?>
   <div class="carousel-slide-header">
     <p>
-      <?php if ($hasIcon && $hasImg): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?> 
+      <?php if ($hasIcon && !$hasImg): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?> 
       <?php if (isset($item['title'])): ?>
         <?=$this->escapeHtml($this->truncate($item['title'], 70));?>
       <?php endif; ?>
