@@ -282,7 +282,7 @@ class TurkuPaymentAPI extends AbstractBase
     /**
      * Validate and return payment response parameters.
      *
-     * @param Laminas\Http\Request $request Request
+     * @param \Laminas\Http\Request $request Request
      *
      * @return array|false
      */
@@ -347,8 +347,7 @@ class TurkuPaymentAPI extends AbstractBase
             );
             return false;
         }
-
-        return $request->isGet() ? $params : json_decode($body);
+        return $request->isGet() ? $params : json_decode($body, true);
     }
 
     /**
