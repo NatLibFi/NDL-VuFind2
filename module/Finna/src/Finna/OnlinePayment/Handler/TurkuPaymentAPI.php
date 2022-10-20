@@ -313,8 +313,6 @@ class TurkuPaymentAPI extends AbstractBase
                 'X-Turku-Ts',
                 'Authorization'
             ];
-            // Required fields are in json format in the body...
-
         } else {
             $this->logPaymentError(
                 'The request was not POST or GET'
