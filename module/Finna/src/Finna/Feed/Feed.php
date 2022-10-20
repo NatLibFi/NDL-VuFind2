@@ -648,7 +648,7 @@ EOT;
         $parsed = parse_url($data['link']);
         if (!empty($parsed['host'])) {
             foreach ($comparisons as $comparison) {
-                [$from, $to] = explode(';', $comparison, 2);
+                [$from, $to] = explode(':', $comparison, 2);
                 if ($parsed['host'] === $from) {
                     $data['icon'] = [
                         'name' => $to,
