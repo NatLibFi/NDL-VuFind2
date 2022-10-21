@@ -93,12 +93,12 @@
     </div>
 
     <?php foreach ($materials as $material): ?>
-      <?php if (isset($material['driver'])): ?>
-        <h3><?= $this->escapeHtml($material['driver']->getTitle()) ?></h3>
-        <p><?= $this->escapeHtml($material['notes']) ?></p>
-      <?php else: ?>
-        Tietuetta <?= $material['id'] ?> ei löytynyt.
-      <?php endif; ?>
+      <?php try { ?>
+        <?= $this->record($material['id'])->getSearchResult('list') ?>
+        <p><?= $material['notes'] ?></p>
+      <?php } catch (\VuFind\Exception\RecordMissing $e) { ?>
+        <?= $this->transEsc('Cannot find record') . ': ' . $this->escapeHtmlAttr($material['id']) ?>
+      <?php } ?>
     <?php endforeach; ?>
 
     <?php if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>

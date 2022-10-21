@@ -27,9 +27,6 @@
  */
 namespace Finna\RecordDriver;
 
-use Finna\Record\Loader;
-use VuFind\Exception\RecordMissing as RecordMissingException;
-
 /**
  * Model for LRMI records encapsulated in AIPA records.
  *
@@ -41,25 +38,6 @@ use VuFind\Exception\RecordMissing as RecordMissingException;
  */
 class AipaLrmi extends SolrLrmi
 {
-    /**
-     * Record loader.
-     *
-     * @var Loader
-     */
-    protected Loader $recordLoader;
-
-    /**
-     * Attach record loader.
-     *
-     * @param Loader $recordLoader Record loader
-     *
-     * @return void
-     */
-    public function attachRecordLoader(Loader $recordLoader)
-    {
-        $this->recordLoader = $recordLoader;
-    }
-
     /**
      * Return an array of image URLs associated with this record with keys:
      * - url         Image URL
@@ -84,7 +62,6 @@ class AipaLrmi extends SolrLrmi
     /**
      * Return array of materials with keys:
      * - id: record id
-     * - driver: record driver
      * - notes: record notes
      * - position: order of listing
      *
@@ -96,16 +73,10 @@ class AipaLrmi extends SolrLrmi
         $materials = [];
         foreach ($xml->material as $material) {
             $id = (string)$material->identifier;
-            try {
-                $driver = $this->recordLoader->load($id);
-            } catch (RecordMissingException $e) {
-                $driver = null;
-            }
             $notes = (string)$material->comment;
             $position = (int)$material->position ?? 0;
             $materials[] = compact(
                 'id',
-                'driver',
                 'notes',
                 'position',
             );

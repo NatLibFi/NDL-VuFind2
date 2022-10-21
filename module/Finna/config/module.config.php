@@ -840,7 +840,7 @@ $config = [
             'recorddriver' => [
                 'factories' => [
                     'Finna\RecordDriver\AipaLrmi' =>
-                        'Finna\RecordDriver\AipaLrmiFactory',
+                        'Finna\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\EDS' =>
                         'VuFind\RecordDriver\NameBasedConfigFactory',
                     'Finna\RecordDriver\R2Ead3' =>
