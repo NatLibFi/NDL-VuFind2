@@ -1,5 +1,4 @@
 <!-- START of: finna - RecordDriver/AipaLrmi/core.phtml -->
-<div style="border: 1px solid lightgray; padding: 1em;">
 <?php
   $rights = $this->driver->getAccessRestrictionsType($this->layout()->userLang);
   $summary = $this->driver->getSummary();
@@ -48,6 +47,12 @@
           <span><?= $dateCreated ? $this->transEsc('Created') . ': ' . $dateCreated : '';?><?= $dateCreated && $dateModified ? ', ' : ''?><?= $dateModified ? $this->transEsc('modified') . ': ' . $dateModified : '';?></span>
         </div>
       <?php endif; ?>
+      <?= $this->record($this->driver)->getMaterialDisclaimer() ?>
+      <?php if (!empty($summary)): ?>
+        <div class="material-description">
+          <?= $this->escapeHtml(implode('<br>', $summary)); ?>
+        </div>
+      <?php endif; ?>
       <?/* Display Main Details */?>
       <?php
         $formatter = $this->recordDataFormatter();
@@ -87,23 +92,14 @@
       <?/* End Main Details */?>
     </div>
 
-    <?php $materials = $driver->getMaterials() ?>
     <?php foreach ($materials as $material): ?>
-      <div style="border: 1px solid lightgray; padding: 1em;">
       <?php if (isset($material['driver'])): ?>
         <h3><?= $this->escapeHtml($material['driver']->getTitle()) ?></h3>
         <p><?= $this->escapeHtml($material['notes']) ?></p>
       <?php else: ?>
         Tietuetta <?= $material['id'] ?> ei löytynyt.
       <?php endif; ?>
-      </div>
     <?php endforeach; ?>
-    <?= $this->record($this->driver)->getMaterialDisclaimer() ?>
-    <?php if (!empty($summary)): ?>
-      <div class="material-description">
-        <?= $this->escapeHtml(implode('<br>', $summary)); ?>
-      </div>
-    <?php endif; ?>
 
     <?php if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>
       <div>
@@ -111,7 +107,5 @@
       </div>
     <?php endif; ?>
   </div>
-</div>
-
 </div>
 <!-- END of: finna - RecordDriver/AipaLrmi/core.phtml -->

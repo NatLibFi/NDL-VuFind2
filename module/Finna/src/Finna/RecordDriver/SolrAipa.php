@@ -89,6 +89,7 @@ class SolrAipa extends SolrQdc
         $driver = $this->driverManager->get('AipaLrmi');
 
         $data = [
+            'id' => (string)$item->id,
             'title' => (string)$item->title,
             'fullrecord' => $item->asXML(),
         ];

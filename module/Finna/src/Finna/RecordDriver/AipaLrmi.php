@@ -61,19 +61,6 @@ class AipaLrmi extends SolrLrmi
     }
 
     /**
-     * Return the unique identifier of this record within the index;
-     * useful for retrieving additional information (like tags and user
-     * comments) from the external MySQL database.
-     *
-     * @return string Unique identifier.
-     */
-    public function getUniqueID()
-    {
-        // Not applicable to encapsulated records
-        return null;
-    }
-
-    /**
      * Return an array of image URLs associated with this record with keys:
      * - url         Image URL
      * - description Description text
@@ -88,10 +75,10 @@ class AipaLrmi extends SolrLrmi
      *
      * @return mixed
      */
-    public function getAllImages($language = 'fi', $includePdf = true)
+    public function getAllImages($language = 'fi', $includePdf = false)
     {
-        // TODO
-        return [];
+        // LRMI records encapsulated in AIPA records do not have PDF materials
+        return parent::getAllImages($language, false);
     }
 
     /**
