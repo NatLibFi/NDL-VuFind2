@@ -200,39 +200,47 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
                         // No records found, unable do determine sector
                         continue;
                     }
-                    $sector = $response['records'][0]['sectors'][0]['value'];
+                    // Check for all the sectors
+                    $sector = $response['records'][0]['sectors'];
                     $sectors[$parent['id']] = $sector;
                     $cache->setItem($cacheKey, $sectors);
                 }
                 $parent['sector'] = $sector;
             }
-            $parent['sector'] = strstr($parent['sector'], 'mus') ? 'mus' : 'lib';
-            if ($parent['sector'] !== 'mus') {
-                $libraries[] = $parent['id'];
-                continue;
+            if (!is_array($parent['sector'])) {
+                $parent['sector'] = [['value' => $parent['sector']]];
             }
-            $reqParams['orgType'] = 'museum';
-
-            try {
-                $response = $this->organisationInfo->query(
-                    $parent['id'],
-                    $reqParams,
-                    $buildings,
-                    $action
-                );
-            } catch (\Exception $e) {
-                $this->handleError(
-                    'getOrganisationInfo: error reading organisation info (parent '
-                    . print_r($parent, true) . ')',
-                    $e->getMessage()
-                );
-                continue;
-            }
-            if ($response) {
-                if ('lookup' === $action) {
-                    $museums = array_merge($museums, $response['items']);
-                } else {
-                    $museums = array_merge($museums, $response);
+            foreach ($parent['sector'] as $sector) {
+                if (empty($sector['value'])) {
+                    continue;
+                }
+                $type = strstr($sector['value'], 'mus') ? 'mus' : 'lib';
+                if ($type === 'lib') {
+                    $libraries[] = $parent['id'];
+                    continue;
+                }
+                $reqParams['orgType'] = 'museum';
+                try {
+                    $response = $this->organisationInfo->query(
+                        $parent['id'],
+                        $reqParams,
+                        $buildings,
+                        $action
+                    );
+                    if ($response) {
+                        if ('lookup' === $action) {
+                            $museums = array_merge($museums, $response['items']);
+                        } else {
+                            $museums = array_merge($museums, $response);
+                        }
+                    }
+                } catch (\Exception $e) {
+                    $this->handleError(
+                        'getOrganisationInfo: error reading organisation info (parent '
+                        . print_r($parent, true) . ')',
+                        $e->getMessage()
+                    );
+                    continue;
                 }
             }
         }

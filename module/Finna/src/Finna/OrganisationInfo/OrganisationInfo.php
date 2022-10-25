@@ -1130,7 +1130,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         $language = $this->getLanguage();
         $json = $response['museot'][0];
         $publish = $json['finna_publish'];
-        if (!$publish) {
+        if ($publish) {
             return false;
         }
         // Consortium info
