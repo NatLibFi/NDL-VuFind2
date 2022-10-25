@@ -153,7 +153,8 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             ]
                         ],
                         'identifier' => '607643',
-                        'downloadable' => false
+                        'downloadable' => false,
+                        'resourceDescription' => 'Kuvan selitys'
                     ]
                 ]
             ],

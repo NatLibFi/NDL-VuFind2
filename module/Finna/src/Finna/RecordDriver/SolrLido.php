@@ -659,10 +659,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     );
             }
         }
-        if (!empty($resourceSet->resourceDescription)) {
-            $result['description']
+        foreach ($resourceSet->resourceDescription as $desc) {
+            $result['resourceDescription']
                 = (string)$this->getLanguageSpecificItem(
-                    $resourceSet->resourceDescription,
+                    $desc,
                     $language
                 );
         }
