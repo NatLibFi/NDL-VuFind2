@@ -396,7 +396,7 @@ ol {
 }
 
 #cc-main {
-  z-index: auto !important;
+  z-index: 2000 !important;
   .cm {
     z-index: 1000;
   }
@@ -410,7 +410,10 @@ ol {
       background-size: 0%;
     }
   }
-
+  .cm-wrapper {
+    z-index: 1;
+    position: relative;
+  }
   .c--anim .cm__close,
   .c--anim .cm__btn,
   .pm__btn {
