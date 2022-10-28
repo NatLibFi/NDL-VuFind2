@@ -430,7 +430,11 @@ ol {
   .cm--bar .cm__btn {
     flex: none;
   }
-
+  @media screen and (max-width: 640px){
+    .pm--box {
+      top: @navbar-height + 1px;
+    }
+  }
   .pm__section--expandable .pm__section-arrow {
     background: none;
   }
