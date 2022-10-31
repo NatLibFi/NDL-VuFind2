@@ -224,6 +224,38 @@ CREATE TABLE `finna_record_stats_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `finna_record_view_record` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `backend` varchar(128) NOT NULL,
+  `source` varchar(255) NOT NULL,
+  `record_id` varchar(255) NOT NULL,
+  `formats` varchar(255) NOT NULL,
+  `usage_rights` varchar(255) NOT NULL,
+  `online` tinyint(1) NOT NULL,
+  `extra_metadata` mediumtext DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `backend_source_record` (`backend`(32), `source`(64), `record_id`),
+  KEY `record_source` (`source`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `finna_record_view` (
+  `institution` varchar(255) NOT NULL,
+  `view` varchar(255) NOT NULL,
+  `crawler` tinyint(1) NOT NULL,
+  `date` DATE NOT NULL,
+  `record_id` int(11) NOT NULL,
+  `count` int(11) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`institution`, `view`(128), `crawler`, `date`, `record_id`),
+  CONSTRAINT `finna_record_view_ibfk1` FOREIGN KEY (`record_id`) REFERENCES `finna_record_view_record` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
