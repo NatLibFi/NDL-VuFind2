@@ -1,6 +1,6 @@
 <?php
 /**
- * Table Definition for finna_record_view_record
+ * Table Definition for finna_record_view_inst_view
  *
  * PHP version 7
  *
@@ -27,13 +27,14 @@
  */
 namespace Finna\Db\Table;
 
-use Finna\Db\Row\FinnaRecordViewRecord as FinnaRecordViewRecordRow;
+use Finna\Db\Row\FinnaRecordStatsLog;
+use Finna\Db\Row\FinnaRecordViewInstView as FinnaRecordViewInstViewRow;
 use Laminas\Db\Adapter\Adapter;
 use VuFind\Db\Row\RowGateway;
 use VuFind\Db\Table\PluginManager;
 
 /**
- * Table Definition for finna_record_view_records
+ * Table Definition for finna_record_view_inst_view
  *
  * @category VuFind
  * @package  Db_Table
@@ -41,23 +42,8 @@ use VuFind\Db\Table\PluginManager;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
-class FinnaRecordViewRecord extends \VuFind\Db\Table\Gateway
+class FinnaRecordViewInstView extends \VuFind\Db\Table\Gateway
 {
-    /**
-     * Log entry fields to copy
-     *
-     * @var array
-     */
-    protected $logEntryFields = [
-        'backend',
-        'source',
-        'record_id',
-        'format_id',
-        'usage_rights_id',
-        'online',
-        'extra_metadata'
-    ];
-
     /**
      * Constructor
      *
@@ -72,7 +58,7 @@ class FinnaRecordViewRecord extends \VuFind\Db\Table\Gateway
         PluginManager $tm,
         $cfg,
         RowGateway $rowObj = null,
-        $table = 'finna_record_view_record'
+        $table = 'finna_record_view_inst_view'
     ) {
         parent::__construct($adapter, $tm, $cfg, $rowObj, $table);
     }
@@ -81,41 +67,27 @@ class FinnaRecordViewRecord extends \VuFind\Db\Table\Gateway
      * Retrieve an object from the database based on a log record; when requested,
      * create a new row if no existing match is found.
      *
-     * @param array $logEntry Log record
-     * @param bool  $create   Should we create records that don't already exist?
-     * @param bool  $update   Should we update any existing record as necessary?
+     * @param FinnaRecordStatsLog $logEntry Log record
+     * @param bool                $create   Should we create records that don't
+     * already exist?
      *
-     * @return ?FinnaRecordViewRecordRow
+     * @return ?FinnaRecordViewInstViewRow
      */
     public function getByLogEntry(
-        array $logEntry,
-        $create = true,
-        $update = true
-    ): ?FinnaRecordViewRecordRow {
+        FinnaRecordStatsLog $logEntry,
+        $create = true
+    ): ?FinnaRecordViewInstViewRow {
         $record = $this->select(
             [
-                'backend' => $logEntry['backend'],
-                'source' => $logEntry['source'],
-                'record_id' => $logEntry['record_id']
+                'institution' => $logEntry->institution,
+                'view' => $logEntry->view,
             ]
         )->current();
         if ($create && empty($record)) {
             $record = $this->createRow();
-            foreach ($this->logEntryFields as $field) {
-                $record[$field] = $logEntry[$field];
-            }
+            $record->institution = $logEntry->institution;
+            $record->view = $logEntry->view;
             $record->save();
-        } elseif ($update && !empty($record)) {
-            $changes = false;
-            foreach ($this->logEntryFields as $field) {
-                if ($record[$field] !== $logEntry[$field]) {
-                    $record[$field] = $logEntry[$field];
-                    $changes = true;
-                }
-            }
-            if ($changes) {
-                $record->save();
-            }
         }
         return $record;
     }

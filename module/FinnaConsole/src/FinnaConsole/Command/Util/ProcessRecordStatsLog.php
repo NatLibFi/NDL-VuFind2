@@ -29,7 +29,10 @@ namespace FinnaConsole\Command\Util;
 
 use Finna\Db\Table\FinnaRecordStatsLog;
 use Finna\Db\Table\FinnaRecordView;
+use Finna\Db\Table\FinnaRecordViewInstView;
 use Finna\Db\Table\FinnaRecordViewRecord;
+use Finna\Db\Table\FinnaRecordViewRecordFormat;
+use Finna\Db\Table\FinnaRecordViewRecordRights;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -60,6 +63,20 @@ class ProcessRecordStatsLog extends AbstractUtilCommand
     protected $recordStatsLog;
 
     /**
+     * Record view table
+     *
+     * @var FinnaRecordView
+     */
+    protected $recordView;
+
+    /**
+     * Record view institution data table
+     *
+     * @var FinnaRecordViewInstView
+     */
+    protected $recordViewInstView;
+
+    /**
      * Record view record data table
      *
      * @var FinnaRecordViewRecord
@@ -67,11 +84,32 @@ class ProcessRecordStatsLog extends AbstractUtilCommand
     protected $recordViewRecord;
 
     /**
-     * Record view table
+     * Record view record format data table
      *
-     * @var FinnaRecordView
+     * @var FinnaRecordViewRecordFormat
      */
-    protected $recordView;
+    protected $recordViewRecordFormat;
+
+    /**
+     * Record view record usage rights data table
+     *
+     * @var FinnaRecordViewRecordRights
+     */
+    protected $recordViewRecordRights;
+
+    /**
+     * Formats cache
+     *
+     * @var array
+     */
+    protected $formatCache = [];
+
+    /**
+     * Usage rights cache
+     *
+     * @var array
+     */
+    protected $usageRightsCache = [];
 
     /**
      * Record batch size to process at a time
@@ -83,18 +121,32 @@ class ProcessRecordStatsLog extends AbstractUtilCommand
     /**
      * Constructor
      *
-     * @param FinnaRecordStatsLog   $recordStatsLog   Record stats log table
-     * @param FinnaRecordViewRecord $recordViewRecord Record view record data table
-     * @param FinnaRecordView       $recordView       Record view table
+     * @param FinnaRecordStatsLog         $recordStatsLog         Record stats log
+     * table
+     * @param FinnaRecordView             $recordView             Record view table
+     * @param FinnaRecordViewInstView     $recordViewInstView     Record view
+     * institution data table
+     * @param FinnaRecordViewRecord       $recordViewRecord       Record view record
+     * data table
+     * @param FinnaRecordViewRecordFormat $recordViewRecordFormat Record view record
+     * format data table
+     * @param FinnaRecordViewRecordRights $recordViewRecordRights Record view record
+     * usage rights data table
      */
     public function __construct(
         FinnaRecordStatsLog $recordStatsLog,
+        FinnaRecordView $recordView,
+        FinnaRecordViewInstView $recordViewInstView,
         FinnaRecordViewRecord $recordViewRecord,
-        FinnaRecordView $recordView
+        FinnaRecordViewRecordFormat $recordViewRecordFormat,
+        FinnaRecordViewRecordRights $recordViewRecordRights
     ) {
         $this->recordStatsLog = $recordStatsLog;
-        $this->recordViewRecord = $recordViewRecord;
         $this->recordView = $recordView;
+        $this->recordViewInstView = $recordViewInstView;
+        $this->recordViewRecord = $recordViewRecord;
+        $this->recordViewRecordFormat = $recordViewRecordFormat;
+        $this->recordViewRecordRights = $recordViewRecordRights;
 
         parent::__construct();
     }
@@ -137,6 +189,8 @@ class ProcessRecordStatsLog extends AbstractUtilCommand
 
         $addCount = 0;
         $incCount = 0;
+        $viewRecord = null;
+        $viewInstView = null;
         do {
             $callback = function ($select) {
                 $select->where->lessThan('date', date('Y-m-d'));
@@ -144,10 +198,28 @@ class ProcessRecordStatsLog extends AbstractUtilCommand
             };
             $rows = 0;
             foreach ($this->recordStatsLog->select($callback) as $logEntry) {
-                $viewRecord = $this->recordViewRecord->getByLogEntry($logEntry);
-                $hitFields = [
-                    'institution' => $logEntry->institution,
-                    'view' => $logEntry->view,
+                if (null === $viewRecord
+                    || $viewRecord->backend !== $logEntry->backend
+                    || $viewRecord->source !== $logEntry->source
+                    || $viewRecord->record_id !== $logEntry->record_id
+                ) {
+                    $logEntryArr = $logEntry->toArray();
+                    $logEntryArr['format_id']
+                        = $this->getFormatId($logEntryArr['formats']);
+                    $logEntryArr['usage_rights_id']
+                        = $this->getUsageRightsId($logEntryArr['usage_rights']);
+                    $viewRecord
+                        = $this->recordViewRecord->getByLogEntry($logEntryArr);
+                }
+                if (null === $viewInstView
+                    || $viewInstView->institution !== $logEntry->institution
+                    || $viewInstView->view !== $logEntry->view
+                ) {
+                    $viewInstView
+                        = $this->recordViewInstView->getByLogEntry($logEntry);
+                }
+                $viewFields = [
+                    'inst_view_id' => $viewInstView->id,
                     'crawler' => $logEntry->crawler,
                     'date' => $logEntry->date,
                     'record_id' => $viewRecord->id,
@@ -159,11 +231,11 @@ class ProcessRecordStatsLog extends AbstractUtilCommand
                             'count + ' . $logEntry->count
                         )
                     ],
-                    $hitFields,
+                    $viewFields,
                 );
                 if (0 === $rowsAffected) {
                     $hit = $this->recordView->createRow();
-                    $hit->populate($hitFields);
+                    $hit->populate($viewFields);
                     $hit->count = $logEntry->count;
                     $hit->save();
                     ++$addCount;
@@ -191,5 +263,37 @@ class ProcessRecordStatsLog extends AbstractUtilCommand
         $this->msg($msg);
 
         return 0;
+    }
+
+    /**
+     * Get id for a formats string
+     *
+     * @param string $formats Formats
+     *
+     * @return int
+     */
+    protected function getFormatId(string $formats): int
+    {
+        if (!isset($this->formatCache[$formats])) {
+            $this->formatCache[$formats]
+                = $this->recordViewRecordFormat->getByFormat($formats)->id;
+        }
+        return $this->formatCache[$formats];
+    }
+
+    /**
+     * Get id for a usage rights string
+     *
+     * @param string $usageRights Usage rights
+     *
+     * @return int
+     */
+    protected function getUsageRightsId(string $usageRights): int
+    {
+        if (!isset($this->usageRightsCache[$usageRights])) {
+            $this->usageRightsCache[$usageRights]
+                = $this->recordViewRecordRights->getByUsageRights($usageRights)->id;
+        }
+        return $this->usageRightsCache[$usageRights];
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Row definition for finna_record_view
+ * Row definition for finna_record_view_record_rights
  *
  * PHP version 7
  *
@@ -28,7 +28,7 @@
 namespace Finna\Db\Row;
 
 /**
- * Row definition for finna_record_view
+ * Row definition for finna_record_view_record_rights
  *
  * @category VuFind
  * @package  Db_Table
@@ -36,7 +36,7 @@ namespace Finna\Db\Row;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class FinnaRecordView extends \VuFind\Db\Row\RowGateway
+class FinnaRecordViewRecordRights extends \VuFind\Db\Row\RowGateway
 {
     /**
      * Constructor
@@ -45,15 +45,6 @@ class FinnaRecordView extends \VuFind\Db\Row\RowGateway
      */
     public function __construct($adapter)
     {
-        parent::__construct(
-            [
-                'inst_view_id',
-                'crawler',
-                'date',
-                'record_id'
-            ],
-            'finna_record_view',
-            $adapter
-        );
+        parent::__construct('id', 'finna_record_view_record_rights', $adapter);
     }
 }
