@@ -25,6 +25,9 @@
     data-query-suppressed="<?=$querySuppressed ? '1' : '0' ?>"
     data-extra-fields="<?=$this->escapeHtml(implode(',', $extraUrlFields))?>">
 </div>
+<?php if ('usage_rights_ext_str_mv' === $title): ?>
+  <?=$this->render('Recommend/SideFacets/usage-rights-facet-info.phtml')?>
+<?php endif; ?>
 <?php
   $script = <<<JS
 $(document).ready(function () {

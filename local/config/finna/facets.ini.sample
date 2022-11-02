@@ -28,6 +28,7 @@ geographic_facet    = Region
 ;publishDate         = "adv_search_year"  ; share year string w/advanced search page
 topic_facet         = Topic
 usage_rights_str_mv = "Usage Rights"
+;usage_rights_ext_str_mv = "Usage Rights"
 hierarchy_parent_title = component_part_is_part_of
 first_indexed       = "New Items in Index"
 category_str_mv     = category_facet_heading
@@ -79,6 +80,7 @@ hierarchical[] = format
 hierarchical[] = sector_str_mv
 hierarchical[] = category_str_mv
 hierarchical[] = format_ext_str_mv
+hierarchical[] = usage_rights_ext_str_mv
 ; Sort options for hierarchical facets:
 ; How hierarchical facets are sorted. Default is result count, but alternative ways
 ; can be specified:
@@ -155,6 +157,7 @@ collapsedFacets = sector_str_mv,building,author_facet,language,original_lng_str_
 ; so if you are using facet translation, your values may not always display in
 ; the expected order.
 sorted_by_index[] = usage_rights_str_mv
+sorted_by_index[] = usage_rights_ext_str_mv
 
 ; The author home screen has different facets
 [Author]
@@ -222,6 +225,7 @@ translated_facets[] = usage_rights_str_mv
 translated_facets[] = major_genre_str_mv
 translated_facets[] = format_ext_str_mv
 translated_facets[] = hierarchy_parent_title:hierarchy
+translated_facets[] = usage_rights_ext_str_mv
 
 ; Prefix to be used in facet translation to avoid mixing facet strings with other
 ; translated content
