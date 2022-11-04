@@ -153,10 +153,10 @@ abstract class AbstractBase implements CustomElementInterface
         }
 
         // Get default variable values.
-        $variables = $this->getDefaultVariables();
+        $variables = static::getDefaultVariables();
 
         // Try to set variable values from attributes, if defined by subclass.
-        foreach ($this->getAttributeToVariableMap()
+        foreach (static::getAttributeToVariableMap()
             as $attributeName => $variableName
         ) {
             if (array_key_exists($attributeName, $attributes)) {
@@ -166,7 +166,7 @@ abstract class AbstractBase implements CustomElementInterface
 
         // Try to set variable values from options, if defined by subclass.
         // Option values overwrite attribute values when setting variables.
-        foreach ($this->getOptionToVariableMap() as $optionName => $variableName) {
+        foreach (static::getOptionToVariableMap() as $optionName => $variableName) {
             if (array_key_exists($optionName, $options)) {
                 $variables[$variableName] = $options[$optionName];
             }
