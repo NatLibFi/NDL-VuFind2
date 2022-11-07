@@ -153,10 +153,10 @@ abstract class AbstractBase implements CustomElementInterface
         }
 
         // Get default variable values.
-        $variables = $this->getDefaultVariables();
+        $variables = static::getDefaultVariables();
 
         // Try to set variable values from attributes, if defined by subclass.
-        foreach ($this->getAttributeToVariableMap()
+        foreach (static::getAttributeToVariableMap()
             as $attributeName => $variableName
         ) {
             if (array_key_exists($attributeName, $attributes)) {
@@ -166,7 +166,7 @@ abstract class AbstractBase implements CustomElementInterface
 
         // Try to set variable values from options, if defined by subclass.
         // Option values overwrite attribute values when setting variables.
-        foreach ($this->getOptionToVariableMap() as $optionName => $variableName) {
+        foreach (static::getOptionToVariableMap() as $optionName => $variableName) {
             if (array_key_exists($optionName, $options)) {
                 $variables[$variableName] = $options[$optionName];
             }
@@ -216,6 +216,16 @@ abstract class AbstractBase implements CustomElementInterface
     }
 
     /**
+     * Get the template name or null if a default template should be used.
+     *
+     * @return string|null
+     */
+    public static function getTemplateName(): ?string
+    {
+        return null;
+    }
+
+    /**
      * Get the view model for server-side rendering the element.
      *
      * @return ModelInterface
@@ -230,7 +240,7 @@ abstract class AbstractBase implements CustomElementInterface
      *
      * @return array
      */
-    protected function getDefaultVariables(): array
+    public static function getDefaultVariables(): array
     {
         return [];
     }

@@ -82,6 +82,7 @@ tabs[Details] = StaffViewArray
 defaultTab = null
 
 [Finna\RecordDriver\SolrLido]
+tabs[HierarchyTree] = HierarchyTree
 tabs[UserComments] = UserComments
 tabs[Reviews] = Reviews
 tabs[Map] = Map

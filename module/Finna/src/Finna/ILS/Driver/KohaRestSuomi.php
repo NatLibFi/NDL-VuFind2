@@ -1317,7 +1317,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
                 if ($holding['suppress'] || !empty($holding['_hasItems'])) {
                     continue;
                 }
-                $holdingData = $this->getHoldingData($holding, true);
+                $holdingData = $this->getHoldingData($holding);
                 $i++;
                 $entry = $this->createHoldingEntry($id, $holding, $i);
                 $entry += $holdingData;

@@ -44,6 +44,8 @@ use Laminas\Mvc\Controller\Plugin\Params;
 class GetAccountNotifications
     extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
 {
+    public const STATUS_HTTP_NOT_ALLOWED = 405;   // method not allowed
+
     /**
      * Handle a request.
      *
@@ -56,10 +58,10 @@ class GetAccountNotifications
         $this->disableSessionWrites();  // avoid session write timing bug
         $patron = $this->ilsAuthenticator->storedCatalogLogin();
         if (!$patron) {
-            return $this->formatResponse('', self::STATUS_HTTP_NEED_AUTH, 401);
+            return $this->formatResponse('', self::STATUS_HTTP_NEED_AUTH);
         }
         if (!$this->ils->checkCapability('getMyProfile', compact('patron'))) {
-            return $this->formatResponse('', self::STATUS_HTTP_ERROR, 405);
+            return $this->formatResponse('', self::STATUS_HTTP_NOT_ALLOWED);
         }
         $profile = $this->ils->getMyProfile($patron);
         $status = [

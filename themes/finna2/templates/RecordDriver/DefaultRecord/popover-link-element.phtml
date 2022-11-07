@@ -1,0 +1,54 @@
+<?php
+static $idIndex = 0;
+++$idIndex;
+$safeId = preg_replace('/[^a-zA-Z0-9]/', '', $this->driver->getUniqueId());
+$fieldId = "$safeId-$idIndex";
+$aAttrsBase = [
+  'class' => $this->classes,
+  'href' => '#',
+  'id' => "field-anchor-$fieldId",
+  'aria-expanded' => 'false',
+  'aria-haspopup' => 'true',
+  'aria-controls' => "field-popover-$fieldId",
+];
+$aAttributes = $this->htmlAttributes($aAttrsBase);
+$aAttributes->add('class', 'show-info');
+$aAttributes->add('title', $this->title ?: $this->translate('field_info_link_title'));
+$additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-additional-data\">{$this->additionalDataHtml}</span>" : '';
+?>
+<div class="inline-linked-field" data-ids="<?=$this->escapeHtmlAttr(json_encode($this->ids))?>" data-auth-ids="<?=$this->escapeHtmlAttr(json_encode($this->authIds))?>" data-type="<?=$this->escapeHtmlAttr($this->type)?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
+  <a<?=$aAttributes?>><span class="field-label"><?=$this->escapeHtml($this->label)?></span> <i class="fa fa-caret-down expand" aria-hidden="true"></i><i class="fa fa-caret-up collapse" aria-hidden="true"></i></a><?=$additionalDataElem?>
+  <?php if (!empty($this->description)): ?>
+    <span class="authority-description"><?="({$this->escapeHtml($this->description)})"?></span>
+  <?php endif; ?>
+  <div class="field-info field-popover" id="field-popover-<?=$this->escapeHtmlAttr($fieldId)?>">
+    <div class="content">
+      <h2><?=$this->escapeHtml($this->label)?></h2>
+      <?php foreach ($this->fieldLinks as $link): ?>
+        <a href="<?=$link['escapedUrl']?>"><?=$this->transEsc($link['linkText'])?></a><br>
+      <?php endforeach; ?>
+      <?php if ($this->ids): ?>
+        <div class="dynamic-content">
+          <i class="fa fa-spin fa-spinner" aria-hidden="true"></i>
+        </div>
+        <?php if ($this->externalLinks): ?>
+          <div class="popover-external-links">
+            <?php foreach ($this->externalLinks as $i => $link): ?>
+              <?=($i > 0) ? '<br>' : ''?>
+              <a href="<?=$this->escapeHtmlAttr($link['url'])?>" target="_blank" aria-label="<?=$this->transEscAttr($link['title'])?> (<?=$this->transEscAttr('external_link')?>; <?=$this->transEscAttr('Open in a new window')?>)">
+                <i class="fa fa-external-link"></i> <?=$this->transEsc($link['text'])?>
+              </a>
+              <?php if ($link['displayId']): ?>
+                <br>
+                <span class="external-link-identifier">
+                  <?=$this->transEsc('Inventory ID')?>: <?=$this->escapeHtml($link['displayId'])?>
+                </span>
+              <?php endif; ?>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
+      <?php endif; ?>
+    </div>
+    <a href="#" class="hide-info"><span class="link-text"><?=$this->translate('field_hide_info')?></a>
+  </div>
+</div>

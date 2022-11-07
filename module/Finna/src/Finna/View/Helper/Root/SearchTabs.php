@@ -136,78 +136,68 @@ class SearchTabs extends \VuFind\View\Helper\Root\SearchTabs
                     continue;
                 }
             }
-
-            if (isset($tab['url'])) {
-                $parts = parse_url($tab['url']);
-                $params = [];
-                if (isset($parts['query'])) {
-                    parse_str($parts['query'], $params);
-                }
-
-                // Remove search index specific URL parameters
-                $dropParams = [
-                   'page', 'set', 'sort'
-                ];
-                $resultParams = $this->results->get($this->activeSearchClass)
-                    ->getParams();
-                if (is_callable([$resultParams, 'getDateRangeSearchField'])) {
-                    $dateRangeField = $resultParams->getDateRangeSearchField();
-                    if ($dateRangeField) {
-                        $dropParams[] = "{$dateRangeField}_type";
-                    }
-                }
-                $params = array_diff_key($params, array_flip($dropParams));
-
-                $filterQuery = false;
-
-                $tabId = urlencode($tab['id']);
-                if (isset($savedSearches[$tabId])) {
-                    $helper = $this->getView()->results->getUrlQuery();
-                    $searchId = $savedSearches[$tabId];
-                    $searchSettings = $this->getSearchSettings($searchId);
-                    $targetClass = $tab['id'];
-
-                    // Make sure that tab url does not contain the
-                    // search id for the same tab.
-                    if (isset($searchSettings['params'])) {
-                        $params = array_merge($params, $searchSettings['params']);
-                    }
-
-                    if (isset($params['search'])) {
-                        $filtered = [];
-                        foreach ($params['search'] as $search) {
-                            [$searchClass, $searchId] = explode(':', $search);
-                            if ($searchClass !== $targetClass) {
-                                $filtered[] = $search;
-                            }
-                        }
-                        if (!empty($filtered)) {
-                            $params['search'] = $filtered;
-                        } else {
-                            unset($params['search']);
-                        }
-                    }
-
-                    if (isset($searchSettings['filters'])) {
-                        $filterQuery .= '&' .
-                            $helper->buildQueryString(
-                                ['filter' => $searchSettings['filters']],
-                                false
-                            );
-                    }
-                }
-                $url = $parts['path'];
-                if (!empty($params)) {
-                    $url .= '?' . http_build_query($params);
-                }
-                if ($filterQuery) {
-                    if (strstr($url, '?') === false) {
-                        $url .= '?';
-                    }
-                    $url .= $filterQuery;
-                }
-                $tab['url'] = $url;
+            if (empty($tab['url'])) {
+                continue;
             }
+
+            $parts = parse_url($tab['url']);
+            $params = [];
+            if (isset($parts['query'])) {
+                parse_str($parts['query'], $params);
+            }
+
+            // Remove search index specific URL parameters
+            $dropParams = ['page', 'set', 'sort'];
+            $resultParams = $this->results->get($this->activeSearchClass)
+                ->getParams();
+            if (is_callable([$resultParams, 'getDateRangeSearchField'])) {
+                $dateRangeField = $resultParams->getDateRangeSearchField();
+                if ($dateRangeField) {
+                    $dropParams[] = "{$dateRangeField}_type";
+                }
+            }
+            $params = array_diff_key($params, array_flip($dropParams));
+
+            $tabId = urlencode($tab['id']);
+            if (isset($savedSearches[$tabId])) {
+                $helper = $this->getView()->results->getUrlQuery();
+                $searchId = $savedSearches[$tabId];
+                $searchSettings = $this->getSearchSettings($searchId);
+                $targetClass = $tab['id'];
+
+                // Make sure that tab url does not contain the
+                // search id for the same tab.
+                if (isset($searchSettings['params'])) {
+                    $params = array_merge($params, $searchSettings['params']);
+                }
+
+                if (isset($params['search'])) {
+                    $filtered = [];
+                    foreach ($params['search'] as $search) {
+                        [$searchClass, $searchId] = explode(':', $search);
+                        if ($searchClass !== $targetClass) {
+                            $filtered[] = $search;
+                        }
+                    }
+                    if (!empty($filtered)) {
+                        $params['search'] = $filtered;
+                    } else {
+                        unset($params['search']);
+                    }
+                }
+
+                if (!empty($searchSettings['filters'])) {
+                    $params['filter'] = array_merge(
+                        $params['filter'] ?? [],
+                        $searchSettings['filters']
+                    );
+                }
+            }
+            $url = $parts['path'];
+            if (!empty($params)) {
+                $url .= '?' . http_build_query($params);
+            }
+            $tab['url'] = $url;
         }
         return $tabConfig;
     }

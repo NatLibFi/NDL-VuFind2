@@ -77,7 +77,7 @@
         $coreFields = $formatter->getData($driver, $coreFields);
       ?>
       <?php if (!empty($coreFields)): ?>
-        <table class="table table-finna-record record-details">
+        <table class="table table-finna-record record-details" role="presentation">
           <?=$this->record($this->driver)->renderTemplate('core-fields.phtml', ['coreFields' => $coreFields]);?>
         </table>
       <?php endif; ?>

@@ -27,8 +27,6 @@
  */
 namespace Finna\Config;
 
-use VuFind\Config\Locator;
-
 /**
  * VuFind YAML Configuration Reader
  *
@@ -40,37 +38,6 @@ use VuFind\Config\Locator;
  */
 class YamlReader extends \VuFind\Config\YamlReader
 {
-    /**
-     * Return a configuration
-     *
-     * @param string  $filename        Config file name
-     * @param boolean $useLocalConfig  Use local configuration if available
-     * @param boolean $ignoreFileCache Read from file even if config has been cached.
-     *
-     * @return array
-     */
-    public function get($filename, $useLocalConfig = true, $ignoreFileCache = false)
-    {
-        // Load data if it is not already in the object's cache:
-        if ($ignoreFileCache || !isset($this->files[$filename])) {
-            if ($useLocalConfig) {
-                $localFile = Locator::getLocalConfigPath($filename);
-                if (!file_exists($localFile)) {
-                    $localFile
-                        = Locator::getLocalConfigPath($filename, 'config/finna');
-                }
-            } else {
-                $localFile = null;
-            }
-            $this->files[$filename] = $this->getFromPaths(
-                Locator::getBaseConfigPath($filename),
-                $localFile
-            );
-        }
-
-        return $this->files[$filename];
-    }
-
     /**
      * Return a Finna configuration (Finna default or view specific)
      *
@@ -92,7 +59,8 @@ class YamlReader extends \VuFind\Config\YamlReader
                 ? $this->cacheManager->getCache($this->cacheName) : false;
 
             // Determine full configuration file path:
-            $fullpath = Locator::getLocalConfigPath($filename, $localDir);
+            $fullpath
+                = $this->pathResolver->getLocalConfigPath($filename, $localDir);
 
             // Generate cache key:
             $cacheKey = $filename . '-'

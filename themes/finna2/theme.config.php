@@ -3,6 +3,7 @@ $config = [
     'extends' => 'bootstrap3',
     'helpers' => [
         'factories' => [
+            'Finna\View\Helper\Root\AdjustHeadingLevel' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\Auth' => 'Finna\View\Helper\Root\AuthFactory',
             'Finna\View\Helper\Root\AuthorizationNotification' => 'Finna\View\Helper\Root\AuthorizationNotificationFactory',
             'Finna\View\Helper\Root\Authority' => 'Finna\View\Helper\Root\AuthorityFactory',
@@ -17,6 +18,7 @@ $config = [
             'Finna\View\Helper\Root\Config' => 'VuFind\View\Helper\Root\ConfigFactory',
             'Finna\View\Helper\Root\Content' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\Cookie' => 'Finna\View\Helper\Root\CookieFactory',
+            'Finna\View\Helper\Root\CookieConsent' => 'VuFind\View\Helper\Root\CookieConsentFactory',
             'Finna\View\Helper\Root\CustomElement' => 'Finna\View\Helper\Root\CustomElementFactory',
             'Finna\View\Helper\Root\EDS' => 'Finna\View\Helper\Root\EDSFactory',
             'Finna\View\Helper\Root\Feed' => 'Finna\View\Helper\Root\FeedFactory',
@@ -26,7 +28,8 @@ $config = [
             'Finna\View\Helper\Root\FinnaSurvey' => 'Finna\View\Helper\Root\HelperWithMainConfigFactory',
             'Finna\View\Helper\Root\Followup' => 'Finna\View\Helper\Root\FollowupFactory',
             'Finna\View\Helper\Root\HtmlElement' => 'Laminas\ServiceManager\Factory\InvokableFactory',
-            'Finna\View\Helper\Root\Holdings' => 'Finna\View\Helper\Root\HelperWithMainConfigFactory',
+            'Finna\View\Helper\Root\Holdings' => 'VuFind\View\Helper\Root\HoldingsFactory',
+            'Finna\View\Helper\Root\Iframe' => 'Finna\View\Helper\Root\IframeFactory',
             'Finna\View\Helper\Root\ImageSrc' => 'Finna\View\Helper\Root\HelperWithThemeInfoFactory',
             'Finna\View\Helper\Root\LayoutClass' => 'VuFind\View\Helper\Bootstrap3\LayoutClassFactory',
             'Finna\View\Helper\Root\LinkedEventsTabs' => 'Laminas\ServiceManager\Factory\InvokableFactory',
@@ -36,7 +39,7 @@ $config = [
             'Finna\View\Helper\Root\Navibar' => 'Finna\View\Helper\Root\NavibarFactory',
             'Finna\View\Helper\Root\R2' => 'Finna\View\Helper\Root\R2Factory',
             'Finna\View\Helper\Root\OnlinePayment' => 'Laminas\ServiceManager\Factory\InvokableFactory',
-            'Finna\View\Helper\Root\OpenUrl' => 'Finna\View\Helper\Root\OpenUrlFactory',
+            'Finna\View\Helper\Root\OpenUrl' => 'VuFind\View\Helper\Root\OpenUrlFactory',
             'Finna\View\Helper\Root\OrganisationDisplayName' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\OrganisationInfo' => 'Finna\View\Helper\Root\OrganisationInfoFactory',
             'Finna\View\Helper\Root\OrganisationsList' => 'Finna\View\Helper\Root\OrganisationsListFactory',
@@ -72,6 +75,7 @@ $config = [
             'VuFind\View\Helper\Root\Linkify' => 'Finna\View\Helper\Root\LinkifyFactory',
         ],
         'aliases' => [
+            'adjustHeadingLevel' => 'Finna\View\Helper\Root\AdjustHeadingLevel',
             'auth' => 'Finna\View\Helper\Root\Auth',
             'authority' => 'Finna\View\Helper\Root\Authority',
             'authorizationNote' => 'Finna\View\Helper\Root\AuthorizationNotification',
@@ -83,6 +87,7 @@ $config = [
             'combined' => 'Finna\View\Helper\Root\Combined',
             'content' => 'Finna\View\Helper\Root\Content',
             'cookie' => 'Finna\View\Helper\Root\Cookie',
+            'cookieConsent' => 'Finna\View\Helper\Root\CookieConsent',
             'customElement' => 'Finna\View\Helper\Root\CustomElement',
             'eds' => 'Finna\View\Helper\Root\EDS',
             'feed' => 'Finna\View\Helper\Root\Feed',
@@ -91,12 +96,12 @@ $config = [
             'fileSrc' => 'Finna\View\Helper\Root\FileSrc',
             'finnaSurvey' => 'Finna\View\Helper\Root\FinnaSurvey',
             'followup' => 'Finna\View\Helper\Root\Followup',
-            'holdings' => 'Finna\View\Helper\Root\Holdings',
             // For back-compatibility
             'holdingsSettings' => 'Finna\View\Helper\Root\Holdings',
             'htmlElement' => 'Finna\View\Helper\Root\HtmlElement',
             //use root highlight so search results use span instead of mark
             'highlight' => 'VuFind\View\Helper\Root\Highlight',
+            'iframe' => 'Finna\View\Helper\Root\Iframe',
             'imageSrc' => 'Finna\View\Helper\Root\ImageSrc',
             'indexedTotal' => 'Finna\View\Helper\Root\TotalIndexed',
             'linkedEventsTabs' => 'Finna\View\Helper\Root\LinkedEventsTabs',
@@ -131,6 +136,7 @@ $config = [
             'VuFind\View\Helper\Root\Browse' => 'Finna\View\Helper\Root\Browse',
             'VuFind\View\Helper\Root\Citation' => 'Finna\View\Helper\Root\Citation',
             'VuFind\View\Helper\Root\Config' => 'Finna\View\Helper\Root\Config',
+            'VuFind\View\Helper\Root\Holdings' => 'Finna\View\Helper\Root\Holdings',
             'VuFind\View\Helper\Root\Matomo' => 'Finna\View\Helper\Root\Matomo',
             'VuFind\View\Helper\Root\OpenUrl' => 'Finna\View\Helper\Root\OpenUrl',
             'VuFind\View\Helper\Root\Piwik' => 'Finna\View\Helper\Root\Piwik',
@@ -181,6 +187,7 @@ $config = [
         'cart.js',
         'check_item_statuses.js',
         'check_save_statuses.js',
+        'checkouts.js',
         'collection_record.js',
         'combined-search.js',
         'embedded_record.js',
@@ -256,6 +263,15 @@ $config = [
         'active' => false
     ],
     'favicon' => 'favicon.ico',
+    'icons' => [
+        'aliases' => [
+            'service-available' => 'FontAwesome:ok',
+            'service-unavailable' => 'FontAwesome:remove',
+            'instagram' => 'FontAwesome:instagram',
+            'twitter' => 'FontAwesome:twitter',
+            'facebook' => 'FontAwesome:facebook'
+        ]
+    ]
 ];
 include 'components.config.php';
 return $config;

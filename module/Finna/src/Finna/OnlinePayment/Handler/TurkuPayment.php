@@ -37,6 +37,8 @@ use Finna\OnlinePayment\Handler\Connector\TurkuPayment\TurkuPaytrailE2;
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ *
+ * @deprecated Use TurkuPaymentAPI
  */
 class TurkuPayment extends AbstractBase
 {

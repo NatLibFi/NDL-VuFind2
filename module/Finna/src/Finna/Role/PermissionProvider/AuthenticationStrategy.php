@@ -148,6 +148,7 @@ class AuthenticationStrategy implements PermissionProviderInterface
             ? 'getPatronStaffAuthorizationStatus' : 'getPatronAuthorizationStatus';
         $code = $staff ? 'staff' : 'patron';
 
+        $key = null;
         try {
             if (($user = $this->authManager->isLoggedIn())
                 && !empty($user->cat_username)
@@ -172,7 +173,9 @@ class AuthenticationStrategy implements PermissionProviderInterface
                 return $this->sessionContainer->{$code}[$key];
             }
         } catch (ILSException $e) {
-            $this->sessionContainer->{$code}->{$key} = null;
+            if (null !== $key) {
+                $this->sessionContainer->{$code}->{$key} = null;
+            }
         }
         return false;
     }

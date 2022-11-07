@@ -12,7 +12,7 @@
   }
   if (null !== $author):
 ?>
-  <?=$this->record($record)->getAuthorityLinkElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?><br/>
+  <?=$this->record($record)->getLinkedFieldElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?><br/>
 <?php elseif (false === $authors):?>
   <?php
     // Fallback for missing records that don't support getNonPresenterAuthors/getPresenters

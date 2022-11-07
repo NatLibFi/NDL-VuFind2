@@ -38,6 +38,8 @@ use VuFind\Exception\MissingField as MissingFieldException;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
+ *
+ * @property string $finna_updated
  */
 class UserList extends \VuFind\Db\Row\UserList
 {

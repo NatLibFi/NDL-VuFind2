@@ -46,6 +46,17 @@ onlinePayment['handler'] = 'Paytrail'
 ; E2 interface url (optional, default is https://payment.paytrail.com/e2):
 ;onlinePayment['e2url'] = '...'
 
+; ### Turku Payment API (Current interface)
+;onlinePayment['handler'] = "TurkuPaymentAPI"
+;onlinePayment['url'] = "..."
+;onlinePayment['oId'] = "..."
+;onlinePayment['platformName'] = "..."
+;onlinePayment['sapCode'] = "..."
+;onlinePayment['sapOfficeCode'] = "..."
+;onlinePayment['sapSalesOrganization'] = "..."
+;onlinePayment['sapDistributionChannel'] = "..."
+;onlinePayment['sapSector'] = "..."
+
 ; ## Common settings for all services:
 
 ; Merchant identifier:

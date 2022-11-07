@@ -637,7 +637,7 @@ class BackendTest extends TestCase
         $expectedEDS = 65924;
 
         $params = $this->getSearchParams([]);
-        $result = $backend->search($query ?? new Query(), 0, 0, $params);
+        $result = $backend->search(new Query(), 0, 0, $params);
         $this->assertEquals([], $result->getErrors());
         $this->assertEquals($expectedSolr + $expectedEDS, $result->getTotal());
 
@@ -1116,11 +1116,18 @@ class BackendTest extends TestCase
         $map = new \VuFindSearch\Backend\Solr\HandlerMap(
             ['select' => ['fallback' => true]]
         );
-        $client = $this->createMock(\Laminas\Http\Client::class);
         $connector
             = $this->getMockBuilder(\VuFindSearch\Backend\Solr\Connector::class)
             ->onlyMethods(['query'])
-            ->setConstructorArgs(['http://localhost/', $map, $client])
+            ->setConstructorArgs(
+                [
+                    'http://localhost/',
+                    $map,
+                    function () {
+                        return $this->createMock(\Laminas\Http\Client::class);
+                    }
+                ]
+            )
             ->getMock();
         $connector->expects($this->any())
             ->method('query')

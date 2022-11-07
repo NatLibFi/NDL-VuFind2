@@ -1,6 +1,23 @@
 .external-data {
-    margin-bottom: 15px;
     width: 100%;
+
+    .fa-chevron-up, .fa-chevron-down {
+        font-size: .80em;
+        vertical-align: middle;
+    }
+    &.collapsible {
+        .toggle-expand {
+            display: none;
+        }
+        &.collapsed {
+          .toggle-collapse {
+              display: none;
+          }
+          .toggle-expand {
+              display: initial;
+          }
+       }
+    }
 
     thead {
         display: block;
@@ -16,8 +33,10 @@
         clear: both;
         overflow: hidden;
         &:not(.info) {
-            padding: 10px;
-
+            padding: 10px 10px 10px 20px;
+        }
+        &.external-data-headers {
+            padding-left: 5px;
         }
         &:nth-child(even):not(.info) {
             background-color: @gray-ultralight;
@@ -29,10 +48,26 @@
             &.tbl-left {
                 float: left;
                 width: 40%;
+                font-size: 1.5m;
+                font-weight: 600;
             }
             &.tbl-right {
                 float: right;
                 width: 60%;
+            }
+        }
+        .tbl-row:not(.external-data-headers) {
+            .tbl-left, .tbl-right {
+                @media (max-width: @screen-xs-max) {
+                    width: 100%;
+                }
+            }
+        }
+        .tbl-row.external-data-headers {
+            .tbl-left, .tbl-right {
+                @media (max-width: @screen-xs-max) {
+                    width: 50%;
+                }
             }
         }
     }
@@ -72,5 +107,22 @@
             white-space: nowrap;
             padding: 2px 5px;
         }
+    }
+    border: 1px @gray-lighter solid;
+    .format-info {
+        margin-left: 15px;
+    }
+    &.external-data-heading.collapsed {
+        .tbl-row:not(.external-data-headers), .format-info {
+            display: none;
+        }
+    }
+}
+.external-data-feedback {
+    margin: 5px 0 5px 5px;
+    a.btn {
+        text-align: left;
+        white-space: normal;
+        padding: 6px 12px;
     }
 }

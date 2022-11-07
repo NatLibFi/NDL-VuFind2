@@ -130,15 +130,12 @@ class GetFacetData extends \VuFind\AjaxHandler\GetFacetData
         $result = parent::handleRequest($params);
 
         $facet = $params->fromQuery('facetName');
-        if (empty($this->facetConfig->FacetFilters->$facet)
-            && empty($this->facetConfig->ExcludeFilters->$facet)
+        if ((empty($this->facetConfig->FacetFilters->$facet)
+            && empty($this->facetConfig->ExcludeFilters->$facet))
+            || empty($result[0]['facets'])
         ) {
             return $result;
         }
-
-        // Filter facet array. Need to decode the JSON response, which is not quite
-        // optimal..
-        $resultContent = json_decode($result[0], true);
 
         $facet = $params->fromQuery('facetName');
         $filters = !empty($this->facetConfig->FacetFilters->$facet)
@@ -148,13 +145,12 @@ class GetFacetData extends \VuFind\AjaxHandler\GetFacetData
             ? $this->facetConfig->ExcludeFilters->$facet->toArray()
             : [];
 
-        $resultContent['data'] = $this->facetHelper->filterFacets(
-            $resultContent['data'],
+        $result[0]['facets'] = $this->facetHelper->filterFacets(
+            $result[0]['facets'],
             $filters,
             $excludeFilters
         );
 
-        $result[0] = json_encode($resultContent);
         return $result;
     }
 }

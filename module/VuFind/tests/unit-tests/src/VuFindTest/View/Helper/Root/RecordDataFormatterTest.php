@@ -27,7 +27,7 @@
  */
 namespace VuFindTest\View\Helper\Root;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use VuFind\View\Helper\Root\RecordDataFormatter;
 use VuFind\View\Helper\Root\RecordDataFormatterFactory;
 
@@ -44,6 +44,7 @@ class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
 {
     use \VuFindTest\Feature\FixtureTrait;
     use \VuFindTest\Feature\ViewTrait;
+    use \VuFindTest\Feature\PathResolverTrait;
 
     /**
      * Get a mock record router.
@@ -77,12 +78,12 @@ class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
                 $this->getMockBuilder(\VuFind\Auth\ILSAuthenticator::class)->disableOriginalConstructor()->getMock()
             ),
             'context' => $context,
+            'config' => new \VuFind\View\Helper\Root\Config($container->get(\VuFind\Config\PluginManager::class)),
             'doi' => new \VuFind\View\Helper\Root\Doi($context),
             'icon' => new \VuFind\View\Helper\Root\Icon(
                 [],
                 new \Laminas\Cache\Storage\Adapter\BlackHole(),
                 new \Laminas\View\Helper\EscapeHtmlAttr(),
-                new \Laminas\View\Helper\HeadLink()
             ),
             'openUrl' => new \VuFind\View\Helper\Root\OpenUrl($context, [], $this->getMockBuilder(\VuFind\Resolver\Driver\PluginManager::class)->disableOriginalConstructor()->getMock()),
             'proxyUrl' => new \VuFind\View\Helper\Root\ProxyUrl(),
@@ -150,6 +151,7 @@ class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
             \VuFind\Config\PluginManager::class,
             new \VuFind\Config\PluginManager($container)
         );
+        $this->addPathResolverToContainer($container);
         $formatter = $factory($container, RecordDataFormatter::class);
 
         // Create a view object with a set of helpers:

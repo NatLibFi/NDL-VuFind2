@@ -97,21 +97,13 @@ class RecordController extends \VuFind\Controller\RecordController
     protected function getRecordForm($id)
     {
         $driver = $this->loadRecord();
-        $recordPlugin = $this->getViewRenderer()->plugin('record');
-
-        $data = [
-           'record' => $driver->getBreadcrumb(),
-           'record_info' => $recordPlugin($driver)->getEmail()
-        ];
-
         return $this->redirect()->toRoute(
             'feedback-form',
             ['id' => $id],
             ['query' => [
-                'data' => $data,
                 'layout' => $this->getRequest()->getQuery('layout', false),
                 'record_id'
-                => $driver->getSourceIdentifier() . '|' . $driver->getUniqueID()
+                    => $driver->getSourceIdentifier() . '|' . $driver->getUniqueID()
             ]]
         );
     }

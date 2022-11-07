@@ -1,0 +1,14 @@
+<?php if ($embed): ?>
+  <?php
+    $attrs = [
+      'class' => 'twitter-timeline',
+      'data-width' => $this->width,
+      'data-height' => $this->height,
+      'href' => 'https://twitter.com/' . rawurlencode($this->screenName)
+    ];
+  ?>
+  <?=$this->makeTag('a', 'Tweets by ' . $this->screenName, $attrs)?>
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8" nonce="<?=$this->cspNonce()?>"></script>
+<?php else: ?>
+  <?=$this->context($this)->renderinContext('Helpers/iframe.phtml', ['embed' => false, 'serviceBaseUrl' => 'https://twitter.com', 'serviceUrl' => 'https://twitter.com/' . rawurlencode($this->screenName)])?>
+<?php endif; ?>

@@ -50,7 +50,7 @@
     <div>
       <?php if ($list): ?>
         <div class="useraccount-header">
-          <h2 class="list-title"><i class="list-title-edit fa fa-pen"></i><span><?=$this->escapeHtml($list->title)?></span></h2>
+          <h2 class="list-title"><i class="list-title-edit fa fa-pen" aria-label="<?=$this->transEscAttr('edit')?>"></i><span><?=$this->escapeHtml($list->title)?></span></h2>
         </div>
         <?php if ($list && $user && $list->user_id === $user->id && $list->public): ?>
           <div class="list-public-indicator">
@@ -74,7 +74,7 @@
 
             <div class="edit-tags">
               <div class="toggle" title="<?=$this->transEscAttr('edit-list-tags')?>">
-                <span><?=$this->transEsc('edit-list-tags')?> </span><i aria-hidden="true" class="fa fa-tag"></i>
+                <span><?=$this->transEsc('edit-list-tags')?> </span><i aria-hidden="true" class="fa fa-tag" aria-label="<?=$this->transEscAttr('edit-list-tags')?>"></i>
               </div>
               <div class="ui">
                 <p class="info"><i aria-hidden="true" class="fa fa-info"></i> <?=$this->transEsc('add-list-tag-note')?></p>

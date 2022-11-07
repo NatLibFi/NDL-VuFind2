@@ -1,0 +1,13 @@
+<?php //Don't add START and END comments ?>
+<?php
+    if (empty($data) || !is_array($data)) {
+        return;
+    }
+?>
+<div class="truncate-field" data-rows="5">
+    <?php foreach ($data as $line): ?>
+        <?php if (!empty($line['notes'])): ?>
+            <?=$this->escapeHtml($line['notes']) ?><br/>
+        <?php endif; ?>
+    <?php endforeach; ?>
+</div>

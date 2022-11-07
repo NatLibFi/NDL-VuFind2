@@ -56,7 +56,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      * @var array
      */
     protected $imageSizeMappings = [
-        'THUMBNAIL' => 'small',
+        'thumbnail' => 'small',
         'square' => 'small',
         'small' => 'small',
         'medium' => 'medium',
@@ -228,18 +228,23 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         $addToResults = function ($imageData) use (&$results) {
             if (!isset($imageData['urls']['small'])) {
                 $imageData['urls']['small'] = $imageData['urls']['medium']
-                    ?? $imageData['urls']['large'];
+                    ?? $imageData['urls']['large']
+                    ?? $imageData['urls']['original'];
             }
             if (!isset($imageData['urls']['medium'])) {
                 $imageData['urls']['medium'] = $imageData['urls']['small'];
             }
+            if (!isset($imageData['urls']['large'])) {
+                $imageData['urls']['large'] = $imageData['urls']['medium'];
+            }
+            $imageData['downloadable'] = $this->allowRecordImageDownload($imageData);
             $results[] = $imageData;
         };
 
         foreach ($xml->file as $node) {
             $attributes = $node->attributes();
-            $type = $attributes->type ?? '';
-            if (!empty($attributes->type)
+            $type = (string)($attributes->type ?? '');
+            if ($type
                 && !in_array($type, array_keys($this->imageMimeTypes))
             ) {
                 continue;
@@ -251,8 +256,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                 continue;
             }
 
-            $bundle = (string)$attributes->bundle;
-            if ($bundle === 'THUMBNAIL' && !$otherSizes) {
+            $bundle = strtolower((string)$attributes->bundle);
+            if ($bundle === 'thumbnail' && !$otherSizes) {
                 // Lets see if the record contains only thumbnails
                 $thumbnails[] = $url;
             } else {
@@ -384,6 +389,23 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get identifier
+     *
+     * @return array
+     */
+    public function getIdentifier()
+    {
+        $xml = $this->getXmlRecord();
+        foreach ($xml->identifier ?? [] as $identifier) {
+            // Inventory number
+            if ((string)$identifier['type'] === 'wikidata:P217') {
+                return [trim((string)$identifier)];
+            }
+        }
+        return [];
+    }
+
+    /**
      * Get identifiers as an array
      *
      * @return array
@@ -412,7 +434,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                 // Leave out some obvious matches like urls or urns
                 if (!preg_match('{(^urn:|^https?)}i', $trimmed)) {
                     $detail = (string)$identifier['type'];
-                    $data = $identifier;
+                    $data = trim((string)$identifier);
                     $results[] = compact('data', 'detail');
                 }
             }

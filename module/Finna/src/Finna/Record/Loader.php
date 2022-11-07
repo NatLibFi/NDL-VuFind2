@@ -112,6 +112,7 @@ class Loader extends \VuFind\Record\Loader
                 'Record ' . $source . ':' . $id . ' does not exist.'
             );
         }
+        $result = null;
         $missingException = false;
         try {
             $result = parent::load($id, $source, $tolerateMissing, $params);
@@ -129,6 +130,11 @@ class Loader extends \VuFind\Record\Loader
         }
         if ($missingException) {
             throw $missingException;
+        }
+        if (null === $result) {
+            throw new RecordMissingException(
+                'Record ' . $source . ':' . $id . ' does not exist.'
+            );
         }
 
         if ($this->preferredLanguage) {

@@ -92,7 +92,7 @@ class SolrAuthForward extends SolrAuthDefault
     /**
      * Return birth date.
      *
-     * @param boolean $force Return established date for corporations?
+     * @param bool $force Return established date for corporations?
      *
      * @return string
      */
@@ -107,7 +107,7 @@ class SolrAuthForward extends SolrAuthDefault
     /**
      * Return birth place.
      *
-     * @param boolean $force Return established date for corporations?
+     * @param bool $force Return established date for corporations?
      *
      * @return string
      */
@@ -124,7 +124,7 @@ class SolrAuthForward extends SolrAuthDefault
     /**
      * Return death date.
      *
-     * @param boolean $force Return terminated date for corporations?
+     * @param bool $force Return terminated date for corporations?
      *
      * @return string
      */
@@ -139,7 +139,7 @@ class SolrAuthForward extends SolrAuthDefault
     /**
      * Return death place.
      *
-     * @param boolean $force Return terminated date for corporations?
+     * @param bool $force Return terminated date for corporations?
      *
      * @return string
      */
@@ -195,9 +195,11 @@ class SolrAuthForward extends SolrAuthDefault
     /**
      * Allow record image to be downloaded?
      *
+     * @param array $image Image to check
+     *
      * @return boolean
      */
-    public function allowRecordImageDownload()
+    public function allowRecordImageDownload(array $image = []): bool
     {
         return false;
     }

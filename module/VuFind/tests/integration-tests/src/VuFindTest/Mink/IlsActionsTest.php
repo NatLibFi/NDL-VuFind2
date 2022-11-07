@@ -58,20 +58,6 @@ final class IlsActionsTest extends \VuFindTest\Integration\MinkTestCase
     }
 
     /**
-     * Standard setup method.
-     *
-     * @return void
-     */
-    public function setUp(): void
-    {
-        // Give up if we're not running in CI:
-        if (!$this->continuousIntegrationRunning()) {
-            $this->markTestSkipped('Continuous integration not running.');
-            return;
-        }
-    }
-
-    /**
      * Get config.ini override settings for testing ILS functions.
      *
      * @return array
@@ -101,25 +87,6 @@ final class IlsActionsTest extends \VuFindTest\Integration\MinkTestCase
         $page = $session->getPage();
         $this->waitForPageLoad($page);
         return $page;
-    }
-
-    /**
-     * Fill in and submit the catalog login form with the provided credentials.
-     *
-     * @param Element $page     Page element.
-     * @param string  $username Username
-     * @param string  $password Password
-     *
-     * @return void
-     */
-    protected function submitCatalogLoginForm(
-        Element $page,
-        string $username,
-        string $password
-    ): void {
-        $this->findCss($page, '#profile_cat_username')->setValue($username);
-        $this->findCss($page, '#profile_cat_password')->setValue($password);
-        $this->clickCss($page, 'input.btn.btn-primary');
     }
 
     /**
@@ -551,6 +518,7 @@ final class IlsActionsTest extends \VuFindTest\Integration\MinkTestCase
 
         // Test submitting with no selected checkboxes:
         $this->clickCss($page, '#renewSelected');
+        $this->clickButtonGroupLink($page, 'Yes');
         $this->assertEquals(
             'No items were selected',
             $this->findCss($page, '.alert.alert-danger')->getText()
@@ -558,6 +526,7 @@ final class IlsActionsTest extends \VuFindTest\Integration\MinkTestCase
 
         // Test "renew all":
         $this->clickCss($page, '#renewAll');
+        $this->clickButtonGroupLink($page, 'Yes');
         $this->assertEquals(
             'Renewal Successful',
             $this->findCss($page, '.alert.alert-success')->getText()

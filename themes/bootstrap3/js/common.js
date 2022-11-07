@@ -143,7 +143,7 @@ var VuFind = (function VuFind() {
   var loading = function loading(text = null, extraClass = "") {
     let className = ("loading-spinner " + extraClass).trim();
     let string = translate(text === null ? 'loading_ellipsis' : text);
-    return '<span class="' + className + '">' + icon('spinner') + string + '</span>';
+    return '<span class="' + className + '">' + icon('spinner') + ' ' + string + '</span>';
   };
 
   /**
@@ -190,6 +190,10 @@ var VuFind = (function VuFind() {
     });
   };
 
+  var isPrinting = function() {
+    return Boolean(window.location.search.match(/[?&]print=/));
+  };
+
   //Reveal
   return {
     defaultSearchBackend: defaultSearchBackend,
@@ -201,6 +205,7 @@ var VuFind = (function VuFind() {
     emit: emit,
     getCspNonce: getCspNonce,
     icon: icon,
+    isPrinting: isPrinting,
     listen: listen,
     refreshPage: refreshPage,
     register: register,

@@ -48,6 +48,7 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
         'Paytrail' => Paytrail::class,
         'PaytrailPaymentAPI' => PaytrailPaymentAPI::class,
         'TurkuPayment' => TurkuPayment::class,
+        'TurkuPaymentAPI' => TurkuPaymentAPI::class,
     ];
 
     /**
@@ -60,6 +61,7 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
         Paytrail::class => AbstractBaseFactory::class,
         PaytrailPaymentAPI::class => AbstractBaseFactory::class,
         TurkuPayment::class => AbstractBaseFactory::class,
+        TurkuPaymentAPI::class => AbstractBaseFactory::class,
     ];
 
     /**

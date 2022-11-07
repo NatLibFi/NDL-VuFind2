@@ -2,10 +2,16 @@
 <?php
   $clickableElement = !$this->touchDevice && !isset($this->linkText);
   $clickableLink = !$clickableElement;
+  $hasIcon = !empty($item['icon']['name']);
+  $hasImg = !empty($item['image']['url']);
 ?>
+<?php if ($hasIcon && $hasImg): ?>
+  <?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon'], 'wrapper' => true]);?>
+<?php endif; ?>
 <?php if (isset($item['title']) || isset($item['dateFull'])): ?>
   <div class="carousel-slide-header">
     <p>
+      <?php if ($hasIcon && !$hasImg): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?> 
       <?php if (isset($item['title'])): ?>
         <?=$this->escapeHtml($this->truncate($item['title'], 70));?>
       <?php endif; ?>
@@ -52,7 +58,7 @@
     <span class="carousel-description"><?= $linkTextEsc ?></span>
   <?php endif; ?>
 </div>
-<?php if (isset($item['image']) && isset($item['image']['url'])): ?>
+<?php if ($hasImg): ?>
   <div class="wrapper" aria-hidden="true">
     <img data-lazy="<?=$this->escapeHtmlAttr($item['image']['url']) ?>" alt="<?=$this->transEsc('Image');?><?php if (isset($item['title'])): ?>: <?=$this->escapeHtml($item['title']) ?><?php endif; ?>" />
   </div>

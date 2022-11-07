@@ -37,6 +37,12 @@ use Finna\Db\Table\Transaction as TransactionTable;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
+ *
+ * @property int $complete
+ * @property string $paid
+ * @property string $status
+ * @property string $registered
+ * @property string $reported
  */
 class Transaction extends \VuFind\Db\Row\RowGateway
 {

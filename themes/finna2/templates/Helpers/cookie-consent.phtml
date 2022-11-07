@@ -1,10 +1,34 @@
+<?php
+  // Render the new cookie consent initialization script if necessary:
+ if (!empty($this->consentDialogConfig)) {
+  $this->headScript()->appendFile('vendor/cookieconsent.umd.js');
+  $this->headScript()->appendFile('cookie.js');
+
+  // Quick fix for null domain:
+  $consentDialogConfig = $this->consentDialogConfig;
+  if (array_key_exists('domain', $consentDialogConfig['cookie']) && $consentDialogConfig['cookie']['domain'] === null) {
+    unset($consentDialogConfig['cookie']['domain']);
+  }
+  $configJson = json_encode(
+      [
+          'consentDialog' => $consentDialogConfig,
+          'controlledVuFindServices' => $this->controlledVuFindServices,
+      ]
+  );
+  $this->headScript()->appendScript("window.addEventListener('load', function() { VuFind.cookie.setupConsent($configJson); });");
+  return;
+}
+?>
+<?php // Render old cookie banner only if new cookie consent dialog is disabled: ?>
+<?php if (!$this->cookieConsent()->isEnabled()): ?>
 <!-- START of: finna - Helpers/cookie-consent.phtml -->
-<div class="container-fluid cookie-consent">
-  <div class="cookie-consent-text">
-    <?=$this->translate('cookie_consent_html', ['%%link%%' => $this->escapeHtmlAttr($this->url('content-page', ['page' => 'privacy']) . '#cookies')])?>
+  <div class="container-fluid cookie-consent">
+    <div class="cookie-consent-text">
+      <?=$this->translate('cookie_consent_html', ['%%link%%' => $this->escapeHtmlAttr($this->url('content-page', ['page' => 'privacy']) . '#cookies')])?>
+    </div>
+    <div class="nav navbar-nav nav-absolute cookie-consent-button">
+      <button class="btn btn-primary cookie-consent-dismiss" aria-label="<?=$this->transEsc('Accept cookies')?>"><?=$this->transEsc('OK')?></button>
+    </div>
   </div>
-  <div class="nav navbar-nav nav-absolute cookie-consent-button">
-    <button class="btn btn-primary cookie-consent-dismiss" aria-label="<?=$this->transEsc('Accept cookies')?>"><?=$this->transEsc('OK')?></button>
-  </div>
-</div>
+<?php endif; ?>
 <!-- END of: finna - Helpers/cookie-consent.phtml -->

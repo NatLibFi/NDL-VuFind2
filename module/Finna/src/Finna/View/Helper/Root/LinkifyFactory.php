@@ -28,8 +28,8 @@
 namespace Finna\View\Helper\Root;
 
 use Finna\UrlHighlight\FinnaHighlighter;
-use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerInterface;
 use VStelmakh\UrlHighlight\Encoder\HtmlSpecialcharsEncoder;
 use VStelmakh\UrlHighlight\UrlHighlight;
 use VuFind\View\Helper\Root\Linkify;

@@ -61,7 +61,13 @@ class FieldGroupBuilder
      * @param string $label    Label for this group or false for no label.
      * @param array  $lines    Lines belonging to the group.
      * @param string $template Template used to render the lines in the group.
-     * @param array  $options  Additional options (optional).
+     * @param array  $options  Additional group options (optional):
+     *                         - context
+     *                         Context array containing data made available to
+     *                         templates.
+     *                         - skipGroup
+     *                         Set to true to skip rendering of the group. This
+     *                         can e.g. be used to skip rendering unused lines.
      *
      * @return void
      */
@@ -79,14 +85,19 @@ class FieldGroupBuilder
     /**
      * Helper method for setting multiple groups at once.
      *
-     * @param array  $groups        Array specifying the groups.
-     * @param array  $lines         All lines used in the groups.
+     * @param array  $groups        Array specifying the groups. See
+     *                              FieldGroupBuilder::addGroup() for details.
+     * @param array  $lines         All lines used in the groups. If this contains
+     *                              lines not specified in $groups, all unused lines
+     *                              will be appended as their own group.
      * @param string $template      Default group template to use if not
      *                              specified for a group.
      * @param array  $options       Additional options to use if not specified
-     *                              for a group (optional).
-     * @param array  $unusedOptions Additional options for unused lines
-     *                              (optional).
+     *                              for a group (optional). See
+     *                              FieldGroupBuilder::addGroup() for details.
+     * @param array  $unusedOptions Additional options for the unused lines group
+     *                              (optional). See FieldGroupBuilder::addGroup()
+     *                              for details.
      *
      * @return void
      */

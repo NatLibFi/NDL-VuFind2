@@ -7,6 +7,7 @@ $config = [
             'FinnaApi\Controller\AdminApiController' => 'VuFindApi\Controller\AdminApiControllerFactory',
             'FinnaApi\Controller\AuthApiController' => 'FinnaApi\Controller\AuthApiControllerFactory',
             'FinnaApi\Controller\BazaarApiController' => 'FinnaApi\Controller\BazaarApiControllerFactory',
+            'FinnaApi\Controller\ListApiController' => 'FinnaApi\Controller\ListApiControllerFactory',
             'FinnaApi\Controller\SearchApiController' => 'VuFindApi\Controller\SearchApiControllerFactory',
             'VuFindApi\Controller\ApiController' => 'FinnaApi\Controller\ApiControllerFactory',
         ],
@@ -14,11 +15,13 @@ $config = [
             'AdminApi' => 'FinnaApi\Controller\AdminApiController',
             'AuthApi' => 'FinnaApi\Controller\AuthApiController',
             'BazaarApi' => 'FinnaApi\Controller\BazaarApiController',
+            'ListApi' => 'FinnaApi\Controller\ListApiController',
             'VuFindApi\Controller\SearchApiController' => 'FinnaApi\Controller\SearchApiController',
 
             'adminapi' => 'AdminApi',
             'authapi' => 'AuthApi',
             'bazaarapi' => 'BazaarApi',
+            'listapi' => 'ListApi',
         ]
     ],
     'service_manager' => [
@@ -33,6 +36,7 @@ $config = [
         'register_controllers' => [
             \FinnaApi\Controller\AuthApiController::class,
             \FinnaApi\Controller\BazaarApiController::class,
+            \FinnaApi\Controller\ListApiController::class,
         ]
     ],
     'router' => [
@@ -77,6 +81,17 @@ $config = [
                     'defaults' => [
                         'controller' => 'BazaarApi',
                         'action'     => 'handshake',
+                    ]
+                ]
+            ],
+            'listApiV1' => [
+                'type' => 'Laminas\Router\Http\Literal',
+                'verb' => 'get,post,options',
+                'options' => [
+                    'route'    => '/api/v1/list',
+                    'defaults' => [
+                        'controller' => 'ListApi',
+                        'action'     => 'list',
                     ]
                 ]
             ],

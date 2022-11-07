@@ -343,11 +343,16 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             true,
             $this->record->getDriver()->getSourceIdentifier()
         );
+        // Get plausible model data
+        if (!in_array($type, ['list', 'list grid'])
+            && $this->record->getDriver()->tryMethod('getModels')
+        ) {
+            $images = $this->mergeModelDataToImages($images);
+        }
         if ($images && $view->layout()->templateDir === 'combined') {
             // Limit combined results to a single image
-            $images = [$images[0]];
+            $images = [reset($images)];
         }
-
         $context = [
             'type' => $type,
             'images' => $images,
@@ -359,5 +364,79 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         ];
 
         return $this->record->renderTemplate('record-image.phtml', $context);
+    }
+
+    /**
+     * Return all models in a presentative format.
+     *
+     * @return array
+     */
+    protected function getAllModelsAsRepresentations(): array
+    {
+        $models = $this->record->getDriver()->tryMethod('getModels', [], []);
+        if (!$models) {
+            return [];
+        }
+
+        $result = [];
+        $uniqueID = $this->record->getDriver()->getUniqueID();
+        $source = $this->record->getDriver()->getSourceIdentifier();
+        $bgImage
+            = $this->view->plugin('imageSrc')->getSourceAddress('3d-bg.jpg', true);
+        foreach ($models as $index => $model) {
+            foreach ($model as $format => $data) {
+                $modelData = [
+                    'urls' => [
+                        'small' => null,
+                        'medium' => null,
+                        'large' => $bgImage,
+                        'master' => null
+                    ],
+                    'type' => 'model',
+                    'format' => $format,
+                    'scripts' => '/themes/finna2/js/vendor/',
+                    'texture' => '/themes/finna2/images/',
+                    'params' => http_build_query(
+                        [
+                            'method' => 'getModel',
+                            'id' => $uniqueID,
+                            'index' => $index,
+                            'format' => $format,
+                            'source' => $source
+                        ]
+                    )
+                ];
+                $result[$index] = $modelData;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Function to combine model data with image data.
+     *
+     * @param array $images Images from getAllImagesAsCoverLinks
+     *
+     * @return array
+     */
+    protected function mergeModelDataToImages(array $images): array
+    {
+        $models = $this->getAllModelsAsRepresentations();
+        $modelSettings
+            = $this->record->getDriver()->tryMethod('getModelSettings', [], []);
+        foreach ($models as $ind => $model) {
+            if (!isset($images[$ind])) {
+                $images[$ind] = [
+                    'rights' => []
+                ];
+            }
+            if ($modelSettings['previewImages'] ?? false) {
+                $images[$ind] = array_merge($model, $images[$ind]);
+            } else {
+                $images[$ind] = array_merge($images[$ind], $model);
+            }
+            $images[$ind]['type'] = 'model';
+        }
+        return $images;
     }
 }

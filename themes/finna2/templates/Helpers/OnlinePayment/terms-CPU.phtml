@@ -1,6 +1,7 @@
 <!-- START of: finna - Helpers/OnlinePayment/terms-CPU.phtml -->
 <h2><?=$this->transEsc('online_payment_go_to_pay', ['%%amount%%' => ''])?></h2>
 <form id="cpu-form" class="online-payment-form" action="<?=$this->url('myresearch-fines')?>" method="post" data-lightbox-ignore>
+  <input type="hidden" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>" name="csrf"/>
   <img src="<?=$this->imageLink('online-payment-cpu.png')?>" id="cpu-logo" alt="CPU" />
   <div class="terms-of-service terms-of-service-text">
     <div class="terms-of-service-info-box">

@@ -172,18 +172,6 @@ class Connector extends \VuFindSearch\Backend\Solr\Connector
     }
 
     /**
-     * Set HTTP options
-     *
-     * @param array $options HTTP options
-     *
-     * @return void
-     */
-    public function setHttpOptions(array $options)
-    {
-        $this->client->setOptions($options);
-    }
-
-    /**
      * Execute a search.
      *
      * @param ParamBag $params Parameters

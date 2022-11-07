@@ -361,6 +361,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             'category' => $result['category_id'] ?? '',
             'expiration_date' => $expirationDate,
             'expiration_soon' => !empty($result['expiry_date_near']),
+            'expired' => !empty($result['blocks']['Patron::CardExpired']),
             'hold_identifier' => $result['other_name'],
             'guarantors' => $guarantors,
             'guarantees' => $guarantees,
@@ -1094,7 +1095,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 if ($holding['suppressed'] || !empty($holding['_hasItems'])) {
                     continue;
                 }
-                $holdingData = $this->getHoldingData($holding, true);
+                $holdingData = $this->getHoldingData($holding);
                 $i++;
                 $entry = $this->createHoldingsEntry($id, $holding, $i);
                 $entry += $holdingData;
@@ -1767,6 +1768,12 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 $reason = 'Patron::DebarredWithReason';
             }
             break;
+        case 'Patron::CardExpired':
+            $params = [
+                '%%expirationDate%%'
+                    => $this->convertDate($details['expiration_date'])
+            ];
+            break;
         }
         return $this->translate($this->patronStatusMappings[$reason] ?? '', $params);
     }
@@ -1880,7 +1887,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 'item_id' => $entry['item_id'],
                 'barcode' => $entry['external_id'] ?? null,
                 'title' => $this->getBiblioTitle($entry),
-                'volume' => $entry['serial_issue_number'] ?? '',
+                // enumchron should have been mapped to serial_issue_number, but the
+                // mapping is missing from all plugin versions up to v22.05.02:
+                'volume' => $entry['serial_issue_number'] ?? $entry['enumchron']
+                    ?? '',
                 'publication_year' => $entry['copyright_date']
                     ?? $entry['publication_year'] ?? '',
                 'borrowingLocation' => $this->getLibraryName($entry['library_id']),
@@ -1902,5 +1912,19 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             'count' => $result['headers']['X-Total-Count'] ?? count($transactions),
             $arrayKey => $transactions
         ];
+    }
+
+    /**
+     * Create a HTTP client
+     *
+     * @param string $url Request URL
+     *
+     * @return \Laminas\Http\Client
+     */
+    protected function createHttpClient($url)
+    {
+        $client = parent::createHttpClient($url);
+        $client->setOptions(['keepalive' => false]);
+        return $client;
     }
 }

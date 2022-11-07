@@ -241,6 +241,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                     ],
                     'description' => '',
                     'rights' => [],
+                    'downloadable' => false,
                     'pdf' => $pdf
                 ];
             }
@@ -292,6 +293,12 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                         break;
                     case '080':
                         $classification = 'udk';
+                        $version = $this->getSubfield($field, '2');
+                        if ($version && preg_match('/(\d{4})/', $version, $matches)
+                            && 2017 <= $matches[1]
+                        ) {
+                            $classification .= '2017';
+                        }
                         break;
                     default:
                         $classification = $this->getSubfield($field, '2');
@@ -479,6 +486,32 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
+     * Get original version notes.
+     * Each result contains:
+     * - notes => Notes found
+     *
+     * @return array
+     */
+    public function getOriginalVersionNotes(): array
+    {
+        $results = [];
+        foreach ($this->getMarcReader()->getFields('534') as $field) {
+            $result = [];
+            if ($subfields = $this->getSubfieldArray(
+                $field,
+                ['p', 'c']
+            )
+            ) {
+                $result['notes'] = implode(' ', $subfields);
+            }
+            if ($result) {
+                $results[] = $result;
+            }
+        }
+        return $results;
+    }
+
+    /**
      * Get an array of embedded component parts
      *
      * @return array Component parts
@@ -493,6 +526,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             $uniformTitle = '';
             $duration = '';
             $partTitle = '';
+            $partId = '';
             foreach ($this->getAllSubfields($field) as $subfield) {
                 $data = trim($subfield['data']);
                 if ('' === $data) {
@@ -826,13 +860,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         ) {
             // Can't use 773 fields since they don't represent the actual links
             foreach ($this->fields['hierarchy_parent_id'] as $key => $parentId) {
-                if (isset($this->fields['hierarchy_parent_title'][$key])) {
-                    $title = $this->fields['hierarchy_parent_title'][$key];
-                } elseif (isset($this->fields['hierarchy_parent_title'][0])) {
-                    $this->fields['hierarchy_parent_title'][0];
-                } else {
-                    $title = 'Title not available';
-                }
+                $title = $this->fields['hierarchy_parent_title'][$key]
+                    ?? $this->fields['hierarchy_parent_title'][0]
+                    ?? 'Title not available';
                 $result[] = [
                     'id' => $parentId,
                     'sourceId' => $sourceId,
@@ -849,6 +879,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             $title = '';
             $reference = '';
             $publishingInfo = '';
+            $author = '';
             foreach ($this->getAllSubfields($field) as $subfield) {
                 $data = $subfield['data'];
                 switch ($subfield['code']) {
@@ -865,6 +896,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                     break;
                 case 'd':
                     $publishingInfo = $this->stripTrailingPunctuation($data, '.-');
+                    break;
+                case 'a':
+                    $author = $this->stripTrailingPunctuation($data, '.-');
                     break;
                 }
             }
@@ -884,7 +918,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                 'sourceId' => $sourceId,
                 'title' => $title,
                 'reference' => $reference,
-                'publishingInfo' => $publishingInfo
+                'publishingInfo' => $publishingInfo,
+                'mainHeading' => $author,
             ];
         }
         return $result;
@@ -1145,11 +1180,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     /**
      * Get the estimated publication date of the record.
      *
-     * @return array
+     * @return string
      */
     public function getProjectedPublicationDate()
     {
-        $dateString = $this->getFirstFieldValue('263', ['a']);
+        $dateString = $this->getFirstFieldValue('263', ['a']) ?? '';
         if (strlen($dateString) === 8) {
             $year = intval(substr($dateString, 0, 4));
             $month = intval(substr($dateString, 4, 2));
@@ -1224,7 +1259,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
         if (empty($matches)) {
             // Now check 490 and display it only if 440/800/830 were empty:
-            $secondaryFields = ['490' => ['a', 'x']];
+            $secondaryFields = ['490' => ['a', 'v', 'x']];
             $matches = $this->getSeriesFromMARC($secondaryFields);
         }
 
@@ -1596,7 +1631,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      * - heading: the actual subject heading chunks
      * - type: heading type
      * - source: source vocabulary
-     * - id: authority id (if defined)
+     * - id: first authority id (if defined)
+     * - ids: multiple authority ids (if defined)
      * - authType: authority type (if id is defined)
      *
      * @return array
@@ -2158,6 +2194,18 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
+     * Get standard report numbers from field 027, subfield a.
+     *
+     * @return array
+     */
+    public function getStandardReportNumbers()
+    {
+        return $this->stripTrailingPunctuation(
+            $this->getFieldArray('027', ['a'])
+        );
+    }
+
+    /**
      * Get publisher or distributor number from field 028, subfields b and a.
      *
      * @return array
@@ -2263,6 +2311,29 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                 } else {
                     $results[] = $this->stripTrailingPunctuation($subfield);
                 }
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Get hardware requirements.
+     *
+     * @return array
+     */
+    public function getHardwareRequirements(): array
+    {
+        $results = [];
+        foreach ($this->getMarcReader()->getFields('753') as $field) {
+            $result = [];
+            if ($subfield = $this->getSubfield($field, 'a')) {
+                $subfield = $this->stripTrailingPunctuation($subfield);
+                if (!in_array($subfield, array_column($results, 'make_model'))) {
+                    $result['make_model'] = $subfield;
+                }
+            }
+            if ($result) {
+                $results[] = $result;
             }
         }
         return $results;

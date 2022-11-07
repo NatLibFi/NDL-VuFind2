@@ -40,20 +40,6 @@ namespace VuFindTest\Mink;
 class BlendedSearchTest extends \VuFindTest\Integration\MinkTestCase
 {
     /**
-     * Standard setup method.
-     *
-     * @return void
-     */
-    public function setUp(): void
-    {
-        // Give up if we're not running in CI:
-        if (!$this->continuousIntegrationRunning()) {
-            $this->markTestSkipped('Continuous integration not running.');
-            return;
-        }
-    }
-
-    /**
      * Get config settings for Blender.ini.
      *
      * @return array
@@ -133,13 +119,17 @@ class BlendedSearchTest extends \VuFindTest\Integration\MinkTestCase
         );
 
         $session = $this->getMinkSession();
-        $session->visit($this->getVuFindUrl() . '/Search/Blended');
+        $session->visit(
+            $this->getVuFindUrl() . '/Search/Blended?'
+            . http_build_query($queryParams)
+        );
         $page = $session->getPage();
 
         $text = $this->findCss($page, '.search-stats strong')->getText();
         [$start, $limit] = explode(' - ', $text);
-        $this->assertEquals(1, intval($start));
-        $this->assertEquals(20, intval($limit));
+        $offset = (($queryParams['page'] ?? 1) - 1) * 20;
+        $this->assertEquals(1 + $offset, intval($start));
+        $this->assertEquals(20 + $offset, intval($limit));
 
         $i = 0;
         foreach ($this->findCss($page, '.result span.label-source') as $label) {
