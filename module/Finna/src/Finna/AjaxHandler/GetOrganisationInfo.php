@@ -155,9 +155,36 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
                 $params->fromQuery('parentName', null)
             );
         }
-
-        $result = [];
         $parents = isset($parents['id']) ? [$parents] : $parents;
+        $result = $this->getOrganisationInfos(
+            $parents,
+            $buildings,
+            $reqParams,
+            $action
+        );
+        if (!empty($result['error'])) {
+            return $this->handleError($result['error']);
+        }
+        return $this->formatResponse($result ?: false);
+    }
+
+    /**
+     * Get informations for the organisation.
+     *
+     * @param array  $parents   Parents data
+     * @param ?array $buildings Buildings to use in query
+     * @param array  $reqParams Request params
+     * @param string $action    Action type
+     *
+     * @return array
+     */
+    protected function getOrganisationInfos(
+        array $parents,
+        ?array $buildings,
+        array $reqParams,
+        string $action
+    ): array {
+        $result = [];
         $libraries = [];
         foreach ($parents as $parent) {
             if (empty($parent['sector'])) {
@@ -165,16 +192,18 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
                 $cacheKey = 'sectors';
                 $sectors = $cache->getItem($cacheKey);
                 if (empty($sectors[$parent['id']])) {
-                    $result = $this->getSectorsWithAPI($parent);
-                    if (!empty($result['sectors'])) {
+                    $apiResult = $this->getSectorsWithAPI($parent);
+                    if (!empty($apiResult['sectors'])) {
                         // Check for all the sectors
-                        $sectors[$parent['id']] = $result['sectors'];
+                        $sectors[$parent['id']] = $apiResult['sectors'];
                         $cache->setItem($cacheKey, $sectors);
                     } elseif (!empty($result['error'])) {
-                        return $this->handleError($result['error']);
+                        return ['error' => $apiResult['error']];
                     }
                 }
-                $parent['sector'] = $sectors[$parent['id']] ?? [];
+                if (!empty($sectors[$parent['id']])) {
+                    $parent['sector'] = $sectors[$parent['id']];
+                }
             }
             if (!is_array($parent['sector'])) {
                 $parent['sector'] = [['value' => $parent['sector']]];
@@ -208,10 +237,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
                 $action
             )
         );
-        if (empty($result)) {
-            $result = false;
-        }
-        return $this->formatResponse($result);
+        return $result;
     }
 
     /**
@@ -279,31 +305,16 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
         $result = [];
         $libraries = implode(',', $libraries);
         $reqParams['orgType'] = 'library';
-        $libraries = $this->organisationInfo->query(
+        $result = $this->organisationInfo->query(
             $libraries,
             $reqParams,
             $buildings,
             $action
         );
-        if (isset($libraries['items'])) {
-            $result = $libraries['items'];
+        if (!is_array($result)) {
+            $result = [];
         }
-        return $result;
-    }
-
-    /**
-     * Get libraries and museums from parent array
-     *
-     * @param array $parent Parent to check for sectors
-     *
-     * @return array Associative array holding all the libraries and museums
-     */
-    protected function getSectorsFromParent(array $parent): array
-    {
-        $libraries = [];
-        $museums = [];
-
-        return compact('libraries', 'museums');
+        return $result['items'] ?? $result;
     }
 
     /**
