@@ -159,53 +159,22 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
         $result = [];
         $parents = isset($parents['id']) ? [$parents] : $parents;
         $libraries = [];
-        $museums = [];
-        $response = [];
         foreach ($parents as $parent) {
             if (empty($parent['sector'])) {
                 $cache = $this->cacheManager->getCache('organisation-info');
                 $cacheKey = 'sectors';
                 $sectors = $cache->getItem($cacheKey);
-                $sector = $sectors[$parent['id']] ?? null;
-                if (!$sector) {
-                    $params = [
-                        'filter[]' => 'building:0/' . $parent['id'] . '/',
-                        'limit' => 1,
-                        'field[]' => 'sectors'
-                    ];
-                    $url = 'https://api.finna.fi/v1/search?';
-                    $client = $this->httpService->createClient($url);
-                    $client->setOptions(
-                        [
-                            'useragent' => 'FinnaOrganisationInfo VuFind'
-                        ]
-                    );
-                    $client->setParameterGet($params);
-                    $result = $client->send();
-                    if (!$result->isSuccess()) {
-                        return $this->handleError(
-                            'API request failed, url: ' . $url
-                        );
+                if (empty($sectors[$parent['id']])) {
+                    $result = $this->getSectorsWithAPI($parent);
+                    if (!empty($result['sectors'])) {
+                        // Check for all the sectors
+                        $sectors[$parent['id']] = $result['sectors'];
+                        $cache->setItem($cacheKey, $sectors);
+                    } elseif (!empty($result['error'])) {
+                        return $this->handleError($result['error']);
                     }
-
-                    $response = json_decode($result->getBody(), true);
-                    if (isset($response['result'])
-                        && $response['result'] == 'error'
-                    ) {
-                        return $this->handleError(
-                            'API request failed, message: ' . $response['message']
-                        );
-                    }
-                    if (empty($response['records'][0])) {
-                        // No records found, unable do determine sector
-                        continue;
-                    }
-                    // Check for all the sectors
-                    $sector = $response['records'][0]['sectors'];
-                    $sectors[$parent['id']] = $sector;
-                    $cache->setItem($cacheKey, $sectors);
                 }
-                $parent['sector'] = $sector;
+                $parent['sector'] = $sectors[$parent['id']] ?? [];
             }
             if (!is_array($parent['sector'])) {
                 $parent['sector'] = [['value' => $parent['sector']]];
@@ -217,53 +186,170 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
                 $type = strstr($sector['value'], 'mus') ? 'mus' : 'lib';
                 if ($type === 'lib') {
                     $libraries[] = $parent['id'];
-                    continue;
-                }
-                $reqParams['orgType'] = 'museum';
-                try {
-                    $response = $this->organisationInfo->query(
-                        $parent['id'],
-                        $reqParams,
-                        $buildings,
-                        $action
+                } else {
+                    $result = array_merge(
+                        $result,
+                        $this->getItemsForMuseums(
+                            $parent,
+                            $buildings,
+                            $reqParams,
+                            $action
+                        )
                     );
-                    if ($response) {
-                        if ('lookup' === $action) {
-                            $museums = array_merge($museums, $response['items']);
-                        } else {
-                            $museums = array_merge($museums, $response);
-                        }
-                    }
-                } catch (\Exception $e) {
-                    $this->handleError(
-                        'getOrganisationInfo: error reading '
-                        . 'organisation info (parent '
-                        . print_r($parent, true) . ')',
-                        $e->getMessage()
-                    );
-                    continue;
                 }
             }
         }
-        if (!empty($libraries)) {
-            $libraries = implode(',', $libraries);
-            $reqParams['orgType'] = 'library';
-            $libraries = $this->organisationInfo->query(
+        $result = array_merge(
+            $result,
+            $this->getItemsForLibraries(
                 $libraries,
-                $reqParams,
                 $buildings,
+                $reqParams,
                 $action
-            );
-            if (isset($libraries['items'])) {
-                $libraries = $libraries['items'];
-            }
-        }
-
-        $result = array_merge($museums, $libraries ?: []);
+            )
+        );
         if (empty($result)) {
             $result = false;
         }
         return $this->formatResponse($result);
+    }
+
+    /**
+     * Get items for museums with parent id.
+     *
+     * @param array  $parent    Parent data
+     * @param ?array $buildings Buildings to use in query
+     * @param array  $reqParams Request params
+     * @param string $action    Action type
+     *
+     * @return array
+     */
+    protected function getItemsForMuseums(
+        array $parent,
+        ?array $buildings,
+        array $reqParams,
+        string $action
+    ): array {
+        $result = [];
+        $reqParams['orgType'] = 'museum';
+        try {
+            $response = $this->organisationInfo->query(
+                $parent['id'],
+                $reqParams,
+                $buildings,
+                $action
+            );
+            if ($response) {
+                if ('lookup' === $action) {
+                    $result = array_merge($result, $response['items']);
+                } else {
+                    $result = array_merge($result, $response);
+                }
+            }
+        } catch (\Exception $e) {
+            $this->handleError(
+                'getOrganisationInfo: error reading '
+                . 'organisation info (parent '
+                . print_r($parent, true) . ')',
+                $e->getMessage()
+            );
+        }
+        return $result;
+    }
+
+    /**
+     * Get items for libraries.
+     *
+     * @param array  $libraries Libraries to use for fetching data.
+     * @param array  $buildings Buildings to use in query
+     * @param array  $reqParams Request params
+     * @param string $action    Action type
+     *
+     * @return array
+     */
+    protected function getItemsForLibraries(
+        array $libraries,
+        ?array $buildings,
+        array $reqParams,
+        string $action
+    ): array {
+        if (!$libraries) {
+            return [];
+        }
+        $result = [];
+        $libraries = implode(',', $libraries);
+        $reqParams['orgType'] = 'library';
+        $libraries = $this->organisationInfo->query(
+            $libraries,
+            $reqParams,
+            $buildings,
+            $action
+        );
+        if (isset($libraries['items'])) {
+            $result = $libraries['items'];
+        }
+        return $result;
+    }
+
+    /**
+     * Get libraries and museums from parent array
+     *
+     * @param array $parent Parent to check for sectors
+     *
+     * @return array Associative array holding all the libraries and museums
+     */
+    protected function getSectorsFromParent(array $parent): array
+    {
+        $libraries = [];
+        $museums = [];
+
+        return compact('libraries', 'museums');
+    }
+
+    /**
+     * Get sectors from the first record found with API.
+     *
+     * @param array $parent Information for fetch
+     *
+     * @return array
+     */
+    protected function getSectorsWithAPI(array $parent): array
+    {
+        $params = [
+            'filter[]' => 'building:0/' . $parent['id'] . '/',
+            'limit' => 1,
+            'field[]' => 'sectors'
+        ];
+        $url = 'https://api.finna.fi/v1/search?';
+        $client = $this->httpService->createClient($url);
+        $client->setOptions(
+            [
+                'useragent' => 'FinnaOrganisationInfo VuFind'
+            ]
+        );
+        $client->setParameterGet($params);
+        $result = $client->send();
+        if (!$result->isSuccess()) {
+            return [
+                'error' => 'API request failed, url: ' . $url
+            ];
+        }
+
+        $response = json_decode($result->getBody(), true);
+        if (isset($response['result'])
+            && $response['result'] == 'error'
+        ) {
+            return [
+                'error' => 'API request failed, message: ' . $response['message']
+            ];
+        }
+        if (empty($response['records'][0])) {
+            // No records found, unable do determine sector
+            return [];
+        }
+        return [
+            'sectors' => $response['records'][0]['sectors']
+        ];
     }
 
     /**
