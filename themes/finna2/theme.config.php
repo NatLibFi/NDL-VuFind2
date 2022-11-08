@@ -2,6 +2,7 @@
 $config = [
     'extends' => 'bootstrap3',
     'helpers' => [
+        // test comment
         'factories' => [
             'Finna\View\Helper\Root\AdjustHeadingLevel' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\Auth' => 'Finna\View\Helper\Root\AuthFactory',
