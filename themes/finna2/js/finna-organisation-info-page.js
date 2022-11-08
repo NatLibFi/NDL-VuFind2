@@ -422,6 +422,39 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     }
   }
 
+  function updatePersons(data) {
+    if (data.details.persons) {
+      holder.find('.persons').show();
+      let personsContainer = $('.persons-container').empty();
+      data.details.persons.forEach(function handlePerson(person) {
+        let tr = document.createElement('tr');
+        let td = document.createElement('td');
+        td.append(`${person.firstName || ''} ${person.lastName || ''}`);
+        tr.append(td);
+        td = document.createElement('td');
+        td.append(`${person.jobTitle || ''}`);
+        tr.append(td);
+        td = document.createElement('td');
+        td.append(document.createComment('noindex'));
+        td.append(document.createComment('googleoff: all'));
+        if (person.email && person.email !== '') {
+          let div = document.createElement('div');
+          div.append(person.email);
+          td.append(div);
+        }
+        if (person.phone && person.phone !== '') {
+          let div = document.createElement('div');
+          div.append(person.phone);
+          td.append(div);
+        }
+        td.append(document.createComment('googleon: all'));
+        td.append(document.createComment('/noindex'));
+        tr.append(td);
+        personsContainer.append(tr);
+      });
+    }
+  }
+
   function updateRSSFeeds(data) {
     var rssAvailable = false;
     if ('rss' in data.details) {
@@ -557,6 +590,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     widgetHolder.on('detailsLoaded', function onDetailsLoaded(ev, id) {
       var info = service.getDetails(id);
       updateServices(info);
+      updatePersons(info);
       var rssAvailable = updateRSSFeeds(info);
       updateGeneralInfo(info, rssAvailable);
     });

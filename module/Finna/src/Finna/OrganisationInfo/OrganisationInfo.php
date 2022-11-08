@@ -576,7 +576,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         if ($fullDetails) {
             $with .=
                 ',phoneNumbers,emailAddresses,mailAddress,pictures,links,services,
-                customData,schedules';
+                customData,schedules,persons';
         }
 
         $params = [
@@ -986,6 +986,26 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                 }
                 $result['allServices'] = $allServices;
             }
+        }
+
+        if (!empty($response['persons'])) {
+            $persons = [];
+            foreach ($response['persons'] as $person) {
+                $persons[] = [
+                    'firstName' => $person['firstName'] ?? '',
+                    'lastName' => $person['lastName'] ?? '',
+                    'jobTitle' => $person['jobTitle'] ?? '',
+                    'email' => $person['email'] ?? '',
+                    'phone' => $person['phone'] ?? '',
+                ];
+            }
+            usort(
+                $persons,
+                function ($person1, $person2) {
+                    return strnatcasecmp($person1['lastName'], $person2['lastName']);
+                }
+            );
+            $result['persons'] = $persons;
         }
 
         if (isset($response['customData'])) {
