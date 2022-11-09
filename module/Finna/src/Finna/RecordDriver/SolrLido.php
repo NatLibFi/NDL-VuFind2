@@ -660,11 +660,19 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
         }
         if (!empty($resourceSet->resourceDescription)) {
-            $result['resourceDescription']
-                = (string)$this->getLanguageSpecificItem(
+            $description
+                = $this->getLanguageSpecificItem(
                     $resourceSet->resourceDescription,
                     $language
                 );
+            if ($descriptionTrimmed = trim((string)$description)) {
+                $type = trim($description->attributes()->type);
+                if ($type === 'displayLink') {
+                    $result['resourceName'] = $descriptionTrimmed;
+                } else {
+                    $result['resourceDescription'] = $descriptionTrimmed;
+                }
+            }
         }
         if (!empty($resourceSet->resourceDateTaken->displayDate)) {
             $result['dateTaken']

@@ -104,7 +104,8 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             ]
                         ],
                         'identifier' => '607642',
-                        'downloadable' => true
+                        'downloadable' => true,
+                        'resourceDescription' => 'Kuvan selitys'
                     ],
                     [
                         'urls' => [
@@ -154,7 +155,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         ],
                         'identifier' => '607643',
                         'downloadable' => false,
-                        'resourceDescription' => 'Kuvan selitys'
+                        'resourceName' => 'Kuvan nimi'
                     ]
                 ]
             ],

@@ -6,6 +6,7 @@
       <resourceWrap>
         <resourceSet>
           <resourceID type="ID">607642</resourceID>
+          <resourceDescription>Kuvan selitys</resourceDescription>
           <resourceRepresentation type="image_large">
             <linkResource>https://largekuvanlinkki.com</linkResource>
           </resourceRepresentation>
@@ -42,7 +43,7 @@
         </resourceSet>
         <resourceSet>
           <resourceID type="ID">607643</resourceID>
-          <resourceDescription type="displayLink">Kuvan selitys</resourceDescription>
+          <resourceDescription type="displayLink">Kuvan nimi</resourceDescription>
           <resourceRepresentation type="image_thumb">
             <linkResource>https://thumbkuvanlinkki2.com</linkResource>
           </resourceRepresentation>
