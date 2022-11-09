@@ -159,9 +159,9 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     ],
                     7 => [
                         'urls' => [
-                            'large' => 'https:/kaikkilinkit.com',
-                            'small' => 'https:/kaikkilinkit.com',
-                            'medium' => 'https:/kaikkilinkit.com'
+                            'large' => 'https://kaikkilinkit.com',
+                            'small' => 'https://kaikkilinkit.com',
+                            'medium' => 'https://kaikkilinkit.com'
                         ],
                         'description' => '',
                         'rights' => [
