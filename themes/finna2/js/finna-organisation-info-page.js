@@ -436,11 +436,11 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     return decrypted;
   }
 
-  function updatePersons(data) {
-    if (data.details.persons) {
-      holder.find('.persons').show();
-      let personsContainer = $('.persons-container').empty();
-      data.details.persons.forEach(function handlePerson(person) {
+  function updatePersonnel(data) {
+    if (data.details.personnel) {
+      holder.find('.personnel').show();
+      let personnelContainer = $('.personnel-container').empty();
+      data.details.personnel.forEach(function handlePerson(person) {
         let tr = document.createElement('tr');
         let td = document.createElement('td');
         td.append(`${person.firstName || ''} ${person.lastName || ''}`);
@@ -464,7 +464,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
         td.append(document.createComment('googleon: all'));
         td.append(document.createComment('/noindex'));
         tr.append(td);
-        personsContainer.append(tr);
+        personnelContainer.append(tr);
       });
     }
   }
@@ -604,7 +604,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     widgetHolder.on('detailsLoaded', function onDetailsLoaded(ev, id) {
       var info = service.getDetails(id);
       updateServices(info);
-      updatePersons(info);
+      updatePersonnel(info);
       var rssAvailable = updateRSSFeeds(info);
       updateGeneralInfo(info, rssAvailable);
     });

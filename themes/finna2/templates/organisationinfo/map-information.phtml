@@ -158,12 +158,12 @@
             <th><?= $this->transEsc('organisation_info_contact') ?></th>
           </tr>
         </thead>
-        <tbody class="persons-container"></tbody>
+        <tbody class="personnel-container"></tbody>
       </table>
     </div>
   <?php $content = ob_get_clean(); ?>
   <?= $this->render('components/molecules/containers/finna-panel', [
-      'attributes' => ['class' => ['finna-panel-borderless', 'persons', 'info-element']],
+      'attributes' => ['class' => ['finna-panel-borderless', 'personnel', 'info-element']],
       'heading' => $this->transEsc('organisation_info_staff'),
       'headingLevel' => 4,
       'content' => $content,

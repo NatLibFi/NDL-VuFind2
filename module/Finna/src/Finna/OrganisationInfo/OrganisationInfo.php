@@ -989,14 +989,14 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         }
 
         if (!empty($response['persons'])) {
-            $persons = [];
+            $personnel = [];
             foreach ($response['persons'] as $person) {
                 if (!empty($email = $person['email'] ?? '')) {
                     $email = str_replace('@', '/at/', $email);
                     $email = str_replace('.', '/dot/', $email);
                     $email = str_rot13($email);
                 }
-                $persons[] = [
+                $personnel[] = [
                     'firstName' => $person['firstName'] ?? '',
                     'lastName' => $person['lastName'] ?? '',
                     'jobTitle' => $person['jobTitle'] ?? '',
@@ -1005,12 +1005,12 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                 ];
             }
             usort(
-                $persons,
+                $personnel,
                 function ($person1, $person2) {
                     return strnatcasecmp($person1['lastName'], $person2['lastName']);
                 }
             );
-            $result['persons'] = $persons;
+            $result['personnel'] = $personnel;
         }
 
         if (isset($response['customData'])) {
