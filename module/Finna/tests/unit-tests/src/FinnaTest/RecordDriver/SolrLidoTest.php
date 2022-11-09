@@ -155,6 +155,24 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'identifier' => '607643',
                         'downloadable' => false,
                         'resourceDescription' => 'Kuvan selitys'
+                    ],
+                    7 => [
+                        'urls' => [
+                            'large' => 'https:/kaikkilinkit.com',
+                            'small' => 'https:/kaikkilinkit.com',
+                            'medium' => 'https:/kaikkilinkit.com'
+                        ],
+                        'description' => '',
+                        'rights' => [
+                            'copyright' => 'CC BY 4.0',
+                            'description' => [
+                                0 => 'Tässä on kuvien copyright.',
+                                1 => 'Tässä on kuvien copyright.'
+                            ]
+                        ],
+                        'highResolution' => [],
+                        'identifier' => '607644',
+                        'downloadable' => true
                     ]
                 ]
             ],
