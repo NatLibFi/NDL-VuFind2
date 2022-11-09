@@ -260,6 +260,36 @@ class SolrAuthEacCpf extends SolrAuthDefault
     }
 
     /**
+     * Return sources
+     *
+     * @return array
+     */
+    public function getSources()
+    {
+        $result = [];
+        $record = $this->getXmlRecord();
+        if (isset($record->control->sources)) {
+            $languages = $this->mapLanguageCode($this->getLocale());
+            foreach ($record->control->sources->source as $source) {
+                if (isset($source->sourceEntry)) {
+                    $title = '';
+                    foreach ($source->sourceEntry as $entry) {
+                        if (in_array($entry->attributes()->lang, $languages)) {
+                            $title = (string)$entry;
+                        }
+                    }
+                    $result[] = [
+                        'title' => $title ? $title : (string)$source->sourceEntry,
+                        'url' => (string)($source->attributes()->href ?? ''),
+                        'subtitle' => ''
+                    ];
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * Set preferred language for display strings.
      *
      * @param string $language Language

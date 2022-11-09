@@ -1038,6 +1038,13 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             }
             $locationId = $item['location'];
 
+            $number = $item['serial_issue_number'];
+            if (!$number
+                && !empty($this->config['Holdings']['display_call_number_per_item'])
+            ) {
+                $number = $callnumber;
+            }
+
             $entry = [
                 'id' => $id,
                 'item_id' => $item['item_id'],
@@ -1048,7 +1055,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 'reserve' => 'N',
                 'callnumber' => $callnumber,
                 'duedate' => $duedate,
-                'number' => $item['serial_issue_number'],
+                'number' => $number,
                 'barcode' => $item['external_id'],
                 'sort' => $i,
                 'requests_placed' => max(
