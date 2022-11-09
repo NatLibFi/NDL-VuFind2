@@ -447,7 +447,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
         let span = document.createElement('span');
         span.append(document.createElement('br'));
         span.setAttribute('class', 'job-title');
-        span.append(`(${person.jobTitle || ''})`);
+        span.append(`${person.jobTitle || ''}`);
         td.append(span);
         tr.append(td);
         td = document.createElement('td');
