@@ -148,6 +148,31 @@
       'collapseId' => 'collapse5',
       'collapsed' => false
     ]); ?>
+  <?php ob_start(); ?>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>
+              <?= $this->transEsc('organisation_info_name') ?>
+              <span class="job-title"><br><?= $this->transEsc('organisation_info_job_title') ?></span>
+            </th>
+            <th><?= $this->transEsc('organisation_info_job_title') ?></th>
+            <th><?= $this->transEsc('organisation_info_contact') ?></th>
+          </tr>
+        </thead>
+        <tbody class="personnel-container"></tbody>
+      </table>
+    </div>
+  <?php $content = ob_get_clean(); ?>
+  <?= $this->render('components/molecules/containers/finna-panel', [
+      'attributes' => ['class' => ['finna-panel-borderless', 'personnel', 'info-element']],
+      'heading' => $this->transEsc('organisation_info_staff'),
+      'headingLevel' => 4,
+      'content' => $content,
+      'headingId' => 'heading6',
+      'collapseId' => 'collapse6',
+    ]); ?>
   <div class="organisation-feeds">
     <?php ob_start(); ?>
       <div class="feed-container news-feed info-element" data-init="0"></div>
@@ -157,8 +182,8 @@
         'heading' => $this->transEsc('organisation_info_rss_news'),
         'headingLevel' => 4,
         'content' => $content,
-        'headingId' => 'heading6',
-        'collapseId' => 'collapse6'
+        'headingId' => 'heading7',
+        'collapseId' => 'collapse7',
       ]); ?>
     <?php ob_start(); ?>
       <div class="feed-container events-feed info-element" data-init="0"></div>
@@ -168,8 +193,8 @@
         'heading' => $this->transEsc('organisation_info_rss_events'),
         'headingLevel' => 4,
         'content' => $content,
-        'headingId' => 'heading7',
-        'collapseId' => 'collapse7'
+        'headingId' => 'heading8',
+        'collapseId' => 'collapse8',
       ]); ?>
   </div>
 </div>
