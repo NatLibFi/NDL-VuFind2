@@ -444,6 +444,11 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
         let tr = document.createElement('tr');
         let td = document.createElement('td');
         td.append(`${person.firstName || ''} ${person.lastName || ''}`);
+        let span = document.createElement('span');
+        span.append(document.createElement('br'));
+        span.setAttribute('class', 'job-title');
+        span.append(`(${person.jobTitle || ''})`);
+        td.append(span);
         tr.append(td);
         td = document.createElement('td');
         td.append(`${person.jobTitle || ''}`);

@@ -153,7 +153,10 @@
       <table class="table table-striped">
         <thead>
           <tr>
-            <th><?= $this->transEsc('organisation_info_name') ?></th>
+            <th>
+              <?= $this->transEsc('organisation_info_name') ?>
+              <span class="job-title"><br>(<?= $this->transEsc('organisation_info_job_title') ?>)</span>
+            </th>
             <th><?= $this->transEsc('organisation_info_job_title') ?></th>
             <th><?= $this->transEsc('organisation_info_contact') ?></th>
           </tr>
