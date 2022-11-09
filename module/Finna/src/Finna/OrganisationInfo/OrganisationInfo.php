@@ -991,11 +991,16 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         if (!empty($response['persons'])) {
             $persons = [];
             foreach ($response['persons'] as $person) {
+                if (!empty($email = $person['email'] ?? '')) {
+                    $email = str_replace('@', '/at/', $email);
+                    $email = str_replace('.', '/dot/', $email);
+                    $email = str_rot13($email);
+                }
                 $persons[] = [
                     'firstName' => $person['firstName'] ?? '',
                     'lastName' => $person['lastName'] ?? '',
                     'jobTitle' => $person['jobTitle'] ?? '',
-                    'email' => $person['email'] ?? '',
+                    'email' => $email,
                     'phone' => $person['phone'] ?? '',
                 ];
             }

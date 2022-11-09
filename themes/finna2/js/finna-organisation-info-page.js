@@ -422,6 +422,20 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     }
   }
 
+  function rot13(string) {
+    return string.replace(/[a-zA-Z]/g, function rot13replace(c) {
+      // eslint-disable-next-line no-param-reassign
+      return String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26);
+    });
+  }
+
+  function decryptEmailAddress(string) {
+    let decrypted = rot13(string);
+    decrypted = decrypted.replace(/\/dot\//g, '.');
+    decrypted = decrypted.replace(/\/at\//g, '@');
+    return decrypted;
+  }
+
   function updatePersons(data) {
     if (data.details.persons) {
       holder.find('.persons').show();
@@ -439,7 +453,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
         td.append(document.createComment('googleoff: all'));
         if (person.email && person.email !== '') {
           let div = document.createElement('div');
-          div.append(person.email);
+          div.append(decryptEmailAddress(person.email));
           td.append(div);
         }
         if (person.phone && person.phone !== '') {
