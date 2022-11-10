@@ -156,7 +156,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
             );
         }
         $parents = isset($parents['id']) ? [$parents] : $parents;
-        $result = $this->getOrganisationInfos(
+        $result = $this->getOrganisationInfo(
             $parents,
             $buildings,
             $reqParams,
@@ -169,57 +169,64 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
     }
 
     /**
-     * Get informations for the organisation.
+     * Get information for the organisation.
      *
-     * @param array  $parents   Parents data
-     * @param ?array $buildings Buildings to use in query
-     * @param array  $reqParams Request params
-     * @param string $action    Action type
+     * @param array  $organisations Array containing arrays for organisations
+     *                              - id     Organisation id
+     *                              - sector Array containing sectors
+     * @param ?array $buildings     Buildings to use in query
+     * @param array  $reqParams     Request params
+     * @param string $action        Action type
+     *                              - lookup     Get all the museums/libraries
+     *                              for the organisation
+     *                              - details    Get opening times and other details
+     *                              - consortium Get consortium info
      *
      * @return array
      */
-    protected function getOrganisationInfos(
-        array $parents,
+    protected function getOrganisationInfo(
+        array $organisations,
         ?array $buildings,
         array $reqParams,
         string $action
     ): array {
         $result = [];
         $libraries = [];
-        foreach ($parents as $parent) {
-            if (empty($parent['sector'])) {
+        foreach ($organisations as $organisation) {
+            $id = $organisation['id'];
+            if (empty($organisation['sector'])) {
                 $cache = $this->cacheManager->getCache('organisation-info');
                 $cacheKey = 'sectors';
                 $sectors = $cache->getItem($cacheKey);
-                if (empty($sectors[$parent['id']])) {
-                    $apiResult = $this->getSectorsWithAPI($parent);
+                if (empty($sectors[$id])) {
+                    $apiResult = $this->getSectorsWithAPI($id);
                     if (!empty($apiResult['sectors'])) {
                         // Check for all the sectors
-                        $sectors[$parent['id']] = $apiResult['sectors'];
+                        $sectors[$id] = $apiResult['sectors'];
                         $cache->setItem($cacheKey, $sectors);
                     } elseif (!empty($result['error'])) {
                         return ['error' => $apiResult['error']];
                     }
                 }
-                if (!empty($sectors[$parent['id']])) {
-                    $parent['sector'] = $sectors[$parent['id']];
+                if (!empty($sectors[$id])) {
+                    $organisation['sector'] = $sectors[$id];
                 }
             }
-            if (!is_array($parent['sector'])) {
-                $parent['sector'] = [['value' => $parent['sector']]];
+            if (!is_array($organisation['sector'])) {
+                $organisation['sector'] = [['value' => $organisation['sector']]];
             }
-            foreach ($parent['sector'] as $sector) {
+            foreach ($organisation['sector'] as $sector) {
                 if (empty($sector['value'])) {
                     continue;
                 }
                 $type = strstr($sector['value'], 'mus') ? 'mus' : 'lib';
                 if ($type === 'lib') {
-                    $libraries[] = $parent['id'];
+                    $libraries[] = $id;
                 } else {
                     $result = array_merge(
                         $result,
                         $this->getItemsForMuseums(
-                            $parent,
+                            $organisation,
                             $buildings,
                             $reqParams,
                             $action
@@ -243,15 +250,21 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
     /**
      * Get items for museums with parent id.
      *
-     * @param array  $parent    Parent data
-     * @param ?array $buildings Buildings to use in query
-     * @param array  $reqParams Request params
-     * @param string $action    Action type
+     * @param array  $organisation Array of data for organisation.
+     *                             - id     Organisation id
+     *                             - sector Array containing sectors
+     * @param ?array $buildings    Buildings to use in query
+     * @param array  $reqParams    Request params
+     * @param string $action       Action type
+     *                             - lookup     Get all the museums
+     *                             for the organisation
+     *                             - details    Get opening times and other details
+     *                             - consortium Get consortium info
      *
      * @return array
      */
     protected function getItemsForMuseums(
-        array $parent,
+        array $organisation,
         ?array $buildings,
         array $reqParams,
         string $action
@@ -260,7 +273,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
         $reqParams['orgType'] = 'museum';
         try {
             $response = $this->organisationInfo->query(
-                $parent['id'],
+                $organisation['id'],
                 $reqParams,
                 $buildings,
                 $action
@@ -276,7 +289,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
             $this->handleError(
                 'getOrganisationInfo: error reading '
                 . 'organisation info (parent '
-                . print_r($parent, true) . ')',
+                . print_r($organisation, true) . ')',
                 $e->getMessage()
             );
         }
@@ -290,6 +303,10 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
      * @param array  $buildings Buildings to use in query
      * @param array  $reqParams Request params
      * @param string $action    Action type
+     *                          - lookup     Get all the libraries
+     *                          for the organisation
+     *                          - details    Get opening times and other details
+     *                          - consortium Get consortium info
      *
      * @return array
      */
@@ -320,14 +337,14 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
     /**
      * Get sectors from the first record found with API.
      *
-     * @param array $parent Information for fetch
+     * @param string $institutionId Id of institution to search for sectors
      *
      * @return array
      */
-    protected function getSectorsWithAPI(array $parent): array
+    protected function getSectorsWithAPI(string $institutionId): array
     {
         $params = [
-            'filter[]' => 'building:0/' . $parent['id'] . '/',
+            'filter[]' => 'building:0/' . $institutionId . '/',
             'limit' => 1,
             'field[]' => 'sectors'
         ];
