@@ -143,6 +143,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Available Online',
             'Awards',
             'Bibliography',
+            'child_records',
             'Collection',
             'DOI',
             'Edition',
@@ -159,9 +160,11 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Item Description',
             'Keywords',
             'Language',
+            'lido_editions',
             'Measurements',
             'New Title',
             'Organisation',
+            'original_work_language',
             'Other Classification',
             'Other Classifications',
             'Other ID',
@@ -190,9 +193,6 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Subject Place',
             'SubjectsWithoutPlaces',
             'System Format',
-            'child_records',
-            'lido_editions',
-            'original_work_language',
         ];
         return array_intersect_key($coreFields, array_flip($include));
     }
@@ -213,6 +213,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Author Notes',
             'Awards',
             'Bibliography',
+            'child_records',
             'Contained In',
             'DOI',
             'Edition',
@@ -226,6 +227,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Keywords',
             'Language',
             'New Title',
+            'original_work_language',
             'Physical Description',
             'Physical Medium',
             'Playing Time',
@@ -240,8 +242,6 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Series',
             'Subjects',
             'System Format',
-            'child_records',
-            'original_work_language',
         ];
         return array_intersect_key($coreFields, array_flip($include));
     }
@@ -267,6 +267,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Authors',
             'Awards',
             'Bibliography',
+            'child_records',
             'Contained In',
             'DOI',
             'Edition',
@@ -292,6 +293,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Objective and Content',
             'Online Access',
             'Organisation',
+            'original_work_language',
             'Other Titles',
             'Physical Description',
             'Physical Medium',
@@ -313,8 +315,6 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Source Collection',
             'Subjects',
             'System Format',
-            'child_records',
-            'original_work_language'
         ];
         return array_intersect_key($coreFields, array_flip($include));
     }
@@ -418,6 +418,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Material Arrangement',
             'Material Condition',
             'New Title',
+            'original_work_language',
             'Other Related Material',
             'Other Titles',
             'Playing Time',
@@ -431,10 +432,9 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Related Items',
             'Related Materials',
             'Related Places',
+            'subjects_extended',
             'System Format',
             'Unit IDs',
-            'original_work_language',
-            'subjects_extended',
         ];
         return array_intersect_key($coreFields, array_flip($include));
     }
@@ -455,6 +455,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Author Notes',
             'Awards',
             'Bibliography',
+            'child_records',
             'DOI',
             'Description FWD',
             'Edition',
@@ -477,7 +478,6 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Source Collection',
             'Subjects',
             'System Format',
-            'child_records'
         ];
         return array_intersect_key($coreFields, array_flip($include));
     }
@@ -503,6 +503,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Awards',
             'Bibliography',
             'Broadcasting Dates',
+            'child_records',
             'Color',
             'DOI',
             'Description FWD',
@@ -531,6 +532,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Number of Viewers',
             'Online Access',
             'Original Work',
+            'original_work_language',
             'Other Screenings',
             'Physical Description',
             'Playing Time',
@@ -554,8 +556,6 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Studios',
             'Subjects',
             'System Format',
-            'child_records',
-            'original_work_language',
         ];
         return array_intersect_key($coreFields, array_flip($include));
     }
