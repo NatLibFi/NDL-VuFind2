@@ -31,6 +31,7 @@
  */
 namespace Finna\View\Helper\Root;
 
+use Exception;
 use Finna\View\Helper\Root\RecordDataFormatter\FieldGroupBuilder;
 use VuFind\RecordDriver\AbstractBase as RecordDriver;
 
@@ -567,16 +568,20 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
      * @param string $type       Collection type (ead|ead3)
      *
      * @return array
+     *
+     * @throws Exception If trying to access record type without collection support
      */
     public function filterCollectionFields($coreFields, $type = 'ead')
     {
         switch ($type) {
         case 'ead':
             return $this->filterEADFields($coreFields);
+        case 'ead3':
+            return $this->filterEAD3Fields($coreFields);
         case 'lido':
             return $this->filterLidoFields($coreFields);
         default:
-            return $this->filterEAD3Fields($coreFields);
+            throw new Exception("Collection for record type $type doesn't exist.");
         }
     }
 
