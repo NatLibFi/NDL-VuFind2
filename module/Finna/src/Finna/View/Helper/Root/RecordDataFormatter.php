@@ -66,6 +66,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Author Notes',
             'Awards',
             'Bibliography',
+            'child_records',
             'Classification',
             'Copyright Notes',
             'Creator Characteristics',
@@ -91,6 +92,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Notated Music Format',
             'Notes',
             'Original Version Notes',
+            'original_work_language',
             'Other Links',
             'Other Titles',
             'Physical Description',
@@ -113,6 +115,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Source of Acquisition',
             'Standard Codes',
             'Standard Report Number',
+            'subjects_extended',
             'System Format',
             'Terms of Use',
             'Time Period',
@@ -120,9 +123,6 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Trade Availability Note',
             'Uncontrolled Title',
             'Uniform Title',
-            'child_records',
-            'original_work_language',
-            'subjects_extended',
         ];
         return array_intersect_key($coreFields, array_flip($include));
     }
