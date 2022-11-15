@@ -29,6 +29,7 @@
 namespace Finna\RecordDriver\Feature;
 
 use VuFind\RecordDriver\Feature\VersionAwareInterface;
+use VuFindSearch\Command\RetrieveCommand;
 use VuFindSearch\Command\SearchCommand;
 use VuFindSearch\Command\WorkExpressionsCommand;
 
@@ -422,7 +423,7 @@ trait SolrFinnaTrait
         }
 
         if (!empty($this->fields['dedup_id_str_mv'])) {
-            $command = new SearchCommand(
+            $command = new RetrieveCommand(
                 $this->getSourceIdentifier(),
                 $this->fields['dedup_id_str_mv'][0]
             );
