@@ -58,8 +58,8 @@
   }
 
   // LIDO records are displayed like on the record page:
-  $lidoRecord = $this->driver instanceof \Finna\RecordDriver\SolrLido;
-  $largeImageLayout = $lidoRecord && $this->record($this->driver)->hasLargeImageLayout();
+  $displayAsFullRecord = $this->driver instanceof \Finna\RecordDriver\SolrLido;
+  $largeImageLayout = $displayAsFullRecord && $this->record($this->driver)->hasLargeImageLayout();
 ?>
 <?php if (!empty($lastSearch)) : ?>
 </div>
@@ -74,7 +74,7 @@
   <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
   <div class="record-main<?=!$largeImageLayout ? ' mainbody left' : ''?>">
     <?=$this->flashmessages()?>
-    <?php if ($lidoRecord): ?>
+    <?php if ($displayAsFullRecord): ?>
       <?=$this->record($this->driver)->getMetaTags();?>
       <?=$this->record($this->driver)->getCoreMetadata()?>
     <?php else: ?>
