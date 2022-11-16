@@ -218,11 +218,11 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected classifications data
+     * Function to get expected format classifications data
      *
      * @return array
      */
-    public function getClassificationsData(): array
+    public function getFormatClassificationsData(): array
     {
         return [
             [
@@ -299,11 +299,11 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      * @param string $function Function of the driver to test
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getClassificationsData
+     * @dataProvider getFormatClassificationsData
      *
      * @return void
      */
-    public function testClassifications(
+    public function testGetFormatClassifications(
         string $function,
         array $expected
     ): void {
@@ -327,7 +327,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testOtherClassifications(
+    public function testGetOtherClassifications(
         string $function,
         array $expected
     ): void {
