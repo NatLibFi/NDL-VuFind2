@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<lidoWrap schemaLocation="http://www.lido-schema.org http://www.lido-schema.org/schema/v1.0/lido-v1.0.xsd">
+  <lido>
+    <lidoRecID type="Test">knp-247394</lidoRecID>
+    <descriptiveMetadata lang="fi">
+      <objectClassificationWrap>
+        <objectWorkTypeWrap>
+          <objectWorkType>
+            <term>      arkeologinen kohde</term>
+          </objectWorkType>
+        </objectWorkTypeWrap>
+        <classificationWrap>
+          <classification type="language">
+            <term type="test" lang="sv">fi</term>
+          </classification>
+          <classification type="language">
+            <term label="another test" lang="en">sv</term>
+          </classification>
+          <classification>
+            <term label="testimittari" lang="en">uno</term>
+            <term type="testimittari" lang="fi">dos</term>
+          </classification>
+          <classification>
+            <term label="testimittari" lang="en">one</term>
+            <term type="testimittari" lang="en">two</term>
+          </classification>
+        </classificationWrap>
+      </objectClassificationWrap>
+    </descriptiveMetadata>
+  </lido>
+</lidoWrap>

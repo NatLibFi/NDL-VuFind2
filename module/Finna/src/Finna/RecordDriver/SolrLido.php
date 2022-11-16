@@ -1028,7 +1028,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             'lido/descriptiveMetadata/objectClassificationWrap/classificationWrap/'
             . 'classification'
         ) as $node) {
-            $type = trim((string)$node->type);
+            $type = trim((string)$node->attributes()->type);
             if (in_array($type, $this->excludedClassifications)) {
                 continue;
             }
@@ -1279,7 +1279,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             foreach ($node->classificationWrap->classification ?? []
                 as $classification
             ) {
-                $type = trim($classification->attributes()->type);
+                $type = trim((string)$classification->attributes()->type);
                 if (in_array($type, $this->excludedClassifications)) {
                     continue;
                 }

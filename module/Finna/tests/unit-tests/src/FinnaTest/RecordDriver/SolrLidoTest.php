@@ -218,6 +218,60 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Function to get expected classifications data
+     *
+     * @return array
+     */
+    public function getClassificationsData(): array
+    {
+        return [
+            [
+                'getFormatClassifications',
+                [
+                    'lido_test.xml' => [
+                        'näkyy (testimittari)'
+                    ],
+                    'lido_test2.xml' => [
+                        'uno (testimittari)',
+                        'dos',
+                        'one (testimittari)',
+                        'two'
+                    ]
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * Function to get expected classifications data for built targets
+     *
+     * @return array
+     */
+    public function getOtherClassificationsData(): array
+    {
+        return [
+            [
+                'getOtherClassifications',
+                [
+                    'lido_test.xml' => [
+                        'näkyy'
+                    ],
+                    'lido_test2.xml' => [
+                        [
+                            'term' => 'uno',
+                            'label' => 'testimittari'
+                        ],
+                        [
+                            'term' => 'one',
+                            'label' => 'testimittari'
+                        ]
+                    ]
+                ]
+            ],
+        ];
+    }
+
+    /**
      * Test representations
      *
      * @param string $function Function of the driver to test
@@ -231,7 +285,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         string $function,
         array $expected
     ): void {
-        $driver = $this->getDriver();
+        $driver = $this->getDriver('lido_test.xml');
         $this->assertTrue(is_callable([$driver, $function], true));
         $this->assertEquals(
             $expected,
@@ -240,16 +294,68 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test classifications for build targets
+     *
+     * @param string $function Function of the driver to test
+     * @param array  $expected Result to be expected
+     *
+     * @dataProvider getClassificationsData
+     *
+     * @return void
+     */
+    public function testClassifications(
+        string $function,
+        array $expected
+    ): void {
+        foreach ($expected as $file => $result) {
+            $driver = $this->getDriver($file);
+            $this->assertTrue(is_callable([$driver, $function], true));
+            $this->assertEquals(
+                $result,
+                $driver->$function()
+            );
+        }
+    }
+
+    /**
+     * Test other classifications
+     *
+     * @param string $function Function of the driver to test
+     * @param array  $expected Result to be expected
+     *
+     * @dataProvider getOtherClassificationsData
+     *
+     * @return void
+     */
+    public function testOtherClassifications(
+        string $function,
+        array $expected
+    ): void {
+        foreach ($expected as $file => $result) {
+            $driver = $this->getDriver($file);
+            $this->assertTrue(is_callable([$driver, $function], true));
+            $this->assertEquals(
+                $result,
+                $driver->$function()
+            );
+        }
+    }
+
+    /**
      * Get a record driver with fake data
      *
-     * @param array $overrides    Fixture fields to override
-     * @param array $searchConfig Search configuration
+     * @param string $recordXml    Xml record to use for the test
+     * @param array  $overrides    Fixture fields to override
+     * @param array  $searchConfig Search configuration
      *
      * @return SolrLido
      */
-    protected function getDriver($overrides = [], $searchConfig = []): SolrLido
-    {
-        $fixture = $this->getFixture('lido/lido_test.xml', 'Finna');
+    protected function getDriver(
+        string $recordXml,
+        $overrides = [],
+        $searchConfig = []
+    ): SolrLido {
+        $fixture = $this->getFixture("lido/$recordXml", 'Finna');
         $config = [
             'Record' => [
                 'allowed_external_hosts_mode' => 'disable',
