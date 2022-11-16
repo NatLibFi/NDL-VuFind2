@@ -1284,16 +1284,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     continue;
                 }
                 $getDisplayString = function (string $term, string $extra) {
-                    if ($extra) {
-                        return "$term ($extra)";
-                    } else {
-                        return $term;
-                    }
+                    return $extra ? "$term ($extra)" : $term;
                 };
                 foreach ($classification->term as $term) {
                     $termString = trim((string)$term);
-                    $termType = trim($term->attributes()->type);
-                    $termLabel = trim($term->attributes()->label);
+                    $termType = trim((string)$term->attributes()->type);
+                    $termLabel = trim((string)$term->attributes()->label);
 
                     switch ($workTypeTerm) {
                     case 'rakennetun ympäristön kohde':
