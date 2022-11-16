@@ -669,7 +669,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $language
                 );
             if ($descriptionTrimmed = trim((string)$description)) {
-                $type = trim($description->attributes()->type);
+                $type = trim((string)$description->attributes()->type);
                 if ($type === 'displayLink') {
                     $result['resourceName'] = $descriptionTrimmed;
                 } else {
