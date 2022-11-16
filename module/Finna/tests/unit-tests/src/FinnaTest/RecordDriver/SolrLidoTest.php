@@ -294,7 +294,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test classifications for build targets
+     * Test getFormatClassifications
      *
      * @param string $function Function of the driver to test
      * @param array  $expected Result to be expected
@@ -318,7 +318,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test other classifications
+     * Test getOtherClassifications
      *
      * @param string $function Function of the driver to test
      * @param array  $expected Result to be expected
