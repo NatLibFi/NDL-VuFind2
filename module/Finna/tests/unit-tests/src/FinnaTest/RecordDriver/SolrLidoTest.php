@@ -243,7 +243,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected classifications data for built targets
+     * Function to get expected other classifications data
      *
      * @return array
      */
