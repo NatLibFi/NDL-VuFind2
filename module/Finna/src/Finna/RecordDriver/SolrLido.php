@@ -1271,7 +1271,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     {
         $results = [];
         foreach ($this->getXmlRecord()->lido->descriptiveMetadata
-            ->objectClassificationWrap as $node
+            ->objectClassificationWrap ?? [] as $node
         ) {
             $workTypeTerm = trim(
                 (string)($node->objectWorkTypeWrap->objectWorkType->term ?? '')
