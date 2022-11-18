@@ -1850,20 +1850,29 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             $message = isset($loan->loanStatus->status)
                 ? $this->mapStatus($loan->loanStatus->status, $function) : '';
 
-            if (!isset($this->config['Loans']['renewalLimit'])
-                || (isset($loan->loanStatus->status)
-                && $this->isPermanentRenewalBlock($loan->loanStatus->status))
+            // These are confusingly similarly named, but displayed a bit differently
+            // in the UI:
+            // renew/renewLimit is displayed as "x renewals remaining"
+            $renew = null;
+            $renewLimit = null;
+            // renewals/renewalLimit is displayed as "renewed/limit"
+            $renewals = null;
+            $renewalLimit = null;
+            if (isset($loan->loanStatus->status)
+                && $this->isPermanentRenewalBlock($loan->loanStatus->status)
             ) {
-                $renewLimit = null;
-                $renewals = null;
-            } else {
-                $renewLimit = $this->config['Loans']['renewalLimit'];
+                // No changes
+            } elseif (isset($this->config['Loans']['renewalLimit'])) {
+                $renewalLimit = $this->config['Loans']['renewalLimit'];
                 $renewals = max(
                     [
                         0,
                         $renewLimit - $loan->remainingRenewals
                     ]
                 );
+            } elseif ($loan->remainingRenewals > 0) {
+                $renew = 0;
+                $renewLimit = $loan->remainingRenewals;
             }
 
             $dueDate = strtotime($loan->loanDueDate . ' 23:59:59');
@@ -1883,8 +1892,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'dueStatus' => $dueStatus,
                 'renewable' => (string)$loan->loanStatus->isRenewable == 'yes',
                 'message' => $message,
+                'renew' => $renew,
+                'renewLimit' => $renewLimit,
                 'renewalCount' => $renewals,
-                'renewalLimit' => $renewLimit,
+                'renewalLimit' => $renewalLimit,
             ];
 
             $transList[] = $trans;
