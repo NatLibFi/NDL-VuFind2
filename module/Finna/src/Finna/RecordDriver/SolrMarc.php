@@ -1321,7 +1321,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     public function getTitle()
     {
         return $this->stripTrailingPunctuation(
-            $this->getFirstFieldValue('245', ['a', 'b', 'n', 'p'])
+            $this->getFirstFieldValue('245', ['a', 'b', 'n', 'p']),
+            '',
+            true
         );
     }
 
