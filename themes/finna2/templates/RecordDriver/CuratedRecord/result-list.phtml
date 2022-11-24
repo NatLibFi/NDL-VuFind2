@@ -4,11 +4,18 @@
   <?php if ($record instanceof \VuFind\RecordDriver\Missing): ?>
     <div class="media">
       <div class="media-body">
-        <?= $this->transEsc('Cannot find record') . ': ' . $this->escapeHtmlAttr($record->getUniqueID()) ?>
+        <p><?= $this->transEsc('Cannot find record') . ': ' . $this->escapeHtmlAttr($record->getUniqueID()) ?></p>
+        <?= $this->recordFieldMarkdown()->toHtml($this->driver->getNotes()) ?>
       </div>
     </div>
   <?php else: ?>
-    <?= $this->record($record)->getSearchResult('list') ?>
+    <?php
+      // Add curated record variable and replace driver with encapsulated record.
+      // Then render the same template using the encapsulated record.
+      $this->curatedRecord = $this->driver;
+      $this->driver = $record;
+    ?>
+    <?= $this->record($this->driver)->getSearchResult('list') ?>
   <?php endif; ?>
 <?php endif; ?>
 <!-- END of: finna - RecordDriver/CuratedRecord/result-list.phtml -->

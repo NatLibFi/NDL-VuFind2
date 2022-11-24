@@ -63,7 +63,7 @@ trait ContainerFormatTrait
      *
      * @var ?string
      */
-    protected ?string $encapsulatedElementDefaultFormat = null;
+    protected ?string $encapsulatedRecordDefaultFormat = null;
 
     /**
      * Cache for encapsulated records.
@@ -182,8 +182,8 @@ trait ContainerFormatTrait
         $formatElement = $this->encapsulatedRecordElementNames['format'];
         if (isset($item->{$formatElement})) {
             $format = ucfirst(strtolower((string)$item->{$formatElement}));
-        } elseif (isset($this->encapsulatedElementDefaultFormat)) {
-            $format = $this->encapsulatedElementDefaultFormat;
+        } elseif (isset($this->encapsulatedRecordDefaultFormat)) {
+            $format = $this->encapsulatedRecordDefaultFormat;
         } else {
             throw new \RuntimeException('Unable to determine format');
         }
