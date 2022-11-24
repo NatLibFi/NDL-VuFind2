@@ -1383,7 +1383,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Returns HTML for a set of user list result items.
+     * Returns HTML for a set of encapsulated records.
      *
      * @param string $id         Container record ID
      * @param int    $offset     Record offset
