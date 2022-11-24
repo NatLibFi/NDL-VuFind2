@@ -1,0 +1,15 @@
+<!-- START of: finna - RecordDriver/SolrAipa/encapsulated-records.phtml -->
+<?php if ($this->results->getResultTotal() > 0): ?>
+  <div class="encapsulated-records">
+    <?php foreach ($this->results->getResults() as $result): ?>
+      <div class="encapsulated-record">
+        <?php if ($result instanceof \VuFind\RecordDriver\Missing): ?>
+          <p><?= $this->transEsc('Cannot find record') . ': ' . $this->escapeHtmlAttr($result->getUniqueID()) ?></p>
+        <?php else: ?>
+          <?= $this->record($result)->getCoreMetadata() ?>
+        <?php endif; ?>
+      </div>
+    <?php endforeach; ?>
+  </div>
+<?php endif; ?>
+<!-- END of: finna - RecordDriver/SolrAipa/encapsulated-records.phtml -->

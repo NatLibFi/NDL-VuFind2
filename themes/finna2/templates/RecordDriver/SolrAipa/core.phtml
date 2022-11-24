@@ -156,15 +156,15 @@
       <?php if ($abstracts = $this->driver->getAbstracts()): ?>
         <div class="truncate-field wide summary recordSummary">
           <?php if (isset($abstracts[$this->layout()->userLang])): ?>
-            <?= $this->recordFieldMarkdown()->toHTML(($abstracts[$this->layout()->userLang]), "\n") ?>
+            <?= $this->recordFieldMarkdown()->toHtml(($abstracts[$this->layout()->userLang]), "\n") ?>
           <?php else: ?>
-            <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", $abstracts), "\n") ?>
+            <?= $this->recordFieldMarkdown()->toHtml(implode("\n\n", $abstracts), "\n") ?>
           <?php endif; ?>
         </div>
       <?php endif; ?>
       <?php if ($descriptions = $this->driver->getDescriptions()): ?>
         <div class="truncate-field wide summary recordSummary">
-          <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", $descriptions), '<br>') ?>
+          <?= $this->recordFieldMarkdown()->toHtml(implode("\n\n", $descriptions), '<br>') ?>
         </div>
       <?php endif; ?>
 
@@ -190,9 +190,7 @@
       <?php endif; ?>
       <?/* End Main Details */?>
 
-      <?php foreach ($this->driver->getItems() as $itemDriver): ?>
-        <?= $this->record($itemDriver)->renderTemplate('core.phtml', ['driver' => $itemDriver]) ?>
-      <?php endforeach; ?>
+      <?= $this->record($this->driver)->encapsulatedRecords() ?>
 
       <?php if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>
       <div>

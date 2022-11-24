@@ -427,6 +427,8 @@ $config = [
                         'Finna\AjaxHandler\GetDescriptionFactory',
                     'Finna\AjaxHandler\GetModel' =>
                         'Finna\AjaxHandler\GetModelFactory',
+                    'Finna\AjaxHandler\GetEncapsulatedRecords' =>
+                        'Finna\AjaxHandler\GetEncapsulatedRecordsFactory',
                     'Finna\AjaxHandler\GetFacetData' =>
                         'Finna\AjaxHandler\GetFacetDataFactory',
                     'Finna\AjaxHandler\GetFeed' =>
@@ -486,6 +488,7 @@ $config = [
                     'getDescription' => 'Finna\AjaxHandler\GetDescription',
                     'getModel' => 'Finna\AjaxHandler\GetModel',
                     'getDateRangeVisual' => 'Finna\AjaxHandler\GetDateRangeVisual',
+                    'getEncapsulatedRecords' => 'Finna\AjaxHandler\GetEncapsulatedRecords',
                     'getFeed' => 'Finna\AjaxHandler\GetFeed',
                     'getFieldInfo' => 'Finna\AjaxHandler\GetFieldInfo',
                     'getHoldingsDetails' => 'Finna\AjaxHandler\GetHoldingsDetails',
@@ -792,6 +795,7 @@ $config = [
                 'factories' => [
                     'Finna\Search\Blender\Results' => '\VuFind\Search\Solr\ResultsFactory',
                     'Finna\Search\Combined\Results' => 'VuFind\Search\Results\ResultsFactory',
+                    'Finna\Search\EncapsulatedRecords\Results' => 'VuFind\Search\Results\ResultsFactory',
                     'Finna\Search\Favorites\Results' => 'Finna\Search\Favorites\ResultsFactory',
                     'Finna\Search\R2\Results' => 'VuFind\Search\Solr\ResultsFactory',
                     'Finna\Search\R2Collection\Results' => 'VuFind\Search\Solr\ResultsFactory',
@@ -809,6 +813,7 @@ $config = [
                     'VuFind\Search\Solr\Results' => 'Finna\Search\Solr\Results',
                     'VuFind\Search\SolrAuth\Results' => 'Finna\Search\SolrAuth\Results',
 
+                    'EncapsulatedRecords' => 'Finna\Search\EncapsulatedRecords\Results',
                     'L1' => 'Finna\Search\L1\Results',
                     'R2' => 'Finna\Search\R2\Results',
                     'R2Collection' => 'Finna\Search\R2Collection\Results',
@@ -840,7 +845,9 @@ $config = [
             'recorddriver' => [
                 'factories' => [
                     'Finna\RecordDriver\AipaLrmi' =>
-                        'Finna\RecordDriver\SolrDefaultFactory',
+                        'Finna\RecordDriver\AipaLrmiFactory',
+                    'Finna\RecordDriver\CuratedRecord' =>
+                        'VuFind\RecordDriver\AbstractBaseFactory',
                     'Finna\RecordDriver\EDS' =>
                         'VuFind\RecordDriver\NameBasedConfigFactory',
                     'Finna\RecordDriver\R2Ead3' =>
@@ -879,6 +886,7 @@ $config = [
                     'r2ead3missing' => 'Finna\RecordDriver\R2Ead3Missing',
 
                     'AipaLrmi' => 'Finna\RecordDriver\AipaLrmi',
+                    'CuratedRecord' => 'Finna\RecordDriver\CuratedRecord',
                     'SolrAipa' => 'Finna\RecordDriver\SolrAipa',
                     'SolrAuthEaccpf' => 'Finna\RecordDriver\SolrAuthEaccpf',
                     'SolrAuthForwardAuthority' => 'Finna\RecordDriver\SolrAuthForward',

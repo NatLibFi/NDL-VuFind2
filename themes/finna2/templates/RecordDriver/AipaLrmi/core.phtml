@@ -92,14 +92,7 @@
       <?/* End Main Details */?>
     </div>
 
-    <?php foreach ($materials as $material): ?>
-      <?php try { ?>
-        <?= $this->record($material['id'])->getSearchResult('list') ?>
-        <p><?= $material['notes'] ?></p>
-      <?php } catch (\VuFind\Exception\RecordMissing $e) { ?>
-        <?= $this->transEsc('Cannot find record') . ': ' . $this->escapeHtmlAttr($material['id']) ?>
-      <?php } ?>
-    <?php endforeach; ?>
+    <?= $this->record($this->driver)->encapsulatedRecords() ?>
 
     <?php if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>
       <div>

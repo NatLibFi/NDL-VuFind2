@@ -1,6 +1,6 @@
 <?php
 /**
- * Model for LRMI records encapsulated in AIPA records.
+ * Model for AIPA LRMI records.
  *
  * PHP version 7
  *
@@ -27,8 +27,11 @@
  */
 namespace Finna\RecordDriver;
 
+use Finna\RecordDriver\Feature\ContainerFormatInterface;
+use Finna\RecordDriver\Feature\ContainerFormatTrait;
+
 /**
- * Model for LRMI records encapsulated in AIPA records.
+ * Model for AIPA LRMI records.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -36,8 +39,33 @@ namespace Finna\RecordDriver;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-class AipaLrmi extends SolrLrmi
+class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
 {
+    use ContainerFormatTrait;
+
+    /**
+     * Constructor
+     *
+     * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
+     * for built-in defaults)
+     * @param \Laminas\Config\Config $recordConfig   Record-specific configuration
+     * file (omit to use $mainConfig as $recordConfig)
+     * @param \Laminas\Config\Config $searchSettings Search-specific configuration
+     * file
+     */
+    public function __construct(
+        $mainConfig = null,
+        $recordConfig = null,
+        $searchSettings = null
+    ) {
+        parent::__construct($mainConfig, $recordConfig, $searchSettings);
+
+        // Set correct AIPA LRMI record XML element names for ContainerFormatTrait
+        $this->encapsulatedRecordElementNames['item'] = 'material';
+        $this->encapsulatedRecordElementNames['id'] = 'identifier';
+        $this->encapsulatedElementDefaultFormat = 'Curatedrecord';
+    }
+
     /**
      * Return an array of image URLs associated with this record with keys:
      * - url         Image URL
@@ -55,40 +83,37 @@ class AipaLrmi extends SolrLrmi
      */
     public function getAllImages($language = 'fi', $includePdf = false)
     {
-        // LRMI records encapsulated in AIPA records do not have PDF materials
+        // AIPA LRMI records do not directly contain PDF files
         return parent::getAllImages($language, false);
     }
 
     /**
-     * Return array of materials with keys:
-     * - id: record id
-     * - notes: record notes
-     * - position: order of listing
+     * Return record driver instance for an encapsulated curated record.
      *
-     * @return array
+     * @param \SimpleXMLElement $item Curated record item XML
+     *
+     * @return CuratedRecord
      */
-    public function getMaterials()
+    protected function getCuratedrecordDriver(\SimpleXMLElement $item): CuratedRecord
     {
-        $xml = $this->getXmlRecord();
-        $materials = [];
-        foreach ($xml->material as $material) {
-            $id = (string)$material->identifier;
-            $notes = (string)$material->comment;
-            $position = (int)$material->position ?? 0;
-            $materials[] = compact(
-                'id',
-                'notes',
-                'position',
-            );
-        }
+        $driver = $this->driverManager->get('CuratedRecord');
 
-        usort(
-            $materials,
-            function ($a, $b) {
-                return $a['position'] <=> $b['position'];
-            }
+        $encapsulatedRecord = $this->recordLoader->load(
+            (string)$item->identifier,
+            DEFAULT_SEARCH_BACKEND,
+            true
         );
 
-        return $materials;
+        $data = [
+            'id' => (string)$item->identifier,
+            'record' => $encapsulatedRecord,
+            'title' => $encapsulatedRecord->getTitle(),
+            'position' => (int)$item->position,
+            'notes' => (string)$item->comment,
+        ];
+
+        $driver->setRawData($data);
+
+        return $driver;
     }
 }

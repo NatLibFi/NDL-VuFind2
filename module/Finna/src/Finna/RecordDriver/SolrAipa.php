@@ -27,6 +27,10 @@
  */
 namespace Finna\RecordDriver;
 
+use Finna\Record\Loader;
+use Finna\RecordDriver\Feature\ContainerFormatInterface;
+use Finna\RecordDriver\Feature\ContainerFormatTrait;
+
 /**
  * Model for AIPA records in Solr.
  *
@@ -36,45 +40,57 @@ namespace Finna\RecordDriver;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-class SolrAipa extends SolrQdc
+class SolrAipa extends SolrQdc implements ContainerFormatInterface
 {
-    /**
-     * Record driver plugin manager.
-     *
-     * @var PluginManager
-     */
-    protected PluginManager $driverManager;
+    use ContainerFormatTrait;
 
     /**
-     * Attach record driver plugin manager.
+     * Return an array of image URLs associated with this record with keys:
+     * - url         Image URL
+     * - description Description text
+     * - rights      Rights
+     *   - copyright   Copyright (e.g. 'CC BY 4.0') (optional)
+     *   - description Human readable description (array)
+     *   - link        Link to copyright info
      *
-     * @param PluginManager $driverManager Record driver plugin manager
+     * @param string $language   Language for copyright information
+     * @param bool   $includePdf Whether to include first PDF file when no image
+     * links are found
      *
-     * @return void
+     * @return mixed
      */
-    public function attachDriverManager(PluginManager $driverManager): void
+    public function getAllImages($language = 'fi', $includePdf = false)
     {
-        $this->driverManager = $driverManager;
-    }
+        $cacheKey = __FUNCTION__ . "/$language" . ($includePdf ? '/1' : '/0');
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
 
-    /**
-     * Return all items encapsulated in the AIPA record.
-     *
-     * @return array
-     */
-    public function getItems(): array
-    {
         $xml = $this->getXmlRecord();
-        $items = [];
-        foreach ($xml->item as $item) {
-            $format = ucfirst(strtolower((string)$item->format));
-            $method = "get{$format}Driver";
-            if (is_callable([$this, $method])) {
-                $items[] = $this->$method($item);
+        $uniqueId = $this->getUniqueID();
+        $result = [];
+        $images = ['image/png', 'image/jpeg'];
+        foreach ($xml->description as $desc) {
+            $attr = $desc->attributes();
+            $format = trim((string)($attr['format'] ?? ''));
+            if ($format && in_array($format, $images)) {
+                $url = (string)$desc;
+                if ($this->isUrlLoadable($url, $uniqueId)) {
+                    $result[] = [
+                        'urls' => [
+                            'small' => $url,
+                            'medium' => $url,
+                            'large' => $url
+                        ],
+                        'description' => '',
+                        'rights' => [],
+                        'downloadable' => false
+                    ];
+                }
             }
         }
 
-        return $items;
+        return $this->cache[$cacheKey] = $result;
     }
 
     /**
@@ -89,9 +105,12 @@ class SolrAipa extends SolrQdc
         $driver = $this->driverManager->get('AipaLrmi');
 
         $data = [
-            'id' => (string)$item->id,
+            'id' => $this->getUniqueID()
+                . Loader::ENCAPSULATED_RECORD_ID_SEPARATOR
+                . (string)$item->id,
             'title' => (string)$item->title,
             'fullrecord' => $item->asXML(),
+            'position' => (int)$item->position,
         ];
 
         // Facets

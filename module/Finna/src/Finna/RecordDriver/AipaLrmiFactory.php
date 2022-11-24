@@ -1,10 +1,10 @@
 <?php
 /**
- * Record helper factory.
+ * Factory for AipaLrmi record drivers.
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2018-2019.
+ * Copyright (C) The National Library of Finland 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,29 +20,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  View_Helpers
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  RecordDrivers
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-namespace Finna\View\Helper\Root;
+namespace Finna\RecordDriver;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
-use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Record helper factory.
+ * Factory for AipaLrmi record drivers.
  *
  * @category VuFind
- * @package  View_Helpers
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  RecordDrivers
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-class RecordFactory implements FactoryInterface
+class AipaLrmiFactory extends \Finna\RecordDriver\SolrDefaultFactory
 {
     /**
      * Create an object
@@ -63,26 +62,12 @@ class RecordFactory implements FactoryInterface
         $requestedName,
         array $options = null
     ) {
-        if (!empty($options)) {
-            throw new \Exception('Unexpected options sent to factory.');
-        }
-        $helper = new Record(
-            $container->get(\VuFind\Config\PluginManager::class)->get('config'),
-            $container->get(\VuFind\Record\Loader::class),
-            $container->get('ViewHelperManager')->get('recordImage'),
-            $container->get(\Finna\Search\Solr\AuthorityHelper::class),
-            $container->get('ViewHelperManager')->get('url'),
-            $container->get('ViewHelperManager')->get('recordLink'),
-            $container->get(\VuFind\RecordTab\TabManager::class),
-            $container->get(\VuFind\Form\Form::class),
-            $container->get(\VuFind\Search\Results\PluginManager::class)
-                ->get('EncapsulatedRecords')
+        $driver = parent::__invoke($container, $requestedName, $options);
+        $driver->attachRecordLoader($container->get(\Finna\Record\Loader::class));
+        $driver->attachDriverManager(
+            $container->get(\Finna\RecordDriver\PluginManager::class)
         );
-        if ('cli' !== php_sapi_name()) {
-            $helper->setCoverRouter(
-                $container->get(\VuFind\Cover\Router::class)
-            );
-        }
-        return $helper;
+
+        return $driver;
     }
 }
