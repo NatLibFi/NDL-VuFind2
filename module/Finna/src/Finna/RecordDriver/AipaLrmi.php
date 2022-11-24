@@ -63,7 +63,7 @@ class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
         // Set correct AIPA LRMI record XML element names for ContainerFormatTrait
         $this->encapsulatedRecordElementNames['item'] = 'material';
         $this->encapsulatedRecordElementNames['id'] = 'identifier';
-        $this->encapsulatedElementDefaultFormat = 'Curatedrecord';
+        $this->encapsulatedRecordDefaultFormat = 'Curatedrecord';
     }
 
     /**
