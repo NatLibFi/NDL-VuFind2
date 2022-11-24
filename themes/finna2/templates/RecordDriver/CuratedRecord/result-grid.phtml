@@ -1,0 +1,21 @@
+<!-- START of: finna - RecordDriver/CuratedRecord/result-grid.phtml -->
+<?php $records = $this->driver->getEncapsulatedRecords(); ?>
+<?php if ($record = reset($records)): ?>
+  <?php if ($record instanceof \VuFind\RecordDriver\Missing): ?>
+    <div class="grid-result">
+      <div class="grid-body">
+        <p><?= $this->transEsc('Cannot find record') . ': ' . $this->escapeHtmlAttr($record->getUniqueID()) ?></p>
+        <?= $this->recordFieldMarkdown()->toHtml($this->driver->getNotes()) ?>
+      </div>
+    </div>
+  <?php else: ?>
+    <?php
+      // Add curated record variable and replace driver with encapsulated record.
+      // Then render the same template using the encapsulated record.
+      $this->curatedRecord = $this->driver;
+      $this->driver = $record;
+    ?>
+    <?= $this->record($this->driver)->getSearchResult('grid') ?>
+  <?php endif; ?>
+<?php endif; ?>
+<!-- END of: finna - RecordDriver/CuratedRecord/result-grid.phtml -->

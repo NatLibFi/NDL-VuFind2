@@ -29,6 +29,7 @@
  */
 namespace Finna\Record;
 
+use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use VuFind\Exception\RecordMissing as RecordMissingException;
 use VuFindSearch\Command\SearchCommand;
 use VuFindSearch\ParamBag;
@@ -46,6 +47,8 @@ use VuFindSearch\ParamBag;
  */
 class Loader extends \VuFind\Record\Loader
 {
+    public const ENCAPSULATED_RECORD_ID_SEPARATOR = '_';
+
     /**
      * Preferred language for display strings from RecordDriver
      *
@@ -127,6 +130,19 @@ class Loader extends \VuFind\Record\Loader
             if ($redirectedRecord = $this->handleMissingSolrRecord($id)) {
                 $missingException = false;
                 $result = $redirectedRecord;
+            }
+        }
+        if ($missingException) {
+            // Check for an encapsulated record ID
+            $parts = explode(self::ENCAPSULATED_RECORD_ID_SEPARATOR, $id, 2);
+            if ($id !== $parts[0]) {
+                $result = parent::load($parts[0]);
+                if ($result instanceof ContainerFormatInterface) {
+                    $result = $result->getEncapsulatedRecord($parts[1]);
+                    if (null !== $result) {
+                        $missingException = false;
+                    }
+                }
             }
         }
         if ($missingException) {
