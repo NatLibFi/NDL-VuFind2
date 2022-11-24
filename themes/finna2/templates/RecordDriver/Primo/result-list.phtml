@@ -160,10 +160,6 @@
             <p class="summary"><?=$summary;?></p>
           </div>
         <?php endif; ?>
-        <?php
-        $openUrl = $this->openUrl($driver, 'results');
-        $openUrlActive = $openUrl->isActive();
-        ?>
         <?=$this->render('record/labels.phtml', ['driver' => $this->driver]); ?>
         <div>
             <?=$this->record($this->driver)->getOnlineUrls('results')?>

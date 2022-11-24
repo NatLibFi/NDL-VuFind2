@@ -549,7 +549,7 @@ EOT;
             if (!$accept) {
                 continue;
             }
-
+            $this->populateIcon($data, $config);
             $items[] = $data;
             $cnt++;
             if ($itemsCnt !== null && $cnt == $itemsCnt) {
@@ -618,5 +618,39 @@ EOT;
             }
         }
         return compact('channel', 'items', 'config', 'modal', 'contentPage');
+    }
+
+    /**
+     * Populate icon data for feed slide.
+     *
+     * @param array                  $data   Data for slide
+     * @param \Laminas\Config\Config $config Config for feed
+     *
+     * @return void
+     */
+    protected function populateIcon(
+        array &$data,
+        \Laminas\Config\Config $config
+    ): void {
+        if (empty($config->showIcons)
+            || empty($data['link'])
+            || empty($this->mainConfig->Content->feedHostToNameMappings)
+        ) {
+            return;
+        }
+
+        // Parse the link to know the origin
+        $comparisons
+            = $this->mainConfig->Content->feedHostToNameMappings->toArray();
+        $parsed = parse_url($data['link']);
+        if (!empty($parsed['host'])) {
+            foreach ($comparisons as $comparison) {
+                [$from, $to] = explode(':', $comparison, 2);
+                if ($parsed['host'] === $from) {
+                    $data['icon'] = ['name' => $to];
+                    return;
+                }
+            }
+        }
     }
 }

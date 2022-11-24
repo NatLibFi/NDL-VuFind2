@@ -396,6 +396,13 @@ ol {
 }
 
 #cc-main {
+  z-index: @zindex-cc-main !important;
+  .cm {
+    z-index: 1;
+  }
+  .pm {
+    z-index: 2;
+  }
   a {
     &:hover {
       color: @link-hover-color;
@@ -403,7 +410,10 @@ ol {
       background-size: 0%;
     }
   }
-
+  .cm-wrapper {
+    z-index: 1;
+    position: relative;
+  }
   .c--anim .cm__close,
   .c--anim .cm__btn,
   .pm__btn {
@@ -420,7 +430,11 @@ ol {
   .cm--bar .cm__btn {
     flex: none;
   }
-
+  @media screen and (max-width: 640px){
+    .pm--box {
+      top: @navbar-height + 1px;
+    }
+  }
   .pm__section--expandable .pm__section-arrow {
     background: none;
   }

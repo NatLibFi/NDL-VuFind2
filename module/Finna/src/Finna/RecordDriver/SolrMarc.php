@@ -294,7 +294,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                     case '080':
                         $classification = 'udk';
                         $version = $this->getSubfield($field, '2');
-                        if (strpos($version, '2017') !== false) {
+                        if ($version && preg_match('/(\d{4})/', $version, $matches)
+                            && 2017 <= $matches[1]
+                        ) {
                             $classification .= '2017';
                         }
                         break;
@@ -1257,7 +1259,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
         if (empty($matches)) {
             // Now check 490 and display it only if 440/800/830 were empty:
-            $secondaryFields = ['490' => ['a', 'v', 'x']];
+            $secondaryFields = ['490' => ['a', 'v']];
             $matches = $this->getSeriesFromMARC($secondaryFields);
         }
 
@@ -1319,7 +1321,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     public function getTitle()
     {
         return $this->stripTrailingPunctuation(
-            $this->getFirstFieldValue('245', ['a', 'b', 'n', 'p'])
+            $this->getFirstFieldValue('245', ['a', 'b', 'n', 'p']),
+            '',
+            true
         );
     }
 

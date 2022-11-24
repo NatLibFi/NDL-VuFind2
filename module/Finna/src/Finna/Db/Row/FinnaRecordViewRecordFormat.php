@@ -1,6 +1,6 @@
 <?php
 /**
- * Database authentication class
+ * Row definition for finna_record_view_record_format
  *
  * PHP version 7
  *
@@ -20,44 +20,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Authentication
+ * @package  Db_Table
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:authentication_handlers Wiki
+ * @link     http://vufind.org   Main Site
  */
-namespace Finna\Auth;
-
-use VuFind\Exception\Auth as AuthException;
+namespace Finna\Db\Row;
 
 /**
- * Database authentication class
+ * Row definition for finna_record_view_record_format
  *
  * @category VuFind
- * @package  Authentication
+ * @package  Db_Table
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:authentication_handlers Wiki
+ * @link     http://vufind.org   Main Site
  */
-class Database extends \VuFind\Auth\Database
+class FinnaRecordViewRecordFormat extends \VuFind\Db\Row\RowGateway
 {
     /**
-     * Make sure username contains only allowed characters
+     * Constructor
      *
-     * @param array $params request parameters
-     *
-     * @return void
+     * @param \Laminas\Db\Adapter\Adapter $adapter Database adapter
      */
-    protected function validateUsernameAndPassword($params)
+    public function __construct($adapter)
     {
-        parent::validateUsernameAndPassword($params);
-
-        // Check that the username only contains allowed characters:
-        $valid = preg_match(
-            '/^(?!.*[._\-]{2})[A-ZÅÄÖa-zåäö0-9._\-:]{3,50}$/',
-            $params['username']
-        );
-        if (!$valid) {
-            throw new AuthException('Username contains invalid characters');
-        }
+        parent::__construct('id', 'finna_record_view_record_format', $adapter);
     }
 }

@@ -1,9 +1,11 @@
 <!-- START of: finna - RecordDriver/SolrQdc/core.phtml -->
 <?php
-
   $openUrl = $this->openUrl($this->driver, 'record');
-  $recordHelper = $this->record($this->driver);
   $openUrlActive = $openUrl->isActive();
+  $doi = $this->doi($this->driver, 'record');
+  $doiActive = $doi->isActive();
+
+  $recordHelper = $this->record($this->driver);
   // Account for replace_other_urls setting
   $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
   $onlineURLs = $this->driver->getOnlineURLs(false, ['image']);
@@ -80,8 +82,8 @@
         </div>
       <?php endif; ?>
 
-      <?php if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
-        <?php if ($hasOnlineURLs || $openUrlActive): ?>
+      <?php if (!empty($urls) || $openUrlActive || $doiActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
+        <?php if ($hasOnlineURLs || $openUrlActive || $doiActive): ?>
         <div class="recordURLs local-available-online-record">
           <div class="truncate-field">
             <?php if (!empty($otherUrls)): ?>
@@ -108,10 +110,14 @@
               <?php endforeach; ?>
             <?php endif; ?>
           </div>
+
           <?php if ($openUrlActive): ?>
             <?=$openUrl->renderTemplate()?><br/>
           <?php endif; ?>
-          </div>
+          <?php if ($doiActive): ?>
+            <?=$doi->renderTemplate()?>
+          <?php endif; ?>
+        </div>
         <?php endif; ?>
       <?php endif; ?>
 

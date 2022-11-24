@@ -8,7 +8,7 @@
       <li><a href="<?=$this->url('content-page', ['page' => 'terms'])?>"><?=$this->transEsc('Terms')?></a></li>
       <li><a href="<?=$this->url('content-page', ['page' => 'privacy'])?>"><?=$this->transEsc('Privacy')?></a></li>
       <?php if ($this->cookieConsent()->isEnabled()): ?>
-        <li><a href="#" type="button" data-cc="show-preferencesModal" aria-haspopup="dialog"><?=$this->transEsc('Cookie Settings')?></a></li>
+        <li><a href="#" data-cc="show-preferencesModal" aria-haspopup="dialog"><?=$this->transEsc('Cookie Settings')?></a></li>
       <?php endif; ?>
     </ul>
   </div>

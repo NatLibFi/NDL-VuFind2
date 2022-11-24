@@ -66,7 +66,7 @@ CookieConsent:
       DefaultEnabled: true
       Essential: true
       Cookies:
-        - Name: '{{consent_cookie_name}}'
+        - Name: '{{consent_cookie_name}}, cookieConsent'
           Domain: '{{vufind_cookie_domain}}'
           Description: CookieConsent::cookie_description_consent_html
           Expiration: '{{consent_cookie_expiration}}'
@@ -84,7 +84,7 @@ CookieConsent:
           Domain: '{{vufind_cookie_domain}}'
           Description: CookieConsent::cookie_description_sidefacet_html
           Expiration: session
-        - Name: '{{vufind_session_cookie}}'
+        - Name: 'PHPSESSID, VUFIND_SESSION'
           Domain: '{{vufind_cookie_domain}}'
           Description: CookieConsent::cookie_description_session_html
           Expiration: session
@@ -104,10 +104,19 @@ CookieConsent:
           Domain: '{{vufind_cookie_domain}}'
           Description: CookieConsent::cookie_description_collapse_authority_info_html
           Expiration: session
+        - Name: finna.fi, _shib_session_*, _opensaml_req_ss*
+          Domain: '{{vufind_cookie_domain}}'
+          Description: CookieConsent::cookie_description_session_html
+          Expiration: session
         - Name: finnaSurvey
           Domain: '{{vufind_cookie_domain}}'
           Description: CookieConsent::cookie_description_finna_survey_html
           Expiration: session
+        - Name: organisationInfoId
+          Domain: '{{vufind_cookie_domain}}'
+          Description: CookieConsent::cookie_description_finna_organisation_id_html
+          Expiration: 1
+          ExpirationUnit: year
         - Name: preferredRecordSource
           Domain: '{{vufind_cookie_domain}}'
           Description: CookieConsent::cookie_description_preferred_record_source_info_html

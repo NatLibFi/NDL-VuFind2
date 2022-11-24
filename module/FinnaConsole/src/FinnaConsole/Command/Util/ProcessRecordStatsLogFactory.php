@@ -1,11 +1,10 @@
 <?php
 /**
- * VuFind HTTP Service factory.
+ * Factory for record stats log processor.
  *
  * PHP version 7
  *
- * Copyright (C) Villanova University 2019.
- * Copyright (C) The National Library of Finland 2020.
+ * Copyright (C) The National Library of Finland 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,12 +21,11 @@
  *
  * @category VuFind
  * @package  Service
- * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-namespace Finna\Service;
+namespace FinnaConsole\Command\Util;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
@@ -36,16 +34,15 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * VuFind HTTP Service factory.
+ * Factory for record stats log processor
  *
  * @category VuFind
  * @package  Service
- * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class HttpServiceFactory implements FactoryInterface
+class ProcessRecordStatsLogFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -66,27 +63,15 @@ class HttpServiceFactory implements FactoryInterface
         $requestedName,
         array $options = null
     ) {
-        if (!empty($options)) {
-            throw new \Exception('Unexpected options passed to factory.');
-        }
-        $config = $container->get(\VuFind\Config\PluginManager::class)
-            ->get('config');
-        $options = [];
-        if (isset($config->Proxy->host)) {
-            $options['proxy_host'] = $config->Proxy->host;
-            if (isset($config->Proxy->port)) {
-                $options['proxy_port'] = $config->Proxy->port;
-            }
-            if (isset($config->Proxy->type)) {
-                $options['proxy_type'] = $config->Proxy->type;
-            }
-        }
-        $defaults = isset($config->Http)
-            ? $config->Http->toArray() : [];
-        // Back-compatibility for the Http adapter setting
-        if (($defaults['adapter'] ?? '') === 'Zend\Http\Client\Adapter\Curl') {
-            $defaults['adapter'] = 'Laminas\Http\Client\Adapter\Curl';
-        }
-        return new $requestedName($options, $defaults);
+        $tableManager = $container->get(\VuFind\Db\Table\PluginManager::class);
+        return new $requestedName(
+            $tableManager->get(\Finna\Db\Table\FinnaRecordStatsLog::class),
+            $tableManager->get(\Finna\Db\Table\FinnaRecordView::class),
+            $tableManager->get(\Finna\Db\Table\FinnaRecordViewInstView::class),
+            $tableManager->get(\Finna\Db\Table\FinnaRecordViewRecord::class),
+            $tableManager->get(\Finna\Db\Table\FinnaRecordViewRecordFormat::class),
+            $tableManager->get(\Finna\Db\Table\FinnaRecordViewRecordRights::class),
+            ...($options ?? [])
+        );
     }
 }

@@ -3,6 +3,8 @@
     $renderedURLs = [];
     $openUrl = $this->openUrl($this->driver, 'results');
     $openUrlActive = $openUrl->isActive();
+    $doi = $this->doi($this->driver, 'results');
+    $doiActive = $doi->isActive();
     $context = $this->context ?? 'results';
     $maxLinkCount = 4;
 
@@ -27,7 +29,7 @@
 
   <?php // Always output the container div so that we can update its contents on dedup record selection: ?>
   <div class="available-online-links">
-    <?php if (!empty($combined) || $openUrlActive): ?>
+    <?php if (!empty($combined) || $openUrlActive || $doiActive): ?>
       <?php if ('popup' !== $context): ?>
         <strong class="available-online-header <?=!empty($combined) ? '' : 'hidden'; ?>"><?=$this->transEsc('Available Online') ?>:</strong>
       <?php endif; ?>
@@ -91,6 +93,9 @@
       </div>
       <?php if ($openUrlActive): ?>
         <?=$openUrl->renderTemplate()?>
+      <?php endif; ?>
+      <?php if ($doiActive): ?>
+        <?=$doi->renderTemplate()?>
       <?php endif; ?>
     <?php endif; ?>
   </div>

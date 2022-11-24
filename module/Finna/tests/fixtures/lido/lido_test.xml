@@ -2,10 +2,32 @@
 <lidoWrap schemaLocation="http://www.lido-schema.org http://www.lido-schema.org/schema/v1.0/lido-v1.0.xsd">
   <lido>
     <lidoRecID type="Test">knp-247394</lidoRecID>
+    <descriptiveMetadata lang="fi">
+      <objectClassificationWrap>
+        <objectWorkTypeWrap>
+          <objectWorkType>
+            <term> rakennetun ympäristön kohde </term>
+          </objectWorkType>
+        </objectWorkTypeWrap>
+        <classificationWrap>
+          <classification type="language">
+            <term>fi</term>
+          </classification>
+          <classification type="language">
+            <term>sv</term>
+          </classification>
+          <classification lang="en">
+            <term type="testimittari">näkyy</term>
+            <term type="testimittari">ei näy</term>
+          </classification>
+        </classificationWrap>
+      </objectClassificationWrap>
+    </descriptiveMetadata>
     <administrativeMetadata>
       <resourceWrap>
         <resourceSet>
           <resourceID type="ID">607642</resourceID>
+          <resourceDescription>Kuvan selitys</resourceDescription>
           <resourceRepresentation type="image_large">
             <linkResource>https://largekuvanlinkki.com</linkResource>
           </resourceRepresentation>
@@ -42,6 +64,7 @@
         </resourceSet>
         <resourceSet>
           <resourceID type="ID">607643</resourceID>
+          <resourceDescription type="displayLink">Kuvan nimi</resourceDescription>
           <resourceRepresentation type="image_thumb">
             <linkResource>https://thumbkuvanlinkki2.com</linkResource>
           </resourceRepresentation>
@@ -112,6 +135,12 @@
           <resourceDescription type="displayLink">DocxTesti.docx</resourceDescription>
           <resourceRepresentation type="provided_text">
             <linkResource formatResource="docx">https://linkkiDocx.fi</linkResource>
+          </resourceRepresentation>
+        </resourceSet>
+        <resourceSet>
+          <resourceID type="ID">607644</resourceID>
+          <resourceRepresentation>
+            <linkResource>https://kaikkilinkit.com</linkResource>
           </resourceRepresentation>
         </resourceSet>
       </resourceWrap>

@@ -1038,6 +1038,11 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             }
             $locationId = $item['location'];
 
+            $number = $item['serial_issue_number'];
+            if (!$number) {
+                $number = $this->getItemSpecificLocation($item);
+            }
+
             $entry = [
                 'id' => $id,
                 'item_id' => $item['item_id'],
@@ -1048,7 +1053,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 'reserve' => 'N',
                 'callnumber' => $callnumber,
                 'duedate' => $duedate,
-                'number' => $item['serial_issue_number'],
+                'number' => $number,
                 'barcode' => $item['external_id'],
                 'sort' => $i,
                 'requests_placed' => max(
@@ -1369,6 +1374,116 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             }
         }
         return $result;
+    }
+
+    /**
+     * Return item-specific location information as configured
+     *
+     * @param array $item Koha item
+     *
+     * @return string
+     */
+    protected function getItemSpecificLocation($item)
+    {
+        if (empty($this->config['Holdings']['display_location_per_item'])) {
+            return '';
+        }
+
+        $result = [];
+        foreach (explode(',', $this->config['Holdings']['display_location_per_item'])
+            as $field
+        ) {
+            switch ($field) {
+            case 'collection_code':
+                if (!empty($item['collection_code'])) {
+                    $collection = $this->translateCollection(
+                        $item['collection_code'],
+                        $item['collection_code_description']
+                            ?? $item['collection_code']
+                    );
+                    if ($collection) {
+                        $result[] = $collection;
+                    }
+                }
+                break;
+            case 'location':
+                if (!empty($item['location'])) {
+                    $location = $this->translateLocation(
+                        $item['location'],
+                        !empty($item['location_description'])
+                            ? $item['location_description'] : $item['location']
+                    );
+                    if ($location) {
+                        $result[] = $location;
+                    }
+                }
+                break;
+            case 'sub_location':
+                if (!empty($item['sub_location'])) {
+                    $subLocations = $this->getSubLocations();
+                    $result[] = $this->translateSubLocation(
+                        $item['sub_location'],
+                        $subLocations[$item['sub_location']]['lib_opac'] ?? null
+                    );
+                }
+                break;
+            case 'callnumber':
+                if (!empty($item['callnumber'])) {
+                    $result[] = $item['callnumber'];
+                }
+                break;
+            }
+        }
+
+        return implode(', ', $result);
+    }
+
+    /**
+     * Translate sub-location name
+     *
+     * @param string $location Location code
+     * @param string $default  Default value if translation is not available
+     *
+     * @return string
+     */
+    protected function translateSubLocation($location, $default = null)
+    {
+        if (empty($location)) {
+            return $default ?? '';
+        }
+        $prefix = !empty($this->config['Catalog']['id'])
+            ? ($this->config['Catalog']['id'] . '_')
+            : '';
+        $prefix .= 'sub_location_';
+
+        return $this->translate(
+            "$prefix$location",
+            null,
+            $default ?? $location
+        );
+    }
+
+    /**
+     * Get sub-locations from cache or from the API
+     *
+     * @return array
+     */
+    protected function getSubLocations()
+    {
+        $cacheKey = 'sublocations';
+        $locations = $this->getCachedData($cacheKey);
+        if (null === $locations) {
+            $result = $this->makeRequest(
+                'v1/contrib/kohasuomi/authorised_values/authorised_value_categories/'
+                . '?authorised_value_category=SUBLOC'
+            );
+            $locations = [];
+            foreach ($result['data'] as $location) {
+                $locations[$location['authorised_value']] = $location;
+            }
+            $this->putCachedData($cacheKey, $locations, 3600);
+        }
+        return $locations;
     }
 
     /**

@@ -608,6 +608,33 @@
                 }
                 position:relative;
             }
+            .personnel {
+                table {
+                    th,
+                    td {
+                        width: 100%/2;
+                    }
+                    th:nth-of-type(2),
+                    td:nth-of-type(2) {
+                        display: none;
+                    }
+                }
+                @media(min-width: @screen-sm) {
+                    table {
+                        th,
+                        td {
+                            width: 100%/3;
+                        }
+                        th:nth-of-type(2),
+                        td:nth-of-type(2) {
+                            display: table-cell;
+                        }
+                    }
+                    .job-title {
+                        display: none;
+                    }
+                }
+            }
             .organisation-feeds {
                 @media(min-width: @screen-sm) {
                     width: 100%;
@@ -629,9 +656,11 @@
                         column-count: 3;
                     }
                     .service-tooltip {
-                        &:hover {
-                            cursor: pointer;
-                        }
+                        color: @link-color;
+                        text-decoration: none;
+                        background-color: inherit;
+                        border: none;
+                        padding: 0;
                     }
                     .service-short-desc {
                         font-size: .90em;

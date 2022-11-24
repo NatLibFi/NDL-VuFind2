@@ -263,8 +263,12 @@ $config = [
     'favicon' => 'favicon.ico',
     'icons' => [
         'aliases' => [
+            'external-link' => 'FontAwesome:external-link',
+            'facebook' => 'FontAwesome:facebook',
+            'instagram' => 'FontAwesome:instagram',
             'service-available' => 'FontAwesome:ok',
-            'service-unavailable' => 'FontAwesome:remove'
+            'service-unavailable' => 'FontAwesome:remove',
+            'twitter' => 'FontAwesome:twitter',
         ]
     ]
 ];

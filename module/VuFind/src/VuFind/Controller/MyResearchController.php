@@ -211,9 +211,10 @@ class MyResearchController extends AbstractBase
 
         // Make view
         $view = $this->createViewModel();
+        // Username policy
+        $view->usernamePolicy = $this->getAuthManager()->getUsernamePolicy($method);
         // Password policy
-        $view->passwordPolicy = $this->getAuthManager()
-            ->getPasswordPolicy($method);
+        $view->passwordPolicy = $this->getAuthManager()->getPasswordPolicy($method);
         // Set up Captcha
         $view->useCaptcha = $this->captcha()->active('newAccount');
         // Pass request to view so we can repopulate user parameters in form:
@@ -2005,6 +2006,8 @@ class MyResearchController extends AbstractBase
         if (!$this->formWasSubmitted('submit')) {
             return $this->redirect()->toRoute('home');
         }
+        // Set up authentication so that we can retrieve the correct password policy:
+        $this->setUpAuthenticationFromRequest();
         // Pull in from POST
         $request = $this->getRequest();
         $post = $request->getPost();
@@ -2014,12 +2017,10 @@ class MyResearchController extends AbstractBase
             : false;
         // View, password policy and Captcha
         $view = $this->createViewModel($post);
-        $view->passwordPolicy = $this->getAuthManager()
-            ->getPasswordPolicy();
+        $view->passwordPolicy = $this->getAuthManager()->getPasswordPolicy();
         $view->useCaptcha = $this->captcha()->active('changePassword');
         // Check Captcha
         if (!$this->formWasSubmitted('submit', $view->useCaptcha)) {
-            $this->setUpAuthenticationFromRequest();
             return $this->resetNewPasswordForm($userFromHash, $view);
         }
         // Missing or invalid hash

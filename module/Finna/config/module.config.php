@@ -359,7 +359,6 @@ $config = [
 
             // Factory overrides for non-Finna classes:
             'VuFind\Config\PathResolver' => 'Finna\Config\PathResolverFactory',
-            'VuFindHttp\HttpService' => 'Finna\Service\HttpServiceFactory',
 
             'League\CommonMark\ConverterInterface' => 'Finna\Service\MarkdownFactory',
         ],
@@ -521,14 +520,12 @@ $config = [
             ],
             'auth' => [
                 'factories' => [
-                    'Finna\Auth\Database' => 'Laminas\ServiceManager\Factory\InvokableFactory',
                     'Finna\Auth\ILS' => 'VuFind\Auth\ILSFactory',
                     'Finna\Auth\MultiILS' => 'VuFind\Auth\ILSFactory',
                     'Finna\Auth\Shibboleth' => 'Finna\Auth\ShibbolethFactory',
                     'Finna\Auth\Suomifi' => 'Finna\Auth\SuomifiFactory',
                 ],
                 'aliases' => [
-                    'VuFind\Auth\Database' => 'Finna\Auth\Database',
                     'VuFind\Auth\ILS' => 'Finna\Auth\ILS',
                     'VuFind\Auth\MultiILS' => 'Finna\Auth\MultiILS',
                     'VuFind\Auth\Shibboleth' => 'Finna\Auth\Shibboleth',
@@ -557,6 +554,11 @@ $config = [
                     'Finna\Db\Row\FinnaPageViewStats' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\FinnaRecordStats' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\FinnaRecordStatsLog' => 'VuFind\Db\Row\RowGatewayFactory',
+                    'Finna\Db\Row\FinnaRecordView' => 'VuFind\Db\Row\RowGatewayFactory',
+                    'Finna\Db\Row\FinnaRecordViewInstView' => 'VuFind\Db\Row\RowGatewayFactory',
+                    'Finna\Db\Row\FinnaRecordViewRecord' => 'VuFind\Db\Row\RowGatewayFactory',
+                    'Finna\Db\Row\FinnaRecordViewRecordFormat' => 'VuFind\Db\Row\RowGatewayFactory',
+                    'Finna\Db\Row\FinnaRecordViewRecordRights' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\FinnaSessionStats' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\PrivateUser' => 'VuFind\Db\Row\UserFactory',
                     'Finna\Db\Row\Resource' => 'VuFind\Db\Row\RowGatewayFactory',
@@ -599,6 +601,11 @@ $config = [
                     'Finna\Db\Table\FinnaPageViewStats' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\FinnaRecordStats' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\FinnaRecordStatsLog' => 'VuFind\Db\Table\GatewayFactory',
+                    'Finna\Db\Table\FinnaRecordView' => 'VuFind\Db\Table\GatewayFactory',
+                    'Finna\Db\Table\FinnaRecordViewInstView' => 'VuFind\Db\Table\GatewayFactory',
+                    'Finna\Db\Table\FinnaRecordViewRecord' => 'VuFind\Db\Table\GatewayFactory',
+                    'Finna\Db\Table\FinnaRecordViewRecordFormat' => 'VuFind\Db\Table\GatewayFactory',
+                    'Finna\Db\Table\FinnaRecordViewRecordRights' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\FinnaSessionStats' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\Resource' => 'VuFind\Db\Table\ResourceFactory',
                     'Finna\Db\Table\Search' => 'VuFind\Db\Table\GatewayFactory',

@@ -77,7 +77,7 @@
           <?php foreach ($this->recordList as $resource): ?>
             <?php $iteration++; ?>
             <?php $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
-            <tr id="record<?=$this->escapeHtmlAttr($resource->getUniqueId()) ?>" class="myresearch-row">
+            <tr id="record<?=$this->escapeHtmlAttr($resource->getUniqueId()) ?>" class="result myresearch-row">
               <td class="text-center">
               <?php if ($this->cancelForm && isset($ilsDetails['cancel_details'])): ?>
                 <?php $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $resource->getUniqueId()); ?>
