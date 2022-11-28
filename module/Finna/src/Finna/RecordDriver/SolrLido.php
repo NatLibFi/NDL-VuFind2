@@ -1856,21 +1856,22 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         if (!isset($this->fields[$key])) {
             return null;
         }
-        $start = null;
-        $end = null;
         if (preg_match(
             '/\[(-?\d{4}).* TO (-?\d{4})/',
             $this->fields[$key],
             $matches
         )
         ) {
-            $start = (string)(intval($matches[1]));
             $end = (string)(intval($matches[2]));
+            return [
+                (string)(intval($matches[1])),
+                $end == '9999' ? null : $end
+            ];
         } elseif (preg_match('/^(-?\d{4})-/', $this->fields[$key], $matches)) {
-            $start = (string)intval($matches[1]);
-        }
-        if ($start != null) {
-            return [$start, $end == '9999' ? null : $end];
+            return [
+                (string)(intval($matches[1])),
+                null
+            ];
         }
         return null;
     }
