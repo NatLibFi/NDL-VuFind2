@@ -255,7 +255,8 @@ $config = [
         'vendor/leaflet.draw.min.js',
         'vendor/js.cookie.js',
         'finna-multiselect.js',
-        'finna-model-viewer.js'
+        'finna-model-viewer.js',
+        'finna-video-element.js'
     ],
     'less' => [
         'active' => false

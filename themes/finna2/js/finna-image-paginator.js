@@ -691,55 +691,9 @@ FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() 
     if (typeof $('.open-link a').attr('href') !== 'undefined') {
       _.setDimensions();
     }
-    _.popup.collapseArea.find('[data-embed-video]').each(function initVideo() {
-      var videoSources = $(this).data('videoSources');
-      var posterUrl = $(this).data('posterUrl');
-      var scripts = $(this).data('scripts');
-      $.each(scripts, function updateNonces(key, value) {
-        scripts[key] = VuFind.updateCspNonce(value);
-      });
-      $(this).finnaPopup({
-        id: 'popupvideo',
-        cycle: false,
-        parent: 'video-player',
-        classes: 'canvas-player',
-        translations: translations,
-        modal: '<video class="video-js vjs-big-play-centered" controls></video>',
-        onPopupOpen: function onPopupOpen() {
-          // Lets find the active trigger
-          finna.layout.loadScripts(scripts, function onScriptsLoaded() {
-            finna.videoPopup.initVideoJs('.video-popup', videoSources, posterUrl);
-          });
-          _.setCanvasElement('video');
-        },
-        onPopupClose: function onPopupClose() {
-
-        }
-      });
+    _.popup.collapseArea.find('finna-video').on('click', () => {
+      _.setCanvasElement('video');
     });
-
-    _.popup.collapseArea.find('[data-embed-iframe]').each(function setIframes() {
-      var source = $(this).is('a') ? $(this).attr('href') : $(this).data('link');
-      $(this).finnaPopup({
-        id: 'popupiframe',
-        cycle: false,
-        classes: 'finna-iframe',
-        translations: translations,
-        modal: '<div style="height:100%">' +
-          '<iframe class="player finna-popup-iframe" frameborder="0" allowfullscreen></iframe>' +
-          '</div>',
-        parent: 'video-player',
-        onPopupOpen: function onPopupOpen() {
-          var player = this.content.find('iframe');
-          player.attr('src', this.adjustEmbedLink(source));
-          _.setCanvasElement('video');
-        },
-        onPopupClose: function onPopupClose() {
-
-        }
-      });
-    });
-
     if ($('.imagepopup-holder .feedback-record')[0] || $('.imagepopup-holder .save-record')[0]) {
       $('.imagepopup-holder .feedback-record, .imagepopup-holder .save-record').on('click', function onClickActionLink(/*e*/) {
         $.fn.finnaPopup.closeOpen();
