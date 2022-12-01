@@ -1,5 +1,5 @@
 /* global VuFind */
-class FinnaCookieConsent extends HTMLElement {
+class FinnaCookieConsentElement extends HTMLElement {
 
   get consentCategories() {
     return this.getAttribute('consent-categories');
@@ -89,4 +89,4 @@ class FinnaCookieConsent extends HTMLElement {
   }
 }
 
-customElements.define('finna-consent', FinnaCookieConsent);
+customElements.define('finna-consent', FinnaCookieConsentElement);

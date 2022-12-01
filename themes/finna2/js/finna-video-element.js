@@ -94,7 +94,7 @@ class VideoElement extends HTMLElement {
       this.scripts[key] = scriptElement;
     }
     const cookieScript = document.createElement('script');
-    cookieScript.src = `${VuFind.path}/themes/finna2/js/finna-cookie-consent.js`;
+    cookieScript.src = `${VuFind.path}/themes/finna2/js/finna-cookie-consent-element.js`;
     cookieScript.id = 'js-cookie-consent-element';
     cookieScript.setAttribute('nonce', VuFind.getCspNonce());
 
