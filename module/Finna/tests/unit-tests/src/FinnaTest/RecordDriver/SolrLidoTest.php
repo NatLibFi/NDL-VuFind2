@@ -376,7 +376,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             [
                 '[-0055-10-31 TO -0002-02-15]',
                 ['-55', '-2']
-            ],           
+            ],
             [
                 '',
                 null
