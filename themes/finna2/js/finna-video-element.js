@@ -67,7 +67,7 @@ class VideoElement extends HTMLElement {
 
   constructor() {
     super();
-    this.videoModal = `<video class="video-js vjs-big-play-centered video-popup" controls></video>`
+    this.videoModal = `<video class="video-js vjs-big-play-centered video-popup" controls></video>`;
     this.iFrameModal = `<div style="height:100%">
     <iframe class="player finna-popup-iframe" frameborder="0" allowfullscreen></iframe>
     </div>`;
@@ -167,12 +167,12 @@ class VideoElement extends HTMLElement {
             this.content.find('iframe').attr('src', this.adjustEmbedLink(self.source));
             break;
           default:
-            console.warn(`Unknown video type in video element: ${self.type}`)
+            console.warn(`Unknown video type in video element: ${self.type}`);
             break;
           }
         }
       }
-    )
+    );
   }
 }
 

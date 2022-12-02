@@ -82,7 +82,7 @@ class FinnaCookieConsentElement extends HTMLElement {
       if (found) {
         found.click();
       }
-    })
+    });
     divActions.append(aShowModal);
     divDescription.append(divActions);
     this.append(divInfo);

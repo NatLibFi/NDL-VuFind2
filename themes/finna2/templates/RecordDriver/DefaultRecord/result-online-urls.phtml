@@ -72,15 +72,16 @@
           <?php if ($url['embed'] ?? false): ?>
             <?php
               $isPopup = 'popup' === $context;
-              $classes = $url['embed'] === 'iframe' ? 'finna-iframe' : 'video-popup';
-              $popupId = $url['embed'] === 'iframe' ? 'finna-iframe' : 'finna-video';
+              $isIFrame = $url['embed'] === 'iframe';
+              $classes = $isIFrame ? 'finna-iframe' : 'video-popup';
+              $popupId = $isIFrame ? 'finna-iframe' : 'finna-video';
               if ($isPopup) {
                 $popupId .= '-popup';
               }
             ?>
             <finna-video
-              class="<?= $isPopup ? 'videourl fulltext btn btn-primary' : 'btn btn-link'?>"
-              popup-id="<?= $popupId ?>"
+              class="<?=$isPopup ? 'videourl fulltext btn btn-primary' : 'btn btn-link'?>"
+              popup-id="<?=$popupId?>"
               <?php if ($isPopup): ?>
                 embed-parent="video-player"
               <?php endif; ?>

@@ -10,27 +10,12 @@
  */
 finna.scriptLoader = (() => {
 
-  const scriptCache = [];
-
   /**
-   * Load given scripts asynchronously. First are the scripts to be loaded before
-   * the last scripts can be loaded.
+   * Cache all scripts which are already loaded here
    *
-   * @param {object}   first          First scripts to load.
-   *                                  Key is an unique identifier used to check if
-   *                                  script has already been loaded
-   *                                  Value is the js file name to load
-   * @param {object}   last           Last scripts to load.
-   *                                  Key is an unique identifier used to check if
-   *                                  script has already been loaded
-   *                                  Value is the js file name to load
-   * @param {?function} scriptsLoaded Callback when the scripts are loaded
+   * @var {array}
    */
-  function loadInOrder(first, last, scriptsLoaded) {
-    load(first, () => {
-      load(last, scriptsLoaded);
-    });
-  }
+  const scriptCache = [];
 
   /**
    * Load given scripts asynchronously.
@@ -72,8 +57,29 @@ finna.scriptLoader = (() => {
     }
   }
 
+  /**
+   * Load given scripts asynchronously. First are the scripts to be loaded before
+   * the last scripts can be loaded.
+   *
+   * @param {object}   first          First scripts to load.
+   *                                  Key is an unique identifier used to check if
+   *                                  script has already been loaded
+   *                                  Value is the js file name to load
+   * @param {object}   last           Last scripts to load.
+   *                                  Key is an unique identifier used to check if
+   *                                  script has already been loaded
+   *                                  Value is the js file name to load
+   * @param {?function} scriptsLoaded Callback when the scripts are loaded
+   */
+  function loadInOrder(first, last, scriptsLoaded) {
+    load(first, () => {
+      load(last, scriptsLoaded);
+    });
+  }
+  
+
   return {
     load,
     loadInOrder
-  }
+  };
 })();
