@@ -1569,7 +1569,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Get an array of dates for results list display
      *
-     * @return array
+     * @return ?array Array of two dates or null if not available
      */
     public function getResultDateRange()
     {
@@ -1848,7 +1848,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @param string $event Event name
      *
-     * @return null|array Array of two dates or null if not available
+     * @return ?array Array of two dates or null if not available
      */
     protected function getDateRange($event)
     {
