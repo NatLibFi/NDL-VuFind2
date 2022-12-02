@@ -13,7 +13,7 @@ class FinnaCookieConsentElement extends HTMLElement {
   /**
    * Set consent categories
    *
-   * @param {string} newValue Value to give
+   * @param {string} newValue Value to set
    */
   set consentCategories(newValue) {
     this.setAttribute('consent-categories', newValue);
@@ -44,7 +44,7 @@ class FinnaCookieConsentElement extends HTMLElement {
   /**
    * Set service url
    *
-   * @param {string} newValue Value to give
+   * @param {string} newValue Value to set
    */
   set serviceUrl(newValue) {
     this.setAttribute('service-url', newValue);
