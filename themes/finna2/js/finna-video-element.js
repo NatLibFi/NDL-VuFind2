@@ -10,13 +10,6 @@ class VideoElement extends HTMLElement {
   }
 
   /**
-   * Classes for the popup holder
-   */
-  get holderClasses() {
-    return this.getAttribute('holder-classes') || '';
-  }
-
-  /**
    * Parent element to which the element is being embedded into
    */
   get embedParent() {
@@ -65,6 +58,13 @@ class VideoElement extends HTMLElement {
     return this.getAttribute('has-consent') === 'true';
   }
 
+  /**
+   * Get the set index
+   */
+  get index() {
+    return this.getAttribute('index');
+  }
+
   constructor() {
     super();
     this.videoModal = `<video class="video-js vjs-big-play-centered video-popup" controls></video>`
@@ -78,47 +78,40 @@ class VideoElement extends HTMLElement {
       next: VuFind.translate('Next Record'),
       previous: VuFind.translate('Previous Record'),
     };
-
     this.scripts = {
       'js-videojs': 'vendor/video.min.js',
+    };
+    this.subScripts = {
       'js-videojs-hotkeys': 'vendor/videojs.hotkeys.min.js',
       'js-videojs-quality': 'vendor/videojs-contrib-quality-levels.js',
-      'js-videojs-airplay': 'vendor/silvermine-videojs-airplay.min.js'
-    }
-
-    for (const [key, value] of Object.entries(this.scripts)) {
-      const scriptElement = document.createElement('script');
-      scriptElement.src = `${VuFind.path}/themes/finna2/js/${value}`;
-      scriptElement.id = key;
-      scriptElement.setAttribute('nonce', VuFind.getCspNonce());
-      this.scripts[key] = scriptElement;
-    }
-    const cookieScript = document.createElement('script');
-    cookieScript.src = `${VuFind.path}/themes/finna2/js/finna-cookie-consent-element.js`;
-    cookieScript.id = 'js-cookie-consent-element';
-    cookieScript.setAttribute('nonce', VuFind.getCspNonce());
-
-    finna.layout.loadScripts({'js-cookie-consent-element': cookieScript}, () => {});
+      'js-videojs-airplay': 'vendor/silvermine-videojs-airplay.min.js',
+    };
   }
 
   connectedCallback() {
     const self = this;
     if (!this.hasConsent) {
-      this.consentModal = document.createElement('finna-consent');
-      this.consentModal.consentCategories = this.consentCategories;
-      this.consentModal.serviceBaseUrl = new URL(this.source).host;
-      this.consentModal.serviceUrl = this.source;
-
-      this.iFrameModal = this.consentModal;
-      this.videoModal = this.consentModal;
+      finna.scriptLoader.load(
+        {'js-cookie-consent': 'finna-cookie-consent-element.js'},
+        () => {
+          this.consentModal = document.createElement('finna-consent');
+          this.consentModal.consentCategories = this.consentCategories;
+          this.consentModal.serviceBaseUrl = new URL(this.source).host;
+          this.consentModal.serviceUrl = this.source;
+    
+          this.iFrameModal = this.consentModal;
+          this.videoModal = this.consentModal;
+        }
+      );
     }
+
     // Finnapopup needs jquery atm to be initialized.
     $(this).finnaPopup(
       {
         id: this.popupId,
         modal: this.type === 'iframe' ? this.iFrameModal : this.videoModal,
         cycle: typeof this.embedParent !== 'undefined',
-        classes: this.holderClasses,
+        classes: this.type === 'iframe' ? 'finna-iframe' : 'video-popup',
         parent: this.embedParent,
         translations: this.translations,
         onPopupInit: (t) => {
@@ -130,36 +123,39 @@ class VideoElement extends HTMLElement {
           if (!self.hasConsent) {
             return;
           }
-          const index = self.dataset.index;
-          const warnings
-            = document.querySelector(`.video-warning[data-index="${index}"]`);
-          if (self.embedParent) {
-            document.querySelectorAll('.active-video').forEach(v => {
-              v.classList.remove('active-video');
-            });
-            document.querySelectorAll('.video-warning').forEach(v => {
-              if (v.dataset.index !== index) {
-                v.classList.add('hidden');
-              } else {
-                v.classList.remove('hidden');
+          const record = self.closest('div.record');
+          if (record) {
+            const warnings
+              = record.querySelector(`.video-warning[data-index="${self.index}"]`);
+            if (this.parent) {
+              record.querySelectorAll('.active-video').forEach(v => {
+                v.classList.remove('active-video');
+              });
+              record.querySelectorAll('.video-warning').forEach(v => {
+                if (v.dataset.index !== self.index) {
+                  v.classList.add('hidden');
+                } else {
+                  v.classList.remove('hidden');
+                }
+              });
+              this.currentTrigger().addClass('active-video');
+            } else {
+              this.content.css('height', '100%');
+              if (warnings) {
+                const clone = warnings.cloneNode(true);
+                clone.classList.remove('hidden');
+                this.modalHolder.append(clone);
+                finna.common.observeImages(clone.querySelectorAll('img[data-src]'));
+                setTimeout(function startFade() {
+                  $(clone).fadeOut(2000);
+                }, 3000);
               }
-            });
-            this.currentTrigger().addClass('active-video');
-          } else {
-            this.content.css('height', '100%');
-            if (warnings) {
-              const clone = warnings.cloneNode(true);
-              clone.classList.remove('hidden');
-              this.modalHolder.append(clone);
-              finna.common.observeImages(clone.querySelectorAll('img[data-src]'));
-              setTimeout(function startFade() {
-                $(clone).fadeOut(2000);
-              }, 3000);
             }
           }
+
           switch (self.type) {
           case 'video':
-            finna.layout.loadScripts(self.scripts, function onScriptsLoaded() {
+            finna.scriptLoader.loadInOrder(self.scripts, self.subScripts, () => {
               finna.videoPopup.initVideoJs('.video-popup', self.videoSources, self.posterUrl);
             });
             break;

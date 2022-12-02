@@ -601,6 +601,13 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  /**
+   * 
+   * @param {*} scripts 
+   * @param {*} callback
+   *
+   * @deprecated Use finna.scriptLoader
+   */
   function loadScripts(scripts, callback) {
     var needed = {};
     // Check for required scripts that are not yet loaded
