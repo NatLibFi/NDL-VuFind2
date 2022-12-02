@@ -65,6 +65,9 @@ class VideoElement extends HTMLElement {
     return this.getAttribute('index');
   }
 
+  /**
+   * Constructor
+   */
   constructor() {
     super();
     this.videoModal = `<video class="video-js vjs-big-play-centered video-popup" controls></video>`;
@@ -88,6 +91,9 @@ class VideoElement extends HTMLElement {
     };
   }
 
+  /**
+   * When the element is added to the dom
+   */
   connectedCallback() {
     const self = this;
     if (!this.hasConsent) {
@@ -96,7 +102,6 @@ class VideoElement extends HTMLElement {
         () => {
           this.consentModal = document.createElement('finna-consent');
           this.consentModal.consentCategories = this.consentCategories;
-          this.consentModal.serviceBaseUrl = new URL(this.source).host;
           this.consentModal.serviceUrl = this.source;
     
           this.iFrameModal = this.consentModal;

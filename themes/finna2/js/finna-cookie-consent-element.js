@@ -1,34 +1,65 @@
 /* global VuFind */
 class FinnaCookieConsentElement extends HTMLElement {
 
+  /**
+   * Get consent categories
+   *
+   * @return {string}
+   */
   get consentCategories() {
-    return this.getAttribute('consent-categories');
+    return this.getAttribute('consent-categories') || '';
   }
 
+  /**
+   * Set consent categories
+   *
+   * @param {string} newValue Value to give
+   */
   set consentCategories(newValue) {
     this.setAttribute('consent-categories', newValue);
   }
 
+  /**
+   * Get service base url
+   *
+   * @return {string}
+   */
   get serviceBaseUrl() {
-    return this.getAttribute('service-base-url');
+    const url = this.getAttribute('service-url');
+    if (url) {
+      return new URL(url).host;
+    }
+    return '';
   }
 
-  set serviceBaseUrl(newValue) {
-    this.setAttribute('service-base-url', newValue);
-  }
-
+  /**
+   * Get service url
+   *
+   * @return {string}
+   */
   get serviceUrl() {
-    return this.getAttribute('service-url');
+    return this.getAttribute('service-url') || '';
   }
 
+  /**
+   * Set service url
+   *
+   * @param {string} newValue Value to give
+   */
   set serviceUrl(newValue) {
     this.setAttribute('service-url', newValue);
   }
   
+  /**
+   * Constructor
+   */
   constructor() {
     super();
   }
 
+  /**
+   * When the element is added to the dom
+   */
   connectedCallback() {
     // Create the element
     const divInfo = document.createElement('div');
