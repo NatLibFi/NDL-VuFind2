@@ -27,7 +27,11 @@ class FinnaCookieConsentElement extends HTMLElement {
   get serviceBaseUrl() {
     const url = this.getAttribute('service-url');
     if (url) {
-      return new URL(url).host;
+      try {
+        return new URL(url).host;
+      } catch (_) {
+        return url;
+      }
     }
     return '';
   }

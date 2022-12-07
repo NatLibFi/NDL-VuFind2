@@ -230,9 +230,6 @@ class VideoElement extends HTMLElement {
         }
       },
       onPopupOpen: function onPopupOpen() {
-        if (!self.hasConsent) {
-          return;
-        }
         if (record) {
           const warnings
             = record.querySelector(`.video-warning[data-index="${self.index}"]`);
@@ -261,6 +258,9 @@ class VideoElement extends HTMLElement {
               }, 3000);
             }
           }
+        }
+        if (!self.hasConsent) {
+          return;
         }
 
         switch (self.type) {
