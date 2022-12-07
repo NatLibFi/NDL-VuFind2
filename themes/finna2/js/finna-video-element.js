@@ -3,73 +3,184 @@
 class VideoElement extends HTMLElement {
 
   /**
-   * Type of the video, iFrame | video
+   * Get the type of the video, iFrame | video
+   *
+   * @returns {string}
    */
   get type() {
     return (this.getAttribute('type') || '').toLowerCase();
   }
 
   /**
-   * Parent element to which the element is being embedded into
+   * Set the type of the video, iFrame | video
+   *
+   * @param {string} value iFrame | video
+   */
+  set type(value) {
+    this.setAttribute('type', value);
+  }
+
+  /**
+   * Get the parent element to which the video player is being embedded into.
+   *
+   * @returns {string|undefined}
    */
   get embedParent() {
     return this.getAttribute('embed-parent') || undefined;
   }
 
   /**
-   * Source of the video
+   * Set the parent element to which the video player is being embedded into.
+   * Omit to display in a new popup.
+   *
+   * @param {string|undefined} value Parent element id or undefined.
+   */
+  set embedParent(value) {
+    this.setAttribute('embed-parent', value);
+  }
+
+  /**
+   * Get the source of the video.
+   *
+   * @returns {string}
    */
   get source() {
     return this.getAttribute('source') || '';
   }
 
   /**
-   * Video sources as a json object
+   * Set the source of the video.
+   *
+   * @param {string} value The video source
+   */
+  set source(value) {
+    this.setAttribute('source', value);
+  }
+
+  /**
+   * Get the video sources as an object.
+   *
+   * @returns {object}
    */
   get videoSources() {
     return this.getAttribute('video-sources') ? JSON.parse(this.getAttribute('video-sources')) : {};
   }
 
   /**
-   * Poster url to display in viewer
+   * Set the video sources as an object.
+   *
+   * @param {object} value
+   */
+  set videoSources(value) {
+    this.setAttribute('video-sources', JSON.stringify(value || {}));
+  }
+
+  /**
+   * Get the poster url to display in viewer.
+   *
+   * @return {string}
    */
   get posterUrl() {
     return this.getAttribute('poster-url') || '';
   }
 
   /**
-   * Identity for the popup group
+   * Set the poster url to display in viewer.
+   *
+   * @param {string} value
+   */
+  set posterUrl(value) {
+    this.setAttribute('poster-url', value);
+  }
+
+  /**
+   * Get the identity for the popup group.
+   *
+   * @returns {string}
    */
   get popupId() {
     return this.getAttribute('popup-id') || '';
   }
 
   /**
-   * Consent categories required for the video
+   * Set the identity for the popup group.
+   *
+   * @param {string} value
+   */
+  set popupId(value) {
+    this.setAttribute('popup-id', value);
+  }
+
+  /**
+   * Get consent categories required for the video.
+   *
+   * @returns {string}
    */
   get consentCategories() {
     return this.getAttribute('consent-categories') || '';
   }
 
   /**
-   * Get if the element has consent
+   * Get consent categories required for the video.
+   *
+   * @param {string} value
+   */
+  set consentCategories(value) {
+    this.setAttribute('consent-categories', value);
+  }
+
+  /**
+   * Get if the element has consent.
+   * Returns true if the value is 'true' as a string.
+   *
+   * @returns {boolean}
    */
   get hasConsent() {
     return this.getAttribute('has-consent') === 'true';
   }
 
   /**
-   * Get the set index
+   * Set if the element has consent.
+   *
+   * @param {string} value
    */
-  get index() {
-    return this.getAttribute('index');
+  set hasConsent(value) {
+    this.setAttribute('has-consent', value);
   }
 
   /**
-   * Get if the video should be activated
+   * Get index.
+   *
+   * @returns {string}
+   */
+  get index() {
+    return this.getAttribute('index') || '';
+  }
+
+  /**
+   * Set index.
+   *
+   * @param {number} value Value
+   */
+  set index(value) {
+    this.setAttribute('index', value);
+  }
+
+  /**
+   * Get if the video should be activated on load.
+   * Returns true if the value is 'true' as a string.
+   *
+   * @returns {boolean}
    */
   get active() {
     return this.getAttribute('active') === 'true';
+  }
+
+  /**
+   * Set if the video should be activated on load.
+   */
+  set active(value) {
+    this.setAttribute('active', value);
   }
 
   /**
