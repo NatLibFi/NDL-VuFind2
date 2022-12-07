@@ -69,7 +69,7 @@
               $desc = $this->truncateUrl($desc);
             }
           ?>
-          <?php if ($url['embed'] ?? false): ?>
+          <?php if (!empty($url['embed'])): ?>
             <?php
               $isPopup = 'popup' === $context;
               $isIFrame = $url['embed'] === 'iframe';
