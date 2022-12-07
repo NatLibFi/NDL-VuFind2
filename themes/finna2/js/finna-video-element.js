@@ -66,6 +66,13 @@ class VideoElement extends HTMLElement {
   }
 
   /**
+   * Get if the video should be activated
+   */
+  get active() {
+    return this.getAttribute('active') === 'true';
+  }
+
+  /**
    * Constructor
    */
   constructor() {
@@ -74,7 +81,6 @@ class VideoElement extends HTMLElement {
     this.iFrameModal = `<div style="height:100%">
     <iframe class="player finna-popup-iframe" frameborder="0" allowfullscreen></iframe>
     </div>`;
-    this.consentModal = '';
 
     this.translations = {
       close: VuFind.translate('close'),
@@ -83,6 +89,7 @@ class VideoElement extends HTMLElement {
     };
     this.scripts = {
       'js-videojs': 'vendor/video.min.js',
+      'js-video-popup': 'finna-video-popup.js'
     };
     this.subScripts = {
       'js-videojs-hotkeys': 'vendor/videojs.hotkeys.min.js',
@@ -95,89 +102,104 @@ class VideoElement extends HTMLElement {
    * When the element is added to the dom
    */
   connectedCallback() {
+    // Check if this video is inside a record
+    const record = this.closest('div.record');
     const self = this;
+
+    const popupSettings = {
+      id: this.popupId,
+      modal: this.type === 'iframe' ? this.iFrameModal : this.videoModal,
+      cycle: typeof this.embedParent !== 'undefined',
+      classes: this.type === 'iframe' ? 'finna-iframe' : 'video-popup',
+      parent: this.embedParent,
+      translations: this.translations,
+      onPopupInit: (t) => {
+        if (this.embedParent) {
+          t.removeClass('active-video');
+        }
+      },
+      onPopupOpen: function onPopupOpen() {
+        if (!self.hasConsent) {
+          return;
+        }
+        if (record) {
+          const warnings
+            = record.querySelector(`.video-warning[data-index="${self.index}"]`);
+          if (this.parent) {
+            record.querySelectorAll('.active-video').forEach(v => {
+              v.classList.remove('active-video');
+            });
+            record.querySelectorAll('.video-warning').forEach(v => {
+              if (v.dataset.index !== self.index) {
+                v.classList.add('hidden');
+              } else {
+                v.classList.remove('hidden');
+                finna.common.observeImages(v.querySelectorAll('img[data-src]'));
+              }
+            });
+            this.currentTrigger().addClass('active-video');
+          } else {
+            this.content.css('height', '100%');
+            if (warnings) {
+              const clone = warnings.cloneNode(true);
+              clone.classList.remove('hidden');
+              this.modalHolder.append(clone);
+              finna.common.observeImages(clone.querySelectorAll('img[data-src]'));
+              setTimeout(function startFade() {
+                $(clone).fadeOut(2000);
+              }, 3000);
+            }
+          }
+        }
+
+        switch (self.type) {
+        case 'video':
+          finna.scriptLoader.loadInOrder(self.scripts, self.subScripts, () => {
+            finna.videoPopup.initVideoJs('.video-popup', self.videoSources, self.posterUrl);
+          });
+          break;
+        case 'iframe':
+          // If using Chrome + VoiceOver, Chrome crashes if vimeo player video settings button has aria-haspopup=true
+          document.querySelectorAll('.vp-prefs .js-prefs').forEach(e => {
+            e.setAttribute('aria-haspopup', false);
+          });
+          this.content.find('iframe').attr('src', this.adjustEmbedLink(self.source));
+          break;
+        default:
+          console.warn(`Unknown video type in video element: ${self.type}`);
+          break;
+        }
+      }
+    };
+
     if (!this.hasConsent) {
       finna.scriptLoader.load(
         {'js-cookie-consent': 'finna-cookie-consent-element.js'},
         () => {
-          this.consentModal = document.createElement('finna-consent');
-          this.consentModal.consentCategories = this.consentCategories;
-          this.consentModal.serviceUrl = this.source;
+          const consentModal = document.createElement('finna-consent');
+          consentModal.consentCategories = this.consentCategories;
+          consentModal.serviceUrl = this.source;
     
-          this.iFrameModal = this.consentModal;
-          this.videoModal = this.consentModal;
+          popupSettings.modal = consentModal;
+          $(this).finnaPopup(popupSettings);
+          if (this.active) {
+            this.click();
+          }
         }
       );
-    }
-
-    // Finnapopup needs jquery atm to be initialized.
-    $(this).finnaPopup(
-      {
-        id: this.popupId,
-        modal: this.type === 'iframe' ? this.iFrameModal : this.videoModal,
-        cycle: typeof this.embedParent !== 'undefined',
-        classes: this.type === 'iframe' ? 'finna-iframe' : 'video-popup',
-        parent: this.embedParent,
-        translations: this.translations,
-        onPopupInit: (t) => {
-          if (this.embedParent) {
-            t.removeClass('active-video');
-          }
-        },
-        onPopupOpen: function onPopupOpen() {
-          if (!self.hasConsent) {
-            return;
-          }
-          const record = self.closest('div.record');
-          if (record) {
-            const warnings
-              = record.querySelector(`.video-warning[data-index="${self.index}"]`);
-            if (this.parent) {
-              record.querySelectorAll('.active-video').forEach(v => {
-                v.classList.remove('active-video');
-              });
-              record.querySelectorAll('.video-warning').forEach(v => {
-                if (v.dataset.index !== self.index) {
-                  v.classList.add('hidden');
-                } else {
-                  v.classList.remove('hidden');
-                }
-              });
-              this.currentTrigger().addClass('active-video');
-            } else {
-              this.content.css('height', '100%');
-              if (warnings) {
-                const clone = warnings.cloneNode(true);
-                clone.classList.remove('hidden');
-                this.modalHolder.append(clone);
-                finna.common.observeImages(clone.querySelectorAll('img[data-src]'));
-                setTimeout(function startFade() {
-                  $(clone).fadeOut(2000);
-                }, 3000);
-              }
-            }
-          }
-
-          switch (self.type) {
-          case 'video':
-            finna.scriptLoader.loadInOrder(self.scripts, self.subScripts, () => {
-              finna.videoPopup.initVideoJs('.video-popup', self.videoSources, self.posterUrl);
-            });
-            break;
-          case 'iframe':
-            // If using Chrome + VoiceOver, Chrome crashes if vimeo player video settings button has aria-haspopup=true
-            document.querySelectorAll('.vp-prefs .js-prefs').forEach(e => {
-              e.setAttribute('aria-haspopup', false);
-            });
-            this.content.find('iframe').attr('src', this.adjustEmbedLink(self.source));
-            break;
-          default:
-            console.warn(`Unknown video type in video element: ${self.type}`);
-            break;
-          }
-        }
+    } else {
+      $(this).finnaPopup(popupSettings);
+      if (this.active) {
+        this.click();
       }
-    );
+    }
+  }
+
+  /**
+   * When the element is removed from the dom
+   */
+  disconnectedCallback() {
+    $(this).trigger('removeclick.finna');
   }
 }
 

@@ -11,13 +11,6 @@
 finna.scriptLoader = (() => {
 
   /**
-   * Cache all scripts which are already loaded here
-   *
-   * @var {array}
-   */
-  const scriptCache = [];
-
-  /**
    * Load given scripts asynchronously.
    *
    * @param {object}   scripts       Object of scripts to load
@@ -37,11 +30,11 @@ finna.scriptLoader = (() => {
       };
     }
     for (const [key, value] of Object.entries(scripts)) {
-      if (scriptCache.includes(key)) {
+      const found = document.getElementById(key);
+      if (found) {
         keyCount--;
         continue;
       }
-      scriptCache.push(key);
       const scriptElement = document.createElement('script');
       scriptElement.async = 'async';
       scriptElement.src = `${VuFind.path}/themes/finna2/js/${value}`;

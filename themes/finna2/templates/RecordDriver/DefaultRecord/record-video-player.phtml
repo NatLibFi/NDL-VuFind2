@@ -3,10 +3,6 @@
   $this->partial('Helpers/videojs-translations.phtml');
   $inlineVideo = $this->config()->inlineVideoEnabled();
 ?>
-<?php if ($inlineVideo): ?>
-  <div class="inline-video-container hidden">
-    <div class="inline-video" id="inline-video"></div>
-<?php endif; ?>
 <div class="video-warnings">
   <?php
     $warningImageUrls = [];
@@ -74,6 +70,7 @@
         popup-id="<?=$popupId?>"
         <?php if ($inlineVideo): ?>
           embed-parent="inline-video"
+          active ="<?= $inlineVideo && $index === 0 ? 'true' : 'false'?>"
         <?php endif; ?>
         source="<?=$source?>"
         type="<?=$type?>"
@@ -93,5 +90,4 @@
     <?php endforeach; ?>
   </div>
 </div>
-<?php if ($inlineVideo): ?></div><?php endif; ?>
 <!-- END of: finna - RecordDriver/DefaultRecord/record-video-player.phtml -->

@@ -34,7 +34,7 @@
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment ?>">
 
-    <?php if (!empty($videoUrls)): ?>
+    <?php if (!empty($videoUrls) && !$this->config()->inlineVideoEnabled()): ?>
       <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls, 'type' => 'SolrForward']);?>
     <?php endif; ?>
 

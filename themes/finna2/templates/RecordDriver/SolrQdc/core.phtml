@@ -49,7 +49,7 @@
 
     <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img]);?>
 
-    <?php if (!empty($videoUrls)): ?>
+    <?php if (!empty($videoUrls) && !$this->config()->inlineVideoEnabled()): ?>
       <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls]);?>
     <?php endif; ?>
 

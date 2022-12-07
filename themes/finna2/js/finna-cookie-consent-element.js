@@ -1,4 +1,4 @@
-/* global VuFind */
+/* global VuFind, CookieConsent */
 class FinnaCookieConsentElement extends HTMLElement {
 
   /**
@@ -104,15 +104,9 @@ class FinnaCookieConsentElement extends HTMLElement {
     aShowModal.href = '#';
     aShowModal.setAttribute('aria-haspopup', 'dialog');
     aShowModal.append(VuFind.translate('Cookie Settings'));
-    aShowModal.addEventListener('click', (e) => {
-      // Proxy a click to first found element with proper data-cc attribute
-      e.preventDefault();
-      e.stopPropagation();
+    aShowModal.addEventListener('click', () => {
       $.fn.finnaPopup.closeOpen();
-      const found = document.querySelector('span[data-cc]');
-      if (found) {
-        found.click();
-      }
+      CookieConsent.showPreferences();
     });
     divActions.append(aShowModal);
     divDescription.append(divActions);
