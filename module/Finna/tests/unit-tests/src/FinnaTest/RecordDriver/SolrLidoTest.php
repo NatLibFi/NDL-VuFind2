@@ -400,6 +400,80 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             );
         }
     }
+    
+    /**
+     * Function to get expected date range data
+     * 
+     * @return array
+     */
+    public function getDateRangeData(): array
+    {
+        return [
+            [
+                '[2009-01-01 TO 2009-12-31]',
+                ['2009', '2009']
+            ],
+            [
+                '[-2000-01-01 TO 0900-12-31]',
+                ['-2000', '900']
+            ],
+            [
+                '1937-12-08',
+                ['1937', null]
+            ],
+            [
+                '[0000-01-01 TO 0000-12-31]',
+                ['0', '0']
+            ],
+            [
+                '[0999-06-02 TO 9999-12-31]',
+                ['999', null]
+            ],
+            [
+                '[-9999-01-01 TO 9998-12-31]',
+                ['-9999', '9998']
+            ],
+            [
+                '[-0055-10-31 TO -0002-02-15]',
+                ['-55', '-2']
+            ],
+            [
+                '',
+                null
+            ]
+        ];
+    }
+
+    /**
+     * Test getDateRange
+     *
+     * @param string $indexValue Index value to test
+     * @param ?array $expected Result to be expected
+     *
+     * @dataProvider getDateRangeData
+     *
+     * @return void
+     */
+    public function testGetDateRange(
+        string $indexValue,
+        ?array $expected
+    ): void {
+        $record = new SolrLido(
+            [],
+            [],
+            new \Laminas\Config\Config([])
+        );
+        $record->setRawData(
+            [
+                'id' => 'knp-247394',
+                'creation_daterange' => $indexValue
+            ]
+        );
+        $this->assertEquals(
+            $expected,
+            $record->getResultDateRange()
+        );
+    }
 
     /**
      * Get a record driver with fake data

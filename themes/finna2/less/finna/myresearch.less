@@ -99,16 +99,19 @@
       }
     }
   }
-  .renew-button, #update_selected, #cancelSelected, #cancelAll {
+  .renew-button, #renewAll, #renewSelected, #update_selected, #cancelAll, #cancelSelected {
     height: 35px;
     padding: 0 10px;
     margin-right: 12px;
-    @media (max-width: @screen-sm) {
-      margin-bottom: 12px;
+    @media (max-width: @screen-md) {
+      margin: 6px 12px 6px 0px;
     }
   }
   .sort-col .dropdown-toggle {
     margin-bottom: 0;
+    @media (max-width: @screen-md) {
+      margin-top: 6px;
+    }
   }
   @media(min-width: @screen-sm) {
     .half-table-column {
@@ -139,7 +142,6 @@
   }
   @media(max-width: @screen-xxs-max) {
     .renew-button-col {
-      margin-bottom: 10px;
       width: 100%;
       float: left;
       input {
@@ -163,6 +165,9 @@
   .checkboxFilter.mylist-select-all {
     .checkbox {
       margin: 5px 0;
+      @media (max-width: @screen-md) {
+        margin-top: 12px;
+      }
     }
   }
 }
@@ -193,6 +198,14 @@
   }
   .myresearch-row:last-child {
     box-shadow: none;
+  }
+  #cancelSelected, #cancelAll {
+    height: 35px;
+    padding: 0 10px;
+    margin-right: 12px;
+    @media (max-width: @screen-md) {
+      margin: 6px 12px 6px 0;
+    }
   }
 }
 .list-description,
@@ -448,6 +461,16 @@
   }
 }
 
+#cancelILLRequest .toolbar, #cancelStorageRetrievalRequest .toolbar {
+  padding: 5px;
+  .btn-group {
+    margin: 0;
+  }
+  @media (max-width: @screen-md) {
+    padding: 0;
+  }
+}
+
 .template-dir-myresearch .toolbar, .template-dir-holds .toolbar {
   margin: 0;
   margin-top: 5px;
@@ -470,9 +493,6 @@
         width: 100%;
       }
     }
-  }
-  .btn-group {
-    margin-top: 3px;
   }
 }
 
