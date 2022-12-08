@@ -37,7 +37,7 @@ finna.scriptLoader = (() => {
       }
       const scriptElement = document.createElement('script');
       scriptElement.async = 'async';
-      scriptElement.src = `${VuFind.path}/themes/finna2/js/${value}`;
+      scriptElement.src = `${VuFind.path}/themes/finna2/js/${value}?_=${Date.now()}`;
       if (typeof onScriptLoad === 'function' && typeof scriptsLoaded === 'function') {
         scriptElement.addEventListener('load', onScriptLoad);
       }
