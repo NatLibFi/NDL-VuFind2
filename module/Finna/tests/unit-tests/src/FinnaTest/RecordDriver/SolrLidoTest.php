@@ -400,10 +400,10 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             );
         }
     }
-    
+
     /**
      * Function to get expected date range data
-     * 
+     *
      * @return array
      */
     public function getDateRangeData(): array
