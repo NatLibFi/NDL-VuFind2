@@ -45,7 +45,7 @@
         $url = $BROWSE_BASE . '?findby=' . urlencode($this->findby)
           . '&amp;query=' . urlencode($secondary['value']);
         if (isset($this->category)) {
-          $url .= '&amp;category=' . urlencode($this->category ?? '');
+          $url .= '&amp;category=' . urlencode($this->category);
         }
         if ($this->facetPrefix) {
           $url .= '&amp;facet_prefix=' . urlencode($secondary['displayText']);
