@@ -342,6 +342,66 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Function to get expected measurements data
+     *
+     * @return array
+     */
+    public function getMeasurementsByTypeData(): array
+    {
+        return [
+            [
+                'getMeasurements',
+                [
+                    'lido_test.xml' => [
+                        'pituus 73.0 cm, leveys 14 cm (kohde 2, kohde 3)'
+                    ],
+                    'lido_test2.xml' => [
+                        'syvyys 50 cm (kohde 1)',
+                        'pituus 0.73 m'
+                    ]
+                ]
+            ],
+            [
+                'getPhysicalDescriptions',
+                [
+                    'lido_test.xml' => [
+                        '1001 neliömetriä'
+                    ],
+                    'lido_test2.xml' => [
+                        '1200 kpl (kohde 1)',
+                        '12 yksikköä (kohde 1)',
+                        '100 hyllymetriä'
+                    ]
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * Test getMeasurementsByType
+     *
+     * @param string $function Function of the driver to test
+     * @param array  $expected Result to be expected
+     *
+     * @dataProvider getMeasurementsByTypeData
+     *
+     * @return void
+     */
+    public function testGetMeasurementsByType(
+        string $function,
+        array $expected
+    ): void {
+        foreach ($expected as $file => $result) {
+            $driver = $this->getDriver($file);
+            $this->assertTrue(is_callable([$driver, $function], true));
+            $this->assertEquals(
+                $result,
+                $driver->$function()
+            );
+        }
+    }
+
+    /**
      * Get a record driver with fake data
      *
      * @param string $recordXml    Xml record to use for the test
