@@ -197,6 +197,7 @@ $config = [
         'requests.js',
         'finna-polyfill.js',
         'finna.js',
+        'finna-script-loader.js',
         'finna-popup.js',
         'finna-autocomplete.js',
         'finna-authority.js',
@@ -255,7 +256,8 @@ $config = [
         'vendor/leaflet.draw.min.js',
         'vendor/js.cookie.js',
         'finna-multiselect.js',
-        'finna-model-viewer.js'
+        'finna-model-viewer.js',
+        'finna-video-element.js'
     ],
     'less' => [
         'active' => false
