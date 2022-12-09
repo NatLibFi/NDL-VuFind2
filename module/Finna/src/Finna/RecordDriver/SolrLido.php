@@ -1471,7 +1471,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Get measurements.
+     * Get measurements by type.
      *
      * @param array $include Measurement types to include, otherwise all but
      * excluded types
