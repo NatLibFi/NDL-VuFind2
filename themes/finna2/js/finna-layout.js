@@ -606,6 +606,14 @@ finna.layout = (function finnaLayout() {
     finna.videoPopup.initIframeEmbed($('body'));
   }
 
+  /**
+   * Load scripts and call the callback if it is a function.
+   *
+   * @param {*} scripts  Scripts to load.
+   * @param {*} callback Function to call after the scripts are loaded.
+   *
+   * @deprecated Use finna.scriptLoader
+   */
   function loadScripts(scripts, callback) {
     var needed = {};
     // Check for required scripts that are not yet loaded
