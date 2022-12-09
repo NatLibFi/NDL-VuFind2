@@ -3,20 +3,20 @@
 /**
  * Module for a script loader.
  * Exposes functions:
- *  - init
  *  - load
+ *  - loadInOrder
  *
- * @returns {object} Exposed functions
+ * @return {object} Exposed functions
  */
 finna.scriptLoader = (() => {
 
   /**
    * Load given scripts asynchronously.
    *
-   * @param {object}   scripts       Object of scripts to load
-   *                                 Key is an unique identifier used to check if
-   *                                 script has already been loaded
-   *                                 Value is the js file name to load
+   * @param {object}   scripts        Object of scripts to load
+   *                                  Key is an unique identifier used to check if
+   *                                  script has already been loaded
+   *                                  Value is the js file name to load
    * @param {?function} scriptsLoaded Callback when the scripts are loaded
    */
   function load(scripts, scriptsLoaded) {
