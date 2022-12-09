@@ -578,12 +578,12 @@ finna.layout = (function finnaLayout() {
 
   function initAudioButtons() {
     var scripts = {
-      'js-videojs': 'vendor/video.min.js',
+      'videojs': 'vendor/video.min.js',
     };
     var subScripts = {
-      'js-videojs-hotkeys': 'vendor/videojs.hotkeys.min.js',
-      'js-videojs-quality': 'vendor/videojs-contrib-quality-levels.js',
-      'js-videojs-airplay': 'vendor/silvermine-videojs-airplay.min.js',
+      'videojs-hotkeys': 'vendor/videojs.hotkeys.min.js',
+      'videojs-quality': 'vendor/videojs-contrib-quality-levels.js',
+      'videojs-airplay': 'vendor/silvermine-videojs-airplay.min.js',
     };
     $('.audio-accordion .audio-item-wrapper').each(function initAudioPlayer() {
       var self = $(this);

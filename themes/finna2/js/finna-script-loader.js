@@ -29,7 +29,8 @@ finna.scriptLoader = (() => {
         }
       };
     }
-    for (const [key, value] of Object.entries(scripts)) {
+    for (let [key, value] of Object.entries(scripts)) {
+      key = `scriptloader-js-${key}`;
       const found = document.getElementById(key);
       if (found) {
         keyCount--;
@@ -69,7 +70,6 @@ finna.scriptLoader = (() => {
       load(last, scriptsLoaded);
     });
   }
-  
 
   return {
     load,
