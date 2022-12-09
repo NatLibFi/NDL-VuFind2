@@ -32,7 +32,7 @@
             <objectMeasurements>
               <measurementsSet>
                 <measurementType>
-                  <conceptID type="URI" source="Metadata thesaurus">https://finto.fi/mts/fi/page/m8</conceptID>
+                  <conceptID type="URI">http://urn.fi/URN:NBN:fi:au:mts:m8</conceptID>
                   <term lang="en">extent</term>
                 </measurementType>
                 <measurementUnit>kpl</measurementUnit>
@@ -40,7 +40,7 @@
               </measurementsSet>
               <measurementsSet>
                 <measurementType>
-                  <conceptID type="URI" source="Metadata thesaurus">https://finto.fi/mts/fi/page/m8</conceptID>
+                  <conceptID type="URI">http://urn.fi/URN:NBN:fi:au:mts:m8</conceptID>
                   <term lang="en">extent</term>
                 </measurementType>
                 <measurementUnit>yksikköä</measurementUnit>
@@ -59,7 +59,7 @@
               <displayObjectMeasurements>  </displayObjectMeasurements>
               <measurementsSet>
                 <measurementType>
-                  <conceptID type="URI" source="Metadata thesaurus">https://finto.fi/mts/fi/page/m8</conceptID>
+                  <conceptID type="URI">http://urn.fi/URN:NBN:fi:au:mts:m8</conceptID>
                   <term lang="en">extent</term>
                 </measurementType>
                 <measurementUnit>hyllymetriä</measurementUnit>

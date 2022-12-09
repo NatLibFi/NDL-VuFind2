@@ -161,6 +161,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     protected $excludedClassifications = ['language'];
 
     /**
+     * Array of excluded measurements
+     *
+     * @var array
+     */
+    protected $excludedMeasurements = ['extent'];
+
+    /**
      * Events used for author information.
      *
      * Key is event type, value is priority (lower is more important),
@@ -1450,7 +1457,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getMeasurements(): array
     {
-        return $this->getMeasurementsByType([], ['extent']);
+        return $this->getMeasurementsByType();
     }
 
     /**
@@ -1466,16 +1473,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Get measurements.
      *
-     * @param array $include Measurement types to include
-     * @param array $exclude Measurement types to exclude
+     * @param array $include Measurement types to include, otherwise all but
+     * excluded types
      *
      * @return array
      */
-    public function getMeasurementsByType(
-        array $include = [],
-        array $exclude = []
-    ): array {
+    public function getMeasurementsByType(array $include = []): array
+    {
         $results = [];
+        $exclude = $include ? [] : $this->excludedMeasurements;
         foreach ($this->getXmlRecord()->lido->descriptiveMetadata
             ->objectIdentificationWrap->objectMeasurementsWrap
             ->objectMeasurementsSet ?? [] as $set
