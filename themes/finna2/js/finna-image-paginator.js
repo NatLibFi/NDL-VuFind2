@@ -691,13 +691,17 @@ FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() 
     if (typeof $('.open-link a').attr('href') !== 'undefined') {
       _.setDimensions();
     }
+    var scripts = {
+      'js-videojs': 'vendor/video.min.js',
+    };
+    var subScripts = {
+      'js-videojs-hotkeys': 'vendor/videojs.hotkeys.min.js',
+      'js-videojs-quality': 'vendor/videojs-contrib-quality-levels.js',
+      'js-videojs-airplay': 'vendor/silvermine-videojs-airplay.min.js',
+    };
     _.popup.collapseArea.find('[data-embed-video]').each(function initVideo() {
       var videoSources = $(this).data('videoSources');
       var posterUrl = $(this).data('posterUrl');
-      var scripts = $(this).data('scripts');
-      $.each(scripts, function updateNonces(key, value) {
-        scripts[key] = VuFind.updateCspNonce(value);
-      });
       $(this).finnaPopup({
         id: 'popupvideo',
         cycle: false,
@@ -707,7 +711,7 @@ FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() 
         modal: '<video class="video-js vjs-big-play-centered" controls></video>',
         onPopupOpen: function onPopupOpen() {
           // Lets find the active trigger
-          finna.layout.loadScripts(scripts, function onScriptsLoaded() {
+          finna.scriptLoader.loadInOrder(scripts, subScripts, function onScriptsLoaded() {
             finna.videoPopup.initVideoJs('.video-popup', videoSources, posterUrl);
           });
           _.setCanvasElement('video');

@@ -14,7 +14,6 @@
     $combined = [...$urls, ...($onlineURLs ?? []), ...($mergedData['urls'] ?? [])];
 
     $this->partial('Helpers/videojs-translations.phtml');
-    $videoScripts = $this->partial('Helpers/videojs-urls.phtml');
 
     $urlBase = [
       'class' => 'fulltext',
@@ -54,7 +53,6 @@
             ];
             if (!empty($url['videoSources'])) {
               $currentUrl['data-video-sources'] = json_encode($url['videoSources']);
-              $currentUrl['data-scripts'] = $videoScripts;
             }
             if (!empty($url['posterUrl'])) {
               $currentUrl['data-poster-url'] = $url['posterUrl'];

@@ -154,11 +154,17 @@ finna.videoPopup = (function finnaVideoPopup() {
       next: VuFind.translate('Next Record'),
       previous: VuFind.translate('Previous Record'),
     };
-
+    var scripts = {
+      'js-videojs': 'vendor/video.min.js',
+    };
+    var subScripts = {
+      'js-videojs-hotkeys': 'vendor/videojs.hotkeys.min.js',
+      'js-videojs-quality': 'vendor/videojs-contrib-quality-levels.js',
+      'js-videojs-airplay': 'vendor/silvermine-videojs-airplay.min.js',
+    };
     container.find('[data-embed-video]').each(function initVideo() {
       var _ = $(this);
       var videoSources = _.data('videoSources');
-      var scripts = _.data('scripts');
       var posterUrl = _.data('posterUrl');
       _.finnaPopup({
         id: 'recordvideo',
@@ -197,7 +203,7 @@ finna.videoPopup = (function finnaVideoPopup() {
             }
           }
 
-          finna.layout.loadScripts(scripts, function onScriptsLoaded() {
+          finna.scriptLoader.loadInOrder(scripts, subScripts, function onScriptsLoaded() {
             finna.videoPopup.initVideoJs('.video-popup', videoSources, posterUrl);
           });
         }
