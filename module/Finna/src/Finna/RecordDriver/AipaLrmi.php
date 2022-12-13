@@ -44,29 +44,6 @@ class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
     use ContainerFormatTrait;
 
     /**
-     * Constructor
-     *
-     * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
-     * for built-in defaults)
-     * @param \Laminas\Config\Config $recordConfig   Record-specific configuration
-     * file (omit to use $mainConfig as $recordConfig)
-     * @param \Laminas\Config\Config $searchSettings Search-specific configuration
-     * file
-     */
-    public function __construct(
-        $mainConfig = null,
-        $recordConfig = null,
-        $searchSettings = null
-    ) {
-        parent::__construct($mainConfig, $recordConfig, $searchSettings);
-
-        // Set correct AIPA LRMI record XML element names for ContainerFormatTrait
-        $this->encapsulatedRecordElementNames['item'] = 'material';
-        $this->encapsulatedRecordElementNames['id'] = 'identifier';
-        $this->encapsulatedRecordDefaultFormat = 'Curatedrecord';
-    }
-
-    /**
      * Return an array of image URLs associated with this record with keys:
      * - url         Image URL
      * - description Description text
@@ -88,6 +65,47 @@ class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
     }
 
     /**
+     * Return all encapsulated record items.
+     *
+     * @return array
+     */
+    protected function getEncapsulatedRecordItems(): array
+    {
+        // Implementation for XML items in 'material' elements.
+        $items = [];
+        $xml = $this->getXmlRecord();
+        foreach ($xml->material as $item) {
+            $items[] = $item;
+        }
+        return $items;
+    }
+
+    /**
+     * Return ID for an encapsulated record.
+     *
+     * @param mixed $item Encapsulated record item.
+     *
+     * @return string
+     */
+    protected function getEncapsulatedRecordId($item): string
+    {
+        // Implementation for XML items with ID specified in an 'identifier' element
+        return (string)$item->identifier;
+    }
+
+    /**
+     * Return format for an encapsulated record.
+     *
+     * @param mixed $item Encapsulated record item
+     *
+     * @return string
+     */
+    protected function getEncapsulatedRecordFormat($item): string
+    {
+        return 'Curatedrecord';
+    }
+
+    /**
      * Return record driver instance for an encapsulated curated record.
      *
      * @param \SimpleXMLElement $item Curated record item XML
@@ -96,7 +114,7 @@ class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
      */
     protected function getCuratedrecordDriver(\SimpleXMLElement $item): CuratedRecord
     {
-        $driver = $this->driverManager->get('CuratedRecord');
+        $driver = $this->recordDriverManager->get('CuratedRecord');
 
         $encapsulatedRecord = $this->recordLoader->load(
             (string)$item->identifier,

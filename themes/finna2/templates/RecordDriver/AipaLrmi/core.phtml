@@ -67,7 +67,7 @@
               'Subjects',
               'Language',
             ]]
-        ], $filteredFields, null, null, ['skipGroup' => true]));
+        ], $filteredFields));
       ?>
       <?php if ($rights || !empty($coreFields)): ?>
         <table class="table table-finna-record record-details record-field-groups" role="presentation">
@@ -92,7 +92,7 @@
       <?/* End Main Details */?>
     </div>
 
-    <?= $this->record($this->driver)->encapsulatedRecords() ?>
+    <?= $this->record($this->driver)->renderEncapsulatedRecords() ?>
 
     <?php if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>
       <div>

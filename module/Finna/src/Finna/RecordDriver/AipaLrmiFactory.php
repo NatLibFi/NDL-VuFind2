@@ -64,7 +64,7 @@ class AipaLrmiFactory extends \Finna\RecordDriver\SolrDefaultFactory
     ) {
         $driver = parent::__invoke($container, $requestedName, $options);
         $driver->attachRecordLoader($container->get(\Finna\Record\Loader::class));
-        $driver->attachDriverManager(
+        $driver->attachRecordDriverManager(
             $container->get(\Finna\RecordDriver\PluginManager::class)
         );
 

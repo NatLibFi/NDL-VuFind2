@@ -102,7 +102,7 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      */
     protected function getLrmiDriver(\SimpleXMLElement $item): AipaLrmi
     {
-        $driver = $this->driverManager->get('AipaLrmi');
+        $driver = $this->recordDriverManager->get('AipaLrmi');
 
         $data = [
             'id' => $this->getUniqueID()

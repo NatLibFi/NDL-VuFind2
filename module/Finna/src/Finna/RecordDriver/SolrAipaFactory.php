@@ -63,7 +63,7 @@ class SolrAipaFactory extends \Finna\RecordDriver\SolrDefaultFactory
         array $options = null
     ) {
         $driver = parent::__invoke($container, $requestedName, $options);
-        $driver->attachDriverManager(
+        $driver->attachRecordDriverManager(
             $container->get(\Finna\RecordDriver\PluginManager::class)
         );
 
