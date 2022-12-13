@@ -9,6 +9,10 @@
           'indexStart' => $this->indexStart,
           'hideCartControls' => true
         ];
+        if (!isset($this->layout()->templateDir)) {
+          // This needs to be set so that list notes are shown
+          $this->layout()->templateDir = 'record';
+        }
       ?>
       <?=$this->partial('search/list-' . $this->view . '.phtml', $viewParams)?>
       <?php if ($this->showAllLink): ?>
