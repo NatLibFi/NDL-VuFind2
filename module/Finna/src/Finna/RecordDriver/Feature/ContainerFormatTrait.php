@@ -43,29 +43,6 @@ use VuFind\RecordDriver\AbstractBase;
 trait ContainerFormatTrait
 {
     /**
-     * Names of specific encapsulated record XML elements.
-     *
-     * These may be changed in the class using the trait.
-     *
-     * @var string[]
-     */
-    protected array $encapsulatedRecordElementNames = [
-        'item' => 'item',
-        'id' => 'id',
-        'position' => 'position',
-        'format' => 'format',
-    ];
-
-    /**
-     * Default format for encapsulated records that do not have a format element.
-     *
-     * This may be changed in the class using the trait.
-     *
-     * @var ?string
-     */
-    protected ?string $encapsulatedRecordDefaultFormat = null;
-
-    /**
      * Cache for encapsulated records.
      *
      * @var array
@@ -77,7 +54,7 @@ trait ContainerFormatTrait
      *
      * @var PluginManager
      */
-    protected PluginManager $driverManager;
+    protected PluginManager $recordDriverManager;
 
     /**
      * Record loader.
@@ -89,13 +66,14 @@ trait ContainerFormatTrait
     /**
      * Attach record driver plugin manager.
      *
-     * @param PluginManager $driverManager Record driver plugin manager
+     * @param PluginManager $recordDriverManager Record driver plugin manager
      *
      * @return void
      */
-    public function attachDriverManager(PluginManager $driverManager): void
-    {
-        $this->driverManager = $driverManager;
+    public function attachRecordDriverManager(
+        PluginManager $recordDriverManager
+    ): void {
+        $this->recordDriverManager = $recordDriverManager;
     }
 
     /**
@@ -169,24 +147,79 @@ trait ContainerFormatTrait
     }
 
     /**
+     * Return all encapsulated record items.
+     *
+     * @return array
+     */
+    protected function getEncapsulatedRecordItems(): array
+    {
+        // Implementation for XML items in 'item' elements
+        $items = [];
+        $xml = $this->getXmlRecord();
+        foreach ($xml->item as $item) {
+            $items[] = $item;
+        }
+        return $items;
+    }
+
+    /**
+     * Return ID for an encapsulated record.
+     *
+     * @param mixed $item Encapsulated record item.
+     *
+     * @return string
+     */
+    protected function getEncapsulatedRecordId($item): string
+    {
+        // Implementation for XML items with ID specified in an 'id' element
+        return (string)$item->id;
+    }
+
+    /**
+     * Return format for an encapsulated record.
+     *
+     * @param mixed $item Encapsulated record item
+     *
+     * @return string
+     * @throws \RuntimeException If the format can not be determined
+     */
+    protected function getEncapsulatedRecordFormat($item): string
+    {
+        // Implementation for XML items with format specified in a 'format' element
+        if (isset($item->format)) {
+            return ucfirst(strtolower((string)$item->format));
+        }
+        throw new \RuntimeException('Unable to determine format');
+    }
+
+    /**
+     * Return position for an encapsulated record, or null for unspecified position
+     *
+     * @param mixed $item Encapsulated record item
+     *
+     * @return int|null
+     */
+    protected function getEncapsulatedRecordPosition($item): ?int
+    {
+        // Implementation for XML items with position optionally specified in a
+        // 'position' element
+        if (isset($item->position)) {
+            return (int)$item->position;
+        }
+        return null;
+    }
+
+    /**
      * Return record driver for an encapsulated record.
      *
-     * @param \SimpleXMLElement $item Encapsulated record XML
+     * @param mixed $item Encapsulated record item
      *
      * @return ?AbstractBase
      * @throws \RuntimeException If the format is not supported
      */
-    protected function getEncapsulatedRecordDriver(
-        \SimpleXMLElement $item
-    ): ?AbstractBase {
-        $formatElement = $this->encapsulatedRecordElementNames['format'];
-        if (isset($item->{$formatElement})) {
-            $format = ucfirst(strtolower((string)$item->{$formatElement}));
-        } elseif (isset($this->encapsulatedRecordDefaultFormat)) {
-            $format = $this->encapsulatedRecordDefaultFormat;
-        } else {
-            throw new \RuntimeException('Unable to determine format');
-        }
+    protected function getEncapsulatedRecordDriver($item): ?AbstractBase
+    {
+        $format = $this->getEncapsulatedRecordFormat($item);
         $method = "get{$format}Driver";
         if (!is_callable([$this, $method])) {
             throw new \RuntimeException('No driver for format ' . $format);
@@ -199,7 +232,7 @@ trait ContainerFormatTrait
      *
      * The cache is an array of arrays with the following keys:
      * - id: Record ID
-     * - item: Record item XML
+     * - item: Record item
      *
      * and if the driver has been loaded using
      * ContainerFormatTrait::getCachedEncapsulatedRecordDriver():
@@ -214,18 +247,14 @@ trait ContainerFormatTrait
         }
 
         $records = [];
-        $xml = $this->getXmlRecord();
-        $itemElement = $this->encapsulatedRecordElementNames['item'];
-        $idElement = $this->encapsulatedRecordElementNames['id'];
-        $positionElement = $this->encapsulatedRecordElementNames['position'];
-        foreach ($xml->$itemElement as $item) {
+        foreach ($this->getEncapsulatedRecordItems() as $item) {
             $record = [
-                'id' => (string)$item->{$idElement},
+                'id' => $this->getEncapsulatedRecordId($item),
                 'item' => $item,
             ];
-            // Position element is optional
-            if (isset($item->{$positionElement})) {
-                $records[(int)$item->{$positionElement}] = $record;
+            // Position is optional
+            if ($position = $this->getEncapsulatedRecordPosition($item)) {
+                $records[$position] = $record;
             } else {
                 $records[] = $record;
             }

@@ -73,17 +73,20 @@ class GetEncapsulatedRecords extends \VuFind\AjaxHandler\AbstractBase
         $this->disableSessionWrites();  // avoid session write timing bug
 
         $id = $params->fromPost('id', $params->fromQuery('id'));
+        $view
+            = $params->fromPost('view', $params->fromQuery('view'));
         $offset = $params->fromPost('offset', $params->fromQuery('offset'));
         $indexStart
             = $params->fromPost('indexStart', $params->fromQuery('indexStart'));
-        $view
-            = $params->fromPost('view', $params->fromQuery('view'));
 
-        $html = $this->helper->loadMoreEncapsulatedRecords(
-            $id,
+        $html = ($this->helper)($id)->renderEncapsulatedRecords(
+            [
+                'limit' => null, // No limit
+                'page' => 1,
+                'view' => $view,
+            ],
             $offset,
-            $indexStart,
-            $view
+            $indexStart
         );
         return $this->formatResponse(compact('html'));
     }

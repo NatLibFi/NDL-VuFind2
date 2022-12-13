@@ -136,9 +136,13 @@ class Loader extends \VuFind\Record\Loader
             // Check for an encapsulated record ID
             $parts = explode(self::ENCAPSULATED_RECORD_ID_SEPARATOR, $id, 2);
             if ($id !== $parts[0]) {
-                $result = parent::load($parts[0]);
-                if ($result instanceof ContainerFormatInterface) {
-                    $result = $result->getEncapsulatedRecord($parts[1]);
+                // Encapsulated record ID separator was found.
+                // Attempt to load parent record using the first part of the ID.
+                $parentRecord = parent::load($parts[0]);
+                // If the parent record implements ContainerRecordInterface
+                // get encapsulated record using the second part of the ID
+                if ($parentRecord instanceof ContainerFormatInterface) {
+                    $result = $parentRecord->getEncapsulatedRecord($parts[1]);
                     if (null !== $result) {
                         $missingException = false;
                     }

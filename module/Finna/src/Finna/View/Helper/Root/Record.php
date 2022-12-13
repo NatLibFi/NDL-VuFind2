@@ -1320,7 +1320,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @return string
      */
-    public function encapsulatedRecords(
+    public function renderEncapsulatedRecords(
         array $opt = [],
         int $offset = null,
         int $indexStart = null
@@ -1344,7 +1344,10 @@ class Record extends \VuFind\View\Helper\Root\Record
 
         $loadMore = $offset !== null;
 
-        $opt['limit'] = $opt['limit'] ?? 6;
+        // null is an accepted limit value (no limit)
+        if (!array_key_exists('limit', $opt)) {
+            $opt['limit'] = 6;
+        }
         $opt['showAllLink'] = $opt['showAllLink'] ?? true;
         $view = $opt['view'] = $opt['view'] ?? 'grid';
 
@@ -1380,41 +1383,5 @@ class Record extends \VuFind\View\Helper\Root\Record
         );
 
         return $html;
-    }
-
-    /**
-     * Returns HTML for a set of encapsulated records.
-     *
-     * @param string $id         Container record ID
-     * @param int    $offset     Record offset
-     * @param int    $startIndex Result item offset in DOM
-     * @param string $view       Result view type
-     *
-     * @return string
-     */
-    public function loadMoreEncapsulatedRecords(
-        string $id,
-        int $offset,
-        int $startIndex,
-        string $view
-    ): string {
-        $this->driver = $this->loader->load($id);
-
-        $resultsCopy = clone $this->encapsulatedResults;
-        $params = $resultsCopy->getParams();
-        $params->initFromRequest(new Parameters(['id' => $id]));
-
-        $limit = $resultsCopy->getResultTotal();
-
-        return $this->encapsulatedRecords(
-            [
-                'id' => $id,
-                'page' => 1,
-                'limit' => $limit,
-                'view' => $view
-            ],
-            $offset,
-            $startIndex
-        );
     }
 }
