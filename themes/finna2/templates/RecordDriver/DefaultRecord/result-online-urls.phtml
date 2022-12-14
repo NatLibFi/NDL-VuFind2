@@ -63,7 +63,6 @@
               }
               break;
             }
-            echo $url['embed'];
             $desc = $url['desc'] ?? $url['url'];
             if ($desc === $url['url']) {
               $desc = $this->truncateUrl($desc);

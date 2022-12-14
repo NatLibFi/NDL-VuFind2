@@ -37,7 +37,6 @@
       <?php
       $embeddedVideo = $this->recordLinker()->getEmbeddedVideo($url['url']);
       $desc = $url['desc'] ?? $this->truncateUrl($url['url']);
-      var_dump($url['embed']);
 
       if (($type ?? '') === 'SolrEad') {
         $desc = $embeddedVideo === 'data-embed-iframe' ? $this->translate('format_Video') : $this->translate('link_' . $url['desc'], null, $url['desc']);
