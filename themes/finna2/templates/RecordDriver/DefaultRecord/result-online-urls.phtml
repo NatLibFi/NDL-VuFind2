@@ -48,9 +48,10 @@
           <?=$i > 0 ? '<br/>' : ''?>
           <?php
             $currentUrl = [
+              'href' => $this->proxyUrl($url['url']),
               'title' => $url['url']
             ];
-            $currentUrl['popup' === $context ? 'data-link' : 'href'] = $this->proxyUrl($url['url']);
+
             if (!empty($url['videoSources'])) {
               $currentUrl['data-video-sources'] = json_encode($url['videoSources']);
             }

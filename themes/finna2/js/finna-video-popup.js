@@ -204,7 +204,9 @@ finna.videoPopup = (function finnaVideoPopup() {
           }
 
           finna.scriptLoader.loadInOrder(scripts, subScripts, function onScriptsLoaded() {
-            finna.videoPopup.initVideoJs('.video-popup', videoSources, posterUrl);
+            if (document.querySelector('.video-popup video')) {
+              finna.videoPopup.initVideoJs('.video-popup', videoSources, posterUrl);
+            }
           });
         }
       });
