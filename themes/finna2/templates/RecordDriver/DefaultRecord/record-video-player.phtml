@@ -60,7 +60,7 @@
         popup-id="<?=$popupId?>"
         <?php if ($inlineVideo): ?>
           embed-parent="inline-video"
-          active ="<?= $inlineVideo && $index === 0 ? 'true' : 'false'?>"
+          active ="<?= $inlineVideo && $i === 0 ? 'true' : 'false'?>"
         <?php endif; ?>
         source="<?=$source?>"
         type="<?=$type?>"
@@ -69,7 +69,7 @@
         <?php endif; ?>
         has-consent="<?=$hasConsent || $type === 'video' ? "true" : "false";?>"
         consent-categories="<?=$this->transEscAttr('CookieConsent::video_cookies_title_html')?>"
-        index="<?=$index++?>"
+        index="<?=$i++?>"
 
         title="<?=$url['url']?>"
         aria-label="<?=$this->transEscAttr('Link to video') . ' ' . $description?>"
