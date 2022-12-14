@@ -49,14 +49,6 @@
       }
       $description = $this->escapeHtml($desc);
 
-      if (!empty($embeddedVideo)) {
-        if ($inlineVideo) {
-          $currentVideo['data-inline-iframe'] = '';
-        }
-        $currentVideo['data-embed-url'] = $this->recordLinker()->getEmbeddedVideoUrl($url['url']);
-        $currentVideo[$embeddedVideo] = '';
-      }
-
       $popupId = ($embeddedVideo ?? '') === 'data-embed-iframe' ? 'finna-iframe' : 'finna-video';
       $type = ($embeddedVideo ?? '') === 'data-embed-iframe' ? 'iFrame' : 'video';
       $embedParent = $inlineVideo ? 'inline-video' : '';

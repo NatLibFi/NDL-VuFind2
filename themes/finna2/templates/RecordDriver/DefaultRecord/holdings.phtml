@@ -1,6 +1,6 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/holdings.phtml -->
 <?php
-  $dedupData = $this->driver->getDedupData();
+  $dedupData = $this->driver->getDedupData(true);
   $deduplicated = count($dedupData) > 1;
 ?>
 

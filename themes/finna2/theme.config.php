@@ -197,6 +197,7 @@ $config = [
         'requests.js',
         'finna-polyfill.js',
         'finna.js',
+        'finna-script-loader.js',
         'finna-popup.js',
         'finna-autocomplete.js',
         'finna-authority.js',

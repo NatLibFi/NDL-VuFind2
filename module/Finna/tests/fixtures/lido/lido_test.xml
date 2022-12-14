@@ -22,6 +22,40 @@
           </classification>
         </classificationWrap>
       </objectClassificationWrap>
+      <objectIdentificationWrap>
+        <objectMeasurementsWrap>
+          <objectMeasurementsSet>
+            <displayObjectMeasurements label="extent">1001 neliömetriä</displayObjectMeasurements>
+            <objectMeasurements>
+              <measurementsSet>
+                <measurementType>
+                  <conceptID type="URI">http://urn.fi/URN:NBN:fi:au:mts:m8</conceptID>
+                  <term lang="en">extent</term>
+                </measurementType>
+                <measurementUnit>m2</measurementUnit>
+                <measurementValue>1002</measurementValue>
+              </measurementsSet>
+            </objectMeasurements>
+          </objectMeasurementsSet>
+          <objectMeasurementsSet>
+            <displayObjectMeasurements>pituus 73.0 cm, leveys 14 cm</displayObjectMeasurements>
+            <objectMeasurements>
+              <measurementsSet>
+                <measurementType>pituus</measurementType>
+                <measurementUnit>m</measurementUnit>
+                <measurementValue>2</measurementValue>
+              </measurementsSet>
+              <measurementsSet>
+                <measurementType>leveys</measurementType>
+                <measurementUnit>m</measurementUnit>
+                <measurementValue>1</measurementValue>
+              </measurementsSet>
+              <extentMeasurements>kohde 2</extentMeasurements>
+              <extentMeasurements>kohde 3</extentMeasurements>
+            </objectMeasurements>
+          </objectMeasurementsSet>
+        </objectMeasurementsWrap>
+      </objectIdentificationWrap>
     </descriptiveMetadata>
     <administrativeMetadata>
       <resourceWrap>

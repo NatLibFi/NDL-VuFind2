@@ -1867,7 +1867,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 $renewals = max(
                     [
                         0,
-                        $renewLimit - $loan->remainingRenewals
+                        $renewalLimit - $loan->remainingRenewals
                     ]
                 );
             } elseif ($loan->remainingRenewals > 0) {
@@ -2323,6 +2323,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             } else {
                 $amount = str_replace(',', '.', $debt->debtAmountFormatted) * 100;
             }
+            // Round the amount in case it's a weird decimal number:
+            $amount = round($amount);
             $description = $debt->debtType . ' - ' . $debt->debtNote;
             $payable = $amount > 0;
             if ($payable) {
