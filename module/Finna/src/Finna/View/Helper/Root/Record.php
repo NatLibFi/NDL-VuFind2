@@ -132,7 +132,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @var int
      */
-    protected $indexStart = 0;
+    protected $indexStart = 1000;
 
     /**
      * Constructor
@@ -1322,8 +1322,8 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function renderEncapsulatedRecords(
         array $opt = [],
-        int $offset = null,
-        int $indexStart = null
+        ?int $offset = null,
+        ?int $indexStart = null
     ): string {
         foreach (array_keys($opt) as $key) {
             if (!in_array(
@@ -1364,8 +1364,6 @@ class Record extends \VuFind\View\Helper\Root\Record
             $idStart = $indexStart;
             $resultsCopy->overrideStartRecord($offset);
         }
-        // Try to avoid clashes with IDs in other possible lists on the same page
-        $idStart += 1000;
 
         $resultsCopy->performAndProcessSearch();
 
