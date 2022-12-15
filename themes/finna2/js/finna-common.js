@@ -6,8 +6,6 @@ finna.common = (function finnaCommon() {
     SameSite: 'Lax'
   };
 
-  let lazyImageObserver;
-
   function decodeHtml(str) {
     return $("<textarea/>").html(str).text();
   }
@@ -67,57 +65,24 @@ finna.common = (function finnaCommon() {
     window.Cookies.remove(cookie, _getCookieSettings());
   }
 
-  /**
-   * Start observing given nodelist. Used for lazyloading images.
-   * Images must contain data-src attribute.
-   * 
-   * @param {NodeList} images 
-   */
-  function observeImages(images) {
-    if (!images.length) {
-      return;
-    }
-    if (!('IntersectionObserver' in window) ||
-      !('IntersectionObserverEntry' in window) ||
-      !('isIntersecting' in window.IntersectionObserverEntry.prototype) ||
-      !('intersectionRatio' in window.IntersectionObserverEntry.prototype)
-    ) {
-      // Fallback: display images instantly on browsers that don't support the observer properly
-      images.forEach((image) => {
-        image.src = image.dataset.src;
-        delete image.dataset.src;
-      });
-    } else {
-      if (!lazyImageObserver) {
-        lazyImageObserver = new IntersectionObserver((entries, obs) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              let lazyImage = entry.target;
-              lazyImage.src = lazyImage.dataset.src;
-              delete lazyImage.dataset.src;
-              obs.unobserve(lazyImage);
-            }
-          }); 
-        });
-      }
-      images.forEach((image) => {
-        lazyImageObserver.observe(image);
-      });
-    }
-  }
-
   var my = {
     decodeHtml: decodeHtml,
     getField: getField,
     initQrCodeLink: initQrCodeLink,
     init: function init() {
       initQrCodeLink();
+      VuFind.observerManager.createIntersectionObserver(
+        'LazyImages',
+        (element) => {
+          element.src = element.dataset.src;
+          delete element.dataset.src;
+        }
+      );
     },
     getCookie: getCookie,
     setCookie: setCookie,
     removeCookie: removeCookie,
     setCookieSettings: setCookieSettings,
-    observeImages: observeImages
   };
 
   return my;

@@ -2,11 +2,13 @@
 finna.openUrl = (function finnaOpenUrl() {
   function initLinks(_container) {
     var container = _container || $('body');
-    $(container).find('.openUrlEmbed a').each(function initOpenUrlEmbed(ind, e) {
-      $(e).one('inview', function onInViewOpenUrl() {
-        VuFind.openurl.embedOpenUrlLinks($(this));
-      });
-    });
+    VuFind.observerManager.createIntersectionObserver(
+      'OpenUrl',
+      (element) => {
+        VuFind.openurl.embedOpenUrlLinks($(element));
+      },
+      $(container).find('.openUrlEmbed a').toArray()
+    );
   }
 
   var my = {

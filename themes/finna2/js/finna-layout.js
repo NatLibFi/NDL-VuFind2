@@ -549,12 +549,13 @@ finna.layout = (function finnaLayout() {
   }
 
   function initOrganisationPageLinks() {
-    $('.organisation-page-link').not('.done').each(function setupOrganisationPageLinks() {
-      $(this).one('inview', function onInViewLink() {
-        var holder = $(this);
-        var organisationId = $(this).data('organisation');
-        var organisationName = $(this).data('organisationName');
-        var organisationSector = $(this).data('organisationSector');
+    VuFind.observerManager.createIntersectionObserver(
+      'OrganisationPageLinks',
+      (element) => {
+        const holder = $(element);
+        var organisationId = holder.data('organisation');
+        var organisationName = holder.data('organisationName');
+        var organisationSector = holder.data('organisationSector');
         var organisation = {'id': organisationId, 'sector': organisationSector};
         getOrganisationPageLink(organisation, organisationName, true, function organisationPageCallback(response) {
           holder.toggleClass('done', true);
@@ -564,8 +565,9 @@ finna.layout = (function finnaLayout() {
             });
           }
         });
-      });
-    });
+      },
+      document.querySelectorAll('.organisation-page-link:not(.done)')
+    );
   }
 
   function initOrganisationInfoWidgets() {

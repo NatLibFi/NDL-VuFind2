@@ -560,7 +560,10 @@ FinnaPaginator.prototype.changeTriggerImage = function changeTriggerImage(imageP
     }
     setImageProperties(this);
   });
-  finna.common.observeImages(img[0].parentNode.querySelectorAll('img[data-src]'));
+  VuFind.observerManager.observe(
+    'LazyImages',
+    img[0].parentNode.querySelectorAll('img[data-src]')
+  );
 };
 
 FinnaPaginator.prototype.showImageDetails = function showImageDetails(imagePopup) {

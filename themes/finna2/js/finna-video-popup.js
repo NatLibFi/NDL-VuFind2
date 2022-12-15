@@ -187,7 +187,10 @@ finna.videoPopup = (function finnaVideoPopup() {
             this.currentTrigger().addClass('active-video');
             $('.video-warning').addClass('hidden');
             if (warnings[0]) {
-              finna.common.observeImages(warnings[0].querySelectorAll('img[data-src]'));
+              VuFind.observerManager.observe(
+                'LazyImages',
+                warnings[0].querySelectorAll('img[data-src]')
+              );
               warnings.removeClass('hidden');
             }
           } else {
@@ -196,7 +199,10 @@ finna.videoPopup = (function finnaVideoPopup() {
               var clone = warnings.clone();
               clone.appendTo(this.modalHolder);
               clone.removeClass('hidden');
-              finna.common.observeImages(clone[0].querySelectorAll('img[data-src]'));
+              VuFind.observerManager.observe(
+                'LazyImages',
+                clone[0].querySelectorAll('img[data-src]')
+              );
               setTimeout(function startFade() {
                 clone.fadeOut(2000);
               }, 3000);
@@ -257,7 +263,10 @@ finna.videoPopup = (function finnaVideoPopup() {
             $('.video-warning').addClass('hidden');
             if (warnings[0]) {
               warnings.removeClass('hidden');
-              finna.common.observeImages(warnings[0].querySelectorAll('img[data-src]'));
+              VuFind.observerManager.observe(
+                'LazyImages',
+                warnings[0].querySelectorAll('img[data-src]')
+              );
             }
           } else {
             this.content.css('height', '100%');
@@ -265,7 +274,10 @@ finna.videoPopup = (function finnaVideoPopup() {
               var clone = warnings.clone();
               clone.removeClass('hidden');
               clone.appendTo(this.modalHolder);
-              finna.common.observeImages(clone[0].querySelectorAll('img[data-src]'));
+              VuFind.observerManager.observe(
+                'LazyImages',
+                clone[0].querySelectorAll('img[data-src]')
+              );
               setTimeout(function startFade() {
                 clone.fadeOut(2000);
               }, 3000);

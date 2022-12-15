@@ -29,7 +29,10 @@ finna.linkedEvents = (function finnaLinkedEvents() {
       .done(function onGetEventsDone(response) {
         if (response.data) {
           callback(response.data, append, container);
-          finna.common.observeImages(container[0].querySelectorAll('img[data-src]'));
+          VuFind.observerManager.observe(
+            'LazyImages',
+            container[0].querySelectorAll('img[data-src]')
+          );
         } else {
           var err = $('<div></div>').attr('class', 'linked-events-noresults infobox').text(VuFind.translate('nohit_heading'));
           container.find($('.linked-events-content')).html(err);
