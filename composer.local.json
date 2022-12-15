@@ -6,7 +6,7 @@
         "ezyang/htmlpurifier": "4.12.0",
         "jaybizzle/crawler-detect": "^1.2.111",
         "league/mime-type-detection": "1.9.0",
-        "paquettg/php-html-parser": "3.1.0",
+        "natlibfi/php-html-parser": "4.0.1",
         "paytrail/paytrail-php-sdk": "1.1.0",
         "picqer/php-barcode-generator": "2.0.1",
         "natlibfi/besimple-soap": "2.0.0",

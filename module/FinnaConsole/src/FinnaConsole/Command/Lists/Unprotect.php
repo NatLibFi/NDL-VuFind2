@@ -1,6 +1,6 @@
 <?php
 /**
- * Database authentication class
+ * Console service for unprotecting lists.
  *
  * PHP version 7
  *
@@ -20,44 +20,57 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Authentication
+ * @package  Service
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:authentication_handlers Wiki
+ * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-namespace Finna\Auth;
+namespace FinnaConsole\Command\Lists;
 
-use VuFind\Exception\Auth as AuthException;
+use VuFind\Db\Row\RowGateway;
 
 /**
- * Database authentication class
+ * Console service for unprotecting lists
  *
  * @category VuFind
- * @package  Authentication
+ * @package  Service
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:authentication_handlers Wiki
+ * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class Database extends \VuFind\Auth\Database
+class Unprotect extends \FinnaConsole\Command\AbstractRecordUpdateCommand
 {
     /**
-     * Make sure username contains only allowed characters
+     * Table display name
      *
-     * @param array $params request parameters
-     *
-     * @return void
+     * @var string
      */
-    protected function validateUsernameAndPassword($params)
-    {
-        parent::validateUsernameAndPassword($params);
+    protected $tableName = 'list';
 
-        // Check that the username only contains allowed characters:
-        $valid = preg_match(
-            '/^(?!.*[._\-]{2})[A-ZÅÄÖa-zåäö0-9._\-]{3,50}$/',
-            $params['username']
-        );
-        if (!$valid) {
-            throw new AuthException('Username contains invalid characters');
+    /**
+     * Command description
+     *
+     * @var string
+     */
+    protected $description = 'Unprotect lists in the database';
+
+    /**
+     * Update a record
+     *
+     * @param RowGateway $record Record
+     *
+     * @return bool Whether changes were made
+     */
+    protected function changeRecord(RowGateway $record): bool
+    {
+        if ($record->finna_protected === 0) {
+            return false;
         }
+        $record->finna_protected = 0;
+        // Fake a user to pass owner check:
+        $user = new \StdClass();
+        $user->id = $record->user_id;
+        $record->save($user);
+        return true;
     }
 }

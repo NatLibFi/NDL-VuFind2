@@ -241,6 +241,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                     ],
                     'description' => '',
                     'rights' => [],
+                    'downloadable' => false,
                     'pdf' => $pdf
                 ];
             }
@@ -292,6 +293,12 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                         break;
                     case '080':
                         $classification = 'udk';
+                        $version = $this->getSubfield($field, '2');
+                        if ($version && preg_match('/(\d{4})/', $version, $matches)
+                            && 2017 <= $matches[1]
+                        ) {
+                            $classification .= '2017';
+                        }
                         break;
                     default:
                         $classification = $this->getSubfield($field, '2');
@@ -1252,7 +1259,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
         if (empty($matches)) {
             // Now check 490 and display it only if 440/800/830 were empty:
-            $secondaryFields = ['490' => ['a', 'v', 'x']];
+            $secondaryFields = ['490' => ['a', 'v']];
             $matches = $this->getSeriesFromMARC($secondaryFields);
         }
 
@@ -1314,7 +1321,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     public function getTitle()
     {
         return $this->stripTrailingPunctuation(
-            $this->getFirstFieldValue('245', ['a', 'b', 'n', 'p'])
+            $this->getFirstFieldValue('245', ['a', 'b', 'n', 'p']),
+            '',
+            true
         );
     }
 
@@ -1624,7 +1633,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      * - heading: the actual subject heading chunks
      * - type: heading type
      * - source: source vocabulary
-     * - id: authority id (if defined)
+     * - id: first authority id (if defined)
+     * - ids: multiple authority ids (if defined)
      * - authType: authority type (if id is defined)
      *
      * @return array
@@ -2183,6 +2193,18 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             $results[] = implode(' ', $subfields);
         }
         return $results;
+    }
+
+    /**
+     * Get standard report numbers from field 027, subfield a.
+     *
+     * @return array
+     */
+    public function getStandardReportNumbers()
+    {
+        return $this->stripTrailingPunctuation(
+            $this->getFieldArray('027', ['a'])
+        );
     }
 
     /**

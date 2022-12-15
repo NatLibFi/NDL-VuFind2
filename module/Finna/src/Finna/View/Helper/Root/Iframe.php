@@ -88,7 +88,7 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper
         $serviceBaseUrl = $this->getServiceBaseUrl($serviceUrl);
         $consentCategoriesTranslated
             = $this->getTranslatedConsentCategories($consentCategories);
-        $embed = $this->hasConcent($consentCategories);
+        $embed = $this->hasConsent($consentCategories);
 
         return $this->getView()->render(
             'Helpers/iframe.phtml',
@@ -243,7 +243,7 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper
             $styleParts[] = "height: {$height}px;";
         }
         $style = implode(' ', $styleParts);
-        $embed = $this->hasConcent($consentCategories);
+        $embed = $this->hasConsent($consentCategories);
         return  $this->getView()->render(
             'Helpers/twitter-timeline.phtml',
             compact(
@@ -302,13 +302,13 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Check if user has concented to given categories
+     * Check if user has consented to given categories
      *
      * @param array $categories Categories
      *
      * @return bool
      */
-    protected function hasConcent(array $categories): bool
+    protected function hasConsent(array $categories): bool
     {
         $cookieConsent = $this->getView()->plugin('cookieConsent');
         if ($cookieConsent->isEnabled()) {

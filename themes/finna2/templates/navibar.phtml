@@ -125,7 +125,7 @@
       <?php if (is_object($account) && $account->loginEnabled()): ?>
         <?php if ($user): ?>
           <li class="logoutOptions">
-            <a href="#" role="menuitem" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="account-icon" class="fa fa-user fa-lg" aria-hidden="true"></i><span class="username login-text"><span class="sr-only"><?=$this->transEsc('logged_in_as')?>: </span><?=$user ? $this->escapeHtml($this->truncate($user->getDisplayName(), 20)) : $this->transEsc("Your Account")?></span><b class="caret"></b></a>
+            <a href="#" role="menuitem" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="account-icon" class="fa fa-user fa-lg" aria-hidden="true"></i><span class="username login-text"><?=$this->transEsc("Your Account")?></span><b class="caret"></b></a>
             <ul role="menu" id="my-info-dropdown-menu" class="dropdown-menu">
               <?php if ($user->getLibraryCards()->count() > 0): ?>
                 <li>

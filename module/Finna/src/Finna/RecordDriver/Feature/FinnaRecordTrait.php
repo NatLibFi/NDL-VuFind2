@@ -137,8 +137,12 @@ trait FinnaRecordTrait
     protected function getArticleOpenUrlParams()
     {
         $params = parent::getArticleOpenUrlParams();
-        if ($doi = $this->tryMethod('getCleanDOI')) {
-            $params['rft.doi'] = $doi;
+        if ($doiFull = $this->tryMethod('getCleanDOI')) {
+            $doi = preg_replace('/^doi:|^info:doi\//', '', $doiFull);
+            $doi = 'info:doi/' . $doi;
+
+            $params['rft_id'] = (array)($params['rft_id'] ?? []);
+            $params['rft_id'][] = $doi;
         }
         if ($mmsId = $this->tryMethod('getAlmaMmsId')) {
             $params['rft.mms_id'] = $mmsId;
@@ -261,13 +265,37 @@ trait FinnaRecordTrait
     /**
      * Allow record image to be downloaded?
      *
-     * @return boolean
+     * @param array $image Image to check
+     *
+     * @return bool
      */
-    public function allowRecordImageDownload()
+    public function allowRecordImageDownload(array $image = []): bool
     {
-        $rights = $this->tryMethod('getUsageRights');
-        if (empty($rights) || in_array('usage_F', $rights)) {
+        // Check rights from index if they would not allow the download
+        $indexRights = $this->tryMethod('getUsageRights', [], []);
+        if (empty($indexRights) || in_array('usage_F', $indexRights)) {
             return false;
+        }
+        if (empty($image)) {
+            return true;
+        }
+        if (!empty($this->mainConfig->FileDownload->excludeRights)) {
+            $restrictions
+                = $this->mainConfig->FileDownload->excludeRights->toArray();
+            $copyright = mb_strtoupper($image['rights']['copyright'] ?? '', 'UTF-8');
+            if (in_array($copyright, $restrictions)) {
+                return false;
+            }
+        }
+        if (!empty($image['pdf'])
+            && !empty($this->mainConfig->Content->pdfCoverImageDownload)
+        ) {
+            return !empty(
+                array_intersect(
+                    explode(',', $this->mainConfig->Content->pdfCoverImageDownload),
+                    $this->getFormats()
+                )
+            );
         }
         return true;
     }

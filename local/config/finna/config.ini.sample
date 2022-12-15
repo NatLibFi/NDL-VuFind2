@@ -371,6 +371,22 @@ ils_encryption_key = ""
 ; You can use mcrypt_list_algorithms to see the full list of choices for your system.
 ils_encryption_algo = "aes"
 
+; Specify default minimum and maximum new username length (Auth method may override
+; this).
+minimum_username_length = 3
+maximum_username_length = 50
+; Specify default limit of accepted characters in the username. Allowed values
+; are "numeric", "alphanumeric" or a regular expression.
+; The following default requires the username to consist of printable characters
+; allowed in email addresses (i.e. !#$%&'*+-/=?^_`{|}~) and letters and decimal
+; numbers in any script (see
+; https://www.php.net/manual/en/regexp.reference.unicode.php for more information):
+username_pattern = "([\\x21\\x23-\\x2B\\x2D-\\x2F\\x3D\\x3F\\x40\\x5E-\\x60\\x7B-\\x7E\\p{L}\\p{Nd}]+)"
+; Specify default hint about what the username may contain when using a regexp
+; pattern. May be text or a translation key. The "numeric" and "alphanumeric"
+; patterns have translated default hints.
+username_hint = username_only_letters_numbers_and_basic_punctuation
+
 ; Specify default minimum and maximum password length (Auth method may override
 ; this).
 minimum_password_length = 8
@@ -470,9 +486,8 @@ database          = mysql://vufind:vufind@localhost/vufind2
 ; If your database (e.g. PostgreSQL) uses a schema, you can set it here:
 ;schema = schema_name
 
-; The character set of the database -- may be latin1 or utf8; utf8 is STRONGLY
-; RECOMMENDED and is the default if no value is set here.  You may need latin1
-; for compatibility with existing VuFind 1.x installations.
+; The character set of the database -- utf8 and utf8mb4 are currently the only
+; supported values, and utf8mb4 is the default if no value is set here.
 ;charset = utf8
 
 ; LDAP is optional.  This section only needs to exist if the
@@ -686,7 +701,7 @@ noCoverAvailableImage = images/noCover2.gif
 
 ; URL of a service that is used to convert PDF files to jpg.
 ; The service receives the URL of the pdf file as a GET parameter and outputs a jpg file.
-; convertPdfToCoverImageService = "http://127.0.0.1:9999"
+; convertPdfToCoverImageService = "http://127.0.0.1:9999?url=%%url%%"
 
 ; Comma separated list of record formats whose PDF converted record images may be downloaded.
 pdfCoverImageDownload = "0/Map/"
@@ -703,6 +718,10 @@ summarycachetime = 1440
 ; How long feed content is cached locally in minutes.
 ; Set this to 0 to disable caching.
 feedcachetime = 10
+
+; Array of hosts and their name values, separated by a colon
+; Host is the same as from parse_url
+;feedHostToNameMappings[] = 'www.instagram.com:instagram'
 
 ; You can select from Syndetics, SyndeticsPlus, Amazon Editorial, Amazon, Booksite
 ; and/or the Guardian
@@ -1753,6 +1772,12 @@ CCBYNC4.0 = CC BY-NC-SA 4.0
 PUBLIC DOMAIN = PDM
 PUBLIC DOMAIN 1.0 = PDM
 
+; Settings for file downloads
+[FileDownload]
+; Excluded rights prevents a file from being downloaded.
+excludeRights[] = "INC"
+excludeRights[] = "CNE"
+
 ; Finna survey
 [FinnaSurvey]
 enabled = false
@@ -1813,3 +1838,7 @@ termsOfServiceUrl = "https://www.kiwi.fi/display/Finna/Finna+API+Terms+of+Use"
 ; By default, VuFind sorts text in a locale-agnostic way; if this setting is
 ; turned on, the current user-selected locale will impact sort order.
 use_locale_sorting = true
+
+[DOI]
+; Whether to open links in a new window. Default is false.
+new_window = true

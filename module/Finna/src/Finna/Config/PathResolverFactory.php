@@ -1,11 +1,10 @@
 <?php
 /**
- * VuFind HTTP Service factory.
+ * Factory for PathResolver.
  *
  * PHP version 7
  *
- * Copyright (C) Villanova University 2019.
- * Copyright (C) The National Library of Finland 2020.
+ * Copyright (C) The National Library of Finland 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,31 +20,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Service
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @package  Config
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\Service;
+namespace Finna\Config;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
-use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * VuFind HTTP Service factory.
+ * Factory for PathResolver.
  *
  * @category VuFind
- * @package  Service
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @package  Config
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class HttpServiceFactory implements FactoryInterface
+class PathResolverFactory extends \VuFind\Config\PathResolverFactory
 {
     /**
      * Create an object
@@ -59,7 +55,7 @@ class HttpServiceFactory implements FactoryInterface
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
-     * @throws ContainerException if any other error occurs
+     * @throws ContainerException&\Throwable if any other error occurs
      */
     public function __invoke(
         ContainerInterface $container,
@@ -67,26 +63,26 @@ class HttpServiceFactory implements FactoryInterface
         array $options = null
     ) {
         if (!empty($options)) {
-            throw new \Exception('Unexpected options passed to factory.');
+            throw new \Exception('Unexpected options sent to factory.');
         }
-        $config = $container->get(\VuFind\Config\PluginManager::class)
-            ->get('config');
-        $options = [];
-        if (isset($config->Proxy->host)) {
-            $options['proxy_host'] = $config->Proxy->host;
-            if (isset($config->Proxy->port)) {
-                $options['proxy_port'] = $config->Proxy->port;
-            }
-            if (isset($config->Proxy->type)) {
-                $options['proxy_type'] = $config->Proxy->type;
-            }
-        }
-        $defaults = isset($config->Http)
-            ? $config->Http->toArray() : [];
-        // Back-compatibility for the Http adapter setting
-        if (($defaults['adapter'] ?? '') === 'Zend\Http\Client\Adapter\Curl') {
-            $defaults['adapter'] = 'Laminas\Http\Client\Adapter\Curl';
-        }
-        return new $requestedName($options, $defaults);
+        $localDirs = defined('LOCAL_OVERRIDE_DIR')
+            && strlen(trim(LOCAL_OVERRIDE_DIR)) > 0
+                ? [
+                    [
+                        'directory' => LOCAL_OVERRIDE_DIR,
+                        'defaultConfigSubdir' => 'config/finna'
+                    ],
+                    [
+                        'directory' => LOCAL_OVERRIDE_DIR,
+                        'defaultConfigSubdir' => $this->defaultLocalConfigSubdir
+                    ]
+                ] : [];
+        return new $requestedName(
+            [
+                'directory' => APPLICATION_PATH,
+                'defaultConfigSubdir' => $this->defaultBaseConfigSubdir
+            ],
+            $localDirs
+        );
     }
 }

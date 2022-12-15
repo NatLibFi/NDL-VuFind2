@@ -29,6 +29,8 @@
  */
 namespace Finna\Related;
 
+use VuFindSearch\Command\WorkExpressionsCommand;
+
 /**
  * Related Records: Solr-based work expressions
  *
@@ -113,12 +115,13 @@ class WorkExpressions implements \VuFind\Related\RelatedInterface
         ) {
             $params = new \VuFindSearch\ParamBag();
             $params->add('rows', $this->getResultMoreLimit());
-            $results = $this->searchService->workExpressions(
+            $command = new WorkExpressionsCommand(
                 $driver->getSourceIdentifier(),
                 $driver->getUniqueID(),
                 $this->workKeys,
                 $params
             );
+            $results = $this->searchService->invoke($command)->getResult();
             $this->results = $results->getRecords();
             $this->resultCount = $results->getTotal();
         } else {

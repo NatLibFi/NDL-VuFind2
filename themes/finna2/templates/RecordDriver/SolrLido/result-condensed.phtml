@@ -36,18 +36,14 @@
       <div class="dateyeartype">
         <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?></div>
         <?=$this->escapeHtml($this->organisationDisplayName($this->driver)) ?>
-        <?php if ($this->driver->isCollection()): ?>
-          <?=implode('<br>', array_map([$this, 'escapeHtml'], $this->driver->getSummary())); ?>
-        <?php else: ?>
-          <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles'); if (!empty($authors)): ?>
-            <?php $author = $authors[0]; ?>
-            <a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a>
-            <?php if (count($authors) > 1): ?> <?=$this->transEsc('more_authors_abbrev')?><?php endif; ?>
-          <?php endif; ?>
+        <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles'); if (!empty($authors)): ?>
+          <?php $author = $authors[0]; ?>
+          <a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a>
+          <?php if (count($authors) > 1): ?> <?=$this->transEsc('more_authors_abbrev')?><?php endif; ?>
+        <?php endif; ?>
 
-          <?php if ($dates = $this->driver->getResultDateRange()): ?>
-            <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
-          <?php endif; ?>
+        <?php if ($dates = $this->driver->getResultDateRange()): ?>
+          <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
         <?php endif; ?>
       </div>
     </div>

@@ -754,7 +754,10 @@ class Record extends \VuFind\View\Helper\Root\Record
      * If record image is converted from PDF, downloading is allowed only
      * for configured record formats.
      *
-     * @return boolean
+     * @deprecated Please use downloadable variable found in image array
+     *             returned from record->getAllImages().
+     *
+     * @return bool
      */
     public function allowRecordImageDownload()
     {

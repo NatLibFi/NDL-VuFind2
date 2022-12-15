@@ -39,7 +39,7 @@ namespace Finna\RecordDriver;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
-class SolrAuthEacCpf extends SolrAuthDefault
+class SolrAuthEaccpf extends SolrAuthDefault
 {
     use Feature\SolrAuthFinnaTrait {
         getOccupations as _getOccupations;
@@ -84,16 +84,61 @@ class SolrAuthEacCpf extends SolrAuthDefault
     public function getAlternativeTitles()
     {
         $titles = [];
-        $path = 'cpfDescription/identity/nameEntryParallel/nameEntry';
+        $dates = [];
+        $path = 'cpfDescription/identity/nameEntryParallel';
         foreach ($this->getXmlRecord()->xpath($path) as $name) {
-            foreach ($name->part ?? [] as $part) {
+            $title = '';
+            foreach ($name->nameEntry->part ?? [] as $part) {
                 $localType = (string)$part->attributes()->localType;
                 if ($localType === 'http://rdaregistry.info/Elements/a/P50103') {
-                    $titles[] = ['data' => (string)$part];
+                    $title = (string)$part;
                 }
             }
+            if (!empty($name->useDates)) {
+                $dates = $this->parseDates($name->useDates);
+            }
+            $titles[] = ['data' => $title, 'detail' => implode(', ', $dates)];
         }
         return $titles;
+    }
+
+    /**
+     * Get dates from either date or dateRange elements
+     *
+     * @param \SimpleXmlElement $dateElement date element
+     *
+     * @return array array of dates
+     */
+    public function parseDates($dateElement)
+    {
+        $dates = [];
+        foreach ($dateElement->dateRange ?? [] as $range) {
+            $fromDate = $range->fromDate->attributes()->standardDate
+                ?? $range->fromDate
+                ?? '';
+            $fromDate = $this->formatDate((string)($fromDate));
+            $toDate = $range->toDate->attributes()->standardDate
+                ?? $range->toDate
+                ?? '';
+            $toDate = $this->formatDate((string)($toDate));
+            $ndash = html_entity_decode('&#x2013;', ENT_NOQUOTES, 'UTF-8');
+            if ($fromDate && $toDate) {
+                $dates[] = "$fromDate $ndash $toDate";
+            }
+        }
+        foreach ($dateElement->date ?? [] as $dateEl) {
+            if (!empty($dateEl->attributes()->standardDate)) {
+                $dates[] = $this->formatDate(
+                    (string)$dateEl->attributes()->standardDate
+                );
+            } elseif ($d = $this->formatDate((string)$dateEl)) {
+                $dates[] = $d;
+            }
+        }
+        if (!empty($dateElement->dateSet)) {
+            $dates = array_merge($dates, $this->parseDates($dateElement->dateSet));
+        }
+        return $dates;
     }
 
     /**
@@ -123,7 +168,7 @@ class SolrAuthEacCpf extends SolrAuthDefault
             return '';
         }
         return $this->formatDate(
-            $this->getExistDate('http://rdaregistry.info/Elements/a/P50120') ?? ''
+            $this->getExistDate('http://rdaregistry.info/Elements/a/P50121') ?? ''
         );
     }
 
@@ -140,7 +185,7 @@ class SolrAuthEacCpf extends SolrAuthDefault
             return '';
         }
         return $this->formatDate(
-            $this->getExistDate('http://rdaregistry.info/Elements/a/P50121') ?? ''
+            $this->getExistDate('http://rdaregistry.info/Elements/a/P50120') ?? ''
         );
     }
 
@@ -260,6 +305,36 @@ class SolrAuthEacCpf extends SolrAuthDefault
     }
 
     /**
+     * Return sources
+     *
+     * @return array
+     */
+    public function getSources()
+    {
+        $result = [];
+        $record = $this->getXmlRecord();
+        if (isset($record->control->sources)) {
+            $languages = $this->mapLanguageCode($this->getLocale());
+            foreach ($record->control->sources->source as $source) {
+                if (isset($source->sourceEntry)) {
+                    $title = '';
+                    foreach ($source->sourceEntry as $entry) {
+                        if (in_array($entry->attributes()->lang, $languages)) {
+                            $title = (string)$entry;
+                        }
+                    }
+                    $result[] = [
+                        'title' => $title ? $title : (string)$source->sourceEntry,
+                        'url' => (string)($source->attributes()->href ?? ''),
+                        'subtitle' => ''
+                    ];
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * Set preferred language for display strings.
      *
      * @param string $language Language
@@ -283,7 +358,16 @@ class SolrAuthEacCpf extends SolrAuthDefault
             return $date;
         }
         try {
-            if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $date)) {
+            if (preg_match('/^(unknown|open)/', $date)) {
+                return '';
+            }
+            // Handle date formats like 1977-uu-uu
+            if (preg_match('/^(\d{4})-([a-z]{2})-([a-z]{2})$/', $date, $matches)) {
+                return $this->dateConverter->convertFromDisplayDate(
+                    'Y',
+                    $this->dateConverter->convertToDisplayDate('Y', $matches[1])
+                );
+            } elseif (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $date)) {
                 return $this->dateConverter->convertToDisplayDate('Y-m-d', $date);
             } elseif (preg_match('/^(\d{4})$/', $date)) {
                 return $this->dateConverter->convertFromDisplayDate(

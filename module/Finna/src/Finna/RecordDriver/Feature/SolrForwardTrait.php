@@ -87,7 +87,7 @@ trait SolrForwardTrait
                         $rights['link'] = $link;
                     }
                 }
-                $images[] = [
+                $image = [
                     'urls' => [
                         'small' => $url,
                         'medium' => $url,
@@ -96,6 +96,8 @@ trait SolrForwardTrait
                     'description' => $desc,
                     'rights' => $rights
                 ];
+                $image['downloadable'] = $this->allowRecordImageDownload($image);
+                $images[] = $image;
             }
         }
         return $images;

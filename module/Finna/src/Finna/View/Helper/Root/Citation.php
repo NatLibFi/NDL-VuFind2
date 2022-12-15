@@ -51,7 +51,7 @@ class Citation extends \VuFind\View\Helper\Root\Citation
     {
         $harvard = [
             'title' => $this->getAPATitle(),
-            'authors' => $this->getAPAAuthors()
+            'authors' => $this->getHarvardAuthors()
         ];
 
         $harvard['periodAfterTitle']
@@ -81,7 +81,7 @@ class Citation extends \VuFind\View\Helper\Root\Citation
      *
      * @return array
      */
-    protected function getAPAAuthors()
+    protected function getHarvardAuthors()
     {
         $authorStr = '';
         if (isset($this->details['authors'])

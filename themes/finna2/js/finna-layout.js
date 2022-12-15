@@ -173,11 +173,14 @@ finna.layout = (function finnaLayout() {
   function initCheckboxClicks() {
     $('.template-name-mylist input.checkbox-select-item').on('click', function onClickCheckbox() {
       var actions = $('.mylist-functions button, .mylist-functions select');
+      var aria = $('.mylist-functions .sr-only');
       var noneChecked = $('.template-name-mylist input.checkbox-select-item:checked').length === 0;
       if (noneChecked) {
         actions.attr('disabled', true);
+        aria.removeAttr('aria-hidden');
       } else {
         actions.removeAttr('disabled');
+        aria.attr('aria-hidden', 'true');
       }
     });
   }
@@ -574,26 +577,35 @@ finna.layout = (function finnaLayout() {
   }
 
   function initAudioButtons() {
+    var scripts = {
+      'videojs': 'vendor/video.min.js',
+    };
+    var subScripts = {
+      'videojs-hotkeys': 'vendor/videojs.hotkeys.min.js',
+      'videojs-quality': 'vendor/videojs-contrib-quality-levels.js',
+      'videojs-airplay': 'vendor/silvermine-videojs-airplay.min.js',
+    };
     $('.audio-accordion .audio-item-wrapper').each(function initAudioPlayer() {
       var self = $(this);
       var play = self.find('.play');
       var source = self.find('source');
-      play.on('click', function onPlay() {
-        self.find('.audio-player-wrapper').removeClass('hide');
-        var audio = self.find('audio');
-        audio.removeClass('hide').addClass('video-js');
-        source.attr('src', source.data('src'));
-        finna.layout.loadScripts(
-          $(this).data('scripts'),
+      play.one('click', function onPlay() {
+        finna.scriptLoader.loadInOrder(
+          scripts,
+          subScripts,
           function onVideoJsLoaded() {
+            self.find('.audio-player-wrapper').removeClass('hide');
+            var audio = self.find('audio');
+            audio.removeClass('hide').addClass('video-js');
+            source.attr('src', source.data('src'));
             videojs(
               audio.attr('id'),
               { controlBar: { volumePanel: false, muteToggle: false } },
               function onVideoJsInited() {}
             );
+            play.remove();
           }
         );
-        play.remove();
       });
     });
   }
@@ -601,40 +613,6 @@ finna.layout = (function finnaLayout() {
   function initVideoButtons() {
     finna.videoPopup.initVideoPopup($('body'));
     finna.videoPopup.initIframeEmbed($('body'));
-  }
-
-  function loadScripts(scripts, callback) {
-    var needed = {};
-    // Check for required scripts that are not yet loaded
-    if (scripts) {
-      for (var item in scripts) {
-        if (Object.prototype.hasOwnProperty.call(scripts, item) && $('#' + item).length === 0) {
-          needed[item] = scripts[item];
-        }
-      }
-    }
-    var loadCount = Object.keys(needed).length;
-    if (loadCount) {
-      // Load scripts and initialize player when all are loaded
-      var scriptLoaded = function onScriptLoaded() {
-        if (--loadCount === 0) {
-          if (typeof callback === 'function') {
-            callback();
-          }
-        }
-      };
-      for (var itemNeeded in needed) {
-        if (Object.prototype.hasOwnProperty.call(needed, itemNeeded)) {
-          $(needed[itemNeeded])
-            .on('load', scriptLoaded)
-            .attr('async', 'true')
-            .appendTo($('head'))
-            .trigger('load');
-        }
-      }
-    } else if (typeof callback === 'function') {
-      callback();
-    }
   }
 
   function initKeyboardNavigation() {
@@ -708,7 +686,7 @@ finna.layout = (function finnaLayout() {
       $('.cookie-consent').removeClass('hidden');
     }
     VuFind.listen('vf-cookie-consent-first-done', VuFind.refreshPage);
-    VuFind.listen('vf-cookie-consent-change', VuFind.refreshPage);
+    VuFind.listen('vf-cookie-consent-changed', VuFind.refreshPage);
   }
 
   // The accordion has a delicate relationship with the tabs. Handle with care!
@@ -819,7 +797,6 @@ finna.layout = (function finnaLayout() {
     initILSPasswordRecoveryLink: initILSPasswordRecoveryLink,
     initILSSelfRegistrationLink: initILSSelfRegistrationLink,
     initLoginTabs: initLoginTabs,
-    loadScripts: loadScripts,
     initToolTips: initToolTips,
     initImagePaginators: initImagePaginators,
     init: function init() {

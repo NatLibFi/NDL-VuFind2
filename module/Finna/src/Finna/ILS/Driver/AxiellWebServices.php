@@ -32,7 +32,6 @@
 namespace Finna\ILS\Driver;
 
 use DOMDocument;
-use VuFind\Config\Locator;
 use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\Translator\TranslatorAwareInterface as TranslatorAwareInterface;
@@ -67,6 +66,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * @var \VuFind\Date\Converter
      */
     protected $dateFormat;
+
+    /**
+     * Config file path resolver
+     *
+     * @var \VuFind\Config\PathResolver
+     */
+    protected $pathResolver;
 
     /**
      * Default pickup location
@@ -291,11 +297,15 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     /**
      * Constructor
      *
-     * @param \VuFind\Date\Converter $dateConverter Date converter object
+     * @param \VuFind\Date\Converter      $dateConverter Date converter object
+     * @param \VuFind\Config\PathResolver $pathResolver  Config file path resolver
      */
-    public function __construct(\VuFind\Date\Converter $dateConverter)
-    {
+    public function __construct(
+        \VuFind\Date\Converter $dateConverter,
+        \VuFind\Config\PathResolver $pathResolver
+    ) {
         $this->dateFormat = $dateConverter;
+        $this->pathResolver = $pathResolver;
     }
 
     /**
@@ -1840,20 +1850,29 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             $message = isset($loan->loanStatus->status)
                 ? $this->mapStatus($loan->loanStatus->status, $function) : '';
 
-            if (!isset($this->config['Loans']['renewalLimit'])
-                || (isset($loan->loanStatus->status)
-                && $this->isPermanentRenewalBlock($loan->loanStatus->status))
+            // These are confusingly similarly named, but displayed a bit differently
+            // in the UI:
+            // renew/renewLimit is displayed as "x renewals remaining"
+            $renew = null;
+            $renewLimit = null;
+            // renewals/renewalLimit is displayed as "renewed/limit"
+            $renewals = null;
+            $renewalLimit = null;
+            if (isset($loan->loanStatus->status)
+                && $this->isPermanentRenewalBlock($loan->loanStatus->status)
             ) {
-                $renewLimit = null;
-                $renewals = null;
-            } else {
-                $renewLimit = $this->config['Loans']['renewalLimit'];
+                // No changes
+            } elseif (isset($this->config['Loans']['renewalLimit'])) {
+                $renewalLimit = $this->config['Loans']['renewalLimit'];
                 $renewals = max(
                     [
                         0,
-                        $renewLimit - $loan->remainingRenewals
+                        $renewalLimit - $loan->remainingRenewals
                     ]
                 );
+            } elseif ($loan->remainingRenewals > 0) {
+                $renew = 0;
+                $renewLimit = $loan->remainingRenewals;
             }
 
             $dueDate = strtotime($loan->loanDueDate . ' 23:59:59');
@@ -1873,8 +1892,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'dueStatus' => $dueStatus,
                 'renewable' => (string)$loan->loanStatus->isRenewable == 'yes',
                 'message' => $message,
+                'renew' => $renew,
+                'renewLimit' => $renewLimit,
                 'renewalCount' => $renewals,
-                'renewalLimit' => $renewLimit,
+                'renewalLimit' => $renewalLimit,
             ];
 
             $transList[] = $trans;
@@ -2302,6 +2323,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             } else {
                 $amount = str_replace(',', '.', $debt->debtAmountFormatted) * 100;
             }
+            // Round the amount in case it's a weird decimal number:
+            $amount = round($amount);
             $description = $debt->debtType . ' - ' . $debt->debtNote;
             $payable = $amount > 0;
             if ($payable) {
@@ -3517,10 +3540,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             // Don't mangle a URL
             return $wsdl;
         }
-        $file = Locator::getConfigPath($wsdl);
-        if (!file_exists($file)) {
-            $file = Locator::getConfigPath($wsdl, 'config/finna');
-        }
-        return $file;
+        return $this->pathResolver->getConfigPath($wsdl);
     }
 }

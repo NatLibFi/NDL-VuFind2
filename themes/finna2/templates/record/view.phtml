@@ -71,11 +71,6 @@
   }
 
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
-  $recordImage = $this->recordImage($this->record($this->driver));
-  $images = $recordImage->getAllImagesAsCoverLinks(
-      $this->layout()->userLang,
-      $params
-  );
   $largeImageLayout = $this->record($this->driver)->hasLargeImageLayout();
 
   if ($oldRecordId = $this->driver->getExtraDetail('redirectedFromId')) {

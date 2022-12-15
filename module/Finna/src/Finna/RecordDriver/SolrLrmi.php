@@ -320,7 +320,8 @@ class SolrLrmi extends SolrQdc
                             'large' => $url
                         ],
                         'description' => '',
-                        'rights' => []
+                        'rights' => [],
+                        'downloadable' => false
                     ];
                 }
             }

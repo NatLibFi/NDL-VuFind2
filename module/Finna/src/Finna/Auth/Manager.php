@@ -27,6 +27,7 @@
  */
 namespace Finna\Auth;
 
+use Finna\Db\Row\User;
 use VuFind\Auth\AbstractBase;
 
 /**

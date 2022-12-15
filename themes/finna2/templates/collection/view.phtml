@@ -57,76 +57,84 @@
       }
   }
 
+  // LIDO records are displayed like on the record page:
+  $displayAsFullRecord = $this->driver instanceof \Finna\RecordDriver\SolrLido;
+  $largeImageLayout = $displayAsFullRecord && $this->record($this->driver)->hasLargeImageLayout();
 ?>
 <?php if (!empty($lastSearch)) : ?>
 </div>
 <div class="container">
 <?php endif; ?>
-<div class="record record-row source<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
+<div class="record record-row source<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?><?=$largeImageLayout ? ' large-image-layout' : '' ?>">
   <?= $this->R2()->registeredInfo($this->driver) ?>
   <div>
     <?=$this->record($this->driver)->getToolbar()?>
   </div>
   <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId" id="record_id" />
   <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
-  <div class="record-main mainbody left">
+  <div class="record-main<?=!$largeImageLayout ? ' mainbody left' : ''?>">
     <?=$this->flashmessages()?>
-    <h2 class="collection-title"><?=$this->driver->getTitle();?></h2>
-    <?= $this->R2()->register($this->driver, ['brief' => true])?>
-    <?php $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
-       <div class="recordFormat collection-format">
-         <?=$this->record($this->driver)->getFormatList()?><br/>
-       </div>
-    <?php endif; ?>
-    <?php if ($summary = $this->driver->tryMethod('getSummaryExtended')): ?>
-      <div class="truncate-field wide summary recordSummary">
-        <?php foreach ($summary as $i => $item): ?>
-          <?php
-            $html = $this->recordFieldMarkdown()->toHtml($item['text']);
-            if (!empty($url = $item['url'] ?? '')) {
-              $link = ' (<a target="_blank" href="'
-                . $this->escapeHtmlAttr($this->proxyUrl($url))
-                . '">' . $this->escapeHtml($this->truncateUrl($url)) . '</a>)';
-              $html = trim($html);
-              if ('</p>' === substr($html, -4)) {
-                $html = substr($html, 0, strlen($html) - 4) . $link . '</p>';
-              } else {
-                $html .= $link;
-              }
-            }
-          ?>
-          <?= $html ?>
-        <?php endforeach; ?>
-      </div>
-    <?php elseif ($summary = $this->driver->tryMethod('getSummary')): ?>
-      <div class="truncate-field wide summary recordSummary">
-        <?php foreach ($summary as $field): ?>
-          <?= $this->recordFieldMarkdown()->toHtml($field) ?>
-        <?php endforeach; ?>
-      </div>
-    <?php endif; ?>
-    <?/* Display Main Details from records */?>
-    <?php
-      $formatter = $this->recordDataFormatter();
-      $coreFields = $formatter->filterCollectionFields($formatter->getDefaults('core'), $driver->getRecordFormat());
-      $coreFieldGroups = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
-        ['label' => 'Context',
-          'lines' => ['Archive Origination', 'Archive', 'Archive Series', 'Archive File']
-        ],
-        ['lines' => [
-            'Format', 'Authors', 'Secondary Authors', 'Unit ID', 'Unit IDs','Subjects',
-            'subjects_extended', 'Dates', 'Material Condition']
-        ],
-        ['label' => 'access_restrictions_general',
-          'lines' => ['Access Restrictions Extended']]
-        ], $coreFields));
-      ?>
-      <?php if (!empty($coreFieldGroups)): ?>
-        <table class="table table-finna-record record-details record-field-groups">
-          <?=$this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $coreFieldGroups]);?>
-        </table>
+    <?php if ($displayAsFullRecord): ?>
+      <?=$this->record($this->driver)->getMetaTags();?>
+      <?=$this->record($this->driver)->getCoreMetadata()?>
+    <?php else: ?>
+      <h2 class="collection-title"><?=$this->driver->getTitle();?></h2>
+      <?= $this->R2()->register($this->driver, ['brief' => true])?>
+      <?php $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
+        <div class="recordFormat collection-format">
+          <?=$this->record($this->driver)->getFormatList()?><br/>
+        </div>
       <?php endif; ?>
-    <?/* End Main Details */?>
+      <?php if ($summary = $this->driver->tryMethod('getSummaryExtended')): ?>
+        <div class="truncate-field wide summary recordSummary">
+          <?php foreach ($summary as $i => $item): ?>
+            <?php
+              $html = $this->recordFieldMarkdown()->toHtml($item['text']);
+              if (!empty($url = $item['url'] ?? '')) {
+                $link = ' (<a target="_blank" href="'
+                  . $this->escapeHtmlAttr($this->proxyUrl($url))
+                  . '">' . $this->escapeHtml($this->truncateUrl($url)) . '</a>)';
+                $html = trim($html);
+                if ('</p>' === substr($html, -4)) {
+                  $html = substr($html, 0, strlen($html) - 4) . $link . '</p>';
+                } else {
+                  $html .= $link;
+                }
+              }
+            ?>
+            <?= $html ?>
+          <?php endforeach; ?>
+        </div>
+      <?php elseif ($summary = $this->driver->tryMethod('getSummary')): ?>
+        <div class="truncate-field wide summary recordSummary">
+          <?php foreach ($summary as $field): ?>
+            <?= $this->recordFieldMarkdown()->toHtml($field) ?>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
+      <?/* Display Main Details from records */?>
+      <?php
+        $formatter = $this->recordDataFormatter();
+        $coreFields = $formatter->filterCollectionFields($formatter->getDefaults('core'), $driver->getRecordFormat());
+        $coreFieldGroups = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
+          ['label' => 'Context',
+            'lines' => ['Archive Origination', 'Archive', 'Archive Series', 'Archive File']
+          ],
+          ['lines' => [
+              'Format', 'Authors', 'Secondary Authors', 'Unit ID', 'Unit IDs','Subjects',
+              'subjects_extended', 'Dates', 'Material Condition']
+          ],
+          ['label' => 'access_restrictions_general',
+            'lines' => ['Access Restrictions Extended']]
+          ], $coreFields));
+        ?>
+        <?php if (!empty($coreFieldGroups)): ?>
+          <table class="table table-finna-record record-details record-field-groups">
+            <?=$this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $coreFieldGroups]);?>
+          </table>
+        <?php endif; ?>
+      <?/* End Main Details */?>
+    <?php endif; ?>
   </div>
   <?php ob_start(); ?>
     <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'sidebar'): ?>

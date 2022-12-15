@@ -811,6 +811,7 @@ class SolrEad3 extends SolrEad
                     }
                 }
             }
+            $formatted['downloadable'] = $this->allowRecordImageDownload($formatted);
             $result['displayImages'][] = $formatted;
         };
         $isExcludedFromOCR = function ($title) {
@@ -1039,9 +1040,9 @@ class SolrEad3 extends SolrEad
         foreach ($xml->bibliography->p ?? [] as $p) {
             $text = (string)$p;
             $url = isset($p->ref)
-                 ? (string)$p->ref->attributes()->href : null;
-            if ($this->urlBlocked($url, $text)) {
-                $url = null;
+                 ? (string)($p->ref->attributes()->href ?? '') : '';
+            if ($url && $this->urlBlocked($url, $text)) {
+                $url = '';
             }
             $data = compact('text', 'url');
             $results[] = $data;
@@ -1305,6 +1306,9 @@ class SolrEad3 extends SolrEad
      * - heading: the actual subject heading chunks
      * - type: heading type
      * - source: source vocabulary
+     * - id: first authority id (if defined)
+     * - ids: multiple authority ids (if defined)
+     * - authType: authority type (if id is defined)
      *
      * @return array
      */
@@ -1601,6 +1605,16 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Get parent series
+     *
+     * @return array
+     */
+    public function getParentSeries(): array
+    {
+        return $this->getHierarchyParents();
+    }
+
+    /**
      * Get the hierarchy_parent_id(s) associated with this item (empty if none).
      *
      * @param string[] $levels Optional list of level types to return
@@ -1890,7 +1904,7 @@ class SolrEad3 extends SolrEad
                 );
                 $url = (string)$material->attributes()->href ?? '';
                 if ($this->urlBlocked($url, $text[0])) {
-                    $url = null;
+                    $url = '';
                 }
                 $result[] = ['text' => $text[0], 'url' => $url];
             }
@@ -1935,9 +1949,9 @@ class SolrEad3 extends SolrEad
                         $text = (string)$p;
                         $lang = $this->detectNodeLanguage($p);
                         $url = isset($p->ref)
-                            ? (string)$p->ref->attributes()->href : null;
+                            ? (string)($p->ref->attributes()->href ?? '') : '';
                         if ($url && $this->urlBlocked($url, $text)) {
-                            $url = null;
+                            $url = '';
                         }
                         $data = compact('text', 'lang', 'url');
                         $itemResult[] = $data;

@@ -1,0 +1,8 @@
+<?php // Do not add start and end comments ?>
+<?php if ($this->wrapper): ?>
+  <div class="feed-icon-wrapper <?=$this->escapeHtmlAttr($this->class)?>">
+    <?=$this->icon($icon['name'], ['class' => 'feed-icon']) ?>
+  </div>
+<?php else: ?>
+  <?=$this->icon($icon['name'], ['class' => 'feed-icon']) ?>
+<?php endif; ?>

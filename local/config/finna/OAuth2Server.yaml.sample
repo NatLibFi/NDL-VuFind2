@@ -111,6 +111,10 @@ Scopes:
     ils: true
     claims:
       - block_status
+  library_card:
+    description: external_auth_scope_library_card
+    claims:
+      - library_card
   library_user_id:
     description: external_auth_scope_library_user_id
     claims:
@@ -143,6 +147,7 @@ ClaimMappings:
   phone: phone
   address: address_json # special field including all address fields
   block_status: block_status # special field indicating whether the patron has blocks
+  library_card: cat_username
   library_user_id: library_user_id_hash # special field with a hash of cat_username
   auth_method: auth_method
 

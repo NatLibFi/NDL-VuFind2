@@ -6,16 +6,19 @@ $config = [
         'factories' => [
             'FinnaApi\Controller\AdminApiController' => 'VuFindApi\Controller\AdminApiControllerFactory',
             'FinnaApi\Controller\AuthApiController' => 'FinnaApi\Controller\AuthApiControllerFactory',
+            'FinnaApi\Controller\ListApiController' => 'FinnaApi\Controller\ListApiControllerFactory',
             'FinnaApi\Controller\SearchApiController' => 'VuFindApi\Controller\SearchApiControllerFactory',
             'VuFindApi\Controller\ApiController' => 'FinnaApi\Controller\ApiControllerFactory',
         ],
         'aliases' => [
             'AdminApi' => 'FinnaApi\Controller\AdminApiController',
             'AuthApi' => 'FinnaApi\Controller\AuthApiController',
+            'ListApi' => 'FinnaApi\Controller\ListApiController',
             'VuFindApi\Controller\SearchApiController' => 'FinnaApi\Controller\SearchApiController',
 
             'adminapi' => 'AdminApi',
             'authapi' => 'AuthApi',
+            'listapi' => 'ListApi',
         ]
     ],
     'service_manager' => [
@@ -29,6 +32,7 @@ $config = [
     'vufind_api' => [
         'register_controllers' => [
             \FinnaApi\Controller\AuthApiController::class,
+            \FinnaApi\Controller\ListApiController::class,
         ]
     ],
     'router' => [
@@ -62,6 +66,17 @@ $config = [
                     'route'    => '/api/v1/auth/[:action]',
                     'defaults' => [
                         'controller' => 'AuthApi'
+                    ]
+                ]
+            ],
+            'listApiV1' => [
+                'type' => 'Laminas\Router\Http\Literal',
+                'verb' => 'get,post,options',
+                'options' => [
+                    'route'    => '/api/v1/list',
+                    'defaults' => [
+                        'controller' => 'ListApi',
+                        'action'     => 'list',
                     ]
                 ]
             ],

@@ -154,6 +154,20 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     protected $displayableModelFormats = ['gltf', 'glb'];
 
     /**
+     * Array of excluded classifications
+     *
+     * @var array
+     */
+    protected $excludedClassifications = ['language'];
+
+    /**
+     * Array of excluded measurements
+     *
+     * @var array
+     */
+    protected $excludedMeasurements = ['extent'];
+
+    /**
      * Events used for author information.
      *
      * Key is event type, value is priority (lower is more important),
@@ -417,6 +431,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 if (!isset($images['urls']['medium'])) {
                     $images['urls']['medium'] = $images['urls']['small'];
                 }
+                if (!isset($images['urls']['large'])) {
+                    $images['urls']['large'] = $images['urls']['medium'];
+                }
+                $images['downloadable'] = $this->allowRecordImageDownload($images);
             }
             $results[] = compact(
                 'images',
@@ -659,11 +677,19 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
         }
         if (!empty($resourceSet->resourceDescription)) {
-            $result['description']
-                = (string)$this->getLanguageSpecificItem(
+            $description
+                = $this->getLanguageSpecificItem(
                     $resourceSet->resourceDescription,
                     $language
                 );
+            if ($descriptionTrimmed = trim((string)$description)) {
+                $type = trim((string)$description->attributes()->type);
+                if ($type === 'displayLink') {
+                    $result['resourceName'] = $descriptionTrimmed;
+                } else {
+                    $result['resourceDescription'] = $descriptionTrimmed;
+                }
+            }
         }
         if (!empty($resourceSet->resourceDateTaken->displayDate)) {
             $result['dateTaken']
@@ -1009,6 +1035,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             'lido/descriptiveMetadata/objectClassificationWrap/classificationWrap/'
             . 'classification'
         ) as $node) {
+            $type = trim((string)$node->attributes()->type);
+            if (in_array($type, $this->excludedClassifications)) {
+                continue;
+            }
             if (isset($node->term)) {
                 $term = trim((string)$node->term);
                 if ('' !== $term) {
@@ -1247,38 +1277,34 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getFormatClassifications()
     {
         $results = [];
-        foreach ($this->getXmlRecord()->xpath(
-            'lido/descriptiveMetadata/objectClassificationWrap'
-        ) as $node) {
-            if (!isset($node->objectWorkTypeWrap->objectWorkType->term)) {
-                continue;
-            }
-            $term = (string)$node->objectWorkTypeWrap->objectWorkType->term;
-            if ($term === 'rakennetun ympäristön kohde') {
-                foreach ($node->classificationWrap->classification ?? []
-                    as $classificationNode
-                ) {
-                    $attributes = $classificationNode->attributes();
-                    $type = $attributes->type ?? '';
-                    if ($type) {
-                        $results[] = (string)$classificationNode->term
-                            . " ($type)";
-                    } else {
-                        $results[] = (string)$classificationNode->term;
-                    }
+        foreach ($this->getXmlRecord()->lido->descriptiveMetadata
+            ->objectClassificationWrap ?? [] as $node
+        ) {
+            $workTypeTerm = trim(
+                (string)($node->objectWorkTypeWrap->objectWorkType->term ?? '')
+            );
+            foreach ($node->classificationWrap->classification ?? []
+                as $classification
+            ) {
+                $type = trim((string)$classification->attributes()->type);
+                if (in_array($type, $this->excludedClassifications)) {
+                    continue;
                 }
-            } elseif ($term === 'arkeologinen kohde') {
-                foreach ($node->classificationWrap->classification ?? []
-                    as $classificationNode
-                ) {
-                    foreach ($classificationNode->term as $term) {
-                        $attributes = $term->attributes();
-                        $label = $attributes->label ?? '';
-                        if ($label) {
-                            $results[] = (string)$term . " ($label)";
-                        } else {
-                            $results[] = (string)$term;
-                        }
+                $getDisplayString = function (string $term, string $extra) {
+                    return $extra ? "$term ($extra)" : $term;
+                };
+                foreach ($classification->term as $term) {
+                    $termString = trim((string)$term);
+                    $termType = trim((string)$term->attributes()->type);
+                    $termLabel = trim((string)$term->attributes()->label);
+
+                    switch ($workTypeTerm) {
+                    case 'rakennetun ympäristön kohde':
+                        $results[] = $getDisplayString($termString, $termType);
+                        break 2;
+                    case 'arkeologinen kohde':
+                        $results[] = $getDisplayString($termString, $termLabel);
+                        break;
                     }
                 }
             }
@@ -1429,9 +1455,99 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    public function getMeasurements()
+    public function getMeasurements(): array
     {
-        return $this->fields['measurements'] ?? [];
+        return $this->getMeasurementsByType();
+    }
+
+    /**
+     * Get extent.
+     *
+     * @return array
+     */
+    public function getPhysicalDescriptions(): array
+    {
+        return $this->getMeasurementsByType(['extent']);
+    }
+
+    /**
+     * Get measurements by type.
+     *
+     * @param array $include Measurement types to include, otherwise all but
+     * excluded types
+     *
+     * @return array
+     */
+    public function getMeasurementsByType(array $include = []): array
+    {
+        $results = [];
+        $exclude = $include ? [] : $this->excludedMeasurements;
+        foreach ($this->getXmlRecord()->lido->descriptiveMetadata
+            ->objectIdentificationWrap->objectMeasurementsWrap
+            ->objectMeasurementsSet ?? [] as $set
+        ) {
+            $setExtents = [];
+            foreach ($set->objectMeasurements->extentMeasurements ?? []
+                as $extent
+            ) {
+                if ($value = trim((string)$extent)) {
+                    $setExtents[] = $value;
+                }
+            }
+            $setExtents = implode(', ', $setExtents);
+            // Use allowed display elements
+            $displayFound = false;
+            foreach ($set->displayObjectMeasurements as $measurements) {
+                if ($value = trim((string)$measurements)) {
+                    $displayFound = true;
+                    $label = $measurements->attributes()->label ?? '';
+                    if (($include && !in_array($label, $include))
+                        || ($exclude && in_array($label, $exclude))
+                    ) {
+                        continue;
+                    }
+                    if ($setExtents) {
+                        $value .= " ($setExtents)";
+                    }
+                    $results[] = $value;
+                }
+            }
+            // Use measurementsSet only if no display elements exist
+            if (!$displayFound) {
+                foreach ($set->objectMeasurements->measurementsSet ?? []
+                    as $measurements
+                ) {
+                    $type = trim(
+                        (string)($measurements->measurementType->term ?? '')
+                    );
+                    if (($include && !in_array($type, $include))
+                        || ($exclude && in_array($type, $exclude))
+                    ) {
+                        continue;
+                    }
+                    $parts = [];
+                    if ($type = trim((string)($measurements->measurementType ?? ''))
+                    ) {
+                        $parts[] = $type;
+                    }
+                    if ($val = trim((string)($measurements->measurementValue ?? ''))
+                    ) {
+                        $parts[] = $val;
+                    }
+                    if ($unit = trim((string)($measurements->measurementUnit ?? ''))
+                    ) {
+                        $parts[] = $unit;
+                    }
+                    if ($parts) {
+                        if ($setExtents) {
+                            $parts[] = "($setExtents)";
+                        }
+                        $results[] = implode(' ', $parts);
+                    }
+                }
+            }
+        }
+        return $results;
     }
 
     /**
@@ -1550,7 +1666,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Get an array of dates for results list display
      *
-     * @return array
+     * @return ?array Array of two dates or null if not available
      */
     public function getResultDateRange()
     {
@@ -1829,7 +1945,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @param string $event Event name
      *
-     * @return null|array Array of two dates or null if not available
+     * @return ?array Array of two dates or null if not available
      */
     protected function getDateRange($event)
     {
@@ -1837,8 +1953,22 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         if (!isset($this->fields[$key])) {
             return null;
         }
-        if (preg_match('/\[(\d{4}).* TO (\d{4})/', $this->fields[$key], $matches)) {
-            return [$matches[1], $matches[2] == '9999' ? null : $matches[2]];
+        if (preg_match(
+            '/\[(-?\d{4}).* TO (-?\d{4})/',
+            $this->fields[$key],
+            $matches
+        )
+        ) {
+            $end = (string)(intval($matches[2]));
+            return [
+                (string)(intval($matches[1])),
+                $end == '9999' ? null : $end
+            ];
+        } elseif (preg_match('/^(-?\d{4})-/', $this->fields[$key], $matches)) {
+            return [
+                (string)(intval($matches[1])),
+                null
+            ];
         }
         return null;
     }

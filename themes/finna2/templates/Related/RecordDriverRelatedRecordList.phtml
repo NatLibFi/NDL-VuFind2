@@ -21,10 +21,12 @@
                 $topIds = $record->getHierarchyTopId();
                 $topId = $topIds[0] ?? '';
               ?>
-              <br>
-              <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl("$parentSource|$topId"))?>">
-                <?=$this->escapeHtml($this->truncate($topTitle, 180)) ?>
-              </a>
+              <?php if ($record->getUniqueId() !== $topId): ?>
+                <br>
+                <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl("$parentSource|$topId"))?>">
+                  <?=$this->escapeHtml($this->truncate($topTitle, 180)) ?>
+                </a>
+              <?php endif; ?>
             <?php endif?>
           </li>
         <?php endforeach; ?>

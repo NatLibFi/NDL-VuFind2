@@ -454,6 +454,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      * - heading: the actual subject heading
      * - type: heading type
      * - source: source vocabulary
+     * - id: first authority id (if defined)
+     * - ids: multiple authority ids (if defined)
+     * - authType: authority type (if id is defined)
      *
      * @return array
      */

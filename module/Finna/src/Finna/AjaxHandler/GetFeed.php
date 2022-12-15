@@ -221,7 +221,8 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
         $cacheDir = $this->cacheManager->getCache('feed')->getOptions()
             ->getCacheDir();
         $cacheFile = "$cacheDir/" . urlencode($ilsId . '-' . $query) . '.xml';
-        $maxAge = $ilsConfig['cacheSettings'][$query] ?? 60;
+        $val = (string)($ilsConfig['cacheSettings'][$query] ?? '');
+        $maxAge = $val && ctype_digit($val) ? (int)$val : 60;
 
         if (is_readable($cacheFile)
             && time() - filemtime($cacheFile) < $maxAge * 60

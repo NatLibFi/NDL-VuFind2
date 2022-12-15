@@ -1,11 +1,10 @@
 <?php
 /**
- * VuFind Config Manager
+ * Row definition for finna_record_view_record_format
  *
  * PHP version 7
  *
- * Copyright (C) Villanova University 2010.
- * Copyright (C) The National Library of Finland 2018.
+ * Copyright (C) The National Library of Finland 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,40 +20,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  ServiceManager
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @package  Db_Table
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     http://vufind.org   Main Site
  */
-namespace Finna\Config;
+namespace Finna\Db\Row;
 
 /**
- * VuFind Config Manager
+ * Row definition for finna_record_view_record_format
  *
  * @category VuFind
- * @package  ServiceManager
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @package  Db_Table
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     http://vufind.org   Main Site
  */
-class PluginManager extends \VuFind\Config\PluginManager
+class FinnaRecordViewRecordFormat extends \VuFind\Db\Row\RowGateway
 {
     /**
      * Constructor
      *
-     * Make sure plugins are properly initialized.
-     *
-     * @param mixed $configOrContainerInstance Configuration or container instance
-     * @param array $v3config                  If $configOrContainerInstance is a
-     * container, this value will be passed to the parent constructor.
+     * @param \Laminas\Db\Adapter\Adapter $adapter Database adapter
      */
-    public function __construct(
-        $configOrContainerInstance = null,
-        array $v3config = []
-    ) {
-        $this->addAbstractFactory('Finna\Config\PluginFactory');
-        parent::__construct($configOrContainerInstance, $v3config);
+    public function __construct($adapter)
+    {
+        parent::__construct('id', 'finna_record_view_record_format', $adapter);
     }
 }

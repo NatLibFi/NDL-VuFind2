@@ -1,11 +1,10 @@
 <?php
 /**
- * OpenUrl helper factory.
+ * Factory for PathResolver.
  *
  * PHP version 7
  *
- * Copyright (C) Villanova University 2018.
- * Copyright (C) The National Library of Finland 2018.
+ * Copyright (C) The National Library of Finland 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,13 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  View_Helpers
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @package  Config
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\View\Helper\Root;
+namespace VuFind\Config;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
@@ -36,17 +34,30 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * OpenUrl helper factory.
+ * Factory for PathResolver.
  *
  * @category VuFind
- * @package  View_Helpers
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @package  Config
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class OpenUrlFactory implements FactoryInterface
+class PathResolverFactory implements FactoryInterface
 {
+    /**
+     * Default base config file subdirectory under the base directory
+     *
+     * @var string
+     */
+    protected $defaultBaseConfigSubdir = PathResolver::DEFAULT_CONFIG_SUBDIR;
+
+    /**
+     * Default config file subdirectory under a local override directory
+     *
+     * @var string
+     */
+    protected $defaultLocalConfigSubdir = PathResolver::DEFAULT_CONFIG_SUBDIR;
+
     /**
      * Create an object
      *
@@ -59,7 +70,7 @@ class OpenUrlFactory implements FactoryInterface
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
-     * @throws ContainerException if any other error occurs
+     * @throws ContainerException&\Throwable if any other error occurs
      */
     public function __invoke(
         ContainerInterface $container,
@@ -69,27 +80,20 @@ class OpenUrlFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        $config
-            = $container->get(\VuFind\Config\PluginManager::class)->get('config');
-        $file = \VuFind\Config\Locator::getLocalConfigPath('OpenUrlRules.json');
-        if ($file === null) {
-            $file = \VuFind\Config\Locator::getLocalConfigPath(
-                'OpenUrlRules.json',
-                'config/finna'
-            );
-            if ($file === null) {
-                $file = \VuFind\Config\Locator::getConfigPath('OpenUrlRules.json');
-            }
-        }
-        $openUrlRules = json_decode(file_get_contents($file), true);
-        $resolverPluginManager
-            = $container->get(\VuFind\Resolver\Driver\PluginManager::class);
-        $helpers = $container->get('ViewHelperManager');
+        $localDirs = defined('LOCAL_OVERRIDE_DIR')
+            && strlen(trim(LOCAL_OVERRIDE_DIR)) > 0
+                ? [
+                    [
+                        'directory' => LOCAL_OVERRIDE_DIR,
+                        'defaultConfigSubdir' => $this->defaultLocalConfigSubdir
+                    ]
+                ] : [];
         return new $requestedName(
-            $helpers->get('context'),
-            $openUrlRules,
-            $resolverPluginManager,
-            $config->OpenURL ?? null
+            [
+                'directory' => APPLICATION_PATH,
+                'defaultConfigSubdir' => $this->defaultBaseConfigSubdir
+            ],
+            $localDirs
         );
     }
 }

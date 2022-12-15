@@ -4,6 +4,8 @@
 
   $openUrl = $this->openUrl($this->driver, 'record');
   $openUrlActive = $openUrl->isActive();
+  $doi = $this->doi($this->driver, 'record');
+  $doiActive = $doi->isActive();
   // Account for replace_other_urls setting
   $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
   $onlineURLs = $this->driver->getOnlineURLs();
@@ -134,6 +136,9 @@
           <?php if ($openUrlActive): ?>
             <?=$openUrl->renderTemplate()?>
           <?php endif; ?>
+          <?php if ($doiActive): ?>
+            <?=$doi->renderTemplate()?>
+          <?php endif; ?>
         </div>
       </div>
 
@@ -255,7 +260,7 @@
         ], $coreFields));
       ?>
       <?php if (!empty($coreFieldGroups)): ?>
-        <table class="table table-finna-record record-details record-details-more record-field-groups">
+        <table class="table table-finna-record record-details record-details-more record-field-groups" role="presentation">
           <?=$this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $coreFieldGroups]);?>
         </table>
       <?php endif; ?>

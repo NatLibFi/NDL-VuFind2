@@ -64,7 +64,8 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
                             'copyright' => 'CC BY 4.0',
                             'link' => 'http://creativecommons.org/licenses/by/4.0/deed.fi'
                         ],
-                        'pdf' => true
+                        'pdf' => true,
+                        'downloadable' => true
                     ]
                 ]
             ],
@@ -170,6 +171,9 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
     {
         $fixture = $this->getFixture('qdc/qdc_ir_test.xml', 'Finna');
         $config = [
+            'Content' => [
+                'pdfCoverImageDownload' => '0/Painting'
+            ],
             'Record' => [
                 'allowed_external_hosts_mode' => 'disable',
             ],
@@ -183,14 +187,29 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
                 'sv' => [
                     'CC BY 4.0' => 'http://creativecommons.org/licenses/by/4.0/deed.sv'
                 ]
-            ]
+            ],
+            'FileDownload' => [
+                'excludeRights' => [
+                    'InC'
+                ]
+            ],
         ];
+        $config = new \Laminas\Config\Config($config);
         $record = new SolrQdc(
             $config,
             $config,
             new \Laminas\Config\Config($searchConfig)
         );
-        $record->setRawData(['id' => 'knp-247394', 'fullrecord' => $fixture]);
+        $record->setRawData(
+            [
+                'id' => 'knp-247394',
+                'fullrecord' => $fixture,
+                'usage_rights_str_mv' => [
+                    'usage_A'
+                ],
+                'format' => '0/Painting'
+            ]
+        );
         return $record;
     }
 }

@@ -49,7 +49,7 @@ class EventHandler
     protected $institution;
 
     /**
-     * View code
+     * View subpath
      *
      * @param string
      */
@@ -75,7 +75,7 @@ class EventHandler
      * Note that this must be called before any of the events to be handled is
      *
      * @param string      $institution Institution code
-     * @param string      $view        View code
+     * @param string      $view        View subpath
      * @param ?BaseDriver $driver      Statistics storage driver
      * @param string      $userAgent   Client's user agent
      */

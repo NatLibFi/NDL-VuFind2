@@ -18,34 +18,34 @@ CookieConsent:
         - Name: yt-player-bandwidth
           Domain: youtube.com
           ThirdParty: true
-          Description: Used to estimate bandwidth.
+          Description: CookieConsent::cookie_description_third_party_bandwidth_html
           Expiration: session
         - Name: yt-player-headers-readable
           Domain: youtube.com
           ThirdParty: true
-          Description: Used to store user's preferences.
+          Description: CookieConsent::cookie_description_third_party_preferences_html
           Expiration: session
         - Name: GPS
           Domain: youtube.com
           ThirdParty: true
-          Description: Used to store user's location.
+          Description: CookieConsent::cookie_description_third_party_gps_html
           Expiration: session
         - Name: VISITOR_INFO1_LIVE
           Domain: youtube.com
           ThirdParty: true
-          Description: Used to estimate bandwidth.
+          Description: CookieConsent::cookie_description_third_party_bandwidth_html
           Expiration: 6
           ExpirationUnit: months
         - Name: PREF, __Secure-YEC
           Domain: youtube.com
           ThirdParty: true
-          Description: Used to store user's preferences.
+          Description: CookieConsent::cookie_description_third_party_preferences_html
           Expiration: 8
           ExpirationUnit: months
         - Name: YSC, CONSENT, SOCS
           Domain: youtube.com
           ThirdParty: true
-          Description: Used to track user's actions for marketing purposes.
+          Description: CookieConsent::cookie_description_third_party_marketing_html
           Expiration: 8
           ExpirationUnit: months
       AutoClearCookies:
@@ -55,3 +55,72 @@ CookieConsent:
       Description: CookieConsent::social_media_cookies_description_html
       DefaultEnabled: false
       Essential: false
+    chat: # Following settings are for tawk.to
+      Title: CookieConsent::chat_cookies_title_html
+      Description: CookieConsent::chat_cookies_description_html
+      DefaultEnabled: false
+      Essential: false
+      Cookies:
+        - Name: twk_uuid_*
+          Domain: tawk.to
+          ThirdParty: true
+          Description: Used to tracks unique visitors.
+          Expiration: 6
+          ExpirationUnit: months
+        - Name: twk_idm_key
+          Domain: tawk.to
+          ThirdParty: true
+          Description: Used to visitor connection management.
+          Expiration: session
+        - Name: twk_token_*
+          Domain: tawk.to
+          ThirdParty: true
+          Description: Used for local storage and are set by the navigator.locks plugin.
+          Expiration: never
+        - Name: tawk_uuid_propertyId
+          Domain: tawk.to
+          ThirdParty: true
+          Description: Used to visitor tracking.
+          Expiration: 6
+          ExpirationUnit: months
+        - Name: TawkConnectionTime
+          Domain: tawk.to
+          ThirdParty: true
+          Description: Used to manage visitor connection.
+          Expiration: session
+      AutoClearCookies:
+        - Name: '/^(twk_uuid_.*|twk_idm_key|TawkConnectionTime)'
+    audio:
+      Title: CookieConsent::audio_cookies_title_html
+      Description: CookieConsent::audio_cookies_description_html
+      DefaultEnabled: false
+      Essential: false
+      Cookies:
+        - Name: sc_anonymous_id
+          Domain: soundcloud.com
+          ThirdParty: true
+          Description: Used to store anonymous ID.
+          Expiration: 12
+          ExpirationUnit: months
+      AutoClearCookies:
+        - Name: ’sc_anonymous_id'
+    vimeo: # Can be own vimeo category or included in video category.
+      Title: CookieConsent::vimeo_cookies_title_html
+      Description: CookieConsent::vimeo_cookies_description_html
+      DefaultEnabled: false
+      Essential: false
+      Cookies:
+        - Name: vuid
+          Domain: vimeo.com
+          ThirdParty: true
+          Description: Used to store the user's usage history.
+          Expiration: 24
+          ExpirationUnit: months
+        - Name: __cf_bm
+          Domain: vimeo.com
+          ThirdParty: true
+          Description: Used to read and filter requests from bots.
+          Expiration: 30
+          ExpirationUnit: minutes
+      AutoClearCookies:
+        - Name: 'vuid|__cf_bm'

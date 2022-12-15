@@ -29,6 +29,8 @@
 namespace Finna\RecordDriver\Feature;
 
 use VuFind\RecordDriver\Feature\VersionAwareInterface;
+use VuFindSearch\Command\RetrieveCommand;
+use VuFindSearch\Command\WorkExpressionsCommand;
 
 /**
  * Additional functionality for Finna Solr records.
@@ -420,25 +422,12 @@ trait SolrFinnaTrait
         }
 
         if (!empty($this->fields['dedup_id_str_mv'])) {
-            $records = $this->searchService->retrieve(
+            $command = new RetrieveCommand(
                 $this->getSourceIdentifier(),
                 $this->fields['dedup_id_str_mv'][0]
-            )->getRecords();
-        } else {
-            $safeId = addcslashes($this->getUniqueID(), '"');
-            $query = new \VuFindSearch\Query\Query(
-                'local_ids_str_mv:"' . $safeId . '"'
             );
-            $params = new \VuFindSearch\ParamBag(
-                ['hl' => 'false', 'spellcheck' => 'false', 'sort' => '']
-            );
-            $records = $this->searchService->search(
-                $this->getSourceIdentifier(),
-                $query,
-                0,
-                1,
-                $params
-            )->getRecords();
+            $records = $this->searchService->invoke($command)->getResult()
+                ->getRecords();
         }
         if (!isset($records[0])) {
             $this->cache[__FUNCTION__] = [];
@@ -883,11 +872,20 @@ trait SolrFinnaTrait
     /**
      * Get information on records deduplicated with this one
      *
+     * @param bool $load Whether to try to load dedup data if it's not already
+     * available
+     *
      * @return array Array keyed by source id containing record id
      */
-    public function getDedupData()
+    public function getDedupData(bool $load = false)
     {
         $results = parent::getDedupData();
+        if (!$results && $load) {
+            $mergedData = $this->getMergedRecordData();
+            foreach ($mergedData['records'] ?? [] as $record) {
+                $results[$record['source']] = ['id' => $record['id']];
+            }
+        }
         if (!empty($this->recordConfig->Record->sort_sources)) {
             uksort(
                 $results,
@@ -1139,12 +1137,13 @@ trait SolrFinnaTrait
             $params = new \VuFindSearch\ParamBag();
             $params->add('rows', 0);
             $this->addVersionsFilters($params);
-            $results = $this->searchService->workExpressions(
+            $command = new WorkExpressionsCommand(
                 $this->getSourceIdentifier(),
                 $this->getUniqueID(),
                 $workKeys,
                 $params
             );
+            $results = $this->searchService->invoke($command)->getResult();
             $this->otherVersionsCount = $results->getTotal();
         }
         return $this->otherVersionsCount;
@@ -1177,12 +1176,14 @@ trait SolrFinnaTrait
             $params->add('rows', $count);
             $params->add('start', $offset);
             $this->addVersionsFilters($params);
-            $this->otherVersions = $this->searchService->workExpressions(
+            $command = new WorkExpressionsCommand(
                 $this->getSourceIdentifier(),
                 $includeSelf ? '' : $this->getUniqueID(),
                 $workKeys,
                 $params
             );
+            $this->otherVersions = $this->searchService->invoke($command)
+                ->getResult();
         }
         return $this->otherVersions;
     }

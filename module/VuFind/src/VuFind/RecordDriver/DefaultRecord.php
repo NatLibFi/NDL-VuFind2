@@ -93,9 +93,6 @@ class DefaultRecord extends AbstractBase
      * - heading: the actual subject heading chunks
      * - type: heading type
      * - source: source vocabulary
-     * - id: first authority id (if defined)
-     * - ids: multiple authority ids (if defined)
-     * - authType: authority type (if id is defined)
      *
      * @return array
      */
@@ -889,7 +886,14 @@ class DefaultRecord extends AbstractBase
         }
 
         // Assemble the URL:
-        return http_build_query($params);
+        $query = [];
+        foreach ($params as $key => $value) {
+            $value = (array)$value;
+            foreach ($value as $sub) {
+                $query[] = urlencode($key) . '=' . urlencode($sub);
+            }
+        }
+        return implode("&", $query);
     }
 
     /**

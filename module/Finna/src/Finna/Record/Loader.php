@@ -30,6 +30,7 @@
 namespace Finna\Record;
 
 use VuFind\Exception\RecordMissing as RecordMissingException;
+use VuFindSearch\Command\SearchCommand;
 use VuFindSearch\ParamBag;
 
 /**
@@ -262,7 +263,14 @@ class Loader extends \VuFind\Record\Loader
         $params = new \VuFindSearch\ParamBag(
             ['hl' => 'false', 'spellcheck' => 'false']
         );
-        $results = $this->searchService->search('Solr', $query, 0, 1, $params)
+        $command = new SearchCommand(
+            'Solr',
+            $query,
+            0,
+            1,
+            $params
+        );
+        $results = $this->searchService->invoke($command)->getResult()
             ->getRecords();
         return !empty($results) ? $results[0] : false;
     }
@@ -291,7 +299,14 @@ class Loader extends \VuFind\Record\Loader
         $params = new \VuFindSearch\ParamBag(
             ['hl' => 'false', 'spellcheck' => 'false']
         );
-        $results = $this->searchService->search('Solr', $query, 0, 1, $params)
+        $command = new SearchCommand(
+            'Solr',
+            $query,
+            0,
+            1,
+            $params
+        );
+        $results = $this->searchService->invoke($command)->getResult()
             ->getRecords();
         return !empty($results) ? $results[0] : false;
     }

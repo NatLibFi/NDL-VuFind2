@@ -139,7 +139,9 @@
         echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $loadOpenURLs, 'SET')
       ?>
     <?php endif; ?>
-    <?php if ($doiActive): ?><?=$doi->renderTemplate()?><?php endif; ?>
+    <?php if ($doiActive): ?>
+      <?=$doi->renderTemplate()?>
+    <?php endif; ?>
   </div>
 </div>
 <?php endif; ?>

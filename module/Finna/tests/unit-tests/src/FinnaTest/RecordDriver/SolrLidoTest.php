@@ -103,7 +103,9 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 ]
                             ]
                         ],
-                        'identifier' => '607642'
+                        'identifier' => '607642',
+                        'downloadable' => true,
+                        'resourceDescription' => 'Kuvan selitys'
                     ],
                     [
                         'urls' => [
@@ -115,7 +117,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         ],
                         'description' => '',
                         'rights' => [
-                            'copyright' => 'CC BY 4.0',
+                            'copyright' => 'InC',
                             'description' => [
                                 0 => 'Tässä on kuvien copyright.'
                             ]
@@ -151,7 +153,27 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 ]
                             ]
                         ],
-                        'identifier' => '607643'
+                        'identifier' => '607643',
+                        'downloadable' => false,
+                        'resourceName' => 'Kuvan nimi'
+                    ],
+                    7 => [
+                        'urls' => [
+                            'large' => 'https://kaikkilinkit.com',
+                            'small' => 'https://kaikkilinkit.com',
+                            'medium' => 'https://kaikkilinkit.com'
+                        ],
+                        'description' => '',
+                        'rights' => [
+                            'copyright' => 'CC BY 4.0',
+                            'description' => [
+                                0 => 'Tässä on kuvien copyright.',
+                                1 => 'Tässä on kuvien copyright.'
+                            ]
+                        ],
+                        'highResolution' => [],
+                        'identifier' => '607644',
+                        'downloadable' => true
                     ]
                 ]
             ],
@@ -196,6 +218,60 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Function to get expected format classifications data
+     *
+     * @return array
+     */
+    public function getFormatClassificationsData(): array
+    {
+        return [
+            [
+                'getFormatClassifications',
+                [
+                    'lido_test.xml' => [
+                        'näkyy (testimittari)'
+                    ],
+                    'lido_test2.xml' => [
+                        'uno (testimittari)',
+                        'dos',
+                        'one (testimittari)',
+                        'two'
+                    ]
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * Function to get expected other classifications data
+     *
+     * @return array
+     */
+    public function getOtherClassificationsData(): array
+    {
+        return [
+            [
+                'getOtherClassifications',
+                [
+                    'lido_test.xml' => [
+                        'näkyy'
+                    ],
+                    'lido_test2.xml' => [
+                        [
+                            'term' => 'uno',
+                            'label' => 'testimittari'
+                        ],
+                        [
+                            'term' => 'one',
+                            'label' => 'testimittari'
+                        ]
+                    ]
+                ]
+            ],
+        ];
+    }
+
+    /**
      * Test representations
      *
      * @param string $function Function of the driver to test
@@ -209,7 +285,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         string $function,
         array $expected
     ): void {
-        $driver = $this->getDriver();
+        $driver = $this->getDriver('lido_test.xml');
         $this->assertTrue(is_callable([$driver, $function], true));
         $this->assertEquals(
             $expected,
@@ -218,27 +294,227 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test getFormatClassifications
+     *
+     * @param string $function Function of the driver to test
+     * @param array  $expected Result to be expected
+     *
+     * @dataProvider getFormatClassificationsData
+     *
+     * @return void
+     */
+    public function testGetFormatClassifications(
+        string $function,
+        array $expected
+    ): void {
+        foreach ($expected as $file => $result) {
+            $driver = $this->getDriver($file);
+            $this->assertTrue(is_callable([$driver, $function], true));
+            $this->assertEquals(
+                $result,
+                $driver->$function()
+            );
+        }
+    }
+
+    /**
+     * Test getOtherClassifications
+     *
+     * @param string $function Function of the driver to test
+     * @param array  $expected Result to be expected
+     *
+     * @dataProvider getOtherClassificationsData
+     *
+     * @return void
+     */
+    public function testGetOtherClassifications(
+        string $function,
+        array $expected
+    ): void {
+        foreach ($expected as $file => $result) {
+            $driver = $this->getDriver($file);
+            $this->assertTrue(is_callable([$driver, $function], true));
+            $this->assertEquals(
+                $result,
+                $driver->$function()
+            );
+        }
+    }
+
+    /**
+     * Function to get expected measurements data
+     *
+     * @return array
+     */
+    public function getMeasurementsByTypeData(): array
+    {
+        return [
+            [
+                'getMeasurements',
+                [
+                    'lido_test.xml' => [
+                        'pituus 73.0 cm, leveys 14 cm (kohde 2, kohde 3)'
+                    ],
+                    'lido_test2.xml' => [
+                        'syvyys 50 cm (kohde 1)',
+                        'pituus 0.73 m'
+                    ]
+                ]
+            ],
+            [
+                'getPhysicalDescriptions',
+                [
+                    'lido_test.xml' => [
+                        '1001 neliömetriä'
+                    ],
+                    'lido_test2.xml' => [
+                        '1200 kpl (kohde 1)',
+                        '12 yksikköä (kohde 1)',
+                        '100 hyllymetriä'
+                    ]
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * Test getMeasurementsByType
+     *
+     * @param string $function Function of the driver to test
+     * @param array  $expected Result to be expected
+     *
+     * @dataProvider getMeasurementsByTypeData
+     *
+     * @return void
+     */
+    public function testGetMeasurementsByType(
+        string $function,
+        array $expected
+    ): void {
+        foreach ($expected as $file => $result) {
+            $driver = $this->getDriver($file);
+            $this->assertTrue(is_callable([$driver, $function], true));
+            $this->assertEquals(
+                $result,
+                $driver->$function()
+            );
+        }
+    }
+
+    /**
+     * Function to get expected date range data
+     *
+     * @return array
+     */
+    public function getDateRangeData(): array
+    {
+        return [
+            [
+                '[2009-01-01 TO 2009-12-31]',
+                ['2009', '2009']
+            ],
+            [
+                '[-2000-01-01 TO 0900-12-31]',
+                ['-2000', '900']
+            ],
+            [
+                '1937-12-08',
+                ['1937', null]
+            ],
+            [
+                '[0000-01-01 TO 0000-12-31]',
+                ['0', '0']
+            ],
+            [
+                '[0999-06-02 TO 9999-12-31]',
+                ['999', null]
+            ],
+            [
+                '[-9999-01-01 TO 9998-12-31]',
+                ['-9999', '9998']
+            ],
+            [
+                '[-0055-10-31 TO -0002-02-15]',
+                ['-55', '-2']
+            ],
+            [
+                '',
+                null
+            ]
+        ];
+    }
+
+    /**
+     * Test getDateRange
+     *
+     * @param string $indexValue Index value to test
+     * @param ?array $expected Result to be expected
+     *
+     * @dataProvider getDateRangeData
+     *
+     * @return void
+     */
+    public function testGetDateRange(
+        string $indexValue,
+        ?array $expected
+    ): void {
+        $record = new SolrLido(
+            [],
+            [],
+            new \Laminas\Config\Config([])
+        );
+        $record->setRawData(
+            [
+                'id' => 'knp-247394',
+                'creation_daterange' => $indexValue
+            ]
+        );
+        $this->assertEquals(
+            $expected,
+            $record->getResultDateRange()
+        );
+    }
+
+    /**
      * Get a record driver with fake data
      *
-     * @param array $overrides    Fixture fields to override
-     * @param array $searchConfig Search configuration
+     * @param string $recordXml    Xml record to use for the test
+     * @param array  $overrides    Fixture fields to override
+     * @param array  $searchConfig Search configuration
      *
      * @return SolrLido
      */
-    protected function getDriver($overrides = [], $searchConfig = []): SolrLido
-    {
-        $fixture = $this->getFixture('lido/lido_test.xml', 'Finna');
+    protected function getDriver(
+        string $recordXml,
+        $overrides = [],
+        $searchConfig = []
+    ): SolrLido {
+        $fixture = $this->getFixture("lido/$recordXml", 'Finna');
         $config = [
             'Record' => [
                 'allowed_external_hosts_mode' => 'disable',
+            ],
+            'FileDownload' => [
+                'excludeRights' => [
+                    'INC'
+                ]
             ]
         ];
+        $config = new \Laminas\Config\Config($config);
         $record = new SolrLido(
             $config,
             $config,
             new \Laminas\Config\Config($searchConfig)
         );
-        $record->setRawData(['id' => 'knp-247394', 'fullrecord' => $fixture]);
+        $record->setRawData(
+            [
+                'id' => 'knp-247394',
+                'fullrecord' => $fixture,
+                'usage_rights_str_mv' => [
+                    'usage_A'
+                ]
+            ]
+        );
         return $record;
     }
 }

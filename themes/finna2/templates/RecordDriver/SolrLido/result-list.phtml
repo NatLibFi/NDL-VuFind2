@@ -51,20 +51,16 @@ if ($img):
             <?=$this->record($this->driver)->getFormatList() ?>
             <?=$this->record($this->driver)->getLabelList() ?>
           </div>
-          <?php if ($this->driver->isCollection()): ?>
-            <?=implode('<br>', array_map([$this, 'escapeHtml'], $this->driver->getSummary())); ?>
-          <?php else: ?>
-            <?php $summAuthors = $this->driver->getPrimaryAuthorsWithHighlighting(); if (!empty($summAuthors)): ?>
-              <div class="truncate-field" data-rows="1">
-                <?php $authorCount = count($summAuthors); foreach ($summAuthors as $i => $summAuthor): ?>
-                  <a href="<?=$this->record($this->driver)->getLink('author', $this->highlight($summAuthor, null, true, false))?>"><?=$this->highlight($summAuthor)?></a><?=$i + 1 < $authorCount ? ' ; ' : ''?>
-                <?php endforeach; ?>
-              </div>
-            <?php endif; ?>
+          <?php $summAuthors = $this->driver->getPrimaryAuthorsWithHighlighting(); if (!empty($summAuthors)): ?>
+            <div class="truncate-field" data-rows="1">
+              <?php $authorCount = count($summAuthors); foreach ($summAuthors as $i => $summAuthor): ?>
+                <a href="<?=$this->record($this->driver)->getLink('author', $this->highlight($summAuthor, null, true, false))?>"><?=$this->highlight($summAuthor)?></a><?=$i + 1 < $authorCount ? ' ; ' : ''?>
+              <?php endforeach; ?>
+            </div>
+          <?php endif; ?>
 
-            <?php if ($dates = $this->driver->getResultDateRange()): ?>
-              <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
-            <?php endif; ?>
+          <?php if ($dates = $this->driver->getResultDateRange()): ?>
+            <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
           <?php endif; ?>
         </div>
 
