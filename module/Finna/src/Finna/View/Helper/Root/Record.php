@@ -122,7 +122,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Encapsulated records results
      *
-     * @var EncapsulatedRecords
+     * @var Results
      */
     protected $encapsulatedResults;
 
@@ -1342,7 +1342,7 @@ class Record extends \VuFind\View\Helper\Root\Record
 
         $id = $opt['id'] = $this->driver->getUniqueID();
 
-        $loadMore = $offset !== null;
+        $loadMore = (int)$offset > 0;
 
         // null is an accepted limit value (no limit)
         if (!array_key_exists('limit', $opt)) {
@@ -1364,6 +1364,8 @@ class Record extends \VuFind\View\Helper\Root\Record
             $idStart = $indexStart;
             $resultsCopy->overrideStartRecord($offset);
         }
+        // Try to avoid clashes with IDs in other possible lists on the same page
+        $idStart += 1000;
 
         $resultsCopy->performAndProcessSearch();
 
