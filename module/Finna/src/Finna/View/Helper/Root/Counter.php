@@ -135,10 +135,11 @@ class Counter extends \Laminas\View\Helper\AbstractHelper
      *
      * @param string $value Value to set. If omitted, 0 will be used.
      *
-     * @return void
+     * @return Counter this
      */
-    public function set(int $value = 0): void
+    public function set(int $value = 0): Counter
     {
         $this->counters[$this->currentId] = $value;
+        return $this;
     }
 }
