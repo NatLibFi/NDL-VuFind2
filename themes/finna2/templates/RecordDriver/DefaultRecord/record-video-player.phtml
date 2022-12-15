@@ -1,11 +1,15 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/record-video-player.phtml -->
 <?php
+  if ($this->counter('RecordVideoPlayer')->increment()->get() > 1) {
+    return;
+  }
   $videoElementBase = [
     'class' => 'video-link-container active-video',
     'type' => 'button'
   ];
   $this->htmlElement()->addAttributeTemplate('video-base', $videoElementBase);
   $this->partial('Helpers/videojs-translations.phtml');
+
   $inlineVideo = $this->config()->inlineVideoEnabled();
 ?>
 <?php if ($inlineVideo): ?>
