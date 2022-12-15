@@ -38,7 +38,9 @@ namespace Finna\Search\EncapsulatedRecords;
  */
 class Params extends \VuFind\Search\Base\Params
 {
-    use \Finna\Search\FinnaParams;
+    use \Finna\Search\FinnaParams {
+        initLimit as finnaInitLimit;
+    }
 
     /**
      * Add filters to the object based on values found in the request object.
@@ -59,5 +61,25 @@ class Params extends \VuFind\Search\Base\Params
 
         // Otherwise use standard parent behavior:
         parent::initFilters($request);
+    }
+
+    /**
+     * Pull the page size parameter or set to default
+     *
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
+     * request.
+     *
+     * @return void
+     */
+    protected function initLimit($request)
+    {
+        if ($request->offsetExists('limit')
+            && null === $request->offsetGet('limit')
+        ) {
+            // Null value is allowed (no limit)
+            $this->limit = null;
+        } else {
+            $this->finnaInitLimit($request);
+        }
     }
 }
