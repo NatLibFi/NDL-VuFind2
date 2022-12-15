@@ -285,7 +285,7 @@ class VideoElement extends HTMLElement {
 
     if (!this.hasConsent) {
       finna.scriptLoader.load(
-        {'js-cookie-consent': 'finna-cookie-consent-element.js'},
+        {'cookie-consent': 'finna-cookie-consent-element.js'},
         () => {
           const consentModal = document.createElement('finna-consent');
           consentModal.consentCategories = this.consentCategories;

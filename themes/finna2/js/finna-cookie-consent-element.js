@@ -95,7 +95,7 @@ class FinnaCookieConsentElement extends HTMLElement {
     const linkIcon = document.createElement('i');
     linkIcon.classList.add('fa', 'fa-new-window');
     linkIcon.setAttribute('aria-hidden', true);
-    aOuterLink.append(linkIcon);
+    aOuterLink.append(' ', linkIcon);
 
     const linkSpan = document.createElement('span');
     linkSpan.classList.add('sr-only');
@@ -113,7 +113,7 @@ class FinnaCookieConsentElement extends HTMLElement {
       CookieConsent.showPreferences();
     });
     divActions.append(aShowModal);
-    divDescription.append(divActions);
+    divInfo.append(divActions);
     this.append(divInfo);
   }
 }
