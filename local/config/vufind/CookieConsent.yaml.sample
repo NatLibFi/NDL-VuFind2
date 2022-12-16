@@ -124,3 +124,7 @@ CookieConsent:
           ExpirationUnit: minutes
       AutoClearCookies:
         - Name: 'vuid|__cf_bm'
+  Options:
+    RecordVideoPlayer:
+      Category: 'video'
+      Translation: 'video_cookies_title_html'

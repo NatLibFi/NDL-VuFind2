@@ -96,4 +96,20 @@ class CookieConsent extends \VuFind\View\Helper\Root\CookieConsent
 
         return parent::render();
     }
+
+    /**
+     * Get cookie consent settings for videos. Contains defined video category and
+     * category translation key
+     *
+     * @return array []
+     */
+    public function getConsentSettingsForVideos(): array
+    {
+        $options = $this->consentConfig['Options']['RecordVideoPlayer'] ?? [];
+        var_dump($options);
+        return [
+            'category' => $options['Category'] ?? 'video',
+            'translation' => $options['Translation'] ?? 'video_cookies_title_html'
+        ];
+    }
 }
