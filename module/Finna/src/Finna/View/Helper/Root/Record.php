@@ -113,13 +113,6 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $form;
 
     /**
-     * Counter for deduplication elements
-     *
-     * @var int
-     */
-    public static $dedupCounter = 0;
-
-    /**
      * Constructor
      *
      * @param \Laminas\Config\Config              $config           VuFind config
@@ -1334,5 +1327,23 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
         return '';
+    }
+
+    /**
+     * Get container classes if the driver supports ajax status and/or has
+     * preferred source.
+     *
+     * @return string
+     */
+    public function getContainerClasses(): string
+    {
+        $classes = '';
+        if ($this->driver->supportsAjaxStatus()) {
+            $classes .= 'ajaxItem';
+        }
+        if (!$this->getPreferredSource()) {
+            $classes .= $classes ? ' js-sourceless' : 'js-sourceless';
+        }
+        return $classes;
     }
 }

@@ -3,7 +3,7 @@
 <?php
   $dedupData = $this->driver->getDedupData(true);
   $deduplicated = count($dedupData) > 1;
-  $selectID = "dedup-select-{$this->counter()->increment('deduplicatedSources')}";
+  $selectID = "dedup-select-{$this->counter('deduplicatedSources')->increment()}";
 ?>
 
 <div class="holding-details<?=$deduplicated ? ' deduplicated' : ''?>">
