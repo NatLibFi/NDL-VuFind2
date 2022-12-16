@@ -100,7 +100,7 @@
     <?php if (!empty($videoUrls)): ?>
       <div class="inline-video-container">
         <div class="inline-video" id="inline-video"></div>
-        <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls]);?>
+        <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls, 'inlineVideo' => true]);?>
       </div>
     <?php endif; ?>
   <?php endif; ?>

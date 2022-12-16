@@ -1,7 +1,10 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/record-video-player.phtml -->
 <?php
-  $this->partial('Helpers/videojs-translations.phtml');
   $inlineVideo = $this->config()->inlineVideoEnabled();
+  if (empty($this->inlineVideo) && $this->config()->inlineVideoEnabled()) {
+    return;
+  }
+  $this->partial('Helpers/videojs-translations.phtml');
 ?>
 <div class="video-warnings">
   <?php
