@@ -5,7 +5,7 @@ class VideoElement extends HTMLElement {
   /**
    * Get the type of the video, iFrame | video
    *
-   * @returns {string}
+   * @return {string}
    */
   get type() {
     return (this.getAttribute('type') || '').toLowerCase();
@@ -23,7 +23,7 @@ class VideoElement extends HTMLElement {
   /**
    * Get the parent element to which the video player is being embedded into.
    *
-   * @returns {string|undefined}
+   * @return {string|undefined}
    */
   get embedParent() {
     return this.getAttribute('embed-parent') || undefined;
@@ -42,7 +42,7 @@ class VideoElement extends HTMLElement {
   /**
    * Get the source of the video.
    *
-   * @returns {string}
+   * @return {string}
    */
   get source() {
     return this.getAttribute('source') || '';
@@ -60,7 +60,7 @@ class VideoElement extends HTMLElement {
   /**
    * Get the video sources as an object.
    *
-   * @returns {object}
+   * @return {object}
    */
   get videoSources() {
     return this.getAttribute('video-sources') ? JSON.parse(this.getAttribute('video-sources')) : {};
@@ -96,7 +96,7 @@ class VideoElement extends HTMLElement {
   /**
    * Get the identity for the popup group.
    *
-   * @returns {string}
+   * @return {string}
    */
   get popupId() {
     return this.getAttribute('popup-id') || '';
@@ -114,7 +114,7 @@ class VideoElement extends HTMLElement {
   /**
    * Get consent categories required for the video.
    *
-   * @returns {string}
+   * @return {string}
    */
   get consentCategories() {
     return this.getAttribute('consent-categories') || '';
@@ -131,9 +131,9 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get if the element has consent.
-   * Returns true if the value is 'true' as a string.
+   * return true if the value is 'true' as a string.
    *
-   * @returns {boolean}
+   * @return {boolean}
    */
   get hasConsent() {
     return this.getAttribute('has-consent') === 'true';
@@ -151,7 +151,7 @@ class VideoElement extends HTMLElement {
   /**
    * Get index.
    *
-   * @returns {string}
+   * @return {string}
    */
   get index() {
     return this.getAttribute('index') || '';
@@ -168,9 +168,9 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get if the video should be activated on load.
-   * Returns true if the value is 'true' as a string.
+   * return true if the value is 'true' as a string.
    *
-   * @returns {boolean}
+   * @return {boolean}
    */
   get active() {
     return this.getAttribute('active') === 'true';
