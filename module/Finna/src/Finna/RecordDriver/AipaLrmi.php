@@ -65,6 +65,58 @@ class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
     }
 
     /**
+     * Return type of access restriction for the record.
+     *
+     * @param string $language Language
+     *
+     * @return mixed array with keys:
+     *   'copyright'   Copyright (e.g. 'CC BY 4.0')
+     *   'link'        Link to copyright info, see IndexRecord::getRightsLink
+     *   or false if no access restriction type is defined.
+     */
+    public function getAccessRestrictionsType($language)
+    {
+        $xml = $this->getXmlRecord();
+        $rights = [];
+        if (!empty($xml->rights)) {
+            $rights['copyright'] = $this->getMappedRights((string)$xml->rights);
+            if ($link = $this->getRightsLink($rights['copyright'], $language)) {
+                $rights['link'] = $link;
+            }
+            return $rights;
+        }
+        return false;
+    }
+
+    /**
+     * Return aim, or null if not found in record.
+     *
+     * @return ?string
+     */
+    public function getAim(): ?string
+    {
+        $xml = $this->getXmlRecord();
+        if ($xml->aim) {
+            return (string)$xml->aim;
+        }
+        return null;
+    }
+
+    /**
+     * Return assignment ideas, or null if not found in record.
+     *
+     * @return ?string
+     */
+    public function getAssignmentIdeas(): ?string
+    {
+        $xml = $this->getXmlRecord();
+        if ($xml->assignmentIdeas) {
+            return (string)$xml->assignmentIdeas;
+        }
+        return null;
+    }
+
+    /**
      * Return all encapsulated record items.
      *
      * @return array

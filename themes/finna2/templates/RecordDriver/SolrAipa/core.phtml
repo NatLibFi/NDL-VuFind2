@@ -43,7 +43,7 @@
 
   $img = $this->recordImage($this->record($this->driver));
   $thumbnail = false;
-  $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
+  $thumbnailAlignment = false;
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment ?><?=!empty($audioUrls) ? ' audio' : ''?>">
 
@@ -128,6 +128,7 @@
 
         <?php if ($results = $this->driver->getNonPresenterAuthors()): ?>
         <div class="truncate-field recordAuthors">
+          <strong><?= $this->transEsc('Curated By') ?>:</strong>
           <span property="author">
           <?php foreach($results as $index => $author): ?>
             <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a><?php if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><?php endif; ?><?php if (!empty($author['role'])): ?><span class="author-role">, <?=$this->escapeHtml($author['role']) ?></span><?php endif; ?>
@@ -146,9 +147,6 @@
                 <?php if ($pubName = $field->getName()): ?>
                   <span property="name"><?=$this->escapeHtml($pubName)?></span>
                 <?php endif; ?>
-                <?php if ($pubDate = $field->getDate()): ?>
-                  <span property="datePublished"><?=$this->escapeHtml($pubDate)?></span>
-                <?php endif; ?>
               </span>
             <?php endforeach; ?>
           </div>
@@ -159,8 +157,21 @@
         <?php endif; ?>
       </div>
 
+      <p class="material-questions-feedback">
+        <?= $this->transEsc('aipa_questions_feedback') ?>
+        <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Feedback'))?>" data-lightbox><?=$this->transEsc('Send feedback on record')?></a>
+      </p>
+
+      <?php if ($rights = $this->driver->getAccessRestrictionsType($this->layout()->userLang)): ?>
+        <div class="access-rights">
+          <strong><?= $this->transEsc('Access Restrictions') ?>:</strong>
+          <?= $this->partial('Helpers/copyright-field-value.phtml', ['data' => $rights]) ?>
+          <span class="rights-info"><?= $this->transEsc('aipa_also_check_material_specific_rights') ?></span>
+        </div>
+      <?php endif; ?>
+
       <?php if ($abstracts = $this->driver->getAbstracts()): ?>
-        <div class="truncate-field wide summary recordSummary">
+        <div class="wide summary recordSummary">
           <?php if (isset($abstracts[$this->layout()->userLang])): ?>
             <?= $this->recordFieldMarkdown()->toHTML(($abstracts[$this->layout()->userLang]), "\n") ?>
           <?php else: ?>
@@ -169,8 +180,8 @@
         </div>
       <?php endif; ?>
       <?php if ($descriptions = $this->driver->getDescriptions()): ?>
-        <div class="truncate-field wide summary recordSummary">
-          <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", $descriptions), "\n") ?>
+        <div class="wide summary recordSummary">
+          <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", $descriptions)) ?>
         </div>
       <?php endif; ?>
 
@@ -196,7 +207,23 @@
       <?php endif; ?>
       <?/* End Main Details */?>
 
-      <?= $this->record($this->driver)->renderEncapsulatedRecords() ?>
+      <?php $encapsulatedRecords = $this->driver->getEncapsulatedRecords(); ?>
+      <?php if (count($encapsulatedRecords) > 1): ?>
+        <div class="record-toc">
+          <p><strong><?= $this->transEsc('aipa_consists_of_the_following') ?>:</strong></p>
+          <ul>
+            <?php foreach ($encapsulatedRecords as $encapsulatedRecord): ?>
+              <li>
+                <a href="#encapsulated-record-<?= $this->escapeHtmlAttr($encapsulatedRecord->getUniqueId()) ?>">
+                  <?= $encapsulatedRecord->getTitle() ?>
+                </a>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        </div>
+      <?php endif; ?>
+
+      <?= $this->record($this->driver)->renderEncapsulatedRecords(['limit' => null]) ?>
 
       <?php if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>
       <div>
