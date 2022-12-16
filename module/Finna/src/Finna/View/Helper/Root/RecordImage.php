@@ -29,6 +29,8 @@
  */
 namespace Finna\View\Helper\Root;
 
+use Laminas\View\Helper\Url;
+
 /**
  * Header view helper
  *
@@ -47,6 +49,23 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
      * @var Record
      */
     protected $record;
+
+    /**
+     * Url helper
+     *
+     * @var Url
+     */
+    protected $urlHelper;
+
+    /**
+     * Constructor.
+     *
+     * @param Url $urlHelper Url helper.
+     */
+    public function __construct(Url $urlHelper)
+    {
+        $this->urlHelper = $urlHelper;
+    }
 
     /**
      * Assign record image URLs to the view and return the view helper.
@@ -128,7 +147,6 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         if (!isset($images[$index])) {
             return false;
         }
-        $urlHelper = $this->getView()->plugin('url');
         $imageParams = $images[$index]['urls']['large']
             ?? $images[$index]['urls']['medium'];
         $imageParams = array_merge($imageParams, $params);
@@ -136,7 +154,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             = $imageParams['source']
             ?? $this->record->getDriver()->getSourceIdentifier();
 
-        $url = $urlHelper(
+        $url = ($this->urlHelper)(
             'cover-show',
             [],
             $canonical ? ['force_canonical' => true] : []
@@ -191,7 +209,6 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             // Fall back to large image
             return $this->getLargeImageWithInfo($index, $params, $canonical);
         }
-        $urlHelper = $this->getView()->plugin('url');
 
         $imageParams = $images[$index]['urls']['master'];
         $imageParams = array_merge($imageParams, $params);
@@ -199,7 +216,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             = $imageParams['source']
             ?? $this->record->getDriver()->getSourceIdentifier();
 
-        $url = $urlHelper(
+        $url = ($this->urlHelper)(
             'cover-show',
             [],
             $canonical ? ['force_canonical' => true] : []
@@ -244,37 +261,38 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         $includePdf = true,
         $source = null
     ) {
+        $images = $this->record->getAllImages($language, $thumbnails, $includePdf);
+        if (empty($images)) {
+            return [];
+        }
         $imageParams = [
             'small' => [],
             'medium' => [],
             'large' => [],
             'master' => [],
         ];
-        foreach ($params as $size => $sizeParams) {
-            $imageParams[$size] = $sizeParams;
-        }
-
-        $urlHelper = $this->getView()->plugin('url');
-
-        $imageTypes = ['small', 'medium', 'large', 'master'];
         $source = $source ?? $this->record->getDriver()->getSourceIdentifier();
-        $images = $this->record->getAllImages($language, $thumbnails, $includePdf);
-        foreach ($images as $idx => &$image) {
-            foreach ($imageTypes as $imageType) {
-                if (!isset($image['urls'][$imageType])) {
-                    continue;
-                }
-                $params = $image['urls'][$imageType];
-                $image['urls'][$imageType] = $urlHelper('cover-show') . '?' .
+        foreach ($imageParams as $size => &$value) {
+            if (!empty($params[$size])) {
+                $value = $params[$size];
+            }
+            $value['source'] = $source;
+        }
+        unset($value);
+        foreach ($images as &$image) {
+            foreach (array_intersect_key($imageParams, $image['urls'] ?? [])
+                as $size => $values
+            ) {
+                $image['urls'][$size] = ($this->urlHelper)('cover-show') . '?' .
                     http_build_query(
                         array_merge(
-                            $params,
-                            $imageParams[$imageType],
-                            ['source' => $source]
+                            $imageParams[$size],
+                            $image['urls'][$size]
                         )
                     );
             }
         }
+        unset($image);
         return $images;
     }
 
@@ -438,5 +456,49 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             $images[$ind]['type'] = 'model';
         }
         return $images;
+    }
+
+    /**
+     * Get image array with index.
+     *
+     * @param int $index Index of the image array to get.
+     *
+     * @return array
+     */
+    public function getImageWithIndex(int $index): array
+    {
+        $image
+            = $this->record->getAllImages($this->view->layout()->userLang)[$index]
+            ?? [];
+        if (empty($image)) {
+            return [];
+        }
+        $source = $this->record->getDriver()->getSourceIdentifier();
+        $imageParams = [
+            'small' => [
+                'source' => $source
+            ],
+            'medium' => [
+                'source' => $source
+            ],
+            'large' => [
+                'source' => $source
+            ],
+            'master' => [
+                'source' => $source
+            ],
+        ];
+        foreach (array_intersect_key($imageParams, $image['urls'] ?? [])
+            as $size => $values
+        ) {
+            $image['urls'][$size] = ($this->urlHelper)('cover-show') . '?' .
+                http_build_query(
+                    array_merge(
+                        $imageParams[$size],
+                        $image['urls'][$size]
+                    )
+                );
+        }
+        return $image;
     }
 }

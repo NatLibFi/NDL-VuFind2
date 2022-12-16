@@ -1,10 +1,6 @@
 <?php
   $recordImage = $this->recordImage($this->record($this->driver));
-  $highResolution = $recordImage->getHighResolutionImages((int)$this->index);
-  $largeImage = $recordImage->getLargeImageWithInfo($this->index)['url'] ?? false;
-
-  $allImages = $this->driver->tryMethod('getAllImages', [$this->layout()->userLang]);
-  $imageDescription = $allImages[$this->index]['description'] ?? '';
+  $image = $recordImage->getImageWithIndex($this->index);
   $rights = $recordImage->getImageRights($this->index);
 
   $formats = $this->driver->tryMethod('getFormats');
@@ -65,9 +61,9 @@ if ($otherTitles):?>
       <?php if ('marc' === $recordType): ?>
         <p></p>
       <?php else: ?>
-        <?php if ($imageDescription): ?>
+        <?php if (!empty($image['description'])): ?>
           <div id="popup-image-description" class="image-description">
-            <p><strong><?=$this->transEsc('Image') ?>:</strong> <?=$this->escapeHtml($imageDescription)?></p>
+            <p><strong><?=$this->transEsc('Image') ?>:</strong> <?=$this->escapeHtml($image['description'])?></p>
           </div>
         <?php endif; ?>
         <?php if ($summaries = $this->driver->tryMethod('getDescriptions') ?? $this->driver->tryMethod('getSummary')): ?>
@@ -103,8 +99,8 @@ if ($otherTitles):?>
   <div class="popup-link-buttons">
     <?=$this->record($this->driver)->getOnlineUrls('popup')?>
     <?php if ($this->userlist()->getMode() !== 'disabled'): ?><div class="save-record-link"><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>"><i class="fa fa-heart"></i> <span><?=$this->transEsc('Add to favorites')?></span></a></div><?php endif; ?>
-    <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-download.phtml', ['index' => $this->index, 'rights' => $rights, 'image' => ['urls' => ['large' => $largeImage]], 'hiRes' => $highResolution ?? false]) ?>
-    <?= $this->record($this->driver)->renderTemplate('image-information.phtml', ['index' => 'popup', 'image' => $allImages[$this->index] ?? []]); ?>
+    <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-download.phtml', ['index' => $this->index, 'rights' => $rights, 'image' => $image, 'hiRes' => $image['highResolution'] ?? false]) ?>
+    <?= $this->record($this->driver)->renderTemplate('image-information.phtml', ['index' => 'popup', 'image' => $image]); ?>
   </div>
   <?php if ($this->driver->getSourceIdentifier() !== 'SolrAuth'): ?>
     <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-rights.phtml', ['rights' => $rights, 'truncateLicense' => true]); ?>
