@@ -1,8 +1,5 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/record-video-player.phtml -->
 <?php
-  if ($this->counter('RecordVideoPlayer')->increment()->get() > 1) {
-    return;
-  }
   $videoElementBase = [
     'class' => 'video-link-container active-video',
     'type' => 'button'

@@ -73,13 +73,12 @@ class Counter extends \Laminas\View\Helper\AbstractHelper
      *
      * @param int $amount Amount to increment.
      *
-     * @return Counter this
+     * @return int The increment result.
      */
     public function increment(
         int $amount = 1
-    ): Counter {
-        $this->counters[$this->currentId] += $amount;
-        return $this;
+    ): int {
+        return $this->counters[$this->currentId] += $amount;
     }
 
     /**
@@ -87,13 +86,12 @@ class Counter extends \Laminas\View\Helper\AbstractHelper
      *
      * @param int $amount Amount to decrement.
      *
-     * @return Counter this
+     * @return int The decrement result.
      */
     public function decrement(
         int $amount = 1
-    ): Counter {
-        $this->counters[$this->currentId] -= $amount;
-        return $this;
+    ): int {
+        return $this->counters[$this->currentId] -= $amount;
     }
 
     /**
