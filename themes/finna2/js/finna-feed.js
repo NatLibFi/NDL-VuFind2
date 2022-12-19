@@ -314,7 +314,7 @@ finna.feed = (function finnaFeed() {
       (element) => {
         loadFeed($(element));
       },
-      document.querySelectorAll('.feed-container[data-init]:not([data-init="0"])')
+      document.querySelectorAll('.feed-container:not([data-init="0"])')
     );
   }
 
