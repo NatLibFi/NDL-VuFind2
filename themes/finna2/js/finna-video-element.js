@@ -208,7 +208,10 @@ class VideoElement extends HTMLElement {
     };
   }
 
-  onConsentChecked() {
+  /**
+   * Called after consent settings have been initialized.
+   */
+  onConsentInitialized() {
     // Check if this video is inside a record
     const record = this.closest('div.record');
     const self = this;
@@ -307,7 +310,7 @@ class VideoElement extends HTMLElement {
   connectedCallback() {
     // Wait for the cookie consent to be initialized
     document.addEventListener('vf-cookie-consent-initialized', () => {
-      this.onConsentChecked();
+      this.onConsentInitialized();
     });
   }
 
