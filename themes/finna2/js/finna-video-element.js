@@ -311,9 +311,13 @@ class VideoElement extends HTMLElement {
    */
   connectedCallback() {
     // Wait for the cookie consent to be initialized
-    document.addEventListener('vf-cookie-consent-initialized', () => {
+    if (VuFind.cookie.getConsentConfig() === null) {
+      document.addEventListener('vf-cookie-consent-initialized', () => {
+        this.onConsentInitialized();
+      });
+    } else {
       this.onConsentInitialized();
-    });
+    }
   }
 
 
