@@ -58,6 +58,13 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
     protected $urlHelper;
 
     /**
+     * Image parameters base values.
+     *
+     * @var array
+     */
+    protected $imageParamsBase = [];
+
+    /**
      * Constructor.
      *
      * @param Url $urlHelper Url helper.
@@ -77,6 +84,21 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
     public function __invoke(\Finna\View\Helper\Root\Record $record)
     {
         $this->record = $record;
+        $source = $this->record->getDriver()->getSourceIdentifier();
+        $this->imageParamsBase = [
+            'small' => [
+                'source' => $source
+            ],
+            'medium' => [
+                'source' => $source
+            ],
+            'large' => [
+                'source' => $source
+            ],
+            'master' => [
+                'source' => $source
+            ],
+        ];
         return $this;
     }
 
@@ -149,10 +171,11 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         }
         $imageParams = $images[$index]['urls']['large']
             ?? $images[$index]['urls']['medium'];
-        $imageParams = array_merge($imageParams, $params);
-        $imageParams['source']
-            = $imageParams['source']
-            ?? $this->record->getDriver()->getSourceIdentifier();
+        $imageParams = array_merge(
+            $this->imageParamsBase['large'],
+            $imageParams,
+            $params,
+        );
 
         $url = ($this->urlHelper)(
             'cover-show',
@@ -210,11 +233,11 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             return $this->getLargeImageWithInfo($index, $params, $canonical);
         }
 
-        $imageParams = $images[$index]['urls']['master'];
-        $imageParams = array_merge($imageParams, $params);
-        $imageParams['source']
-            = $imageParams['source']
-            ?? $this->record->getDriver()->getSourceIdentifier();
+        $imageParams = array_merge(
+            $this->imageParamsBase['master'],
+            $images[$index]['urls']['master'],
+            $params
+        );
 
         $url = ($this->urlHelper)(
             'cover-show',
@@ -250,7 +273,6 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
      *                           are found
      * @param bool   $includePdf Whether to include first PDF file when no image
      *                           links are found
-     * @param string $source     Record source
      *
      * @return array
      */
@@ -258,25 +280,17 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         $language,
         $params = [],
         $thumbnails = true,
-        $includePdf = true,
-        $source = null
+        $includePdf = true
     ) {
         $images = $this->record->getAllImages($language, $thumbnails, $includePdf);
         if (empty($images)) {
             return [];
         }
-        $imageParams = [
-            'small' => [],
-            'medium' => [],
-            'large' => [],
-            'master' => [],
-        ];
-        $source = $source ?? $this->record->getDriver()->getSourceIdentifier();
+        $imageParams = $this->imageParamsBase;
         foreach ($imageParams as $size => &$value) {
             if (!empty($params[$size])) {
-                $value = $params[$size];
+                $value = array_merge($params[$size], $value);
             }
-            $value['source'] = $source;
         }
         unset($value);
         foreach ($images as &$image) {
@@ -358,8 +372,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             $view->layout()->userLang,
             $params,
             true,
-            true,
-            $this->record->getDriver()->getSourceIdentifier()
+            true
         );
         // Get plausible model data
         if (!in_array($type, ['list', 'list grid'])
@@ -459,13 +472,13 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Get image array with index.
+     * Get image with index as cover links
      *
      * @param int $index Index of the image array to get.
      *
      * @return array
      */
-    public function getImageWithIndex(int $index): array
+    public function getImageAsCoverLinks(int $index): array
     {
         $image
             = $this->record->getAllImages($this->view->layout()->userLang)[$index]
@@ -473,28 +486,13 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         if (empty($image)) {
             return [];
         }
-        $source = $this->record->getDriver()->getSourceIdentifier();
-        $imageParams = [
-            'small' => [
-                'source' => $source
-            ],
-            'medium' => [
-                'source' => $source
-            ],
-            'large' => [
-                'source' => $source
-            ],
-            'master' => [
-                'source' => $source
-            ],
-        ];
-        foreach (array_intersect_key($imageParams, $image['urls'] ?? [])
+        foreach (array_intersect_key($this->imageParamsBase, $image['urls'] ?? [])
             as $size => $values
         ) {
             $image['urls'][$size] = ($this->urlHelper)('cover-show') . '?' .
                 http_build_query(
                     array_merge(
-                        $imageParams[$size],
+                        $this->imageParamsBase[$size],
                         $image['urls'][$size]
                     )
                 );

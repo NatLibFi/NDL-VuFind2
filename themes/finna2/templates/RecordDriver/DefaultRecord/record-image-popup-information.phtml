@@ -1,6 +1,6 @@
 <?php
   $recordImage = $this->recordImage($this->record($this->driver));
-  $image = $recordImage->getImageWithIndex($this->index);
+  $image = $recordImage->getImageAsCoverLinks($this->index);
   $rights = $recordImage->getImageRights($this->index);
 
   $formats = $this->driver->tryMethod('getFormats');
