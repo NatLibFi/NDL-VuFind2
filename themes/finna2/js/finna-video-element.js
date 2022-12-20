@@ -112,6 +112,24 @@ class VideoElement extends HTMLElement {
   }
 
   /**
+   * Get consent service required for the video.
+   *
+   * @return {string}
+   */
+  get consentService() {
+    return this.getAttribute('consent-service') || '';
+  }
+
+  /**
+   * Get consent service required for the video.
+   *
+   * @return {string}
+   */
+  set consentService(value) {
+    this.setAttribute('consent-service', value);
+  }
+
+  /**
    * Get consent categories required for the video.
    *
    * @return {string}
@@ -121,31 +139,12 @@ class VideoElement extends HTMLElement {
   }
 
   /**
-   * Get consent categories required for the video.
+   * Set consent categories required for the video.
    *
    * @param {string} value
    */
   set consentCategories(value) {
     this.setAttribute('consent-categories', value);
-  }
-
-  /**
-   * Get if the element has consent.
-   * return true if the value is 'true' as a string.
-   *
-   * @return {boolean}
-   */
-  get hasConsent() {
-    return this.getAttribute('has-consent') === 'true';
-  }
-
-  /**
-   * Set if the element has consent.
-   *
-   * @param {string} value
-   */
-  set hasConsent(value) {
-    this.setAttribute('has-consent', value);
   }
 
   /**
@@ -209,14 +208,10 @@ class VideoElement extends HTMLElement {
     };
   }
 
-  /**
-   * When the element is added to the dom
-   */
-  connectedCallback() {
+  onConsentChecked() {
     // Check if this video is inside a record
     const record = this.closest('div.record');
     const self = this;
-
     const popupSettings = {
       id: this.popupId,
       modal: this.type === 'iframe' ? this.iFrameModal : this.videoModal,
@@ -230,6 +225,9 @@ class VideoElement extends HTMLElement {
         }
       },
       onPopupOpen: function onPopupOpen() {
+        if (!self.hasConsent) {
+          return;
+        }
         if (record) {
           const warnings
             = record.querySelector(`.video-warning[data-index="${self.index}"]`);
@@ -259,9 +257,6 @@ class VideoElement extends HTMLElement {
             }
           }
         }
-        if (!self.hasConsent) {
-          return;
-        }
 
         switch (self.type) {
         case 'video':
@@ -282,7 +277,7 @@ class VideoElement extends HTMLElement {
         }
       }
     };
-
+    this.hasConsent = VuFind.cookie.isServiceAllowed(this.consentService);
     if (!this.hasConsent) {
       finna.scriptLoader.load(
         {'cookie-consent': 'finna-cookie-consent-element.js'},
@@ -305,6 +300,17 @@ class VideoElement extends HTMLElement {
       }
     }
   }
+
+  /**
+   * When the element is added to the dom
+   */
+  connectedCallback() {
+    // Wait for the cookie consent to be initialized
+    document.addEventListener('vf-cookie-consent-initialized', () => {
+      this.onConsentChecked();
+    });
+  }
+
 
   /**
    * When the element is removed from the dom

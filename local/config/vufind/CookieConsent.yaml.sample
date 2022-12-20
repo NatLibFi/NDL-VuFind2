@@ -14,7 +14,7 @@ CookieConsent:
       Description: CookieConsent::video_cookies_description_html
       DefaultEnabled: false
       ControlVuFindServices:
-        - video
+        - recordvideo
       Essential: false
       Cookies:
         - Name: yt-player-bandwidth
