@@ -280,8 +280,10 @@ class VideoElement extends HTMLElement {
         }
       }
     };
-    this.hasConsent = VuFind.cookie.isServiceAllowed(this.consentService);
-    if (!this.hasConsent && this.type === 'iframe') {
+    this.hasConsent = this.type === 'iframe'
+      ? VuFind.cookie.isServiceAllowed(this.consentService)
+      : true;
+    if (!this.hasConsent) {
       finna.scriptLoader.load(
         {'cookie-consent': 'finna-cookie-consent-element.js'},
         () => {
