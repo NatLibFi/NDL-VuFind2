@@ -56,7 +56,7 @@
       $type = ($embeddedVideo ?? '') === 'data-embed-iframe' ? 'iFrame' : 'video';
       $source = $this->proxyUrl($url['url']);
       $cookieConsent = $this->plugin('cookieConsent');
-      $consentSettings = $cookieConsent->getConsentSettingsForCategory('video');
+      $consentSettings = $cookieConsent->getConsentSettingsForService('video');
       $hasConsent = !$cookieConsent->isEnabled() || $cookieConsent->isCategoryAccepted($consentSettings['category']);
       ?>
       <finna-video

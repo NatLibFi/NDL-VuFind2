@@ -105,7 +105,7 @@ class CookieConsent extends \VuFind\View\Helper\Root\CookieConsent
      *
      * @return array
      */
-    public function getConsentSettingsForCategory(string $service): array
+    public function getConsentSettingsForService(string $service): array
     {
         foreach ($this->getControlledVuFindServices() as $key => $value) {
             if (in_array($service, $value)) {
