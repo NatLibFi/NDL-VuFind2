@@ -47,8 +47,6 @@ use VuFindSearch\ParamBag;
  */
 class Loader extends \VuFind\Record\Loader
 {
-    public const ENCAPSULATED_RECORD_ID_SEPARATOR = '_';
-
     /**
      * Preferred language for display strings from RecordDriver
      *
@@ -134,7 +132,11 @@ class Loader extends \VuFind\Record\Loader
         }
         if ($missingException) {
             // Check for an encapsulated record ID
-            $parts = explode(self::ENCAPSULATED_RECORD_ID_SEPARATOR, $id, 2);
+            $parts = explode(
+                ContainerFormatInterface::ENCAPSULATED_RECORD_ID_SEPARATOR,
+                $id,
+                2
+            );
             if ($id !== $parts[0]) {
                 // Encapsulated record ID separator was found.
                 // Attempt to load parent record using the first part of the ID.

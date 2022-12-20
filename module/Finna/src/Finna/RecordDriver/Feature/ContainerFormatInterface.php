@@ -41,6 +41,12 @@ use VuFind\RecordDriver\AbstractBase;
 interface ContainerFormatInterface
 {
     /**
+     * Separator used in an ID combining the IDs of a container record and an
+     * encapsulated record.
+     */
+    public const ENCAPSULATED_RECORD_ID_SEPARATOR = '|';
+
+    /**
      * Get records encapsulated in this container record.
      *
      * @param int  $offset Offset for results
