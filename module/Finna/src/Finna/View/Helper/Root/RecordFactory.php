@@ -80,8 +80,7 @@ class RecordFactory implements FactoryInterface
                 $result = clone $container
                     ->get(\VuFind\Search\Results\PluginManager::class)
                     ->get('EncapsulatedRecords');
-                $params = $result->getParams();
-                $params->initFromRequest(new Parameters($options));
+                $result->getParams()->initFromRequest(new Parameters($options));
                 return $result;
             }
         );
