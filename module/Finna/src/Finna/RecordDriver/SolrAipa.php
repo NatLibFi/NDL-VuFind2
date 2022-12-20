@@ -27,7 +27,6 @@
  */
 namespace Finna\RecordDriver;
 
-use Finna\Record\Loader;
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use Finna\RecordDriver\Feature\ContainerFormatTrait;
 
@@ -130,7 +129,7 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
 
         $data = [
             'id' => $this->getUniqueID()
-                . Loader::ENCAPSULATED_RECORD_ID_SEPARATOR
+                . ContainerFormatInterface::ENCAPSULATED_RECORD_ID_SEPARATOR
                 . (string)$item->id,
             'title' => (string)$item->title,
             'fullrecord' => $item->asXML(),
