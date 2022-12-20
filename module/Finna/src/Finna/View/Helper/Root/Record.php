@@ -33,10 +33,8 @@
 namespace Finna\View\Helper\Root;
 
 use Finna\Form\Form;
-use Finna\Search\EncapsulatedRecords\Results;
 use Finna\Search\Solr\AuthorityHelper;
 use Laminas\Config\Config;
-use Laminas\Stdlib\Parameters;
 use VuFind\Record\Loader;
 use VuFind\RecordTab\TabManager;
 use VuFind\View\Helper\Root\Url;
@@ -120,11 +118,11 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $form;
 
     /**
-     * Encapsulated records results
+     * Callback to get encapsulated records results
      *
-     * @var Results
+     * @var callable
      */
-    protected $encapsulatedResults;
+    protected $getEncapsulatedResults;
 
     /**
      * Counter used to ensure unique ID attributes when several sets of encapsulated
@@ -137,15 +135,16 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Constructor
      *
-     * @param Config          $config              VuFind config
-     * @param Loader          $loader              Record loader
-     * @param RecordImage     $recordImage         Record image helper
-     * @param AuthorityHelper $authorityHelper     Authority helper
-     * @param Url             $urlHelper           Url helper
-     * @param RecordLink      $recordLinkHelper    Record link helper
-     * @param TabManager      $tabManager          Tab manager
-     * @param Form            $form                Form
-     * @param Results         $encapsulatedResults Encapsulated records results
+     * @param Config          $config                 VuFind config
+     * @param Loader          $loader                 Record loader
+     * @param RecordImage     $recordImage            Record image helper
+     * @param AuthorityHelper $authorityHelper        Authority helper
+     * @param Url             $urlHelper              Url helper
+     * @param RecordLink      $recordLinkHelper       Record link helper
+     * @param TabManager      $tabManager             Tab manager
+     * @param Form            $form                   Form
+     * @param callable        $getEncapsulatedResults Callback to get encapsulated
+     *                                                records results
      */
     public function __construct(
         Config $config,
@@ -156,7 +155,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         RecordLink $recordLinkHelper,
         TabManager $tabManager,
         Form $form,
-        Results $encapsulatedResults
+        callable $getEncapsulatedResults
     ) {
         parent::__construct($config);
         $this->loader = $loader;
@@ -166,7 +165,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $this->recordLinkHelper = $recordLinkHelper;
         $this->tabManager = $tabManager;
         $this->form = $form;
-        $this->encapsulatedResults = $encapsulatedResults;
+        $this->getEncapsulatedResults = $getEncapsulatedResults;
     }
 
     /**
@@ -1351,9 +1350,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $opt['showAllLink'] = $opt['showAllLink'] ?? true;
         $view = $opt['view'] = $opt['view'] ?? 'grid';
 
-        $resultsCopy = clone $this->encapsulatedResults;
-        $params = $resultsCopy->getParams();
-        $params->initFromRequest(new Parameters($opt));
+        $resultsCopy = ($this->getEncapsulatedResults)($opt);
 
         $total = $resultsCopy->getResultTotal();
         if (!$loadMore) {
@@ -1372,7 +1369,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             [
                 'id' => $id,
                 'results' => $resultsCopy,
-                'params' => $params,
+                'params' => $resultsCopy->getParams(),
                 'indexStart' => $idStart,
                 'view' => $view,
                 'total' => $total,
