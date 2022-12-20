@@ -19,9 +19,6 @@
       'class' => 'fulltext',
       'target' => '_blank'
     ];
-    $cookieConsent = $this->plugin('cookieConsent');
-    $consentSettings = $cookieConsent->getConsentSettingsForService('video');
-    $hasConsent = !$cookieConsent->isEnabled() || $cookieConsent->isCategoryAccepted($consentSettings['category']);
     $this->htmlElement()->addAttributeTemplate('url-base', $urlBase);
   ?>
 
