@@ -49,11 +49,10 @@
       } else {
         $desc = $embeddedVideo === 'data-embed-iframe' ? $this->translate('format_Video') : $desc;
       }
-      $description = $this->escapeHtml($desc);
 
+      $description = $this->escapeHtml($desc);
       $popupId = ($embeddedVideo ?? '') === 'data-embed-iframe' ? 'finna-iframe' : 'finna-video';
       $type = ($embeddedVideo ?? '') === 'data-embed-iframe' ? 'iFrame' : 'video';
-      $cookieConsent = $this->plugin('cookieConsent');
       ?>
       <finna-video
         class="video-link-container active-video"
@@ -64,7 +63,7 @@
         title="<?=$this->escapeHtmlAttr($url['url'])?>"
         aria-label="<?=$this->transEscAttr('Link to video') . ' ' . $description?>"
         consent-service="recordvideo"
-        consent-categories="<?=$this->transEscAttr($cookieConsent->getCategoryTitleForService('recordvideo'))?>"
+        consent-categories="<?=$this->transEscAttr($this->plugin('cookieConsent')->getCategoryTitleForService('recordvideo'))?>"
         <?php if ($inlineVideo): ?>
           embed-parent="inline-video"
           active ="<?= $i === 0 ? 'true' : 'false'?>"
