@@ -59,7 +59,7 @@
         class="video-link-container active-video"
         popup-id="<?=$popupId?>"
         type="<?=$type?>"
-        index="<?=$i++?>"
+        index="<?=$i?>"
         source="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>"
         title="<?=$this->escapeHtmlAttr($url['url'])?>"
         aria-label="<?=$this->transEscAttr('Link to video') . ' ' . $description?>"
@@ -76,6 +76,7 @@
         <i class="fa fa-play-circle"></i>
         <span class="video-desc"><?=$this->truncate(ucfirst($description), 30)?></span>
       </finna-video>
+      <?php $i++; ?>
     <?php endforeach; ?>
   </div>
 </div>
