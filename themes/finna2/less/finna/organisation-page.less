@@ -233,6 +233,20 @@
         p {
             margin: 0;
         }
+        .source-desc {
+            margin-left: -15px;
+            margin-right: -15px;
+            @media (max-width: @screen-sm) {
+                margin-left: 0;
+                margin-right: 0;
+            }
+            p {
+                margin-top: 30px;
+                padding-top: 10px;
+                font-size: @font-size-small;
+                border-top: 1px solid @gray-lighter;
+            }
+        }
     }
     #consortium-info-section p,
     #consortium-usage-rights-section p {
@@ -251,6 +265,7 @@
         > .loader {
             display: none;
         }
+        
         .consortium-info {
             margin-bottom: 20px;
             .consotrium-logo img {

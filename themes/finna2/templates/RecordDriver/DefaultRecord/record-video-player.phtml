@@ -6,7 +6,6 @@
   ];
   $this->htmlElement()->addAttributeTemplate('video-base', $videoElementBase);
   $this->partial('Helpers/videojs-translations.phtml');
-  $videoScripts = $this->partial('Helpers/videojs-urls.phtml');
   $inlineVideo = $this->config()->inlineVideoEnabled();
 ?>
 <?php if ($inlineVideo): ?>
@@ -74,7 +73,6 @@
 
       if (!empty($url['videoSources'])) {
         $currentVideo['data-video-sources'] = json_encode($url['videoSources']);
-        $currentVideo['data-scripts'] = $videoScripts;
       }
 
       if (!empty($url['embed']) && $url['embed'] === 'video') {
@@ -82,7 +80,6 @@
           $currentVideo['data-inline'] = '';
         }
         $currentVideo['data-embed-video'] = '';
-        $currentVideo['data-scripts'] = $videoScripts;
       }
 
       $currentVideo['data-index'] = $i++;

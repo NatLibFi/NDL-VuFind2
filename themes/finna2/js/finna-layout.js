@@ -88,8 +88,8 @@ finna.layout = (function finnaLayout() {
         var moreLabel = self.data('label') || VuFind.translate('show_more');
         var lessLabel = self.data('label') || VuFind.translate('show_less');
 
-        var moreLink = $('<button type="button" class="more-link">' + moreLabel + ' <i class="fa fa-arrow-down" aria-hidden="true"></i></button>');
-        var lessLink = $('<button type="button" class="less-link">' + lessLabel + ' <i class="fa fa-arrow-up" aria-hidden="true"></i></button>');
+        var moreLink = $('<button type="button" class="more-link" aria-hidden="true">' + moreLabel + ' <i class="fa fa-arrow-down" aria-hidden="true"></i></button>');
+        var lessLink = $('<button type="button" class="less-link" aria-hidden="true">' + lessLabel + ' <i class="fa fa-arrow-up" aria-hidden="true"></i></button>');
 
         var linkClass = self.data('button-class') || '';
         if (linkClass) {
@@ -549,12 +549,13 @@ finna.layout = (function finnaLayout() {
   }
 
   function initOrganisationPageLinks() {
-    $('.organisation-page-link').not('.done').each(function setupOrganisationPageLinks() {
-      $(this).one('inview', function onInViewLink() {
-        var holder = $(this);
-        var organisationId = $(this).data('organisation');
-        var organisationName = $(this).data('organisationName');
-        var organisationSector = $(this).data('organisationSector');
+    VuFind.observerManager.createIntersectionObserver(
+      'OrganisationPageLinks',
+      (element) => {
+        const holder = $(element);
+        var organisationId = holder.data('organisation');
+        var organisationName = holder.data('organisationName');
+        var organisationSector = holder.data('organisationSector');
         var organisation = {'id': organisationId, 'sector': organisationSector};
         getOrganisationPageLink(organisation, organisationName, true, function organisationPageCallback(response) {
           holder.toggleClass('done', true);
@@ -564,8 +565,9 @@ finna.layout = (function finnaLayout() {
             });
           }
         });
-      });
-    });
+      },
+      document.querySelectorAll('.organisation-page-link:not(.done)')
+    );
   }
 
   function initOrganisationInfoWidgets() {
@@ -577,26 +579,35 @@ finna.layout = (function finnaLayout() {
   }
 
   function initAudioButtons() {
+    var scripts = {
+      'videojs': 'vendor/video.min.js',
+    };
+    var subScripts = {
+      'videojs-hotkeys': 'vendor/videojs.hotkeys.min.js',
+      'videojs-quality': 'vendor/videojs-contrib-quality-levels.js',
+      'videojs-airplay': 'vendor/silvermine-videojs-airplay.min.js',
+    };
     $('.audio-accordion .audio-item-wrapper').each(function initAudioPlayer() {
       var self = $(this);
       var play = self.find('.play');
       var source = self.find('source');
-      play.on('click', function onPlay() {
-        self.find('.audio-player-wrapper').removeClass('hide');
-        var audio = self.find('audio');
-        audio.removeClass('hide').addClass('video-js');
-        source.attr('src', source.data('src'));
-        finna.layout.loadScripts(
-          $(this).data('scripts'),
+      play.one('click', function onPlay() {
+        finna.scriptLoader.loadInOrder(
+          scripts,
+          subScripts,
           function onVideoJsLoaded() {
+            self.find('.audio-player-wrapper').removeClass('hide');
+            var audio = self.find('audio');
+            audio.removeClass('hide').addClass('video-js');
+            source.attr('src', source.data('src'));
             videojs(
               audio.attr('id'),
               { controlBar: { volumePanel: false, muteToggle: false } },
               function onVideoJsInited() {}
             );
+            play.remove();
           }
         );
-        play.remove();
       });
     });
   }
@@ -604,40 +615,6 @@ finna.layout = (function finnaLayout() {
   function initVideoButtons() {
     finna.videoPopup.initVideoPopup($('body'));
     finna.videoPopup.initIframeEmbed($('body'));
-  }
-
-  function loadScripts(scripts, callback) {
-    var needed = {};
-    // Check for required scripts that are not yet loaded
-    if (scripts) {
-      for (var item in scripts) {
-        if (Object.prototype.hasOwnProperty.call(scripts, item) && $('#' + item).length === 0) {
-          needed[item] = scripts[item];
-        }
-      }
-    }
-    var loadCount = Object.keys(needed).length;
-    if (loadCount) {
-      // Load scripts and initialize player when all are loaded
-      var scriptLoaded = function onScriptLoaded() {
-        if (--loadCount === 0) {
-          if (typeof callback === 'function') {
-            callback();
-          }
-        }
-      };
-      for (var itemNeeded in needed) {
-        if (Object.prototype.hasOwnProperty.call(needed, itemNeeded)) {
-          $(needed[itemNeeded])
-            .on('load', scriptLoaded)
-            .attr('async', 'true')
-            .appendTo($('head'))
-            .trigger('load');
-        }
-      }
-    } else if (typeof callback === 'function') {
-      callback();
-    }
   }
 
   function initKeyboardNavigation() {
@@ -822,7 +799,6 @@ finna.layout = (function finnaLayout() {
     initILSPasswordRecoveryLink: initILSPasswordRecoveryLink,
     initILSSelfRegistrationLink: initILSSelfRegistrationLink,
     initLoginTabs: initLoginTabs,
-    loadScripts: loadScripts,
     initToolTips: initToolTips,
     initImagePaginators: initImagePaginators,
     init: function init() {

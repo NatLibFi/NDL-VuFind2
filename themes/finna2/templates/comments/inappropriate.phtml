@@ -13,5 +13,7 @@
       <?php endforeach; ?>
     </ul>
   </div>
+  <p><?=$this->transEsc('report_inappropriate_info') ?>:</p>
+  <textarea id="message" class="form-control" name="message" rows="3" maxlength="1000"></textarea>
   <input class="btn btn-primary" name="submit" type="submit" value="<?=$this->transEscAttr('Submit')?>" />
 </form>

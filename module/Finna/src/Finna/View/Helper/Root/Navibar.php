@@ -281,7 +281,7 @@ class Navibar extends \Laminas\View\Helper\AbstractHelper
             $options = [];
             foreach ($items as $itemKey => $action) {
                 if (!is_string($action)) {
-                    $action = $action[$lng] ?? null;
+                    $action = $action[$lng] ?? '';
                 }
 
                 if (strncmp($action, 'metalib-', 8) === 0) {

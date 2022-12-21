@@ -1040,9 +1040,9 @@ class SolrEad3 extends SolrEad
         foreach ($xml->bibliography->p ?? [] as $p) {
             $text = (string)$p;
             $url = isset($p->ref)
-                 ? (string)$p->ref->attributes()->href : null;
-            if ($this->urlBlocked($url, $text)) {
-                $url = null;
+                 ? (string)($p->ref->attributes()->href ?? '') : '';
+            if ($url && $this->urlBlocked($url, $text)) {
+                $url = '';
             }
             $data = compact('text', 'url');
             $results[] = $data;
@@ -1904,7 +1904,7 @@ class SolrEad3 extends SolrEad
                 );
                 $url = (string)$material->attributes()->href ?? '';
                 if ($this->urlBlocked($url, $text[0])) {
-                    $url = null;
+                    $url = '';
                 }
                 $result[] = ['text' => $text[0], 'url' => $url];
             }
@@ -1949,9 +1949,9 @@ class SolrEad3 extends SolrEad
                         $text = (string)$p;
                         $lang = $this->detectNodeLanguage($p);
                         $url = isset($p->ref)
-                            ? (string)$p->ref->attributes()->href : null;
+                            ? (string)($p->ref->attributes()->href ?? '') : '';
                         if ($url && $this->urlBlocked($url, $text)) {
-                            $url = null;
+                            $url = '';
                         }
                         $data = compact('text', 'lang', 'url');
                         $itemResult[] = $data;

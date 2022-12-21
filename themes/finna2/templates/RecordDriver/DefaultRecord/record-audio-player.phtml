@@ -1,11 +1,6 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/record-audio-player.phtml -->
 <?php
   $this->partial('Helpers/videojs-translations.phtml');
-  $videoScripts = $this->partial('Helpers/videojs-urls.phtml');
-  $audioElementBase = [
-    'data-scripts' => $videoScripts
-  ];
-  $this->htmlElement()->addAttributeTemplate('audio-base', $audioElementBase);
 ?>
 <div class="audio-accordion">
 <?php foreach ($audioUrls as $ind => $url): ?>
@@ -20,7 +15,7 @@
       </div>
     </div>
     <div class="audio-accordion-item">
-      <a class="play" <?=$this->htmlElement()->getAttributes($audioElementBase, 'audio-base');?>>
+      <a class="play">
         <i class="fa fa-play-circle"></i>
       </a>
       <div class="audio-player-wrapper hide">

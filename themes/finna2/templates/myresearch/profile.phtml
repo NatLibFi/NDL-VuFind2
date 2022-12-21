@@ -69,6 +69,9 @@
       <?php endif; ?>
       <?=$this->partial('myresearch/profile-messages.phtml', ['messages' => $this->profile['messages'] ?? []]); ?>
       <?php if (is_array($this->profile)): ?>
+        <div class="logged-in-as">
+          <i id="account-icon" class="fa fa-user"></i><span class="sr-only"><?=$this->transEsc('logged_in_as')?>: </span><?=$this->escapeHtml($user->getDisplayName()) ?>
+        </div>
         <div class="myresearch-profile-header"><h3><?=$this->transEsc('Library Card Settings');?></h3></div>
         <div class="myresearch-profile-list library-profile">
           <?php if ($showHomeLibForm): ?>

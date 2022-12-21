@@ -265,7 +265,10 @@ finna.feed = (function finnaFeed() {
         if (onFeedLoaded) {
           onFeedLoaded();
         }
-        finna.common.observeImages(holder[0].querySelectorAll('img[data-src]'));
+        VuFind.observerManager.observe(
+          'LazyImages',
+          holder[0].querySelectorAll('img[data-src]')
+        );
       })
       .fail(function loadFeedFail(response/*, textStatus, err*/) {
         var err = '<!-- Feed could not be loaded';
@@ -306,11 +309,13 @@ finna.feed = (function finnaFeed() {
   }
 
   function initComponents() {
-    $('.feed-container[data-init!="0"]').each(function setupLoadFeed() {
-      $(this).one('inview', function loadEachFeed() {
-        loadFeed($(this));
-      });
-    });
+    VuFind.observerManager.createIntersectionObserver(
+      'FeedElements',
+      (element) => {
+        loadFeed($(element));
+      },
+      document.querySelectorAll('.feed-container:not([data-init="0"])')
+    );
   }
 
   var my = {

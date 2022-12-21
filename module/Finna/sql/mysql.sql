@@ -75,6 +75,7 @@ CREATE TABLE `finna_comments_inappropriate` (
   `comment_id` int(11) NOT NULL,
   `created` datetime NOT NULL DEFAULT '2000-01-01 00:00:00',
   `reason` varchar(1000) DEFAULT NULL,
+  `message` varchar(1000) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `comment_id` (`comment_id`),

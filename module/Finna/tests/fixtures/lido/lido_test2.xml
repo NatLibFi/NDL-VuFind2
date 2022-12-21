@@ -26,6 +26,59 @@
           </classification>
         </classificationWrap>
       </objectClassificationWrap>
+      <objectIdentificationWrap>
+        <objectMeasurementsWrap>
+          <objectMeasurementsSet>
+            <objectMeasurements>
+              <measurementsSet>
+                <measurementType>
+                  <conceptID type="URI">http://urn.fi/URN:NBN:fi:au:mts:m8</conceptID>
+                  <term lang="en">extent</term>
+                </measurementType>
+                <measurementUnit>kpl</measurementUnit>
+                <measurementValue>1200</measurementValue>
+              </measurementsSet>
+              <measurementsSet>
+                <measurementType>
+                  <conceptID type="URI">http://urn.fi/URN:NBN:fi:au:mts:m8</conceptID>
+                  <term lang="en">extent</term>
+                </measurementType>
+                <measurementUnit>yksikköä</measurementUnit>
+                <measurementValue>12</measurementValue>
+              </measurementsSet>
+              <measurementsSet>
+                <measurementType>syvyys</measurementType>
+                <measurementUnit>cm</measurementUnit>
+                <measurementValue>50</measurementValue>
+              </measurementsSet>
+              <extentMeasurements>kohde 1</extentMeasurements>
+            </objectMeasurements>
+          </objectMeasurementsSet>
+          <objectMeasurementsSet>
+            <objectMeasurements>
+              <displayObjectMeasurements>  </displayObjectMeasurements>
+              <measurementsSet>
+                <measurementType>
+                  <conceptID type="URI">http://urn.fi/URN:NBN:fi:au:mts:m8</conceptID>
+                  <term lang="en">extent</term>
+                </measurementType>
+                <measurementUnit>hyllymetriä</measurementUnit>
+                <measurementValue>100</measurementValue>
+              </measurementsSet>
+            </objectMeasurements>
+          </objectMeasurementsSet>
+          <objectMeasurementsSet>
+            <objectMeasurements>
+              <measurementsSet>
+                <measurementType>pituus</measurementType>
+                <measurementUnit>m</measurementUnit>
+                <measurementValue>0.73</measurementValue>
+              </measurementsSet>
+            </objectMeasurements>
+              <extentMeasurements>  </extentMeasurements>
+          </objectMeasurementsSet>                  
+        </objectMeasurementsWrap>
+      </objectIdentificationWrap>
     </descriptiveMetadata>
   </lido>
 </lidoWrap>
