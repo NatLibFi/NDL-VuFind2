@@ -77,7 +77,6 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
     public function __invoke(\Finna\View\Helper\Root\Record $record)
     {
         $this->record = $record;
-        $source = $this->record->getDriver()->getSourceIdentifier();
         return $this;
     }
 
