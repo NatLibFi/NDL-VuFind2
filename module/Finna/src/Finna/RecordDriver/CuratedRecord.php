@@ -117,7 +117,7 @@ class CuratedRecord extends AbstractBase implements ContainerFormatInterface
      *
      * @return string
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->fields['title'] ?? '';
     }
@@ -127,7 +127,7 @@ class CuratedRecord extends AbstractBase implements ContainerFormatInterface
      *
      * @return int
      */
-    public function getPosition()
+    public function getPosition(): int
     {
         return $this->fields['position'] ?? 0;
     }
@@ -137,7 +137,7 @@ class CuratedRecord extends AbstractBase implements ContainerFormatInterface
      *
      * @return string
      */
-    public function getNotes()
+    public function getNotes(): string
     {
         return $this->fields['notes'] ?? '';
     }
