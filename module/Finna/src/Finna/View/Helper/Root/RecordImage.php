@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2014-2020.
+ * Copyright (C) The National Library of Finland 2014-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -488,11 +488,12 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             'large' => [],
             'master' => []
         ];
+        $source = $this->record->getDriver()->getSourceIdentifier();
         foreach ($imageParams as $size => &$value) {
             if (!empty($params[$size])) {
                 $value = array_merge($params[$size], $value);
             }
-            $value['source'] = $this->record->getDriver()->getSourceIdentifier();
+            $value['source'] = $source;
         }
         return $imageParams;
     }
