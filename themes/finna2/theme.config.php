@@ -237,6 +237,7 @@ $config = [
         'vendor/bootstrap-datepicker.sv.min.js',
         'vendor/bootstrap-rating.min.js',
         'vendor/bootstrap-slider.min.js',
+        'vendor/hunt.min.js',
         'vendor/jquery.colorhelpers.min.js',
         'vendor/jquery.dataTables.min.js',
         'vendor/dataTables.bootstrap.min.js',
