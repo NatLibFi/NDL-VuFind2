@@ -58,13 +58,6 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
     protected $urlHelper;
 
     /**
-     * Image parameters base values.
-     *
-     * @var array
-     */
-    protected $imageParamsBase = [];
-
-    /**
      * Constructor.
      *
      * @param Url $urlHelper Url helper.
@@ -85,20 +78,6 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
     {
         $this->record = $record;
         $source = $this->record->getDriver()->getSourceIdentifier();
-        $this->imageParamsBase = [
-            'small' => [
-                'source' => $source
-            ],
-            'medium' => [
-                'source' => $source
-            ],
-            'large' => [
-                'source' => $source
-            ],
-            'master' => [
-                'source' => $source
-            ],
-        ];
         return $this;
     }
 
@@ -172,7 +151,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         $imageParams = $images[$index]['urls']['large']
             ?? $images[$index]['urls']['medium'];
         $imageParams = array_merge(
-            $this->imageParamsBase['large'],
+            ['source' => $this->record->getDriver()->getSourceIdentifier()],
             $imageParams,
             $params,
         );
@@ -234,7 +213,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         }
 
         $imageParams = array_merge(
-            $this->imageParamsBase['master'],
+            ['source' => $this->record->getDriver()->getSourceIdentifier()],
             $images[$index]['urls']['master'],
             $params
         );
@@ -286,13 +265,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         if (empty($images)) {
             return [];
         }
-        $imageParams = $this->imageParamsBase;
-        foreach ($imageParams as $size => &$value) {
-            if (!empty($params[$size])) {
-                $value = array_merge($params[$size], $value);
-            }
-        }
-        unset($value);
+        $imageParams = $this->getImageParams($params);
         foreach ($images as &$image) {
             foreach (array_intersect_key($imageParams, $image['urls'] ?? [])
                 as $size => $values
@@ -486,17 +459,42 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         if (empty($image)) {
             return [];
         }
-        foreach (array_intersect_key($this->imageParamsBase, $image['urls'] ?? [])
+        $imageParams = $this->getImageParams();
+        foreach (array_intersect_key($imageParams, $image['urls'] ?? [])
             as $size => $values
         ) {
             $image['urls'][$size] = ($this->urlHelper)('cover-show') . '?' .
                 http_build_query(
                     array_merge(
-                        $this->imageParamsBase[$size],
+                        $imageParams[$size],
                         $image['urls'][$size]
                     )
                 );
         }
         return $image;
+    }
+
+    /**
+     * Returns image params to be used when creating cover links.
+     *
+     * @param array $params Extra parameters for image. Width, height.
+     *
+     * @return array ['source' => n, ...]
+     */
+    protected function getImageParams(array $params = []): array
+    {
+        $imageParams = [
+            'small' => [],
+            'medium' => [],
+            'large' => [],
+            'master' => []
+        ];
+        foreach ($imageParams as $size => &$value) {
+            if (!empty($params[$size])) {
+                $value = array_merge($params[$size], $value);
+            }
+            $value['source'] = $this->record->getDriver()->getSourceIdentifier();
+        }
+        return $imageParams;
     }
 }
