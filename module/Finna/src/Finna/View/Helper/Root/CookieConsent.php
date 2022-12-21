@@ -98,13 +98,13 @@ class CookieConsent extends \VuFind\View\Helper\Root\CookieConsent
     }
 
     /**
-     * Get cookie consent title for service.
+     * Get title of required category for a service.
      *
      * @param string $service Service to check.
      *
      * @return string
      */
-    public function getServiceTitle(string $service): string
+    public function getCategoryTitleForService(string $service): string
     {
         foreach ($this->getControlledVuFindServices() as $key => $values) {
             if (in_array($service, $values)) {

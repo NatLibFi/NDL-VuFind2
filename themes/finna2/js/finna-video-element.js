@@ -243,7 +243,10 @@ class VideoElement extends HTMLElement {
                 v.classList.add('hidden');
               } else {
                 v.classList.remove('hidden');
-                finna.common.observeImages(v.querySelectorAll('img[data-src]'));
+                VuFind.observerManager.observe(
+                  'LazyImages',
+                  v.querySelectorAll('img[data-src]')
+                );
               }
             });
             this.currentTrigger().addClass('active-video');
@@ -253,7 +256,10 @@ class VideoElement extends HTMLElement {
               const clone = warnings.cloneNode(true);
               clone.classList.remove('hidden');
               this.modalHolder.append(clone);
-              finna.common.observeImages(clone.querySelectorAll('img[data-src]'));
+              VuFind.observerManager.observe(
+                'LazyImages',
+                clone.querySelectorAll('img[data-src]')
+              );
               setTimeout(function startFade() {
                 $(clone).fadeOut(2000);
               }, 3000);
