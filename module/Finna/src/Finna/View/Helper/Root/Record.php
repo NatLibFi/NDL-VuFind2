@@ -32,7 +32,12 @@
  */
 namespace Finna\View\Helper\Root;
 
+use Finna\Form\Form;
 use Finna\Search\Solr\AuthorityHelper;
+use Laminas\Config\Config;
+use VuFind\Record\Loader;
+use VuFind\RecordTab\TabManager;
+use VuFind\View\Helper\Root\Url;
 
 /**
  * Record driver view helper
@@ -52,7 +57,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Record loader
      *
-     * @var \VuFind\Record\Loader
+     * @var Loader
      */
     protected $loader;
 
@@ -66,28 +71,28 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Record image helper
      *
-     * @var \Finna\View\Helper\Root\RecordImage
+     * @var RecordImage
      */
     protected $recordImageHelper;
 
     /**
      * Authority helper
      *
-     * @var \Finna\Search\Solr\AuthorityHelper
+     * @var AuthorityHelper
      */
     protected $authorityHelper;
 
     /**
      * Url helper
      *
-     * @var \VuFind\View\Helper\Root\Url
+     * @var Url
      */
     protected $urlHelper;
 
     /**
      * Record link helper
      *
-     * @var \VuFind\View\Helper\Root\RecordLink
+     * @var RecordLink
      */
     protected $recordLinkHelper;
 
@@ -101,40 +106,56 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Tab Manager
      *
-     * @var \VuFind\RecordTab\TabManager
+     * @var TabManager
      */
     protected $tabManager;
 
     /**
      * Form
      *
-     * @var \Finna\Form\Form
+     * @var Form
      */
     protected $form;
 
     /**
+     * Callback to get encapsulated records results
+     *
+     * @var callable
+     */
+    protected $getEncapsulatedResults;
+
+    /**
+     * Counter used to ensure unique ID attributes when several sets of encapsulated
+     * records are displayed
+     *
+     * @var int
+     */
+    protected $indexStart = 1000;
+
+    /**
      * Constructor
      *
-     * @param \Laminas\Config\Config              $config           VuFind config
-     * @param \VuFind\Record\Loader               $loader           Record loader
-     * @param \Finna\View\Helper\Root\RecordImage $recordImage      Record image
-     * helper
-     * @param \Finna\Search\Solr\AuthorityHelper  $authorityHelper  Authority helper
-     * @param \VuFind\View\Helper\Root\Url        $urlHelper        Url helper
-     * @param \VuFind\View\Helper\Root\RecordLink $recordLinkHelper Record link
-     * helper
-     * @param \VuFind\RecordTab\TabManager        $tabManager       Tab manager
-     * @param \Finna\Form\Form                    $form             Form
+     * @param Config          $config                 VuFind config
+     * @param Loader          $loader                 Record loader
+     * @param RecordImage     $recordImage            Record image helper
+     * @param AuthorityHelper $authorityHelper        Authority helper
+     * @param Url             $urlHelper              Url helper
+     * @param RecordLink      $recordLinkHelper       Record link helper
+     * @param TabManager      $tabManager             Tab manager
+     * @param Form            $form                   Form
+     * @param callable        $getEncapsulatedResults Callback to get encapsulated
+     *                                                records results
      */
     public function __construct(
-        \Laminas\Config\Config $config,
-        \VuFind\Record\Loader $loader,
-        \Finna\View\Helper\Root\RecordImage $recordImage,
-        \Finna\Search\Solr\AuthorityHelper $authorityHelper,
-        \VuFind\View\Helper\Root\Url $urlHelper,
-        \VuFind\View\Helper\Root\RecordLink $recordLinkHelper,
-        \VuFind\RecordTab\TabManager $tabManager,
-        \Finna\Form\Form $form
+        Config $config,
+        Loader $loader,
+        RecordImage $recordImage,
+        AuthorityHelper $authorityHelper,
+        Url $urlHelper,
+        RecordLink $recordLinkHelper,
+        TabManager $tabManager,
+        Form $form,
+        callable $getEncapsulatedResults
     ) {
         parent::__construct($config);
         $this->loader = $loader;
@@ -144,6 +165,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $this->recordLinkHelper = $recordLinkHelper;
         $this->tabManager = $tabManager;
         $this->form = $form;
+        $this->getEncapsulatedResults = $getEncapsulatedResults;
     }
 
     /**
@@ -1284,5 +1306,79 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
         return ('SolrAuth' === $source || $this->hasLargeImageLayout())
             ? 'inline' : 'sidebar';
+    }
+
+    /**
+     * Returns HTML for encapsulated records.
+     *
+     * @param array $opt        Options
+     * @param ?int  $offset     Record offset
+     *                          (used when loading more results via AJAX)
+     * @param ?int  $indexStart Result item offset in DOM
+     *                          (used when loading more results via AJAX)
+     *
+     * @return string
+     */
+    public function renderEncapsulatedRecords(
+        array $opt = [],
+        ?int $offset = null,
+        ?int $indexStart = null
+    ): string {
+        foreach (array_keys($opt) as $key) {
+            if (!in_array(
+                $key,
+                [
+                    'limit',
+                    'page',
+                    'showAllLink',
+                    'view',
+                ]
+            )
+            ) {
+                unset($opt[$key]);
+            }
+        }
+
+        $id = $opt['id'] = $this->driver->getUniqueID();
+
+        $loadMore = (int)$offset > 0;
+
+        // null is an accepted limit value (no limit)
+        if (!array_key_exists('limit', $opt)) {
+            $opt['limit'] = 6;
+        }
+        $opt['showAllLink'] = $opt['showAllLink'] ?? true;
+        $view = $opt['view'] = $opt['view'] ?? 'grid';
+
+        $resultsCopy = ($this->getEncapsulatedResults)($opt);
+
+        $total = $resultsCopy->getResultTotal();
+        if (!$loadMore) {
+            $idStart = $this->indexStart;
+            $this->indexStart += $total;
+        } else {
+            // Load more results using given $indexStart and $offset
+            $idStart = $indexStart;
+            $resultsCopy->overrideStartRecord($offset);
+        }
+
+        $resultsCopy->performAndProcessSearch();
+
+        $html = $this->renderTemplate(
+            'encapsulated-records.phtml',
+            [
+                'id' => $id,
+                'results' => $resultsCopy,
+                'params' => $resultsCopy->getParams(),
+                'indexStart' => $idStart,
+                'view' => $view,
+                'total' => $total,
+                'showAllLink' =>
+                    ($opt['showAllLink'] ?? false)
+                    && $opt['limit'] < $total,
+            ]
+        );
+
+        return $html;
     }
 }

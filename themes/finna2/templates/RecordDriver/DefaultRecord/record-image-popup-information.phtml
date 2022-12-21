@@ -1,10 +1,15 @@
 <?php
   $recordImage = $this->recordImage($this->record($this->driver));
-  $highResolution = $recordImage->getHighResolutionImages((int)$this->index);
-  $largeImage = $recordImage->getLargeImageWithInfo($this->index)['url'] ?? false;
 
-  $allImages = $this->driver->tryMethod('getAllImages', [$this->layout()->userLang]);
-  $imageDescription = $allImages[$this->index]['description'] ?? '';
+  $images = $recordImage->getAllImagesAsCoverLinks(
+      $this->layout()->userLang,
+      [],
+      true,
+      true,
+      $this->driver->getSourceIdentifier()
+  );
+  $image = $images[$this->index] ?? [];
+  $imageDescription = $image['description'] ?? '';
   $rights = $recordImage->getImageRights($this->index);
 
   $formats = $this->driver->tryMethod('getFormats');
@@ -103,8 +108,8 @@ if ($otherTitles):?>
   <div class="popup-link-buttons">
     <?=$this->record($this->driver)->getOnlineUrls('popup')?>
     <?php if ($this->userlist()->getMode() !== 'disabled'): ?><div class="save-record-link"><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>"><i class="fa fa-heart"></i> <span><?=$this->transEsc('Add to favorites')?></span></a></div><?php endif; ?>
-    <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-download.phtml', ['index' => $this->index, 'rights' => $rights, 'image' => ['urls' => ['large' => $largeImage]], 'hiRes' => $highResolution ?? false]) ?>
-    <?= $this->record($this->driver)->renderTemplate('image-information.phtml', ['index' => 'popup', 'image' => $allImages[$this->index] ?? []]); ?>
+    <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-download.phtml', ['index' => $this->index, 'rights' => $rights, 'image' => $image, 'hiRes' => $image['highResolution'] ?? false]) ?>
+    <?= $this->record($this->driver)->renderTemplate('image-information.phtml', ['index' => 'popup', 'image' => $image]); ?>
   </div>
   <?php if ($this->driver->getSourceIdentifier() !== 'SolrAuth'): ?>
     <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-rights.phtml', ['rights' => $rights, 'truncateLicense' => true]); ?>

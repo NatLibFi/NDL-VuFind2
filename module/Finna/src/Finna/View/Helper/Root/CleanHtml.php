@@ -108,6 +108,17 @@ class CleanHtml extends \Laminas\View\Helper\AbstractHelper
                 $config->set('HTML.TargetBlank', 1);
             }
 
+            // Setting the following option makes purifier’s DOMLex pass the
+            // LIBXML_PARSEHUGE option to DOMDocument::loadHtml method. This in turn
+            // ensures that PHP calls htmlCtxtUseOptions (see
+            // github.com/php/php-src/blob/PHP-8.1.14/ext/dom/document.c#L1870),
+            // which ensures that the libxml2 options (namely keepBlanks) are set up
+            // properly, and whitespace nodes are preserved. This should not be an
+            // issue from libxml2 version 2.9.5, but during testing the issue was
+            // still intermittently present. Regardless of that, CentOS 7.x have an
+            // older libxml2 that exhibits the issue.
+            $config->set('Core.AllowParseManyTags', true);
+
             // Add elements and attributes not supported by default
             $def = $config->getHTMLDefinition(true);
             foreach ($this->allowedElements as $elementName => $elementInfo) {

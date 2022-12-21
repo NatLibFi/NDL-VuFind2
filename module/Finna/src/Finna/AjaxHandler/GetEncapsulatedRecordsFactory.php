@@ -1,10 +1,10 @@
 <?php
 /**
- * Record helper factory.
+ * Factory for GetEncapsulatedRecords AJAX handler.
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2018-2019.
+ * Copyright (C) The National Library of Finland 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,30 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  View_Helpers
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  AJAX
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\View\Helper\Root;
+namespace Finna\AjaxHandler;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
-use Laminas\ServiceManager\Factory\FactoryInterface;
-use Laminas\Stdlib\Parameters;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Record helper factory.
+ * Factory for GetEncapsulatedRecords AJAX handler.
  *
  * @category VuFind
- * @package  View_Helpers
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  AJAX
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class RecordFactory implements FactoryInterface
+class GetEncapsulatedRecordsFactory
+    implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create an object
@@ -58,6 +57,8 @@ class RecordFactory implements FactoryInterface
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
      * @throws ContainerException if any other error occurs
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __invoke(
         ContainerInterface $container,
@@ -65,30 +66,11 @@ class RecordFactory implements FactoryInterface
         array $options = null
     ) {
         if (!empty($options)) {
-            throw new \Exception('Unexpected options sent to factory.');
+            throw new \Exception('Unexpected options passed to factory.');
         }
-        $helper = new Record(
-            $container->get(\VuFind\Config\PluginManager::class)->get('config'),
-            $container->get(\VuFind\Record\Loader::class),
-            $container->get('ViewHelperManager')->get('recordImage'),
-            $container->get(\Finna\Search\Solr\AuthorityHelper::class),
-            $container->get('ViewHelperManager')->get('url'),
-            $container->get('ViewHelperManager')->get('recordLink'),
-            $container->get(\VuFind\RecordTab\TabManager::class),
-            $container->get(\VuFind\Form\Form::class),
-            function ($options) use ($container) {
-                $result = clone $container
-                    ->get(\VuFind\Search\Results\PluginManager::class)
-                    ->get('EncapsulatedRecords');
-                $result->getParams()->initFromRequest(new Parameters($options));
-                return $result;
-            }
+        return new $requestedName(
+            $container->get(\VuFind\Session\Settings::class),
+            $container->get('ViewRenderer')->plugin('record')
         );
-        if ('cli' !== php_sapi_name()) {
-            $helper->setCoverRouter(
-                $container->get(\VuFind\Cover\Router::class)
-            );
-        }
-        return $helper;
     }
 }
