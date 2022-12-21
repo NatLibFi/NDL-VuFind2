@@ -50,7 +50,6 @@
         $desc = $embeddedVideo === 'data-embed-iframe' ? $this->translate('format_Video') : $desc;
       }
 
-      $description = $this->escapeHtml($desc);
       $popupId = ($embeddedVideo ?? '') === 'data-embed-iframe' ? 'finna-iframe' : 'finna-video';
       $type = ($embeddedVideo ?? '') === 'data-embed-iframe' ? 'iFrame' : 'video';
       ?>
@@ -61,7 +60,7 @@
         index="<?=$i?>"
         source="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>"
         title="<?=$this->escapeHtmlAttr($url['url'])?>"
-        aria-label="<?=$this->transEscAttr('Link to video') . ' ' . $description?>"
+        aria-label="<?=$this->transEscAttr('Link to video') . ' ' . $this->escapeHtmlAttr($desc)?>"
         consent-service="recordvideo"
         consent-categories="<?=$this->transEscAttr($this->plugin('cookieConsent')->getCategoryTitleForService('recordvideo'))?>"
         <?php if ($inlineVideo): ?>
@@ -73,7 +72,7 @@
         <?php endif; ?>
       >
         <i class="fa fa-play-circle"></i>
-        <span class="video-desc"><?=$this->truncate(ucfirst($description), 30)?></span>
+        <span class="video-desc"><?=$this->escapeHtml($this->truncate(ucfirst($desc), 30))?></span>
       </finna-video>
       <?php $i++; ?>
     <?php endforeach; ?>

@@ -93,7 +93,7 @@
               <?php endif; ?>
             >
               <i class="fa fa-play-circle"></i>
-              <span class="video-desc"><?=$this->truncate(ucfirst($desc), 30)?></span>
+              <span class="video-desc"><?=$this->escapeHtml($this->truncate(ucfirst($desc), 30))?></span>
             </finna-video>
           <?php else: ?>
             <a <?= $this->htmlElement()->getAttributes($currentUrl, 'url-base') ?>><i class="fa fa-external-link" aria-hidden="true"></i>
