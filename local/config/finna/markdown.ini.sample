@@ -80,7 +80,8 @@ disallowed_tags[] = "plaintext"
 [ExternalLink]
 ; This should be always set, if you want to use this extension. You can use regular
 ; expressions to match group of hosts
-internal_hosts[] = www.finna.fi
+internal_hosts[] = "(^|\.)finna\.fi$"
+internal_hosts[] = "(^|\.)finna-pre\.fi$"
 open_in_new_window = true
 ;html_class = external-link
 nofollow = external
