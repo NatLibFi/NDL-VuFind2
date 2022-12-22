@@ -3,7 +3,6 @@
 <?php
   $dedupData = $this->driver->getDedupData(true);
   $deduplicated = count($dedupData) > 1;
-  $selectID = "dedup-select-{$this->counter('deduplicatedSources')->increment()}";
 ?>
 
 <div class="holding-details<?=$deduplicated ? ' deduplicated' : ''?>">
@@ -12,15 +11,17 @@
   $recordSource = $this->record($this->driver)->getPreferredSource();
   if ($deduplicated): ?>
     <div class="dedupInformation">
-      <label for="<?=$this->escapeHtmlAttr($selectID)?>"><?=$this->transEsc('Holdings')?>:</label>
-      <select id="<?=$this->escapeHtmlAttr($selectID)?>" class="dedup-select form-control" role="listbox" aria-haspopup="true" title="<?=$this->transEscAttr('select_dedup_organisation');?>" aria-label="<?=$this->transEscAttr('select_dedup_organisation');?>">
-        <?php if (!$recordSource):?>
-          <option class="js-dedup-placeholder" value="" disabled selected><?= $this->transEsc('Choose Source')?></option>
-        <?php endif;?>
-        <?php foreach ($dedupData as $source => $current): ?>
-          <option value="<?=$this->escapeHtmlAttr($current['id']) ?>" class="dedup-data-id" data-source="<?=$this->escapeHtmlAttr($source) ?>"<?php if ($recordSource === $source): ?> selected="selected"<?php endif; ?>><?=$this->transEsc("source_$source", null, $source) ?></option>
-        <?php endforeach; ?>
-      </select>
+      <label>
+        <?=$this->transEsc('Holdings')?>:
+        <select class="dedup-select form-control" role="listbox" aria-haspopup="true" title="<?=$this->transEscAttr('select_dedup_organisation');?>" aria-label="<?=$this->transEscAttr('select_dedup_organisation');?>">
+          <?php if (!$recordSource):?>
+            <option class="js-dedup-placeholder" value="" disabled selected><?= $this->transEsc('Choose Source')?></option>
+          <?php endif;?>
+          <?php foreach ($dedupData as $source => $current): ?>
+            <option value="<?=$this->escapeHtmlAttr($current['id']) ?>" class="dedup-data-id" data-source="<?=$this->escapeHtmlAttr($source) ?>"<?php if ($recordSource === $source): ?> selected="selected"<?php endif; ?>><?=$this->transEsc("source_$source", null, $source) ?></option>
+          <?php endforeach; ?>
+        </select>
+      </label>
     </div>
   <?php elseif ($recordSource): ?>
     <div class="dedupInformation">

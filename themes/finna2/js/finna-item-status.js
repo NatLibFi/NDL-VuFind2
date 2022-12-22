@@ -14,13 +14,13 @@ finna.itemStatus = (function finnaItemStatus() {
       return;
     }
     var recordContainer = $(element).closest('.record-container');
-    recordContainer.data('ajaxAvailabilityDone', 0);
     var oldRecordId = recordContainer.find('.hiddenId')[0].value;
+
+    // Element changes are being watched with lazyloading so return if the value is same.
     if (id === oldRecordId) {
       return;
     }
     // Update IDs of elements
-    recordContainer.find('.hiddenId').val(id);
     var hiddenId = recordContainer.find('.hiddenId');
     hiddenId.val(id);
     // Update IDs of elements
@@ -34,21 +34,24 @@ finna.itemStatus = (function finnaItemStatus() {
         $(this).attr('href', $(this).attr('href').replace(oldRecordId, id));
       }
     });
-    if (recordContainer.hasClass('js-item-done')) {
-      $(element).trigger('change', [true]);
-    }
-  }
-
-  /**
-   * Finds all the elements with dedup-select class and updates their ids.
-   *
-   * @param {HTMLElement} holder 
-   */
-  function updateElementIDs(holder) {
-    var selects = $(holder).find('.dedup-select');
-    selects.each((ind, element) => {
-      updateElement(element);
-    });
+    // Item statuses
+    var $loading = $('<span/>')
+      .addClass('location ajax-availability hidden')
+      .html(VuFind.loading());
+    recordContainer.find('.callnumAndLocation')
+      .empty()
+      .append($loading);
+    recordContainer.find('.callnumber').removeClass('hidden');
+    recordContainer.find('.location').removeClass('hidden');
+    recordContainer.removeClass('js-item-done');
+    VuFind.observerManager.observe(
+      'itemStatuses',
+      [recordContainer[0]]
+    );
+    VuFind.observerManager.observe(
+      'FinnaDedupSelect',
+      [recordContainer[0]]
+    );
   }
 
   /**
@@ -61,9 +64,11 @@ finna.itemStatus = (function finnaItemStatus() {
     var selects = $(holder).find('.dedup-select');
 
     selects.on('change', function onChangeDedupSelection(e, auto_selected) {
-      var source = $(this).find('option:selected').data('source');
-      var recordContainer = $(this).closest('.record-container');
-      var hiddenId = recordContainer.find('.hiddenId');
+      if (auto_selected) {
+        return;
+      }
+      const self = $(this);
+      var source = self.find('option:selected').data('source');
       // prefer 3 latest sources
       var cookie = finna.common.getCookie('preferredRecordSource');
       if (cookie) {
@@ -73,65 +78,63 @@ finna.itemStatus = (function finnaItemStatus() {
         // If no cookie is set, assign the source as a default for all dedups
         cookie = [];
       } else if (cookie.length > 2) {
-        cookie.slice(0, 2);
+        cookie = cookie.slice(0, 2);
       }
       cookie.unshift(source);
       finna.common.setCookie('preferredRecordSource', JSON.stringify(cookie));
-
       selects.each(function setValues() {
+        if (self[0] === $(this)[0]) {
+          return;
+        }
         var elem = $(this).find(`option[data-source='${source}']`);
         if (elem.length) {
           $(this).val(elem.val());
+          updateElement(elem);
         }
       });
-
-      const placeholder = $(this).find('.js-dedup-placeholder');
+      updateElement(this);
+      const placeholder = self.find('.js-dedup-placeholder');
       if (placeholder) {
         placeholder.remove();
-      }
-      // Update deduplication elements to match only if done with user input
-      if (!auto_selected) {
-        updateElementIDs(holder);
-      }
-      // Item statuses
-      var $loading = $('<span/>')
-        .addClass('location ajax-availability hidden')
-        .html(VuFind.loading());
-      recordContainer.find('.callnumAndLocation')
-        .empty()
-        .append($loading);
-      recordContainer.find('.callnumber').removeClass('hidden');
-      recordContainer.find('.location').removeClass('hidden');
-      recordContainer.removeClass('js-item-done');
-      VuFind.itemStatuses.checkRecord(recordContainer);
-      // Online URLs
-      var $recordUrls = recordContainer.find('.available-online-links');
-      if ($recordUrls.length) {
-        $recordUrls.html(VuFind.loading());
-        $.getJSON(
-          VuFind.path + '/AJAX/JSON',
-          {
-            method: 'getRecordData',
-            data: 'onlineUrls',
-            source: recordContainer.find('.hiddenSource')[0].value,
-            id: hiddenId.val()
-          }
-        ).done(function onGetRecordLinksDone(response) {
-          $recordUrls.replaceWith(VuFind.updateCspNonce(response.data.html));
-          finna.layout.initTruncate(recordContainer);
-          VuFind.openurl.embedOpenUrlLinks(recordContainer.find('.openUrlEmbed a'));
-        }).fail(function onGetRecordLinksFail() {
-          $recordUrls.html(VuFind.translate('error_occurred'));
-        });
       }
     });
   }
 
+  function createLinkObserver() {
+    VuFind.observerManager.createIntersectionObserver(
+      'FinnaDedupSelect',
+      (recordContainer) => {
+        var $recordContainer = $(recordContainer);
+        var hiddenId = $recordContainer.find('.hiddenId');
+        var $recordUrls = $recordContainer.find('.available-online-links');
+        if ($recordUrls.length) {
+          $recordUrls.html(VuFind.loading());
+          $.getJSON(
+            VuFind.path + '/AJAX/JSON',
+            {
+              method: 'getRecordData',
+              data: 'onlineUrls',
+              source: $recordContainer.find('.hiddenSource')[0].value,
+              id: hiddenId.val()
+            }
+          ).done(function onGetRecordLinksDone(response) {
+            $recordUrls.replaceWith(VuFind.updateCspNonce(response.data.html));
+            finna.layout.initTruncate($recordContainer);
+            VuFind.openurl.embedOpenUrlLinks($recordContainer.find('.openUrlEmbed a'));
+          }).fail(function onGetRecordLinksFail() {
+            $recordUrls.html(VuFind.translate('error_occurred'));
+          });
+        }
+      }
+    );
+  }
+
   var my = {
     initDedupRecordSelection: initDedupRecordSelection,
-    updateElementIDs: updateElementIDs,
+    updateElement: updateElement,
     init: function init() {
       if (!$('.results').hasClass('result-view-condensed')) {
+        createLinkObserver();
         initDedupRecordSelection();
       }
     }

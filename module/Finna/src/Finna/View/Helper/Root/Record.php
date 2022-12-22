@@ -1322,9 +1322,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         if (empty($this->config->Record->select_dedup_holdings_library)) {
             return $this->driver->tryMethod('getDataSource', [], '');
         }
-
-        $params = $this->getView()->params;
-        if (!empty($params)) {
+        if ($params = $this->getView()->params) {
             $filterList = $params->getFilterList();
             if (!empty($filterList['Organisation'])) {
                 return $this->driver->tryMethod('getDataSource', [], '');
@@ -1360,16 +1358,17 @@ class Record extends \VuFind\View\Helper\Root\Record
     public function getContainerClasses(): string
     {
         $classes = '';
-        if ($this->driver->supportsAjaxStatus()) {
+        if (!empty($this->driver) && $this->driver->supportsAjaxStatus()) {
             $classes .= 'ajaxItem';
         }
         if (!$this->getPreferredSource()) {
-            $classes .= $classes ? ' js-sourceless' : 'js-sourceless';
+            $classes .= $classes ? ' ' : '';
+            $classes .= 'js-sourceless';
         }
         return $classes;
     }
 
-    /*
+    /**
      * Returns HTML for encapsulated records.
      *
      * @param array $opt        Options
