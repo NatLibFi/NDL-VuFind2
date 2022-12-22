@@ -50,7 +50,7 @@ $config = [
             'Finna\View\Helper\Root\Record' => 'Finna\View\Helper\Root\RecordFactory',
             'Finna\View\Helper\Root\RecordDataFormatter' => 'Finna\View\Helper\Root\RecordDataFormatterFactory',
             'Finna\View\Helper\Root\RecordFieldMarkdown' => 'Finna\View\Helper\Root\RecordFieldMarkdownFactory',
-            'Finna\View\Helper\Root\RecordImage' => 'Laminas\ServiceManager\Factory\InvokableFactory',
+            'Finna\View\Helper\Root\RecordImage' => 'Finna\View\Helper\Root\RecordImageFactory',
             'Finna\View\Helper\Root\RecordLink' => 'Finna\View\Helper\Root\RecordLinkFactory',
             'Finna\View\Helper\Root\RecordLinker' => 'Finna\View\Helper\Root\RecordLinkerFactory',
             'Finna\View\Helper\Root\ResultFeed' => 'VuFind\View\Helper\Root\ResultFeedFactory',
@@ -204,7 +204,6 @@ $config = [
         'finna-autocomplete.js',
         'finna-authority.js',
         'finna-combined-results.js',
-        'finna-video-popup.js',
         'finna-image-paginator.js',
         'finna-menu-movement.js',
         'finna-comments.js',
@@ -246,7 +245,6 @@ $config = [
         'vendor/jquery.editable.min.js',
         'vendor/jquery.flot.min.js',
         'vendor/jquery.flot.selection.min.js',
-        'vendor/jquery.inview.min.js',
         'vendor/jsTree/jstree.min.js',
         'vendor/sortable.min.js',
         'vendor/easymde.min.js',
@@ -259,6 +257,7 @@ $config = [
         'vendor/js.cookie.js',
         'finna-multiselect.js',
         'finna-model-viewer.js',
+        'finna-video-element.js',
         'finna-vufind-overrides.js'
     ],
     'less' => [

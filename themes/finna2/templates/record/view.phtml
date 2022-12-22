@@ -88,6 +88,22 @@
   <div>
       <?=$this->record($this->driver)->getToolbar()?>
   </div>
+  <?php if ($this->config()->inlineVideoEnabled()): ?>
+    <?php
+      $videoUrls = [];
+      foreach ($this->record($this->driver)->getLinkDetails() as $url) {
+        if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
+          $videoUrls[] = $url;
+        }
+      }
+    ?>
+    <?php if (!empty($videoUrls)): ?>
+      <div class="inline-video-container">
+        <div class="inline-video" id="inline-video"></div>
+        <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls, 'inlineVideo' => true]);?>
+      </div>
+    <?php endif; ?>
+  <?php endif; ?>
   <div class="record-main <?= !$largeImageLayout ? 'mainbody left' : ''?>">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId" />
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier()) ?>" class="hiddenSource" />

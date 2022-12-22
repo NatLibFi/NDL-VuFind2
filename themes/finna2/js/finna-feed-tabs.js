@@ -1,4 +1,4 @@
-/*global finna */
+/*global finna, VuFind */
 finna.feedTabs = (function finnaFeedTab() {
 
   /**
@@ -118,24 +118,13 @@ finna.feedTabs = (function finnaFeedTab() {
    * @param {String} id 
    */
   function init(id) {
-    var containers = document.querySelectorAll('.feed-tabs#' + id + ':not(.init-done)');
-    if (window.IntersectionObserver) {
-      var observer = new IntersectionObserver(function observe(entries, obs) {
-        entries.forEach(function checkEntry(entry) {
-          new FeedTab(entry.target);
-          obs.unobserve(entry.target);
-        }); 
-      }, {rootMargin: "0px 0px -200px 0px"});
-      containers.forEach(function observeFeedTab(container) {
-        observer.observe(container);
-      });
-    } else {
-      // TODO: remove jquery version of the init
-      // Support for older browsers
-      $(containers).one('inview', function onInview() {
-        new FeedTab(this);
-      });
-    }
+    VuFind.observerManager.createIntersectionObserver(
+      'FinnaFeedTabs',
+      (element) => {
+        new FeedTab(element);
+      },
+      document.querySelectorAll('.feed-tabs#' + id + ':not(.init-done)')
+    );
   }
 
   var my = {

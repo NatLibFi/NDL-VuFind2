@@ -1,9 +1,13 @@
 <!-- START of: finna - list/list-notes.phtml -->
 <?php
-  if (!in_array($this->layout()->templateDir, ['content', 'list', 'search']) || $this->layout()->templateName === 'results' || !is_callable([$this->results, 'getListObject'])) {
+  if (!in_array($this->layout()->templateDir, ['content', 'list', 'search', 'record']) || $this->layout()->templateName === 'results') {
     return;
   }
-  $notes = $this->driver->getListNotes($this->results->getListObject()->id);
+  if (is_callable([$this->results, 'getListObject'])) {
+      $notes = $this->driver->getListNotes($this->results->getListObject()->id);
+  } elseif (isset($this->curatedRecord) && !empty($notes = $this->curatedRecord->getNotes())) {
+      $notes = [$notes];
+  }
   if (empty($notes)) {
     return;
   }

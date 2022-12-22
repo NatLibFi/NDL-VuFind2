@@ -1,14 +1,14 @@
 /*global VuFind, finna, checkSaveStatuses */
-finna.userListEmbed = (function userListEmbed() {
+finna.encapsulatedRecords = (function encapsulatedRecords() {
   var my = {
     init: function init() {
-      $('.public-list-embed.show-all').not(':data(inited)').each(function initEmbed() {
-        var embed = $(this);
-        embed.data('inited', '1');
+      $('.encapsulated-records.show-all').not(':data(inited)').each(function initRecords() {
+        var records = $(this);
+        records.data('inited', '1');
 
-        var showMore = embed.find('.show-more');
-        var spinner = embed.find('.fa-spinner');
-        embed.find('.btn.load-more').on('click', function initLoadMore() {
+        var showMore = records.find('.show-more');
+        var spinner = records.find('.fa-spinner');
+        records.find('.btn.load-more').on('click', function initLoadMore() {
           spinner.removeClass('hide').show();
 
           var btn = $(this);
@@ -21,22 +21,22 @@ finna.userListEmbed = (function userListEmbed() {
 
           btn.hide();
 
-          var resultsContainer = embed.find(
+          var resultsContainer = records.find(
             view === 'grid' ? '.search-grid' : '.result-view-' + view
           );
 
           $.getJSON(
-            VuFind.path + '/AJAX/JSON?method=getUserList',
+            VuFind.path + '/AJAX/JSON?method=getEncapsulatedRecords',
             {
               id: id,
               offset: offset,
               indexStart: indexStart,
               view: view,
               sort: sort,
-              method: 'getUserList'
+              method: 'getEncapsulatedRecords'
             }
           )
-            .done(function onListLoaded(response) {
+            .done(function onRecordsLoaded(response) {
               showMore.remove();
               $(VuFind.updateCspNonce(response.data.html)).find('.result').each(function appendResult(/*index*/) {
                 resultsContainer.append($(this));
@@ -47,6 +47,8 @@ finna.userListEmbed = (function userListEmbed() {
               finna.layout.initTruncate();
               finna.layout.initImagePaginators();
               finna.openUrl.initLinks(resultsContainer);
+              finna.videoPopup.initIframeEmbed(resultsContainer);
+              finna.videoPopup.initVideoPopup(resultsContainer);
               VuFind.itemStatuses.check(resultsContainer);
               finna.itemStatus.initDedupRecordSelection(resultsContainer);
               VuFind.recordVersions.init(resultsContainer);
@@ -55,7 +57,7 @@ finna.userListEmbed = (function userListEmbed() {
               $.fn.finnaPopup.reIndex();
               checkSaveStatuses(resultsContainer);
             })
-            .fail(function onLoadListFail() {
+            .fail(function onLoadRecordsFail() {
               btn.show();
               spinner.hide();
             });
