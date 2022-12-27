@@ -328,7 +328,10 @@ FinnaPaginator.prototype.onLeafletImageClick = function onLeafletImageClick(imag
   _.leafletHolder.setMaxBounds(null);
   _.leafletHolder.setMinZoom(1);
   var img = new Image();
-  img.src = image.data('master') || image.data('large');
+  img.src = image.data('master')
+    || image.data('large')
+    || image.data('medium')
+    || image.attr('href');
   _.timeOut = setTimeout(function onLoadStart() {
     _.leafletLoader.addClass('loading');
   }, 100);
@@ -764,7 +767,7 @@ FinnaPaginator.prototype.createImagePopup = function createImagePopup(image, ind
     'data-master': image.urls.master,
     'data-description': image.description,
     'data-type': image.type,
-    'href': (!_.settings.isList) ? image.urls.large : image.urls.medium,
+    'href': (!_.settings.isList) ? (image.urls.large || image.urls.medium) : image.urls.medium,
     'data-alt': image.description
   });
 
