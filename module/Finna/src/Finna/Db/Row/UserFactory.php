@@ -27,7 +27,7 @@
  */
 namespace Finna\Db\Row;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * User row gateway factory.

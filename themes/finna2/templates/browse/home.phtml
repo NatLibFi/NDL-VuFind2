@@ -41,9 +41,12 @@
   <?php if (!empty($this->secondaryList)): ?>
     <div class="browse list-group<?php if (!empty($this->resultList)): ?> hidden-xs<?php endif ?>" id="list3">
     <?php foreach($this->secondaryList as $secondary): ?>
-      <?php $url = $BROWSE_BASE . '?findby=' . urlencode($this->findby)
-          . '&amp;category=' . urlencode($this->category)
+      <?php
+        $url = $BROWSE_BASE . '?findby=' . urlencode($this->findby)
           . '&amp;query=' . urlencode($secondary['value']);
+        if (isset($this->category)) {
+          $url .= '&amp;category=' . urlencode($this->category);
+        }
         if ($this->facetPrefix) {
           $url .= '&amp;facet_prefix=' . urlencode($secondary['displayText']);
         }

@@ -99,16 +99,19 @@
       }
     }
   }
-  .renew-button, #update_selected, #cancelSelected, #cancelAll {
+  .renew-button, #renewAll, #renewSelected, #update_selected, #cancelAll, #cancelSelected {
     height: 35px;
     padding: 0 10px;
     margin-right: 12px;
-    @media (max-width: @screen-sm) {
-      margin-bottom: 12px;
+    @media (max-width: @screen-md) {
+      margin: 6px 12px 6px 0px;
     }
   }
   .sort-col .dropdown-toggle {
     margin-bottom: 0;
+    @media (max-width: @screen-md) {
+      margin-top: 6px;
+    }
   }
   @media(min-width: @screen-sm) {
     .half-table-column {
@@ -139,7 +142,6 @@
   }
   @media(max-width: @screen-xxs-max) {
     .renew-button-col {
-      margin-bottom: 10px;
       width: 100%;
       float: left;
       input {
@@ -163,6 +165,9 @@
   .checkboxFilter.mylist-select-all {
     .checkbox {
       margin: 5px 0;
+      @media (max-width: @screen-md) {
+        margin-top: 12px;
+      }
     }
   }
 }
@@ -193,6 +198,14 @@
   }
   .myresearch-row:last-child {
     box-shadow: none;
+  }
+  #cancelSelected, #cancelAll {
+    height: 35px;
+    padding: 0 10px;
+    margin-right: 12px;
+    @media (max-width: @screen-md) {
+      margin: 6px 12px 6px 0;
+    }
   }
 }
 .list-description,
@@ -359,7 +372,6 @@
 
   .profile-status i::before {
     display: inline-block;
-    margin-top: 4px;
   }
 }
 
@@ -449,6 +461,16 @@
   }
 }
 
+#cancelILLRequest .toolbar, #cancelStorageRetrievalRequest .toolbar {
+  padding: 5px;
+  .btn-group {
+    margin: 0;
+  }
+  @media (max-width: @screen-md) {
+    padding: 0;
+  }
+}
+
 .template-dir-myresearch .toolbar, .template-dir-holds .toolbar {
   margin: 0;
   margin-top: 5px;
@@ -471,9 +493,6 @@
         width: 100%;
       }
     }
-  }
-  .btn-group {
-    margin-top: 3px;
   }
 }
 
@@ -602,10 +621,12 @@
 
 .useraccount-nav-mobile {
   .dropdown-menu {
-    left: ~"-webkit-calc(50% - 100px)";
-    left: ~"-moz-calc(50% - 100px)";
-    left: ~"calc(50% - 100px)";
-    width: 200px;
+    width: 100%;
+    right: 0;
+    left: 0;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 .useraccount-nav {
@@ -741,14 +762,58 @@
       }
     }
   }
-  // remove exclamation mark from fines row
-  .fines-status .badge.overdue {
-    &:before {
-      content:"";
+}
+
+// Status badges
+.myresearch-menu, #my-info-dropdown-menu {
+  a {
+    display: block;
+    &.flex {
+      display: flex;
+    }
+    &:hover {
+      background-color: @gray-lighter;
+    }
+    &:focus {
+      background-color: @nav-link-hover-bg;
+    }
+    &.user-list-link i {
+      margin-left: 0.5rem;
+    }
+    &.active {
+      background-color: @brand-primary;
+      color: #fff;
+    }
+  }
+
+  .status {
+    float: right;
+    display: flex;
+    flex: none;
+    .badge {
+      border-radius: 2px;
+      margin: 0 2px;
+      border: 1px solid; /* color inherited from bootstrap */
+      height: 22px;
+      padding: 0 7px;
+
+      &.account-info {
+        color: @state-success-text;
+        background-color: @state-success-bg;
+      }
+      &.account-warning {
+        color: @state-warning-text;
+        background-color: @state-warning-bg;
+      }
+      &.account-alert {
+        color: @state-danger-text;
+        background-color: @state-danger-bg;
+      }
     }
   }
 }
 
+// Search history
 .history-holder {
   @media (min-width: @screen-xs-max) {
     h2 {
@@ -762,11 +827,14 @@
   }
 }
 
-.useraccount-cancel > li {
+.useraccount-confirm {
+  min-width: 205px;
+}
+.useraccount-confirm > li {
   border-bottom: none;
   &:not(.disabled) {
     float: left;
-    width: 45%;
+    width: 100px;
     padding: 10px;
     text-align: center;
     a {
@@ -781,12 +849,12 @@
     margin-bottom: 20px;
   }
 }
-.template-dir-librarycards .dropdown-menu.useraccount-cancel {
+.template-dir-librarycards .dropdown-menu.useraccount-confirm {
   left: auto;
   right: 0;
   top: auto;
 }
-.template-dir-myresearch .toolbar > .btn-group:last-of-type .dropdown-menu.useraccount-cancel {
+.template-dir-myresearch .toolbar > .btn-group:last-of-type .dropdown-menu.useraccount-confirm {
   @media (max-width: @screen-xs-max) {
     left: auto;
     right: 0;
@@ -839,7 +907,7 @@
     top: 120%;
     transition: top 0.5s ease;
     background: @body-bg;
-    z-index: 1030;
+    z-index: @zindex-sidebar;
     width: 100%;
     height: 100%;
     overflow-y: scroll;

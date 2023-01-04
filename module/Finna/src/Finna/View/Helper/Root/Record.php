@@ -5,7 +5,7 @@
  * PHP version 7
  *
  * Copyright (C) Villanova University 2010.
- * Copyright (C) The National Library of Finland 2015-2020.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -32,7 +32,12 @@
  */
 namespace Finna\View\Helper\Root;
 
+use Finna\Form\Form;
 use Finna\Search\Solr\AuthorityHelper;
+use Laminas\Config\Config;
+use VuFind\Record\Loader;
+use VuFind\RecordTab\TabManager;
+use VuFind\View\Helper\Root\Url;
 
 /**
  * Record driver view helper
@@ -52,7 +57,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Record loader
      *
-     * @var \VuFind\Record\Loader
+     * @var Loader
      */
     protected $loader;
 
@@ -66,75 +71,91 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Record image helper
      *
-     * @var \Finna\View\Helper\Root\RecordImage
+     * @var RecordImage
      */
     protected $recordImageHelper;
 
     /**
      * Authority helper
      *
-     * @var \Finna\Search\Solr\AuthorityHelper
+     * @var AuthorityHelper
      */
     protected $authorityHelper;
 
     /**
      * Url helper
      *
-     * @var \VuFind\View\Helper\Root\Url
+     * @var Url
      */
     protected $urlHelper;
 
     /**
      * Record link helper
      *
-     * @var \VuFind\View\Helper\Root\RecordLink
+     * @var RecordLink
      */
     protected $recordLinkHelper;
 
     /**
-     * Image cache
+     * Local cache
      *
      * @var array
      */
-    protected $cachedImages = [];
+    protected $cache = [];
 
     /**
      * Tab Manager
      *
-     * @var \VuFind\RecordTab\TabManager
+     * @var TabManager
      */
     protected $tabManager;
 
     /**
      * Form
      *
-     * @var \Finna\Form\Form
+     * @var Form
      */
     protected $form;
 
     /**
+     * Callback to get encapsulated records results
+     *
+     * @var callable
+     */
+    protected $getEncapsulatedResults;
+
+    /**
+     * Counter used to ensure unique ID attributes when several sets of encapsulated
+     * records are displayed
+     *
+     * @var int
+     */
+    protected $indexStart = 1000;
+
+    /**
      * Constructor
      *
-     * @param \Laminas\Config\Config              $config           VuFind config
-     * @param \VuFind\Record\Loader               $loader           Record loader
-     * @param \Finna\View\Helper\Root\RecordImage $recordImage      Record image
-     * helper
-     * @param \Finna\Search\Solr\AuthorityHelper  $authorityHelper  Authority helper
-     * @param \VuFind\View\Helper\Root\Url        $urlHelper        Url helper
-     * @param \VuFind\View\Helper\Root\RecordLink $recordLinkHelper Record link
-     * helper
-     * @param \VuFind\RecordTab\TabManager        $tabManager       Tab manager
-     * @param \Finna\Form\Form                    $form             Form
+     * @param Config          $config                 VuFind config
+     * @param Loader          $loader                 Record loader
+     * @param RecordImage     $recordImage            Record image helper
+     * @param AuthorityHelper $authorityHelper        Authority helper
+     * @param Url             $urlHelper              Url helper
+     * @param RecordLink      $recordLinkHelper       Record link helper
+     * @param TabManager      $tabManager             Tab manager
+     * @param Form            $form                   Form
+     * @param callable        $getEncapsulatedResults Callback to get encapsulated
+     *                                                records results
      */
     public function __construct(
-        \Laminas\Config\Config $config,
-        \VuFind\Record\Loader $loader,
-        \Finna\View\Helper\Root\RecordImage $recordImage,
-        \Finna\Search\Solr\AuthorityHelper $authorityHelper,
-        \VuFind\View\Helper\Root\Url $urlHelper,
-        \VuFind\View\Helper\Root\RecordLink $recordLinkHelper,
-        \VuFind\RecordTab\TabManager $tabManager,
-        \Finna\Form\Form $form
+        Config $config,
+        Loader $loader,
+        RecordImage $recordImage,
+        AuthorityHelper $authorityHelper,
+        Url $urlHelper,
+        RecordLink $recordLinkHelper,
+        TabManager $tabManager,
+        Form $form,
+        callable $getEncapsulatedResults
     ) {
         parent::__construct($config);
         $this->loader = $loader;
@@ -144,6 +165,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $this->recordLinkHelper = $recordLinkHelper;
         $this->tabManager = $tabManager;
         $this->form = $form;
+        $this->getEncapsulatedResults = $getEncapsulatedResults;
     }
 
     /**
@@ -303,13 +325,15 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @param string $type              Link type
      * @param string $lookfor           String to search for at link
-     * @param array  $params            Optional array of parameters for the
+     * @param ?array $params            Optional array of parameters for the
      * link template
      * @param bool   $withInfo          return an array with link HTML and
      * returned linktype.
      * @param bool   $searchTabsFilters Include search tabs hiddenFilters in
      * the URL (needed when the link performs a search, but not when linking
      * to authority page).
+     * @param bool   $switchType        Whether to switch to authority search
+     * automatically
      *
      * @return string
      */
@@ -318,7 +342,8 @@ class Record extends \VuFind\View\Helper\Root\Record
         $lookfor,
         $params = [],
         $withInfo = false,
-        $searchTabsFilters = true
+        $searchTabsFilters = true,
+        $switchType = true
     ) {
         if (is_array($lookfor)) {
             $lookfor = $lookfor['name'];
@@ -326,11 +351,13 @@ class Record extends \VuFind\View\Helper\Root\Record
         $searchAction = !empty($this->getView()->browse)
             ? 'browse-' . $this->getView()->browse : $params['searchAction'] ?? '';
         $params = $params ?? [];
-        $filter = null;
 
         $linkType = $params['linkType'] ?? $this->getAuthorityLinkType($type);
         $authId = null;
         if (isset($params['id'])) {
+            // For BC: put non-mangled id into localId and keep the prefixed id in
+            // 'id' element.
+            $params['localId'] = $params['id'];
             // Add namespace to id
             $authId = $params['id'] = $this->driver->getAuthorityId(
                 $params['id'],
@@ -339,15 +366,12 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
 
         // Attempt to switch Author search link to Authority link.
-        if (null !== $linkType
+        if ($switchType
+            && null !== $linkType
             && in_array($type, ['author', 'author-id', 'subject'])
             && $authId
         ) {
             $type = "authority-$linkType";
-            $filter = $linkType === 'search'
-                ? $params['filter']
-                    ?? sprintf('%s:"%s"', AuthorityHelper::AUTHOR2_ID_FACET, $authId)
-                : $authId;
         }
 
         $params = array_merge(
@@ -356,7 +380,6 @@ class Record extends \VuFind\View\Helper\Root\Record
                 'driver' => $this->driver,
                 'lookfor' => $lookfor,
                 'searchAction' => $searchAction,
-                'filter' => $filter
             ]
         );
         $result = $this->renderTemplate(
@@ -402,6 +425,132 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * Render a linked field.
+     *
+     * @param string $type    Link type
+     * @param string $lookfor Link label or string to search for
+     * @param array  $data    Additional link data
+     * @param array  $params  Optional array of parameters for the link template
+     *
+     * @return string HTML
+     */
+    public function getLinkedFieldElement(
+        string $type,
+        string $lookfor,
+        array $data,
+        array $params = []
+    ): string {
+        if (empty($this->config->LinkPopovers->enabled)) {
+            return $this->getAuthorityLinkElement($type, $lookfor, $data, $params);
+        }
+
+        $id = $data['id'] ?? '';
+        $ids = $data['ids'] ?? [$id];
+        $links = $this->config->LinkPopovers->links->{$type}
+            ?? $this->config->LinkPopovers->links->{'*'}
+            ?? 'search_as_keyword:keyword';
+
+        $fieldLinks = [];
+        foreach ($links ? explode('|', $links) : [] as $linkDefinition) {
+            [$linkText, $linkType] = explode(':', "$linkDefinition:");
+            // Early bypass of authority-page if we don't have an id to avoid all the
+            // getLink processing:
+            if (!$id && 'authority-page' === $linkType) {
+                continue;
+            }
+            // Discard search tabs hiddenFilters when jumping to Authority page
+            $preserveSearchTabsFilters = 'authority-page' !== $linkType;
+
+            [$escapedUrl, $urlType] = $this->getLink(
+                $linkType,
+                $lookfor,
+                $params + compact('id', 'ids', 'linkType'),
+                true,
+                $preserveSearchTabsFilters,
+                false
+            );
+            if (!$escapedUrl) {
+                continue;
+            }
+
+            $fieldLinks[]
+                = compact('linkText', 'linkType', 'urlType', 'escapedUrl');
+        }
+
+        $authorityType = $params['authorityType'] ?? 'Personal Name';
+        $authorityType
+            = $this->config->Authority->typeMap->{$authorityType} ?? $authorityType;
+
+        $externalLinks = [];
+        $language = $this->getView()->layout()->userLang;
+        foreach ($this->config->LinkPopovers->external_links ?? [] as $link) {
+            $linkConfig = explode('||', $link);
+            if (!isset($linkConfig[4])) {
+                continue;
+            }
+            foreach ($ids as $id) {
+                if (preg_match('/' . $linkConfig[2] . '/', $id, $matches)) {
+                    $url = preg_replace_callback(
+                        '/\{\d\}/',
+                        function ($m) use ($matches) {
+                            $index = intval(trim($m[0], '{}'));
+                            return $matches[$index] ?? '';
+                        },
+                        $linkConfig[3]
+                    );
+                    $url = str_replace('{lang}', $language, $url);
+                    $displayId = '';
+                    if ($linkConfig[4]) {
+                        if ('full' === $linkConfig[4]) {
+                            $displayId = $id;
+                        } else {
+                            $index = intval(trim($linkConfig[4], '{}'));
+                            $displayId = $matches[$index] ?? '';
+                        }
+                    }
+                    $externalLinks[] = [
+                        'text' => $linkConfig[0],
+                        'title' => $linkConfig[1],
+                        'url' => $url,
+                        'displayId' => $displayId
+                    ];
+                }
+            }
+        }
+
+        $elementParams = [
+            'driver' => $this->driver,
+            'searchAction' => $params['searchAction'] ?? null,
+            'label' => $lookfor,
+            'ids' => array_filter($ids),
+            'authIds' => array_filter(
+                array_map(
+                    function ($s) use ($type) {
+                        return $this->driver
+                            ->tryMethod('getAuthorityId', [$s, $type], '');
+                    },
+                    $ids
+                )
+            ),
+            'authorityLink' => $id && $this->isAuthorityLinksEnabled(),
+            'type' => $type,
+            'authorityType' => $authorityType,
+            'title' => $params['title'] ?? null,
+            'classes' => $params['class'] ?? [],
+            'fieldLinks' => $fieldLinks,
+            'externalLinks' => $externalLinks,
+        ];
+        if ($additionalData = $this->composeAdditionalData($data, $params)) {
+            $elementParams['additionalDataHtml'] = $additionalData;
+        }
+        if (!empty($params['description']) && !empty($data['description'])) {
+            $elementParams['description'] = $data['description'];
+        }
+
+        return $this->renderTemplate('popover-link-element.phtml', $elementParams);
+    }
+
+    /**
      * Render a authority search link or fallback to Author search.
      *
      * @param string $type    Link type
@@ -432,37 +581,8 @@ class Record extends \VuFind\View\Helper\Root\Record
             $preserveSearchTabsFilters
         );
 
-        $showInlineInfo = !empty($params['showInlineInfo'])
-          && $this->isAuthorityInlineInfoEnabled() && $id;
-
-        if (!$this->isAuthorityEnabled()
-            || (!$showInlineInfo
-            && !in_array(
-                $urlType,
-                ['authority-search', 'authority-page', 'authority-search-subject']
-            ))
-        ) {
-            $author = [
-               'name' => $data['name'] ?? null,
-               'date' => !empty($data['date']) ? $data['date'] : null,
-               'affiliation' => !empty($data['affiliation'])
-                   ? $data['affiliation'] : null,
-               'description' => $data['description'] ?? null
-            ];
-
-            if (!empty($params['displayRole'])) {
-                $role = $params['displayRole'];
-                $author[$role] = !empty($data[$role]) ? $data[$role] : null;
-            } else {
-                $author['role'] = !empty($data['role']) ? $data['role'] : null;
-            }
-            // NOTE: currently this fallbacks always to a author-link
-            // (extend to handle subject/topic fallbacks when needed).
-            return $this->getAuthorLinkElement($author);
-        }
-
-        $authId = $this->driver->getAuthorityId($id, $type);
-        $authorityType = $params['authorityType'] ?? 'Personal Name';
+        $authId = $this->driver->tryMethod('getAuthorityId', [$id, $type], '');
+        $authorityType = $params['authorityType'] ?? '';
         $authorityType
             = $this->config->Authority->typeMap->{$authorityType} ?? $authorityType;
 
@@ -473,37 +593,16 @@ class Record extends \VuFind\View\Helper\Root\Record
            'label' => $lookfor,
            'id' => $authId,
            'authorityLink' => $id && $this->isAuthorityLinksEnabled(),
-           'showInlineInfo' => $showInlineInfo,
-           'recordSource' => $this->driver->getDataSource(),
+           'showInlineInfo' => false,
+           'recordSource' => $this->driver->tryMethod('getDataSource'),
            'type' => $type,
            'authorityType' => $authorityType,
            'title' => $params['title'] ?? null,
            'classes' => $params['class'] ?? []
         ];
-
-        if (isset($params['additionalData'])) {
-            $elementParams['additionalData'] = $params['additionalData'];
-        } else {
-            // Special handling for backwards compatibility.
-            $additionalData = [];
-            if (isset($params['role'])) {
-                if (!empty($data['roleName'])) {
-                    $additionalData['role'] = $data['roleName'];
-                } elseif (!empty($data['role'])) {
-                    $translator = $this->getView()->plugin('translate');
-                    $additionalData['role']
-                        = $translator('CreatorRoles::' . $data['role']);
-                }
-            }
-            if (isset($params['date']) && !empty($data['date'])) {
-                $additionalData['date'] = $data['date'];
-            }
-            if (!empty($additionalData)) {
-                $elementParams['additionalData']
-                    = $this->getAuthorityLinkAdditionalData($additionalData);
-            }
+        if ($additionalData = $this->composeAdditionalData($data, $params)) {
+            $elementParams['additionalData'] = $additionalData;
         }
-
         if (!empty($params['description']) && !empty($data['description'])) {
             $elementParams['description'] = $data['description'];
         }
@@ -533,6 +632,39 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         return $this->isAuthorityEnabled()
             && ($this->config->Authority->authority_links ?? false);
+    }
+
+    /**
+     * Compose additional data string for a link
+     *
+     * @param array $data   Link data
+     * @param array $params Link params
+     *
+     * @return string
+     */
+    protected function composeAdditionalData(array $data, array $params): string
+    {
+        if (isset($params['additionalData'])) {
+            return $params['additionalData'];
+        }
+        // Additional author information fields:
+        $additionalData = [];
+        if (isset($params['role'])) {
+            if (!empty($data['roleName'])) {
+                $additionalData['role'] = $data['roleName'];
+            } elseif (!empty($data['role'])) {
+                $translator = $this->getView()->plugin('translate');
+                $additionalData['role']
+                    = $translator('CreatorRoles::' . $data['role']);
+            }
+        }
+        if (isset($params['date']) && !empty($data['date'])) {
+            $additionalData['date'] = $data['date'];
+        }
+        if (!empty($additionalData)) {
+            return $this->getAuthorityLinkAdditionalData($additionalData);
+        }
+        return '';
     }
 
     /**
@@ -568,17 +700,6 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Is authority inline info enabled?
-     *
-     * @return bool
-     */
-    protected function isAuthorityInlineInfoEnabled()
-    {
-        return $this->driver->tryMethod('isAuthorityEnabled')
-            && ($this->config->Authority->authority_info ?? false);
-    }
-
-    /**
      * Render an HTML checkbox control for the current record.
      *
      * @param string $idPrefix Prefix for checkbox HTML ids
@@ -605,28 +726,6 @@ class Record extends \VuFind\View\Helper\Root\Record
             'record/checkbox.phtml',
             $context
         );
-    }
-
-    /**
-     * Return all record image urls as array keys.
-     *
-     * @return array
-     */
-    public function getAllRecordImageUrls()
-    {
-        $images = $this->driver->tryMethod('getAllImages', ['']);
-        if (empty($images)) {
-            return [];
-        }
-        $urls = [];
-        foreach ($images as $image) {
-            $urls[] = $image['urls']['small'];
-            $urls[] = $image['urls']['medium'];
-            if (isset($image['urls']['large'])) {
-                $urls[] = $image['urls']['large'];
-            }
-        }
-        return array_flip($urls);
     }
 
     /**
@@ -670,7 +769,10 @@ class Record extends \VuFind\View\Helper\Root\Record
      * If record image is converted from PDF, downloading is allowed only
      * for configured record formats.
      *
-     * @return boolean
+     * @deprecated Please use downloadable variable found in image array
+     *             returned from record->getAllImages().
+     *
+     * @return bool
      */
     public function allowRecordImageDownload()
     {
@@ -701,10 +803,10 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         $recordId = $this->driver->getUniqueID();
 
-        $cacheKey = "$recordId\t" . ($thumbnails ? '1' : '0')
+        $cacheKey = __FUNCTION__ . "$recordId\t" . ($thumbnails ? '1' : '0')
             . ($includePdf ? '1' : '0');
-        if (isset($this->cachedImages[$cacheKey])) {
-            return $this->cachedImages[$cacheKey];
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
         }
 
         $sizes = ['small', 'medium', 'large', 'master'];
@@ -725,6 +827,16 @@ class Record extends \VuFind\View\Helper\Root\Record
                 }
             }
             if ($urls) {
+                // Make sure we have all sizes:
+                if (!isset($urls['small'])) {
+                    $urls['small'] = $urls['medium']
+                        ?? $urls['large'];
+                }
+                if (!isset($urls['medium'])) {
+                    $urls['medium'] = $urls['large']
+                        ?? $urls['small'];
+                }
+
                 $images[] = [
                     'urls' => $urls,
                     'description' => '',
@@ -760,7 +872,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                 }
             }
         }
-        return $this->cachedImages[$cacheKey] = $images;
+        return $this->cache[$cacheKey] = $images;
     }
 
     /**
@@ -825,6 +937,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * This is here for backwards compability.
      * Check if the given array of URLs contain URLs that
      * are not record images.
      *
@@ -845,6 +958,22 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
         return false;
+    }
+
+    /**
+     * This is here for backwards compability.
+     * Return all record image urls as array keys.
+     *
+     * @return array
+     */
+    public function getAllRecordImageUrls()
+    {
+        $images = $this->driver->tryMethod('getAllImages', ['', false]);
+        $urls = [];
+        foreach ($images as $image) {
+            $urls = [...$urls, ...array_values($image['urls'])];
+        }
+        return array_flip($urls);
     }
 
     /**
@@ -905,16 +1034,12 @@ class Record extends \VuFind\View\Helper\Root\Record
      * Render a source id element if necessary
      *
      * @return string
+     *
+     * @deprecated Use getLabelList instead
      */
     public function getSourceIdElement()
     {
-        $view = $this->getView();
-        if (isset($view->results) && is_callable([$view->results, 'getBackendId'])) {
-            if ($view->results->getBackendId() === 'Blender') {
-                return $this->renderTemplate('source-id-label.phtml');
-            }
-        }
-        return '';
+        return $this->getLabelList();
     }
 
     /**
@@ -1121,10 +1246,13 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function hasLargeImageLayout(): bool
     {
+        if ($this->driver->tryMethod('getModels')) {
+            return true;
+        }
         $language = $this->getView()->layout()->userLang;
 
         $imageTypes = ['small', 'medium', 'large', 'master'];
-        $images = $this->getAllImages($language, false, false, false);
+        $images = $this->getAllImages($language, false, false);
         $hasValidImages = false;
         foreach ($images as $image) {
             if (array_intersect(array_keys($image['urls'] ?? []), $imageTypes)) {
@@ -1178,5 +1306,79 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
         return ('SolrAuth' === $source || $this->hasLargeImageLayout())
             ? 'inline' : 'sidebar';
+    }
+
+    /**
+     * Returns HTML for encapsulated records.
+     *
+     * @param array $opt        Options
+     * @param ?int  $offset     Record offset
+     *                          (used when loading more results via AJAX)
+     * @param ?int  $indexStart Result item offset in DOM
+     *                          (used when loading more results via AJAX)
+     *
+     * @return string
+     */
+    public function renderEncapsulatedRecords(
+        array $opt = [],
+        ?int $offset = null,
+        ?int $indexStart = null
+    ): string {
+        foreach (array_keys($opt) as $key) {
+            if (!in_array(
+                $key,
+                [
+                    'limit',
+                    'page',
+                    'showAllLink',
+                    'view',
+                ]
+            )
+            ) {
+                unset($opt[$key]);
+            }
+        }
+
+        $id = $opt['id'] = $this->driver->getUniqueID();
+
+        $loadMore = (int)$offset > 0;
+
+        // null is an accepted limit value (no limit)
+        if (!array_key_exists('limit', $opt)) {
+            $opt['limit'] = 6;
+        }
+        $opt['showAllLink'] = $opt['showAllLink'] ?? true;
+        $view = $opt['view'] = $opt['view'] ?? 'grid';
+
+        $resultsCopy = ($this->getEncapsulatedResults)($opt);
+
+        $total = $resultsCopy->getResultTotal();
+        if (!$loadMore) {
+            $idStart = $this->indexStart;
+            $this->indexStart += $total;
+        } else {
+            // Load more results using given $indexStart and $offset
+            $idStart = $indexStart;
+            $resultsCopy->overrideStartRecord($offset);
+        }
+
+        $resultsCopy->performAndProcessSearch();
+
+        $html = $this->renderTemplate(
+            'encapsulated-records.phtml',
+            [
+                'id' => $id,
+                'results' => $resultsCopy,
+                'params' => $resultsCopy->getParams(),
+                'indexStart' => $idStart,
+                'view' => $view,
+                'total' => $total,
+                'showAllLink' =>
+                    ($opt['showAllLink'] ?? false)
+                    && $opt['limit'] < $total,
+            ]
+        );
+
+        return $html;
     }
 }

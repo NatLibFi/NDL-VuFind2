@@ -52,7 +52,7 @@ if ($img):
             <?php else: ?>
               <?=$this->escapeHtml($type) ?><?=$this->escapeHtml($country) ?>
             <?php endif; ?>
-            <?=$this->record($this->driver)->getSourceIdElement() ?>
+            <?=$this->record($this->driver)->getLabelList() ?>
           </div>
 
           <?php if ($results = $this->driver->tryMethod('getOtherLinks')): ?>
@@ -83,7 +83,7 @@ if ($img):
             <?php if (!empty($primaryAuthors)): ?>
               <div class="truncate-field" data-rows="1">
                 <?php foreach($primaryAuthors as $index => $author): ?>
-                  <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getAuthorityLinkElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type']])?>
+                  <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type']])?>
                 <?php endforeach; ?>
               </div>
             <?php endif; ?>
@@ -146,10 +146,10 @@ if ($img):
         <?php if (!$this->driver->isCollection()): ?>
           <?php if ($snippet = $this->driver->getHighlightedSnippet()): ?>
             <?php if (!empty($snippet['caption'])): ?>
-              <strong><?=$this->transEsc($snippet['caption']) ?>:</strong> ';
+              <strong><?=$this->transEsc($snippet['caption']) ?>:</strong>
             <?php endif; ?>
             <?php if (!empty($snippet['snippet'])): ?>
-              <span class="quotestart">&#8220;</span>...<?=$this->highlight(strip_tags($snippet['snippet'])); ?>...</i><span class="quoteend">&#8221;</span><br/>
+              <?=$this->translate('highlight_snippet_html', ['%%snippet%%' => $this->highlight($snippet['snippet'])]) ?><br/>
             <?php endif; ?>
           <?php endif; ?>
         <?php endif; ?>

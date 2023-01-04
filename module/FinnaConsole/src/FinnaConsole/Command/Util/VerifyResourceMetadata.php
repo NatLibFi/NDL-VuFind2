@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2016-2020.
+ * Copyright (C) The National Library of Finland 2016-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -142,8 +142,13 @@ class VerifyResourceMetadata extends AbstractUtilCommand
 
         $count = 0;
         $fixed = 0;
+        $this->msg($resources->count() . ' records to check');
         $this->recordLoader->setCacheContext(\VuFind\Record\Cache::CONTEXT_FAVORITE);
         foreach ($resources as $resource) {
+            $this->msg(
+                "Checking record $resource->source:$resource->record_id",
+                OutputInterface::VERBOSITY_VERBOSE
+            );
             try {
                 $driver = $this->recordLoader
                     ->load($resource->record_id, $resource->source);
@@ -156,6 +161,10 @@ class VerifyResourceMetadata extends AbstractUtilCommand
                 if ($original != $resource) {
                     $resource->save();
                     ++$fixed;
+                    $this->msg(
+                        "Updated record $resource->source:$resource->record_id",
+                        OutputInterface::VERBOSITY_VERBOSE
+                    );
                 }
             } catch (\Exception $e) {
                 $this->msg(

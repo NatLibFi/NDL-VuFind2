@@ -320,7 +320,8 @@ class SolrLrmi extends SolrQdc
                             'large' => $url
                         ],
                         'description' => '',
-                        'rights' => []
+                        'rights' => [],
+                        'downloadable' => false
                     ];
                 }
             }
@@ -399,7 +400,7 @@ class SolrLrmi extends SolrQdc
                     }
                 }
 
-                $titles = $this->getMaterialTitles($material->name, $locale);
+                $titles = $this->getMaterialTitles($material->name);
                 $title = $titles[$locale] ?? $titles['default'];
                 $position = (int)$material->position ?? 0;
                 $filesize = (string)$material->filesize ?? null;

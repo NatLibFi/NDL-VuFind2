@@ -46,7 +46,10 @@
         <?php endforeach; ?>
 
         <div class="dateyeartype">
-          <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?> <?=$this->record($this->driver)->getSourceIdElement() ?></div>
+          <div class="resultItemFormat">
+            <?=$this->record($this->driver)->getFormatList() ?>
+            <?=$this->record($this->driver)->getLabelList() ?>
+          </div>
 
           <?php if ($results = $this->driver->tryMethod('getOtherLinks')): ?>
             <div class="resultOtherLinks">
@@ -76,7 +79,7 @@
             <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles'); if (!empty($authors)): ?>
               <div class="truncate-field" data-rows="1">
                 <?php foreach($authors as $index => $author): ?>
-                  <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getAuthorityLinkElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
+                  <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
                 <?php endforeach; ?>
               </div>
             <?php endif; ?>
@@ -94,7 +97,7 @@
                     <?=$i > 0 ? '<br/>' : ''?>
                     <?php if ($hostRecord['id'] || $hostRecord['title']): ?>
                       <?php $link = $hostRecord['id'] ? $this->recordLinker()->getUrl($hostRecord['sourceId'] . '|' . $hostRecord['id']) : $this->record($this->driver)->getLink('title', $hostRecord['title']); ?>
-                      <a href="<?=$this->escapeHtmlAttr($link)?>"><?=$hostRecord['title']?></a>
+                      <a href="<?=$this->escapeHtmlAttr($link)?>"><?=$hostRecord['title'] !== '' ? $hostRecord['title'] : $hostRecord['mainHeading']?></a>
                     <?php endif; ?>
                     <?=$this->escapeHtml($hostRecord['reference']); ?>
                   <?php endforeach; ?>
@@ -147,7 +150,7 @@
               <strong><?=$this->transEsc($snippet['caption']) ?>:</strong>
             <?php endif; ?>
             <?php if (!empty($snippet['snippet'])): ?>
-              <span class="quotestart">&#8220;</span>...<?=$this->highlight($snippet['snippet']) ?>...<span class="quoteend">&#8221;</span><br/>
+              <?=$this->translate('highlight_snippet_html', ['%%snippet%%' => $this->highlight($snippet['snippet'])]) ?><br/>
             <?php endif; ?>
           <?php endif; ?>
         <?php endif; ?>

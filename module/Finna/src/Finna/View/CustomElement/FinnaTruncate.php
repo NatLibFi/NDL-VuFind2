@@ -77,9 +77,7 @@ class FinnaTruncate extends AbstractBase
             );
         }
 
-        $this->setTemplate(
-            'components/molecules/containers/finna-truncate/finna-truncate'
-        );
+        $this->setTemplate(self::getTemplateName());
     }
 
     /**
@@ -102,11 +100,21 @@ class FinnaTruncate extends AbstractBase
     }
 
     /**
+     * Get the template name or null if a default template should be used.
+     *
+     * @return string|null
+     */
+    public static function getTemplateName(): ?string
+    {
+        return 'components/molecules/containers/finna-truncate/finna-truncate';
+    }
+
+    /**
      * Get default values for view model variables.
      *
      * @return array
      */
-    protected function getDefaultVariables(): array
+    public static function getDefaultVariables(): array
     {
         return [
             'rows'      => 1,

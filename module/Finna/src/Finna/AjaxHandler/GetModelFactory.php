@@ -28,7 +28,7 @@
  */
 namespace Finna\AjaxHandler;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Factory for GetModel AJAX handler.

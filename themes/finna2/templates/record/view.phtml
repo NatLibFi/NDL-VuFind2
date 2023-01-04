@@ -71,11 +71,6 @@
   }
 
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
-  $recordImage = $this->recordImage($this->record($this->driver));
-  $images = $recordImage->getAllImagesAsCoverLinks(
-      $this->layout()->userLang,
-      $params
-  );
   $largeImageLayout = $this->record($this->driver)->hasLargeImageLayout();
 
   if ($oldRecordId = $this->driver->getExtraDetail('redirectedFromId')) {
@@ -93,6 +88,22 @@
   <div>
       <?=$this->record($this->driver)->getToolbar()?>
   </div>
+  <?php if ($this->config()->inlineVideoEnabled()): ?>
+    <?php
+      $videoUrls = [];
+      foreach ($this->record($this->driver)->getLinkDetails() as $url) {
+        if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
+          $videoUrls[] = $url;
+        }
+      }
+    ?>
+    <?php if (!empty($videoUrls)): ?>
+      <div class="inline-video-container">
+        <div class="inline-video" id="inline-video"></div>
+        <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls, 'inlineVideo' => true]);?>
+      </div>
+    <?php endif; ?>
+  <?php endif; ?>
   <div class="record-main <?= !$largeImageLayout ? 'mainbody left' : ''?>">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId" />
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier()) ?>" class="hiddenSource" />
@@ -135,7 +146,7 @@
         <?php if (count($this->tabs) > 3): ?>
         <div class="tabs-responsive">
         <?php endif; ?>
-        <ul class="recordTabs nav nav-tabs visible-md visible-lg">
+        <ul class="recordTabs nav nav-tabs visible-md visible-lg" role="tablist">
           <?php foreach ($this->tabs as $tab => $obj): ?>
             <?php // add current tab to breadcrumbs if applicable:
               $desc = $obj->getDescription();
@@ -152,10 +163,10 @@
               if (!$obj->supportsAjax()) { $tabClasses[] = 'noajax'; }
               if (strtolower($tab) == 'details') { $tabClasses[] = 'hidden-xs tab-right'; }
             ?>
-            <li class="<?=implode(' ', $tabClasses)?>" data-tab="<?=$this->escapeHtmlAttr($tabName)?>"<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?> data-background<?php endif ?>>
+            <li class="<?=implode(' ', $tabClasses)?>" role="tab" data-tab="<?=$this->escapeHtmlAttr($tabName)?>"<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?> data-background<?php endif ?>>
               <a class="<?=$this->escapeHtmlAttr(strtolower($tab)) ?>" aria-label="<?=$this->transEscAttr($desc)?>"
                 href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $tab))?>#tabnav" data-lightbox-ignore>
-                <?php if (strtolower($tab) == 'details'): ?><i class="fa fa-lg fa-<?=$this->escapeHtmlAttr($tab)?>"></i><?php endif; ?>
+                <?php if (strtolower($tab) == 'details'): ?><i aria-hidden="true" class="fa fa-lg fa-<?=$this->escapeHtmlAttr($tab)?>"></i><?php endif; ?>
                 <?php if (strtolower($tab) != 'details'): ?><?=$this->transEsc($desc)?><?php endif; ?><?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?>
               </a>
             </li>

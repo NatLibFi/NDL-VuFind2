@@ -56,7 +56,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      * @var array
      */
     protected $imageSizeMappings = [
-        'THUMBNAIL' => 'small',
+        'thumbnail' => 'small',
         'square' => 'small',
         'small' => 'small',
         'medium' => 'medium',
@@ -207,7 +207,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAllImages($language = 'fi', $includePdf = true)
     {
-        $cacheKey = __FUNCTION__ . "/$language" . $includePdf ? '/1' : '/0';
+        $cacheKey = __FUNCTION__ . "/$language" . ($includePdf ? '/1' : '/0');
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
@@ -228,18 +228,23 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         $addToResults = function ($imageData) use (&$results) {
             if (!isset($imageData['urls']['small'])) {
                 $imageData['urls']['small'] = $imageData['urls']['medium']
-                    ?? $imageData['urls']['large'];
+                    ?? $imageData['urls']['large']
+                    ?? $imageData['urls']['original'];
             }
             if (!isset($imageData['urls']['medium'])) {
                 $imageData['urls']['medium'] = $imageData['urls']['small'];
             }
+            if (!isset($imageData['urls']['large'])) {
+                $imageData['urls']['large'] = $imageData['urls']['medium'];
+            }
+            $imageData['downloadable'] = $this->allowRecordImageDownload($imageData);
             $results[] = $imageData;
         };
 
         foreach ($xml->file as $node) {
             $attributes = $node->attributes();
-            $type = $attributes->type ?? '';
-            if (!empty($attributes->type)
+            $type = (string)($attributes->type ?? '');
+            if ($type
                 && !in_array($type, array_keys($this->imageMimeTypes))
             ) {
                 continue;
@@ -251,8 +256,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                 continue;
             }
 
-            $bundle = (string)$attributes->bundle;
-            if ($bundle === 'THUMBNAIL' && !$otherSizes) {
+            $bundle = strtolower((string)$attributes->bundle);
+            if ($bundle === 'thumbnail' && !$otherSizes) {
                 // Lets see if the record contains only thumbnails
                 $thumbnails[] = $url;
             } else {
@@ -293,7 +298,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                 ]
             );
         }
-
         // Attempt to find a PDF file to be converted to a coverimage
         if ($includePdf && empty($results)) {
             $urls = [];
@@ -385,6 +389,23 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get identifier
+     *
+     * @return array
+     */
+    public function getIdentifier()
+    {
+        $xml = $this->getXmlRecord();
+        foreach ($xml->identifier ?? [] as $identifier) {
+            // Inventory number
+            if ((string)$identifier['type'] === 'wikidata:P217') {
+                return [trim((string)$identifier)];
+            }
+        }
+        return [];
+    }
+
+    /**
      * Get identifiers as an array
      *
      * @return array
@@ -396,15 +417,16 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         foreach ([$xml->identifier, $xml->isFormatOf] as $field) {
             foreach ($field as $identifier) {
                 $type = (string)$identifier['type'];
+                $identifierTrimmed = trim((string)$identifier);
                 if (in_array($type, ['issn', 'isbn'])) {
                     continue;
                 }
-                $trimmed = str_replace('-', '', trim($identifier));
+                $trimmed = str_replace('-', '', $identifierTrimmed);
                 // ISBN
                 if (preg_match('{^[0-9]{9,12}[0-9xX]}', $trimmed)) {
                     continue;
                 }
-                $trimmed = trim($identifier);
+                $trimmed = $identifierTrimmed;
                 // ISSN
                 if (preg_match('{(issn:)[\S]{4}\-[\S]{4}}', $trimmed)) {
                     continue;
@@ -412,8 +434,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
 
                 // Leave out some obvious matches like urls or urns
                 if (!preg_match('{(^urn:|^https?)}i', $trimmed)) {
-                    $detail = (string)$identifier['type'];
-                    $data = $identifier;
+                    $detail = $type;
+                    $data = $identifierTrimmed;
                     $results[] = compact('data', 'detail');
                 }
             }
@@ -441,6 +463,49 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             }
         }
         return array_values(array_unique($result));
+    }
+
+    /**
+     * Get all record links related to the current record. Each link is returned as
+     * array.
+     * Format:
+     * array(
+     *        array(
+     *               'title' => label_for_title
+     *               'value' => link_name
+     *               'link'  => link_URI
+     *        ),
+     *        ...
+     * )
+     *
+     * @return null|array
+     */
+    public function getAllRecordLinks()
+    {
+        $xml = $this->getXmlRecord();
+        $relations = [];
+        foreach ($xml->isPartOf ?? [] as $isPartOf) {
+            $relations[] = [
+                'value' => (string)$isPartOf,
+                'link' => [
+                    'value' => (string)$isPartOf,
+                    'type' => 'allFields'
+                ]
+            ];
+        }
+        foreach ($xml->relation ?? [] as $relation) {
+            $attrs = $relation->attributes();
+            if ('ispartof' === (string)($attrs->type ?? '')) {
+                $relations[] = [
+                    'value' => (string)$relation,
+                    'link' => [
+                        'value' => (string)$relation,
+                        'type' => 'allFields'
+                    ]
+                ];
+            }
+        }
+        return $relations;
     }
 
     /**

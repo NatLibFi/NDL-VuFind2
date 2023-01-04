@@ -20,7 +20,10 @@
     <?php endif; ?>
     <div class="media-body">
       <div class="result-body">
-        <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?> <?=$this->record($this->driver)->getSourceIdElement() ?></div>
+        <div class="resultItemFormat">
+          <?=$this->record($this->driver)->getFormatList() ?>
+          <?=$this->record($this->driver)->getLabelList() ?>
+        </div>
         <div class="title-container">
             <h2 class="search-title">
             <a class="title" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver))?>" data-view="<?=isset($this->params) ? $this->params->getOptions()->getListViewOption() : 'list' ?>">
@@ -66,14 +69,16 @@
             <?=$this->cleanHtml(implode('<br>', $this->driver->getSummary() ?? [])); ?>
           </div>
         </div>
+
         <?php if ($snippet = $this->driver->getHighlightedSnippet()): ?>
           <?php if (!empty($snippet['caption'])): ?>
             <strong><?=$this->transEsc($snippet['caption']) ?>:</strong>
           <?php endif; ?>
           <?php if (!empty($snippet['snippet'])): ?>
-            <span class="quotestart">&#8220;</span>...<?=$this->highlight($snippet['snippet']) ?>...<span class="quoteend">&#8221;</span><br/>
+            <?=$this->translate('highlight_snippet_html', ['%%snippet%%' => $this->highlight($snippet['snippet'])]) ?><br/>
           <?php endif; ?>
         <?php endif; ?>
+
         <div class="authority-record-info"></div>
 
         <?php $recordHelper = $this->record($this->driver); ?>

@@ -51,8 +51,10 @@ defaultRequiredDate = 0:0:1
 extraHoldFields = pickUpLocation
 
 ; A Pick Up Location Code used to pre-select the pick up location drop down list and
-; provide a default option if others are not available. Must correspond with one of
-; the Location IDs returned by getPickUpLocations()
+; provide a default option if others are not available. Must be one of the following:
+; 1) empty string to indicate that the first location is default (default setting)
+; 2) "user-selected" to indicate that the user always has to choose the location
+; 3) a value within the Location IDs returned by getPickUpLocations()
 defaultPickUpLocation = 1.001
 
 ; Exclude locations or organisations from hold pick up selection

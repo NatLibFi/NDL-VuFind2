@@ -16,7 +16,7 @@
               if (strstr($username, '.')) {
                 [$target, $username] = explode('.', $username, 2);
               }
-              $display = $this->transEsc($card->card_name ? $card->card_name : $username);
+              $display = $this->escapeHtml($card->card_name ? $card->card_name : $username);
               if ($display == "$target.$username") {
                 $display = $username;
               }
@@ -24,7 +24,7 @@
                 $display .= ' (' . $this->transEsc("source_$target", null, $target) . ')';
               }
             ?>
-            <?php $selectedCard = (!isset($this->displaySelected) || $this->displaySelected) && (strcasecmp($card->cat_username, $this->user->cat_username) === 0); ?>
+            <?php $selectedCard = (!isset($this->displaySelected) || $this->displaySelected) && (strcasecmp($card->cat_username, $this->user->cat_username ?? '') === 0); ?>
             <a aria-describedby="select-card-label-dropdown" role="menuitem" href="<?=$this->url('librarycards-selectcard')?>?cardID=<?=$this->escapeHtmlAttr($card->id)?>" data-clear-account-cache><?=$selectedCard ? '<i class="fa fa-check"></i><span class="sr-only">(' . $this->transEsc("selected") . ')</span> ' : '' ?><?=$display ?></a>
           <?php endforeach; ?>
         <?php endif; ?>
@@ -48,7 +48,7 @@
                 if (strstr($username, '.')) {
                   [$target, $username] = explode('.', $username, 2);
                 }
-                $display = $this->transEsc($card->card_name ? $card->card_name : $username);
+                $display = $this->escapeHtml($card->card_name ? $card->card_name : $username);
                 if ($display == "$target.$username") {
                   $display = $username;
                 }

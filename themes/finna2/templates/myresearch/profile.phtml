@@ -55,17 +55,23 @@
         </div>
       <?php endif; ?>
       <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
-      <?php if (!empty($this->profile['expiration_soon']) && !empty($this->profile['expiration_date'])): ?>
-        <div class="flash-message alert alert-warning">
-          <?=$this->transEsc('patron_status_card_expires_soon', ['%%expirationDate%%' => $this->profile['expiration_date']])?>
-        </div>
-      <?php elseif (!empty($this->profile['expired']) && !empty($this->profile['expiration_date'])): ?>
-        <div class="flash-message alert alert-danger">
-          <?=$this->transEsc('patron_status_card_expired', ['%%expirationDate%%' => $this->profile['expiration_date']])?>
-        </div>
+      <?php if (!empty($this->profile['expiration_date'])): ?>
+        <?php $cardExpired = !empty($this->profile['expired']) ?>
+        <?php if (!empty($this->profile['expiration_soon']) && !$cardExpired): ?>
+          <div class="flash-message alert alert-warning">
+            <?=$this->transEsc('patron_status_card_expires_soon', ['%%expirationDate%%' => $this->profile['expiration_date']])?>
+          </div>
+        <?php elseif ($cardExpired): ?>
+          <div class="flash-message alert alert-danger">
+            <?=$this->transEsc('patron_status_card_expired', ['%%expirationDate%%' => $this->profile['expiration_date']])?>
+          </div>
+        <?php endif; ?>
       <?php endif; ?>
       <?=$this->partial('myresearch/profile-messages.phtml', ['messages' => $this->profile['messages'] ?? []]); ?>
       <?php if (is_array($this->profile)): ?>
+        <div class="logged-in-as">
+          <i id="account-icon" class="fa fa-user"></i><span class="sr-only"><?=$this->transEsc('logged_in_as')?>: </span><?=$this->escapeHtml($user->getDisplayName()) ?>
+        </div>
         <div class="myresearch-profile-header"><h3><?=$this->transEsc('Library Card Settings');?></h3></div>
         <div class="myresearch-profile-list library-profile">
           <?php if ($showHomeLibForm): ?>
@@ -73,10 +79,16 @@
               <div class="my-profile-col profile-title"><label for="home_library"><?=$this->transEsc('preferred_pickup_location')?>:</label></div>
               <div>
                 <?php
-                  $selected = (isset($this->profile['home_library']) && $this->profile['home_library'] != "")
-                    ? $this->profile['home_library'] : $this->defaultPickupLocation
+                  // Use ' ** ' for null ()
+                  $selected = $this->profile['home_library'] ?? ' ** ';
                 ?>
                 <select id="home_library" name="home_library" class="jumpMenu form-control">
+                  <option value=""<?='' === $selected ? ' selected="selected"' : ''?>>
+                    <?=$this->transEsc('preferred_library_default')?>
+                  </option>
+                  <option value="<?=$this->escapeHtmlAttr(' ** ')?>"<?=' ** ' === $selected ? ' selected="selected"' : ''?>>
+                    <?=$this->transEsc('Always ask me')?>
+                  </option>
                   <?php foreach ($this->pickup as $lib): ?>
                     <option value="<?=$this->escapeHtmlAttr($lib['locationID'])?>"<?=($selected == $lib['locationID'])?' selected="selected"':''?>><?=$this->transEscWithPrefix('location_', $lib['locationDisplay'])?></option>
                   <?php endforeach; ?>
@@ -145,7 +157,7 @@
             <?php endif; ?>
             <?php if (!empty($this->profile['phone']) || $updatePhone): ?>
               <?php if ($updatePhone): ?>
-                <div class="my-profile-col profile-title"><?=$this->transEsc('Phone') ?>:</div>
+                <div class="my-profile-col profile-title"><label for="profile_tel"><?=$this->transEsc('Phone') ?>:</label></div>
                 <div>
                   <input class="form-control" type="tel" name="profile_tel" value="<?=empty($this->profile['phone']) ? '' : $this->escapeHtmlAttr($this->profile['phone']) ?>" title="<?=$this->transEscAttr('Phone') ?>" />
                 </div>
@@ -156,7 +168,7 @@
             <?php endif; ?>
             <?php if (!empty($this->profile['smsnumber']) || $updateSmsNumber): ?>
               <?php if ($updateSmsNumber): ?>
-                <div class="my-profile-col profile-title"><?=$this->transEsc('SMS Number') ?>:</div>
+                <div class="my-profile-col profile-title"><label for="profile_sms_number"><?=$this->transEsc('SMS Number') ?>:</label></div>
                 <div>
                   <input class="form-control" type="tel" name="profile_sms_number" value="<?=empty($this->profile['smsnumber']) ? '' : $this->escapeHtmlAttr($this->profile['smsnumber']) ?>" title="<?=$this->transEscAttr('SMS Number') ?>" />
                 </div>
@@ -166,7 +178,7 @@
               <?php endif; ?>
             <?php endif; ?>
             <?php if (!empty($this->profile['email']) || $updateEmail): ?>
-              <div class="my-profile-col profile-title"><?=$this->transEsc('Email') ?>:</div>
+              <div class="my-profile-col profile-title"><label for="profile_email"><?=$this->transEsc('Email') ?>:</label></div>
               <?php if ($updateEmail): ?>
                 <div>
                   <input class="form-control" type="email" name="profile_email" value="<?=empty($this->profile['email']) ? '' : $this->escapeHtmlAttr($this->profile['email']) ?>" title="<?=$this->transEscAttr('Email') ?>" />

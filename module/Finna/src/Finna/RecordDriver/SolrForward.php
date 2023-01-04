@@ -120,14 +120,24 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
-     * Roles to not display
+     * Array of roles to convert
      *
      * @var array
      */
-    protected $filteredRoles = [
-        'esiintyjä',
-        'prf',
-        'oth'
+    protected $roleConversion = [
+        'esiintyjä' => 'no_role',
+        'prf' => 'no_role',
+        'oth' => 'no_role'
+    ];
+
+    /**
+     * Roles to filter
+     *
+     * @var array
+     */
+    protected $rolesToFilter = [
+        'no_role',
+        'act'
     ];
 
     /**
@@ -224,11 +234,15 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     ],
                     'avustajat' => [
                         'credited' => 'assistant'
+                    ],
+                    'no_role' => [
+                        'credited' => 'other'
                     ]
                 ]
             ],
             'skipTags' => [
-                'elotekijakokoonpano' => true
+                'elotekijakokoonpano' => true,
+                'muuttekijat' => true
             ]
         ],
         'nonPresenterSecondaryAuthors' => [
@@ -274,6 +288,11 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     'default' => [
                         'credited' => 'credited',
                         'uncredited' => 'uncredited'
+                    ]
+                ],
+                'no_type' => [
+                    'no_role' => [
+                        'credited' => 'credited'
                     ]
                 ],
                 'default' => [
@@ -435,6 +454,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      * - heading: the actual subject heading
      * - type: heading type
      * - source: source vocabulary
+     * - id: first authority id (if defined)
+     * - ids: multiple authority ids (if defined)
+     * - authType: authority type (if id is defined)
      *
      * @return array
      */
@@ -751,6 +773,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 'idx' => ''
             ];
 
+            $primary = false;
             if (!empty($agent->Activity)) {
                 $activity = $agent->Activity;
                 $relator = (string)$activity;
@@ -758,11 +781,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 if (null === ($role = $this->getAuthorRole($agent, $relator))) {
                     continue;
                 }
-                if (in_array($role, $this->filteredRoles)) {
-                    $result['role'] = '';
-                } else {
-                    $result['role'] = $role;
-                }
+                $result['role'] = $this->roleConversion[$role] ?? $role;
                 foreach ($activity->attributes() as $key => $value) {
                     $result[$key] = (string)$value;
                 }
@@ -796,15 +815,18 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             $result['idx'] = $primary ? $idx : 10000 * $idx;
 
             $type = $result['type'] ?: 'no_type';
-            $role = $result['role'] ?: 'no_role';
+            $role = $result['role'];
             $credited = $result['uncredited'] === true ? 'uncredited' : 'credited';
             $lcRelator = mb_strtolower($result['relator'] ?? '', 'UTF-8');
             foreach ($this->authorConfig as $storage => $data) {
-                if ($skip = $data['skipTags'][$result['tag']] ?? false) {
+                if ($data['skipTags'][$result['tag']] ?? false) {
                     continue;
                 }
                 if (in_array($lcRelator, $data['relators'])) {
                     $valuesToPreserve = $data['preservedValues'] ?? [];
+                    if (in_array($role, $this->rolesToFilter)) {
+                        $result['role'] = '';
+                    }
                     $type = in_array($type, $valuesToPreserve) ? $type : 'default';
                     $role = in_array($role, $valuesToPreserve) ? $role : 'default';
                     if ($res = $data['mappings'][$type][$role][$credited] ?? '') {

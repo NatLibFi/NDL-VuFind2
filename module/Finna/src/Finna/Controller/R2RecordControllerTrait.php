@@ -92,7 +92,12 @@ trait R2RecordControllerTrait
             $driver = $this->serviceLocator
                 ->get(\VuFind\RecordDriver\PluginManager::class)
                 ->get('r2ead3missing');
-            $driver->setRawData(['id' => $id]);
+            $driver->setRawData(
+                [
+                    'id' => $id,
+                    'fullrecord' => '<ead/>'
+                ]
+            );
             $this->driver = $driver;
             return $driver;
         }

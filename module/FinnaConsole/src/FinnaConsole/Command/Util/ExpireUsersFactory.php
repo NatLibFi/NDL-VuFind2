@@ -28,11 +28,11 @@
  */
 namespace FinnaConsole\Command\Util;
 
-use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerExceptionInterface as ContainerException;
+use Psr\Container\ContainerInterface;
 
 /**
  * Factory for the "expire users" task.
@@ -65,10 +65,10 @@ class ExpireUsersFactory implements FactoryInterface
         $requestedName,
         array $options = null
     ) {
+        $tableManager = $container->get(\VuFind\Db\Table\PluginManager::class);
         return new $requestedName(
-            $container->get(\VuFind\Db\Table\PluginManager::class)->get('User'),
-            $container->get(\VuFind\Config\PluginManager::class)->get('config'),
-            ...($options ?? [])
+            $tableManager->get('User'),
+            $container->get(\VuFind\Config\PluginManager::class)->get('config')
         );
     }
 }

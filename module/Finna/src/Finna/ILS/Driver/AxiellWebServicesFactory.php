@@ -27,10 +27,10 @@
  */
 namespace Finna\ILS\Driver;
 
-use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Psr\Container\ContainerExceptionInterface as ContainerException;
+use Psr\Container\ContainerInterface;
 
 /**
  * Factory for AxiellWebServices ILS driver.
@@ -66,13 +66,10 @@ class AxiellWebServicesFactory
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
-        $sessionFactory = function ($namespace) use ($container) {
-            $manager = $container->get(\Laminas\Session\SessionManager::class);
-            return new \Laminas\Session\Container(
-                "AxiellWebServices_$namespace",
-                $manager
-            );
-        };
-        return parent::__invoke($container, $requestedName, [$sessionFactory]);
+        return parent::__invoke(
+            $container,
+            $requestedName,
+            [$container->get(\VuFind\Config\PathResolver::class)]
+        );
     }
 }

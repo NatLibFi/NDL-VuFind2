@@ -15,6 +15,7 @@ chdir(APPLICATION_PATH);
 if (file_exists('vendor/autoload.php')) {
     $loader = include 'vendor/autoload.php';
     $loader = new Composer\Autoload\ClassLoader();
+    $loader->addClassMap(['minSO' => __DIR__ . '/../src/VuFind/Search/minSO.php']);
     $loader->add('VuFindTest', __DIR__ . '/unit-tests/src');
     $loader->add('VuFindTest', __DIR__ . '/../src');
     // Dynamically discover all module src directories:
@@ -30,8 +31,9 @@ if (file_exists('vendor/autoload.php')) {
 }
 
 // Make sure local config dir exists:
-if ($localDir = \VuFind\Config\Locator::getLocalConfigPath('', null, true)) {
-    if (!file_exists($localDir)) {
-        mkdir($localDir, 0777, true);
-    }
+if (!defined('LOCAL_OVERRIDE_DIR')) {
+    throw new \Exception('LOCAL_OVERRIDE_DIR must be defined');
+}
+if (!file_exists(LOCAL_OVERRIDE_DIR)) {
+    mkdir(LOCAL_OVERRIDE_DIR, 0777, true);
 }

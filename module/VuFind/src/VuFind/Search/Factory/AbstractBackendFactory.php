@@ -27,9 +27,10 @@
  */
 namespace VuFind\Search\Factory;
 
-use Interop\Container\ContainerInterface;
-
+use Laminas\Cache\Storage\StorageInterface;
+use Laminas\Config\Config;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Abstract factory for backends.
@@ -71,22 +72,53 @@ abstract class AbstractBackendFactory implements FactoryInterface
     /**
      * Create HTTP Client
      *
-     * @param int   $timeout Request timeout
-     * @param array $options Other options
+     * @param int    $timeout Request timeout
+     * @param array  $options Other options
+     * @param string $url     Request URL (needed for proper local address check when
+     * the client is being proxified)
      *
      * @return \Laminas\Http\Client
      */
     protected function createHttpClient(
         ?int $timeout = null,
-        array $options = []
+        array $options = [],
+        string $url = null
     ): \Laminas\Http\Client {
         $client = $this->serviceLocator->get(\VuFindHttp\HttpService::class)
-            ->createClient();
-        $options = $options ?? [];
+            ->createClient($url);
         if (null !== $timeout) {
             $options['timeout'] = $timeout;
         }
         $client->setOptions($options);
         return $client;
+    }
+
+    /**
+     * Create cache for the connector if enabled in configuration
+     *
+     * @param Config $searchConfig Search configuration
+     *
+     * @return ?StorageInterface
+     */
+    protected function createConnectorCache(Config $searchConfig): ?StorageInterface
+    {
+        if (empty($searchConfig->SearchCache->adapter)) {
+            return null;
+        }
+        $cacheConfig = $searchConfig->SearchCache->toArray();
+        $options = $cacheConfig['options'] ?? [];
+        if (empty($options['namespace'])) {
+            $options['namespace'] = 'Index';
+        }
+        if (empty($options['ttl'])) {
+            $options['ttl'] = 300;
+        }
+        $settings = [
+            'adapter' => $cacheConfig['adapter'],
+            'options' => $options,
+        ];
+        return $this->serviceLocator
+            ->get(\Laminas\Cache\Service\StorageAdapterFactory::class)
+            ->createFromArrayConfiguration($settings);
     }
 }

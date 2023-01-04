@@ -88,7 +88,7 @@
         margin-top: 0px;
     }
     & .group {
-        &.facet, &.filter, &.suggestion, &.phrase, &.handler {
+        &.facet, &.filter, &.suggestion, &.phrase, &.handler, &.isbn {
             &:before {
                 content: attr(data-title);
             }
@@ -106,6 +106,22 @@
                 content: attr(data-title);
                 margin-left: 10px;
             }
+        }
+    }
+    .ac-isbn {
+        display: flex;
+        img {
+            margin-right: 10px;
+            max-height: 80px;
+            max-width: 60px;
+        }
+        .iconlabel {
+            margin-top: 5px;
+            color: #d1d1d1;
+            font-size: 2em;
+        }
+        span {
+            margin-top: 10px;
         }
     }
 

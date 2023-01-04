@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2019.
+ * Copyright (C) The National Library of Finland 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,8 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Search_Solr
- * @author   Mika Hatakka <mika.hatakka@helsinki.fi>
+ * @package  Search_Blender
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
@@ -29,272 +28,286 @@
 namespace Finna\Search\Blender;
 
 use Finna\Search\Solr\AuthorityHelper;
-use Finna\Search\Solr\HierarchicalFacetHelper;
+use VuFind\Search\Solr\HierarchicalFacetHelper;
 
 /**
  * Blender Search Parameters
  *
  * @category VuFind
- * @package  Search_Solr
- * @author   Mika Hatakka <mika.hatakka@helsinki.fi>
+ * @package  Search_Blender
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
-class Params extends \Finna\Search\Solr\Params
+class Params extends \VuFind\Search\Blender\Params
 {
-    /**
-     * Secondary search params
-     *
-     * @var \VuFind\Search\Base\Params
-     */
-    protected $secondaryParams;
+    use \Finna\Search\Solr\ParamsSharedTrait;
 
     /**
-     * Blender configuration
+     * Helper for formatting authority id filter display texts.
      *
-     * @var \Laminas\Config\Config
+     * @var AuthorityHelper
      */
-    protected $blenderConfig;
+    protected $authorityHelper = null;
 
     /**
-     * Blender mappings
+     * Whether to request checkbox facet counts
      *
-     * @var array
+     * @var bool
      */
-    protected $mappings;
+    protected $checkboxFacetCounts = false;
 
     /**
      * Constructor
      *
-     * @param \VuFind\Search\Base\Options  $options         Options to use
-     * @param \VuFind\Config\PluginManager $configLoader    Config loader
-     * @param HierarchicalFacetHelper      $facetHelper     Hierarchical facet helper
-     * @param AuthorityHelper              $authorityHelper Authority helper
-     * @param \VuFind\Date\Converter       $dateConverter   Date converter
-     * @param \VuFind\Search\Base\Params   $secondaryParams Secondary search params
-     * @param \Laminas\Config\Config       $blenderConfig   Blender configuration
-     * @param array                        $mappings        Blender mappings
+     * @param \VuFind\Search\Base\Options  $options       Options to use
+     * @param \VuFind\Config\PluginManager $configLoader  Config loader
+     * @param HierarchicalFacetHelper      $facetHelper   Hierarchical facet helper
+     * @param array                        $searchParams  Search params for backends
+     * @param \Laminas\Config\Config       $blenderConfig Blender configuration
+     * @param array                        $mappings      Blender mappings,
+     * @param AuthorityHelper              $authHelper    Authority helper
      */
     public function __construct(
         \VuFind\Search\Base\Options $options,
         \VuFind\Config\PluginManager $configLoader,
         HierarchicalFacetHelper $facetHelper,
-        AuthorityHelper $authorityHelper,
-        \VuFind\Date\Converter $dateConverter,
-        \VuFind\Search\Base\Params $secondaryParams,
+        array $searchParams,
         \Laminas\Config\Config $blenderConfig,
-        $mappings
+        array $mappings,
+        AuthorityHelper $authHelper
     ) {
         parent::__construct(
             $options,
             $configLoader,
             $facetHelper,
-            $authorityHelper,
-            $dateConverter
+            $searchParams,
+            $blenderConfig,
+            $mappings
         );
 
-        $this->secondaryParams = $secondaryParams;
-        $this->blenderConfig = $blenderConfig;
-        $this->mappings = $mappings;
+        $this->authorityHelper = $authHelper;
     }
 
     /**
-     * Pull the search parameters
+     * Whether to request checkbox facet counts
+     *
+     * @return bool
+     */
+    public function getCheckboxFacetCounts()
+    {
+        return $this->checkboxFacetCounts;
+    }
+
+    /**
+     * Whether to request checkbox facet counts
+     *
+     * @param bool $value Enable or disable
+     *
+     * @return void
+     */
+    public function setCheckboxFacetCounts($value)
+    {
+        $this->checkboxFacetCounts = $value;
+        foreach ($this->searchParams as $params) {
+            if (is_callable([$params, 'setCheckboxFacetCounts'])) {
+                $params->setCheckboxFacetCounts($value);
+            }
+        }
+    }
+
+    /**
+     * Get the date range field from options, if available
+     *
+     * @return string
+     */
+    public function getDateRangeSearchField()
+    {
+        return $this->getOptions()->getDateRangeSearchField();
+    }
+
+    /**
+     * Return current date range filter.
+     *
+     * @return mixed false|array Filter
+     */
+    public function getDateRangeFilter()
+    {
+        $filterList = $this->getFilterList();
+        foreach ($filterList as $filters) {
+            foreach ($filters as $filter) {
+                if ($this->isDateRangeFilter($filter['field'])) {
+                    return $filter;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Add filters to the object based on values found in the request object.
      *
      * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
      * @return void
      */
-    public function initFromRequest($request)
+    protected function initFilters($request)
     {
-        parent::initFromRequest($request);
-        $this->secondaryParams->initFromRequest($this->translateRequest($request));
+        parent::initFilters($request);
+        foreach ($this->searchParams as $params) {
+            if ($params instanceof \Finna\Search\Solr\Params) {
+                $params->initSpatialDateRangeFilter($request);
+            }
+        }
     }
 
     /**
-     * Create search backend parameters for advanced features.
+     * Format a single filter for use in getFilterList().
      *
-     * @return \VuFindSearch\ParamBag
-     */
-    public function getBackendParameters()
-    {
-        $params = parent::getBackendParameters();
-        if (!is_callable([$this->secondaryParams, 'getBackendParameters'])) {
-            throw new \Exception(
-                'Secondary backend missing support for getBackendParameters'
-            );
-        }
-        $secondaryParams = $this->secondaryParams->getBackendParameters();
-        $params->set(
-            'secondary_backend',
-            $secondaryParams
-        );
-        return $params;
-    }
-
-    /**
-     * Translate a request for the secondary backend
-     *
-     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
-     * request.
-     *
-     * @return \Laminas\Stdlib\Parameters
-     */
-    protected function translateRequest($request)
-    {
-        $secondary = $this->blenderConfig['Secondary']['backend'];
-        $mappings = $this->mappings['Facets'] ?? [];
-        $filters = $request->get('filter');
-        if (!empty($filters)) {
-            $hierarchicalFacets = [];
-            $options = $this->getOptions();
-            if (is_callable([$options, 'getHierarchicalFacets'])) {
-                $hierarchicalFacets = $options->getHierarchicalFacets();
-            }
-            $newFilters = [];
-            foreach ((array)$filters as $filter) {
-                [$field, $value] = $this->parseFilter($filter);
-                if ('blender_backend' === $field) {
-                    continue;
-                }
-                $prefix = '';
-                if (substr($field, 0, 1) === '~') {
-                    $prefix = '~';
-                    $field = substr($field, 1);
-                }
-                $values = [$value];
-                if (isset($mappings[$field]['Secondary'])) {
-                    // Map facet value
-                    $facetType = $mappings[$field]['Type'] ?? '';
-                    if ('boolean' === $facetType) {
-                        $value = (bool)$value;
-                    }
-                    $resultValues = [];
-                    $valueMappings = $mappings[$field]['Values'] ?? [];
-                    if ($valueMappings) {
-                        foreach ($valueMappings as $k => $v) {
-                            if ('boolean' === $facetType) {
-                                $v = (bool)$v;
-                            }
-                            if ($value === $v) {
-                                $resultValues[] = $k;
-                            }
-                        }
-                        // Check also higher levels when converting hierarchical
-                        // facets:
-                        if (in_array($field, $hierarchicalFacets)) {
-                            $levelOffset = -1;
-                            do {
-                                $levelGood = false;
-                                foreach ($valueMappings as $k => $v) {
-                                    $parts = explode('/', $v);
-                                    $partCount = count($parts);
-                                    if ($parts[0] <= 0 || $partCount <= 2) {
-                                        continue;
-                                    }
-                                    $level = $parts[0] + $levelOffset;
-                                    if ($level < 0) {
-                                        continue;
-                                    }
-                                    $levelGood = true;
-                                    $levelValue = $level . '/'
-                                        . implode(
-                                            '/',
-                                            array_slice($parts, 1, $level + 1)
-                                        ) . '/';
-                                    if ($value === $levelValue) {
-                                        $resultValues[] = $k;
-                                    }
-                                }
-                                --$levelOffset;
-                            } while ($levelGood);
-                        }
-                    }
-                    foreach ($mappings[$field]['RegExp'] ?? [] as $regexp) {
-                        $search = $regexp['Search'] ?? '';
-                        $replace = $regexp['Replace'] ?? '';
-                        if ($search) {
-                            $resultValues[]
-                                = preg_replace("/$search/", $replace, $value);
-                        }
-                    }
-                    if ($resultValues) {
-                        $values = $resultValues;
-                    }
-                    // Map facet type (only after $field is no longer needed)
-                    if (isset($mappings[$field]['Secondary'])) {
-                        $field = $mappings[$field]['Secondary'];
-                    } else {
-                        // Facet not supported by secondary
-                        continue;
-                    }
-                }
-                if ('EDS' === $secondary) {
-                    array_map(
-                        [
-                            '\VuFindSearch\Backend\EDS\SearchRequestModel',
-                            'escapeSpecialCharacters'
-                        ],
-                        $values
-                    );
-                }
-                foreach ($values as $value) {
-                    $newFilters[] = $prefix . $field . ':"' . $value . '"';
-                }
-            }
-            $request->set('filter', $newFilters);
-        }
-
-        $type = $request->get('type');
-        if (!empty($type)) {
-            $key = array_search($type, $this->mappings['Search']['Fields'] ?? []);
-            if (false !== $key) {
-                $request->set('type', $key);
-            }
-        }
-
-        $sort = $request->get('sort');
-        if (!empty($sort)) {
-            $key = array_search($sort, $this->mappings['Sorting']['Fields'] ?? []);
-            if (false !== $key) {
-                $request->set('sort', $key);
-            }
-        }
-
-        return $request;
-    }
-
-    /**
-     * Get information on the current state of the boolean checkbox facets.
-     *
-     * @param array $include        List of checkbox filters to return (null for all)
-     * @param bool  $includeDynamic Should we include dynamically-generated
-     * checkboxes that are not part of the include list above?
+     * @param string $field     Field name
+     * @param string $value     Field value
+     * @param string $operator  Operator (AND/OR/NOT)
+     * @param bool   $translate Should we translate the label?
      *
      * @return array
      */
-    public function getCheckboxFacets(
-        array $include = null,
-        bool $includeDynamic = true
-    ) {
-        $facets = parent::getCheckboxFacets($include, $includeDynamic);
+    protected function formatFilterListEntry($field, $value, $operator, $translate)
+    {
+        if ($translate
+            && in_array($field, $this->getOptions()->getHierarchicalFacets())
+        ) {
+            return $this->translateHierarchicalFacetFilter(
+                $field,
+                $value,
+                $operator
+            );
+        }
+        $result = parent::formatFilterListEntry(
+            $field,
+            $value,
+            $operator,
+            $translate
+        );
 
-        // Mark other backend filters disabled if one is enabled
-        foreach ($facets as $details) {
-            [$field] = $this->parseFilter($details['filter']);
-            if ('blender_backend' === $field && $details['selected']) {
-                foreach ($facets as $key => $current) {
-                    [$field] = $this->parseFilter($current['filter']);
-                    if ('blender_backend' === $field && !$current['selected']) {
-                        $facets[$key]['disabled'] = true;
-                    }
-                }
-                break;
-            }
+        if ($this->isDateRangeFilter($field)) {
+            return $this->formatDateRangeFilterListEntry(
+                $result,
+                $field,
+                $value
+            );
+        }
+        if ($this->isGeographicFilter($field)) {
+            return $this->formatGeographicFilterListEntry(
+                $result,
+                $field,
+                $value
+            );
         }
 
-        return $facets;
+        return $this->formatAuthorIdFilterListEntry($result, $field, $value);
+    }
+
+    /**
+     * Check if the given filter is a date range filter
+     *
+     * @param string $field Filter field
+     *
+     * @return boolean
+     */
+    protected function isDateRangeFilter($field)
+    {
+        if (!($dateRangeField = $this->getDateRangeSearchField())) {
+            return false;
+        }
+        return $field == $dateRangeField;
+    }
+
+    /**
+     * Format a date range filter for use in getFilterList().
+     *
+     * @param array  $listEntry List entry
+     * @param string $field     Field name
+     * @param string $value     Field value
+     *
+     * @return array
+     */
+    protected function formatDateRangeFilterListEntry($listEntry, $field, $value)
+    {
+        $range = $this->parseDateRangeFilter($value);
+        if ($range) {
+            $display = '';
+            $from = $range['from'];
+            $to = $range['to'];
+
+            if ($from != '*') {
+                $display .= $from;
+            }
+            $ndash = html_entity_decode('&#x2013;', ENT_NOQUOTES, 'UTF-8');
+            $display .= $ndash;
+            if ($to != '*') {
+                $display .= $to;
+            }
+            $listEntry['displayText'] = $display;
+        }
+        return $listEntry;
+    }
+
+    /**
+     * Parse "from" and "to" values out of a spatial date range
+     * filter (or return false if the filter is not a range).
+     *
+     * @param string $filter Solr filter to parse.
+     *
+     * @return array|bool   Array with 'from', 'to' and 'type' (if available) values
+     * extracted from the range or false if the provided query is not a range.
+     */
+    public function parseDateRangeFilter($filter)
+    {
+        // VuFind2 initialized date range:
+        // search_daterange_mv:(Intersects|Within)|[1900 TO 2000]
+        $regex = '/(\w+)\|\[([\d-]+|\*)\s+TO\s+([\d-]+|\*)\]/';
+        if (preg_match($regex, $filter, $matches)) {
+            return [
+                'from' => $matches[2], 'to' => $matches[3], 'type' => $matches[1]
+            ];
+        }
+
+        // VuFind2 uninitialized or generic date range:
+        // search_daterange_mv:[1900 TO 2000]
+        $regex = '/\[([\d-]+|\*)\s+TO\s+([\d-]+|\*)\]/';
+        if (preg_match($regex, $filter, $matches)) {
+            return [
+                'from' => $matches[1], 'to' => $matches[2], 'type' => 'overlap'
+            ];
+        }
+
+        return false;
+    }
+
+    /**
+     * Remove all hidden filters.
+     *
+     * Used in the search tabs filter handling thingy.
+     *
+     * @return void
+     */
+    public function removeHiddenFilters()
+    {
+        $this->hiddenFilters = [];
+    }
+
+    /**
+     * Format a geographic filter for use in getFilterList().
+     *
+     * @param array  $listEntry List entry
+     * @param string $field     Field name
+     * @param string $value     Field value
+     *
+     * @return array
+     */
+    protected function formatGeographicFilterListEntry($listEntry, $field, $value)
+    {
+        return $listEntry;
     }
 }

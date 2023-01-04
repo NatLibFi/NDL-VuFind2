@@ -201,20 +201,6 @@ FinnaPaginator.prototype.setEvents = function setEvents() {
       toggleButtons(_.moreBtn, _.lessBtn);
       _.loadPage(0, null, _.settings.imagesPerRow);
     });
-
-    _.trigger.on('viewer-show', function hideSelf() {
-      _.triggerImage.css('display', 'none');
-      _.triggerImage.siblings('div.iconlabel').css('display', 'none');
-      _.trigger.trigger('removeclick.finna');
-      _.trigger.on('click', function preventClicks(e) {
-        e.preventDefault();
-      });
-    });
-    _.trigger.on('image-show', function hideSelf() {
-      _.triggerImage.css('display', '');
-      _.triggerImage.siblings('div.iconlabel').css('display', '');
-      $.fn.finnaPopup.closeOpen('modelViewer');
-    });
   } else {
     _.leftBtn.off('click').on('click', function setImage(){
       _.onListButton(-1);
@@ -342,7 +328,10 @@ FinnaPaginator.prototype.onLeafletImageClick = function onLeafletImageClick(imag
   _.leafletHolder.setMaxBounds(null);
   _.leafletHolder.setMinZoom(1);
   var img = new Image();
-  img.src = image.data('master') || image.data('large');
+  img.src = image.data('master')
+    || image.data('large')
+    || image.data('medium')
+    || image.attr('href');
   _.timeOut = setTimeout(function onLoadStart() {
     _.leafletLoader.addClass('loading');
   }, 100);
@@ -574,7 +563,10 @@ FinnaPaginator.prototype.changeTriggerImage = function changeTriggerImage(imageP
     }
     setImageProperties(this);
   });
-  finna.common.observeImages(img[0].parentNode.querySelectorAll('img[data-src]'));
+  VuFind.observerManager.observe(
+    'LazyImages',
+    img[0].parentNode.querySelectorAll('img[data-src]')
+  );
 };
 
 FinnaPaginator.prototype.showImageDetails = function showImageDetails(imagePopup) {
@@ -640,7 +632,7 @@ FinnaPaginator.prototype.loadPage = function loadPage(direction, openImageIndex,
       cur = $('<div/>');
       _.appendTracks(cur);
     }
-    var image = _.createImagePopup(_.images[currentImage]);
+    var image = _.createImagePopup(_.images[currentImage], currentImage);
     if (typeof image !== 'undefined') {
       cur.append(image);
       column = (column === _.settings.imagesPerRow) ? 1 : column + 1;
@@ -705,55 +697,9 @@ FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() 
     if (typeof $('.open-link a').attr('href') !== 'undefined') {
       _.setDimensions();
     }
-    _.popup.collapseArea.find('[data-embed-video]').each(function initVideo() {
-      var videoSources = $(this).data('videoSources');
-      var posterUrl = $(this).data('posterUrl');
-      var scripts = $(this).data('scripts');
-      $.each(scripts, function updateNonces(key, value) {
-        scripts[key] = VuFind.updateCspNonce(value);
-      });
-      $(this).finnaPopup({
-        id: 'popupvideo',
-        cycle: false,
-        parent: 'video-player',
-        classes: 'canvas-player',
-        translations: translations,
-        modal: '<video class="video-js vjs-big-play-centered" controls></video>',
-        onPopupOpen: function onPopupOpen() {
-          // Lets find the active trigger
-          finna.layout.loadScripts(scripts, function onScriptsLoaded() {
-            finna.videoPopup.initVideoJs('.video-popup', videoSources, posterUrl);
-          });
-          _.setCanvasElement('video');
-        },
-        onPopupClose: function onPopupClose() {
-
-        }
-      });
+    _.popup.collapseArea.find('finna-video').on('click', () => {
+      _.setCanvasElement('video');
     });
-
-    _.popup.collapseArea.find('[data-embed-iframe]').each(function setIframes() {
-      var source = $(this).is('a') ? $(this).attr('href') : $(this).data('link');
-      $(this).finnaPopup({
-        id: 'popupiframe',
-        cycle: false,
-        classes: 'finna-iframe',
-        translations: translations,
-        modal: '<div style="height:100%">' +
-          '<iframe class="player finna-popup-iframe" frameborder="0" allowfullscreen></iframe>' +
-          '</div>',
-        parent: 'video-player',
-        onPopupOpen: function onPopupOpen() {
-          var player = this.content.find('iframe');
-          player.attr('src', this.adjustEmbedLink(source));
-          _.setCanvasElement('video');
-        },
-        onPopupClose: function onPopupClose() {
-
-        }
-      });
-    });
-
     if ($('.imagepopup-holder .feedback-record')[0] || $('.imagepopup-holder .save-record')[0]) {
       $('.imagepopup-holder .feedback-record, .imagepopup-holder .save-record').on('click', function onClickActionLink(/*e*/) {
         $.fn.finnaPopup.closeOpen();
@@ -793,15 +739,16 @@ FinnaPaginator.prototype.loadBookDescription = function loadBookDescription() {
  * Function to create small images for popup track consuming the data from image object
  *
  * @param {object} image
+ * @param {number} index
  */
-FinnaPaginator.prototype.createImagePopup = function createImagePopup(image) {
+FinnaPaginator.prototype.createImagePopup = function createImagePopup(image, index) {
   var _ = this;
   var holder = $(_.imagePopup).clone(true);
   if (_.images.length > 1) {
-    if (image.small) {
+    if (image.urls.small) {
       var img = new Image();
-      img.src = image.small;
-      img.alt = image.alt;
+      img.src = image.urls.small;
+      img.alt = image.description;
       img.title = image.title;
       holder.append(img, $('<i class="fa fa-spinner fa-spin"/>'));
       img.onload = function onLoad() {
@@ -815,18 +762,19 @@ FinnaPaginator.prototype.createImagePopup = function createImagePopup(image) {
     }
   }
   holder.attr({
-    'index': image.index,
-    'data-large': image.large,
-    'data-master': image.master,
+    'index': index,
+    'data-large': image.urls.large,
+    'data-master': image.urls.master,
     'data-description': image.description,
     'data-type': image.type,
-    'href': (!_.settings.isList) ? image.large : image.medium,
-    'data-alt': image.alt
+    'href': (!_.settings.isList) ? (image.urls.large || image.urls.medium) : image.urls.medium,
+    'data-alt': image.description
   });
 
   if (image.type === 'model') {
     holder.attr({
-      'data-modelsettings': image.modelsettings,
+      'data-params': image.params,
+      'data-texture': image.texture,
       'data-scripts': image.scripts
     });
   }
@@ -936,14 +884,12 @@ FinnaPaginator.prototype.createPopupObject = function createPopupObject(popup) {
  */
 FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
   var _ = this;
-  _.trigger.trigger('image-show');
-
-  if (imagePopup.attr('href')) {
-    _.trigger.removeClass('show-icon');
+  var imageType = imagePopup.data('type');
+  var img = _.trigger.find('img');
+  img.toggleClass('hidden', imageType === 'model');
+  if (imagePopup.attr('href') && imageType !== 'model') {
     _.changeTriggerImage(imagePopup);
   } else {
-    _.trigger.find('img').removeAttr('src');
-    _.trigger.addClass('show-icon');
     _.showImageDetails(imagePopup);
   }
   _.openImageIndex = imagePopup.attr('index');
@@ -961,12 +907,28 @@ FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
   } else if (_.settings.triggerClick === 'open') {
     return;
   }
-  var imageType = imagePopup.data('type');
+  // Draggable="false" doesn't work...
+  _.trigger.off('dragstart').on('dragstart', function preventDrag(e) {
+    e.preventDefault();
+  });
+  if (_.viewer) {
+    _.viewer.parentNode.removeChild(_.viewer);
+    _.viewer = undefined;
+  }
   if (imageType === 'model') {
-    _.trigger.addClass('model-trigger');
-    _.trigger.finnaModel(imagePopup.data('modelsettings'), imagePopup.data('scripts'));
+    _.viewer = document.createElement('finna-model-viewer');
+    _.viewer.proxy = `${VuFind.path}/AJAX/JSON?${imagePopup.data('params')}`;
+    _.viewer.texture = `${VuFind.path}${imagePopup.data('texture')}`;
+    _.viewer.scripts = `${VuFind.path}${imagePopup.data('scripts')}`;
+    _.viewer.translations = _.settings.modelTranslations;
+    _.viewer.debug = _.settings.viewerDebug;
+    if (imagePopup.attr('href')) {
+      _.viewer.previewsrc = imagePopup.attr('href');
+    }
+    _.trigger.append(_.viewer);
+    _.trigger.trigger('removeclick.finna');
+    _.trigger.on('click', (e) => { e.preventDefault(); });
   } else {
-    _.trigger.removeClass('model-trigger');
     _.trigger.finnaPopup({
       modal: modal,
       id: 'paginator',
@@ -1049,11 +1011,11 @@ FinnaPaginator.prototype.zoomButtonState = function zoomButtonState() {
 FinnaPaginator.prototype.setListTrigger = function setListTrigger(image) {
   var _ = this;
   var tmpImg = $(_.imagePopup).clone(true);
-  tmpImg.find('img').data('src', image.small);
+  tmpImg.find('img').data('src', image.urls.small);
   tmpImg.attr({
-    'index': image.index,
-    'href': image.medium,
-    'data-alt': image.alt
+    'index': _.offSet,
+    'href': image.urls.medium,
+    'data-alt': image.description
   });
   tmpImg.click();
 };

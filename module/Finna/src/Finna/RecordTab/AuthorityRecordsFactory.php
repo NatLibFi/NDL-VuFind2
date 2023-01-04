@@ -27,10 +27,10 @@
  */
 namespace Finna\RecordTab;
 
-use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Psr\Container\ContainerExceptionInterface as ContainerException;
+use Psr\Container\ContainerInterface;
 
 /**
  * Base class for Authority records record tabs.
@@ -69,7 +69,6 @@ class AuthorityRecordsFactory
             throw new \Exception('Unexpected options passed to factory.');
         }
         return new $requestedName(
-            $container->get(\VuFind\Config\PluginManager::class)->get('config'),
             $container->get(\Finna\Search\Solr\AuthorityHelper::class)
         );
     }

@@ -94,6 +94,13 @@ interface CustomElementInterface
     public static function getChildInfo(): array;
 
     /**
+     * Get the template name or null if a default template should be used.
+     *
+     * @return ?string
+     */
+    public static function getTemplateName(): ?string;
+
+    /**
      * Get the view model for server-side rendering the element.
      *
      * @return ModelInterface

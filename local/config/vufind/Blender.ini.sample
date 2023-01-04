@@ -5,14 +5,70 @@ override_full_sections = "Results,ResultsTop,SpecialFacets,CheckboxFacets,Result
 
 ; Add any overrides below
 
-;[General]
-;display_versions = true
-;versions_filter = "same_source"
+; Enabled backends and their labels. A label is a translatable string that is
+; displayed in the results list for each result. Use an empty string for no label.
+; Backend order defines the order the results are fetched from each backend.
+[Backends]
+;Solr = tabs_local
+;SolrAuth = tabs_authority
+;Primo = tabs_pci
+;EDS = tabs_eds
 
-;[Records]
-; Boolean value indicating if deduplication is enabled. Defaults to false.
-deduplication = true
-; Priority order (descending) for record sources (record ID prefixes separated
-; from the actual record by period, e.g. testsrc.12345)
-;sources = alli,testsrc
+[Blending]
+; Backends used for blending the first results for at most the initial 20 results:
+;initialResults[] = Solr
+;initialResults[] = Solr
+;initialResults[] = SolrAuth
+;initialResults[] = SolrAuth
+;initialResults[] = Primo
+;initialResults[] = EDS
+;initialResults[] = Primo
+;initialResults[] = EDS
+
+; The number of records to take from each backend when filling a result list in a
+; round-robin fashion:
+blockSize = 7
+
+; Block size based on result count (result count range[colon]block size):
+;adaptiveBlockSizes[] = "0-20:3"
+;adaptiveBlockSizes[] = "21-10000:5"
+
+; ---------- searches.ini settings ----------
+
+[General]
+; Whether the "versions" (FRBR) link and record tab are enabled. Default is true.
+;display_versions = true
+
+; Whether to filter the "versions" (FRBR). Only valid option at the moment is
+; 'same_source', which means that other versions are only displayed from the same
+; data source. By default all versions are displayed.
+;versions_filter = 'same_source'
+
+; ---------- facets.ini settings ----------
+
+; The order of display is as shown below
+; The name of the index field is on the left
+; The display name of the field is on the right
+[Results]
+;blender_backend    = Source
+;institution         = Institution
+building            = Organisation
+;building_sub        = Department
+format_ext          = Format
+author_facet        = Author
+language            = Language
+language_original   = original_work_language
+language_subtitles  = subtitle_language
+;year                = "Year"
+search_daterange    = "Main Year"
+topic_facet         = Topic
+
+[CheckboxFacets]
+;blender_backend:Solr = tabs_local
+;blender_backend:SolrAuth = tabs_authority
+;blender_backend:Primo = tabs_pci
+;blender_backend:EDS = tabs_eds
+peer_reviewed:1 = "peer_reviewed"
+online:1 = "online_material_facet_html"
+source_available_str_mv:* = "available_locally_facet_html"
 

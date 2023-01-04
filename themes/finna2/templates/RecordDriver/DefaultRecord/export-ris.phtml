@@ -60,8 +60,13 @@ if (is_array($series)) {
     }
 }
 
-foreach ($this->driver->tryMethod('getNonPresenterAuthors', [], []) as $author) {
-    echo "AU  - {$author['name']}\r\n";
+$authors = $this->driver->tryMethod('getNonPresenterAuthors')
+    ?? $this->driver->tryMethod('getPrimaryAuthors')
+    ?? [];
+
+foreach ($authors as $author) {
+    $name = $author['name'] ?? $author;
+    echo "AU  - {$name}\r\n";
 }
 
 $presenters = $this->driver->tryMethod('getPresenters', [], []);

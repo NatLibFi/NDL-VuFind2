@@ -27,11 +27,12 @@
  */
 namespace Finna\View\Helper\Root;
 
-use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Stdlib\Parameters;
+use Psr\Container\ContainerExceptionInterface as ContainerException;
+use Psr\Container\ContainerInterface;
 
 /**
  * Record helper factory.
@@ -74,7 +75,14 @@ class RecordFactory implements FactoryInterface
             $container->get('ViewHelperManager')->get('url'),
             $container->get('ViewHelperManager')->get('recordLink'),
             $container->get(\VuFind\RecordTab\TabManager::class),
-            $container->get(\VuFind\Form\Form::class)
+            $container->get(\VuFind\Form\Form::class),
+            function ($options) use ($container) {
+                $result = clone $container
+                    ->get(\VuFind\Search\Results\PluginManager::class)
+                    ->get('EncapsulatedRecords');
+                $result->getParams()->initFromRequest(new Parameters($options));
+                return $result;
+            }
         );
         if ('cli' !== php_sapi_name()) {
             $helper->setCoverRouter(

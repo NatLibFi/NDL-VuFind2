@@ -57,16 +57,10 @@ class PrimoBackendFactory
      * Finna: Add hidden filters and set cache manager
      *
      * @return Connector
-     * @todo   Refactor so that the whole connector doesn't need to be duplicated
-     * (instantiate the class separately from initialization or something)
      */
     protected function createConnector()
     {
         $connector = parent::createConnector();
-
-        $connector->setCacheManager(
-            $this->serviceLocator->get(\VuFind\Cache\Manager::class)
-        );
 
         if ($this->primoConfig->HiddenFilters) {
             $connector->setHiddenFilters(

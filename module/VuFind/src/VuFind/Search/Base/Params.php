@@ -28,6 +28,7 @@
  */
 namespace VuFind\Search\Base;
 
+use VuFind\I18n\TranslatableString;
 use VuFind\Search\QueryAdapter;
 use VuFind\Solr\Utils as SolrUtils;
 use VuFindSearch\Backend\Solr\LuceneSyntaxHelper;
@@ -773,6 +774,25 @@ class Params
     }
 
     /**
+     * Parse apart any prefix, field and value from a URL filter string.
+     *
+     * @param string $filter A filter string from url : "field:value"
+     *
+     * @return array         Array with elements 0 = prefix, 1 = field, 2 = value.
+     */
+    public function parseFilterAndPrefix($filter)
+    {
+        [$field, $value] = $this->parseFilter($filter);
+        $prefix = substr($field, 0, 1);
+        if (in_array($prefix, ['-', '~'])) {
+            $field = substr($field, 1);
+        } else {
+            $prefix = '';
+        }
+        return [$prefix, $field, $value];
+    }
+
+    /**
      * Given a facet field, return an array containing all aliases of that
      * field.
      *
@@ -892,6 +912,9 @@ class Params
             // If necessary, rebuild the array to remove gaps in the key sequence:
             if ($rebuildArray) {
                 $this->filterList[$field] = array_values($this->filterList[$field]);
+                if (!$this->filterList[$field]) {
+                    unset($this->filterList[$field]);
+                }
             }
         }
     }
@@ -908,8 +931,12 @@ class Params
     {
         if ($field == null) {
             $this->filterList = [];
-        } elseif (isset($this->filterList[$field])) {
-            unset($this->filterList[$field]);
+        } else {
+            foreach (['', '-', '~'] as $prefix) {
+                if (isset($this->filterList[$prefix . $field])) {
+                    unset($this->filterList[$prefix . $field]);
+                }
+            }
         }
     }
 
@@ -1064,23 +1091,48 @@ class Params
     }
 
     /**
-     * Check for delimited facets -- if $field is a delimited facet field,
-     * process $displayText accordingly. Return the appropriate display value.
+     * Get a display text for a facet field.
      *
-     * @param string $field       The facet
-     * @param string $displayText The facet value
+     * @param string $field Facet field
+     * @param string $value Facet value
      *
      * @return string
      */
-    public function checkForDelimitedFacetDisplayText($field, $displayText)
+    public function getFacetValueRawDisplayText(string $field, string $value): string
     {
+        // Check for delimited facets -- if $field is a delimited facet field,
+        // process $displayText accordingly:
         $delimitedFacetFields = $this->getOptions()->getDelimitedFacets(true);
         if (isset($delimitedFacetFields[$field])) {
-            $parts = explode($delimitedFacetFields[$field], $displayText);
-            $displayText = end($parts);
+            $parts = explode($delimitedFacetFields[$field], $value);
+            return end($parts);
         }
 
-        return $displayText;
+        return $value;
+    }
+
+    /**
+     * Translate a facet value.
+     *
+     * @param string                    $field Field name
+     * @param string|TranslatableString $text  Field value (processed by
+     * getFacetValueRawDisplayText)
+     *
+     * @return string
+     */
+    public function translateFacetValue(string $field, $text): string
+    {
+        $domain = $this->getOptions()->getTextDomainForTranslatedFacet($field);
+        $translateFormat = $this->getOptions()->getFormatForTranslatedFacet($field);
+        $translated = $this->translate([$domain, $text]);
+        return $translateFormat
+            ? $this->translate(
+                $translateFormat,
+                [
+                    '%%raw%%' => $text,
+                    '%%translated%%' => $translated
+                ]
+            ) : $translated;
     }
 
     /**
@@ -1095,12 +1147,10 @@ class Params
      */
     protected function formatFilterListEntry($field, $value, $operator, $translate)
     {
-        $displayText = $this->checkForDelimitedFacetDisplayText($field, $value);
-
-        if ($translate) {
-            $domain = $this->getOptions()->getTextDomainForTranslatedFacet($field);
-            $displayText = $this->translate("$domain::$displayText");
-        }
+        $rawDisplayText = $this->getFacetValueRawDisplayText($field, $value);
+        $displayText = $translate
+            ? $this->translateFacetValue($field, $rawDisplayText)
+            : $rawDisplayText;
 
         return compact('value', 'displayText', 'field', 'operator');
     }
@@ -1203,14 +1253,14 @@ class Params
      * Support method for initDateFilters() -- normalize a year for use in a
      * year-based date range.
      *
-     * @param string $year Value to check for valid year.
+     * @param ?string $year Value to check for valid year.
      *
      * @return string      Formatted year.
      */
     protected function formatYearForDateRange($year)
     {
         // Make sure parameter is set and numeric; default to wildcard otherwise:
-        $year = preg_match('/\d{2,4}/', $year) ? $year : '*';
+        $year = ($year && preg_match('/\d{2,4}/', $year)) ? $year : '*';
 
         // Pad to four digits:
         if (strlen($year) == 2) {
@@ -1226,14 +1276,14 @@ class Params
      * Support method for initFullDateFilters() -- normalize a date for use in a
      * year/month/day date range.
      *
-     * @param string $date Value to check for valid date.
+     * @param ?string $date Value to check for valid date.
      *
      * @return string      Formatted date.
      */
     protected function formatDateForFullDateRange($date)
     {
         // Make sure date is valid; default to wildcard otherwise:
-        $date = SolrUtils::sanitizeDate($date);
+        $date = $date ? SolrUtils::sanitizeDate($date) : null;
         return $date ?? '*';
     }
 
@@ -1241,7 +1291,7 @@ class Params
      * Support method for initNumericRangeFilters() -- normalize a year for use in
      * a date range.
      *
-     * @param string $num Value to format into a number.
+     * @param ?string $num Value to format into a number.
      *
      * @return string     Formatted number.
      */

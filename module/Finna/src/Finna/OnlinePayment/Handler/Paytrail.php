@@ -88,7 +88,7 @@ class Paytrail extends AbstractBase
         $patronId = $patron['cat_username'];
         $transactionId = $this->generateTransactionId($patronId);
 
-        $module = $this->initPaytrail($transactionId, $currency);
+        $module = $this->initPaytrail();
 
         $returnUrl = $this->addQueryParams(
             $returnBaseUrl,
@@ -288,9 +288,7 @@ class Paytrail extends AbstractBase
      */
     protected function getPaymentResponseParams($request)
     {
-        if (!($module = $this->initPaytrail())) {
-            return false;
-        }
+        $module = $this->initPaytrail();
 
         $params = array_merge(
             $request->getQuery()->toArray(),

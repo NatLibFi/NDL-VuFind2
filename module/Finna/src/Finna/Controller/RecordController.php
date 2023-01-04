@@ -42,6 +42,7 @@ use VuFindSearch\ParamBag;
 class RecordController extends \VuFind\Controller\RecordController
 {
     use FinnaRecordControllerTrait;
+    use \Finna\Statistics\ReporterTrait;
 
     /**
      * Create record feedback form and send feedback to correct recipient.
@@ -74,6 +75,18 @@ class RecordController extends \VuFind\Controller\RecordController
     }
 
     /**
+     * Home (default) action -- forward to requested (or default) tab.
+     *
+     * @return mixed
+     */
+    public function homeAction()
+    {
+        $result = parent::homeAction();
+        $this->triggerStatsRecordView($result->driver ?? null);
+        return $result;
+    }
+
+    /**
      * Helper for building a route to a record form
      * (Feedback, Repository library request).
      *
@@ -84,21 +97,13 @@ class RecordController extends \VuFind\Controller\RecordController
     protected function getRecordForm($id)
     {
         $driver = $this->loadRecord();
-        $recordPlugin = $this->getViewRenderer()->plugin('record');
-
-        $data = [
-           'record' => $driver->getBreadcrumb(),
-           'record_info' => $recordPlugin($driver)->getEmail()
-        ];
-
         return $this->redirect()->toRoute(
             'feedback-form',
             ['id' => $id],
             ['query' => [
-                'data' => $data,
                 'layout' => $this->getRequest()->getQuery('layout', false),
                 'record_id'
-                => $driver->getSourceIdentifier() . '|' . $driver->getUniqueID()
+                    => $driver->getSourceIdentifier() . '|' . $driver->getUniqueID()
             ]]
         );
     }
@@ -299,10 +304,21 @@ class RecordController extends \VuFind\Controller\RecordController
             return $this->redirectToRecord('#top');
         }
         if ((is_array($validRequest) && !$validRequest['valid']) || !$validRequest) {
-            $this->flashMessenger()->addErrorMessage(
-                is_array($validRequest)
-                    ? $validRequest['status'] : 'hold_error_blocked'
-            );
+            $message = is_array($validRequest)
+                ? $validRequest['status'] : 'hold_error_blocked';
+            if (is_string($message)) {
+                // Check for _html version of the message:
+                $translationEmpty = $this->getViewRenderer()
+                    ->plugin('translationEmpty');
+                if (!$translationEmpty($message . '_html')) {
+                    $message = [
+                        'html' => true,
+                        'msg' => $message . '_html',
+                    ];
+                }
+            }
+
+            $this->flashMessenger()->addErrorMessage($message);
             return $this->redirectToRecord('#top');
         }
 

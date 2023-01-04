@@ -27,10 +27,10 @@
  */
 namespace Finna\AjaxHandler;
 
-use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Psr\Container\ContainerExceptionInterface as ContainerException;
+use Psr\Container\ContainerInterface;
 
 /**
  * Factory for GetImageInformation AJAX handler.
@@ -77,6 +77,9 @@ class GetImageInformationFactory
             $tablePluginManager->get(\VuFind\Db\Table\UserList::class),
             $container->get(\VuFind\Auth\Manager::class)->isLoggedIn(),
             $container->get('ViewRenderer')->plugin('record')
+        );
+        $result->setStatisticsEventHandler(
+            $container->get(\Finna\Statistics\EventHandler::class)
         );
         return $result;
     }

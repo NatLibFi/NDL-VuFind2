@@ -110,9 +110,11 @@ trait SolrAuthFinnaTrait
     /**
      * Return birth date.
      *
+     * @param bool $force Return established date for corporations?
+     *
      * @return string
      */
-    public function getBirthDate()
+    public function getBirthDate($force = false)
     {
         return '';
     }
@@ -120,9 +122,11 @@ trait SolrAuthFinnaTrait
     /**
      * Return birth place.
      *
+     * @param bool $force Return established date for corporations?
+     *
      * @return string
      */
-    public function getBirthPlace()
+    public function getBirthPlace($force = false)
     {
         return $this->fields['birth_place'] ?? '';
     }
@@ -130,9 +134,11 @@ trait SolrAuthFinnaTrait
     /**
      * Return death date.
      *
+     * @param bool $force Return terminated date for corporations?
+     *
      * @return string
      */
-    public function getDeathDate()
+    public function getDeathDate($force = false)
     {
         return '';
     }
@@ -140,9 +146,11 @@ trait SolrAuthFinnaTrait
     /**
      * Return death place.
      *
+     * @param bool $force Return terminated date for corporations?
+     *
      * @return string
      */
-    public function getDeathPlace()
+    public function getDeathPlace($force = false)
     {
         return $this->fields['death_place'] ?? '';
     }

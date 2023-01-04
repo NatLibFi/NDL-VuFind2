@@ -28,11 +28,11 @@
 namespace Finna\View\Helper\Root;
 
 use Finna\View\CustomElement\CustomElementInterface;
-use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerExceptionInterface as ContainerException;
+use Psr\Container\ContainerInterface;
 
 /**
  * CleanHtml helper factory.
@@ -71,10 +71,28 @@ class CleanHtmlFactory implements FactoryInterface
             ->getCache('object')->getOptions()->getCacheDir();
 
         $config = $container->get('config');
-        $allowedElements
+        $customElements
             = $config['vufind']['plugin_managers']['view_customelement']['aliases'];
+
+        return new $requestedName(
+            $cacheDir,
+            self::getAllowedElements($customElements)
+        );
+    }
+
+    /**
+     * Returns an array containing HTML Purifier compatible information about all
+     * allowed HTML elements, based on the provided array of custom elements.
+     *
+     * @param array $customElements Custom elements
+     *
+     * @return array
+     */
+    public static function getAllowedElements($customElements)
+    {
         $attrs = CustomElementInterface::ATTRIBUTES;
-        foreach ($allowedElements as $elementName => $elementClass) {
+        $allowedElements = [];
+        foreach ($customElements as $elementName => $elementClass) {
             $allowedElements[$elementName] = $elementClass::getInfo();
             foreach ($elementClass::getChildInfo() as $childName => $childInfo) {
                 if (isset($allowedElements[$childName][$attrs])) {
@@ -86,7 +104,6 @@ class CleanHtmlFactory implements FactoryInterface
                 $allowedElements[$childName] = $childInfo;
             }
         }
-
-        return new $requestedName($cacheDir, $allowedElements);
+        return $allowedElements;
     }
 }

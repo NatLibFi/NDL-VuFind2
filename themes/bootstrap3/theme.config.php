@@ -25,6 +25,8 @@ return [
          *          - 3xx => VuFind scripts (highly VuFind-specific code)
          * - position: 'header' (default) or 'footer'
          * - conditional: e.g. 'lt IE 10'
+         * - disabled: if set to true in a child theme, the matching file will be
+         *   removed if it was included by a parent theme.
          *
          * Entries with neither priority nor load_after will be loaded after all
          * other entries.
@@ -44,6 +46,7 @@ return [
         ['file' => 'lightbox.js', 'priority' => 320],
         ['file' => 'truncate.js', 'priority' => 330],
         ['file' => 'trigger_print.js', 'priority' => 340],
+        ['file' => 'observer_manager.js', 'priority' => 350],
     ],
     'less' => [
         'active' => false,
@@ -106,6 +109,9 @@ return [
              */
             'addthis-bookmark' => 'FontAwesome:bookmark-o',
             'barcode' => 'FontAwesome:barcode',
+            'browzine-issue' => 'Alias:format-serial',
+            'browzine-pdf' => 'FontAwesome:file-pdf-o',
+            'browzine-retraction' => 'FontAwesome:exclamation',
             'cart' => 'FontAwesome:suitcase',
             'cart-add' => 'FontAwesome:plus',
             'cart-empty' => 'FontAwesome:times',
@@ -186,8 +192,8 @@ return [
             'format-videoreel' => 'FontAwesome:video-camera',
             'hierarchy-tree' => 'FontAwesome:sitemap',
             'lightbox-close' => 'FontAwesome:times',
-            'more' => 'FontAwesome:long-arrow-right',
-            'more-rtl' => 'FontAwesome:long-arrow-left',
+            'more' => 'FontAwesome:chevron-circle-right',
+            'more-rtl' => 'FontAwesome:chevron-circle-left',
             'my-account' => 'FontAwesome:user-circle-o',
             'my-account-notification' => 'Alias:notification',
             'my-account-warning' => 'Alias:warning',
@@ -216,7 +222,7 @@ return [
             'place-hold' => 'FontAwesome:flag',
             'place-ill-request' => 'FontAwesome:exchange',
             'place-recall' => 'FontAwesome:flag',
-            'place-storage-retrieval' => 'FontAwesome:flag',
+            'place-storage-retrieval' => 'FontAwesome:truck',
             'print' => 'FontAwesome:print',
             'profile' => 'FontAwesome:user',
             'profile-card-delete' => 'Alias:ui-delete',
@@ -229,16 +235,20 @@ return [
             'qrcode' => 'FontAwesome:qrcode',
             'search' => 'FontAwesome:search',
             'search-delete' => 'Alias:ui-delete',
+            'search-filter-remove' => 'FontAwesome:times',
             'search-rss' => 'FontAwesome:rss',
             'search-save' => 'Alias:ui-save',
+            'search-schedule-alert' => 'FontAwesome:exclamation-circle',
             'send-email' => 'FontAwesome:envelope',
             'send-sms' => 'FontAwesome:phone',
             'sign-in' => 'FontAwesome:sign-in',
             'sign-out' => 'FontAwesome:sign-out',
             'spinner' => 'FontAwesome:spinner:icon--spin',
+            'status-available' => 'FontAwesome:check',
             'status-indicator' => 'FontAwesome:circle',
             'status-pending' => 'FontAwesome:clock-o',
             'status-ready' => 'FontAwesome:bell',
+            'status-unavailable' => 'FontAwesome:times',
             'tag-add' => 'Alias:ui-add',
             'tag-remove' => 'Alias:ui-remove',
             'tree-context' => 'FontAwesome:sitemap',
@@ -270,7 +280,7 @@ return [
             'user-storage-retrievals' => 'FontAwesome:archive',
             'view-grid' => 'FontAwesome:th',
             'view-list' => 'FontAwesome:list',
-            'view-visual' => 'FontAwesome:visual',
+            'view-visual' => 'FontAwesome:th-large',
             'warning' => 'FontAwesome:exclamation-triangle',
         ],
     ],

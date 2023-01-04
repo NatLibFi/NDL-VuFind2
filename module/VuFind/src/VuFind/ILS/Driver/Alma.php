@@ -823,6 +823,10 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
             }
             $profile['email'] = $this->getPreferredEmail($xml);
         }
+        if ($xml->birth_date) {
+            // Drop any time zone designator from the date:
+            $profile['birthdate'] = substr((string)$xml->birth_date, 0, 10);
+        }
 
         // Cache the user group code
         $cacheId = 'alma|user|' . $patronId . '|group_code';
@@ -1367,7 +1371,7 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getConfig($function, $params = null)
+    public function getConfig($function, $params = [])
     {
         if ($function == 'patronLogin') {
             return [

@@ -1,8 +1,15 @@
 <!-- START of: finna - ajax/feed-list-item.phtml -->
-<?php if (isset($item['image']) && isset($item['image']['url'])): ?>
+<?php
+  $hasIcon = !empty($item['icon']['name']);
+  $hasImg = !empty($item['image']['url']);
+?>
+<?php if ($hasImg): ?>
   <img src="<?=$this->escapeHtmlAttr($item['image']['url']) ?>" alt="" />
+  <?php if ($hasIcon && $hasImg): ?>
+    <?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon'], 'wrapper' => true]);?>
+  <?php endif; ?>
 <?php endif; ?>
-<span class="title"><?=$this->escapeHtml($item['title']) ?></span>
+<span class="title"><?php if ($hasIcon && !$hasImg): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?> <?=$this->escapeHtml($item['title']) ?></span>
 <?php if ($item['xcal'] ?? []): ?>
   <div class="xcal-fields">
     <?php if (!empty($xcal['startDate'])): ?>

@@ -29,7 +29,10 @@
         <?php endif; ?>
 
         <div class="resultOtherLinks">
-          <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?> <?=$this->record($this->driver)->getSourceIdElement() ?></div>
+          <div class="resultItemFormat">
+            <?=$this->record($this->driver)->getFormatList() ?>
+            <?=$this->record($this->driver)->getLabelList() ?>
+          </div>
           <?php if ($results = $this->driver->tryMethod('getOtherLinks')): ?>
             <?php $prevOtherLinkHeading = ''; ?>
             <?php foreach ($results as $result): ?>
@@ -55,7 +58,7 @@
           <?php else: ?>
             <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles'); if (!empty($authors)): ?>
               <?php $author = $authors[0]; ?>
-                <?=$this->record($this->driver)->getAuthorityLinkElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?>
+                <?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?>
               <?php if (count($authors) > 1): ?> <?=$this->transEsc('more_authors_abbrev')?><?php endif; ?>
             <?php endif; ?>
             <?php $journalTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDates(); ?>
@@ -166,7 +169,7 @@
               <?php endif; ?>
 
               <div class="callnumAndLocation ajax-availability<?=$this->driver->supportsAjaxStatus() ? ' hidden' : ''?>">
-                <span class="availability-load-indicator hidden"><i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('Loading')?>...<br/></span>
+                <span class="availability-load-indicator hidden"><i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('loading_ellipsis')?><br/></span>
                 <?php if ($this->driver->supportsAjaxStatus()): ?>
                   <strong class="hideIfDetailed"></strong>
                   <span class="callnumber ajax-availability hidden">

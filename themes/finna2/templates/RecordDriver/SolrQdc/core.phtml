@@ -1,26 +1,21 @@
 <!-- START of: finna - RecordDriver/SolrQdc/core.phtml -->
 <?php
-
   $openUrl = $this->openUrl($this->driver, 'record');
   $openUrlActive = $openUrl->isActive();
+  $doi = $this->doi($this->driver, 'record');
+  $doiActive = $doi->isActive();
+
+  $recordHelper = $this->record($this->driver);
   // Account for replace_other_urls setting
   $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
-  $onlineURLs = $this->driver->getOnlineURLs();
+  $onlineURLs = $this->driver->getOnlineURLs(false, ['image']);
   $mergedData = $this->driver->tryMethod('getMergedRecordData');
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
   $img = $this->recordImage($this->record($this->driver));
-  $images = $img->getAllImagesAsCoverLinks(
-      $this->layout()->userLang,
-      $params
-  );
   $audioUrls = [];
   $videoUrls = [];
   $otherUrls = [];
-  $hasOnlineURLs =
-      $this->record($this->driver)->containsNonImageURL($urls, $images)
-      || $this->record($this->driver)->containsNonImageURL($onlineURLs, $images)
-      || !empty($mergedData['urls']) && $this->record($this->driver)->containsNonImageURL($mergedData['urls'], $images)
-  ;
+  $hasOnlineURLs = !empty($urls) || !empty($onlineURLs) || !empty($mergedData['urls']);
 
   if (!empty($urls)) {
     foreach ($urls as $url) {
@@ -87,8 +82,8 @@
         </div>
       <?php endif; ?>
 
-      <?php if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
-        <?php if ($hasOnlineURLs || $openUrlActive): ?>
+      <?php if (!empty($urls) || $openUrlActive || $doiActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
+        <?php if ($hasOnlineURLs || $openUrlActive || $doiActive): ?>
         <div class="recordURLs local-available-online-record">
           <div class="truncate-field">
             <?php if (!empty($otherUrls)): ?>
@@ -115,10 +110,14 @@
               <?php endforeach; ?>
             <?php endif; ?>
           </div>
+
           <?php if ($openUrlActive): ?>
             <?=$openUrl->renderTemplate()?><br/>
           <?php endif; ?>
-          </div>
+          <?php if ($doiActive): ?>
+            <?=$doi->renderTemplate()?>
+          <?php endif; ?>
+        </div>
         <?php endif; ?>
       <?php endif; ?>
 
@@ -191,7 +190,7 @@
         );
       ?>
       <?php if (!empty($coreFields)): ?>
-        <table class="table table-finna-record record-details">
+        <table class="table table-finna-record record-details" role="presentation">
           <?=$this->record($this->driver)->renderTemplate('core-fields.phtml', ['coreFields' => $coreFields]);?>
         </table>
       <?php endif; ?>

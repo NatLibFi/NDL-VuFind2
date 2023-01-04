@@ -1,22 +1,36 @@
-[Primary]
-backend = Solr
-
-[Secondary]
-backend = Primo
+; Enabled backends and their labels. A label is a translatable string that is
+; displayed in the results list for each result. Use an empty string for no label.
+; Backend order defines the order the results are fetched from each backend.
+[Backends]
+;Solr = "Items in Library"
+;SolrAuth = "Authors"
+;Primo = "CDI"
+;EDS = "EDS"
 
 [Blending]
-; Result list position for records boosted from secondary. Position + count (below)
-; must fit within within the first record block (10 records by default) or boosting
-; will be ignored.
-boostPosition = 2
-; Number of records boosted from secondary
-boostCount = 3
+; Backends used for blending the first results for at most the initial 20 results:
+;initialResults[] = Solr
+;initialResults[] = Solr
+;initialResults[] = SolrAuth
+;initialResults[] = SolrAuth
+;initialResults[] = Primo
+;initialResults[] = EDS
+;initialResults[] = Primo
+;initialResults[] = EDS
+
+; The number of records to take from each backend when filling a result list in a
+; round-robin fashion:
+blockSize = 7
+
+; Block size based on result count (result count range[colon]block size):
+;adaptiveBlockSizes[] = "0-20:3"
+;adaptiveBlockSizes[] = "21-10000:5"
 
 ; ---------- searches.ini settings ----------
 
 [General]
 default_handler = AllFields
-default_sort = "relevance,id asc"
+default_sort = "relevance"
 default_view = list
 default_limit = 20
 ;limit_options        = 10,20,40,60,80,100
@@ -31,6 +45,9 @@ default_noresults_recommend[] = SwitchType
 default_noresults_recommend[] = SwitchQuery:::fuzzy
 default_noresults_recommend[] = SpellingSuggestions
 default_noresults_recommend[] = RemoveFilters
+;default_noresults_recommend[] = "FinnaSuggestionsDeferred:api.finna.fi/api/v1/search?lookfor=%%lookfor%%:finna.fi/Search/Results?lookfor=%%lookfor%%&lng=%%lng%%"
+;default_results_top_recommend[] = Feedback
+;default_results_top_recommend[] = OntologyDeferred
 
 ; Set this to true in order to highlight keywords from the search query when they
 ; appear in fields displayed in search results.
@@ -41,12 +58,6 @@ highlighting = true
 highlighting_fields = "author,author2,author_additional,author_fuller,container_title,contents,culture,description,dewey-full,edition,era,genre,geographic,institution,isbn,issn,language,lccn,material,measurements,publication_place_txt_mv,publisher,series,series2,title,title_alt,title_full,title_new,title_old,topic"
 snippets = true
 retain_filters_by_default = true
-;default_filters[] = "format:Book"
-;default_filters[] = "institution:MyInstitution"
-;default_filters[] = "(format:Book AND institution:MyInstitution)"
-
-;display_versions = true
-;versions_filter = "same_source"
 
 [Records]
 ; Boolean value indicating if deduplication is enabled. Defaults to false.
@@ -75,15 +86,15 @@ title = sort_title
 ; The name of the index field is on the left
 ; The display name of the field is on the right
 [Results]
-sector_str_mv      = Sector
-;institution        = Institution
-building           = Organisation
-;building_sub_str_mv = Department
-format_ext_str_mv   = Format
+;blender_backend     = Source
+;institution         = Institution
+building            = Organisation
+;building_sub        = Department
+format_ext          = Format
 author_facet        = Author
 language            = Language
-original_lng_str_mv = original_work_language
-subtitle_lng_str_mv = subtitle_language
+language_original   = original_work_language
+language_subtitles  = subtitle_language
 ;main_date_str       = "Year"
 search_daterange_mv = "Main Year"
 topic_facet         = Topic
@@ -94,7 +105,6 @@ labelSections[] = HomePage_Facets
 labelSections[] = ResultsTop
 labelSections[] = Results
 labelSections[] = ExtraFacetLabels
-checkboxSections[] = CheckboxFacets
 
 ; This setting lists configuration settings defining checkbox facets. If you use
 ; a custom section to configure additional facets, be sure to add it to this list
@@ -120,9 +130,9 @@ dateRange[] = publishDate
 ; use a trailing slash to avoid ambiquities)
 hierarchical[] = building
 hierarchical[] = format
-hierarchical[] = sector_str_mv
-hierarchical[] = category_str_mv
-hierarchical[] = format_ext_str_mv
+hierarchical[] = format_ext
+hierarchical[] = sector
+hierarchical[] = category
 ; Sort options for hierarchical facets:
 ; How hierarchical facets are sorted. Default is result count, but alternative ways
 ; can be specified:
@@ -136,7 +146,7 @@ hierarchicalFacetSortOptions[building] = top
 ; full   = Display full hierarchy for each entry
 ;hierarchicalFacetDisplayStyles[format] = full
 ; Separator used when display hierarchical facet levels (default is "/")
-;hierarchicalFacetSeparators[format] = " > "
+hierarchicalFacetSeparators[format] = " > "
 ; Any fields listed below will be treated as new items facets
 newItems[] = first_indexed
 ; Date visualisations
@@ -152,36 +162,18 @@ dateRangeVis = search_daterange_mv:main_date_str
 ;
 ; Leave the section empty if you do not need checkbox facets.
 [CheckboxFacets]
-;blender_backend:primary = tabs_local
-;blender_backend:secondary = tabs_pci
-;edition:1st* = "First Edition"     ; Contrived hypothetical example
+;blender_backend:Solr = tabs_local
+;blender_backend:SolrAuth = tabs_authority
+;blender_backend:Primo = tabs_pci
+;blender_backend:EDS = tabs_eds
 source_available_str_mv:* = available_locally_facet_html
-online_boolean:1 = online_material_facet_html
-;free_online_boolean:1 = free_online_material_facet_html
-peer_reviewed_boolean:1 = peer_reviewed
+online:1 = online_material_facet_html
+;free_online:1 = free_online_material_facet_html
+peer_reviewed:1 = peer_reviewed
 
 ; These settings affect the way the [Results] facets are displayed
 ; If using facets at the top of search results you have more room for text.
 [Results_Settings]
-; By default, how many values should we show for each facet? (-1 for no limit)
-facet_limit        = 30
-; Override facet_limit on a per-field basis using this array:
-;facet_limit_by_field[format] = 50
-
-; By default, the side facets will only show 6 facets and then the "show more"
-; button. This can get configured with the showMore settings.
-; You can use the * to set a new default setting.
-showMore[*] = 6
-; Or you can set a facet specific value by using the facet name as index.
-;showMore['format'] = 10
-
-; Show more facets in a lightbox (paginated, no limit)
-; If false, facets expand in side bar to show facets up to the above limit
-; If "more", facets expand and offer an option at the bottom to open the lightbox
-; If true, facets immediately open in the lightbox
-showMoreInLightbox[*] = more
-lightboxLimit = 100 ; page size for the lightbox
-
 ; Number of rows of values for top facets to show above the "more" button
 top_rows = 2
 ; Should we show "exclude" links for some or all of the facets? Set to * for
@@ -193,7 +185,7 @@ top_rows = 2
 ; to false or omit to disable ORed facets.
 orFacets = *
 ; Do we want any facets to be collapsed by default?
-collapsedFacets = sector_str_mv,building,author_facet,language,original_lng_str_mv,subtitle_lng_str_mv,main_date_str,search_daterange_mv,genre_facet,era_facet,geographic_facet,topic_facet,hierarchy_parent_title,first_indexed,category_str_mv,usage_rights_str_mv,major_genre_str_mv
+collapsedFacets = sector,building,author_facet,language,language_original,language_subtitles,main_date_str,search_daterange_mv,genre_facet,era_facet,geographic_facet,topic_facet,hierarchy_parent_title,first_indexed,category,usage_rights_str_mv,major_genre,year
 
 ; This can be used to sort specific facet fields alphabetically by index value
 ; (which normally results in alphabetical order).
@@ -205,7 +197,9 @@ sorted_by_index[] = usage_rights_str_mv
 ; Most of these settings affect the way the [Advanced] facets are displayed; the
 ; translated_facets setting affects facets globally.
 [Advanced_Settings]
-facet_limit      = -1      ; how many values should we show for each facet?
+; A default delimiter for use with delimited facets (see below).
+delimiter = "{{{_:::_}}}"
+
 ; Should we OR together facets rather than ANDing them? Set to * for
 ; all facets, use a comma-separated list to apply to some of the facets, set
 ; to false or omit to disable ORed facets.
@@ -225,21 +219,38 @@ special_facets   = "daterange"
 ; translated facets, be sure that all of the necessary strings are included in the
 ; language files found in the web/lang directory.  By default, no facets are
 ; translated -- uncomment or add lines below to turn on this feature.
+translated_facets[] = blender_backend
 translated_facets[] = institution
 translated_facets[] = building
-translated_facets[] = building_sub_str_mv:department
+translated_facets[] = building_sub:department
 translated_facets[] = format
-translated_facets[] = language
+translated_facets[] = format_ext
+translated_facets[] = language:langcode
 translated_facets[] = genre_facet
-translated_facets[] = sector_str_mv
+translated_facets[] = sector
 translated_facets[] = first_indexed
-translated_facets[] = original_lng_str_mv
-translated_facets[] = subtitle_lng_str_mv
-translated_facets[] = category_str_mv
+translated_facets[] = language_original:langcode
+translated_facets[] = language_subtitles:langcode
+translated_facets[] = category
 translated_facets[] = usage_rights_str_mv
-translated_facets[] = major_genre_str_mv
-translated_facets[] = format_ext_str_mv
+translated_facets[] = major_genre
+translated_facets[] = format_ext
 
 ; Prefix to be used in facet translation to avoid mixing facet strings with other
 ; translated content
 facet_translation_prefix = "facet_"
+
+; Any facets named here will be treated as a delimited facet.
+; Delimited facets can be used to display a text value for otherwise incomprehensible
+; facet values. It can also be used in combination with sorted_by_index (above)
+; to fully control the display order of facet values. The delimiter may be present in
+; the string an unlimited number of times; only the text after the last delimiter
+; will be displayed to the user.
+; e.g. facetValue{{{_:::_}}}displayText
+; e.g. sortKey{{{_:::_}}}facetValue{{{_:::_}}}displayText
+; Per-field delimiters can be set here following a pipe after the facet name.
+; e.g. "author_id_str|:::"
+; If no delimiter is set, the default delimiter (set above) will be used.
+;delimited_facets[] = author_id_str
+;delimited_facets[] = "author_id_str|:::"
+delimited_facets[] = "blender_backend|{{{_:::_}}}"

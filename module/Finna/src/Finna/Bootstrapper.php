@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2021.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -109,14 +109,19 @@ class Bootstrapper
                 return;
             }
             $agent = $headers->get('User-Agent')->toString();
-            if (!preg_match('/bot|crawl|slurp|spider/i', $agent)) {
+            $crawlerDetect = new \Jaybizzle\CrawlerDetect\CrawlerDetect();
+            if (!$crawlerDetect->isCrawler($agent)) {
                 return;
             }
             // Check if the action should be prevented
+            $ajaxAllowed = [
+                'onlinepaymentnotify',
+                'systemstatus',
+            ];
             $routeMatch = $event->getRouteMatch();
             $controller = strtolower($routeMatch->getParam('controller'));
             $action = strtolower($routeMatch->getParam('action'));
-            if (($controller == 'ajax' && $action != 'systemstatus')
+            if (($controller == 'ajax' && !in_array($action, $ajaxAllowed))
                 || ($controller == 'record' && $action == 'ajaxtab')
                 || ($controller == 'record' && $action == 'holdings')
                 || ($controller == 'record' && $action == 'details')
@@ -143,31 +148,6 @@ class Bootstrapper
 
         // Attach with a high priority
         $this->events->attach('dispatch', $callback, 11000);
-    }
-
-    /**
-     * Initialize the base url for the application from an environment variable
-     *
-     * @return void
-     */
-    protected function initBaseUrl()
-    {
-        if (PHP_SAPI === 'cli') {
-            return;
-        }
-        $callback = function ($event) {
-            $application = $event->getApplication();
-            $request = $application->getRequest();
-            $baseUrl = $request->getServer('FINNA_BASE_URL');
-
-            if (!empty($baseUrl)) {
-                $baseUrl = '/' . trim($baseUrl, '/');
-                $router = $application->getServiceManager()->get('Router');
-                $router->setBaseUrl($baseUrl);
-                $request->setBaseUrl($baseUrl);
-            }
-        };
-        $this->events->attach('route', $callback, 9000);
     }
 
     /**
@@ -294,6 +274,52 @@ class Bootstrapper
             }
         };
 
+        $this->events->attach('dispatch', $callback, 9000);
+    }
+
+    /**
+     * Set up statistics event handler
+     *
+     * N.B. The event handler may have already been created by the database row
+     * session factory to ensure proper hookup before session events.
+     *
+     * @return void
+     */
+    protected function initStatisticsEventHandler()
+    {
+        if (PHP_SAPI === 'cli') {
+            return;
+        }
+
+        $sm = $this->event->getApplication()->getServiceManager();
+        $callback = function ($event) use ($sm) {
+            if (!($routeMatch = $event->getRouteMatch())) {
+                return;
+            }
+            $controller = strtolower($routeMatch->getParam('controller'));
+            $action = strtolower($routeMatch->getParam('action'));
+            if (!in_array($controller, ['cover', 'qrcode'])) {
+                if ('ajax' === $controller) {
+                    if ('json' !== $action || !($request = $event->getRequest())) {
+                        return;
+                    }
+                    $method = $request->getPost('method')
+                        ?? $request->getQuery('method');
+                    if (!in_array($method, ['getImageInformation'])) {
+                        return;
+                    }
+                    $action .= "/$method";
+                }
+                if ('ajaxtab' === $action && $request = $event->getRequest()) {
+                    $tab = $request->getPost('tab') ?? $request->getQuery('tab');
+                    if ($tab) {
+                        $action .= "/$tab";
+                    }
+                }
+                $sm->get(\Finna\Statistics\EventHandler::class)
+                    ->pageView($controller, $action);
+            }
+        };
         $this->events->attach('dispatch', $callback, 9000);
     }
 

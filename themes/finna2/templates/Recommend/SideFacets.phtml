@@ -56,12 +56,6 @@
     }
   }
 ?>
-<?=$this->context($this)->renderInContext('Recommend/SideFacets/filter-list.phtml', [
-    'collapsedFacets' => $collapsedFacets,
-    'extraFilters' => $extraFilters,
-    'filterList' => $filterList,
-    'results' => $results,
-]); ?>
 <?php
 if ($this->fromStreetSearch) {
   if (($key = array_search('geographic_facet', $collapsedFacets)) !== false) {

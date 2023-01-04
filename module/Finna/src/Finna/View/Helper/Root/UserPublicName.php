@@ -1,10 +1,10 @@
 <?php
 /**
- * User publicly show name view helper
+ * User public name view helper
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2019.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -24,19 +24,21 @@
  * @author   Mika Hatakka <mika.hatakka@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Tuure Ilmarinen <tuure.ilmarinen@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 namespace Finna\View\Helper\Root;
 
 /**
- * User publicly show name view helper
+ * User public name view helper
  *
  * @category VuFind
  * @package  View_Helpers
  * @author   Mika Hatakka <mika.hatakka@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Tuure Ilmarinen <tuure.ilmarinen@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
@@ -64,7 +66,7 @@ implements \VuFind\I18n\Translator\TranslatorAwareInterface
             } elseif ($user->email
                 && ($pos = strpos($user->email, '@')) !== false
             ) {
-                $username = substr($user->email, 0, $pos);
+                [$username] = explode('+', substr($user->email, 0, $pos));
             } elseif ($user->firstname && $user->lastname) {
                 $username = "$user->firstname $user->lastname";
             }

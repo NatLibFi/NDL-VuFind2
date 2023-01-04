@@ -32,7 +32,6 @@
 namespace Finna\ILS\Driver;
 
 use DOMDocument;
-use VuFind\Config\Locator;
 use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\Translator\TranslatorAwareInterface as TranslatorAwareInterface;
@@ -67,6 +66,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * @var \VuFind\Date\Converter
      */
     protected $dateFormat;
+
+    /**
+     * Config file path resolver
+     *
+     * @var \VuFind\Config\PathResolver
+     */
+    protected $pathResolver;
 
     /**
      * Default pickup location
@@ -291,11 +297,15 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     /**
      * Constructor
      *
-     * @param \VuFind\Date\Converter $dateConverter Date converter object
+     * @param \VuFind\Date\Converter      $dateConverter Date converter object
+     * @param \VuFind\Config\PathResolver $pathResolver  Config file path resolver
      */
-    public function __construct(\VuFind\Date\Converter $dateConverter)
-    {
+    public function __construct(
+        \VuFind\Date\Converter $dateConverter,
+        \VuFind\Config\PathResolver $pathResolver
+    ) {
         $this->dateFormat = $dateConverter;
+        $this->pathResolver = $pathResolver;
     }
 
     /**
@@ -416,7 +426,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ]
         ];
 
-        if ($this->defaultPickUpLocation == '0') {
+        if ($this->defaultPickUpLocation == '0'
+            || $this->defaultPickUpLocation === 'user-selected'
+        ) {
             $this->defaultPickUpLocation = false;
         }
 
@@ -1076,7 +1088,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 }
             }
         } else {
-            $result = $this->parseHoldings($holdings, $id, '', '');
+            $result = $this->parseHoldings($holdings, $id);
         }
 
         if (!empty($result)) {
@@ -1448,19 +1460,18 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
         $serviceSendMethod
             = $this->config['updateMessagingSettings']['method'] ?? 'none';
-        $infoServices = $info->messageServices->messageService ?? [];
 
         switch ($serviceSendMethod) {
         case 'database':
             $userCached['messagingServices']
                 = $this->parseEmailMessagingSettings(
-                    $info->messageServices->messageService ?? []
+                    $info->messageServices->messageService ?? null
                 );
             break;
         case 'driver':
             $userCached['messagingServices']
                 = $this->parseDriverMessagingSettings(
-                    $info->messageServices->messageService ?? [],
+                    $info->messageServices->messageService ?? null,
                     $user
                 );
             break;
@@ -1477,7 +1488,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     /**
      * Function to create an array for using email to change messaging services
      *
-     * @param object $infoServices to parse
+     * @param ?object $infoServices Services to parse
      *
      * @return array parsed services
      */
@@ -1527,9 +1538,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             $services[$service] = $data;
         }
 
-        if (!empty($infoServices)) {
+        if (null !== $infoServices) {
             foreach ($infoServices as $service) {
-                $methods = [];
                 $serviceType = $service->serviceType;
                 $numOfDays = $service->nofDays->value ?? 'none';
                 $active = $service->isActive === 'yes';
@@ -1581,8 +1591,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     /**
      * Function to create an array for using driver to change messaging services
      *
-     * @param object $infoServices to parse
-     * @param array  $user         data
+     * @param ?object $infoServices Services to parse
+     * @param array   $user         User data
      *
      * @return array parsed services
      */
@@ -1591,15 +1601,17 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $services = [];
         $messagingSettings = [];
 
-        foreach ($infoServices as $service => $options) {
-            $current = [
-                'transport_type' =>
-                    (string)$options->sendMethods->sendMethod->value,
-            ];
-            if (isset($options->nofDays)) {
-                $current['nofDays'] = $options->nofDays->value;
+        if (null !== $infoServices) {
+            foreach ($infoServices as $service => $options) {
+                $current = [
+                    'transport_type' =>
+                        (string)$options->sendMethods->sendMethod->value,
+                ];
+                if (isset($options->nofDays)) {
+                    $current['nofDays'] = $options->nofDays->value;
+                }
+                $services[$options->serviceType] = $current;
             }
-            $services[$options->serviceType] = $current;
         }
 
         // We need to find proper options for current service
@@ -1838,20 +1850,29 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             $message = isset($loan->loanStatus->status)
                 ? $this->mapStatus($loan->loanStatus->status, $function) : '';
 
-            if (!isset($this->config['Loans']['renewalLimit'])
-                || (isset($loan->loanStatus->status)
-                && $this->isPermanentRenewalBlock($loan->loanStatus->status))
+            // These are confusingly similarly named, but displayed a bit differently
+            // in the UI:
+            // renew/renewLimit is displayed as "x renewals remaining"
+            $renew = null;
+            $renewLimit = null;
+            // renewals/renewalLimit is displayed as "renewed/limit"
+            $renewals = null;
+            $renewalLimit = null;
+            if (isset($loan->loanStatus->status)
+                && $this->isPermanentRenewalBlock($loan->loanStatus->status)
             ) {
-                $renewLimit = null;
-                $renewals = null;
-            } else {
-                $renewLimit = $this->config['Loans']['renewalLimit'];
+                // No changes
+            } elseif (isset($this->config['Loans']['renewalLimit'])) {
+                $renewalLimit = $this->config['Loans']['renewalLimit'];
                 $renewals = max(
                     [
                         0,
-                        $renewLimit - $loan->remainingRenewals
+                        $renewalLimit - $loan->remainingRenewals
                     ]
                 );
+            } elseif ($loan->remainingRenewals > 0) {
+                $renew = 0;
+                $renewLimit = $loan->remainingRenewals;
             }
 
             $dueDate = strtotime($loan->loanDueDate . ' 23:59:59');
@@ -1871,8 +1892,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'dueStatus' => $dueStatus,
                 'renewable' => (string)$loan->loanStatus->isRenewable == 'yes',
                 'message' => $message,
+                'renew' => $renew,
+                'renewLimit' => $renewLimit,
                 'renewalCount' => $renewals,
-                'renewalLimit' => $renewLimit,
+                'renewalLimit' => $renewalLimit,
             ];
 
             $transList[] = $trans;
@@ -2300,6 +2323,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             } else {
                 $amount = str_replace(',', '.', $debt->debtAmountFormatted) * 100;
             }
+            // Round the amount in case it's a weird decimal number:
+            $amount = round($amount);
             $description = $debt->debtType . ' - ' . $debt->debtNote;
             $payable = $amount > 0;
             if ($payable) {
@@ -3226,47 +3251,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             $b['location'] = $b['journalInfo']['location'];
             return $this->defaultHoldingsSortFunction($a, $b);
         } else {
-            $a = $this->parseJournalIssue($editionA);
-            $b = $this->parseJournalIssue($editionB);
-
-            if (empty($a)) {
-                return 1;
-            }
-            if (empty($b)) {
-                return -1;
-            }
-
-            if ($a === $b) {
-                return 0;
-            }
-
-            $cnt = min(count($a), count($b));
-            $a = array_slice($a, 0, $cnt);
-            $b = array_slice($b, 0, $cnt);
-
-            $f = function ($str) {
-                $parts = explode('-', $str);
-                return reset($parts);
-            };
-
-            $a = array_map($f, $a);
-            $b = array_map($f, $b);
-
-            return $a > $b ? -1 : 1;
+            return strnatcasecmp($editionB, $editionA);
         }
-    }
-
-    /**
-     * Utility function for parsing journal issue.
-     *
-     * @param string $issue Journal issue.
-     *
-     * @return array
-     */
-    protected function parseJournalIssue($issue)
-    {
-        $parts = explode(':', $issue);
-        return array_map('trim', $parts);
     }
 
     /**
@@ -3554,10 +3540,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             // Don't mangle a URL
             return $wsdl;
         }
-        $file = Locator::getConfigPath($wsdl);
-        if (!file_exists($file)) {
-            $file = Locator::getConfigPath($wsdl, 'config/finna');
-        }
-        return $file;
+        return $this->pathResolver->getConfigPath($wsdl);
     }
 }

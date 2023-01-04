@@ -29,8 +29,6 @@
  */
 namespace Finna\Config;
 
-use VuFind\Config\Locator;
-
 /**
  * VuFind SearchSpecs Configuration Reader
  *
@@ -68,15 +66,16 @@ class SearchSpecsReader extends \VuFind\Config\SearchSpecsReader
                 ? $this->cacheManager->getCache('searchspecs') : false;
 
             // Determine full configuration file path:
-            $fullpath = Locator::getBaseConfigPath($filename);
-            $local = Locator::getLocalConfigPath($filename);
-            $finna = Locator::getLocalConfigPath($filename, 'config/finna');
+            $fullpath =  $this->pathResolver->getBaseConfigPath($filename);
+            $local = $this->pathResolver->getLocalConfigPath($filename);
+            $finna = $this->pathResolver
+                ->getLocalConfigPath($filename, 'config/finna');
 
             // Generate cache key:
             $cacheKey = $filename . '-'
                 . (file_exists($fullpath) ? filemtime($fullpath) : 0);
             if ($useLocalConfig && !empty($finna)) {
-                $cacheKey .= '-finna-' . filemtime($local);
+                $cacheKey .= '-finna-' . filemtime($finna);
             }
             if ($useLocalConfig && !empty($local)) {
                 $cacheKey .= '-local-' . filemtime($local);
@@ -85,8 +84,7 @@ class SearchSpecsReader extends \VuFind\Config\SearchSpecsReader
 
             // Generate data if not found in cache:
             if ($cache === false || !($results = $cache->getItem($cacheKey))) {
-                $results = file_exists($fullpath)
-                    ? $this->parseYaml($fullpath) : [];
+                $results = file_exists($fullpath) ? $this->parseYaml($fullpath) : [];
                 if (!empty($finna)) {
                     $localResults = $this->parseYaml($finna);
                     foreach ($localResults as $key => $value) {

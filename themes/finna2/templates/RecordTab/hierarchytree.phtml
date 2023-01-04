@@ -19,7 +19,7 @@
   echo $this->inlineScript();
 ?>
 <?php if ($this->layout()->getTemplate() == 'layout/lightbox'): ?>
-  <h2><?=$this->transEsc('hierarchy_tree') ?></h2>
+  <h2><?=$this->transEsc($this->tab->getDescription())?></h2>
 <?php endif; ?>
 <?php if (count($hierarchyTreeList) > 1): ?>
   <div id="treeSelector">
@@ -34,7 +34,7 @@
 <?php endif; ?>
 <?php if ($activeTree): ?>
   <div id="hierarchyTreeHolder">
-    <div id="hierarchyLoading" class="hide"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> <?=$this->transEsc("Loading")?>...</div>
+    <div id="hierarchyLoading" class="hide"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> <?=$this->transEsc('loading_ellipsis')?></div>
     <div id="hierarchyTree" class="hierarchy-tree">
       <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenRecordId" />
       <input type="hidden" value="<?=$this->escapeHtmlAttr($activeTree)?>" class="hiddenHierarchyId" />

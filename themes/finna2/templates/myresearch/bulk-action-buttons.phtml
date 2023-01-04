@@ -17,6 +17,7 @@
       <span class="my-list-functions-label"><?=ucfirst($this->transEsc('with_selected'))?>:</span>
     </div>
     <div class="mylist-functions btn-group">
+      <span class="sr-only"><?=$this->transEsc('bulk_noitems_advice')?></span>
       <button class="btn btn-primary" type="submit" name="email" value="<?=$this->transEscAttr('Email')?>" title="<?=$this->transEscAttr('bookbag_email_selected')?>" disabled<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>><?=$this->transEsc('Email')?></button>
       <?php $exportOptions = $this->export()->getActiveFormats('bulk'); if (count($exportOptions) > 0): ?>
         <button class="btn btn-primary" type="submit" name="export" value="<?=$this->transEscAttr('Export')?>" title="<?=$this->transEscAttr('bookbag_export_selected')?>" disabled<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>><?=$this->transEsc('Export')?></button>

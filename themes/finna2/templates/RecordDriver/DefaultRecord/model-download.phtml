@@ -22,7 +22,7 @@
             ?>
             <a download href="<?= $type === 'preview' ? $this->url('record-downloadmodel', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $index, 'format' => $format, 'type' => $type]]) : $this->escapeHtmlAttr($url)?>" rel="nofollow">
                 <i aria-hidden="true" class="fa fa-download"></i>
-                <?=$this->transEsc('Download the file')?></span>
+                <span><?=$this->transEsc('Download the file')?></span>
             </a>
         </div>
     <?php endif; ?>
