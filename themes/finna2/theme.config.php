@@ -256,7 +256,6 @@ $config = [
         'finna-multiselect.js',
         'finna-model-viewer.js',
         'finna-video-element.js',
-        'finna-vufind-overrides.js'
     ],
     'less' => [
         'active' => false

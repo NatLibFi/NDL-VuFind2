@@ -1329,19 +1329,25 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
         $dedupData = $this->driver->getDedupData();
-        $preferredRecordSource = $this->getView()
+        $preferredSources = $this->getView()
             ->plugin('cookie')->get('preferredRecordSource');
-
-        if (!empty($preferredRecordSource)) {
-            $preferredRecordSource = json_decode($preferredRecordSource);
+        // BC check for preferredSources
+        if (empty($preferredSources)) {
+            $preferredSources = [];
+        } elseif ('[' === mb_substr($preferredSources, 0, 1)) {
+            $preferredSources = json_decode($preferredSources);
+            if (!is_array($preferredSources)) {
+                $preferredSources = [$preferredSources];
+            }
         } else {
-            $preferredRecordSource = [];
+            $preferredSources = [$preferredSources];
         }
         $patron = $this->getView()->plugin('auth')->getILSPatron();
         if (!empty($patron['source'])) {
-            $preferredRecordSource[] = $patron['source'];
+            $preferredSources[] = $patron['source'];
         }
-        foreach ($preferredRecordSource as $source) {
+
+        foreach ($preferredSources as $source) {
             if (!empty($dedupData[$source])) {
                 return $source;
             }
@@ -1350,22 +1356,21 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Get container classes if the driver supports ajax status and/or has
+     * Get container js classes if the driver supports ajax status and/or has
      * preferred source.
      *
      * @return string
      */
-    public function getContainerClasses(): string
+    public function getContainerJsClasses(): string
     {
-        $classes = '';
+        $classes = [];
         if (!empty($this->driver) && $this->driver->supportsAjaxStatus()) {
-            $classes .= 'ajaxItem';
+            $classes[] = 'ajaxItem';
         }
         if (!$this->getPreferredSource()) {
-            $classes .= $classes ? ' ' : '';
-            $classes .= 'js-sourceless';
+            $classes[] = 'js-item-done';
         }
-        return $classes;
+        return implode(' ', $classes);
     }
 
     /**
