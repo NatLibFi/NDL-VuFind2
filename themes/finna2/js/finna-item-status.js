@@ -18,14 +18,17 @@ finna.itemStatus = (function finnaItemStatus() {
     var oldRecordId = recordContainer.find('.hiddenId')[0].value;
 
     const placeholder = $(element).find('.js-dedup-placeholder');
-
-    // Element changes are being watched with lazyloading so return if the value is same.
-    if (id === oldRecordId && !placeholder) {
-      return;
-    }
+    let skipUpdate = id === oldRecordId;
     if (placeholder) {
+      skipUpdate = false;
       placeholder.remove();
     }
+    // Element changes are being watched with lazyloading so return if the value is same.
+    // If placeholder is set, then force the load for first time.
+    if (skipUpdate) {
+      return;
+    }
+
     // Update IDs of elements
     var hiddenId = recordContainer.find('.hiddenId');
     hiddenId.val(id);
