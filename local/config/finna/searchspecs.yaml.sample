@@ -299,10 +299,14 @@ TitleStart:
   QueryFields:
     title_txtP_l:
       - [onephrase, ~]
+    title_alt_txtP_l_mv:
+      - [onephrase, ~]
 
 TitleExact:
   QueryFields:
     title_txtP_lr:
+      - [onephrase, ~]
+    title_alt_txtP_lr_mv:
       - [onephrase, ~]
 
 Series:

@@ -1870,22 +1870,38 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             . 'relatedWorkSet/relatedWork'
         );
         $data = [];
+        $language = $this->getLocale();
         foreach ($relatedWorks as $work) {
             if (!empty($work->object->objectWebResource)) {
                 $tmp = [];
-                $url = trim((string)$work->object->objectWebResource);
+                $url = trim(
+                    (string)$this->getLanguageSpecificItem(
+                        $work->object->objectWebResource,
+                        $language
+                    )
+                );
                 if ($this->urlBlocked($url)) {
                     continue;
                 }
                 $tmp['url'] = $url;
                 if (!empty($work->displayObject)) {
-                    $tmp['desc'] = trim((string)$work->displayObject);
+                    $tmp['desc'] = trim(
+                        (string)$this->getLanguageSpecificItem(
+                            $work->displayObject,
+                            $language
+                        )
+                    );
                 }
                 if (!empty($work->object->objectID)) {
                     $tmp['info'] = trim((string)$work->object->objectID);
                     $objectAttrs = $work->object->objectID->attributes();
                     if (!empty($objectAttrs->label)) {
-                        $tmp['label'] = trim((string)$objectAttrs->label);
+                        $tmp['label'] = trim(
+                            (string)$this->getLanguageSpecificItem(
+                                $objectAttrs->label,
+                                $language
+                            )
+                        );
                     }
                 }
                 $data[] = $tmp;

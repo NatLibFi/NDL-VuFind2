@@ -1506,7 +1506,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         $results = [];
         foreach (['130', '240'] as $fieldCode) {
             foreach ($this->getMarcReader()->getFields($fieldCode) as $field) {
-                $results[] = implode(' ', $this->getSubfields($field, ''));
+                $results = [
+                    ...$results,
+                    ...$this->getSubfieldArray($field, range('a', 'z'))
+                ];
             }
         }
         return $results;
