@@ -34,6 +34,7 @@ namespace Finna\View\Helper\Root;
 
 use Finna\Form\Form;
 use Finna\Search\Solr\AuthorityHelper;
+use Finna\Service\UserPreferenceService;
 use Laminas\Config\Config;
 use VuFind\Record\Loader;
 use VuFind\RecordTab\TabManager;
@@ -118,6 +119,13 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $form;
 
     /**
+     * User preference service
+     *
+     * @var UserPreferenceService
+     */
+    protected $userPreferenceService;
+
+    /**
      * Callback to get encapsulated records results
      *
      * @var callable
@@ -135,16 +143,19 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Constructor
      *
-     * @param Config          $config                 VuFind config
-     * @param Loader          $loader                 Record loader
-     * @param RecordImage     $recordImage            Record image helper
-     * @param AuthorityHelper $authorityHelper        Authority helper
-     * @param Url             $urlHelper              Url helper
-     * @param RecordLink      $recordLinkHelper       Record link helper
-     * @param TabManager      $tabManager             Tab manager
-     * @param Form            $form                   Form
-     * @param callable        $getEncapsulatedResults Callback to get encapsulated
-     *                                                records results
+     * @param Config                $config                 VuFind config
+     * @param Loader                $loader                 Record loader
+     * @param RecordImage           $recordImage            Record image helper
+     * @param AuthorityHelper       $authorityHelper        Authority helper
+     * @param Url                   $urlHelper              Url helper
+     * @param RecordLink            $recordLinkHelper       Record link helper
+     * @param TabManager            $tabManager             Tab manager
+     * @param Form                  $form                   Form
+     * @param UserPreferenceService $userPreferenceService  User preference
+     *                                                      service
+     * @param callable              $getEncapsulatedResults Callback to get
+     *                                                      encapsulated
+     *                                                      records results
      */
     public function __construct(
         Config $config,
@@ -155,6 +166,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         RecordLink $recordLinkHelper,
         TabManager $tabManager,
         Form $form,
+        UserPreferenceService $userPreferenceService,
         callable $getEncapsulatedResults
     ) {
         parent::__construct($config);
@@ -165,6 +177,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $this->recordLinkHelper = $recordLinkHelper;
         $this->tabManager = $tabManager;
         $this->form = $form;
+        $this->userPreferenceService = $userPreferenceService;
         $this->getEncapsulatedResults = $getEncapsulatedResults;
     }
 
@@ -1329,24 +1342,12 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
         $dedupData = $this->driver->getDedupData();
-        $preferredSources = $this->getView()
-            ->plugin('cookie')->get('preferredRecordSource');
-        // BC check for preferredSources
-        if (empty($preferredSources)) {
-            $preferredSources = [];
-        } elseif ('[' === mb_substr($preferredSources, 0, 1)) {
-            $preferredSources = json_decode($preferredSources);
-            if (!is_array($preferredSources)) {
-                $preferredSources = [$preferredSources];
-            }
-        } else {
-            $preferredSources = [$preferredSources];
+        // Return drivers datasource if deduplication data is not set.
+        // This will default favorite listed items into their own datasources.
+        if (empty($dedupData)) {
+            return $this->driver->tryMethod('getDataSource', [], '');
         }
-        $patron = $this->getView()->plugin('auth')->getILSPatron();
-        if (!empty($patron['source'])) {
-            $preferredSources[] = $patron['source'];
-        }
-
+        $preferredSources = $this->userPreferenceService->getPreferredDataSources();
         foreach ($preferredSources as $source) {
             if (!empty($dedupData[$source])) {
                 return $source;

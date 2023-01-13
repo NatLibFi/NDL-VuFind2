@@ -17,9 +17,14 @@ finna.itemStatus = (function finnaItemStatus() {
     var recordContainer = $(element).closest('.record-container');
     var oldRecordId = recordContainer.find('.hiddenId')[0].value;
 
+    const placeholder = $(element).find('.js-dedup-placeholder');
+
     // Element changes are being watched with lazyloading so return if the value is same.
-    if (id === oldRecordId) {
+    if (id === oldRecordId && !placeholder) {
       return;
+    }
+    if (placeholder) {
+      placeholder.remove();
     }
     // Update IDs of elements
     var hiddenId = recordContainer.find('.hiddenId');
@@ -35,6 +40,7 @@ finna.itemStatus = (function finnaItemStatus() {
         $(this).attr('href', $(this).attr('href').replace(oldRecordId, id));
       }
     });
+
     // Item statuses
     var $loading = $('<span/>')
       .addClass('location ajax-availability hidden')
@@ -84,7 +90,7 @@ finna.itemStatus = (function finnaItemStatus() {
       }
       // Filter same sources from the resulting array
       cookie = cookie.filter((src, index) => {
-        return index < 3 && src !== source;
+        return index < 2 && src !== source;
       });
       cookie.unshift(source);
       finna.common.setCookie('preferredRecordSource', JSON.stringify(cookie));
@@ -99,10 +105,6 @@ finna.itemStatus = (function finnaItemStatus() {
         }
       });
       updateElement(this);
-      const placeholder = self.find('.js-dedup-placeholder');
-      if (placeholder) {
-        placeholder.remove();
-      }
     });
   }
 
