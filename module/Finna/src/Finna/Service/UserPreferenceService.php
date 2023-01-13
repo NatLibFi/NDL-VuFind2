@@ -81,14 +81,16 @@ class UserPreferenceService
         // preferredRecordSource cookie defines the primary sources:
         if ($this->cookieManager) {
             $preferred = $this->cookieManager->get('preferredRecordSource');
-            // Check if the cookie is sort of an array
-            if (!empty($preferred) && '[' === mb_substr($preferred, 0, 1)) {
-                $preferred = json_decode($preferred);
-                if (is_array($preferred)) {
-                    $result = $preferred;
+            if (!empty($preferred)) {
+                // Check if the cookie is a JSON array:
+                if ('[' === mb_substr($preferred, 0, 1)) {
+                    $preferred = json_decode($preferred);
+                    if (is_array($preferred)) {
+                        $result = $preferred;
+                    }
+                } else {
+                    $result = [$preferred];
                 }
-            } elseif (!empty($preferred)) {
-                $result = [$preferred];
             }
         }
 
