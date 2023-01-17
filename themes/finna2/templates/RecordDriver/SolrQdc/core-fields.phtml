@@ -1,8 +1,8 @@
 <!-- START of: finna - RecordDriver/SolrQdc/core-fields.phtml -->
 <?php
-  $formatter = $this->recordDataFormatter($driver);
+  $formatter = $this->recordDataFormatter($this->driver);
   $coreFields = $formatter->getData(
-      $formatter->filterQDCFields($formatter->getDefaults($defaults))
+      $formatter->filterQDCFields($formatter->getDefaults($this->defaults))
   );
 ?>
 <?php if (!empty($coreFields)): ?>
