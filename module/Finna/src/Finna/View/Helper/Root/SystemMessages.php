@@ -114,8 +114,9 @@ class SystemMessages extends \Laminas\View\Helper\AbstractHelper
         $messages = [];
 
         // Use local config for both schedule values if either value is set.
-        $scheduleStart = $this->localConfig->Site->systemMessagesScheduleStart;
-        $scheduleEnd = $this->localConfig->Site->systemMessagesScheduleEnd;
+        $scheduleStart
+            = $this->localConfig->Site->systemMessagesScheduleStart ?? false;
+        $scheduleEnd = $this->localConfig->Site->systemMessagesScheduleEnd ?? false;
         if (!$scheduleStart && !$scheduleEnd) {
             // Otherwise use core config for both values.
             $scheduleStart = $this->coreConfig->Site->systemMessagesScheduleStart;
