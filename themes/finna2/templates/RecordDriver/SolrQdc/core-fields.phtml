@@ -1,0 +1,13 @@
+<!-- START of: finna - RecordDriver/SolrQdc/core-fields.phtml -->
+<?php
+  $formatter = $this->recordDataFormatter($driver);
+  $coreFields = $formatter->getData(
+      $formatter->filterQDCFields($formatter->getDefaults($defaults))
+  );
+?>
+<?php if (!empty($coreFields)): ?>
+  <table class="table table-finna-record record-details" role="presentation">
+    <?=$this->record($driver)->renderTemplate('core-fields.phtml', ['coreFields' => $coreFields]);?>
+  </table>
+<?php endif; ?>
+<!-- END of: finna - RecordDriver/SolrQdc/core-fields.phtml -->
