@@ -131,10 +131,14 @@ quickAddToFavorites = true
 institution =
 ; Whether index is used for new items search instead of backend driver
 indexBasedNewItems = true
-; Any system messages that need to be displayed on the top of every page. May contain html markup.
-; systemMessages[fi] = "Huom! Tämä on kehitysympäristö. Sisältö ja toiminnallisuus voivat muuttua milloin tahansa."
-; systemMessages[sv] = "Obs! Systemet är under utveckling. Innehåll och funktioner kan förändras när som helst."
-; systemMessages[en-gb] = ""
+; Any system messages that need to be displayed on the top of every page.
+; May contain HTML markup.
+;systemMessages[fi] = Lorem ipsum
+;systemMessages[en-gb] = Dolores sit amet
+; Start and end times for scheduled system messages. Both values are optional.
+; Use the format YYYY-MM-DD HH:MM.
+;systemMessagesScheduleStart = 2023-01-17 09:00
+;systemMessagesScheduleEnd = 2023-01-17 17:00
 
 ; Whether to hide due date reminder settings. Default is false
 ;hideDueDateReminder = true
