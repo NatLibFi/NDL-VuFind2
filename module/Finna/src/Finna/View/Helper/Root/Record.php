@@ -1314,7 +1314,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * Note: This works with DeduplicationListener, so make sure to
      * update both as necessary.
-     * 
+     *
      * @return string
      */
     public function getPreferredSource(): string
