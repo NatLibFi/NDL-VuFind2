@@ -10,7 +10,7 @@ finna.itemStatus = (function finnaItemStatus() {
    * @return void
    */
   function updateElement(element) {
-    var id = $(element).val();
+    var id = document.createTextNode($(element).val()).nodeValue;
     if (!id) {
       return;
     }
