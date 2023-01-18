@@ -22,12 +22,11 @@ JS;
   }
 ?>
 <?php if ($this->modal): ?><h2></h2><?php endif; ?>
-<div class="clearfix">
-  <div class="<?= $this->modal ? '' : 'page-content'?> feed-content" data-feed="<?=$this->escapeHtmlAttr($this->feed)?>" data-element="<?=$this->escapeHtmlAttr($this->element)?>" data-feed-url="<?=$this->escapeHtmlAttr($this->feedUrl)?>">
-
   <?php if (!$this->modal): ?>
+    <div class="container">
     <div class="mainbody left">
   <?php endif ?>
+  <div class="<?= $this->modal ? '' : 'page-content'?> feed-content" data-feed="<?=$this->escapeHtmlAttr($this->feed)?>" data-element="<?=$this->escapeHtmlAttr($this->element)?>" data-feed-url="<?=$this->escapeHtmlAttr($this->feedUrl)?>">
     <div class="date"><?=$this->transEsc('Published');?>: <span></span></div>
     <img class="xcal-featured hidden" alt=""/>
     <div class="xcal-fields">
@@ -43,16 +42,25 @@ JS;
       <div class="xcal-categories hidden"><span class="xcal-field"><?= $this->transEsc('Category')?></span><span class="xcal-value"></span></div>
     </div>
     <div class="holder"></div>
-  <?php if (!$this->modal): ?>
-    </div>
   </div>
+  <?php if (!$this->modal): ?>
+  </div>
+  <?php endif; ?>
+  <?php if (!empty($this->contentNavigation) && (!$this->modal)): ?>
     <div class="sidebar right">
-      <div><h3 class="article-navigation-header"><?=$this->translate('content-feed-navigation')?></h3></div>
+      <h3 class="article-navigation-header"><?=$this->translate('content-feed-navigation')?></h3>
       <div class="article-navigation-wrapper"></div>
     </div>
   <?php endif; ?>
-</div>
-<?php if ($this->resolver('content/Additions/feedContentEnd' . '-' . $feed . '.phtml')): ?>
-  <?=$this->render('content/Additions/feedContentEnd' . '-' . $feed . '.phtml')?>
+  <?php if (!$this->modal): ?>
+  </div>
+  <?php endif; ?>
+  <?php if (!empty($this->nextArticles) && (!$this->modal)): ?>
+    <div class="next-articles container"></div>
+  <?php endif ?>
+  <?php if (!empty($this->additionalText)): ?>
+    <div class="feed-content-additional-text container">
+      <?=$this->translate($this->additionalText);?>
+    </div>
 <?php endif; ?>
 <!-- END of: finna - feedcontent/content.phtml -->

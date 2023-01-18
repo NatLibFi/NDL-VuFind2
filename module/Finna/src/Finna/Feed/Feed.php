@@ -386,6 +386,9 @@ EOT;
         $contentDateFormat = $config->contentDateFormat ?? 'j.n.Y';
         $fullDateFormat = $config->fullDateFormat ?? 'j.n.Y';
 
+        $contentNavigation = $config->feedcontentNavigation ?? true;
+        $nextArticles = $config->feedcontentNextArticles ?? false;
+
         $itemsCnt = $config->items ?? null;
         $elements = $config->content ?? [];
         $allowXcal = $elements['xcal'] ?? true;
@@ -617,7 +620,7 @@ EOT;
                 }
             }
         }
-        return compact('channel', 'items', 'config', 'modal', 'contentPage');
+        return compact('channel', 'items', 'config', 'modal', 'contentPage', 'contentNavigation', 'nextArticles');
     }
 
     /**

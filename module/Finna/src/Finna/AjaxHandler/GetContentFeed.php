@@ -152,6 +152,8 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
         $config = $feed['config'];
         $modal = $feed['modal'];
         $contentPage = $feed['contentPage'] && !$modal;
+        $contentNavigation = $feed['contentNavigation'];
+        $nextArticles = $feed['nextArticles'];
 
         $result = [
             'channel' => [
@@ -174,12 +176,22 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
             }
         }
 
-        if ($contentPage && !empty($items)) {
+        if ($contentNavigation && $contentPage && !empty($items)) {
             $result['navigation'] = $this->renderer->partial(
                 'feedcontent/navigation',
                 [
                    'items' => $items, 'element' => $element, 'numeric' => $numeric,
                    'feedUrl' => $feedUrl
+                ]
+            );
+        }
+
+        if ($nextArticles && $contentPage && !empty($items)) {
+            $result['nextarticles'] = $this->renderer->partial(
+                'feedcontent/nextarticles',
+                [
+                   'items' => $items, 'element' => $element, 'numeric' => $numeric,
+                   'feedUrl' => $feedUrl, 'nextArticles' => $nextArticles
                 ]
             );
         }

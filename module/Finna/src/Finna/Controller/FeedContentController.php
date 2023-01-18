@@ -64,10 +64,13 @@ class FeedContentController extends ContentController
 
         $config = $rssConfig[$page];
         $modal = isset($config->linkTo) && $config->linkTo == 'modal';
+        $contentNavigation = $config->feedcontentNavigation ?? true;
+        $nextArticles = $config->feedcontentNextArticles ?? false;
+        $additionalText = $config->feedcontentAdditionalText ?? '';
 
         return $this->createViewModel(
             ['page' => 'feed-content', 'feed' => $page,
-             'element' => $element, 'modal' => $modal, 'feedUrl' => $feedUrl]
+             'element' => $element, 'modal' => $modal, 'feedUrl' => $feedUrl, 'contentNavigation' => $contentNavigation, 'nextArticles' => $nextArticles, 'additionalText' => $additionalText]
         );
     }
 
