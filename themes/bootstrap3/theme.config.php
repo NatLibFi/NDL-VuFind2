@@ -48,10 +48,6 @@ return [
         ['file' => 'trigger_print.js', 'priority' => 340],
         ['file' => 'observer_manager.js', 'priority' => 350],
     ],
-    'less' => [
-        'active' => false,
-        'compiled.less'
-    ],
     'favicon' => 'vufind-favicon.ico',
     'helpers' => [
         'factories' => [
@@ -233,6 +229,8 @@ return [
             'profile-email' => 'FontAwesome:envelope',
             'profile-sms' => 'FontAwesome:phone',
             'qrcode' => 'FontAwesome:qrcode',
+            'rating-half' => 'FontAwesome:star-half',
+            'rating-full' => 'FontAwesome:star',
             'search' => 'FontAwesome:search',
             'search-delete' => 'Alias:ui-delete',
             'search-filter-remove' => 'FontAwesome:times',

@@ -13,11 +13,8 @@
 -- Additional columns for comments
 --
 ALTER TABLE comments ADD COLUMN `finna_visible` tinyint(1) DEFAULT '1';
-ALTER TABLE comments ADD COLUMN `finna_rating` float DEFAULT NULL;
-ALTER TABLE comments ADD COLUMN `finna_type` tinyint(1) DEFAULT '0' NOT NULL;
 ALTER TABLE comments ADD COLUMN `finna_updated` datetime DEFAULT NULL;
 ALTER TABLE comments ADD INDEX `finna_visible` (`finna_visible`);
-ALTER TABLE comments ADD INDEX `finna_rating` (`finna_rating`);
 --
 -- Additional columns for user
 --

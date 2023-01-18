@@ -177,7 +177,7 @@ class PaytrailPaymentAPI extends AbstractBase
                 $item = (new Item())
                     ->setDescription($fineDesc)
                     ->setProductCode($code)
-                    ->setUnitPrice($fine['balance'])
+                    ->setUnitPrice(round($fine['balance']))
                     ->setUnits(1)
                     ->setVatPercentage(0);
                 $items[] = $item;

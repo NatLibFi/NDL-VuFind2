@@ -86,7 +86,7 @@
   }
 
   @media print {
-    .organisation-menu {
+    .organisation-menu {
       display: none;
     }
 
@@ -549,50 +549,8 @@ a.authority {
 .part-authors-padded {
   padding-left: 10px;
 }
-.rating-symbol-background {
-  margin-right: 1px;
-  color: @gray-light;
-}
-.record .rating-average {
-  margin-top: 10px;
-  .count {
-    display: inline-block;
-    color: @gray-light;
-    &:hover {
-      cursor: pointer;
-    }
-  }
-  & .stars {
-    display: inline-block;
-    &:hover, & .rating-symbol-background:hover {
-      cursor: pointer;
-    }
-  }
-  @media(max-width:@screen-sm-max) {
-    font-size: .8em;
-    & .stars {
-      margin-right: -1px;
-    }
-  }
-}
 .nickname-holder {
   margin-bottom: 5px;
-}
-.rating-holder {
-  margin-bottom: 5px;
-  .info {
-    line-height: 2em;
-    @media(max-width:@screen-sm-max) {
-      line-height: 2.4em;
-    }
-  }
-  .rating-symbol {
-    margin-right: 3px;
-    font-size: 1.4em;
-    @media(max-width:@screen-sm-max) {
-      font-size: 1.8em;
-    }
-  }
 }
 .recordInscriptions {
   .record-inscription {
@@ -1084,6 +1042,86 @@ finna-model-viewer .object-editor {
     }
     i.collapse {
       display: inline-block;
+    }
+  }
+}
+
+/* ------ Star Rating ------ */
+.record .media-left .rating {
+  margin-bottom: 1rem;
+
+  .rating-summary {
+    display: block;
+  }
+}
+
+.rating-breakdown {
+  margin-bottom: 1rem;
+
+  .rating-breakdown-stars {
+    display: inline-block;
+  }
+
+  .rating-breakdown-percentage {
+    display: inline-block;
+    width: 4rem;
+    text-align: right;
+  }
+}
+
+.star-rating {
+  /* Use display:inline-flex to prevent whitespace issues. Alternatively, you can put all the children of .rating-group on a single line. */
+  display: inline-flex;
+
+  /* Make hover effect work properly in IE, reset width */
+  .rating__icon {
+    pointer-events: none;
+    width: initial;
+  }
+
+  /* Hide radio inputs, but keep them accessible by keyboard */
+  .rating__input {
+    position: absolute !important;
+    left: -9999px !important;
+  }
+
+  /* Set icon padding and size */
+  .rating__label {
+    cursor: pointer;
+    /* If you change the left/right padding, update the margin-right property of .rating__label--half as well. */
+    padding: 0;
+    margin: 0;
+    font-size: 1.8rem;
+  }
+
+  /* Add padding and positioning to half star labels */
+  .rating__label--half {
+    padding-right: 0;
+    margin-right: -0.5em;
+    z-index: 2;
+  }
+
+  /* Set default star color */
+  .rating__icon--star {
+    color: @text-color;
+  }
+
+  /* If any input is checked, make its following siblings grey */
+  .rating__input:checked ~ .rating__label .rating__icon--star {
+    color: #ddd;
+  }
+
+  /* Make all stars highlight on rating group hover */
+  &:not(.readonly)
+  {
+    &:hover .rating__label .rating__icon--star,
+    &:hover .rating__label--half .rating__icon--star {
+      color: @text-color;
+    }
+    /* Make hovered input's following siblings grey on hover */
+    .rating__input:hover ~ .rating__label .rating__icon--star,
+    .rating__input:hover ~ .rating__label--half .rating__icon--star {
+      color: #ddd;
     }
   }
 }

@@ -214,7 +214,7 @@ forms:
           - [class, 'url']
       - name: need_help
         type: radio
-        label: Need Help?
+        label: feedback_help_label
         required: true
         options:
           - Yes

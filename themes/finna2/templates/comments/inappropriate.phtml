@@ -2,7 +2,7 @@
 
 <?=$this->flashmessages() ?>
 
-<form class="comment-inappropriate-form" method="post" name="commentInappropriateForm"  data-lightbox-onclose="finna.comments.requestRefreshComments">
+<form class="comment-inappropriate-form" method="post" name="commentInappropriateForm"  data-lightbox-onclose="finna.comments.requestRefreshCommentsAndRating">
   <input type="hidden" name="id" value="<?=$this->escapeHtmlAttr($this->id)?>"/>
   <div class="form-group">
     <p><?=$this->transEsc('Select') ?>:</p>

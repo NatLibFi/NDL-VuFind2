@@ -409,6 +409,9 @@ account_deletion = true
 ; Whether comments added by a user are deleted when they remove their account.
 ; Default is true.
 delete_comments_with_user = false
+; Whether ratings added by a user are deleted when they remove their account.
+; Default is true.
+delete_ratings_with_user = false
 
 
 [ChoiceAuth]
@@ -1633,6 +1636,10 @@ max_tag_length = 64
 ; This controls whether tags are case-sensitive (true) or always forced to be
 ; represented as lowercase strings (false -- the default).
 case_sensitive_tags = false
+; Whether rating is enabled (true or false, default is false)
+rating = true
+; Whether the user is allowed to remove a rating (true or false, default is true)
+remove_rating = false
 
 ; Uncomment this section and provide your API key to enable Google Analytics
 ;[GoogleAnalytics]

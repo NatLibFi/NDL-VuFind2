@@ -48,7 +48,9 @@
                 <?php else: ?>
                   <span>
                     <?=$this->transEsc("Library Card name missing")?>
-                    <a class="btn-link" href="<?=$this->url('editLibraryCard') . $this->escapeHtmlAttr($record['id']) ?>" title="<?=$this->transEsc('Edit Library Card')?>"> <?=$this->transEsc("Add name")?></a>
+                    <?php if ($this->auth()->getManager()->allowsUserIlsLogin()): ?>
+                      <a class="btn-link" href="<?=$this->url('editLibraryCard') . $this->escapeHtmlAttr($record['id']) ?>" title="<?=$this->transEsc('Edit Library Card')?>"> <?=$this->transEsc("Add name")?></a>
+                    <?php endif; ?>
                   </span>
                 <?php endif; ?>
               </td>
@@ -74,7 +76,9 @@
                   <?php if ($this->ils()->checkFunction('changePassword', (array)$record)): ?>
                     <a class="btn-link" href="<?=$this->url('newLibraryCardPassword') ?>?id=<?=$this->escapeHtmlAttr($record['id']) ?>" data-lightbox title="<?=$this->transEsc('Change Password')?>"><i class="fa fa-lock bigger gray"></i> <?=$this->transEsc('Change Password')?></a>
                   <?php endif; ?>
-                  <a class="btn-link" href="<?=$this->url('editLibraryCard') . $this->escapeHtmlAttr($record['id']) ?>" title="<?=$this->transEsc('Edit Library Card')?>"><i class="fa fa-pen gray" aria-hidden="true"></i> <?=$this->transEsc('Update Card Details')?></a>
+                  <?php if ($this->auth()->getManager()->allowsUserIlsLogin()): ?>
+                    <a class="btn-link" href="<?=$this->url('editLibraryCard') . $this->escapeHtmlAttr($record['id']) ?>" title="<?=$this->transEsc('Edit Library Card')?>"><i class="fa fa-pen gray" aria-hidden="true"></i> <?=$this->transEsc('Update Card Details')?></a>
+                  <?php endif; ?>
                   <div class="dropdown">
                     <a class="btn-link dropdown-toggle" data-toggle="dropdown" href="<?=$this->escapeHtmlAttr($this->url('librarycards-deletecard', [], ['query' => ['cardID' => $record['id']]]))?>">
                       <i class="fa fa-unlink gray" aria-hidden="true"></i> <?=$this->transEsc('Disconnect Library Card')?>
@@ -93,7 +97,9 @@
       <?php endif; ?>
 
       <div>
-        <a href="<?=$this->url('editLibraryCard') ?>NEW" class="btn btn-primary" title="<?=$this->transEsc('Connect Library Card')?>"><i class="fa fa-link" aria-hidden="true"></i> <?=$this->transEsc('Connect Library Card')?><?=$this->transEsc('eol_ellipsis')?></a>
+        <?php if ($this->auth()->getManager()->allowsUserIlsLogin()): ?>
+          <a href="<?=$this->url('editLibraryCard') ?>NEW" class="btn btn-primary" title="<?=$this->transEsc('Connect Library Card')?>"><i class="fa fa-link" aria-hidden="true"></i> <?=$this->transEsc('Connect Library Card')?><?=$this->transEsc('eol_ellipsis')?></a>
+        <?php endif; ?>
         <br>
         <br>
       </div>

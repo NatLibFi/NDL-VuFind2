@@ -73,6 +73,13 @@ class ImportComments extends AbstractUtilCommand
     protected $resourceTable;
 
     /**
+     * Ratings table
+     *
+     * @var \VuFind\Db\Table\Ratings
+     */
+    protected $ratingsTable;
+
+    /**
      * Log file
      *
      * @var string
@@ -82,18 +89,21 @@ class ImportComments extends AbstractUtilCommand
     /**
      * Constructor
      *
-     * @param Finna\Db\Table\Comments       $comments       Comments table
-     * @param Finna\Db\Table\CommentsRecord $commentsRecord CommentsRecord table
-     * @param Finna\Db\Table\Resource       $resource       Resource table
+     * @param \Finna\Db\Table\Comments       $comments       Comments table
+     * @param \Finna\Db\Table\CommentsRecord $commentsRecord CommentsRecord table
+     * @param \Finna\Db\Table\Resource       $resource       Resource table
+     * @param \VuFind\Db\Table\Ratings       $ratings        Ratings table
      */
     public function __construct(
         \Finna\Db\Table\Comments $comments,
         \Finna\Db\Table\CommentsRecord $commentsRecord,
-        \Finna\Db\Table\Resource $resource
+        \Finna\Db\Table\Resource $resource,
+        \VuFind\Db\Table\Ratings $ratings
     ) {
         $this->commentsTable = $comments;
         $this->commentsRecordTable = $commentsRecord;
         $this->resourceTable = $resource;
+        $this->ratingsTable = $ratings;
         parent::__construct();
     }
 
@@ -105,7 +115,7 @@ class ImportComments extends AbstractUtilCommand
     protected function configure()
     {
         $this
-            ->setDescription('Import comments from a CSV file.')
+            ->setDescription('Import comments and/or ratings from a CSV file.')
             ->addArgument(
                 'source',
                 InputArgument::REQUIRED,
@@ -191,7 +201,7 @@ class ImportComments extends AbstractUtilCommand
                     = preg_replace('/\\\\([^\\\\])/', '\1', $commentString);
                 $rating = $data[3] ?? null;
             }
-            if (null !== $rating && ($rating < 0 || $rating > 5)) {
+            if (null !== $rating && ($rating < 0 || $rating > 100)) {
                 $this->log("Invalid rating $rating on row $count", true);
                 return 1;
             }
@@ -228,7 +238,10 @@ class ImportComments extends AbstractUtilCommand
             $row->comment = $commentString ?? '';
             $row->created = $timestampStr;
             if (null !== $rating) {
-                $row->finna_rating = $rating;
+                $ratingRow = $this->ratingsTable->createRow();
+                $ratingRow->resource_id = $resource->id;
+                $ratingRow->created = $timestampStr;
+                $ratingRow->rating = $rating;
             }
             $row->save();
 

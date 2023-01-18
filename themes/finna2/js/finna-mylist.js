@@ -396,7 +396,7 @@ finna.myList = (function finnaMyList() {
     // Prompt before leaving page if Ajax load is in progress
     window.onbeforeunload = function onBeforeUnloadWindow(/*e*/) {
       if ($('.list-save').length) {
-        return VuFind.translate('loading') + '...';
+        return VuFind.translate('loading_ellipsis');
       }
     };
   }

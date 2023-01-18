@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2018.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,11 +30,12 @@ namespace Finna\AjaxHandler;
 
 use Finna\Db\Table\CommentsRecord;
 use Laminas\Mvc\Controller\Plugin\Params;
+use VuFind\Config\AccountCapabilities;
 use VuFind\Controller\Plugin\Captcha;
 use VuFind\Db\Row\User;
 use VuFind\Db\Table\Comments;
-use VuFind\Db\Table\Record;
 use VuFind\Db\Table\Resource;
+use VuFind\Record\Loader as RecordLoader;
 use VuFind\Search\SearchRunner;
 
 /**
@@ -73,24 +74,28 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
     /**
      * Constructor
      *
-     * @param Resource        $table          Resource database table
-     * @param Captcha         $captcha        Captcha controller plugin
-     * @param User|bool       $user           Logged in user (or false)
-     * @param bool            $enabled        Are comments enabled?
-     * @param Comments        $comments       Comments table
-     * @param CommmentsRecord $commentsRecord CommentsRecord table
-     * @param SearchRunner    $searchRunner   Search runner
+     * @param Resource            $table          Resource database table
+     * @param Captcha             $captcha        Captcha controller plugin
+     * @param User|bool           $user           Logged in user (or false)
+     * @param bool                $enabled        Are comments enabled?
+     * @param RecordLoader        $loader         Record loader
+     * @param AccountCapabilities $ac             Account capabilities helper
+     * @param Comments            $comments       Comments table
+     * @param CommmentsRecord     $commentsRecord CommentsRecord table
+     * @param SearchRunner        $searchRunner   Search runner
      */
     public function __construct(
         Resource $table,
         Captcha $captcha,
         $user,
-        $enabled = true,
+        $enabled,
+        RecordLoader $loader,
+        AccountCapabilities $ac,
         Comments $comments = null,
         CommentsRecord $commentsRecord = null,
         SearchRunner $searchRunner = null
     ) {
-        parent::__construct($table, $captcha, $user, $enabled);
+        parent::__construct($table, $captcha, $user, $enabled, $loader, $ac);
         $this->commentsTable = $comments;
         $this->commentsRecordTable = $commentsRecord;
         $this->searchRunner = $searchRunner;
@@ -120,88 +125,70 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
             );
         }
 
-        $type = $params->fromPost('type');
         $id = $params->fromPost('id');
+        $source = $params->fromPost('source', DEFAULT_SEARCH_BACKEND);
+        $comment = $params->fromPost('comment');
+        if (empty($id) || empty($comment)) {
+            return $this->formatResponse(
+                $this->translate('bulk_error_missing'),
+                self::STATUS_HTTP_BAD_REQUEST
+            );
+        }
+        $driver = $this->recordLoader->load($id, $source, false);
+
+        $resource = $this->table->findResource($id, $source);
         if ($commentId = $params->fromPost('commentId')) {
             // Edit existing comment
-            $comment = $params->fromPost('comment');
-            if (empty($comment)) {
+            $this->commentsTable->edit($this->user->id, $commentId, $comment);
+        } else {
+            // Add new comment
+            if (!$this->checkCaptcha()) {
                 return $this->formatResponse(
-                    $this->translate('An error has occurred'),
-                    self::STATUS_HTTP_BAD_REQUEST
+                    $this->translate('captcha_not_passed'),
+                    self::STATUS_HTTP_FORBIDDEN
                 );
             }
-            $rating = $params->fromPost('rating');
-            $this->commentsTable
-                ->edit($this->user->id, $commentId, $comment, $rating);
 
-            $output = ['id' => $commentId];
-            if ($rating) {
-                $average = $this->commentsTable->getAverageRatingForResource($id);
-                $output['rating'] = $average;
+            $commentId = $resource->addComment($comment, $this->user);
+
+            // Add comment to deduplicated records
+            $results = $this->searchRunner->run(
+                ['lookfor' => 'local_ids_str_mv:"' . addcslashes($id, '"') . '"'],
+                $source,
+                function ($runner, $params, $searchId) {
+                    $params->setLimit(1000);
+                    $params->setPage(1);
+                    $params->resetFacetConfig();
+                    $options = $params->getOptions();
+                    $options->disableHighlighting();
+                    $options->spellcheckEnabled(false);
+                }
+            );
+            $ids = [$id];
+
+            if (!$results instanceof \VuFind\Search\EmptySet\Results
+                && count($results->getResults())
+            ) {
+                $results = $results->getResults();
+                $ids = reset($results)->getLocalIds();
             }
-            return $this->formatResponse($output);
+            $ids[] = $id;
+            $ids = array_values(array_unique($ids));
+
+            $this->commentsRecordTable->addLinks($commentId, $ids);
         }
 
-        if ($type === '1') {
-            // Allow only 1 rating/record for each user
-            $comments = $this->commentsTable
-                ->getForResourceByUser($id, $this->user->id);
-            if (count($comments)) {
-                return $this->formatResponse(
-                    $this->translate('An error has occurred'),
-                    self::STATUS_HTTP_ERROR
-                );
-            }
-        }
-
-        $output = parent::handleRequest($params);
-
-        if (isset($output[1]) && 200 !== $output[1]) {
-            return $output;
-        }
-
-        $commentId = $output[0]['commentId'];
-
-        // Update type
-        $this->commentsTable->setType($this->user->id, $commentId, $type);
-
-        // Update rating
-        $rating = $params->fromPost('rating');
-        $updateRating = $rating !== null && $rating > 0 && $rating <= 5;
-        if ($updateRating) {
-            $this->commentsTable->setRating($this->user->id, $commentId, $rating);
-        }
-
-        // Add comment to deduplicated records
-        $results = $this->searchRunner->run(
-            ['lookfor' => 'local_ids_str_mv:"' . addcslashes($id, '"') . '"'],
-            'Solr',
-            function ($runner, $params, $searchId) {
-                $params->setLimit(1000);
-                $params->setPage(1);
-                $params->resetFacetConfig();
-                $options = $params->getOptions();
-                $options->disableHighlighting();
-                $options->spellcheckEnabled(false);
-            }
-        );
-        $ids = [$id];
-
-        if (!$results instanceof \VuFind\Search\EmptySet\Results
-            && count($results->getResults())
+        $rating = $params->fromPost('rating', '');
+        if ($driver->isRatingAllowed()
+            && ('' !== $rating
+            || $this->accountCapabilities->isRatingRemovalAllowed())
         ) {
-            $results = $results->getResults();
-            $ids = reset($results)->getLocalIds();
+            $driver->addOrUpdateRating(
+                $this->user->id,
+                '' === $rating ? null : intval($rating)
+            );
         }
 
-        $this->commentsRecordTable->addLinks($commentId, $ids);
-
-        if ($updateRating) {
-            $average = $this->commentsTable->getAverageRatingForResource($id);
-            $output[0]['rating'] = $average;
-        }
-
-        return $this->formatResponse($output[0]);
+        return $this->formatResponse(compact('commentId'));
     }
 }

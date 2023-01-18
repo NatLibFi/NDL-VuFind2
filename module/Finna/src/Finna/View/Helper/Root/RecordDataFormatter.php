@@ -651,7 +651,6 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             }
             // Render the fields in the group as the value for the group.
             $value = $this->renderRecordDriverTemplate(
-                $driver,
                 $data,
                 ['template' => $group['template']]
             );

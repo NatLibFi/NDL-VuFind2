@@ -180,14 +180,16 @@ trait SolrFinnaTrait
      * Get record rating.
      *
      * @return array Keys 'average' and 'count'
+     *
+     * @deprecated Use getRatingData
      */
     public function getAverageRating()
     {
-        $table = $this->getDbTable('Comments');
-        return $table->getAverageRatingForResource(
-            $this->getUniqueId(),
-            $this->getSourceIdentifier()
-        );
+        $rating = $this->getRatingData();
+        return [
+            'count' => $rating['count'],
+            'average' => $rating['rating']
+        ];
     }
 
     /**
@@ -706,13 +708,29 @@ trait SolrFinnaTrait
     /**
      * Is rating allowed.
      *
-     * @return boolean
+     * @return bool
      */
-    public function ratingAllowed()
+    public function isRatingAllowed(): bool
     {
+        if (!parent::isRatingAllowed()) {
+            return false;
+        }
+
         $allowed = ['0/Book/', '0/Journal/', '0/Sound/', '0/Video/'];
         $list = array_intersect($allowed, $this->getFormats());
         return !empty($list);
+    }
+
+    /**
+     * Is rating allowed.
+     *
+     * @return bool
+     *
+     * @deprecated Use isRatingAllowed
+     */
+    public function ratingAllowed()
+    {
+        return false;
     }
 
     /**

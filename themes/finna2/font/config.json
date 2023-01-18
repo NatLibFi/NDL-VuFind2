@@ -2721,6 +2721,20 @@
       "search": [
         "dice"
       ]
+    },
+    {
+      "uid": "d850313a246a0a48ae7acc50aa2645be",
+      "css": "star-half-1",
+      "code": 59587,
+      "src": "custom_icons",
+      "selected": true,
+      "svg": {
+        "path": "M500 104.2 500 762.5 241.7 895.8 291.7 608.3 83.3 408.3 370.8 366.7Z",
+        "width": 500
+      },
+      "search": [
+        "star"
+      ]
     }
   ]
 }

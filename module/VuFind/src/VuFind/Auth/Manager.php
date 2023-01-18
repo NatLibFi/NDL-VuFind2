@@ -496,13 +496,17 @@ class Manager implements \LmcRbacMvc\Identity\IdentityProviderInterface,
                     ->select(['id' => $this->session->userId]);
                 $this->currentUser = count($results) < 1
                     ? false : $results->current();
+                // End the session since the logged-in user cannot be found:
+                if (false === $this->currentUser) {
+                    $this->logout('');
+                }
             } elseif (isset($this->session->userDetails)) {
                 // privacy mode
                 $results = $this->userTable->createRow();
                 $results->exchangeArray($this->session->userDetails);
                 $this->currentUser = $results;
             } else {
-                // unexpected state
+                // not logged in
                 $this->currentUser = false;
             }
         }
@@ -807,6 +811,16 @@ class Manager implements \LmcRbacMvc\Identity\IdentityProviderInterface,
         $user->auth_method = strtolower($method);
         $user->last_login = date('Y-m-d H:i:s');
         $user->save();
+    }
+
+    /**
+     * Is the user allowed to log directly into the ILS?
+     *
+     * @return bool
+     */
+    public function allowsUserIlsLogin(): bool
+    {
+        return $this->config->Catalog->allowUserLogin ?? true;
     }
 
     /**

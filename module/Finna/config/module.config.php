@@ -405,8 +405,6 @@ $config = [
                         'VuFind\AjaxHandler\AbstractIlsAndUserActionFactory',
                     'Finna\AjaxHandler\CommentRecord' =>
                         'Finna\AjaxHandler\CommentRecordFactory',
-                    'Finna\AjaxHandler\DeleteRecordComment' =>
-                        'VuFind\AjaxHandler\DeleteRecordCommentFactory',
                     'Finna\AjaxHandler\EditList' =>
                         'Finna\AjaxHandler\EditListFactory',
                     'Finna\AjaxHandler\EditListResource' =>
@@ -510,7 +508,6 @@ $config = [
 
                     // Overrides:
                     'VuFind\AjaxHandler\CommentRecord' => 'Finna\AjaxHandler\CommentRecord',
-                    'VuFind\AjaxHandler\DeleteRecordComment' => 'Finna\AjaxHandler\DeleteRecordComment',
                     'VuFind\AjaxHandler\GetACSuggestions' => 'Finna\AjaxHandler\GetACSuggestions',
                     'VuFind\AjaxHandler\GetFacetData' => 'Finna\AjaxHandler\GetFacetData',
                     'VuFind\AjaxHandler\GetItemStatuses' => 'Finna\AjaxHandler\GetItemStatuses',

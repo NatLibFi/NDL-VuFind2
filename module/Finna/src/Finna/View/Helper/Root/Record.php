@@ -33,11 +33,11 @@
 namespace Finna\View\Helper\Root;
 
 use Finna\Form\Form;
+use Finna\RecordTab\TabManager;
 use Finna\Search\Solr\AuthorityHelper;
 use Finna\Service\UserPreferenceService;
 use Laminas\Config\Config;
 use VuFind\Record\Loader;
-use VuFind\RecordTab\TabManager;
 use VuFind\View\Helper\Root\Url;
 
 /**
@@ -93,9 +93,9 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Record link helper
      *
-     * @var RecordLink
+     * @var RecordLinker
      */
-    protected $recordLinkHelper;
+    protected $recordLinker;
 
     /**
      * Local cache
@@ -148,7 +148,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      * @param RecordImage           $recordImage            Record image helper
      * @param AuthorityHelper       $authorityHelper        Authority helper
      * @param Url                   $urlHelper              Url helper
-     * @param RecordLink            $recordLinkHelper       Record link helper
+     * @param RecordLinker          $recordLinker           Record link helper
      * @param TabManager            $tabManager             Tab manager
      * @param Form                  $form                   Form
      * @param UserPreferenceService $userPreferenceService  User preference
@@ -163,7 +163,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         RecordImage $recordImage,
         AuthorityHelper $authorityHelper,
         Url $urlHelper,
-        RecordLink $recordLinkHelper,
+        RecordLinker $recordLinker,
         TabManager $tabManager,
         Form $form,
         UserPreferenceService $userPreferenceService,
@@ -174,7 +174,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $this->recordImageHelper = $recordImage;
         $this->authorityHelper = $authorityHelper;
         $this->urlHelper = $urlHelper;
-        $this->recordLinkHelper = $recordLinkHelper;
+        $this->recordLinker = $recordLinker;
         $this->tabManager = $tabManager;
         $this->form = $form;
         $this->userPreferenceService = $userPreferenceService;
@@ -202,6 +202,8 @@ class Record extends \VuFind\View\Helper\Root\Record
      * Deprecated method. Return false for legacy template code.
      *
      * @return boolean
+     *
+     * @deprecated
      */
     public function bxRecommendationsEnabled()
     {
@@ -214,18 +216,11 @@ class Record extends \VuFind\View\Helper\Root\Record
      * @param object $user Current user
      *
      * @return boolean
+     *
+     * @deprecated Not needed anymore since commenting is always allowed when enabled
      */
     public function commentingAllowed($user)
     {
-        if (!$this->ratingAllowed()) {
-            return true;
-        }
-        $comments = $this->driver->getComments();
-        foreach ($comments as $comment) {
-            if ($comment->user_id === $user->id) {
-                return false;
-            }
-        }
         return true;
     }
 
@@ -935,18 +930,12 @@ class Record extends \VuFind\View\Helper\Root\Record
      * Render average rating
      *
      * @return string
+     *
+     * @deprecated Use upstream rating support
      */
     public function getRating()
     {
-        if ($this->ratingAllowed()
-            && $average = $this->driver->tryMethod('getAverageRating')
-        ) {
-            return $this->getView()->render(
-                'Helpers/record-rating.phtml',
-                ['average' => $average['average'], 'count' => $average['count']]
-            );
-        }
-        return false;
+        return '';
     }
 
     /**
@@ -1013,12 +1002,11 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Is rating allowed.
      *
-     * @return boolean
+     * @return bool
      */
     public function ratingAllowed()
     {
-        return $this->commentingEnabled()
-            && $this->driver->tryMethod('ratingAllowed');
+        return $this->driver->tryMethod('isRatingAllowed');
     }
 
     /**
@@ -1135,7 +1123,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             'author' => [
                 'cnt' => $authorCnt,
                 'tabUrl' => in_array('AuthorityRecordsAuthor', $tabs)
-                    ? $this->recordLinkHelper->getTabUrl(
+                    ? $this->recordLinker->getTabUrl(
                         $this->driver,
                         'AuthorityRecordsAuthor'
                     )
@@ -1144,7 +1132,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             'topic' => [
                 'cnt' => $topicCnt,
                 'tabUrl' => in_array('AuthorityRecordsTopic', $tabs)
-                    ? $this->recordLinkHelper->getTabUrl(
+                    ? $this->recordLinker->getTabUrl(
                         $this->driver,
                         'AuthorityRecordsTopic'
                     )
