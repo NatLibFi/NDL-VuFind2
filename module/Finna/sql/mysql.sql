@@ -171,6 +171,8 @@ CREATE TABLE `finna_feedback` (
 CREATE TABLE `finna_page_view_stats` (
   `institution` varchar(255) NOT NULL,
   `view` varchar(255) NOT NULL,
+  -- Note: `crawler` is actually a bitmap for request type, but the name remains for
+  -- historical reasons.
   `crawler` tinyint(1) NOT NULL,
   `controller` varchar(128) NOT NULL,
   `action` varchar(128) NOT NULL,
@@ -185,6 +187,8 @@ CREATE TABLE `finna_page_view_stats` (
 CREATE TABLE `finna_session_stats` (
   `institution` varchar(255) NOT NULL,
   `view` varchar(255) NOT NULL,
+  -- Note: `crawler` is actually a bitmap for request type, but the name remains for
+  -- historical reasons.
   `crawler` tinyint(1) NOT NULL,
   `date` DATE NOT NULL,
   `count` int(11) NOT NULL DEFAULT 1,
@@ -197,6 +201,8 @@ CREATE TABLE `finna_session_stats` (
 CREATE TABLE `finna_record_stats` (
   `institution` varchar(255) NOT NULL,
   `view` varchar(255) NOT NULL,
+  -- Note: `crawler` is actually a bitmap for request type, but the name remains for
+  -- historical reasons.
   `crawler` tinyint(1) NOT NULL,
   `date` DATE NOT NULL,
   `backend` varchar(128) NOT NULL,
@@ -213,6 +219,8 @@ CREATE TABLE `finna_record_stats` (
 CREATE TABLE `finna_record_stats_log` (
   `institution` varchar(255) NOT NULL,
   `view` varchar(255) NOT NULL,
+  -- Note: `crawler` is actually a bitmap for request type, but the name remains for
+  -- historical reasons.
   `crawler` tinyint(1) NOT NULL,
   `date` DATE NOT NULL,
   `backend` varchar(128) NOT NULL,

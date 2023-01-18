@@ -431,6 +431,10 @@ choice_order = Database,Shibboleth,MultiILS
 ; Currently only supported statistics driver is Database. Uncomment to enable
 ; recording of statistics:
 ;driver = Database
+; IP addresses or address ranges of monitoring systems
+;monitoring_ips[] = "127.0.0.1"
+; IP addresses or address ranges of systems excluded from statistics
+;exclude_ips[] = "192.168.1.1-192.168.255.255"
 
 ; This section requires no changes for most installations
 [Index]

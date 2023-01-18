@@ -32,6 +32,7 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Net\IpAddressUtils;
 
 /**
  * Statistics event handler factory.
@@ -68,13 +69,18 @@ class EventHandlerFactory implements FactoryInterface
         }
 
         $config = $container->get(\VuFind\Config\PluginManager::class)
-            ->get('config');
+            ->get('config')->toArray();
 
         $driver = null;
-        if (!empty($config->Statistics->driver)) {
+        $ipUtils = $container->get(\VuFind\Net\IpAddressUtils::class);
+        $remoteAddress = new \Laminas\Http\PhpEnvironment\RemoteAddress();
+        $clientIp = $remoteAddress->getIpAddress();
+        if (!empty($config['Statistics']['driver'])
+            && !$this->isRequestsExluded($ipUtils, $clientIp, $config)
+        ) {
             $driverManager
                 = $container->get(\Finna\Statistics\Driver\PluginManager::class);
-            $driver = $driverManager->get($config->Statistics->driver);
+            $driver = $driverManager->get($config['Statistics']['driver']);
         }
 
         $request = $container->get('Request');
@@ -83,10 +89,51 @@ class EventHandlerFactory implements FactoryInterface
             ? $headers->get('User-Agent')->toString() : '';
 
         return new $requestedName(
-            $config->Site->institution ?? '',
+            $config['Site']['institution'] ?? '',
             rtrim(getenv('FINNA_BASE_URL') ?: '', '/'),
             $driver,
-            $userAgent
+            $userAgent,
+            $this->isMonitoringSystem($ipUtils, $clientIp, $config)
         );
+    }
+
+    /**
+     * Check if the request should be excluded
+     *
+     * @param IpAddressUtils $ipUtils  IP address utilities
+     * @param string         $clientIp Client IP address
+     * @param array          $config   Main configuration
+     *
+     * @return bool
+     */
+    protected function isRequestsExluded(
+        IpAddressUtils $ipUtils,
+        string $clientIp,
+        array $config
+    ): bool {
+        if ($ranges = ($config['Statistics']['exclude_ips'] ?? [])) {
+            return $ipUtils->isInRange($clientIp, (array)$ranges);
+        }
+        return false;
+    }
+
+    /**
+     * Check if the request comes from a monitoring system
+     *
+     * @param IpAddressUtils $ipUtils  IP address utilities
+     * @param string         $clientIp Client IP address
+     * @param array          $config   Main configuration
+     *
+     * @return bool
+     */
+    protected function isMonitoringSystem(
+        IpAddressUtils $ipUtils,
+        string $clientIp,
+        array $config
+    ): bool {
+        if ($ranges = ($config['Statistics']['monitoring_ips'] ?? [])) {
+            return $ipUtils->isInRange($clientIp, (array)$ranges);
+        }
+        return false;
     }
 }
