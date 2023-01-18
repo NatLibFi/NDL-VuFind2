@@ -1324,6 +1324,9 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Get preferred record source for deduplicated records.
      *
+     * Note: This works with DeduplicationListener, so make sure to
+     * update both as necessary.
+     * 
      * @return string
      */
     public function getPreferredSource(): string
@@ -1331,7 +1334,8 @@ class Record extends \VuFind\View\Helper\Root\Record
         if (null === $this->driver) {
             return '';
         }
-        // Is selecting a datasource mandatory?
+        // Is selecting a datasource mandatory? If not, we can just rely on
+        // DeduplicationListener having selected the correct one.
         if (empty($this->config->Record->select_dedup_holdings_library)) {
             return $this->driver->tryMethod('getDataSource', [], '');
         }
@@ -1342,8 +1346,8 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
         $dedupData = $this->driver->getDedupData();
-        // Return drivers datasource if deduplication data is not set.
-        // This will default favorite listed items into their own datasources.
+        // Return driver's datasource if deduplication data is not set.
+        // There cannot be any other sources in this case.
         if (empty($dedupData)) {
             return $this->driver->tryMethod('getDataSource', [], '');
         }
