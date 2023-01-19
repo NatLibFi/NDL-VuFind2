@@ -450,6 +450,9 @@ EOT;
                             $imgLink = $this->checkLocalFile($value['url']);
                             if (null !== $imgLink) {
                                 $value['url'] = $imgLink;
+                            } elseif ($id) {
+                                $value['url']
+                                    = $this->proxifyImageUrl($value['url'], $id);
                             }
                         }
                     } elseif ($setting == 'date') {
@@ -511,7 +514,10 @@ EOT;
                             if (!empty($imgLink = $this->extractImage($xcal))) {
                                 if ($localFile = $this->checkLocalFile($imgLink)) {
                                     $imgLink = $localFile;
+                                } elseif ($id) {
+                                    $imgLink = $this->proxifyImageUrl($imgLink, $id);
                                 }
+
                                 $data['xcal']['featured'] = $imgLink;
                                 if ($elements['image'] != 0
                                     || !isset($elements['image'])
@@ -618,6 +624,33 @@ EOT;
             }
         }
         return compact('channel', 'items', 'config', 'modal', 'contentPage');
+    }
+
+    /**
+     * Proxify an image url for loading via the FeedContent controller
+     *
+     * @param string $url    Image URL
+     * @param string $feedId Feed identifier
+     *
+     * @return string
+     */
+    public function proxifyImageUrl(string $url, string $feedId): string
+    {
+        // Ensure that we don't proxify an already proxified URL:
+        $check = $this->urlHelper->fromRoute('feed-image', ['page' => '']);
+        if (strncasecmp($url, $check, strlen($check)) === 0) {
+            return $url;
+        }
+
+        return $this->urlHelper->fromRoute(
+            'feed-image',
+            ['page' => $feedId],
+            [
+                'query' => [
+                    'image' => $url,
+                ]
+            ]
+        );
     }
 
     /**

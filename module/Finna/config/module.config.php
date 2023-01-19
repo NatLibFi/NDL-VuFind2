@@ -77,6 +77,19 @@ $config = [
                     ]
                 ],
             ],
+            'feed-image' => [
+                'type'    => 'Laminas\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/FeedContent/Image/:page',
+                    'constraints' => [
+                        'page'     => '[a-zA-Z][a-zA-Z0-9_-]*'
+                    ],
+                    'defaults' => [
+                        'controller' => 'FeedContent',
+                        'action'     => 'Image',
+                    ]
+                ],
+            ],
             'linked-events-content' => [
                 'type'    => 'Laminas\Router\Http\Segment',
                 'options' => [

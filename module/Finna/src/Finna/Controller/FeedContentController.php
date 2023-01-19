@@ -29,6 +29,8 @@
  */
 namespace Finna\Controller;
 
+use VuFind\Http\CachingDownloader;
+
 /**
  * Loads feed content pages
  *
@@ -82,5 +84,91 @@ class FeedContentController extends ContentController
         return $this->createViewModel(
             ['page' => 'linked-events', 'event' => $event]
         );
+    }
+
+    /**
+     * Proxy load feed image
+     *
+     * @return Laminas\View\Model\ViewModel
+     */
+    public function imageAction()
+    {
+        $event = $this->getEvent();
+        $routeMatch = $event->getRouteMatch();
+        $id = $routeMatch->getParam('page');
+        if (!($imageUrl = $this->params()->fromQuery('image'))) {
+            return $this->notFoundAction();
+        }
+
+        $url = $this->serviceLocator->get('ControllerPluginManager')->get('url');
+        $serverUrlHelper = $this->getViewRenderer()->plugin('serverurl');
+        $homeUrl = $serverUrlHelper($url->fromRoute('home'));
+
+        $feedService = $this->serviceLocator->get(\Finna\Feed\Feed::class);
+        if ($config = $feedService->getFeedConfig($id)) {
+            $config = $config['result'];
+        }
+
+        // Only handle a normal feed:
+        $feed = null;
+        if (!isset($config['ilsList'])) {
+            $feed = $feedService->readFeed($id, $homeUrl);
+        }
+
+        if (!$feed) {
+            return $this->notFoundAction();
+        }
+
+        // Validate image url to ensure we don't proxy anything not belonging to the
+        // feed:
+        $valid = false;
+        $proxiedUrl = $feedService->proxifyImageUrl($imageUrl, $id);
+        foreach ($feed['items'] as $item) {
+            if (($item['image']['url'] ?? '') === $proxiedUrl) {
+                $valid = true;
+                break;
+            }
+        }
+        if (!$valid) {
+            return $this->notFoundAction();
+        }
+
+        $downloader = $this->serviceLocator->get(CachingDownloader::class);
+        try {
+            $imageResponse = $downloader->download(
+                $imageUrl,
+                [],
+                function (\Laminas\Http\Response $response) {
+                    $contentType = '';
+                    if ($header = $response->getHeaders()->get('Content-Type')) {
+                        $contentType = $header->getFieldValue();
+                    }
+                    return [
+                        'contentType' => $contentType,
+                        'content' => $response->getBody()
+                    ];
+                }
+            );
+        } catch (\VuFind\Exception\HttpDownloadException $e) {
+            return $this->notFoundAction();
+        }
+        $response = $this->getResponse();
+        $headers = $response->getHeaders();
+        $headers->addHeaderLine('Content-type', $imageResponse['contentType']);
+
+        // Send proper caching headers so that the user's browser
+        // is able to cache the cover images and not have to re-request
+        // then on each page load. Default TTL set at 14 days
+
+        $coverImageTtl = (60 * 60 * 24 * 14); // 14 days
+        $headers->addHeaderLine('Cache-Control', "maxage=" . $coverImageTtl);
+        $headers->addHeaderLine('Pragma', 'public');
+        $headers->addHeaderLine(
+            'Expires',
+            gmdate('D, d M Y H:i:s', time() + $coverImageTtl) . ' GMT'
+        );
+
+        $response->setContent($imageResponse['content']);
+        return $response;
     }
 }
