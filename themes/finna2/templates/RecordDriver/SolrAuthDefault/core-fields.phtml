@@ -5,7 +5,21 @@
 ?>
 <?php if (!empty($coreFields)): ?>
   <table class="table table-finna-record record-details" role="presentation">
-    <?=$this->record($this->driver)->renderTemplate('core-fields.phtml', ['coreFields' => $coreFields]);?>
+    <?php foreach ($coreFields as $key => $current): ?>
+      <?php $header = $this->transEsc($current['context']['title'] ?? $current['label']); ?>
+      <?php if ($header): ?>
+        <?php if ($class = $current['context']['class'] ?? null): ?>
+          <tr class="<?=$this->escapeHtmlAttr($class)?>">
+        <?php else: ?>
+          <tr>
+        <?php endif; ?>
+          <th><?=$header?></th>
+          <td><?=$current['value']?></td>
+        </tr>
+      <?php else: ?>
+        <?=$current['value']?>
+      <?php endif; ?>
+    <?php endforeach; ?>
   </table>
 <?php endif; ?>
 <!-- END of: finna - RecordDriver/SolrAuthDefault/core-fields.phtml -->
