@@ -144,9 +144,12 @@ class OrganisationInfoController extends \VuFind\Controller\AbstractBase
             return $this->notFoundAction();
         }
 
-        if (!($imageResult = $this->downloadData($imageUrl))) {
+        if (!($imageResult = $this->downloadData($imageUrl))
+            || !$this->isImageContentType($imageResult['contentType'])
+        ) {
             return $this->notFoundAction();
         }
+
         $response = $this->getResponse();
         $headers = $response->getHeaders();
         $headers->addHeaderLine('Content-type', $imageResult['contentType']);
