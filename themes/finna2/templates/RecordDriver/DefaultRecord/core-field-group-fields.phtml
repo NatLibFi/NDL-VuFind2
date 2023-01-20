@@ -12,7 +12,7 @@
     </tr>
   <?php endif; ?>
     <tr>
-      <td>
+      <td<?php if ($header): ?> role="complementary" aria-label="<?=$header?>"<?php endif; ?>>
         <?=$current['value']?>
       </td>
     </tr>
