@@ -199,7 +199,7 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
         // Check for cached version
         $cacheDir
             = $this->cacheManager->getCache('feed')->getOptions()->getCacheDir();
-        $localFile = "$cacheDir/" . md5(var_export($params, true)) . '.xml';
+        $localFile = "$cacheDir/" . md5(var_export($params, true)) . '.json';
         $maxAge = isset($this->mainConfig->Content->feedcachetime)
             && '' !== $this->mainConfig->Content->feedcachetime
             ? $this->mainConfig->Content->feedcachetime : 10;
