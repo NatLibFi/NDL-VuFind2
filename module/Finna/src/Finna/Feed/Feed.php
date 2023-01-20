@@ -264,20 +264,18 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
 
         $channel = null;
 
-        // Check for cached version
-        $cacheDir
-            = $this->cacheManager->getCache('feed')->getOptions()->getCacheDir();
-
-        $localFile = "$cacheDir/" . md5(var_export($cacheKey, true)) . '.xml';
-        $maxAge = isset($this->mainConfig->Content->feedcachetime)
-            && '' !== $this->mainConfig->Content->feedcachetime
-            ? $this->mainConfig->Content->feedcachetime : 10;
-
         $httpClient = $this->httpService->createClient();
         $httpClient->setOptions(['useragent' => 'VuFind']);
         $httpClient->setOptions(['timeout' => 30]);
         Reader::setHttpClient($httpClient);
 
+        // Check for cached version
+        $cacheDir
+            = $this->cacheManager->getCache('feed')->getOptions()->getCacheDir();
+        $localFile = "$cacheDir/" . md5(var_export($cacheKey, true)) . '.xml';
+        $maxAge = isset($this->mainConfig->Content->feedcachetime)
+            && '' !== $this->mainConfig->Content->feedcachetime
+            ? $this->mainConfig->Content->feedcachetime : 10;
         if ($maxAge) {
             if (is_readable($localFile)
                 && time() - filemtime($localFile) < $maxAge * 60
@@ -594,7 +592,7 @@ EOT;
                             $styleAttr = $el->getAttribute('style');
                             $properties = explode(';', $styleAttr);
                             foreach ($properties as $prop) {
-                                [$field, $val] = explode(':', $prop);
+                                [$field] = explode(':', $prop);
                                 if (stristr($field, 'width') === false
                                     && stristr($field, 'height') === false
                                     && stristr($field, 'margin') === false

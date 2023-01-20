@@ -47,7 +47,7 @@ class GetLinkedEvents extends \VuFind\AjaxHandler\AbstractBase
     /**
      * Linked Events
      *
-     * @var LinkedEvents $linkedEvents
+     * @var \Finna\Feed\LinkedEvents $linkedEvents
      */
     protected $linkedEvents;
 

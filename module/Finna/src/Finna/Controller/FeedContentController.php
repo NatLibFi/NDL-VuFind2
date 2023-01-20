@@ -45,6 +45,8 @@ use VuFind\Http\CachingDownloader;
  */
 class FeedContentController extends ContentController
 {
+    use Feature\DownloadTrait;
+
     /**
      * Default action if none provided
      *
@@ -134,42 +136,61 @@ class FeedContentController extends ContentController
             return $this->notFoundAction();
         }
 
-        $downloader = $this->serviceLocator->get(CachingDownloader::class);
-        try {
-            $imageResponse = $downloader->download(
-                $imageUrl,
-                [],
-                function (\Laminas\Http\Response $response) {
-                    $contentType = '';
-                    if ($header = $response->getHeaders()->get('Content-Type')) {
-                        $contentType = $header->getFieldValue();
-                    }
-                    return [
-                        'contentType' => $contentType,
-                        'content' => $response->getBody()
-                    ];
-                }
-            );
-        } catch (\VuFind\Exception\HttpDownloadException $e) {
+        if (!($imageResult = $this->downloadData($imageUrl))) {
             return $this->notFoundAction();
         }
+
         $response = $this->getResponse();
         $headers = $response->getHeaders();
-        $headers->addHeaderLine('Content-type', $imageResponse['contentType']);
+        $headers->addHeaderLine('Content-type', $imageResult['contentType']);
+        $this->setCachingHeaders($headers);
+        $response->setContent($imageResult['content']);
+        return $response;
+    }
 
-        // Send proper caching headers so that the user's browser
-        // is able to cache the cover images and not have to re-request
-        // then on each page load. Default TTL set at 14 days
+    /**
+     * Proxy load linked event image
+     *
+     * @return Laminas\View\Model\ViewModel
+     */
+    public function eventImageAction()
+    {
+        $params = $this->params()->fromQuery();
+        if (!($imageUrl = $params['image'] ?? '')) {
+            return $this->notFoundAction();
+        }
+        unset($params['image']);
 
-        $coverImageTtl = (60 * 60 * 24 * 14); // 14 days
-        $headers->addHeaderLine('Cache-Control', "maxage=" . $coverImageTtl);
-        $headers->addHeaderLine('Pragma', 'public');
-        $headers->addHeaderLine(
-            'Expires',
-            gmdate('D, d M Y H:i:s', time() + $coverImageTtl) . ' GMT'
-        );
+        $linkedEvents = $this->serviceLocator->get(\Finna\Feed\LinkedEvents::class);
+        try {
+            $events = $linkedEvents->getEvents($params);
+        } catch (\Exception $e) {
+            return $this->notFoundAction();
+        }
 
-        $response->setContent($imageResponse['content']);
+        // Validate image url to ensure we don't proxy anything not belonging to the
+        // feed:
+        $valid = false;
+        $proxiedUrl = $linkedEvents->proxifyImageUrl($imageUrl, $params);
+        foreach ($events['events'] as $event) {
+            if (($event['image']['url'] ?? '') === $proxiedUrl) {
+                $valid = true;
+                break;
+            }
+        }
+        if (!$valid) {
+            return $this->notFoundAction();
+        }
+
+        if (!($imageResult = $this->downloadData($imageUrl))) {
+            return $this->notFoundAction();
+        }
+
+        $response = $this->getResponse();
+        $headers = $response->getHeaders();
+        $headers->addHeaderLine('Content-type', $imageResult['contentType']);
+        $this->setCachingHeaders($headers);
+        $response->setContent($imageResult['content']);
         return $response;
     }
 }

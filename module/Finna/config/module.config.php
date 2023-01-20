@@ -90,6 +90,16 @@ $config = [
                     ]
                 ],
             ],
+            'linked-events-image' => [
+                'type'    => 'Laminas\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/FeedContent/EventImage',
+                    'defaults' => [
+                        'controller' => 'FeedContent',
+                        'action'     => 'EventImage',
+                    ]
+                ],
+            ],
             'linked-events-content' => [
                 'type'    => 'Laminas\Router\Http\Segment',
                 'options' => [
