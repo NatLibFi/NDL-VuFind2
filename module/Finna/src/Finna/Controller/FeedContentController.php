@@ -30,8 +30,6 @@
  */
 namespace Finna\Controller;
 
-use VuFind\Http\CachingDownloader;
-
 /**
  * Loads feed content pages
  *
