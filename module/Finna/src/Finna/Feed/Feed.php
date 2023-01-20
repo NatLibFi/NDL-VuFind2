@@ -634,7 +634,10 @@ EOT;
      */
     public function proxifyImageUrl(string $url, string $feedId): string
     {
-        // Ensure that we don't proxify an already proxified URL:
+        // Ensure that we don't proxify an empty or already proxified URL:
+        if (!$url) {
+            return '';
+        }
         $check = $this->urlHelper->fromRoute('feed-image', ['page' => '']);
         if (strncasecmp($url, $check, strlen($check)) === 0) {
             return $url;

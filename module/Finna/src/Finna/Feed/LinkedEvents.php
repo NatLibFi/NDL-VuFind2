@@ -396,7 +396,10 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
      */
     public function proxifyImageUrl(string $url, array $params): string
     {
-        // Ensure that we don't proxify an already proxified URL:
+        // Ensure that we don't proxify an empty or already proxified URL:
+        if (!$url) {
+            return '';
+        }
         $check = $this->url->fromRoute('linked-events-image', []);
         if (strncasecmp($url, $check, strlen($check)) === 0) {
             return $url;

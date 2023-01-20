@@ -134,7 +134,9 @@ class FeedContentController extends ContentController
             return $this->notFoundAction();
         }
 
-        if (!($imageResult = $this->downloadData($imageUrl))) {
+        if (!($imageResult = $this->downloadData($imageUrl))
+            || !$this->isImageContentType($imageResult['contentType'])
+        ) {
             return $this->notFoundAction();
         }
 
@@ -180,7 +182,9 @@ class FeedContentController extends ContentController
             return $this->notFoundAction();
         }
 
-        if (!($imageResult = $this->downloadData($imageUrl))) {
+        if (!($imageResult = $this->downloadData($imageUrl))
+            || !$this->isImageContentType($imageResult['contentType'])
+        ) {
             return $this->notFoundAction();
         }
 

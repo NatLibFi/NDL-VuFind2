@@ -93,4 +93,16 @@ trait DownloadTrait
             gmdate('D, d M Y H:i:s', time() + $ttl) . ' GMT'
         );
     }
+
+    /**
+     * Check if the content type is an image
+     *
+     * @param string $contentType Content type
+     *
+     * @return bool
+     */
+    protected function isImageContentType(string $contentType): bool
+    {
+        return strncmp($contentType, 'image/', 6) === 0;
+    }
 }
