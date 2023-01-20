@@ -5,7 +5,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2016-2019.
+ * Copyright (C) The National Library of Finland 2016-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,6 +29,8 @@
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 namespace Finna\OrganisationInfo;
+
+use Laminas\Mvc\Controller\Plugin\Url;
 
 /**
  * Service for querying Kirjastohakemisto database.
@@ -93,23 +95,33 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
     protected $cleanHtml;
 
     /**
+     * URL plugin
+     *
+     * @var Url
+     */
+    protected $urlPlugin;
+
+    /**
      * Constructor.
      *
      * @param \Laminas\Config\Config             $config        Configuration
      * @param \VuFind\Cache\Manager              $cacheManager  Cache manager
      * @param \Laminas\View\Renderer\PhpRenderer $viewRenderer  View renderer
      * @param \VuFind\Date\Converter             $dateConverter Date converter
+     * @param Url                                $url           URL plugin
      */
     public function __construct(
         \Laminas\Config\Config $config,
         \VuFind\Cache\Manager $cacheManager,
         \Laminas\View\Renderer\PhpRenderer $viewRenderer,
-        \VuFind\Date\Converter $dateConverter
+        \VuFind\Date\Converter $dateConverter,
+        Url $url
     ) {
         $this->config = $config;
         $this->cacheManager = $cacheManager;
         $this->viewRenderer = $viewRenderer;
         $this->dateConverter = $dateConverter;
+        $this->urlPlugin = $url;
         $this->cleanHtml = $viewRenderer->plugin('cleanHtml');
     }
 
@@ -423,7 +435,9 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             $id = $json['finna_org_id'];
             $data = "{$url}?" . http_build_query(['id' => $id]);
             if ($link) {
-                $logo = $json['image'] ?? null;
+                $logo = !empty($json['image'])
+                    ? $this->proxifyImageUrl($json['image'])
+                    : null;
                 $lang = $this->getLanguage();
                 $name = $json['name'][$lang]
                         ?? $this->translator->translate("source_{$parent}");
@@ -612,6 +626,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         // Details
         $response = $response['items'][0];
         $result = $this->parseDetails(
+            $id,
             $target,
             $response,
             $schedules,
@@ -843,7 +858,8 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
     /**
      * Parse organisation details.
      *
-     * @param string  $target             page|widge
+     * @param int     $id                 Organisation
+     * @param string  $target             page|widget
      * @param object  $response           JSON-object
      * @param boolean $schedules          Include schedules in the response?
      * @param boolean $includeAllServices Include services in the response?
@@ -851,6 +867,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
      * @return array
      */
     protected function parseDetails(
+        $id,
         $target,
         $response,
         $schedules,
@@ -908,7 +925,9 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         if (!empty($response['pictures'])) {
             $pics = [];
             foreach ($response['pictures'] as $pic) {
-                $pics[] = $pic['files']['medium'];
+                $medium = $pic['files']['medium'];
+                $medium['url'] = $this->proxifyImageUrl($medium['url']);
+                $pics[] = $medium;
             }
             if (!empty($pics)) {
                 $result['pictures'] = $pics;
@@ -1177,7 +1196,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                 = $key['link_info']['link_url_' . $language . ''];
         }
         if (!empty($json['image'])) {
-            $consortium['logo']['small'] = $json['image'];
+            $consortium['logo']['small'] = $this->proxifyImageUrl($json['image']);
         }
         // Details info
         $details = [
@@ -1270,17 +1289,17 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                 0 => [
                     'url' =>
                     isset($json['image2']) && strlen($json['image2']) > 30
-                        ? $json['image2'] : ''
+                        ? $this->proxifyImageUrl($json['image2']) : ''
                 ],
                 1 => [
                     'url' =>
                     isset($json['image3']) && strlen($json['image3']) > 30
-                        ? $json['image3'] : ''
+                        ? $this->proxifyImageUrl($json['image3']) : ''
                 ],
                 2 => [
                     'url' =>
                     isset($json['image4']) && strlen($json['image4']) > 30
-                        ? $json['image4'] : ''
+                        ? $this->proxifyImageUrl($json['image4']) : ''
                 ]
             ],
             'scheduleDescriptions' => [
@@ -1327,5 +1346,31 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             }
         }
         return $return;
+    }
+
+    /**
+     * Proxify an image url for loading via the OrganisationInfo controller
+     *
+     * @param string $url Image URL
+     *
+     * @return string
+     */
+    protected function proxifyImageUrl(string $url): string
+    {
+        // Ensure that we don't proxify an already proxified URL:
+        $check = $this->urlPlugin->fromRoute('organisation-info-image');
+        if (strncasecmp($url, $check, strlen($check)) === 0) {
+            return $url;
+        }
+
+        return $this->urlPlugin->fromRoute(
+            'organisation-info-image',
+            [],
+            [
+                'query' => [
+                    'image' => $url,
+                ]
+            ]
+        );
     }
 }

@@ -191,6 +191,16 @@ $config = [
                     ]
                 ],
             ],
+            'organisation-info-image' => [
+                'type'    => 'Laminas\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/OrganisationInfo/Image',
+                    'defaults' => [
+                        'controller' => 'OrganisationInfo',
+                        'action'     => 'Image',
+                    ]
+                ],
+            ],
             'record-preview' => [
                 'type' => 'Laminas\Router\Http\Literal',
                 'options' => [

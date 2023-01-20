@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2016-2019.
+ * Copyright (C) The National Library of Finland 2016-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -38,6 +38,8 @@ namespace Finna\Controller;
  */
 class OrganisationInfoController extends \VuFind\Controller\AbstractBase
 {
+    use Feature\DownloadTrait;
+
     /**
      * Default action if none provided
      *
@@ -113,5 +115,43 @@ class OrganisationInfoController extends \VuFind\Controller\AbstractBase
         $view->consortiumInfo = $consortiumInfo;
 
         return $view;
+    }
+
+    /**
+     * Proxy load image
+     *
+     * @return Laminas\View\Model\ViewModel
+     */
+    public function imageAction()
+    {
+        if (!($imageUrl = $this->params()->fromQuery('image'))) {
+            return $this->notFoundAction();
+        }
+
+        // Validate image url to ensure we don't proxy anything not belonging to
+        // organisation information:
+        $valid = false;
+        $imageHost = mb_strtolower(parse_url($imageUrl, PHP_URL_HOST), 'UTF-8');
+        $config = $this->serviceLocator
+            ->get(\VuFind\Config\PluginManager::class)->get('OrganisationInfo');
+        foreach ($config['Images']['allowed_hosts'] ?? [] as $host) {
+            if ($imageHost === $host) {
+                $valid = true;
+                break;
+            }
+        }
+        if (!$valid) {
+            return $this->notFoundAction();
+        }
+
+        if (!($imageResult = $this->downloadData($imageUrl))) {
+            return $this->notFoundAction();
+        }
+        $response = $this->getResponse();
+        $headers = $response->getHeaders();
+        $headers->addHeaderLine('Content-type', $imageResult['contentType']);
+        $this->setCachingHeaders($headers);
+        $response->setContent($imageResult['content']);
+        return $response;
     }
 }

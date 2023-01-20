@@ -61,3 +61,8 @@ url = "https://museot.fi/xml"
 [LinkedEvents]
 ;api_url = ""
 ;publisher_id = ""
+
+[Images]
+; Allowed hosts for images
+allowed_hosts[] = 'kirkanta.kirjastot.fi'
+allowed_hosts[] = 'museot.fi'
