@@ -122,15 +122,7 @@ class FeedContentController extends ContentController
 
         // Validate image url to ensure we don't proxy anything not belonging to the
         // feed:
-        $valid = false;
-        $proxiedUrl = $feedService->proxifyImageUrl($imageUrl, $id);
-        foreach ($feed['items'] as $item) {
-            if (($item['image']['url'] ?? '') === $proxiedUrl) {
-                $valid = true;
-                break;
-            }
-        }
-        if (!$valid) {
+        if (!in_array($imageUrl, $feed['allowedImages'])) {
             return $this->notFoundAction();
         }
 

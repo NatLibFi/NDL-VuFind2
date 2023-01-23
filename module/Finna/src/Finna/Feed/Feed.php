@@ -263,43 +263,44 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
      * @param string $id         Feed id (needed when the feed content is shown on a
      * content page or in a modal)
      *
-     * @return mixed null|array
+     * @return array
      */
     protected function processReadFeed($feedConfig, $viewUrl, $id = null)
     {
         $config = $feedConfig['result'];
         $url = trim($feedConfig['url']);
 
-        $cacheKey = (array)$feedConfig;
-        $cacheKey['language'] = $this->translator->getLocale();
-
-        $channel = null;
-
         $httpClient = $this->httpService->createClient();
         $httpClient->setOptions(['useragent' => 'VuFind']);
         $httpClient->setOptions(['timeout' => 30]);
         Reader::setHttpClient($httpClient);
 
+        $cacheKey = (array)$feedConfig;
+        $cacheKey['language'] = $this->translator->getLocale();
+
         // Check for cached version
         $cacheDir
             = $this->cacheManager->getCache('feed')->getOptions()->getCacheDir();
-        $localFile = "$cacheDir/" . md5(var_export($cacheKey, true)) . '.xml';
+        $localFile = "$cacheDir/feed-" . md5(var_export($cacheKey, true)) . '.xml';
         $maxAge = isset($this->mainConfig->Content->feedcachetime)
             && '' !== $this->mainConfig->Content->feedcachetime
             ? $this->mainConfig->Content->feedcachetime : 10;
-        if ($maxAge) {
-            if (is_readable($localFile)
-                && time() - filemtime($localFile) < $maxAge * 60
-            ) {
-                $channel = Reader::importFile($localFile);
+        if ($maxAge && is_readable($localFile)
+            && time() - filemtime($localFile) < $maxAge * 60
+        ) {
+            if ($result = unserialize(file_get_contents($localFile))) {
+                // Include feed object for downstream usage (cannot be serialized):
+                // TODO: Get rid of channel requirement in downstream code
+                $result['channel'] = Reader::importString($result['feedXml']);
+                return $result;
             }
         }
 
-        if (!$channel) {
-            // No cache available, read from source.
-            if (strstr($url, 'finna-test.fi') || strstr($url, 'finna-pre.fi')) {
-                // Refuse to load feeds from finna-test.fi or finna-pre.fi
-                $feedStr = <<<EOT
+        // No cache available, read from source.
+        $channel = null;
+        if (strstr($url, 'finna-test.fi') || strstr($url, 'finna-pre.fi')) {
+            // Refuse to load feeds from finna-test.fi or finna-pre.fi
+            $feedStr = <<<EOT
 <?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
@@ -310,44 +311,44 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
   </channel>
 </rss>
 EOT;
-                $channel = Reader::importString($feedStr);
-            } elseif (preg_match('/^http(s)?:\/\//', $url)) {
-                // Absolute URL
-                try {
-                    $channel = Reader::import($url);
-                } catch (\Exception $e) {
-                    $this->logError(
-                        "Error importing feed from url $url: " . $e->getMessage()
-                    );
-                }
-            } elseif (substr($url, 0, 1) === '/') {
-                // Relative URL
-                $url = substr($viewUrl, 0, -1) . $url;
-                try {
-                    $channel = Reader::import($url);
-                } catch (\Exception $e) {
-                    $this->logError(
-                        "Error importing feed from url $url: " . $e->getMessage()
-                    );
-                }
-            } else {
-                // Local file
-                $file = APPLICATION_PATH . '/' . ltrim($url, '/');
-                if (!is_file($file)) {
-                    $this->logError("File $file (from $url) could not be found");
-                }
-                try {
-                    $channel = Reader::importFile($file);
-                } catch (\Exception $e) {
-                    $this->logError(
-                        "Error importing feed from file $file: " . $e->getMessage()
-                    );
-                }
+            $channel = Reader::importString($feedStr);
+        } elseif (preg_match('/^http(s)?:\/\//', $url)) {
+            // Absolute URL
+            try {
+                $channel = Reader::import($url);
+            } catch (\Exception $e) {
+                $this->logError(
+                    "Error importing feed from url $url: " . $e->getMessage()
+                );
             }
+        } elseif (substr($url, 0, 1) === '/') {
+            // Relative URL
+            $url = substr($viewUrl, 0, -1) . $url;
+            try {
+                $channel = Reader::import($url);
+            } catch (\Exception $e) {
+                $this->logError(
+                    "Error importing feed from url $url: " . $e->getMessage()
+                );
+            }
+        } else {
+            // Local file
+            $file = APPLICATION_PATH . '/' . ltrim($url, '/');
+            if (!is_file($file)) {
+                $this->logError("File $file (from $url) could not be found");
+            }
+            try {
+                $channel = Reader::importFile($file);
+            } catch (\Exception $e) {
+                $this->logError(
+                    "Error importing feed from file $file: " . $e->getMessage()
+                );
+            }
+        }
 
-            if (!$channel) {
-                // Cache also a failed load as an empty feed XML
-                $feedStr = <<<EOT
+        if (!$channel) {
+            // Cache also a failed load as an empty feed XML
+            $feedStr = <<<EOT
 <?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
@@ -358,19 +359,15 @@ EOT;
   </channel>
 </rss>
 EOT;
-                $channel = Reader::importString($feedStr);
-            }
-
-            if ($channel instanceof AbstractFeed) {
-                file_put_contents($localFile, $channel->saveXml());
-            }
+            $channel = Reader::importString($feedStr);
         }
 
-        if (!$channel) {
-            return false;
-        }
-
-        return $this->parseFeed($channel, $config, $id);
+        $result = $this->parseFeed($channel, $config, $id);
+        file_put_contents($localFile, serialize($result));
+        // Include feed object for downstream usage (cannot be serialized):
+        // TODO: Get rid of channel requirement in downstream code
+        $result['channel'] = $channel;
+        return $result;
     }
 
     /**
@@ -433,6 +430,7 @@ EOT;
         $items = [];
         $cnt = 0;
         $xpath = null;
+        $allowedImages = [];
 
         foreach ($channel as $item) {
             if (!$xpath) {
@@ -524,7 +522,9 @@ EOT;
                             if (!empty($imgLink = $this->extractImage($xcal))) {
                                 if ($localFile = $this->checkLocalFile($imgLink)) {
                                     $imgLink = $localFile;
+                                    $allowedImages[] = $imgLink;
                                 } elseif ($id) {
+                                    $allowedImages[] = $imgLink;
                                     $imgLink = $this->proxifyImageUrl($imgLink, $id);
                                 }
 
@@ -541,7 +541,7 @@ EOT;
                     }
                 }
             }
-            //Format start/end date and time for xcal events
+            // Format start/end date and time for xcal events
             if (isset($data['xcal']['dtstart']) && isset($data['xcal']['dtend'])) {
                 $dateStart = new \DateTime($data['xcal']['dtstart']);
                 $dateEnd = new \DateTime($data['xcal']['dtend']);
@@ -597,8 +597,9 @@ EOT;
                             mb_convert_encoding($content, 'HTML-ENTITIES', 'UTF-8')
                         );
                         $domx = new \DOMXPath($dom);
-                        $elements = $domx->query('//div[@style]|//p[@style]');
 
+                        // Process style attributes:
+                        $elements = $domx->query('//div[@style]|//p[@style]');
                         foreach ($elements as $el) {
                             $styleProperties = [];
                             $styleAttr = $el->getAttribute('style');
@@ -618,6 +619,17 @@ EOT;
                                 implode(';', $styleProperties)
                             );
                         }
+
+                        // Proxify images:
+                        foreach ($domx->query('//img') as $el) {
+                            $srcAttr = $el->getAttribute('src');
+                            $allowedImages[] = $srcAttr;
+                            $el->setAttribute(
+                                'src',
+                                $this->proxifyImageUrl($srcAttr, $id)
+                            );
+                        }
+
                         $content = $dom->saveHTML();
 
                         // Process feed specific search-replace regexes
@@ -639,7 +651,16 @@ EOT;
                 }
             }
         }
-        return compact('channel', 'items', 'config', 'modal', 'contentPage');
+
+        $feedXml = $channel->saveXml();
+        return compact(
+            'feedXml',
+            'items',
+            'config',
+            'modal',
+            'contentPage',
+            'allowedImages'
+        );
     }
 
     /**
@@ -650,7 +671,7 @@ EOT;
      *
      * @return string
      */
-    public function proxifyImageUrl(string $url, string $feedId): string
+    protected function proxifyImageUrl(string $url, string $feedId): string
     {
         // Ensure that we don't proxify an empty or already proxified URL:
         if (!$url) {
