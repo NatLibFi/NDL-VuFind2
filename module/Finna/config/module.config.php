@@ -77,6 +77,29 @@ $config = [
                     ]
                 ],
             ],
+            'feed-image' => [
+                'type'    => 'Laminas\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/FeedContent/Image/:page',
+                    'constraints' => [
+                        'page'     => '[a-zA-Z][a-zA-Z0-9_-]*'
+                    ],
+                    'defaults' => [
+                        'controller' => 'FeedContent',
+                        'action'     => 'Image',
+                    ]
+                ],
+            ],
+            'linked-events-image' => [
+                'type'    => 'Laminas\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/FeedContent/EventImage',
+                    'defaults' => [
+                        'controller' => 'FeedContent',
+                        'action'     => 'EventImage',
+                    ]
+                ],
+            ],
             'linked-events-content' => [
                 'type'    => 'Laminas\Router\Http\Segment',
                 'options' => [
@@ -165,6 +188,16 @@ $config = [
                     'defaults' => [
                         'controller' => 'MyResearch',
                         'action'     => 'Import',
+                    ]
+                ],
+            ],
+            'organisation-info-image' => [
+                'type'    => 'Laminas\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/OrganisationInfo/Image',
+                    'defaults' => [
+                        'controller' => 'OrganisationInfo',
+                        'action'     => 'Image',
                     ]
                 ],
             ],

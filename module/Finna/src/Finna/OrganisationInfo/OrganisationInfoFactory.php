@@ -5,7 +5,7 @@
  * PHP version 7
  *
  * Copyright (C) Villanova University 2019.
- * Copyright (C) The National Library of Finland 2019.
+ * Copyright (C) The National Library of Finland 2019-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -74,7 +74,8 @@ class OrganisationInfoFactory implements FactoryInterface
                 ->get('OrganisationInfo'),
             $container->get(\VuFind\Cache\Manager::class),
             $container->get('ViewRenderer'),
-            $container->get(\VuFind\Date\Converter::class)
+            $container->get(\VuFind\Date\Converter::class),
+            $container->get('ControllerPluginManager')->get('url')
         );
     }
 }

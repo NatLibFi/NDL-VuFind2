@@ -251,7 +251,7 @@ $config = [
         'vendor/js.cookie.js',
         'finna-multiselect.js',
         'finna-model-viewer.js',
-        'finna-video-element.js'
+        'finna-video-element.js',
     ],
     'less' => [
         'active' => false

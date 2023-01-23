@@ -189,7 +189,7 @@ class TurkuPaymentAPI extends AbstractBase
                     ->setSapProduct($sapProduct)
                     ->setDescription($fineDesc)
                     ->setProductCode($code)
-                    ->setUnitPrice($fine['balance'])
+                    ->setUnitPrice(round($fine['balance']))
                     ->setUnits(1)
                     ->setVatPercentage(0);
 

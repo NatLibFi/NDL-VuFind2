@@ -11,7 +11,7 @@
   }
   $recordType = $this->driver->tryMethod('getRecordType');
 ?>
-<div class="record-container<?=$recordType?" record-type-$recordType":''?><?=$this->driver->supportsAjaxStatus()?' ajaxItem ':''?> list-view">
+<div class="record-container<?=$recordType?" record-type-$recordType":''?> list-view <?=$this->record($this->driver)->getContainerJsClasses()?>">
   <div class="media">
     <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
       <div class="media-<?=$thumbnailAlignment ?> <?=$this->escapeHtmlAttr($coverDetails['size'])?>">

@@ -76,6 +76,7 @@ class RecordFactory implements FactoryInterface
             $container->get('ViewHelperManager')->get('recordLinker'),
             $container->get(\Finna\RecordTab\TabManager::class),
             $container->get(\VuFind\Form\Form::class),
+            $container->get(\Finna\Service\UserPreferenceService::class),
             function ($options) use ($container) {
                 $result = clone $container
                     ->get(\VuFind\Search\Results\PluginManager::class)

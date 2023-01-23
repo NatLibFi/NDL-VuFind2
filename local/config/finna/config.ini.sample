@@ -131,10 +131,14 @@ quickAddToFavorites = true
 institution =
 ; Whether index is used for new items search instead of backend driver
 indexBasedNewItems = true
-; Any system messages that need to be displayed on the top of every page. May contain html markup.
-; systemMessages[fi] = "Huom! Tämä on kehitysympäristö. Sisältö ja toiminnallisuus voivat muuttua milloin tahansa."
-; systemMessages[sv] = "Obs! Systemet är under utveckling. Innehåll och funktioner kan förändras när som helst."
-; systemMessages[en-gb] = ""
+; Any system messages that need to be displayed on the top of every page.
+; May contain HTML markup.
+;systemMessages[fi] = Lorem ipsum
+;systemMessages[en-gb] = Dolores sit amet
+; Start and end times for scheduled system messages. Both values are optional.
+; Use the format YYYY-MM-DD HH:MM.
+;systemMessagesScheduleStart = 2023-01-17 09:00
+;systemMessagesScheduleEnd = 2023-01-17 17:00
 
 ; Whether to hide due date reminder settings. Default is false
 ;hideDueDateReminder = true
@@ -431,6 +435,10 @@ choice_order = Database,Shibboleth,MultiILS
 ; Currently only supported statistics driver is Database. Uncomment to enable
 ; recording of statistics:
 ;driver = Database
+; IP addresses or address ranges of monitoring systems
+;monitoring_ips[] = "127.0.0.1"
+; IP addresses or address ranges of systems excluded from statistics
+;exclude_ips[] = "192.168.1.1-192.168.255.255"
 
 ; This section requires no changes for most installations
 [Index]
@@ -1194,6 +1202,10 @@ show_details_after_location_group = false
 ; Non-Axiell only: How many holdings items should be displayed before truncating.
 ; Set this to false (or comment out) to disable truncating.
 truncate_limit = 5
+
+; Uncomment to prevent deduplicated holdings from being fetched immediately.
+; Display a "Choose library" placeholder in the record source select elements.
+;select_dedup_holdings_library = true
 
 ; This section controls the behavior of the Record module.
 [Record]

@@ -176,7 +176,7 @@ class SolrDefaultBackendFactory
     {
         $hf = parent::getHiddenFilters();
 
-        if (!isset($_ENV['VUFIND_API_CALL']) || !$_ENV['VUFIND_API_CALL']) {
+        if (!getenv('VUFIND_API_CALL')) {
             return $hf;
         }
         $search = $this->config->get($this->searchConfig);

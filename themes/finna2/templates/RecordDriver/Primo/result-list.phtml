@@ -10,7 +10,7 @@
     $thumbnail = $img->render('list', ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 250, 'h' => 250]]);
   }
 ?>
-<div class="record-container list-view<?=$this->driver->supportsAjaxStatus()?' ajaxItem ':''?>">
+<div class="record-container list-view <?=$this->record($this->driver)->getContainerJsClasses()?>">
   <div class="media">
     <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
       <div class="media-<?=$thumbnailAlignment ?> <?=$this->escapeHtmlAttr($coverDetails['size'])?>">

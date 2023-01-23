@@ -190,7 +190,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
     {
         $result = parent::determineBuildingPriority($params);
 
-        if (!isset($_ENV['VUFIND_API_CALL']) || !$_ENV['VUFIND_API_CALL']) {
+        if (!getenv('VUFIND_API_CALL')) {
             return $result;
         }
 
@@ -251,7 +251,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
 
         // If handling an API call, remove excluded sources so that they don't get
         // become preferred (they will get filtered out of the dedup data later)
-        if (isset($_ENV['VUFIND_API_CALL']) && $_ENV['VUFIND_API_CALL']) {
+        if (getenv('VUFIND_API_CALL')) {
             $searchConfig = $config->get($this->searchConfig);
             if (isset($searchConfig->Records->apiExcludedSources)) {
                 $excluded = explode(',', $searchConfig->Records->apiExcludedSources);
@@ -273,7 +273,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
     {
         parent::fetchLocalRecords($event);
 
-        if (!isset($_ENV['VUFIND_API_CALL']) || !$_ENV['VUFIND_API_CALL']) {
+        if (!getenv('VUFIND_API_CALL')) {
             return;
         }
 

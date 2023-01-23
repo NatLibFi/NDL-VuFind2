@@ -35,6 +35,7 @@ namespace Finna\View\Helper\Root;
 use Finna\Form\Form;
 use Finna\RecordTab\TabManager;
 use Finna\Search\Solr\AuthorityHelper;
+use Finna\Service\UserPreferenceService;
 use Laminas\Config\Config;
 use VuFind\Record\Loader;
 use VuFind\View\Helper\Root\Url;
@@ -118,6 +119,13 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $form;
 
     /**
+     * User preference service
+     *
+     * @var UserPreferenceService
+     */
+    protected $userPreferenceService;
+
+    /**
      * Callback to get encapsulated records results
      *
      * @var callable
@@ -135,16 +143,19 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Constructor
      *
-     * @param Config          $config                 VuFind config
-     * @param Loader          $loader                 Record loader
-     * @param RecordImage     $recordImage            Record image helper
-     * @param AuthorityHelper $authorityHelper        Authority helper
-     * @param Url             $urlHelper              Url helper
-     * @param RecordLinker    $recordLinker           Record link helper
-     * @param TabManager      $tabManager             Tab manager
-     * @param Form            $form                   Form
-     * @param callable        $getEncapsulatedResults Callback to get encapsulated
-     *                                                records results
+     * @param Config                $config                 VuFind config
+     * @param Loader                $loader                 Record loader
+     * @param RecordImage           $recordImage            Record image helper
+     * @param AuthorityHelper       $authorityHelper        Authority helper
+     * @param Url                   $urlHelper              Url helper
+     * @param RecordLinker          $recordLinker           Record link helper
+     * @param TabManager            $tabManager             Tab manager
+     * @param Form                  $form                   Form
+     * @param UserPreferenceService $userPreferenceService  User preference
+     *                                                      service
+     * @param callable              $getEncapsulatedResults Callback to get
+     *                                                      encapsulated
+     *                                                      records results
      */
     public function __construct(
         Config $config,
@@ -155,6 +166,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         RecordLinker $recordLinker,
         TabManager $tabManager,
         Form $form,
+        UserPreferenceService $userPreferenceService,
         callable $getEncapsulatedResults
     ) {
         parent::__construct($config);
@@ -165,6 +177,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $this->recordLinker = $recordLinker;
         $this->tabManager = $tabManager;
         $this->form = $form;
+        $this->userPreferenceService = $userPreferenceService;
         $this->getEncapsulatedResults = $getEncapsulatedResults;
     }
 
@@ -1294,6 +1307,63 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
         return ('SolrAuth' === $source || $this->hasLargeImageLayout())
             ? 'inline' : 'sidebar';
+    }
+
+    /**
+     * Get preferred record source for deduplicated records.
+     *
+     * Note: This works with DeduplicationListener, so make sure to
+     * update both as necessary.
+     *
+     * @return string
+     */
+    public function getPreferredSource(): string
+    {
+        if (null === $this->driver) {
+            return '';
+        }
+        // Is selecting a datasource mandatory? If not, we can just rely on
+        // DeduplicationListener having selected the correct one.
+        if (empty($this->config->Record->select_dedup_holdings_library)) {
+            return $this->driver->tryMethod('getDataSource', [], '');
+        }
+        if ($params = $this->getView()->params) {
+            $filterList = $params->getFilterList();
+            if (!empty($filterList['Organisation'])) {
+                return $this->driver->tryMethod('getDataSource', [], '');
+            }
+        }
+        $dedupData = $this->driver->getDedupData();
+        // Return driver's datasource if deduplication data is not set.
+        // There cannot be any other sources in this case.
+        if (empty($dedupData)) {
+            return $this->driver->tryMethod('getDataSource', [], '');
+        }
+        $preferredSources = $this->userPreferenceService->getPreferredDataSources();
+        foreach ($preferredSources as $source) {
+            if (!empty($dedupData[$source])) {
+                return $source;
+            }
+        }
+        return '';
+    }
+
+    /**
+     * Get container js classes if the driver supports ajax status and/or has
+     * preferred source.
+     *
+     * @return string
+     */
+    public function getContainerJsClasses(): string
+    {
+        $classes = [];
+        if (!empty($this->driver) && $this->driver->supportsAjaxStatus()) {
+            $classes[] = 'ajaxItem';
+        }
+        if (!$this->getPreferredSource()) {
+            $classes[] = 'js-item-done';
+        }
+        return implode(' ', $classes);
     }
 
     /**

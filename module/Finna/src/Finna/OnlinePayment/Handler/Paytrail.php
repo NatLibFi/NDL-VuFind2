@@ -194,7 +194,7 @@ class Paytrail extends AbstractBase
                     $fineDesc,
                     $code,
                     1,
-                    $fine['balance'],
+                    round($fine['balance']),
                     0,
                     PaytrailE2::TYPE_NORMAL
                 );

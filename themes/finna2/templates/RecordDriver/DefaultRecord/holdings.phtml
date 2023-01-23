@@ -7,19 +7,24 @@
 <div class="holding-details<?=$deduplicated ? ' deduplicated' : ''?>">
   <?php
   /* Display information on duplicate records if available */
-  $recordSource = $this->driver->tryMethod('getDataSource');
-
+  $preferredSource = $this->record($this->driver)->getPreferredSource();
   if ($deduplicated): ?>
     <div class="dedupInformation">
-      <select class="dedup-select form-control" role="listbox" aria-haspopup="true" title="<?=$this->transEsc('select_dedup_organisation');?>" aria-label="<?=$this->transEsc('select_dedup_organisation');?>">
-        <?php foreach ($dedupData as $source => $current): ?>
-          <option value="<?=$this->escapeHtmlAttr($current['id']) ?>" class="dedup-data-id" data-source="<?=$this->escapeHtmlAttr($source) ?>"<?php if ($recordSource === $source): ?> selected="selected"<?php endif; ?>><?=$this->transEsc("source_$source", null, $source) ?></option>
-        <?php endforeach; ?>
-      </select>
+      <label>
+        <?=$this->transEsc('Holdings')?>:
+        <select class="dedup-select form-control" role="listbox" aria-haspopup="true" title="<?=$this->transEscAttr('select_dedup_organisation');?>" aria-label="<?=$this->transEscAttr('select_dedup_organisation');?>">
+          <?php if (!$preferredSource):?>
+            <option class="js-dedup-placeholder" value="" disabled selected><?= $this->transEsc('Show Holdings')?></option>
+          <?php endif;?>
+          <?php foreach ($dedupData as $source => $current): ?>
+            <option value="<?=$this->escapeHtmlAttr($current['id']) ?>" class="dedup-data-id" data-source="<?=$this->escapeHtmlAttr($source) ?>"<?php if ($preferredSource === $source): ?> selected="selected"<?php endif; ?>><?=$this->transEsc("source_$source", null, $source) ?></option>
+          <?php endforeach; ?>
+        </select>
+      </label>
     </div>
-  <?php elseif ($recordSource): ?>
+  <?php elseif ($preferredSource): ?>
     <div class="dedupInformation">
-      <strong><?=$this->transEsc("source_$recordSource", null, $recordSource) ?></strong>
+      <strong><?=$this->transEsc("source_$preferredSource", null, $preferredSource) ?></strong>
     </div>
   <?php endif; ?>
 
@@ -36,6 +41,5 @@
       <?php endif; ?>
     <?php endif; ?>
   </div>
-
 </div>
 <!-- END of: finna - RecordDriver/DefaultRecord/holdings.phtml -->

@@ -205,7 +205,7 @@ class CPU extends AbstractBase
             $product = new Product(
                 $code,
                 1,
-                $fine['balance'],
+                round($fine['balance']),
                 $fineDesc ?: null
             );
             $payment = $payment->addProduct($product);

@@ -56,6 +56,13 @@ class UserPreferenceService
     protected $cookieManager;
 
     /**
+     * Temporal cache
+     *
+     * @var array
+     */
+    protected $cache = [];
+
+    /**
      * Constructor.
      *
      * @param AuthManager    $authManager   Authentication manager
@@ -76,6 +83,10 @@ class UserPreferenceService
      */
     public function getPreferredDataSources(): array
     {
+        $cacheKey = __FUNCTION__;
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
         $result = [];
 
         // preferredRecordSource cookie defines the primary sources:
@@ -102,6 +113,6 @@ class UserPreferenceService
             }
         }
 
-        return $result;
+        return $this->cache[$cacheKey] = $result;
     }
 }

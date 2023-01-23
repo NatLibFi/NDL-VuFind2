@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2017.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,6 +23,7 @@
  * @package  View_Helpers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
@@ -38,6 +39,7 @@ use Laminas\Session\Container;
  * @package  View_Helpers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
@@ -111,14 +113,30 @@ class SystemMessages extends \Laminas\View\Helper\AbstractHelper
 
         $messages = [];
 
-        if (!empty($this->coreConfig->Site->systemMessages)) {
+        // Use local config for both schedule values if either value is set.
+        $scheduleStart
+            = $this->localConfig->Site->systemMessagesScheduleStart ?? false;
+        $scheduleEnd = $this->localConfig->Site->systemMessagesScheduleEnd ?? false;
+        if (!$scheduleStart && !$scheduleEnd) {
+            // Otherwise use core config for both values.
+            $scheduleStart = $this->coreConfig->Site->systemMessagesScheduleStart;
+            $scheduleEnd = $this->coreConfig->Site->systemMessagesScheduleEnd;
+        }
+
+        $scheduleStart = $scheduleStart ? new \DateTime($scheduleStart) : false;
+        $scheduleEnd = $scheduleEnd ? new \DateTime($scheduleEnd) : false;
+        $now = new \DateTime();
+        $scheduleOk = !(($scheduleStart && $now < $scheduleStart)
+            || ($scheduleEnd && $now > $scheduleEnd));
+
+        if ($scheduleOk && !empty($this->coreConfig->Site->systemMessages)) {
             $messages = $getMessageFn(
                 $this->coreConfig->Site->systemMessages->toArray(),
                 $language
             );
         }
 
-        if (!empty($this->localConfig->Site->systemMessages)) {
+        if ($scheduleOk && !empty($this->localConfig->Site->systemMessages)) {
             $localMessages = $getMessageFn(
                 $this->localConfig->Site->systemMessages->toArray(),
                 $language
