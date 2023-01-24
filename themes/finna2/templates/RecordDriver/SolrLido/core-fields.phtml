@@ -2,30 +2,51 @@
 <?php
   $formatter = $this->recordDataFormatter($this->driver);
   $coreFields = $formatter->getDefaults();
+
   // Note: groups contain also fields that come before the Context group:
-  $coreFieldGroups = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
-    ['lines' => ['Genre']],
-    ['lines' => ['Age Limit']],
-    ['lines' => ['Original Work']],
-    ['lines' => ['Published in']],
-    ['lines' => ['New Title']],
-    ['lines' => ['Previous Title']],
-    ['lines' => ['Secondary Authors']],
-    ['lines' => ['Actors']],
-    ['lines' => ['Identifiers']],
-    ['lines' => ['Press Reviews']],
-    ['lines' => ['Music']],
-    ['lines' => ['Projected Publication Date']],
-    ['lines' => ['Dissertation Note']],
-    ['lines' => ['Other Links']],
-    ['lines' => ['Presenters']],
-    ['lines' => ['Other Titles']],
-    ['lines' => ['Format']],
-    ['lines' => ['Collection']],
-    ['label' => 'Context',
-      'lines' => ['Parent Archive', 'Parent Collection', 'Parent Purchase Batch', 'Parent Series', 'Parent Work']
-    ],
-  ], $coreFields));
+  $coreFieldGroups = $formatter->getGroupedData(
+      $driver,
+      $formatter->getGroupedFields(
+          [
+              ['lines' => ['Published in']],
+              ['lines' => ['Format']],
+              ['lines' => ['Organisation']],
+              ['lines' => ['Collection']],
+              [
+                'label' => 'Context',
+                'lines' => ['Parent Archive', 'Parent Collection', 'Parent Purchase Batch', 'Parent Series', 'Parent Work']
+              ],
+              ['lines' => ['Identifiers']],
+              ['lines' => ['Inventory ID']],
+              ['lines' => ['Language']],
+              ['lines' => ['Extent']],
+              ['lines' => ['original_work_language']],
+              ['lines' => ['Other ID']],
+              ['lines' => ['Measurements']],
+              ['lines' => ['Inscriptions']],
+              ['lines' => ['Events']],
+              ['lines' => ['Edition']],
+              ['lines' => ['lido_editions']],
+              ['lines' => ['Subject Detail']],
+              ['lines' => ['Subject Place']],
+              ['lines' => ['Subject Date']],
+              ['lines' => ['Subject Actor']],
+              ['lines' => ['SubjectsWithoutPlaces']],
+              ['lines' => ['Publications']],
+              ['lines' => ['Other Classifications']],
+              ['lines' => ['Other Classification']],
+              ['lines' => ['Introduction']],
+              ['lines' => ['child_records']],
+              ['lines' => ['ISBN']],
+              ['lines' => ['ISSN']],
+              ['lines' => ['DOI']],
+              ['lines' => ['Author Notes']],
+              ['lines' => ['Available Online']],
+              ['lines' => ['Parent Unclassified Entity']],
+          ],
+          $coreFields
+      )
+  );
 ?>
 <?php if (!empty($coreFieldGroups)): ?>
   <table class="table table-finna-record record-details record-field-groups" role="presentation">
