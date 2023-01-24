@@ -120,22 +120,11 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
         if (!$element) {
             $element = 0;
         }
-        $feedUrl = $params->fromQuery('feedUrl');
         try {
             $serverHelper = $this->renderer->plugin('serverurl');
             $homeUrl = $serverHelper($this->url->fromRoute('home'));
 
-            if ($feedUrl) {
-                $config = $this->getOrganisationFeedConfig($id, $feedUrl);
-                $feed = $this->feedService->readFeedFromUrl(
-                    $id,
-                    $feedUrl,
-                    $config,
-                    $homeUrl
-                );
-            } else {
-                $feed = $this->feedService->readFeed($id, $homeUrl);
-            }
+            $feed = $this->feedService->readFeed($id, $homeUrl);
         } catch (\Exception $e) {
             return $this->formatResponse($e->getMessage(), self::STATUS_HTTP_ERROR);
         }
@@ -149,13 +138,12 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
 
         $channel = $feed['channel'];
         $items = $feed['items'];
-        $config = $feed['config'];
         $modal = $feed['modal'];
         $contentPage = $feed['contentPage'] && !$modal;
 
         $result = [
             'channel' => [
-                'title' => $channel->getTitle(),
+                'title' => $feed['title'] ?? '-',
                 'link' => $channel->getLink()
             ]
         ];
@@ -178,8 +166,10 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
             $result['navigation'] = $this->renderer->partial(
                 'feedcontent/navigation',
                 [
-                   'items' => $items, 'element' => $element, 'numeric' => $numeric,
-                   'feedUrl' => $feedUrl
+                   'items' => $items,
+                   'element' => $element,
+                   'numeric' => $numeric,
+                   'feedId' => $id,
                 ]
             );
         }
