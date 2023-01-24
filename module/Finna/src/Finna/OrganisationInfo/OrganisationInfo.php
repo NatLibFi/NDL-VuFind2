@@ -307,6 +307,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             $allServices = !empty($params['allServices']);
             $fullDetails = !empty($params['fullDetails']);
             $response = $this->detailsAction(
+                $parent,
                 $id,
                 $target,
                 $schedules,
@@ -567,7 +568,9 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
     /**
      * Query organisation details.
      *
-     * @param int     $id          Organisation
+     * @param string  $parent      Consortium Finna ID in Kirjastohakemisto or
+     * in Museoliitto. Use a comma delimited string to check multiple Finna IDs.
+     * @param int     $id          Service Point ID
      * @param string  $target      page|widget
      * @param boolean $schedules   Include opening times
      * @param string  $startDate   Start date (YYYY-MM-DD) of opening times
@@ -578,6 +581,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
      * @return array|bool array of results or false on error.
      */
     protected function detailsAction(
+        $parent,
         $id,
         $target,
         $schedules,
@@ -631,6 +635,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         // Details
         $response = $response['items'][0];
         $result = $this->parseDetails(
+            $parent,
             $id,
             $target,
             $response,
@@ -863,6 +868,8 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
     /**
      * Parse organisation details.
      *
+     * @param string  $parent             Consortium Finna ID in Kirjastohakemisto or
+     * in Museoliitto. Use a comma delimited string to check multiple Finna IDs.
      * @param int     $id                 Organisation
      * @param string  $target             page|widget
      * @param object  $response           JSON-object
@@ -872,6 +879,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
      * @return array
      */
     protected function parseDetails(
+        $parent,
         $id,
         $target,
         $response,
@@ -979,13 +987,16 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                         ? $service['standardName'] : $service['name'];
                     $data = [$name];
                     $shortDesc = ($this->cleanHtml)(
-                        $service['shortDescription'],
+                        $service['shortDescription'] ?? '',
                         true
                     );
                     if ($shortDesc) {
                         $data['shortDesc'] = $shortDesc;
                     }
-                    $longDesc = ($this->cleanHtml)($service['description'], true);
+                    $longDesc = ($this->cleanHtml)(
+                        $service['description'] ?? '',
+                        true
+                    );
                     if ($longDesc) {
                         $data['desc'] = $longDesc;
                     }
@@ -1042,8 +1053,11 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             foreach ($response['customData'] as $link) {
                 if (in_array($link['id'], ['news', 'events'])) {
                     $rssLinks[] = [
-                       'id' => $link['id'],
-                       'url' => $link['value']
+                        'parent' => $parent,
+                        'id' => $id,
+                        'orgType' => 'library',
+                        'feedType' => $link['id'],
+                        'url' => $link['value']
                     ];
                 }
             }
