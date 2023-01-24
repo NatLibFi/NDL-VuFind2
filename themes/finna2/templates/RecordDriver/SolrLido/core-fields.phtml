@@ -1,7 +1,7 @@
 <!-- START of: finna - RecordDriver/SolrLido/core-fields.phtml -->
 <?php
   $formatter = $this->recordDataFormatter($this->driver);
-  $coreFields = $formatter->filterLIDOFields($formatter->getDefaults($this->defaults));
+  $coreFields = $formatter->getDefaults();
   // Note: groups contain also fields that come before the Context group:
   $coreFieldGroups = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
     ['lines' => ['Genre']],

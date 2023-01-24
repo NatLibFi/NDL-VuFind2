@@ -1,9 +1,7 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/core-fields.phtml -->
 <?php
   $formatter = $this->recordDataFormatter($this->driver);
-  $coreFields = $formatter->getData(
-      $formatter->filterMarcFields($formatter->getDefaults($this->defaults))
-  );
+  $coreFields = $formatter->getData($formatter->getDefaults());
   $openUrl = $this->openUrl($this->driver, 'record');
   $openUrlActive = $openUrl->isActive();
 ?>

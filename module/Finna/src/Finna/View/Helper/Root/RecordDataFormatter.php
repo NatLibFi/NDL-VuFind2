@@ -562,26 +562,43 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     }
 
     /**
-     * Filter unnecessary fields from EAD-collection records.
+     * Get default configuration.
      *
-     * @param array  $coreFields data to filter.
-     * @param string $type       Collection type (ead|ead3)
+     * @param string $key Key for configuration to look up.
      *
      * @return array
      *
-     * @throws Exception If trying to access record type without collection support
+     * @throws Exception
      */
-    public function filterCollectionFields($coreFields, $type = 'ead')
+    public function getDefaults($key = 'core'): array
     {
+        if (!isset($this->driver)) {
+            throw new Exception('Driver not set when calling getDefaults.');
+        }
+        $defaults = parent::getDefaults($key);
+        $type = strtolower($this->driver->getRecordFormat());
         switch ($type) {
+        case 'dc':
+        case 'qdc':
+            return $this->filterQDCFields($defaults);
         case 'ead':
-            return $this->filterEADFields($coreFields);
+            return $this->filterEADFields($defaults);
         case 'ead3':
-            return $this->filterEAD3Fields($coreFields);
+            return $this->filterEAD3Fields($defaults);
+        case 'forward':
+            return $this->filterForwardFields($defaults);
+        case 'forwardauthority':
+            return $defaults;
         case 'lido':
-            return $this->filterLidoFields($coreFields);
+            return $this->filterLidoFields($defaults);
+        case 'lrmi':
+            return $this->filterLrmiFields($defaults);
+        case 'marc':
+            return $this->filterMarcFields($defaults);
+        case 'primo':
+            return $this->filterPrimoFields($defaults);
         default:
-            throw new Exception("Collection for record type $type doesn't exist.");
+            throw new Exception("Core fields for record type $type not found.");
         }
     }
 

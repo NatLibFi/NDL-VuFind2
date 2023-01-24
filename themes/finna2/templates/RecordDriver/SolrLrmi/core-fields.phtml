@@ -1,7 +1,7 @@
 <!-- START of: finna - RecordDriver/SolrLrmi/core-fields.phtml -->
 <?php
   $formatter = $this->recordDataFormatter($this->driver);
-  $filteredFields = $formatter->filterLrmiFields($formatter->getDefaults($this->defaults));
+  $filteredFields = $formatter->getDefaults();
   $coreFields = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
       ['lines' => [
         'Educational Role',

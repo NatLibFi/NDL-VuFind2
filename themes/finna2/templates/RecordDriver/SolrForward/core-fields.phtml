@@ -1,7 +1,7 @@
 <!-- START of: finna - RecordDriver/SolrForward/core-fields.phtml -->
 <?php
   $formatter = $this->recordDataFormatter($this->driver);
-  $coreFields = $formatter->filterForwardFields($formatter->getDefaults('core'));
+  $coreFields = $formatter->getDefaults();
   $coreFields['Distribution']['context']['title'] = 'Distributor';
   $coreFields['Description FWD']['context']['title'] = '';
   $coreFieldGroups = $formatter->getGroupedData($this->driver, $formatter->getGroupedFields([

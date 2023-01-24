@@ -1,10 +1,7 @@
 <!-- START of: finna - RecordDriver/SolrEad/core-fields.phtml -->
 <?php
   $formatter = $this->recordDataFormatter($this->driver);
-  $coreFields = $formatter->getDefaults($this->defaults);
-  $coreFields = $driver->getRecordFormat() === 'ead3'
-      ? $formatter->filterEAD3Fields($coreFields)
-      : $formatter->filterEADFields($coreFields);
+  $coreFields = $formatter->getDefaults();
   $coreFields['Access Restrictions Extended']['hideSubheadings']
       = ['access_restrictions_general'];
   $coreFieldGroups = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
