@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2018.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -37,6 +37,7 @@ use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\View\Renderer\RendererInterface;
 use VuFind\Cache\Manager as CacheManager;
+use VuFind\Exception\BadRequest;
 use VuFind\ILS\Connection;
 use VuFind\Record\Loader;
 use VuFind\Session\Settings as SessionSettings;
@@ -170,6 +171,8 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                 // Titlelist feed
                 $feed = $this->handleTitleListFeed($config);
             }
+        } catch (BadRequest $e) {
+            return $this->formatResponse($e->getMessage(), $e->getHttpStatus());
         } catch (\Exception $e) {
             return $this->formatResponse($e->getMessage(), self::STATUS_HTTP_ERROR);
         }
@@ -214,7 +217,7 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
             ['id' => $patronId]
         );
         if (!$ilsConfig) {
-            return $this->formatResponse('Missing configuration', 501);
+            throw new BadRequest('Missing ILS configuration');
         }
 
         $cacheDir = $this->cacheManager->getCache('feed')->getOptions()
