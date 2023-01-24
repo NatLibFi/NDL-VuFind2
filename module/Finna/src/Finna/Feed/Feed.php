@@ -302,24 +302,7 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
     }
 
     /**
-     * Return feed content from a URL.
-     * See readFeed for a description of the return object.
-     *
-     * @param string $id      Feed id
-     * @param string $url     Feed URL
-     * @param array  $config  Configuration
-     * @param string $viewUrl View URL
-     *
-     * @return mixed null|array
-     */
-    public function readFeedFromUrl($id, $url, $config, $viewUrl)
-    {
-        $config = new \Laminas\Config\Config($config);
-        return $this->processReadFeed($config, $viewUrl, $id);
-    }
-
-    /**
-     * Utility function for processing a feed (see readFeed, readFeedFromUrl).
+     * Utility function for processing a feed (see readFeed).
      *
      * @param array  $feedConfig Configuration
      * @param string $viewUrl    View URL
