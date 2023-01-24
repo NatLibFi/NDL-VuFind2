@@ -2346,4 +2346,18 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         }
         return $results;
     }
+
+    /**
+     * Get accessibility information from field 341, subfields a and b.
+     *
+     * @return array
+     */
+    public function getAccessibility()
+    {
+      $results = [];
+      if ($fields = $this->getFieldArray('341', ['a', 'b'], true, ' : ')) {
+          $results = $fields;
+      }
+      return $results;
+    }
 }

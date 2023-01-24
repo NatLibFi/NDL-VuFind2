@@ -60,6 +60,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     {
         $include = [
             'Access',
+            'Accessibility',
             'Additional Information',
             'Age Limit',
             'Audience',

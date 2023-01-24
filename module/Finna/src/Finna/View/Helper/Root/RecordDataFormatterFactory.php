@@ -1640,7 +1640,14 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'creator-characteristics']
             ]
         );
-
+        $setTemplateLine(
+            'Accessibility',
+            'getAccessibility',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'record-accessibility']
+            ]
+        );
         return $lines;
     }
 
