@@ -2352,12 +2352,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      *
      * @return array
      */
-    public function getAccessibility()
+    public function getAccessibility(): array
     {
-        $results = [];
-        if ($fields = $this->getFieldArray('341', ['a', 'b'], true, ': ')) {
-            $results = $fields;
-        }
-        return $results;
+        return $this->getFieldArray('341', ['a', 'b'], true, ': ');
     }
 }
