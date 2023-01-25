@@ -600,7 +600,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         case 'primo':
             return $this->filterPrimoFields($defaults);
         default:
-            throw new Exception("Core fields for record type $type not found.");
+            throw new Exception("Unhandled record type $type");
         }
     }
 

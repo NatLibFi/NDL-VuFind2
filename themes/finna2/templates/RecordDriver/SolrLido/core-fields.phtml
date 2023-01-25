@@ -3,7 +3,7 @@
   $formatter = $this->recordDataFormatter($this->driver);
   $coreFields = $formatter->getDefaults();
   // Note: groups contain also fields that come before the Context group:
-  $coreFieldGroups = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
+  $coreFieldGroups = $formatter->getGroupedData($this->driver, $formatter->getGroupedFields([
     ['lines' => ['Genre']],
     ['lines' => ['Age Limit']],
     ['lines' => ['Original Work']],

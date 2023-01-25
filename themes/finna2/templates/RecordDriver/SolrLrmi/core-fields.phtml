@@ -2,7 +2,7 @@
 <?php
   $formatter = $this->recordDataFormatter($this->driver);
   $filteredFields = $formatter->getDefaults();
-  $coreFields = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
+  $coreFields = $formatter->getGroupedData($this->driver, $formatter->getGroupedFields([
       ['lines' => [
         'Educational Role',
         'Educational Level',
