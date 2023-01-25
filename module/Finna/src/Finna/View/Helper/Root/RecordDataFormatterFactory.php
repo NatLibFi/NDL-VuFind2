@@ -1641,7 +1641,7 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Accessibility',
+            'Accessibility Feature',
             'getAccessibility',
             'data-escapeHtml.phtml',
             [
