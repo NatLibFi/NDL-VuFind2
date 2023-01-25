@@ -478,18 +478,18 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     var rssAvailable = false;
     if ('rss' in data.details) {
       $(data.details.rss).each(function handleRSSFeed(ind, obj) {
-        var id = obj.id;
-        if (id !== 'news' && id !== 'events') {
+        if (obj.feedType !== 'news' && obj.feedType !== 'events') {
           return false;
         }
-        var feedHolder = holder.find('.feed-container.' + id + '-feed');
+        var feedHolder = holder.find('.feed-container.' + obj.feedType + '-feed');
         feedHolder
-          .empty().show()
-          .data('url', encodeURIComponent(obj.url))
-          .data('feed', 'organisation-info-' + encodeURIComponent(id))
+          .empty()
+          .show()
           .closest('.rss-container').show();
+        // Use dataset to avoid jQuery caching issues:
+        feedHolder[0].dataset.feed = 'organisation-info|' + obj.parent + '|' + obj.id + '|' + obj.orgType + '|' + obj.feedType;
 
-        finna.feed.loadFeedFromUrl(feedHolder);
+        finna.feed.loadFeed(feedHolder);
         rssAvailable = true;
       });
     }

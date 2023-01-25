@@ -238,7 +238,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
         $result = array_merge(
             $result,
             $this->getItemsForLibraries(
-                $libraries,
+                array_values(array_unique($libraries)),
                 $buildings,
                 $reqParams,
                 $action

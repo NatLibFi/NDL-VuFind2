@@ -28,6 +28,7 @@
  */
 namespace Finna\Feed;
 
+use Finna\OrganisationInfo\OrganisationInfo;
 use Finna\View\Helper\Root\CleanHtml;
 use Laminas\Config\Config;
 use Laminas\Feed\Reader\Entry\AbstractEntry;
@@ -70,6 +71,13 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
     protected $feedConfig;
 
     /**
+     * Feed configuration for the organisation info page.
+     *
+     * @var Config
+     */
+    protected $organisationInfoFeedConfig;
+
+    /**
      * Cache manager
      *
      * @var CacheManager
@@ -98,29 +106,43 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
     protected $cleanHtml;
 
     /**
+     * Organisation info service
+     *
+     * @var OrganisationInfo
+     */
+    protected $organisationInfo;
+
+    /**
      * Constructor.
      *
-     * @param Config       $config     Main configuration
-     * @param Config       $feedConfig Feed configuration
-     * @param CacheManager $cm         Cache manager
-     * @param Url          $url        URL helper
-     * @param ImageLink    $imageLink  Image link helper
-     * @param CleanHtml    $cleanHtml  Clean HTML helper
+     * @param Config           $config        Main configuration
+     * @param Config           $feedConfig    Feed configuration
+     * @param Config           $orgFeedConfig Organisation info page feed
+     * configuration
+     * @param CacheManager     $cm            Cache manager
+     * @param Url              $url           URL helper
+     * @param ImageLink        $imageLink     Image link helper
+     * @param CleanHtml        $cleanHtml     Clean HTML helper
+     * @param OrganisationInfo $orgInfo       Organisation info service
      */
     public function __construct(
         Config $config,
         Config $feedConfig,
+        Config $orgFeedConfig,
         CacheManager $cm,
         Url $url,
         ImageLink $imageLink,
-        CleanHTML $cleanHtml
+        CleanHTML $cleanHtml,
+        OrganisationInfo $orgInfo
     ) {
         $this->mainConfig = $config;
         $this->feedConfig = $feedConfig;
+        $this->organisationInfoFeedConfig = $orgFeedConfig;
         $this->cacheManager = $cm;
         $this->urlHelper = $url;
         $this->imageLinkHelper = $imageLink;
         $this->cleanHtml = $cleanHtml;
+        $this->organisationInfo = $orgInfo;
     }
 
     /**
@@ -132,10 +154,51 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
      *
      * @param string $id Feed id
      *
-     * @return boolean|array
+     * @return bool|array
      */
     public function getFeedConfig($id)
     {
+        // Check for an organisation info feed:
+        $idParts = explode('|', $id);
+        if ('organisation-info' === $idParts[0] && isset($idParts[4])) {
+            [, $parent, $unitId, $type, $feedType] = $idParts;
+            $result = $this->organisationInfo->query(
+                $parent,
+                [
+                    'id' => $unitId,
+                    'orgType' => $type,
+                    'action' => 'details',
+                    'allServices' => 1,
+                    'fullDetails' => 1,
+                ]
+            );
+
+            $url = '';
+            foreach ($result['rss'] as $current) {
+                if ($feedType === $current['feedType']) {
+                    $url = $current['url'];
+                    break;
+                }
+            }
+            if (!$url) {
+                $this->logError("Missing feed URL (id $id)");
+                return false;
+            }
+
+            $feedConfig = ['url' => $url];
+
+            $key = "organisation-info-$feedType";
+            if (isset($this->organisationInfoFeedConfig[$key])) {
+                $resultConfig = $this->organisationInfoFeedConfig[$key]->toArray();
+            } else {
+                $resultConfig = ['items' => 5];
+            }
+            $resultConfig['type'] = 'grid';
+            $resultConfig['active'] = 1;
+            $feedConfig['result'] = new Config($resultConfig);
+            return $feedConfig;
+        }
+
         if (!isset($this->feedConfig[$id])) {
             $this->logError("Missing configuration (id $id)");
             return false;
@@ -239,24 +302,7 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
     }
 
     /**
-     * Return feed content from a URL.
-     * See readFeed for a description of the return object.
-     *
-     * @param string $id      Feed id
-     * @param string $url     Feed URL
-     * @param array  $config  Configuration
-     * @param string $viewUrl View URL
-     *
-     * @return mixed null|array
-     */
-    public function readFeedFromUrl($id, $url, $config, $viewUrl)
-    {
-        $config = new \Laminas\Config\Config($config);
-        return $this->processReadFeed($config, $viewUrl, $id);
-    }
-
-    /**
-     * Utility function for processing a feed (see readFeed, readFeedFromUrl).
+     * Utility function for processing a feed (see readFeed).
      *
      * @param array  $feedConfig Configuration
      * @param string $viewUrl    View URL
@@ -354,7 +400,7 @@ EOT;
   <channel>
     <atom:link href="" rel="self" type="application/rss+xml"/>
     <link></link>
-    <title><![CDATA[<!-- Feed could not be loaded -->]]></title>
+    <title>Feed could not be loaded</title>
     <description></description>
   </channel>
 </rss>
@@ -558,11 +604,10 @@ EOT;
             }
 
             // Make sure that we have something to display
-            $accept = $data['title'] && trim($data['title']) != ''
-                || $data['text'] && trim($data['text']) != ''
-                || $data['image']
-            ;
-            if (!$accept) {
+            if (trim($data['title'] ?? '') === ''
+                && trim($data['text'] ?? '') === ''
+                && empty($data['image'])
+            ) {
                 continue;
             }
             $this->populateIcon($data, $config);
@@ -673,9 +718,10 @@ EOT;
      */
     protected function proxifyImageUrl(string $url, string $feedId): string
     {
-        // Ensure that we don't proxify an empty or already proxified URL:
-        if (!$url) {
-            return '';
+        // Ensure that we don't proxify an empty or already proxified URL or a
+        // relative url:
+        if (!$url || !parse_url($url, PHP_URL_HOST)) {
+            return $url;
         }
         $check = $this->urlHelper->fromRoute('feed-image', ['page' => '']);
         if (strncasecmp($url, $check, strlen($check)) === 0) {

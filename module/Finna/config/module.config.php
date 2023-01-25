@@ -68,9 +68,6 @@ $config = [
                 'type'    => 'Laminas\Router\Http\Segment',
                 'options' => [
                     'route'    => '/FeedContent[/:page][/:element]',
-                    'constraints' => [
-                        'page'     => '[a-zA-Z][a-zA-Z0-9_-]*'
-                    ],
                     'defaults' => [
                         'controller' => 'FeedContent',
                         'action'     => 'Content',
@@ -81,9 +78,6 @@ $config = [
                 'type'    => 'Laminas\Router\Http\Segment',
                 'options' => [
                     'route'    => '/FeedContent/Image/:page',
-                    'constraints' => [
-                        'page'     => '[a-zA-Z][a-zA-Z0-9_-]*'
-                    ],
                     'defaults' => [
                         'controller' => 'FeedContent',
                         'action'     => 'Image',

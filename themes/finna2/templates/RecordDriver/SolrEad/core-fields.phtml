@@ -4,7 +4,7 @@
   $coreFields = $formatter->getDefaults();
   $coreFields['Access Restrictions Extended']['hideSubheadings']
       = ['access_restrictions_general'];
-  $coreFieldGroups = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
+  $coreFieldGroups = $formatter->getGroupedData($this->driver, $formatter->getGroupedFields([
     ['label' => 'Context',
       'lines' => ['Archive Origination', 'Archive', 'Archive Series', 'Archive File']
     ],

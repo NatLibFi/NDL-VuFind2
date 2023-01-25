@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d705a9aa089626506bbeb6c016f2d8a6",
+    "content-hash": "c47bdf83a3bcba682ce7352ea6a352f3",
     "packages": [
         {
             "name": "ahand/mobileesp",
@@ -185,16 +185,16 @@
         },
         {
             "name": "brick/varexporter",
-            "version": "0.3.7",
+            "version": "0.3.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brick/varexporter.git",
-                "reference": "3e263cd718d242594c52963760fee2059fd5833c"
+                "reference": "b5853edea6204ff8fa10633c3a4cccc4058410ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brick/varexporter/zipball/3e263cd718d242594c52963760fee2059fd5833c",
-                "reference": "3e263cd718d242594c52963760fee2059fd5833c",
+                "url": "https://api.github.com/repos/brick/varexporter/zipball/b5853edea6204ff8fa10633c3a4cccc4058410ed",
+                "reference": "b5853edea6204ff8fa10633c3a4cccc4058410ed",
                 "shasum": ""
             },
             "require": {
@@ -222,7 +222,7 @@
             ],
             "support": {
                 "issues": "https://github.com/brick/varexporter/issues",
-                "source": "https://github.com/brick/varexporter/tree/0.3.7"
+                "source": "https://github.com/brick/varexporter/tree/0.3.8"
             },
             "funding": [
                 {
@@ -230,7 +230,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-06-29T23:37:57+00:00"
+            "time": "2023-01-21T23:05:38+00:00"
         },
         {
             "name": "cap60552/php-sip2",
@@ -6095,16 +6095,16 @@
         },
         {
             "name": "nette/utils",
-            "version": "v3.2.8",
+            "version": "v3.2.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/utils.git",
-                "reference": "02a54c4c872b99e4ec05c4aec54b5a06eb0f6368"
+                "reference": "c91bac3470c34b2ecd5400f6e6fdf0b64a836a5c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/utils/zipball/02a54c4c872b99e4ec05c4aec54b5a06eb0f6368",
-                "reference": "02a54c4c872b99e4ec05c4aec54b5a06eb0f6368",
+                "url": "https://api.github.com/repos/nette/utils/zipball/c91bac3470c34b2ecd5400f6e6fdf0b64a836a5c",
+                "reference": "c91bac3470c34b2ecd5400f6e6fdf0b64a836a5c",
                 "shasum": ""
             },
             "require": {
@@ -6114,6 +6114,7 @@
                 "nette/di": "<3.0.6"
             },
             "require-dev": {
+                "jetbrains/phpstorm-attributes": "dev-master",
                 "nette/tester": "~2.0",
                 "phpstan/phpstan": "^1.0",
                 "tracy/tracy": "^2.3"
@@ -6174,22 +6175,22 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/utils/issues",
-                "source": "https://github.com/nette/utils/tree/v3.2.8"
+                "source": "https://github.com/nette/utils/tree/v3.2.9"
             },
-            "time": "2022-09-12T23:36:20+00:00"
+            "time": "2023-01-18T03:26:20+00:00"
         },
         {
             "name": "nikic/php-parser",
-            "version": "v4.15.2",
+            "version": "v4.15.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "f59bbe44bf7d96f24f3e2b4ddc21cd52c1d2adbc"
+                "reference": "570e980a201d8ed0236b0a62ddf2c9cbb2034039"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/f59bbe44bf7d96f24f3e2b4ddc21cd52c1d2adbc",
-                "reference": "f59bbe44bf7d96f24f3e2b4ddc21cd52c1d2adbc",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/570e980a201d8ed0236b0a62ddf2c9cbb2034039",
+                "reference": "570e980a201d8ed0236b0a62ddf2c9cbb2034039",
                 "shasum": ""
             },
             "require": {
@@ -6230,9 +6231,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v4.15.2"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v4.15.3"
             },
-            "time": "2022-11-12T15:38:23+00:00"
+            "time": "2023-01-16T22:05:37+00:00"
         },
         {
             "name": "ocramius/proxy-manager",
@@ -10931,31 +10932,31 @@
         },
         {
             "name": "vufind-org/vufinddate",
-            "version": "v1.1.0",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vufind-org/vufinddate.git",
-                "reference": "bd1a58b0b29ab388700c090f90f2faea112c5277"
+                "reference": "319b862c5a8a1352ff6cb93095fface6b40bc2e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vufind-org/vufinddate/zipball/bd1a58b0b29ab388700c090f90f2faea112c5277",
-                "reference": "bd1a58b0b29ab388700c090f90f2faea112c5277",
+                "url": "https://api.github.com/repos/vufind-org/vufinddate/zipball/319b862c5a8a1352ff6cb93095fface6b40bc2e1",
+                "reference": "319b862c5a8a1352ff6cb93095fface6b40bc2e1",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.3"
+                "php": ">=7.4.1"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "2.19.0",
+                "friendsofphp/php-cs-fixer": "3.8.0",
                 "pear/http_request2": "2.4.2",
                 "phing/phing": "2.17.3",
                 "phploc/phploc": "7.0.2",
-                "phpmd/phpmd": "2.10.0",
-                "phpstan/phpstan": "0.12.85",
-                "phpunit/phpunit": "9.5.4",
+                "phpmd/phpmd": "2.12.0",
+                "phpstan/phpstan": "1.6.8",
+                "phpunit/phpunit": "9.5.20",
                 "sebastian/phpcpd": "6.0.3",
-                "squizlabs/php_codesniffer": "3.6.0"
+                "squizlabs/php_codesniffer": "3.6.2"
             },
             "type": "library",
             "autoload": {
@@ -10977,9 +10978,9 @@
             "homepage": "https://vufind.org/",
             "support": {
                 "issues": "https://vufind.org/jira",
-                "source": "https://github.com/vufind-org/vufinddate/tree/v1.1.0"
+                "source": "https://github.com/vufind-org/vufinddate/tree/v1.2.0"
             },
-            "time": "2022-05-16T15:33:26+00:00"
+            "time": "2023-01-17T14:25:21+00:00"
         },
         {
             "name": "vufind-org/vufindharvest",
