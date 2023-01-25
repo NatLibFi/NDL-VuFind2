@@ -483,10 +483,11 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
         }
         var feedHolder = holder.find('.feed-container.' + obj.feedType + '-feed');
         feedHolder
-          .empty().show()
-          .data('url', encodeURIComponent(obj.url))
-          .data('feed', 'organisation-info|' + obj.parent + '|' + obj.id + '|' + obj.orgType + '|' + obj.feedType)
+          .empty()
+          .show()
           .closest('.rss-container').show();
+        // Use dataset to avoid jQuery caching issues:
+        feedHolder[0].dataset.feed = 'organisation-info|' + obj.parent + '|' + obj.id + '|' + obj.orgType + '|' + obj.feedType;
 
         finna.feed.loadFeed(feedHolder);
         rssAvailable = true;

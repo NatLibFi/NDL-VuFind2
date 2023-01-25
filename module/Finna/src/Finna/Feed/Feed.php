@@ -400,7 +400,7 @@ EOT;
   <channel>
     <atom:link href="" rel="self" type="application/rss+xml"/>
     <link></link>
-    <title><![CDATA[<!-- Feed could not be loaded -->]]></title>
+    <title>Feed could not be loaded</title>
     <description></description>
   </channel>
 </rss>

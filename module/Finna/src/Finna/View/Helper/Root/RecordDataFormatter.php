@@ -5,7 +5,7 @@
  * PHP version 7
  *
  * Copyright (C) Villanova University 2016.
- * Copyright (C) The National Library of Finland 2017-2022.
+ * Copyright (C) The National Library of Finland 2017-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -25,6 +25,7 @@
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma  <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
@@ -43,6 +44,7 @@ use VuFind\RecordDriver\AbstractBase as RecordDriver;
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma  <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
@@ -139,33 +141,23 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     public function filterLidoFields($coreFields)
     {
         $include = [
-            'Additional Information',
-            'Audience',
             'Author Notes',
             'Available Online',
-            'Awards',
-            'Bibliography',
             'child_records',
             'Collection',
             'DOI',
             'Edition',
-            'Education Programs',
             'Events',
             'Extent',
-            'Finding Aid',
             'Format',
-            'Genre',
-            'ISBN',
-            'ISSN',
             'Inscriptions',
             'Introduction',
             'Inventory ID',
-            'Item Description',
-            'Keywords',
+            'ISBN',
+            'ISSN',
             'Language',
             'lido_editions',
             'Measurements',
-            'New Title',
             'Organisation',
             'original_work_language',
             'Other Classification',
@@ -177,24 +169,13 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Parent Series',
             'Parent Unclassified Entity',
             'Parent Work',
-            'Playing Time',
-            'Presenters',
-            'Previous Title',
-            'Production Credits',
-            'Publication Frequency',
-            'Publication_Place',
             'Publications',
             'Published in',
-            'Record Links',
-            'Related Items',
-            'Related Places',
-            'Series',
             'Subject Actor',
             'Subject Date',
             'Subject Detail',
             'Subject Place',
             'SubjectsWithoutPlaces',
-            'System Format',
         ];
         return array_intersect_key($coreFields, array_flip($include));
     }
@@ -563,26 +544,45 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     }
 
     /**
-     * Filter unnecessary fields from EAD-collection records.
+     * Get default configuration.
      *
-     * @param array  $coreFields data to filter.
-     * @param string $type       Collection type (ead|ead3)
+     * @param string $key Key for configuration to look up.
      *
      * @return array
      *
-     * @throws Exception If trying to access record type without collection support
+     * @throws Exception
      */
-    public function filterCollectionFields($coreFields, $type = 'ead')
+    public function getDefaults($key = 'core'): array
     {
+        if (!isset($this->driver)) {
+            throw new Exception('Driver not set when calling getDefaults.');
+        }
+        $defaults = parent::getDefaults($key);
+        $type = strtolower($this->driver->getRecordFormat());
         switch ($type) {
+        case 'dc':
+        case 'qdc':
+            return $this->filterQDCFields($defaults);
         case 'ead':
-            return $this->filterEADFields($coreFields);
+            return $this->filterEADFields($defaults);
         case 'ead3':
-            return $this->filterEAD3Fields($coreFields);
+            return $this->filterEAD3Fields($defaults);
+        case 'forward':
+            return $this->filterForwardFields($defaults);
+        case 'forwardauthority':
+            return $defaults;
         case 'lido':
-            return $this->filterLidoFields($coreFields);
+            return $this->filterLidoFields($defaults);
+        case 'lrmi':
+            return $this->filterLrmiFields($defaults);
+        case 'marc':
+            return $this->filterMarcFields($defaults);
+        case 'marcauthority':
+            return $defaults;
+        case 'primo':
+            return $this->filterPrimoFields($defaults);
         default:
-            throw new Exception("Collection for record type $type doesn't exist.");
+            throw new Exception("Unhandled record type $type");
         }
     }
 

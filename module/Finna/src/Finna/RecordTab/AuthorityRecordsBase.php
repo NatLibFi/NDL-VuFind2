@@ -59,6 +59,13 @@ abstract class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
     protected $records = null;
 
     /**
+     * Record count
+     *
+     * @var int
+     */
+    protected $recordCount = null;
+
+    /**
      * Record driver.
      *
      * @var \Finna\RecordDriver\SolrDefault
@@ -136,8 +143,16 @@ abstract class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
      */
     protected function getNumOfRecords()
     {
-        $records = $this->getRecords();
-        return $records->getResultTotal();
+        if (null === $this->recordCount) {
+            $this->recordCount = $this->records
+                ? $this->records->getResultTotal()
+                : $this->authorityHelper->getRecordsByAuthorityId(
+                    $this->driver->getUniqueID(),
+                    $this->getRelation(),
+                    true
+                );
+        }
+        return $this->recordCount;
     }
 
     /**

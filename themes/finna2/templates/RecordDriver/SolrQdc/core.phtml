@@ -182,18 +182,14 @@
       <?php endif; ?>
 
       <?/* Display Main Details */?>
-      <?php
-        $formatter = $this->recordDataFormatter();
-        $coreFields = $formatter->getData(
-            $driver,
-            $formatter->filterQDCFields($formatter->getDefaults('core'))
+      <?=
+        $this->record($this->driver)->renderTemplate(
+            'core-fields.phtml',
+            [
+              'driver' => $this->driver,
+            ]
         );
       ?>
-      <?php if (!empty($coreFields)): ?>
-        <table class="table table-finna-record record-details" role="presentation">
-          <?=$this->record($this->driver)->renderTemplate('core-fields.phtml', ['coreFields' => $coreFields]);?>
-        </table>
-      <?php endif; ?>
       <?/* End Main Details */?>
 
       <?php if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>

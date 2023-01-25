@@ -1,0 +1,67 @@
+<!-- START of: finna - RecordDriver/EDS/core-fields.phtml -->
+<div class="record-details">
+  <table class="table table-condensed table-finna-record" summary="<?=$this->transEsc('Bibliographic Details')?>" role="presentation">
+    <?php foreach ($this->driver->getItems($this->defaults) as $key => $item): ?>
+      <?php if (!empty($item['Data']) && !in_array($item['Label'], $this->ignoreDetailsFields ?? [])): ?>
+      <tr class="record-<?=strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $item['Label']))?>">
+        <th><?php if (!empty($item['Label'])): ?><?=$this->transEsc($item['Label'])?>:<?php endif; ?></th>
+        <td>
+          <div class="truncate-field">
+            <p><?=$this->driver->linkUrls($item['Data'])?></p>
+          </div>
+        </td>
+      </tr>
+      <?php endif; ?>
+    <?php endforeach; ?>
+
+    <?php if (!empty($this->dbLabel)): ?>
+      <tr>
+        <th><?=$this->transEsc('Database')?>:</th>
+        <td><?=$this->escapeHtml($this->dbLabel)?></td>
+      </tr>
+    <?php endif; ?>
+
+    <?php if ($this->driver->hasHTMLFullTextAvailable() && empty($this->restrictedView)):
+      $fullText = $this->driver->getHtmlFullText();?>
+      <tr id="html">
+        <td colspan="2">
+          <div class="truncate-field" data-rows="15">
+            <?=$fullText?>
+          </div>
+        </td>
+      </tr>
+    <?php elseif ($this->driver->hasHTMLFullTextAvailable() && !empty($this->restrictedView)): ?>
+      <tr id="html">
+        <td>
+          <?=$this->transEsc('Full text is not displayed to guests')?>
+        </td>
+        <td>
+          <a class="login" href="<?=$this->url('myresearch-home')?>" rel="nofollow">
+            <strong><?=$this->transEsc('Login for full access')?></strong>
+          </a>
+        </td>
+      </tr>
+    <?php endif; ?>
+  </table>
+
+  <div class="resultItemLine4 custom-links">
+    <?php $customLinks = array_merge($this->driver->getFTCustomLinks(), $this->driver->getCustomLinks());
+    if (!empty($customLinks)): ?>
+      <?php foreach ($customLinks as $customLink): ?>
+      <?php $url = $customLink['Url'] ?? '';
+          $mot = $customLink['MouseOverText'] ?? '';
+          $icon = $customLink['Icon'] ?? '';
+          $name = $customLink['Text'] ?? '';
+      ?>
+      <span>
+        <a href="<?=$this->escapeHtmlAttr($url)?>" target="_blank" title="<?=$this->escapeHtmlAttr($mot)?>" class="custom-link">
+          <?php if ($icon): ?><img src="<?=$this->escapeHtmlAttr($icon)?>" /> <?php endif; ?><?=$this->escapeHtml($name)?>
+        </a>
+      </span>
+      <?php endforeach; ?>
+    <?php endif; ?>
+  </div>
+
+  <?=$openUrl ? $openUrl->renderMoreOptions() : '' ?>
+</div>
+<!-- END of: finna - RecordDriver/EDS/core-fields.phtml -->

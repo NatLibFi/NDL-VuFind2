@@ -241,25 +241,14 @@
     <?php endif; ?>
 
     <?/* Display Main Details */?>
-    <?php
-      $formatter = $this->recordDataFormatter();
-      $coreFields = $formatter->getData(
-          $driver,
-          $formatter->filterMarcFields($formatter->getDefaults('core'))
+    <?=
+      $this->record($this->driver)->renderTemplate(
+          'core-fields.phtml',
+          [
+            'driver' => $this->driver,
+          ]
       );
     ?>
-    <?php if (!empty($coreFields)): ?>
-      <table class="table table-finna-record record-details record-details-more" style="table-layout:initial;" role="presentation">
-        <?=$this->record($this->driver)->renderTemplate('core-fields.phtml', ['coreFields' => $coreFields]);?>
-        <?php if ($openUrlActive): ?>
-          <tr>
-            <td colspan="2" class="more-options-link"><?=$openUrl->renderTemplate()?> </td>
-          </tr>
-        <?php endif; ?>
-      </table>
-    <?php endif; ?>
-    <button class="btn show-details-button hidden"><?=$this->transEsc('show_more_details');?> <i class="fa fa-arrow-down"></i></button>
-    <button class="btn hide-details-button hidden"><?=$this->transEsc('show_less_details');?> <i class="fa fa-arrow-up"></i></button>
     <?/* End Main Details */?>
 
     <?php if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>

@@ -282,7 +282,8 @@ finna.feed = (function finnaFeed() {
 
   function loadFeed(holder, onFeedLoaded) {
     var container = $(holder);
-    var id = container.data('feed');
+    // Use dataset to avoid jQuery caching issues:
+    var id = container[0].dataset.feed;
     if (typeof id === 'undefined') {
       return;
     }

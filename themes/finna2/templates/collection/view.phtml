@@ -114,8 +114,8 @@
       <?php endif; ?>
       <?/* Display Main Details from records */?>
       <?php
-        $formatter = $this->recordDataFormatter();
-        $coreFields = $formatter->filterCollectionFields($formatter->getDefaults('core'), $driver->getRecordFormat());
+        $formatter = $this->recordDataFormatter($driver);
+        $coreFields = $formatter->getDefaults();
         $coreFieldGroups = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
           ['label' => 'Context',
             'lines' => ['Archive Origination', 'Archive', 'Archive Series', 'Archive File']
