@@ -1693,7 +1693,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/'
             . 'subjectSet/subject/subjectActor/actor/nameActorSet/appellationValue'
         ) as $node) {
-            $results[] = (string)$node;
+            if ($actor = trim((string)$node)) {
+                $results[] = $actor;
+            }
         }
         return $results;
     }
