@@ -598,7 +598,7 @@ class Record extends \VuFind\View\Helper\Root\Record
            'escapedUrl' => trim($escapedUrl),
            'record' => $this->driver,
            'searchAction' => $params['searchAction'] ?? null,
-           'label' => $lookfor,
+           'label' => $params['label'] ?? $lookfor,
            'id' => $authId,
            'authorityLink' => $id && $this->isAuthorityLinksEnabled(),
            'showInlineInfo' => false,
@@ -1105,23 +1105,10 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getAuthoritySummary($onAuthorityPage = false)
     {
-        $id = $this->driver->getUniqueID();
-        $authorCnt = $this->authorityHelper->getRecordsByAuthorityId(
-            $id,
-            AuthorityHelper::AUTHOR2_ID_FACET,
-            true
-        );
-        $topicCnt = $this->authorityHelper->getRecordsByAuthorityId(
-            $id,
-            AuthorityHelper::TOPIC_ID_FACET,
-            true
-        );
-
         $tabs = array_keys($this->tabManager->getTabsForRecord($this->driver));
-
         $summary = [
             'author' => [
-                'cnt' => $authorCnt,
+                'cnt' => null,
                 'tabUrl' => in_array('AuthorityRecordsAuthor', $tabs)
                     ? $this->recordLinker->getTabUrl(
                         $this->driver,
@@ -1130,7 +1117,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                     : null
             ],
             'topic' => [
-                'cnt' => $topicCnt,
+                'cnt' => null,
                 'tabUrl' => in_array('AuthorityRecordsTopic', $tabs)
                     ? $this->recordLinker->getTabUrl(
                         $this->driver,
