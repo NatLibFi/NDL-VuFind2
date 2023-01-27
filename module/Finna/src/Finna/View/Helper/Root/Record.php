@@ -1333,9 +1333,10 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
         $dedupData = $this->driver->getDedupData();
-        // Return driver's datasource if deduplication data is not set.
+        // Return driver's datasource if deduplication data is not set or
+        // the count of deduplication data is 1.
         // There cannot be any other sources in this case.
-        if (empty($dedupData)) {
+        if (count($dedupData) <= 1) {
             return $this->driver->tryMethod('getDataSource', [], '');
         }
         $preferredSources = $this->userPreferenceService->getPreferredDataSources();
