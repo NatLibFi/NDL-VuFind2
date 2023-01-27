@@ -1108,6 +1108,9 @@ class Record extends \VuFind\View\Helper\Root\Record
         $tabs = array_keys($this->tabManager->getTabsForRecord($this->driver));
         $summary = [
             'author' => [
+                // cnt is no longer available beforehand. Use
+                // $this->authority()->getCountAsAuthor($driver->getUniqueID()) when
+                // needed.
                 'cnt' => null,
                 'tabUrl' => in_array('AuthorityRecordsAuthor', $tabs)
                     ? $this->recordLinker->getTabUrl(
@@ -1117,6 +1120,9 @@ class Record extends \VuFind\View\Helper\Root\Record
                     : null
             ],
             'topic' => [
+                // cnt is no longer available beforehand. Use
+                // $this->authority()->getCountAsTopic($driver->getUniqueID()) when
+                // needed.
                 'cnt' => null,
                 'tabUrl' => in_array('AuthorityRecordsTopic', $tabs)
                     ? $this->recordLinker->getTabUrl(
