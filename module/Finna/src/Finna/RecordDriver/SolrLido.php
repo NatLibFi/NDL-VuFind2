@@ -514,11 +514,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                         $representation->resourceMeasurementsSet
                     )
                     ) {
-                        $imageUrls
-                            = array_merge($imageUrls, $image['displayImage']);
-
+                        if (!empty($image['displayImage'])) {
+                            $imageUrls
+                                = array_merge($imageUrls, $image['displayImage']);
+                        }
                         // Does image have a highresolution for download?
-                        if ($image['highResolution']) {
+                        if (!empty($image['highResolution'])) {
                             $highResolution = array_merge(
                                 $highResolution,
                                 $image['highResolution']
@@ -770,8 +771,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         }
 
         $size = $this->imageTypes[$type];
-        $displayImage[$size] = $url;
-
+        $displayImage = [];
+        if ($size !== 'original') {
+            $displayImage[$size] = $url;
+        }
         $highResolution = [];
         if (in_array($size, ['master', 'original'])) {
             $currentHiRes = [
