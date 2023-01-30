@@ -43,6 +43,11 @@ ALTER TABLE user_list ADD COLUMN `finna_protected` tinyint(1) DEFAULT '0' NOT NU
 ALTER TABLE `user_resource` ADD COLUMN `finna_custom_order_index` int DEFAULT NULL;
 
 --
+-- Additional columns for ratings
+--
+ALTER TABLE `ratings` ADD COLUMN `finna_checked` datetime NOT NULL DEFAULT '2000-01-01 00:00:00';
+
+--
 -- Proper collation to resource sort columns
 --
 alter online table resource change column `title` `title` varchar(255) COLLATE utf8mb4_swedish_ci NOT NULL DEFAULT '';
