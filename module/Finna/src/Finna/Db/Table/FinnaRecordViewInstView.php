@@ -27,7 +27,6 @@
  */
 namespace Finna\Db\Table;
 
-use Finna\Db\Row\FinnaRecordStatsLog;
 use Finna\Db\Row\FinnaRecordViewInstView as FinnaRecordViewInstViewRow;
 use Laminas\Db\Adapter\Adapter;
 use VuFind\Db\Row\RowGateway;
@@ -67,26 +66,25 @@ class FinnaRecordViewInstView extends \VuFind\Db\Table\Gateway
      * Retrieve an object from the database based on a log record; when requested,
      * create a new row if no existing match is found.
      *
-     * @param FinnaRecordStatsLog $logEntry Log record
-     * @param bool                $create   Should we create records that don't
-     * already exist?
+     * @param array $logEntry Log record
+     * @param bool  $create   Should we create records that don't already exist?
      *
      * @return ?FinnaRecordViewInstViewRow
      */
     public function getByLogEntry(
-        FinnaRecordStatsLog $logEntry,
+        array $logEntry,
         $create = true
     ): ?FinnaRecordViewInstViewRow {
         $record = $this->select(
             [
-                'institution' => $logEntry->institution,
-                'view' => $logEntry->view,
+                'institution' => $logEntry['institution'],
+                'view' => $logEntry['view'],
             ]
         )->current();
         if ($create && empty($record)) {
             $record = $this->createRow();
-            $record->institution = $logEntry->institution;
-            $record->view = $logEntry->view;
+            $record->institution = $logEntry['institution'];
+            $record->view = $logEntry['view'];
             $record->save();
         }
         return $record;

@@ -198,12 +198,12 @@ class ProcessRecordStatsLog extends AbstractUtilCommand
             };
             $rows = 0;
             foreach ($this->recordStatsLog->select($callback) as $logEntry) {
+                $logEntryArr = $logEntry->toArray();
                 if (null === $viewRecord
                     || $viewRecord->backend !== $logEntry->backend
                     || $viewRecord->source !== $logEntry->source
                     || $viewRecord->record_id !== $logEntry->record_id
                 ) {
-                    $logEntryArr = $logEntry->toArray();
                     $logEntryArr['format_id']
                         = $this->getFormatId($logEntryArr['formats']);
                     $logEntryArr['usage_rights_id']
@@ -216,7 +216,7 @@ class ProcessRecordStatsLog extends AbstractUtilCommand
                     || $viewInstView->view !== $logEntry->view
                 ) {
                     $viewInstView
-                        = $this->recordViewInstView->getByLogEntry($logEntry);
+                        = $this->recordViewInstView->getByLogEntry($logEntryArr);
                 }
                 $viewFields = [
                     'inst_view_id' => $viewInstView->id,

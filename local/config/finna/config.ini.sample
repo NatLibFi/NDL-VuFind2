@@ -432,13 +432,24 @@ choice_order = Database,Shibboleth,MultiILS
 ; This section will allow you to control whether VuFind should record usage
 ; statistics.
 [Statistics]
-; Currently only supported statistics driver is Database. Uncomment to enable
-; recording of statistics:
+; Driver to use for storing statistics. Supported drivers are:
+; Database  -- Stores statistics directly to the database
+; Redis     -- Sends statistics to a Redis queue that's processed separately
 ;driver = Database
 ; IP addresses or address ranges of monitoring systems
 ;monitoring_ips[] = "127.0.0.1"
 ; IP addresses or address ranges of systems excluded from statistics
 ;exclude_ips[] = "192.168.1.1-192.168.255.255"
+
+; Settings related to Redis-based queue. Defaults are below.
+;redis_host               = localhost
+;redis_port               = 6379
+;redis_connection_timeout = 0.5
+;redis_db                 = 0
+;redis_user               =
+;redis_auth               =
+;redis_standalone         = true
+;redis_key_prefix         = finna_statistics/
 
 ; This section requires no changes for most installations
 [Index]

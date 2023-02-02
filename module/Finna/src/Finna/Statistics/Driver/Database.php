@@ -115,7 +115,7 @@ class Database implements DriverInterface, LoggerAwareInterface
         $date = date('Y-m-d');
         $crawler = $type;
         $params = compact('institution', 'view', 'crawler', 'date');
-        $this->processAdd($this->sessionTable, $params);
+        $this->addNewSessionEntry($params);
     }
 
     /**
@@ -146,7 +146,7 @@ class Database implements DriverInterface, LoggerAwareInterface
             'action',
             'date'
         );
-        $this->processAdd($this->pageViewTable, $params);
+        $this->addPageViewEntry($params);
     }
 
     /**
@@ -188,13 +188,61 @@ class Database implements DriverInterface, LoggerAwareInterface
             'backend',
             'source'
         );
-        $this->processAdd($this->recordTable, $params);
+        $this->addRecordViewEntry($params);
 
         // Record log:
         $params['record_id'] = $recordId;
         $params['formats'] = implode('|', $formats);
         $params['usage_rights'] = implode('|', $rights);
         $params['online'] = $online;
+        $this->addRecordLogEntry($params);
+    }
+
+    /**
+     * Add a session entry
+     *
+     * @param array $params Row identification params
+     *
+     * @return void
+     */
+    public function addNewSessionEntry(array $params): void
+    {
+        $this->processAdd($this->sessionTable, $params);
+    }
+
+    /**
+     * Add a page view entry
+     *
+     * @param array $params Row identification params
+     *
+     * @return void
+     */
+    public function addPageViewEntry(array $params): void
+    {
+        $this->processAdd($this->pageViewTable, $params);
+    }
+
+    /**
+     * Add a record view entry
+     *
+     * @param array $params Row identification params
+     *
+     * @return void
+     */
+    public function addRecordViewEntry(array $params): void
+    {
+        $this->processAdd($this->recordTable, $params);
+    }
+
+    /**
+     * Add a detailed record log entry
+     *
+     * @param array $params Row identification params
+     *
+     * @return void
+     */
+    public function addRecordLogEntry(array $params): void
+    {
         $this->processAdd($this->recordLogTable, $params);
     }
 

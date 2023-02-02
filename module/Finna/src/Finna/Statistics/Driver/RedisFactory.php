@@ -1,10 +1,11 @@
 <?php
 /**
- * Database handler factory.
+ * Redis handler factory.
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) Villanova University 2019.
+ * Copyright (C) The National Library of Finland 2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,6 +22,7 @@
  *
  * @category VuFind
  * @package  Statistics
+ * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
@@ -34,15 +36,18 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Database handler factory.
+ * Generic factory for instantiating session handlers
  *
  * @category VuFind
  * @package  Statistics
+ * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
+ *
+ * @codeCoverageIgnore
  */
-class DatabaseFactory implements FactoryInterface
+class RedisFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -56,7 +61,7 @@ class DatabaseFactory implements FactoryInterface
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
-     * @throws ContainerException if any other error occurs
+     * @throws ContainerException&\Throwable if any other error occurs
      */
     public function __invoke(
         ContainerInterface $container,
@@ -67,12 +72,44 @@ class DatabaseFactory implements FactoryInterface
             throw new \Exception('Unexpected options passed to factory.');
         }
 
-        $tableManager = $container->get(\VuFind\Db\Table\PluginManager::class);
+        $config = $container->get(\VuFind\Config\PluginManager::class)
+            ->get('config')->Statistics ?? null;
         return new $requestedName(
-            $tableManager->get('FinnaSessionStats'),
-            $tableManager->get('FinnaPageViewStats'),
-            $tableManager->get('FinnaRecordStats'),
-            $tableManager->get('FinnaRecordStatsLog')
+            $this->getConnection($config),
+            $config->redis_key_prefix ?? Redis::DEFAULT_KEY_PREFIX
         );
+    }
+
+    /**
+     * Given a configuration, build the client object.
+     *
+     * @param \Laminas\Config\Config $config Session configuration
+     *
+     * @return \Credis_Client
+     */
+    protected function getConnection(\Laminas\Config\Config $config)
+    {
+        // Set defaults if nothing set in config file.
+        $host = $config->redis_host ?? 'localhost';
+        $port = $config->redis_port ?? 6379;
+        $timeout = $config->redis_connection_timeout ?? 0.5;
+        $password = $config->redis_auth ?? null;
+        $username = $config->redis_user ?? null;
+        $redisDb = $config->redis_db ?? 0;
+
+        // Create Credis client, the connection is established lazily
+        $client = new \Credis_Client(
+            $host,
+            $port,
+            $timeout,
+            '',
+            $redisDb,
+            $password,
+            $username
+        );
+        if ((bool)($config->redis_standalone ?? true)) {
+            $client->forceStandalone();
+        }
+        return $client;
     }
 }
