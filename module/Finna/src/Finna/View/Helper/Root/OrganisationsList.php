@@ -43,11 +43,8 @@ use Finna\OrganisationInfo\OrganisationInfo;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
-    \Laminas\Log\LoggerAwareInterface
+class OrganisationsList extends \Laminas\View\Helper\AbstractHelper
 {
-    use \VuFind\Log\LoggerAwareTrait;
-
     /**
      * Organisation info service
      *
