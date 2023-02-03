@@ -344,15 +344,15 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
     }
 
     /**
-     * Get sectors using the organisationsList helper.
+     * Get sectors for organisation as an associative array.
      *
      * @param string $institutionId Id of institution to search for sectors
      *
-     * @return array
+     * @return array [[value => sector]...]
      */
     protected function getSectorsForOrganisation(string $institutionId): array
     {
-        $list = $this->organisationsList->getOrganisationsWithSectors();
+        $list = $this->organisationInfo->getOrganisationsWithSectors();
         if (!empty($list[$institutionId])) {
             // Convert the results into ['value' => $sector] for bc.
             $result = [];
