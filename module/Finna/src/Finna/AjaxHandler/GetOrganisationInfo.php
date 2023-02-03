@@ -78,10 +78,10 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
     /**
      * Constructor
      *
-     * @param SessionSettings     $ss                Session settings
-     * @param CookieManager       $cookieManager     ILS connection
-     * @param OrganisationInfo    $organisationInfo  Organisation info
-     * @param VuFind\CacheManager $cacheManager      Cache manager
+     * @param SessionSettings     $ss               Session settings
+     * @param CookieManager       $cookieManager    ILS connection
+     * @param OrganisationInfo    $organisationInfo Organisation info
+     * @param VuFind\CacheManager $cacheManager     Cache manager
      */
     public function __construct(
         SessionSettings $ss,
