@@ -137,11 +137,10 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
     {
         $cacheDir = $this->cacheManager->getCache('organisation-info')->getOptions()
             ->getCacheDir();
-        $cacheFile = "$cacheDir/organisations_list_ $this->locale.json";
-        $val = (string)(
-            $this->organisationConfig['General']['organisationListCacheTime'] ?? 60
-        );
-        $maxAge = $val && ctype_digit($val) ? (int)$val : 60;
+        $cacheFile = "$cacheDir/organisations_list_$this->locale.json";
+        $maxAge = (int)(
+            $this->organisationConfig['General']['organisationListCacheTime'] ?? null
+        ) ?? 60;
         $list = [];
         if (is_readable($cacheFile)
             && time() - filemtime($cacheFile) < $maxAge * 60
