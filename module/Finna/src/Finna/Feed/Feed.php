@@ -634,62 +634,12 @@ EOT;
                         $content = $xpath->query($xpathElement, $xpathItem)
                             ->item($cnt++)->nodeValue;
 
-                        // Remove width & height declarations from style
-                        // attributes in div & p elements
-                        $dom = new \DOMDocument();
-                        libxml_use_internal_errors(true);
-                        $dom->loadHTML(
-                            mb_convert_encoding($content, 'HTML-ENTITIES', 'UTF-8')
+                        $content = $this->processItemContent(
+                            $content ?: '',
+                            $searchReplace,
+                            $cleanContent,
+                            $id ?? ''
                         );
-                        $domx = new \DOMXPath($dom);
-
-                        // Process style attributes:
-                        $elements = $domx->query('//div[@style]|//p[@style]');
-                        foreach ($elements as $el) {
-                            $styleProperties = [];
-                            $styleAttr = $el->getAttribute('style');
-                            $properties = explode(';', $styleAttr);
-                            foreach ($properties as $prop) {
-                                [$field] = explode(':', $prop);
-                                if (stristr($field, 'width') === false
-                                    && stristr($field, 'height') === false
-                                    && stristr($field, 'margin') === false
-                                ) {
-                                    $styleProperties[] = $prop;
-                                }
-                            }
-                            $el->removeAttribute('style');
-                            $el->setAttribute(
-                                'style',
-                                implode(';', $styleProperties)
-                            );
-                        }
-
-                        // Proxify images:
-                        foreach ($domx->query('//img') as $el) {
-                            $srcAttr = $el->getAttribute('src');
-                            $allowedImages[] = $srcAttr;
-                            $el->setAttribute(
-                                'src',
-                                $this->proxifyImageUrl($srcAttr, $id)
-                            );
-                        }
-
-                        $content = $dom->saveHTML();
-
-                        // Process feed specific search-replace regexes
-                        foreach ($searchReplace as $search => $replace) {
-                            $pattern = "/$search/";
-                            $replaced = preg_replace($pattern, $replace, $content);
-                            if ($replaced !== null) {
-                                $content = $replaced;
-                            }
-                        }
-
-                        // Clean up the HTML:
-                        if ($cleanContent) {
-                            $content = ($this->cleanHtml)($content);
-                        }
 
                         $item[$setting] = $content;
                     }
@@ -706,6 +656,85 @@ EOT;
             'contentPage',
             'allowedImages'
         );
+    }
+
+    /**
+     * Process item content
+     *
+     * @param string $content       Content as string
+     * @param array  $searchReplace Search and replacement values
+     * @param bool   $cleanContent  Whether to run the content through cleanHtml
+     * @param string $feedId        Feed ID
+     *
+     * @return string
+     */
+    protected function processItemContent(
+        string $content,
+        array $searchReplace,
+        bool $cleanContent,
+        string $feedId
+    ): string {
+        if (!$content) {
+            return $content;
+        }
+        // Remove width & height declarations from style
+        // attributes in div & p elements
+        $dom = new \DOMDocument();
+        $saveErrors = libxml_use_internal_errors(true);
+        $dom->loadHTML(mb_convert_encoding($content, 'HTML-ENTITIES', 'UTF-8'));
+        $domx = new \DOMXPath($dom);
+
+        // Process style attributes:
+        $elements = $domx->query('//div[@style]|//p[@style]');
+        foreach ($elements as $el) {
+            $styleProperties = [];
+            $styleAttr = $el->getAttribute('style');
+            $properties = explode(';', $styleAttr);
+            foreach ($properties as $prop) {
+                [$field] = explode(':', $prop);
+                if (stristr($field, 'width') === false
+                    && stristr($field, 'height') === false
+                    && stristr($field, 'margin') === false
+                ) {
+                    $styleProperties[] = $prop;
+                }
+            }
+            $el->removeAttribute('style');
+            $el->setAttribute(
+                'style',
+                implode(';', $styleProperties)
+            );
+        }
+
+        // Proxify images:
+        if ($feedId) {
+            foreach ($domx->query('//img') as $el) {
+                $srcAttr = $el->getAttribute('src');
+                $allowedImages[] = $srcAttr;
+                $el->setAttribute(
+                    'src',
+                    $this->proxifyImageUrl($srcAttr, $feedId)
+                );
+            }
+        }
+
+        $content = $dom->saveHTML();
+        libxml_use_internal_errors($saveErrors);
+
+        // Process feed specific search-replace regexes
+        foreach ($searchReplace as $search => $replace) {
+            $pattern = "/$search/";
+            $replaced = preg_replace($pattern, $replace, $content);
+            if ($replaced !== null) {
+                $content = $replaced;
+            }
+        }
+
+        // Clean up the HTML:
+        if ($cleanContent) {
+            $content = ($this->cleanHtml)($content);
+        }
+        return $content;
     }
 
     /**
