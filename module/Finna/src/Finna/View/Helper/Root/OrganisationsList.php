@@ -138,11 +138,11 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
         $cacheDir = $this->cacheManager->getCache('organisation-info')->getOptions()
             ->getCacheDir();
         $cacheFile = "$cacheDir/organisations_list_ $this->locale.json";
-        $val = (string)( 
+        $val = (string)(
             $this->organisationConfig['General']['organisationListCacheTime'] ?? 60
         );
         $maxAge = $val && ctype_digit($val) ? (int)$val : 60;
-
+        $list = [];
         if (is_readable($cacheFile)
             && time() - filemtime($cacheFile) < $maxAge * 60
         ) {
@@ -187,8 +187,10 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
                     }
                     $collator->sort($list[$sector]);
                 }
-                $cacheJson = json_encode($list);
-                file_put_contents($cacheFile, $cacheJson);
+                if (!empty($list)) {
+                    $cacheJson = json_encode($list);
+                    file_put_contents($cacheFile, $cacheJson);
+                }
                 return $list;
             } catch (\VuFindSearch\Backend\Exception\BackendException $e) {
                 $this->logError(
@@ -245,7 +247,9 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
         $result = [];
         foreach ($this->generateOrganisationsList() as $sector => $organisations) {
             foreach ($organisations as $organisation) {
-                if (!isset($organisation['name']) && !isset($organisation['sector'])) {
+                if (!isset($organisation['name'])
+                    && !isset($organisation['sector'])
+                ) {
                     continue;
                 }
                 if (!isset($result[$organisation['name']])) {
