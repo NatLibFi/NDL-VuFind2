@@ -171,7 +171,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
      *
      * @param string|array $building Building
      *
-     * @return string ID
+     * @return string|null ID or null if not found
      */
     public function getOrganisationInfoId($building)
     {

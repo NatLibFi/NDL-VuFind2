@@ -30,6 +30,7 @@
 namespace Finna\AjaxHandler;
 
 use Finna\OrganisationInfo\OrganisationInfo;
+use Finna\View\Helper\Root\OrganisationsList;
 use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Cookie\CookieManager;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
@@ -69,6 +70,13 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
     protected $organisationInfo;
 
     /**
+     * Organisation info
+     *
+     * @var OrganisationsList
+     */
+    protected $organisationsList;
+
+    /**
      * Cache manager
      *
      * @var VuFind\CacheManager
@@ -78,20 +86,23 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
     /**
      * Constructor
      *
-     * @param SessionSettings     $ss               Session settings
-     * @param CookieManager       $cookieManager    ILS connection
-     * @param OrganisationInfo    $organisationInfo Organisation info
-     * @param VuFind\CacheManager $cacheManager     Cache manager
+     * @param SessionSettings     $ss                Session settings
+     * @param CookieManager       $cookieManager     ILS connection
+     * @param OrganisationInfo    $organisationInfo  Organisation info
+     * @param OrganisationsList   $organisationsList Organisations list helper
+     * @param VuFind\CacheManager $cacheManager      Cache manager
      */
     public function __construct(
         SessionSettings $ss,
         CookieManager $cookieManager,
         OrganisationInfo $organisationInfo,
+        OrganisationsList $organisationsList,
         $cacheManager
     ) {
         $this->sessionSettings = $ss;
         $this->cookieManager = $cookieManager;
         $this->organisationInfo = $organisationInfo;
+        $this->organisationsList = $organisationsList;
         $this->cacheManager = $cacheManager;
     }
 
@@ -199,13 +210,11 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
                 $cacheKey = 'sectors';
                 $sectors = $cache->getItem($cacheKey);
                 if (empty($sectors[$id])) {
-                    $apiResult = $this->getSectorsWithAPI($id);
-                    if (!empty($apiResult['sectors'])) {
+                    $fetchResult = $this->getSectorsForOrganisation($id);
+                    if (!empty($fetchResult)) {
                         // Check for all the sectors
-                        $sectors[$id] = $apiResult['sectors'];
+                        $sectors[$id] = $fetchResult;
                         $cache->setItem($cacheKey, $sectors);
-                    } elseif (!empty($result['error'])) {
-                        return ['error' => $apiResult['error']];
                     }
                 }
                 if (!empty($sectors[$id])) {
@@ -335,49 +344,26 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
     }
 
     /**
-     * Get sectors from the first record found with API.
+     * Get sectors using the organisationsList helper.
      *
      * @param string $institutionId Id of institution to search for sectors
      *
      * @return array
      */
-    protected function getSectorsWithAPI(string $institutionId): array
+    protected function getSectorsForOrganisation(string $institutionId): array
     {
-        $params = [
-            'filter[]' => 'building:0/' . $institutionId . '/',
-            'limit' => 1,
-            'field[]' => 'sectors'
-        ];
-        $url = 'https://api.finna.fi/v1/search?';
-        $client = $this->httpService->createClient($url);
-        $client->setOptions(
-            [
-                'useragent' => 'FinnaOrganisationInfo VuFind'
-            ]
-        );
-        $client->setParameterGet($params);
-        $result = $client->send();
-        if (!$result->isSuccess()) {
-            return [
-                'error' => 'API request failed, url: ' . $url
-            ];
+        $list = $this->organisationsList->getOrganisationsWithSectors();
+        if (!empty($list[$institutionId])) {
+            // Convert the results into ['value' => $sector] for bc.
+            $result = [];
+            foreach ($list[$institutionId] as $sector) {
+                $result[] = [
+                    'value' => $sector
+                ];
+            }
+            return $result;
         }
-
-        $response = json_decode($result->getBody(), true);
-        if (isset($response['result'])
-            && $response['result'] == 'error'
-        ) {
-            return [
-                'error' => 'API request failed, message: ' . $response['message']
-            ];
-        }
-        if (empty($response['records'][0])) {
-            // No records found, unable do determine sector
-            return [];
-        }
-        return [
-            'sectors' => $response['records'][0]['sectors']
-        ];
+        return [];
     }
 
     /**

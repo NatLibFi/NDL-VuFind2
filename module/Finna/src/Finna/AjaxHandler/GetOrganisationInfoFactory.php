@@ -72,6 +72,7 @@ class GetOrganisationInfoFactory
             $container->get(\VuFind\Session\Settings::class),
             $container->get(\VuFind\Cookie\CookieManager::class),
             $container->get(\Finna\OrganisationInfo\OrganisationInfo::class),
+            $container->get('ViewRenderer')->plugin('organisationsList'),
             $container->get(\VuFind\Cache\Manager::class)
         );
         $result->setLogger($container->get(\VuFind\Log\Logger::class));

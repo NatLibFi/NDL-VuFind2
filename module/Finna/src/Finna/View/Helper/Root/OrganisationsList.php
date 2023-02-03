@@ -31,7 +31,8 @@ namespace Finna\View\Helper\Root;
 
 use Finna\OrganisationInfo\OrganisationInfo;
 use Finna\Search\Solr\HierarchicalFacetHelper;
-use Laminas\Cache\Storage\StorageInterface;
+use Laminas\Config\Config;
+use VuFind\Cache\Manager as CacheManager;
 use VuFind\Search\Results\PluginManager;
 
 /**
@@ -57,11 +58,11 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
     protected $locale;
 
     /**
-     * Cache
+     * CacheManager
      *
-     * @var StorageInterface
+     * @var CacheManager
      */
-    protected $cache;
+    protected $cacheManager;
 
     /**
      * Hierarchial facet helper
@@ -85,26 +86,36 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
     protected $organisationInfo;
 
     /**
+     * Organisation info config
+     *
+     * @var Config
+     */
+    protected $organisationConfig;
+
+    /**
      * Constructor
      *
-     * @param StorageInterface        $cache            Cache
-     * @param HierarchicalFacetHelper $facetHelper      Facet helper
-     * @param PluginManager           $resultsManager   Search result manager
-     * @param OrganisationInfo        $organisationInfo Organisation info service
-     * @param string                  $locale           Current locale
+     * @param CacheManager            $cacheManager       CacheManager
+     * @param HierarchicalFacetHelper $facetHelper        Facet helper
+     * @param PluginManager           $resultsManager     Search result manager
+     * @param OrganisationInfo        $organisationInfo   Organisation info service
+     * @param string                  $locale             Current locale
+     * @param Config                  $organisationConfig Organisation info ini
      */
     public function __construct(
-        StorageInterface $cache,
+        CacheManager $cacheManager,
         HierarchicalFacetHelper $facetHelper,
         PluginManager $resultsManager,
         OrganisationInfo $organisationInfo,
-        string $locale
+        string $locale,
+        Config $organisationConfig
     ) {
-        $this->cache = $cache;
+        $this->cacheManager = $cacheManager;
         $this->facetHelper = $facetHelper;
         $this->resultsManager = $resultsManager;
         $this->organisationInfo = $organisationInfo;
         $this->locale = $locale;
+        $this->organisationConfig = $organisationConfig;
     }
 
     /**
@@ -114,15 +125,33 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
      */
     public function __invoke()
     {
-        $cacheName = 'organisations_list_' . $this->locale;
-        $list = $this->cache->getItem($cacheName);
+        return $this->generateOrganisationsList();
+    }
 
-        if (!$list) {
+    /**
+     * Generates a list of current organisations.
+     *
+     * @return array
+     */
+    protected function generateOrganisationsList(): array
+    {
+        $cacheDir = $this->cacheManager->getCache('organisation-info')->getOptions()
+            ->getCacheDir();
+        $cacheFile = "$cacheDir/organisations_list_ $this->locale.json";
+        $val = (string)( 
+            $this->organisationConfig['General']['organisationListCacheTime'] ?? 60
+        );
+        $maxAge = $val && ctype_digit($val) ? (int)$val : 60;
+
+        if (is_readable($cacheFile)
+            && time() - filemtime($cacheFile) < $maxAge * 60
+        ) {
+            return json_decode(file_get_contents($cacheFile), true);
+        } else {
             $emptyResults = $this->resultsManager->get('EmptySet');
-
+            $collator = \Collator::create($this->locale);
             try {
                 $sectorFacets = $this->getFacetList('sector_str_mv');
-
                 foreach ($sectorFacets as $sectorFacet) {
                     $sectorParts = explode('/', $sectorFacet['value']);
                     $sectorParts = array_splice($sectorParts, 1, -1);
@@ -156,10 +185,11 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
                             'sector' => $sector
                         ];
                     }
-                    $collator = \Collator::create($this->locale);
                     $collator->sort($list[$sector]);
                 }
-                $this->cache->setItem($cacheName, $list);
+                $cacheJson = json_encode($list);
+                file_put_contents($cacheFile, $cacheJson);
+                return $list;
             } catch (\VuFindSearch\Backend\Exception\BackendException $e) {
                 $this->logError(
                     'Error creating organisations list: ' . $e->getMessage()
@@ -167,8 +197,7 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
                 throw $e;
             }
         }
-
-        return $list;
+        return [];
     }
 
     /**
@@ -203,6 +232,29 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
             $params->addFilter($filter);
         }
         $facetList = $results->getFacetList();
+        var_dump($facetList[$field]['list']);
         return $facetList[$field]['list'] ?? [];
+    }
+
+    /**
+     * Get all the organisations and their sectors as an associative array.
+     *
+     * @return void
+     */
+    public function getOrganisationsWithSectors()
+    {
+        $result = [];
+        foreach ($this->generateOrganisationsList() as $sector => $organisations) {
+            foreach ($organisations as $organisation) {
+                if (!isset($organisation['name']) && !isset($organisation['sector'])) {
+                    continue;
+                }
+                if (!isset($result[$organisation['name']])) {
+                    $result[$organisation['name']] = [];
+                }
+                $result[$organisation['name']][] = $organisation['sector'];
+            }
+        }
+        return $result;
     }
 }
