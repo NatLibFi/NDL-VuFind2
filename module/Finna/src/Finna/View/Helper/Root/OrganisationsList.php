@@ -232,7 +232,6 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
             $params->addFilter($filter);
         }
         $facetList = $results->getFacetList();
-        var_dump($facetList[$field]['list']);
         return $facetList[$field]['list'] ?? [];
     }
 
