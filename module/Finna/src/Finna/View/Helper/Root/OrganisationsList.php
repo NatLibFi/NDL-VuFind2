@@ -187,10 +187,8 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
                     }
                     $collator->sort($list[$sector]);
                 }
-                if (!empty($list)) {
-                    $cacheJson = json_encode($list);
-                    file_put_contents($cacheFile, $cacheJson);
-                }
+                $cacheJson = json_encode($list);
+                file_put_contents($cacheFile, $cacheJson);
                 return $list;
             } catch (\VuFindSearch\Backend\Exception\BackendException $e) {
                 $this->logError(
