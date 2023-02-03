@@ -30,7 +30,6 @@
 namespace Finna\AjaxHandler;
 
 use Finna\OrganisationInfo\OrganisationInfo;
-use Finna\View\Helper\Root\OrganisationsList;
 use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Cookie\CookieManager;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
@@ -70,13 +69,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
     protected $organisationInfo;
 
     /**
-     * Organisation info
-     *
-     * @var OrganisationsList
-     */
-    protected $organisationsList;
-
-    /**
      * Cache manager
      *
      * @var VuFind\CacheManager
@@ -89,20 +81,17 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
      * @param SessionSettings     $ss                Session settings
      * @param CookieManager       $cookieManager     ILS connection
      * @param OrganisationInfo    $organisationInfo  Organisation info
-     * @param OrganisationsList   $organisationsList Organisations list helper
      * @param VuFind\CacheManager $cacheManager      Cache manager
      */
     public function __construct(
         SessionSettings $ss,
         CookieManager $cookieManager,
         OrganisationInfo $organisationInfo,
-        OrganisationsList $organisationsList,
         $cacheManager
     ) {
         $this->sessionSettings = $ss;
         $this->cookieManager = $cookieManager;
         $this->organisationInfo = $organisationInfo;
-        $this->organisationsList = $organisationsList;
         $this->cacheManager = $cacheManager;
     }
 
