@@ -239,7 +239,7 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
     /**
      * Get all the organisations and their sectors as an associative array.
      *
-     * @return void
+     * @return array
      */
     public function getOrganisationsWithSectors()
     {
