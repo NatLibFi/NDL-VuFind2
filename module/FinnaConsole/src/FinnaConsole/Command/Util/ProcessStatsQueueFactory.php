@@ -72,11 +72,6 @@ class ProcessStatsQueueFactory implements FactoryInterface
                 ->get('Database'),
             $this->getConnection($config),
             $config->redis_key_prefix ?? RedisDriver::DEFAULT_KEY_PREFIX,
-            $tableManager->get(\Finna\Db\Table\FinnaRecordView::class),
-            $tableManager->get(\Finna\Db\Table\FinnaRecordViewInstView::class),
-            $tableManager->get(\Finna\Db\Table\FinnaRecordViewRecord::class),
-            $tableManager->get(\Finna\Db\Table\FinnaRecordViewRecordFormat::class),
-            $tableManager->get(\Finna\Db\Table\FinnaRecordViewRecordRights::class),
             ...($options ?? [])
         );
     }

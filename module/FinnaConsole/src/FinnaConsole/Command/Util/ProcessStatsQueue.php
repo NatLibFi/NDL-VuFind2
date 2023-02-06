@@ -27,11 +27,6 @@
  */
 namespace FinnaConsole\Command\Util;
 
-use Finna\Db\Table\FinnaRecordView;
-use Finna\Db\Table\FinnaRecordViewInstView;
-use Finna\Db\Table\FinnaRecordViewRecord;
-use Finna\Db\Table\FinnaRecordViewRecordFormat;
-use Finna\Db\Table\FinnaRecordViewRecordRights;
 use Finna\Statistics\Driver\Database as DatabaseDriver;
 use Finna\Statistics\Driver\Redis as RedisDriver;
 use Symfony\Component\Console\Input\InputInterface;
@@ -72,55 +67,6 @@ class ProcessStatsQueue extends AbstractUtilCommand
     protected $redisClient;
 
     /**
-     * Record view table
-     *
-     * @var FinnaRecordView
-     */
-    protected $recordView;
-
-    /**
-     * Record view institution data table
-     *
-     * @var FinnaRecordViewInstView
-     */
-    protected $recordViewInstView;
-
-    /**
-     * Record view record data table
-     *
-     * @var FinnaRecordViewRecord
-     */
-    protected $recordViewRecord;
-
-    /**
-     * Record view record format data table
-     *
-     * @var FinnaRecordViewRecordFormat
-     */
-    protected $recordViewRecordFormat;
-
-    /**
-     * Record view record usage rights data table
-     *
-     * @var FinnaRecordViewRecordRights
-     */
-    protected $recordViewRecordRights;
-
-    /**
-     * Formats cache
-     *
-     * @var array
-     */
-    protected $formatCache = [];
-
-    /**
-     * Usage rights cache
-     *
-     * @var array
-     */
-    protected $usageRightsCache = [];
-
-    /**
      * Redis key prefix
      *
      * @var string
@@ -130,38 +76,18 @@ class ProcessStatsQueue extends AbstractUtilCommand
     /**
      * Constructor
      *
-     * @param DatabaseDriver              $dbHandler              Statistics database
-     * driver
-     * @param \Credis_Client              $redisClient            Redis client
-     * @param string                      $keyPrefix              Redis key prefix
-     * @param FinnaRecordView             $recordView             Record view table
-     * @param FinnaRecordViewInstView     $recordViewInstView     Record view
-     * institution data table
-     * @param FinnaRecordViewRecord       $recordViewRecord       Record view record
-     * data table
-     * @param FinnaRecordViewRecordFormat $recordViewRecordFormat Record view record
-     * format data table
-     * @param FinnaRecordViewRecordRights $recordViewRecordRights Record view record
-     * usage rights data table
+     * @param DatabaseDriver $dbHandler   Statistics database driver
+     * @param \Credis_Client $redisClient Redis client
+     * @param string         $keyPrefix   Redis key prefix
      */
     public function __construct(
         DatabaseDriver $dbHandler,
         \Credis_Client $redisClient,
-        string $keyPrefix,
-        FinnaRecordView $recordView,
-        FinnaRecordViewInstView $recordViewInstView,
-        FinnaRecordViewRecord $recordViewRecord,
-        FinnaRecordViewRecordFormat $recordViewRecordFormat,
-        FinnaRecordViewRecordRights $recordViewRecordRights
+        string $keyPrefix
     ) {
         $this->dbHandler = $dbHandler;
         $this->redisClient = $redisClient;
         $this->keyPrefix = $keyPrefix;
-        $this->recordView = $recordView;
-        $this->recordViewInstView = $recordViewInstView;
-        $this->recordViewRecord = $recordViewRecord;
-        $this->recordViewRecordFormat = $recordViewRecordFormat;
-        $this->recordViewRecordRights = $recordViewRecordRights;
 
         parent::__construct();
     }
@@ -281,9 +207,7 @@ class ProcessStatsQueue extends AbstractUtilCommand
      */
     protected function processRecordViews(): void
     {
-        $viewRecord = null;
-        $viewInstView = null;
-        $callback = function (array $logEntry) use (&$viewRecord, &$viewInstView) {
+        $callback = function (array $logEntry) {
             $this->dbHandler->addRecordViewEntry(
                 [
                     'institution' => $logEntry['institution'],
@@ -296,78 +220,9 @@ class ProcessStatsQueue extends AbstractUtilCommand
             );
 
             // Add detailed log entry:
-            if (null === $viewRecord
-                || $viewRecord->backend !== $logEntry['backend']
-                || $viewRecord->source !== $logEntry['source']
-                || $viewRecord->record_id !== $logEntry['record_id']
-            ) {
-                $logEntry['format_id']
-                    = $this->getFormatId($logEntry['formats']);
-                $logEntry['usage_rights_id']
-                    = $this->getUsageRightsId($logEntry['usage_rights']);
-                $viewRecord
-                    = $this->recordViewRecord->getByLogEntry($logEntry);
-            }
-            if (null === $viewInstView
-                || $viewInstView->institution !== $logEntry['institution']
-                || $viewInstView->view !== $logEntry['view']
-            ) {
-                $viewInstView
-                    = $this->recordViewInstView->getByLogEntry($logEntry);
-            }
-            $viewFields = [
-                'inst_view_id' => $viewInstView->id,
-                'crawler' => $logEntry['crawler'],
-                'date' => $logEntry['date'],
-                'record_id' => $viewRecord->id,
-            ];
-
-            $rowsAffected = $this->recordView->update(
-                [
-                    'count' => new \Laminas\Db\Sql\Literal('count + 1')
-                ],
-                $viewFields,
-            );
-            if (0 === $rowsAffected) {
-                $hit = $this->recordView->createRow();
-                $hit->populate($viewFields);
-                $hit->count = 1;
-                $hit->save();
-            }
+            $this->dbHandler->addDetailedRecordViewEntry($logEntry);
         };
 
         $this->processQueue('record view', RedisDriver::KEY_RECORD_VIEW, $callback);
-    }
-
-    /**
-     * Get id for a formats string
-     *
-     * @param string $formats Formats
-     *
-     * @return int
-     */
-    protected function getFormatId(string $formats): int
-    {
-        if (!isset($this->formatCache[$formats])) {
-            $this->formatCache[$formats]
-                = $this->recordViewRecordFormat->getByFormat($formats)->id;
-        }
-        return $this->formatCache[$formats];
-    }
-
-    /**
-     * Get id for a usage rights string
-     *
-     * @param string $usageRights Usage rights
-     *
-     * @return int
-     */
-    protected function getUsageRightsId(string $usageRights): int
-    {
-        if (!isset($this->usageRightsCache[$usageRights])) {
-            $this->usageRightsCache[$usageRights]
-                = $this->recordViewRecordRights->getByUsageRights($usageRights)->id;
-        }
-        return $this->usageRightsCache[$usageRights];
     }
 }
