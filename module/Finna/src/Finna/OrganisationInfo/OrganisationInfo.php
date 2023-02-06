@@ -1435,11 +1435,11 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
     }
 
     /**
-     * Generates a list of current organisations.
+     * Get a list of current organisations.
      *
      * @return array
      */
-    public function generateOrganisationsList(): array
+    public function getOrganisationsList(): array
     {
         $cacheDir = $this->cacheManager->getCache('organisation-info')->getOptions()
             ->getCacheDir();
@@ -1514,15 +1514,12 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
     public function getOrganisationsWithSectors()
     {
         $result = [];
-        foreach ($this->generateOrganisationsList() as $sector => $organisations) {
+        foreach ($this->getOrganisationsList() as $organisations) {
             foreach ($organisations as $organisation) {
                 if (!isset($organisation['name'])
                     && !isset($organisation['sector'])
                 ) {
                     continue;
-                }
-                if (!isset($result[$organisation['name']])) {
-                    $result[$organisation['name']] = [];
                 }
                 $result[$organisation['name']][] = $organisation['sector'];
             }

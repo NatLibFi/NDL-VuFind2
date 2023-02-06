@@ -69,6 +69,6 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper
      */
     public function __invoke()
     {
-        return $this->organisationInfo->generateOrganisationsList();
+        return $this->organisationInfo->getOrganisationsList();
     }
 }
