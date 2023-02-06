@@ -361,9 +361,6 @@ class Database implements DriverInterface, LoggerAwareInterface
             'usage_rights_id' => $rightsId,
         ];
 
-        print_r($viewFields);
-        return;
-
         $rowsAffected = $this->recordView->update(
             [
                 'count'
