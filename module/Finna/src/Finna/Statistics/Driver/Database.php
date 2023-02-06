@@ -357,21 +357,20 @@ class Database implements DriverInterface, LoggerAwareInterface
             'crawler' => $logEntry['crawler'],
             'date' => $logEntry['date'],
             'record_id' => $recordId,
-            'format_id' => $formatId,
-            'usage_rights_id' => $rightsId,
         ];
 
         $rowsAffected = $this->recordView->update(
             [
-                'count'
-                    => new \Laminas\Db\Sql\Literal('count + ' . $logEntry['count'])
+                'count' => new \Laminas\Db\Sql\Literal(
+                    'count + ' . ($logEntry['count'] ?? '1')
+                )
             ],
             $viewFields,
         );
         if (0 === $rowsAffected) {
             $hit = $this->recordView->createRow();
             $hit->populate($viewFields);
-            $hit->count = 1;
+            $hit->count = $logEntry['count'] ?? 1;
             $hit->save();
         }
     }
