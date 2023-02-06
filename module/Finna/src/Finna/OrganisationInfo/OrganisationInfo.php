@@ -25,12 +25,16 @@
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 namespace Finna\OrganisationInfo;
 
+use Finna\Search\Solr\HierarchicalFacetHelper;
+use Laminas\Config\Config;
 use Laminas\Mvc\Controller\Plugin\Url;
+use VuFind\Search\Results\PluginManager;
 
 /**
  * Service for querying Kirjastohakemisto database.
@@ -41,6 +45,7 @@ use Laminas\Mvc\Controller\Plugin\Url;
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
@@ -102,20 +107,50 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
     protected $urlPlugin;
 
     /**
+     * Organisation info config
+     *
+     * @var Config
+     */
+    protected $organisationConfig;
+
+    /**
+     * Results plugin manager
+     *
+     * @var PluginManager
+     */
+    protected $resultsManager;
+
+    /**
+     * Hierarchical facet helper
+     *
+     * @var HierarchicalFacetHelper
+     */
+    protected $facetHelper;
+
+    /**
      * Constructor.
      *
-     * @param \Laminas\Config\Config             $config        Configuration
-     * @param \VuFind\Cache\Manager              $cacheManager  Cache manager
-     * @param \Laminas\View\Renderer\PhpRenderer $viewRenderer  View renderer
-     * @param \VuFind\Date\Converter             $dateConverter Date converter
-     * @param Url                                $url           URL plugin
+     * @param \Laminas\Config\Config             $config             Configuration
+     * @param \VuFind\Cache\Manager              $cacheManager       Cache manager
+     * @param \Laminas\View\Renderer\PhpRenderer $viewRenderer       View renderer
+     * @param \VuFind\Date\Converter             $dateConverter      Date converter
+     * @param Url                                $url                URL plugin
+     * @param Config                             $organisationConfig Organisation
+     *                                                               config
+     * @param PluginManager                      $resultsManager     Results
+     *                                                               manager
+     * @param HierarchicalFacetHelper            $facetHelper        Hierarchical
+     *                                                               facet helper
      */
     public function __construct(
         \Laminas\Config\Config $config,
         \VuFind\Cache\Manager $cacheManager,
         \Laminas\View\Renderer\PhpRenderer $viewRenderer,
         \VuFind\Date\Converter $dateConverter,
-        Url $url
+        Url $url,
+        Config $organisationConfig,
+        PluginManager $resultsManager,
+        HierarchicalFacetHelper $facetHelper
     ) {
         $this->config = $config;
         $this->cacheManager = $cacheManager;
@@ -123,6 +158,9 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         $this->dateConverter = $dateConverter;
         $this->urlPlugin = $url;
         $this->cleanHtml = $viewRenderer->plugin('cleanHtml');
+        $this->organisationConfig = $organisationConfig;
+        $this->resultsManager = $resultsManager;
+        $this->facetHelper = $facetHelper;
     }
 
     /**
@@ -171,7 +209,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
      *
      * @param string|array $building Building
      *
-     * @return string ID
+     * @return string|null ID or null if not found
      */
     public function getOrganisationInfoId($building)
     {
@@ -1394,5 +1432,133 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                 ]
             ]
         );
+    }
+
+    /**
+     * Get a list of current organisations.
+     *
+     * @return array
+     */
+    public function getOrganisationsList(): array
+    {
+        $cacheDir = $this->cacheManager->getCache('organisation-info')->getOptions()
+            ->getCacheDir();
+        $locale = $this->translator->getLocale();
+        $cacheFile = "$cacheDir/organisations_list_$locale.json";
+        $maxAge = (int)(
+            $this->organisationConfig['General']['organisationListCacheTime'] ?? null
+        ) ?? 60;
+        $list = [];
+        if (is_readable($cacheFile)
+            && time() - filemtime($cacheFile) < $maxAge * 60
+        ) {
+            return json_decode(file_get_contents($cacheFile), true);
+        } else {
+            $emptyResults = $this->resultsManager->get('EmptySet');
+            $collator = \Collator::create($locale);
+            try {
+                $sectorFacets = $this->getFacetList('sector_str_mv');
+                foreach ($sectorFacets as $sectorFacet) {
+                    $sectorParts = explode('/', $sectorFacet['value']);
+                    $sectorParts = array_splice($sectorParts, 1, -1);
+                    $sector = implode('/', $sectorParts);
+                    $list[$sector] = [];
+
+                    $collection = $this->getFacetList(
+                        'building',
+                        '0/',
+                        'sector_str_mv:' . $sectorFacet['value']
+                    );
+
+                    foreach ($collection as $item) {
+                        $link = $emptyResults->getUrlQuery()
+                            ->addFacet('building', $item['value'])->getParams();
+                        $displayText = $item['displayText'];
+                        if ($displayText == $item['value']) {
+                            $displayText = $this->facetHelper
+                                ->formatDisplayText($displayText)
+                                ->getDisplayString();
+                        }
+                        $organisationInfoId
+                            = $this->getOrganisationInfoId(
+                                $item['value']
+                            );
+
+                        $list[$sector][] = [
+                            'name' => $displayText,
+                            'link' => $link,
+                            'organisation' => $organisationInfoId,
+                            'sector' => $sector
+                        ];
+                    }
+                    $collator->sort($list[$sector]);
+                }
+                $cacheJson = json_encode($list);
+                file_put_contents($cacheFile, $cacheJson);
+                return $list;
+            } catch (\VuFindSearch\Backend\Exception\BackendException $e) {
+                $this->logError(
+                    'Error creating organisations list: ' . $e->getMessage()
+                );
+                throw $e;
+            }
+        }
+        return [];
+    }
+
+    /**
+     * Get all the organisations and their sectors as an associative array.
+     *
+     * @return array
+     */
+    public function getOrganisationsWithSectors()
+    {
+        $result = [];
+        foreach ($this->getOrganisationsList() as $organisations) {
+            foreach ($organisations as $organisation) {
+                if (!isset($organisation['name'])
+                    && !isset($organisation['sector'])
+                ) {
+                    continue;
+                }
+                $result[$organisation['name']][] = $organisation['sector'];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Get facet data from a field
+     *
+     * @param string $field  Field to return
+     * @param string $prefix Optional facet prefix limiter
+     * @param string $filter Optional filter
+     *
+     * @return array
+     */
+    protected function getFacetList(
+        string $field,
+        string $prefix = '',
+        string $filter = ''
+    ): array {
+        $results = $this->resultsManager->get('Solr');
+        $params = $results->getParams();
+        // Disable deduplication so that facet results are not affected:
+        $params->addFilter('finna.deduplication:"0"');
+        $params->setLimit(0);
+        $params->setFacetLimit(-1);
+        if ('' !== $prefix) {
+            $params->setFacetPrefix($prefix);
+        }
+        $options = $params->getOptions();
+        $options->disableHighlighting();
+        $options->spellcheckEnabled(false);
+
+        $params->addFacet($field, $field, false);
+        if ('' !== $filter) {
+            $params->addFilter($filter);
+        }
+        $facetList = $results->getFacetList();
+        return $facetList[$field]['list'] ?? [];
     }
 }
