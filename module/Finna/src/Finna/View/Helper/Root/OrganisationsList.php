@@ -57,7 +57,8 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper
      *
      * @param OrganisationInfo $organisationInfo Organisation info service
      */
-    public function __construct(OrganisationInfo $organisationInfo) {
+    public function __construct(OrganisationInfo $organisationInfo)
+    {
         $this->organisationInfo = $organisationInfo;
     }
 
