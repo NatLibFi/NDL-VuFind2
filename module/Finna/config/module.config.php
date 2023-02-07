@@ -852,6 +852,14 @@ $config = [
                     'SolrBrowse' => 'Finna\Search\SolrBrowse\Results',
                 ]
             ],
+            'session' => [
+                'factories' => [
+                    'Finna\Session\Redis' => 'VuFind\Session\RedisFactory',
+                ],
+                'aliases' => [
+                    'VuFind\Session\Redis' => 'Finna\Session\Redis',
+                ]
+            ],
             'statistics_driver' => [
                 'factories' => [
                     'Finna\Statistics\Driver\Database' => 'Finna\Statistics\Driver\DatabaseFactory',
