@@ -36,7 +36,7 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Generic factory for instantiating session handlers
+ * Redis handler factory.
  *
  * @category VuFind
  * @package  Statistics
