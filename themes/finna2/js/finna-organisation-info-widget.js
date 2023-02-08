@@ -235,7 +235,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
         dir: dir,
         fullDetails: 0,
         allServices: 0
-      }
+      };
       service.getSchedules(
         queryParams,
         function onGetSchedules(response) {
@@ -456,7 +456,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
       parent: parent,
       buildings: buildings,
       sector: sector
-    }
+    };
     service.getOrganisations(searchParams, {}, function onGetOrganisations(response) {
       if (response === false) {
         holder.html('<!-- Organisation info could not be loaded');
