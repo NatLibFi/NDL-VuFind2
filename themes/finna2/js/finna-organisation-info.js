@@ -184,7 +184,9 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    *                             - dir: period paging direction -1 | 1
    *                             - fullDetails: 0|1
    *                             - allServices: 0|1
-   * @param {*} callback 
+   * @param {function} callback  Callback function (false | string, object)
+   *
+   * @returns void
    */
   function getSchedules(queryParams, callback) {
     const fullDetails = queryParams.fullDetails || 0;
