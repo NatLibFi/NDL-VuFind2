@@ -66,7 +66,8 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    * Fetch organisations.
    *
    * @param {object}   searchParams   Parameters to form the search query
-   * @param {object}   callbackParams Parameters passed to callback function
+   *                                  - target: page
+   *                                  - buildings: list of buildings separated by a ,
    * @param {function} callback       Callback function, function (response|false, callbackParams)
    * @returns void
    */
@@ -175,19 +176,19 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Get building schedules.
-   * @param {object} queryParams Queryparameters used:
-   *                             Parent: Organisation id.
-   *                             Target: Target,
-   *                             id: ID
-   *                             periodStart: Start date of period
-   *                             dir: ???
-   *                             fullDetails: 0|1
-   *                             allServices: 0|1
+   * @param {object} queryParams Query parameters used:
+   *                             - Parent: Organisation parent id.
+   *                             - Target: Target,
+   *                             - id: Organisation id
+   *                             - periodStart: Start date of period
+   *                             - dir: period paging direction -1 | 1
+   *                             - fullDetails: 0|1
+   *                             - allServices: 0|1
    * @param {*} callback 
    */
   function getSchedules(queryParams, callback) {
     const fullDetails = queryParams.fullDetails || 0;
-    const id = queryParams.id || -1;
+    const id = queryParams.id || '';
     query(queryParams, function onQueryDone(success, obj) {
       if (!success) {
         callback(false);
