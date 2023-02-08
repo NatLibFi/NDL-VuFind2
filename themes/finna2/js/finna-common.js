@@ -10,6 +10,13 @@ finna.common = (function finnaCommon() {
     return $("<textarea/>").html(str).text();
   }
 
+  /**
+   * Get field from the object.
+   *
+   * @param {object} obj   Object to search for the field
+   * @param {string} field Field to look for
+   * @returns The field found or null if undefined.
+   */
   function getField(obj, field) {
     if (field in obj && typeof obj[field] != 'undefined') {
       return obj[field];
