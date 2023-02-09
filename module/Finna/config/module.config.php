@@ -854,7 +854,7 @@ $config = [
             ],
             'session' => [
                 'factories' => [
-                    'Finna\Session\Redis' => 'VuFind\Session\RedisFactory',
+                    'Finna\Session\Redis' => 'Finna\Session\RedisFactory',
                 ],
                 'aliases' => [
                     'VuFind\Session\Redis' => 'Finna\Session\Redis',

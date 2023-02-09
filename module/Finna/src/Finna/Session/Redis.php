@@ -27,8 +27,6 @@
  */
 namespace Finna\Session;
 
-use Laminas\Config\Config;
-
 /**
  * Redis session handler extensions
  *
@@ -40,34 +38,13 @@ use Laminas\Config\Config;
  */
 class Redis extends \VuFind\Session\Redis
 {
-    /**
-     * Whether to try to find an existing session from the database. Used while
-     * migrating to Redis to avoid lost sessions.
-     *
-     * @var bool
-     */
-    protected $readFromDatabase;
-
-    /**
-     * Constructor
-     *
-     * @param \Credis_Client $connection Redis connection object
-     * @param Config         $config     Session configuration ([Session] section of
-     * config.ini)
-     */
-    public function __construct(\Credis_Client $connection, Config $config = null)
-    {
-        parent::__construct($connection, $config);
-        $this->readFromDatabase
-            = (bool)($config->redis_read_sessions_from_db ?? false);
-    }
+    use \Finna\Statistics\ReporterTrait;
 
     /**
      * Read function must return string value always to make save handler work as
      * expected. Return empty string if there is no data to read.
      *
-     * Finna: Provides support for a secondary read-only Database storage to avoid
-     * lost sessions during migration.
+     * Finna: Provides support for statistics
      *
      * @param string $sessId The session ID to read
      *
@@ -78,18 +55,21 @@ class Redis extends \VuFind\Session\Redis
         if ($result = parent::read($sessId)) {
             return $result;
         }
-        if ($this->readFromDatabase) {
-            // Adapted from Database driver:
+        $this->triggerStatsSessionStart((string)$sessId);
+        return $result;
+    }
 
-            // Try to read the session, but destroy it if it has expired:
-            $sessionTable = $this->getTable('Session');
-            try {
-                return $sessionTable->readSession($sessId, $this->lifetime);
-            } catch (\VuFind\Exception\SessionExpired $e) {
-                $sessionTable->destroySession($sessId);
-                return '';
-            }
-        }
-        return '';
+    /**
+     * The destroy handler, this is executed when a session is destroyed with
+     * session_destroy() and takes the session id as its only parameter.
+     *
+     * @param string $sessId The session ID to destroy
+     *
+     * @return bool
+     */
+    public function destroy($sessId): bool
+    {
+        parent::destroy($sessId);
+        return true;
     }
 }
