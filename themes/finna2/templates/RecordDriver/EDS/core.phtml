@@ -39,11 +39,11 @@
     <?php if (!empty($urls) || $openUrlActive || $doiActive): ?>
       <div class="recordURLs eds-available-online-record">
         <?=$this->partial('RecordDriver/EDS/online-url-list.phtml', ['driver' => $this->driver, 'urls' => $urls])?>
-        <?php if ($openUrlActive): ?>
-          <?=$openUrl->renderTemplate()?>
-        <?php endif; ?>
         <?php if ($doiActive): ?>
           <?=$doi->renderTemplate()?>
+        <?php endif; ?>
+        <?php if ($openUrlActive): ?>
+          <?=$openUrl->renderTemplate()?>
         <?php endif; ?>
       </div>
     <?php endif; ?>
@@ -79,71 +79,18 @@
     </div>
 
     <?/* Display Main Details */?>
-    <div class="record-details">
-      <table class="table table-condensed table-finna-record" summary="<?=$this->transEsc('Bibliographic Details')?>" role="presentation">
-        <?php foreach ($this->driver->getItems('core') as $key => $item): ?>
-          <?php if (!empty($item['Data']) && !in_array($item['Label'], $ignoreDetailsFields)): ?>
-          <tr class="record-<?=strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $item['Label']))?>">
-            <th><?php if (!empty($item['Label'])): ?><?=$this->transEsc($item['Label'])?>:<?php endif; ?></th>
-            <td>
-              <div class="truncate-field">
-                <p><?=$this->driver->linkUrls($item['Data'])?></p>
-              </div>
-            </td>
-          </tr>
-          <?php endif; ?>
-        <?php endforeach; ?>
-
-        <?php if ($dbLabel): ?>
-          <tr>
-            <th><?=$this->transEsc('Database')?>:</th>
-            <td><?=$this->escapeHtml($dbLabel)?></td>
-          </tr>
-        <?php endif; ?>
-
-        <?php if ($this->driver->hasHTMLFullTextAvailable() && !$restrictedView):
-          $fullText = $this->driver->getHtmlFullText();?>
-          <tr id="html">
-            <td colspan="2">
-              <div class="truncate-field" data-rows="15">
-                <?=$fullText?>
-              </div>
-            </td>
-          </tr>
-        <?php elseif ($this->driver->hasHTMLFullTextAvailable() && $restrictedView): ?>
-          <tr id="html">
-            <td>
-              <?=$this->transEsc('Full text is not displayed to guests')?>
-            </td>
-            <td>
-              <a class="login" href="<?=$this->url('myresearch-home')?>" rel="nofollow">
-                <strong><?=$this->transEsc('Login for full access')?></strong>
-              </a>
-            </td>
-          </tr>
-        <?php endif; ?>
-      </table>
-
-      <div class="resultItemLine4 custom-links">
-        <?php $customLinks = array_merge($this->driver->getFTCustomLinks(), $this->driver->getCustomLinks());
-        if (!empty($customLinks)): ?>
-          <?php foreach ($customLinks as $customLink): ?>
-          <?php $url = $customLink['Url'] ?? '';
-              $mot = $customLink['MouseOverText'] ?? '';
-              $icon = $customLink['Icon'] ?? '';
-              $name = $customLink['Text'] ?? '';
-          ?>
-          <span>
-            <a href="<?=$this->escapeHtmlAttr($url)?>" target="_blank" title="<?=$this->escapeHtmlAttr($mot)?>" class="custom-link">
-              <?php if ($icon): ?><img src="<?=$this->escapeHtmlAttr($icon)?>" /> <?php endif; ?><?=$this->escapeHtml($name)?>
-            </a>
-          </span>
-          <?php endforeach; ?>
-        <?php endif; ?>
-      </div>
-
-      <?=$openUrl ? $openUrl->renderMoreOptions() : '' ?>
-    </div>
+    <?=
+      $this->record($this->driver)->renderTemplate(
+          'core-fields.phtml',
+          [
+            'driver' => $this->driver,
+            'restrictedView' => $restrictedView,
+            'ignoreDetailsFields' => $ignoreDetailsFields,
+            'dbLabel' => $dbLabel
+          ]
+      );
+    ?>
+    <?/* End Main Details */?>
 
     <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
       <?php /* Display the lists that this record is saved to */ ?>
@@ -151,7 +98,6 @@
         <strong><?=$this->transEsc("Saved in")?>:</strong>
       </div>
     <?php endif; ?>
-    <?/* End Main Details */?>
 
     <?php if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>
     <div>

@@ -74,10 +74,12 @@ class FeedFactory implements FactoryInterface
         return new $requestedName(
             $config->get('config'),
             $config->get('rss'),
+            $config->get('rss-organisation-page'),
             $container->get(\VuFind\Cache\Manager::class),
             $container->get('ControllerPluginManager')->get('url'),
             $renderer->plugin('imageLink'),
-            $renderer->plugin('cleanHtml')
+            $renderer->plugin('cleanHtml'),
+            $container->get(\Finna\OrganisationInfo\OrganisationInfo::class)
         );
     }
 }

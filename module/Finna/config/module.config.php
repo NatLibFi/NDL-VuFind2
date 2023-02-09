@@ -68,9 +68,6 @@ $config = [
                 'type'    => 'Laminas\Router\Http\Segment',
                 'options' => [
                     'route'    => '/FeedContent[/:page][/:element]',
-                    'constraints' => [
-                        'page'     => '[a-zA-Z][a-zA-Z0-9_-]*'
-                    ],
                     'defaults' => [
                         'controller' => 'FeedContent',
                         'action'     => 'Content',
@@ -81,9 +78,6 @@ $config = [
                 'type'    => 'Laminas\Router\Http\Segment',
                 'options' => [
                     'route'    => '/FeedContent/Image/:page',
-                    'constraints' => [
-                        'page'     => '[a-zA-Z][a-zA-Z0-9_-]*'
-                    ],
                     'defaults' => [
                         'controller' => 'FeedContent',
                         'action'     => 'Image',
@@ -858,12 +852,22 @@ $config = [
                     'SolrBrowse' => 'Finna\Search\SolrBrowse\Results',
                 ]
             ],
+            'session' => [
+                'factories' => [
+                    'Finna\Session\Redis' => 'VuFind\Session\RedisFactory',
+                ],
+                'aliases' => [
+                    'VuFind\Session\Redis' => 'Finna\Session\Redis',
+                ]
+            ],
             'statistics_driver' => [
                 'factories' => [
                     'Finna\Statistics\Driver\Database' => 'Finna\Statistics\Driver\DatabaseFactory',
+                    'Finna\Statistics\Driver\Redis' => 'Finna\Statistics\Driver\RedisFactory',
                 ],
                 'aliases' => [
                     'Database' => 'Finna\Statistics\Driver\Database',
+                    'Redis' => 'Finna\Statistics\Driver\Redis',
                 ]
             ],
             'content_covers' => [

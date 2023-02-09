@@ -1,13 +1,13 @@
 /* Carousel styling */
 .carousel {
     button {
-        overflow: hidden; // prevent scrollbars appearing with some browsers   
+        overflow: hidden; // prevent scrollbars appearing with some browsers
     }
     .slick-slider {
-        padding: 0px;   
+        padding: 0px;
     }
     .slick-track {
-          
+
     }
     .slick-slider .slick-slide {
         overflow: hidden;
@@ -107,7 +107,7 @@
             top: 0px;
             overflow: hidden;
             margin-top: 0;
-            
+
             padding-bottom: 10px;
             max-height: 100%;
         }
@@ -154,7 +154,7 @@
 
     .slick-slider.slick-vertical {
         .slick-slide img {
-            max-height: initial;   
+            max-height: initial;
         }
         .carousel-slide-header p {
             background: @carousel-verticalslide-header-background;
@@ -170,7 +170,7 @@
             right: 0;
         }
         .carousel-hover-title, .carousel-hover-date {
-            display: none;  
+            display: none;
         }
     }
     .slick-slider:not(.slick-vertical) .slick-slide.slick-active {
@@ -206,7 +206,7 @@
         }
         .carousel-text {
             opacity: 1;
-            padding: 0px;   
+            padding: 0px;
             margin-top: 50px;
             background: @carousel-verticalslide-header-background;
             overflow: hidden;
@@ -239,7 +239,7 @@
             display: none !important;
         }
     }
-    
+
     .slick-dots {
         margin-top: -15px;
         left: 0;
@@ -257,17 +257,17 @@
         height: 45px;
         &:before {
             display: block;
-            color: @gray;  
+            color: @gray;
         }
         &:hover:before, &:focus:before  {
-            margin-right: 0; 
+            margin-right: 0;
         }
     }
     .slick-prev {
-        left: -22px;  
+        left: -22px;
     }
     .slick-next {
-        right: -22px;  
+        right: -22px;
     }
 }
 
@@ -310,13 +310,13 @@
         margin-top: 15px;
     }
     .date {
-        color: @gray-light;   
+        color: @gray-light;
     }
 
     .text {
         color: @gray;
         &:hover {
-            text-decoration: none;   
+            text-decoration: none;
         }
     }
 
@@ -332,7 +332,7 @@
 
     &.with-image {
         li {
-          clear: both;  
+          clear: both;
         }
         img {
             max-width: 40%;
@@ -351,7 +351,7 @@
             vertical-align: top;
             float: right;
             width: 55%;
-        }  
+        }
         .text {
             padding-bottom: 15px;
         }
@@ -366,9 +366,9 @@
             text-align: center;
             padding-top: 15px;
         }
-        
+
     }
-    
+
 }
 
 // mixin for image prosessing on fulltext rss feeds
@@ -420,6 +420,19 @@
     }
 }
 
+// rss-feed content
+.feed-content {
+    ul, ol {
+        margin-left: 25px;
+    }
+    ul li {
+        list-style-type: disc;
+    }
+    ol li {
+        list-style-type: decimal;
+    }
+}
+
 // rss-feed in modal window
 #modal.feed-content {
     -webkit-overflow-scrolling: auto ;
@@ -433,15 +446,6 @@
             color: @gray-light;
             margin-bottom: 15px;
             display: none;
-        }
-        ul, ol {
-            margin-left: 25px;
-        }
-        ul li {
-            list-style-type: disc;
-        }
-        ol li {
-            list-style-type: decimal;
         }
     }
 }

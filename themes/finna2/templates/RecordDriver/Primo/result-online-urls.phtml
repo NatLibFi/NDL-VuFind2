@@ -16,12 +16,12 @@ $fulltextAvailable = $this->driver->getFulltextAvailable();
     <?php endif; ?>
   <?php endif; ?>
 
-  <?php if ($openUrlActive): ?>
-    <?=$openUrl->renderTemplate()?>
-  <?php endif; ?>
-
   <?php if ($doiActive): ?>
     <?=$doi->renderTemplate()?>
+  <?php endif; ?>
+
+  <?php if ($openUrlActive): ?>
+    <?=$openUrl->renderTemplate()?>
   <?php endif; ?>
 
   <?php if (!$openUrlActive && empty($urls) && $this->driver->supportsAjaxStatus()): ?>

@@ -1,10 +1,11 @@
 <?php
 /**
- * Factory for GetOrganisationPageFeed AJAX handler.
+ * Redis handler factory.
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2018.
+ * Copyright (C) Villanova University 2019.
+ * Copyright (C) The National Library of Finland 2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,29 +21,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  AJAX
+ * @package  Statistics
+ * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\AjaxHandler;
+namespace Finna\Statistics\Driver;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Factory for GetOrganisationPageFeed AJAX handler.
+ * Redis handler factory.
  *
  * @category VuFind
- * @package  AJAX
+ * @package  Statistics
+ * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
+ *
+ * @codeCoverageIgnore
  */
-class GetOrganisationPageFeedFactory
-    implements \Laminas\ServiceManager\Factory\FactoryInterface
+class RedisFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -56,9 +61,7 @@ class GetOrganisationPageFeedFactory
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
-     * @throws ContainerException if any other error occurs
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @throws ContainerException&\Throwable if any other error occurs
      */
     public function __invoke(
         ContainerInterface $container,
@@ -68,15 +71,45 @@ class GetOrganisationPageFeedFactory
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
-        $result = new $requestedName(
-            $container->get(\VuFind\Session\Settings::class),
-            $container->get(\VuFind\Config\PluginManager::class)
-                ->get('rss-organisation-page'),
-            $container->get(\Finna\Feed\Feed::class),
-            $container->get('ViewRenderer'),
-            $container->get('ControllerPluginManager')->get('url')
+
+        $config = $container->get(\VuFind\Config\PluginManager::class)
+            ->get('config')->Statistics ?? null;
+        return new $requestedName(
+            $this->getConnection($config),
+            $config->redis_key_prefix ?? Redis::DEFAULT_KEY_PREFIX
         );
-        $result->setLogger($container->get(\VuFind\Log\Logger::class));
-        return $result;
+    }
+
+    /**
+     * Given a configuration, build the client object.
+     *
+     * @param \Laminas\Config\Config $config Session configuration
+     *
+     * @return \Credis_Client
+     */
+    protected function getConnection(\Laminas\Config\Config $config)
+    {
+        // Set defaults if nothing set in config file.
+        $host = $config->redis_host ?? 'localhost';
+        $port = $config->redis_port ?? 6379;
+        $timeout = $config->redis_connection_timeout ?? 0.5;
+        $password = $config->redis_auth ?? null;
+        $username = $config->redis_user ?? null;
+        $redisDb = $config->redis_db ?? 0;
+
+        // Create Credis client, the connection is established lazily
+        $client = new \Credis_Client(
+            $host,
+            $port,
+            $timeout,
+            '',
+            $redisDb,
+            $password,
+            $username
+        );
+        if ((bool)($config->redis_standalone ?? true)) {
+            $client->forceStandalone();
+        }
+        return $client;
     }
 }

@@ -22,7 +22,7 @@
               $linkElement['data-lightbox-title'] = $item['title'];
             }
           ?>
-          <a <?=$this->htmlElement()->getAttributes($linkElement)?> data-feed="<?=$this->escapeHtmlAttr($this->feedUrl)?>">
+          <a <?=$this->htmlElement()->getAttributes($linkElement)?> data-feed="<?=$this->escapeHtmlAttr($this->feedId)?>">
             <?=$this->partial('ajax/feed-list-item.phtml', compact('item'))?>
           </a>
         <?php else: ?>

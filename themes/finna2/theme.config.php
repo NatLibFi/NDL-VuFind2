@@ -185,6 +185,7 @@ $config = [
         'checkouts.js',
         'collection_record.js',
         'combined-search.js',
+        'doi.js',
         'embedded_record.js',
         'facets.js',
         'keep_alive.js',

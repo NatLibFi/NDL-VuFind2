@@ -7,9 +7,9 @@
       : $element === $item['id'];
 
     $link = $item['link'];
-    if ($this->feedUrl) {
+    if ($this->feedId) {
       $link .= strpos($item['link'], '?') === false ? '?' : '&';
-      $link .= 'feedUrl=' . urlencode($this->feedUrl);
+      $link .= 'id=' . urlencode($this->feedId);
     }
   ?>
   <li><?= !$selected ? ('<a href="' . $this->escapeHtmlAttr($link) . '">' . $this->escapeHtml($item['title']) . '</a>') : $this->escapeHtml($item['title']) ?></li>

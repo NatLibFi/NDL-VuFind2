@@ -51,9 +51,6 @@ trait FeedTrait
      * @param array             $feed         Feed data
      * @param Config            $config       Feed configuration
      * @param RendererInterface $viewRenderer View renderer
-     * @param string|bool       $feedUrl      Feed URL (needed for organisation page
-     * RSS-feeds where the feed URL is passed to the FeedContentController as
-     * a URL parameter.
      * @param bool              $touchDevice  Whether the feed is being rendered for
      * a touch-enabled device
      *
@@ -65,7 +62,6 @@ trait FeedTrait
         $feed,
         Config $config,
         RendererInterface $viewRenderer,
-        $feedUrl = false,
         $touchDevice = false
     ) {
         $channel = $feed['channel'];
@@ -98,7 +94,6 @@ trait FeedTrait
             'touchDevice' => $touchDevice,
             'images' => $images,
             'modal' => $modal,
-            'feedUrl' => $feedUrl
         ];
 
         if (isset($config->title)) {
@@ -119,18 +114,6 @@ trait FeedTrait
 
         if (isset($config->visualItems)) {
             $feed['visualItems'] = $config->visualItems;
-        }
-
-        // Add feed url to the item links:
-        if ($feedUrl) {
-            foreach ($feed['items'] as &$item) {
-                if ($item['link'] ?? false) {
-                    $item['link'] .= strpos($item['link'], '?') === false
-                        ? '?' : '&';
-                    $item['link'] .= 'feedUrl=' . urlencode($feedUrl);
-                }
-            }
-            unset($item);
         }
 
         $template = strpos($type, 'carousel') !== false ? 'carousel' : $type;
