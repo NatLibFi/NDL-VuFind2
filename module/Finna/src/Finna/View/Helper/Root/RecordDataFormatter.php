@@ -26,6 +26,7 @@
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma  <juha.luoma@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
@@ -45,6 +46,7 @@ use VuFind\RecordDriver\AbstractBase as RecordDriver;
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma  <juha.luoma@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
@@ -562,6 +564,8 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         case 'dc':
         case 'qdc':
             return $this->filterQDCFields($defaults);
+        case 'eaccpf':
+            return $defaults;
         case 'ead':
             return $this->filterEADFields($defaults);
         case 'ead3':
@@ -581,7 +585,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         case 'primo':
             return $this->filterPrimoFields($defaults);
         default:
-            throw new Exception("Unhandled record type $type");
+            return $defaults;
         }
     }
 
@@ -596,10 +600,10 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
      * @param string $template      Default group template to use if not specified
      *                              for a group (optional, set to null to use the
      *                              default value).
-     * @param array  $options       Additional options to use if not specified for a
-     *                              group (optional, set to null to use the default
-     *                              value). See FieldGroupBuilder::addGroup() for
-     *                              details.
+     * @param array  $options       Additional options to be merged with group
+     *                              specific additional options (optional, set to
+     *                              null to use the default value). See
+     *                              FieldGroupBuilder::addGroup() for details.
      * @param array  $unusedOptions Additional options for the unused lines group
      *                              (optional, set to null to use the default value).
      *                              See FieldGroupBuilder::addGroup()
@@ -614,13 +618,17 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         $options = null,
         $unusedOptions = null
     ) {
+        $template = $template ?? 'core-field-group-fields.phtml';
+        $options = $options ?? [];
+        $unusedOptions = $unusedOptions ?? $options;
+
         $fieldGroups = new FieldGroupBuilder();
         $fieldGroups->setGroups(
             $groups,
             $lines,
-            $template ?? 'core-field-group-fields.phtml',
-            $options ?? [],
-            $unusedOptions ?? []
+            $template,
+            $options,
+            $unusedOptions
         );
         return $fieldGroups->getArray();
     }
@@ -657,7 +665,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             $result[] = [
                 'label' => $group['label'],
                 'value' => $value,
-                'context' => $group['context'],
+                'context' => $group['options']['context'] ?? [],
             ];
         }
         return $result;

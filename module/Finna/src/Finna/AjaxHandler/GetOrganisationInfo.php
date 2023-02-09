@@ -341,18 +341,14 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
      */
     protected function getSectorsForOrganisation(string $institutionId): array
     {
-        $list = $this->organisationInfo->getOrganisationsWithSectors();
-        if (!empty($list[$institutionId])) {
-            // Convert the results into ['value' => $sector] for bc.
-            $result = [];
-            foreach ($list[$institutionId] as $sector) {
-                $result[] = [
-                    'value' => $sector
-                ];
-            }
-            return $result;
+        $result = [];
+        $list = $this->organisationInfo->getSectorsForOrganisation($institutionId);
+        foreach ($list as $sector) {
+            $result[] = [
+                'value' => $sector
+            ];
         }
-        return [];
+        return $result;
     }
 
     /**

@@ -1507,21 +1507,28 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
     }
 
     /**
-     * Get all the organisations and their sectors as an associative array.
+     * Get all the sectors for an organisation.
+     *
+     * @param string $id Organisation ID
      *
      * @return array
      */
-    public function getOrganisationsWithSectors()
+    public function getSectorsForOrganisation(string $id): array
     {
         $result = [];
+        $id = mb_strtolower($id, 'UTF-8');
         foreach ($this->getOrganisationsList() as $organisations) {
             foreach ($organisations as $organisation) {
-                if (!isset($organisation['name'])
-                    && !isset($organisation['sector'])
-                ) {
+                if (!($sector = $organisation['sector'] ?? '')) {
                     continue;
                 }
-                $result[$organisation['name']][] = $organisation['sector'];
+                $orgId = mb_strtolower(
+                    $organisation['organisation'] ?? '',
+                    'UTF-8'
+                );
+                if ($orgId === $id) {
+                    $result[] = $sector;
+                }
             }
         }
         return $result;
