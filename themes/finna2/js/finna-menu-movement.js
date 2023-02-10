@@ -10,13 +10,6 @@ function FinnaMovement (element) {
   _.menuRootElement = $(element);
   _.menuElements = [];
   _.setChildData();
-  _.keys = {
-    up: 38,
-    down: 40,
-    left: 37,
-    right: 39,
-    space: 32
-  };
   _.indexCache = -1;
   _.setEvents();
 }
@@ -26,10 +19,18 @@ function FinnaMovement (element) {
  */
 FinnaMovement.prototype.setEvents = function setEvents() {
   var _ = this;
-  _.menuRootElement.on('reindex.finna', function reIndex() {
-    _.setChildData();
-    _.setFocusTo();
+  _.mutationObserver = new MutationObserver((mutationList) => {
+    for (const mutation of mutationList) {
+      const reIndex = mutation.type === 'childList'
+        || (mutation.type === 'attributes' && mutation.attributeName === 'aria-expanded');
+      if (reIndex) {
+        _.setChildData();
+        _.setFocusTo();
+        break;
+      }
+    }
   });
+  _.mutationObserver.observe(_.menuRootElement[0], {attributes: true, childList: true, subtree: true})
   _.menuRootElement.on('keydown', function detectKeyPress(e) {
     _.checkKey(e);
   });
@@ -54,14 +55,29 @@ FinnaMovement.prototype.setChildData = function setChildData() {
   var i = 0;
   _.menuElements = [];
 
-  var FOCUSABLE_ELEMENTS = ['a[href]', 'area[href]', 'input[type=radio]:checked', 'input:not([disabled]):not([type="hidden"]):not([aria-hidden]):not([type=radio])', 'select:not([disabled]):not([aria-hidden])', 'textarea:not([disabled]):not([aria-hidden])', 'button:not([disabled]):not([aria-hidden]):not(.tooltip-myaccount)', 'iframe', 'object', 'embed', '[contenteditable]', '[tabindex]:not([tabindex^="-"])'];
+  var FOCUSABLE_ELEMENTS = [
+    'a[href]',
+    'area[href]',
+    'input[type=radio]:checked',
+    'input:not([disabled]):not([type="hidden"]):not([aria-hidden]):not([type=radio])',
+    'select:not([disabled]):not([aria-hidden])',
+    'textarea:not([disabled]):not([aria-hidden])',
+    'button:not([disabled]):not([aria-hidden]):not(.tooltip-myaccount)',
+    'iframe',
+    'object',
+    'embed',
+    '[contenteditable]',
+    '[tabindex]:not([tabindex^="-"])'
+  ];
 
   var nodes = _.menuRootElement[0].querySelectorAll(FOCUSABLE_ELEMENTS);
   var children = [].slice.apply(nodes);
   var formedObjects = [];
   children.forEach(function createElement(element) {
+    if (null === element.offsetParent) {
+      return;
+    }
     var input = $(element);
-    input.attr('tabindex', (i === 0) ? '0' : '-1');
     input.data('index', i++);
     formedObjects.push(input);
   });
@@ -73,22 +89,24 @@ FinnaMovement.prototype.setChildData = function setChildData() {
  */
 FinnaMovement.prototype.checkKey = function checkKey(e) {
   var _ = this;
-  var code = (e.keyCode ? e.keyCode : e.which);
-  switch (code) {
-  case _.keys.up:
+  if (!_.menuElements.find((el) => e.target === el[0])) {
+    return;
+  }
+  switch (e.key) {
+  case 'ArrowUp':
     _.moveMainmenu(-1);
     e.preventDefault();
     break;
-  case _.keys.left:
-  case _.keys.right:
-  case _.keys.space:
+  case 'ArrowLeft':
+  case 'ArrowRight':
+  case 'Space':
     var element = _.getMenuItem(0);
     if (!element.is('input')) {
       element.trigger('togglesubmenu');
       e.preventDefault();
     }
     break;
-  case _.keys.down:
+  case 'ArrowDown':
     _.moveMainmenu(1);
     e.preventDefault();
     break;
