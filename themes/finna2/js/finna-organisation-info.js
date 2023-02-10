@@ -67,7 +67,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    *
    * @param {object}   searchParams   Parameters to form the search query
    *                                  - target: page
-   *                                  - buildings: list of buildings separated by a ,
+   *                                  - buildings: list of buildings separated by a comma
    * @param {function} callback       Callback function, function (response|false, callbackParams)
    * @returns void
    */
