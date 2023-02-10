@@ -76,7 +76,6 @@ FinnaMovement.prototype.checkKey = function checkKey(e) {
   if (!this.menuElements.find((el) => e.target === el)) {
     return;
   }
-  console.log(e);
   switch (e.key) {
   case 'ArrowUp':
     this.moveMainmenu(-1);
