@@ -30,7 +30,7 @@ FinnaMovement.prototype.setEvents = function setEvents() {
       }
     }
   });
-  _.mutationObserver.observe(_.menuRootElement[0], {attributes: true, childList: true, subtree: true})
+  _.mutationObserver.observe(_.menuRootElement[0], {attributes: true, childList: true, subtree: true});
   _.menuRootElement.on('keydown', function detectKeyPress(e) {
     _.checkKey(e);
   });
