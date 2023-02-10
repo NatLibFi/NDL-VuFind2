@@ -171,7 +171,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
   /**
    * Gets the organisation list.
    *
-   * @param {string} buildings List of buildings separated by a , 
+   * @param {string} buildings List of buildings separated by a comma
    * @param {string} orgId     Organisation ID
    * @param {string} sector    Sector to look for data i.e 'mus', 'lib'...
    */
