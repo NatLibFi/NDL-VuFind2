@@ -4,6 +4,7 @@ $config = [
     'helpers' => [
         'factories' => [
             'Finna\View\Helper\Root\AdjustHeadingLevel' => 'Laminas\ServiceManager\Factory\InvokableFactory',
+            'Finna\View\Helper\Root\ApiRecordFormatter' => 'Finna\View\Helper\Root\ApiRecordFormatterFactory',
             'Finna\View\Helper\Root\Auth' => 'Finna\View\Helper\Root\AuthFactory',
             'Finna\View\Helper\Root\AuthorizationNotification' => 'Finna\View\Helper\Root\AuthorizationNotificationFactory',
             'Finna\View\Helper\Root\Authority' => 'Finna\View\Helper\Root\AuthorityFactory',
@@ -74,6 +75,7 @@ $config = [
         ],
         'aliases' => [
             'adjustHeadingLevel' => 'Finna\View\Helper\Root\AdjustHeadingLevel',
+            'apiRecordFormatter' => 'Finna\View\Helper\Root\ApiRecordFormatter',
             'auth' => 'Finna\View\Helper\Root\Auth',
             'authority' => 'Finna\View\Helper\Root\Authority',
             'authorizationNote' => 'Finna\View\Helper\Root\AuthorizationNotification',
