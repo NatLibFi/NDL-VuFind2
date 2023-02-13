@@ -83,7 +83,7 @@
                 <?php endforeach; ?>
               </div>
             <?php endif; ?>
-            <?php $containerTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDates(); ?>
+            <?php $containerTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDateRange(); ?>
             <?php if (!empty($containerTitle)): ?>
               <div class="truncate-field" data-rows="1">
                 <?=$this->transEsc('Published in')?>
@@ -108,13 +108,13 @@
                   <?php if (!empty($ref)): ?>
                     <?=$this->escapeHtml($ref); ?>
                   <?php else: ?>
-                    <?=!empty($summDate) ? ' (' . $this->escapeHtml($summDate[0]) . ')' : ''?>
+                    <?=!empty($summDate) ? ' (' . implode('&ndash;', array_map($this->escapeHtml, $summDate)) . ')' : ''?>
                   <?php endif; ?>
                 <?php endif; ?>
               </div>
             <?php elseif (!empty($summDate)): ?>
               <?=!empty($summAuthor) ? '' : ' '?>
-              <span class="publish-year"><?=$this->escapeHtml($summDate[0])?></span>
+              <span class="publish-year"><?=implode('&ndash;', array_map($this->escapeHtml, $summDate));?></span>
             <?php endif; ?>
             <?php if ($classifications = $this->driver->tryMethod('getClassifications')): ?>
               <div class="resultClassification">

@@ -27,11 +27,11 @@ if ($otherTitles):?>
           <?=$this->escapeHtml($author) ?>
         <?php endif; ?>
         <?php if ($dates = $this->driver->tryMethod('getResultDateRange')): ?>
-          <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
+          <?=implode('&ndash;', array_map($this->escapeHtml, $dates)) ?>
         <?php else: ?>
-          <?php foreach ($this->driver->getPublicationDates() as $date): ?>
-            <?=$this->escapeHtml($date) ?>
-          <?php endforeach ?>
+          <?php if ($summDate = $this->driver->getPublicationDateRange()): ?>
+            <?=implode('&ndash;', array_map($this->escapeHtml, $summDate)) ?>
+          <?php endif; ?>
         <?php endif; ?>
       </p>
     <?php else: ?>
@@ -41,7 +41,7 @@ if ($otherTitles):?>
           <?=($index > 0 ? '; ' : '')?><?=$this->escapeHtml($author['name'])?><?php if (!empty($author['role'])): ?>, <?=$this->escapeHtml($author['role'])?><?php endif; ?>
         <?php endforeach; ?>
         <?php if ($dates = $this->driver->getResultDateRange()): ?>
-          <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
+          <?=implode('&ndash;', array_map($this->escapeHtml, $dates)) ?>
         <?php endif; ?>
         <?php if (($results = $this->driver->getSubjectDates()) && !isset($dates[0])): ?>
           <?=implode('<br/>', array_map([$this, 'escapeHtml'], $results))?>

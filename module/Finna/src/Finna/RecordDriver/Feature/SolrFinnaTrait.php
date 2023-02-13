@@ -246,6 +246,34 @@ trait SolrFinnaTrait
     }
 
     /**
+     * Get a Date Range from Index Fields
+     *
+     * @param string $event Event name
+     *
+     * @return ?array Array of one or two dates or null if not available
+     */
+    protected function getDateRange($event)
+    {
+        $key = "{$event}_daterange";
+        if (!isset($this->fields[$key])) {
+            return null;
+        }
+        if (preg_match(
+            '/\[(-?\d{4}).* TO (-?\d{4})/',
+            $this->fields[$key],
+            $matches
+        )
+        ) {
+            $start = (string)(intval($matches[1]));
+            $end = (string)(intval($matches[2]));
+            return $end == '9999' || $end == $start ? [$start] : [$start, $end];
+        } elseif (preg_match('/^(-?\d{4})-/', $this->fields[$key], $matches)) {
+            return [(string)(intval($matches[1]))];
+        }
+        return null;
+    }
+
+    /**
      * Return an external URL where a displayable description text
      * can be retrieved from, if available; false otherwise.
      *
