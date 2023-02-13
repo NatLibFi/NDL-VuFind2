@@ -33,7 +33,6 @@
  */
 namespace Finna\View\Helper\Root;
 
-use Exception;
 use Finna\View\Helper\Root\RecordDataFormatter\FieldGroupBuilder;
 use VuFind\RecordDriver\AbstractBase as RecordDriver;
 
