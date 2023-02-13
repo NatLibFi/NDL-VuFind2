@@ -550,15 +550,13 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
      * @param string $key Key for configuration to look up.
      *
      * @return array
-     *
-     * @throws Exception
      */
     public function getDefaults($key = 'core'): array
     {
-        if (!isset($this->driver)) {
-            throw new Exception('Driver not set when calling getDefaults.');
-        }
         $defaults = parent::getDefaults($key);
+        if (!isset($this->driver)) {
+            return $defaults;
+        }
         $type = strtolower($this->driver->getRecordFormat());
         switch ($type) {
         case 'dc':
