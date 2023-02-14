@@ -73,7 +73,7 @@ class AdminApiController extends \VuFindApi\Controller\AdminApiController
      *
      * @return \Laminas\Http\Response
      */
-    public function getOrganisationsListAction(): \Laminas\Http\Response
+    public function organisationListAction(): \Laminas\Http\Response
     {
         $this->disableSessionWrites();
         $this->determineOutputMode();
