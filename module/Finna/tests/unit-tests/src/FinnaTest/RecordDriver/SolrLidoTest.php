@@ -425,7 +425,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 '[0999-06-02 TO 9999-12-31]',
-                ['999']
+                ['999', '']
             ],
             [
                 '[-9999-01-01 TO 9998-12-31]',

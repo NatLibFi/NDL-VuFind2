@@ -1677,7 +1677,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Get an array of dates for results list display
      *
-     * @return ?array Array of one or two dates or null if not available
+     * @return ?array Array of one or two dates or null if not available.
+     * If date range is still continuing end year will be an empty string.
      */
     public function getResultDateRange()
     {

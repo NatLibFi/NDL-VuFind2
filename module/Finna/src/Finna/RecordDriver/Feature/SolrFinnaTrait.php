@@ -250,7 +250,8 @@ trait SolrFinnaTrait
      *
      * @param string $event Event name
      *
-     * @return ?array Array of one or two dates or null if not available
+     * @return ?array Array of one or two dates or null if not available.
+     * If date range is still continuing end year will be an empty string.
      */
     protected function getDateRange($event)
     {
@@ -266,7 +267,11 @@ trait SolrFinnaTrait
         ) {
             $start = (string)(intval($matches[1]));
             $end = (string)(intval($matches[2]));
-            return $end == '9999' || $end == $start ? [$start] : [$start, $end];
+            if ($end == '9999') {
+                // End year is in the future
+                return [$start, ''];
+            }
+            return $end == $start ? [$start] : [$start, $end];
         } elseif (preg_match('/^(-?\d{4})-/', $daterange, $matches)) {
             return [(string)(intval($matches[1]))];
         }
