@@ -1,6 +1,9 @@
 <?php
-  $formatter = $this->plugin('apiRecordFormatter');
-  $fields = $formatter->getDefaultFields();
-  $fields[] = '__index__';
+  $fields = [
+    '__index__',
+    'id',
+    'images',
+    'languages',
+  ];
 ?>
-<?= json_encode($formatter->format([$this->driver], $fields)) ?>
+<?= json_encode($this->plugin('apiRecordFormatter')->format([$this->driver], $fields)) ?>
