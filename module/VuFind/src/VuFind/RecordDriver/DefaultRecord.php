@@ -1015,7 +1015,8 @@ class DefaultRecord extends AbstractBase
     /**
      * Get publication date or date range.
      *
-     * @return ?array Array of one or two dates or null if not available
+     * @return ?array Array of one or two dates or null if not available.
+     * If date range is still continuing end year will be an empty string.
      */
     public function getPublicationDateRange()
     {
