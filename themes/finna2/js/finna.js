@@ -13,7 +13,6 @@ var finna = (function finnaModule() {
         'common',
         'changeHolds',
         'dateRangeVis',
-        'feed',
         'feedback',
         'itemStatus',
         'layout',

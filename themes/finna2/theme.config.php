@@ -255,6 +255,7 @@ $config = [
         'finna-multiselect.js',
         'finna-model-viewer.js',
         'finna-video-element.js',
+        'finna-feed-element.js',
     ],
     'less' => [
         'active' => false
