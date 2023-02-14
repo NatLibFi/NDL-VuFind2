@@ -254,20 +254,20 @@ trait SolrFinnaTrait
      */
     protected function getDateRange($event)
     {
-        $key = "{$event}_daterange";
-        if (!isset($this->fields[$key])) {
+        $daterange = $this->fields["{$event}_daterange"] ?? [];
+        if (!$daterange) {
             return null;
         }
         if (preg_match(
             '/\[(-?\d{4}).* TO (-?\d{4})/',
-            $this->fields[$key],
+            $daterange,
             $matches
         )
         ) {
             $start = (string)(intval($matches[1]));
             $end = (string)(intval($matches[2]));
             return $end == '9999' || $end == $start ? [$start] : [$start, $end];
-        } elseif (preg_match('/^(-?\d{4})-/', $this->fields[$key], $matches)) {
+        } elseif (preg_match('/^(-?\d{4})-/', $daterange, $matches)) {
             return [(string)(intval($matches[1]))];
         }
         return null;
