@@ -38,6 +38,14 @@ class FinnaFeedElement extends HTMLElement {
     this.cache = [];
   }
 
+  /**
+   * Calculate feed scroll speed for splide.
+   *
+   * @param {number} scrollCnt   Amount of slides to scroll
+   * @param {number} scrollSpeed Default scroll speed to multiply
+   *
+   * @return {number}
+   */
   calculateScrollSpeed(scrollCnt, scrollSpeed) {
     return scrollSpeed * Math.max(1, (scrollCnt / 5));
   }
@@ -56,6 +64,10 @@ class FinnaFeedElement extends HTMLElement {
     });
   }
 
+  /**
+   * Adjust titles. Useful when the screen size changes so the elements
+   * look as they should.
+   */
   adjustTitles() {
     // Move title field below image
     let maxH = 0;
@@ -71,6 +83,12 @@ class FinnaFeedElement extends HTMLElement {
     });
   }
 
+  /**
+   * Get splide js settings.
+   *
+   * @param {object} settings Settings obtained from JSON request to backend.
+   * @returns 
+   */
   getCarouselSettings(settings) {
     var autoplay = typeof settings.autoplay !== 'boolean' ? parseInt(settings.autoplay, 10) : 0;
     return {
@@ -130,10 +148,16 @@ class FinnaFeedElement extends HTMLElement {
     };
   }
 
+  /**
+   * When the feed is loaded or found from the internal cache.
+   * Constructs the feed into the dom.
+   *
+   * @param {object} jsonResponse The response obtained from the backend.
+   */
   afterGetFeed(jsonResponse) {
     const holder = this;
     if (jsonResponse.data) {
-      holder.innerHTML = VuFind.updateCspNonce(jsonResponse.data.html)
+      holder.innerHTML = VuFind.updateCspNonce(jsonResponse.data.html);
       var settings = jsonResponse.data.settings;
       settings.height = settings.height || 300;
       const type = settings.type;
@@ -215,7 +239,7 @@ class FinnaFeedElement extends HTMLElement {
           }); 
         } else {
           holder.querySelectorAll('.carousel').forEach(el => {
-            el.classList.add('carousel-non-touch-device')
+            el.classList.add('carousel-non-touch-device');
           });
         }
       }
@@ -257,7 +281,7 @@ class FinnaFeedElement extends HTMLElement {
         showLessFeeds.classList.add('hidden');
       });
     }
-    const feedGrid = holder.querySelector('.feed-grid:not(.news-feed .feed-grid, .events-feed .feed-grid)')
+    const feedGrid = holder.querySelector('.feed-grid:not(.news-feed .feed-grid, .events-feed .feed-grid)');
     if (feedGrid) {
       if (feedGrid.getBoundingClientRect().width <= 500) {
         feedGrid.querySelectorAll('.grid-item').forEach(el => {
@@ -280,6 +304,9 @@ class FinnaFeedElement extends HTMLElement {
     );
   }
 
+  /**
+   * Starts process to load the proper feed.
+   */
   loadFeed() {
     const cacheItem = this.cache.find(c => { return c.id === this.feedId; });
     if (cacheItem) {
@@ -323,8 +350,6 @@ class FinnaFeedElement extends HTMLElement {
    * Observed attribute value changed
    *
    * @param {string} name     Name of the attribute
-   * @param {string} oldValue Attributes old value
-   * @param {string} newValue Attributes new value
    */
   attributeChangedCallback(name) {
     switch (name) {
@@ -336,7 +361,6 @@ class FinnaFeedElement extends HTMLElement {
 
   /**
    * Add this element to an intersection observer.
-   * Creating a new intersection observer does not overwrite the new one.
    */
   addToObserver() {
     VuFind.observerManager.createIntersectionObserver(
