@@ -238,7 +238,6 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     holder.find('.office-quick-information').toggleClass('hide', false);
     var contactHolder = holder.find('.contact-details-' + (rssAvailable ? 'rss' : 'no-rss'));
     contactHolder.show();
-    finna.feed.init(contactHolder);
 
     holder.find('.office-quick-information .service-title').text(data.name);
     if ('address' in data) {
@@ -491,18 +490,20 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     var rssAvailable = false;
     if ('rss' in data.details) {
       $(data.details.rss).each(function handleRSSFeed(ind, obj) {
+
         if (obj.feedType !== 'news' && obj.feedType !== 'events') {
           return false;
         }
+        const feedElement = document.createElement('finna-feed');
+        feedElement.feedId = 'organisation-info|' + obj.parent + '|' + obj.id + '|' + obj.orgType + '|' + obj.feedType;
         var feedHolder = holder.find('.feed-container.' + obj.feedType + '-feed');
         feedHolder
           .empty()
+          .closest('.rss-container')
           .show()
-          .closest('.rss-container').show();
+          .find('.feed-container')
+          .replaceWith(feedElement);
         // Use dataset to avoid jQuery caching issues:
-        feedHolder[0].dataset.feed = 'organisation-info|' + obj.parent + '|' + obj.id + '|' + obj.orgType + '|' + obj.feedType;
-
-        finna.feed.loadFeed(feedHolder);
         rssAvailable = true;
       });
     }

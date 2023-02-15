@@ -14,7 +14,7 @@ finna.feedTabs = (function finnaFeedTab() {
     var _ = this;
     container.classList.add('init-done');
     _.anchors = container.querySelectorAll('.feed-tab-anchor, .feed-accordion-anchor');
-    _.tabContent = container.querySelector('.tab-content');
+    _.tabContent = container.querySelector('finna-feed');
     _.setEvents();
     _.firstLoad();
     _.allowHashChange = false;
@@ -78,15 +78,13 @@ finna.feedTabs = (function finnaFeedTab() {
         parent.setAttribute('aria-selected', false);
       }
     });
-    _.tabContent.innerHTML = '';
-    delete _.tabContent.dataset.init;
-    _.tabContent.dataset.feed = tab;
-    finna.feed.loadFeed(_.tabContent, function onLoad() {
+    _.tabContent.feedId = tab;
+    _.tabContent.onFeedLoaded = function onLoad() {
       _.isLoading = false;
       if (!_.allowHashChange) {
         _.allowHashChange = true;
       }
-    });
+    };
   };
 
   /**
