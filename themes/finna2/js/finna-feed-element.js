@@ -50,6 +50,10 @@ class FinnaFeedElement extends HTMLElement {
     return scrollSpeed * Math.max(1, (scrollCnt / 5));
   }
 
+  /**
+   * Adjust slides. Useful when the screen size changes so the elements
+   * look as they should.
+   */
   adjustSlides() {
     const slide = this.querySelectorAll('.slick-slide');
     const newWidth = slide[0].getBoundingClientRect.width - 20;
