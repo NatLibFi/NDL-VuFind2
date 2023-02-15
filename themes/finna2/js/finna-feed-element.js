@@ -333,7 +333,6 @@ class FinnaFeedElement extends HTMLElement {
           this.cache.push(cacheObject);
           this.afterGetFeed(responseJSON);
         }).catch((responseJSON) => {
-          console.log(responseJSON);
           holder.innerHTML = `<!-- Feed could not be loaded: ${responseJSON.data || ''} -->`;
         });
     }
