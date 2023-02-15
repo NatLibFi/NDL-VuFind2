@@ -263,7 +263,7 @@ class FinnaFeedElement extends HTMLElement {
     }
     const showMoreFeeds = holder.querySelector('.show-more-feeds');
     const showLessFeeds = holder.querySelector('.show-less-feeds');
-    if (showMoreFeeds.length) {
+    if (showMoreFeeds) {
       showMoreFeeds.addEventListener('click', () => {
         truncatedGrid.forEach(el => {
           el.classList.remove('hidden');
@@ -272,7 +272,7 @@ class FinnaFeedElement extends HTMLElement {
         showMoreFeeds.classList.add('hidden');
       });
     }
-    if (showLessFeeds.length) {
+    if (showLessFeeds) {
       showLessFeeds.addEventListener('click', () => {
         truncatedGrid.forEach(el => {
           el.classList.add('hidden');
@@ -332,8 +332,9 @@ class FinnaFeedElement extends HTMLElement {
           };
           this.cache.push(cacheObject);
           this.afterGetFeed(responseJSON);
-        }).catch((jsonResponse) => {
-          holder.innerHTML = `<!-- Feed could not be loaded: ${jsonResponse.data || ''} -->`;
+        }).catch((responseJSON) => {
+          console.log(responseJSON);
+          holder.innerHTML = `<!-- Feed could not be loaded: ${responseJSON.data || ''} -->`;
         });
     }
 
