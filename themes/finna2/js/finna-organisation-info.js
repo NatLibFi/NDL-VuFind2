@@ -2,9 +2,12 @@
 finna.organisationInfo = (function finnaOrganisationInfo() {
   var organisationList = {};
 
-  function query(parentId, queryParams, callback) {
+  function query(queryParams, callback) {
     var url = VuFind.path + '/AJAX/JSON';
-    var org = {'id': parentId, 'sector': ''};
+    var org = {'id': queryParams.parent, 'sector': queryParams.sector || ''};
+    delete queryParams.sector;
+    delete queryParams.parent;
+
     var params = {method: 'getOrganisationInfo', parent: org, params: queryParams};
     $.getJSON(url, params)
       .done(function onGetOrganisationInfoDone(response) {
@@ -59,18 +62,27 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     }
   }
 
-  function getOrganisations(target, parent, buildings, callbackParams, callback) {
+  /**
+   * Fetch organisations.
+   *
+   * @param {object}   searchParams   Parameters to form the search query
+   *                                  - target: page
+   *                                  - buildings: list of buildings separated by a comma
+   * @param {function} callback       Callback function, function (response|false, callbackParams)
+   * @returns void
+   */
+  function getOrganisations(searchParams, callback) {
+    const parent = searchParams.parent;
     if (typeof parent === 'undefined') {
       return;
     }
-
     if (parent in organisationList) {
       callback(organisationList[parent]);
     }
-
-    query(parent, {action: 'consortium', target: target, buildings: buildings}, function onQueryDone(success, response) {
+    searchParams.action = 'consortium';
+    query(searchParams, function onQueryDone(success, response) {
       if (!success) {
-        callback(false, callbackParams);
+        callback(false);
         return;
       }
       var list = getField(response, 'list');
@@ -79,7 +91,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
         organisationList[obj.id].details = {};
         cacheSchedules(obj.id, obj);
       });
-      callback(response, callbackParams);
+      callback(response);
     });
   }
 
@@ -162,26 +174,28 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     organisationList[id].details = details;
   }
 
-  function getSchedules(target, parent, id, periodStart, dir, fullDetails, allServices, callback) {
-    var params = {
-      target: target, action: 'details', id: id,
-      fullDetails: fullDetails ? 1 : 0,
-      allServices: allServices ? 1 : 0
-    };
-
-    if (periodStart) {
-      params = $.extend(params, {periodStart: periodStart});
-    }
-    if (dir) {
-      params = $.extend(params, {dir: dir});
-    }
-
-    query(parent, params, function onQueryDone(success, obj) {
+  /**
+   * Get building schedules.
+   * @param {object} queryParams Query parameters used:
+   *                             - Parent: Organisation parent id.
+   *                             - Target: Target,
+   *                             - id: Organisation id
+   *                             - periodStart: Start date of period
+   *                             - dir: period paging direction -1 | 1
+   *                             - fullDetails: 0|1
+   *                             - allServices: 0|1
+   * @param {function} callback  Callback function (false | string, object)
+   *
+   * @returns void
+   */
+  function getSchedules(queryParams, callback) {
+    const fullDetails = queryParams.fullDetails || 0;
+    const id = queryParams.id || '';
+    query(queryParams, function onQueryDone(success, obj) {
       if (!success) {
         callback(false);
         return;
       }
-
       if (fullDetails) {
         cacheDetails(id, obj);
       }

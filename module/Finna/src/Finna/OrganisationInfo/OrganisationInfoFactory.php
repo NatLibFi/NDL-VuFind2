@@ -24,6 +24,7 @@
  * @package  Service
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
@@ -42,6 +43,7 @@ use Psr\Container\ContainerInterface;
  * @package  Service
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
@@ -75,7 +77,11 @@ class OrganisationInfoFactory implements FactoryInterface
             $container->get(\VuFind\Cache\Manager::class),
             $container->get('ViewRenderer'),
             $container->get(\VuFind\Date\Converter::class),
-            $container->get('ControllerPluginManager')->get('url')
+            $container->get('ControllerPluginManager')->get('url'),
+            $container->get(\VuFind\Config\PluginManager::class)
+                ->get('OrganisationInfo'),
+            $container->get(\VuFind\Search\Results\PluginManager::class),
+            $container->get(\VuFind\Search\Solr\HierarchicalFacetHelper::class),
         );
     }
 }

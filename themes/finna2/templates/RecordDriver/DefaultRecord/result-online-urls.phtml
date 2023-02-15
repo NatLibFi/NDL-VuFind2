@@ -110,11 +110,11 @@
           <div><?=$this->transEsc('eol_ellipsis')?></div>
         <?php endif; ?>
       </div>
-      <?php if ($openUrlActive): ?>
-        <?=$openUrl->renderTemplate()?>
-      <?php endif; ?>
       <?php if ($doiActive): ?>
         <?=$doi->renderTemplate()?>
+      <?php endif; ?>
+      <?php if ($openUrlActive): ?>
+        <?=$openUrl->renderTemplate()?>
       <?php endif; ?>
     <?php endif; ?>
   </div>

@@ -93,41 +93,15 @@
         </div>
       <?php endif; ?>
       <?/* Display Main Details */?>
-      <?php
-        $formatter = $this->recordDataFormatter();
-        $filteredFields = $formatter->filterLrmiFields($formatter->getDefaults('core'));
-        $coreFields = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
-            ['lines' => [
-              'Educational Role',
-              'Educational Level',
-              'Learning Resource Type',
-              'Educational Subject',
-              'Objective and Content',
-              'Subjects',
-              'Language',
-            ]]
-        ], $filteredFields));
+      <?=
+        $this->record($this->driver)->renderTemplate(
+            'core-fields.phtml',
+            [
+              'driver' => $this->driver,
+              'rights' => $rights
+            ]
+        );
       ?>
-      <?php if ($rights || !empty($coreFields)): ?>
-        <table class="table table-finna-record record-details record-field-groups" role="presentation">
-          <?php if ($rights): ?>
-            <?=
-              $this->record($this->driver)->renderTemplate(
-                  'core-field-group-fields.phtml',
-                  [
-                      'data' => [
-                          [
-                              'label' => 'Image Rights',
-                              'value' => $this->partial('Helpers/copyright-field-value.phtml', ['data' => $rights])
-                          ]
-                      ]
-                  ]
-              )
-            ?>
-          <?php endif; ?>
-          <?=$this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $coreFields]);?>
-        </table>
-      <?php endif; ?>
       <?/* End Main Details */?>
     </div>
 

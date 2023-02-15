@@ -168,10 +168,23 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     });
   }
 
-  function loadOrganisationList(buildings, orgId) {
-    service.getOrganisations('page', parent, buildings, {id: orgId}, function onGetOrganisation(response, params) {
+  /**
+   * Gets the organisation list.
+   *
+   * @param {string} buildings List of buildings separated by a comma
+   * @param {string} orgId     Organisation ID
+   * @param {string} sector    Sector to look for data i.e 'mus', 'lib'...
+   */
+  function loadOrganisationList(buildings, orgId, sector) {
+    const searchParams = {
+      target: 'page',
+      parent: parent,
+      buildings: buildings,
+      sector: sector
+    };
+    service.getOrganisations(searchParams, function onGetOrganisation(response) {
       if (response) {
-        var id = params.id;
+        var id = orgId;
         holder.find('.loading').toggleClass('loading', false);
 
         var cnt = 0;
@@ -478,18 +491,18 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     var rssAvailable = false;
     if ('rss' in data.details) {
       $(data.details.rss).each(function handleRSSFeed(ind, obj) {
-        var id = obj.id;
-        if (id !== 'news' && id !== 'events') {
+        if (obj.feedType !== 'news' && obj.feedType !== 'events') {
           return false;
         }
-        var feedHolder = holder.find('.feed-container.' + id + '-feed');
+        var feedHolder = holder.find('.feed-container.' + obj.feedType + '-feed');
         feedHolder
-          .empty().show()
-          .data('url', encodeURIComponent(obj.url))
-          .data('feed', 'organisation-info-' + encodeURIComponent(id))
+          .empty()
+          .show()
           .closest('.rss-container').show();
+        // Use dataset to avoid jQuery caching issues:
+        feedHolder[0].dataset.feed = 'organisation-info|' + obj.parent + '|' + obj.id + '|' + obj.orgType + '|' + obj.feedType;
 
-        finna.feed.loadFeedFromUrl(feedHolder);
+        finna.feed.loadFeed(feedHolder);
         rssAvailable = true;
       });
     }
@@ -516,9 +529,10 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
 
     setOfficeInformationLoader(false);
 
-    parent = finna.common.getField(options, 'id');
-    consortiumInfo = finna.common.getField(options, 'consortiumInfo') === 1;
-    var buildings = finna.common.getField(options, 'buildings');
+    parent = options.id || null;
+    consortiumInfo = (options.consortiumInfo || null) === 1;
+    var buildings = options.buildings;
+    var sector = options.sector;
     var mapTileUrl = 'https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png';
     var attribution =
       '<i class="fa fa-map-marker marker open"></i><span class="map-marker-text">' + VuFind.translate('organisation_info_is_open') + '</span>' +
@@ -633,8 +647,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     if (hash) {
       library = hash;
     }
-
-    loadOrganisationList(buildings, library);
+    loadOrganisationList(buildings, library, sector);
   }
 
   var my = {

@@ -69,7 +69,6 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     [
                         'urls' => [
                             'large' => 'https://largekuvanlinkki.com',
-                            'original' => 'https://originalKuvanLinkkiTif.com',
                             'small' => 'https://largekuvanlinkki.com',
                             'medium' => 'https://largekuvanlinkki.com'
                         ],
@@ -110,7 +109,6 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     [
                         'urls' => [
                             'large' => 'https://largekuvanlinkki2.com',
-                            'original' => 'https://originalKuvanLinkkiTif.com',
                             'small' => 'https://thumbkuvanlinkki2.com',
                             'medium' => 'https://thumbkuvanlinkki2.com',
                             'master' => 'https://masterkuvanlinkki2.com'

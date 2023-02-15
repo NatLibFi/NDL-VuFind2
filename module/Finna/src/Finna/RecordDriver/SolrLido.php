@@ -514,11 +514,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                         $representation->resourceMeasurementsSet
                     )
                     ) {
-                        $imageUrls
-                            = array_merge($imageUrls, $image['displayImage']);
-
+                        if (!empty($image['displayImage'])) {
+                            $imageUrls
+                                = array_merge($imageUrls, $image['displayImage']);
+                        }
                         // Does image have a highresolution for download?
-                        if ($image['highResolution']) {
+                        if (!empty($image['highResolution'])) {
                             $highResolution = array_merge(
                                 $highResolution,
                                 $image['highResolution']
@@ -770,8 +771,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         }
 
         $size = $this->imageTypes[$type];
-        $displayImage[$size] = $url;
-
+        $displayImage = [];
+        if ($size !== 'original') {
+            $displayImage[$size] = $url;
+        }
         $highResolution = [];
         if (in_array($size, ['master', 'original'])) {
             $currentHiRes = [
@@ -1090,13 +1093,21 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getEvents()
     {
         $events = [];
+        $language = $this->getLocale();
         foreach ($this->getXmlRecord()->xpath(
             '/lidoWrap/lido/descriptiveMetadata/eventWrap/eventSet/event'
         ) as $node) {
             $name = (string)($node->eventName->appellationValue ?? '');
             $type = isset($node->eventType->term)
                 ? mb_strtolower((string)$node->eventType->term, 'UTF-8') : '';
-            $date = (string)($node->eventDate->displayDate ?? '');
+            if (!empty($node->eventDate->displayDate)) {
+                $date = (string)($this->getLanguageSpecificItem(
+                    $node->eventDate->displayDate,
+                    $language
+                ));
+            } else {
+                $date = '';
+            }
             if (!$date && !empty($node->eventDate->date)) {
                 $startDate
                     = trim((string)($node->eventDate->date->earliestDate ?? ''));
@@ -1685,7 +1696,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/'
             . 'subjectSet/subject/subjectActor/actor/nameActorSet/appellationValue'
         ) as $node) {
-            $results[] = (string)$node;
+            if ($actor = trim((string)$node)) {
+                $results[] = $actor;
+            }
         }
         return $results;
     }
@@ -1698,11 +1711,20 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getSubjectDates()
     {
         $results = [];
+        $language = $this->getLocale();
         foreach ($this->getXmlRecord()->xpath(
             'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/'
-            . 'subjectSet/subject/subjectDate/displayDate'
+            . 'subjectSet/subject'
         ) as $node) {
-            $results[] = (string)$node;
+            if (!empty($node->subjectDate->displayDate)) {
+                $term = (string)($this->getLanguageSpecificItem(
+                    $node->subjectDate->displayDate,
+                    $language
+                ));
+                if ($term) {
+                    $results[] = $term;
+                }
+            }
         }
         return $results;
     }
@@ -1743,9 +1765,23 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getAllSubjectHeadingsWithoutPlaces(bool $extended = false): array
     {
         $headings = [];
-        foreach (['topic', 'genre', 'era'] as $field) {
+        $language = $this->getLocale();
+        foreach (['topic', 'genre'] as $field) {
             if (isset($this->fields[$field])) {
                 $headings = array_merge($headings, (array)$this->fields[$field]);
+            }
+        }
+        // Include all display dates from events
+        foreach ($this->getXmlRecord()->lido->descriptiveMetadata->eventWrap
+            ->eventSet ?? [] as $node) {
+            if (!empty($node->eventDate->displayDate)) {
+                $date = (string)($this->getLanguageSpecificItem(
+                    $node->eventDate->displayDate,
+                    $language
+                ));
+                if ($date) {
+                    $headings[] = $date;
+                }
             }
         }
 

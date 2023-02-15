@@ -281,31 +281,13 @@ finna.feed = (function finnaFeed() {
   }
 
   function loadFeed(holder, onFeedLoaded) {
-    var container = holder instanceof jQuery ? holder : $(holder);
-    // Clear the internal jQuery memory of data feed so proper data being taken
-    container.removeData('feed');
-    var id = container.data('feed');
-    if (typeof id == 'undefined') {
+    var container = $(holder);
+    // Use dataset to avoid jQuery caching issues:
+    var id = container[0].dataset.feed;
+    if (typeof id === 'undefined') {
       return;
     }
     processLoadFeed(container, {method: 'getFeed', id: id}, onFeedLoaded);
-  }
-
-  function loadFeedFromUrl(holder) {
-    var feedUrl = holder.data('url');
-    var id = holder.data('feed');
-
-    if (typeof feedUrl == 'undefined' || typeof id == 'undefined') {
-      return;
-    }
-    processLoadFeed(
-      holder,
-      {
-        method: 'getOrganisationPageFeed',
-        url: feedUrl,
-        id: id
-      }
-    );
   }
 
   function initComponents() {
@@ -320,7 +302,6 @@ finna.feed = (function finnaFeed() {
 
   var my = {
     loadFeed: loadFeed,
-    loadFeedFromUrl: loadFeedFromUrl,
     init: function init() {
       initComponents();
     }

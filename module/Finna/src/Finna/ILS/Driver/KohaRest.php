@@ -1036,6 +1036,15 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             } else {
                 $libraryId = $item['home_library_id'];
             }
+            // Check holding library and modify status if not in home library:
+            if ($this->useHomeLibrary && null !== $item['holding_library_id']
+                && $item['home_library_id'] !== $item['holding_library_id']
+                && 'On Shelf' === $status
+            ) {
+                $available = false;
+                $status = 'Not Available';
+                array_unshift($statusCodes, 'Not Available');
+            }
             $locationId = $item['location'];
 
             $number = $item['serial_issue_number'];

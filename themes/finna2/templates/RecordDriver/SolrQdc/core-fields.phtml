@@ -1,0 +1,25 @@
+<!-- START of: finna - RecordDriver/SolrQdc/core-fields.phtml -->
+<?php
+  $formatter = $this->recordDataFormatter($this->driver);
+  $coreFields = $formatter->getData($formatter->getDefaults());
+?>
+<?php if (!empty($coreFields)): ?>
+  <table class="table table-finna-record record-details" role="presentation">
+    <?php foreach ($coreFields as $key => $current): ?>
+      <?php $header = $this->transEsc($current['context']['title'] ?? $current['label']); ?>
+      <?php if ($header): ?>
+        <?php if ($class = $current['context']['class'] ?? null): ?>
+          <tr class="<?=$this->escapeHtmlAttr($class)?>">
+        <?php else: ?>
+          <tr>
+        <?php endif; ?>
+          <th><?=$header?></th>
+          <td><?=$current['value']?></td>
+        </tr>
+      <?php else: ?>
+        <?=$current['value']?>
+      <?php endif; ?>
+    <?php endforeach; ?>
+  </table>
+<?php endif; ?>
+<!-- END of: finna - RecordDriver/SolrQdc/core-fields.phtml -->

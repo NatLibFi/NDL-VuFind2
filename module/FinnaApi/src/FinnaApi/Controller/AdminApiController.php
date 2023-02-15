@@ -67,4 +67,25 @@ class AdminApiController extends \VuFindApi\Controller\AdminApiController
 
         return $this->output(['fields' => $data], self::STATUS_OK);
     }
+
+    /**
+     * Returns list of organisations
+     *
+     * @return \Laminas\Http\Response
+     */
+    public function organisationListAction(): \Laminas\Http\Response
+    {
+        $this->disableSessionWrites();
+        $this->determineOutputMode();
+
+        $organisationInfo = $this->serviceLocator->get(
+            \Finna\OrganisationInfo\OrganisationInfo::class
+        );
+        return $this->output(
+            [
+                'data' => $organisationInfo->getOrganisationsList()
+            ],
+            self::STATUS_OK
+        );
+    }
 }

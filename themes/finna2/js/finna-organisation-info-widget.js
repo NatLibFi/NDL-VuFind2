@@ -226,9 +226,18 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
       $(this).data('icon-classes', icon.attr('class'));
       icon.removeClass('fa-arrow-right fa-arrow-left');
       icon.addClass('fa-spinner fa-spin');
-
+      const queryParams = {
+        action: 'details',
+        target: holder.data('target'),
+        parent: parent,
+        id: id,
+        periodStart: holder.data('period-start'),
+        dir: dir,
+        fullDetails: 0,
+        allServices: 0
+      };
       service.getSchedules(
-        holder.data('target'), parent, id, holder.data('period-start'), dir, false, false,
+        queryParams,
         function onGetSchedules(response) {
           schedulesLoaded(id, response);
         }
@@ -313,6 +322,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     holder.find('.is-open').hide();
 
     var parent = holder.data('parent');
+    var sector = holder.data('sector');
     var data = service.getDetails(id);
     if (!data) {
       detailsLoaded(id, null);
@@ -348,9 +358,19 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
       map.show();
     }
 
+    const queryParams = {
+      action: 'details',
+      target: holder.data('target'),
+      parent: parent,
+      sector: sector,
+      id: id,
+      periodStart: holder.data('period-start'),
+      dir: null,
+      fullDetails: 1,
+      allServices: allServices ? 1 : 0
+    };
     service.getSchedules(
-      holder.data('target'), parent, id,
-      holder.data('period-start'), null, true, allServices,
+      queryParams,
       function handleSchedule(response) {
         if (response) {
           schedulesLoaded(id, response);
@@ -414,6 +434,11 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     attachWeekNaviListener();
   }
 
+  /**
+   * Loads organisation list.
+   *
+   * @returns void
+   */
   function loadOrganisationList() {
     holder.find('.week-navi.prev-week').fadeTo(0, 0);
 
@@ -422,10 +447,17 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
       return;
     }
     var buildings = holder.data('buildings');
+    var sector = holder.data('sector');
 
     toggleSpinner(true);
     holder.find('.error,.info-element').hide();
-    service.getOrganisations(holder.data('target'), parent, buildings, {}, function onGetOrganisations(response) {
+    const searchParams = {
+      target: holder.data('target'),
+      parent: parent,
+      buildings: buildings,
+      sector: sector
+    };
+    service.getOrganisations(searchParams, {}, function onGetOrganisations(response) {
       if (response === false) {
         holder.html('<!-- Organisation info could not be loaded');
       } else {

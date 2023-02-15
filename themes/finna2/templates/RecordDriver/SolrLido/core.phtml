@@ -133,39 +133,14 @@
       <?php endif; ?>
 
       <?/* Display Main Details */?>
-      <?php
-        $formatter = $this->recordDataFormatter();
-        $coreFields = $formatter->filterLIDOFields($formatter->getDefaults('core'));
-        // Note: groups contain also fields that come before the Context group:
-        $coreFieldGroups = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
-          ['lines' => ['Genre']],
-          ['lines' => ['Age Limit']],
-          ['lines' => ['Original Work']],
-          ['lines' => ['Published in']],
-          ['lines' => ['New Title']],
-          ['lines' => ['Previous Title']],
-          ['lines' => ['Secondary Authors']],
-          ['lines' => ['Actors']],
-          ['lines' => ['Identifiers']],
-          ['lines' => ['Press Reviews']],
-          ['lines' => ['Music']],
-          ['lines' => ['Projected Publication Date']],
-          ['lines' => ['Dissertation Note']],
-          ['lines' => ['Other Links']],
-          ['lines' => ['Presenters']],
-          ['lines' => ['Other Titles']],
-          ['lines' => ['Format']],
-          ['lines' => ['Collection']],
-          ['label' => 'Context',
-           'lines' => ['Parent Archive', 'Parent Collection', 'Parent Purchase Batch', 'Parent Series', 'Parent Work']
-          ],
-        ], $coreFields));
+      <?=
+        $this->record($this->driver)->renderTemplate(
+            'core-fields.phtml',
+            [
+              'driver' => $this->driver,
+            ]
+        );
       ?>
-      <?php if (!empty($coreFieldGroups)): ?>
-        <table class="table table-finna-record record-details record-field-groups" role="presentation">
-          <?=$this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $coreFieldGroups]);?>
-        </table>
-      <?php endif; ?>
       <?/* End Main Details */?>
 
       <?php if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>

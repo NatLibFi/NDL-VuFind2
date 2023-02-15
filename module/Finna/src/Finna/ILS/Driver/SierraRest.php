@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2016-2020.
+ * Copyright (C) The National Library of Finland 2016-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -40,6 +40,14 @@ use VuFind\Exception\ILS as ILSException;
  */
 class SierraRest extends \VuFind\ILS\Driver\SierraRest
 {
+    /**
+     * Error message in the exception when an empty reply was received
+     *
+     * @var string
+     */
+    public const EMPTY_REPLY_ERROR
+        = 'Error in cURL request: Empty reply from server';
+
     /**
      * Get Holding
      *
@@ -286,5 +294,82 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
            'callnumber' => null,
            'location' => '__HOLDINGSSUMMARYLOCATION__'
         ];
+    }
+
+    /**
+     * Make Request
+     *
+     * Wraps the parent's makeRequest and retries the request on empty reply
+     *
+     * @param array  $hierarchy    Array of values to embed in the URL path of the
+     * request
+     * @param array  $params       A keyed array of query data
+     * @param string $method       The http request method to use (Default is GET)
+     * @param array  $patron       Patron information, if available
+     * @param bool   $returnStatus Whether to return HTTP status code and response
+     * as a keyed array instead of just the response
+     *
+     * @throws ILSException
+     * @return mixed JSON response decoded to an associative array, an array of HTTP
+     * status code and JSON response when $returnStatus is true or null on
+     * authentication error when using patron-specific access
+     */
+    protected function makeRequest(
+        $hierarchy,
+        $params = false,
+        $method = 'GET',
+        $patron = false,
+        $returnStatus = false
+    ) {
+        // Retry request if we get an empty reply from the server:
+        $retryLimit = (int)($this->config['Catalog']['http_retry_limit'] ?? 3);
+        $lastException = null;
+
+        $statusCallback = function (int $attempt, bool $success) use (
+            $hierarchy,
+            $params,
+            $method
+        ): void {
+            $apiUrl = $this->config['Catalog']['host'];
+            foreach ($hierarchy as $value) {
+                $apiUrl .= '/' . urlencode($value);
+            }
+            $msg = "$method request for '$apiUrl' with params "
+                . var_export($params, true)
+                . ($success ? ' succeeded' : ' failed')
+                . " on attempt $attempt";
+            $this->logWarning($msg);
+        };
+
+        for ($attempt = 1; $attempt <= 1 + $retryLimit; $attempt++) {
+            try {
+                $result = parent::makeRequest(
+                    $hierarchy,
+                    $params,
+                    $method,
+                    $patron,
+                    $returnStatus
+                );
+                if ($attempt > 1) {
+                    $statusCallback($attempt, true);
+                }
+                return $result;
+            } catch (ILSException $e) {
+                $lastException = $e;
+                $previous = $lastException->getPrevious();
+                // Break out of retry loop if we got something else as an error:
+                if ($previous
+                    && static::EMPTY_REPLY_ERROR !== $previous->getMessage()
+                ) {
+                    break;
+                }
+                $statusCallback($attempt, false);
+            }
+        }
+        throw new ILSException(
+            $lastException->getMessage(),
+            $lastException->getCode(),
+            $lastException
+        );
     }
 }
