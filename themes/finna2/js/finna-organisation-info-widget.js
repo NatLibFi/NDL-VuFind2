@@ -457,7 +457,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
       buildings: buildings,
       sector: sector
     };
-    service.getOrganisations(searchParams, {}, function onGetOrganisations(response) {
+    service.getOrganisations(searchParams, function onGetOrganisations(response) {
       if (response === false) {
         holder.html('<!-- Organisation info could not be loaded');
       } else {
