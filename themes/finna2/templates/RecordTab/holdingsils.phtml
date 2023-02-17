@@ -334,7 +334,7 @@
         </div>
       <?php endif; ?>
     <?php endif; ?>
-    <div class="holdings-container-heading">
+    <div class="holdings-container-heading" tabindex="0" role="button" aria-expanded="<?=$holdingsDetails == 'collapsed' ? 'false' : 'true'?>">
       <div class="location">
         <i class="fa fa-arrow-<?=$holdingsDetails == 'collapsed' ? 'right' : 'down'?>" aria-hidden="true"></i>
         <?php $locationText = $this->transEscWithPrefix('location_', $holding['location']); ?>

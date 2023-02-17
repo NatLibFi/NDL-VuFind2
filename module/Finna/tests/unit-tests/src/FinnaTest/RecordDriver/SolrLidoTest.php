@@ -409,7 +409,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 '[2009-01-01 TO 2009-12-31]',
-                ['2009', '2009']
+                ['2009']
             ],
             [
                 '[-2000-01-01 TO 0900-12-31]',
@@ -417,15 +417,15 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 '1937-12-08',
-                ['1937', null]
+                ['1937']
             ],
             [
                 '[0000-01-01 TO 0000-12-31]',
-                ['0', '0']
+                ['0']
             ],
             [
                 '[0999-06-02 TO 9999-12-31]',
-                ['999', null]
+                ['999', '']
             ],
             [
                 '[-9999-01-01 TO 9998-12-31]',

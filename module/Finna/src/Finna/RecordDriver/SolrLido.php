@@ -1677,7 +1677,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Get an array of dates for results list display
      *
-     * @return ?array Array of two dates or null if not available
+     * @return ?array Array of one or two dates or null if not available.
+     * If date range is still continuing end year will be an empty string.
      */
     public function getResultDateRange()
     {
@@ -1990,39 +1991,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         return isset($this->recordConfig->$confParam)
             && isset($this->recordConfig->$confParam[$datasource])
             ? $this->recordConfig->$confParam[$datasource] : null;
-    }
-
-    /**
-     * Get a Date Range from Index Fields
-     *
-     * @param string $event Event name
-     *
-     * @return ?array Array of two dates or null if not available
-     */
-    protected function getDateRange($event)
-    {
-        $key = "{$event}_daterange";
-        if (!isset($this->fields[$key])) {
-            return null;
-        }
-        if (preg_match(
-            '/\[(-?\d{4}).* TO (-?\d{4})/',
-            $this->fields[$key],
-            $matches
-        )
-        ) {
-            $end = (string)(intval($matches[2]));
-            return [
-                (string)(intval($matches[1])),
-                $end == '9999' ? null : $end
-            ];
-        } elseif (preg_match('/^(-?\d{4})-/', $this->fields[$key], $matches)) {
-            return [
-                (string)(intval($matches[1])),
-                null
-            ];
-        }
-        return null;
     }
 
     /**

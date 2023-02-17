@@ -51,7 +51,7 @@
             <?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?>
             <?php if (count($authors) > 1): ?> <?=$this->transEsc('more_authors_abbrev')?><?php endif; ?>
           <?php endif; ?>
-          <?php $journalTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDates(); ?>
+          <?php $journalTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDateRange(); ?>
           <?php if (!empty($journalTitle)): ?>
             <?=!empty($summAuthor) ? '' : ' '?>
             <?php
@@ -73,11 +73,11 @@
             <?php $ref = $this->driver->getContainerReference(); if (!empty($ref)): ?>
               <?=$this->escapeHtml($ref); ?>
             <?php else: ?>
-              <?=!empty($summDate) ? ' (' . $this->escapeHtml($summDate[0]) . ')' : ''?>
+              <?=!empty($summDate) ? ' (' . implode('&ndash;', array_map($this->escapeHtml, $summDate)) . ')' : ''?>
             <?php endif; ?>
           <?php elseif (!empty($summDate)): ?>
             <?=!empty($summAuthor) ? '' : ' '?>
-            <span class="publish-year"><?=$this->escapeHtml($summDate[0])?></span>
+            <span class="publish-year"><?=implode('&ndash;', array_map($this->escapeHtml, $summDate));?></span>
           <?php endif; ?>
         <?php endif; ?>
       </div>

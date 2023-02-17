@@ -556,7 +556,12 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         if (!isset($this->driver)) {
             return $defaults;
         }
-        $type = strtolower($this->driver->getRecordFormat());
+        $backend = $this->driver->getSourceIdentifier();
+        if (in_array($backend, ['Solr', 'SolrAuth', 'L1', 'R2'])) {
+            $type = strtolower($this->driver->getRecordFormat());
+        } else {
+            $type = strtolower($backend);
+        }
         switch ($type) {
         case 'dc':
         case 'qdc':

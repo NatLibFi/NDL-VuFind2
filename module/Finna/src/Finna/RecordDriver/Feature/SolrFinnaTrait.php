@@ -246,6 +246,39 @@ trait SolrFinnaTrait
     }
 
     /**
+     * Get a Date Range from Index Fields
+     *
+     * @param string $event Event name
+     *
+     * @return ?array Array of one or two dates or null if not available.
+     * If date range is still continuing end year will be an empty string.
+     */
+    protected function getDateRange($event)
+    {
+        $daterange = $this->fields["{$event}_daterange"] ?? [];
+        if (!$daterange) {
+            return null;
+        }
+        if (preg_match(
+            '/\[(-?\d{4}).* TO (-?\d{4})/',
+            $daterange,
+            $matches
+        )
+        ) {
+            $start = (string)(intval($matches[1]));
+            $end = (string)(intval($matches[2]));
+            if ($end == '9999') {
+                // End year is in the future
+                return [$start, ''];
+            }
+            return $end == $start ? [$start] : [$start, $end];
+        } elseif (preg_match('/^(-?\d{4})-/', $daterange, $matches)) {
+            return [(string)(intval($matches[1]))];
+        }
+        return null;
+    }
+
+    /**
      * Return an external URL where a displayable description text
      * can be retrieved from, if available; false otherwise.
      *

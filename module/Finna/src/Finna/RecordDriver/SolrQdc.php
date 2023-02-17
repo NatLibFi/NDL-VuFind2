@@ -362,6 +362,31 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get human readable publication dates for display purposes (may not be suitable
+     * for computer processing -- use getPublicationDates() for that).
+     *
+     * @return array
+     */
+    public function getHumanReadablePublicationDates()
+    {
+        if ($dates = $this->getPublicationDateRange()) {
+            return [implode('–', $dates)];
+        }
+        return [];
+    }
+
+    /**
+     * Get publication date or date range.
+     *
+     * @return ?array Array of one or two dates or null if not available.
+     * If date range is still continuing end year will be an empty string.
+     */
+    public function getPublicationDateRange()
+    {
+        return $this->getDateRange('publication');
+    }
+
+    /**
      * Return full record as filtered XML for public APIs.
      *
      * @return string

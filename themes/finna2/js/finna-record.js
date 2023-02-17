@@ -150,7 +150,14 @@ finna.record = (function finnaRecord() {
   }
 
   function initHoldingsControls() {
+    $('.record-holdings-table:not(.electronic-holdings) .holdings-container-heading').on('keydown', function onClickHeading(e) {
+      if (e.keyCode === 13 || e.keyCode === 32) {
+        e.preventDefault();
+        $('.record-holdings-table:not(.electronic-holdings) .holdings-container-heading').click();
+      }
+    });
     $('.record-holdings-table:not(.electronic-holdings) .holdings-container-heading').on('click', function onClickHeading(e) {
+      $(this).attr('aria-expanded', function changeAria(i, attr) { return attr === 'false' ? 'true' : 'false'; });
       if ($(e.target).hasClass('location-service') || $(e.target).parents().hasClass('location-service')) {
         return;
       }
@@ -158,8 +165,7 @@ finna.record = (function finnaRecord() {
       if ($('.location .fa', this).hasClass('fa-arrow-down')) {
         $('.location .fa', this).removeClass('fa-arrow-down');
         $('.location .fa', this).addClass('fa-arrow-right');
-      }
-      else {
+      } else {
         $('.location .fa', this).removeClass('fa-arrow-right');
         $('.location .fa', this).addClass('fa-arrow-down');
         var rows = $(this).nextUntil('.holdings-container-heading');

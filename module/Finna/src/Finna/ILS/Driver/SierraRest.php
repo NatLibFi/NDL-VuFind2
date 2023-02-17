@@ -178,7 +178,67 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      */
     public function getMyProfile($patron)
     {
-        $profile = parent::getMyProfile($patron);
+        $result = $this->makeRequest(
+            [$this->apiBase, 'patrons', $patron['id']],
+            [
+                'fields' => 'names,emails,phones,addresses,birthDate,expirationDate'
+                    . ',message'
+            ],
+            'GET',
+            $patron
+        );
+
+        if (empty($result)) {
+            return [];
+        }
+        $firstname = '';
+        $lastname = '';
+        $address = '';
+        $zip = '';
+        $city = '';
+        if (!empty($result['names'])) {
+            $nameParts = explode(', ', $result['names'][0], 2);
+            $lastname = $nameParts[0];
+            $firstname = $nameParts[1] ?? '';
+        }
+        if (!empty($result['addresses'][0]['lines'][1])) {
+            $address = $result['addresses'][0]['lines'][0];
+            $postalParts = explode(' ', $result['addresses'][0]['lines'][1], 2);
+            if (isset($postalParts[1])) {
+                $zip = $postalParts[0];
+                $city = $postalParts[1];
+            } else {
+                $city = $postalParts[0];
+            }
+        }
+        $expirationDate = !empty($result['expirationDate'])
+                ? $this->dateConverter->convertToDisplayDate(
+                    'Y-m-d',
+                    $result['expirationDate']
+                ) : '';
+
+        $messages = [];
+        foreach ($result['message']['accountMessages'] ?? [] as $message) {
+            $messages[] = [
+                'message' => $message,
+            ];
+        }
+
+        $profile = [
+            'firstname' => $firstname,
+            'lastname' => $lastname,
+            'phone' => !empty($result['phones'][0]['number'])
+                ? $result['phones'][0]['number'] : '',
+            'email' => !empty($result['emails']) ? $result['emails'][0] : '',
+            'address1' => $address,
+            'zip' => $zip,
+            'city' => $city,
+            'birthdate' => $result['birthDate'] ?? '',
+            'expiration_date' => $expirationDate,
+            'messages' => $messages,
+        ];
+
+        // Checkout history:
         $result = $this->makeRequest(
             [
                 'v6', 'patrons', $patron['id'], 'checkouts', 'history',
