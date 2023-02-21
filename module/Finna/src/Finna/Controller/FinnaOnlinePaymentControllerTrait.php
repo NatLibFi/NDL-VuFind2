@@ -195,10 +195,15 @@ trait FinnaOnlinePaymentControllerTrait
 
         $payableOnline = $catalog->getOnlinePayableAmount($patron, $fines);
 
-        $callback = function ($fine) {
+        $fineIds = [];
+        $callback = function ($fine) use (&$fineIds) {
+            if (isset($fine['fine_id']) && $fine['payableOnline']) {
+                $fineIds[] = $fine['fine_id'];
+            }
             return $fine['payableOnline'];
         };
         $payableFines = array_filter($fines, $callback);
+        $session->validFineIds = $fineIds;
 
         $view->onlinePayment = true;
         $view->paymentHandler = $onlinePayment->getHandlerName($patron['source']);
@@ -209,6 +214,7 @@ trait FinnaOnlinePaymentControllerTrait
         $view->payableOnlineCnt = count($payableFines);
         $view->nonPayableFines = count($fines) != count($payableFines);
         $view->registerPayment = false;
+        $view->selectPayable = $paymentConfig['selectFines'] ?? false;
 
         $trTable = $this->getTable('transaction');
         $paymentInProgress = $trTable->isPaymentInProgress($patron['cat_username']);
@@ -346,6 +352,8 @@ trait FinnaOnlinePaymentControllerTrait
                 }
 
                 $view->onlinePaymentEnabled = $allowPayment;
+                $view->selectPayable = $allowPayment
+                    && $paymentConfig['selectFines'] ?? false;
                 if (!empty($payableOnline['reason'])) {
                     $view->nonPayableReason = $payableOnline['reason'];
                 } elseif ($this->formWasSubmitted('pay')) {

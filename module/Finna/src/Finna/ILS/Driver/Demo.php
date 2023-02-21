@@ -159,10 +159,11 @@ class Demo extends \VuFind\ILS\Driver\Demo
         $accruedType = 'Accrued Fine';
 
         $config = $this->config['OnlinePayment'] ?? [];
-        $nonPayable = $config['nonPayable'] ?? []
-        ;
+        $nonPayable = $config['nonPayable'] ?? [];
         $nonPayable[] = $accruedType;
+        $id = 0;
         foreach ($fines as &$fine) {
+            ++$id;
             $payableOnline = true;
             if (isset($fine['fine'])) {
                 if (in_array($fine['fine'], $nonPayable)) {
@@ -171,6 +172,7 @@ class Demo extends \VuFind\ILS\Driver\Demo
             }
             $fine['accruedFine'] = ($fine['fine'] === $accruedType);
             $fine['payableOnline'] = $payableOnline;
+            $fine['fine_id'] = $id;
         }
 
         return $fines;
@@ -185,6 +187,7 @@ class Demo extends \VuFind\ILS\Driver\Demo
      * @param int    $amount            Amount to be registered as paid
      * @param string $transactionId     Transaction ID
      * @param int    $transactionNumber Internal transaction number
+     * @param array  $fineIds            Fine IDs to mark paid
      *
      * @throws ILSException
      * @return boolean success
@@ -193,19 +196,33 @@ class Demo extends \VuFind\ILS\Driver\Demo
         $patron,
         $amount,
         $transactionId,
-        $transactionNumber
+        $transactionNumber,
+        $fineIds = []
     ) {
         if ($this->isFailing(__METHOD__, 10)) {
             throw new ILSException('online_payment_registration_failed');
         }
 
         $session = $this->getSession($patron['id'] ?? null);
+        $paid = 0;
         if (isset($session->fines)) {
-            foreach ($session->fines as $key => $fine) {
-                if ($fine['payableOnline']) {
+            foreach ($session->sfines as $key => $fine) {
+                if ($fine['payableOnline']
+                    && (!$fineIds || in_array($fine['fine_id'], $fineIds))
+                ) {
                     unset($session->fines[$key]);
+                    $paid -= $fine['balance'];
                 }
             }
+        }
+        if ($paid < $amount) {
+            $session->fines[$key][] = [
+                'amount'   => $paid - $amount,
+                'createdate' => $this->dateConverter
+                    ->convertToDisplayDate('U', time()),
+                'fine'     => 'Balance',
+                'balance'  => $paid - $amount,
+            ];
         }
 
         return true;
