@@ -242,7 +242,10 @@ class FinnaFeedElement extends HTMLElement {
       // Bind lightbox if feed content is shown in modal
       if (typeof settings.modal !== 'undefined' && settings.modal) {
         const onClickHolderLink = function onClickHolderLink() {
-          $('#modal').addClass('feed-content');
+          const modal = document.getElementById('modal');
+          if (modal) {
+            modal.classList.add('feed-content');
+          }
         };
         holder.querySelectorAll('a').forEach(el => {
           el.addEventListener('click', onClickHolderLink);
