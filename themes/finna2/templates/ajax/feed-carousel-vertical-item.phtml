@@ -28,12 +28,12 @@
     </div>
   <?php endif; ?>
   <?php if (!empty($item['text'])): ?>
-      <div class="sr-only">
-        <p><?=$this->escapeHtml($item['text'])?></p>
-        <?php if ($clickableLink): ?>
-          <span class="carousel-description"><?= $this->linkTextEsc ?></span>
-        <?php endif; ?>
-      </div>
+    <div class="sr-only">
+      <p><?=$this->escapeHtml($item['text'])?></p>
+      <?php if ($clickableLink): ?>
+        <span class="carousel-description"><?= $this->linkTextEsc ?></span>
+      <?php endif; ?>
+    </div>
   <?php endif; ?>
   <div class="carousel-text" aria-hidden="true">
     <?php if (!empty($item['title'])): ?>
