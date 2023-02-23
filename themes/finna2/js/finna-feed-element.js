@@ -158,25 +158,16 @@ class FinnaFeedElement extends HTMLElement {
    *
    * @param {object} jsonResponse The response obtained from the backend.
    */
-  afterGetFeed(jsonResponse) {
+  buildFeedDom(jsonResponse) {
     const holder = this;
     if (jsonResponse.data) {
       holder.innerHTML = VuFind.updateCspNonce(jsonResponse.data.html);
       var settings = jsonResponse.data.settings;
       settings.height = settings.height || 300;
       const type = settings.type;
-      let carousel = ['carousel', 'carousel-vertical'].includes(settings.type);
-      let vertical = false;
-      switch (type) {
-      case 'carousel':
-        carousel = true;
-        break;
-      case 'carousel-vertical':
-        carousel = true;
-        vertical = true;
-        break;
-      }
+      const carousel = ['carousel', 'carousel-vertical'].includes(type);
       if (carousel) {
+        const vertical = 'carousel-vertical' === settings.type;
         settings.vertical = vertical;
         const feedObject = holder.querySelector('.carousel-feed');
 
@@ -314,7 +305,7 @@ class FinnaFeedElement extends HTMLElement {
   loadFeed() {
     const cacheItem = this.cache.find(c => { return c.id === this.feedId; });
     if (cacheItem) {
-      this.afterGetFeed(cacheItem.responseJSON);
+      this.buildFeedDom(cacheItem.responseJSON);
     } else {
       const holder = this;
       // Prepend spinner
@@ -335,7 +326,7 @@ class FinnaFeedElement extends HTMLElement {
             responseJSON: responseJSON
           };
           this.cache.push(cacheObject);
-          this.afterGetFeed(responseJSON);
+          this.buildFeedDom(responseJSON);
         }).catch((responseJSON) => {
           holder.innerHTML = `<!-- Feed could not be loaded: ${responseJSON.data || ''} -->`;
         });
@@ -356,10 +347,8 @@ class FinnaFeedElement extends HTMLElement {
    * @param {string} name     Name of the attribute
    */
   attributeChangedCallback(name) {
-    switch (name) {
-    case 'feed-id':
+    if ('feed-id' === name) {
       this.addToObserver();
-      break;
     }
   }
 
