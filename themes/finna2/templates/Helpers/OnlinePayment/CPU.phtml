@@ -1,5 +1,5 @@
 <!-- START of: finna - Helpers/OnlinePayment/CPU.phtml -->
 <img src="<?=$this->imageLink('online-payment-cpu.png')?>" id="cpu-logo" alt="CPU" />
 <input name="transactionId" type="hidden" value="<?=$this->escapeHtmlAttr($this->transactionId)?>">
-<input type="submit" name="pay" class="btn btn-primary" value="<?=$this->transEscAttr('online_payment_go_to_pay', ['%%amount%%' => $this->safeMoneyFormat($this->amount / 100.00)])?>" />
+<input type="submit" name="pay" class="btn btn-primary" value="<?=$this->transEscAttr('online_payment_go_to_pay', ['%%amount%%' => $this->amount ? $this->safeMoneyFormat($this->amount / 100.00) : ''])?>"<?=(!$this->amount) ? ' disabled' : ''?>>
 <!-- END of: finna - Helpers/OnlinePayment/CPU.phtml -->

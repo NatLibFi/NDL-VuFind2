@@ -14,6 +14,7 @@ var finna = (function finnaModule() {
         'changeHolds',
         'dateRangeVis',
         'feedback',
+        'fines',
         'itemStatus',
         'layout',
         'menu',

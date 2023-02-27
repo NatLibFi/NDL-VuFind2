@@ -193,17 +193,21 @@ trait FinnaOnlinePaymentControllerTrait
             return false;
         }
 
-        $payableOnline = $catalog->getOnlinePayableAmount($patron, $fines);
+        $selectFees = $paymentConfig['selectFines'] ?? false;
+        $pay = $this->formWasSubmitted('pay-confirm');
+        $selectedIds = ($selectFees && $pay)
+            ? $this->getRequest()->getPost()->get('selectedIDS', [])
+            : null;
+        $payableOnline = $catalog->getOnlinePayableInfo(
+            $patron,
+            $fines,
+            $selectedIds
+        );
 
-        $fineIds = [];
-        $callback = function ($fine) use (&$fineIds) {
-            if (isset($fine['fine_id']) && $fine['payableOnline']) {
-                $fineIds[] = $fine['fine_id'];
-            }
+        $callback = function ($fine) {
             return $fine['payableOnline'];
         };
         $payableFines = array_filter($fines, $callback);
-        $session->validFineIds = $fineIds;
 
         $view->onlinePayment = true;
         $view->paymentHandler = $onlinePayment->getHandlerName($patron['source']);
@@ -214,12 +218,11 @@ trait FinnaOnlinePaymentControllerTrait
         $view->payableOnlineCnt = count($payableFines);
         $view->nonPayableFines = count($fines) != count($payableFines);
         $view->registerPayment = false;
-        $view->selectPayable = $paymentConfig['selectFines'] ?? false;
+        $view->selectFees = $selectFees;
 
         $trTable = $this->getTable('transaction');
         $paymentInProgress = $trTable->isPaymentInProgress($patron['cat_username']);
         $transactionIdParam = 'finna_payment_id';
-        $pay = $this->formWasSubmitted('pay-confirm');
         if ($pay && $session && $payableOnline
             && $payableOnline['payable'] && $payableOnline['amount']
             && !$paymentInProgress
@@ -243,8 +246,10 @@ trait FinnaOnlinePaymentControllerTrait
                 header("Location: " . $this->getServerUrl('myresearch-fines'));
                 exit();
             }
+
             if ((($paymentConfig['exactBalanceRequired'] ?? true)
                 || !empty($paymentConfig['creditUnsupported']))
+                && !$selectFees
                 && $this->checkIfFinesUpdated($patron, $payableOnline['amount'])
             ) {
                 // Fines updated, redirect and show updated list.
@@ -275,7 +280,7 @@ trait FinnaOnlinePaymentControllerTrait
                 $driver,
                 $payableOnline['amount'],
                 $view->transactionFee,
-                $payableFines,
+                $payableOnline['fines'],
                 $paymentConfig['currency'],
                 $transactionIdParam
             );
@@ -352,8 +357,8 @@ trait FinnaOnlinePaymentControllerTrait
                 }
 
                 $view->onlinePaymentEnabled = $allowPayment;
-                $view->selectPayable = $allowPayment
-                    && $paymentConfig['selectFines'] ?? false;
+                $view->selectedIds
+                    = $this->getRequest()->getPost()->get('selectedIDS', []);
                 if (!empty($payableOnline['reason'])) {
                     $view->nonPayableReason = $payableOnline['reason'];
                 } elseif ($this->formWasSubmitted('pay')) {

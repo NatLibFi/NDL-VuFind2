@@ -104,35 +104,49 @@ class Demo extends \VuFind\ILS\Driver\Demo
     }
 
     /**
-     * Return total amount of fees that may be paid online.
+     * Return information on fees payable online.
      *
-     * @param array $patron Patron
-     * @param array $fines  Patron's fines
+     * @param array  $patron          Patron
+     * @param array  $fines           Patron's fines
+     * @param ?array $selectedFineIds Selected fines
      *
      * @throws ILSException
      * @return array Associative array of payment info,
      * false if an ILSException occurred.
      */
-    public function getOnlinePayableAmount($patron, $fines)
+    public function getOnlinePayableInfo($patron, $fines, ?array $selectedFineIds)
     {
         if (!empty($fines)) {
             $nonPayableReason = false;
             $amount = 0;
+            $payableFines = [];
             foreach ($fines as $fine) {
+                if (null !== $selectedFineIds
+                    && !in_array($fine['fine_id'], $selectedFineIds)
+                ) {
+                    continue;
+                }
                 if (!$fine['payableOnline'] && !$fine['accruedFine']) {
                     $nonPayableReason
                         = 'online_payment_fines_contain_nonpayable_fees';
                 } elseif ($fine['payableOnline']) {
                     $amount += $fine['balance'];
+                    $payableFines[] = $fine;
                 }
             }
             $config = $this->getConfig('onlinePayment');
+            $transactionFee = $config['transactionFee'] ?? 0;
             if (!$nonPayableReason
-                && isset($config['minimumFee']) && $amount < $config['minimumFee']
+                && isset($config['minimumFee'])
+                && $amount + $transactionFee < $config['minimumFee']
             ) {
                 $nonPayableReason = 'online_payment_minimum_fee';
             }
-            $res = ['payable' => empty($nonPayableReason), 'amount' => $amount];
+            $res = [
+                'payable' => empty($nonPayableReason),
+                'amount' => $amount,
+                'fines' => $payableFines,
+            ];
             if ($nonPayableReason) {
                 $res['reason'] = $nonPayableReason;
             }
@@ -187,7 +201,7 @@ class Demo extends \VuFind\ILS\Driver\Demo
      * @param int    $amount            Amount to be registered as paid
      * @param string $transactionId     Transaction ID
      * @param int    $transactionNumber Internal transaction number
-     * @param array  $fineIds            Fine IDs to mark paid
+     * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
      *
      * @throws ILSException
      * @return boolean success
@@ -197,7 +211,7 @@ class Demo extends \VuFind\ILS\Driver\Demo
         $amount,
         $transactionId,
         $transactionNumber,
-        $fineIds = []
+        $fineIds = null
     ) {
         if ($this->isFailing(__METHOD__, 10)) {
             throw new ILSException('online_payment_registration_failed');
@@ -206,17 +220,17 @@ class Demo extends \VuFind\ILS\Driver\Demo
         $session = $this->getSession($patron['id'] ?? null);
         $paid = 0;
         if (isset($session->fines)) {
-            foreach ($session->sfines as $key => $fine) {
+            foreach ($session->fines as $key => $fine) {
                 if ($fine['payableOnline']
                     && (!$fineIds || in_array($fine['fine_id'], $fineIds))
                 ) {
                     unset($session->fines[$key]);
-                    $paid -= $fine['balance'];
+                    $paid += $fine['balance'];
                 }
             }
         }
         if ($paid < $amount) {
-            $session->fines[$key][] = [
+            $session->fines[] = [
                 'amount'   => $paid - $amount,
                 'createdate' => $this->dateConverter
                     ->convertToDisplayDate('U', time()),

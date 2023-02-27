@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2017.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -86,6 +86,7 @@ class Transaction extends \VuFind\Db\Table\Gateway
      * @param int    $amount         Amount (excluding transaction fee)
      * @param int    $transactionFee Transaction fee
      * @param string $currency       Currency
+     * @param array  $fines          Fines
      *
      * @return Finna\Db\Row\Transaction
      */
