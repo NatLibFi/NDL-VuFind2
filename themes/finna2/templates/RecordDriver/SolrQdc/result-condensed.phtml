@@ -10,7 +10,7 @@
     <?php $thumbnail = ob_get_contents(); ?>
   <?php ob_end_clean(); ?>
 <?php endif;?>
-<div class="record-container<?=$this->driver->supportsAjaxStatus()?' ajaxItem ':''?> list-view" id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>">
+<div class="record-container list-view <?=$this->record($this->driver)->getContainerJsClasses()?>" id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>">
   <div class="condensed-collapse-toggle">
     <div class="condensed-body">
       <i class="fa fa-arrow-right"></i>
