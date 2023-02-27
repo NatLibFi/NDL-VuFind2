@@ -303,6 +303,13 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  /**
+   * Initializes additional functionality for condensed styled lists.
+   * I.e search condensed, authority records record tab.
+   *
+   * @param {jQuery|undefined} _holder Element as jQuery to initialize.
+   *                                   If uninitialized, defaults to document.
+   */
   function initCondensedList(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
     finna.itemStatus.initDedupRecordSelection(holder);

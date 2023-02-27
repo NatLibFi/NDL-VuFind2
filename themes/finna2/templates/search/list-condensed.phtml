@@ -4,7 +4,7 @@
 <div class="<?=$this->escapeHtmlAttr(trim('record-list ' . ($this->resultsClass ?? '')))?>">
   <?php $i = $this->indexStart; foreach ($this->results->getResults() as $current):
     $recordNumber = $this->results->getStartRecord() + $i - $this->indexStart; ?>
-    <div id="result<?=$i++ ?>" class="result condensed-list-view clearfix<?=$current->supportsAjaxStatus()?' ajaxItem':''?>">
+    <div id="result<?=$i++ ?>" class="result condensed-list-view clearfix <?=$this->record($current)->getContainerJsClasses()?>">
       <?php if (isset($this->showCheckboxes) && $this->showCheckboxes): ?>
         <div class="record-checkbox">
           <?=$this->record($current)->getCheckbox('', 'search-cart-form')?>
