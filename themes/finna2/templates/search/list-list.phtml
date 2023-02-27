@@ -20,14 +20,14 @@
       <?php $this->headScript()->appendFile("openurl.js"); ?>
       <?php $haveRecommendationHolder = true; ?>
     <?php endif; ?>
-    <div id="result<?=$i++ ?>" class="result clearfix<?=$current->supportsAjaxStatus()?' ajaxItem':''?>">
+    <div id="result<?=$i++ ?>" class="result clearfix <?=$this->record($this->driver)->getContainerJsClasses()?>">
         <?php if (isset($this->showCheckboxes) && $this->showCheckboxes): ?>
           <div class="record-checkbox">
             <?=$this->record($current)->getCheckbox('', 'search-cart-form')?>
           </div>
         <?php endif; ?>
         <span class="sr-only"><?=$this->transEsc('Search Result');?> <?=$recordNumber ?></span>
-      <?=$this->record($current)->getSearchResult('list')?>
+      <?=$this->record($current)->getSearchResult('list', $this->results)?>
     </div>
   <?php endforeach; ?>
 </div>

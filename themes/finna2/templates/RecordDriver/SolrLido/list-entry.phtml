@@ -1,0 +1,175 @@
+<!-- START of: finna - RecordDriver/DefaultRecord/list-entry.phtml -->
+<?php
+  // Set up some convenience variables:
+  $id = $this->driver->getUniqueId();
+  $source = $this->driver->getSourceIdentifier();
+  if (isset($this->list) && is_object($this->list)) {
+    $list_id = $this->list->id;
+    $user_id = $this->list->user_id;
+  } else {
+    $list_id = null;
+    $user_id = $this->user ? $this->user->id : null;
+  }
+  // Thumbnail
+  $img = $this->recordImage($this->record($this->driver));
+  $thumbnail = false;
+  $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('list');
+  if ($img):
+    ob_start(); ?>
+    <div class="text-center">
+      <?=$img->render('list', ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 250, 'h' => 250]]) ?>
+    </div>
+    <?php $thumbnail = ob_get_contents(); ?>
+  <?php ob_end_clean(); ?>
+<?php endif; ?>
+<!-- start list-entry -->
+<div class="result record-container<?php if($this->driver->supportsAjaxStatus()): ?> ajaxItem<?php endif ?> myresearch-row">
+    <div class="checkboxFilter">
+      <div class="checkbox">
+        <?php // Request a checkbox with a label (can't add the label here as checkbox template contains more than one field): ?>
+        <?=$this->record($this->driver)->getCheckbox('', false, true) ?>
+      </div>
+    </div>
+    <input type="hidden" value="<?=$this->escapeHtmlAttr($id) ?>" class="hiddenId"/>
+    <input type="hidden" value="<?=$this->escapeHtmlAttr($source) ?>" class="hiddenSource"/>
+
+  <div class="media">
+    <div class="media-left">
+      <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
+        <?=$thumbnail ?>
+      <?php endif; ?>
+    </div>
+    <div class="media-body">
+      <div class="result-body">
+        <div class="resultItemLine1">
+          <?php $missing = $this->driver instanceof \VuFind\RecordDriver\Missing; ?>
+          <?php if (!$missing): ?>
+            <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver))?>">
+          <?php endif; ?>
+          <h3><?=$this->record($this->driver)->getTitleHtml()?></h3>
+          <?php if (!$missing): ?>
+            <span class="sr-only"> <?=$this->transEsc('To the record')?></span></a>
+          <?php endif; ?>
+          <?php if ($altTitles = $this->driver->tryMethod('getAlternativeTitles')): ?>
+            <div class="result-alt-titles truncate-field" data-rows="5">
+              <?=implode('<br>', array_map([$this, 'escapeHtml'], $altTitles))?>
+            </div>
+          <?php endif; ?>
+        </div>
+
+        <div class="record-core-metadata">
+          <?=$this->record($this->driver)->getFormatList() ?><br/>
+          <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles'); if (!empty($authors)): ?>
+            <div class="truncate-field" data-rows="1">
+              <?php foreach($authors as $index => $author): ?>
+                <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
+              <?php endforeach; ?>
+            </div>
+          <?php elseif ($authors = $this->driver->getPrimaryAuthors()): ?>
+            <div class="truncate-field" data-rows="1">
+              <?php foreach($authors as $index => $author): ?>
+                <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author)?>"><?=$this->escapeHtml($author)?></a>
+              <?php endforeach; ?>
+            </div>
+          <?php endif; ?>
+
+          <?php
+            $journalTitle = $this->driver->getContainerTitle();
+            $summDate = $this->driver->getPublicationDates();
+            $dates = $this->driver->tryMethod('getResultDateRange', []);
+          ?>
+          <?php if (!empty($journalTitle)): ?>
+            <?=!empty($summAuthor) ? '' : ''?>
+            <?=/* TODO: handle highlighting more elegantly here */ $this->transEsc('Published in') . ' <a href="' . $this->record($this->driver)->getLink('journaltitle', str_replace(['{{{{START_HILITE}}}}', '{{{{END_HILITE}}}}'], '', $journalTitle)) . '">' . $this->highlight($journalTitle) . '</a>';?>
+            <?=!empty($summDate) ? ' (' . $this->escapeHtml($summDate[0]) . ')' : ''?>
+          <?php elseif (!empty($summDate)): ?>
+            <?=!empty($summAuthor) ? '' : ''?>
+              <?=$this->escapeHtml($summDate[0])?>
+          <?php elseif ($dates): ?>
+              <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
+          <?php endif; ?>
+          <?php $summInCollection = $this->driver->getContainingCollections(); if (false && !empty($summInCollection)): ?>
+            <?php foreach ($summInCollection as $collId => $collText): ?>
+              <div>
+                <b><?=$this->transEsc("in_collection_label")?></b>
+                <a class="collectionLinkText" href="<?=$this->url('collection', ['id' => $collId])?>?recordID=<?=urlencode($this->driver->getUniqueID())?>">
+                  <?=$this->escapeHtml($collText)?>
+                </a>
+              </div>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </div>
+
+        <div class="last">
+          <?php
+            if ($snippet = $this->driver->getHighlightedSnippet()) {
+              if (!empty($snippet['caption'])) {
+                echo '<strong>' . $this->transEsc($snippet['caption']) . ':</strong> ';
+              }
+              if (!empty($snippet['snippet'])) {
+                echo $this->translate(
+                    'highlight_snippet_html',
+                    ['%%snippet%%' => $this->highlight($snippet['snippet'])]
+                ) . '<br/>';
+              }
+            }
+          ?>
+
+          <?php
+          $listTags = ($this->usertags()->getMode() !== 'disabled') ? $this->driver->getTags(
+              null === $list_id ? true : $list_id, // get tags for all lists if no single list is selected
+              $user_id,
+              'tag'
+          ) : [];
+          ?>
+          <?php if (count($listTags) > 0): ?>
+            <strong><?=$this->transEsc('Your Tags')?>:</strong>
+            <?php $i = 0; foreach ($listTags as $tag): ?><?=($i++ == 0)?'':', '?><a href="<?=$this->currentPath() . $results->getUrlQuery()->addFacet('tags', $tag->tag)?>"><?=$this->escapeHtml($tag->tag)?></a><?php endforeach; ?>
+            <br/>
+          <?php endif; ?>
+
+          <?php $recordHelper = $this->record($this->driver); ?>
+          <?=$recordHelper->getOnlineUrls('results');?>
+          <?=$recordHelper->getPreviews();?>
+        </div>
+        <div class="myresearch-notes">
+        <?php
+          $notes = $list_id != null ? $this->driver->getListNotes($list_id, $user_id) : false;
+          if ($notes) {
+            $notes = trim(implode('', $notes));
+          }
+        ?>
+          <div class="note-info <?= $notes ? '' : ' hide' ?>"><strong><?=$this->transEsc('Note')?>:</strong></div>
+          <?php if ($list_id): ?>
+            <?php $markdown = $notes ? $this->markdown()->replaceDeprecatedTags($notes) : ''; ?>
+            <?= $this->render('components/organisms/widgets/finna-md-editable', [
+                'attributes' => ['class' => 'resource-note'],
+                'markdown' => $markdown,
+                'html' => $markdown ? $this->markdown()->toHtml($markdown, false) : '',
+                'emptyHtml' => $this->translate('Add note'),
+                'preview' => true
+              ]); ?>
+          <?php endif;?>
+        </div>
+        <?php if (count($this->lists ?? []) > 0 && !$list): ?>
+          <div class="saved-lists">
+            <strong><?=$this->transEsc('Saved in')?>:</strong>
+            <?php $i = 0;foreach($this->lists as $current): ?>
+              <a href="<?=$this->url('userList', ['id' => $current->id])?>"><?=$this->escapeHtml($current->title)?></a><?php if($i++ < count($this->lists) - 1): ?>,<?php endif; ?>
+            <?php endforeach; ?>
+            <br/>
+          </div>
+        <?php endif; ?>
+
+        <?php $countNotes = count($this->driver->getListNotes($list_id, $user_id)); ?>
+        <?php if ($countNotes > 0 && !$list): ?>
+          <strong><?=$this->transEsc('note_count', ['%%count%%' => $countNotes])?></strong>
+        <?php endif; ?>
+      </div>
+      <?php if ($thumbnail && $thumbnailAlignment == 'right'): ?>
+        <?=$thumbnail ?>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
+<!-- END of: finna - RecordDriver/DefaultRecord/list-entry.phtml -->

@@ -5,13 +5,18 @@
   $mergedData = $this->driver->tryMethod('getMergedRecordData');
   $recordType = $this->driver->tryMethod('getRecordFormat');
   $sector = $this->driver->tryMethod('getSector');
+  // The final key will be information_provided_by_single, information_provided_by_multiple,
+  // material_provided_by_single or material_provided_by_multiple
+  $headingType = ($this->driver instanceof \VuFind\RecordDriver\SolrAuthDefault)
+    ? 'information' : 'material';
+
 ?>
 <div class="recordProvidedBy">
   <h2 class="record-organisation-header">
     <?php if ($mergedData && count($mergedData['records']) > 1): ?>
-      <?=$this->transEsc('material_provided_by_multiple', ['%%count%%' => count($mergedData['records'])])?>
+      <?=$this->transEsc($headingType . '_provided_by_multiple', ['%%count%%' => count($mergedData['records'])])?>
     <?php else: ?>
-      <?=$this->transEsc('material_provided_by_single')?>
+      <?=$this->transEsc($headingType . '_provided_by_single')?>
     <?php endif; ?>
   </h2>
   <div class="record-organisation-box">

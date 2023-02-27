@@ -8,7 +8,7 @@
         <span class="count"><?=$this->transEsc('search_tabs_recommendation_count', ['%%count%%' => $this->localizedNumber($this->results->getResultTotal())]) ?></span>
         <?php foreach ($this->results->getResults() as $current): ?>
           <div class="result clearfix">
-            <?=$this->record($current)->getSearchResult('list')?>
+            <?=$this->record($current)->getSearchResult('list', $this->results)?>
           </div>
         <?php endforeach; ?>
     </div>

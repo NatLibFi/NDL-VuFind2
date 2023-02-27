@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Service
+ * @package  Statistics
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
@@ -37,7 +37,7 @@ use Psr\Container\ContainerInterface;
  * Database handler factory.
  *
  * @category VuFind
- * @package  Service
+ * @package  Statistics
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
@@ -69,10 +69,15 @@ class DatabaseFactory implements FactoryInterface
 
         $tableManager = $container->get(\VuFind\Db\Table\PluginManager::class);
         return new $requestedName(
-            $tableManager->get('FinnaSessionStats'),
-            $tableManager->get('FinnaPageViewStats'),
-            $tableManager->get('FinnaRecordStats'),
-            $tableManager->get('FinnaRecordStatsLog')
+            $tableManager->get(\Finna\Db\Table\FinnaSessionStats::class),
+            $tableManager->get(\Finna\Db\Table\FinnaPageViewStats::class),
+            $tableManager->get(\Finna\Db\Table\FinnaRecordStats::class),
+            $tableManager->get(\Finna\Db\Table\FinnaRecordStatsLog::class),
+            $tableManager->get(\Finna\Db\Table\FinnaRecordView::class),
+            $tableManager->get(\Finna\Db\Table\FinnaRecordViewInstView::class),
+            $tableManager->get(\Finna\Db\Table\FinnaRecordViewRecord::class),
+            $tableManager->get(\Finna\Db\Table\FinnaRecordViewRecordFormat::class),
+            $tableManager->get(\Finna\Db\Table\FinnaRecordViewRecordRights::class)
         );
     }
 }

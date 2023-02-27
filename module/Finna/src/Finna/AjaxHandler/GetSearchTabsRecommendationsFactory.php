@@ -75,7 +75,8 @@ class GetSearchTabsRecommendationsFactory
             $tablePluginManager->get(\VuFind\Db\Table\Search::class),
             $container->get(\VuFind\Search\Results\PluginManager::class),
             $container->get('ViewRenderer'),
-            $container->get(\VuFind\Search\SearchRunner::class)
+            $container->get(\VuFind\Search\SearchRunner::class),
+            $container->get(\Laminas\Session\SessionManager::class)->getId()
         );
         return $result;
     }

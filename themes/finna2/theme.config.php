@@ -4,6 +4,7 @@ $config = [
     'helpers' => [
         'factories' => [
             'Finna\View\Helper\Root\AdjustHeadingLevel' => 'Laminas\ServiceManager\Factory\InvokableFactory',
+            'Finna\View\Helper\Root\ApiRecordFormatter' => 'Finna\View\Helper\Root\ApiRecordFormatterFactory',
             'Finna\View\Helper\Root\Auth' => 'Finna\View\Helper\Root\AuthFactory',
             'Finna\View\Helper\Root\AuthorizationNotification' => 'Finna\View\Helper\Root\AuthorizationNotificationFactory',
             'Finna\View\Helper\Root\Authority' => 'Finna\View\Helper\Root\AuthorityFactory',
@@ -50,7 +51,7 @@ $config = [
             'Finna\View\Helper\Root\Record' => 'Finna\View\Helper\Root\RecordFactory',
             'Finna\View\Helper\Root\RecordDataFormatter' => 'Finna\View\Helper\Root\RecordDataFormatterFactory',
             'Finna\View\Helper\Root\RecordFieldMarkdown' => 'Finna\View\Helper\Root\RecordFieldMarkdownFactory',
-            'Finna\View\Helper\Root\RecordImage' => 'Laminas\ServiceManager\Factory\InvokableFactory',
+            'Finna\View\Helper\Root\RecordImage' => 'Finna\View\Helper\Root\RecordImageFactory',
             'Finna\View\Helper\Root\RecordLink' => 'Finna\View\Helper\Root\RecordLinkFactory',
             'Finna\View\Helper\Root\RecordLinker' => 'Finna\View\Helper\Root\RecordLinkerFactory',
             'Finna\View\Helper\Root\ResultFeed' => 'VuFind\View\Helper\Root\ResultFeedFactory',
@@ -66,7 +67,6 @@ $config = [
             'Finna\View\Helper\Root\SystemMessages' => 'Finna\View\Helper\Root\SystemMessagesFactory',
             'Finna\View\Helper\Root\TotalIndexed' => 'Finna\View\Helper\Root\TotalIndexedFactory',
             'Finna\View\Helper\Root\Translation' => 'Finna\View\Helper\Root\TranslationFactory',
-            'Finna\View\Helper\Root\TranslationEmpty' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\TruncateUrl' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\UserAgent' => 'Finna\View\Helper\Root\UserAgentFactory',
             'Finna\View\Helper\Root\UserListEmbed' => 'Finna\View\Helper\Root\UserListEmbedFactory',
@@ -76,6 +76,7 @@ $config = [
         ],
         'aliases' => [
             'adjustHeadingLevel' => 'Finna\View\Helper\Root\AdjustHeadingLevel',
+            'apiRecordFormatter' => 'Finna\View\Helper\Root\ApiRecordFormatter',
             'auth' => 'Finna\View\Helper\Root\Auth',
             'authority' => 'Finna\View\Helper\Root\Authority',
             'authorizationNote' => 'Finna\View\Helper\Root\AuthorizationNotification',
@@ -117,6 +118,7 @@ $config = [
             'primo' => 'Finna\View\Helper\Root\Primo',
             'recordFieldMarkdown' => 'Finna\View\Helper\Root\RecordFieldMarkdown',
             'recordImage' => 'Finna\View\Helper\Root\RecordImage',
+            'recordLink' => 'Finna\View\Helper\Root\RecordLink',
             'scriptSrc' => 'Finna\View\Helper\Root\ScriptSrc',
             'stripTags' => 'Finna\View\Helper\Root\StripTags',
             'search' => 'Finna\View\Helper\Root\Search',
@@ -126,7 +128,6 @@ $config = [
             'streetSearch' => 'Finna\View\Helper\Root\StreetSearch',
             'systemMessages' => 'Finna\View\Helper\Root\SystemMessages',
             'translation' => 'Finna\View\Helper\Root\Translation',
-            'translationEmpty' => 'Finna\View\Helper\Root\TranslationEmpty',
             'truncateUrl' => 'Finna\View\Helper\Root\TruncateUrl',
             'userAgent' => 'Finna\View\Helper\Root\UserAgent',
             'userlistEmbed' => 'Finna\View\Helper\Root\UserListEmbed',
@@ -143,7 +144,6 @@ $config = [
             'VuFind\View\Helper\Root\ProxyUrl' => 'Finna\View\Helper\Root\ProxyUrl',
             'VuFind\View\Helper\Root\Record' => 'Finna\View\Helper\Root\Record',
             'VuFind\View\Helper\Root\RecordDataFormatter' => 'Finna\View\Helper\Root\RecordDataFormatter',
-            'VuFind\View\Helper\Root\RecordLink' => 'Finna\View\Helper\Root\RecordLink',
             'VuFind\View\Helper\Root\RecordLinker' => 'Finna\View\Helper\Root\RecordLinker',
             'VuFind\View\Helper\Root\ResultFeed' => 'Finna\View\Helper\Root\ResultFeed',
             'VuFind\View\Helper\Root\SearchTabs' => 'Finna\View\Helper\Root\SearchTabs',
@@ -164,7 +164,6 @@ $config = [
     ],
     'css' => [
         'vendor/bootstrap-datepicker3.min.css',
-        'vendor/bootstrap-rating.min.css',
         'vendor/bootstrap-slider.min.css',
         'vendor/dataTables.bootstrap.min.css',
         'vendor/L.Control.Locate.min.css',
@@ -190,6 +189,7 @@ $config = [
         'checkouts.js',
         'collection_record.js',
         'combined-search.js',
+        'doi.js',
         'embedded_record.js',
         'facets.js',
         'keep_alive.js',
@@ -199,11 +199,11 @@ $config = [
         'requests.js',
         'finna-polyfill.js',
         'finna.js',
+        'finna-script-loader.js',
         'finna-popup.js',
         'finna-autocomplete.js',
         'finna-authority.js',
         'finna-combined-results.js',
-        'finna-video-popup.js',
         'finna-image-paginator.js',
         'finna-menu-movement.js',
         'finna-comments.js',
@@ -212,7 +212,6 @@ $config = [
         'finna-item-status.js',
         'finna-adv-search.js',
         'finna-daterange-vis.js',
-        'finna-feed.js',
         'finna-layout.js',
         'finna-linked-events.js',
         'finna-openurl.js',
@@ -236,7 +235,6 @@ $config = [
         'vendor/bootstrap-datepicker.en-GB.min.js',
         'vendor/bootstrap-datepicker.fi.min.js',
         'vendor/bootstrap-datepicker.sv.min.js',
-        'vendor/bootstrap-rating.min.js',
         'vendor/bootstrap-slider.min.js',
         'vendor/hunt.min.js',
         'vendor/jquery.colorhelpers.min.js',
@@ -245,7 +243,6 @@ $config = [
         'vendor/jquery.editable.min.js',
         'vendor/jquery.flot.min.js',
         'vendor/jquery.flot.selection.min.js',
-        'vendor/jquery.inview.min.js',
         'vendor/jsTree/jstree.min.js',
         'vendor/sortable.min.js',
         'vendor/easymde.min.js',
@@ -257,7 +254,9 @@ $config = [
         'vendor/leaflet.draw.min.js',
         'vendor/js.cookie.js',
         'finna-multiselect.js',
-        'finna-model-viewer.js'
+        'finna-model-viewer.js',
+        'finna-video-element.js',
+        'finna-feed-element.js',
     ],
     'less' => [
         'active' => false
@@ -265,11 +264,12 @@ $config = [
     'favicon' => 'favicon.ico',
     'icons' => [
         'aliases' => [
+            'external-link' => 'FontAwesome:external-link',
+            'facebook' => 'FontAwesome:facebook',
+            'instagram' => 'FontAwesome:instagram',
             'service-available' => 'FontAwesome:ok',
             'service-unavailable' => 'FontAwesome:remove',
-            'instagram' => 'FontAwesome:instagram',
             'twitter' => 'FontAwesome:twitter',
-            'facebook' => 'FontAwesome:facebook'
         ]
     ]
 ];

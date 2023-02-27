@@ -1,11 +1,10 @@
 <?php //Don't add start and end tags ?>
-<div class="record-rating text-left">
-  <div class="rating-stars">
-    <div class="rating-link">
-        <?=$this->record($this->driver)->getRating()?>
-    </div>
-  </div>
-</div>
+<?php if ($this->driver->isRatingAllowed()): ?>
+  <?php if (!$this->translationEmpty('finna rating')): ?>
+    <div><?=$this->transEsc('finna rating') ?></div>
+  <?php endif; ?>
+  <?=$this->record($this->driver)->renderTemplate('rating.phtml')?>
+<?php endif; ?>
 <?php if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-toolbar")): ?>
   <div>
     <div class="record-post-toolbar">

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<c02 level="file">
+  <did>
+    <didnote encodinganalog="ahaa:AI46">Yksityisaineisto</didnote>
+    <unitdate label="Ajallinen kattavuus" normal="16uu-01-01/17uu-01-01">01.01.16uu-01.01.17uu</unitdate>
+    <unittitle label="Reinius Theodor S 3:b) 1" normal="Reinius Theodor S 3:b) 1" lang="fin">Reinius Theodor S 3:b) 1</unittitle>
+
+    <didnote encodinganalog="ahaa:AI46">Yksityisaineisto</didnote>
+    <unitdate label="Ajallinen kattavuus" normal="1661-uu-u/1661-uu-uu"></unitdate>
+    <unittitle label="Reinius Theodor S 3:b) 1" normal="Reinius Theodor S 3:b) 1" lang="fin">Reinius Theodor S 3:b) 1</unittitle>
+
+    <didnote encodinganalog="ahaa:AI46">Yksityisaineisto</didnote>
+    <unitdate label="Ajallinen kattavuus" normal="166u"></unitdate>
+    <unittitle label="Reinius Theodor S 3:b) 1" normal="Reinius Theodor S 3:b) 1" lang="fin">Reinius Theodor S 3:b) 1</unittitle>
+
+    <didnote encodinganalog="ahaa:AI46">Yksityisaineisto</didnote>
+    <unitdate label="Ajallinen kattavuus" normal="1600-01-01/1610-01-01"></unitdate>
+    <unittitle label="Reinius Theodor S 3:b) 1" normal="Reinius Theodor S 3:b) 1" lang="fin">Reinius Theodor S 3:b) 1</unittitle>
+
+  </did>
+</c02>

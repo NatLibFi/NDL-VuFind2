@@ -362,6 +362,31 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get human readable publication dates for display purposes (may not be suitable
+     * for computer processing -- use getPublicationDates() for that).
+     *
+     * @return array
+     */
+    public function getHumanReadablePublicationDates()
+    {
+        if ($dates = $this->getPublicationDateRange()) {
+            return [implode('–', $dates)];
+        }
+        return [];
+    }
+
+    /**
+     * Get publication date or date range.
+     *
+     * @return ?array Array of one or two dates or null if not available.
+     * If date range is still continuing end year will be an empty string.
+     */
+    public function getPublicationDateRange()
+    {
+        return $this->getDateRange('publication');
+    }
+
+    /**
      * Return full record as filtered XML for public APIs.
      *
      * @return string
@@ -417,15 +442,16 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         foreach ([$xml->identifier, $xml->isFormatOf] as $field) {
             foreach ($field as $identifier) {
                 $type = (string)$identifier['type'];
+                $identifierTrimmed = trim((string)$identifier);
                 if (in_array($type, ['issn', 'isbn'])) {
                     continue;
                 }
-                $trimmed = str_replace('-', '', trim($identifier));
+                $trimmed = str_replace('-', '', $identifierTrimmed);
                 // ISBN
                 if (preg_match('{^[0-9]{9,12}[0-9xX]}', $trimmed)) {
                     continue;
                 }
-                $trimmed = trim($identifier);
+                $trimmed = $identifierTrimmed;
                 // ISSN
                 if (preg_match('{(issn:)[\S]{4}\-[\S]{4}}', $trimmed)) {
                     continue;
@@ -433,8 +459,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
 
                 // Leave out some obvious matches like urls or urns
                 if (!preg_match('{(^urn:|^https?)}i', $trimmed)) {
-                    $detail = (string)$identifier['type'];
-                    $data = trim((string)$identifier);
+                    $detail = $type;
+                    $data = $identifierTrimmed;
                     $results[] = compact('data', 'detail');
                 }
             }

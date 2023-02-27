@@ -1,0 +1,10 @@
+<?php
+  $fields = [
+    '__index__',
+    'id',
+    'images',
+    'languages',
+    'title',
+  ];
+?>
+<?= json_encode($this->plugin('apiRecordFormatter')->format([$this->driver], $fields)) ?>

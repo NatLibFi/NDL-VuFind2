@@ -124,35 +124,14 @@
       <?php endif; ?>
 
       <?/* Display Main Details */?>
-      <?php
-        $formatter = $this->recordDataFormatter();
-        $coreFields = $formatter->getDefaults('core');
-        $coreFields = $driver->getRecordFormat() === 'ead3'
-            ? $formatter->filterEAD3Fields($coreFields)
-            : $formatter->filterEADFields($coreFields);
-        $coreFields['Access Restrictions Extended']['hideSubheadings']
-            = ['access_restrictions_general'];
-        $coreFieldGroups = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
-          ['label' => 'Context',
-           'lines' => ['Archive Origination', 'Archive', 'Archive Series', 'Archive File']
-          ],
-          ['lines' => [
-             'Format', 'Authors', 'Secondary Authors', 'Unit ID', 'Unit IDs','Subjects',
-             'subjects_extended', 'Dates', 'Material Condition']
-          ],
-          ['label' => 'access_restrictions_general',
-           'lines' => ['Access Restrictions Extended']
-          ],
-          [
-           'lines' => ['Access Restrictions']
-          ]
-        ], $coreFields));
+      <?=
+        $this->record($this->driver)->renderTemplate(
+            'core-fields.phtml',
+            [
+              'driver' => $this->driver,
+            ]
+        );
       ?>
-      <?php if (!empty($coreFieldGroups)): ?>
-        <table class="table table-finna-record record-details record-field-groups" role="presentation">
-          <?=$this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $coreFieldGroups]);?>
-        </table>
-      <?php endif; ?>
       <?/* End Main Details */?>
 
       <?php if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>

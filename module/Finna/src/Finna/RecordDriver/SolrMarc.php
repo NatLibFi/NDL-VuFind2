@@ -282,44 +282,47 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
         foreach (['050', '060', '080', '084'] as $fieldCode) {
             $fields = $this->getMarcReader()->getFields($fieldCode);
-            if (is_array($fields)) {
-                foreach ($fields as $field) {
-                    switch ($fieldCode) {
-                    case '050':
-                        $classification = 'dlc';
-                        break;
-                    case '060':
-                        $classification = 'nlm';
-                        break;
-                    case '080':
-                        $classification = 'udk';
-                        $version = $this->getSubfield($field, '2');
-                        if ($version && preg_match('/(\d{4})/', $version, $matches)
-                            && 2017 <= $matches[1]
-                        ) {
-                            $classification .= '2017';
-                        }
-                        break;
-                    default:
-                        $classification = $this->getSubfield($field, '2');
-                        break;
+            foreach ($fields as $field) {
+                switch ($fieldCode) {
+                case '050':
+                    $classification = 'dlc';
+                    break;
+                case '060':
+                    $classification = 'nlm';
+                    break;
+                case '080':
+                    $classification = 'udk';
+                    $version = $this->getSubfield($field, '2');
+                    if (in_array($version, ['1974/fin/fennica', '1974/fin/finuc-s'])
+                    ) {
+                        $classification .= 'f';
+                    } elseif ($version && preg_match('/(\d{4})/', $version, $matches)
+                        && (int)$matches[1] >= 2009
+                    ) {
+                        $classification .= '2';
+                    } else {
+                        $classification .= 'x';
                     }
-                    // continue doesn't work inside the switch statement
-                    if (empty($classification)) {
-                        continue;
-                    }
+                    break;
+                default:
+                    $classification = $this->getSubfield($field, '2');
+                    break;
+                }
+                // continue doesn't work inside the switch statement
+                if (empty($classification)) {
+                    continue;
+                }
 
-                    $subfields = $this->getSubfieldArray($field, ['a', 'b']);
-                    if (!empty($subfields)) {
-                        $class = $subfields[0];
-                        if ($x = $this->getSubfield($field, 'x')) {
-                            if (preg_match('/^\w/', $x)) {
-                                $class .= '-';
-                            }
-                            $class .= $x;
+                $subfields = $this->getSubfieldArray($field, ['a', 'b']);
+                if (!empty($subfields)) {
+                    $class = $subfields[0];
+                    if ($x = $this->getSubfield($field, 'x')) {
+                        if (preg_match('/^\w/', $x)) {
+                            $class .= '-';
                         }
-                        $result[$classification][] = $class;
+                        $class .= $x;
                     }
+                    $result[$classification][] = $class;
                 }
             }
         }
@@ -1259,7 +1262,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
         if (empty($matches)) {
             // Now check 490 and display it only if 440/800/830 were empty:
-            $secondaryFields = ['490' => ['a', 'v', 'x']];
+            $secondaryFields = ['490' => ['a', 'v']];
             $matches = $this->getSeriesFromMARC($secondaryFields);
         }
 
@@ -1321,7 +1324,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     public function getTitle()
     {
         return $this->stripTrailingPunctuation(
-            $this->getFirstFieldValue('245', ['a', 'b', 'n', 'p'])
+            $this->getFirstFieldValue('245', ['a', 'b', 'n', 'p']),
+            '',
+            true
         );
     }
 
@@ -1504,7 +1509,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         $results = [];
         foreach (['130', '240'] as $fieldCode) {
             foreach ($this->getMarcReader()->getFields($fieldCode) as $field) {
-                $results[] = implode(' ', $this->getSubfields($field, ''));
+                $results = [
+                    ...$results,
+                    ...$this->getSubfieldArray($field, range('a', 'z'))
+                ];
             }
         }
         return $results;

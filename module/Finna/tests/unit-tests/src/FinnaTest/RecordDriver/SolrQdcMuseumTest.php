@@ -182,6 +182,162 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Function to get expected publication date range data
+     *
+     * @return array
+     */
+    public function getPublicationDateRangeData(): array
+    {
+        return [
+            [
+                '[2001-01-01 TO 2001-12-31]',
+                ['2001']
+            ],
+            [
+                '[1998-01-01 TO 2012-12-31]',
+                ['1998', '2012']
+            ],
+            [
+                '[-2002-01-01 TO 0100-12-31]',
+                ['-2002', '100']
+            ],
+            [
+                '[-0099-10-31 TO -0001-05-01]',
+                ['-99', '-1']
+            ],
+            [
+                '[0000-01-01 TO 0000-12-31]',
+                ['0']
+            ],
+            [
+                '[0999-06-02 TO 9999-12-31]',
+                ['999', '']
+            ],
+            [
+                '[-9999-01-01 TO 9998-12-31]',
+                ['-9999', '9998']
+            ],
+            [
+                '1937-12-08',
+                ['1937']
+            ],
+            [
+                '',
+                null
+            ]
+        ];
+    }
+
+    /**
+     * Test getPublicationDateRange
+     *
+     * @param string $indexValue Index value to test
+     * @param ?array $expected Result to be expected
+     *
+     * @dataProvider getPublicationDateRangeData
+     *
+     * @return void
+     */
+    public function testGetPublicationDateRange(
+        string $indexValue,
+        ?array $expected
+    ): void {
+        $record = new SolrQdc(
+            [],
+            [],
+            new \Laminas\Config\Config([])
+        );
+        $record->setRawData(
+            [
+                'id' => 'knp-247394',
+                'publication_daterange' => $indexValue
+            ]
+        );
+        $this->assertEquals(
+            $expected,
+            $record->getPublicationDateRange()
+        );
+    }
+
+    /**
+     * Function to get expected human readable publication dates data
+     *
+     * @return array
+     */
+    public function getHumanReadablePublicationDatesData(): array
+    {
+        return [
+            [
+                '[2001-01-01 TO 2001-12-31]',
+                ['2001']
+            ],
+            [
+                '[1998-01-01 TO 2012-12-31]',
+                ['1998–2012']
+            ],
+            [
+                '[-2002-01-01 TO 0100-12-31]',
+                ['-2002–100']
+            ],
+            [
+                '[-0099-10-31 TO -0001-05-01]',
+                ['-99–-1']
+            ],
+            [
+                '[0000-01-01 TO 0000-12-31]',
+                ['0']
+            ],
+            [
+                '[0999-06-02 TO 9999-12-31]',
+                ['999–']
+            ],
+            [
+                '[-9999-01-01 TO 9998-12-31]',
+                ['-9999–9998']
+            ],
+            [
+                '1937-12-08',
+                ['1937']
+            ],
+            [
+                '',
+                []
+            ]
+        ];
+    }
+
+    /**
+     * Test getHumanReadablePublicationDates
+     *
+     * @param string $indexValue Index value to test
+     * @param ?array $expected Result to be expected
+     *
+     * @dataProvider getHumanReadablePublicationDatesData
+     *
+     * @return void
+     */
+    public function testGetHumanReadablePublicationDates(
+        string $indexValue,
+        ?array $expected
+    ): void {
+        $record = new SolrQdc(
+            [],
+            [],
+            new \Laminas\Config\Config([])
+        );
+        $record->setRawData(
+            [
+                'id' => 'knp-247394',
+                'publication_daterange' => $indexValue
+            ]
+        );
+        $this->assertEquals(
+            $expected,
+            $record->getHumanReadablePublicationDates()
+        );
+    }
+
+    /**
      * Get a record driver with fake data
      *
      * @param array $overrides    Fixture fields to override

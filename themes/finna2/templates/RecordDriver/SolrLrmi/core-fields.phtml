@@ -1,0 +1,37 @@
+<!-- START of: finna - RecordDriver/SolrLrmi/core-fields.phtml -->
+<?php
+  $formatter = $this->recordDataFormatter($this->driver);
+  $filteredFields = $formatter->getDefaults();
+  $coreFields = $formatter->getGroupedData($this->driver, $formatter->getGroupedFields([
+      ['lines' => [
+        'Educational Role',
+        'Educational Level',
+        'Learning Resource Type',
+        'Educational Subject',
+        'Objective and Content',
+        'Subjects',
+        'Language',
+      ]]
+  ], $filteredFields));
+?>
+<?php if ($this->rights || !empty($coreFields)): ?>
+  <table class="table table-finna-record record-details record-field-groups" role="presentation">
+    <?php if ($this->rights): ?>
+      <?=
+        $this->record($this->driver)->renderTemplate(
+            'core-field-group-fields.phtml',
+            [
+                'data' => [
+                    [
+                        'label' => 'Image Rights',
+                        'value' => $this->partial('Helpers/copyright-field-value.phtml', ['data' => $this->rights])
+                    ]
+                ]
+            ]
+        )
+      ?>
+    <?php endif; ?>
+    <?=$this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $coreFields]);?>
+  </table>
+<?php endif; ?>
+<!-- END of: finna - RecordDriver/SolrLrmi/core-fields.phtml -->

@@ -4,10 +4,6 @@
   $this->headScript()->appendFile("record.js");
   $this->headScript()->appendFile("check_save_statuses.js");
   $this->headScript()->appendFile("finna-comments.js");
-  if ($this->record($this->driver)->ratingAllowed()) {
-     $this->headScript()->appendFile('vendor/bootstrap-rating.min.js');
-     $this->headLink()->appendStylesheet('vendor/bootstrap-rating.min.css');
-  }
   // Activate Syndetics Plus if necessary:
   if ($this->syndeticsPlus()->isActive()) {
     echo $this->headScript()->appendFile($this->syndeticsPlus()->getScript());
@@ -80,6 +76,9 @@
           'SET'
       );
   }
+
+  // Store scrollData for searchbox:
+  $this->layout()->scrollData = $this->scrollData;
 ?>
 </div>
 <div class="container">
@@ -88,6 +87,22 @@
   <div>
       <?=$this->record($this->driver)->getToolbar()?>
   </div>
+  <?php if ($this->config()->inlineVideoEnabled()): ?>
+    <?php
+      $videoUrls = [];
+      foreach ($this->record($this->driver)->getLinkDetails() as $url) {
+        if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
+          $videoUrls[] = $url;
+        }
+      }
+    ?>
+    <?php if (!empty($videoUrls)): ?>
+      <div class="inline-video-container">
+        <div class="inline-video" id="inline-video"></div>
+        <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls, 'inlineVideo' => true]);?>
+      </div>
+    <?php endif; ?>
+  <?php endif; ?>
   <div class="record-main <?= !$largeImageLayout ? 'mainbody left' : ''?>">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId" />
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier()) ?>" class="hiddenSource" />

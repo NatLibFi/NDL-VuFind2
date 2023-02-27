@@ -1,17 +1,34 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/core-fields.phtml -->
-<?php foreach ($coreFields as $key => $current): ?>
-  <?php $header = $this->transEsc($current['context']['title'] ?? $current['label']); ?>
-  <?php if ($header): ?>
-    <?php if ($class = $current['context']['class'] ?? null): ?>
-      <tr class="<?=$this->escapeHtmlAttr($class)?>">
-    <?php else: ?>
+<?php
+  $formatter = $this->recordDataFormatter($this->driver);
+  $coreFields = $formatter->getData($formatter->getDefaults());
+  $openUrl = $this->openUrl($this->driver, 'record');
+  $openUrlActive = $openUrl->isActive();
+?>
+<?php if (!empty($coreFields)): ?>
+  <table class="table table-finna-record record-details record-details-more" style="table-layout:initial;" role="presentation" tabindex="-1">
+    <?php foreach ($coreFields as $key => $current): ?>
+      <?php $header = $this->transEsc($current['context']['title'] ?? $current['label']); ?>
+      <?php if ($header): ?>
+        <?php if ($class = $current['context']['class'] ?? null): ?>
+          <tr class="<?=$this->escapeHtmlAttr($class)?>">
+        <?php else: ?>
+          <tr>
+        <?php endif; ?>
+          <th><?=$header?></th>
+          <td><?=$current['value']?></td>
+        </tr>
+      <?php else: ?>
+        <?=$current['value']?>
+      <?php endif; ?>
+    <?php endforeach; ?>
+    <?php if (!empty($openUrlActive)): ?>
       <tr>
-    <?php endif; ?>
-        <th><?=$header?></th>
-        <td><?=$current['value']?></td>
+        <td colspan="2" class="more-options-link"><?=$openUrl->renderTemplate()?> </td>
       </tr>
-  <?php else: ?>
-    <?=$current['value']?>
-  <?php endif; ?>
-<?php endforeach; ?>
+    <?php endif; ?>
+  </table>
+<?php endif; ?>
+<button class="btn show-details-button hidden"><?=$this->transEsc('show_more_details');?> <i class="fa fa-arrow-down"></i></button>
+<button class="btn hide-details-button hidden"><?=$this->transEsc('show_less_details');?> <i class="fa fa-arrow-up"></i></button>
 <!-- END of: finna - RecordDriver/DefaultRecord/core-fields.phtml -->

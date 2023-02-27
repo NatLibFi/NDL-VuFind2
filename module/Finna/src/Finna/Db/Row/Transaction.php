@@ -148,7 +148,7 @@ class Transaction extends \VuFind\Db\Row\RowGateway
     public function setRegistrationFailed(string $msg): void
     {
         $this->complete = TransactionTable::STATUS_REGISTRATION_FAILED;
-        $this->status = $msg;
+        $this->status = mb_substr($msg, 0, 255, 'UTF-8');
         $this->save();
     }
 

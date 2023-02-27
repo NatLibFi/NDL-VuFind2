@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2016-2020.
+ * Copyright (C) The National Library of Finland 2016-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -40,6 +40,14 @@ use VuFind\Exception\ILS as ILSException;
  */
 class SierraRest extends \VuFind\ILS\Driver\SierraRest
 {
+    /**
+     * Error message in the exception when an empty reply was received
+     *
+     * @var string
+     */
+    public const EMPTY_REPLY_ERROR
+        = 'Error in cURL request: Empty reply from server';
+
     /**
      * Get Holding
      *
@@ -170,7 +178,67 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      */
     public function getMyProfile($patron)
     {
-        $profile = parent::getMyProfile($patron);
+        $result = $this->makeRequest(
+            [$this->apiBase, 'patrons', $patron['id']],
+            [
+                'fields' => 'names,emails,phones,addresses,birthDate,expirationDate'
+                    . ',message'
+            ],
+            'GET',
+            $patron
+        );
+
+        if (empty($result)) {
+            return [];
+        }
+        $firstname = '';
+        $lastname = '';
+        $address = '';
+        $zip = '';
+        $city = '';
+        if (!empty($result['names'])) {
+            $nameParts = explode(', ', $result['names'][0], 2);
+            $lastname = $nameParts[0];
+            $firstname = $nameParts[1] ?? '';
+        }
+        if (!empty($result['addresses'][0]['lines'][1])) {
+            $address = $result['addresses'][0]['lines'][0];
+            $postalParts = explode(' ', $result['addresses'][0]['lines'][1], 2);
+            if (isset($postalParts[1])) {
+                $zip = $postalParts[0];
+                $city = $postalParts[1];
+            } else {
+                $city = $postalParts[0];
+            }
+        }
+        $expirationDate = !empty($result['expirationDate'])
+                ? $this->dateConverter->convertToDisplayDate(
+                    'Y-m-d',
+                    $result['expirationDate']
+                ) : '';
+
+        $messages = [];
+        foreach ($result['message']['accountMessages'] ?? [] as $message) {
+            $messages[] = [
+                'message' => $message,
+            ];
+        }
+
+        $profile = [
+            'firstname' => $firstname,
+            'lastname' => $lastname,
+            'phone' => !empty($result['phones'][0]['number'])
+                ? $result['phones'][0]['number'] : '',
+            'email' => !empty($result['emails']) ? $result['emails'][0] : '',
+            'address1' => $address,
+            'zip' => $zip,
+            'city' => $city,
+            'birthdate' => $result['birthDate'] ?? '',
+            'expiration_date' => $expirationDate,
+            'messages' => $messages,
+        ];
+
+        // Checkout history:
         $result = $this->makeRequest(
             [
                 'v6', 'patrons', $patron['id'], 'checkouts', 'history',
@@ -286,5 +354,31 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
            'callnumber' => null,
            'location' => '__HOLDINGSSUMMARYLOCATION__'
         ];
+    }
+
+    /**
+     * Get Item Statuses
+     *
+     * This is responsible for retrieving the status information of a certain
+     * record.
+     *
+     * @param string $id            The record id to retrieve the holdings for
+     * @param bool   $checkHoldings Whether to check holdings records
+     *
+     * @return array An associative array with the following keys:
+     * id, availability (boolean), status, location, reserve, callnumber.
+     */
+    protected function getItemStatusesForBib($id, $checkHoldings)
+    {
+        $result = parent::getItemStatusesForBib($id, $checkHoldings);
+        foreach ($result as &$item) {
+            if (strncmp($item['item_id'], 'ORDER_', 6) === 0) {
+                $item['number'] = $this->translate('item_order_heading');
+            } else {
+                $item['number'] = $item['callnumber'];
+            }
+        }
+        unset($item);
+        return $result;
     }
 }

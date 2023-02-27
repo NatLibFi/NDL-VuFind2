@@ -29,7 +29,10 @@ finna.linkedEvents = (function finnaLinkedEvents() {
       .done(function onGetEventsDone(response) {
         if (response.data) {
           callback(response.data, append, container);
-          finna.common.observeImages(container[0].querySelectorAll('img[data-src]'));
+          VuFind.observerManager.observe(
+            'LazyImages',
+            container[0].querySelectorAll('img[data-src]')
+          );
         } else {
           var err = $('<div></div>').attr('class', 'linked-events-noresults infobox').text(VuFind.translate('nohit_heading'));
           container.find($('.linked-events-content')).html(err);
@@ -48,7 +51,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
 
   function initEventMap(coordinates) {
     var mapCanvas = $('.linked-events-map');
-    var map = finna.map.initMap(mapCanvas, false, {'center': coordinates});
+    var map = finna.map.initMap(mapCanvas, false, {center: coordinates, zoom: 15});
     var icon = L.divIcon({
       className: 'mapMarker',
       iconSize: null,
@@ -61,7 +64,6 @@ finna.linkedEvents = (function finnaLinkedEvents() {
       [coordinates.lat, coordinates.lng],
       {icon: icon}
     ).addTo(map.map);
-    map.map.setZoom(15);
   }
 
   var handleSingleEvent = function handleSingleEvent(data) {

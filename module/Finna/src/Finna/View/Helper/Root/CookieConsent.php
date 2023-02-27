@@ -96,4 +96,22 @@ class CookieConsent extends \VuFind\View\Helper\Root\CookieConsent
 
         return parent::render();
     }
+
+    /**
+     * Get title of required category for a service.
+     *
+     * @param string $service Service to check.
+     *
+     * @return string
+     */
+    public function getCategoryTitleForService(string $service): string
+    {
+        foreach ($this->getControlledVuFindServices() as $key => $values) {
+            if (in_array($service, $values)) {
+                return $this->consentConfig['Categories'][$key]['Title']
+                    ?? 'Unknown';
+            }
+        }
+        return 'Unknown';
+    }
 }

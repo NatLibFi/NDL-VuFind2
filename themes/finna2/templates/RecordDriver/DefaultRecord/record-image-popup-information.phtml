@@ -1,17 +1,12 @@
 <?php
   $recordImage = $this->recordImage($this->record($this->driver));
-  $highResolution = $recordImage->getHighResolutionImages((int)$this->index);
-  $largeImage = $recordImage->getLargeImageWithInfo($this->index)['url'] ?? false;
-
-  $allImages = $this->driver->tryMethod('getAllImages', [$this->layout()->userLang]);
-  $imageDescription = $allImages[$this->index]['description'] ?? '';
+  $image = $recordImage->getImageAsCoverLinks($this->index);
   $rights = $recordImage->getImageRights($this->index);
 
   $formats = $this->driver->tryMethod('getFormats');
   $translatedFormat = $this->transEsc(end($formats));
   $recordType = $this->driver->tryMethod('getRecordFormat');
   $this->partial('Helpers/videojs-translations.phtml');
-  $videoScripts = $this->partial('Helpers/videojs-urls.phtml');
 ?>
 <div id="popup-content-collapse" class="content">
   <h3 id="popup-image-title" class="title"><?=$this->escapeHtml($this->driver->getTitle())?></h3>
@@ -32,11 +27,11 @@ if ($otherTitles):?>
           <?=$this->escapeHtml($author) ?>
         <?php endif; ?>
         <?php if ($dates = $this->driver->tryMethod('getResultDateRange')): ?>
-          <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
+          <?=implode('&ndash;', array_map($this->escapeHtml, $dates)) ?>
         <?php else: ?>
-          <?php foreach ($this->driver->getPublicationDates() as $date): ?>
-            <?=$this->escapeHtml($date) ?>
-          <?php endforeach ?>
+          <?php if ($summDate = $this->driver->getPublicationDateRange()): ?>
+            <?=implode('&ndash;', array_map($this->escapeHtml, $summDate)) ?>
+          <?php endif; ?>
         <?php endif; ?>
       </p>
     <?php else: ?>
@@ -46,7 +41,7 @@ if ($otherTitles):?>
           <?=($index > 0 ? '; ' : '')?><?=$this->escapeHtml($author['name'])?><?php if (!empty($author['role'])): ?>, <?=$this->escapeHtml($author['role'])?><?php endif; ?>
         <?php endforeach; ?>
         <?php if ($dates = $this->driver->getResultDateRange()): ?>
-          <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
+          <?=implode('&ndash;', array_map($this->escapeHtml, $dates)) ?>
         <?php endif; ?>
         <?php if (($results = $this->driver->getSubjectDates()) && !isset($dates[0])): ?>
           <?=implode('<br/>', array_map([$this, 'escapeHtml'], $results))?>
@@ -59,16 +54,16 @@ if ($otherTitles):?>
     <?=$this->escapeHtml($this->organisationDisplayName($this->driver)) ?>
   </div>
   <div class="popup-link-buttons">
-    <div class="record-link"><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver)) ?>"><i class="fa fa-arrow-circle-right"></i> <span><?=$this->transEsc('To the record') ?></span></a></div>
+    <div class="record-link"><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver, ['excludeSearchId' => true]) . '?sid=' . urlencode($this->searchId)) ?>"><i class="fa fa-arrow-circle-right"></i> <span><?=$this->transEsc('To the record') ?></span></a></div>
   </div>
   <div class="summary loading">
     <div data-rows="6" class="truncate-field">
       <?php if ('marc' === $recordType): ?>
         <p></p>
       <?php else: ?>
-        <?php if ($imageDescription): ?>
+        <?php if (!empty($image['description'])): ?>
           <div id="popup-image-description" class="image-description">
-            <p><strong><?=$this->transEsc('Image') ?>:</strong> <?=$this->escapeHtml($imageDescription)?></p>
+            <p><strong><?=$this->transEsc('Image') ?>:</strong> <?=$this->escapeHtml($image['description'])?></p>
           </div>
         <?php endif; ?>
         <?php if ($summaries = $this->driver->tryMethod('getDescriptions') ?? $this->driver->tryMethod('getSummary')): ?>
@@ -104,8 +99,8 @@ if ($otherTitles):?>
   <div class="popup-link-buttons">
     <?=$this->record($this->driver)->getOnlineUrls('popup')?>
     <?php if ($this->userlist()->getMode() !== 'disabled'): ?><div class="save-record-link"><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>"><i class="fa fa-heart"></i> <span><?=$this->transEsc('Add to favorites')?></span></a></div><?php endif; ?>
-    <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-download.phtml', ['index' => $this->index, 'rights' => $rights, 'image' => ['urls' => ['large' => $largeImage]], 'hiRes' => $highResolution ?? false]) ?>
-    <?= $this->record($this->driver)->renderTemplate('image-information.phtml', ['index' => 'popup', 'image' => $allImages[$this->index] ?? []]); ?>
+    <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-download.phtml', ['index' => $this->index, 'rights' => $rights, 'image' => $image, 'hiRes' => $image['highResolution'] ?? false]) ?>
+    <?= $this->record($this->driver)->renderTemplate('image-information.phtml', ['index' => 'popup', 'image' => $image]); ?>
   </div>
   <?php if ($this->driver->getSourceIdentifier() !== 'SolrAuth'): ?>
     <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-rights.phtml', ['rights' => $rights, 'truncateLicense' => true]); ?>

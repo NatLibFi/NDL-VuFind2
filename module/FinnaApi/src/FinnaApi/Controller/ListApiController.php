@@ -223,6 +223,7 @@ class ListApiController extends ListController implements ApiInterface
             }
         } else {
             $fieldList = $this->defaultRecordFields;
+            $fieldList[] = '__index__';
         }
         return $fieldList;
     }

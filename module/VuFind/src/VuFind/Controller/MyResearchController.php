@@ -541,7 +541,9 @@ class MyResearchController extends AbstractBase
             $userId
         );
         foreach ($matches as $current) {
-            if ($current->saved === 1 && $current->id !== $rowToCheck->id) {
+            // $current->saved may be 1 (MySQL) or true (PostgreSQL), so we should
+            // avoid a strict === comparison here:
+            if ($current->saved == 1 && $current->id !== $rowToCheck->id) {
                 return $current->id;
             }
         }
@@ -943,9 +945,7 @@ class MyResearchController extends AbstractBase
         }
 
         return $this->createViewModel(
-            [
-                'driver' => $driver, 'lists' => $lists, 'savedData' => $savedData
-            ]
+            compact('driver', 'lists', 'savedData', 'listID')
         );
     }
 
@@ -2218,7 +2218,8 @@ class MyResearchController extends AbstractBase
                 $csrf->trimTokenList(0);
             }
             $user->delete(
-                $config->Authentication->delete_comments_with_user ?? true
+                $config->Authentication->delete_comments_with_user ?? true,
+                $config->Authentication->delete_ratings_with_user ?? true
             );
             $view->accountDeleted = true;
             $view->redirectUrl = $this->getAuthManager()->logout(

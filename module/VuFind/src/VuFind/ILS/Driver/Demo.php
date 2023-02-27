@@ -8,7 +8,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) Villanova University 2007.
+ * Copyright (C) Villanova University 2007, 2022.
  * Copyright (C) The National Library of Finland 2014.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,6 +38,7 @@ use Laminas\Http\Request as HttpRequest;
 use Laminas\Session\Container as SessionContainer;
 use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
+use VuFindSearch\Command\RandomCommand;
 use VuFindSearch\Query\Query;
 use VuFindSearch\Service as SearchService;
 
@@ -373,7 +374,8 @@ class Demo extends AbstractBase implements \VuFind\I18n\HasSorterInterface
     {
         $source = $this->getRecordSource();
         $query = $this->config['Records']['query'] ?? '*:*';
-        $result = $this->searchService->random($source, new Query($query), 1);
+        $command = new RandomCommand($source, new Query($query), 1);
+        $result = $this->searchService->invoke($command)->getResult();
         if (count($result) === 0) {
             throw new \Exception("Problem retrieving random record from $source.");
         }
@@ -462,6 +464,7 @@ class Demo extends AbstractBase implements \VuFind\I18n\HasSorterInterface
         $locationhref = ($location === 'Campus A') ? 'http://campus-a' : false;
         $result = [
             'id'           => $id,
+            'record_id'    => $id, // for hold links to not rely on id from route
             'source'       => $this->getRecordSource(),
             'item_id'      => $number,
             'number'       => $number,
@@ -2060,7 +2063,7 @@ class Demo extends AbstractBase implements \VuFind\I18n\HasSorterInterface
         $reqNum = sprintf('%06d', $nextId);
         $session->holds->append(
             [
-                'id'       => $holdDetails['id'],
+                'id'       => $holdDetails['record_id'],
                 'source'   => $this->getRecordSource(),
                 'location' => $holdDetails['pickUpLocation'],
                 'expire'   =>
@@ -2538,7 +2541,7 @@ class Demo extends AbstractBase implements \VuFind\I18n\HasSorterInterface
         if ($function == 'Holds') {
             return $this->config['Holds']
                 ?? [
-                    'HMACKeys' => 'id:item_id:level',
+                    'HMACKeys' => 'record_id:item_id:level',
                     'extraHoldFields' =>
                         'comments:requestGroup:pickUpLocation:requiredByDate',
                     'defaultRequiredDate' => 'driver:0:2:0',

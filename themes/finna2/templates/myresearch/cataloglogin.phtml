@@ -29,6 +29,9 @@
 
 <?php if ($offlineMode == "ils-offline"): ?>
   <?=$this->render('Helpers/ils-offline.phtml', ['offlineModeMsg' => 'ils_offline_login_message'])?>
+<?php elseif (!$this->auth()->getManager()->allowsUserIlsLogin()): ?>
+  <h3><?=$this->transEsc('Library Catalog Profile')?></h3>
+  <div class="alert alert-warning"><?=$this->transEsc('ils_connection_failed')?></div>
 <?php elseif ($this->targets === null || !empty($this->targets)): ?>
   <?php if (($user = $this->auth()->isLoggedIn()) && count($user->getLibraryCards()) >= 1): ?>
     <h3><?=$this->transEsc('catalog_login_change_card_heading') ?></h3>

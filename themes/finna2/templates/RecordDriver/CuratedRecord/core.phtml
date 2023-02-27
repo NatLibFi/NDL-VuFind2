@@ -1,0 +1,11 @@
+<!-- START of: finna - RecordDriver/CuratedRecord/core.phtml -->
+<?php $records = $this->driver->getEncapsulatedRecords(); ?>
+<?php if ($record = reset($records)): ?>
+  <?php if ($record instanceof \VuFind\RecordDriver\Missing): ?>
+    <p><?= $this->transEsc('Cannot find record') . ': ' . $this->escapeHtmlAttr($record->getUniqueID()) ?></p>
+  <?php else: ?>
+    <?= $this->record($record)->getCoreMetadata() ?>
+  <?php endif; ?>
+  <?= $this->recordFieldMarkdown()->toHtml($this->driver->getNotes()) ?>
+<?php endif; ?>
+<!-- END of: finna - RecordDriver/CuratedRecord/core.phtml -->

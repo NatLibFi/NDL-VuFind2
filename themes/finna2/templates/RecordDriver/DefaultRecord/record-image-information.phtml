@@ -1,6 +1,7 @@
 <?php
   //Don't add start and end tags
   $localSizes = $sizes ?? ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]];
+  $rating = $this->driver->isRatingAllowed();
 ?>
 <div class="image-information">
   <div class="cover-wrapper">
@@ -18,6 +19,7 @@
     <?php if ($QRCode): ?>
       <div class="visible-print inline-block"><img alt="<?=$this->transEsc('QR Code')?>" class="qrcode" src="<?=$this->escapeHtmlAttr($QRCode);?>"/></div>
     <?php endif; ?>
+    <?php /* Display rating if enabled: */ ?>
   </div>
   <?php // if you have a preview tab but want to move or remove the preview link
       // from this area of the record view, this can be split into

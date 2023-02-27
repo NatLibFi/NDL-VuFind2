@@ -4,7 +4,7 @@
     return;
   }
   $user = $this->auth()->isLoggedIn();
-  $ratings = $this->record($this->driver)->ratingAllowed();
+  $ratings = $this->driver->isRatingAllowed();
 ?>
 <!-- START of: finna - RecordTab/usercomments.phtml -->
 <div class="comment-list">
@@ -18,15 +18,13 @@
         <input type="hidden" name="id" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>"/>
         <input type="hidden" name="source" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>"/>
         <input type="hidden" name="commentId" />
-        <input type="hidden" name="type" value="<?= $ratings ? '1' : '0' ?>" />
       </div>
       <div>
         <?php if ($ratings): ?>
-          <div class="rating-holder">
-            <div class="info"><?= $this->translate('Rating by stars') ?>:</div>
-            <div>
-              <?= $this->partial('Helpers/rating-stars.phtml', ['value' => 5])?>
-            </div>
+          <div class="comment-rating">
+            <?=$this->transEsc('Rating by stars')?>:
+            <?php $ratingData = $this->driver->getRatingData($user->id); ?>
+            <?=$this->render('Helpers/star-rating.phtml', ['ratingData' => $ratingData, 'allowClear' => 0 === $ratingData['count'] || $this->accountCapabilities()->isRatingRemovalAllowed()]);?>
           </div>
         <?php endif; ?>
         <?php if ($nickname = $this->escapeHtml(trim($this->userPublicName($user)))): ?>
@@ -35,21 +33,21 @@
               <b><?= $nickname ?>:</b>
             </div>
           </div>
-          <?php endif; ?>
-          <textarea name="comment" class="form-control" rows="4" cols="37" maxlength="8000" required></textarea><br/>
-          </div>
-          <?php if ($this->tab->isCaptchaActive()): ?>
-            <?=$this->captcha()->html(true, false) ?>
-          <?php endif; ?>
-          <input class="btn btn-primary save" data-label-new="<?=$this->transEscAttr('Add your comment') ?>" data-label-edit="<?=$this->transEscAttr('Save') ?>" data-loading-text="<?=$this->transEscAttr('Submitting') ?><?=$this->transEscAttr('eol_ellipsis')?>" type="submit" value="<?=$this->transEscAttr($ratings ? 'Add your rating' : 'Add your comment')?>"/>
-          <input class="btn btn-primary cancel hide" type="submit" value="<?=$this->transEscAttr("Reset")?>"/>
+        <?php endif; ?>
+        <textarea name="comment" class="form-control" rows="4" cols="37" maxlength="8000" required></textarea><br/>
       </div>
-      <div class="comment-col">
+      <?php if ($this->tab->isCaptchaActive()): ?>
+        <?=$this->captcha()->html(true, false) ?>
+      <?php endif; ?>
+      <input class="btn btn-primary save" data-label-new="<?=$this->transEscAttr('Add your comment') ?>" data-label-edit="<?=$this->transEscAttr('Save') ?>" data-loading-text="<?=$this->transEscAttr('Submitting') ?><?=$this->transEscAttr('eol_ellipsis')?>" type="submit" value="<?=$this->transEscAttr($ratings ? 'Add your rating' : 'Add your comment')?>"/>
+      <input class="btn btn-primary cancel hide" type="submit" value="<?=$this->transEscAttr("Reset")?>"/>
+    </div>
+    <div class="comment-col">
         <i class="fa fa-info3" aria-hidden="true"></i>
-        <div class="comment-description">
-          <?=$this->translate('user_comment_description_html');?>
-        </div>
+      <div class="comment-description">
+        <?=$this->translate('user_comment_description_html');?>
       </div>
+    </div>
   </form>
 <?php else: ?>
   <div>

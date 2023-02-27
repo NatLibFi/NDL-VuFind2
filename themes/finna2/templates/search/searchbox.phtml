@@ -7,52 +7,76 @@
       $this->layout()->skiplink = '<a class="sr-only sr-only-focusable" href="#searchForm_lookfor">' . $this->transEsc('Skip to search') . '</a>';
     }
 
-    // Set default value if necessary:
-    if (!isset($this->searchClassId)) {
+    // Initialize from current search (if available) or defaults:
+    if ($results = ($this->results ?? $this->searchMemory()->getCurrentSearch())) {
+      $params = $results->getParams();
+      $this->searchClassId = $params->getSearchClassId();
+      $hiddenFilters = $params->getHiddenFilters();
+      $lastSort = $params->getSort();
+      $lastLimit = $params->getLimit();
+      $options = $results->getOptions();
+    } else {
+      if (!isset($this->searchClassId)) {
         switch ($module) {
         case 'combined':
-            $this->searchClassId = 'Combined';
-            break;
+          $this->searchClassId = 'Combined';
+          break;
         case 'eds':
-            $this->searchClassId = 'EDS';
-            break;
+          $this->searchClassId = 'EDS';
+          break;
         case 'summon':
-            $this->searchClassId = 'Summon';
-            break;
+          $this->searchClassId = 'Summon';
+          break;
         case 'search2':
-            $this->searchClassId = 'Search2';
-            break;
+          $this->searchClassId = 'Search2';
+          break;
         case 'authority':
-            $this->searchClassId = 'SolrAuth';
-           break;
+          $this->searchClassId = 'SolrAuth';
+          break;
         case 'r2search':
-            $this->searchClassId = 'R2';
-            break;
+          $this->searchClassId = 'R2';
+          break;
         default:
-            $config = $this->config()->get('config');
-            $this->searchClassId = $config->Site->defaultSearchBackend ?? 'Solr';
+          $config = $this->config()->get('config');
+          $this->searchClassId = $config->Site->defaultSearchBackend ?? 'Solr';
         }
+      }
+      $options = $this->searchOptions($this->searchClassId);
+      $hiddenFilters = $this->searchTabs()->getHiddenFilters($this->searchClassId, true, $this->ignoreHiddenFiltersInRequest ?? false);
+      $lastSort = $this->searchMemory()->getLastSort($this->searchClassId);
+      $lastLimit = $this->searchMemory()->getLastLimit($this->searchClassId);
+      $params = null;
     }
 
     // Load search actions and settings (if any):
-    $options = $this->searchOptions($this->searchClassId);
     $handlers = $this->searchbox()->getHandlers($this->searchClassId, $this->searchIndex ?? null);
     $handlerCount = count($handlers);
     $basicSearch = $browse ? "browse-{$browse}" : $options->getSearchAction();
     $advSearch = $module != 'combined' ? $options->getAdvancedSearchAction() : 'search-advanced';
-    $lastSort = $browse ? null: $this->searchMemory()->getLastSort($this->searchClassId);
-    $lastLimit = $browse ? null: $this->searchMemory()->getLastLimit($this->searchClassId);
-    $defaultSortApplied = !isset($this->params) || $lastSort == $options->getDefaultSortByHandler($this->params->getSearchHandler());
+    $defaultSortApplied = null === $params || $lastSort == $options->getDefaultSortByHandler($params->getSearchHandler());
 
-    $ignoreHiddenFilterMemory = $this->ignoreHiddenFilterMemory ?? false;
-    $ignoreHiddenFiltersInRequest = $this->ignoreHiddenFiltersInRequest ?? false;
-    $hiddenFilters = $this->searchtabs()->getHiddenFilters($this->searchClassId, $ignoreHiddenFilterMemory, $ignoreHiddenFiltersInRequest);
-    if (empty($hiddenFilters) && !$ignoreHiddenFilterMemory) {
-        $hiddenFilters = $this->searchMemory()->getLastHiddenFilters($this->searchClassId);
-        if (empty($hiddenFilters)) {
-            $hiddenFilters = $this->searchtabs()->getHiddenFilters($this->searchClassId);
-        }
+    if (!isset($this->filterList) || !isset($this->checkboxFilters)) {
+        $params = $params ?? $this->searchMemory()->getLastSearchParams($this->searchClassId);
+        $filterList = $params->getFilterList(true);
+        $checkboxFilters = $params->getCheckboxFacets();
+    } else {
+        $filterList = is_array($this->filterList) ? $this->filterList : [];
+        $checkboxFilters = is_array($this->checkboxFilters) ? $this->checkboxFilters : [];
     }
+    $filterDetails = $this->searchbox()->getFilterDetails($filterList, $checkboxFilters);
+    $showFilters = $filterDetails && ($results || $options->getRetainFilterSetting());
+
+    // Set up filters
+    $this->layout()->finnaFilters = $showFilters ? $this->context($this)->renderInContext(
+        'search/filters.phtml',
+        [
+            'filterList' => $filterList,
+            'checkboxFilters' => $checkboxFilters,
+            'defaultSortApplied' => $defaultSortApplied,
+            'options' => $options,
+            'params' => $params
+        ]
+    ) : '';
 
     $searchTabs = $this->searchtabs()->getTabConfig($this->searchClassId, $this->lookfor, $this->searchIndex, $this->searchType, $hiddenFilters, $this->layout()->savedTabs);
 
@@ -71,6 +95,7 @@
       }
     }
     $mainPage = $action === 'home' && in_array($module, ['combined', 'primo', 'search', 'r2search', 'eds', 'summon', 'authority']);
+    $scrollData = $this->scrollData ?? $this->layout()->scrollData ?? null;
 ?>
 <?php if ($this->searchType != 'advanced'): ?>
   <?php
@@ -160,14 +185,8 @@
             <input type="checkbox" <?=$isSelected ? 'checked="checked" ' : ''?>name="shard[]" value='<?=$this->escapeHtmlAttr($shard)?>' /> <?=$this->transEsc($shard)?>
         <?php endforeach; ?>
       <?php endif; ?>
-      <?php
-        $filterDetails = $this->searchbox()->getFilterDetails(
-            isset($this->filterList) && is_array($this->filterList) ? $this->filterList : [],
-            isset($this->checkboxFilters) && is_array($this->checkboxFilters) ? $this->checkboxFilters : []
-        );
-      ?>
-       <?php $defaultFilterState = $this->hasDefaultsApplied || $options->getRetainFilterSetting() || !$defaultSortApplied ? ' checked="checked"' : ''; ?>
-       <?php if (!$browse && (!empty($filterDetails) || !empty($this->savedSearches) || !$defaultSortApplied || (isset($this->searchIndex) && ($this->searchIndex != 'AllFields' && $handlerCount <= 1)))): ?>
+      <?php $defaultFilterState = $this->hasDefaultsApplied || $options->getRetainFilterSetting() || !$defaultSortApplied ? ' checked="checked"' : ''; ?>
+      <?php if (!$browse && (!empty($filterDetails) || !empty($this->savedSearches) || !$defaultSortApplied || (isset($this->searchIndex) && ($this->searchIndex != 'AllFields' && $handlerCount <= 1)))): ?>
         <div aria-hidden="true" class="hidden">
             <?php foreach ($filterDetails as $current): ?>
               <input class="applied-filter" id="<?=$this->escapeHtmlAttr($current['id'])?>" type="checkbox"<?=$defaultFilterState?> name="filter[]" value="<?=$this->escapeHtmlAttr($current['value'])?>" />
@@ -191,7 +210,7 @@
       <?php endif; ?>
       <?php foreach ($hiddenFilters as $key => $filter): ?>
         <?php foreach ($filter as $value): ?>
-          <input type="hidden" name="hiddenFilters[]" value="<?=$this->escapeHtmlAttr($key) . ':' . $this->escapeHtmlAttr($value)?>" />
+          <input type="hidden" name="hiddenFilters[]" value="<?=$this->escapeHtmlAttr($key) . ':' . $this->escapeHtmlAttr('"' . $value . '"')?>" />
         <?php endforeach; ?>
       <?php endforeach; ?>
       <?php if (!empty($lastLimit)): ?>
@@ -246,42 +265,41 @@
         </div>
       <?php endif; ?>
     <?php else: ?>
-      <?php $this->scrollData = $this->searchMemory()->getLastScrollData() ?>
-      <?php if (isset($this->scrollData) && ($this->scrollData['previousRecord'] || $this->scrollData['nextRecord'])): ?>
+      <?php if ($scrollData && ($scrollData['previousRecord'] || $scrollData['nextRecord'])): ?>
         <ul class="pager hidden-print" id="view-pager">
-            <?php if ($this->scrollData['previousRecord']): ?>
-                <?php if ($this->scrollData['firstRecord']): ?>
+            <?php if ($scrollData['previousRecord']): ?>
+                <?php if ($scrollData['firstRecord']): ?>
                 <li>
-                  <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->scrollData['firstRecord']))?>" rel="nofollow"><i class="fa fa-first-page"></i><span class="sr-only"><?=$this->transEsc('First Record')?></span></a>
+                  <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($scrollData['firstRecord']))?>" rel="nofollow"><i class="fa fa-first-page"></i><span class="sr-only"><?=$this->transEsc('First Record')?></span></a>
                 </li>
                 <?php endif; ?>
               <li class="pager-previous-record">
-                <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->scrollData['previousRecord']))?>" rel="nofollow"><i class="fa fa-arrow-alt-left"></i><span class="sr-only"><?=$this->transEsc('Previous Record')?></span></a>
+                <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($scrollData['previousRecord']))?>" rel="nofollow"><i class="fa fa-arrow-alt-left"></i><span class="sr-only"><?=$this->transEsc('Previous Record')?></span></a>
               </li>
             <?php else: ?>
-              <?php if ($this->scrollData['firstRecord']): ?>
+              <?php if ($scrollData['firstRecord']): ?>
                 <li class="disabled" title="<?=$this->transEsc('First Record')?>"><a><i class="fa fa-first-page"></i></a></li>
               <?php endif; ?>
               <li class="disabled" title="<?=$this->transEsc('Previous Record')?>"><a><i class="fa fa-arrow-alt-left"></i></a></li>
             <?php endif; ?>
           <li class="pager-text">
               <?=$this->transEsc('of_num_results', [
-                  '%%position%%' => $this->localizedNumber($this->scrollData['currentPosition']),
-                  '%%total%%' => $this->localizedNumber($this->scrollData['resultTotal'])
+                  '%%position%%' => $this->localizedNumber($scrollData['currentPosition']),
+                  '%%total%%' => $this->localizedNumber($scrollData['resultTotal'])
               ]) ?>
           </li>
-            <?php if ($this->scrollData['nextRecord']): ?>
+            <?php if ($scrollData['nextRecord']): ?>
               <li class="pager-next-record">
-                <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->scrollData['nextRecord']))?>" rel="nofollow"><i class="fa fa-arrow-alt-right"></i><span class="sr-only"><?=$this->transEsc('Next Record')?></span></a>
+                <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($scrollData['nextRecord']))?>" rel="nofollow"><i class="fa fa-arrow-alt-right"></i><span class="sr-only"><?=$this->transEsc('Next Record')?></span></a>
               </li>
-              <?php if ($this->scrollData['lastRecord']): ?>
+              <?php if ($scrollData['lastRecord']): ?>
                 <li>
-                  <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->scrollData['lastRecord']))?>" rel="nofollow"><i class="fa fa-last-page"></i><span class="sr-only"><?=$this->transEsc('Last Record')?></span></a>
+                  <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($scrollData['lastRecord']))?>" rel="nofollow"><i class="fa fa-last-page"></i><span class="sr-only"><?=$this->transEsc('Last Record')?></span></a>
                 </li>
               <?php endif; ?>
             <?php else: ?>
               <li class="disabled" title="<?=$this->transEsc('Next Record')?>"><a><i class="fa fa-arrow-alt-right"></i></a></li>
-                <?php if ($this->scrollData['lastRecord']): ?>
+                <?php if ($scrollData['lastRecord']): ?>
                   <li class="disabled" title="<?=$this->transEsc('Last Record')?>"><a><i class="fa fa-last-page"></i></a></li>
                 <?php endif; ?>
             <?php endif; ?>

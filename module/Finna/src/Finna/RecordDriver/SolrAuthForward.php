@@ -225,7 +225,7 @@ class SolrAuthForward extends SolrAuthDefault
                 }
             }
         }
-        return null;
+        return '';
     }
 
     /**

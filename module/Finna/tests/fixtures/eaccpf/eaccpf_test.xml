@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<eac-cpf>
+  <cpfDescription>
+    <identity>
+      <entityId localType="tekninen">102491294</entityId>
+      <entityId localType="">5646138928</entityId>
+      <entityId localType="">SKS-AM_1169.SKS</entityId>
+      <entityId localType="">SKS/VAKKA-AM_tunnus: 1169.SKS</entityId>
+      <entityType>person</entityType>
+      <nameEntry lang="fin">
+        <part localType="http://rdaregistry.info/Elements/a/P50117">Sukunimi, Etunimi</part>
+        <part localType="TONI1">Testi</part>
+        <part localType="TONI4">Etunimi</part>
+        <authorizedForm>AHAA/National Name Authority</authorizedForm>
+      </nameEntry>
+      <nameEntryParallel>
+        <useDates>
+          <dateRange>
+            <fromDate>1930-uu-uu</fromDate>
+            <toDate>1944-uu-uu</toDate>
+          </dateRange>
+          <dateRange>
+            <fromDate standardDate="1949-01-01">1949 1. Tammikuuta</fromDate>
+            <toDate standardDate="1950-02-02">1950</toDate>
+          </dateRange>
+        </useDates>
+        <nameEntry lang="fin">
+          <part localType="http://rdaregistry.info/Elements/a/P50103">Tokanimi, Etunimi</part>
+          <part localType="TONI1">Tokanimi</part>
+          <part localType="TONI4">Etunimi</part>
+        </nameEntry>
+      </nameEntryParallel>
+      <nameEntryParallel>
+        <useDates>
+          <dateRange>
+            <fromDate>unknown</fromDate>
+            <toDate>open</toDate>
+          </dateRange>
+          <dateSet>
+            <dateRange>
+              <fromDate>1900-12-12</fromDate>
+              <toDate>1920-02-02</toDate>
+            </dateRange>
+            <date standardDate="1925-05-05">5. Toukokuuta 1925</date>
+          </dateSet>
+        </useDates>
+        <nameEntry lang="fin">
+          <part localType="http://rdaregistry.info/Elements/a/P50103">Testi, Testaaja</part>
+          <part localType="TONI1">Testi</part>
+          <part localType="TONI4">Testaaja</part>
+        </nameEntry>
+      </nameEntryParallel>
+      <nameEntryParallel>
+        <useDates>
+          <dateRange>
+            <fromDate>1901-uu-uu</fromDate>
+            <toDate>1930-uu-uu</toDate>
+          </dateRange>
+          <date standardDate="1940-10-13">Kolmastoista lokakuuta 1940</date>
+          <dateSet>
+            <dateRange>
+              <fromDate>1941-12-12</fromDate>
+              <toDate>1942-11-11</toDate>
+            </dateRange>
+          </dateSet>
+        </useDates>
+        <nameEntry lang="fin">
+          <part localType="http://rdaregistry.info/Elements/a/P50103">Testeri, Test</part>
+          <part localType="TONI1">Testeri</part>
+          <part localType="TONI4">Test</part>
+        </nameEntry>
+      </nameEntryParallel>
+    </identity>
+  </cpfDescription>
+</eac-cpf>

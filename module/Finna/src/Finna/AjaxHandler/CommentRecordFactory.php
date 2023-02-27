@@ -81,6 +81,8 @@ class CommentRecordFactory implements FactoryInterface
                 ->get(\VuFind\Controller\Plugin\Captcha::class),
             $container->get(\VuFind\Auth\Manager::class)->isLoggedIn(),
             $capabilities->getCommentSetting() !== 'disabled',
+            $container->get(\VuFind\Record\Loader::class),
+            $container->get(\VuFind\Config\AccountCapabilities::class),
             $tablePluginManager->get(\VuFind\Db\Table\Comments::class),
             $tablePluginManager->get(\Finna\Db\Table\CommentsRecord::class),
             $container->get(\VuFind\Search\SearchRunner::class)

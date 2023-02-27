@@ -45,18 +45,24 @@ trait FinnaMarcReaderTrait
     /**
      * Strip trailing spaces and punctuation characters from a string
      *
-     * @param string|array $input      String to strip
-     * @param string       $additional Additional punctuation characters
+     * @param string|array $input                   String to strip
+     * @param string       $additional              Additional punctuation characters
+     * @param bool         $preservePunctuationOnly Return the original string if it
+     * contains only punctuation
      *
      * @return string|array
      */
-    protected function stripTrailingPunctuation($input, $additional = '')
-    {
+    protected function stripTrailingPunctuation(
+        $input,
+        string $additional = '',
+        bool $preservePunctuationOnly = false
+    ) {
         $array = is_array($input);
         if (!$array) {
             $input = [$input];
         }
         foreach ($input as &$str) {
+            $originalStr = $str;
             $str = mb_ereg_replace("[\s\/:;\,=\($additional]+\$", '', $str);
             // Don't replace an initial letter (e.g. string "Smith, A.") followed by
             // period
@@ -70,7 +76,11 @@ trait FinnaMarcReaderTrait
                     $str = substr($str, 0, -1);
                 }
             }
+            if ($preservePunctuationOnly && '' === $str) {
+                $str = $originalStr;
+            }
         }
+        unset($str);
         return $array ? $input : $input[0];
     }
 
