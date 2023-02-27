@@ -189,7 +189,6 @@ VuFind.register('itemStatuses', function ItemStatuses() {
 
   function checkItemStatus(el) {
     var $item = $(el);
-    console.log($item);
     if ($item.hasClass('js-item-pending') || $item.hasClass('js-item-done')) {
       return;
     }
