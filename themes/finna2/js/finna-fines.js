@@ -57,15 +57,15 @@ finna.fines = (function finnaFines() {
       // If something is selected, include any transaction fee:
       var transactionFee = 0;
       if (selectedAmount) {
-        const transactionField = document.querySelector('#online_payment_transaction_fee .amount');
+        const transactionField = document.querySelector('#online_payment_transaction_fee');
         if (transactionField) {
           transactionFee = parseInt(transactionField.dataset.raw, 10);
         }
       }
 
-      const minimumAmount = parseInt(document.querySelector('#online_payment_minimum_payment .amount').dataset.raw, 10);
-      const button = document.querySelector('#pay_selected');
       const minimumContainer = document.querySelector('#online_payment_minimum_payment');
+      const minimumAmount = parseInt(minimumContainer.dataset.raw, 10);
+      const button = document.querySelector('#pay_selected');
       if (selectedAmount + transactionFee >= minimumAmount) {
         button.removeAttribute('disabled');
         button.value = formatAmount(selectedAmount + transactionFee, button.dataset.template);
@@ -81,7 +81,7 @@ finna.fines = (function finnaFines() {
       }
 
       // Update summary for remaining after payment:
-      const remainingAmount = parseInt(document.querySelector('#online_payment_total_due .amount').dataset.raw, 10) - selectedAmount;
+      const remainingAmount = parseInt(document.querySelector('#online_payment_total_due').dataset.raw, 10) - selectedAmount;
       const remainingField = document.querySelector('#online_payment_remaining_after .amount');
       remainingField.textContent = formatAmount(remainingAmount, remainingField.dataset.template);
     };
