@@ -175,7 +175,7 @@ class Demo extends \VuFind\ILS\Driver\Demo
         $config = $this->config['OnlinePayment'] ?? [];
         $nonPayable = $config['nonPayable'] ?? [];
         $nonPayable[] = $accruedType;
-        $id = 0;
+        $id = rand(0, 999999);
         foreach ($fines as &$fine) {
             ++$id;
             $payableOnline = true;

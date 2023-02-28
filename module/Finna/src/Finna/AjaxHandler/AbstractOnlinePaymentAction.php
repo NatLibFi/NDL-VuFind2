@@ -247,7 +247,6 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
         if (!$this->onlinePayment->isEnabled($driver)) {
             return false;
         }
-
         try {
             return $this->onlinePayment->getHandler($driver);
         } catch (\Exception $e) {
