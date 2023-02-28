@@ -198,7 +198,7 @@ trait FinnaOnlinePaymentControllerTrait
         $selectedIds = ($selectFees && $pay)
             ? $this->getRequest()->getPost()->get('selectedIDS', [])
             : null;
-        $payableOnline = $catalog->getOnlinePayableInfo(
+        $payableOnline = $catalog->getOnlinePaymentDetails(
             $patron,
             $fines,
             $selectedIds

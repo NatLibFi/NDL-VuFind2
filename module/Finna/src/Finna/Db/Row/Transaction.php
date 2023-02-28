@@ -38,6 +38,7 @@ use Finna\Db\Table\Transaction as TransactionTable;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  *
+ * @property int $id
  * @property int $complete
  * @property string $paid
  * @property string $status

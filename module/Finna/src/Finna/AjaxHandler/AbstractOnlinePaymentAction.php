@@ -29,7 +29,6 @@
 namespace Finna\AjaxHandler;
 
 use Finna\Db\Row\Transaction as TransactionRow;
-use Finna\Db\Table\Fee as FeeTable;
 use Finna\Db\Table\Transaction as TransactionTable;
 use Finna\OnlinePayment\OnlinePayment;
 use Laminas\Session\Container as SessionContainer;
@@ -181,7 +180,7 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
                 $fines = $this->ils->getMyFines($patron);
                 // Filter by fines selected for the transaction if fine_id field is
                 // available:
-                $finesAmount = $this->ils->getOnlinePayableInfo(
+                $finesAmount = $this->ils->getOnlinePaymentDetails(
                     $patron,
                     $fines,
                     $fineIds ?: null

@@ -104,17 +104,17 @@ class Demo extends \VuFind\ILS\Driver\Demo
     }
 
     /**
-     * Return information on fees payable online.
+     * Return details on fees payable online.
      *
      * @param array  $patron          Patron
      * @param array  $fines           Patron's fines
      * @param ?array $selectedFineIds Selected fines
      *
      * @throws ILSException
-     * @return array Associative array of payment info,
+     * @return array Associative array of payment details,
      * false if an ILSException occurred.
      */
-    public function getOnlinePayableInfo($patron, $fines, ?array $selectedFineIds)
+    public function getOnlinePaymentDetails($patron, $fines, ?array $selectedFineIds)
     {
         if (!empty($fines)) {
             $nonPayableReason = false;

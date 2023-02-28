@@ -86,7 +86,6 @@ class Transaction extends \VuFind\Db\Table\Gateway
      * @param int    $amount         Amount (excluding transaction fee)
      * @param int    $transactionFee Transaction fee
      * @param string $currency       Currency
-     * @param array  $fines          Fines
      *
      * @return Finna\Db\Row\Transaction
      */
