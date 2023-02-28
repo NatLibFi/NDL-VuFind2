@@ -46,7 +46,11 @@ finna.fines = (function finnaFines() {
    */
   function init()
   {
-    paySelectedDefaultText = document.querySelector('#pay_selected').value;
+    const payButton = document.querySelector('#pay_selected');
+    if (null === payButton) {
+      return;
+    }
+    paySelectedDefaultText = payButton.value;
     const checkCheckboxes = function () {
       // Count the balance for selected fees:
       var selectedAmount = 0;
@@ -65,14 +69,13 @@ finna.fines = (function finnaFines() {
 
       const minimumContainer = document.querySelector('#online_payment_minimum_payment');
       const minimumAmount = parseInt(minimumContainer.dataset.raw, 10);
-      const button = document.querySelector('#pay_selected');
       if (selectedAmount + transactionFee >= minimumAmount) {
-        button.removeAttribute('disabled');
-        button.value = formatAmount(selectedAmount + transactionFee, button.dataset.template);
+        payButton.removeAttribute('disabled');
+        payButton.value = formatAmount(selectedAmount + transactionFee, payButton.dataset.template);
         minimumContainer.classList.add('hidden');
       } else {
-        button.setAttribute('disabled', 'disabled');
-        button.value = paySelectedDefaultText;
+        payButton.setAttribute('disabled', 'disabled');
+        payButton.value = paySelectedDefaultText;
         if (selectedAmount) {
           minimumContainer.classList.remove('hidden');
         } else {
