@@ -5,11 +5,21 @@ finna.fines = (function finnaFines() {
 
   var paySelectedDefaultText;
 
+  /**
+   * Get the whole part from currency in cents
+   *
+   * @return {int}
+   */
   function getWhole(currency)
   {
     return Math.trunc(currency / 100);
   }
 
+  /**
+   * Get the fraction part from currency in cents padded to two characters
+   *
+   * @return {string}
+   */
   function getFraction(currency)
   {
     var fraction = String(currency % 100);
@@ -19,11 +29,21 @@ finna.fines = (function finnaFines() {
     return fraction;
   }
 
+  /**
+   * Format currency according to a template where 11 is whole and 22 is fraction
+   *
+   * @return {string}
+   */
   function formatAmount(currency, template)
   {
     return template.replace('11', getWhole(currency)).replace('22', getFraction(currency));
   }
 
+  /**
+   * Initialize payment
+   *
+   * @return {void}
+   */
   function init()
   {
     paySelectedDefaultText = document.querySelector('#pay_selected').value;
