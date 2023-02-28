@@ -246,7 +246,6 @@ trait FinnaOnlinePaymentControllerTrait
                 header("Location: " . $this->getServerUrl('myresearch-fines'));
                 exit();
             }
-
             if ((($paymentConfig['exactBalanceRequired'] ?? true)
                 || !empty($paymentConfig['creditUnsupported']))
                 && !$selectFees
