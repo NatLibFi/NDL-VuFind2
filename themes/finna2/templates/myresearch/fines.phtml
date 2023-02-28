@@ -77,7 +77,7 @@
               <span class="amount"><?=$this->safeMoneyFormat($payableOnline / 100.00);?></span>
             </p>
           </div>
-          <div id="online_payment_minimum_payment" class="alert alert-warning invisible">
+          <div id="online_payment_minimum_payment" class="alert alert-warning hidden">
             <?=$this->transEsc('online_payment_minimum_fee'); ?>:
             <span class="amount" data-raw="<?=$this->escapeHtmlAttr($minimumFee)?>"><?=$this->safeMoneyFormat($minimumFee / 100.00)?></span>
           </div>

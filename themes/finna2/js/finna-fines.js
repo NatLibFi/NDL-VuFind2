@@ -49,14 +49,14 @@ finna.fines = (function finnaFines() {
       if (selectedAmount + transactionFee >= minimumAmount) {
         button.removeAttribute('disabled');
         button.value = formatAmount(selectedAmount + transactionFee, button.dataset.template);
-        minimumContainer.classList.add('invisible');
+        minimumContainer.classList.add('hidden');
       } else {
         button.setAttribute('disabled', 'disabled');
         button.value = paySelectedDefaultText;
         if (selectedAmount) {
-          minimumContainer.classList.remove('invisible');
+          minimumContainer.classList.remove('hidden');
         } else {
-          minimumContainer.classList.add('invisible');
+          minimumContainer.classList.add('hidden');
         }
       }
 
