@@ -2415,15 +2415,17 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * @param int    $amount            Amount to be registered as paid
      * @param string $transactionId     Transaction ID
      * @param int    $transactionNumber Internal transaction number
+     * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
      *
      * @throws ILSException
-     * @return boolean success
+     * @return bool success
      */
     public function markFeesAsPaid(
         $patron,
         $amount,
         $transactionId,
-        $transactionNumber
+        $transactionNumber,
+        $fineIds = null
     ) {
         $function = 'AddPayment';
         $functionResult = 'addPaymentResponse';
