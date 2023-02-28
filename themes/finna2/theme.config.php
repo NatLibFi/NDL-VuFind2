@@ -168,8 +168,7 @@ $config = [
         'vendor/leaflet.css',
         'vendor/leaflet.draw.css',
         'vendor/easymde.min.css',
-        'vendor/slick.css',
-        'vendor/slick-theme.css',
+        'vendor/splide-core.min.css',
         'vendor/video-js.min.css',
         'vendor/select2.min.css',
         'finna.css',
@@ -244,7 +243,7 @@ $config = [
         'vendor/jsTree/jstree.min.js',
         'vendor/sortable.min.js',
         'vendor/easymde.min.js',
-        'vendor/slick.min.js',
+        'vendor/splide.min.js',
         'vendor/gauge.min.js',
         'vendor/select2.min.js',
         'vendor/priority-nav.min.js',
@@ -255,6 +254,7 @@ $config = [
         'finna-model-viewer.js',
         'finna-video-element.js',
         'finna-feed-element.js',
+        'finna-splide-manager.js'
     ],
     'less' => [
         'active' => false
