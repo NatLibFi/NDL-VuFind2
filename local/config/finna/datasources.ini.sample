@@ -38,10 +38,10 @@ onlinePayment['handler'] = 'CPU'
 ; Payment service url:
 onlinePayment['url'] = ''
 
-; ### Paytrail Payment API (current interface):
+; ### Paytrail Payment API:
 onlinePayment['handler'] = 'PaytrailPaymentAPI'
 
-; ### Turku Payment API (Current interface)
+; ### Turku Payment API:
 ;onlinePayment['handler'] = "TurkuPaymentAPI"
 ;onlinePayment['url'] = "..."
 ;onlinePayment['oId'] = "..."
