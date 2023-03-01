@@ -238,19 +238,6 @@
               </td>
             </tr>
             <?php endforeach; ?>
-            <tr>
-              <td colspan="<?=$this->selectFees ? '8' : '7'?>" class="total-balance">
-                <?=$this->transEsc('Total Balance Due')?> (<?=count($this->fines);?>): <span class="amount"><?=$this->safeMoneyFormat($totalDue / 100.00) ?></span>
-                <?php if ($this->onlinePayment): ?>
-                    <br>
-                    <?=$this->transEsc('online_payment_payable_online'); ?> (<?=$payableOnlineCnt ?>): <span class="amount"><?=$this->safeMoneyFormat($payableOnline / 100.00);?></span>
-                    <?php if (!empty($transactionFee)): ?>
-                      <br><?=$this->transEsc('online_payment_transaction_fee'); ?>: <span class="amount"><?=$this->safeMoneyFormat($transactionFee / 100.00);?></span>
-                    <?php endif; ?>
-                  </div>
-                <?php endif; ?>
-              </td>
-            </tr>
           </table>
         </div>
         <?php if ($this->onlinePaymentEnabled): ?>
