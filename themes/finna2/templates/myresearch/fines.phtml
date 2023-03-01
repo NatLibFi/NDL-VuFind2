@@ -37,6 +37,7 @@
           }
       }
     }
+    $currencyTemplate = $this->safeMoneyFormat(11.22);
 ?>
 <!-- Leftside navigationbar -->
 <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'fines']); ?>
@@ -94,7 +95,7 @@
           <div id="online_payment_remaining_after">
             <p>
               <?=$this->transEsc('online_payment_remaining_after'); ?>:
-              <span class="amount" data-template="<?=$this->safeMoneyFormat(11.22)?>">
+              <span class="amount" data-template="<?=$this->escapeHtmlAttr($currencyTemplate)?>">
                 <?=$this->safeMoneyFormat(($this->selectFees ? $totalDue : $totalDue - $payableOnline) / 100)?>
               </span>
             </p>
@@ -146,7 +147,10 @@
                 </div>
               </div>
               <div class="payment-row fines-info-area">
-                <input type="submit" id="pay_selected" name="pay" class="btn btn-primary" value="<?=$this->transEscAttr('online_payment_go_to_pay', ['%%amount%%' => ''])?>" data-template="<?=$this->transEscAttr('online_payment_go_to_pay', ['%%amount%%' => $this->safeMoneyFormat(11.22)])?>" disabled>
+                <span id="online_payment_selected_sr" class="sr-only" data-template="<?=$this->transEscAttr('online_payment_selected_to_pay') . ' ' . $this->transEscAttr($currencyTemplate)?>">
+                  <?=$this->transEscAttr('online_payment_selected_to_pay') . ' ' . $this->safeMoneyFormat(0)?>
+                </span>
+                <input type="submit" id="pay_selected" name="pay" class="btn btn-primary" value="<?=$this->transEscAttr('online_payment_go_to_pay', ['%%amount%%' => ''])?>" data-template="<?=$this->transEscAttr('online_payment_go_to_pay', ['%%amount%%' => $currencyTemplate])?>" disabled>
               </div>
             </div>
           </div>

@@ -8,6 +8,8 @@ finna.fines = (function finnaFines() {
   /**
    * Get the whole part from currency in cents
    *
+   * @param {int} currency
+   *
    * @return {int}
    */
   function getWhole(currency)
@@ -17,6 +19,9 @@ finna.fines = (function finnaFines() {
 
   /**
    * Get the fraction part from currency in cents padded to two characters
+   *
+   * @param {int} currency
+   * @param {string} template
    *
    * @return {string}
    */
@@ -32,11 +37,31 @@ finna.fines = (function finnaFines() {
   /**
    * Format currency according to a template where 11 is whole and 22 is fraction
    *
+   * @param {int} currency
+   * @param {string} template
+   *
    * @return {string}
    */
   function formatAmount(currency, template)
   {
     return template.replace('11', getWhole(currency)).replace('22', getFraction(currency));
+  }
+
+  /**
+   * Set the aria-live attribute for an element
+   *
+   * @param {Element} element
+   * @param {string} politeness
+   *
+   * @return {void}
+   */
+  function ariaLive(element, politeness)
+  {
+    if (politeness) {
+      element.setAttribute('aria-polite', politeness);
+    } else {
+      element.removeAttribute('aria-polite');
+    }
   }
 
   /**
@@ -73,15 +98,23 @@ finna.fines = (function finnaFines() {
         payButton.removeAttribute('disabled');
         payButton.value = formatAmount(selectedAmount + transactionFee, payButton.dataset.template);
         minimumContainer.classList.add('hidden');
+        ariaLive(minimumContainer, '');
       } else {
         payButton.setAttribute('disabled', 'disabled');
         payButton.value = paySelectedDefaultText;
         if (selectedAmount) {
           minimumContainer.classList.remove('hidden');
+          ariaLive(minimumContainer, 'polite');
         } else {
           minimumContainer.classList.add('hidden');
+          ariaLive(minimumContainer, '');
         }
       }
+
+      // Update SR info:
+      const srInfo = document.querySelector('#online_payment_selected_sr');
+      srInfo.textContent = formatAmount(selectedAmount + transactionFee, srInfo.dataset.template);
+      ariaLive(srInfo, 'polite');
 
       // Update summary for remaining after payment:
       const remainingAmount = parseInt(document.querySelector('#online_payment_total_due').dataset.raw, 10) - selectedAmount;
