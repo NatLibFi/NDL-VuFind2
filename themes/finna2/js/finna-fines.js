@@ -58,9 +58,9 @@ finna.fines = (function finnaFines() {
   function ariaLive(element, politeness)
   {
     if (politeness) {
-      element.setAttribute('aria-polite', politeness);
+      element.setAttribute('aria-live', politeness);
     } else {
-      element.removeAttribute('aria-polite');
+      element.removeAttribute('aria-live');
     }
   }
 
