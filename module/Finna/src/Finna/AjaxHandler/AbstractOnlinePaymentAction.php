@@ -225,8 +225,8 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
                     'Payment registration error (patron ' . $patron['id'] . '): '
                     . 'markFeesAsPaid failed'
                 );
-                $t->setRegistrationFailed($e->getMessage());
-                return ['success' => false, 'msg' => $e->getMessage()];
+                $t->setRegistrationFailed('markFeesAsPaid failed');
+                return ['success' => false, 'msg' => 'markFeesAsPaid failed'];
             }
             $t->setRegistered();
             $this->onlinePaymentSession->paymentOk = true;
