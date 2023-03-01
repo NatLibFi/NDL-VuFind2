@@ -44,6 +44,10 @@
   }
 }
 
+.useraccount-table.online-payment .checkboxFilter {
+  margin-top: 2px;
+}
+
 .checkboxFilter.mylist-select-all {
   padding-left: 0;
   padding-top: 2px;
@@ -99,7 +103,7 @@
       }
     }
   }
-  .renew-button, #renewAll, #renewSelected, #update_selected, #cancelAll, #cancelSelected {
+  .renew-button, #renewAll, #renewSelected, #update_selected, #cancelAll, #cancelSelected, #pay_selected {
     height: 35px;
     padding: 0 10px;
     margin-right: 12px;
@@ -393,7 +397,7 @@
   }
 }
 
-.payment-row {
+.online-payment-form > .payment-row {
   .online-payment-area {
     display: inline-block;
     .online-payment-form {
@@ -430,6 +434,17 @@
   }
 }
 
+.myresearch-table.online-payment {
+  .checkbox-col {
+    width: initial;
+  }
+  .toolbar {
+    border: 0;
+    padding-bottom: 0;
+    padding-left: 9px;
+  }
+}
+
 .fines-info-area {
   margin-bottom: 15px;
   div.card-holder {
@@ -439,6 +454,14 @@
   }
   .amount {
     font-weight: bold;
+  }
+  .online-payment-info {
+    display: flex;
+    align-items: baseline;
+  }
+  #online_payment_minimum_payment {
+    margin: 0 0 0 1em;
+    padding: 6px;
   }
 }
 

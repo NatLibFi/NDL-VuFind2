@@ -1305,7 +1305,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
            'locations' => count($locations),
            'holdable' => $holdable,
            'availability' => null,
-           'callnumber' => null,
+           'callnumber' => '',
            'location' => '__HOLDINGSSUMMARYLOCATION__'
         ];
     }
@@ -2369,16 +2369,17 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     }
 
     /**
-     * Return total amount of fees that may be paid online.
+     * Return details on fees payable online.
      *
-     * @param array $patron Patron
-     * @param array $fines  Patron's fines
+     * @param array  $patron          Patron
+     * @param array  $fines           Patron's fines
+     * @param ?array $selectedFineIds Selected fines
      *
      * @throws ILSException
-     * @return array Associative array of payment info,
+     * @return array Associative array of payment details,
      * false if an ILSException occurred.
      */
-    public function getOnlinePayableAmount($patron, $fines)
+    public function getOnlinePaymentDetails($patron, $fines, ?array $selectedFineIds)
     {
         if (!empty($fines)) {
             $amount = 0;
@@ -2414,15 +2415,17 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * @param int    $amount            Amount to be registered as paid
      * @param string $transactionId     Transaction ID
      * @param int    $transactionNumber Internal transaction number
+     * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
      *
      * @throws ILSException
-     * @return boolean success
+     * @return bool success
      */
     public function markFeesAsPaid(
         $patron,
         $amount,
         $transactionId,
-        $transactionNumber
+        $transactionNumber,
+        $fineIds = null
     ) {
         $function = 'AddPayment';
         $functionResult = 'addPaymentResponse';
