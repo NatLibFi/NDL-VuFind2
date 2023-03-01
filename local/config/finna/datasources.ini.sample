@@ -42,9 +42,8 @@ onlinePayment['url'] = ''
 onlinePayment['handler'] = 'PaytrailPaymentAPI'
 
 ; ### Turku Payment API:
-; Payment service url:
-onlinePayment['url'] = ''
 ;onlinePayment['handler'] = "TurkuPaymentAPI"
+;onlinePayment['url'] = "..."
 ;onlinePayment['oId'] = "..."
 ;onlinePayment['platformName'] = "..."
 ;onlinePayment['sapCode'] = "..."
