@@ -118,8 +118,17 @@ minimumFee = 65
 transactionMaxDuration = 15
 ; Currency
 currency = 'EUR'
-; Fine types that can be paid online. Default is 2, 4, 5, 6.
-;fineTypes = '2, 4, 5, 6'
+; Fine types that can be paid online. Default is 2,4,5,6.
+; Fine types:
+; 1 = manual
+; 2 = overdue
+; 3 = replacement
+; 4 = adjustment
+; 5 = lost book
+; 6 = overdue renewal
+; 7 = rental
+; 8 = rental adjustment
+;fineTypes = '2,4,5,6'
 ; Manual fine description regexp patterns that allow online payment. Default is none.
 ;manualFineDescriptions[] = '/^Varausmaksu/'
 ;manualFineDescriptions[] = '/^Noutamaton varaus/'
