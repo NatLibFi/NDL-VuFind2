@@ -213,13 +213,21 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
         }
 
         try {
-            $this->ils->markFeesAsPaid(
+            $res = $this->ils->markFeesAsPaid(
                 $patron,
                 $t->amount,
                 $t->transaction_id,
                 $t->id,
                 ($paymentConfig['selectFines'] ?? false) ? $fineIds : null
             );
+            if (!$res) {
+                $this->logError(
+                    'Payment registration error (patron ' . $patron['id'] . '): '
+                    . 'markFeesAsPaid failed'
+                );
+                $t->setRegistrationFailed($e->getMessage());
+                return ['success' => false, 'msg' => $e->getMessage()];
+            }
             $t->setRegistered();
             $this->onlinePaymentSession->paymentOk = true;
         } catch (\Exception $e) {
