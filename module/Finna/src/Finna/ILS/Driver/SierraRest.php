@@ -41,12 +41,38 @@ use VuFind\Exception\ILS as ILSException;
 class SierraRest extends \VuFind\ILS\Driver\SierraRest
 {
     /**
-     * Error message in the exception when an empty reply was received
+     * Fine types that allow online payment
      *
-     * @var string
+     * @var array
      */
-    public const EMPTY_REPLY_ERROR
-        = 'Error in cURL request: Empty reply from server';
+    protected $onlinePayableFineTypes = [2, 4, 5, 6];
+
+    /**
+     * Manual fine description regexp patterns that allow online payment
+     *
+     * @var array
+     */
+    protected $onlinePayableManualFineDescriptionPatterns = [];
+
+    /**
+     * Initialize the driver.
+     *
+     * Validate configuration and perform all resource-intensive tasks needed to
+     * make the driver active.
+     *
+     * @throws ILSException
+     * @return void
+     */
+    public function init()
+    {
+        parent::init();
+
+        if ($types = $this->config['OnlinePayment']['fineTypes'] ?? '') {
+            $this->onlinePayableFineTypes = explode(',', $types);
+        }
+        $this->onlinePayableManualFineDescriptionPatterns
+            = $this->config['OnlinePayment']['manualFineDescriptions'] ?? [];
+    }
 
     /**
      * Get Holding
@@ -290,6 +316,247 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
+     * Get Patron Fines
+     *
+     * This is responsible for retrieving all fines by a specific patron.
+     *
+     * @param array $patron The patron array from patronLogin
+     *
+     * @throws DateException
+     * @throws ILSException
+     * @return array        Array of the patron's fines on success.
+     */
+    public function getMyFines($patron)
+    {
+        $result = $this->makeRequest(
+            [$this->apiBase, 'patrons', $patron['id'], 'fines'],
+            [
+                'fields' => 'item,assessedDate,description,chargeType,itemCharge'
+                    . ',processingFee,billingFee,paidAmount,location,invoiceNumber'
+            ],
+            'GET',
+            $patron
+        );
+
+        if (!isset($result['entries'])) {
+            return [];
+        }
+        $fines = [];
+        foreach ($result['entries'] as $entry) {
+            $amount = $entry['itemCharge'] + $entry['processingFee']
+                + $entry['billingFee'];
+            $balance = $amount - $entry['paidAmount'];
+            $description = '';
+            // Display charge type if it's not manual (code=1)
+            if (!empty($entry['chargeType'])
+                && $entry['chargeType']['code'] != '1'
+            ) {
+                $description = $entry['chargeType']['display'];
+            }
+            if (!empty($entry['description'])) {
+                if ($description) {
+                    $description .= ' - ';
+                }
+                $description .= $entry['description'];
+            }
+            switch ($description) {
+            case 'Overdue Renewal':
+                $description = 'Overdue';
+                break;
+            }
+            $bibId = null;
+            $title = null;
+            if (!empty($entry['item'])) {
+                $itemId = $this->extractId($entry['item']);
+                // Fetch bib ID from item
+                $item = $this->makeRequest(
+                    [$this->apiBase, 'items', $itemId],
+                    ['fields' => 'bibIds'],
+                    'GET',
+                    $patron
+                );
+                if (!empty($item['bibIds'])) {
+                    $bibId = $item['bibIds'][0];
+                    // Fetch bib information
+                    $bib = $this->getBibRecord($bibId, 'title,publishYear', $patron);
+                    $title = $bib['title'] ?? '';
+                }
+            }
+
+            $fines[] = [
+                'amount' => $amount * 100,
+                'fine' => $description,
+                'balance' => $balance * 100,
+                'createdate' => $this->dateConverter->convertToDisplayDate(
+                    'Y-m-d',
+                    $entry['assessedDate']
+                ),
+                'checkout' => '',
+                'id' => $this->formatBibId($bibId),
+                'title' => $title,
+                'fine_id' => $this->extractId($entry['id']),
+                'organization' => $entry['location']['code'] ?? '',
+                'payableOnline' => $balance > 0 && $this->finePayableOnline($entry),
+                '__invoiceNumber' => $entry['invoiceNumber'],
+            ];
+        }
+        return $fines;
+    }
+
+    /**
+     * Return details on fees payable online.
+     *
+     * @param array  $patron          Patron
+     * @param array  $fines           Patron's fines
+     * @param ?array $selectedFineIds Selected fines
+     *
+     * @throws ILSException
+     * @return array Associative array of payment details,
+     * false if an ILSException occurred.
+     */
+    public function getOnlinePaymentDetails($patron, $fines, ?array $selectedFineIds)
+    {
+        if (!$fines) {
+            return [
+                'payable' => false,
+                'amount' => 0,
+                'reason' => 'online_payment_minimum_fee'
+            ];
+        }
+
+        $nonPayableReason = false;
+        $amount = 0;
+        $payableFines = [];
+        foreach ($fines as $fine) {
+            if (null !== $selectedFineIds
+                && !in_array($fine['fine_id'], $selectedFineIds)
+            ) {
+                continue;
+            }
+            if ($fine['payableOnline']) {
+                $amount += $fine['balance'];
+                $payableFines[] = $fine;
+            }
+        }
+        $config = $this->getConfig('onlinePayment');
+        $transactionFee = $config['transactionFee'] ?? 0;
+        if (isset($config['minimumFee'])
+            && $amount + $transactionFee < $config['minimumFee']
+        ) {
+            $nonPayableReason = 'online_payment_minimum_fee';
+        }
+        $res = [
+            'payable' => empty($nonPayableReason),
+            'amount' => $amount,
+            'fines' => $payableFines,
+        ];
+        if ($nonPayableReason) {
+            $res['reason'] = $nonPayableReason;
+        }
+        return $res;
+    }
+
+    /**
+     * Mark fees as paid.
+     *
+     * This is called after a successful online payment.
+     *
+     * @param array  $patron            Patron
+     * @param int    $amount            Amount to be registered as paid
+     * @param string $transactionId     Transaction ID
+     * @param int    $transactionNumber Internal transaction number
+     * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
+     *
+     * @throws ILSException
+     * @return bool success
+     */
+    public function markFeesAsPaid(
+        $patron,
+        $amount,
+        $transactionId,
+        $transactionNumber,
+        $fineIds = null
+    ) {
+        if (empty($fineIds)) {
+            $this->logError('Bulk payment not supported');
+            return false;
+        }
+
+        $fines = $this->getMyFines($patron);
+        if (!$fines) {
+            $this->logError('No fines to pay found');
+            return false;
+        }
+
+        $amountRemaining = $amount;
+        $payments = [];
+        foreach ($fines as $fine) {
+            if (in_array($fine['fine_id'], $fineIds)
+                && $fine['payableOnline'] && $fine['balance'] > 0
+            ) {
+                $pay = min($fine['balance'], $amountRemaining);
+                $payments[] = [
+                    'amount' => $pay,
+                    'paymentType' => 1,
+                    'invoiceNumber' => (string)$fine['__invoiceNumber'],
+                ];
+                $amountRemaining -= $pay;
+            }
+        }
+        if (!$payments) {
+            $this->logError('Fine IDs do not match any of the payable fines');
+            return false;
+        }
+
+        $request = [
+            'payments' => $payments
+        ];
+        $result = $this->makeRequest(
+            [
+                'v6', 'patrons', $patron['id'], 'fines', 'payment'
+            ],
+            json_encode($request),
+            'PUT',
+            $patron,
+            true
+        );
+
+        if (!in_array($result['statusCode'], ['200', '204'])) {
+            $this->logError(
+                "Payment request failed with status code {$result['statusCode']}: "
+                . (var_export($result['response'] ?? '', true))
+            );
+            return false;
+        }
+        // Sierra doesn't support storing any remaining amount, so we'll just have to
+        // live with the assumption that any fine amount didn't somehow get smaller
+        // during payment. That would be unlikely in any case.
+        return true;
+    }
+
+    /**
+     * Public Function which retrieves renew, hold and cancel settings from the
+     * driver ini file.
+     *
+     * @param string $function The name of the feature to be checked
+     * @param array  $params   Optional feature-specific parameters (array)
+     *
+     * @return array An array with key-value pairs.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function getConfig($function, $params = [])
+    {
+        if ('onlinePayment' === $function) {
+            $result = $this->config['OnlinePayment'] ?? [];
+            $result['exactBalanceRequired'] = false;
+            $result['selectFines'] = true;
+            return $result;
+        }
+        return parent::getConfig($function, $params);
+    }
+
+    /**
      * Purge Patron Transaction History
      *
      * @param array $patron The patron array from patronLogin
@@ -332,7 +599,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      */
     protected function getHoldingsSummary($holdings)
     {
-        $availableTotal = $itemsTotal = $reservationsTotal = 0;
+        $availableTotal = 0;
         $locations = [];
 
         foreach ($holdings as $item) {
@@ -380,5 +647,27 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         }
         unset($item);
         return $result;
+    }
+
+    /**
+     * Check if a fine can be paid online
+     *
+     * @param array $fine Fine
+     *
+     * @return bool
+     */
+    protected function finePayableOnline(array $fine): bool
+    {
+        $code = $fine['chargeType']['code'] ?? 0;
+        $desc = $fine['description'] ?? '';
+        if (in_array($code, $this->onlinePayableFineTypes)) {
+            return true;
+        }
+        foreach ($this->onlinePayableManualFineDescriptionPatterns as $pattern) {
+            if (preg_match($pattern, $desc)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
