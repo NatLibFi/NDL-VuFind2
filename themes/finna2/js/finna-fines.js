@@ -73,8 +73,18 @@ finna.fines = (function finnaFines() {
   {
     const payButton = document.querySelector('#pay_selected');
     if (null === payButton) {
+      // No button, no need to do anything
       return;
     }
+    const minimumElem = document.querySelector('#online_payment_minimum_payment');
+    const srInfoElem = document.querySelector('#online_payment_selected_sr');
+    const totalPaymentElem = document.querySelector('#online_payment_total_due');
+    const remainingElem = document.querySelector('#online_payment_remaining_after .amount');
+    if (!minimumElem || !srInfoElem || !totalPaymentElem || !remainingElem) {
+      console.warn('Online payment page element(s) missing');
+      return;
+    }
+
     paySelectedDefaultText = payButton.value;
     const checkCheckboxes = function () {
       // Count the balance for selected fees:
@@ -92,34 +102,31 @@ finna.fines = (function finnaFines() {
         }
       }
 
-      const minimumContainer = document.querySelector('#online_payment_minimum_payment');
-      const minimumAmount = parseInt(minimumContainer.dataset.raw, 10);
+      const minimumAmount = parseInt(minimumElem.dataset.raw, 10);
       if (selectedAmount + transactionFee >= minimumAmount) {
         payButton.removeAttribute('disabled');
         payButton.value = formatAmount(selectedAmount + transactionFee, payButton.dataset.template);
-        minimumContainer.classList.add('hidden');
-        ariaLive(minimumContainer, '');
+        minimumElem.classList.add('hidden');
+        ariaLive(minimumElem, '');
       } else {
         payButton.setAttribute('disabled', 'disabled');
         payButton.value = paySelectedDefaultText;
         if (selectedAmount) {
-          minimumContainer.classList.remove('hidden');
-          ariaLive(minimumContainer, 'polite');
+          minimumElem.classList.remove('hidden');
+          ariaLive(minimumElem, 'polite');
         } else {
-          minimumContainer.classList.add('hidden');
-          ariaLive(minimumContainer, '');
+          minimumElem.classList.add('hidden');
+          ariaLive(minimumElem, '');
         }
       }
 
       // Update SR info:
-      const srInfo = document.querySelector('#online_payment_selected_sr');
-      srInfo.textContent = formatAmount(selectedAmount + transactionFee, srInfo.dataset.template);
-      ariaLive(srInfo, 'polite');
+      srInfoElem.textContent = formatAmount(selectedAmount + transactionFee, srInfoElem.dataset.template);
+      ariaLive(srInfoElem, 'polite');
 
       // Update summary for remaining after payment:
-      const remainingAmount = parseInt(document.querySelector('#online_payment_total_due').dataset.raw, 10) - selectedAmount;
-      const remainingField = document.querySelector('#online_payment_remaining_after .amount');
-      remainingField.textContent = formatAmount(remainingAmount, remainingField.dataset.template);
+      const remainingAmount = parseInt(totalPaymentElem.dataset.raw, 10) - selectedAmount;
+      remainingElem.textContent = formatAmount(remainingAmount, remainingElem.dataset.template);
     };
 
     document.querySelectorAll(CHECKBOX_SELECTOR).forEach((checkbox) => {
