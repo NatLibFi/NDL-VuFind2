@@ -35,11 +35,15 @@ staffUiUrl = "https://server-address/cgi-bin/koha/catalogue/detail.pl?biblionumb
 
 ; ### CPU (Ceepos):
 onlinePayment['handler'] = 'CPU'
+; Payment service url:
+onlinePayment['url'] = ''
 
 ; ### Paytrail Payment API:
 onlinePayment['handler'] = 'PaytrailPaymentAPI'
 
 ; ### Turku Payment API:
+; Payment service url:
+onlinePayment['url'] = ''
 ;onlinePayment['handler'] = "TurkuPaymentAPI"
 ;onlinePayment['oId'] = "..."
 ;onlinePayment['platformName'] = "..."
@@ -51,8 +55,6 @@ onlinePayment['handler'] = 'PaytrailPaymentAPI'
 
 ; ## Common settings for all services:
 
-; Payment service url:
-onlinePayment['url'] = ''
 ; Merchant identifier:
 onlinePayment['merchantId'] = ''
 ; Merchant secret:
