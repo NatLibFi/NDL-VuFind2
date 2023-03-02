@@ -5,7 +5,17 @@
             "post": {
                 "summary": "Get Bazaar browse URL",
                 "description": "<?=str_replace(["\n", "\r"], ['\\n', '\\r'], $this->render('bazaarapi/browse-description.phtml'))?>",
-                "parameters": [],
+                "parameters": [
+                  {
+                    "in": "header",
+                    "name": "Authentication",
+                    "schema": {
+                      "type": "string",
+                      "required": true
+                    },
+                    "description": "Authentication header as described in the Bazaar specification"
+                  }
+                ],
                 "tags": [
                     "Bazaar"
                 ],
