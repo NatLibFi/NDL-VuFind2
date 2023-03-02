@@ -1,10 +1,10 @@
 <?php
 /**
- * Session view helper
+ * Bazaar session view helper
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) The National Library of Finland 2022-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,76 +22,149 @@
  * @category VuFind
  * @package  View_Helpers
  * @author   Aida Luuppala <aida.luuppala@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 namespace Finna\View\Helper\Root;
 
+use Laminas\Session\SessionManager;
+use Laminas\Stdlib\ArrayObject;
+use Laminas\View\Helper\AbstractHelper;
+
 /**
- * Session view helper
+ * Bazaar session view helper
  *
  * @category VuFind
  * @package  View_Helpers
  * @author   Aida Luuppala <aida.luuppala@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class BazaarSession extends \Laminas\View\Helper\AbstractHelper
+class BazaarSession extends AbstractHelper
 {
     /**
-     * Session configuration
-     *
-     * @var \Laminas\Config\Config
-     */
-    protected $config;
-
-    /**
-     * Session container
-     *
-     * @var Container
-     */
-    protected $session;
-
-    /**
-     * Session container name.
+     * Bazaar session data namespace.
      *
      * @var string
      */
-    public const SESSION_NAME = 'BazaarSession';
+    public const NAMESPACE = 'bazaar';
+
+    /**
+     * Session manager.
+     *
+     * @var SessionManager
+     */
+    protected SessionManager $session;
+
+    /**
+     * Bazaar session storage container.
+     *
+     * @var ?ArrayObject
+     */
+    protected ?ArrayObject $container = null;
+
+    /**
+     * Bazaar add resource callback payload.
+     *
+     * @var array
+     */
+    protected array $payload = [];
 
     /**
      * Constructor
      *
-     * @param \Laminas\Config\Config     $config  Session configuration
-     * @param \Laminas\Session\Container $session Session container
+     * @param SessionManager $session Session manager
      */
-    public function __construct(
-        \Laminas\Config\Config $config,
-        \Laminas\Session\Container $session
-    ) {
-        $this->config = $config;
+    public function __construct(SessionManager $session)
+    {
         $this->session = $session;
     }
 
     /**
-     * Get value from this session container by key name.
-     *
-     * @param string $name Session variable's key name
-     *
-     * @return mixed
-     */
-    public function get($name)
-    {
-        return $this->session[$name];
-    }
-
-    /**
-     * Checks if uuid is set to session.
+     * Return whether a Bazaar session is active.
      *
      * @return bool
      */
-    public function isSelectionOngoing()
+    public function isActive(): bool
     {
-        return ($this->get('uuid')) ? true : false;
+        $this->container = $this->session->getStorage()->offsetGet(self::NAMESPACE);
+        if ($this->container) {
+            return !empty($this->container['client_id']);
+        }
+        return false;
+    }
+
+    /**
+     * Sets selection data if a Bazaar session is active.
+     *
+     * @param string $uid  UID
+     * @param string $name Name
+     *
+     * @return bool Whether the data was set or not
+     */
+    public function setSelectionData(string $uid, string $name): bool
+    {
+        if (!$this->isActive()) {
+            return false;
+        }
+        $this->payload['uid'] = $uid;
+        $this->payload['name'] = $name;
+        return true;
+    }
+
+    /**
+     * Returns an add resource callback payload, or null if a Bazaar session is not
+     * active or payload data has not been set.
+     *
+     * @return ?string
+     */
+    public function getAddResourceCallbackPayload(): ?string
+    {
+        if (!$this->isActive()
+            || empty($this->payload['uid'])
+            || empty($this->payload['name'])
+        ) {
+            return null;
+        }
+        return base64_encode(json_encode($this->payload));
+    }
+
+    /**
+     * Returns the add resource callback URL, or null if a Bazaar session is not
+     * active.
+     *
+     * @return ?string
+     */
+    public function getAddResourceCallbackUrl(): ?string
+    {
+        return $this->get('add_resource_callback_url');
+    }
+
+    /**
+     * Returns the cancel URL, or null if a Bazaar session is not active.
+     *
+     * @return ?string
+     */
+    public function getCancelUrl(): ?string
+    {
+        return $this->get('cancel_url');
+    }
+
+    /**
+     * Returns a value from Bazaar session storage container, or null if a Bazaar
+     * session is not active.
+     *
+     * @param string $key Key
+     *
+     * @return mixed|null
+     */
+    protected function get(string $key)
+    {
+        if (!$this->isActive()) {
+            return null;
+        }
+        return $this->container[$key];
     }
 }

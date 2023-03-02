@@ -77,10 +77,10 @@ $config = [
                 'type' => 'Laminas\Router\Http\Literal',
                 'verb' => 'get,post,options',
                 'options' => [
-                    'route'    => '/api/v1/bazaar',
+                    'route'    => '/api/v1/bazaar/browse',
                     'defaults' => [
                         'controller' => 'BazaarApi',
-                        'action'     => 'handshake',
+                        'action'     => 'browse',
                     ]
                 ]
             ],

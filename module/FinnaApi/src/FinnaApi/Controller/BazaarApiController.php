@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) The National Library of Finland 2022-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,11 +22,13 @@
  * @category VuFind
  * @package  Controller
  * @author   Aida Luuppala <aida.luuppala@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
 namespace FinnaApi\Controller;
 
+use Laminas\Http\Response;
 use VuFindApi\Controller\ApiController;
 use VuFindApi\Controller\ApiInterface;
 use VuFindApi\Controller\ApiTrait;
@@ -39,6 +41,7 @@ use VuFindApi\Controller\ApiTrait;
  * @category VuFind
  * @package  Service
  * @author   Aida Luuppala <aida.luuppala@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
@@ -47,92 +50,55 @@ class BazaarApiController extends ApiController implements ApiInterface
     use ApiTrait;
 
     /**
-     * Execute the request
-     *
-     * @param \Laminas\Mvc\MvcEvent $e Event
-     *
-     * @return mixed
-     * @throws Exception\DomainException
-     */
-    public function onDispatch(\Laminas\Mvc\MvcEvent $e)
-    {
-        // Add CORS headers and handle OPTIONS requests. This is a simplistic
-        // approach since we allow any origin. For more complete CORS handling
-        // a module like zfr-cors could be used.
-        $response = $this->getResponse();
-        $headers = $response->getHeaders();
-        $headers->addHeaderLine('Access-Control-Allow-Origin', '*');
-        $headers->addHeaderLine(
-            'Access-Control-Allow-Methods',
-            'GET, POST, OPTIONS'
-        );
-        $headers->addHeaderLine(
-            'Access-Control-Allow-Headers',
-            'Content-Type, Authorization, X-Requested-With'
-        );
-        $request = $this->getRequest();
-        if ($request->getMethod() == 'OPTIONS') {
-            return $this->output(null, 204);
-        }
-        return parent::onDispatch($e);
-    }
-
-    /**
      * Save request data to auth_hash table.
      *
-     * @return \Laminas\Http\Response
+     * @return Response
      */
-    public function handshakeAction()
+    public function browseAction(): Response
     {
-        $requestParams = null;
-        $requestUuid = null;
-        $requestReturnUrl = null;
         try {
-            $requestParams = json_decode($this->getRequest()->getContent(), true);
-            $requestUuid = $requestParams['uuid'];
-            $requestReturnUrl = $requestParams['return_url'];
-            if ($requestReturnUrl == null) {
-                throw new \Exception();
-            }
+            $payload = $this->getRequest()->getContent();
+            $authenticationData = $this->authenticateBazaarRequest($payload);
         } catch (\Exception $e) {
-            return $this->output([], self::STATUS_ERROR, 400, 'Bad Request');
+            return $this->output([], self::STATUS_ERROR, 401, $e->getMessage());
         }
-
-        $configUuid = null;
         try {
-            $configUuid = $this->getConfig()->Bazaar->uuid['moodle'];
+            $payload = json_decode($payload, true);
+            if (null === $payload) {
+                throw new \Exception('Invalid request payload');
+            }
+            $callbackUrl
+                = $this->getParamUrlValue('add_resource_callback_url', $payload);
+            $cancelUrl = $this->getParamUrlValue('cancel_url', $payload);
         } catch (\Exception $e) {
-            return $this->output([], self::STATUS_ERROR, 401, 'Unauthorized');
+            return $this->output([], self::STATUS_ERROR, 400, $e->getMessage());
         }
 
         $csrf = $this->serviceLocator->get(\VuFind\Validator\CsrfInterface::class);
-        if ($configUuid == $requestUuid) {
-            $hash = $csrf->getHash(true);
-            $data = [
-                'uuid' => $requestUuid,
-                'return_url' => $requestReturnUrl,
-            ];
-            $authHash = $this->serviceLocator
-                ->get(\VuFind\Db\Table\PluginManager::class)
-                ->get(\VuFind\Db\Table\AuthHash::class);
-            $authHash->insert(
-                [
-                    'hash' => $hash,
-                    'type' => 'bazaar',
-                    'data' => json_encode($data, JSON_UNESCAPED_UNICODE)
-                ]
-            );
+        $hash = $csrf->getHash(true);
+        $data = [
+            'client_id' => $authenticationData['clientId'],
+            'add_resource_callback_url' => $callbackUrl,
+            'cancel_url' => $cancelUrl,
+        ];
+        $authHash = $this->serviceLocator
+            ->get(\VuFind\Db\Table\PluginManager::class)
+            ->get(\VuFind\Db\Table\AuthHash::class);
+        $authHash->insert(
+            [
+                'hash' => $hash,
+                'type' => 'bazaar',
+                'data' => json_encode($data, JSON_UNESCAPED_UNICODE)
+            ]
+        );
 
-            $baseUrl = $this->getServerUrl('home');
-            $viewUrl = $baseUrl . 'Search/Bazaar?hash=';
-            $response = [
-                'view_url' => $viewUrl . urlencode($hash)
-            ];
+        $baseUrl = $this->getServerUrl('home');
+        $browseUrl = $baseUrl . 'Search/Bazaar?hash=';
+        $response = [
+            'browse_url' => $browseUrl . urlencode($hash)
+        ];
 
-            return $this->output($response, self::STATUS_OK);
-        } else {
-            return $this->output([], self::STATUS_ERROR, 401, 'Unauthorized');
-        }
+        return $this->output($response, self::STATUS_OK);
     }
 
     /**
@@ -143,74 +109,66 @@ class BazaarApiController extends ApiController implements ApiInterface
      */
     public function getApiSpecFragment()
     {
-        $spec = [];
-        $spec['paths']['/bazaar']['get'] = [
-            'summary' => 'Get view url for selection',
-            'description' => 'Returns a view url for selection',
-            'parameters' => [],
-            'tags' => ['bazaar'],
-            'requestBody' => [
-                'required' => true,
-                'content' => [
-                    'application/json' => [
-                        'schema' => [
-                            'type' => 'object',
-                            'properties' => [
-                                'uuid' => [
-                                    'type' => 'string',
-                                    'description' => 'Predefined uuid '
-                                    . 'that matches config uuid',
-                                ],
-                                'return_url' => [
-                                    'type' => 'string',
-                                    'description' => 'Return url for exiting '
-                                    . 'selection and sending selected id',
-                                ],
-                            ],
-                            'required' => [
-                                'uuid',
-                                'return_url',
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            'responses' => [
-                '200' => [
-                    'description' => 'View url',
-                    'content' => [
-                        'application/json' => [
-                            'schema' => [
-                                'properties' => [
-                                    'view_url' => [
-                                        'description' => 'View url for '
-                                        . 'the selection view',
-                                        'type' => 'string'
-                                    ],
-                                    'status' => [
-                                        'description' => 'Status code',
-                                        'type' => 'string',
-                                        'enum' => ['OK']
-                                    ],
-                                ],
-                            ],
-                        ],
-                        'required' => ['status']
-                    ]
-                ],
-                'default' => [
-                    'description' => 'Error',
-                    'content' => [
-                        'application/json' => [
-                            'schema' => [
-                                '$ref' => '#/components/schemas/Error'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ];
+        return $this->getViewRenderer()->render('bazaarapi/openapi');
+    }
 
-        return json_encode($spec);
+    /**
+     * Authenticate a Bazaar API request.
+     *
+     * @param string $payload Payload to validate
+     *
+     * @return array Array containing authentication data
+     * @throws \Exception If authentication fails
+     */
+    protected function authenticateBazaarRequest(string $payload): array
+    {
+        $authHeader = $this->getRequest()->getHeader('Authentication');
+        if (false === $authHeader) {
+            throw new \Exception('Missing authentication header');
+        }
+
+        $matches = [];
+        $matched = preg_match(
+            '/^BAZAAR (.+):(.+)$/',
+            $authHeader->getFieldValue(),
+            $matches
+        );
+        if (!$matched) {
+            throw new \Exception('Invalid authentication header');
+        }
+        $clientId = $matches[1];
+        $hashToken = $matches[2];
+
+        $secretKey = $this->getConfig()->Bazaar->client[$clientId];
+        if (!$secretKey) {
+            throw new \Exception('Unknown client id');
+        }
+
+        $correctHash = hash_hmac('sha256', $payload, $secretKey);
+        if ($hashToken !== $correctHash) {
+            throw new \Exception('Invalid hash token');
+        }
+
+        return compact('clientId');
+    }
+
+    /**
+     * Returns a validated parameter URL value from the request payload.
+     *
+     * @param string $name    Parameter name
+     * @param array  $payload Request payload
+     *
+     * @return string
+     * @throws \Exception
+     */
+    protected function getParamUrlValue(string $name, array $payload): string
+    {
+        if (!$value = $payload[$name] ?? null) {
+            throw new \Exception('Missing parameter: ' . $name);
+        }
+        if (!filter_var($value, FILTER_VALIDATE_URL)) {
+            throw new \Exception('Invalid URL in parameter: ' . $name);
+        }
+        return $value;
     }
 }

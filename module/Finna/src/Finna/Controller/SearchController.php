@@ -531,15 +531,17 @@ class SearchController extends \VuFind\Controller\SearchController
             throw new AuthException('authentication_error_expired');
         }
 
-        $session = new \Laminas\Session\Container(
-            \Finna\View\Helper\Root\BazaarSession::SESSION_NAME,
+        $sessionContainer = new \Laminas\Session\Container(
+            \Finna\View\Helper\Root\BazaarSession::NAMESPACE,
             $this->serviceLocator->get(\Laminas\Session\SessionManager::class)
         );
 
         $data = json_decode($row['data']);
 
-        $session['uuid'] = $data->uuid;
-        $session['return_url'] = $data->return_url;
+        $sessionContainer['client_id'] = $data->client_id;
+        $sessionContainer['add_resource_callback_url']
+            = $data->add_resource_callback_url;
+        $sessionContainer['cancel_url'] = $data->cancel_url;
 
         // Delete, because the hash has been used
         $row->delete();
