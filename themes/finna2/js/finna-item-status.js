@@ -149,8 +149,8 @@ finna.itemStatus = (function finnaItemStatus() {
     initDedupRecordSelection: initDedupRecordSelection,
     updateElement: updateElement,
     init: function init() {
+      createLinkObserver();
       if (!$('.results').hasClass('result-view-condensed')) {
-        createLinkObserver();
         initDedupRecordSelection();
       }
     }

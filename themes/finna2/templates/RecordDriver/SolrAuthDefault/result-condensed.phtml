@@ -12,7 +12,7 @@
     <?php $thumbnail = ob_get_contents(); ?>
   <?php ob_end_clean(); ?>
 <?php endif;?>
-<div class="record-container<?=$this->driver->supportsAjaxStatus()?' ajaxItem ':''?> list-view authority">
+<div class="record-container list-view authority <?=$this->record($this->driver)->getContainerJsClasses()?>">
   <div class="condensed-collapse-toggle">
     <div class="condensed-body authority">
       <i class="fa fa-arrow-right"></i>

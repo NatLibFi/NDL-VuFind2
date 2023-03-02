@@ -1127,7 +1127,7 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'System Format',
             'getSystemDetails',
-            'data-escapeHtml',
+            'data-systemFormat.phtml',
             [
                 'context' => ['class' => 'extendedSystem']
             ]
@@ -1534,7 +1534,7 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Language Notes',
             'getLanguageNotes',
-            'data-transEsc.phtml',
+            'data-languageNotes.phtml',
             [
                 'context' => ['class' => 'record-language-notes']
             ]
