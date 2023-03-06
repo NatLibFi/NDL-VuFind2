@@ -29,7 +29,9 @@
  */
 namespace Finna\Record;
 
+use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use VuFind\Exception\RecordMissing as RecordMissingException;
+use VuFindSearch\Command\SearchCommand;
 use VuFindSearch\ParamBag;
 
 /**
@@ -126,6 +128,27 @@ class Loader extends \VuFind\Record\Loader
             if ($redirectedRecord = $this->handleMissingSolrRecord($id)) {
                 $missingException = false;
                 $result = $redirectedRecord;
+            }
+        }
+        if ($missingException) {
+            // Check for an encapsulated record ID
+            $parts = explode(
+                ContainerFormatInterface::ENCAPSULATED_RECORD_ID_SEPARATOR,
+                $id,
+                2
+            );
+            if ($id !== $parts[0]) {
+                // Encapsulated record ID separator was found.
+                // Attempt to load parent record using the first part of the ID.
+                $parentRecord = parent::load($parts[0]);
+                // If the parent record implements ContainerRecordInterface
+                // get encapsulated record using the second part of the ID
+                if ($parentRecord instanceof ContainerFormatInterface) {
+                    $result = $parentRecord->getEncapsulatedRecord($parts[1]);
+                    if (null !== $result) {
+                        $missingException = false;
+                    }
+                }
             }
         }
         if ($missingException) {
@@ -262,7 +285,14 @@ class Loader extends \VuFind\Record\Loader
         $params = new \VuFindSearch\ParamBag(
             ['hl' => 'false', 'spellcheck' => 'false']
         );
-        $results = $this->searchService->search('Solr', $query, 0, 1, $params)
+        $command = new SearchCommand(
+            'Solr',
+            $query,
+            0,
+            1,
+            $params
+        );
+        $results = $this->searchService->invoke($command)->getResult()
             ->getRecords();
         return !empty($results) ? $results[0] : false;
     }
@@ -291,7 +321,14 @@ class Loader extends \VuFind\Record\Loader
         $params = new \VuFindSearch\ParamBag(
             ['hl' => 'false', 'spellcheck' => 'false']
         );
-        $results = $this->searchService->search('Solr', $query, 0, 1, $params)
+        $command = new SearchCommand(
+            'Solr',
+            $query,
+            0,
+            1,
+            $params
+        );
+        $results = $this->searchService->invoke($command)->getResult()
             ->getRecords();
         return !empty($results) ? $results[0] : false;
     }

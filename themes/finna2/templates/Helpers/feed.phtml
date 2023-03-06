@@ -1,3 +1,3 @@
 <!-- START of: finna - Helpers/feed.phtml -->
-<div class="feed-container" data-feed="<?= $this->id; ?>"<?= ($this->init ?? true) ? '' : ' data-init="0"'?>></div>
+<finna-feed class="feed-container" feed-id="<?= $this->escapeHtmlAttr($this->id); ?>"></finna-feed>
 <!-- END of: finna - Helpers/feed.phtml -->

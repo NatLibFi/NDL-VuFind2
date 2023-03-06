@@ -400,7 +400,7 @@ FinnaPopup.prototype.focusTrap = function focusTrap(e) {
       }
     } else {
       $.each($.fn.finnaPopup.popups, function callClose(key, obj) {
-        if (obj.isOpen) {
+        if (obj.isOpen && typeof obj.parent === 'undefined') {
           obj.onPopupClose();
         }
       });

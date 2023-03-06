@@ -42,7 +42,7 @@ use Finna\Form\R2Form;
  * @link     http://vufind.org   Main Site
  */
 class R2FeedbackController extends FeedbackController
-    implements \Laminas\Log\LoggerAwareInterface
+implements \Laminas\Log\LoggerAwareInterface
 {
     use \VuFind\Log\LoggerAwareTrait;
 

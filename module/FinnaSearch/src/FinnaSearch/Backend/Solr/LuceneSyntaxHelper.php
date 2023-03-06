@@ -141,14 +141,14 @@ class LuceneSyntaxHelper extends \VuFindSearch\Backend\Solr\LuceneSyntaxHelper
     protected function normalizeUnicodeForm($searchString)
     {
         switch ($this->unicodeNormalizationForm) {
-        case 'NFC':
-            return \Normalizer::normalize($searchString, \Normalizer::FORM_C);
-        case 'NFD':
-            return \Normalizer::normalize($searchString, \Normalizer::FORM_D);
-        case 'NFKC':
-            return \Normalizer::normalize($searchString, \Normalizer::FORM_KC);
-        case 'NFKD':
-            return \Normalizer::normalize($searchString, \Normalizer::FORM_KD);
+            case 'NFC':
+                return \Normalizer::normalize($searchString, \Normalizer::FORM_C);
+            case 'NFD':
+                return \Normalizer::normalize($searchString, \Normalizer::FORM_D);
+            case 'NFKC':
+                return \Normalizer::normalize($searchString, \Normalizer::FORM_KC);
+            case 'NFKD':
+                return \Normalizer::normalize($searchString, \Normalizer::FORM_KD);
         }
 
         return $searchString;

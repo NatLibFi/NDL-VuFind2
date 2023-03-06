@@ -40,7 +40,7 @@ use VuFind\I18n\Translator\TranslatorAwareTrait;
  * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
  */
 abstract class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
-    implements TranslatorAwareInterface
+implements TranslatorAwareInterface
 {
     use TranslatorAwareTrait;
 
@@ -57,6 +57,13 @@ abstract class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
      * @var \VuFind\Search\Results
      */
     protected $records = null;
+
+    /**
+     * Record count
+     *
+     * @var int
+     */
+    protected $recordCount = null;
 
     /**
      * Record driver.
@@ -136,8 +143,16 @@ abstract class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
      */
     protected function getNumOfRecords()
     {
-        $records = $this->getRecords();
-        return $records->getResultTotal();
+        if (null === $this->recordCount) {
+            $this->recordCount = $this->records
+                ? $this->records->getResultTotal()
+                : $this->authorityHelper->getRecordsByAuthorityId(
+                    $this->driver->getUniqueID(),
+                    $this->getRelation(),
+                    true
+                );
+        }
+        return $this->recordCount;
     }
 
     /**

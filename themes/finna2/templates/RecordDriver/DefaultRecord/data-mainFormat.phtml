@@ -34,7 +34,7 @@
     <br>
   <?php endif; ?>
   <?php if (!empty($event['descriptions'])): ?>
-    <?=implode('<br/>', array_map([$this, 'escapeHtml'], $event['descriptions']))?><br/>
+    <?=$this->recordFieldMarkdown()->toHtml(implode("\n\n", $event['descriptions'])) ?>
   <?php endif; ?>
 <?php endforeach; ?>
 </div>

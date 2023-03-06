@@ -3,12 +3,12 @@
   <?php foreach ($data as $field): ?>
     <span property="publisher" typeof="Organization">
       <?php $pubPlace = $field->getPlace(); if (!empty($pubPlace)): ?>
-         <span property="location"><?=$this->escapeHtml($pubPlace)?></span>
+        <span property="location"><?=$this->escapeHtml($pubPlace)?></span>
       <?php endif; ?>
-        <?php $pubName = $field->getName(); if (!empty($pubName)): ?>
-      <span property="name"><?=$this->escapeHtml($pubName)?></span>
-        <?php endif; ?>
-      <?php $pubDate = $field->getDate(); if (!empty($pubDate)): ?>
+      <?php $pubName = $field->getName(); $pubDate = $field->getDate(); if (!empty($pubName)): ?>
+        <span property="name"><?=$this->escapeHtml($pubName)?><?php if (!empty($pubDate)): ?>, <?php endif; ?></span>
+      <?php endif; ?>
+      <?php if (!empty($pubDate)): ?>
         <span property="datePublished"><?=$this->escapeHtml($pubDate)?></span>
       <?php endif; ?>
     </span>

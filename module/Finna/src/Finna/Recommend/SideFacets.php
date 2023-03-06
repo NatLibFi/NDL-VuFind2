@@ -47,7 +47,7 @@ use VuFind\I18n\Translator\TranslatorAwareTrait;
  * @link     http://vufind.org/wiki/vufind2:recommendation_modules Wiki
  */
 class SideFacets extends \VuFind\Recommend\SideFacets
-    implements TranslatorAwareInterface
+implements TranslatorAwareInterface
 {
     use TranslatorAwareTrait;
     use SideFacetsTrait;

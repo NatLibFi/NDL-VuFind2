@@ -107,7 +107,7 @@ class R2BackendFactory extends SolrDefaultBackendFactory
     {
         $this->r2Config = $sm->get(\VuFind\Config\PluginManager::class)->get('R2');
         $this->r2SupportService = $sm->get(\Finna\Service\R2SupportService::class);
-        $this->solrCore = $this->r2Config->Index->default_core;
+        $this->defaultIndexName = $this->r2Config->Index->default_core;
         $this->rems = $sm->get(\Finna\Service\RemsService::class);
         $this->events = new EventManager($sm->get('SharedEventManager'));
 
@@ -202,6 +202,6 @@ class R2BackendFactory extends SolrDefaultBackendFactory
     protected function getSolrUrl($config = null)
     {
         $url = $this->r2Config->Index->url;
-        return "$url/" . $this->solrCore;
+        return "$url/" . $this->defaultIndexName;
     }
 }

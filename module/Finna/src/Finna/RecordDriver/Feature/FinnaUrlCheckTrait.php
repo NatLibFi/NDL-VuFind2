@@ -261,7 +261,7 @@ trait FinnaUrlCheckTrait
      */
     protected function getIPv6Address(string $host): string
     {
-        foreach (dns_get_record($host, DNS_AAAA) as $dnsRec) {
+        foreach (dns_get_record($host, DNS_AAAA) ?: [] as $dnsRec) {
             $ipv6 = $dnsRec['ipv6'] ?? '';
             if ($ipv6) {
                 return $ipv6;

@@ -52,7 +52,6 @@
         </div>
         <?php if ($this->layout()->templateDir === 'record'): ?>
         <div class="pager-container">
-            <?php  $this->scrollData = $this->searchMemory()->getLastScrollData() ?>
             <?php if (isset($this->scrollData) && ($this->scrollData['previousRecord'] || $this->scrollData['nextRecord'])): ?>
               <ul class="pager hidden-print" id="view-pager">
                   <?php if ($this->scrollData['previousRecord']): ?>
@@ -112,7 +111,7 @@
     <div class="container <?=$searchType != 'advanced' ? 'hidden-xs' : '';?>">
       <div class="finna-main-header">
         <h1 class="search-result-header">
-        <?php if ($this->recordsFound || isset($onRecordPage)): ?>
+        <?php if ($this->recordsFound): ?>
           <?php if (isset($this->overrideSearchHeading)): ?>
             <?=$this->overrideSearchHeading?>
           <?php elseif ($searchType == 'basic'): ?>

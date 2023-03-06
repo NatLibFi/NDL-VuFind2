@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2022.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -47,7 +47,7 @@ use VuFind\Session\Settings as SessionSettings;
  * @link     https://vufind.org/wiki/development Wiki
  */
 abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractBase
-    implements \Laminas\Log\LoggerAwareInterface
+implements \Laminas\Log\LoggerAwareInterface
 {
     use \VuFind\Log\LoggerAwareTrait;
 
@@ -171,12 +171,20 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
         }
 
         $paymentConfig = $this->ils->getConfig('onlinePayment', $patron);
+        $fineIds = $t->getFineIds();
+
         if (($paymentConfig['exactBalanceRequired'] ?? true)
             || !empty($paymentConfig['creditUnsupported'])
         ) {
             try {
                 $fines = $this->ils->getMyFines($patron);
-                $finesAmount = $this->ils->getOnlinePayableAmount($patron, $fines);
+                // Filter by fines selected for the transaction if fine_id field is
+                // available:
+                $finesAmount = $this->ils->getOnlinePaymentDetails(
+                    $patron,
+                    $fines,
+                    $fineIds ?: null
+                );
             } catch (\Exception $e) {
                 $this->logException($e);
                 return ['success' => false];
@@ -205,12 +213,21 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
         }
 
         try {
-            $this->ils->markFeesAsPaid(
+            $res = $this->ils->markFeesAsPaid(
                 $patron,
                 $t->amount,
                 $t->transaction_id,
-                $t->id
+                $t->id,
+                ($paymentConfig['selectFines'] ?? false) ? $fineIds : null
             );
+            if (!$res) {
+                $this->logError(
+                    'Payment registration error (patron ' . $patron['id'] . '): '
+                    . 'markFeesAsPaid failed'
+                );
+                $t->setRegistrationFailed('markFeesAsPaid failed');
+                return ['success' => false, 'msg' => 'markFeesAsPaid failed'];
+            }
             $t->setRegistered();
             $this->onlinePaymentSession->paymentOk = true;
         } catch (\Exception $e) {
@@ -238,7 +255,6 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
         if (!$this->onlinePayment->isEnabled($driver)) {
             return false;
         }
-
         try {
             return $this->onlinePayment->getHandler($driver);
         } catch (\Exception $e) {

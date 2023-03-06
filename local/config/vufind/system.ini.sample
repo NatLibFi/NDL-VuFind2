@@ -1,5 +1,9 @@
 [Site]
-; Any local system messages that need to be displayed on the top of every page. May contain html markup.
+; Any local system messages that need to be displayed on the top of every page.
+; May contain HTML markup.
 ;systemMessages[fi] = Lorem ipsum
 ;systemMessages[en-gb] = Dolores sit amet
-
+; Start and end times for scheduled system messages. Both values are optional.
+; Use the format YYYY-MM-DD HH:MM.
+;systemMessagesScheduleStart = 2023-01-17 09:00
+;systemMessagesScheduleEnd = 2023-01-17 17:00

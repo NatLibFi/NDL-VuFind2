@@ -595,21 +595,21 @@ class RemsService implements
     public function setAccessStatusFromConnector(?string $status)
     {
         switch ($status) {
-        case 'ok':
-            $status = self::STATUS_APPROVED;
-            break;
-        case 'no-applications':
-            $status = self::STATUS_NOT_SUBMITTED;
-            break;
-        case 'manual-revoked':
-            $status = self::STATUS_REVOKED;
-            break;
-        case 'session-expired-closed':
-            // REMS session closed due to user's inactivity
-            $status = self::STATUS_EXPIRED;
-            break;
-        default:
-            $status = self::STATUS_CLOSED;
+            case 'ok':
+                $status = self::STATUS_APPROVED;
+                break;
+            case 'no-applications':
+                $status = self::STATUS_NOT_SUBMITTED;
+                break;
+            case 'manual-revoked':
+                $status = self::STATUS_REVOKED;
+                break;
+            case 'session-expired-closed':
+                // REMS session closed due to user's inactivity
+                $status = self::STATUS_EXPIRED;
+                break;
+            default:
+                $status = self::STATUS_CLOSED;
         }
         if ($status !== self::STATUS_APPROVED) {
             $this->session->{self::SESSION_USER_REGISTERED_TIME} = null;
@@ -795,12 +795,12 @@ class RemsService implements
         $userId = null;
 
         switch ($apiUser) {
-        case RemsService::TYPE_USER:
-            $userId = $this->getUserId();
-            break;
-        case RemsService::TYPE_ADMIN:
-            $userId = $this->config->General->apiAdminUser;
-            break;
+            case RemsService::TYPE_USER:
+                $userId = $this->getUserId();
+                break;
+            case RemsService::TYPE_ADMIN:
+                $userId = $this->config->General->apiAdminUser;
+                break;
         }
 
         if ($userId === null) {

@@ -34,6 +34,7 @@
           <div class="holds-pre-list"><?=$this->render($template)?></div>
         <?php endif; ?>
         <?php if (!empty($this->recordList)): ?>
+          <div class="holds-sort"><?=$this->context($this)->renderInContext("myresearch/controls/sort.phtml", ['sortList' => $this->sortList])?></div>
           <?php if ($this->cancelForm || $this->updateForm): ?>
             <form name="updateForm" class="inline" method="post" action="<?=$this->escapeHtmlAttr($this->url('holds-list'))?>" id="update_holds" data-clear-account-cache="holds" data-lightbox>
               <input type="hidden" id="submitType" name="cancelSelected" value="1"/>
@@ -59,7 +60,7 @@
                     <?php if ($this->cancelForm): ?>
                       <div class="btn-group">
                         <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEscAttr("hold_cancel_selected") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
-                        <ul class="dropdown-menu useraccount-cancel" role="presentation">
+                        <ul class="dropdown-menu useraccount-confirm" role="presentation">
                           <li class="disabled"><a><?=$this->transEsc("confirm_hold_cancel_selected_text") ?></a></li>
                           <li><a href="#" id="confirm_cancel_selected_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
                           <li><a href="#" class="confirm_cancel_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
@@ -67,7 +68,7 @@
                       </div>
                       <div class="btn-group">
                         <input id="cancelAll" name="cancelAll" type="submit" value="<?=$this->transEscAttr("hold_cancel_all") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
-                        <ul class="dropdown-menu useraccount-cancel" role="presentation">
+                        <ul class="dropdown-menu useraccount-confirm" role="presentation">
                           <li class="disabled"><a><?=$this->transEsc("confirm_hold_cancel_all_text") ?></a></li>
                           <li><a href="#" id="confirm_cancel_all_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
                           <li><a href="#" class="confirm_cancel_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
@@ -208,8 +209,12 @@
                           <?=$this->transEsc('hold_available') ?>
                         <?php endif; ?>
                         <?php if (isset($ilsDetails['pickupnum'])):?>
-                        <br />
-                        <strong><?=$this->transEsc("Pickup number") ?>:</strong> <?=$this->escapeHtml($ilsDetails['pickupnum']) ?>
+                          <br />
+                          <strong><?=$this->transEsc("Pickup number") ?>:</strong> <?=$this->escapeHtml($ilsDetails['pickupnum']) ?>
+                        <?php endif;?>
+                        <?php if (!empty($ilsDetails['holdShelf'])):?>
+                          <br />
+                          <strong><?=$this->transEsc("Hold Shelf") ?>:</strong> <?=$this->escapeHtml($ilsDetails['holdShelf']) ?>
                         <?php endif;?>
                       </div>
                     <?php elseif (isset($ilsDetails['in_transit']) && $ilsDetails['in_transit']): ?>

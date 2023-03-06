@@ -2,6 +2,8 @@
 <?php
 $openUrl = $this->openUrl($this->driver, 'results');
 $openUrlActive = $openUrl->isActive();
+$doi = $this->doi($this->driver, 'results');
+$doiActive = $doi->isActive();
 // Account for replace_other_urls setting
 $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
 $fulltextAvailable = $this->driver->getFulltextAvailable();
@@ -12,6 +14,10 @@ $fulltextAvailable = $this->driver->getFulltextAvailable();
     <?php if(!$this->driver->isCollection()): ?>
     <?=$this->partial('RecordDriver/Primo/online-url-list.phtml', ['driver' => $this->driver, 'urls' => $urls])?>
     <?php endif; ?>
+  <?php endif; ?>
+
+  <?php if ($doiActive): ?>
+    <?=$doi->renderTemplate()?>
   <?php endif; ?>
 
   <?php if ($openUrlActive): ?>

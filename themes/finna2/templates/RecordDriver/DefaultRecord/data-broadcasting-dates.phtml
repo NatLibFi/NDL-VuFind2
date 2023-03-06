@@ -5,8 +5,8 @@
       <?php foreach ($data as $fields => $keys): ?>
         <li>
           <?php if (!empty($keys['time'])): ?>
-            <span class="record-broadcasting-info-time"><?=$this->escapeHtml($keys['time'])?></span>
-            <span class="record-broadcasting-info-place"><?=$this->escapeHtml($keys['place'])?></span>
+            <span class="record-broadcasting-info-time"><?=$this->escapeHtml($keys['time'] ?? '')?></span>
+            <span class="record-broadcasting-info-place"><?=$this->escapeHtml($keys['place'] ?? '')?></span>
             <span class="record-broadcasting-info-viewers"><?php if (!empty($keys['viewers'])): ?><?=$this->transEsc('Amount of Viewers') ?>: <?=str_replace(' ', '&nbsp;', $this->escapeHtml($keys['viewers']));?><?php endif;?></span>
           <?php endif; ?>
         </li>

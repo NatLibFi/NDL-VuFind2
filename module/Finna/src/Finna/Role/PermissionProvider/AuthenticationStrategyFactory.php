@@ -45,7 +45,7 @@ use Psr\Container\ContainerInterface;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class AuthenticationStrategyFactory
-    implements \Laminas\ServiceManager\Factory\FactoryInterface
+implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create an object

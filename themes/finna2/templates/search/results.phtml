@@ -12,6 +12,9 @@
   $searchType = $this->params->getSearchType();
   $geoFilter = '';
 
+  // Store search id:
+  $this->layout()->searchId = $this->results->getSearchId();
+
     // Set up search box:
     $this->layout()->searchbox = $this->context($this)->renderInContext(
         'search/searchbox.phtml',

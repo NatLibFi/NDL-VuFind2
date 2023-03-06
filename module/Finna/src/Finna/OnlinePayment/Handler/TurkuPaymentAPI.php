@@ -106,8 +106,10 @@ class TurkuPaymentAPI extends AbstractBase
             ->setSuccess($notifyUrl)
             ->setCancel($notifyUrl);
 
+        // Use email from the ILS as default and use the one stored in Finna as a
+        // fallback:
         $customer = (new Customer())
-            ->setEmail(trim($user->email));
+            ->setEmail(trim(($patron['email'] ?? '') ?: $user->email));
 
         $language = $this->languageMap[$this->getCurrentLanguageCode()] ?? 'FI';
         $sapOrganization = [
@@ -187,7 +189,7 @@ class TurkuPaymentAPI extends AbstractBase
                     ->setSapProduct($sapProduct)
                     ->setDescription($fineDesc)
                     ->setProductCode($code)
-                    ->setUnitPrice($fine['balance'])
+                    ->setUnitPrice(round($fine['balance']))
                     ->setUnits(1)
                     ->setVatPercentage(0);
 
@@ -263,16 +265,16 @@ class TurkuPaymentAPI extends AbstractBase
 
         $status = $params['checkout-status'];
         switch ($status) {
-        case 'ok':
-            $transaction->setPaid();
-            return self::PAYMENT_SUCCESS;
-        case 'fail':
-            $transaction->setCanceled();
-            return self::PAYMENT_CANCEL;
-        case 'new':
-        case 'pending':
-        case 'delayed':
-            return self::PAYMENT_PENDING;
+            case 'ok':
+                $transaction->setPaid();
+                return self::PAYMENT_SUCCESS;
+            case 'fail':
+                $transaction->setCanceled();
+                return self::PAYMENT_CANCEL;
+            case 'new':
+            case 'pending':
+            case 'delayed':
+                return self::PAYMENT_PENDING;
         }
 
         $this->logPaymentError("unknown status $status");

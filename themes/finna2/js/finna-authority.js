@@ -71,14 +71,14 @@ finna.authority = (function finnaAuthority() {
 
   function initAuthorityResultInfo(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
-
-    holder.find('.authority-record-info').each(function getAuthorityRecordInfo() {
-      $(this).one('inview', function onInView() {
-        var $elem = $(this);
+    VuFind.observerManager.createIntersectionObserver(
+      'authorityResults',
+      (element) => {
+        var $elem = $(element);
         if ($elem.hasClass('loaded')) {
           return;
         }
-        var $item = $(this).parents('.record-container');
+        var $item = $elem.parents('.record-container');
         if ($item.length === 0) {
           return;
         }
@@ -107,8 +107,9 @@ finna.authority = (function finnaAuthority() {
             $elem.text(VuFind.translate('error_occurred'));
             $elem.removeClass('loading');
           });
-      });
-    });
+      },
+      holder.find('.authority-record-info').toArray()
+    );
   }
 
   var my = {

@@ -166,13 +166,14 @@ class Form extends \VuFind\Form\Form
     /**
      * Set form id
      *
-     * @param string $formId Form id
-     * @param array  $params Additional form parameters.
+     * @param string $formId  Form id
+     * @param array  $params  Additional form parameters.
+     * @param array  $prefill Prefill form with these values.
      *
      * @return void
      * @throws Exception
      */
-    public function setFormId($formId, $params = [])
+    public function setFormId($formId, $params = [], $prefill = [])
     {
         // First set up our customized parameters needed during initialization:
         if (!$config = $this->getFormConfig($formId)) {
@@ -183,7 +184,7 @@ class Form extends \VuFind\Form\Form
 
         // Call parent's setFormId to initialize form settings now that the above has
         // been done:
-        parent::setFormId($formId, $params);
+        parent::setFormId($formId, $params, $prefill);
 
         if ($this->reportPatronBarcode()) {
             if ($this->user && ($catUsername = $this->user->cat_username)) {
@@ -672,15 +673,16 @@ class Form extends \VuFind\Form\Form
     /**
      * Parse form configuration.
      *
-     * @param string $formId Form id
-     * @param array  $config Configuration
-     * @param array  $params Additional form parameters.
+     * @param string $formId  Form id
+     * @param array  $config  Configuration
+     * @param array  $params  Additional form parameters.
+     * @param array  $prefill Prefill form with these values.
      *
      * @return array
      */
-    protected function parseConfig($formId, $config, $params)
+    protected function parseConfig($formId, $config, $params, $prefill)
     {
-        $elements = parent::parseConfig($formId, $config, $params);
+        $elements = parent::parseConfig($formId, $config, $params, $prefill);
 
         if (!empty($this->formConfig['hideSenderInfo'])) {
             // Remove default sender info fields

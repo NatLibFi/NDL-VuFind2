@@ -50,7 +50,7 @@
             <form name="renewals" method="post" id="renewals" data-clear-account-cache="checkedOut" data-disable-on-submit>
               <input type="hidden" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>" name="csrf"/>
               <input type="hidden" id="submitType" name="renewSelected" value="1">
-              <table class="myresearch-table" role="presentation" aria-label="<?=$this->escapeHtmlAttr('Actions');?>">
+              <table class="myresearch-table" role="presentation" aria-label="<?=$this->transEscAttr('Actions');?>">
                 <tr class="toolbar">
                   <td class="text-left checkbox-col">
                     <div class="checkboxFilter mylist-select-all">
@@ -66,8 +66,8 @@
                   <td>
                     <div class="renew-button-col">
                       <div class="btn-group">
-                        <input type="submit" id="renewSelected" name="renewSelected" value="<?=$this->transEscAttr('renew_selected')?>" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
-                        <ul class="dropdown-menu">
+                        <input type="submit" class="btn btn-primary dropdown-toggle" id="renewSelected" name="renewSelected" value="<?=$this->transEscAttr('renew_selected')?>" data-toggle="dropdown" data-lightbox-ignore>
+                        <ul class="dropdown-menu useraccount-confirm">
                           <li class="disabled"><a><?=$this->transEsc('confirm_renew_selected_text')?></a></li>
                           <li><a href="#" id="confirm_renew_selected_yes"><?=$this->transEsc('confirm_dialog_yes')?></a></li>
                           <li><a href="#" class="confirm_renew_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
@@ -75,8 +75,8 @@
                       </div>
                       <?php if ($renewAll): ?>
                         <div class="btn-group">
-                          <input type="submit" id="renewAll" name="renewAll" value="<?=$this->transEscAttr('renew_all')?>" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
-                          <ul class="dropdown-menu">
+                          <input type="submit" class="btn btn-primary dropdown-toggle" id="renewAll" name="renewAll" value="<?=$this->transEscAttr('renew_all')?>" data-toggle="dropdown" data-lightbox-ignore>
+                          <ul class="dropdown-menu useraccount-confirm">
                             <li class="disabled"><a><?=$this->transEsc('confirm_renew_all_text')?></a></li>
                             <li><a href="#" id="confirm_renew_all_yes"><?=$this->transEsc('confirm_dialog_yes')?></a></li>
                             <li><a href="#" class="confirm_renew_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>

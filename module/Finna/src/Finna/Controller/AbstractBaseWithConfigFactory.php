@@ -42,7 +42,7 @@ use Psr\Container\ContainerInterface;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class AbstractBaseWithConfigFactory
-    extends \VuFind\Controller\AbstractBaseWithConfigFactory
+extends \VuFind\Controller\AbstractBaseWithConfigFactory
 {
     /**
      * Create an object

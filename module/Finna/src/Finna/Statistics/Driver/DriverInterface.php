@@ -42,8 +42,8 @@ interface DriverInterface
      * Add a new session to statistics
      *
      * @param string $institution Institution code
-     * @param string $view        View code (empty string for default view)
-     * @param bool   $crawler     Whether the request comes from bot or crawler
+     * @param string $view        View subpath (empty string for default view)
+     * @param int    $type        Request type bitmap
      * @param array  $session     Session data
      *
      * @return void
@@ -51,7 +51,7 @@ interface DriverInterface
     public function addNewSession(
         string $institution,
         string $view,
-        bool $crawler,
+        int $type,
         array $session
     ): void;
 
@@ -59,8 +59,8 @@ interface DriverInterface
      * Add a record view to statistics
      *
      * @param string $institution Institution code
-     * @param string $view        View code (empty string for default view)
-     * @param bool   $crawler     Whether the request comes from bot or crawler
+     * @param string $view        View subpath (empty string for default view)
+     * @param int    $type        Request type bitmap
      * @param string $backend     Backend ID
      * @param string $source      Record source
      * @param string $recordId    Record ID
@@ -74,7 +74,7 @@ interface DriverInterface
     public function addRecordView(
         string $institution,
         string $view,
-        bool $crawler,
+        int $type,
         string $backend,
         string $source,
         string $recordId,
@@ -87,8 +87,8 @@ interface DriverInterface
      * Add a page view to statistics
      *
      * @param string $institution Institution code
-     * @param string $view        View code (empty string for default view)
-     * @param bool   $crawler     Whether the request comes from bot or crawler
+     * @param string $view        View subpath (empty string for default view)
+     * @param int    $type        Request type bitmap
      * @param string $controller  Controller
      * @param string $action      Action
      *
@@ -97,7 +97,7 @@ interface DriverInterface
     public function addPageView(
         string $institution,
         string $view,
-        bool $crawler,
+        int $type,
         string $controller,
         string $action
     ): void;

@@ -121,7 +121,10 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
         }
         foreach ($this->hiddenFilters as $filter => $value) {
             if ($filter == 'pcAvailability') {
-                $args['pcAvailability'] = (bool)$value;
+                // Toggle the setting unless we are told to ignore the hidden filter:
+                if (empty($args['ignorePcAvailabilityHiddenFilter'])) {
+                    $args['pcAvailability'] = (bool)$value;
+                }
             } else {
                 $args['filterList'][$filter][] = $value;
             }
@@ -132,10 +135,10 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
     /**
      * Translate Primo's XML into array of arrays.
      *
-     * @param array $data   The raw xml from Primo
-     * @param array $params Request parameters
+     * @param string $data   The raw xml from Primo
+     * @param array  $params Request parameters
      *
-     * @return array      The processed response from Primo
+     * @return array The processed response from Primo
      */
     protected function process($data, $params = [])
     {

@@ -45,7 +45,7 @@ use VuFind\Session\Settings as SessionSettings;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase
-    implements \Laminas\Log\LoggerAwareInterface
+implements \Laminas\Log\LoggerAwareInterface
 {
     use \VuFind\Log\LoggerAwareTrait;
 
@@ -85,14 +85,29 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase
     protected $searchRunner;
 
     /**
+     * Session ID
+     *
+     * @var string
+     */
+    protected $sessionId;
+
+    /**
+     * Logged in user (or false)
+     *
+     * @var User|bool
+     */
+    protected $user;
+
+    /**
      * Constructor
      *
-     * @param SessionSettings   $ss       Session settings
-     * @param Config            $config   Main config
-     * @param SearchTable       $st       Search table
-     * @param ResultsManager    $results  Results manager
-     * @param RendererInterface $renderer View renderer
-     * @param SearchRunner      $sr       Search runner
+     * @param SessionSettings   $ss        Session settings
+     * @param Config            $config    Main config
+     * @param SearchTable       $st        Search table
+     * @param ResultsManager    $results   Results manager
+     * @param RendererInterface $renderer  View renderer
+     * @param SearchRunner      $sr        Search runner
+     * @param string            $sessionId Session ID
      */
     public function __construct(
         SessionSettings $ss,
@@ -100,7 +115,8 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase
         SearchTable $st,
         ResultsManager $results,
         RendererInterface $renderer,
-        SearchRunner $sr
+        SearchRunner $sr,
+        string $sessionId
     ) {
         $this->sessionSettings = $ss;
         $this->config = $config;
@@ -108,6 +124,7 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase
         $this->resultsManager = $results;
         $this->renderer = $renderer;
         $this->searchRunner = $sr;
+        $this->sessionId = $sessionId;
     }
 
     /**
@@ -130,7 +147,7 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase
         $id = $params->fromPost('searchId', $params->fromQuery('searchId'));
         $limit = $params->fromPost('limit', $params->fromQuery('limit', null));
 
-        $search = $this->searchTable->select(['id' => $id])->current();
+        $search = $this->searchTable->getOwnedRowById($id, $this->sessionId, null);
         if (empty($search)) {
             return $this->formatResponse(
                 'Search not found',

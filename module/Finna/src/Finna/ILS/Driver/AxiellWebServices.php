@@ -50,7 +50,7 @@ use VuFind\I18n\Translator\TranslatorAwareInterface as TranslatorAwareInterface;
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
 class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
-    implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
+implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface
 {
     use \VuFindHttp\HttpServiceAwareTrait;
@@ -1305,7 +1305,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
            'locations' => count($locations),
            'holdable' => $holdable,
            'availability' => null,
-           'callnumber' => null,
+           'callnumber' => '',
            'location' => '__HOLDINGSSUMMARYLOCATION__'
         ];
     }
@@ -1462,22 +1462,22 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             = $this->config['updateMessagingSettings']['method'] ?? 'none';
 
         switch ($serviceSendMethod) {
-        case 'database':
-            $userCached['messagingServices']
-                = $this->parseEmailMessagingSettings(
-                    $info->messageServices->messageService ?? null
-                );
-            break;
-        case 'driver':
-            $userCached['messagingServices']
-                = $this->parseDriverMessagingSettings(
-                    $info->messageServices->messageService ?? null,
-                    $user
-                );
-            break;
-        default:
-            $userCached['messagingServices'] = [];
-            break;
+            case 'database':
+                $userCached['messagingServices']
+                    = $this->parseEmailMessagingSettings(
+                        $info->messageServices->messageService ?? null
+                    );
+                break;
+            case 'driver':
+                $userCached['messagingServices']
+                    = $this->parseDriverMessagingSettings(
+                        $info->messageServices->messageService ?? null,
+                        $user
+                    );
+                break;
+            default:
+                $userCached['messagingServices'] = [];
+                break;
         }
 
         $this->putCachedData($cacheKey, $userCached);
@@ -1850,20 +1850,29 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             $message = isset($loan->loanStatus->status)
                 ? $this->mapStatus($loan->loanStatus->status, $function) : '';
 
-            if (!isset($this->config['Loans']['renewalLimit'])
-                || (isset($loan->loanStatus->status)
-                && $this->isPermanentRenewalBlock($loan->loanStatus->status))
+            // These are confusingly similarly named, but displayed a bit differently
+            // in the UI:
+            // renew/renewLimit is displayed as "x renewals remaining"
+            $renew = null;
+            $renewLimit = null;
+            // renewals/renewalLimit is displayed as "renewed/limit"
+            $renewals = null;
+            $renewalLimit = null;
+            if (isset($loan->loanStatus->status)
+                && $this->isPermanentRenewalBlock($loan->loanStatus->status)
             ) {
-                $renewLimit = null;
-                $renewals = null;
-            } else {
-                $renewLimit = $this->config['Loans']['renewalLimit'];
+                // No changes
+            } elseif (isset($this->config['Loans']['renewalLimit'])) {
+                $renewalLimit = $this->config['Loans']['renewalLimit'];
                 $renewals = max(
                     [
                         0,
-                        $renewLimit - $loan->remainingRenewals
+                        $renewalLimit - $loan->remainingRenewals
                     ]
                 );
+            } elseif ($loan->remainingRenewals > 0) {
+                $renew = 0;
+                $renewLimit = $loan->remainingRenewals;
             }
 
             $dueDate = strtotime($loan->loanDueDate . ' 23:59:59');
@@ -1883,8 +1892,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'dueStatus' => $dueStatus,
                 'renewable' => (string)$loan->loanStatus->isRenewable == 'yes',
                 'message' => $message,
+                'renew' => $renew,
+                'renewLimit' => $renewLimit,
                 'renewalCount' => $renewals,
-                'renewalLimit' => $renewLimit,
+                'renewalLimit' => $renewalLimit,
             ];
 
             $transList[] = $trans;
@@ -2312,6 +2323,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             } else {
                 $amount = str_replace(',', '.', $debt->debtAmountFormatted) * 100;
             }
+            // Round the amount in case it's a weird decimal number:
+            $amount = round($amount);
             $description = $debt->debtType . ' - ' . $debt->debtNote;
             $payable = $amount > 0;
             if ($payable) {
@@ -2356,16 +2369,17 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     }
 
     /**
-     * Return total amount of fees that may be paid online.
+     * Return details on fees payable online.
      *
-     * @param array $patron Patron
-     * @param array $fines  Patron's fines
+     * @param array  $patron          Patron
+     * @param array  $fines           Patron's fines
+     * @param ?array $selectedFineIds Selected fines
      *
      * @throws ILSException
-     * @return array Associative array of payment info,
+     * @return array Associative array of payment details,
      * false if an ILSException occurred.
      */
-    public function getOnlinePayableAmount($patron, $fines)
+    public function getOnlinePaymentDetails($patron, $fines, ?array $selectedFineIds)
     {
         if (!empty($fines)) {
             $amount = 0;
@@ -2401,15 +2415,17 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * @param int    $amount            Amount to be registered as paid
      * @param string $transactionId     Transaction ID
      * @param int    $transactionNumber Internal transaction number
+     * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
      *
      * @throws ILSException
-     * @return boolean success
+     * @return bool success
      */
     public function markFeesAsPaid(
         $patron,
         $amount,
         $transactionId,
-        $transactionNumber
+        $transactionNumber,
+        $fineIds = null
     ) {
         $function = 'AddPayment';
         $functionResult = 'addPaymentResponse';
@@ -3503,14 +3519,14 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     public function supportsMethod($method, $params)
     {
         switch ($method) {
-        case 'changePassword':
-            return isset($this->config['changePassword']);
-        case 'getMyTransactionHistory':
-            return !empty($this->loansaurora_wsdl);
-        case 'updateAddress':
-            return !empty($this->patronaurora_wsdl);
-        default:
-            return is_callable([$this, $method]);
+            case 'changePassword':
+                return isset($this->config['changePassword']);
+            case 'getMyTransactionHistory':
+                return !empty($this->loansaurora_wsdl);
+            case 'updateAddress':
+                return !empty($this->patronaurora_wsdl);
+            default:
+                return is_callable([$this, $method]);
         }
     }
 

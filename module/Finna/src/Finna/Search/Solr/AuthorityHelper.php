@@ -305,6 +305,9 @@ class AuthorityHelper
             function ($runner, $params, $searchId) use ($onlyCount) {
                 $params->setLimit($onlyCount ? 0 : 100);
                 $params->setPage(1);
+                $options = $params->getOptions();
+                $options->disableHighlighting();
+                $options->spellcheckEnabled(false);
             }
         );
         return $onlyCount ? $results->getResultTotal() : $results;

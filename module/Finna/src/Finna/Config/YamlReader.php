@@ -64,7 +64,7 @@ class YamlReader extends \VuFind\Config\YamlReader
 
             // Generate cache key:
             $cacheKey = $filename . '-'
-                . (file_exists($fullpath) ? filemtime($fullpath) : 0)
+                . ($fullpath ? filemtime($fullpath) : 0)
                 . '-' . $localDir;
 
             $cacheKey = md5($cacheKey);

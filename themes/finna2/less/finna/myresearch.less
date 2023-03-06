@@ -44,6 +44,10 @@
   }
 }
 
+.useraccount-table.online-payment .checkboxFilter {
+  margin-top: 2px;
+}
+
 .checkboxFilter.mylist-select-all {
   padding-left: 0;
   padding-top: 2px;
@@ -99,16 +103,19 @@
       }
     }
   }
-  .renew-button, #update_selected, #cancelSelected, #cancelAll {
+  .renew-button, #renewAll, #renewSelected, #update_selected, #cancelAll, #cancelSelected, #pay_selected {
     height: 35px;
     padding: 0 10px;
     margin-right: 12px;
-    @media (max-width: @screen-sm) {
-      margin-bottom: 12px;
+    @media (max-width: @screen-md) {
+      margin: 6px 12px 6px 0px;
     }
   }
   .sort-col .dropdown-toggle {
     margin-bottom: 0;
+    @media (max-width: @screen-md) {
+      margin-top: 6px;
+    }
   }
   @media(min-width: @screen-sm) {
     .half-table-column {
@@ -139,7 +146,6 @@
   }
   @media(max-width: @screen-xxs-max) {
     .renew-button-col {
-      margin-bottom: 10px;
       width: 100%;
       float: left;
       input {
@@ -163,6 +169,9 @@
   .checkboxFilter.mylist-select-all {
     .checkbox {
       margin: 5px 0;
+      @media (max-width: @screen-md) {
+        margin-top: 12px;
+      }
     }
   }
 }
@@ -193,6 +202,17 @@
   }
   .myresearch-row:last-child {
     box-shadow: none;
+  }
+  .holds-sort {
+    margin-bottom: 6px;
+  }
+  #cancelSelected, #cancelAll {
+    height: 35px;
+    padding: 0 10px;
+    margin-right: 12px;
+    @media (max-width: @screen-md) {
+      margin: 6px 12px 6px 0;
+    }
   }
 }
 .list-description,
@@ -359,7 +379,6 @@
 
   .profile-status i::before {
     display: inline-block;
-    margin-top: 4px;
   }
 }
 
@@ -378,7 +397,7 @@
   }
 }
 
-.payment-row {
+.online-payment-form > .payment-row {
   .online-payment-area {
     display: inline-block;
     .online-payment-form {
@@ -415,6 +434,17 @@
   }
 }
 
+.myresearch-table.online-payment {
+  .checkbox-col {
+    width: initial;
+  }
+  .toolbar {
+    border: 0;
+    padding-bottom: 0;
+    padding-left: 9px;
+  }
+}
+
 .fines-info-area {
   margin-bottom: 15px;
   div.card-holder {
@@ -424,6 +454,14 @@
   }
   .amount {
     font-weight: bold;
+  }
+  .online-payment-info {
+    display: flex;
+    align-items: baseline;
+  }
+  #online_payment_minimum_payment {
+    margin: 0 0 0 1em;
+    padding: 6px;
   }
 }
 
@@ -446,6 +484,16 @@
   }
   .checkboxFilter .checkbox label {
     font-size: 13px;
+  }
+}
+
+#cancelILLRequest .toolbar, #cancelStorageRetrievalRequest .toolbar {
+  padding: 5px;
+  .btn-group {
+    margin: 0;
+  }
+  @media (max-width: @screen-md) {
+    padding: 0;
   }
 }
 
@@ -472,9 +520,6 @@
       }
     }
   }
-  .btn-group {
-    margin-top: 3px;
-  }
 }
 
 .online-payment-data {
@@ -499,7 +544,6 @@
 }
 
 .useraccount-table {
-  margin-bottom: 40px;
   border: 1px solid @gray-lighter;
   border-top: none;
   box-shadow: 0 15px 30px -35px @gray;
@@ -796,11 +840,6 @@
 
 // Search history
 .history-holder {
-  @media (min-width: @screen-xs-max) {
-    h2 {
-      margin-top: 9px;
-    }
-  }
   .table-responsive .table tbody {
     tr, td {
       vertical-align: middle;
@@ -808,11 +847,14 @@
   }
 }
 
-.useraccount-cancel > li {
+.useraccount-confirm {
+  min-width: 205px;
+}
+.useraccount-confirm > li {
   border-bottom: none;
   &:not(.disabled) {
     float: left;
-    width: 45%;
+    width: 100px;
     padding: 10px;
     text-align: center;
     a {
@@ -827,12 +869,12 @@
     margin-bottom: 20px;
   }
 }
-.template-dir-librarycards .dropdown-menu.useraccount-cancel {
+.template-dir-librarycards .dropdown-menu.useraccount-confirm {
   left: auto;
   right: 0;
   top: auto;
 }
-.template-dir-myresearch .toolbar > .btn-group:last-of-type .dropdown-menu.useraccount-cancel {
+.template-dir-myresearch .toolbar > .btn-group:last-of-type .dropdown-menu.useraccount-confirm {
   @media (max-width: @screen-xs-max) {
     left: auto;
     right: 0;

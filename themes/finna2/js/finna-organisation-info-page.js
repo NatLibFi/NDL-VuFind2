@@ -168,10 +168,23 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     });
   }
 
-  function loadOrganisationList(buildings, orgId) {
-    service.getOrganisations('page', parent, buildings, {id: orgId}, function onGetOrganisation(response, params) {
+  /**
+   * Gets the organisation list.
+   *
+   * @param {string} buildings List of buildings separated by a comma
+   * @param {string} orgId     Organisation ID
+   * @param {string} sector    Sector to look for data i.e 'mus', 'lib'...
+   */
+  function loadOrganisationList(buildings, orgId, sector) {
+    const searchParams = {
+      target: 'page',
+      parent: parent,
+      buildings: buildings,
+      sector: sector
+    };
+    service.getOrganisations(searchParams, function onGetOrganisation(response) {
       if (response) {
-        var id = params.id;
+        var id = orgId;
         holder.find('.loading').toggleClass('loading', false);
 
         var cnt = 0;
@@ -225,7 +238,6 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     holder.find('.office-quick-information').toggleClass('hide', false);
     var contactHolder = holder.find('.contact-details-' + (rssAvailable ? 'rss' : 'no-rss'));
     contactHolder.show();
-    finna.feed.init(contactHolder);
 
     holder.find('.office-quick-information .service-title').text(data.name);
     if ('address' in data) {
@@ -402,7 +414,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
           var serviceText = '';
           var serviceTitle = '<b>' + services[0] + '</b>';
           if (typeof services.desc !== 'undefined' || typeof services.shortDesc !== 'undefined') {
-            serviceText = $('<a class="service-tooltip" data-toggle="tooltip" data-placement="bottom" data-html="true" />').html(serviceTitle);
+            serviceText = $('<button type="button" class="service-tooltip" data-toggle="tooltip" data-placement="bottom" data-html="true" />').html(serviceTitle);
             var serviceDesc = '';
             if (typeof services.desc !== 'undefined') {
               serviceDesc = services.desc;
@@ -422,22 +434,76 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     }
   }
 
+  function rot13(string) {
+    return string.replace(/[a-zA-Z]/g, function rot13replace(c) {
+      // eslint-disable-next-line no-param-reassign
+      return String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26);
+    });
+  }
+
+  function decryptEmailAddress(string) {
+    let decrypted = rot13(string);
+    decrypted = decrypted.replace(/\/dot\//g, '.');
+    decrypted = decrypted.replace(/\/at\//g, '@');
+    return decrypted;
+  }
+
+  function updatePersonnel(data) {
+    if (data.details.personnel) {
+      holder.find('.personnel').show();
+      let personnelContainer = $('.personnel-container').empty();
+      data.details.personnel.forEach(function handlePerson(person) {
+        let tr = document.createElement('tr');
+        let td = document.createElement('td');
+        td.append(`${person.firstName || ''} ${person.lastName || ''}`);
+        let span = document.createElement('span');
+        span.append(document.createElement('br'));
+        span.setAttribute('class', 'job-title');
+        span.append(`${person.jobTitle || ''}`);
+        td.append(span);
+        tr.append(td);
+        td = document.createElement('td');
+        td.append(`${person.jobTitle || ''}`);
+        tr.append(td);
+        td = document.createElement('td');
+        td.append(document.createComment('noindex'));
+        td.append(document.createComment('googleoff: all'));
+        if (person.email && person.email !== '') {
+          let div = document.createElement('div');
+          div.append(decryptEmailAddress(person.email));
+          td.append(div);
+        }
+        if (person.phone && person.phone !== '') {
+          let div = document.createElement('div');
+          div.append(person.phone);
+          td.append(div);
+        }
+        td.append(document.createComment('googleon: all'));
+        td.append(document.createComment('/noindex'));
+        tr.append(td);
+        personnelContainer.append(tr);
+      });
+    }
+  }
+
   function updateRSSFeeds(data) {
     var rssAvailable = false;
     if ('rss' in data.details) {
       $(data.details.rss).each(function handleRSSFeed(ind, obj) {
-        var id = obj.id;
-        if (id !== 'news' && id !== 'events') {
+
+        if (obj.feedType !== 'news' && obj.feedType !== 'events') {
           return false;
         }
-        var feedHolder = holder.find('.feed-container.' + id + '-feed');
+        const feedElement = document.createElement('finna-feed');
+        feedElement.feedId = 'organisation-info|' + obj.parent + '|' + obj.id + '|' + obj.orgType + '|' + obj.feedType;
+        var feedHolder = holder.find('.feed-container.' + obj.feedType + '-feed');
         feedHolder
-          .empty().show()
-          .data('url', encodeURIComponent(obj.url))
-          .data('feed', 'organisation-info-' + encodeURIComponent(id))
-          .closest('.rss-container').show();
-
-        finna.feed.loadFeedFromUrl(feedHolder);
+          .empty()
+          .closest('.rss-container')
+          .show()
+          .find('.feed-container')
+          .replaceWith(feedElement);
+        // Use dataset to avoid jQuery caching issues:
         rssAvailable = true;
       });
     }
@@ -464,9 +530,10 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
 
     setOfficeInformationLoader(false);
 
-    parent = finna.common.getField(options, 'id');
-    consortiumInfo = finna.common.getField(options, 'consortiumInfo') === 1;
-    var buildings = finna.common.getField(options, 'buildings');
+    parent = options.id || null;
+    consortiumInfo = (options.consortiumInfo || null) === 1;
+    var buildings = options.buildings;
+    var sector = options.sector;
     var mapTileUrl = 'https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png';
     var attribution =
       '<i class="fa fa-map-marker marker open"></i><span class="map-marker-text">' + VuFind.translate('organisation_info_is_open') + '</span>' +
@@ -557,6 +624,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     widgetHolder.on('detailsLoaded', function onDetailsLoaded(ev, id) {
       var info = service.getDetails(id);
       updateServices(info);
+      updatePersonnel(info);
       var rssAvailable = updateRSSFeeds(info);
       updateGeneralInfo(info, rssAvailable);
     });
@@ -580,8 +648,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     if (hash) {
       library = hash;
     }
-
-    loadOrganisationList(buildings, library);
+    loadOrganisationList(buildings, library, sector);
   }
 
   var my = {

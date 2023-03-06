@@ -27,6 +27,10 @@ languages[] = en
 ; Set this to false or comment out to disable caching.
 cachetime = 1
 
+; Organisation info list cache time.
+; Default is 60 minutes
+organisationListCacheTime = 60;
+
 ; URL patterns for map and route instructions
 routeUrl = "https://opas.matka.fi/?to={street},%20{city}"
 mapUrl = "http://maps.google.com/?q={street}%20{city}"
@@ -61,3 +65,8 @@ url = "https://museot.fi/xml"
 [LinkedEvents]
 ;api_url = ""
 ;publisher_id = ""
+
+[Images]
+; Allowed hosts for images
+allowed_hosts[] = 'kirkanta.kirjastot.fi'
+allowed_hosts[] = 'museot.fi'

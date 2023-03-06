@@ -47,8 +47,6 @@ finna.userListEmbed = (function userListEmbed() {
               finna.layout.initTruncate();
               finna.layout.initImagePaginators();
               finna.openUrl.initLinks(resultsContainer);
-              finna.videoPopup.initIframeEmbed(resultsContainer);
-              finna.videoPopup.initVideoPopup(resultsContainer);
               VuFind.itemStatuses.check(resultsContainer);
               finna.itemStatus.initDedupRecordSelection(resultsContainer);
               VuFind.recordVersions.init(resultsContainer);

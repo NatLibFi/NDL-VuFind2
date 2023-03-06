@@ -38,15 +38,10 @@ onlinePayment['handler'] = 'CPU'
 ; Payment service url:
 onlinePayment['url'] = ''
 
-; ### Paytrail Payment API (current interface):
+; ### Paytrail Payment API:
 onlinePayment['handler'] = 'PaytrailPaymentAPI'
 
-; ### Paytrail E2 (legacy interface):
-onlinePayment['handler'] = 'Paytrail'
-; E2 interface url (optional, default is https://payment.paytrail.com/e2):
-;onlinePayment['e2url'] = '...'
-
-; ### Turku Payment API (Current interface)
+; ### Turku Payment API:
 ;onlinePayment['handler'] = "TurkuPaymentAPI"
 ;onlinePayment['url'] = "..."
 ;onlinePayment['oId'] = "..."

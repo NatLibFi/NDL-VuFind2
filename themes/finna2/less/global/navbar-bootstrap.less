@@ -38,11 +38,14 @@
   padding: 0;
   line-height: @navbar-height;
   max-width: 200px;
+  display: flex;
+  align-items: center;
   .navbar-logo {
     font-size: @navbar-logo-height;
     color: @logo-color;
   }
   img {
+    object-fit: contain;
     height: @navbar-logo-height;
     width: auto;
   }
@@ -270,6 +273,5 @@
 
 .navbar .navbar-logo {
   height: @navbar-logo-height;
-  margin-top: ((@navbar-height/2)-(@navbar-logo-height/2));
   margin-right: 10px;
 }
