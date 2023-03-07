@@ -29,7 +29,7 @@
 namespace Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI;
 
 use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailPaymentAPI\Client
-    as FinnaPaytrailClient;
+as FinnaPaytrailClient;
 use Paytrail\SDK\Request\PaymentRequest;
 use Paytrail\SDK\Response\PaymentResponse;
 

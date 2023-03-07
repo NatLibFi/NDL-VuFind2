@@ -563,31 +563,31 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             $type = strtolower($backend);
         }
         switch ($type) {
-        case 'dc':
-        case 'qdc':
-            return $this->filterQDCFields($defaults);
-        case 'eaccpf':
-            return $defaults;
-        case 'ead':
-            return $this->filterEADFields($defaults);
-        case 'ead3':
-            return $this->filterEAD3Fields($defaults);
-        case 'forward':
-            return $this->filterForwardFields($defaults);
-        case 'forwardauthority':
-            return $defaults;
-        case 'lido':
-            return $this->filterLidoFields($defaults);
-        case 'lrmi':
-            return $this->filterLrmiFields($defaults);
-        case 'marc':
-            return $this->filterMarcFields($defaults);
-        case 'marcauthority':
-            return $defaults;
-        case 'primo':
-            return $this->filterPrimoFields($defaults);
-        default:
-            return $defaults;
+            case 'dc':
+            case 'qdc':
+                return $this->filterQDCFields($defaults);
+            case 'eaccpf':
+                return $defaults;
+            case 'ead':
+                return $this->filterEADFields($defaults);
+            case 'ead3':
+                return $this->filterEAD3Fields($defaults);
+            case 'forward':
+                return $this->filterForwardFields($defaults);
+            case 'forwardauthority':
+                return $defaults;
+            case 'lido':
+                return $this->filterLidoFields($defaults);
+            case 'lrmi':
+                return $this->filterLrmiFields($defaults);
+            case 'marc':
+                return $this->filterMarcFields($defaults);
+            case 'marcauthority':
+                return $defaults;
+            case 'primo':
+                return $this->filterPrimoFields($defaults);
+            default:
+                return $defaults;
         }
     }
 

@@ -44,7 +44,7 @@ use League\CommonMark\Renderer\NodeRendererInterface;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class CustomElementRenderer extends AbstractCustomElementEnabledBase
-    implements NodeRendererInterface
+implements NodeRendererInterface
 {
     /**
      * Render the node.

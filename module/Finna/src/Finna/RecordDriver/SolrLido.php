@@ -45,7 +45,7 @@ namespace Finna\RecordDriver;
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
 class SolrLido extends \VuFind\RecordDriver\SolrDefault
-    implements \Laminas\Log\LoggerAwareInterface
+implements \Laminas\Log\LoggerAwareInterface
 {
     use Feature\SolrFinnaTrait;
     use Feature\FinnaXmlReaderTrait;
@@ -1310,12 +1310,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $termLabel = trim((string)$term->attributes()->label);
 
                     switch ($workTypeTerm) {
-                    case 'rakennetun ympäristön kohde':
-                        $results[] = $getDisplayString($termString, $termType);
-                        break 2;
-                    case 'arkeologinen kohde':
-                        $results[] = $getDisplayString($termString, $termLabel);
-                        break;
+                        case 'rakennetun ympäristön kohde':
+                            $results[] = $getDisplayString($termString, $termType);
+                            break 2;
+                        case 'arkeologinen kohde':
+                            $results[] = $getDisplayString($termString, $termLabel);
+                            break;
                     }
                 }
             }

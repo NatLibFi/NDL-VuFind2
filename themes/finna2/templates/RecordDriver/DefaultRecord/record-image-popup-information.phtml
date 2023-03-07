@@ -54,7 +54,7 @@ if ($otherTitles):?>
     <?=$this->escapeHtml($this->organisationDisplayName($this->driver)) ?>
   </div>
   <div class="popup-link-buttons">
-    <div class="record-link"><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver)) ?>"><i class="fa fa-arrow-circle-right"></i> <span><?=$this->transEsc('To the record') ?></span></a></div>
+    <div class="record-link"><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver, ['excludeSearchId' => true]) . '?sid=' . urlencode($this->searchId)) ?>"><i class="fa fa-arrow-circle-right"></i> <span><?=$this->transEsc('To the record') ?></span></a></div>
   </div>
   <div class="summary loading">
     <div data-rows="6" class="truncate-field">

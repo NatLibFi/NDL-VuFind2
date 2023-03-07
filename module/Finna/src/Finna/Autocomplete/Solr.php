@@ -41,7 +41,7 @@ use VuFindCode\ISBN;
  * @link     https://vufind.org/wiki/development:plugins:autosuggesters Wiki
  */
 class Solr extends \VuFind\Autocomplete\Solr
-    implements \VuFind\I18n\Translator\TranslatorAwareInterface
+implements \VuFind\I18n\Translator\TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 

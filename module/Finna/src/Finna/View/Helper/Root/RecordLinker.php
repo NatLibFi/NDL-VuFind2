@@ -91,16 +91,16 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
         }
         $embedUrl = '';
         switch ($parts['host']) {
-        case 'vimeo.com':
-            $embedUrl = "https://player.vimeo.com/video" . $parts['path'];
-            break;
-        case 'youtu.be':
-            $embedUrl = "https://www.youtube.com/embed" . $parts['path'];
-            break;
-        case 'youtube.com':
-            parse_str($parts['query'], $query);
-            $embedUrl = "https://www.youtube.com/embed/" . $query['v'];
-            break;
+            case 'vimeo.com':
+                $embedUrl = "https://player.vimeo.com/video" . $parts['path'];
+                break;
+            case 'youtu.be':
+                $embedUrl = "https://www.youtube.com/embed" . $parts['path'];
+                break;
+            case 'youtube.com':
+                parse_str($parts['query'], $query);
+                $embedUrl = "https://www.youtube.com/embed/" . $query['v'];
+                break;
         }
         return $embedUrl;
     }

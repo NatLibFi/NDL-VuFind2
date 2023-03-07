@@ -47,7 +47,7 @@ use VuFind\Session\Settings as SessionSettings;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
-    implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
+implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;

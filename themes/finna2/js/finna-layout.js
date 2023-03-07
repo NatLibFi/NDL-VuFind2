@@ -303,19 +303,24 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  /**
+   * Initializes additional functionality for condensed styled lists.
+   * I.e search condensed, authority records record tab.
+   *
+   * @param {jQuery|undefined} _holder Element as jQuery to initialize.
+   *                                   If uninitialized, defaults to document.
+   */
   function initCondensedList(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
-
+    finna.itemStatus.initDedupRecordSelection(holder);
     holder.find('.condensed-collapse-toggle').off('click').on('click', function onClickCollapseToggle(event) {
       if ((event.target.nodeName) !== 'A' && (event.target.nodeName) !== 'MARK') {
         holder = $(this).parent().parent();
         holder.toggleClass('open');
-
+        VuFind.itemStatuses.check(holder);
         var onSlideComplete = null;
         if (holder.hasClass('open') && !holder.hasClass('opened')) {
           holder.addClass('opened');
-          VuFind.itemStatuses.check(holder);
-          finna.itemStatus.initDedupRecordSelection(holder);
         }
 
         $(this).nextAll('.condensed-collapse-data').first().slideToggle(120, 'linear', onSlideComplete);

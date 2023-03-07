@@ -206,6 +206,7 @@ $config = [
         'finna-comments.js',
         'finna-common.js',
         'finna-content-feed.js',
+        'finna-fines.js',
         'finna-item-status.js',
         'finna-adv-search.js',
         'finna-daterange-vis.js',

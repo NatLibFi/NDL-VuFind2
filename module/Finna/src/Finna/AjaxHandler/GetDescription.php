@@ -46,7 +46,7 @@ use VuFind\Session\Settings as SessionSettings;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class GetDescription extends \VuFind\AjaxHandler\AbstractBase
-    implements TranslatorAwareInterface, \VuFindHttp\HttpServiceAwareInterface
+implements TranslatorAwareInterface, \VuFindHttp\HttpServiceAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFindHttp\HttpServiceAwareTrait;

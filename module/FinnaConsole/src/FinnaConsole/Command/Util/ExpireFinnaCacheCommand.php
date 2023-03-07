@@ -40,7 +40,7 @@ namespace FinnaConsole\Command\Util;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class ExpireFinnaCacheCommand
-    extends \VuFindConsole\Command\Util\AbstractExpireCommand
+extends \VuFindConsole\Command\Util\AbstractExpireCommand
 {
     /**
      * Help description for the command.

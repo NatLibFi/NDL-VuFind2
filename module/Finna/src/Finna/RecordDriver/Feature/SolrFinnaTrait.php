@@ -1117,15 +1117,15 @@ trait SolrFinnaTrait
                 $codec = $match[2];
                 $type = $embed = null;
                 switch (strtolower($codec)) {
-                case 'wav':
-                case 'mp3':
-                    $type = $embed = 'audio';
-                    break;
-                case 'jpg':
-                case 'png':
-                case 'tif':
-                    $type = 'image';
-                    break;
+                    case 'wav':
+                    case 'mp3':
+                        $type = $embed = 'audio';
+                        break;
+                    case 'jpg':
+                    case 'png':
+                    case 'tif':
+                        $type = 'image';
+                        break;
                 }
                 $url['type'] = $type;
                 $url['codec'] = $codec;

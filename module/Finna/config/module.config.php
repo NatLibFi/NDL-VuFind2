@@ -371,7 +371,6 @@ $config = [
             'Finna\RecordDriver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\RecordTab\TabManager' => 'VuFind\RecordTab\TabManagerFactory',
             'Finna\Role\PermissionManager' => 'VuFind\Role\PermissionManagerFactory',
-            'Finna\Search\Memory' => 'VuFind\Search\MemoryFactory',
             'Finna\Search\Solr\AuthorityHelper' => 'Finna\Search\Solr\AuthorityHelperFactory',
             'Finna\Search\Solr\HierarchicalFacetHelper' => 'VuFind\Search\Solr\HierarchicalFacetHelperFactory',
             'Finna\Service\R2SupportService' => 'Finna\Service\R2SupportServiceFactory',
@@ -408,7 +407,6 @@ $config = [
             'VuFind\Record\Loader' => 'Finna\Record\Loader',
             'VuFind\RecordTab\TabManager' => 'Finna\RecordTab\TabManager',
             'VuFind\Role\PermissionManager' => 'Finna\Role\PermissionManager',
-            'VuFind\Search\Memory' => 'Finna\Search\Memory',
             'VuFind\Search\Solr\HierarchicalFacetHelper' => 'Finna\Search\Solr\HierarchicalFacetHelper',
 
             'ViewResolver' => 'Finna\View\Resolver\AggregateResolver',

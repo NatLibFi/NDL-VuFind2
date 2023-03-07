@@ -4,12 +4,13 @@
   $this->headTitle($this->translate('Search History'));
 
   $saveSupported = $this->accountCapabilities()->getSavedSearchSetting() === 'enabled';
+  $loggedInUser = $this->auth()->isLoggedIn();
 
-  $layoutLoggedIn = $saveSupported && $this->auth()->isLoggedIn();
+  $layoutLoggedIn = $saveSupported && $loggedInUser;
   // Set up myresearch menu
   // Set up breadcrumbs:
   $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li>'
-    . '<li class="active">' . $this->transEsc('History') . '</li>';
+    . '<li class="active">' . $this->transEsc('Search History') . '</li>';
 
   // Check for scheduled searches
   $scheduledSearches = false;
@@ -33,16 +34,24 @@
         <div class="alert alert-info alert-email-notification">
           <?=$this->transEsc("alert_email_address") . ': ' . $this->escapeHtml($this->alertemail) . ' (';?><a href="<?=$this->url('myresearch-profile', [], ['fragment' => 'profile-settings']);?>"><?=$this->transEsc("edit");?></a>)
         </div>
-      <?php elseif ($this->auth()->isLoggedIn()): ?>
+      <?php elseif ($loggedInUser): ?>
         <div class="alert alert-danger alert-email-notification">
           <?=$this->transEsc("no_email_address") . ' ';?><a href="<?=$this->url('myresearch-profile', [], ['fragment' => 'profile-settings']);?>"><?=$this->transEsc("check_profile");?></a>
         </div>
       <?php endif; ?>
     <?php endif; ?>
     <?=$this->flashmessages();?>
-    <?php if ($saveSupported && !empty($this->saved)): ?>
+    <?php if ($saveSupported): ?>
       <h2><?=$this->transEsc("history_saved_searches")?></h2>
-      <?=$this->context()->renderInContext('search/history-table.phtml', ['showSaved' => true]);?>
+      <?php if (!empty($this->saved)): ?>
+        <?=$this->context()->renderInContext('search/history-table.phtml', ['showSaved' => true]);?>
+      <?php else: ?>
+        <?=
+          $loggedInUser
+            ? $this->transEsc('history_no_saved_searches')
+            : $this->translate('history_login_html', ['%%url%%' => '?require_login'])
+        ?>
+      <?php endif; ?>
     <?php endif; ?>
 
     <h2><?=$this->transEsc("history_recent_searches")?></h2>

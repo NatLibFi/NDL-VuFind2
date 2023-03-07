@@ -15,7 +15,7 @@
       $this->curatedRecord = $this->driver;
       $this->driver = $record;
     ?>
-    <?= $this->record($this->driver)->getSearchResult('grid') ?>
+    <?= $this->record($this->driver)->getSearchResult('grid', $this->results) ?>
   <?php endif; ?>
 <?php endif; ?>
 <!-- END of: finna - RecordDriver/CuratedRecord/result-grid.phtml -->

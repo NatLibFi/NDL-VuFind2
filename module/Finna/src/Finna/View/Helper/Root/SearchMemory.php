@@ -39,25 +39,14 @@ namespace Finna\View\Helper\Root;
 class SearchMemory extends \VuFind\View\Helper\Root\SearchMemory
 {
     /**
-     * Retrieve the last search id
-     *
-     * @return string
-     */
-    public function getLastSearchId()
-    {
-        $searchData = $this->memory->retrieveLastSearchData();
-        return $searchData ? $searchData->id : '';
-    }
-
-    /**
      * Retrieve the last search class id
      *
      * @return string
      */
     public function getLastSearchClassId()
     {
-        $searchData = $this->memory->retrieveLastSearchData();
-        return $searchData->searchClassId ?? '';
+        $search = $this->memory->getLastSearch();
+        return $search ? $search->getBackendId() : '';
     }
 
     /**
@@ -67,8 +56,8 @@ class SearchMemory extends \VuFind\View\Helper\Root\SearchMemory
      */
     public function getLastSearchType()
     {
-        $searchData = $this->memory->retrieveLastSearchData();
-        return $searchData ? $searchData->type : '';
+        $search = $this->memory->getLastSearch();
+        return $search ? $search->getParams()->getSearchType() : '';
     }
 
     /**
@@ -78,14 +67,17 @@ class SearchMemory extends \VuFind\View\Helper\Root\SearchMemory
      */
     public function getLastSearchLookfor()
     {
-        $searchData = $this->memory->retrieveLastSearchData();
-        return $searchData ? $searchData->lookfor : '';
+        $search = $this->memory->getLastSearch();
+        return (null == $search || $search->getUrlQuery()->isQuerySuppressed())
+            ? '' : $search->getParams()->getDisplayQuery();
     }
 
     /**
      * Retrieve the last search url
      *
      * @return string
+     *
+     * @deprecated Non-functional -- For template back-compatibility only
      */
     public function getLastSearchUrl()
     {
@@ -93,31 +85,14 @@ class SearchMemory extends \VuFind\View\Helper\Root\SearchMemory
     }
 
     /**
-     * Retrieve the parameters of the last search by the search class
-     *
-     * @param string $searchClassId Search class
-     *
-     * @return \VuFind\Search\Base\Params
-     */
-    public function getLastSearchParams($searchClassId)
-    {
-        $lastUrl = $this->getLastSearchUrl();
-        $queryParams = $lastUrl ? (parse_url($lastUrl, PHP_URL_QUERY) ?? '') : '';
-        $request = new \Laminas\Stdlib\Parameters();
-        $request->fromString($queryParams);
-        $paramsPlugin = $this->getView()->plugin('searchParams');
-        $params = $paramsPlugin($searchClassId);
-        $params->initFromRequest($request);
-        return $params;
-    }
-
-    /**
      * Retrieve the scroll data
      *
-     * @return \VuFind\Search\Base\Params
+     * @return array
+     *
+     * @deprecated For template back-compatibility only
      */
     public function getLastScrollData()
     {
-        return  $this->memory->retrieveScrollData();
+        return [];
     }
 }

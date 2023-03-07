@@ -41,7 +41,7 @@ namespace FinnaSearch\Backend\Solr\Response\Json;
  * @link     http://vufind.org
  */
 class RecordCollection
-    extends \VuFindSearch\Backend\Solr\Response\Json\RecordCollection
+extends \VuFindSearch\Backend\Solr\Response\Json\RecordCollection
 {
     /**
      * Get query debug information

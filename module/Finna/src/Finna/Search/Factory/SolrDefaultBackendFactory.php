@@ -50,7 +50,7 @@ use VuFindSearch\Backend\Solr\Backend;
  * @link     http://vufind.org   Main Site
  */
 class SolrDefaultBackendFactory
-    extends \VuFind\Search\Factory\SolrDefaultBackendFactory
+extends \VuFind\Search\Factory\SolrDefaultBackendFactory
 {
     /**
      * Callback for creating a record driver.

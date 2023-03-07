@@ -123,12 +123,14 @@
       }
       $dsb = DEFAULT_SEARCH_BACKEND;
       $cspNonce = $this->cspNonce();
+      $searchId = json_encode($this->layout()->searchId);
       $appendScripts[] = <<<JS
 VuFind.path = '{$root}';
 VuFind.defaultSearchBackend = '{$dsb}';
 VuFind.addTranslations({$translations});
 VuFind.addIcons({$icons});
 VuFind.setCspNonce('{$cspNonce}');
+VuFind.setCurrentSearchId($searchId);
 JS;
       $this->headScript()->appendScript(implode("\n", $appendScripts));
     ?>
@@ -147,73 +149,7 @@ JS;
       // Set up default search box if no data was provided from the template;
       // this covers case 1.  Cases 2 and 3 are then covered by logic below.
       if (!isset($this->layout()->searchbox)) {
-        $url = $this->searchMemory()->getLastSearchUrl();
-        if (!in_array($this->layout()->templateDir, ['record', 'collection']) || !$url) {
-            $this->layout()->searchbox = $this->context($this)->renderInContext("search/searchbox.phtml", ['ignoreHiddenFilterMemory' => $this->layout()->ignoreHiddenFilterMemory ?? false]);
-        } else {
-          $searchId = $this->searchMemory()->getLastSearchId();
-          $searchType = $this->searchMemory()->getLastSearchType();
-          $lookfor = $this->searchMemory()->getLastSearchLookfor();
-          $lastSearchClassId = $this->searchMemory()->getLastSearchClassId();
-
-          //parse querystring to variables
-          parse_str($url, $parsed);
-
-          if ($searchType == 'advanced') {
-            $this->layout()->searchbox = $this->context($this)->renderInContext(
-                "search/searchbox.phtml",
-                [
-                  'searchType' => "advanced",
-                  'ignoreHiddenFilterMemory' => $this->layout()->ignoreHiddenFilterMemory ?? false
-                ]
-            );
-
-            $this->layout()->advSearchHeader = $this->context($this)->renderInContext(
-                'search/header.phtml',
-                [
-                  'searchType' => $searchType,
-                  'searchId' => $searchId,
-                  'lookfor' => $lookfor,
-                  'onRecordPage' => true
-                ]
-            );
-          } else {
-            if ($this->searchClassId === $lastSearchClassId) {
-              // Init filters only when backendId has not been changed since last search
-              $filters = [];
-              foreach ($parsed as $key => $filter) {
-                if (strpos($key, 'filter') !== false) {
-                  //used filters to filterArray
-                  foreach ($filter as $value) {
-                    $filterArray = explode(':', $value, 2);
-                    $filterKey = $filterArray[0];
-                    $filterValue = trim($filterArray[1], '"');
-                    if (array_key_exists($filterKey, $filters)) {
-                      array_push($filters[$filterKey], $filterValue);
-                    } else {
-                      $filters[$filterKey] = [$filterValue];
-                    }
-                  }
-                } elseif (strpos($key, 'type') !== false) {
-                  $type = explode('#', $filter)[0];
-                }
-              }
-            } else {
-              // BackendId changed since last search, reset search term
-              $lookfor = '';
-            }
-
-            $this->layout()->searchbox = $this->context($this)->renderInContext(
-                "search/searchbox.phtml",
-                [
-                  'lookfor' => $lookfor ?? '',
-                  'filterList' => $filters ?? [],
-                  'ignoreHiddenFilterMemory' => $this->layout()->ignoreHiddenFilterMemory ?? false,
-                  'searchIndex' => $type ?? ''
-                ]
-            );
-          }
-        }
+        $this->layout()->searchbox = $this->render('search/searchbox.phtml');
       }
     ?>
     <header class="hidden-print">

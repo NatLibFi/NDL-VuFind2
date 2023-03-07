@@ -72,55 +72,55 @@ class CheckRequestsAreValid extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
                     $results = [];
                     foreach ($data as $item) {
                         switch ($requestType) {
-                        case 'ILLRequest':
-                            $result = $this->ils->checkILLRequestIsValid(
-                                $id,
-                                $item,
-                                $patron
-                            );
-
-                            if (is_array($result)) {
-                                $msg = $result['status'];
-                                $result = $result['valid'];
-                            } else {
-                                $msg = $result
-                                    ? 'ill_request_place_text'
-                                    : 'ill_request_error_blocked';
-                            }
-                            break;
-                        case 'StorageRetrievalRequest':
-                            $result = $this->ils
-                                ->checkStorageRetrievalRequestIsValid(
+                            case 'ILLRequest':
+                                $result = $this->ils->checkILLRequestIsValid(
                                     $id,
                                     $item,
                                     $patron
                                 );
 
-                            if (is_array($result)) {
-                                $msg = $result['status'];
-                                $result = $result['valid'];
-                            } else {
-                                $msg = $result
-                                    ? 'storage_retrieval_request_place_text'
-                                    : 'storage_retrieval_request_error_blocked';
-                            }
-                            break;
-                        default:
-                            $result = $this->ils->checkRequestIsValid(
-                                $id,
-                                $item,
-                                $patron
-                            );
+                                if (is_array($result)) {
+                                    $msg = $result['status'];
+                                    $result = $result['valid'];
+                                } else {
+                                    $msg = $result
+                                        ? 'ill_request_place_text'
+                                        : 'ill_request_error_blocked';
+                                }
+                                break;
+                            case 'StorageRetrievalRequest':
+                                $result = $this->ils
+                                    ->checkStorageRetrievalRequestIsValid(
+                                        $id,
+                                        $item,
+                                        $patron
+                                    );
 
-                            if (is_array($result)) {
-                                $msg = $result['status'];
-                                $result = $result['valid'];
-                            } else {
-                                $msg = $result
-                                    ? 'request_place_text'
-                                    : 'hold_error_blocked';
-                            }
-                            break;
+                                if (is_array($result)) {
+                                    $msg = $result['status'];
+                                    $result = $result['valid'];
+                                } else {
+                                    $msg = $result
+                                        ? 'storage_retrieval_request_place_text'
+                                        : 'storage_retrieval_request_error_blocked';
+                                }
+                                break;
+                            default:
+                                $result = $this->ils->checkRequestIsValid(
+                                    $id,
+                                    $item,
+                                    $patron
+                                );
+
+                                if (is_array($result)) {
+                                    $msg = $result['status'];
+                                    $result = $result['valid'];
+                                } else {
+                                    $msg = $result
+                                        ? 'request_place_text'
+                                        : 'hold_error_blocked';
+                                }
+                                break;
                         }
                         $results[] = [
                             'status' => $result,
