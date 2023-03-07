@@ -516,20 +516,6 @@ finna-feed {
         }
     }
 }
-.slick-slider:not(.slick-vertical) .slick-slide.slick-active {
-    &:hover,
-    &.ie-mobile-tap {
-        .carousel-text {
-            opacity: 1;
-        }
-    }
-}
-.slick-slider:not(.slick-vertical) .slick-slide.slick-active:hover .carousel-slide-header p:not(.title-bottom) {
-    opacity: 0;
-}
-.slick-slider:not(.slick-vertical) .slick-slide.slick-active .carousel-slide-header p:not(.title-bottom) {
-    opacity: 1;
-}
 finna-feed.splide--ltr {
     .splide__arrows {
         width: 100%;
@@ -567,6 +553,7 @@ finna-feed.splide--ltr {
         display: flex;
         .feed-link {
             display: flex;
+            flex-flow: column;
             height: 100%;
             width: 100%;
         }
@@ -586,6 +573,7 @@ finna-feed.splide--ltr {
             background: @carousel-slider-background;
             overflow: hidden;
             width: 100%;
+            flex: 1 1 100%;
             img {
                 max-width: none;
                 max-height: 100%;
@@ -594,11 +582,13 @@ finna-feed.splide--ltr {
         .carousel-slide-header {
             p {
                 position: absolute;
+                &.title-bottom {
+                    position: initial;
+                    height: 100%;
+                    width: 100%;
+                }
                 bottom: 0;
                 width: 100%;
-                &.title-bottom {
-                    top: 100%;
-                }
                 min-height: 30px;
                 width: 100%;
                 z-index: 1;
@@ -651,6 +641,7 @@ finna-feed.splide--ttb {
         height: 100%;
         .feed-link {
             display: flex;
+            flex-flow: row;
             height: 100%;
             width: 100%;
         }

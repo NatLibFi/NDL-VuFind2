@@ -61,6 +61,9 @@ class FinnaFeedElement extends HTMLElement {
       maxH = Math.max(maxH, el.getBoundingClientRect().height);
       el.classList.add('title-bottom');
     });
+    this.querySelectorAll('.carousel-slide-header p').forEach(el => {
+      el.style.height = `${maxH}px`;
+    });
     this.querySelectorAll('.carousel-feed .carousel-text').forEach(el => {
       el.classList.add('text-bottom');
     });
@@ -106,7 +109,6 @@ class FinnaFeedElement extends HTMLElement {
         }
         // Text hover for touch devices
         if (finna.layout.isTouchDevice() && typeof settings.linkText === 'undefined') {
-          console.log(this);
           holder.querySelectorAll('.carousel-text').forEach(el => {
             el.style.paddingBottom = '30px';
           });

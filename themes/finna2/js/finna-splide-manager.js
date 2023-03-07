@@ -5,13 +5,15 @@ finna.splideManager = (() => {
     'desktop-small': 1200,
     tablet: 992,
     mobile: 768
-  }
+  };
 
   /**
-   * Settings in finna to settings in splide
+   * Settings in finna to settings in splide.
+   * Key is the setting in the ini file of an rss feed.
+   * Value is either a value or a function returning the value.
    */
   const settingNameMappings = {
-    height: (value) => { return {height: parseInt(value)} },
+    height: (value) => { return {height: parseInt(value)}; },
     slidesToShow: (itemsPerPage) => {
       const breakpoints = {};
       let perPage = 0;
@@ -66,19 +68,43 @@ finna.splideManager = (() => {
     i18n: (translations) => {
       return {
         i18n: {
-          prev: VuFind.translate(translations.prev || 'splide_prev_slide'),
-          next: VuFind.translate(translations.next || 'splide_next_slide'),
-          first: VuFind.translate(translations.first || 'splide_first_slide'),
-          last: VuFind.translate(translations.last || 'splide_last_slide'),
-          slideX: VuFind.translate(translations.slide || 'splide_navigation'),
-          pageX: VuFind.translate(translations.page || 'splide_page'),
-          play: VuFind.translate(translations.play || 'splide_autoplay_start'),
-          pause: VuFind.translate(translations.pause || 'splide_autoplay_pause'),
-          select: VuFind.translate(translations.select || 'splide_select_slide'),
-          slideLabel: VuFind.translate(translations.label || 'splide_slide_label'),
+          prev: VuFind.translate(translations.prev || 'Carousel::Prev'),
+          next: VuFind.translate(translations.next || 'Carousel::Next'),
+          first: VuFind.translate(translations.first || 'Carousel::First'),
+          last: VuFind.translate(translations.last || 'Carousel::Last'),
+          slideX: VuFind.translate(translations.slide || 'Carousel::go_to_page'),
+          pageX: VuFind.translate(translations.page || 'Carousel::page_number'),
+          play: VuFind.translate(translations.play || 'Carousel::Start Autoplay'),
+          pause: VuFind.translate(translations.pause || 'Carousel::Stop Autoplay'),
+          select: VuFind.translate(translations.select || 'Carousel::Select Page'),
+          slideLabel: VuFind.translate(translations.label || 'Carousel::slide_label'),
+        }
+      };
+    }
+  };
+
+  /**
+   * Merge sub objects into target from source
+   *
+   * @param {Object} target To merge key/values to
+   * @param {Object} source To merge key/values from
+   *
+   * @returns {Object} Merged object
+   */
+  function deepMerge(target, source) {
+    if (typeof target === 'object' && typeof source === 'object') {
+      for (const key in source) {
+        if (typeof source[key] === 'object') {
+          if (!target[key]) {
+            Object.assign(target, { [key]: {} });
+          }
+          deepMerge(target[key], source[key]);
+        } else {
+          Object.assign(target, { [key]: source[key] });
         }
       }
     }
+    return target;
   }
 
   /**
@@ -108,30 +134,6 @@ finna.splideManager = (() => {
   }
 
   /**
-   * Merge sub objects into target from source
-   *
-   * @param {Object} target To merge key/values to
-   * @param {Object} source To merge key/values from
-   *
-   * @returns {Object} Merged object
-   */
-  function deepMerge(target, source) {
-    if (typeof target === 'object' && typeof source === 'object') {
-      for (const key in source) {
-        if (typeof source[key] === 'object') {
-          if (!target[key]) {
-            Object.assign(target, { [key]: {} });
-          }
-          deepMerge(target[key], source[key]);
-        } else {
-          Object.assign(target, { [key]: source[key] });
-        }
-      }
-    }
-    return target;
-  }
-
-  /**
    * Turn given elements into carousels
    *
    * @param {Array|NodeList} elements Elements to turn into a carousel
@@ -139,7 +141,7 @@ finna.splideManager = (() => {
    */
   function create(elements, settings) {
     if (typeof settings.i18n === 'undefined') {
-      settings.i18n = {}
+      settings.i18n = {};
     }
     const splideSettings = toSplideSettings(settings);
     for (let i = 0; i < elements.length; i++) {
