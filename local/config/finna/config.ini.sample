@@ -1877,4 +1877,4 @@ show_in_holdings = false    ; include in holdings tab of record view
 ; Client IDs and secrets used in API request authentication.
 ; See https://educloud-alliance-technical-documentation.readthedocs.io/en/latest/bazaar/interface_lms.html
 ; for more information.
-;client['client_id'] = secret
+;client[client_id] = secret

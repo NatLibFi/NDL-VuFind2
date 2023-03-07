@@ -1,10 +1,10 @@
 <?php
 /**
- * Session helper factory.
+ * BazaarService factory.
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2022-2023.
+ * Copyright (C) The National Library of Finland 2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,31 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  View_Helpers
- * @author   Aida Luuppala <aida.luuppala@helsinki.fi>
+ * @package  Service
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\View\Helper\Root;
+namespace Finna\Service;
 
-use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerExceptionInterface as ContainerException;
+use Psr\Container\ContainerInterface;
 
 /**
- * Session helper factory.
+ * BazaarService factory.
  *
  * @category VuFind
- * @package  View_Helpers
- * @author   Aida Luuppala <aida.luuppala@helsinki.fi>
+ * @package  Service
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class BazaarSessionFactory implements FactoryInterface
+class BazaarServiceFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -66,10 +64,13 @@ class BazaarSessionFactory implements FactoryInterface
         array $options = null
     ) {
         if (!empty($options)) {
-            throw new \Exception('Unexpected options sent to factory.');
+            throw new \Exception('Unexpected options passed to factory.');
         }
+
         return new $requestedName(
-            $container->get(\Finna\Service\BazaarService::class)
+            $container->get(\VuFind\Db\Table\PluginManager::class)
+                ->get(\VuFind\Db\Table\AuthHash::class),
+            $container->get(\Laminas\Session\SessionManager::class)
         );
     }
 }

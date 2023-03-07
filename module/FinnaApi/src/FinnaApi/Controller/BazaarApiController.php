@@ -81,9 +81,7 @@ class BazaarApiController extends ApiController implements ApiInterface
             'add_resource_callback_url' => $callbackUrl,
             'cancel_url' => $cancelUrl,
         ];
-        $authHash = $this->serviceLocator
-            ->get(\VuFind\Db\Table\PluginManager::class)
-            ->get(\VuFind\Db\Table\AuthHash::class);
+        $authHash = $this->getTable(\VuFind\Db\Table\AuthHash::class);
         $authHash->insert(
             [
                 'hash' => $hash,
@@ -92,10 +90,10 @@ class BazaarApiController extends ApiController implements ApiInterface
             ]
         );
 
-        $baseUrl = $this->getServerUrl('home');
-        $browseUrl = $baseUrl . 'Search/Bazaar?hash=';
+        $browseUrl = $this->getServerUrl('bazaar-home')
+            . '?hash=' . urlencode($hash);
         $response = [
-            'browse_url' => $browseUrl . urlencode($hash)
+            'browse_url' => $browseUrl,
         ];
 
         return $this->output($response, self::STATUS_OK);
@@ -163,7 +161,7 @@ class BazaarApiController extends ApiController implements ApiInterface
      */
     protected function getParamUrlValue(string $name, array $payload): string
     {
-        if (!$value = $payload[$name] ?? null) {
+        if (!($value = $payload[$name] ?? null)) {
             throw new \Exception('Missing parameter: ' . $name);
         }
         if (!filter_var($value, FILTER_VALIDATE_URL)) {

@@ -238,6 +238,7 @@ $config = [
             'Finna\Controller\AuthorityController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\AuthorityRecordController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\BarcodeController' => 'VuFind\Controller\AbstractBaseFactory',
+            'Finna\Controller\BazaarController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\BrowseSearchController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\CartController' => 'VuFind\Controller\CartControllerFactory',
             'Finna\Controller\CollectionController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
@@ -277,6 +278,8 @@ $config = [
             'AuthorityRecord' => 'Finna\Controller\AuthorityRecordController',
             'Barcode' => 'Finna\Controller\BarcodeController',
             'barcode' => 'Finna\Controller\BarcodeController',
+            'Bazaar' => 'Finna\Controller\BazaarController',
+            'bazaar' => 'Finna\Controller\BazaarController',
             'BrowseSearch' => 'Finna\Controller\BrowseSearchController',
             // Alias for the browse record route (that must not clash with normal
             // record route for getMatchedRouteName to return correct value):
@@ -373,6 +376,7 @@ $config = [
             'Finna\Role\PermissionManager' => 'VuFind\Role\PermissionManagerFactory',
             'Finna\Search\Solr\AuthorityHelper' => 'Finna\Search\Solr\AuthorityHelperFactory',
             'Finna\Search\Solr\HierarchicalFacetHelper' => 'VuFind\Search\Solr\HierarchicalFacetHelperFactory',
+            'Finna\Service\BazaarService' => 'Finna\Service\BazaarServiceFactory',
             'Finna\Service\R2SupportService' => 'Finna\Service\R2SupportServiceFactory',
             'Finna\Service\RecordFieldMarkdown' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\Service\RemsService' => 'Finna\Service\RemsServiceFactory',
@@ -428,6 +432,8 @@ $config = [
                 'factories' => [
                     'Finna\AjaxHandler\AddToList' =>
                         'Finna\AjaxHandler\AddToListFactory',
+                    'Finna\AjaxHandler\BazaarAddResource' =>
+                        'Finna\AjaxHandler\BazaarAddResourceFactory',
                     'Finna\AjaxHandler\CheckRequestsAreValid' =>
                         'VuFind\AjaxHandler\AbstractIlsAndUserActionFactory',
                     'Finna\AjaxHandler\CommentRecord' =>
@@ -503,6 +509,7 @@ $config = [
                 ],
                 'aliases' => [
                     'addToList' => 'Finna\AjaxHandler\AddToList',
+                    'bazaarAddResource' => 'Finna\AjaxHandler\BazaarAddResource',
                     'checkRequestsAreValid' => 'Finna\AjaxHandler\CheckRequestsAreValid',
                     'editList' => 'Finna\AjaxHandler\EditList',
                     'editListResource' => 'Finna\AjaxHandler\EditListResource',
@@ -1075,10 +1082,11 @@ $staticRoutes = [
     'PCI/Home', 'PCI/Search', 'PCI/Record',
     'R2/Advanced', 'R2/FacetList', 'R2/Home', 'R2/Results',
     'Search/StreetSearch',
-    'Barcode/Show', 'Search/MapFacet', 'Search/Bazaar',
+    'Barcode/Show', 'Search/MapFacet',
     'L1/Advanced', 'L1/FacetList', 'L1/Home', 'L1/Results',
     'Record/DownloadModel',
-    'Record/DownloadFile'
+    'Record/DownloadFile',
+    'Bazaar/Home', 'Bazaar/Cancel',
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();

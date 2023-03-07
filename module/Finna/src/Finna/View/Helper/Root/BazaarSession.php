@@ -28,8 +28,7 @@
  */
 namespace Finna\View\Helper\Root;
 
-use Laminas\Session\SessionManager;
-use Laminas\Stdlib\ArrayObject;
+use Finna\Service\BazaarService;
 use Laminas\View\Helper\AbstractHelper;
 
 /**
@@ -45,41 +44,20 @@ use Laminas\View\Helper\AbstractHelper;
 class BazaarSession extends AbstractHelper
 {
     /**
-     * Bazaar session data namespace.
+     * Bazaar service.
      *
-     * @var string
+     * @var BazaarService
      */
-    public const NAMESPACE = 'bazaar';
-
-    /**
-     * Session manager.
-     *
-     * @var SessionManager
-     */
-    protected SessionManager $session;
-
-    /**
-     * Bazaar session storage container.
-     *
-     * @var ?ArrayObject
-     */
-    protected ?ArrayObject $container = null;
-
-    /**
-     * Bazaar add resource callback payload.
-     *
-     * @var array
-     */
-    protected array $payload = [];
+    protected BazaarService $bazaarService;
 
     /**
      * Constructor
      *
-     * @param SessionManager $session Session manager
+     * @param BazaarService $bazaarService Bazaar service
      */
-    public function __construct(SessionManager $session)
+    public function __construct(BazaarService $bazaarService)
     {
-        $this->session = $session;
+        $this->bazaarService = $bazaarService;
     }
 
     /**
@@ -89,11 +67,7 @@ class BazaarSession extends AbstractHelper
      */
     public function isActive(): bool
     {
-        $this->container = $this->session->getStorage()->offsetGet(self::NAMESPACE);
-        if ($this->container) {
-            return !empty($this->container['client_id']);
-        }
-        return false;
+        return $this->bazaarService->isSessionActive();
     }
 
     /**
@@ -106,12 +80,7 @@ class BazaarSession extends AbstractHelper
      */
     public function setSelectionData(string $uid, string $name): bool
     {
-        if (!$this->isActive()) {
-            return false;
-        }
-        $this->payload['uid'] = $uid;
-        $this->payload['name'] = $name;
-        return true;
+        return $this->bazaarService->setSelectionData($uid, $name);
     }
 
     /**
@@ -122,49 +91,27 @@ class BazaarSession extends AbstractHelper
      */
     public function getAddResourceCallbackPayload(): ?string
     {
-        if (!$this->isActive()
-            || empty($this->payload['uid'])
-            || empty($this->payload['name'])
-        ) {
-            return null;
-        }
-        return base64_encode(json_encode($this->payload));
+        return $this->bazaarService->getAddResourceCallbackPayload();
     }
 
     /**
-     * Returns the add resource callback URL, or null if a Bazaar session is not
-     * active.
+     * Returns the add resource callback URL, or null if it is not set or a Bazaar
+     * session is not active.
      *
      * @return ?string
      */
     public function getAddResourceCallbackUrl(): ?string
     {
-        return $this->get('add_resource_callback_url');
+        return $this->bazaarService->getAddResourceCallbackUrl();
     }
 
     /**
-     * Returns the cancel URL, or null if a Bazaar session is not active.
+     * Returns the cancel URL.
      *
      * @return ?string
      */
     public function getCancelUrl(): ?string
     {
-        return $this->get('cancel_url');
-    }
-
-    /**
-     * Returns a value from Bazaar session storage container, or null if a Bazaar
-     * session is not active.
-     *
-     * @param string $key Key
-     *
-     * @return mixed|null
-     */
-    protected function get(string $key)
-    {
-        if (!$this->isActive()) {
-            return null;
-        }
-        return $this->container[$key];
+        return $this->getView()->plugin('url')('bazaar-cancel');
     }
 }

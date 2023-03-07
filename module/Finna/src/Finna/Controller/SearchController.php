@@ -28,7 +28,6 @@
  */
 namespace Finna\Controller;
 
-use VuFind\Exception\Auth as AuthException;
 use VuFindCode\ISBN;
 use VuFindSearch\Backend\Exception\BackendException;
 
@@ -504,49 +503,5 @@ class SearchController extends \VuFind\Controller\SearchController
         $view->setTemplate('Recommend/SideFacets/map-facet-modal');
 
         return $view;
-    }
-
-    /**
-     * Get values from auth_hash_cache table and store them into session
-     *
-     * @return mixed
-     */
-    public function bazaarAction()
-    {
-        $hash = $this->getRequest()->getQuery('hash');
-
-        $authHash = $this->serviceLocator->get(\VuFind\Db\Table\PluginManager::class)
-            ->get(\VuFind\Db\Table\AuthHash::class);
-
-        $row = $authHash->getByHashAndType($hash, 'bazaar', false);
-
-        if (!$row) {
-            // The hash has already been used
-            throw new AuthException('authentication_error_expired');
-        }
-
-        if (time() - strtotime($row['created']) > 600) {
-            // The hash has expired
-            $row->delete();
-            throw new AuthException('authentication_error_expired');
-        }
-
-        $sessionContainer = new \Laminas\Session\Container(
-            \Finna\View\Helper\Root\BazaarSession::NAMESPACE,
-            $this->serviceLocator->get(\Laminas\Session\SessionManager::class)
-        );
-
-        $data = json_decode($row['data']);
-
-        $sessionContainer['client_id'] = $data->client_id;
-        $sessionContainer['add_resource_callback_url']
-            = $data->add_resource_callback_url;
-        $sessionContainer['cancel_url'] = $data->cancel_url;
-
-        // Delete, because the hash has been used
-        $row->delete();
-
-        $url = $this->url()->fromRoute('search-home');
-        return $this->redirect()->toUrl($url);
     }
 }
