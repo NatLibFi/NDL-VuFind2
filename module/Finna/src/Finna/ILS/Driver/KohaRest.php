@@ -1406,44 +1406,44 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             as $field
         ) {
             switch ($field) {
-            case 'collection_code':
-                if (!empty($item['collection_code'])) {
-                    $collection = $this->translateCollection(
-                        $item['collection_code'],
-                        $item['collection_code_description']
-                            ?? $item['collection_code']
-                    );
-                    if ($collection) {
-                        $result[] = $collection;
+                case 'collection_code':
+                    if (!empty($item['collection_code'])) {
+                        $collection = $this->translateCollection(
+                            $item['collection_code'],
+                            $item['collection_code_description']
+                                ?? $item['collection_code']
+                        );
+                        if ($collection) {
+                            $result[] = $collection;
+                        }
                     }
-                }
-                break;
-            case 'location':
-                if (!empty($item['location'])) {
-                    $location = $this->translateLocation(
-                        $item['location'],
-                        !empty($item['location_description'])
-                            ? $item['location_description'] : $item['location']
-                    );
-                    if ($location) {
-                        $result[] = $location;
+                    break;
+                case 'location':
+                    if (!empty($item['location'])) {
+                        $location = $this->translateLocation(
+                            $item['location'],
+                            !empty($item['location_description'])
+                                ? $item['location_description'] : $item['location']
+                        );
+                        if ($location) {
+                            $result[] = $location;
+                        }
                     }
-                }
-                break;
-            case 'sub_location':
-                if (!empty($item['sub_location'])) {
-                    $subLocations = $this->getSubLocations();
-                    $result[] = $this->translateSubLocation(
-                        $item['sub_location'],
-                        $subLocations[$item['sub_location']]['lib_opac'] ?? null
-                    );
-                }
-                break;
-            case 'callnumber':
-                if (!empty($item['callnumber'])) {
-                    $result[] = $item['callnumber'];
-                }
-                break;
+                    break;
+                case 'sub_location':
+                    if (!empty($item['sub_location'])) {
+                        $subLocations = $this->getSubLocations();
+                        $result[] = $this->translateSubLocation(
+                            $item['sub_location'],
+                            $subLocations[$item['sub_location']]['lib_opac'] ?? null
+                        );
+                    }
+                    break;
+                case 'callnumber':
+                    if (!empty($item['callnumber'])) {
+                        $result[] = $item['callnumber'];
+                    }
+                    break;
             }
         }
 
@@ -1876,39 +1876,39 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     {
         $params = [];
         switch ($reason) {
-        case 'Hold::MaximumHoldsReached':
-            $params = [
-                '%%blockCount%%' => $details['current_hold_count'],
-                '%%blockLimit%%' => $details['max_holds_allowed']
-            ];
-            break;
-        case 'Patron::Debt':
-        case 'Patron::DebtGuarantees':
-            $count = isset($details['current_outstanding'])
-                ? $this->formatMoney($details['current_outstanding'])
-                : '-';
-            $limit = isset($details['max_outstanding'])
-                ? $this->formatMoney($details['max_outstanding'])
-                : '-';
-            $params = [
-                '%%blockCount%%' => $count,
-                '%%blockLimit%%' => $limit,
-            ];
-            break;
-        case 'Patron::Debarred':
-            if (!empty($details['comment'])) {
+            case 'Hold::MaximumHoldsReached':
                 $params = [
-                    '%%reason%%' => $details['comment']
+                    '%%blockCount%%' => $details['current_hold_count'],
+                    '%%blockLimit%%' => $details['max_holds_allowed']
                 ];
-                $reason = 'Patron::DebarredWithReason';
-            }
-            break;
-        case 'Patron::CardExpired':
-            $params = [
-                '%%expirationDate%%'
-                    => $this->convertDate($details['expiration_date'])
-            ];
-            break;
+                break;
+            case 'Patron::Debt':
+            case 'Patron::DebtGuarantees':
+                $count = isset($details['current_outstanding'])
+                    ? $this->formatMoney($details['current_outstanding'])
+                    : '-';
+                $limit = isset($details['max_outstanding'])
+                    ? $this->formatMoney($details['max_outstanding'])
+                    : '-';
+                $params = [
+                    '%%blockCount%%' => $count,
+                    '%%blockLimit%%' => $limit,
+                ];
+                break;
+            case 'Patron::Debarred':
+                if (!empty($details['comment'])) {
+                    $params = [
+                        '%%reason%%' => $details['comment']
+                    ];
+                    $reason = 'Patron::DebarredWithReason';
+                }
+                break;
+            case 'Patron::CardExpired':
+                $params = [
+                    '%%expirationDate%%'
+                        => $this->convertDate($details['expiration_date'])
+                ];
+                break;
         }
         return $this->translate($this->patronStatusMappings[$reason] ?? '', $params);
     }

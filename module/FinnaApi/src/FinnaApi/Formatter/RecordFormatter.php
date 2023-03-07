@@ -136,8 +136,8 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
         $recordHelper = $this->helperManager->get('record');
         $serverUrlHelper = $this->helperManager->get('serverUrl');
         for ($i = 0;
-             $i < $recordHelper($record)->getNumOfRecordImages('large', false);
-             $i++
+            $i < $recordHelper($record)->getNumOfRecordImages('large', false);
+            $i++
         ) {
             $images[] = $serverUrlHelper()
                 . $imageHelper($recordHelper($record))

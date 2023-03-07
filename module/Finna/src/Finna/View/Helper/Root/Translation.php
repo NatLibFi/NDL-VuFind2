@@ -37,7 +37,7 @@ namespace Finna\View\Helper\Root;
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 class Translation extends \Laminas\View\Helper\AbstractHelper
-    implements \VuFind\I18n\Translator\TranslatorAwareInterface
+implements \VuFind\I18n\Translator\TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 

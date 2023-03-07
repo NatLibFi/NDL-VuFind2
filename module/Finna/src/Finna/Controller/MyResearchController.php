@@ -73,14 +73,14 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             if ($route) {
                 $requestedAction = $route->getParam('action');
                 switch ($requestedAction) {
-                case 'ILLRequests':
-                    break;
-                case 'CheckedOut':
-                    $requestedAction = 'checkedout';
-                    break;
-                default:
-                    $requestedAction = lcfirst($requestedAction);
-                    break;
+                    case 'ILLRequests':
+                        break;
+                    case 'CheckedOut':
+                        $requestedAction = 'checkedout';
+                        break;
+                    default:
+                        $requestedAction = lcfirst($requestedAction);
+                        break;
                 }
             }
         }
@@ -256,15 +256,15 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
             if (null !== $accountStatus) {
                 switch ($current['dueStatus'] ?? '') {
-                case 'due':
-                    $accountStatus['warn']++;
-                    break;
-                case 'overdue':
-                    $accountStatus['overdue']++;
-                    break;
-                default:
-                    $accountStatus['ok']++;
-                    break;
+                    case 'due':
+                        $accountStatus['warn']++;
+                        break;
+                    case 'overdue':
+                        $accountStatus['overdue']++;
+                        break;
+                    default:
+                        $accountStatus['ok']++;
+                        break;
                 }
             }
 

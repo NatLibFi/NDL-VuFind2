@@ -40,7 +40,7 @@ use Laminas\ServiceManager\ServiceLocatorInterface;
  * @link     https://vufind.org Main Site
  */
 class ShibbolethLogoutNotificationController
-    extends \VuFind\Controller\ShibbolethLogoutNotificationController
+extends \VuFind\Controller\ShibbolethLogoutNotificationController
 {
     /**
      * Is R2 search enabled?

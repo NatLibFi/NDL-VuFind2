@@ -46,7 +46,7 @@ namespace Finna\RecordDriver;
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
 class SolrEad extends SolrDefault
-    implements \Laminas\Log\LoggerAwareInterface
+implements \Laminas\Log\LoggerAwareInterface
 {
     use Feature\SolrFinnaTrait;
     use Feature\FinnaXmlReaderTrait;
@@ -156,15 +156,15 @@ class SolrEad extends SolrDefault
                 $role = (string)$attributes->role;
                 $size = '';
                 switch ($role) {
-                case 'image_thumbnail':
-                    $size = 'small';
-                    break;
-                case 'image_reference':
-                    $size = 'medium';
-                    break;
-                case 'image_full':
-                    $size = 'large';
-                    break;
+                    case 'image_thumbnail':
+                        $size = 'small';
+                        break;
+                    case 'image_reference':
+                        $size = 'medium';
+                        break;
+                    case 'image_full':
+                        $size = 'large';
+                        break;
                 }
                 if (!$size || !$this->isUrlLoadable($url, $this->getUniqueID())) {
                     continue;
@@ -286,15 +286,15 @@ class SolrEad extends SolrDefault
         $parts = explode('_', $language);
         $language = $parts[0];
         switch ($language) {
-        case 'fi':
-            $language = 'fin';
-            break;
-        case 'sv':
-            $language = 'swe';
-            break;
-        case 'en':
-            $language = 'eng';
-            break;
+            case 'fi':
+                $language = 'fin';
+                break;
+            case 'sv':
+                $language = 'swe';
+                break;
+            case 'en':
+                $language = 'eng';
+                break;
         }
 
         $desc = $this->getAccessRestrictions();

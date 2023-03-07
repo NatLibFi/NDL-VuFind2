@@ -524,64 +524,64 @@ class SolrEad3 extends SolrEad
                 }
                 $val = (string)$defitem->item;
                 switch ($type) {
-                case self::ALTFORM_LOCATION:
-                    $result['location'] = $val;
-                    if (in_array($val, $onlineTypes)) {
-                        $result['online'] = true;
-                    } else {
-                        $result['service'] = true;
-                    }
-                    break;
-                case self::ALTFORM_LOCATION_TYPE:
-                    $result['locationType'] = $val;
-                    break;
-                case self::ALTFORM_PHYSICAL_LOCATION:
-                    $result['physicalLocation'] = $val;
-                    break;
-                case self::ALTFORM_LOCATION_OFFICE:
-                    $result['locationOffice'] = $val;
-                    break;
-                case self::ALTFORM_IMAGE_SIZE:
-                    $result['imageSize'] = $val;
-                    break;
-                case self::ALTFORM_IMAGE_AREA:
-                    $result['imageArea'] = $val;
-                    break;
-                case self::ALTFORM_MAP_SCALE:
-                    $result['mapScale'] = $val;
-                    break;
-                case self::ALTFORM_MICROFILM_SERIES:
-                    $result['microfilmSeries'] = $val;
-                    break;
-                case self::ALTFORM_TYPE:
-                    $result['type'] = $val;
-                    break;
-                case self::ALTFORM_DIGITAL_TYPE:
-                    $result['digitalType'] = $val;
-                    break;
-                case self::ALTFORM_FORMAT:
-                    $result['format'] = $val;
-                    break;
-                case self::ALTFORM_ORIGINAL:
-                    $result['original'] = $val;
-                    break;
-                case self::ALTFORM_MICROFILM_COPY_TYPE:
-                    $result['microfilmCopyType'] = $val;
-                    break;
-                case self::ALTFORM_IMAGE_TYPE:
-                    $result['imageType'] = $val;
-                    break;
-                case self::ALTFORM_ACCESS:
-                    $lang = (string)$defitem->item->attributes()->lang ?? 'fin';
-                    $accessRestrictions[$lang] = $val;
-                    break;
-                case self::ALTFORM_CONDITION:
-                    if ($info = (string)$defitem->label) {
-                        $info .= ': ';
-                    }
-                    $info .= $val;
-                    $result['info'] = $info;
-                    break;
+                    case self::ALTFORM_LOCATION:
+                        $result['location'] = $val;
+                        if (in_array($val, $onlineTypes)) {
+                            $result['online'] = true;
+                        } else {
+                            $result['service'] = true;
+                        }
+                        break;
+                    case self::ALTFORM_LOCATION_TYPE:
+                        $result['locationType'] = $val;
+                        break;
+                    case self::ALTFORM_PHYSICAL_LOCATION:
+                        $result['physicalLocation'] = $val;
+                        break;
+                    case self::ALTFORM_LOCATION_OFFICE:
+                        $result['locationOffice'] = $val;
+                        break;
+                    case self::ALTFORM_IMAGE_SIZE:
+                        $result['imageSize'] = $val;
+                        break;
+                    case self::ALTFORM_IMAGE_AREA:
+                        $result['imageArea'] = $val;
+                        break;
+                    case self::ALTFORM_MAP_SCALE:
+                        $result['mapScale'] = $val;
+                        break;
+                    case self::ALTFORM_MICROFILM_SERIES:
+                        $result['microfilmSeries'] = $val;
+                        break;
+                    case self::ALTFORM_TYPE:
+                        $result['type'] = $val;
+                        break;
+                    case self::ALTFORM_DIGITAL_TYPE:
+                        $result['digitalType'] = $val;
+                        break;
+                    case self::ALTFORM_FORMAT:
+                        $result['format'] = $val;
+                        break;
+                    case self::ALTFORM_ORIGINAL:
+                        $result['original'] = $val;
+                        break;
+                    case self::ALTFORM_MICROFILM_COPY_TYPE:
+                        $result['microfilmCopyType'] = $val;
+                        break;
+                    case self::ALTFORM_IMAGE_TYPE:
+                        $result['imageType'] = $val;
+                        break;
+                    case self::ALTFORM_ACCESS:
+                        $lang = (string)$defitem->item->attributes()->lang ?? 'fin';
+                        $accessRestrictions[$lang] = $val;
+                        break;
+                    case self::ALTFORM_CONDITION:
+                        if ($info = (string)$defitem->label) {
+                            $info .= ': ';
+                        }
+                        $info .= $val;
+                        $result['info'] = $info;
+                        break;
                 }
             }
             if ($accessRestrictions) {
@@ -1111,18 +1111,18 @@ class SolrEad3 extends SolrEad
                 $type = (string)$attr->encodinganalog;
                 if (in_array($type, self::ACCESS_RESTRICT_TYPES)) {
                     switch ($type) {
-                    case 'ahaa:KR7':
-                        $label = $this->getDisplayLabel(
-                            $access->p->name,
-                            'part',
-                            true
-                        );
-                        break;
-                    case 'ahaa:KR9':
-                        $label = [(string)($access->p->date ?? '')];
-                        break;
-                    default:
-                        $label = $this->getDisplayLabel($access, 'p');
+                        case 'ahaa:KR7':
+                            $label = $this->getDisplayLabel(
+                                $access->p->name,
+                                'part',
+                                true
+                            );
+                            break;
+                        case 'ahaa:KR9':
+                            $label = [(string)($access->p->date ?? '')];
+                            break;
+                        default:
+                            $label = $this->getDisplayLabel($access, 'p');
                     }
                     if ($label) {
                         // These are displayed under the same heading

@@ -46,7 +46,7 @@ use Finna\Db\Table\Transaction as TransactionTable;
  * @property string $reported
  */
 class Transaction extends \VuFind\Db\Row\RowGateway
-    implements \VuFind\Db\Table\DbTableAwareInterface
+implements \VuFind\Db\Table\DbTableAwareInterface
 {
     use \VuFind\Db\Table\DbTableAwareTrait;
 

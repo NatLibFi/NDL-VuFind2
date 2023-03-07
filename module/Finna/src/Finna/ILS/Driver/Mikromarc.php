@@ -1284,7 +1284,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         if (isset($details['notifications'])) {
             $options
                 = $details['notifications']['settings']['transport_types']['options']
-                ;
+            ;
             if (!empty($options['SMS'])) {
                 $settings['LettersBySMS'] = $options['SMS']['active'];
             }

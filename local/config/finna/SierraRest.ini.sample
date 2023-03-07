@@ -78,6 +78,26 @@ title_hold_bib_levels = a:b:m:d
 ; available for pickup). Supported values are "frozen" and "pickUpLocation".
 updateFields = frozen:pickUpLocation
 
+; Hold shelf information retrieval per hold location prefix. The example below uses
+; IMMS with settings from IMMSHelsinki section for all holds where pick up location
+; code starts with 'h'.
+;holdShelfHandler[h] = "IMMS:IMMSHelsinki"
+
+; IMMS configuration
+[IMMSHelsinki]
+; Security WSDL address
+securityWsdl = ""
+; Query WSDL address
+queryWsdl = ""
+; Authentication token cache time in seconds. Default is 3600.
+;authTokenCacheTime = 3600
+; Shelf location cache time. Default is 300.
+;locationCacheTime = 300
+; API username
+username = ""
+; API password
+password = ""
+
 ; This section allows modification of the default mapping from item status codes to
 ; VuFind item statuses
 [ItemStatusMappings]

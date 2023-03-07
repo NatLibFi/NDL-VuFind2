@@ -50,7 +50,7 @@ use VuFind\I18n\Translator\TranslatorAwareInterface as TranslatorAwareInterface;
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
 class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
-    implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
+implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface
 {
     use \VuFindHttp\HttpServiceAwareTrait;
@@ -1462,22 +1462,22 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             = $this->config['updateMessagingSettings']['method'] ?? 'none';
 
         switch ($serviceSendMethod) {
-        case 'database':
-            $userCached['messagingServices']
-                = $this->parseEmailMessagingSettings(
-                    $info->messageServices->messageService ?? null
-                );
-            break;
-        case 'driver':
-            $userCached['messagingServices']
-                = $this->parseDriverMessagingSettings(
-                    $info->messageServices->messageService ?? null,
-                    $user
-                );
-            break;
-        default:
-            $userCached['messagingServices'] = [];
-            break;
+            case 'database':
+                $userCached['messagingServices']
+                    = $this->parseEmailMessagingSettings(
+                        $info->messageServices->messageService ?? null
+                    );
+                break;
+            case 'driver':
+                $userCached['messagingServices']
+                    = $this->parseDriverMessagingSettings(
+                        $info->messageServices->messageService ?? null,
+                        $user
+                    );
+                break;
+            default:
+                $userCached['messagingServices'] = [];
+                break;
         }
 
         $this->putCachedData($cacheKey, $userCached);
@@ -3519,14 +3519,14 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     public function supportsMethod($method, $params)
     {
         switch ($method) {
-        case 'changePassword':
-            return isset($this->config['changePassword']);
-        case 'getMyTransactionHistory':
-            return !empty($this->loansaurora_wsdl);
-        case 'updateAddress':
-            return !empty($this->patronaurora_wsdl);
-        default:
-            return is_callable([$this, $method]);
+            case 'changePassword':
+                return isset($this->config['changePassword']);
+            case 'getMyTransactionHistory':
+                return !empty($this->loansaurora_wsdl);
+            case 'updateAddress':
+                return !empty($this->patronaurora_wsdl);
+            default:
+                return is_callable([$this, $method]);
         }
     }
 

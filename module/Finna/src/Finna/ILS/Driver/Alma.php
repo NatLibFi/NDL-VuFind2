@@ -1903,18 +1903,18 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
         $errorCode = $error->errorList->error[0]->errorCode ?? null;
         switch ($errorCode) {
-        case '401136':
-            $errorMsg = 'hold_error_already_held';
-            break;
-        case '401129':
-            $errorMsg = 'hold_error_cannot_fulfill';
-            break;
-        case '401652':
-            $errorMsg = 'hold_error_fail';
-            break;
-        default:
-            $errorMsg = $error->errorList->error[0]->errorMessage
-                ?? 'hold_error_fail';
+            case '401136':
+                $errorMsg = 'hold_error_already_held';
+                break;
+            case '401129':
+                $errorMsg = 'hold_error_cannot_fulfill';
+                break;
+            case '401652':
+                $errorMsg = 'hold_error_fail';
+                break;
+            default:
+                $errorMsg = $error->errorList->error[0]->errorMessage
+                    ?? 'hold_error_fail';
         }
 
         if ('Missing mandatory field: Description.' === $errorMsg) {
@@ -2061,15 +2061,15 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                         $totalAvailable += $available;
                         $locations[$locationCode] = 1;
                         switch ($status) {
-                        case 'available':
-                            $status = 'Available';
-                            break;
-                        case 'unavailable':
-                            $status = 'Not Available';
-                            break;
-                        case 'check_holdings':
-                            $status = '';
-                            break;
+                            case 'available':
+                                $status = 'Available';
+                                break;
+                            case 'unavailable':
+                                $status = 'Not Available';
+                                break;
+                            case 'check_holdings':
+                                $status = '';
+                                break;
                         }
 
                         $holdings[] = [

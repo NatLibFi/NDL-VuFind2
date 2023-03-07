@@ -54,7 +54,7 @@ use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
  * Wiki
  */
 class RecordDataFormatterFactory
-    extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
+extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
 {
     /**
      * Translator

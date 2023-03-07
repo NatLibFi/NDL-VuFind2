@@ -1159,11 +1159,11 @@ class Record extends \VuFind\View\Helper\Root\Record
         $translator = $this->getView()->plugin('translate');
         $externalLinkText = $translator('external_link');
         switch ($this->driver->getDataSource()) {
-        case 'aoe':
-            $source = ' aoe.fi';
-            break;
-        default:
-            $source = '';
+            case 'aoe':
+                $source = ' aoe.fi';
+                break;
+            default:
+                $source = '';
         }
         return '(' . $externalLinkText . $source . ')';
     }

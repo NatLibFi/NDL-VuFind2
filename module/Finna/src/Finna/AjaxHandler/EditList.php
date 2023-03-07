@@ -45,7 +45,7 @@ use VuFind\I18n\Translator\TranslatorAwareInterface;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class EditList extends \VuFind\AjaxHandler\AbstractBase
-    implements TranslatorAwareInterface
+implements TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 

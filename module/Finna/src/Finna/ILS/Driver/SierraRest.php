@@ -55,6 +55,19 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     protected $onlinePayableManualFineDescriptionPatterns = [];
 
     /**
+     * SOAP options for the IMMS connection
+     *
+     * @var array
+     */
+    protected $immsSoapOptions = [
+        'soap_version' => SOAP_1_1,
+        'exceptions' => true,
+        'trace' => false,
+        'timeout' => 15,
+        'connection_timeout' => 5,
+    ];
+
+    /**
      * Initialize the driver.
      *
      * Validate configuration and perform all resource-intensive tasks needed to
@@ -102,9 +115,35 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
+     * Get Patron Holds
+     *
+     * This is responsible for retrieving all holds by a specific patron.
+     *
+     * @param array $patron The patron array from patronLogin
+     *
+     * @throws DateException
+     * @throws ILSException
+     * @return array        Array of the patron's holds on success.
+     * @todo   Support for handling frozen and pickup location change
+     */
+    public function getMyHolds($patron)
+    {
+        $holds = parent::getMyHolds($patron);
+        foreach ($holds as &$hold) {
+            if (!$hold['available']) {
+                continue;
+            }
+            $hold['holdShelf'] = $this->getHoldShelf($hold, $patron);
+        }
+        unset($hold);
+
+        return $holds;
+    }
+
+    /**
      * Get Pick Up Locations
      *
-     * This is responsible for gettting a list of valid library locations for
+     * This is responsible for getting a list of valid library locations for
      * holds / recall retrieval
      *
      * @param array $patron      Patron information returned by the patronLogin
@@ -360,9 +399,9 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 $description .= $entry['description'];
             }
             switch ($description) {
-            case 'Overdue Renewal':
-                $description = 'Overdue';
-                break;
+                case 'Overdue Renewal':
+                    $description = 'Overdue';
+                    break;
             }
             $bibId = null;
             $title = null;
@@ -669,5 +708,254 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             }
         }
         return false;
+    }
+
+    /**
+     * Get hold shelf for an available hold
+     *
+     * @param array $hold   Hold
+     * @param array $patron The patron array from patronLogin
+     *
+     * @return string
+     */
+    protected function getHoldShelf(array $hold, array $patron): string
+    {
+        $location = $hold['location'];
+        $cacheKey = "holdshelf|$location|" . $hold['item_id'];
+        if (null !== ($shelf = $this->getCachedData($cacheKey))) {
+            return $shelf;
+        }
+
+        $result = '';
+        $handlerConfig = $this->getHoldShelfHandlerConfig($hold);
+        if ($handlerConfig) {
+            $type = $handlerConfig['type'];
+            $config = $handlerConfig['config'];
+            try {
+                switch ($type) {
+                    case 'IMMS':
+                        $result
+                            = $this->getHoldShelfWithIMMS($config, $hold, $patron);
+                        break;
+                    default:
+                        $this->logError("Unknown hold shelf handler: $type");
+                }
+            } catch (\Exception $e) {
+                $this->logError(
+                    "Failed to get hold shelf for item {$hold['item_id']} with"
+                    . " handler $type: " . (string)$e
+                );
+            }
+        }
+        $this->putCachedData(
+            $cacheKey,
+            $result,
+            $config['locationCacheTime'] ?? 300
+        );
+        return $result;
+    }
+
+    /**
+     * Get hold shelf handler configuration
+     *
+     * @param array $hold Hold
+     *
+     * @return ?array handler and config, or null if not found
+     */
+    protected function getHoldShelfHandlerConfig(array $hold): ?array
+    {
+        $location = $hold['location'];
+        $handlers = $this->config['Holds']['holdShelfHandler'] ?? [];
+        while ($location) {
+            if ($setting = $handlers[$location] ?? '') {
+                $parts = explode(':', $setting);
+                $type = $parts[0];
+                $config = !empty($parts[1])
+                    ? ($this->config[$parts[1]] ?? null)
+                    : null;
+                if ($type && $config) {
+                    return compact('type', 'config');
+                }
+            }
+            $location = substr($location, 0, -1);
+        }
+        return null;
+    }
+
+    /**
+     * Get hold shelf for an available hold with IMMS
+     *
+     * @param array $config IMMS configuration
+     * @param array $hold   Hold
+     * @param array $patron The patron array from patronLogin
+     *
+     * @return string
+     */
+    protected function getHoldShelfWithIMMS(
+        array $config,
+        array $hold,
+        array $patron
+    ): string {
+        foreach (['securityWsdl', 'queryWsdl', 'username', 'password'] as $key) {
+            if (empty($config[$key])) {
+                $this->logError("IMMS config missing $key");
+                throw new ILSException('Problem with IMMS configuration');
+            }
+        }
+
+        $cacheKeyToken = 'token|' . md5(var_export($config, true));
+
+        $itemId = $hold['item_id'];
+        // Get item barcode using same request as elsewhere for cacheability
+        $item = $this->makeRequest(
+            [$this->apiBase, 'items', $itemId],
+            ['fields' => 'bibIds,varFields'],
+            'GET',
+            $patron
+        );
+        $barcode = '';
+        foreach ($item['varFields'] ?? [] as $field) {
+            if ('b' === $field['fieldTag']) {
+                $barcode = $field['content'];
+                break;
+            }
+        }
+        if (!$barcode) {
+            $this->logError("Could not retrieve barcode for item $itemId");
+            return '';
+        }
+
+        $shelf = '';
+        try {
+            if (!($authToken = $this->getCachedData($cacheKeyToken))) {
+                $this->logWarning('Retrieving IMMS auth token');
+                $authToken = $this->getIMMSAuthToken($config);
+            }
+
+            $client = new ProxySoapClient(
+                $this->httpService,
+                $config['queryWsdl'],
+                $this->immsSoapOptions
+            );
+            try {
+                $response = $client->GetItemDetails(
+                    [
+                        'Token' => $authToken,
+                        'ItemId' => $barcode
+                    ]
+                );
+            } catch (\SoapFault $e) {
+                if ($e->getMessage() === 'Token is invalid') {
+                    // Retry with a new authentication token:
+                    $this->logWarning('Refreshing IMMS auth token');
+                    $authToken = $this->getIMMSAuthToken($config);
+                    $response = $client->GetItemDetails(
+                        [
+                            'Token' => $authToken,
+                            'ItemId' => $barcode
+                        ]
+                    );
+                } else {
+                    throw new ILSException('IMMS request failed', $e->getCode(), $e);
+                }
+            }
+            $placement = $response->ItemDetails->CurrentLocation->Placement
+                ->ShortPlacementText ?? '';
+            preg_match('/(\d+)/', $placement, $matches);
+            $shelf = ltrim($matches[1] ?? '', '0');
+        } catch (\Exception $e) {
+            throw new ILSException('IMMS request failed', $e->getCode(), $e);
+        }
+        $this->putCachedData(
+            $cacheKeyToken,
+            $authToken,
+            $config['authTokenCacheTime'] ?? 3600
+        );
+        return $shelf;
+    }
+
+    /**
+     * Get a new authentication token from IMMS
+     *
+     * @param array $config IMMS config
+     *
+     * @return string
+     */
+    protected function getIMMSAuthToken(array $config): string
+    {
+        $client = new ProxySoapClient(
+            $this->httpService,
+            $config['securityWsdl'],
+            $this->immsSoapOptions
+        );
+
+        $response = $client->Login(
+            [
+                'Username' => $config['username'],
+                'Password' => $config['password'],
+            ]
+        );
+        return (string)$response->Token;
+    }
+
+    /**
+     * Make Request
+     *
+     * Makes a request to the Sierra REST API
+     *
+     * Finna: Adds caching for bibs and items
+     *
+     * @param array  $hierarchy    Array of values to embed in the URL path of the
+     * request
+     * @param array  $params       A keyed array of query data
+     * @param string $method       The http request method to use (Default is GET)
+     * @param array  $patron       Patron information, if available
+     * @param bool   $returnStatus Whether to return HTTP status code and response
+     * as a keyed array instead of just the response
+     *
+     * @throws ILSException
+     * @return mixed JSON response decoded to an associative array, an array of HTTP
+     * status code and JSON response when $returnStatus is true or null on
+     * authentication error when using patron-specific access
+     */
+    protected function makeRequest(
+        $hierarchy,
+        $params = false,
+        $method = 'GET',
+        $patron = false,
+        $returnStatus = false
+    ) {
+        $url = $this->getApiUrlFromHierarchy($hierarchy);
+        // Allow caching of GET requests for bibs and items:
+        $bibsUrl = $this->getApiUrlFromHierarchy([$this->apiBase, 'bibs']);
+        $itemsUrl = $this->getApiUrlFromHierarchy([$this->apiBase, 'items']);
+        $cacheKey = null;
+        if ('GET' === $method
+            && (strncmp($url, $bibsUrl, strlen($bibsUrl)) === 0
+            || strncmp($url, $itemsUrl, strlen($itemsUrl)) === 0)
+        ) {
+            // Cacheable request, check cache:
+            $paramArray = compact('params', 'method', 'patron', 'returnStatus');
+            $cacheKey = "request|$url|" . md5(var_export($paramArray, true));
+            if (null !== ($result = $this->getCachedData($cacheKey))) {
+                return $result;
+            }
+        }
+        $result = parent::makeRequest(
+            $hierarchy,
+            $params,
+            $method,
+            $patron,
+            $returnStatus
+        );
+        if ($cacheKey) {
+            // Cache records by default for 300 seconds:
+            $this->putCachedData(
+                $cacheKey,
+                $result,
+                $this->config['Catalog']['request_cache_time'] ?? 300
+            );
+        }
+        return $result;
     }
 }

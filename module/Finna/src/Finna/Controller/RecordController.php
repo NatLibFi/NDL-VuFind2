@@ -919,15 +919,15 @@ class RecordController extends \VuFind\Controller\RecordController
                 } else {
                     $contentType = '';
                     switch ($format) {
-                    case 'gltf':
-                        $contentType = 'model/gltf+json';
-                        break;
-                    case 'glb':
-                        $contentType = 'model/gltf+binary';
-                        break;
-                    default:
-                        $contentType = 'application/octet-stream';
-                        break;
+                        case 'gltf':
+                            $contentType = 'model/gltf+json';
+                            break;
+                        case 'glb':
+                            $contentType = 'model/gltf+binary';
+                            break;
+                        default:
+                            $contentType = 'application/octet-stream';
+                            break;
                     }
                     // Set headers for downloadable file
                     header("Content-Type: $contentType");
@@ -970,22 +970,22 @@ class RecordController extends \VuFind\Controller\RecordController
             $formedFilename = "$id-$index.$format";
             $representation = [];
             switch ($type) {
-            case 'highresimg':
-                $size = $params->fromQuery('size');
-                $key = $params->fromQuery('key', -1);
-                $representations = $driver->tryMethod('getAllImages');
-                $representation
-                    = $representations[$index]['highResolution'][$size][$key]
-                    ?? [];
-                $formedFilename = "$id-$index-$size.$format";
-                break;
-            case 'document':
-                $representations = $driver->tryMethod('getDocuments');
-                $representation = $representations[$index] ?? [];
-                break;
-            default:
-                $response->setStatusCode(400);
-                break;
+                case 'highresimg':
+                    $size = $params->fromQuery('size');
+                    $key = $params->fromQuery('key', -1);
+                    $representations = $driver->tryMethod('getAllImages');
+                    $representation
+                        = $representations[$index]['highResolution'][$size][$key]
+                        ?? [];
+                    $formedFilename = "$id-$index-$size.$format";
+                    break;
+                case 'document':
+                    $representations = $driver->tryMethod('getDocuments');
+                    $representation = $representations[$index] ?? [];
+                    break;
+                default:
+                    $response->setStatusCode(400);
+                    break;
             }
 
             if ($url = $representation['url'] ?? false) {
