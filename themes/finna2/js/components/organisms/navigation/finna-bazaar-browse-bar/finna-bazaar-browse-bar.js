@@ -8,6 +8,6 @@ $(document).ready(function onFinnaBazaarBrowseBarReady() {
       .always(function afterAjaxCall() {
         form.off('submit');
         form.submit();
-      })
+      });
   });
 });
