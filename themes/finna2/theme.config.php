@@ -255,7 +255,7 @@ $config = [
         'finna-model-viewer.js',
         'finna-video-element.js',
         'finna-feed-element.js',
-        'finna-splide-manager.js'
+        'finna-carousel-manager.js'
     ],
     'less' => [
         'active' => false

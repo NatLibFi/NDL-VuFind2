@@ -93,7 +93,7 @@ class FinnaFeedElement extends HTMLElement {
         const vertical = 'carousel-vertical' === settings.type;
         settings.vertical = vertical;
 
-        finna.splideManager.create([this], settings);
+        finna.carouselManager.create([this], settings);
 
         var titleBottom = typeof settings.titlePosition !== 'undefined' && settings.titlePosition === 'bottom';
         if (!vertical) {

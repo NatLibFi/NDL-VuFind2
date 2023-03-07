@@ -1,5 +1,5 @@
 /* global VuFind, finna, Splide */
-finna.splideManager = (() => {
+finna.carouselManager = (() => {
   const breakpointSettingMappings = {
     desktop: 'perPage',
     'desktop-small': 1200,

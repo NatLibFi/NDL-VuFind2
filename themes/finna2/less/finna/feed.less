@@ -485,12 +485,43 @@ finna-feed {
         display: flex;
         justify-content: space-between;
         z-index: 1;
-
+        align-items: center;
+        top: 0;
+        bottom: 0;
+        margin: auto;
         button {
+            position: relative;
+            width: 20px;
+            height: 40px;
             display: flex;
             align-items: center;
             pointer-events: auto;
             border: none;
+        }
+    }
+    .feed-item-holder {
+        height: 100%;
+        position: relative;
+        display: flex !important;
+        .feed-link {
+            display: flex;
+            height: 100%;
+            width: 100%;
+        }
+    }
+    .wrapper {
+        display: flex;
+        background: @carousel-slider-background;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+    .carousel-slide-header {
+        p {
+            .carousel-date {
+                display: block;
+                font-weight: 400;
+            }
         }
     }
     .splide__pagination {
@@ -519,16 +550,9 @@ finna-feed {
 finna-feed.splide--ltr {
     .splide__arrows {
         width: 100%;
-        align-items: center;
         left: 0;
         right: 0;
-        top: 0;
-        bottom: 0;
-        margin: auto;
         button {
-            position: relative;
-            width: 20px;
-            height: 40px;
             &.left {
                 left: -24px;
                 transform: rotate(180deg);
@@ -536,7 +560,6 @@ finna-feed.splide--ltr {
             &.right {
                 right: -24px;
             }
-            pointer-events: auto;
         }
     }
     .feed-item-holder {
@@ -548,14 +571,16 @@ finna-feed.splide--ltr {
                 opacity: 0;
             }
         }
-        height: 100%;
-        position: relative;
-        display: flex;
         .feed-link {
-            display: flex;
             flex-flow: column;
-            height: 100%;
+        }
+        .wrapper {
+            flex: 1 1 100%;
             width: 100%;
+            img {
+                max-width: none;
+                max-height: 100%;
+            }
         }
         .carousel-text {
             width: 100%;
@@ -566,19 +591,7 @@ finna-feed.splide--ltr {
             opacity: 0;
             padding: 10px;
         }
-        .wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: @carousel-slider-background;
-            overflow: hidden;
-            width: 100%;
-            flex: 1 1 100%;
-            img {
-                max-width: none;
-                max-height: 100%;
-            }
-        }
+
         .carousel-slide-header {
             p {
                 position: absolute;
@@ -601,10 +614,6 @@ finna-feed.splide--ltr {
                 margin-bottom: 0;
                 letter-spacing: 0.2px;
                 text-shadow: @carousel-slide-header-text-shadow;
-                .carousel-date {
-                    display: block;
-                    font-weight: 400;
-                }
             }
         }
     }
@@ -613,16 +622,9 @@ finna-feed.splide--ltr {
 finna-feed.splide--ttb {
     .splide__arrows {
         height: 100%;
-        align-items: center;
         flex-flow: column;
         right: -20px;
-        top: 0;
-        bottom: 0;
-        margin: auto;
         button {
-            position: relative;
-            width: 20px;
-            height: 40px;
             &.up {
                 top: 0;
                 transform: rotate(-90deg);
@@ -631,30 +633,19 @@ finna-feed.splide--ttb {
                 bottom: 0;
                 transform: rotate(90deg);
             }
-            pointer-events: auto;
         }
     }
     .feed-item-holder {
-        display: flex !important;
         flex-flow: row;
         flex: 1 1 100%;
-        height: 100%;
         .feed-link {
-            display: flex;
             flex-flow: row;
-            height: 100%;
-            width: 100%;
         }
         .carousel-hover-title, .carousel-hover-date {
             display: none;
         }
         .wrapper {
-            display: flex;
             flex: 1 1 40%;
-            background: @carousel-slider-background;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
             img {
                 max-width: 80%;
                 max-height: initial;
@@ -676,8 +667,6 @@ finna-feed.splide--ttb {
                     padding-left: 0;
                     font-weight: 400;
                     .carousel-date {
-                        display: block;
-                        font-weight: 400;
                         color: @gray-light;
                     }
                 }
