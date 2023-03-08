@@ -1289,7 +1289,6 @@ implements \Laminas\Log\LoggerAwareInterface
      */
     public function getFormatClassifications()
     {
-        var_dump('hiiip');
         $results = [];
         foreach ($this->getXmlRecord()->lido->descriptiveMetadata
             ->objectClassificationWrap ?? [] as $node
@@ -1323,7 +1322,6 @@ implements \Laminas\Log\LoggerAwareInterface
                 }
             }
         }
-        var_dump($results);
         return $results;
     }
 
