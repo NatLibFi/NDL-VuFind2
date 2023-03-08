@@ -1598,7 +1598,7 @@ implements \Laminas\Log\LoggerAwareInterface
                 }
             }
         }
-        ksort($authors);
+        ksort($authors, SORT_NUMERIC);
         return array_values($authors);
     }
 
