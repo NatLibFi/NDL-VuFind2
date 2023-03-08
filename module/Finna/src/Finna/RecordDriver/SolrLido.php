@@ -1049,8 +1049,10 @@ implements \Laminas\Log\LoggerAwareInterface
                     $label = (string)($attributes->label ?? '');
                     $data = $label ? compact('term', 'label') : $term;
                     $allResults[] = $data;
+                    $termLanguage = trim((string)$node->attributes()->lang)
+                        ?: trim((string)$node->term->attributes()->lang);
                     if (in_array(
-                        (string)$node->attributes()->lang,
+                        $termLanguage,
                         $preferredLanguages
                     )
                     ) {
@@ -1287,6 +1289,7 @@ implements \Laminas\Log\LoggerAwareInterface
      */
     public function getFormatClassifications()
     {
+        var_dump('hiiip');
         $results = [];
         foreach ($this->getXmlRecord()->lido->descriptiveMetadata
             ->objectClassificationWrap ?? [] as $node
@@ -1320,6 +1323,7 @@ implements \Laminas\Log\LoggerAwareInterface
                 }
             }
         }
+        var_dump($results);
         return $results;
     }
 
