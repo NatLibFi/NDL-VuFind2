@@ -2,9 +2,12 @@
 /**
  * RecordLink view helper (DEPRECATED -- use RecordLinker instead)
  *
+ * Note that RecordLink has been removed from upstream and the Finna version only
+ * remains for compatibility with existing production views.
+ *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2017-2020.
+ * Copyright (C) The National Library of Finland 2017-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -19,28 +22,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * @category VuFind
- * @package  View_Helpers
- * @author   Anna Niku <anna.niku@gofore.com>
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
- * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @category   VuFind
+ * @package    View_Helpers
+ * @author     Anna Niku <anna.niku@gofore.com>
+ * @author     Ere Maijala <ere.maijala@helsinki.fi>
+ * @author     Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @license    http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link       http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @deprecated RecordLink has been removed from upstream and the Finna version only
+ * remains for compatibility with existing production views.
  */
 namespace Finna\View\Helper\Root;
 
 /**
  * RecordLink view helper (DEPRECATED -- use RecordLinker instead)
  *
- * @category VuFind
- * @package  View_Helpers
- * @author   Anna Niku <anna.niku@gofore.com>
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
- * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @category   VuFind
+ * @package    View_Helpers
+ * @author     Anna Niku <anna.niku@gofore.com>
+ * @author     Ere Maijala <ere.maijala@helsinki.fi>
+ * @author     Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @license    http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link       http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @deprecated RecordLink has been removed from upstream and the Finna version only
+ * remains for compatibility with existing production views.
  */
-class RecordLink extends \VuFind\View\Helper\Root\RecordLink
+class RecordLink extends \Laminas\View\Helper\AbstractHelper
 {
     /**
      * Data source configuration
@@ -58,6 +65,63 @@ class RecordLink extends \VuFind\View\Helper\Root\RecordLink
     {
         // parent no longer has a constructor that uses $router
         $this->datasourceConfig = $config;
+    }
+
+    /**
+     * Magic method to proxy recordLinker functionality.
+     *
+     * @param string $method Method being called
+     * @param array  $args   Method arguments
+     *
+     * @return mixed
+     */
+    public function __call($method, $args)
+    {
+        return $this->getView()->plugin('recordLinker')->$method(...$args);
+    }
+
+    /**
+     * Alias for getBreadcrumbHtml(), for backward compatibility with
+     * VuFind 7.x and earlier versions.
+     *
+     * @param \VuFind\RecordDriver\AbstractBase $driver Record to link to.
+     *
+     * @return string
+     */
+    public function getBreadcrumb($driver)
+    {
+        return $this->__call('getBreadcrumbHtml', [$driver]);
+    }
+
+    /**
+     * Given a string or array of parts, build a request (e.g. hold) URL.
+     *
+     * @param string|array $url           URL to process
+     * @param bool         $includeAnchor Should we include an anchor?
+     *
+     * @return string
+     */
+    public function getRequestUrl($url, $includeAnchor = true)
+    {
+        $finalUrl = $this->__call(__FUNCTION__, func_get_args());
+        // Make sure everything is properly HTML encoded:
+        $escaper = $this->getView()->plugin('escapehtml');
+        return $escaper($finalUrl);
+    }
+
+    /**
+     * Return search URL for all versions
+     *
+     * @param \VuFind\RecordDriver\AbstractBase $driver Record driver
+     *
+     * @return string
+     */
+    public function getVersionsSearchUrl($driver)
+    {
+        $url = $this->__call(__FUNCTION__, func_get_args());
+        // Make sure everything is properly HTML encoded:
+        $escaper = $this->getView()->plugin('escapehtml');
+        return $escaper($url);
     }
 
     /**
@@ -90,106 +154,17 @@ class RecordLink extends \VuFind\View\Helper\Root\RecordLink
         }
         $embedUrl = '';
         switch ($parts['host']) {
-        case 'vimeo.com':
-            $embedUrl = "https://player.vimeo.com/video" . $parts['path'];
-            break;
-        case 'youtu.be':
-            $embedUrl = "https://www.youtube.com/embed" . $parts['path'];
-            break;
-        case 'youtube.com':
-            parse_str($parts['query'], $query);
-            $embedUrl = "https://www.youtube.com/embed/" . $query['v'];
-            break;
+            case 'vimeo.com':
+                $embedUrl = "https://player.vimeo.com/video" . $parts['path'];
+                break;
+            case 'youtu.be':
+                $embedUrl = "https://www.youtube.com/embed" . $parts['path'];
+                break;
+            case 'youtube.com':
+                parse_str($parts['query'], $query);
+                $embedUrl = "https://www.youtube.com/embed/" . $query['v'];
+                break;
         }
         return $embedUrl;
-    }
-
-    /**
-     * Given an array representing a related record (which may be a bib ID or OCLC
-     * number), this helper renders a URL linking to that record.
-     *
-     * @param array  $link   Link information from record model
-     * @param bool   $escape Should we escape the rendered URL?
-     * @param string $source Source ID for backend being used to retrieve records
-     *
-     * @return string       URL derived from link information
-     */
-    public function related($link, $escape = true, $source = DEFAULT_SEARCH_BACKEND)
-    {
-        if ('identifier' === $link['type']) {
-            $urlHelper = $this->getView()->plugin('url');
-            $baseUrl = $urlHelper($this->getSearchActionForSource($source));
-
-            $result = $baseUrl
-                . '?lookfor=' . urlencode($link['value'])
-                . '&type=Identifier&jumpto=1';
-        } else {
-            $result = parent::related($link, false, $source);
-        }
-
-        $driver = $this->getView()->plugin('record')->getDriver();
-        $result .= $this->getView()->plugin('searchTabs')
-            ->getCurrentHiddenFilterParams(
-                $driver->getSourceIdentifier(),
-                false,
-                '&'
-            );
-
-        if ($filters = ($link['filter'] ?? [])) {
-            $result .= '&' . implode(
-                '&',
-                array_map(
-                    function ($key, $val) {
-                        return 'filter[]=' . urlencode("$key:$val");
-                    },
-                    array_keys($filters),
-                    $filters
-                )
-            );
-        }
-
-        if ($escape) {
-            $escapeHelper = $this->getView()->plugin('escapeHtml');
-            $result = $escapeHelper($result);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Return URL of the record in staff interface if available
-     *
-     * @param \VuFind\RecordDriver\AbstractBase $driver Record driver
-     *
-     * @return string
-     */
-    public function getStaffUiUrl($driver)
-    {
-        $parts = explode('.', $driver->getUniqueId(), 2);
-
-        if (!isset($parts[1])) {
-            return '';
-        }
-        $source = $parts[0];
-        $id = $parts[1];
-
-        if (!empty($this->datasourceConfig[$source]['staffUiUrl'])) {
-            $url = $this->datasourceConfig[$source]['staffUiUrl'];
-            return str_replace('%%id%%', $id, $url);
-        }
-        return '';
-    }
-
-    /**
-     * Given a record source ID, return the route name for searching its backend.
-     *
-     * @param string $source Record source identifier.
-     *
-     * @return string
-     */
-    protected function getSearchActionForSource($source)
-    {
-        $optionsHelper = $this->getView()->plugin('searchOptions');
-        return $optionsHelper($source)->getSearchAction();
     }
 }

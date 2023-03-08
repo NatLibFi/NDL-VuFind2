@@ -22,6 +22,7 @@
  * @category VuFind
  * @package  View_Helpers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
@@ -32,7 +33,6 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
-use VuFind\I18n\Locale\LocaleSettings;
 
 /**
  * Organisations list helper factory.
@@ -40,6 +40,7 @@ use VuFind\I18n\Locale\LocaleSettings;
  * @category VuFind
  * @package  View_Helpers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
@@ -69,11 +70,7 @@ class OrganisationsListFactory implements FactoryInterface
         }
 
         return new $requestedName(
-            $container->get(\VuFind\Cache\Manager::class)->getCache('object'),
-            $container->get(\VuFind\Search\Solr\HierarchicalFacetHelper::class),
-            $container->get(\VuFind\Search\Results\PluginManager::class),
             $container->get(\Finna\OrganisationInfo\OrganisationInfo::class),
-            $container->get(LocaleSettings::class)->getUserLocale()
         );
     }
 }

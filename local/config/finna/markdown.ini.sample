@@ -39,7 +39,7 @@ renderer[soft_break] = "<br>"
 ; with 'config_key' with value of configuration key, in which your extension expects
 ; its configuration. More about custom extension configuration:
 ; https://commonmark.thephpleague.com/2.3/customization/configuration/
-extensions = Autolink
+extensions = Autolink,ExternalLink
 
 ; CommonMarkCore extension is always enabled by default
 [CommonMarkCore]
@@ -80,12 +80,13 @@ disallowed_tags[] = "plaintext"
 [ExternalLink]
 ; This should be always set, if you want to use this extension. You can use regular
 ; expressions to match group of hosts
-internal_hosts[] = www.example.com
-;open_in_new_window = true
+internal_hosts[] = "/(^|\.)finna\.fi$/"
+internal_hosts[] = "/(^|\.)finna-pre\.fi$/"
+open_in_new_window = true
 ;html_class = external-link
-;nofollow =
-;noopener = external
-;noreferrer = external
+nofollow = external
+noopener = external
+noreferrer = external
 
 ; See https://commonmark.thephpleague.com/2.3/extensions/footnotes/
 [Footnote]

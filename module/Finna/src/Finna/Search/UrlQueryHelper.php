@@ -43,19 +43,6 @@ use Finna\Search\Solr\AuthorityHelper;
 class UrlQueryHelper extends \VuFind\Search\UrlQueryHelper
 {
     /**
-     * Expose parent method since we need to use it from SearchTabs.
-     *
-     * @param array $a      Array of parameters to turn into a GET string
-     * @param bool  $escape Should we escape the string for use in the view?
-     *
-     * @return string
-     */
-    public function buildQueryString($a, $escape = true)
-    {
-        return parent::buildQueryString($a, $escape);
-    }
-
-    /**
      * Remove a parameter from the object.
      *
      * @param string $name Name of parameter
@@ -167,7 +154,7 @@ class UrlQueryHelper extends \VuFind\Search\UrlQueryHelper
     {
         $params = $this->urlParams;
         unset($params['page']);
-        return '?' . $this->buildQueryString($params, $escape);
+        return '?' . static::buildQueryString($params, $escape);
     }
 
     /**
@@ -187,7 +174,7 @@ class UrlQueryHelper extends \VuFind\Search\UrlQueryHelper
         $filters[]
             = AuthorityHelper::AUTHOR_ID_ROLE_FACET . ":{$id}{$separator}{$role}";
         $params['filter'] = $filters;
-        return '?' . $this->buildQueryString($params, true);
+        return '?' . static::buildQueryString($params, true);
     }
 
     /**
@@ -204,6 +191,6 @@ class UrlQueryHelper extends \VuFind\Search\UrlQueryHelper
             = AuthorityHelper::AUTHOR2_ID_FACET . ":{$id}";
         $params = $this->urlParams;
         $params['filter'] = $filters;
-        return '?' . $this->buildQueryString($params, true);
+        return '?' . static::buildQueryString($params, true);
     }
 }

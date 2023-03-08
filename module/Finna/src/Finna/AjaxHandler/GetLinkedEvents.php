@@ -40,14 +40,14 @@ use VuFind\I18n\Translator\TranslatorAwareInterface;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class GetLinkedEvents extends \VuFind\AjaxHandler\AbstractBase
-    implements TranslatorAwareInterface
+implements TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
      * Linked Events
      *
-     * @var LinkedEvents $linkedEvents
+     * @var \Finna\Feed\LinkedEvents $linkedEvents
      */
     protected $linkedEvents;
 

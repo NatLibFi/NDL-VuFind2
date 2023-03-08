@@ -49,7 +49,7 @@ use Psr\Container\ContainerInterface;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class SolrDefaultFactory
-    extends \VuFind\RecordDriver\SolrDefaultWithoutSearchServiceFactory
+extends \VuFind\RecordDriver\SolrDefaultWithoutSearchServiceFactory
 {
     /**
      * Create an object

@@ -34,10 +34,11 @@ namespace Finna\View\Helper\Root;
 
 use Finna\Form\Form;
 use Finna\RecordDriver\SolrAipa;
+use Finna\RecordTab\TabManager;
 use Finna\Search\Solr\AuthorityHelper;
+use Finna\Service\UserPreferenceService;
 use Laminas\Config\Config;
 use VuFind\Record\Loader;
-use VuFind\RecordTab\TabManager;
 use VuFind\View\Helper\Root\Url;
 
 /**
@@ -93,9 +94,9 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Record link helper
      *
-     * @var RecordLink
+     * @var RecordLinker
      */
-    protected $recordLinkHelper;
+    protected $recordLinker;
 
     /**
      * Local cache
@@ -119,6 +120,13 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $form;
 
     /**
+     * User preference service
+     *
+     * @var UserPreferenceService
+     */
+    protected $userPreferenceService;
+
+    /**
      * Callback to get encapsulated records results
      *
      * @var callable
@@ -136,16 +144,19 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Constructor
      *
-     * @param Config          $config                 VuFind config
-     * @param Loader          $loader                 Record loader
-     * @param RecordImage     $recordImage            Record image helper
-     * @param AuthorityHelper $authorityHelper        Authority helper
-     * @param Url             $urlHelper              Url helper
-     * @param RecordLink      $recordLinkHelper       Record link helper
-     * @param TabManager      $tabManager             Tab manager
-     * @param Form            $form                   Form
-     * @param callable        $getEncapsulatedResults Callback to get encapsulated
-     *                                                records results
+     * @param Config                $config                 VuFind config
+     * @param Loader                $loader                 Record loader
+     * @param RecordImage           $recordImage            Record image helper
+     * @param AuthorityHelper       $authorityHelper        Authority helper
+     * @param Url                   $urlHelper              Url helper
+     * @param RecordLinker          $recordLinker           Record link helper
+     * @param TabManager            $tabManager             Tab manager
+     * @param Form                  $form                   Form
+     * @param UserPreferenceService $userPreferenceService  User preference
+     *                                                      service
+     * @param callable              $getEncapsulatedResults Callback to get
+     *                                                      encapsulated
+     *                                                      records results
      */
     public function __construct(
         Config $config,
@@ -153,9 +164,10 @@ class Record extends \VuFind\View\Helper\Root\Record
         RecordImage $recordImage,
         AuthorityHelper $authorityHelper,
         Url $urlHelper,
-        RecordLink $recordLinkHelper,
+        RecordLinker $recordLinker,
         TabManager $tabManager,
         Form $form,
+        UserPreferenceService $userPreferenceService,
         callable $getEncapsulatedResults
     ) {
         parent::__construct($config);
@@ -163,9 +175,10 @@ class Record extends \VuFind\View\Helper\Root\Record
         $this->recordImageHelper = $recordImage;
         $this->authorityHelper = $authorityHelper;
         $this->urlHelper = $urlHelper;
-        $this->recordLinkHelper = $recordLinkHelper;
+        $this->recordLinker = $recordLinker;
         $this->tabManager = $tabManager;
         $this->form = $form;
+        $this->userPreferenceService = $userPreferenceService;
         $this->getEncapsulatedResults = $getEncapsulatedResults;
     }
 
@@ -190,6 +203,8 @@ class Record extends \VuFind\View\Helper\Root\Record
      * Deprecated method. Return false for legacy template code.
      *
      * @return boolean
+     *
+     * @deprecated
      */
     public function bxRecommendationsEnabled()
     {
@@ -202,18 +217,11 @@ class Record extends \VuFind\View\Helper\Root\Record
      * @param object $user Current user
      *
      * @return boolean
+     *
+     * @deprecated Not needed anymore since commenting is always allowed when enabled
      */
     public function commentingAllowed($user)
     {
-        if (!$this->ratingAllowed()) {
-            return true;
-        }
-        $comments = $this->driver->getComments();
-        foreach ($comments as $comment) {
-            if ($comment->user_id === $user->id) {
-                return false;
-            }
-        }
         return true;
     }
 
@@ -591,7 +599,7 @@ class Record extends \VuFind\View\Helper\Root\Record
            'escapedUrl' => trim($escapedUrl),
            'record' => $this->driver,
            'searchAction' => $params['searchAction'] ?? null,
-           'label' => $lookfor,
+           'label' => $params['label'] ?? $lookfor,
            'id' => $authId,
            'authorityLink' => $id && $this->isAuthorityLinksEnabled(),
            'showInlineInfo' => false,
@@ -923,18 +931,12 @@ class Record extends \VuFind\View\Helper\Root\Record
      * Render average rating
      *
      * @return string
+     *
+     * @deprecated Use upstream rating support
      */
     public function getRating()
     {
-        if ($this->ratingAllowed()
-            && $average = $this->driver->tryMethod('getAverageRating')
-        ) {
-            return $this->getView()->render(
-                'Helpers/record-rating.phtml',
-                ['average' => $average['average'], 'count' => $average['count']]
-            );
-        }
-        return false;
+        return '';
     }
 
     /**
@@ -1001,12 +1003,11 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Is rating allowed.
      *
-     * @return boolean
+     * @return bool
      */
     public function ratingAllowed()
     {
-        return $this->commentingEnabled()
-            && $this->driver->tryMethod('ratingAllowed');
+        return $this->driver->tryMethod('isRatingAllowed');
     }
 
     /**
@@ -1105,34 +1106,27 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getAuthoritySummary($onAuthorityPage = false)
     {
-        $id = $this->driver->getUniqueID();
-        $authorCnt = $this->authorityHelper->getRecordsByAuthorityId(
-            $id,
-            AuthorityHelper::AUTHOR2_ID_FACET,
-            true
-        );
-        $topicCnt = $this->authorityHelper->getRecordsByAuthorityId(
-            $id,
-            AuthorityHelper::TOPIC_ID_FACET,
-            true
-        );
-
         $tabs = array_keys($this->tabManager->getTabsForRecord($this->driver));
-
         $summary = [
             'author' => [
-                'cnt' => $authorCnt,
+                // cnt is no longer available beforehand. Use
+                // $this->authority()->getCountAsAuthor($driver->getUniqueID()) when
+                // needed.
+                'cnt' => null,
                 'tabUrl' => in_array('AuthorityRecordsAuthor', $tabs)
-                    ? $this->recordLinkHelper->getTabUrl(
+                    ? $this->recordLinker->getTabUrl(
                         $this->driver,
                         'AuthorityRecordsAuthor'
                     )
                     : null
             ],
             'topic' => [
-                'cnt' => $topicCnt,
+                // cnt is no longer available beforehand. Use
+                // $this->authority()->getCountAsTopic($driver->getUniqueID()) when
+                // needed.
+                'cnt' => null,
                 'tabUrl' => in_array('AuthorityRecordsTopic', $tabs)
-                    ? $this->recordLinkHelper->getTabUrl(
+                    ? $this->recordLinker->getTabUrl(
                         $this->driver,
                         'AuthorityRecordsTopic'
                     )
@@ -1166,11 +1160,11 @@ class Record extends \VuFind\View\Helper\Root\Record
         $translator = $this->getView()->plugin('translate');
         $externalLinkText = $translator('external_link');
         switch ($this->driver->getDataSource()) {
-        case 'aoe':
-            $source = ' aoe.fi';
-            break;
-        default:
-            $source = '';
+            case 'aoe':
+                $source = ' aoe.fi';
+                break;
+            default:
+                $source = '';
         }
         return '(' . $externalLinkText . $source . ')';
     }
@@ -1318,8 +1312,65 @@ class Record extends \VuFind\View\Helper\Root\Record
         if (!in_array($source, $localSources)) {
             return false;
         }
-        return ('SolrAuth' === $source || $this->hasLargeImageLayout())
-            ? 'inline' : 'sidebar';
+        return $this->hasLargeImageLayout() ? 'inline' : 'sidebar';
+    }
+
+    /**
+     * Get preferred record source for deduplicated records.
+     *
+     * Note: This works with DeduplicationListener, so make sure to
+     * update both as necessary.
+     *
+     * @return string
+     */
+    public function getPreferredSource(): string
+    {
+        if (null === $this->driver) {
+            return '';
+        }
+        // Is selecting a datasource mandatory? If not, we can just rely on
+        // DeduplicationListener having selected the correct one.
+        if (empty($this->config->Record->select_dedup_holdings_library)) {
+            return $this->driver->tryMethod('getDataSource', [], '');
+        }
+        if ($params = $this->getView()->params) {
+            $filterList = $params->getFilterList();
+            if (!empty($filterList['Organisation'])) {
+                return $this->driver->tryMethod('getDataSource', [], '');
+            }
+        }
+        $dedupData = $this->driver->getDedupData();
+        // Return driver's datasource if deduplication data is not set or
+        // the count of deduplication data is 1.
+        // There cannot be any other sources in this case.
+        if (count($dedupData) <= 1) {
+            return $this->driver->tryMethod('getDataSource', [], '');
+        }
+        $preferredSources = $this->userPreferenceService->getPreferredDataSources();
+        foreach ($preferredSources as $source) {
+            if (!empty($dedupData[$source])) {
+                return $source;
+            }
+        }
+        return '';
+    }
+
+    /**
+     * Get container js classes if the driver supports ajax status and/or has
+     * preferred source.
+     *
+     * @return string
+     */
+    public function getContainerJsClasses(): string
+    {
+        $classes = [];
+        if (!empty($this->driver) && $this->driver->supportsAjaxStatus()) {
+            $classes[] = 'ajaxItem';
+        }
+        if (!$this->getPreferredSource()) {
+            $classes[] = 'js-item-done';
+        }
+        return implode(' ', $classes);
     }
 
     /**

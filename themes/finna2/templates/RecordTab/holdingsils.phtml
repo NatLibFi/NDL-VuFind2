@@ -132,15 +132,15 @@
         <a class="holdings-url-link" href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><i class="fa fa-external-link"></i> <?=$this->transEsc('default::link_' . $current['desc'], null, $current['desc'])?></a>
       <?php endforeach; ?>
     <?php endif; ?>
+    <?php if ($doiActive): ?>
+      <?=$doi->renderTemplate()?>
+    <?php endif; ?>
     <?php if ($openUrlActive): ?>
       <?=$openUrl->renderTemplate()?>
       <?php
         $loadOpenURLs = "finna.openUrl.initLinks($('.holdings-urls'));";
         echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $loadOpenURLs, 'SET')
       ?>
-    <?php endif; ?>
-    <?php if ($doiActive): ?>
-      <?=$doi->renderTemplate()?>
     <?php endif; ?>
   </div>
 </div>
@@ -334,7 +334,7 @@
         </div>
       <?php endif; ?>
     <?php endif; ?>
-    <div class="holdings-container-heading">
+    <div class="holdings-container-heading" tabindex="0" role="button" aria-expanded="<?=$holdingsDetails == 'collapsed' ? 'false' : 'true'?>">
       <div class="location">
         <i class="fa fa-arrow-<?=$holdingsDetails == 'collapsed' ? 'right' : 'down'?>" aria-hidden="true"></i>
         <?php $locationText = $this->transEscWithPrefix('location_', $holding['location']); ?>

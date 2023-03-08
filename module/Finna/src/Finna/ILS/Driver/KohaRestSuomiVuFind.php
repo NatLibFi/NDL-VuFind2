@@ -1998,66 +1998,67 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
                 } elseif (strncmp($key, 'Item::', 6) == 0) {
                     $status = substr($key, 6);
                     switch ($status) {
-                    case 'CheckedOut':
-                        $overdue = false;
-                        if (!empty($reason['date_due'])) {
-                            $duedate = $this->dateConverter->convert(
-                                'Y-m-d',
-                                'U',
-                                $reason['date_due']
-                            );
-                            $overdue = $duedate < time();
-                        }
-                        $statuses[] = $overdue ? 'Overdue' : 'Charged';
-                        break;
-                    case 'Lost':
-                        $statuses[] = 'Lost--Library Applied';
-                        break;
-                    case 'NotForLoan':
-                    case 'NotForLoanForcing':
-                        if (isset($reason['code'])) {
-                            switch ($reason['code']) {
-                            case 'Not For Loan':
-                                $statuses[] = 'On Reference Desk';
-                                break;
-                            default:
-                                $statuses[] = $reason['code'];
-                                break;
+                        case 'CheckedOut':
+                            $overdue = false;
+                            if (!empty($reason['date_due'])) {
+                                $duedate = $this->dateConverter->convert(
+                                    'Y-m-d',
+                                    'U',
+                                    $reason['date_due']
+                                );
+                                $overdue = $duedate < time();
                             }
-                        } else {
-                            $statuses[] = 'On Reference Desk';
-                        }
-                        break;
-                    case 'Transfer':
-                        $onHold = false;
-                        if (!empty($item['availability']['notes'])) {
-                            foreach ($item['availability']['notes'] as $noteKey
-                                => $note
-                            ) {
-                                if ('Item::Held' === $noteKey) {
-                                    $onHold = true;
-                                    break;
+                            $statuses[] = $overdue ? 'Overdue' : 'Charged';
+                            break;
+                        case 'Lost':
+                            $statuses[] = 'Lost--Library Applied';
+                            break;
+                        case 'NotForLoan':
+                        case 'NotForLoanForcing':
+                            if (isset($reason['code'])) {
+                                switch ($reason['code']) {
+                                    case 'Not For Loan':
+                                        $statuses[] = 'On Reference Desk';
+                                        break;
+                                    default:
+                                        $statuses[] = $reason['code'];
+                                        break;
+                                }
+                            } else {
+                                $statuses[] = 'On Reference Desk';
+                            }
+                            break;
+                        case 'Transfer':
+                            $onHold = false;
+                            if (!empty($item['availability']['notes'])) {
+                                foreach ($item['availability']['notes'] as $noteKey
+                                    => $note
+                                ) {
+                                    if ('Item::Held' === $noteKey) {
+                                        $onHold = true;
+                                        break;
+                                    }
                                 }
                             }
-                        }
-                        $statuses[] = $onHold ? 'In Transit On Hold' : 'In Transit';
-                        break;
-                    case 'Held':
-                        $statuses[] = 'On Hold';
-                        break;
-                    case 'Waiting':
-                        $statuses[] = 'On Holdshelf';
-                        break;
-                    default:
-                        $statuses[] = !empty($reason['code'])
-                            ? $reason['code'] : $status;
+                            $statuses[] = $onHold
+                                ? 'In Transit On Hold' : 'In Transit';
+                            break;
+                        case 'Held':
+                            $statuses[] = 'On Hold';
+                            break;
+                        case 'Waiting':
+                            $statuses[] = 'On Holdshelf';
+                            break;
+                        default:
+                            $statuses[] = !empty($reason['code'])
+                                ? $reason['code'] : $status;
                     }
                 } elseif (strncmp($key, 'ItemType::', 10) == 0) {
                     $status = substr($key, 10);
                     switch ($status) {
-                    case 'NotForLoan':
-                        $statuses[] = 'On Reference Desk';
-                        break;
+                        case 'NotForLoan':
+                            $statuses[] = 'On Reference Desk';
+                            break;
                     }
                 }
             }
@@ -2330,13 +2331,13 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     {
         $message = $result['error'] ?? 'hold_error_fail';
         switch ($message) {
-        case 'Reserve cannot be placed. Reason: tooManyReserves':
-        case 'Reserve cannot be placed. Reason: tooManyHoldsForThisRecord':
-            $message = 'hold_error_too_many_holds';
-            break;
-        case 'Reserve cannot be placed. Reason: ageRestricted':
-            $message = 'hold_error_age_restricted';
-            break;
+            case 'Reserve cannot be placed. Reason: tooManyReserves':
+            case 'Reserve cannot be placed. Reason: tooManyHoldsForThisRecord':
+                $message = 'hold_error_too_many_holds';
+                break;
+            case 'Reserve cannot be placed. Reason: ageRestricted':
+                $message = 'hold_error_age_restricted';
+                break;
         }
         return [
             'success' => false,
@@ -2423,23 +2424,23 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
                 as $key => $reason
             ) {
                 switch ($key) {
-                case 'Biblio::NoAvailableItems':
-                    return 'hold_error_not_holdable';
-                case 'Item::NotForLoan':
-                case 'Hold::NotAllowedInOPAC':
-                case 'Hold::ZeroHoldsAllowed':
-                case 'Hold::NotAllowedByLibrary':
-                case 'Hold::NotAllowedFromOtherLibraries':
-                case 'Item::Restricted':
-                case 'Hold::ItemLevelHoldNotAllowed':
-                    return 'hold_error_item_not_holdable';
-                case 'Hold::MaximumHoldsForRecordReached':
-                case 'Hold::MaximumHoldsReached':
-                    return 'hold_error_too_many_holds';
-                case 'Item::AlreadyHeldForThisPatron':
-                    return 'hold_error_already_held';
-                case 'Hold::OnShelfNotAllowed':
-                    return 'hold_error_on_shelf_blocked';
+                    case 'Biblio::NoAvailableItems':
+                        return 'hold_error_not_holdable';
+                    case 'Item::NotForLoan':
+                    case 'Hold::NotAllowedInOPAC':
+                    case 'Hold::ZeroHoldsAllowed':
+                    case 'Hold::NotAllowedByLibrary':
+                    case 'Hold::NotAllowedFromOtherLibraries':
+                    case 'Item::Restricted':
+                    case 'Hold::ItemLevelHoldNotAllowed':
+                        return 'hold_error_item_not_holdable';
+                    case 'Hold::MaximumHoldsForRecordReached':
+                    case 'Hold::MaximumHoldsReached':
+                        return 'hold_error_too_many_holds';
+                    case 'Item::AlreadyHeldForThisPatron':
+                        return 'hold_error_already_held';
+                    case 'Hold::OnShelfNotAllowed':
+                        return 'hold_error_on_shelf_blocked';
                 }
             }
         }

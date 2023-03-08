@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2020.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -70,6 +70,7 @@ class ImportCommentsFactory implements FactoryInterface
             $tableManager->get('Comments'),
             $tableManager->get('CommentsRecord'),
             $tableManager->get('Resource'),
+            $tableManager->get('Ratings'),
             ...($options ?? [])
         );
     }

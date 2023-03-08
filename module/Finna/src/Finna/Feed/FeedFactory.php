@@ -70,12 +70,16 @@ class FeedFactory implements FactoryInterface
             throw new \Exception('Unexpected options passed to factory.');
         }
         $config = $container->get(\VuFind\Config\PluginManager::class);
+        $renderer = $container->get('ViewRenderer');
         return new $requestedName(
             $config->get('config'),
             $config->get('rss'),
+            $config->get('rss-organisation-page'),
             $container->get(\VuFind\Cache\Manager::class),
             $container->get('ControllerPluginManager')->get('url'),
-            $container->get('ViewRenderer')->plugin('imageLink')
+            $renderer->plugin('imageLink'),
+            $renderer->plugin('cleanHtml'),
+            $container->get(\Finna\OrganisationInfo\OrganisationInfo::class)
         );
     }
 }

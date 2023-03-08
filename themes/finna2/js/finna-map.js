@@ -63,7 +63,7 @@ finna.map = (function finnaMap() {
         drawnItems.addLayer(circle);
       }
     });
-    if (options.items.length <= 0 ) {
+    if (options.items.length <= 0 && typeof _options.zoom === 'undefined') {
       options.zoom = 5;
     }
 

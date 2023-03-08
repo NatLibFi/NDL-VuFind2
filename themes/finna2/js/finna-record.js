@@ -30,28 +30,37 @@ finna.record = (function finnaRecord() {
         });
     }
   }
-
+  function showDetails() {
+    $('.record-information .record-details-more').removeClass('hidden');
+    $('.show-details-button').addClass('hidden');
+    $('.hide-details-button').removeClass('hidden');
+    $('.record .description .more-link.wide').click();
+    sessionStorage.setItem('finna_record_details', '1');
+  }
+  function hideDetails() {
+    $('.record-information .record-details-more').addClass('hidden');
+    $('.hide-details-button').addClass('hidden');
+    $('.show-details-button').removeClass('hidden');
+    $('.record .description .less-link.wide').click();
+    sessionStorage.removeItem('finna_record_details');
+  }
   function initHideDetails() {
     $('.show-details-button').on('click', function onClickShowDetailsButton() {
-      $('.record-information .record-details-more').removeClass('hidden');
-      $(this).addClass('hidden');
-      $('.hide-details-button').removeClass('hidden');
-      $('.record .description .more-link.wide').click();
-      sessionStorage.setItem('finna_record_details', '1');
+      showDetails();
+      $(this).blur();
+      $(this).siblings('table.table').focus();
     });
     $('.hide-details-button').click (function onClickHideDetailsButton() {
-      $('.record-information .record-details-more').addClass('hidden');
-      $(this).addClass('hidden');
-      $('.show-details-button').removeClass('hidden');
-      $('.record .description .less-link.wide').click();
-      sessionStorage.removeItem('finna_record_details');
+      hideDetails();
+      $(this).blur();
+      $(this).siblings('.show-details-button').focus();
     });
     if ($('.record-information').height() > 350 && $('.show-details-button')[0]) {
       $('.record-information .description').addClass('too-long');
       if (sessionStorage.getItem('finna_record_details')) {
-        $('.show-details-button').click();
+        showDetails();
       } else {
-        $('.hide-details-button').click();
+        hideDetails();
       }
     }
   }
@@ -150,7 +159,14 @@ finna.record = (function finnaRecord() {
   }
 
   function initHoldingsControls() {
+    $('.record-holdings-table:not(.electronic-holdings) .holdings-container-heading').on('keydown', function onClickHeading(e) {
+      if (e.keyCode === 13 || e.keyCode === 32) {
+        e.preventDefault();
+        $('.record-holdings-table:not(.electronic-holdings) .holdings-container-heading').click();
+      }
+    });
     $('.record-holdings-table:not(.electronic-holdings) .holdings-container-heading').on('click', function onClickHeading(e) {
+      $(this).attr('aria-expanded', function changeAria(i, attr) { return attr === 'false' ? 'true' : 'false'; });
       if ($(e.target).hasClass('location-service') || $(e.target).parents().hasClass('location-service')) {
         return;
       }
@@ -158,8 +174,7 @@ finna.record = (function finnaRecord() {
       if ($('.location .fa', this).hasClass('fa-arrow-down')) {
         $('.location .fa', this).removeClass('fa-arrow-down');
         $('.location .fa', this).addClass('fa-arrow-right');
-      }
-      else {
+      } else {
         $('.location .fa', this).removeClass('fa-arrow-right');
         $('.location .fa', this).addClass('fa-arrow-down');
         var rows = $(this).nextUntil('.holdings-container-heading');

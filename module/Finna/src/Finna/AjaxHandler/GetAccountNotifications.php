@@ -42,7 +42,7 @@ use Laminas\Mvc\Controller\Plugin\Params;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class GetAccountNotifications
-    extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
+extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
 {
     public const STATUS_HTTP_NOT_ALLOWED = 405;   // method not allowed
 

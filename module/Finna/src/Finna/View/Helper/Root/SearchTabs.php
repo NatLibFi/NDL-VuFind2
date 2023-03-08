@@ -32,6 +32,7 @@ use Laminas\View\Helper\Url;
 use VuFind\Db\Table\PluginManager as TableManager;
 use VuFind\Search\Results\PluginManager as ResultsManager;
 use VuFind\Search\SearchTabsHelper;
+use VuFind\Search\UrlQueryHelper;
 
 /**
  * "Search tabs" view helper
@@ -195,7 +196,7 @@ class SearchTabs extends \VuFind\View\Helper\Root\SearchTabs
             }
             $url = $parts['path'];
             if (!empty($params)) {
-                $url .= '?' . http_build_query($params);
+                $url .= '?' . UrlQueryHelper::buildQueryString($params, false);
             }
             $tab['url'] = $url;
         }

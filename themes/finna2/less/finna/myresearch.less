@@ -44,6 +44,10 @@
   }
 }
 
+.useraccount-table.online-payment .checkboxFilter {
+  margin-top: 2px;
+}
+
 .checkboxFilter.mylist-select-all {
   padding-left: 0;
   padding-top: 2px;
@@ -99,7 +103,7 @@
       }
     }
   }
-  .renew-button, #renewAll, #renewSelected, #update_selected, #cancelAll, #cancelSelected {
+  .renew-button, #renewAll, #renewSelected, #update_selected, #cancelAll, #cancelSelected, #pay_selected {
     height: 35px;
     padding: 0 10px;
     margin-right: 12px;
@@ -198,6 +202,9 @@
   }
   .myresearch-row:last-child {
     box-shadow: none;
+  }
+  .holds-sort {
+    margin-bottom: 6px;
   }
   #cancelSelected, #cancelAll {
     height: 35px;
@@ -390,7 +397,7 @@
   }
 }
 
-.payment-row {
+.online-payment-form > .payment-row {
   .online-payment-area {
     display: inline-block;
     .online-payment-form {
@@ -427,6 +434,17 @@
   }
 }
 
+.myresearch-table.online-payment {
+  .checkbox-col {
+    width: initial;
+  }
+  .toolbar {
+    border: 0;
+    padding-bottom: 0;
+    padding-left: 9px;
+  }
+}
+
 .fines-info-area {
   margin-bottom: 15px;
   div.card-holder {
@@ -436,6 +454,14 @@
   }
   .amount {
     font-weight: bold;
+  }
+  .online-payment-info {
+    display: flex;
+    align-items: baseline;
+  }
+  #online_payment_minimum_payment {
+    margin: 0 0 0 1em;
+    padding: 6px;
   }
 }
 
@@ -518,7 +544,6 @@
 }
 
 .useraccount-table {
-  margin-bottom: 40px;
   border: 1px solid @gray-lighter;
   border-top: none;
   box-shadow: 0 15px 30px -35px @gray;
@@ -815,11 +840,6 @@
 
 // Search history
 .history-holder {
-  @media (min-width: @screen-xs-max) {
-    h2 {
-      margin-top: 9px;
-    }
-  }
   .table-responsive .table tbody {
     tr, td {
       vertical-align: middle;

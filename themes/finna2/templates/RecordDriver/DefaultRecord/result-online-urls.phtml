@@ -19,11 +19,7 @@
       'class' => 'fulltext',
       'target' => '_blank'
     ];
-    $videoBase = [
-      'class' => 'videourl fulltext btn btn-primary'
-    ];
     $this->htmlElement()->addAttributeTemplate('url-base', $urlBase);
-    $this->htmlElement()->addAttributeTemplate('video-base', $videoBase);
   ?>
 
   <?php // Always output the container div so that we can update its contents on dedup record selection: ?>
@@ -51,12 +47,6 @@
               'href' => $this->proxyUrl($url['url']),
               'title' => $url['url']
             ];
-            if (!empty($url['videoSources'])) {
-              $currentUrl['data-video-sources'] = json_encode($url['videoSources']);
-            }
-            if (!empty($url['posterUrl'])) {
-              $currentUrl['data-poster-url'] = $url['posterUrl'];
-            }
             switch ($url['embed'] ?? '') {
             case 'video':
               $currentUrl['data-embed-video'] = '';
@@ -64,16 +54,47 @@
             case 'iframe':
               $currentUrl['data-embed-iframe'] = '';
               break;
+            default:
+              if ($this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
+                $url['embed'] = 'iframe';
+                $currentUrl['data-embed-iframe'] = '';
+              }
+              break;
             }
             $desc = $url['desc'] ?? $url['url'];
             if ($desc === $url['url']) {
               $desc = $this->truncateUrl($desc);
             }
           ?>
-          <?php if ('popup' === $context && $url['embed'] ?? false): ?>
-            <button <?= $this->htmlElement()->getAttributes($currentUrl, 'video-base') ?>>
-              <i class="fa fa-external-link"></i> <?=$desc?>
-            </button>
+          <?php if (!empty($url['embed'])): ?>
+            <?php
+              $isPopup = 'popup' === $context;
+              $isIframe = $url['embed'] === 'iframe';
+              $popupId = $isIframe ? 'finna-iframe' : 'finna-video';
+              if ($isPopup) {
+                $popupId .= '-popup';
+              }
+            ?>
+            <finna-video
+              class="<?=$isPopup ? 'videourl fulltext btn btn-primary' : 'btn btn-link'?>"
+              popup-id="<?=$popupId?>"
+              source="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>"
+              type="<?=$this->escapeHtmlAttr($url['embed'])?>"
+              title="<?=$this->escapeHtmlAttr($url['url'])?>"
+              consent-service="recordvideo"
+              consent-categories="<?=$this->transEscAttr($this->cookieConsent()->getCategoryTitleForService('recordvideo'))?>"
+              index="<?=$i?>"
+              aria-label="<?=$this->transEscAttr('Link to video') . ' ' . $this->escapeHtmlAttr($desc)?>"
+              <?php if ($isPopup): ?>
+                embed-parent="video-player"
+              <?php endif; ?>
+              <?php if (!empty($url['videoSources'])): ?>
+                video-sources="<?=htmlspecialchars(json_encode($url['videoSources']), ENT_QUOTES, 'UTF-8');?>"
+              <?php endif; ?>
+            >
+              <i class="fa fa-play-circle"></i>
+              <span class="video-desc"><?=$this->escapeHtml($this->truncate(ucfirst($desc), 30))?></span>
+            </finna-video>
           <?php else: ?>
             <a <?= $this->htmlElement()->getAttributes($currentUrl, 'url-base') ?>><i class="fa fa-external-link" aria-hidden="true"></i>
               <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
@@ -89,11 +110,11 @@
           <div><?=$this->transEsc('eol_ellipsis')?></div>
         <?php endif; ?>
       </div>
-      <?php if ($openUrlActive): ?>
-        <?=$openUrl->renderTemplate()?>
-      <?php endif; ?>
       <?php if ($doiActive): ?>
         <?=$doi->renderTemplate()?>
+      <?php endif; ?>
+      <?php if ($openUrlActive): ?>
+        <?=$openUrl->renderTemplate()?>
       <?php endif; ?>
     <?php endif; ?>
   </div>

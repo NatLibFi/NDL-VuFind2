@@ -13,14 +13,10 @@
         }
      }
   }
-  $ratings = $this->record($this->driver)->ratingAllowed();
-  $comments = $this->driver->getComments();
-  $allowCommenting = $user && $this->record($this->driver)->commentingAllowed($user);
-  $allowRating = $this->record($this->driver)->ratingAllowed();
+  $ratingAllowed = $this->driver->isRatingAllowed();
 ?>
-<?php $comments = $this->driver->getComments(); ?>
 <?php if (count($comments) == 0): ?>
-  <div class="alert alert-info"><?=$this->transEsc($allowRating ? 'Be the first to leave a rating' : 'Be the first to leave a comment')?></div>
+  <div class="alert alert-info"><?=$this->transEsc('Be the first to leave a comment')?></div>
 <?php else: ?>
   <?php
     foreach ($comments as $comment):
@@ -29,17 +25,26 @@
   ?>
   <div class="comment-wrapper comment" data-id="<?=$comment->id?>">
     <div class="name text-right">
-      <?php if ($comment->finna_rating !== null): ?>
-      <div class="comment-rating">
-        <?=$this->partial('Helpers/rating-stars.phtml', ['value' => $comment->finna_rating ?: 0, 'disabled' => true])?>
-      </div>
+      <?php if ($ratingAllowed): ?>
+        <div class="comment-rating">
+          <?php $ratingData = $this->driver->getRatingData($comment->user_id); ?>
+          <?php if ($ratingData['count']): ?>
+            <?=$this->render('Helpers/star-rating.phtml', ['readonly' => true, 'ratingData' => $ratingData]);?>
+          <?php endif; ?>
+        </div>
       <?php endif; ?>
       <div class="comment-info">
         <small>
           <?php $commenter = $this->driver->tryMethod('getUserById', [$comment->user_id]); ?>
           <strong><?=null === $comment->user_id ? $this->transEsc('comment_anonymous_user') : $this->escapeHtml(trim($this->userPublicName($commenter)))?></strong>
           <?=$this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $comment->created))?>
+          <?php if ($comment->finna_updated): ?>
+            <br>
+            <?=$this->transEsc('modified')?>
+            <?=$this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $comment->finna_updated))?>
+          <?php endif; ?>
           <?php if ($own): ?>
+            <br>
             <a href="#" class="edit"><?=$this->transEsc('Edit')?></a>
             <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'DeleteComment'))?>?delete=<?=urlencode($comment->id)?>" id="recordComment<?=$this->escapeHtml($comment->id)?>" class="delete text-danger"><?=$this->transEsc('Delete')?></a>
           <?php endif; ?>
@@ -48,15 +53,15 @@
     </div>
     <div class="comment-text"><?=$this->escapeHtml($comment->comment)?></div>
     <?php if (!$own): ?>
-    <div class="comment-inappropriate<?= $reported ? '-reported' : ''?> text-right">
-      <small>
-        <?php if (!$reported): ?>
-          <a title="<?=$this->transEscAttr('Report inappropriate') ?>" href="<?=$this->url('comments-inappropriate', ['id' => $comment->id]) ?>" data-lightbox><?=$this->translate('Report inappropriate')?></a>
-        <?php else: ?>
-          <?=$this->translate('Reported inappropriate'); ?>
-        <?php endif; ?>
-      </small>
-    </div>
+      <div class="comment-inappropriate<?= $reported ? '-reported' : ''?> text-right">
+        <small>
+          <?php if (!$reported): ?>
+            <a title="<?=$this->transEscAttr('Report inappropriate') ?>" href="<?=$this->url('comments-inappropriate', ['id' => $comment->id]) ?>" data-lightbox><?=$this->translate('Report inappropriate')?></a>
+          <?php else: ?>
+            <?=$this->translate('Reported inappropriate'); ?>
+          <?php endif; ?>
+        </small>
+      </div>
     <?php endif; ?>
   </div>
   <?php endforeach; ?>
@@ -65,8 +70,8 @@
   $this->inlineScript(
       \Laminas\View\Helper\HeadScript::SCRIPT,
       '$(document).ready(function() { finna.comments.initCommentList('
-      . ($allowCommenting ? 'true' : 'false') . ','
-      . ($allowRating ? 'true' : 'false') . ','
+      . 'true,'
+      . ($ratingAllowed ? 'true' : 'false') . ','
       . count($comments)
       . '); });',
       'SET'

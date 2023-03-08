@@ -68,12 +68,29 @@ $config = [
                 'type'    => 'Laminas\Router\Http\Segment',
                 'options' => [
                     'route'    => '/FeedContent[/:page][/:element]',
-                    'constraints' => [
-                        'page'     => '[a-zA-Z][a-zA-Z0-9_-]*'
-                    ],
                     'defaults' => [
                         'controller' => 'FeedContent',
                         'action'     => 'Content',
+                    ]
+                ],
+            ],
+            'feed-image' => [
+                'type'    => 'Laminas\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/FeedContent/Image/:page',
+                    'defaults' => [
+                        'controller' => 'FeedContent',
+                        'action'     => 'Image',
+                    ]
+                ],
+            ],
+            'linked-events-image' => [
+                'type'    => 'Laminas\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/FeedContent/EventImage',
+                    'defaults' => [
+                        'controller' => 'FeedContent',
+                        'action'     => 'EventImage',
                     ]
                 ],
             ],
@@ -165,6 +182,16 @@ $config = [
                     'defaults' => [
                         'controller' => 'MyResearch',
                         'action'     => 'Import',
+                    ]
+                ],
+            ],
+            'organisation-info-image' => [
+                'type'    => 'Laminas\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/OrganisationInfo/Image',
+                    'defaults' => [
+                        'controller' => 'OrganisationInfo',
+                        'action'     => 'Image',
                     ]
                 ],
             ],
@@ -326,6 +353,7 @@ $config = [
             'Finna\Connection\Finto' => 'Finna\Connection\FintoFactory',
             'Finna\Cookie\RecommendationMemory' => 'Finna\Cookie\RecommendationMemoryFactory',
             'Finna\Cover\Loader' => 'VuFind\Cover\LoaderFactory',
+            'Finna\Export' => 'VuFind\ExportFactory',
             'Finna\File\Loader' => 'Finna\File\LoaderFactory',
             'Finna\Feed\Feed' => 'Finna\Feed\FeedFactory',
             'Finna\Feed\LinkedEvents' => 'Finna\Feed\LinkedEventsFactory',
@@ -343,15 +371,15 @@ $config = [
             'Finna\RecordDriver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\RecordTab\TabManager' => 'VuFind\RecordTab\TabManagerFactory',
             'Finna\Role\PermissionManager' => 'VuFind\Role\PermissionManagerFactory',
-            'Finna\Search\Memory' => 'VuFind\Search\MemoryFactory',
             'Finna\Search\Solr\AuthorityHelper' => 'Finna\Search\Solr\AuthorityHelperFactory',
             'Finna\Search\Solr\HierarchicalFacetHelper' => 'VuFind\Search\Solr\HierarchicalFacetHelperFactory',
             'Finna\Service\R2SupportService' => 'Finna\Service\R2SupportServiceFactory',
             'Finna\Service\RecordFieldMarkdown' => 'Laminas\ServiceManager\Factory\InvokableFactory',
+            'Finna\Service\RemsService' => 'Finna\Service\RemsServiceFactory',
+            'Finna\Service\UserPreferenceService' => 'Finna\Service\UserPreferenceServiceFactory',
             'Finna\Statistics\Driver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Statistics\EventHandler' => 'Finna\Statistics\EventHandlerFactory',
             'Finna\Favorites\FavoritesService' => 'Finna\Favorites\FavoritesServiceFactory',
-            'Finna\Service\RemsService' => 'Finna\Service\RemsServiceFactory',
             'Finna\View\CustomElement\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Video\Handler\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Video\Video' => 'Finna\Video\VideoFactory',
@@ -370,6 +398,7 @@ $config = [
             'VuFind\Config\SearchSpecsReader' => 'Finna\Config\SearchSpecsReader',
             'VuFind\Config\YamlReader' => 'Finna\Config\YamlReader',
             'VuFind\Cover\Loader' => 'Finna\Cover\Loader',
+            'VuFind\Export' => 'Finna\Export',
             'VuFind\Favorites\FavoritesService' => 'Finna\Favorites\FavoritesService',
             'VuFind\Form\Form' => 'Finna\Form\Form',
             'VuFind\ILS\Connection' => 'Finna\ILS\Connection',
@@ -378,7 +407,6 @@ $config = [
             'VuFind\Record\Loader' => 'Finna\Record\Loader',
             'VuFind\RecordTab\TabManager' => 'Finna\RecordTab\TabManager',
             'VuFind\Role\PermissionManager' => 'Finna\Role\PermissionManager',
-            'VuFind\Search\Memory' => 'Finna\Search\Memory',
             'VuFind\Search\Solr\HierarchicalFacetHelper' => 'Finna\Search\Solr\HierarchicalFacetHelper',
 
             'ViewResolver' => 'Finna\View\Resolver\AggregateResolver',
@@ -404,8 +432,6 @@ $config = [
                         'VuFind\AjaxHandler\AbstractIlsAndUserActionFactory',
                     'Finna\AjaxHandler\CommentRecord' =>
                         'Finna\AjaxHandler\CommentRecordFactory',
-                    'Finna\AjaxHandler\DeleteRecordComment' =>
-                        'VuFind\AjaxHandler\DeleteRecordCommentFactory',
                     'Finna\AjaxHandler\EditList' =>
                         'Finna\AjaxHandler\EditListFactory',
                     'Finna\AjaxHandler\EditListResource' =>
@@ -509,7 +535,6 @@ $config = [
 
                     // Overrides:
                     'VuFind\AjaxHandler\CommentRecord' => 'Finna\AjaxHandler\CommentRecord',
-                    'VuFind\AjaxHandler\DeleteRecordComment' => 'Finna\AjaxHandler\DeleteRecordComment',
                     'VuFind\AjaxHandler\GetACSuggestions' => 'Finna\AjaxHandler\GetACSuggestions',
                     'VuFind\AjaxHandler\GetFacetData' => 'Finna\AjaxHandler\GetFacetData',
                     'VuFind\AjaxHandler\GetItemStatuses' => 'Finna\AjaxHandler\GetItemStatuses',
@@ -827,12 +852,22 @@ $config = [
                     'SolrBrowse' => 'Finna\Search\SolrBrowse\Results',
                 ]
             ],
+            'session' => [
+                'factories' => [
+                    'Finna\Session\Redis' => 'Finna\Session\RedisFactory',
+                ],
+                'aliases' => [
+                    'VuFind\Session\Redis' => 'Finna\Session\Redis',
+                ]
+            ],
             'statistics_driver' => [
                 'factories' => [
                     'Finna\Statistics\Driver\Database' => 'Finna\Statistics\Driver\DatabaseFactory',
+                    'Finna\Statistics\Driver\Redis' => 'Finna\Statistics\Driver\RedisFactory',
                 ],
                 'aliases' => [
                     'Database' => 'Finna\Statistics\Driver\Database',
+                    'Redis' => 'Finna\Statistics\Driver\Redis',
                 ]
             ],
             'content_covers' => [

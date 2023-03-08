@@ -37,7 +37,7 @@ namespace Finna\RecordDriver;
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
 class SolrAuthForward extends SolrAuthDefault
-    implements \Laminas\Log\LoggerAwareInterface
+implements \Laminas\Log\LoggerAwareInterface
 {
     use Feature\SolrAuthFinnaTrait;
     use Feature\SolrForwardTrait {
@@ -225,7 +225,7 @@ class SolrAuthForward extends SolrAuthDefault
                 }
             }
         }
-        return null;
+        return '';
     }
 
     /**

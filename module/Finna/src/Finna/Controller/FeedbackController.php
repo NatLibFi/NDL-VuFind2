@@ -43,7 +43,7 @@ use VuFind\Log\LoggerAwareTrait;
  * @link     http://vufind.org   Main Site
  */
 class FeedbackController extends \VuFind\Controller\FeedbackController
-    implements \Laminas\Log\LoggerAwareInterface
+implements \Laminas\Log\LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

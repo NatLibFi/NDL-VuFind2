@@ -232,21 +232,42 @@ class User extends RowGateway implements \VuFind\Db\Table\DbTableAwareInterface,
             return $text;
         }
 
+        $configAuth = $this->config->Authentication;
+
         // Load encryption key from configuration if not already present:
-        if (null === $this->encryptionKey) {
-            if (!isset($this->config->Authentication->ils_encryption_key)
-                || empty($this->config->Authentication->ils_encryption_key)
-            ) {
+        if ($this->encryptionKey === null) {
+            if (empty($configAuth->ils_encryption_key)) {
                 throw new \VuFind\Exception\PasswordSecurity(
                     'ILS password encryption on, but no key set.'
                 );
             }
-            $this->encryptionKey = $this->config->Authentication->ils_encryption_key;
+
+            $this->encryptionKey = $configAuth->ils_encryption_key;
         }
 
         // Perform encryption:
-        $algo = $this->config->Authentication->ils_encryption_algo ?? 'blowfish';
-        $cipher = new BlockCipher(new Openssl(['algorithm' => $algo]));
+        $algo = $configAuth->ils_encryption_algo ?? 'blowfish';
+
+        // Check if OpenSSL error is caused by blowfish support
+        try {
+            $cipher = new BlockCipher(new Openssl(['algorithm' => $algo]));
+            if ($algo == 'blowfish') {
+                trigger_error(
+                    'Deprecated encryption algorithm (blowfish) detected',
+                    E_USER_DEPRECATED
+                );
+            }
+        } catch (\InvalidArgumentException $e) {
+            if ($algo == 'blowfish') {
+                throw new \VuFind\Exception\PasswordSecurity(
+                    'The blowfish encryption algorithm ' .
+                    'is not supported by your version of OpenSSL. ' .
+                    'Please visit /Upgrade/CriticalFixBlowfish for further details.'
+                );
+            } else {
+                throw $e;
+            }
+        }
         $cipher->setKey($this->encryptionKey);
         return $encrypt ? $cipher->encrypt($text) : $cipher->decrypt($text);
     }
@@ -703,10 +724,11 @@ class User extends RowGateway implements \VuFind\Db\Table\DbTableAwareInterface,
      * Destroy the user.
      *
      * @param bool $removeComments Whether to remove user's comments
+     * @param bool $removeRatings  Whether to remove user's ratings
      *
      * @return int The number of rows deleted.
      */
-    public function delete($removeComments = true)
+    public function delete($removeComments = true, $removeRatings = true)
     {
         // Remove all lists owned by the user:
         $lists = $this->getLists();
@@ -722,6 +744,10 @@ class User extends RowGateway implements \VuFind\Db\Table\DbTableAwareInterface,
         if ($removeComments) {
             $comments = $this->getDbTable('Comments');
             $comments->deleteByUser($this);
+        }
+        if ($removeRatings) {
+            $ratings = $this->getDbTable('Ratings');
+            $ratings->deleteByUser($this);
         }
 
         // Remove the user itself:

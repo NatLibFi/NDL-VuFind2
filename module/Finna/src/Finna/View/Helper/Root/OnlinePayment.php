@@ -43,8 +43,9 @@ class OnlinePayment extends \Laminas\View\Helper\AbstractHelper
      *
      * @param string $handler       Payment handler.
      * @param string $transactionId Transaction id.
-     * @param int    $amount        Total payable amount,
-     *                              including transction fee (in cents).
+     * @param ?int   $amount        Total payable amount,
+     *                              including transaction fee (in cents), or null if
+     *                              user has to choose fees to pay.
      *
      * @return string
      */

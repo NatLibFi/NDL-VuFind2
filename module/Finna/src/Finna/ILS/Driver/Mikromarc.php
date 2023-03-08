@@ -1284,7 +1284,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         if (isset($details['notifications'])) {
             $options
                 = $details['notifications']['settings']['transport_types']['options']
-                ;
+            ;
             if (!empty($options['SMS'])) {
                 $settings['LettersBySMS'] = $options['SMS']['active'];
             }
@@ -1417,16 +1417,17 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Return total amount of fees that may be paid online.
+     * Return details on fees payable online.
      *
-     * @param array $patron Patron
-     * @param array $fines  Patron's fines
+     * @param array  $patron          Patron
+     * @param array  $fines           Patron's fines
+     * @param ?array $selectedFineIds Selected fines
      *
      * @throws ILSException
-     * @return array Associative array of payment info,
+     * @return array Associative array of payment details,
      * false if an ILSException occurred.
      */
-    public function getOnlinePayableAmount($patron, $fines)
+    public function getOnlinePaymentDetails($patron, $fines, ?array $selectedFineIds)
     {
         if (empty($fines)) {
             return [
@@ -1477,6 +1478,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      * @param int    $amount            Amount to be registered as paid
      * @param string $transactionId     Transaction ID
      * @param int    $transactionNumber Internal transaction number
+     * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
      *
      * @throws ILSException
      * @return bool success
@@ -1485,7 +1487,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         $patron,
         $amount,
         $transactionId,
-        $transactionNumber
+        $transactionNumber,
+        $fineIds = null
     ) {
         $userId = $patron['id'];
 

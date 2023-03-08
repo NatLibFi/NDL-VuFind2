@@ -135,6 +135,7 @@ class GetImageInformation extends \VuFind\AjaxHandler\AbstractBase
         $index = $params->fromQuery('index');
         $publicList = $params->fromQuery('publicList') === '1';
         $listId = $params->fromQuery('listId');
+        $searchId = $params->fromQuery('sid');
 
         if (null === ($source = $params->fromQuery('source'))) {
             [$source, $recId] = explode('.', $id, 2);
@@ -148,7 +149,8 @@ class GetImageInformation extends \VuFind\AjaxHandler\AbstractBase
 
         $context = [
             'driver' => $driver,
-            'index' => $index
+            'index' => $index,
+            'searchId' => $searchId,
         ];
         $user = null;
         if ($publicList) {

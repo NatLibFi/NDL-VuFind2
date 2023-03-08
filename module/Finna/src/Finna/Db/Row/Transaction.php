@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2022.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -38,6 +38,7 @@ use Finna\Db\Table\Transaction as TransactionTable;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  *
+ * @property int $id
  * @property int $complete
  * @property string $paid
  * @property string $status
@@ -45,7 +46,10 @@ use Finna\Db\Table\Transaction as TransactionTable;
  * @property string $reported
  */
 class Transaction extends \VuFind\Db\Row\RowGateway
+implements \VuFind\Db\Table\DbTableAwareInterface
 {
+    use \VuFind\Db\Table\DbTableAwareTrait;
+
     /**
      * Constructor
      *
@@ -148,7 +152,7 @@ class Transaction extends \VuFind\Db\Row\RowGateway
     public function setRegistrationFailed(string $msg): void
     {
         $this->complete = TransactionTable::STATUS_REGISTRATION_FAILED;
-        $this->status = $msg;
+        $this->status = mb_substr($msg, 0, 255, 'UTF-8');
         $this->save();
     }
 
@@ -174,5 +178,22 @@ class Transaction extends \VuFind\Db\Row\RowGateway
         $this->complete = TransactionTable::STATUS_FINES_UPDATED;
         $this->status = 'fines_updated';
         $this->save();
+    }
+
+    /**
+     * Get fine IDs from associated fees
+     *
+     * @return array
+     */
+    public function getFineIds(): array
+    {
+        $feeTable = $this->getDbTable('Fee');
+        $fineIds = [];
+        foreach ($feeTable->select(['transaction_id' => $this->id]) as $fee) {
+            if (!empty($fee['fine_id'])) {
+                $fineIds[] = $fee['fine_id'];
+            }
+        }
+        return $fineIds;
     }
 }

@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2013-2016.
+ * Copyright (C) The National Library of Finland 2013-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -190,7 +190,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
     {
         $result = parent::determineBuildingPriority($params);
 
-        if (!isset($_ENV['VUFIND_API_CALL']) || !$_ENV['VUFIND_API_CALL']) {
+        if (!getenv('VUFIND_API_CALL')) {
             return $result;
         }
 
@@ -237,36 +237,21 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
             );
         }
 
-        // Secondary priority to selected library card
-        $authManager = $this->serviceLocator->get(\VuFind\Auth\Manager::class);
-        if ($user = $authManager->isLoggedIn()) {
-            if ($user->cat_username) {
-                [$preferred] = explode('.', $user->cat_username, 2);
-                // array_search may return 0, but that's fine since it means the
-                // source already has highest priority
-                if ($preferred && $key = array_search($preferred, $recordSources)) {
-                    unset($recordSources[$key]);
-                    array_unshift($recordSources, $preferred);
-                }
-            }
-        }
-
-        // Primary priority to cookie
-        $cookieManager
-            = $this->serviceLocator->get(\VuFind\Cookie\CookieManager::class);
-        if ($cookieManager) {
-            $preferred = $cookieManager->get('preferredRecordSource');
-            // array_search may return 0, but that's fine since it means the source
-            // already has highest priority
-            if ($preferred && $key = array_search($preferred, $recordSources)) {
+        $userPreferenceService = $this->serviceLocator->get(
+            \Finna\Service\UserPreferenceService::class
+        );
+        foreach (array_reverse($userPreferenceService->getPreferredDataSources())
+            as $source
+        ) {
+            if (false !== ($key = array_search($source, $recordSources))) {
                 unset($recordSources[$key]);
-                array_unshift($recordSources, $preferred);
             }
+            array_unshift($recordSources, $source);
         }
 
         // If handling an API call, remove excluded sources so that they don't get
         // become preferred (they will get filtered out of the dedup data later)
-        if (isset($_ENV['VUFIND_API_CALL']) && $_ENV['VUFIND_API_CALL']) {
+        if (getenv('VUFIND_API_CALL')) {
             $searchConfig = $config->get($this->searchConfig);
             if (isset($searchConfig->Records->apiExcludedSources)) {
                 $excluded = explode(',', $searchConfig->Records->apiExcludedSources);
@@ -288,7 +273,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
     {
         parent::fetchLocalRecords($event);
 
-        if (!isset($_ENV['VUFIND_API_CALL']) || !$_ENV['VUFIND_API_CALL']) {
+        if (!getenv('VUFIND_API_CALL')) {
             return;
         }
 

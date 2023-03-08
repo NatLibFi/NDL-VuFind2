@@ -42,6 +42,27 @@ use VuFind\RecordDriver\AbstractBase as AbstractRecord;
 class EventHandler
 {
     /**
+     * Request type bit indicating a crawler
+     *
+     * @var int
+     */
+    public const REQUEST_TYPE_CRAWLER = 1;
+
+    /**
+     * Request type bit indicating an API request
+     *
+     * @var int
+     */
+    public const REQUEST_TYPE_API = 2;
+
+    /**
+     * Request type bit indicating a request from a monitoring system
+     *
+     * @var int
+     */
+    public const REQUEST_TYPE_MONITORING = 4;
+
+    /**
      * Institution code
      *
      * @param string
@@ -70,6 +91,13 @@ class EventHandler
     protected $userAgent;
 
     /**
+     * Whether the request comes from a monitoring system
+     *
+     * @var bool
+     */
+    protected $monitoringSystem;
+
+    /**
      * Constructor
      *
      * Note that this must be called before any of the events to be handled is
@@ -78,17 +106,21 @@ class EventHandler
      * @param string      $view        View subpath
      * @param ?BaseDriver $driver      Statistics storage driver
      * @param string      $userAgent   Client's user agent
+     * @param bool        $monitoring  Whether the request comes from a monitoring
+     * system
      */
     public function __construct(
         string $institution,
         string $view,
         ?DriverInterface $driver,
-        string $userAgent
+        string $userAgent,
+        bool $monitoring = false
     ) {
         $this->institution = $institution;
         $this->view = $view;
         $this->driver = $driver;
         $this->userAgent = $userAgent;
+        $this->monitoringSystem = $monitoring;
     }
 
     /**
@@ -104,7 +136,7 @@ class EventHandler
             $this->driver->addNewSession(
                 $this->institution,
                 $this->view,
-                $this->isCrawler(),
+                $this->getRequestTypeBitmap(),
                 $params
             );
         }
@@ -124,7 +156,7 @@ class EventHandler
             $this->driver->addPageView(
                 $this->institution,
                 $this->view,
-                $this->isCrawler(),
+                $this->getRequestTypeBitmap(),
                 $controller,
                 $action
             );
@@ -155,7 +187,7 @@ class EventHandler
             $this->driver->addRecordView(
                 $this->institution,
                 $this->view,
-                $this->isCrawler(),
+                $this->getRequestTypeBitmap(),
                 $record->getSourceIdentifier(),
                 $source,
                 $record->getUniqueID(),
@@ -167,16 +199,28 @@ class EventHandler
     }
 
     /**
-     * Check if the request comes from a crawler or bot
+     * Get request type as a bitmap
      *
-     * @return bool
+     * @return int
      */
-    protected function isCrawler(): bool
+    protected function getRequestTypeBitmap(): int
     {
-        if (!$this->userAgent) {
-            return false;
+        $result = 0;
+        if ($this->userAgent) {
+            $crawlerDetect = new \Jaybizzle\CrawlerDetect\CrawlerDetect();
+            if ($crawlerDetect->isCrawler($this->userAgent)) {
+                $result |= static::REQUEST_TYPE_CRAWLER;
+            }
         }
-        $crawlerDetect = new \Jaybizzle\CrawlerDetect\CrawlerDetect();
-        return $crawlerDetect->isCrawler($this->userAgent);
+
+        if (getenv('VUFIND_API_CALL')) {
+            $result |= static::REQUEST_TYPE_API;
+        }
+
+        if ($this->monitoringSystem) {
+            $result |= static::REQUEST_TYPE_MONITORING;
+        }
+
+        return $result;
     }
 }

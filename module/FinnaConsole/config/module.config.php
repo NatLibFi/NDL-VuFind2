@@ -21,6 +21,7 @@ $config = [
                     'FinnaConsole\Command\Util\ImportComments' => 'FinnaConsole\Command\Util\ImportCommentsFactory',
                     'FinnaConsole\Command\Util\OnlinePaymentMonitor' => 'FinnaConsole\Command\Util\OnlinePaymentMonitorFactory',
                     'FinnaConsole\Command\Util\ProcessRecordStatsLog' => 'FinnaConsole\Command\Util\ProcessRecordStatsLogFactory',
+                    'FinnaConsole\Command\Util\ProcessStatsQueue' => 'FinnaConsole\Command\Util\ProcessStatsQueueFactory',
                     'FinnaConsole\Command\Util\ScheduledAlerts' => 'VuFindConsole\Command\ScheduledSearch\NotifyCommandFactory',
                     'FinnaConsole\Command\Util\UpdateSearchHashes' => 'FinnaConsole\Command\Util\UpdateSearchHashesFactory',
                     'FinnaConsole\Command\Util\VerifyRecordLinks' => 'FinnaConsole\Command\Util\VerifyRecordLinksFactory',

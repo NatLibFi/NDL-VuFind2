@@ -177,7 +177,7 @@ class PaytrailPaymentAPI extends AbstractBase
                 $item = (new Item())
                     ->setDescription($fineDesc)
                     ->setProductCode($code)
-                    ->setUnitPrice($fine['balance'])
+                    ->setUnitPrice(round($fine['balance']))
                     ->setUnits(1)
                     ->setVatPercentage(0);
                 $items[] = $item;
@@ -250,16 +250,16 @@ class PaytrailPaymentAPI extends AbstractBase
 
         $status = $params['checkout-status'];
         switch ($status) {
-        case 'ok':
-            $transaction->setPaid();
-            return self::PAYMENT_SUCCESS;
-        case 'fail':
-            $transaction->setCanceled();
-            return self::PAYMENT_CANCEL;
-        case 'new':
-        case 'pending':
-        case 'delayed':
-            return self::PAYMENT_PENDING;
+            case 'ok':
+                $transaction->setPaid();
+                return self::PAYMENT_SUCCESS;
+            case 'fail':
+                $transaction->setCanceled();
+                return self::PAYMENT_CANCEL;
+            case 'new':
+            case 'pending':
+            case 'delayed':
+                return self::PAYMENT_PENDING;
         }
 
         $this->logPaymentError("unknown status $status");

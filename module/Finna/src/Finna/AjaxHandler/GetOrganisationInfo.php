@@ -47,7 +47,7 @@ use VuFind\Session\Settings as SessionSettings;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
-    implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
+implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
@@ -199,13 +199,11 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
                 $cacheKey = 'sectors';
                 $sectors = $cache->getItem($cacheKey);
                 if (empty($sectors[$id])) {
-                    $apiResult = $this->getSectorsWithAPI($id);
-                    if (!empty($apiResult['sectors'])) {
+                    $fetchResult = $this->getSectorsForOrganisation($id);
+                    if (!empty($fetchResult)) {
                         // Check for all the sectors
-                        $sectors[$id] = $apiResult['sectors'];
+                        $sectors[$id] = $fetchResult;
                         $cache->setItem($cacheKey, $sectors);
-                    } elseif (!empty($result['error'])) {
-                        return ['error' => $apiResult['error']];
                     }
                 }
                 if (!empty($sectors[$id])) {
@@ -238,7 +236,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
         $result = array_merge(
             $result,
             $this->getItemsForLibraries(
-                $libraries,
+                array_values(array_unique($libraries)),
                 $buildings,
                 $reqParams,
                 $action
@@ -335,49 +333,22 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
     }
 
     /**
-     * Get sectors from the first record found with API.
+     * Get sectors for organisation as an associative array.
      *
      * @param string $institutionId Id of institution to search for sectors
      *
-     * @return array
+     * @return array [[value => sector]...]
      */
-    protected function getSectorsWithAPI(string $institutionId): array
+    protected function getSectorsForOrganisation(string $institutionId): array
     {
-        $params = [
-            'filter[]' => 'building:0/' . $institutionId . '/',
-            'limit' => 1,
-            'field[]' => 'sectors'
-        ];
-        $url = 'https://api.finna.fi/v1/search?';
-        $client = $this->httpService->createClient($url);
-        $client->setOptions(
-            [
-                'useragent' => 'FinnaOrganisationInfo VuFind'
-            ]
-        );
-        $client->setParameterGet($params);
-        $result = $client->send();
-        if (!$result->isSuccess()) {
-            return [
-                'error' => 'API request failed, url: ' . $url
+        $result = [];
+        $list = $this->organisationInfo->getSectorsForOrganisation($institutionId);
+        foreach ($list as $sector) {
+            $result[] = [
+                'value' => $sector
             ];
         }
-
-        $response = json_decode($result->getBody(), true);
-        if (isset($response['result'])
-            && $response['result'] == 'error'
-        ) {
-            return [
-                'error' => 'API request failed, message: ' . $response['message']
-            ];
-        }
-        if (empty($response['records'][0])) {
-            // No records found, unable do determine sector
-            return [];
-        }
-        return [
-            'sectors' => $response['records'][0]['sectors']
-        ];
+        return $result;
     }
 
     /**

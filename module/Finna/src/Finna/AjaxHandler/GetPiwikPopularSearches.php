@@ -44,7 +44,7 @@ use VuFind\Session\Settings as SessionSettings;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class GetPiwikPopularSearches extends \VuFind\AjaxHandler\AbstractBase
-    implements TranslatorAwareInterface, \VuFindHttp\HttpServiceAwareInterface,
+implements TranslatorAwareInterface, \VuFindHttp\HttpServiceAwareInterface,
     \Laminas\Log\LoggerAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;

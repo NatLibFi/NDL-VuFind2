@@ -26,7 +26,7 @@
   </nav>
   <?php $recordNumber = $results->getOffset(); ?>
   <?php foreach ($results as $current): ?>
-    <div id="result<?=++$recordNumber ?>" class="result clearfix<?=$current->supportsAjaxStatus() ? ' ajaxItem' : ''?>">
+    <div id="result<?=++$recordNumber ?>" class="result clearfix <?=$this->record($this->driver)->getContainerJsClasses()?>">
       <span class="sr-only"><?=$this->transEsc('Search Result');?> <?=$recordNumber ?></span>
       <?=$this->record($current)->getSearchResult($view)?>
     </div>

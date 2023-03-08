@@ -1,0 +1,26 @@
+---
+# See local/config/finna/CookieConsent.yaml for more information.
+
+"@parent_yaml": "../finna/OAuth2Server.yaml"
+
+# Make your changes below.
+
+Clients:
+  tester:
+    # Client name
+    name: OIDC Tester
+    # Redirect URI
+    redirectUri: "http://localhost:8080/session/callback"
+    # Whether to use PKCE (see https://tools.ietf.org/html/rfc7636 for details). Must
+    # be enabled for non-confidential clients.
+    pkce: true
+    # Whether the client is confidential (as opposed to a public one such as an
+    # in-browser app). Only condidential clients can be verified by the client
+    # secret.
+    isConfidential: true
+    # Hash of a client secret. You can use the following command to get a hash for a
+    # password:
+    # php -r 'echo password_hash("secret",  PASSWORD_DEFAULT) . PHP_EOL;'
+    # Note that a secret can only be used with confidential clients since public
+    # ones have no way of using it securely.
+    secret: ""

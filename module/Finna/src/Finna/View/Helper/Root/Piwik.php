@@ -39,7 +39,7 @@ namespace Finna\View\Helper\Root;
  * @link     http://vufind.org   Main Site
  */
 class Piwik extends \VuFind\View\Helper\Root\Piwik
-    implements \VuFind\I18n\Translator\TranslatorAwareInterface
+implements \VuFind\I18n\Translator\TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 

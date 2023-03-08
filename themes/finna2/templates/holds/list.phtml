@@ -34,6 +34,7 @@
           <div class="holds-pre-list"><?=$this->render($template)?></div>
         <?php endif; ?>
         <?php if (!empty($this->recordList)): ?>
+          <div class="holds-sort"><?=$this->context($this)->renderInContext("myresearch/controls/sort.phtml", ['sortList' => $this->sortList])?></div>
           <?php if ($this->cancelForm || $this->updateForm): ?>
             <form name="updateForm" class="inline" method="post" action="<?=$this->escapeHtmlAttr($this->url('holds-list'))?>" id="update_holds" data-clear-account-cache="holds" data-lightbox>
               <input type="hidden" id="submitType" name="cancelSelected" value="1"/>
@@ -208,8 +209,12 @@
                           <?=$this->transEsc('hold_available') ?>
                         <?php endif; ?>
                         <?php if (isset($ilsDetails['pickupnum'])):?>
-                        <br />
-                        <strong><?=$this->transEsc("Pickup number") ?>:</strong> <?=$this->escapeHtml($ilsDetails['pickupnum']) ?>
+                          <br />
+                          <strong><?=$this->transEsc("Pickup number") ?>:</strong> <?=$this->escapeHtml($ilsDetails['pickupnum']) ?>
+                        <?php endif;?>
+                        <?php if (!empty($ilsDetails['holdShelf'])):?>
+                          <br />
+                          <strong><?=$this->transEsc("Hold Shelf") ?>:</strong> <?=$this->escapeHtml($ilsDetails['holdShelf']) ?>
                         <?php endif;?>
                       </div>
                     <?php elseif (isset($ilsDetails['in_transit']) && $ilsDetails['in_transit']): ?>

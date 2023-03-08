@@ -45,9 +45,7 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
      */
     protected $aliases = [
         'CPU' => CPU::class,
-        'Paytrail' => Paytrail::class,
         'PaytrailPaymentAPI' => PaytrailPaymentAPI::class,
-        'TurkuPayment' => TurkuPayment::class,
         'TurkuPaymentAPI' => TurkuPaymentAPI::class,
     ];
 
@@ -58,9 +56,7 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
      */
     protected $factories = [
         CPU::class => AbstractBaseFactory::class,
-        Paytrail::class => AbstractBaseFactory::class,
         PaytrailPaymentAPI::class => AbstractBaseFactory::class,
-        TurkuPayment::class => AbstractBaseFactory::class,
         TurkuPaymentAPI::class => AbstractBaseFactory::class,
     ];
 

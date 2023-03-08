@@ -51,7 +51,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
 
   function initEventMap(coordinates) {
     var mapCanvas = $('.linked-events-map');
-    var map = finna.map.initMap(mapCanvas, false, {'center': coordinates});
+    var map = finna.map.initMap(mapCanvas, false, {center: coordinates, zoom: 15});
     var icon = L.divIcon({
       className: 'mapMarker',
       iconSize: null,
@@ -64,7 +64,6 @@ finna.linkedEvents = (function finnaLinkedEvents() {
       [coordinates.lat, coordinates.lng],
       {icon: icon}
     ).addTo(map.map);
-    map.map.setZoom(15);
   }
 
   var handleSingleEvent = function handleSingleEvent(data) {

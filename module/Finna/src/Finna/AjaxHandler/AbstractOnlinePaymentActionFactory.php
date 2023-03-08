@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2018-2022.
+ * Copyright (C) The National Library of Finland 2018-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -42,7 +42,7 @@ use Psr\Container\ContainerInterface;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class AbstractOnlinePaymentActionFactory
-    implements \Laminas\ServiceManager\Factory\FactoryInterface
+implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create an object

@@ -5,7 +5,7 @@
  * PHP version 7
  *
  * Copyright (C) Villanova University 2016.
- * Copyright (C) The National Library of Finland 2017-2022.
+ * Copyright (C) The National Library of Finland 2017-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -25,13 +25,14 @@
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma  <juha.luoma@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
  */
 namespace Finna\View\Helper\Root;
 
-use Exception;
 use Finna\View\Helper\Root\RecordDataFormatter\FieldGroupBuilder;
 use VuFind\RecordDriver\AbstractBase as RecordDriver;
 
@@ -43,6 +44,8 @@ use VuFind\RecordDriver\AbstractBase as RecordDriver;
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma  <juha.luoma@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
@@ -138,33 +141,23 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     public function filterLidoFields($coreFields)
     {
         $include = [
-            'Additional Information',
-            'Audience',
             'Author Notes',
             'Available Online',
-            'Awards',
-            'Bibliography',
             'child_records',
             'Collection',
             'DOI',
             'Edition',
-            'Education Programs',
             'Events',
             'Extent',
-            'Finding Aid',
             'Format',
-            'Genre',
-            'ISBN',
-            'ISSN',
             'Inscriptions',
             'Introduction',
             'Inventory ID',
-            'Item Description',
-            'Keywords',
+            'ISBN',
+            'ISSN',
             'Language',
             'lido_editions',
             'Measurements',
-            'New Title',
             'Organisation',
             'original_work_language',
             'Other Classification',
@@ -176,24 +169,13 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Parent Series',
             'Parent Unclassified Entity',
             'Parent Work',
-            'Playing Time',
-            'Presenters',
-            'Previous Title',
-            'Production Credits',
-            'Publication Frequency',
-            'Publication_Place',
             'Publications',
             'Published in',
-            'Record Links',
-            'Related Items',
-            'Related Places',
-            'Series',
             'Subject Actor',
             'Subject Date',
             'Subject Detail',
             'Subject Place',
             'SubjectsWithoutPlaces',
-            'System Format',
         ];
         return array_intersect_key($coreFields, array_flip($include));
     }
@@ -562,26 +544,50 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     }
 
     /**
-     * Filter unnecessary fields from EAD-collection records.
+     * Get default configuration.
      *
-     * @param array  $coreFields data to filter.
-     * @param string $type       Collection type (ead|ead3)
+     * @param string $key Key for configuration to look up.
      *
      * @return array
-     *
-     * @throws Exception If trying to access record type without collection support
      */
-    public function filterCollectionFields($coreFields, $type = 'ead')
+    public function getDefaults($key = 'core'): array
     {
+        $defaults = parent::getDefaults($key);
+        if (!isset($this->driver)) {
+            return $defaults;
+        }
+        $backend = $this->driver->getSourceIdentifier();
+        if (in_array($backend, ['Solr', 'SolrAuth', 'L1', 'R2'])) {
+            $type = strtolower($this->driver->getRecordFormat());
+        } else {
+            $type = strtolower($backend);
+        }
         switch ($type) {
-        case 'ead':
-            return $this->filterEADFields($coreFields);
-        case 'ead3':
-            return $this->filterEAD3Fields($coreFields);
-        case 'lido':
-            return $this->filterLidoFields($coreFields);
-        default:
-            throw new Exception("Collection for record type $type doesn't exist.");
+            case 'dc':
+            case 'qdc':
+                return $this->filterQDCFields($defaults);
+            case 'eaccpf':
+                return $defaults;
+            case 'ead':
+                return $this->filterEADFields($defaults);
+            case 'ead3':
+                return $this->filterEAD3Fields($defaults);
+            case 'forward':
+                return $this->filterForwardFields($defaults);
+            case 'forwardauthority':
+                return $defaults;
+            case 'lido':
+                return $this->filterLidoFields($defaults);
+            case 'lrmi':
+                return $this->filterLrmiFields($defaults);
+            case 'marc':
+                return $this->filterMarcFields($defaults);
+            case 'marcauthority':
+                return $defaults;
+            case 'primo':
+                return $this->filterPrimoFields($defaults);
+            default:
+                return $defaults;
         }
     }
 
@@ -596,10 +602,10 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
      * @param string $template      Default group template to use if not specified
      *                              for a group (optional, set to null to use the
      *                              default value).
-     * @param array  $options       Additional options to use if not specified for a
-     *                              group (optional, set to null to use the default
-     *                              value). See FieldGroupBuilder::addGroup() for
-     *                              details.
+     * @param array  $options       Additional options to be merged with group
+     *                              specific additional options (optional, set to
+     *                              null to use the default value). See
+     *                              FieldGroupBuilder::addGroup() for details.
      * @param array  $unusedOptions Additional options for the unused lines group
      *                              (optional, set to null to use the default value).
      *                              See FieldGroupBuilder::addGroup()
@@ -614,13 +620,17 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         $options = null,
         $unusedOptions = null
     ) {
+        $template = $template ?? 'core-field-group-fields.phtml';
+        $options = $options ?? [];
+        $unusedOptions = $unusedOptions ?? $options;
+
         $fieldGroups = new FieldGroupBuilder();
         $fieldGroups->setGroups(
             $groups,
             $lines,
-            $template ?? 'core-field-group-fields.phtml',
-            $options ?? [],
-            $unusedOptions ?? []
+            $template,
+            $options,
+            $unusedOptions
         );
         return $fieldGroups->getArray();
     }
@@ -651,14 +661,13 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             }
             // Render the fields in the group as the value for the group.
             $value = $this->renderRecordDriverTemplate(
-                $driver,
                 $data,
                 ['template' => $group['template']]
             );
             $result[] = [
                 'label' => $group['label'],
                 'value' => $value,
-                'context' => $group['context'],
+                'context' => $group['options']['context'] ?? [],
             ];
         }
         return $result;

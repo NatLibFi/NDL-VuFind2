@@ -48,6 +48,26 @@ CREATE TABLE `comments` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `ratings`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ratings` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `resource_id` int(11) NOT NULL DEFAULT '0',
+  `rating` int(3) NOT NULL,
+  `created` datetime NOT NULL DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `resource_id` (`resource_id`),
+  CONSTRAINT `ratings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `ratings_ibfk_2` FOREIGN KEY (`resource_id`) REFERENCES `resource` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `oai_resumption`
 --
 
@@ -118,7 +138,7 @@ CREATE TABLE `search` (
   `folder_id` int(11) DEFAULT NULL,
   `created` datetime NOT NULL DEFAULT '2000-01-01 00:00:00',
   `title` varchar(20) DEFAULT NULL,
-  `saved` int(1) NOT NULL DEFAULT '0',
+  `saved` tinyint(1) NOT NULL DEFAULT '0',
   `search_object` blob,
   `checksum` int(11) DEFAULT NULL,
   `notification_frequency` int(11) NOT NULL DEFAULT '0',
@@ -245,7 +265,7 @@ CREATE TABLE `user_list` (
   `title` varchar(200) NOT NULL,
   `description` text,
   `created` datetime NOT NULL DEFAULT '2000-01-01 00:00:00',
-  `public` int(11) NOT NULL DEFAULT '0',
+  `public` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `user_list_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE

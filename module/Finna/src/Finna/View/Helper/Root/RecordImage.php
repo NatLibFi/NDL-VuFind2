@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2014-2020.
+ * Copyright (C) The National Library of Finland 2014-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,6 +29,8 @@
  */
 namespace Finna\View\Helper\Root;
 
+use Laminas\View\Helper\Url;
+
 /**
  * Header view helper
  *
@@ -47,6 +49,23 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
      * @var Record
      */
     protected $record;
+
+    /**
+     * Url helper
+     *
+     * @var Url
+     */
+    protected $urlHelper;
+
+    /**
+     * Constructor.
+     *
+     * @param Url $urlHelper Url helper.
+     */
+    public function __construct(Url $urlHelper)
+    {
+        $this->urlHelper = $urlHelper;
+    }
 
     /**
      * Assign record image URLs to the view and return the view helper.
@@ -128,15 +147,15 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         if (!isset($images[$index])) {
             return false;
         }
-        $urlHelper = $this->getView()->plugin('url');
         $imageParams = $images[$index]['urls']['large']
             ?? $images[$index]['urls']['medium'];
-        $imageParams = array_merge($imageParams, $params);
-        $imageParams['source']
-            = $imageParams['source']
-            ?? $this->record->getDriver()->getSourceIdentifier();
+        $imageParams = array_merge(
+            ['source' => $this->record->getDriver()->getSourceIdentifier()],
+            $imageParams,
+            $params,
+        );
 
-        $url = $urlHelper(
+        $url = ($this->urlHelper)(
             'cover-show',
             [],
             $canonical ? ['force_canonical' => true] : []
@@ -191,15 +210,14 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             // Fall back to large image
             return $this->getLargeImageWithInfo($index, $params, $canonical);
         }
-        $urlHelper = $this->getView()->plugin('url');
 
-        $imageParams = $images[$index]['urls']['master'];
-        $imageParams = array_merge($imageParams, $params);
-        $imageParams['source']
-            = $imageParams['source']
-            ?? $this->record->getDriver()->getSourceIdentifier();
+        $imageParams = array_merge(
+            ['source' => $this->record->getDriver()->getSourceIdentifier()],
+            $images[$index]['urls']['master'],
+            $params
+        );
 
-        $url = $urlHelper(
+        $url = ($this->urlHelper)(
             'cover-show',
             [],
             $canonical ? ['force_canonical' => true] : []
@@ -233,7 +251,6 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
      *                           are found
      * @param bool   $includePdf Whether to include first PDF file when no image
      *                           links are found
-     * @param string $source     Record source
      *
      * @return array
      */
@@ -241,40 +258,27 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         $language,
         $params = [],
         $thumbnails = true,
-        $includePdf = true,
-        $source = null
+        $includePdf = true
     ) {
-        $imageParams = [
-            'small' => [],
-            'medium' => [],
-            'large' => [],
-            'master' => [],
-        ];
-        foreach ($params as $size => $sizeParams) {
-            $imageParams[$size] = $sizeParams;
-        }
-
-        $urlHelper = $this->getView()->plugin('url');
-
-        $imageTypes = ['small', 'medium', 'large', 'master'];
-        $source = $source ?? $this->record->getDriver()->getSourceIdentifier();
         $images = $this->record->getAllImages($language, $thumbnails, $includePdf);
-        foreach ($images as $idx => &$image) {
-            foreach ($imageTypes as $imageType) {
-                if (!isset($image['urls'][$imageType])) {
-                    continue;
-                }
-                $params = $image['urls'][$imageType];
-                $image['urls'][$imageType] = $urlHelper('cover-show') . '?' .
+        if (empty($images)) {
+            return [];
+        }
+        $imageParams = $this->getImageParams($params);
+        foreach ($images as &$image) {
+            foreach (array_intersect_key($imageParams, $image['urls'] ?? [])
+                as $size => $values
+            ) {
+                $image['urls'][$size] = ($this->urlHelper)('cover-show') . '?' .
                     http_build_query(
                         array_merge(
-                            $params,
-                            $imageParams[$imageType],
-                            ['source' => $source]
+                            $imageParams[$size],
+                            $image['urls'][$size]
                         )
                     );
             }
         }
+        unset($image);
         return $images;
     }
 
@@ -340,8 +344,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             $view->layout()->userLang,
             $params,
             true,
-            true,
-            $this->record->getDriver()->getSourceIdentifier()
+            true
         );
         // Get plausible model data
         if (!in_array($type, ['list', 'list grid'])
@@ -438,5 +441,60 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             $images[$ind]['type'] = 'model';
         }
         return $images;
+    }
+
+    /**
+     * Get image with index as cover links
+     *
+     * @param int $index Index of the image array to get.
+     *
+     * @return array
+     */
+    public function getImageAsCoverLinks(int $index): array
+    {
+        $image
+            = $this->record->getAllImages($this->view->layout()->userLang)[$index]
+            ?? [];
+        if (empty($image)) {
+            return [];
+        }
+        $imageParams = $this->getImageParams();
+        foreach (array_intersect_key($imageParams, $image['urls'] ?? [])
+            as $size => $values
+        ) {
+            $image['urls'][$size] = ($this->urlHelper)('cover-show') . '?' .
+                http_build_query(
+                    array_merge(
+                        $imageParams[$size],
+                        $image['urls'][$size]
+                    )
+                );
+        }
+        return $image;
+    }
+
+    /**
+     * Returns image params to be used when creating cover links.
+     *
+     * @param array $params Extra parameters for image. Width, height.
+     *
+     * @return array ['source' => n, ...]
+     */
+    protected function getImageParams(array $params = []): array
+    {
+        $imageParams = [
+            'small' => [],
+            'medium' => [],
+            'large' => [],
+            'master' => []
+        ];
+        $source = $this->record->getDriver()->getSourceIdentifier();
+        foreach ($imageParams as $size => &$value) {
+            if (!empty($params[$size])) {
+                $value = array_merge($params[$size], $value);
+            }
+            $value['source'] = $source;
+        }
+        return $imageParams;
     }
 }

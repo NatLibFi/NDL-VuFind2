@@ -496,13 +496,17 @@ class Manager implements \LmcRbacMvc\Identity\IdentityProviderInterface,
                     ->select(['id' => $this->session->userId]);
                 $this->currentUser = count($results) < 1
                     ? false : $results->current();
+                // End the session since the logged-in user cannot be found:
+                if (false === $this->currentUser) {
+                    $this->logout('');
+                }
             } elseif (isset($this->session->userDetails)) {
                 // privacy mode
                 $results = $this->userTable->createRow();
                 $results->exchangeArray($this->session->userDetails);
                 $this->currentUser = $results;
             } else {
-                // unexpected state
+                // not logged in
                 $this->currentUser = false;
             }
         }
@@ -810,6 +814,16 @@ class Manager implements \LmcRbacMvc\Identity\IdentityProviderInterface,
     }
 
     /**
+     * Is the user allowed to log directly into the ILS?
+     *
+     * @return bool
+     */
+    public function allowsUserIlsLogin(): bool
+    {
+        return $this->config->Catalog->allowUserLogin ?? true;
+    }
+
+    /**
      * Process a raw policy configuration
      *
      * @param array $policy Policy configuration
@@ -820,11 +834,11 @@ class Manager implements \LmcRbacMvc\Identity\IdentityProviderInterface,
     {
         // Convert 'numeric' or 'alphanumeric' pattern to a regular expression:
         switch ($policy['pattern'] ?? '') {
-        case 'numeric':
-            $policy['pattern'] = '\d+';
-            break;
-        case 'alphanumeric':
-            $policy['pattern'] = '[\da-zA-Z]+';
+            case 'numeric':
+                $policy['pattern'] = '\d+';
+                break;
+            case 'alphanumeric':
+                $policy['pattern'] = '[\da-zA-Z]+';
         }
 
         // Map settings to attributes for a text input field:

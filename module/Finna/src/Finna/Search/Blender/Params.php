@@ -29,6 +29,7 @@ namespace Finna\Search\Blender;
 
 use Finna\Search\Solr\AuthorityHelper;
 use VuFind\Search\Solr\HierarchicalFacetHelper;
+use VuFindSearch\ParamBag;
 
 /**
  * Blender Search Parameters
@@ -142,6 +143,26 @@ class Params extends \VuFind\Search\Blender\Params
             }
         }
         return false;
+    }
+
+    /**
+     * Create search backend parameters for advanced features.
+     *
+     * @return ParamBag
+     */
+    public function getBackendParameters(): ParamBag
+    {
+        $result = parent::getBackendParameters();
+
+        if ($primoParams = $result->get('params_Primo')) {
+            $filterList = $primoParams[0]->get('filterList');
+            if (isset($filterList['pcAvailability'])) {
+                // We have a pcAvailability filter so tell the connector to ignore
+                // any hidden filter:
+                $primoParams[0]->set('ignorePcAvailabilityHiddenFilter', true);
+            }
+        }
+        return $result;
     }
 
     /**

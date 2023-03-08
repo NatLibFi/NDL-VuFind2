@@ -228,7 +228,7 @@ class SolrExtensionsListener
         $sources = explode(',', $sources);
 
         // Finally, check for an API exclusion list:
-        if (isset($_ENV['VUFIND_API_CALL']) && $_ENV['VUFIND_API_CALL']
+        if (getenv('VUFIND_API_CALL')
             && isset($searchConfig->Records->apiExcludedSources)
         ) {
             $sources = array_diff(

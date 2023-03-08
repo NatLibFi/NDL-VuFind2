@@ -29,33 +29,18 @@
   }
   $this->layout()->breadcrumbs .= '<li class="active" aria-current="page">' . $this->recordLinker()->getBreadcrumbHtml($this->driver) . '</li>';
 
+  // Set up search box:
+  $this->layout()->searchbox = $this->context($this)->renderInContext(
+      'search/searchbox.phtml',
+      [
+        'ignoreHiddenFiltersInRequest' => true,
+      ]
+  );
+
   // Set page title.
   $dataSource = $this->driver->tryMethod('getDataSource');
   $headText = $this->driver->getBreadcrumb() . ' | ' . $this->translate('Collection') . (isset($dataSource) ? ' | ' . $this->transEsc('default::source_' . $dataSource, null, $dataSource) : '');
   $this->headTitle($headText);
-
-  if ($lastUrl = $this->searchMemory()->getLastSearchUrl()) {
-      $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
-      $filterList = $params->getFilterList(true);
-
-      if (!empty($params->getFilterList(false))) {
-          $checkboxFilters = $params->getCheckboxFacets();
-          $lastSort = $this->searchMemory()->getLastSort($this->searchClassId);
-          $options = $this->searchOptions($this->searchClassId);
-          $defaultSortApplied = !isset($params) || $lastSort == $options->getDefaultSortByHandler($params->getSearchHandler());
-          // Set up filters
-          $this->layout()->finnaFilters = $this->context($this)->renderInContext(
-              'search/filters.phtml',
-              [
-                  'filterList' => $filterList,
-                  'checkboxFilters' => $checkboxFilters,
-                  'defaultSortApplied' => $defaultSortApplied,
-                  'options' => $options,
-                  'params' => $params
-              ]
-          );
-      }
-  }
 
   // LIDO records are displayed like on the record page:
   $displayAsFullRecord = $this->driver instanceof \Finna\RecordDriver\SolrLido;
@@ -114,8 +99,8 @@
       <?php endif; ?>
       <?/* Display Main Details from records */?>
       <?php
-        $formatter = $this->recordDataFormatter();
-        $coreFields = $formatter->filterCollectionFields($formatter->getDefaults('core'), $driver->getRecordFormat());
+        $formatter = $this->recordDataFormatter($driver);
+        $coreFields = $formatter->getDefaults();
         $coreFieldGroups = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
           ['label' => 'Context',
             'lines' => ['Archive Origination', 'Archive', 'Archive Series', 'Archive File']

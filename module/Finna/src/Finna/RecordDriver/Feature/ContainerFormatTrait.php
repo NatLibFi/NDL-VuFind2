@@ -83,7 +83,7 @@ trait ContainerFormatTrait
      *
      * @return void
      */
-    public function attachRecordLoader(Loader $recordLoader)
+    public function attachRecordLoader(Loader $recordLoader): void
     {
         $this->recordLoader = $recordLoader;
     }

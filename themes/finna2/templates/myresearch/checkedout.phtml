@@ -50,7 +50,7 @@
             <form name="renewals" method="post" id="renewals" data-clear-account-cache="checkedOut" data-disable-on-submit>
               <input type="hidden" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>" name="csrf"/>
               <input type="hidden" id="submitType" name="renewSelected" value="1">
-              <table class="myresearch-table" role="presentation" aria-label="<?=$this->escapeHtmlAttr('Actions');?>">
+              <table class="myresearch-table" role="presentation" aria-label="<?=$this->transEscAttr('Actions');?>">
                 <tr class="toolbar">
                   <td class="text-left checkbox-col">
                     <div class="checkboxFilter mylist-select-all">

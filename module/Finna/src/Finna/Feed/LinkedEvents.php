@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2020.
+ * Copyright (C) The National Library of Finland 2020-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,10 +22,16 @@
  * @category VuFind
  * @package  Content
  * @author   Jaro Ravila <jaro.ravila@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 namespace Finna\Feed;
+
+use Finna\View\Helper\Root\CleanHtml;
+use Laminas\Config\Config;
+use Laminas\Mvc\Controller\Plugin\Url;
+use VuFind\Cache\Manager as CacheManager;
 
 /**
  * Linked events service
@@ -33,6 +39,7 @@ namespace Finna\Feed;
  * @category VuFind
  * @package  Content
  * @author   Jaro Ravila <jaro.ravila@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
@@ -80,9 +87,23 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
     /**
      * CleanHtml helper
      *
-     * @var \Finna\View\Helper\Root\CleanHtml
+     * @var CleanHtml
      */
     protected $cleanHtml;
+
+    /**
+     * Cache manager
+     *
+     * @var CacheManager
+     */
+    protected $cacheManager;
+
+    /**
+     * Main configuration.
+     *
+     * @var Config
+     */
+    protected $mainConfig;
 
     /**
      * How many related events (if available) are displayed on
@@ -99,12 +120,16 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
      * @param \VuFind\Date\Converter $dateConverter Date converter
      * @param Url                    $url           Url helper
      * @param CleanHtml              $cleanHtml     cleanHtml helper
+     * @param CacheManager           $cm            Cache manager
+     * @param Config                 $mainConfig    Main configuration
      */
     public function __construct(
         \Laminas\Config\Config $config,
         \VuFind\Date\Converter $dateConverter,
-        \Laminas\Mvc\Controller\Plugin\Url $url,
-        \Finna\View\Helper\Root\CleanHtml $cleanHtml
+        Url $url,
+        CleanHtml $cleanHtml,
+        CacheManager $cm,
+        Config $mainConfig
     ) {
         $this->apiUrl = $config->LinkedEvents->api_url ?? '';
         $this->publisherId = $config->LinkedEvents->publisher_id ?? '';
@@ -112,6 +137,8 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
         $this->dateConverter = $dateConverter;
         $this->url = $url;
         $this->cleanHtml = $cleanHtml;
+        $this->cacheManager = $cm;
+        $this->mainConfig = $mainConfig;
     }
 
     /**
@@ -131,7 +158,7 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
         }
         $paramArray = [];
         if (!empty($params['url'])
-            && strpos($params['url'], $this->apiUrl) !== false
+            && strncmp($params['url'], $this->apiUrl, strlen($this->apiUrl)) === 0
         ) {
             $url = $params['url'];
         } else {
@@ -170,15 +197,30 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
                 . '&include=location';
             }
         }
-        $client = $this->httpService->createClient($url);
-        $client->setOptions(['useragent' => 'VuFind']);
-        $result = $client->send();
-        if (!$result->isSuccess()) {
-            $this->logError('LinkedEvents API request failed, url: ' . $url);
-            return false;
-        }
 
-        $response = json_decode($result->getBody(), true);
+        // Check for cached version
+        $cacheDir
+            = $this->cacheManager->getCache('feed')->getOptions()->getCacheDir();
+        $localFile = "$cacheDir/" . md5(var_export($params, true)) . '.json';
+        $maxAge = isset($this->mainConfig->Content->feedcachetime)
+            && '' !== $this->mainConfig->Content->feedcachetime
+            ? $this->mainConfig->Content->feedcachetime : 10;
+        if ($maxAge && is_readable($localFile)
+            && time() - filemtime($localFile) < $maxAge * 60
+        ) {
+            $response = json_decode(file_get_contents($localFile), true);
+        } else {
+            $client = $this->httpService->createClient($url);
+            $client->setOptions(['useragent' => 'VuFind']);
+            $result = $client->send();
+            if (!$result->isSuccess()) {
+                $this->logError('LinkedEvents API request failed, url: ' . $url);
+                return false;
+            }
+            $body = $result->getBody();
+            $response = json_decode($body, true);
+            file_put_contents($localFile, $body);
+        }
         $events = [];
         $result = [];
         if (!empty($response)) {
@@ -204,7 +246,12 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
                     'description' => ($this->cleanHtml)(
                         $this->getField($eventData, 'description')
                     ),
-                    'image' => ['url' => $eventData['images'][0]['url'] ?? ''],
+                    'image' => [
+                        'url' => $this->proxifyImageUrl(
+                            $eventData['images'][0]['url'] ?? '',
+                            $params
+                        )
+                    ],
                     'short_description' =>
                         $this->getField($eventData, 'short_description'),
                     'xcal' => [
@@ -306,7 +353,7 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
         if (is_array($data)) {
             $data = !empty($data[$this->language])
                 ? $data[$this->language]
-                : $data['fi'];
+                : ($data['fi'] ?? '');
         }
         return $data;
     }
@@ -339,5 +386,34 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
             return $this->dateConverter->convertToDisplayTime('Y-m-d', $time);
         }
         return null;
+    }
+
+    /**
+     * Proxify an image url for loading via the FeedContent controller
+     *
+     * @param string $url    Image URL
+     * @param array  $params Array of parameters
+     *
+     * @return string
+     */
+    public function proxifyImageUrl(string $url, array $params): string
+    {
+        // Ensure that we don't proxify an empty or already proxified URL:
+        if (!$url) {
+            return '';
+        }
+        $check = $this->url->fromRoute('linked-events-image', []);
+        if (strncasecmp($url, $check, strlen($check)) === 0) {
+            return $url;
+        }
+
+        $params['image'] = $url;
+        return $this->url->fromRoute(
+            'linked-events-image',
+            [],
+            [
+                'query' => $params
+            ]
+        );
     }
 }

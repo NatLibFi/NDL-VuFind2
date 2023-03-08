@@ -235,11 +235,7 @@ class RecordController extends \VuFind\Controller\RecordController
             return $response;
         }
 
-        $view = parent::showTab($tab, $ajax);
-        //$view->scrollData = $this->resultScroller()->getScrollData($driver);
-
-        $this->getSearchMemory()->rememberScrollData($view->scrollData);
-        return $view;
+        return parent::showTab($tab, $ajax);
     }
 
     /**
@@ -307,15 +303,7 @@ class RecordController extends \VuFind\Controller\RecordController
             $message = is_array($validRequest)
                 ? $validRequest['status'] : 'hold_error_blocked';
             if (is_string($message)) {
-                // Check for _html version of the message:
-                $translationEmpty = $this->getViewRenderer()
-                    ->plugin('translationEmpty');
-                if (!$translationEmpty($message . '_html')) {
-                    $message = [
-                        'html' => true,
-                        'msg' => $message . '_html',
-                    ];
-                }
+                $message = $this->convertToHtmlMessageIfAvailable($message);
             }
 
             $this->flashMessenger()->addErrorMessage($message);
@@ -433,12 +421,18 @@ class RecordController extends \VuFind\Controller\RecordController
                     // Failure: use flash messenger to display messages, stay on
                     // the current form.
                     if (isset($results['status'])) {
-                        $this->flashMessenger()
-                            ->addMessage($results['status'], 'error');
+                        $this->flashMessenger()->addErrorMessage(
+                            $this->convertToHtmlMessageIfAvailable(
+                                $results['status']
+                            )
+                        );
                     }
-                    if (isset($results['sysMessage'])) {
-                        $this->flashMessenger()
-                            ->addMessage($results['sysMessage'], 'error');
+                    if (!empty($results['sysMessage'])) {
+                        $this->flashMessenger()->addErrorMessage(
+                            $this->convertToHtmlMessageIfAvailable(
+                                $results['sysMessage']
+                            )
+                        );
                     }
                 }
             }
@@ -499,6 +493,27 @@ class RecordController extends \VuFind\Controller\RecordController
         );
         $view->setTemplate('record/hold');
         return $view;
+    }
+
+    /**
+     * Convert a message to a html translation key if a translation with the _html
+     * suffix is available.
+     *
+     * @param string $message Message to translate
+     *
+     * @return string|array
+     */
+    protected function convertToHtmlMessageIfAvailable(string $message)
+    {
+        // Check for _html version of the message:
+        $translationEmpty = $this->getViewRenderer()->plugin('translationEmpty');
+        if (!$translationEmpty($message . '_html')) {
+            $message = [
+                'html' => true,
+                'msg' => $message . '_html',
+            ];
+        }
+        return $message;
     }
 
     /**
@@ -904,15 +919,15 @@ class RecordController extends \VuFind\Controller\RecordController
                 } else {
                     $contentType = '';
                     switch ($format) {
-                    case 'gltf':
-                        $contentType = 'model/gltf+json';
-                        break;
-                    case 'glb':
-                        $contentType = 'model/gltf+binary';
-                        break;
-                    default:
-                        $contentType = 'application/octet-stream';
-                        break;
+                        case 'gltf':
+                            $contentType = 'model/gltf+json';
+                            break;
+                        case 'glb':
+                            $contentType = 'model/gltf+binary';
+                            break;
+                        default:
+                            $contentType = 'application/octet-stream';
+                            break;
                     }
                     // Set headers for downloadable file
                     header("Content-Type: $contentType");
@@ -955,22 +970,22 @@ class RecordController extends \VuFind\Controller\RecordController
             $formedFilename = "$id-$index.$format";
             $representation = [];
             switch ($type) {
-            case 'highresimg':
-                $size = $params->fromQuery('size');
-                $key = $params->fromQuery('key', -1);
-                $representations = $driver->tryMethod('getAllImages');
-                $representation
-                    = $representations[$index]['highResolution'][$size][$key]
-                    ?? [];
-                $formedFilename = "$id-$index-$size.$format";
-                break;
-            case 'document':
-                $representations = $driver->tryMethod('getDocuments');
-                $representation = $representations[$index] ?? [];
-                break;
-            default:
-                $response->setStatusCode(400);
-                break;
+                case 'highresimg':
+                    $size = $params->fromQuery('size');
+                    $key = $params->fromQuery('key', -1);
+                    $representations = $driver->tryMethod('getAllImages');
+                    $representation
+                        = $representations[$index]['highResolution'][$size][$key]
+                        ?? [];
+                    $formedFilename = "$id-$index-$size.$format";
+                    break;
+                case 'document':
+                    $representations = $driver->tryMethod('getDocuments');
+                    $representation = $representations[$index] ?? [];
+                    break;
+                default:
+                    $response->setStatusCode(400);
+                    break;
             }
 
             if ($url = $representation['url'] ?? false) {

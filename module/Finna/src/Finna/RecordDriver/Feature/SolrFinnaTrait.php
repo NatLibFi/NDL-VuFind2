@@ -180,14 +180,16 @@ trait SolrFinnaTrait
      * Get record rating.
      *
      * @return array Keys 'average' and 'count'
+     *
+     * @deprecated Use getRatingData
      */
     public function getAverageRating()
     {
-        $table = $this->getDbTable('Comments');
-        return $table->getAverageRatingForResource(
-            $this->getUniqueId(),
-            $this->getSourceIdentifier()
-        );
+        $rating = $this->getRatingData();
+        return [
+            'count' => $rating['count'],
+            'average' => $rating['rating']
+        ];
     }
 
     /**
@@ -241,6 +243,39 @@ trait SolrFinnaTrait
         return isset($this->fields['datasource_str_mv'])
             ? ((array)$this->fields['datasource_str_mv'])[0]
             : '';
+    }
+
+    /**
+     * Get a Date Range from Index Fields
+     *
+     * @param string $event Event name
+     *
+     * @return ?array Array of one or two dates or null if not available.
+     * If date range is still continuing end year will be an empty string.
+     */
+    protected function getDateRange($event)
+    {
+        $daterange = $this->fields["{$event}_daterange"] ?? [];
+        if (!$daterange) {
+            return null;
+        }
+        if (preg_match(
+            '/\[(-?\d{4}).* TO (-?\d{4})/',
+            $daterange,
+            $matches
+        )
+        ) {
+            $start = (string)(intval($matches[1]));
+            $end = (string)(intval($matches[2]));
+            if ($end == '9999') {
+                // End year is in the future
+                return [$start, ''];
+            }
+            return $end == $start ? [$start] : [$start, $end];
+        } elseif (preg_match('/^(-?\d{4})-/', $daterange, $matches)) {
+            return [(string)(intval($matches[1]))];
+        }
+        return null;
     }
 
     /**
@@ -706,13 +741,29 @@ trait SolrFinnaTrait
     /**
      * Is rating allowed.
      *
-     * @return boolean
+     * @return bool
      */
-    public function ratingAllowed()
+    public function isRatingAllowed(): bool
     {
+        if (!parent::isRatingAllowed()) {
+            return false;
+        }
+
         $allowed = ['0/Book/', '0/Journal/', '0/Sound/', '0/Video/'];
         $list = array_intersect($allowed, $this->getFormats());
         return !empty($list);
+    }
+
+    /**
+     * Is rating allowed.
+     *
+     * @return bool
+     *
+     * @deprecated Use isRatingAllowed
+     */
+    public function ratingAllowed()
+    {
+        return false;
     }
 
     /**
@@ -789,6 +840,32 @@ trait SolrFinnaTrait
             );
         }
         return in_array($format, $this->undisplayableFormats);
+    }
+
+    /**
+     * Add or update user's rating for the record.
+     *
+     * @param int  $userId ID of the user posting the rating
+     * @param ?int $rating The user-provided rating, or null to clear any existing
+     * rating
+     *
+     * @return void
+     */
+    public function addOrUpdateRating(int $userId, ?int $rating): void
+    {
+        parent::addOrUpdateRating($userId, $rating);
+
+        // Also update ratings of any duplicates:
+        $mergedData = $this->getMergedRecordData();
+        if (empty($mergedData['records'])) {
+            return;
+        }
+        $source = $this->getSourceIdentifier();
+        $resources = $this->getDbTable('Resource');
+        foreach ($mergedData['records'] as $record) {
+            $resource = $resources->findResource($record['id'], $source);
+            $resource->addOrUpdateRating($userId, $rating);
+        }
     }
 
     /**
@@ -1040,15 +1117,15 @@ trait SolrFinnaTrait
                 $codec = $match[2];
                 $type = $embed = null;
                 switch (strtolower($codec)) {
-                case 'wav':
-                case 'mp3':
-                    $type = $embed = 'audio';
-                    break;
-                case 'jpg':
-                case 'png':
-                case 'tif':
-                    $type = 'image';
-                    break;
+                    case 'wav':
+                    case 'mp3':
+                        $type = $embed = 'audio';
+                        break;
+                    case 'jpg':
+                    case 'png':
+                    case 'tif':
+                        $type = 'image';
+                        break;
                 }
                 $url['type'] = $type;
                 $url['codec'] = $codec;
