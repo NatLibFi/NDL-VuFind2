@@ -733,7 +733,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
                 'item_id' => $entry['itemnumber'],
                 'title' => $title,
                 'volume' => $volume,
-                'checkoutdate' => $checkoutDate,
+                'checkoutDate' => $checkoutDate,
                 'duedate' => $dueDate,
                 'dueStatus' => $dueStatus,
                 'returndate' => $returnDate,

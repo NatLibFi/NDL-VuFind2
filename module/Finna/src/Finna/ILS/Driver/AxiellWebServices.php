@@ -1990,8 +1990,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             $trans = [
                 'id' => $obj->id,
                 'title' => $title,
-                'checkoutdate' => $this->formatDate($record->checkOutDate),
-                'returndate' => isset($record->checkInDate)
+                'checkoutDate' => $this->formatDate($record->checkOutDate),
+                'returnDate' => isset($record->checkInDate)
                     ? $this->formatDate($record->checkInDate) : '',
                 'publication_year' => $obj->publicationYear ?? '',
                 'volume' => $obj->volume ?? ''
