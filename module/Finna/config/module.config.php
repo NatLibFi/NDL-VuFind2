@@ -432,8 +432,8 @@ $config = [
                 'factories' => [
                     'Finna\AjaxHandler\AddToList' =>
                         'Finna\AjaxHandler\AddToListFactory',
-                    'Finna\AjaxHandler\BazaarAddResource' =>
-                        'Finna\AjaxHandler\BazaarAddResourceFactory',
+                    'Finna\AjaxHandler\BazaarDestroySession' =>
+                        'Finna\AjaxHandler\BazaarDestroySessionFactory',
                     'Finna\AjaxHandler\CheckRequestsAreValid' =>
                         'VuFind\AjaxHandler\AbstractIlsAndUserActionFactory',
                     'Finna\AjaxHandler\CommentRecord' =>
@@ -509,7 +509,7 @@ $config = [
                 ],
                 'aliases' => [
                     'addToList' => 'Finna\AjaxHandler\AddToList',
-                    'bazaarAddResource' => 'Finna\AjaxHandler\BazaarAddResource',
+                    'bazaarDestroySession' => 'Finna\AjaxHandler\BazaarDestroySession',
                     'checkRequestsAreValid' => 'Finna\AjaxHandler\CheckRequestsAreValid',
                     'editList' => 'Finna\AjaxHandler\EditList',
                     'editListResource' => 'Finna\AjaxHandler\EditListResource',

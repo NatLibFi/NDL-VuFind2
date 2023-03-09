@@ -1,6 +1,6 @@
 <?php
 /**
- * AJAX handler called before a form is posted to add_resource_callback_url.
+ * AJAX handler for destroying a Bazaar session.
  *
  * PHP version 7
  *
@@ -31,7 +31,7 @@ use Finna\Service\BazaarService;
 use Laminas\Mvc\Controller\Plugin\Params;
 
 /**
- * AJAX handler called before a form is posted to add_resource_callback_url.
+ * AJAX handler for destroying a Bazaar session.
  *
  * @category VuFind
  * @package  AJAX
@@ -39,7 +39,7 @@ use Laminas\Mvc\Controller\Plugin\Params;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class BazaarAddResource extends \VuFind\AjaxHandler\AbstractBase
+class BazaarDestroySession extends \VuFind\AjaxHandler\AbstractBase
 {
     /**
      * Bazaar service.
