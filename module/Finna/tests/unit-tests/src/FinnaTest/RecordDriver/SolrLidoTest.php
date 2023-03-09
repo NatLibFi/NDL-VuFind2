@@ -400,6 +400,34 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test getNonPresenterAuthors.
+     * Design event actors should always be before Production event actors.
+     *
+     * @return void
+     */
+    public function testGetNonPresenterAuthors(): void
+    {
+        $driver = $this->getDriver('lido_test.xml');
+        $this->assertEquals(
+            [
+                [
+                    'name' => 'Puu, Teisto',
+                    'role' => 'suunnittelija'
+                ],
+                [
+                    'name' => 'Mattilainen, Meikä',
+                    'role' => 'haaveilija'
+                ],
+                [
+                    'name' => 'Tiistai, Nietos',
+                    'role' => 'Työntekijä'
+                ]
+            ],
+            $driver->getNonPresenterAuthors()
+        );
+    }
+
+    /**
      * Function to get expected date range data
      *
      * @return array
