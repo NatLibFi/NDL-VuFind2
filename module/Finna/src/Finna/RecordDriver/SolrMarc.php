@@ -2392,6 +2392,6 @@ implements \Laminas\Log\LoggerAwareInterface
      */
     public function getAccessibility(): array
     {
-         return $this->getFieldArray('341', ['a', 'b'], true, ': ');
+        return $this->getFieldArray('341', ['a', 'b'], true, ': ');
     }
 }
