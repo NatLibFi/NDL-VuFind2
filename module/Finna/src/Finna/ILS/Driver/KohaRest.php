@@ -1041,6 +1041,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             $number = $item['serial_issue_number'];
             if (!$number) {
                 $number = $this->getItemSpecificLocation($item);
+            } else if (
+                !empty($this->config['Holdings']['display_specific_serial_location'])
+            ) {
+                $number .= ' ' . $this->getItemSpecificLocation($item);
             }
 
             $entry = [
