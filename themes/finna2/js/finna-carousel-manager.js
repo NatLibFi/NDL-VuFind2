@@ -139,7 +139,7 @@ finna.carouselManager = (() => {
    * @param {Array|NodeList} elements Elements to turn into a carousel
    * @param {Object}         settings Old Finna settings for carousels
    */
-  function create(elements, settings) {
+  function createCarousel(elements, settings) {
     if (typeof settings.i18n === 'undefined') {
       settings.i18n = {};
     }
@@ -150,6 +150,6 @@ finna.carouselManager = (() => {
   }
 
   return {
-    create
+    createCarousel
   };
 })();
