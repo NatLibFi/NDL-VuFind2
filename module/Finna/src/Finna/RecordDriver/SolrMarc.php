@@ -2364,7 +2364,7 @@ implements \Laminas\Log\LoggerAwareInterface
         }
         return $results;
     }
-    
+
     /**
      * Get System details from field 538
      *
