@@ -1110,8 +1110,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         ];
         $transactions = [];
         foreach ($result as $entry) {
-            $code = $entry['ServiceCode'];
-            if (!isset($serviceCodeMap[$code])) {
+            if (!($dateField = $serviceCodeMap[$entry['ServiceCode']] ?? '')) {
                 continue;
             }
 
@@ -1129,14 +1128,14 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 'U',
                 $actionTimestamp
             );
-            $transactions[$id][$serviceCodeMap[$code]] = $actionTime;
+            $transactions[$id][$dateField] = $actionTime;
             // Dates for sorting:
-            $transactions[$id]['_' . $serviceCodeMap[$code]] = $actionTimestamp;
+            $transactions[$id]["_$dateField"] = $actionTimestamp;
         }
 
         // Sort the list:
         $parts = explode(' ', $params['sort'] ?? '');
-        $sort = $parts[0] ?? 'checkoutDate';
+        $sort = $parts[0] ?? 'checkout';
         $asc = ($parts[1] ?? 'asc') === 'asc';
         usort(
             $transactions,
