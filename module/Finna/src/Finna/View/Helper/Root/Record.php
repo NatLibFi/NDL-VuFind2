@@ -598,7 +598,7 @@ class Record extends \VuFind\View\Helper\Root\Record
            'escapedUrl' => trim($escapedUrl),
            'record' => $this->driver,
            'searchAction' => $params['searchAction'] ?? null,
-           'label' => $lookfor,
+           'label' => $params['label'] ?? $lookfor,
            'id' => $authId,
            'authorityLink' => $id && $this->isAuthorityLinksEnabled(),
            'showInlineInfo' => false,
@@ -1105,23 +1105,13 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getAuthoritySummary($onAuthorityPage = false)
     {
-        $id = $this->driver->getUniqueID();
-        $authorCnt = $this->authorityHelper->getRecordsByAuthorityId(
-            $id,
-            AuthorityHelper::AUTHOR2_ID_FACET,
-            true
-        );
-        $topicCnt = $this->authorityHelper->getRecordsByAuthorityId(
-            $id,
-            AuthorityHelper::TOPIC_ID_FACET,
-            true
-        );
-
         $tabs = array_keys($this->tabManager->getTabsForRecord($this->driver));
-
         $summary = [
             'author' => [
-                'cnt' => $authorCnt,
+                // cnt is no longer available beforehand. Use
+                // $this->authority()->getCountAsAuthor($driver->getUniqueID()) when
+                // needed.
+                'cnt' => null,
                 'tabUrl' => in_array('AuthorityRecordsAuthor', $tabs)
                     ? $this->recordLinker->getTabUrl(
                         $this->driver,
@@ -1130,7 +1120,10 @@ class Record extends \VuFind\View\Helper\Root\Record
                     : null
             ],
             'topic' => [
-                'cnt' => $topicCnt,
+                // cnt is no longer available beforehand. Use
+                // $this->authority()->getCountAsTopic($driver->getUniqueID()) when
+                // needed.
+                'cnt' => null,
                 'tabUrl' => in_array('AuthorityRecordsTopic', $tabs)
                     ? $this->recordLinker->getTabUrl(
                         $this->driver,
@@ -1166,11 +1159,11 @@ class Record extends \VuFind\View\Helper\Root\Record
         $translator = $this->getView()->plugin('translate');
         $externalLinkText = $translator('external_link');
         switch ($this->driver->getDataSource()) {
-        case 'aoe':
-            $source = ' aoe.fi';
-            break;
-        default:
-            $source = '';
+            case 'aoe':
+                $source = ' aoe.fi';
+                break;
+            default:
+                $source = '';
         }
         return '(' . $externalLinkText . $source . ')';
     }
@@ -1305,8 +1298,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         if (!in_array($source, $localSources)) {
             return false;
         }
-        return ('SolrAuth' === $source || $this->hasLargeImageLayout())
-            ? 'inline' : 'sidebar';
+        return $this->hasLargeImageLayout() ? 'inline' : 'sidebar';
     }
 
     /**
@@ -1334,9 +1326,10 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
         $dedupData = $this->driver->getDedupData();
-        // Return driver's datasource if deduplication data is not set.
+        // Return driver's datasource if deduplication data is not set or
+        // the count of deduplication data is 1.
         // There cannot be any other sources in this case.
-        if (empty($dedupData)) {
+        if (count($dedupData) <= 1) {
             return $this->driver->tryMethod('getDataSource', [], '');
         }
         $preferredSources = $this->userPreferenceService->getPreferredDataSources();

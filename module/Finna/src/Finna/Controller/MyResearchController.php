@@ -73,14 +73,14 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             if ($route) {
                 $requestedAction = $route->getParam('action');
                 switch ($requestedAction) {
-                case 'ILLRequests':
-                    break;
-                case 'CheckedOut':
-                    $requestedAction = 'checkedout';
-                    break;
-                default:
-                    $requestedAction = lcfirst($requestedAction);
-                    break;
+                    case 'ILLRequests':
+                        break;
+                    case 'CheckedOut':
+                        $requestedAction = 'checkedout';
+                        break;
+                    default:
+                        $requestedAction = lcfirst($requestedAction);
+                        break;
                 }
             }
         }
@@ -256,15 +256,15 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
             if (null !== $accountStatus) {
                 switch ($current['dueStatus'] ?? '') {
-                case 'due':
-                    $accountStatus['warn']++;
-                    break;
-                case 'overdue':
-                    $accountStatus['overdue']++;
-                    break;
-                default:
-                    $accountStatus['ok']++;
-                    break;
+                    case 'due':
+                        $accountStatus['warn']++;
+                        break;
+                    case 'overdue':
+                        $accountStatus['overdue']++;
+                        break;
+                    default:
+                        $accountStatus['ok']++;
+                        break;
                 }
             }
 
@@ -496,17 +496,17 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                             . $this->translateWithPrefix('location_', $inst);
                     }
 
-                    if (!empty($current['checkoutdate'])) {
+                    if (!empty($current['checkoutDate'])) {
                         $notes[] = $this->translate('Checkout Date') . ': '
-                            . $current['checkoutdate'];
+                            . $current['checkoutDate'];
                     }
-                    if (!empty($current['returndate'])) {
+                    if (!empty($current['returnDate'])) {
                         $notes[] = $this->translate('Return Date') . ': '
-                            . $current['returndate'];
+                            . $current['returnDate'];
                     }
-                    if (!empty($current['duedate'])) {
+                    if (!empty($current['dueDate'])) {
                         $notes[] = $this->translate('Due Date') . ': '
-                            . $current['duedate'];
+                            . $current['dueDate'];
                     }
 
                     $notesStr = implode("\n", $notes);

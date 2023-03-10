@@ -415,7 +415,6 @@ finna.myList = (function finnaMyList() {
       .done(function onGetMyListsDone(data) {
         toggleSpinner(spinner, false);
         $('.mylist-bar').empty().html(data.data);
-        $('.mylist-bar').closest('.finna-movement').trigger('reindex');
         initEditComponents();
       })
       .fail(function onGetMyListsDone() {

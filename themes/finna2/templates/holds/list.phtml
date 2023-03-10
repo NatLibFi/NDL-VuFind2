@@ -209,8 +209,12 @@
                           <?=$this->transEsc('hold_available') ?>
                         <?php endif; ?>
                         <?php if (isset($ilsDetails['pickupnum'])):?>
-                        <br />
-                        <strong><?=$this->transEsc("Pickup number") ?>:</strong> <?=$this->escapeHtml($ilsDetails['pickupnum']) ?>
+                          <br />
+                          <strong><?=$this->transEsc("Pickup number") ?>:</strong> <?=$this->escapeHtml($ilsDetails['pickupnum']) ?>
+                        <?php endif;?>
+                        <?php if (!empty($ilsDetails['holdShelf'])):?>
+                          <br />
+                          <strong><?=$this->transEsc("Hold Shelf") ?>:</strong> <?=$this->escapeHtml($ilsDetails['holdShelf']) ?>
                         <?php endif;?>
                       </div>
                     <?php elseif (isset($ilsDetails['in_transit']) && $ilsDetails['in_transit']): ?>

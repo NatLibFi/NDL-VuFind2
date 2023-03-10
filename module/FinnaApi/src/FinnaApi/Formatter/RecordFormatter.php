@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2021.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,6 +22,7 @@
  * @category VuFind
  * @package  API_Formatter
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
@@ -35,6 +36,7 @@ use Laminas\View\HelperPluginManager;
  * @category VuFind
  * @package  API_Formatter
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
@@ -134,8 +136,8 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
         $recordHelper = $this->helperManager->get('record');
         $serverUrlHelper = $this->helperManager->get('serverUrl');
         for ($i = 0;
-             $i < $recordHelper($record)->getNumOfRecordImages('large', false);
-             $i++
+            $i < $recordHelper($record)->getNumOfRecordImages('large', false);
+            $i++
         ) {
             $images[] = $serverUrlHelper()
                 . $imageHelper($recordHelper($record))
@@ -373,5 +375,23 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
             $urls += $serviceUrls;
         }
         return $urls ? $urls : null;
+    }
+
+    /**
+     * Get record index.
+     *
+     * Returns '__primary__' for the default search backend.
+     *
+     * @param \VuFind\RecordDriver\SolrDefault $record Record driver
+     *
+     * @return string
+     */
+    protected function getIndex($record)
+    {
+        $backend = $record->getSearchBackendIdentifier();
+        if (DEFAULT_SEARCH_BACKEND === $backend) {
+            $backend = '__primary__';
+        }
+        return $backend;
     }
 }

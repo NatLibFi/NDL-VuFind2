@@ -1,13 +1,14 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/result-grid.phtml -->
 <?php
-/* We need to find out if we're supposed to display an OpenURL link ($openUrlActive),
-   but even if we don't plan to display the link, we still want to get the $openUrl
-   value for use in generating a COinS (Z3988) tag -- see bottom of file.
-*/
-$openUrl = $this->openUrl($this->driver, 'results');
-$openUrlActive = $openUrl->isActive();
-// Account for replace_other_urls setting
-$urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
+  /* We need to find out if we're supposed to display an OpenURL link ($openUrlActive),
+     but even if we don't plan to display the link, we still want to get the $openUrl
+     value for use in generating a COinS (Z3988) tag -- see bottom of file.
+  */
+  $openUrl = $this->openUrl($this->driver, 'results');
+  $openUrlActive = $openUrl->isActive();
+  // Account for replace_other_urls setting
+  $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
+  $recordLinker = $this->recordLinker($this->results);
 ?>
 
 <div class="grid-result<?=$this->driver->supportsAjaxStatus()?' ajaxItem':''?>">
@@ -30,7 +31,7 @@ $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
     <?php endif; ?>
     <div class="text-center grid-title">
       <h2 class="title">
-        <a class="title" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver))?>" title="<?=$this->escapeHtmlAttr($this->driver->getTitle())?>">
+        <a class="title" href="<?=$this->escapeHtmlAttr($recordLinker->getUrl($this->driver))?>" title="<?=$this->escapeHtmlAttr($this->driver->getTitle())?>">
           <?= $this->record($this->driver)->getTitleHtml(50); ?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
         </a>
       </h2>
@@ -55,30 +56,30 @@ $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
           <?php endif; ?>
         <?php endif; ?>
 
-        <?php $journalTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDates(); ?>
+        <?php $journalTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDateRange(); ?>
         <?php if (!empty($journalTitle)): ?>
           <?=!empty($summAuthor) ? '' : ' '?>
           <?php $ref = $this->driver->getContainerReference();
           if (!empty($ref)): ?>
             <?=$this->escapeHtml($ref); ?>
           <?php else: ?>
-            <?=!empty($summDate) ? ' (' . $this->escapeHtml($summDate[0]) . ')' : ''?>
+            <?=!empty($summDate) ? ' (' . implode('&ndash;', array_map($this->escapeHtml, $summDate)) . ')' : ''?>
           <?php endif; ?>
         <?php elseif (!empty($summDate)): ?>
           <?=!empty($summAuthor) ? '' : ' '?>
-          <span class="publish-year"><?=$this->escapeHtml($summDate[0])?></span>
+          <span class="publish-year"><?=implode('&ndash;', array_map($this->escapeHtml, $summDate));?></span>
         <?php endif; ?>
 
         <?php $dates = $this->driver->tryMethod('getResultDateRange', []);?>
         <?php if ($dates): ?>
-          <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
+          <?=implode('&ndash;', array_map($this->escapeHtml, $dates));?>
         <?php endif; ?>
         <?=$this->render('record/labels.phtml', ['labels' => $this->driver->getRecordLabels(), 'driver' => $this->driver]); ?>
       </div>
       <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
         <?php /* Add to favorites */ ?>
         <div class="save-record-container">
-          <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-heart"></i> <?=$this->transEsc('Add to favorites')?></a>
+          <a href="<?=$this->escapeHtmlAttr($recordLinker->getActionUrl($this->driver, 'Save'))?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-heart"></i> <?=$this->transEsc('Add to favorites')?></a>
         </div>
       <?php endif; ?>
       <?php if ($this->layout()->templateDir === 'list' && $this->params->getView() !== 'grid'): ?>

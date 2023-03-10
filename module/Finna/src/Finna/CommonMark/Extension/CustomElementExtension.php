@@ -56,7 +56,7 @@ use League\CommonMark\Extension\ExtensionInterface;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class CustomElementExtension extends AbstractCustomElementEnabledBase
-    implements ExtensionInterface
+implements ExtensionInterface
 {
     /**
      * Register the extension.

@@ -11,7 +11,7 @@
         </div>
       <?php endif; ?>
       <span class="sr-only"><?=$this->transEsc('Search Result');?> <?=$recordNumber ?></span>
-      <?=$this->record($current)->getSearchResult('compact')?>
+      <?=$this->record($current)->getSearchResult('compact', $this->results)?>
     </div>
   <?php endforeach; ?>
 </div>

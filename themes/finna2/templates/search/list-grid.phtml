@@ -5,7 +5,7 @@
   <?php $i = $this->indexStart; ?>
   <?php foreach ($this->results->getResults() as $current): ?>
     <div id="result<?=$i++ ?>" class="result grid">
-      <?=$this->record($current)->getSearchResult('grid')?>
+      <?=$this->record($current)->getSearchResult('grid', $this->results)?>
     </div>
   <?php endforeach; ?>
 </div>

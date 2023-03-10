@@ -9,7 +9,7 @@
   <div class="carousel-feed">
     <?php $items = isset($this->visualItems) ? array_splice($this->items, 0, $this->visualItems) : $this->items; ?>
     <?php foreach ($items as $item): ?>
-      <div>
+      <div class="feed-item-holder">
         <?php if (isset($item['link'])): ?>
           <?php
             $linkElement = [];
@@ -25,11 +25,11 @@
             }
             $linkTextEsc = $this->transEsc($this->linkText ? $this->linkText : 'To the record');
           ?>
-          <a <?=$this->htmlElement()->getAttributes($linkElement)?>>
-            <?=$this->partial('ajax/feed-carousel-item.phtml', compact('item', 'linkDescEsc'))?>
+          <a class="feed-link" <?=$this->htmlElement()->getAttributes($linkElement)?>>
+            <?=$this->partial("ajax/feed-$this->type-item.phtml", compact('item', 'linkTextEsc'))?>
           </a>
         <?php else: ?>
-          <?=$this->partial('ajax/feed-carousel-item.phtml', compact('item', 'linkDescEsc'))?>
+          <?=$this->partial("ajax/feed-$this->type-item.phtml", compact('item', 'linkTextEsc'))?>
         <?php endif; ?>
       </div>
     <?php endforeach; ?>

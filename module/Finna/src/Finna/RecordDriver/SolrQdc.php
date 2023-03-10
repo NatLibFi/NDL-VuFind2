@@ -43,7 +43,7 @@ namespace Finna\RecordDriver;
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
 class SolrQdc extends \VuFind\RecordDriver\SolrDefault
-    implements \Laminas\Log\LoggerAwareInterface
+implements \Laminas\Log\LoggerAwareInterface
 {
     use Feature\SolrFinnaTrait;
     use Feature\FinnaXmlReaderTrait;
@@ -359,6 +359,31 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             $result[] = (string)$programme;
         }
         return $result;
+    }
+
+    /**
+     * Get human readable publication dates for display purposes (may not be suitable
+     * for computer processing -- use getPublicationDates() for that).
+     *
+     * @return array
+     */
+    public function getHumanReadablePublicationDates()
+    {
+        if ($dates = $this->getPublicationDateRange()) {
+            return [implode('–', $dates)];
+        }
+        return [];
+    }
+
+    /**
+     * Get publication date or date range.
+     *
+     * @return ?array Array of one or two dates or null if not available.
+     * If date range is still continuing end year will be an empty string.
+     */
+    public function getPublicationDateRange()
+    {
+        return $this->getDateRange('publication');
     }
 
     /**

@@ -56,6 +56,59 @@
           </objectMeasurementsSet>
         </objectMeasurementsWrap>
       </objectIdentificationWrap>
+      <eventWrap>
+        <eventSet>
+          <event>
+            <eventType>
+              <term>valmistus</term>
+              <term lang="en">Creation</term>
+            </eventType>
+            <eventActor>
+              <actorInRole>
+                <actor>
+                  <nameActorSet>
+                    <appellationValue>  Mattilainen, Meikä   </appellationValue>
+                  </nameActorSet>
+                </actor>
+                <roleActor>
+                  <term>haaveilija</term>
+                </roleActor>
+              </actorInRole>
+            </eventActor>
+            <eventActor>
+              <actorInRole>
+                <actor>
+                  <nameActorSet>
+                    <appellationValue>  Tiistai, Nietos  </appellationValue>
+                  </nameActorSet>
+                </actor>
+                <roleActor>
+                  <term>Työntekijä</term>
+                </roleActor>
+              </actorInRole>
+            </eventActor>
+          </event>
+        </eventSet>
+         <eventSet>
+          <event>
+            <eventType>
+              <term>suunnittelu</term>
+            </eventType>
+            <eventActor>
+              <actorInRole>
+                <actor>
+                  <nameActorSet>
+                    <appellationValue>Puu, Teisto</appellationValue>
+                  </nameActorSet>
+                </actor>
+                <roleActor>
+                  <term>suunnittelija</term>
+                </roleActor>
+              </actorInRole>
+            </eventActor>
+          </event>
+        </eventSet>
+      </eventWrap>
     </descriptiveMetadata>
     <administrativeMetadata>
       <resourceWrap>

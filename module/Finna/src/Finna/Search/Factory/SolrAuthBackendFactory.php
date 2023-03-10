@@ -46,7 +46,7 @@ use VuFindSearch\Backend\Solr\Backend;
  * @link     http://vufind.org   Main Site
  */
 class SolrAuthBackendFactory
-    extends \VuFind\Search\Factory\SolrAuthBackendFactory
+extends \VuFind\Search\Factory\SolrAuthBackendFactory
 {
     /**
      * Solr connector class

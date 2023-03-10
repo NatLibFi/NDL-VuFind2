@@ -43,7 +43,7 @@ use VuFind\I18n\Translator\TranslatorAwareInterface;
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
 class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
-    implements TranslatorAwareInterface
+implements TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFind\Cache\CacheTrait;

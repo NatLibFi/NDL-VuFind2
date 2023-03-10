@@ -37,7 +37,8 @@
       [
           'id' => $this->id,
           'consortiumInfo' => $this->consortiumInfo ? 1 : 0,
-          'buildings' => $this->buildings
+          'buildings' => $this->buildings,
+          'sector' => $this->sector ?? null
       ]
   );
   $setupJS = <<<JS

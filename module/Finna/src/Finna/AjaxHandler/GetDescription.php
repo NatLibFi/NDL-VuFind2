@@ -46,7 +46,7 @@ use VuFind\Session\Settings as SessionSettings;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class GetDescription extends \VuFind\AjaxHandler\AbstractBase
-    implements TranslatorAwareInterface, \VuFindHttp\HttpServiceAwareInterface
+implements TranslatorAwareInterface, \VuFindHttp\HttpServiceAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFindHttp\HttpServiceAwareTrait;
@@ -143,12 +143,16 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
             if ($url) {
                 $result = $this->httpService->get($url, [], 60);
                 if ($result->isSuccess() && ($content = $result->getBody())) {
-                    $encoding = mb_detect_encoding(
-                        $content,
-                        ['UTF-8', 'ISO-8859-1']
-                    );
+                    if ($contentType = $result->getHeaders()->get('Content-Type')) {
+                        $encoding = strtoupper($contentType->getCharset());
+                    } else {
+                        $encoding = mb_detect_encoding(
+                            $content,
+                            ['UTF-8', 'ISO-8859-1']
+                        );
+                    }
                     if ('UTF-8' !== $encoding) {
-                        $content = utf8_encode($content);
+                        $content = mb_convert_encoding($content, 'UTF-8', $encoding);
                     }
                     // Remove head tag, so no titles will be printed.
                     $content = preg_replace(

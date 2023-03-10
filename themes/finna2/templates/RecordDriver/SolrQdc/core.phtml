@@ -111,11 +111,11 @@
             <?php endif; ?>
           </div>
 
-          <?php if ($openUrlActive): ?>
-            <?=$openUrl->renderTemplate()?><br/>
-          <?php endif; ?>
           <?php if ($doiActive): ?>
             <?=$doi->renderTemplate()?>
+          <?php endif; ?>
+          <?php if ($openUrlActive): ?>
+            <?=$openUrl->renderTemplate()?><br/>
           <?php endif; ?>
         </div>
         <?php endif; ?>

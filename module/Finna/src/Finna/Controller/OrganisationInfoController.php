@@ -54,6 +54,7 @@ class OrganisationInfoController extends \VuFind\Controller\AbstractBase
 
         $id = $this->params()->fromQuery('id');
         $buildings = $this->params()->fromQuery('buildings');
+        $sector = $this->params()->fromQuery('sector');
 
         if (!$id) {
             if (!isset($config->General->defaultOrganisation)) {
@@ -115,6 +116,9 @@ class OrganisationInfoController extends \VuFind\Controller\AbstractBase
         }
         $view->buildingFacetOperator = $buildingOperator;
         $view->consortiumInfo = $consortiumInfo;
+        if ($sector) {
+            $view->sector = $sector;
+        }
 
         return $view;
     }

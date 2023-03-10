@@ -45,7 +45,7 @@ use VuFind\View\Helper\Root\Url;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class GetModel extends \VuFind\AjaxHandler\AbstractBase
-    implements \VuFindHttp\HttpServiceAwareInterface
+implements \VuFindHttp\HttpServiceAwareInterface
 {
     use \VuFindHttp\HttpServiceAwareTrait;
 

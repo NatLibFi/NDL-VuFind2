@@ -69,7 +69,6 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     [
                         'urls' => [
                             'large' => 'https://largekuvanlinkki.com',
-                            'original' => 'https://originalKuvanLinkkiTif.com',
                             'small' => 'https://largekuvanlinkki.com',
                             'medium' => 'https://largekuvanlinkki.com'
                         ],
@@ -110,7 +109,6 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     [
                         'urls' => [
                             'large' => 'https://largekuvanlinkki2.com',
-                            'original' => 'https://originalKuvanLinkkiTif.com',
                             'small' => 'https://thumbkuvanlinkki2.com',
                             'medium' => 'https://thumbkuvanlinkki2.com',
                             'master' => 'https://masterkuvanlinkki2.com'
@@ -402,6 +400,34 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test getNonPresenterAuthors.
+     * Design event actors should always be before Production event actors.
+     *
+     * @return void
+     */
+    public function testGetNonPresenterAuthors(): void
+    {
+        $driver = $this->getDriver('lido_test.xml');
+        $this->assertEquals(
+            [
+                [
+                    'name' => 'Puu, Teisto',
+                    'role' => 'suunnittelija'
+                ],
+                [
+                    'name' => 'Mattilainen, Meikä',
+                    'role' => 'haaveilija'
+                ],
+                [
+                    'name' => 'Tiistai, Nietos',
+                    'role' => 'Työntekijä'
+                ]
+            ],
+            $driver->getNonPresenterAuthors()
+        );
+    }
+
+    /**
      * Function to get expected date range data
      *
      * @return array
@@ -411,7 +437,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 '[2009-01-01 TO 2009-12-31]',
-                ['2009', '2009']
+                ['2009']
             ],
             [
                 '[-2000-01-01 TO 0900-12-31]',
@@ -419,15 +445,15 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 '1937-12-08',
-                ['1937', null]
+                ['1937']
             ],
             [
                 '[0000-01-01 TO 0000-12-31]',
-                ['0', '0']
+                ['0']
             ],
             [
                 '[0999-06-02 TO 9999-12-31]',
-                ['999', null]
+                ['999', '']
             ],
             [
                 '[-9999-01-01 TO 9998-12-31]',

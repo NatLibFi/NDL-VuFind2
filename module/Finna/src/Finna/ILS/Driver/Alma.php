@@ -328,16 +328,17 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Return total amount of fees that may be paid online.
+     * Return details on fees payable online.
      *
-     * @param array $patron Patron
-     * @param array $fines  Patron's fines
+     * @param array  $patron          Patron
+     * @param array  $fines           Patron's fines
+     * @param ?array $selectedFineIds Selected fines
      *
      * @throws ILSException
-     * @return array Associative array of payment info,
+     * @return array Associative array of payment details,
      * false if an ILSException occurred.
      */
-    public function getOnlinePayableAmount($patron, $fines)
+    public function getOnlinePaymentDetails($patron, $fines, ?array $selectedFineIds)
     {
         $paymentConfig = $this->config['OnlinePayment'] ?? [];
         $amount = 0;
@@ -370,15 +371,17 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      * @param int    $amount            Amount to be registered as paid
      * @param string $transactionId     Transaction ID
      * @param int    $transactionNumber Internal transaction number
+     * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
      *
      * @throws ILSException
-     * @return boolean success
+     * @return bool success
      */
     public function markFeesAsPaid(
         $patron,
         $amount,
         $transactionId,
-        $transactionNumber
+        $transactionNumber,
+        $fineIds = null
     ) {
         $fines = $this->getFineList($patron);
         $amountRemaining = $amount;
@@ -1900,18 +1903,18 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
         $errorCode = $error->errorList->error[0]->errorCode ?? null;
         switch ($errorCode) {
-        case '401136':
-            $errorMsg = 'hold_error_already_held';
-            break;
-        case '401129':
-            $errorMsg = 'hold_error_cannot_fulfill';
-            break;
-        case '401652':
-            $errorMsg = 'hold_error_fail';
-            break;
-        default:
-            $errorMsg = $error->errorList->error[0]->errorMessage
-                ?? 'hold_error_fail';
+            case '401136':
+                $errorMsg = 'hold_error_already_held';
+                break;
+            case '401129':
+                $errorMsg = 'hold_error_cannot_fulfill';
+                break;
+            case '401652':
+                $errorMsg = 'hold_error_fail';
+                break;
+            default:
+                $errorMsg = $error->errorList->error[0]->errorMessage
+                    ?? 'hold_error_fail';
         }
 
         if ('Missing mandatory field: Description.' === $errorMsg) {
@@ -2058,15 +2061,15 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                         $totalAvailable += $available;
                         $locations[$locationCode] = 1;
                         switch ($status) {
-                        case 'available':
-                            $status = 'Available';
-                            break;
-                        case 'unavailable':
-                            $status = 'Not Available';
-                            break;
-                        case 'check_holdings':
-                            $status = '';
-                            break;
+                            case 'available':
+                                $status = 'Available';
+                                break;
+                            case 'unavailable':
+                                $status = 'Not Available';
+                                break;
+                            case 'check_holdings':
+                                $status = '';
+                                break;
                         }
 
                         $holdings[] = [
