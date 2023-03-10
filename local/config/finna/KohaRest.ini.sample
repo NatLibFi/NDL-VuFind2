@@ -112,8 +112,6 @@ display_title_hold_in_results = true
 use_holding_records = true
 ; Whether to use serial subscriptions. Default is false.
 use_serial_subscriptions = true
-; Display specific item location for serials
-display_specific_serial_location = false
 ; How the list of serials is filtered. Valid settings are:
 ;   empty = No filtering, display all (default)
 ;   "last year" = Display only latest received year

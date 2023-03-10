@@ -1002,8 +1002,6 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         }
 
         $statuses = [];
-        $appendLocation
-            = $this->config['Holdings']['display_specific_serial_location'] ?? false;
         foreach ($result['data']['item_availabilities'] ?? [] as $i => $item) {
             // $holding is a reference!
             unset($holding);
@@ -1043,7 +1041,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             $number = $item['serial_issue_number'];
             if (!$number) {
                 $number = $this->getItemSpecificLocation($item);
-            } elseif ($appendLocation) {
+            } else {
                 $number .= ' ' . $this->getItemSpecificLocation($item);
             }
 
