@@ -497,6 +497,9 @@ finna-feed {
             align-items: center;
             pointer-events: auto;
             border: none;
+            &[disabled] {
+                display: none;
+            }
         }
     }
     .feed-item-holder {
@@ -567,7 +570,7 @@ finna-feed.splide--ltr {
             .carousel-text {
                 opacity: 1;
             }
-            .carousel-slide-header {
+            .carousel-slide-header:not(.title-bottom) {
                 opacity: 0;
             }
         }
@@ -590,6 +593,10 @@ finna-feed.splide--ltr {
             background: @carousel-text-background-color;
             opacity: 0;
             padding: 10px;
+            .text {
+                height: 100%;
+                overflow: hidden;
+            }
         }
 
         .carousel-slide-header {

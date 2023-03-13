@@ -35,6 +35,7 @@ class FinnaFeedElement extends HTMLElement {
     this.isTouchDevice = finna.layout.isTouchDevice() ? 1 : 0;
     this.slideHeight = undefined;
     this.onFeedLoaded = undefined;
+    this.titleBottomHeight = 0;
     this.cache = [];
   }
 
@@ -53,21 +54,26 @@ class FinnaFeedElement extends HTMLElement {
   /**
    * Adjust titles. Useful when the screen size changes so the elements
    * look as they should.
+   *
+   * @param settings Carousel settings
    */
-  setTitleBottom() {
+  setTitleBottom(settings) {
     // Move title field below image
     let maxH = 0;
-    this.querySelectorAll('.carousel-slide-header p').forEach(el => {
-      maxH = Math.max(maxH, el.getBoundingClientRect().height);
+    this.querySelectorAll('.carousel-slide-header').forEach(el => {
+      maxH = Math.max(maxH, el.getBoundingClientRect().height + 10);
       el.classList.add('title-bottom');
     });
-    this.querySelectorAll('.carousel-slide-header p').forEach(el => {
-      el.style.height = `${maxH}px`;
+    this.querySelectorAll('.carousel-slide-header, .carousel-slide-header p').forEach(el => {
+      el.style.minHeight = el.style.height = `${maxH}px`;
     });
     this.querySelectorAll('.carousel-feed .carousel-text').forEach(el => {
       el.classList.add('text-bottom');
+      el.style.maxHeight = `${settings.height}px`;
     });
+    settings.height = +settings.height + maxH;
   }
+
   /**
    * When the feed is loaded or found from the internal cache.
    * Constructs the feed into the dom.
@@ -93,20 +99,21 @@ class FinnaFeedElement extends HTMLElement {
         const vertical = 'carousel-vertical' === settings.type;
         settings.vertical = vertical;
 
-        finna.carouselManager.createCarousel([this], settings);
-
         var titleBottom = typeof settings.titlePosition !== 'undefined' && settings.titlePosition === 'bottom';
         if (!vertical) {
           if (titleBottom) {
-            holder.setTitleBottom();
+            holder.setTitleBottom(settings);
             holder.querySelectorAll('.carousel-hover-title').forEach(el => {
               el.style.display = 'none';
             });
+            holder.querySelectorAll('.carousel-hover-date').forEach(el => {
+              el.style.display = 'none';
+            });
           }
-          holder.querySelectorAll('.carousel-hover-date').forEach(el => {
-            el.style.display = 'none';
-          });
         }
+
+        finna.carouselManager.createCarousel([this], settings);
+
         // Text hover for touch devices
         if (finna.layout.isTouchDevice() && typeof settings.linkText === 'undefined') {
           holder.querySelectorAll('.carousel-text').forEach(el => {

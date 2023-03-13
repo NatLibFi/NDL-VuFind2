@@ -116,7 +116,8 @@ finna.carouselManager = (() => {
     let splidied = {
       direction: 'ltr',
       gap: 10,
-      type: 'loop'
+      type: 'slide',
+      rewind: true
     };
     for (const [key, value] of Object.entries(settings)) {
       if (typeof settingNameMappings[key] !== 'undefined') {
@@ -129,7 +130,6 @@ finna.carouselManager = (() => {
         }
       }
     }
-
     return splidied;
   }
 
