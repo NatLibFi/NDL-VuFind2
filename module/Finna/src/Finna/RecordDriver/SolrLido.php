@@ -1017,7 +1017,8 @@ implements \Laminas\Log\LoggerAwareInterface
                     $term = $termLC != 'julkaisu' ? $term : '';
                     $results[] = [
                       'title' => $title,
-                      'label' => $label ?: $term
+                      'label' => $label ?: $term,
+                      'url' => ''
                     ];
                 }
             }
