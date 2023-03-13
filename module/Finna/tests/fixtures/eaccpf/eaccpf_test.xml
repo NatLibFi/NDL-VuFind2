@@ -87,7 +87,10 @@
         </localDescription>
         <localDescription localType="TJ17">
           <citation href="https://ylioppilasmatrikkeli.helsinki.fi/1853-1899/">Ylioppilasmatrikkeli 1983</citation>
-        </localDescription>                         
+        </localDescription>
+        <localDescription localType="TJ17">
+          <citation>Julkaisu ilman linkkiä</citation>
+        </localDescription>
       </localDescriptions>
     </description>
   </cpfDescription>

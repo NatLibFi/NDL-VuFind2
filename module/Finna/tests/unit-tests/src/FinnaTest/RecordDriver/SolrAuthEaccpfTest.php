@@ -76,6 +76,11 @@ class SolrAuthEaccpfTest extends \PHPUnit\Framework\TestCase
             'title' => 'Ylioppilasmatrikkeli 1983',
             'label' => '',
             'url' => 'https://ylioppilasmatrikkeli.helsinki.fi/1853-1899/'
+          ],
+          [
+            'title' => 'Julkaisu ilman linkkiä',
+            'label' => '',
+            'url' => ''
           ]
         ];
         $this->assertEquals($publications, $driver->getRelatedPublications());
