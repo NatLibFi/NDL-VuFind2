@@ -68,8 +68,16 @@ class FinnaFeedElement extends HTMLElement {
       el.style.minHeight = el.style.height = `${maxH}px`;
     });
     this.querySelectorAll('.carousel-feed .carousel-text').forEach(el => {
-      el.classList.add('text-bottom');
-      el.style.maxHeight = `${settings.height}px`;
+      const textElement = el.querySelector('div.text p');
+      if (!textElement) {
+        return;
+      }
+      if (textElement.innerHTML.trim() !== '') {
+        el.classList.add('text-bottom');
+        el.style.maxHeight = `${settings.height}px`;
+      } else {
+        el.classList.add('no-text');
+      }
     });
     settings.height = +settings.height + maxH;
   }
