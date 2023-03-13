@@ -1,30 +1,4 @@
 /* Carousel styling */
-.carousel {
-    button {
-        overflow: hidden; // prevent scrollbars appearing with some browsers
-    }
-    .carousel-header {
-        background: @carousel-header-background;
-        display: inline-block;
-        padding: @carousel-header-padding;
-        color: @carousel-header-color;
-    }
-
-    .carousel-hover-title {
-        font-size: 14px;
-        font-weight: 900;
-        color: @carousel-slide-header-color;
-    }
-    .carousel-hover-date {
-        font-weight: 300;
-        color: @gray-lighter;
-    }
-}
-
-.carousel-non-touch-device .carousel-hover-title::after {
-    content: " »";
-}
-
 /** List feed **/
 .feed-container .list-feed:not(.with-image) {
     li {
@@ -479,6 +453,24 @@
 
 finna-feed {
     display: block;
+    .carousel-header {
+        background: @carousel-header-background;
+        display: inline-block;
+        padding: @carousel-header-padding;
+        color: @carousel-header-color;
+    }
+    .carousel-hover-title {
+        font-size: 14px;
+        font-weight: 900;
+        color: @carousel-slide-header-color;
+    }
+    .carousel-non-touch-device .carousel-hover-title::after {
+        content: " »";
+    }
+    .carousel-hover-date {
+        font-weight: 300;
+        color: @gray-lighter;
+    }
     .splide__arrows {
         position: absolute;
         pointer-events: none;
