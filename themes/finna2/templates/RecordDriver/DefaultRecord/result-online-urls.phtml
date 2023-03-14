@@ -70,7 +70,7 @@
             <?php
               $isPopup = 'popup' === $context;
               $isIframe = $url['embed'] === 'iframe';
-              $popupId = $isIframe ? 'finna-iframe' : 'finna-video';
+              $popupId = "finna-{$url['embed']}";
               if ($isPopup) {
                 $popupId .= '-popup';
               }
