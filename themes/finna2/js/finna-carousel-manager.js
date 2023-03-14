@@ -15,7 +15,7 @@ finna.carouselManager = (() => {
   const settingNameMappings = {
     autoplay: (value) => {
       let valueToInt = parseInt(value);
-      if (![0, 'NaN'].includes(valueToInt)) {
+      if (![0, NaN].includes(valueToInt)) {
         return {
           autoplay: true,
           interval: valueToInt
