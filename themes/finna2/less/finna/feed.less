@@ -452,6 +452,20 @@
 
 finna-feed {
     display: block;
+    .autoplay-button {
+        border: none;
+        background: none;
+        font-size: 20px;
+        position: absolute;
+        i {
+            cursor: pointer;
+        }
+        &:not(.is-active) {
+            .pause-icon {
+                display: none;
+            }
+        }
+    }
     .carousel-header {
         background: @carousel-header-background;
         display: inline-block;

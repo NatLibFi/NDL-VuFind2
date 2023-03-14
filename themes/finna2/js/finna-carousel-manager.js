@@ -13,6 +13,16 @@ finna.carouselManager = (() => {
    * Value is either a value or a function returning the value.
    */
   const settingNameMappings = {
+    autoplay: (value) => {
+      let valueToInt = parseInt(value);
+      if (![0, 'NaN'].includes(valueToInt)) {
+        return {
+          autoplay: true,
+          interval: valueToInt
+        };
+      }
+      return {autoplay: false};
+    },
     height: (value) => { return {height: parseInt(value)}; },
     slidesToShow: (itemsPerPage) => {
       const breakpoints = {};
@@ -134,19 +144,19 @@ finna.carouselManager = (() => {
   }
 
   /**
-   * Turn given elements into carousels
+   * Turn given element into a carousel
    *
-   * @param {Array|NodeList} elements Elements to turn into a carousel
-   * @param {Object}         settings Old Finna settings for carousels
+   * @param {HTMLElement} element  Element to turn into a carousel
+   * @param {Object}      settings Old Finna settings for carousels
+   *
+   * @return {Splide}
    */
-  function createCarousel(elements, settings) {
+  function createCarousel(element, settings) {
     if (typeof settings.i18n === 'undefined') {
       settings.i18n = {};
     }
     const splideSettings = toSplideSettings(settings);
-    for (let i = 0; i < elements.length; i++) {
-      new Splide(elements[i], splideSettings).mount();
-    }
+    return new Splide(element, splideSettings).mount();
   }
 
   return {

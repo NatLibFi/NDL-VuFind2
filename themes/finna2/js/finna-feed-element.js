@@ -35,7 +35,6 @@ class FinnaFeedElement extends HTMLElement {
     this.isTouchDevice = finna.layout.isTouchDevice() ? 1 : 0;
     this.slideHeight = undefined;
     this.onFeedLoaded = undefined;
-    this.titleBottomHeight = 0;
     this.cache = [];
   }
 
@@ -60,9 +59,10 @@ class FinnaFeedElement extends HTMLElement {
   setTitleBottom(settings) {
     // Move title field below image
     let maxH = 0;
-    this.querySelectorAll('.carousel-slide-header').forEach(el => {
+    this.querySelectorAll('.carousel-slide-header p').forEach(el => {
       maxH = Math.max(maxH, el.getBoundingClientRect().height + 10);
       el.classList.add('title-bottom');
+      el.parentNode.classList.add('title-bottom');
     });
     this.querySelectorAll('.carousel-slide-header, .carousel-slide-header p').forEach(el => {
       el.style.minHeight = el.style.height = `${maxH}px`;
@@ -80,6 +80,32 @@ class FinnaFeedElement extends HTMLElement {
       }
     });
     settings.height = +settings.height + maxH;
+  }
+
+  /**
+   * Create autoplay button.
+   */
+  createAutoplayButton() {
+    const autoPlayButton = document.createElement('button');
+    autoPlayButton.className = 'splide__toggle autoplay-button';
+    autoPlayButton.type = 'button';
+
+    const playSpan = document.createElement('span');
+    playSpan.className = 'sr-only';
+    playSpan.innerHTML = VuFind.translate('Carousel::Start Autoplay');
+    const playIcon = document.createElement('i');
+    playIcon.className = 'fa fa-play-circle splide__toggle__play play-icon';
+    playIcon.append(playSpan);
+
+    const pauseSpan = document.createElement('span');
+    pauseSpan.className = 'sr-only';
+    pauseSpan.innerHTML = VuFind.translate('Carousel::Stop Autoplay');
+    const pauseIcon = document.createElement('i');
+    pauseIcon.className = 'splide__toggle__pause fa fa-pause-circle pause-icon';
+    pauseIcon.append(pauseSpan);
+
+    autoPlayButton.append(playIcon, pauseIcon);
+    this.append(autoPlayButton);
   }
 
   /**
@@ -104,9 +130,14 @@ class FinnaFeedElement extends HTMLElement {
           return;
         }
         this.classList.add('splide');
+
+        if (settings.autoplay && settings.autoplay > 0) {
+          this.createAutoplayButton();
+        }
+
         const vertical = 'carousel-vertical' === settings.type;
         settings.vertical = vertical;
-
+        this.splide = finna.carouselManager.createCarousel(this, settings);
         var titleBottom = typeof settings.titlePosition !== 'undefined' && settings.titlePosition === 'bottom';
         if (!vertical) {
           if (titleBottom) {
@@ -117,10 +148,12 @@ class FinnaFeedElement extends HTMLElement {
             holder.querySelectorAll('.carousel-hover-date').forEach(el => {
               el.style.display = 'none';
             });
+            // Update the height of the splide component for title-bottom to display properly
+            this.splide.options = {
+              height: settings.height
+            };
           }
         }
-
-        finna.carouselManager.createCarousel([this], settings);
 
         // Text hover for touch devices
         if (finna.layout.isTouchDevice() && typeof settings.linkText === 'undefined') {
