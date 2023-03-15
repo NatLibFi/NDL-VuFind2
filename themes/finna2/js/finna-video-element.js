@@ -298,6 +298,7 @@ class VideoElement extends HTMLElement {
           this.content.find('iframe').attr('src', this.adjustEmbedLink(self.source));
           break;
         case 'audio':
+          this.content.css('height', '100%');
           this.content.find('audio').attr('src', self.source);
           break;
         default:
