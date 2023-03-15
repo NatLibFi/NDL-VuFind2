@@ -123,8 +123,8 @@ class FinnaFeedElement extends HTMLElement {
       const type = settings.type;
       const carousel = ['carousel', 'carousel-vertical'].includes(type);
       if (carousel) {
-        const noContent = holder.querySelectorAll('.carousel-feed > li, .carousel-feed > div').length === 0;
-        if (noContent) {
+        const hasContent = holder.querySelector('.carousel-feed > li, .carousel-feed > div');
+        if (!hasContent) {
           holder.style.display = 'none';
           holder.innerHTML = `<!-- No content received -->`;
           return;
