@@ -71,5 +71,27 @@
         </nameEntry>
       </nameEntryParallel>
     </identity>
+    <description>
+      <localDescriptions>
+        <localDescription localType="TJ17">
+          <citation href="https://kansallisbiografia.fi/">Kansallisbiografia</citation>
+        </localDescription>
+        <localDescription localType="TJ1">
+          <citation href="https://ylioppilasmatrikkeli.helsinki.fi/">Ylioppilasmatrikkeli</citation>
+        </localDescription>
+        <localDescription>
+          <citation href="https://fi.wikipedia.org/">Wikipedia</citation>
+        </localDescription>
+        <localDescription localType="TJ17">
+          <citation href="www.helsinki.fi/"></citation>
+        </localDescription>
+        <localDescription localType="TJ17">
+          <citation href="https://ylioppilasmatrikkeli.helsinki.fi/1853-1899/">Ylioppilasmatrikkeli 1983</citation>
+        </localDescription>
+        <localDescription localType="TJ17">
+          <citation>Julkaisu ilman linkkiä</citation>
+        </localDescription>
+      </localDescriptions>
+    </description>
   </cpfDescription>
 </eac-cpf>

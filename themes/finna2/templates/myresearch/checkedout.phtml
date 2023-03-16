@@ -93,7 +93,7 @@
                 </tr>
               </table>
           <?php else: ?>
-            <div class="myresearch-table" aria-label="<?=$this->transEscAttr('Checked Out');?>">
+            <div class="myresearch-table" aria-label="<?=$this->transEscAttr('Your Checked Out Items')?>">
               <div class="toolbar">
                 <div class="myresearch-notification"><?=$this->transEsc('cannot renew any checked out items')?></div>
                 <div class="text-right">
@@ -118,7 +118,7 @@
               <input class="pull-left flip" type="hidden" name="renewAllIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['renew_details'])?>" />
             <?php endif; ?>
           <?php endforeach; ?>
-          <table class="myresearch-table" aria-label="<?=$this->transEscAttr('Checked Out');?>" tabindex="0">
+          <table class="myresearch-table" aria-label="<?=$this->transEscAttr('Your Checked Out Items')?>" tabindex="0">
             <tr class="sr-only myresearch-row" aria-hidden="true">
               <th id="label-select-column"><?=$this->transEsc('Select');?></th>
               <th class="hidden-xs"></th>

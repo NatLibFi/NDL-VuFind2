@@ -79,6 +79,12 @@
 
   // Store scrollData for searchbox:
   $this->layout()->scrollData = $this->scrollData;
+
+  // Set record selection data if a Bazaar session is active.
+  $this->bazaarSession()->setSelectionData(
+      $this->driver->getUniqueId(),
+      $this->driver->getTitle()
+  );
 ?>
 </div>
 <div class="container">

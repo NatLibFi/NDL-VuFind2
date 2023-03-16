@@ -1,0 +1,86 @@
+<?php // This template is a JSON fragment of a complete OpenAPI specification ?>
+{
+    "paths": {
+        "/bazaar/browse": {
+            "post": {
+                "summary": "Get Bazaar browse URL",
+                "description": "<?=str_replace(["\n", "\r"], ['\\n', '\\r'], $this->render('bazaarapi/browse-description.phtml'))?>",
+                "parameters": [
+                  {
+                    "in": "header",
+                    "name": "Authentication",
+                    "schema": {
+                      "type": "string",
+                      "required": true
+                    },
+                    "description": "Authentication header as described in the Bazaar specification"
+                  }
+                ],
+                "tags": [
+                    "Bazaar"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "add_resource_callback_url": {
+                                        "type": "string",
+                                        "description": "LMS callback URL, for adding material to the LMS"
+                                    },
+                                    "cancel_url": {
+                                        "type": "string",
+                                        "description": "Forwarding user back to LMS"
+                                    }
+                                },
+                                "required": [
+                                    "add_resource_callback_url",
+                                    "cancel_url"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Browse URL",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "browse_url": {
+                                            "description": "Browse URL for the selection view",
+                                            "type": "string"
+                                        },
+                                        "status": {
+                                            "description": "Status code",
+                                            "type": "string",
+                                            "enum": [
+                                                "OK"
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "required": [
+                                "status"
+                            ]
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

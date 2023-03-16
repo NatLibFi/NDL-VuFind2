@@ -187,10 +187,16 @@ class VideoElement extends HTMLElement {
    */
   constructor() {
     super();
-    this.videoModal = `<video class="video-js vjs-big-play-centered video-popup" controls></video>`;
-    this.iFrameModal = `<div style="height:100%">
-    <iframe class="player finna-popup-iframe" frameborder="0" allowfullscreen></iframe>
-    </div>`;
+    this.modals = {
+      video: `<video class="video-js vjs-big-play-centered video-popup" controls></video>`,
+      iframe: `<div style="height:100%">
+      <iframe class="player finna-popup-iframe" frameborder="0" allowfullscreen></iframe>
+      </div>`,
+      audio: `<div class="audio-player-wrapper">
+      <audio controls preload="auto">
+      </audio>
+      </div>`
+    };
 
     this.translations = {
       close: VuFind.translate('close'),
@@ -215,11 +221,23 @@ class VideoElement extends HTMLElement {
     // Check if this video is inside a record
     const record = this.closest('div.record');
     const self = this;
+    let classes = 'video-popup';
+    let modal = this.modals.video;
+    switch (this.type) {
+    case 'iframe':
+      classes = 'finna-iframe';
+      modal = this.modals.iframe;
+      break;
+    case 'audio':
+      classes = 'finna-audio';
+      modal = this.modals.audio;
+      break;
+    }
     const popupSettings = {
       id: this.popupId,
-      modal: this.type === 'iframe' ? this.iFrameModal : this.videoModal,
+      modal: modal,
       cycle: typeof this.embedParent !== 'undefined',
-      classes: this.type === 'iframe' ? 'finna-iframe' : 'video-popup',
+      classes: classes,
       parent: this.embedParent,
       translations: this.translations,
       onPopupInit: (t) => {
@@ -266,7 +284,6 @@ class VideoElement extends HTMLElement {
             }
           }
         }
-
         switch (self.type) {
         case 'video':
           finna.scriptLoader.loadInOrder(self.scripts, self.subScripts, () => {
@@ -279,6 +296,10 @@ class VideoElement extends HTMLElement {
             e.setAttribute('aria-haspopup', false);
           });
           this.content.find('iframe').attr('src', this.adjustEmbedLink(self.source));
+          break;
+        case 'audio':
+          this.content.css('height', '100%');
+          this.content.find('audio').attr('src', self.source);
           break;
         default:
           console.warn(`Unknown video type in video element: ${self.type}`);

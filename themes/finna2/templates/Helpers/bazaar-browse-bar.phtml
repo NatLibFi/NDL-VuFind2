@@ -1,0 +1,7 @@
+<!-- START of: finna - Helpers/bazaar-browse-bar.phtml -->
+<?= $this->render('components/organisms/navigation/finna-bazaar-browse-bar', [
+    'addResourceCallbackPayload' => $this->bazaarSession()->getAddResourceCallbackPayload(),
+    'addResourceCallbackUrl' => $this->bazaarSession()->getAddResourceCallbackUrl(),
+    'cancelUrl' => $this->bazaarSession()->getCancelUrl(),
+  ]); ?>
+<!-- END of: finna - Helpers/bazaar-browse-bar.phtml -->

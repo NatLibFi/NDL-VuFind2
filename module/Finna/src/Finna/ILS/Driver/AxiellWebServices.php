@@ -1990,8 +1990,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             $trans = [
                 'id' => $obj->id,
                 'title' => $title,
-                'checkoutdate' => $this->formatDate($record->checkOutDate),
-                'returndate' => isset($record->checkInDate)
+                'checkoutDate' => $this->formatDate($record->checkOutDate),
+                'returnDate' => isset($record->checkInDate)
                     ? $this->formatDate($record->checkInDate) : '',
                 'publication_year' => $obj->publicationYear ?? '',
                 'volume' => $obj->volume ?? ''
@@ -2605,7 +2605,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 'title' => $title,
                 'cancel_details' => $cancelDetails,
                 'updateDetails' => $updateDetails,
-                '_organization' => $reservation->organisationId ?? ''
+                '_organization' => $reservation->organisationId ?? '',
+                'create' => $this->formatDate($reservation->createDate)
             ];
             $holdsList[] = $hold;
         }

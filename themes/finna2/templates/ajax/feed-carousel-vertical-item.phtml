@@ -10,7 +10,7 @@
 <?php endif; ?>
 <?php if ($hasImg): ?>
   <div class="wrapper" aria-hidden="true">
-    <img data-lazy="<?=$this->escapeHtmlAttr($item['image']['url']) ?>" alt="<?=$this->transEsc('Image');?><?php if (isset($item['title'])): ?>: <?=$this->escapeHtml($item['title']) ?><?php endif; ?>" />
+    <img data-src="<?=$this->escapeHtmlAttr($item['image']['url']) ?>" alt="<?=$this->transEsc('Image');?><?php if (isset($item['title'])): ?>: <?=$this->escapeHtml($item['title']) ?><?php endif; ?>" />
   </div>
 <?php endif; ?>
 <div class="carousel-vertical-text-part">
@@ -58,7 +58,7 @@
           <p class="xcal"><i class="fa fa-map-marker" aria-label="<?=$this->transEscAttr('Location') ?>"></i> <?=$this->escapeHtml($xcal['location']) ?></p>
         <?php endif; ?>
       <?php endif; ?>
-      <p><?=$this->escapeHtml($item['text']) ?></p>
+      <p><?=$this->escapeHtml($item['text'] ?? '') ?></p>
     </div>
     <?php if ($clickableLink): ?>
       <span class="carousel-description"><?= $linkTextEsc ?></span>

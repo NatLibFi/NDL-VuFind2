@@ -10,6 +10,7 @@ $config = [
             'Finna\View\Helper\Root\Authority' => 'Finna\View\Helper\Root\AuthorityFactory',
             'Finna\View\Helper\Root\Autocomplete' => 'Finna\View\Helper\Root\AutocompleteFactory',
             'Finna\View\Helper\Root\Barcode' => 'Laminas\ServiceManager\Factory\InvokableFactory',
+            'Finna\View\Helper\Root\BazaarSession' => 'Finna\View\Helper\Root\BazaarSessionFactory',
             'Finna\View\Helper\Root\Browse' => 'Finna\View\Helper\Root\BrowseFactory',
             'Finna\View\Helper\Root\Callnumber' => 'Finna\View\Helper\Root\CallNumberFactory',
             'Finna\View\Helper\Root\Citation' => 'Finna\View\Helper\Root\CitationFactory',
@@ -81,6 +82,7 @@ $config = [
             'authorizationNote' => 'Finna\View\Helper\Root\AuthorizationNotification',
             'autocomplete' => 'Finna\View\Helper\Root\Autocomplete',
             'barcode' => 'Finna\View\Helper\Root\Barcode',
+            'bazaarSession' => 'Finna\View\Helper\Root\BazaarSession',
             'callnumber' => 'Finna\View\Helper\Root\Callnumber',
             'cleanHtml' => 'Finna\View\Helper\Root\CleanHtml',
             'combined' => 'Finna\View\Helper\Root\Combined',
@@ -168,8 +170,7 @@ $config = [
         'vendor/leaflet.css',
         'vendor/leaflet.draw.css',
         'vendor/easymde.min.css',
-        'vendor/slick.css',
-        'vendor/slick-theme.css',
+        'vendor/splide-core.min.css',
         'vendor/video-js.min.css',
         'vendor/select2.min.css',
         'finna.css',
@@ -245,7 +246,7 @@ $config = [
         'vendor/jsTree/jstree.min.js',
         'vendor/sortable.min.js',
         'vendor/easymde.min.js',
-        'vendor/slick.min.js',
+        'vendor/splide.min.js',
         'vendor/gauge.min.js',
         'vendor/select2.min.js',
         'vendor/priority-nav.min.js',
@@ -256,6 +257,7 @@ $config = [
         'finna-model-viewer.js',
         'finna-video-element.js',
         'finna-feed-element.js',
+        'finna-carousel-manager.js'
     ],
     'less' => [
         'active' => false

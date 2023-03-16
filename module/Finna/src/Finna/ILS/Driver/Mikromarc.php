@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2017-2021.
+ * Copyright (C) The National Library of Finland 2017-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -63,6 +63,13 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      * @var \VuFind\Date\Converter
      */
     protected $dateConverter;
+
+    /**
+     * Sorter
+     *
+     * @var \VuFind\I18n\Sorter
+     */
+    protected $sorter;
 
     /**
      * Institution settings for the order of organisations
@@ -132,10 +139,14 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      * Constructor
      *
      * @param \VuFind\Date\Converter $dateConverter Date converter object
+     * @param \VuFind\I18n\Sorter    $sorter        Sorter
      */
-    public function __construct(\VuFind\Date\Converter $dateConverter)
-    {
+    public function __construct(
+        \VuFind\Date\Converter $dateConverter,
+        \VuFind\I18n\Sorter $sorter
+    ) {
         $this->dateConverter = $dateConverter;
+        $this->sorter = $sorter;
     }
 
     /**
@@ -198,9 +209,9 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                     'checkout asc' => 'sort_checkout_date_asc',
                     'return desc' => 'sort_return_date_desc',
                     'return asc' => 'sort_return_date_asc',
-                    'everything desc' => 'sort_loan_history'
+                    'title asc' => 'sort_title',
                 ],
-                'default_sort' => 'everything desc',
+                'default_sort' => 'checkout desc',
             ];
         }
         $functionConfig = $this->config[$function] ?? false;
@@ -1077,62 +1088,75 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      */
     public function getMyTransactionHistory($patron, $params)
     {
-        $history = [
-            'count' => 0,
-            'transactions' => []
-        ];
         // Do not fetch loan history if it is false or not set
         if (!($patron['loan_history'] ?? false)) {
-            return $history;
+            return [
+                'count' => 0,
+                'transactions' => []
+            ];
         }
 
-        $sort = strpos($params['sort'], 'desc') ? 'desc' : 'asc';
         $request = [
-            '$filter' => 'BorrowerId eq' . ' ' . $patron['id'],
-            '$orderby' => 'ServiceTime' . ' ' . $sort
+            '$filter' => 'BorrowerId eq ' . $patron['id']
         ];
         $result = $this->makeRequest(
             ['odata', 'BorrowerServiceHistories'],
             $request
         );
-        $history['count'] = count($result);
         $serviceCodeMap = [
-            'Returned' => 'returndate',
-            'OnLoan' => 'checkoutdate',
-            'LoanRenewed' => 'checkoutdate'
+            'Returned' => 'returnDate',
+            'OnLoan' => 'checkoutDate',
+            'LoanRenewed' => 'checkoutDate'
         ];
+        $transactions = [];
         foreach ($result as $entry) {
-            $code = $entry['ServiceCode'];
-            if (!isset($serviceCodeMap[$code])) {
+            if (!($dateField = $serviceCodeMap[$entry['ServiceCode']] ?? '')) {
                 continue;
             }
 
-            $transaction = [
-                'id' => $entry['MarcRecordId'],
-            ];
+            $id = $entry['ServiceId'];
 
-            $entryTime = $this->dateConverter->convertToDisplayDate(
+            if (!isset($transactions[$id])) {
+                $transactions[$id] = [
+                    'id' => $entry['MarcRecordId'],
+                    'title' => $entry['MarcRecordTitle'] ?? '',
+                ];
+            }
+
+            $actionTimestamp = strtotime($entry['ServiceTime']);
+            $actionTime = $this->dateConverter->convertToDisplayDate(
                 'U',
-                strtotime($entry['ServiceTime'])
+                $actionTimestamp
             );
-
-            $transaction[$serviceCodeMap[$code]] = $entryTime;
-            if (isset($entry['MarcRecordTitle'])) {
-                $transaction['title'] = $entry['MarcRecordTitle'];
-            }
-            if ($params['sort'] == 'checkout ' . $sort
-                && isset($transaction['checkoutdate'])
-            ) {
-                $history['transactions'][] = $transaction;
-            } elseif ($params['sort'] == 'return ' . $sort
-                && isset($transaction['returndate'])
-            ) {
-                $history['transactions'][] = $transaction;
-            } elseif ($params['sort'] == 'everything desc') {
-                $history['transactions'][] = $transaction;
-            }
+            $transactions[$id][$dateField] = $actionTime;
+            // Dates for sorting:
+            $transactions[$id]["_$dateField"] = $actionTimestamp;
         }
-        return $history;
+
+        // Sort the list:
+        $parts = explode(' ', $params['sort'] ?? '');
+        $sort = $parts[0] ?? 'checkout';
+        $asc = ($parts[1] ?? 'asc') === 'asc';
+        usort(
+            $transactions,
+            function ($a, $b) use ($sort, $asc) {
+                $res = 0;
+                if (in_array($sort, ['checkout', 'return'])) {
+                    $key = "_{$sort}Date";
+                    $res = ($a[$key] ?? 0) <=> ($b[$key] ?? 0);
+                }
+                if (0 === $res) {
+                    $res = $this->sorter
+                        ->compare($a['title'] ?? '', $b['title'] ?? '');
+                }
+                return $asc ? $res : -$res;
+            }
+        );
+
+        return [
+            'count' => count($transactions),
+            'transactions' => $transactions,
+        ];
     }
 
     /**

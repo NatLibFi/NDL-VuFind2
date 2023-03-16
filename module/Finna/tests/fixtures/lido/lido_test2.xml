@@ -27,6 +27,26 @@
         </classificationWrap>
       </objectClassificationWrap>
       <objectIdentificationWrap>
+        <titleWrap>
+          <titleSet>
+            <appellationValue>Otsikko näkyy partial.</appellationValue>
+            <appellationValue>Näkyy kokonaan.</appellationValue>
+            <appellationValue pref="preferred">Ei näy preferred.</appellationValue>
+            <appellationValue pref="alternate">Ei näy alternate.</appellationValue>
+          </titleSet>
+        </titleWrap>
+        <objectDescriptionWrap>
+          <objectDescriptionSet type="introduction">
+            <descriptiveNoteValue lang="fi" label="esittely">Ei saa näkyä.</descriptiveNoteValue>
+          </objectDescriptionSet>
+          <objectDescriptionSet>
+            <descriptiveNoteValue lang="fi">Otsikko</descriptiveNoteValue>
+          </objectDescriptionSet>
+          <objectDescriptionSet>
+            <descriptiveNoteValue lang="fi">Näkyy description untyped.</descriptiveNoteValue>
+            <descriptiveNoteValue lang="sv">Synas description untyped.</descriptiveNoteValue>
+          </objectDescriptionSet>
+        </objectDescriptionWrap>
         <objectMeasurementsWrap>
           <objectMeasurementsSet>
             <objectMeasurements>
@@ -79,6 +99,14 @@
           </objectMeasurementsSet>                  
         </objectMeasurementsWrap>
       </objectIdentificationWrap>
+      <objectRelationWrap>
+        <subjectWrap>
+          <subjectSet>
+            <displaySubject lang="fi" label="">Näkyy subject unlabeled.</displaySubject>
+            <displaySubject label="">Näkyy subject unlabeled.</displaySubject>
+          </subjectSet>
+        </subjectWrap>
+      </objectRelationWrap>
     </descriptiveMetadata>
   </lido>
 </lidoWrap>

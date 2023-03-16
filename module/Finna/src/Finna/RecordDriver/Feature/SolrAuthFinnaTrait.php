@@ -366,6 +366,16 @@ trait SolrAuthFinnaTrait
     }
 
     /**
+     * Get an array of related publications for the record.
+     *
+     * @return array
+     */
+    public function getRelatedPublications()
+    {
+        return [];
+    }
+
+    /**
      * Is this a Person authority record?
      *
      * @return boolean
