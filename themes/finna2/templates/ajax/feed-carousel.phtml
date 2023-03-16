@@ -1,15 +1,15 @@
 <!-- START of: finna - ajax/feed-carousel.phtml -->
-<div class="carousel">
-  <?php if ($this->title || $this->translateTitle): ?>
-    <h2 class="carousel-header"><?=$this->translateTitle ? $this->transEsc($this->translateTitle) : $this->escapeHtml($this->title); ?></h2>
-  <?php endif; ?>
-  <?php if (isset($this->description)): ?>
-    <p class="additional-description"><?=$this->translate($this->description) // HTML, intentionally left unescaped ?></p>
-  <?php endif; ?>
-  <div class="carousel-feed">
+<?php if ($this->title || $this->translateTitle): ?>
+  <h2 class="carousel-header"><?=$this->translateTitle ? $this->transEsc($this->translateTitle) : $this->escapeHtml($this->title); ?></h2>
+<?php endif; ?>
+<?php if (isset($this->description)): ?>
+  <p class="additional-description"><?=$this->translate($this->description) // HTML, intentionally left unescaped ?></p>
+<?php endif; ?>
+<div class="splide__track carousel">
+  <ul class="splide__list carousel-feed">
     <?php $items = isset($this->visualItems) ? array_splice($this->items, 0, $this->visualItems) : $this->items; ?>
     <?php foreach ($items as $item): ?>
-      <div class="feed-item-holder">
+      <li class="splide__slide feed-item-holder">
         <?php if (isset($item['link'])): ?>
           <?php
             $linkElement = [];
@@ -31,8 +31,8 @@
         <?php else: ?>
           <?=$this->partial("ajax/feed-$this->type-item.phtml", compact('item', 'linkTextEsc'))?>
         <?php endif; ?>
-      </div>
+      </li>
     <?php endforeach; ?>
-  </div>
+  </ul>
 </div>
 <!-- END of: finna - ajax/feed-carousel.phtml -->

@@ -78,10 +78,21 @@ title_hold_bib_levels = a:b:m:d
 ; available for pickup). Supported values are "frozen" and "pickUpLocation".
 updateFields = frozen:pickUpLocation
 
-; Hold shelf information retrieval per hold location prefix. The example below uses
-; IMMS with settings from IMMSHelsinki section for all holds where pick up location
-; code starts with 'h'.
+; If frozen is included in updateFields above, whether to check up front if the hold
+; can be frozen. This check should only be enabled with Sierra 5.6 or later since it
+; is known to be very slow in prior versions. Default is false.
+checkFreezability = true
+
+; Hold shelf information retrieval per hold location prefix.  The setting is a
+; colon-separated string where first part is the handler, second part is
+; configuration section and optional third part contains any handler-specific
+; parameters that get passed to it.
+; The example below uses IMMS with settings from IMMSHelsinki section for all holds
+; where pick up location code starts with 'h'.
 ;holdShelfHandler[h] = "IMMS:IMMSHelsinki"
+; The example below uses BMA with settings from BMAEspoo section for all holds
+; where pick up location code starts with 'e01'.
+;holdShelfHandler[e01] = "BMA:BMAEspoo:53"
 
 ; IMMS configuration
 [IMMSHelsinki]
@@ -97,6 +108,10 @@ queryWsdl = ""
 username = ""
 ; API password
 password = ""
+
+[BMAEspoo]
+apiKey = ""
+url = ""
 
 ; This section allows modification of the default mapping from item status codes to
 ; VuFind item statuses

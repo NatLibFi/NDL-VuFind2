@@ -165,8 +165,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'rights' => [
                             'copyright' => 'CC BY 4.0',
                             'description' => [
-                                0 => 'Tässä on kuvien copyright.',
-                                1 => 'Tässä on kuvien copyright.'
+                                0 => 'Tässä on kuvien copyright.'
                             ]
                         ],
                         'highResolution' => [],
@@ -502,6 +501,79 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Function to get expected summary data
+     *
+     * @return array
+     */
+    public function getSummaryData()
+    {
+        return [
+            [
+                'lido_test.xml',
+                [
+                    'Visible description.',
+                    'Visible subject labeled.'
+                ],
+                [],
+                'en-gb'
+
+            ],
+            [
+                'lido_test2.xml',
+                [
+                    'näkyy partial.',
+                    'Näkyy kokonaan.',
+                    'Näkyy description untyped.',
+                    'Näkyy subject unlabeled.'
+                ],
+                ['title' => 'Otsikko'],
+                'fi'
+            ],
+            [
+                'lido_test.xml',
+                [
+                    'Näkyy description typed.',
+                    'Visible description.',
+                    'Visible subject labeled.',
+                    'Näkyy subject labeled.',
+                    'Synas subject labeled.'
+                ],
+                [],
+                'xy'
+            ]
+        ];
+    }
+
+    /**
+     * Test getSummary()
+     *
+     * @param string $xmlFile Xml record to use for the test
+     * @param array $expected Expected results from function
+     * @param array $rawData  The additional tested data
+     *
+     * @dataProvider getSummaryData
+     */
+    public function testGetSummary(
+        $xmlFile,
+        $expected,
+        $rawData,
+        $language
+    ) {
+        $translator = $this
+            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+        $translator->setLocale($language);
+        $driver = $this->getDriver($xmlFile, [], [], $rawData);
+        $driver->setTranslator($translator);
+        $this->assertEquals(
+            $expected,
+            $driver->getSummary()
+        );
+    }
+
+    /**
      * Get a record driver with fake data
      *
      * @param string $recordXml    Xml record to use for the test
@@ -513,7 +585,8 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     protected function getDriver(
         string $recordXml,
         $overrides = [],
-        $searchConfig = []
+        $searchConfig = [],
+        $rawData = []
     ): SolrLido {
         $fixture = $this->getFixture("lido/$recordXml", 'Finna');
         $config = [
@@ -532,14 +605,15 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             $config,
             new \Laminas\Config\Config($searchConfig)
         );
-        $record->setRawData(
-            [
-                'id' => 'knp-247394',
-                'fullrecord' => $fixture,
-                'usage_rights_str_mv' => [
-                    'usage_A'
-                ]
+        $defaultData = [
+            'id' => 'knp-247394',
+            'fullrecord' => $fixture,
+            'usage_rights_str_mv' => [
+                'usage_A'
             ]
+        ];
+        $record->setRawData(
+            array_merge($defaultData, $rawData)
         );
         return $record;
     }

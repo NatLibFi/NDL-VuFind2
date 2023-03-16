@@ -1,0 +1,48 @@
+<?php
+    static $i = 1;
+    foreach ($documents as $document):
+        $language = $this->layout()->userLang;
+        $description = $document['description'] ?: $this->translate('Download the file');
+        $rights = $this->driver->getAccessRestrictionsType($language);
+        $rightsDescription = $this->driver->getAccessRestrictions($language);
+        $hasLink = isset($rights['link']) && !empty($rights['link']);
+    ?>
+    <li class="fulltextField">
+        <div class="link-wrapper">  
+            <a href="<?=$this->escapeHtmlAttr($this->url('record-downloadfile', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $i, 'format' => $document['format'], 'type' => 'document']]))?>" target="_blank" download>
+                <i class="fa fa-download" aria-hidden="true"></i>
+                <?=$this->escapeHtml($description)?>
+            </a>
+            <div class="copyright-wrapper">
+                <span>
+                    (<?=$this->escapeHtml($document['format'])?><?php if ($rights) { ?>:<?php } ?>
+                </span>
+                <span class="copyright-icons">
+                    <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $rights['copyright']])?>
+                </span>
+                <?php if ($hasLink): ?>
+                    <a class="copyright-description" href="<?=$this->escapeHtml($rights['link'])?>" target="_blank"><?=$this->escapeHtmlAttr($rights['copyright'])?></a>
+                <?php else: ?>
+                <span>
+                    <?=$this->escapeHtml($rights['copyright']);?>
+                </span>
+                <?php endif; ?>
+                <button class="show-hide-button show-info more-link collapsed" data-toggle="collapse" data-target="#cc_info_<?= $i ?>" aria-expanded="false">
+                    <?=$this->transEsc('copyright_info_show')?> <?=$this->icon('truncate-more')?>
+                </button><span>)</span>
+            </div>
+        </div>
+        <div id="cc_info_<?= $i ?>" class="cc-info collapse">
+            <?php foreach ($rightsDescription as $item): ?>
+                <p class="access-rights"><?=$this->escapeHtml((string)$item);?></p>
+            <?php endforeach; ?>
+            <button class="hide-info less-link" data-toggle="collapse" data-target="#cc_info_<?= $i ?>" aria-expanded="false">
+                <?=$this->transEsc('copyright_info_hide')?> <?=$this->icon('truncate-less')?>
+            </button>
+        </div>
+        
+    </li>
+<?php
+    $i++;
+    endforeach;
+?>

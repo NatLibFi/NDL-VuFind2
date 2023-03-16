@@ -3,7 +3,15 @@
   <div class="truncate-field">
     <?php foreach ($data as $publication): ?>
       <div class="related-publications">
-        <?=$this->escapeHtml($publication['title'])?><?php if (!empty($publication['label'])): ?> (<?=$this->escapeHtml($publication['label'])?>)<?php endif; ?>
+        <?php if (!empty($publication['url'])): ?>
+          <a href="<?=$this->escapeHtmlAttr($publication['url'])?>" target="_blank" aria-label="<?=$this->escapeHtmlAttr($publication['title'])?> (<?=$this->transEscAttr('external_link')?>; <?=$this->transEscAttr('Open in a new window')?>)">
+            <?=$this->icon('external-link') ?>
+            <?=$this->escapeHtml($publication['title'])?>
+          </a>
+          <?php if (!empty($publication['label'])): ?> (<?=$this->escapeHtml($publication['label'])?>)<?php endif; ?>
+        <?php else: ?>
+            <?=$this->escapeHtml($publication['title'])?><?php if (!empty($publication['label'])): ?> (<?=$this->escapeHtml($publication['label'])?>)<?php endif; ?>
+        <?php endif; ?>
       </div>
     <?php endforeach; ?> 
   </div>

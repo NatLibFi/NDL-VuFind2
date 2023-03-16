@@ -224,7 +224,7 @@ implements \Laminas\Log\LoggerAwareInterface
                 }
             }
         }
-        return $restrictions;
+        return array_unique($restrictions);
     }
 
     /**
@@ -1017,7 +1017,8 @@ implements \Laminas\Log\LoggerAwareInterface
                     $term = $termLC != 'julkaisu' ? $term : '';
                     $results[] = [
                       'title' => $title,
-                      'label' => $label ?: $term
+                      'label' => $label ?: $term,
+                      'url' => ''
                     ];
                 }
             }
@@ -1774,15 +1775,18 @@ implements \Laminas\Log\LoggerAwareInterface
                 $headings = array_merge($headings, (array)$this->fields[$field]);
             }
         }
-        // Include all display dates from events
+        // Include all display dates from events except creation date
         foreach ($this->getXmlRecord()->lido->descriptiveMetadata->eventWrap
             ->eventSet ?? [] as $node) {
-            if (!empty($node->eventDate->displayDate)) {
-                $date = (string)($this->getLanguageSpecificItem(
-                    $node->eventDate->displayDate,
-                    $language
-                ));
-                if ($date) {
+            $type = isset($node->event->eventType->term)
+                ? mb_strtolower((string)$node->event->eventType->term, 'UTF-8') : '';
+            if ($type !== 'valmistus') {
+                $displayDate = $node->event->eventDate->displayDate;
+                if (!empty($displayDate)) {
+                    $date = (string)($this->getLanguageSpecificItem(
+                        $displayDate,
+                        $language
+                    ));
                     $headings[] = $date;
                 }
             }
@@ -2065,8 +2069,66 @@ implements \Laminas\Log\LoggerAwareInterface
                 return $item;
             }
         }
-
         return $element;
+    }
+
+    /**
+     * Get all fitting language-specific items from an element array
+     *
+     * @param array  $elements Array of elements to use
+     * @param string $language Language to look for
+     *
+     * @return array
+     */
+    protected function getAllLanguageSpecificItems(
+        array $elements,
+        string $language
+    ): array {
+        $languages = [];
+        $items = [];
+        $allItems = [];
+        if ($language) {
+            $languages[] = $language;
+            if (strlen($language) > 2) {
+                $languages[] = substr($language, 0, 2);
+            }
+        }
+        foreach ($elements as $item) {
+            if ('' !== trim((string)$item)) {
+                $allItems[] = $item;
+                $attrs = $item->attributes();
+                if (!empty($attrs->lang)
+                    && in_array((string)$attrs->lang, $languages)
+                ) {
+                    $items[] = $item;
+                }
+            }
+        }
+        // Return either language specific results or all given items.
+        return $items ?: $allItems;
+    }
+
+    /**
+     * Compare the title of current object with items from given array as titles
+     *
+     * @param array $compare An array of items to compare
+     *
+     * @return array
+     */
+    protected function compareWithTitle(array $compare): array
+    {
+        $compareDone = [];
+        $title = str_replace([',', ';'], '', $this->getTitle());
+        $compareFull = str_replace([',', ';'], '', implode(' ', $compare));
+        if ($compareFull != $title) {
+            foreach ($compare as $item) {
+                $checkTitle = str_replace([',', ';'], ' ', (string)$item) != $title;
+                if ($checkTitle) {
+                    $compareDone[] = (string)$item;
+                }
+            }
+        }
+        return array_unique($compareDone);
     }
 
     /**
@@ -2076,39 +2138,111 @@ implements \Laminas\Log\LoggerAwareInterface
      */
     public function getSummary()
     {
-        $results = [];
-        $label = null;
-        $title = str_replace([',', ';'], ' ', $this->getTitle());
-        foreach ($this->getXmlRecord()->xpath(
-            'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet'
-        ) as $node) {
-            $subject = $node->displaySubject;
-            $checkTitle = str_replace([',', ';'], ' ', (string)$subject) != $title;
-            foreach ($subject as $attributes) {
-                $label = $attributes->attributes()->label;
-                if (($label == 'aihe' || $label == null) && $checkTitle) {
-                    $results[] = (string)$subject;
+        $collected = [];
+        $descriptions = [];
+        $descriptionsTyped = [];
+        $descriptionsUntyped = [];
+        $subjectsLabeled = [];
+        $subjectsUnlabeled = [];
+        $titleValues = [];
+        $language = $this->getLocale();
+        //Collect all fitting description objects
+        foreach ($this->getXmlRecord()->lido->descriptiveMetadata
+            ->objectIdentificationWrap->objectDescriptionWrap->objectDescriptionSet
+            ?? [] as $node) {
+            $type = $node->attributes()->type;
+            //Descriptions divided to typed and untyped
+            foreach ($node->descriptiveNoteValue ?? [] as $desc) {
+                if ($type == 'description') {
+                    $descriptionsTyped[] = $desc;
+                } elseif (empty($type)) {
+                    $descriptionsUntyped[] = $desc;
                 }
             }
         }
-
-        $preferredLanguages = $this->getPreferredLanguageCodes();
-        foreach ($this->getXmlRecord()->xpath(
-            'lido/descriptiveMetadata/objectIdentificationWrap/objectDescriptionWrap'
-            . '/objectDescriptionSet[@type="description"]/descriptiveNoteValue'
-        ) as $node) {
-            if (in_array((string)$node->attributes()->lang, $preferredLanguages)) {
-                if ($term = trim((string)$node)) {
-                    $results[] = $term;
+        //Collect all fitting subject objects
+        foreach ($this->getXmlRecord()->lido->descriptiveMetadata
+            ->objectRelationWrap->subjectWrap->subjectSet ?? [] as $node) {
+            foreach ($node->displaySubject ?? [] as $subj) {
+                $label = $subj->attributes()->label;
+                //Subjects divided to labeled and unlabeled
+                if ($label == 'aihe') {
+                    $subjectsLabeled[] = $subj;
+                } elseif ($label == '') {
+                    $subjectsUnlabeled[] = $subj;
                 }
             }
         }
-
-        if (!$results && !empty($this->fields['description'])) {
-            $results[] = (string)($this->fields['description']) != $title
-                ? (string)$this->fields['description'] : '';
+        //Check for matching language variations
+        if ($descriptionsTyped ?: $descriptionsUntyped) {
+            $collectedDesc = $this->getAllLanguageSpecificItems(
+                $descriptionsTyped ?: $descriptionsUntyped,
+                $language
+            );
+            //Discard values matching the object title
+            $collected = $this->compareWithTitle($collectedDesc);
+            foreach ($collected as $item) {
+                $descriptions[] = (string)$item;
+            }
         }
-        return array_unique($results);
+        if ($subjectsLabeled ?: $subjectsUnlabeled) {
+            $collectedSubj = $this->getAllLanguageSpecificItems(
+                $subjectsLabeled ?: $subjectsUnlabeled,
+                $language
+            );
+            $collected = $this->compareWithTitle($collectedSubj);
+            foreach ($collected as $item) {
+                $descriptions[] = (string)$item;
+            }
+        }
+
+        //Collect all titles to be checked
+        $displayTitle = $this->getTitle();
+        foreach ($this->getXmlRecord()->lido->descriptiveMetadata
+            ->objectIdentificationWrap->titleWrap->titleSet
+            ?? [] as $node
+        ) {
+            foreach ($node->appellationValue ?? [] as $title) {
+                $pref = (string)($title->attributes()->pref ?? '');
+                $titleValues[] = $title;
+                if ($pref === 'preferred' || $pref === 'alternate') {
+                    $titlesNotInDesc[] = $title;
+                }
+            }
+        }
+        //Get language specific titles
+        if ($titleValues) {
+            $titleValues = $this->getAllLanguageSpecificItems(
+                $titleValues,
+                $language
+            );
+            //Discard values matching the object title
+            $titleValues = $this->compareWithTitle($titleValues);
+            //Discard values matching the alternate titles
+            if (isset($titlesNotInDesc)) {
+                $titleValues = array_diff($titleValues, $titlesNotInDesc);
+            }
+            //Check for partial titles
+            $checkWord = preg_replace('/[^a-zA-Z0-9]/', '', $displayTitle);
+            $checkLength = strlen($checkWord);
+            foreach ($titleValues as $title) {
+                $checkItem = preg_replace('/[^a-zA-Z0-9]/', '', (string)$title);
+                if (strncmp($checkItem, $checkWord, $checkLength) == 0
+                    && $checkLength !== strlen($checkItem)
+                ) {
+                    $title = ltrim(substr($title, strlen($displayTitle)), ' .,;:!?');
+                    $collectedTitles[] = (string)$title;
+                } elseif ($displayTitle !== $title) {
+                    $collectedTitles[] = (string)$title;
+                }
+            }
+            //Add titles to the beginning of descriptions
+            if (isset($collectedTitles)) {
+                $descriptions = array_merge($collectedTitles, $descriptions);
+            }
+        }
+
+        return $descriptions;
     }
 
     /**

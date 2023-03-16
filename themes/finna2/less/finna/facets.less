@@ -194,8 +194,13 @@
         font-size: 1.4em;
     }
     .jstree-ocl:before {
-      width: 32px;
+      width: 22px;
     }
+  }
+
+  // Allow wrapping for facet_usage_rights_ext_str_mv
+  #facet_usage_rights_ext_str_mv li span.main {
+    white-space: inherit;
   }
 }
 
@@ -340,9 +345,14 @@ span.badge.cb-facet {
 }
 
 .sidebar {
+  .facet-info-header {
+    font-size: 0.9em;
+    font-weight: 600;
+    padding: 10px 0 10px 8px;
+  }
   .facet-info {
-    margin-left: 8px;
-    margin-right: 8px;
+    margin-left: 0;
+    margin-right: 0;
     margin-bottom: 10px;
     padding: 5px;
     font-size: 0.9em;
@@ -362,6 +372,11 @@ span.badge.cb-facet {
       display: block;
       margin-top: 3px;
     }
+  }
+  .list-group.facet .collapse .list-group-item.facet-info-highlight {
+    &:extend(.alert);
+    &:extend(.alert-info);
+    padding: 8px;
   }
 }
 

@@ -51,105 +51,61 @@ class FinnaFeedElement extends HTMLElement {
   }
 
   /**
-   * Adjust slides. Useful when the screen size changes so the elements
-   * look as they should.
-   */
-  adjustSlides() {
-    const slide = this.querySelectorAll('.slick-slide');
-    const newWidth = slide[0].getBoundingClientRect.width - 20;
-    slide.forEach(el => {
-      el.style.height = this.slideHeight;
-      el.style.maxHeight = this.slideHeight;
-      el.firstChild.style.height = '100%';
-      el.classList.add('adjusted-height');
-    });
-    this.querySelectorAll('.carousel-slide-header p, .carousel-text').forEach (el => {
-      el.getBoundingClientRect().width = newWidth;
-    });
-  }
-
-  /**
    * Adjust titles. Useful when the screen size changes so the elements
    * look as they should.
+   *
+   * @param settings Carousel settings
    */
-  adjustTitles() {
+  setTitleBottom(settings) {
     // Move title field below image
     let maxH = 0;
-    this.querySelectorAll('.carousel-feed .slick-slide .carousel-slide-header p').forEach(el => {
-      maxH = Math.max(maxH, el.getBoundingClientRect().height);
+    this.querySelectorAll('.carousel-slide-header p').forEach(el => {
+      maxH = Math.max(maxH, el.getBoundingClientRect().height + 10);
       el.classList.add('title-bottom');
+      el.parentNode.classList.add('title-bottom');
     });
-    this.querySelectorAll('.carousel-feed .slick-list').forEach(el => {
-      el.style.paddingBottom = `${maxH}px`;
+    this.querySelectorAll('.carousel-slide-header, .carousel-slide-header p').forEach(el => {
+      el.style.minHeight = el.style.height = `${maxH}px`;
     });
-    this.querySelectorAll('.carousel-feed .slick-slide .carousel-text').forEach(el => {
-      el.classList.add('text-bottom');
+    this.querySelectorAll('.carousel-feed .carousel-text').forEach(el => {
+      const textElement = el.querySelector('div.text p');
+      if (!textElement) {
+        return;
+      }
+      if (textElement.innerHTML.trim() !== '') {
+        el.classList.add('text-bottom');
+        el.style.maxHeight = `${settings.height}px`;
+      } else {
+        el.classList.add('no-text');
+      }
     });
+    settings.height = +settings.height + maxH;
   }
 
   /**
-   * Get splide js settings.
-   *
-   * @param {object} settings Settings obtained from JSON request to backend.
-   * @returns 
+   * Create autoplay button.
    */
-  getCarouselSettings(settings) {
-    var autoplay = typeof settings.autoplay !== 'boolean' ? parseInt(settings.autoplay, 10) : 0;
-    return {
-      dots: settings.dots,
-      swipe: !settings.vertical,
-      infinite: true,
-      prevArrow: '<button class="slick-prev" type="button">'
-        + '<span class="slick-prev-icon" aria-hidden="true"></span>'
-        + '<span class="slick-sr-only">' + VuFind.translate("Prev") + '</span>'
-        + '</button>',
-      nextArrow: '<button class="slick-next" type="button">'
-        + '<span class="slick-next-icon" aria-hidden="true"></span>'
-        + '<span class="slick-sr-only">' + VuFind.translate("Next") + '</span>'
-                + '</button>',
-      regionLabel: VuFind.translate("Image Carousel"),
-      customPaging: function initCustomPaging(slider, i) {
-        return $('<button type="button">'
-         + '<span class="slick-dot-icon" aria-hidden="true"></span>'
-         + '<span class="slick-sr-only">' + VuFind.translate("Go to slide") + ' ' + (i + 1) + '</span>'
-         + '</button>');
-      },
-      touchThreshold: 8,
-      autoplay: autoplay !== 0,
-      autoplaySpeed: autoplay,
-      useAutoplayToggleButton: false,
-      slidesToShow: settings.slidesToShow.desktop,
-      slidesToScroll: settings.scrolledItems.desktop,
-      speed: this.calculateScrollSpeed(settings.scrolledItems.desktop, settings.scrollSpeed),
-      vertical: settings.vertical,
-      lazyLoad: (typeof settings.lazyLoad !== 'undefined') ? settings.lazyLoad : 'ondemand',
-      responsive: [
-        {
-          breakpoint: 1200,
-          settings: {
-            slidesToShow: settings.slidesToShow['desktop-small'],
-            slidesToScroll: settings.scrolledItems['desktop-small'],
-            speed: this.calculateScrollSpeed(settings.scrolledItems['desktop-small'], settings.scrollSpeed)
-          }
-        },
-        {
-          breakpoint: 992,
-          settings: {
-            slidesToShow: settings.slidesToShow.tablet,
-            slidesToScroll: settings.scrolledItems.tablet,
-            speed: this.calculateScrollSpeed(settings.scrolledItems.tablet, settings.scrollSpeed)
-          }
-        },
-        {
-          breakpoint: 768,
-          settings: {
-            slidesToShow: settings.slidesToShow.mobile,
-            slidesToScroll: settings.scrolledItems.mobile,
-            speed: this.calculateScrollSpeed(settings.scrolledItems.mobile, settings.scrollSpeed)
-          }
-        }
-      ]
-    };
+  createAutoplayButton() {
+    const autoPlayButton = document.createElement('button');
+    autoPlayButton.className = 'splide__toggle autoplay-button';
+    autoPlayButton.type = 'button';
+
+    const playSpan = document.createElement('span');
+    playSpan.className = 'sr-only';
+    playSpan.innerHTML = VuFind.translate('Carousel::Start Autoplay');
+    const playIcon = document.createElement('i');
+    playIcon.className = 'fa fa-play-circle splide__toggle__play play-icon';
+    playIcon.append(playSpan);
+
+    const pauseSpan = document.createElement('span');
+    pauseSpan.className = 'sr-only';
+    pauseSpan.innerHTML = VuFind.translate('Carousel::Stop Autoplay');
+    const pauseIcon = document.createElement('i');
+    pauseIcon.className = 'splide__toggle__pause fa fa-pause-circle pause-icon';
+    pauseIcon.append(pauseSpan);
+
+    autoPlayButton.append(playIcon, pauseIcon);
+    this.append(autoPlayButton);
   }
 
   /**
@@ -167,61 +123,37 @@ class FinnaFeedElement extends HTMLElement {
       const type = settings.type;
       const carousel = ['carousel', 'carousel-vertical'].includes(type);
       if (carousel) {
-        const noContent = holder.querySelectorAll('.feed-item-holder').length === 0;
-        if (noContent) {
+        const hasContent = holder.querySelector('.carousel-feed > li, .carousel-feed > div');
+        if (!hasContent) {
           holder.style.display = 'none';
           holder.innerHTML = `<!-- No content received -->`;
           return;
         }
+        this.classList.add('splide');
+
+        if (settings.autoplay && settings.autoplay > 0) {
+          this.createAutoplayButton();
+        }
+
         const vertical = 'carousel-vertical' === settings.type;
         settings.vertical = vertical;
-        const feedObject = holder.querySelector('.carousel-feed');
-
-        // Slick depends on jquery
-        $(feedObject).slick(this.getCarouselSettings(settings));
-
+        this.splide = finna.carouselManager.createCarousel(this, settings);
         var titleBottom = typeof settings.titlePosition !== 'undefined' && settings.titlePosition === 'bottom';
-
-        var callbacks = {};
-        callbacks.resize = () => {
-          this.adjustSlides();
-          if (titleBottom) {
-            this.adjustTitles();
-          }
-        };
-
-        // Call resize on fixed intervals
-        $(window).on('throttled-resize.finna', function resizeWindow() {
-          callbacks.resize();
-        });
-        this.slideHeight = `${settings.height}px`;
         if (!vertical) {
-          this.adjustSlides();
-
           if (titleBottom) {
-            this.adjustTitles();
-            holder.querySelectorAll('.carousel-hover-title, .carousel-hover-date').forEach(el => {
+            holder.setTitleBottom(settings);
+            holder.querySelectorAll('.carousel-hover-title').forEach(el => {
               el.style.display = 'none';
             });
-          } else {
             holder.querySelectorAll('.carousel-hover-date').forEach(el => {
               el.style.display = 'none';
             });
+            // Update the height of the splide component for title-bottom to display properly
+            this.splide.options = {
+              height: settings.height
+            };
           }
         }
-        holder.querySelectorAll('.slick-track, .slick-slide').forEach(el => {
-          el.style.height = this.slideHeight;
-          el.style.maxHeight = this.slideHeight;
-        });
-        const sliderDots = this.querySelectorAll('ul.slick-dots li');
-        holder.querySelector('.slick-slider').addEventListener('afterChange', function onAfterChange() {
-          sliderDots.forEach(el => {
-            el.removeAttribute('aria-current');
-            if (el.classList.contains('active')) {
-              el.setAttribute('aria-current', true);
-            }
-          });
-        });
 
         // Text hover for touch devices
         if (finna.layout.isTouchDevice() && typeof settings.linkText === 'undefined') {
@@ -229,13 +161,13 @@ class FinnaFeedElement extends HTMLElement {
             el.style.paddingBottom = '30px';
           });
           const onSlideClick = function onSlideClick () {
-            const slide = this.closest('.slick-slide');
+            const slide = this.closest('.feed-item-holder');
             if (slide && !slide.classList.contains('clicked')) {
               slide.classList.add('clicked');
               return false;
             }
           };
-          holder.querySelectorAll('.slick-slide a, .slick-slide').forEach(el => {
+          holder.querySelectorAll('.feed-item-holder a, .feed-item-holder').forEach(el => {
             el.addEventListener('click', onSlideClick);
           }); 
         } else {
@@ -337,7 +269,11 @@ class FinnaFeedElement extends HTMLElement {
           this.cache.push(cacheObject);
           this.buildFeedDom(responseJSON);
         }).catch((responseJSON) => {
-          holder.innerHTML = `<!-- Feed could not be loaded: ${responseJSON.data || ''} -->`;
+          // The catch will catch all the js errors in buildFeedDom, so display a warning
+          // if something happens
+          console.error(responseJSON);
+          holder.innerHTML
+            = `<!-- Feed could not be loaded: ${responseJSON.data || ''} -->`;
         });
     }
 

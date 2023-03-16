@@ -63,6 +63,29 @@ class SolrAuthEaccpfTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($titles, $driver->getAlternativeTitles());
     }
 
+    public function testGetRelatedPublications()
+    {
+        $driver = $this->getDriver();
+        $publications = [
+          [
+            'title' => 'Kansallisbiografia',
+            'label' => '',
+            'url' => 'https://kansallisbiografia.fi/'
+          ],
+          [
+            'title' => 'Ylioppilasmatrikkeli 1983',
+            'label' => '',
+            'url' => 'https://ylioppilasmatrikkeli.helsinki.fi/1853-1899/'
+          ],
+          [
+            'title' => 'Julkaisu ilman linkkiä',
+            'label' => '',
+            'url' => ''
+          ]
+        ];
+        $this->assertEquals($publications, $driver->getRelatedPublications());
+    }
+
     /**
      * Get a record driver with fake data.
      *

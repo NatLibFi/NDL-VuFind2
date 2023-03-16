@@ -23,6 +23,20 @@
         </classificationWrap>
       </objectClassificationWrap>
       <objectIdentificationWrap>
+      <objectDescriptionWrap>
+        <objectDescriptionSet type="introduction">
+          <descriptiveNoteValue lang="fi" label="esittely">Ei saa näkyä.</descriptiveNoteValue>
+        </objectDescriptionSet>
+        <objectDescriptionSet type="description">
+          <descriptiveNoteValue lang="fi" label="kuvaus">Näkyy description typed.</descriptiveNoteValue>
+        </objectDescriptionSet>
+        <objectDescriptionSet type="description">
+          <descriptiveNoteValue lang="en" label="description">Visible description.</descriptiveNoteValue>
+        </objectDescriptionSet>
+        <objectDescriptionSet>
+            <descriptiveNoteValue label="CAPTION">Ei näy description untyped.</descriptiveNoteValue>
+        </objectDescriptionSet>
+      </objectDescriptionWrap>
         <objectMeasurementsWrap>
           <objectMeasurementsSet>
             <displayObjectMeasurements label="extent">1001 neliömetriä</displayObjectMeasurements>
@@ -56,6 +70,17 @@
           </objectMeasurementsSet>
         </objectMeasurementsWrap>
       </objectIdentificationWrap>
+       <objectRelationWrap>
+        <subjectWrap>
+          <subjectSet>
+            <displaySubject lang="en" label="aihe">Visible subject labeled.</displaySubject>
+            <displaySubject lang="fi" label="aihe">Näkyy subject labeled.</displaySubject>
+            <displaySubject lang="sv" label="aihe">Synas subject labeled.</displaySubject>
+            <displaySubject label="">Ei näy subject unlabeled.</displaySubject>
+            <displaySubject>Ei näy, no label.</displaySubject>
+          </subjectSet>
+        </subjectWrap>
+      </objectRelationWrap>
       <eventWrap>
         <eventSet>
           <event>

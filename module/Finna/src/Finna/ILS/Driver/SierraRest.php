@@ -731,11 +731,24 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         if ($handlerConfig) {
             $type = $handlerConfig['type'];
             $config = $handlerConfig['config'];
+            $params = $handlerConfig['params'];
             try {
                 switch ($type) {
+                    case 'BMA':
+                        $result = $this->getHoldShelfWithBMA(
+                            $config,
+                            $params,
+                            $hold,
+                            $patron
+                        );
+                        break;
                     case 'IMMS':
-                        $result
-                            = $this->getHoldShelfWithIMMS($config, $hold, $patron);
+                        $result = $this->getHoldShelfWithIMMS(
+                            $config,
+                            $params,
+                            $hold,
+                            $patron
+                        );
                         break;
                     default:
                         $this->logError("Unknown hold shelf handler: $type");
@@ -760,7 +773,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      *
      * @param array $hold Hold
      *
-     * @return ?array handler and config, or null if not found
+     * @return ?array handler, config and params, or null if not found
      */
     protected function getHoldShelfHandlerConfig(array $hold): ?array
     {
@@ -773,8 +786,9 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 $config = !empty($parts[1])
                     ? ($this->config[$parts[1]] ?? null)
                     : null;
+                $params = $parts[2] ?? '';
                 if ($type && $config) {
-                    return compact('type', 'config');
+                    return compact('type', 'config', 'params');
                 }
             }
             $location = substr($location, 0, -1);
@@ -786,6 +800,70 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      * Get hold shelf for an available hold with IMMS
      *
      * @param array $config IMMS configuration
+     * @param array $params Extra parameters
+     * @param array $hold   Hold
+     * @param array $patron The patron array from patronLogin
+     *
+     * @return string
+     */
+    protected function getHoldShelfWithBMA(
+        array $config,
+        string $params,
+        array $hold,
+        array $patron
+    ): string {
+        foreach (['apiKey', 'url'] as $key) {
+            if (empty($config[$key])) {
+                $this->logError("BMA config missing $key");
+                throw new ILSException('Problem with BMA configuration');
+            }
+        }
+
+        $itemId = $hold['item_id'];
+        if (!($barcode = $this->getItemBarcode($itemId, $patron))) {
+            $this->logError("Could not retrieve barcode for item $itemId");
+            return '';
+        }
+
+        $url = $config['url'] . 'reservation/apikey/company/'
+            . ((int)$params) . '/null/null/null/' . urlencode($barcode)
+            . '/null/null/null/null/null/null/null';
+        try {
+            $response = $this->httpService->get(
+                $url,
+                [],
+                null,
+                [
+                    'Authorization: Bearer ' . $config['apiKey']
+                ]
+            );
+            if (!$response->isSuccess()) {
+                throw new \Exception(
+                    "BMA request $url failed: " . $response->getReasonPhrase(),
+                    $response->getStatusCode()
+                );
+            }
+            $data = json_decode($response->getBody(), true);
+            $indexVar = $data['data'][0]['index_var'] ?? null;
+            $indexDayId = $data['data'][0]['index_day_id'] ?? null;
+            if (null === $indexVar || null === $indexDayId) {
+                throw new \Exception(
+                    "index_var or index_day_id not found in BMA response for $url: "
+                    . $response->getBody()
+                );
+            }
+            return "$indexVar $indexDayId";
+        } catch (\Exception $e) {
+            throw new ILSException("BMA request $url failed", $e->getCode(), $e);
+        }
+        return '';
+    }
+
+    /**
+     * Get hold shelf for an available hold with IMMS
+     *
+     * @param array $config IMMS configuration
+     * @param array $params Extra parameters
      * @param array $hold   Hold
      * @param array $patron The patron array from patronLogin
      *
@@ -793,6 +871,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      */
     protected function getHoldShelfWithIMMS(
         array $config,
+        string $params,
         array $hold,
         array $patron
     ): string {
@@ -803,24 +882,10 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             }
         }
 
-        $cacheKeyToken = 'token|' . md5(var_export($config, true));
+        $cacheKeyToken = 'imms|' . md5(var_export($config, true));
 
         $itemId = $hold['item_id'];
-        // Get item barcode using same request as elsewhere for cacheability
-        $item = $this->makeRequest(
-            [$this->apiBase, 'items', $itemId],
-            ['fields' => 'bibIds,varFields'],
-            'GET',
-            $patron
-        );
-        $barcode = '';
-        foreach ($item['varFields'] ?? [] as $field) {
-            if ('b' === $field['fieldTag']) {
-                $barcode = $field['content'];
-                break;
-            }
-        }
-        if (!$barcode) {
+        if (!($barcode = $this->getItemBarcode($itemId, $patron))) {
             $this->logError("Could not retrieve barcode for item $itemId");
             return '';
         }
@@ -896,6 +961,31 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             ]
         );
         return (string)$response->Token;
+    }
+
+    /**
+     * Get item barcode
+     *
+     * @param string $itemId Item ID
+     * @param array  $patron The patron array from patronLogin
+     *
+     * @return string
+     */
+    protected function getItemBarcode(string $itemId, array $patron): string
+    {
+        // Get item barcode using same request as elsewhere for cacheability
+        $item = $this->makeRequest(
+            [$this->apiBase, 'items', $itemId],
+            ['fields' => 'bibIds,varFields'],
+            'GET',
+            $patron
+        );
+        foreach ($item['varFields'] ?? [] as $field) {
+            if ('b' === $field['fieldTag']) {
+                return $field['content'];
+            }
+        }
+        return '';
     }
 
     /**

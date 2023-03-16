@@ -1,8 +1,6 @@
 <?php
-static $idIndex = 0;
-++$idIndex;
 $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $this->driver->getUniqueId());
-$fieldId = "$safeId-$idIndex";
+$fieldId = "$safeId-{$this->fieldIndex}";
 $aAttrsBase = [
   'class' => $this->classes,
   'href' => '#',
@@ -49,6 +47,6 @@ $additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-a
         <?php endif; ?>
       <?php endif; ?>
     </div>
-    <a href="#" class="hide-info"><span class="link-text"><?=$this->translate('field_hide_info')?></a>
+    <a href="#" class="hide-info"><span class="link-text"><?=$this->translate('field_hide_info')?></span></a>
   </div>
 </div>
