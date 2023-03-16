@@ -135,6 +135,9 @@
                 <?php if (isset($row['availabilityInfo']['total'])): ?>
                   / <?=$row['availabilityInfo']['total']?>
                 <?php endif; ?>
+                <?php if ($branches): ?>
+                  <?=$this->callnumber()->callnumber($this->driver->tryMethod('getDataSource'), $this->driver->getFullTitle(), '', $row['collection'] ?? '', $row['location'] ?? '', $this->layout()->userLang, 'record', $row, true)?>
+                <?php endif; ?>
               </div>
             <?php endif; ?>
           </div>

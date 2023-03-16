@@ -234,6 +234,7 @@ finna.record = (function finnaRecord() {
     finna.layout.initLocationService();
     finna.layout.initJumpMenus($('.holdings-tab'));
     VuFind.lightbox.bind($('.holdings-tab'));
+    finna.common.initQrCodeLink($('.holdings-tab'));
   }
 
   function setupLocationsEad3Tab() {
