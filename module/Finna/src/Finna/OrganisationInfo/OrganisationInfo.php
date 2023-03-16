@@ -474,7 +474,12 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         $items = [];
         if ($json['finna_publish'] == 1) {
             $id = $json['finna_org_id'];
-            $data = "{$url}?" . http_build_query(['id' => $id]);
+            $data = "{$url}?" . http_build_query(
+                [
+                    'id' => $id,
+                    'sector' => 'mus'
+                ]
+            );
             if ($link) {
                 $logo = $json['image'] ?? '';
                 $lang = $this->getLanguage();
