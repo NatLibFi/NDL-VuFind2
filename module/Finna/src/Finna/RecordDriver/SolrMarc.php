@@ -2390,7 +2390,7 @@ implements \Laminas\Log\LoggerAwareInterface
      *
      * @return array
      */
-    public function getAccessibility(): array
+    public function getAccessibilityFeatures(): array
     {
         return $this->getFieldArray('341', ['a', 'b'], true, ': ');
     }
