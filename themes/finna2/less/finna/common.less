@@ -112,6 +112,9 @@
 }
 
 .add-to-favorite-col {
+  .qrcode {
+    min-width: 120px;
+  }
   @media (min-width: @screen-sm) {
     position: absolute;
     top: 0px;
@@ -123,21 +126,27 @@
       margin-bottom: 5px;
     }
   }
-
-  .qrcode {
-    width: 90px;
-    height: 90px;
-  }
+}
+.add-to-favorite-col, .location-link-text {
   .finnaQrcodeLink {
     background-color: @body-bg;
   }
-  .qr-box {
-    box-shadow: 0 6px 12px @gray-mid-light;
-    border: 1px solid @gray-mid-light;
-    border-radius: 10px;
-    padding: 5px;
-    background: #fff;
+}
+.location-link-text {
+  .qrcode {
+    width: 120px;
+    height: 120px;
+    max-width: inherit;
   }
+  .location-service-qrcode {
+    display: inline-block;
+  }
+}
+.branchInfo .location-link-text, .copy-info .location-link-text {
+  margin-left: 8px;
+}
+.copy-info .location-link-text {
+  float: right;
 }
 
 //== SYSTEM MESSAGES

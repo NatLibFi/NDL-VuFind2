@@ -104,23 +104,10 @@
       <div class="hidden-print hidden-xs add-to-favorite-col">
         <?php /* Add to favorites */ ?>
         <a href="<?=$this->escapeHtmlAttr($recordLinker->getActionUrl($this->driver, 'Save'))?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-heart"></i> <span class="hidden-sm hidden-md hidden-lg"><?=$this->transEsc('Add to favorites')?></span> <span class="sr-only hidden-xs"><?=$this->transEsc('Add to favorites')?></span></a>
-        <?php /* Display qrcode if appropriate: */ ?>
-        <?php if ($QRCode = $this->record($this->driver)->getQRCode("results")): ?>
-          <?php
-            // Add JS Variables for QrCode
-            $this->jsTranslations()->addStrings(['qrcode_hide' => 'qrcode_hide', 'qrcode_show' => 'qrcode_show']);
-          ?>
-          <div>
-            <a href="<?=$this->escapeHtmlAttr($QRCode);?>" class="finnaQrcodeLink" title="<?=$this->transEsc('qrcode_show')?>" rel="nofollow">
-              <i class="fa fa-qr-code" aria-hidden="true"><span class="sr-only"><?=$this->transEsc('QR Code')?></span></i>
-            </a>
-            <div class="qrcode hidden">
-              <script type="text/template" class="qrCodeImgTag">
-                <img alt="" src="<?=$this->escapeHtmlAttr($QRCode);?>"/>
-              </script>
-            </div><br/>
-          </div>
-        <?php endif; ?>
+        <?php
+          // Display qrcode if appropriate:
+          echo $this->record($this->driver)->renderTemplate('result-qrcode.phtml', ['driver' => $this->driver]);
+        ?>
       </div>
       <?php /* Saved lists */ ?>
     <?php endif; ?>
