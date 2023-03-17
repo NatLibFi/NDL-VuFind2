@@ -1640,6 +1640,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
                 'context' => ['class' => 'creator-characteristics']
             ]
         );
+
         return $lines;
     }
 
