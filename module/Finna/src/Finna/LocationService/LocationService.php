@@ -103,7 +103,9 @@ class LocationService
         }
 
         $params = [
-            'callno' => $callnumber,
+            // For some not very obvious reason we have two separate call number
+            // fields:
+            'callno' => $fields['callNo'] ?? $fields['callnumber'] ?? '',
             'collection' => $collection,
             'location' => $location,
             'branch' => $fields['branch'] ?? '',

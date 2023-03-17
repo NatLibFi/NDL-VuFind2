@@ -110,7 +110,7 @@ class Callnumber extends \Laminas\View\Helper\AbstractHelper
             $params['locationServiceModal'] = $config['modal'];
             // Extract the page from something like 'results' or 'results-online':
             [$basePage] = explode('-', $page);
-            $section = $basePage == 'results' ? 'qrCodeResults' : 'qrCodeRecord';
+            $section = $basePage === 'results' ? 'qrCodeResults' : 'qrCodeRecord';
             $params['qrCode'] = $config[$section];
         }
         return $this->getView()->render('Helpers/holding-callnumber.phtml', $params);
