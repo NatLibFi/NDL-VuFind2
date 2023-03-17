@@ -114,9 +114,10 @@
           ?>
           <?php if ($data['hint']): ?>
             <div class="help-block"><?=$this->transEsc($data['hint'])?></div>
+          <?php else: ?>
+            <div class="help-block with-errors"></div>
           <?php endif; ?>
         <?php endif; ?>
-        <div class="help-block with-errors"></div>
       </div>
     <?php endforeach; ?>
     <?php if ($currentGroup): ?>
