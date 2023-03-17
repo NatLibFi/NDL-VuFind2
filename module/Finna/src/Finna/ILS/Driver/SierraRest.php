@@ -381,10 +381,11 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     {
         // Compose a request from the fields:
         $request = [];
-        $address1 = $details['address1'] ?? '';
-        $zip = $details['zip'] ?? '';
-        $city = $details['city'] ?? '';
-        if ($address1 || $zip || $city) {
+        $addressFields = ['address1' => true, 'zip' => true, 'city' => true];
+        if (array_intersect_key($details, $addressFields)) {
+            $address1 = $details['address1'] ?? '';
+            $zip = $details['zip'] ?? '';
+            $city = $details['city'] ?? '';
             $request['addresses'][] = [
                 'lines' => array_filter(
                     [
@@ -396,20 +397,20 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'type' => 'a'
             ];
         }
-        if ($phone = $details['phone'] ?? '') {
+        if (array_key_exists('phone', $details)) {
             $request['phones'][] = [
-                'number' => $phone,
+                'number' => $details['phone'],
                 'type' => 'p'
             ];
         }
-        if ($sms = $details['smsnumber'] ?? '') {
+        if (array_key_exists('smsnumber', $details)) {
             $request['phones'][] = [
-                'number' => $sms,
+                'number' => $details['smsnumber'],
                 'type' => 't'
             ];
         }
-        if ($email = $details['email']) {
-            $request['emails'][] = $email;
+        if (array_key_exists('email', $details)) {
+            $request['emails'][] = $details['email'];
         }
         if ($homeLibrary = $details['home_library']) {
             $request['homeLibraryCode'] = $homeLibrary;
