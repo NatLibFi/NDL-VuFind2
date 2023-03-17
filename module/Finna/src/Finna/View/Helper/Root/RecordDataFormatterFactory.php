@@ -1640,14 +1640,6 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
                 'context' => ['class' => 'creator-characteristics']
             ]
         );
-        $setTemplateLine(
-            'Accessibility Feature',
-            'getAccessibilityFeatures',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'record-accessibility']
-            ]
-        );
         return $lines;
     }
 
