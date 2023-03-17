@@ -184,23 +184,12 @@
         <?php endif; ?>
 
         <div class="hidden-print add-to-favorite-col">
-            <?php /* Display qrcode if appropriate: */ ?>
-            <?php if ($QRCode = $this->record($this->driver)->getQRCode("results")): ?>
-                <?php
-                // Add JS Variables for QrCode
-                $this->jsTranslations()->addStrings(['qrcode_hide' => 'qrcode_hide', 'qrcode_show' => 'qrcode_show']);
-                ?>
-              <div class="<?= $combinedView ? 'hidden' : '' ?> hidden-xs">
-                <a href="<?=$this->escapeHtmlAttr($QRCode);?>" title="<?=$this->transEsc('qrcode_show')?>" class="finnaQrcodeLink" rel="nofollow">
-                  <i class="fa fa-qr-code" aria-hidden="true"><span class="sr-only"><?=$this->transEsc('QR Code')?></span></i>
-                </a>
-                <div class="qrcode hidden">
-                  <script type="text/template" class="qrCodeImgTag">
-                    <img alt="" src="<?=$this->escapeHtmlAttr($QRCode);?>"/>
-                  </script>
-                </div>
-              </div>
-            <?php endif; ?>
+            <?php
+              // Display qrcode if appropriate:
+              if (!$combinedView) {
+                echo $this->record($this->driver)->renderTemplate('result-qrcode.phtml', ['driver' => $this->driver]);
+              }
+            ?>
 
             <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
                 <?php /* Add to favorites */ ?>

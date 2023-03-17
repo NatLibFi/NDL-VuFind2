@@ -26,24 +26,10 @@ finna.common = (function finnaCommon() {
 
   function initQrCodeLink(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
-    // handle finna QR code links
-    holder.find('a.finnaQrcodeLink').on('click', function qrcodeToggle() {
-      var qrLink = $(this);
-      var isActive = qrLink.hasClass('active');
-      qrLink.html(isActive ? "<i class='fa fa-qr-code' aria-hidden='true'></i>" : VuFind.translate('qrcode_hide'));
-      qrLink.toggleClass('active', !isActive);
-      qrLink.parent().toggleClass('qr-box', !isActive);
 
-      var qrholder = qrLink.next('.qrcode');
-      if (qrholder.find('img').length === 0) {
-        // We need to insert the QRCode image
-        qrholder.html(qrholder.find('.qrCodeImgTag').html());
-      }
-      qrholder.toggleClass('hidden');
-      return false;
-    });
-
-    $('a.finnaQrcodeLinkRecord').on('click', function qrcodeToggleRecord() {
+    // Handle finna QR code links
+    // Note: a.finnaQrcodeLinkRecord is retained for backward compatibility
+    holder.find('a.finnaQrcodeLink,a.finnaQrcodeLinkRecord').on('click', function qrcodeToggleRecord() {
       var qrholder = $(this).parent().find('li');
       if (qrholder.find('img').length === 0) {
         // We need to insert the QRCode image

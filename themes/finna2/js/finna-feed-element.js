@@ -223,7 +223,6 @@ class FinnaFeedElement extends HTMLElement {
         feedGrid.querySelectorAll('.grid-item').forEach(el => {
           el.style.flexBasis = '100%';
         });
-        feedGrid.find('.grid-item').css('flex-basis', '100%');
       } else if (feedGrid.getBoundingClientRect().width <= 800) {
         feedGrid.querySelectorAll('.grid-item').forEach(el => {
           el.style.flexBasis = '50%';
