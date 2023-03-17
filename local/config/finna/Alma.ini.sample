@@ -268,7 +268,8 @@ method = driver
 ; emailAddress is required for the email method
 ;emailAddress =
 ; Uncomment the following lines to change which fields are included in the form.
-; Format for the fields is label:profile_field[:type][:required][:options]
+; Format for the fields is:
+; label:profile_field[:type][:required][:options][:pattern][:pattern_hint]
 ; Default is address, zip, city, country and pin. Email and phone are included unless
 ; they have their own sections [updateEmail] or [updatePhone] defined. Also custom
 ; fields can be defined.

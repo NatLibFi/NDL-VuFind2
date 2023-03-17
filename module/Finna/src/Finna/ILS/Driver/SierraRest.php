@@ -247,7 +247,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             [$this->apiBase, 'patrons', $patron['id']],
             [
                 'fields' => 'names,emails,phones,addresses,birthDate,expirationDate'
-                    . ',message'
+                    . ',message,homeLibraryCode'
             ],
             'GET',
             $patron
@@ -289,11 +289,23 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             ];
         }
 
+        $phoneType = $this->config['Profile']['phoneNumberField'] ?? 'p';
+        $smsType = $this->config['Profile']['smsNumberField'] ?? 't';
+        $phone = '';
+        $sms = '';
+        foreach ($result['phones'] ?? [] as $entry) {
+            if ($phoneType === $entry['type']) {
+                $phone = $entry['number'];
+            } elseif ($smsType === $entry['type']) {
+                $sms = $entry['number'];
+            }
+        }
+
         $profile = [
             'firstname' => $firstname,
             'lastname' => $lastname,
-            'phone' => !empty($result['phones'][0]['number'])
-                ? $result['phones'][0]['number'] : '',
+            'phone' => $phone,
+            'smsnumber' => $sms,
             'email' => !empty($result['emails']) ? $result['emails'][0] : '',
             'address1' => $address,
             'zip' => $zip,
@@ -301,6 +313,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             'birthdate' => $result['birthDate'] ?? '',
             'expiration_date' => $expirationDate,
             'messages' => $messages,
+            'home_library' => $result['homeLibraryCode'],
         ];
 
         // Checkout history:
@@ -352,6 +365,84 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             ];
         }
         return ['success' => true, 'status' => 'request_change_done'];
+    }
+
+    /**
+     * Update patron contact information
+     *
+     * @param array $patron  Patron array
+     * @param array $details Associative array of patron contact information
+     *
+     * @throws ILSException
+     *
+     * @return array Associative array of the results
+     */
+    public function updateAddress($patron, $details)
+    {
+        // Compose a request from the fields:
+        $request = [];
+        $address1 = $details['address1'] ?? '';
+        $zip = $details['zip'] ?? '';
+        $city = $details['city'] ?? '';
+        if ($address1 || $zip || $city) {
+            $request['addresses'][] = [
+                'lines' => array_filter(
+                    [
+                        $address1,
+                        trim("$zip $city"),
+                        $details['country'] ?? '',
+                    ]
+                ),
+                'type' => 'a'
+            ];
+        }
+        if ($phone = $details['phone'] ?? '') {
+            $request['phones'][] = [
+                'number' => $phone,
+                'type' => 'p'
+            ];
+        }
+        if ($sms = $details['smsnumber'] ?? '') {
+            $request['phones'][] = [
+                'number' => $sms,
+                'type' => 't'
+            ];
+        }
+        if ($email = $details['email']) {
+            $request['emails'][] = $email;
+        }
+        if ($homeLibrary = $details['home_library']) {
+            $request['homeLibraryCode'] = $homeLibrary;
+        }
+
+        $result = $this->makeRequest(
+            [
+                'v6', 'patrons', $patron['id']
+            ],
+            json_encode($request),
+            'PUT',
+            $patron,
+            true
+        );
+
+        if (!in_array($result['statusCode'], ['200', '204'])) {
+            $this->logError(
+                'Patron update request failed with status code'
+                . " {$result['statusCode']}: "
+                . (var_export($result['response'] ?? '', true))
+            );
+            return [
+                'success' => false,
+                'status' => 'profile_update_failed',
+                'sys_message' => $result['description'] ?? ''
+            ];
+        }
+
+        return [
+            'success' => true,
+            'status' => 'request_change_accepted',
+            'sys_message' => ''
+        ];
     }
 
     /**
@@ -592,6 +683,49 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             $result['selectFines'] = true;
             return $result;
         }
+        if ('updateAddress' === $function) {
+            $function = 'updateProfile';
+            $config = parent::getConfig('updateProfile', $params);
+            if (isset($config['fields'])) {
+                foreach ($config['fields'] as &$field) {
+                    $parts = explode(':', $field);
+                    $fieldLabel = $parts[0];
+                    $fieldId = $parts[1] ?? '';
+                    $fieldRequired = ($parts[3] ?? '') === 'required';
+                    if ('home_library' === $fieldId) {
+                        $locations = [];
+                        $pickUpLocations = $this->getPickUpLocations(
+                            $params['patron'] ?? false
+                        );
+                        foreach ($pickUpLocations as $current) {
+                            $locations[$current['locationID']]
+                                = $current['locationDisplay'];
+                        }
+                        $field = [
+                            'field' => $fieldId,
+                            'label' => $fieldLabel,
+                            'type' => 'select',
+                            'required' => $fieldRequired,
+                            'options' => $locations,
+                        ];
+                        if ($options = ($parts[4] ?? '')) {
+                            $field['options'] = [];
+                            foreach (explode(';', $options) as $option) {
+                                $keyVal = explode('=', $option, 2);
+                                if (isset($keyVal[1])) {
+                                    $field['options'][$keyVal[0]] = [
+                                        'name' => $keyVal[1]
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+                unset($field);
+            }
+            return $config;
+        }
+
         return parent::getConfig($function, $params);
     }
 
@@ -1047,5 +1181,21 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             );
         }
         return $result;
+    }
+
+    /**
+     * Get locations
+     *
+     * @return array
+     */
+    protected function getLocations(): array
+    {
+        // Ensure cache:
+        $this->getLocationName('*');
+        $locations = $this->getCachedData('locations');
+        if (null === $locations) {
+            throw new \Exception('Location cache not available');
+        }
+        return $locations;
     }
 }

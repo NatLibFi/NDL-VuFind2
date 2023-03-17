@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2018.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -854,25 +854,31 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $updateConfig = $catalog->checkFunction('updateAddress', compact('patron'));
         $profile = $catalog->getMyProfile($patron);
         $fields = [];
-        if (!empty($updateConfig['fields'])) {
-            foreach ($updateConfig['fields'] as $fieldConfig) {
-                if (is_array($fieldConfig)) {
-                    $fields[$fieldConfig['field']] = $fieldConfig;
-                    if (!isset($fields[$fieldConfig['field']]['required'])) {
-                        $fields[$fieldConfig['field']]['required'] = false;
-                    }
-                } else {
-                    $parts = explode(':', $fieldConfig);
-                    $field = $parts[1] ?? '';
-                    if (!$field) {
-                        continue;
-                    }
-                    $fields[$field] = [
-                        'label' => $parts[0],
-                        'type' => $parts[2] ?? 'text',
-                        'required' => ($parts[3] ?? '') === 'required'
-                    ];
+        foreach ($updateConfig['fields'] ?? [] as $fieldConfig) {
+            if (is_array($fieldConfig)) {
+                // Add defaults if not specified:
+                $fieldConfig = $fieldConfig + [
+                    'required' => false,
+                    'type' => 'text',
+                    'options' => [],
+                    'pattern' => '',
+                    'hint' => '',
+                ];
+                $fields[$fieldConfig['field']] = $fieldConfig;
+            } else {
+                $parts = explode(':', $fieldConfig);
+                $field = $parts[1] ?? '';
+                if (!$field) {
+                    continue;
                 }
+                $fields[$field] = [
+                    'label' => $parts[0],
+                    'type' => $parts[2] ?? 'text',
+                    'required' => ($parts[3] ?? '') === 'required',
+                    'options' => $parts[4] ?? [],
+                    'pattern' => $parts[5] ?? '',
+                    'hint' => $parts[6] ?? '',
+                ];
             }
         }
         if (empty($fields)) {
@@ -913,8 +919,22 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         );
         $view->setTemplate('myresearch/change-address-settings');
 
-        if ($this->formWasSubmitted('address_change_request')) {
-            $data = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        // Set up CSRF:
+        $csrfValidator = $this->serviceLocator
+            ->get(\VuFind\Validator\CsrfInterface::class);
+
+        if ($this->formWasSubmitted('address_change_request', false)) {
+            $csrf = $this->getRequest()->getPost()->get('csrf');
+            if (!$csrfValidator->isValid($csrf)) {
+                $this->flashMessenger()->addErrorMessage('csrf_validation_failed');
+                return $view;
+            }
+
+            // Filter any undefined fields and bad values from the request:
+            $data = array_intersect_key(
+                filter_input_array(INPUT_POST),
+                $fields
+            );
 
             if (isset($updateConfig['method'])
                 && 'driver' === $updateConfig['method']
@@ -944,6 +964,30 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                         );
                         return $view;
                     }
+                    // Check that select, multiselect and radio contain valid values:
+                    if (!empty($fieldConfig['options'])) {
+                        foreach ((array)$data[$fieldName] as $value) {
+                            if ('' !== $value
+                                && !array_key_exists($value, $fieldConfig['options'])
+                            ) {
+                                $this->flashMessenger()->addErrorMessage(
+                                    'error_inconsistent_parameters'
+                                );
+                                return $view;
+                            }
+                        }
+                    }
+                    // Check that the value matches required pattern:
+                    $pattern = addcslashes($fieldConfig['pattern'], '/');
+                    if ($pattern && '' !== $data[$fieldName]
+                        && !preg_match("/$pattern/", $data[$fieldName])
+                    ) {
+                        $this->flashMessenger()->addErrorMessage(
+                            $this->translate('field_contents_invalid') . ': '
+                            . $this->translate($fieldConfig['label'])
+                        );
+                        return $view;
+                    }
                 }
 
                 try {
@@ -952,6 +996,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                         $view->requestCompleted = true;
                         $this->flashMessenger()
                             ->addSuccessMessage($result['status']);
+                        if ($this->inLightbox()) {
+                            return $this->getRefreshResponse();
+                        }
                     } else {
                         $this->flashMessenger()->addErrorMessage($result['status']);
                     }
