@@ -228,9 +228,37 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     public function getMyFines($patron)
     {
-        $fines = parent::getMyFines($patron);
-        foreach ($fines as &$fine) {
-            $fine['payableOnline'] = $fine['balance'] > 0;
+        // TODO: Make this use X-Koha-Embed when the endpoint allows
+        $result = $this->makeRequest(['v1', 'patrons', $patron['id'], 'account']);
+
+        $fines = [];
+        foreach ($result['data']['outstanding_debits']['lines'] ?? [] as $entry) {
+            $bibId = null;
+            if (!empty($entry['item_id'])) {
+                $item = $this->getItem($entry['item_id']);
+                if (!empty($item['biblio_id'])) {
+                    $bibId = $item['biblio_id'];
+                }
+            }
+            $type = trim($entry['debit_type']);
+            $type = $this->translate($this->feeTypeMappings[$type] ?? $type);
+            $description = trim($entry['description']);
+            if ($description !== $type) {
+                $type .= " - $description";
+            }
+            $fine = [
+                'fine_id' => $entry['account_line_id'],
+                'amount' => $entry['amount'] * 100,
+                'balance' => $entry['amount_outstanding'] * 100,
+                'fine' => $type,
+                'createdate' => $this->convertDate($entry['date'] ?? null),
+                'checkout' => '',
+                'payableOnline' => $entry['amount_outstanding'] > 0
+            ];
+            if (null !== $bibId) {
+                $fine['id'] = $bibId;
+            }
+            $fines[] = $fine;
         }
         return $fines;
     }
@@ -627,24 +655,28 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     public function getOnlinePaymentDetails($patron, $fines, ?array $selectedFineIds)
     {
-        if (!empty($fines)) {
-            $amount = 0;
-            foreach ($fines as $fine) {
-                if ($fine['payableOnline']) {
-                    $amount += $fine['balance'];
-                }
+        $amount = 0;
+        $payableFines = [];
+        foreach ($fines as $fine) {
+            if (null !== $selectedFineIds
+                && !in_array($fine['fine_id'], $selectedFineIds)
+            ) {
+                continue;
             }
-            $config = $this->getConfig('onlinePayment');
-            $nonPayableReason = false;
-            if (isset($config['minimumFee']) && $amount < $config['minimumFee']) {
-                $nonPayableReason = 'online_payment_minimum_fee';
+            if ($fine['payableOnline']) {
+                $amount += $fine['balance'];
+                $payableFines[] = $fine;
             }
-            $res = ['payable' => empty($nonPayableReason), 'amount' => $amount];
-            if ($nonPayableReason) {
-                $res['reason'] = $nonPayableReason;
-            }
-            return $res;
         }
+        $paymentConfig = $this->config['OnlinePayment'] ?? [];
+        if ($amount >= ($paymentConfig['minimumFee'] ?? 0)) {
+            return [
+                'payable' => true,
+                'amount' => $amount,
+                'fines' => $payableFines,
+            ];
+        }
+
         return [
             'payable' => false,
             'amount' => 0,
@@ -678,6 +710,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             'amount' => $amount / 100,
             'note' => "Online transaction $transactionId"
         ];
+        if (null !== $fineIds) {
+            $request['account_lines_ids'] = $fineIds;
+        }
 
         $result = $this->makeRequest(
             [
