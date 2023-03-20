@@ -350,7 +350,7 @@
       <div class="holdings-details"><?=$holdingSummary ?></div>
       <div class="location-link text-right">
         <?php foreach ($callnumbers as $data): ?>
-          <?=$this->callnumber()->callnumber($recordSource, $this->driver->getFullTitle(), $data['callNo'], $data['collection'], $data['location'], $this->layout()->userLang, 'record', $data, !$branchesActive)?>
+          <?=$this->callnumber()->callnumber($recordSource, $this->driver->getFullTitle(), $data['callnumber'], $data['collection'], $data['location'], $this->layout()->userLang, 'record', $data, !$branchesActive)?>
         <?php endforeach; ?>
         <?php if ($holdsAllowed && isset($holdLinksLocation[$holding['location']])): ?>
           <a class="expandedCheckRequest inlineblock placehold btn btn-primary hidden-print" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getRequestUrl($holdLinksLocation[$holding['location']]))?>" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('request_place_text') . $dialogTitle); ?>"><?=$this->transEsc("request_place_text")?></a>

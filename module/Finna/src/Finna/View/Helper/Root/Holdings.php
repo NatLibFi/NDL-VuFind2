@@ -167,6 +167,9 @@ class Holdings extends \VuFind\View\Helper\Root\Holdings
                     }
                 }
             }
+            // Use callnumber as the primary field but include callNo for backward
+            // compatibility:
+            $result['callnumber'] = $callNo;
             $result['callNo'] = $callNo;
             $callnumbers[] = $result;
         }
