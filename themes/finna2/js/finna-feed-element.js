@@ -109,6 +109,22 @@ class FinnaFeedElement extends HTMLElement {
   }
 
   /**
+   * Create arrow buttons. Fixes the problem with safari not loading svg.
+   *
+   * @param {boolean} vertical Is the carousel vertical?
+   */
+  adjustArrowButtons(vertical) {
+    const prev = this.querySelector('.splide__arrow--prev');
+    if (prev) {
+      prev.classList.add(vertical ? 'up' : 'left');
+    }
+    const next = this.querySelector('.splide__arrow--next');
+    if (next) {
+      next.classList.add(vertical ? 'down' : 'right');
+    }
+  }
+
+  /**
    * When the feed is loaded or found from the internal cache.
    * Constructs the feed into the dom.
    *
@@ -136,6 +152,7 @@ class FinnaFeedElement extends HTMLElement {
         }
 
         const vertical = 'carousel-vertical' === settings.type;
+        this.adjustArrowButtons(vertical);
         settings.vertical = vertical;
         this.splide = finna.carouselManager.createCarousel(this, settings);
         var titleBottom = typeof settings.titlePosition !== 'undefined' && settings.titlePosition === 'bottom';
