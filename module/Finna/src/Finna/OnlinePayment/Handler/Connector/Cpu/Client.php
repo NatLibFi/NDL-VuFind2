@@ -70,7 +70,6 @@ class Client
         }
 
         if ($this->service_url && $this->source && $this->secret_key) {
-
             // Prepare data to be sent.
             $data = $payment->convertToArray();
             $data['Source'] = $this->source;

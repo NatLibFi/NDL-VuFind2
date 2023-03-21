@@ -3,6 +3,7 @@
   $script = <<<JS
 $(document).ready(function() {
   finna.layout.initCondensedList();
+  finna.layout.initTruncate(document.querySelector('.authority-records'));
 });
 JS;
   echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
@@ -23,13 +24,13 @@ JS;
       <?=$this->translate('showing_results_html', ['%%start%%' => 1, '%%end%%' => count($results->getResults())])?>
     </span>
     <?php if ($resultCnt > 10): ?>
-      <?= " / <span class=\"search-link\"><a href=\"{$moreUrl}\">{$moreLabel}</a></span>" ?>
+      <span class="search-link"><a href="<?=$moreUrl?>"><?=$moreLabel?></a></span>
     <?php endif ?>
   </div>
   <?php foreach ($results->getResults() as $current): ?>
     <div id="result<?=$i++ ?>" class="result condensed-list-view clearfix<?=$current->supportsAjaxStatus()?' ajaxItem':''?>">
       <span class="sr-only"><?=$this->transEsc('Search Result');?> <?=$i ?></span>
-      <?=$this->record($current)->getSearchResult('condensed', ['authorId' => $this->driver->getUniqueId()])?>
+      <?=$this->record($current)->getSearchResult('condensed', $this->results)?>
     </div>
   <?php endforeach ?>
   <div class="search-btn-container">

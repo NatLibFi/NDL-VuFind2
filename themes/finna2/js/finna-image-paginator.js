@@ -679,6 +679,13 @@ FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() 
   if (typeof listId !== 'undefined') {
     src += '&listId=' + listId;
   }
+
+  // Include current search id
+  const searchId = VuFind.getCurrentSearchId();
+  if (searchId) {
+    src += "&sid=" + encodeURIComponent(searchId);
+  }
+
   _.popup.collapseArea.html('<div class="large-spinner"><i class="fa fa-spinner fa-spin"/></div>');
   $.ajax({
     url: src,

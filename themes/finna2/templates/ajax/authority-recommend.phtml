@@ -27,7 +27,7 @@
   <?php $coreFields = $formatter->getData($record, $coreFields); ?>
   <?php if (!empty($coreFields)): ?>
     <table class="table table-finna-record record-details">
-      <?=$this->record($record)->renderTemplate('core-fields.phtml', ['coreFields' => $coreFields]);?>
+      <?=$this->record($record)->renderTemplate('core-fields.phtml', ['coreFields' => $coreFields, 'driver' => $record]);?>
     </table>
   <?php endif; ?>
   <?php $summ = $record->getSummary(); if (!empty($summ)): ?>

@@ -39,7 +39,7 @@ use VuFind\Exception\ILS as ILSException;
  * @link     https://vufind.org Main Page
  */
 class AuthApiController extends \VuFindApi\Controller\ApiController
-    implements \VuFindApi\Controller\ApiInterface, \Laminas\Log\LoggerAwareInterface
+implements \VuFindApi\Controller\ApiInterface, \Laminas\Log\LoggerAwareInterface
 {
     use \VuFindApi\Controller\ApiTrait;
     use \VuFind\Log\LoggerAwareTrait;

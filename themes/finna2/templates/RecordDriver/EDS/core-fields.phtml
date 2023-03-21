@@ -5,7 +5,7 @@
       <?php if (!empty($item['Data']) && !in_array($item['Label'], $this->ignoreDetailsFields ?? [])): ?>
       <tr class="record-<?=strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $item['Label']))?>">
         <th><?php if (!empty($item['Label'])): ?><?=$this->transEsc($item['Label'])?>:<?php endif; ?></th>
-        <td>
+        <td class="record__biblio-value">
           <div class="truncate-field">
             <p><?=$this->driver->linkUrls($item['Data'])?></p>
           </div>

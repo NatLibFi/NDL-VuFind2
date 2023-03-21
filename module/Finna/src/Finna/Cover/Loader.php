@@ -539,30 +539,30 @@ class Loader extends \VuFind\Cover\Loader
     protected function rotateImage($image, $orientation)
     {
         switch ($orientation) {
-        case 2: // horizontal flip
-            return imageflip($image, 1);
-            break;
-        case 3: // 180 rotate left
-            return imagerotate($image, 180, 0);
-            break;
-        case 4: // vertical flip
-            return imageflip($image, 2);
-            break;
-        case 5: // vertical flip + 90 rotate right
-            return imagerotate(imageflip($image, 2), -90, 0);
-            break;
-        case 6: // 90 rotate right
-            return imagerotate($image, -90, 0);
-            break;
-        case 7: // horizontal flip + 90 rotate right
-            return imagerotate(imageflip($image, 1), -90, 0);
-            break;
-        case 8: // 90 rotate left
-            return imagerotate($image, 90, 0);
-            break;
-        default: // no rotation found
-            return $image;
-            break;
+            case 2: // horizontal flip
+                return imageflip($image, 1);
+                break;
+            case 3: // 180 rotate left
+                return imagerotate($image, 180, 0);
+                break;
+            case 4: // vertical flip
+                return imageflip($image, 2);
+                break;
+            case 5: // vertical flip + 90 rotate right
+                return imagerotate(imageflip($image, 2), -90, 0);
+                break;
+            case 6: // 90 rotate right
+                return imagerotate($image, -90, 0);
+                break;
+            case 7: // horizontal flip + 90 rotate right
+                return imagerotate(imageflip($image, 1), -90, 0);
+                break;
+            case 8: // 90 rotate left
+                return imagerotate($image, 90, 0);
+                break;
+            default: // no rotation found
+                return $image;
+                break;
         }
     }
 

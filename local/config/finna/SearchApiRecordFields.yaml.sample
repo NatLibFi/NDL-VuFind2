@@ -5,6 +5,10 @@
 #
 # See https://spec.openapis.org/oas/v3.0.3 for information on the format.
 #
+__index__:
+  vufind.method: getIndex
+  description: Index
+  type: string
 accessRestrictions:
   vufind.method: getAccessRestrictions
   description: Access restriction notes

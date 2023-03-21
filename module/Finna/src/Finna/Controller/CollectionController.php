@@ -59,10 +59,7 @@ class CollectionController extends \VuFind\Controller\CollectionController
             return $this->catalogLogin();
         }
 
-        $view = parent::showTab($tab, $ajax);
-
-        $this->getSearchMemory()->rememberScrollData($view->scrollData);
-        return $view;
+        return parent::showTab($tab, $ajax);
     }
 
     /**

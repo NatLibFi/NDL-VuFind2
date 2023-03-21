@@ -32,7 +32,7 @@ default_noresults_recommend[] = RemoveFilters
 ; When you filter a search using facets, VuFind will present a checkbox that can
 ; be used to apply those filters to the next search you perform.  This setting
 ; controls its default state: on (true) or off (false).
-retain_filters_by_default = true
+retain_filters_by_default = false
 
 ; This is the timeout in seconds when communicating with the EDS server.
 timeout = 120

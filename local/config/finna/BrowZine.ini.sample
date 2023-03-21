@@ -39,8 +39,8 @@ local_icons = true
 ; more information) and value contains translation key, local icon and Third Iron's
 ; icon asset (optional) separated by a pipe character.
 [DOIServices]
-fullTextFile = "PDF Full Text|external-link"
-browzineWebLink = "View Complete Issue|external-link"
+fullTextFile = "PDF Full Text|browzine-pdf"
+browzineWebLink = "View Complete Issue|browzine-issue"
 retractionNoticeUrl = "View Retraction Notice|external-link"
 
 ; This section defines the view options available on standard search results.

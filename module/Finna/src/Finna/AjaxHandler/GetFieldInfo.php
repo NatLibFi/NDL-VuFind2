@@ -48,7 +48,7 @@ use VuFindSearch\ParamBag;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase
-    implements LoggerAwareInterface
+implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

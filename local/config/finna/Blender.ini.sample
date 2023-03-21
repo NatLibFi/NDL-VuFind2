@@ -57,7 +57,7 @@ highlighting = true
 ; Solr parameter); default = '*' for all fields:
 highlighting_fields = "author,author2,author_additional,author_fuller,container_title,contents,culture,description,dewey-full,edition,era,genre,geographic,institution,isbn,issn,language,lccn,material,measurements,publication_place_txt_mv,publisher,series,series2,title,title_alt,title_full,title_new,title_old,topic"
 snippets = true
-retain_filters_by_default = true
+retain_filters_by_default = false
 
 [Records]
 ; Boolean value indicating if deduplication is enabled. Defaults to false.

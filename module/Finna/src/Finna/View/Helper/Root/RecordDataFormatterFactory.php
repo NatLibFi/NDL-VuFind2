@@ -54,7 +54,7 @@ use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
  * Wiki
  */
 class RecordDataFormatterFactory
-    extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
+extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
 {
     /**
      * Translator
@@ -1127,7 +1127,7 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'System Format',
             'getSystemDetails',
-            'data-escapeHtml',
+            'data-systemFormat.phtml',
             [
                 'context' => ['class' => 'extendedSystem']
             ]
@@ -1534,7 +1534,7 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Language Notes',
             'getLanguageNotes',
-            'data-transEsc.phtml',
+            'data-languageNotes.phtml',
             [
                 'context' => ['class' => 'record-language-notes']
             ]
@@ -1710,7 +1710,11 @@ class RecordDataFormatterFactory
             'data-lines-with-detail.phtml'
         );
         $spec->setLine('Historical Information', 'getHistory');
-
+        $spec->setTemplateLine(
+            'Publications',
+            'getRelatedPublications',
+            'data-relatedPublications.phtml'
+        );
         $spec->setTemplateLine('Sources', 'getSources', 'data-sources.phtml');
         $spec->setTemplateLine(
             'Related Authorities',

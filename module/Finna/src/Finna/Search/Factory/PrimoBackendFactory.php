@@ -42,7 +42,7 @@ use FinnaSearch\Backend\Primo\Connector;
  * @link     http://vufind.org   Main Site
  */
 class PrimoBackendFactory
-    extends \VuFind\Search\Factory\PrimoBackendFactory
+extends \VuFind\Search\Factory\PrimoBackendFactory
 {
     /**
      * Primo connector class

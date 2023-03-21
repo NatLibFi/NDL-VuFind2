@@ -42,7 +42,7 @@ use Psr\Container\ContainerInterface;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class AxiellWebServicesFactory
-    extends \VuFind\ILS\Driver\DriverWithDateConverterFactory
+extends \VuFind\ILS\Driver\DriverWithDateConverterFactory
 {
     /**
      * Create an object

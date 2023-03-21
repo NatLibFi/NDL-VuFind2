@@ -133,11 +133,12 @@
             <?php endif; ?>
           <?php endif; ?>
 
-          <?php if ($openUrlActive): ?>
-            <?=$openUrl->renderTemplate()?>
-          <?php endif; ?>
           <?php if ($doiActive): ?>
             <?=$doi->renderTemplate()?>
+          <?php endif; ?>
+
+          <?php if ($openUrlActive): ?>
+            <?=$openUrl->renderTemplate()?>
           <?php endif; ?>
         </div>
       </div>

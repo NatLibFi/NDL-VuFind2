@@ -335,6 +335,35 @@ class SolrAuthEaccpf extends SolrAuthDefault
     }
 
     /**
+     * Get an array of related publications for the record.
+     *
+     * @return array
+     */
+    public function getRelatedPublications()
+    {
+        $result = [];
+        $record = $this->getXmlRecord();
+        foreach ($record->cpfDescription->description->localDescriptions
+            ->localDescription ?? [] as $description
+        ) {
+            $type = $description->attributes()->localType ?? '';
+            if ($type != 'TJ17') {
+                continue;
+            }
+            foreach ($description->citation ?? [] as $citation) {
+                if ($title = trim((string)$citation ?? '')) {
+                    $result[] = [
+                        'title' => $title,
+                        'label' => '',
+                        'url' => (string)($citation->attributes()->href ?? '')
+                    ];
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * Set preferred language for display strings.
      *
      * @param string $language Language

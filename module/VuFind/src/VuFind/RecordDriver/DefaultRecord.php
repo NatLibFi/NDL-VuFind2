@@ -282,6 +282,51 @@ class DefaultRecord extends AbstractBase
     }
 
     /**
+     * Return all ISBNs found in the record.
+     *
+     * @param string $mode          Mode for returning ISBNs:
+     *  - 'only10' returns only ISBN-10s
+     *  - 'prefer10' returns ISBN-10s if available, otherwise ISBN-13s (default)
+     *  - 'normalize13' returns ISBN-13s, normalizing ISBN-10s to ISBN-13s
+     * @param bool   $filterInvalid Whether to filter out invalid ISBNs
+     *
+     * @return array
+     */
+    public function getCleanISBNs(
+        string $mode = 'prefer10',
+        bool $filterInvalid = true
+    ): array {
+        $isbns = $this->getISBNs();
+        $all = $tens = $thirteens = $invalid = [];
+        foreach ($isbns as $isbn) {
+            // Strip off any unwanted notes:
+            if ($pos = strpos($isbn, ' ')) {
+                $isbn = substr($isbn, 0, $pos);
+            }
+            $isbnObj = new ISBN($isbn);
+            if ($isbnObj->isValid()) {
+                if ($isbn10 = $isbnObj->get10()) {
+                    $normalized
+                        = $mode === 'normalize13' ? $isbnObj->get13() : $isbn10;
+                    $tens[] = $normalized;
+                    $all[] = $normalized;
+                } elseif ($isbn13 = $isbnObj->get13()) {
+                    $thirteens[] = $isbn13;
+                    $all[] = $isbn13;
+                }
+            } elseif (!$filterInvalid) {
+                $invalid[] = $isbn;
+                $all[] = $isbn;
+            }
+        }
+        if ($mode === 'only10') {
+            return array_merge($tens, $invalid);
+        }
+        return $mode === 'prefer10'
+            ? array_merge($tens, $thirteens, $invalid) : $all;
+    }
+
+    /**
      * Get just the base portion of the first listed ISSN (or false if no ISSNs).
      *
      * @return mixed
@@ -686,11 +731,24 @@ class DefaultRecord extends AbstractBase
             return 'Article';
         } elseif (in_array('Journal', $formats)) {
             return 'Journal';
+        } elseif (strlen($this->getCleanISSN()) > 0) {
+            // If the record has an ISSN and we have not already
+            // decided it is an Article, we'll treat it as a Book
+            // if it has an ISBN and is therefore likely part of a
+            // monographic series. Otherwise, we'll treat it as a
+            // Journal.
+            // Anecdotally, some link resolvers do not return correct
+            // results when given both ISBN and ISSN for a member of a
+            // monographic series.
+            return strlen($this->getCleanISBN()) > 0 ? 'Book' : 'Journal';
         } elseif (isset($formats[0])) {
             return $formats[0];
-        } elseif (strlen($this->getCleanISSN()) > 0) {
-            return 'Journal';
         } elseif (strlen($this->getCleanISBN()) > 0) {
+            // Last ditch. Note that this is last by intention; if the
+            // record has a format set and also has an ISBN, we don't
+            // necessarily want to send the ISBN, as it may be a game
+            // or a DVD that wouldn't typically be found in OpenURL
+            // knowledgebases.
             return 'Book';
         }
         return 'UnknownFormat';
@@ -1013,6 +1071,18 @@ class DefaultRecord extends AbstractBase
     }
 
     /**
+     * Get publication date or date range.
+     *
+     * @return ?array Array of one or two dates or null if not available.
+     * If date range is still continuing end year will be an empty string.
+     */
+    public function getPublicationDateRange()
+    {
+        $publicationDates = $this->getPublicationDates();
+        return $publicationDates ? [$publicationDates[0]] : null;
+    }
+
+    /**
      * Get an array of publication detail lines combining information from
      * getPublicationDates(), getPublishers() and getPlacesOfPublication().
      *
@@ -1222,8 +1292,9 @@ class DefaultRecord extends AbstractBase
             'recordid'   => $this->getUniqueID(),
             'source'   => $this->getSourceIdentifier(),
         ];
-        if ($isbn = $this->getCleanISBN()) {
-            $arr['isbn'] = $isbn;
+        $isbns = $this->getCleanISBNs();
+        if (!empty($isbns)) {
+            $arr['isbns'] = $isbns;
         }
         if ($issn = $this->getCleanISSN()) {
             $arr['issn'] = $issn;
@@ -1618,25 +1689,25 @@ class DefaultRecord extends AbstractBase
         $types = [];
         foreach ($this->getFormats() as $format) {
             switch ($format) {
-            case 'Book':
-            case 'eBook':
-                $types['Book'] = 1;
-                break;
-            case 'Video':
-            case 'VHS':
-                $types['Movie'] = 1;
-                break;
-            case 'Photo':
-                $types['Photograph'] = 1;
-                break;
-            case 'Map':
-                $types['Map'] = 1;
-                break;
-            case 'Audio':
-                $types['MusicAlbum'] = 1;
-                break;
-            default:
-                $types['CreativeWork'] = 1;
+                case 'Book':
+                case 'eBook':
+                    $types['Book'] = 1;
+                    break;
+                case 'Video':
+                case 'VHS':
+                    $types['Movie'] = 1;
+                    break;
+                case 'Photo':
+                    $types['Photograph'] = 1;
+                    break;
+                case 'Map':
+                    $types['Map'] = 1;
+                    break;
+                case 'Audio':
+                    $types['MusicAlbum'] = 1;
+                    break;
+                default:
+                    $types['CreativeWork'] = 1;
             }
         }
         return array_keys($types);

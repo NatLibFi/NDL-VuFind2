@@ -23,6 +23,7 @@
       <?php endforeach; ?>
     </table>
   <?php endif; ?>
+  <?php $openUrl = $this->openUrl($this->driver, 'record'); ?>
   <?=$openUrl ? $openUrl->renderMoreOptions() : '' ?>
 </div>
 <!-- END of: finna - RecordDriver/Primo/core-fields.phtml -->

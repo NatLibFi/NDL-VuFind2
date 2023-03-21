@@ -228,9 +228,37 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     public function getMyFines($patron)
     {
-        $fines = parent::getMyFines($patron);
-        foreach ($fines as &$fine) {
-            $fine['payableOnline'] = $fine['balance'] > 0;
+        // TODO: Make this use X-Koha-Embed when the endpoint allows
+        $result = $this->makeRequest(['v1', 'patrons', $patron['id'], 'account']);
+
+        $fines = [];
+        foreach ($result['data']['outstanding_debits']['lines'] ?? [] as $entry) {
+            $bibId = null;
+            if (!empty($entry['item_id'])) {
+                $item = $this->getItem($entry['item_id']);
+                if (!empty($item['biblio_id'])) {
+                    $bibId = $item['biblio_id'];
+                }
+            }
+            $type = trim($entry['debit_type']);
+            $type = $this->translate($this->feeTypeMappings[$type] ?? $type);
+            $description = trim($entry['description']);
+            if ($description !== $type) {
+                $type .= " - $description";
+            }
+            $fine = [
+                'fine_id' => $entry['account_line_id'],
+                'amount' => $entry['amount'] * 100,
+                'balance' => $entry['amount_outstanding'] * 100,
+                'fine' => $type,
+                'createdate' => $this->convertDate($entry['date'] ?? null),
+                'checkout' => '',
+                'payableOnline' => $entry['amount_outstanding'] > 0
+            ];
+            if (null !== $bibId) {
+                $fine['id'] = $bibId;
+            }
+            $fines[] = $fine;
         }
         return $fines;
     }
@@ -615,35 +643,40 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Return total amount of fees that may be paid online.
+     * Return details on fees payable online.
      *
-     * @param array $patron Patron
-     * @param array $fines  Patron's fines
+     * @param array  $patron          Patron
+     * @param array  $fines           Patron's fines
+     * @param ?array $selectedFineIds Selected fines
      *
      * @throws ILSException
-     * @return array Associative array of payment info,
+     * @return array Associative array of payment details,
      * false if an ILSException occurred.
      */
-    public function getOnlinePayableAmount($patron, $fines)
+    public function getOnlinePaymentDetails($patron, $fines, ?array $selectedFineIds)
     {
-        if (!empty($fines)) {
-            $amount = 0;
-            foreach ($fines as $fine) {
-                if ($fine['payableOnline']) {
-                    $amount += $fine['balance'];
-                }
+        $amount = 0;
+        $payableFines = [];
+        foreach ($fines as $fine) {
+            if (null !== $selectedFineIds
+                && !in_array($fine['fine_id'], $selectedFineIds)
+            ) {
+                continue;
             }
-            $config = $this->getConfig('onlinePayment');
-            $nonPayableReason = false;
-            if (isset($config['minimumFee']) && $amount < $config['minimumFee']) {
-                $nonPayableReason = 'online_payment_minimum_fee';
+            if ($fine['payableOnline']) {
+                $amount += $fine['balance'];
+                $payableFines[] = $fine;
             }
-            $res = ['payable' => empty($nonPayableReason), 'amount' => $amount];
-            if ($nonPayableReason) {
-                $res['reason'] = $nonPayableReason;
-            }
-            return $res;
         }
+        $paymentConfig = $this->config['OnlinePayment'] ?? [];
+        if ($amount >= ($paymentConfig['minimumFee'] ?? 0)) {
+            return [
+                'payable' => true,
+                'amount' => $amount,
+                'fines' => $payableFines,
+            ];
+        }
+
         return [
             'payable' => false,
             'amount' => 0,
@@ -660,21 +693,26 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      * @param int    $amount            Amount to be registered as paid
      * @param string $transactionId     Transaction ID
      * @param int    $transactionNumber Internal transaction number
+     * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
      *
      * @throws ILSException
-     * @return boolean success
+     * @return bool success
      */
     public function markFeesAsPaid(
         $patron,
         $amount,
         $transactionId,
-        $transactionNumber
+        $transactionNumber,
+        $fineIds = null
     ) {
         $request = [
             'credit_type' => 'PAYMENT',
             'amount' => $amount / 100,
             'note' => "Online transaction $transactionId"
         ];
+        if (null !== $fineIds) {
+            $request['account_lines_ids'] = $fineIds;
+        }
 
         $result = $this->makeRequest(
             [
@@ -1036,11 +1074,22 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             } else {
                 $libraryId = $item['home_library_id'];
             }
+            // Check holding library and modify status if not in home library:
+            if ($this->useHomeLibrary && null !== $item['holding_library_id']
+                && $item['home_library_id'] !== $item['holding_library_id']
+                && 'On Shelf' === $status
+            ) {
+                $available = false;
+                $status = 'Not Available';
+                array_unshift($statusCodes, 'Not Available');
+            }
             $locationId = $item['location'];
 
             $number = $item['serial_issue_number'];
             if (!$number) {
                 $number = $this->getItemSpecificLocation($item);
+            } else {
+                $number .= ' ' . $this->getItemSpecificLocation($item);
             }
 
             $entry = [
@@ -1394,44 +1443,44 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             as $field
         ) {
             switch ($field) {
-            case 'collection_code':
-                if (!empty($item['collection_code'])) {
-                    $collection = $this->translateCollection(
-                        $item['collection_code'],
-                        $item['collection_code_description']
-                            ?? $item['collection_code']
-                    );
-                    if ($collection) {
-                        $result[] = $collection;
+                case 'collection_code':
+                    if (!empty($item['collection_code'])) {
+                        $collection = $this->translateCollection(
+                            $item['collection_code'],
+                            $item['collection_code_description']
+                                ?? $item['collection_code']
+                        );
+                        if ($collection) {
+                            $result[] = $collection;
+                        }
                     }
-                }
-                break;
-            case 'location':
-                if (!empty($item['location'])) {
-                    $location = $this->translateLocation(
-                        $item['location'],
-                        !empty($item['location_description'])
-                            ? $item['location_description'] : $item['location']
-                    );
-                    if ($location) {
-                        $result[] = $location;
+                    break;
+                case 'location':
+                    if (!empty($item['location'])) {
+                        $location = $this->translateLocation(
+                            $item['location'],
+                            !empty($item['location_description'])
+                                ? $item['location_description'] : $item['location']
+                        );
+                        if ($location) {
+                            $result[] = $location;
+                        }
                     }
-                }
-                break;
-            case 'sub_location':
-                if (!empty($item['sub_location'])) {
-                    $subLocations = $this->getSubLocations();
-                    $result[] = $this->translateSubLocation(
-                        $item['sub_location'],
-                        $subLocations[$item['sub_location']]['lib_opac'] ?? null
-                    );
-                }
-                break;
-            case 'callnumber':
-                if (!empty($item['callnumber'])) {
-                    $result[] = $item['callnumber'];
-                }
-                break;
+                    break;
+                case 'sub_location':
+                    if (!empty($item['sub_location'])) {
+                        $subLocations = $this->getSubLocations();
+                        $result[] = $this->translateSubLocation(
+                            $item['sub_location'],
+                            $subLocations[$item['sub_location']]['lib_opac'] ?? null
+                        );
+                    }
+                    break;
+                case 'callnumber':
+                    if (!empty($item['callnumber'])) {
+                        $result[] = $item['callnumber'];
+                    }
+                    break;
             }
         }
 
@@ -1840,6 +1889,14 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             return $defaultTranslation;
         }
 
+        // Try first with location_ prefix:
+        $prefix = 'location_' . $this->config['Catalog']['id'] . '_';
+        $key = "$prefix$location";
+        $translated = $this->translate($key);
+        if ($translated !== $key) {
+            return $translated;
+        }
+        // Fall back to just catalog id:
         $prefix = $this->config['Catalog']['id'] . '_';
         return $this->translate("$prefix$location", [], $defaultTranslation);
     }
@@ -1856,39 +1913,39 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     {
         $params = [];
         switch ($reason) {
-        case 'Hold::MaximumHoldsReached':
-            $params = [
-                '%%blockCount%%' => $details['current_hold_count'],
-                '%%blockLimit%%' => $details['max_holds_allowed']
-            ];
-            break;
-        case 'Patron::Debt':
-        case 'Patron::DebtGuarantees':
-            $count = isset($details['current_outstanding'])
-                ? $this->formatMoney($details['current_outstanding'])
-                : '-';
-            $limit = isset($details['max_outstanding'])
-                ? $this->formatMoney($details['max_outstanding'])
-                : '-';
-            $params = [
-                '%%blockCount%%' => $count,
-                '%%blockLimit%%' => $limit,
-            ];
-            break;
-        case 'Patron::Debarred':
-            if (!empty($details['comment'])) {
+            case 'Hold::MaximumHoldsReached':
                 $params = [
-                    '%%reason%%' => $details['comment']
+                    '%%blockCount%%' => $details['current_hold_count'],
+                    '%%blockLimit%%' => $details['max_holds_allowed']
                 ];
-                $reason = 'Patron::DebarredWithReason';
-            }
-            break;
-        case 'Patron::CardExpired':
-            $params = [
-                '%%expirationDate%%'
-                    => $this->convertDate($details['expiration_date'])
-            ];
-            break;
+                break;
+            case 'Patron::Debt':
+            case 'Patron::DebtGuarantees':
+                $count = isset($details['current_outstanding'])
+                    ? $this->formatMoney($details['current_outstanding'])
+                    : '-';
+                $limit = isset($details['max_outstanding'])
+                    ? $this->formatMoney($details['max_outstanding'])
+                    : '-';
+                $params = [
+                    '%%blockCount%%' => $count,
+                    '%%blockLimit%%' => $limit,
+                ];
+                break;
+            case 'Patron::Debarred':
+                if (!empty($details['comment'])) {
+                    $params = [
+                        '%%reason%%' => $details['comment']
+                    ];
+                    $reason = 'Patron::DebarredWithReason';
+                }
+                break;
+            case 'Patron::CardExpired':
+                $params = [
+                    '%%expirationDate%%'
+                        => $this->convertDate($details['expiration_date'])
+                ];
+                break;
         }
         return $this->translate($this->patronStatusMappings[$reason] ?? '', $params);
     }

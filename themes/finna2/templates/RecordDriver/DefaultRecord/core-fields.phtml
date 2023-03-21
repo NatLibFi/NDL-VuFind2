@@ -6,7 +6,7 @@
   $openUrlActive = $openUrl->isActive();
 ?>
 <?php if (!empty($coreFields)): ?>
-  <table class="table table-finna-record record-details record-details-more" style="table-layout:initial;" role="presentation">
+  <table class="table table-finna-record record-details record-details-more" style="table-layout:initial;" role="presentation" tabindex="-1">
     <?php foreach ($coreFields as $key => $current): ?>
       <?php $header = $this->transEsc($current['context']['title'] ?? $current['label']); ?>
       <?php if ($header): ?>

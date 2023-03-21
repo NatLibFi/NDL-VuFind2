@@ -51,7 +51,6 @@ finna.menu = (function finnaMenu() {
           data: {'active': null}
         }).done(function onGetMyListsDone(data) {
           $('.mylist-bar').append(data.data);
-          link.closest('.finna-movement').trigger('reindex');
           $('.add-new-list-holder').hide();
         });
       });

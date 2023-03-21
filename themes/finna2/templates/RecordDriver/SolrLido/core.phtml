@@ -97,23 +97,11 @@
           <?=$this->record($this->driver)->renderTemplate('versions-link.phtml')?>
         <?php endif; ?>
       </div>
-
       <?php if ($documents = $this->driver->getDocuments()): ?>
         <div class="record-links">
           <div class="recordURLs local-available-online-record">
             <ul class="truncate-field outer" data-rows="4">
-              <?php foreach ($documents as $i => $document): ?>
-                <?php
-                  $description = $document['description'] ?: $this->translate('Download the file');
-                ?>
-                <li class="fulltextField">
-                  <a href="<?=$this->escapeHtmlAttr($this->url('record-downloadfile', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $i, 'format' => $document['format'], 'type' => 'document']]))?>" target="_blank" download>
-                    <i class="fa fa-download" aria-hidden="true"></i>
-                    <?=$this->escapeHtml($description)?>
-                  </a>
-                  (<?=$this->escapeHtml($document['format'])?>)
-                </li>
-              <?php endforeach; ?>
+              <?=$this->record($this->driver)->renderTemplate('document-links.phtml', ['documents' => $documents])?>
             </ul>
           </div>
         </div>

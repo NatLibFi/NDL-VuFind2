@@ -194,6 +194,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     }
                     $finesGrouped[$key]['amount'] += $fine['amount'];
                     $finesGrouped[$key]['balance'] += $fine['balance'];
+                    $finesGrouped[$key]['fine_id'] .= '|' . $fine['fine_id'];
                 } else {
                     $finesGrouped[$key] = $fine;
                 }
@@ -328,32 +329,40 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Return total amount of fees that may be paid online.
+     * Return details on fees payable online.
      *
-     * @param array $patron Patron
-     * @param array $fines  Patron's fines
+     * @param array  $patron          Patron
+     * @param array  $fines           Patron's fines
+     * @param ?array $selectedFineIds Selected fines
      *
      * @throws ILSException
-     * @return array Associative array of payment info,
+     * @return array Associative array of payment details,
      * false if an ILSException occurred.
      */
-    public function getOnlinePayableAmount($patron, $fines)
+    public function getOnlinePaymentDetails($patron, $fines, ?array $selectedFineIds)
     {
-        $paymentConfig = $this->config['OnlinePayment'] ?? [];
         $amount = 0;
-        if (!empty($fines)) {
-            foreach ($fines as $fine) {
-                if ($fine['payableOnline']) {
-                    $amount += $fine['balance'];
-                }
+        $payableFines = [];
+        foreach ($fines as $fine) {
+            if (null !== $selectedFineIds
+                && !in_array($fine['fine_id'], $selectedFineIds)
+            ) {
+                continue;
+            }
+            if ($fine['payableOnline']) {
+                $amount += $fine['balance'];
+                $payableFines[] = $fine;
             }
         }
+        $paymentConfig = $this->config['OnlinePayment'] ?? [];
         if ($amount >= ($paymentConfig['minimumFee'] ?? 0)) {
             return [
                 'payable' => true,
-                'amount' => $amount
+                'amount' => $amount,
+                'fines' => $payableFines,
             ];
         }
+
         return [
             'payable' => false,
             'amount' => 0,
@@ -370,16 +379,28 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      * @param int    $amount            Amount to be registered as paid
      * @param string $transactionId     Transaction ID
      * @param int    $transactionNumber Internal transaction number
+     * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
      *
      * @throws ILSException
-     * @return boolean success
+     * @return bool success
      */
     public function markFeesAsPaid(
         $patron,
         $amount,
         $transactionId,
-        $transactionNumber
+        $transactionNumber,
+        $fineIds = null
     ) {
+        // Unpack grouped fine_id's:
+        if (null !== $fineIds) {
+            $newIds = [];
+            foreach ($fineIds as $fineIdGroup) {
+                foreach (explode('|', $fineIdGroup) as $fineId) {
+                    $newIds[] = $fineId;
+                }
+            }
+            $fineIds = $newIds;
+        }
         $fines = $this->getFineList($patron);
         $amountRemaining = $amount;
         // Mark payable fines as long as amount remains. If there's any left over
@@ -387,6 +408,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         foreach ($fines as $fine) {
             if ($fine['payableOnline'] && $fine['balance'] > 0
                 && $fine['balance'] <= $amountRemaining
+                && (null === $fineIds || in_array($fine['fine_id'], $fineIds))
             ) {
                 $getParams = [
                     'op' => 'pay',
@@ -397,7 +419,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 ];
                 $this->makeRequest(
                     '/users/' . rawurlencode($patron['id']) . '/fees/'
-                    . rawurlencode($fine['id']),
+                    . rawurlencode($fine['fine_id']),
                     $getParams,
                     [],
                     'POST'
@@ -1900,18 +1922,18 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
         $errorCode = $error->errorList->error[0]->errorCode ?? null;
         switch ($errorCode) {
-        case '401136':
-            $errorMsg = 'hold_error_already_held';
-            break;
-        case '401129':
-            $errorMsg = 'hold_error_cannot_fulfill';
-            break;
-        case '401652':
-            $errorMsg = 'hold_error_fail';
-            break;
-        default:
-            $errorMsg = $error->errorList->error[0]->errorMessage
-                ?? 'hold_error_fail';
+            case '401136':
+                $errorMsg = 'hold_error_already_held';
+                break;
+            case '401129':
+                $errorMsg = 'hold_error_cannot_fulfill';
+                break;
+            case '401652':
+                $errorMsg = 'hold_error_fail';
+                break;
+            default:
+                $errorMsg = $error->errorList->error[0]->errorMessage
+                    ?? 'hold_error_fail';
         }
 
         if ('Missing mandatory field: Description.' === $errorMsg) {
@@ -2058,15 +2080,15 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                         $totalAvailable += $available;
                         $locations[$locationCode] = 1;
                         switch ($status) {
-                        case 'available':
-                            $status = 'Available';
-                            break;
-                        case 'unavailable':
-                            $status = 'Not Available';
-                            break;
-                        case 'check_holdings':
-                            $status = '';
-                            break;
+                            case 'available':
+                                $status = 'Available';
+                                break;
+                            case 'unavailable':
+                                $status = 'Not Available';
+                                break;
+                            case 'check_holdings':
+                                $status = '';
+                                break;
                         }
 
                         $holdings[] = [
@@ -3173,7 +3195,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             $feeType = $this->feeTypeMappings[(string)$fee->type]
                 ?? (string)$fee->type['desc'];
             $fineList[] = [
-                'id'       => (string)$fee->id,
+                'fine_id'  => (string)$fee->id,
                 "title"    => (string)($fee->title ?? ''),
                 "amount"   => round(floatval($fee->original_amount) * 100),
                 "balance"  => round(floatval($fee->balance) * 100),

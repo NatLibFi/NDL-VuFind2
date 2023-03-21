@@ -41,7 +41,7 @@ namespace Finna\RecordDriver;
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
 class SolrForward extends \VuFind\RecordDriver\SolrDefault
-    implements \Laminas\Log\LoggerAwareInterface
+implements \Laminas\Log\LoggerAwareInterface
 {
     use Feature\SolrFinnaTrait;
     use Feature\SolrForwardTrait {
@@ -369,7 +369,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             'elokuva-tarkastus-perustelut' => 'reason',
             'elokuva-tarkastus-muuttiedot' => 'additional',
             'elokuva-tarkastus-tarkastusilmoitus' => 'notification',
-            'elokuva-tarkastus-tarkastuselin' => 'inspector'
+            'elokuva-tarkastus-tarkastuselin' => 'inspector',
+            'elokuva-tarkastus-kopiolkm' => 'copy_count'
         ],
         'accessRestrictionMappings' => [
             'finna-kayttooikeus' => 'accessRestrictions'
@@ -519,14 +520,15 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     $titleTextStr .= " ($type)";
                 } else {
                     switch ((string)$rel) {
-                    case 'working':
-                        $titleTextStr .= " ({$this->translate('working title')})";
-                        break;
-                    case 'translated':
-                        if ($lang = $titleText->attributes()->lang) {
-                            $titleTextStr .= " ({$this->translate($lang)})";
-                        }
-                        break;
+                        case 'working':
+                            $titleTextStr
+                                .= " ({$this->translate('working title')})";
+                            break;
+                        case 'translated':
+                            if ($lang = $titleText->attributes()->lang) {
+                                $titleTextStr .= " ({$this->translate($lang)})";
+                            }
+                            break;
                     }
                 }
             }
@@ -846,26 +848,27 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             }
 
             switch ($result['finna-activity-code'] ?? '') {
-            case 'E10':
-                $results['producers'][] = $result;
-                break;
-            case 'fds':
-                $result['date'] = $result['elokuva-elolevittaja-vuosi'] ?? '';
-                $result['method']
-                    = $result['elokuva-elolevittaja-levitystapa'] ?? '';
-                $results['distributors'][] = $result;
-                break;
-            case 'fnd':
-                $result['amount'] = $result['elokuva-elorahoitusyhtio-summa'] ?? '';
-                $result['fundingType']
-                    = $result['elokuva-elorahoitusyhtio-rahoitustapa'] ?? '';
-                $results['funders'][] = $result;
-                break;
-            default:
-                if (isset($result['elokuva-elotuotantoyhtio'])) {
+                case 'E10':
                     $results['producers'][] = $result;
-                }
-                break;
+                    break;
+                case 'fds':
+                    $result['date'] = $result['elokuva-elolevittaja-vuosi'] ?? '';
+                    $result['method']
+                        = $result['elokuva-elolevittaja-levitystapa'] ?? '';
+                    $results['distributors'][] = $result;
+                    break;
+                case 'fnd':
+                    $result['amount']
+                        = $result['elokuva-elorahoitusyhtio-summa'] ?? '';
+                    $result['fundingType']
+                        = $result['elokuva-elorahoitusyhtio-rahoitustapa'] ?? '';
+                    $results['funders'][] = $result;
+                    break;
+                default:
+                    if (isset($result['elokuva-elotuotantoyhtio'])) {
+                        $results['producers'][] = $result;
+                    }
+                    break;
             }
         }
         return $this->cache[$cacheKey] = $results;

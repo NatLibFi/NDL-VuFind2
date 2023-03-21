@@ -72,7 +72,8 @@ class LocationServiceController extends \VuFind\Controller\AbstractBase
             $callnumber,
             $collection,
             $location,
-            $language
+            $language,
+            $request
         );
         if ($config) {
             $view = $this->createViewModel();

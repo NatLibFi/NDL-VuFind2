@@ -201,7 +201,7 @@ foreach ($this->statusItems as $item):
             <?php endif; ?>
           </span>
         <?php endif; ?>
-        <span class="info text-right"><?=$this->callnumber()->callnumber($source, $driver->getFullTitle(), $item['callnumber'], $item['collection'] ?? null, $item['location'] ?? null, $this->layout()->userLang, ($item['locationhref'] ?? false) ? 'results-online' : 'results')?></span>
+        <span class="info text-right"><?=$this->callnumber()->callnumber($source, $driver->getFullTitle(), $item['callnumber'], $item['collection'] ?? null, $item['location'] ?? null, $this->layout()->userLang, ($item['locationhref'] ?? false) ? 'results-online' : 'results', $item, false)?></span>
       </div>
     <div class="holdings<?=$collapseBranches ? ' collapsible collapsed' : ''?>">
   <?php endif; ?>
@@ -247,6 +247,7 @@ foreach ($this->statusItems as $item):
             <?php else: ?>
               <?= $this->transEsc('status_' . $item['availabilityInfo']['displayText'], [], $item['availabilityInfo']['displayText']); ?>
             <?php endif; ?>
+            <?=$this->callnumber()->callnumber($source, $driver->getFullTitle(), '', $item['collection'] ?? null, $item['location'] ?? null, $this->layout()->userLang, ($item['locationhref'] ?? false) ? 'results-online' : 'results', $item, true)?>
           </span>
         <?php else: ?>
           <?php if ($item['availability'] && !empty($item['availabilityInfo']['coverage'])): ?>
@@ -274,6 +275,15 @@ foreach ($this->statusItems as $item):
 
 <div class="actions">
 <?php
+
+$addSid = function ($url) {
+  if ($this->searchId) {
+    $url .= strpos($url, '?') === false ? '?' : '&';
+    $url .= 'sid=' . urlencode($this->searchId);
+  }
+  return $url;
+};
+
 $holdingsLink = $this->recordLinker()->getUrl($driver);
 $disableTitleHold = isset($summary['holdable']) && !$summary['holdable'];
 
@@ -291,27 +301,27 @@ if (!$disableTitleHold
       $link = null;
       if (!$logged) {
         if (!$this->record($driver)->repositoryLibraryRequestEnabled('results')) {
-          $link = $this->escapeHtmlAttr($holdingsLink . '?login=true&catalogLogin=true&target=' . $source);
+          $link = $holdingsLink . '?login=true&catalogLogin=true&target=' . urlencode($source);
         }
       } elseif ($journal) {
-        $link = $this->escapeHtmlAttr($holdingsLink);
+        $link = $holdingsLink;
       } else {
         $holdingTitleHold = $driver ? $driver->tryMethod('getRealTimeTitleHold') : false;
         if (!empty($holdingTitleHold)) {
-          $link = $this->escapeHtmlAttr($this->recordLinker()->getRequestUrl($holdingTitleHold));
+          $link = $this->recordLinker()->getRequestUrl($holdingTitleHold);
         }
       }
       if ($link) {
         if ($logged) {
 ?>
     <div class="title-hold">
-      <a href="<?=$link?>" class="placehold btn btn-primary hidden-print" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('title_hold_place') . ': ' . $driver->getTitle()) ?>" data-lightbox><?=$this->transEsc('title_hold_place')?><span class="sr-only">: <?=$this->escapeHtml($driver->getTitle())?></span></a>
+      <a href="<?=$this->escapeHtmlAttr($addSid($link))?>" class="placehold btn btn-primary hidden-print" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('title_hold_place') . ': ' . $driver->getTitle()) ?>" data-lightbox><?=$this->transEsc('title_hold_place')?><span class="sr-only">: <?=$this->escapeHtml($driver->getTitle())?></span></a>
     </div>
 <?php
         } else {
 ?>
     <div class="title-hold">
-      <a href="<?=$link?>" class="login btn btn-primary hidden-print" data-lightbox><?=$this->transEsc('title_hold_login')?><span class="sr-only">: <?=$this->escapeHtml($driver->getTitle())?></span></a>
+      <a href="<?=$this->escapeHtmlAttr($addSid($link))?>" class="login btn btn-primary hidden-print" data-lightbox><?=$this->transEsc('title_hold_login')?><span class="sr-only">: <?=$this->escapeHtml($driver->getTitle())?></span></a>
     </div>
 <?php
         }
@@ -329,7 +339,7 @@ if (!$disableTitleHold
         <a href="<?=$this->url('editLibraryCard', ['id' => 'NEW'])?>" class="btn btn-primary login-link hidden-print"><?=$this->transEsc('repository_library_request_add_library_card')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
       <?php endif; ?>
     <?php else: ?>
-      <a href="<?=$this->escapeHtmlAttr($holdingsLink . '?login=true&catalogLogin=true')?>" class="btn btn-primary login-link hidden-print" data-lightbox><?=$this->transEsc('repository_library_request_login')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
+      <a href="<?=$this->escapeHtmlAttr($addSid($holdingsLink . '?login=true&catalogLogin=true'))?>" class="btn btn-primary login-link hidden-print" data-lightbox><?=$this->transEsc('repository_library_request_login')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
     <?php endif; ?>
   </div>
   <div class="clearfix"></div>
@@ -337,7 +347,7 @@ if (!$disableTitleHold
 
 <?php if ($this->holdings()->showLinkToRecordPage()): ?>
   <div class="all-holdings">
-    <a href="<?=$this->escapeHtmlAttr($holdingsLink)?>"><?=$this->transEsc('See all holdings')?></a>
+    <a href="<?=$this->escapeHtmlAttr($addSid($holdingsLink))?>"><?=$this->transEsc('See all holdings')?></a>
   </div>
 <?php endif; ?>
 </div>
@@ -350,6 +360,8 @@ if (!$disableTitleHold
   $js = <<<JS
 finna.layout.initTruncate($('.holding-details'));
 VuFind.lightbox.bind($('.holding-details'));
+finna.layout.initLocationService($('.holding-details'));
+finna.common.initQrCodeLink($('.holding-details'));
 
 var item = $('.hiddenId[value="{$this->escapeHtmlAttr($id)}"]').closest('.record-container');
 item.find('.holdings-container.collapsible > .header').on('click', function onClickCollapsibleHeader() {

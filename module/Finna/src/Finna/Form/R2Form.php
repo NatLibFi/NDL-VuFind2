@@ -97,15 +97,15 @@ class R2Form extends Form
         $urlHelper = $this->viewHelperManager->get('url');
         // R2 registration form help texts
         switch ($translationKey) {
-        case 'R2_register_form_usage_link_html':
-        case 'R2_register_form_help_returninguser_pre_html':
-            $url = $urlHelper('content-page', ['page' => 'tutkijasali']);
-            return $this->translate($translationKey, ['%%url%%' => $url]);
-        case 'R2_register_form_help_post_html':
-            return $this->translate($translationKey);
-        case 'R2_register_form_usage_help_html':
-            $help = $this->translate('R2_register_form_usage_help_tooltip_html');
-            return $this->translate($translationKey, ['%%title%%' => $help]);
+            case 'R2_register_form_usage_link_html':
+            case 'R2_register_form_help_returninguser_pre_html':
+                $url = $urlHelper('content-page', ['page' => 'tutkijasali']);
+                return $this->translate($translationKey, ['%%url%%' => $url]);
+            case 'R2_register_form_help_post_html':
+                return $this->translate($translationKey);
+            case 'R2_register_form_usage_help_html':
+                $help = $this->translate('R2_register_form_usage_help_tooltip_html');
+                return $this->translate($translationKey, ['%%title%%' => $help]);
         }
 
         return parent::getDisplayString($translationKey, $escape);
@@ -114,15 +114,16 @@ class R2Form extends Form
     /**
      * Parse form configuration.
      *
-     * @param string $formId Form id
-     * @param array  $config Configuration
-     * @param array  $params Additional form parameters.
+     * @param string $formId  Form id
+     * @param array  $config  Configuration
+     * @param array  $params  Additional form parameters.
+     * @param array  $prefill Prefill form with these values.
      *
      * @return array
      */
-    protected function parseConfig($formId, $config, $params)
+    protected function parseConfig($formId, $config, $params, $prefill)
     {
-        $elements = parent::parseConfig($formId, $config, $params);
+        $elements = parent::parseConfig($formId, $config, $params, $prefill);
 
         // Set name fields to readonly. This will still post the fields
         // (in contrast to disabled)

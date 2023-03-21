@@ -1,7 +1,7 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/toolbar_mobile.phtml -->
 <?php
   if ($this->driver->tryMethod('socialMediaSharingAllowed') !== false) {
-      $shareUrl = $this->serverUrl($this->recordLinker()->getUrl($this->driver));
+      $shareUrl = $this->serverUrl($this->recordLinker()->getUrl($this->driver, ['excludeSearchId' => true]));
       $shareUrl .= (strpos($shareUrl, '?') ? '&' : '?') . 'lng=' . urlencode($this->layout()->userLang);
   }
 

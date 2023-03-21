@@ -44,7 +44,7 @@ use Laminas\Mvc\Controller\Plugin\Params;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class GetRequestGroupPickupLocations
-    extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
+extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
 {
     /**
      * Handle a request.

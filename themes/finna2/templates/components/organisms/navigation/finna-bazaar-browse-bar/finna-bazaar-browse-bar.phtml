@@ -1,0 +1,20 @@
+<?php $__attributes = $this->htmlAttributes($attributes ?? []); ?>
+<div<?= $__attributes->add('class', 'finna-bazaar-browse-bar') ?>>
+  <div class="finna-bazaar-browse-bar-layout container-fluid navbar">
+    <div class="finna-bazaar-browse-bar-title">
+      <?= $this->transEscAttr('bazaar_browse_title') ?>
+    </div>
+    <div class="finna-bazaar-browse-bar-buttons">
+      <?php if (!empty($addResourceCallbackPayload)): ?>
+        <form id="finna-bazaar-add-resource" action="<?= $this->escapeHtmlAttr($addResourceCallbackUrl) ?>" method="POST">
+          <input type="hidden" name="params" value="<?= $this->escapeHtmlAttr($addResourceCallbackPayload) ?>">
+          <input type="submit" value="<?= $this->transEscAttr('bazaar_browse_select') ?>" class="btn btn-primary">
+        </form>
+      <?php endif; ?>
+      <a href="<?= $this->escapeHtmlAttr($cancelUrl) ?>" class="btn btn-primary">
+        <?= $this->transEscAttr('bazaar_browse_cancel') ?>
+      </a>
+    </div>
+  </div>
+</div>
+<?php $this->headScript()->appendFile('components/organisms/navigation/finna-bazaar-browse-bar/finna-bazaar-browse-bar.js'); ?>

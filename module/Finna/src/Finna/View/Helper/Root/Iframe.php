@@ -40,7 +40,7 @@ use VuFind\I18n\Translator\TranslatorAwareTrait;
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 class Iframe extends \Laminas\View\Helper\AbstractHelper
-    implements TranslatorAwareInterface
+implements TranslatorAwareInterface
 {
     use TranslatorAwareTrait;
 
@@ -172,7 +172,7 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper
             'Vimeo',
             'https://player.vimeo.com/video/' . urlencode($videoId),
             $attributes,
-            'https://vimeo.com/?v=' . urlencode($videoId),
+            'https://vimeo.com/' . urlencode($videoId),
             $consentCategories
         );
     }

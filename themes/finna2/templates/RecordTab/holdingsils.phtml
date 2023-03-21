@@ -46,7 +46,7 @@
 
     // Use location-specific hold links only if we have branches
     $first = reset($holdings['holdings']);
-    $useLocationHoldLinks = isset($first['items'][0]['branch']);
+    $branchesActive = isset($first['items'][0]['branch']);
 
     if (!empty($holdings['holdings'])) {
       $location = reset($holdings['holdings']);
@@ -79,7 +79,7 @@
           }
           if (isset($row['link']) && $row['link']) {
              $holdLinks = true;
-             if ($useLocationHoldLinks && (!$journal || !empty($row['item_id']))) {
+             if ($branchesActive && (!$journal || !empty($row['item_id']))) {
                 $holdLinksLocation[$row['location']] = $row['link'];
              }
           }
@@ -132,15 +132,15 @@
         <a class="holdings-url-link" href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><i class="fa fa-external-link"></i> <?=$this->transEsc('default::link_' . $current['desc'], null, $current['desc'])?></a>
       <?php endforeach; ?>
     <?php endif; ?>
+    <?php if ($doiActive): ?>
+      <?=$doi->renderTemplate()?>
+    <?php endif; ?>
     <?php if ($openUrlActive): ?>
       <?=$openUrl->renderTemplate()?>
       <?php
         $loadOpenURLs = "finna.openUrl.initLinks($('.holdings-urls'));";
         echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $loadOpenURLs, 'SET')
       ?>
-    <?php endif; ?>
-    <?php if ($doiActive): ?>
-      <?=$doi->renderTemplate()?>
     <?php endif; ?>
   </div>
 </div>
@@ -334,7 +334,7 @@
         </div>
       <?php endif; ?>
     <?php endif; ?>
-    <div class="holdings-container-heading">
+    <div class="holdings-container-heading" tabindex="0" role="button" aria-expanded="<?=$holdingsDetails == 'collapsed' ? 'false' : 'true'?>">
       <div class="location">
         <i class="fa fa-arrow-<?=$holdingsDetails == 'collapsed' ? 'right' : 'down'?>" aria-hidden="true"></i>
         <?php $locationText = $this->transEscWithPrefix('location_', $holding['location']); ?>
@@ -350,7 +350,7 @@
       <div class="holdings-details"><?=$holdingSummary ?></div>
       <div class="location-link text-right">
         <?php foreach ($callnumbers as $data): ?>
-          <?=$this->callnumber()->callnumber($recordSource, $this->driver->getFullTitle(), $data['callNo'], $data['collection'], $data['location'], $this->layout()->userLang)?>
+          <?=$this->callnumber()->callnumber($recordSource, $this->driver->getFullTitle(), $data['callnumber'], $data['collection'], $data['location'], $this->layout()->userLang, 'record', $data, !$branchesActive)?>
         <?php endforeach; ?>
         <?php if ($holdsAllowed && isset($holdLinksLocation[$holding['location']])): ?>
           <a class="expandedCheckRequest inlineblock placehold btn btn-primary hidden-print" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getRequestUrl($holdLinksLocation[$holding['location']]))?>" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('request_place_text') . $dialogTitle); ?>"><?=$this->transEsc("request_place_text")?></a>

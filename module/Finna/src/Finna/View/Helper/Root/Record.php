@@ -526,6 +526,8 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
 
+        static $fieldIndex = 0;
+        ++$fieldIndex;
         $elementParams = [
             'driver' => $this->driver,
             'searchAction' => $params['searchAction'] ?? null,
@@ -547,6 +549,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             'classes' => $params['class'] ?? [],
             'fieldLinks' => $fieldLinks,
             'externalLinks' => $externalLinks,
+            'fieldIndex' => $fieldIndex,
         ];
         if ($additionalData = $this->composeAdditionalData($data, $params)) {
             $elementParams['additionalDataHtml'] = $additionalData;
@@ -1159,11 +1162,11 @@ class Record extends \VuFind\View\Helper\Root\Record
         $translator = $this->getView()->plugin('translate');
         $externalLinkText = $translator('external_link');
         switch ($this->driver->getDataSource()) {
-        case 'aoe':
-            $source = ' aoe.fi';
-            break;
-        default:
-            $source = '';
+            case 'aoe':
+                $source = ' aoe.fi';
+                break;
+            default:
+                $source = '';
         }
         return '(' . $externalLinkText . $source . ')';
     }

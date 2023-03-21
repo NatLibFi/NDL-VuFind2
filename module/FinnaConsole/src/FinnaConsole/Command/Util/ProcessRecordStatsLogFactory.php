@@ -66,11 +66,8 @@ class ProcessRecordStatsLogFactory implements FactoryInterface
         $tableManager = $container->get(\VuFind\Db\Table\PluginManager::class);
         return new $requestedName(
             $tableManager->get(\Finna\Db\Table\FinnaRecordStatsLog::class),
-            $tableManager->get(\Finna\Db\Table\FinnaRecordView::class),
-            $tableManager->get(\Finna\Db\Table\FinnaRecordViewInstView::class),
-            $tableManager->get(\Finna\Db\Table\FinnaRecordViewRecord::class),
-            $tableManager->get(\Finna\Db\Table\FinnaRecordViewRecordFormat::class),
-            $tableManager->get(\Finna\Db\Table\FinnaRecordViewRecordRights::class),
+            $container->get(\Finna\Statistics\Driver\PluginManager::class)
+                ->get('Database'),
             ...($options ?? [])
         );
     }

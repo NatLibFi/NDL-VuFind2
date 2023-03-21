@@ -102,14 +102,14 @@ class FinnaRecordViewRecord extends \VuFind\Db\Table\Gateway
         if ($create && empty($record)) {
             $record = $this->createRow();
             foreach ($this->logEntryFields as $field) {
-                $record[$field] = $logEntry[$field];
+                $record[$field] = $logEntry[$field] ?? null;
             }
             $record->save();
         } elseif ($update && !empty($record)) {
             $changes = false;
             foreach ($this->logEntryFields as $field) {
-                if ($record[$field] !== $logEntry[$field]) {
-                    $record[$field] = $logEntry[$field];
+                if ($record[$field] !== ($logEntry[$field] ?? null)) {
+                    $record[$field] = $logEntry[$field] ?? null;
                     $changes = true;
                 }
             }

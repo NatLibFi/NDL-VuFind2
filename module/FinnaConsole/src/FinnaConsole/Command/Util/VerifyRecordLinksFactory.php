@@ -71,6 +71,7 @@ class VerifyRecordLinksFactory implements FactoryInterface
             $tableManager->get('Comments'),
             $tableManager->get('CommentsRecord'),
             $tableManager->get('Resource'),
+            $tableManager->get('Ratings'),
             $container->get(\VuFind\Search\BackendManager::class)->get('Solr'),
             $container->get(\VuFind\Record\Loader::class),
             $container->get(\VuFind\Config\PluginManager::class)->get('searches'),

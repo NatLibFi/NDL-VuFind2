@@ -103,7 +103,7 @@ class RecordFieldMarkdown implements ConverterInterface
      * @return RenderedContentInterface
      */
     public function convert(string $input, ?string $softBreak = null)
-        : RenderedContentInterface
+    : RenderedContentInterface
     {
         $converter = $this->getConverter($softBreak);
         return $converter->convert($input);

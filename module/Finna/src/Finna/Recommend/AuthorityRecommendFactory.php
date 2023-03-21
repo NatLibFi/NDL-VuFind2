@@ -43,7 +43,7 @@ use VuFind\Search\Results\PluginManager as ResultsManager;
  * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
 class AuthorityRecommendFactory
-    implements \Laminas\ServiceManager\Factory\FactoryInterface
+implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create an object

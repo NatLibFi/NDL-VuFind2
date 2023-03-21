@@ -213,6 +213,9 @@ nonPayable[] = '/^Muu maksu/'
 ; Whether the paid amount must match the payable amount. Default is true. If false,
 ; payments of less than the full amount are accepted.
 ;exactBalanceRequired = false
+; Date threshold for payable fines. Older fines cannot be paid online. The value can
+; be anything that PHP's strtotime can parse. Default is "-5 years".
+payableFineDateThreshold = "-3 months"
 
 ; valid value is 'driver'.
 [updateTransactionHistoryState]

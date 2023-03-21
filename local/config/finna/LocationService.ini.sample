@@ -3,10 +3,27 @@
 
 [General]
 enabled = false
-url = "https://kirjastokartta.kansalliskirjasto.fi/LocationHandler?callno={callno}&collection={collection}&lang={lang}&owner={owner}"
 modal = true
 qr_code_record = false
 qr_code_results = false
+; A common service URL for all languages and data sources that don't have their own
+; url settings specified. The example includes all parameters.
+url = "https://service-url/LocationHandler?location={location}&collection={collection}&branch={branch}&department={department}&lang={lang}&owner={owner}"
+; Language-specific service URLs for all data sources that don't have their own
+; url settings specified. The example includes all parameters.
+url[fi] = "https://service-url/LocationHandler?location={location}&collection={collection}&branch={branch}&department={department}&lang=fin&owner={owner}"
+url[sv] = "https://service-url/LocationHandler?location={location}&collection={collection}&branch={branch}&department={department}&lang=swe&owner={owner}"
+
+// Sample configuration for a data source
+[datasource]
+; Owner, typically an ISIL code. Inserted as {owner} in the link. Must be specified
+; even if not used.
+owner = "FI-XY"
+; A common service URL for all languages. The example includes all parameters.
+url = "https://service-url/LocationHandler?location={location}&collection={collection}&branch={branch}&department={department}&lang={lang}&owner={owner}"
+; Language-specific service URLs. The example includes all parameters.
+url[fi] = "https://service-url/LocationHandler?location={location}&collection={collection}&branch={branch}&department={department}&lang=fin&owner={owner}"
+url[sv] = "https://service-url/LocationHandler?location={location}&collection={collection}&branch={branch}&department={department}&lang=swe&owner={owner}"
 
 [jykdok]
 owner = "FI-J"
@@ -35,3 +52,9 @@ url[fi] = "https://haltia.amkit.fi/vwebv/ui/fi_FI/htdocs/libmap/html/Libmap.html
 url[fi] = "https://tria.linneanet.fi/cgi-bin/getlocfinna.cgi?la=fi&co={collection}&ca={callno}&lo={location}&ti={title}"
 url[sv] = "https://tria.linneanet.fi/cgi-bin/getlocfinna.cgi?la=sv&co={collection}&ca={callno}&lo={location}&ti={title}"
 url[en-gb] = "https://tria.linneanet.fi/cgi-bin/getlocfinna.cgi?la=en&co={collection}&ca={callno}&lo={location}&ti={title}"
+
+[lastu]
+url[fi] = "https://tria.linneanet.fi/cgi-bin/getlocfinna.cgi?la=fi&co={collection}&ca={callno}&lo={location}&ti={title}"
+url[sv] = "https://tria.linneanet.fi/cgi-bin/getlocfinna.cgi?la=sv&co={collection}&ca={callno}&lo={location}&ti={title}"
+url[en-gb] = "https://tria.linneanet.fi/cgi-bin/getlocfinna.cgi?la=en&co={collection}&ca={callno}&lo={location}&ti={title}"
+level = 2

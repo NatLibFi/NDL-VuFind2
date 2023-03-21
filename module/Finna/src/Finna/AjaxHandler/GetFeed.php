@@ -258,7 +258,7 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
             $feed->setId(' ');
             $feed->setDescription(' ');
             foreach ($sourceRecords as $key => $rec) {
-                $isRecord = !$rec instanceof \VuFind\RecordDriver\Missing;
+                $isRecord = !($rec instanceof \VuFind\RecordDriver\Missing);
                 $entry = $feed->createEntry();
                 $entry->setTitle($rec->getTitle());
                 $entry->setDateModified(time());
