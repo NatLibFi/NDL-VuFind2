@@ -182,7 +182,7 @@
             <a class="<?=$this->escapeHtmlAttr(strtolower($tab)) ?>" aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>"
               href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $tab))?>#tabnav" data-lightbox-ignore<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?>
               data-background<?php endif ?>>
-              <?php if (strtolower($tab) == 'details'): ?><i class="fa fa-lg fa-<?=$this->escapeHtmlAttr($tab)?>"></i><?php endif; ?>
+              <?php if (strtolower($tab) == 'details'): ?><?=$this->icon('tabs-detail') ?><?php endif; ?>
               <?php if (strtolower($tab) != 'details'): ?><?=$this->transEsc($desc)?><?php endif; ?><?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?>
             </a>
             </li>

@@ -1,4 +1,4 @@
-<!-- START of: finna - navibar.phtml --> 
+<!-- START of: finna - navibar.phtml -->
 <?php
     $user = $this->auth()->isLoggedIn();
     $patron = $user ? $this->auth()->getILSPatron() : false;
@@ -8,8 +8,8 @@
 <div role="navigation" aria-label="<?=$this->transEscAttr('Main Menu')?>" class="finna-navbar">
   <div class="navbar-header">
     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-collapse" aria-label="<?=$this->transEscAttr('Mobile Menu') ?>" aria-expanded="false">
-      <i class="fa fa-bars" aria-hidden="true"></i>
-      <i class="fa fa-times" aria-hidden="true"></i>
+      <span class="mobilemenu-bars"><?=$this->icon('mobilemenu-bars') ?></span>
+      <span class="mobilemenu-close"><?=$this->icon('mobilemenu-close') ?></span>
     </button>
     <?php if ($this->resolver('navibar-logo.phtml')): ?><a class="navbar-brand" href="<?=$this->url('home')?>"><?=$this->render('navibar-logo.phtml')?></a><?php endif ?>
   </div>
@@ -19,7 +19,7 @@
         <?php foreach ($this->navibar()->getMenuItems($this->layout()->userLang) as $key => $val): ?>
           <?php if (count($val['items']) > 1): ?>
             <li class="dropdown" id="<?= $val['label'] ?>">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-nav-<?=$val['label'] ?>" aria-hidden="true"></i><?= $this->transEsc($val['label']) ?> <b class="caret" aria-hidden="true"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?= $this->transEsc($val['label']) ?> <?= $this->icon('menu-open') ?></a>
               <ul role="group" class="dropdown-menu" aria-labelledby="<?= $val['label'] ?>">
                 <?php foreach ($val['items'] as $itemKey => $itemVal): ?>
                 <?php
@@ -51,12 +51,12 @@
             $target = $itemUrl['target'] ?? null;
             $label = $itemVal['label'];
           ?>
-            <li><a <?=$url === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" <?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?= $url ?>"><i class="fa fa-nav-<?=$label ?>" aria-hidden="true"></i><?= $this->transEsc($label) ?></a></li>
+            <li><a <?=$url === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" <?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?= $url ?>"><?= $this->transEsc($label) ?></a></li>
           <?php endif; ?>
         <?php endforeach; ?>
         <?php $cart = $this->cart(); if ($cart->isActive()): ?>
           <li id="cartSummary">
-            <a <?=$this->url('cart-home') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" id="cartItems" data-lightbox title="<?=$this->transEsc('View Book Bag')?>" href="<?=$this->url('cart-home')?>"><i class="fa fa-suitcase" aria-hidden="true"></i> <strong><?=count($cart->getItems())?></strong> <span class="sr-only"><?=$this->transEsc('items')?></span></a>
+            <a <?=$this->url('cart-home') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" id="cartItems" data-lightbox title="<?=$this->transEsc('View Book Bag')?>" href="<?=$this->url('cart-home')?>"><?=$this->icon('cart') ?> <strong><?=count($cart->getItems())?></strong> <span class="sr-only"><?=$this->transEsc('items')?></span></a>
           </li>
         <?php endif; ?>
         <?php if ($this->feedback()->tabEnabled()): ?>
@@ -67,7 +67,7 @@
 
         <?php if (isset($this->layout()->themeOptions) && count($this->layout()->themeOptions) > 1): ?>
           <li class="theme dropdown">
-            <a role="menuitem" href="#" class="dropdown-toggle" data-toggle="dropdown"><?=$this->transEsc("Theme")?> <b class="caret"></b></a>
+            <a role="menuitem" href="#" class="dropdown-toggle" data-toggle="dropdown"><?=$this->transEsc("Theme")?> <?= $this->icon('menu-open') ?></a>
             <ul role="menu" class="dropdown-menu">
               <?php foreach ($this->layout()->themeOptions as $current): ?>
                 <li<?=$current['selected'] ? ' class="active"' : ''?>>
@@ -103,15 +103,15 @@
         <ul role="menubar" class="nav navbar-nav nav-login">
           <li class="nav-login" id="loginOptions-navi">
             <?php if ($sessionInitiator = $account->getSessionInitiator($this->serverUrl($this->url('myresearch-home')))): ?>
-              <a <?=$this->url('myresearch-userlogin') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-userlogin')?>"><i class="fa fa-user" aria-hidden="true"></i> <?=$this->transEsc("Institutional Login")?></a>
+              <a <?=$this->url('myresearch-userlogin') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-userlogin')?>"><?= $this->icon('sign-in') ?> <?=$this->transEsc("Institutional Login")?></a>
             <?php else: ?>
               <?php if ($this->templateDir === 'myresearch' && $this->templateName === 'login'): ?>
                 <div>
-                  <a role="menuitem" class="btn btn-primary btn-uppercase"><i class="fa fa-user fa-lg" aria-hidden="true"></i><span  class="login-text"><?=$this->transEsc("Login")?></span></a>
+                  <a role="menuitem" class="btn btn-primary btn-uppercase"><?= $this->icon('sign-in') ?><span  class="login-text"><?=$this->transEsc("Login")?></span></a>
                 </div>
               <?php else: ?>
                 <div>
-                  <a <?=$this->url('myresearch-userlogin') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-userlogin')?>" class="btn btn-primary btn-uppercase" data-lightbox data-lightbox-onclose="window.location.href='<?=$this->escapeHtmlAttr($this->url('myresearch-home')) ?>'"><i class="fa fa-user fa-lg" aria-hidden="true"></i><span class="login-text"><?=$this->transEsc("Login")?></span></a>
+                  <a <?=$this->url('myresearch-userlogin') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-userlogin')?>" class="btn btn-primary btn-uppercase" data-lightbox data-lightbox-onclose="window.location.href='<?=$this->escapeHtmlAttr($this->url('myresearch-home')) ?>'"><?= $this->icon('sign-in') ?><span class="login-text"><?=$this->transEsc("Login")?></span></a>
                 </div>
               <?php endif; ?>
             <?php endif; ?>
@@ -125,13 +125,13 @@
       <?php if (is_object($account) && $account->loginEnabled()): ?>
         <?php if ($user): ?>
           <li class="logoutOptions">
-            <a href="#" role="menuitem" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="account-icon" class="fa fa-user fa-lg" aria-hidden="true"></i><span class="username login-text"><?=$this->transEsc("Your Account")?></span><b class="caret"></b></a>
+            <a href="#" role="menuitem" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="account-icon" class="fa fa-user fa-lg" aria-hidden="true"></i><span class="username login-text"><?=$this->transEsc("Your Account")?> <?= $this->icon('menu-open') ?></a>
             <ul role="menu" id="my-info-dropdown-menu" class="dropdown-menu">
               <?php if ($user->getLibraryCards()->count() > 0): ?>
                 <li>
                   <a <?=$this->url('myresearch-checkedout') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-checkedout')?>">
                     <?=$this->transEsc('Checked Out Items')?>
-                    <span class="checkedout-status status hidden"><i class="fa fa-spin fa-spinner" aria-hidden="true"></i></span>
+                    <span class="checkedout-status status hidden"><?= $this->icon('spinner') ?></i></span>
                   </a>
                 </li>
                 <?php if ($this->ils()->checkCapability('getMyTransactionHistory', $capabilityParams)): ?>
@@ -144,13 +144,13 @@
                 <li>
                   <a <?=$this->url('holds-list') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('holds-list')?>">
                     <?=$this->transEsc('Holds and Recalls')?>
-                    <span class="holds-status status hidden"><i class="fa fa-spin fa-spinner" aria-hidden="true"></i></span>
+                    <span class="holds-status status hidden"><?= $this->icon('spinner') ?></span>
                   </a>
                 </li>
                 <li>
                   <a <?=$this->url('myresearch-fines') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-fines')?>">
                     <?=$this->transEsc('Fines')?>
-                    <span class="fines-status status hidden"><i class="fa fa-spin fa-spinner" aria-hidden="true"></i></span>
+                    <span class="fines-status status hidden"><?= $this->icon('spinner') ?></span>
                   </a>
                 </li>
               <?php endif; ?>
@@ -158,7 +158,7 @@
               <li>
                 <a <?=$this->url('myresearch-profile') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-profile')?>">
                   <?=$this->transEsc('Profile')?>
-                  <span class="profile-status status hidden"><i class="fa fa-spin fa-spinner" aria-hidden="true"></i></span>
+                  <span class="profile-status status hidden"><?= $this->icon('spinner') ?></span>
                 </a>
               </li>
               <?php if ($this->R2()->isAvailable()): ?>
@@ -167,7 +167,7 @@
                   <a <?=$this->url('myresearch-r2accessrights') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-r2accessrights')?>">
                     <?=$this->transEsc($registered ? 'R2_accessrights_title' : 'R2_menu_heading_register')?>
                     <?php if (!$registered): ?>
-                      <i class="fa fa-research pull-right" aria-hidden="true"></i>
+                      <?= $this->icon('myresearch','pull-right') ?></i>
                     <?php endif; ?>
                   </a>
                 </li>
@@ -185,22 +185,22 @@
                 </li>
               <?php endif; ?>
               <li>
-                <a <?=$this->url('myresearch-logout') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-logout')?>" title="<?=$this->transEsc("Log Out")?>"><?=$this->transEsc("Log Out")?><i class="pull-right fa fa-sign-out fa-lg" aria-hidden="true"></i></a>
+                <a <?=$this->url('myresearch-logout') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-logout')?>" title="<?=$this->transEsc("Log Out")?>"><?=$this->transEsc("Log Out")?><?= $this->icon('sign-out', 'pull-right') ?></a>
               </li>
             </ul>
           </li>
         <?php endif; ?>
         <li id="loginOptions"<?= $account->isLoggedIn() ?  " class='hidden'" : '';?>>
           <?php if ($sessionInitiator = $account->getSessionInitiator($this->serverUrl($this->url('myresearch-home')))): ?>
-            <a <?=$this->url('myresearch-userlogin') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-userlogin')?>"><i class="fa fa-user" aria-hidden="true"></i> <?=$this->transEsc("Institutional Login")?></a>
+            <a <?=$this->url('myresearch-userlogin') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-userlogin')?>"><?= $this->icon('sign-in') ?> <?=$this->transEsc("Institutional Login")?></a>
           <?php else: ?>
             <?php if ($this->templateDir === 'myresearch' && $this->templateName === 'login'): ?>
               <div>
-                <a role="menuitem" class="btn btn-primary btn-uppercase"><i class="fa fa-user fa-lg" aria-hidden="true"></i><span  class="login-text"><?=$this->transEsc("Login")?></span></a>
+                <a role="menuitem" class="btn btn-primary btn-uppercase"><?= $this->icon('sign-in') ?><span  class="login-text"><?=$this->transEsc("Login")?></span></a>
               </div>
             <?php else: ?>
               <div>
-                <a <?=$this->url('myresearch-userlogin') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-userlogin')?>" class="btn btn-primary btn-uppercase" data-lightbox data-lightbox-onclose="window.location.href='<?=$this->escapeHtmlAttr($this->url('myresearch-home')) ?>'"><i class="fa fa-user fa-lg" aria-hidden="true"></i><span class="login-text"><?=$this->transEsc("Login")?></span></a>
+                <a <?=$this->url('myresearch-userlogin') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-userlogin')?>" class="btn btn-primary btn-uppercase" data-lightbox data-lightbox-onclose="window.location.href='<?=$this->escapeHtmlAttr($this->url('myresearch-home')) ?>'"><?= $this->icon('sign-in') ?><span class="login-text"><?=$this->transEsc("Login")?></span></a>
               </div>
             <?php endif; ?>
           <?php endif; ?>
