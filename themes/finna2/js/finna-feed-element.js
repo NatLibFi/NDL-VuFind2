@@ -109,7 +109,7 @@ class FinnaFeedElement extends HTMLElement {
   }
 
   /**
-   * Create arrow buttons. Fixes the problem with safari not loading svg.
+   * Add proper classes for arrow buttons.
    *
    * @param {boolean} vertical Is the carousel vertical?
    */
