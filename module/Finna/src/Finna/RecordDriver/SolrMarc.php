@@ -2425,6 +2425,6 @@ implements \Laminas\Log\LoggerAwareInterface
                 $results[] = $this->stripTrailingPunctuation($subfield);
             }
         }
-        return $results;      
+        return $results;
     }
 }
