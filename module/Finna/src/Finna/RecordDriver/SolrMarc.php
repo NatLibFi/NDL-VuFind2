@@ -2396,10 +2396,8 @@ implements \Laminas\Log\LoggerAwareInterface
         $results = [];
         $results = $this->getFieldArray('341', ['a', 'b'], true, ': ');
         foreach ($this->getMarcReader()->getFields('532') as $field) {
-            if (
-                ($subfield = $this->getSubfield($field, 'a'))
-                && (
-                    ($field['i1'] == "0")
+            if (($subfield = $this->getSubfield($field, 'a'))
+                && (($field['i1'] == "0")
                     || ($field['i1'] == "1")
                 )
             ) {
@@ -2418,8 +2416,7 @@ implements \Laminas\Log\LoggerAwareInterface
     {
         $results = [];
         foreach ($this->getMarcReader()->getFields('532') as $field) {
-            if (
-                ($subfield = $this->getSubfield($field, 'a'))
+            if (($subfield = $this->getSubfield($field, 'a'))
                 && ($field['i1'] == "2")
             ) {
                 $results[] = $this->stripTrailingPunctuation($subfield);
