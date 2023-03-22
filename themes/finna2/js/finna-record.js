@@ -30,6 +30,19 @@ finna.record = (function finnaRecord() {
         });
     }
   }
+  function checkYearRTL() {
+    var title = $('.record-title');
+    if (title.html()) {
+      var titleItems = title.html().split(/([()])/);
+      var organized = "";
+      titleItems.forEach(element => {
+        if (element !== '') {
+          organized += '<bdi dir="auto">' + element + '</bdi>';
+        }
+      });
+      title.html(organized);
+    }
+  }
   function showDetails() {
     $('.record-information .record-details-more').removeClass('hidden');
     $('.show-details-button').addClass('hidden');
@@ -510,6 +523,7 @@ finna.record = (function finnaRecord() {
   function init() {
     initHideDetails();
     initDescription();
+    checkYearRTL();
     initRecordNaviHashUpdate();
     initRecordAccordion();
     initAudioAccordion();
