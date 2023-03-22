@@ -33,14 +33,10 @@ finna.record = (function finnaRecord() {
   function checkYearRTL() {
     var title = $('.record-title');
     if (title.html()) {
-      var titleItems = title.html().split(/([()])/);
-      var organized = "";
-      titleItems.forEach(element => {
-        if (element !== '') {
-          organized += '<bdi dir="auto">' + element + '</bdi>';
-        }
-      });
-      title.html(organized);
+      var titleItems = title.html().match(/\d/);
+      var position = title.html().indexOf(titleItems);
+      var output = title.html().substr(0, position - 1) + " " + '&lrm;' + title.html().substr(position - 1);
+      title.html(output);
     }
   }
   function showDetails() {
