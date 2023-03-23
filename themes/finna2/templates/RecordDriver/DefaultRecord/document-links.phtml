@@ -9,7 +9,7 @@
     ?>
     <li class="fulltextField">
         <div class="link-wrapper">  
-            <a href="<?=$this->escapeHtmlAttr($this->url('record-downloadfile', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $i, 'format' => $document['format'], 'type' => 'document']]))?>" download rel="nofollow">
+            <a href="<?=$this->escapeHtmlAttr($this->url('record-downloadfile', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $setIndex, 'format' => $document['format'], 'type' => 'document']]))?>" download rel="nofollow">
                 <i class="fa fa-download" aria-hidden="true"></i>
                 <?=$this->escapeHtml($description)?>
             </a>
