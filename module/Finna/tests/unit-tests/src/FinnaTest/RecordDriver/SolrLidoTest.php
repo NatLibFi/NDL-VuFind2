@@ -199,12 +199,12 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             [
                 'getDocuments',
                 [
-                    5 => [
+                    0 => [
                         'description' => 'PDFTesti.pdf',
                         'url' => 'https://linkkiPDF.fi',
                         'format' => 'pdf'
                     ],
-                    6 => [
+                    1 => [
                         'description' => 'DocxTesti.docx',
                         'url' => 'https://linkkiDocx.fi',
                         'format' => 'docx'

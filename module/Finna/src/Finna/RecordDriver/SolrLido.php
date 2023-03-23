@@ -389,7 +389,9 @@ implements \Laminas\Log\LoggerAwareInterface
     {
         $language = $this->getTranslatorLocale();
         $representations = $this->getRepresentations($language);
-        return array_filter(array_column($representations, 'documents'));
+        return array_values(
+            array_filter(array_column($representations, 'documents'))
+        );
     }
 
     /**
