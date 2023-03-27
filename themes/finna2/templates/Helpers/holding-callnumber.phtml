@@ -1,19 +1,27 @@
 <!-- START of: finna - Helpers/holding-callnumber.phtml -->
 <div class="location-link-text">
-<?php if (isset($this->locationServiceUrl)): ?>
-  <a class="location-service <?=$this->locationServiceModal ? ' location-service-modal' : ''?>" href="<?=$this->locationServiceUrl?>"<?=$this->locationServiceModal ? ' data-lightbox-href="' . $this->url('locationservice-modal') . '?callnumber=' . urlencode(($this->callnumber instanceof \VuFind\I18n\TranslatableString) ? $this->callnumber->getDisplayString() : $this->callnumber) . '&amp;collection=' . urlencode($this->collection ?? '') . '&amp;location=' . urlencode($this->location ?? '') . '&amp;title=' . urlencode($this->title) . '&amp;source=' . urlencode($this->source) : '' ?>" target="location-service"><i class="fa fa-map-marker"></i> <?=$this->transEsc($this->callnumber)?></a>
-<?php else: ?>
-  <?php if ($this->page == 'results'): ?>
-    (<span><?=$this->transEsc("shelf_location"); ?>: </span><?=$this->transEsc($this->callnumber)?>)
-  <?php else: ?>
-    <?=$this->transEsc($this->callnumber)?>
+  <?php if (isset($this->locationServiceUrl)): ?>
+    <a class="location-service <?=$this->locationServiceModal ? ' location-service-modal' : ''?>" href="<?=$this->locationServiceUrl?>"<?=$this->locationServiceModal ? ' data-lightbox-href="' . $this->url('locationservice-modal') . '?callnumber=' . urlencode(($this->callnumber instanceof \VuFind\I18n\TranslatableString) ? $this->callnumber->getDisplayString() : $this->callnumber) . '&amp;collection=' . urlencode($this->collection ?? '') . '&amp;location=' . urlencode($this->location ?? '') . '&amp;title=' . urlencode($this->title) . '&amp;source=' . urlencode($this->source) : '' ?>" target="location-service"><i class="fa fa-map-marker"></i> <?=$this->transEsc($this->callnumber)?></a>
+  <?php elseif ($this->callnumber): ?>
+    <?php if ($this->page === 'results'): ?>
+      (<span><?=$this->transEsc("shelf_location"); ?>: </span><?=$this->transEsc($this->callnumber)?>)
+    <?php else: ?>
+      <?=$this->transEsc($this->callnumber)?>
+    <?php endif; ?>
   <?php endif; ?>
-<?php endif; ?>
-<?php if ($this->qrCode): ?>
-  <a class="dropdown-toggle location-service" data-toggle="dropdown" href="<?=$this->escapeHtmlAttr($this->locationServiceUrl);?>" rel="nofollow"><i class="fa fa-qr-code"></i></a>
-  <ul class="dropdown-menu" role="menu">
-    <li class="text-center"><img src="<?=$this->url('qrcode-show') . '?text=' . $this->escapeHtmlAttr($locationServiceUrl);?>" alt="<?=$this->transEsc('QR Code')?>" class="qrcode"/></li>
-  </ul>
-<?php endif; ?>
+  <?php if ($this->qrCode): ?>
+    <div class="dropdown location-service-qrcode">
+      <a href="#" class="dropdown-toggle finnaQrcodeLink" data-toggle="dropdown" title="<?=$this->transEsc('qrcode_show')?>" rel="nofollow">
+        <?=$this->icon('qrcode')?><span class="sr-only"><?=$this->transEsc('QR Code')?></span>
+      </a>
+      <ul class="dropdown-menu" role="menu">
+        <li>
+          <script type="text/template" class="qrCodeImgTag">
+            <img class="qrcode" alt="" src="<?=$this->url('qrcode-show', [], ['query' => ['text' => $this->locationServiceUrl]])?>" rel="nofollow">
+          </script>
+        </li>
+      </ul>
+    </div>
+  <?php endif; ?>
 </div>
 <!-- END of: finna - Helpers/holding-callnumber.phtml -->

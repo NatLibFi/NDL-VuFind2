@@ -523,6 +523,11 @@ finna-feed {
         justify-content: center;
         align-items: center;
         overflow: hidden;
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     }
     .carousel-slide-header {
         p {
@@ -538,7 +543,9 @@ finna-feed {
             button {
                 font-size: 1em;
                 line-height: 0;
-                display: block;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 width: 5px;
                 height: 5px;
                 padding: 5px;
@@ -658,10 +665,6 @@ finna-feed.splide--ttb {
         }
         .wrapper {
             flex: 1 1 40%;
-            img {
-                max-width: 80%;
-                max-height: initial;
-            }
         }
         .carousel-vertical-text-part {
             flex: 1 1 60%;

@@ -37,6 +37,17 @@ finna.common = (function finnaCommon() {
       }
       return true;
     });
+
+    // Reposition the dropdown to escape any truncated div:
+    holder.find('.dropdown.location-service-qrcode').on('shown.bs.dropdown', function positionDropdown() {
+      const button = $(this);
+      var menu = button.find('.dropdown-menu');
+      menu.css({
+        top: button.offset().top - $(window).scrollTop() + button.height(),
+        left: button.offset().left - $(window).scrollLeft() - menu.width(),
+        position: 'fixed'
+      });
+    });
   }
 
   function _getCookieSettings() {

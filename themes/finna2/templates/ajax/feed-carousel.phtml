@@ -5,6 +5,14 @@
 <?php if (isset($this->description)): ?>
   <p class="additional-description"><?=$this->translate($this->description) // HTML, intentionally left unescaped ?></p>
 <?php endif; ?>
+<div class="splide__arrows">
+  <button class="splide__arrow splide__arrow--prev">
+    <?=$this->icon('chevron-right')?>
+  </button>
+  <button class="splide__arrow splide__arrow--next">
+    <?=$this->icon('chevron-right')?>
+  </button>
+</div>
 <div class="splide__track carousel">
   <ul class="splide__list carousel-feed">
     <?php $items = isset($this->visualItems) ? array_splice($this->items, 0, $this->visualItems) : $this->items; ?>

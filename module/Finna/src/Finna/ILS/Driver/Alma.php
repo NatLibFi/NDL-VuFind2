@@ -194,6 +194,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     }
                     $finesGrouped[$key]['amount'] += $fine['amount'];
                     $finesGrouped[$key]['balance'] += $fine['balance'];
+                    $finesGrouped[$key]['fine_id'] .= '|' . $fine['fine_id'];
                 } else {
                     $finesGrouped[$key] = $fine;
                 }
@@ -340,21 +341,28 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      */
     public function getOnlinePaymentDetails($patron, $fines, ?array $selectedFineIds)
     {
-        $paymentConfig = $this->config['OnlinePayment'] ?? [];
         $amount = 0;
-        if (!empty($fines)) {
-            foreach ($fines as $fine) {
-                if ($fine['payableOnline']) {
-                    $amount += $fine['balance'];
-                }
+        $payableFines = [];
+        foreach ($fines as $fine) {
+            if (null !== $selectedFineIds
+                && !in_array($fine['fine_id'], $selectedFineIds)
+            ) {
+                continue;
+            }
+            if ($fine['payableOnline']) {
+                $amount += $fine['balance'];
+                $payableFines[] = $fine;
             }
         }
+        $paymentConfig = $this->config['OnlinePayment'] ?? [];
         if ($amount >= ($paymentConfig['minimumFee'] ?? 0)) {
             return [
                 'payable' => true,
-                'amount' => $amount
+                'amount' => $amount,
+                'fines' => $payableFines,
             ];
         }
+
         return [
             'payable' => false,
             'amount' => 0,
@@ -383,6 +391,16 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         $transactionNumber,
         $fineIds = null
     ) {
+        // Unpack grouped fine_id's:
+        if (null !== $fineIds) {
+            $newIds = [];
+            foreach ($fineIds as $fineIdGroup) {
+                foreach (explode('|', $fineIdGroup) as $fineId) {
+                    $newIds[] = $fineId;
+                }
+            }
+            $fineIds = $newIds;
+        }
         $fines = $this->getFineList($patron);
         $amountRemaining = $amount;
         // Mark payable fines as long as amount remains. If there's any left over
@@ -390,6 +408,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         foreach ($fines as $fine) {
             if ($fine['payableOnline'] && $fine['balance'] > 0
                 && $fine['balance'] <= $amountRemaining
+                && (null === $fineIds || in_array($fine['fine_id'], $fineIds))
             ) {
                 $getParams = [
                     'op' => 'pay',
@@ -400,7 +419,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 ];
                 $this->makeRequest(
                     '/users/' . rawurlencode($patron['id']) . '/fees/'
-                    . rawurlencode($fine['id']),
+                    . rawurlencode($fine['fine_id']),
                     $getParams,
                     [],
                     'POST'
@@ -3176,7 +3195,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             $feeType = $this->feeTypeMappings[(string)$fee->type]
                 ?? (string)$fee->type['desc'];
             $fineList[] = [
-                'id'       => (string)$fee->id,
+                'fine_id'  => (string)$fee->id,
                 "title"    => (string)($fee->title ?? ''),
                 "amount"   => round(floatval($fee->original_amount) * 100),
                 "balance"  => round(floatval($fee->balance) * 100),

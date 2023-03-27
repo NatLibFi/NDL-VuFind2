@@ -64,6 +64,7 @@ class LocationService
      * @param string $collection Collection
      * @param string $location   Location
      * @param string $language   Language
+     * @param array  $fields     Additional data fields
      *
      * @return array Array with the following keys:
      *   [url]   string  URL to the Location Service map.
@@ -76,7 +77,8 @@ class LocationService
         $callnumber,
         $collection,
         $location,
-        $language
+        $language,
+        $fields
     ) {
         if (empty($this->config['General']['enabled'])
             || empty($this->config['General']['url'])
@@ -101,13 +103,14 @@ class LocationService
         }
 
         $params = [
-            'callno' => $callnumber,
+            'callno' => $fields['callnumber'] ?? '',
             'collection' => $collection,
             'location' => $location,
+            'branch' => $fields['branch'] ?? '',
+            'department' => $fields['department'] ?? '',
             'title' => $title,
             'lang' => substr($language, 0, 2),
-            'owner' => $this->config[$source]['owner']
-               ?? ''
+            'owner' => $this->config[$source]['owner'] ?? '',
         ];
 
         foreach ($params as $key => $val) {
@@ -118,7 +121,8 @@ class LocationService
            'url' => $url,
            'modal' => $this->config['General']['modal'] ?? true,
            'qrCodeRecord' => $this->config['General']['qr_code_record'] ?? false,
-           'qrCodeResults' => $this->config['General']['qr_code_results'] ?? false
+           'qrCodeResults' => $this->config['General']['qr_code_results'] ?? false,
+           'level' => $this->config[$source]['level'] ?? 'location',
         ];
     }
 

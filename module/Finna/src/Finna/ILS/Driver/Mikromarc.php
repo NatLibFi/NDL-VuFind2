@@ -1731,18 +1731,19 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             $statuses[] = $entry;
         }
 
-        foreach ($statuses as &$status) {
-            $status['availabilityInfo']
-                = array_merge(
-                    ['displayText' => $status['status']],
-                    $organisationTotal[$status['branch_id']]
-                );
+        if ($statuses) {
+            foreach ($statuses as &$status) {
+                $status['availabilityInfo']
+                    = array_merge(
+                        ['displayText' => $status['status']],
+                        $organisationTotal[$status['branch_id']]
+                    );
+            }
+
+            usort($statuses, [$this, 'statusSortFunction']);
+            $summary = $this->getHoldingsSummary($statuses);
+            $statuses[] = $summary;
         }
-
-        usort($statuses, [$this, 'statusSortFunction']);
-
-        $summary = $this->getHoldingsSummary($statuses);
-        $statuses[] = $summary;
         return $statuses;
     }
 

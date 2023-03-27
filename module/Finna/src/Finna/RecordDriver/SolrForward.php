@@ -369,7 +369,8 @@ implements \Laminas\Log\LoggerAwareInterface
             'elokuva-tarkastus-perustelut' => 'reason',
             'elokuva-tarkastus-muuttiedot' => 'additional',
             'elokuva-tarkastus-tarkastusilmoitus' => 'notification',
-            'elokuva-tarkastus-tarkastuselin' => 'inspector'
+            'elokuva-tarkastus-tarkastuselin' => 'inspector',
+            'elokuva-tarkastus-kopiolkm' => 'copy_count'
         ],
         'accessRestrictionMappings' => [
             'finna-kayttooikeus' => 'accessRestrictions'

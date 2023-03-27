@@ -61,13 +61,16 @@ class Callnumber extends \Laminas\View\Helper\AbstractHelper
     /**
      * Returns HTML for a holding callnumber.
      *
-     * @param string $source     Record source
-     * @param string $title      Record title
-     * @param string $callnumber Callnumber
-     * @param string $collection Collection
-     * @param string $location   Location
-     * @param string $language   Language
-     * @param string $page       Page (record|results)
+     * @param string $source             Record source
+     * @param string $title              Record title
+     * @param string $callnumber         Callnumber
+     * @param string $collection         Collection
+     * @param string $location           Location
+     * @param string $language           Language
+     * @param string $page               Page (record|results)
+     * @param array  $fields             Additional data fields
+     * @param bool   $useLocationService Whether to display location service links
+     * (if available)
      *
      * @return string
      */
@@ -78,38 +81,39 @@ class Callnumber extends \Laminas\View\Helper\AbstractHelper
         $collection,
         $location,
         $language,
-        $page = 'record'
+        $page = 'record',
+        $fields = [],
+        $useLocationService = true
     ) {
-        $params = [
-            'callnumber' => $callnumber, 'location' => $location, 'title' => $title,
-            'page' => $page, 'source' => $source
-        ];
-        // Set results-online to just results for qrCode config below
-        if ('results-online' === $page) {
-            $page = 'results';
-        }
-        $config = $this->locationService->getConfig(
+        $params = compact(
+            'callnumber',
+            'collection',
+            'location',
+            'title',
+            'page',
+            'source'
+        );
+
+        $config = $useLocationService ? $this->locationService->getConfig(
             $source,
             $title,
             $callnumber,
             $collection,
             $location,
-            $language
-        );
+            $language,
+            $fields
+        ) : null;
 
         if ($config) {
-            $params['collection'] = $collection;
-            $params['location'] = $location;
-            $params['title'] = $title;
+            $params['fields'] = $fields;
             $params['locationServiceUrl'] = $config['url'];
             $params['locationServiceModal'] = $config['modal'];
-            $params['qrCode']
-                = $config[$page == 'results' ? 'qrCodeResults' : 'qrCodeRecord'];
+            // Extract the page from something like 'results' or 'results-online':
+            [$basePage] = explode('-', $page);
+            $section = $basePage === 'results' ? 'qrCodeResults' : 'qrCodeRecord';
+            $params['qrCode'] = $config[$section];
         }
-        return $this->getView()->render(
-            'Helpers/holding-callnumber.phtml',
-            $params
-        );
+        return $this->getView()->render('Helpers/holding-callnumber.phtml', $params);
     }
 
     /**

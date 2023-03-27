@@ -2384,4 +2384,14 @@ implements \Laminas\Log\LoggerAwareInterface
         }
         return $results;
     }
+
+    /**
+     * Get accessibility information from field 341, subfields a and b.
+     *
+     * @return array
+     */
+    public function getAccessibilityFeatures(): array
+    {
+        return $this->getFieldArray('341', ['a', 'b'], true, ': ');
+    }
 }

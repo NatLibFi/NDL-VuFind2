@@ -172,7 +172,7 @@ implements TranslatorAwareInterface
             'Vimeo',
             'https://player.vimeo.com/video/' . urlencode($videoId),
             $attributes,
-            'https://vimeo.com/?v=' . urlencode($videoId),
+            'https://vimeo.com/' . urlencode($videoId),
             $consentCategories
         );
     }

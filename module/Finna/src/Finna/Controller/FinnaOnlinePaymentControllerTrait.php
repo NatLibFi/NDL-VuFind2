@@ -203,6 +203,12 @@ trait FinnaOnlinePaymentControllerTrait
             $fines,
             $selectedIds
         );
+        if ($selectedIds && empty($payableOnline['fines'])) {
+            $this->handleError(
+                "Fines to pay missing from ILS driver for '{$patron['source']}'"
+            );
+            return false;
+        }
 
         $callback = function ($fine) {
             return $fine['payableOnline'];
@@ -279,7 +285,7 @@ trait FinnaOnlinePaymentControllerTrait
                 $driver,
                 $payableOnline['amount'],
                 $view->transactionFee,
-                $payableOnline['fines'],
+                $payableOnline['fines'] ?? $payableFines,
                 $paymentConfig['currency'],
                 $transactionIdParam
             );

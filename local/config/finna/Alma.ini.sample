@@ -260,6 +260,8 @@ indexes = "868az"
 ;transactionMaxDuration = 15
 ; Currency
 ;currency = 'EUR'
+; Whether to allow selection of fines to pay. Default is false.
+;selectFines = true
 
 ; Uncomment the following lines to enable updating of profile information.
 ; Choose a method on how to update the profile information (driver, email or url).

@@ -152,22 +152,26 @@ class Holdings extends \VuFind\View\Helper\Root\Holdings
         sort($callNos);
 
         foreach (array_unique($callNos) as $callNo) {
-            $collection = null;
-            $location = null;
+            $result = [
+                'location' => null,
+                'collection' => null,
+                'branch' => null,
+                'department' => null,
+            ];
             foreach ($items as $item) {
                 if ($item['callnumber'] === $callNo) {
-                    if (!$collection && isset($item['collection'])) {
-                        $collection = $item['collection'];
-                    }
-                    if (!$location && isset($item['location'])) {
-                        $location = $item['location'];
-                    }
-                    if ($collection && $location) {
-                        break;
+                    foreach (array_keys($result) as $key) {
+                        if (!$result[$key] && isset($item[$key])) {
+                            $result[$key] = $item[$key];
+                        }
                     }
                 }
             }
-            $callnumbers[] = compact('callNo', 'collection', 'location');
+            // Use callnumber as the primary field but include callNo for backward
+            // compatibility:
+            $result['callnumber'] = $callNo;
+            $result['callNo'] = $callNo;
+            $callnumbers[] = $result;
         }
         return $callnumbers;
     }
