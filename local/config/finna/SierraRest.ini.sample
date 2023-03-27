@@ -185,7 +185,7 @@ currency = 'EUR'
 ;manualFineDescriptions[] = '/^Kaukopalvelumaksu/'
 
 ; Uncomment the following lines to enable updating of profile information.
-; Choose a method on how to update the address information (driver, email or url).
+; Choose a method on how to update the address information (driver, database or url).
 [updateProfile]
 method = driver
 ; emailAddress is required for the email method
