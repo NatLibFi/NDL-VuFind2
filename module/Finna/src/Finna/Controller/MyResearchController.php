@@ -856,14 +856,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $fields = [];
         foreach ($updateConfig['fields'] ?? [] as $fieldConfig) {
             if (is_array($fieldConfig)) {
-                // Add defaults if not specified:
-                $fieldConfig = $fieldConfig + [
-                    'required' => false,
-                    'type' => 'text',
-                    'options' => [],
-                    'pattern' => '',
-                    'hint' => '',
-                ];
                 $fields[$fieldConfig['field']] = $fieldConfig;
             } else {
                 $parts = explode(':', $fieldConfig);
@@ -909,6 +901,18 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 ];
             }
         }
+
+        // Add defaults to all fields if not specified:
+        foreach ($fields as &$field) {
+            $field = $field + [
+                'required' => false,
+                'type' => 'text',
+                'options' => [],
+                'pattern' => '',
+                'hint' => '',
+            ];
+        }
+        unset($field);
 
         $view = $this->createViewModel(
             [
