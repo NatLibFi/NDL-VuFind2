@@ -265,6 +265,7 @@ $config = [
     'favicon' => 'favicon.ico',
     'icons' => [
         'aliases' => [
+            'export' => 'FontAwesome:list-alt',
             'external-link' => 'FontAwesome:external-link',
             'facebook' => 'FontAwesome:facebook',
             'instagram' => 'FontAwesome:instagram',

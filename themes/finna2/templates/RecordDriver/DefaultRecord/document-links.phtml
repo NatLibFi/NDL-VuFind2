@@ -1,5 +1,5 @@
 <?php
-    static $i = 1;
+    $i = 0;
     foreach ($documents as $document):
         $language = $this->layout()->userLang;
         $description = $document['description'] ?: $this->translate('Download the file');
@@ -9,7 +9,7 @@
     ?>
     <li class="fulltextField">
         <div class="link-wrapper">  
-            <a href="<?=$this->escapeHtmlAttr($this->url('record-downloadfile', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $i, 'format' => $document['format'], 'type' => 'document']]))?>" target="_blank" download>
+            <a href="<?=$this->escapeHtmlAttr($this->url('record-downloadfile', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $i, 'format' => $document['format'], 'type' => 'document']]))?>" download rel="nofollow">
                 <i class="fa fa-download" aria-hidden="true"></i>
                 <?=$this->escapeHtml($description)?>
             </a>
