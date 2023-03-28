@@ -2414,7 +2414,7 @@ implements \Laminas\Log\LoggerAwareInterface
     {
         $results = [];
         foreach ($this->getMarcReader()->getFields('532') as $field) {
-            if (($field['i1'] === "2")
+            if (($field['i1'] === '2')
                 && ($subfield = $this->getSubfield($field, 'a'))
             ) {
                 $results[] = $this->stripTrailingPunctuation($subfield);
