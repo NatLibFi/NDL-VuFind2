@@ -49,7 +49,6 @@
   .grid:not(.recordcovers) {
     padding: 0px 5px 10px;
     margin-bottom: 0px;
-    height: 350px;
     &:focus {
       outline: none;
     }
@@ -59,26 +58,22 @@
       flex-direction: column;
     }
     .grid-title {
-      padding: 6px 5px 4px;
-      width: 100%;
-      top: ~"-webkit-calc(100% - 22px)";
-      top: ~"-moz-calc(100% - 22px)";
-      top: ~"calc(100% - 22px)";
+      padding-top: 5px;
       overflow: hidden;
-      max-height: 200px;
-      min-height: 50px;
-      z-index: 10;
       background: transparent;
     }
     .dateyeartype {
-      margin-top: -4px;
       p {
-        margin-bottom: 0px;
+        margin-top: 0;
+        margin-bottom: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
     .grid-image {
       overflow: hidden;
-      flex-basis: 80%;
+      flex-basis: 250px;
       position: relative;
       display: flex;
       background-color: @gray-ultralight;
@@ -86,6 +81,7 @@
     }
     h2.title {
       font-size: 1.15em;
+      line-height: 1.5;
       text-overflow: ellipsis;
       // Position: relative makes ellipsis work with absolute elements in Chrome
       position: relative;
@@ -123,12 +119,9 @@
       box-shadow: none;
     }
     .image-popup-trigger:not(.no-image) {
-      max-height: 350px;
       display: flex;
-      flex-direction: column;
       align-items: stretch;
       justify-content: center;
-      overflow: hidden;
       height: 100%;
       img {
         width: auto;
@@ -177,28 +170,7 @@
       }
     }
   }
-  &:not(.touch-device) {
-    .grid.no-image  {
-      .grid-title {
-        max-height: 43px;
-        max-height: 200px;
-        box-shadow: 0px 0px 0px;
-        opacity: 1;
-        padding-top: 6px;
-        padding-bottom: 6px;
-        top: initial;
-        bottom: 0;
-        margin: 0;
-        background: #fff;
-      }
-      .dateyeartype {
-        margin-top: -4px;
-        p {
-          margin-bottom: 0px;
-        }
-      }
-    }
-  }
+
   .record-image-container {
     margin-bottom: 0;
     height: 60%;
