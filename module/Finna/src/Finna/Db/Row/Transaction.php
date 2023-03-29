@@ -28,6 +28,7 @@
 namespace Finna\Db\Row;
 
 use Finna\Db\Table\Transaction as TransactionTable;
+use Laminas\Db\ResultSet\ResultSetInterface;
 
 /**
  * Row definition for online payment transaction
@@ -44,6 +45,7 @@ use Finna\Db\Table\Transaction as TransactionTable;
  * @property string $status
  * @property string $registered
  * @property string $reported
+ * @property string $cat_username
  */
 class Transaction extends \VuFind\Db\Row\RowGateway
 implements \VuFind\Db\Table\DbTableAwareInterface
@@ -195,5 +197,16 @@ implements \VuFind\Db\Table\DbTableAwareInterface
             }
         }
         return $fineIds;
+    }
+
+    /**
+     * Get associated fees
+     *
+     * @return ResultSetInterface
+     */
+    public function getFines(): ResultSetInterface
+    {
+        $feeTable = $this->getDbTable('Fee');
+        return $feeTable->select(['transaction_id' => $this->id]);
     }
 }

@@ -64,6 +64,18 @@
     <?=$this->flashmessages()?>
     <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
     <div class="fines-info-area">
+      <?php if (!empty($this->lastTransaction)): ?>
+        <div class="last-transaction-information">
+          <div>
+            <?=$this->transEsc('Payment::Last Paid')?>:
+            <span class="amount"><?=$this->safeMoneyFormat($this->lastTransaction->amount / 100.00)?></span>
+            <?=$this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $this->lastTransaction->paid)?>
+          </div>
+          <div class="text-right">
+            <a href="?transactionReport=true" class="btn btn-sm btn-primary"><?=$this->transEsc('Payment::download_transaction_breakdown_pdf')?></a>
+          </div>
+        </div>
+      <?php endif; ?>
       <div id="online_payment_total_due" data-raw="<?=$this->escapeHtmlAttr($totalDue)?>">
         <p>
           <?=$this->transEsc('Total Balance Due')?> (<?=count($this->fines ?? []);?>):

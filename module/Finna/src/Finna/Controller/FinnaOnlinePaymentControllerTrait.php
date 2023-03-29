@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2022.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,12 +23,15 @@
  * @package  Controller
  * @author   Leszek Manicki <leszek.z.manicki@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
 namespace Finna\Controller;
 
+use Finna\Db\Row\Transaction;
 use Laminas\Stdlib\Parameters;
+use TCPDF;
 
 /**
  * Online payment controller trait.
@@ -37,6 +40,7 @@ use Laminas\Stdlib\Parameters;
  * @package  Controller
  * @author   Leszek Manicki <leszek.z.manicki@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
@@ -190,7 +194,12 @@ trait FinnaOnlinePaymentControllerTrait
                 "Mandatory setting 'currency' missing from ILS driver for"
                 . " '{$patron['source']}'"
             );
-            return false;
+            return;
+        }
+
+        if (!($user = $this->getUser())) {
+            $this->handleError('Could not get user');
+            return;
         }
 
         $selectFees = $paymentConfig['selectFines'] ?? false;
@@ -227,6 +236,21 @@ trait FinnaOnlinePaymentControllerTrait
         $view->selectFees = $selectFees;
 
         $trTable = $this->getTable('transaction');
+        $lastTransaction = $trTable->getLastPaidForPatron($patron['cat_username']);
+        if ($lastTransaction
+            && $this->params()->fromQuery('transactionReport') === 'true'
+        ) {
+            $data = $this->createTransactionReportPDF($lastTransaction);
+            header('Content-Type: application/pdf');
+            header(
+                'Content-disposition: inline; filename="' .
+                addcslashes($data['filename'], '"') . '"'
+            );
+            echo $data['pdf'];
+            exit(0);
+        }
+        $view->lastTransaction = $lastTransaction;
+
         $paymentInProgress = $trTable->isPaymentInProgress($patron['cat_username']);
         $transactionIdParam = 'finna_payment_id';
         if ($pay && $session && $payableOnline
@@ -266,10 +290,6 @@ trait FinnaOnlinePaymentControllerTrait
             $returnUrl = $this->getServerUrl('myresearch-fines');
             $notifyUrl = $this->getServerUrl('home') . 'AJAX/onlinePaymentNotify';
             [$driver, ] = explode('.', $patron['cat_username'], 2);
-
-            if (!($user = $this->getUser())) {
-                return;
-            }
 
             $patronProfile = array_merge(
                 $patron,
@@ -446,5 +466,193 @@ trait FinnaOnlinePaymentControllerTrait
         } elseif (is_callable([$this, 'logException'])) {
             $this->logException($e);
         }
+    }
+
+    /**
+     * Create a transaction breakdown PDF
+     *
+     * @param Transaction $transaction Transaction
+     *
+     * @return array
+     */
+    protected function createTransactionReportPDF(
+        Transaction $transaction
+    ): array {
+        [$source] = explode('.', $transaction->cat_username);
+        $sourceName = $this->translate('source_' . $source);
+
+        $dateConverter = $this->serviceLocator->get(\VuFind\Date\Converter::class);
+        $paidDate = $dateConverter->convertToDisplayDateAndTime(
+            'Y-m-d H:i:s',
+            $transaction->paid
+        );
+
+        $left = 10;
+        $right = 200;
+        $bottom = 280;
+
+        $view = $this->getViewRenderer();
+        $safeMoneyFormat = $view->plugin('safeMoneyFormat');
+        $translationEmpty = $view->plugin('translationEmpty');
+
+        $dataSourceConfig = $this->getConfig('datasources')->toArray();
+        $config = $dataSourceConfig[$source] ?? [];
+        if ($orgId = $config['onlinePayment']['organisationInfoId'] ?? '') {
+            $urlHelper = $view->plugin('url');
+            $contactInfo = $urlHelper(
+                'organisationinfo-home',
+                [],
+                [
+                    'query' => [
+                        'id' => $orgId,
+                    ],
+                    'force_canonical' => true,
+                ]
+            );
+        } else {
+            $contactInfo = $config['onlinePayment']['contactInfo'] ?? '';
+        }
+
+        $heading = $this->translate('Payment::breakdown_title') . " - $sourceName";
+        $pdf = new TCPDF();
+        $pdf->SetCreator('Finna');
+        $pdf->SetTitle($heading . ' - ' . $paidDate);
+        $pdf->SetMargins($left, 18);
+        $pdf->SetHeaderMargin(10);
+        $pdf->SetHeaderData('', 0, $heading);
+        $pdf->SetFooterMargin(10);
+        $pdf->SetAutoPageBreak(false);
+        $pdf->AddPage();
+
+        $addInfo = function ($heading, $value) use ($pdf) {
+            $pdf->SetFont('helvetica', 'B', 10);
+            $pdf->Cell(60, 0, $this->translate($heading));
+            $pdf->SetFont('helvetica', '', 10);
+            $pdf->Cell(120, 0, $value);
+            $pdf->Ln();
+        };
+
+        // Print information array:
+        $pdf->setY(25);
+        $addInfo('Payment::Recipient', $sourceName);
+        $addInfo('Payment::Date', $paidDate);
+        $addInfo('Payment::Identifier', $transaction->transaction_id);
+        if ($contactInfo) {
+            $addInfo('Payment::Contact Information', $contactInfo);
+        }
+
+        // Print lines:
+        $printHeaders = function (TCPDF $pdf) use ($left, $right) {
+            $pdf->SetFont('helvetica', 'B', 10);
+            $pdf->Cell(40, 0, $this->translate('Payment::Identifier'), 0, 0);
+            $pdf->Cell(40, 0, $this->translate('Payment::Type'), 0, 0);
+            $pdf->Cell(70, 0, $this->translate('Payment::Details'), 0, 0);
+            $pdf->Cell(40, 0, $this->translate('Payment::Fee'), 0, 1, 'R');
+            $pdf->SetFont('helvetica', '', 10);
+            $y = $pdf->GetY() + 1;
+            $pdf->Line($left, $y, $right, $y);
+            $pdf->SetY($y + 1);
+        };
+
+        $printLine = function (TCPDF $pdf, $fine)
+            use ($translationEmpty, $safeMoneyFormat, $left)
+        {
+            $type = $fine->type;
+            if (!$translationEmpty("fine_status_$type")) {
+                $type = "fine_status_$type";
+            } elseif (!$translationEmpty("status_$type")) {
+                // Fallback to item status translations for backwards-compatibility
+                $type = "status_$type";
+            }
+
+            $curY = $pdf->GetY();
+            $pdf->Cell(40, 0, $fine->fine_id ?? '');
+            $pdf->MultiCell(40, 0, $this->translate($type), 0, 'L');
+            $nextY = $pdf->GetY();
+            $pdf->SetXY($left + 80, $curY);
+            $pdf->MultiCell(70, 0, $fine->title, 0, 'L');
+            $nextY = max($nextY, $pdf->GetY());
+            $pdf->SetXY($left + 150, $curY);
+            $pdf->Cell(
+                40,
+                0,
+                $safeMoneyFormat($fine->amount / 100.00, $fine->currency),
+                0,
+                0,
+                'R'
+            );
+            $pdf->setY($nextY);
+        };
+
+        $pdf->SetY($pdf->GetY() + 10);
+        $printHeaders($pdf);
+        // Account for the "Total" line:
+        $linesBottom = $bottom - 7;
+        foreach ($transaction->getFines() as $fine) {
+            $savePDF = clone $pdf;
+
+            $printLine($pdf, $fine);
+            // If we exceed bottom, revert and add a new page:
+            if ($pdf->GetY() > $linesBottom) {
+                $pdf = $savePDF;
+                $pdf->AddPage();
+                $pdf->SetY(25);
+                $printHeaders($pdf);
+                $printLine($pdf, $fine);
+            }
+        }
+        $pdf->SetY($pdf->GetY() + 1);
+        $pdf->SetFont('helvetica', 'B', 10);
+        $amount = $safeMoneyFormat(
+            $transaction->amount / 100.00,
+            $transaction->currency
+        );
+        $pdf->Cell(
+            190,
+            0,
+            $this->translate('Payment::Total') . " $amount" ,
+            0,
+            1,
+            'R'
+        );
+
+        // Print VAT summary:
+        $printVATSummary = function (TCPDF $pdf)
+            use ($left, $amount, $safeMoneyFormat, $right)
+        {
+            $pdf->SetY($pdf->GetY() + 15);
+            $pdf->SetFont('helvetica', 'B', 10);
+            $vatLeft = $left + 50;
+            $pdf->SetX($vatLeft);
+            $pdf->Cell(30, 0, $this->translate('Payment::VAT Breakdown'), 0, 0, 'L');
+            $pdf->Cell(20, 0, $this->translate('Payment::VAT Percent'));
+            $pdf->Cell(30, 0, $this->translate('Payment::Excluding VAT'), 0, 0, 'R');
+            $pdf->Cell(30, 0, $this->translate('Payment::VAT'), 0, 0, 'R');
+            $pdf->Cell(30, 0, $this->translate('Payment::Including VAT'), 0, 1, 'R');
+            $pdf->SetFont('helvetica', '', 10);
+            $pdf->SetX($vatLeft);
+            $y = $pdf->GetY() + 1;
+            $pdf->Line($vatLeft, $y, $vatLeft + 30, $y, ['dash' => '1,2']);
+            $pdf->Line($vatLeft + 30, $y, $right, $y, ['dash' => 0]);
+            $pdf->SetXY($vatLeft + 30, $y + 1);
+            $pdf->Cell(20, 0, '0 %');
+            $pdf->Cell(30, 0, $amount, 0, 0, 'R');
+            $pdf->Cell(30, 0, $safeMoneyFormat(0), 0, 0, 'R');
+            $pdf->Cell(30, 0, $amount, 0, 1, 'R');
+        };
+
+        $savePDF = clone $pdf;
+        $printVATSummary($pdf);
+        if ($pdf->GetY() > $bottom) {
+            $pdf = $savePDF;
+            $pdf->AddPage();
+            $printVATSummary($pdf);
+        }
+
+        $date = strtotime($transaction->paid);
+        return [
+            'pdf' => $pdf->getPDFData(),
+            'filename' => $heading . ' - ' . date('Y-m-d H-i', $date),
+        ];
     }
 }

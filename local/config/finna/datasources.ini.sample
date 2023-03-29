@@ -59,6 +59,12 @@ onlinePayment['merchantId'] = ''
 ; Merchant secret:
 onlinePayment['secret'] = ''
 
+; Contact information for clients
+; Organisation info ID (Finna ID in kirkanta):
+onlinePayment['organisationInfoId'] = "Helmet"
+; If the above if not available, a URL or other information can be provided:
+onlinePayment['contactInfo'] = "https://..."
+
 ; The following settings are mandatory for CPU and optional for Paytrail services.
 ; With Paytrail only a total amount to pay is defined if productCode,
 ; transactionFeeProductCode and productCodeMappings are undefined, and empty values
