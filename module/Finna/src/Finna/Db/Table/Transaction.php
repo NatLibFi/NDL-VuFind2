@@ -246,7 +246,10 @@ class Transaction extends \VuFind\Db\Table\Gateway
             self::STATUS_FINES_UPDATED
         ];
 
-        $callback = function (\Laminas\Db\Sql\Select $select) use ($patronId, $statuses) {
+        $callback = function (\Laminas\Db\Sql\Select $select) use (
+            $patronId,
+            $statuses
+        ) {
             $select->where->equalTo('cat_username', $patronId);
             $select->where('complete in (' . implode(',', $statuses) . ')');
             $select->order('paid desc');

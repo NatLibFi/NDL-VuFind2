@@ -554,9 +554,11 @@ trait FinnaOnlinePaymentControllerTrait
             $pdf->SetY($y + 1);
         };
 
-        $printLine = function (TCPDF $pdf, $fine)
-            use ($translationEmpty, $safeMoneyFormat, $left)
-        {
+        $printLine = function (TCPDF $pdf, $fine) use (
+            $translationEmpty,
+            $safeMoneyFormat,
+            $left
+        ) {
             $type = $fine->type;
             if (!$translationEmpty("fine_status_$type")) {
                 $type = "fine_status_$type";
@@ -610,16 +612,19 @@ trait FinnaOnlinePaymentControllerTrait
         $pdf->Cell(
             190,
             0,
-            $this->translate('Payment::Total') . " $amount" ,
+            $this->translate('Payment::Total') . " $amount",
             0,
             1,
             'R'
         );
 
         // Print VAT summary:
-        $printVATSummary = function (TCPDF $pdf)
-            use ($left, $amount, $safeMoneyFormat, $right)
-        {
+        $printVATSummary = function (TCPDF $pdf) use (
+            $left,
+            $amount,
+            $safeMoneyFormat,
+            $right
+        ) {
             $pdf->SetY($pdf->GetY() + 15);
             $pdf->SetFont('helvetica', 'B', 10);
             $vatLeft = $left + 50;
