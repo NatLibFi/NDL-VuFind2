@@ -514,7 +514,15 @@ trait FinnaOnlinePaymentControllerTrait
         }
 
         $heading = $this->translate('Payment::breakdown_title') . " - $sourceName";
+        [$language] = explode('-', $this->getTranslatorLocale(), 2);
+        $languageConfig = [
+            'a_meta_charset' => 'utf-8',
+            'a_meta_dir' => 'ltr',
+            'a_meta_language' => $language,
+            'w_page' => 'page',
+        ];
         $pdf = new TCPDF();
+        $pdf->setLanguageArray($languageConfig);
         $pdf->SetCreator('Finna');
         $pdf->SetTitle($heading . ' - ' . $paidDate);
         $pdf->SetMargins($left, 18);
