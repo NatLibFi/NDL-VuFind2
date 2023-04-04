@@ -536,7 +536,12 @@ trait FinnaOnlinePaymentControllerTrait
             $pdf->SetFont('helvetica', 'B', 10);
             $pdf->Cell(60, 0, $this->translate($heading));
             $pdf->SetFont('helvetica', '', 10);
-            $pdf->Cell(120, 0, $value);
+            if (preg_match('/^https?:\/\/([^\s]+)$/', $value, $matches)) {
+                // Create link:
+                $pdf->Write(0, $matches[1], $value);
+            } else {
+                $pdf->Cell(120, 0, $value);
+            }
             $pdf->Ln();
         };
 
