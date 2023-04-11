@@ -167,7 +167,6 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Other ID',
             'Parent Archive',
             'Parent Collection',
-            'Parent Purchase Batch',
             'Parent Series',
             'Parent Unclassified Entity',
             'Parent Work',

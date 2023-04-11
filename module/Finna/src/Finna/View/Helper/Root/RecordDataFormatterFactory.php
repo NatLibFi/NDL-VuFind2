@@ -356,16 +356,6 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Parent Purchase Batch',
-            'getParentPurchaseBatches',
-            'data-hierarchyLinks.phtml',
-            [
-                'context' => [
-                    'class' => 'recordHierarchyLinks',
-                ]
-            ]
-        );
-        $setTemplateLine(
             'Parent Work',
             'getParentWorks',
             'data-hierarchyLinks.phtml',

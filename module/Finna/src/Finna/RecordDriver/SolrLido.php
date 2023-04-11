@@ -186,10 +186,9 @@ implements \Laminas\Log\LoggerAwareInterface
      */
     protected $relatedWorkTypeMap = [
         'archive' => ['archive', 'arkisto', 'henkilöarkisto', 'yhteisöarkisto'],
-        'collection' => ['collection', 'kokoelma'],
+        'collection' => ['collection', 'kokoelma', 'purchase batch', 'hankintaerä'],
         'subcollection' => ['subcollection', 'alakokoelma'],
-        'series' => ['series', 'sarja'],
-        'purchaseBatch' => ['purchase batch', 'hankintaerä', 'hankintaerä (lapsi)'],
+        'series' => ['series', 'sarja', 'hankintaerä (lapsi)'],
         'work' => ['work', 'teos'],
     ];
 
@@ -1651,10 +1650,12 @@ implements \Laminas\Log\LoggerAwareInterface
      * Get hierarchy parent purchase batches
      *
      * @return array
+     *
+     * @deprecated No longer used
      */
     public function getParentPurchaseBatches()
     {
-        return $this->getParentLinksByType('purchaseBatch');
+        return [];
     }
 
     /**
