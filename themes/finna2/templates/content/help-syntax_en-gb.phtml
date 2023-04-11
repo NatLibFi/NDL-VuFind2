@@ -57,21 +57,22 @@
       </p>
     </div>
     <div id="wildcardsearches" class="content-section">
-      <h2>Wildcard characters</h2>
-      <p><strong class="helpTerm">?</strong> replaces one character in your search term.
-      </p>
-      <p>For example, the terms “text” and “test” can be searched for using the same query:
-      </p>
-      <pre class="code">te?t</pre>
-      <p><strong class="helpTerm">*</strong>replaces no, one or more characters in a search term.
-      </p>
-      <p>For example, the terms “test”, “tests” and “tester” can be searched for using the query:
-      </p>
-      <pre class="code">test*</pre>
-      <p>You can also use the asterisk in the middle of a search term:</p>
-      <pre class="code">te*t</pre>
-      <p>NB! The wildcards ? and * cannot replace the first character in a search term.
-      </p>
+      <h2>The use of wildcards in search terms</h2>
+      <p>The wildcard symbols * and ? can be used to replace characters in search terms to ensure that the search results include all inflected forms of the search term.</p>
+      <p>The use of wildcard symbols is not recommended for search terms in Finnish, since their use will exclude some processing measures related to the search terms. These include, for example, the processing of synonyms and splitting terms at a hyphen.</p>
+      <p>Finna takes the various inflected forms of the search terms into account automatically. For example, if the search term is “taulu”, the search engine will also recognise its inflected forms, such as “taulut” and “taulujen”. The use of wildcards may confuse the search engine’s automatic processes.</p>
+      <h3>Use of wildcards</h3>
+      <p>NB! The wildcard symbols cannot be the first character of a search term.</p>
+      <h4>*</h4>
+      <p>The * symbol replaces one or several characters in the search term. The search results will also include the form of the search term that was used when performing a search.</p>
+      <p>The search term may be truncated at the end with an asterisk. For example, to find search results for the terms competition, competitions, competitor and competitiveness, use the search term:</p>
+      <pre class="code">competit*</pre>
+      <p>The asterisk may also be used in the middle of a search term to replace one or more characters. For example, to search for both the terms color and colour, use the search term:</p>
+      <pre class="code">colo*r</pre>
+      <h4>?</h4>
+      <p>The wildcard symbol ? replaces a single character in a search term, enabling the use of different word forms.</p>
+      <p>For example, to find results for both the terms woman and women, use the search term:</p>
+      <pre class="code">wom?n</pre>
     </div>
     <div id="fuzzysearches" class="content-section">
       <h2>Fuzzy searches</h2>

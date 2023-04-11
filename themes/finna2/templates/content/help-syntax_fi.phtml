@@ -29,17 +29,22 @@
       <pre class="code">NOT surrealismi</pre>
     </div>
     <div id="wildcardsearch" class="content-section">
-      <h2>Hakusanan katkaisu tai kirjaimen korvaaminen jokerimerkillä</h2>
-      <p>Hakusanan voi katkaista sanan lopusta tähtimerkillä:
-      <pre class="code">kilpail*</pre>
-      <p>(haku hakee silloin mm. muodot: kilpailu, kilpailut, kilpailun)</p>
-      <p>Hakusanan keskellä * korvaa yhden tai useamman merkin:
-      <pre class="code">colo*r</i></pre>
-      <p>(color, colour)</p>
-      <p>Hakusanaa ei voi katkaista alusta.</p>
-      <p>Kysymysmerkki korvaa yhden merkin hakusanasta, mikä mahdollistaa useammat sanamuodot:</p>
+      <h2>Jokerimerkkien käyttö hakusanoissa</h2>
+      <p>Jokerimerkeillä * ja ? voidaan korvata hakusanassa esiintyviä merkkejä, jotta hakutuloksessa saadaan huomioitua laajemmin hakusanan mahdolliset erilaiset sanapäätteet.</p>
+      <p>Suomenkielisten hakusanojen kohdalla jokerimerkkien käyttöä ei suositella, sillä jokerimerkkejä käyttäessä osa hakuehdon käsittelytoimenpiteistä jää pois. Tällaisia ovat esimerkiksi synonyymien käsittely ja termien jakaminen väliviivan kohdalta.</p>
+      <p>Finna huomioi automaattisesti hakusanojen erilaiset taivutukset ja sanapäätteet. Hakusanan ollessa "taulu", hakukone tunnistaa myös sanan taivutetut muodot, kuten "taulut" ja "taulujen". Jokerimerkin käyttö voi sekoittaa hakukoneen automaattisia käsittelytoimenpiteitä.</p>
+      <h3>Jokerimerkkien käyttö</h3>
+      <p>Huom! Jokerimerkkejä ei voi käyttää hakusanan ensimmäisenä merkkinä.</p>
+      <h4>*</h4>
+      <p>*-merkki korvaa yhden tai useamman merkin hakusanasta. Hakutuloksiin sisältyy myös se hakusanan muoto, jolla haku tehdään.</p>
+      <p>Voit katkaista hakusanan lopusta tähtimerkillä. Esimerkiksi termejä competition, competitions, competitor ja competitiveness voidaan hakea hakusanalla:</p>
+      <pre class="code">competit*</pre>
+      <p>Voit käyttää tähtimerkkiä myös hakusanan keskellä korvaamaan yhden tai useamman merkin. Esimerkiksi termejä color ja colour voidaan hakea hakusanalla:</p>
+      <pre class="code">colo*r</pre>
+      <h4>?</h4>
+      <p>Jokerimerkki ? korvaa yhden merkin hakusanasta, mikä mahdollistaa useammat sanamuodot.</p>
+      <p>Esimerkiksi termejä woman ja women voidaan hakea yhdellä hakusanalla:</p>
       <pre class="code">wom?n</pre>
-      <p>(woman, women)</p>
     </div>
     <div id="phrasesearch" class="content-section">
       <h2>Fraasihaku</h2>
