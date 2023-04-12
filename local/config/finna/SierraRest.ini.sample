@@ -78,10 +78,21 @@ title_hold_bib_levels = a:b:m:d
 ; available for pickup). Supported values are "frozen" and "pickUpLocation".
 updateFields = frozen:pickUpLocation
 
-; Hold shelf information retrieval per hold location prefix. The example below uses
-; IMMS with settings from IMMSHelsinki section for all holds where pick up location
-; code starts with 'h'.
+; If frozen is included in updateFields above, whether to check up front if the hold
+; can be frozen. This check should only be enabled with Sierra 5.6 or later since it
+; is known to be very slow in prior versions. Default is false.
+checkFreezability = true
+
+; Hold shelf information retrieval per hold location prefix.  The setting is a
+; colon-separated string where first part is the handler, second part is
+; configuration section and optional third part contains any handler-specific
+; parameters that get passed to it.
+; The example below uses IMMS with settings from IMMSHelsinki section for all holds
+; where pick up location code starts with 'h'.
 ;holdShelfHandler[h] = "IMMS:IMMSHelsinki"
+; The example below uses BMA with settings from BMAEspoo section for all holds
+; where pick up location code starts with 'e01'.
+;holdShelfHandler[e01] = "BMA:BMAEspoo:53"
 
 ; IMMS configuration
 [IMMSHelsinki]
@@ -97,6 +108,10 @@ queryWsdl = ""
 username = ""
 ; API password
 password = ""
+
+[BMAEspoo]
+apiKey = ""
+url = ""
 
 ; This section allows modification of the default mapping from item status codes to
 ; VuFind item statuses
@@ -168,3 +183,30 @@ currency = 'EUR'
 ;manualFineDescriptions[] = '/^CD-levyn kotelon korvaus/'
 ;manualFineDescriptions[] = '/^Muun kotelon korvaus/'
 ;manualFineDescriptions[] = '/^Kaukopalvelumaksu/'
+
+; Uncomment the following lines to enable updating of profile information.
+; Choose a method on how to update the address information (driver, database or url).
+[updateProfile]
+method = driver
+; emailAddress is required for the email method
+;emailAddress =
+; Uncomment the following lines to change which fields are included in the form.
+; Format for the fields is:
+; label:profile_field[:type][:required][:options][:pattern][:pattern_hint]
+; Default is address1, zip, city.
+; Supported fields are home_library, email, address1, zip, city, phone and smsnumber.
+fields[] = Preferred Library:home_library:select:required
+fields[] = Email:email:email
+fields[] = Address:address1:text:required
+fields[] = Zip:zip:text:required::\d{5}
+fields[] = City:city:text:required
+fields[] = "SMS Number:smsnumber:tel:::^\+358[45]\d+:sms_number_format_hint"
+fields[] = Phone:phone:tel
+; url is required for the url method. url can be a single address or an array of
+; language-specific addresses. First example is a single one:
+;url = http://address.of.change.form
+; Alternatively different links can be specified for each language:
+;url[fi] = http://address.of.change.form/finnish
+;url[sv] = http://address.of.change.form/swedish
+;url[en-gb] = http://address.of.change.form/english
+needsApproval = false

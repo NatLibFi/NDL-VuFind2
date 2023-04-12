@@ -6,7 +6,11 @@
     }
   ?>
   <?php if (!empty($url['url'])): ?>
-    <a href="<?=$this->escapeHtmlAttr($url['url'])?>"><?=$title?></a><?= $this->escapeHtml($url['subtitle']) ? (' ' . $this->escapeHtml($url['subtitle'])) : '' ?>
+    <a href="<?=$this->escapeHtmlAttr($url['url'])?>" target="_blank" aria-label="<?=$this->escapeHtmlAttr($url['title'])?> (<?=$this->transEscAttr('external_link')?>; <?=$this->transEscAttr('Open in a new window')?>)">
+      <?=$this->icon('external-link') ?>
+      <?=$title?>
+    </a>
+    <?= $this->escapeHtml($url['subtitle']) ? (' ' . $this->escapeHtml($url['subtitle'])) : '' ?>
   <?php else: ?>
     <?=$title?>
   <?php endif; ?>

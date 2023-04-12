@@ -500,6 +500,51 @@ a.authority {
   color: @gray-light;
   margin-bottom: 6px;
 }
+
+.record-links {
+  vertical-align: baseline;
+  .cc-info {
+    margin-left: 5px;
+  }
+  a.copyright-description, .iconlabel {
+      font-size: @font-size-small;
+      font-weight: normal;
+  }
+  .show-info, .hide-info {
+      font-size: @font-size-small;
+      text-transform: lowercase;
+      font-weight: normal;
+  }
+  span.fa-arrow-down, span.fa-arrow-up {
+      font-size: 0.8em;
+  }
+  .show-info:first-letter, .hide-info:first-letter {
+      text-transform: none;
+  }
+  .iconlabel {
+      margin-right: -3px;
+      vertical-align: bottom;
+  }
+  .iconlabel:first-child {
+      margin-left: 2px;
+  }
+  span {
+      font-size: @font-size-small;
+  }
+  p {
+     font-size: @font-size-small; 
+     padding: 0;
+     margin: 0;
+  }
+  .copyright-description {
+      margin-right: 5px;
+  }
+}
+.copyright-wrapper {
+    display: inline-block;
+    margin-left: 3px;
+}
+
 .summary {
   color: @gray-light;
   font-size: 1.05em;

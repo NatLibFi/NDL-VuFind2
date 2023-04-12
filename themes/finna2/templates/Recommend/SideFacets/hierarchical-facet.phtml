@@ -13,6 +13,9 @@
   // of the suppressed query:
   $extraUrlFields = $this->results->getUrlQuery()->getParamsWithConfiguredDefaults();
 ?>
+<?php if ('usage_rights_ext_str_mv' === $title): ?>
+  <?=$this->render('Recommend/SideFacets/usage-rights-ext-facet-header.phtml')?>
+<?php endif; ?>
 <div id="facet_<?=$this->escapeHtml($title)?>" class="jstree-facet"
     data-source="<?=$this->escapeHtml($this->searchClassId)?>"
     data-facet="<?=$this->escapeHtmlAttr($title)?>"
@@ -25,6 +28,9 @@
     data-query-suppressed="<?=$querySuppressed ? '1' : '0' ?>"
     data-extra-fields="<?=$this->escapeHtml(implode(',', $extraUrlFields))?>">
 </div>
+<?php if ('usage_rights_ext_str_mv' === $title): ?>
+  <?=$this->render('Recommend/SideFacets/usage-rights-ext-facet-footer.phtml')?>
+<?php endif; ?>
 <?php
   $script = <<<JS
 $(document).ready(function () {

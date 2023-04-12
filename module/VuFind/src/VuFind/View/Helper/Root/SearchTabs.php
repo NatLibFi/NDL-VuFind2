@@ -447,8 +447,9 @@ class SearchTabs extends \Laminas\View\Helper\AbstractHelper
         if ($hiddenFilters = $params->getHiddenFiltersAsQueryParams()) {
             return $prepend . UrlQueryHelper::buildQueryString(
                 [
-                    'hiddenFilters' => $hiddenFilters
-                ]
+                    'hiddenFilters' => $hiddenFilters,
+                ],
+                false
             );
         }
         return '';

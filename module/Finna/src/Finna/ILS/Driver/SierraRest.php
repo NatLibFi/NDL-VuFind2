@@ -247,7 +247,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             [$this->apiBase, 'patrons', $patron['id']],
             [
                 'fields' => 'names,emails,phones,addresses,birthDate,expirationDate'
-                    . ',message'
+                    . ',message,homeLibraryCode'
             ],
             'GET',
             $patron
@@ -289,11 +289,23 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             ];
         }
 
+        $phoneType = $this->config['Profile']['phoneNumberField'] ?? 'p';
+        $smsType = $this->config['Profile']['smsNumberField'] ?? 't';
+        $phone = '';
+        $sms = '';
+        foreach ($result['phones'] ?? [] as $entry) {
+            if ($phoneType === $entry['type']) {
+                $phone = $entry['number'];
+            } elseif ($smsType === $entry['type']) {
+                $sms = $entry['number'];
+            }
+        }
+
         $profile = [
             'firstname' => $firstname,
             'lastname' => $lastname,
-            'phone' => !empty($result['phones'][0]['number'])
-                ? $result['phones'][0]['number'] : '',
+            'phone' => $phone,
+            'smsnumber' => $sms,
             'email' => !empty($result['emails']) ? $result['emails'][0] : '',
             'address1' => $address,
             'zip' => $zip,
@@ -301,6 +313,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             'birthdate' => $result['birthDate'] ?? '',
             'expiration_date' => $expirationDate,
             'messages' => $messages,
+            'home_library' => $result['homeLibraryCode'],
         ];
 
         // Checkout history:
@@ -352,6 +365,85 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             ];
         }
         return ['success' => true, 'status' => 'request_change_done'];
+    }
+
+    /**
+     * Update patron contact information
+     *
+     * @param array $patron  Patron array
+     * @param array $details Associative array of patron contact information
+     *
+     * @throws ILSException
+     *
+     * @return array Associative array of the results
+     */
+    public function updateAddress($patron, $details)
+    {
+        // Compose a request from the fields:
+        $request = [];
+        $addressFields = ['address1' => true, 'zip' => true, 'city' => true];
+        if (array_intersect_key($details, $addressFields)) {
+            $address1 = $details['address1'] ?? '';
+            $zip = $details['zip'] ?? '';
+            $city = $details['city'] ?? '';
+            $request['addresses'][] = [
+                'lines' => array_filter(
+                    [
+                        $address1,
+                        trim("$zip $city"),
+                        $details['country'] ?? '',
+                    ]
+                ),
+                'type' => 'a'
+            ];
+        }
+        if (array_key_exists('phone', $details)) {
+            $request['phones'][] = [
+                'number' => $details['phone'],
+                'type' => 'p'
+            ];
+        }
+        if (array_key_exists('smsnumber', $details)) {
+            $request['phones'][] = [
+                'number' => $details['smsnumber'],
+                'type' => 't'
+            ];
+        }
+        if (array_key_exists('email', $details)) {
+            $request['emails'][] = $details['email'];
+        }
+        if ($homeLibrary = $details['home_library']) {
+            $request['homeLibraryCode'] = $homeLibrary;
+        }
+
+        $result = $this->makeRequest(
+            [
+                'v6', 'patrons', $patron['id']
+            ],
+            json_encode($request),
+            'PUT',
+            $patron,
+            true
+        );
+
+        if (!in_array($result['statusCode'], ['200', '204'])) {
+            $this->logError(
+                'Patron update request failed with status code'
+                . " {$result['statusCode']}: "
+                . (var_export($result['response'] ?? '', true))
+            );
+            return [
+                'success' => false,
+                'status' => 'profile_update_failed',
+                'sys_message' => $result['description'] ?? ''
+            ];
+        }
+
+        return [
+            'success' => true,
+            'status' => 'request_change_accepted',
+            'sys_message' => ''
+        ];
     }
 
     /**
@@ -592,6 +684,49 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             $result['selectFines'] = true;
             return $result;
         }
+        if ('updateAddress' === $function) {
+            $function = 'updateProfile';
+            $config = parent::getConfig('updateProfile', $params);
+            if (isset($config['fields'])) {
+                foreach ($config['fields'] as &$field) {
+                    $parts = explode(':', $field);
+                    $fieldLabel = $parts[0];
+                    $fieldId = $parts[1] ?? '';
+                    $fieldRequired = ($parts[3] ?? '') === 'required';
+                    if ('home_library' === $fieldId) {
+                        $locations = [];
+                        $pickUpLocations = $this->getPickUpLocations(
+                            $params['patron'] ?? false
+                        );
+                        foreach ($pickUpLocations as $current) {
+                            $locations[$current['locationID']]
+                                = $current['locationDisplay'];
+                        }
+                        $field = [
+                            'field' => $fieldId,
+                            'label' => $fieldLabel,
+                            'type' => 'select',
+                            'required' => $fieldRequired,
+                            'options' => $locations,
+                        ];
+                        if ($options = ($parts[4] ?? '')) {
+                            $field['options'] = [];
+                            foreach (explode(';', $options) as $option) {
+                                $keyVal = explode('=', $option, 2);
+                                if (isset($keyVal[1])) {
+                                    $field['options'][$keyVal[0]] = [
+                                        'name' => $keyVal[1]
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+                unset($field);
+            }
+            return $config;
+        }
+
         return parent::getConfig($function, $params);
     }
 
@@ -731,11 +866,24 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         if ($handlerConfig) {
             $type = $handlerConfig['type'];
             $config = $handlerConfig['config'];
+            $params = $handlerConfig['params'];
             try {
                 switch ($type) {
+                    case 'BMA':
+                        $result = $this->getHoldShelfWithBMA(
+                            $config,
+                            $params,
+                            $hold,
+                            $patron
+                        );
+                        break;
                     case 'IMMS':
-                        $result
-                            = $this->getHoldShelfWithIMMS($config, $hold, $patron);
+                        $result = $this->getHoldShelfWithIMMS(
+                            $config,
+                            $params,
+                            $hold,
+                            $patron
+                        );
                         break;
                     default:
                         $this->logError("Unknown hold shelf handler: $type");
@@ -760,7 +908,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      *
      * @param array $hold Hold
      *
-     * @return ?array handler and config, or null if not found
+     * @return ?array handler, config and params, or null if not found
      */
     protected function getHoldShelfHandlerConfig(array $hold): ?array
     {
@@ -773,8 +921,9 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 $config = !empty($parts[1])
                     ? ($this->config[$parts[1]] ?? null)
                     : null;
+                $params = $parts[2] ?? '';
                 if ($type && $config) {
-                    return compact('type', 'config');
+                    return compact('type', 'config', 'params');
                 }
             }
             $location = substr($location, 0, -1);
@@ -786,6 +935,70 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      * Get hold shelf for an available hold with IMMS
      *
      * @param array $config IMMS configuration
+     * @param array $params Extra parameters
+     * @param array $hold   Hold
+     * @param array $patron The patron array from patronLogin
+     *
+     * @return string
+     */
+    protected function getHoldShelfWithBMA(
+        array $config,
+        string $params,
+        array $hold,
+        array $patron
+    ): string {
+        foreach (['apiKey', 'url'] as $key) {
+            if (empty($config[$key])) {
+                $this->logError("BMA config missing $key");
+                throw new ILSException('Problem with BMA configuration');
+            }
+        }
+
+        $itemId = $hold['item_id'];
+        if (!($barcode = $this->getItemBarcode($itemId, $patron))) {
+            $this->logError("Could not retrieve barcode for item $itemId");
+            return '';
+        }
+
+        $url = $config['url'] . 'reservation/apikey/company/'
+            . ((int)$params) . '/null/null/null/' . urlencode($barcode)
+            . '/null/null/null/null/null/null/null';
+        try {
+            $response = $this->httpService->get(
+                $url,
+                [],
+                null,
+                [
+                    'Authorization: Bearer ' . $config['apiKey']
+                ]
+            );
+            if (!$response->isSuccess()) {
+                throw new \Exception(
+                    "BMA request $url failed: " . $response->getReasonPhrase(),
+                    $response->getStatusCode()
+                );
+            }
+            $data = json_decode($response->getBody(), true);
+            $indexVar = $data['data'][0]['index_var'] ?? null;
+            $indexDayId = $data['data'][0]['index_day_id'] ?? null;
+            if (null === $indexVar || null === $indexDayId) {
+                throw new \Exception(
+                    "index_var or index_day_id not found in BMA response for $url: "
+                    . $response->getBody()
+                );
+            }
+            return "$indexVar $indexDayId";
+        } catch (\Exception $e) {
+            throw new ILSException("BMA request $url failed", $e->getCode(), $e);
+        }
+        return '';
+    }
+
+    /**
+     * Get hold shelf for an available hold with IMMS
+     *
+     * @param array $config IMMS configuration
+     * @param array $params Extra parameters
      * @param array $hold   Hold
      * @param array $patron The patron array from patronLogin
      *
@@ -793,6 +1006,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      */
     protected function getHoldShelfWithIMMS(
         array $config,
+        string $params,
         array $hold,
         array $patron
     ): string {
@@ -803,24 +1017,10 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             }
         }
 
-        $cacheKeyToken = 'token|' . md5(var_export($config, true));
+        $cacheKeyToken = 'imms|' . md5(var_export($config, true));
 
         $itemId = $hold['item_id'];
-        // Get item barcode using same request as elsewhere for cacheability
-        $item = $this->makeRequest(
-            [$this->apiBase, 'items', $itemId],
-            ['fields' => 'bibIds,varFields'],
-            'GET',
-            $patron
-        );
-        $barcode = '';
-        foreach ($item['varFields'] ?? [] as $field) {
-            if ('b' === $field['fieldTag']) {
-                $barcode = $field['content'];
-                break;
-            }
-        }
-        if (!$barcode) {
+        if (!($barcode = $this->getItemBarcode($itemId, $patron))) {
             $this->logError("Could not retrieve barcode for item $itemId");
             return '';
         }
@@ -899,6 +1099,31 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
+     * Get item barcode
+     *
+     * @param string $itemId Item ID
+     * @param array  $patron The patron array from patronLogin
+     *
+     * @return string
+     */
+    protected function getItemBarcode(string $itemId, array $patron): string
+    {
+        // Get item barcode using same request as elsewhere for cacheability
+        $item = $this->makeRequest(
+            [$this->apiBase, 'items', $itemId],
+            ['fields' => 'bibIds,varFields'],
+            'GET',
+            $patron
+        );
+        foreach ($item['varFields'] ?? [] as $field) {
+            if ('b' === $field['fieldTag']) {
+                return $field['content'];
+            }
+        }
+        return '';
+    }
+
+    /**
      * Make Request
      *
      * Makes a request to the Sierra REST API
@@ -957,5 +1182,21 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             );
         }
         return $result;
+    }
+
+    /**
+     * Get locations
+     *
+     * @return array
+     */
+    protected function getLocations(): array
+    {
+        // Ensure cache:
+        $this->getLocationName('*');
+        $locations = $this->getCachedData('locations');
+        if (null === $locations) {
+            throw new \Exception('Location cache not available');
+        }
+        return $locations;
     }
 }

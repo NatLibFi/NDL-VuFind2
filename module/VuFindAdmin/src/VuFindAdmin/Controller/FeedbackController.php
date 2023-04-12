@@ -70,7 +70,8 @@ class FeedbackController extends AbstractAdmin
         $feedback = $feedbackTable->getFeedbackByFilter(
             $this->convertFilter($this->getParam('form_name')),
             $this->convertFilter($this->getParam('site_url')),
-            $this->convertFilter($this->getParam('status'))
+            $this->convertFilter($this->getParam('status')),
+            $this->getParam('page')
         );
         $view = $this->createViewModel(
             [
@@ -232,11 +233,13 @@ class FeedbackController extends AbstractAdmin
             'admin/feedback',
             [],
             [
-                'query' => [
-                    'form_name' => $this->getParam('form_name'),
-                    'site_url' => $this->getParam('site_url'),
-                    'status' => $this->getParam('status'),
-                ],
+                'query' => array_filter(
+                    [
+                        'form_name' => $this->getParam('form_name'),
+                        'site_url' => $this->getParam('site_url'),
+                        'status' => $this->getParam('status'),
+                    ]
+                ),
             ]
         );
     }

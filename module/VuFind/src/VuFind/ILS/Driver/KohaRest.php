@@ -767,6 +767,9 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                 ? ''
                 : $requestId;
             $updateDetails = ($available || $inTransit) ? '' : $requestId;
+            // Note: Expiration date is the last interest date until the hold becomes
+            // available for pickup. Then it becomes the last pickup date.
+            $expirationDate = $this->convertDate($entry['expiration_date']);
             $holds[] = [
                 'id' => $entry['biblio_id'],
                 'item_id' => $entry['hold_id'],
@@ -775,9 +778,10 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                     $entry['pickup_library_id'] ?? null
                 ),
                 'create' => $this->convertDate($entry['hold_date'] ?? null),
-                'expire' => $this->convertDate($entry['expiration_date'] ?? null),
+                'expire' => $available ? null : $expirationDate,
                 'position' => $entry['priority'],
                 'available' => $available,
+                'last_pickup_date' => $available ? $expirationDate : null,
                 'frozen' => $frozen,
                 'frozenThrough' => $frozen
                     ? $this->convertDate($entry['suspended_until'] ?? null) : null,
@@ -1090,7 +1094,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             'patron_id' => (int)$patron['id'],
             'pickup_library_id' => $pickUpLocation,
             'notes' => $comment,
-            'expiration_date' => $holdDetails['requiredByTS']
+            'expiration_date' => !empty($holdDetails['requiredByTS'])
                         ? date('Y-m-d', $holdDetails['requiredByTS'])
                         : null,
         ];

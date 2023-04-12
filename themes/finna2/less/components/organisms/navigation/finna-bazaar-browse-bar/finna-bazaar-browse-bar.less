@@ -1,0 +1,22 @@
+.finna-bazaar-browse-bar {
+  color: @bazaar-browse-bar-color;
+  background-color: @bazaar-browse-bar-background-color;
+  .finna-bazaar-browse-bar-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    &::before,
+    &::after {
+      content: none;
+    }
+  }
+  .finna-bazaar-browse-bar-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}

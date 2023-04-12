@@ -356,16 +356,6 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Parent Purchase Batch',
-            'getParentPurchaseBatches',
-            'data-hierarchyLinks.phtml',
-            [
-                'context' => [
-                    'class' => 'recordHierarchyLinks',
-                ]
-            ]
-        );
-        $setTemplateLine(
             'Parent Work',
             'getParentWorks',
             'data-hierarchyLinks.phtml',
@@ -1710,7 +1700,11 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'data-lines-with-detail.phtml'
         );
         $spec->setLine('Historical Information', 'getHistory');
-
+        $spec->setTemplateLine(
+            'Publications',
+            'getRelatedPublications',
+            'data-relatedPublications.phtml'
+        );
         $spec->setTemplateLine('Sources', 'getSources', 'data-sources.phtml');
         $spec->setTemplateLine(
             'Related Authorities',

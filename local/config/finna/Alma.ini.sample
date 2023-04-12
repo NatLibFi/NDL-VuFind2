@@ -250,6 +250,8 @@ indexes = "868az"
 ;enabled = true
 ; Fee types listed are not payable online.
 ;nonPayable[] = 'LOSTITEMREPLACEMENTFEE'
+; Fee statuses listed are payable online. Default is ACTIVE.
+;payableStatuses[] = 'ACTIVE'
 ; Transaction fee (in cents) added to each payment
 ;transactionFee = 0
 ; Minimum fee (in cents) allowed to be paid online
@@ -260,6 +262,8 @@ indexes = "868az"
 ;transactionMaxDuration = 15
 ; Currency
 ;currency = 'EUR'
+; Whether to allow selection of fines to pay. Default is false.
+;selectFines = true
 
 ; Uncomment the following lines to enable updating of profile information.
 ; Choose a method on how to update the profile information (driver, email or url).
@@ -268,7 +272,8 @@ method = driver
 ; emailAddress is required for the email method
 ;emailAddress =
 ; Uncomment the following lines to change which fields are included in the form.
-; Format for the fields is label:profile_field[:type][:required][:options]
+; Format for the fields is:
+; label:profile_field[:type][:required][:options][:pattern][:pattern_hint]
 ; Default is address, zip, city, country and pin. Email and phone are included unless
 ; they have their own sections [updateEmail] or [updatePhone] defined. Also custom
 ; fields can be defined.

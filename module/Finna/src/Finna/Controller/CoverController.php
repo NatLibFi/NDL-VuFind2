@@ -137,8 +137,8 @@ class CoverController extends \VuFind\Controller\CoverController
             $contentType = $headers->get('Content-Type');
             if ($contentType && $contentType->match('image/jpeg')) {
                 $params = $this->getImageParams();
-                if (!empty($params['isbn'])) {
-                    $filename = $params['isbn'];
+                if (!empty($params['isbns'])) {
+                    $filename = reset($params['isbns']);
                 } elseif (!empty($params['issn'])) {
                     $filename = $params['issn'];
                 } elseif (isset($driver)) {

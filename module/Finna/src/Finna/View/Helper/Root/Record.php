@@ -527,6 +527,8 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
 
+        static $fieldIndex = 0;
+        ++$fieldIndex;
         $elementParams = [
             'driver' => $this->driver,
             'searchAction' => $params['searchAction'] ?? null,
@@ -548,6 +550,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             'classes' => $params['class'] ?? [],
             'fieldLinks' => $fieldLinks,
             'externalLinks' => $externalLinks,
+            'fieldIndex' => $fieldIndex,
         ];
         if ($additionalData = $this->composeAdditionalData($data, $params)) {
             $elementParams['additionalDataHtml'] = $additionalData;

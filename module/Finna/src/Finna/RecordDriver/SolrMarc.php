@@ -2384,4 +2384,42 @@ implements \Laminas\Log\LoggerAwareInterface
         }
         return $results;
     }
+
+    /**
+     * Get accessibility information from field 341, subfields a and b.
+     * Additional information from field 532, subfield a
+     *
+     * @return array
+     */
+    public function getAccessibilityFeatures(): array
+    {
+        $results = [];
+        $results = $this->getFieldArray('341', ['a', 'b'], true, ': ');
+        foreach ($this->getMarcReader()->getFields('532') as $field) {
+            if ((in_array($field['i1'], ['0', '1']))
+                && ($subfield = $this->getSubfield($field, 'a'))
+            ) {
+                $results[] = $this->stripTrailingPunctuation($subfield);
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Get accessibility hazards from field 532, subfield a.
+     *
+     * @return array
+     */
+    public function getAccessibilityHazards(): array
+    {
+        $results = [];
+        foreach ($this->getMarcReader()->getFields('532') as $field) {
+            if (($field['i1'] === '2')
+                && ($subfield = $this->getSubfield($field, 'a'))
+            ) {
+                $results[] = $this->stripTrailingPunctuation($subfield);
+            }
+        }
+        return $results;
+    }
 }

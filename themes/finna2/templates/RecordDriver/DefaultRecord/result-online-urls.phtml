@@ -20,6 +20,22 @@
       'target' => '_blank'
     ];
     $this->htmlElement()->addAttributeTemplate('url-base', $urlBase);
+
+    $addRenderedUrl = function (array $url) use (&$renderedURLs) {
+      $renderedURLs[] = [
+        'url' => $url['url'],
+        'desc' => $url['desc'] ?? $url['text'] ?? ''
+      ];
+    };
+
+    $isRendered = function (array $url) use (&$renderedURLs) {
+      foreach ($renderedURLs as $renderedURL) {
+        if ($url['url'] === $renderedURL['url'] && ($url['desc'] ?? $url['text'] ?? '') === $renderedURL['desc']) {
+          return true;
+        }
+      }
+      return false;
+    };
   ?>
 
   <?php // Always output the container div so that we can update its contents on dedup record selection: ?>
@@ -34,9 +50,10 @@
         ?>
         <?php foreach ($combined as $i => $url): ?>
           <?php
-            if (in_array($url['url'], $renderedURLs)) {
+            if ($isRendered($url)) {
               continue;
             }
+
             if ('popup' === $context && ++$linkCount > $maxLinkCount) {
               break;
             }
@@ -70,7 +87,7 @@
             <?php
               $isPopup = 'popup' === $context;
               $isIframe = $url['embed'] === 'iframe';
-              $popupId = $isIframe ? 'finna-iframe' : 'finna-video';
+              $popupId = "finna-{$url['embed']}";
               if ($isPopup) {
                 $popupId .= '-popup';
               }
@@ -104,7 +121,7 @@
           <?php if (!empty($url['source'])): ?>
             <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source']) ?>)</span>
           <?php endif; ?>
-          <?php $renderedURLs[] = $url['url']; ?>
+          <?php $addRenderedUrl($url); ?>
         <?php endforeach; ?>
         <?php if ('popup' === $context && $linkCount > $maxLinkCount): ?>
           <div><?=$this->transEsc('eol_ellipsis')?></div>

@@ -208,6 +208,7 @@ class VerifyRecordLinks extends AbstractUtilCommand
         $this->msg('Checking saved Solr resources for moved records');
         $count = $fixed = 0;
         $lastId = null;
+        $batch = [];
         do {
             $callback = function ($select) use ($lastId) {
                 $select->where->equalTo('source', 'Solr');
@@ -221,10 +222,13 @@ class VerifyRecordLinks extends AbstractUtilCommand
             $resources = $this->resourceTable->select($callback);
             foreach ($resources as $resource) {
                 $lastId = $resource->id;
-                if ($this->verifyResourceId($resource)) {
-                    ++$fixed;
+                $batch[] = $resource;
+                if (count($batch) < 100) {
+                    continue;
                 }
-                ++$count;
+                $fixed += $this->verifyResourceIds($batch);
+                $count += count($batch);
+                $batch = [];
                 $msg = "$count resources checked, $fixed id's updated";
                 if ($count % 1000 == 0) {
                     $this->msg($msg);
@@ -233,6 +237,10 @@ class VerifyRecordLinks extends AbstractUtilCommand
                 }
             }
         } while (null !== $lastId);
+        if ($batch) {
+            $fixed += $this->verifyResourceIds($batch);
+            $count += count($batch);
+        }
         $this->msg(
             "Resource checking completed with $count resources checked, $fixed"
             . " id's fixed"
@@ -249,6 +257,7 @@ class VerifyRecordLinks extends AbstractUtilCommand
         $this->msg('Checking comments');
         $count = $fixed = 0;
         $lastId = null;
+        $batch = [];
         do {
             $callback = function ($select) use ($lastId) {
                 if (null !== $lastId) {
@@ -268,10 +277,16 @@ class VerifyRecordLinks extends AbstractUtilCommand
                 if (!$resource || 'Solr' !== $resource->source) {
                     continue;
                 }
-                if ($this->verifyCommentLinks($comment->id, $resource->record_id)) {
-                    ++$fixed;
+                $batch[] = [
+                    'commentId' => $comment->id,
+                    'recordId' => $resource->record_id,
+                ];
+                if (count($batch) < 100) {
+                    continue;
                 }
-                ++$count;
+                $fixed += $this->verifyCommentLinks($batch);
+                $count += count($batch);
+                $batch = [];
                 $msg = "$count comments checked, $fixed links fixed";
                 if ($count % 1000 == 0) {
                     $this->msg($msg);
@@ -280,6 +295,10 @@ class VerifyRecordLinks extends AbstractUtilCommand
                 }
             }
         } while (null !== $lastId);
+        if ($batch) {
+            $fixed += $this->verifyCommentLinks($batch);
+            $count += count($batch);
+        }
         $this->msg(
             "Comment check completed with $count comments checked, $fixed"
             . ' links fixed'
@@ -297,6 +316,7 @@ class VerifyRecordLinks extends AbstractUtilCommand
         $count = $fixed = 0;
         $startDate = date('Y-m-d');
         $lastId = null;
+        $batch = [];
         do {
             $callback = function ($select) use ($lastId) {
                 if (null !== $lastId) {
@@ -323,13 +343,17 @@ class VerifyRecordLinks extends AbstractUtilCommand
                 if (!$resource || 'Solr' !== $resource->source) {
                     continue;
                 }
-                if ($this->verifyRatings($rating, $resource->record_id)) {
-                    ++$fixed;
+                $batch[] = [
+                    'rating' => $rating,
+                    'recordId' => $resource->record_id,
+                ];
+                if (count($batch) < 100) {
+                    continue;
                 }
-                $rating->finna_checked = date('Y-m-d H:i:s');
-                $rating->save();
-                ++$count;
-                $msg = "$count ratings checked, $fixed fixed";
+                $fixed += $this->verifyRatings($batch);
+                $count += count($batch);
+                $batch = [];
+                $msg = "$count ratings checked, $fixed links fixed";
                 if ($count % 1000 == 0) {
                     $this->msg($msg);
                 } else {
@@ -337,144 +361,189 @@ class VerifyRecordLinks extends AbstractUtilCommand
                 }
             }
         } while (null !== $lastId);
+        if ($batch) {
+            $fixed += $this->verifyRatings($batch);
+            $count += count($batch);
+        }
         $this->msg(
-            "Rating check completed with $count ratings checked, $fixed fixed"
+            "Rating check completed with $count ratings checked, $fixed links fixed"
         );
     }
 
     /**
-     * Verify comment links for a record
+     * Verify comment links for a batch of comments
      *
-     * @param int    $commentId Comment ID
-     * @param string $recordId  Record ID
+     * @param array $batch Batch of commentId + recordId
      *
-     * @return bool True if changes were made
+     * @return int Number of comments fixed
      */
-    protected function verifyCommentLinks($commentId, $recordId)
+    protected function verifyCommentLinks(array $batch): int
     {
-        $ids = $this->getDedupRecordIds($recordId);
-        // This preserves the comment-record links for a comment when all
-        // links point to non-existent records. Dangling links have no
-        // effect in the UI. If a record was temporarily unavailable and
-        // gets re-added to the index with the same ID, the comment is shown
-        // in the UI again.
-        if (!$ids) {
-            $ids = [$recordId];
-        }
+        $recordIds = array_column($batch, 'recordId');
+        $allIds = $this->getDedupRecordIds($recordIds);
 
-        if ($this->commentsRecordTable->verifyLinks($commentId, $ids)) {
-            return true;
+        $fixed = 0;
+        foreach ($batch as $current) {
+            $commentId = $current['commentId'];
+            $recordId = $current['recordId'];
+            // This preserves the comment-record links for a comment when all
+            // links point to non-existent records. Dangling links have no
+            // effect in the UI. If a record was temporarily unavailable and
+            // gets re-added to the index with the same ID, the comment is shown
+            // in the UI again.
+            $ids = $allIds[$recordId] ?? [$recordId];
+            if ($this->commentsRecordTable->verifyLinks($commentId, $ids)) {
+                ++$fixed;
+            }
         }
-        return false;
+        return $fixed;
     }
 
     /**
      * Verify ratings
      *
-     * @param \VuFind\Db\Row\Ratings $rating   Rating
-     * @param string                 $recordId Record ID
+     * @param array $batch Batch of rating + recordId
      *
-     * @return bool True if changes were made
+     * @return int Number of ratings fixed
      */
-    protected function verifyRatings(
-        \VuFind\Db\Row\Ratings $rating,
-        string $recordId
-    ): bool {
-        $result = false;
-        $ids = $this->getDedupRecordIds($recordId);
-        foreach ($ids as $id) {
-            if ($id === $recordId) {
-                continue;
-            }
-            $resource = $this->resourceTable->findResource($id, 'Solr');
-            if (!$resource) {
-                continue;
-            }
+    protected function verifyRatings(array $batch): int
+    {
+        $recordIds = array_column($batch, 'recordId');
+        $allIds = $this->getDedupRecordIds($recordIds);
 
-            $targetRow = $this->ratingsTable->select(
-                [
-                    'resource_id' => $resource->id,
-                    'user_id' => $rating->user_id
-                ]
-            )->current();
-            if ($targetRow) {
-                if ($targetRow->rating !== $rating->rating) {
-                    $result = true;
-                }
-            } else {
-                $result = true;
-                $targetRow = $this->ratingsTable->createRow();
-                $targetRow->user_id = $rating->user_id;
-                $targetRow->resource_id = $resource->id;
+        $fixed = 0;
+        foreach ($batch as $current) {
+            $rating = $current['rating'];
+            $recordId = $current['recordId'];
+            $ids = $allIds[$recordId] ?? [];
+            if (!$allIds) {
+                continue;
             }
-            $targetRow->rating = $rating->rating;
-            // Don't set creation date to indicate that this is a generated entry
-            $targetRow->finna_checked = date('Y-m-d H:i:s');
-            $targetRow->save();
+            foreach ($ids as $id) {
+                if ($id === $recordId) {
+                    continue;
+                }
+                $resource = $this->resourceTable->findResource($id, 'Solr');
+                if (!$resource) {
+                    continue;
+                }
+
+                $targetRow = $this->ratingsTable->select(
+                    [
+                        'resource_id' => $resource->id,
+                        'user_id' => $rating->user_id
+                    ]
+                )->current();
+                if ($targetRow) {
+                    if ($targetRow->rating !== $rating->rating) {
+                        ++$fixed;
+                    }
+                } else {
+                    ++$fixed;
+                    $targetRow = $this->ratingsTable->createRow();
+                    $targetRow->user_id = $rating->user_id;
+                    $targetRow->resource_id = $resource->id;
+                }
+                $targetRow->rating = $rating->rating;
+                // Don't set creation date to indicate that this is a generated entry
+                $targetRow->finna_checked = date('Y-m-d H:i:s');
+                $targetRow->save();
+            }
+            $rating->finna_checked = date('Y-m-d H:i:s');
+            $rating->save();
         }
-        return $result;
+
+        return $fixed;
     }
 
     /**
      * Get IDs of duplicate records (including the given record)
      *
-     * @param string $recordId Record ID
+     * @param array $recordIds Record IDs
      *
-     * @return array
+     * @return array Associative array of arrays with record ID as the key
      */
-    protected function getDedupRecordIds(string $recordId): array
+    protected function getDedupRecordIds(array $recordIds): array
     {
         // Search directly in Solr to avoid any listeners or filters from interfering
-        $query = new \VuFindSearch\Query\Query(
-            'local_ids_str_mv:"' . addcslashes($recordId, '"') . '"'
+        $escapedIds = array_map(
+            function ($i) {
+                return '"' . addcslashes($i, '"') . '"';
+            },
+            $recordIds
         );
 
+        $query = new \VuFindSearch\Query\Query();
         $params = new \VuFindSearch\ParamBag(
-            ['hl' => 'false', 'spellcheck' => 'false', 'sort' => '']
+            [
+                'hl' => 'false',
+                'spellcheck' => 'false',
+                'sort' => '',
+                'q' => 'local_ids_str_mv:(' . implode(' OR ', $escapedIds) . ')'
+            ]
         );
-        $records = $this->solr->search($query, 0, 1, $params)->getRecords();
-        return $records ? $records[0]->getLocalIds() : [];
+        $records = $this->solr->search($query, 0, 1000, $params)->getRecords();
+
+        $result = [];
+        foreach ($records as $record) {
+            $localIds = $record->getLocalIds();
+            foreach ($recordIds as $id) {
+                if (in_array($id, $localIds)) {
+                    $result[$id] = $localIds;
+                    break;
+                }
+            }
+        }
+        return $result;
     }
 
     /**
-     * Verify resource id
+     * Verify resource ids
      *
-     * @param Resource $resource Resource
+     * @param Resource[] $resources Resources to verify
      *
-     * @return bool True if changes were made
+     * @return int Number of fixed resources
      */
-    protected function verifyResourceId(Resource $resource)
+    protected function verifyResourceIds(array $resources)
     {
+        $ids = [];
+        foreach ($resources as $resource) {
+            $ids[] = [
+                'id' => $resource->record_id,
+                'source' => $resource->source,
+            ];
+        }
         try {
-            $record = $this->recordLoader
-                ->load($resource->record_id, $resource->source, true);
+            $records = $this->recordLoader->loadBatch($ids, true);
         } catch (\Exception $e) {
             $this->warn(
-                "Exception loading record {$resource->source}:{$resource->record_id}"
-                    . ':' . $e->getMessage()
+                'Exception loading record batch: ' . $e->getMessage()
             );
             return false;
         }
 
-        if ($record instanceof \VuFind\RecordDriver\Missing) {
-            $this->msg(
-                "Record missing for resource {$resource->id} record_id"
-                    . " {$resource->source}:{$resource->record_id}",
-                OutputInterface::VERBOSITY_VERBOSE
-            );
-            return false;
-        }
+        $fixed = 0;
+        foreach ($records as $idx => $record) {
+            $resource = $resources[$idx];
+            if ($record instanceof \VuFind\RecordDriver\Missing) {
+                $this->msg(
+                    "Record missing for resource {$resource->id} record_id"
+                        . " {$resource->source}:{$resource->record_id}",
+                    OutputInterface::VERBOSITY_VERBOSE
+                );
+            }
 
-        $id = $record->getUniqueId();
-        if ($id != $resource->record_id) {
-            $this->msg(
-                "Updating resource {$resource->id} record_id from"
-                . " {$resource->record_id} to $id"
-            );
-            $resource->record_id = $id;
-            $resource->save();
-            return true;
+            $id = $record->getUniqueId();
+            if ($id != $resource->record_id) {
+                $this->msg(
+                    "Updating resource {$resource->id} record_id from"
+                    . " {$resource->record_id} to $id"
+                );
+                $resource->record_id = $id;
+                $resource->save();
+                ++$fixed;
+            }
         }
-        return false;
+        return $fixed;
     }
 }

@@ -1990,8 +1990,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             $trans = [
                 'id' => $obj->id,
                 'title' => $title,
-                'checkoutdate' => $this->formatDate($record->checkOutDate),
-                'returndate' => isset($record->checkInDate)
+                'checkoutDate' => $this->formatDate($record->checkOutDate),
+                'returnDate' => isset($record->checkInDate)
                     ? $this->formatDate($record->checkInDate) : '',
                 'publication_year' => $obj->publicationYear ?? '',
                 'volume' => $obj->volume ?? ''
@@ -2279,6 +2279,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
 
         $paymentConfig = $this->config['onlinePayment'] ?? [];
         $blockedTypes = $paymentConfig['nonPayable'] ?? [];
+        $payableMinDate
+            = strtotime($paymentConfig['payableFineDateThreshold'] ?? '-5 years');
 
         $function = 'GetDebts';
         $functionResult = 'debtsResponse';
@@ -2326,7 +2328,11 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             // Round the amount in case it's a weird decimal number:
             $amount = round($amount);
             $description = $debt->debtType . ' - ' . $debt->debtNote;
-            $payable = $amount > 0;
+            $debtDate = $this->dateFormat->convertFromDisplayDate(
+                'U',
+                $this->formatDate($debt->debtDate)
+            );
+            $payable = $amount > 0 && $debtDate >= $payableMinDate;
             if ($payable) {
                 foreach ($blockedTypes as $blockedType) {
                     if ($blockedType === $description
@@ -2605,7 +2611,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 'title' => $title,
                 'cancel_details' => $cancelDetails,
                 'updateDetails' => $updateDetails,
-                '_organization' => $reservation->organisationId ?? ''
+                '_organization' => $reservation->organisationId ?? '',
+                'create' => $this->formatDate($reservation->createDate)
             ];
             $holdsList[] = $hold;
         }

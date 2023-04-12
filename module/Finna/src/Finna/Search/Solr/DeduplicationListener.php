@@ -95,6 +95,16 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
                         $params->set('fq', $fq);
                     }
                 }
+                // Remove finna.deduplication from any facet fields:
+                if ($facetFields = $params->get('facet.field')) {
+                    $newFields = [];
+                    foreach ($facetFields as $field) {
+                        if (strstr($field, 'finna.deduplication') === false) {
+                            $newFields[] = $field;
+                        }
+                    }
+                    $params->set('facet.field', $newFields);
+                }
             }
         }
         $result = parent::onSearchPre($event);

@@ -1872,3 +1872,9 @@ new_window = true
 show_in_results = true      ; include in search results
 show_in_record = true      ; include in core record metadata
 show_in_holdings = false    ; include in holdings tab of record view
+
+[Bazaar]
+; Client IDs and secrets used in API request authentication.
+; See https://educloud-alliance-technical-documentation.readthedocs.io/en/latest/bazaar/interface_lms.html
+; for more information.
+;client[client_id] = secret

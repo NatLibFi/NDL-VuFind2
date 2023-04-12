@@ -201,7 +201,7 @@ foreach ($this->statusItems as $item):
             <?php endif; ?>
           </span>
         <?php endif; ?>
-        <span class="info text-right"><?=$this->callnumber()->callnumber($source, $driver->getFullTitle(), $item['callnumber'], $item['collection'] ?? null, $item['location'] ?? null, $this->layout()->userLang, ($item['locationhref'] ?? false) ? 'results-online' : 'results')?></span>
+        <span class="info text-right"><?=$this->callnumber()->callnumber($source, $driver->getFullTitle(), $item['callnumber'], $item['collection'] ?? null, $item['location'] ?? null, $this->layout()->userLang, ($item['locationhref'] ?? false) ? 'results-online' : 'results', $item, false)?></span>
       </div>
     <div class="holdings<?=$collapseBranches ? ' collapsible collapsed' : ''?>">
   <?php endif; ?>
@@ -247,6 +247,7 @@ foreach ($this->statusItems as $item):
             <?php else: ?>
               <?= $this->transEsc('status_' . $item['availabilityInfo']['displayText'], [], $item['availabilityInfo']['displayText']); ?>
             <?php endif; ?>
+            <?=$this->callnumber()->callnumber($source, $driver->getFullTitle(), '', $item['collection'] ?? null, $item['location'] ?? null, $this->layout()->userLang, ($item['locationhref'] ?? false) ? 'results-online' : 'results', $item, true)?>
           </span>
         <?php else: ?>
           <?php if ($item['availability'] && !empty($item['availabilityInfo']['coverage'])): ?>
@@ -359,6 +360,8 @@ if (!$disableTitleHold
   $js = <<<JS
 finna.layout.initTruncate($('.holding-details'));
 VuFind.lightbox.bind($('.holding-details'));
+finna.layout.initLocationService($('.holding-details'));
+finna.common.initQrCodeLink($('.holding-details'));
 
 var item = $('.hiddenId[value="{$this->escapeHtmlAttr($id)}"]').closest('.record-container');
 item.find('.holdings-container.collapsible > .header').on('click', function onClickCollapsibleHeader() {

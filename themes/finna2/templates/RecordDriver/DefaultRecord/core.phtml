@@ -13,6 +13,22 @@
   $audioUrls = [];
   $otherUrls = [];
 
+  $addRenderedUrl = function (array $url) use (&$renderedURLs) {
+    $renderedURLs[] = [
+      'url' => $url['url'],
+      'desc' => $url['desc'] ?? $url['text'] ?? ''
+    ];
+  };
+
+  $isRendered = function (array $url) use (&$renderedURLs) {
+    foreach ($renderedURLs as $renderedURL) {
+      if ($url['url'] === $renderedURL['url'] && ($url['desc'] ?? $url['text'] ?? '') === $renderedURL['desc']) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   if (!empty($urls)){
     foreach ($urls as $url) {
       if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
@@ -118,9 +134,10 @@
 
       <?php foreach ($otherUrls ?? [] as $url): ?>
         <?php
-          if (in_array($url['url'], $renderedURLs)) {
+          if ($isRendered($url)) {
             continue;
           }
+
           $desc = $url['desc'] ?? $url['url'];
           if ($desc === $url['url']) {
             $desc = $this->truncateUrl($desc);
@@ -139,22 +156,22 @@
           </a>
           <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?><?php endif; ?>
         </div>
-        <?php $renderedURLs[] = $url['url']; ?>
+        <?php $addRenderedUrl($url); ?>
       <?php endforeach; ?>
       <?php foreach ($onlineURLs ?? [] as $url): ?>
-        <?php if (in_array($url['url'], $renderedURLs)) { continue; } ?>
+        <?php if ($isRendered($url)) { continue; } ?>
         <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><i class="fa fa-external-link"></i> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
           <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part'])?><?php endif; ?>
           <?php if ($url['source']): ?>
             <span class="online-source">(<?=$this->transEsc('default::source_' . $url['source'], null, $url['source'])?>)</span>
           <?php endif; ?>
         </div>
-        <?php $renderedURLs[] = $url['url']; ?>
+        <?php $addRenderedUrl($url); ?>
       <?php endforeach; ?>
       <?php if (!empty($mergedData['urls'])): ?>
         <?php
-          $filteredMergedURLs = array_filter($mergedData['urls'], function ($url) use ($renderedURLs) {
-            return !in_array($url['url'], $renderedURLs);
+          $filteredMergedURLs = array_filter($mergedData['urls'], function ($url) use ($isRendered) {
+            return !$isRendered($url);
           });
           $count = count($filteredMergedURLs);
         ?>
@@ -166,7 +183,7 @@
                 <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source'])?>)</span>
               <?php endif; ?>
             </div>
-            <?php $renderedURLs[] = $url['url']; ?>
+            <?php $addRenderedUrl($url); ?>
           <?php endforeach; ?>
         </div>
       <?php endif; ?>

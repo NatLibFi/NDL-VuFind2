@@ -29,6 +29,18 @@ finna.record = (function finnaRecord() {
           description.hide();
         });
     }
+    const more = $('.show-hide-button').html();
+    const less = $('.hide-info').html();
+    $('.cc-info').on('show.bs.collapse', function changeText() {
+      $(this).parents('.fulltextField').find('.show-hide-button').html(less);
+      $(this).parents('ul').siblings('button.more-link').click();
+    }).on('hidden.bs.collapse', function changeText() {
+      $(this).parents('.fulltextField').find('.show-hide-button').html(more);
+    });
+    $('.hide-info').on('click', function handleClick() {
+      $(this).blur();
+      $(this).parents('.fulltextField').find('.show-hide-button').focus();
+    });
   }
   function showDetails() {
     $('.record-information .record-details-more').removeClass('hidden');
@@ -222,6 +234,7 @@ finna.record = (function finnaRecord() {
     finna.layout.initLocationService();
     finna.layout.initJumpMenus($('.holdings-tab'));
     VuFind.lightbox.bind($('.holdings-tab'));
+    finna.common.initQrCodeLink($('.holdings-tab'));
   }
 
   function setupLocationsEad3Tab() {

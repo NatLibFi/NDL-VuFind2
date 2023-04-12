@@ -163,6 +163,9 @@ minimumFee = 65
 transactionMaxDuration = 15
 ; Currency
 currency = 'EUR'
+; Whether to allow selection of fines to pay. Default is false.
+;selectFines = true
+
 
 [PasswordRecovery]
 enabled = true
