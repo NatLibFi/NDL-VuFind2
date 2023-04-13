@@ -119,7 +119,7 @@ source_available_str_mv:* = available_locally_facet_html
 ; These settings affect the way the [Results] facets are displayed
 ; If using facets at the top of search results you have more room for text.
 [Results_Settings]
-; By default, how many values should we show for each facet? (-1 for no limit)
+; By default, how many values should we show for each facet? (range: 1 - 100)
 facet_limit        = 30
 ; Override facet_limit on a per-field basis using this array:
 ;facet_limit_by_field[format] = 50

@@ -765,15 +765,16 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Constrain facet limits to a maximum of 100.
+     * Constrain facet limits to 1-100.
      *
      * @return void
      */
     protected function constrainFacetLimits(): void
     {
-        $this->facetLimit = min((int)$this->facetLimit, static::MAX_FACET_LIMIT);
+        $this->facetLimit
+            = max(min((int)$this->facetLimit, static::MAX_FACET_LIMIT), 1);
         foreach ($this->facetLimitByField as &$value) {
-            $value = min((int)$value, static::MAX_FACET_LIMIT);
+            $value = max(min((int)$value, static::MAX_FACET_LIMIT), 1);
         }
         unset($value);
     }
