@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2016.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -28,6 +28,7 @@
  */
 namespace Finna\Search\Solr;
 
+use Laminas\Config\Config;
 use VuFind\Solr\Utils;
 
 /**
@@ -44,6 +45,13 @@ class Params extends \VuFind\Search\Solr\Params
 {
     use \Finna\Search\FinnaParams;
     use ParamsSharedTrait;
+
+    /**
+     * Maximum facet limit
+     *
+     * @var int
+     */
+    public const MAX_FACET_LIMIT = 100;
 
     /**
      * Date converter
@@ -291,6 +299,49 @@ class Params extends \VuFind\Search\Solr\Params
         }
 
         return $result;
+    }
+
+    /**
+     * Initialize facet limit from a Config object.
+     *
+     * @param Config $config Configuration
+     *
+     * @return void
+     */
+    protected function initFacetLimitsFromConfig(Config $config = null)
+    {
+        parent::initFacetLimitsFromConfig($config);
+        $this->constrainFacetLimits();
+    }
+
+    /**
+     * Set Facet Limit
+     *
+     * Finna: ensure the limit does not exceed 100.
+     *
+     * @param int $l the new limit value
+     *
+     * @return void
+     */
+    public function setFacetLimit($l)
+    {
+        parent::setFacetLimit($l);
+        $this->constrainFacetLimits();
+    }
+
+    /**
+     * Set Facet Limit by Field
+     *
+     * Finna: ensure the limits do not exceed 100.
+     *
+     * @param array $new Associative array of $field name => $limit
+     *
+     * @return void
+     */
+    public function setFacetLimitByField(array $new)
+    {
+        parent::setFacetLimitByField($new);
+        $this->constrainFacetLimits();
     }
 
     /**
@@ -706,6 +757,37 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
+     * Set the sorting value (note: sort will be set to default if an illegal
+     * or empty value is passed in).
+     *
+     * @param string $sort  New sort value (null for default)
+     * @param bool   $force Set sort value without validating it?
+     *
+     * @return void
+     */
+    public function setSort($sort, $force = false)
+    {
+        if (!$force) {
+            // Check if we need to convert the sort to a currently valid option
+            // (it must be a prefix of a currently valid option):
+            $validOptions = array_keys($this->getOptions()->getSortOptions());
+            if (!empty($sort) && !in_array($sort, $validOptions)) {
+                $sortLen = strlen($sort);
+                foreach ($validOptions as $valid) {
+                    if (strlen($valid) > $sortLen
+                        && strncmp($sort, $valid, $sortLen) === 0
+                    ) {
+                        $sort = $valid;
+                        break;
+                    }
+                }
+            }
+        }
+
+        parent::setSort($sort, $force);
+    }
+
+    /**
      * Add filters to the object based on values found in the request object.
      *
      * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
@@ -744,33 +826,16 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Set the sorting value (note: sort will be set to default if an illegal
-     * or empty value is passed in).
-     *
-     * @param string $sort  New sort value (null for default)
-     * @param bool   $force Set sort value without validating it?
+     * Constrain facet limits to a maximum of 100.
      *
      * @return void
      */
-    public function setSort($sort, $force = false)
+    protected function constrainFacetLimits(): void
     {
-        if (!$force) {
-            // Check if we need to convert the sort to a currently valid option
-            // (it must be a prefix of a currently valid option):
-            $validOptions = array_keys($this->getOptions()->getSortOptions());
-            if (!empty($sort) && !in_array($sort, $validOptions)) {
-                $sortLen = strlen($sort);
-                foreach ($validOptions as $valid) {
-                    if (strlen($valid) > $sortLen
-                        && strncmp($sort, $valid, $sortLen) === 0
-                    ) {
-                        $sort = $valid;
-                        break;
-                    }
-                }
-            }
+        $this->facetLimit = min((int)$this->facetLimit, static::MAX_FACET_LIMIT);
+        foreach ($this->facetLimitByField as &$value) {
+            $value = min((int)$value, static::MAX_FACET_LIMIT);
         }
-
-        parent::setSort($sort, $force);
+        unset($value);
     }
 }
