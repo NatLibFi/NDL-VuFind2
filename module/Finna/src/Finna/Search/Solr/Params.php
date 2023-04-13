@@ -315,36 +315,6 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Set Facet Limit
-     *
-     * Finna: ensure the limit does not exceed 100.
-     *
-     * @param int $l the new limit value
-     *
-     * @return void
-     */
-    public function setFacetLimit($l)
-    {
-        parent::setFacetLimit($l);
-        $this->constrainFacetLimits();
-    }
-
-    /**
-     * Set Facet Limit by Field
-     *
-     * Finna: ensure the limits do not exceed 100.
-     *
-     * @param array $new Associative array of $field name => $limit
-     *
-     * @return void
-     */
-    public function setFacetLimitByField(array $new)
-    {
-        parent::setFacetLimitByField($new);
-        $this->constrainFacetLimits();
-    }
-
-    /**
      * Return current facet configurations.
      * Add checkbox facets to list.
      *
