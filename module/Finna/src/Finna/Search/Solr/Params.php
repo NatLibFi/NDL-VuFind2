@@ -302,19 +302,6 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Initialize facet limit from a Config object.
-     *
-     * @param Config $config Configuration
-     *
-     * @return void
-     */
-    protected function initFacetLimitsFromConfig(Config $config = null)
-    {
-        parent::initFacetLimitsFromConfig($config);
-        $this->constrainFacetLimits();
-    }
-
-    /**
      * Return current facet configurations.
      * Add checkbox facets to list.
      *
@@ -762,6 +749,19 @@ class Params extends \VuFind\Search\Solr\Params
                 = $this->buildFullDateRangeFilter('first_indexed', $from, '*');
             $this->addFilter($rangeFacet);
         }
+    }
+
+    /**
+     * Initialize facet limit from a Config object.
+     *
+     * @param Config $config Configuration
+     *
+     * @return void
+     */
+    protected function initFacetLimitsFromConfig(Config $config = null)
+    {
+        parent::initFacetLimitsFromConfig($config);
+        $this->constrainFacetLimits();
     }
 
     /**
