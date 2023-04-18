@@ -302,45 +302,60 @@ implements \Laminas\Log\LoggerAwareInterface
      * Function to format given resourceMeasurementsSet to readable format
      *
      * @param \SimpleXmlElement $measurements of the image
-     * @param string            $language     language to get information
      *
      * @return array
      */
     protected function formatImageMeasurements(
         \SimpleXmlElement $measurements,
-        string $language
-    ) {
-        $data = [];
+    ):array {
+        // The values are universal
+        $results = [];
+        // Default the types into english versions
+        $termToTypeMappings = [
+            'leveys' => 'width',
+            'korkeus' => 'height',
+            'koko' => 'size',
+        ];
         foreach ($measurements as $set) {
-            if (empty($set->measurementValue)) {
+            $result = [];
+            $value = trim((string)$set->measurementValue);
+            if (!$value) {
                 continue;
             }
-            $value = trim((string)$set->measurementValue);
             $type = '';
             foreach ($set->measurementType as $t) {
-                if (!($lang = (string)$t->attributes()->lang)) {
-                    $lang = 'nolocale';
-                }
                 $type = trim((string)$t);
-                if (!isset($data[$lang][$type])) {
-                    $data[$lang][$type] = [];
-                }
+                $type = $termToTypeMappings[$type] ?? $type;
+                $result[$type] = [];
+                break;
             }
-            $unit = '';
+            $units = [];
             foreach ($set->measurementUnit as $u) {
-                if (!($lang = (string)$u->attributes()->lang)) {
-                    $lang = 'nolocale';
-                }
+                $lang = trim($u->attributes()->lang) ?: 'default';
                 $unit = trim((string)$u);
-                if (!isset($data[$lang][$type]['unit'])) {
-                    $data[$lang][$type]['unit'] = $unit;
-                }
-                if (!isset($data[$lang][$type]['value'])) {
-                    $data[$lang][$type]['value'] = $value;
-                }
+                $units[$lang] = $unit;
             }
+            // Set the default value always
+            if (!isset($units['default'])) {
+                $units['default'] = reset($units);
+            }
+            // The museumplus cannot handle image sizes with multiple layers
+            // so explode the results and sum them if the value is too long.
+            // Example of the value to be summed: 400030 400030 21313 223314.
+            // Only do this with sizes.
+            if ($type === 'size' && strlen($value) > 15) {
+                $tmpValue = 0;
+                foreach (explode(' ', $value) as $part) {
+                    $tmpValue += (int)$part;
+                }
+                $value = $tmpValue;
+            }
+            $results[$type] = [
+                'unit' => $units,
+                'value' => $value
+            ];
         }
-        return $data[$language] ?? reset($data);
+        return $results;
     }
 
     /**
@@ -780,8 +795,7 @@ implements \Laminas\Log\LoggerAwareInterface
         if (in_array($size, ['master', 'original'])) {
             $currentHiRes = [
                 'data' => $this->formatImageMeasurements(
-                    $measurements,
-                    $language
+                    $measurements
                 ),
                 'url' => $url,
                 'format' => $format ?: 'jpg'
