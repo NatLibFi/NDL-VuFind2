@@ -453,7 +453,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     // loadBatch ensures correct indexing
                     $driver = $records[$i];
                     // If the record is removed from the collection and
-                    // is not present in the cache, then exclude it.
+                    // there is no indication about the id of the old record
+                    // then skip it
                     if (empty($driver->getUniqueID())) {
                         continue;
                     }
