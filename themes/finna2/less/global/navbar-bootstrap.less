@@ -2,15 +2,20 @@
   max-width: 1300px; // dont fully scale the navigation bar text
 
   .logoutOptions, #loginOptions {
+    .my-account-icon {
+      font-size: 1.2em;
+      color: @action-link-color;
+    }
+    .login-icon {
+      font-size: 1.2em;
+    }
     .login-text {
-      padding-left: 0.5em;
       @media (max-width: @screen-xxs) {
         display: none;
       }
     }
   }
   .login-text {
-    padding-left: 0.5em;
     @media (max-width: @screen-xxs) {
       display: inherit;
     }
@@ -229,10 +234,6 @@
   }
 }
 #language_menu {
-  #language_menu_dropdown_button {
-    color: @btn-primary-bg;
-    font-weight: 600;
-  }
   #language_menu_dropdown_button:active {
     box-shadow: none;
   }
@@ -242,6 +243,7 @@
   }
   .lang-icon {
     font-size: 1.2em;
+    color: @action-link-color;
   }
   .active {
     font-weight: bold;
@@ -258,18 +260,11 @@
 .header-navbar-right {
   display: flex;
   flex-direction: row;
-  align-items: center;
-  height: @navbar-height;
-  margin-bottom: 0;
-  .username {
-    padding-right: 3px;
-    font-weight: 600;
-  }
+
   div.logoutOptions a:active {
     box-shadow: none;
   }
   div.logoutOptions, #loginOptions {
-    padding-left: 1px;
     padding-right: 12px;
     position: relative;
   }
