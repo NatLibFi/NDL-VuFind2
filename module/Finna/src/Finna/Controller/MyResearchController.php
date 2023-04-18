@@ -452,6 +452,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 foreach ($result['transactions'] as $i => $current) {
                     // loadBatch ensures correct indexing
                     $driver = $records[$i];
+                    // If the driver is missing, then skip it
+                    if ($driver instanceof \VuFind\RecordDriver\Missing) {
+                        continue;
+                    }
                     $otherNotes = '';
                     $notesBlocks = [];
 
