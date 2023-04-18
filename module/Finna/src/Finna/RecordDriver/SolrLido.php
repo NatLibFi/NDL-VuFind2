@@ -336,8 +336,8 @@ implements \Laminas\Log\LoggerAwareInterface
                 $units[$lang] = $unit;
             }
             // Set the default value always
-            if (!isset($units['default'])) {
-                $units['default'] = reset($units);
+            if (!isset($units['default']) && !empty($units)) {
+                $units['default'] = $units['en'] ?? reset($units);
             }
             // The museumplus cannot handle image sizes with multiple layers
             // so explode the results and sum them if the value is too long.

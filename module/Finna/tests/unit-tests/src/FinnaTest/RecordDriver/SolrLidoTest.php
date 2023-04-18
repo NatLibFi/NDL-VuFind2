@@ -84,15 +84,27 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 0 => [
                                     'data' => [
                                         'size' => [
-                                            'unit' => 'bytes',
+                                            'unit' => [
+                                                'en' => 'bytes',
+                                                'fi' => 'tavua',
+                                                'default' => 'bytes',
+                                            ],
                                             'value' => '123'
                                         ],
                                         'width' => [
-                                            'unit' => 'pixel',
+                                            'unit' => [
+                                                'en' => 'pixel',
+                                                'fi' => 'pikseli',
+                                                'default' => 'pixel',
+                                            ],
                                             'value' => '123'
                                         ],
                                         'height' => [
-                                            'unit' => 'pixel',
+                                            'unit' => [
+                                                'en' => 'pixel',
+                                                'fi' => 'pikseli',
+                                                'default' => 'pixel',
+                                            ],
                                             'value' => '123'
                                         ]
                                     ],
@@ -125,15 +137,27 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 0 => [
                                     'data' => [
                                         'size' => [
-                                            'unit' => 'bytes',
+                                            'unit' => [
+                                                'en' => 'bytes',
+                                                'fi' => 'tavua',
+                                                'default' => 'bytes',
+                                            ],
                                             'value' => '5'
                                         ],
                                         'width' => [
-                                            'unit' => 'pixel',
+                                            'unit' => [
+                                                'en' => 'pixel',
+                                                'fi' => 'pikseli',
+                                                'default' => 'pixel',
+                                            ],
                                             'value' => '5'
                                         ],
                                         'height' => [
-                                            'unit' => 'pixel',
+                                            'unit' => [
+                                                'en' => 'pixel',
+                                                'fi' => 'pikseli',
+                                                'default' => 'pixel',
+                                            ],
                                             'value' => '5'
                                         ]
                                     ],
@@ -145,7 +169,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             'master' => [
                                 [
                                     'url' => 'https://masterkuvanlinkki2.com',
-                                    'data' => false,
+                                    'data' => [],
                                     'format' => 'jpg',
                                     'resourceID' => '607643'
                                 ]
