@@ -118,7 +118,7 @@
     <?php if (is_object($account) && $account->loginEnabled()): ?>
       <?php if ($user): ?>
         <li class="logoutOptions">
-          <a href="#" class="btn" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="account-icon"></span><?=$this->icon('my-account','my-account-icon') ?> <span class="username login-text"><?=$this->transEsc("Your Account")?></span> <?=$this->icon('collapse-open')?></a>
+          <a href="#" class="btn" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="account-icon"></span><?=$this->icon('my-account', 'my-account-icon') ?> <span class="username login-text"><?=$this->transEsc("Your Account")?></span> <?=$this->icon('collapse-open')?></a>
           <ul role="menu" id="my-info-dropdown-menu" class="dropdown-menu dropdown-menu-right">
             <?php if ($user->getLibraryCards()->count() > 0): ?>
               <li role="none">
