@@ -452,7 +452,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 foreach ($result['transactions'] as $i => $current) {
                     // loadBatch ensures correct indexing
                     $driver = $records[$i];
-                    if ($driver instanceof \VuFind\RecordDriver\Missing) {
+                    // If the record is removed from the collection and
+                    // is not present in the cache, then exclude it.
+                    if (empty($driver->getUniqueID())) {
                         continue;
                     }
                     $otherNotes = '';
