@@ -87,7 +87,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                             'unit' => [
                                                 'en' => 'bytes',
                                                 'fi' => 'tavua',
-                                                'default' => 'bytes',
+                                                'default' => 'bytes'
                                             ],
                                             'value' => '123'
                                         ],
@@ -95,7 +95,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                             'unit' => [
                                                 'en' => 'pixel',
                                                 'fi' => 'pikseli',
-                                                'default' => 'pixel',
+                                                'default' => 'pixel'
                                             ],
                                             'value' => '123'
                                         ],
@@ -103,7 +103,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                             'unit' => [
                                                 'en' => 'pixel',
                                                 'fi' => 'pikseli',
-                                                'default' => 'pixel',
+                                                'default' => 'pixel'
                                             ],
                                             'value' => '123'
                                         ]
@@ -140,7 +140,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                             'unit' => [
                                                 'en' => 'bytes',
                                                 'fi' => 'tavua',
-                                                'default' => 'bytes',
+                                                'default' => 'bytes'
                                             ],
                                             'value' => '5'
                                         ],
@@ -148,7 +148,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                             'unit' => [
                                                 'en' => 'pixel',
                                                 'fi' => 'pikseli',
-                                                'default' => 'pixel',
+                                                'default' => 'pixel'
                                             ],
                                             'value' => '5'
                                         ],
@@ -156,7 +156,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                             'unit' => [
                                                 'en' => 'pixel',
                                                 'fi' => 'pikseli',
-                                                'default' => 'pixel',
+                                                'default' => 'pixel'
                                             ],
                                             'value' => '5'
                                         ]
