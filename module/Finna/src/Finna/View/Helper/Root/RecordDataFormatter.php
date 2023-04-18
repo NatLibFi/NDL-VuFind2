@@ -652,7 +652,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         // Apply the group spec.
         $result = [];
         foreach ($groups as $group) {
-            if (!empty($group['skipGroup'])) {
+            if (!empty($group['options']['skipGroup'])) {
                 continue;
             }
             $lines = $group['lines'];

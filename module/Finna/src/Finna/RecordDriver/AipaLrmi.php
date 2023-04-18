@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) The National Library of Finland 2022-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -44,6 +44,16 @@ class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
     use ContainerFormatTrait;
 
     /**
+     * Get an array of formats/extents for the record
+     *
+     * @return array
+     */
+    public function getPhysicalDescriptions(): array
+    {
+        return [];
+    }
+
+    /**
      * Return an array of image URLs associated with this record with keys:
      * - url         Image URL
      * - description Description text
@@ -60,7 +70,7 @@ class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
      */
     public function getAllImages($language = 'fi', $includePdf = false)
     {
-        // AIPA LRMI records do not directly contain PDF files
+        // AIPA LRMI records do not directly contain PDF files.
         return parent::getAllImages($language, false);
     }
 
@@ -89,17 +99,23 @@ class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
     }
 
     /**
-     * Return aim, or null if not found in record.
+     * Return study objectives, or null if not found in record.
      *
      * @return ?string
      */
-    public function getAim(): ?string
+    public function getStudyObjectives(): ?string
     {
+        $studyObjectives = null;
         $xml = $this->getXmlRecord();
-        if ($xml->aim) {
-            return (string)$xml->aim;
+        foreach ($xml->learningResource as $learningResource) {
+            if ($learningResource->studyObjectives) {
+                if (null === $studyObjectives) {
+                    $studyObjectives = '';
+                }
+                $studyObjectives .= (string)$learningResource->studyObjectives;
+            }
         }
-        return null;
+        return $studyObjectives;
     }
 
     /**

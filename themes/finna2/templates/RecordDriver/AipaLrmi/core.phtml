@@ -45,6 +45,19 @@
           </span>
         </div>
       <?php endif; ?>
+      <?php
+        $formatter = $this->recordDataFormatter($this->driver);
+        $filteredFields = $formatter->getDefaults();
+        $levelFields = $formatter->getGroupedData($this->driver, $formatter->getGroupedFields([
+          ['lines' => [
+            'Educational Level',
+            'Educational Subject',
+          ]]
+        ], $filteredFields, null, null, ['skipGroup' => true]));
+      ?>
+      <table class="table table-finna-record record-details record-field-groups" role="presentation">
+        <?= $this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $levelFields]) ?>
+      </table>
       <?= $this->record($this->driver)->getMaterialDisclaimer() ?>
       <?php if (!empty($summary)): ?>
         <div class="material-description">
@@ -53,11 +66,26 @@
       <?php endif; ?>
     </div>
 
+    <?php
+      $objectivesFields = $formatter->getGroupedData($this->driver, $formatter->getGroupedFields([
+        ['lines' => [
+          'Objective and Content',
+        ]]
+      ], $filteredFields, null, null, ['skipGroup' => true]));
+      ob_start();
+    ?>
+    <table class="table table-finna-record record-details record-field-groups" role="presentation">
+      <?= $this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $objectivesFields]) ?>
+    </table>
+    <?php
+      $content = ob_get_clean();
+      $content .= $this->recordFieldMarkdown()->toHtml($this->driver->getStudyObjectives() ?? '');
+    ?>
     <?= $this->render('components/molecules/containers/finna-panel', [
         'attributes' => ['class' => ['finna-panel-default', 'organisation-info-panel']],
-        'heading' => $this->transEsc('aipa_lrmi_aim'),
+        'heading' => $this->transEsc('aipa_lrmi_objectives'),
         'headingLevel' => 4,
-        'content' => $this->recordFieldMarkdown()->toHtml($this->driver->getAim()),
+        'content' => $content,
         'headingId' => uniqid('heading-'),
         'collapseId' => uniqid('collapse-')
       ]); ?>
