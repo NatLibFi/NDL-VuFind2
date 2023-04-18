@@ -90,30 +90,31 @@
   <?php endif; ?>
   <ul class="nav navbar-nav nav-absolute header-navbar-right">
     <li id="language_menu" class="dropdown">
-        <a href="#" id="language_menu_dropdown_button" class="btn dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <?=$this->icon('language', 'lang-icon') ?>
-          <span class="hidden-xs"><?=$this->displayLanguageOption($selectedLang)?></span>
-          <?=$this->icon('collapse-open') ?>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="language_menu_dropdown_button" aria-label="<?=$this->transEscAttr('Language')?>">
-          <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
-            <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
-              <?php if ($this->layout()->userLang == $langCode): ?>
-                <li class="dropdown-item" role="none">
-                  <a class="preserve-anchor active" role="menuitem" lang="<?=$this->escapeHtmlAttr($langCode)?>"> <?=$this->displayLanguageOption($langName)?></a>
-                </li>
-                <?php break; ?>
-              <?php endif ?>
-            <?php endforeach; ?>
-            <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
-              <?php if ($this->layout()->userLang != $langCode): ?>
-                <li class="dropdown-item" role="none">
-                  <a class="preserve-anchor" role="menuitem" lang="<?=$this->escapeHtmlAttr($langCode)?>" href="<?=$this->escapeHtmlAttr($this->navibar()->getLanguageUrl($langCode))?>"><?=$this->displayLanguageOption($langName)?></a>
-                </li>
-              <?php endif ?>
-            <?php endforeach; ?>
-          <?php endif; ?>
-        </ul>
+      <a href="#" id="language_menu_dropdown_button" class="btn dropdown-toggle" role="button" data-toggle="dropdown" aria-label="<?=$this->transEscAttr('Language')?>" aria-haspopup="true" aria-expanded="false">
+        <?=$this->icon('language', 'lang-icon') ?>
+        <span class="hidden-xs"><?=$this->displayLanguageOption($selectedLang)?></span>
+        <?=$this->icon('collapse-open') ?>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="language_menu_dropdown_button" >
+        <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
+          <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
+            <?php if ($this->layout()->userLang == $langCode): ?>
+              <li class="dropdown-item" role="none">
+                <a class="preserve-anchor active" role="menuitem" lang="<?=$this->escapeHtmlAttr($langCode)?>"> <?=$this->displayLanguageOption($langName)?></a>
+              </li>
+              <?php break; ?>
+            <?php endif ?>
+          <?php endforeach; ?>
+          <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
+            <?php if ($this->layout()->userLang != $langCode): ?>
+              <li class="dropdown-item" role="none">
+                <a class="preserve-anchor" role="menuitem" lang="<?=$this->escapeHtmlAttr($langCode)?>" href="<?=$this->escapeHtmlAttr($this->navibar()->getLanguageUrl($langCode))?>"><?=$this->displayLanguageOption($langName)?></a>
+              </li>
+            <?php endif ?>
+          <?php endforeach; ?>
+        <?php endif; ?>
+
+      </ul>
     </li>
     <?php if (is_object($account) && $account->loginEnabled()): ?>
       <?php if ($user): ?>
@@ -183,7 +184,7 @@
           </ul>
         </div>
       <?php endif; ?>
-      <div id="loginOptions"<?= $account->isLoggedIn() ?  " class='hidden'" : '';?>>
+      <li id="loginOptions"<?= $account->isLoggedIn() ?  " class='hidden'" : '';?>>
         <?php if ($sessionInitiator = $account->getSessionInitiator($this->serverUrl($this->url('myresearch-home')))): ?>
           <a <?=$this->url('myresearch-userlogin') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> href="<?=$this->url('myresearch-userlogin')?>"><?=$this->icon('login','login-icon') ?> <?=$this->transEsc("Institutional Login")?></a>
         <?php else: ?>
@@ -197,7 +198,7 @@
             </div>
           <?php endif; ?>
         <?php endif; ?>
-      </div>
+      </li>
     <?php endif; ?>
   </ul>
 </div>
