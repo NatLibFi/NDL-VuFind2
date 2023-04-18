@@ -306,7 +306,7 @@ implements \Laminas\Log\LoggerAwareInterface
      * @return array
      */
     protected function formatImageMeasurements(
-        \SimpleXmlElement $measurements,
+        \SimpleXmlElement $measurements
     ):array {
         // The values are universal
         $results = [];
