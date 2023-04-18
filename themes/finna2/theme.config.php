@@ -265,7 +265,6 @@ $config = [
     'favicon' => 'favicon.ico',
     'icons' => [
         'aliases' => [
-            'collapse-open' => 'FontAwesome:angle-down',
             'export' => 'FontAwesome:list-alt',
             'external-link' => 'FontAwesome:external-link',
             'facebook' => 'FontAwesome:facebook',
