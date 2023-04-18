@@ -314,7 +314,7 @@ implements \Laminas\Log\LoggerAwareInterface
         $termToTypeMappings = [
             'leveys' => 'width',
             'korkeus' => 'height',
-            'koko' => 'size',
+            'koko' => 'size'
         ];
         foreach ($measurements as $set) {
             $result = [];
