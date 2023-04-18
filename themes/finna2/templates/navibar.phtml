@@ -181,7 +181,7 @@
               <a <?=$this->url('myresearch-logout') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-logout')?>" title="<?=$this->transEsc("Log Out")?>"><?=$this->transEsc("Log Out")?><?=$this->icon('sign-out', 'sign-out-icon pull-right') ?></a>
             </li>
           </ul>
-        </div>
+        </li>
       <?php endif; ?>
       <li id="loginOptions"<?= $account->isLoggedIn() ?  " class='hidden'" : '';?>>
         <?php if ($sessionInitiator = $account->getSessionInitiator($this->serverUrl($this->url('myresearch-home')))): ?>
