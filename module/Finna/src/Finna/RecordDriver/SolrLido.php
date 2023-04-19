@@ -310,14 +310,17 @@ implements \Laminas\Log\LoggerAwareInterface
     ):array {
         // The values are universal
         $results = [];
-        // Default the types into english versions
+        // Default the types and units into english
         $termToTypeMappings = [
             'leveys' => 'width',
             'korkeus' => 'height',
             'koko' => 'size'
         ];
+        $termToUnitMappings = [
+            'tavua' => 'bytes',
+            'pikseli' => 'pixel'
+        ];
         foreach ($measurements as $set) {
-            $result = [];
             $value = trim((string)$set->measurementValue);
             if (!$value) {
                 continue;
@@ -326,18 +329,13 @@ implements \Laminas\Log\LoggerAwareInterface
             foreach ($set->measurementType as $t) {
                 $type = trim((string)$t);
                 $type = $termToTypeMappings[$type] ?? $type;
-                $result[$type] = [];
                 break;
             }
-            $units = [];
+            $unit = '';
             foreach ($set->measurementUnit as $u) {
-                $lang = trim($u->attributes()->lang) ?: 'default';
                 $unit = trim((string)$u);
-                $units[$lang] = $unit;
-            }
-            // Set the default value always
-            if (!isset($units['default']) && !empty($units)) {
-                $units['default'] = $units['en'] ?? reset($units);
+                $unit = $termToUnitMappings[$unit] ?? $unit;
+                break;
             }
             // The museumplus cannot handle image sizes with multiple layers
             // so explode the results and sum them if the value is too long.
@@ -351,7 +349,7 @@ implements \Laminas\Log\LoggerAwareInterface
                 $value = $tmpValue;
             }
             $results[$type] = [
-                'unit' => $units,
+                'unit' => $unit,
                 'value' => $value
             ];
         }

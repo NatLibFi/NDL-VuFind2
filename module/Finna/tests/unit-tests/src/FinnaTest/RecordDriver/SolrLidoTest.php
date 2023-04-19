@@ -84,27 +84,15 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 0 => [
                                     'data' => [
                                         'size' => [
-                                            'unit' => [
-                                                'en' => 'bytes',
-                                                'fi' => 'tavua',
-                                                'default' => 'bytes'
-                                            ],
+                                            'unit' => 'bytes',
                                             'value' => '123'
                                         ],
                                         'width' => [
-                                            'unit' => [
-                                                'en' => 'pixel',
-                                                'fi' => 'pikseli',
-                                                'default' => 'pixel'
-                                            ],
+                                            'unit' => 'pixel',
                                             'value' => '123'
                                         ],
                                         'height' => [
-                                            'unit' => [
-                                                'en' => 'pixel',
-                                                'fi' => 'pikseli',
-                                                'default' => 'pixel'
-                                            ],
+                                            'unit' => 'pixel',
                                             'value' => '123'
                                         ]
                                     ],
@@ -137,27 +125,15 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 0 => [
                                     'data' => [
                                         'size' => [
-                                            'unit' => [
-                                                'en' => 'bytes',
-                                                'fi' => 'tavua',
-                                                'default' => 'bytes'
-                                            ],
+                                            'unit' => 'bytes',
                                             'value' => '5'
                                         ],
                                         'width' => [
-                                            'unit' => [
-                                                'en' => 'pixel',
-                                                'fi' => 'pikseli',
-                                                'default' => 'pixel'
-                                            ],
+                                            'unit' => 'pixel',
                                             'value' => '5'
                                         ],
                                         'height' => [
-                                            'unit' => [
-                                                'en' => 'pixel',
-                                                'fi' => 'pikseli',
-                                                'default' => 'pixel'
-                                            ],
+                                            'unit' => 'pixel',
                                             'value' => '5'
                                         ]
                                     ],
