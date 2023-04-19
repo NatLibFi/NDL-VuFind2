@@ -210,7 +210,7 @@
       <?php $encapsulatedRecords = $this->driver->getEncapsulatedRecords(); ?>
       <?php if (count($encapsulatedRecords) > 1): ?>
         <div class="record-toc">
-          <p><strong><?= $this->transEsc('aipa_consists_of_the_following') ?>:</strong></p>
+          <p><strong><?= $this->transEsc('aipa_contents') ?>:</strong></p>
           <ul>
             <?php foreach ($encapsulatedRecords as $encapsulatedRecord): ?>
               <li>
