@@ -155,7 +155,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     protected $measurementTypeMappings = [
         'leveys' => 'width',
         'korkeus' => 'height',
-        'koko' => 'size'
+        'koko' => 'size',
     ];
 
     /**
@@ -329,7 +329,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     protected function formatImageMeasurements(
         \SimpleXmlElement $measurements
     ):array {
-        // The values are universal
         $results = [];
         foreach ($measurements as $set) {
             $value = trim((string)$set->measurementValue);
