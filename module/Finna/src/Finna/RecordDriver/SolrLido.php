@@ -360,7 +360,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             }
             $results[$type] = [
                 'unit' => $unit,
-                'value' => $value
+                'value' => $value,
             ];
         }
         return $results;
