@@ -147,6 +147,28 @@ implements \Laminas\Log\LoggerAwareInterface
     ];
 
     /**
+     * Measurement type mappings
+     *
+     * @var array
+     */
+    protected $measurementTypeMappings = [
+        'leveys' => 'width',
+        'korkeus' => 'height',
+        'koko' => 'size'
+    ];
+
+    /**
+     * Measurement unit mappings
+     *
+     * @var array
+     */
+    protected $measurementUnitMappings = [
+        'tavua' => 'byte',
+        'bytes' => 'byte',
+        'pikseli' => 'pixel',
+    ];
+
+    /**
      * Array of web friendly model formats
      *
      * @var array
@@ -310,16 +332,6 @@ implements \Laminas\Log\LoggerAwareInterface
     ):array {
         // The values are universal
         $results = [];
-        // Default the types and units into english
-        $termToTypeMappings = [
-            'leveys' => 'width',
-            'korkeus' => 'height',
-            'koko' => 'size'
-        ];
-        $termToUnitMappings = [
-            'tavua' => 'bytes',
-            'pikseli' => 'pixel'
-        ];
         foreach ($measurements as $set) {
             $value = trim((string)$set->measurementValue);
             if (!$value) {
@@ -328,13 +340,13 @@ implements \Laminas\Log\LoggerAwareInterface
             $type = '';
             foreach ($set->measurementType as $t) {
                 $type = trim((string)$t);
-                $type = $termToTypeMappings[$type] ?? $type;
+                $type = $this->measurementTypeMappings[$type] ?? $type;
                 break;
             }
             $unit = '';
             foreach ($set->measurementUnit as $u) {
                 $unit = trim((string)$u);
-                $unit = $termToUnitMappings[$unit] ?? $unit;
+                $unit = $this->measurementUnitMappings[$unit] ?? $unit;
                 break;
             }
             // The museumplus cannot handle image sizes with multiple layers

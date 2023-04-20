@@ -23,7 +23,7 @@
                                 $imgSize = $info['data']['size'] ?? [];
                                 $imageSize = '';
                                 if ($imgSize) {
-                                    $imageSize = !empty($imgSize['value']) && $imgSize['unit'] === 'bytes' ? $this->fileSize(preg_replace("/[^0-9]/", "", $imgSize['value'])) : '';
+                                    $imageSize = !empty($imgSize['value']) && $imgSize['unit'] === 'byte' ? $this->fileSize(preg_replace("/[^0-9]/", "", $imgSize['value'])) : '';
                                 }
                                 $width = $info['data']['width'] ?? [];
                                 $height = $info['data']['height'] ?? [];
