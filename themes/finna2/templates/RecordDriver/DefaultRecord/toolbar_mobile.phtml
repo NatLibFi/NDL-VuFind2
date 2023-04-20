@@ -36,11 +36,11 @@
                 <?=$this->partial('record/share-buttons.phtml', ['shareUrl' => $shareUrl, 'title' => $this->driver->tryMethod('getTitle', [], '')]);?>
                 <?php // Fetch correct image link and metadata here for Facebook, Twitter and Pinterest ?>
                 <!--
-                <meta property="og:title" content="<?=$this->escapeHtml($this->driver->getTitle()); ?>" />
-                <?php if ($summary): ?><meta property="og:description" content="<?=$this->truncate($this->stripTags($summary[0]), 100)?>" /><?php endif; ?>
-                <?php if ($author): /* TODO */ ?><meta property="article:author" content="" /><?php endif; ?>
-                <?php if ($publisher): /* TODO */ ?><meta property="article:publisher" content="" /><?php endif; ?>
-                <meta property="og:image" content="<?=$this->escapeHtmlAttr($mediumThumb);?>" />
+                <meta property="og:title" content="<?=$this->escapeHtml($this->driver->getTitle()); ?>">
+                <?php if ($summary): ?><meta property="og:description" content="<?=$this->truncate($this->stripTags($summary[0]), 100)?>"><?php endif; ?>
+                <?php if ($author): /* TODO */ ?><meta property="article:author" content=""><?php endif; ?>
+                <?php if ($publisher): /* TODO */ ?><meta property="article:publisher" content=""><?php endif; ?>
+                <meta property="og:image" content="<?=$this->escapeHtmlAttr($mediumThumb);?>">
                 -->
               <li class="whatsapp">
                 <span class="visible-xs"><a class="whatsapp-record" href="whatsapp://send?text=<?=urlencode($this->serverUrl() . $this->recordLinker()->getUrl($this->driver)) ?>" data-action="share/whatsapp/share" rel="nofollow"><i class="fa fa-phone"></i><span class="sr-only">Whatsapp</span></a></span>

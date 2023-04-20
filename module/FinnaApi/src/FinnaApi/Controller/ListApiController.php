@@ -1,4 +1,5 @@
 <?php
+
 /**
  * List API Controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
+
 namespace FinnaApi\Controller;
 
 use Exception;
@@ -135,7 +137,8 @@ class ListApiController extends ListController implements ApiInterface
             return $this->output([], self::STATUS_ERROR, 400, 'Missing id');
         }
 
-        if (isset($request['limit'])
+        if (
+            isset($request['limit'])
             && (!ctype_digit($request['limit'])
             || $request['limit'] < 0 || $request['limit'] > $this->maxLimit)
         ) {
@@ -152,7 +155,7 @@ class ListApiController extends ListController implements ApiInterface
             $response = [
                 'id' => $listObj->id,
                 'title' => $listObj->title,
-                'recordCount' => $results->getResultTotal()
+                'recordCount' => $results->getResultTotal(),
             ];
 
             $description = $listObj->description;
@@ -177,7 +180,7 @@ class ListApiController extends ListController implements ApiInterface
                 foreach ($results->getResults() as $result) {
                     $record = [
                         'record' => ($this->recordFormatter
-                            ->format([$result], $requestedFields))[0]
+                            ->format([$result], $requestedFields))[0],
                     ];
 
                     $notes = $result->getListNotes($listObj->id);

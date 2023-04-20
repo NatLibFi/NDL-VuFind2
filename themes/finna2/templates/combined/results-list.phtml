@@ -45,11 +45,11 @@
     <p class="sub-label hidden"><?=$this->translate($currentSearch['sublabel'])?></p>
     <?php
       $script = <<<JS
-        $('.show-list-details').on('click', function () {
-          $(this).next().toggleClass('hidden');
-          $('i', this).toggleClass('fa-arrow-up');
-        });
-JS;
+                  $('.show-list-details').on('click', function () {
+                    $(this).next().toggleClass('hidden');
+                    $('i', this).toggleClass('fa-arrow-up');
+                  });
+          JS;
       echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
     ?>
   <?php endif; ?>
@@ -109,7 +109,8 @@ JS;
       'showCartControls' => $this->showCartControls,
       'showBulkOptions' => $this->showBulkOptions,
       'showCheckboxes' => $this->showCartControls || $this->showBulkOptions,
-      'searchClassId' => $searchClassId
+      'excludeResultIds' => true, // Don't add id attributes to results to avoid duplicates
+      'searchClassId' => $searchClassId,
     ];
   ?>
   <?= $this->authorizationNote($searchClassId) ?>

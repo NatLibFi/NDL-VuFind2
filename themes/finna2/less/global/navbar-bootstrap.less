@@ -9,7 +9,7 @@
       }
     }
   }
-  #loginOptions-navi .login-text {
+  .login-text {
     padding-left: 0.5em;
     @media (max-width: @screen-xxs) {
       display: inherit;
@@ -119,7 +119,7 @@
       }
     }
     // Dropdowns get custom display when collapsed
-    .open:not(.logoutOptions):not(.browsebar-dropdown) .dropdown-menu {
+    .open:not(.logoutOptions):not(.browsebar-dropdown):not(#language_menu) .dropdown-menu {
       position: static;
       float: none;
       width: auto;
@@ -193,33 +193,21 @@
   }
 }
 
+.navbar-nav {
+  @media(max-width: @screen-sm) {
+    margin: 0;
+  }
+}
+
 .navbar-nav > li {
   float: none;
 }
 
-.navbar-nav.lang {
-  line-height: 64px;
-  white-space: nowrap;
-}
 .navbar-nav.nav-login {
   border-top: 1px solid @gray-lighter;
   display: none;
   line-height: 64px;
   text-align: center;
-}
-
-.navbar-nav>li.lang>a {
-  line-height: @line-height-computed;
-  margin: 0;
-}
-
-.navbar-nav>li.lang {
-  display: inline-block;
-  border-left: 1px solid @text-color;
-}
-
-.navbar-nav>li.lang:first-child {
-  border-left: none;
 }
 
 .navbar-nav>li>.dropdown-menu {
@@ -240,6 +228,52 @@
     transition: none;
   }
 }
+#language_menu {
+  #language_menu_dropdown_button {
+    color: @btn-primary-bg;
+    font-weight: 600;
+  }
+  #language_menu_dropdown_button:active {
+    box-shadow: none;
+  }
+  .dropdown-menu {
+    margin: 0;
+    background-color: @navbar-default-bg;
+  }
+  .lang-icon {
+    font-size: 1.2em;
+  }
+  .active {
+    font-weight: bold;
+  }
+}
+#language_menu.open {
+  .dropdown-menu {
+    position: absolute;
+  }
+  a.preserve-anchor {
+    width: 100%;
+  }
+}
+.header-navbar-right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: @navbar-height;
+  margin-bottom: 0;
+  .username {
+    padding-right: 3px;
+    font-weight: 600;
+  }
+  div.logoutOptions a:active {
+    box-shadow: none;
+  }
+  div.logoutOptions, #loginOptions {
+    padding-left: 1px;
+    padding-right: 12px;
+    position: relative;
+  }
+}
 
 /* Mobile navbar */
 @media(max-width: @grid-float-breakpoint-max) {
@@ -255,10 +289,11 @@
     .navbar-collapse > ul > li {
       border-bottom: 1px solid @gray-lighter;
     }
-    .navbar-nav > li.lang, .navbar-nav > li.nav-login {
+    .navbar-nav > li.nav-login {
       border-bottom: none;
     }
     .navbar-nav.nav-login {
+      border-top: none;
       display: inherit;
     }
   }
@@ -271,7 +306,24 @@
   }
 }
 
+@media(max-width: @screen-sm) {
+  #header-collapse {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
 .navbar .navbar-logo {
   height: @navbar-logo-height;
   margin-right: 10px;
+}
+
+//Focus outline for dropdowns in Firefox
+@supports (-moz-appearance:none) {
+  a.dropdown-toggle:focus {
+    outline: none;
+  }
+  a.dropdown-toggle:focus-visible {
+    outline: revert;
+  }
 }

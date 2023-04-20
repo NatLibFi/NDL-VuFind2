@@ -56,7 +56,7 @@
         var filters = item.data('filters').split('&');
         $.each(filters, function eachFilter(i, _filter) {
           var filter = _filter.split('#').join(':');
-          $('<input/>')
+          $('<input>')
             .attr('type', 'hidden').attr('name', 'filter[]')
             .val(filter)
             .appendTo(form);
@@ -83,7 +83,7 @@
         var img = $('#ac-recordcover');
         img[0].src = response.data.url;
         img[0].onload = function onImgLoad() {
-          if (this.naturalWidth && this.naturalWidth !== 10 && this.naturalHeight !== 10) { 
+          if (this.naturalWidth && this.naturalWidth !== 10 && this.naturalHeight !== 10) {
             img.toggleClass('hidden');
             $('.ac-isbn .iconlabel').toggleClass('hidden');
           }
@@ -148,7 +148,7 @@
             .attr('data-recordid', data[i].match.recordId)
             .addClass('hidden'));
           item.wrapInner($('<div class="ac-isbn">'));
-  
+
           var url = VuFind.path + '/AJAX/JSON?method=' + 'getRecordCover';
           var imgdata = {
             recordId: data[i].match.recordId,

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 3D model ajax handler.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Finna\File\Loader as FileLoader;
@@ -44,8 +46,7 @@ use VuFind\View\Helper\Root\Url;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class GetModel extends \VuFind\AjaxHandler\AbstractBase
-implements \VuFindHttp\HttpServiceAwareInterface
+class GetModel extends \VuFind\AjaxHandler\AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
 {
     use \VuFindHttp\HttpServiceAwareTrait;
 

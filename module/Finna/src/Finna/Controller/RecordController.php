@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Record Controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Controller;
 
 use Finna\Form\Form;
@@ -103,7 +105,7 @@ class RecordController extends \VuFind\Controller\RecordController
             ['query' => [
                 'layout' => $this->getRequest()->getQuery('layout', false),
                 'record_id'
-                    => $driver->getSourceIdentifier() . '|' . $driver->getUniqueID()
+                    => $driver->getSourceIdentifier() . '|' . $driver->getUniqueID(),
             ]]
         );
     }
@@ -152,7 +154,7 @@ class RecordController extends \VuFind\Controller\RecordController
                     'title_full' => 'Failed to load preview',
                     // This works for MARC and other XML loaders too
                     'fullrecord'
-                        => '<collection><record><leader/></record></collection>'
+                        => '<collection><record><leader/></record></collection>',
                 ];
             } else {
                 throw new \Exception(
@@ -226,7 +228,8 @@ class RecordController extends \VuFind\Controller\RecordController
     {
         // Special case -- handle lightbox login request if login has already been
         // done
-        if ($this->inLightbox()
+        if (
+            $this->inLightbox()
             && $this->params()->fromQuery('catalogLogin', 'false') == 'true'
             && is_array($this->catalogLogin())
         ) {
@@ -258,7 +261,7 @@ class RecordController extends \VuFind\Controller\RecordController
             'Holds',
             [
                 'id' => $driver->getUniqueID(),
-                'patron' => $patron
+                'patron' => $patron,
             ]
         );
         if (!$checkHolds) {
@@ -329,7 +332,8 @@ class RecordController extends \VuFind\Controller\RecordController
                     || count($requestGroups) > 1));
 
         $pickupDetails = $gatheredDetails;
-        if (!$requestGroupNeeded && !empty($requestGroups)
+        if (
+            !$requestGroupNeeded && !empty($requestGroups)
             && count($requestGroups) == 1
         ) {
             // Request group selection is not required, but we have a single request
@@ -377,14 +381,16 @@ class RecordController extends \VuFind\Controller\RecordController
             if (!$termsOk) {
                 $this->flashMessenger()->addErrorMessage('must_accept_terms');
             }
-            if ($termsOk && $validGroup && $validPickup
+            if (
+                $termsOk && $validGroup && $validPickup
                 && !$dateValidationResults['errors']
             ) {
                 // If we made it this far, we're ready to place the hold;
                 // if successful, we will redirect and can stop here.
 
                 // Pass start date to the driver only if it's in the future:
-                if (!empty($gatheredDetails['startDate'])
+                if (
+                    !empty($gatheredDetails['startDate'])
                     && $dateValidationResults['startDateTS'] < strtotime('+1 day')
                 ) {
                     $gatheredDetails['startDate'] = '';
@@ -408,7 +414,7 @@ class RecordController extends \VuFind\Controller\RecordController
                         'html' => true,
                         'msg' => 'hold_place_success_html',
                         'tokens' => [
-                            '%%url%%' => $this->url()->fromRoute('holds-list')
+                            '%%url%%' => $this->url()->fromRoute('holds-list'),
                         ],
                     ];
                     $this->flashMessenger()->addMessage($msg, 'success');
@@ -536,7 +542,7 @@ class RecordController extends \VuFind\Controller\RecordController
             'StorageRetrievalRequests',
             [
                 'id' => $driver->getUniqueID(),
-                'patron' => $patron
+                'patron' => $patron,
             ]
         );
         if (!$checkRequests) {
@@ -574,7 +580,8 @@ class RecordController extends \VuFind\Controller\RecordController
 
         // Process form submissions if necessary:
         if (null !== $this->params()->fromPost('placeStorageRetrievalRequest')) {
-            if (in_array('acceptTerms', $extraFields)
+            if (
+                in_array('acceptTerms', $extraFields)
                 && empty($gatheredDetails['acceptTerms'])
             ) {
                 $this->flashMessenger()->addMessage(
@@ -599,7 +606,7 @@ class RecordController extends \VuFind\Controller\RecordController
                         'msg' => 'storage_retrieval_request_place_success_html',
                         'tokens' => [
                             '%%url%%' => $this->url()
-                                ->fromRoute('myresearch-storageretrievalrequests')
+                                ->fromRoute('myresearch-storageretrievalrequests'),
                         ],
                     ];
                     $this->flashMessenger()->addMessage($msg, 'success');
@@ -644,7 +651,7 @@ class RecordController extends \VuFind\Controller\RecordController
                 'helpText' => $checkRequests['helpText'] ?? null,
                 // For backward-compatibility:
                 'acceptTermsText' => $checkRequests['acceptTermsText'] ?? null,
-                'acceptTermsTextHtml' => $checkRequests['acceptTermsText'] ?? null
+                'acceptTermsTextHtml' => $checkRequests['acceptTermsText'] ?? null,
             ]
         );
         $view->setTemplate('record/storageretrievalrequest');
@@ -671,7 +678,7 @@ class RecordController extends \VuFind\Controller\RecordController
             'ILLRequests',
             [
                 'id' => $driver->getUniqueID(),
-                'patron' => $patron
+                'patron' => $patron,
             ]
         );
         if (!$checkRequests) {
@@ -708,7 +715,8 @@ class RecordController extends \VuFind\Controller\RecordController
 
         // Process form submissions if necessary:
         if (null !== $this->params()->fromPost('placeILLRequest')) {
-            if (in_array('acceptTerms', $extraFields)
+            if (
+                in_array('acceptTerms', $extraFields)
                 && empty($gatheredDetails['acceptTerms'])
             ) {
                 $this->flashMessenger()->addMessage(
@@ -733,7 +741,7 @@ class RecordController extends \VuFind\Controller\RecordController
                         'msg' => 'ill_request_place_success_html',
                         'tokens' => [
                             '%%url%%' => $this->url()
-                                ->fromRoute('myresearch-illrequests')
+                                ->fromRoute('myresearch-illrequests'),
                         ],
                     ];
                     $this->flashMessenger()->addMessage($msg, 'success');
@@ -782,7 +790,7 @@ class RecordController extends \VuFind\Controller\RecordController
                 'helpText' => $checkRequests['helpText'] ?? null,
                 // For backward-compatibility:
                 'acceptTermsText' => $checkRequests['acceptTermsText'] ?? null,
-                'acceptTermsTextHtml' => $checkRequests['acceptTermsText'] ?? null
+                'acceptTermsTextHtml' => $checkRequests['acceptTermsText'] ?? null,
             ]
         );
         $view->setTemplate('record/illrequest');
@@ -835,9 +843,7 @@ class RecordController extends \VuFind\Controller\RecordController
         );
         $searchConfig = $this->getConfig('searches');
         if (!empty($searchConfig->Records->sources)) {
-            foreach (explode(',', $searchConfig->Records->sources)
-                as $priority => $id
-            ) {
+            foreach (explode(',', $searchConfig->Records->sources) as $priority => $id) {
                 foreach ($sources as &$source) {
                     if ($id === $source['id']) {
                         $source['priority'] = $priority;
@@ -859,7 +865,7 @@ class RecordController extends \VuFind\Controller\RecordController
         );
         $view = new \Laminas\View\Model\ViewModel(
             [
-                'sources' => $sources
+                'sources' => $sources,
             ]
         );
         return $view;

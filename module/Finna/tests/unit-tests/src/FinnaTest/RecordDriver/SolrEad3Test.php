@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SolrEad3 Test Class
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
+
 namespace FinnaTest\RecordDriver;
 
 use Finna\RecordDriver\SolrEad3;
@@ -55,7 +57,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
         $dates = [
             [
                 'data' => "1600{$ndash}1799",
-                'detail' => 'Ajallinen kattavuus'
+                'detail' => 'Ajallinen kattavuus',
             ],
             [
                 'data' => "1661",
@@ -68,7 +70,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
             [
                 'data' => "01.01.1600{$ndash}01.01.1610",
                 'detail' => 'Ajallinen kattavuus',
-            ]
+            ],
         ];
         $this->assertEquals($dates, $driver->getUnitDates());
     }

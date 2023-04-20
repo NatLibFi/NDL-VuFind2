@@ -13,16 +13,16 @@
         id="<?=$this->escapeHtmlAttr(str_replace(' ', '', $current['desc']))?>"
         data-location="<?=$current['selected'] ? $results->getUrlQuery()->removeFilter($current['filter']) : $results->getUrlQuery()->addFilter($current['filter']) ?>"
         <?=!empty($current['disabled']) ? 'disabled="disabled"' : ''?>
-      />
+      >
       <span><?=$this->translate($current['desc']) // Intentionally left unescaped to allow HTML in the description ?></span>
     </label>
   </div>
 <?php endforeach; ?>
 <?php
   $script = <<<JS
-$('input.checkbox-filter').on('click', function() {
-  document.location.href = $(this).data('location');
-});
-JS;
+      $('input.checkbox-filter').on('click', function() {
+        document.location.href = $(this).data('location');
+      });
+      JS;
   echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
 ?>

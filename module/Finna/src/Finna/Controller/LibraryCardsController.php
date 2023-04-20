@@ -1,4 +1,5 @@
 <?php
+
 /**
  * LibraryCards Controller
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Controller;
 
 use VuFind\Exception\Auth as AuthException;
@@ -59,7 +61,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 $patron = $this->getILSAuthenticator()->storedCatalogLogin();
                 foreach ($view->libraryCards as $card) {
                     $card = $card->toArray();
-                    if ($patron
+                    if (
+                        $patron
                         && $patron['cat_username'] === $card['cat_username']
                     ) {
                         $profile = $this->getILS()->getMyProfile($patron);
@@ -172,7 +175,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 'card' => $card,
                 'hash' => $user->verify_hash,
                 'passwordPolicy' => $policy,
-                'verifyold' => true
+                'verifyold' => true,
             ]
         );
     }
@@ -196,7 +199,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         );
         $view = $this->createViewModel(
             [
-                'target' => $target
+                'target' => $target,
             ]
         );
         if (!$recoveryConfig) {
@@ -204,7 +207,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         }
         $view->useCaptcha = $this->captcha()->active('passwordRecovery');
         // If we have a submitted form
-        if ($recoveryConfig
+        if (
+            $recoveryConfig
             && $this->formWasSubmitted('submit', $view->useCaptcha)
         ) {
             // Check if we have a submitted form, and use the information
@@ -215,7 +219,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             $result = $catalog->getPasswordRecoveryToken(
                 [
                     'cat_username' => "$target.$username",
-                    'email' => $email
+                    'email' => $email,
                 ]
             );
 
@@ -234,7 +238,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                         'target' => $target,
                         'username' => $username,
                         'email' => $email,
-                        'token' => $result['token']
+                        'token' => $result['token'],
                     ]
                 );
                 $row->save();
@@ -242,7 +246,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                     $email,
                     $target,
                     [
-                        'hash' => $hash
+                        'hash' => $hash,
                     ]
                 );
                 $view->emailSent = true;
@@ -278,7 +282,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         $view = $this->createViewModel(
             [
                 'target' => $target,
-                'introductionText' => $registerConfig['introductionText'] ?? ''
+                'introductionText' => $registerConfig['introductionText'] ?? '',
             ]
         );
         $view->useCaptcha = $this->captcha()->active('passwordRecovery');
@@ -313,7 +317,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                             $email,
                             [
                                 'email' => $email,
-                                'target' => $target
+                                'target' => $target,
                             ],
                             [],
                             'librarycards-registrationform',
@@ -447,7 +451,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 // Don't let the user override the email address
                 $params['userdata'][$id] = 'email' === $id
                     ? $params['email'] : trim($this->params()->fromPost($id, ''));
-                if (($field['required'] ?? false)
+                if (
+                    ($field['required'] ?? false)
                     && '' === $params['userdata'][$id]
                 ) {
                     $missingFields = true;
@@ -465,7 +470,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 $result = $catalog->registerPatron(
                     [
                         'cat_username' => "$target.123",
-                        'userdata' => $params['userdata']
+                        'userdata' => $params['userdata'],
                     ]
                 );
                 if ($result['success']) {
@@ -599,7 +604,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             [
                 'target' => $target,
                 'hash' => $hash,
-                'passwordPolicy' => $policy
+                'passwordPolicy' => $policy,
             ]
         );
         $view->useCaptcha = $this->captcha()->active('changePassword');
@@ -617,7 +622,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                     'cat_username' => "$target." . $recoveryData['username'],
                     'email' => $recoveryData['email'],
                     'token' => $recoveryData['token'],
-                    'password' => $password
+                    'password' => $password,
                 ]
             );
 
@@ -706,7 +711,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                     continue;
                 }
                 [$otherInstitution] = explode('.', $otherCard->cat_username, 2);
-                if ($cardInstitution == $otherInstitution
+                if (
+                    $cardInstitution == $otherInstitution
                     && strcasecmp($cardName, $otherCard->card_name) == 0
                 ) {
                     $this->flashMessenger()->addMessage(
@@ -788,10 +794,11 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             [
                 'patron' => $patron,
                 'oldPassword' => $oldPassword,
-                'newPassword' => $password
+                'newPassword' => $password,
             ]
         );
-        if (!$result['success']
+        if (
+            !$result['success']
             && $result['status'] == 'authentication_error_invalid'
             && !empty($oldPassword)
         ) {
@@ -801,7 +808,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 [
                     'patron' => $patron,
                     'oldPassword' => '',
-                    'newPassword' => $password
+                    'newPassword' => $password,
                 ]
             );
         }
@@ -849,14 +856,14 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 [
                     'library' => $library,
                     'url' => $this->getServerUrl('librarycards-resetpassword')
-                        . '?' . http_build_query($urlParams)
+                        . '?' . http_build_query($urlParams),
                 ]
             );
             $config = $this->getConfig();
             $subject = $this->translate(
                 'library_card_recovery_email_subject',
                 [
-                    '%%library%%' => $library
+                    '%%library%%' => $library,
                 ]
             );
             $this->serviceLocator->get(\VuFind\Mailer\Mailer::class)->send(

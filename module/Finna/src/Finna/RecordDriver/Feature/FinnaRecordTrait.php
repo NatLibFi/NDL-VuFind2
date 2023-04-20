@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Additional functionality for Finna and Primo records.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver\Feature;
 
 use Finna\Db\Row\User;
@@ -287,7 +289,8 @@ trait FinnaRecordTrait
                 return false;
             }
         }
-        if (!empty($image['pdf'])
+        if (
+            !empty($image['pdf'])
             && !empty($this->mainConfig->Content->pdfCoverImageDownload)
         ) {
             return !empty(

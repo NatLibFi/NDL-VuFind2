@@ -5,8 +5,8 @@
 <h2><?=$this->transEsc('loan_history_save') ?></h2>
 <?=$this->flashmessages()?>
 <p><?=$this->transEsc('loan_history_save_info_html') ?></p>
-<form class="form-record-save" method="post" action="<?=$this->url('myresearch-savehistoricloans')?>" name="saveLoans" data-lightbox-onclose="checkSaveStatusesCallback">
-  <input type="hidden" name="submit" value="1" />
+<form class="form-record-save" method="post" action="<?=$this->url('myresearch-savehistoricloans')?>" name="saveLoans" data-lightbox-onclose="VuFind.saveStatuses.refresh">
+  <input type="hidden" name="submit" value="1">
 
   <div class="form-group">
     <label class="control-label" for="save_list"><?=$this->transEsc('Choose a List') ?></label>
@@ -25,6 +25,6 @@
   </div>
 
   <div class="form-group">
-    <input class="btn btn-primary" type="submit" value="<?=$this->transEscAttr('Save') ?>"/>
+    <input class="btn btn-primary" type="submit" value="<?=$this->transEscAttr('Save') ?>">
   </div>
 </form>

@@ -1,1 +1,3 @@
-<?=$this->url('eds-search')?>?lookfor=<?=urlencode($this->lookfor)?>&amp;type=ISSN
+<?php
+// Use echo to ensure we don't return a line feed
+echo $this->url('eds-search') . '?lookfor=' . urlencode($this->lookfor) . '&amp;type=ISSN';

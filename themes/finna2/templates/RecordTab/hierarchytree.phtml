@@ -36,10 +36,10 @@
   <div id="hierarchyTreeHolder">
     <div id="hierarchyLoading" class="hide"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> <?=$this->transEsc('loading_ellipsis')?></div>
     <div id="hierarchyTree" class="hierarchy-tree">
-      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenRecordId" />
-      <input type="hidden" value="<?=$this->escapeHtmlAttr($activeTree)?>" class="hiddenHierarchyId" />
-      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenRecordSource" />
-      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->treeContext ?? 'Record')?>" class="hiddenContext" />
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenRecordId">
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($activeTree)?>" class="hiddenHierarchyId">
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenRecordSource">
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->treeContext ?? 'Record')?>" class="hiddenContext">
     </div>
     <div class="back-to-up hidden"><?=$this->transEsc("Back to top")?> <i class="fa fa-arrow-up"></i></div>
   </div>

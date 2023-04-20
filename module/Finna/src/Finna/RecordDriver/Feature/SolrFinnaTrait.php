@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Additional functionality for Finna Solr records.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver\Feature;
 
 use VuFind\RecordDriver\Feature\VersionAwareInterface;
@@ -188,7 +190,7 @@ trait SolrFinnaTrait
         $rating = $this->getRatingData();
         return [
             'count' => $rating['count'],
-            'average' => $rating['rating']
+            'average' => $rating['rating'],
         ];
     }
 
@@ -259,11 +261,12 @@ trait SolrFinnaTrait
         if (!$daterange) {
             return null;
         }
-        if (preg_match(
-            '/\[(-?\d{4}).* TO (-?\d{4})/',
-            $daterange,
-            $matches
-        )
+        if (
+            preg_match(
+                '/\[(-?\d{4}).* TO (-?\d{4})/',
+                $daterange,
+                $matches
+            )
         ) {
             $start = (string)(intval($matches[1]));
             $end = (string)(intval($matches[2]));
@@ -346,7 +349,7 @@ trait SolrFinnaTrait
      *
      * @return array
      */
-    public function getHierarchyParentID(array $levels = []) : array
+    public function getHierarchyParentID(array $levels = []): array
     {
         return $this->fields['hierarchy_parent_id'] ?? [];
     }
@@ -358,7 +361,7 @@ trait SolrFinnaTrait
      *
      * @return array
      */
-    public function getHierarchyParentTitle(array $levels = []) : array
+    public function getHierarchyParentTitle(array $levels = []): array
     {
         return $this->fields['hierarchy_parent_title'] ?? [];
     }
@@ -437,7 +440,7 @@ trait SolrFinnaTrait
                     ? $this->mergeURLArray(
                         $this->fields['online_urls_str_mv'],
                         true
-                    ) : []
+                    ) : [],
             ];
         }
 
@@ -627,7 +630,8 @@ trait SolrFinnaTrait
             if ($isbn = $this->getFirstISBN()) {
                 $result['invisbn'] = $isbn;
             }
-        } elseif (is_string($result)
+        } elseif (
+            is_string($result)
             && is_callable([$this, 'isUrlLoadable'])
             && !$this->isUrlLoadable($result, $this->getUniqueID())
         ) {
@@ -878,17 +882,20 @@ trait SolrFinnaTrait
         // If we have multiple formats, Book, Journal and Article are most
         // important...
         $formats = $this->getFormats();
-        if (in_array('1/Book/BookSection/', $formats)
+        if (
+            in_array('1/Book/BookSection/', $formats)
             || in_array('1/Book/eBookSection/', $formats)
         ) {
             return 'BookSection';
         } elseif (in_array('0/Book/', $formats)) {
             return 'Book';
-        } elseif (in_array('1/Journal/Article/', $formats)
+        } elseif (
+            in_array('1/Journal/Article/', $formats)
             || in_array('1/Journal/eArticle/', $formats)
         ) {
             return 'Article';
-        } elseif (in_array('0/Journal/', $formats)
+        } elseif (
+            in_array('0/Journal/', $formats)
             || in_array('1/Other/ContinuouslyUpdatedResource/', $formats)
         ) {
             return 'Journal';
@@ -929,7 +936,7 @@ trait SolrFinnaTrait
             }
             $results[] = [
                 'source' => $source,
-                'id' => $id
+                'id' => $id,
             ];
         }
         if (!empty($this->recordConfig->Record->sort_sources)) {
@@ -1038,7 +1045,7 @@ trait SolrFinnaTrait
                     } else {
                         $existingUrl['source'] = [
                             $existingUrl['source'],
-                            $newURL['source']
+                            $newURL['source'],
                         ];
                     }
                     if (!$existingUrl['text']) {
@@ -1083,7 +1090,8 @@ trait SolrFinnaTrait
         }
         foreach ($blocklist as $rule) {
             if (substr($rule, 0, 1) == '/' && substr($rule, -1, 1) == '/') {
-                if (preg_match($rule, $url)
+                if (
+                    preg_match($rule, $url)
                     || ($desc !== '' && preg_match($rule, $desc))
                 ) {
                     return true;
@@ -1108,11 +1116,12 @@ trait SolrFinnaTrait
     {
         $newUrls = [];
         foreach ($urls as $url) {
-            if (preg_match(
-                '/^http(s)?:\/\/.*\.([a-zA-Z0-9]{3,4})$/',
-                $url['url'],
-                $match
-            )
+            if (
+                preg_match(
+                    '/^http(s)?:\/\/.*\.([a-zA-Z0-9]{3,4})$/',
+                    $url['url'],
+                    $match
+                )
             ) {
                 $codec = $match[2];
                 $type = $embed = null;
@@ -1178,7 +1187,7 @@ trait SolrFinnaTrait
             $bibLevels = $holdConfig['titleHoldBibLevels']
                 ?? [
                     'monograph', 'monographpart',
-                    'serialpart', 'collectionpart'
+                    'serialpart', 'collectionpart',
                 ];
             if (in_array($biblioLevel, $bibLevels) && isset($this->titleHoldLogic)) {
                 return $this->titleHoldLogic->getHold($this->getUniqueID());

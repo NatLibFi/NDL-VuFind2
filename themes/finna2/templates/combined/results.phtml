@@ -21,7 +21,7 @@
       'filterList' => $this->params->getFilterList(true),
       'hasDefaultsApplied' => $this->params->hasDefaultsApplied(),
       'selectedShards' => $this->params->getSelectedShards(),
-      'savedSearches' => $this->layout()->savedTabs
+      'savedSearches' => $this->layout()->savedTabs,
     ]
   );
 
@@ -62,7 +62,7 @@
       'combinedResults' => $this->combinedResults,
       'supportsCartOptions' => $this->supportsCartOptions,
       'showCartControls' => $this->showCartControls,
-      'showBulkOptions' => $this->showBulkOptions
+      'showBulkOptions' => $this->showBulkOptions,
     ];
   ?>
   <?=$this->context($this)->renderInContext('combined/stack-' . $placement . '.phtml', $viewParams)?>
@@ -83,7 +83,7 @@
           'results' => $combinedResults,
           'params' => $combinedResults->getParams(),
           'lookfor' => $combinedResults->getParams()->getDisplayQuery(),
-          'recordsFound' => true // This might not be true, but we don't really know
+          'recordsFound' => true, // This might not be true, but we don't really know
       ]
   );
 ?>

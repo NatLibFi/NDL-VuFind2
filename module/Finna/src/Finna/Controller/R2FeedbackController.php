@@ -1,4 +1,5 @@
 <?php
+
 /**
  * R2 Feedback Controller
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Controller;
 
 use Finna\Form\Form;
@@ -41,8 +43,7 @@ use Finna\Form\R2Form;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class R2FeedbackController extends FeedbackController
-implements \Laminas\Log\LoggerAwareInterface
+class R2FeedbackController extends FeedbackController implements \Laminas\Log\LoggerAwareInterface
 {
     use \VuFind\Log\LoggerAwareTrait;
 
@@ -74,7 +75,8 @@ implements \Laminas\Log\LoggerAwareInterface
         $submitted = $this->formWasSubmitted('submit');
 
         if (!$submitted) {
-            if ($formId === R2Form::R2_REGISTER_FORM && $this->getUser()
+            if (
+                $formId === R2Form::R2_REGISTER_FORM && $this->getUser()
             ) {
                 $rems
                     = $this->serviceLocator->get(\Finna\Service\RemsService::class);
@@ -203,7 +205,7 @@ implements \Laminas\Log\LoggerAwareInterface
             $form->populateValues(
                 [
                  'firstname' => $user->firstname,
-                 'lastname' => $user->lastname
+                 'lastname' => $user->lastname,
                 ]
             );
         }

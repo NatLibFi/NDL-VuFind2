@@ -1,5 +1,19 @@
 <?php
+
+/**
+ * CPU Product
+ *
+ * PHP version 7
+ *
+ * @category VuFind
+ * @package  OnlinePayment
+ * @author   MB <asiakastuki@cpu.fi>
+ * @license  https://www.cpu.fi/ Unknown
+ * @link     https://www.cpu.fi/
+ */
+
 // @codingStandardsIgnoreStart
+
 namespace Finna\OnlinePayment\Handler\Connector\Cpu;
 
 /**

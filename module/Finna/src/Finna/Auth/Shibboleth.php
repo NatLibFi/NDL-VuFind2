@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Shibboleth authentication module.
  *
@@ -28,6 +29,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Auth;
 
 use VuFind\Auth\Shibboleth\ConfigurationLoaderInterface;
@@ -124,7 +126,8 @@ class Shibboleth extends \VuFind\Auth\Shibboleth
                 $value = $this->getAttribute($request, $shib[$attribute]);
                 if ($attribute == 'email') {
                     $user->updateEmail($value);
-                } elseif ($attribute == 'cat_username' && isset($shib['prefix'])
+                } elseif (
+                    $attribute == 'cat_username' && isset($shib['prefix'])
                     && !empty($value)
                 ) {
                     $user->cat_username = $shib['prefix'] . '.' . $value;

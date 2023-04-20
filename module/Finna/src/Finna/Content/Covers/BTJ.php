@@ -1,4 +1,5 @@
 <?php
+
 /**
  * BTJ Cover Image Service cover content loader.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\Content\Covers;
 
 use VuFindCode\ISBN;
@@ -76,7 +78,7 @@ class BTJ extends \VuFind\Content\AbstractCover
         $sizeCodes = [
             'medium' => '04',
             'small' => '06',
-            'large' => '07'
+            'large' => '07',
         ];
         try {
             $pid = '';
@@ -100,7 +102,7 @@ class BTJ extends \VuFind\Content\AbstractCover
                 $params = [
                     'id' => $key,
                     'pid' => $pid,
-                    'ftype' => $sizeCodes[$size] ?? '04'
+                    'ftype' => $sizeCodes[$size] ?? '04',
                 ];
                 return 'https://armas.btj.fi/request.php?error=1&'
                     . http_build_query($params);

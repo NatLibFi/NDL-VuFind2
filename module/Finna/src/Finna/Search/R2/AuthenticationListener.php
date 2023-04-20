@@ -26,12 +26,12 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
  */
+
 namespace Finna\Search\R2;
 
 use Finna\Service\R2SupportService;
 use Finna\Service\RemsService;
 use FinnaSearch\Backend\R2\Connector;
-
 use Laminas\EventManager\EventInterface;
 use Laminas\EventManager\SharedEventManagerInterface;
 

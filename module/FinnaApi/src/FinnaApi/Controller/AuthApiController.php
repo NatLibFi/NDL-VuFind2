@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Authentication Api Controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace FinnaApi\Controller;
 
 use VuFind\Exception\ILS as ILSException;
@@ -38,8 +40,9 @@ use VuFind\Exception\ILS as ILSException;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
-class AuthApiController extends \VuFindApi\Controller\ApiController
-implements \VuFindApi\Controller\ApiInterface, \Laminas\Log\LoggerAwareInterface
+class AuthApiController extends \VuFindApi\Controller\ApiController implements
+    \VuFindApi\Controller\ApiInterface,
+    \Laminas\Log\LoggerAwareInterface
 {
     use \VuFindApi\Controller\ApiTrait;
     use \VuFind\Log\LoggerAwareTrait;
@@ -111,7 +114,7 @@ implements \VuFindApi\Controller\ApiInterface, \Laminas\Log\LoggerAwareInterface
 
             $backend = [
                 'id' => $target,
-                'name' => $this->translate("source_$target", null, $target)
+                'name' => $this->translate("source_$target", null, $target),
             ];
             $backends[] = $backend;
         }
@@ -129,7 +132,8 @@ implements \VuFindApi\Controller\ApiInterface, \Laminas\Log\LoggerAwareInterface
         $this->disableSessionWrites();
         $this->determineOutputMode();
 
-        if ($result = $this->isAccessDenied('access.finna.api.auth.librarycardlogin')
+        if (
+            $result = $this->isAccessDenied('access.finna.api.auth.librarycardlogin')
         ) {
             return $result;
         }
@@ -239,12 +243,12 @@ implements \VuFindApi\Controller\ApiInterface, \Laminas\Log\LoggerAwareInterface
                                                     'id' => [
                                                         'description'
                                                             => 'Target identifier',
-                                                        'type' => 'string'
+                                                        'type' => 'string',
                                                     ],
                                                     'name' => [
                                                         'description'
                                                             => 'Target name',
-                                                        'type' => 'string'
+                                                        'type' => 'string',
                                                     ],
                                                 ],
                                             ],
@@ -252,25 +256,25 @@ implements \VuFindApi\Controller\ApiInterface, \Laminas\Log\LoggerAwareInterface
                                         'status' => [
                                             'description' => 'Status code',
                                             'type' => 'string',
-                                            'enum' => ['OK']
+                                            'enum' => ['OK'],
                                         ],
                                     ],
                                 ],
                             ],
-                            'required' => ['resultCount', 'status']
-                        ]
+                            'required' => ['resultCount', 'status'],
+                        ],
                     ],
                     'default' => [
                         'description' => 'Error',
                         'content' => [
                             'application/json' => [
                                 'schema' => [
-                                    '$ref' => '#/components/schemas/Error'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                    '$ref' => '#/components/schemas/Error',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ];
         }
         if (!$this->isAccessDenied('access.finna.api.auth.backendlist')) {
@@ -295,38 +299,38 @@ implements \VuFindApi\Controller\ApiInterface, \Laminas\Log\LoggerAwareInterface
                                                     'id' => [
                                                         'description'
                                                             => 'Target identifier',
-                                                        'type' => 'string'
+                                                        'type' => 'string',
                                                     ],
                                                     'name' => [
                                                         'description'
                                                             => 'Target name',
-                                                        'type' => 'string'
+                                                        'type' => 'string',
                                                     ],
                                                 ],
-                                            ]
+                                            ],
                                         ],
                                         'status' => [
                                             'description' => 'Status code',
                                             'type' => 'string',
-                                            'enum' => ['OK']
-                                        ]
+                                            'enum' => ['OK'],
+                                        ],
                                     ],
-                                    'required' => ['resultCount', 'status']
-                                ]
-                            ]
-                        ]
+                                    'required' => ['resultCount', 'status'],
+                                ],
+                            ],
+                        ],
                     ],
                     'default' => [
                         'description' => 'Error',
                         'content' => [
                             'application/json' => [
                                 'schema' => [
-                                    '$ref' => '#/components/schemas/Error'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                    '$ref' => '#/components/schemas/Error',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ];
         }
 
@@ -381,23 +385,23 @@ implements \VuFindApi\Controller\ApiInterface, \Laminas\Log\LoggerAwareInterface
                                         'status' => [
                                             'description' => 'Status code',
                                             'type' => 'string',
-                                            'enum' => ['OK']
-                                        ]
+                                            'enum' => ['OK'],
+                                        ],
                                     ],
-                                    'required' => ['resultCount', 'status']
-                                ]
-                            ]
-                        ]
+                                    'required' => ['resultCount', 'status'],
+                                ],
+                            ],
+                        ],
                     ],
                     '500' => [
                         'description' => 'Processing of the login request failed',
                         'content' => [
                             'application/json' => [
                                 'schema' => [
-                                    '$ref' => '#/components/schemas/Error'
-                                ]
-                            ]
-                        ]
+                                    '$ref' => '#/components/schemas/Error',
+                                ],
+                            ],
+                        ],
                     ],
                     '503' => [
                         'description'
@@ -405,22 +409,22 @@ implements \VuFindApi\Controller\ApiInterface, \Laminas\Log\LoggerAwareInterface
                         'content' => [
                             'application/json' => [
                                 'schema' => [
-                                    '$ref' => '#/components/schemas/Error'
-                                ]
-                            ]
-                        ]
+                                    '$ref' => '#/components/schemas/Error',
+                                ],
+                            ],
+                        ],
                     ],
                     'default' => [
                         'description' => 'Error',
                         'content' => [
                             'application/json' => [
                                 'schema' => [
-                                    '$ref' => '#/components/schemas/Error'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                    '$ref' => '#/components/schemas/Error',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ];
         }
 

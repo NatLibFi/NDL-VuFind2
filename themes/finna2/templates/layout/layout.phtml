@@ -5,10 +5,10 @@
 <html lang="<?=$this->layout()->userLang?>"<?php if ($this->layout()->rtl): ?> dir="rtl"<?php endif; ?>>
   <head>
     <?php $this->setupThemeResources(); ?>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <?php // Turn off automatic telephone number detection on iOS ?>
-    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="telephone=no">
     <?php // set finna-facebook.png image for Facebook sharing if image is present and we aren't on record view
       if ($this->imageLink('finna-facebook.png') != '' && $this->layout()->templateName != 'view') {
         $this->headMeta()->setProperty('og:image', $this->serverUrl() . $this->imageLink('finna-facebook.png'));
@@ -33,7 +33,7 @@
           [
             '%%pageTitle%%' => $this->headTitle()->renderTitle(),
             '%%siteTitle%%' => $siteConfig->title,
-            '%%titleSeparator%%' => $siteConfig->titleSeparator ?? '|'
+            '%%titleSeparator%%' => $siteConfig->titleSeparator ?? '|',
           ]
       );
       // Enable escaping again for proper output:
@@ -46,7 +46,7 @@
               'href' => $this->url('search-opensearch') . '?method=describe',
               'type' => 'application/opensearchdescription+xml',
               'title' => $this->transEsc('Library Catalog Search'),
-              'rel' => 'search'
+              'rel' => 'search',
           ]
       );
       // We need to generate the icons early, because they may add some stylesheets;
@@ -125,13 +125,13 @@
       $cspNonce = $this->cspNonce();
       $searchId = json_encode($this->layout()->searchId);
       $appendScripts[] = <<<JS
-VuFind.path = '{$root}';
-VuFind.defaultSearchBackend = '{$dsb}';
-VuFind.addTranslations({$translations});
-VuFind.addIcons({$icons});
-VuFind.setCspNonce('{$cspNonce}');
-VuFind.setCurrentSearchId($searchId);
-JS;
+          VuFind.path = '{$root}';
+          VuFind.defaultSearchBackend = '{$dsb}';
+          VuFind.addTranslations({$translations});
+          VuFind.addIcons({$icons});
+          VuFind.setCspNonce('{$cspNonce}');
+          VuFind.setCurrentSearchId($searchId);
+          JS;
       $this->headScript()->appendScript(implode("\n", $appendScripts));
     ?>
     <?=$this->cookieConsent()->render()?>
@@ -305,10 +305,10 @@ JS;
       $url = $this->followup()->retrieveAndClear('postLoginLightbox', null);
       if ($url && $this->layout()->getTemplate() !== 'layout/lightbox') {
         $script = <<<EOT
-$(document).ready(function handlePostLoginLightbox() {
-  finna.layout.showPostLoginLightbox('{$url}');
-});
-EOT;
+            $(document).ready(function handlePostLoginLightbox() {
+              finna.layout.showPostLoginLightbox('{$url}');
+            });
+            EOT;
           echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
       }
     ?>

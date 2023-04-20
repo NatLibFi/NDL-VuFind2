@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Custom element block node
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\CommonMark\Node\Block;
 
 use League\CommonMark\Node\Block\AbstractBlock;
@@ -113,7 +115,7 @@ class CustomElement extends AbstractBlock
      *
      * @return bool
      */
-    public function shouldSsr():  bool
+    public function shouldSsr(): bool
     {
         return $this->canSsr
             && false === strpos($this->openingTag, 'ssr="false"');

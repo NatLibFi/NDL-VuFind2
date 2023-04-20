@@ -1,8 +1,8 @@
 <!-- START of: finna - myresearch/bulk-action-buttons.phtml -->
 <?php if (isset($list)): ?>
-  <input type="hidden" name="listID" value="<?=$this->escapeHtmlAttr($list->id)?>" />
-  <input type="hidden" name="listName" value="<?=$this->escapeHtmlAttr($list->title)?>" />
-  <input type="hidden" name="listDescription" value="<?=$this->escapeHtmlAttr($list->description)?>" />
+  <input type="hidden" name="listID" value="<?=$this->escapeHtmlAttr($list->id)?>">
+  <input type="hidden" name="listName" value="<?=$this->escapeHtmlAttr($list->title)?>">
+  <input type="hidden" name="listDescription" value="<?=$this->escapeHtmlAttr($list->description)?>">
 <?php endif; ?>
 <?php $user = $this->auth()->isLoggedIn(); ?>
 <div class="bulk-action-buttons-row hidden-print">
@@ -10,7 +10,7 @@
     <div class="checkboxFilter mylist-select-all">
       <div class="checkbox">
         <label>
-          <input type="checkbox" class="checkbox-select-all" name="selectAll" id="<?=$this->idPrefix?>addFormCheckboxSelectAll"<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>/>
+          <input type="checkbox" class="checkbox-select-all" name="selectAll" id="<?=$this->idPrefix?>addFormCheckboxSelectAll"<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>>
           <span class="hidden-xs"><?=$this->transEsc('select_page')?></span>
         </label>
       </div>

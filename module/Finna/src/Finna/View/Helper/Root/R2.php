@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Helper class for restricted Solr R2 search.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\View\Helper\Root;
 
 use Finna\Db\Row\User;
@@ -163,7 +165,8 @@ class R2 extends \Laminas\View\Helper\AbstractHelper
         // Driver is null when the helper is called outside record page
         if (!$driver || $driver->tryMethod('hasRestrictedMetadata')) {
             try {
-                if (!$this->user
+                if (
+                    !$this->user
                     || !$this->rems->hasUserAccess(true, $params['throw'] ?? false)
                 ) {
                     // Registration hint on search results page.
@@ -190,7 +193,7 @@ class R2 extends \Laminas\View\Helper\AbstractHelper
             $tplParams = [
                 'usagePurpose' => $this->rems->getUsagePurpose(),
                 'showInfo' => !($params['hideInfo'] ?? false),
-                'warning' => $warning
+                'warning' => $warning,
             ];
 
             return $this->getView()->render(

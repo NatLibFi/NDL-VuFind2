@@ -1,4 +1,5 @@
 <?php
+
 namespace FinnaConsole\Module\Configuration;
 
 $config = [

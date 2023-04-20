@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Model for EDS records.
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver;
 
 /**
@@ -239,7 +241,8 @@ class EDS extends \VuFind\RecordDriver\EDS
         $formats = $this->getFormats();
         if (in_array('Book', $formats)) {
             return 'Book';
-        } elseif (in_array('Academic Journal', $formats)
+        } elseif (
+            in_array('Academic Journal', $formats)
             || in_array('Magazine', $formats)
             || in_array('Periodical', $formats)
         ) {
@@ -333,21 +336,21 @@ class EDS extends \VuFind\RecordDriver\EDS
             $retVal[] = [
                 'desc' => 'View in EDS',
                 'url' => $url,
-                'citation' => true
+                'citation' => true,
             ];
         }
 
         if ($url = $this->getPdfLink()) {
             $retVal[] = [
                 'desc' => 'PDF Full Text',
-                'url' => $url
+                'url' => $url,
             ];
         }
 
         if ($this->hasHTMLFullTextAvailable()) {
             $retVal[] = [
                 'desc' => 'HTML Full Text',
-                'url' => '#html'
+                'url' => '#html',
             ];
         }
 
@@ -356,7 +359,7 @@ class EDS extends \VuFind\RecordDriver\EDS
         foreach ($customLinks as $link) {
             $retVal[] = [
                 'desc' => $link['Text'] ?: $link['Name'],
-                'url' => $link['Url']
+                'url' => $link['Url'],
             ];
         }
 

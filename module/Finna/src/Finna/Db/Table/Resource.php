@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for resource
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
  */
+
 namespace Finna\Db\Table;
 
 use Laminas\Db\Sql\Expression;
@@ -72,7 +74,7 @@ class Resource extends \VuFind\Db\Table\Resource
                             'DISTINCT(?)',
                             ['resource.id'],
                             [Expression::TYPE_IDENTIFIER]
-                        ), '*'
+                        ), '*',
                     ]
                 );
                 $urColumns = $list === null ?
@@ -81,7 +83,7 @@ class Resource extends \VuFind\Db\Table\Resource
                         'MAX(?)',
                         ['ur.id'],
                         [Expression::TYPE_IDENTIFIER]
-                    )
+                    ),
                     ]
                     : [
                     'id' => new Expression(
@@ -93,7 +95,7 @@ class Resource extends \VuFind\Db\Table\Resource
                         'MAX(?)',
                         ['ur.finna_custom_order_index'],
                         [Expression::TYPE_IDENTIFIER]
-                    )
+                    ),
                     ];
                 $s->join(
                     ['ur' => 'user_resource'],
@@ -151,7 +153,7 @@ class Resource extends \VuFind\Db\Table\Resource
                 'records' => new Expression(
                     'COUNT(?)',
                     ['resource.id']
-                )
+                ),
             ]
         );
         $select->join(
@@ -186,7 +188,7 @@ class Resource extends \VuFind\Db\Table\Resource
         // Apply sorting, if necessary:
         $legalSorts = [
             'title', 'title desc', 'author', 'author desc', 'year', 'year desc',
-            'id', 'id desc', 'custom_order'
+            'id', 'id desc', 'custom_order',
         ];
         if (!empty($sort) && in_array(strtolower($sort), $legalSorts)) {
             if ('custom_order' === $sort) {

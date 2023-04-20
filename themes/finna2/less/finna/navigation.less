@@ -40,7 +40,6 @@
     color: @action-link-color;
   }
   .dropdown-menu {
-    right: 5px;
     left: auto;
     > li {
       > a {
@@ -63,7 +62,6 @@
     white-space: nowrap;
     vertical-align: top;
     font-size: @font-size-base;
-    font-weight: 600;
     @media (max-width: @screen-sm) {
       max-width: 80px;
     }
@@ -133,9 +131,6 @@
   width: 280px;
   background-color: @body-bg;
   margin-top: 0;
-  @media (max-width: @screen-xxs) {
-    right: -90%;
-  }
   .box-shadow(0 6px 12px rgba(0, 0, 0, .275));
 
   .card-selection {
@@ -281,16 +276,9 @@
 @media(min-width: @grid-float-breakpoint) {
   .finna-navbar {
     display: flex;
-    .nav.nav-absolute {
-      position: relative;
-    }
     .navbar-collapse {
       flex: 1;
       display: flex !important; // Needed to override bootstrap defaults
-    }
-    .navbar-nav.lang {
-      flex-grow: 0;
-      flex-shrink: 0;
     }
   }
 }

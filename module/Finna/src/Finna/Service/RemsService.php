@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Resource Entitlement Management System (REMS) service
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\Service;
 
 use Laminas\Config\Config;
@@ -175,7 +177,8 @@ class RemsService implements
      */
     public function isUserRegisteredDuringSession($checkEntitlements = false)
     {
-        if (!$checkEntitlements
+        if (
+            !$checkEntitlements
             && $this->session->{RemsService::SESSION_REGISTRATION_SUBMITTED}
         ) {
             // Registered during session
@@ -393,7 +396,7 @@ class RemsService implements
         $params = [
             'userid' => $this->getUserId(),
             'email' => $email,
-            'name' => trim("$firstname $lastname")
+            'name' => trim("$firstname $lastname"),
         ];
 
         $this->sendRequest(
@@ -443,8 +446,8 @@ class RemsService implements
                 ['form' => $formId, 'field' => $fieldIds['license'],
                  'value' => $formParams['license'] ?? null],
                 ['form' => $formId, 'field' => $fieldIds['user_id'],
-                 'value' => $this->userIdentityNumber]
-            ]
+                 'value' => $this->userIdentityNumber],
+            ],
         ];
 
         $response = $this->sendRequest(
@@ -458,7 +461,7 @@ class RemsService implements
 
         // 5. Submit application
         $params = [
-             'application-id' => $applicationId
+             'application-id' => $applicationId,
         ];
         $response = $this->sendRequest(
             'applications/submit',
@@ -548,7 +551,7 @@ class RemsService implements
             foreach ($applications as $application) {
                 $params = [
                     'application-id' => $application['id'],
-                    'comment' => 'ULOSKIRJAUTUMINEN'
+                    'comment' => 'ULOSKIRJAUTUMINEN',
                 ];
                 $this->sendRequest(
                     'applications/close',
@@ -837,7 +840,8 @@ class RemsService implements
         }
 
         $result = json_decode($response->getBody(), true);
-        if ($method === 'POST'
+        if (
+            $method === 'POST'
             && (!isset($result['success']) || !$result['success'])
         ) {
             $err = 'REMS: POST request failed: '
@@ -951,7 +955,7 @@ class RemsService implements
             'application.state/closed' => RemsService::STATUS_CLOSED,
             'application.state/draft' => RemsService::STATUS_DRAFT,
             'application.state/revoked' => RemsService::STATUS_REVOKED,
-            'application.state/rejected' => RemsService::STATUS_REJECTED
+            'application.state/rejected' => RemsService::STATUS_REJECTED,
         ];
 
         return $statusMap[$remsStatus] ?? 'unknown';

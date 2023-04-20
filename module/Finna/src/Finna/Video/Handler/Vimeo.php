@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class for Vimeo video handling.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\Video\Handler;
 
 /**
@@ -76,7 +78,7 @@ class Vimeo extends \Finna\Video\Handler\AbstractBase
                 'desc' => $media['type'],
                 'source' => $this->source,
                 'embed' => 'iframe',
-                'warnings' => $media['warnings']
+                'warnings' => $media['warnings'],
             ];
         }
         return $results;

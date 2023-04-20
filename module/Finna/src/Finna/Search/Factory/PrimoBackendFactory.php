@@ -27,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Search\Factory;
 
 use FinnaSearch\Backend\Primo\Connector;
@@ -41,8 +42,7 @@ use FinnaSearch\Backend\Primo\Connector;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class PrimoBackendFactory
-extends \VuFind\Search\Factory\PrimoBackendFactory
+class PrimoBackendFactory extends \VuFind\Search\Factory\PrimoBackendFactory
 {
     /**
      * Primo connector class

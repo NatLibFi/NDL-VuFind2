@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Model for Marc authority records in Solr.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver;
 
 use Finna\Util\MetadataUtils;
@@ -88,7 +90,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
                     'id' => "$sourceId.$id",
                     'name' => $this->stripTrailingPunctuation($name, '. '),
                     'role' => $role,
-                    'type' => $code === '500' ? 'Personal Name' : 'Corporate Name'
+                    'type' => $code === '500' ? 'Personal Name' : 'Corporate Name',
                 ];
             }
         }
@@ -189,7 +191,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
                 'title' => $title,
                 'subtitle' => $subtitle,
                 'info' => $info ?: null,
-                'url' => $url ?: null
+                'url' => $url ?: null,
             ];
         }
         return $result;
@@ -203,9 +205,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     public function getAlternativeTitles()
     {
         $result = [];
-        foreach (['400' => ['a', 'b', 'c'], '410' => ['a', 'b']]
-            as $fieldCode => $subfields
-        ) {
+        foreach (['400' => ['a', 'b', 'c'], '410' => ['a', 'b']] as $fieldCode => $subfields) {
             foreach ($this->getMarcReader()->getFields($fieldCode) as $field) {
                 if ($matches = $this->getSubfieldArray($field, $subfields, false)) {
                     $matches = array_map(

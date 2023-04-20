@@ -1,4 +1,5 @@
 <?php
+
 /**
  * FinnaSuggestions Recommendations Module
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Recommend;
 
 use Laminas\Http\Client;
@@ -156,7 +158,8 @@ class FinnaSuggestions implements
 
         // Output suggestions only for basic search with
         // AllFields handler and no filters.
-        if (!empty($lookfor)
+        if (
+            !empty($lookfor)
             && !$params->getRawFilters()
             && in_array($searchHandler, $this->supportedSearchHandlers)
             && $searchType === 'basic'
@@ -179,7 +182,7 @@ class FinnaSuggestions implements
         return [
             'lookfor' => $this->lookfor,
             'resultCount' => $this->resultCount,
-            'searchLink' => $this->getSearchLink()
+            'searchLink' => $this->getSearchLink(),
         ];
     }
 
@@ -222,7 +225,7 @@ class FinnaSuggestions implements
         $client->setOptions(
             [
                 'timeout' => 30,
-                'useragent' => 'FinnaSuggestions VuFind'
+                'useragent' => 'FinnaSuggestions VuFind',
             ]
         );
         $client->getRequest()->getHeaders()->addHeaderLine(
@@ -270,7 +273,7 @@ class FinnaSuggestions implements
             [
                 urlencode($this->lookfor),
                 urlencode($this->searchHandler),
-                urlencode($this->getTranslatorLocale())
+                urlencode($this->getTranslatorLocale()),
             ],
             $this->searchUrl
         );

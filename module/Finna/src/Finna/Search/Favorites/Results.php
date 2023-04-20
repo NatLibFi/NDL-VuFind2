@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Favorites aspect of the Search Multi-class (Results)
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Search\Favorites;
 
 use VuFind\Db\Table\Resource as ResourceTable;
@@ -91,7 +93,8 @@ class Results extends \VuFind\Search\Favorites\Results
         $list = $this->getListObject();
         $sort = $this->getParams()->getSort();
 
-        if ($sort == 'custom_order'
+        if (
+            $sort == 'custom_order'
             && (empty($list)
             || !$this->userResourceTable->isCustomOrderAvailable($list->id))
         ) {
@@ -146,7 +149,8 @@ class Results extends \VuFind\Search\Favorites\Results
         // Load a list when
         //   a. if we haven't previously tried to load a list ($this->list = false)
         //   b. the requested list is not the same as previously loaded list
-        if ($this->list === false
+        if (
+            $this->list === false
             || ($listId && ($this->list['id'] ?? null) !== $listId)
         ) {
             // Check the filters for a list ID, and load the corresponding object

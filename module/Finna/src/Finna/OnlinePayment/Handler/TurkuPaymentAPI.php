@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Turku Payment API handler
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\OnlinePayment\Handler;
 
 use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailPaymentAPI\Customer;
@@ -55,7 +57,7 @@ class TurkuPaymentAPI extends AbstractBase
     protected $languageMap = [
         'fi' => 'FI',
         'sv' => 'SV',
-        'en' => 'EN'
+        'en' => 'EN',
     ];
 
     /**
@@ -132,7 +134,8 @@ class TurkuPaymentAPI extends AbstractBase
 
         // Payment description in $this->config->paymentDescription is not supported
 
-        if (isset($this->config->productCode)
+        if (
+            isset($this->config->productCode)
             || isset($this->config->transactionFeeProductCode)
             || isset($this->config->productCodeMappings)
             || isset($this->config->organizationProductCodeMappings)
@@ -146,7 +149,7 @@ class TurkuPaymentAPI extends AbstractBase
             $items = [];
             $sapProduct = [
                 'sapCode' => $this->config->sapCode ?? '',
-                'sapOfficeCode' => $this->config->sapOfficeCode ?? ''
+                'sapOfficeCode' => $this->config->sapOfficeCode ?? '',
             ];
             foreach ($fines as $fine) {
                 $fineType = $fine['fine'] ?? '';
@@ -305,7 +308,7 @@ class TurkuPaymentAPI extends AbstractBase
                 'checkout-transaction-id',
                 'X-TURKU-SP',
                 'X-TURKU-TS',
-                'Authorization'
+                'Authorization',
             ];
         } elseif ($request->isPost()) {
             $params = $request->getHeaders()->toArray();
@@ -313,7 +316,7 @@ class TurkuPaymentAPI extends AbstractBase
             $required = [
                 'X-Turku-Sp',
                 'X-Turku-Ts',
-                'Authorization'
+                'Authorization',
             ];
         } else {
             $this->logPaymentError(

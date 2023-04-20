@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Facet Helper
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Search\Solr;
 
 /**
@@ -240,7 +242,8 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
         foreach ($params['filter'] as $filter) {
             [$filterField, $filterValue] = explode(':', $filter, 2);
             if ($filterField == $facet || $filterField == "~$facet") {
-                if ((!$children && $this->isAncestor($item, $filterValue))
+                if (
+                    (!$children && $this->isAncestor($item, $filterValue))
                     || ($children && $this->isChild($item, $filterValue))
                 ) {
                     continue;

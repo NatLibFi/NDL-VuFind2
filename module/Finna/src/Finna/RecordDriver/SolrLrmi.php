@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Model for LRMI records in Solr.
  *
@@ -29,6 +30,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver;
 
 /**
@@ -54,7 +56,7 @@ class SolrLrmi extends SolrQdc
     protected $downloadableFileFormats = [
         'pdf', 'pptx', 'ppt', 'docx', 'mp4', 'mp3', 'html',
         'avi', 'odt', 'rtf', 'txt', 'odp', 'png', 'jpeg', 'm4a',
-        'mbz', 'doc'
+        'mbz', 'doc',
     ];
 
     /**
@@ -65,7 +67,7 @@ class SolrLrmi extends SolrQdc
      */
     protected $previewableConvertedFileFormats = [
         'pdf', 'pptx', 'ppt', 'odp', 'docx', 'doc',
-        'odt', 'rtf', 'txt', 'png', 'jpg', 'html'
+        'odt', 'rtf', 'txt', 'png', 'jpg', 'html',
     ];
 
     /**
@@ -144,12 +146,12 @@ class SolrLrmi extends SolrQdc
         foreach ($xml->author->person ?? [] as $author) {
             $result[] = [
                 'name' => trim((string)$author->name),
-                'affiliation' => trim((string)$author->affiliation)
+                'affiliation' => trim((string)$author->affiliation),
             ];
         }
         foreach ($xml->author->organization ?? [] as $org) {
             $result[] = [
-                'name' => trim((string)$org->legalName)
+                'name' => trim((string)$org->legalName),
             ];
         }
         return $result;
@@ -254,7 +256,8 @@ class SolrLrmi extends SolrQdc
         foreach ($xml->about as $about) {
             $thing = $about->thing;
             $name = trim((string)$thing->name);
-            if ($name && strpos((string)$thing->identifier, $type) !== false
+            if (
+                $name && strpos((string)$thing->identifier, $type) !== false
             ) {
                 $topics[] = $name;
             }
@@ -317,11 +320,11 @@ class SolrLrmi extends SolrQdc
                         'urls' => [
                             'small' => $url,
                             'medium' => $url,
-                            'large' => $url
+                            'large' => $url,
                         ],
                         'description' => '',
                         'rights' => [],
-                        'downloadable' => false
+                        'downloadable' => false,
                     ];
                 }
             }
@@ -355,9 +358,9 @@ class SolrLrmi extends SolrQdc
         if ($pdfUrl) {
             $result[] = [
                 'urls' => [
-                    'small' => $pdfUrl, 'medium' => $pdfUrl, 'large' => $pdfUrl
+                    'small' => $pdfUrl, 'medium' => $pdfUrl, 'large' => $pdfUrl,
                 ],
-                'description' => '', 'rights' => []
+                'description' => '', 'rights' => [],
             ];
         }
 

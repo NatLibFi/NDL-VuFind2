@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Recommendation memory.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\Cookie;
 
 use Laminas\Stdlib\Parameters;
@@ -122,7 +124,7 @@ class RecommendationMemory
             self::SOURCE_MODULE => $srcMod,
             self::RECOMMENDATION => $rec,
             self::ORIGINAL => $orig,
-            self::RECOMMENDATION_TYPE => $recType
+            self::RECOMMENDATION_TYPE => $recType,
         ];
         return base64_encode(json_encode($data));
     }

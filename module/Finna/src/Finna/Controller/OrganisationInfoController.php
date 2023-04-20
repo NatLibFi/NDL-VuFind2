@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Organisation info page controller.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Controller;
 
 /**
@@ -100,7 +102,8 @@ class OrganisationInfoController extends \VuFind\Controller\AbstractBase
                 'trim',
                 explode(',', $facetConfig->Results_Settings->orFacets)
             );
-            if (!empty($orFacets[0])
+            if (
+                !empty($orFacets[0])
                 && ($orFacets[0] == '*' || in_array('building', $orFacets))
             ) {
                 $buildingOperator = '~';
@@ -150,7 +153,8 @@ class OrganisationInfoController extends \VuFind\Controller\AbstractBase
             return $this->notFoundAction();
         }
 
-        if (!($imageResult = $this->downloadData($imageUrl))
+        if (
+            !($imageResult = $this->downloadData($imageUrl))
             || !$this->isImageContentType($imageResult['contentType'])
         ) {
             return $this->notFoundAction();

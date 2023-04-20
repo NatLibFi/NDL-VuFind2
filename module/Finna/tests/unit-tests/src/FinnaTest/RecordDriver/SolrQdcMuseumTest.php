@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SolrQdc Museum Test Class
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
+
 namespace FinnaTest\RecordDriver;
 
 use Finna\RecordDriver\SolrQdc;
@@ -58,24 +60,24 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
                             'large' => 'https://www.savanni.art.collection.org/large/ducksinharmony.jpg',
                             'small' => 'https://www.savanni.art.collection.org/square/ducksinharmony.jpg',
                             'medium' => 'https://www.savanni.art.collection.org/medium/ducksinharmony.jpg',
-                            'original' => 'https://www.savanni.art.collection.org/original/ducksinharmony.jpg'
+                            'original' => 'https://www.savanni.art.collection.org/original/ducksinharmony.jpg',
                         ],
                         'description' => '',
                         'rights' => [
                             'copyright' => '',
-                            'link' => false
+                            'link' => false,
                         ],
                         'highResolution' => [
                             'original' => [
                                 0 => [
                                     'data' => [],
                                     'url' => 'https://www.savanni.art.collection.org/original/ducksinharmony.jpg',
-                                    'format' => 'jpg'
-                                ]
-                            ]
+                                    'format' => 'jpg',
+                                ],
+                            ],
                         ],
-                        'downloadable' => false
-                    ]
+                        'downloadable' => false,
+                    ],
                 ],
             ],
             [
@@ -85,28 +87,28 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
                         'value' => 'Ducks in the universe',
                         'link' => [
                             'value' => 'Ducks in the universe',
-                            'type' => 'allFields'
-                        ]
-                    ]
+                            'type' => 'allFields',
+                        ],
+                    ],
                 ],
             ],
             [
                 'getSeries',
-                []
+                [],
             ],
             [
                 'getIdentifier',
                 [
-                    0 => 'TM 1234'
-                ]
+                    0 => 'TM 1234',
+                ],
             ],
             [
                 'getKeywords',
-                []
+                [],
             ],
             [
                 'getISBNs',
-                []
+                [],
             ],
             [
                 'getOtherIdentifiers',
@@ -117,45 +119,45 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
                     ],
                     1 => [
                         'data' => 'TM 1234',
-                        'detail' => 'wikidata:P217'
-                    ]
-                ]
+                        'detail' => 'wikidata:P217',
+                    ],
+                ],
             ],
             [
                 'getURLs',
-                []
+                [],
             ],
             [
                 'getEducationPrograms',
-                []
+                [],
             ],
             [
                 'getPhysicalDescriptions',
                 [
-                    0 => '2.1 cm x 2.3 cm'
-                ]
+                    0 => '2.1 cm x 2.3 cm',
+                ],
             ],
             [
                 'getPhysicalMediums',
                 [
                     0 => 'Akryyli',
-                    1 => 'Kangas'
-                ]
+                    1 => 'Kangas',
+                ],
             ],
             [
                 'getDescriptions',
                 [
-                    0 => 'painting by Juha Kuoma'
-                ]
+                    0 => 'painting by Juha Kuoma',
+                ],
             ],
             [
                 'getAbstracts',
-                []
+                [],
             ],
             [
                 'getDescriptionURL',
-                false
-            ]
+                false,
+            ],
         ];
     }
 
@@ -191,40 +193,40 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 '[2001-01-01 TO 2001-12-31]',
-                ['2001']
+                ['2001'],
             ],
             [
                 '[1998-01-01 TO 2012-12-31]',
-                ['1998', '2012']
+                ['1998', '2012'],
             ],
             [
                 '[-2002-01-01 TO 0100-12-31]',
-                ['-2002', '100']
+                ['-2002', '100'],
             ],
             [
                 '[-0099-10-31 TO -0001-05-01]',
-                ['-99', '-1']
+                ['-99', '-1'],
             ],
             [
                 '[0000-01-01 TO 0000-12-31]',
-                ['0']
+                ['0'],
             ],
             [
                 '[0999-06-02 TO 9999-12-31]',
-                ['999', '']
+                ['999', ''],
             ],
             [
                 '[-9999-01-01 TO 9998-12-31]',
-                ['-9999', '9998']
+                ['-9999', '9998'],
             ],
             [
                 '1937-12-08',
-                ['1937']
+                ['1937'],
             ],
             [
                 '',
-                null
-            ]
+                null,
+            ],
         ];
     }
 
@@ -232,7 +234,7 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
      * Test getPublicationDateRange
      *
      * @param string $indexValue Index value to test
-     * @param ?array $expected Result to be expected
+     * @param ?array $expected   Result to be expected
      *
      * @dataProvider getPublicationDateRangeData
      *
@@ -250,7 +252,7 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
         $record->setRawData(
             [
                 'id' => 'knp-247394',
-                'publication_daterange' => $indexValue
+                'publication_daterange' => $indexValue,
             ]
         );
         $this->assertEquals(
@@ -269,40 +271,40 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 '[2001-01-01 TO 2001-12-31]',
-                ['2001']
+                ['2001'],
             ],
             [
                 '[1998-01-01 TO 2012-12-31]',
-                ['1998–2012']
+                ['1998–2012'],
             ],
             [
                 '[-2002-01-01 TO 0100-12-31]',
-                ['-2002–100']
+                ['-2002–100'],
             ],
             [
                 '[-0099-10-31 TO -0001-05-01]',
-                ['-99–-1']
+                ['-99–-1'],
             ],
             [
                 '[0000-01-01 TO 0000-12-31]',
-                ['0']
+                ['0'],
             ],
             [
                 '[0999-06-02 TO 9999-12-31]',
-                ['999–']
+                ['999–'],
             ],
             [
                 '[-9999-01-01 TO 9998-12-31]',
-                ['-9999–9998']
+                ['-9999–9998'],
             ],
             [
                 '1937-12-08',
-                ['1937']
+                ['1937'],
             ],
             [
                 '',
-                []
-            ]
+                [],
+            ],
         ];
     }
 
@@ -310,7 +312,7 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
      * Test getHumanReadablePublicationDates
      *
      * @param string $indexValue Index value to test
-     * @param ?array $expected Result to be expected
+     * @param ?array $expected   Result to be expected
      *
      * @dataProvider getHumanReadablePublicationDatesData
      *
@@ -328,7 +330,7 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
         $record->setRawData(
             [
                 'id' => 'knp-247394',
-                'publication_daterange' => $indexValue
+                'publication_daterange' => $indexValue,
             ]
         );
         $this->assertEquals(
@@ -354,15 +356,15 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
             ],
             'ImageRights' => [
                 'fi' => [
-                    'CC BY 4.0' => 'http://creativecommons.org/licenses/by/4.0/deed.fi'
+                    'CC BY 4.0' => 'http://creativecommons.org/licenses/by/4.0/deed.fi',
                 ],
                 'en-gb' => [
-                    'CC BY 4.0' => 'http://creativecommons.org/licenses/by/4.0/deed.en'
+                    'CC BY 4.0' => 'http://creativecommons.org/licenses/by/4.0/deed.en',
                 ],
                 'sv' => [
-                    'CC BY 4.0' => 'http://creativecommons.org/licenses/by/4.0/deed.sv'
-                ]
-            ]
+                    'CC BY 4.0' => 'http://creativecommons.org/licenses/by/4.0/deed.sv',
+                ],
+            ],
         ];
         $record = new SolrQdc(
             $config,

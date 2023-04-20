@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Linked events service
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\Feed;
 
 use Finna\View\Helper\Root\CleanHtml;
@@ -43,7 +45,8 @@ use VuFind\Cache\Manager as CacheManager;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
+class LinkedEvents implements
+    \VuFindHttp\HttpServiceAwareInterface,
     \Laminas\Log\LoggerAwareInterface
 {
     use \VuFindHttp\HttpServiceAwareTrait;
@@ -157,7 +160,8 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
             return false;
         }
         $paramArray = [];
-        if (!empty($params['url'])
+        if (
+            !empty($params['url'])
             && strncmp($params['url'], $this->apiUrl, strlen($this->apiUrl)) === 0
         ) {
             $url = $params['url'];
@@ -205,7 +209,8 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
         $maxAge = isset($this->mainConfig->Content->feedcachetime)
             && '' !== $this->mainConfig->Content->feedcachetime
             ? $this->mainConfig->Content->feedcachetime : 10;
-        if ($maxAge && is_readable($localFile)
+        if (
+            $maxAge && is_readable($localFile)
             && time() - filemtime($localFile) < $maxAge * 60
         ) {
             $response = json_decode(file_get_contents($localFile), true);
@@ -232,7 +237,8 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
                     . '?id=' . $eventData['id'];
 
                 $providerLink = $this->getField($eventData, 'provider_link');
-                if ($providerLink
+                if (
+                    $providerLink
                     && !preg_match('/^https?:\/\//', $providerLink)
                 ) {
                     $providerLink = 'http://' . $providerLink;
@@ -250,7 +256,7 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
                         'url' => $this->proxifyImageUrl(
                             $eventData['images'][0]['url'] ?? '',
                             $params
-                        )
+                        ),
                     ],
                     'short_description' =>
                         $this->getField($eventData, 'short_description'),
@@ -281,11 +287,12 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
                     'link' => $link,
                     'keywords' => $this->getField($eventData, 'keywords'),
                     'superEvent' => $eventData['super_event'],
-                    'subEvents' => $eventData['sub_events']
+                    'subEvents' => $eventData['sub_events'],
                 ];
 
                 $events[] = $event;
-                if (($eventData['super_event'] !== null
+                if (
+                    ($eventData['super_event'] !== null
                     || !empty($eventData['sub_events']))
                     && !empty($paramArray['id'])
                 ) {
@@ -338,7 +345,7 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
             if (isset($data['position']['coordinates'])) {
                 $coordinates = [
                     'lng' => $data['position']['coordinates'][0],
-                    'lat' => $data['position']['coordinates'][1]
+                    'lat' => $data['position']['coordinates'][1],
                 ];
             }
             return $coordinates;
@@ -412,7 +419,7 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
             'linked-events-image',
             [],
             [
-                'query' => $params
+                'query' => $params,
             ]
         );
     }

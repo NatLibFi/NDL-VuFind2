@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Lightweight translator aware marker interface.
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
  */
+
 namespace Finna\I18n\Translator;
 
 /**
@@ -100,7 +102,8 @@ trait TranslatorAwareTrait
         $defaultTranslation
             = $this->translateString((string)$str, $tokens, $default, $domain);
 
-        if ($defaultTranslation !== (string)$str && $defaultTranslation !== $default
+        if (
+            $defaultTranslation !== (string)$str && $defaultTranslation !== $default
         ) {
             return $defaultTranslation;
         }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Row definition for finna_record_stats_log
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Db\Row;
 
 /**
@@ -53,7 +55,7 @@ class FinnaRecordStatsLog extends \VuFind\Db\Row\RowGateway
                 'date',
                 'backend',
                 'source',
-                'record_id'
+                'record_id',
             ],
             'finna_record_stats_log',
             $adapter

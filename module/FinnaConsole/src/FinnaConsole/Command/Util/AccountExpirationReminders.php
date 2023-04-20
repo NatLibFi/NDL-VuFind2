@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Console service for reminding users x days before account expiration
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace FinnaConsole\Command\Util;
 
 use DateInterval;
@@ -425,7 +427,8 @@ class AccountExpirationReminders extends AbstractUtilCommand
             $expirationDatetime = new DateTime($user->last_login);
             $expirationDatetime->add(new DateInterval('P' . $days . 'D'));
 
-            if (($user->finna_last_expiration_reminder < $user->last_login
+            if (
+                ($user->finna_last_expiration_reminder < $user->last_login
                 && $expirationDatetime->getTimestamp() < $initialReminderThreshold)
                 || $expirationDatetime->getTimestamp() < time()
             ) {
@@ -440,7 +443,8 @@ class AccountExpirationReminders extends AbstractUtilCommand
 
             // Check that the user has some saved content so that no reminder is sent
             // if there is none.
-            if ($user->finna_due_date_reminder === 0
+            if (
+                $user->finna_due_date_reminder === 0
                 && $user->getTags()->count() === 0
                 && count($this->searchTable->getSearches('', $user->id)) === 0
                 && count($this->resourceTable->getFavorites($user->id)) === 0
@@ -486,7 +490,8 @@ class AccountExpirationReminders extends AbstractUtilCommand
             return false;
         }
 
-        if (!$this->currentInstitution
+        if (
+            !$this->currentInstitution
             || $userInstitution != $this->currentInstitution
         ) {
             $templateDirs = [
@@ -527,7 +532,8 @@ class AccountExpirationReminders extends AbstractUtilCommand
             );
         }
 
-        if (isset($this->currentSiteConfig['System']['available'])
+        if (
+            isset($this->currentSiteConfig['System']['available'])
             && !$this->currentSiteConfig['System']['available']
         ) {
             $this->msg(
@@ -613,7 +619,8 @@ class AccountExpirationReminders extends AbstractUtilCommand
         $language = $this->currentSiteConfig['Site']['language'] ?? 'fi';
         $validLanguages = array_keys((array)$this->currentSiteConfig['Languages']);
 
-        if (!empty($user->last_language)
+        if (
+            !empty($user->last_language)
             && in_array($user->last_language, $validLanguages)
         ) {
             $language = $user->last_language;
@@ -681,7 +688,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
             [
                 '%%expirationDate%%' => $params['expirationDate'],
                 '%%serviceName%%' => $serviceName,
-                '%%serviceAddress%%' => $serviceAddress
+                '%%serviceAddress%%' => $serviceAddress,
             ]
         );
 
@@ -696,15 +703,15 @@ class AccountExpirationReminders extends AbstractUtilCommand
 
             if ($this->reportOnly) {
                 echo <<<EOT
-----------
-From: $from
-To: $to
-Subject: $subject
+                    ----------
+                    From: $from
+                    To: $to
+                    Subject: $subject
 
-$message
-----------
+                    $message
+                    ----------
 
-EOT;
+                    EOT;
             } else {
                 $this->sendEmailWithRetry($to, $from, $subject, $message);
                 $user->finna_last_expiration_reminder = date('Y-m-d H:i:s');

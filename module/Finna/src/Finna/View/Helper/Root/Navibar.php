@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Navibar view helper
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\View\Helper\Root;
 
 use Laminas\Http\Request;
@@ -291,7 +293,7 @@ class Navibar extends \Laminas\View\Helper\AbstractHelper
 
                 $option = [
                     'id' => $itemKey, 'label' => "menu_$itemKey",
-                    'action' => $parseUrl($action)
+                    'action' => $parseUrl($action),
                 ];
 
                 $desc = 'menu_' . $itemKey . '_desc';
@@ -319,7 +321,8 @@ class Navibar extends \Laminas\View\Helper\AbstractHelper
             $menuItems[$menuKey]['items']
                 = array_values($menuItems[$menuKey]['items']);
 
-            if (isset($menuItems[$menuKey]['items'])
+            if (
+                isset($menuItems[$menuKey]['items'])
                 && empty($menuItems[$menuKey]['items'])
             ) {
                 unset($menuItems[$menuKey]);

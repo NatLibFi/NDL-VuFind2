@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Online payment POST request trait.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\OnlinePayment;
 
 use Laminas\Stdlib\Parameters;
@@ -100,7 +102,7 @@ trait OnlinePaymentPostRequestTrait
             $headers = array_merge(
                 [
                     'Content-Type' => 'application/json',
-                    'Content-Length' => strlen($body)
+                    'Content-Length' => strlen($body),
                 ],
                 $headers
             );
@@ -139,7 +141,7 @@ trait OnlinePaymentPostRequestTrait
         return [
             'httpCode' => $status,
             'response' => $content,
-            'headers' => $response->getHeaders()->toArray()
+            'headers' => $response->getHeaders()->toArray(),
         ];
     }
 }

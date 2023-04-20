@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Model for Primo Central records.
  *
@@ -28,6 +29,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver;
 
 /**
@@ -69,7 +71,8 @@ class Primo extends \VuFind\RecordDriver\Primo
     public function getCitationFormats()
     {
         // Default behavior: use all supported options.
-        if (!isset($this->mainConfig->Record->citation_formats)
+        if (
+            !isset($this->mainConfig->Record->citation_formats)
             || $this->mainConfig->Record->citation_formats === true
             || $this->mainConfig->Record->citation_formats === 'true'
         ) {
@@ -77,7 +80,8 @@ class Primo extends \VuFind\RecordDriver\Primo
         }
 
         // Citations disabled:
-        if ($this->mainConfig->Record->citation_formats === false
+        if (
+            $this->mainConfig->Record->citation_formats === false
             || $this->mainConfig->Record->citation_formats === 'false'
         ) {
             return [];
@@ -194,7 +198,7 @@ class Primo extends \VuFind\RecordDriver\Primo
             $urls[] = [
                 'url' => $url,
                 'urlShort' => $urlParts['host'],
-                'citation' => $citation
+                'citation' => $citation,
             ];
             break;
         }
@@ -339,7 +343,8 @@ class Primo extends \VuFind\RecordDriver\Primo
         $authors = $this->getCreators();
         // Don't check for highlighted values if highlighting is disabled or we
         // don't have highlighting data:
-        if (!$this->highlight || !isset($this->fields['highlightDetails']['author'])
+        if (
+            !$this->highlight || !isset($this->fields['highlightDetails']['author'])
         ) {
             return $authors;
         }

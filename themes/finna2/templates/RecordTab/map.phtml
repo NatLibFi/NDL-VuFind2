@@ -4,62 +4,62 @@
 <?php
   $markers = $this->tab->getMapMarkers();
   $script = <<<JS
-$(document).ready(function() {
-  var tileLayer = L.tileLayer('https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    tileSize: 256,
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
-  });
+      $(document).ready(function() {
+        var tileLayer = L.tileLayer('https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png', {
+          maxZoom: 18,
+          tileSize: 256,
+          attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+        });
 
-  var drawnItems = new L.FeatureGroup();
+        var drawnItems = new L.FeatureGroup();
 
-  var markersData = $markers;
-  var icon = L.divIcon({
-    className: 'mapMarker',
-    iconSize: null,
-    html: '<div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" style="margin-left: -10px; margin-top: -30px;"><i class="fa fa-map-marker" style="position: relative; font-size: 35px; opacity: 0.8"></i></div>'
-  });
-  for (var i = 0; i < markersData.length; i++) {
-    var marker = markersData[i];
-    var item = null;
-    if (marker.geojson) {
-      item = L.geoJson(marker.geojson);
-    } else if (marker.polygon) {
-      item = L.polygon(marker.polygon);
-    } else if (marker.multipolygon) {
-      item = L.multiPolygon(marker.multipolygon);
-    }
+        var markersData = $markers;
+        var icon = L.divIcon({
+          className: 'mapMarker',
+          iconSize: null,
+          html: '<div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" style="margin-left: -10px; margin-top: -30px;"><i class="fa fa-map-marker" style="position: relative; font-size: 35px; opacity: 0.8"></i></div>'
+        });
+        for (var i = 0; i < markersData.length; i++) {
+          var marker = markersData[i];
+          var item = null;
+          if (marker.geojson) {
+            item = L.geoJson(marker.geojson);
+          } else if (marker.polygon) {
+            item = L.polygon(marker.polygon);
+          } else if (marker.multipolygon) {
+            item = L.multiPolygon(marker.multipolygon);
+          }
 
-    if (item) {
-      item.addTo(drawnItems);
-      var center;
-      if (typeof marker.center !== 'undefined') {
-        center = L.latLng(marker.center.lat, marker.center.lon);
-      } else {
-        center = item.getBounds().getCenter();
-      }
-      L.marker(center, {icon: icon}).addTo(drawnItems);
-    } else if (marker.points) {
-      for (var p = 0; p < marker.points.length; p++) {
-        L.marker([marker.points[p].lat, marker.points[p].lon], {icon: icon}).addTo(drawnItems);
-      }
-    }
-  }
-  var map = new L.Map($('.map-canvas').get(0), {
-    layers: [tileLayer, drawnItems],
-    center: drawnItems.getBounds().getCenter(),
-    zoom: 5,
-    zoomControl: false
-  });
-  finna.map.initMapZooming(map);
-  var onLoad = function() {
-    fitZoom = map.getBoundsZoom(drawnItems.getBounds());
-    map.setZoom(fitZoom <= 9 ? fitZoom - 1 : 9);
-    tileLayer.off('load', onLoad);
-  };
-  tileLayer.on('load', onLoad);
-});
-JS;
+          if (item) {
+            item.addTo(drawnItems);
+            var center;
+            if (typeof marker.center !== 'undefined') {
+              center = L.latLng(marker.center.lat, marker.center.lon);
+            } else {
+              center = item.getBounds().getCenter();
+            }
+            L.marker(center, {icon: icon}).addTo(drawnItems);
+          } else if (marker.points) {
+            for (var p = 0; p < marker.points.length; p++) {
+              L.marker([marker.points[p].lat, marker.points[p].lon], {icon: icon}).addTo(drawnItems);
+            }
+          }
+        }
+        var map = new L.Map($('.map-canvas').get(0), {
+          layers: [tileLayer, drawnItems],
+          center: drawnItems.getBounds().getCenter(),
+          zoom: 5,
+          zoomControl: false
+        });
+        finna.map.initMapZooming(map);
+        var onLoad = function() {
+          fitZoom = map.getBoundsZoom(drawnItems.getBounds());
+          map.setZoom(fitZoom <= 9 ? fitZoom - 1 : 9);
+          tileLayer.off('load', onLoad);
+        };
+        tileLayer.on('load', onLoad);
+      });
+      JS;
   echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
 ?>
 <!-- END of: finna - RecordTab/map.phtml -->

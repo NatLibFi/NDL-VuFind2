@@ -1,4 +1,5 @@
 <?php
+
 /**
  * HtmlElement helper
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\View\Helper\Root;
 
 /**
@@ -48,7 +50,7 @@ class HtmlElement extends \Laminas\View\Helper\AbstractHelper
         'disabled',
         'checked',
         'open',
-        'multiple'
+        'multiple',
     ];
 
     /**
@@ -171,7 +173,8 @@ class HtmlElement extends \Laminas\View\Helper\AbstractHelper
         $stringified = [];
 
         foreach ($element as $key => $value) {
-            if (in_array($key, $this->booleanAttributes)
+            if (
+                in_array($key, $this->booleanAttributes)
                 && strlen($value) === 0
             ) {
                 continue;

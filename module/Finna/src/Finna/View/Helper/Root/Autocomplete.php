@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Autocomplete view helper
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\View\Helper\Root;
 
 /**
@@ -119,7 +121,7 @@ class Autocomplete extends \Laminas\View\Helper\AbstractHelper
             }
             $result[] = [
                'handler' => $handlerItem[0],
-               'label' => count($handlerItem) > 1 ? $handlerItem[1] : $handlerItem[0]
+               'label' => count($handlerItem) > 1 ? $handlerItem[1] : $handlerItem[0],
             ];
         }
         return $result;
@@ -130,8 +132,8 @@ class Autocomplete extends \Laminas\View\Helper\AbstractHelper
      *
      * @return boolean
      */
-    public function getPhraseSearch(
-    ) {
+    public function getPhraseSearch()
+    {
         return !empty($this->searchConfig->Autocomplete_Sections->phrase)
             ? $this->searchConfig->Autocomplete_Sections->phrase : false;
     }

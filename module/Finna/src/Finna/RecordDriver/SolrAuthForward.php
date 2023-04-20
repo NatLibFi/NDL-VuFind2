@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Model for Forward authority records in Solr.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver;
 
 /**
@@ -36,8 +38,7 @@ namespace Finna\RecordDriver;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
-class SolrAuthForward extends SolrAuthDefault
-implements \Laminas\Log\LoggerAwareInterface
+class SolrAuthForward extends SolrAuthDefault implements \Laminas\Log\LoggerAwareInterface
 {
     use Feature\SolrAuthFinnaTrait;
     use Feature\SolrForwardTrait {
@@ -218,7 +219,8 @@ implements \Laminas\Log\LoggerAwareInterface
         if (isset($doc->BiographicalNote)) {
             foreach ($doc->BiographicalNote as $bio) {
                 $attr = $bio->attributes();
-                if (!$type || isset($attr->{$type})
+                if (
+                    !$type || isset($attr->{$type})
                     && (string)$attr->{$type} === $typeVal
                 ) {
                     return (string)$bio;
@@ -256,7 +258,8 @@ implements \Laminas\Log\LoggerAwareInterface
                     $dateType = (int)$d->AgentDateEventType;
                     $date = (string)$d->DateText;
                     $place =  (string)$d->LocationName;
-                    if (($type === 'birth' && $dateType === 51)
+                    if (
+                        ($type === 'birth' && $dateType === 51)
                         || ($type == 'death' && $dateType === 52)
                     ) {
                         return ['date' => $date, 'place' => $place];

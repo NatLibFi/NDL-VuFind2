@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SideFacets Recommendations Module
  *
@@ -28,6 +29,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:recommendation_modules Wiki
  */
+
 namespace Finna\Recommend;
 
 use VuFind\I18n\Translator\TranslatorAwareInterface;
@@ -46,8 +48,7 @@ use VuFind\I18n\Translator\TranslatorAwareTrait;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:recommendation_modules Wiki
  */
-class SideFacets extends \VuFind\Recommend\SideFacets
-implements TranslatorAwareInterface
+class SideFacets extends \VuFind\Recommend\SideFacets implements TranslatorAwareInterface
 {
     use TranslatorAwareTrait;
     use SideFacetsTrait;

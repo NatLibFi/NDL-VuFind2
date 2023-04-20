@@ -37,15 +37,15 @@
           <div class="holds-sort"><?=$this->context($this)->renderInContext("myresearch/controls/sort.phtml", ['sortList' => $this->sortList])?></div>
           <?php if ($this->cancelForm || $this->updateForm): ?>
             <form name="updateForm" class="inline" method="post" action="<?=$this->escapeHtmlAttr($this->url('holds-list'))?>" id="update_holds" data-clear-account-cache="holds" data-lightbox>
-              <input type="hidden" id="submitType" name="cancelSelected" value="1"/>
-              <input type="hidden" id="cancelConfirm" name="confirm" value="0"/>
+              <input type="hidden" id="submitType" name="cancelSelected" value="1">
+              <input type="hidden" id="cancelConfirm" name="confirm" value="0">
               <table class="myresearch-table" role="presentation">
                 <tr class="toolbar">
                   <td class="text-left checkbox-col">
                     <div class="checkboxFilter mylist-select-all">
                       <div class="checkbox">
                         <label>
-                          <input type="checkbox" name="selectAll" class="checkbox-select-all"/>
+                          <input type="checkbox" name="selectAll" class="checkbox-select-all">
                           <?=$this->transEsc('select_page')?>
                         </label>
                       </div>
@@ -98,12 +98,12 @@
               <tr class="myresearch-row result">
                 <td class="text-left checkbox-col">
                 <?php if ($this->cancelForm && isset($ilsDetails['cancel_details'])): ?>
-                  <input type="hidden" name="cancelAllIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" />
+                  <input type="hidden" name="cancelAllIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>">
                   <div class="checkboxFilter">
                     <div class="checkbox">
                       <label>
                         <span class="sr-only"><?=$this->transEsc('Select');?></span>
-                        <input type="checkbox" name="selectedIDS[]" class="checkbox-select-item" value="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" />
+                        <input type="checkbox" name="selectedIDS[]" class="checkbox-select-item" value="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>">
                       </label>
                     </div>
                   </div>
@@ -114,9 +114,9 @@
                 <td class="text-left hidden-xs" aria-hidden="true">
                   <div class="cover-image">
                     <?php if ($summThumb = $this->record($resource)->getThumbnail()): ?>
-                      <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEscAttr('Cover Image')?>"/>
+                      <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEscAttr('Cover Image')?>">
                     <?php else: ?>
-                      <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEscAttr('No Cover Image')?>"/>
+                      <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEscAttr('No Cover Image')?>">
                     <?php endif; ?>
                   </div>
                 </td>
@@ -145,24 +145,24 @@
                     <div class="record-core-metadata">
                       <?php $formats = $resource->getFormats(); if (count($formats) > 0): ?>
                         <?=$this->record($resource)->getFormatList() ?>
-                        <br/>
+                        <br>
                       <?php endif; ?>
                       <?=$this->partial('myresearch/helpers/record-author.phtml', ['record' => $resource]);?>
                       <?php if (isset($ilsDetails['volume']) && !empty($ilsDetails['volume'])): ?>
                         <strong><?=$this->transEsc('Volume')?>:</strong> <?=$this->escapeHtml($ilsDetails['volume'])?>
-                        <br />
+                        <br>
                       <?php endif; ?>
 
                       <?php if (isset($ilsDetails['publication_year']) && !empty($ilsDetails['publication_year'])): ?>
                         <strong><?=$this->transEsc('Year of Publication')?>:</strong> <?=$this->escapeHtml($ilsDetails['publication_year'])?>
-                        <br />
+                        <br>
                       <?php endif; ?>
                     </div>
                   </div>
                   <div class="half-table-column holds-status-information">
                     <?php if (!empty($ilsDetails['requestGroup'])): ?>
                       <strong><?=$this->transEsc('hold_requested_group') ?>:</strong> <?=$this->transEsc('request_group_' . $ilsDetails['requestGroup'], [], $this->transEscWithPrefix('location_', $ilsDetails['requestGroup']))?>
-                      <br />
+                      <br>
                     <?php endif; ?>
 
                     <?php /* Depending on the ILS driver, the "location" value may be a string or an ID; figure out the best
@@ -199,7 +199,7 @@
                     <?php if (!empty($ilsDetails['expire'])): ?>
                       <strong><?=$this->transEsc('hold_expires') ?>:</strong> <?=$this->escapeHtml($ilsDetails['expire']) ?>
                     <?php endif; ?>
-                    <br />
+                    <br>
 
                     <?php if (isset($ilsDetails['available']) && $ilsDetails['available'] == true): ?>
                       <div class="alert alert-success">
@@ -209,11 +209,11 @@
                           <?=$this->transEsc('hold_available') ?>
                         <?php endif; ?>
                         <?php if (isset($ilsDetails['pickupnum'])):?>
-                          <br />
+                          <br>
                           <strong><?=$this->transEsc("Pickup number") ?>:</strong> <?=$this->escapeHtml($ilsDetails['pickupnum']) ?>
                         <?php endif;?>
                         <?php if (!empty($ilsDetails['holdShelf'])):?>
-                          <br />
+                          <br>
                           <strong><?=$this->transEsc("Hold Shelf") ?>:</strong> <?=$this->escapeHtml($ilsDetails['holdShelf']) ?>
                         <?php endif;?>
                       </div>

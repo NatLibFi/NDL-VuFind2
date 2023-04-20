@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Book Bag / Bulk Action Controller
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
  */
+
 namespace Finna\Controller;
 
 use VuFind\Exception\Mail as MailException;
@@ -65,7 +67,8 @@ class CartController extends \VuFind\Controller\CartController
 
         // Force login if necessary:
         $config = $this->getConfig();
-        if ((!isset($config->Mail->require_login) || $config->Mail->require_login)
+        if (
+            (!isset($config->Mail->require_login) || $config->Mail->require_login)
             && !$this->getUser()
         ) {
             return $this->forceLogin(

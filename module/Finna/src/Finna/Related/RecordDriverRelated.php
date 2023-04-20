@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Related Record: record driver based
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:building_a_related_record_module Wiki
  */
+
 namespace Finna\Related;
 
 /**

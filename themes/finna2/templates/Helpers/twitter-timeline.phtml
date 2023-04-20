@@ -4,7 +4,7 @@
       'class' => 'twitter-timeline',
       'data-width' => $this->width,
       'data-height' => $this->height,
-      'href' => 'https://twitter.com/' . rawurlencode($this->screenName)
+      'href' => 'https://twitter.com/' . rawurlencode($this->screenName),
     ];
   ?>
   <?=$this->makeTag('a', 'Tweets by ' . $this->screenName, $attrs)?>

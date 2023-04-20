@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Class ObalkyKnih
@@ -27,6 +26,9 @@ declare(strict_types=1);
  * @license  https://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
+declare(strict_types=1);
+
 namespace VuFind\Content\Covers;
 
 use VuFind\Content\ObalkyKnihService;
@@ -126,7 +128,7 @@ class ObalkyKnih extends \VuFind\Content\AbstractCover
             return [
                 'url' => $url,
                 'backlink_url' => $data->backlink_url ?? '',
-                'backlink_text' => 'ObálkyKnih.cz'
+                'backlink_text' => 'ObálkyKnih.cz',
             ];
         }
         return [];

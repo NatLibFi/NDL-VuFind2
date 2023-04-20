@@ -1,4 +1,5 @@
 <?php
+
 /**
  * III Sierra REST API driver
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
+
 namespace Finna\ILS\Driver;
 
 use VuFind\Exception\ILS as ILSException;
@@ -169,7 +171,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                     'locationID' => $id,
                     'locationDisplay' => $this->translateLocation(
                         ['code' => $id, 'name' => $location]
-                    )
+                    ),
                 ];
             }
             return $locations;
@@ -181,7 +183,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'limit' => 10000,
                 'offset' => 0,
                 'fields' => 'code,name',
-                'language' => $this->getTranslatorLocale()
+                'language' => $this->getTranslatorLocale(),
             ],
             'GET',
             $patron
@@ -202,7 +204,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         foreach ($result as $entry) {
             $locations[] = [
                 'locationID' => $entry['code'],
-                'locationDisplay' => $entry['name']
+                'locationDisplay' => $entry['name'],
             ];
         }
 
@@ -247,7 +249,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             [$this->apiBase, 'patrons', $patron['id']],
             [
                 'fields' => 'names,emails,phones,addresses,birthDate,expirationDate'
-                    . ',message,homeLibraryCode'
+                    . ',message,homeLibraryCode',
             ],
             'GET',
             $patron
@@ -320,7 +322,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         $result = $this->makeRequest(
             [
                 'v6', 'patrons', $patron['id'], 'checkouts', 'history',
-                'activationStatus'
+                'activationStatus',
             ],
             [],
             'GET',
@@ -349,7 +351,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         $result = $this->makeRequest(
             [
                 'v6', 'patrons', $patron['id'], 'checkouts', 'history',
-                'activationStatus'
+                'activationStatus',
             ],
             json_encode($request),
             'POST',
@@ -361,7 +363,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'success' => false,
                 'status' => $this->formatErrorMessage(
                     $result['description'] ?? $result['name']
-                )
+                ),
             ];
         }
         return ['success' => true, 'status' => 'request_change_done'];
@@ -394,19 +396,19 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                         $details['country'] ?? '',
                     ]
                 ),
-                'type' => 'a'
+                'type' => 'a',
             ];
         }
         if (array_key_exists('phone', $details)) {
             $request['phones'][] = [
                 'number' => $details['phone'],
-                'type' => 'p'
+                'type' => 'p',
             ];
         }
         if (array_key_exists('smsnumber', $details)) {
             $request['phones'][] = [
                 'number' => $details['smsnumber'],
-                'type' => 't'
+                'type' => 't',
             ];
         }
         if (array_key_exists('email', $details)) {
@@ -418,7 +420,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
 
         $result = $this->makeRequest(
             [
-                'v6', 'patrons', $patron['id']
+                'v6', 'patrons', $patron['id'],
             ],
             json_encode($request),
             'PUT',
@@ -435,14 +437,14 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             return [
                 'success' => false,
                 'status' => 'profile_update_failed',
-                'sys_message' => $result['description'] ?? ''
+                'sys_message' => $result['description'] ?? '',
             ];
         }
 
         return [
             'success' => true,
             'status' => 'request_change_accepted',
-            'sys_message' => ''
+            'sys_message' => '',
         ];
     }
 
@@ -463,7 +465,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             [$this->apiBase, 'patrons', $patron['id'], 'fines'],
             [
                 'fields' => 'item,assessedDate,description,chargeType,itemCharge'
-                    . ',processingFee,billingFee,paidAmount,location,invoiceNumber'
+                    . ',processingFee,billingFee,paidAmount,location,invoiceNumber',
             ],
             'GET',
             $patron
@@ -479,7 +481,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             $balance = $amount - $entry['paidAmount'];
             $description = '';
             // Display charge type if it's not manual (code=1)
-            if (!empty($entry['chargeType'])
+            if (
+                !empty($entry['chargeType'])
                 && $entry['chargeType']['code'] != '1'
             ) {
                 $description = $entry['chargeType']['display'];
@@ -551,7 +554,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             return [
                 'payable' => false,
                 'amount' => 0,
-                'reason' => 'online_payment_minimum_fee'
+                'reason' => 'online_payment_minimum_fee',
             ];
         }
 
@@ -559,7 +562,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         $amount = 0;
         $payableFines = [];
         foreach ($fines as $fine) {
-            if (null !== $selectedFineIds
+            if (
+                null !== $selectedFineIds
                 && !in_array($fine['fine_id'], $selectedFineIds)
             ) {
                 continue;
@@ -571,7 +575,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         }
         $config = $this->getConfig('onlinePayment');
         $transactionFee = $config['transactionFee'] ?? 0;
-        if (isset($config['minimumFee'])
+        if (
+            isset($config['minimumFee'])
             && $amount + $transactionFee < $config['minimumFee']
         ) {
             $nonPayableReason = 'online_payment_minimum_fee';
@@ -622,7 +627,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         $amountRemaining = $amount;
         $payments = [];
         foreach ($fines as $fine) {
-            if (in_array($fine['fine_id'], $fineIds)
+            if (
+                in_array($fine['fine_id'], $fineIds)
                 && $fine['payableOnline'] && $fine['balance'] > 0
             ) {
                 $pay = min($fine['balance'], $amountRemaining);
@@ -640,11 +646,11 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         }
 
         $request = [
-            'payments' => $payments
+            'payments' => $payments,
         ];
         $result = $this->makeRequest(
             [
-                'v6', 'patrons', $patron['id'], 'fines', 'payment'
+                'v6', 'patrons', $patron['id'], 'fines', 'payment',
             ],
             json_encode($request),
             'PUT',
@@ -715,7 +721,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                                 $keyVal = explode('=', $option, 2);
                                 if (isset($keyVal[1])) {
                                     $field['options'][$keyVal[0]] = [
-                                        'name' => $keyVal[1]
+                                        'name' => $keyVal[1],
                                     ];
                                 }
                             }
@@ -742,7 +748,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     {
         $result = $this->makeRequest(
             [
-                'v6', 'patrons', $patron['id'], 'checkouts', 'history'
+                'v6', 'patrons', $patron['id'], 'checkouts', 'history',
             ],
             '',
             'DELETE',
@@ -754,13 +760,13 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'success' => false,
                 'status' => $this->formatErrorMessage(
                     $result['description'] ?? $result['name']
-                )
+                ),
             ];
         }
         return [
             'success' => true,
             'status' => 'loan_history_purged',
-            'sysMessage' => ''
+            'sysMessage' => '',
         ];
     }
 
@@ -793,7 +799,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
            'locations' => count($locations),
            'availability' => null,
            'callnumber' => null,
-           'location' => '__HOLDINGSSUMMARYLOCATION__'
+           'location' => '__HOLDINGSSUMMARYLOCATION__',
         ];
     }
 
@@ -969,7 +975,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 [],
                 null,
                 [
-                    'Authorization: Bearer ' . $config['apiKey']
+                    'Authorization: Bearer ' . $config['apiKey'],
                 ]
             );
             if (!$response->isSuccess()) {
@@ -1041,7 +1047,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 $response = $client->GetItemDetails(
                     [
                         'Token' => $authToken,
-                        'ItemId' => $barcode
+                        'ItemId' => $barcode,
                     ]
                 );
             } catch (\SoapFault $e) {
@@ -1052,7 +1058,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                     $response = $client->GetItemDetails(
                         [
                             'Token' => $authToken,
-                            'ItemId' => $barcode
+                            'ItemId' => $barcode,
                         ]
                     );
                 } else {
@@ -1155,7 +1161,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         $bibsUrl = $this->getApiUrlFromHierarchy([$this->apiBase, 'bibs']);
         $itemsUrl = $this->getApiUrlFromHierarchy([$this->apiBase, 'items']);
         $cacheKey = null;
-        if ('GET' === $method
+        if (
+            'GET' === $method
             && (strncmp($url, $bibsUrl, strlen($bibsUrl)) === 0
             || strncmp($url, $itemsUrl, strlen($itemsUrl)) === 0)
         ) {

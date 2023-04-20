@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Bazaar support service.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\Service;
 
 use Laminas\Session\Container;
@@ -172,7 +174,8 @@ class BazaarService
      */
     public function getAddResourceCallbackPayload(): ?string
     {
-        if (!$this->isSessionActive()
+        if (
+            !$this->isSessionActive()
             || empty($this->payload['uid'])
             || empty($this->payload['name'])
         ) {

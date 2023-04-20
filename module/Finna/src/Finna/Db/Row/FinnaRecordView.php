@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Row definition for finna_record_view
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Db\Row;
 
 /**
@@ -50,7 +52,7 @@ class FinnaRecordView extends \VuFind\Db\Row\RowGateway
                 'inst_view_id',
                 'crawler',
                 'date',
-                'record_id'
+                'record_id',
             ],
             'finna_record_view',
             $adapter

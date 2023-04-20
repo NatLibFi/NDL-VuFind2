@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Factory for CommentRecord AJAX handler.
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;

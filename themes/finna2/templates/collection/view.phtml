@@ -55,8 +55,8 @@
   <div>
     <?=$this->record($this->driver)->getToolbar()?>
   </div>
-  <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId" id="record_id" />
-  <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+  <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId" id="record_id">
+  <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource">
   <div class="record-main<?=!$largeImageLayout ? ' mainbody left' : ''?>">
     <?=$this->flashmessages()?>
     <?php if ($displayAsFullRecord): ?>
@@ -67,7 +67,7 @@
       <?= $this->R2()->register($this->driver, ['brief' => true])?>
       <?php $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
         <div class="recordFormat collection-format">
-          <?=$this->record($this->driver)->getFormatList()?><br/>
+          <?=$this->record($this->driver)->getFormatList()?><br>
         </div>
       <?php endif; ?>
       <?php if ($summary = $this->driver->tryMethod('getSummaryExtended')): ?>
@@ -103,14 +103,14 @@
         $coreFields = $formatter->getDefaults();
         $coreFieldGroups = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
           ['label' => 'Context',
-            'lines' => ['Archive Origination', 'Archive', 'Archive Series', 'Archive File']
+            'lines' => ['Archive Origination', 'Archive', 'Archive Series', 'Archive File'],
           ],
           ['lines' => [
               'Format', 'Authors', 'Secondary Authors', 'Unit ID', 'Unit IDs','Subjects',
-              'subjects_extended', 'Dates', 'Material Condition']
+              'subjects_extended', 'Dates', 'Material Condition'],
           ],
           ['label' => 'access_restrictions_general',
-            'lines' => ['Access Restrictions Extended']]
+            'lines' => ['Access Restrictions Extended']],
           ], $coreFields));
         ?>
         <?php if (!empty($coreFieldGroups)): ?>
@@ -192,7 +192,7 @@
          $desc = $obj->getDescription();
          $accordion_classes = [
            'accordion',
-           'accordion-' . preg_replace("/\W/", "-", strtolower($accordion))
+           'accordion-' . preg_replace("/\W/", "-", strtolower($accordion)),
          ];
          if (0 === strcasecmp($this->activeTab, $accordion)) {
            if (!$this->loadInitialTabWithAjax || !$obj->supportsAjax()) {
@@ -217,7 +217,7 @@
      <?php endforeach; ?>
     </div>
 
-    <?=$this->driver->supportsCoinsOpenURL()?'<span class="Z3988" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenURL()) . '"></span>':''?>
+    <?=$this->driver->supportsCoinsOpenURL() ? '<span class="Z3988" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenURL()) . '"></span>' : ''?>
   </div>
 
 </div>

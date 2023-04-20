@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Model for LIDO records in Solr.
  *
@@ -29,6 +30,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver;
 
 /**
@@ -44,8 +46,7 @@ namespace Finna\RecordDriver;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
-class SolrLido extends \VuFind\RecordDriver\SolrDefault
-implements \Laminas\Log\LoggerAwareInterface
+class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\LoggerAwareInterface
 {
     use Feature\SolrFinnaTrait;
     use Feature\FinnaXmlReaderTrait;
@@ -58,7 +59,7 @@ implements \Laminas\Log\LoggerAwareInterface
     public const LANGUAGE_CODES = [
         'fi' => ['fi','fin'],
         'sv' => ['sv','swe'],
-        'en-gb' => ['en','eng']
+        'en-gb' => ['en','eng'],
     ];
 
     /**
@@ -74,7 +75,7 @@ implements \Laminas\Log\LoggerAwareInterface
         'large' => 'large',
         'zoomview' => 'large',
         'image_master' => 'master',
-        'image_original' => 'original'
+        'image_original' => 'original',
     ];
 
     /**
@@ -84,7 +85,7 @@ implements \Laminas\Log\LoggerAwareInterface
      */
     protected $modelTypes = [
         'preview_3D' => 'preview',
-        'provided_3D' => 'provided'
+        'provided_3D' => 'provided',
     ];
 
     /**
@@ -112,7 +113,7 @@ implements \Laminas\Log\LoggerAwareInterface
      */
     protected $documentTypes = [
         'preview_text' => 'document',
-        'provided_text' => 'document'
+        'provided_text' => 'document',
     ];
 
     /**
@@ -122,7 +123,7 @@ implements \Laminas\Log\LoggerAwareInterface
      */
     protected $supportedAudioFormats = [
         'mp3' => 'mpeg',
-        'wav' => 'wav'
+        'wav' => 'wav',
     ];
 
     /**
@@ -131,7 +132,7 @@ implements \Laminas\Log\LoggerAwareInterface
      * @var array
      */
     protected $supportedVideoFormats = [
-        'mp4' => 'video/mp4'
+        'mp4' => 'video/mp4',
     ];
 
     /**
@@ -143,7 +144,7 @@ implements \Laminas\Log\LoggerAwareInterface
         'preview_video' => 'displayLink',
         'preview_audio' => 'displayLink',
         'preview_text' => 'displayLink',
-        'provided_text' => 'displayLink'
+        'provided_text' => 'displayLink',
     ];
 
     /**
@@ -269,9 +270,7 @@ implements \Laminas\Log\LoggerAwareInterface
             if ($conceptID = $rights->xpath('conceptID')) {
                 $conceptID = $conceptID[0];
                 $attributes = $conceptID->attributes();
-                if ($attributes->type
-                    && strtolower($attributes->type) == 'copyright'
-                ) {
+                if ($attributes->type && strtolower($attributes->type) == 'copyright') {
                     $data = [];
 
                     $copyright = trim((string)$conceptID);
@@ -315,7 +314,7 @@ implements \Laminas\Log\LoggerAwareInterface
      */
     public function getAllImages($language = null)
     {
-        $language = $language ?? $this->getTranslatorLocale();
+        $language ??= $this->getTranslatorLocale();
         $representations = $this->getRepresentations($language);
         return array_filter(array_column($representations, 'images'));
     }
@@ -471,10 +470,8 @@ implements \Laminas\Log\LoggerAwareInterface
             );
         };
 
-        foreach ($this->getXmlRecord()->xpath(
-            '/lidoWrap/lido/administrativeMetadata/'
-            . 'resourceWrap/resourceSet'
-        ) as $resourceSet) {
+        $xpath = '/lidoWrap/lido/administrativeMetadata/resourceWrap/resourceSet';
+        foreach ($this->getXmlRecord()->xpath($xpath) as $resourceSet) {
             // Process rights first since we may need to duplicate them if there
             // are multiple representations in the set (non-standard)
             if (!($rights = $this->getResourceRights($resourceSet, $language))) {
@@ -508,7 +505,7 @@ implements \Laminas\Log\LoggerAwareInterface
                             [
                                 'urls' => $imageUrls,
                                 'description' => '',
-                                'rights' => $rights
+                                'rights' => $rights,
                             ]
                         );
                         $imageUrls = [];
@@ -531,15 +528,15 @@ implements \Laminas\Log\LoggerAwareInterface
 
                 // Representation is an image
                 if (in_array($type, $imageTypeKeys)) {
-                    if ($image = $this->getImage(
+                    $image = $this->getImage(
                         $url,
                         $type,
                         $language,
                         $resourceSet->resourceID,
                         $format,
                         $representation->resourceMeasurementsSet
-                    )
-                    ) {
+                    );
+                    if ($image) {
                         if (!empty($image['displayImage'])) {
                             $imageUrls
                                 = array_merge($imageUrls, $image['displayImage']);
@@ -578,24 +575,14 @@ implements \Laminas\Log\LoggerAwareInterface
                 }
                 // Representation is a document
                 if (in_array($type, $documentTypeKeys)) {
-                    if ($document = $this->getDocument(
-                        $url,
-                        $format,
-                        $description
-                    )
-                    ) {
+                    if ($document = $this->getDocument($url, $format, $description)) {
                         $documentUrls = array_merge($documentUrls, $document);
                     }
                 }
             }
             // Save all the found results here as a new object
             // If current set has no links, continue to next one
-            if (!$imageUrls
-                && !$modelUrls
-                && !$audioUrls
-                && !$videoUrls
-                && !$documentUrls
-            ) {
+            if (!$imageUrls && !$modelUrls && !$audioUrls && !$videoUrls && !$documentUrls) {
                 continue;
             }
             $imageResult = [];
@@ -605,14 +592,10 @@ implements \Laminas\Log\LoggerAwareInterface
                     'urls' => $imageUrls,
                     'description' => '',
                     'rights' => $rights,
-                    'highResolution' => $highResolution
+                    'highResolution' => $highResolution,
                 ];
 
-                if ($extraDetails = $this->getExtraDetails(
-                    $resourceSet,
-                    $language
-                )
-                ) {
+                if ($extraDetails = $this->getExtraDetails($resourceSet, $language)) {
                     $imageResult = array_merge($imageResult, $extraDetails);
                 }
 
@@ -750,11 +733,7 @@ implements \Laminas\Log\LoggerAwareInterface
     {
         $type = $this->modelTypes[$type];
         $format = strtolower($format);
-        if ('preview_3D' === $type && !in_array(
-            $format,
-            $this->displayableModelFormats
-        )
-        ) {
+        if ('preview_3D' === $type && !in_array($format, $this->displayableModelFormats)) {
             return [];
         }
         return [$format => [$type => $url]];
@@ -808,7 +787,7 @@ implements \Laminas\Log\LoggerAwareInterface
                     $measurements
                 ),
                 'url' => $url,
-                'format' => $format ?: 'jpg'
+                'format' => $format ?: 'jpg',
             ];
             if ($id) {
                 $currentHiRes['resourceID'] = $id;
@@ -844,7 +823,7 @@ implements \Laminas\Log\LoggerAwareInterface
                 'url' => $url,
                 'codec' => $format,
                 'type' => 'audio',
-                'embed' => 'audio'
+                'embed' => 'audio',
             ];
         }
         return [];
@@ -879,7 +858,7 @@ implements \Laminas\Log\LoggerAwareInterface
                 'videoSources' => [
                     'src' => $url,
                     'type' => $codec,
-                ]
+                ],
             ];
         }
         return [];
@@ -902,7 +881,7 @@ implements \Laminas\Log\LoggerAwareInterface
         return [
             'description' => $description ?: false,
             'url' => $url,
-            'format' => strtolower($format)
+            'format' => strtolower($format),
         ];
     }
 
@@ -940,7 +919,7 @@ implements \Laminas\Log\LoggerAwareInterface
                     continue;
                 }
                 $rightsHolder = [
-                    'name' => (string)$holder->legalBodyName->appellationValue
+                    'name' => (string)$holder->legalBodyName->appellationValue,
                 ];
 
                 if (!empty($holder->legalBodyWeblink)) {
@@ -963,9 +942,7 @@ implements \Laminas\Log\LoggerAwareInterface
                 $resourceSet->rightsResource->rightsType->term,
                 $language
             );
-            if (!isset($rights['copyright'])
-                || $rights['copyright'] !== $term
-            ) {
+            if (!isset($rights['copyright']) || $rights['copyright'] !== $term) {
                 $rights['description'][] = $term;
             }
         }
@@ -989,7 +966,7 @@ implements \Laminas\Log\LoggerAwareInterface
         if ($iniData = $this->recordConfig->Models ?? []) {
             $settings = [
                 'debug' => boolval($iniData->debug ?? 0),
-                'previewImages' => $this->allowModelPreviewImages()
+                'previewImages' => $this->allowModelPreviewImages(),
             ];
         }
 
@@ -1026,10 +1003,9 @@ implements \Laminas\Log\LoggerAwareInterface
     {
         $results = [];
         $publicationTypes = ['kirjallisuus', 'lähteet', 'julkaisu'];
-        foreach ($this->getXmlRecord()->xpath(
-            'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
-            . 'relatedWorkSet'
-        ) as $node) {
+        $xpath = 'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
+            . 'relatedWorkSet';
+        foreach ($this->getXmlRecord()->xpath($xpath) as $node) {
             if (!empty($node->relatedWork->displayObject)) {
                 $title = trim((string)$node->relatedWork->displayObject);
                 $attributes = $node->relatedWork->displayObject->attributes();
@@ -1043,7 +1019,7 @@ implements \Laminas\Log\LoggerAwareInterface
                     $results[] = [
                       'title' => $title,
                       'label' => $label ?: $term,
-                      'url' => ''
+                      'url' => '',
                     ];
                 }
             }
@@ -1060,10 +1036,9 @@ implements \Laminas\Log\LoggerAwareInterface
     {
         $preferredLanguages = $this->getPreferredLanguageCodes();
         $preferredLangResults = $allResults = [];
-        foreach ($this->getXmlRecord()->xpath(
-            'lido/descriptiveMetadata/objectClassificationWrap/classificationWrap/'
-            . 'classification'
-        ) as $node) {
+        $xpath = 'lido/descriptiveMetadata/objectClassificationWrap/classificationWrap/'
+            . 'classification';
+        foreach ($this->getXmlRecord()->xpath($xpath) as $node) {
             $type = trim((string)$node->attributes()->type);
             if (in_array($type, $this->excludedClassifications)) {
                 continue;
@@ -1077,11 +1052,7 @@ implements \Laminas\Log\LoggerAwareInterface
                     $allResults[] = $data;
                     $termLanguage = trim((string)$attributes->lang)
                         ?: trim((string)$node->attributes()->lang);
-                    if (in_array(
-                        $termLanguage,
-                        $preferredLanguages
-                    )
-                    ) {
+                    if (in_array($termLanguage, $preferredLanguages)) {
                         $preferredLangResults[] = $data;
                     }
                 }
@@ -1100,10 +1071,9 @@ implements \Laminas\Log\LoggerAwareInterface
         $results = [];
         $allowedTypes = ['Kokoelma', 'kuuluu kokoelmaan', 'kokoelma', 'Alakokoelma',
             'Erityiskokoelma'];
-        foreach ($this->getXmlRecord()->xpath(
-            'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
-            . 'relatedWorkSet'
-        ) as $node) {
+        $xpath = 'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
+            . 'relatedWorkSet';
+        foreach ($this->getXmlRecord()->xpath($xpath) as $node) {
             $term = $node->relatedWorkRelType->term ?? '';
             $collection = trim((string)$node->relatedWork->displayObject ?? '');
             if ($collection && in_array($term, $allowedTypes)) {
@@ -1122,9 +1092,9 @@ implements \Laminas\Log\LoggerAwareInterface
     {
         $events = [];
         $language = $this->getLocale();
-        foreach ($this->getXmlRecord()->xpath(
-            '/lidoWrap/lido/descriptiveMetadata/eventWrap/eventSet/event'
-        ) as $node) {
+        foreach (
+            $this->getXmlRecord()->xpath('/lidoWrap/lido/descriptiveMetadata/eventWrap/eventSet/event') as $node
+        ) {
             $name = (string)($node->eventName->appellationValue ?? '');
             $type = isset($node->eventType->term)
                 ? mb_strtolower((string)$node->eventType->term, 'UTF-8') : '';
@@ -1198,9 +1168,7 @@ implements \Laminas\Log\LoggerAwareInterface
             } elseif (isset($node->eventMaterialsTech->materialsTech)) {
                 // display label not defined, build from materialsTech
                 $materials = [];
-                foreach ($node->xpath('eventMaterialsTech/materialsTech')
-                    as $materialsTech
-                ) {
+                foreach ($node->xpath('eventMaterialsTech/materialsTech') as $materialsTech) {
                     if ($terms = $materialsTech->xpath('termMaterialsTech/term')) {
                         foreach ($terms as $term) {
                             $label = null;
@@ -1271,7 +1239,7 @@ implements \Laminas\Log\LoggerAwareInterface
                             'name' => $appellationValue,
                             'role' => $role,
                             'birth' => $earliestDate,
-                            'death' => $latestDate
+                            'death' => $latestDate,
                         ];
                     }
                 }
@@ -1295,7 +1263,7 @@ implements \Laminas\Log\LoggerAwareInterface
                 'culture' => $culture,
                 'descriptions' => $descriptions,
                 // For backward compatibility
-                'description' => $descriptions[0] ?? ''
+                'description' => $descriptions[0] ?? '',
             ];
             // Only add the event if it has content
             foreach ($event as $key => $field) {
@@ -1316,15 +1284,14 @@ implements \Laminas\Log\LoggerAwareInterface
     public function getFormatClassifications()
     {
         $results = [];
-        foreach ($this->getXmlRecord()->lido->descriptiveMetadata
+        foreach (
+            $this->getXmlRecord()->lido->descriptiveMetadata
             ->objectClassificationWrap ?? [] as $node
         ) {
             $workTypeTerm = trim(
                 (string)($node->objectWorkTypeWrap->objectWorkType->term ?? '')
             );
-            foreach ($node->classificationWrap->classification ?? []
-                as $classification
-            ) {
+            foreach ($node->classificationWrap->classification ?? [] as $classification) {
                 $type = trim((string)$classification->attributes()->type);
                 if (in_array($type, $this->excludedClassifications)) {
                     continue;
@@ -1415,10 +1382,9 @@ implements \Laminas\Log\LoggerAwareInterface
     public function getInscriptions()
     {
         $results = [];
-        foreach ($this->getXmlRecord()->xpath(
-            'lido/descriptiveMetadata/objectIdentificationWrap/inscriptionsWrap/'
-            . 'inscriptions'
-        ) as $inscriptions) {
+        $xpath = 'lido/descriptiveMetadata/objectIdentificationWrap/inscriptionsWrap/'
+            . 'inscriptions';
+        foreach ($this->getXmlRecord()->xpath($xpath) as $inscriptions) {
             $group = [];
             foreach ($inscriptions->inscriptionDescription as $node) {
                 $content = trim((string)$node->descriptiveNoteValue ?? '');
@@ -1521,14 +1487,13 @@ implements \Laminas\Log\LoggerAwareInterface
     {
         $results = [];
         $exclude = $include ? [] : $this->excludedMeasurements;
-        foreach ($this->getXmlRecord()->lido->descriptiveMetadata
+        foreach (
+            $this->getXmlRecord()->lido->descriptiveMetadata
             ->objectIdentificationWrap->objectMeasurementsWrap
             ->objectMeasurementsSet ?? [] as $set
         ) {
             $setExtents = [];
-            foreach ($set->objectMeasurements->extentMeasurements ?? []
-                as $extent
-            ) {
+            foreach ($set->objectMeasurements->extentMeasurements ?? [] as $extent) {
                 if ($value = trim((string)$extent)) {
                     $setExtents[] = $value;
                 }
@@ -1540,7 +1505,8 @@ implements \Laminas\Log\LoggerAwareInterface
                 if ($value = trim((string)$measurements)) {
                     $displayFound = true;
                     $label = $measurements->attributes()->label ?? '';
-                    if (($include && !in_array($label, $include))
+                    if (
+                        ($include && !in_array($label, $include))
                         || ($exclude && in_array($label, $exclude))
                     ) {
                         continue;
@@ -1553,28 +1519,24 @@ implements \Laminas\Log\LoggerAwareInterface
             }
             // Use measurementsSet only if no display elements exist
             if (!$displayFound) {
-                foreach ($set->objectMeasurements->measurementsSet ?? []
-                    as $measurements
-                ) {
+                foreach ($set->objectMeasurements->measurementsSet ?? [] as $measurements) {
                     $type = trim(
                         (string)($measurements->measurementType->term ?? '')
                     );
-                    if (($include && !in_array($type, $include))
+                    if (
+                        ($include && !in_array($type, $include))
                         || ($exclude && in_array($type, $exclude))
                     ) {
                         continue;
                     }
                     $parts = [];
-                    if ($type = trim((string)($measurements->measurementType ?? ''))
-                    ) {
+                    if ($type = trim((string)($measurements->measurementType ?? ''))) {
                         $parts[] = $type;
                     }
-                    if ($val = trim((string)($measurements->measurementValue ?? ''))
-                    ) {
+                    if ($val = trim((string)($measurements->measurementValue ?? ''))) {
                         $parts[] = $val;
                     }
-                    if ($unit = trim((string)($measurements->measurementUnit ?? ''))
-                    ) {
+                    if ($unit = trim((string)($measurements->measurementUnit ?? ''))) {
                         $parts[] = $unit;
                     }
                     if ($parts) {
@@ -1598,9 +1560,7 @@ implements \Laminas\Log\LoggerAwareInterface
     {
         $authors = [];
         $index = 0;
-        foreach ($this->getXmlRecord()->lido->descriptiveMetadata
-            ->eventWrap->eventSet ?? [] as $set
-        ) {
+        foreach ($this->getXmlRecord()->lido->descriptiveMetadata->eventWrap->eventSet ?? [] as $set) {
             if (!($event = $set->event ?? '')) {
                 continue;
             }
@@ -1723,10 +1683,9 @@ implements \Laminas\Log\LoggerAwareInterface
     public function getSubjectActors()
     {
         $results = [];
-        foreach ($this->getXmlRecord()->xpath(
-            'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/'
-            . 'subjectSet/subject/subjectActor/actor/nameActorSet/appellationValue'
-        ) as $node) {
+        $xpath = 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/'
+            . 'subjectSet/subject/subjectActor/actor/nameActorSet/appellationValue';
+        foreach ($this->getXmlRecord()->xpath($xpath) as $node) {
             if ($actor = trim((string)$node)) {
                 $results[] = $actor;
             }
@@ -1743,10 +1702,9 @@ implements \Laminas\Log\LoggerAwareInterface
     {
         $results = [];
         $language = $this->getLocale();
-        foreach ($this->getXmlRecord()->xpath(
-            'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/'
-            . 'subjectSet/subject'
-        ) as $node) {
+        $xpath = 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/'
+            . 'subjectSet/subject';
+        foreach ($this->getXmlRecord()->xpath($xpath) as $node) {
             if (!empty($node->subjectDate->displayDate)) {
                 $term = (string)($this->getLanguageSpecificItem(
                     $node->subjectDate->displayDate,
@@ -1768,10 +1726,9 @@ implements \Laminas\Log\LoggerAwareInterface
     public function getSubjectDetails()
     {
         $results = [];
-        foreach ($this->getXmlRecord()->xpath(
-            'lido/descriptiveMetadata/objectIdentificationWrap/titleWrap/titleSet/'
-            . "appellationValue[@label='aiheen tarkenne']"
-        ) as $node) {
+        $xpath = 'lido/descriptiveMetadata/objectIdentificationWrap/titleWrap/titleSet/'
+            . "appellationValue[@label='aiheen tarkenne']";
+        foreach ($this->getXmlRecord()->xpath($xpath) as $node) {
             $results[] = (string)$node;
         }
         return $results;
@@ -1803,8 +1760,7 @@ implements \Laminas\Log\LoggerAwareInterface
             }
         }
         // Include all display dates from events except creation date
-        foreach ($this->getXmlRecord()->lido->descriptiveMetadata->eventWrap
-            ->eventSet ?? [] as $node) {
+        foreach ($this->getXmlRecord()->lido->descriptiveMetadata->eventWrap->eventSet ?? [] as $node) {
             $type = isset($node->event->eventType->term)
                 ? mb_strtolower((string)$node->event->eventType->term, 'UTF-8') : '';
             if ($type !== 'valmistus') {
@@ -1849,10 +1805,9 @@ implements \Laminas\Log\LoggerAwareInterface
     public function getSubjectPlaces(bool $extended = false)
     {
         $results = [];
-        foreach ($this->getXmlRecord()->xpath(
-            'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/'
-            . 'subjectSet/subject/subjectPlace'
-        ) as $subjectPlace) {
+        $xpath = 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/'
+            . 'subjectSet/subject/subjectPlace';
+        foreach ($this->getXmlRecord()->xpath($xpath) as $subjectPlace) {
             if (!($displayPlace = (string)($subjectPlace->displayPlace ?? ''))) {
                 continue;
             }
@@ -2041,13 +1996,15 @@ implements \Laminas\Log\LoggerAwareInterface
         array $exclude = []
     ): array {
         $results = [];
-        foreach ($this->getXmlRecord()->lido->descriptiveMetadata
+        foreach (
+            $this->getXmlRecord()->lido->descriptiveMetadata
             ->objectIdentificationWrap->repositoryWrap
             ->repositorySet ?? [] as $repository
         ) {
             foreach ($repository->workID ?? [] as $node) {
                 $type = $node->attributes()->type ?? '';
-                if (($include && !in_array($type, $include))
+                if (
+                    ($include && !in_array($type, $include))
                     || ($exclude && in_array($type, $exclude))
                 ) {
                     continue;
@@ -2124,7 +2081,8 @@ implements \Laminas\Log\LoggerAwareInterface
             if ('' !== trim((string)$item)) {
                 $allItems[] = $item;
                 $attrs = $item->attributes();
-                if (!empty($attrs->lang)
+                if (
+                    !empty($attrs->lang)
                     && in_array((string)$attrs->lang, $languages)
                 ) {
                     $items[] = $item;
@@ -2174,9 +2132,11 @@ implements \Laminas\Log\LoggerAwareInterface
         $titleValues = [];
         $language = $this->getLocale();
         //Collect all fitting description objects
-        foreach ($this->getXmlRecord()->lido->descriptiveMetadata
+        foreach (
+            $this->getXmlRecord()->lido->descriptiveMetadata
             ->objectIdentificationWrap->objectDescriptionWrap->objectDescriptionSet
-            ?? [] as $node) {
+            ?? [] as $node
+        ) {
             $type = $node->attributes()->type;
             //Descriptions divided to typed and untyped
             foreach ($node->descriptiveNoteValue ?? [] as $desc) {
@@ -2188,8 +2148,10 @@ implements \Laminas\Log\LoggerAwareInterface
             }
         }
         //Collect all fitting subject objects
-        foreach ($this->getXmlRecord()->lido->descriptiveMetadata
-            ->objectRelationWrap->subjectWrap->subjectSet ?? [] as $node) {
+        foreach (
+            $this->getXmlRecord()->lido->descriptiveMetadata
+            ->objectRelationWrap->subjectWrap->subjectSet ?? [] as $node
+        ) {
             foreach ($node->displaySubject ?? [] as $subj) {
                 $label = $subj->attributes()->label;
                 //Subjects divided to labeled and unlabeled
@@ -2225,7 +2187,8 @@ implements \Laminas\Log\LoggerAwareInterface
 
         //Collect all titles to be checked
         $displayTitle = $this->getTitle();
-        foreach ($this->getXmlRecord()->lido->descriptiveMetadata
+        foreach (
+            $this->getXmlRecord()->lido->descriptiveMetadata
             ->objectIdentificationWrap->titleWrap->titleSet
             ?? [] as $node
         ) {
@@ -2254,7 +2217,8 @@ implements \Laminas\Log\LoggerAwareInterface
             $checkLength = strlen($checkWord);
             foreach ($titleValues as $title) {
                 $checkItem = preg_replace('/[^a-zA-Z0-9]/', '', (string)$title);
-                if (strncmp($checkItem, $checkWord, $checkLength) == 0
+                if (
+                    strncmp($checkItem, $checkWord, $checkLength) == 0
                     && $checkLength !== strlen($checkItem)
                 ) {
                     $title = ltrim(substr($title, strlen($displayTitle)), ' .,;:!?');
@@ -2281,10 +2245,9 @@ implements \Laminas\Log\LoggerAwareInterface
     {
         $results = [];
         $preferredLanguages = $this->getPreferredLanguageCodes();
-        foreach ($this->getXmlRecord()->xpath(
-            'lido/descriptiveMetadata/objectIdentificationWrap/objectDescriptionWrap'
-            . '/objectDescriptionSet[@type="introduction"]/descriptiveNoteValue'
-        ) as $node) {
+        $xpath = 'lido/descriptiveMetadata/objectIdentificationWrap/objectDescriptionWrap'
+            . '/objectDescriptionSet[@type="introduction"]/descriptiveNoteValue';
+        foreach ($this->getXmlRecord()->xpath($xpath) as $node) {
             if (in_array((string)$node->attributes()->lang, $preferredLanguages)) {
                 if ($term = trim((string)$node)) {
                     $results[] = $term;
@@ -2334,9 +2297,11 @@ implements \Laminas\Log\LoggerAwareInterface
     public function getEditions()
     {
         $results = [];
-        foreach ($this->getXmlRecord()->lido->descriptiveMetadata
+        foreach (
+            $this->getXmlRecord()->lido->descriptiveMetadata
             ->objectIdentificationWrap->displayStateEditionWrap
-            ->displayEdition ?? [] as $edition) {
+            ->displayEdition ?? [] as $edition
+        ) {
             $results[] = (string)$edition;
         }
         return $results;
@@ -2374,7 +2339,8 @@ implements \Laminas\Log\LoggerAwareInterface
                     break;
                 }
             }
-            if (($allowedTypes && !in_array($workType, $allowedTypes))
+            if (
+                ($allowedTypes && !in_array($workType, $allowedTypes))
                 || ($disallowedTypes && in_array($workType, $disallowedTypes))
             ) {
                 continue;
@@ -2383,7 +2349,10 @@ implements \Laminas\Log\LoggerAwareInterface
                 $id = "$sourceId.$id";
             }
             $title = (string)($set->relatedWork->displayObject ?? '');
-            if ($id && $title && $id !== $this->getUniqueID()
+            if (
+                $id
+                && $title
+                && $id !== $this->getUniqueID()
                 && !in_array($id, array_column($result, 'id'))
             ) {
                 $result[] = compact('id', 'title');

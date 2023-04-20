@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Console service for sending due date reminders.
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace FinnaConsole\Command\Util;
 
 use Laminas\Mvc\I18n\Translator;
@@ -206,7 +208,8 @@ class DueDateReminders extends AbstractUtilCommand
         $this->catalog = $catalog;
         $this->mainConfig = $mainConfig;
 
-        if (isset($this->mainConfig->Catalog->loadNoILSOnFailure)
+        if (
+            isset($this->mainConfig->Catalog->loadNoILSOnFailure)
             && $this->mainConfig->Catalog->loadNoILSOnFailure
         ) {
             throw new \Exception('Catalog/loadNoILSOnFailure must not be enabled');
@@ -387,7 +390,7 @@ class DueDateReminders extends AbstractUtilCommand
                 if (!isset($loans['count'])) {
                     $loans = [
                         'count' => count($loans),
-                        'records' => $loans
+                        'records' => $loans,
                     ];
                 }
             } catch (\Exception $e) {
@@ -403,14 +406,15 @@ class DueDateReminders extends AbstractUtilCommand
             foreach ($loans['records'] as $loan) {
                 $dueDate = new \DateTime($loan['duedate']);
                 $dayDiff = $dueDate->diff($todayTime)->days;
-                if ($todayTime >= $dueDate
+                if (
+                    $todayTime >= $dueDate
                     || $dayDiff <= $card->finna_due_date_reminder
                 ) {
                     $params = [
                        'user_id' => $user->id,
                        'loan_id' => $loan['item_id'],
                        'due_date'
-                          => $dueDate->format($this::DUE_DATE_FORMAT)
+                          => $dueDate->format($this::DUE_DATE_FORMAT),
                     ];
 
                     $reminder = $this->dueDateReminderTable->select($params);
@@ -441,7 +445,7 @@ class DueDateReminders extends AbstractUtilCommand
                         'dueDate' => $loan['duedate'],
                         'dueDateFormatted' => $dueDate->format($dateFormat),
                         'title' => $title,
-                        'record' => $record
+                        'record' => $record,
                     ];
                 }
             }
@@ -470,7 +474,8 @@ class DueDateReminders extends AbstractUtilCommand
 
         [$userInstitution, ] = explode(':', $user['username'], 2);
 
-        if (!$this->currentInstitution
+        if (
+            !$this->currentInstitution
             || $userInstitution != $this->currentInstitution
         ) {
             $templateDirs = [
@@ -500,7 +505,8 @@ class DueDateReminders extends AbstractUtilCommand
 
         $language = $this->currentSiteConfig['Site']['language'] ?? 'fi';
         $validLanguages = array_keys($this->currentSiteConfig['Languages']);
-        if (!empty($user->last_language)
+        if (
+            !empty($user->last_language)
             && in_array($user->last_language, $validLanguages)
         ) {
             $language = $user->last_language;
@@ -517,7 +523,7 @@ class DueDateReminders extends AbstractUtilCommand
         $urlParams = [
             'id' => $user->id,
             'type' => 'reminder',
-            'key' => $key
+            'key' => $key,
         ];
         $unsubscribeUrl = ($this->urlHelper)('myresearch-unsubscribe')
             . '?' . http_build_query($urlParams);
@@ -547,7 +553,7 @@ class DueDateReminders extends AbstractUtilCommand
             'loginMethod' => $loginMethod,
             'serviceName' => $serviceName,
             'userInstitution' => $userInstitution,
-            'user' => $user
+            'user' => $user,
         ];
 
         $urlHelper = $this->urlHelper;

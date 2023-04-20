@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Solr Autocomplete Module
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:autosuggesters Wiki
  */
+
 namespace Finna\Autocomplete;
 
 use VuFindCode\ISBN;
@@ -40,8 +42,7 @@ use VuFindCode\ISBN;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:autosuggesters Wiki
  */
-class Solr extends \VuFind\Autocomplete\Solr
-implements \VuFind\I18n\Translator\TranslatorAwareInterface
+class Solr extends \VuFind\Autocomplete\Solr implements \VuFind\I18n\Translator\TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
@@ -152,7 +153,7 @@ implements \VuFind\I18n\Translator\TranslatorAwareInterface
             }
             $settings[$field][] = [
                 'pos' => $pos++, 'limit' => $limit,
-                'filter' => $filter, 'tabs' => $tabs
+                'filter' => $filter, 'tabs' => $tabs,
             ];
         }
 
@@ -196,7 +197,8 @@ implements \VuFind\I18n\Translator\TranslatorAwareInterface
                 ? str_replace('###', ':', $this->request->tab) : '';
             foreach ($this->facetSettings as $field => $facets) {
                 foreach ($facets as $key => $facet) {
-                    if (!empty($facet['tabs'])
+                    if (
+                        !empty($facet['tabs'])
                         && (!$searchTab || !in_array($searchTab, $facet['tabs']))
                     ) {
                         unset($this->facetSettings[$field][$key]);
@@ -318,7 +320,7 @@ implements \VuFind\I18n\Translator\TranslatorAwareInterface
                                 'record',
                                 ['id' => $current['id']]
                             ),
-                            'recordId' => $current['id']
+                            'recordId' => $current['id'],
                         ];
                     }
                 }

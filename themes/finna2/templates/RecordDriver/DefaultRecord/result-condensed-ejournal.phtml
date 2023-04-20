@@ -1,12 +1,12 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/result-condensed-ejournal.phtml -->
 <div>
-  <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
-  <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+  <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId">
+  <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource">
   <table class="table table-condensed">
   <?php $langs = $this->driver->getLanguages(); if (!empty($langs)): ?>
     <tr class="recordLanguage">
       <th><?=$this->transEsc('Language')?>: </th>
-      <td><?php foreach ($langs as $lang): ?><?= $this->transEsc($lang)?><br/><?php endforeach; ?></td>
+      <td><?php foreach ($langs as $lang): ?><?= $this->transEsc($lang)?><br><?php endforeach; ?></td>
     </tr>
   <?php endif; ?>
 
@@ -37,7 +37,7 @@
       <th><?=$this->transEsc('ISSN')?>: </th>
       <td>
         <?php foreach ($issns as $field): ?>
-          <?=$this->escapeHtml($field)?><br/>
+          <?=$this->escapeHtml($field)?><br>
         <?php endforeach; ?>
       </td>
     </tr>

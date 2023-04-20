@@ -27,7 +27,7 @@
         <?php
           $placeholders = [
             '%%serviceBaseUrl%%' => $this->serviceBaseUrl,
-            '%%consentCategories%%' => implode(', ', $this->consentCategoriesTranslated)
+            '%%consentCategories%%' => implode(', ', $this->consentCategoriesTranslated),
           ];
         ?>
         <?=$this->translate('embedded_content_description', $placeholders)?>

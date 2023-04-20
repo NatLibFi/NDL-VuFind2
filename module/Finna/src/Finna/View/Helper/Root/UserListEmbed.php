@@ -1,4 +1,5 @@
 <?php
+
 /**
  * View helper for embedding a user list.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\View\Helper\Root;
 
 use Laminas\Stdlib\Parameters;
@@ -120,12 +122,13 @@ class UserListEmbed extends \Laminas\View\Helper\AbstractHelper
     public function __invoke($opt, $offset = null, $indexStart = null)
     {
         foreach (array_keys($opt) as $key) {
-            if (!in_array(
-                $key,
-                ['id', 'view', 'sort', 'limit', 'page',
+            if (
+                !in_array(
+                    $key,
+                    ['id', 'view', 'sort', 'limit', 'page',
                        'title', 'description', 'date', 'tags', 'headingLevel',
                        'allowCopy', 'showAllLink']
-            )
+                )
             ) {
                 unset($opt[$key]);
             }
@@ -147,7 +150,7 @@ class UserListEmbed extends \Laminas\View\Helper\AbstractHelper
 
         $loadMore = $offset !== null;
 
-        $opt['limit'] = $opt['limit'] ?? 100;
+        $opt['limit'] ??= 100;
 
         $resultsCopy = clone $this->results;
         $params = $resultsCopy->getParams();
@@ -197,7 +200,7 @@ class UserListEmbed extends \Laminas\View\Helper\AbstractHelper
                     ? null : $list->finna_updated ?? $list->created,
                 'listTags' => $listTags,
                 'headingLevel' => $opt['headingLevel'] ?? 2,
-                'allowCopy' => $opt['allowCopy'] ?? false
+                'allowCopy' => $opt['allowCopy'] ?? false,
             ]
         );
 
@@ -235,7 +238,7 @@ class UserListEmbed extends \Laminas\View\Helper\AbstractHelper
         return ($this)(
             [
                 'id' => $id, 'page' => 1, 'limit' => $limit,
-                'view' => $view, 'sort' => $sort
+                'view' => $view, 'sort' => $sort,
             ],
             $offset,
             $startIndex

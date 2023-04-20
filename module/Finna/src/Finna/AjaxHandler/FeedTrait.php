@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Feed support trait
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Laminas\Config\Config;
@@ -121,7 +123,7 @@ trait FeedTrait
 
         $settings = [
             'type' => $type,
-            'modal' => $modal
+            'modal' => $modal,
         ];
         if (isset($config->height)) {
             $settings['height'] = $config->height;
@@ -136,7 +138,7 @@ trait FeedTrait
             $settings['scrollSpeed']
                 = $config->scrollSpeed ?? 750;
             $breakPoints = [
-                'desktop' => 4, 'desktop-small' => 3, 'tablet' => 2, 'mobile' => 1
+                'desktop' => 4, 'desktop-small' => 3, 'tablet' => 2, 'mobile' => 1,
             ];
 
             foreach ($breakPoints as $breakPoint => $default) {

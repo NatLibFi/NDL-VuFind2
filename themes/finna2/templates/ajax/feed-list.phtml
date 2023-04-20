@@ -12,7 +12,7 @@
         <?php if (isset($item['link'])):?>
           <?php
             $linkElement = [
-              'href' => $item['link']
+              'href' => $item['link'],
             ];
             if ($this->linkTarget) {
               $linkElement['target'] = $this->linkTarget;

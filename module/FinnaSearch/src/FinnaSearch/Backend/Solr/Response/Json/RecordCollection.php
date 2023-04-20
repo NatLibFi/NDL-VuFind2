@@ -28,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org
  */
+
 namespace FinnaSearch\Backend\Solr\Response\Json;
 
 /**
@@ -40,8 +41,7 @@ namespace FinnaSearch\Backend\Solr\Response\Json;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org
  */
-class RecordCollection
-extends \VuFindSearch\Backend\Solr\Response\Json\RecordCollection
+class RecordCollection extends \VuFindSearch\Backend\Solr\Response\Json\RecordCollection
 {
     /**
      * Get query debug information
@@ -73,7 +73,8 @@ extends \VuFindSearch\Backend\Solr\Response\Json\RecordCollection
     protected function getRawSpellcheckSuggestions()
     {
         $query = $this->getSpellcheckQuery();
-        if (str_word_count($query) > 1
+        if (
+            str_word_count($query) > 1
             && isset($this->response['spellcheck']['collations'])
         ) {
             // Compose a list that resembles Solr's single-word suggestions
@@ -84,7 +85,7 @@ extends \VuFindSearch\Backend\Solr\Response\Json\RecordCollection
                 }
                 $suggestions[] = [
                     'word' => $collation[1],
-                    'freq' => 0
+                    'freq' => 0,
                 ];
             }
             return [[
@@ -92,8 +93,8 @@ extends \VuFindSearch\Backend\Solr\Response\Json\RecordCollection
                 [
                     'numFound' => count($suggestions),
                     'origFreq' => 0,
-                    'suggestion' => $suggestions
-                ]
+                    'suggestion' => $suggestions,
+                ],
             ]];
         }
         return $this->response['spellcheck']['suggestions'] ?? [];

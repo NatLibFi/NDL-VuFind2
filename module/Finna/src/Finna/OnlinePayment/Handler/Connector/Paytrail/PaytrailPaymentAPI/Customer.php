@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Paytrail Payment API customer
  *
@@ -26,6 +27,7 @@
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  * @link     http://docs.paytrail.com/ Paytrail API documentation
  */
+
 namespace Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailPaymentAPI;
 
 use Paytrail\SDK\Exception\ValidationException;

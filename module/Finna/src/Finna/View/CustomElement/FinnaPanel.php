@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Finna-panel custom element
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
+
 namespace Finna\View\CustomElement;
 
 /**
@@ -102,7 +104,7 @@ class FinnaPanel extends AbstractBase
                     array_keys(self::getAttributeToVariableMap())
                 ),
                 'CDATA'
-            )
+            ),
         ];
     }
 
@@ -119,7 +121,7 @@ class FinnaPanel extends AbstractBase
             self::TYPE => 'Heading',
             self::CONTENTS => 'Inline',
             self::ATTR_COLLECTIONS => 'Common',
-            self::ATTRIBUTES => ['slot' => 'CDATA']
+            self::ATTRIBUTES => ['slot' => 'CDATA'],
         ];
         return [
             'h1' => $hArgs,
@@ -132,8 +134,8 @@ class FinnaPanel extends AbstractBase
                 self::TYPE => 'Inline',
                 self::CONTENTS => 'Inline',
                 self::ATTR_COLLECTIONS => 'Common',
-                self::ATTRIBUTES => ['slot' => 'CDATA']
-            ]
+                self::ATTRIBUTES => ['slot' => 'CDATA'],
+            ],
         ];
     }
 
@@ -157,7 +159,7 @@ class FinnaPanel extends AbstractBase
         return [
             'attributes'   => ['class' => 'finna-panel-default'],
             'headingLevel' => 3,
-            'headingTag'   => true
+            'headingTag'   => true,
         ];
     }
 
@@ -172,7 +174,7 @@ class FinnaPanel extends AbstractBase
         return [
             'collapsed'     => 'collapsed',
             'heading-level' => 'headingLevel',
-            'heading-tag'   => 'headingTag'
+            'heading-tag'   => 'headingTag',
         ];
     }
 }

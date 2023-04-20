@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CPU payment handler
  *
@@ -28,6 +29,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\OnlinePayment\Handler;
 
 use Finna\OnlinePayment\Handler\Connector\Cpu\Client;
@@ -273,7 +275,7 @@ class CPU extends AbstractBase
 
         $params = [
             $transactionId, $status,
-            $response->Reference, $response->PaymentAddress
+            $response->Reference, $response->PaymentAddress,
         ];
         if (!$this->verifyHash($params, $response->Hash)) {
             $this->logPaymentError(
@@ -404,7 +406,7 @@ class CPU extends AbstractBase
         $hashParams = [
             $response['Id'],
             intval($response['Status']),
-            $response['Reference']
+            $response['Reference'],
         ];
         if (!$this->verifyHash($hashParams, $response['Hash'])) {
             $this->logPaymentError(

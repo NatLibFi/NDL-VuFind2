@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Online payment controller trait.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
+
 namespace Finna\Controller;
 
 use Laminas\Stdlib\Parameters;
@@ -229,7 +231,8 @@ trait FinnaOnlinePaymentControllerTrait
         $trTable = $this->getTable('transaction');
         $paymentInProgress = $trTable->isPaymentInProgress($patron['cat_username']);
         $transactionIdParam = 'finna_payment_id';
-        if ($pay && $session && $payableOnline
+        if (
+            $pay && $session && $payableOnline
             && $payableOnline['payable'] && $payableOnline['amount']
             && !$paymentInProgress
         ) {
@@ -252,7 +255,8 @@ trait FinnaOnlinePaymentControllerTrait
                 header("Location: " . $this->getServerUrl('myresearch-fines'));
                 exit();
             }
-            if ((($paymentConfig['exactBalanceRequired'] ?? true)
+            if (
+                (($paymentConfig['exactBalanceRequired'] ?? true)
                 || !empty($paymentConfig['creditUnsupported']))
                 && !$selectFees
                 && $this->checkIfFinesUpdated($patron, $payableOnline['amount'])
@@ -299,7 +303,8 @@ trait FinnaOnlinePaymentControllerTrait
 
         $request = $this->getRequest();
         $transactionId = $request->getQuery()->get($transactionIdParam);
-        if ($transactionId
+        if (
+            $transactionId
             && ($transaction = $trTable->getTransaction($transactionId))
         ) {
             $this->ensureLogger();
@@ -327,7 +332,7 @@ trait FinnaOnlinePaymentControllerTrait
                     // Display page and mark fees as paid via AJAX:
                     $view->registerPayment = true;
                     $view->registerPaymentParams = [
-                        'transactionId' => $transaction->transaction_id
+                        'transactionId' => $transaction->transaction_id,
                     ];
                 } elseif ($paymentHandler::PAYMENT_CANCEL === $result) {
                     $this->flashMessenger()

@@ -38,7 +38,7 @@
 
 <?php
   $options = [
-    'items' => []
+    'items' => [],
   ];
   foreach ($geoFilters as $filter) {
     foreach (preg_split('/\s+OR\s+/', $filter) as $item) {
@@ -47,9 +47,9 @@
   }
   $options = json_encode($options);
   $script = <<<JS
-  $(document).ready(function() {
-    finna.MapFacet.initMapFacet($options);
-  });
-JS;
+        $(document).ready(function() {
+          finna.MapFacet.initMapFacet($options);
+        });
+      JS;
   echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
 ?>

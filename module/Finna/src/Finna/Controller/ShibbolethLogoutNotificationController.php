@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Shibboleth Logout Notification API Controller
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
  */
+
 namespace Finna\Controller;
 
 use Laminas\ServiceManager\ServiceLocatorInterface;
@@ -39,8 +41,7 @@ use Laminas\ServiceManager\ServiceLocatorInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
  */
-class ShibbolethLogoutNotificationController
-extends \VuFind\Controller\ShibbolethLogoutNotificationController
+class ShibbolethLogoutNotificationController extends \VuFind\Controller\ShibbolethLogoutNotificationController
 {
     /**
      * Is R2 search enabled?

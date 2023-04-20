@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Error Controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
  */
+
 namespace Finna\Controller;
 
 /**
@@ -51,7 +53,8 @@ class ErrorController extends \VuFind\Controller\ErrorController
             $router = $event->getRouter();
             if ($router) {
                 $routeMatch = $router->match($this->getRequest());
-                if (strcasecmp($routeMatch->getParam('controller'), 'adminapi') == 0
+                if (
+                    strcasecmp($routeMatch->getParam('controller'), 'adminapi') == 0
                 ) {
                     return $this->forward()->dispatch(
                         $routeMatch->getParam('controller'),

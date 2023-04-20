@@ -7,7 +7,7 @@
           'results' => $this->results,
           'params' => $this->params,
           'indexStart' => $this->indexStart,
-          'hideCartControls' => true
+          'hideCartControls' => true,
         ];
         if (!isset($this->layout()->templateDir)) {
           // This needs to be set so that list notes are shown
@@ -23,7 +23,7 @@
               $transParams = [
                 '%%start%%' => 1,
                 '%%end%%' => $limit,
-                '%%total%%' => $this->localizedNumber($this->total)
+                '%%total%%' => $this->localizedNumber($this->total),
               ];
             ?>
             <?=$this->translate('showing_results_of_html', $transParams)?>
@@ -37,10 +37,10 @@
   <?php
     $this->headScript()->appendFile('finna-encapsulated-records.js');
     $js = <<<JS
-$(document).ready(function(){
-  finna.encapsulatedRecords.init();
-});
-JS;
+        $(document).ready(function(){
+          finna.encapsulatedRecords.init();
+        });
+        JS;
     $this->headScript()->appendScript($js);
   ?>
 <?php endif; ?>

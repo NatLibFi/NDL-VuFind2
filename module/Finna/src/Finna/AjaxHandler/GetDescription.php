@@ -1,4 +1,5 @@
 <?php
+
 /**
  * GetDescription AJAX handler
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Laminas\Config\Config;
@@ -45,8 +47,9 @@ use VuFind\Session\Settings as SessionSettings;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class GetDescription extends \VuFind\AjaxHandler\AbstractBase
-implements TranslatorAwareInterface, \VuFindHttp\HttpServiceAwareInterface
+class GetDescription extends \VuFind\AjaxHandler\AbstractBase implements
+    TranslatorAwareInterface,
+    \VuFindHttp\HttpServiceAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFindHttp\HttpServiceAwareTrait;
@@ -126,7 +129,8 @@ implements TranslatorAwareInterface, \VuFindHttp\HttpServiceAwareInterface
 
         $maxAge = $this->config->Content->summarycachetime ?? 1440;
 
-        if (is_readable($localFile)
+        if (
+            is_readable($localFile)
             && time() - filemtime($localFile) < $maxAge * 60
         ) {
             // Load local cache if available

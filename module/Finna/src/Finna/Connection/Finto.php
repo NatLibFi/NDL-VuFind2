@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Finto connection class.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\Connection;
 
 use Laminas\Config\Config;
@@ -124,7 +126,7 @@ class Finto implements LoggerAwareInterface
             [
                 'timeout' => $this->config->get('http_timeout', 30),
                 'useragent' => 'VuFind',
-                'keepalive' => true
+                'keepalive' => true,
             ]
         );
 
@@ -265,7 +267,8 @@ class Finto implements LoggerAwareInterface
             // There is only one result.
             $result = reset($results['results']);
 
-            if (((isset($result['altLabel'])
+            if (
+                ((isset($result['altLabel'])
                 && $result['altLabel'] === $query)
                 || (isset($result['hiddenLabel'])
                 && $result['hiddenLabel'] === $query))
@@ -276,12 +279,13 @@ class Finto implements LoggerAwareInterface
             } elseif ($narrower) {
                 // The result is not a non-descriptor so we will make an additional
                 // API call to see if there are narrower concepts.
-                if ($narrowerResults = $this->narrower(
-                    $result['vocab'],
-                    $result['uri'],
-                    $result['lang'],
-                    true
-                )
+                if (
+                    $narrowerResults = $this->narrower(
+                        $result['vocab'],
+                        $result['uri'],
+                        $result['lang'],
+                        true
+                    )
                 ) {
                     $extendedResults[Finto::RESULT_TYPE] = Finto::TYPE_HYPONYM;
                     $extendedResults[Finto::NARROWER_RESULTS] = $narrowerResults;

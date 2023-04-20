@@ -29,7 +29,7 @@
         <?php endif; ?>
         <ul class="record-organisation-info">
         <?php if (isset($currentSource['imageUrl'])): ?>
-          <li><img src="<?=$currentSource['imageUrl']?>"/></li>
+          <li><img src="<?=$currentSource['imageUrl']?>"></li>
         <?php endif; ?>
         <?php if (isset($currentSource['moreinfoLink'])): ?>
           <li><a href="<?=$currentSource['moreinfoLink']?>"><?=$this->transEsc('More information about organisation')?></a></li>

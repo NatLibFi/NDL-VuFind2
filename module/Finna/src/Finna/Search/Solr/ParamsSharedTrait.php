@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Additional functionality for Solr parameters shared with Blender.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\Search\Solr;
 
 /**
@@ -53,10 +55,11 @@ trait ParamsSharedTrait
         if ($id = $this->parseAuthorIdFilter($value)) {
             // Author id filter  (OR query with <field>:<author-id> pairs)
             $displayText = $this->authorityHelper->formatFacet($id);
-        } elseif (in_array(
-            $filter['field'],
-            $this->authorityHelper->getAuthorIdFacets()
-        )
+        } elseif (
+            in_array(
+                $filter['field'],
+                $this->authorityHelper->getAuthorIdFacets()
+            )
         ) {
             $displayText = $this->authorityHelper->formatFacet($displayText);
         }
