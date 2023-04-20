@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Factory for Cover Art Archive Images module.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\Content\Covers;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Browse Search Controller
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
+
 namespace Finna\Controller;
 
 use VuFind\Exception\BadConfig as BadConfigException;
@@ -100,7 +102,11 @@ class BrowseSearchController extends SearchController
         }
 
         $config = $config[$type];
-        $callback = function ($runner, $params, $searchId) use (
+        $callback = function (
+            $runner,
+            $params,
+            $searchId
+        ) use (
             $config,
             $type
         ) {
@@ -116,8 +122,8 @@ class BrowseSearchController extends SearchController
             $listener->setConfig(
                 [
                     'side' => [
-                        "SideFacets:Browse{$type}:CheckboxFacets:facets-browse"
-                    ]
+                        "SideFacets:Browse{$type}:CheckboxFacets:facets-browse",
+                    ],
                 ]
             );
             $listener->attach($runner->getEventManager()->getSharedManager());

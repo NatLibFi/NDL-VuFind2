@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Feedback Recommendations Module.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
+
 namespace Finna\Recommend;
 
 use Finna\Cookie\RecommendationMemory;
@@ -136,8 +138,8 @@ class Feedback implements RecommendInterface
                 'original'
                     => $this->recData[RecommendationMemory::ORIGINAL],
                 'recommendation_type'
-                    => $this->recData[RecommendationMemory::RECOMMENDATION_TYPE]
-            ]
+                    => $this->recData[RecommendationMemory::RECOMMENDATION_TYPE],
+            ],
         ];
     }
 }

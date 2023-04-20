@@ -17,7 +17,7 @@
 <?=$this->flashmessages()?>
 <?php if (!isset($this->requestCompleted) || !$this->requestCompleted): ?>
   <form name="requestAddressChange" method="post" action="<?=$this->url('myresearch-changeprofileaddress')?>" class="address-form profile-form" data-toggle="validator">
-    <input type="hidden" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>" name="csrf"/>
+    <input type="hidden" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>" name="csrf">
     <?php $currentGroup = ''; ?>
     <?php foreach ($this->fields as $field => $data): ?>
       <?php
@@ -80,7 +80,7 @@
             <legend class="control-label radio-label"><?=$this->transEsc($data['label']) ?>:</legend>
             <?php foreach($data['options'] as $optionId => $option): ?>
               <?php $name = is_string($option) ? $option : ($option['name'] ?? $optionId); ?>
-              <input type="radio" name="<?=$this->escapeHtmlAttr($field)?>" id="<?=$this->escapeHtmlAttr($field . '_' . $optionId) ?>" class="form-control" value="<?=$this->escapeHtmlAttr($optionId)?>"<?=$optionId == $value ? ' checked' : ''?><?=$data['required'] ?? false ? ' required aria-required="true"': ''?><?=$data['readonly'] ?? false ? ' readonly': ''?>>
+              <input type="radio" name="<?=$this->escapeHtmlAttr($field)?>" id="<?=$this->escapeHtmlAttr($field . '_' . $optionId) ?>" class="form-control" value="<?=$this->escapeHtmlAttr($optionId)?>"<?=$optionId == $value ? ' checked' : ''?><?=$data['required'] ?? false ? ' required aria-required="true"' : ''?><?=$data['readonly'] ?? false ? ' readonly' : ''?>>
               <label class="control-label" for="<?=$this->escapeHtmlAttr($field . '_' . $optionId) ?>"><?=$this->transEsc($name) ?></label>
               <br>
             <?php endforeach; ?>
@@ -102,7 +102,7 @@
                 'name' => $field,
                 'type' => $data['type'],
                 'value' => $value,
-                'class' => 'form-control'
+                'class' => 'form-control',
               ];
               if ($data['required']) {
                 $attrs['required'] = true;
@@ -124,7 +124,7 @@
       </fieldset>
     <?php endif; ?>
     <div class="form-group">
-      <input name="address_change_request" class="btn btn-primary" type="submit" value="<?=$this->transEscAttr('Send') ?>" />
+      <input name="address_change_request" class="btn btn-primary" type="submit" value="<?=$this->transEscAttr('Send') ?>">
     </div>
   </form>
 <?php endif; ?>

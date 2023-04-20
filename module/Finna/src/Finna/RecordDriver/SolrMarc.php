@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Model for MARC records in Solr.
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver;
 
 /**
@@ -40,8 +42,7 @@ namespace Finna\RecordDriver;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
-class SolrMarc extends \VuFind\RecordDriver\SolrMarc
-implements \Laminas\Log\LoggerAwareInterface
+class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\LoggerAwareInterface
 {
     use Feature\SolrFinnaTrait;
     use Feature\FinnaMarcReaderTrait;
@@ -62,7 +63,7 @@ implements \Laminas\Log\LoggerAwareInterface
         '650' => 'topic',
         '651' => 'geographic',
         '653' => '',
-        '656' => 'occupation'
+        '656' => 'occupation',
     ];
 
     /**
@@ -230,19 +231,21 @@ implements \Laminas\Log\LoggerAwareInterface
                 $image = strcasecmp($part, 'Image') === 0;
             }
 
-            if (($image || $pdf) && $this->urlAllowed($address)
+            if (
+                ($image || $pdf)
+                && $this->urlAllowed($address)
                 && ($pdf || $this->isUrlLoadable($address, $this->getUniqueID()))
             ) {
                 $urls[$image ? 'images' : 'pdfs'][] = [
                     'urls' => [
                         'small' => $address,
                         'medium' => $address,
-                        'large' => $address
+                        'large' => $address,
                     ],
                     'description' => '',
                     'rights' => [],
                     'downloadable' => false,
-                    'pdf' => $pdf
+                    'pdf' => $pdf,
                 ];
             }
         }
@@ -299,7 +302,8 @@ implements \Laminas\Log\LoggerAwareInterface
                         );
                         if ($isFennicaOrFinuc) {
                             $classification .= 'f';
-                        } elseif ($version
+                        } elseif (
+                            $version
                             && preg_match('/(\d{4})/', $version, $matches)
                             && (int)$matches[1] >= 2009
                         ) {
@@ -411,7 +415,8 @@ implements \Laminas\Log\LoggerAwareInterface
             if (!$subfield) {
                 continue;
             }
-            if (preg_match('/,\s*\w\.?\s*([\d,\-]+)/', $subfield, $matches)
+            if (
+                preg_match('/,\s*\w\.?\s*([\d,\-]+)/', $subfield, $matches)
                 || preg_match('/^\w\.?\s*([\d,\-]+)/', $subfield, $matches)
             ) {
                 $pages = explode('-', $matches[1]);
@@ -504,11 +509,7 @@ implements \Laminas\Log\LoggerAwareInterface
         $results = [];
         foreach ($this->getMarcReader()->getFields('534') as $field) {
             $result = [];
-            if ($subfields = $this->getSubfieldArray(
-                $field,
-                ['p', 'c']
-            )
-            ) {
+            if ($subfields = $this->getSubfieldArray($field, ['p', 'c'])) {
                 $result['notes'] = implode(' ', $subfields);
             }
             if ($result) {
@@ -626,9 +627,7 @@ implements \Laminas\Log\LoggerAwareInterface
                 $partOtherAuthors = [];
                 foreach ($partAuthors as $author) {
                     if (isset($this->recordConfig['Record']['presenter_roles'])) {
-                        foreach ($this->recordConfig['Record']['presenter_roles']
-                            as $role
-                        ) {
+                        foreach ($this->recordConfig['Record']['presenter_roles'] as $role) {
                             $author = trim($author);
                             if (substr($author, -strlen($role) - 2) == ", $role") {
                                 $partPresenters[] = $author;
@@ -637,9 +636,7 @@ implements \Laminas\Log\LoggerAwareInterface
                         }
                     }
                     if (isset($this->recordConfig['Record']['arranger_roles'])) {
-                        foreach ($this->recordConfig['Record']['arranger_roles']
-                            as $role
-                        ) {
+                        foreach ($this->recordConfig['Record']['arranger_roles'] as $role) {
                             if (substr($author, -strlen($role) - 2) == ", $role") {
                                 $partArrangers[] = $author;
                                 continue 2;
@@ -732,7 +729,7 @@ implements \Laminas\Log\LoggerAwareInterface
             's' => 'numPerformers',
             't' => 'numEnsembles',
             'v' => 'note',
-            '3' => 'materials'
+            '3' => 'materials',
         ];
         $marc = $this->getMarcReader();
         foreach ($marc->getFields('382') as $field) {
@@ -740,7 +737,8 @@ implements \Laminas\Log\LoggerAwareInterface
             $items = [];
             foreach ($allSubfields as $subfield) {
                 $code = $subfield['code'];
-                if (($type = $typeMap[$code] ?? false)
+                if (
+                    ($type = $typeMap[$code] ?? false)
                     && ($contents = trim($subfield['data']))
                 ) {
                     $items[] = compact('type', 'contents');
@@ -862,7 +860,8 @@ implements \Laminas\Log\LoggerAwareInterface
         $sourceId = $this->getSourceIdentifier();
         $fields = $this->getMarcReader()->getFields('773');
 
-        if (!empty($this->fields['hierarchy_parent_id'])
+        if (
+            !empty($this->fields['hierarchy_parent_id'])
             && count($this->fields['hierarchy_parent_id']) > count($fields)
         ) {
             // Can't use 773 fields since they don't represent the actual links
@@ -875,7 +874,7 @@ implements \Laminas\Log\LoggerAwareInterface
                     'sourceId' => $sourceId,
                     'title' => $title,
                     'reference' => '',
-                    'publishingInfo' => ''
+                    'publishingInfo' => '',
                 ];
             }
             return $result;
@@ -911,7 +910,8 @@ implements \Laminas\Log\LoggerAwareInterface
                 }
             }
 
-            if (count($fields) === 1
+            if (
+                count($fields) === 1
                 && !empty($this->fields['hierarchy_parent_id'])
             ) {
                 // If we only have one field, use the hierarchy data for id
@@ -976,7 +976,7 @@ implements \Laminas\Log\LoggerAwareInterface
         }
 
         $fields = [
-            '022' => ['a']
+            '022' => ['a'],
             /* We don't want to display all ISSNs without further
              * explanation on their relationship with this record.
             '440' => ['x'],
@@ -1048,7 +1048,8 @@ implements \Laminas\Log\LoggerAwareInterface
                     $roles = array_map([$this, 'stripTrailingPunctuation'], $roles);
                     $role = implode(', ', $roles);
                     $role = mb_strtolower($role, 'UTF-8');
-                    if ($role
+                    if (
+                        $role
                         && isset($this->mainConfig->Record->presenter_roles)
                         && in_array(
                             trim($role, ' .'),
@@ -1078,7 +1079,7 @@ implements \Laminas\Log\LoggerAwareInterface
                         'role' => $role,
                         'id' => $id ?: null,
                         'type' => in_array($fieldCode, ['100', '700'])
-                            ? 'Personal Name' : 'Corporate Name'
+                            ? 'Personal Name' : 'Corporate Name',
                     ];
                 }
             }
@@ -1141,7 +1142,8 @@ implements \Laminas\Log\LoggerAwareInterface
                     }
                     $role = mb_strtolower($role, 'UTF-8');
                     $role = $this->stripTrailingPunctuation($role);
-                    if (!$role
+                    if (
+                        !$role
                         || !isset($this->mainConfig->Record->presenter_roles)
                         || !in_array(
                             trim($role, ' .'),
@@ -1159,7 +1161,7 @@ implements \Laminas\Log\LoggerAwareInterface
                             'date' => $dates
                                 ? $this->stripTrailingPunctuation($dates[0]) : '',
                             'role' => $role,
-                            'id' => $id ?: null
+                            'id' => $id ?: null,
                         ];
                     }
                 }
@@ -1261,7 +1263,7 @@ implements \Laminas\Log\LoggerAwareInterface
         $primaryFields = [
             '440' => ['a', 'n', 'p'],
             '800' => ['a', 'b', 'c', 'd', 'f', 'n', 'p', 'q', 't', 'l', 'v'],
-            '830' => ['a', 'v']
+            '830' => ['a', 'v'],
         ];
         $matches = $this->getSeriesFromMARC($primaryFields);
 
@@ -1434,9 +1436,7 @@ implements \Laminas\Log\LoggerAwareInterface
                 continue;
             }
             $item = $this->getSubfield($field, 'a');
-            if (!$item
-                || !in_array($item, ['kieli', 'språk', 'language'])
-            ) {
+            if (!$item || !in_array($item, ['kieli', 'språk', 'language'])) {
                 continue;
             }
             $link = $this->getSubfield($field, '8');
@@ -1516,7 +1516,7 @@ implements \Laminas\Log\LoggerAwareInterface
             foreach ($this->getMarcReader()->getFields($fieldCode) as $field) {
                 $results = [
                     ...$results,
-                    ...$this->getSubfieldArray($field, range('a', 'z'))
+                    ...$this->getSubfieldArray($field, range('a', 'z')),
                 ];
             }
         }
@@ -1544,7 +1544,7 @@ implements \Laminas\Log\LoggerAwareInterface
         // Which fields/subfields should we check for URLs?
         $fieldsToCheck = [
             '856' => ['y', 'z', '3'], // Standard URL
-            '555' => ['a']            // Cumulative index/finding aids
+            '555' => ['a'],            // Cumulative index/finding aids
         ];
 
         foreach ($fieldsToCheck as $field => $subfields) {
@@ -1555,7 +1555,8 @@ implements \Laminas\Log\LoggerAwareInterface
                     $address = $this->getSubfield($url, 'u');
                     // Require at least one dot surrounded by valid characters or a
                     // familiar scheme
-                    if ($address
+                    if (
+                        $address
                         && (preg_match('/[A-Za-z0-9]\.[A-Za-z0-9]/', $address)
                         || preg_match('/^(http|ftp)s?:\/\//', $address))
                     ) {
@@ -1580,9 +1581,10 @@ implements \Laminas\Log\LoggerAwareInterface
                         }
 
                         $data = [
-                            'url' => $address, 'desc' => $desc, 'part' => $part
+                            'url' => $address, 'desc' => $desc, 'part' => $part,
                         ];
-                        if (!$this->urlBlocked($address, $desc)
+                        if (
+                            !$this->urlBlocked($address, $desc)
                             && !in_array($data, $retVal)
                         ) {
                             $retVal[] = $data;
@@ -1613,7 +1615,9 @@ implements \Laminas\Log\LoggerAwareInterface
         }
         // Or maybe in 730 fields?
         foreach ($this->getMarcReader()->getFields('730') as $field) {
-            if ($field['i2'] == 2 && ('' !== $this->getSubfield($field, 'a')
+            if (
+                $field['i2'] == 2
+                && ('' !== $this->getSubfield($field, 'a')
                 || '' !== $this->getSubfield($field, 't'))
             ) {
                 return true;
@@ -1749,7 +1753,7 @@ implements \Laminas\Log\LoggerAwareInterface
                     if ($isbn = $this->getSubfield($field, 'z')) {
                         $link = [
                             'type' => 'isn', 'value' => trim($isbn),
-                            'exclude' => $this->getUniqueId()
+                            'exclude' => $this->getUniqueId(),
                         ];
                     }
                     break;
@@ -1757,7 +1761,7 @@ implements \Laminas\Log\LoggerAwareInterface
                     if ($issn = $this->getSubfield($field, 'x')) {
                         $link = [
                             'type' => 'isn', 'value' => trim($issn),
-                            'exclude' => $this->getUniqueId()
+                            'exclude' => $this->getUniqueId(),
                         ];
                     }
                     break;
@@ -1775,7 +1779,7 @@ implements \Laminas\Log\LoggerAwareInterface
         return !isset($link) ? false : [
             'title' => $note,
             'value' => $title,
-            'link'  => $link
+            'link'  => $link,
         ];
     }
 
@@ -1804,7 +1808,8 @@ implements \Laminas\Log\LoggerAwareInterface
         foreach ($marc->getFields($linkage['field']) as $linkedField) {
             $sub6 = $marc->getSubfield($linkedField, '6');
             $targetLinkage = $marc->parseLinkageField($sub6);
-            if ($targetLinkage['field'] == $field['tag']
+            if (
+                $targetLinkage['field'] == $field['tag']
                 && $targetLinkage['occurrence'] === $linkage['occurrence']
             ) {
                 $data = $this->getSubfieldArray($linkedField, $subfields);
@@ -1842,7 +1847,7 @@ implements \Laminas\Log\LoggerAwareInterface
                     if ($name) {
                         $currentArray = [
                             'name' =>
-                                $this->stripTrailingPunctuation(array_shift($name))
+                                $this->stripTrailingPunctuation(array_shift($name)),
                         ];
                         $currentArray['additional'] = implode(' ', $name);
 
@@ -1890,7 +1895,8 @@ implements \Laminas\Log\LoggerAwareInterface
     {
         // BTJ
         if (preg_match('/^(http|https):.*\.btj\.com\//', $url)) {
-            if (!isset($this->mainConfig->Record->btj_links)
+            if (
+                !isset($this->mainConfig->Record->btj_links)
                 || !$this->mainConfig->Record->btj_links
             ) {
                 return false;
@@ -1899,7 +1905,8 @@ implements \Laminas\Log\LoggerAwareInterface
 
         // Kirjavälitys
         if (strstr($url, 'http://data.kirjavalitys.fi/')) {
-            if (!isset($this->mainConfig->Record->kirjavalitys_links)
+            if (
+                !isset($this->mainConfig->Record->kirjavalitys_links)
                 || !$this->mainConfig->Record->kirjavalitys_links
             ) {
                 return false;
@@ -2001,7 +2008,7 @@ implements \Laminas\Log\LoggerAwareInterface
             $results[] = [
                 'description' => $marcReader->getSubfield($field, 'a'),
                 'term' => $marcReader->getSubfield($field, 'b'),
-                'url' => $marcReader->getSubfield($field, '0')
+                'url' => $marcReader->getSubfield($field, '0'),
             ];
         }
         return $results;
@@ -2396,7 +2403,8 @@ implements \Laminas\Log\LoggerAwareInterface
         $results = [];
         $results = $this->getFieldArray('341', ['a', 'b'], true, ': ');
         foreach ($this->getMarcReader()->getFields('532') as $field) {
-            if ((in_array($field['i1'], ['0', '1']))
+            if (
+                in_array($field['i1'], ['0', '1'])
                 && ($subfield = $this->getSubfield($field, 'a'))
             ) {
                 $results[] = $this->stripTrailingPunctuation($subfield);
@@ -2414,7 +2422,8 @@ implements \Laminas\Log\LoggerAwareInterface
     {
         $results = [];
         foreach ($this->getMarcReader()->getFields('532') as $field) {
-            if (($field['i1'] === '2')
+            if (
+                ($field['i1'] === '2')
                 && ($subfield = $this->getSubfield($field, 'a'))
             ) {
                 $results[] = $this->stripTrailingPunctuation($subfield);

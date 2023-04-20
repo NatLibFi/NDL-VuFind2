@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for comments
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Db\Table;
 
 /**
@@ -103,11 +105,11 @@ class Comments extends \VuFind\Db\Table\Comments
         $this->update(
             [
                 'comment' => $comment,
-                'finna_updated' => date('Y-m-d H:i:s')
+                'finna_updated' => date('Y-m-d H:i:s'),
             ],
             [
                 'id' => $id,
-                'user_id' => $userId
+                'user_id' => $userId,
             ]
         );
     }

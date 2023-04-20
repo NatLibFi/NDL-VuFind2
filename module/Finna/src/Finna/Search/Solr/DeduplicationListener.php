@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Solr deduplication (merged records) listener.
  *
@@ -25,10 +26,10 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Search\Solr;
 
 use Laminas\EventManager\EventInterface;
-
 use VuFindSearch\Query\Query;
 use VuFindSearch\Query\QueryGroup;
 
@@ -59,7 +60,8 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
             $query = method_exists($command, 'getQuery')
                 ? $command->getQuery()
                 : null;
-            if ($query
+            if (
+                $query
                 && !($query instanceof QueryGroup)
                 && ($query instanceof Query && $query->getHandler() === 'id')
             ) {
@@ -129,7 +131,8 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
         }
         $context = $command->getContext();
         $params = $command->getSearchParameters();
-        if ($params
+        if (
+            $params
             && in_array($context, ['search', 'similar', 'workExpressions'])
         ) {
             if ($params->contains('finna.deduplication', '1')) {
@@ -179,7 +182,8 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
             $localRecordData['online_urls_str_mv'] = [];
             foreach ($dedupRecordData['online_urls_str_mv'] as $onlineURL) {
                 $onlineURLArray = json_decode($onlineURL, true);
-                if (!$recordSources
+                if (
+                    !$recordSources
                     || isset($sourcePriority[$onlineURLArray['source']])
                 ) {
                     $localRecordData['online_urls_str_mv'][] = $onlineURL;
@@ -250,9 +254,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
         $userPreferenceService = $this->serviceLocator->get(
             \Finna\Service\UserPreferenceService::class
         );
-        foreach (array_reverse($userPreferenceService->getPreferredDataSources())
-            as $source
-        ) {
+        foreach (array_reverse($userPreferenceService->getPreferredDataSources()) as $source) {
             if (false !== ($key = array_search($source, $recordSources))) {
                 unset($recordSources[$key]);
             }

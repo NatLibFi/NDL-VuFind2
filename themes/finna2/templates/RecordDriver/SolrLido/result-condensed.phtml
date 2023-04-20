@@ -59,8 +59,8 @@
   <div class="media condensed-collapse-data">
     <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
       <div class="media-left condensed-image resultThumb">
-        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
-        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId">
+        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource">
           <?=$thumbnail ?>
       </div>
     <?php endif; ?>
@@ -88,7 +88,7 @@
         <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
           <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
           <div class="hierarchyTreeLink">
-            <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId" />
+            <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId">
             <i class="fa fa-sitemap"></i>
             <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID]))?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>" data-lightbox-href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID]))?>" data-lightbox-post="tab=hierarchytree">
                 <?=$this->transEsc('hierarchy_view_context')?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?>
@@ -98,7 +98,7 @@
         <?php endif; ?>
 
           <?php $openUrl = $this->driver->getOpenURL(); ?>
-          <?=$openUrl?'<span class="Z3988" title="' . $this->escapeHtmlAttr($openUrl) . '"></span>':''?>
+          <?=$openUrl ? '<span class="Z3988" title="' . $this->escapeHtmlAttr($openUrl) . '"></span>' : ''?>
 
         <?php /* Saved lists */ ?>
         <div class="savedLists">
@@ -108,8 +108,8 @@
     </div>
     <?php if ($thumbnail && $thumbnailAlignment === 'right'): ?>
     <div class="media-right condensed-image resultThumb">
-      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
-      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId">
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource">
         <?=$thumbnail ?>
     </div>
     <?php endif; ?>

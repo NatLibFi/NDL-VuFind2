@@ -61,7 +61,7 @@ $this->jsTranslations()->addStrings(
         'Carousel::Select Page' => 'Carousel::Select Page',
         'Carousel::slide_label' => 'Carousel::slide_label',
         'Carousel::Start Autoplay' => 'Carousel::Start Autoplay',
-        'Carousel::Stop Autoplay' => 'Carousel::Stop Autoplay'
+        'Carousel::Stop Autoplay' => 'Carousel::Stop Autoplay',
     ]
 );
 
@@ -71,7 +71,7 @@ if ($this->searchbox()->autocompleteEnabled($this->searchClassId ?? 'Solr')) {
     $this->jsTranslations()->addStrings(['autocomplete_phrase' => $this->translate('autocomplete_phrase')]);
   }
 
-  $browse = $browse ?? false;
+  $browse ??= false;
   if (!$browse) {
     $activeTab = $this->searchClassId ?? DEFAULT_SEARCH_BACKEND;
     if (isset($searchTabs['selected'])) {

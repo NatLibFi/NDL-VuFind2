@@ -1,4 +1,5 @@
 <?php
+
 /**
  * "Get Request Group Pickup Locations" AJAX handler
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Laminas\Mvc\Controller\Plugin\Params;
@@ -43,8 +45,7 @@ use Laminas\Mvc\Controller\Plugin\Params;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class GetRequestGroupPickupLocations
-extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
+class GetRequestGroupPickupLocations extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
 {
     /**
      * Handle a request.

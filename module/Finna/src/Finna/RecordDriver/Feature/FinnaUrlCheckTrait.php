@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Trait for checking external content url validity
  *
@@ -29,6 +30,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/configuration:external_content Wiki
  */
+
 namespace Finna\RecordDriver\Feature;
 
 /**
@@ -78,7 +80,8 @@ trait FinnaUrlCheckTrait
         }
 
         $scheme = parse_url($url, PHP_URL_SCHEME);
-        if (!in_array($scheme, ['http', 'https'])
+        if (
+            !in_array($scheme, ['http', 'https'])
             || !is_callable([$this, 'getConfig'])
         ) {
             return self::$urlCheckResultCache[$url] = false;

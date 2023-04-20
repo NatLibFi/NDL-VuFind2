@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Row definition for finna_page_view_stats
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Db\Row;
 
 /**
@@ -50,7 +52,7 @@ class FinnaPageViewStats extends \VuFind\Db\Row\RowGateway
                 'institution',
                 'view',
                 'crawler',
-                'date'
+                'date',
             ],
             'finna_page_view_stats',
             $adapter

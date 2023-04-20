@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Axiell Web Services ILS Driver
  *
@@ -29,6 +30,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
+
 namespace Finna\ILS\Driver;
 
 use DOMDocument;
@@ -49,8 +51,9 @@ use VuFind\I18n\Translator\TranslatorAwareInterface as TranslatorAwareInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
-class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
-implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
+class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
+    TranslatorAwareInterface,
+    \Laminas\Log\LoggerAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface
 {
     use \VuFindHttp\HttpServiceAwareTrait;
@@ -215,7 +218,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
     protected $messagingFilters = [
         'pickUpNotice' => [],
         'overdueNotice' => [],
-        'dueDateAlert' => []
+        'dueDateAlert' => [],
     ];
 
     /**
@@ -227,7 +230,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
         'new' => 'shownovelty',
         'mostrequested' => 'mostreserved',
         'mostborrowed' => 'mostloaned',
-        'lastreturned' => 'showlastreturned'
+        'lastreturned' => 'showlastreturned',
     ];
 
     /**
@@ -247,7 +250,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
      */
     protected $oldStatuses = [
         'snailMail' => 'letter',
-        'ilsDefined' => 'none'
+        'ilsDefined' => 'none',
     ];
 
     /**
@@ -266,9 +269,9 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 'type_ns' => 'http://www.w3.org/2001/XMLSchema',
                 'type_name' => 'anyType',
                 'from_xml' => ['\AxiellWebServices', 'anyTypeToString'],
-                'to_xml' => ['\AxiellWebServices', 'stringToAnyType']
-            ]
-        ]
+                'to_xml' => ['\AxiellWebServices', 'stringToAnyType'],
+            ],
+        ],
     ];
 
     /**
@@ -286,12 +289,12 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
     protected $excludedPickUpLocations = [
         'regional' => [
             'organisation' => [],
-            'unit' => []
+            'unit' => [],
         ],
         'normal' => [
             'organisation' => [],
-            'unit' => []
-        ]
+            'unit' => [],
+        ],
     ];
 
     /**
@@ -418,15 +421,16 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
         $this->excludedPickUpLocations = [
             'normal' => [
                 'unit' => $excludedNormalLocations,
-                'organisation' => $excludedNormalOrganisations
+                'organisation' => $excludedNormalOrganisations,
             ],
             'regional' => [
                 'unit' => $excludedRegionalLocations,
-                'organisation' => $excludedRegionalOrganisations
-            ]
+                'organisation' => $excludedRegionalOrganisations,
+            ],
         ];
 
-        if ($this->defaultPickUpLocation == '0'
+        if (
+            $this->defaultPickUpLocation == '0'
             || $this->defaultPickUpLocation === 'user-selected'
         ) {
             $this->defaultPickUpLocation = false;
@@ -500,7 +504,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 'new' => 15,
                 'lastreturned' => 15,
                 'mostborrowed' => 480,
-                'mostrequested' => 240
+                'mostrequested' => 240,
             ];
 
         if (!empty($this->config['Catalog']['connection_timeout'])) {
@@ -585,7 +589,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             'language' => $this->getLanguage(),
             'country' => 'FI',
             'reservationEntities' => $id,
-            'reservationType' => $holdType
+            'reservationType' => $holdType,
         ];
 
         $result = $this->doSOAPRequest(
@@ -620,14 +624,16 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 continue;
             }
 
-            if (!empty($holdDetails['_organization']) && $limitToCurrentOrganisation
+            if (
+                !empty($holdDetails['_organization']) && $limitToCurrentOrganisation
                 && $organisation->name !== $holdDetails['_organization']
             ) {
                 continue;
             }
 
             $organisationID = $organisation->id;
-            if (!empty($this->excludedPickUpLocations[$holdType])
+            if (
+                !empty($this->excludedPickUpLocations[$holdType])
                 && in_array(
                     $organisationID,
                     $this->excludedPickUpLocations[$holdType]['organisation'] ?? []
@@ -644,7 +650,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             foreach ($branches as $branch) {
                 $locationID
                     = $organisationID . '.' . $branch->id;
-                if (!empty($this->excludedPickUpLocations[$holdType])
+                if (
+                    !empty($this->excludedPickUpLocations[$holdType])
                     && in_array(
                         $locationID,
                         $this->excludedPickUpLocations[$holdType]['unit'] ?? []
@@ -655,7 +662,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
 
                 $locationsList[] = [
                     'locationID' => $locationID,
-                    'locationDisplay' => $branch->name
+                    'locationDisplay' => $branch->name,
                 ];
             }
         }
@@ -726,12 +733,12 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
         $requestGroups = [
             [
                 'id'   => 'normal',
-                'name' => 'axiell_normal'
+                'name' => 'axiell_normal',
             ],
             [
                 'id'   => 'regional',
-                'name' => 'axiell_regional'
-            ]
+                'name' => 'axiell_regional',
+            ],
         ];
         return $requestGroups;
     }
@@ -792,7 +799,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             'organisationId' => $organisation,
             'pickUpBranchId' => $branch,
             'validFromDate' => $validFromDate,
-            'validToDate' => $validToDate
+            'validToDate' => $validToDate,
         ];
 
         $result = $this->doSOAPRequest(
@@ -813,12 +820,12 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             }
             return [
                'success' => false,
-               'sysMessage' => $message
+               'sysMessage' => $message,
             ];
         }
 
         return [
-            'success' => true
+            'success' => true,
         ];
     }
 
@@ -853,7 +860,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 ['removeReservationsParam' =>
                    ['arenaMember' => $this->arenaMember,
                     'user' => $username, 'password' => $password,
-                     'language' => 'en', 'id' => $id]
+                     'language' => 'en', 'id' => $id],
                 ]
             );
 
@@ -868,13 +875,13 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 $results[$id] = [
                     'success' => false,
                     'status' => 'hold_cancel_fail',
-                    'sysMessage' => $statusAWS->message ?? $statusAWS->type
+                    'sysMessage' => $statusAWS->message ?? $statusAWS->type,
                 ];
             } else {
                 $results[$id] = [
                     'success' => true,
                     'status' => 'hold_cancel_success',
-                    'sysMessage' => ''
+                    'sysMessage' => '',
                 ];
             }
 
@@ -914,7 +921,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 'id' => $requestId,
                 'pickUpBranchId' => $pickupLocation,
                 'validFromDate' => $validFromDate,
-                'validToDate' => $validToDate
+                'validToDate' => $validToDate,
             ];
 
             if (isset($fields['requiredByTS'])) {
@@ -936,7 +943,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 } else {
                     $updateRequest['validFromDate'] = date('Y-m-d');
                 }
-            } elseif ($updateRequest['validFromDate'] > $updateRequest['validToDate']
+            } elseif (
+                $updateRequest['validFromDate'] > $updateRequest['validToDate']
             ) {
                 $updateRequest['validFromDate'] = $updateRequest['validToDate'];
             }
@@ -962,11 +970,11 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 );
                 $results[$requestId] = [
                     'success' => false,
-                    'status' => $message
+                    'status' => $message,
                 ];
             } else {
                 $results[$requestId] = [
-                    'success' => true
+                    'success' => true,
                 ];
             }
         }
@@ -1034,7 +1042,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
         $conf = [
             'arenaMember' => $this->arenaMember,
             'id' => $id,
-            'language' => $this->getLanguage()
+            'language' => $this->getLanguage(),
         ];
 
         $response = $this->doSOAPRequest(
@@ -1074,7 +1082,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                         = $this->objectToArray($holdingsEdition->compositeHolding);
                     $journalInfo = [
                         'year' => $year,
-                        'edition' => $edition
+                        'edition' => $edition,
                     ];
 
                     $result = array_merge(
@@ -1171,7 +1179,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                                 || $status == 'returnedToday';
 
                         // Special status: On reference desk
-                        if ($status == 'nonAvailableForLoan'
+                        if (
+                            $status == 'nonAvailableForLoan'
                             && isset($department->nofReference)
                             && $department->nofReference != 0
                         ) {
@@ -1190,7 +1199,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                            'overdueLoan' => 'overdueLoan',
                            'ordered' => 'Ordered',
                            'returnedToday' => 'Returned today',
-                           'inTransfer' => 'In Transit'
+                           'inTransfer' => 'In Transit',
                         ];
 
                         // Convert status text
@@ -1207,7 +1216,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                         $holdable
                             = $branch->reservationButtonStatus == 'reservationOk';
                         $requests = 0;
-                        if (!$this->singleReservationQueue
+                        if (
+                            !$this->singleReservationQueue
                             && isset($branch->nofReservations)
                         ) {
                             $requests = $branch->nofReservations;
@@ -1240,7 +1250,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                             'is_holdable' => $holdable,
                             'collapsed' => true,
                             'requests_placed' => $requests,
-                            'reserve' => null
+                            'reserve' => null,
                         ];
                         if ($journalInfo) {
                             $holding['journalInfo'] = $journalInfo;
@@ -1279,7 +1289,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             if (isset($item['availabilityInfo']['ordered'])) {
                 $orderedTotal += $item['availabilityInfo']['ordered'];
             }
-            if ($this->singleReservationQueue
+            if (
+                $this->singleReservationQueue
                 && isset($item['availabilityInfo']['reservations'])
             ) {
                 $reservationsTotal
@@ -1306,7 +1317,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
            'holdable' => $holdable,
            'availability' => null,
            'callnumber' => '',
-           'location' => '__HOLDINGSSUMMARYLOCATION__'
+           'location' => '__HOLDINGSSUMMARYLOCATION__',
         ];
     }
 
@@ -1347,7 +1358,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             'arenaMember' => $this->arenaMember,
             'user' => $username,
             'password' => $password,
-            'language' => $this->getLanguage()
+            'language' => $this->getLanguage(),
         ];
 
         $result = $this->doSOAPRequest(
@@ -1390,7 +1401,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             'firstname' => $firstname,
             'major' => null,
             'college' => null,
-            'patronId' => $patronId
+            'patronId' => $patronId,
         ];
 
         $userCached = [
@@ -1413,7 +1424,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             'major' => null,
             'college' => null,
             'patronId' => $patronId,
-            'loan_history' => (bool)$loanHistoryEnabled
+            'loan_history' => (bool)$loanHistoryEnabled,
         ];
 
         if (!empty($info->emailAddresses->emailAddress)) {
@@ -1496,14 +1507,14 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
     {
         $validServices = [
             'pickUpNotice'  => [
-                'letter', 'email', 'sms', 'none'
+                'letter', 'email', 'sms', 'none',
             ],
             'overdueNotice' => [
-                'letter', 'email', 'sms', 'none'
+                'letter', 'email', 'sms', 'none',
             ],
             'dueDateAlert' => [
-                'email', 'none'
-            ]
+                'email', 'none',
+            ],
          ];
 
         $services = [];
@@ -1516,14 +1527,15 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             $data = [
                 'active' => false,
                 'type' => $typeLabel,
-                'sendMethods' => []
+                'sendMethods' => [],
             ];
 
             foreach ($validMethods as $methodKey) {
-                if (in_array(
-                    $this->mapOldStatusToCode($methodKey),
-                    $this->messagingFilters[$service] ?? []
-                )
+                if (
+                    in_array(
+                        $this->mapOldStatusToCode($methodKey),
+                        $this->messagingFilters[$service] ?? []
+                    )
                 ) {
                     continue;
                 }
@@ -1531,8 +1543,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 $data['sendMethods'] += [
                     "$methodKey" => [
                         'active' => false,
-                        'type' => $methodKey
-                    ]
+                        'type' => $methodKey,
+                    ],
                 ];
             }
             $services[$service] = $data;
@@ -1624,9 +1636,9 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                         'options' => [],
                         'value' => $this->mapCodeToStatus(
                             $services[$service]['transport_type']
-                        )
+                        ),
                     ],
-                ]
+                ],
             ];
             if ($service === 'dueDateAlert') {
                 $options = [];
@@ -1641,7 +1653,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                             : 'messaging_settings_num_of_days_plural',
                             ['%%days%%' => $i]
                         ),
-                        'active' => $i === $services[$service]['nofDays']
+                        'active' => $i === $services[$service]['nofDays'],
                     ];
                 }
                 if (!$hasActive) {
@@ -1651,14 +1663,14 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                     'type' => 'select',
                     'value' => $services[$service]['nofDays'],
                     'options' => $options,
-                    'readonly' => false
+                    'readonly' => false,
                 ];
             }
             foreach ($methods as $methodId => $method) {
                 $coded = $this->mapCodeToStatus($method);
                 $settings['settings']['transport_types']['options'][$coded] = [
                         'active' => $services[$service]['transport_type']
-                            === $method
+                            === $method,
                     ];
             }
             $messagingSettings[$service] = $settings;
@@ -1692,7 +1704,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             if (isset($this->config['Catalog']['catalogueaurora_wsdl'])) {
                 $functionConfig = [
                     'enabled' => true,
-                    'cacheSettings' => $this->titleListCacheSettings
+                    'cacheSettings' => $this->titleListCacheSettings,
                 ];
             }
         }
@@ -1715,7 +1727,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             'page' => isset($params['page']) ? $params['page'] - 1 : 0,
             'query' => isset($params['query'])
                 ? $this->getDynamicMappedValue($params['query'])
-                : 'mostloaned'
+                : 'mostloaned',
         ];
 
         $function = 'Search';
@@ -1746,7 +1758,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             'records' => [],
             'count' => $result->$functionResult->nofRecordsTotal,
             'countPage' => $result->$functionResult->nofRecordsPage,
-            'pages' => $result->$functionResult->nofPages
+            'pages' => $result->$functionResult->nofPages,
         ];
         // Lets get a pretty list of results
         foreach ($records as $key => $obj) {
@@ -1756,7 +1768,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 'mediaClass' => $obj->mediaClass ?? '',
                 'icon' => $obj->mediaClassIcon ?? '',
                 'author' => $obj->author ?? '',
-                'year' => $obj->publicationYear ?? ''
+                'year' => $obj->publicationYear ?? '',
             ];
             $formatted['records'][] = $record;
         }
@@ -1812,7 +1824,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             'arenaMember' => $this->arenaMember,
             'user' => $username,
             'password' => $password,
-            'language' => $this->getLanguage()
+            'language' => $this->getLanguage(),
         ];
 
         $result = $this->doSOAPRequest(
@@ -1858,7 +1870,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             // renewals/renewalLimit is displayed as "renewed/limit"
             $renewals = null;
             $renewalLimit = null;
-            if (isset($loan->loanStatus->status)
+            if (
+                isset($loan->loanStatus->status)
                 && $this->isPermanentRenewalBlock($loan->loanStatus->status)
             ) {
                 // No changes
@@ -1867,7 +1880,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 $renewals = max(
                     [
                         0,
-                        $renewalLimit - $loan->remainingRenewals
+                        $renewalLimit - $loan->remainingRenewals,
                     ]
                 );
             } elseif ($loan->remainingRenewals > 0) {
@@ -1955,7 +1968,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 ? ($params['page'] - 1) * $pageSize : 0,
             'count' => $pageSize,
             'sortField' => $sortField,
-            'sortDirection' => $sortKey
+            'sortDirection' => $sortKey,
         ];
 
         $result = $this->doSOAPRequest(
@@ -1994,7 +2007,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 'returnDate' => isset($record->checkInDate)
                     ? $this->formatDate($record->checkInDate) : '',
                 'publication_year' => $obj->publicationYear ?? '',
-                'volume' => $obj->volume ?? ''
+                'volume' => $obj->volume ?? '',
             ];
             $transList[] = $trans;
         }
@@ -2022,7 +2035,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
         $conf = [
             'arenaMember' => $this->arenaMember,
             'user' => $username,
-            'password' => $password
+            'password' => $password,
         ];
 
         $result = $this->doSOAPRequest(
@@ -2057,7 +2070,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
     {
         $result = [
             'success' => true,
-            'status' => 'request_change_done'
+            'status' => 'request_change_done',
         ];
 
         foreach ($params as $service => $settings) {
@@ -2068,7 +2081,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             $coded = $this->mapStatusToCode($transport['value']);
             $current = [
                 'serviceType' => $service,
-                'sendMethod' => $coded
+                'sendMethod' => $coded,
             ];
             if ($coded === 'ilsDefined') {
                 $status = $this->removeMessageService($patron, $current);
@@ -2177,14 +2190,14 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             'user' => $username,
             'password' => $password,
             'sendMethod' => [
-                'value' => $params['sendMethod']
+                'value' => $params['sendMethod'],
             ],
-            'serviceType' => $params['serviceType']
+            'serviceType' => $params['serviceType'],
         ];
 
         if ($params['serviceType'] === 'dueDateAlert') {
             $conf['nofDays'] = [
-                'value' => $params['nofDays']
+                'value' => $params['nofDays'],
             ];
         }
 
@@ -2205,7 +2218,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             }
             return [
                 'success' => false,
-                'status' => $statusAWS
+                'status' => $statusAWS,
             ];
         }
 
@@ -2235,7 +2248,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             'language' => $this->getLanguage(),
             'user' => $username,
             'password' => $password,
-            'serviceType' => $params['serviceType']
+            'serviceType' => $params['serviceType'],
         ];
 
         $result = $this->doSOAPRequest(
@@ -2255,7 +2268,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             }
             return [
                 'success' => false,
-                'status' => $statusAWS
+                'status' => $statusAWS,
             ];
         }
 
@@ -2290,7 +2303,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             'password' => $password,
             'language' => $this->getLanguage(),
             'fromDate' => '1699-12-31',
-            'toDate' => time()
+            'toDate' => time(),
         ];
 
         $result = $this->doSOAPRequest(
@@ -2335,7 +2348,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             $payable = $amount > 0 && $debtDate >= $payableMinDate;
             if ($payable) {
                 foreach ($blockedTypes as $blockedType) {
-                    if ($blockedType === $description
+                    if (
+                        $blockedType === $description
                         || (strncmp($blockedType, '/', 1) === 0
                         && substr_compare($blockedType, '/', -1) === 0
                         && preg_match($blockedType, $description))
@@ -2353,7 +2367,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 'balance' => $amount,
                 'createdate' => $debt->debtDate,
                 'payableOnline' => $payable,
-                'organization' => trim($debt->organisation ?? '')
+                'organization' => trim($debt->organisation ?? ''),
             ];
             $finesList[] = $fine;
         }
@@ -2408,7 +2422,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
         return [
             'payable' => false,
             'amount' => 0,
-            'reason' => 'online_payment_minimum_fee'
+            'reason' => 'online_payment_minimum_fee',
         ];
     }
 
@@ -2450,7 +2464,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             'transactionNumber' => (string)$transactionId,
             'paymentAmount'     => $amount,
             // Comma-separated list of IDs since the API has it single-valued
-            'debts'             => ['id' => implode(',', $debtIds)]
+            'debts'             => ['id' => implode(',', $debtIds)],
         ];
 
         $result = $this->doSOAPRequest(
@@ -2510,7 +2524,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             'arenaMember' => $this->arenaMember,
             'user' => $username,
             'password' => $password,
-            'language' => $this->getLanguage()
+            'language' => $this->getLanguage(),
 
         ];
 
@@ -2556,7 +2570,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             $cancelDetails = '';
             // Regional holds have isEditable 'no' even when they're editable, so
             // check for isDeletetable for them:
-            if ('yes' === $reservation->isEditable
+            if (
+                'yes' === $reservation->isEditable
                 || ('regional' === $reservation->reservationType
                 && 'yes' === $reservation->isDeletable)
             ) {
@@ -2566,7 +2581,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 $cancelDetails = $detailsStr;
             }
             $frozen = $reservation->validFromDate > date('Y-m-d');
-            if ($frozen && $reservation->validFromDate != $reservation->validToDate
+            if (
+                $frozen && $reservation->validFromDate != $reservation->validToDate
             ) {
                 $ts = $this->dateFormat->convertFromDisplayDate(
                     'U',
@@ -2612,7 +2628,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 'cancel_details' => $cancelDetails,
                 'updateDetails' => $updateDetails,
                 '_organization' => $reservation->organisationId ?? '',
-                'create' => $this->formatDate($reservation->createDate)
+                'create' => $this->formatDate($reservation->createDate),
             ];
             $holdsList[] = $hold;
         }
@@ -2670,7 +2686,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             'user' => $username,
             'password' => $password,
             'language' => 'en',
-            'loans' => $renewDetails['details']
+            'loans' => $renewDetails['details'],
         ];
 
         $result = $this->doSOAPRequest(
@@ -2708,7 +2724,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
                 'new_date' => $this->formatDate(
                     $loan->loanDueDate
                 ),
-                'new_time' => ''
+                'new_time' => '',
             ];
         }
         return $results;
@@ -2743,7 +2759,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             'areaCode'     => '',
             'country'      => $user['phoneCountry'] ?? 'FI',
             'localCode'    => $phone,
-            'useForSms'    => 'yes'
+            'useForSms'    => 'yes',
         ];
 
         if (!empty($user['phoneId'])) {
@@ -2775,7 +2791,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             return  [
                 'success' => false,
                 'status' => 'Changing the phone number failed',
-                'sys_message' => $statusAWS->message ?? $statusAWS->type
+                'sys_message' => $statusAWS->message ?? $statusAWS->type,
             ];
         }
 
@@ -2786,7 +2802,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
         return [
                 'success' => true,
                 'status' => 'Phone number changed',
-                'sys_message' => ''
+                'sys_message' => '',
             ];
     }
 
@@ -2809,7 +2825,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
         $conf = [
             'arenaMember' => $this->arenaMember,
             'patronId' => $patron['patronId'],
-            'isLoanHistoryEnabled' => $state
+            'isLoanHistoryEnabled' => $state,
         ];
 
         $result = $this->doSOAPRequest(
@@ -2829,7 +2845,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             }
             return [
                 'success' => false,
-                'status' => 'Changing the checkout history state failed'
+                'status' => 'Changing the checkout history state failed',
             ];
         }
 
@@ -2861,7 +2877,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
         $functionParam = '';
 
         // Workaround for AWS issue where a bare plus sign gets converted to a space
-        if (!isset($this->config['updateEmail']['encodeEmailPlusSign'])
+        if (
+            !isset($this->config['updateEmail']['encodeEmailPlusSign'])
             || $this->config['updateEmail']['encodeEmailPlusSign']
         ) {
             $email = str_replace('+', '%2B', $email);
@@ -2872,7 +2889,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             'user'         => $username,
             'password'     => $password,
             'address'      => $email,
-            'isActive'     => 'yes'
+            'isActive'     => 'yes',
         ];
 
         if (!empty($user['emailId'])) {
@@ -2904,7 +2921,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             return  [
                 'success' => false,
                 'status' => 'Changing the email address failed',
-                'sys_message' => $statusAWS->message ?? $statusAWS->type
+                'sys_message' => $statusAWS->message ?? $statusAWS->type,
             ];
         }
 
@@ -2963,7 +2980,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             'id'            => $user['addressId'],
             'streetAddress' => $details['address1'],
             'zipCode'       => $details['zip'],
-            'city'          => $details['city']
+            'city'          => $details['city'],
         ];
 
         $function = 'changeAddress';
@@ -2993,7 +3010,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
         $cacheKey = $this->getPatronCacheKey($username);
         $this->putCachedData($cacheKey, null);
 
-        if (isset($this->config['updateAddress']['needsApproval'])
+        if (
+            isset($this->config['updateAddress']['needsApproval'])
             && !$this->config['updateAddress']['needsApproval']
         ) {
             $status = 'request_change_accepted';
@@ -3003,7 +3021,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
         return [
             'success' => true,
             'status' => $status,
-            'sys_message' => ''
+            'sys_message' => '',
         ];
     }
 
@@ -3047,7 +3065,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             }
             return  [
                 'success' => false,
-                'status' => $statusAWS->message ?? $statusAWS->type
+                'status' => $statusAWS->message ?? $statusAWS->type,
             ];
         }
 
@@ -3336,7 +3354,8 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
      */
     protected function getHoldType($holdDetails)
     {
-        if ($this->requestGroupsEnabled && !empty($holdDetails['requestGroupId'])
+        if (
+            $this->requestGroupsEnabled && !empty($holdDetails['requestGroupId'])
         ) {
             $holdType = $holdDetails['requestGroupId'];
         } else {
@@ -3395,7 +3414,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
             'renewalIsDenied'       => 'renew_denied',
             'ReservationDenied'     => 'hold_error_denied',
             'BlockedBorrCard'       => 'addReservation' === $function
-                ? 'hold_error_blocked' : 'Borrowing Block Message'
+                ? 'hold_error_blocked' : 'Borrowing Block Message',
         ];
 
         if (isset($statuses[$status])) {
@@ -3415,7 +3434,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
     {
         $blocks = [
             'copyHasSpecialCircCat',
-            'copyIsReserved'
+            'copyIsReserved',
         ];
 
         return in_array($status, $blocks);

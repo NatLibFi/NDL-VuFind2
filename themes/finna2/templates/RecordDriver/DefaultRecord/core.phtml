@@ -16,7 +16,7 @@
   $addRenderedUrl = function (array $url) use (&$renderedURLs) {
     $renderedURLs[] = [
       'url' => $url['url'],
-      'desc' => $url['desc'] ?? $url['text'] ?? ''
+      'desc' => $url['desc'] ?? $url['text'] ?? '',
     ];
   };
 
@@ -198,7 +198,7 @@
     <div class="record-core-metadata">
       <?php $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
         <div class="recordFormat">
-          <?=$this->record($this->driver)->getFormatList()?><br/>
+          <?=$this->record($this->driver)->getFormatList()?><br>
         </div>
       <?php endif; ?>
 
@@ -212,7 +212,7 @@
             <?php $altScriptFound = false; ?>
             <?php foreach($results as $index => $author): ?>
               <?php if (!empty($author['name_alt'])): ?>
-                <?php if (!$altScriptFound): ?><br/><?php else: ?>; <?php endif; ?>
+                <?php if (!$altScriptFound): ?><br><?php else: ?>; <?php endif; ?>
                 <?=$this->escapeHtml($author['name_alt'])?><?php if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><?php endif; ?><?php if (!empty($author['role'])): ?><span class="author-role">, <?=mb_strtolower($this->transEsc('CreatorRoles::' . $author['role']), 'UTF-8') ?></span><?php endif; ?>
                 <?php $altScriptFound = true; ?>
               <?php endif; ?>

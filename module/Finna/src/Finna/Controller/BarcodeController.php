@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Barcode Controller
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Controller;
 
 /**
@@ -55,7 +57,7 @@ class BarcodeController extends \VuFind\Controller\AbstractBase
             [
                 'code' => $code,
                 'type' => $type,
-                'html' => $htmlGenerator->getBarcode($code, $type, 3, 60)
+                'html' => $htmlGenerator->getBarcode($code, $type, 3, 60),
             ]
         );
     }

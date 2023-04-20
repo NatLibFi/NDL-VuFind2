@@ -3,9 +3,9 @@
   $this->headTitle($this->translate('import_favorites_from_list'));
 ?>
 <h2><?=$this->translate("import_favorites_from_list") ?></h2>
-<form class="form-record-save" method="post" action="<?=$this->url('list-save', ['id' => $this->listId])?>" name="cloneList" data-lightbox-onclose="checkSaveStatusesCallback">
-  <input type="hidden" name="submit" value="1" />
-  <input type="hidden" name="list" value="<?=$this->escapeHtmlAttr($this->listId) ?>" />
+<form class="form-record-save" method="post" action="<?=$this->url('list-save', ['id' => $this->listId])?>" name="cloneList" data-lightbox-onclose="VuFind.saveStatuses.refresh">
+  <input type="hidden" name="submit" value="1">
+  <input type="hidden" name="list" value="<?=$this->escapeHtmlAttr($this->listId) ?>">
 
   <div class="form-group">
     <label class="control-label" for="save_list"><?=$this->transEsc('Choose a List') ?></label>
@@ -24,6 +24,6 @@
   </div>
 
   <div class="form-group">
-    <input class="btn btn-primary" type="submit" value="<?=$this->transEscAttr('Save') ?>"/>
+    <input class="btn btn-primary" type="submit" value="<?=$this->transEscAttr('Save') ?>">
   </div>
 </form>

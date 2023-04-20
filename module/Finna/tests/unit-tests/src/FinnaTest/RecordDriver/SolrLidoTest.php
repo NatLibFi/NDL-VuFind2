@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SolrLido Test Class
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
+
 namespace FinnaTest\RecordDriver;
 
 use Finna\RecordDriver\SolrLido;
@@ -55,13 +57,13 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 [
                     2 => [
                         'gltf' => [
-                            'preview' => 'https://gltfmalli.gltf'
+                            'preview' => 'https://gltfmalli.gltf',
                         ],
                         'glb' => [
-                            'preview' => 'https://glbmalli.glb'
-                        ]
-                    ]
-                ]
+                            'preview' => 'https://glbmalli.glb',
+                        ],
+                    ],
+                ],
             ],
             [
                 'getAllImages',
@@ -70,14 +72,14 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'urls' => [
                             'large' => 'https://largekuvanlinkki.com',
                             'small' => 'https://largekuvanlinkki.com',
-                            'medium' => 'https://largekuvanlinkki.com'
+                            'medium' => 'https://largekuvanlinkki.com',
                         ],
                         'description' => '',
                         'rights' => [
                             'copyright' => 'CC BY 4.0',
                             'description' => [
-                                0 => 'Tässä on kuvien copyright.'
-                            ]
+                                0 => 'Tässä on kuvien copyright.',
+                            ],
                         ],
                         'highResolution' => [
                             'original' => [
@@ -85,40 +87,40 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                     'data' => [
                                         'size' => [
                                             'unit' => 'bytes',
-                                            'value' => '123'
+                                            'value' => '123',
                                         ],
                                         'width' => [
                                             'unit' => 'pixel',
-                                            'value' => '123'
+                                            'value' => '123',
                                         ],
                                         'height' => [
                                             'unit' => 'pixel',
-                                            'value' => '123'
-                                        ]
+                                            'value' => '123',
+                                        ],
                                     ],
                                     'url' => 'https://originalKuvanLinkkiTif.com',
                                     'format' => 'tif',
-                                    'resourceID' => '607642'
-                                ]
-                            ]
+                                    'resourceID' => '607642',
+                                ],
+                            ],
                         ],
                         'identifier' => '607642',
                         'downloadable' => true,
-                        'resourceDescription' => 'Kuvan selitys'
+                        'resourceDescription' => 'Kuvan selitys',
                     ],
                     [
                         'urls' => [
                             'large' => 'https://largekuvanlinkki2.com',
                             'small' => 'https://thumbkuvanlinkki2.com',
                             'medium' => 'https://thumbkuvanlinkki2.com',
-                            'master' => 'https://masterkuvanlinkki2.com'
+                            'master' => 'https://masterkuvanlinkki2.com',
                         ],
                         'description' => '',
                         'rights' => [
                             'copyright' => 'InC',
                             'description' => [
-                                0 => 'Tässä on kuvien copyright.'
-                            ]
+                                0 => 'Tässä on kuvien copyright.',
+                            ],
                         ],
                         'highResolution' => [
                             'original' => [
@@ -126,53 +128,53 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                     'data' => [
                                         'size' => [
                                             'unit' => 'bytes',
-                                            'value' => '5'
+                                            'value' => '5',
                                         ],
                                         'width' => [
                                             'unit' => 'pixel',
-                                            'value' => '5'
+                                            'value' => '5',
                                         ],
                                         'height' => [
                                             'unit' => 'pixel',
-                                            'value' => '5'
-                                        ]
+                                            'value' => '5',
+                                        ],
                                     ],
                                     'url' => 'https://originalKuvanLinkkiTif.com',
                                     'format' => 'tif',
-                                    'resourceID' => '607643'
-                                ]
+                                    'resourceID' => '607643',
+                                ],
                             ],
                             'master' => [
                                 [
                                     'url' => 'https://masterkuvanlinkki2.com',
                                     'data' => false,
                                     'format' => 'jpg',
-                                    'resourceID' => '607643'
-                                ]
-                            ]
+                                    'resourceID' => '607643',
+                                ],
+                            ],
                         ],
                         'identifier' => '607643',
                         'downloadable' => false,
-                        'resourceName' => 'Kuvan nimi'
+                        'resourceName' => 'Kuvan nimi',
                     ],
                     7 => [
                         'urls' => [
                             'large' => 'https://kaikkilinkit.com',
                             'small' => 'https://kaikkilinkit.com',
-                            'medium' => 'https://kaikkilinkit.com'
+                            'medium' => 'https://kaikkilinkit.com',
                         ],
                         'description' => '',
                         'rights' => [
                             'copyright' => 'CC BY 4.0',
                             'description' => [
-                                0 => 'Tässä on kuvien copyright.'
-                            ]
+                                0 => 'Tässä on kuvien copyright.',
+                            ],
                         ],
                         'highResolution' => [],
                         'identifier' => '607644',
-                        'downloadable' => true
-                    ]
-                ]
+                        'downloadable' => true,
+                    ],
+                ],
             ],
             [
                 'getURLs',
@@ -182,7 +184,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'url' => 'https://linkkiaudioon.fi',
                         'codec' => 'mp3',
                         'type' => 'audio',
-                        'embed' => 'audio'
+                        'embed' => 'audio',
                     ],
                     [
                         'desc' => 'VideoTesti.mp4',
@@ -191,10 +193,10 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'format' => 'mp4',
                         'videoSources' => [
                             'src' => 'https://linkkivideoon.fi',
-                            'type' => 'video/mp4'
-                        ]
+                            'type' => 'video/mp4',
+                        ],
                     ],
-                ]
+                ],
             ],
             [
                 'getDocuments',
@@ -202,14 +204,14 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     0 => [
                         'description' => 'PDFTesti.pdf',
                         'url' => 'https://linkkiPDF.fi',
-                        'format' => 'pdf'
+                        'format' => 'pdf',
                     ],
                     1 => [
                         'description' => 'DocxTesti.docx',
                         'url' => 'https://linkkiDocx.fi',
-                        'format' => 'docx'
-                    ]
-                ]
+                        'format' => 'docx',
+                    ],
+                ],
             ],
         ];
     }
@@ -226,15 +228,15 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 'getFormatClassifications',
                 [
                     'lido_test.xml' => [
-                        'näkyy (testimittari)'
+                        'näkyy (testimittari)',
                     ],
                     'lido_test2.xml' => [
                         'uno (testimittari)',
                         'dos',
                         'one (testimittari)',
-                        'two'
-                    ]
-                ]
+                        'two',
+                    ],
+                ],
             ],
         ];
     }
@@ -251,19 +253,19 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 'getOtherClassifications',
                 [
                     'lido_test.xml' => [
-                        'näkyy'
+                        'näkyy',
                     ],
                     'lido_test2.xml' => [
                         [
                             'term' => 'uno',
-                            'label' => 'testimittari'
+                            'label' => 'testimittari',
                         ],
                         [
                             'term' => 'one',
-                            'label' => 'testimittari'
-                        ]
-                    ]
-                ]
+                            'label' => 'testimittari',
+                        ],
+                    ],
+                ],
             ],
         ];
     }
@@ -350,26 +352,26 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 'getMeasurements',
                 [
                     'lido_test.xml' => [
-                        'pituus 73.0 cm, leveys 14 cm (kohde 2, kohde 3)'
+                        'pituus 73.0 cm, leveys 14 cm (kohde 2, kohde 3)',
                     ],
                     'lido_test2.xml' => [
                         'syvyys 50 cm (kohde 1)',
-                        'pituus 0.73 m'
-                    ]
-                ]
+                        'pituus 0.73 m',
+                    ],
+                ],
             ],
             [
                 'getPhysicalDescriptions',
                 [
                     'lido_test.xml' => [
-                        '1001 neliömetriä'
+                        '1001 neliömetriä',
                     ],
                     'lido_test2.xml' => [
                         '1200 kpl (kohde 1)',
                         '12 yksikköä (kohde 1)',
-                        '100 hyllymetriä'
-                    ]
-                ]
+                        '100 hyllymetriä',
+                    ],
+                ],
             ],
         ];
     }
@@ -411,16 +413,16 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             [
                 [
                     'name' => 'Puu, Teisto',
-                    'role' => 'suunnittelija'
+                    'role' => 'suunnittelija',
                 ],
                 [
                     'name' => 'Mattilainen, Meikä',
-                    'role' => 'haaveilija'
+                    'role' => 'haaveilija',
                 ],
                 [
                     'name' => 'Tiistai, Nietos',
-                    'role' => 'Työntekijä'
-                ]
+                    'role' => 'Työntekijä',
+                ],
             ],
             $driver->getNonPresenterAuthors()
         );
@@ -436,36 +438,36 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 '[2009-01-01 TO 2009-12-31]',
-                ['2009']
+                ['2009'],
             ],
             [
                 '[-2000-01-01 TO 0900-12-31]',
-                ['-2000', '900']
+                ['-2000', '900'],
             ],
             [
                 '1937-12-08',
-                ['1937']
+                ['1937'],
             ],
             [
                 '[0000-01-01 TO 0000-12-31]',
-                ['0']
+                ['0'],
             ],
             [
                 '[0999-06-02 TO 9999-12-31]',
-                ['999', '']
+                ['999', ''],
             ],
             [
                 '[-9999-01-01 TO 9998-12-31]',
-                ['-9999', '9998']
+                ['-9999', '9998'],
             ],
             [
                 '[-0055-10-31 TO -0002-02-15]',
-                ['-55', '-2']
+                ['-55', '-2'],
             ],
             [
                 '',
-                null
-            ]
+                null,
+            ],
         ];
     }
 
@@ -473,7 +475,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      * Test getDateRange
      *
      * @param string $indexValue Index value to test
-     * @param ?array $expected Result to be expected
+     * @param ?array $expected   Result to be expected
      *
      * @dataProvider getDateRangeData
      *
@@ -491,7 +493,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         $record->setRawData(
             [
                 'id' => 'knp-247394',
-                'creation_daterange' => $indexValue
+                'creation_daterange' => $indexValue,
             ]
         );
         $this->assertEquals(
@@ -505,17 +507,17 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getSummaryData()
+    public function getSummaryData(): array
     {
         return [
             [
                 'lido_test.xml',
                 [
                     'Visible description.',
-                    'Visible subject labeled.'
+                    'Visible subject labeled.',
                 ],
                 [],
-                'en-gb'
+                'en-gb',
 
             ],
             [
@@ -524,10 +526,10 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     'näkyy partial.',
                     'Näkyy kokonaan.',
                     'Näkyy description untyped.',
-                    'Näkyy subject unlabeled.'
+                    'Näkyy subject unlabeled.',
                 ],
                 ['title' => 'Otsikko'],
-                'fi'
+                'fi',
             ],
             [
                 'lido_test.xml',
@@ -536,29 +538,32 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     'Visible description.',
                     'Visible subject labeled.',
                     'Näkyy subject labeled.',
-                    'Synas subject labeled.'
+                    'Synas subject labeled.',
                 ],
                 [],
-                'xy'
-            ]
+                'xy',
+            ],
         ];
     }
 
     /**
      * Test getSummary()
      *
-     * @param string $xmlFile Xml record to use for the test
-     * @param array $expected Expected results from function
-     * @param array $rawData  The additional tested data
+     * @param string $xmlFile  Xml record to use for the test
+     * @param array  $expected Expected results from function
+     * @param array  $rawData  The additional tested data
+     * @param string $language Language
      *
      * @dataProvider getSummaryData
+     *
+     * @return void
      */
     public function testGetSummary(
         $xmlFile,
         $expected,
         $rawData,
         $language
-    ) {
+    ): void {
         $translator = $this
             ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
             ->disableOriginalConstructor()
@@ -579,6 +584,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      * @param string $recordXml    Xml record to use for the test
      * @param array  $overrides    Fixture fields to override
      * @param array  $searchConfig Search configuration
+     * @param array  $rawData      Raw data for the record
      *
      * @return SolrLido
      */
@@ -595,9 +601,9 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             ],
             'FileDownload' => [
                 'excludeRights' => [
-                    'INC'
-                ]
-            ]
+                    'INC',
+                ],
+            ],
         ];
         $config = new \Laminas\Config\Config($config);
         $record = new SolrLido(
@@ -609,8 +615,8 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             'id' => 'knp-247394',
             'fullrecord' => $fixture,
             'usage_rights_str_mv' => [
-                'usage_A'
-            ]
+                'usage_A',
+            ],
         ];
         $record->setRawData(
             array_merge($defaultData, $rawData)

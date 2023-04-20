@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SolrMarc Test Class
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
+
 namespace FinnaTest\RecordDriver;
 
 use Finna\RecordDriver\SolrMarc;
@@ -89,17 +91,17 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'ind1' => ' ',
                         'ind2' => ' ',
                         'subfields' => [
-                            ['a' => $title]
-                        ]
-                    ]
-                ]
-            ]
+                            ['a' => $title],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $record = new SolrMarc();
         $record->setRawData(
             [
-                'fullrecord' => json_encode($marc)
+                'fullrecord' => json_encode($marc),
             ]
         );
 

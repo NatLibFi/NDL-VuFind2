@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API record formatter view helper
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\View\Helper\Root;
 
 use FinnaApi\Formatter\RecordFormatter;
@@ -38,7 +40,7 @@ use FinnaApi\Formatter\RecordFormatter;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class ApiRecordFormatter extends  \Laminas\View\Helper\AbstractHelper
+class ApiRecordFormatter extends \Laminas\View\Helper\AbstractHelper
 {
     /**
      * Record formatter.

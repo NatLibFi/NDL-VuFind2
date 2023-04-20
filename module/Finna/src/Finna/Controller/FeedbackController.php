@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Feedback Controller
  *
@@ -28,6 +29,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Controller;
 
 use VuFind\Log\LoggerAwareTrait;
@@ -42,8 +44,7 @@ use VuFind\Log\LoggerAwareTrait;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class FeedbackController extends \VuFind\Controller\FeedbackController
-implements \Laminas\Log\LoggerAwareInterface
+class FeedbackController extends \VuFind\Controller\FeedbackController implements \Laminas\Log\LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -66,7 +67,8 @@ implements \Laminas\Log\LoggerAwareInterface
         // Copy any record_id from query params to post params so that it's available
         // for the form:
         $request = $this->getRequest();
-        if (null === $request->getPost('record_id')
+        if (
+            null === $request->getPost('record_id')
             && $recordId = $request->getQuery('record_id')
         ) {
             $request->getPost()->set('record_id', $recordId);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Model for EAC-CPF records in Solr.
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver;
 
 /**
@@ -196,16 +198,10 @@ class SolrAuthEaccpf extends SolrAuthDefault
      *
      * @return null|string
      */
-    protected function getExistDate(string $localType) : ?string
+    protected function getExistDate(string $localType): ?string
     {
         $record = $this->getXmlRecord();
-        if (!isset($record->cpfDescription->description->existDates->dateSet->date)
-        ) {
-            return null;
-        }
-        foreach ($record->cpfDescription->description->existDates->dateSet->date
-            as $date
-        ) {
+        foreach ($record->cpfDescription->description->existDates->dateSet->date ?? [] as $date) {
             $attrs = $date->attributes();
             $type = (string)$attrs->localType;
             if ($localType === $type) {
@@ -230,12 +226,10 @@ class SolrAuthEaccpf extends SolrAuthDefault
         $languages = $this->mapLanguageCode($this->getLocale());
         foreach ($record->cpfDescription->description->places->place as $place) {
             $attr = $place->attributes();
-            if ($attr->placeEntry
-                && !$attr->lang || in_array((string)$attr->lang, $languages)
-            ) {
+            if ($attr->placeEntry && !$attr->lang || in_array((string)$attr->lang, $languages)) {
                 $result[] = [
                     'data' => (string)$place->placeEntry,
-                    'detail' => (string)$place->placeRole
+                    'detail' => (string)$place->placeRole,
                 ];
             }
         }
@@ -253,9 +247,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
         $result = [];
         $sourceId = $this->getDataSource();
 
-        foreach ($record->cpfDescription->relations->cpfRelation ?? []
-            as $relation
-        ) {
+        foreach ($record->cpfDescription->relations->cpfRelation ?? [] as $relation) {
             $attr = $relation->attributes();
             $id = (string)$attr->href;
             $name = (string)$relation->relationEntry;
@@ -282,9 +274,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
         $record = $this->getXmlRecord();
         if (isset($record->cpfDescription->description->occupations)) {
             $languages = $this->mapLanguageCode($this->getLocale());
-            foreach ($record->cpfDescription->description->occupations
-                as $occupations
-            ) {
+            foreach ($record->cpfDescription->description->occupations as $occupations) {
                 if (!isset($occupations->occupation)) {
                     continue;
                 }
@@ -294,8 +284,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
                     }
                     $term = $occupation->term;
                     $attr = $term->attributes();
-                    if ($attr->lang && in_array((string)$attr->lang, $languages)
-                    ) {
+                    if ($attr->lang && in_array((string)$attr->lang, $languages)) {
                         $result[] = (string)$term;
                     }
                 }
@@ -326,7 +315,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
                     $result[] = [
                         'title' => $title ? $title : (string)$source->sourceEntry,
                         'url' => (string)($source->attributes()->href ?? ''),
-                        'subtitle' => ''
+                        'subtitle' => '',
                     ];
                 }
             }
@@ -343,9 +332,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     {
         $result = [];
         $record = $this->getXmlRecord();
-        foreach ($record->cpfDescription->description->localDescriptions
-            ->localDescription ?? [] as $description
-        ) {
+        foreach ($record->cpfDescription->description->localDescriptions->localDescription ?? [] as $description) {
             $type = $description->attributes()->localType ?? '';
             if ($type != 'TJ17') {
                 continue;
@@ -355,7 +342,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
                     $result[] = [
                         'title' => $title,
                         'label' => '',
-                        'url' => (string)($citation->attributes()->href ?? '')
+                        'url' => (string)($citation->attributes()->href ?? ''),
                     ];
                 }
             }

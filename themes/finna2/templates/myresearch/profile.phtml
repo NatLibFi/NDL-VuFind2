@@ -90,7 +90,7 @@
                     <?=$this->transEsc('Always ask me')?>
                   </option>
                   <?php foreach ($this->pickup as $lib): ?>
-                    <option value="<?=$this->escapeHtmlAttr($lib['locationID'])?>"<?=($selected == $lib['locationID'])?' selected="selected"':''?>><?=$this->transEscWithPrefix('location_', $lib['locationDisplay'])?></option>
+                    <option value="<?=$this->escapeHtmlAttr($lib['locationID'])?>"<?=($selected == $lib['locationID']) ? ' selected="selected"' : ''?>><?=$this->transEscWithPrefix('location_', $lib['locationDisplay'])?></option>
                   <?php endforeach; ?>
                 </select>
               </div>
@@ -159,7 +159,7 @@
               <?php if ($updatePhone): ?>
                 <div class="my-profile-col profile-title"><label for="profile_tel"><?=$this->transEsc('Phone') ?>:</label></div>
                 <div>
-                  <input class="form-control" type="tel" name="profile_tel" value="<?=empty($this->profile['phone']) ? '' : $this->escapeHtmlAttr($this->profile['phone']) ?>" title="<?=$this->transEscAttr('Phone') ?>" />
+                  <input class="form-control" type="tel" name="profile_tel" value="<?=empty($this->profile['phone']) ? '' : $this->escapeHtmlAttr($this->profile['phone']) ?>" title="<?=$this->transEscAttr('Phone') ?>">
                 </div>
               <?php else: ?>
                 <div class="my-profile-col profile-title"><?=$this->transEsc('Phone') ?>:</div>
@@ -170,7 +170,7 @@
               <?php if ($updateSmsNumber): ?>
                 <div class="my-profile-col profile-title"><label for="profile_sms_number"><?=$this->transEsc('SMS Number') ?>:</label></div>
                 <div>
-                  <input class="form-control" type="tel" name="profile_sms_number" value="<?=empty($this->profile['smsnumber']) ? '' : $this->escapeHtmlAttr($this->profile['smsnumber']) ?>" title="<?=$this->transEscAttr('SMS Number') ?>" />
+                  <input class="form-control" type="tel" name="profile_sms_number" value="<?=empty($this->profile['smsnumber']) ? '' : $this->escapeHtmlAttr($this->profile['smsnumber']) ?>" title="<?=$this->transEscAttr('SMS Number') ?>">
                 </div>
               <?php else: ?>
                 <div class="my-profile-col profile-title"><?=$this->transEsc('SMS Number') ?>:</div>
@@ -181,7 +181,7 @@
               <div class="my-profile-col profile-title"><label for="profile_email"><?=$this->transEsc('Email') ?>:</label></div>
               <?php if ($updateEmail): ?>
                 <div>
-                  <input class="form-control" type="email" name="profile_email" value="<?=empty($this->profile['email']) ? '' : $this->escapeHtmlAttr($this->profile['email']) ?>" title="<?=$this->transEscAttr('Email') ?>" />
+                  <input class="form-control" type="email" name="profile_email" value="<?=empty($this->profile['email']) ? '' : $this->escapeHtmlAttr($this->profile['email']) ?>" title="<?=$this->transEscAttr('Email') ?>">
                 </div>
               <?php else: ?>
                 <div class="profile-text-value"><?=$this->escapeHtml($this->profile['email']) ?></div>
@@ -265,7 +265,7 @@
             <?php endif; ?>
             <div class="my-profile-row">
               <?php if ($updatePhone || $updateEmail || $updateLoanHistory): ?>
-                <input id="save-library-profile" name="saveLibraryProfile" type="submit" value="<?=$this->transEscAttr("save_my_profile") ?>" class="btn btn-primary my-profile-btn" />
+                <input id="save-library-profile" name="saveLibraryProfile" type="submit" value="<?=$this->transEscAttr("save_my_profile") ?>" class="btn btn-primary my-profile-btn">
               <?php endif; ?>
               <div class="clearfix"></div>
             </div>

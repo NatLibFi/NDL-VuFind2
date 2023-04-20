@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Additional functionality for ILS/MultiILS authentication.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:authentication_handlers Wiki
  */
+
 namespace Finna\Auth;
 
 use VuFind\Exception\Auth as AuthException;

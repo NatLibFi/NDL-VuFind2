@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Search box view helper
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\View\Helper\Root;
 
 /**
@@ -67,7 +69,8 @@ class SearchBox extends \VuFind\View\Helper\Root\SearchBox
     public function combinedHandlersActive()
     {
         if (!empty($this->tabConfig)) {
-            if (!isset($this->config['General']['combinedHandlers'])
+            if (
+                !isset($this->config['General']['combinedHandlers'])
                 || !$this->config['General']['combinedHandlers']
             ) {
                 throw new \Exception(
@@ -96,7 +99,7 @@ class SearchBox extends \VuFind\View\Helper\Root\SearchBox
                    'value' => $type,
                    'label' => $label,
                    'indent' => false,
-                   'selected' => ($activeHandler == $type)
+                   'selected' => ($activeHandler == $type),
                 ];
             }
             return $handlers;

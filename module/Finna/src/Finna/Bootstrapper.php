@@ -1,4 +1,5 @@
 <?php
+
 /**
  * VuFind Bootstrapper
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna;
 
 use Laminas\Mvc\MvcEvent;
@@ -121,7 +123,8 @@ class Bootstrapper
             $routeMatch = $event->getRouteMatch();
             $controller = strtolower($routeMatch->getParam('controller'));
             $action = strtolower($routeMatch->getParam('action'));
-            if (($controller == 'ajax' && !in_array($action, $ajaxAllowed))
+            if (
+                ($controller == 'ajax' && !in_array($action, $ajaxAllowed))
                 || ($controller == 'record' && $action == 'ajaxtab')
                 || ($controller == 'record' && $action == 'holdings')
                 || ($controller == 'record' && $action == 'details')

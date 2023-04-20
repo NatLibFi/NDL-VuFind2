@@ -32,74 +32,74 @@
     </div>
   </div>
   <div class="form-group">
-      <input class="btn btn-primary" type="submit" name="submit" value="<?=$this->transEscAttr('Send')?>"/>
+      <input class="btn btn-primary" type="submit" name="submit" value="<?=$this->transEscAttr('Send')?>">
   </div>
 </form>
 
 <?php
   $sources = json_encode($this->sources);
   $script = <<<JS
-// Try to guess the format
-$('#data').change(function onDataChange() {
-  var \$format = $('#format');
-  if (\$format.val() !== '') {
-    return;
-  }
-  var format = '';
-  var data = $(this).val();
-  if (data.match(/<\/([^>]+:)?lidoWrap>/)) {
-    format = 'lido';
-  } else if ((data.match(/<\/([^>]+:)?record>/) && data.match(/<\/([^>]+:)?leader>/))
-    || data.match(/^\d{5}/)
-    || data.match(/\s*(LDR|\d{5})\s/)
-  ) {
-    format = 'marc';
-  } else if (data.match(/<\/([^>]+:)?qualifieddc>/)) {
-    format = 'qdc';
-  } else if (data.match(/<\/([^>]+:)?dc>/)) {
-    format = 'dc';
-  } else if (data.match(/<\/([^>]+:)?ExchangeSet>/)) {
-    format = 'forward';
-  } else if (data.match(/<\/([^>]+:)?did>/)) {
-    format = 'ead';
-  }
-  if (format) {
-    \$format.val(format);
-    \$format.change();
-  }
-});
+      // Try to guess the format
+      $('#data').change(function onDataChange() {
+        var \$format = $('#format');
+        if (\$format.val() !== '') {
+          return;
+        }
+        var format = '';
+        var data = $(this).val();
+        if (data.match(/<\/([^>]+:)?lidoWrap>/)) {
+          format = 'lido';
+        } else if ((data.match(/<\/([^>]+:)?record>/) && data.match(/<\/([^>]+:)?leader>/))
+          || data.match(/^\d{5}/)
+          || data.match(/\s*(LDR|\d{5})\s/)
+        ) {
+          format = 'marc';
+        } else if (data.match(/<\/([^>]+:)?qualifieddc>/)) {
+          format = 'qdc';
+        } else if (data.match(/<\/([^>]+:)?dc>/)) {
+          format = 'dc';
+        } else if (data.match(/<\/([^>]+:)?ExchangeSet>/)) {
+          format = 'forward';
+        } else if (data.match(/<\/([^>]+:)?did>/)) {
+          format = 'ead';
+        }
+        if (format) {
+          \$format.val(format);
+          \$format.change();
+        }
+      });
 
-var sources = $sources;
-var onFormatChange = function onFormatChange() {
-  var format = $(this).val();
-  var \$source = $('#source');
-  \$source.find('option').remove();
-  var currentPriority = 9999;
-  var \$priorityElem = null;
-  $(sources).each(function processSource(index, src) {
-    if (src.format === format) {
-      var desc = src.institutionName;
-      if (src.institutionName !== src.institution) {
-        desc += ' (' + src.institution + ')';
-      }
-      desc += ' - ' + src.id
-      var \$elem = $('<option>')
-        .attr('value', src.id)
-        .text(desc);
-      if (typeof src.priority !== 'undefined' && src.priority < currentPriority) {
-        \$priorityElem = \$elem;
-        currentPriority = src.priority;
-      }
-      \$elem.appendTo(\$source);
-    }
-  });
-  if (null !== \$priorityElem) {
-    \$priorityElem.attr('selected', 'selected');
-  }
-};
-$('#format').change(onFormatChange);
-$('#format').change();
-JS;
+      var sources = $sources;
+      var onFormatChange = function onFormatChange() {
+        var format = $(this).val();
+        var \$source = $('#source');
+        \$source.find('option').remove();
+        var currentPriority = 9999;
+        var \$priorityElem = null;
+        $(sources).each(function processSource(index, src) {
+          if (src.format === format) {
+            var desc = src.institutionName;
+            if (src.institutionName !== src.institution) {
+              desc += ' (' + src.institution + ')';
+            }
+            desc += ' - ' + src.id
+            var \$elem = $('<option>')
+              .attr('value', src.id)
+              .text(desc);
+            if (typeof src.priority !== 'undefined' && src.priority < currentPriority) {
+              \$priorityElem = \$elem;
+              currentPriority = src.priority;
+            }
+            \$elem.appendTo(\$source);
+          }
+        });
+        if (null !== \$priorityElem) {
+          \$priorityElem.attr('selected', 'selected');
+        }
+      };
+      $('#format').change(onFormatChange);
+      $('#format').change();
+      JS;
   echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
 ?>
 <!-- END of: finna - record/previewform.phtml -->

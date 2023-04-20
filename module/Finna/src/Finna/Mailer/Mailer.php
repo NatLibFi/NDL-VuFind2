@@ -1,4 +1,5 @@
 <?php
+
 /**
  * VuFind Mailer Class
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\Mailer;
 
 use Laminas\Mail\Address;
@@ -44,7 +46,7 @@ use VuFind\RecordDriver\AbstractBase as AbstractRecord;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class Mailer  extends \VuFind\Mailer\Mailer
+class Mailer extends \VuFind\Mailer\Mailer
 {
     /**
      * Send an email message representing a record.
@@ -76,7 +78,7 @@ class Mailer  extends \VuFind\Mailer\Mailer
             'Email/records.phtml',
             [
                 'drivers' => $records, 'to' => $to, 'from' => $from,
-                'message' => $msg
+                'message' => $msg,
             ]
         );
         $this->send($to, $from, $subject, $body, $cc);

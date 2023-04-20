@@ -1,5 +1,19 @@
 <?php
+
+/**
+ * CPU Client
+ *
+ * PHP version 7
+ *
+ * @category VuFind
+ * @package  OnlinePayment
+ * @author   MB <asiakastuki@cpu.fi>
+ * @license  https://www.cpu.fi/ Unknown
+ * @link     https://www.cpu.fi/
+ */
+
 // @codingStandardsIgnoreStart
+
 namespace Finna\OnlinePayment\Handler\Connector\Cpu;
 
 /**
@@ -85,7 +99,7 @@ class Client
 
             $options = ['maxredirects' => 1];
             $headers = [
-               'Content-Type' => 'application/json; charset=utf-8'
+               'Content-Type' => 'application/json; charset=utf-8',
             ];
 
             $response = $this->postRequest(

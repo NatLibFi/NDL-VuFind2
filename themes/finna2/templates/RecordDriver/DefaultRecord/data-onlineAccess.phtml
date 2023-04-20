@@ -14,7 +14,7 @@
   <div class="truncate-field" data-rows="3">
     <?php foreach ($urls as $current): ?>
       <?php if (!in_array($current['url'], $renderedURLs)): ?>
-        <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>"><?=$this->escapeHtml($current['desc'])?></a><br/>
+        <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>"><?=$this->escapeHtml($current['desc'])?></a><br>
         <?php $i++ ?>
       <?php endif; ?>
     <?php endforeach; ?>

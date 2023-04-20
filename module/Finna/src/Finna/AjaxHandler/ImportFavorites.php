@@ -1,4 +1,5 @@
 <?php
+
 /**
  * AJAX handler for importing favorites.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Laminas\Mvc\Controller\Plugin\Params;
@@ -51,8 +53,7 @@ use VuFind\Search\Results\PluginManager as ResultsManager;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class ImportFavorites extends \VuFind\AjaxHandler\AbstractBase
-implements TranslatorAwareInterface
+class ImportFavorites extends \VuFind\AjaxHandler\AbstractBase implements TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
@@ -173,20 +174,20 @@ implements TranslatorAwareInterface
                 $templateParams = [
                     'searches' => $searches,
                     'lists' => $lists['userLists'],
-                    'resources' => $lists['userResources']
+                    'resources' => $lists['userResources'],
                 ];
             } else {
                 $error = true;
                 $templateParams = [
                     'error' => $this->translate(
                         'import_favorites_error_invalid_file'
-                    )
+                    ),
                 ];
             }
         } else {
             $error = true;
             $templateParams = [
-                'error' => $this->translate('import_favorites_error_no_file')
+                'error' => $this->translate('import_favorites_error_no_file'),
             ];
         }
 
@@ -282,7 +283,7 @@ implements TranslatorAwareInterface
                 $params = [
                     'notes' => $record['notes'],
                     'list' => $existingList->id,
-                    'mytags' => $record['tags']
+                    'mytags' => $record['tags'],
                 ];
                 $this->favorites->save($params, $this->user, $driver);
 
@@ -310,7 +311,7 @@ implements TranslatorAwareInterface
 
         return [
             'userLists' => $listCount,
-            'userResources' => $favoritesCount
+            'userResources' => $favoritesCount,
         ];
     }
 }

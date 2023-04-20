@@ -12,14 +12,14 @@
   }
   if (null !== $author):
 ?>
-  <?=$this->record($record)->getLinkedFieldElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?><br/>
+  <?=$this->record($record)->getLinkedFieldElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?><br>
 <?php elseif (false === $authors):?>
   <?php
     // Fallback for missing records that don't support getNonPresenterAuthors/getPresenters
     $listAuthor = $record->tryMethod('getPrimaryAuthor');
     if (!empty($listAuthor)):
   ?>
-    <a href="<?=$this->record($record)->getLink('author', $listAuthor)?>"><?=$this->escapeHtml($listAuthor)?></a><br/>
+    <a href="<?=$this->record($record)->getLink('author', $listAuthor)?>"><?=$this->escapeHtml($listAuthor)?></a><br>
   <?php endif; ?>
 <?php endif; ?>
 <!-- END of: finna - myresearch/helpers/record-author.phtml -->

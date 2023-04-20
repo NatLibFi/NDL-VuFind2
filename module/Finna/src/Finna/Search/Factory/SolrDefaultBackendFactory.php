@@ -28,15 +28,14 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Search\Factory;
 
 use Finna\Search\Solr\DeduplicationListener;
 use Finna\Search\Solr\SolrExtensionsListener;
-
 use FinnaSearch\Backend\Solr\LuceneSyntaxHelper;
 use FinnaSearch\Backend\Solr\QueryBuilder;
 use FinnaSearch\Backend\Solr\Response\Json\RecordCollection;
-
 use VuFindSearch\Backend\Solr\Backend;
 
 /**
@@ -49,8 +48,7 @@ use VuFindSearch\Backend\Solr\Backend;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class SolrDefaultBackendFactory
-extends \VuFind\Search\Factory\SolrDefaultBackendFactory
+class SolrDefaultBackendFactory extends \VuFind\Search\Factory\SolrDefaultBackendFactory
 {
     /**
      * Callback for creating a record driver.
@@ -201,7 +199,7 @@ extends \VuFind\Search\Factory\SolrDefaultBackendFactory
     protected function getSolrUrl($config = null)
     {
         $url = parent::getSolrUrl();
-        $config = $config ?? $this->mainConfig;
+        $config ??= $this->mainConfig;
         if (is_array($url) && !empty($this->config->get($config)->Index->shuffle)) {
             shuffle($url);
         }

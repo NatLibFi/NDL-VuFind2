@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Factory for record driver data formatting view helper
  *
@@ -31,6 +32,7 @@
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
  */
+
 namespace Finna\View\Helper\Root;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -53,8 +55,7 @@ use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
  */
-class RecordDataFormatterFactory
-extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
+class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
 {
     /**
      * Translator
@@ -131,7 +132,12 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
         $lines = [];
 
         $setTemplateLine
-            = function ($key, $dataMethod, $template, $options = []) use (
+            = function (
+                $key,
+                $dataMethod,
+                $template,
+                $options = []
+            ) use (
                 &$lines,
                 &$pos
             ) {
@@ -146,7 +152,10 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
                 $dataMethod,
                 $callback,
                 $options = []
-            ) use (&$lines, &$pos) {
+            ) use (
+                &$lines,
+                &$pos
+            ) {
                 $pos += 100;
                 $options['pos'] = $pos;
                 $lines[$key] = [true, $dataMethod, $callback, $options];
@@ -156,7 +165,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getGenres',
             'data-genres.phtml',
             [
-                'context' => ['class' => 'recordGenres']
+                'context' => ['class' => 'recordGenres'],
             ]
         );
         $setTemplateLine(
@@ -164,7 +173,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAgeLimit',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordAgeLimit']
+                'context' => ['class' => 'recordAgeLimit'],
             ]
         );
         $setTemplateLine(
@@ -172,7 +181,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getOriginalWork',
             'data-forwardFields.phtml',
             [
-                'context' => ['class' => 'recordOriginalWork']
+                'context' => ['class' => 'recordOriginalWork'],
             ]
         );
         $setTemplateLine(
@@ -180,7 +189,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getContainerTitle',
             'data-containerTitle.phtml',
             [
-                'context' => ['class' => 'record-container-link']
+                'context' => ['class' => 'record-container-link'],
             ]
         );
         $setTemplateLine(
@@ -188,7 +197,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getNewerTitles',
             'data-titles.phtml',
             [
-                'context' => ['class' => 'recordNextTitles']
+                'context' => ['class' => 'recordNextTitles'],
             ]
         );
         $setTemplateLine(
@@ -196,7 +205,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getPreviousTitles',
             'data-titles.phtml',
             [
-                'context' => ['class' => 'recordPrevTitles']
+                'context' => ['class' => 'recordPrevTitles'],
             ]
         );
 
@@ -208,7 +217,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
                 'context' => ['class' => 'recordAuthors'],
                 'labelFunction' => function () {
                     return 'Contributors';
-                }
+                },
             ]
         );
         $setTemplateLine(
@@ -216,7 +225,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getPresenters',
             'data-actors.phtml',
             [
-                'context' => ['class' => 'recordPresenters']
+                'context' => ['class' => 'recordPresenters'],
             ]
         );
         $setTemplateLine(
@@ -224,7 +233,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getGeneralNotes',
             'data-forwardFields.phtml',
             [
-                'context' => ['class' => 'recordDescription']
+                'context' => ['class' => 'recordDescription'],
             ]
         );
         $setTemplateLine(
@@ -232,7 +241,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getDescription',
             'data-forwardFields.phtml',
             [
-                'context' => ['class' => 'recordDescription']
+                'context' => ['class' => 'recordDescription'],
             ]
         );
         $setTemplateLine(
@@ -240,7 +249,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getOtherIdentifiers',
             'data-lines-with-detail.phtml',
             [
-                'context' => ['class' => 'recordIdentifiers']
+                'context' => ['class' => 'recordIdentifiers'],
             ]
         );
         $setTemplateLine(
@@ -248,7 +257,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getPressReview',
             'data-forwardFields.phtml',
             [
-                'context' => ['class' => 'record-press-review']
+                'context' => ['class' => 'record-press-review'],
             ]
         );
         $setTemplateLine(
@@ -256,7 +265,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getMusicInfo',
             'data-forwardFields.phtml',
             [
-                'context' => ['class' => 'record-music']
+                'context' => ['class' => 'record-music'],
             ]
         );
         $setTemplateLine(
@@ -264,7 +273,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getProjectedPublicationDate',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'coreProjectedPublicationDate']
+                'context' => ['class' => 'coreProjectedPublicationDate'],
             ]
         );
         $setTemplateLine(
@@ -272,7 +281,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getDissertationNote',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'coreDissertationNote']
+                'context' => ['class' => 'coreDissertationNote'],
             ]
         );
         $setTemplateLine(
@@ -284,7 +293,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
                     $label = isset($data[0]) ? $data[0]['heading'] : '';
                     return $label;
                 },
-                'context' => ['class' => 'recordOtherLink']
+                'context' => ['class' => 'recordOtherLink'],
             ]
         );
         $setTemplateLine(
@@ -292,7 +301,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getPresenters',
             'data-presenters.phtml',
             [
-                'context' => ['class' => 'recordPresenters']
+                'context' => ['class' => 'recordPresenters'],
             ]
         );
         $setTemplateLine(
@@ -300,7 +309,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAlternativeTitles',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordAltTitles']
+                'context' => ['class' => 'recordAltTitles'],
             ]
         );
 
@@ -309,7 +318,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getFormats',
             'format-list.phtml',
             [
-                'context' => ['class' => 'recordFormat']
+                'context' => ['class' => 'recordFormat'],
             ]
         );
 
@@ -322,7 +331,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             [
                 'context' => [
                     'class' => 'recordHierarchyLinks',
-                ]
+                ],
             ]
         );
         $setTemplateLine(
@@ -332,7 +341,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             [
                 'context' => [
                     'class' => 'recordHierarchyLinks',
-                ]
+                ],
             ]
         );
         $setTemplateLine(
@@ -342,7 +351,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             [
                 'context' => [
                     'class' => 'recordHierarchyLinks',
-                ]
+                ],
             ]
         );
         $setTemplateLine(
@@ -352,7 +361,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             [
                 'context' => [
                     'class' => 'recordHierarchyLinks',
-                ]
+                ],
             ]
         );
         $setTemplateLine(
@@ -362,7 +371,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             [
                 'context' => [
                     'class' => 'recordHierarchyLinks',
-                ]
+                ],
             ]
         );
         $setTemplateLine(
@@ -372,7 +381,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             [
                 'context' => [
                     'class' => 'recordHierarchyLinks',
-                ]
+                ],
             ]
         );
 
@@ -381,7 +390,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getOriginationExtended',
             'data-origination.phtml',
             [
-                'context' => ['class' => 'record-origination']
+                'context' => ['class' => 'record-origination'],
             ]
         );
         $setTemplateLine(
@@ -389,7 +398,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getParentArchives',
             'data-hierarchyLinks.phtml',
             [
-                'context' => ['class' => 'recordHierarchyLinks']
+                'context' => ['class' => 'recordHierarchyLinks'],
             ]
         );
         $setTemplateLine(
@@ -399,7 +408,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             [
                 'context' => [
                     'class' => 'recordSeries',
-                ]
+                ],
             ]
         );
         $setTemplateLine(
@@ -409,8 +418,8 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             [
                 'context' => [
                     'class' => 'recordFile',
-                    'levels' => \Finna\RecordDriver\SolrEad::FILE_LEVELS
-                ]
+                    'levels' => \Finna\RecordDriver\SolrEad::FILE_LEVELS,
+                ],
             ]
         );
         $setTemplateLine(
@@ -418,7 +427,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getPhysicalMediums',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'physical-medium']
+                'context' => ['class' => 'physical-medium'],
             ]
         );
         $setTemplateLine(
@@ -426,7 +435,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getPhysicalDescriptions',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'physicalDescriptions']
+                'context' => ['class' => 'physicalDescriptions'],
             ]
         );
         $setTemplateLine(
@@ -434,7 +443,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getPhysicalDescriptions',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'record-extent']
+                'context' => ['class' => 'record-extent'],
             ]
         );
         $setTemplateLine(
@@ -442,7 +451,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getLanguages',
             'data-transEscLangcode.phtml',
             [
-                'context' => ['class' => 'recordLanguage']
+                'context' => ['class' => 'recordLanguage'],
             ]
         );
         $setTemplateLine(
@@ -450,7 +459,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getOriginalLanguages',
             'data-transEscLangcode.phtml',
             [
-                'context' => ['class' => 'originalLanguage']
+                'context' => ['class' => 'originalLanguage'],
             ]
         );
         $setTemplateLine(
@@ -458,7 +467,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getGeneralNotes',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordDescription']
+                'context' => ['class' => 'recordDescription'],
             ]
         );
         $setTemplateLine(
@@ -466,7 +475,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getInstitutions',
             'data-organisation.phtml',
             [
-                'context' => ['class' => 'recordInstitution']
+                'context' => ['class' => 'recordInstitution'],
             ]
         );
         $setTemplateLine(
@@ -474,7 +483,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getCollections',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordCollection']
+                'context' => ['class' => 'recordCollection'],
             ]
         );
         $setTemplateLine(
@@ -496,7 +505,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getIdentifier',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordIdentifier']
+                'context' => ['class' => 'recordIdentifier'],
             ]
         );
 
@@ -505,7 +514,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getLocalIdentifiers',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordIdentifiers']
+                'context' => ['class' => 'recordIdentifiers'],
             ]
         );
 
@@ -514,7 +523,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getMeasurements',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordMeasurements']
+                'context' => ['class' => 'recordMeasurements'],
             ]
         );
         $setTemplateLine(
@@ -522,7 +531,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getInscriptions',
             'data-inscriptions.phtml',
             [
-                'context' => ['class' => 'recordInscriptions']
+                'context' => ['class' => 'recordInscriptions'],
             ]
         );
         $setTemplateLine(
@@ -530,7 +539,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getFormatClassifications',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordClassifications']
+                'context' => ['class' => 'recordClassifications'],
             ]
         );
 
@@ -579,7 +588,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getUnitID',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordReferenceCode']
+                'context' => ['class' => 'recordReferenceCode'],
             ]
         );
         $setTemplateLine(
@@ -592,7 +601,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getNonPresenterAuthors',
             'data-authors.phtml',
             [
-                'context' => ['class' => 'recordAuthors']
+                'context' => ['class' => 'recordAuthors'],
             ]
         );
         $setTemplateLine(
@@ -600,7 +609,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getPublicationDetails',
             'data-publicationDetails.phtml',
             [
-                'context' => ['class' => 'recordPublications']
+                'context' => ['class' => 'recordPublications'],
             ]
         );
         $setTemplateLine(
@@ -608,7 +617,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getPublicationDetails',
             'data-publicationDetails.phtml',
             [
-                'context' => ['class' => 'recordPublications']
+                'context' => ['class' => 'recordPublications'],
             ]
         );
         $setTemplateLine(
@@ -616,7 +625,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getProjectedPublicationDate',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'coreProjectedPublicationDate']
+                'context' => ['class' => 'coreProjectedPublicationDate'],
             ]
         );
         $setTemplateLine(
@@ -624,7 +633,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getDissertationNote',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'coreDissertationNote']
+                'context' => ['class' => 'coreDissertationNote'],
             ]
         );
         $setTemplateLine(
@@ -632,7 +641,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getEdition',
             'data-edition.phtml',
             [
-                'context' => ['class' => 'recordEdition']
+                'context' => ['class' => 'recordEdition'],
             ]
         );
         $setTemplateLine(
@@ -640,7 +649,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getSeries',
             'data-series.phtml',
             [
-                'context' => ['class' => 'recordSeries']
+                'context' => ['class' => 'recordSeries'],
             ]
         );
         $setTemplateLine(
@@ -648,7 +657,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getClassifications',
             'data-classification.phtml',
             [
-                'context' => ['class' => 'recordClassifications']
+                'context' => ['class' => 'recordClassifications'],
             ]
         );
         $setTemplateLine(
@@ -656,7 +665,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getEditions',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordDisplayEdition']
+                'context' => ['class' => 'recordDisplayEdition'],
             ]
         );
         $setTemplateLine(
@@ -664,7 +673,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getSubjectDetails',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordSubjects']
+                'context' => ['class' => 'recordSubjects'],
             ]
         );
         $setTemplateLine(
@@ -675,7 +684,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
                 'context' => [
                     'class' => 'recordSubjects',
                     'headingType' => 'place',
-                ]
+                ],
             ]
         );
         $setTemplateLine(
@@ -683,7 +692,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getSubjectDates',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordSubjects']
+                'context' => ['class' => 'recordSubjects'],
             ]
         );
         $setTemplateLine(
@@ -691,7 +700,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getSubjectActors',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordSubjects']
+                'context' => ['class' => 'recordSubjects'],
             ]
         );
         $setTemplateLine(
@@ -699,7 +708,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAllSubjectHeadings',
             'data-allSubjectHeadings.phtml',
             [
-                'context' => ['class' => 'recordSubjects']
+                'context' => ['class' => 'recordSubjects'],
             ]
         );
         $setTemplateLine(
@@ -707,7 +716,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAllSubjectHeadingsWithoutPlaces',
             'data-allSubjectHeadings.phtml',
             [
-                'context' => ['class' => 'recordSubjects', 'title' => 'Subjects']
+                'context' => ['class' => 'recordSubjects', 'title' => 'Subjects'],
             ]
         );
         $setTemplateLine(
@@ -715,7 +724,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAllSubjectHeadingsExtended',
             'data-allSubjectHeadingsExtended.phtml',
             [
-                'context' => ['class' => 'recordSubjects']
+                'context' => ['class' => 'recordSubjects'],
             ]
         );
         $setTemplateLine(
@@ -723,7 +732,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getMethodology',
             'data-methodology-links.phtml',
             [
-                'context' => ['class' => 'recordMethodology']
+                'context' => ['class' => 'recordMethodology'],
             ]
         );
         $setTemplateLine(
@@ -731,7 +740,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getRelatedPublications',
             'data-relatedPublications.phtml',
             [
-                'context' => ['class' => 'record-related-publications']
+                'context' => ['class' => 'record-related-publications'],
             ]
         );
         $setTemplateLine(
@@ -740,8 +749,8 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'data-keywords.phtml',
             [
                 'context' => [
-                    'class' => 'recordClassifications', 'title' => 'Classification'
-                ]
+                    'class' => 'recordClassifications', 'title' => 'Classification',
+                ],
             ]
         );
         $setTemplateLine(
@@ -749,7 +758,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getIntroduction',
             'data-markdown.phtml',
             [
-                'context' => ['class' => 'record-introduction']
+                'context' => ['class' => 'record-introduction'],
             ]
         );
         $setTemplateLine(
@@ -757,7 +766,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getManufacturer',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'recordManufacturer']
+                'context' => ['class' => 'recordManufacturer'],
             ]
         );
         $setTemplateLine(
@@ -765,7 +774,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getProducers',
             'data-producers.phtml',
             [
-                'context' => ['class' => 'recordManufacturer']
+                'context' => ['class' => 'recordManufacturer'],
             ]
         );
         $setTemplateLine(
@@ -773,7 +782,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getProductionCost',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'record-production-cost']
+                'context' => ['class' => 'record-production-cost'],
             ]
         );
         $setTemplateLine(
@@ -781,7 +790,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getFunders',
             'data-funding.phtml',
             [
-                'context' => ['class' => 'record-funders']
+                'context' => ['class' => 'record-funders'],
             ]
         );
         $setTemplateLine(
@@ -789,7 +798,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getDistributors',
             'data-distribution.phtml',
             [
-                'context' => ['class' => 'record-distributors']
+                'context' => ['class' => 'record-distributors'],
             ]
         );
         $setTemplateLine(
@@ -797,7 +806,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getPremiereTime',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'record-premiere-night']
+                'context' => ['class' => 'record-premiere-night'],
             ]
         );
         $setTemplateLine(
@@ -814,7 +823,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getBroadcastingInfo',
             'data-broadcasting-dates.phtml',
             [
-                'context' => ['class' => 'record-broadcasting-info']
+                'context' => ['class' => 'record-broadcasting-info'],
             ]
         );
         $setTemplateLine(
@@ -822,7 +831,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAmountOfViewers',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'record-number-of-viewers']
+                'context' => ['class' => 'record-number-of-viewers'],
             ]
         );
         $setTemplateLine(
@@ -830,7 +839,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getFestivalInfo',
             'data-festival-info.phtml',
             [
-                'context' => ['class' => 'record-festival-info']
+                'context' => ['class' => 'record-festival-info'],
             ]
         );
         $setTemplateLine(
@@ -838,7 +847,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getForeignDistribution',
             'data-foreign-distribution.phtml',
             [
-               'context' => ['class' => 'record-foreign-distribution']
+               'context' => ['class' => 'record-foreign-distribution'],
             ]
         );
         $setTemplateLine(
@@ -846,7 +855,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getNumberOfCopies',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'record-film-copies']
+                'context' => ['class' => 'record-film-copies'],
             ]
         );
         $setTemplateLine(
@@ -854,7 +863,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getOtherScreenings',
             'data-other-screenings.phtml',
             [
-               'context' => ['class' => 'record-other-screenings']
+               'context' => ['class' => 'record-other-screenings'],
             ]
         );
         $setTemplateLine(
@@ -864,8 +873,8 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             [
                'context' => [
                    'class' => 'record-thanks',
-                   'title' => 'movie_thanks'
-                ]
+                   'title' => 'movie_thanks',
+                ],
             ]
         );
         $setTemplateLine(
@@ -873,7 +882,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getExteriors',
             'data-forwardFields.phtml',
             [
-                'context' => ['class' => 'record-exteriors']
+                'context' => ['class' => 'record-exteriors'],
             ]
         );
         $setTemplateLine(
@@ -881,7 +890,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getInteriors',
             'data-forwardFields.phtml',
             [
-                'context' => ['class' => 'record-interiors']
+                'context' => ['class' => 'record-interiors'],
             ]
         );
         $setTemplateLine(
@@ -889,7 +898,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getStudios',
             'data-forwardFields.phtml',
             [
-                'context' => ['class' => 'record-studios']
+                'context' => ['class' => 'record-studios'],
             ]
         );
         $setTemplateLine(
@@ -897,7 +906,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getLocationNotes',
             'data-forwardFields.phtml',
             [
-                'context' => ['class' => 'record-location-notes']
+                'context' => ['class' => 'record-location-notes'],
             ]
         );
         $setTemplateLine(
@@ -905,7 +914,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getFilmingDate',
             'data-forwardFields.phtml',
             [
-                'context' => ['class' => 'record-filming-date']
+                'context' => ['class' => 'record-filming-date'],
             ]
         );
         $setTemplateLine(
@@ -913,7 +922,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getArchiveFilms',
             'data-forwardFields.phtml',
             [
-                'context' => ['class' => 'record-archive-films']
+                'context' => ['class' => 'record-archive-films'],
             ]
         );
         $setTemplateLine(
@@ -921,7 +930,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getTitleStatement',
             'data-addInfo.phtml',
             [
-                'context' => ['class' => 'recordTitleStatement']
+                'context' => ['class' => 'recordTitleStatement'],
             ]
         );
 
@@ -932,8 +941,8 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             [
                 'context' => [
                     'class' => 'recordTitleStatement',
-                    'title' => 'Additional Information'
-                ]
+                    'title' => 'Additional Information',
+                ],
             ]
         );
 
@@ -943,7 +952,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'data-childRecords.phtml',
             [
                 'allowZero' => false,
-                'context' => ['class' => 'recordComponentParts']
+                'context' => ['class' => 'recordComponentParts'],
             ]
         );
         $setTemplateLine(
@@ -951,7 +960,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAllRecordLinks',
             'data-allRecordLinks.phtml',
             [
-                'context' => ['class' => 'recordLinks', 'title' => ""]
+                'context' => ['class' => 'recordLinks', 'title' => ""],
             ]
         );
         $setTemplateLine(
@@ -959,7 +968,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAllRecordLinks',
             'data-allRecordLinks.phtml',
             [
-                'context' => ['class' => 'relatedMaterials']
+                'context' => ['class' => 'relatedMaterials'],
             ]
         );
         $setTemplateLine(
@@ -967,7 +976,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             true,
             'data-onlineAccess.phtml',
             [
-                'context' => ['class' => 'webResource']
+                'context' => ['class' => 'webResource'],
             ]
         );
         $setTemplateLine(
@@ -975,7 +984,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getSource',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordSource']
+                'context' => ['class' => 'recordSource'],
             ]
         );
         $setTemplateLine(
@@ -983,7 +992,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getDateSpan',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'extendedDateSpan']
+                'context' => ['class' => 'extendedDateSpan'],
             ]
         );
         $setTemplateLine(
@@ -991,7 +1000,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getKeywords',
             'data-keywords.phtml',
             [
-                'context' => ['class' => 'record-keywords']
+                'context' => ['class' => 'record-keywords'],
             ]
         );
         $setTemplateLine(
@@ -999,7 +1008,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getEducationPrograms',
             'data-education.phtml',
             [
-                'context' => ['class' => 'record-education-programs']
+                'context' => ['class' => 'record-education-programs'],
             ]
         );
         $setTemplateLine(
@@ -1007,7 +1016,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getEducationalAudiences',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'record-educational-audience']
+                'context' => ['class' => 'record-educational-audience'],
             ]
         );
         $setTemplateLine(
@@ -1015,7 +1024,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getEducationalUse',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'record-educational-uses']
+                'context' => ['class' => 'record-educational-uses'],
             ]
         );
         $setTemplateLine(
@@ -1023,7 +1032,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getEducationalLevels',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'record-educational-levels']
+                'context' => ['class' => 'record-educational-levels'],
             ]
         );
         $setTemplateLine(
@@ -1031,7 +1040,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getEducationalSubjects',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'record-educational-subjects']
+                'context' => ['class' => 'record-educational-subjects'],
             ]
         );
         $setTemplateLine(
@@ -1039,7 +1048,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getEducationalMaterialType',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'record-educational-material-type']
+                'context' => ['class' => 'record-educational-material-type'],
             ]
         );
         $setTemplateLine(
@@ -1047,7 +1056,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getEducationalAim',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'record-educational-aim']
+                'context' => ['class' => 'record-educational-aim'],
             ]
         );
         $setTemplateLine(
@@ -1055,7 +1064,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAccessibilityFeatures',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'record-accessibility-features']
+                'context' => ['class' => 'record-accessibility-features'],
             ]
         );
         $setTemplateLine(
@@ -1063,7 +1072,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAccessibilityHazards',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'record-accessibility-hazard']
+                'context' => ['class' => 'record-accessibility-hazard'],
             ]
         );
         $setTemplateLine(
@@ -1071,7 +1080,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getPublicationFrequency',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'extendedFrequency']
+                'context' => ['class' => 'extendedFrequency'],
             ]
         );
         $setTemplateLine(
@@ -1079,7 +1088,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getPlayingTimes',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'extendedPlayTime']
+                'context' => ['class' => 'extendedPlayTime'],
             ]
         );
         $setTemplateLine(
@@ -1087,7 +1096,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getColor',
             'data-color.phtml',
             [
-                'context' => ['class' => 'record-color']
+                'context' => ['class' => 'record-color'],
             ]
         );
         $setTemplateLine(
@@ -1095,7 +1104,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getSound',
             'data-sound.phtml',
             [
-                'context' => ['class' => 'record-sound']
+                'context' => ['class' => 'record-sound'],
             ]
         );
         $setTemplateLine(
@@ -1103,7 +1112,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAspectRatio',
             'data-escapeHtml',
             [
-                'context' => ['class' => 'record-aspect-ratio']
+                'context' => ['class' => 'record-aspect-ratio'],
             ]
         );
         $setTemplateLine(
@@ -1111,7 +1120,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getHardwareRequirements',
             'data-hardwareRequirements.phtml',
             [
-                'context' => ['class' => 'record-hardware']
+                'context' => ['class' => 'record-hardware'],
             ]
         );
         $setTemplateLine(
@@ -1119,7 +1128,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getSystemDetails',
             'data-systemFormat.phtml',
             [
-                'context' => ['class' => 'extendedSystem']
+                'context' => ['class' => 'extendedSystem'],
             ]
         );
         $setTemplateLine(
@@ -1127,7 +1136,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getTargetAudienceNotes',
             'data-escapeHtml',
             [
-                'context' => ['class' => 'extendedAudience']
+                'context' => ['class' => 'extendedAudience'],
             ]
         );
         $setTemplateLine(
@@ -1135,7 +1144,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAwards',
             'data-forwardFields.phtml',
             [
-                'context' => ['class' => 'extendedAwards']
+                'context' => ['class' => 'extendedAwards'],
             ]
         );
         $setTemplateLine(
@@ -1143,7 +1152,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getProductionCredits',
             'data-escapeHtml',
             [
-                'context' => ['class' => 'extendedCredits']
+                'context' => ['class' => 'extendedCredits'],
             ]
         );
         $setTemplateLine(
@@ -1151,7 +1160,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getBibliographyNotes',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'extendedBibliography']
+                'context' => ['class' => 'extendedBibliography'],
             ]
         );
         $setTemplateLine(
@@ -1159,7 +1168,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getISBNs',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'extendedISBNs']
+                'context' => ['class' => 'extendedISBNs'],
             ]
         );
         $setTemplateLine(
@@ -1167,7 +1176,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getISSNs',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'extendedISSNs']
+                'context' => ['class' => 'extendedISSNs'],
             ]
         );
         $setTemplateLine(
@@ -1175,7 +1184,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getCleanDOI',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'extended-doi']
+                'context' => ['class' => 'extended-doi'],
             ]
         );
         $setTemplateLine(
@@ -1183,7 +1192,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getRelationshipNotes',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'extendedRelatedItems']
+                'context' => ['class' => 'extendedRelatedItems'],
             ]
         );
         $setTemplateLine(
@@ -1191,7 +1200,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAccessRestrictions',
             'data-accrest.phtml',
             [
-                'context' => ['class' => 'extendedAccess']
+                'context' => ['class' => 'extendedAccess'],
             ]
         );
         $setTemplateLine(
@@ -1199,7 +1208,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAccessRestrictions',
             'data-accrest.phtml',
             [
-                'context' => ['class' => 'extendedAccess']
+                'context' => ['class' => 'extendedAccess'],
             ]
         );
 
@@ -1208,7 +1217,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getTermsOfUse',
             'data-termsOfUse.phtml',
             [
-                'context' => ['class' => 'extendedTermsOfUse']
+                'context' => ['class' => 'extendedTermsOfUse'],
             ]
         );
         $setTemplateLine(
@@ -1216,7 +1225,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getFindingAids',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'extendedFindingAids']
+                'context' => ['class' => 'extendedFindingAids'],
             ]
         );
         $setTemplateLine(
@@ -1226,7 +1235,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             [
                 'context' => [
                     'class' => 'extendedFindingAids',
-                    'title' => 'Finding Aid'
+                    'title' => 'Finding Aid',
                 ],
             ]
         );
@@ -1235,7 +1244,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getHierarchicalPlaceNames',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'publicationPlace']
+                'context' => ['class' => 'publicationPlace'],
             ]
         );
         $setTemplateLine(
@@ -1243,7 +1252,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             true,
             'data-authorNotes.phtml',
             [
-                'context' => ['class' => 'extendedAuthorNotes']
+                'context' => ['class' => 'extendedAuthorNotes'],
             ]
         );
         $setTemplateLine(
@@ -1251,7 +1260,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getPhysicalLocations',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordPhysicalLocation']
+                'context' => ['class' => 'recordPhysicalLocation'],
             ]
         );
         $setTemplateLine(
@@ -1259,7 +1268,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getUnitDate',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordDaterange']
+                'context' => ['class' => 'recordDaterange'],
             ]
         );
         $setTemplateLine(
@@ -1267,7 +1276,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getUnitDates',
             'data-lines-with-detail.phtml',
             [
-                'context' => ['title' => 'Date']
+                'context' => ['title' => 'Date'],
             ]
         );
         $setTemplateLine(
@@ -1275,7 +1284,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getMaterialCondition',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'materialCondition']
+                'context' => ['class' => 'materialCondition'],
             ]
         );
         $setTemplateLine(
@@ -1283,7 +1292,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAllRecordLinks',
             'data-containedIn.phtml',
             [
-                'context' => ['class' => 'isPartOf']
+                'context' => ['class' => 'isPartOf'],
             ]
         );
 
@@ -1297,7 +1306,8 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
                 $values = $useSubHeadings && $values
                     ? array_values($values) : $values;
                 $label = $useSubHeadings ? "access_restrictions_$type" : null;
-                if ($useSubHeadings
+                if (
+                    $useSubHeadings
                     && isset($options['hideSubheadings'])
                     && in_array($label, $options['hideSubheadings'])
                 ) {
@@ -1331,7 +1341,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAcquisitionSource',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordAcquisition']
+                'context' => ['class' => 'recordAcquisition'],
             ]
         );
         $setTemplateLine(
@@ -1339,7 +1349,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getMusicCompositions',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'record-composition']
+                'context' => ['class' => 'record-composition'],
             ]
         );
 
@@ -1376,7 +1386,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getNotatedMusicFormat',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordNoteFormat']
+                'context' => ['class' => 'recordNoteFormat'],
             ]
         );
         $setTemplateLine(
@@ -1384,7 +1394,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getEventNotice',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordEventNotice']
+                'context' => ['class' => 'recordEventNotice'],
             ]
         );
         $setTemplateLine(
@@ -1392,7 +1402,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getFirstLyrics',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordFirstLyrics']
+                'context' => ['class' => 'recordFirstLyrics'],
             ]
         );
         $setTemplateLine(
@@ -1400,7 +1410,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getTradeAvailabilityNote',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordTradeNote']
+                'context' => ['class' => 'recordTradeNote'],
             ]
         );
         $setTemplateLine(
@@ -1408,7 +1418,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getInspectionDetails',
             'data-inspection.phtml',
             [
-                'context' => ['class' => 'recordInspection']
+                'context' => ['class' => 'recordInspection'],
             ]
         );
         $setTemplateLine(
@@ -1416,7 +1426,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getMapScale',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'record-map-scale']
+                'context' => ['class' => 'record-map-scale'],
             ]
         );
         $setTemplateLine(
@@ -1426,8 +1436,8 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             [
                 'context' => [
                     'class' => 'record-available-online',
-                    'truncateUrl' => true
-                ]
+                    'truncateUrl' => true,
+                ],
             ]
         );
         $setTemplateLine(
@@ -1435,7 +1445,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getNotes',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'record-notes']
+                'context' => ['class' => 'record-notes'],
             ]
         );
         $setTemplateLine(
@@ -1453,7 +1463,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAssociatedPlace',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'record-associated-place']
+                'context' => ['class' => 'record-associated-place'],
             ]
         );
         $setTemplateLine(
@@ -1461,7 +1471,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getRelatedPlacesExtended',
             'data-lines-with-detail.phtml',
             [
-                'context' => ['class' => 'record-related-place']
+                'context' => ['class' => 'record-related-place'],
             ]
         );
         $setTemplateLine(
@@ -1469,7 +1479,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getTimePeriodOfCreation',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'record-time-period-creation']
+                'context' => ['class' => 'record-time-period-creation'],
             ]
         );
 
@@ -1478,7 +1488,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getCollectiveUniformTitle',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'record-collective-uniform-title']
+                'context' => ['class' => 'record-collective-uniform-title'],
             ]
         );
         $setTemplateLine(
@@ -1486,7 +1496,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getStandardCodes',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'record-standard-codes']
+                'context' => ['class' => 'record-standard-codes'],
             ]
         );
         $setTemplateLine(
@@ -1494,7 +1504,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getStandardReportNumbers',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'record-standard-report-number']
+                'context' => ['class' => 'record-standard-report-number'],
             ]
         );
         $setTemplateLine(
@@ -1502,7 +1512,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getPubDistNumber',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'record-pubdist-number']
+                'context' => ['class' => 'record-pubdist-number'],
             ]
         );
         $setTemplateLine(
@@ -1510,7 +1520,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getTimePeriod',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'record-time-period']
+                'context' => ['class' => 'record-time-period'],
             ]
         );
         $setTemplateLine(
@@ -1518,7 +1528,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getCopyrightNotes',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'record-copyright-notes']
+                'context' => ['class' => 'record-copyright-notes'],
             ]
         );
         $setTemplateLine(
@@ -1526,7 +1536,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getLanguageNotes',
             'data-languageNotes.phtml',
             [
-                'context' => ['class' => 'record-language-notes']
+                'context' => ['class' => 'record-language-notes'],
             ]
         );
         $setTemplateLine(
@@ -1534,7 +1544,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getUncontrolledTitle',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'record-uncontrolled-title']
+                'context' => ['class' => 'record-uncontrolled-title'],
             ]
         );
 
@@ -1585,7 +1595,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAppraisal',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordAppraisal']
+                'context' => ['class' => 'recordAppraisal'],
             ]
         );
 
@@ -1594,7 +1604,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getContainerInformation',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordContainerInformation']
+                'context' => ['class' => 'recordContainerInformation'],
             ]
         );
 
@@ -1603,7 +1613,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getMaterialArrangement',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordMaterialArrangement']
+                'context' => ['class' => 'recordMaterialArrangement'],
             ]
         );
         $setTemplateLine(
@@ -1611,7 +1621,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getOtherRelatedMaterial',
             'data-otherRelatedMaterial.phtml',
             [
-                'context' => ['class' => 'other-related-material']
+                'context' => ['class' => 'other-related-material'],
             ]
         );
         $setTemplateLine(
@@ -1619,7 +1629,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getAudienceCharacteristics',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'audience-characteristics']
+                'context' => ['class' => 'audience-characteristics'],
             ]
         );
         $setTemplateLine(
@@ -1627,7 +1637,7 @@ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
             'getCreatorCharacteristics',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'creator-characteristics']
+                'context' => ['class' => 'creator-characteristics'],
             ]
         );
 

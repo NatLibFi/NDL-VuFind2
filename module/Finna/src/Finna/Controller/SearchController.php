@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Default Controller
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
+
 namespace Finna\Controller;
 
 use VuFindCode\ISBN;
@@ -69,10 +71,11 @@ class SearchController extends \VuFind\Controller\SearchController
 
         $range = [
             'type' => 'date',
-            'field' => $params->getDateRangeSearchField()
+            'field' => $params->getDateRangeSearchField(),
         ];
 
-        if ($view->saved
+        if (
+            $view->saved
             && is_callable([$view->saved->getParams(), 'getDateRangeFilter'])
             && ($filter = $view->saved->getParams()->getDateRangeFilter())
         ) {
@@ -225,7 +228,8 @@ class SearchController extends \VuFind\Controller\SearchController
 
         if (isset($request['url_ver']) && $request['url_ver'] == 'Z39.88-2004') {
             // Parse OpenURL 1.0
-            if (isset($request['rft_val_fmt'])
+            if (
+                isset($request['rft_val_fmt'])
                 && $request['rft_val_fmt'] == 'info:ofi/fmt:kev:mtx:book'
             ) {
                 // Book format
@@ -285,7 +289,8 @@ class SearchController extends \VuFind\Controller\SearchController
             }
         }
 
-        if (ISBN::isValidISBN10($isbn)
+        if (
+            ISBN::isValidISBN10($isbn)
             || ISBN::isValidISBN13($isbn)
         ) {
             $isbnObj = new ISBN($isbn);
@@ -321,7 +326,8 @@ class SearchController extends \VuFind\Controller\SearchController
         $results = false;
 
         // Journal first..
-        if (!$params['eissn']
+        if (
+            !$params['eissn']
             || !($results = $this->trySearch(
                 $runner,
                 ['ISN' => $params['eissn']],
@@ -337,7 +343,8 @@ class SearchController extends \VuFind\Controller\SearchController
             }
         }
         if ($results) {
-            if ($params['date'] || $params['volume'] || $params['issue']
+            if (
+                $params['date'] || $params['volume'] || $params['issue']
                 || $params['spage'] || $params['atitle']
             ) {
                 // Ok, we found a journal. See if we can find an article too.
@@ -399,7 +406,8 @@ class SearchController extends \VuFind\Controller\SearchController
         }
 
         // Try to find a book or something
-        if (!$params['isbn']
+        if (
+            !$params['isbn']
             || !($results = $this->trySearch(
                 $runner,
                 ['ISN' => $params['isbn']],
@@ -497,7 +505,7 @@ class SearchController extends \VuFind\Controller\SearchController
             [
                 'results' => $results,
                 'geoFilters' =>
-                $params->getGeographicFilters($params->getFilterList())
+                $params->getGeographicFilters($params->getFilterList()),
             ]
         );
         $view->setTemplate('Recommend/SideFacets/map-facet-modal');

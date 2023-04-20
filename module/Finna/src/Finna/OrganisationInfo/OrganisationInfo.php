@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Service for querying Kirjastohakemisto database.
  * See: https://api.kirjastot.fi/
@@ -29,6 +30,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\OrganisationInfo;
 
 use Finna\Search\Solr\HierarchicalFacetHelper;
@@ -49,7 +51,8 @@ use VuFind\Search\Results\PluginManager;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterface,
+class OrganisationInfo implements
+    \VuFind\I18n\Translator\TranslatorAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface,
     \Laminas\Log\LoggerAwareInterface
 {
@@ -405,7 +408,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         // Check if consortium is found in Kirjastohakemisto
         $params = [
             'finna:id' => $parent,
-            'lang' => $this->getLanguage()
+            'lang' => $this->getLanguage(),
         ];
         $response = $this->fetchData('finna_organisation', $params);
 
@@ -436,7 +439,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                        'url' => $data,
                        'label' => 'organisation_info_link',
                        'logo' => $this->proxifyImageUrl($logo),
-                       'name' => $parentName
+                       'name' => $parentName,
                     ]
                 );
             }
@@ -477,7 +480,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             $data = "{$url}?" . http_build_query(
                 [
                     'id' => $id,
-                    'sector' => 'mus'
+                    'sector' => 'mus',
                 ]
             );
             if ($link) {
@@ -491,7 +494,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                     'url' => $data,
                     'label' => 'organisation_info_link',
                     'logo' => $this->proxifyImageUrl($logo),
-                    'name' => $name
+                    'name' => $name,
                     ]
                 );
             }
@@ -522,12 +525,13 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         $params = [
             'finna:id' => $parent,
             'with' => 'links',
-            'lang' => $this->getLanguage()
+            'lang' => $this->getLanguage(),
         ];
 
         $response = $this->fetchData('finna_organisation', $params);
 
-        if (!$response
+        if (
+            !$response
             || !$response['total'] || !isset($response['items'][0]['id'])
         ) {
             $this->logError(
@@ -652,7 +656,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             'period.end' => $endDate,
             'status' => '',
             'lang' => $this->getLanguage(),
-            'refs' => 'period'
+            'refs' => 'period',
         ];
 
         $response = $this->fetchData('service_point', $params);
@@ -729,7 +733,8 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
 
         $response = false;
         if ($maxAge) {
-            if (is_readable($localFile)
+            if (
+                is_readable($localFile)
                 && time() - filemtime($localFile) < $maxAge * 60
             ) {
                 $response = file_get_contents($localFile);
@@ -818,7 +823,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                 'type' => $item['type'],
                 'mobile' => $item['type'] == 'mobile' ? 1 : 0,
                 'email' => $item['primaryContactInfo']['email']['email'] ?? null,
-                'homepage' => $item['primaryContactInfo']['homepage']['url'] ?? null
+                'homepage' => $item['primaryContactInfo']['homepage']['url'] ?? null,
             ];
 
             if (!empty($item['mailAddress'])) {
@@ -826,7 +831,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                     'area' => $item['mailAddress']['area'],
                     'boxNumber' => $item['mailAddress']['boxNumber'],
                     'street' => $item['mailAddress']['street'],
-                    'zipcode' => $item['mailAddress']['zipcode']
+                    'zipcode' => $item['mailAddress']['zipcode'],
                 ];
             }
             if (!empty($mailAddress)) {
@@ -882,7 +887,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             }
             $schedules = [
                 'schedule' => $item['schedules'],
-                'status' => $item['liveStatus']
+                'status' => $item['liveStatus'],
             ];
             $data['openTimes'] = $this->parseSchedules($schedules);
 
@@ -932,7 +937,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         $result = [];
         $scheduleData = [
             'schedule' => $response['schedules'],
-            'status' => $response['liveStatus']
+            'status' => $response['liveStatus'],
         ];
         if ($schedules) {
             $result['openTimes'] = $this->parseSchedules($scheduleData);
@@ -1009,7 +1014,8 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             $result['links'] = $links;
         }
 
-        if (!empty($response['services'])
+        if (
+            !empty($response['services'])
             && ($includeAllServices
             || !empty($this->config->OpeningTimesWidget->services))
         ) {
@@ -1100,7 +1106,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                         'id' => $id,
                         'orgType' => 'library',
                         'feedType' => $link['id'],
-                        'url' => $link['value']
+                        'url' => $link['value'],
                     ];
                 }
             }
@@ -1127,7 +1133,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
 
         $dayNames = [
             'monday', 'tuesday', 'wednesday', 'thursday',
-            'friday', 'saturday', 'sunday'
+            'friday', 'saturday', 'sunday',
         ];
 
         $openToday = false;
@@ -1248,7 +1254,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                 'service_point' => $params['id'],
                 'finna_coverage' => $json['coverage'],
                 'usage_perc' => $json['coverage'],
-                'usage_info' => $json['usage_rights'][$language]
+                'usage_info' => $json['usage_rights'][$language],
             ],
         ];
         foreach ($json['links'] as $field => $key) {
@@ -1271,9 +1277,9 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             'address' => [
                 'coordinates' => [
                     'lat' => !empty($json['latitude']) ? $json['latitude'] : '',
-                    'lon' => !empty($json['longitude']) ? $json['longitude'] : ''
+                    'lon' => !empty($json['longitude']) ? $json['longitude'] : '',
                 ],
-                'street' => !empty($json['address']) ? $json['address'] : ''
+                'street' => !empty($json['address']) ? $json['address'] : '',
             ],
             'id' => $params['id'],
             'email' => $json['email'] ?? '',
@@ -1282,7 +1288,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         // Date handling
         $days = [
             0 => 'monday', 1 => 'tuesday', 2 => 'wednesday',
-            3 => 'thursday', 4 => 'friday', 5 => 'saturday', 6 => 'sunday'
+            3 => 'thursday', 4 => 'friday', 5 => 'saturday', 6 => 'sunday',
         ];
         foreach ($days as $day => $key) {
             $details['openTimes']['schedules'][$day]
@@ -1328,7 +1334,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                     'name' =>
                         $key['contact_info']['place_' . $language . ''],
                     'contact' =>
-                        $key['contact_info']['phone_email_' . $language . '']
+                        $key['contact_info']['phone_email_' . $language . ''],
                 ];
         }
         try {
@@ -1343,7 +1349,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         $result = [
             'id' => $params['id'] ?? '',
             'list' => [
-                0 => $details
+                0 => $details,
             ],
             'weekNum' => date('W'),
             'consortium' => $consortium,
@@ -1351,24 +1357,24 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                 0 => [
                     'url' =>
                     isset($json['image2']) && strlen($json['image2']) > 30
-                        ? $this->proxifyImageUrl($json['image2']) : ''
+                        ? $this->proxifyImageUrl($json['image2']) : '',
                 ],
                 1 => [
                     'url' =>
                     isset($json['image3']) && strlen($json['image3']) > 30
-                        ? $this->proxifyImageUrl($json['image3']) : ''
+                        ? $this->proxifyImageUrl($json['image3']) : '',
                 ],
                 2 => [
                     'url' =>
                     isset($json['image4']) && strlen($json['image4']) > 30
-                        ? $this->proxifyImageUrl($json['image4']) : ''
-                ]
+                        ? $this->proxifyImageUrl($json['image4']) : '',
+                ],
             ],
             'scheduleDescriptions' => [
                 0 => !empty($json['opening_info'][$language])
-                    ? $json['opening_info'][$language] : ''
+                    ? $json['opening_info'][$language] : '',
             ],
-            'contactInfo' => $contactInfoToResult ?? ''
+            'contactInfo' => $contactInfoToResult ?? '',
         ];
         return $result;
     }
@@ -1387,7 +1393,8 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         $currentHour = date('H:i');
         $return = [];
         $dayShortcode = substr($day, 0, 3);
-        if (empty($json['opening_time']["{$dayShortcode}_start"])
+        if (
+            empty($json['opening_time']["{$dayShortcode}_start"])
             && empty($json['opening_time']["{$dayShortcode}_end"])
         ) {
             $return['closed'] = true;
@@ -1401,7 +1408,8 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         $return['date'] = date('d.m', strtotime("{$day} this week"));
         if ($today == $return['date']) {
             $return['today'] = true;
-            if ($currentHour >= $json['opening_time']["{$dayShortcode}_start"]
+            if (
+                $currentHour >= $json['opening_time']["{$dayShortcode}_start"]
                 && $currentHour <= $json['opening_time']["{$dayShortcode}_end"]
             ) {
                 $return['openNow'] = true;
@@ -1434,7 +1442,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             [
                 'query' => [
                     'image' => $url,
-                ]
+                ],
             ]
         );
     }
@@ -1454,7 +1462,8 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             $this->organisationConfig['General']['organisationListCacheTime'] ?? 60
         );
         $list = [];
-        if (is_readable($cacheFile)
+        if (
+            is_readable($cacheFile)
             && time() - filemtime($cacheFile) < $maxAge * 60
         ) {
             return json_decode(file_get_contents($cacheFile), true);
@@ -1493,7 +1502,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                             'name' => $displayText,
                             'link' => $link,
                             'organisation' => $organisationInfoId,
-                            'sector' => $sector
+                            'sector' => $sector,
                         ];
                     }
                     $collator->sort($list[$sector]);

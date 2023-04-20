@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Model for Qualified Dublin Core records in Solr.
  *
@@ -28,6 +29,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver;
 
 /**
@@ -42,8 +44,7 @@ namespace Finna\RecordDriver;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
-class SolrQdc extends \VuFind\RecordDriver\SolrDefault
-implements \Laminas\Log\LoggerAwareInterface
+class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\LoggerAwareInterface
 {
     use Feature\SolrFinnaTrait;
     use Feature\FinnaXmlReaderTrait;
@@ -61,7 +62,7 @@ implements \Laminas\Log\LoggerAwareInterface
         'small' => 'small',
         'medium' => 'medium',
         'large' => 'large',
-        'original' => 'original'
+        'original' => 'original',
     ];
 
     /**
@@ -71,7 +72,7 @@ implements \Laminas\Log\LoggerAwareInterface
      */
     protected $imageMimeTypes = [
         'image/jpeg' => 'jpg',
-        'image/png' => 'png'
+        'image/png' => 'png',
     ];
 
     /**
@@ -81,7 +82,7 @@ implements \Laminas\Log\LoggerAwareInterface
      */
     protected $seriesInfoMappings = [
         'ispartofseries' => 'name',
-        'numberinseries' => 'partNumber'
+        'numberinseries' => 'partNumber',
     ];
 
     /**
@@ -222,7 +223,7 @@ implements \Laminas\Log\LoggerAwareInterface
         $rightsStmt = $this->getMappedRights((string)($xml->rights ?? ''));
         $rights = [
             'copyright' => $rightsStmt,
-            'link' => $this->getRightsLink($rightsStmt, $language)
+            'link' => $this->getRightsLink($rightsStmt, $language),
         ];
 
         $addToResults = function ($imageData) use (&$results) {
@@ -244,13 +245,15 @@ implements \Laminas\Log\LoggerAwareInterface
         foreach ($xml->file as $node) {
             $attributes = $node->attributes();
             $type = (string)($attributes->type ?? '');
-            if ($type
+            if (
+                $type
                 && !in_array($type, array_keys($this->imageMimeTypes))
             ) {
                 continue;
             }
             $url = (string)($attributes->href ?? $node);
-            if (!preg_match('/\.(jpg|png)$/i', $url)
+            if (
+                !preg_match('/\.(jpg|png)$/i', $url)
                 || !$this->isUrlLoadable($url, $this->getUniqueID())
             ) {
                 continue;
@@ -269,7 +272,7 @@ implements \Laminas\Log\LoggerAwareInterface
                         $currentHiRes = [
                             'data' => [],
                             'url' => $url,
-                            'format' => $this->imageMimeTypes[$type] ?? 'jpg'
+                            'format' => $this->imageMimeTypes[$type] ?? 'jpg',
                         ];
                         $highResolution[$size][] = $currentHiRes;
                     }
@@ -284,7 +287,7 @@ implements \Laminas\Log\LoggerAwareInterface
                     [
                         'urls' => ['large' => $url],
                         'description' => '',
-                        'rights' => $rights
+                        'rights' => $rights,
                     ]
                 );
             }
@@ -294,7 +297,7 @@ implements \Laminas\Log\LoggerAwareInterface
                     'urls' => $otherSizes,
                     'description' => '',
                     'rights' => $rights,
-                    'highResolution' => $highResolution
+                    'highResolution' => $highResolution,
                 ]
             );
         }
@@ -324,7 +327,7 @@ implements \Laminas\Log\LoggerAwareInterface
                         'urls' => $urls,
                         'description' => '',
                         'rights' => $rights,
-                        'pdf' => true
+                        'pdf' => true,
                     ]
                 );
                 break;
@@ -400,7 +403,7 @@ implements \Laminas\Log\LoggerAwareInterface
         // Try to filter out any summary or abstract fields
         $filterTerms = [
             'tiivistelmä', 'abstract', 'abstracts', 'abstrakt', 'sammandrag',
-            'sommario', 'summary', 'аннотация'
+            'sommario', 'summary', 'аннотация',
         ];
         for ($i = count($record->description) - 1; $i >= 0; $i--) {
             $node = $record->description[$i];
@@ -480,7 +483,8 @@ implements \Laminas\Log\LoggerAwareInterface
         foreach ([$xml->identifier, $xml->isFormatOf] as $field) {
             foreach ($field as $identifier) {
                 $trimmed = str_replace('-', '', trim($identifier));
-                if ((string)$identifier['type'] === 'isbn'
+                if (
+                    (string)$identifier['type'] === 'isbn'
                     || preg_match('{^[0-9]{9,12}[0-9xX]}', $trimmed)
                 ) {
                     $result[] = $identifier;
@@ -514,8 +518,8 @@ implements \Laminas\Log\LoggerAwareInterface
                 'value' => (string)$isPartOf,
                 'link' => [
                     'value' => (string)$isPartOf,
-                    'type' => 'allFields'
-                ]
+                    'type' => 'allFields',
+                ],
             ];
         }
         foreach ($xml->relation ?? [] as $relation) {
@@ -525,8 +529,8 @@ implements \Laminas\Log\LoggerAwareInterface
                     'value' => (string)$relation,
                     'link' => [
                         'value' => (string)$relation,
-                        'type' => 'allFields'
-                    ]
+                        'type' => 'allFields',
+                    ],
                 ];
             }
         }
@@ -629,7 +633,7 @@ implements \Laminas\Log\LoggerAwareInterface
                 // Initialize the result so that it contains the required elements:
                 if (!isset($results[$lang])) {
                     $results[$lang] = [
-                        'name' => ''
+                        'name' => '',
                     ];
                 }
                 if (empty($results[$lang][$key])) {

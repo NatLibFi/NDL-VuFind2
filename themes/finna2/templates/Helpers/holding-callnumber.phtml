@@ -11,13 +11,13 @@
   <?php endif; ?>
   <?php if ($this->qrCode): ?>
     <div class="dropdown location-service-qrcode">
-      <a href="#" class="dropdown-toggle finnaQrcodeLink" data-toggle="dropdown" title="<?=$this->transEsc('qrcode_show')?>" rel="nofollow">
+      <a href="#" class="dropdown-toggle qrcodeLink" data-toggle="dropdown" title="<?=$this->transEsc('QR Code')?>" rel="nofollow">
         <?=$this->icon('qrcode')?><span class="sr-only"><?=$this->transEsc('QR Code')?></span>
       </a>
-      <ul class="dropdown-menu" role="menu">
+      <ul class="dropdown-menu qrcode" role="menu">
         <li>
           <script type="text/template" class="qrCodeImgTag">
-            <img class="qrcode" alt="" src="<?=$this->url('qrcode-show', [], ['query' => ['text' => $this->locationServiceUrl]])?>" rel="nofollow">
+            <img alt="" src="<?=$this->url('qrcode-show', [], ['query' => ['text' => $this->locationServiceUrl]])?>" rel="nofollow">
           </script>
         </li>
       </ul>

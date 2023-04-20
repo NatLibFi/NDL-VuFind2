@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Generic controller factory (with config injection).
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\Controller;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -41,8 +43,7 @@ use Psr\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class AbstractBaseWithConfigFactory
-extends \VuFind\Controller\AbstractBaseWithConfigFactory
+class AbstractBaseWithConfigFactory extends \VuFind\Controller\AbstractBaseWithConfigFactory
 {
     /**
      * Create an object

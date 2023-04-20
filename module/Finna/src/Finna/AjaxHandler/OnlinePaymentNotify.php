@@ -1,4 +1,5 @@
 <?php
+
 /**
  * "Online Payment Notify" AJAX handler.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Laminas\Mvc\Controller\Plugin\Params;
@@ -70,7 +72,8 @@ class OnlinePaymentNotify extends AbstractOnlinePaymentAction
                 . ', post parameters: ' . $request->getPost()->toString()
             );
             // If this is an old (invalid) request, return success:
-            if (!empty($reqParams['driver'])
+            if (
+                !empty($reqParams['driver'])
                 && '1' == ($reqParams['payment'] ?? '')
             ) {
                 return $this->formatResponse('');

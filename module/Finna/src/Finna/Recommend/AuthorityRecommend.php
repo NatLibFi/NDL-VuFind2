@@ -1,4 +1,5 @@
 <?php
+
 /**
  * AuthorityRecommend Recommendations Module
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Recommend;
 
 use Finna\Search\Solr\AuthorityHelper;
@@ -207,7 +209,8 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
             // Detect if authority filters have been changed and switch active
             // authority recommendation tab accordingly.
             $idsWithRoles = $params->getAuthorIdFilter(true);
-            if ($this->session->idsWithRoles
+            if (
+                $this->session->idsWithRoles
                 && $this->session->idsWithRoles !== $idsWithRoles
             ) {
                 $added = array_values(
@@ -267,7 +270,8 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
         }
 
         // Check result limit before proceeding...
-        if ($this->resultLimit > 0
+        if (
+            $this->resultLimit > 0
             && $this->resultLimit < $results->getResultTotal()
         ) {
             return;

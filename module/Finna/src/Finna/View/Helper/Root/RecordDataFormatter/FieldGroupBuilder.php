@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Field group builder for record driver data formatting view helper
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\View\Helper\Root\RecordDataFormatter;
 
 /**
@@ -76,9 +78,9 @@ class FieldGroupBuilder
      */
     public function addGroup($label, $lines, $template, $options = [])
     {
-        $options['context'] = $options['context'] ?? [];
-        $options['lineContext'] = $options['lineContext'] ?? [];
-        $options['skipGroup'] = $options['skipGroup'] ?? false;
+        $options['context'] ??= [];
+        $options['lineContext'] ??= [];
+        $options['skipGroup'] ??= false;
 
         if (!empty($options['lineContext'])) {
             foreach ($lines as &$line) {
@@ -123,7 +125,7 @@ class FieldGroupBuilder
         $options = [],
         $unusedOptions = null
     ) {
-        $unusedOptions = $unusedOptions ?? $options;
+        $unusedOptions ??= $options;
         $allUsed = [];
         foreach ($groups as $group) {
             if (!isset($group['lines'])) {

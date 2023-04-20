@@ -25,10 +25,10 @@ $this->layout()->infoMessage = '<div class="street-search-progress hidden"><div 
 
 <?php
   $script = <<<JS
-$(document).ready(function() {
-  finna.StreetSearch.initStreetHeader();
-});
-JS;
+      $(document).ready(function() {
+        finna.StreetSearch.initStreetHeader();
+      });
+      JS;
   echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
 ?>
 <!-- END of: finna - search/street-search-header.phtml -->

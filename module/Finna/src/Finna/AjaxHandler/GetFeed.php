@@ -1,4 +1,5 @@
 <?php
+
 /**
  * GetFeed AJAX handler
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Finna\Feed\Feed as FeedService;
@@ -226,7 +228,8 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
         $val = (string)($ilsConfig['cacheSettings'][$query] ?? '');
         $maxAge = $val && ctype_digit($val) ? (int)$val : 60;
 
-        if (is_readable($cacheFile)
+        if (
+            is_readable($cacheFile)
             && time() - filemtime($cacheFile) < $maxAge * 60
         ) {
             // Load local cache if available
@@ -240,7 +243,7 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
             foreach ($data['records'] ?? [] as $record) {
                 $requests[] = [
                     'id' => $record['id'],
-                    'source' => $source
+                    'source' => $source,
                 ];
             }
             $sourceRecords = $this->recordLoader->loadBatch($requests, true);
@@ -301,7 +304,7 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                     [
                         'uri' => $serverUrl($imageUrl),
                         'type' => 'image/jpeg',
-                        'length' => 0
+                        'length' => 0,
                     ]
                 );
                 $feed->addEntry($entry);

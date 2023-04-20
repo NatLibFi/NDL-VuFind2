@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Console service for processing unregistered online payments.
  *
@@ -26,11 +27,11 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace FinnaConsole\Command\Util;
 
 use Finna\Db\Row\User;
 use Finna\Db\Table\Transaction;
-
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -435,7 +436,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
 
                 $params = [
                    'driver' => $driver,
-                   'cnt' => $cnt
+                   'cnt' => $cnt,
                 ];
                 $messageSubject = sprintf($subject, $driver);
 

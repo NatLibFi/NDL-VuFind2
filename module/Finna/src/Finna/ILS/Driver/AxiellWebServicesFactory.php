@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Factory for AxiellWebServices ILS driver.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\ILS\Driver;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -41,8 +43,7 @@ use Psr\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class AxiellWebServicesFactory
-extends \VuFind\ILS\Driver\DriverWithDateConverterFactory
+class AxiellWebServicesFactory extends \VuFind\ILS\Driver\DriverWithDateConverterFactory
 {
     /**
      * Create an object

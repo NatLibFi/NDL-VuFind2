@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Factory for instantiating AuthenticationStrategy permission provider.
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\Role\PermissionProvider;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -44,8 +46,7 @@ use Psr\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class AuthenticationStrategyFactory
-implements \Laminas\ServiceManager\Factory\FactoryInterface
+class AuthenticationStrategyFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create an object

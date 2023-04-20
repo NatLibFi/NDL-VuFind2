@@ -1,4 +1,5 @@
 <?php
+
 /**
  * User public name view helper
  *
@@ -28,6 +29,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\View\Helper\Root;
 
 /**
@@ -42,9 +44,8 @@ namespace Finna\View\Helper\Root;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class UserPublicName
-extends \Laminas\View\Helper\AbstractHelper
-implements \VuFind\I18n\Translator\TranslatorAwareInterface
+class UserPublicName extends \Laminas\View\Helper\AbstractHelper implements
+    \VuFind\I18n\Translator\TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
@@ -63,7 +64,8 @@ implements \VuFind\I18n\Translator\TranslatorAwareInterface
                 $nicknameTranslation
                     = strtolower($this->translate('finna_nickname'));
                 $username = $user->finna_nickname . " ($nicknameTranslation)";
-            } elseif ($user->email
+            } elseif (
+                $user->email
                 && ($pos = strpos($user->email, '@')) !== false
             ) {
                 [$username] = explode('+', substr($user->email, 0, $pos));

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * AJAX handler for editing a list resource.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Finna\View\Helper\Root\Markdown;
@@ -42,8 +44,7 @@ use VuFind\I18n\Translator\TranslatorAwareInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class EditListResource extends \VuFind\AjaxHandler\AbstractBase
-implements TranslatorAwareInterface
+class EditListResource extends \VuFind\AjaxHandler\AbstractBase implements TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
@@ -120,7 +121,8 @@ implements TranslatorAwareInterface
         }
 
         $listParams = $params->fromPost('params');
-        if (!isset($listParams['listId']) || !isset($listParams['notes'])
+        if (
+            !isset($listParams['listId']) || !isset($listParams['notes'])
             || !isset($listParams['id'])
         ) {
             return $this->formatResponse(

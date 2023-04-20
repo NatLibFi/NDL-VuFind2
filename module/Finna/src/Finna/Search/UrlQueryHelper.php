@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class to help build URLs and forms in the view based on search settings.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\Search;
 
 use Finna\Search\Solr\AuthorityHelper;

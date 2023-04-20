@@ -16,7 +16,7 @@
         <td>
           <?php foreach ($links as $link): ?>
             <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->related($link['link'], $this->driver->getSourceIdentifier()));?>"><?=$this->escapeHtml($link['value'] ?: $this->translate($title));?></a><?php if (isset($link['detail'])): ?> (<?=$this->escapeHtml($link['detail'])?>)<?php endif; ?>
-            <br />
+            <br>
           <?php endforeach; ?>
         </td>
       </tr>
@@ -25,7 +25,7 @@
     <div class="truncate-field">
       <?php foreach ($allLinks as $link): ?>
         <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->related($link['link'], $this->driver->getSourceIdentifier()));?>"><?=$this->escapeHtml($link['value'])?></a><?php if (isset($link['detail'])): ?> (<?=$this->escapeHtml($link['detail'])?>)<?php endif; ?>
-        <br />
+        <br>
       <?php endforeach; ?>
     </div>
   <?php endif?>

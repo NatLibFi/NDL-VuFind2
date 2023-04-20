@@ -14,14 +14,14 @@
 <?php endif; ?>
 <?php
   $script = <<<JS
-$('.rating-link').on('click', function () {
-  $('a.usercomments').click();
-  $('html, body').animate(
-    {
-      scrollTop: $('.record-tabs').offset().top
-    }, 500
-  );
-});
-JS;
+      $('.rating-link').on('click', function () {
+        $('a.usercomments').click();
+        $('html, body').animate(
+          {
+            scrollTop: $('.record-tabs').offset().top
+          }, 500
+        );
+      });
+      JS;
   echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
 ?>

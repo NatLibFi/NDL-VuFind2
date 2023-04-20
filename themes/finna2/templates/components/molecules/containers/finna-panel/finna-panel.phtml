@@ -1,6 +1,6 @@
 <?php
-  $collapsed = $collapsed ?? true;
-  $headingTag = $headingTag ?? true;
+  $collapsed ??= true;
+  $headingTag ??= true;
 ?>
 <div<?= $this->htmlAttributes($attributes ?? [])->add('class', ['finna-panel', 'panel']) ?>>
   <?php if (isset($heading)): ?>
@@ -9,7 +9,7 @@
       if (!$headingTag && isset($headingLevel)) {
         $__headingAttributes->set([
           'role' => 'heading',
-          'aria-level' => $headingLevel
+          'aria-level' => $headingLevel,
         ]);
       }
     ?>
@@ -25,7 +25,7 @@
             'data-toggle' => 'collapse',
             'href' => '#' . $collapseId,
             'aria-expanded' => $collapsed ? 'false' : 'true',
-            'aria-controls' => $collapseId
+            'aria-controls' => $collapseId,
           ]);
           if ($collapsed) {
             $__headingInnerAttributes->add('class', 'collapsed');

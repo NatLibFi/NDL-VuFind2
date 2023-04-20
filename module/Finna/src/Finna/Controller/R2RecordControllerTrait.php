@@ -1,4 +1,5 @@
 <?php
+
 /**
  * R2 record controller trait.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
+
 namespace Finna\Controller;
 
 use VuFindSearch\ParamBag;
@@ -95,7 +97,7 @@ trait R2RecordControllerTrait
             $driver->setRawData(
                 [
                     'id' => $id,
-                    'fullrecord' => '<ead/>'
+                    'fullrecord' => '<ead/>',
                 ]
             );
             $this->driver = $driver;

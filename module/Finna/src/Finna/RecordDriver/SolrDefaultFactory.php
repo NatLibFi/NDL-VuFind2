@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Factory for SolrDefault record drivers.
  *
@@ -29,6 +30,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\RecordDriver;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -48,8 +50,7 @@ use Psr\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class SolrDefaultFactory
-extends \VuFind\RecordDriver\SolrDefaultWithoutSearchServiceFactory
+class SolrDefaultFactory extends \VuFind\RecordDriver\SolrDefaultWithoutSearchServiceFactory
 {
     /**
      * Create an object

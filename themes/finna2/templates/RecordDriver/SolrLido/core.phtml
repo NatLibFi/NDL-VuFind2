@@ -88,7 +88,7 @@
               <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
             <?php endif; ?>
             <?php if (($results = $this->driver->getSubjectDates()) && !isset($dates[0])): ?>
-              <?=implode('<br/>', array_map([$this, 'escapeHtml'], $results))?>
+              <?=implode('<br>', array_map([$this, 'escapeHtml'], $results))?>
             <?php endif; ?>
           </div>
         <?php endif; ?>

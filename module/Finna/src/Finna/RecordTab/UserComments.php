@@ -1,4 +1,5 @@
 <?php
+
 /**
  * User comments tab
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
  */
+
 namespace Finna\RecordTab;
 
 /**

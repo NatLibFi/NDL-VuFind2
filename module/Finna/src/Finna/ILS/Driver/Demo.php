@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Advanced Dummy ILS Driver -- Returns sample values based on Solr index.
  *
@@ -31,6 +32,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
+
 namespace Finna\ILS\Driver;
 
 use VuFind\Exception\ILS as ILSException;
@@ -70,7 +72,8 @@ class Demo extends \VuFind\ILS\Driver\Demo
             }
             return $functionConfig;
         }
-        if ('getPasswordRecoveryToken' === $function
+        if (
+            'getPasswordRecoveryToken' === $function
             || 'recoverPassword' === $function
         ) {
             return !empty($this->config['PasswordRecovery']['enabled'])
@@ -121,7 +124,8 @@ class Demo extends \VuFind\ILS\Driver\Demo
             $amount = 0;
             $payableFines = [];
             foreach ($fines as $fine) {
-                if (null !== $selectedFineIds
+                if (
+                    null !== $selectedFineIds
                     && !in_array($fine['fine_id'], $selectedFineIds)
                 ) {
                     continue;
@@ -136,7 +140,8 @@ class Demo extends \VuFind\ILS\Driver\Demo
             }
             $config = $this->getConfig('onlinePayment');
             $transactionFee = $config['transactionFee'] ?? 0;
-            if (!$nonPayableReason
+            if (
+                !$nonPayableReason
                 && isset($config['minimumFee'])
                 && $amount + $transactionFee < $config['minimumFee']
             ) {
@@ -155,7 +160,7 @@ class Demo extends \VuFind\ILS\Driver\Demo
         return [
             'payable' => false,
             'amount' => 0,
-            'reason' => 'online_payment_minimum_fee'
+            'reason' => 'online_payment_minimum_fee',
         ];
     }
 
@@ -221,7 +226,8 @@ class Demo extends \VuFind\ILS\Driver\Demo
         $paid = 0;
         if (isset($session->fines)) {
             foreach ($session->fines as $key => $fine) {
-                if ($fine['payableOnline']
+                if (
+                    $fine['payableOnline']
                     && (!$fineIds || in_array($fine['fine_id'], $fineIds))
                 ) {
                     unset($session->fines[$key]);
@@ -258,11 +264,12 @@ class Demo extends \VuFind\ILS\Driver\Demo
     {
         if ($method == 'markFeesAsPaid') {
             $required = [
-                'currency', 'enabled'
+                'currency', 'enabled',
             ];
 
             foreach ($required as $req) {
-                if (!isset($this->config['OnlinePayment'][$req])
+                if (
+                    !isset($this->config['OnlinePayment'][$req])
                     || empty($this->config['OnlinePayment'][$req])
                 ) {
                     return false;
@@ -293,14 +300,14 @@ class Demo extends \VuFind\ILS\Driver\Demo
         if ((rand() % 10) > 8) {
             return [
                 'success' => false,
-                'error' => 'Simulating failure'
+                'error' => 'Simulating failure',
             ];
         }
         $session = $this->getSession();
         $session->passwordRecoveryToken = md5(rand());
         return [
             'success' => true,
-            'token' => $session->passwordRecoveryToken
+            'token' => $session->passwordRecoveryToken,
         ];
     }
 
@@ -318,11 +325,11 @@ class Demo extends \VuFind\ILS\Driver\Demo
         if ($session->passwordRecoveryToken != $params['token']) {
             return [
                 'success' => false,
-                'error' => 'Recovery token mismatch'
+                'error' => 'Recovery token mismatch',
             ];
         }
         return [
-            'success' => true
+            'success' => true,
         ];
     }
 
@@ -394,7 +401,7 @@ class Demo extends \VuFind\ILS\Driver\Demo
     {
         return [
             'success' => false,
-            'sysMessage' => $message
+            'sysMessage' => $message,
         ];
     }
 

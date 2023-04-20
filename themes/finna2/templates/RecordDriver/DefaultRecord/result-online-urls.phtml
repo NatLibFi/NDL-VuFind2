@@ -17,14 +17,14 @@
 
     $urlBase = [
       'class' => 'fulltext',
-      'target' => '_blank'
+      'target' => '_blank',
     ];
     $this->htmlElement()->addAttributeTemplate('url-base', $urlBase);
 
     $addRenderedUrl = function (array $url) use (&$renderedURLs) {
       $renderedURLs[] = [
         'url' => $url['url'],
-        'desc' => $url['desc'] ?? $url['text'] ?? ''
+        'desc' => $url['desc'] ?? $url['text'] ?? '',
       ];
     };
 
@@ -58,11 +58,11 @@
               break;
             }
           ?>
-          <?=$i > 0 ? '<br/>' : ''?>
+          <?=$i > 0 ? '<br>' : ''?>
           <?php
             $currentUrl = [
               'href' => $this->proxyUrl($url['url']),
-              'title' => $url['url']
+              'title' => $url['url'],
             ];
             switch ($url['embed'] ?? '') {
             case 'video':

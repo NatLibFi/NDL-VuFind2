@@ -26,6 +26,7 @@
  * @license  https://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
+
 namespace FinnaTest\View\Helper\Root;
 
 use Finna\View\Helper\Root\CleanHtml;
@@ -49,7 +50,7 @@ class RecordFieldMarkdownTest extends \PHPUnit\Framework\TestCase
      *
      * @return RecordFieldMarkdown
      */
-    protected function getHelper()
+    protected function getHelper(): RecordFieldMarkdown
     {
         $view = $this->getPhpRenderer(
             ['cleanHtml' => new CleanHtml(null, [])],
@@ -67,7 +68,7 @@ class RecordFieldMarkdownTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testRecordFieldMarkdown()
+    public function testRecordFieldMarkdown(): void
     {
         $converted = $this->getHelper()->toHtml($this->getTestMarkdown());
         $expected = <<<EOT
@@ -83,7 +84,7 @@ class RecordFieldMarkdownTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testRecordFieldMarkdownWithProvidedSoftBreak()
+    public function testRecordFieldMarkdownWithProvidedSoftBreak(): void
     {
         $converted = $this->getHelper()->toHtml($this->getTestMarkdown(), "\n");
         $expected = <<<EOT
@@ -98,7 +99,12 @@ class RecordFieldMarkdownTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $converted);
     }
 
-    protected function getTestMarkdown()
+    /**
+     * Return test Markdown input
+     *
+     * @return string
+     */
+    protected function getTestMarkdown(): string
     {
         return <<<EOT
             # Heading

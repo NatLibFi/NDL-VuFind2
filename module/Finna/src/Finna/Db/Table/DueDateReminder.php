@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for due date reminders.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -77,7 +79,7 @@ class DueDateReminder extends \VuFind\Db\Table\Gateway
         $data = [
             'id' => $id,
             'user_id' => $user->id,
-            'created' => $user->created
+            'created' => $user->created,
         ];
         return $hmac->generate(array_keys($data), $data);
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SolrQdc Institutional Repository Test Class
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
+
 namespace FinnaTest\RecordDriver;
 
 use Finna\RecordDriver\SolrQdc;
@@ -57,17 +59,17 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
                         'urls' => [
                             'large' => 'https://www.animals.of.earth.fi/duck.pdf',
                             'small' => 'https://www.animals.of.earth.fi/duck.pdf',
-                            'medium' => 'https://www.animals.of.earth.fi/duck.pdf'
+                            'medium' => 'https://www.animals.of.earth.fi/duck.pdf',
                         ],
                         'description' => '',
                         'rights' => [
                             'copyright' => 'CC BY 4.0',
-                            'link' => 'http://creativecommons.org/licenses/by/4.0/deed.fi'
+                            'link' => 'http://creativecommons.org/licenses/by/4.0/deed.fi',
                         ],
                         'pdf' => true,
-                        'downloadable' => true
-                    ]
-                ]
+                        'downloadable' => true,
+                    ],
+                ],
             ],
             [
                 'getAllRecordLinks',
@@ -76,26 +78,26 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
                         'value' => 'Animals of Earth',
                         'link' => [
                             'value' => 'Animals of Earth',
-                            'type' => 'allFields'
-                        ]
-                    ]
+                            'type' => 'allFields',
+                        ],
+                    ],
                 ],
             ],
             [
                 'getSeries',
-                []
+                [],
             ],
             [
                 'getIdentifier',
-                []
+                [],
             ],
             [
                 'getKeywords',
-                []
+                [],
             ],
             [
                 'getISBNs',
-                []
+                [],
             ],
             [
                 'getOtherIdentifiers',
@@ -103,37 +105,37 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
                     0 => [
                         'data' => '123-4-245-6',
                         'detail' => '',
-                    ]
-                ]
+                    ],
+                ],
             ],
             [
                 'getURLs',
-                []
+                [],
             ],
             [
                 'getEducationPrograms',
-                []
+                [],
             ],
             [
                 'getPhysicalDescriptions',
-                []
+                [],
             ],
             [
                 'getPhysicalMediums',
-                []
+                [],
             ],
             [
                 'getDescriptions',
-                []
+                [],
             ],
             [
                 'getAbstracts',
-                []
+                [],
             ],
             [
                 'getDescriptionURL',
-                false
-            ]
+                false,
+            ],
         ];
     }
 
@@ -172,26 +174,26 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
         $fixture = $this->getFixture('qdc/qdc_ir_test.xml', 'Finna');
         $config = [
             'Content' => [
-                'pdfCoverImageDownload' => '0/Painting'
+                'pdfCoverImageDownload' => '0/Painting',
             ],
             'Record' => [
                 'allowed_external_hosts_mode' => 'disable',
             ],
             'ImageRights' => [
                 'fi' => [
-                    'CC BY 4.0' => 'http://creativecommons.org/licenses/by/4.0/deed.fi'
+                    'CC BY 4.0' => 'http://creativecommons.org/licenses/by/4.0/deed.fi',
                 ],
                 'en-gb' => [
-                    'CC BY 4.0' => 'http://creativecommons.org/licenses/by/4.0/deed.en'
+                    'CC BY 4.0' => 'http://creativecommons.org/licenses/by/4.0/deed.en',
                 ],
                 'sv' => [
-                    'CC BY 4.0' => 'http://creativecommons.org/licenses/by/4.0/deed.sv'
-                ]
+                    'CC BY 4.0' => 'http://creativecommons.org/licenses/by/4.0/deed.sv',
+                ],
             ],
             'FileDownload' => [
                 'excludeRights' => [
-                    'InC'
-                ]
+                    'InC',
+                ],
             ],
         ];
         $config = new \Laminas\Config\Config($config);
@@ -205,9 +207,9 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
                 'id' => 'knp-247394',
                 'fullrecord' => $fixture,
                 'usage_rights_str_mv' => [
-                    'usage_A'
+                    'usage_A',
                 ],
-                'format' => '0/Painting'
+                'format' => '0/Painting',
             ]
         );
         return $record;

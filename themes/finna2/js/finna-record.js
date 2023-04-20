@@ -179,7 +179,10 @@ finna.record = (function finnaRecord() {
     });
     $('.record-holdings-table:not(.electronic-holdings) .holdings-container-heading').on('click', function onClickHeading(e) {
       $(this).attr('aria-expanded', function changeAria(i, attr) { return attr === 'false' ? 'true' : 'false'; });
-      if ($(e.target).hasClass('location-service') || $(e.target).parents().hasClass('location-service')) {
+      if ($(e.target).hasClass('location-service') || $(e.target).parents().hasClass('location-service')
+        || $(e.target).parents().hasClass('location-service-qrcode')
+      ) {
+        e.preventDefault();
         return;
       }
       $(this).nextUntil('.holdings-container-heading').toggleClass('collapsed');

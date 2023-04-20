@@ -1,4 +1,5 @@
 <?php
+
 /**
  * "Results as feed" view helper
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\View\Helper\Root;
 
 /**
@@ -127,7 +129,7 @@ class ResultFeed extends \VuFind\View\Helper\Root\ResultFeed
             [
                 'uri' => $serverUrl($imageUrl),
                 'type' => 'image/jpeg',
-                'length' => 0
+                'length' => 0,
             ]
         );
         $entry->setCommentCount(count($record->getComments()));

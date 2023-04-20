@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Helper for Authority recommendations.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Search\Solr;
 
 /**
@@ -240,7 +242,7 @@ class AuthorityHelper
         return [
             AuthorityHelper::AUTHOR_ID_ROLE_FACET,
             AuthorityHelper::AUTHOR2_ID_FACET,
-            AuthorityHelper::TOPIC_ID_FACET
+            AuthorityHelper::TOPIC_ID_FACET,
         ];
     }
 
@@ -356,7 +358,7 @@ class AuthorityHelper
                 $setting,
                 [
                     self::LINK_TYPE_PAGE, self::LINK_TYPE_SEARCH,
-                    self::LINK_TYPE_SEARCH_SUBJECT
+                    self::LINK_TYPE_SEARCH_SUBJECT,
                 ]
             )
             ? $setting : null;

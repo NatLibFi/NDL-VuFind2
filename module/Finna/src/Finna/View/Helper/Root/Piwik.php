@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Piwik view helper
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\View\Helper\Root;
 
 /**
@@ -38,8 +40,7 @@ namespace Finna\View\Helper\Root;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class Piwik extends \VuFind\View\Helper\Root\Piwik
-implements \VuFind\I18n\Translator\TranslatorAwareInterface
+class Piwik extends \VuFind\View\Helper\Root\Piwik implements \VuFind\I18n\Translator\TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
@@ -74,7 +75,8 @@ implements \VuFind\I18n\Translator\TranslatorAwareInterface
         $viewModel = $this->getView()->plugin('view_model');
         if ($current = $viewModel->getCurrent()) {
             $children = $current->getChildren();
-            if (isset($children[0])
+            if (
+                isset($children[0])
                 && isset($children[0]->disablePiwik) && $children[0]->disablePiwik
             ) {
                 return '';
@@ -92,7 +94,8 @@ implements \VuFind\I18n\Translator\TranslatorAwareInterface
     protected function getCustomUrl()
     {
         // Prettify image popup page URL (AJAX/JSON?method=... > /record/[id]/image
-        if ($this->calledFromImagePopup()
+        if (
+            $this->calledFromImagePopup()
             && !empty($this->params['recordUrl'])
         ) {
             return $this->params['recordUrl'] . '/image';
