@@ -328,7 +328,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      */
     protected function formatImageMeasurements(
         \SimpleXmlElement $measurements
-    ):array {
+    ): array {
         $results = [];
         foreach ($measurements as $set) {
             $value = trim((string)$set->measurementValue);
