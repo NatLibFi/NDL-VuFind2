@@ -1225,7 +1225,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @param string $copyright Copyright
      *
-     * @return string
+     * @return string HTML-escaped translation
      */
     public function translateCopyright(string $copyright): string
     {
