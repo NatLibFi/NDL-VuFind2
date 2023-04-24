@@ -56,7 +56,7 @@ class R2FeedbackController extends FeedbackController implements \Laminas\Log\Lo
 
     /**
      * Handles rendering and submit of dynamic forms.
-     * Form configurations are specified in FeedbackForms.json
+     * Form configurations are specified in FeedbackForms.yaml
      *
      * @return mixed
      */
