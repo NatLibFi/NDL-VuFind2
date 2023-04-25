@@ -502,6 +502,18 @@ a.authority {
 }
 
 .record-links {
+  button.less-link:nth-child(1){
+    top:0;
+    position:sticky;
+    //background-color: @body-bg;
+    background-color: red;
+    margin-left: -73%;
+    width: 100% ;
+    text-align: left;
+    @media(max-width: @screen-md-max) {
+      top:@navbar-height;
+    }
+  }
   vertical-align: baseline;
   .cc-info {
     margin-left: 5px;
