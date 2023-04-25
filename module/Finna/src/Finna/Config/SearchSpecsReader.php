@@ -1,4 +1,5 @@
 <?php
+
 /**
  * VuFind SearchSpecs Configuration Reader
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Config;
 
 /**

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Solr aspect of the Search Multi-class (Results)
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Search\Solr;
 
 /**
@@ -55,7 +57,8 @@ class Results extends \VuFind\Search\Solr\Results
         // Append date range facet to the list so that it gets
         // included even when facet counts are zero.
         $dateRangeField = $this->getParams()->getDateRangeSearchField();
-        if (!isset($list[$dateRangeField])
+        if (
+            !isset($list[$dateRangeField])
             && (null === $filter || isset($filter[$dateRangeField]))
         ) {
             // Resolve facet index in list

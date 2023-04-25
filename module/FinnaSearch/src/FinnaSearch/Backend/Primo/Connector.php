@@ -27,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org
  */
+
 namespace FinnaSearch\Backend\Primo;
 
 /**
@@ -279,7 +280,8 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
                 }
                 [$key, $val] = explode('=', $param, 2);
                 $val = trim($val);
-                if ($val == ''
+                if (
+                    $val == ''
                     || isset($blacklist[$key]) && $blacklist[$key] == $val
                 ) {
                     continue;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Feed service
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\Feed;
 
 use Finna\OrganisationInfo\OrganisationInfo;
@@ -48,7 +50,8 @@ use VuFindTheme\View\Helper\ImageLink;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
+class Feed implements
+    \VuFind\I18n\Translator\TranslatorAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface,
     \Laminas\Log\LoggerAwareInterface
 {
@@ -331,7 +334,8 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
         $maxAge = isset($this->mainConfig->Content->feedcachetime)
             && '' !== $this->mainConfig->Content->feedcachetime
             ? $this->mainConfig->Content->feedcachetime : 10;
-        if ($maxAge && is_readable($localFile)
+        if (
+            $maxAge && is_readable($localFile)
             && time() - filemtime($localFile) < $maxAge * 60
         ) {
             if ($result = unserialize(file_get_contents($localFile))) {
@@ -347,16 +351,16 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
         if (strstr($url, 'finna-test.fi') || strstr($url, 'finna-pre.fi')) {
             // Refuse to load feeds from finna-test.fi or finna-pre.fi
             $feedStr = <<<EOT
-<?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
-  <channel>
-    <atom:link href="" rel="self" type="application/rss+xml"/>
-    <link></link>
-    <title><![CDATA[<!-- Feed URL blocked -->]]></title>
-    <description></description>
-  </channel>
-</rss>
-EOT;
+                <?xml version="1.0" encoding="UTF-8"?>
+                <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+                  <channel>
+                    <atom:link href="" rel="self" type="application/rss+xml"/>
+                    <link></link>
+                    <title><![CDATA[<!-- Feed URL blocked -->]]></title>
+                    <description></description>
+                  </channel>
+                </rss>
+                EOT;
             $channel = Reader::importString($feedStr);
         } elseif (preg_match('/^http(s)?:\/\//', $url)) {
             // Absolute URL
@@ -395,16 +399,16 @@ EOT;
         if (!$channel) {
             // Cache also a failed load as an empty feed XML
             $feedStr = <<<EOT
-<?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
-  <channel>
-    <atom:link href="" rel="self" type="application/rss+xml"/>
-    <link></link>
-    <title>Feed could not be loaded</title>
-    <description></description>
-  </channel>
-</rss>
-EOT;
+                <?xml version="1.0" encoding="UTF-8"?>
+                <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+                  <channel>
+                    <atom:link href="" rel="self" type="application/rss+xml"/>
+                    <link></link>
+                    <title>Feed could not be loaded</title>
+                    <description></description>
+                  </channel>
+                </rss>
+                EOT;
             $channel = Reader::importString($feedStr);
         }
 
@@ -451,11 +455,11 @@ EOT;
             'image' => 'getEnclosure',
             'link' => 'getLink',
             'date' => 'getDateCreated',
-            'contentDate' => 'getDateCreated'
+            'contentDate' => 'getDateCreated',
         ];
 
         $xpathContent = [
-            'html' => '//item/content:encoded'
+            'html' => '//item/content:encoded',
         ];
 
         $xcalContent = [
@@ -470,7 +474,7 @@ EOT;
             'organizer-url',
             'url',
             'cost',
-            'categories'
+            'categories',
         ];
 
         $items = [];
@@ -485,7 +489,8 @@ EOT;
             $data = [];
             $data['modal'] = $modal;
             foreach ($content as $setting => $method) {
-                if (!isset($elements[$setting])
+                if (
+                    !isset($elements[$setting])
                     || $elements[$setting] != 0
                 ) {
                     $value = $item->{$method}();
@@ -537,8 +542,8 @@ EOT;
                             [
                                 'query' => [
                                     'element' => $itemId,
-                                    'lng' => $this->getTranslatorLocale()
-                                ]
+                                    'lng' => $this->getTranslatorLocale(),
+                                ],
                             ]
                         );
                     } elseif ($setting == 'id') {
@@ -575,7 +580,8 @@ EOT;
                                 }
 
                                 $data['xcal']['featured'] = $imgLink;
-                                if ($elements['image'] != 0
+                                if (
+                                    $elements['image'] != 0
                                     || !isset($elements['image'])
                                 ) {
                                     $data['image']['url'] = $imgLink;
@@ -604,7 +610,8 @@ EOT;
             }
 
             // Make sure that we have something to display
-            if (trim($data['title'] ?? '') === ''
+            if (
+                trim($data['title'] ?? '') === ''
                 && trim($data['text'] ?? '') === ''
                 && empty($data['image'])
             ) {
@@ -695,7 +702,8 @@ EOT;
             $properties = explode(';', $styleAttr);
             foreach ($properties as $prop) {
                 [$field] = explode(':', $prop);
-                if (stristr($field, 'width') === false
+                if (
+                    stristr($field, 'width') === false
                     && stristr($field, 'height') === false
                     && stristr($field, 'margin') === false
                 ) {
@@ -766,7 +774,7 @@ EOT;
             [
                 'query' => [
                     'image' => $url,
-                ]
+                ],
             ]
         );
     }
@@ -783,7 +791,8 @@ EOT;
         array &$data,
         \Laminas\Config\Config $config
     ): void {
-        if (empty($config->showIcons)
+        if (
+            empty($config->showIcons)
             || empty($data['link'])
             || empty($this->mainConfig->Content->feedHostToNameMappings)
         ) {

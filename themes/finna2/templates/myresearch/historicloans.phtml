@@ -62,9 +62,9 @@
             <td class="text-left hidden-xs" aria-hidden="true">
               <div class="cover-image">
                 <?php if ($summThumb = $this->record($resource)->getThumbnail()): ?>
-                  <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEscAttr('Cover Image')?>"/>
+                  <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEscAttr('Cover Image')?>">
                 <?php else: ?>
-                  <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEscAttr('No Cover Image')?>"/>
+                  <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEscAttr('No Cover Image')?>">
                 <?php endif; ?>
               </div>
             </td>
@@ -92,29 +92,29 @@
               <div class="record-core-metadata">
                 <?php $formats = $resource->getFormats(); if (count($formats) > 0): ?>
                   <?=$this->record($resource)->getFormatList() ?>
-                  <br/>
+                  <br>
                 <?php endif; ?>
                 <?=$this->partial('myresearch/helpers/record-author.phtml', ['record' => $resource]);?>
                 <?php if (!empty($ilsDetails['volume'])): ?>
                   <strong><?=$this->transEsc('Issue')?>:</strong> <?=$this->escapeHtml($ilsDetails['volume'])?>
-                  <br />
+                  <br>
                 <?php endif; ?>
 
                 <?php if (!empty($ilsDetails['publication_year'])): ?>
                   <strong><?=$this->transEsc('Year of Publication')?>:</strong> <?=$this->escapeHtml($ilsDetails['publication_year'])?>
-                  <br />
+                  <br>
                 <?php endif; ?>
               </div>
             </td>
             <td class="checkedout-status-information">
               <?php if (!empty($ilsDetails['institution_name']) && (empty($ilsDetails['borrowingLocation']) || $ilsDetails['institution_name'] != $ilsDetails['borrowingLocation'])): ?>
                 <strong><?=$this->transEscWithPrefix('location_', $ilsDetails['institution_name'])?></strong>
-                <br />
+                <br>
               <?php endif; ?>
 
               <?php if (!empty($ilsDetails['borrowingLocation'])): ?>
                 <strong><?=$this->transEsc('Borrowing Location')?>:</strong> <?=$this->transEscWithPrefix('location_', $ilsDetails['borrowingLocation'])?>
-                <br />
+                <br>
               <?php endif; ?>
 
               <?php if (!empty($ilsDetails['checkoutDate'])): ?>

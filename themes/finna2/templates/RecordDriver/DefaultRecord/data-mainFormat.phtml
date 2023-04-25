@@ -1,19 +1,19 @@
 <?php //Don't add START and END comments ?>
 <div class="truncate-field">
 <?php foreach ($data as $event): ?>
-  <?php if ($event != $data[0]): ?><br/><?php endif; ?>
-  <?php if (!empty($event['name'])): ?><?=$this->escapeHtml($event['name'])?><br/><?php endif; ?>
-  <?php if (!empty($event['date'])): ?><?=$this->escapeHtml($event['date'])?><br/><?php endif; ?>
+  <?php if ($event != $data[0]): ?><br><?php endif; ?>
+  <?php if (!empty($event['name'])): ?><?=$this->escapeHtml($event['name'])?><br><?php endif; ?>
+  <?php if (!empty($event['date'])): ?><?=$this->escapeHtml($event['date'])?><br><?php endif; ?>
   <?php if (!empty($event['methods'])): ?>
-    <?=implode('<br/>', array_map([$this, 'escapeHtml'], $event['methods']))?><br/>
+    <?=implode('<br>', array_map([$this, 'escapeHtml'], $event['methods']))?><br>
   <?php endif; ?>
   <?php if (!empty($event['materials'])): ?>
-    <?=implode('<br/>', array_map([$this, 'escapeHtml'], $event['materials']))?><br/>
+    <?=implode('<br>', array_map([$this, 'escapeHtml'], $event['materials']))?><br>
   <?php endif; ?>
   <?php if (!empty($event['places'])): ?>
-    <?=implode('<br/>', array_map([$this, 'escapeHtml'], $event['places']))?><br/>
+    <?=implode('<br>', array_map([$this, 'escapeHtml'], $event['places']))?><br>
   <?php endif; ?>
-  <?php if (!empty($event['culture'])): ?><?=$this->escapeHtml($event['culture'])?><br/><?php endif; ?>
+  <?php if (!empty($event['culture'])): ?><?=$this->escapeHtml($event['culture'])?><br><?php endif; ?>
   <?php if (!empty($event['actors'])): ?>
     <?php
       $displayActors = [];

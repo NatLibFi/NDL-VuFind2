@@ -490,12 +490,12 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     var rssAvailable = false;
     if ('rss' in data.details) {
       $(data.details.rss).each(function handleRSSFeed(ind, obj) {
-
         if (obj.feedType !== 'news' && obj.feedType !== 'events') {
           return false;
         }
         const feedElement = document.createElement('finna-feed');
         feedElement.feedId = 'organisation-info|' + obj.parent + '|' + obj.id + '|' + obj.orgType + '|' + obj.feedType;
+        feedElement.classList.add('feed-container', `${obj.feedType}-feed`);
         var feedHolder = holder.find('.feed-container.' + obj.feedType + '-feed');
         feedHolder
           .empty()

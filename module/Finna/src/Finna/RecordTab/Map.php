@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Map tab
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
  */
+
 namespace Finna\RecordTab;
 
 /**
@@ -115,7 +117,7 @@ class Map extends \VuFind\RecordTab\Map
             [(float)$minY, (float)$maxX],
             [(float)$maxY, (float)$maxX],
             [(float)$maxY, (float)$minX],
-            [(float)$minY, (float)$minX]
+            [(float)$minY, (float)$minX],
         ];
     }
 
@@ -130,7 +132,7 @@ class Map extends \VuFind\RecordTab\Map
     {
         $wktTypes = [
             'coords', 'multicoords', 'linestring',
-            'multilinestring', 'polygon', 'multipolygon', 'geometrycollection'
+            'multilinestring', 'polygon', 'multipolygon', 'geometrycollection',
         ];
 
         $p = strpos($location, '(');
@@ -140,7 +142,7 @@ class Map extends \VuFind\RecordTab\Map
             $shape = \geoPHP\geoPHP::load($location, 'wkt');
             $geoJsonAdapter = new \geoPHP\Adapter\GeoJSON();
             return [
-                'geojson' => $geoJsonAdapter->getArray($shape)
+                'geojson' => $geoJsonAdapter->getArray($shape),
             ];
         }
 
@@ -156,11 +158,11 @@ class Map extends \VuFind\RecordTab\Map
                 foreach ($matches as $match) {
                     $results[] = [
                         'lon' => (float)$match[1],
-                        'lat' => (float)$match[2]
+                        'lat' => (float)$match[2],
                     ];
                 }
                 return [
-                    'points' => $results
+                    'points' => $results,
                 ];
             }
             return null;
@@ -169,8 +171,8 @@ class Map extends \VuFind\RecordTab\Map
         if ($type == 'envelope') {
             return [
                 'polygon' => [
-                    $this->envelopeToArray($location)
-                ]
+                    $this->envelopeToArray($location),
+                ],
             ];
         }
 
@@ -188,16 +190,16 @@ class Map extends \VuFind\RecordTab\Map
             $polygon[] = [$lat2, $lon];
             $polygon[] = [$lat, $lon];
             return [
-                'polygon' => [$polygon]
+                'polygon' => [$polygon],
             ];
         }
         return [
             'points' => [
                 [
                     'lon' => $coordinates[0],
-                    'lat' => $coordinates[1]
-                ]
-            ]
+                    'lat' => $coordinates[1],
+                ],
+            ],
         ];
     }
 }

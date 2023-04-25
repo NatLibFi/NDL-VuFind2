@@ -1,4 +1,4 @@
-/*global VuFind, videojs, checkSaveStatuses, finna, initFacetTree, priorityNav */
+/*global VuFind, videojs, finna, initFacetTree, priorityNav */
 finna.layout = (function finnaLayout() {
   var currentOpenTooltips = [];
 
@@ -821,7 +821,6 @@ finna.layout = (function finnaLayout() {
       initScrollLinks();
       initSearchboxFunctions();
       initCondensedList();
-      if (typeof checkSaveStatuses !== 'undefined') { checkSaveStatuses(); }
       initTouchDeviceGallery();
       initSideFacets();
       initPiwikPopularSearches();

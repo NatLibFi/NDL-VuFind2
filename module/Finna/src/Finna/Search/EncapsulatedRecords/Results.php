@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Encapsulated Records aspect of the Search Multi-class (Results)
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Search\EncapsulatedRecords;
 
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
@@ -99,7 +101,8 @@ class Results extends \VuFind\Search\Base\Results
         //      ($this->containerRecord = false)
         //   b. if the requested container record is not the same as previously
         //      loaded container record
-        if ($this->containerRecord === false
+        if (
+            $this->containerRecord === false
             || ($id && ($this->containerRecord->getUniqueID() ?? null) !== $id)
         ) {
             // Check the filters for a record ID, and load the corresponding object

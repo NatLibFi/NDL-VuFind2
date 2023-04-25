@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Blender Search Parameters
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Search\Blender;
 
 use Finna\Search\Solr\AuthorityHelper;
@@ -195,7 +197,8 @@ class Params extends \VuFind\Search\Blender\Params
      */
     protected function formatFilterListEntry($field, $value, $operator, $translate)
     {
-        if ($translate
+        if (
+            $translate
             && in_array($field, $this->getOptions()->getHierarchicalFacets())
         ) {
             return $this->translateHierarchicalFacetFilter(
@@ -290,7 +293,7 @@ class Params extends \VuFind\Search\Blender\Params
         $regex = '/(\w+)\|\[([\d-]+|\*)\s+TO\s+([\d-]+|\*)\]/';
         if (preg_match($regex, $filter, $matches)) {
             return [
-                'from' => $matches[2], 'to' => $matches[3], 'type' => $matches[1]
+                'from' => $matches[2], 'to' => $matches[3], 'type' => $matches[1],
             ];
         }
 
@@ -299,7 +302,7 @@ class Params extends \VuFind\Search\Blender\Params
         $regex = '/\[([\d-]+|\*)\s+TO\s+([\d-]+|\*)\]/';
         if (preg_match($regex, $filter, $matches)) {
             return [
-                'from' => $matches[1], 'to' => $matches[2], 'type' => 'overlap'
+                'from' => $matches[1], 'to' => $matches[2], 'type' => 'overlap',
             ];
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Trait for view path handling.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace FinnaConsole\Command\Util;
 
 /**
@@ -81,7 +83,8 @@ trait ViewPathTrait
         }
         if (!$view) {
             $view = $this->getDefaultViewPath();
-            if (isset($this->datasourceConfig)
+            if (
+                isset($this->datasourceConfig)
                 && isset($this->datasourceConfig[$institution]['mainView'])
             ) {
                 [$institution, $view]

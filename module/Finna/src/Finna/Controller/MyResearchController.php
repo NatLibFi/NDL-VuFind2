@@ -1,10 +1,11 @@
 <?php
+
 /**
  * MyResearch Controller
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2018.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,6 +31,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Controller;
 
 use VuFind\Exception\Forbidden as ForbiddenException;
@@ -157,7 +159,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         if (!isset($result['count'])) {
             $result = [
                 'count' => count($result),
-                'records' => $result
+                'records' => $result,
             ];
         }
 
@@ -186,13 +188,13 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 'duedate' => [
                     'desc' => 'Due Date',
                     'url' => '?sort=duedate',
-                    'selected' => $currentSort == 'duedate'
+                    'selected' => $currentSort == 'duedate',
                 ],
                 'title' => [
                     'desc' => 'Title',
                     'url' => '?sort=title',
-                    'selected' => $currentSort == 'title'
-                ]
+                    'selected' => $currentSort == 'title',
+                ],
             ];
 
             $date = $this->serviceLocator->get(\VuFind\Date\Converter::class);
@@ -227,14 +229,11 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         // If the results are not paged in the ILS, collect up to date stats for ajax
         // account notifications:
-        if ((!$pageOptions['ilsPaging'] || !$paginator)
+        if (
+            (!$pageOptions['ilsPaging'] || !$paginator)
             && !empty($this->getConfig()->Authentication->enableAjax)
         ) {
-            $accountStatus = [
-                'ok' => 0,
-                'warn' => 0,
-                'overdue' => 0
-            ];
+            $accountStatus = $this->getTransactionSummary($result['records']);
         } else {
             $accountStatus = null;
         }
@@ -247,25 +246,12 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 $current,
                 $renewStatus
             );
-            if ($renewStatus && !isset($current['renew_link'])
+            if (
+                $renewStatus && !isset($current['renew_link'])
                 && $current['renewable']
             ) {
                 // Enable renewal form if necessary:
                 $renewForm = true;
-            }
-
-            if (null !== $accountStatus) {
-                switch ($current['dueStatus'] ?? '') {
-                    case 'due':
-                        $accountStatus['warn']++;
-                        break;
-                    case 'overdue':
-                        $accountStatus['overdue']++;
-                        break;
-                    default:
-                        $accountStatus['ok']++;
-                        break;
-                }
             }
 
             // Build record driver (only for the current visible page):
@@ -452,6 +438,12 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 foreach ($result['transactions'] as $i => $current) {
                     // loadBatch ensures correct indexing
                     $driver = $records[$i];
+                    // If the record is removed from the collection and
+                    // there is no indication about the id of the old record
+                    // then skip it
+                    if (empty($driver->getUniqueID())) {
+                        continue;
+                    }
                     $otherNotes = '';
                     $notesBlocks = [];
 
@@ -523,7 +515,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     $saveResult = $favorites->save(
                         [
                             'list' => $listId,
-                            'notes' => $allNotes
+                            'notes' => $allNotes,
                         ],
                         $user,
                         $driver
@@ -545,13 +537,13 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 'html' => true,
                 'msg' => $this->translate('bulk_save_success') . '. '
                 . '<a href="' . $listUrl . '" class="gotolist">'
-                . $this->translate('go_to_list') . '</a>.'
+                . $this->translate('go_to_list') . '</a>.',
             ];
             $this->flashMessenger()->addSuccessMessage($message);
         }
         $view = $this->createViewModel(
             [
-                'lists' => $user->getLists()
+                'lists' => $user->getLists(),
             ]
         );
         return $view;
@@ -568,7 +560,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         // If the user is in the process of saving a public list, send them back
         // to the save screen
         if ($view instanceof \Laminas\Http\PhpEnvironment\Response) {
-            if ($this->formWasSubmitted('submit')
+            if (
+                $this->formWasSubmitted('submit')
                 && ($listId = $this->params()->fromQuery('saveListId'))
             ) {
                 $saveUrl = $this->url()->fromRoute('list-save', ['id' => $listId]);
@@ -578,7 +571,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         // If the user is in the process of saving historic loans, send them back
         // to the save screen
         if ($view instanceof \Laminas\Http\PhpEnvironment\Response) {
-            if ($this->formWasSubmitted('submit')
+            if (
+                $this->formWasSubmitted('submit')
                 && ($this->params()->fromQuery('saveHistoricLoans'))
             ) {
                 $saveUrl = $this->url()->fromRoute('myresearch-savehistoricloans');
@@ -602,7 +596,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $list = $results->getListObject();
 
             // Redirect anonymous users and list visitors to public list URL
-            if ($list && $list->isPublic()
+            if (
+                $list && $list->isPublic()
                 && (!$user || $user->id != $list->user_id)
             ) {
                 return $this->redirect()->toRoute('list-page', ['lid' => $list->id]);
@@ -615,12 +610,12 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 );
                 if ($r2->isEnabled()) {
                     $table = $this->getTable('Resource');
-                    if ($table->doesListIncludeRecordsFromSource(
+                    $includesR2 = $table->doesListIncludeRecordsFromSource(
                         $user->id,
                         $list->id,
                         'R2'
-                    )
-                    ) {
+                    );
+                    if ($includesR2) {
                         $this->flashMessenger()
                             ->addMessage('R2_mylist_restricted', 'info');
                     }
@@ -674,7 +669,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             );
             $table = $this->getTable('UserResource');
             $listID = $this->params()->fromPost('list_id');
-            if (empty($listID) || empty($orderedList)
+            if (
+                empty($listID) || empty($orderedList)
                 || !$table->saveCustomFavoriteOrder($user->id, $listID, $orderedList)
             ) {
                 $this->flashMessenger()->addErrorMessage('An error has occurred');
@@ -707,7 +703,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             return $this->createViewModel(
                 ['params' => $results->getParams(),
                  'results' => $results,
-                 'listUrl' => $listUrl
+                 'listUrl' => $listUrl,
                 ]
             );
         } catch (ListPermissionException $e) {
@@ -854,25 +850,23 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $updateConfig = $catalog->checkFunction('updateAddress', compact('patron'));
         $profile = $catalog->getMyProfile($patron);
         $fields = [];
-        if (!empty($updateConfig['fields'])) {
-            foreach ($updateConfig['fields'] as $fieldConfig) {
-                if (is_array($fieldConfig)) {
-                    $fields[$fieldConfig['field']] = $fieldConfig;
-                    if (!isset($fields[$fieldConfig['field']]['required'])) {
-                        $fields[$fieldConfig['field']]['required'] = false;
-                    }
-                } else {
-                    $parts = explode(':', $fieldConfig);
-                    $field = $parts[1] ?? '';
-                    if (!$field) {
-                        continue;
-                    }
-                    $fields[$field] = [
-                        'label' => $parts[0],
-                        'type' => $parts[2] ?? 'text',
-                        'required' => ($parts[3] ?? '') === 'required'
-                    ];
+        foreach ($updateConfig['fields'] ?? [] as $fieldConfig) {
+            if (is_array($fieldConfig)) {
+                $fields[$fieldConfig['field']] = $fieldConfig;
+            } else {
+                $parts = explode(':', $fieldConfig);
+                $field = $parts[1] ?? '';
+                if (!$field) {
+                    continue;
                 }
+                $fields[$field] = [
+                    'label' => $parts[0],
+                    'type' => $parts[2] ?? 'text',
+                    'required' => ($parts[3] ?? '') === 'required',
+                    'options' => $parts[4] ?? [],
+                    'pattern' => $parts[5] ?? '',
+                    'hint' => $parts[6] ?? '',
+                ];
             }
         }
         if (empty($fields)) {
@@ -882,16 +876,14 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 'zip' => ['label' => 'Zip', 'type' => 'text', 'required' => true],
                 'city' => ['label' => 'City', 'type' => 'text', 'required' => true],
                 'country'
-                    => ['label' => 'Country', 'type' => 'text', 'required' => true]
+                    => ['label' => 'Country', 'type' => 'text', 'required' => true],
             ];
 
-            if (false === $catalog->checkFunction('updateEmail', compact('patron'))
-            ) {
+            if (false === $catalog->checkFunction('updateEmail', compact('patron'))) {
                 $fields['email']
                     = ['label' => 'Email', 'type' => 'email', 'required' => true];
             }
-            if (false === $catalog->checkFunction('updatePhone', compact('patron'))
-            ) {
+            if (false === $catalog->checkFunction('updatePhone', compact('patron'))) {
                 $fields['phone']
                     = ['label' => 'Phone', 'type' => 'tel', 'required' => true];
             }
@@ -899,10 +891,22 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 = $catalog->checkFunction('updateSmsNumber', compact('patron'));
             if (false === $updateSms) {
                 $fields['sms_number'] = [
-                    'label' => 'SMS Number', 'type' => 'tel', 'required' => false
+                    'label' => 'SMS Number', 'type' => 'tel', 'required' => false,
                 ];
             }
         }
+
+        // Add defaults to all fields if not specified:
+        foreach ($fields as &$field) {
+            $field += $field + [
+                'required' => false,
+                'type' => 'text',
+                'options' => [],
+                'pattern' => '',
+                'hint' => '',
+            ];
+        }
+        unset($field);
 
         $view = $this->createViewModel(
             [
@@ -913,12 +917,24 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         );
         $view->setTemplate('myresearch/change-address-settings');
 
-        if ($this->formWasSubmitted('address_change_request')) {
-            $data = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        // Set up CSRF:
+        $csrfValidator = $this->serviceLocator
+            ->get(\VuFind\Validator\CsrfInterface::class);
 
-            if (isset($updateConfig['method'])
-                && 'driver' === $updateConfig['method']
-            ) {
+        if ($this->formWasSubmitted('address_change_request', false)) {
+            $csrf = $this->getRequest()->getPost()->get('csrf');
+            if (!$csrfValidator->isValid($csrf)) {
+                $this->flashMessenger()->addErrorMessage('csrf_validation_failed');
+                return $view;
+            }
+
+            // Filter any undefined fields and bad values from the request:
+            $data = array_intersect_key(
+                filter_input_array(INPUT_POST),
+                $fields
+            );
+
+            if ('driver' === ($updateConfig['method'] ?? '')) {
                 if (false === $updateConfig) {
                     throw new \Exception(
                         'ILS driver does not support updating profile information'
@@ -926,7 +942,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 }
 
                 foreach ($fields as $fieldName => $fieldConfig) {
-                    if ($fieldConfig['required']
+                    if (
+                        $fieldConfig['required']
                         && (!isset($data[$fieldName]) || '' === $data[$fieldName])
                     ) {
                         $this->flashMessenger()->addErrorMessage(
@@ -935,11 +952,39 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                         );
                         return $view;
                     }
-                    if ('pin4' === $fieldConfig['type'] && !empty($data[$fieldName])
+                    if (
+                        'pin4' === $fieldConfig['type'] && !empty($data[$fieldName])
                         && !preg_match('/^[0-9]{4}$/', $data[$fieldName])
                     ) {
                         $this->flashMessenger()->addErrorMessage(
                             $this->translate('password_error_invalid') . ': '
+                            . $this->translate($fieldConfig['label'])
+                        );
+                        return $view;
+                    }
+                    // Check that select, multiselect and radio contain valid values:
+                    if (!empty($fieldConfig['options'])) {
+                        foreach ((array)$data[$fieldName] as $value) {
+                            if (
+                                '' !== $value
+                                && !array_key_exists($value, $fieldConfig['options'])
+                            ) {
+                                $this->flashMessenger()->addErrorMessage(
+                                    'error_inconsistent_parameters'
+                                );
+                                return $view;
+                            }
+                        }
+                    }
+                    // Check that the value matches required pattern:
+                    $pattern = addcslashes($fieldConfig['pattern'], '/');
+                    if (
+                        $pattern
+                        && '' !== $data[$fieldName]
+                        && !preg_match("/$pattern/", $data[$fieldName])
+                    ) {
+                        $this->flashMessenger()->addErrorMessage(
+                            $this->translate('field_contents_invalid') . ': '
                             . $this->translate($fieldConfig['label'])
                         );
                         return $view;
@@ -952,6 +997,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                         $view->requestCompleted = true;
                         $this->flashMessenger()
                             ->addSuccessMessage($result['status']);
+                        if ($this->inLightbox()) {
+                            return $this->getRefreshResponse();
+                        }
                     } else {
                         $this->flashMessenger()->addErrorMessage($result['status']);
                     }
@@ -1013,9 +1061,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                                 ''
                             );
                         } elseif ('multiselect' == $setting['type']) {
-                            foreach ($setting['options'] as $optionId
-                                => &$option
-                            ) {
+                            foreach ($setting['options'] as $optionId => &$option) {
                                 $option['active'] = (bool)$request->getPost(
                                     $serviceId . '_' . $settingId . '_' . $optionId,
                                     false
@@ -1114,7 +1160,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             'author' => 'sort_author',
             'year desc' => 'sort_year',
             'year' => 'sort_year asc',
-            'format' => 'sort_format'
+            'format' => 'sort_format',
         ];
     }
 
@@ -1131,12 +1177,15 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
 
         $listID = $this->params()->fromPost('list_id');
-        if ($this->formWasSubmitted('opcode')
+        if (
+            $this->formWasSubmitted('opcode')
             && $this->params()->fromPost('opcode') == 'save_order'
         ) {
             $orderedList = $this->params()->fromPost('orderedList');
             $table = $this->getTable('UserResource');
-            if (empty($listID) || empty($orderedList)
+            if (
+                empty($listID)
+                || empty($orderedList)
                 || !$table->saveCustomFavoriteOrder($user->id, $listID, $orderedList)
             ) {
                 $this->flashMessenger()->addErrorMessage('An error has occurred');
@@ -1159,8 +1208,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             return $patron;
         }
 
-        if ($view = $this->createViewIfUnsupported('StorageRetrievalRequests', true)
-        ) {
+        if ($view = $this->createViewIfUnsupported('StorageRetrievalRequests', true)) {
             return $view;
         }
 
@@ -1312,7 +1360,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         $exportData = [
             'searches' => $this->exportSavedSearches($user->id),
-            'lists' => $this->exportUserLists($user->id)
+            'lists' => $this->exportUserLists($user->id),
         ];
         $json = json_encode($exportData);
         $timestamp = strftime('%Y-%m-%d-%H%M');
@@ -1382,7 +1430,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         foreach ($sortOptions as $key => $value) {
             $sortList[$key] = [
                 'desc' => $value,
-                'selected' => $key === $sort
+                'selected' => $key === $sort,
             ];
         }
         return $sortList;
@@ -1437,7 +1485,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $success = true;
         if (isset($values->profile_email)) {
             $validator = new \Laminas\Validator\EmailAddress();
-            if ($validator->isValid($values->profile_email)
+            if (
+                $validator->isValid($values->profile_email)
                 && $catalog->checkFunction('updateEmail', compact('patron'))
             ) {
                 // Update email
@@ -1449,7 +1498,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             }
         }
         // Update phone
-        if (isset($values->profile_tel)
+        if (
+            isset($values->profile_tel)
             && $catalog->checkFunction('updatePhone', compact('patron'))
         ) {
             $result = $catalog->updatePhone($patron, $values->profile_tel);
@@ -1459,7 +1509,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             }
         }
         // Update SMS Number
-        if (isset($values->profile_sms_number)
+        if (
+            isset($values->profile_sms_number)
             && $catalog->checkFunction('updateSmsNumber', compact('patron'))
         ) {
             $result = $catalog->updateSmsNumber(
@@ -1533,7 +1584,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             'Library' => $library,
             'Username' => $username,
             'Name' => $name,
-            'Email' => $email
+            'Email' => $email,
         ];
 
         $message = [];
@@ -1542,7 +1593,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         $ignoredTypes = [
             'layout',
-            'messaging_update_request'
+            'messaging_update_request',
         ];
         if (!empty($fields)) {
             foreach ($fields as $field => $fieldData) {
@@ -1661,7 +1712,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 'title' => $list->title,
                 'description' => $list->description,
                 'public' => $list->public,
-                'records' => []
+                'records' => [],
             ];
 
             foreach ($listRecords->getResults() as $record) {
@@ -1680,7 +1731,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     'tags' => array_map($getTag, $tags->toArray()),
                     'order' => $userResource
                         ? $userResource->finna_custom_order_index
-                        : null
+                        : null,
                 ];
             }
 

@@ -4,7 +4,7 @@
     [
       'ariaLabel' => $this->translate('Help'),
       'attributes' => [
-        'class' => ['finna-multi-level-nav-content', 'finna-multi-level-nav-lg']
+        'class' => ['finna-multi-level-nav-content', 'finna-multi-level-nav-lg'],
       ],
       'brandContent' => $this->transEsc('tabs_' . $activeTab),
       'collapseId' => 'nav-help-collapse',
@@ -12,7 +12,7 @@
         [
           'active' => 'help' === $activeTab,
           'label' => $this->translate('tabs_help'),
-          'link' => $this->url('content-page', ['page' => 'help'])
+          'link' => $this->url('content-page', ['page' => 'help']),
         ],
         [
           'active' => 'help-basic' === $activeTab,

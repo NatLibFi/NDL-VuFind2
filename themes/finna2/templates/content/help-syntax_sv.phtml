@@ -58,20 +58,22 @@
       </p>
     </div>
     <div id="wildcardsearches" class="content-section">
-      <h2>Jokertecken</h2>
-      <p><strong class="helpTerm">?</strong> ersätter ett tecken i sökordet.</p>
-      <p>Till exempel: du kan söka både ”text” och ”test” med samma sökord:</p>
-      <pre class="code">te?t</pre>
-      <p><strong class="helpTerm">*</strong> ersätter 0, 1 eller flera tecken i sökordet.
-      </p>
-      <p>Till exempel: du kan söka både ”test”, ”tests” och ”tester” med samma sökord:
-      </p>
-      <pre class="code">test*</pre>
-      <p>Jokertecknen kan också användas inne i sökordet:
-      </p>
-      <pre class="code">te*t</pre>
-      <p>Obs! Jokertecknen ? och * kan inte vara det första tecknet i ett ord.
-      </p>
+      <h2>Användning av jokertecken i sökord</h2>
+      <p>Jokertecknen * och ? kan användas för att ersätta tecken som förekommer i ett sökord, så att sökresultatet i större utsträckning omfattar olika eventuella ändelser.</p>
+      <p>När det gäller finskspråkiga sökord rekommenderas inte användning av jokertecken, eftersom en del av de funktioner som utförs för det givna sökkriteriet då uteblir. Exempel på sådana funktioner är synonymhantering och uppdelning av termer vid bindestrecket.</p>
+      <p>Finna tar automatiskt hänsyn till sökordets olika böjningsformer och ändelser. Om ditt sökord är ”taulu” så känner sökmotorn även igen ordets böjda former, såsom ”taulut” och ”taulujen”. Användning av jokertecken kan förvilla sökmotorns automatiska sökfunktioner.</p>
+      <h3>Användning av jokertecken</h3>
+      <p>Obs! Jokertecknet får inte användas som sökordets första tecken.</p>
+      <h4>*</h4>
+      <p>*-tecknet ersätter ett eller flera tecken i sökordet. I sökresultaten ingår också den form av sökordet som använts för sökningen.</p>
+      <p>Sökordet kan trunkeras med asterisk. Till exempel kan orden konkurrens, konkurrent, konkurrensutsättning och konkurrenslagstiftning alla sökas med sökordet:</p>
+      <pre class="code">konkurren*</pre>
+      <p>Asterisk kan också användas inuti ett ord för att ersätta ett eller flera tecken. Exempelvis kan stavningsvarianterna color och colour sökas med sökordet:</p>
+      <pre class="code">colo*r</pre>
+      <h4>?</h4>
+      <p>Jokertecknet ? ersätter ett tecken i ett sökord, vilket möjliggör flera ordformer.</p>
+      <p>Exempelvis kan orden woman och women sökas med samma sökord:</p>
+      <pre class="code">wom?n</pre>
     </div>
     <div id="fuzzysearches" class="content-section">
       <h2>Oskarp sökning</h2>

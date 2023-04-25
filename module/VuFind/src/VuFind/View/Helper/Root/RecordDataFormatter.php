@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Record driver data formatting view helper
  *
@@ -27,6 +28,7 @@
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
  */
+
 namespace VuFind\View\Helper\Root;
 
 use Laminas\View\Helper\AbstractHelper;
@@ -386,7 +388,7 @@ class RecordDataFormatter extends AbstractHelper
         $escaper = ($options['translate'] ?? false)
             ? $view->plugin('transEsc') : $view->plugin('escapeHtml');
         $transDomain = $options['translationTextDomain'] ?? '';
-        $separator = $options['separator'] ?? '<br />';
+        $separator = $options['separator'] ?? '<br>';
         $retVal = '';
         $array = (array)$data;
         $remaining = count($array);

@@ -114,7 +114,7 @@
           <?php endif; ?>
       <?php elseif (!empty($this->nonPayableReason) && !empty($this->fines)): ?>
         <div class="fines-info-area">
-          <p><?=$this->transEsc($this->nonPayableReason); ?><?=$this->nonPayableReason == 'online_payment_minimum_fee' ?  (': <span class="amount">' . $this->safeMoneyFormat($this->minimumFee / 100.00)) . '</span>' : '';?></p>
+          <p><?=$this->transEsc($this->nonPayableReason); ?><?=$this->nonPayableReason == 'online_payment_minimum_fee' ? (': <span class="amount">' . $this->safeMoneyFormat($this->minimumFee / 100.00)) . '</span>' : '';?></p>
         </div>
       <?php endif; ?>
     <?php endif; ?>
@@ -132,14 +132,14 @@
         <h3><?=$this->transEsc('You do not have any fines')?></h3>
       <?php else: ?>
         <?php if ($this->onlinePaymentEnabled && $this->selectFees): ?>
-          <input type="hidden" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>" name="csrf"/>
+          <input type="hidden" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>" name="csrf">
           <div class="myresearch-table online-payment" aria-label="<?=$this->transEscAttr('Actions');?>">
             <div class="toolbar">
               <div class="text-left checkbox-col">
                 <div class="checkboxFilter mylist-select-all">
                   <div class="checkbox">
                     <label>
-                      <input type="checkbox" name="selectAll" class="checkbox-select-all"/>
+                      <input type="checkbox" name="selectAll" class="checkbox-select-all">
                       <?=$this->transEsc('Select All')?>
                       <span class="selected"></span>
                     </label>
@@ -270,10 +270,10 @@
   if (!empty($this->registerPayment)) {
     $paramsJson = json_encode($registerPaymentParams);
     $js = <<<JS
-$(document).ready(function() {
-  finna.onlinePayment.registerPayment($paramsJson);
-});
-JS;
+        $(document).ready(function() {
+          finna.onlinePayment.registerPayment($paramsJson);
+        });
+        JS;
     echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $js, 'SET');
   }
 ?>

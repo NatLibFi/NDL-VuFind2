@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Additional functionality for Finna parameters.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\Search;
 
 use VuFind\Search\QueryAdapter;
@@ -114,7 +116,8 @@ trait FinnaParams
      */
     public function getFacetLabel($field, $value = null, $default = null)
     {
-        if (is_callable([$this, 'isGeographicFilter'])
+        if (
+            is_callable([$this, 'isGeographicFilter'])
             && $this->isGeographicFilter($field)
         ) {
             return 'Geographical Area';
@@ -158,7 +161,8 @@ trait FinnaParams
         // Extract field and value from URL string:
         [$field, $value] = $this->parseFilter($filter);
 
-        if (isset($this->hiddenFilters[$field])
+        if (
+            isset($this->hiddenFilters[$field])
             && in_array($value, $this->hiddenFilters[$field])
         ) {
             return true;
@@ -238,7 +242,7 @@ trait FinnaParams
         $regex = '/(\w+)\|\[([\d-]+|\*)\s+TO\s+([\d-]+|\*)\]/';
         if (preg_match($regex, $filter, $matches)) {
             return [
-                'from' => $matches[2], 'to' => $matches[3], 'type' => $matches[1]
+                'from' => $matches[2], 'to' => $matches[3], 'type' => $matches[1],
             ];
         }
 
@@ -247,7 +251,7 @@ trait FinnaParams
         $regex = '/\[([\d-]+|\*)\s+TO\s+([\d-]+|\*)\]/';
         if (preg_match($regex, $filter, $matches)) {
             return [
-                'from' => $matches[1], 'to' => $matches[2], 'type' => 'overlap'
+                'from' => $matches[1], 'to' => $matches[2], 'type' => 'overlap',
             ];
         }
 
@@ -303,7 +307,8 @@ trait FinnaParams
         if ($this->isDateRangeFilter($field)) {
             return $this->formatDateRangeFilterListEntry($res, $field, $value);
         }
-        if (is_callable([$this, 'isGeographicFilter'])
+        if (
+            is_callable([$this, 'isGeographicFilter'])
             && $this->isGeographicFilter($field)
         ) {
             return $this->formatGeographicFilterListEntry($res, $field, $value);
@@ -394,7 +399,8 @@ trait FinnaParams
             // to reduce the size of result lists without actually enabling
             // the user's ability to select a reduced list size).
             $legalOptions = $this->getOptions()->getLimitOptions();
-            if (in_array($limit, $legalOptions)
+            if (
+                in_array($limit, $legalOptions)
                 || ($limit > 0 && $limit < max($legalOptions))
             ) {
                 $this->limit = $limit;

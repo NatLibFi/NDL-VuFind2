@@ -8,12 +8,12 @@
 <h2><?=$this->transEsc('Book Bag') ?></h2>
 <?=$this->flashmessages()?>
 <form class="form-inline" action="<?=$this->url('cart-processor')?>" method="post"  name="cartForm" data-lightbox-onsubmit="cartFormHandler">
-  <input type="hidden" id="dropdown_value"/>
+  <input type="hidden" id="dropdown_value">
   <?php if (!$this->cart()->isEmpty()): ?>
     <div class="cart-controls clearfix">
       <div class="checkbox pull-left flip">
         <label>
-          <input type="checkbox" name="selectAll" class="checkbox-select-all"/>
+          <input type="checkbox" name="selectAll" class="checkbox-select-all">
           <?=$this->transEsc('select_page')?>
         </label>
       </div>
@@ -64,16 +64,16 @@
 
 <?php
   $script = <<<'JS'
-  function submitFormWithButton(link, name) {
-    $('#dropdown_value').attr('name', name).val(1);
-    $(link).closest('form').submit();
-  }
-  $("#cart-confirm-delete").click(function($e) {
-      submitFormWithButton(this, 'delete');
-  });
-  $("#cart-confirm-empty").click(function($e) {
-      submitFormWithButton(this, 'empty');
-  });
-JS;
+        function submitFormWithButton(link, name) {
+          $('#dropdown_value').attr('name', name).val(1);
+          $(link).closest('form').submit();
+        }
+        $("#cart-confirm-delete").click(function($e) {
+            submitFormWithButton(this, 'delete');
+        });
+        $("#cart-confirm-empty").click(function($e) {
+            submitFormWithButton(this, 'empty');
+        });
+      JS;
 ?>
 <?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET') ?>

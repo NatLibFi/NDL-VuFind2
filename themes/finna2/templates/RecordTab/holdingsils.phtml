@@ -19,7 +19,7 @@
           'electronic_holdings' => [],
           'total' => 0,
           'page' => 0,
-          'itemLimit' => 0
+          'itemLimit' => 0,
         ];
         $offlineMode = 'ils-offline';
     }
@@ -129,7 +129,7 @@
   <div class="holdings-urls">
     <?php if (!empty($urls)): ?>
       <?php foreach ($urls as $current): ?>
-        <a class="holdings-url-link" href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><i class="fa fa-external-link"></i> <?=$this->transEsc('default::link_' . $current['desc'], null, $current['desc'])?></a>
+        <a class="holdings-url-link" href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><i class="fa fa-external-link"></i> <?=$this->transEsc('default::link_' . $current['desc'], null, $current['desc'])?> <?=$current['part'] ?? ''?></a>
       <?php endforeach; ?>
     <?php endif; ?>
     <?php if ($doiActive): ?>
@@ -377,7 +377,7 @@
         <div class="title"><?=$this->transEsc("Most Recent Received Issues")?>:</div>
         <div class="history">
           <?php foreach ($holding['purchase_history'] as $current): ?>
-            <?=$this->escapeHtml($current['issue'])?><br/>
+            <?=$this->escapeHtml($current['issue'])?><br>
           <?php endforeach; ?>
         </div>
         <div class="clearfix"></div>

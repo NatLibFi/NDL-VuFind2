@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Record driver data formatting view helper
  *
@@ -31,6 +32,7 @@
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
  */
+
 namespace Finna\View\Helper\Root;
 
 use Finna\View\Helper\Root\RecordDataFormatter\FieldGroupBuilder;
@@ -64,6 +66,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         $include = [
             'Access',
             'Accessibility Feature',
+            'Accessibility Hazard',
             'Additional Information',
             'Age Limit',
             'Audience',
@@ -166,7 +169,6 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Other ID',
             'Parent Archive',
             'Parent Collection',
-            'Parent Purchase Batch',
             'Parent Series',
             'Parent Unclassified Entity',
             'Parent Work',
@@ -621,9 +623,9 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         $options = null,
         $unusedOptions = null
     ) {
-        $template = $template ?? 'core-field-group-fields.phtml';
-        $options = $options ?? [];
-        $unusedOptions = $unusedOptions ?? $options;
+        $template ??= 'core-field-group-fields.phtml';
+        $options ??= [];
+        $unusedOptions ??= $options;
 
         $fieldGroups = new FieldGroupBuilder();
         $fieldGroups->setGroups(

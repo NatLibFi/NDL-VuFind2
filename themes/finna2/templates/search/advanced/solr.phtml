@@ -55,8 +55,8 @@
   <fieldset>
     <legend><?=$this->transEsc("Illustrated")?>:</legend>
     <?php foreach ($this->illustratedLimit as $current): ?>
-      <input id="illustrated_<?=$this->escapeHtmlAttr($current['value'])?>" type="radio" name="illustration" value="<?=$this->escapeHtmlAttr($current['value'])?>"<?=$current['selected']?' checked="checked"':''?>/>
-      <label for="illustrated_<?=$this->escapeHtmlAttr($current['value'])?>"><?=$this->transEsc($current['text'])?></label><br/>
+      <input id="illustrated_<?=$this->escapeHtmlAttr($current['value'])?>" type="radio" name="illustration" value="<?=$this->escapeHtmlAttr($current['value'])?>"<?=$current['selected'] ? ' checked="checked"' : ''?>>
+      <label for="illustrated_<?=$this->escapeHtmlAttr($current['value'])?>"><?=$this->transEsc($current['text'])?></label><br>
     <?php endforeach; ?>
   </fieldset>
 <?php endif; ?>

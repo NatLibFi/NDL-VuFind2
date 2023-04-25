@@ -1,4 +1,5 @@
 <?php
+
 /**
  * GetPiwikPopularSearches AJAX handler
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Laminas\Config\Config;
@@ -43,8 +45,9 @@ use VuFind\Session\Settings as SessionSettings;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class GetPiwikPopularSearches extends \VuFind\AjaxHandler\AbstractBase
-implements TranslatorAwareInterface, \VuFindHttp\HttpServiceAwareInterface,
+class GetPiwikPopularSearches extends \VuFind\AjaxHandler\AbstractBase implements
+    TranslatorAwareInterface,
+    \VuFindHttp\HttpServiceAwareInterface,
     \Laminas\Log\LoggerAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
@@ -103,7 +106,8 @@ implements TranslatorAwareInterface, \VuFindHttp\HttpServiceAwareInterface,
     {
         $this->disableSessionWrites();  // avoid session write timing bug
 
-        if (empty($this->config->Piwik->url)
+        if (
+            empty($this->config->Piwik->url)
             || empty($this->config->Piwik->site_id)
             || empty($this->config->Piwik->token_auth)
         ) {
@@ -118,7 +122,7 @@ implements TranslatorAwareInterface, \VuFindHttp\HttpServiceAwareInterface,
             'period'       => 'range',
             'date'         => date('Y-m-d', strtotime('-30 days')) . ',' .
                               date('Y-m-d'),
-            'token_auth'   => $this->config->Piwik->token_auth
+            'token_auth'   => $this->config->Piwik->token_auth,
         ];
         $url = $this->config->Piwik->url;
 
@@ -131,7 +135,8 @@ implements TranslatorAwareInterface, \VuFindHttp\HttpServiceAwareInterface,
         // Minutes
         $maxAge = $this->config->Piwik->querycachetime ?? 60;
 
-        if (is_readable($cacheFile)
+        if (
+            is_readable($cacheFile)
             && time() - filemtime($cacheFile) < $maxAge * 60
         ) {
             // Load local cache if available

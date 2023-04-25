@@ -14,7 +14,7 @@
       <?php $QRCode = $this->record($this->driver)->getQRCode("core"); ?>
       <?php if($QRCode): ?>
         <span class="hidden-xs">
-          <br/><img alt="<?=$this->transEsc('QR Code')?>" class="qrcode" src="<?=$this->escapeHtmlAttr($QRCode);?>"/>
+          <br><img alt="<?=$this->transEsc('QR Code')?>" class="qrcode" src="<?=$this->escapeHtmlAttr($QRCode);?>">
         </span>
       <?php endif; ?>
     </div>

@@ -71,7 +71,7 @@
       'backend' => $backendId,
       'daterangeFacet' => $daterangeFacetField,
       'plotFrom' => $plotFrom,
-      'plotImmediately' => !in_array($facet, $collapsedFacets) ? 'true' : 'false'
+      'plotImmediately' => !in_array($facet, $collapsedFacets) ? 'true' : 'false',
     ]);
     ?>
   </div>
@@ -83,7 +83,7 @@
       'allowExclude' => $this->recommend->excludeAllowed($facet),
       'facets_before_more' => $this->recommend->getShowMoreSetting($facet),
       'showMoreInLightbox' => $this->recommend->getShowInLightboxSetting($facet),
-      'results' => $results
+      'results' => $results,
   ]; ?>
   <?=$this->context($this)->renderInContext('Recommend/SideFacets/usage-rights-facet.phtml', array_merge($contextVars, ['title' => $facet, 'cluster' => $this->cluster])); ?>
 <?php else: ?>
@@ -96,7 +96,7 @@
     'sortOptions' => $hierarchicalFacetSortOptions[$facet] ?? '',
     'sortOptions' => $hierarchicalFacetSortOptions[$facet] ?? $hierarchicalFacetSortOptions['*'] ?? null,
     'collapsedFacets' => $collapsedFacets,
-    'results' => $results
+    'results' => $results,
   ]; ?>
   <?php if (in_array($facet, $hierarchicalFacets)): ?>
     <?php

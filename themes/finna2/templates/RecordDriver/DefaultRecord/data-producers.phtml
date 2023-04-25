@@ -2,7 +2,7 @@
 <?php if (!empty($data)): ?>
   <div class="truncate-field">
     <?php foreach ($data as $index => $item): ?>
-      <?=$index > 0 ? '<br/>' : '' ?><?=$this->record($this->driver)->getLinkedFieldElement('author', $item['name'], $item, ['date' => true, 'role' => true, 'authorityType' => $item['type'] ?? null])?>
+      <?=$index > 0 ? '<br>' : '' ?><?=$this->record($this->driver)->getLinkedFieldElement('author', $item['name'], $item, ['date' => true, 'role' => true, 'authorityType' => $item['type'] ?? null])?>
     <?php endforeach; ?>
   </div>
 <?php endif; ?>

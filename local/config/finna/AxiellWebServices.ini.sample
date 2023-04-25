@@ -126,8 +126,10 @@ maxLength = 4
 ; Uncomment needsApproval and keep it as false when using driver and patronaurora
 ;needsApproval = false
 ; Uncomment the following lines to change which fields are included in the form
-; when using the email method. Format for the fields is label:profile_field
-; Default is address, zip, city and country. Email and phone are included unless
+; when using the email method.
+; Format for the fields is:
+; label:profile_field[:type][:required][:options][:pattern][:pattern_hint]
+; Default is address1, zip, city and country. Email and phone are included unless
 ; they have their own sections [updateEmail] or [updatePhone] defined. Also custom
 ; fields can be defined.
 ; When using patronaurora and driver method, you need to

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * AJAX handler for fetching holdings details
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Laminas\Mvc\Controller\Plugin\Params;
@@ -127,12 +129,14 @@ class GetHoldingsDetails extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
             if (in_array($fieldName, ['notes', 'holdings_notes'])) {
                 if (empty($holding[$fieldName])) {
                     // begin aliasing
-                    if ($fieldName == 'notes'
+                    if (
+                        $fieldName == 'notes'
                         && !empty($holding['holdings_notes'])
                     ) {
                         // using notes as alias for holdings_notes
                         $holding[$fieldName] = $holding['holdings_notes'];
-                    } elseif ($fieldName == 'holdings_notes'
+                    } elseif (
+                        $fieldName == 'holdings_notes'
                         && !empty($holding['notes'])
                     ) {
                         // using holdings_notes as alias for notes
@@ -161,7 +165,7 @@ class GetHoldingsDetails extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
                 'holding' => $holdingItems,
                 'mode' => 'expanded',
                 'moreLinkPage' => $moreLinkPage,
-                'moreLinkKey' => $detailsGroupKey
+                'moreLinkKey' => $detailsGroupKey,
             ]
         );
 

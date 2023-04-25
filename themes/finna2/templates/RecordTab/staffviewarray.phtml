@@ -24,12 +24,12 @@
       $this->inlineScript(\Laminas\View\Helper\HeadScript::FILE, 'vendor/highlight.pack.js');
       echo $this->inlineScript();
       $script = <<<JS
-  $(document).ready(function() {
-    $('#record-data').each(function(i, block) {
-      hljs.highlightBlock(block);
-    });
-  });
-JS;
+            $(document).ready(function() {
+              $('#record-data').each(function(i, block) {
+                hljs.highlightBlock(block);
+              });
+            });
+          JS;
       echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
     } else {
       echo '<pre id="record-data">' . $this->escapeHtml($rawFieldData['fullrecord']) . '</pre>';

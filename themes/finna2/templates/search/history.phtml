@@ -58,7 +58,7 @@
     <?php if (!empty($this->unsaved)): ?>
       <?=$this->context()->renderInContext('search/history-table.phtml', ['showSaved' => false]);?>
       <p class="text-right"><a href="?purge=true"><i class="fa fa-button fa-remove" aria-hidden="true"></i> <?=$this->transEsc("history_purge")?></a></p>
-      <br/>
+      <br>
     <?php else: ?>
       <h4><?=$this->transEsc("history_no_searches")?></h4>
       <br>

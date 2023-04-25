@@ -6,18 +6,18 @@
       = ['access_restrictions_general'];
   $coreFieldGroups = $formatter->getGroupedData($this->driver, $formatter->getGroupedFields([
     ['label' => 'Context',
-      'lines' => ['Archive Origination', 'Archive', 'Archive Series', 'Archive File']
+      'lines' => ['Archive Origination', 'Archive', 'Archive Series', 'Archive File'],
     ],
     ['lines' => [
         'Format', 'Authors', 'Secondary Authors', 'Unit ID', 'Unit IDs','Subjects',
-        'subjects_extended', 'Dates', 'Material Condition']
+        'subjects_extended', 'Dates', 'Material Condition'],
     ],
     ['label' => 'access_restrictions_general',
-      'lines' => ['Access Restrictions Extended']
+      'lines' => ['Access Restrictions Extended'],
     ],
     [
-      'lines' => ['Access Restrictions']
-    ]
+      'lines' => ['Access Restrictions'],
+    ],
   ], $coreFields));
 ?>
 <?php if (!empty($coreFieldGroups)): ?>

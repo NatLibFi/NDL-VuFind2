@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Related Records: Solr-based work expressions
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:related_records_modules Wiki
  */
+
 namespace Finna\Related;
 
 use VuFindSearch\Command\WorkExpressionsCommand;
@@ -110,7 +112,8 @@ class WorkExpressions implements \VuFind\Related\RelatedInterface
     public function init($settings, $driver)
     {
         $this->recordId = $driver->getUniqueID();
-        if (($this->workKeys = $driver->tryMethod('getWorkKeys'))
+        if (
+            ($this->workKeys = $driver->tryMethod('getWorkKeys'))
             && $driver->getSourceIdentifier() === 'Solr'
         ) {
             $params = new \VuFindSearch\ParamBag();
@@ -186,7 +189,7 @@ class WorkExpressions implements \VuFind\Related\RelatedInterface
             'join' => 'AND',
             'lookfor0[]' => "\"$imploded\"",
             'type0[]' => 'WorkKeys',
-            'bool0[]' => 'AND'
+            'bool0[]' => 'AND',
         ];
         return http_build_query($query);
     }

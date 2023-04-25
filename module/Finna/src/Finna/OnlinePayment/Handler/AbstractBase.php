@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Abstract payment handler
  *
@@ -28,6 +29,7 @@
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  * @link     http://docs.paytrail.com/ Paytrail API documentation
  */
+
 namespace Finna\OnlinePayment\Handler;
 
 use Finna\Db\Table\Fee;
@@ -47,8 +49,10 @@ use VuFind\I18n\Translator\TranslatorAwareInterface;
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  * @link     http://docs.paytrail.com/ Paytrail API documentation
  */
-abstract class AbstractBase implements HandlerInterface,
-    LoggerAwareInterface, TranslatorAwareInterface
+abstract class AbstractBase implements
+    HandlerInterface,
+    LoggerAwareInterface,
+    TranslatorAwareInterface
 {
     use \VuFind\Log\LoggerAwareTrait;
     use \VuFind\I18n\Translator\TranslatorAwareTrait;

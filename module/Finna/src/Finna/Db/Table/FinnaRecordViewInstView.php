@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for finna_record_view_inst_view
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Db\Table;
 
 use Finna\Db\Row\FinnaRecordViewInstView as FinnaRecordViewInstViewRow;

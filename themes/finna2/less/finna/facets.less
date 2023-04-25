@@ -30,34 +30,22 @@
   }
 }
 
-// Hide checkbox from facets
-.hierarchy-facet-icon {
-  display: none;
-}
-
 .list-group.facet, .list-group.facets {
   // style Finna facet headers
   .list-group-item.title {
-    font-size: @font-size-h4;
-    margin-bottom: 1px;
     cursor:pointer;
-    padding-right: 25px;
-    &.collapsed {
-      border-radius: 0px;
-      &:after {
-        font-family: finnaicons;
-        font-size: 24px;
-        content: "\e91a";
-        color: @action-link-color;
-      }
-    }
-    &:after {
-      font-family: finnaicons;
-      font-size: 24px;
-      content: "\e916";
-      float: right;
-      position: absolute;
-      right: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: @facet-text-color;
+    background: @facet-header-background;
+    text-align: left;
+    border: 1px solid  @facet-border-color;
+    padding: 10px;
+    margin-bottom: 1px;
+
+    .icon {
+      cursor: pointer;
       color: @action-link-color;
     }
   }
@@ -90,17 +78,6 @@
     &:hover {
       text-decoration: underline;
     }
-  }
-  button.list-group-item.title {
-    font-size: 1em;
-    background: @facet-header-background;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: @facet-text-color;
-    width: 100%;
-    text-align: left;
-    border: 1px solid  @facet-border-color;
-    padding: 15px 10px;
   }
 
   .more-less-btn-wrapper .btn, a.more-narrow-toggle {
@@ -137,31 +114,13 @@
   }
   .jstree-facet {
     .jstree-node {
-      padding: 3px 0 3px 5px;
       border: 0;
+      padding: 3px 0 3px 5px;
     }
-    .jstree-container-ul {
-      background: transparent;
-      color: @link-color;
-      > li.active,
-      > li.active a.jstree-anchor {
-        font-weight: bold;
-        color: @link-color;
-      }
-    }
-    .facet {
+
+    .hierarchical-facet-anchor {
       line-height: inherit;
-      padding: 0;
-      .badge {
-        margin-top: 3px;
-      }
     }
-  }
-  .jstree-children {
-    padding-left: 8px;
-  }
-  .jstree-container-ul {
-    padding: 0;
   }
 
   .jstree-facet .jstree-container-ul .jstree-icon {
@@ -239,39 +198,42 @@ span.badge.cb-facet {
 .facet-group {
   margin-bottom: 1rem;
 
-  .title {
-    display: block;
-    line-height: 1.5rem;
-  }
   .facet {
     line-height: 1.5rem;
-    padding: 5px 8px;
+    padding: 5px 0 5px 8px;
     display: flex;
     .text { flex-grow: 1; }
   }
   .title {
+    display: flex;
+    line-height: 1.5;
     padding: 4px 8px 4px 10px;
     font-weight: bold;
+  }
+  // Hide checkbox from facets
+  .icon-link .icon {
+    display: none;
   }
 
   [data-toggle="collapse"] {
     cursor: pointer;
-
-    &::after {
-      content: '\25B2';
-      float: right;
-
-      body.rtl { float: left; }
-    }
   }
-  .collapsed::after {content: '\25BC';}
 
   .collapse, .collapsing {
     position: relative;
   }
 
-  .badge { flex-shrink: 0; }
-  .text { flex-grow: 1; }
+  .badge {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+  }
+  .text, .hierarchical-facet-anchor {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    flex-grow: 1;
+  }
   .exclude {
     margin-left: 5px;
     flex-shrink: 0;
@@ -302,6 +264,13 @@ span.badge.cb-facet {
   padding: 1px .5rem;
   color: #fff;
   background-color: #000;
+}
+.facet-group .facet-title {
+  flex: 1 1 0%;
+  align-self: center;
+}
+.facet-group .facet-title-icon {
+  flex: none;
 }
 
 // Full facet list

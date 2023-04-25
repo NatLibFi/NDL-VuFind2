@@ -26,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org
  */
+
 namespace FinnaSearch\Backend\Solr;
 
 use VuFindCode\ISBN;
@@ -121,7 +122,8 @@ class LuceneSyntaxHelper extends \VuFindSearch\Backend\Solr\LuceneSyntaxHelper
      */
     protected function normalizeISBN($searchString)
     {
-        if (!preg_match('/^\d{9}[\dxX]$/', $searchString)
+        if (
+            !preg_match('/^\d{9}[\dxX]$/', $searchString)
             || !ISBN::isValidISBN10($searchString)
         ) {
             return $searchString;
@@ -221,7 +223,8 @@ class LuceneSyntaxHelper extends \VuFindSearch\Backend\Solr\LuceneSyntaxHelper
         $result = preg_replace_callback(
             '/(^|[:\(]|[^\w\[\*]+?)([\*\?]+)($|[^\]\*])/u',
             function ($matches) {
-                if (':' === $matches[1] && '*' === $matches[2]
+                if (
+                    ':' === $matches[1] && '*' === $matches[2]
                     && ('' === $matches[3] || strncmp(' ', $matches[3], 1) === 0)
                 ) {
                     return ':*' . $matches[3];

@@ -5,7 +5,7 @@
     if ($titleLocation) {
         $dialogTitle .= " - $titleLocation";
     }
-    $holdsAllowed = $holdsAllowed ?? $this->driver->tryMethod('getHoldsAllowed');
+    $holdsAllowed ??= $this->driver->tryMethod('getHoldsAllowed');
 
     $branches = false;
     foreach ($holding['items'] as $row) {
@@ -54,8 +54,8 @@
       <?php endif; ?>
       <div class="copy-info">
         <?php if (isset($row['reserve']) && $row['reserve'] == "Y"): ?>
-          <link property="availability" href="http://schema.org/InStoreOnly" />
-          <?=$this->transEsc("On Reserve - Ask at Circulation Desk")?><br />
+          <link property="availability" href="http://schema.org/InStoreOnly">
+          <?=$this->transEsc("On Reserve - Ask at Circulation Desk")?><br>
         <?php endif; ?>
         <?php if (isset($row['use_unknown_message']) && $row['use_unknown_message']): ?>
           <span class="text-muted"><?=$this->transEsc("status_unknown_message")?></span>
@@ -65,7 +65,7 @@
             <span class="text-success">
               <i class="fa fa-ok" aria-hidden="true"></i>
               <?=isset($row['availabilityInfo']['displayText']) ? $this->transEsc('status_' . $row['availabilityInfo']['displayText'], [], $row['availabilityInfo']['displayText']) : $this->transEsc('Available')?>
-              <link property="availability" href="http://schema.org/InStock" />
+              <link property="availability" href="http://schema.org/InStock">
             </span>
             <?php if (isset($row['requests_placed']) && $row['requests_placed'] > 0): ?>
               &ndash;&nbsp;<span class="small"><?=$this->translate('status_requests_html', ['%%count%%' => $this->escapeHtml($row['requests_placed'])])?></span>
@@ -85,7 +85,7 @@
             </div>
           <?php else: ?>
             <?php /* Begin Unavailable Items (Recalls) */ ?>
-            <span class="text-danger"><?=$row['status'] == 'Ordered' ? '' : '<i class="fa fa-remove" aria-hidden="true"></i>';?> <?=$this->transEsc('status_' . $row['status'], null, $this->translate($row['status']))?><link property="availability" href="http://schema.org/OutOfStock" /> </span>
+            <span class="text-danger"><?=$row['status'] == 'Ordered' ? '' : '<i class="fa fa-remove" aria-hidden="true"></i>';?> <?=$this->transEsc('status_' . $row['status'], null, $this->translate($row['status']))?><link property="availability" href="http://schema.org/OutOfStock"> </span>
             <?php if (isset($row['returnDate']) && $row['returnDate']): ?>&ndash; <span class="small"><?=$this->escapeHtml($row['returnDate'])?></span><?php endif; ?>
             <?php if (isset($row['duedate']) && $row['duedate']): ?>
               &ndash;&nbsp;<span class="small"><?=$this->transEsc('Due')?>:&nbsp;<?=$this->escapeHtml($row['duedate'])?></span>
@@ -111,17 +111,17 @@
         <?php endif; ?>
         <?php /* Embed item structured data: library, barcode, call number */ ?>
         <?php if ($row['location']): ?>
-          <meta property="seller" content="<?=$this->escapeHtmlAttr($row['location'])?>" />
+          <meta property="seller" content="<?=$this->escapeHtmlAttr($row['location'])?>">
         <?php endif; ?>
         <?php if ($row['barcode']): ?>
-          <meta property="serialNumber" content="<?=$this->escapeHtmlAttr($row['barcode'])?>" />
+          <meta property="serialNumber" content="<?=$this->escapeHtmlAttr($row['barcode'])?>">
         <?php endif; ?>
         <?php if ($row['callnumber']): ?>
-          <meta property="sku" content="<?=$this->escapeHtmlAttr($row['callnumber'])?>" />
+          <meta property="sku" content="<?=$this->escapeHtmlAttr($row['callnumber'])?>">
         <?php endif; ?>
         <?php /* Declare that the item is to be borrowed, not for sale */ ?>
-          <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut" />
-          <link property="itemOffered" href="#record" />
+          <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+          <link property="itemOffered" href="#record">
         <?php if (isset($row['availabilityInfo'])): ?>
           <div class="copy-available">
             <?php if (!empty($row['availabilityInfo']['ordered'])): ?>

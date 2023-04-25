@@ -1,4 +1,5 @@
 <?php
+
 /**
  * AJAX handler for getting authority information for recommendations.
  *
@@ -25,10 +26,10 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Finna\Recommend\AuthorityRecommend;
-
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\View\Renderer\RendererInterface;
 

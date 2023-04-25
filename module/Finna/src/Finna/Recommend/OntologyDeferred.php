@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OntologyDeferred Recommendations Module.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
+
 namespace Finna\Recommend;
 
 use VuFind\Recommend\RecommendInterface;
@@ -131,7 +133,7 @@ class OntologyDeferred implements RecommendInterface
             'mod' => 'Ontology',
             'lookfor' => $this->lookfor,
             'searchId' => $this->results->getSearchId(),
-            'resultTotal' => $this->results->getResultTotal()
+            'resultTotal' => $this->results->getResultTotal(),
         ];
 
         // Add other possible request parameters.

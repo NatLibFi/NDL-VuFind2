@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Followup view helper.
  * Retrieves session variables from the Followup controller plugin.
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\View\Helper\Root;
 
 use VuFind\Controller\Plugin\Followup as FollowupPlugin;

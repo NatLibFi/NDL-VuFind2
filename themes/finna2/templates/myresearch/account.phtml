@@ -17,21 +17,21 @@
   </div>
   <div class="form-group">
     <a class="back-to-login btn btn-link" href="<?=$this->url('myresearch-userlogin') ?>"><i class="fa fa-arrow-left" aria-hidden="true"></i> <?=$this->transEsc('Back')?></a>
-    <input class="btn btn-primary" type="submit" name="submit" value="<?=$this->transEscAttr('Submit')?>"/>
+    <input class="btn btn-primary" type="submit" name="submit" value="<?=$this->transEscAttr('Submit')?>">
   </div>
 </form>
 
 <?php
 // Set up validation; we do this inline instead of in the header for lightbox compatibility:
 $js = <<<JS
-  if ($.isReady) {
-    $('#accountForm').validator();
-  } else {
-    $(document).ready(function(){
-      $('#accountForm').validator();
-    });
-  }
-JS;
+      if ($.isReady) {
+        $('#accountForm').validator();
+      } else {
+        $(document).ready(function(){
+          $('#accountForm').validator();
+        });
+      }
+    JS;
 
 echo $this->inlineScript()->appendScript($js);
 ?>

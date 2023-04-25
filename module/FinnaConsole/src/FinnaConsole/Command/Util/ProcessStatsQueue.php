@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Console service for processing the statistics queue.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace FinnaConsole\Command\Util;
 
 use Finna\Statistics\Driver\Database as DatabaseDriver;

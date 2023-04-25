@@ -76,7 +76,7 @@ finna.advSearch = (function advSearch() {
         filters += value;
       });
       if (filters) {
-        var field = $('<input type="hidden" name="filter[]"/>').val(filters);
+        var field = $('<input type="hidden" name="filter[]">').val(filters);
         mapCanvas.closest('form').append(field);
       }
     });

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Additional functionality for Finna Solr and Finna SolrAuth records.
  *
@@ -28,6 +29,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver\Feature;
 
 /**
@@ -189,7 +191,7 @@ trait SolrCommonFinnaTrait
                 $params = $images[$index]['urls'][$size];
                 if (!is_array($params)) {
                     $params = [
-                        'url' => $params
+                        'url' => $params,
                     ];
                 }
                 if ($size == 'large') {

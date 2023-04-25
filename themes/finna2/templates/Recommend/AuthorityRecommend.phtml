@@ -41,10 +41,10 @@ $that = $this;
         </ul>
       </div>
       <?php  $js = <<<JS
-$(document).ready(function(){
-  finna.authority.initAuthorityRecommendTabs();
-});
-JS;
+                $(document).ready(function(){
+                  finna.authority.initAuthorityRecommendTabs();
+                });
+                JS;
         $this->headScript()->appendScript($js);
       ?>
     <?php endif; ?>

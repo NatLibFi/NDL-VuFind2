@@ -945,6 +945,10 @@ i.bigger {
     font-family: finnaicons;
     content: "\e8ac";
 }
+.fa-globe:before {
+    font-family: finnaicons;
+    content: "\e8c5";
+}
 .fa-pagebreak:before {
     font-family: finnaicons;
     content: "\e8ab";
@@ -990,6 +994,10 @@ i.bigger {
     }
 }
 
+#account-icon {
+    position: relative;
+}
+
 // Status none
 #account-icon .account-status-none {
     width: auto;
@@ -1011,8 +1019,8 @@ i.bigger {
         position: absolute;
         width: 12px;
         height: 12px;
-        top: 18px;
-        left: 20px;
+        top: 65%;
+        left: 9px;
         background: @brand-success;
         border: 2px solid @header-background-color;
         border-radius: 50%;
@@ -1032,8 +1040,8 @@ i.bigger {
         position: absolute;
         width: 12px;
         height: 12px;
-        top: 18px;
-        left: 20px;
+        top: 65%;
+        left: 9px;
         background: @brand-warning;
         border: 2px solid @header-background-color;
         border-radius: 50%;
@@ -1056,8 +1064,8 @@ i.bigger {
         position: absolute;
         width: 12px;
         height: 12px;
-        top: 18px;
-        left: 20px;
+        top: 65%;
+        left: 9px;
         background: @brand-danger;
         border: 2px solid @header-background-color;
         border-radius: 50%;
@@ -1102,4 +1110,13 @@ i.bigger {
     .feed-icon {
         color: #121212;
     }
+}
+
+// Collapse / expand
+.show--closed,
+.collapsed .show--open {
+    display: none;
+}
+.collapsed .show--closed {
+    display: inline;
 }

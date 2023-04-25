@@ -40,8 +40,8 @@
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
   <div class="mylist-error hidden"><?=$this->translate('An error has occurred'); ?></div>
   <?php if (isset($list)): ?>
-    <input type="hidden" name="listID" value="<?=$this->escapeHtmlAttr($list->id)?>" />
-    <input type="hidden" name="listName" value="<?=$this->escapeHtmlAttr($list->title)?>" />
+    <input type="hidden" name="listID" value="<?=$this->escapeHtmlAttr($list->id)?>">
+    <input type="hidden" name="listName" value="<?=$this->escapeHtmlAttr($list->title)?>">
   <?php endif; ?>
   <div class="clearfix mylist-header hidden-print">
     <div>
@@ -63,7 +63,7 @@
             'markdown' => $markdown,
             'html' => $markdown ? $this->markdown()->toHtml($markdown, false) : '',
             'emptyHtml' => $this->translate('Add list description'),
-            'preview' => true
+            'preview' => true,
           ]); ?>
         <?php if ($this->usertags()->getListMode() === 'enabled'): ?>
           <?php $listTags = $list->getListTags(); ?>
@@ -82,7 +82,7 @@
                   <fieldset>
                     <legend></legend>
                     <div class="add-new">
-                      <input type="text" class="new-tag" name="new-tag" value="" aria-required="true" required aria-label="<?= $this->transEscAttr('list-tags-info')?>" placeholder="<?= $this->transEscAttr('list-tags-info')?>"/>
+                      <input type="text" class="new-tag" name="new-tag" value="" aria-required="true" required aria-label="<?= $this->transEscAttr('list-tags-info')?>" placeholder="<?= $this->transEscAttr('list-tags-info')?>">
                       <button type="submit" class="btn btn-primary "><?=$this->transEsc('Save')?></button>
                       <div><i aria-hidden="true" class="fa fa-spin fa-spinner hide"></i></div>
                     </div>

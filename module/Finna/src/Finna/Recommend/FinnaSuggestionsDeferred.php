@@ -1,4 +1,5 @@
 <?php
+
 /**
  * FinnaSuggestionsDeferred Recommendations Module
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Recommend;
 
 /**
@@ -57,7 +59,7 @@ class FinnaSuggestionsDeferred extends FinnaSuggestions
                 'searchHandler' => $this->searchHandler,
                 'searchType' => $this->searchType,
                 'lookfor' => $this->lookfor,
-                'params' => $this->settings
+                'params' => $this->settings,
             ]
         );
     }

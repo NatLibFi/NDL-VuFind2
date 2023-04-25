@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Record driver view helper
  *
@@ -30,6 +31,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\View\Helper\Root;
 
 use Finna\Form\Form;
@@ -243,7 +245,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @return bool
      */
-    public function repositoryLibraryRequestEnabled(string $context = '') : bool
+    public function repositoryLibraryRequestEnabled(string $context = ''): bool
     {
         if (!isset($this->config->Record->repository_library_request_sources)) {
             return false;
@@ -358,7 +360,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
         $searchAction = !empty($this->getView()->browse)
             ? 'browse-' . $this->getView()->browse : $params['searchAction'] ?? '';
-        $params = $params ?? [];
+        $params ??= [];
 
         $linkType = $params['linkType'] ?? $this->getAuthorityLinkType($type);
         $authId = null;
@@ -374,7 +376,8 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
 
         // Attempt to switch Author search link to Authority link.
-        if ($switchType
+        if (
+            $switchType
             && null !== $linkType
             && in_array($type, ['author', 'author-id', 'subject'])
             && $authId
@@ -396,8 +399,12 @@ class Record extends \VuFind\View\Helper\Root\Record
         );
 
         if ($searchTabsFilters) {
-            $result .= $this->getView()->plugin('searchTabs')
-                ->getCurrentHiddenFilterParams($this->driver->getSourceIdentifier());
+            $prepend = (strpos($result, '?') === false) ? '?' : '&amp;';
+            $result .= $this->getView()->plugin('searchTabs')->getCurrentHiddenFilterParams(
+                $this->driver->getSourceIdentifier(),
+                false,
+                $prepend
+            );
         }
 
         return $withInfo ? [$result, $type] : $result;
@@ -520,7 +527,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                         'text' => $linkConfig[0],
                         'title' => $linkConfig[1],
                         'url' => $url,
-                        'displayId' => $displayId
+                        'displayId' => $displayId,
                     ];
                 }
             }
@@ -609,7 +616,7 @@ class Record extends \VuFind\View\Helper\Root\Record
            'type' => $type,
            'authorityType' => $authorityType,
            'title' => $params['title'] ?? null,
-           'classes' => $params['class'] ?? []
+           'classes' => $params['class'] ?? [],
         ];
         if ($additionalData = $this->composeAdditionalData($data, $params)) {
             $elementParams['additionalData'] = $additionalData;
@@ -689,7 +696,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         $params = [
            'record' => $this->driver,
-           'author' => $data
+           'author' => $data,
         ];
 
         return trim($this->renderTemplate('author-link-element.phtml', $params));
@@ -728,7 +735,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             'id' => $id,
             'count' => $checkboxCount++,
             'prefix' => $idPrefix,
-            'label' => $label
+            'label' => $label,
         ];
         if ($formAttr) {
             $context['formAttr'] = $formAttr;
@@ -769,7 +776,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             $params = [
                 'url' => $this->getThumbnail($size),
                 'description' => '',
-                'rights' => []
+                'rights' => [],
             ];
         }
         return $params;
@@ -830,7 +837,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             foreach ($sizes as $size) {
                 if ($thumb = $this->driver->getThumbnail($size)) {
                     $params = is_array($thumb) ? $thumb : [
-                        'id' => $recordId
+                        'id' => $recordId,
                     ];
                     $params['index'] = 0;
                     $params['size'] = $size;
@@ -851,7 +858,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                 $images[] = [
                     'urls' => $urls,
                     'description' => '',
-                    'rights' => []
+                    'rights' => [],
                 ];
             }
         } else {
@@ -863,7 +870,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                     $params = [
                         'id' => $recordId,
                         'index' => $idx,
-                        'size' => $size
+                        'size' => $size,
                     ];
                     $image['urls'][$size] = $params;
                 }
@@ -876,7 +883,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                                 'size' => $size,
                                 'format' => $data['format'] ?? 'jpg',
                                 'key' => $key,
-                                'type' => 'highresimg'
+                                'type' => 'highresimg',
                             ];
                         }
                     }
@@ -914,7 +921,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             'result-online-urls.phtml',
             [
                 'driver' => $this->driver,
-                'context' => $context
+                'context' => $context,
             ]
         );
     }
@@ -1120,7 +1127,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                         $this->driver,
                         'AuthorityRecordsAuthor'
                     )
-                    : null
+                    : null,
             ],
             'topic' => [
                 // cnt is no longer available beforehand. Use
@@ -1132,8 +1139,8 @@ class Record extends \VuFind\View\Helper\Root\Record
                         $this->driver,
                         'AuthorityRecordsTopic'
                     )
-                    : null
-            ]
+                    : null,
+            ],
         ];
 
         if ($onAuthorityPage) {
@@ -1220,7 +1227,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @return string
      */
-    public function translateCopyright(string $copyright) : string
+    public function translateCopyright(string $copyright): string
     {
         $transEsc = $this->getView()->plugin('transEsc');
 
@@ -1379,15 +1386,16 @@ class Record extends \VuFind\View\Helper\Root\Record
         ?int $indexStart = null
     ): string {
         foreach (array_keys($opt) as $key) {
-            if (!in_array(
-                $key,
-                [
+            if (
+                !in_array(
+                    $key,
+                    [
                     'limit',
                     'page',
                     'showAllLink',
                     'view',
-                ]
-            )
+                    ]
+                )
             ) {
                 unset($opt[$key]);
             }
@@ -1401,7 +1409,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         if (!array_key_exists('limit', $opt)) {
             $opt['limit'] = 6;
         }
-        $opt['showAllLink'] = $opt['showAllLink'] ?? true;
+        $opt['showAllLink'] ??= true;
         $view = $opt['view'] = $opt['view'] ?? 'grid';
 
         $resultsCopy = ($this->getEncapsulatedResults)($opt);

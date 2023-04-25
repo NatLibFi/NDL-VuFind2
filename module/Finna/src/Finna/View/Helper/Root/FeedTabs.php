@@ -1,4 +1,5 @@
 <?php
+
 /**
  * View helper for feed tabs.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\View\Helper\Root;
 
 /**
@@ -55,7 +57,7 @@ class FeedTabs extends \Laminas\View\Helper\AbstractHelper
                 'title' => $title,
                 'id' => md5(json_encode($ids)),
                 'feedIds' => $ids,
-                'active' => array_shift($ids)
+                'active' => array_shift($ids),
             ]
         );
     }

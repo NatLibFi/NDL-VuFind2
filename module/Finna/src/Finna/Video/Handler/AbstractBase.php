@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Base for video services.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\Video\Handler;
 
 /**
@@ -89,7 +91,7 @@ abstract class AbstractBase implements \Laminas\Log\LoggerAwareInterface
                         $conf['src']
                     ),
                     'type' => $conf['mediaType'],
-                    'priority' => $conf['priority']
+                    'priority' => $conf['priority'],
                 ];
             }
             if (!$videoSources) {
@@ -109,7 +111,7 @@ abstract class AbstractBase implements \Laminas\Log\LoggerAwareInterface
                 'desc' => $media['type'],
                 'source' => $this->source,
                 'embed' => 'video',
-                'warnings' => $media['warnings']
+                'warnings' => $media['warnings'],
             ];
         }
         return $results;
@@ -166,7 +168,7 @@ abstract class AbstractBase implements \Laminas\Log\LoggerAwareInterface
                 'mediaType' => $settings[0],
                 'src' => $settings[1],
                 'sourceTypes' => explode(',', $settings[2] ?? 'mp4'),
-                'priority' => $sourcePriority++
+                'priority' => $sourcePriority++,
             ];
         }
         return $results;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Cover Art Archive cover content loader.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\Content\Covers;
 
 /**
@@ -36,8 +38,7 @@ namespace Finna\Content\Covers;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class CoverArtArchive extends \VuFind\Content\AbstractCover
-implements \VuFindHttp\HttpServiceAwareInterface
+class CoverArtArchive extends \VuFind\Content\AbstractCover implements \VuFindHttp\HttpServiceAwareInterface
 {
     use \VuFindHttp\HttpServiceAwareTrait;
 

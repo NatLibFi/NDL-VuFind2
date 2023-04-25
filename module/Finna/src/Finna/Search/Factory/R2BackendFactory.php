@@ -26,15 +26,14 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Search\Factory;
 
 use Finna\Search\R2\AuthenticationListener;
 use Laminas\EventManager\EventManager;
 use Psr\Container\ContainerInterface;
 use VuFindSearch\Backend\Solr\Backend;
-
 use VuFindSearch\Backend\Solr\Connector;
-
 use VuFindSearch\Backend\Solr\Response\Json\RecordCollectionFactory;
 
 /**

@@ -16,8 +16,8 @@ if ($img):
   <div class="media">
     <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <div class="media-<?=$thumbnailAlignment ?> resultThumb <?=$this->escapeHtmlAttr($coverDetails['size'])?>">
-      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
-      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId">
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource">
         <?php if ($thumbnail): ?>
             <?=$thumbnail ?>
         <?php endif; ?>
@@ -60,7 +60,7 @@ if ($img):
             <?php if (!$this->translationEmpty('Archive Repository')): ?><span class="small"><?=$this->transEsc('Archive Repository')?>:</span><?php endif; ?>
             <?=$this->escapeHtml($this->organisationDisplayName($this->driver)) ?>
             <?php if ($originations = $this->driver->tryMethod('getOriginationExtended', [])): ?>
-              <br/><span class="archive-label"><?=$this->transEsc('Archive Origination')?>:</span>
+              <br><span class="archive-label"><?=$this->transEsc('Archive Origination')?>:</span>
               <?php foreach ($originations as $i => $origination): ?>
                 <?=$i > 0 ? ' ; ' : ''?>
                 <?=$this->record($this->driver)->getLinkedFieldElement('author', $origination['name'], $origination, ['authorityType' => $origination['type'] ?? null, 'description' => false])?>
@@ -74,7 +74,7 @@ if ($img):
                 <?php $topIds = $this->driver->getHierarchyParentId(); $topTitles = $this->driver->getHierarchyParentTitle(); ?>
               <?php endif; ?>
               <?php if (!$this->driver->isCollection()): ?>
-                <br/><span class="archive-label"><?=$this->transEsc('Archive')?>:</span>
+                <br><span class="archive-label"><?=$this->transEsc('Archive')?>:</span>
                 <?php foreach($topIds as $index => $parentId): ?>
                   <a href="<?=$this->escapeHtmlAttr($recordLinker->getUrl("$parentSource|$parentId"))?>"><?=isset($topTitles[$index]) ? $this->truncate($topTitles[$index], 180) : ''?></a>
                 <?php endforeach; ?>
@@ -83,12 +83,12 @@ if ($img):
             <?php if (!$fondsOrCollection && $this->driver->isPartOfArchiveSeries()): ?>
               <?php foreach ([
                 ['Archive Series', \Finna\RecordDriver\SolrEad::SERIES_LEVELS],
-                ['Archive File', \Finna\RecordDriver\SolrEad::FILE_LEVELS]
+                ['Archive File', \Finna\RecordDriver\SolrEad::FILE_LEVELS],
               ] as [$label, $levels]):
               ?>
                 <?php $parentIds = $this->driver->getHierarchyParentId($levels); $parentTitles = $this->driver->getHierarchyParentTitle($levels); ?>
                 <?php if ($parentIds): ?>
-                  <br/><span class="archive-label"><?=$this->transEsc($label)?>:</span>
+                  <br><span class="archive-label"><?=$this->transEsc($label)?>:</span>
                   <?php foreach ($parentIds as $index => $parentId): ?>
                     <?php
                       try {
@@ -111,7 +111,7 @@ if ($img):
               <strong><?=$this->transEsc($snippet['caption']) ?>:</strong>
             <?php endif; ?>
             <?php if (!empty($snippet['snippet'])): ?>
-              <?=$this->translate('highlight_snippet_html', ['%%snippet%%' => $this->highlight($snippet['snippet'])]) ?><br/>
+              <?=$this->translate('highlight_snippet_html', ['%%snippet%%' => $this->highlight($snippet['snippet'])]) ?><br>
             <?php endif; ?>
           <?php endif; ?>
         <?php endif; ?>
@@ -125,8 +125,8 @@ if ($img):
         <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
           <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
             <div class="hierarchyTreeLink hidden-print">
-              <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId" />
-              <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchySource)?>" class="hiddenHierarchySource" />
+              <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId">
+              <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchySource)?>" class="hiddenHierarchySource">
               <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID, 'source' => $hierarchySource]))?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>" data-lightbox-href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID]))?>" data-lightbox-post="tab=hierarchytree">
                 <i class="fa fa-sitemap"></i>
                 <?=$this->transEsc('hierarchy_view_context')?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?>
@@ -148,11 +148,11 @@ if ($img):
             <?php endif; ?>
 
             <?php if (isset($this->params) && $this->cart()->isActiveInSearch() && $this->params->getOptions()->supportsCart() && $this->cart()->isActive()): ?>
-                <?=$this->render('record/cart-buttons.phtml', ['id' => $this->driver->getUniqueId(), 'source' => $this->driver->getSourceIdentifier()]); ?><br/>
+                <?=$this->render('record/cart-buttons.phtml', ['id' => $this->driver->getUniqueId(), 'source' => $this->driver->getSourceIdentifier()]); ?><br>
             <?php endif; ?>
 
             <?php $openUrl = $this->driver->getOpenURL(); ?>
-            <?=$openUrl?'<span class="Z3988" title="' . $this->escapeHtmlAttr($openUrl) . '"></span>':''?>
+            <?=$openUrl ? '<span class="Z3988" title="' . $this->escapeHtmlAttr($openUrl) . '"></span>' : ''?>
         </div>
         <div class="clearfix visible-xs"></div>
         <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
@@ -165,8 +165,8 @@ if ($img):
     </div>
     <?php if ($thumbnail && $thumbnailAlignment == 'right'): ?>
     <div class="media-<?=$thumbnailAlignment ?> resultThumb <?=$this->escapeHtmlAttr($coverDetails['size'])?>">
-      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
-      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId">
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource">
         <?php if ($thumbnail): ?>
             <?=$thumbnail ?>
         <?php endif; ?>

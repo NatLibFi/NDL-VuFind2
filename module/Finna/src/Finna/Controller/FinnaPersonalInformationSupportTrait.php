@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Finna personal information support trait.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
+
 namespace Finna\Controller;
 
 /**
@@ -54,7 +56,8 @@ trait FinnaPersonalInformationSupportTrait
         $availableRecordList = [];
         $recordListBasic = [];
         foreach ($recordList as $item) {
-            if (isset($item->getExtraDetail('ils_details')['available'])
+            if (
+                isset($item->getExtraDetail('ils_details')['available'])
                 && $item->getExtraDetail('ils_details')['available']
             ) {
                 $availableRecordList[] = $item;
@@ -75,7 +78,8 @@ trait FinnaPersonalInformationSupportTrait
     protected function getAccountBlocks($patron)
     {
         $catalog = $this->getILS();
-        if ($catalog->checkCapability('getAccountBlocks', compact('patron'))
+        if (
+            $catalog->checkCapability('getAccountBlocks', compact('patron'))
             && $blocks = $catalog->getAccountBlocks($patron)
         ) {
             return $blocks;

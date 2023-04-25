@@ -1,4 +1,5 @@
 <?php
+
 /**
  * "Get Facet Data" AJAX handler
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Laminas\Config\Config;
@@ -130,7 +132,8 @@ class GetFacetData extends \VuFind\AjaxHandler\GetFacetData
         $result = parent::handleRequest($params);
 
         $facet = $params->fromQuery('facetName');
-        if ((empty($this->facetConfig->FacetFilters->$facet)
+        if (
+            (empty($this->facetConfig->FacetFilters->$facet)
             && empty($this->facetConfig->ExcludeFilters->$facet))
             || empty($result[0]['facets'])
         ) {

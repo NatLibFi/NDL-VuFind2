@@ -31,8 +31,20 @@
 
         <ul class="dropdown-menu" role="menu" aria-labelledby="show-as-label">
           <?php foreach ($viewList as $viewType => $viewData): ?>
+            <?php
+              if ($viewData['selected']) {
+                $viewUrl = '#';
+              } else {
+                $viewUrl = $this->results->getUrlQuery()->setViewParam($viewType);
+                if ('visual' === $viewType) {
+                    $viewUrl = $viewUrl->setPage(1);
+                }
+              }
+            ?>
             <li>
-              <a href="<?php if (!$viewData['selected']): ?> <?=$this->results->getUrlQuery()->setViewParam($viewType)?><?php else: ?>#<?php endif; ?>" title="<?=$this->transEsc($viewData['desc'])?>" role="menuitem" aria-label="<?=$this->transEsc('show_as') . ': ' . $this->transEsc('Show As ' . $viewData['desc'])?>" ><i class="fa fa-<?=$viewType ?>"></i> <?=$this->transEsc('Show As ' . $viewData['desc'])?></a>
+              <a href="<?=$viewUrl?>" title="<?=$this->transEsc($viewData['desc'])?>" role="menuitem" aria-label="<?=$this->transEsc('show_as') . ': ' . $this->transEsc('Show As ' . $viewData['desc'])?>" >
+                <i class="fa fa-<?=$viewType ?>"></i> <?=$this->transEsc('Show As ' . $viewData['desc'])?>
+              </a>
             </li>
           <?php endforeach; ?>
         </ul>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Factory for PathResolver.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\Config;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -70,17 +72,17 @@ class PathResolverFactory extends \VuFind\Config\PathResolverFactory
                 ? [
                     [
                         'directory' => LOCAL_OVERRIDE_DIR,
-                        'defaultConfigSubdir' => 'config/finna'
+                        'defaultConfigSubdir' => 'config/finna',
                     ],
                     [
                         'directory' => LOCAL_OVERRIDE_DIR,
-                        'defaultConfigSubdir' => $this->defaultLocalConfigSubdir
-                    ]
+                        'defaultConfigSubdir' => $this->defaultLocalConfigSubdir,
+                    ],
                 ] : [];
         return new $requestedName(
             [
                 'directory' => APPLICATION_PATH,
-                'defaultConfigSubdir' => $this->defaultBaseConfigSubdir
+                'defaultConfigSubdir' => $this->defaultBaseConfigSubdir,
             ],
             $localDirs
         );

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * File loader factory.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\File;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;

@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Class FeedbackController
@@ -27,6 +26,9 @@ declare(strict_types=1);
  * @license  https://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
+
+declare(strict_types=1);
+
 namespace VuFindAdmin\Controller;
 
 use Laminas\Db\Sql\Select;
@@ -128,7 +130,7 @@ class FeedbackController extends AbstractAdmin
         $this->flashMessenger()->addMessage(
             [
                 'msg' => 'feedback_delete_success',
-                'tokens' => ['%%count%%' => $delete]
+                'tokens' => ['%%count%%' => $delete],
             ],
             'success'
         );
@@ -158,8 +160,8 @@ class FeedbackController extends AbstractAdmin
                     'site_url' => $this->getParam('site_url', true),
                     'status' => $this->getParam('status', true),
                     'ids' => $ids,
-                ]
-            ]
+                ],
+            ],
         ];
         return $this->forwardTo('Confirm', 'Confirm', $data);
     }
@@ -188,7 +190,7 @@ class FeedbackController extends AbstractAdmin
         $messages = [];
         $messages[] = [
             'msg' => 'feedback_delete_warning',
-            'tokens' => ['%%count%%' => $count]
+            'tokens' => ['%%count%%' => $count],
         ];
 
         if (array_filter(array_map([$this, 'getParam'], $params))) {
@@ -198,7 +200,7 @@ class FeedbackController extends AbstractAdmin
                     '%%formname%%' => $paramMessages['form_name'],
                     '%%siteurl%%' => $paramMessages['site_url'],
                     '%%status%%' => $paramMessages['status'],
-                ]
+                ],
             ];
         }
         $messages[] = ['msg' => 'confirm_delete'];

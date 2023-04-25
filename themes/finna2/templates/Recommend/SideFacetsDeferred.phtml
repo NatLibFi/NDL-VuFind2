@@ -100,7 +100,10 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
       $dataTarget = 'side-collapse-' . $escAttrField;
     ?>
     <div class="list-group facet<?= $daterangeFacet ? ' daterange-facet' : '' ?> facet-group" id="side-panel-<?=$escAttrField?>">
-      <button class="list-group-item title<?= $isCollapsed ? ' collapsed' : '' ?>" data-toggle="collapse" data-target="#<?=$dataTarget?>" aria-controls="<?=$dataTarget?>" aria-expanded="<?= !$isCollapsed ? 'true' : 'false';?>"><?=$this->transEsc($facetName)?></button>
+      <button class="list-group-item title<?php if ($isCollapsed): ?> collapsed<?php endif ?>" data-toggle="collapse" data-target="#<?=$dataTarget?>" aria-controls="<?=$dataTarget?>" aria-expanded="<?= !$isCollapsed ? 'true' : 'false';?>">
+        <span class="facet-title"><?=$this->transEsc($facetName)?></span>
+        <?=$this->icon('collapse', 'facet-title-icon') ?>
+      </button>
       <div id="<?=$dataTarget?>" class="collapse<?= !$isCollapsed ? ' in' : '';?>"<?php if (!in_array($field, $hierarchicalFacets)):?> data-facet="<?=$escAttrField ?>"<?php endif ?> aria-expanded="<?= !$isCollapsed ? 'true' : 'false';?>">
         <span class="facet-load-failed hidden"><?=$msgFailed?></span>
         <?php if (in_array($field, $hierarchicalFacets)): ?>
@@ -114,7 +117,7 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
                   'title' => $field,
                   'sortOptions' => $hierarchicalFacetSortOptions[$field] ?? $hierarchicalFacetSortOptions['*'] ?? null,
                   'collapsedFacets' => $collapsedFacets,
-                  'results' => $this->results
+                  'results' => $this->results,
                 ]
             );
           ?>

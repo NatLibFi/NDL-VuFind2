@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Finna search controller trait.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
+
 namespace Finna\Controller;
 
 /**
@@ -127,11 +129,13 @@ trait FinnaSearchControllerTrait
         // Enable recommendations unless explicitly told to disable them:
         $all = ['top', 'results_top', 'side', 'noresults', 'bottom'];
         $noRecommend = $this->params()->fromQuery('noRecommend', false);
-        if ($noRecommend === 1 || $noRecommend === '1'
+        if (
+            $noRecommend === 1 || $noRecommend === '1'
             || $noRecommend === 'true' || $noRecommend === true
         ) {
             return [];
-        } elseif ($noRecommend === 0 || $noRecommend === '0'
+        } elseif (
+            $noRecommend === 0 || $noRecommend === '0'
             || $noRecommend === 'false' || $noRecommend === false
         ) {
             return $all;

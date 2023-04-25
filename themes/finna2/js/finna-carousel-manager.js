@@ -2,9 +2,9 @@
 finna.carouselManager = (() => {
   const breakpointSettingMappings = {
     desktop: 'perPage',
-    'desktop-small': 1200,
-    tablet: 992,
-    mobile: 768
+    'desktop-small': 992,
+    tablet: 768,
+    mobile: 480
   };
 
   /**

@@ -1,5 +1,6 @@
-<?php // No ending line feed
+<?php
 if (!$this->id) {
     return;
 }
+// Use echo to ensure we don't return a line feed
 echo $this->url('solrauthrecord', ['id' => $this->id]);

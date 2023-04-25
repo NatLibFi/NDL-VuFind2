@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Finna aggregate resolver.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\View\Resolver;
 
 use Laminas\View\Renderer\RendererInterface as Renderer;
@@ -63,7 +65,8 @@ class AggregateResolver extends \Laminas\View\Resolver\AggregateResolver
      */
     protected function expandName(string $name): string
     {
-        if (!empty($name)
+        if (
+            !empty($name)
             && strpos($name, 'components/') === 0
             && substr($name, -6) !== '.phtml'
         ) {

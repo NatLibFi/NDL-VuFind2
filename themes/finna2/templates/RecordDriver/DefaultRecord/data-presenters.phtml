@@ -5,7 +5,7 @@
       <?php foreach($data['presenters'] as $index => $author): ?>
         <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
       <?php endforeach; ?>
-    <br/>
+    <br>
     <?php endif; ?>
     <?php if (!empty($data['details'])): ?>
       <?php foreach($data['details'] as $index => $detail): ?>

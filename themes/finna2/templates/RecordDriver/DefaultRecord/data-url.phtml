@@ -10,10 +10,10 @@
   <?php if (is_array($data)): ?>
     <div class="truncate-field" data-rows="5">
       <?php foreach ($data as $field): ?>
-        <?= $formatFn($data) ?><br/>
+        <?= $formatFn($data) ?><br>
       <?php endforeach; ?>
     </div>
   <?php else: ?>
-    <?= $formatFn($data) ?><br/>
+    <?= $formatFn($data) ?><br>
   <?php endif; ?>
 <?php endif; ?>

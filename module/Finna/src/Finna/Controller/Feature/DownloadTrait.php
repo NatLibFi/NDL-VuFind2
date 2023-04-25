@@ -1,4 +1,5 @@
 <?php
+
 /**
  * External data download feature trait
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Controller\Feature;
 
 use Laminas\Http\Headers;
@@ -63,7 +65,7 @@ trait DownloadTrait
                     }
                     return [
                         'contentType' => $contentType,
-                        'content' => $response->getBody()
+                        'content' => $response->getBody(),
                     ];
                 }
             );
@@ -85,7 +87,7 @@ trait DownloadTrait
         // Send proper caching headers so that the user's browser is able to cache
         // the content. Default TTL set at 14 days.
 
-        $ttl = $ttl ?? (60 * 60 * 24 * 14); // 14 days
+        $ttl ??= (60 * 60 * 24 * 14); // 14 days
         $headers->addHeaderLine('Cache-Control', "maxage=$ttl");
         $headers->addHeaderLine('Pragma', 'public');
         $headers->addHeaderLine(

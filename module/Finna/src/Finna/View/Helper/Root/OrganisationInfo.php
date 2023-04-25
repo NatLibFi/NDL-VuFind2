@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Organisation info component view helper
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\View\Helper\Root;
 
 /**
@@ -91,7 +93,7 @@ class OrganisationInfo extends \Laminas\View\Helper\AbstractHelper
                'id' => $id,
                'buildings' => $buildings,
                'target' => $params['target'] ?? 'widget',
-               'showDetails' => $showDetails
+               'showDetails' => $showDetails,
             ]
         );
     }

@@ -1,8 +1,8 @@
 <div class="form-group">
   <label class="control-label" for="email_to"><?=$this->transEsc('To')?>:</label>
-  <input type="<?=$this->maxRecipients != 1 ? 'text' : 'email'?>" id="email_to" class="form-control" size="35" name="to" value="<?=$this->escapeHtmlAttr($this->to ?? '')?>"/>
+  <input type="<?=$this->maxRecipients != 1 ? 'text' : 'email'?>" id="email_to" class="form-control" size="35" name="to" value="<?=$this->escapeHtmlAttr($this->to ?? '')?>">
   <?php if ($this->maxRecipients != 1): ?>
-    <br />
+    <br>
     <?=$this->transEsc('email_multiple_recipients_note')?>
     <?php if ($this->maxRecipients > 1): ?>
       <?=$this->transEsc('email_maximum_recipients_note', ['%%max%%' => $this->maxRecipients])?>
@@ -12,13 +12,13 @@
 <?php if (!$this->disableFrom): ?>
   <div class="form-group">
     <label class="control-label" for="email_from"><?=$this->transEsc('From')?>:</label>
-    <input type="email" id="email_from" name="from" value="<?=$this->escapeHtmlAttr($this->from ?? '')?>" size="35" class="form-control"/>
+    <input type="email" id="email_from" name="from" value="<?=$this->escapeHtmlAttr($this->from ?? '')?>" size="35" class="form-control">
   </div>
 <?php endif; ?>
 <?php if ($this->editableSubject): ?>
   <div class="form-group">
     <label class="control-label" for="email_subject"><?=$this->transEsc('email_subject')?>:</label>
-    <input type="text" id="email_subject" name="subject" value="<?=$this->escapeHtmlAttr($this->subject ?? '')?>" size="37" class="form-control"/>
+    <input type="text" id="email_subject" name="subject" value="<?=$this->escapeHtmlAttr($this->subject ?? '')?>" size="37" class="form-control">
   </div>
 <?php endif; ?>
 <div class="form-group">
@@ -29,7 +29,7 @@
   <div class="form-group">
     <div class="checkbox">
       <label>
-        <input type="checkbox" name="ccself"/> <?=$this->transEsc('send_email_copy_to_me'); ?>
+        <input type="checkbox" name="ccself"> <?=$this->transEsc('send_email_copy_to_me'); ?>
       </label>
     </div>
   </div>
@@ -38,13 +38,13 @@
   <?=$this->captcha()->html($this->useCaptcha) ?>
 </div>
 <div class="form-group">
-  <input type="submit" class="btn btn-primary" name="submit" value="<?=$this->transEscAttr('Send')?>"/>
+  <input type="submit" class="btn btn-primary" name="submit" value="<?=$this->transEscAttr('Send')?>">
 </div>
 
 <?php $emailFormScript = <<<'JS'
-    $('#email_to, #email_from, #email_subject').on('invalid', function($e) {
-        $('#modal .fa-spinner').remove();
-    });
-JS;
+        $('#email_to, #email_from, #email_subject').on('invalid', function($e) {
+            $('#modal .fa-spinner').remove();
+        });
+    JS;
 ?>
 <?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $emailFormScript, 'SET');

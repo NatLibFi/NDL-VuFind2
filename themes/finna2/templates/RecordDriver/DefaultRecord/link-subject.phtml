@@ -1,3 +1,4 @@
-<?php // No ending line feed ?>
-<?php $searchRoute = $this->searchAction ?: $this->searchOptions($this->driver->getSearchBackendIdentifier())->getSearchAction(); ?>
-<?=$this->url($searchRoute)?>?lookfor=%22<?=urlencode($this->lookfor)?>%22&amp;type=Subject
+<?php
+$searchRoute = $this->searchAction ?: $this->searchOptions($this->driver->getSearchBackendIdentifier())->getSearchAction();
+// Use echo to ensure we don't return a line feed
+echo $this->url($searchRoute) . '?lookfor=%22' . urlencode($this->lookfor) . '%22&amp;type=Subject';

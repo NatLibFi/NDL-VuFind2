@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Authentication strategy permission provider for VuFind.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\Role\PermissionProvider;
 
 use Finna\Auth\ILSAuthenticator;
@@ -114,7 +116,8 @@ class AuthenticationStrategy implements PermissionProviderInterface
             return ['loggedin'];
         }
 
-        if (in_array($selected, ['ILS', 'MultiILS'])
+        if (
+            in_array($selected, ['ILS', 'MultiILS'])
             && in_array('ILS-statCode', $options)
         ) {
             // Check ILS stat group
@@ -123,7 +126,8 @@ class AuthenticationStrategy implements PermissionProviderInterface
             }
         }
 
-        if (in_array($selected, ['ILS', 'MultiILS'])
+        if (
+            in_array($selected, ['ILS', 'MultiILS'])
             && in_array('ILS-staff', $options)
         ) {
             // Check ILS for staff user
@@ -150,7 +154,8 @@ class AuthenticationStrategy implements PermissionProviderInterface
 
         $key = null;
         try {
-            if (($user = $this->authManager->isLoggedIn())
+            if (
+                ($user = $this->authManager->isLoggedIn())
                 && !empty($user->cat_username)
             ) {
                 $key = $user->cat_username;

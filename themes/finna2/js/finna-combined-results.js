@@ -1,4 +1,4 @@
-/*global VuFind, finna, checkSaveStatuses*/
+/*global VuFind, finna */
 finna.combinedResults = (function finnaCombinedResults() {
   var my = {
     init: function init(container) {
@@ -6,11 +6,11 @@ finna.combinedResults = (function finnaCombinedResults() {
       finna.layout.initImagePaginators();
       finna.openUrl.initLinks(container);
       finna.itemStatus.initDedupRecordSelection(container);
-      VuFind.itemStatuses.check(container);
+      VuFind.itemStatuses.init(container);
       VuFind.recordVersions.init(container);
       VuFind.lightbox.bind(container);
       VuFind.cart.init(container);
-      checkSaveStatuses(container);
+      VuFind.saveStatuses.init(container);
     }
   };
 

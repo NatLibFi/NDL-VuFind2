@@ -477,6 +477,9 @@ finna-feed {
         font-weight: 900;
         color: @carousel-slide-header-color;
     }
+    .carousel-hover-title, .carousel-slide-header p {
+        overflow-wrap: break-word;
+    }
     .carousel-non-touch-device .carousel-hover-title::after {
         content: " »";
     }
@@ -523,6 +526,11 @@ finna-feed {
         justify-content: center;
         align-items: center;
         overflow: hidden;
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     }
     .carousel-slide-header {
         p {
@@ -660,10 +668,6 @@ finna-feed.splide--ttb {
         }
         .wrapper {
             flex: 1 1 40%;
-            img {
-                max-width: 80%;
-                max-height: initial;
-            }
         }
         .carousel-vertical-text-part {
             flex: 1 1 60%;

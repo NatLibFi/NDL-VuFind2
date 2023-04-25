@@ -1,4 +1,5 @@
 <?php
+
 /**
  * GetContentFeed AJAX handler
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Finna\Feed\Feed as FeedService;
@@ -144,8 +146,8 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
         $result = [
             'channel' => [
                 'title' => $feed['title'] ?? '-',
-                'link' => $channel->getLink()
-            ]
+                'link' => $channel->getLink(),
+            ],
         ];
         $numeric = is_numeric($element);
         if ($numeric) {

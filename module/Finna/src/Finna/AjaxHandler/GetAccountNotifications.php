@@ -1,4 +1,5 @@
 <?php
+
 /**
  * "Get Account Notifications" AJAX handler
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Laminas\Mvc\Controller\Plugin\Params;
@@ -41,8 +43,7 @@ use Laminas\Mvc\Controller\Plugin\Params;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class GetAccountNotifications
-extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
+class GetAccountNotifications extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
 {
     public const STATUS_HTTP_NOT_ALLOWED = 405;   // method not allowed
 
@@ -67,12 +68,14 @@ extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
         $status = [
             'notifications' => false,
         ];
-        if (!empty($profile['expired']) || !empty($profile['expiration_soon'])
+        if (
+            !empty($profile['expired']) || !empty($profile['expiration_soon'])
             || !empty($profile['messages'])
         ) {
             $status['notifications'] = true;
         } else {
-            if ($this->ils->checkCapability('getAccountBlocks', compact('patron'))
+            if (
+                $this->ils->checkCapability('getAccountBlocks', compact('patron'))
                 && $this->ils->getAccountBlocks($patron)
             ) {
                 $status['notifications'] = true;

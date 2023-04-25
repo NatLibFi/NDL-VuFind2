@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Additional functionality for Finna SideFacets
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:recommendation_modules Wiki
  */
+
 namespace Finna\Recommend;
 
 use VuFind\Solr\Utils as SolrUtils;
@@ -77,7 +79,7 @@ trait SideFacetsTrait
             $result[$current] = [
                 'raw' => $from,
                 'date' => preg_match('/^\d{4}-\d{2}-\d{2}/', $from)
-                    ? substr($from, 0, 10) : str_replace('/DAY', '', $from)
+                    ? substr($from, 0, 10) : str_replace('/DAY', '', $from),
             ];
         }
         return $result;
