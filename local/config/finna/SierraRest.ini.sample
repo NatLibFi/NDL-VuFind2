@@ -190,6 +190,9 @@ currency = 'EUR'
 ;manualFineDescriptions[] = '/^Muun kotelon korvaus/'
 ;manualFineDescriptions[] = '/^Kaukopalvelumaksu/'
 
+[PasswordRecovery]
+enabled = true
+
 ; Uncomment the following lines to enable updating of profile information.
 ; Choose a method on how to update the address information (driver, database or url).
 [updateProfile]

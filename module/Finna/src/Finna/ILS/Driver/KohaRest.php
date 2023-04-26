@@ -769,7 +769,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             } else {
                 return [
                     'success' => false,
-                    'error' => 'Patron not found',
+                    'error' => 'recovery_user_not_found',
                 ];
             }
         }
@@ -779,7 +779,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         }
         return [
             'success' => false,
-            'error' => 'Patron not found',
+            'error' => 'recovery_user_not_found',
         ];
     }
 
