@@ -138,15 +138,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         if (!isset($reqParams['id']) && $cookie) {
             $reqParams['id'] = $cookie;
         }
-        $lang = $this->translator->getLocale();
-        $map = ['en-gb' => 'en'];
-
-        if (isset($map[$lang])) {
-            $lang = $map[$lang];
-        }
-        if (!in_array($lang, ['fi', 'sv', 'en'])) {
-            $lang = 'fi';
-        }
 
         if ('lookup' === $action) {
             $reqParams['link'] = $params->fromPost(

@@ -394,9 +394,30 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
       contactInfo.find('> p').html(data.details.contactInfo);
       contactInfo.show();
     }
+    if ('accessibilityInfo' in data.details) {
+      let template = document.getElementById('accessibility_info_template');
+      let blocks = [];
+      data.details.accessibilityInfo.forEach((info) => {
+        let block = template.content.cloneNode(true);
+        block.querySelector('.accessibility-group-heading').textContent = info.heading;
+        let statements = block.querySelector('.accessibility-group-statements');
+        info.statements.forEach((statement) => {
+          let p = document.createElement('p');
+          p.textContent = statement;
+          statements.appendChild(p);
+        });
+        blocks.push(block);
+      });
+      if (blocks.length > 0) {
+        let accessibilityDetails = holder.find('.accessibility-details');
+        accessibilityDetails.find('.panel-body').append(blocks);
+        accessibilityDetails.show();
+      }
+    }
 
     $('.office-quick-information').show();
     $('.office-information').show();
+    VuFind.truncate.initTruncate(longDesc);
     setOfficeInformationLoader(false);
   }
 

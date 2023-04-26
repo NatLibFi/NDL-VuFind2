@@ -182,7 +182,7 @@ class OrganisationInfo implements
         }
 
         if (!in_array($language, $allLanguages)) {
-            $language = 'fi';
+            $language = $this->config->General->fallbackLanguage ?? 'fi';
         }
 
         return $language;
@@ -200,7 +200,7 @@ class OrganisationInfo implements
                 ? $this->config->General->languages->toArray() : [];
 
             $language = $this->config->General->language
-                ?? $this->translator->getLocale();
+                ?? $this->getTranslatorLocale();
 
             $this->language = $this->validateLanguage($language, $allLanguages);
         }
@@ -725,13 +725,26 @@ class OrganisationInfo implements
             $url = $apiUrl . '/' . $action
                 . '?' . http_build_query($params);
         }
+
+        return $this->fetchJson($url) ?? false;
+    }
+
+    /**
+     * Fetch JSON data as an array from cache or external API.
+     *
+     * @param string $url URL
+     *
+     * @return ?array Data or null on failure
+     */
+    protected function fetchJson(string $url): ?array
+    {
         $cacheDir = $this->cacheManager->getCache('organisation-info')
             ->getOptions()->getCacheDir();
 
         $localFile = "$cacheDir/" . md5($url) . '.json';
         $maxAge = $this->config->General->cachetime ?? 10;
 
-        $response = false;
+        $response = null;
         if ($maxAge) {
             if (
                 is_readable($localFile)
@@ -754,7 +767,7 @@ class OrganisationInfo implements
                         'Error querying organisation info, response code '
                         . $result->getStatusCode() . ", url: $url"
                     );
-                    return false;
+                    return null;
                 }
             } else {
                 $this->logError(
@@ -762,7 +775,7 @@ class OrganisationInfo implements
                     . $result->getStatusCode() . ': ' . $result->getReasonPhrase()
                     . ", url: $url"
                 );
-                return false;
+                return null;
             }
 
             $response = $result->getBody();
@@ -772,14 +785,14 @@ class OrganisationInfo implements
         }
 
         if (!$response) {
-            return false;
+            return null;
         }
 
         $response = json_decode($response, true);
         $jsonError = json_last_error();
         if ($jsonError !== JSON_ERROR_NONE) {
             $this->logError("Error decoding JSON: $jsonError (url: $url)");
-            return false;
+            return null;
         }
 
         return $response;
@@ -1116,7 +1129,140 @@ class OrganisationInfo implements
             }
         }
 
+        foreach ($this->config->Enrichment->$parent ?? [] as $enrichment) {
+            $this->enrich(
+                $parent,
+                $id,
+                $target,
+                $response,
+                $schedules,
+                $includeAllServices,
+                $result,
+                $enrichment
+            );
+        }
+
         return $result;
+    }
+
+    /**
+     * Enrich organisation details.
+     *
+     * @param string  $parent             Consortium Finna ID in Kirjastohakemisto or
+     * in Museoliitto. Use a comma delimited string to check multiple Finna IDs.
+     * @param int     $id                 Organisation
+     * @param string  $target             page|widget
+     * @param object  $response           JSON-object
+     * @param boolean $schedules          Include schedules in the response?
+     * @param boolean $includeAllServices Include services in the response?
+     * @param array   $result             Results
+     * @param string  $enrichment         Enrichment setting
+     *
+     * @return void
+     */
+    protected function enrich(
+        $parent,
+        $id,
+        $target,
+        $response,
+        $schedules,
+        $includeAllServices,
+        array &$result,
+        string $enrichment
+    ): void {
+        $parts = explode(':', $enrichment);
+        switch ($parts[0]) {
+            case 'TPRAccessibility':
+                $this->enrichTPRAccessibility(
+                    $parent,
+                    $id,
+                    $target,
+                    $response,
+                    $schedules,
+                    $includeAllServices,
+                    $parts[1] ?? '',
+                    $result
+                );
+                break;
+            default:
+                throw new \Exception("Unknown enrichment: $enrichment");
+                break;
+        }
+    }
+
+    /**
+     * Enrich organisation details with accessibility information from TPR
+     * Palvelukuvausrekisteri
+     *
+     * @param string  $parent             Consortium Finna ID in Kirjastohakemisto or
+     * in Museoliitto. Use a comma delimited string to check multiple Finna IDs.
+     * @param int     $id                 Organisation
+     * @param string  $target             page|widget
+     * @param object  $response           JSON-object
+     * @param boolean $schedules          Include schedules in the response?
+     * @param boolean $includeAllServices Include services in the response?
+     * @param string  $configSection      Configuration section to use
+     * @param array   $result             Results
+     *
+     * @return void
+     */
+    protected function enrichTPRAccessibility(
+        $parent,
+        $id,
+        $target,
+        $response,
+        $schedules,
+        $includeAllServices,
+        $configSection,
+        array &$result
+    ): void {
+        if (!$includeAllServices || !$configSection) {
+            return;
+        }
+        if (!$configSection || !($baseUrl = $this->config->$configSection->url)) {
+            throw new \Exception("Setting $configSection / url missing");
+        }
+
+        $id = null;
+        foreach ($response['customData'] ?? [] as $data) {
+            if ('esteettömyys' === $data['id']) {
+                $id = $data['value'];
+                break;
+            }
+        }
+        if (null === $id) {
+            return;
+        }
+        $url = "$baseUrl/v4/unit/" . rawurlencode($id);
+
+        if (!($json = $this->fetchJson($url))) {
+            return;
+        }
+        $lang = $this->getLanguage();
+        $headingKey = "sentence_group_$lang";
+        $sentenceKey = "sentence_$lang";
+
+        $accessibility = [];
+        foreach ($json['accessibility_sentences'] ?? [] as $sentence) {
+            if (
+                !($heading = $sentence[$headingKey])
+                || !($sentence = $sentence[$sentenceKey])
+            ) {
+                continue;
+            }
+            if (!isset($accessibility[$heading])) {
+                $accessibility[$heading] = [
+                    'heading' => $this->translate(['OrganisationInfo', $heading]),
+                    'statements' => [
+                        $sentence,
+                    ],
+                ];
+            } else {
+                $accessibility[$heading]['statements'][]
+                    = $this->translate(['OrganisationInfo', $sentence]);
+            }
+        }
+        $result['accessibilityInfo'] = array_values($accessibility);
     }
 
     /**
@@ -1456,7 +1602,7 @@ class OrganisationInfo implements
     {
         $cacheDir = $this->cacheManager->getCache('organisation-info')->getOptions()
             ->getCacheDir();
-        $locale = $this->translator->getLocale();
+        $locale = $this->getLanguage();
         $cacheFile = "$cacheDir/organisations_list_$locale.json";
         $maxAge = (int)(
             $this->organisationConfig['General']['organisationListCacheTime'] ?? 60

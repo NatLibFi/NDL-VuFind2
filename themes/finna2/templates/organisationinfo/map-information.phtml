@@ -46,7 +46,7 @@
   </div>
 </div>
 <div class="office-information-loader">
-  <p><i class="fa fa-spinner fa-spin" style="text-align: center;"></i> <?=$this->transEsc('Loading')?></p>
+  <p><i class="fa fa-spinner fa-spin" style="text-align: center;"></i> <?=$this->transEsc('loading_ellipsis')?></p>
 </div>
 <div class="office-quick-information info-element hide">
   <div class="office-title">
@@ -77,6 +77,7 @@
 </div>
 
 <div class="row office-information info-element">
+  <?php // Information columns ?>
   <div class="office-row-general">
     <div class="office-col">
       <?php ob_start(); ?>
@@ -85,7 +86,7 @@
         <img class="extra-image-2" src="#" alt="">
         <p class="building-name info-element"></p>
         <p class="building-year info-element"><?=$this->transEsc('organisation_info_building_year')?>: <span></span></p>
-        <p class="office-description description-long info-element"></p>
+        <p class="office-description description-long info-element" data-truncate="<?=$this->htmlSafeJsonEncode(['rows' => 5])?>"></p>
       <?php $content = ob_get_clean(); ?>
       <?= $this->render('components/molecules/containers/finna-panel', [
           'attributes' => ['class' => ['finna-panel-borderless', 'introduction']],
@@ -129,6 +130,7 @@
         ]); ?>
     </div>
   </div>
+  <?php // Services ?>
   <?php ob_start(); ?>
     <h5 class="service-header hardware hidden"><?= $this->transEsc('kirkanta_hardware') ?></h5>
     <div class="service-list hardware"></div>
@@ -148,6 +150,17 @@
       'collapseId' => 'collapse5',
       'collapsed' => false,
     ]); ?>
+  <?php // Accessibility information ?>
+  <?= $this->render('components/molecules/containers/finna-panel', [
+      'attributes' => ['class' => ['finna-panel-borderless', 'accessibility-details', 'info-element']],
+      'heading' => $this->transEsc('organisation_info_accessibility'),
+      'headingLevel' => 4,
+      'content' => $this->partial('Helpers/organisation-info-accessibility'),
+      'headingId' => 'heading6',
+      'collapseId' => 'collapse6',
+      'collapsed' => true,
+    ]); ?>
+  <?php // Staff ?>
   <?php ob_start(); ?>
     <div class="table-responsive">
       <table class="table table-striped">
@@ -170,9 +183,10 @@
       'heading' => $this->transEsc('organisation_info_staff'),
       'headingLevel' => 4,
       'content' => $content,
-      'headingId' => 'heading6',
-      'collapseId' => 'collapse6',
+      'headingId' => 'heading7',
+      'collapseId' => 'collapse7',
     ]); ?>
+  <?php // Feeds and events ?>
   <div class="organisation-feeds">
     <?php ob_start(); ?>
       <div class="feed-container news-feed info-element" data-init="0"></div>
@@ -182,8 +196,8 @@
         'heading' => $this->transEsc('organisation_info_rss_news'),
         'headingLevel' => 4,
         'content' => $content,
-        'headingId' => 'heading7',
-        'collapseId' => 'collapse7',
+        'headingId' => 'heading8',
+        'collapseId' => 'collapse8',
       ]); ?>
     <?php ob_start(); ?>
       <div class="feed-container events-feed info-element" data-init="0"></div>
@@ -193,8 +207,8 @@
         'heading' => $this->transEsc('organisation_info_rss_events'),
         'headingLevel' => 4,
         'content' => $content,
-        'headingId' => 'heading8',
-        'collapseId' => 'collapse8',
+        'headingId' => 'heading9',
+        'collapseId' => 'collapse9',
       ]); ?>
   </div>
 </div>
