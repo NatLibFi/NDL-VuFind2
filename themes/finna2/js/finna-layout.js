@@ -317,7 +317,7 @@ finna.layout = (function finnaLayout() {
       if ((event.target.nodeName) !== 'A' && (event.target.nodeName) !== 'MARK') {
         holder = $(this).parent().parent();
         holder.toggleClass('open');
-        VuFind.itemStatuses.check(holder);
+        VuFind.itemStatuses.init(holder);
         var onSlideComplete = null;
         if (holder.hasClass('open') && !holder.hasClass('opened')) {
           holder.addClass('opened');
