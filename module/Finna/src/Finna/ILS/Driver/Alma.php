@@ -2105,7 +2105,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                                 $status = '';
                                 break;
                         }
-
+                        $callnumber = $marc->getSubfield($field, 'd');
                         $holdings[] = [
                             'id' => $holdingId,
                             'source' => 'Solr',
@@ -2117,7 +2117,10 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                             ),
                             'location_code' => $locationCode,
                             'reserve' => 'N',   // TODO: support reserve status
-                            'callnumber' => $marc->getSubfield($field, 'd'),
+                            'callnumber' => $this->getTranslatableStringForCode(
+                                $callnumber,
+                                $callnumber
+                            ),
                             'duedate' => null,
                             'returnDate' => false, // TODO: support recent return
                             'barcode' => '',
@@ -2801,7 +2804,11 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                         $location,
                         $marc->getSubfield($field, 'c')
                     );
-                    $item['callnumber'] = $marc->getSubfield($field, 'd');
+                    $callnumber = $marc->getSubfield($field, 'd');
+                    $item['callnumber'] = $this->getTranslatableStringForCode(
+                        $callnumber,
+                        $callnumber
+                    );
                     $item['sort'] = $sort++;
                     $item['externalInterfaceUrl'] = $externalInterfaceUrl;
                     if ($statusDisplayText) {

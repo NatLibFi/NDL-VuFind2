@@ -259,7 +259,7 @@ foreach ($this->statusItems as $item):
             <?php if (!empty($item['callnumbers'])): ?>
               (<?=$this->transEsc($item['callnumbers'])?>)
             <?php elseif (!empty($item['callnumber'])): ?>
-              <?=$this->callnumber()->callnumber($source, $driver->getFullTitle(), $item['callnumber'], $item['collection'] ?? null, $item['location'] ?? null, $this->layout()->userLang, ($item['locationhref'] ?? false) ? 'results-online' : 'results')?>
+              <?=$this->callnumber()->callnumber($source, $driver->getFullTitle(), $item['callnumber'], $item['collection'] ?? null, $item['location'] ?? null, $this->layout()->userLang, ($item['locationhref'] ?? false) ? 'results-online' : 'results', $item)?>
             <?php endif; ?>
           </div>
         <?php endif; ?>
