@@ -58,6 +58,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
   function updateSelectedOrganisation(id, clearSearch) {
     setOfficeInformationLoader(true);
     holder.find('.error, .info-element').hide();
+    holder.find('.more-less-btn-wrapper').remove();
     infoWidget.showDetails(id, '', true);
     if (clearSearch) {
       $('#office-search').val('');
@@ -284,7 +285,11 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     var longDesc = holder.find('.office-description.description-long');
     if ('description' in data.details) {
       longDesc.html(data.details.description).show();
+    } else {
+      longDesc.html('');
     }
+    longDesc.removeAttr('style');
+    longDesc.removeClass('truncate-done');
 
     if ('links' in data.details) {
       var links = data.details.links;
