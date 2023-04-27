@@ -1216,11 +1216,11 @@ class OrganisationInfo implements
         $configSection,
         array &$result
     ): void {
-        if (!$includeAllServices || !$configSection) {
+        if (!$includeAllServices) {
             return;
         }
         if (!$configSection || !($baseUrl = $this->config->$configSection->url)) {
-            throw new \Exception("Setting $configSection / url missing");
+            throw new \Exception("Setting [$configSection] / url missing");
         }
 
         $id = null;
@@ -1245,8 +1245,8 @@ class OrganisationInfo implements
         $accessibility = [];
         foreach ($json['accessibility_sentences'] ?? [] as $sentence) {
             if (
-                !($heading = $sentence[$headingKey])
-                || !($sentence = $sentence[$sentenceKey])
+                !($heading = $sentence[$headingKey] ?? '')
+                || !($sentence = $sentence[$sentenceKey] ?? '')
             ) {
                 continue;
             }
