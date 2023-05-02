@@ -96,65 +96,46 @@
                 font-weight: bold;
             }
         }
-        & .opening-times-week {
+        .opening-times-week {
+            display: flex;
+            flex-flow: column nowrap;
             font-size: 1.0em;
             width: 100%;
             margin-bottom: 20px;
             @media (max-width: @screen-sm-max) {
                 max-width: @organisation-info-max-w;
             }
-            & div.cell {
-                display: inline-block;
-                vertical-align: top;
-            }
-            & .day-container {
-                margin-bottom: 1px;
-                padding: 2px;
-                & .time-row {
-                    width: 100%;
-                    line-height: 1.26em;
-                    &.staff {
-                        margin-top: 1px;
+            .time-row {
+                display: flex;
+                flex-flow: row nowrap;
+                width: 100%;
+                line-height: 1.26em;
+                padding: 5px;
+                .date-container {
+                    flex: 1 0 22%;
+                    display: flex;
+                    flex-flow: nowrap;
+                    padding-right: 5px;
+                    .name {
+                        padding-left: 5px;
+                    }
+                }
+                .description {
+                    flex: 1 1 40%;
+                    display: flex;
+                    padding-right: 5px;
+                    .name-staff, .selfservice-only {
+                        color: @gray-light;
                         font-size: .94em;
-                        &:last-child {
-                            margin-bottom: 5px;
-                        }
                     }
-                    .date, .description, .time-container {
-                        padding: 0 5px;
-                    }
-                    .date {
-                        width: 20%;
-                    }
-                    .description {
-                        width: 45%;
-                        & .info {
-                            margin-left: 5px;
-                            margin-right: 5px;
-                        }
-                        & .name-staff, .selfservice-only {
-                            color: @gray-light;
-                            font-size: .94em;
-                        }
-                        & .selfservice-only {
-                            margin-left: 5px;
-                        }
-                    }
-                    .time-container {
-                        width: 30%;
+                }
+                .time-container {
+                    flex: 1 0 30%;
+                    display: flex;
+                    flex-flow: nowrap;
+                    .period, .closed-today {
+                        width: 100%;
                         text-align: right;
-                        & .time-template {
-                            margin-right: 0px;
-                            & .period:after {
-                                content:',';
-                            }
-                            &:last-child .period:after {
-                                content:'';
-                            }
-                        }
-                    }
-                    &:first-of-type .name-staff {
-                        display: none;
                     }
                 }
                 &.today {

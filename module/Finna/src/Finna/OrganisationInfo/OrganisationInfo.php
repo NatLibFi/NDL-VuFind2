@@ -1284,18 +1284,17 @@ class OrganisationInfo implements
 
         $openToday = false;
         $currentWeek = false;
+        $currentDate = new \DateTime();
+        $currentDate->setTime(0, 0, 0);
         foreach ($data['schedule'] as $day) {
             if (!$periodStart) {
                 $periodStart = $day['date'];
             }
 
-            $now = new \DateTime();
-            $now->setTime(0, 0, 0);
-
             $date = new \DateTime($day['date']);
             $date->setTime(0, 0, 0);
 
-            $today = $now == $date;
+            $today = $currentDate == $date;
 
             $dayTime = strtotime($day['date']);
             if ($dayTime === false) {
@@ -1309,11 +1308,14 @@ class OrganisationInfo implements
             );
 
             $times = [];
-            $now = time();
             $closed = $day['closed'];
 
-            // Staff times
+            // Open times
             foreach ($day['times'] as $time) {
+                if (0 === $time['status']) {
+                    // closed
+                    continue;
+                }
                 $result['opens'] = $this->formatTime($time['from']);
                 $result['closes'] = $this->formatTime($time['to']);
                 $result['selfservice'] = $time['status'] === 2 ? true : false;
@@ -1363,11 +1365,8 @@ class OrganisationInfo implements
     protected function formatTime($time)
     {
         $parts = explode(':', $time);
-        if (substr($parts[0], 0, 1) == '0') {
-            $parts[0] = substr($parts[0], 1);
-        }
         if (!isset($parts[1]) || $parts[1] == '00') {
-            return $parts[0];
+            return ltrim($parts[0], '0');
         }
         return $this->dateConverter->convertToDisplayTime('H:i', $time);
     }

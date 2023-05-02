@@ -71,80 +71,49 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     if (hasSchedules) {
       var schedules = response.openTimes.schedules;
 
-      var dayRowTpl = holder.find('.day-container.template').clone().removeClass('template hide');
+      // Check if there are self-service times
+      var selfServiceTimes = false;
+      $.each(schedules, function checkSchedule(ind, obj) {
+        $.each(obj.times, function checkOpenTimes(tind, time) {
+          if (time.selfservice) {
+            selfServiceTimes = true;
+          }
+        });
+      });
+
       var timeRowTpl = holder.find('.time-row.template').not('.staff').clone().removeClass('template hide');
 
-      var dayRow = dayRowTpl.clone();
       $.each(schedules, function handleSchedule(ind, obj) {
         var today = 'today' in obj;
-        var dayCnt = 0;
-
-        dayRow.toggleClass('today', today);
 
         if (!('closed' in obj)) {
-          var currentSelfservice = null;
-          var currentDate = null;
-
-          var selfserviceAvail = false;
-          var currentTimeRow = null;
-          var addFullOpeningTimes = true;
-          var firstElement = obj.times[0];
-          var lastElement = obj.times[obj.times.length - 1];
+          // Add all open times
           var info = 'info' in obj ? obj.info : null;
           $.each(obj.times, function handleOpenTimes(tind, time) {
-            var selfservice = !!time.selfservice;
-            selfserviceAvail = selfserviceAvail || 'selfservice' in time;
+            var date = 0 === tind ? obj.date : '';
+            var day = 0 === tind ? obj.day : '';
 
-            var date = dayCnt === 0 ? obj.date : '';
-            var day = dayCnt === 0 ? obj.day : '';
+            var timeRow = timeRowTpl.clone();
+            timeRow.find('.date').text(date);
+            timeRow.find('.name').text(day);
 
-            if (currentDate !== obj.date) {
-              dayCnt = 0;
+            if (info) {
+              timeRow.find('.info').text(info).append('<br>');
+            } else {
+              timeRow.find('.info').hide();
             }
+            timeRow.find('.opens').text(time.opens);
+            timeRow.find('.closes').text(time.closes);
 
-            var timeOpens = time.opens;
-            var timeCloses = time.closes;
-            if (!selfservice || obj.times.length === 1) {
-              if (currentSelfservice === null || selfservice !== currentSelfservice) {
-                var timeRow = timeRowTpl.clone();
-                timeRow.find('.date').text(date);
-                timeRow.find('.name').text(day);
-                if (info === null) {
-                  timeRow.find('.info').hide();
-                } else {
-                  timeRow.find('.info').text(info);
-                }
-                if (addFullOpeningTimes && obj.times.length > 1) {
-                  timeRow.find('.opens').text(firstElement.opens);
-                  timeRow.find('.closes').text(lastElement.closes);
-                  dayRow.append(timeRow);
-                  timeRow = timeRowTpl.clone();
-                  addFullOpeningTimes = false;
-                }
-                timeRow.find('.opens').text(timeOpens);
-                timeRow.find('.closes').text(timeCloses);
-
-                if (selfserviceAvail && selfservice !== currentSelfservice) {
-                  timeRow.toggleClass('staff', !selfservice);
-                }
-                if (time.selfservice === true) {
-                  timeRow.find('.name-staff').hide();
-                  timeRow.find('.selfservice-only').removeClass('hide');
-                }
-                dayRow.append(timeRow);
-                currentTimeRow = timeRow;
-              } else {
-                var timePeriod = currentTimeRow.find('.time-template').eq(0).clone();
-                timePeriod.find('.opens').text(timeOpens);
-                timePeriod.find('.closes').text(timeCloses);
-                currentTimeRow.find('.time-container').append(timePeriod);
-              }
-
-              currentSelfservice = selfservice;
-              currentDate = obj.date;
-
-              dayCnt++;
+            if (time.selfservice) {
+              timeRow.find('.name-staff').hide();
+              timeRow.removeClass('staff');
+              timeRow.find('.selfservice-only').removeClass('hide');
+            } else if (!selfServiceTimes) {
+              timeRow.find('.name-staff').hide();
             }
+            timeRow.toggleClass('today', today);
+            timeRow.appendTo(schedulesHolder);
           });
         } else {
           var timeRow = timeRowTpl.clone();
@@ -153,14 +122,10 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
           timeRow.find('.info').text(obj.info);
           timeRow.find('.period, .name-staff').hide();
           timeRow.find('.closed-today').removeClass('hide');
-          dayRow.append(timeRow);
-
-          dayRow.toggleClass('is-closed', true);
+          timeRow.toggleClass('is-closed', true);
+          timeRow.toggleClass('today', today);
+          timeRow.appendTo(schedulesHolder);
         }
-
-        dayCnt = 0;
-        schedulesHolder.append(dayRow);
-        dayRow = dayRowTpl.clone();
       });
     } else {
       var links = null;
