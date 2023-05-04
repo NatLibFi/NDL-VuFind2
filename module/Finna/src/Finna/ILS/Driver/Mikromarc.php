@@ -2342,7 +2342,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             $items = $this->getStatus($id);
             $summary = array_pop($items);
             if (
-                (isset($summary['titleHold']) && $summary['titleHold'] === false)
+                !empty($summary['number'])
                 || empty($summary['is_holdable'])
             ) {
                 return false;
