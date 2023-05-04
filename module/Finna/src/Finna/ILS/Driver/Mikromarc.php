@@ -2343,7 +2343,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             $summary = array_pop($items);
             if (
                 (isset($summary['titleHold']) && $summary['titleHold'] === false)
-                || !$summary['holdable']
+                || empty($summary['is_holdable'])
             ) {
                 return false;
             }
