@@ -1,4 +1,5 @@
 <?php
+
 /**
  * RecordLink view helper (DEPRECATED -- use RecordLinker instead)
  *
@@ -32,6 +33,7 @@
  * @deprecated RecordLink has been removed from upstream and the Finna version only
  * remains for compatibility with existing production views.
  */
+
 namespace Finna\View\Helper\Root;
 
 /**

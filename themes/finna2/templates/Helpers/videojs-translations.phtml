@@ -3,7 +3,7 @@
     $translations = $this->jsTranslations()
         ->getJSONFromArray(
             [
-                'Open AirPlay menu' => 'Open AirPlay menu'
+                'Open AirPlay menu' => 'Open AirPlay menu',
             ]
         );
     echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, "VuFind.addTranslations($translations);", 'SET');

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Ontology Recommendations Module.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
+
 namespace Finna\Recommend;
 
 use Finna\Connection\Finto;
@@ -368,7 +370,8 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
 
         // Do nothing if the amount of processed search terms is zero or more than
         // the maximum.
-        if (0 === count($this->lookforTerms)
+        if (
+            0 === count($this->lookforTerms)
             || (null !== $this->maxSearchTerms
             && count($this->lookforTerms) > $this->maxSearchTerms)
         ) {
@@ -380,7 +383,8 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         // maximum value is set in configuration and it has been reached.
         $cookieValue = $this->cookieManager->get(self::COOKIE_NAME);
         $timesShownTotal = is_numeric($cookieValue) ? $cookieValue : 0;
-        if (is_numeric($this->maxTimesShownPerSession)
+        if (
+            is_numeric($this->maxTimesShownPerSession)
             && $timesShownTotal > $this->maxTimesShownPerSession
         ) {
             return null;
@@ -419,7 +423,8 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
             $this->apiCallTotal += 1;
 
             // Continue to next term if no results or "other" results.
-            if (!$fintoResults
+            if (
+                !$fintoResults
                 || Finto::TYPE_OTHER === $fintoResults[Finto::RESULT_TYPE]
             ) {
                 continue;
@@ -477,7 +482,8 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
             $term = trim($term);
 
             // Skip if not actually a search term.
-            if (empty($term)
+            if (
+                empty($term)
                 || preg_match('/^https?:/', $term)
                 || preg_match('/^topic_id_str_mv:/', $term)
                 || in_array($term, ['AND', 'OR', 'NOT'])
@@ -493,7 +499,8 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
 
         // Special case for two-word searches, which will be processed as one
         // search term.
-        if (2 === count($processed)
+        if (
+            2 === count($processed)
             && false === strpos($processed[0], ' ')
             && false === strpos($processed[1], ' ')
         ) {
@@ -593,7 +600,7 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         $this->recommendations[$resultType][$term][] = [
             'label' => $fintoResult['prefLabel'],
             'href' => $href,
-            'params' => $params
+            'params' => $params,
         ];
     }
 

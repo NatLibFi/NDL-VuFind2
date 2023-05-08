@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Custom element Markdown extension
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\CommonMark\Extension;
 
 use Finna\CommonMark\Node\Block\CustomElement;
@@ -55,8 +57,7 @@ use League\CommonMark\Extension\ExtensionInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class CustomElementExtension extends AbstractCustomElementEnabledBase
-implements ExtensionInterface
+class CustomElementExtension extends AbstractCustomElementEnabledBase implements ExtensionInterface
 {
     /**
      * Register the extension.

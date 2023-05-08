@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mink record actions test class.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace VuFindTest\Mink;
 
 /**
@@ -143,8 +145,8 @@ final class RecordActionsTest extends \VuFindTest\Integration\MinkTestCase
         $this->changeConfigs(
             [
                 'config' => [
-                    'Captcha' => ['types' => ['demo'], 'forms' => '*']
-                ]
+                    'Captcha' => ['types' => ['demo'], 'forms' => '*'],
+                ],
             ]
         );
         // Go to a record view
@@ -229,7 +231,7 @@ final class RecordActionsTest extends \VuFindTest\Integration\MinkTestCase
         // Count tags
         $this->waitForPageLoad($page);
         $tags = $page->findAll('css', '.tagList .tag');
-        $this->assertEquals(4, count($tags));
+        $this->assertCount(4, $tags);
         $tvals = [];
         foreach ($tags as $t) {
             $link = $t->find('css', 'a');
@@ -313,8 +315,8 @@ final class RecordActionsTest extends \VuFindTest\Integration\MinkTestCase
         $this->changeConfigs(
             [
                 'config' => [
-                    'Social' => ['case_sensitive_tags' => 'true']
-                ]
+                    'Social' => ['case_sensitive_tags' => 'true'],
+                ],
             ]
         );
         // Login
@@ -332,7 +334,7 @@ final class RecordActionsTest extends \VuFindTest\Integration\MinkTestCase
         // Count tags
         $this->waitForPageLoad($page);
         $tags = $page->findAll('css', '.tagList .tag');
-        $this->assertEquals(6, count($tags));
+        $this->assertCount(6, $tags);
     }
 
     /**
@@ -349,7 +351,7 @@ final class RecordActionsTest extends \VuFindTest\Integration\MinkTestCase
             [
                 'config' => [
                     'Mail' => ['testOnly' => 1],
-                ]
+                ],
             ]
         );
 
@@ -413,7 +415,7 @@ final class RecordActionsTest extends \VuFindTest\Integration\MinkTestCase
             [
                 'config' => [
                     'Mail' => ['testOnly' => 1],
-                ]
+                ],
             ]
         );
 
@@ -462,6 +464,8 @@ final class RecordActionsTest extends \VuFindTest\Integration\MinkTestCase
 
     /**
      * Test record view print button.
+     *
+     * @return void
      */
     public function testPrint(): void
     {
@@ -515,6 +519,8 @@ final class RecordActionsTest extends \VuFindTest\Integration\MinkTestCase
     /**
      * Test star ratings on records.
      *
+     * @param bool $allowRemove Value for remove_rating config
+     *
      * @dataProvider getTestRatingData
      *
      * @retryCallback removeUsername2And3And4
@@ -530,8 +536,8 @@ final class RecordActionsTest extends \VuFindTest\Integration\MinkTestCase
                     'Social' => [
                         'rating' => true,
                         'remove_rating' => $allowRemove,
-                    ]
-                ]
+                    ],
+                ],
             ]
         );
         $this->removeUsername2And3And4();
@@ -570,7 +576,7 @@ final class RecordActionsTest extends \VuFindTest\Integration\MinkTestCase
         // Check result
         $this->waitForPageLoad($page);
         $inputs = $page->findAll('css', $checked);
-        $this->assertEquals(1, count($inputs));
+        $this->assertCount(1, $inputs);
         $this->assertEquals('100', $inputs[0]->getValue());
         // Update rating
         $this->clickCss($page, $ratingLink);
@@ -581,7 +587,7 @@ final class RecordActionsTest extends \VuFindTest\Integration\MinkTestCase
         $this->assertEquals('Rating Saved', $success->getText());
         // Check result
         $inputs = $page->findAll('css', $checked);
-        $this->assertEquals(1, count($inputs));
+        $this->assertCount(1, $inputs);
         $this->assertEquals('50', $inputs[0]->getValue());
 
         if ($allowRemove) {
@@ -591,7 +597,7 @@ final class RecordActionsTest extends \VuFindTest\Integration\MinkTestCase
             $this->waitForPageLoad($page);
             // Check result
             $inputs = $page->findAll('css', $checked);
-            $this->assertEquals(1, count($inputs));
+            $this->assertCount(1, $inputs);
             $this->assertEquals('', $inputs[0]->getValue());
             // Add it back
             $this->clickCss($page, $ratingLink);
@@ -622,7 +628,7 @@ final class RecordActionsTest extends \VuFindTest\Integration\MinkTestCase
         // Check result
         $this->waitForPageLoad($page);
         $inputs = $page->findAll('css', $checked);
-        $this->assertEquals(1, count($inputs));
+        $this->assertCount(1, $inputs);
         $this->assertEquals('70', $inputs[0]->getValue());
 
         // Login with third account
@@ -643,7 +649,7 @@ final class RecordActionsTest extends \VuFindTest\Integration\MinkTestCase
         // Check result
         $this->waitForPageLoad($page);
         $inputs = $page->findAll('css', $checked);
-        $this->assertEquals(1, count($inputs));
+        $this->assertCount(1, $inputs);
         $this->assertEquals('80', $inputs[0]->getValue());
         if ($allowRemove) {
             // Clear rating when adding another comment
@@ -653,7 +659,7 @@ final class RecordActionsTest extends \VuFindTest\Integration\MinkTestCase
             // Check result
             $this->waitForPageLoad($page);
             $inputs = $page->findAll('css', $checked);
-            $this->assertEquals(1, count($inputs));
+            $this->assertCount(1, $inputs);
             $this->assertEquals('70', $inputs[0]->getValue());
         } else {
             // Check that the "Clear" link is no longer available:

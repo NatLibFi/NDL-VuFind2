@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Base class for Authority records record tabs.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
  */
+
 namespace Finna\RecordTab;
 
 use VuFind\I18n\Translator\TranslatorAwareInterface;
@@ -39,8 +41,7 @@ use VuFind\I18n\Translator\TranslatorAwareTrait;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
  */
-abstract class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
-implements TranslatorAwareInterface
+abstract class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase implements TranslatorAwareInterface
 {
     use TranslatorAwareTrait;
 

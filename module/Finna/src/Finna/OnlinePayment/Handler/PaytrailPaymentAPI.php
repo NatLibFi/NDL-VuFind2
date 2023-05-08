@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Paytrail Payment API handler
  *
@@ -26,6 +27,7 @@
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  * @link     http://docs.paytrail.com/ Paytrail API documentation
  */
+
 namespace Finna\OnlinePayment\Handler;
 
 use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailPaymentAPI\Client;
@@ -55,7 +57,7 @@ class PaytrailPaymentAPI extends AbstractBase
     protected $languageMap = [
         'fi' => 'FI',
         'sv' => 'SV',
-        'en' => 'EN'
+        'en' => 'EN',
     ];
 
     /**
@@ -124,7 +126,8 @@ class PaytrailPaymentAPI extends AbstractBase
             ->setCustomer($customer);
         // Payment description in $this->config->paymentDescription is not supported
 
-        if (isset($this->config->productCode)
+        if (
+            isset($this->config->productCode)
             || isset($this->config->transactionFeeProductCode)
             || isset($this->config->productCodeMappings)
             || isset($this->config->organizationProductCodeMappings)
@@ -281,7 +284,7 @@ class PaytrailPaymentAPI extends AbstractBase
             'checkout-reference',
             'checkout-stamp',
             'checkout-status',
-            'signature'
+            'signature',
         ];
 
         foreach ($required as $name) {

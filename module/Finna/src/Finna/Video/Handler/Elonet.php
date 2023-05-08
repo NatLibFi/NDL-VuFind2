@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Elonet video module.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\Video\Handler;
 
 /**
@@ -99,8 +101,8 @@ class Elonet extends \Finna\Video\Handler\AbstractBase
                     'src' => $url,
                     'type' => $format === 'mpd'
                         ? 'application/dash+xml'
-                        : 'application/x-mpegURL'
-                ]
+                        : 'application/x-mpegURL',
+                ],
             ];
         }
         return $results;

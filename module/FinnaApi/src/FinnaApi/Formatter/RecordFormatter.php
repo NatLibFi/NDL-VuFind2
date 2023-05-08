@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Record formatter for API responses
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
+
 namespace FinnaApi\Formatter;
 
 use Laminas\View\HelperPluginManager;
@@ -135,7 +137,8 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
         $imageHelper = $this->helperManager->get('recordImage');
         $recordHelper = $this->helperManager->get('record');
         $serverUrlHelper = $this->helperManager->get('serverUrl');
-        for ($i = 0;
+        for (
+            $i = 0;
             $i < $recordHelper($record)->getNumOfRecordImages('large', false);
             $i++
         ) {
@@ -177,7 +180,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
                         "0/$institution/",
                         null,
                         $institution
-                    )
+                    ),
                 ];
             }
             return $result;
@@ -216,7 +219,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
                     }
                     $url['source'] = [
                         'value' => $url['source'],
-                        'translated' => $translated
+                        'translated' => $translated,
                     ];
                 }
             }
@@ -240,7 +243,8 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
 
         // description in MARC and QDC records may contain non-CC0 text, so leave
         // it out
-        if ($record instanceof \VuFind\RecordDriver\SolrMarc
+        if (
+            $record instanceof \VuFind\RecordDriver\SolrMarc
             || $record instanceof \Finna\RecordDriver\SolrQdc
         ) {
             unset($rawData['description']);
@@ -266,7 +270,8 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
             $translate = $this->helperManager->get('translate');
             $translationEmpty = $this->helperManager->get('translationEmpty');
             foreach ($links as &$link) {
-                if (isset($link['title'])
+                if (
+                    isset($link['title'])
                     && !$translationEmpty($link['title'])
                 ) {
                     $link['translated'] = $translate($link['title']);
@@ -294,7 +299,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
         foreach ($rawData['sector_str_mv'] as $sector) {
             $result[] = [
                'value' => (string)$sector,
-               'translated' => $translate($sector)
+               'translated' => $translate($sector),
             ];
         }
         return $result;
@@ -328,7 +333,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
             foreach ($sources as $source) {
                 $result[] = [
                     'value' => $source,
-                    'translated' => $translate("source_$source", null, $source)
+                    'translated' => $translate("source_$source", null, $source),
                 ];
             }
             return $result;
@@ -352,7 +357,8 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
         $translate = $this->helperManager->get('translate');
         if ($urls) {
             foreach ($urls as &$url) {
-                if (isset($url['desc'])
+                if (
+                    isset($url['desc'])
                     && !$translationEmpty('link_' . $url['desc'])
                 ) {
                     $url['translated'] = $translate('link_' . $url['desc']);
@@ -364,7 +370,8 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
         if ($serviceUrls) {
             $source = $record->tryMethod('getDataSource');
             foreach ($serviceUrls as &$url) {
-                if (isset($url['desc'])
+                if (
+                    isset($url['desc'])
                     && !$translationEmpty($source . '_' . $url['desc'])
                 ) {
                     $url['translated']

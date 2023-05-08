@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Model for R2 records.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver;
 
 /**
@@ -67,7 +69,8 @@ class R2Ead3 extends SolrEad3
         // Recursively check the access restrictions:
         $hasAI24 = function ($elem, $checkFunc) {
             foreach ($elem->accessrestrict ?? [] as $accessrestrict) {
-                if ('ahaa:AI24' === (string)$accessrestrict['encodinganalog']
+                if (
+                    'ahaa:AI24' === (string)$accessrestrict['encodinganalog']
                     || $checkFunc($accessrestrict, $checkFunc)
                 ) {
                     return true;

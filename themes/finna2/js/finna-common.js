@@ -1,4 +1,4 @@
-/*global VuFind, finna*/
+/*global VuFind, finna, setupQRCodeLinks*/
 finna.common = (function finnaCommon() {
   let cookieSettings = {
     path: '/',
@@ -27,18 +27,9 @@ finna.common = (function finnaCommon() {
   function initQrCodeLink(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
-    // Handle finna QR code links
-    // Note: a.finnaQrcodeLinkRecord is retained for backward compatibility
-    holder.find('a.finnaQrcodeLink,a.finnaQrcodeLinkRecord').on('click', function qrcodeToggleRecord() {
-      var qrholder = $(this).parent().find('li');
-      if (qrholder.find('img').length === 0) {
-        // We need to insert the QRCode image
-        qrholder.html(qrholder.find('.qrCodeImgTag').html());
-      }
-      return true;
-    });
+    setupQRCodeLinks(holder);
 
-    // Reposition the dropdown to escape any truncated div:
+    // Reposition the dropdown in location service to escape any truncated div:
     holder.find('.dropdown.location-service-qrcode').on('shown.bs.dropdown', function positionDropdown() {
       const button = $(this);
       var menu = button.find('.dropdown-menu');

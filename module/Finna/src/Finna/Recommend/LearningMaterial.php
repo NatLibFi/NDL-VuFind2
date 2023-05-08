@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Learning Material Recommendations Module.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
+
 namespace Finna\Recommend;
 
 use Finna\View\Helper\Root\SearchTabs;
@@ -59,7 +61,7 @@ class LearningMaterial implements RecommendInterface
      */
     public const LEARNING_MATERIAL_FILTER_FIELDS = [
         'format',
-        'format_ext_str_mv'
+        'format_ext_str_mv',
     ];
 
     /**
@@ -126,7 +128,8 @@ class LearningMaterial implements RecommendInterface
     public function process($results)
     {
         $params = $results->getParams();
-        if (!$this->hasLearningMaterialFilter($params)
+        if (
+            !$this->hasLearningMaterialFilter($params)
             || $params->getSearchType() !== 'basic'
         ) {
             return;
@@ -161,7 +164,8 @@ class LearningMaterial implements RecommendInterface
                     );
                     continue;
                 }
-                if (in_array($facet['field'], self::LEARNING_MATERIAL_FILTER_FIELDS)
+                if (
+                    in_array($facet['field'], self::LEARNING_MATERIAL_FILTER_FIELDS)
                     && self::LEARNING_MATERIAL_FILTER_VALUE === $parts[1]
                 ) {
                     return true;

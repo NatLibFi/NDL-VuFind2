@@ -1,4 +1,5 @@
 <?php
+
 /**
  * FinnaSuggestionsDeferred Recommendations Module factory.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
+
 namespace Finna\Recommend;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -42,8 +44,7 @@ use Psr\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
-class FinnaSuggestionsDeferredFactory
-implements \Laminas\ServiceManager\Factory\FactoryInterface
+class FinnaSuggestionsDeferredFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create an object

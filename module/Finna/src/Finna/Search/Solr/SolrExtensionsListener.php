@@ -26,10 +26,10 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Search\Solr;
 
 use Laminas\EventManager\EventInterface;
-
 use Laminas\EventManager\SharedEventManagerInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use VuFindSearch\Query\Query;
@@ -228,7 +228,8 @@ class SolrExtensionsListener
         $sources = explode(',', $sources);
 
         // Finally, check for an API exclusion list:
-        if (getenv('VUFIND_API_CALL')
+        if (
+            getenv('VUFIND_API_CALL')
             && isset($searchConfig->Records->apiExcludedSources)
         ) {
             $sources = array_diff(
@@ -298,7 +299,8 @@ class SolrExtensionsListener
     {
         $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class);
         $searchConfig = $config->get($this->searchConfig);
-        if (isset($searchConfig->General->hide_component_parts)
+        if (
+            isset($searchConfig->General->hide_component_parts)
             && $searchConfig->General->hide_component_parts
         ) {
             $command = $event->getParam('command');
@@ -308,7 +310,8 @@ class SolrExtensionsListener
                 $query = method_exists($command, 'getQuery')
                     ? $command->getQuery()
                     : null;
-                if (!$query
+                if (
+                    !$query
                     || $query instanceof QueryGroup
                     || ($query instanceof Query && $query->getHandler() !== 'id')
                 ) {
@@ -337,7 +340,7 @@ class SolrExtensionsListener
         echo "<!--\n";
         echo 'Raw query string: ' . $debugInfo['rawquerystring'] . "\n\n";
         echo 'Query string: ' . $debugInfo['querystring'] . "\n\n";
-        echo 'Parsed query: ' . $debugInfo['parsedquery'] . "\n\n";
+        echo 'Parsed query: ' . var_export($debugInfo['parsedquery'], true) . "\n\n";
         echo 'Query parser: ' . $debugInfo['QParser'] . "\n\n";
         if (!empty($debugInfo['altquerystring'])) {
             echo 'Alt query string: ' . $debugInfo['altquerystring'] . "\n\n";
@@ -438,7 +441,7 @@ class SolrExtensionsListener
 
                 if (!empty($searchConfig->Records->deduplication)) {
                     $prefixes = [
-                        'online', 'free_online', 'hires_images'
+                        'online', 'free_online', 'hires_images',
                     ];
                     foreach ($prefixes as $prefix) {
                         foreach ($filters as $key => $value) {

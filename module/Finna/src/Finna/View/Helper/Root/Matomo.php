@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Matomo web analytics view helper for Matomo versions >= 4
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
  */
+
 namespace Finna\View\Helper\Root;
 
 use VuFind\RecordDriver\AbstractBase as RecordDriverBase;
@@ -96,7 +98,8 @@ class Matomo extends \VuFind\View\Helper\Root\Matomo
     protected function getPageUrl(): string
     {
         // Prettify image popup page URL (AJAX/JSON?method=... > /record/[id]/image
-        if ($this->calledFromImagePopup()
+        if (
+            $this->calledFromImagePopup()
             && !empty($this->params['recordUrl'])
         ) {
             return $this->params['recordUrl'] . '/image';

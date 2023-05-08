@@ -1,7 +1,8 @@
-<?php // No ending line feed
+<?php
 if (!($id = $this->id ?: $this->localId)) {
     return;
 }
+// Use echo to ensure we don't return a line feed
 echo $this->url(
     $this->searchAction ?: $this->searchOptions($this->driver->getSourceIdentifier())->getSearchAction(),
     [],

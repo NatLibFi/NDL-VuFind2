@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Abstract base custom element
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
+
 namespace Finna\View\CustomElement;
 
 use Exception;
@@ -133,7 +135,8 @@ abstract class AbstractBase implements CustomElementInterface
                     ->setCleanupInput(false)
                     ->setRemoveDoubleSpace(false)
             );
-            if ($dom->countChildren() !== 1
+            if (
+                $dom->countChildren() !== 1
                 || $dom->firstChild()->getTag()->name() !== $this->getName()
             ) {
                 throw new Exception('Element outerHTML is not valid');
@@ -156,9 +159,7 @@ abstract class AbstractBase implements CustomElementInterface
         $variables = static::getDefaultVariables();
 
         // Try to set variable values from attributes, if defined by subclass.
-        foreach (static::getAttributeToVariableMap()
-            as $attributeName => $variableName
-        ) {
+        foreach (static::getAttributeToVariableMap() as $attributeName => $variableName) {
             if (array_key_exists($attributeName, $attributes)) {
                 $variables[$variableName] = $attributes[$attributeName];
             }
@@ -201,7 +202,7 @@ abstract class AbstractBase implements CustomElementInterface
             self::ATTRIBUTES => array_fill_keys(
                 array_keys(static::getAttributeToVariableMap()),
                 'CDATA'
-            )
+            ),
         ];
     }
 
@@ -353,7 +354,8 @@ abstract class AbstractBase implements CustomElementInterface
         $parent->removeChild($element->id());
 
         // If the parent is an empty p element, remove the parent also.
-        if (!$parent->hasChildren()
+        if (
+            !$parent->hasChildren()
             && $parent->getTag()->name() === 'p'
         ) {
             $parent->getParent()->removeChild($parent->id());

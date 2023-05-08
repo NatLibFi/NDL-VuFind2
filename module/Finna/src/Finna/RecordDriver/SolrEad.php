@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Model for EAD records in Solr.
  *
@@ -28,6 +29,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver;
 
 /**
@@ -45,8 +47,7 @@ namespace Finna\RecordDriver;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
-class SolrEad extends SolrDefault
-implements \Laminas\Log\LoggerAwareInterface
+class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
 {
     use Feature\SolrFinnaTrait;
     use Feature\FinnaXmlReaderTrait;
@@ -362,7 +363,7 @@ implements \Laminas\Log\LoggerAwareInterface
             if ($name) {
                 $result[] = [
                     'name' => $name,
-                    'date' => (string)($origination->ref->date ?? '')
+                    'date' => (string)($origination->ref->date ?? ''),
                 ];
             }
         }
@@ -424,7 +425,8 @@ implements \Laminas\Log\LoggerAwareInterface
         $urls = [];
         $source = $this->getDataSource();
         $config = $this->recordConfig->Record;
-        if (isset($config->ead_document_order_link_template[$source])
+        if (
+            isset($config->ead_document_order_link_template[$source])
             && !$this->isDigitized()
             && in_array('1/Document/ArchiveItem/', $this->getFormats())
         ) {
@@ -432,17 +434,18 @@ implements \Laminas\Log\LoggerAwareInterface
                 'url' => $this->replaceURLPlaceholders(
                     $config->ead_document_order_link_template[$source]
                 ),
-                'desc' => 'ead_document_order'
+                'desc' => 'ead_document_order',
             ];
         }
-        if (isset($config->ead_usage_permission_request_link_template[$source])
+        if (
+            isset($config->ead_usage_permission_request_link_template[$source])
             && $this->getAccessRestrictions()
         ) {
             $urls[] = [
                 'url' => $this->replaceURLPlaceholders(
                     $config->ead_usage_permission_request_link_template[$source]
                 ),
-                'desc' => 'ead_usage_permission_request'
+                'desc' => 'ead_usage_permission_request',
             ];
         }
         if (isset($config->ead_external_link_template[$source])) {
@@ -450,7 +453,7 @@ implements \Laminas\Log\LoggerAwareInterface
                 'url' => $this->replaceURLPlaceholders(
                     $config->ead_external_link_template[$source]
                 ),
-                'desc' => 'ead_external_link_description'
+                'desc' => 'ead_external_link_description',
             ];
         }
         return $urls;
@@ -468,7 +471,8 @@ implements \Laminas\Log\LoggerAwareInterface
         // schema, but we might as well support the array case just to be on the safe
         // side. If needed, handle a special case where the indexed description
         // consists of several joined paragraphs:
-        if (isset($this->fields['description'])
+        if (
+            isset($this->fields['description'])
             && !empty($this->fields['description'])
         ) {
             return is_array($this->fields['description'])
@@ -539,7 +543,7 @@ implements \Laminas\Log\LoggerAwareInterface
             if (!$this->urlBlocked($url, $desc)) {
                 $urls[] = [
                     'url' => $url,
-                    'desc' => $desc
+                    'desc' => $desc,
                 ];
             }
         }
@@ -554,7 +558,7 @@ implements \Laminas\Log\LoggerAwareInterface
             if ($match && !$this->urlBlocked($matches[2], $matches[1])) {
                 $urls[] = [
                     'url' => $matches[2],
-                    'desc' => $matches[1]
+                    'desc' => $matches[1],
                 ];
             }
         }
@@ -687,7 +691,7 @@ implements \Laminas\Log\LoggerAwareInterface
      *
      * @return array
      */
-    public function getHierarchyParentID(array $levels = []) : array
+    public function getHierarchyParentID(array $levels = []): array
     {
         if ($levels && !empty(array_diff($levels, self::SERIES_LEVELS))) {
             return [];
@@ -702,7 +706,7 @@ implements \Laminas\Log\LoggerAwareInterface
      *
      * @return array
      */
-    public function getHierarchyParentTitle(array $levels = []) : array
+    public function getHierarchyParentTitle(array $levels = []): array
     {
         if ($levels && !empty(array_diff($levels, self::SERIES_LEVELS))) {
             return [];
@@ -770,7 +774,8 @@ implements \Laminas\Log\LoggerAwareInterface
             // information appended to it:
             $len = mb_strlen($normalized, 'UTF-8');
             $lenId = mb_strlen($normalizedWithId, 'UTF-8');
-            if (mb_substr($mainTitle, 0, $len, 'UTF-8') !== $normalized
+            if (
+                mb_substr($mainTitle, 0, $len, 'UTF-8') !== $normalized
                 && mb_substr($mainTitle, 0, $lenId, 'UTF-8') !== $normalizedWithId
             ) {
                 $results[] = $title;
@@ -817,7 +822,7 @@ implements \Laminas\Log\LoggerAwareInterface
             [
                 '{id}',
                 '{originationId}',
-                '{nonPrefixedOriginationId}'
+                '{nonPrefixedOriginationId}',
             ],
             [
                 urlencode($id),

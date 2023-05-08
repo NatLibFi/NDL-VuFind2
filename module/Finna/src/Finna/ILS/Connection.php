@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Catalog Connection Class
  *
@@ -28,6 +29,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
+
 namespace Finna\ILS;
 
 use VuFind\Exception\ILS as ILSException;
@@ -88,7 +90,8 @@ class Connection extends \VuFind\ILS\Connection
             // Check source of record id vs. patron id
             [$recordSource] = explode('.', $params[1]['id'] ?? '');
             [$patronSource] = explode('.', $params[1]['patron']['id'] ?? '');
-            if ($patronSource && $recordSource && $patronSource !== $recordSource
+            if (
+                $patronSource && $recordSource && $patronSource !== $recordSource
                 && ($params[1]['patron']['email'] ?? '') !== 'Lib.Rarian@library.not'
             ) {
                 return false;
@@ -197,7 +200,8 @@ class Connection extends \VuFind\ILS\Connection
         $functionConfig,
         $params
     ) {
-        if ($this->checkCapability('getPatronAuthorizationStatus', [$params ?: []])
+        if (
+            $this->checkCapability('getPatronAuthorizationStatus', [$params ?: []])
         ) {
             return ['function' => 'getPatronAuthorizationStatus'];
         }
@@ -259,7 +263,8 @@ class Connection extends \VuFind\ILS\Connection
         if ($functionConfig['method'] == 'url' && !empty($functionConfig['url'])) {
             return $functionConfig;
         }
-        if ($functionConfig['method'] == 'driver'
+        if (
+            $functionConfig['method'] == 'driver'
             && $this->checkCapability('updateAddress', [$params ?: []])
         ) {
             return $functionConfig;
@@ -316,7 +321,8 @@ class Connection extends \VuFind\ILS\Connection
         if (!isset($functionConfig['method'])) {
             return false;
         }
-        if ($functionConfig['method'] == 'email'
+        if (
+            $functionConfig['method'] == 'email'
             && !empty($functionConfig['emailAddress'])
         ) {
             return $functionConfig;
@@ -324,7 +330,8 @@ class Connection extends \VuFind\ILS\Connection
         if ($functionConfig['method'] == 'url' && !empty($functionConfig['url'])) {
             return $functionConfig;
         }
-        if ($functionConfig['method'] == 'driver'
+        if (
+            $functionConfig['method'] == 'driver'
             && $this->checkCapability('updateEmail', [$params ?: []])
         ) {
             return $functionConfig;
@@ -358,7 +365,8 @@ class Connection extends \VuFind\ILS\Connection
         if ($functionConfig['method'] == 'url' && !empty($functionConfig['url'])) {
             return $functionConfig;
         }
-        if ($functionConfig['method'] == 'driver'
+        if (
+            $functionConfig['method'] == 'driver'
             && $this->checkCapability('updateMessagingSettings', [$params ?: []])
         ) {
             return $functionConfig;
@@ -386,7 +394,8 @@ class Connection extends \VuFind\ILS\Connection
         if (!isset($functionConfig['method'])) {
             return false;
         }
-        if ($functionConfig['method'] == 'email'
+        if (
+            $functionConfig['method'] == 'email'
             && !empty($functionConfig['emailAddress'])
         ) {
             return $functionConfig;
@@ -394,7 +403,8 @@ class Connection extends \VuFind\ILS\Connection
         if ($functionConfig['method'] == 'url' && !empty($functionConfig['url'])) {
             return $functionConfig;
         }
-        if ($functionConfig['method'] == 'driver'
+        if (
+            $functionConfig['method'] == 'driver'
             && $this->checkCapability('updatePhone', [$params ?: []])
         ) {
             return $functionConfig;
@@ -422,7 +432,8 @@ class Connection extends \VuFind\ILS\Connection
         if (!isset($functionConfig['method'])) {
             return false;
         }
-        if ($functionConfig['method'] == 'driver'
+        if (
+            $functionConfig['method'] == 'driver'
             && !empty($functionConfig['emailAddress'])
         ) {
             return $functionConfig;
@@ -430,7 +441,8 @@ class Connection extends \VuFind\ILS\Connection
         if ($functionConfig['method'] == 'url' && !empty($functionConfig['url'])) {
             return $functionConfig;
         }
-        if ($functionConfig['method'] == 'driver'
+        if (
+            $functionConfig['method'] == 'driver'
             && $this->checkCapability('updateSmsNumber', [$params ?: []])
         ) {
             return $functionConfig;
@@ -516,7 +528,8 @@ class Connection extends \VuFind\ILS\Connection
      */
     protected function checkMethodgetTitleList($functionConfig, $params)
     {
-        if (!empty($functionConfig['enabled'])
+        if (
+            !empty($functionConfig['enabled'])
             && isset($params['id'])
         ) {
             return $functionConfig;

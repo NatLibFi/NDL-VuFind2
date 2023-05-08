@@ -9,7 +9,7 @@
          <span class="linked-event-field hidden"> <span class="linked-event-price"></span></span>
          <span class="linked-event-field hidden"><i class="fa fa-users"></i> <span class="linked-event-audience"></span></span>
       </span>
-      <img class="linked-event-image" alt=""/>
+      <img class="linked-event-image" alt="">
       <b><div class="linked-event-short_description"></div></b>
       <div class="linked-event-description"></div>
       <div class="linked-event-keywords"></div>
@@ -30,10 +30,10 @@
 <?php
   $id = $this->event['id'];
   $setupJS = <<<JS
-$(document).ready(function() {
-   finna.linkedEvents.getEventContent("$id");
-});
-JS;
+      $(document).ready(function() {
+         finna.linkedEvents.getEventContent("$id");
+      });
+      JS;
     echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $setupJS, 'SET');
 ?>
 <!-- END of: finna - feedcontent/linked-events.phtml -->

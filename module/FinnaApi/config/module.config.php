@@ -1,4 +1,5 @@
 <?php
+
 namespace FinnaApi\Module\Configuration;
 
 $config = [
@@ -22,14 +23,14 @@ $config = [
             'authapi' => 'AuthApi',
             'bazaarapi' => 'BazaarApi',
             'listapi' => 'ListApi',
-        ]
+        ],
     ],
     'service_manager' => [
         'factories' => [
             'FinnaApi\Formatter\RecordFormatter' => 'FinnaApi\Formatter\RecordFormatterFactory',
         ],
         'aliases' => [
-            'VuFindApi\Formatter\RecordFormatter' => 'FinnaApi\Formatter\RecordFormatter'
+            'VuFindApi\Formatter\RecordFormatter' => 'FinnaApi\Formatter\RecordFormatter',
         ],
     ],
     'vufind_api' => [
@@ -37,7 +38,7 @@ $config = [
             \FinnaApi\Controller\AuthApiController::class,
             \FinnaApi\Controller\BazaarApiController::class,
             \FinnaApi\Controller\ListApiController::class,
-        ]
+        ],
     ],
     'router' => [
         'routes' => [
@@ -49,8 +50,8 @@ $config = [
                     'defaults' => [
                         'controller' => 'AdminApi',
                         'action'     => 'Index',
-                    ]
-                ]
+                    ],
+                ],
             ],
             'apiHomeBareV1' => [
                 'type' => 'Laminas\Router\Http\Segment',
@@ -60,7 +61,7 @@ $config = [
                     'defaults' => [
                         'controller' => 'Api',
                         'action'     => 'Index',
-                    ]
+                    ],
                 ],
             ],
             'authApiV1' => [
@@ -69,9 +70,9 @@ $config = [
                 'options' => [
                     'route'    => '/api/v1/auth/[:action]',
                     'defaults' => [
-                        'controller' => 'AuthApi'
-                    ]
-                ]
+                        'controller' => 'AuthApi',
+                    ],
+                ],
             ],
             'bazaarApiV1' => [
                 'type' => 'Laminas\Router\Http\Literal',
@@ -81,8 +82,8 @@ $config = [
                     'defaults' => [
                         'controller' => 'BazaarApi',
                         'action'     => 'browse',
-                    ]
-                ]
+                    ],
+                ],
             ],
             'listApiV1' => [
                 'type' => 'Laminas\Router\Http\Literal',
@@ -92,8 +93,8 @@ $config = [
                     'defaults' => [
                         'controller' => 'ListApi',
                         'action'     => 'list',
-                    ]
-                ]
+                    ],
+                ],
             ],
             'searchApiBareV1' => [
                 'type' => 'Laminas\Router\Http\Literal',
@@ -103,8 +104,8 @@ $config = [
                     'defaults' => [
                         'controller' => 'SearchApi',
                         'action'     => 'search',
-                    ]
-                ]
+                    ],
+                ],
             ],
             'recordApiBareV1' => [
                 'type' => 'Laminas\Router\Http\Literal',
@@ -114,11 +115,11 @@ $config = [
                     'defaults' => [
                         'controller' => 'SearchApi',
                         'action'     => 'record',
-                    ]
-                ]
-            ]
-        ]
-    ]
+                    ],
+                ],
+            ],
+        ],
+    ],
 ];
 
 return $config;

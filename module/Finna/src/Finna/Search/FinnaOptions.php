@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Additional functionality for Finna options.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\Search;
 
 /**
@@ -51,11 +53,13 @@ trait FinnaOptions
 
         if ($view == 'grid' && $searchSettings->General->default_limit_grid) {
             $defaultLimit = $searchSettings->General->default_limit_grid;
-        } elseif ($view == 'condensed'
+        } elseif (
+            $view == 'condensed'
             && $searchSettings->General->default_limit_condensed
         ) {
             $defaultLimit = $searchSettings->General->default_limit_condensed;
-        } elseif ($view == 'compact'
+        } elseif (
+            $view == 'compact'
             && $searchSettings->General->default_limit_compact
         ) {
             $defaultLimit = $searchSettings->General->default_limit_compact;
@@ -92,7 +96,8 @@ trait FinnaOptions
         // module:
         $searchSettings = $this->configLoader->get($this->getSearchIni());
 
-        if (null !== $handler
+        if (
+            null !== $handler
             && isset($searchSettings->ResultsTopRecommendations->$handler)
         ) {
             $recommend['results_top'] = $searchSettings->ResultsTopRecommendations

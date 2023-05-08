@@ -31,10 +31,10 @@
     <?php if ($backend != 'primo' && (!isset($hideType) || !$hideType)): ?>
     <div class="range-type">
       <label class="radiobutton" for="radio_overlap">
-        <input class="timeline_overlap" type="radio" name="type" id="radio_overlap" value="overlap"<?= !$this->type || $this->type == 'overlap' ? ' checked="checked"' : ''; ?>/><?= $this->translate('Timeline overlap'); ?>
+        <input class="timeline_overlap" type="radio" name="type" id="radio_overlap" value="overlap"<?= !$this->type || $this->type == 'overlap' ? ' checked="checked"' : ''; ?>><?= $this->translate('Timeline overlap'); ?>
       </label>
       <label class="radiobutton" for="radio_within">
-        <input class="timeline_within" type="radio" name="type" id="radio_within" value="within"<?= $this->type == 'within' ? ' checked="checked"' : ''; ?>/><?= $this->translate('Timeline within'); ?>
+        <input class="timeline_within" type="radio" name="type" id="radio_within" value="within"<?= $this->type == 'within' ? ' checked="checked"' : ''; ?>><?= $this->translate('Timeline within'); ?>
       </label>
     </div>
     <?php endif; ?>
@@ -42,14 +42,14 @@
 </div>
 <?php
 $script = <<<JS
-$(document).ready(function() {
-  finna.dateRangeVis.initVis(
-      '{$backend}',
-      '{$daterangeFacet}',
-      '{$searchParams}',
-      '{$baseParams}',
-      $('.daterange-vis'),
-JS;
+    $(document).ready(function() {
+      finna.dateRangeVis.initVis(
+          '{$backend}',
+          '{$daterangeFacet}',
+          '{$searchParams}',
+          '{$baseParams}',
+          $('.daterange-vis'),
+    JS;
 
 $script .= isset($this->plotFrom) ? "{$this->plotFrom}," : 'false,';
 $script .= isset($this->plotTo) ? "{$this->plotTo}," : 'false,';

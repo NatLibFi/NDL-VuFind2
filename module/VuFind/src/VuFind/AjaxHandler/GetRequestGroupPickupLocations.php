@@ -1,4 +1,5 @@
 <?php
+
 /**
  * "Get Request Group Pickup Locations" AJAX handler
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace VuFind\AjaxHandler;
 
 use Laminas\Mvc\Controller\Plugin\Params;
@@ -53,7 +55,6 @@ class GetRequestGroupPickupLocations extends AbstractIlsAndUserAction
     {
         $this->disableSessionWrites();  // avoid session write timing bug
         $id = $params->fromQuery('id');
-        $itemId = $params->fromQuery('itemId');
         $requestGroupId = $params->fromQuery('requestGroupId');
         if (null === $id || null === $requestGroupId) {
             return $this->formatResponse(
@@ -73,8 +74,7 @@ class GetRequestGroupPickupLocations extends AbstractIlsAndUserAction
             if ($patron = $this->ilsAuthenticator->storedCatalogLogin()) {
                 $details = [
                     'id' => $id,
-                    'item_id' => $itemId,
-                    'requestGroupId' => $requestGroupId
+                    'requestGroupId' => $requestGroupId,
                 ];
                 $results = $this->ils->getPickupLocations($patron, $details);
                 foreach ($results as &$result) {

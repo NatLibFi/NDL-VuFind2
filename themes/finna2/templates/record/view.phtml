@@ -38,7 +38,7 @@
   $this->jsTranslations()->addStrings(
       [
           'map_zoom_in' => 'map_zoom_in',
-          'map_zoom_out' => 'map_zoom_out'
+          'map_zoom_out' => 'map_zoom_out',
       ]
   );
 
@@ -60,7 +60,7 @@
                   'hasDefaultsApplied' => $params->hasDefaultsApplied(),
                   'defaultSortApplied' => $defaultSortApplied,
                   'options' => $options,
-                  'params' => $params
+                  'params' => $params,
               ]
           );
       }
@@ -110,13 +110,13 @@
     <?php endif; ?>
   <?php endif; ?>
   <div class="record-main <?= !$largeImageLayout ? 'mainbody left' : ''?>">
-    <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId" />
-    <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier()) ?>" class="hiddenSource" />
+    <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId">
+    <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier()) ?>" class="hiddenSource">
     <?=$this->flashmessages()?>
     <?=$this->record($this->driver)->getMetaTags();?>
     <?=$this->record($this->driver)->getCoreMetadata()?>
 
-    <?=$this->driver->supportsCoinsOpenURL()?'<span class="Z3988" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenURL()) . '"></span>':''?>
+    <?=$this->driver->supportsCoinsOpenURL() ? '<span class="Z3988" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenURL()) . '"></span>' : ''?>
   </div>
 
   <?php ob_start(); ?>
@@ -188,7 +188,7 @@
           $desc = $obj->getDescription();
           $accordion_classes = [
             'accordion',
-            'accordion-' . strtolower($accordion)
+            'accordion-' . strtolower($accordion),
           ];
           if (0 === strcasecmp($this->activeTab, $accordion)) {
             if (!$this->loadInitialTabWithAjax || !$obj->supportsAjax()) {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Application bootstrap event listener
  *
@@ -28,6 +29,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna;
 
 use Laminas\EventManager\EventManagerInterface;

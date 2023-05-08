@@ -40,40 +40,90 @@
       <h2>Hakutulosten rajaaminen</h2>
       <p>Hakutulossivu näyttää oletusarvoisesti parhaiten hakuun täsmänneet tulokset ylimmäisenä (täsmäävyys, relevanssi). Hakutulosten järjestyksen voi muuttaa myös esimerkiksi vanhimmasta uusimpaan valmistusvuoden mukaan. Lisäksi näkymästä saa galleriamuotoisen tai tiivistetyn listan.</p>
       <p><strong>Rajaa hakua</strong> -valikon avulla saat rajattua hakutuloksia suppeammaksi käyttämällä jopa useita rajauksia samanaikaisesti. Vaihtoehdot ovat oletuksena kiinni, mutta ne saa auki alasvetovalikko-nuolesta.</p>
-      <p><strong>Verkossa saatavilla</strong>: rajaa tulokset aineistoon, johon on pääsy Finnan kautta.</p>
-      <p><strong>Sallitut käyttötavat</strong>: toimii verkossa saatavilla olevilla aineistoilla. Tutustu aineistojen yhteydessä esitettyihin käyttöoikeustietoihin. Aineistojen käyttäjällä on vastuu tekijänoikeuksien ja yksityisyydensuojan kunnioittamisesta. Lähde ja tekijä on nimettävä, jos rajausvaihtoehto on jokin muu kuin vapaa käyttö.</p>
-      <ul class="list-bullets">
-        <li><strong>Vapaa käyttö</strong></li>
-        <li><strong>Saa muokata</strong>
-          <ul class="list-bullets">
-            <li>Ei kaupalliseen käyttöön</li>
-            <li>Myös kaupalliseen käyttöön</li>
-          </ul>
-        </li>
-        <li><strong>Muokkauksia tekemättä</strong>
-          <ul class="list-bullets">
-            <li>Ei kaupalliseen käyttöön</li>
-            <li>Myös kaupalliseen käyttöön</li>
-            <li>Luvanvarainen käyttö / ei tiedossa</li>
-          </ul>
-        </li>
-      </ul>
-      <p><strong>Aineistotyyppi</strong>: sisältää erilaisia vaihtoehtoja sen mukaan minkä tyyppistä aineistoa on saatavilla, esimerkiksi kuvia, esineitä, kirjoja jne.</p>
-      <p><strong>Tekijä</strong>: kuka aineiston on tuottanut tai kuka oikeuksia hallinnoi</p>
-      <p><strong>Aihe</strong>: valmiita aiheita helpottamaan haun rajaamista</p>
-      <p><strong>Alue</strong>: miltä alueelta aineisto on</p>
-      <p><strong>Valmistusvuosi</strong>: valmistusvuodesta voi määrittää minkä aikavälin aineistoa näytetään, esimerkiksi 1920–1980-luvut. Palkin pylväät näyttävät, miltä ajalta aineistoa on tarjolla.</p>
-      <ul class="list-bullets">
-        <li>Kaikki tulokset</li>
-        <li>Aikavälille kokonaan sisältyvät tulokset</li>
-        <li>Rajaa hakutuloksia julkaisuvuoden, valmistuvuoden ja luontivuoden mukaan.</li>
-      </ul>
-      <p><strong>Aiheen aika</strong>: tarjoaa valmiita vuosilukuja ja vuosikymmeniä. Haku valikoi tiettyjä kokonaisuuksia ja sulkee toiset vaihtoehdot pois. Esimerkiksi 1930-luku ei erittele vuoden 1933 tuloksia, vaan hakee tietoja, jotka on merkattu nimenomaan 1930-luvulle.</p>
-      <p><strong>Kieli</strong>: näyttää, minkä kielistä aineistoa hakutulokseen sisältyy.</p>
-      <p><strong>Sisältyy julkaisuun</strong>: ilmoittaa esimerkiksi lehden nimen, jos hakutuloksissa on artikkeleita.</p>
-      <p><strong>Toimiala</strong>: organisaation tyyppi – museo, arkisto tai kirjasto.</p>
-      <p><strong>Organisaatio</strong>: näyttää kaikki arkistot, kirjastot ja museot, joiden aineistoja hakutulokseen sisältyy.</p>
-      <p><strong>Uutta Finnassa</strong>: näyttää, mitä aineistoa Finnaan on viimeksi lisätty.</p>
+
+      <?php
+        $facetFields = $this->config()->getFacetFields();
+        $checkboxFacets = $this->config()->getCheckboxFacets();
+      ?>
+
+      <?php if (isset($checkboxFacets['online_boolean:1']) || isset($checkboxFacets['free_online_boolean:1'])): ?>
+        <p><strong>Verkossa saatavilla</strong>: rajaa tulokset aineistoon, johon on pääsy Finnan kautta.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['usage_rights_ext_str_mv'])): ?>
+        <p><strong>Käyttöoikeudet</strong>: toimii verkossa saatavilla olevilla aineistoilla. Rajain sisältää erilaisia vaihtoehtoja sen mukaan, millaisia käyttöoikeusmerkintöjä aineistoista löytyy. (CC-lisenssit, Right Statements –käyttöoikeuskuvaukset)</p>
+        <p>Tarkempia tietoja käyttöoikeusmerkinnöistä löytyy <a href="/Content/terms">aineistojen käyttöoikeudet -ohjesivulta</a>. Aineistojen käyttäjällä on vastuu tekijänoikeuksien ja yksityisyydensuojan kunnioittamisesta.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['usage_rights_str_mv'])): ?>
+        <p><strong>Sallitut käyttötavat</strong>: toimii verkossa saatavilla olevilla aineistoilla. Tutustu aineistojen yhteydessä esitettyihin käyttöoikeustietoihin. Aineistojen käyttäjällä on vastuu tekijänoikeuksien ja yksityisyydensuojan kunnioittamisesta. Lähde ja tekijä on nimettävä, jos rajausvaihtoehto on jokin muu kuin vapaa käyttö.</p>
+        <ul class="list-bullets">
+          <li><strong>Vapaa käyttö</strong></li>
+          <li><strong>Saa muokata</strong>
+            <ul class="list-bullets">
+              <li>Ei kaupalliseen käyttöön</li>
+              <li>Myös kaupalliseen käyttöön</li>
+            </ul>
+          </li>
+          <li><strong>Muokkauksia tekemättä</strong>
+            <ul class="list-bullets">
+              <li>Ei kaupalliseen käyttöön</li>
+              <li>Myös kaupalliseen käyttöön</li>
+              <li>Luvanvarainen käyttö / ei tiedossa</li>
+            </ul>
+          </li>
+        </ul>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['format']) || isset($facetFields['format_ext_str_mv'])): ?>
+        <p><strong>Aineistotyyppi</strong>: sisältää erilaisia vaihtoehtoja sen mukaan minkä tyyppistä aineistoa on saatavilla, esimerkiksi kuvia, esineitä, kirjoja jne.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['author_facet']) || isset($facetFields['author2_id_str_mv'])): ?>
+        <p><strong>Tekijä</strong>: kuka aineiston on tuottanut tai kuka oikeuksia hallinnoi</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['topic_facet'])): ?>
+        <p><strong>Aihe</strong>: valmiita aiheita helpottamaan haun rajaamista</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['geographic_facet'])): ?>
+        <p><strong>Alue</strong>: miltä alueelta aineisto on</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['search_daterange_mv'])): ?>
+        <p><strong>Valmistusvuosi</strong>: valmistusvuodesta voi määrittää minkä aikavälin aineistoa näytetään, esimerkiksi 1920–1980-luvut. Palkin pylväät näyttävät, miltä ajalta aineistoa on tarjolla.</p>
+        <ul class="list-bullets">
+          <li>Kaikki tulokset</li>
+          <li>Aikavälille kokonaan sisältyvät tulokset</li>
+          <li>Rajaa hakutuloksia julkaisuvuoden, valmistuvuoden ja luontivuoden mukaan.</li>
+        </ul>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['era_facet'])): ?>
+        <p><strong>Aiheen aika</strong>: tarjoaa valmiita vuosilukuja ja vuosikymmeniä. Haku valikoi tiettyjä kokonaisuuksia ja sulkee toiset vaihtoehdot pois. Esimerkiksi 1930-luku ei erittele vuoden 1933 tuloksia, vaan hakee tietoja, jotka on merkattu nimenomaan 1930-luvulle.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['language'])): ?>
+        <p><strong>Kieli</strong>: näyttää, minkä kielistä aineistoa hakutulokseen sisältyy.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['hierarchy_parent_title'])): ?>
+        <p><strong>Sisältyy julkaisuun</strong>: ilmoittaa esimerkiksi lehden nimen, jos hakutuloksissa on artikkeleita.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['sector_str_mv'])): ?>
+        <p><strong>Toimiala</strong>: organisaation tyyppi – museo, arkisto tai kirjasto.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['building'])): ?>
+        <p><strong>Organisaatio</strong>: näyttää kaikki arkistot, kirjastot ja museot, joiden aineistoja hakutulokseen sisältyy.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['first_indexed'])): ?>
+        <p><strong>Uutta Finnassa</strong>: näyttää, mitä aineistoa Finnaan on viimeksi lisätty.</p>
+      <?php endif; ?>
+
       <h3>Kun rajaukset on tehty...</h3>
       <p>Finna säilyttää tekemäsi rajaukset ja näyttää ne hakukentän alapuolella. Yksittäisen rajauksen voi poistaa klikkaamalla kyseisen rajauksen poistopainiketta: <i class="fa fa-lg fa-window-close" aria-hidden="true"></i>. Kaikki rajaukset voi poistaa hakupalkin alta poistamalla valinta kohdasta <i>Säilytä rajaukset</i> ja tekemällä uuden haun.</p>
     </div>

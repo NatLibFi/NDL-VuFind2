@@ -2,7 +2,7 @@
   <?= $this->render('components/molecules/buttons/finna-btn', [
       'ariaLabel' => $editLabel ?? $this->transEsc('Edit'),
       'attributes' => ['class' => 'finna-editable-btn'],
-      'iconClass' => 'finna-editable-btn-icon'
+      'iconClass' => 'finna-editable-btn-icon',
     ]); ?>
   <div<?= $this->htmlAttributes($containerAttributes ?? [])->add('class', 'finna-editable-container') ?>>
     <?= $editable ?? '' ?>

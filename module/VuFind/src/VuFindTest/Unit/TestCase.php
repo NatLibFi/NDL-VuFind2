@@ -26,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
+
 namespace VuFindTest\Unit;
 
 use VuFind\Search\Factory\UrlQueryHelperFactory;
@@ -118,7 +119,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
             'factories' => [
                 'Solr' => 'VuFind\Search\Factory\SolrDefaultBackendFactory',
                 'SolrAuth' => 'VuFind\Search\Factory\SolrAuthBackendFactory',
-            ]
+            ],
         ];
         $registry = new \VuFind\Search\BackendRegistry(
             $this->serviceManager,
@@ -181,7 +182,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
                 $this->serviceManager,
                 [
                     'abstract_factories' =>
-                        [\VuFind\RecordDriver\PluginFactory::class]
+                        [\VuFind\RecordDriver\PluginFactory::class],
                 ]
             );
             $this->serviceManager->setService(

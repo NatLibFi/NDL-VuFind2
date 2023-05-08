@@ -24,7 +24,7 @@
      'map_my_location' => 'map_my_location',
      'map_zoom_in' => 'map_zoom_in',
      'map_zoom_out' => 'map_zoom_out',
-     'organisationInfoAutocomplete' => 'organisation_info_autocomplete'
+     'organisationInfoAutocomplete' => 'organisation_info_autocomplete',
   ]);
 
   if ($this->consortiumInfo) {
@@ -38,14 +38,14 @@
           'id' => $this->id,
           'consortiumInfo' => $this->consortiumInfo ? 1 : 0,
           'buildings' => $this->buildings,
-          'sector' => $this->sector ?? null
+          'sector' => $this->sector ?? null,
       ]
   );
   $setupJS = <<<JS
-$(document).ready(function() {
-   finna.organisationInfoPage.init({$initParams});
-});
-JS;
+      $(document).ready(function() {
+         finna.organisationInfoPage.init({$initParams});
+      });
+      JS;
    $this->headScript()->appendScript($setupJS);
 ?>
 

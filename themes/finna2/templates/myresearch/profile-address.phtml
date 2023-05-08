@@ -12,7 +12,7 @@
     <div class="my-profile-col profile-long">
       <?php if ($this->needsApproval): ?>
         <i class="fa fa-info-big"></i> <?=$this->transEsc(($this->updatePhone || $this->updateEmail) ? 'request_address_change_title' : 'request_contact_information_change_title') ?>
-        <br/>
+        <br>
       <?php endif; ?>
       <?=$this->updateAddressLink ?>
     </div>

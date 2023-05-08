@@ -20,12 +20,17 @@
                     <?php foreach ($hiRes as $size => $img): ?>
                         <?php foreach ($img as $key => $info): ?>
                             <?php
-                                $data = $info['data'];
-                                $imageSize = !empty($data['size']['value']) ? $this->fileSize(preg_replace("/[^0-9]/", "", $data['size']['value'])) : '';
+                                $imgSize = $info['data']['size'] ?? [];
+                                $imageSize = '';
+                                if ($imgSize) {
+                                    $imageSize = !empty($imgSize['value']) && $imgSize['unit'] === 'byte' ? $this->fileSize(preg_replace("/[^0-9]/", "", $imgSize['value'])) : '';
+                                }
+                                $width = $info['data']['width'] ?? [];
+                                $height = $info['data']['height'] ?? [];
                                 $dimensions = '';
-                                if (!empty($data['width']) && !empty($data['height'])) {
-                                    $cleanWidth = preg_replace("/[^0-9]/", "", $data['width']['value']);
-                                    $cleanHeight = preg_replace("/[^0-9]/", "", $data['height']['value']);
+                                if (!empty($width['value']) && !empty($height['value']) && $height['unit'] === 'pixel' && $width['unit'] === 'pixel') {
+                                    $cleanWidth = preg_replace("/[^0-9]/", "", $width['value']);
+                                    $cleanHeight = preg_replace("/[^0-9]/", "", $height['value']);
                                     $dimensions = "($cleanWidth x $cleanHeight px)";
                                 }
                                 $downloadName = str_replace('.', '-', $this->driver->getUniqueID()) . '-' . ($info['resourceID'] ?? $index) . '-' . $size;

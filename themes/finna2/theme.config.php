@@ -160,7 +160,7 @@ $config = [
             'searchtabs' => 'searchTabs',
             'transesc' => 'transEsc',
             'inlinescript' => 'inlineScript',
-        ]
+        ],
     ],
     'css' => [
         'vendor/bootstrap-datepicker3.min.css',
@@ -175,11 +175,9 @@ $config = [
         'vendor/select2.min.css',
         'finna.css',
         'vendor/priority-nav-core.css',
-        'finna-flex-fallback.css::lt IE 10', // flex polyfill
     ],
     'js' => [
         'finna-object-editor.js',
-        'vendor/event-stub.js:lt IE 9',
         'account_ajax.js',
         'advanced_search.js',
         'cart.js',
@@ -196,6 +194,7 @@ $config = [
         'record.js',
         'record_versions.js',
         'requests.js',
+        'lib/autocomplete.js',
         'finna-polyfill.js',
         'finna.js',
         'finna-script-loader.js',
@@ -236,7 +235,6 @@ $config = [
         'vendor/bootstrap-datepicker.fi.min.js',
         'vendor/bootstrap-datepicker.sv.min.js',
         'vendor/bootstrap-slider.min.js',
-        'vendor/hunt.min.js',
         'vendor/jquery.colorhelpers.min.js',
         'vendor/jquery.dataTables.min.js',
         'vendor/dataTables.bootstrap.min.js',
@@ -253,14 +251,15 @@ $config = [
         'vendor/leaflet.min.js',
         'vendor/leaflet.draw.min.js',
         'vendor/js.cookie.js',
+        'jstree-vufind-facet-plugin.js', // Load after jstree
         'finna-multiselect.js',
         'finna-model-viewer.js',
         'finna-video-element.js',
         'finna-feed-element.js',
-        'finna-carousel-manager.js'
+        'finna-carousel-manager.js',
     ],
     'less' => [
-        'active' => false
+        'active' => false,
     ],
     'favicon' => 'favicon.ico',
     'icons' => [
@@ -269,12 +268,15 @@ $config = [
             'external-link' => 'FontAwesome:external-link',
             'facebook' => 'FontAwesome:facebook',
             'instagram' => 'FontAwesome:instagram',
+            'language' => 'FontAwesome:globe',
+            'login' => 'FontAwesome:user',
+            'my-account' => 'FontAwesome:user',
             'qrcode' => 'FontAwesome:qr-code',
             'service-available' => 'FontAwesome:ok',
             'service-unavailable' => 'FontAwesome:remove',
             'twitter' => 'FontAwesome:twitter',
-        ]
-    ]
+        ],
+    ],
 ];
 include 'components.config.php';
 return $config;

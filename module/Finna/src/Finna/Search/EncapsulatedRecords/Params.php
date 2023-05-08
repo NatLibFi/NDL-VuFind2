@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Encapsulated Records aspect of the Search Multi-class (Params)
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Search\EncapsulatedRecords;
 
 /**
@@ -73,7 +75,8 @@ class Params extends \VuFind\Search\Base\Params
      */
     protected function initLimit($request)
     {
-        if ($request->offsetExists('limit')
+        if (
+            $request->offsetExists('limit')
             && null === $request->offsetGet('limit')
         ) {
             // Null value is allowed (no limit)

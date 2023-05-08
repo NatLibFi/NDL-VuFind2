@@ -76,7 +76,10 @@ if ($this->fromStreetSearch) {
       $dataTarget = 'side-collapse-' . $escTitle;
     ?>
     <div class="list-group facets<?= $daterangeFacet ? ' daterange-facet' : '' ?> facet-group" id="side-panel-<?=$escTitle?>">
-      <button class="list-group-item title<?= $isCollapsed ? ' collapsed': '' ?>" data-toggle="collapse" data-target="#<?=$dataTarget?>" aria-controls="<?=$dataTarget?>" aria-expanded="<?= !$isCollapsed ? 'true' : 'false';?>"><?=$this->transEsc($cluster['label'])?></button>
+      <button class="list-group-item title<?= $isCollapsed ? ' collapsed' : '' ?>" data-toggle="collapse" data-target="#<?=$dataTarget?>" aria-controls="<?=$dataTarget?>" aria-expanded="<?= !$isCollapsed ? 'true' : 'false';?>">
+        <span class="facet-title"><?=$this->transEsc($cluster['label'])?></span>
+        <?=$this->icon('collapse', 'facet-title-icon') ?>
+      </button>
       <div id="<?=$dataTarget?>" class="collapse<?= !$isCollapsed ? ' in' : '' ?>" data-facet="<?=$escTitle?>" aria-expanded="<?= !$isCollapsed ? 'true' : 'false';?>">
         <?=
           $this->context($this)->renderInContext(
@@ -85,7 +88,7 @@ if ($this->fromStreetSearch) {
                   'facet' => $title,
                   'cluster' => $cluster,
                   'collapsedFacets' => $collapsedFacets,
-                  'datePickerLang' => $datePickerLang
+                  'datePickerLang' => $datePickerLang,
               ]
           )?>
       </div>

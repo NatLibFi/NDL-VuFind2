@@ -49,7 +49,6 @@
   .grid:not(.recordcovers) {
     padding: 0px 5px 10px;
     margin-bottom: 0px;
-    height: 350px;
     &:focus {
       outline: none;
     }
@@ -59,26 +58,33 @@
       flex-direction: column;
     }
     .grid-title {
-      padding: 6px 5px 4px;
-      width: 100%;
-      top: ~"-webkit-calc(100% - 22px)";
-      top: ~"-moz-calc(100% - 22px)";
-      top: ~"calc(100% - 22px)";
+      padding-top: 5px;
       overflow: hidden;
-      max-height: 200px;
-      min-height: 50px;
-      z-index: 10;
       background: transparent;
     }
+    .status {
+      display: inline;
+      .label {
+        text-indent: -9999em;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        padding: 0;
+      }
+    }
     .dateyeartype {
-      margin-top: -4px;
+      display: inline;
       p {
-        margin-bottom: 0px;
+        margin-top: 0;
+        margin-bottom: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
     .grid-image {
       overflow: hidden;
-      flex-basis: 80%;
+      flex-basis: 250px;
       position: relative;
       display: flex;
       background-color: @gray-ultralight;
@@ -86,17 +92,11 @@
     }
     h2.title {
       font-size: 1.15em;
+      line-height: 1.5;
       text-overflow: ellipsis;
       // Position: relative makes ellipsis work with absolute elements in Chrome
       position: relative;
       white-space: nowrap;
-      overflow: hidden;
-    }
-    a.fulltext {
-      width: 100%;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      display: inline-block;
       overflow: hidden;
     }
     .save-record-container {
@@ -109,26 +109,14 @@
       float: none;
       font-size: inherit;
     }
-    .result .status {
-      position: absolute;
-      width: auto;
-      bottom: 30px;
-      left: auto;
-      .label  {
-        background-color: #00b270;
-        box-shadow: -2px 2px 10px -2px black;
-      }
-    }
     img {
       box-shadow: none;
     }
     .image-popup-trigger:not(.no-image) {
-      max-height: 350px;
       display: flex;
-      flex-direction: column;
       align-items: stretch;
       justify-content: center;
-      overflow: hidden;
+      flex-direction: column;
       height: 100%;
       img {
         width: auto;
@@ -177,28 +165,7 @@
       }
     }
   }
-  &:not(.touch-device) {
-    .grid.no-image  {
-      .grid-title {
-        max-height: 43px;
-        max-height: 200px;
-        box-shadow: 0px 0px 0px;
-        opacity: 1;
-        padding-top: 6px;
-        padding-bottom: 6px;
-        top: initial;
-        bottom: 0;
-        margin: 0;
-        background: #fff;
-      }
-      .dateyeartype {
-        margin-top: -4px;
-        p {
-          margin-bottom: 0px;
-        }
-      }
-    }
-  }
+
   .record-image-container {
     margin-bottom: 0;
     height: 60%;
@@ -218,29 +185,7 @@
     }
   }
 }
-.result-view-grid.touch-device {
-  .grid {
-    .grid-title {
-      .opacity(.9);
-      max-height: 200px;
-      top: 100%;
-      box-shadow: none;
-      padding: 10px;
-      top: ~"-webkit-calc(100% - 21px)";
-      top: ~"-moz-calc(100% - 21px)";
-      top: ~"calc(100% - 21px)";
-    }
-    .save-record-container, .fulltext-links {
-      display: none;
-    }
-    .dateyeartype {
-      margin-top: -4px;
-      p {
-        margin-bottom: 0;
-      }
-    }
-  }
-}
+
 @media (max-width: 767px) {
   .grid:not(.recordcovers) { min-height: 250px; }
 }

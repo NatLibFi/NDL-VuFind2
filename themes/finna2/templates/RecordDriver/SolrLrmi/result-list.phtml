@@ -12,12 +12,12 @@
   }
   $recordType = $this->driver->tryMethod('getRecordType');
 ?>
-<div class="record-container<?=$recordType?" record-type-$recordType":''?> list-view <?=$this->record($this->driver)->getContainerJsClasses()?>">
+<div class="record-container<?=$recordType ? " record-type-$recordType" : ''?> list-view <?=$this->record($this->driver)->getContainerJsClasses()?>">
   <div class="media">
     <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
       <div class="media-<?=$thumbnailAlignment ?> <?=$this->escapeHtmlAttr($coverDetails['size'])?>">
-        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
-        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId">
+        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource">
             <?=$thumbnail ?>
       </div>
     <?php endif; ?>
@@ -32,7 +32,7 @@
           <?php if ($uniformTitles = $this->driver->tryMethod('getUniformTitles')): ?>
             <div class="result-uniform-titles">
               <?php foreach ($uniformTitles as $uniformTitle): ?>
-                <?=$this->escapeHtml($uniformTitle) ?><br/>
+                <?=$this->escapeHtml($uniformTitle) ?><br>
               <?php endforeach; ?>
             </div>
           <?php endif; ?>
@@ -70,7 +70,7 @@
                 ?>
                 <?php if ($hostRecords): ?>
                   <?php foreach ($hostRecords as $i => $hostRecord): ?>
-                    <?=$i > 0 ? '<br/>' : ''?>
+                    <?=$i > 0 ? '<br>' : ''?>
                     <?php if ($hostRecord['id'] || $hostRecord['title']): ?>
                       <?php $link = $hostRecord['id'] ? $recordLinker->getUrl($hostRecord['sourceId'] . '|' . $hostRecord['id']) : $this->record($this->driver)->getLink('title', $hostRecord['title']); ?>
                       <a href="<?=$this->escapeHtmlAttr($link)?>"><?=$hostRecord['title'] !== '' ? $hostRecord['title'] : $hostRecord['mainHeading']?></a>
@@ -101,7 +101,7 @@
                       $classForTranslation = 'classification::' . str_replace('::', ' ', $result);
                       if (!$this->translationEmpty($classForTranslation)):
                     ?>
-                      <a title="<?=$this->escapeHtmlAttr($result)?>" href="<?=$this->record($this->driver)->getLink('classification', $result)?>"><?=$this->transEsc($classForTranslation) . '<span class="classification-detail"> (' . $this->escapeHtml($result) . ')</span>';?></a><br/>
+                      <a title="<?=$this->escapeHtmlAttr($result)?>" href="<?=$this->record($this->driver)->getLink('classification', $result)?>"><?=$this->transEsc($classForTranslation) . '<span class="classification-detail"> (' . $this->escapeHtml($result) . ')</span>';?></a><br>
                     <?php endif; ?>
                   <?php endif; ?>
                 <?php endforeach; ?>
@@ -165,17 +165,17 @@
             <?php endif; ?>
 
             <?php if (isset($this->params) && $this->cart()->isActiveInSearch() && $this->params->getOptions()->supportsCart() && $this->cart()->isActive()): ?>
-                <?=$this->render('record/cart-buttons.phtml', ['id' => $this->driver->getUniqueId(), 'source' => $this->driver->getSourceIdentifier()]); ?><br/>
+                <?=$this->render('record/cart-buttons.phtml', ['id' => $this->driver->getUniqueId(), 'source' => $this->driver->getSourceIdentifier()]); ?><br>
             <?php endif; ?>
 
-            <?=$this->driver->supportsCoinsOpenUrl()?'<span class="Z3988" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenUrl()) . '"></span>':''?>
+            <?=$this->driver->supportsCoinsOpenUrl() ? '<span class="Z3988" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenUrl()) . '"></span>' : ''?>
         </div>
       </div>
     </div>
     <?php if ($thumbnail && $thumbnailAlignment == 'right'): ?>
       <div class="media-<?=$thumbnailAlignment ?> <?=$this->escapeHtmlAttr($coverDetails['size'])?>">
-        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
-        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId">
+        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource">
           <?=$thumbnail ?>
       </div>
     <?php endif; ?>

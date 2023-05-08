@@ -37,37 +37,86 @@
     <div id="narrowsearch" class="content-section">
       <h2>Narrowing your search</h2>
       <p>The search results page displays the best results at the top based on the relevance of the match. You can change the order of the results by, for example, changing the date of manufacture to view from oldest to newest. Additionally you can view the search results as a summary list or in gallery format.</p>
-       <ul class="list-bullets">
-        <li><strong>Free use</strong></li>
-        <li><strong>Can be edited</strong>
-          <ul class="list-bullets">
-            <li>Not for commercial use</li>
-            <li>Also for commercial use</li>
-          </ul>
-        </li>
-        <li><strong>Cannot be edited</strong>
-          <ul class="list-bullets">
-            <li>Not for commercial use</li>
-            <li>Also for commercial use</li>
-            <li>Authorised use only/unknown</li>
-          </ul>
-        </li>
-      </ul>
-      <p><strong>Type of material</strong>: includes different options based on the materials available in the collections, for example, pictures, objects, books, etc.</p>
-      <p><strong>Author</strong>: the creator(s) of the work or the rights holder(s)</p>
-      <p><strong>Subject</strong>: ready subject headings to help filter your search</p>
-      <p><strong>Place</strong>: where the desired material is from</p>
-      <p><strong>Date of manufacture</strong>: You can use the date of manufacture to display materials from a specific time period, for example, the 1980s-1990s. The bars in the chart will display the time periods in which materials are available.</p>
-      <ul class="list-bullets">
-        <li>All results</li>
-        <li>Results restricted to the indicated time period</li>
-        <li>Filter the results by date of publication, manufacture and creation</li>
-      </ul>
-      <p><strong>Language</strong>: displays the language(s) in which the search results appear.</p>
-      <p><strong>Included in a publication</strong>: will provide the name of the journal, if, for example, the results include articles.</p>
-      <p><strong>Sector</strong>: the type of organisation – either a museum, archive or library.</p>
-      <p><strong>Organisation</strong>: displays all of the archives, libraries and museums whose collections appear in the results.</p>
-      <p><strong>New on Finna</strong>: Displays the collections which have most recently been added to Finna.</p>
+
+      <?php
+        $facetFields = $this->config()->getFacetFields();
+        $checkboxFacets = $this->config()->getCheckboxFacets();
+      ?>
+
+      <?php if (isset($checkboxFacets['online_boolean:1']) || isset($checkboxFacets['free_online_boolean:1'])): ?>
+        <p><strong>Available Online</strong>: limits results to those accessible online via Finna.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['usage_rights_ext_str_mv'])): ?>
+        <p><strong>Usage rights</strong>: Pertains to material that is available online. The filter has various options depending on the usage rights for resources (CC licences, Rights Statements).</p>
+        <p>For further information on usage rights, please see <a href="/Content/terms">Material usage rights</a>. The user is responsible for respecting copyright and privacy laws.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['usage_rights_str_mv'])): ?>
+        <p><strong>Permissible uses</strong>: Pertains to material that is available online. The filter has various options depending on the usage rights for resources.</p>
+        <ul class="list-bullets">
+          <li><strong>Free use</strong></li>
+          <li><strong>Can be edited</strong>
+            <ul class="list-bullets">
+              <li>Not for commercial use</li>
+              <li>Also for commercial use</li>
+            </ul>
+          </li>
+          <li><strong>Cannot be edited</strong>
+            <ul class="list-bullets">
+              <li>Not for commercial use</li>
+              <li>Also for commercial use</li>
+              <li>Authorised use only/unknown</li>
+            </ul>
+          </li>
+        </ul>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['format']) || isset($facetFields['format_ext_str_mv'])): ?>
+        <p><strong>Type of material</strong>: includes different options based on the materials available in the collections, for example, pictures, objects, books, etc.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['author_facet']) || isset($facetFields['author2_id_str_mv'])): ?>
+        <p><strong>Author</strong>: the creator(s) of the work or the rights holder(s)</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['topic_facet'])): ?>
+        <p><strong>Subject</strong>: ready subject headings to help filter your search</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['geographic_facet'])): ?>
+        <p><strong>Place</strong>: where the desired material is from</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['search_daterange_mv'])): ?>
+        <p><strong>Date of manufacture</strong>: You can use the date of manufacture to display materials from a specific time period, for example, the 1980s-1990s. The bars in the chart will display the time periods in which materials are available.</p>
+        <ul class="list-bullets">
+          <li>All results</li>
+          <li>Results restricted to the indicated time period</li>
+          <li>Filter the results by date of publication, manufacture and creation</li>
+        </ul>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['language'])): ?>
+        <p><strong>Language</strong>: displays the language(s) in which the search results appear.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['hierarchy_parent_title'])): ?>
+        <p><strong>Included in a publication</strong>: will provide the name of the journal, if, for example, the results include articles.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['sector_str_mv'])): ?>
+        <p><strong>Sector</strong>: the type of organisation – either a museum, archive or library.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['building'])): ?>
+        <p><strong>Organisation</strong>: displays all of the archives, libraries and museums whose collections appear in the results.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['first_indexed'])): ?>
+        <p><strong>New on Finna</strong>: Displays the collections which have most recently been added to Finna.</p>
+      <?php endif; ?>
+
       <h3>Once you’ve selected your filters…</h3>
       <p>Finna saves your selected filters and displays them below the search box. You can remove a single filter by simply clicking on the X by the filter in question. You can remove all filters by clicking and undoing the check mark by Save filters and starting a new search.</p>
     </div>

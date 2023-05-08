@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Finna-truncate custom element
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
+
 namespace Finna\View\CustomElement;
 
 /**
@@ -50,12 +52,14 @@ class FinnaTruncate extends AbstractBase
 
         // If only one of the 'rows' and 'row-height' attributes is set, unset the
         // default value of the other attribute.
-        if (isset($this->attributes['rows'])
+        if (
+            isset($this->attributes['rows'])
             && !isset($this->attributes['row-height'])
         ) {
             $this->setVariable('rowHeight', null);
         }
-        if (isset($this->attributes['row-height'])
+        if (
+            isset($this->attributes['row-height'])
             && !isset($this->attributes['rows'])
         ) {
             $this->setVariable('rows', null);
@@ -94,8 +98,8 @@ class FinnaTruncate extends AbstractBase
                 self::TYPE => 'Inline',
                 self::CONTENTS => 'Inline',
                 self::ATTR_COLLECTIONS => 'Common',
-                self::ATTRIBUTES => ['slot' => 'CDATA']
-            ]
+                self::ATTRIBUTES => ['slot' => 'CDATA'],
+            ],
         ];
     }
 
@@ -118,7 +122,7 @@ class FinnaTruncate extends AbstractBase
     {
         return [
             'rows'      => 1,
-            'rowHeight' => 5
+            'rowHeight' => 5,
         ];
     }
 
@@ -132,7 +136,7 @@ class FinnaTruncate extends AbstractBase
     {
         return [
             'rows'       => 'rows',
-            'row-height' => 'rowHeight'
+            'row-height' => 'rowHeight',
         ];
     }
 }

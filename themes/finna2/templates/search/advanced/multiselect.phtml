@@ -10,11 +10,11 @@
             $isChild = $value['level'] !== '0';
             $display = str_pad('', 4 * $value['level'] * 6, '&nbsp;', STR_PAD_LEFT) . $this->escapeHtml($value['displayText']);
           ?>
-          <option class="<?= $isParent ? 'option-parent' : ''; ?> <?= $isChild ? 'option-child child-width-' . $value['level'] : ''?>" value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $this->field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected'])?' selected="selected"':''?>><?=$display?></option>
+          <option class="<?= $isParent ? 'option-parent' : ''; ?> <?= $isChild ? 'option-child child-width-' . $value['level'] : ''?>" value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $this->field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected']) ? ' selected="selected"' : ''?>><?=$display?></option>
         <?php endforeach; ?>
       <?php else: ?>
         <?php foreach ($this->list['list'] as $value): ?>
-          <option value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $this->field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected'])?' selected="selected"':''?>><?=$this->escapeHtml($value['displayText'])?></option>
+          <option value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $this->field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected']) ? ' selected="selected"' : ''?>><?=$this->escapeHtml($value['displayText'])?></option>
         <?php endforeach; ?>
       <?php endif; ?>
     </select>

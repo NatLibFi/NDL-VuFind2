@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for finna_record_view_record
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Db\Table;
 
 use Finna\Db\Row\FinnaRecordViewRecord as FinnaRecordViewRecordRow;
@@ -55,7 +57,7 @@ class FinnaRecordViewRecord extends \VuFind\Db\Table\Gateway
         'format_id',
         'usage_rights_id',
         'online',
-        'extra_metadata'
+        'extra_metadata',
     ];
 
     /**
@@ -96,7 +98,7 @@ class FinnaRecordViewRecord extends \VuFind\Db\Table\Gateway
             [
                 'backend' => $logEntry['backend'],
                 'source' => $logEntry['source'],
-                'record_id' => $logEntry['record_id']
+                'record_id' => $logEntry['record_id'],
             ]
         )->current();
         if ($create && empty($record)) {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Header view helper
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\View\Helper\Root;
 
 use Laminas\View\Helper\Url;
@@ -266,9 +268,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         }
         $imageParams = $this->getImageParams($params);
         foreach ($images as &$image) {
-            foreach (array_intersect_key($imageParams, $image['urls'] ?? [])
-                as $size => $values
-            ) {
+            foreach (array_keys(array_intersect_key($imageParams, $image['urls'] ?? [])) as $size) {
                 $image['urls'][$size] = ($this->urlHelper)('cover-show') . '?' .
                     http_build_query(
                         array_merge(
@@ -347,7 +347,8 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             true
         );
         // Get plausible model data
-        if (!in_array($type, ['list', 'list grid'])
+        if (
+            !in_array($type, ['list', 'list grid'])
             && $this->record->getDriver()->tryMethod('getModels')
         ) {
             $images = $this->mergeModelDataToImages($images);
@@ -363,7 +364,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             'imageToRecord' => $imageToRecord,
             'imageRightsLabel' => $imageRightsLabel,
             'numOfImages' => $numOfImages,
-            'displayIcon' => $displayIcon
+            'displayIcon' => $displayIcon,
         ];
 
         return $this->record->renderTemplate('record-image.phtml', $context);
@@ -393,7 +394,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
                         'small' => null,
                         'medium' => null,
                         'large' => $bgImage,
-                        'master' => null
+                        'master' => null,
                     ],
                     'type' => 'model',
                     'format' => $format,
@@ -405,9 +406,9 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
                             'id' => $uniqueID,
                             'index' => $index,
                             'format' => $format,
-                            'source' => $source
+                            'source' => $source,
                         ]
-                    )
+                    ),
                 ];
                 $result[$index] = $modelData;
             }
@@ -430,7 +431,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         foreach ($models as $ind => $model) {
             if (!isset($images[$ind])) {
                 $images[$ind] = [
-                    'rights' => []
+                    'rights' => [],
                 ];
             }
             if ($modelSettings['previewImages'] ?? false) {
@@ -459,9 +460,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             return [];
         }
         $imageParams = $this->getImageParams();
-        foreach (array_intersect_key($imageParams, $image['urls'] ?? [])
-            as $size => $values
-        ) {
+        foreach (array_keys(array_intersect_key($imageParams, $image['urls'] ?? [])) as $size) {
             $image['urls'][$size] = ($this->urlHelper)('cover-show') . '?' .
                 http_build_query(
                     array_merge(
@@ -486,7 +485,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             'small' => [],
             'medium' => [],
             'large' => [],
-            'master' => []
+            'master' => [],
         ];
         $source = $this->record->getDriver()->getSourceIdentifier();
         foreach ($imageParams as $size => &$value) {

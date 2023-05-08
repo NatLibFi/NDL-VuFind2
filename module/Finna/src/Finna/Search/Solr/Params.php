@@ -1,10 +1,11 @@
 <?php
+
 /**
  * Solr Search Parameters
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2016.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -26,8 +27,10 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Search\Solr;
 
+use Laminas\Config\Config;
 use VuFind\Solr\Utils;
 
 /**
@@ -44,6 +47,13 @@ class Params extends \VuFind\Search\Solr\Params
 {
     use \Finna\Search\FinnaParams;
     use ParamsSharedTrait;
+
+    /**
+     * Maximum facet limit
+     *
+     * @var int
+     */
+    public const MAX_FACET_LIMIT = 100;
 
     /**
      * Date converter
@@ -174,7 +184,8 @@ class Params extends \VuFind\Search\Solr\Params
         // Extract field and value from URL string:
         [$field, $value] = $this->parseFilter($filter);
 
-        if ($field == $this->getDateRangeSearchField()
+        if (
+            $field == $this->getDateRangeSearchField()
             || $field == self::SPATIAL_DATERANGE_FIELD_VF1
         ) {
             // Date range filters are processed
@@ -218,13 +229,13 @@ class Params extends \VuFind\Search\Solr\Params
         if (preg_match('/^NOW-(\w+)/', $date, $matches)) {
             return [
                 $this->translate("$domain::new_items_" . strtolower($matches[1])),
-                false
+                false,
             ];
         }
         $date = substr($date, 0, 10);
         return [
             $this->dateConverter->convertToDisplayDate('Y-m-d', $date),
-            true
+            true,
         ];
     }
 
@@ -302,7 +313,8 @@ class Params extends \VuFind\Search\Solr\Params
     public function getFacetSettings()
     {
         $facetSet = parent::getFacetSettings();
-        if (!empty($facetSet)
+        if (
+            !empty($facetSet)
             && null !== $this->hierarchicalFacetLimit
             && $this->facetLimit !== $this->hierarchicalFacetLimit
         ) {
@@ -420,13 +432,15 @@ class Params extends \VuFind\Search\Solr\Params
         if (($reqFilters = $request->get('filter')) && is_array($reqFilters)) {
             foreach ($reqFilters as $f) {
                 [$field, $value] = $this->parseFilter($f);
-                if ($field == $dateRangeField
+                if (
+                    $field == $dateRangeField
                     || $field == self::SPATIAL_DATERANGE_FIELD_VF1
                 ) {
                     if ($range = $this->parseDateRangeFilter($f)) {
                         $from = $range['from'];
                         $to = $range['to'];
-                        if (isset($range['type'])
+                        if (
+                            isset($range['type'])
                             && $range['type'] !== self::DATERANGE_DEFAULT_TYPE
                         ) {
                             $type = $range['type'];
@@ -569,11 +583,12 @@ class Params extends \VuFind\Search\Solr\Params
                     continue;
                 }
                 $field = $filterItem['field'];
-                if (in_array(
-                    $field,
-                    [AuthorityHelper::AUTHOR2_ID_FACET,
-                     AuthorityHelper::TOPIC_ID_FACET]
-                )
+                if (
+                    in_array(
+                        $field,
+                        [AuthorityHelper::AUTHOR2_ID_FACET,
+                        AuthorityHelper::TOPIC_ID_FACET]
+                    )
                 ) {
                     // Author id filter
                     $result[] = $filter;
@@ -604,10 +619,12 @@ class Params extends \VuFind\Search\Solr\Params
      */
     protected function formatFilterListEntry($field, $value, $operator, $translate)
     {
-        if (!in_array($field, $this->newItemsFacets)
+        if (
+            !in_array($field, $this->newItemsFacets)
             || !($range = Utils::parseRange($value))
         ) {
-            if ($translate
+            if (
+                $translate
                 && in_array($field, $this->getOptions()->getHierarchicalFacets())
             ) {
                 return $this->translateHierarchicalFacetFilter(
@@ -693,10 +710,11 @@ class Params extends \VuFind\Search\Solr\Params
     {
         foreach ($this->getFilterList() as $field => $facets) {
             foreach ($facets as $facet) {
-                if (in_array(
-                    $facet['field'],
-                    $this->authorityHelper->getAuthorIdFacets()
-                )
+                if (
+                    in_array(
+                        $facet['field'],
+                        $this->authorityHelper->getAuthorIdFacets()
+                    )
                 ) {
                     return true;
                 }
@@ -744,6 +762,34 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
+     * Initialize facet limit from a Config object.
+     *
+     * @param Config $config Configuration
+     *
+     * @return void
+     */
+    protected function initFacetLimitsFromConfig(Config $config = null)
+    {
+        parent::initFacetLimitsFromConfig($config);
+        $this->constrainFacetLimits();
+    }
+
+    /**
+     * Constrain facet limits to 1-100.
+     *
+     * @return void
+     */
+    protected function constrainFacetLimits(): void
+    {
+        $this->facetLimit
+            = max(min((int)$this->facetLimit, static::MAX_FACET_LIMIT), 1);
+        foreach ($this->facetLimitByField as &$value) {
+            $value = max(min((int)$value, static::MAX_FACET_LIMIT), 1);
+        }
+        unset($value);
+    }
+
+    /**
      * Set the sorting value (note: sort will be set to default if an illegal
      * or empty value is passed in).
      *
@@ -761,7 +807,8 @@ class Params extends \VuFind\Search\Solr\Params
             if (!empty($sort) && !in_array($sort, $validOptions)) {
                 $sortLen = strlen($sort);
                 foreach ($validOptions as $valid) {
-                    if (strlen($valid) > $sortLen
+                    if (
+                        strlen($valid) > $sortLen
                         && strncmp($sort, $valid, $sortLen) === 0
                     ) {
                         $sort = $valid;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Service for querying Kirjastohakemisto database.
  * See: https://api.kirjastot.fi/
@@ -29,6 +30,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\OrganisationInfo;
 
 use Finna\Search\Solr\HierarchicalFacetHelper;
@@ -49,7 +51,8 @@ use VuFind\Search\Results\PluginManager;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterface,
+class OrganisationInfo implements
+    \VuFind\I18n\Translator\TranslatorAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface,
     \Laminas\Log\LoggerAwareInterface
 {
@@ -179,7 +182,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         }
 
         if (!in_array($language, $allLanguages)) {
-            $language = 'fi';
+            $language = $this->config->General->fallbackLanguage ?? 'fi';
         }
 
         return $language;
@@ -197,7 +200,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                 ? $this->config->General->languages->toArray() : [];
 
             $language = $this->config->General->language
-                ?? $this->translator->getLocale();
+                ?? $this->getTranslatorLocale();
 
             $this->language = $this->validateLanguage($language, $allLanguages);
         }
@@ -405,7 +408,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         // Check if consortium is found in Kirjastohakemisto
         $params = [
             'finna:id' => $parent,
-            'lang' => $this->getLanguage()
+            'lang' => $this->getLanguage(),
         ];
         $response = $this->fetchData('finna_organisation', $params);
 
@@ -436,7 +439,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                        'url' => $data,
                        'label' => 'organisation_info_link',
                        'logo' => $this->proxifyImageUrl($logo),
-                       'name' => $parentName
+                       'name' => $parentName,
                     ]
                 );
             }
@@ -477,7 +480,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             $data = "{$url}?" . http_build_query(
                 [
                     'id' => $id,
-                    'sector' => 'mus'
+                    'sector' => 'mus',
                 ]
             );
             if ($link) {
@@ -491,7 +494,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                     'url' => $data,
                     'label' => 'organisation_info_link',
                     'logo' => $this->proxifyImageUrl($logo),
-                    'name' => $name
+                    'name' => $name,
                     ]
                 );
             }
@@ -522,12 +525,13 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         $params = [
             'finna:id' => $parent,
             'with' => 'links',
-            'lang' => $this->getLanguage()
+            'lang' => $this->getLanguage(),
         ];
 
         $response = $this->fetchData('finna_organisation', $params);
 
-        if (!$response
+        if (
+            !$response
             || !$response['total'] || !isset($response['items'][0]['id'])
         ) {
             $this->logError(
@@ -652,7 +656,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             'period.end' => $endDate,
             'status' => '',
             'lang' => $this->getLanguage(),
-            'refs' => 'period'
+            'refs' => 'period',
         ];
 
         $response = $this->fetchData('service_point', $params);
@@ -721,15 +725,29 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             $url = $apiUrl . '/' . $action
                 . '?' . http_build_query($params);
         }
+
+        return $this->fetchJson($url) ?? false;
+    }
+
+    /**
+     * Fetch JSON data as an array from cache or external API.
+     *
+     * @param string $url URL
+     *
+     * @return ?array Data or null on failure
+     */
+    protected function fetchJson(string $url): ?array
+    {
         $cacheDir = $this->cacheManager->getCache('organisation-info')
             ->getOptions()->getCacheDir();
 
         $localFile = "$cacheDir/" . md5($url) . '.json';
         $maxAge = $this->config->General->cachetime ?? 10;
 
-        $response = false;
+        $response = null;
         if ($maxAge) {
-            if (is_readable($localFile)
+            if (
+                is_readable($localFile)
                 && time() - filemtime($localFile) < $maxAge * 60
             ) {
                 $response = file_get_contents($localFile);
@@ -749,7 +767,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                         'Error querying organisation info, response code '
                         . $result->getStatusCode() . ", url: $url"
                     );
-                    return false;
+                    return null;
                 }
             } else {
                 $this->logError(
@@ -757,7 +775,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                     . $result->getStatusCode() . ': ' . $result->getReasonPhrase()
                     . ", url: $url"
                 );
-                return false;
+                return null;
             }
 
             $response = $result->getBody();
@@ -767,14 +785,14 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         }
 
         if (!$response) {
-            return false;
+            return null;
         }
 
         $response = json_decode($response, true);
         $jsonError = json_last_error();
         if ($jsonError !== JSON_ERROR_NONE) {
             $this->logError("Error decoding JSON: $jsonError (url: $url)");
-            return false;
+            return null;
         }
 
         return $response;
@@ -818,7 +836,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                 'type' => $item['type'],
                 'mobile' => $item['type'] == 'mobile' ? 1 : 0,
                 'email' => $item['primaryContactInfo']['email']['email'] ?? null,
-                'homepage' => $item['primaryContactInfo']['homepage']['url'] ?? null
+                'homepage' => $item['primaryContactInfo']['homepage']['url'] ?? null,
             ];
 
             if (!empty($item['mailAddress'])) {
@@ -826,7 +844,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                     'area' => $item['mailAddress']['area'],
                     'boxNumber' => $item['mailAddress']['boxNumber'],
                     'street' => $item['mailAddress']['street'],
-                    'zipcode' => $item['mailAddress']['zipcode']
+                    'zipcode' => $item['mailAddress']['zipcode'],
                 ];
             }
             if (!empty($mailAddress)) {
@@ -882,7 +900,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             }
             $schedules = [
                 'schedule' => $item['schedules'],
-                'status' => $item['liveStatus']
+                'status' => $item['liveStatus'],
             ];
             $data['openTimes'] = $this->parseSchedules($schedules);
 
@@ -932,7 +950,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         $result = [];
         $scheduleData = [
             'schedule' => $response['schedules'],
-            'status' => $response['liveStatus']
+            'status' => $response['liveStatus'],
         ];
         if ($schedules) {
             $result['openTimes'] = $this->parseSchedules($scheduleData);
@@ -1009,7 +1027,8 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             $result['links'] = $links;
         }
 
-        if (!empty($response['services'])
+        if (
+            !empty($response['services'])
             && ($includeAllServices
             || !empty($this->config->OpeningTimesWidget->services))
         ) {
@@ -1100,7 +1119,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                         'id' => $id,
                         'orgType' => 'library',
                         'feedType' => $link['id'],
-                        'url' => $link['value']
+                        'url' => $link['value'],
                     ];
                 }
             }
@@ -1110,7 +1129,140 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             }
         }
 
+        foreach ($this->config->Enrichment->$parent ?? [] as $enrichment) {
+            $this->enrich(
+                $parent,
+                $id,
+                $target,
+                $response,
+                $schedules,
+                $includeAllServices,
+                $result,
+                $enrichment
+            );
+        }
+
         return $result;
+    }
+
+    /**
+     * Enrich organisation details.
+     *
+     * @param string  $parent             Consortium Finna ID in Kirjastohakemisto or
+     * in Museoliitto. Use a comma delimited string to check multiple Finna IDs.
+     * @param int     $id                 Organisation
+     * @param string  $target             page|widget
+     * @param object  $response           JSON-object
+     * @param boolean $schedules          Include schedules in the response?
+     * @param boolean $includeAllServices Include services in the response?
+     * @param array   $result             Results
+     * @param string  $enrichment         Enrichment setting
+     *
+     * @return void
+     */
+    protected function enrich(
+        $parent,
+        $id,
+        $target,
+        $response,
+        $schedules,
+        $includeAllServices,
+        array &$result,
+        string $enrichment
+    ): void {
+        $parts = explode(':', $enrichment);
+        switch ($parts[0]) {
+            case 'TPRAccessibility':
+                $this->enrichTPRAccessibility(
+                    $parent,
+                    $id,
+                    $target,
+                    $response,
+                    $schedules,
+                    $includeAllServices,
+                    $parts[1] ?? '',
+                    $result
+                );
+                break;
+            default:
+                throw new \Exception("Unknown enrichment: $enrichment");
+                break;
+        }
+    }
+
+    /**
+     * Enrich organisation details with accessibility information from TPR
+     * Palvelukuvausrekisteri
+     *
+     * @param string  $parent             Consortium Finna ID in Kirjastohakemisto or
+     * in Museoliitto. Use a comma delimited string to check multiple Finna IDs.
+     * @param int     $id                 Organisation
+     * @param string  $target             page|widget
+     * @param object  $response           JSON-object
+     * @param boolean $schedules          Include schedules in the response?
+     * @param boolean $includeAllServices Include services in the response?
+     * @param string  $configSection      Configuration section to use
+     * @param array   $result             Results
+     *
+     * @return void
+     */
+    protected function enrichTPRAccessibility(
+        $parent,
+        $id,
+        $target,
+        $response,
+        $schedules,
+        $includeAllServices,
+        $configSection,
+        array &$result
+    ): void {
+        if (!$includeAllServices) {
+            return;
+        }
+        if (!$configSection || !($baseUrl = $this->config->$configSection->url)) {
+            throw new \Exception("Setting [$configSection] / url missing");
+        }
+
+        $id = null;
+        foreach ($response['customData'] ?? [] as $data) {
+            if ('esteettömyys' === $data['id']) {
+                $id = $data['value'];
+                break;
+            }
+        }
+        if (null === $id) {
+            return;
+        }
+        $url = "$baseUrl/v4/unit/" . rawurlencode($id);
+
+        if (!($json = $this->fetchJson($url))) {
+            return;
+        }
+        $lang = $this->getLanguage();
+        $headingKey = "sentence_group_$lang";
+        $sentenceKey = "sentence_$lang";
+
+        $accessibility = [];
+        foreach ($json['accessibility_sentences'] ?? [] as $sentence) {
+            if (
+                !($heading = $sentence[$headingKey] ?? '')
+                || !($sentence = $sentence[$sentenceKey] ?? '')
+            ) {
+                continue;
+            }
+            if (!isset($accessibility[$heading])) {
+                $accessibility[$heading] = [
+                    'heading' => $this->translate(['OrganisationInfo', $heading]),
+                    'statements' => [
+                        $sentence,
+                    ],
+                ];
+            } else {
+                $accessibility[$heading]['statements'][]
+                    = $this->translate(['OrganisationInfo', $sentence]);
+            }
+        }
+        $result['accessibilityInfo'] = array_values($accessibility);
     }
 
     /**
@@ -1127,7 +1279,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
 
         $dayNames = [
             'monday', 'tuesday', 'wednesday', 'thursday',
-            'friday', 'saturday', 'sunday'
+            'friday', 'saturday', 'sunday',
         ];
 
         $openToday = false;
@@ -1248,7 +1400,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                 'service_point' => $params['id'],
                 'finna_coverage' => $json['coverage'],
                 'usage_perc' => $json['coverage'],
-                'usage_info' => $json['usage_rights'][$language]
+                'usage_info' => $json['usage_rights'][$language],
             ],
         ];
         foreach ($json['links'] as $field => $key) {
@@ -1271,9 +1423,9 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             'address' => [
                 'coordinates' => [
                     'lat' => !empty($json['latitude']) ? $json['latitude'] : '',
-                    'lon' => !empty($json['longitude']) ? $json['longitude'] : ''
+                    'lon' => !empty($json['longitude']) ? $json['longitude'] : '',
                 ],
-                'street' => !empty($json['address']) ? $json['address'] : ''
+                'street' => !empty($json['address']) ? $json['address'] : '',
             ],
             'id' => $params['id'],
             'email' => $json['email'] ?? '',
@@ -1282,7 +1434,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         // Date handling
         $days = [
             0 => 'monday', 1 => 'tuesday', 2 => 'wednesday',
-            3 => 'thursday', 4 => 'friday', 5 => 'saturday', 6 => 'sunday'
+            3 => 'thursday', 4 => 'friday', 5 => 'saturday', 6 => 'sunday',
         ];
         foreach ($days as $day => $key) {
             $details['openTimes']['schedules'][$day]
@@ -1328,7 +1480,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                     'name' =>
                         $key['contact_info']['place_' . $language . ''],
                     'contact' =>
-                        $key['contact_info']['phone_email_' . $language . '']
+                        $key['contact_info']['phone_email_' . $language . ''],
                 ];
         }
         try {
@@ -1343,7 +1495,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         $result = [
             'id' => $params['id'] ?? '',
             'list' => [
-                0 => $details
+                0 => $details,
             ],
             'weekNum' => date('W'),
             'consortium' => $consortium,
@@ -1351,24 +1503,24 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                 0 => [
                     'url' =>
                     isset($json['image2']) && strlen($json['image2']) > 30
-                        ? $this->proxifyImageUrl($json['image2']) : ''
+                        ? $this->proxifyImageUrl($json['image2']) : '',
                 ],
                 1 => [
                     'url' =>
                     isset($json['image3']) && strlen($json['image3']) > 30
-                        ? $this->proxifyImageUrl($json['image3']) : ''
+                        ? $this->proxifyImageUrl($json['image3']) : '',
                 ],
                 2 => [
                     'url' =>
                     isset($json['image4']) && strlen($json['image4']) > 30
-                        ? $this->proxifyImageUrl($json['image4']) : ''
-                ]
+                        ? $this->proxifyImageUrl($json['image4']) : '',
+                ],
             ],
             'scheduleDescriptions' => [
                 0 => !empty($json['opening_info'][$language])
-                    ? $json['opening_info'][$language] : ''
+                    ? $json['opening_info'][$language] : '',
             ],
-            'contactInfo' => $contactInfoToResult ?? ''
+            'contactInfo' => $contactInfoToResult ?? '',
         ];
         return $result;
     }
@@ -1387,7 +1539,8 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         $currentHour = date('H:i');
         $return = [];
         $dayShortcode = substr($day, 0, 3);
-        if (empty($json['opening_time']["{$dayShortcode}_start"])
+        if (
+            empty($json['opening_time']["{$dayShortcode}_start"])
             && empty($json['opening_time']["{$dayShortcode}_end"])
         ) {
             $return['closed'] = true;
@@ -1401,7 +1554,8 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         $return['date'] = date('d.m', strtotime("{$day} this week"));
         if ($today == $return['date']) {
             $return['today'] = true;
-            if ($currentHour >= $json['opening_time']["{$dayShortcode}_start"]
+            if (
+                $currentHour >= $json['opening_time']["{$dayShortcode}_start"]
                 && $currentHour <= $json['opening_time']["{$dayShortcode}_end"]
             ) {
                 $return['openNow'] = true;
@@ -1434,7 +1588,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             [
                 'query' => [
                     'image' => $url,
-                ]
+                ],
             ]
         );
     }
@@ -1448,13 +1602,14 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
     {
         $cacheDir = $this->cacheManager->getCache('organisation-info')->getOptions()
             ->getCacheDir();
-        $locale = $this->translator->getLocale();
+        $locale = $this->getLanguage();
         $cacheFile = "$cacheDir/organisations_list_$locale.json";
         $maxAge = (int)(
             $this->organisationConfig['General']['organisationListCacheTime'] ?? 60
         );
         $list = [];
-        if (is_readable($cacheFile)
+        if (
+            is_readable($cacheFile)
             && time() - filemtime($cacheFile) < $maxAge * 60
         ) {
             return json_decode(file_get_contents($cacheFile), true);
@@ -1493,7 +1648,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                             'name' => $displayText,
                             'link' => $link,
                             'organisation' => $organisationInfoId,
-                            'sector' => $sector
+                            'sector' => $sector,
                         ];
                     }
                     $collator->sort($list[$sector]);

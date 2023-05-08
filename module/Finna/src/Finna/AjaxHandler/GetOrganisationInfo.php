@@ -1,4 +1,5 @@
 <?php
+
 /**
  * AJAX handler for getting organisation info.
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Finna\OrganisationInfo\OrganisationInfo;
@@ -46,8 +48,9 @@ use VuFind\Session\Settings as SessionSettings;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
-implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
+class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
+    TranslatorAwareInterface,
+    \Laminas\Log\LoggerAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
@@ -134,15 +137,6 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
 
         if (!isset($reqParams['id']) && $cookie) {
             $reqParams['id'] = $cookie;
-        }
-        $lang = $this->translator->getLocale();
-        $map = ['en-gb' => 'en'];
-
-        if (isset($map[$lang])) {
-            $lang = $map[$lang];
-        }
-        if (!in_array($lang, ['fi', 'sv', 'en'])) {
-            $lang = 'fi';
         }
 
         if ('lookup' === $action) {
@@ -345,7 +339,7 @@ implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
         $list = $this->organisationInfo->getSectorsForOrganisation($institutionId);
         foreach ($list as $sector) {
             $result[] = [
-                'value' => $sector
+                'value' => $sector,
             ];
         }
         return $result;

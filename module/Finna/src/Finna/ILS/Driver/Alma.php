@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Alma ILS Driver
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
+
 namespace Finna\ILS\Driver;
 
 use VuFind\Exception\ILS as ILSException;
@@ -139,9 +141,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             = $this->config['Holdings']['sortByEnumChron'] ?? true;
 
         if (!empty($this->config['Holdings']['hiddenProcessTypes'])) {
-            foreach ($this->config['Holdings']['hiddenProcessTypes']
-                as $key => $value
-            ) {
+            foreach ($this->config['Holdings']['hiddenProcessTypes'] as $key => $value) {
                 $this->hiddenProcessTypes[$key] = explode(':', $value);
             }
         }
@@ -253,7 +253,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 ? ($params['page'] - 1) * $pageSize : 0,
             'order_by' => $sortKey,
             'direction' => $direction,
-            'expand' => 'renewable'
+            'expand' => 'renewable',
         ];
 
         // Get user loans from Alma API
@@ -324,7 +324,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
         return [
             'count' => $totalCount,
-            'records' => $returnArray
+            'records' => $returnArray,
         ];
     }
 
@@ -344,7 +344,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         $amount = 0;
         $payableFines = [];
         foreach ($fines as $fine) {
-            if (null !== $selectedFineIds
+            if (
+                null !== $selectedFineIds
                 && !in_array($fine['fine_id'], $selectedFineIds)
             ) {
                 continue;
@@ -366,7 +367,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         return [
             'payable' => false,
             'amount' => 0,
-            'reason' => 'online_payment_minimum_fee'
+            'reason' => 'online_payment_minimum_fee',
         ];
     }
 
@@ -406,7 +407,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         // Mark payable fines as long as amount remains. If there's any left over
         // send it as a generic payment.
         foreach ($fines as $fine) {
-            if ($fine['payableOnline'] && $fine['balance'] > 0
+            if (
+                $fine['payableOnline'] && $fine['balance'] > 0
                 && $fine['balance'] <= $amountRemaining
                 && (null === $fineIds || in_array($fine['fine_id'], $fineIds))
             ) {
@@ -415,7 +417,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     'amount' => sprintf('%0.02F', $fine['balance'] / 100),
                     'method' => 'ONLINE',
                     'comment' => "Finna transaction $transactionNumber",
-                    'external_transaction_id' => $transactionId
+                    'external_transaction_id' => $transactionId,
                 ];
                 $this->makeRequest(
                     '/users/' . rawurlencode($patron['id']) . '/fees/'
@@ -434,7 +436,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 'amount' => sprintf('%0.02F', $amountRemaining / 100),
                 'method' => 'ONLINE',
                 'comment' => "Finna transaction $transactionNumber",
-                'external_transaction_id' => $transactionId
+                'external_transaction_id' => $transactionId,
             ];
             $this->makeRequest(
                 '/users/' . rawurlencode($patron['id']) . '/fees/all',
@@ -525,7 +527,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                         $parts = [
                             (string)$item->line1 ?? '',
                             ((string)$item->zip ?? '') . ' '
-                            . ((string)$item->city ?? '')
+                            . ((string)$item->city ?? ''),
                         ];
                         $parts = array_map('trim', $parts);
                         $addressLine = implode(', ', array_filter($parts));
@@ -572,7 +574,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
         if ($xml->user_identifiers && $xml->user_identifiers->user_identifier) {
             foreach ($xml->user_identifiers->user_identifier as $identifier) {
-                if ('BARCODE' === (string)$identifier->id_type
+                if (
+                    'BARCODE' === (string)$identifier->id_type
                     && 'ACTIVE' === (string)$identifier->status
                 ) {
                     $profile['barcode'] = (string)$identifier->value;
@@ -593,7 +596,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         if ($xml->proxy_for_users) {
             foreach ($xml->proxy_for_users->proxy_for_user as $user) {
                 $profile['guarantees'][] = [
-                    'lastname' => (string)$user->full_name
+                    'lastname' => (string)$user->full_name,
                 ];
             }
         }
@@ -608,9 +611,11 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             $diff = $date->diff(new \Datetime());
             if (!$diff->invert && $diff->days > 0) {
                 $profile['expired'] = true;
-            } elseif ($this->daysBeforeAccountExpirationNotification
-                && $diff->invert
-                && $diff->days <= $this->daysBeforeAccountExpirationNotification
+            } elseif (
+                $this->daysBeforeAccountExpirationNotification
+                && $diff->days === 0
+                || ($diff->invert
+                && $diff->days <= $this->daysBeforeAccountExpirationNotification)
             ) {
                 $profile['expiration_soon'] = true;
             }
@@ -722,10 +727,10 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             'country' => 'country',
         ];
         $phoneMapping = [
-            'phone' => 'phone_number'
+            'phone' => 'phone_number',
         ];
         $emailMapping = [
-            'email' => 'email_address'
+            'email' => 'email_address',
         ];
         $otherMapping = [
             'self_service_pin' => 'pin_number',
@@ -945,7 +950,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         if ($identifiers = $userData->user_identifiers) {
             $activeBarcodes = [];
             foreach ($identifiers->user_identifier as $identifier) {
-                if ('BARCODE' === (string)$identifier->id_type
+                if (
+                    'BARCODE' === (string)$identifier->id_type
                     && 'ACTIVE' === (string)$identifier->status
                 ) {
                     $activeBarcodes[] = (string)$identifier->value;
@@ -954,7 +960,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             do {
                 $removed = false;
                 foreach ($identifiers->user_identifier as $identifier) {
-                    if ('BARCODE' === (string)$identifier->id_type
+                    if (
+                        'BARCODE' === (string)$identifier->id_type
                         && 'INACTIVE' === (string)$identifier->status
                     ) {
                         if (in_array((string)$identifier->value, $activeBarcodes)) {
@@ -988,14 +995,14 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             return [
                 'success' => false,
                 'status' => (string)$response->errorList->error[0]->errorMessage,
-                'sys_message' => ''
+                'sys_message' => '',
             ];
         }
 
         return [
             'success' => true,
             'status' => 'request_change_accepted',
-            'sys_message' => ''
+            'sys_message' => '',
         ];
     }
 
@@ -1148,7 +1155,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
         if ($statusCode >= 200 && $statusCode < 300) {
             return [
-                'success' => true
+                'success' => true,
             ];
         }
 
@@ -1156,7 +1163,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         return [
             'success' => false,
             'status' => '401851' === $errorCode
-                ? 'new_ils_account_duplicate' : 'An error has occurred'
+                ? 'new_ils_account_duplicate' : 'An error has occurred',
         ];
 
         return true;
@@ -1214,7 +1221,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     $fieldLabel = $parts[0];
                     $fieldId = $parts[1] ?? '';
                     $fieldRequired = ($parts[3] ?? '') === 'required';
-                    if ('country' === $fieldId
+                    if (
+                        'country' === $fieldId
                         || preg_match('/^addresses\[[0-9]\]\[country\]$/', $fieldId)
                     ) {
                         $field = [
@@ -1227,8 +1235,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                             ),
                             'required' => $fieldRequired,
                         ];
-                    } elseif (preg_match('/^addresses\[[0-9]\]\[types\]$/', $fieldId)
-                    ) {
+                    } elseif (preg_match('/^addresses\[[0-9]\]\[types\]$/', $fieldId)) {
                         // Add address types
                         $field = [
                             'field' => $fieldId,
@@ -1268,7 +1275,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                                 $keyVal = explode('=', $option, 2);
                                 if (isset($keyVal[1])) {
                                     $field['options'][$keyVal[0]] = [
-                                        'name' => $keyVal[1]
+                                        'name' => $keyVal[1],
                                     ];
                                 }
                             }
@@ -1278,7 +1285,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             }
         }
         if ($config && 'Holds' === $function) {
-            if (isset($config['titleHoldBibLevels'])
+            if (
+                isset($config['titleHoldBibLevels'])
                 && !is_array($config['titleHoldBibLevels'])
             ) {
                 $config['titleHoldBibLevels']
@@ -1471,7 +1479,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
         $this->debug("Considering pickup locations:\n" . $libs2str($libraries));
 
-        if ($patron && $holdDetails
+        if (
+            $patron && $holdDetails
             && !empty($this->config['Holds']['pickupLocationRules'])
         ) {
             $rules = $this->parsePickupLocationRules(
@@ -1502,7 +1511,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                         '/bibs/' . rawurlencode($bibId) . '/holdings/ALL/items',
                         [
                             'offset' => $offset,
-                            'limit' => $limit
+                            'limit' => $limit,
                         ]
                     );
                     foreach ($itemsResult->item as $item) {
@@ -1521,7 +1530,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 $entry = [
                     'lib' => $lib,
                     'loc' => $loc,
-                    'policy' => $policy
+                    'policy' => $policy,
                 ];
                 $allItems[] = $entry;
                 $status = (string)$item->item_data->base_status;
@@ -1532,7 +1541,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
             foreach ($allItems as $item) {
                 foreach ($availableItems as $availItem) {
-                    if ($item['lib'] === $availItem['lib']
+                    if (
+                        $item['lib'] === $availItem['lib']
                         && $item['loc'] === $availItem['loc']
                         && $item['policy'] === $availItem['policy']
                     ) {
@@ -1554,14 +1564,16 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             $this->debug("Request level: $level");
 
             foreach ($rules as $rule) {
-                if (!empty($rule['level'])
+                if (
+                    !empty($rule['level'])
                     && !$this->compareRuleWithArray($rule['level'], (array)$level)
                 ) {
                     $this->debug('No match: rule level: ' . $rule['_str']);
                     continue;
                 }
 
-                if ((!empty($rule['loc']) || !empty($rule['lib'])
+                if (
+                    (!empty($rule['loc']) || !empty($rule['lib'])
                     || !empty($rule['policy']))
                     && !$this->compareItemRule(
                         $rule['lib'][0] ?? '',
@@ -1573,7 +1585,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     $this->debug('No match: loc, lib, policy: ' . $rule['_str']);
                     continue;
                 }
-                if ((!empty($rule['avail']) || !empty($rule['availlib'])
+                if (
+                    (!empty($rule['avail']) || !empty($rule['availlib'])
                     || !empty($rule['availpolicy']))
                     && !$this->compareItemRule(
                         $rule['availlib'][0] ?? '',
@@ -1587,7 +1600,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     );
                     continue;
                 }
-                if ((!empty($rule['unavail']) || !empty($rule['unavaillib'])
+                if (
+                    (!empty($rule['unavail']) || !empty($rule['unavaillib'])
                     || !empty($rule['unavailpolicy']))
                     && !$this->compareItemRule(
                         $rule['unavaillib'][0] ?? '',
@@ -1660,7 +1674,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     'locationDisplay' => $this->getTranslatableStringForCode(
                         'pickup_location_home_address',
                         'pickup_location_home_address'
-                    )
+                    ),
                 ];
             }
             if ($work) {
@@ -1670,7 +1684,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                         'locationDisplay' => $this->getTranslatableStringForCode(
                             'pickup_location_work_address',
                             'pickup_location_work_address'
-                        )
+                        ),
                     ];
                 }
             }
@@ -1746,7 +1760,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         $patronId = $patron['id'];
         $level = $data['level'] ?? 'copy';
         if ('copy' === $level) {
-            if (isset($this->config['Holds']['enableItemHolds'])
+            if (
+                isset($this->config['Holds']['enableItemHolds'])
                 && !$this->config['Holds']['enableItemHolds']
             ) {
                 return false;
@@ -1891,7 +1906,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         $client->setHeaders(
             [
             'Content-type: application/json',
-            'Accept: application/json'
+            'Accept: application/json',
             ]
         );
 
@@ -1943,7 +1958,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
         return [
             'success' => false,
-            'sysMessage' => $errorMsg
+            'sysMessage' => $errorMsg,
         ];
     }
 
@@ -2044,7 +2059,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
                 // Summary holdings
                 $params = [
-                    'expand' => 'p_avail'
+                    'expand' => 'p_avail',
                 ];
                 if ($displayRequests) {
                     $params['expand'] .= ',requests';
@@ -2109,7 +2124,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                             'holding_id' => $holdingId,
                             'detailsGroupKey'
                                 => "$holdingId||$libraryCode||$locationCode",
-                            'sort' => $sort++
+                            'sort' => $sort++,
                         ];
                     }
                     usort($holdings, [$this, 'statusSortFunction']);
@@ -2129,7 +2144,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     'locations' => count($locations),
                     'availability' => null,
                     'callnumber' => null,
-                    'location' => '__HOLDINGSSUMMARYLOCATION__'
+                    'location' => '__HOLDINGSSUMMARYLOCATION__',
                 ];
                 if ($displayRequests) {
                     $summary['reservations'] = $requests;
@@ -2144,12 +2159,13 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         } else {
             $results = [
                 'holdings' => [],
-                'total' => 0
+                'total' => 0,
             ];
         }
 
         // Fetch also digital and/or electronic inventory if configured
-        if (in_array('d_avail', $inventoryTypes)
+        if (
+            in_array('d_avail', $inventoryTypes)
             || in_array('e_avail', $inventoryTypes)
         ) {
             // No need for physical items
@@ -2191,7 +2207,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             $config = $this->config['NewUser'] ?? [];
             $required = [
                 'recordType', 'accountType', 'status', 'userGroup',
-                'emailType', 'termsUrl'
+                'emailType', 'termsUrl',
             ];
             foreach ($required as $key) {
                 if (empty($config[$key])) {
@@ -2233,7 +2249,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 return [
                     'holdingsDetails' => [],
                     'items' => [],
-                    'totalItems' => 0
+                    'totalItems' => 0,
                 ];
             }
         }
@@ -2304,7 +2320,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         // Items
         $items = [
             'items' => [],
-            'total' => 0
+            'total' => 0,
         ];
         if ($libraryCode && $locationCode) {
             $itemLimit = min(
@@ -2380,7 +2396,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             foreach ($itemsResult->item as $item) {
                 $processType = (string)($item->item_data->process_type ?? '');
                 $format = (string)($item->item_data->physical_material_type ?? '');
-                if (in_array($processType, $this->hiddenProcessTypes[$format] ?? [])
+                if (
+                    in_array($processType, $this->hiddenProcessTypes[$format] ?? [])
                     || in_array($processType, $this->hiddenProcessTypes['*'] ?? [])
                 ) {
                     continue;
@@ -2410,7 +2427,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 $statusDisplayText = null;
                 if ($this->locationTypeToItemStatus) {
                     $locationType = $this->getItemLocationType($item);
-                    if ($locationType
+                    if (
+                        $locationType
                         && isset($this->locationTypeToItemStatus[$locationType])
                     ) {
                         $parts = explode(
@@ -2476,7 +2494,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     'detailsGroupKey' => $holdingId ? "$holdingId||||" : '',
                     'sort' => $sort++,
                     'availabilityInfo' => [
-                        'displayText' => $statusDisplayText ?? null
+                        'displayText' => $statusDisplayText ?? null,
                     ],
                 ];
             }
@@ -2724,7 +2742,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         $results = [];
         $params = [
             'mms_id' => implode(',', $ids),
-            'expand' => implode(',', array_unique(array_merge($types, ['requests'])))
+            'expand' => implode(',', array_unique(array_merge($types, ['requests']))),
         ];
         if ($bibs = $this->makeRequest('/bibs', $params)) {
             foreach ($bibs as $bib) {
@@ -2757,9 +2775,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     if ($this->locationTypeToItemStatus) {
                         $library = $marc->getSubfield($field, 'b');
                         $type = $this->getLocationType($library, $location);
-                        if ($type
-                            && isset($this->locationTypeToItemStatus[$type])
-                        ) {
+                        if ($type && isset($this->locationTypeToItemStatus[$type])) {
                             $parts = explode(
                                 ':',
                                 $this->locationTypeToItemStatus[$type]
@@ -2806,7 +2822,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     // d (Available for library)
                     // b (Available for library)
                     $location = [
-                        $marc->getSubfield($field, 'm') ?: 'Get full text'
+                        $marc->getSubfield($field, 'm') ?: 'Get full text',
                     ];
                     foreach (['i', 'd', 'b'] as $code) {
                         if ($content = $marc->getSubfield($field, $code)) {
@@ -2894,7 +2910,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         foreach ($table->rows->row as $row) {
             if ((string)$row->enabled === 'true') {
                 $result[(string)$row->code] = [
-                    'name' => (string)$row->description
+                    'name' => (string)$row->description,
                 ];
             }
         }
@@ -3016,7 +3032,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             if ($loc && !$this->compareRuleWithArray($loc, (array)$item['loc'])) {
                 continue;
             }
-            if ($policy
+            if (
+                $policy
                 && !$this->compareRuleWithArray($policy, (array)$item['policy'])
             ) {
                 continue;
@@ -3064,7 +3081,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             $rawBody,
             $headers,
             $allowedErrors,
-            $returnStatus
+            $returnStatus,
         ];
         $reqId = md5(print_r($reqIdParts, true));
         if ('GET' === $method && $reqId === $cachedRequest) {
@@ -3083,7 +3100,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         if ('GET' === $method) {
             $this->cachedRequest = [
                 'request' => $reqId,
-                'response' => $result
+                'response' => $result,
             ];
         }
         return $result;

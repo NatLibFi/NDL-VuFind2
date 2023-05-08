@@ -30,8 +30,8 @@
         <?=$this->record($this->driver)->getCheckbox('', false, true) ?>
       </div>
     </div>
-    <input type="hidden" value="<?=$this->escapeHtmlAttr($id) ?>" class="hiddenId"/>
-    <input type="hidden" value="<?=$this->escapeHtmlAttr($source) ?>" class="hiddenSource"/>
+    <input type="hidden" value="<?=$this->escapeHtmlAttr($id) ?>" class="hiddenId">
+    <input type="hidden" value="<?=$this->escapeHtmlAttr($source) ?>" class="hiddenSource">
 
   <div class="media">
     <div class="media-left">
@@ -58,7 +58,7 @@
         <?php endforeach; ?>
 
         <div class="record-core-metadata">
-          <?=$this->record($this->driver)->getFormatList() ?><br/>
+          <?=$this->record($this->driver)->getFormatList() ?><br>
           <?php if($this->driver->isCollection()): ?>
             <?=implode('<br>', array_map([$this, 'escapeHtml'], $this->driver->getSummary())); ?>
           <?php else: ?>
@@ -114,7 +114,7 @@
                   echo $this->translate(
                       'highlight_snippet_html',
                       ['%%snippet%%' => $this->highlight($snippet['snippet'])]
-                  ) . '<br/>';
+                  ) . '<br>';
                 }
               }
             } ?>
@@ -128,8 +128,8 @@
           ?>
           <?php if (count($listTags) > 0): ?>
             <strong><?=$this->transEsc('Your Tags')?>:</strong>
-            <?php $i = 0; foreach ($listTags as $tag): ?><?=($i++ == 0)?'':', '?><a href="<?=$this->currentPath() . $results->getUrlQuery()->addFacet('tags', $tag->tag)?>"><?=$this->escapeHtml($tag->tag)?></a><?php endforeach; ?>
-            <br/>
+            <?php $i = 0; foreach ($listTags as $tag): ?><?=($i++ == 0) ? '' : ', '?><a href="<?=$this->currentPath() . $results->getUrlQuery()->addFacet('tags', $tag->tag)?>"><?=$this->escapeHtml($tag->tag)?></a><?php endforeach; ?>
+            <br>
           <?php endif; ?>
 
           <?php $recordHelper = $this->record($this->driver); ?>
@@ -152,7 +152,7 @@
                 'markdown' => $markdown,
                 'html' => $markdown ? $this->markdown()->toHtml($markdown, false) : '',
                 'emptyHtml' => $this->translate('Add note'),
-                'preview' => true
+                'preview' => true,
               ]); ?>
           <?php endif;?>
         </div>
@@ -162,7 +162,7 @@
             <?php $i = 0;foreach($this->lists as $current): ?>
               <a href="<?=$this->url('userList', ['id' => $current->id])?>"><?=$this->escapeHtml($current->title)?></a><?php if($i++ < count($this->lists) - 1): ?>,<?php endif; ?>
             <?php endforeach; ?>
-            <br/>
+            <br>
           </div>
         <?php endif; ?>
 

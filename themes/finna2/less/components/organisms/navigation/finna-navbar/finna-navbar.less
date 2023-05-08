@@ -146,7 +146,7 @@
       .navbar-nav > .dropdown,
       .open .dropdown-menu,
       // This last selector is a non-component CSS compatibility hack
-      .open:not(.logoutOptions):not(.browsebar-dropdown) .dropdown-menu {
+      .open:not(.logoutOptions):not(.browsebar-dropdown):not(#language_menu) .dropdown-menu {
         > li > a {
           color: @dropdown-link-color;
           background-color: @dropdown-bg;

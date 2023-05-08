@@ -16,7 +16,7 @@
         'activeId' => $list['id'] ?? null,
         'lists' => $user ? $user->getLists() : null,
         'results' => $this->results,
-        'user' => $user
+        'user' => $user,
       ];
     }
 
@@ -29,9 +29,9 @@
           'statusKey' => 'checkedout',
         ],
         'historicloans' => [
-          'url' => 'myresearch-historicloans',
+          'url' => 'checkouts-history',
           'translation' => 'Loan History',
-          'show' => $this->ils()->checkCapability('getMyTransactionHistory', $capabilityParams)
+          'show' => $this->ils()->checkCapability('getMyTransactionHistory', $capabilityParams),
         ],
         'holds' => [
           'url' => 'holds-list',
@@ -58,8 +58,8 @@
         'librarycards' => [
           'url' => 'librarycards-home',
           'translation' => 'Library Cards',
-          'show' => $user && $user->libraryCardsEnabled()
-        ]
+          'show' => $user && $user->libraryCardsEnabled(),
+        ],
       ];
     }
 
@@ -67,7 +67,7 @@
     if ($r2SearchEnabled) {
         $nonLibraryItems['r2-accessrights'] = [
             'url' => 'myresearch-r2accessrights',
-            'translation' => 'R2_accessrights_menu_heading'
+            'translation' => 'R2_accessrights_menu_heading',
         ];
     }
     $nonLibraryItems += [
@@ -80,19 +80,19 @@
       'history' => [
         'url' => 'search-history',
         'query' => '?require_login',
-        'translation' => 'history_saved_searches'
+        'translation' => 'history_saved_searches',
       ],
       'favorites' => [
         'url' => 'myresearch-favorites',
         'translation' => 'Favorites',
-        'show' => $this->userlist()->getMode() !== 'disabled'
+        'show' => $this->userlist()->getMode() !== 'disabled',
       ],
       'logout' => [
         'url' => 'myresearch-logout',
         'translation' => 'Log Out',
         'iconClass' => 'pull-right fa fa-sign-out fa-lg',
-        'desktopOnly' => true
-      ]
+        'desktopOnly' => true,
+      ],
     ];
 
     $menuListItems = array_merge($menuListItems, $nonLibraryItems);
@@ -116,10 +116,10 @@
         'partial' => [
           'url' => 'myresearch/mylist-navi.phtml',
           'wrapperClass' => 'mylist-bar',
-          'params' => $listParams ?? []
-        ]
+          'params' => $listParams ?? [],
+        ],
       ],
-      'logout'
+      'logout',
     ];
 
     $headerKey = substr($activeToLower, 0, 4) === 'list' ? 'favorites' : $activeToLower;

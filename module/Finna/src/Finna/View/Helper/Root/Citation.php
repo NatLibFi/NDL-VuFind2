@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Citation view helper
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\View\Helper\Root;
 
 /**
@@ -51,7 +53,7 @@ class Citation extends \VuFind\View\Helper\Root\Citation
     {
         $harvard = [
             'title' => $this->getAPATitle(),
-            'authors' => $this->getHarvardAuthors()
+            'authors' => $this->getHarvardAuthors(),
         ];
 
         $harvard['periodAfterTitle']
@@ -84,14 +86,16 @@ class Citation extends \VuFind\View\Helper\Root\Citation
     protected function getHarvardAuthors()
     {
         $authorStr = '';
-        if (isset($this->details['authors'])
+        if (
+            isset($this->details['authors'])
             && is_array($this->details['authors'])
         ) {
             $i = 0;
             $ellipsis = false;
             foreach ($this->details['authors'] as $author) {
                 $author = $this->abbreviateName($author);
-                if (($i + 1 == count($this->details['authors']))
+                if (
+                    ($i + 1 == count($this->details['authors']))
                     && ($i > 0)
                 ) { // Last
                     // Do we already have periods of ellipsis?  If not, we need

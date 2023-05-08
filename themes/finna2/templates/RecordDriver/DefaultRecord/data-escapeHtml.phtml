@@ -3,10 +3,10 @@
   <?php if (is_array($data)): ?>
     <div class="truncate-field" data-rows="5">
       <?php foreach ($data as $field): ?>
-        <?=$this->escapeHtml($field) ?><br/>
+        <?=$this->escapeHtml($field) ?><br>
       <?php endforeach; ?>
     </div>
   <?php else: ?>
-    <?=$this->escapeHtml($data) ?><br/>
+    <?=$this->escapeHtml($data) ?><br>
   <?php endif; ?>
 <?php endif; ?>

@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Class Api
@@ -29,6 +28,9 @@ declare(strict_types=1);
  * @license  https://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
+declare(strict_types=1);
+
 namespace Finna\Form\Handler;
 
 use Laminas\Log\LoggerAwareInterface;
@@ -46,8 +48,11 @@ use VuFindHttp\HttpServiceAwareInterface;
  * @license  https://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class Api implements HandlerInterface, LoggerAwareInterface,
-    TranslatorAwareInterface, HttpServiceAwareInterface
+class Api implements
+    HandlerInterface,
+    LoggerAwareInterface,
+    TranslatorAwareInterface,
+    HttpServiceAwareInterface
 {
     use LoggerAwareTrait;
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
@@ -91,7 +96,7 @@ class Api implements HandlerInterface, LoggerAwareInterface,
         $recordParamMap = [
             'record' => 'record',
             'record_id' => 'recordId',
-            'record_info' => 'recordInfo'
+            'record_info' => 'recordInfo',
         ];
 
         $postParams = (array)$params->fromPost();
@@ -172,7 +177,8 @@ class Api implements HandlerInterface, LoggerAwareInterface,
                 "'apiSettings/url' is required for api handler"
             );
         }
-        if (strpos($apiSettings['url'], 'https://') !== 0
+        if (
+            strpos($apiSettings['url'], 'https://') !== 0
             && $apiSettings['url'] !== 'test'
             && 'development' !== APPLICATION_ENV
         ) {
@@ -207,7 +213,7 @@ class Api implements HandlerInterface, LoggerAwareInterface,
         $headers = array_merge(
             [
                 'Content-Type' => 'application/json',
-                'Content-Length' => mb_strlen($messageJson, 'UTF-8')
+                'Content-Length' => mb_strlen($messageJson, 'UTF-8'),
             ],
             (array)($apiSettings['headers'] ?? [])
         );

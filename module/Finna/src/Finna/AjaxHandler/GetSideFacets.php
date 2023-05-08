@@ -1,4 +1,5 @@
 <?php
+
 /**
  * "Get Side Facets" AJAX handler
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use VuFind\Search\Base\Results;
@@ -75,7 +77,8 @@ class GetSideFacets extends \VuFind\AjaxHandler\GetSideFacets
                 if ($delimiter = $delimitedFacets[$field] ?? '') {
                     [$itemValue] = explode($delimiter, $itemValue);
                 }
-                if ($itemValue == $value
+                if (
+                    $itemValue == $value
                     || ($truncate
                     && preg_match('/^' . $value . '/', $item['value']))
                     || ($item['value'] == 'true' && $value == '1')

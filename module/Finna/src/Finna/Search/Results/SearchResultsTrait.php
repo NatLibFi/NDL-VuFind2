@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Finna search results trait
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Search\Results;
 
 use Finna\Search\Factory\UrlQueryHelperFactory;
@@ -65,7 +67,8 @@ trait SearchResultsTrait
                 $this->getParams(),
                 $this->getUrlQueryHelperOptions()
             );
-            if (null !== $this->request
+            if (
+                null !== $this->request
                 && is_callable([$this->helpers['urlQuery'], 'setSearchId'])
             ) {
                 $savedSearches = $this->request->getQuery('search');

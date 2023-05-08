@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Database driver for statistics
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\Statistics\Driver;
 
 use Finna\Db\Table\FinnaPageViewStats;
@@ -363,7 +365,7 @@ class Database implements DriverInterface, LoggerAwareInterface
             [
                 'count' => new \Laminas\Db\Sql\Literal(
                     'count + ' . ($logEntry['count'] ?? '1')
-                )
+                ),
             ],
             $viewFields,
         );
@@ -426,7 +428,7 @@ class Database implements DriverInterface, LoggerAwareInterface
     ): bool {
         $rowsAffected = $table->update(
             [
-                'count' => new \Laminas\Db\Sql\Literal('count + 1')
+                'count' => new \Laminas\Db\Sql\Literal('count + 1'),
             ],
             $where
         );
@@ -442,7 +444,8 @@ class Database implements DriverInterface, LoggerAwareInterface
      */
     protected function getRecordViewInstViewId(array $logEntry): int
     {
-        if (null === $this->cachedViewInstView
+        if (
+            null === $this->cachedViewInstView
             || $this->cachedViewInstView->institution !== $logEntry['institution']
             || $this->cachedViewInstView->view !== $logEntry['view']
         ) {
@@ -461,7 +464,8 @@ class Database implements DriverInterface, LoggerAwareInterface
      */
     protected function getRecordViewRecordId(array $logEntry): int
     {
-        if (null === $this->cachedViewRecord
+        if (
+            null === $this->cachedViewRecord
             || $this->cachedViewRecord->backend !== $logEntry['backend']
             || $this->cachedViewRecord->source !== $logEntry['source']
             || $this->cachedViewRecord->record_id !== $logEntry['record_id']

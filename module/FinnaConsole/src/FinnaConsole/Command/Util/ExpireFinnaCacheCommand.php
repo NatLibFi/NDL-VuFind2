@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Console command: expire Finna cache records.
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace FinnaConsole\Command\Util;
 
 /**
@@ -39,8 +41,7 @@ namespace FinnaConsole\Command\Util;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class ExpireFinnaCacheCommand
-extends \VuFindConsole\Command\Util\AbstractExpireCommand
+class ExpireFinnaCacheCommand extends \VuFindConsole\Command\Util\AbstractExpireCommand
 {
     /**
      * Help description for the command.

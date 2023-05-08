@@ -1,4 +1,4 @@
-/*global VuFind, videojs, checkSaveStatuses, finna, initFacetTree, priorityNav */
+/*global VuFind, videojs, finna, initFacetTree, priorityNav */
 finna.layout = (function finnaLayout() {
   var currentOpenTooltips = [];
 
@@ -317,7 +317,7 @@ finna.layout = (function finnaLayout() {
       if ((event.target.nodeName) !== 'A' && (event.target.nodeName) !== 'MARK') {
         holder = $(this).parent().parent();
         holder.toggleClass('open');
-        VuFind.itemStatuses.check(holder);
+        VuFind.itemStatuses.init(holder);
         var onSlideComplete = null;
         if (holder.hasClass('open') && !holder.hasClass('opened')) {
           holder.addClass('opened');
@@ -821,7 +821,6 @@ finna.layout = (function finnaLayout() {
       initScrollLinks();
       initSearchboxFunctions();
       initCondensedList();
-      if (typeof checkSaveStatuses !== 'undefined') { checkSaveStatuses(); }
       initTouchDeviceGallery();
       initSideFacets();
       initPiwikPopularSearches();

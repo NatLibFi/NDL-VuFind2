@@ -1,4 +1,5 @@
 <?php
+
 /**
  * AJAX handler for getting information for a field popover.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Finna\Db\Table\FinnaCache;
@@ -47,8 +49,7 @@ use VuFindSearch\ParamBag;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase
-implements LoggerAwareInterface
+class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -141,8 +142,11 @@ implements LoggerAwareInterface
         $authority = null;
         $authorityFields = $this->config->LinkPopovers->authority_fields
             ? $this->config->LinkPopovers->authority_fields->toArray() : [];
-        if ($authIds && $authIds[0] && preg_match('/^[\w_-]+\./', $authIds[0])
+        if (
+            $authIds
             && $authorityFields
+            && ($authIds[0] ?? false)
+            && preg_match('/^[\w_-]+\./', $authIds[0])
         ) {
             try {
                 $authority = $this->loader->load(
@@ -190,7 +194,8 @@ implements LoggerAwareInterface
      */
     protected function getEnrichmentData(string $id, string $label): array
     {
-        if (empty($this->config->LinkPopovers->skosmos)
+        if (
+            empty($this->config->LinkPopovers->skosmos)
             || empty($this->config->LinkPopovers->skosmos_base_url)
         ) {
             return [];
@@ -210,9 +215,7 @@ implements LoggerAwareInterface
 
         // Check if the url has an allowed prefix:
         $match = false;
-        foreach ($this->config->LinkPopovers->skosmos_id_prefix_allowed_list
-            as $prefix
-        ) {
+        foreach ($this->config->LinkPopovers->skosmos_id_prefix_allowed_list as $prefix) {
             if (strncmp($id, $prefix, strlen($prefix)) === 0) {
                 $match = true;
                 break;
@@ -350,9 +353,7 @@ implements LoggerAwareInterface
 
                 // Check if exact match id prefix is allowed:
                 $allowed = false;
-                foreach ($this->config->LinkPopovers->skosmos_id_prefix_exact_matches
-                    as $prefix
-                ) {
+                foreach ($this->config->LinkPopovers->skosmos_id_prefix_exact_matches as $prefix) {
                     if (strncmp($matchId, $prefix, strlen($prefix)) === 0) {
                         $allowed = true;
                         break;
@@ -364,8 +365,7 @@ implements LoggerAwareInterface
                 $matchData = json_decode($match, true);
 
                 foreach ($matchData['graph'] ?? [] as $matchItem) {
-                    if (!in_array('skos:Concept', (array)($matchItem['type'] ?? []))
-                    ) {
+                    if (!in_array('skos:Concept', (array)($matchItem['type'] ?? []))) {
                         continue;
                     }
                     if (($matchItem['uri'] ?? null) !== $matchId) {

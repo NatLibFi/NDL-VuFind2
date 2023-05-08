@@ -11,7 +11,7 @@
     <div class="media-<?=$thumbnailAlignment ?>">
       <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', [
         'img' => $img, 'imageClick' => 'none', 'imageRightsLabel' => 'Image Rights Authority',
-        'numOfImages' => ['mobile' => 4, 'normal' => 4]
+        'numOfImages' => ['mobile' => 4, 'normal' => 4],
       ]);?>
 
       <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
@@ -57,7 +57,7 @@
       <div class="truncate-field wide recordSummary">
         <p class="summary">
         <?php foreach ($summ as $field): ?>
-          <?=$this->cleanHtml($field)?><br/>
+          <?=$this->cleanHtml($field)?><br>
         <?php endforeach; ?>
         </p>
       </div>

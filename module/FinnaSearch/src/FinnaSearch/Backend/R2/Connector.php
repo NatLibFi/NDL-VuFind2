@@ -26,12 +26,12 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org
  */
+
 namespace FinnaSearch\Backend\R2;
 
 use Laminas\EventManager\EventManager;
 use Laminas\Http\Client as HttpClient;
 use VuFindSearch\Backend\Exception\HttpErrorException;
-
 use VuFindSearch\ParamBag;
 
 /**
@@ -261,7 +261,7 @@ class Connector extends \VuFindSearch\Backend\Solr\Connector
 
             $limits = [
                 'x-user-daily-request-limit-exceeded' => 'daily',
-                'x-user-monthly-request-limit-exceeded' => 'monthly'
+                'x-user-monthly-request-limit-exceeded' => 'monthly',
             ];
             foreach ($limits as $header => $type) {
                 $this->rems->setSearchLimitExceededFromConnector(

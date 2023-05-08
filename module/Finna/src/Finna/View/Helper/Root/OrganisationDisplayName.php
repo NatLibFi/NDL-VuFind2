@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Organisation display name view helper for Solr records.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\View\Helper\Root;
 
 /**

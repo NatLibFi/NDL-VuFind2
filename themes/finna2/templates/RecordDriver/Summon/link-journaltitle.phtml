@@ -1,1 +1,3 @@
-<?=$this->url('summon-search')?>?lookfor=%22<?=urlencode($this->lookfor)?>%22&amp;type=AllFields
+<?php
+// Use echo to ensure we don't return a line feed
+echo $this->url('summon-search') . '?lookfor=%22' . urlencode($this->lookfor) . '%22&amp;type=AllFields';

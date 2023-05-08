@@ -3,7 +3,7 @@
   <div class="truncate-field">
     <?php
       foreach ($data as $index => $author): ?>
-        <?=($index > 0 ? '<br/> ' : '')?><?=$this->record($this->driver)->renderTemplate('data-contributors-single.phtml', ['author' => $author])?>
+        <?=($index > 0 ? '<br> ' : '')?><?=$this->record($this->driver)->renderTemplate('data-contributors-single.phtml', ['author' => $author])?>
     <?php endforeach; ?>
   </div>
 <?php endif; ?>

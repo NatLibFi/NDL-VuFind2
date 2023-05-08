@@ -44,7 +44,7 @@ if ($otherTitles):?>
           <?=implode('&ndash;', array_map($this->escapeHtml, $dates)) ?>
         <?php endif; ?>
         <?php if (($results = $this->driver->getSubjectDates()) && !isset($dates[0])): ?>
-          <?=implode('<br/>', array_map([$this, 'escapeHtml'], $results))?>
+          <?=implode('<br>', array_map([$this, 'escapeHtml'], $results))?>
         <?php endif; ?>
         </div>
       <?php endif; ?>
@@ -113,13 +113,13 @@ $this->matomo([
   'context' => 'lightbox',
   'record' => $this->driver,
   'action' => 'imagePopup',
-  'recordUrl' => $this->recordLinker()->getUrl($this->driver)
+  'recordUrl' => $this->recordLinker()->getUrl($this->driver),
 ]);
 ?>
 
 <?php
   $script = <<<JS
-finna.layout.initOrganisationPageLinks();
-JS;
+      finna.layout.initOrganisationPageLinks();
+      JS;
   echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
 ?>

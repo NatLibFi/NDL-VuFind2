@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Model for FORWARD records in Solr.
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver;
 
 /**
@@ -40,8 +42,7 @@ namespace Finna\RecordDriver;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
-class SolrForward extends \VuFind\RecordDriver\SolrDefault
-implements \Laminas\Log\LoggerAwareInterface
+class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\LoggerAwareInterface
 {
     use Feature\SolrFinnaTrait;
     use Feature\SolrForwardTrait {
@@ -68,7 +69,7 @@ implements \Laminas\Log\LoggerAwareInterface
         'E04' => 'cmm',
         'E10' => 'pro',
         'F01' => 'cng',
-        'F02' => 'flm'
+        'F02' => 'flm',
     ];
 
     /**
@@ -90,7 +91,7 @@ implements \Laminas\Log\LoggerAwareInterface
         'äänitys' => 'rce',
         'dokumentti-esiintyjä' => 'prf',
         'kreditoimaton-dokumentti-esiintyjä' => 'prf',
-        'dokumentti-muutesiintyjät' => 'oth'
+        'dokumentti-muutesiintyjät' => 'oth',
     ];
 
     /**
@@ -102,7 +103,7 @@ implements \Laminas\Log\LoggerAwareInterface
         'väkivalta' => 'content_descriptor_violence',
         'seksi' => 'content_descriptor_sexual_content',
         'päihde' => 'content_descriptor_drug_use',
-        'ahdistus' => 'content_descriptor_anxiety'
+        'ahdistus' => 'content_descriptor_anxiety',
     ];
 
     /**
@@ -116,7 +117,7 @@ implements \Laminas\Log\LoggerAwareInterface
         '7' => 'age_rating_7',
         '12' => 'age_rating_12',
         '16' => 'age_rating_16',
-        '18' => 'age_rating_18'
+        '18' => 'age_rating_18',
     ];
 
     /**
@@ -127,7 +128,7 @@ implements \Laminas\Log\LoggerAwareInterface
     protected $roleConversion = [
         'esiintyjä' => 'no_role',
         'prf' => 'no_role',
-        'oth' => 'no_role'
+        'oth' => 'no_role',
     ];
 
     /**
@@ -137,7 +138,7 @@ implements \Laminas\Log\LoggerAwareInterface
      */
     protected $rolesToFilter = [
         'no_role',
-        'act'
+        'act',
     ];
 
     /**
@@ -154,7 +155,7 @@ implements \Laminas\Log\LoggerAwareInterface
             'elokuva-elotekija-rooli' => 'roleName',
             'elokuva-elonayttelija-rooli' => 'roleName',
             'elokuva-eloesiintyja-maare' => 'roleName',
-            'elokuva-elonayttelijakokoonpano-tehtava' => 'roleName'
+            'elokuva-elonayttelijakokoonpano-tehtava' => 'roleName',
         ],
         'uncredited' => [
             'elokuva-elokreditoimatonnayttelija-rooli' => 'roleName',
@@ -162,8 +163,8 @@ implements \Laminas\Log\LoggerAwareInterface
             'elokuva-elokreditoimatontekija-nimi' => 'name',
             'elokuva-elokreditoimatonnayttelija-nimi' => 'name',
             'elokuva-elokreditoimatonnayttelija-selitys' => 'description',
-            'elokuva-elokreditoimatontekija-selitys' => 'description'
-        ]
+            'elokuva-elokreditoimatontekija-selitys' => 'description',
+        ],
     ];
 
     /**
@@ -196,54 +197,54 @@ implements \Laminas\Log\LoggerAwareInterface
                 'elonet_henkilo',
                 'elonet_kokoonpano',
                 'muutesiintyjät',
-                'avustajat'
+                'avustajat',
             ],
             'relators' => [
-                'e01', 'e99', 'cmm', 'a99', 'oth'
+                'e01', 'e99', 'cmm', 'a99', 'oth',
             ],
             'mappings' => [
                 'elonet_henkilo' => [
                     'act' => [
                         'credited' => 'credited',
-                        'uncredited' => 'uncredited'
+                        'uncredited' => 'uncredited',
                     ],
                     'no_role' => [
                         'credited' => 'performer',
-                        'uncredited' => 'uncreditedPerformer'
+                        'uncredited' => 'uncreditedPerformer',
                     ],
                     'avustajat' => [
-                        'credited' => 'assistant'
-                    ]
+                        'credited' => 'assistant',
+                    ],
                 ],
                 'elonet_kokoonpano' => [
                     'default' => [
                         'credited' => 'actingEnsemble',
                     ],
                     'no_role' => [
-                        'credited' => 'performingEnsemble'
-                    ]
+                        'credited' => 'performingEnsemble',
+                    ],
                 ],
                 'default' => [
                     'no_role' => [
-                        'credited' => 'other'
-                    ]
+                        'credited' => 'other',
+                    ],
                 ],
                 'no_type' => [
                     'muutesiintyjät' => [
-                        'credited' => 'other'
+                        'credited' => 'other',
                     ],
                     'avustajat' => [
-                        'credited' => 'assistant'
+                        'credited' => 'assistant',
                     ],
                     'no_role' => [
-                        'credited' => 'other'
-                    ]
-                ]
+                        'credited' => 'other',
+                    ],
+                ],
             ],
             'skipTags' => [
                 'elotekijakokoonpano' => true,
-                'muuttekijat' => true
-            ]
+                'muuttekijat' => true,
+            ],
         ],
         'nonPresenterSecondaryAuthors' => [
             'preservedValues' => [
@@ -251,7 +252,7 @@ implements \Laminas\Log\LoggerAwareInterface
                 'no_role',
                 'act',
                 'elonet_henkilo',
-                'elonet_kokoonpano'
+                'elonet_kokoonpano',
             ],
             'relators' => [
                 'a00', 'a01', 'a03', 'a06', 'a50', 'a99',
@@ -275,44 +276,44 @@ implements \Laminas\Log\LoggerAwareInterface
                 'rpt', 'rth', 'rtm', 'res', 'rsp', 'rst', 'rse', 'rpy', 'rsg',
                 'rev', 'rbr', 'sce', 'sad', 'scr', 'scl', 'spy', 'std', 'sng',
                 'sds', 'spk', 'stm', 'str', 'stl', 'sht', 'ths', 'trl', 'tyd',
-                'tyg', 'vdg', 'voc', 'wde', 'wdc', 'wam'
+                'tyg', 'vdg', 'voc', 'wde', 'wdc', 'wam',
             ],
             'mappings' => [
                 'elonet_kokoonpano' => [
                     'default' => [
                         'credited' => 'ensembles',
-                        'uncredited' => 'ensembles'
-                    ]
+                        'uncredited' => 'ensembles',
+                    ],
                 ],
                 'elonet_henkilo' => [
                     'default' => [
                         'credited' => 'credited',
-                        'uncredited' => 'uncredited'
-                    ]
+                        'uncredited' => 'uncredited',
+                    ],
                 ],
                 'no_type' => [
                     'no_role' => [
-                        'credited' => 'credited'
-                    ]
+                        'credited' => 'credited',
+                    ],
                 ],
                 'default' => [
                     'default' => [
                         'credited' => 'credited',
-                        'uncredited' => 'uncredited'
-                    ]
-                ]
+                        'uncredited' => 'uncredited',
+                    ],
+                ],
             ],
             'skipTags' => [
-                'elonayttelijakokoonpano' => true
+                'elonayttelijakokoonpano' => true,
             ],
-            'all' => 'nonPresenters'
+            'all' => 'nonPresenters',
         ],
         'primaryAuthors' => [
             'relators' => [
-                'd02'
+                'd02',
             ],
-            'all' => 'primaryAuthors'
-        ]
+            'all' => 'primaryAuthors',
+        ],
     ];
 
     protected $productionConfig = [
@@ -328,7 +329,7 @@ implements \Laminas\Log\LoggerAwareInterface
             'elokuva-teatterikopioidenlkm' => 'numberOfCopies',
             'elokuva-katsojaluku' => 'amountOfViewers',
             'elokuva-kuvausaika' => 'filmingDate',
-            'elokuva-arkistoaineisto' => 'archiveFilms'
+            'elokuva-arkistoaineisto' => 'archiveFilms',
         ],
         'productionEventMappings' => [
             'elokuva_laji2fin' => 'type',
@@ -339,21 +340,21 @@ implements \Laminas\Log\LoggerAwareInterface
             'elokuva_sisakuvat' => 'interiors',
             'elokuva_studiot' => 'studios',
             'elokuva_kuvauspaikkahuomautus' => 'locationNotes',
-            'elokuva_kiitokset' => 'thanks'
+            'elokuva_kiitokset' => 'thanks',
         ],
         'broadcastingInfoMappings' => [
             'elokuva-elotelevisioesitys-esitysaika' => 'time',
             'elokuva-elotelevisioesitys-paikka' => 'place',
-            'elokuva-elotelevisioesitys-katsojamaara' => 'viewers'
+            'elokuva-elotelevisioesitys-katsojamaara' => 'viewers',
         ],
         'festivalSubjectMappings' => [
-            'elokuva-elofestivaaliosallistuminen-aihe' => 'festivalInfo'
+            'elokuva-elofestivaaliosallistuminen-aihe' => 'festivalInfo',
         ],
         'foreignDistributorMappings' => [
-            'elokuva-eloulkomaanmyynti-levittaja' => 'foreignDistribution'
+            'elokuva-eloulkomaanmyynti-levittaja' => 'foreignDistribution',
         ],
         'otherScreeningMappings' => [
-            'elokuva-muuesitys-aihe' => 'otherScreenings'
+            'elokuva-muuesitys-aihe' => 'otherScreenings',
         ],
         'inspectionAttributes' => [
             'elokuva-tarkastus-tarkastusnro' => 'number',
@@ -370,11 +371,11 @@ implements \Laminas\Log\LoggerAwareInterface
             'elokuva-tarkastus-muuttiedot' => 'additional',
             'elokuva-tarkastus-tarkastusilmoitus' => 'notification',
             'elokuva-tarkastus-tarkastuselin' => 'inspector',
-            'elokuva-tarkastus-kopiolkm' => 'copy_count'
+            'elokuva-tarkastus-kopiolkm' => 'copy_count',
         ],
         'accessRestrictionMappings' => [
-            'finna-kayttooikeus' => 'accessRestrictions'
-        ]
+            'finna-kayttooikeus' => 'accessRestrictions',
+        ],
     ];
 
     /**
@@ -384,7 +385,7 @@ implements \Laminas\Log\LoggerAwareInterface
      */
     protected $descriptionTypeMappings = [
         'Content description' => 'contentDescription',
-        'Synopsis' => 'synopsis'
+        'Synopsis' => 'synopsis',
     ];
 
     /**
@@ -472,7 +473,7 @@ implements \Laminas\Log\LoggerAwareInterface
                     $results[] = [
                         'heading' => [$term],
                         'type' => '',
-                        'source' => ''
+                        'source' => '',
                     ];
                 }
             }
@@ -759,7 +760,7 @@ implements \Laminas\Log\LoggerAwareInterface
         $results = [
             'primaryAuthors' => [],
             'producers' => [],
-            'nonPresenters' => []
+            'nonPresenters' => [],
         ];
 
         foreach ($xml->HasAgent as $agent) {
@@ -772,7 +773,7 @@ implements \Laminas\Log\LoggerAwareInterface
                 'roleName' => '',
                 'description' => '',
                 'uncredited' => '',
-                'idx' => ''
+                'idx' => '',
             ];
 
             $primary = false;
@@ -892,7 +893,8 @@ implements \Laminas\Log\LoggerAwareInterface
             // Filter out video URLs
             foreach ($this->fields['online_urls_str_mv'] as $urlJson) {
                 $url = json_decode($urlJson, true);
-                if ($videoUrls && strpos($url['url'], 'elonet.fi') > 0
+                if (
+                    $videoUrls && strpos($url['url'], 'elonet.fi') > 0
                     && strpos($url['url'], '/video/') > 0
                 ) {
                     continue;
@@ -1016,7 +1018,8 @@ implements \Laminas\Log\LoggerAwareInterface
         $remove = [];
         foreach ($record->ProductionEvent as $event) {
             $attributes = $event->attributes();
-            if (isset($attributes->{'elonet-tag'})
+            if (
+                isset($attributes->{'elonet-tag'})
                 && 'lehdistoarvio' === (string)$attributes->{'elonet-tag'}
             ) {
                 $remove[] = $event;
@@ -1088,7 +1091,7 @@ implements \Laminas\Log\LoggerAwareInterface
             'foreignDistribution' => [],
             'otherScreenings' => [],
             'inspectionDetails' => [],
-            'accessRestrictions' => []
+            'accessRestrictions' => [],
         ];
         $xml = $this->getRecordXML();
         $config = $this->productionConfig;
@@ -1124,15 +1127,16 @@ implements \Laminas\Log\LoggerAwareInterface
                     $results[$festival][] = [
                         'name' => $stringValue,
                         'region' => $regionName,
-                        'date' => $dateText
+                        'date' => $dateText,
                     ];
                 }
                 // Get foreign distribution info
-                if ($distributor = $config['foreignDistributorMappings'][$key] ?? ''
+                if (
+                    $distributor = $config['foreignDistributorMappings'][$key] ?? ''
                 ) {
                     $results[$distributor][] = [
                         'name' => $stringValue,
-                        'region' => $regionName
+                        'region' => $regionName,
                     ];
                 }
                 // Get other screening info
@@ -1140,7 +1144,7 @@ implements \Laminas\Log\LoggerAwareInterface
                     $results[$screening][] = [
                         'name' => $stringValue,
                         'region' => $regionName,
-                        'date' => $dateText
+                        'date' => $dateText,
                     ];
                 }
                 // Get inspection detail
@@ -1148,7 +1152,8 @@ implements \Laminas\Log\LoggerAwareInterface
                     $inspectionResult[$inspection] = $stringValue;
                 }
                 // Get access restriction details
-                if ($restriction = $config['accessRestrictionMappings'][$key] ?? ''
+                if (
+                    $restriction = $config['accessRestrictionMappings'][$key] ?? ''
                 ) {
                     $results[$restriction][] = $stringValue;
                 }
@@ -1165,7 +1170,8 @@ implements \Laminas\Log\LoggerAwareInterface
             }
             $children = $event->children();
             foreach ($children as $childKey => $childValue) {
-                if ($storage = $config['productionEventMappings'][$childKey] ?? []
+                if (
+                    $storage = $config['productionEventMappings'][$childKey] ?? []
                 ) {
                     $results[$storage][] = (string)$childValue;
                 }
@@ -1197,7 +1203,8 @@ implements \Laminas\Log\LoggerAwareInterface
             return $this->cache[$cacheKey];
         }
         $source = $this->getSource();
-        if (null === $this->videoHandler
+        if (
+            null === $this->videoHandler
             || !($handler = $this->videoHandler->getHandler($source))
         ) {
             return $this->cache[$cacheKey] = [];
@@ -1249,7 +1256,7 @@ implements \Laminas\Log\LoggerAwareInterface
                     'description' => $videoType,
                     'text' => $videoType,
                     'source' => $source,
-                    'warnings' => $warnings
+                    'warnings' => $warnings,
                 ];
             }
         }
@@ -1507,16 +1514,19 @@ implements \Laminas\Log\LoggerAwareInterface
         $role = $this->roleMap[$normalizedRelator] ?? $relator;
 
         $attributes = $agent->Activity->attributes();
-        if (in_array(
-            $normalizedRelator,
-            ['A00', 'A08', 'A99', 'D99', 'E04', 'E99']
-        )
+        if (
+            in_array(
+                $normalizedRelator,
+                ['A00', 'A08', 'A99', 'D99', 'E04', 'E99']
+            )
         ) {
-            if (!empty($attributes->{'elokuva-elolevittaja'})
+            if (
+                !empty($attributes->{'elokuva-elolevittaja'})
             ) {
                 return null;
             }
-            if (!empty($attributes->{'elokuva-elotuotantoyhtio'})
+            if (
+                !empty($attributes->{'elokuva-elotuotantoyhtio'})
                 || !empty($attributes->{'elokuva-elorahoitusyhtio'})
                 || !empty($attributes->{'elokuva-elolaboratorio'})
             ) {

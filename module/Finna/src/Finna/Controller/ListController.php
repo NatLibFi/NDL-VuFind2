@@ -1,4 +1,5 @@
 <?php
+
 /**
  * List Controller
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Controller;
 
 use Laminas\Stdlib\Parameters;
@@ -116,7 +118,7 @@ class ListController extends \Finna\Controller\MyResearchController
                     'params' => $params,
                     'results' => $results,
                     'sortList' => $this->createSortList($listObj),
-                    'listTags' => $listTags
+                    'listTags' => $listTags,
                 ]
             );
             return $view;
@@ -172,7 +174,7 @@ class ListController extends \Finna\Controller\MyResearchController
                 'html' => true,
                 'msg' => $this->translate('bulk_save_success') . '. '
                 . '<a href="' . $listUrl . '" class="gotolist">'
-                . $this->translate('go_to_list') . '</a>.'
+                . $this->translate('go_to_list') . '</a>.',
             ];
             $this->flashMessenger()->addMessage($message, 'success');
             return $this->redirect()->toRoute('list-page', ['lid' => $sourceListId]);
@@ -180,7 +182,7 @@ class ListController extends \Finna\Controller\MyResearchController
         $view = $this->createViewModel(
             [
                 'listId' => $sourceListId,
-                'lists' => $user->getLists()
+                'lists' => $user->getLists(),
             ]
         );
         $view->setTemplate('list/save');

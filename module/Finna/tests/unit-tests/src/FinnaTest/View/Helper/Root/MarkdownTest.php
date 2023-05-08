@@ -26,6 +26,7 @@
  * @license  https://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
+
 namespace FinnaTest\View\Helper\Root;
 
 use Finna\CommonMark\Extension\CustomElementExtension;
@@ -61,7 +62,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
      *
      * @return Markdown
      */
-    protected function getHelper()
+    protected function getHelper(): Markdown
     {
         if (isset($this->helper)) {
             return $this->helper;
@@ -113,11 +114,12 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testDefaultHeadingLevelAdjustment()
+    public function testDefaultHeadingLevelAdjustment(): void
     {
         $markdown = "# One\n## Two\n### Three\n#### Four\n##### Five\n###### Six\n####### Seven";
         $converted = $this->getHelper()->toHtml($markdown);
-        $expected = "<h2>One</h2>\n<h3>Two</h3>\n<h4>Three</h4>\n<h5>Four</h5>\n<h6>Five</h6>\n<h6>Six</h6>\n<p>####### Seven</p>\n";
+        $expected = "<h2>One</h2>\n<h3>Two</h3>\n<h4>Three</h4>\n<h5>Four</h5>\n"
+            . "<h6>Five</h6>\n<h6>Six</h6>\n<p>####### Seven</p>\n";
         $this->assertEquals($expected, $converted);
     }
 
@@ -126,7 +128,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testReplaceDeprecatedDetailsTag()
+    public function testReplaceDeprecatedDetailsTag(): void
     {
         $markdown = "<details><summary markdown=\"1\">Summary</summary>Details</details>";
         $converted = $this->getHelper()->replaceDeprecatedTags($markdown);
@@ -139,7 +141,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testReplaceDeprecatedTruncateTag()
+    public function testReplaceDeprecatedTruncateTag(): void
     {
         $markdown = "<truncate><summary>Summary</summary>Truncate</truncate>";
         $converted = $this->getHelper()->replaceDeprecatedTags($markdown);
@@ -152,7 +154,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testFinnaPanel()
+    public function testFinnaPanel(): void
     {
         $markdown = $this->getFinnaPanelMarkdown();
         $converted = $this->getHelper()->toHtml($markdown);
@@ -165,7 +167,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testNestedFinnaPanels()
+    public function testNestedFinnaPanels(): void
     {
         $markdown = $this->getFinnaPanelMarkdown($this->getFinnaPanelMarkdown());
         $converted = $this->getHelper()->toHtml($markdown);
@@ -179,7 +181,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testFinnaTruncate()
+    public function testFinnaTruncate(): void
     {
         $markdown = $this->getFinnaTruncateMarkdown();
         $converted = $this->getHelper()->toHtml($markdown);
@@ -192,7 +194,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testSubsequentCustomElements()
+    public function testSubsequentCustomElements(): void
     {
         $markdown = $this->getFinnaPanelMarkdown() . "\n\n"
             . $this->getFinnaTruncateMarkdown();
@@ -207,7 +209,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testSingleLineCustomElement()
+    public function testSingleLineCustomElement(): void
     {
         $markdown = "<finna-panel></finna-panel> Extra content";
         $converted = $this->getHelper()->toHtml($markdown);
@@ -216,28 +218,48 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $converted);
     }
 
-    protected function getFinnaPanelMarkdown($content = '**Content**')
+    /**
+     * Get test Markdown with finna-panel
+     *
+     * @param string $content Content
+     *
+     * @return string
+     */
+    protected function getFinnaPanelMarkdown($content = '**Content**'): string
     {
         return <<<EOT
             <finna-panel heading-id="hid" collapse-id="cid">
               <h2 slot="heading">Heading</h2>
-              
+
               $content
             </finna-panel>
             EOT;
     }
 
-    protected function getFinnaTruncateMarkdown()
+    /**
+     * Get test Markdown with finna-truncate
+     *
+     * @return string
+     */
+    protected function getFinnaTruncateMarkdown(): string
     {
         return <<<EOT
             <finna-truncate>
               <span slot="label">Label</span>
-              
+
               **Content**
             </finna-truncate>
             EOT;
     }
 
+    /**
+     * Get expected result for finna-panel
+     *
+     * @param ?string $content Content
+     * @param ?string $heading Heading
+     *
+     * @return string
+     */
     protected function getExpectedFinnaPanel(
         ?string $content = "\n  \n<p><strong>Content</strong></p>\n",
         ?string $heading = 'Heading'
@@ -256,7 +278,12 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
         ) . "\n";
     }
 
-    protected function getExpectedFinnaTruncate()
+    /**
+     * Get expected result for finna-truncate
+     *
+     * @return string
+     */
+    protected function getExpectedFinnaTruncate(): string
     {
         return $this->getHelper()->getView()->render(
             FinnaTruncate::getTemplateName(),
@@ -264,7 +291,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
                 FinnaTruncate::getDefaultVariables(),
                 [
                     'label' => 'Label',
-                    'content' => "\n\n<p><strong>Content</strong></p>\n"
+                    'content' => "\n\n<p><strong>Content</strong></p>\n",
                 ]
             )
         ) . "\n";

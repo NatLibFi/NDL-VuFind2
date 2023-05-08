@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Video handler plugin manager
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\Video\Handler;
 
 /**
@@ -46,7 +48,7 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
     protected $aliases = [
         'Elonet' => Elonet::class,
         'Vimeo' => Vimeo::class,
-        'Default' => DefaultVideo::class
+        'Default' => DefaultVideo::class,
     ];
 
     /**

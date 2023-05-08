@@ -26,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org
  */
+
 namespace FinnaTest\Backend\Solr;
 
 use FinnaSearch\Backend\Solr\LuceneSyntaxHelper;
@@ -239,7 +240,7 @@ class LuceneSyntaxHelperTest extends \VuFindTest\Unit\TestCase
             ['[a      to      b]', '([a TO b] OR [A TO B])'],   // handle extra spaces
             // special case for timestamps:
             ['[1900-01-01t00:00:00z to 1900-12-31t23:59:59z]', '[1900-01-01T00:00:00Z TO 1900-12-31T23:59:59Z]'],
-            ['{1900-01-01T00:00:00Z       TO   1900-12-31T23:59:59Z}', '{1900-01-01T00:00:00Z TO 1900-12-31T23:59:59Z}']
+            ['{1900-01-01T00:00:00Z       TO   1900-12-31T23:59:59Z}', '{1900-01-01T00:00:00Z TO 1900-12-31T23:59:59Z}'],
         ];
         // @codingStandardsIgnoreEnd
 
@@ -386,7 +387,7 @@ class LuceneSyntaxHelperTest extends \VuFindTest\Unit\TestCase
             'index:+keyword index2:-keyword2^20' => 'keyword keyword2',
             'index:[start TO end]' => '[start TO end]',
             'index:{start TO end}' => '{start TO end}',
-            'es\\"caped field:test' => 'es\\"caped test'
+            'es\\"caped field:test' => 'es\\"caped test',
         ];
         foreach ($tests as $input => $expected) {
             $this->assertEquals(

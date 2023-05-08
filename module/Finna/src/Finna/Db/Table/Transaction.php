@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Definition for online payment transaction
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Db\Table;
 
 use Finna\Db\Row\Transaction as TransactionRow;
@@ -133,7 +135,7 @@ class Transaction extends \VuFind\Db\Table\Gateway
             self::STATUS_PAID,
             self::STATUS_REGISTRATION_FAILED,
             self::STATUS_REGISTRATION_EXPIRED,
-            self::STATUS_FINES_UPDATED
+            self::STATUS_FINES_UPDATED,
         ];
 
         $callback = function ($select) use ($patronId, $statuses) {

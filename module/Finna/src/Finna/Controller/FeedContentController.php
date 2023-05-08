@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Feed Content Controller
  *
@@ -28,6 +29,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Controller;
 
 /**
@@ -69,7 +71,7 @@ class FeedContentController extends ContentController
                 'page' => 'feed-content',
                 'feed' => $page,
                 'element' => $element,
-                'modal' => $modal
+                'modal' => $modal,
             ]
         );
     }
@@ -126,7 +128,8 @@ class FeedContentController extends ContentController
             return $this->notFoundAction();
         }
 
-        if (!($imageResult = $this->downloadData($imageUrl))
+        if (
+            !($imageResult = $this->downloadData($imageUrl))
             || !$this->isImageContentType($imageResult['contentType'])
         ) {
             return $this->notFoundAction();
@@ -174,7 +177,8 @@ class FeedContentController extends ContentController
             return $this->notFoundAction();
         }
 
-        if (!($imageResult = $this->downloadData($imageUrl))
+        if (
+            !($imageResult = $this->downloadData($imageUrl))
             || !$this->isImageContentType($imageResult['contentType'])
         ) {
             return $this->notFoundAction();

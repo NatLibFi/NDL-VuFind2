@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Abstract base class for online payment handlers.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Finna\Db\Row\Transaction as TransactionRow;
@@ -46,8 +48,8 @@ use VuFind\Session\Settings as SessionSettings;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractBase
-implements \Laminas\Log\LoggerAwareInterface
+abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractBase implements
+    \Laminas\Log\LoggerAwareInterface
 {
     use \VuFind\Log\LoggerAwareTrait;
 
@@ -173,7 +175,8 @@ implements \Laminas\Log\LoggerAwareInterface
         $paymentConfig = $this->ils->getConfig('onlinePayment', $patron);
         $fineIds = $t->getFineIds();
 
-        if (($paymentConfig['exactBalanceRequired'] ?? true)
+        if (
+            ($paymentConfig['exactBalanceRequired'] ?? true)
             || !empty($paymentConfig['creditUnsupported'])
         ) {
             try {
@@ -193,7 +196,8 @@ implements \Laminas\Log\LoggerAwareInterface
             // Check that payable sum has not been updated
             $exact = $paymentConfig['exactBalanceRequired'] ?? true;
             $noCredit = $exact || !empty($paymentConfig['creditUnsupported']);
-            if ($finesAmount['payable'] && !empty($finesAmount['amount'])
+            if (
+                $finesAmount['payable'] && !empty($finesAmount['amount'])
                 && (($exact && $t->amount != $finesAmount['amount'])
                 || ($noCredit && $t->amount > $finesAmount['amount']))
             ) {
@@ -207,7 +211,7 @@ implements \Laminas\Log\LoggerAwareInterface
                 $t->setFinesUpdated();
                 return [
                     'success' => false,
-                    'msg' => 'online_payment_registration_failed'
+                    'msg' => 'online_payment_registration_failed',
                 ];
             }
         }

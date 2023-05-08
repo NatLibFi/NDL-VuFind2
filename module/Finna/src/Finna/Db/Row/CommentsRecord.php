@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Row Definition for CommentsRecord link table.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Db\Row;
 
 use VuFind\Db\Row\RowGateway;

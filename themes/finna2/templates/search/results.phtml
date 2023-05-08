@@ -1,6 +1,6 @@
 <!-- START of: finna - search/results.phtml -->
 <?php
-  $browse = $browse ?? false;
+  $browse ??= false;
   $this->layout()->browse = $browse;
   $this->headMeta()->appendName('robots', 'noindex,follow');
   // Set up page title:
@@ -45,7 +45,7 @@
       'startRecord' => $this->results->getStartRecord(),
       'endRecord' => $this->results->getEndRecord(),
       'recordsFound' => $this->results->getResultTotal() > 0,
-      'searchType' => $searchType
+      'searchType' => $searchType,
   ];
   if ($searchType == 'advanced') {
     $this->layout()->advSearchHeader = $this->context($this)->renderInContext(
@@ -81,7 +81,7 @@
               'defaultSortApplied' => $defaultSortApplied,
               'options' => $options,
               'urlQuery' => $results->getUrlQuery(),
-              'params' => $params
+              'params' => $params,
           ]
       );
   }
@@ -222,7 +222,7 @@
             [
             '%%start%%' => $this->results->getStartRecord(),
             '%%end%%' => $this->results->getEndRecord(),
-            '%%total%%' => $this->localizedNumber($recordTotal)
+            '%%total%%' => $this->localizedNumber($recordTotal),
           ]
         );?>
         <div class="pagination-container">

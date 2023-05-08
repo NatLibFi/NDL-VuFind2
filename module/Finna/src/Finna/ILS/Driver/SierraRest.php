@@ -1,4 +1,5 @@
 <?php
+
 /**
  * III Sierra REST API driver
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
+
 namespace Finna\ILS\Driver;
 
 use VuFind\Exception\ILS as ILSException;
@@ -68,6 +70,13 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     ];
 
     /**
+     * Days before account expiration to start displaying a notification
+     *
+     * @var int
+     */
+    protected $daysBeforeAccountExpirationNotification = 30;
+
+    /**
      * Initialize the driver.
      *
      * Validate configuration and perform all resource-intensive tasks needed to
@@ -85,33 +94,12 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         }
         $this->onlinePayableManualFineDescriptionPatterns
             = $this->config['OnlinePayment']['manualFineDescriptions'] ?? [];
-    }
 
-    /**
-     * Get Holding
-     *
-     * This is responsible for retrieving the holding information of a certain
-     * record.
-     *
-     * @param string $id      The record id to retrieve the holdings for
-     * @param array  $patron  Patron data
-     * @param array  $options Extra options
-     *
-     * @throws \VuFind\Exception\ILS
-     * @return array         On success, an associative array with the following
-     * keys: id, availability (boolean), status, location, reserve, callnumber,
-     * duedate, number, barcode.
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function getHolding($id, array $patron = null, array $options = [])
-    {
-        $data = parent::getHolding($id, $patron);
-        if (!empty($data)) {
-            $summary = $this->getHoldingsSummary($data);
-            $data[] = $summary;
+        $key = 'daysBeforeAccountExpirationNotification';
+        if (isset($this->config['Catalog'][$key])) {
+            $this->daysBeforeAccountExpirationNotification
+                = $this->config['Catalog'][$key];
         }
-        return $data;
     }
 
     /**
@@ -169,7 +157,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                     'locationID' => $id,
                     'locationDisplay' => $this->translateLocation(
                         ['code' => $id, 'name' => $location]
-                    )
+                    ),
                 ];
             }
             return $locations;
@@ -181,7 +169,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'limit' => 10000,
                 'offset' => 0,
                 'fields' => 'code,name',
-                'language' => $this->getTranslatorLocale()
+                'language' => $this->getTranslatorLocale(),
             ],
             'GET',
             $patron
@@ -202,33 +190,12 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         foreach ($result as $entry) {
             $locations[] = [
                 'locationID' => $entry['code'],
-                'locationDisplay' => $entry['name']
+                'locationDisplay' => $entry['name'],
             ];
         }
 
         usort($locations, [$this, 'pickupLocationSortFunction']);
         return $locations;
-    }
-
-    /**
-     * Get Status
-     *
-     * This is responsible for retrieving the status information of a certain
-     * record.
-     *
-     * @param string $id The record id to retrieve the holdings for
-     *
-     * @return array An associative array with the following keys:
-     * id, availability (boolean), status, location, reserve, callnumber.
-     */
-    public function getStatus($id)
-    {
-        $data = parent::getStatus($id);
-        if (!empty($data)) {
-            $summary = $this->getHoldingsSummary($data);
-            $data[] = $summary;
-        }
-        return $data;
     }
 
     /**
@@ -247,7 +214,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             [$this->apiBase, 'patrons', $patron['id']],
             [
                 'fields' => 'names,emails,phones,addresses,birthDate,expirationDate'
-                    . ',message,homeLibraryCode'
+                    . ',message,homeLibraryCode',
             ],
             'GET',
             $patron
@@ -276,11 +243,6 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 $city = $postalParts[0];
             }
         }
-        $expirationDate = !empty($result['expirationDate'])
-                ? $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d',
-                    $result['expirationDate']
-                ) : '';
 
         $messages = [];
         foreach ($result['message']['accountMessages'] ?? [] as $message) {
@@ -311,16 +273,34 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             'zip' => $zip,
             'city' => $city,
             'birthdate' => $result['birthDate'] ?? '',
-            'expiration_date' => $expirationDate,
             'messages' => $messages,
             'home_library' => $result['homeLibraryCode'],
         ];
+
+        if (!empty($result['expirationDate'])) {
+            $profile['expiration_date'] = $this->dateConverter->convertToDisplayDate(
+                'Y-m-d',
+                $result['expirationDate']
+            );
+            $date = \DateTime::createFromFormat('Y-m-d', $result['expirationDate']);
+            $diff = $date->diff(new \Datetime());
+            if (!$diff->invert && $diff->days > 0) {
+                $profile['expired'] = true;
+            } elseif (
+                $this->daysBeforeAccountExpirationNotification
+                && $diff->days === 0
+                || ($diff->invert
+                && $diff->days <= $this->daysBeforeAccountExpirationNotification)
+            ) {
+                $profile['expiration_soon'] = true;
+            }
+        }
 
         // Checkout history:
         $result = $this->makeRequest(
             [
                 'v6', 'patrons', $patron['id'], 'checkouts', 'history',
-                'activationStatus'
+                'activationStatus',
             ],
             [],
             'GET',
@@ -349,7 +329,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         $result = $this->makeRequest(
             [
                 'v6', 'patrons', $patron['id'], 'checkouts', 'history',
-                'activationStatus'
+                'activationStatus',
             ],
             json_encode($request),
             'POST',
@@ -361,7 +341,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'success' => false,
                 'status' => $this->formatErrorMessage(
                     $result['description'] ?? $result['name']
-                )
+                ),
             ];
         }
         return ['success' => true, 'status' => 'request_change_done'];
@@ -394,19 +374,19 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                         $details['country'] ?? '',
                     ]
                 ),
-                'type' => 'a'
+                'type' => 'a',
             ];
         }
         if (array_key_exists('phone', $details)) {
             $request['phones'][] = [
                 'number' => $details['phone'],
-                'type' => 'p'
+                'type' => 'p',
             ];
         }
         if (array_key_exists('smsnumber', $details)) {
             $request['phones'][] = [
                 'number' => $details['smsnumber'],
-                'type' => 't'
+                'type' => 't',
             ];
         }
         if (array_key_exists('email', $details)) {
@@ -418,7 +398,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
 
         $result = $this->makeRequest(
             [
-                'v6', 'patrons', $patron['id']
+                'v6', 'patrons', $patron['id'],
             ],
             json_encode($request),
             'PUT',
@@ -435,14 +415,14 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             return [
                 'success' => false,
                 'status' => 'profile_update_failed',
-                'sys_message' => $result['description'] ?? ''
+                'sys_message' => $result['description'] ?? '',
             ];
         }
 
         return [
             'success' => true,
             'status' => 'request_change_accepted',
-            'sys_message' => ''
+            'sys_message' => '',
         ];
     }
 
@@ -463,7 +443,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             [$this->apiBase, 'patrons', $patron['id'], 'fines'],
             [
                 'fields' => 'item,assessedDate,description,chargeType,itemCharge'
-                    . ',processingFee,billingFee,paidAmount,location,invoiceNumber'
+                    . ',processingFee,billingFee,paidAmount,location,invoiceNumber',
             ],
             'GET',
             $patron
@@ -479,7 +459,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             $balance = $amount - $entry['paidAmount'];
             $description = '';
             // Display charge type if it's not manual (code=1)
-            if (!empty($entry['chargeType'])
+            if (
+                !empty($entry['chargeType'])
                 && $entry['chargeType']['code'] != '1'
             ) {
                 $description = $entry['chargeType']['display'];
@@ -551,7 +532,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             return [
                 'payable' => false,
                 'amount' => 0,
-                'reason' => 'online_payment_minimum_fee'
+                'reason' => 'online_payment_minimum_fee',
             ];
         }
 
@@ -559,7 +540,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         $amount = 0;
         $payableFines = [];
         foreach ($fines as $fine) {
-            if (null !== $selectedFineIds
+            if (
+                null !== $selectedFineIds
                 && !in_array($fine['fine_id'], $selectedFineIds)
             ) {
                 continue;
@@ -571,7 +553,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         }
         $config = $this->getConfig('onlinePayment');
         $transactionFee = $config['transactionFee'] ?? 0;
-        if (isset($config['minimumFee'])
+        if (
+            isset($config['minimumFee'])
             && $amount + $transactionFee < $config['minimumFee']
         ) {
             $nonPayableReason = 'online_payment_minimum_fee';
@@ -622,7 +605,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         $amountRemaining = $amount;
         $payments = [];
         foreach ($fines as $fine) {
-            if (in_array($fine['fine_id'], $fineIds)
+            if (
+                in_array($fine['fine_id'], $fineIds)
                 && $fine['payableOnline'] && $fine['balance'] > 0
             ) {
                 $pay = min($fine['balance'], $amountRemaining);
@@ -640,11 +624,11 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         }
 
         $request = [
-            'payments' => $payments
+            'payments' => $payments,
         ];
         $result = $this->makeRequest(
             [
-                'v6', 'patrons', $patron['id'], 'fines', 'payment'
+                'v6', 'patrons', $patron['id'], 'fines', 'payment',
             ],
             json_encode($request),
             'PUT',
@@ -666,6 +650,142 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
+     * Get a password recovery token for a user
+     *
+     * @param array $params Required params such as cat_username and email
+     *
+     * @return array Associative array of the results
+     */
+    public function getPasswordRecoveryToken($params)
+    {
+        $request = [
+            'queries' => [
+                [
+                    'target' => [
+                        'record' => [
+                            'type' => 'patron',
+                        ],
+                        'field' => [
+                            'tag' => 'b',
+                        ],
+                    ],
+                    'expr' => [
+                        'op' => 'equals',
+                        'operands' => [
+                            str_replace(' ', '', $params['cat_username']),
+                        ],
+                    ],
+                ],
+                'and',
+                [
+                    'target' => [
+                        'record' => [
+                            'type' => 'patron',
+                        ],
+                        'field' => [
+                            'tag' => 'z',
+                        ],
+                    ],
+                    'expr' => [
+                        'op' => 'equals',
+                        'operands' => [
+                            trim($params['email']),
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $result = $this->makeRequest(
+            [
+                [
+                    'type' => 'encoded',
+                    'value' => 'v6/patrons/query?offset=0&limit=1',
+                ],
+            ],
+            json_encode($request),
+            'POST'
+        );
+
+        if (
+            $result['total'] === 1
+            && $link = $result['entries'][0]['link'] ?? null
+        ) {
+            $patronId = $this->extractId($link);
+
+            // Check that there's an existing PIN in varFields:
+            $result = $this->makeRequest(
+                [$this->apiBase, 'patrons', $patronId],
+                [
+                    'fields' => 'varFields',
+                ],
+                'GET'
+            );
+            $pinExists = false;
+            foreach ($result['varFields'] ?? [] as $field) {
+                if ('=' === $field['fieldTag']) {
+                    $pinExists = true;
+                    break;
+                }
+            }
+            if (!$pinExists) {
+                return [
+                    'success' => false,
+                    'error' => 'authentication_error_account_locked',
+                ];
+            }
+            return [
+                'success' => true,
+                'token' => $patronId,
+            ];
+        }
+        return [
+            'success' => false,
+            'error' => 'recovery_user_not_found',
+        ];
+    }
+
+    /**
+     * Recover user's password with a token from getPasswordRecoveryToken
+     *
+     * @param array $params Required params such as cat_username, token and new
+     * password
+     *
+     * @return array Associative array of the results
+     */
+    public function recoverPassword($params)
+    {
+        $request = [
+            'pin' => $params['password'],
+        ];
+        $result = $this->makeRequest(
+            [
+                'v6', 'patrons', $params['token'],
+            ],
+            json_encode($request),
+            'PUT',
+            false,
+            true
+        );
+
+        if (!in_array($result['statusCode'], ['200', '204'])) {
+            $this->logError(
+                'Patron update request failed with status code'
+                . " {$result['statusCode']}: "
+                . (var_export($result['response'] ?? '', true))
+            );
+            return [
+                'success' => false,
+                'error' => 'profile_update_failed',
+            ];
+        }
+
+        return [
+            'success' => true,
+        ];
+    }
+
+    /**
      * Public Function which retrieves renew, hold and cancel settings from the
      * driver ini file.
      *
@@ -683,6 +803,13 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             $result['exactBalanceRequired'] = false;
             $result['selectFines'] = true;
             return $result;
+        }
+        if (
+            'getPasswordRecoveryToken' === $function
+            || 'recoverPassword' === $function
+        ) {
+            return !empty($this->config['PasswordRecovery']['enabled'])
+                ? $this->config['PasswordRecovery'] : false;
         }
         if ('updateAddress' === $function) {
             $function = 'updateProfile';
@@ -715,7 +842,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                                 $keyVal = explode('=', $option, 2);
                                 if (isset($keyVal[1])) {
                                     $field['options'][$keyVal[0]] = [
-                                        'name' => $keyVal[1]
+                                        'name' => $keyVal[1],
                                     ];
                                 }
                             }
@@ -731,47 +858,14 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Purge Patron Transaction History
-     *
-     * @param array $patron The patron array from patronLogin
-     *
-     * @throws ILSException
-     * @return array Associative array of the results
-     */
-    public function purgeTransactionHistory($patron)
-    {
-        $result = $this->makeRequest(
-            [
-                'v6', 'patrons', $patron['id'], 'checkouts', 'history'
-            ],
-            '',
-            'DELETE',
-            $patron
-        );
-
-        if (!empty($result['code'])) {
-            return [
-                'success' => false,
-                'status' => $this->formatErrorMessage(
-                    $result['description'] ?? $result['name']
-                )
-            ];
-        }
-        return [
-            'success' => true,
-            'status' => 'loan_history_purged',
-            'sysMessage' => ''
-        ];
-    }
-
-    /**
      * Return summary of holdings items.
      *
      * @param array $holdings Parsed holdings items
+     * @param array $bib      Bibliographic data
      *
      * @return array summary
      */
-    protected function getHoldingsSummary($holdings)
+    protected function getHoldingsSummary($holdings, $bib)
     {
         $availableTotal = 0;
         $locations = [];
@@ -786,15 +880,18 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         // Since summary data is appended to the holdings array as a fake item,
         // we need to add a few dummy-fields that VuFind expects to be
         // defined for all elements.
-
-        return [
+        $result = [
            'available' => $availableTotal,
            'total' => count($holdings),
            'locations' => count($locations),
            'availability' => null,
            'callnumber' => null,
-           'location' => '__HOLDINGSSUMMARYLOCATION__'
+           'location' => '__HOLDINGSSUMMARYLOCATION__',
         ];
+        if ($this->config['Holdings']['display_total_hold_count'] ?? true) {
+            $result['reservations'] = $bib['holdCount'] ?? null;
+        }
+        return $result;
     }
 
     /**
@@ -811,16 +908,208 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      */
     protected function getItemStatusesForBib($id, $checkHoldings)
     {
-        $result = parent::getItemStatusesForBib($id, $checkHoldings);
-        foreach ($result as &$item) {
-            if (strncmp($item['item_id'], 'ORDER_', 6) === 0) {
-                $item['number'] = $this->translate('item_order_heading');
-            } else {
-                $item['number'] = $item['callnumber'];
+        $bibFields = 'bibLevel';
+        // If we need to look at bib call numbers, retrieve varFields:
+        if (!empty($this->config['CallNumber']['bib_fields'])) {
+            $bibFields .= ',varFields';
+        }
+        // Retrieve orders if needed:
+        if (!empty($this->config['Holdings']['display_orders'])) {
+            $bibFields .= ',orders';
+        }
+        // Retrieve hold count if needed:
+        if ($this->config['Holdings']['display_total_hold_count'] ?? true) {
+            $bibFields .= ',holdCount';
+        }
+        $bib = $this->getBibRecord($id, $bibFields);
+        $bibCallNumber = $this->getBibCallNumber($bib);
+        $orders = [];
+        foreach ($bib['orders'] ?? [] as $order) {
+            $location = $order['location']['code'];
+            $orders[$location][] = $order;
+        }
+        $holdingsData = [];
+        if ($checkHoldings && $this->apiVersion >= 5.1) {
+            $holdingsResult = $this->makeRequest(
+                ['v5', 'holdings'],
+                [
+                    'bibIds' => $this->extractBibId($id),
+                    //'deleted' => 'false',
+                    //'suppressed' => 'false',
+                    'fields' => 'fixedFields,varFields',
+                ],
+                'GET'
+            );
+            foreach ($holdingsResult['entries'] ?? [] as $entry) {
+                $location = '';
+                foreach ($entry['fixedFields'] as $code => $field) {
+                    if (
+                        $code === static::HOLDINGS_LINE_NUMBER
+                        || $field['label'] === 'LOCATION'
+                    ) {
+                        $location = $field['value'];
+                        break;
+                    }
+                }
+                if ('' === $location) {
+                    continue;
+                }
+                $holdingsData[$location][] = $entry;
             }
         }
-        unset($item);
-        return $result;
+
+        $offset = 0;
+        $limit = 50;
+        $fields = 'location,status,barcode,callNumber,fixedFields,varFields';
+        $statuses = [];
+        $sort = 0;
+        $result = null;
+        // Fetch hold count for items if needed:
+        $displayItemHoldCount = $this->config['Holdings']['display_item_hold_counts'] ?? false;
+        if ($displayItemHoldCount) {
+            $fields .= ',holdCount';
+        }
+        while (null === $result || $limit === $result['total']) {
+            $result = $this->makeRequest(
+                [$this->apiBase, 'items'],
+                [
+                    'bibIds' => $this->extractBibId($id),
+                    'deleted' => 'false',
+                    'suppressed' => 'false',
+                    'fields' => $fields,
+                    'limit' => $limit,
+                    'offset' => $offset,
+                ],
+                'GET'
+            );
+            if (empty($result['entries'])) {
+                if (!empty($result['httpStatus']) && 404 !== $result['httpStatus']) {
+                    $msg = "Item status request failed: {$result['httpStatus']}";
+                    if (!empty($result['description'])) {
+                        $msg .= " ({$result['description']})";
+                    }
+                    throw new ILSException($msg);
+                }
+                break;
+            }
+
+            foreach ($result['entries'] as $item) {
+                $location = $this->translateLocation($item['location']);
+                [$status, $duedate, $notes] = $this->getItemStatus($item);
+                $available = $status == $this->mapStatusCode('-');
+                // OPAC message
+                if (isset($item['fixedFields']['108'])) {
+                    $opacMsg = $item['fixedFields']['108'];
+                    $trimmedMsg = trim($opacMsg['value']);
+                    if (strlen($trimmedMsg) && $trimmedMsg != '-') {
+                        $notes[] = $this->translateOpacMessage(
+                            trim($opacMsg['value'])
+                        );
+                    }
+                }
+                $callnumber = isset($item['callNumber'])
+                    ? preg_replace('/^\|a/', '', $item['callNumber'])
+                    : $bibCallNumber;
+
+                $volume = isset($item['varFields']) ? $this->extractVolume($item)
+                    : '';
+
+                $entry = [
+                    'id' => $id,
+                    'item_id' => $item['id'],
+                    'location' => $location,
+                    'availability' => $available,
+                    'status' => $status,
+                    'reserve' => 'N',
+                    'callnumber' => $callnumber,
+                    'duedate' => $duedate,
+                    'number' => $volume,
+                    'barcode' => $item['barcode'],
+                    'sort' => $sort--,
+                    'requests_placed' => $displayItemHoldCount ? ($item['holdCount'] ?? null) : null,
+                ];
+                if ($notes) {
+                    $entry['item_notes'] = $notes;
+                }
+
+                if (
+                    $this->isHoldable($item) && $this->itemHoldAllowed($item, $bib)
+                ) {
+                    $entry['is_holdable'] = true;
+                    $entry['level'] = 'copy';
+                    $entry['addLink'] = true;
+                } else {
+                    $entry['is_holdable'] = false;
+                }
+
+                $locationCode = $item['location']['code'] ?? '';
+                if (!empty($holdingsData[$locationCode])) {
+                    $entry += $this->getHoldingsData($holdingsData[$locationCode]);
+                    $holdingsData[$locationCode]['_hasItems'] = true;
+                }
+
+                $statuses[] = $entry;
+            }
+            $offset += $limit;
+        }
+
+        // Add holdings that don't have items
+        foreach ($holdingsData as $locationCode => $holdings) {
+            if (!empty($holdings['_hasItems'])) {
+                continue;
+            }
+
+            $location = $this->translateLocation(
+                ['code' => $locationCode, 'name' => '']
+            );
+            $code = $locationCode;
+            while ('' === $location && $code) {
+                $location = $this->getLocationName($code);
+                $code = substr($code, 0, -1);
+            }
+            $entry = [
+                'id' => $id,
+                'item_id' => 'HLD_' . $holdings[0]['id'],
+                'location' => $location,
+                'requests_placed' => 0,
+                'status' => '',
+                'use_unknown_message' => true,
+                'availability' => false,
+                'duedate' => '',
+                'barcode' => '',
+                'sort' => $sort--,
+            ];
+            $entry += $this->getHoldingsData($holdings);
+
+            $statuses[] = $entry;
+        }
+
+        // Add orders
+        foreach ($orders as $locationCode => $orderSet) {
+            $location = $this->translateLocation($orderSet[0]['location']);
+            $statuses[] = [
+                'id' => $id,
+                'item_id' => "ORDER_{$id}_$locationCode",
+                'location' => $location,
+                'callnumber' => $bibCallNumber,
+                'number' => '',
+                'status' => $this->mapStatusCode('Ordered'),
+                'reserve' => 'N',
+                'item_notes' => $this->getOrderMessages($orderSet),
+                'availability' => false,
+                'duedate' => '',
+                'barcode' => '',
+                'sort' => $sort--,
+            ];
+        }
+
+        usort($statuses, [$this, 'statusSortFunction']);
+
+        if ($statuses) {
+            $statuses[] = $this->getHoldingsSummary($statuses, $bib);
+        }
+
+        return $statuses;
     }
 
     /**
@@ -969,7 +1258,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 [],
                 null,
                 [
-                    'Authorization: Bearer ' . $config['apiKey']
+                    'Authorization: Bearer ' . $config['apiKey'],
                 ]
             );
             if (!$response->isSuccess()) {
@@ -1041,7 +1330,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 $response = $client->GetItemDetails(
                     [
                         'Token' => $authToken,
-                        'ItemId' => $barcode
+                        'ItemId' => $barcode,
                     ]
                 );
             } catch (\SoapFault $e) {
@@ -1052,7 +1341,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                     $response = $client->GetItemDetails(
                         [
                             'Token' => $authToken,
-                            'ItemId' => $barcode
+                            'ItemId' => $barcode,
                         ]
                     );
                 } else {
@@ -1155,7 +1444,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         $bibsUrl = $this->getApiUrlFromHierarchy([$this->apiBase, 'bibs']);
         $itemsUrl = $this->getApiUrlFromHierarchy([$this->apiBase, 'items']);
         $cacheKey = null;
-        if ('GET' === $method
+        if (
+            'GET' === $method
             && (strncmp($url, $bibsUrl, strlen($bibsUrl)) === 0
             || strncmp($url, $itemsUrl, strlen($itemsUrl)) === 0)
         ) {
@@ -1198,5 +1488,29 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             throw new \Exception('Location cache not available');
         }
         return $locations;
+    }
+
+    /**
+     * Build an API URL from a hierarchy array
+     *
+     * @param array $hierarchy Hierarchy
+     *
+     * @return string
+     */
+    protected function getApiUrlFromHierarchy(array $hierarchy): string
+    {
+        $url = $this->config['Catalog']['host'];
+        foreach ($hierarchy as $value) {
+            if (is_array($value)) {
+                if ('encoded' === $value['type']) {
+                    $url .= '/' . $value['value'];
+                    continue;
+                }
+                $value = $value['value'];
+            } else {
+                $url .= '/' . urlencode($value);
+            }
+        }
+        return $url;
     }
 }

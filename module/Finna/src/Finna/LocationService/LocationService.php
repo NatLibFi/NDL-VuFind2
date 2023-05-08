@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Location Service.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\LocationService;
 
 /**
@@ -80,7 +82,8 @@ class LocationService
         $language,
         $fields
     ) {
-        if (empty($this->config['General']['enabled'])
+        if (
+            empty($this->config['General']['enabled'])
             || empty($this->config['General']['url'])
             || empty($this->config[$source])
             || (empty($this->config[$source]['owner'])
@@ -102,8 +105,12 @@ class LocationService
             }
         }
 
+        $callnum = $fields['callnumber'] ?? '';
+        if ($callnum instanceof \VuFind\I18n\TranslatableString) {
+            $callnum = $callnum->getDisplayString();
+        }
         $params = [
-            'callno' => $fields['callnumber'] ?? '',
+            'callno' => $callnum,
             'collection' => $collection,
             'location' => $location,
             'branch' => $fields['branch'] ?? '',

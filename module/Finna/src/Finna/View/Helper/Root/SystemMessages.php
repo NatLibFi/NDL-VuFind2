@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Helper class for system messages
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\View\Helper\Root;
 
 use Laminas\Config\Config;
@@ -43,8 +45,8 @@ use Laminas\Session\Container;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class SystemMessages extends \Laminas\View\Helper\AbstractHelper
-implements \VuFind\I18n\Translator\TranslatorAwareInterface
+class SystemMessages extends \Laminas\View\Helper\AbstractHelper implements
+    \VuFind\I18n\Translator\TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 

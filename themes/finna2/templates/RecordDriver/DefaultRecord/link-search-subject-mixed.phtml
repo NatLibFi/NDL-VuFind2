@@ -1,8 +1,10 @@
-<?php // No ending line feed
+<?php
 $searchRoute = $this->searchAction ?: $this->searchOptions($this->driver->getSearchBackendIdentifier())->getSearchAction();
 if (!($id = $this->id ?: $this->localId)) {
+    // Use echo to ensure we don't return a line feed
     echo $this->url($searchRoute, [], ['query' => ['lookfor' => '"' . $this->lookfor . '"', 'type' => 'Subject']]);
 } else {
+    // Use echo to ensure we don't return a line feed
     echo $this->url(
         $searchRoute,
         [],

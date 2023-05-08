@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Row definition for online payment transaction
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Db\Row;
 
 use Finna\Db\Table\Transaction as TransactionTable;
@@ -47,8 +49,7 @@ use Laminas\Db\ResultSet\ResultSetInterface;
  * @property string $reported
  * @property string $cat_username
  */
-class Transaction extends \VuFind\Db\Row\RowGateway
-implements \VuFind\Db\Table\DbTableAwareInterface
+class Transaction extends \VuFind\Db\Row\RowGateway implements \VuFind\Db\Table\DbTableAwareInterface
 {
     use \VuFind\Db\Table\DbTableAwareTrait;
 
@@ -73,7 +74,7 @@ implements \VuFind\Db\Table\DbTableAwareInterface
             $this->complete,
             [
                 TransactionTable::STATUS_PROGRESS,
-                TransactionTable::STATUS_REGISTRATION_FAILED
+                TransactionTable::STATUS_REGISTRATION_FAILED,
             ]
         );
     }
@@ -111,7 +112,7 @@ implements \VuFind\Db\Table\DbTableAwareInterface
             $this->complete,
             [
                 TransactionTable::STATUS_PAID,
-                TransactionTable::STATUS_REGISTRATION_FAILED
+                TransactionTable::STATUS_REGISTRATION_FAILED,
             ]
         );
     }

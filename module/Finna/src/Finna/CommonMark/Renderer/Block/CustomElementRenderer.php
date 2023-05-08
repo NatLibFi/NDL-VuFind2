@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Custom element renderer
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\CommonMark\Renderer\Block;
 
 use Exception;
@@ -43,8 +45,7 @@ use League\CommonMark\Renderer\NodeRendererInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class CustomElementRenderer extends AbstractCustomElementEnabledBase
-implements NodeRendererInterface
+class CustomElementRenderer extends AbstractCustomElementEnabledBase implements NodeRendererInterface
 {
     /**
      * Render the node.
