@@ -52,16 +52,17 @@
               <div class="time-row template hide">
                 <div class="date-container">
                   <span class="date"></span>
+                </div>
+                <div class="description">
                   <span class="name"></span>
+                  <span class="name-staff"><?=$this->translate('organisation_info_schedule_staff')?></span>
+                  <span class="selfservice-only hide"><?=$this->translate('organisation_info_only_selfservice')?></span>
+                  <span class="closed-notice hide"><?=$this->icon('organisation-info-closed')?> <?=$this->translate('organisation_info_is_closed')?></span>
+                  <span class="info"></span>
                 </div>
                 <div class="time-container">
                   <span class="period"><span class="opens"></span> - <span class="closes"></span></span>
                   <span class="closed-today hide"><?=$this->translate('organisation_info_is_closed')?></span>
-                </div>
-                <div class="description">
-                  <span class="name-staff"><?=$this->translate('organisation_info_schedule_staff')?></span>
-                  <span class="selfservice-only hide"><?=$this->translate('organisation_info_only_selfservice')?></span>
-                  <span class="info"></span>
                 </div>
               </div>
             </div>

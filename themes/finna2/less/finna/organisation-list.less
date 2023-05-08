@@ -106,8 +106,13 @@
                 max-width: @organisation-info-max-w;
             }
             .date-rows {
+                padding: 5px;
                 &:not(:last-child) {
                     border-bottom: 1px solid @gray-lighter;
+                }
+                &.today {
+                    background: @gray-lighter;
+                    font-weight: bold;
                 }
 
                 .time-row {
@@ -115,7 +120,13 @@
                     flex-flow: row nowrap;
                     width: 100%;
                     line-height: 1.26em;
-                    padding: 5px;
+                    padding-top: 2px;
+
+                    &.sub-row {
+                        color: @gray-light;
+                        font-size: .94em;
+                    }
+
                     .date-container {
                         flex: 1 0 20%;
                         display: flex;
@@ -125,27 +136,23 @@
                             padding-left: 5px;
                         }
                     }
+                    .description {
+                        flex: 1 1 60%;
+                        display: flex;
+                        padding-left: 10px;
+
+                        .info {
+                            padding-left: 10px;
+                        }
+                    }
                     .time-container {
-                        flex: 1 0 15%;
+                        flex: 1 0 20%;
                         display: flex;
                         flex-flow: nowrap;
                         .period, .closed-today {
                             width: 100%;
                             text-align: right;
                         }
-                    }
-                    .description {
-                        flex: 1 1 60%;
-                        display: flex;
-                        padding-left: 10px;
-                        .name-staff, .selfservice-only {
-                            color: @gray-light;
-                            font-size: .94em;
-                        }
-                    }
-                    &.today {
-                        background: @gray-lighter;
-                        font-weight: bold;
                     }
                 }
                 .name.staff {

@@ -73,10 +73,14 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
 
       // Check if there are self-service times
       var selfServiceTimes = false;
+      var gaps = false;
       $.each(schedules, function checkSchedule(ind, obj) {
         $.each(obj.times, function checkOpenTimes(tind, time) {
           if (time.selfservice) {
             selfServiceTimes = true;
+          }
+          if (time.closed) {
+            gaps = true;
           }
         });
       });
@@ -88,39 +92,73 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
         var today = 'today' in obj;
 
         var dateRows = dateRowsTpl.clone();
+        dateRows.toggleClass('today', today);
         dateRows.appendTo(schedulesHolder);
 
         if (!('closed' in obj)) {
-          // Add all open times
-          var date = obj.date;
-          var day = obj.day;
-          $.each(obj.times, function handleOpenTimes(tind, time) {
-            var timeRow = timeRowTpl.clone();
-            timeRow.find('.date').text(date);
-            timeRow.find('.name').text(day);
-            timeRow.find('.info').hide();
-            date = '';
-            day = '';
-
-            let opensTime = document.createElement('time');
-            opensTime.setAttribute('datetime', time.opens_datetime);
-            opensTime.textContent = time.opens;
-            timeRow.find('.opens').append(opensTime);
-            let closesTime = document.createElement('time');
-            closesTime.setAttribute('datetime', time.closes_datetime);
-            closesTime.textContent = time.closes;
-            timeRow.find('.closes').append(closesTime);
-
-            if (time.selfservice) {
-              timeRow.find('.name-staff').hide();
-              timeRow.removeClass('staff');
-              timeRow.find('.selfservice-only').removeClass('hide');
-            } else if (!selfServiceTimes) {
-              timeRow.find('.name-staff').hide();
+          // Add main open times
+          var firstOpenDateTime = null;
+          var firstOpenTime = null;
+          var lastCloseDateTime = null;
+          var lastCloseTime = null;
+          $.each(obj.times, function checkOpenTimes(tind, time) {
+            if (null === firstOpenDateTime || time.opens_datetime < firstOpenDateTime) {
+              firstOpenDateTime = time.opens_datetime;
+              firstOpenTime = time.opens;
             }
-            timeRow.toggleClass('today', today);
-            timeRow.appendTo(dateRows);
+            if (null === lastCloseDateTime || time.closes_datetime > lastCloseDateTime) {
+              lastCloseDateTime = time.closes_datetime;
+              lastCloseTime = time.closes;
+            }
           });
+          var timeRowMain = timeRowTpl.clone();
+          timeRowMain.find('.date').text(obj.date);
+          timeRowMain.find('.name').text(obj.day);
+          let firstOpensTimeElem = document.createElement('time');
+          firstOpensTimeElem.setAttribute('datetime', firstOpenDateTime);
+          firstOpensTimeElem.textContent = firstOpenTime;
+          timeRowMain.find('.opens').append(firstOpensTimeElem);
+          let lastClosesTimeElem = document.createElement('time');
+          lastClosesTimeElem.setAttribute('datetime', lastCloseDateTime);
+          lastClosesTimeElem.textContent = lastCloseTime;
+          timeRowMain.find('.closes').append(lastClosesTimeElem);
+          timeRowMain.find('.name-staff').hide();
+          var info = 'info' in obj ? obj.info : null;
+          if (info) {
+            timeRowMain.find('.info').text(info);
+          }
+          timeRowMain.appendTo(dateRows);
+
+          // Add all open/closed times if needed
+          if (selfServiceTimes || gaps) {
+            $.each(obj.times, function handleOpenTimes(tind, time) {
+              var timeRow = timeRowTpl.clone();
+              timeRow.find('.info').hide();
+              timeRow.addClass('sub-row');
+
+              let opensTimeElem = document.createElement('time');
+              opensTimeElem.setAttribute('datetime', time.opens_datetime);
+              opensTimeElem.textContent = time.opens;
+              timeRow.find('.opens').append(opensTimeElem);
+              let closesTimeElem = document.createElement('time');
+              closesTimeElem.setAttribute('datetime', time.closes_datetime);
+              closesTimeElem.textContent = time.closes;
+              timeRow.find('.closes').append(closesTimeElem);
+
+              if (time.selfservice) {
+                timeRow.find('.name-staff').hide();
+                timeRow.removeClass('staff');
+                timeRow.find('.selfservice-only').removeClass('hide');
+              } else if (!selfServiceTimes) {
+                timeRow.find('.name-staff').hide();
+              }
+              if (time.closed) {
+                timeRow.find('.name-staff').hide();
+                timeRow.find('.closed-notice').removeClass('hide');
+              }
+              timeRow.appendTo(dateRows);
+            });
+          }
         } else {
           var timeRow = timeRowTpl.clone();
           timeRow.find('.date').text(obj.date);
@@ -132,16 +170,6 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
           timeRow.toggleClass('today', today);
           timeRow.appendTo(dateRows);
         }
-
-        var info = 'info' in obj ? obj.info : null;
-        if (info) {
-          var timeRowInfo = timeRowTpl.clone();
-          timeRowInfo.find('.period').hide();
-          timeRowInfo.find('.name-staff').hide();
-          timeRowInfo.find('.info').text(info);
-          timeRowInfo.appendTo(dateRows);
-        }
-
       });
     } else {
       var links = null;
