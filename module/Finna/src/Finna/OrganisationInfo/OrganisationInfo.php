@@ -1294,7 +1294,8 @@ class OrganisationInfo implements
             $date = new \DateTime($day['date']);
             $date->setTime(0, 0, 0);
 
-            $today = $currentDate === $date;
+            // Non-strong comparison to not require same object:
+            $today = $currentDate == $date;
 
             $dayTime = strtotime($day['date']);
             if ($dayTime === false) {
