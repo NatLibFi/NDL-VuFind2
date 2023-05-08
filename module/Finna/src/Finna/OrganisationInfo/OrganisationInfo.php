@@ -1312,13 +1312,12 @@ class OrganisationInfo implements
 
             // Open times
             foreach ($day['times'] as $time) {
-                if (0 === $time['status']) {
-                    // closed
-                    continue;
-                }
                 $result['opens'] = $this->formatTime($time['from']);
+                $result['opens_datetime'] = $this->formatDateTime($date, $time['from']);
                 $result['closes'] = $this->formatTime($time['to']);
-                $result['selfservice'] = $time['status'] === 2 ? true : false;
+                $result['closes_datetime'] = $this->formatDateTime($date, $time['to']);
+                $result['selfservice'] = $time['status'] === 2;
+                $result['closed'] = 0 === $time['status'];
                 $times[] = $result;
             }
 
@@ -1369,6 +1368,21 @@ class OrganisationInfo implements
             return ltrim($parts[0], '0');
         }
         return $this->dateConverter->convertToDisplayTime('H:i', $time);
+    }
+
+    /**
+     * Return a date and time string in RFC 3339 format.
+     *
+     * @param \DateTime $date Date
+     * @param string    $time Time as string H:i
+     *
+     * @return string
+     */
+    protected function formatDateTime(\DateTime $date, string $time): string
+    {
+        $timePart = $this->dateConverter->convertToDateTime('H:i', $time);
+        $date->setTime($timePart->format('H'), $timePart->format('i'), 0);
+        return $date->format(\DATE_RFC3339);
     }
 
     /**
@@ -1538,20 +1552,29 @@ class OrganisationInfo implements
         $currentHour = date('H:i');
         $return = [];
         $dayShortcode = substr($day, 0, 3);
+        $dayDate = new \DateTime("$day this week");
+        $schedule = $json['opening_time'] ?? [];
         if (
-            empty($json['opening_time']["{$dayShortcode}_start"])
-            && empty($json['opening_time']["{$dayShortcode}_end"])
+            empty($schedule["{$dayShortcode}_start"])
+            || 'NULL' === $schedule["{$dayShortcode}_start"]
+            || empty($schedule["{$dayShortcode}_end"])
+            || 'NULL' === $schedule["{$dayShortcode}_end"]
         ) {
             $return['closed'] = true;
         } else {
-            $return['times'][0]['closes']
-                = $this->formatTime($json['opening_time']["{$dayShortcode}_end"]);
-            $return['times'][0]['opens']
-                = $this->formatTime($json['opening_time']["{$dayShortcode}_start"]);
+            $time = [];
+
+            $time['opens'] = $this->formatTime($schedule["{$dayShortcode}_start"]);
+            $time['opens_datetime']
+                = $this->formatDateTime($dayDate, $schedule["{$dayShortcode}_start"]);
+            $time['closes'] = $this->formatTime($schedule["{$dayShortcode}_end"]);
+            $time['closes_datetime']
+                = $this->formatDateTime($dayDate, $schedule["{$dayShortcode}_end"]);
+            $return['times'][] = $time;
         }
-        $return['day'] = $this->translator->translate('day-name-short-' . $day);
-        $return['date'] = date('d.m', strtotime("{$day} this week"));
-        if ($today == $return['date']) {
+        $return['day'] = $this->translator->translate("day-name-short-$day");
+        $return['date'] = $dayDate->format('d.m');
+        if ($today === $return['date']) {
             $return['today'] = true;
             if (
                 $currentHour >= $json['opening_time']["{$dayShortcode}_start"]

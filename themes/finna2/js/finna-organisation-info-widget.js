@@ -81,29 +81,35 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
         });
       });
 
+      var dateRowsTpl = holder.find('.date-rows.template').clone().removeClass('template hide');
       var timeRowTpl = holder.find('.time-row.template').not('.staff').clone().removeClass('template hide');
 
       $.each(schedules, function handleSchedule(ind, obj) {
         var today = 'today' in obj;
 
+        var dateRows = dateRowsTpl.clone();
+        dateRows.appendTo(schedulesHolder);
+
         if (!('closed' in obj)) {
           // Add all open times
-          var info = 'info' in obj ? obj.info : null;
+          var date = obj.date;
+          var day = obj.day;
           $.each(obj.times, function handleOpenTimes(tind, time) {
-            var date = 0 === tind ? obj.date : '';
-            var day = 0 === tind ? obj.day : '';
-
             var timeRow = timeRowTpl.clone();
             timeRow.find('.date').text(date);
             timeRow.find('.name').text(day);
+            timeRow.find('.info').hide();
+            date = '';
+            day = '';
 
-            if (info) {
-              timeRow.find('.info').text(info).append('<br>');
-            } else {
-              timeRow.find('.info').hide();
-            }
-            timeRow.find('.opens').text(time.opens);
-            timeRow.find('.closes').text(time.closes);
+            let opensTime = document.createElement('time');
+            opensTime.setAttribute('datetime', time.opens_datetime);
+            opensTime.textContent = time.opens;
+            timeRow.find('.opens').append(opensTime);
+            let closesTime = document.createElement('time');
+            closesTime.setAttribute('datetime', time.closes_datetime);
+            closesTime.textContent = time.closes;
+            timeRow.find('.closes').append(closesTime);
 
             if (time.selfservice) {
               timeRow.find('.name-staff').hide();
@@ -113,7 +119,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
               timeRow.find('.name-staff').hide();
             }
             timeRow.toggleClass('today', today);
-            timeRow.appendTo(schedulesHolder);
+            timeRow.appendTo(dateRows);
           });
         } else {
           var timeRow = timeRowTpl.clone();
@@ -124,8 +130,18 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
           timeRow.find('.closed-today').removeClass('hide');
           timeRow.toggleClass('is-closed', true);
           timeRow.toggleClass('today', today);
-          timeRow.appendTo(schedulesHolder);
+          timeRow.appendTo(dateRows);
         }
+
+        var info = 'info' in obj ? obj.info : null;
+        if (info) {
+          var timeRowInfo = timeRowTpl.clone();
+          timeRowInfo.find('.period').hide();
+          timeRowInfo.find('.name-staff').hide();
+          timeRowInfo.find('.info').text(info);
+          timeRowInfo.appendTo(dateRows);
+        }
+
       });
     } else {
       var links = null;
