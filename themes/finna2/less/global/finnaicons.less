@@ -1,13 +1,4 @@
 /* This is the file for using Finna font icons, use font icons for all icons and update this file when new icons are available */
-.icon--font {
-    display: inline-block;
-    width: 1.25em;
-    line-height: inherit;
-    text-align: center;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
 .iconlabel:before, .slick-prev, .slick-next, .slick-dots li, .openUrlEmbed:before  {
     font-family: finnaicons;
     font-size: inherit;
@@ -790,11 +781,12 @@ table .iconlabel {
     color: @link-color;
 }
 .searchbox .btn-link {
-    & .fa-search-adv {
+    .advanced-search-icon {
         margin-right: 5px;
         font-size: 20px;
+        line-height: 20px;
     }
-    & .fa-search {
+    .search-icon {
         margin-right: 5px;
         font-size: 16px;
     }
@@ -855,7 +847,7 @@ i.bigger {
     &:hover {
         cursor: pointer;
     }
-    &> i {
+    > .icon {
         font-size: 18px;
         margin-left: 5px;
         vertical-align: middle;
@@ -996,6 +988,7 @@ i.bigger {
 
 #account-icon {
     position: relative;
+    left: 2px;
 }
 
 // Status none

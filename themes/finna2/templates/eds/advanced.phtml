@@ -29,7 +29,7 @@
             <option value="<?=$this->escapeHtmlAttr($searchVal)?>"><?=$this->transEsc($searchDesc)?></option>
           <?php endforeach; ?>
         </select>
-        <a class="adv-term-remove"><i class="fa fa-times"></i></a>
+        <a class="adv-term-remove"><?=$this->icon('remove') ?></a>
       </div>
       <?php if ($search === 0): ?>
         </div>

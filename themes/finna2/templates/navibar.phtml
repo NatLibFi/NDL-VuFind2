@@ -21,7 +21,7 @@
         <?php foreach ($this->navibar()->getMenuItems($this->layout()->userLang) as $key => $val): ?>
           <?php if (count($val['items']) > 1): ?>
             <li role="none" class="dropdown" id="<?= $val['label'] ?>">
-              <a href="#" role="menuitem" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-nav-<?=$val['label'] ?>" aria-hidden="true"></i><?= $this->transEsc($val['label']) ?> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
+              <a href="#" role="menuitem" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?= $this->icon($val['label']) ?><?= $this->transEsc($val['label']) ?> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
               <ul role="menu" class="dropdown-menu" aria-labelledby="<?= $val['label'] ?>">
                 <?php foreach ($val['items'] as $itemKey => $itemVal): ?>
                 <?php
@@ -53,7 +53,7 @@
             $target = $itemUrl['target'] ?? null;
             $label = $itemVal['label'];
           ?>
-            <li role="none"><a <?=$url === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" <?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?= $url ?>"><i class="fa fa-nav-<?=$label ?>" aria-hidden="true"></i><?= $this->transEsc($label) ?></a></li>
+            <li role="none"><a <?=$url === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" <?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?= $url ?>"><?= $this->icon($label) ?><?= $this->transEsc($label) ?></a></li>
           <?php endif; ?>
         <?php endforeach; ?>
         <?php $cart = $this->cart(); if ($cart->isActive()): ?>
