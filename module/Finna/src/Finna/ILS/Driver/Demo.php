@@ -192,6 +192,7 @@ class Demo extends \VuFind\ILS\Driver\Demo
             $fine['accruedFine'] = ($fine['fine'] === $accruedType);
             $fine['payableOnline'] = $payableOnline;
             $fine['fine_id'] = $id;
+            $fine['organization'] = $this->getFakeLoc();
         }
 
         return $fines;

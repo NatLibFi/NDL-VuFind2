@@ -245,7 +245,7 @@ class Transaction extends \VuFind\Db\Table\Gateway
             self::STATUS_REGISTRATION_FAILED,
             self::STATUS_REGISTRATION_EXPIRED,
             self::STATUS_REGISTRATION_RESOLVED,
-            self::STATUS_FINES_UPDATED
+            self::STATUS_FINES_UPDATED,
         ];
 
         $callback = function (\Laminas\Db\Sql\Select $select) use (

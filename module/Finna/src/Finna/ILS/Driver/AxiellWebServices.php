@@ -2361,6 +2361,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
             }
             $fine = [
                 'debt_id' => $debt->id,
+                'fine_id' => $debt->id,
                 'amount' => $amount,
                 'checkout' => '',
                 'fine' => $description,

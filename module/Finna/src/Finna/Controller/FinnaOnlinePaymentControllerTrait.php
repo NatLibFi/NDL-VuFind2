@@ -238,8 +238,13 @@ trait FinnaOnlinePaymentControllerTrait
         $view->selectFees = $selectFees;
 
         $trTable = $this->getTable('transaction');
-        $lastTransaction = $trTable->getLastPaidForPatron($patron['cat_username']);
-        if ($lastTransaction
+        $lastTransaction = null;
+        $dataSourceConfig = $this->getConfig('datasources')->toArray();
+        if ($dataSourceConfig[$patron['source']]['onlinePayment']['receipt'] ?? false) {
+            $lastTransaction = $trTable->getLastPaidForPatron($patron['cat_username']);
+        }
+        if (
+            $lastTransaction
             && $this->params()->fromQuery('transactionReport') === 'true'
         ) {
             $data = $this->createTransactionReportPDF($lastTransaction);
@@ -517,6 +522,26 @@ trait FinnaOnlinePaymentControllerTrait
         } else {
             $contactInfo = $config['onlinePayment']['contactInfo'] ?? '';
         }
+        $businessId = $config['onlinePayment']['businessId'] ?? '';
+        $organizationBusinessIdMappings = [];
+        if ($map = $config['onlinePayment']['organizationBusinessIdMappings'] ?? '') {
+            foreach (explode(':', $map) as $item) {
+                $parts = explode('=', $item, 2);
+                if (count($parts) !== 2) {
+                    continue;
+                }
+                $organizationBusinessIdMappings[trim($parts[0])] = trim($parts[1]);
+            }
+        }
+        // Check if we have recipient organizations:
+        $hasFineOrgs = false;
+        foreach ($transaction->getFines() as $fine) {
+            $fineOrg = $fine->organization;
+            if ($fineOrg && ($organizationBusinessIdMappings[$fineOrg] ?? false)) {
+                $hasFineOrgs = true;
+                break;
+            }
+        }
 
         $heading = $this->translate('Payment::breakdown_title') . " - $sourceName";
         [$language] = explode('-', $this->getTranslatorLocale(), 2);
@@ -537,7 +562,7 @@ trait FinnaOnlinePaymentControllerTrait
         $pdf->SetAutoPageBreak(false);
         $pdf->AddPage();
 
-        $addInfo = function ($heading, $value) use ($pdf) {
+        $addInfo = function ($heading, $value) use ($pdf): void {
             $pdf->SetFont('helvetica', 'B', 10);
             $pdf->Cell(60, 0, $this->translate($heading));
             $pdf->SetFont('helvetica', '', 10);
@@ -552,7 +577,9 @@ trait FinnaOnlinePaymentControllerTrait
 
         // Print information array:
         $pdf->setY(25);
-        $addInfo('Payment::Recipient', $sourceName);
+        if (!$hasFineOrgs) {
+            $addInfo('Payment::Recipient', $sourceName . ($businessId ? " ($businessId)" : ''));
+        }
         $addInfo('Payment::Date', $paidDate);
         $addInfo('Payment::Identifier', $transaction->transaction_id);
         if ($contactInfo) {
@@ -560,23 +587,33 @@ trait FinnaOnlinePaymentControllerTrait
         }
 
         // Print lines:
-        $printHeaders = function (TCPDF $pdf) use ($left, $right) {
+        $printHeaders = function (TCPDF $pdf) use ($left, $right, $hasFineOrgs): void {
             $pdf->SetFont('helvetica', 'B', 10);
-            $pdf->Cell(40, 0, $this->translate('Payment::Identifier'), 0, 0);
+            $pdf->Cell(30, 0, $this->translate('Payment::Identifier'), 0, 0);
             $pdf->Cell(40, 0, $this->translate('Payment::Type'), 0, 0);
-            $pdf->Cell(70, 0, $this->translate('Payment::Details'), 0, 0);
-            $pdf->Cell(40, 0, $this->translate('Payment::Fee'), 0, 1, 'R');
+            $pdf->Cell($hasFineOrgs ? 50 : 90, 0, $this->translate('Payment::Details'), 0, 0);
+            if ($hasFineOrgs) {
+                $pdf->Cell(50, 0, $this->translate('Payment::Recipient'), 0, 0);
+            }
+            $pdf->Cell(20, 0, $this->translate('Payment::Fee'), 0, 1, 'R');
             $pdf->SetFont('helvetica', '', 10);
             $y = $pdf->GetY() + 1;
             $pdf->Line($left, $y, $right, $y);
             $pdf->SetY($y + 1);
         };
 
-        $printLine = function (TCPDF $pdf, $fine) use (
+        $printLine = function (
+            TCPDF $pdf,
+            $fine
+        ) use (
             $translationEmpty,
             $safeMoneyFormat,
-            $left
-        ) {
+            $left,
+            $sourceName,
+            $businessId,
+            $hasFineOrgs,
+            $organizationBusinessIdMappings
+        ): void {
             $type = $fine->type;
             if (!$translationEmpty("fine_status_$type")) {
                 $type = "fine_status_$type";
@@ -586,22 +623,40 @@ trait FinnaOnlinePaymentControllerTrait
             }
 
             $curY = $pdf->GetY();
-            $pdf->Cell(40, 0, $fine->fine_id ?? '');
-            $pdf->MultiCell(40, 0, $this->translate($type), 0, 'L');
+
+            $pdf->MultiCell(38, 0, $fine->fine_id ?? '', 0, 'L');
             $nextY = $pdf->GetY();
-            $pdf->SetXY($left + 80, $curY);
-            $pdf->MultiCell(70, 0, $fine->title, 0, 'L');
+
+            $pdf->SetXY($left + 30, $curY);
+            $pdf->MultiCell(38, 0, $this->translate($type), 0, 'L');
             $nextY = max($nextY, $pdf->GetY());
-            $pdf->SetXY($left + 150, $curY);
+
+            $pdf->SetXY($left + 70, $curY);
+            $pdf->MultiCell($hasFineOrgs ? 48 : 88, 0, $fine->title ?? '', 0, 'L');
+            $nextY = max($nextY, $pdf->GetY());
+
+            if ($hasFineOrgs) {
+                $recipient = $sourceName . ($businessId ? " ($businessId)" : '');
+                $fineOrg = $fine->organization;
+                if ($fineOrg && $lineBusinessId = $organizationBusinessIdMappings[$fineOrg] ?? '') {
+                    $recipient = $this->translate('Payment::organization_' . $fineOrg, [], $fineOrg)
+                        . " ($lineBusinessId)";
+                }
+                $pdf->SetXY($left + 120, $curY);
+                $pdf->MultiCell(48, 0, $recipient, 0, 'L');
+                $nextY = max($nextY, $pdf->GetY());
+            }
+
+            $pdf->SetXY($left + 170, $curY);
             $pdf->Cell(
-                40,
+                20,
                 0,
                 $safeMoneyFormat($fine->amount / 100.00, $fine->currency),
                 0,
                 0,
                 'R'
             );
-            $pdf->setY($nextY);
+            $pdf->setY($nextY + 2);
         };
 
         $pdf->SetY($pdf->GetY() + 10);
