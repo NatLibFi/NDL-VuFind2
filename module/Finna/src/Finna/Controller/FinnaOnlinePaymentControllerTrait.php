@@ -31,9 +31,7 @@
 
 namespace Finna\Controller;
 
-use Finna\Db\Row\Transaction;
 use Laminas\Stdlib\Parameters;
-use TCPDF;
 
 /**
  * Online payment controller trait.
@@ -240,14 +238,16 @@ trait FinnaOnlinePaymentControllerTrait
         $trTable = $this->getTable('transaction');
         $lastTransaction = null;
         $dataSourceConfig = $this->getConfig('datasources')->toArray();
-        if ($dataSourceConfig[$patron['source']]['onlinePayment']['receipt'] ?? false) {
+        $receiptEnabled = $dataSourceConfig[$patron['source']]['onlinePayment']['receipt'] ?? false;
+        if ($receiptEnabled) {
             $lastTransaction = $trTable->getLastPaidForPatron($patron['cat_username']);
         }
         if (
             $lastTransaction
             && $this->params()->fromQuery('transactionReport') === 'true'
         ) {
-            $data = $this->createTransactionReportPDF($lastTransaction);
+            $receipt = $this->serviceLocator->get(\Finna\OnlinePayment\Receipt::class);
+            $data = $receipt->createReceiptPDF($lastTransaction);
             header('Content-Type: application/pdf');
             header(
                 'Content-disposition: inline; filename="' .
@@ -344,16 +344,28 @@ trait FinnaOnlinePaymentControllerTrait
                     ->addSuccessMessage('online_payment_successful');
             } else {
                 // Process payment response:
-                $result = $paymentHandler->processPaymentResponse(
+                [$result, $markedAsPaid] = $paymentHandler->processPaymentResponse(
                     $transaction,
                     $this->getRequest()
                 );
                 $this->logger->warn(
                     "Online payment response for $transactionId result: $result"
                 );
-                if ($paymentHandler::PAYMENT_SUCCESS === $result) {
+                if (
+                    $paymentHandler::PAYMENT_SUCCESS === $result
+                    && $markedAsPaid
+                ) {
                     $this->flashMessenger()
                         ->addSuccessMessage('online_payment_successful');
+                    // Send receipt by email if enabled:
+                    if ($receiptEnabled) {
+                        $patronProfile = array_merge(
+                            $patron,
+                            $catalog->getMyProfile($patron)
+                        );
+                        $receipt = $this->serviceLocator->get(\Finna\OnlinePayment\Receipt::class);
+                        $receipt->sendEmail($user, $patronProfile, $transaction);
+                    }
                     // Display page and mark fees as paid via AJAX:
                     $view->registerPayment = true;
                     $view->registerPaymentParams = [
@@ -476,261 +488,5 @@ trait FinnaOnlinePaymentControllerTrait
         } elseif (is_callable([$this, 'logException'])) {
             $this->logException($e);
         }
-    }
-
-    /**
-     * Create a transaction breakdown PDF
-     *
-     * @param Transaction $transaction Transaction
-     *
-     * @return array
-     */
-    protected function createTransactionReportPDF(
-        Transaction $transaction
-    ): array {
-        [$source] = explode('.', $transaction->cat_username);
-        $sourceName = $this->translate('source_' . $source);
-
-        $dateConverter = $this->serviceLocator->get(\VuFind\Date\Converter::class);
-        $paidDate = $dateConverter->convertToDisplayDateAndTime(
-            'Y-m-d H:i:s',
-            $transaction->paid
-        );
-
-        $left = 10;
-        $right = 200;
-        $bottom = 280;
-
-        $view = $this->getViewRenderer();
-        $safeMoneyFormat = $view->plugin('safeMoneyFormat');
-        $translationEmpty = $view->plugin('translationEmpty');
-
-        $dataSourceConfig = $this->getConfig('datasources')->toArray();
-        $config = $dataSourceConfig[$source] ?? [];
-        if ($orgId = $config['onlinePayment']['organisationInfoId'] ?? '') {
-            $urlHelper = $view->plugin('url');
-            $contactInfo = $urlHelper(
-                'organisationinfo-home',
-                [],
-                [
-                    'query' => [
-                        'id' => $orgId,
-                    ],
-                    'force_canonical' => true,
-                ]
-            );
-        } else {
-            $contactInfo = $config['onlinePayment']['contactInfo'] ?? '';
-        }
-        $businessId = $config['onlinePayment']['businessId'] ?? '';
-        $organizationBusinessIdMappings = [];
-        if ($map = $config['onlinePayment']['organizationBusinessIdMappings'] ?? '') {
-            foreach (explode(':', $map) as $item) {
-                $parts = explode('=', $item, 2);
-                if (count($parts) !== 2) {
-                    continue;
-                }
-                $organizationBusinessIdMappings[trim($parts[0])] = trim($parts[1]);
-            }
-        }
-        // Check if we have recipient organizations:
-        $hasFineOrgs = false;
-        foreach ($transaction->getFines() as $fine) {
-            $fineOrg = $fine->organization;
-            if ($fineOrg && ($organizationBusinessIdMappings[$fineOrg] ?? false)) {
-                $hasFineOrgs = true;
-                break;
-            }
-        }
-
-        $heading = $this->translate('Payment::breakdown_title') . " - $sourceName";
-        [$language] = explode('-', $this->getTranslatorLocale(), 2);
-        $languageConfig = [
-            'a_meta_charset' => 'utf-8',
-            'a_meta_dir' => 'ltr',
-            'a_meta_language' => $language,
-            'w_page' => 'page',
-        ];
-        $pdf = new TCPDF();
-        $pdf->setLanguageArray($languageConfig);
-        $pdf->SetCreator('Finna');
-        $pdf->SetTitle($heading . ' - ' . $paidDate);
-        $pdf->SetMargins($left, 18);
-        $pdf->SetHeaderMargin(10);
-        $pdf->SetHeaderData('', 0, $heading);
-        $pdf->SetFooterMargin(10);
-        $pdf->SetAutoPageBreak(false);
-        $pdf->AddPage();
-
-        $addInfo = function ($heading, $value) use ($pdf): void {
-            $pdf->SetFont('helvetica', 'B', 10);
-            $pdf->Cell(60, 0, $this->translate($heading));
-            $pdf->SetFont('helvetica', '', 10);
-            if (preg_match('/^https?:\/\/([^\s]+)$/', $value, $matches)) {
-                // Create link:
-                $pdf->Write(0, $matches[1], $value);
-            } else {
-                $pdf->Cell(120, 0, $value);
-            }
-            $pdf->Ln();
-        };
-
-        // Print information array:
-        $pdf->setY(25);
-        if (!$hasFineOrgs) {
-            $addInfo('Payment::Recipient', $sourceName . ($businessId ? " ($businessId)" : ''));
-        }
-        $addInfo('Payment::Date', $paidDate);
-        $addInfo('Payment::Identifier', $transaction->transaction_id);
-        if ($contactInfo) {
-            $addInfo('Payment::Contact Information', $contactInfo);
-        }
-
-        // Print lines:
-        $printHeaders = function (TCPDF $pdf) use ($left, $right, $hasFineOrgs): void {
-            $pdf->SetFont('helvetica', 'B', 10);
-            $pdf->Cell(30, 0, $this->translate('Payment::Identifier'), 0, 0);
-            $pdf->Cell(40, 0, $this->translate('Payment::Type'), 0, 0);
-            $pdf->Cell($hasFineOrgs ? 50 : 90, 0, $this->translate('Payment::Details'), 0, 0);
-            if ($hasFineOrgs) {
-                $pdf->Cell(50, 0, $this->translate('Payment::Recipient'), 0, 0);
-            }
-            $pdf->Cell(20, 0, $this->translate('Payment::Fee'), 0, 1, 'R');
-            $pdf->SetFont('helvetica', '', 10);
-            $y = $pdf->GetY() + 1;
-            $pdf->Line($left, $y, $right, $y);
-            $pdf->SetY($y + 1);
-        };
-
-        $printLine = function (
-            TCPDF $pdf,
-            $fine
-        ) use (
-            $translationEmpty,
-            $safeMoneyFormat,
-            $left,
-            $sourceName,
-            $businessId,
-            $hasFineOrgs,
-            $organizationBusinessIdMappings
-        ): void {
-            $type = $fine->type;
-            if (!$translationEmpty("fine_status_$type")) {
-                $type = "fine_status_$type";
-            } elseif (!$translationEmpty("status_$type")) {
-                // Fallback to item status translations for backwards-compatibility
-                $type = "status_$type";
-            }
-
-            $curY = $pdf->GetY();
-
-            $pdf->MultiCell(38, 0, $fine->fine_id ?? '', 0, 'L');
-            $nextY = $pdf->GetY();
-
-            $pdf->SetXY($left + 30, $curY);
-            $pdf->MultiCell(38, 0, $this->translate($type), 0, 'L');
-            $nextY = max($nextY, $pdf->GetY());
-
-            $pdf->SetXY($left + 70, $curY);
-            $pdf->MultiCell($hasFineOrgs ? 48 : 88, 0, $fine->title ?? '', 0, 'L');
-            $nextY = max($nextY, $pdf->GetY());
-
-            if ($hasFineOrgs) {
-                $recipient = $sourceName . ($businessId ? " ($businessId)" : '');
-                $fineOrg = $fine->organization;
-                if ($fineOrg && $lineBusinessId = $organizationBusinessIdMappings[$fineOrg] ?? '') {
-                    $recipient = $this->translate('Payment::organization_' . $fineOrg, [], $fineOrg)
-                        . " ($lineBusinessId)";
-                }
-                $pdf->SetXY($left + 120, $curY);
-                $pdf->MultiCell(48, 0, $recipient, 0, 'L');
-                $nextY = max($nextY, $pdf->GetY());
-            }
-
-            $pdf->SetXY($left + 170, $curY);
-            $pdf->Cell(
-                20,
-                0,
-                $safeMoneyFormat($fine->amount / 100.00, $fine->currency),
-                0,
-                0,
-                'R'
-            );
-            $pdf->setY($nextY + 2);
-        };
-
-        $pdf->SetY($pdf->GetY() + 10);
-        $printHeaders($pdf);
-        // Account for the "Total" line:
-        $linesBottom = $bottom - 7;
-        foreach ($transaction->getFines() as $fine) {
-            $savePDF = clone $pdf;
-
-            $printLine($pdf, $fine);
-            // If we exceed bottom, revert and add a new page:
-            if ($pdf->GetY() > $linesBottom) {
-                $pdf = $savePDF;
-                $pdf->AddPage();
-                $pdf->SetY(25);
-                $printHeaders($pdf);
-                $printLine($pdf, $fine);
-            }
-        }
-        $pdf->SetY($pdf->GetY() + 1);
-        $pdf->SetFont('helvetica', 'B', 10);
-        $amount = $safeMoneyFormat(
-            $transaction->amount / 100.00,
-            $transaction->currency
-        );
-        $pdf->Cell(
-            190,
-            0,
-            $this->translate('Payment::Total') . " $amount",
-            0,
-            1,
-            'R'
-        );
-
-        // Print VAT summary:
-        $printVATSummary = function (TCPDF $pdf) use (
-            $left,
-            $amount,
-            $safeMoneyFormat,
-            $right
-        ) {
-            $pdf->SetY($pdf->GetY() + 15);
-            $pdf->SetFont('helvetica', 'B', 10);
-            $vatLeft = $left + 50;
-            $pdf->SetX($vatLeft);
-            $pdf->Cell(30, 0, $this->translate('Payment::VAT Breakdown'), 0, 0, 'L');
-            $pdf->Cell(20, 0, $this->translate('Payment::VAT Percent'));
-            $pdf->Cell(30, 0, $this->translate('Payment::Excluding VAT'), 0, 0, 'R');
-            $pdf->Cell(30, 0, $this->translate('Payment::VAT'), 0, 0, 'R');
-            $pdf->Cell(30, 0, $this->translate('Payment::Including VAT'), 0, 1, 'R');
-            $pdf->SetFont('helvetica', '', 10);
-            $pdf->SetX($vatLeft);
-            $y = $pdf->GetY() + 1;
-            $pdf->Line($vatLeft, $y, $vatLeft + 30, $y, ['dash' => '1,2']);
-            $pdf->Line($vatLeft + 30, $y, $right, $y, ['dash' => 0]);
-            $pdf->SetXY($vatLeft + 30, $y + 1);
-            $pdf->Cell(20, 0, '0 %');
-            $pdf->Cell(30, 0, $amount, 0, 0, 'R');
-            $pdf->Cell(30, 0, $safeMoneyFormat(0), 0, 0, 'R');
-            $pdf->Cell(30, 0, $amount, 0, 1, 'R');
-        };
-
-        $savePDF = clone $pdf;
-        $printVATSummary($pdf);
-        if ($pdf->GetY() > $bottom) {
-            $pdf = $savePDF;
-            $pdf->AddPage();
-            $printVATSummary($pdf);
-        }
-
-        $date = strtotime($transaction->paid);
-        return [
-            'pdf' => $pdf->getPDFData(),
-            'filename' => $heading . ' - ' . date('Y-m-d H-i', $date),
-        ];
     }
 }

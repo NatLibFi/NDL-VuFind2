@@ -122,14 +122,18 @@ class Transaction extends \VuFind\Db\Row\RowGateway implements \VuFind\Db\Table\
      *
      * @param int $timestamp Optional payment unix timestamp
      *
-     * @return void
+     * @return bool
      */
-    public function setPaid(int $timestamp = null): void
+    public function setPaid(int $timestamp = null): bool
     {
+        if ($this->complete !== TransactionTable::STATUS_PROGRESS) {
+            return false;
+        }
         $this->paid = date('Y-m-d H:i:s', $timestamp ?: time());
         $this->complete = TransactionTable::STATUS_PAID;
         $this->status = 'paid';
         $this->save();
+        return true;
     }
 
     /**

@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Factory for AbstractOnlinePaymentAction AJAX handlers.
+ * Receipt factory.
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2018-2023.
+ * Copyright (C) The National Library of Finland 2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,29 +21,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  AJAX
+ * @package  OnlinePayment
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
 
-namespace Finna\AjaxHandler;
+namespace Finna\OnlinePayment;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Factory for AbstractOnlinePaymentAction AJAX handlers.
+ * Receipt factory.
  *
  * @category VuFind
- * @package  AJAX
+ * @package  OnlinePayment
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class AbstractOnlinePaymentActionFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
+class ReceiptFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -58,8 +59,6 @@ class AbstractOnlinePaymentActionFactory implements \Laminas\ServiceManager\Fact
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
      * @throws ContainerException if any other error occurs
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __invoke(
         ContainerInterface $container,
@@ -69,18 +68,15 @@ class AbstractOnlinePaymentActionFactory implements \Laminas\ServiceManager\Fact
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
-        $tablePluginManager = $container->get(\VuFind\Db\Table\PluginManager::class);
-        $result = new $requestedName(
-            $container->get(\VuFind\Session\Settings::class),
-            $container->get(\VuFind\ILS\Connection::class),
-            $tablePluginManager->get(\Finna\Db\Table\Transaction::class),
-            $tablePluginManager->get(\VuFind\Db\Table\User::class),
-            $container->get(\Finna\OnlinePayment\OnlinePayment::class),
-            $container->get('Finna\OnlinePayment\Session'),
-            $container->get(\VuFind\Config\PluginManager::class)->get('datasources')->toArray(),
-            $container->get(\Finna\OnlinePayment\Receipt::class)
+        $configManager = $container->get(\VuFind\Config\PluginManager::class);
+        return new $requestedName(
+            $configManager->get('config')->toArray(),
+            $configManager->get('datasources')->toArray(),
+            $container->get(\VuFind\Date\Converter::class),
+            $container->get(\VuFind\Service\CurrencyFormatter::class),
+            $container->get('HttpRouter'),
+            $container->get(\VuFind\Mailer\Mailer::class),
+            $container->get('ViewRenderer')
         );
-        $result->setLogger($container->get(\VuFind\Log\Logger::class));
-        return $result;
     }
 }
