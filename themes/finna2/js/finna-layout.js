@@ -119,9 +119,10 @@ finna.layout = (function finnaLayout() {
           if (topLink) {
             self.before(lessLink.clone(true));
           }
-          if ($(this).parent().hasClass('recordURLs')) {
+          if (self.parent().hasClass('recordURLs') || self.parent().hasClass('truncate-wrapper')) {
             self.after([moreLink]);
-          } else {
+          }
+           else {
             self.after([moreLink, lessLink]);
           }
         }
