@@ -122,7 +122,7 @@ finna.layout = (function finnaLayout() {
           if (self.parent().hasClass('recordURLs') || self.parent().hasClass('truncate-wrapper')) {
             self.after([moreLink]);
           }
-           else {
+          else {
             self.after([moreLink, lessLink]);
           }
         }
