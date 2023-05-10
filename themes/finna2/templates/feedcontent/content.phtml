@@ -13,11 +13,11 @@
   ]);
 
   if ($this->modal) {
-     $setupJS = <<<JS
-$(document).ready(function() {
-   finna.contentFeed.loadFeed($('#modal .feed-content'), true);
-});
-JS;
+    $setupJS = <<<JS
+    $(document).ready(function() {
+       finna.contentFeed.loadFeed($('#modal .feed-content'), true);
+    });
+    JS;
     echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $setupJS, 'SET');
   }
 ?>

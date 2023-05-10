@@ -77,7 +77,7 @@ class FeedContentController extends ContentController
                 'modal' => $modal,
                 'contentNavigation' => $contentNavigation,
                 'nextArticles' => $nextArticles,
-                'additionalText' => $additionalText
+                'additionalText' => $additionalText,
             ]
         );
     }
