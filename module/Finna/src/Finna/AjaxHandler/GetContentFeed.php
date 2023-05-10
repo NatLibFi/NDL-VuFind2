@@ -186,7 +186,7 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
                    'element' => $element,
                    'numeric' => $numeric,
                    'feedId' => $id,
-                   'nextArticles' => $nextArticles
+                   'nextArticles' => $nextArticles,
                 ]
             );
         }
