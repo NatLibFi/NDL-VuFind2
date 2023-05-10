@@ -638,7 +638,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 $payableFines[] = $fine;
             }
         }
-        $paymentConfig = $this->config['OnlinePayment'] ?? [];
+        $paymentConfig = $this->config['OnlinePayment']
+            ?? $this->config['onlinePayment']
+            ?? [];
+
         if ($amount >= ($paymentConfig['minimumFee'] ?? 0)) {
             return [
                 'payable' => true,
