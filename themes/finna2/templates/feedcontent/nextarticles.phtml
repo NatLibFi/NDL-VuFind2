@@ -1,0 +1,43 @@
+  <?php
+    $lastItem = end($items);
+    $from = 0;
+    $to = 0;
+    $cnt = 0;
+  ?>
+  <?php if ($element != $lastItem['id']): ?>
+    <h3 class="next-articles-header"><?=$this->translate('Read next')?></h3>
+  <?php endif ?>
+  <div class="next-articles-grid">
+  <?php foreach ($this->items as $item): ?>
+    <?php
+      $hasImg = isset($item['image']['url']);
+      $selected = $numeric
+        ? $element === $cnt
+        : $element === $item['id'];
+
+      $link = $item['link'] . ($this->feedId ? (strpos($item['link'], '?') === false ? '?id=' : '&id=') . urlencode($this->feedId) : '');
+
+      if ($selected) {
+        $from = $cnt;
+        $to = $selected + $nextArticles;
+      }
+      if (!$selected && !$to) {
+        continue;
+      }
+      if ($cnt === $to && $cnt !== 0) {
+        break;
+      }
+    ?>
+    <?= !$selected ? (
+        '<div class="article">' .
+        ($hasImg ? '<div class="article-image"><a href="' . $this->escapeHtmlAttr($link) . '"><img src="' . $item['image']['url'] . '" alt=""></a></div>' : '</a>') .
+        '<div class="article-details">' .
+        '<span class="publish-date">' . $this->transEsc('Published') . ' ' . $this->escapeHtml($item['dateFull']) . '</span>' .
+        '<span class="article-title">' . '<a href="' . $this->escapeHtmlAttr($link) . '">' . $this->truncate($item['title'], 80) . '</a>' . '</span>' .
+        '</div>' .
+        '</div>'
+    ) : null ?>
+    <?php ++$cnt; ?>
+  <?php endforeach;?>
+  </div>
+

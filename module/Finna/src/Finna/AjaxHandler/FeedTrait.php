@@ -70,6 +70,8 @@ trait FeedTrait
         $items = $feed['items'];
         $config = $feed['config'];
         $modal = $feed['modal'];
+        $contentNavigation = $feed['contentNavigation'];
+        $nextArticles = $feed['nextArticles'];
 
         $images
             = $config->content['image'] ?? true;
