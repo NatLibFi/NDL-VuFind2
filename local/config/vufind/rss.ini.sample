@@ -74,13 +74,13 @@
 ; content[xcal] = 0
 
 ; Show/hide navigation on content page (default true)
-; feedcontentNavigation = true|false
+; feedcontentNavigation = true
 
 ; Show next articles on content page (default 0)
 ; feedcontentNextArticles = 5
 
-; Show additional text on content page or modal (by default empty)
-; feedcontentAdditionalText = "<translation-key>"
+; Show additional content on content page or modal (by default empty)
+; feedcontentadditionalHtml = "<translation-key>"
 
 ;; Optional list settings:
 

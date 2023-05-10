@@ -445,7 +445,7 @@ class Feed implements
 
         $contentNavigation = $config->feedcontentNavigation ?? true;
         $nextArticles = $config->feedcontentNextArticles ?? false;
-        $additionalText = $config->feedcontentAdditionalText ?? '';
+        $additionalHtml = $config->feedcontentadditionalHtml ?? '';
 
         $itemsCnt = $config->items ?? null;
         $elements = $config->content ?? [];
@@ -669,7 +669,7 @@ class Feed implements
             'allowedImages',
             'contentNavigation',
             'nextArticles',
-            'additionalText'
+            'additionalHtml'
         );
     }
 

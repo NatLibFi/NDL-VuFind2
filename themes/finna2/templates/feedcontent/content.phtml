@@ -52,8 +52,9 @@
   </div>
 <?php endif; ?>
 <div class="next-articles"></div>
-<?php if (isset($this->additionalText)): ?>
-  <div class="feed-content-additional-text ">
-    <?=$this->translate($this->additionalText);?>
+<?php if (isset($this->additionalHtml)): ?>
+  <div class="feed-content-additional">
+    <?=$this->translate($this->additionalHtml);?>
+  </div>
 <?php endif; ?>
 <!-- END of: finna - feedcontent/content.phtml -->
