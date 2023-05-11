@@ -18,34 +18,34 @@ $cnt = 0;
       $link = $item['link'] . ($this->feedId ? (strpos($item['link'], '?') === false ? '?id=' : '&id=') . urlencode($this->feedId) : '');
 
       if ($selected) {
-          $from = $cnt;
-          $to = $selected + $nextArticles;
+        $from = $cnt;
+        $to = $selected + $nextArticles;
       }
       if (!$selected && !$to) {
-          continue;
+        continue;
       }
       if ($cnt === $to && $cnt !== 0) {
-          break;
+        break;
       }
     ?>
     <?php if (!$selected) : ?>
       <div class="article">
-          <?php if ($hasImg) : ?>
-              <div class="article-image">
-                  <a href="<?= $this->escapeHtmlAttr($link) ?>">
-                      <img src="<?= $item['image']['url'] ?>" alt="">
-                  </a>
-              </div>
-          <?php endif; ?>
+        <?php if ($hasImg) : ?>
+          <div class="article-image">
+            <a href="<?= $this->escapeHtmlAttr($link) ?>">
+              <img src="<?= $this->escapeHtmlAttr($item['image']['url']) ?>" alt="">
+            </a>
+          </div>
+        <?php endif; ?>
           <div class="article-details">
-              <span class="publish-date">
-                  <?= $this->transEsc('Published') ?> <?= $this->escapeHtml($item['dateFull']) ?>
-              </span>
-              <span class="article-title">
-                  <a href="<?= $this->escapeHtmlAttr($link) ?>">
-                      <?= $this->truncate($item['title'], 80) ?>
-                  </a>
-              </span>
+            <span class="publish-date">
+              <?= $this->transEsc('Published') ?> <?= $this->escapeHtml($item['dateFull']) ?>
+            </span>
+            <span class="article-title">
+              <a href="<?= $this->escapeHtmlAttr($link) ?>">
+                <?= $this->escapeHtml($this->truncate($item['title'], 80)) ?>
+              </a>
+            </span>
           </div>
       </div>
     <?php endif; ?>
