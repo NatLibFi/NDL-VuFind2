@@ -7,6 +7,22 @@
   background: @list-group-bg;
   color: @action-link-color;
 }
+
+div.facet > a {
+  min-width: 0;
+  > span.text, > span.facet-value {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    display: inline-block;
+  }
+}
+
+ul.jstree-children {
+  width: 100%;
+  padding: 0;
+}
+
 .facet-group .active {
   font-weight: bold;
   color: @link-color;
