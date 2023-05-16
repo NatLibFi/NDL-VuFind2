@@ -67,8 +67,9 @@
       <span class="library-is-closed info-element"><?=$this->transEsc('organisation_info_is_closed')?></span>
     </h4>
     <p class="time-open info-element">
-      <span class="opening-times"><i class="fa fa-clock-o"></i> <?=$this->transEsc('organisation_info_open_today')?> <span class="opens"></span> - <span class="closes"></span></span>
-      <span class="hide staff-times">(<?=$this->transEsc('organisation_info_schedule_staff')?> <span class="hide shift-template"><span class="opens"></span> - <span class="closes"></span></span>)</span>
+      <span class="opening-times"><i class="fa fa-clock-o"></i> <?=$this->transEsc('organisation_info_open_today')?> <span class="hide times-template"><span class="opens"></span>&ndash;<span class="closes"></span></span></span>
+      <span class="hide staff-times">(<?=$this->transEsc('organisation_info_schedule_staff')?> <span class="hide shift-template"><span class="opens"></span>&ndash;<span class="closes"></span></span>)</span>
+      <span class="hide closed-times"><br><?=$this->icon('organisation-info-closed')?> <?=$this->transEsc('organisation_info_is_closed')?> <span class="hide gap-template"><span class="opens"></span>&ndash;<span class="closes"></span></span></span>
     </p>
   </div>
   <div class="social-button info-element"><a aria-label="Facebook" href="#" target="_blank"><i class="fa fa-facebook"></i></a></div>

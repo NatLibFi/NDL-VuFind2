@@ -115,6 +115,8 @@
       </div>
     <?php endif; ?>
 
+    <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
+
     <?php
       $formats = $this->driver->getFormats();
     ?>

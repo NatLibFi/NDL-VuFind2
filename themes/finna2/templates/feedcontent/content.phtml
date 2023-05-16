@@ -13,44 +13,48 @@
   ]);
 
   if ($this->modal) {
-     $setupJS = <<<JS
-         $(document).ready(function() {
-            finna.contentFeed.loadFeed($('#modal .feed-content'), true);
-         });
-         JS;
+    $setupJS = <<<JS
+        $(document).ready(function() {
+          finna.contentFeed.loadFeed($('#modal .feed-content'), true);
+        });
+        JS;
     echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $setupJS, 'SET');
   }
 ?>
 <?php if ($this->modal): ?><h2></h2><?php endif; ?>
-<div>
-  <div class="<?= $this->modal ? '' : 'page-content'?> feed-content" data-feed="<?=$this->escapeHtmlAttr($this->feed)?>" data-element="<?=$this->escapeHtmlAttr($this->element)?>">
-
-  <?php if (!$this->modal): ?>
+<?php if (!$this->modal): ?>
+  <div class="clearfix">
     <div class="mainbody left">
-  <?php endif ?>
-    <div class="date"><?=$this->transEsc('Published');?>: <span></span></div>
-    <img class="xcal-featured hidden" alt="">
-    <div class="xcal-fields">
-      <div class="xcal-startDate xcal-endDate hidden"><span class="xcal-field"><?= $this->transEsc('xcal_date')?></span><span class="xcal-value"><span class="xcal-startDate"></span><span class="xcal-endDate hidden">&nbsp;&ndash;&nbsp;</span></span></div>
-      <div class="xcal-startTime xcal-endTime hidden"><span class="xcal-field"><?= $this->transEsc('xcal_time')?></span><span class="xcal-value"><span class="xcal-startTime"></span><span class="xcal-endTime hidden">&nbsp;&ndash;&nbsp;</span></span></div>
-      <div class="xcal-location hidden"><span class="xcal-field"><?= $this->transEsc('Location')?></span><span class="xcal-value"></span></div>
-      <div class="xcal-location-address hidden"><span class="xcal-field"><?= $this->transEsc('Address')?></span><span class="xcal-value"></span></div>
-      <div class="xcal-location-city hidden"><span class="xcal-field"><?= $this->transEsc('City')?></span><span class="xcal-value"></span></div>
-      <div class="xcal-organizer hidden"><span class="xcal-field"><?= $this->transEsc('Organizer')?></span><span class="xcal-value"></span></div>
-      <div class="xcal-organizer-url hidden"><span class="xcal-field"></span><a class="xcal-value" target="_blank"></a></div>
-      <div class="xcal-url hidden"><span class="xcal-field"><?= $this->transEsc('websites')?></span><a class="xcal-value" target="_blank"></a></div>
-      <div class="xcal-cost hidden"><span class="xcal-field"><?= $this->transEsc('Cost')?></span><span class="xcal-value"></span></div>
-      <div class="xcal-categories hidden"><span class="xcal-field"><?= $this->transEsc('Category')?></span><span class="xcal-value"></span></div>
-    </div>
-    <div class="holder"></div>
-  <?php if (!$this->modal): ?>
-    </div>
+<?php endif ?>
+<div class="<?= $this->modal ? '' : 'page-content'?> feed-content" data-feed="<?=$this->escapeHtmlAttr($this->feed)?>" data-element="<?=$this->escapeHtmlAttr($this->element)?>">
+  <div class="date"><?=$this->transEsc('Published');?>: <span></span></div>
+  <img class="xcal-featured hidden" alt="">
+  <div class="xcal-fields">
+    <div class="xcal-startDate xcal-endDate hidden"><span class="xcal-field"><?= $this->transEsc('xcal_date')?></span><span class="xcal-value"><span class="xcal-startDate"></span><span class="xcal-endDate hidden">&nbsp;&ndash;&nbsp;</span></span></div>
+    <div class="xcal-startTime xcal-endTime hidden"><span class="xcal-field"><?= $this->transEsc('xcal_time')?></span><span class="xcal-value"><span class="xcal-startTime"></span><span class="xcal-endTime hidden">&nbsp;&ndash;&nbsp;</span></span></div>
+    <div class="xcal-location hidden"><span class="xcal-field"><?= $this->transEsc('Location')?></span><span class="xcal-value"></span></div>
+    <div class="xcal-location-address hidden"><span class="xcal-field"><?= $this->transEsc('Address')?></span><span class="xcal-value"></span></div>
+    <div class="xcal-location-city hidden"><span class="xcal-field"><?= $this->transEsc('City')?></span><span class="xcal-value"></span></div>
+    <div class="xcal-organizer hidden"><span class="xcal-field"><?= $this->transEsc('Organizer')?></span><span class="xcal-value"></span></div>
+    <div class="xcal-organizer-url hidden"><span class="xcal-field"></span><a class="xcal-value" target="_blank"></a></div>
+    <div class="xcal-url hidden"><span class="xcal-field"><?= $this->transEsc('websites')?></span><a class="xcal-value" target="_blank"></a></div>
+    <div class="xcal-cost hidden"><span class="xcal-field"><?= $this->transEsc('Cost')?></span><span class="xcal-value"></span></div>
+    <div class="xcal-categories hidden"><span class="xcal-field"><?= $this->transEsc('Category')?></span><span class="xcal-value"></span></div>
+  </div>
+  <div class="holder"></div>
+</div>
+<?php if (!$this->modal): ?>
   </div>
     <div class="sidebar right">
-      <div><h3 class="article-navigation-header"><?=$this->translate('content-feed-navigation')?></h3></div>
+      <h3 class="article-navigation-header"><?=$this->translate('content-feed-navigation')?></h3>
       <div class="article-navigation-wrapper"></div>
     </div>
-  <?php endif; ?>
-
-</div>
+  </div>
+<?php endif; ?>
+<div class="next-articles"></div>
+<?php if (isset($this->additionalHtml)): ?>
+  <div class="feed-content-additional">
+    <?=$this->translate($this->additionalHtml);?>
+  </div>
+<?php endif; ?>
 <!-- END of: finna - feedcontent/content.phtml -->

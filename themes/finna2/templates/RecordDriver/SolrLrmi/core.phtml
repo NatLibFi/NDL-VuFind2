@@ -31,6 +31,9 @@
   <?php endif; ?>
   <div class="media-body record-information">
     <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+
+    <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
+
     <?php if (!empty($formats)): ?>
       <span class="recordFormat"><?=$this->record($this->driver)->getFormatList()?></span>
     <?php endif; ?>

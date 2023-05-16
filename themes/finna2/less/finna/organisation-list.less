@@ -96,86 +96,67 @@
                 font-weight: bold;
             }
         }
-        & .opening-times-week {
+        .opening-times-week {
+            display: flex;
+            flex-flow: column nowrap;
             font-size: 1.0em;
             width: 100%;
             margin-bottom: 20px;
             @media (max-width: @screen-sm-max) {
                 max-width: @organisation-info-max-w;
             }
-            & div.cell {
-                display: inline-block;
-                vertical-align: top;
-            }
-            & .day-container {
-                margin-bottom: 1px;
-                padding: 2px;
-                & .time-row {
-                    width: 100%;
-                    line-height: 1.26em;
-                    &.staff {
-                        margin-top: 1px;
-                        font-size: .94em;
-                        &:last-child {
-                            margin-bottom: 5px;
-                        }
-                    }
-                    .date, .description, .time-container {
-                        padding: 0 5px;
-                    }
-                    .date {
-                        width: 20%;
-                    }
-                    .description {
-                        width: 45%;
-                        & .info {
-                            margin-left: 5px;
-                            margin-right: 5px;
-                        }
-                        & .name-staff, .selfservice-only {
-                            color: @gray-light;
-                            font-size: .94em;
-                        }
-                        & .selfservice-only {
-                            margin-left: 5px;
-                        }
-                    }
-                    .time-container {
-                        width: 30%;
-                        text-align: right;
-                        & .time-template {
-                            margin-right: 0px;
-                            & .period:after {
-                                content:',';
-                            }
-                            &:last-child .period:after {
-                                content:'';
-                            }
-                        }
-                    }
-                    &:first-of-type .name-staff {
-                        display: none;
-                    }
+            .date-rows {
+                padding: 5px;
+                &:not(:last-child) {
+                    border-bottom: 1px solid @gray-lighter;
                 }
                 &.today {
                     background: @gray-lighter;
                     font-weight: bold;
                 }
-            }
-            & .name.staff {
-                color: @gray-light;
-            }
-            & .week td {
-                font-weight: bold;
-                & i {
-                    font-size: 1.5em;
-                    margin-left: 4px;
-                    vertical-align: middle;
-                    margin-top: -3px;
-                    color: @link-color;
-                    &:hover {
-                        cursor: pointer;
+
+                .time-row {
+                    display: flex;
+                    flex-flow: row nowrap;
+                    width: 100%;
+                    line-height: 1.26em;
+
+                    &.sub-row {
+                        padding-top: 3px;
+                        color: @gray-light;
+                        font-size: .94em;
                     }
+
+                    .date-container {
+                        flex: 1 0 20%;
+                        display: flex;
+                        flex-flow: nowrap;
+                        padding-right: 5px;
+                        .name {
+                            padding-left: 5px;
+                        }
+                    }
+                    .description {
+                        flex: 1 1 60%;
+                        display: flex;
+                        padding-left: 10px;
+
+                        .info {
+                            padding-left: 10px;
+                        }
+                    }
+                    .time-container {
+                        flex: 1 0 20%;
+                        display: flex;
+                        flex-flow: nowrap;
+                        .period, .closed-today {
+                            width: 100%;
+                            text-align: right;
+                        }
+                    }
+                }
+                .name.staff {
+                    color: @gray-light;
                 }
             }
         }

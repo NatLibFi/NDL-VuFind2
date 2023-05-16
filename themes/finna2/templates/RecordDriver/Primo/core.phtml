@@ -20,6 +20,8 @@
     </div>
     <h1 property="name" class="record-title"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
 
+    <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
+
     <?=$this->render('record/labels.phtml', ['driver' => $this->driver]); ?>
 
     <?php

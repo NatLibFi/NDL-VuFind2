@@ -5,7 +5,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2016-2019.
+ * Copyright (C) The National Library of Finland 2016-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -125,7 +125,8 @@ class Loader extends \VuFind\Record\Loader
         }
         if (
             $source == 'Solr'
-            && ($missingException || $result instanceof \VuFind\RecordDriver\Missing)
+            && ($missingException || $result instanceof \VuFind\RecordDriver\Missing
+            || ($result && $result->getExtraDetail('cached_record')))
         ) {
             // Check for a redirected record without overwriting $result
             if ($redirectedRecord = $this->handleMissingSolrRecord($id)) {

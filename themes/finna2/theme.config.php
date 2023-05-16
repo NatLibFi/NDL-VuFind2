@@ -271,6 +271,7 @@ $config = [
             'language' => 'FontAwesome:globe',
             'login' => 'FontAwesome:user',
             'my-account' => 'FontAwesome:user',
+            'organisation-info-closed' => 'FontAwesome:exclamation-circle',
             'qrcode' => 'FontAwesome:qr-code',
             'service-available' => 'FontAwesome:ok',
             'service-unavailable' => 'FontAwesome:remove',

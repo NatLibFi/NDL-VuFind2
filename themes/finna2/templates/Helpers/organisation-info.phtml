@@ -31,15 +31,15 @@
           </ul>
         </div>
       </div>
-      <span class="is-open open info-element"><?=$this->translate('organisation_info_is_open')?></span>
-      <span class="is-open closed info-element"><?=$this->translate('organisation_info_is_closed')?></span>
+      <span class="is-open open info-element"><?=$this->transEsc('organisation_info_is_open')?></span>
+      <span class="is-open closed info-element"><?=$this->transEsc('organisation_info_is_closed')?></span>
 <?php endif ?>
       <div class="info schedules">
         <div class="week-navi-holder">
           <button type="button" class="prev-week week-navi btn-link" data-dir="-1" aria-label="<?= $this->transEscAttr('organisation_info_previous_week')?>">
             <i class="fa fa-arrow-left" aria-hidden="true"></i>
           </button>
-          <span class="week-text"><?=$this->translate('organisation_info_schedule_week')?> <span class="num"></span></span>
+          <span class="week-text"><?=$this->transEsc('organisation_info_schedule_week')?> <span class="num"></span></span>
           <button type="button" class="next-week week-navi btn-link" data-dir="+1" aria-label="<?= $this->transEscAttr('organisation_info_next_week')?>">
             <i class="fa fa-arrow-right" aria-hidden="true"></i>
           </button>
@@ -48,24 +48,28 @@
 
         <div class="content">
           <div class="opening-times-week">
-            <div class="day-container template hide"></div>
-
-            <div class="time-row template hide">
-              <div class="cell date"></div>
-              <div class="cell description">
-                <span class="name"></span><span class="name-staff"><?=$this->translate('organisation_info_schedule_staff')?></span><span class="info"></span><span class="selfservice-only hide"><?=$this->translate('organisation_info_only_selfservice')?></span>
-              </div>
-              <div class="cell time-container">
-                <div class="cell time-template">
-                  <span class="period"><span class="opens"></span> - <span class="closes"></span></span>
-                  <span class="closed-today hide"><?=$this->translate('organisation_info_is_closed')?></span>
+            <div class="date-rows template hide">
+              <div class="time-row template hide">
+                <div class="date-container">
+                  <span class="date"></span>
+                </div>
+                <div class="description">
+                  <span class="name"></span>
+                  <span class="name-staff"><?=$this->transEsc('organisation_info_schedule_staff')?></span>
+                  <span class="selfservice-only hide"><?=$this->transEsc('organisation_info_only_selfservice')?></span>
+                  <span class="closed-notice hide"><?=$this->icon('organisation-info-closed')?> <?=$this->transEsc('organisation_info_is_closed')?></span>
+                  <span class="info"></span>
+                </div>
+                <div class="time-container">
+                  <span class="period"><span class="opens"></span>&ndash;<span class="closes"></span></span>
+                  <span class="closed-today hide"><?=$this->transEsc('organisation_info_is_closed')?></span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="no-schedules info-element"><?=$this->translate('organisation_info_no_schedule')?></div>
+        <div class="no-schedules info-element"><?=$this->transEsc('organisation_info_no_schedule')?></div>
         <div class="mobile-schedule-link-template hide" aria-hidden="true"><a href="#" target="_blank">Template link</a></div>
         <div class="mobile-schedules info-element"></div>
       </div>
@@ -85,7 +89,7 @@
         <a href="#" target="_blank" class="facebook info-element"><span class="btn"><i class="fa fa-facebook-square" aria-hidden="true"></i><span class="sr-only"><?=$this->transEsc('organisation_info_facebook') ?></span></span></a>
       </div>
       <div class="map info-element"><a href="#" target="_blank"><i class="fa fa-map-marker" aria-hidden="true"></i> <span class="map-address"></span></a></div>
-      <div class="details-link info-element"><a href="#" data-href="<?=$this->escapeHtmlAttr($this->url('organisationinfo-home'))?>" class="details"><i class="fa fa-home" aria-hidden="true"></i> <?=$this->translate('organisation_info_more_info')?></a></div>
+      <div class="details-link info-element"><a href="#" data-href="<?=$this->escapeHtmlAttr($this->url('organisationinfo-home'))?>" class="details"><i class="fa fa-home" aria-hidden="true"></i> <?=$this->transEsc('organisation_info_more_info')?></a></div>
       <div class="services">
         <span class="btn btn-open-widget btn-round service-wifi info-element">
           <i class="fa fa-wifi" title="<?=$this->transEscAttr('organisation_info_service_wifi')?>" aria-hidden="true"></i>

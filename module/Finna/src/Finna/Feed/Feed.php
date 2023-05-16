@@ -443,6 +443,10 @@ class Feed implements
         $fullDateFormat = $config->fullDateFormat ?? 'j.n.Y';
         $cleanContent = $config->cleanContent ?? true;
 
+        $contentNavigation = $config->feedcontentNavigation ?? true;
+        $nextArticles = $config->feedcontentNextArticles ?? false;
+        $additionalHtml = $config->feedcontentadditionalHtml ?? '';
+
         $itemsCnt = $config->items ?? null;
         $elements = $config->content ?? [];
         $allowXcal = $elements['xcal'] ?? true;
@@ -662,7 +666,10 @@ class Feed implements
             'config',
             'modal',
             'contentPage',
-            'allowedImages'
+            'allowedImages',
+            'contentNavigation',
+            'nextArticles',
+            'additionalHtml'
         );
     }
 

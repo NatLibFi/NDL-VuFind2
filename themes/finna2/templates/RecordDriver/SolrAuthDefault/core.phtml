@@ -41,6 +41,9 @@
         <p class="format"><?=$this->transEsc($formats[0])?></p>
         <h1 property="name" class="record-title"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
       </div>
+
+      <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
+
       <?php if ($occupations = $this->driver->getOccupations()): ?>
         <div class="occupation"><?=implode(', ', $occupations)?></div>
       <?php elseif ($corporateType = $this->driver->getCorporateType()): ?>
