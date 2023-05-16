@@ -73,7 +73,7 @@ onlinePayment['receipt'] = true
 ; Contact information for clients
 ; Organisation info ID (Finna ID in kirkanta):
 onlinePayment['organisationInfoId'] = "Helmet"
-; If the above if not available, a URL or other information can be provided:
+; If the above is not available, a URL or other information can be provided:
 onlinePayment['contactInfo'] = "https://..."
 
 ; The following settings are mandatory for CPU and optional for Paytrail services.

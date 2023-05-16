@@ -271,7 +271,7 @@ class TurkuPaymentAPI extends AbstractBase
         switch ($status) {
             case 'ok':
                 $marked = $transaction->setPaid();
-                return [self::PAYMENT_SUCCESS, false];
+                return [self::PAYMENT_SUCCESS, $marked];
             case 'fail':
                 $transaction->setCanceled();
                 return [self::PAYMENT_CANCEL, false];

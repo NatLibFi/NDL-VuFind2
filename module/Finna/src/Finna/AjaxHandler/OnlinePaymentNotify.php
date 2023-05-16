@@ -115,21 +115,19 @@ class OnlinePaymentNotify extends AbstractOnlinePaymentAction
         if (
             $handler::PAYMENT_SUCCESS === $paymentResult
             && $markedAsPaid
-            && $user = $this->userTable->getById($t->user_id)
-            && $patron = $this->getPatronForTransaction($t)
+            && ($user = $this->userTable->getById($t->user_id))
+            && ($patron = $this->getPatronForTransaction($t))
+            && ($this->dataSourceConfig[$patron['source']]['onlinePayment']['receipt'] ?? false)
         ) {
             // Send receipt by email if enabled:
-            $receiptEnabled = $this->dataSourceConfig[$patron['source']]['onlinePayment']['receipt'] ?? false;
-            if ($receiptEnabled) {
-                $patronProfile = array_merge(
-                    $patron,
-                    $this->ils->getMyProfile($patron)
-                );
-                try {
-                    $this->receipt->sendEmail($user, $patronProfile, $t);
-                } catch (\Exception $e) {
-                    $this->logger->err("Failed to send email receipt for $transactionId: " . (string)$e);
-                }
+            $patronProfile = array_merge(
+                $patron,
+                $this->ils->getMyProfile($patron)
+            );
+            try {
+                $this->receipt->sendEmail($user, $patronProfile, $t);
+            } catch (\Exception $e) {
+                $this->logger->err("Failed to send email receipt for $transactionId: " . (string)$e);
             }
         }
 
