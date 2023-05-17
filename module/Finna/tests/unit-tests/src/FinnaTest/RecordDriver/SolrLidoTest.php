@@ -401,6 +401,53 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Function to get expected physical locations data
+     *
+     * @return array
+     */
+    public function getPhysicalLocationsData(): array
+    {
+        return [
+            [
+                'getPhysicalLocations',
+                [
+                    'lido_test.xml' => [
+                        'Kansalliskirjaston kupolisali, Unioninkatu 36, Helsinki',
+                        'Teos on nähtävissä kirjaston aukioloaikoina.'
+                    ],
+                    'lido_test2.xml' => [
+                        'Huonenumero 123, Auditorio, Mannerheimintie 999, Helsinki'
+                    ],
+                ],
+            ]
+        ];
+    }
+
+    /**
+     * Test getPhysicalLocations
+     *
+     * @param string $function Function of the driver to test
+     * @param array  $expected Result to be expected
+     *
+     * @dataProvider getPhysicalLocationsData
+     *
+     * @return void
+     */
+    public function testGetPhysicalLocations(
+        string $function,
+        array $expected
+    ): void {
+        foreach ($expected as $file => $result) {
+            $driver = $this->getDriver($file);
+            $this->assertTrue(is_callable([$driver, $function], true));
+            $this->assertEquals(
+                $result,
+                $driver->$function()
+            );
+        }
+    }
+
+    /**
      * Test getNonPresenterAuthors.
      * Design event actors should always be before Production event actors.
      *
