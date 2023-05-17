@@ -413,13 +413,13 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 [
                     'lido_test.xml' => [
                         'Kansalliskirjaston kupolisali, Unioninkatu 36, Helsinki',
-                        'Teos on nähtävissä kirjaston aukioloaikoina.'
+                        'Teos on nähtävissä kirjaston aukioloaikoina.',
                     ],
                     'lido_test2.xml' => [
-                        'Huonenumero 123, Auditorio, Mannerheimintie 999, Helsinki'
+                        'Huonenumero 123, Auditorio, Mannerheimintie 999, Helsinki',
                     ],
                 ],
-            ]
+            ],
         ];
     }
 
