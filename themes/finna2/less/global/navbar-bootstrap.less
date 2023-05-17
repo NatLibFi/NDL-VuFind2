@@ -264,6 +264,7 @@
 .header-navbar-right {
   display: flex;
   flex-direction: row;
+  align-items: baseline;
 
   div.logoutOptions a:active {
     box-shadow: none;
@@ -271,6 +272,18 @@
   div.logoutOptions, #loginOptions {
     padding-right: 12px;
     position: relative;
+  }
+
+  @media (max-width: @screen-sm-max) {
+    position: absolute;
+    margin: 0;
+    line-height: @navbar-height;
+    top: 0;
+    right: @navbar-right;
+    flex: 0 0;
+    .dropdown-menu > li > a {
+      white-space: normal;
+    }
   }
 }
 
