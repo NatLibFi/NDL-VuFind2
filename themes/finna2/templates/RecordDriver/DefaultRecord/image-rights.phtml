@@ -5,34 +5,60 @@
       $descriptions = $rights['description'] ?? [];
     ?>
     <div class="image-rights">
-      <?php $hasLink = isset($rights['link']) && !empty($rights['link']); ?>
-      <strong><?=$this->transEsc($imageRightsLabel ?? 'Image Rights') ?></strong><br>
+      <?php $hasLink = !empty($rights['link']); ?>
+      <strong><?=$this->transEsc($imageRightsLabel ?? 'Image Rights') ?></strong>
+      <br>
       <span class="cc-rights">
         <?php if (!empty($rights['copyright'])): ?>
           <?php
             $copyright = $rights['copyright'];
-            $label = $this->record($this->driver)->translateCopyright($copyright);
+            $labelEsc = $this->record($this->driver)->translateCopyright($copyright);
           ?>
-          <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $copyright]);?><?php if ($hasLink): ?><a target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>"><?php endif; ?><span class="copyright-label"><?= $label ?></span><?php if ($hasLink): ?></a><?php endif; ?>
+          <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $copyright]);?>
+          <?php if ($hasLink): ?>
+            <a target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>">
+              <span class="copyright-label"><?=$labelEsc?></span>
+            </a>
+          <?php else: ?>
+            <span class="copyright-label"><?=$labelEsc?></span>
+          <?php endif; ?>
         <?php else: ?>
           <?php foreach ($descriptions as $item): ?>
-            <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $item])?> <?php if ($hasLink): ?><a target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>"><?php endif; ?><span><?= $item ?></span><?php if ($hasLink): ?></a><?php endif; ?>
+            <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $item])?>
+            <?php if ($hasLink): ?>
+              <a target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>">
+                <?=$this->escapeHtml($item)?></span>
+              </a>
+            <?php else: ?>
+              <span><?=$this->escapeHtml($item)?></span>
+            <?php endif; ?>
           <?php endforeach ?>
           <?php $descriptions = []; ?>
         <?php endif; ?>
-      </span> <p class="copyright-meaning hidden-print"><a target="_blank" <?php if ($hasLink): ?>aria-label="<?=$this->transEscAttr('external_online_link')?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>"><?php else: ?> href="<?=$this->url('content-page', ['page' => 'terms'])?>"><?php endif; ?><?=$this->transEsc('usage_meaning') ?></a></p>
+      </span>
+      <p class="copyright-meaning hidden-print">
+        <?php $urlEsc = $hasLink ? $this->escapeHtmlAttr($rights['link']) : $this->url('content-page', ['page' => 'terms']) ?>
+        <a target="_blank"<?php if ($hasLink): ?> aria-label="<?=$this->transEscAttr('external_online_link')?>"<?php endif; ?> href="<?=$urlEsc?>">
+          <?=$this->transEsc('usage_meaning') ?>
+        </a>
+      </p>
     </div>
-  <?php endif ?>
-  <?php if (isset($descriptions)): ?>
-    <div class="copyright<?=$this->truncateLicense ? ' truncate-field' : ''?>">
-      <?php foreach ($descriptions as $item): ?>
-        <p><?=$this->transEsc($item)?></p>
-      <?php endforeach ?>
-    </div>
-  <?php endif; ?>
-  <?php if (!isset($rights['copyright']) && !isset($rights['description'])): ?>
-    <p class="image-rights-default"><?=$this->transEsc('Image Rights Default') ?></p>
-    <p class="hidden-print"><a href="<?= $this->url('content-page', ['page' => 'terms']) . '#image_rights' ?>"><i class="fa fa-arrow-right"></i><?= $this->translate('See terms and conditions') ?></a></p>
+    <?php if ($descriptions): ?>
+      <div class="copyright<?=$this->truncateLicense ? ' truncate-field' : ''?>">
+        <?php foreach ($descriptions as $item): ?>
+          <p><?=$this->transEsc($item)?></p>
+        <?php endforeach ?>
+      </div>
+    <?php endif; ?>
+  <?php else: ?>
+    <p class="image-rights-default">
+      <?=$this->transEsc('Image Rights Default') ?>
+    </p>
+    <p class="hidden-print">
+      <a href="<?= $this->url('content-page', ['page' => 'terms']) . '#image_rights' ?>">
+        <i class="fa fa-arrow-right"></i><?= $this->translate('See terms and conditions') ?>
+      </a>
+    </p>
   <?php endif; ?>
 </div>
 <!-- END of: finna - RecordDriver/DefaultRecord/image-rights.phtml -->

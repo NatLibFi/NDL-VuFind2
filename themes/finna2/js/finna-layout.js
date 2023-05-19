@@ -119,7 +119,12 @@ finna.layout = (function finnaLayout() {
           if (topLink) {
             self.before(lessLink.clone(true));
           }
-          self.after([moreLink, lessLink]);
+          if (self.parents().hasClass('record-information')) {
+            self.after([moreLink]);
+          }
+          else {
+            self.after([moreLink, lessLink]);
+          }
         }
         self.addClass('truncated');
       }
