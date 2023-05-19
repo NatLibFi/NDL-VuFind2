@@ -1,31 +1,55 @@
 <!-- START of: finna - content/help_advanced_en-gb.phtml -->
+<?php $this->headTitle($this->translate('tabs_help-advanced'))?>
+
 <?php if ($this->resolver('content/help-tabs.phtml')): ?>
     <?=$this->render('content/help-tabs.phtml', ['activeTab' => 'help-advanced'])?>
 <?php endif; ?>
-<div>
-  <div class="sidebar left">
-    <div class="content-navigation-menu">
-    </div>
+<div class="sidebar left">
+  <div class="content-navigation-menu">
   </div>
-  <div class="mainbody right">
-      <p><a href="<?=$this->url('search-advanced')?>">Advanced search</a> provides a number of search boxes for entering search terms and phrases.</p>
-      <p>For example, you can search by title, author and role or subject. When you narrow your search by “Author and role,” you can enter the author’s name and their role, for example, <i>Jörn Donner</i> writer. Thus your search results will only contain books written by <i>Donner</i>, but not the films he has directed. Organisations may also have a role connected to the source material, for example as a creator of an archive.</p>
-      <p>You can conduct a search with multiple search terms by using several search fields or groups at once. The same Boolean operators (AND, OR, NOT) apply to the search terms used in a search group. The drop-down menu located next to the search fields defines the Boolean operator within the search group in question as follows:</p>
-      <p><strong>All search terms (AND)</strong> — Returns results that contain all of the terms in the search fields.</p>
-      <p><strong>Any search term (OR)</strong> — Returns results that contain one or more of the search terms. (There will be more results than with a search using AND.)</p>
-      <p><strong>Without any of the search terms (NOT)</strong> — Returns results that don’t contain any of the terms entered in the search fields. You can use this function when you want results that don’t contain a specific search term at all. Please note that you will need a separate search group if you also want to define terms contained in the source material.</p>
-      <p><strong>The Add a search field</strong> –button adds a new search field.</p>
-      <p><strong>The Add a search group</strong> –button adds search fields for a new group. The Remove a search group -button allows you to remove specified groups.</p>
-      <p>The relationships between search groups are defined by using the search operators <strong>All groups (AND)</strong> and <strong>Any search groups (OR)</strong>.</p>
-    <div id="filters" class="content-section">
-      <h2>Filters</h2>
-      <p>You can use advanced search to limit your results to a certain language or type as well as to date of manufacture.</p>
-      <p>You can include several languages and types of materials in a search.</p>
-    </div>
-    <div id="geographical-area" class="content-section">
-      <h2>Geographical area</h2>
-      <p>You can choose a specific area on the map of Finland to limit results to that region in your search. Depending on how you would like to narrow your search, you can use the plus and minus buttons to zoom in or out on the map. Please note that only some of the source material can be retrieved in a search based on location.</p>
-    </div>
+</div>
+<div class="mainbody right">
+  <h1>Advanced search instructions</h1>
+  <div id="adv-search-fields" class="content-section">
+    <h2>Search fields</h2>
+    <p><a href="<?=$this->url('search-advanced')?>">With the advanced search</a>, you can perform more complex searches. The advanced search features several search fields into which you can type search terms and phrases as well as Boolean search operators (AND, OR, NOT).</p>
+    <p>Every search field has a drop-down menu from which you can choose to limit the search, for example, by author, subject or publisher. Several search terms may be combined by using multiple search fields or search groups at the same time. The same Boolean operator will always be applied to the search term within a single search group (AND, OR, NOT).</p>
   </div>
+  <div id="adv-match-menu" class="content-section">
+    <h2>The Match menu in the search group</h2>
+    <p>The Match drop-down menu in the search group determines whether the results must feature all, some or none of the terms in the search fields.</p>
+    <p><strong>With all these (AND)</strong> — Returns results that match the content of every search field.</p>
+    <p><strong>With any of these (OR)</strong> — Returns results that match the content of one or more search fields. NB! The OR operator may yield more results than the AND operator.</p>
+    <p><strong>With none of these (NOT)</strong> — Returns results that feature none of the terms in any of the search fields. Use this operator if you want to exclude a specific keyword.</p>
+  </div>
+  <div id="adv-search-groups" class="content-section">
+    <h2>Search groups</h2>
+    <p><strong>Add search group</strong> — Adds a new group of search fields.</p>
+    <p><strong>Remove search group</strong> — Removes the search group.</p>
+    <p>The relationships between several search groups are determined by using the search operators ALL groups or ANY groups.</p>
+  </div>  
+  <div id="adv-search-narrow" class="content-section">
+    <h2>Limits</h2>
+    <p>You can limit an advanced search by language, content type or year of manufacture.</p>
+    <p>A single search may include several languages and material types.</p>
+    <p>You can further refine your search on the search results page by filtering by permissible uses or content providers.</p>
+  </div>
+  <div id="adv-search-geo" class="content-section">
+    <h2>Geographical region</h2>
+    <p>If you want to find material from a specific region of Finland, you can choose it on the map. You can zoom in or out depending on how extensive an area you wish to include in your search. Please note that not all of the material is grouped by geographical location.</p>
+    <p>Tip! If you try searching by the name of the region, you may find more results.</p>
+  </div>
+  <div id="adv-search-examples" class="content-section">
+    <h2>Example of advanced search</h2>
+    <h3>Search with several search terms and groups</h3>
+    <p>You want to find material on the cultural history of India or China.</p>
+    <ol class="list-numbers">
+      <li>Type <i>India</i> into the top search field and <i>China</i> into the lower one.</li>
+      <li>Make sure that you have selected the search operator <strong>With any of these (OR)</strong>. Your results will display material on either China or India.</li>
+      <li>Add a new search group by clicking on <strong>+Add search group</strong>.</li>
+      <li>Type <i>cultural history</i> into the search field of the new search group.</li>
+      <li>Finally, combine these search groups by selecting <strong>ALL groups</strong> from the drop-down menu underneath.</li>
+    </ol>
+  </div>         
 </div>
 <!-- END of: finna - content/help_advanced_en-gb.phtml -->

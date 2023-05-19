@@ -1,31 +1,67 @@
 <!-- START of: finna - content/help_advanced_fi.phtml -->
+<?php $this->headTitle($this->translate('tabs_help-advanced'))?>
+
 <?php if ($this->resolver('content/help-tabs.phtml')): ?>
     <?=$this->render('content/help-tabs.phtml', ['activeTab' => 'help-advanced'])?>
 <?php endif; ?>
-<div>
-  <div class="sidebar left">
-    <div class="content-navigation-menu">
-    </div>
+<div class="sidebar left">
+  <div class="content-navigation-menu">
   </div>
-  <div class="mainbody right">
-      <p><a href="<?=$this->url('search-advanced')?>">Tarkennetussa haussa</a> kohdassa <strong>Hakuehdot</strong> on useita <strong>hakukenttiä</strong>, joihin voi kirjoittaa hakusanoja ja hakulausekkeita.</p>
-      <p>Voit kohdistaa haun kaikkiin hakukenttiin tai täsmentää kohdistusta yhteen hakukenttään (esim. nimeke, tekijä ja rooli tai aihe). Tekijä ja rooli -kohdistuskenttään voit kirjoittaa tekijän nimen ja tekijäroolin, esimerkiksi <i>Jörn Donner</i> kirjoittaja, mikäli haluaa etsiä vain <i>Donnerin</i> kirjoittamia kirjoja, mutta ei hänen ohjaamiaan elokuvia. Myös organisaatioilla voi olla aineiston tekemiseen liittyvä rooli, esimerkiksi arkistonmuodostajana.</p>
-      <p>Useita hakusanoja yhdistelevä haku onnistuu käyttämällä useampaa hakukenttää tai hakuryhmää samanaikaisesti. Hakuryhmän sisällä oleviin hakusanoihin sovelletaan aina samaa boolen operaattoria (AND, OR, NOT). Hakukenttien vieressä oleva Hae-alasvetovalikko määrittelee, miten useita hakukenttiä sisältävä kysely käsitellään kyseisen hakuryhmän sisällä:</p>
-      <p><strong>Kaikilla hakusanoilla (AND)</strong> — Tuottaa hakutuloksia, jotka täsmäävät kaikkien hakukenttien sisältöön.</p>
-      <p><strong>Millä tahansa hakusanalla (OR)</strong> — Tuottaa hakutuloksia, jotka täsmäävät yhden tai useamman hakukentän sisältöön.</p>
-      <p><strong>Ei millään hakusanoista (NOT)</strong> — Tuottaa hakutuloksia, joissa ei esiinny yhdenkään hakukentän sisältöä. Tätä kannattaa käyttää, jos ei halua jonkin tietyn hakusanan sisältyvän lainkaan hakuun. Huomaa, että tämän käyttöön tarvitsee erillisen hakuryhmän, jos haluaa määritellä myös aineistoon sisältyviä kuvailutietoja.</p>
-      <p><strong>Lisää hakukenttä</strong> –painikkeella lomakkeelle pystyy lisäämään uuden hakukentän.</p>
-      <p><strong>Lisää hakuryhmä</strong> –painike lisää uuden ryhmän hakukenttiä. <strong>Poista hakuryhmä</strong> –painikkeella kyseisiä ryhmiä voidaan poistaa.</p>
-      <p>Hakuryhmien välisiä suhteita määritellään käyttäen <strong>Kaikki ryhmät (AND)</strong> ja <strong>Mitkä tahansa ryhmät (OR)</strong> –hakuoperaattoreita.</p>
-    <div id="filters" class="content-section">
-      <h2>Rajaukset</h2>
-      <p>Tarkennettua hakua voi rajata sisältämään aineistoa tietyllä kielellä, aineistotyypin sekä valmistusvuoden mukaan.</p>
-      <p>Kieliä ja aineistotyyppejä voi olla useampia samassa haussa.</p>
-    </div>
-    <div id="geographical-area" class="content-section">
-      <h2>Maantieteellinen alue</h2>
-      <p>Suomen kartalta voi valita tietyn alueen, miltä aineistoa haluaa hakuun tulevan. Karttaa voi lähentää tai loitontaa sen mukaan, kuinka laajalle alueelle haluaa laittaa rajauksen. Huomaa, että vain osa aineistosta on löydettävissä sijainnin perusteella.</p>
-    </div>
+</div>
+<div class="mainbody right">
+  <h1>Tarkennetun haun ohje</h1>
+  <div id="adv-search-fields" class="content-section">
+    <h2>Hakukentät</h2>
+    <p><a href="<?=$this->url('search-advanced')?>">Tarkennetulla haulla</a> voit tehdä monimutkaisempia hakuja. Tarkennettu haku hakee kaikkia Finnasta löytyviä aineistoja. Tarkennetun haun sivulla on useita hakukenttiä, joihin voit kirjoittaa hakusanoja ja -lausekkeita sekä käyttää Boolen hakuoperaattoreita (AND, OR, NOT). </p>
+    <p>Jokaisen hakukentän vieressä on valikko, jonka avulla voit etsiä aineistoa esimerkiksi tekijän, aiheen tai julkaisijan mukaan. Voit yhdistää useita hakusanoja, kun käytät useaa hakukenttään tai hakuryhmää samaan aikaan.</p>
   </div>
+  <div id="adv-match-menu" class="content-section">
+    <h2>Hakuryhmän Hae-valikko</h2>
+    <p>Hakuryhmän sisällä on valikko, jonka avulla voit tarkentaa ja rajata hakua. Voit saada hakutuloksia, joissa on mukana tiettyjä sanoja tai joista on poistettu tietyt sanat.</p>
+    <p><strong>Kaikilla hakusanoilla (AND)</strong> — Hakutuloksissa on mukana kaikki sanat, jotka olet kirjoittanut hakukenttiin.</p>
+    <p><strong>Millä tahansa hakusanalla (OR)</strong> — Hakutuloksissa on mukana yksi tai useampi sana, jonka olet kirjoittanut hakukenttään. Huomio! Jos valitset vaihtoehdon <strong>Millä tahansa näistä</strong>, voit saada enemmän hakutuloksia kuin jos valitset vaihtoehdon <strong>Kaikilla hakusanoilla</strong>.</p>
+    <p><strong>Ei millään hakusanoista (NOT)</strong> — Hakutuloksissa ei ole mukana yhtään sanaa, jonka olet kirjoittanut hakukenttään. Tätä kannattaa käyttää, jos et halua, että jokin tietty hakusana on mukana haussa.</p>
+  </div>
+  <div id="adv-search-groups" class="content-section">
+    <h2>Hakuryhmät</h2>
+    <p>Tarkennetussa haussa voit käyttää useampaa hakuryhmää yhteen hakuun.</p>
+    <p><strong>Lisää hakuryhmä</strong> –painike lisää uuden ryhmän hakukenttiä.</p>
+    <p><strong>Poista hakuryhmä</strong>–painike poistaa hakuryhmän.</p> 
+    <h3>Hakuryhmien yhdistäminen</h3>
+    <p>Voit myös yhdistää useita hakuryhmiä. Tällöin haku hakee tuloksia useasta hakuryhmästä yhdellä kertaa. Jos haluat määrittää useiden hakuryhmien suhdetta, voit valita joko <strong>Kaikki ryhmät (AND)</strong> tai <strong>Mitkä tahansa ryhmät (OR)</strong>.</p>
+    <p><strong>Kaikki ryhmät (AND)</strong> -valinta hakee tuloksia, jossa esiintyy kaikkien hakuryhmien hakusanat.</p>
+    <p><strong>Mitkä tahansa ryhmät (OR)</strong> -valinta hakee tuloksia, joissa esiintyy yksi tai useampi hakuryhmän hakusana.</p>
+    <p><a href="#adv-search-example-combine">Katso esimerkki useampia hakusanoja ja -ryhmiä yhdistelevästä hausta</a>.</p>
+  </div>  
+  <div id="adv-search-narrow" class="content-section">
+    <h2>Rajaukset</h2>
+    <p>Voit rajata tarkennettua hakua, että saat tuloksia, joissa on tietty kieli, aineistotyyppi tai valmistusvuosi.  Voit valita useamman kielen ja aineistotyypin samassa haussa.</p>
+    <p>Voit rajata hakuasi lisää hakutulossivulla esimerkiksi käyttöoikeuksien tai aineiston tarjoajan mukaan.</p>
+  </div>
+  <div id="adv-search-geo" class="content-section">
+    <h2>Maantieteellinen alue</h2>
+    <p>Voit hakea aineistoa tietyltä Suomen alueelta, kun valitset alueen kartalta. Karttaa voi lähentää tai loitontaa sen mukaan, kuinka laajalle alueelle haluat rajauksen. Vain osa aineistosta löytyy sijainnin perusteella.  </p>
+    <p>Vinkki! Kokeile hakua paikannimellä, ja voit ehkä löytää enemmän aineistoja.</p>
+  </div>
+  <div id="adv-search-examples" class="content-section">
+    <h2>Esimerkkejä tarkennetusta hausta</h2>
+    <h3>Yhden hakuryhmän haku</h3>
+    <p>Etsit Jörn Donnerin kirjoja, mutta et hänen ohjaamiaan elokuvia.</p>
+    <ol class="list-numbers">
+      <li>Kirjoita hakukenttään <i>Jörn Donner kirjoittaja</i>.</li>
+      <li>Rajaa hakua valikolla, joka on hakukentän vieressä. Valitse valikosta <strong>Tekijä ja rooli</strong>.</li>
+    </ol>
+    <h3 id="adv-search-example-combine">Useampia hakusanoja ja -ryhmiä yhdistelevä haku</h3>
+    <p>Haluat löytää aineistoja Alvar Aallon muotoilusta, mutta et arkkitehtuurista tai huonekaluista.</p>
+    <ol class="list-numbers">
+      <li>Kirjoita hakuryhmän hakukenttään <i>Aalto Alvar</i> ja alempaan <i>muotoilu</i>.</li>
+      <li>Katso, että hakuehtona on valittuna <strong>Kaikilla näillä (AND)</strong>. Haku kohdistuu kumpaankin hakukenttään.</li>
+      <li>Lisää uusi hakuryhmä valitsemalla <strong>+Lisää hakuryhmä</strong>.</li>
+      <li>Kirjoita uuden hakuryhmän hakukenttiin <i>huonekalut</i> ja <i>arkkitehtuuri</i>.</li>
+      <li>Voit valita tietyn aiheen, jonka haluat rajata pois hausta. Valitse <strong>Aihe</strong> valikosta, joka on hakukenttien vieressä.</li>
+      <li>Yhdistä hakuryhmän hakukentät valitsemalla Hae-valikosta <strong>Ei millään näistä (NOT)</strong>. Saat hakutuloksia, joissa ei ole valitsemiasi hakusanoja.</li>
+      <li>Yhdistä lopuksi molemmat hakuryhmät ehdolla <strong>Kaikki ryhmät (AND)</strong>.</li>
+    </ol>
+  </div>         
 </div>
 <!-- END of: finna - content/help_advanced_fi.phtml -->

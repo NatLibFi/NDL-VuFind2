@@ -1,131 +1,206 @@
 <!-- START of: finna - content/help-basic_sv.phtml -->
+<?php $this->headTitle($this->translate('tabs_help-basic'))?>
+
 <?php if ($this->resolver('content/help-tabs.phtml')): ?>
     <?=$this->render('content/help-tabs.phtml', ['activeTab' => 'help-basic'])?>
 <?php endif; ?>
-<div>
-  <div class="sidebar left">
-    <div class="content-navigation-menu">
-    </div>
+
+<div class="sidebar left">
+  <div class="content-navigation-menu">
   </div>
-  <div class="mainbody right">
-    <div id="basicsearch" class="content-section">
-      <h2><i class="fa fa-search"></i> Fri ordsökning</h2>
-      <p>Skriv in sökorden i sökrutan.</p>
-      <p>I rullgardinsmenyn till höger i sökrutan kan du välja att söka på titel, upphovsman eller ämne.<p>
-      <p>Sökord åtskilda med mellanslag följer samma söklogik som om de skulle åtskiljas av ett AND, dvs. sökresultaten ska innehålla alla sökord.</p>
-      <p>Till exempel:</p>
-      <pre class="code">mannerheim carl</pre>
-      <p>är i praktiken samma sökning som</p>
-      <pre class="code">mannerheim AND carl</pre>
-      <p>Efter att du gjort en sökning kan du begränsa sökresultaten till exempel enligt användningsrättigheter, innehållstyp eller produktionsår.</p>
-      <pre class="code">barn</pre>
-      <p>sökresultaten innehåller material med anknytning till barn</p>
-      <pre class="code">"barn"</pre>
-      <p>exaktare sökresultat, citationstecknen begränsar ordformen så att ordet ”barn” finns i sökresultatet</p>
-      <pre class="code">"Helsingfors universitet"</pre>
-      <p>liknande fraser är alltid bra att skriva inom citationstecken, så att sökningen inte tolkar orden separat</p>
-      <pre class="code">barn sommar</pre>
-      <p>samma som barn AND sommar; sökningen tar fram material som anknyter både till barn och till sommar</p>
-      <pre class="code">landsbygd OR bondgård</pre>
-      <p>sökningen ger resultat som anknyter till landsbygden eller bondgårdar</p>
-      <pre class="code">"kivi aleksis"</pre>
-      <p>upphovsmän skrivs inom citationstecken, helst med tillnamnet först</p>
-      <pre class="code">data*</pre>
-      <p>asterisken bryter av ordet och sökresultaten kan innehålla flera olika ändelser: t.ex. databas, databehandling, dataskydd</p>
-      <p>När du i sökrutan skriver in t.ex. en boktitel, förutser systemet ordet som du söker genom att föreslå alternativ, bland vilka du kanske direkt hittar det du söker.</p>
-      <p><strong>Närmare anvisningar för formulering av sökfraser finns i delen <a href="<?=$this->url('content-page', ['page' => 'help-syntax'])?>">söksyntax</a>.</strong></p>
-    </div>
-    <div id="narrowsearch" class="content-section">
-      <h2>Begränsa sökresultaten</h2>
-      <p>Standardinställningen för sökresultaten är att de som bäst motsvarar sökningen visas först (relevans). Ordningen på sökresultaten kan också ändras t.ex. så att de äldsta (enligt produktionsår) visas först. Därtill kan resultaten visas som bildgalleri eller som en förkortad lista.</p>
-      <p>I menyn <strong>Begränsa sökningen</strong> kan du avgränsa sökresultaten genom att använda ett eller flera filter samtidigt. Alternativen är stängda, men du kan öppna dem med pilen för rullgardinsmenyn.</p>
-
-      <?php
-        $facetFields = $this->config()->getFacetFields();
-        $checkboxFacets = $this->config()->getCheckboxFacets();
-      ?>
-
-      <?php if (isset($checkboxFacets['online_boolean:1']) || isset($checkboxFacets['free_online_boolean:1'])): ?>
-        <p><strong>Tillgänglig på nätet</strong>: begränsar resultaten till material som är tillgängligt via Finna.</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['usage_rights_ext_str_mv'])): ?>
-        <p><strong>Användarrättigheter</strong>: fungerar för material som är tillgängligt på nätet. Filtret innehåller olika alternativ beroende på de anteckningar om användarrättigheter som finns i materialet. (CC-licenser, Right Statements-beskrivningar av användarrättigheter)</p>
-        <p>Mer information om anteckningarna om användarrättigheter finns på <a href="/Content/terms">anvisningssidan Materials användarrättigheter</a>. Den som använder materialet har ansvar för att respektera upphovsrätten och integritetsskyddet.</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['usage_rights_str_mv'])): ?>
-        <p><strong>Tillåtna användningssyften</strong>: fungerar för material tillgängligt på nätet. Läs informationen om användarrättigheterna som finns i samband med materialet. Den som använder materialet har ansvar för att respektera upphovsrätten och dataskyddet. Källa och upphovsman måste anges om avgränsningen är annan än fri användning.</p>
-        <ul class="list-bullets">
-          <li><strong>Fri användning</strong></li>
-          <li><strong>Får redigeras</strong>
-            <ul class="list-bullets">
-              <li>Inte för kommersiell användning</li>
-              <li>Även för kommersiell användning</li>
-            </ul>
-          </li>
-          <li><strong>Utan redigering</strong>
-            <ul class="list-bullets">
-              <li>Inte för kommersiell användning</li>
-              <li>Även för kommersiell användning</li>
-              <li>nvändning kräver tillstånd/okänd</li>
-            </ul>
-          </li>
-        </ul>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['format']) || isset($facetFields['format_ext_str_mv'])): ?>
-        <p><strong>Materialtyp</strong>: olika alternativ för typ av material som är tillgängligt, t.ex. bilder, föremål, böcker.</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['author_facet']) || isset($facetFields['author2_id_str_mv'])): ?>
-        <p><strong>Upphovsman</strong>: vem har producerat materialet eller vem administrerar rättigheterna.</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['topic_facet'])): ?>
-        <p><strong>Tema</strong>: föreslagna teman för att begränsa sökningen.</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['geographic_facet'])): ?>
-        <p><strong>Region</strong>: vilken region handlar materialet om.</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['search_daterange_mv'])): ?>
-        <p><strong>Produktionsår</strong>: välj tidsintervall för materialets produktionsår, t.ex. 1920–1980-talet. Staplarna i tidslinjen visar från vilken tidsperiod det finns material.</p>
-        <ul class="list-bullets">
-          <li>Alla resultat</li>
-          <li>Resultat som helt ingår i tidsintervallet</li>
-          <li>Begränsa sökresultaten enligt publikationsår, tillverkningsår och produktionsår</li>
-        </ul>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['era_facet'])): ?>
-        <p><strong>Tidsperiod</strong>: erbjuder årtal och årtionden som materialet handlar om. Sökningen väljer vissa helheter och utesluter andra alternativ. T.ex. 1930-talet specificerar inte resultat om 1933, utan söker uppgifter som uttryckligen är märkta att gälla 1930-talet.</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['language'])): ?>
-        <p><strong>Språk</strong>: visar på vilka språk det finns material i sökresultaten.</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['hierarchy_parent_title'])): ?>
-        <p><strong>Ingår i publikationen</strong>: ger namnet på t.ex. tidningen som det finns artiklar i sökresultaten.</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['sector_str_mv'])): ?>
-        <p><strong>Sektor</strong>: organisationstyp – museum, arkiv eller bibliotek.</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['building'])): ?>
-        <p><strong>Organisation</strong>: visar alla arkiv, bibliotek och museer från vilka det finns material i sökresultaten.</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['first_indexed'])): ?>
-        <p><strong>Nytt i Finna</strong>: visar vilket material som senast har lagts till i Finna.</p>
-      <?php endif; ?>
-
-      <h3>När du har valt begränsningarna...</h3>
-      <p>Finna sparar dina valda begränsningar och visar dem nedanför sökrutan. Du kan ta bort en begränsning genom att klicka på krysset vid den (bild). Du kan ta bort alla begränsningar genom att avkryssa rutan Spara tidigare begränsningar nedanför sökrutan och göra en nya sökning.</p>
-    </div>
+</div>
+<div class="mainbody right">
+  <h1>Grundläggande sökning</h1>
+  <div id="basicsearch" class="content-section">
+    <h2>Fri ordsökning</h2>
+    <p>Inled sökningen med att skriva sökord i sökfältet. Sökningen är prediktiv och ger dig alternativ när du till exempel skriver in namnet på en bok i sökfältet. Därför kanske du genast hittar det du söker.</p>
+    <p>Sökord som enbart separeras med mellanslag följer söklogiken AND, det vill säga att sökresultaten ska innehålla alla dina sökord.</p>
+    <p>Exempel:</p>
+    <pre class="code">Jansson Tove</pre>
+    <p>betyder detsamma som</p>
+    <pre class="code">Jansson AND Tove</pre>
+    <h3>Förhandsbegränsning</h3>
+    <p>Med rullgardinsmenyn i sökfältet kan du avgränsa alla resultat i sökningen till titel, upphovsman eller ämne.</p>
+    <p>På sidan med resultat kan du begränsa sökresultaten ytterligare, exempelvis efter användarrättigheter, materialtyp eller produktionsår.</p>
+    <h3>Exempel på sökfraser</h3>
+    <p>Fritextsökning av cykelrelaterat material:</p>
+    <pre class="code">cykel</pre>
+    <p>Genom att sätta sökordet inom citationstecken får du exaktare sökresultat. Sökningen begränsas till material där ordet ”cykling” förekommer:</p>
+    <pre class="code">”cykling”</pre>
+    <p>Om du söker en fras eller ordkombinationer ska du sätta sökorden inom citationstecken. Då tolkas inte orden som separata:</p>
+    <pre class="code">”Helsingfors universitet”</pre>
+    <p>Med operatorn OR får du ett sökresultat där minst ett av dina sökord ingår. Med exempelsökningen får du sökresultat som handlar om landsbygden eller lantgårdar:</p>
+    <pre class="code">landsbygd OR lantgård</pre>
+    <p>Om du söker på upphovsmannens namn ska du skriva efternamnet först och sätta sökordet inom citationstecken:</p>
+    <pre class="code">"Kivi Aleksis"</pre>
+    <p>Sökord kan trunkeras med asterisk, vilket gör att sökresultaten kan inkludera flera ordformer, exempelvis informationsteknologi, information och informationsbehandling:</p>
+    <pre class="code">information*</pre>
+  </div>
+  <div id="narrowing-search" class="content-section">
+    <h2>Begränsa sökresultaten</h2>
+    <p>Sidan över sökresultat visar automatiskt de resultat som bäst motsvarar sökningen överst (precision, relevans). Ordningsföljden kan även justeras så att sökresultaten exempelvis går från äldsta till nyaste efter produktionsår eller publiceringstidpunkt. Dessutom kan du välja att visa vyn som bildgalleri eller en förkortad lista.</p>
+    <h3>Avgränsa sökträffar</h3>
+    <p>I den vänstra kanten av sökresultatsidan hittar du <strong>filter</strong> med många olika alternativ för att avgränsa din sökning.</p>
+    <p><strong>Tillgänglig på nätet:</strong> begränsa resultaten till material som är tillgängligt via Finna.</p>
+    <p><strong>Användarrättigheter:</strong> fungerar för material som är tillgängligt på nätet. Filtret innehåller olika alternativ beroende på de anteckningar om användarrättigheter som finns i materialet. (CC-licenser, Right Statements-beskrivningar av användarrättigheter)</p>
+    <p>Mer information om anteckningarna om användarrättigheter finns på <a href="/Content/terms">anvisningssidan Materials användarrättigheter</a>. Den som använder materialet har ansvar för att respektera upphovsrätten och integritetsskyddet.</p>
+    <p><strong>Materialtyp:</strong> inkluderar olika alternativ alltefter det tillgängliga materialet, till exempel bilder, föremål, böcker osv.</p>
+    <p><strong>Upphovsman:</strong> den som har producerat materialet eller förvaltar rättigheterna</p>
+    <p><strong>Ämne:</strong> färdiga ämnen som underlättar begränsning av sökningen</p>
+    <p><strong>Område:</strong> vilket område sökningen ska avgränsa sig till</p>
+    <p><strong>Produktionsår:</strong> med produktionsår kan du fastställa en period för vilken material ska visas, till exempel 1920–1980. Staplarna visar vilka år materialet är från. Förstora eller förminska tidslinjen med knapparna + och –. Med pilarna kan du gå framåt eller bakåt på tidslinjen. Helskärmsknappen visar en bredare tidslinje. Välj önskade år på tidslinjen genom att antingen skriva årtalen eller dra med muspekaren längs tidslinjen. Klicka på Uppdatera.</p>
+    <ul class="list-bullets">
+      <li>Alla resultat</li>
+      <li>Resultat som faller helt inom tidslinjen</li>
+      <li>Begränsa sökresultaten efter publikationsår, tillverkningsår och produktionsår.</li>
+    </ul>
+    <p><strong>Tidsperiod:</strong> ger färdigt formulerade årtal och årtionden. Sökningen riktar in sig på vissa helheter och utesluter andra alternativ. Med 1930-talet inkluderas exempelvis inte resultat från 1933, utan sökningen hämtar material för vilket 1930-talet specifikt angetts.</p>
+    <p><strong>Språk:</strong> visar det eller de språk som materialen bland sökresultaten har.</p>
+    <p><strong>Ingår i en helhet:</strong> anger exempelvis tidskrifternas namn om sökresultaten inkluderar artiklar.</p>
+    <p><strong>Sektor:</strong> organisationstyp, som kan vara museum, arkiv eller bibliotek</p>
+    <p><strong>Organisation:</strong> visar alla arkiv, bibliotek och museer vars material finns bland sökresultaten.</p>
+    <p><strong>Nytt i Finna:</strong> visar det material som senast lagts till i Finna.</p>
+    <h3>När du har valt begränsningarna</h3>
+    <p>Finna sparar dina begränsningar och visar dem under sökfältet. En enskild sökning kan tas bort med krysset intill sökningen: <i class="fa fa-lg fa-window-close" aria-hidden="true"></i>. Du kan ta bort alla begränsningar genom att klicka på <strong>Ta bort begränsningar</strong> och göra en ny sökning.</p>
+  </div>
+  <div id="saving-search" class="content-section">
+    <h2>Spara sökningen</h2>
+    <p>Om du är inloggad kan du spara din sökning med knappen <strong>Spara sökningen</strong> nere på sidan med sökresultat. Dina sökningar hittar du via <strong>Mitt konto → Sparade sökningar.</strong></p>
+    <p>Sparade sökningar kan bevakas med <a href="<?=$this->url('content-page', ['page' => 'help-account-management'])?>#saved-searches">Sökbevakning</a>, som meddelar per e-post om nytt material som motsvarar sökvillkoren.</p>
+  </div>
+  <div id="combining-search" class="content-section">
+    <h2>Kombinera sökord</h2>
+    <p>Finna-sökningar fungerar med booleska sökoperatorer. De vanligaste är AND, OR och NOT. Obs! Sökoperatorerna ska skrivas med VERSALER mellan sökorden.</p>
+    <p>Om du i en sökfras använder två eller flera operatorer ska du lägga till parenteser mellan de olika sökordskombinationerna. Exempel:</p>
+    <pre class="code">kost AND (diet OR livsstil)</pre>
+    <h3>AND</h3>
+    <p>AND ger sökresultat där alla sökord i sökfältet ingår. Om du anger flera sökord med mellanslag fungerar mellanslaget som AND.</p>
+    <p>Exempelvis ger de två följande sökningarna samma resultat:</p>
+    <pre class="code">Karisto Seppälä</pre>
+    <p>och</p>
+    <pre class="code">Karisto AND Seppälä</pre>
+    <h3>OR</h3>
+    <p>OR utökar sökresultatet. Då hämtas allt material där åtminstone ett av dina sökord förekommer. Om du exempelvis söker personhistorisk litteratur kan du formulera sökfrasen:</p>
+    <pre class="code">personhistoria OR biografia</pre>
+    <p>Eller om du vill ha information om Krimkriget:</p>
+    <pre class="code">”Orientaliska kriget” OR ”Åländska kriget” OR ”Krimkriget”</pre>
+    <h3>NOT</h3>
+    <p>NOT utesluter allt material som inkluderar det sökord som följer operatorn. Om du till exempel söker information om surrealism, men inte vill ha material som behandlar ämnet som en strömning inom bildkonsten, skriver du:</p>
+    <pre class="code">surrealism NOT (bildkonst OR målarkonst)</pre>
+    <p>OBS! Operatorn NOT kan inte användas i sökningar med bara ett sökord. Exempelvis ger följande sökning inga resultat alls:</p>
+    <pre class="code">NOT surrealism</pre>
+    <h3>Sökoperatorerna + och !- </h3>
+    <p>Utöver de vanligaste booleska operatorerna (AND, OR, NOT) används även + och !- i Finna.</p>
+    <h4>+ </h4>
+    <p>Med + anges kravet att ett sökord måste förekomma i varje sökresultat.</p>
+    <p>Om du exempelvis söker material som måste innehålla economics och som dessutom får innehålla Keynes, skriver du:</p>
+    <pre class="code">+economics Keynes</pre>
+    <h4>!- </h4>
+    <p>Med teckenkombinationen <strong>!-</strong> kan man utesluta material som inkluderar ordet efter teckenkombinationen från sökresultaten.</p>
+    <p>Om du alltså söker material som ska innehålla termen <i>economics</i> men inte termen <i>Keynes</i>, skriver du:</p>
+    <pre class="code">economics !-Keynes</pre>
+    <p>Obs! Teckenkombinationen <strong>!-</strong> kan inte användas för sökningar med bara ett sökord.</p>
+    <p>Exempelvis ger följande sökning inga resultat alls:</p>
+    <pre class="code">!-economics</pre>
+  </div>
+  <div id="truncating-search" class="content-section">
+    <h2>Användning av jokertecken i sökord</h2>
+    <p>Jokertecknen * och ? kan användas för att ersätta tecken som förekommer i ett sökord, så att sökresultatet i större utsträckning omfattar olika eventuella ändelser.</p>
+    <p>När det gäller finskspråkiga sökord rekommenderas inte användning av jokertecken, eftersom en del av de funktioner som utförs för det givna sökkriteriet då uteblir. Exempel på sådana funktioner är synonymhantering och uppdelning av termer vid bindestrecket.</p>
+    <p>Finna tar automatiskt hänsyn till sökordets olika böjningsformer och ändelser. Om ditt sökord är ”taulu” så känner sökmotorn även igen ordets böjda former, såsom ”taulut” och ”taulujen”. Användning av jokertecken kan förvilla sökmotorns automatiska sökfunktioner.</p>
+    <h3>Användning av jokertecken</h3>
+    <p>Obs! Jokertecknet får inte användas som sökordets första tecken.</p>
+    <h4>* </h4>
+    <p>*-tecknet ersätter ett eller flera tecken i sökordet. I sökresultaten ingår också den form av sökordet som använts för sökningen.</p>
+    <p>Sökordet kan trunkeras med asterisk. Till exempel kan orden konkurrens, konkurrent, konkurrensutsättning och konkurrenslagstiftning alla sökas med sökordet:</p>
+    <pre class="code">konkurren*</pre>
+    <p>Asterisk kan också användas inuti ett ord för att ersätta ett eller flera tecken. Exempelvis kan stavningsvarianterna color och colour sökas med sökordet:</p>
+    <pre class="code">colo*r</pre>
+    <h4>? </h4>
+    <p>Jokertecknet ? ersätter ett tecken i ett sökord, vilket möjliggör flera ordformer.</p>
+    <p>Exempelvis kan orden <i>woman</i> och <i>women</i> sökas med samma sökord:</p>
+    <pre class="code">wom?n</pre>
+  </div>
+  <div id="phrase-search" class="content-section">
+    <h2>Frassökning</h2>
+    <p>Frassökning bör användas om du enbart vill få fram material om ett visst ord eller en viss ordkombination. Frassökningar görs genom att sökorden skrivs inom citationstecken.</p>
+    <p>Om du till exempel ska söka material som innehåller ordkombinationen <i>Helsingfors universitet</i> men exkluderar <i>Helsingfors stad</i> skriver du</p>
+    <pre class="code">”Helsingfors universitet”</pre>
+    <p>Frassökning kan också användas för enskilda sökord. Sökningen gäller då enbart det angivna sökordet och dess specifika böjningsform.</p>
+    <p>Om du exempelvis gör en sökning på ordet tecken inom citationstecken, utesluts ord som <i>utropstecken</i>, <i>utmärkelsetecken</i> och <i>teckenspråk</i>.</p>
+    <pre class="code">”tecken”"</pre>
+  </div>
+  <div id="isbn-issn-search" class="content-section">
+    <h2>ISBN/ISSN-sökning</h2>
+    <p>För att söka ett verk på dess ISBN fyller du i sifferserien med eller utan bindestreck:</p>
+    <pre class="code">978-951-31-6583-3</pre>
+    <p>eller</p>
+    <pre class="code">9789513165833</pre>
+    <p>Sök tidskrifter eller serier med ISSN:</p>
+    <pre class="code">0782-8195</pre>
+    <p>eller</p>
+    <pre class="code">07828195</pre>
+    <p>En avancerad sökning tillåter sökning på ISBN/ISSN.</p>
+    <p><strong>Obs!</strong> Resultaten kan preciseras med filtren i menyn Begränsa sökresultaten.</p>
+  </div>
+  <div id="fine-tuning" class="content-section">
+    <h2>Finjustera dina sökningar</h2>
+    <h3>Oskarp sökning</h3>
+    <p>Om man gör en oskarp sökning visas också poster som innehåller ord som liknar sökordet.</p>
+    <p>Du kan göra en oskarp sökning genom att lägga till tecknet <strong>~</strong> i slutet av ett ord.</p>
+    <p>Om du till exempel gör en oskarp sökning med sökordet <i>roam</i>, inkluderas även termerna <i>foam</i> och <i>roams</i>:</p>
+    <pre class="code">roam~</pre>
+    <h3>Avståndssökning</h3>
+    <p>Genom en avståndssökning får man träffar där sökorden står nära men inte nödvändigtvis intill varandra.</p>
+    <p>Du gör en avståndssökning genom att lägga till tecknet ~ och ett avståndsvärde efter en sökfras med flera sökord.</p>
+    <p>Om du till exempel söker på orden <i>economics</i> och <i>Keynes</i> och vill att de ska förekomma på högst 10 ords avstånd från varandra skriver du:</p>
+    <pre class="code">"economics Keynes"~10</pre>
+    <h3>Intervallsökning</h3>
+    <p>För att söka inom intervallet mellan två värden kan man använda klammerparenteser { } eller hakparenteser [ ]. Om man använder klammerparenteserna görs sökningen mellan värdena, medan värdena själva utesluts. Om man använder hakparenteser inkluderas däremot också värdena som anges i sökningen.</p>
+    <p>Om du till exempel söker en term som börjar på bokstaven B eller C kan du söka på</p>
+    <pre class="code">{A TO D}</pre>
+    <p>Vill du söka ett värde mellan 1920–1950 kan du söka på</p>
+    <pre class="code">[1920 TO 1950]</pre>
+    <p>Observera att ordet TO mellan orden ska skrivas med VERSALER.</p>
+    <h3>Att vikta sökord</h3>
+    <p>Tecknet ^ ger mer vikt åt sökordet.</p>
+    <p>I följande sökning är sökordet <i>Koivisto</i> viktat:</p>
+    <pre class="code">economics Koivisto^5</pre>
+  </div>
+  <div id="searching-cyrillic" class="content-section">
+    <h2>Kyrilliska tecken</h2>
+    <h3>Hur söker man material som innehåller kyrilliska tecken?</h3>
+    <p>Material som har skrivits med kyrilliska tecken sparas i kyrillisk form i databasen. Den gamla ortografin och de gamla grammatiska formerna bevaras.</p>
+    <p>När du söker material som har skrivits med kyrilliska tecken kan du använda Windows tecken för modern ryska, ukrainska, vitryska, makedonska, bulgariska och serbiska.</p>
+    <p>Ett enskilt kyrilliskt tecken kan ersättas med två procenttecken (%%).</p>
+    <p>Det bästa sökresultatet får man om man använder translitteration.</p>
+    <h3>Translittererad sökning</h3>
+    <p>Sökningen görs med de vanliga latinska tecknen. Ett kyrilliskt tecken motsvaras av ett latinskt tecken. Translitterationen följer standarden ISO 9, men man behöver inte använda diakritiska tecken.</p>
+    <h3>Undantag från de nationella systemen för translitteration:</h3>
+    <p>
+      е = e Ельцин = El'cin<br>
+      ж = z жизнь = zizn'<br>
+      з = z Заварзин = Zavarzin<br>
+      й = j Толстой = Tolstoj<br>
+      х = h Хармс = Harms<br>
+      ц = c Цветаева = Cvetaeva<br>
+      ч = c Чехов = Cehov<br>
+      ш = s Шолохов = Solohov<br>
+      щ = s Щедрин = Sedrin<br>
+      ъ = " объект = ob ekt (haussa " on korvattava välilyönnillä!)<br>
+      ы = y Лыков = Lykov<br>
+      ь = ' Гоголь = Gogol' tai Gogol<br>
+      ю = u юность = unost' tai unost<br>
+      я =a Яков = Akov<br>
+      њ = n Његош = Negos<br>
+      љ = l љубав = lubav<br>
+      ђ = d Ђинђић = Dindic<br>
+      ћ = c ћуприја = cuprija<br>
+      џ = d Караџић = Karadic<br>
+      Ѣ = e мѢра = mera<br>
+      Ѳ = f Ѳетъ = Fet"<br>
+      ѵ = i Сѵнодъ = Sinod"<br>
+    </p>
   </div>
 </div>
 <!-- END of: finna - content/help-basic_sv.phtml -->
