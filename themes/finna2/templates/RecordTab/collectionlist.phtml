@@ -12,7 +12,6 @@
 
   <div class="collection-list-controls">
     <div class="filter-input">
-      <span class="hidden-xs"><?=$this->transEsc('Search from collection')?></span>
       <form class="form-inline" method="get" name="keywordFilterForm" id="keywordFilterForm">
         <div class="input-group">
           <input id="keywordFilter_lookfor" type="text" name="lookfor" aria-label="<?=$this->transEscAttr('Search from collection')?>" placeholder="<?=$this->transEscAttr('Search from collection')?>" value="<?=$this->escapeHtmlAttr($params->getDisplayQuery())?>" class="form-control">
@@ -23,7 +22,11 @@
             <?php endforeach; ?>
             <input type="hidden" name="view" value="<?=$this->escapeHtmlAttr($params->getView()) ?>">
             <input type="hidden" name="sort" value="<?=$this->escapeHtmlAttr($params->getSort()) ?>">
-          <span class="input-group-btn"><button class="btn btn-primary" type="submit" name="submit"><span class="sr-only"><?=$this->transEsc('Search')?></span><i class="fa fa-search"></i></button></span>
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" name="submit" aria-label="<?=$this->transEsc('Search')?>">
+                <?=$this->icon('search')?>
+              </button>
+            </span>
         </div>
       </form>
     </div>
