@@ -911,8 +911,14 @@ class RecordController extends \VuFind\Controller\RecordController
         if ($format && $index) {
             $driver = $this->loadRecord();
             $id = $driver->getUniqueID();
-            $models = $driver->tryMethod('getModels');
-            $url = $models[$index][$format]['preview'] ?? false;
+            $models = $driver->tryMethod('getModels')[$index]['models'] ?? [];
+            $found = array_search('preview', array_column($models, 'type'));
+            if (false === $found) {
+                $response->setStatusCode(404);
+                return $response;
+            }
+            // Always force preview model to be fetched
+            $url = $models[$found]['url'];
             if (!empty($url)) {
                 $fileName = urlencode($id) . '-' . $index . '.' . $format;
                 $fileLoader = $this->serviceLocator->get(\Finna\File\Loader::class);

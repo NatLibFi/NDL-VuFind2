@@ -778,9 +778,10 @@ FinnaPaginator.prototype.createImagePopup = function createImagePopup(image, ind
     'data-alt': image.description
   });
 
-  if (image.type === 'model') {
+  if (image.type === 'model' && image.models) {
+    const previewModel = image.models.find(el => el.type === 'preview');
     holder.attr({
-      'data-params': image.params,
+      'data-params': previewModel.params,
       'data-texture': image.texture,
       'data-scripts': image.scripts
     });
