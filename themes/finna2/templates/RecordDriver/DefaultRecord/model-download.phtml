@@ -15,9 +15,10 @@
                                 [
                                     'query' => [
                                         'id' => $this->driver->getUniqueID(),
-                                        'index' => $index, 'format' => $model['format'],
-                                        'type' => $model['type']
-                                    ]
+                                        'index' => $index,
+                                        'format' => $model['format'],
+                                        'type' => $model['type'],
+                                    ],
                                 ]
                             ) : $this->escapeHtmlAttr($model['url'])
                         ?>
@@ -39,9 +40,10 @@
                     [
                         'query' => [
                             'id' => $this->driver->getUniqueID(),
-                            'index' => $index, 'format' => $model['format'],
-                            'type' => $model['type']
-                        ]
+                            'index' => $index,
+                            'format' => $model['format'],
+                            'type' => $model['type'],
+                        ],
                     ]
                 ) : $this->escapeHtmlAttr($model['url'])
             ?>
