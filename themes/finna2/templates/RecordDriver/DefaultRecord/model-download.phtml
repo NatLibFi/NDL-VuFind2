@@ -24,7 +24,7 @@
                                 ) : $this->escapeHtmlAttr($model['url'])
                         ?>
                         <a download href="<?=$url?>" rel="nofollow">
-                            <?=$this->transEsc("model_type_{$model['type']}", null, $model['type'])?>
+                            <?=$this->transEscWithPrefix('model_type_', $model['type'])?>
                             <span><?=$this->transEscWithPrefix('model_format_', $model['format'])?></span>
                         </a>
                     </li> 
