@@ -165,6 +165,10 @@ transactionMaxDuration = 15
 currency = 'EUR'
 ; Whether to allow selection of fines to pay. Default is false.
 ;selectFines = true
+; Non-payable fine types:
+;nonPayableTypes[] = "LOST"
+; Non-payable fine statuses:
+;nonPayableStatuses[] = "UNRETURNED"
 
 
 [PasswordRecovery]
