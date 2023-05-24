@@ -9,18 +9,19 @@
                 <?php foreach ($models as $model): ?>
                     <li>
                         <?php
-                            $url = $model['type'] === 'preview' ? $this->url(
-                                'record-downloadmodel',
-                                [],
-                                [
-                                    'query' => [
-                                        'id' => $this->driver->getUniqueID(),
-                                        'index' => $index,
-                                        'format' => $model['format'],
-                                        'type' => $model['type'],
-                                    ],
-                                ]
-                            ) : $this->escapeHtmlAttr($model['url'])
+                            $url = $model['type'] === 'preview' ?
+                                $this->url(
+                                    'record-downloadmodel',
+                                    [],
+                                    [
+                                        'query' => [
+                                            'id' => $this->driver->getUniqueID(),
+                                            'index' => $index,
+                                            'format' => $model['format'],
+                                            'type' => $model['type'],
+                                        ],
+                                    ]
+                                ) : $this->escapeHtmlAttr($model['url'])
                         ?>
                         <a download href="<?=$url?>" rel="nofollow">
                             <?=$this->transEsc("model_type_{$model['type']}", null, $model['type'])?>
@@ -34,18 +35,19 @@
         <div class="download-link">
             <?php
                 $model = reset($models);
-                $url = $model['type'] === 'preview' ? $this->url(
-                    'record-downloadmodel',
-                    [],
-                    [
-                        'query' => [
-                            'id' => $this->driver->getUniqueID(),
-                            'index' => $index,
-                            'format' => $model['format'],
-                            'type' => $model['type'],
-                        ],
-                    ]
-                ) : $this->escapeHtmlAttr($model['url'])
+                $url = $model['type'] === 'preview' ?
+                    $this->url(
+                        'record-downloadmodel',
+                        [],
+                        [
+                            'query' => [
+                                'id' => $this->driver->getUniqueID(),
+                                'index' => $index,
+                                'format' => $model['format'],
+                                'type' => $model['type'],
+                            ],
+                        ]
+                    ) : $this->escapeHtmlAttr($model['url'])
             ?>
             <a download href="<?=$url?>" rel="nofollow">
                 <i aria-hidden="true" class="fa fa-download"></i>
