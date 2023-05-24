@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Online payment POST request trait.
+ * Online payment HTTP request trait.
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2016-2022.
+ * Copyright (C) The National Library of Finland 2016-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -33,7 +33,7 @@ namespace Finna\OnlinePayment;
 use Laminas\Stdlib\Parameters;
 
 /**
- * Online payment POST request trait.
+ * Online payment HTTP request trait.
  *
  * @category VuFind
  * @package  OnlinePayment
@@ -42,31 +42,63 @@ use Laminas\Stdlib\Parameters;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-trait OnlinePaymentPostRequestTrait
+trait OnlinePaymentHttpRequestTrait
 {
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
      * HTTP service.
      *
-     * @var \VuFind\Http
+     * @var \VuFindHttp\HttpService
      */
     protected $http;
 
     /**
      * Set HTTP service.
      *
-     * @param \VuFind\Http $http HTTP service.
+     * @param \VuFindHttp\HttpService $http HTTP service.
      *
      * @return void
      */
-    public function setHttpService($http)
+    public function setHttpService(\VuFindHttp\HttpService $http): void
     {
         $this->http = $http;
     }
 
     /**
-     * Post request to payment provider.
+     * Make a GET request to payment provider.
+     *
+     * @param string $url      URL
+     * @param array  $options  Laminas HTTP client options
+     * @param array  $headers  HTTP headers (key-value list).
+     * @param string $username Username for HTTP basic authentication.
+     * @param string $password Password for HTTP basic authentication.
+     *
+     * @return bool|array false on error, otherwise an array with keys:
+     * - httpCode => Response status code
+     * - response => Response body
+     * - headers => Response headers
+     */
+    protected function getRequest(
+        $url,
+        $options = [],
+        $headers = [],
+        $username = null,
+        $password = null
+    ) {
+        return $this->sendHttpRequest(
+            \Laminas\Http\Request::METHOD_POST,
+            $url,
+            '',
+            $options,
+            $headers,
+            $username,
+            $password
+        );
+    }
+
+    /**
+     * Make a POST request to payment provider.
      *
      * @param string $url      URL
      * @param string $body     Request body
@@ -77,7 +109,6 @@ trait OnlinePaymentPostRequestTrait
      *
      * @return bool|array false on error, otherwise an array with keys:
      * - httpCode => Response status code
-     * - contentType => Response content type
      * - response => Response body
      * - headers => Response headers
      */
@@ -89,12 +120,44 @@ trait OnlinePaymentPostRequestTrait
         $username = null,
         $password = null
     ) {
+        return $this->sendHttpRequest(
+            \Laminas\Http\Request::METHOD_POST,
+            $url,
+            $body,
+            $options,
+            $headers,
+            $username,
+            $password
+        );
+    }
+
+    /**
+     * Send a request to payment provider.
+     *
+     * @param string  $method   HTTP method
+     * @param string  $url      URL
+     * @param string  $body     Request body (POST requests)
+     * @param array   $options  Laminas HTTP client options
+     * @param array   $headers  HTTP headers (key-value list).
+     * @param ?string $username Username for HTTP basic authentication.
+     * @param ?string $password Password for HTTP basic authentication.
+     *
+     * @return bool|array false on error, otherwise an array with keys:
+     * - httpCode => Response status code
+     * - response => Response body
+     * - headers => Response headers
+     */
+    protected function sendHttpRequest(
+        string $method,
+        string $url,
+        string $body,
+        array $options = [],
+        array $headers = [],
+        ?string $username = null,
+        ?string $password = null
+    ) {
         try {
-            $client = $this->http->createClient(
-                $url,
-                \Laminas\Http\Request::METHOD_POST,
-                30
-            );
+            $client = $this->http->createClient($url, $method, 30);
             if (!empty($username) && !empty($password)) {
                 $client->setAuth($username, $password);
             }
@@ -111,7 +174,7 @@ trait OnlinePaymentPostRequestTrait
             $response = $client->send();
         } catch (\Exception $e) {
             $this->logger->err(
-                "Error posting request: " . $e->getMessage()
+                "Error sending $method request: " . $e->getMessage()
                 . ", url: $url, body: $body, headers: " . var_export($headers, true)
             );
             if ($this->logger instanceof \VuFind\Log\Logger) {
@@ -121,7 +184,7 @@ trait OnlinePaymentPostRequestTrait
         }
 
         $this->logger->warn(
-            "Online payment request: url: $url, body: $body, headers: "
+            "Online payment request: method: $method, url: $url, body: $body, headers: "
             . var_export($headers, true) . ', response: '
             . (string)$response
         );

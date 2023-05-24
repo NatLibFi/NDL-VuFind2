@@ -51,7 +51,7 @@ class Customer extends \Paytrail\SDK\Model\Customer
      *
      * @throws ValidationException
      */
-    public function validate()
+    public function validate(): bool
     {
         $props = get_object_vars($this);
 

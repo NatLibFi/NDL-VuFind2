@@ -369,15 +369,15 @@ class TurkuPaymentAPI extends AbstractBase
             }
         }
 
-        $client = new Client(
-            $this->config->merchantId,
-            $this->config->oId,
+        return new Client(
+            0,
             $this->config->secret,
-            $this->config->platformName,
-            $this->config->url
+            'Finna',
+            $this->http,
+            $this->getLogger(),
+            $this->config->url,
+            $this->config->merchantId,
+            $this->config->oId
         );
-        $client->setHttpService($this->http);
-        $client->setLogger($this->logger);
-        return $client;
     }
 }

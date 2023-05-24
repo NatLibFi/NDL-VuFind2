@@ -331,13 +331,13 @@ class PaytrailPaymentAPI extends AbstractBase
             }
         }
 
-        $client = new Client(
+        return new Client(
             $this->config->merchantId,
             $this->config->secret,
-            'Finna'
+            'Finna',
+            $this->http,
+            $this->getLogger(),
+            Client::API_ENDPOINT
         );
-        $client->setHttpService($this->http);
-        $client->setLogger($this->logger);
-        return $client;
     }
 }
