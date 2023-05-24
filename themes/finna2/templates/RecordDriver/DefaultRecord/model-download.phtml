@@ -21,7 +21,7 @@
                                             'type' => $model['type'],
                                         ],
                                     ]
-                                ) : $this->escapeHtmlAttr($model['url'])
+                                ) : $this->escapeHtmlAttr($model['url']);
                         ?>
                         <a download href="<?=$url?>" rel="nofollow">
                             <?=$this->transEscWithPrefix('model_type_', $model['type'])?>
@@ -47,7 +47,7 @@
                                 'type' => $model['type'],
                             ],
                         ]
-                    ) : $this->escapeHtmlAttr($model['url'])
+                    ) : $this->escapeHtmlAttr($model['url']);
             ?>
             <a download href="<?=$url?>" rel="nofollow">
                 <i aria-hidden="true" class="fa fa-download"></i>
