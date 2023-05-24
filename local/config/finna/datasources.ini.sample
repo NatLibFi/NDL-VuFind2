@@ -84,7 +84,7 @@ onlinePayment['contactInfo'] = "https://..."
 onlinePayment['paymentDescription'] = 'Finna: verkkomaksuja'
 ; Default product code
 onlinePayment['productCode'] = ''
-; Product code for transaction fees
+; Product code for transaction fees (cannot be used with shop-in-shop functionality)
 onlinePayment['transactionFeeProductCode'] = 'Transaction'
 ; Product code mappings from the fine types to product codes
 onlinePayment['productCodeMappings'] = 'Overdue=demo_003:Long Overdue=demo_004'
@@ -94,6 +94,9 @@ onlinePayment['productCodeMappings'] = 'Overdue=demo_003:Long Overdue=demo_004'
 ; already a product code from other mappings above, this value is prepended to it
 ; without any delimiter.
 ;onlinePayment['organizationProductCodeMappings'] = 'Helsinki=demo_003:Tampere=demo_004'
+; Mappings from organization names or codes to merchant id's for shop-in-shop
+; functionality.
+;onlinePayment['organizationMerchantIdMappings'] = 'Helsinki=123:Vantaa=234'
 
 ; # Video on demand settings
 
