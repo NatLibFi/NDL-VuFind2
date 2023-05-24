@@ -151,7 +151,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
 
   function keyHandler(e/*, cb*/) {
     if (e.which === 13 || e.which === 32) {
-      $(e.target).click();
+      $(e.target).trigger("click");
       e.preventDefault();
       return false;
     }

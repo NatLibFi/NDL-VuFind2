@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Abstract base class for online payment handlers.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2015-2023.
  *
@@ -26,11 +27,13 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Finna\Db\Row\Transaction as TransactionRow;
 use Finna\Db\Table\Transaction as TransactionTable;
 use Finna\OnlinePayment\OnlinePayment;
+use Finna\OnlinePayment\Receipt;
 use Laminas\Session\Container as SessionContainer;
 use VuFind\Db\Table\User as UserTable;
 use VuFind\ILS\Connection;
@@ -46,8 +49,8 @@ use VuFind\Session\Settings as SessionSettings;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractBase
-implements \Laminas\Log\LoggerAwareInterface
+abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractBase implements
+    \Laminas\Log\LoggerAwareInterface
 {
     use \VuFind\Log\LoggerAwareTrait;
 
@@ -87,6 +90,20 @@ implements \Laminas\Log\LoggerAwareInterface
     protected $onlinePaymentSession;
 
     /**
+     * Data source configuration
+     *
+     * @var array
+     */
+    protected $dataSourceConfig;
+
+    /**
+     * Receipt
+     *
+     * @var \Finna\OnlinePayment\Receipt
+     */
+    protected $receipt;
+
+    /**
      * Constructor
      *
      * @param SessionSettings  $ss  Session settings
@@ -95,6 +112,8 @@ implements \Laminas\Log\LoggerAwareInterface
      * @param UserTable        $ut  User table
      * @param OnlinePayment    $op  Online payment manager
      * @param SessionContainer $os  Online payment session
+     * @param array            $ds  Data source configuration
+     * @param Receipt          $rcp Receipt
      */
     public function __construct(
         SessionSettings $ss,
@@ -102,7 +121,9 @@ implements \Laminas\Log\LoggerAwareInterface
         TransactionTable $tt,
         UserTable $ut,
         OnlinePayment $op,
-        SessionContainer $os
+        SessionContainer $os,
+        array $ds,
+        Receipt $rcp
     ) {
         $this->sessionSettings = $ss;
         $this->ils = $ils;
@@ -110,6 +131,8 @@ implements \Laminas\Log\LoggerAwareInterface
         $this->userTable = $ut;
         $this->onlinePayment = $op;
         $this->onlinePaymentSession = $os;
+        $this->dataSourceConfig = $ds;
+        $this->receipt = $rcp;
     }
 
     /**
@@ -121,44 +144,7 @@ implements \Laminas\Log\LoggerAwareInterface
      */
     protected function markFeesAsPaid(TransactionRow $t): array
     {
-        $catUser = '';
-        $catPassword = '';
-        if ($user = $this->userTable->getById($t->user_id)) {
-            // Check if user's current credentials match (typical case):
-            $match = mb_strtolower($user->cat_username, 'UTF-8')
-                === mb_strtolower($t->cat_username, 'UTF-8');
-            if ($match) {
-                $catUser = $user->cat_username;
-                $catPassword = $user->getCatPassword();
-            } else {
-                // Check for a matching library card:
-                $userCards = $user->getLibraryCardsByUserName($t->cat_username);
-                $first = $userCards->current();
-                // Read the card with a separate call to decrypt password:
-                $userCard = $first ? $user->getLibraryCard($first->id) : null;
-                if ($userCard) {
-                    $catUser = $userCard->cat_username;
-                    $catPassword = $userCard->cat_password;
-                }
-            }
-        }
-
-        if (!$catUser) {
-            $this->logError(
-                'Error processing transaction id ' . $t->id
-                . ': user card not found (cat_username: ' . $t->cat_username
-                . ', user id: ' . $t->user_id . ')'
-            );
-            return ['success' => false];
-        }
-
-        $patron = null;
-        try {
-            $patron = $this->ils->patronLogin($catUser, $catPassword);
-        } catch (\Exception $e) {
-            $this->logException($e);
-        }
-
+        $patron = $this->getPatronForTransaction($t);
         if (!$patron) {
             $this->logError(
                 'Error processing transaction id ' . $t->id
@@ -173,7 +159,8 @@ implements \Laminas\Log\LoggerAwareInterface
         $paymentConfig = $this->ils->getConfig('onlinePayment', $patron);
         $fineIds = $t->getFineIds();
 
-        if (($paymentConfig['exactBalanceRequired'] ?? true)
+        if (
+            ($paymentConfig['exactBalanceRequired'] ?? true)
             || !empty($paymentConfig['creditUnsupported'])
         ) {
             try {
@@ -193,7 +180,8 @@ implements \Laminas\Log\LoggerAwareInterface
             // Check that payable sum has not been updated
             $exact = $paymentConfig['exactBalanceRequired'] ?? true;
             $noCredit = $exact || !empty($paymentConfig['creditUnsupported']);
-            if ($finesAmount['payable'] && !empty($finesAmount['amount'])
+            if (
+                $finesAmount['payable'] && !empty($finesAmount['amount'])
                 && (($exact && $t->amount != $finesAmount['amount'])
                 || ($noCredit && $t->amount > $finesAmount['amount']))
             ) {
@@ -207,7 +195,7 @@ implements \Laminas\Log\LoggerAwareInterface
                 $t->setFinesUpdated();
                 return [
                     'success' => false,
-                    'msg' => 'online_payment_registration_failed'
+                    'msg' => 'online_payment_registration_failed',
                 ];
             }
         }
@@ -241,6 +229,69 @@ implements \Laminas\Log\LoggerAwareInterface
             return ['success' => false, 'msg' => $e->getMessage()];
         }
         return ['success' => true];
+    }
+
+    /**
+     * Find patron credentials from a transaction
+     *
+     * @param TransactionRow $t Transaction
+     *
+     * @return array Patron information or null on failure
+     */
+    protected function getPatronForTransaction(TransactionRow $t): ?array
+    {
+        $catCreds = $this->getPatronCredentials($t);
+        if (!$catCreds) {
+            $this->logError(
+                'Error processing transaction id ' . $t->id
+                . ': user card not found (cat_username: ' . $t->cat_username
+                . ', user id: ' . $t->user_id . ')'
+            );
+            return null;
+        }
+
+        try {
+            return $this->ils->patronLogin($catCreds['user'], $catCreds['password']);
+        } catch (\Exception $e) {
+            $this->logException($e);
+        }
+        return null;
+    }
+
+    /**
+     * Find patron credentials from a transaction
+     *
+     * @param TransactionRow $t Transaction
+     *
+     * @return array Array with keys 'user' and 'password', or null on failure
+     */
+    protected function getPatronCredentials(TransactionRow $t): ?array
+    {
+        if ($user = $this->userTable->getById($t->user_id)) {
+            // Check if user's current credentials match (typical case):
+            $match = mb_strtolower($user->cat_username, 'UTF-8')
+                === mb_strtolower($t->cat_username, 'UTF-8');
+            if ($match) {
+                return [
+                    'user' => $user->cat_username,
+                    'password' => $user->getCatPassword(),
+                ];
+            }
+
+            // Check for a matching library card:
+            $userCards = $user->getLibraryCardsByUserName($t->cat_username);
+            $first = $userCards->current();
+            // Read the card with a separate call to decrypt password:
+            $userCard = $first ? $user->getLibraryCard($first->id) : null;
+            if ($userCard) {
+                return [
+                    'user' => $userCard->cat_username,
+                    'password' => $userCard->cat_password,
+                ];
+            }
+        }
+
+        return null;
     }
 
     /**

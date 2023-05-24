@@ -4,7 +4,7 @@
   $hasImg = !empty($item['image']['url']);
 ?>
 <?php if ($hasImg): ?>
-  <img src="<?=$this->escapeHtmlAttr($item['image']['url']) ?>" alt="" />
+  <img src="<?=$this->escapeHtmlAttr($item['image']['url']) ?>" alt="">
   <?php if ($hasIcon && $hasImg): ?>
     <?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon'], 'wrapper' => true]);?>
   <?php endif; ?>

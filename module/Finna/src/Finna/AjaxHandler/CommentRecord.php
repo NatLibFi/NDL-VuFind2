@@ -1,8 +1,9 @@
 <?php
+
 /**
  * AJAX handler to comment on a record.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2015-2023.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Finna\Db\Table\CommentsRecord;
@@ -166,7 +168,8 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
             );
             $ids = [$id];
 
-            if (!$results instanceof \VuFind\Search\EmptySet\Results
+            if (
+                !$results instanceof \VuFind\Search\EmptySet\Results
                 && count($results->getResults())
             ) {
                 $results = $results->getResults();
@@ -179,7 +182,8 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
         }
 
         $rating = $params->fromPost('rating', '');
-        if ($driver->isRatingAllowed()
+        if (
+            $driver->isRatingAllowed()
             && ('' !== $rating
             || $this->accountCapabilities->isRatingRemovalAllowed())
         ) {

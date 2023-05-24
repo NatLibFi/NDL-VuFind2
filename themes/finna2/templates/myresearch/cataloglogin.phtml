@@ -58,11 +58,11 @@
       <?php if (null === $this->loginMethod || 'email' === $this->loginMethod): ?>
         <label class="control-label email-login<?php if (null === $this->loginMethod): ?> hidden<?php endif; ?>" for="profile_cat_username"><?=$this->transEsc('Email')?>:</label>
       <?php endif; ?>
-      <input id="profile_cat_username" type="text" name="cat_username" value="" class="form-control"/>
+      <input id="profile_cat_username" type="text" name="cat_username" value="" class="form-control">
     </div>
     <div class="form-group">
       <label class="control-label" for="profile_cat_password"><?=$this->transEsc('Library Catalog Password')?>:</label>
-      <input id="profile_cat_password" type="password" name="cat_password" value="" class="form-control"/>
+      <input id="profile_cat_password" type="password" name="cat_password" value="" class="form-control">
     </div>
     <div class="form-group">
       <input class="btn btn-primary" type="submit" name="processLogin" value="<?=$this->transEscAttr('Save')?>">
@@ -85,8 +85,8 @@
 <?php
   $methods = json_encode($this->loginMethods);
   $script = <<<EOT
-  setupMultiILSLoginFields($methods, 'profile_cat_');
-EOT;
+        setupMultiILSLoginFields($methods, 'profile_cat_');
+      EOT;
 
   // Inline the script for lightbox compatibility
   echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');

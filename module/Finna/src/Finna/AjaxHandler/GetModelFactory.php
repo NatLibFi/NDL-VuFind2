@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Factory for GetModel AJAX handler.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2021.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Psr\Container\ContainerInterface;
@@ -40,8 +42,7 @@ use Psr\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class GetModelFactory
-implements \Laminas\ServiceManager\Factory\FactoryInterface
+class GetModelFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create an object

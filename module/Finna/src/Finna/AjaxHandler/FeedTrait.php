@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Feed support trait
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2015-2018.
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Laminas\Config\Config;
@@ -68,6 +70,8 @@ trait FeedTrait
         $items = $feed['items'];
         $config = $feed['config'];
         $modal = $feed['modal'];
+        $contentNavigation = $feed['contentNavigation'];
+        $nextArticles = $feed['nextArticles'];
 
         $images
             = $config->content['image'] ?? true;
@@ -116,12 +120,12 @@ trait FeedTrait
             $feed['visualItems'] = $config->visualItems;
         }
 
-        $template = strpos($type, 'carousel') !== false ? 'carousel' : $type;
+        $template = str_contains($type, 'carousel') ? 'carousel' : $type;
         $html = $viewRenderer->partial("ajax/feed-$template.phtml", $feed);
 
         $settings = [
             'type' => $type,
-            'modal' => $modal
+            'modal' => $modal,
         ];
         if (isset($config->height)) {
             $settings['height'] = $config->height;
@@ -136,7 +140,7 @@ trait FeedTrait
             $settings['scrollSpeed']
                 = $config->scrollSpeed ?? 750;
             $breakPoints = [
-                'desktop' => 4, 'desktop-small' => 3, 'tablet' => 2, 'mobile' => 1
+                'desktop' => 4, 'desktop-small' => 3, 'tablet' => 2, 'mobile' => 1,
             ];
 
             foreach ($breakPoints as $breakPoint => $default) {

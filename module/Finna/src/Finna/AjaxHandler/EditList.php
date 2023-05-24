@@ -1,8 +1,9 @@
 <?php
+
 /**
  * AJAX handler for editing a list.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2018.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Finna\View\Helper\Root\Markdown;
@@ -44,8 +46,7 @@ use VuFind\I18n\Translator\TranslatorAwareInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class EditList extends \VuFind\AjaxHandler\AbstractBase
-implements TranslatorAwareInterface
+class EditList extends \VuFind\AjaxHandler\AbstractBase implements TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
@@ -160,7 +161,7 @@ implements TranslatorAwareInterface
                     $tag = urldecode($tag);
                     // Quote tag with whitespace to prevent VuFind
                     // from creating multiple tags.
-                    return false !== strpos($tag, ' ') ? "\"{$tag}\"" : $tag;
+                    return str_contains($tag, ' ') ? "\"{$tag}\"" : $tag;
                 },
                 $listParams['tags']
             );

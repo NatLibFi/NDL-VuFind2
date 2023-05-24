@@ -133,6 +133,7 @@ CREATE TABLE `finna_fee` (
   `amount` float NOT NULL DEFAULT '0',
   `currency` varchar(3) NOT NULL DEFAULT 'EUR',
   `fine_id` varchar(255) NOT NULL DEFAULT '',
+  `organization` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `finna_fee_ibfk1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,

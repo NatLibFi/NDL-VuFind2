@@ -1059,7 +1059,7 @@ FinnaPaginator.prototype.addDocumentLoadCallback = function addDocumentLoadCallb
  */
 FinnaPaginator.prototype.onDocumentLoad = function onDocumentLoad() {
   var _ = this;
-  $(document).ready(function doDocumentLoadCallbacks() {
+  $(function doDocumentLoadCallbacks() {
     for (var i = 0; i < _.onDocumentLoadCallbacks.length; i++) {
       _.onDocumentLoadCallbacks[i]();
     }

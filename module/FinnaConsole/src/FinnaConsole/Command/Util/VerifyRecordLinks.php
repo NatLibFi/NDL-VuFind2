@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Console service for verifying record links, resources and ratings.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2016-2023.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace FinnaConsole\Command\Util;
 
 use Symfony\Component\Console\Input\InputInterface;
@@ -431,7 +433,7 @@ class VerifyRecordLinks extends AbstractUtilCommand
                 $targetRow = $this->ratingsTable->select(
                     [
                         'resource_id' => $resource->id,
-                        'user_id' => $rating->user_id
+                        'user_id' => $rating->user_id,
                     ]
                 )->current();
                 if ($targetRow) {
@@ -479,7 +481,7 @@ class VerifyRecordLinks extends AbstractUtilCommand
                 'hl' => 'false',
                 'spellcheck' => 'false',
                 'sort' => '',
-                'q' => 'local_ids_str_mv:(' . implode(' OR ', $escapedIds) . ')'
+                'q' => 'local_ids_str_mv:(' . implode(' OR ', $escapedIds) . ')',
             ]
         );
         $records = $this->solr->search($query, 0, 1000, $params)->getRecords();

@@ -1,4 +1,4 @@
-/*global VuFind, finna, checkSaveStatuses */
+/*global VuFind, finna */
 finna.userListEmbed = (function userListEmbed() {
   var my = {
     init: function init() {
@@ -47,13 +47,13 @@ finna.userListEmbed = (function userListEmbed() {
               finna.layout.initTruncate();
               finna.layout.initImagePaginators();
               finna.openUrl.initLinks(resultsContainer);
-              VuFind.itemStatuses.check(resultsContainer);
+              VuFind.itemStatuses.init(resultsContainer);
               finna.itemStatus.initDedupRecordSelection(resultsContainer);
               VuFind.recordVersions.init(resultsContainer);
               VuFind.lightbox.bind(resultsContainer);
               VuFind.cart.init(resultsContainer);
               $.fn.finnaPopup.reIndex();
-              checkSaveStatuses(resultsContainer);
+              VuFind.saveStatuses.init(resultsContainer);
             })
             .fail(function onLoadListFail() {
               btn.show();

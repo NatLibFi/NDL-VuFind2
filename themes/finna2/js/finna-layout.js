@@ -1,4 +1,4 @@
-/*global VuFind, videojs, checkSaveStatuses, finna, initFacetTree, priorityNav */
+/*global VuFind, videojs, finna, initFacetTree, priorityNav */
 finna.layout = (function finnaLayout() {
   var currentOpenTooltips = [];
 
@@ -119,7 +119,12 @@ finna.layout = (function finnaLayout() {
           if (topLink) {
             self.before(lessLink.clone(true));
           }
-          self.after([moreLink, lessLink]);
+          if (self.parents().hasClass('record-information')) {
+            self.after([moreLink]);
+          }
+          else {
+            self.after([moreLink, lessLink]);
+          }
         }
         self.addClass('truncated');
       }
@@ -199,7 +204,7 @@ finna.layout = (function finnaLayout() {
     var feedbackBtn = $('.floating-feedback-btn');
     if (feedbackBtn.length) {
       var feedbackBtnOffset = feedbackBtn.offset().top;
-      $(window).scroll(function onScrollWindow(/*event*/) {
+      $(window).on("scroll", function onScrollWindow(/*event*/) {
         feedbackBtn.toggleClass('fixed', $(window).scrollTop() > feedbackBtnOffset);
       });
     }
@@ -247,8 +252,8 @@ finna.layout = (function finnaLayout() {
       btn.addClass('hidden');
     });
 
-    $('.searchForm_lookfor').bind('autocomplete:select', function onAutocompleteSelect() {
-      $('.navbar-form').submit();
+    $('.searchForm_lookfor').on('autocomplete:select', function onAutocompleteSelect() {
+      $('.navbar-form').trigger("submit");
     });
 
     $('.select-type').on('click', function onClickSelectType(event) {
@@ -317,7 +322,7 @@ finna.layout = (function finnaLayout() {
       if ((event.target.nodeName) !== 'A' && (event.target.nodeName) !== 'MARK') {
         holder = $(this).parent().parent();
         holder.toggleClass('open');
-        VuFind.itemStatuses.check(holder);
+        VuFind.itemStatuses.init(holder);
         var onSlideComplete = null;
         if (holder.hasClass('open') && !holder.hasClass('opened')) {
           holder.addClass('opened');
@@ -405,7 +410,7 @@ finna.layout = (function finnaLayout() {
 
   function initJumpMenus(_holder) {
     var holder = typeof _holder === 'undefined' ? $('body') : _holder;
-    holder.find('select.jumpMenu').off('change').on('change', function onChangeJumpMenu() { $(this).closest('form').submit(); });
+    holder.find('select.jumpMenu').off('change').on('change', function onChangeJumpMenu() { $(this).closest('form').trigger("submit"); });
     holder.find('select.jumpMenuUrl').off('change').on('change', function onChangeJumpMenuUrl(e) { window.location.href = $(e.target).val(); });
   }
 
@@ -422,7 +427,7 @@ finna.layout = (function finnaLayout() {
       } else {
         $('#login_library_card_recovery').hide();
       }
-    }).change();
+    }).trigger("change");
   }
 
   function initILSSelfRegistrationLink(links, idPrefix) {
@@ -434,7 +439,7 @@ finna.layout = (function finnaLayout() {
       } else {
         $('#login_library_card_register').hide();
       }
-    }).change();
+    }).trigger("change");
   }
 
   function initSideFacets() {
@@ -623,13 +628,13 @@ finna.layout = (function finnaLayout() {
   }
 
   function initKeyboardNavigation() {
-    $(window).keyup(function onKeyUp(e) {
+    $(window).on("keyup", function onKeyUp(e) {
       var $target = $(e.target);
       // jsTree link target navigation
       if ((e.which === 13 || e.which === 32)
           && $target.hasClass('jstree-anchor') && $target.find('.main').length > 0
       ) {
-        $target.find('.main').click();
+        $target.find('.main').trigger("click");
         e.preventDefault();
         return false;
       }
@@ -765,15 +770,15 @@ finna.layout = (function finnaLayout() {
     if ($('.help-tabs')[0]) {
       $('.help-tab').each(function initHelpTab() {
         if ($(this).hasClass('active')) {
-          $(this).focus();
+          $(this).trigger("focus");
         }
         var url = $(this).data('url');
-        $(this).keydown(function onTabEnter(event) {
+        $(this).on("keydown", function onTabEnter(event) {
           if (event.which === 13) {
             window.location.href = url;
           }
         });
-        $(this).click(function onTabClick() {
+        $(this).on("click", function onTabClick() {
           window.location.href = url;
         });
       });
@@ -821,7 +826,6 @@ finna.layout = (function finnaLayout() {
       initScrollLinks();
       initSearchboxFunctions();
       initCondensedList();
-      if (typeof checkSaveStatuses !== 'undefined') { checkSaveStatuses(); }
       initTouchDeviceGallery();
       initSideFacets();
       initPiwikPopularSearches();

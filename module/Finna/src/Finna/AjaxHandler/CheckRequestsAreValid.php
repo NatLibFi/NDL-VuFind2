@@ -1,8 +1,9 @@
 <?php
+
 /**
  * AJAX handler for checking that requests are valid
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2018.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Laminas\Mvc\Controller\Plugin\Params;
@@ -124,7 +126,7 @@ class CheckRequestsAreValid extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
                         }
                         $results[] = [
                             'status' => $result,
-                            'msg' => $this->translate($msg)
+                            'msg' => $this->translate($msg),
                         ];
                     }
                     return $this->formatResponse($results);

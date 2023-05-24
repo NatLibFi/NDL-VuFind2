@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Additional functionality for Finna SolrAuth records.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library 2020.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver\Feature;
 
 /**
@@ -166,7 +168,7 @@ trait SolrAuthFinnaTrait
     {
         return [
             'data' => $this->getBirthDate($force),
-            'detail' => $this->getBirthPlace()
+            'detail' => $this->getBirthPlace(),
         ];
     }
 
@@ -181,7 +183,7 @@ trait SolrAuthFinnaTrait
     {
         return [
             'data' => $this->getDeathDate($force),
-            'detail' => $this->getDeathPlace()
+            'detail' => $this->getDeathPlace(),
         ];
     }
 

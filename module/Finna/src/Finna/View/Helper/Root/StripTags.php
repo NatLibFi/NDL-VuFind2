@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Strip tags view helper
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2020.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\View\Helper\Root;
 
 /**
@@ -50,7 +52,7 @@ class StripTags extends \Laminas\View\Helper\AbstractHelper
      */
     public function __invoke($string, $remove_whitespace = true)
     {
-        if (false === strpos($string, '<')) {
+        if (!str_contains($string, '<')) {
             return $string;
         }
 

@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Suomi.fi authentication module.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2019.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Auth;
 
 use Laminas\Crypt\PublicKey\Rsa;
@@ -186,7 +188,8 @@ class Suomifi extends Shibboleth
         $val = parent::getServerParam($request, $param);
 
         $config = $this->getConfig()->Shibboleth;
-        if ($param === $config->username
+        if (
+            $param === $config->username
         ) {
             $secret = $config->hash_secret ?? '';
             if (empty(trim($secret))) {
@@ -222,7 +225,7 @@ class Suomifi extends Shibboleth
         $rsa = Rsa::factory(
             [
                 'public_key'    => $key,
-                'binary_output' => false
+                'binary_output' => false,
             ]
         );
         $rsa->setOptions(

@@ -20,6 +20,10 @@ http_timeout = 30
 ; need to be a properly working url)
 redirect_uri = "http://localhost:8080/vufind/MyResearch/Home?auth_method=sierra"
 
+; Days before account expiration to start displaying a notification for the user.
+; Default is 30.
+;daysBeforeAccountExpirationNotification = 30
+
 ; This section controls hold behavior; note that you must also ensure that Holds are
 ; enabled in the [Catalog] section of config.ini in order to take advantage of these
 ; settings.
@@ -36,11 +40,13 @@ HMACKeys = item_id:holdtype:level
 ; defaultRequiredDate - A colon-separated list used to set the default "not required
 ; after" date for holds in the format days:months:years
 ; e.g. 0:1:0 will set a "not required after" date of 1 month from the current date
+; Set to empty for no default.
 defaultRequiredDate = 0:0:2
 
-; extraHoldFields - A colon-separated list used to display extra visible fields in the
-; place holds form. Supported values are "requiredByDate", "requestGroup"
-; (location in Sierra), "pickUpLocation", "acceptTerms" and "comments"
+; extraHoldFields - A colon-separated list used to display extra visible fields in
+; the place holds form. Supported values are "requiredByDate",
+; "requiredByDateOptional", "pickUpLocation" and
+; "comments". Comments are only supported with Sierra API v4 onwards.
 extraHoldFields = requiredByDate:pickUpLocation
 
 ; A Pick Up Location Code used to pre-select the pick up location drop down list and
@@ -118,6 +124,11 @@ url = ""
 [ItemStatusMappings]
 ;d = "In Processing"
 
+; This section allows mapping of patron block codes to VuFind translation strings
+[PatronBlockMappings]
+k = patron_status_card_lost
+e = patron_status_card_blocked
+
 ; Uncomment the following lines to enable password (PIN) change
 [changePassword]
 ; PIN change parameters. The default limits are taken from the interface documentation.
@@ -132,6 +143,12 @@ pattern = "numeric"
 [TransactionHistory]
 ; By default the loan history is disabled. Uncomment the following line to enable it.
 enabled = true
+; By default selective purging of loan history is enabled. Uncomment the following
+; line to disable it:
+;purgeSelected = false
+; By default purging of all loan history is enabled. Uncomment the following line
+; to disable it:
+;purgeAll = false
 
 ; Changing of loan history state is enabled if method parameter is set. Only
 ; valid value is 'driver'.
@@ -184,6 +201,9 @@ currency = 'EUR'
 ;manualFineDescriptions[] = '/^Muun kotelon korvaus/'
 ;manualFineDescriptions[] = '/^Kaukopalvelumaksu/'
 
+[PasswordRecovery]
+enabled = true
+
 ; Uncomment the following lines to enable updating of profile information.
 ; Choose a method on how to update the address information (driver, database or url).
 [updateProfile]
@@ -210,3 +230,29 @@ fields[] = Phone:phone:tel
 ;url[sv] = http://address.of.change.form/swedish
 ;url[en-gb] = http://address.of.change.form/english
 needsApproval = false
+
+; Both MARC field+subfields and Sierra field tags may be used to specify which fields
+; are included as textual information from holdings records. Note that Sierra does
+; not use MARC tags for all holdings information, and e.g. 'h' may cover several
+; fields of which only some are mapped to MARC fields.
+[Holdings]
+; Whether item-specific hold counts are displayed
+display_item_hold_counts = false
+; Whether total count of holds is displayed
+display_total_hold_count = true
+; Whether total item count is displayed in results list
+display_total_item_count_in_results = true
+; Holdings fields to include in notes. Default is none.
+;notes = "n"
+; Holdings fields to include in summary. Default is "h".
+;summary = "863abiz:866az:h"
+; Holdings fields to include in supplements. Default is none.
+;supplements = "867az"
+; Holdings fields to include in indexes. Default is none.
+;indexes = "868az"
+; Whether to sort items by enum/chron (v field) instead of order they are returned
+; from Sierra. Default is true.
+;sort_by_enum_chron = false
+; Whether to retrieve and display orders (default is false):
+;display_orders = false
+

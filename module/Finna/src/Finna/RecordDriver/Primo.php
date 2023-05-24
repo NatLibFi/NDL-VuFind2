@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Model for Primo Central records.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2010.
  * Copyright (C) The National Library of Finland 2012-2021.
@@ -28,6 +29,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver;
 
 /**
@@ -69,7 +71,8 @@ class Primo extends \VuFind\RecordDriver\Primo
     public function getCitationFormats()
     {
         // Default behavior: use all supported options.
-        if (!isset($this->mainConfig->Record->citation_formats)
+        if (
+            !isset($this->mainConfig->Record->citation_formats)
             || $this->mainConfig->Record->citation_formats === true
             || $this->mainConfig->Record->citation_formats === 'true'
         ) {
@@ -77,7 +80,8 @@ class Primo extends \VuFind\RecordDriver\Primo
         }
 
         // Citations disabled:
-        if ($this->mainConfig->Record->citation_formats === false
+        if (
+            $this->mainConfig->Record->citation_formats === false
             || $this->mainConfig->Record->citation_formats === 'false'
         ) {
             return [];
@@ -194,7 +198,7 @@ class Primo extends \VuFind\RecordDriver\Primo
             $urls[] = [
                 'url' => $url,
                 'urlShort' => $urlParts['host'],
-                'citation' => $citation
+                'citation' => $citation,
             ];
             break;
         }
@@ -339,7 +343,8 @@ class Primo extends \VuFind\RecordDriver\Primo
         $authors = $this->getCreators();
         // Don't check for highlighted values if highlighting is disabled or we
         // don't have highlighting data:
-        if (!$this->highlight || !isset($this->fields['highlightDetails']['author'])
+        if (
+            !$this->highlight || !isset($this->fields['highlightDetails']['author'])
         ) {
             return $authors;
         }
@@ -518,7 +523,7 @@ class Primo extends \VuFind\RecordDriver\Primo
 
         $params = [];
         // Take params from the OpenURL returned from Primo, if available
-        if ($link && strpos($link, 'url_ver=Z39.88-2004') !== false) {
+        if ($link && str_contains($link, 'url_ver=Z39.88-2004')) {
             parse_str(substr($link, strpos($link, '?') + 1), $params);
             $params = $this->processOpenUrlParams($params);
         }
@@ -547,7 +552,7 @@ class Primo extends \VuFind\RecordDriver\Primo
     protected function processOpenUrlParams($params)
     {
         foreach ($params as $key => $val) {
-            if (strpos($key, 'rft_') === 0) {
+            if (str_starts_with($key, 'rft_')) {
                 $params['rft.' . substr($key, 4)] = $val;
             }
         }

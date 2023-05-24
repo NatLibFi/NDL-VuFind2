@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SolrForward Test Class
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
+
 namespace FinnaTest\RecordDriver;
 
 use Finna\RecordDriver\SolrForward;
@@ -64,7 +66,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                     "idx" => 1,
                     "tehtava" => "ohjaus",
                     "finna-activity-code" => "D02",
-                    "relator" => "D02"
+                    "relator" => "D02",
                 ],
             ],
             $driver->getNonPresenterPrimaryAuthors()
@@ -93,7 +95,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                     'idx' => 70000,
                     'finna-activity-code' => 'E10',
                     'relator' => 'E10',
-                ]
+                ],
             ],
             $driver->getProducers()
         );
@@ -123,8 +125,8 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                             'idx' => 120000,
                             'finna-activity-code' => 'E01',
                             'relator' => 'E01',
-                            'elokuva-elonayttelija-rooli' => 'Debug Duck'
-                        ]
+                            'elokuva-elonayttelija-rooli' => 'Debug Duck',
+                        ],
                     ],
                 ],
             ],
@@ -148,10 +150,10 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                             'elokuva-elokreditoimatonnayttelija-nimi'
                                 => 'Kreditoimaton näyttelijä',
                             'elokuva-elokreditoimatonnayttelija-rooli'
-                                => 'vankilavieras'
-                        ]
+                                => 'vankilavieras',
+                        ],
                     ],
-                ]
+                ],
             ],
             'actingEnsemblesTest' => [
                 'actingEnsemble',
@@ -172,10 +174,10 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                             'finna-activity-text' => 'Esitti yhtyettä',
                             'elokuva-elonayttelijakokoonpano-tehtava'
                                 => 'Esitti yhtyettä',
-                            'relator' => 'A99'
-                        ]
-                    ]
-                ]
+                            'relator' => 'A99',
+                        ],
+                    ],
+                ],
             ],
             'performingEnsemblesTest' => [
                 'performingEnsemble',
@@ -193,10 +195,10 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                             'idx' => 180000,
                             'tehtava' => 'Esitti yhtyettä',
                             'finna-activity-code' => 'A99',
-                            'relator' => 'A99'
-                        ]
-                    ]
-                ]
+                            'relator' => 'A99',
+                        ],
+                    ],
+                ],
             ],
             'performersTest' => [
                 'performer',
@@ -243,7 +245,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                             'idx' => 190000,
                             'finna-activity-code' => 'E99',
                             'finna-activity-text' => 'esiintyjä',
-                            'relator' => 'E99'
+                            'relator' => 'E99',
                         ],
                     ],
                 ],
@@ -311,10 +313,10 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                             'finna-activity-code' => 'A99',
                             'finna-activity-text' => 'avustajat',
                             'elokuva-avustajat' => 'avustajat',
-                            'relator' => 'A99'
-                        ]
-                    ]
-                ]
+                            'relator' => 'A99',
+                        ],
+                    ],
+                ],
             ],
             'othersTest' => [
                 'other',
@@ -332,11 +334,11 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                             'idx' => 200000,
                             'finna-activity-code' => 'E99',
                             'finna-activity-text' => 'dokumentti-muutesiintyjät',
-                            'relator' => 'E99'
-                        ]
-                    ]
-                ]
-            ]
+                            'relator' => 'E99',
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -409,7 +411,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                         'finna-activity-code' => 'fds',
                         'relator' => 'fds',
                         'elokuva-elolevittaja-vuosi' => '2001',
-                        'elokuva-elolevittaja-levitystapa' => 'teatterilevitys'
+                        'elokuva-elolevittaja-levitystapa' => 'teatterilevitys',
                     ],
                     [
                         'tag' => 'muuttekijat',
@@ -424,7 +426,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                         'idx' => 210000,
                         'finna-activity-code' => 'oth',
                         'relator' => 'oth',
-                    ]
+                    ],
                 ],
             ],
             'ensemblesTests' =>
@@ -471,7 +473,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                         'elokuva-elokreditoimatontekija-nimi' => 'Valo K. Uvaus',
                     ],
                 ],
-            ]
+            ],
         ];
     }
 
@@ -613,27 +615,27 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 'getAccessRestrictions',
-                []
+                [],
             ],
             [
                 'getDescription',
                 [
-                    'Tämä on sisällön kuvaus.'
-                ]
+                    'Tämä on sisällön kuvaus.',
+                ],
             ],
             [
                 'getGeneralNotes',
                 [
-                    'Tässä on huomautukset.'
-                ]
+                    'Tässä on huomautukset.',
+                ],
             ],
             [
                 'getAllSubjectHeadings',
                 [
                     ['Testi'],
                     ['Unit'],
-                    ['Forward']
-                ]
+                    ['Forward'],
+                ],
             ],
             [
                 'getAlternativeTitles',
@@ -641,29 +643,29 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                     'Zoo (swe)',
                     'Animals (language name)',
                     'Animals Working (working title)',
-                    'Park (test name)'
-                ]
+                    'Park (test name)',
+                ],
             ],
             [
                 'getAwards',
                 [
                     'Paras elokuva.',
                     'Best movie.',
-                    'Good movie.'
-                ]
+                    'Good movie.',
+                ],
             ],
             [
                 'getPlayingTimes',
                 [
-                    '1 min'
-                ]
+                    '1 min',
+                ],
             ],
             [
                 'getPremiereTheaters',
                 [
                     'Leppävaara: Sellosali 1',
-                    'Karjaa: Bio Pallas'
-                ]
+                    'Karjaa: Bio Pallas',
+                ],
             ],
             [
                 'getBroadcastingInfo',
@@ -671,14 +673,14 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                     [
                         'time' => '7.05.1995',
                         'place' => 'Kanava 1',
-                        'viewers' => '1 000 (mediaani)'
+                        'viewers' => '1 000 (mediaani)',
                     ],
                     [
                         'time' => '15.05.2011',
                         'place' => 'Kanava 2',
-                        'viewers' => '5 000'
-                    ]
-                ]
+                        'viewers' => '5 000',
+                    ],
+                ],
             ],
             [
                 'getFestivalInfo',
@@ -686,27 +688,27 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                     [
                         'name' => 'Ensimmäinen festivaaliosallistuminen',
                         'region' => 'Leppävaara, Suomi',
-                        'date' => '1990'
+                        'date' => '1990',
                     ],
                     [
                         'name' => 'Toinen festivaaliosallistuminen',
                         'region' => 'Lahti, Suomi',
-                        'date' => '1991'
-                    ]
-                ]
+                        'date' => '1991',
+                    ],
+                ],
             ],
             [
                 'getForeignDistribution',
                 [
                     [
                         'name' => 'Mat',
-                        'region' => 'Ruotsi'
+                        'region' => 'Ruotsi',
                     ],
                     [
                         'name' => 'Pat',
-                        'region' => 'Norja'
-                    ]
-                ]
+                        'region' => 'Norja',
+                    ],
+                ],
             ],
             [
                 'getOtherScreenings',
@@ -714,9 +716,9 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                     [
                         'name' => 'ennakkoesitys',
                         'region' => 'Mordor, Keskimaa',
-                        'date' => '03.03.2000'
-                    ]
-                ]
+                        'date' => '03.03.2000',
+                    ],
+                ],
             ],
             [
                 'getInspectionDetails',
@@ -730,22 +732,22 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                         'agerestriction' => 'S',
                         'additional' => 'Tarkastajat: Tarkastajat OY',
                         'office' => 'Finna-filmit Oy',
-                        'date' => '15.02.2001'
-                    ]
-                ]
+                        'date' => '15.02.2001',
+                    ],
+                ],
             ],
             [
                 'getLocationNotes',
                 [
-                    'Tässä on tietoa kuvauspaikkahuomautuksista.'
-                ]
+                    'Tässä on tietoa kuvauspaikkahuomautuksista.',
+                ],
             ],
             [
                 'getMovieThanks',
                 [
-                    'Kiitos, thanks, tack.'
-                ]
-            ]
+                    'Kiitos, thanks, tack.',
+                ],
+            ],
         ];
     }
 
@@ -759,68 +761,68 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 'getColor',
-                'väri'
+                'väri',
             ],
             [
                 'getColorSystem',
-                'rgb'
+                'rgb',
             ],
             [
                 'getType',
-                'kauhu, draama'
+                'kauhu, draama',
             ],
             [
                 'getAspectRatio',
-                '1,75:1'
+                '1,75:1',
             ],
             [
                 'getMusicInfo',
-                'Tästä musiikki-infosta poistuu br merkki alusta.'
+                'Tästä musiikki-infosta poistuu br merkki alusta.',
             ],
             [
                 'getOriginalWork',
-                'lotr'
+                'lotr',
             ],
             [
                 'getPressReview',
-                'Tässä on lehdistöarvio.'
+                'Tässä on lehdistöarvio.',
             ],
             [
                 'getSound',
-                'ääni'
+                'ääni',
             ],
             [
                 'getSoundSystem',
-                '6+1'
+                '6+1',
             ],
             [
                 'getProductionCost',
-                '5 €'
+                '5 €',
             ],
             [
                 'getPremiereTime',
-                '01.01.2001'
+                '01.01.2001',
             ],
             [
                 'getNumberOfCopies',
-                '1'
+                '1',
             ],
             [
                 'getAmountOfViewers',
-                '1 100'
+                '1 100',
             ],
             [
                 'getAgeLimit',
-                'S'
+                'S',
             ],
             [
                 'getFilmingDate',
-                '10.6.1996 - syksy 2000 (Lähde: ctrl+c 22.2.2010).'
+                '10.6.1996 - syksy 2000 (Lähde: ctrl+c 22.2.2010).',
             ],
             [
                 'getArchiveFilms',
-                'Infoa arkistoaineistosta.'
-            ]
+                'Infoa arkistoaineistosta.',
+            ],
         ];
     }
 

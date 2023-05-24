@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Finna-list custom element
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2021.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
+
 namespace Finna\View\CustomElement;
 
 /**
@@ -77,7 +79,7 @@ class FinnaList extends AbstractBase
             'allowCopy'    => true,
             'limit'        => 6,
             'showAllLink'  => true,
-            'headingLevel' => 2
+            'headingLevel' => 2,
         ];
     }
 
@@ -98,7 +100,7 @@ class FinnaList extends AbstractBase
             'allow-copy'    => 'allowCopy',
             'limit'         => 'limit',
             'show-all-link' => 'showAllLink',
-            'heading-level' => 'headingLevel'
+            'heading-level' => 'headingLevel',
         ];
     }
 }

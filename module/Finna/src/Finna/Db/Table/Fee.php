@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Table Definition for online payment fee
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2015.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
@@ -79,6 +81,7 @@ class Fee extends \VuFind\Db\Table\Gateway
         $fee->title = mb_substr($fine['title'] ?? '', 0, 255, 'UTF-8');
         $fee->type = mb_substr($fine['fine'], 0, 255, 'UTF-8');
         $fee->fine_id = mb_substr($fine['fine_id'] ?? '', 0, 255, 'UTF-8');
+        $fee->organization = mb_substr($fine['organization'] ?? '', 0, 255, 'UTF-8');
         $fee->amount = $fine['balance'];
         $fee->currency = $currency;
         if (!$fee->amount) {

@@ -140,9 +140,9 @@ function buildTreeWithXml(cb) {
     });
 }
 
-$(document).ready(function hierarchyTreeReady() {
+$(function hierarchyTreeReady() {
   // "Back to top" link
-  $('#hierarchyTree').scroll(function onScrollHierarchyTree() {
+  $('#hierarchyTree').on("scroll", function onScrollHierarchyTree() {
     var modalContent = $('#hierarchyTree').scrollTop();
     if (modalContent > 1500) {
       $('#modal .back-to-up').removeClass('hidden');
@@ -167,7 +167,7 @@ $(document).ready(function hierarchyTreeReady() {
   $("#hierarchyLoading").removeClass('hide');
 
   $("#hierarchyTree")
-    .bind("ready.jstree", function jsTreeReady(/*event, data*/) {
+    .on("ready.jstree", function jsTreeReady(/*event, data*/) {
       $("#hierarchyLoading").addClass('hide');
       var tree = $("#hierarchyTree").jstree(true);
       tree.select_node(htmlID);
@@ -182,7 +182,7 @@ $(document).ready(function hierarchyTreeReady() {
         $('html, body').animate({scrollTop: $('#hierarchyTreeHolder').offset().top - 70}, 200);
       });
 
-      $("#hierarchyTree").bind('select_node.jstree', function jsTreeSelect(e, resp) {
+      $("#hierarchyTree").on('select_node.jstree', function jsTreeSelect(e, resp) {
         if (hierarchyContext === "Record") {
           window.location.href = resp.node.a_attr.href;
         } else {
@@ -249,8 +249,8 @@ $(document).ready(function hierarchyTreeReady() {
     });
 
   $('#treeSearch').removeClass('hidden');
-  $('#treeSearch [type=submit]').click(doTreeSearch);
-  $('#treeSearchText').keyup(function treeSearchKeyup(e) {
+  $('#treeSearch [type=submit]').on("click", doTreeSearch);
+  $('#treeSearchText').on("keyup", function treeSearchKeyup(e) {
     var code = (e.keyCode ? e.keyCode : e.which);
     if (code === 13 || $(this).val().length === 0) {
       doTreeSearch();

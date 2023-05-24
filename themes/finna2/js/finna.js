@@ -42,7 +42,7 @@ var finna = (function finnaModule() {
   return my;
 })();
 
-$(document).ready(function onReady() {
+$(function onReady() {
   finna.init();
 
   // init custom.js for custom theme

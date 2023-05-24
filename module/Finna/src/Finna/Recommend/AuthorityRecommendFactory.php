@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Recommendation module plugin manager
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2019.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
+
 namespace Finna\Recommend;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -42,8 +44,7 @@ use VuFind\Search\Results\PluginManager as ResultsManager;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
-class AuthorityRecommendFactory
-implements \Laminas\ServiceManager\Factory\FactoryInterface
+class AuthorityRecommendFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create an object

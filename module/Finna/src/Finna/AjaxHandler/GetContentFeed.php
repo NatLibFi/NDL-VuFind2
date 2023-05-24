@@ -1,8 +1,9 @@
 <?php
+
 /**
  * GetContentFeed AJAX handler
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2016-2018.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Finna\Feed\Feed as FeedService;
@@ -140,12 +142,14 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
         $items = $feed['items'];
         $modal = $feed['modal'];
         $contentPage = $feed['contentPage'] && !$modal;
+        $contentNavigation = $feed['contentNavigation'];
+        $nextArticles = $feed['nextArticles'];
 
         $result = [
             'channel' => [
                 'title' => $feed['title'] ?? '-',
-                'link' => $channel->getLink()
-            ]
+                'link' => $channel->getLink(),
+            ],
         ];
         $numeric = is_numeric($element);
         if ($numeric) {
@@ -162,7 +166,7 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
             }
         }
 
-        if ($contentPage && !empty($items)) {
+        if ($contentNavigation && $contentPage && !empty($items)) {
             $result['navigation'] = $this->renderer->partial(
                 'feedcontent/navigation',
                 [
@@ -170,6 +174,19 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
                    'element' => $element,
                    'numeric' => $numeric,
                    'feedId' => $id,
+                ]
+            );
+        }
+
+        if ($nextArticles && $contentPage && !empty($items)) {
+            $result['nextarticles'] = $this->renderer->partial(
+                'feedcontent/nextarticles',
+                [
+                   'items' => $items,
+                   'element' => $element,
+                   'numeric' => $numeric,
+                   'feedId' => $id,
+                   'nextArticles' => $nextArticles,
                 ]
             );
         }

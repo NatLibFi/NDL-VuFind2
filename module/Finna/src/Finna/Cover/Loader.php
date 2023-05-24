@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Record image loader
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2007.
  * Copyright (C) The National Library of Finland 2015-2020.
@@ -29,6 +30,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/configuration:external_content Wiki
  */
+
 namespace Finna\Cover;
 
 /**
@@ -160,7 +162,8 @@ class Loader extends \VuFind\Cover\Loader
 
         // Display a fail image unless our parameters pass inspection and we
         // are able to display an ISBN or content-type-based image.
-        if (!$this->fetchFromAPI()
+        if (
+            !$this->fetchFromAPI()
             && !$this->fetchFromContentType()
         ) {
             if ($this->generator) {
@@ -297,7 +300,8 @@ class Loader extends \VuFind\Cover\Loader
                 $handler = $this->apiManager->get($apiName);
 
                 // Is the current provider appropriate for the available data?
-                if (!$handler->supports($ids)
+                if (
+                    !$handler->supports($ids)
                     || !$handler->getUrl($key, $this->size, $ids)
                 ) {
                     continue;
@@ -312,7 +316,7 @@ class Loader extends \VuFind\Cover\Loader
                 }
             } catch (\Exception $e) {
                 $this->debug(
-                    get_class($e) . ' during cache processing of ' . $apiName
+                    $e::class . ' during cache processing of ' . $apiName
                     . ': ' . $e->getMessage()
                 );
             }
@@ -342,7 +346,7 @@ class Loader extends \VuFind\Cover\Loader
                 }
             } catch (\Exception $e) {
                 $this->debug(
-                    get_class($e) . ' during processing of ' . $apiName
+                    $e::class . ' during processing of ' . $apiName
                     . ': ' . $e->getMessage()
                 );
             }
@@ -628,7 +632,8 @@ class Loader extends \VuFind\Cover\Loader
         $failures = 0;
         $blockDuration = $this->config->Content->coverServerFailureBlockDuration
             ?? 3600;
-        if (file_exists($statusFile)
+        if (
+            file_exists($statusFile)
             && filemtime($statusFile) + $blockDuration >= time()
         ) {
             $failures = file_get_contents($statusFile);

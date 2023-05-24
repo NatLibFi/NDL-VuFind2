@@ -2,11 +2,11 @@
 
 @font-face {
     font-family: 'finnaicons';
-    src:url('../../../themes/finna2/css/fonts/finnaicons.eot?a4b07032');
-    src:url('../../../themes/finna2/css/fonts/finnaicons.eot?a4b07032#iefix') format('embedded-opentype'),
-    url('../../../themes/finna2/css/fonts/finnaicons.woff?a4b07032') format('woff'),
-    url('../../../themes/finna2/css/fonts/finnaicons.ttf?a4b07032') format('truetype'),
-    url('../../../themes/finna2/css/fonts/finnaicons.svg?a4b07032#finnaicons') format('svg');
+    src:url('../../../themes/finna2/css/fonts/finnaicons.eot?dcdbbb5d');
+    src:url('../../../themes/finna2/css/fonts/finnaicons.eot?dcdbbb5d#iefix') format('embedded-opentype'),
+    url('../../../themes/finna2/css/fonts/finnaicons.woff?0dcdbbb5d') format('woff'),
+    url('../../../themes/finna2/css/fonts/finnaicons.ttf?dcdbbb5d') format('truetype'),
+    url('../../../themes/finna2/css/fonts/finnaicons.svg?dcdbbb5d#finnaicons') format('svg');
     font-weight: normal;
     font-style: normal;
 
@@ -951,6 +951,10 @@ i.bigger {
     font-family: finnaicons;
     content: "\e8ac";
 }
+.fa-globe:before {
+    font-family: finnaicons;
+    content: "\e8c5";
+}
 .fa-pagebreak:before {
     font-family: finnaicons;
     content: "\e8ab";
@@ -996,6 +1000,10 @@ i.bigger {
     }
 }
 
+#account-icon {
+    position: relative;
+}
+
 // Status none
 #account-icon .account-status-none {
     width: auto;
@@ -1017,8 +1025,8 @@ i.bigger {
         position: absolute;
         width: 12px;
         height: 12px;
-        top: 18px;
-        left: 20px;
+        top: 65%;
+        left: 9px;
         background: @brand-success;
         border: 2px solid @header-background-color;
         border-radius: 50%;
@@ -1038,8 +1046,8 @@ i.bigger {
         position: absolute;
         width: 12px;
         height: 12px;
-        top: 18px;
-        left: 20px;
+        top: 65%;
+        left: 9px;
         background: @brand-warning;
         border: 2px solid @header-background-color;
         border-radius: 50%;
@@ -1062,8 +1070,8 @@ i.bigger {
         position: absolute;
         width: 12px;
         height: 12px;
-        top: 18px;
-        left: 20px;
+        top: 65%;
+        left: 9px;
         background: @brand-danger;
         border: 2px solid @header-background-color;
         border-radius: 50%;
@@ -1108,4 +1116,26 @@ i.bigger {
     .feed-icon {
         color: #121212;
     }
+}
+
+// Collapse / expand
+.show--closed,
+.collapsed .show--open {
+    display: none;
+}
+.collapsed .show--closed {
+    display: inline;
+}
+
+// Icon links
+.icon-link {
+  display: inline-flex;
+  gap: 0.25rem;
+  vertical-align: middle;
+}
+.icon-link__icon {
+  flex: none;
+  padding: 0;
+  line-height: inherit;
+  color: inherit;
 }

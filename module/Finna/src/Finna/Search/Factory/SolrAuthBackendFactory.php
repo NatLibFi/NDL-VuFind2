@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Abstract factory for SOLR Auth backends.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2013.
  * Copyright (C) The National Library of Finland 2013-2021.
@@ -28,10 +29,10 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Search\Factory;
 
 use Finna\Search\SolrAuth\SolrAuthExtensionsListener;
-
 use VuFindSearch\Backend\Solr\Backend;
 
 /**
@@ -45,8 +46,7 @@ use VuFindSearch\Backend\Solr\Backend;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class SolrAuthBackendFactory
-extends \VuFind\Search\Factory\SolrAuthBackendFactory
+class SolrAuthBackendFactory extends \VuFind\Search\Factory\SolrAuthBackendFactory
 {
     /**
      * Solr connector class

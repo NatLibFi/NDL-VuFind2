@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Row definition for online payment transaction
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2015-2023.
  *
@@ -25,9 +26,11 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Db\Row;
 
 use Finna\Db\Table\Transaction as TransactionTable;
+use Laminas\Db\ResultSet\ResultSetInterface;
 
 /**
  * Row definition for online payment transaction
@@ -44,9 +47,9 @@ use Finna\Db\Table\Transaction as TransactionTable;
  * @property string $status
  * @property string $registered
  * @property string $reported
+ * @property string $cat_username
  */
-class Transaction extends \VuFind\Db\Row\RowGateway
-implements \VuFind\Db\Table\DbTableAwareInterface
+class Transaction extends \VuFind\Db\Row\RowGateway implements \VuFind\Db\Table\DbTableAwareInterface
 {
     use \VuFind\Db\Table\DbTableAwareTrait;
 
@@ -71,7 +74,7 @@ implements \VuFind\Db\Table\DbTableAwareInterface
             $this->complete,
             [
                 TransactionTable::STATUS_PROGRESS,
-                TransactionTable::STATUS_REGISTRATION_FAILED
+                TransactionTable::STATUS_REGISTRATION_FAILED,
             ]
         );
     }
@@ -109,7 +112,7 @@ implements \VuFind\Db\Table\DbTableAwareInterface
             $this->complete,
             [
                 TransactionTable::STATUS_PAID,
-                TransactionTable::STATUS_REGISTRATION_FAILED
+                TransactionTable::STATUS_REGISTRATION_FAILED,
             ]
         );
     }
@@ -119,14 +122,18 @@ implements \VuFind\Db\Table\DbTableAwareInterface
      *
      * @param int $timestamp Optional payment unix timestamp
      *
-     * @return void
+     * @return bool
      */
-    public function setPaid(int $timestamp = null): void
+    public function setPaid(int $timestamp = null): bool
     {
+        if ($this->complete !== TransactionTable::STATUS_PROGRESS) {
+            return false;
+        }
         $this->paid = date('Y-m-d H:i:s', $timestamp ?: time());
         $this->complete = TransactionTable::STATUS_PAID;
         $this->status = 'paid';
         $this->save();
+        return true;
     }
 
     /**
@@ -195,5 +202,16 @@ implements \VuFind\Db\Table\DbTableAwareInterface
             }
         }
         return $fineIds;
+    }
+
+    /**
+     * Get associated fees
+     *
+     * @return ResultSetInterface
+     */
+    public function getFines(): ResultSetInterface
+    {
+        $feeTable = $this->getDbTable('Fee');
+        return $feeTable->select(['transaction_id' => $this->id]);
     }
 }

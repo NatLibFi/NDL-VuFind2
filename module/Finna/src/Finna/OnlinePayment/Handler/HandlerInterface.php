@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Online payment handler interface
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2016-2022.
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\OnlinePayment\Handler;
 
 /**
@@ -77,10 +79,11 @@ interface HandlerInterface
      * @param \Finna\Db\Row\Transaction $transaction Transaction
      * @param \Laminas\Http\Request     $request     Request
      *
-     * @return int One of the result codes defined in AbstractBase
+     * @return array One of the result codes defined in AbstractBase and bool
+     * indicating whether the transaction was just now marked as paid
      */
     public function processPaymentResponse(
         \Finna\Db\Row\Transaction $transaction,
         \Laminas\Http\Request $request
-    ): int;
+    ): array;
 }

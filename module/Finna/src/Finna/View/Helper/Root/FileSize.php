@@ -1,8 +1,9 @@
 <?php
+
 /**
  * File size view helper
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2020.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\View\Helper\Root;
 
 /**
@@ -52,7 +54,7 @@ class FileSize extends \Laminas\View\Helper\AbstractHelper
         ['key' => 'digital_information_unit_PB'],
         ['key' => 'digital_information_unit_EB'],
         ['key' => 'digital_information_unit_ZB'],
-        ['key' => 'digital_information_unit_YB']
+        ['key' => 'digital_information_unit_YB'],
     ];
 
     /**

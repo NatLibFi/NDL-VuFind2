@@ -82,6 +82,8 @@
         </div>
       <?php endif; ?>
 
+      <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
+
       <?php if (!empty($urls) || $openUrlActive || $doiActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
         <?php if ($hasOnlineURLs || $openUrlActive || $doiActive): ?>
         <div class="recordURLs local-available-online-record">
@@ -115,7 +117,7 @@
             <?=$doi->renderTemplate()?>
           <?php endif; ?>
           <?php if ($openUrlActive): ?>
-            <?=$openUrl->renderTemplate()?><br/>
+            <?=$openUrl->renderTemplate()?><br>
           <?php endif; ?>
         </div>
         <?php endif; ?>

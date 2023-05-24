@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Abstract payment handler
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2016-2022.
  *
@@ -28,6 +29,7 @@
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  * @link     http://docs.paytrail.com/ Paytrail API documentation
  */
+
 namespace Finna\OnlinePayment\Handler;
 
 use Finna\Db\Table\Fee;
@@ -47,8 +49,10 @@ use VuFind\I18n\Translator\TranslatorAwareInterface;
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  * @link     http://docs.paytrail.com/ Paytrail API documentation
  */
-abstract class AbstractBase implements HandlerInterface,
-    LoggerAwareInterface, TranslatorAwareInterface
+abstract class AbstractBase implements
+    HandlerInterface,
+    LoggerAwareInterface,
+    TranslatorAwareInterface
 {
     use \VuFind\Log\LoggerAwareTrait;
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
@@ -162,7 +166,7 @@ abstract class AbstractBase implements HandlerInterface,
      */
     protected function addQueryParams(string $url, array $params): string
     {
-        $url .= strpos($url, '?') === false ? '?' : '&';
+        $url .= !str_contains($url, '?') ? '?' : '&';
         $url .= http_build_query($params);
         return $url;
     }
@@ -371,7 +375,7 @@ abstract class AbstractBase implements HandlerInterface,
                 if (method_exists($value, 'toArray')) {
                     $value = $value->toArray();
                 } else {
-                    $key = "$key: " . get_class($value);
+                    $key = "$key: " . $value::class;
                     $value = get_object_vars($value);
                 }
             }

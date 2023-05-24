@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Record driver data formatting view helper
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2016.
  * Copyright (C) The National Library of Finland 2017-2023.
@@ -31,6 +32,7 @@
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
  */
+
 namespace Finna\View\Helper\Root;
 
 use Finna\View\Helper\Root\RecordDataFormatter\FieldGroupBuilder;
@@ -621,9 +623,9 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         $options = null,
         $unusedOptions = null
     ) {
-        $template = $template ?? 'core-field-group-fields.phtml';
-        $options = $options ?? [];
-        $unusedOptions = $unusedOptions ?? $options;
+        $template ??= 'core-field-group-fields.phtml';
+        $options ??= [];
+        $unusedOptions ??= $options;
 
         $fieldGroups = new FieldGroupBuilder();
         $fieldGroups->setGroups(

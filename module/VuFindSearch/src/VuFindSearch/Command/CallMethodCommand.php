@@ -3,7 +3,7 @@
 /**
  * Call method command.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2021.
  *
@@ -26,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org
  */
+
 namespace VuFindSearch\Command;
 
 use VuFindSearch\Backend\BackendInterface;
@@ -100,7 +101,8 @@ abstract class CallMethodCommand extends AbstractBase
     public function execute(BackendInterface $backend): CommandInterface
     {
         $this->validateBackend($backend);
-        if (!($backend instanceof $this->interface)
+        if (
+            !($backend instanceof $this->interface)
             || !method_exists($this->interface, $this->method)
         ) {
             throw new BackendException(

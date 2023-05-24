@@ -4,7 +4,7 @@ $newItemValues = [
     '1MONTHS',
     '3MONTHS',
     '6MONTHS',
-    '1YEAR'
+    '1YEAR',
 ];
 ?>
 <?php foreach ($newItemValues as $newItemValue): ?>
@@ -23,21 +23,21 @@ $newItemValues = [
     $endDate = $this->dateTime()->convertToDisplayDate('U', time());
     // Load the script inline to support asynchronously loaded sidefacets:
     $script = <<<EOT
-if ($.isReady) {
-  initDatePicker();
-} else {
-  $(document).ready(initDatePicker);
-}
-function initDatePicker() {
-  $('#$component').datepicker({
-    'language': '$datePickerLang',
-    'format': 'd.m.yyyy',
-    'weekStart': 1,
-    'endDate': '$endDate',
-    'autoclose': true
-  });
-}
-EOT
+        if ($.isReady) {
+          initDatePicker();
+        } else {
+          $(document).ready(initDatePicker);
+        }
+        function initDatePicker() {
+          $('#$component').datepicker({
+            'language': '$datePickerLang',
+            'format': 'd.m.yyyy',
+            'weekStart': 1,
+            'endDate': '$endDate',
+            'autoclose': true
+          });
+        }
+        EOT
     ;
     echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
     ?>

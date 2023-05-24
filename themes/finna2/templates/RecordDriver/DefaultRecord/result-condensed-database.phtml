@@ -2,8 +2,8 @@
 <?php $subjects = $this->driver->getAllSubjectHeadings(); ?>
 <div class="result-database">
   <div>
-    <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
-    <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+    <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId">
+    <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource">
     <div class="description">
     <?php $summ = $this->driver->getSummary(); if (!empty($summ)): ?>
       <h5><?=$this->transEsc('Summary')?>:</h5>

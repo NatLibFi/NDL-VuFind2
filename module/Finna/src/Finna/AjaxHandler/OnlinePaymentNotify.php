@@ -1,8 +1,9 @@
 <?php
+
 /**
  * "Online Payment Notify" AJAX handler.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2015-2022.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Laminas\Mvc\Controller\Plugin\Params;
@@ -70,7 +72,8 @@ class OnlinePaymentNotify extends AbstractOnlinePaymentAction
                 . ', post parameters: ' . $request->getPost()->toString()
             );
             // If this is an old (invalid) request, return success:
-            if (!empty($reqParams['driver'])
+            if (
+                !empty($reqParams['driver'])
                 && '1' == ($reqParams['payment'] ?? '')
             ) {
                 return $this->formatResponse('');
@@ -99,7 +102,7 @@ class OnlinePaymentNotify extends AbstractOnlinePaymentAction
             return $this->formatResponse('', self::STATUS_HTTP_ERROR);
         }
 
-        $paymentResult = $handler->processPaymentResponse($t, $request);
+        [$paymentResult, $markedAsPaid] = $handler->processPaymentResponse($t, $request);
 
         $this->logger->warn(
             "Online payment notify handler for $transactionId result: $paymentResult"
@@ -107,6 +110,25 @@ class OnlinePaymentNotify extends AbstractOnlinePaymentAction
 
         if ($handler::PAYMENT_FAILURE == $paymentResult) {
             return $this->formatResponse('', self::STATUS_HTTP_ERROR);
+        }
+
+        if (
+            $handler::PAYMENT_SUCCESS === $paymentResult
+            && $markedAsPaid
+            && ($user = $this->userTable->getById($t->user_id))
+            && ($patron = $this->getPatronForTransaction($t))
+            && ($this->dataSourceConfig[$patron['source']]['onlinePayment']['receipt'] ?? false)
+        ) {
+            // Send receipt by email if enabled:
+            $patronProfile = array_merge(
+                $patron,
+                $this->ils->getMyProfile($patron)
+            );
+            try {
+                $this->receipt->sendEmail($user, $patronProfile, $t);
+            } catch (\Exception $e) {
+                $this->logger->err("Failed to send email receipt for $transactionId: " . (string)$e);
+            }
         }
 
         // This handler does not mark fees as paid since that happens in the response

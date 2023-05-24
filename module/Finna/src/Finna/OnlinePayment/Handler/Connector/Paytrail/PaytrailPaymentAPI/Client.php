@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Paytrail Payment API client
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2022.
  *
@@ -26,6 +27,7 @@
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  * @link     http://docs.paytrail.com/ Paytrail API documentation
  */
+
 namespace Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailPaymentAPI;
 
 use Paytrail\SDK\Exception\HmacException;

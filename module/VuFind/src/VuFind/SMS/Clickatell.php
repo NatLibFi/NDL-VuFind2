@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Class for text messaging via Clickatell's HTTP API
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2009.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace VuFind\SMS;
 
 use VuFind\Exception\Mail as MailException;
@@ -99,7 +101,7 @@ class Clickatell extends AbstractBase
     public function getCarriers()
     {
         return [
-            'Clickatell' => ['name' => 'Clickatell', 'domain' => null]
+            'Clickatell' => ['name' => 'Clickatell', 'domain' => null],
         ];
     }
 

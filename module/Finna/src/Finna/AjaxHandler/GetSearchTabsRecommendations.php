@@ -1,8 +1,9 @@
 <?php
+
 /**
  * "Get Search Tabs Recommendations" AJAX handler
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2018.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Laminas\Config\Config;
@@ -44,8 +46,7 @@ use VuFind\Session\Settings as SessionSettings;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase
-implements \Laminas\Log\LoggerAwareInterface
+class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase implements \Laminas\Log\LoggerAwareInterface
 {
     use \VuFind\Log\LoggerAwareTrait;
 
@@ -162,7 +163,8 @@ implements \Laminas\Log\LoggerAwareInterface
         $searchClass = $searchParams->getSearchClassId();
         // Don't return recommendations if not configured or for combined view
         // or for search types other than basic search.
-        if (empty($recommendationsConfig[$searchClass])
+        if (
+            empty($recommendationsConfig[$searchClass])
             || $searchClass == 'Combined'
             || $searchParams->getSearchType() != 'basic'
         ) {
@@ -234,7 +236,7 @@ implements \Laminas\Log\LoggerAwareInterface
                             'lookfor' => $lookfor,
                             'handler' => $searchParams->getQuery()->getHandler(),
                             'results' => $otherResults,
-                            'params' => $searchParams
+                            'params' => $searchParams,
                         ]
                     );
                 }

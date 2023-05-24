@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Proxy URL view helper
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\View\Helper\Root;
 
 use Laminas\Config\Config;
@@ -94,7 +96,8 @@ class ProxyUrl extends \VuFind\View\Helper\Root\ProxyUrl
             return $url;
         }
         $config = $this->config->EZproxy;
-        if (isset($config->proxy_known_ip_addresses)
+        if (
+            isset($config->proxy_known_ip_addresses)
             && !$config->proxy_known_ip_addresses
             && $this->getIpInRange()
         ) {
@@ -143,7 +146,8 @@ class ProxyUrl extends \VuFind\View\Helper\Root\ProxyUrl
         }
 
         // Check for source specific filters
-        if (!empty($config->include_source)
+        if (
+            !empty($config->include_source)
             || !empty($config->include_datasource)
             || !empty($config->exclude_datasource)
         ) {

@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Factory for AbstractOnlinePaymentAction AJAX handlers.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2018-2023.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -41,8 +43,7 @@ use Psr\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class AbstractOnlinePaymentActionFactory
-implements \Laminas\ServiceManager\Factory\FactoryInterface
+class AbstractOnlinePaymentActionFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create an object
@@ -75,7 +76,9 @@ implements \Laminas\ServiceManager\Factory\FactoryInterface
             $tablePluginManager->get(\Finna\Db\Table\Transaction::class),
             $tablePluginManager->get(\VuFind\Db\Table\User::class),
             $container->get(\Finna\OnlinePayment\OnlinePayment::class),
-            $container->get('Finna\OnlinePayment\Session')
+            $container->get('Finna\OnlinePayment\Session'),
+            $container->get(\VuFind\Config\PluginManager::class)->get('datasources')->toArray(),
+            $container->get(\Finna\OnlinePayment\Receipt::class)
         );
         $result->setLogger($container->get(\VuFind\Log\Logger::class));
         return $result;

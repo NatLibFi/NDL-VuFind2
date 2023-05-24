@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Finna aggregate resolver.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2022.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\View\Resolver;
 
 use Laminas\View\Renderer\RendererInterface as Renderer;
@@ -63,8 +65,9 @@ class AggregateResolver extends \Laminas\View\Resolver\AggregateResolver
      */
     protected function expandName(string $name): string
     {
-        if (!empty($name)
-            && strpos($name, 'components/') === 0
+        if (
+            !empty($name)
+            && str_starts_with($name, 'components/')
             && substr($name, -6) !== '.phtml'
         ) {
             $parts = explode('/', $name);

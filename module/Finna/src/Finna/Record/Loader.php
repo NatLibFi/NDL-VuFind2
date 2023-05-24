@@ -1,10 +1,11 @@
 <?php
+
 /**
  * Record loader
  *
- * PHP version 7
+ * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2016-2019.
+ * Copyright (C) The National Library of Finland 2016-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Record;
 
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
@@ -121,8 +123,10 @@ class Loader extends \VuFind\Record\Loader
         } catch (RecordMissingException $e) {
             $missingException = $e;
         }
-        if ($source == 'Solr'
-            && ($missingException || $result instanceof \VuFind\RecordDriver\Missing)
+        if (
+            $source == 'Solr'
+            && ($missingException || $result instanceof \VuFind\RecordDriver\Missing
+            || ($result && $result->getExtraDetail('cached_record')))
         ) {
             // Check for a redirected record without overwriting $result
             if ($redirectedRecord = $this->handleMissingSolrRecord($id)) {
@@ -207,7 +211,8 @@ class Loader extends \VuFind\Record\Loader
         // Check the results for missing MetaLib IRD records and try to load them
         // with their old MetaLib IDs
         foreach ($records as &$record) {
-            if ($record instanceof \VuFind\RecordDriver\Missing
+            if (
+                $record instanceof \VuFind\RecordDriver\Missing
                 && $record->getSourceIdentifier() == 'Solr'
             ) {
                 $id = $record->getUniqueID();

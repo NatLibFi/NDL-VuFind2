@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Row definition for finna_session_stats
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2022.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\Db\Row;
 
 /**
@@ -50,7 +52,7 @@ class FinnaSessionStats extends \VuFind\Db\Row\RowGateway
                 'institution',
                 'view',
                 'crawler',
-                'date'
+                'date',
             ],
             'finna_session_stats',
             $adapter

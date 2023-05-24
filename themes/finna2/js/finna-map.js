@@ -100,7 +100,7 @@ finna.map = (function finnaMap() {
         },
         createButton: function createButton(cssClass, html, clickHandler/*, style*/) {
           var container = L.DomUtil.create('div', 'map-button btn ' + cssClass + ' leaflet-bar leaflet-control leaflet-control-custom');
-          $(container).html(html).click(clickHandler);
+          $(container).html(html).on("click", clickHandler);
           return container;
         }
       });

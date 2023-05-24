@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Table Definition for user_resource
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2016-2019.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Db\Table;
 
 /**
@@ -112,7 +114,7 @@ class UserResource extends \VuFind\Db\Table\UserResource
                 [
                     'user_id' => $userId,
                     'list_id' => $listId,
-                    'resource_id' => $row->resource_id
+                    'resource_id' => $row->resource_id,
                 ]
             )->current();
             if ($rowToUpdate) {

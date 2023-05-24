@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Module for storing local overrides for Finna.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2010.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/dmj/vf2-proxy
  */
+
 namespace Finna;
 
 use Laminas\Mvc\MvcEvent;

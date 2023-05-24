@@ -27,12 +27,12 @@
   <div class="form-group">
     <label class="control-label password-login" for="login_<?=$this->escapeHtmlAttr($topClass)?>_username"><?=$this->transEsc('Username')?>:</label>
     <label class="control-label email-login hidden" for="login_<?=$this->escapeHtmlAttr($topClass)?>_username"><?=$this->transEsc('Email')?>:</label>
-    <input id="login_<?=$this->escapeHtmlAttr($topClass)?>_username" type="text" name="username" value="<?=$this->escapeHtmlAttr($this->request->get('username'))?>" class="form-control"/>
+    <input id="login_<?=$this->escapeHtmlAttr($topClass)?>_username" type="text" name="username" value="<?=$this->escapeHtmlAttr($this->request->get('username'))?>" class="form-control">
   </div>
 
   <div class="form-group">
     <label class="control-label" for="login_<?=$this->escapeHtmlAttr($topClass)?>_password"><?=$this->transEsc('Password')?>:</label>
-    <input id="login_<?=$this->escapeHtmlAttr($topClass)?>_password" type="password" name="password" class="form-control"/>
+    <input id="login_<?=$this->escapeHtmlAttr($topClass)?>_password" type="password" name="password" class="form-control">
   </div>
 </div>
 
@@ -44,8 +44,8 @@
 
   $methods = json_encode($methods);
   $script = <<<EOT
-  setupMultiILSLoginFields($methods, 'login_{$topClass}_');
-EOT;
+        setupMultiILSLoginFields($methods, 'login_{$topClass}_');
+      EOT;
 
   // Inline the script for lightbox compatibility
   echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');

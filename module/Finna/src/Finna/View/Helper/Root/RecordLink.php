@@ -1,11 +1,12 @@
 <?php
+
 /**
  * RecordLink view helper (DEPRECATED -- use RecordLinker instead)
  *
  * Note that RecordLink has been removed from upstream and the Finna version only
  * remains for compatibility with existing production views.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2017-2023.
  *
@@ -32,6 +33,7 @@
  * @deprecated RecordLink has been removed from upstream and the Finna version only
  * remains for compatibility with existing production views.
  */
+
 namespace Finna\View\Helper\Root;
 
 /**

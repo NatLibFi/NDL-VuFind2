@@ -14,11 +14,13 @@
       <?php $QRCode = $this->record($this->driver)->getQRCode("core"); ?>
       <?php if($QRCode): ?>
         <span class="hidden-xs">
-          <br/><img alt="<?=$this->transEsc('QR Code')?>" class="qrcode" src="<?=$this->escapeHtmlAttr($QRCode);?>"/>
+          <br><img alt="<?=$this->transEsc('QR Code')?>" class="qrcode" src="<?=$this->escapeHtmlAttr($QRCode);?>">
         </span>
       <?php endif; ?>
     </div>
     <h1 property="name" class="record-title"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+
+    <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
 
     <?=$this->render('record/labels.phtml', ['driver' => $this->driver]); ?>
 

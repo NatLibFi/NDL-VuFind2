@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Config view helper
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2010.
  * Copyright (C) The National Library of Finland 2015-2019.
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\View\Helper\Root;
 
 /**
@@ -47,5 +49,27 @@ class Config extends \VuFind\View\Helper\Root\Config
     public function inlineVideoEnabled()
     {
         return !empty($this->get('config')->Record->embedVideo);
+    }
+
+    /**
+     * Get default facet fields
+     *
+     * @return array
+     */
+    public function getFacetFields(): array
+    {
+        $config = $this->get('facets')->Results ?? null;
+        return $config ? $config->toArray() : [];
+    }
+
+    /**
+     * Get default checkbox facets
+     *
+     * @return array
+     */
+    public function getCheckboxFacets(): array
+    {
+        $config = $this->get('facets')->CheckboxFacets ?? null;
+        return $config ? $config->toArray() : [];
     }
 }

@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Iframe helper
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2022.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\View\Helper\Root;
 
 use VuFind\I18n\Translator\TranslatorAwareInterface;
@@ -39,8 +41,7 @@ use VuFind\I18n\Translator\TranslatorAwareTrait;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class Iframe extends \Laminas\View\Helper\AbstractHelper
-implements TranslatorAwareInterface
+class Iframe extends \Laminas\View\Helper\AbstractHelper implements TranslatorAwareInterface
 {
     use TranslatorAwareTrait;
 

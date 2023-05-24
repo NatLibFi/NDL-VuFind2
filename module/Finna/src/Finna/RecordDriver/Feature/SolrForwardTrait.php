@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Additional functionality for SolrForward and SolrForwardAuth records.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library 2019.
  *
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver\Feature;
 
 /**
@@ -91,10 +93,10 @@ trait SolrForwardTrait
                     'urls' => [
                         'small' => $url,
                         'medium' => $url,
-                        'large' => $url
+                        'large' => $url,
                     ],
                     'description' => $desc,
-                    'rights' => $rights
+                    'rights' => $rights,
                 ];
                 $image['downloadable'] = $this->allowRecordImageDownload($image);
                 $images[] = $image;

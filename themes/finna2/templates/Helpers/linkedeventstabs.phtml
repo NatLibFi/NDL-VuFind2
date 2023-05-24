@@ -65,11 +65,11 @@
 <?php
 $translations = $this->jsTranslations()->getJSONFromArray(['nohit_heading' => 'nohit_heading']);
 $js = <<<JS
-$(document).ready(function(){
-  finna.linkedEvents.initEventsTabs("{$this->id}");
-  VuFind.addTranslations({$translations});
-});
-JS;
+    $(document).ready(function(){
+      finna.linkedEvents.initEventsTabs("{$this->id}");
+      VuFind.addTranslations({$translations});
+    });
+    JS;
 $this->headScript()->appendScript($js);
 ?>
 <!-- END of: finna - Helpers/linkedeventstabs.phtml -->

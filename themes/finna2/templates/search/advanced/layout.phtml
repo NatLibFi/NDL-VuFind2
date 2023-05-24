@@ -83,7 +83,7 @@
 <form role="search" aria-label="<?=$this->transEscAttr("Advanced Search")?>" name="searchForm" id="advSearchForm" method="get" action="<?=$this->url($this->options->getSearchAction())?>">
   <?php foreach ($hiddenFilters as $key => $filter): ?>
     <?php foreach ($filter as $value): ?>
-      <input type="hidden" name="hiddenFilters[]" value="<?=$this->escapeHtmlAttr($key) . ':' . $this->escapeHtmlAttr($value)?>" />
+      <input type="hidden" name="hiddenFilters[]" value="<?=$this->escapeHtmlAttr($key) . ':' . $this->escapeHtmlAttr($value)?>">
     <?php endforeach; ?>
   <?php endforeach; ?>
   <div class="advanced-search">
@@ -154,7 +154,7 @@
                     'title' => $msgSearchWords,
                     'type' => 'text',
                     'aria-label' => $msgSearchWords,
-                    'class' => 'adv-term-input form-control form-inline responsive-field search-text'
+                    'class' => 'adv-term-input form-control form-inline responsive-field search-text',
                   ]);
 
                   $this->htmlElement()->addAttributeTemplate('select-field', [
@@ -187,7 +187,7 @@
                           <?php
                           $optionElement = [
                             'value' => $this->escapeHtml($searchVal),
-                            'selected' => ($isQuerySearchSet && $searchVal == $setQueries[$group][$search]->getHandler()) ? 'selected' : ''
+                            'selected' => ($isQuerySearchSet && $searchVal == $setQueries[$group][$search]->getHandler()) ? 'selected' : '',
                           ];
                           ?>
                           <option <?= $this->htmlElement()->getAttributes($optionElement) ?>>
@@ -240,7 +240,7 @@
       </div>
     </div>
     <?php if ($hasDefaultsApplied): ?>
-      <input type="hidden" name="dfApplied" value="1" />
+      <input type="hidden" name="dfApplied" value="1">
     <?php endif ?>
   </div>
   <?php if ($template = $this->content()->findTemplateForLng("content/Additions/solr-advanced-post")): ?>
@@ -249,11 +249,11 @@
 </form>
 <?php
 $script = <<<JS
-$('#groupPlaceHolder button').on('click', function(e) {
-  addGroup(null, null, null, true);
-  return false;
-});
-JS;
+                              $('#groupPlaceHolder button').on('click', function(e) {
+                                addGroup(null, null, null, true);
+                                return false;
+                              });
+                              JS;
 ?>
 <?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');?>
 <!-- END of: finna - search/advanced/layout.phtml -->

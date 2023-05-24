@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Bazaar API Controller
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2022-2023.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
+
 namespace FinnaApi\Controller;
 
 use Laminas\Http\Response;
@@ -86,7 +88,7 @@ class BazaarApiController extends ApiController implements ApiInterface
             [
                 'hash' => $hash,
                 'type' => 'bazaar',
-                'data' => json_encode($data, JSON_UNESCAPED_UNICODE)
+                'data' => json_encode($data, JSON_UNESCAPED_UNICODE),
             ]
         );
 

@@ -1,8 +1,9 @@
 <?php
+
 /**
  * "System Status" AJAX handler
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2018.
  * Copyright (C) The National Library of Finland 2019.
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+
 namespace Finna\AjaxHandler;
 
 use Laminas\Mvc\Controller\Plugin\Params;
@@ -60,7 +62,8 @@ class SystemStatus extends \VuFind\AjaxHandler\SystemStatus
         $startTime = microtime(true);
 
         // Check system status
-        if (!empty($this->config->System->healthCheckFile)
+        if (
+            !empty($this->config->System->healthCheckFile)
             && file_exists($this->config->System->healthCheckFile)
         ) {
             error_log('SystemStatus: Health check file exists');

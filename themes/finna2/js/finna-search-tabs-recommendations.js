@@ -1,4 +1,4 @@
-/*global VuFind, finna, checkSaveStatuses */
+/*global VuFind, finna */
 finna.searchTabsRecommendations = (() => {
   function initSearchTabsRecommendations() {
     const holder = document.getElementById('search-tabs-recommendations-holder');
@@ -18,9 +18,9 @@ finna.searchTabsRecommendations = (() => {
           finna.layout.initTruncate(holder);
           finna.openUrl.initLinks();
           VuFind.lightbox.bind(holder);
-          VuFind.itemStatuses.check(holder);
+          VuFind.itemStatuses.init(holder);
           finna.itemStatus.initDedupRecordSelection(holder);
-          checkSaveStatuses($(holder));
+          VuFind.saveStatuses.init(holder);
         }
       });
   }

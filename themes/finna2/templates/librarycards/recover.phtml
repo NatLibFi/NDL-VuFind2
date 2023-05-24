@@ -23,17 +23,17 @@
     </div>
     <div class="form-group">
       <label class="control-label" for="login_username"><?=$this->transEsc('Username')?>:</label>
-      <input id="login_username" type="text" name="username" class="form-control"/>
+      <input id="login_username" type="text" name="username" class="form-control">
     </div>
     <div class="form-group">
       <label class="control-label" for="username"><?=$this->transEsc('Email') ?>:</label>
-      <input type="email" name="email" id="email" class="form-control"/>
+      <input type="email" name="email" id="email" class="form-control">
     </div>
     <div class="form-group">
       <?=$this->captcha()->html($this->useCaptcha) ?>
     </div>
     <div class="form-group">
-      <input class="btn btn-primary" name="submit" type="submit" value="<?=$this->transEscAttr('Recover Account') ?>"/>
+      <input class="btn btn-primary" name="submit" type="submit" value="<?=$this->transEscAttr('Recover Account') ?>">
     </div>
   </form>
 <?php endif; ?>

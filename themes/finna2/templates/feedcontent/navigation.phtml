@@ -8,7 +8,7 @@
 
     $link = $item['link'];
     if ($this->feedId) {
-      $link .= strpos($item['link'], '?') === false ? '?' : '&';
+      $link .= !str_contains($item['link'], '?') ? '?' : '&';
       $link .= 'id=' . urlencode($this->feedId);
     }
   ?>

@@ -1,8 +1,9 @@
 <?php
+
 /**
  * HTML Cleaner view helper
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2019.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
+
 namespace Finna\View\Helper\Root;
 
 use Finna\View\CustomElement\CustomElementInterface;
@@ -93,7 +95,7 @@ class CleanHtml extends \Laminas\View\Helper\AbstractHelper
      */
     public function __invoke($html, $targetBlank = false)
     {
-        if (false === strpos($html, '<')) {
+        if (!str_contains($html, '<')) {
             return $html;
         }
         if (null === $this->purifier || $targetBlank !== $this->currentTargetBlank) {

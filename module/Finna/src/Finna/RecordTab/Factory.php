@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Record Tab Factory Class
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2014.
  * Copyright (C) The National Library of Finland 2015.
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
  */
+
 namespace Finna\RecordTab;
 
 use Laminas\ServiceManager\ServiceManager;

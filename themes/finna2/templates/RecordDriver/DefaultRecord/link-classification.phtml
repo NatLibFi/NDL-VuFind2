@@ -1,1 +1,3 @@
-<?php // No ending line feed ?><?=$this->url($this->searchAction ?: $this->searchOptions($this->driver->getSourceIdentifier())->getSearchAction())?>?lookfor=%22<?=urlencode($this->lookfor)?>%22&amp;type=Classification
+<?php
+// Use echo to ensure we don't return a line feed
+echo $this->url($this->searchAction ?: $this->searchOptions($this->driver->getSourceIdentifier())->getSearchAction()) . '?lookfor=%22' . urlencode($this->lookfor) . '%22&amp;type=Classification';

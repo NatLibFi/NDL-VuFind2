@@ -1,10 +1,11 @@
 <?php
+
 /**
  * Online payment controller trait.
  *
- * PHP version 7
+ * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2022.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,9 +24,11 @@
  * @package  Controller
  * @author   Leszek Manicki <leszek.z.manicki@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
+
 namespace Finna\Controller;
 
 use Laminas\Stdlib\Parameters;
@@ -37,6 +40,7 @@ use Laminas\Stdlib\Parameters;
  * @package  Controller
  * @author   Leszek Manicki <leszek.z.manicki@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
@@ -190,7 +194,12 @@ trait FinnaOnlinePaymentControllerTrait
                 "Mandatory setting 'currency' missing from ILS driver for"
                 . " '{$patron['source']}'"
             );
-            return false;
+            return;
+        }
+
+        if (!($user = $this->getUser())) {
+            $this->handleError('Could not get user');
+            return;
         }
 
         $selectFees = $paymentConfig['selectFines'] ?? false;
@@ -227,9 +236,32 @@ trait FinnaOnlinePaymentControllerTrait
         $view->selectFees = $selectFees;
 
         $trTable = $this->getTable('transaction');
+        $lastTransaction = null;
+        $dataSourceConfig = $this->getConfig('datasources')->toArray();
+        $receiptEnabled = $dataSourceConfig[$patron['source']]['onlinePayment']['receipt'] ?? false;
+        if ($receiptEnabled) {
+            $lastTransaction = $trTable->getLastPaidForPatron($patron['cat_username']);
+        }
+        if (
+            $lastTransaction
+            && $this->params()->fromQuery('transactionReport') === 'true'
+        ) {
+            $receipt = $this->serviceLocator->get(\Finna\OnlinePayment\Receipt::class);
+            $data = $receipt->createReceiptPDF($lastTransaction);
+            header('Content-Type: application/pdf');
+            header(
+                'Content-disposition: inline; filename="' .
+                addcslashes($data['filename'], '"') . '"'
+            );
+            echo $data['pdf'];
+            exit(0);
+        }
+        $view->lastTransaction = $lastTransaction;
+
         $paymentInProgress = $trTable->isPaymentInProgress($patron['cat_username']);
         $transactionIdParam = 'finna_payment_id';
-        if ($pay && $session && $payableOnline
+        if (
+            $pay && $session && $payableOnline
             && $payableOnline['payable'] && $payableOnline['amount']
             && !$paymentInProgress
         ) {
@@ -252,7 +284,8 @@ trait FinnaOnlinePaymentControllerTrait
                 header("Location: " . $this->getServerUrl('myresearch-fines'));
                 exit();
             }
-            if ((($paymentConfig['exactBalanceRequired'] ?? true)
+            if (
+                (($paymentConfig['exactBalanceRequired'] ?? true)
                 || !empty($paymentConfig['creditUnsupported']))
                 && !$selectFees
                 && $this->checkIfFinesUpdated($patron, $payableOnline['amount'])
@@ -266,10 +299,6 @@ trait FinnaOnlinePaymentControllerTrait
             $returnUrl = $this->getServerUrl('myresearch-fines');
             $notifyUrl = $this->getServerUrl('home') . 'AJAX/onlinePaymentNotify';
             [$driver, ] = explode('.', $patron['cat_username'], 2);
-
-            if (!($user = $this->getUser())) {
-                return;
-            }
 
             $patronProfile = array_merge(
                 $patron,
@@ -299,7 +328,8 @@ trait FinnaOnlinePaymentControllerTrait
 
         $request = $this->getRequest();
         $transactionId = $request->getQuery()->get($transactionIdParam);
-        if ($transactionId
+        if (
+            $transactionId
             && ($transaction = $trTable->getTransaction($transactionId))
         ) {
             $this->ensureLogger();
@@ -314,20 +344,32 @@ trait FinnaOnlinePaymentControllerTrait
                     ->addSuccessMessage('online_payment_successful');
             } else {
                 // Process payment response:
-                $result = $paymentHandler->processPaymentResponse(
+                [$result, $markedAsPaid] = $paymentHandler->processPaymentResponse(
                     $transaction,
                     $this->getRequest()
                 );
                 $this->logger->warn(
                     "Online payment response for $transactionId result: $result"
                 );
-                if ($paymentHandler::PAYMENT_SUCCESS === $result) {
+                if (
+                    $paymentHandler::PAYMENT_SUCCESS === $result
+                    && $markedAsPaid
+                ) {
                     $this->flashMessenger()
                         ->addSuccessMessage('online_payment_successful');
+                    // Send receipt by email if enabled:
+                    if ($receiptEnabled) {
+                        $patronProfile = array_merge(
+                            $patron,
+                            $catalog->getMyProfile($patron)
+                        );
+                        $receipt = $this->serviceLocator->get(\Finna\OnlinePayment\Receipt::class);
+                        $receipt->sendEmail($user, $patronProfile, $transaction);
+                    }
                     // Display page and mark fees as paid via AJAX:
                     $view->registerPayment = true;
                     $view->registerPaymentParams = [
-                        'transactionId' => $transaction->transaction_id
+                        'transactionId' => $transaction->transaction_id,
                     ];
                 } elseif ($paymentHandler::PAYMENT_CANCEL === $result) {
                     $this->flashMessenger()

@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Finna search results trait
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2015-2017.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
+
 namespace Finna\Search\Results;
 
 use Finna\Search\Factory\UrlQueryHelperFactory;
@@ -65,7 +67,8 @@ trait SearchResultsTrait
                 $this->getParams(),
                 $this->getUrlQueryHelperOptions()
             );
-            if (null !== $this->request
+            if (
+                null !== $this->request
                 && is_callable([$this->helpers['urlQuery'], 'setSearchId'])
             ) {
                 $savedSearches = $this->request->getQuery('search');

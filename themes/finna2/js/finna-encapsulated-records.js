@@ -1,4 +1,4 @@
-/*global VuFind, finna, checkSaveStatuses */
+/*global VuFind, finna */
 finna.encapsulatedRecords = (function encapsulatedRecords() {
   var my = {
     init: function init() {
@@ -49,13 +49,13 @@ finna.encapsulatedRecords = (function encapsulatedRecords() {
               finna.openUrl.initLinks(resultsContainer);
               finna.videoPopup.initIframeEmbed(resultsContainer);
               finna.videoPopup.initVideoPopup(resultsContainer);
-              VuFind.itemStatuses.check(resultsContainer);
+              VuFind.itemStatuses.init(resultsContainer);
               finna.itemStatus.initDedupRecordSelection(resultsContainer);
               VuFind.recordVersions.init(resultsContainer);
               VuFind.lightbox.bind(resultsContainer);
               VuFind.cart.init(resultsContainer);
               $.fn.finnaPopup.reIndex();
-              checkSaveStatuses(resultsContainer);
+              VuFind.saveStatuses.init(resultsContainer);
             })
             .fail(function onLoadRecordsFail() {
               btn.show();

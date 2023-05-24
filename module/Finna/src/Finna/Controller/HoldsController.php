@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Holds Controller
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2010.
  * Copyright (C) The National Library of Finland 2021.
@@ -27,6 +28,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
  */
+
 namespace Finna\Controller;
 
 /**
@@ -67,7 +69,7 @@ class HoldsController extends \VuFind\Controller\HoldsController
                 'expire_desc',
                 'create_asc',
                 'create_desc',
-                'title_desc'
+                'title_desc',
             ];
             if (in_array($sort, $supported)) {
                 $view->recordList = $this->sortHolds($view->recordList, $sort);
@@ -78,33 +80,33 @@ class HoldsController extends \VuFind\Controller\HoldsController
                 'available' => [
                     'desc' =>  'hold_sort_available',
                     'url' => '?sort=available',
-                    'selected' => $sort === 'available'
+                    'selected' => $sort === 'available',
                 ],
                 'expire_asc' => [
                     'desc' =>  'hold_sort_expire_asc',
                     'url' => '?sort=expire_asc',
-                    'selected' => $sort === 'expire_asc'
+                    'selected' => $sort === 'expire_asc',
                 ],
                 'expire_desc' => [
                     'desc' =>  'hold_sort_expire_desc',
                     'url' => '?sort=expire_desc',
-                    'selected' => $sort === 'expire_desc'
+                    'selected' => $sort === 'expire_desc',
                 ],
                 'create_asc' => [
                     'desc' =>  'hold_sort_create_asc',
                     'url' => '?sort=create_asc',
-                    'selected' => $sort === 'create_asc'
+                    'selected' => $sort === 'create_asc',
                 ],
                 'create_desc' => [
                     'desc' =>  'hold_sort_create_desc',
                     'url' => '?sort=create_desc',
-                    'selected' => $sort === 'create_desc'
+                    'selected' => $sort === 'create_desc',
                 ],
                 'title_desc' => [
                     'desc' => 'hold_sort_title',
                     'url' => '?sort=title_desc',
-                    'selected' => $sort === 'title_desc'
-                ]
+                    'selected' => $sort === 'title_desc',
+                ],
             ];
             $view->sortList = $sortList;
         }

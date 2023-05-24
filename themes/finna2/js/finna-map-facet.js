@@ -112,7 +112,7 @@ finna.MapFacet = (function finnaStreetMap() {
         window.location.href = url;
       }
       else if (geoFilters) {
-        var field = $('<input type="hidden" name="filter[]"/>').val(geoFilters);
+        var field = $('<input type="hidden" name="filter[]">').val(geoFilters);
         mapCanvas.closest('form').append(field);
       }
     });

@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Paytrail Payment API handler
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2022.
  *
@@ -26,6 +27,7 @@
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  * @link     http://docs.paytrail.com/ Paytrail API documentation
  */
+
 namespace Finna\OnlinePayment\Handler;
 
 use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailPaymentAPI\Client;
@@ -55,7 +57,7 @@ class PaytrailPaymentAPI extends AbstractBase
     protected $languageMap = [
         'fi' => 'FI',
         'sv' => 'SV',
-        'en' => 'EN'
+        'en' => 'EN',
     ];
 
     /**
@@ -124,7 +126,8 @@ class PaytrailPaymentAPI extends AbstractBase
             ->setCustomer($customer);
         // Payment description in $this->config->paymentDescription is not supported
 
-        if (isset($this->config->productCode)
+        if (
+            isset($this->config->productCode)
             || isset($this->config->transactionFeeProductCode)
             || isset($this->config->productCodeMappings)
             || isset($this->config->organizationProductCodeMappings)
@@ -233,37 +236,38 @@ class PaytrailPaymentAPI extends AbstractBase
      * @param \Finna\Db\Row\Transaction $transaction Transaction
      * @param \Laminas\Http\Request     $request     Request
      *
-     * @return int One of the result codes defined in AbstractBase
+     * @return array One of the result codes defined in AbstractBase and bool
+     * indicating whether the transaction was just now marked as paid
      */
     public function processPaymentResponse(
         \Finna\Db\Row\Transaction $transaction,
         \Laminas\Http\Request $request
-    ): int {
+    ): array {
         if (!($params = $this->getPaymentResponseParams($request))) {
-            return self::PAYMENT_FAILURE;
+            return [self::PAYMENT_FAILURE, false];
         }
 
         // Make sure the transaction IDs match:
         if ($transaction->transaction_id !== $params['checkout-stamp']) {
-            return self::PAYMENT_FAILURE;
+            return [self::PAYMENT_FAILURE, false];
         }
 
         $status = $params['checkout-status'];
         switch ($status) {
             case 'ok':
-                $transaction->setPaid();
-                return self::PAYMENT_SUCCESS;
+                $marked = $transaction->setPaid();
+                return [self::PAYMENT_SUCCESS, $marked];
             case 'fail':
                 $transaction->setCanceled();
-                return self::PAYMENT_CANCEL;
+                return [self::PAYMENT_CANCEL, false];
             case 'new':
             case 'pending':
             case 'delayed':
-                return self::PAYMENT_PENDING;
+                return [self::PAYMENT_PENDING, false];
         }
 
         $this->logPaymentError("unknown status $status");
-        return self::PAYMENT_FAILURE;
+        return [self::PAYMENT_FAILURE, false];
     }
 
     /**
@@ -281,7 +285,7 @@ class PaytrailPaymentAPI extends AbstractBase
             'checkout-reference',
             'checkout-stamp',
             'checkout-status',
-            'signature'
+            'signature',
         ];
 
         foreach ($required as $name) {

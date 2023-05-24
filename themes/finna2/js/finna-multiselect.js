@@ -66,12 +66,12 @@ finna.multiSelect = (function multiSelect(){
       e.preventDefault();
       e.stopPropagation();
       _.wasClicked = true;
-      $(this).focus();
+      $(this).trigger("focus");
     });
     _.ul.on('touchstart', function preventFocus(e) {
       e.stopPropagation();
       _.wasClicked = true;
-      $(this).focus();
+      $(this).trigger("focus");
     });
     _.ul.on('focusin', function setFirstActive() {
       if (_.wasClicked) {

@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Turku Payment API handler
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2022.
  *
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace Finna\OnlinePayment\Handler;
 
 use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailPaymentAPI\Customer;
@@ -55,7 +57,7 @@ class TurkuPaymentAPI extends AbstractBase
     protected $languageMap = [
         'fi' => 'FI',
         'sv' => 'SV',
-        'en' => 'EN'
+        'en' => 'EN',
     ];
 
     /**
@@ -132,7 +134,8 @@ class TurkuPaymentAPI extends AbstractBase
 
         // Payment description in $this->config->paymentDescription is not supported
 
-        if (isset($this->config->productCode)
+        if (
+            isset($this->config->productCode)
             || isset($this->config->transactionFeeProductCode)
             || isset($this->config->productCodeMappings)
             || isset($this->config->organizationProductCodeMappings)
@@ -146,7 +149,7 @@ class TurkuPaymentAPI extends AbstractBase
             $items = [];
             $sapProduct = [
                 'sapCode' => $this->config->sapCode ?? '',
-                'sapOfficeCode' => $this->config->sapOfficeCode ?? ''
+                'sapOfficeCode' => $this->config->sapOfficeCode ?? '',
             ];
             foreach ($fines as $fine) {
                 $fineType = $fine['fine'] ?? '';
@@ -248,37 +251,38 @@ class TurkuPaymentAPI extends AbstractBase
      * @param \Finna\Db\Row\Transaction $transaction Transaction
      * @param \Laminas\Http\Request     $request     Request
      *
-     * @return int One of the result codes defined in AbstractBase
+     * @return array One of the result codes defined in AbstractBase and bool
+     * indicating whether the transaction was just now marked as paid
      */
     public function processPaymentResponse(
         \Finna\Db\Row\Transaction $transaction,
         \Laminas\Http\Request $request
-    ): int {
+    ): array {
         if (!($params = $this->getPaymentResponseParams($request))) {
-            return self::PAYMENT_FAILURE;
+            return [self::PAYMENT_FAILURE, false];
         }
 
         // Make sure the transaction IDs match:
         if ($transaction->transaction_id !== $params['checkout-stamp']) {
-            return self::PAYMENT_FAILURE;
+            return [self::PAYMENT_FAILURE, false];
         }
 
         $status = $params['checkout-status'];
         switch ($status) {
             case 'ok':
-                $transaction->setPaid();
-                return self::PAYMENT_SUCCESS;
+                $marked = $transaction->setPaid();
+                return [self::PAYMENT_SUCCESS, $marked];
             case 'fail':
                 $transaction->setCanceled();
-                return self::PAYMENT_CANCEL;
+                return [self::PAYMENT_CANCEL, false];
             case 'new':
             case 'pending':
             case 'delayed':
-                return self::PAYMENT_PENDING;
+                return [self::PAYMENT_PENDING, false];
         }
 
         $this->logPaymentError("unknown status $status");
-        return self::PAYMENT_FAILURE;
+        return [self::PAYMENT_FAILURE, false];
     }
 
     /**
@@ -305,7 +309,7 @@ class TurkuPaymentAPI extends AbstractBase
                 'checkout-transaction-id',
                 'X-TURKU-SP',
                 'X-TURKU-TS',
-                'Authorization'
+                'Authorization',
             ];
         } elseif ($request->isPost()) {
             $params = $request->getHeaders()->toArray();
@@ -313,7 +317,7 @@ class TurkuPaymentAPI extends AbstractBase
             $required = [
                 'X-Turku-Sp',
                 'X-Turku-Ts',
-                'Authorization'
+                'Authorization',
             ];
         } else {
             $this->logPaymentError(

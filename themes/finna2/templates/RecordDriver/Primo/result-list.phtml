@@ -15,16 +15,16 @@
   <div class="media">
     <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
       <div class="media-<?=$thumbnailAlignment ?> <?=$this->escapeHtmlAttr($coverDetails['size'])?>">
-        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
-        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId">
+        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource">
         <?=$thumbnail ?>
       </div>
     <?php endif; ?>
     <div class="media-body">
       <div class="result-body">
         <div>
-          <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
-          <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+          <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId">
+          <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource">
         </div>
         <div class="title-container">
           <h2 class="search-title">
@@ -96,7 +96,7 @@
               <strong><?=$this->transEsc($snippet['caption']) ?>:</strong>
             <?php endif; ?>
             <?php if (!empty($snippet['snippet'])): ?>
-              <?=$this->translate('highlight_snippet_html', ['%%snippet%%' => $this->highlight($snippet['snippet'])]) ?><br/>
+              <?=$this->translate('highlight_snippet_html', ['%%snippet%%' => $this->highlight($snippet['snippet'])]) ?><br>
             <?php endif; ?>
           <?php endif; ?>
         <?php endif; ?>
@@ -130,7 +130,7 @@
           <?php if ($this->driver->supportsAjaxStatus()): ?>
             <strong class="hideIfDetailed"><?=$this->transEsc('Call Number')?>:</strong>
             <span class="callnumber ajax-availability hidden">
-              <?=$this->transEsc('loading_ellipsis')?><br/>
+              <?=$this->transEsc('loading_ellipsis')?><br>
             </span>
             <strong><?=$this->transEsc('Located')?>:</strong>
             <span class="location ajax-availability hidden">
@@ -183,14 +183,14 @@
             <?php endif; ?>
 
             <?php if ($this->cart()->isActiveInSearch() && $this->params->getOptions()->supportsCart() && $this->cart()->isActive()): ?>
-                <?=$this->render('record/cart-buttons.phtml', ['id' => $this->driver->getUniqueId(), 'source' => $this->driver->getSourceIdentifier()]); ?><br/>
+                <?=$this->render('record/cart-buttons.phtml', ['id' => $this->driver->getUniqueId(), 'source' => $this->driver->getSourceIdentifier()]); ?><br>
             <?php endif; ?>
 
             <?php /* Hierarchy tree link */ ?>
             <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
                 <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
                 <div class="hierarchyTreeLink hidden-print">
-                  <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId" />
+                  <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId">
                   <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID]))?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>">
                     <i class="fa fa-sitemap"></i>
                       <?=$this->transEsc('hierarchy_view_context')?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?>
@@ -216,8 +216,8 @@
     </div>
     <?php if ($thumbnail && $thumbnailAlignment == 'right'): ?>
       <div class="media-<?=$thumbnailAlignment ?> <?=$this->escapeHtmlAttr($coverDetails['size'])?>">
-        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
-        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId">
+        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource">
         <?=$thumbnail ?>
       </div>
     <?php endif; ?>
