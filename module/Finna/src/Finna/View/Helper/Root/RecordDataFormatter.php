@@ -566,6 +566,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             $type = strtolower($backend);
         }
         switch ($type) {
+            case 'aipa':
             case 'dc':
             case 'qdc':
                 return $this->filterQDCFields($defaults);
