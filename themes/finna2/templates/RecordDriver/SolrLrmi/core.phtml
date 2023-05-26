@@ -66,7 +66,7 @@
                   <?php if (in_array($material['format'], $linkedFormats)): ?>
                     <a href="<?= $this->escapeHtmlAttr($this->proxyUrl($material['url'])) ?>"
                       aria-label="<?= $this->escapeHtmlAttr($externalLinkText) ?>" target="_blank">
-                      <i class="fa <?= $isHtml ? 'fa-external-link' : 'fa-download' ?>"></i>
+                      <?=$this->icon($isHtml ? 'external-link' : 'download') ?>
                       <?= $title ?>
                     </a>
                     (<?= $isHtml
@@ -75,7 +75,7 @@
                     ?>)
                   <?php elseif ($externalLink): ?>
                     <a href="<?= $externalLink ?>" aria-label="<?= $this->escapeHtmlAttr($externalLinkText) ?>"
-                      target="_blank"><i class="fa fa-external-link"></i><?= $title ?></a>
+                      target="_blank"><?=$this->icon('external-link') ?><?= $title ?></a>
                     <?= $externalLinkAdditionalInfo ?>
                   <?php else: ?>
                     <?= $title ?>

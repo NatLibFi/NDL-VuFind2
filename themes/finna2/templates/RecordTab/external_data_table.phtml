@@ -16,7 +16,7 @@
     <?php foreach ($data['items'] as $item): ?>
       <div role="row" class="tbl-row">
         <div role="cell">
-          <a target="_blank" href="<?=$this->escapeHtmlAttr($item['url'])?>" aria-label="<?=$this->transEscAttr('external_online_link')?>"><i class="fa fa-external-link"></i> <?=$this->escapeHtml($item['label'])?></a>
+          <a target="_blank" href="<?=$this->escapeHtmlAttr($item['url'])?>" aria-label="<?=$this->transEscAttr('external_online_link')?>"><?=$this->icon('external-link') ?> <?=$this->escapeHtml($item['label'])?></a>
         </div>
       </div>
     <?php endforeach; ?>

@@ -37,7 +37,7 @@
       color: darken(@action-link-color,10%);
     }
 
-    & i {
+    & .icon {
       color: tint(@action-link-color, 22%);
       padding-left: 3px;
       padding-right: 3px;
@@ -50,6 +50,7 @@
     & .online-source {
       font-size: 0.9em;
       color: @gray-light;
+      vertical-align: bottom;
     }
     a {
       font-size: 15px;
@@ -532,7 +533,7 @@ a.authority {
       font-size: @font-size-small;
   }
   p {
-     font-size: @font-size-small; 
+     font-size: @font-size-small;
      padding: 0;
      margin: 0;
   }
@@ -713,7 +714,7 @@ a.authority {
   & a:hover {
     text-decoration: none;
   }
-  & > li:not(.share-buttons):not(.whatsapp) {
+  & > li:not(.share-buttons) {
     margin: 10px;
     float: left;
     // Links rendered as pills
@@ -731,15 +732,6 @@ a.authority {
     min-width: 150px;
   }
 }
-.nav-pills .share-buttons a {
-  display: inline-block;
-}
-.share-buttons {
-    margin-right: 5px;
-}
-.share-buttons-toolbox {
-    display: inline-block;
-}
 
 // Request forms
 .ill-request-terms {
@@ -751,7 +743,7 @@ a.authority {
 
 // Comment form
 .comment-form {
-  .fa.fa-info3 {
+  .icon {
     font-size: 1.5em;
     float: left;
     color: @brand-primary;
@@ -761,8 +753,8 @@ a.authority {
     margin-left: 2em;
   }
   @media (min-width: @screen-md) {
-    .fa.fa-info3 {
-      margin-top: 2.7em;
+    .icon {
+      margin-top: 2.4em;
       margin-left: 1em;
     }
     .comment-col {
@@ -1031,14 +1023,14 @@ finna-model-viewer .object-editor {
   display: inline-block;
 
   .show-info {
-    i {
+    .icon {
       font-size: 1.0rem;
       vertical-align: middle;
     }
-    i.expand {
+    .icon.expand {
       display: inline-block;
     }
-    i.collapse {
+    .icon.collapse {
       display: none;
     }
   }
@@ -1082,10 +1074,10 @@ finna-model-viewer .object-editor {
     display: block;
   }
   &.open > .show-info {
-    i.expand {
+    .icon.expand {
       display: none;
     }
-    i.collapse {
+    .icon.collapse {
       display: inline-block;
     }
   }
@@ -1168,5 +1160,45 @@ finna-model-viewer .object-editor {
     .rating__input:hover ~ .rating__label--half .rating__icon--star {
       color: #ddd;
     }
+  }
+}
+
+/* Styling of share buttons */
+.nav-pills > li.share-buttons {
+  float: right;
+}
+.share-buttons-toolbox {
+  display: flex;
+  .share-button-facebook {
+    background: #3a5795;
+    border: 2px solid #3a5795;
+    color: #fff;
+  }
+  .share-button-pinterest {
+      background: #cb2027;
+      border: 2px solid #cb2027;
+      color: #fff;
+  }
+  .share-button-twitter {
+      background: #00aced;
+      border: 2px solid #00aced;
+      color: #fff;
+  }
+  .share-button-google-plus-icon {
+      background: #d34836;
+      border: 2px solid #d34836;
+      color: #fff;
+  }
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border-radius: 50%;
+    box-sizing: border-box;
+    font-size: 12px;
+    margin-left: 5px;
   }
 }
