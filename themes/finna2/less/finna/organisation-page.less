@@ -306,6 +306,7 @@
             }
             .consortium-info-row {
                 display: table;
+                width: 100%;
             }
         }
         .consortium-notification {
@@ -481,6 +482,11 @@
             .open-closed-info {
                 margin-top: 0.5em;
                 margin-bottom: 0.5em;
+
+                .times, .shift {
+                    display: inline-flex;
+                    gap: 2px;
+                }
             }
             @media(min-width: @screen-sm) {
                 .office-title {

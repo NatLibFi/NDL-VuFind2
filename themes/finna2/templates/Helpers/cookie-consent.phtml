@@ -1,7 +1,10 @@
 <?php
   // Render the new cookie consent initialization script if necessary:
  if (!empty($this->consentDialogConfig)) {
-  $this->headScript()->appendFile('vendor/cookieconsent.umd.js');
+  // Use an empty 'conditional' attribute to exclude the script from asset pipeline,
+  // because it doesn't load properly with Safari on iOS < 13.4 due to missing
+  // support for optional chaining:
+  $this->headScript()->appendFile('vendor/cookieconsent.umd.js', 'text/javascript', ['conditional' => '']);
   $this->headScript()->appendFile('cookie.js');
 
   // Quick fix for null domain:

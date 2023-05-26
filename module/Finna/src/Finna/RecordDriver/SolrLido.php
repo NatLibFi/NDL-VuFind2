@@ -554,7 +554,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 // Representation is a 3d model
                 if (in_array($type, $modelTypeKeys)) {
                     if ($model = $this->getModel($url, $format, $type)) {
-                        $modelUrls = array_merge($modelUrls, $model);
+                        $modelUrls[] = $model;
                     }
                     continue;
                 }
@@ -608,9 +608,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                     }
                 );
             }
+            $modelResult = [];
+            if ($modelUrls) {
+                $modelResult = [
+                    'models' => $modelUrls,
+                    'rights' => $rights,
+                ];
+            }
             $addToResults(
                 $imageResult,
-                $modelUrls,
+                $modelResult,
                 $audioUrls,
                 $videoUrls,
                 $documentUrls
@@ -728,14 +735,22 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      *
      * @return array
      */
-    protected function getModel(string $url, string $format, string $type): array
-    {
+    protected function getModel(
+        string $url,
+        string $format,
+        string $type,
+    ): array {
         $type = $this->modelTypes[$type];
         $format = strtolower($format);
-        if ('preview_3D' === $type && !in_array($format, $this->displayableModelFormats)) {
-            return [];
+        if ('preview' === $type && !in_array($format, $this->displayableModelFormats)) {
+            // If we can not display the file, then tag it as a provided 3D model
+            $type = 'provided';
         }
-        return [$format => [$type => $url]];
+        return [
+            'url' => $url,
+            'format' => $format,
+            'type' => $type,
+        ];
     }
 
     /**
@@ -960,7 +975,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      */
     public function getModelSettings(): array
     {
-        $datasource = $this->getDataSource();
         $settings = [];
         if ($iniData = $this->recordConfig->Models ?? []) {
             $settings = [

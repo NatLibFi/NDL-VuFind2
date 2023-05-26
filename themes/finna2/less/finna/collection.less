@@ -4,9 +4,20 @@
   .filter-input {
     flex-grow: 1;
     white-space: nowrap;
-    span {
+    span:not(.icon) {
       margin-right: 10px;
     }
+    display: flex;
+    align-items: center;
+  }
+  button.btn-primary {
+    font-size: 20px;
+    padding: 0;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .view-option-container, .sort-option-container {
     margin: auto 0 auto 5px;
@@ -19,10 +30,9 @@
   }
   #keywordFilter_lookfor {
     width: 100%;
+    height: 40px;
     @media (min-width: @screen-sm) {
-      &::-moz-placeholder { opacity: 0; }
-      &:-ms-input-placeholder { opacity: 0; }
-      &::-webkit-input-placeholder { opacity: 0; }
+      width: 250px;
     }
   }
 }

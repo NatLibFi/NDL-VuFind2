@@ -118,6 +118,7 @@
                 .time-row {
                     display: flex;
                     flex-flow: row nowrap;
+                    gap: 4px;
                     width: 100%;
                     line-height: 1.26em;
 
@@ -151,7 +152,9 @@
                         flex-flow: nowrap;
                         .period, .closed-today {
                             width: 100%;
-                            text-align: right;
+                            display: inline-flex;
+                            justify-content: end;
+                            gap: 2px;
                         }
                     }
                 }

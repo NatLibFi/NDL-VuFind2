@@ -224,6 +224,12 @@
           <resourceRepresentation type="preview_3D">
             <linkResource formatResource="glb">https://glbmalli.glb</linkResource>
           </resourceRepresentation>
+          <rightsResource>
+            <rightsType>
+              <conceptID type="copyright">InC</conceptID>
+              <term lang="fi">Tässä on mallien copyright.</term>
+            </rightsType>
+          </rightsResource>
         </resourceSet>
         <resourceSet>
           <resourceDescription type="displayLink">AudioTesti.mp3</resourceDescription>

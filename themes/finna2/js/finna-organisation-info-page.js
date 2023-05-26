@@ -383,9 +383,11 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     var hasSchedules = 'openTimes' in data && 'schedules' in data.openTimes && data.openTimes.schedules.length > 0;
     var schedules = data.openTimes.schedules;
     var isClosedForWeek = schedules.every(schedule => schedule.closed === true);
-    var hasScheduleExplanation = data.details.scheduleDescriptions.every(description => description !== '');
-    
-    if (isClosedForWeek && !hasScheduleExplanation) {
+    var hasScheduleDescriptions = 'scheduleDescriptions' in data.details
+      ? data.details.scheduleDescriptions.every(description => description !== '')
+      : false;
+
+    if (isClosedForWeek && !hasScheduleDescriptions) {
       holder.find('.open-or-closed').hide();
     }
     else if (hasSchedules) {

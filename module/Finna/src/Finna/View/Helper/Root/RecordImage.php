@@ -387,31 +387,35 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         $source = $this->record->getDriver()->getSourceIdentifier();
         $bgImage
             = $this->view->plugin('imageSrc')->getSourceAddress('3d-bg.jpg', true);
-        foreach ($models as $index => $model) {
-            foreach ($model as $format => $data) {
-                $modelData = [
-                    'urls' => [
-                        'small' => null,
-                        'medium' => null,
-                        'large' => $bgImage,
-                        'master' => null,
-                    ],
-                    'type' => 'model',
-                    'format' => $format,
-                    'scripts' => '/themes/finna2/js/vendor/',
-                    'texture' => '/themes/finna2/images/',
-                    'params' => http_build_query(
-                        [
-                            'method' => 'getModel',
-                            'id' => $uniqueID,
-                            'index' => $index,
-                            'format' => $format,
-                            'source' => $source,
-                        ]
-                    ),
-                ];
-                $result[$index] = $modelData;
+        $template = [
+            // Mimic representation of an image.
+            'urls' => [
+                'small' => null,
+                'medium' => null,
+                'large' => $bgImage,
+                'master' => null,
+            ],
+            // Model only settings
+            'type' => 'model',
+            'scripts' => '/themes/finna2/js/vendor/',
+            'texture' => '/themes/finna2/images/',
+            'models' => [],
+        ];
+        foreach ($models as $index => $object) {
+            foreach ($object['models'] as &$model) {
+                if ('preview' !== $model['type']) {
+                    continue;
+                }
+                $model['params'] = http_build_query([
+                        'method' => 'getModel',
+                        'id' => $uniqueID,
+                        'index' => $index,
+                        'format' => $model['format'],
+                        'source' => $source,
+                    ]);
             }
+            unset($model);
+            $result[$index] = array_merge($template, $object);
         }
         return $result;
     }

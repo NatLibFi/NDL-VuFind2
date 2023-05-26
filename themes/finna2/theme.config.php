@@ -273,6 +273,7 @@ $config = [
             'my-account' => 'FontAwesome:user',
             'organisation-info-closed' => 'FontAwesome:exclamation-circle',
             'qrcode' => 'FontAwesome:qr-code',
+            'search' => 'FontAwesome:search',
             'service-available' => 'FontAwesome:ok',
             'service-unavailable' => 'FontAwesome:remove',
             'twitter' => 'FontAwesome:twitter',
