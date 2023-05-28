@@ -56,11 +56,23 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 'getModels',
                 [
                     2 => [
-                        'gltf' => [
-                            'preview' => 'https://gltfmalli.gltf',
+                        'models' => [
+                            [
+                                'url' => 'https://gltfmalli.gltf',
+                                'format' => 'gltf',
+                                'type' => 'preview',
+                            ],
+                            [
+                                'url' => 'https://glbmalli.glb',
+                                'format' => 'glb',
+                                'type' => 'preview',
+                            ],
                         ],
-                        'glb' => [
-                            'preview' => 'https://glbmalli.glb',
+                        'rights' => [
+                            'copyright' => 'InC',
+                            'description' => [
+                                'Tässä on mallien copyright.',
+                            ],
                         ],
                     ],
                 ],
@@ -168,6 +180,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             'copyright' => 'CC BY 4.0',
                             'description' => [
                                 0 => 'Tässä on kuvien copyright.',
+                                1 => 'Tässä on mallien copyright.',
                             ],
                         ],
                         'highResolution' => [],

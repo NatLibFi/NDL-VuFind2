@@ -3,7 +3,7 @@
 /**
  * KohaRest ILS Driver for KohaSuomi
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2017-2022.
  *
@@ -380,13 +380,17 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     /**
      * Purge Patron Transaction History
      *
-     * @param array $patron The patron array from patronLogin
+     * @param array  $patron The patron array from patronLogin
+     * @param ?array $ids    IDs to purge, or null for all
      *
      * @throws ILSException
      * @return array Associative array of the results
      */
-    public function purgeTransactionHistory($patron)
+    public function purgeTransactionHistory(array $patron, ?array $ids): array
     {
+        if (null !== $ids) {
+            throw new ILSException('Unsupported function');
+        }
         [$code, $result] = $this->makeRequest(
             ['v1', 'checkouts', 'history'],
             ['borrowernumber' => $patron['id']],

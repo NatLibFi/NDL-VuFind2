@@ -1,9 +1,9 @@
 .navbar {
   max-width: 1300px; // dont fully scale the navigation bar text
-
-  .collapse-open-icon::before {
+  .collapse-open-icon {
     font-size: 10px;
     vertical-align: middle;
+    margin-top: -2px;
   }
   .logoutOptions, #loginOptions {
     .my-account-icon {
@@ -265,6 +265,7 @@
 .header-navbar-right {
   display: flex;
   flex-direction: row;
+  align-items: baseline;
 
   div.logoutOptions a:active {
     box-shadow: none;
@@ -272,6 +273,18 @@
   div.logoutOptions, #loginOptions {
     padding-right: 12px;
     position: relative;
+  }
+
+  @media (max-width: @screen-sm-max) {
+    position: absolute;
+    margin: 0;
+    line-height: @navbar-height;
+    top: 0;
+    right: @navbar-right;
+    flex: 0 0;
+    .dropdown-menu > li > a {
+      white-space: normal;
+    }
   }
 }
 

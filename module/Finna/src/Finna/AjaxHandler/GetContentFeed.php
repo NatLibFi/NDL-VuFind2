@@ -3,7 +3,7 @@
 /**
  * GetContentFeed AJAX handler
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2016-2018.
  *
@@ -142,6 +142,8 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
         $items = $feed['items'];
         $modal = $feed['modal'];
         $contentPage = $feed['contentPage'] && !$modal;
+        $contentNavigation = $feed['contentNavigation'];
+        $nextArticles = $feed['nextArticles'];
 
         $result = [
             'channel' => [
@@ -164,7 +166,7 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
             }
         }
 
-        if ($contentPage && !empty($items)) {
+        if ($contentNavigation && $contentPage && !empty($items)) {
             $result['navigation'] = $this->renderer->partial(
                 'feedcontent/navigation',
                 [
@@ -172,6 +174,19 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
                    'element' => $element,
                    'numeric' => $numeric,
                    'feedId' => $id,
+                ]
+            );
+        }
+
+        if ($nextArticles && $contentPage && !empty($items)) {
+            $result['nextarticles'] = $this->renderer->partial(
+                'feedcontent/nextarticles',
+                [
+                   'items' => $items,
+                   'element' => $element,
+                   'numeric' => $numeric,
+                   'feedId' => $id,
+                   'nextArticles' => $nextArticles,
                 ]
             );
         }

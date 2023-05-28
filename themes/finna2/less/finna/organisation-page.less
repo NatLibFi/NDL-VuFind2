@@ -306,6 +306,7 @@
             }
             .consortium-info-row {
                 display: table;
+                width: 100%;
             }
         }
         .consortium-notification {
@@ -481,6 +482,11 @@
             .open-closed-info {
                 margin-top: 0.5em;
                 margin-bottom: 0.5em;
+
+                .times, .shift {
+                    display: inline-flex;
+                    gap: 2px;
+                }
             }
             @media(min-width: @screen-sm) {
                 .office-title {
@@ -529,6 +535,7 @@
                     font-size: 1em;
                     margin-bottom: 1em;
                     margin-top: 1em;
+                    overflow: hidden;
                 }
                 .building-year, .building-name {
                     font-size: 0.9em;
@@ -651,6 +658,17 @@
                 @media(min-width: @screen-sm) {
                     width: 100%;
                     float: right;
+                }
+            }
+            .accessibility-details {
+                .panel-body {
+                    padding-bottom: 15px;
+                }
+                .accessibility-group-heading {
+                    font-size: 1.5em;
+                }
+                .accessibility-group-statements p {
+                    padding-bottom: 0.8em;
                 }
             }
             .services {

@@ -3,7 +3,7 @@
 /**
  * Ontology Recommendations Module.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2020.
  *
@@ -357,7 +357,7 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
 
         // Get language, do nothing if it is not supported.
         $language = $this->getTranslatorLocale();
-        $language = (0 === strpos($language, 'en-')) ? 'en' : $language;
+        $language = (str_starts_with($language, 'en-')) ? 'en' : $language;
         if (!$this->finto->isSupportedLanguage($language)) {
             return null;
         }
@@ -411,7 +411,7 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
 
             // Make the Finto API call(s).
             $fintoTerm = $term . '*';
-            while (false !== strpos($fintoTerm, '**')) {
+            while (str_contains($fintoTerm, '**')) {
                 $fintoTerm = str_replace('**', '*', $fintoTerm);
             }
             $fintoResults = $this->finto->extendedSearch(
@@ -501,8 +501,8 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         // search term.
         if (
             2 === count($processed)
-            && false === strpos($processed[0], ' ')
-            && false === strpos($processed[1], ' ')
+            && !str_contains($processed[0], ' ')
+            && !str_contains($processed[1], ' ')
         ) {
             $processed = [implode(' ', $processed)];
             $this->combinedTerms = true;
@@ -554,7 +554,7 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         ?string $termUri = null
     ): void {
         // Do not add the result if the URI already exists in the original search.
-        if (false !== strpos($this->lookfor, $fintoResult['uri'])) {
+        if (str_contains($this->lookfor, $fintoResult['uri'])) {
             return;
         }
 
@@ -623,10 +623,10 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         ?string $origUri = null
     ): string {
         // Add quotes to multi-word terms if appropriate.
-        if (false !== strpos($repTerm, ' ')) {
+        if (str_contains($repTerm, ' ')) {
             $repTerm = '"' . addcslashes($repTerm, '"') . '"';
         }
-        if (!$this->combinedTerms && (false !== strpos($origTerm, ' '))) {
+        if (!$this->combinedTerms && (str_contains($origTerm, ' '))) {
             $origTerm = "\"$origTerm\"";
         }
 

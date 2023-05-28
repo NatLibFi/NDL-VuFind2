@@ -19,7 +19,7 @@ finna.record = (function finnaRecord() {
             finna.layout.initTruncate(description);
             if (!$('.hide-details-button').hasClass('hidden')) {
               $('.record-information .description').addClass('too-long');
-              $('.record-information .description .more-link.wide').click();
+              $('.record-information .description .more-link.wide').trigger("click");
             }
           } else {
             description.hide();
@@ -33,39 +33,39 @@ finna.record = (function finnaRecord() {
     const less = $('.hide-info').html();
     $('.cc-info').on('show.bs.collapse', function changeText() {
       $(this).parents('.fulltextField').find('.show-hide-button').html(less);
-      $(this).parents('ul').siblings('button.more-link').click();
+      $(this).parents('ul').siblings('button.more-link').trigger("click");
     }).on('hidden.bs.collapse', function changeText() {
       $(this).parents('.fulltextField').find('.show-hide-button').html(more);
     });
     $('.hide-info').on('click', function handleClick() {
-      $(this).blur();
-      $(this).parents('.fulltextField').find('.show-hide-button').focus();
+      $(this).trigger("blur");
+      $(this).parents('.fulltextField').find('.show-hide-button').trigger("focus");
     });
   }
   function showDetails() {
     $('.record-information .record-details-more').removeClass('hidden');
     $('.show-details-button').addClass('hidden');
     $('.hide-details-button').removeClass('hidden');
-    $('.record .description .more-link.wide').click();
+    $('.record .description .more-link.wide').trigger("click");
     sessionStorage.setItem('finna_record_details', '1');
   }
   function hideDetails() {
     $('.record-information .record-details-more').addClass('hidden');
     $('.hide-details-button').addClass('hidden');
     $('.show-details-button').removeClass('hidden');
-    $('.record .description .less-link.wide').click();
+    $('.record .description .less-link.wide').trigger("click");
     sessionStorage.removeItem('finna_record_details');
   }
   function initHideDetails() {
     $('.show-details-button').on('click', function onClickShowDetailsButton() {
       showDetails();
-      $(this).blur();
-      $(this).siblings('table.table').focus();
+      $(this).trigger("blur");
+      $(this).siblings('table.table').trigger("focus");
     });
-    $('.hide-details-button').click (function onClickHideDetailsButton() {
+    $('.hide-details-button').on ("click", function onClickHideDetailsButton() {
       hideDetails();
-      $(this).blur();
-      $(this).siblings('.show-details-button').focus();
+      $(this).trigger("blur");
+      $(this).siblings('.show-details-button').trigger("focus");
     });
     if ($('.record-information').height() > 350 && $('.show-details-button')[0]) {
       $('.record-information .description').addClass('too-long');
@@ -174,7 +174,7 @@ finna.record = (function finnaRecord() {
     $('.record-holdings-table:not(.electronic-holdings) .holdings-container-heading').on('keydown', function onClickHeading(e) {
       if (e.keyCode === 13 || e.keyCode === 32) {
         e.preventDefault();
-        $('.record-holdings-table:not(.electronic-holdings) .holdings-container-heading').click();
+        $('.record-holdings-table:not(.electronic-holdings) .holdings-container-heading').trigger("click");
       }
     });
     $('.record-holdings-table:not(.electronic-holdings) .holdings-container-heading').on('click', function onClickHeading(e) {

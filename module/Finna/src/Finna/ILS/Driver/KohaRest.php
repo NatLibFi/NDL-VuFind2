@@ -3,9 +3,9 @@
 /**
  * VuFind Driver for Koha, using REST API
  *
- * PHP version 7
+ * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2017-2021.
+ * Copyright (C) The National Library of Finland 2017-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -59,6 +59,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         'Item_Check_in' => 'checkinNotice',
         'Item_Checkout' => 'checkoutNotice',
         'Item_Due' => 'dueDateNotice',
+        'Ill_ready' => 'illRequestReadyForPickUp',
+        'Ill_unavailable' => 'illRequestUnavailable',
+        'Ill_update' => 'illRequestUpdate',
     ];
 
     /**
@@ -92,6 +95,27 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      * @var array
      */
     protected $holdingsLocationOrder;
+
+    /**
+     * Minimum payable amount
+     *
+     * @var int
+     */
+    protected $minimumPayableAmount = 0;
+
+    /**
+     * Non-payable fine types
+     *
+     * @var array
+     */
+    protected $nonPayableTypes = [];
+
+    /**
+     * Non-payable fine statuses
+     *
+     * @var array
+     */
+    protected $nonPayableStatuses = [];
 
     /**
      * Initialize the driver.
@@ -130,6 +154,14 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             ? explode(':', $this->config['Holdings']['holdings_location_order'])
             : [];
         $this->holdingsLocationOrder = array_flip($this->holdingsLocationOrder);
+
+        $paymentConfig = $this->config['OnlinePayment']
+            ?? $this->config['onlinePayment']
+            ?? [];
+
+        $this->minimumPayableAmount = $paymentConfig['minimumFee'] ?? 0;
+        $this->nonPayableTypes = (array)($paymentConfig['nonPayableTypes'] ?? []);
+        $this->nonPayableStatuses = (array)($paymentConfig['nonPayableStatuses'] ?? []);
     }
 
     /**
@@ -243,12 +275,16 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                     $bibId = $item['biblio_id'];
                 }
             }
-            $type = trim($entry['debit_type']);
-            $type = $this->translate($this->feeTypeMappings[$type] ?? $type);
+            $debitType = trim($entry['debit_type']);
+            $debitStatus = trim($entry['status'] ?? '');
+            $type = $this->translate($this->feeTypeMappings[$debitType] ?? $debitType);
             $description = trim($entry['description']);
             if ($description !== $type) {
                 $type .= " - $description";
             }
+            $payableOnline = $entry['amount_outstanding'] > 0
+                && !in_array($debitType, $this->nonPayableTypes)
+                && !in_array($debitStatus, $this->nonPayableStatuses);
             $fine = [
                 'fine_id' => $entry['account_line_id'],
                 'amount' => $entry['amount'] * 100,
@@ -256,7 +292,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 'fine' => $type,
                 'createdate' => $this->convertDate($entry['date'] ?? null),
                 'checkout' => '',
-                'payableOnline' => $entry['amount_outstanding'] > 0,
+                'payableOnline' => $payableOnline,
             ];
             if (null !== $bibId) {
                 $fine['id'] = $bibId;
@@ -411,41 +447,6 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         }
 
         return $profile;
-    }
-
-    /**
-     * Purge Patron Transaction History
-     *
-     * @param array $patron The patron array from patronLogin
-     *
-     * @throws ILSException
-     * @return array Associative array of the results
-     */
-    public function purgeTransactionHistory($patron)
-    {
-        $result = $this->makeRequest(
-            [
-                'path' => [
-                    'v1', 'contrib', 'kohasuomi', 'patrons', $patron['id'],
-                    'checkouts', 'history',
-                ],
-                'method' => 'DELETE',
-                'errors' => true,
-            ]
-        );
-        if (!in_array($result['code'], [200, 202, 204])) {
-            return  [
-                'success' => false,
-                'status' => 'Purging the loan history failed',
-                'sys_message' => $result['data']['error'] ?? $result['code'],
-            ];
-        }
-
-        return [
-            'success' => true,
-            'status' => 'loan_history_purged',
-            'sys_message' => '',
-        ];
     }
 
     /**
@@ -673,8 +674,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 $payableFines[] = $fine;
             }
         }
-        $paymentConfig = $this->config['OnlinePayment'] ?? [];
-        if ($amount >= ($paymentConfig['minimumFee'] ?? 0)) {
+
+        if ($amount >= $this->minimumPayableAmount) {
             return [
                 'payable' => true,
                 'amount' => $amount,
@@ -769,7 +770,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             } else {
                 return [
                     'success' => false,
-                    'error' => 'Patron not found',
+                    'error' => 'recovery_user_not_found',
                 ];
             }
         }
@@ -779,7 +780,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         }
         return [
             'success' => false,
-            'error' => 'Patron not found',
+            'error' => 'recovery_user_not_found',
         ];
     }
 
@@ -989,6 +990,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 $functionConfig['exactBalanceRequired'] = false;
             }
         }
+
         return $functionConfig;
     }
 

@@ -3,7 +3,7 @@
 /**
  * AJAX handler for editing a list.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2018.
  *
@@ -161,7 +161,7 @@ class EditList extends \VuFind\AjaxHandler\AbstractBase implements TranslatorAwa
                     $tag = urldecode($tag);
                     // Quote tag with whitespace to prevent VuFind
                     // from creating multiple tags.
-                    return false !== strpos($tag, ' ') ? "\"{$tag}\"" : $tag;
+                    return str_contains($tag, ' ') ? "\"{$tag}\"" : $tag;
                 },
                 $listParams['tags']
             );

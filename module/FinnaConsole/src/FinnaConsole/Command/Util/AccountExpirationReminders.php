@@ -3,7 +3,7 @@
 /**
  * Console service for reminding users x days before account expiration
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2015-2022.
  *
@@ -473,7 +473,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
      */
     protected function sendAccountExpirationReminder($user, $expirationDays)
     {
-        if (false !== strpos($user->username, ':')) {
+        if (str_contains($user->username, ':')) {
             [$userInstitution, $userName] = explode(':', $user->username, 2);
         } else {
             $userInstitution = 'national';

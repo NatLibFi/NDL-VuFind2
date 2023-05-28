@@ -59,10 +59,28 @@ onlinePayment['merchantId'] = ''
 ; Merchant secret:
 onlinePayment['secret'] = ''
 
+; The following settings control output for receipt.
+
+; Whether receipt is enabled
+onlinePayment['receipt'] = true
+; Business ID (Y-tunnus) for payment receipt.
+;onlinePayment['businessId'] = "1234567-8"
+; Mappings from organization names or codes to business IDs. If mappings are found,
+; the recipient organization is displayed on each item line. Note that the
+; organization names or codes can be translated in the Payment translation domain
+; with 'organization_' prefix.
+;onlinePayment['organizationBusinessIdMappings'] = 'Helsinki=1234567-8:Tampere=2345678-9'
+; Contact information for clients
+; Organisation info ID (Finna ID in kirkanta):
+onlinePayment['organisationInfoId'] = "Helmet"
+; If the above is not available, a URL or other information can be provided:
+onlinePayment['contactInfo'] = "https://..."
+
 ; The following settings are mandatory for CPU and optional for Paytrail services.
 ; With Paytrail only a total amount to pay is defined if productCode,
 ; transactionFeeProductCode and productCodeMappings are undefined, and empty values
 ; can be defined to make the system use default values.
+
 onlinePayment['paymentDescription'] = 'Finna: verkkomaksuja'
 ; Default product code
 onlinePayment['productCode'] = ''

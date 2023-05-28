@@ -99,6 +99,8 @@
         </div>
       <?php endif; ?>
 
+      <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
+
       <div class="recordURLs local-available-online-record">
         <div class="truncate-field">
           <?php if(!empty($otherUrls)): ?>

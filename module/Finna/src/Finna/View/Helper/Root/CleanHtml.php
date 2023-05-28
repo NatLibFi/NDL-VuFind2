@@ -3,7 +3,7 @@
 /**
  * HTML Cleaner view helper
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2019.
  *
@@ -95,7 +95,7 @@ class CleanHtml extends \Laminas\View\Helper\AbstractHelper
      */
     public function __invoke($html, $targetBlank = false)
     {
-        if (false === strpos($html, '<')) {
+        if (!str_contains($html, '<')) {
             return $html;
         }
         if (null === $this->purifier || $targetBlank !== $this->currentTargetBlank) {

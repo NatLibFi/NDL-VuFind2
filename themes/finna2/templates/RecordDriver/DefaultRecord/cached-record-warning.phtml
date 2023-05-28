@@ -1,0 +1,7 @@
+<!-- START of: finna - RecordDriver/DefaultRecord/cached-record-warning.phtml -->
+<?php if ($this->driver->getExtraDetail('cached_record') && !$this->translationEmpty('cached_record_warning')): ?>
+  <div class="alert alert-warning">
+    <?=$this->icon('warning')?> <?=$this->transEsc('cached_record_warning')?>
+  </div>
+<?php endif; ?>
+<!-- END of: finna - RecordDriver/DefaultRecord/cached-record-warning.phtml -->

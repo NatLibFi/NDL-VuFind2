@@ -1,26 +1,55 @@
 <!-- START of Finna - RecordDriver/DefaultRecord/model-download.phtml -->
 <div class="model-link">
-    <?php if ((count($model) > 1 || count(end($model)) > 1) && !$this->userAgent()->isBot()): ?>
+    <?php if (count($models) > 1 && !$this->userAgent()->isBot()): ?>
         <div class="dropdown">
             <button class="btn btn-default dropdown-toggle download" type="button" id="downloadMenu-<?=$index?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <?=$this->transEsc('Download the file')?> <span class="caret"></span>
             </button>
             <ul class="dropdown-menu download" aria-labelledby="downloadMenu-<?=$index?>">
-                <?php foreach ($model as $format => $data): ?>
-                    <?php foreach ($data as $type => $url): ?>
-                        <li><a download href="<?=$type === 'preview' ? $this->url('record-downloadmodel', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $index, 'format' => $format, 'type' => $type]]) : $this->escapeHtmlAttr($url)?>" rel="nofollow"> <?=$this->transEsc("model_type_{$type}", null, $type)?> <span><?=$this->transEsc("model_format_{$format}")?></span></a></li> 
-                    <?php endforeach; ?>
+                <?php foreach ($models as $model): ?>
+                    <li>
+                        <?php
+                            $url = $model['type'] === 'preview' ?
+                                $this->url(
+                                    'record-downloadmodel',
+                                    [],
+                                    [
+                                        'query' => [
+                                            'id' => $this->driver->getUniqueID(),
+                                            'index' => $index,
+                                            'format' => $model['format'],
+                                            'type' => $model['type'],
+                                        ],
+                                    ]
+                                ) : $this->escapeHtmlAttr($model['url']);
+                        ?>
+                        <a download href="<?=$url?>" rel="nofollow">
+                            <?=$this->transEscWithPrefix('model_type_', $model['type'])?>
+                            <span><?=$this->transEscWithPrefix('model_format_', $model['format'])?></span>
+                        </a>
+                    </li> 
                 <?php endforeach; ?>
             </ul>
         </div>
     <?php else: ?>
         <div class="download-link">
             <?php
-                $elem = end($model);
-                $type = key($elem);
-                $format = key($model);
+                $model = reset($models);
+                $url = $model['type'] === 'preview' ?
+                    $this->url(
+                        'record-downloadmodel',
+                        [],
+                        [
+                            'query' => [
+                                'id' => $this->driver->getUniqueID(),
+                                'index' => $index,
+                                'format' => $model['format'],
+                                'type' => $model['type'],
+                            ],
+                        ]
+                    ) : $this->escapeHtmlAttr($model['url']);
             ?>
-            <a download href="<?= $type === 'preview' ? $this->url('record-downloadmodel', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $index, 'format' => $format, 'type' => $type]]) : $this->escapeHtmlAttr($url)?>" rel="nofollow">
+            <a download href="<?=$url?>" rel="nofollow">
                 <i aria-hidden="true" class="fa fa-download"></i>
                 <span><?=$this->transEsc('Download the file')?></span>
             </a>

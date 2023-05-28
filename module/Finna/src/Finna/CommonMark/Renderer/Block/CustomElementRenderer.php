@@ -3,7 +3,7 @@
 /**
  * Custom element renderer
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2021-2022.
  *
@@ -59,7 +59,7 @@ class CustomElementRenderer extends AbstractCustomElementEnabledBase implements 
     {
         if (!($node instanceof CustomElement)) {
             throw new \InvalidArgumentException(
-                'Incompatible block type: ' . \get_class($node)
+                'Incompatible block type: ' . $node::class
             );
         }
 

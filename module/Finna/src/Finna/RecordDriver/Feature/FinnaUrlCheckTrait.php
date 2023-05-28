@@ -7,7 +7,7 @@
  * - Main configuration available via getConfig method
  * - LoggerAwareTrait
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2020.
  *

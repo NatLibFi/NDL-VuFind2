@@ -3,7 +3,7 @@
 /**
  * Finna aggregate resolver.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2022.
  *
@@ -67,7 +67,7 @@ class AggregateResolver extends \Laminas\View\Resolver\AggregateResolver
     {
         if (
             !empty($name)
-            && strpos($name, 'components/') === 0
+            && str_starts_with($name, 'components/')
             && substr($name, -6) !== '.phtml'
         ) {
             $parts = explode('/', $name);

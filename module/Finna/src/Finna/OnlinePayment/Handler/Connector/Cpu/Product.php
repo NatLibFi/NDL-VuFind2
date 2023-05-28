@@ -3,7 +3,7 @@
 /**
  * CPU Product
  *
- * PHP version 7
+ * PHP version 8
  *
  * This is free and unencumbered software released into the public domain.
  *

@@ -85,7 +85,7 @@ FinnaMovement.prototype.checkKey = function checkKey(e) {
   case 'ArrowRight':
   case ' ':
     var element = this.getMenuItem(0);
-    if (element.tagName !== 'input') {
+    if (element.tagName.toLowerCase() !== 'input') {
       $(element).trigger('togglesubmenu');
       e.preventDefault();
     }

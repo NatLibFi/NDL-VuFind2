@@ -3,7 +3,7 @@
 /**
  * CPU payment handler
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2016-2022.
  *
@@ -339,32 +339,33 @@ class CPU extends AbstractBase
      * @param \Finna\Db\Row\Transaction $transaction Transaction
      * @param \Laminas\Http\Request     $request     Request
      *
-     * @return int One of the result codes
+     * @return array One of the result codes defined in AbstractBase and bool
+     * indicating whether the transaction was just now marked as paid
      */
     public function processPaymentResponse(
         \Finna\Db\Row\Transaction $transaction,
         \Laminas\Http\Request $request
-    ): int {
+    ): array {
         if (!($params = $this->getPaymentResponseParams($request))) {
-            return self::PAYMENT_FAILURE;
+            return [self::PAYMENT_FAILURE, false];
         }
 
         // Make sure the transaction IDs match:
         if ($transaction->transaction_id !== $params['Id']) {
-            return self::PAYMENT_FAILURE;
+            return [self::PAYMENT_FAILURE, false];
         }
 
         $status = intval($params['Status']);
         if ($status === self::CPU_STATUS_SUCCESS) {
-            $transaction->setPaid();
-            return self::PAYMENT_SUCCESS;
+            $marked = $transaction->setPaid();
+            return [self::PAYMENT_SUCCESS, $marked];
         } elseif ($status === self::CPU_STATUS_CANCELLED) {
             $transaction->setCanceled();
-            return self::PAYMENT_CANCEL;
+            return [self::PAYMENT_CANCEL, false];
         }
 
         $this->logPaymentError("unknown status $status");
-        return self::PAYMENT_FAILURE;
+        return [self::PAYMENT_FAILURE, false];
     }
 
     /**

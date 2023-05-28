@@ -3,7 +3,7 @@
 /**
  * Defines label constants for records.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library 2020.
  *

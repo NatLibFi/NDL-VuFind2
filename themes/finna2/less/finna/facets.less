@@ -7,6 +7,23 @@
   background: @list-group-bg;
   color: @action-link-color;
 }
+
+div.facet > a {
+  min-width: 0;
+  > span.text, > span.facet-value {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    display: inline-block;
+  }
+}
+
+ul.jstree-children {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
 .facet-group .active {
   font-weight: bold;
   color: @link-color;
@@ -143,6 +160,7 @@
   @media (max-width: @screen-xs-max) {
     .facet:not(.facet-group), .usage-right-group {
       font-size: 1.15em;
+      line-height: 1.15em;
     }
     .narrow-toggle .text, .more-less-btn-wrapper {
       font-size: 0.8em;
@@ -193,6 +211,10 @@ h4 + .list-group.facet {
 span.badge.cb-facet {
     float: right;
     margin-right: 10px;
+}
+
+.jstree-facet .jstree-node .facet {
+  padding: 3px 0;
 }
 
 .facet-group {

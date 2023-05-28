@@ -3,7 +3,7 @@
 /**
  * 3D model ajax handler.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2021.
  *
@@ -30,7 +30,6 @@
 namespace Finna\AjaxHandler;
 
 use Finna\File\Loader as FileLoader;
-use Laminas\Http\Request;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Router\Http\TreeRouteStack;
 use VuFind\Record\Loader as RecordLoader;
@@ -132,12 +131,13 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase implements \VuFindHttp\H
         $format = strtolower($format);
         $fileName = urlencode($id) . '-' . $index . '.' . $format;
         $driver = $this->recordLoader->load($id, $source ?? DEFAULT_SEARCH_BACKEND);
-        $models = $driver->tryMethod('getModels');
-        if (empty($models[$index][$format]['preview'])) {
+        $models = $driver->tryMethod('getModels')[$index]['models'] ?? [];
+        $found = array_search('preview', array_column($models, 'type'));
+        if (false === $found) {
             return $this->formatResponse(['json' => ['status' => '404']]);
         }
         // Always force preview model to be fetched
-        $url = $models[$index][$format]['preview'];
+        $url = $models[$found]['url'];
         // Use fileloader for proxies
         $file = $this->fileLoader->getFile($url, $fileName, 'Models', 'public');
         if (!empty($file['result'])) {

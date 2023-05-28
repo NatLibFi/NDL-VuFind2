@@ -3,7 +3,7 @@
 /**
  * Feed Content Controller
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2011.
  * Copyright (C) The National Library of Finland 2014-2023.
@@ -65,6 +65,9 @@ class FeedContentController extends ContentController
         }
 
         $modal = ($config['result']->linkTo ?? '') === 'modal';
+        $contentNavigation = $config['result']->feedcontentNavigation ?? true;
+        $nextArticles = $config['result']->feedcontentNextArticles ?? false;
+        $additionalHtml = $config['result']->feedcontentadditionalHtml ?? '';
 
         return $this->createViewModel(
             [
@@ -72,6 +75,9 @@ class FeedContentController extends ContentController
                 'feed' => $page,
                 'element' => $element,
                 'modal' => $modal,
+                'contentNavigation' => $contentNavigation,
+                'nextArticles' => $nextArticles,
+                'additionalHtml' => $additionalHtml,
             ]
         );
     }

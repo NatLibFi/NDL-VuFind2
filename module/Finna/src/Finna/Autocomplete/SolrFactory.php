@@ -4,7 +4,7 @@
  * Factory for Solr-driven autocomplete plugins. Works for \VuFind\Autocomplete\Solr
  * and all of its subclasses.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2017.
  * Copyright (C) The National Library of Finland 2018.

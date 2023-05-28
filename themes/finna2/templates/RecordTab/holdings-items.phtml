@@ -116,7 +116,7 @@
         <?php if ($row['barcode']): ?>
           <meta property="serialNumber" content="<?=$this->escapeHtmlAttr($row['barcode'])?>">
         <?php endif; ?>
-        <?php if ($row['callnumber']): ?>
+        <?php if ($row['callnumber'] ?? false): ?>
           <meta property="sku" content="<?=$this->escapeHtmlAttr($row['callnumber'])?>">
         <?php endif; ?>
         <?php /* Declare that the item is to be borrowed, not for sale */ ?>

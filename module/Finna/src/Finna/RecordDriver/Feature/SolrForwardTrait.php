@@ -3,7 +3,7 @@
 /**
  * Additional functionality for SolrForward and SolrForwardAuth records.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library 2019.
  *

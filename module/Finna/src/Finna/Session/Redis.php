@@ -3,7 +3,7 @@
 /**
  * Redis session handler extensions
  *
- * PHP version 7
+ * PHP version 8
  *
  * Coypright (C) The National Library of Finland 2023.
  *

@@ -479,7 +479,7 @@
         return input;
       }
 
-      $(window).resize(function onResize() {
+      $(window).on("resize", function onResize() {
         updateAutocompleteTop(input);
         hide();
       });

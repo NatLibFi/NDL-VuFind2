@@ -3,7 +3,7 @@
 /**
  * Turku Payment API Signature
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2022.
  *
@@ -78,7 +78,7 @@ class TurkuSignature
                 // Responses have headers in an array.
                 $param = is_array($params[$key]) ? $params[$key][0] : $params[$key];
 
-                return join(':', [$key, $param]);
+                return implode(':', [$key, $param]);
             },
             $includedKeys
         );
@@ -87,7 +87,7 @@ class TurkuSignature
             'sha256',
             $platformName .
             $timeStamp .
-            ($body ?: join("\n", $hashPayload)) .
+            ($body ?: implode("\n", $hashPayload)) .
             $secretKey
         );
     }

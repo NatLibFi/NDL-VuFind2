@@ -3,7 +3,7 @@
 /**
  * Axiell Web Services ILS Driver
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2015-2022.
  *
@@ -2361,6 +2361,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
             }
             $fine = [
                 'debt_id' => $debt->id,
+                'fine_id' => $debt->id,
                 'amount' => $amount,
                 'checkout' => '',
                 'fine' => $description,

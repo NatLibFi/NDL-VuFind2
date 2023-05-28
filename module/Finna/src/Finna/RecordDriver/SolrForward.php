@@ -3,7 +3,7 @@
 /**
  * Model for FORWARD records in Solr.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2016-2022.
  *
@@ -1163,7 +1163,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
                 $results['broadcastingInfo'][] = $broadcastingResult;
             }
             if ($inspectionResult) {
-                if (strpos($dateText, '0000') === false) {
+                if (!str_contains($dateText, '0000')) {
                     $inspectionResult['date'] = $dateText;
                 }
                 $results['inspectionDetails'][] = $inspectionResult;

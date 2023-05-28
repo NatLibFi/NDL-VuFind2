@@ -3,7 +3,7 @@
 /**
  * Mikromarc ILS Driver
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2017-2023.
  *
@@ -248,7 +248,12 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      */
     public function getHolding($id, array $patron = null, array $options = [])
     {
-        return $this->getItemStatusesForBiblio($id, $patron);
+        $data = $this->getItemStatusesForBiblio($id, $patron);
+        if (!empty($data)) {
+            $summary = $this->getHoldingsSummary($data);
+            $data[] = $summary;
+        }
+        return $data;
     }
 
     /**
@@ -462,6 +467,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 // Append payment information
                 'payableOnline' => $payable,
                 'fineId' => $fineId,
+                'fine_id' => $fineId,
                 'organization' => $entry['LocalUnitId'] ?? '',
             ];
             $recordId = $entry['MarcRecordId'] ?? null;
@@ -1697,7 +1703,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
 
             // Special case: detect if Shelf field has issue number information
             // (e.g. 2018:4) and put the info into number field instead
-            if (preg_match('/^\d{4}:\d+$/', $shelf) === 1) {
+            if ($shelf && preg_match('/^\d{4}:\d+$/', $shelf) === 1) {
                 $number = $shelf;
                 $shelf = '';
             }
@@ -1749,8 +1755,6 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             }
 
             usort($statuses, [$this, 'statusSortFunction']);
-            $summary = $this->getHoldingsSummary($statuses);
-            $statuses[] = $summary;
         }
         return $statuses;
     }
@@ -1906,7 +1910,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             // Prepend parent name to department names
             $parentName = $parent['name'];
             $unitName = $unit['name'];
-            if (strpos(trim($unitName), trim($parentName)) === 0) {
+            if (str_starts_with(trim($unitName), trim($parentName))) {
                 continue;
             }
             $unit['name'] = "$parentName - $unitName";
@@ -2336,11 +2340,11 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     public function checkRequestIsValid($id, $data, $patron)
     {
         if ('title' === $data['level']) {
-            $items = $this->getStatus($id);
-            $summary = array_pop($items);
+            $holding = $this->getHolding($id);
+            $summary = array_pop($holding);
             if (
                 (isset($summary['titleHold']) && $summary['titleHold'] === false)
-                || !$summary['holdable']
+                || (isset($summary['holdable']) && !$summary['holdable'])
             ) {
                 return false;
             }

@@ -1,4 +1,4 @@
-$(document).ready(function onFinnaTabsNavReady() {
+$(function onFinnaTabsNavReady() {
   $('.finna-tabs-nav').each(function doFinnaTabsNavLayout() {
     var activeUl = $(this).find(
       '.finna-nav > li.active > ul, .finna-nav > li.active-trail > ul'

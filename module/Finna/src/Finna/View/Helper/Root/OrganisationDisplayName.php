@@ -3,7 +3,7 @@
 /**
  * Organisation display name view helper for Solr records.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2016.
  *
@@ -70,7 +70,7 @@ class OrganisationDisplayName extends \Laminas\View\Helper\AbstractHelper
         // use the first one found
         if ($buildings) {
             foreach ($buildings as $building) {
-                if (strpos($building, $institution) !== false) {
+                if (str_contains($building, $institution)) {
                     $displayName = (string)$translate($building);
                     break;
                 }

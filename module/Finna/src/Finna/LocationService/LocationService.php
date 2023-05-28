@@ -3,7 +3,7 @@
 /**
  * Location Service.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2016.
  *
@@ -105,8 +105,12 @@ class LocationService
             }
         }
 
+        $callnum = $fields['callnumber'] ?? '';
+        if ($callnum instanceof \VuFind\I18n\TranslatableString) {
+            $callnum = $callnum->getDisplayString();
+        }
         $params = [
-            'callno' => $fields['callnumber'] ?? '',
+            'callno' => $callnum,
             'collection' => $collection,
             'location' => $location,
             'branch' => $fields['branch'] ?? '',

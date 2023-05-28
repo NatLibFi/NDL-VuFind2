@@ -131,7 +131,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
 
       visRangeSelected = true;
       if (event.type === 'plotselected') {
-        $('body').click();
+        $('body').trigger("click");
       }
     });
 
@@ -314,7 +314,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     facetField = _facetField;
     form.find('a.submit').on('click',
       function onFormSubmitClick() {
-        $(this).closest('form').submit();
+        $(this).closest('form').trigger("submit");
         return false;
       }
     );

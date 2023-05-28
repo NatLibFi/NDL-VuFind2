@@ -45,3 +45,10 @@
     background-color: @dropdown-link-hover-bg;
   }
 }
+
+.dropdown-menu > li > .prompt-text {
+  &:extend(.dropdown-menu > li > a);
+
+  white-space: inherit;
+  min-width: 200px;
+}

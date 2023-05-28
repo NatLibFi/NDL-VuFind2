@@ -3,7 +3,7 @@
 /**
  * AJAX handler for getting information for a field popover.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2022.
  *

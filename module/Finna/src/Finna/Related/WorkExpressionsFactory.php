@@ -3,7 +3,7 @@
 /**
  * Factory for Work Expressions related record module (and subclasses).
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2018.
  * Copyright (C) The National Library of Finland 2019.

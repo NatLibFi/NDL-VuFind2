@@ -141,6 +141,51 @@
             word-wrap: break-word;
         }
     }
+    .feed-content-additional {
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
+    .next-articles {
+        .next-articles-header {
+            border-top: 1px solid @gray-lighter;
+            margin-top: 1em;
+            padding-top: 1em;
+            padding-bottom: 1em;
+        }
+        .next-articles-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            @media screen and (min-width: @screen-sm-min) {
+                grid-template-columns: 1fr 1fr;
+            }
+            @media screen and (min-width:@screen-lg-min) {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+            .article {
+                display: flex;
+            }
+            .publish-date {
+                display: block;
+                font-size: 1em;
+            }
+            .article-title {
+                font-size: 1em;
+                font-weight: bold;
+                display: block;
+                padding-bottom: 1em;
+            }
+            .article-image {
+                flex-shrink: 0;
+                img {
+                    object-fit: cover;
+                    aspect-ratio: 3 / 2;
+                    width: 150px;
+                }
+                margin-right: 10px;
+            }
+        }
+    }
 }
 
 // rss-feed content

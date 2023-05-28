@@ -39,40 +39,90 @@
       <h2>Begränsa sökresultaten</h2>
       <p>Standardinställningen för sökresultaten är att de som bäst motsvarar sökningen visas först (relevans). Ordningen på sökresultaten kan också ändras t.ex. så att de äldsta (enligt produktionsår) visas först. Därtill kan resultaten visas som bildgalleri eller som en förkortad lista.</p>
       <p>I menyn <strong>Begränsa sökningen</strong> kan du avgränsa sökresultaten genom att använda ett eller flera filter samtidigt. Alternativen är stängda, men du kan öppna dem med pilen för rullgardinsmenyn.</p>
-      <p><strong>Tillgänglig på nätet</strong>: begränsar resultaten till material som är tillgängligt via Finna.</p>
-      <p><strong>Tillåtna användningssyften</strong>: tfungerar för material tillgängligt på nätet. Läs informationen om användarrättigheterna som finns i samband med materialet. Den som använder materialet har ansvar för att respektera upphovsrätten och dataskyddet. Källa och upphovsman måste anges om avgränsningen är annan än fri användning.</p>
-      <ul class="list-bullets">
-        <li><strong>Fri användning</strong></li>
-        <li><strong>Får redigeras</strong>
-          <ul class="list-bullets">
-            <li>Inte för kommersiell användning</li>
-            <li>Även för kommersiell användning</li>
-          </ul>
-        </li>
-        <li><strong>Utan redigering</strong>
-          <ul class="list-bullets">
-            <li>Inte för kommersiell användning</li>
-            <li>Även för kommersiell användning</li>
-            <li>nvändning kräver tillstånd/okänd</li>
-          </ul>
-        </li>
-      </ul>
-      <p><strong>Materialtyp</strong>: olika alternativ för typ av material som är tillgängligt, t.ex. bilder, föremål, böcker.</p>
-      <p><strong>Upphovsman</strong>: vem har producerat materialet eller vem administrerar rättigheterna.</p>
-      <p><strong>Tema</strong>: föreslagna teman för att begränsa sökningen.</p>
-      <p><strong>Region</strong>: vilken region handlar materialet om.</p>
-      <p><strong>Produktionsår</strong>: välj tidsintervall för materialets produktionsår, t.ex. 1920–1980-talet. Staplarna i tidslinjen visar från vilken tidsperiod det finns material.</p>
-      <ul class="list-bullets">
-        <li>Alla resultat</li>
-        <li>Resultat som helt ingår i tidsintervallet</li>
-        <li>Begränsa sökresultaten enligt publikationsår, tillverkningsår och produktionsår</li>
-      </ul>
-      <p><strong>Tidsperiod</strong>: erbjuder årtal och årtionden som materialet handlar om. Sökningen väljer vissa helheter och utesluter andra alternativ. T.ex. 1930-talet specificerar inte resultat om 1933, utan söker uppgifter som uttryckligen är märkta att gälla 1930-talet.</p>
-      <p><strong>Språk</strong>: visar på vilka språk det finns material i sökresultaten.</p>
-      <p><strong>Ingår i publikationen</strong>: ger namnet på t.ex. tidningen som det finns artiklar i sökresultaten.</p>
-      <p><strong>Sektor</strong>: organisationstyp – museum, arkiv eller bibliotek.</p>
-      <p><strong>Organisation</strong>: visar alla arkiv, bibliotek och museer från vilka det finns material i sökresultaten.</p>
-      <p><strong>Nytt i Finna</strong>: visar vilket material som senast har lagts till i Finna.</p>
+
+      <?php
+        $facetFields = $this->config()->getFacetFields();
+        $checkboxFacets = $this->config()->getCheckboxFacets();
+      ?>
+
+      <?php if (isset($checkboxFacets['online_boolean:1']) || isset($checkboxFacets['free_online_boolean:1'])): ?>
+        <p><strong>Tillgänglig på nätet</strong>: begränsar resultaten till material som är tillgängligt via Finna.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['usage_rights_ext_str_mv'])): ?>
+        <p><strong>Användarrättigheter</strong>: fungerar för material som är tillgängligt på nätet. Filtret innehåller olika alternativ beroende på de anteckningar om användarrättigheter som finns i materialet. (CC-licenser, Right Statements-beskrivningar av användarrättigheter)</p>
+        <p>Mer information om anteckningarna om användarrättigheter finns på <a href="/Content/terms">anvisningssidan Materials användarrättigheter</a>. Den som använder materialet har ansvar för att respektera upphovsrätten och integritetsskyddet.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['usage_rights_str_mv'])): ?>
+        <p><strong>Tillåtna användningssyften</strong>: fungerar för material tillgängligt på nätet. Läs informationen om användarrättigheterna som finns i samband med materialet. Den som använder materialet har ansvar för att respektera upphovsrätten och dataskyddet. Källa och upphovsman måste anges om avgränsningen är annan än fri användning.</p>
+        <ul class="list-bullets">
+          <li><strong>Fri användning</strong></li>
+          <li><strong>Får redigeras</strong>
+            <ul class="list-bullets">
+              <li>Inte för kommersiell användning</li>
+              <li>Även för kommersiell användning</li>
+            </ul>
+          </li>
+          <li><strong>Utan redigering</strong>
+            <ul class="list-bullets">
+              <li>Inte för kommersiell användning</li>
+              <li>Även för kommersiell användning</li>
+              <li>nvändning kräver tillstånd/okänd</li>
+            </ul>
+          </li>
+        </ul>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['format']) || isset($facetFields['format_ext_str_mv'])): ?>
+        <p><strong>Materialtyp</strong>: olika alternativ för typ av material som är tillgängligt, t.ex. bilder, föremål, böcker.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['author_facet']) || isset($facetFields['author2_id_str_mv'])): ?>
+        <p><strong>Upphovsman</strong>: vem har producerat materialet eller vem administrerar rättigheterna.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['topic_facet'])): ?>
+        <p><strong>Tema</strong>: föreslagna teman för att begränsa sökningen.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['geographic_facet'])): ?>
+        <p><strong>Region</strong>: vilken region handlar materialet om.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['search_daterange_mv'])): ?>
+        <p><strong>Produktionsår</strong>: välj tidsintervall för materialets produktionsår, t.ex. 1920–1980-talet. Staplarna i tidslinjen visar från vilken tidsperiod det finns material.</p>
+        <ul class="list-bullets">
+          <li>Alla resultat</li>
+          <li>Resultat som helt ingår i tidsintervallet</li>
+          <li>Begränsa sökresultaten enligt publikationsår, tillverkningsår och produktionsår</li>
+        </ul>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['era_facet'])): ?>
+        <p><strong>Tidsperiod</strong>: erbjuder årtal och årtionden som materialet handlar om. Sökningen väljer vissa helheter och utesluter andra alternativ. T.ex. 1930-talet specificerar inte resultat om 1933, utan söker uppgifter som uttryckligen är märkta att gälla 1930-talet.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['language'])): ?>
+        <p><strong>Språk</strong>: visar på vilka språk det finns material i sökresultaten.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['hierarchy_parent_title'])): ?>
+        <p><strong>Ingår i publikationen</strong>: ger namnet på t.ex. tidningen som det finns artiklar i sökresultaten.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['sector_str_mv'])): ?>
+        <p><strong>Sektor</strong>: organisationstyp – museum, arkiv eller bibliotek.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['building'])): ?>
+        <p><strong>Organisation</strong>: visar alla arkiv, bibliotek och museer från vilka det finns material i sökresultaten.</p>
+      <?php endif; ?>
+
+      <?php if (isset($facetFields['first_indexed'])): ?>
+        <p><strong>Nytt i Finna</strong>: visar vilket material som senast har lagts till i Finna.</p>
+      <?php endif; ?>
+
       <h3>När du har valt begränsningarna...</h3>
       <p>Finna sparar dina valda begränsningar och visar dem nedanför sökrutan. Du kan ta bort en begränsning genom att klicka på krysset vid den (bild). Du kan ta bort alla begränsningar genom att avkryssa rutan Spara tidigare begränsningar nedanför sökrutan och göra en nya sökning.</p>
     </div>

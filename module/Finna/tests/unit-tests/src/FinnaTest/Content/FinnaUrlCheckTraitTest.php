@@ -38,7 +38,7 @@ namespace FinnaTest\Content;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
-class FinnaUrlCheckTraitTest extends \VuFindTest\Unit\TestCase
+class FinnaUrlCheckTraitTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test with empty configuration

@@ -73,6 +73,15 @@
 ; content[contentDate] = 0
 ; content[xcal] = 0
 
+; Show/hide navigation on content page (default true)
+; feedcontentNavigation = true
+
+; Show next articles on content page (default 0)
+; feedcontentNextArticles = 5
+
+; Show additional content on content page or modal (by default empty)
+; feedcontentadditionalHtml = "<translation-key>"
+
 ;; Optional list settings:
 
 ; moreLink = [0|1] Display a "more" link.

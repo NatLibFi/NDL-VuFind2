@@ -823,7 +823,7 @@ class SolrEad3 extends SolrEad
         };
         $isExcludedFromOCR = function ($title) {
             foreach (self::EXCLUDE_OCR_TITLE_PARTS as $part) {
-                if (false !== strpos($title, $part)) {
+                if (str_contains($title, $part)) {
                     return true;
                 }
             }

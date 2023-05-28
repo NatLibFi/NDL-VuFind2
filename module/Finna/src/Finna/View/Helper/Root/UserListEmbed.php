@@ -3,7 +3,7 @@
 /**
  * View helper for embedding a user list.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2019.
  *

@@ -3,7 +3,7 @@
 /**
  * Trait for view path handling.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2016-2020.
  *

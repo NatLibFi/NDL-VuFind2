@@ -3,7 +3,7 @@
 /**
  * Factory for AbstractOnlinePaymentAction AJAX handlers.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2018-2023.
  *
@@ -76,7 +76,9 @@ class AbstractOnlinePaymentActionFactory implements \Laminas\ServiceManager\Fact
             $tablePluginManager->get(\Finna\Db\Table\Transaction::class),
             $tablePluginManager->get(\VuFind\Db\Table\User::class),
             $container->get(\Finna\OnlinePayment\OnlinePayment::class),
-            $container->get('Finna\OnlinePayment\Session')
+            $container->get('Finna\OnlinePayment\Session'),
+            $container->get(\VuFind\Config\PluginManager::class)->get('datasources')->toArray(),
+            $container->get(\Finna\OnlinePayment\Receipt::class)
         );
         $result->setLogger($container->get(\VuFind\Log\Logger::class));
         return $result;

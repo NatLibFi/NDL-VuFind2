@@ -3,7 +3,7 @@
 /**
  * Table Definition for online payment transaction
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2015-2023.
  *
@@ -30,6 +30,7 @@
 
 namespace Finna\Db\Table;
 
+use Finna\Db\Row\Transaction as TransactionRow;
 use Laminas\Db\Adapter\Adapter;
 use VuFind\Db\Row\RowGateway;
 use VuFind\Db\Table\PluginManager;
@@ -221,11 +222,41 @@ class Transaction extends \VuFind\Db\Table\Gateway
      *
      * @param string $transactionId Transaction ID.
      *
-     * @return \Finna\Db\Row\Transaction transaction or false on error
+     * @return TransactionRow transaction or false on error
      */
     public function getTransaction($transactionId)
     {
         $row = $this->select(['transaction_id' => $transactionId])->current();
         return empty($row) ? false : $row;
+    }
+
+    /**
+     * Get last paid transaction for a patron
+     *
+     * @param string $patronId Patron's Catalog username (barcode).
+     *
+     * @return ?TransactionRow
+     */
+    public function getLastPaidForPatron(string $patronId): ?TransactionRow
+    {
+        $statuses = [
+            self::STATUS_COMPLETE,
+            self::STATUS_PAID,
+            self::STATUS_REGISTRATION_FAILED,
+            self::STATUS_REGISTRATION_EXPIRED,
+            self::STATUS_REGISTRATION_RESOLVED,
+            self::STATUS_FINES_UPDATED,
+        ];
+
+        $callback = function (\Laminas\Db\Sql\Select $select) use (
+            $patronId,
+            $statuses
+        ) {
+            $select->where->equalTo('cat_username', $patronId);
+            $select->where('complete in (' . implode(',', $statuses) . ')');
+            $select->order('paid desc');
+        };
+
+        return $this->select($callback)->current();
     }
 }

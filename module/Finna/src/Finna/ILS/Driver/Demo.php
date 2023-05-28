@@ -7,7 +7,7 @@
  * the session.  You can log out and log back in to get a different set of
  * values.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2007.
  * Copyright (C) The National Library of Finland 2014-2022.
@@ -192,6 +192,7 @@ class Demo extends \VuFind\ILS\Driver\Demo
             $fine['accruedFine'] = ($fine['fine'] === $accruedType);
             $fine['payableOnline'] = $payableOnline;
             $fine['fine_id'] = $id;
+            $fine['organization'] = $this->getFakeLoc();
         }
 
         return $fines;

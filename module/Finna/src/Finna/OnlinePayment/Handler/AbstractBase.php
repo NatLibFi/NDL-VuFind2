@@ -3,7 +3,7 @@
 /**
  * Abstract payment handler
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2016-2022.
  *
@@ -166,7 +166,7 @@ abstract class AbstractBase implements
      */
     protected function addQueryParams(string $url, array $params): string
     {
-        $url .= strpos($url, '?') === false ? '?' : '&';
+        $url .= !str_contains($url, '?') ? '?' : '&';
         $url .= http_build_query($params);
         return $url;
     }
@@ -375,7 +375,7 @@ abstract class AbstractBase implements
                 if (method_exists($value, 'toArray')) {
                     $value = $value->toArray();
                 } else {
-                    $key = "$key: " . get_class($value);
+                    $key = "$key: " . $value::class;
                     $value = get_object_vars($value);
                 }
             }

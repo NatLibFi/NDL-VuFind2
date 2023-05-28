@@ -40,8 +40,10 @@ use FinnaSearch\Backend\Solr\LuceneSyntaxHelper;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org
  */
-class LuceneSyntaxHelperTest extends \VuFindTest\Unit\TestCase
+class LuceneSyntaxHelperTest extends \PHPUnit\Framework\TestCase
 {
+    use \VuFindTest\Feature\ReflectionTrait;
+
     /**
      * Test wildcard handling functionality.
      *

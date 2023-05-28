@@ -124,6 +124,11 @@ url = ""
 [ItemStatusMappings]
 ;d = "In Processing"
 
+; This section allows mapping of patron block codes to VuFind translation strings
+[PatronBlockMappings]
+k = patron_status_card_lost
+e = patron_status_card_blocked
+
 ; Uncomment the following lines to enable password (PIN) change
 [changePassword]
 ; PIN change parameters. The default limits are taken from the interface documentation.
@@ -138,6 +143,12 @@ pattern = "numeric"
 [TransactionHistory]
 ; By default the loan history is disabled. Uncomment the following line to enable it.
 enabled = true
+; By default selective purging of loan history is enabled. Uncomment the following
+; line to disable it:
+;purgeSelected = false
+; By default purging of all loan history is enabled. Uncomment the following line
+; to disable it:
+;purgeAll = false
 
 ; Changing of loan history state is enabled if method parameter is set. Only
 ; valid value is 'driver'.
@@ -189,6 +200,9 @@ currency = 'EUR'
 ;manualFineDescriptions[] = '/^CD-levyn kotelon korvaus/'
 ;manualFineDescriptions[] = '/^Muun kotelon korvaus/'
 ;manualFineDescriptions[] = '/^Kaukopalvelumaksu/'
+
+[PasswordRecovery]
+enabled = true
 
 ; Uncomment the following lines to enable updating of profile information.
 ; Choose a method on how to update the address information (driver, database or url).

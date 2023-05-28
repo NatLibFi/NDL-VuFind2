@@ -3,7 +3,7 @@
 /**
  * III Sierra REST API driver
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2016-2023.
  *
@@ -650,6 +650,142 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
+     * Get a password recovery token for a user
+     *
+     * @param array $params Required params such as cat_username and email
+     *
+     * @return array Associative array of the results
+     */
+    public function getPasswordRecoveryToken($params)
+    {
+        $request = [
+            'queries' => [
+                [
+                    'target' => [
+                        'record' => [
+                            'type' => 'patron',
+                        ],
+                        'field' => [
+                            'tag' => 'b',
+                        ],
+                    ],
+                    'expr' => [
+                        'op' => 'equals',
+                        'operands' => [
+                            str_replace(' ', '', $params['cat_username']),
+                        ],
+                    ],
+                ],
+                'and',
+                [
+                    'target' => [
+                        'record' => [
+                            'type' => 'patron',
+                        ],
+                        'field' => [
+                            'tag' => 'z',
+                        ],
+                    ],
+                    'expr' => [
+                        'op' => 'equals',
+                        'operands' => [
+                            trim($params['email']),
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $result = $this->makeRequest(
+            [
+                [
+                    'type' => 'encoded',
+                    'value' => 'v6/patrons/query?offset=0&limit=1',
+                ],
+            ],
+            json_encode($request),
+            'POST'
+        );
+
+        if (
+            $result['total'] === 1
+            && $link = $result['entries'][0]['link'] ?? null
+        ) {
+            $patronId = $this->extractId($link);
+
+            // Check that there's an existing PIN in varFields:
+            $result = $this->makeRequest(
+                [$this->apiBase, 'patrons', $patronId],
+                [
+                    'fields' => 'varFields',
+                ],
+                'GET'
+            );
+            $pinExists = false;
+            foreach ($result['varFields'] ?? [] as $field) {
+                if ('=' === $field['fieldTag']) {
+                    $pinExists = true;
+                    break;
+                }
+            }
+            if (!$pinExists) {
+                return [
+                    'success' => false,
+                    'error' => 'authentication_error_account_locked',
+                ];
+            }
+            return [
+                'success' => true,
+                'token' => $patronId,
+            ];
+        }
+        return [
+            'success' => false,
+            'error' => 'recovery_user_not_found',
+        ];
+    }
+
+    /**
+     * Recover user's password with a token from getPasswordRecoveryToken
+     *
+     * @param array $params Required params such as cat_username, token and new
+     * password
+     *
+     * @return array Associative array of the results
+     */
+    public function recoverPassword($params)
+    {
+        $request = [
+            'pin' => $params['password'],
+        ];
+        $result = $this->makeRequest(
+            [
+                'v6', 'patrons', $params['token'],
+            ],
+            json_encode($request),
+            'PUT',
+            false,
+            true
+        );
+
+        if (!in_array($result['statusCode'], ['200', '204'])) {
+            $this->logError(
+                'Patron update request failed with status code'
+                . " {$result['statusCode']}: "
+                . (var_export($result['response'] ?? '', true))
+            );
+            return [
+                'success' => false,
+                'error' => 'profile_update_failed',
+            ];
+        }
+
+        return [
+            'success' => true,
+        ];
+    }
+
+    /**
      * Public Function which retrieves renew, hold and cancel settings from the
      * driver ini file.
      *
@@ -667,6 +803,13 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             $result['exactBalanceRequired'] = false;
             $result['selectFines'] = true;
             return $result;
+        }
+        if (
+            'getPasswordRecoveryToken' === $function
+            || 'recoverPassword' === $function
+        ) {
+            return !empty($this->config['PasswordRecovery']['enabled'])
+                ? $this->config['PasswordRecovery'] : false;
         }
         if ('updateAddress' === $function) {
             $function = 'updateProfile';
@@ -712,40 +855,6 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         }
 
         return parent::getConfig($function, $params);
-    }
-
-    /**
-     * Purge Patron Transaction History
-     *
-     * @param array $patron The patron array from patronLogin
-     *
-     * @throws ILSException
-     * @return array Associative array of the results
-     */
-    public function purgeTransactionHistory($patron)
-    {
-        $result = $this->makeRequest(
-            [
-                'v6', 'patrons', $patron['id'], 'checkouts', 'history',
-            ],
-            '',
-            'DELETE',
-            $patron
-        );
-
-        if (!empty($result['code'])) {
-            return [
-                'success' => false,
-                'status' => $this->formatErrorMessage(
-                    $result['description'] ?? $result['name']
-                ),
-            ];
-        }
-        return [
-            'success' => true,
-            'status' => 'loan_history_purged',
-            'sysMessage' => '',
-        ];
     }
 
     /**
@@ -902,6 +1011,9 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                     ? preg_replace('/^\|a/', '', $item['callNumber'])
                     : $bibCallNumber;
 
+                $volume = isset($item['varFields']) ? $this->extractVolume($item)
+                    : '';
+
                 $entry = [
                     'id' => $id,
                     'item_id' => $item['id'],
@@ -911,7 +1023,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                     'reserve' => 'N',
                     'callnumber' => $callnumber,
                     'duedate' => $duedate,
-                    'number' => $callnumber,
+                    'number' => $volume,
                     'barcode' => $item['barcode'],
                     'sort' => $sort--,
                     'requests_placed' => $displayItemHoldCount ? ($item['holdCount'] ?? null) : null,
@@ -1376,5 +1488,29 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             throw new \Exception('Location cache not available');
         }
         return $locations;
+    }
+
+    /**
+     * Build an API URL from a hierarchy array
+     *
+     * @param array $hierarchy Hierarchy
+     *
+     * @return string
+     */
+    protected function getApiUrlFromHierarchy(array $hierarchy): string
+    {
+        $url = $this->config['Catalog']['host'];
+        foreach ($hierarchy as $value) {
+            if (is_array($value)) {
+                if ('encoded' === $value['type']) {
+                    $url .= '/' . $value['value'];
+                    continue;
+                }
+                $value = $value['value'];
+            } else {
+                $url .= '/' . urlencode($value);
+            }
+        }
+        return $url;
     }
 }

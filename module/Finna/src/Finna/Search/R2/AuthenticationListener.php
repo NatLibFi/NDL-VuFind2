@@ -3,7 +3,7 @@
 /**
  * Restricted Solr (R2) Search authentication listener.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2020.
  *

@@ -3,7 +3,7 @@
 /**
  * Record image loader
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2007.
  * Copyright (C) The National Library of Finland 2015-2020.
@@ -316,7 +316,7 @@ class Loader extends \VuFind\Cover\Loader
                 }
             } catch (\Exception $e) {
                 $this->debug(
-                    get_class($e) . ' during cache processing of ' . $apiName
+                    $e::class . ' during cache processing of ' . $apiName
                     . ': ' . $e->getMessage()
                 );
             }
@@ -346,7 +346,7 @@ class Loader extends \VuFind\Cover\Loader
                 }
             } catch (\Exception $e) {
                 $this->debug(
-                    get_class($e) . ' during processing of ' . $apiName
+                    $e::class . ' during processing of ' . $apiName
                     . ': ' . $e->getMessage()
                 );
             }

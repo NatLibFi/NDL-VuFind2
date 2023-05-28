@@ -6,7 +6,7 @@
  * Runs early on bootstrap to set the base URL properly before e.g.
  * CookieManagerFactory needs it.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2022.
  *

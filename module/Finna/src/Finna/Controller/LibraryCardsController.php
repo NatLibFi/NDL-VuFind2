@@ -3,7 +3,7 @@
 /**
  * LibraryCards Controller
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2010.
  * Copyright (C) The National Library of Finland 2015-2018.
@@ -253,7 +253,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 $this->flashMessenger()
                     ->addMessage('library_card_recovery_email_sent', 'success');
             } else {
-                $this->flashMessenger()->addErrorMessage('recovery_user_not_found');
+                $this->flashMessenger()
+                    ->addErrorMessage($result['error'] ?? 'recovery_user_not_found');
             }
         }
         return $view;

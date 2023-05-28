@@ -3,7 +3,7 @@
 /**
  * MyResearch Controller
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2015-2023.
  *
@@ -311,52 +311,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         );
 
         $view->blocks = $this->getAccountBlocks($patron);
-        return $view;
-    }
-
-    /**
-     * Purge historic loans action.
-     *
-     * @return mixed
-     */
-    public function purgeHistoricLoansAction()
-    {
-        if ($this->formWasSubmitted('cancel', false)) {
-            return $this->redirect()->toRoute('myresearch-historicloans');
-        }
-
-        // Stop now if the user does not have valid catalog credentials available:
-        if (!is_array($patron = $this->catalogLogin())) {
-            return $patron;
-        }
-
-        if ($view = $this->createViewIfUnsupported('purgeTransactionHistory')) {
-            return $view;
-        }
-
-        // Set up CSRF:
-        $csrfValidator = $this->serviceLocator
-            ->get(\VuFind\Validator\CsrfInterface::class);
-
-        if ($this->formWasSubmitted('submit', false)) {
-            $csrf = $this->getRequest()->getPost()->get('csrf');
-            if (!$csrfValidator->isValid($csrf)) {
-                throw new \Exception('An error has occurred');
-            }
-            // After successful token verification, clear list to shrink session:
-            $csrfValidator->trimTokenList(0);
-            $catalog = $this->getILS();
-            $result = $catalog->purgeTransactionHistory($patron);
-            $this->flashMessenger()->addMessage(
-                $result['status'],
-                $result['success'] ? 'info' : 'error'
-            );
-            return $this->redirect()->toRoute('myresearch-historicloans');
-        }
-
-        $view = $this->createViewModel();
-        $view->csrf = $csrfValidator->getHash(true);
-
         return $view;
     }
 

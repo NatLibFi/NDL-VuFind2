@@ -3,7 +3,7 @@
 /**
  * Additional functionality for Solr parameters shared with Blender.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library 2022.
  *

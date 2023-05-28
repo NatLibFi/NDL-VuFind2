@@ -3,7 +3,7 @@
 /**
  * Fake database row to represent a user in privacy mode.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2015.
  * Copyright (C) The National Library of Finland 2016.

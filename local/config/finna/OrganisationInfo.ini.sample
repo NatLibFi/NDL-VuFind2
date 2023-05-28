@@ -7,11 +7,17 @@ url = "https://api.kirjastot.fi/"
 ; Language settings.
 ; Language codes are given in Kirjastohakemisto format (fi, sv, en...)
 
-; Language version used for translated strings.
-; If defined, this overrides the current user language.
+; Language used for translated strings.
+; If defined, this overrides the current user language. Normally this should be left
+; undefined.
 ; language = fi
 
-; Allowed language versions
+; Fallback language used for translated strings when current user language is not in
+; allowed languages.
+; If defined, this overrides default language defined in config.ini.
+; fallbackLanguage = en
+
+; Allowed languages
 languages[] = fi
 languages[] = sv
 languages[] = en
@@ -70,3 +76,14 @@ url = "https://museot.fi/xml"
 ; Allowed hosts for images
 allowed_hosts[] = 'kirkanta.kirjastot.fi'
 allowed_hosts[] = 'museot.fi'
+
+; This section defines possible organisation-specific enrichment processes. Each key
+; is an organisation id. The setting is a colon-separated string where first part is
+; the enrichment handler and second part is configuration section.
+; Available enrichments:
+;   TPRAccessibility - Display accessibility information for the selected location
+[Enrichment]
+Helmet[] = TPRAccessibility:HelmetTPRAccessibility
+
+[HelmetTPRAccessibility]
+url = "https://www.hel.fi/palvelukarttaws/rest"

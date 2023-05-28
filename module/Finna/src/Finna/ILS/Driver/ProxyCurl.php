@@ -3,7 +3,7 @@
 /**
  * Modified BeSimple Curl for VuFind HTTP Service
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2020.
  *

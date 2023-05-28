@@ -3,7 +3,7 @@
 /**
  * SFX Link Resolver Driver
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Royal Holloway, University of London
  * Copyright (C) The National Library of Finland 2015-2017.

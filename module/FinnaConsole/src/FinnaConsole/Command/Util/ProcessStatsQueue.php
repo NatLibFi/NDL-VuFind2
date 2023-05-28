@@ -3,7 +3,7 @@
 /**
  * Console service for processing the statistics queue.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2022-2023.
  *

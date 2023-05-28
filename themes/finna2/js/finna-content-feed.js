@@ -69,6 +69,9 @@ finna.contentFeed = (function finnaContentFeed() {
               $('.article-navigation-wrapper').html(VuFind.updateCspNonce(data.navigation));
               $('.article-navigation-header').show();
             }
+            if (typeof data.nextarticles != 'undefined') {
+              $('.next-articles').html(VuFind.updateCspNonce(data.nextarticles));
+            }
           }
         }
       })

@@ -2,9 +2,6 @@
 <?php
   $isList = $type == 'list' || $type === 'list grid';
   $formats = $this->driver->tryMethod('getFormats');
-  if (!$isList) {
-    $models = $this->driver->tryMethod('getModels');
-  }
 ?>
 <div class="record-image-container <?= empty($images[0]['urls']['large']) && empty($images[0]['urls']['medium']) ? 'hide-image' : ''?>">
   <div class="recordcover-holder paginate" aria-hidden="true" data-format="<?=$this->transEsc(end($formats))?>" data-noimage="<?=$this->transEsc('no_image')?>">
@@ -29,8 +26,8 @@
       <div class="image-details-container text-left hidden" data-img-index="<?=$ind?>">
         <?=$this->record($this->driver)->renderTemplate('image-download.phtml', ['index' => $ind, 'rights' => $rights, 'image' => $image, 'hiRes' => $image['highResolution'] ?? false, 'models' => $models ?? []])?>
         <?=$this->record($this->driver)->renderTemplate('image-information.phtml', ['index' => $ind, 'image' => $image]);?>
-        <?php if (!empty($models[$ind])): ?>
-          <?=$this->record($this->driver)->renderTemplate('model-download.phtml', ['index' => $ind, 'rights' => $rights, 'model' => $models[$ind]]);?>
+        <?php if (!empty($image['models'])): ?>
+          <?=$this->record($this->driver)->renderTemplate('model-download.phtml', ['index' => $ind, 'models' => $image['models']]);?>
         <?php endif; ?>
         <?=$this->record($this->driver)->renderTemplate('image-rights.phtml', ['imageRightsLabel' => $imageRightsLabel, 'rights' => $rights, 'truncateLicense' => $ind === 0]);?>
       </div>
