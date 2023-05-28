@@ -346,8 +346,10 @@ $config = [
             'survey-close' => 'FinnaIcons:close',
             'staff-view' => 'FontAwesome:code',
             'staff-link' => 'FontAwesome:user',
-            'remove-filter' => 'FontAwesome:window-close',
+            'remove-filter' => 'FinnaIcons:remove',
             'rss-feed' => 'FinnaIcons:bell',
+            'pagination-simple-left' => 'FinnaIcons:arrow-left',
+            'pagination-simple-right' => 'FinnaIcons:arrow-right',
             'pagination-last' => 'FinnaIcons:chevrons-left-circle-filled',
             'pagination-left' => 'FinnaIcons:-left-circle-filled',
             'pagination-first' => 'FinnaIcons:chevrons-right-circle-filled',
@@ -371,6 +373,12 @@ $config = [
             'daterange-prev' => 'FinnaIcons:arrow-left-1',
             'daterange-next' => 'FinnaIcons:arrow-right-1',
             'daterange-expand' => 'FinnaIcons:expand',
+            'map-marker' => 'FontAwesome:map-marker',
+            'back' => 'FontAwesome:chevron-left',
+            'r2-restricted' => 'FinnaIcons:fa-research', #todo
+            'r2-registered' => 'FinnaIcons:fa-research-open', #todo
+            'route' => 'FontAwesome:bus',
+            'home' => 'FinnaIcons:home',
         ],
     ],
 ];

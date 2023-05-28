@@ -81,18 +81,18 @@
         <button type="button" class="btn btn-open-widget phone info-element btn-link" data-toggle="tooltip" data-placement="bottom" data-html="true" data-original-title="" aria-label="<?=$this->transEsc('organisation_info_phone_numbers') ?>">
           <?=$this->icon('phone') ?>
         </button>
-        <a href="#" target="_blank" class="route info-element"><span class="btn"><i class="fa fa-bus" aria-hidden="true"></i><span class="sr-only"><?=$this->transEsc('organisation_info_route') . ' (' . $this->transEsc('external_link') . ')' ?></span></span></a>
-        <a href="#" target="_blank" class="facebook info-element"><span class="btn"><i class="fa fa-facebook-square" aria-hidden="true"></i><span class="sr-only"><?=$this->transEsc('organisation_info_facebook') ?></span></span></a>
+        <a href="#" target="_blank" class="route info-element"><span class="btn"><?=$this->icon('route') ?><span class="sr-only"><?=$this->transEsc('organisation_info_route') . ' (' . $this->transEsc('external_link') . ')' ?></span></span></a>
+        <a href="#" target="_blank" class="facebook info-element"><span class="btn"><?=$this->icon('facebook') ?><span class="sr-only"><?=$this->transEsc('organisation_info_facebook') ?></span></span></a>
       </div>
-      <div class="map info-element"><a href="#" target="_blank"><i class="fa fa-map-marker" aria-hidden="true"></i> <span class="map-address"></span></a></div>
-      <div class="details-link info-element"><a href="#" data-href="<?=$this->escapeHtmlAttr($this->url('organisationinfo-home'))?>" class="details"><i class="fa fa-home" aria-hidden="true"></i> <?=$this->translate('organisation_info_more_info')?></a></div>
+      <div class="map info-element"><a href="#" target="_blank"><?=$this->icon('map-marker') ?> <span class="map-address"></span></a></div>
+      <div class="details-link info-element"><a href="#" data-href="<?=$this->escapeHtmlAttr($this->url('organisationinfo-home'))?>" class="details"><?=$this->icon('home') ?> <?=$this->translate('organisation_info_more_info')?></a></div>
       <div class="services">
         <span class="btn btn-open-widget btn-round service-wifi info-element">
-          <i class="fa fa-wifi" title="<?=$this->transEscAttr('organisation_info_service_wifi')?>" aria-hidden="true"></i>
+          <?=$this->icon('wifi') ?><i class="fa fa-wifi" title="<?=$this->transEscAttr('organisation_info_service_wifi')?>" aria-hidden="true"></i>
           <span class="sr-only"><?=$this->transEsc('organisation_info_service_wifi')?></span>
         </span>
         <span class="btn btn-open-widget btn-round service-print info-element">
-          <i class="fa fa-print" title="<?=$this->transEscAttr('organisation_info_service_print')?>" aria-hidden="true"></i>
+          <?=$this->icon('print') ?><i class="fa fa-print" title="<?=$this->transEscAttr('organisation_info_service_print')?>" aria-hidden="true"></i>
           <span class="sr-only"><?=$this->transEsc('organisation_info_service_print')?></span>
         </span>
       </div>
