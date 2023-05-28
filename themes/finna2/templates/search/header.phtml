@@ -39,13 +39,13 @@
         <div id="searchForm" class="hidden-print">
           <div class="adv_search_links">
             <?php if ($advSearch): ?>
-              <a href="<?=$this->url($advSearch)?>?edit=<?=$this->escapeHtmlAttr($searchId)?>"><?=$this->icon('edit-search') ?> <?=$this->transEsc("Edit this search")?></a>
+              <a href="<?=$this->url($advSearch)?>?edit=<?=$this->escapeHtmlAttr($searchId)?>"><?=$this->icon('search-edit') ?> <?=$this->transEsc("Edit this search")?></a>
             <?php endif; ?>
             <div class="adv-search-menu hidden-xs">
               <?php if ($advSearch): ?>
-                <a href="<?=$this->url($advSearch)?>"><?=$this->icon('advanced-search') ?> <?=$this->transEsc("Start a new Advanced Search")?></a>
+                <a href="<?=$this->url($advSearch)?>"><?=$this->icon('search-advanced') ?> <?=$this->transEsc("Start a new Advanced Search")?></a>
               <?php endif; ?>
-              <a href="<?=$this->url($searchHome)?>"><?=$this->icon('basic-search') ?> <?=$this->transEsc("Start a new Basic Search")?></a>
+              <a href="<?=$this->url($searchHome)?>"><?=$this->icon('search-basic') ?> <?=$this->transEsc("Start a new Basic Search")?></a>
             </div>
             <span class="visible-xs adv-search-menu-toggle"><?=$this->transEsc("adv_search_menu")?> <b class="caret"></b></span>
           </div>

@@ -215,7 +215,7 @@
     <div class="search-tooltip"><?php
       // There should not be any whitespace in this div if it is empty.
       if (!$browse && !$mainPage && $advSearch): ?>
-        <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced <?=($module === 'record') ? 'visible-lg' : 'hidden-xs'?>"><?=$this->icon('advanced-search', 'advanced-search-icon' ) ?><?=$this->transEsc("Advanced Search")?></a>
+        <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced <?=($module === 'record') ? 'visible-lg' : 'hidden-xs'?>"><?=$this->icon('search-advanced', 'search-advanced-icon') ?><?=$this->transEsc("Advanced Search")?></a>
       <?php endif; ?><?php
         $searchTypes = ['search' => 'local', 'primo' => 'pci', 'eds' => 'eds', 'r2search' => 'R2', 'summon' => 'summon'];
         if (isset($searchTypes[$module]) && !$this->translationEmpty('tooltip_' . $searchTypes[$module] . '_search_html')) {
@@ -232,18 +232,18 @@
       <?php if ($browse || $mainPage || ($module === 'authority' && $action === 'search')): ?>
         <div class="search-links">
           <?php if ($advSearch): ?>
-          <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced"><?=$this->icon('advanced-search') ?> <?=$this->transEsc("Advanced Search")?></a>
+          <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced"><?=$this->icon('search-advanced') ?> <?=$this->transEsc("Advanced Search")?></a>
           <?php endif; ?>
           <?php if ($browse || !in_array($this->searchClassId, ['Solr', 'R2'])): ?>
-          <a href="<?=$this->url('home');?>" class="btn btn-link btn-basic"><?=$this->icon('basic-search') ?> <?=$this->transEsc("Basic Search")?></a>
+          <a href="<?=$this->url('home');?>" class="btn btn-link btn-basic"><?=$this->icon('search-basic') ?> <?=$this->transEsc("Basic Search")?></a>
           <?php endif; ?>
 
           <?php if ($this->primo()->isAvailable() && ($browse || $this->searchClassId !== 'Primo')) : ?>
-          <a href="<?=$this->url('primo-home');?>" class="btn btn-link btn-primo"><?=$this->icon('primo-search') ?> <?=$this->transEsc("Primo Search")?></a>
+          <a href="<?=$this->url('primo-home');?>" class="btn btn-link btn-primo"><?=$this->icon('search-primo') ?> <?=$this->transEsc("Primo Search")?></a>
           <?php endif; ?>
 
           <?php if ($this->eds()->isAvailable() && ($browse || $this->searchClassId !== 'EDS')) : ?>
-          <a href="<?=$this->url('eds-home');?>" class="btn btn-link btn-primo"><?=$this->icon('eds-search') ?> <?=$this->transEsc("EDS Search")?></a>
+          <a href="<?=$this->url('eds-home');?>" class="btn btn-link btn-primo"><?=$this->icon('search-eds') ?> <?=$this->transEsc("EDS Search")?></a>
           <?php endif; ?>
 
           <?php if ($this->summon()->isAvailable() && ($browse || $this->searchClassId !== 'Summon')) : ?>
@@ -251,7 +251,7 @@
           <?php endif; ?>
 
           <?php if ($this->authority()->isAvailable() && ($browse || $this->searchClassId !== 'SolrAuth')) : ?>
-            <a href="<?=$this->url('authority-home');?>" class="btn btn-link btn-authority"><?=$this->icon('authority-search') ?> <?=$this->transEsc("Authority Search")?></a>
+            <a href="<?=$this->url('authority-home');?>" class="btn btn-link btn-authority"><?=$this->icon('search-authority') ?> <?=$this->transEsc("Authority Search")?></a>
           <?php endif; ?>
         </div>
       <?php endif; ?>
@@ -265,7 +265,7 @@
                 </li>
                 <?php endif; ?>
               <li class="pager-previous-record">
-                <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($scrollData['previousRecord']))?>" rel="nofollow"><?=$this->icon('pager-previous') ?><span class="sr-only"><?=$this->transEsc('Previous Record')?></span></a>
+                <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($scrollData['previousRecord']))?>" rel="nofollow"><?=$this->icon('pager-prev') ?><span class="sr-only"><?=$this->transEsc('Previous Record')?></span></a>
               </li>
             <?php else: ?>
               <?php if ($scrollData['firstRecord']): ?>

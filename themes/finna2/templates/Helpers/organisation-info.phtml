@@ -24,8 +24,8 @@
         <div class="organisation dropdown">
           <button type="button" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-id="">
             <span class="sr-only"><?=$this->transEsc('organisation_info_selected_service_point')?></span>
-            <span></span>
-            <?=$this->icon('arrow-down') ?>
+            <span class="selected"></span>
+            <?=$this->icon('dropdown-open') ?>
           </button>
           <ul class="dropdown-menu" role="menu" aria-label="<?=$this->transEscAttr('organisation_info_select_service_point')?>">
           </ul>
@@ -37,11 +37,11 @@
       <div class="info schedules">
         <div class="week-navi-holder">
           <button type="button" class="prev-week week-navi btn-link" data-dir="-1" aria-label="<?= $this->transEscAttr('organisation_info_previous_week')?>">
-            <?=$this->icon('arrow-left') ?>
+            <?=$this->icon('week-prev') ?>
           </button>
           <span class="week-text"><?=$this->transEsc('organisation_info_schedule_week')?> <span class="num"></span></span>
           <button type="button" class="next-week week-navi btn-link" data-dir="+1" aria-label="<?= $this->transEscAttr('organisation_info_next_week')?>">
-            <?=$this->icon('arrow-right') ?>
+            <?=$this->icon('week-next') ?>
           </button>
         </div>
         <div class="loader"><?=$this->icon('spinner') ?></div>
@@ -80,7 +80,7 @@
       <a href="#" data-href="<?=$this->escapeHtmlAttr($this->url('organisationinfo-home'))?>" class="facility details" aria-label="<?= $this->transEscAttr('organisation_info_more_info') ?>"><img src="<?=$this->imageLink('noCover2.gif')?>" alt="" class="facility-image"></a>
       <div class="contact-links">
         <button type="button" class="btn btn-open-widget emails email info-element btn-link" data-placement="bottom" data-html="true" data-original-title="" aria-label="<?=$this->transEsc('organisation_info_email') ?>">
-          <?=$this->icon('email') ?>
+          <?=$this->icon('contact-email') ?>
         </button>
         <button type="button" class="btn btn-open-widget phone info-element btn-link" data-toggle="tooltip" data-placement="bottom" data-html="true" data-original-title="" aria-label="<?=$this->transEsc('organisation_info_phone_numbers') ?>">
           <?=$this->icon('phone') ?>
@@ -92,11 +92,11 @@
       <div class="details-link info-element"><a href="#" data-href="<?=$this->escapeHtmlAttr($this->url('organisationinfo-home'))?>" class="details"><?=$this->icon('home') ?> <?=$this->translate('organisation_info_more_info')?></a></div>
       <div class="services">
         <span class="btn btn-open-widget btn-round service-wifi info-element">
-          <?=$this->icon('wifi') ?><i class="fa fa-wifi" title="<?=$this->transEscAttr('organisation_info_service_wifi')?>" aria-hidden="true"></i>
+          <?=$this->icon('wifi') ?>
           <span class="sr-only"><?=$this->transEsc('organisation_info_service_wifi')?></span>
         </span>
         <span class="btn btn-open-widget btn-round service-print info-element">
-          <?=$this->icon('print') ?><i class="fa fa-print" title="<?=$this->transEscAttr('organisation_info_service_print')?>" aria-hidden="true"></i>
+          <?=$this->icon('print') ?>
           <span class="sr-only"><?=$this->transEsc('organisation_info_service_print')?></span>
         </span>
       </div>
