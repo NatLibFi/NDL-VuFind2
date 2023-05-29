@@ -64,6 +64,7 @@
             <?php /* Begin Available Items (Holds) */ ?>
             <span class="text-success">
               <i class="fa fa-ok" aria-hidden="true"></i>
+              <?=$this->icon('status-available', 'status-available-icon') ?>
               <?=isset($row['availabilityInfo']['displayText']) ? $this->transEsc('status_' . $row['availabilityInfo']['displayText'], [], $row['availabilityInfo']['displayText']) : $this->transEsc('Available')?>
               <link property="availability" href="http://schema.org/InStock">
             </span>

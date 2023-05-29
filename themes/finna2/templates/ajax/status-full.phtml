@@ -208,13 +208,13 @@ foreach ($this->statusItems as $item):
   <?php
     $classes = null;
     if (!empty($item['availability'])) {
-      $classes = ['ok', 'success'];
+      $classes = ['available', 'success'];
     }
     if (!$classes && ($item['use_unknown_message'] ?? false)) {
       $classes = $onlyUnknownStatuses ? ['status-unknown-no-icon warning'] : ['status-unknown', 'warning'];
     }
     if (!$classes) {
-      $classes = ['remove', 'error'];
+      $classes = ['unavailable', 'error'];
     }
     $locationText = $this->transEscWithPrefix('location_', $item['location']);
     if ($item['locationhref'] ?? false) {
@@ -232,7 +232,7 @@ foreach ($this->statusItems as $item):
     <div class="<?=$currentRow % 2 == 0 ? 'even' : 'odd'?> clearfix">
       <div class="<?=$groupBranches ? 'group-location-col' : 'no-branches'?>">
         <div class="groupLocation <?= $prevOrganisation && $newOrganisation ? ' new-organisation' : ''; ?>">
-          <i class="fa fa-<?=$classes[0]?> text-<?=$classes[1]?>"></i> <span class="text-<?=$classes[0]?>"><?=$location?></span>
+          <?=$this->icon("status-" . $classes[0], "status-" . $classes[0]. "-icon")?> <span class="text-<?=$classes[0]?>"><?=$location?></span>
         </div>
       <?php if ($groupBranches): ?>
       </div>

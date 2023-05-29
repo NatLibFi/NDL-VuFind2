@@ -25,7 +25,7 @@
           <i class="fa fa-pen"></i>
           <a class="profile-library-info-address-update" href="<?=$this->escapeHtmlAttr($this->url('myresearch-changeprofileaddress')) ?>" data-lightbox title="<?=$this->escapeHtmlAttr($linkText) ?>"><?=$this->escapeHtml($linkText) ?></a>
         <?php elseif ($updateAddress['method'] == 'url'): ?>
-          <i class="fa fa-external-link"></i>
+          <?=$this->icon('external-link') ?>
           <a class="profile-library-info-address-update" href="<?=$this->escapeHtmlAttr($this->translation()->getStringFromMixed($updateAddress['url'])) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($linkText) ?>"><?=$this->escapeHtml($linkText) ?></a>
         <?php endif; ?>
 <?php
