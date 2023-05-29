@@ -44,6 +44,7 @@
           </repositorySet>
           <repositorySet type="Current location">
             <displayRepository lang="fi">Teos on nähtävissä kirjaston aukioloaikoina.</displayRepository>
+            <displayRepository lang="en">The object can be accessed when the library is open.</displayRepository>
             <repositoryLocation>
               <namePlaceSet>
                 <appellationValue label="tarkempi paikka">Kansalliskirjaston kupolisali</appellationValue>

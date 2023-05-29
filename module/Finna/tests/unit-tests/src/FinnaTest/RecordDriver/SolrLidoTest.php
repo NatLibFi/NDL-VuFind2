@@ -409,7 +409,31 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     {
         return [
             [
-                'getPhysicalLocations',
+                'fi',
+                [
+                    'lido_test.xml' => [
+                        'Kansalliskirjaston kupolisali, Unioninkatu 36, Helsinki',
+                        'Teos on nähtävissä kirjaston aukioloaikoina.',
+                    ],
+                    'lido_test2.xml' => [
+                        'Huonenumero 123, Auditorio, Mannerheimintie 999, Helsinki',
+                    ],
+                ],
+            ],
+            [
+                'en-gb',
+                [
+                    'lido_test.xml' => [
+                        'Kansalliskirjaston kupolisali, Unioninkatu 36, Helsinki',
+                        'The object can be accessed when the library is open.',
+                    ],
+                    'lido_test2.xml' => [
+                        'Huonenumero 123, Auditorio, Mannerheimintie 999, Helsinki',
+                    ],
+                ],
+            ],
+            [
+                'xy',
                 [
                     'lido_test.xml' => [
                         'Kansalliskirjaston kupolisali, Unioninkatu 36, Helsinki',
@@ -426,7 +450,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     /**
      * Test getPhysicalLocations
      *
-     * @param string $function Function of the driver to test
+     * @param string $language Language
      * @param array  $expected Result to be expected
      *
      * @dataProvider getPhysicalLocationsData
@@ -434,15 +458,21 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      * @return void
      */
     public function testGetPhysicalLocations(
-        string $function,
+        string $language,
         array $expected
     ): void {
         foreach ($expected as $file => $result) {
+            $translator = $this
+                ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
+                ->disableOriginalConstructor()
+                ->onlyMethods([])
+                ->getMock();
+            $translator->setLocale($language);
             $driver = $this->getDriver($file);
-            $this->assertTrue(is_callable([$driver, $function], true));
+            $driver->setTranslator($translator);
             $this->assertEquals(
                 $result,
-                $driver->$function()
+                $driver->getPhysicalLocations()
             );
         }
     }

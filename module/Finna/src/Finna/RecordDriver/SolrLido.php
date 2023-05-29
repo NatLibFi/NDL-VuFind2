@@ -2031,8 +2031,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             $this->getXmlRecord()->lido->descriptiveMetadata->objectIdentificationWrap
             ->repositoryWrap->repositorySet ?? [] as $repository
         ) {
-            $type = $repository->attributes()->type ?? '';
-            if ($type != 'Current location') {
+            $type = (string)($repository->attributes()->type ?? '');
+            if ($type !== 'Current location') {
                 continue;
             }
             $locations = [];
@@ -2052,7 +2052,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             if ($locations) {
                 $results[] = implode(', ', $locations);
             }
-            if ($display = trim((string)$repository->displayRepository ?? '')) {
+            $lang = $this->getLocale();
+            if (
+                $display = trim(
+                    (string)($this->getLanguageSpecificItem($repository->displayRepository, $lang))
+                    ?? ''
+                )
+            ) {
                 $results[] = $display;
             }
         }
