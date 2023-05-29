@@ -115,18 +115,12 @@ finna.layout = (function finnaLayout() {
 
         if (self.data('button-placement') === 'top') {
           self.before([moreLink, lessLink]);
+        } else if (topLink) {
+          self.before(lessLink.addClass('top-button'));
+          self.after([moreLink]);
         } else {
-          if (topLink) {
-            self.before(lessLink.clone(true));
-          }
-          if (self.parents().hasClass('record-information')) {
-            self.after([moreLink]);
-          }
-          else {
-            self.after([moreLink, lessLink]);
-          }
+          self.after([moreLink, lessLink]);
         }
-        self.addClass('truncated');
       }
     });
   }
