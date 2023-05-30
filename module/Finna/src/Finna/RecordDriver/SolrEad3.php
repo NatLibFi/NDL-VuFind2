@@ -216,15 +216,23 @@ class SolrEad3 extends SolrEad
      */
     public function getURLs()
     {
-        $urls = $localeUrls = [];
+        $urls = [];
         $record = $this->getXmlRecord();
         if (!isset($record->did)) {
             return [];
         }
         $preferredLangCodes = $this->mapLanguageCode($this->preferredLanguage);
-        $formURL = function ($node) use ($preferredLangCodes) {
+        $isExternalUrl = function ($node) {
+            $localtype = (string)$node->attributes()->localtype;
+            return $localtype && in_array($localtype, self::EXTERNAL_DATA_URLS);
+        };
+        $formURL = function ($node) use ($preferredLangCodes, $isExternalUrl) {
             $attr = $node->attributes();
-            if ((string)$attr->linkrole === 'image/jpeg' || !$attr->href) {
+            if (
+                (string)$attr->linkrole === 'image/jpeg'
+                || !$attr->href
+                || $isExternalUrl($node)
+            ) {
                 return [];
             }
             $lang = (string)$attr->lang;
@@ -244,13 +252,10 @@ class SolrEad3 extends SolrEad
             }
             return [];
         };
-
         foreach ($record->did->daoset as $daoset) {
-            $localtype = (string)$daoset->attributes()->localtype;
-
-            if ($localtype && in_array($localtype, self::EXTERNAL_DATA_URLS)) {
+            if ($isExternalUrl($daoset)) {
                 continue;
-            }
+            } 
             foreach ($daoset->dao as $dao) {
                 $urls = array_merge($urls, $formURL($dao));
             }
