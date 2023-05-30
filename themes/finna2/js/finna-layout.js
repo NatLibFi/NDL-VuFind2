@@ -348,7 +348,7 @@ finna.layout = (function finnaLayout() {
   function initBuildingFilter() {
     $('#building_filter').on('keyup', function onKeyUpFilter() {
       var valThis = this.value.toLowerCase();
-      $('#facet_building .facet-value').each(function doBuildingSearch() {
+      $('#facet_building>ul>li>div>a .facet-value').each(function doBuildingSearch() {
         var text = $(this).text().toLowerCase();
         if (text.indexOf(valThis) !== -1) {
           $(this).closest('li').show();
