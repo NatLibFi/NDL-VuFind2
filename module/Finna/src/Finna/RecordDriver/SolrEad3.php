@@ -221,7 +221,9 @@ class SolrEad3 extends SolrEad
         if (!isset($record->did)) {
             return [];
         }
+
         $preferredLangCodes = $this->mapLanguageCode($this->preferredLanguage);
+
         $isExternalUrl = function ($node) {
             $localtype = (string)$node->attributes()->localtype;
             return $localtype && in_array($localtype, self::EXTERNAL_DATA_URLS);
@@ -252,6 +254,7 @@ class SolrEad3 extends SolrEad
             }
             return [];
         };
+
         foreach ($record->did->daoset as $daoset) {
             if ($isExternalUrl($daoset)) {
                 continue;
@@ -263,9 +266,11 @@ class SolrEad3 extends SolrEad
         foreach ($record->did->dao as $dao) {
             $urls = array_merge($urls, $formURL($dao));
         }
+
         if (empty($urls)) {
             return [];
         }
+
         return $this->resolveUrlTypes($urls['localeurls'] ?? $urls['urls']);
     }
 
