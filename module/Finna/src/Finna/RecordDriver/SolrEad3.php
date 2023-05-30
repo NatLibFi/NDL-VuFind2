@@ -248,8 +248,13 @@ class SolrEad3 extends SolrEad
                     'url' => $url,
                     'desc' => (string)$desc,
                 ];
+                if ($preferredLang) {
+                    return [
+                        'localeurls' => [$urlData],
+                    ];
+                }
                 return [
-                    $preferredLang ? 'localeurls' : 'urls' => [$urlData],
+                    'urls' => [$urlData],
                 ];
             }
             return [];
