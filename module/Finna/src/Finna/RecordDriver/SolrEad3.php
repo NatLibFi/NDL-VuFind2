@@ -228,14 +228,14 @@ class SolrEad3 extends SolrEad
             $localtype = (string)$node->attributes()->localtype;
             return $localtype && in_array($localtype, self::EXTERNAL_DATA_URLS);
         };
-        $formURL = function ($node) use ($preferredLangCodes, $isExternalUrl) {
+        $processURL = function ($node) use ($preferredLangCodes, $isExternalUrl, &$urls) {
             $attr = $node->attributes();
             if (
                 (string)$attr->linkrole === 'image/jpeg'
                 || !$attr->href
                 || $isExternalUrl($node)
             ) {
-                return [];
+                return;
             }
             $lang = (string)$attr->lang;
             $preferredLang = $lang && in_array($lang, $preferredLangCodes);
@@ -249,15 +249,11 @@ class SolrEad3 extends SolrEad
                     'desc' => (string)$desc,
                 ];
                 if ($preferredLang) {
-                    return [
-                        'localeurls' => [$urlData],
-                    ];
+                    $urls['localeurls'][] = $urlData;
+                } else {
+                    $urls['urls'][] = $urlData;
                 }
-                return [
-                    'urls' => [$urlData],
-                ];
             }
-            return [];
         };
 
         foreach ($record->did->daoset as $daoset) {
@@ -265,11 +261,11 @@ class SolrEad3 extends SolrEad
                 continue;
             }
             foreach ($daoset->dao as $dao) {
-                $urls = array_merge_recursive($urls, $formURL($dao));
+                $processURL($dao);
             }
         }
         foreach ($record->did->dao as $dao) {
-            $urls = array_merge_recursive($urls, $formURL($dao));
+            $processURL($dao);
         }
 
         if (empty($urls)) {
