@@ -348,7 +348,7 @@ finna.layout = (function finnaLayout() {
   function initBuildingFilter() {
     $('#building_filter').on('keyup', function onKeyUpFilter() {
       var valThis = this.value.toLowerCase();
-      $('#facet_building>ul>li>a .text').each(function doBuildingSearch() {
+      $('#facet_building .facet-value').each(function doBuildingSearch() {
         var text = $(this).text().toLowerCase();
         if (text.indexOf(valThis) !== -1) {
           $(this).closest('li').show();
@@ -385,6 +385,7 @@ finna.layout = (function finnaLayout() {
       }
       // show filter if 15+ organisations
       if (tree.parent().parent().attr('id') === 'side-panel-building' && tree.find('ul.jstree-container-ul > li').length > 15) {
+        console.log('here');
         $(this).before('<div class="building-filter"><label for="building_filter" class="sr-only">' + VuFind.translate('Organisation') + '</label><input type="search" class="form-control" id="building_filter" placeholder="' + VuFind.translate('Organisation') + '..."></input></div>');
         initBuildingFilter();
       }
