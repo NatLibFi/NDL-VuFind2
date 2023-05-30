@@ -222,39 +222,46 @@ class SolrEad3 extends SolrEad
             return [];
         }
         $preferredLangCodes = $this->mapLanguageCode($this->preferredLanguage);
-        foreach ($record->did->xpath('//daoset') ?? [] as $daoset) {
+        $formURL = function ($node) use ($preferredLangCodes) {
+            $attr = $node->attributes();
+            if ((string)$attr->linkrole === 'image/jpeg' || !$attr->href) {
+                return [];
+            }
+            $lang = (string)$attr->lang;
+            $preferredLang = $lang && in_array($lang, $preferredLangCodes);
+
+            $url = (string)$attr->href;
+            $desc = $attr->linktitle ?? $node->descriptivenote->p ?? $url;
+
+            if (!$this->urlBlocked($url, $desc)) {
+                $urlData = [
+                    'url' => $url,
+                    'desc' => (string)$desc,
+                ];
+                return [
+                    $preferredLang ? 'localeurls' : 'urls' => [$urlData],
+                ];
+            }
+            return [];
+        };
+
+        foreach ($record->did->daoset as $daoset) {
             $localtype = (string)$daoset->attributes()->localtype;
 
             if ($localtype && in_array($localtype, self::EXTERNAL_DATA_URLS)) {
                 continue;
             }
-            foreach ($daoset->dao as $node) {
-                $attr = $node->attributes();
-                if ((string)$attr->linkrole === 'image/jpeg' || !$attr->href) {
-                    continue;
-                }
-                $lang = (string)$attr->lang;
-                $preferredLang = $lang && in_array($lang, $preferredLangCodes);
-
-                $url = (string)$attr->href;
-                $desc = $attr->linktitle ?? $node->descriptivenote->p ?? $url;
-
-                if (!$this->urlBlocked($url, $desc)) {
-                    $urlData = [
-                        'url' => $url,
-                        'desc' => (string)$desc,
-                    ];
-                    $urls[] = $urlData;
-                    if ($preferredLang) {
-                        $localeUrls[] = $urlData;
-                    }
-                }
+            foreach ($daoset->dao as $dao) {
+                $urls = array_merge($urls, $formURL($dao));
             }
         }
-        if ($localeUrls) {
-            $urls = $localeUrls;
+        foreach ($record->did->dao as $dao) {
+            $urls = array_merge($urls, $formURL($dao));
         }
-        return $this->resolveUrlTypes($urls);
+        if (empty($urls)) {
+            return [];
+        }
+        return $this->resolveUrlTypes($urls['localeurls'] ?? $urls['urls']);
     }
 
     /**
