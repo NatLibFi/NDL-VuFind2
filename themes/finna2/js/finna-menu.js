@@ -34,7 +34,7 @@ finna.menu = (function finnaMenu() {
       toggleSubmenu($(this));
     });
 
-    $('.menu-parent > .menu-open').on('click', function clickLink(e) {
+    $('.menu-parent > .icon').on('click', function clickLink(e) {
       e.preventDefault();
       $(this).parent().trigger('togglesubmenu');
     });

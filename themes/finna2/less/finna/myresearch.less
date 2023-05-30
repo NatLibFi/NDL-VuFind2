@@ -776,8 +776,8 @@
         }
       }
 
-      &.collapsed {
-        > .menu-open {
+      &:not(.collapsed) {
+        > .icon {
           transform: rotate(180deg);
           -ms-transform: rotate(180deg);
           -webkit-transform: rotate(180deg);

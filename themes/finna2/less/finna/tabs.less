@@ -160,7 +160,7 @@
     padding: .6em 0 0 0;
     cursor: pointer;
     @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
-      i {
+      .i {
         display: block;
         text-align: center;
       }
@@ -212,14 +212,13 @@
       &:hover {
         border-bottom-color: @gray-lighter;
       }
-
-      > i:before,
-      > span.status i:before {
-        line-height: 1.6em;
-      }
-      > i.fa-lg:before,
-      > span.status i.fa-spinner:before {
-        line-height: 1.1em;
+      &.menu-parent {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .icon {
+          font-size: 0.8em;
+        }
       }
     }
     &:first-child > a {
@@ -242,14 +241,6 @@
         cursor: auto;
         font-weight: 600;
       }
-    }
-  }
-  .menu-parent {
-    display: flex;
-    justify-content: space-between;
-    .menu-open {
-      align-items: center;
-      display: flex;
     }
   }
 }

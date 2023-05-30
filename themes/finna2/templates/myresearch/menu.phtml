@@ -179,7 +179,7 @@
           <?php if ($showSpinner) : ?>
             <?=$this->icon('spinner', ['class' => 'hidden']) ?><span class="ajax-error hidden"><small> <?=$this->translate('An error has occurred'); ?></small></span>
           <?php endif; ?>
-          <?=$this->icon('menu-open', ['class' => 'menu-open']) ?>
+          <?=$this->icon('collapse-open') ?>
         </a>
         <div class="<?= $value['partial']['wrapperClass'] ?? 'ajax-wrapper'?>">
           <?php if ($listItem['active']): ?>
