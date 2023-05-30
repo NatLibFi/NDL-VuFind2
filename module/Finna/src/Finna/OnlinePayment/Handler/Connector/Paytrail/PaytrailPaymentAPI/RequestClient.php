@@ -109,7 +109,7 @@ class RequestClient extends \Paytrail\SDK\Util\RequestClient
      */
     protected function buildUrl(string $uri, array $options): string
     {
-        if (isset($options['query'])) {
+        if (!empty($options['query'])) {
             $uri .= '?' . http_build_query($options['query']);
         }
         return $this->requestBaseUrl . $uri;
