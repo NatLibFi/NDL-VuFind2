@@ -258,13 +258,13 @@ class SolrEad3 extends SolrEad
         foreach ($record->did->daoset as $daoset) {
             if ($isExternalUrl($daoset)) {
                 continue;
-            } 
+            }
             foreach ($daoset->dao as $dao) {
-                $urls = array_merge($urls, $formURL($dao));
+                $urls = array_merge_recursive($urls, $formURL($dao));
             }
         }
         foreach ($record->did->dao as $dao) {
-            $urls = array_merge($urls, $formURL($dao));
+            $urls = array_merge_recursive($urls, $formURL($dao));
         }
 
         if (empty($urls)) {
