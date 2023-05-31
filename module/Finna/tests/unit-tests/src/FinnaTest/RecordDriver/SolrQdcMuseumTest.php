@@ -64,8 +64,11 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
                         ],
                         'description' => '',
                         'rights' => [
-                            'copyright' => '',
+                            'copyright' => 'openAccess',
                             'link' => false,
+                            'description' => [
+                                '2023 Finna qa',
+                            ],
                         ],
                         'highResolution' => [
                             'original' => [

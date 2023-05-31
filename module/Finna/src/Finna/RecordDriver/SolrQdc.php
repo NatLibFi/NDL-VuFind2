@@ -215,17 +215,11 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
 
         $results = [];
         $rights = [];
-        $pdf = false;
         $xml = $this->getXmlRecord();
         $thumbnails = [];
         $otherSizes = [];
         $highResolution = [];
-        $rightsStmt = $this->getMappedRights((string)($xml->rights ?? ''));
-        $rights = [
-            'copyright' => $rightsStmt,
-            'link' => $this->getRightsLink($rightsStmt, $language),
-        ];
-
+        $rights = $this->getRights($language);
         $addToResults = function ($imageData) use (&$results) {
             if (!isset($imageData['urls']['small'])) {
                 $imageData['urls']['small'] = $imageData['urls']['medium']
@@ -334,6 +328,44 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
             }
         }
         return $this->cache[$cacheKey] = $results;
+    }
+
+    /**
+     * Get image rights
+     *
+     * @param string $language Language for the copyright link
+     *
+     * @return array [copyright, link, description = []]
+     */
+    protected function getRights(string $language): array
+    {
+        $xml = $this->getXmlRecord();
+        $result = [
+            'copyright' => '',
+            'link' => '',
+            'description' => [],
+        ];
+        $compareLanguage = '';
+        foreach ($xml->rights as $right) {
+            $strRight = trim((string)$right);
+            $type = trim((string)$right->attributes()->type);
+            $rightLanguage = trim((string)$right->attributes()->lang);
+            // Save first right as the displayable right
+            if (!$result['copyright']) {
+                $mappedRight = $this->getMappedRights($strRight);
+                $compareLanguage = $rightLanguage;
+                $result['copyright'] = $mappedRight;
+                $result['link'] = $this->getRightsLink($mappedRight, $language);
+            } elseif (
+                $compareLanguage === $rightLanguage
+                && 'copyright' === $type
+                && $strRight !== $result['copyright']
+                && !in_array($strRight, $result['description'])
+            ) {
+                $result['description'][] = $strRight;
+            }
+        }
+        return $result;
     }
 
     /**
