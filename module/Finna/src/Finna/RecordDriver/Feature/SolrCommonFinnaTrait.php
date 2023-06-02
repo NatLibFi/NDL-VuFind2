@@ -286,7 +286,7 @@ trait SolrCommonFinnaTrait
      * @return array
      */
     protected function getLanguagePriority(
-        array $primary,
+        array $primary = [],
         bool $shortCode = false,
         string $default = '',
     ): array {
