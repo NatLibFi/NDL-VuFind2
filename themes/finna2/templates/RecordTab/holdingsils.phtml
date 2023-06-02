@@ -334,9 +334,9 @@
         </div>
       <?php endif; ?>
     <?php endif; ?>
-    <div class="holdings-container-heading" tabindex="0" role="button" aria-expanded="<?=$holdingsDetails == 'collapsed' ? 'false' : 'true'?>">
+    <div class="holdings-container-heading <?=$holdingsDetails == 'collapsed' ? '' : 'open'?>" tabindex="0" role="button" aria-expanded="<?=$holdingsDetails == 'collapsed' ? 'false' : 'true'?>">
       <div class="location">
-        <i class="fa fa-arrow-<?=$holdingsDetails == 'collapsed' ? 'right' : 'down'?>" aria-hidden="true"></i>
+        <?=$this->icon('holdings-expand', 'expand') ?><?=$this->icon('holdings-collapse', 'collapse') ?>
         <?php $locationText = $this->transEscWithPrefix('location_', $holding['location']); ?>
         <?php if ($holding['locationhref'] ?? false): ?>
           <a href="<?=$holding['locationhref']?>" target="_blank"><?=$locationText?></a>

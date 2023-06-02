@@ -52,7 +52,7 @@ function FinnaPopup(trigger, params, id) {
 
 /**
  * Adjusts a given src to match an embed link in popular services
- * 
+ *
  * @param {string} src
  */
 FinnaPopup.prototype.adjustEmbedLink = function adjustEmbedLink(src) {
@@ -71,7 +71,7 @@ FinnaPopup.prototype.adjustEmbedLink = function adjustEmbedLink(src) {
 
 /**
  * Adds a trigger element to popups internal array, so it can be properly found
- * 
+ *
  * @param {HTMLElement} trigger
  */
 FinnaPopup.prototype.addTrigger = function addTrigger(trigger) {
@@ -124,7 +124,7 @@ FinnaPopup.prototype.currentTrigger = function currentTrigger() {
 
 /**
  * Close a trigger and open the next one found from the internal array
- * 
+ *
  * @param {int} direction
  */
 FinnaPopup.prototype.getTrigger = function getTrigger(direction) {
@@ -271,7 +271,7 @@ FinnaPopup.prototype.onPopupInit = function onPopupInit(/*trigger*/) { };
 
 /**
  * Handles the flow of opening modals
- * 
+ *
  * @param {function} open
  * @param {function} close
  */
@@ -294,7 +294,7 @@ FinnaPopup.prototype.onPopupOpen = function onPopupOpen(open, close) {
 
 /**
  * Toggles the document body scroll state
- * 
+ *
  * @param {boolean} value
  */
 FinnaPopup.prototype.toggleScroll = function toggleScroll(value) {
@@ -338,7 +338,7 @@ FinnaPopup.prototype.onPopupClose = function onPopupClose() {
 
 /**
  * Way to keep users tab inside modal elements
- * 
+ *
  * @param {object} e
  */
 FinnaPopup.prototype.focusTrap = function focusTrap(e) {

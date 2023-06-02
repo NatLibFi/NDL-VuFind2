@@ -305,8 +305,8 @@ $config = [
             'google-plus' => 'FinnaIcons:google+',
             'help' => 'FinnaIcons:help-circle',
             'home' => 'FinnaIcons:home',
-            'holdings-collapse-open' => 'FinnaIcons:arrow-right-1',
-            'holdings-collapse-close' => 'FinnaIcons:arrow-down-1',
+            'holdings-expand' => 'FinnaIcons:arrow-right-1',
+            'holdings-collapse' => 'FinnaIcons:arrow-down-1',
             'image-gallery-view' => 'FinnaIcons:image-gallery',
             'image-zoom-in' => 'FinnaIcons:zoom-in',
             'image-zoom-out' => 'FinnaIcons:zoom-in',
@@ -383,7 +383,8 @@ $config = [
             'user' => 'FontAwesome:user',
             'video-play' => 'FontAwesome:play-circle',
             'week-next' => 'FontAwesome:arrow-right',
-            'week-prev' => 'FontAwesome:arrow-left'
+            'week-prev' => 'FontAwesome:arrow-left',
+            'versions-more-link' => 'FinnaIcons:arrow-right-1',
         ],
     ],
 ];

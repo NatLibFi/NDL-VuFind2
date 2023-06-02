@@ -225,7 +225,7 @@
         if (isset($tooltipClass) && isset($tooltipText)):
       ?>
         <button aria-label="<?= $this->transEsc('Search Tips') ?>" class="tooltip-button <?=$tooltipClass?> hidden-xs" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->escapeHtmlAttr($tooltipText)?>">
-          <?=$this->icon('help', 'search-tips-icon') ?>
+          <?=$this->icon('help', 'search-help-icon') ?>
         </button>
     <?php endif; ?></div>
     <?php if ($module != 'record' && $module != 'collection'): ?>

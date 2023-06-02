@@ -182,6 +182,17 @@
         display: flex;
         min-height: 36px;
         flex-flow: row;
+        .icon.collapse {
+            display: none;
+        }
+        &.open {
+            .icon.expand {
+                display: none;
+            }
+            .icon.collapse {
+                display: initial;
+            }
+        }
         @media (max-width: @screen-xs-max) {
             flex-flow: column;
         }

@@ -4,6 +4,11 @@
 .searchbox, .searchbox-flex {
   margin-bottom: 12px;
   margin-top: 12px;
+  .search-help-icon {
+    font-size: 26px;
+    margin-top: -1px;
+    margin-left: 1px;
+  }
   .searchbox-home {
     .tooltip-button.tooltip-search-pci, .tooltip-button.tooltip-search-local {
       background: rgba(255,255,255,.9);
@@ -12,13 +17,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-sizing: border-box;
       width: 36px;
       height: 36px;
       border-radius: 50%;
-      .icon {
-        margin-top: -1px;
-      }
     }
   }
   .searchbox-home,
@@ -47,11 +48,6 @@
         }
       }
     }
-  }
-  .search-tips-icon {
-    font-size: 26px;
-    line-height: 1em;
-    margin: 0;
   }
   .search-tooltip:empty + .pager {
     margin-left: 12px;
