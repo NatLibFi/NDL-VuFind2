@@ -67,7 +67,7 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
                             'link' => 'http://creativecommons.org/licenses/by/4.0/deed.fi',
                             'description' => [
                                 'This is a copyright description',
-                                'This is a copyright which is should also be displayed as description',
+                                'This is a copyright which should also be displayed as description',
                             ],
                         ],
                         'pdf' => true,

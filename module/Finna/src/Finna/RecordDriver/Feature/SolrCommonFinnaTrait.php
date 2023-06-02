@@ -270,4 +270,46 @@ trait SolrCommonFinnaTrait
         [$locale] = explode('-', $this->getTranslatorLocale());
         return $locale;
     }
+
+    /**
+     * Get an array containing languages in a priority order.
+     * First language is the translator locale, then languages from primary array,
+     * then sites fallback_languages and last default non-language code
+     *
+     * @param array  $primary   An array containing languages, which are to be checked after
+     *                          translator locale.
+     * @param bool   $shortCode Should the languages be reduced into 2 character short codes.
+     *                          Default is false.
+     * @param string $default   If a non-language term is required, then use $default to append
+     *                          a non-language code like 'no_locale'
+     *
+     * @return array
+     */
+    protected function getLanguagePriority(
+        array $primary,
+        bool $shortCode = false,
+        string $default = '',
+    ): array {
+        $languages = [
+            $this->getTranslatorLocale(),
+            ...$primary,
+            ...explode(
+                ',',
+                $this->mainConfig->Site['fallback_languages'] ?? 'fi,sv,en-gb'
+            ),
+        ];
+        if ($shortCode) {
+            $languages = array_map(
+                function ($lang) {
+                    [$code] = explode('-', $lang, 2);
+                    return $code;
+                },
+                $languages
+            );
+        }
+        if ($default) {
+            $languages[] = $default;
+        }
+        return array_unique($languages);
+    }
 }
