@@ -309,15 +309,18 @@ trait SolrCommonFinnaTrait
         string $default = '',
     ): array {
         $languages = [
-            $this->getLocale(),
+            $this->getTranslatorLocale(),
             ...$primary,
             ...$this->localeSettings->getFallbackLocales(),
         ];
         $final = [];
         foreach ($languages as $lang) {
             $final[] = $lang;
-            if (str_contains($lang, '-')) {
-                [$code] = explode('-', $lang, 2);
+            if (!str_contains($lang, '-')) {
+                continue;
+            }
+            [$code] = explode('-', $lang, 2);
+            if ($code) {
                 $final[] = $code;
             }
         }

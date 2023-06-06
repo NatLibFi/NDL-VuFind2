@@ -208,13 +208,15 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
         );
         $localeConfig = [
             'Site' => [
-                'language' => 'en',
-                'fallbackLocales' => 'en',
+                'language' => 'fi',
+                'fallback_languages' => 'en-gb,sv',
+                'browserDetectLanguage' => false,
             ],
             'Languages' => [
                 'fi' => 'Finnish',
                 'en' => 'English',
                 'sv' => 'Swedish',
+                'en-gb' => 'British English',
             ],
         ];
         $localeConfig = new \Laminas\Config\Config($localeConfig);
