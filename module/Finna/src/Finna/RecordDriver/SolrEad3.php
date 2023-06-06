@@ -1974,15 +1974,18 @@ class SolrEad3 extends SolrEad
         $result = [];
         if (isset($xml->relatedmaterial)) {
             foreach ($xml->relatedmaterial as $material) {
-                $text = $this->getDisplayLabel(
+                $texts = $this->getDisplayLabel(
                     $material->p,
                     'ref'
                 );
+                $text = $texts[0] ?? '';
                 $url = (string)$material->attributes()->href ?? '';
-                if ($this->urlBlocked($url, $text[0])) {
+                if ($this->urlBlocked($url, $text)) {
                     $url = '';
                 }
-                $result[] = ['text' => $text[0], 'url' => $url];
+                if ($text || $url) {
+                    $result[] = ['text' => $text, 'url' => $url];
+                }
             }
         }
         return $result;
