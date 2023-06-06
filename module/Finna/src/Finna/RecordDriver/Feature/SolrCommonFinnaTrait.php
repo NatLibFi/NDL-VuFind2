@@ -32,6 +32,8 @@
 
 namespace Finna\RecordDriver\Feature;
 
+use VuFind\I18n\Locale\LocaleSettings;
+
 /**
  * Additional functionality for Finna Solr and Finna SolrAuth records.
  *
@@ -65,6 +67,13 @@ trait SolrCommonFinnaTrait
     protected $videoHandler = null;
 
     /**
+     * Locale settings
+     *
+     * @var LocaleSettings
+     */
+    protected $localeSettings = null;
+
+    /**
      * Attach date converter
      *
      * @param \VuFind\Date\Converter $dateConverter Date Converter
@@ -86,6 +95,18 @@ trait SolrCommonFinnaTrait
     public function attachVideoHandler(\Finna\Video\Video $videoHandler)
     {
         $this->videoHandler = $videoHandler;
+    }
+
+    /**
+     * Attach locale settings to the driver.
+     *
+     * @param LocaleSettings $localeSettings Locale Settings
+     *
+     * @return void
+     */
+    public function attachLocaleSettings(LocaleSettings $localeSettings)
+    {
+        $this->localeSettings = $localeSettings;
     }
 
     /**
@@ -276,40 +297,33 @@ trait SolrCommonFinnaTrait
      * First language is the translator locale, then languages from primary array,
      * then sites fallback_languages and last default non-language code
      *
-     * @param array  $primary   An array containing languages, which are to be checked after
-     *                          translator locale.
-     * @param bool   $shortCode Should the languages be reduced into 2 character short codes.
-     *                          Default is false.
-     * @param string $default   If a non-language term is required, then use $default to append
-     *                          a non-language code like 'no_locale'
+     * @param array  $primary An array containing languages, which are to be checked after
+     *                        translator locale.
+     * @param string $default If a non-language term is required, then use $default to append
+     *                        a non-language code like 'no_locale'
      *
      * @return array
      */
-    protected function getLanguagePriority(
+    protected function getPrioritizedLanguages(
         array $primary = [],
-        bool $shortCode = false,
         string $default = '',
     ): array {
         $languages = [
-            $this->getTranslatorLocale(),
+            $this->getLocale(),
             ...$primary,
-            ...explode(
-                ',',
-                $this->mainConfig->Site['fallback_languages'] ?? 'fi,sv,en-gb'
-            ),
+            ...$this->localeSettings->getFallbackLocales(),
         ];
-        if ($shortCode) {
-            $languages = array_map(
-                function ($lang) {
-                    [$code] = explode('-', $lang, 2);
-                    return $code;
-                },
-                $languages
-            );
+        $final = [];
+        foreach ($languages as $lang) {
+            $final[] = $lang;
+            if (str_contains($lang, '-')) {
+                [$code] = explode('-', $lang, 2);
+                $final[] = $code;
+            }
         }
         if ($default) {
-            $languages[] = $default;
+            $final[] = $default;
         }
-        return array_unique($languages);
+        return array_unique($final);
     }
 }

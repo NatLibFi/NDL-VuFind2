@@ -206,6 +206,19 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
             $config,
             new \Laminas\Config\Config($searchConfig)
         );
+        $localeConfig = [
+            'Site' => [
+                'language' => 'en',
+                'fallbackLocales' => 'en',
+            ],
+            'Languages' => [
+                'fi' => 'Finnish',
+                'en' => 'English',
+                'sv' => 'Swedish',
+            ],
+        ];
+        $localeConfig = new \Laminas\Config\Config($localeConfig);
+        $record->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
         $record->setRawData(
             [
                 'id' => 'knp-247394',

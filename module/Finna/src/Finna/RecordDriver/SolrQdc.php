@@ -361,7 +361,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
         }
         // Check that there is proper values to use for displaying the rights.
         $localizedRights = [];
-        foreach ($this->getLanguagePriority([$language], true, 'no_locale') as $lang) {
+        foreach ($this->getPrioritizedLanguages([$language], 'no_locale') as $lang) {
             if (!empty($cache[$lang])) {
                 $localizedRights = $cache[$lang];
                 break;
@@ -376,7 +376,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
         $result['copyright'] = $mappedRight;
         $result['link'] = $this->getRightsLink($mappedRight, $language);
         foreach ($localizedRights as $right) {
-            // Add all extra copyrights as description
+            // Add rights as descriptions which have the same localization
+            // as the primary right.
             if (
                 'copyright' === $right['type']
                 && $result['copyright'] !== $right['txt']
