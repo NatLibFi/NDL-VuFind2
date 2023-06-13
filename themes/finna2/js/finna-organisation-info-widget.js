@@ -69,7 +69,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
       && response.openTimes.schedules.length > 0;
     var schedules = response.openTimes.schedules;
     // Check that if the organisation has any knowledge about the actual location.
-    // If it does not, then we can assume that the information in schedules is void.
+    // If it does not, then we can assume that the information in schedules might be void.
     var hasLocation = !!(data.address && data.address.city);
     var isClosedForWeek = schedules.every(schedule => schedule.closed === true);
     var hasScheduleDescriptions = 'scheduleDescriptions' in response
