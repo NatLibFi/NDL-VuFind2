@@ -74,7 +74,7 @@ class RecordCollection extends \VuFindSearch\Backend\Solr\Response\Json\RecordCo
     {
         $query = $this->getSpellcheckQuery();
         if (
-            str_word_count($query) > 1
+            count(explode(' ', $query)) > 1
             && isset($this->response['spellcheck']['collations'])
         ) {
             // Compose a list that resembles Solr's single-word suggestions
