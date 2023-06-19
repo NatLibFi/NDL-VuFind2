@@ -89,7 +89,7 @@ class QueryBuilder extends \VuFindSearch\Backend\Solr\QueryBuilder
         $params = parent::build($query);
 
         if ($this->createSpellingQuery && ($sq = $params->get('spellcheck.q'))) {
-            if (preg_match_all("/[\pL']+/u", trim(end($sq))) > $this->maxSpellcheckWords) {
+            if (count(preg_split("/[\s,]/u", trim(end($sq)))) > $this->maxSpellcheckWords) {
                 $params->set('spellcheck.q', '');
             }
         }
