@@ -77,6 +77,17 @@ class RecordController extends \VuFind\Controller\RecordController
     }
 
     /**
+     * Create archive request form and send to correct recipient.
+     *
+     * @return \Laminas\View\Model\ViewModel
+     * @throws \Exception
+     */
+    public function archiveRequestAction()
+    {
+        return $this->getRecordForm(Form::ARCHIVE_MATERIAL_REQUEST);
+    }
+
+    /**
      * Home (default) action -- forward to requested (or default) tab.
      *
      * @return mixed

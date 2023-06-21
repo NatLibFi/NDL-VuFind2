@@ -51,6 +51,8 @@ namespace Finna\RecordDriver;
  */
 class SolrEad3 extends SolrEad
 {
+    use Feature\SolrFinnaTrait;
+
     // Image types
     public const IMAGE_MEDIUM = 'medium';
     public const IMAGE_LARGE = 'large';
@@ -216,45 +218,63 @@ class SolrEad3 extends SolrEad
      */
     public function getURLs()
     {
-        $urls = $localeUrls = [];
+        $urls = [];
         $record = $this->getXmlRecord();
         if (!isset($record->did)) {
             return [];
         }
-        $preferredLangCodes = $this->mapLanguageCode($this->preferredLanguage);
-        foreach ($record->did->xpath('//daoset') ?? [] as $daoset) {
-            $localtype = (string)$daoset->attributes()->localtype;
 
-            if ($localtype && in_array($localtype, self::EXTERNAL_DATA_URLS)) {
+        $preferredLangCodes = $this->mapLanguageCode($this->preferredLanguage);
+
+        $isExternalUrl = function ($node) {
+            $localtype = (string)$node->attributes()->localtype;
+            return $localtype && in_array($localtype, self::EXTERNAL_DATA_URLS);
+        };
+        $processURL = function ($node) use ($preferredLangCodes, $isExternalUrl, &$urls) {
+            $attr = $node->attributes();
+            if (
+                (string)$attr->linkrole === 'image/jpeg'
+                || !$attr->href
+                || $isExternalUrl($node)
+            ) {
+                return;
+            }
+            $lang = (string)$attr->lang;
+            $preferredLang = $lang && in_array($lang, $preferredLangCodes);
+
+            $url = (string)$attr->href;
+            $desc = $attr->linktitle ?? $node->descriptivenote->p ?? $url;
+
+            if (!$this->urlBlocked($url, $desc)) {
+                $urlData = [
+                    'url' => $url,
+                    'desc' => (string)$desc,
+                ];
+                if ($preferredLang) {
+                    $urls['localeurls'][] = $urlData;
+                } else {
+                    $urls['urls'][] = $urlData;
+                }
+            }
+        };
+
+        foreach ($record->did->daoset as $daoset) {
+            if ($isExternalUrl($daoset)) {
                 continue;
             }
-            foreach ($daoset->dao as $node) {
-                $attr = $node->attributes();
-                if ((string)$attr->linkrole === 'image/jpeg' || !$attr->href) {
-                    continue;
-                }
-                $lang = (string)$attr->lang;
-                $preferredLang = $lang && in_array($lang, $preferredLangCodes);
-
-                $url = (string)$attr->href;
-                $desc = $attr->linktitle ?? $node->descriptivenote->p ?? $url;
-
-                if (!$this->urlBlocked($url, $desc)) {
-                    $urlData = [
-                        'url' => $url,
-                        'desc' => (string)$desc,
-                    ];
-                    $urls[] = $urlData;
-                    if ($preferredLang) {
-                        $localeUrls[] = $urlData;
-                    }
-                }
+            foreach ($daoset->dao as $dao) {
+                $processURL($dao);
             }
         }
-        if ($localeUrls) {
-            $urls = $localeUrls;
+        foreach ($record->did->dao as $dao) {
+            $processURL($dao);
         }
-        return $this->resolveUrlTypes($urls);
+
+        if (empty($urls)) {
+            return [];
+        }
+
+        return $this->resolveUrlTypes($urls['localeurls'] ?? $urls['urls']);
     }
 
     /**
@@ -390,6 +410,34 @@ class SolrEad3 extends SolrEad
         }
 
         return $localeResults ?: $results;
+    }
+
+    /**
+     * See if holdings tab is shown on current item
+     *
+     * @return bool
+     */
+    public function archiveRequestAllowed()
+    {
+        $xml = $this->getXmlRecord();
+        $attributes = $xml->attributes();
+        $datasourceSettings = $this->datasourceSettings[$this->getDataSource()] ?? [];
+        // Requests only allowed on specified datasource
+        if (!($datasourceSettings['allowArchiveRequest'] ?? false)) {
+            return false;
+        }
+        // Check if specified item hierarchy levels match the item's
+        if ($allowedLevels = $datasourceSettings['archiveRequestAllowedRecordLevels'] ?? false) {
+            $recordLevels = explode(':', $allowedLevels);
+            if (!in_array((string)$attributes->level, $recordLevels)) {
+                return false;
+            }
+        }
+        // Check if required filing unit exists
+        if (($datasourceSettings['archiveRequestRequireFilingUnit'] ?? false) && empty($this->getFilingUnit())) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -1974,15 +2022,18 @@ class SolrEad3 extends SolrEad
         $result = [];
         if (isset($xml->relatedmaterial)) {
             foreach ($xml->relatedmaterial as $material) {
-                $text = $this->getDisplayLabel(
+                $texts = $this->getDisplayLabel(
                     $material->p,
                     'ref'
                 );
+                $text = $texts[0] ?? '';
                 $url = (string)$material->attributes()->href ?? '';
-                if ($this->urlBlocked($url, $text[0])) {
+                if ($this->urlBlocked($url, $text)) {
                     $url = '';
                 }
-                $result[] = ['text' => $text[0], 'url' => $url];
+                if ($text || $url) {
+                    $result[] = ['text' => $text, 'url' => $url];
+                }
             }
         }
         return $result;

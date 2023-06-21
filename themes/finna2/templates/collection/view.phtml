@@ -65,7 +65,8 @@
     <?php else: ?>
       <h2 class="collection-title"><?=$this->driver->getTitle();?></h2>
       <?= $this->R2()->register($this->driver, ['brief' => true])?>
-      <?php $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
+      <?php $formats = $this->driver->getFormats();
+      if (!empty($formats)): ?>
         <div class="recordFormat collection-format">
           <?=$this->record($this->driver)->getFormatList()?><br>
         </div>
@@ -159,9 +160,15 @@
                 $tabClasses[] = 'initiallyActive';
                 $activeTabObj = $obj;
               }
-              if (!$obj->isVisible()) { $tabClasses[] = 'hidden'; }
-              if (!$obj->supportsAjax()) { $tabClasses[] = 'noajax'; }
-              if (strtolower($tab) == 'details') { $tabClasses[] = 'hidden-xs tab-right'; }
+              if (!$obj->isVisible()) {
+                $tabClasses[] = 'hidden';
+              }
+              if (!$obj->supportsAjax()) {
+                $tabClasses[] = 'noajax';
+              }
+              if (strtolower($tab) == 'details') {
+                $tabClasses[] = 'hidden-xs tab-right';
+              }
             ?>
             <li class="<?=implode(' ', $tabClasses)?>" data-tab="<?=$tabName?>">
             <a class="<?=$this->escapeHtmlAttr(strtolower($tab)) ?>" aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>"
@@ -187,34 +194,38 @@
     </div>
 
     <div class="record-accordions">
-     <?php foreach ($this->tabs as $accordion => $obj): ?>
-       <?php
-         $desc = $obj->getDescription();
-         $accordion_classes = [
-           'accordion',
-           'accordion-' . preg_replace("/\W/", "-", strtolower($accordion)),
-         ];
-         if (0 === strcasecmp($this->activeTab, $accordion)) {
-           if (!$this->loadInitialTabWithAjax || !$obj->supportsAjax()) {
-             $accordion_classes[] = 'active';
-           }
-           $accordion_classes[] = 'initiallyActive';
-         }
-         if (!$obj->isVisible()) { $accordion_classes[] = 'hidden'; }
-         if (!$obj->supportsAjax()) { $accordion_classes[] = 'noajax'; }
-       ?>
-       <div class="<?=implode(' ', $accordion_classes)?>">
-         <div class="accordion-toggle">
-           <a data-tab="<?=$this->escapeHtmlAttr(strtolower($accordion)) ?>" class="accordion-title"
-             href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $accordion))?>#tabnav"<?php if ($obj->supportsAjax() && in_array($accordion, $this->backgroundTabs)):?>
-             data-background<?php endif ?>
-           >
-             <span class="title"><?=$this->transEsc($desc)?><?php if (strtolower($accordion) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?></span>
-             <i class="icon"></i>
-           </a>
-         </div>
-       </div>
-     <?php endforeach; ?>
+      <?php foreach ($this->tabs as $accordion => $obj): ?>
+        <?php
+          $desc = $obj->getDescription();
+          $accordion_classes = [
+            'accordion',
+            'accordion-' . preg_replace("/\W/", "-", strtolower($accordion)),
+          ];
+          if (0 === strcasecmp($this->activeTab, $accordion)) {
+            if (!$this->loadInitialTabWithAjax || !$obj->supportsAjax()) {
+              $accordion_classes[] = 'active';
+            }
+            $accordion_classes[] = 'initiallyActive';
+          }
+          if (!$obj->isVisible()) {
+            $accordion_classes[] = 'hidden';
+          }
+          if (!$obj->supportsAjax()) {
+            $accordion_classes[] = 'noajax';
+          }
+        ?>
+        <div class="<?=implode(' ', $accordion_classes)?>">
+          <div class="accordion-toggle">
+            <a data-tab="<?=$this->escapeHtmlAttr(strtolower($accordion)) ?>" class="accordion-title"
+              href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $accordion))?>#tabnav"<?php if ($obj->supportsAjax() && in_array($accordion, $this->backgroundTabs)):?>
+              data-background<?php endif ?>
+            >
+              <span class="title"><?=$this->transEsc($desc)?><?php if (strtolower($accordion) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?></span>
+              <i class="icon"></i>
+            </a>
+          </div>
+        </div>
+      <?php endforeach; ?>
     </div>
 
     <?=$this->driver->supportsCoinsOpenURL() ? '<span class="Z3988" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenURL()) . '"></span>' : ''?>

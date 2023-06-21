@@ -30,10 +30,8 @@
 
 namespace Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailPaymentAPI;
 
-use Paytrail\SDK\Exception\HmacException;
-use Paytrail\SDK\Exception\ValidationException;
-use Paytrail\SDK\Request\PaymentRequest;
-use Paytrail\SDK\Response\PaymentResponse;
+use Laminas\Log\LoggerInterface;
+use VuFindHttp\HttpService;
 
 /**
  * Paytrail Payment API client
@@ -47,73 +45,64 @@ use Paytrail\SDK\Response\PaymentResponse;
  */
 class Client extends \Paytrail\SDK\Client
 {
-    use \Finna\OnlinePayment\OnlinePaymentPostRequestTrait;
+    use \VuFind\Log\LoggerAwareTrait;
+
+    /**
+     * HTTP Service
+     *
+     * @var HttpService
+     */
+    protected $httpService;
+
+    /**
+     * Logger
+     *
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * Service base URL
+     *
+     * @var string
+     */
+    protected $baseUrl;
 
     /**
      * Client constructor.
      *
-     * @param int    $merchantId   The merchant.
-     * @param string $secretKey    The secret key.
-     * @param string $platformName Platform name.
+     * @param int             $merchantId   The merchant.
+     * @param string          $secretKey    The secret key.
+     * @param string          $platformName Platform name.
+     * @param HttpService     $http         HTTP service.
+     * @param LoggerInterface $logger       Logger.
+     * @param string          $baseUrl      Service base url.
      */
     public function __construct(
         int $merchantId,
         string $secretKey,
-        string $platformName
+        string $platformName,
+        HttpService $http,
+        LoggerInterface $logger,
+        string $baseUrl
     ) {
-        // N.B. Do not call parent constructor to avoid creating a Guzzle client
-        $this->setMerchantId($merchantId);
-        $this->setSecretKey($secretKey);
-        $this->setPlatformName($platformName);
+        // Set these first as parent's constructor will call createHttpClient:
+        $this->httpService = $http;
+        $this->logger = $logger;
+        $this->baseUrl = $baseUrl;
+
+        parent::__construct($merchantId, $secretKey, $platformName);
     }
 
     /**
-     * Create a payment request.
+     * Create HTTP client
      *
-     * @param PaymentRequest $payment A payment class instance.
-     *
-     * @return PaymentResponse
-     * @throws HmacException       Thrown if HMAC calculation fails for responses.
-     * @throws ValidationException Thrown if payment validation fails.
-     * @throws \Exception          Thrown if the HTTP request fails.
+     * @return void
      */
-    public function createPayment(PaymentRequest $payment)
+    protected function createHttpClient()
     {
-        $this->validateRequestItem($payment);
-
-        // Create request and hmac:
-        $body = json_encode($payment, JSON_UNESCAPED_SLASHES);
-        $headers = $this->getHeaders('POST', null, null);
-        $mac = $this->calculateHmac($headers, $body);
-        $headers['signature'] = $mac;
-
-        $response = $this->postRequest(
-            self::API_ENDPOINT . '/payments',
-            $body,
-            [],
-            $headers
-        );
-        if (!$response) {
-            throw new \Exception('Request failed');
-        }
-
-        $body = $response['response'];
-
-        // Handle header data and validate HMAC:
-        $responseHeaders = $response['headers'];
-        $this->validateHmac(
-            $responseHeaders,
-            $body,
-            $responseHeaders['signature'] ?? ''
-        );
-
-        // Create response:
-        $decoded = json_decode($body);
-        $paymentResponse = (new PaymentResponse())
-            ->setTransactionId($decoded->transactionId ?? null)
-            ->setHref($decoded->href ?? null)
-            ->setProviders($decoded->providers ?? null);
-
-        return $paymentResponse;
+        $this->http_client = new RequestClient($this->baseUrl);
+        $this->http_client->setHttpService($this->httpService);
+        $this->http_client->setLogger($this->logger);
     }
 }

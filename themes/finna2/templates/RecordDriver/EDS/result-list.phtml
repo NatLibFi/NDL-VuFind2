@@ -69,16 +69,23 @@
                   <?php endforeach; ?>
                 </div>
               <?php endif; ?>
-              <?php $journalTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDates(); ?>
+              <?php $journalTitle = $this->driver->getContainerTitle();
+              $summDate = $this->driver->getPublicationDates(); ?>
               <?php if (!empty($journalTitle)): ?>
                 <?=!empty($summAuthors) ? '' : ' '?>
                 <?=$this->transEsc('Published in') . ' <a href="' . $this->record($this->driver)->getLink('journaltitle', $journalTitle) . '">' . $journalTitle . '</a>';?>
-                <?php $ref = $this->driver->getContainerReference(); if (!empty($ref)) { echo $this->escapeHtml($ref); } elseif (!empty($summDate)) { echo $this->escapeHtml($summDate[0]); } ?>
+                <?php $ref = $this->driver->getContainerReference();
+                if (!empty($ref)) {
+                  echo $this->escapeHtml($ref);
+                } elseif (!empty($summDate)) {
+                  echo $this->escapeHtml($summDate[0]);
+                } ?>
               <?php elseif (!empty($summDate)): ?>
                 <?=!empty($summAuthors) ? '' : ' '?>
                 <?=$this->escapeHtml($summDate[0])?>
               <?php endif; ?>
-              <?php $summInCollection = $this->driver->getContainingCollections(); if (!empty($summInCollection)): ?>
+              <?php $summInCollection = $this->driver->getContainingCollections();
+              if (!empty($summInCollection)): ?>
                 <?php foreach ($summInCollection as $collId => $collText): ?>
                   <div>
                     <b><?=$this->transEsc("in_collection_label")?></b>
@@ -139,7 +146,8 @@
               </span>
               <div class="locationDetails clearfix"></div>
             <?php else: ?>
-              <?php $summCallNo = $this->driver->getCallNumber(); if (!empty($summCallNo)): ?>
+              <?php $summCallNo = $this->driver->getCallNumber();
+              if (!empty($summCallNo)): ?>
                 <strong><?=$this->transEsc('Call Number')?>:</strong> <?=$this->escapeHtml($summCallNo)?>
               <?php endif; ?>
             <?php endif; ?>
@@ -187,7 +195,8 @@
             <?php endif; ?>
           </div>
           <?php /* Hierarchy tree link */ ?>
-          <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
+          <?php $trees = $this->driver->tryMethod('getHierarchyTrees');
+          if (!empty($trees)): ?>
             <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
             <div class="hierarchyTreeLink hidden-print">
               <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId">

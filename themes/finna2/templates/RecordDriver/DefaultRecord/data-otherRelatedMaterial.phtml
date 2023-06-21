@@ -4,7 +4,8 @@
     <?php foreach ($data as $i => $item): ?>
       <?= $i > 0 ? '<br>' : '' ?>
       <?= $this->escapeHtml($item['text']) ?>
-      <?php $url = $item['url'] ?? ''; if (!empty($url)): ?>
+      <?php $url = $item['url'] ?? '';
+      if (!empty($url)): ?>
         <br><a target="_blank" href="<?=$this->escapeHtmlAttr($url)?>"><?=$this->escapeHtml($this->truncateUrl($url))?></a>
       <?php endif; ?>
     <?php endforeach; ?>

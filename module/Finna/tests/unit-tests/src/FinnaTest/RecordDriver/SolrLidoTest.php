@@ -414,6 +414,83 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Function to get expected physical locations data
+     *
+     * @return array
+     */
+    public function getPhysicalLocationsData(): array
+    {
+        return [
+            [
+                'fi',
+                [
+                    'lido_test.xml' => [
+                        'Kansalliskirjaston kupolisali, Unioninkatu 36, Helsinki',
+                        'Teos on nähtävissä kirjaston aukioloaikoina.',
+                    ],
+                    'lido_test2.xml' => [
+                        'Huonenumero 123, Auditorio, Mannerheimintie 999, Helsinki',
+                    ],
+                ],
+            ],
+            [
+                'en-gb',
+                [
+                    'lido_test.xml' => [
+                        'Kansalliskirjaston kupolisali, Unioninkatu 36, Helsinki',
+                        'The object can be accessed when the library is open.',
+                    ],
+                    'lido_test2.xml' => [
+                        'Huonenumero 123, Auditorio, Mannerheimintie 999, Helsinki',
+                    ],
+                ],
+            ],
+            [
+                'xy',
+                [
+                    'lido_test.xml' => [
+                        'Kansalliskirjaston kupolisali, Unioninkatu 36, Helsinki',
+                        'Teos on nähtävissä kirjaston aukioloaikoina.',
+                    ],
+                    'lido_test2.xml' => [
+                        'Huonenumero 123, Auditorio, Mannerheimintie 999, Helsinki',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Test getPhysicalLocations
+     *
+     * @param string $language Language
+     * @param array  $expected Result to be expected
+     *
+     * @dataProvider getPhysicalLocationsData
+     *
+     * @return void
+     */
+    public function testGetPhysicalLocations(
+        string $language,
+        array $expected
+    ): void {
+        foreach ($expected as $file => $result) {
+            $translator = $this
+                ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
+                ->disableOriginalConstructor()
+                ->onlyMethods([])
+                ->getMock();
+            $translator->setLocale($language);
+            $driver = $this->getDriver($file);
+            $driver->setTranslator($translator);
+            $this->assertEquals(
+                $result,
+                $driver->getPhysicalLocations()
+            );
+        }
+    }
+
+    /**
      * Test getNonPresenterAuthors.
      * Design event actors should always be before Production event actors.
      *

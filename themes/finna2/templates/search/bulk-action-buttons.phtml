@@ -13,7 +13,8 @@
     <div class="btn-group">
       <?php if (isset($this->showBulkOptions) && $this->showBulkOptions): ?>
         <input id="<?=$this->idPrefix?>ribbon-email" class="btn btn-primary" type="submit" name="email" title="<?=$this->transEscAttr('bookbag_email_selected')?>" value="<?=$this->transEscAttr('Email')?>"<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>>
-        <?php $exportOptions = $this->export()->getActiveFormats('bulk'); if (count($exportOptions) > 0): ?>
+        <?php $exportOptions = $this->export()->getActiveFormats('bulk');
+        if (count($exportOptions) > 0): ?>
           <input id="<?=$this->idPrefix?>ribbon-export" class="btn btn-primary" type="submit" name="export" title="<?=$this->transEscAttr('bookbag_export_selected')?>" value="<?=$this->transEscAttr('Export')?>"<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>>
         <?php endif; ?>
         <input id="<?=$this->idPrefix?>ribbon-print" class="btn btn-primary" type="submit" name="print" title="<?=$this->transEscAttr('bookbag_print_selected')?>" value="<?=$this->transEscAttr('Print')?>"<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>>

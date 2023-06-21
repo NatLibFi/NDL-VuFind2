@@ -8,11 +8,11 @@ qr_code_record = false
 qr_code_results = false
 ; A common service URL for all languages and data sources that don't have their own
 ; url settings specified. The example includes all parameters.
-url = "https://service-url/LocationHandler?location={location}&collection={collection}&branch={branch}&department={department}&callnumber={callno}&lang={lang}&owner={owner}"
+url = "https://service-url/LocationHandler?location={location}&collection={collection}&branch={branch}&department={department}&callnumber={callno}&lang={lang}&locale={locale}&owner={owner}"
 ; Language-specific service URLs for all data sources that don't have their own
 ; url settings specified. The example includes all parameters.
-url[fi] = "https://service-url/LocationHandler?location={location}&collection={collection}&branch={branch}&department={department}&callnumber={callno}&lang=fin&owner={owner}"
-url[sv] = "https://service-url/LocationHandler?location={location}&collection={collection}&branch={branch}&department={department}&callnumber={callno}&lang=swe&owner={owner}"
+url[fi] = "https://service-url/LocationHandler?location={location}&collection={collection}&branch={branch}&department={department}&callnumber={callno}&lang=fin&locale={locale}&owner={owner}"
+url[sv] = "https://service-url/LocationHandler?location={location}&collection={collection}&branch={branch}&department={department}&callnumber={callno}&lang=swe&locale={locale}&owner={owner}"
 
 // Sample configuration for a data source
 [datasource]

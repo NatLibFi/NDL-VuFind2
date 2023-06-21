@@ -35,6 +35,29 @@
             <appellationValue pref="alternate">Ei näy alternate.</appellationValue>
           </titleSet>
         </titleWrap>
+        <repositoryWrap>
+          <repositorySet type="Current location">
+            <displayRepository lang="fi">  </displayRepository>
+            <repositoryLocation>
+              <namePlaceSet>
+                <appellationValue label="tarkempi paikka">Huonenumero 123</appellationValue>
+              </namePlaceSet>
+              <namePlaceSet>
+                <appellationValue label="tarkempi paikka">Auditorio</appellationValue>
+              </namePlaceSet>
+              <partOfPlace>
+                <namePlaceSet>
+                  <appellationValue label="katuosoite">Mannerheimintie 999</appellationValue>
+                </namePlaceSet>
+                <partOfPlace>
+                  <namePlaceSet>
+                    <appellationValue label="kunta/kaupunki">Helsinki</appellationValue>
+                  </namePlaceSet>
+                </partOfPlace>
+              </partOfPlace>
+            </repositoryLocation>
+          </repositorySet>
+        </repositoryWrap>
         <objectDescriptionWrap>
           <objectDescriptionSet type="introduction">
             <descriptiveNoteValue lang="fi" label="esittely">Ei saa näkyä.</descriptiveNoteValue>

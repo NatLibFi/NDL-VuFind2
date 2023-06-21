@@ -52,9 +52,11 @@ if ($img):
             <?=$this->record($this->driver)->getFormatList() ?>
             <?=$this->record($this->driver)->getLabelList() ?>
           </div>
-          <?php $summAuthors = $this->driver->getPrimaryAuthorsWithHighlighting(); if (!empty($summAuthors)): ?>
+          <?php $summAuthors = $this->driver->getPrimaryAuthorsWithHighlighting();
+          if (!empty($summAuthors)): ?>
             <div class="truncate-field" data-rows="1">
-              <?php $authorCount = count($summAuthors); foreach ($summAuthors as $i => $summAuthor): ?>
+              <?php $authorCount = count($summAuthors);
+              foreach ($summAuthors as $i => $summAuthor): ?>
                 <a href="<?=$this->record($this->driver)->getLink('author', $this->highlight($summAuthor, null, true, false))?>"><?=$this->highlight($summAuthor)?></a><?=$i + 1 < $authorCount ? ' ; ' : ''?>
               <?php endforeach; ?>
             </div>
@@ -86,7 +88,8 @@ if ($img):
         <?=$this->render('list/list-notes.phtml')?>
         <?php /* Hierarchy tree link */ ?>
         <?php $hierarchySource = $this->driver->getSourceIdentifier() ?>
-        <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
+        <?php $trees = $this->driver->tryMethod('getHierarchyTrees');
+        if (!empty($trees)): ?>
           <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
             <div class="hierarchyTreeLink hidden-print">
               <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId">

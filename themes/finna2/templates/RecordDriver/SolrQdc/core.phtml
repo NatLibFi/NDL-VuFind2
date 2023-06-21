@@ -90,7 +90,9 @@
           <div class="truncate-field">
             <?php if (!empty($otherUrls)): ?>
               <?php foreach ($otherUrls as $url): ?>
-                <?php if (isset($images[$url['url']])) { continue; } ?>
+                <?php if (isset($images[$url['url']])) {
+                  continue;
+                } ?>
                 <?php $desc = $url['desc'] ?? $this->truncateUrl($url['url']); ?>
                 <div class="fulltextField">
                   <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"
@@ -103,7 +105,9 @@
             <?php endif; ?>
             <?php if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
               <?php foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $url): ?>
-                <?php if (isset($images[$url['url']])) { continue; } ?>
+                <?php if (isset($images[$url['url']])) {
+                  continue;
+                } ?>
                 <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><i class="fa fa-external-link"></i> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
                 <?php if ($url['source']): ?>
                   <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source']) ?>)</span>
@@ -124,7 +128,8 @@
       <?php endif; ?>
 
       <div class="record-core-metadata">
-        <?php $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
+        <?php $formats = $this->driver->getFormats();
+        if (!empty($formats)): ?>
           <span class="recordFormat"><?=$this->record($this->driver)->getFormatList()?></span>
         <?php endif; ?>
 

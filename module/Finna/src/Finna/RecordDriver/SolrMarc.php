@@ -471,7 +471,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         }
 
         if ($isbn = $this->getCleanISBN()) {
-            return 'http://s1.doria.fi/getText.php?query=' . $isbn;
+            return 'https://kansikuvat.finna.fi/getText.php?query=' . $isbn;
         }
         return false;
     }

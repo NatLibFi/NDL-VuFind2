@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library 2015-2020.
+ * Copyright (C) The National Library 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -581,6 +581,18 @@ trait SolrFinnaTrait
     public function getPresenters()
     {
         return [];
+    }
+
+    /**
+     * Get publication date or date range.
+     *
+     * @return ?array Array of one or two dates or null if not available.
+     * If date range is still continuing end year will be an empty string.
+     */
+    public function getPublicationDateRange()
+    {
+        $publicationDates = $this->getPublicationDates();
+        return $publicationDates ? [$publicationDates[0]] : null;
     }
 
     /**

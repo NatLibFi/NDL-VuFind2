@@ -18,9 +18,11 @@
 <?php endif; ?>
 <?php if (!($fondsOrCollection = in_array('Document/ArchiveFonds', $formats) || in_array('Document/ArchiveCollection', $formats))): ?>
   <?php if ($this->driver->isPartOfArchiveSeries()): ?>
-    <?php $topIds = $this->driver->getHierarchyTopId(); $topTitles = $this->driver->getHierarchyTopTitle(); ?>
+    <?php $topIds = $this->driver->getHierarchyTopId();
+    $topTitles = $this->driver->getHierarchyTopTitle(); ?>
   <?php else: ?>
-     <?php $topIds = $this->driver->getHierarchyParentId(); $topTitles = $this->driver->getHierarchyParentTitle(); ?>
+     <?php $topIds = $this->driver->getHierarchyParentId();
+     $topTitles = $this->driver->getHierarchyParentTitle(); ?>
   <?php endif; ?>
 <?= PHP_EOL . $this->transEsc('Archive')?>: <?php foreach($topIds as $index => $parentId): ?><?=isset($topTitles[$index]) ? $this->truncate($topTitles[$index], 180) : ''?><?php endforeach; ?>
 <?php endif; ?>
@@ -30,7 +32,8 @@
     ['Archive File', \Finna\RecordDriver\SolrEad::FILE_LEVELS],
   ] as [$label, $levels]):
   ?>
-    <?php $parentIds = $this->driver->getHierarchyParentId($levels); $parentTitles = $this->driver->getHierarchyParentTitle($levels); ?>
+    <?php $parentIds = $this->driver->getHierarchyParentId($levels);
+    $parentTitles = $this->driver->getHierarchyParentTitle($levels); ?>
     <?php if ($parentIds): ?>
       <?= PHP_EOL . $this->transEsc($label)?>: <?php foreach ($parentIds as $index => $parentId): ?><?= isset($parentTitles[$index]) ? $this->truncate($parentTitles[$index], 180) : ''?><?=($index < count($parentIds) - 1 ? ', ' : '')?><?php endforeach; ?>
     <?php endif; ?>

@@ -71,7 +71,8 @@
             <?php elseif ($dates): ?>
                 <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
             <?php endif; ?>
-            <?php $summInCollection = $this->driver->getContainingCollections(); if (false && !empty($summInCollection)): ?>
+            <?php $summInCollection = $this->driver->getContainingCollections();
+            if (false && !empty($summInCollection)): ?>
               <?php foreach ($summInCollection as $collId => $collText): ?>
                 <div>
                   <b><?=$this->transEsc("in_collection_label")?></b>
@@ -104,7 +105,8 @@
           ?>
           <?php if (count($listTags) > 0): ?>
             <strong><?=$this->transEsc('Your Tags')?>:</strong>
-            <?php $i = 0; foreach ($listTags as $tag): ?><?=($i++ == 0) ? '' : ', '?><a href="<?=$this->currentPath() . $results->getUrlQuery()->addFacet('tags', $tag->tag)?>"><?=$this->escapeHtml($tag->tag)?></a><?php endforeach; ?>
+            <?php $i = 0;
+            foreach ($listTags as $tag): ?><?=($i++ == 0) ? '' : ', '?><a href="<?=$this->currentPath() . $results->getUrlQuery()->addFacet('tags', $tag->tag)?>"><?=$this->escapeHtml($tag->tag)?></a><?php endforeach; ?>
             <br>
           <?php endif; ?>
 
@@ -135,7 +137,8 @@
         <?php if (count($this->lists ?? []) > 0 && !$list): ?>
         <div class="saved-lists">
           <strong><?=$this->transEsc('Saved in')?>:</strong>
-          <?php $i = 0;foreach($this->lists as $current): ?>
+          <?php $i = 0;
+          foreach ($this->lists as $current): ?>
             <a href="<?=$this->url('userList', ['id' => $current->id])?>"><?=$this->escapeHtml($current->title)?></a><?php if($i++ < count($this->lists) - 1): ?>,<?php endif; ?>
           <?php endforeach; ?>
           <br>

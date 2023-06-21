@@ -124,7 +124,8 @@
               <th class="hidden-xs"></th>
               <th id="label-title-column"><?=$this->transEsc('Loan Details');?></th>
             </tr>
-            <?php $i = 0; foreach ($this->transactions as $resource): ?>
+            <?php $i = 0;
+            foreach ($this->transactions as $resource): ?>
               <?php $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
               <tr id="record<?=$this->escapeHtmlAttr($resource->getUniqueId())?>" class="myresearch-row<?=!empty($ilsDetails['onsite']) ? ' onsite-checkout' : ''?>">
                 <td class="text-left checkbox-col" headers="label-select-column" aria-labelledby="label-select-column">
@@ -169,7 +170,7 @@
                         }
                         echo '<a href="' . $this->escapeHtmlAttr($this->recordLinker()->getUrl($resource)) .
                           '" class="record-title">' . $title . '</a>';
-                      } elseif (isset($ilsDetails['title']) && !empty($ilsDetails['title'])){
+                      } elseif (isset($ilsDetails['title']) && !empty($ilsDetails['title'])) {
                         // If the record is not available in Solr, perhaps the ILS driver sent us a title we can show...
                         echo '<span class="record-title">' . $this->escapeHtml($ilsDetails['title']) . '</span>';
                       } else {
@@ -178,7 +179,8 @@
                       }
                     ?>
                     <div class="record-core-metadata">
-                      <?php $formats = $resource->getFormats(); if (count($formats) > 0): ?>
+                      <?php $formats = $resource->getFormats();
+                      if (count($formats) > 0): ?>
                         <?=$this->record($resource)->getFormatList() ?>
                         <br>
                       <?php endif; ?>

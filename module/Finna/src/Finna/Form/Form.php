@@ -57,6 +57,13 @@ class Form extends \VuFind\Form\Form
     public const RECORD_FEEDBACK_FORM = 'FeedbackRecord';
 
     /**
+     *  Archive request form id.
+     *
+     * @var string
+     */
+    public const ARCHIVE_MATERIAL_REQUEST = 'ArchiveRequest';
+
+    /**
      * Handlers that are considered safe for transmitting information about the user
      *
      * @var array
@@ -430,6 +437,7 @@ class Form extends \VuFind\Form\Form
 
         $preParagraphs = [];
         $postParagraphs = [];
+        $datasource = null !== $this->record ? $this->record->tryMethod('getDataSource') : '';
 
         // 'feedback_instructions_html' translation
         if ($this->formId === self::FEEDBACK_FORM) {
@@ -437,6 +445,13 @@ class Form extends \VuFind\Form\Form
             $instructions = $this->translate($key);
             if ($instructions !== $key && !$translationEmpty($instructions)) {
                 $preParagraphs[] = $instructions;
+            }
+        }
+        // 'archive_request_{$datasource}_reserve_material_pre_html' translation
+        if ($this->formId === self::ARCHIVE_MATERIAL_REQUEST) {
+            $text = $this->translateCombinedString('archive_request', $datasource, 'reserve_material_pre_html');
+            if ($text) {
+                $preParagraphs[] = $text;
             }
         }
 
@@ -473,6 +488,15 @@ class Form extends \VuFind\Form\Form
             if (!$translationEmpty($datasourceKey)) {
                 $preParagraphs[] = '<span class="datasource-info">'
                     . $this->translate($datasourceKey) . '</span>';
+            }
+        }
+        if (
+            $this->formId === self::ARCHIVE_MATERIAL_REQUEST
+            && null !== $this->record
+        ) {
+            $text = $this->translateCombinedString('archive_request', $datasource, 'info');
+            if ($text) {
+                $preParagraphs[] = $escapeHtml($text);
             }
         } elseif (
             !($this->formConfig['hideRecipientInfo'] ?? false)
@@ -516,11 +540,24 @@ class Form extends \VuFind\Form\Form
         if (
             null !== $this->record
             && ($this->formId === self::RECORD_FEEDBACK_FORM
+            || $this->formId === self::ARCHIVE_MATERIAL_REQUEST
             || $this->isRecordRequestFormWithBarcode())
         ) {
             $preParagraphs[] = '<strong>'
                 . $transEsc('feedback_material') . '</strong>:<br>'
                 . $escapeHtml($this->record->getTitle());
+        }
+
+        if (
+            null !== $this->record
+            && $this->formId === self::ARCHIVE_MATERIAL_REQUEST
+        ) {
+            $identifier = $this->record->tryMethod('getIdentifier');
+            if ($identifier) {
+                $preParagraphs[] = '<strong>'
+                    . $transEsc('Inventory ID') . '</strong>:<br>'
+                    . $escapeHtml($identifier[0]);
+            }
         }
 
         if ($this->userCatUsername) {
@@ -536,12 +573,44 @@ class Form extends \VuFind\Form\Form
             );
         }
 
+        if (
+            null !== $this->record
+            && $this->formId === self::ARCHIVE_MATERIAL_REQUEST
+        ) {
+            $text = $this->translateCombinedString('archive_request', $datasource, 'material_arrival_info_html');
+            if ($text) {
+                $postParagraphs[] = '<div class="alert alert-info">' . $text . '</div>';
+            }
+        }
+
         $pre = implode('</div><div>', $preParagraphs);
         $help['pre'] = $pre ? "<div>$pre</div>" : '';
         $post = implode('</div><div>', $postParagraphs);
         $help['post'] = $post ? "<div>$post</div>" : '';
 
         return $help;
+    }
+
+    /**
+     * Combine a translation key from two or three strings
+     *
+     * @param string $prefix The prefix/first part of translation key
+     * @param string $middle The second part of translation key
+     * @param string $suffix The suffix for translation key (optional)
+     *
+     * @return string
+     */
+    public function translateCombinedString(string $prefix, string $middle, string $suffix = '')
+    {
+        $translate = $prefix;
+        $translationEmpty = $this->viewHelperManager->get('translationEmpty');
+        if ('' !== $middle) {
+            $translate .= '_' . $middle;
+        }
+        if ('' !== $suffix) {
+            $translate .= '_' . $suffix;
+        }
+        return !$translationEmpty($translate) ? $this->translate($translate) : '';
     }
 
     /**
@@ -667,8 +736,12 @@ class Form extends \VuFind\Form\Form
         if ($includeRecordData) {
             // Add hidden fields for record data
             foreach (['record_id', 'record', 'record_info'] as $key) {
-                $elements[$key]
-                    = ['type' => 'hidden', 'name' => $key, 'value' => null];
+                $elements[$key] = ['type' => 'hidden', 'name' => $key, 'value' => null];
+            }
+        }
+        if ($this->formId === self::ARCHIVE_MATERIAL_REQUEST) {
+            foreach (['record_id', 'record_info'] as $key) {
+                $elements[$key] = ['type' => 'hidden', 'name' => $key, 'value' => null];
             }
         }
 
@@ -715,7 +788,14 @@ class Form extends \VuFind\Form\Form
                 }
             }
         }
-
+        if ($formId === self::ARCHIVE_MATERIAL_REQUEST) {
+            foreach ($elements as &$value) {
+                if ($value['name'] === 'submit') {
+                    $value['label'] = 'request_submit_text';
+                }
+            }
+            unset($value);
+        }
         return $elements;
     }
 

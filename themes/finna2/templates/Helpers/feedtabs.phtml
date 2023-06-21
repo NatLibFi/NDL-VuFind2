@@ -31,7 +31,8 @@
 
   <div class="feed-accordions" role="tablist">
     <h2 class="feed-accordions-title"><?= $this->transEsc($this->title); ?></h2>
-    <?php $i = 0; foreach ($this->feedIds as $desc => $feed): ?>
+    <?php $i = 0;
+    foreach ($this->feedIds as $desc => $feed): ?>
       <?php
         $classes = ['accordion', 'accordion-' . $tabNames[$i++]];
         $isActive = 0 === strcasecmp($this->active, $feed);

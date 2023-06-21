@@ -29,7 +29,7 @@
     return false;
   };
 
-  if (!empty($urls)){
+  if (!empty($urls)) {
     foreach ($urls as $url) {
       if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
         $videoUrls[] = $url;
@@ -161,7 +161,9 @@
         <?php $addRenderedUrl($url); ?>
       <?php endforeach; ?>
       <?php foreach ($onlineURLs ?? [] as $url): ?>
-        <?php if ($isRendered($url)) { continue; } ?>
+        <?php if ($isRendered($url)) {
+          continue;
+        } ?>
         <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><i class="fa fa-external-link"></i> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
           <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part'])?><?php endif; ?>
           <?php if ($url['source']): ?>
@@ -198,7 +200,8 @@
     </div>
 
     <div class="record-core-metadata">
-      <?php $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
+      <?php $formats = $this->driver->getFormats();
+      if (!empty($formats)): ?>
         <div class="recordFormat">
           <?=$this->record($this->driver)->getFormatList()?><br>
         </div>
@@ -225,22 +228,26 @@
 
       <?=$this->record($driver)->renderTemplate('container-links.phtml');?>
 
-      <?php $publications = $this->driver->getPublicationDetails(); if (!empty($publications)): ?>
+      <?php $publications = $this->driver->getPublicationDetails();
+      if (!empty($publications)): ?>
         <span class="recordPublications">
           <?php foreach ($publications as $field): ?>
             <span property="publisher" typeof="Organization">
-              <?php $pubName = $field->getName(); if (!empty($pubName)): ?>
+              <?php $pubName = $field->getName();
+              if (!empty($pubName)): ?>
                 <span property="name"><?=$this->escapeHtml($pubName)?></span>
               <?php endif; ?>
             </span>
-            <?php $pubDate = $field->getDate(); if (!empty($pubDate)): ?>
+            <?php $pubDate = $field->getDate();
+            if (!empty($pubDate)): ?>
               <span property="datePublished"><?=$this->escapeHtml($pubDate)?></span>
             <?php endif; ?>
           <?php endforeach; ?>
         </span>
       <?php endif; ?>
 
-      <?php $edition = $this->driver->getEdition(); if (!empty($edition)): ?>
+      <?php $edition = $this->driver->getEdition();
+      if (!empty($edition)): ?>
         <span class="recordEdition">
           <span property="bookEdition"><?=$this->escapeHtml($edition)?></span>
         </span>

@@ -276,6 +276,8 @@ $config = [
             'search' => 'FontAwesome:search',
             'service-available' => 'FontAwesome:ok',
             'service-unavailable' => 'FontAwesome:remove',
+            'status-available' => 'FontAwesome:ok',
+            'status-unknown' => 'FontAwesome:circle-o',
             'twitter' => 'FontAwesome:twitter',
         ],
     ],

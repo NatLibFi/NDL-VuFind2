@@ -78,7 +78,7 @@ class SolrDefaultFactory extends \VuFind\RecordDriver\SolrDefaultWithoutSearchSe
             $container->get(\VuFind\Config\PluginManager::class)->get('datasources')
         );
         $driver->attachVideoHandler($container->get(\Finna\Video\Video::class));
-
+        $driver->attachLocaleSettings($container->get(\VuFind\I18n\Locale\LocaleSettings::class));
         return $driver;
     }
 }

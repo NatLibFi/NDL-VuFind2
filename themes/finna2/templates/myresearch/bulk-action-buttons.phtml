@@ -19,7 +19,8 @@
     <div class="mylist-functions btn-group">
       <span class="sr-only"><?=$this->transEsc('bulk_noitems_advice')?></span>
       <button class="btn btn-primary" type="submit" name="email" value="<?=$this->transEscAttr('Email')?>" title="<?=$this->transEscAttr('bookbag_email_selected')?>" disabled<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>><?=$this->transEsc('Email')?></button>
-      <?php $exportOptions = $this->export()->getActiveFormats('bulk'); if (count($exportOptions) > 0): ?>
+      <?php $exportOptions = $this->export()->getActiveFormats('bulk');
+      if (count($exportOptions) > 0): ?>
         <button class="btn btn-primary" type="submit" name="export" value="<?=$this->transEscAttr('Export')?>" title="<?=$this->transEscAttr('bookbag_export_selected')?>" disabled<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>><?=$this->transEsc('Export')?></button>
       <?php endif; ?>
       <?php if ((null !== $this->list && $this->list->editAllowed($user)) || (null === $this->list && $user)): ?>
@@ -29,7 +30,9 @@
         <select id="add-to-list" class="btn btn-primary form-control" autocomplete="off" aria-label="<?= $this->translate('Add to List'); ?>" disabled<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>>
           <option value=""><?= $this->translate('Add to List'); ?>&hellip;</option>
           <?php foreach ($lists as $l): ?>
-            <?php if ($list && $list->id == $l->id) { continue; } ?>
+            <?php if ($list && $list->id == $l->id) {
+              continue;
+            } ?>
             <?php $title = $this->truncate($l->title, 20) ?>
             <option value="<?=$this->escapeHtmlAttr($l->id) ?>"><?=$this->escapeHtml($title) ?></option>
           <?php endforeach; ?>

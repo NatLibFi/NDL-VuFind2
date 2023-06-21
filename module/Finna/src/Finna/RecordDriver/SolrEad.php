@@ -284,8 +284,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
             }
         }
 
-        $parts = explode('_', $language);
-        $language = $parts[0];
+        [$language] = explode('-', $language);
         switch ($language) {
             case 'fi':
                 $language = 'fin';

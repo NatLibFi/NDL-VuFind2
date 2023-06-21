@@ -77,14 +77,16 @@
           <?php if ($this->driver->isCollection()): ?>
             <?=implode('<br>', $this->driver->getSummary()); ?>
           <?php else: ?>
-            <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles'); if (!empty($authors)): ?>
+            <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles');
+            if (!empty($authors)): ?>
               <div class="truncate-field" data-rows="1">
                 <?php foreach($authors as $index => $author): ?>
                   <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
                 <?php endforeach; ?>
               </div>
             <?php endif; ?>
-            <?php $containerTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDateRange(); ?>
+            <?php $containerTitle = $this->driver->getContainerTitle();
+            $summDate = $this->driver->getPublicationDateRange(); ?>
             <?php if (!empty($containerTitle)): ?>
               <div class="truncate-field" data-rows="1">
                 <?=$this->transEsc('Published in')?>
@@ -133,7 +135,8 @@
               </div>
             <?php endif; ?>
 
-            <?php $summInCollection = $this->driver->getContainingCollections(); if (!empty($summInCollection)): ?>
+            <?php $summInCollection = $this->driver->getContainingCollections();
+            if (!empty($summInCollection)): ?>
               <?php foreach ($summInCollection as $collId => $collText): ?>
                 <div>
                   <b><?=$this->transEsc("in_collection_label")?></b>
@@ -175,7 +178,8 @@
         <?php endif; ?>
 
         <?php /* Hierarchy tree link */ ?>
-        <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
+        <?php $trees = $this->driver->tryMethod('getHierarchyTrees');
+        if (!empty($trees)): ?>
             <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
             <div class="hierarchyTreeLink">
               <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId">

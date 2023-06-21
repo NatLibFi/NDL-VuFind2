@@ -293,6 +293,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 'createdate' => $this->convertDate($entry['date'] ?? null),
                 'checkout' => '',
                 'payableOnline' => $payableOnline,
+                'organization' => $entry['library_id'] ?? '',
             ];
             if (null !== $bibId) {
                 $fine['id'] = $bibId;

@@ -1,7 +1,14 @@
 <!-- START of: finna - search/advanced/multiselect.phtml -->
+<?php
+  $filenameHeader = 'advanced/' . $field . '-facet-information-header.phtml';
+  $filenameFooter = 'advanced/' . $field . '-facet-information-footer.phtml';
+?>
 <div class="facet">
   <div class="solr-adv-filter <?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>-container">
     <label id="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>"><?=$this->transEsc($this->list['label'])?>:</label>
+    <?php if ($this->resolver($filenameHeader)): ?>
+      <?=$this->render($filenameHeader) ?>
+    <?php endif; ?> 
     <select class="finna-multiselect init" aria-labelledby="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>" name="filter[]"  multiple="multiple">
       <?php if (is_array($this->hierarchicalFacets) && in_array($this->field, $this->hierarchicalFacets)): ?>
         <?php foreach ($this->list['list'] as $key => $value): ?>
@@ -22,5 +29,8 @@
     <ul aria-multiselectable="true" role="listbox" aria-label="<?= $this->transEsc('Add filter') . ' ' . $this->transEsc($this->list['label']) ?>" tabindex="0" class="finna-multiselect done" aria-activedescendant=""></ul>
     <button type="button" class="finna-multiselect clear btn btn-link"><?= $this->transEsc('Clear Selections') ?></button> 
   </div>
+  <?php if ($this->resolver($filenameFooter)): ?>
+    <?=$this->render($filenameFooter) ?>
+  <?php endif; ?>  
 </div>
 <!-- END of: finna - search/advanced/multiselect.phtml -->

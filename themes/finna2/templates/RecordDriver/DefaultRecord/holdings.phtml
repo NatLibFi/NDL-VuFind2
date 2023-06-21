@@ -36,7 +36,8 @@
       </span>
       <div class="locationDetails"></div>
     <?php else: ?>
-      <?php $summCallNo = $this->driver->getCallNumber(); if (!empty($summCallNo)): ?>
+      <?php $summCallNo = $this->driver->getCallNumber();
+      if (!empty($summCallNo)): ?>
         <strong><?=$this->transEsc('Call Number')?>:</strong> <?=$this->escapeHtml($summCallNo)?>
       <?php endif; ?>
     <?php endif; ?>

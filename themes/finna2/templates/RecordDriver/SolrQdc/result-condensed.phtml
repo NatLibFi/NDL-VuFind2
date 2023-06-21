@@ -48,11 +48,13 @@
           <?php if($this->driver->isCollection()): ?>
             <?=implode('<br>', $this->driver->getSummary()); ?>
           <?php else: ?>
-            <?php $summAuthor = $this->driver->getPrimaryAuthor(); if (!empty($summAuthor)): ?>
+            <?php $summAuthor = $this->driver->getPrimaryAuthor();
+            if (!empty($summAuthor)): ?>
               <?php $authorForSearch = $this->driver->tryMethod('getPrimaryAuthorForSearch'); ?>
               <a href="<?=$this->record($this->driver)->getLink('author', $authorForSearch ? $authorForSearch : $summAuthor)?>"><?=$this->escapeHtml($summAuthor) ?></a>
             <?php else: ?>
-              <?php $authors = $this->driver->tryMethod('getNonPresenterAuthors'); if (!empty($authors)): ?>
+              <?php $authors = $this->driver->tryMethod('getNonPresenterAuthors');
+              if (!empty($authors)): ?>
               <div class="truncate-field" data-rows="2">
                 <?php foreach ($authors as $i => $author): ?>
                   <?=$i > 0 ? ' ; ' : '' ?>
@@ -63,7 +65,8 @@
               </div>
               <?php endif; ?>
             <?php endif; ?>
-            <?php $journalTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDateRange(); ?>
+            <?php $journalTitle = $this->driver->getContainerTitle();
+            $summDate = $this->driver->getPublicationDateRange(); ?>
             <?php if (!empty($journalTitle)): ?>
               <?=!empty($summAuthor) ? '' : ' '?>
               <?php
@@ -82,7 +85,8 @@
                 }
               ?>
               <?=/* TODO: handle highlighting more elegantly here */ $this->transEsc('Published in') . ' <a href="' . $parentLink . '">' . $this->highlight($journalTitle) . '</a>';?>
-              <?php $ref = $this->driver->getContainerReference(); if (!empty($ref)): ?>
+              <?php $ref = $this->driver->getContainerReference();
+              if (!empty($ref)): ?>
                 <?=$this->escapeHtml($ref); ?>
               <?php else: ?>
                 <?=!empty($summDate) ? ' (' . implode('&ndash;', array_map($this->escapeHtml, $summDate)) . ')' : ''?>
@@ -119,7 +123,8 @@
     <?php endif; ?>
     <div class="media-body">
       <div class="result-body">
-        <?php $classifications = $this->driver->tryMethod('getClassifications'); if (!empty($classifications)): ?>
+        <?php $classifications = $this->driver->tryMethod('getClassifications');
+        if (!empty($classifications)): ?>
           <div class="resultClassification">
             <?=$this->transEsc('Classification') ?>:
             <?php
@@ -144,7 +149,8 @@
           </div>
         <?php endif; ?>
 
-        <?php $summInCollection = $this->driver->getContainingCollections(); if (!empty($summInCollection)): ?>
+        <?php $summInCollection = $this->driver->getContainingCollections();
+        if (!empty($summInCollection)): ?>
           <?php foreach ($summInCollection as $collId => $collText): ?>
             <div>
               <b><?=$this->transEsc("in_collection_label")?></b>
@@ -166,7 +172,8 @@
             </p>
           </div>
         <?php else: ?>
-           <?php $summary = $this->driver->getSummary(); $summary = isset($summary[0]) ? $this->escapeHtml($summary[0]) : false; ?>
+           <?php $summary = $this->driver->getSummary();
+           $summary = isset($summary[0]) ? $this->escapeHtml($summary[0]) : false; ?>
            <?php if ($summary): ?>
            <div class="truncate-field wide">
               <p class="summary"><?=$summary ?></p>
@@ -187,7 +194,8 @@
               <a href="<?=$this->escapeHtmlAttr($recordLinker->getActionUrl($this->driver, 'Save'))?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-heart"></i> <span class="hidden-sm hidden-md hidden-lg"><?=$this->transEsc('Add to favorites')?></span> <span class="sr-only hidden-xs"><?=$this->transEsc('Add to favorites')?></span></a>
             <?php endif; ?>
             <?php /* Hierarchy tree link */ ?>
-            <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
+            <?php $trees = $this->driver->tryMethod('getHierarchyTrees');
+            if (!empty($trees)): ?>
                 <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
                 <div class="hierarchyTreeLink">
                   <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId">

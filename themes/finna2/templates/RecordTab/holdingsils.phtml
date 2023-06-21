@@ -7,6 +7,7 @@
     $openUrlActive = $openUrl->isActive();
     $doi = $this->doi($this->driver, 'holdings');
     $doiActive = $doi->isActive();
+    $allowArchiveRequest = $this->driver->tryMethod('archiveRequestAllowed');
     // Account for replace_other_urls setting
     $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
     $offlineMode = $this->ils()->getOfflineMode();
@@ -100,6 +101,15 @@
 
 <?=($offlineMode == "ils-offline") ? $this->render('Helpers/ils-offline.phtml', ['offlineModeMsg' => 'ils_offline_holdings_message']) : ''?>
 
+<?php if ($user && $allowArchiveRequest): ?>
+  <div class="text-right">
+    <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($driver, 'ArchiveRequest'))?>" class="btn btn-primary" data-lightbox="" data-toggle="modal" data-target="order_archive_material_form" data-lightbox><?=$this->transEsc('archive_request_reserve_action')?></a>
+  </div>
+<?php elseif (!$user && $allowArchiveRequest && !$holdsAllowed): ?>
+  <div class="text-right">    
+    <a href="<?=$this->url('myresearch-userlogin') ?>" class="btn btn-primary" data-lightbox><span><?=$this->transEsc('archive_request_login')?></span></a>
+  </div>
+<?php endif; ?>
 <?php if ($this->driver && $recordSource && $externalInterfaceUrl):?>
   <?=$this->record($driver)->renderTemplate('external-interface-link.phtml', ['driver' => $driver, 'source' => $recordSource, 'link' => $externalInterfaceUrl ?? ''])?>
 <?php endif;?>
@@ -153,7 +163,8 @@
       <a class="expandedCheckILLRequest placeILLRequest btn btn-primary hidden-print" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getRequestUrl($illRequestLink))?>" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('ill_request_place_text') . ': ' . $this->driver->getTitle()) ?>"><?=$this->transEsc("ill_request_check_text")?></a>
     <?php endif; ?>
     <?php if ($holdsAllowed && !$disableTitleHold): ?>
-      <?php $holdingTitleHold = $this->driver->tryMethod('getRealTimeTitleHold'); if (!empty($holdingTitleHold)): ?>
+      <?php $holdingTitleHold = $this->driver->tryMethod('getRealTimeTitleHold');
+      if (!empty($holdingTitleHold)): ?>
         <a class="placehold btn btn-primary hidden-print" data-lightbox data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('title_hold_place') . ': ' . $this->driver->getTitle()) ?>" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getRequestUrl($holdingTitleHold))?>"> <?=$this->transEsc('title_hold_place')?></a>
       <?php elseif ($user): ?>
         <?php
@@ -181,7 +192,8 @@
     <?php endif; ?>
 
     <?php if ($repositoryLibraryRequestAllowed): ?>
-      <?php $user = $this->auth()->isLoggedIn(); if ($user): ?>
+      <?php $user = $this->auth()->isLoggedIn();
+      if ($user): ?>
         <?php if ($user->getLibraryCards()->count()): ?>
           <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'RepositoryLibraryRequest'))?>" data-lightbox class="btn btn-primary repository-library-request-order"><?=$this->transEsc('repository_library_request_order')?><span class="sr-only"> - <?=$this->escapeHtml($this->driver->getTitle())?></span></a>
         <?php else: ?>
@@ -252,17 +264,16 @@
     ++$holdingsGroup;
 
     $available = 0;
+    $uncertain = false;
     $firstDueDate = '';
     $firstDueStr = '';
     $statuses = [];
     $requests = 0;
     foreach ($holding['items'] as $row) {
-      if ($row['availability']) {
-        if (is_int($row['availability'])) {
-          $available += $row['availability'];
-        } else {
-          ++$available;
-        }
+      if ((int)$row['availability'] === \VuFind\ILS\Logic\ItemStatus::STATUS_AVAILABLE) {
+        $available += $row['availabilityInfo']['available'] ?? 1;
+      } elseif ($row['availability'] === \VuFind\ILS\Logic\ItemStatus::STATUS_UNCERTAIN) {
+        $uncertain = true;
       }
       if (!empty($row['duedate']) && empty($row['ignoreDueDate'])) {
         $date = strtotime($row['duedate']);
@@ -279,13 +290,17 @@
       }
     }
     if ($available) {
-      $holdingSummary = '<span class="text-success"><i class="fa fa-ok" aria-hidden="true"></i> ' . $this->translate('status_items_available_html', ['%%count%%' => $available]) . '</span>';
+      $holdingSummary = '<span class="text-success">' . $this->icon('status-available', 'text-success') . ' ' . $this->translate('status_items_available_html', ['%%count%%' => $available]) . '</span>';
     } elseif ($firstDueStr) {
-      $holdingSummary = '<span class="text-danger"><i class="fa fa-remove" aria-hidden="true"></i> ' . $this->transEsc('closest_due_date', ['%%date%%' => $firstDueStr]) . '</span>';
+      $holdingSummary = '<span class="text-danger">' . $this->icon('status-unavailable', 'text-danger') . ' ' . $this->transEsc('closest_due_date', ['%%date%%' => $firstDueStr]) . '</span>';
     } elseif ($statuses) {
-      $holdingSummary = '<span class="text-danger"> ' . $this->escapeHtml(implode(' ', array_flip($statuses))) . '</span>';
+      if ($uncertain) {
+        $holdingSummary = '<span class="text-warning">' . $this->icon('status-unknown', 'text-warning') . ' ' . $this->escapeHtml(implode(' ', array_flip($statuses))) . '</span>';
+      } else {
+        $holdingSummary = '<span class="text-danger"> ' . $this->escapeHtml(implode(' ', array_flip($statuses))) . '</span>';
+      }
     } else {
-      $holdingSummary = '<span class="text-success"><i class="fa fa-ok" aria-hidden="true"></i> ' . $this->transEsc('Available') . '</span>';
+      $holdingSummary = '<span class="text-success">' . $this->icon('status-available', 'text-success') . ' ' . $this->transEsc('Available') . '</span>';
     }
 
     $additionalSummary = [];

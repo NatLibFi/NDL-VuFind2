@@ -9,7 +9,9 @@ $fields = [
   <?php foreach($data as $d): ?>
     <dl class="switcher-line-xxxs">
       <?php foreach ($fields as $key): ?>
-        <?php if (empty($d[$key])) { continue; } ?>
+        <?php if (empty($d[$key])) {
+          continue;
+        } ?>
         <div>
           <dt><?=$this->transEsc("kavi_{$key}")?></dt>
           <dd><?=$this->escapeHtml($d[$key])?></dd>

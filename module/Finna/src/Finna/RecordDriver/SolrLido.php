@@ -2034,6 +2034,52 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     }
 
     /**
+     * Get physical locations
+     *
+     * @return array
+     */
+    public function getPhysicalLocations(): array
+    {
+        $results = [];
+        foreach (
+            $this->getXmlRecord()->lido->descriptiveMetadata->objectIdentificationWrap
+            ->repositoryWrap->repositorySet ?? [] as $repository
+        ) {
+            $type = (string)($repository->attributes()->type ?? '');
+            if ($type !== 'Current location') {
+                continue;
+            }
+            $locations = [];
+            foreach ($repository->repositoryLocation->namePlaceSet ?? [] as $nameSet) {
+                if ($name = trim((string)$nameSet->appellationValue ?? '')) {
+                    $locations[] = $name;
+                }
+            }
+            foreach ($repository->repositoryLocation->partOfPlace ?? [] as $part) {
+                while ($part->namePlaceSet ?? false) {
+                    if ($partName = trim((string)$part->namePlaceSet->appellationValue ?? '')) {
+                        $locations[] = $partName;
+                    }
+                    $part = $part->partOfPlace;
+                }
+            }
+            if ($locations) {
+                $results[] = implode(', ', $locations);
+            }
+            $lang = $this->getLocale();
+            if (
+                $display = trim(
+                    (string)($this->getLanguageSpecificItem($repository->displayRepository, $lang))
+                    ?? ''
+                )
+            ) {
+                $results[] = $display;
+            }
+        }
+        return $results;
+    }
+
+    /**
      * Get a language-specific item from an element array
      *
      * @param SimpleXMLElement $element  Element to use
@@ -2046,8 +2092,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         $languages = [];
         if ($language) {
             $languages[] = $language;
-            if (strlen($language) > 2) {
-                $languages[] = substr($language, 0, 2);
+            // Add region-less language if needed:
+            $parts = explode('-', $language, 2);
+            if (isset($parts[1])) {
+                $languages[] = $parts[0];
             }
         }
         foreach ($languages as $lng) {

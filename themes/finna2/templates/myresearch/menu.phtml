@@ -136,7 +136,9 @@
     </div>
     <ul class="dropdown-menu">
       <?php foreach ($menuListItems as $id => $listItem) : ?>
-        <?php if (isset($listItem['desktopOnly']) && $listItem['desktopOnly']) { continue; } ?>
+        <?php if (isset($listItem['desktopOnly']) && $listItem['desktopOnly']) {
+          continue;
+        } ?>
         <?php if (!isset($listItem['show']) || $listItem['show'] !== false): ?>
           <li role="menuitem" class="<?=$id?><?= $activeToLower === $id ? ' active' : ''?>">
             <a href="<?=$this->escapeHtmlAttr($this->url($listItem['url']) . ($listItem['query'] ?? ''))?>" class="list-group-item" <?=$activeToLower === $id ? 'aria-current="page"' : ''?>>

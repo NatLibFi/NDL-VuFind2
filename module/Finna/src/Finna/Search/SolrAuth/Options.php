@@ -41,6 +41,13 @@ namespace Finna\Search\SolrAuth;
 class Options extends \VuFind\Search\SolrAuth\Options
 {
     /**
+     * Default view option
+     *
+     * @var string
+     */
+    protected $defaultView = 'condensed';
+
+    /**
      * Return the route name for the search results action.
      *
      * @return string

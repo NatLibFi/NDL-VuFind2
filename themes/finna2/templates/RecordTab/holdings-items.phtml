@@ -62,10 +62,29 @@
         <?php else: ?>
           <?php if ($row['availability']): ?>
             <?php /* Begin Available Items (Holds) */ ?>
-            <span class="text-success">
-              <i class="fa fa-ok" aria-hidden="true"></i>
-              <?=isset($row['availabilityInfo']['displayText']) ? $this->transEsc('status_' . $row['availabilityInfo']['displayText'], [], $row['availabilityInfo']['displayText']) : $this->transEsc('Available')?>
-              <link property="availability" href="http://schema.org/InStock">
+            <?php
+              if ((int)$row['availability'] === \VuFind\ILS\Logic\ItemStatus::STATUS_UNCERTAIN) {
+                $statusClassEsc = 'text-warning';
+                $icon = 'status-unknown';
+                $status = 'status_' . $row['status'];
+                $schemaAvailEsc = 'http://schema.org/LimitedAvailability';
+              } else {
+                $statusClassEsc = 'text-success';
+                $icon = 'status-available';
+                if (is_int($row['availability']) && !empty($row['status'])) {
+                  $status = 'status_' . $row['status'];
+                } elseif (isset($item['availabilityInfo']['displayText'])) {
+                  $status = 'status_' . $item['availabilityInfo']['displayText'];
+                } else {
+                  $status = 'Available';
+                }
+                $schemaAvailEsc = 'http://schema.org/InStock';
+              }
+            ?>
+            <span class="<?=$statusClassEsc?>">
+              <?=$this->icon($icon, $statusClassEsc)?>
+              <?=$this->transEsc($status)?>
+              <link property="availability" href="<?=$schemaAvailEsc?>">
             </span>
             <?php if (isset($row['requests_placed']) && $row['requests_placed'] > 0): ?>
               &ndash;&nbsp;<span class="small"><?=$this->translate('status_requests_html', ['%%count%%' => $this->escapeHtml($row['requests_placed'])])?></span>
@@ -85,7 +104,7 @@
             </div>
           <?php else: ?>
             <?php /* Begin Unavailable Items (Recalls) */ ?>
-            <span class="text-danger"><?=$row['status'] == 'Ordered' ? '' : '<i class="fa fa-remove" aria-hidden="true"></i>';?> <?=$this->transEsc('status_' . $row['status'], null, $this->translate($row['status']))?><link property="availability" href="http://schema.org/OutOfStock"> </span>
+            <span class="text-danger"><?=$row['status'] == 'Ordered' ? '' : $this->icon('status-unavailable');?> <?=$this->transEsc('status_' . $row['status'], null, $this->translate($row['status']))?><link property="availability" href="http://schema.org/OutOfStock"> </span>
             <?php if (isset($row['returnDate']) && $row['returnDate']): ?>&ndash; <span class="small"><?=$this->escapeHtml($row['returnDate'])?></span><?php endif; ?>
             <?php if (isset($row['duedate']) && $row['duedate']): ?>
               &ndash;&nbsp;<span class="small"><?=$this->transEsc('Due')?>:&nbsp;<?=$this->escapeHtml($row['duedate'])?></span>

@@ -3,19 +3,19 @@
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
   $img = $this->recordImage($this->record($this->driver));
   $urls = $this->record($this->driver)->getLinkDetails();
-  if (!empty($urls)){
-      $videoUrls = [];
-      $audioUrls = [];
-      $otherUrls = [];
-      foreach ($urls as $url){
-          if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'){
-            array_push($videoUrls, $url);
-          } elseif (!empty($url['embed']) && $url['embed'] == 'audio') {
-            array_push($audioUrls, $url);
-          } else {
-            array_push($otherUrls, $url);
-          }
+  if (!empty($urls)) {
+    $videoUrls = [];
+    $audioUrls = [];
+    $otherUrls = [];
+    foreach ($urls as $url) {
+      if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
+        array_push($videoUrls, $url);
+      } elseif (!empty($url['embed']) && $url['embed'] == 'audio') {
+        array_push($audioUrls, $url);
+      } else {
+        array_push($otherUrls, $url);
       }
+    }
   }
 
   $thumbnail = false;

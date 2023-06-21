@@ -2,6 +2,7 @@
 <?php
   $isManyTabs = (count($searchTabs) > 2);
   $module = $this->layout()->templateDir;
+  $hasSelectedTab = false;
 ?>
 <?php if (!$isManyTabs): ?>
   <div class="tabs-table">
@@ -18,7 +19,10 @@
     ?>
     <ul class="nav nav-tabs <?=$isManyTabs ? ' many-tabs hidden-xs' : '';?>">
       <?php foreach ($searchTabs as $tab): ?>
-        <?php if ($tab['selected']) { $this->layout()->currentTabId = $tab['id']; } ?>
+        <?php if ($tab['selected']) {
+          $this->layout()->currentTabId = $tab['id'];
+          $hasSelectedTab = true;
+        } ?>
         <li class="<?=$tab['selected'] ? 'active' : 'hidden-print'?>">
           <a <?=$tab['selected'] ? 'aria-current="true"' : 'href="' . $this->escapeHtmlAttr($tab['url']) . '"' ?>><?=$this->transEsc($tab['label']); ?></a>
           <?php if (!$this->translationEmpty('tooltip_' . $tab['label'] . '_html') && $this->layout()->templateName !== 'advanced'): ?>
@@ -35,6 +39,11 @@
           <?php endif; ?>
         </li>
       <?php endforeach; ?>
+      <?php if (!$hasSelectedTab && !$this->translationEmpty('temporary_search_tab_title')): ?>
+        <li class="active">
+          <a><?=$this->transEsc('temporary_search_tab_title')?></a>
+        </li>
+      <?php endif; ?>
     </ul>
     <?php if (!$this->translationEmpty("search_tab_tip_{$module}_html")) :?>
       <div class="search-tab-tip">
@@ -53,7 +62,9 @@
         <?php endforeach; ?>
         <ul class="dropdown-menu" role="menu">
           <?php foreach ($searchTabs as $tab): ?>
-            <?php if ($tab['selected']) { $this->layout()->currentTabId = $tab['id']; } ?>
+            <?php if ($tab['selected']) {
+              $this->layout()->currentTabId = $tab['id'];
+            } ?>
             <li role="menuitem" class="<?=$tab['selected'] ? 'active' : ''?>">
               <a <?=$tab['selected'] ? 'aria-current="true"' : 'href="' . $this->escapeHtmlAttr($tab['url']) . '"' ?>><?=$this->transEsc($tab['label']); ?></a>
             </li>

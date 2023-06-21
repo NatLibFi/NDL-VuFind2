@@ -56,7 +56,8 @@
         </div>
       <?php endif; ?>
 
-      <?php $summ = $this->driver->getSummary(); if (!empty($summ)): ?>
+      <?php $summ = $this->driver->getSummary();
+      if (!empty($summ)): ?>
       <div class="truncate-field wide recordSummary">
         <p class="summary">
         <?php foreach ($summ as $field): ?>

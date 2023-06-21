@@ -1,4 +1,5 @@
-<?php $termsOfUse = $this->driver->tryMethod('getTermsOfUse'); if (!empty($termsOfUse)): ?>
+<?php $termsOfUse = $this->driver->tryMethod('getTermsOfUse');
+if (!empty($termsOfUse)): ?>
   <?php
     $termFunc = function ($term) {
       $text = $term['terms'] ?? '';

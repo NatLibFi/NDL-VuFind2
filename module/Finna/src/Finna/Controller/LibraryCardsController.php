@@ -874,7 +874,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 $message
             );
         } catch (\VuFind\Exception\Mail $e) {
-            $this->flashMessenger()->addMessage($e->getMessage(), 'error');
+            $this->flashMessenger()->addMessage($e->getDisplayMessage(), 'error');
         }
     }
 

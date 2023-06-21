@@ -1,125 +1,205 @@
 <!-- START of: finna - content/help-basic_en.phtml -->
+<?php $this->headTitle($this->translate('tabs_help-basic'))?>
+
 <?php if ($this->resolver('content/help-tabs.phtml')): ?>
     <?=$this->render('content/help-tabs.phtml', ['activeTab' => 'help-basic'])?>
 <?php endif; ?>
-<div>
-  <div class="sidebar left">
-    <div class="content-navigation-menu">
-    </div>
+<div class="sidebar left">
+  <div class="content-navigation-menu">
   </div>
-  <div class="mainbody right">
-    <div id="basicsearch" class="content-section">
-      <h2><i class="fa fa-search"></i> Free word search</h2>
-      <p>Enter your search terms in the search box. In the drop-down menu at the end of the search box, you can choose to search by title, author or subject.</p>
-      <p>Search terms separated by spaces use the AND search logic and will return results containing all of your search terms.<p>
-      <p>For example:</p>
-      <pre class="code">mannerheim carl</pre>
-      <p>produces the same search results as</p>
-      <pre class="code">mannerheim AND carl</pre>
-      <p>After starting your search, you can for example narrow your search results by permissible uses, type of material or date of manufacture.</p>
-      <pre class="code">child</pre>
-      <p>The search results return material related to children</p>
-      <pre class="code">"children"</pre>
-      <p>This is a targeted search in which the quotes limit the search results to those that contain the word ”children.”</p>
-      <pre class="code">"University of Helsinki"</pre>
-      <p>It’s always a good idea to put phrases like these in quotes so that Finna doesn’t interpret your search as separate words</p>
-      <pre class="code">children summer</pre>
-      <p>This search is the same as entering children AND summer; the search will include all results related to children and summer</p>
-      <pre class="code">countryside OR farm</pre>
-      <p>The search results will include results related to the countryside or to farms</p>
-      <pre class="code">"kivi aleksis"</pre>
-      <p>The author’s name should be in quotes, and ideally the last name should be entered first</p>
-      <pre class="code">know*</pre>
-      <p>The asterisk truncates words so that the search may return results with a number of different endings, e.g. knowledge and know-how</p>
-      <p>If, for example, you enter the name of a book in the search box, Finna predicts your search terms by offering results that may allow you to find your book directly.</p>
-      <p><strong>You can find more instructions on forming search phrases in  <a href="<?=$this->url('content-page', ['page' => 'help-syntax'])?>">the Search syntax section</a>.</strong></p>
-    </div>
-    <div id="narrowsearch" class="content-section">
-      <h2>Narrowing your search</h2>
-      <p>The search results page displays the best results at the top based on the relevance of the match. You can change the order of the results by, for example, changing the date of manufacture to view from oldest to newest. Additionally you can view the search results as a summary list or in gallery format.</p>
-
-      <?php
-        $facetFields = $this->config()->getFacetFields();
-        $checkboxFacets = $this->config()->getCheckboxFacets();
-      ?>
-
-      <?php if (isset($checkboxFacets['online_boolean:1']) || isset($checkboxFacets['free_online_boolean:1'])): ?>
-        <p><strong>Available Online</strong>: limits results to those accessible online via Finna.</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['usage_rights_ext_str_mv'])): ?>
-        <p><strong>Usage rights</strong>: Pertains to material that is available online. The filter has various options depending on the usage rights for resources (CC licences, Rights Statements).</p>
-        <p>For further information on usage rights, please see <a href="/Content/terms">Material usage rights</a>. The user is responsible for respecting copyright and privacy laws.</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['usage_rights_str_mv'])): ?>
-        <p><strong>Permissible uses</strong>: Pertains to material that is available online. The filter has various options depending on the usage rights for resources.</p>
-        <ul class="list-bullets">
-          <li><strong>Free use</strong></li>
-          <li><strong>Can be edited</strong>
-            <ul class="list-bullets">
-              <li>Not for commercial use</li>
-              <li>Also for commercial use</li>
-            </ul>
-          </li>
-          <li><strong>Cannot be edited</strong>
-            <ul class="list-bullets">
-              <li>Not for commercial use</li>
-              <li>Also for commercial use</li>
-              <li>Authorised use only/unknown</li>
-            </ul>
-          </li>
-        </ul>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['format']) || isset($facetFields['format_ext_str_mv'])): ?>
-        <p><strong>Type of material</strong>: includes different options based on the materials available in the collections, for example, pictures, objects, books, etc.</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['author_facet']) || isset($facetFields['author2_id_str_mv'])): ?>
-        <p><strong>Author</strong>: the creator(s) of the work or the rights holder(s)</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['topic_facet'])): ?>
-        <p><strong>Subject</strong>: ready subject headings to help filter your search</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['geographic_facet'])): ?>
-        <p><strong>Place</strong>: where the desired material is from</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['search_daterange_mv'])): ?>
-        <p><strong>Date of manufacture</strong>: You can use the date of manufacture to display materials from a specific time period, for example, the 1980s-1990s. The bars in the chart will display the time periods in which materials are available.</p>
-        <ul class="list-bullets">
-          <li>All results</li>
-          <li>Results restricted to the indicated time period</li>
-          <li>Filter the results by date of publication, manufacture and creation</li>
-        </ul>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['language'])): ?>
-        <p><strong>Language</strong>: displays the language(s) in which the search results appear.</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['hierarchy_parent_title'])): ?>
-        <p><strong>Included in a publication</strong>: will provide the name of the journal, if, for example, the results include articles.</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['sector_str_mv'])): ?>
-        <p><strong>Sector</strong>: the type of organisation – either a museum, archive or library.</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['building'])): ?>
-        <p><strong>Organisation</strong>: displays all of the archives, libraries and museums whose collections appear in the results.</p>
-      <?php endif; ?>
-
-      <?php if (isset($facetFields['first_indexed'])): ?>
-        <p><strong>New on Finna</strong>: Displays the collections which have most recently been added to Finna.</p>
-      <?php endif; ?>
-
-      <h3>Once you’ve selected your filters…</h3>
-      <p>Finna saves your selected filters and displays them below the search box. You can remove a single filter by simply clicking on the X by the filter in question. You can remove all filters by clicking and undoing the check mark by Save filters and starting a new search.</p>
-    </div>
+</div>
+<div class="mainbody right">
+  <h1>Basic search instructions</h1>
+  <div id="basicsearch" class="content-section">
+    <h2>Free text search</h2>
+    <p>Start your search by typing your search terms into the search field. As you type, the search will try to predict your term by offering suggestions, such as the title of a book. This may help you find what you are looking for.</p>
+    <p>Search terms separated by spaces use the AND search logic and will return results containing all of your search terms.</p>
+    <p>For example:</p>
+    <pre class="code">Jansson Tove</pre>
+    <p>functions identically to</p>
+    <pre class="code">Jansson AND Tove</pre>
+    <h3>Preliminary filtering</h3>
+    <p>You can use the drop-down menu in the search field to limit your search to the title, author or subject. </p>
+    <p>You can further narrow your search on the results page by adding filters such as permissible uses, content type or year of manufacture. </p>
+    <h3>Search phrase examples</h3>
+    <p>Using the free text search to find material on bicycles:</p>
+    <pre class="code">bicycle</pre>
+    <p>Your search results will be more specific if you use quotes. This will restrict the search to material which feature the exact word “bicycles”:</p>
+    <pre class="code">“bicycles”</pre>
+    <p>If you are searching for a phrase or compound noun, use quotes. This way, the search will not interpret the words as separate search terms:</p>
+    <pre class="code">“University of Helsinki”</pre>
+    <p>Using the OR operator will return results that feature one or more of your search terms. This example search will find results relating to farms or farming:</p>
+    <pre class="code">farm OR farming</pre>
+    <p>If you are searching by author, type the last name first and use quotes:</p>
+    <pre class="code">“Jansson Tove”</pre>
+    <p>An asterisk may be used to truncate the search term to yield results with variations of the term, such as: farms, farming and farmland:</p>
+    <pre class="code">farm*</pre>
+  </div>
+  <div id="narrowing-search" class="content-section">
+    <h2>Narrowing your search</h2>
+    <p>As the default, the search results page displays the best results at the top, based on the relevance of the match.  You can also change the order of the search results, for example, you can display them in chronological order by year of manufacture or publication date. Additionally you can view the search results as a condensed list or image gallery.</p>
+    <h3>Filtering search results</h3>
+    <p>You can use the filters on the left-hand side of the results page to refine your search results.</p>
+    <p><strong>Available online:</strong> Only shows results which can be accessed through Finna.</p>
+    <p><strong>Usage rights:</strong> Pertains to material that is available online. The filter has various options depending on the usage rights for resources (CC licences, Rights Statements).</p>
+    <p>For further information on usage rights, please see <a href="/Content/terms">Material usage rights</a>. The user is responsible for respecting copyright and privacy laws.</p>
+    <p><strong>Content type:</strong> Lists options relating to the types of material available, such as images, objects, books, etc.</p>
+    <p><strong>Author:</strong> Displays the creators or rights holders of the titles.</p>
+    <p><strong>Topic:</strong> Provides suggested topics to help refine the search.</p>
+    <p><strong>Region:</strong> Shows the geographical region where the material is from.
+    <p><strong>Year of manufacture:</strong> pecifies the time range from which results should be displayed, e.g., 1920s to 1980s. The bar graph indicates how much material is available for the years in question. Use the + and - buttons to zoom in and out of the timeline. Use the arrows to move back and forth along the timeline. The full screen button displays the timeline in a wider window. Select the years on the timeline by typing in the dates or by clicking and dragging along the timeline. Click <strong>Update</strong>.
+    <ul class="list-bullets">
+      <li>All results</li>
+      <li>Results within the time range</li>
+      <li>Filter results by year of publication, year of manufacture or year of creation.</li>
+    </ul>
+    <p><strong>Era:</strong> Offers suggested dates and decades. This selection will select specific date markings and exclude others. For example, if you select “1930-luku” (the 1930s), the results will only feature material listed under the decade, not those listed under 1933.</p>
+    <p><strong>Language:</strong> Displays languages in which material are available.</p>
+    <p><strong>Contained in:</strong> Lists the titles of journals, etc., if the results feature articles.</p>
+    <p><strong>Sector:</strong> Shows the type of organisation – museum, archive or library.</p>
+    <p><strong>Organisation:</strong> Lists all organisations whose material are listed in the search results.</p>
+    <p><strong>New in Finna:</strong> Indicates which material has been most recently added to Finna.</p>
+    <h3>Once you have selected the filters...</h3>
+    <p>Finna will retain your filter selections and display them under the search field. You can remove an individual filter by clicking on its delete button: <i class="fa fa-lg fa-window-close" aria-hidden="true"></i>. All filters may be removed by clicking <strong>Reset filters</strong> and making a new search.</p>
+  </div>
+  <div id="saving-search" class="content-section">
+    <h2>Saving searches</h2>
+    <p>Once you have logged in, you can save your search with the <strong>Save search</strong> function at the bottom of the screen. You can retrieve your saved searches from <strong>Your account → Saved searches</strong>. You can also set <a href="<?=$this->url('content-page', ['page' => 'help-account-management'])?>#saved-searches">an alert for your saved searches</a> to notify you by email whenever new material matching your search is added.</p>
+  </div>
+  <div id="combining-search" class="content-section">
+    <h2>Combining search terms</h2>
+    <p>The Finna search function uses Boolean operators, the most common of which are AND, OR and NOT. NB! These operators must be typed in CAPITAL LETTERS between search terms.</p>
+    <p>If you use two or more operators in a single search, use parentheses ( ) to separate terms with different operators. For example:</p>
+    <pre class="code">nutrition AND (diet OR lifestyle)</pre>
+    <h3>AND</h3>
+    <p>Use the AND operator to yield search results which feature every term in the search field. If you write several words into the search field and separate them with a space, the space will function as the AND operator.</p>
+    <p>For example, these two searches will yield the same results:</p>
+    <pre class="code">Karisto Seppälä</pre>
+    <p>and</p>
+    <pre class="code">Karisto AND Seppälä</pre>
+    <h3>OR</h3>
+    <p>The OR operator expands your search results. The results will show material that feature at least one of the search terms you indicated. For example, if you are searching for biographical material, you could search for:</p>
+    <pre class="code">memoir OR biography</pre>
+    <p>Or, if you are looking for information on the Eastern Orthodox Church:</p>
+    <pre class="code">“Eastern Orthodoxy” OR “Orthodox Church”</pre>
+    <h3>NOT</h3>
+    <p>The NOT operator excludes search results which feature the search term following the NOT operator. For example, if you are looking for material on surrealism, but are not interested in it as a movement in visual arts:</p>
+    <pre class="code">surrealism NOT (painting OR “visual arts”)</pre>
+    <p>NB! The NOT operator cannot be used in single-word searches. For example, the following search will yield no results:</p>
+    <pre class="code">NOT surrealism</pre>
+    <h3>Search operators + and !- </h3>
+    <p>In addition to the most common Boolean operators (AND, OR, NOT), Finna uses the + and !- operators.</p>
+    <h4>+ </h4>
+    <p>The + sign indicates that the search term must be found in every search result.</p>
+    <p>For example, if you are looking for material that must feature <i>economics</i> and which may also feature <i>Keynes</i>:</p>
+    <pre class="code">+economics Keynes</pre>
+    <h4>!- </h4>
+    <p>The symbols <strong>!-</strong> remove any search results which feature the search term following the operator !-.</p>
+    <p>For example, if you want to find material that feature the term <i>economics</i> but not the term <i>Keynes</i>:</p>
+    <pre class="code">economics !-Keynes</pre>
+    <p>NB! The <strong>!-</strong> operator cannot be used in single-word searches.</p>
+    <p>For example, the following search will yield no results:</p>
+    <pre class="code">!-economics</pre>
+  </div>
+  <div id="truncating-search" class="content-section">
+    <h2>The use of wildcards in search terms</h2>
+    <p>The wildcard symbols * and ? can be used to replace characters in search terms to ensure that the search results include all inflected forms of the search term.</p>
+    <p>The use of wildcard symbols is not recommended for search terms in Finnish, since their use will exclude some processing measures related to the search terms. These include, for example, the processing of synonyms and splitting terms at a hyphen.</p>
+    <p>Finna takes the various inflected forms of the search terms into account automatically. For example, if the search term is “taulu”, the search engine will also recognise its inflected forms, such as “taulut” and “taulujen”. The use of wildcards may confuse the search engine’s automatic processes.</p>
+    <h3>Use of wildcards</h3>
+    <p>NB! The wildcard symbols cannot be the first character of a search term.</p>
+    <h4>* </h4>
+    <p>The * symbol replaces one or several characters in the search term. The search results will also include the form of the search term that was used when performing a search.</p>
+    <p>
+The search term may be truncated at the end with an asterisk. For example, to find search results for the terms competition, competitions, competitor and competitiveness, use the search term:</p>
+    <pre class="code">competit*</pre>
+    <p>The asterisk may also be used in the middle of a search term to replace one or more characters. For example, to search for both the terms <i>color</i> and <i>colour</i>, use the search term:</p>
+    <pre class="code">colo*r</pre>
+    <h4>? </h4>
+    <p>The wildcard symbol ? replaces a single character in a search term, enabling the use of different word forms.</p>
+    <p>For example, to find results for both the terms <i>woman</i> and <i>women</i>, use the search term:</p>
+    <pre class="code">wom?n</pre>
+  </div>
+  <div id="phrase-search" class="content-section">
+    <h2>Phrase search</h2>
+    <p>Use the phrase search if you want your search results to only feature entries with a specific word or phrase. To perform a phrase search, enter your search terms within quotation marks.</p>
+    <p>For example, if you want to find material that feature the phrase <i>University of Helsinki</i> but not <i>City of Helsinki</i>, search with:</p>
+    <pre class="code">“University of Helsinki”</pre>
+    <p>A phrase search may also be used for individual words. In this case, the search will target only the specific term as entered.</p>
+    <p>For example, if you search with the term <i>“board”</i> in quotation marks, the results will exclude hits for <i>chalkboard</i>, <i>whiteboard</i> and <i>boards</i>:</p>
+    <pre class="code">"board"</pre>
+  </div>
+  <div id="isbn-issn-search" class="content-section">
+    <h2>ISBN/ISSN search</h2>
+    <p>To find a book by its ISBN number, enter the full number with or without dashes:</p>
+    <pre class="code">978-951-31-6583-3</pre>
+    <p>or</p>
+    <pre class="code">9789513165833</pre>
+    <p>To find a periodical or publication series by its ISSN number:</p>
+    <pre class="code">0782-8195</pre>
+    <p>or</p>
+    <pre class="code">07828195</pre>
+    <p>In Advanced search, you can limit your search to the ISBN/ISSN field.</p>
+    <p><strong>NB!</strong> You can further refine your search results on the results page by using the filters in the sidebar under <strong>Narrow search</strong>.</p>
+  </div>
+  <div id="fine-tuning" class="content-section">
+    <h2>Fine-tuning your search</h2>
+    <h3>Fuzzy search</h3>
+    <p>Fuzzy search will also yield results that feature words which are similar to your search term.</p>
+    <p>The search operator <strong>~</strong> will perform a fuzzy search when it is used as the final character of a single-word search.</p>
+    <p>For example, a fuzzy search with the word <i>roam</i> will also return results with the words <i>foam</i> and <i>roams</i>.</p>
+    <pre class="code">roam~</pre>
+    <h3>Proximity search</h3>
+    <p>Proximity searches look for material in which the search terms are within a specified distance, but not necessarily one after the other.</p>
+    <p>The ~ symbol will perform a proximity search when it is at the end of a multi-term search phrase and is combined with a proximity value.</p>
+    <p>For example, you can use it to search for materials which feature the search terms <i>economics</i> and <i>Keynes</i> within 10 or fewer terms of one another:</p>
+    <pre class="code">"economics Keynes"~10</pre>
+    <h3>Range searches</h3>
+    <p>Range searches can be conducted using either curvy brackets { } or square brackets [ ]. When using curvy brackets, the search takes into account only the values between the terms entered, excluding the terms themselves. With square brackets, the terms entered in the range search will also be included.</p>
+    <p>For example, to find a term that begins with the letter B or C, the following query may be used:</p>
+    <pre class="code">{A TO D}</pre>
+    <p>To find values between 1920 and 1950:</p>
+    <pre class="code">[1920 TO 1950]</pre>
+    <p>Please note that the operator TO between the values must be entered in CAPITAL LETTERS.</p>
+    <h3>Weighted search terms</h3>
+    <p>The search operator ^ will add weight to the search term in a query.</p>
+    <p>For example, the weight of the term <i>Koivisto</i> has been increased in this search:</p>
+    <pre class="code">economics Koivisto^5</pre>
+  </div>
+  <div id="searching-cyrillic" class="content-section">
+    <h2>Searching for Cyrillic material</h2>
+    <h3>How to search for material written in the Cyrillic alphabet</h3>
+    <p>Cyrillic material has been recorded in the database using the Cyrillic alphabet. Any archaic orthography and grammatical forms have been retained as in the original.</p>
+    <p>To search using the Cyrillic alphabet, you can use any Cyrillic Windows fonts for Modern Russian, Ukrainian, Belarusian, Macedonian, Bulgarian and Serbian.</p>
+    <p>In a Cyrillic search, an individual character may be replaced with two percentage symbols (%%).</p>
+    <p>To receive the broadest search results, transliterate your search terms into the Latin alphabet.</p>
+    <h3>Transliterated search</h3>
+    <p>Enter your search terms using a conventional Latin keyboard. Each Cyrillic character corresponds to a single character in the Latin alphabet. The transliteration in Finna follows the ISO-9 standard, but diacritics are unnecessary.</p>
+    <h3>The following exceptions to national transliteration practices apply:</h3>
+    <p>
+      е = e Ельцин = El'cin<br>
+      ж = z жизнь = zizn'<br>
+      з = z Заварзин = Zavarzin<br>
+      й = j Толстой = Tolstoj<br>
+      х = h Хармс = Harms<br>
+      ц = c Цветаева = Cvetaeva<br>
+      ч = c Чехов = Cehov<br>
+      ш = s Шолохов = Solohov<br>
+      щ = s Щедрин = Sedrin<br>
+      ъ = " объект = ob ekt (haussa " on korvattava välilyönnillä!)<br>
+      ы = y Лыков = Lykov<br>
+      ь = ' Гоголь = Gogol' tai Gogol<br>
+      ю = u юность = unost' tai unost<br>
+      я =a Яков = Akov<br>
+      њ = n Његош = Negos<br>
+      љ = l љубав = lubav<br>
+      ђ = d Ђинђић = Dindic<br>
+      ћ = c ћуприја = cuprija<br>
+      џ = d Караџић = Karadic<br>
+      Ѣ = e мѢра = mera<br>
+      Ѳ = f Ѳетъ = Fet"<br>
+      ѵ = i Сѵнодъ = Sinod"<br>
+    </p>
   </div>
 </div>
 <!-- END of: finna - content/help-basic_en.phtml -->

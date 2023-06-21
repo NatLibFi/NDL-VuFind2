@@ -30,7 +30,6 @@
 namespace Finna\ILS\Driver;
 
 use VuFind\Exception\ILS as ILSException;
-use VuFind\I18n\TranslatableString;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\Marc\MarcReader;
 
@@ -99,13 +98,6 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     ];
 
     /**
-     * Mappings from location type to item status. Overrides any other item status.
-     *
-     * @var array
-     */
-    protected $locationTypeToItemStatus = [];
-
-    /**
      * Days before account expiration to start displaying a notification
      *
      * @var int
@@ -151,11 +143,6 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 $this->feeTypeMappings,
                 $this->config['FeeTypeMappings']
             );
-        }
-
-        if (!empty($this->config['Holdings']['locationTypeItemStatus'])) {
-            $this->locationTypeToItemStatus
-                = $this->config['Holdings']['locationTypeItemStatus'];
         }
 
         $key = 'daysBeforeAccountExpirationNotification';
@@ -2083,34 +2070,43 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                         if ($mmsId !== (string)$bib->mms_id) {
                             continue;
                         }
-                        $status = $marc->getSubfield($field, 'e');
+
+                        $available = null;
+                        $statusText = '';
+                        if ($this->locationTypeToItemStatus) {
+                            $locationCode = $marc->getSubfield($field, 'j');
+                            $library = $marc->getSubfield($field, 'b');
+                            [$available, $statusText] = $this->getItemStatusFromLocationTypeMap(
+                                $this->getLocationType($library, $locationCode)
+                            );
+                        }
+
+                        if (null === $available) {
+                            $availStr = strtolower($marc->getSubfield($field, 'e'));
+                            $available = 'available' === $availStr;
+                            // No status message available, so set it based on availability:
+                            $statusText = $available ? 'Available' : 'Not Available';
+                        }
+
                         $libraryCode = $marc->getSubfield($field, 'b');
                         $locationCode = $marc->getSubfield($field, 'j');
                         $location = $marc->getSubfield($field, 'c');
                         $items = $marc->getSubfield($field, 'f') ?: 0;
                         $unavailable = $marc->getSubfield($field, 'g') ?: 0;
-                        $available = $items - $unavailable;
+                        $availableCount = $items - $unavailable;
                         $holdingId = $marc->getSubfield($field, '8');
                         $total += $items;
-                        $totalAvailable += $available;
+                        $totalAvailable += $availableCount;
                         $locations[$locationCode] = 1;
-                        switch ($status) {
-                            case 'available':
-                                $status = 'Available';
-                                break;
-                            case 'unavailable':
-                                $status = 'Not Available';
-                                break;
-                            case 'check_holdings':
-                                $status = '';
-                                break;
-                        }
 
                         $holdings[] = [
                             'id' => $holdingId,
                             'source' => 'Solr',
                             'availability' => $available,
-                            'status' => $status,
+                            'availabilityInfo' => [
+                                'available' => $availableCount,
+                            ],
+                            'status' => $statusText,
                             'location' => $this->getTranslatableStringForCode(
                                 $locationCode,
                                 $location
@@ -2411,41 +2407,9 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
                 $itemId = (string)$item->item_data->pid;
                 $barcode = (string)$item->item_data->barcode;
-                $status = (string)$item->item_data->base_status[0]
-                    ->attributes()['desc'];
                 $duedate = $item->item_data->due_date
                     ? $this->parseDate((string)$item->item_data->due_date) : null;
-                if ($duedate && 'Item not in place' === $status) {
-                    $status = 'Checked Out';
-                } elseif ($processType && 'LOAN' !== $processType) {
-                    $status = $this->getTranslatableStatusString(
-                        $item->item_data->process_type
-                    );
-                }
-
-                $available = null;
-                $statusDisplayText = null;
-                if ($this->locationTypeToItemStatus) {
-                    $locationType = $this->getItemLocationType($item);
-                    if (
-                        $locationType
-                        && isset($this->locationTypeToItemStatus[$locationType])
-                    ) {
-                        $parts = explode(
-                            ':',
-                            $this->locationTypeToItemStatus[$locationType]
-                        );
-                        $statusDisplayText = $status
-                            = new TranslatableString($parts[0], $parts[0]);
-                        if (isset($parts[1])) {
-                            $available = 'unavailable' !== $parts[1];
-                        }
-                    }
-                }
-
-                if (null === $available) {
-                    $available = $this->getAvailabilityFromItem($item);
-                }
+                [$available, $status] = $this->getItemAvailabilityAndStatus($item);
                 if ($available) {
                     ++$availableItems;
                 }
@@ -2493,9 +2457,6 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     'description' => $description ?? null,
                     'detailsGroupKey' => $holdingId ? "$holdingId||||" : '',
                     'sort' => $sort++,
-                    'availabilityInfo' => [
-                        'displayText' => $statusDisplayText ?? null,
-                    ],
                 ];
             }
         }
@@ -2642,58 +2603,6 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Get location type for an item
-     *
-     * @param SimpleXMLElement $item Item
-     *
-     * @return string
-     */
-    protected function getItemLocationType($item)
-    {
-        // Yes, temporary location is in holding data while permanent location is in
-        // item data.
-        if ('true' === (string)$item->holding_data->in_temp_location) {
-            $library = $item->holding_data->temp_library
-                ?: $item->item_data->library;
-            $location = $item->holding_data->temp_location
-                ?: $item->item_data->location;
-        } else {
-            $library = $item->item_data->library;
-            $location = $item->item_data->location;
-        }
-        return $this->getLocationType((string)$library, (string)$location);
-    }
-
-    /**
-     * Get the locations for a library
-     *
-     * @param string $library Library
-     *
-     * @return array
-     */
-    protected function getLocations($library)
-    {
-        $cacheId = 'alma|locations2|' . $library;
-        $locations = $this->getCachedData($cacheId);
-
-        if (null === $locations) {
-            $xml = $this->makeRequest(
-                '/conf/libraries/' . rawurlencode($library) . '/locations'
-            );
-            $locations = [];
-            foreach ($xml as $entry) {
-                $locations[(string)$entry->code] = [
-                    'name' => (string)$entry->name,
-                    'externalName' => (string)$entry->external_name,
-                    'type' => (string)$entry->type,
-                ];
-            }
-            $this->putCachedData($cacheId, $locations, 3600);
-        }
-        return $locations;
-    }
-
-    /**
      * Get the external name of a location
      *
      * @param string $library  Library
@@ -2770,44 +2679,33 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                         continue;
                     }
                     $available = null;
-                    $statusDisplayText = null;
-                    $location = $marc->getSubfield($field, 'j');
+                    $statusText = null;
+                    $locationCode = $marc->getSubfield($field, 'j');
                     if ($this->locationTypeToItemStatus) {
                         $library = $marc->getSubfield($field, 'b');
-                        $type = $this->getLocationType($library, $location);
-                        if ($type && isset($this->locationTypeToItemStatus[$type])) {
-                            $parts = explode(
-                                ':',
-                                $this->locationTypeToItemStatus[$type]
-                            );
-                            $statusDisplayText
-                                = new TranslatableString($parts[0], $parts[0]);
-                            if (isset($parts[1])) {
-                                $available = 'unavailable' !== $parts[1];
-                            }
-                        }
+                        [$available, $statusText] = $this->getItemStatusFromLocationTypeMap(
+                            $this->getLocationType($library, $locationCode)
+                        );
                     }
 
                     if (null === $available) {
-                        $availStr
-                            = strtolower($marc->getSubfield($field, 'e'));
+                        $availStr = strtolower($marc->getSubfield($field, 'e'));
                         $available = 'available' === $availStr;
+                        // No status message available, so set it based on availability:
+                        $statusText = $available ? 'Item in place' : 'Item not in place';
                     }
 
                     $item = $tmpl;
                     $item['availability'] = $available;
-                    $item['location_code'] = $location;
+                    $item['status'] = $statusText;
+                    $item['location_code'] = $locationCode;
                     $item['location'] = $this->getTranslatableStringForCode(
-                        $location,
+                        $locationCode,
                         $marc->getSubfield($field, 'c')
                     );
                     $item['callnumber'] = $marc->getSubfield($field, 'd');
                     $item['sort'] = $sort++;
                     $item['externalInterfaceUrl'] = $externalInterfaceUrl;
-                    if ($statusDisplayText) {
-                        $item['availabilityInfo']['displayText']
-                            = $statusDisplayText;
-                    }
                     $status[] = $item;
                 }
                 // Electronic

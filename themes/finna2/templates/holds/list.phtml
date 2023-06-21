@@ -134,7 +134,7 @@
                         }
                         echo '<a href="' . $this->escapeHtmlAttr($this->recordLinker()->getUrl($resource))
                           . '" class="record-title">' . $title . '</a>';
-                      } elseif (isset($ilsDetails['title']) && !empty($ilsDetails['title'])){
+                      } elseif (isset($ilsDetails['title']) && !empty($ilsDetails['title'])) {
                         // If the record is not available in Solr, perhaps the ILS driver sent us a title we can show...
                         echo '<span class="record-title">' . $this->escapeHtml($ilsDetails['title']) . '</span>';
                       } else {
@@ -143,7 +143,8 @@
                       }
                     ?>
                     <div class="record-core-metadata">
-                      <?php $formats = $resource->getFormats(); if (count($formats) > 0): ?>
+                      <?php $formats = $resource->getFormats();
+                      if (count($formats) > 0): ?>
                         <?=$this->record($resource)->getFormatList() ?>
                         <br>
                       <?php endif; ?>
@@ -226,7 +227,11 @@
                     <?php if (isset($this->cancelResults['items'])): ?>
                       <?php foreach ($this->cancelResults['items'] as $itemId => $cancelResult): ?>
                         <?php if (($itemId == $ilsDetails['item_id'] || $itemId == ($ilsDetails['requestId'] ?? '')) && $cancelResult['success'] == false): ?>
-                          <div class="alert alert-danger"><?=$this->transEsc($cancelResult['status']) ?><?php if ($cancelResult['sysMessage']) echo ' : ' . $this->transEsc($cancelResult['sysMessage']); ?></div>
+                          <div class="alert alert-danger"><?=$this->transEsc($cancelResult['status']) ?>
+                            <?php if ($cancelResult['sysMessage']): ?>
+                              <?=$this->transEsc($cancelResult['sysMessage']) ?>
+                            <?php endif; ?>
+                          </div>
                         <?php endif; ?>
                       <?php endforeach; ?>
                     <?php endif; ?>
@@ -234,7 +239,11 @@
                     <?php if (isset($ilsDetails['reqnum']) && !empty($this->updateResults[$ilsDetails['reqnum']])): ?>
                       <?php $updateResult = $this->updateResults[$ilsDetails['reqnum']]; ?>
                       <?php if (!$updateResult['success']): ?>
-                        <div class="alert alert-danger"><?=$this->transEsc($updateResult['status']) ?><?php if (!empty($updateResult['sysMessage'])) echo ': ' . $this->transEsc($updateResult['sysMessage']); ?></div>
+                        <div class="alert alert-danger"><?=$this->transEsc($updateResult['status']) ?>
+                          <?php if (!empty($updateResult['sysMessage'])): ?>
+                            <?=$this->transEsc($updateResult['sysMessage']) ?>
+                          <?php endif; ?>
+                        </div>
                       <?php endif; ?>
                     <?php endif; ?>
 

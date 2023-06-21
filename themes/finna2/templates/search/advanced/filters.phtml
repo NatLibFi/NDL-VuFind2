@@ -17,7 +17,11 @@
         <label>
           <?php $operatorChar = ($value['operator'] == 'NOT') ? '-' : ($value['operator'] == 'OR' ? '~' : ''); ?>
           <input type="checkbox" class="checkbox-select-item" checked="checked" name="filter[]" value='<?=$operatorChar . $this->escapeHtmlAttr($value['field'])?>:"<?=$this->escapeHtmlAttr($value['value'])?>"'>
-          <?php if ($value['operator'] == 'NOT') echo $this->transEsc('NOT'); if ($value['operator'] == 'OR' && $index > 0) echo $this->transEsc('OR'); ?>
+          <?php if ($value['operator'] == 'NOT') {
+            echo $this->transEsc('NOT');
+          } if ($value['operator'] == 'OR' && $index > 0) {
+            echo $this->transEsc('OR');
+          } ?>
           <?=$this->transEsc($field)?>: <?=$this->escapeHtml($value['displayText'])?>
         </label>
       </div>

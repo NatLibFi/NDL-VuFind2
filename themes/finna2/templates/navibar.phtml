@@ -56,7 +56,8 @@
             <li role="none"><a <?=$url === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" <?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?= $url ?>"><i class="fa fa-nav-<?=$label ?>" aria-hidden="true"></i><?= $this->transEsc($label) ?></a></li>
           <?php endif; ?>
         <?php endforeach; ?>
-        <?php $cart = $this->cart(); if ($cart->isActive()): ?>
+        <?php $cart = $this->cart();
+        if ($cart->isActive()): ?>
           <li role="none" id="cartSummary">
             <a <?=$this->url('cart-home') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" id="cartItems" data-lightbox title="<?=$this->transEsc('View Book Bag')?>" href="<?=$this->url('cart-home')?>"><?=$this->icon('cart') ?> <strong><?=count($cart->getItems())?></strong> <span class="sr-only"><?=$this->transEsc('items')?></span></a>
           </li>

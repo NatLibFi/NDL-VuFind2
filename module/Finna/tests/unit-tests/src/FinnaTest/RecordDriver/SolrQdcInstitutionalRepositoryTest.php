@@ -65,6 +65,10 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
                         'rights' => [
                             'copyright' => 'CC BY 4.0',
                             'link' => 'http://creativecommons.org/licenses/by/4.0/deed.fi',
+                            'description' => [
+                                'This is a copyright description',
+                                'This is a copyright which should also be displayed as description',
+                            ],
                         ],
                         'pdf' => true,
                         'downloadable' => true,
@@ -202,6 +206,21 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
             $config,
             new \Laminas\Config\Config($searchConfig)
         );
+        $localeConfig = [
+            'Site' => [
+                'language' => 'fi',
+                'fallback_languages' => 'en-gb,sv',
+                'browserDetectLanguage' => false,
+            ],
+            'Languages' => [
+                'fi' => 'Finnish',
+                'en' => 'English',
+                'sv' => 'Swedish',
+                'en-gb' => 'British English',
+            ],
+        ];
+        $localeConfig = new \Laminas\Config\Config($localeConfig);
+        $record->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
         $record->setRawData(
             [
                 'id' => 'knp-247394',

@@ -39,7 +39,10 @@ if ($groupBranches) {
       $illRequestLink = $row['ILLRequestLink'];
     }
 
-    if (!empty($item['availability'])) {
+    if (
+      true === $item['availability']
+      || \VuFind\ILS\Logic\ItemStatus::STATUS_AVAILABLE === $item['availability']
+    ) {
       if (empty($availableLocations[$item['location']])) {
         $availableLocations[$item['location']] = 0;
       }
@@ -81,7 +84,14 @@ if ($groupBranches) {
       ) {
         $statusItemsFiltered[$location]['callnumbers'] = 'Multiple Locations';
       }
-      if ($item['availability'] > $statusItemsFiltered[$location]['availability']) {
+      // Check if availability is better while taking into account non-boolean
+      // statuses as well (anything is better than unavailable, available better than
+      // uncertain):
+      if (
+        (!$statusItemsFiltered[$location]['availability'] && $item['availability'])
+        || (\VuFind\ILS\Logic\ItemStatus::STATUS_UNCERTAIN === $statusItemsFiltered[$location]['availability']
+        && (true === $item['availability'] || \VuFind\ILS\Logic\ItemStatus::STATUS_AVAILABLE === $item['availability']))
+      ) {
         // Copy keys one by one so as to not overwrite callnumbers or any other existing field
         foreach (array_keys($item) as $key) {
           $statusItemsFiltered[$location][$key] = $item[$key];
@@ -107,7 +117,7 @@ if ($groupBranches) {
 <?php if ($groupBranches): ?>
   <div class="holdings-container root <?=$collapseLocations ? ' collapsible' : ''?>">
     <div class="header<?=!empty($availableTotal) ? ' available' : ''?> clearfix">
-      <i class="fa fa-<?=!empty($availableTotal) ? 'ok' : 'remove'?>"></i>
+      <?=!empty($availableTotal) ? $this->icon('status-available', 'text-success') : $this->icon('status-unavailable', 'text-danger')?>
       <span>
         <?php if (!empty($availableTotal)): ?>
           <?=sprintf('%s %d %s', $this->transEsc('axiell_available'), $availableTotal, $this->transEsc($journal ? 'axiell_issues' : 'axiell_branches'));?>
@@ -137,7 +147,7 @@ if ($groupBranches) {
     <div>
     <?php if (!empty($availableTotal)): ?>
       <span class="available-total">
-        <i class="fa fa-ok"></i> <span><?=$this->translate('status_items_available_html', ['%%count%%' => $availableTotal])?></span>
+        <?=$this->icon('status-available', 'text-success')?> <span><?=$this->translate('status_items_available_html', ['%%count%%' => $availableTotal])?></span>
       </span>
     <?php endif; ?>
     <span class="info">
@@ -207,14 +217,18 @@ foreach ($this->statusItems as $item):
   <?php endif; ?>
   <?php
     $classes = null;
-    if (!empty($item['availability'])) {
-      $classes = ['ok', 'success'];
-    }
-    if (!$classes && ($item['use_unknown_message'] ?? false)) {
-      $classes = $onlyUnknownStatuses ? ['status-unknown-no-icon warning'] : ['status-unknown', 'warning'];
-    }
-    if (!$classes) {
-      $classes = ['remove', 'error'];
+    if (true === $item['availability'] || \VuFind\ILS\Logic\ItemStatus::STATUS_AVAILABLE === $item['availability']) {
+      $icon = 'status-available';
+      $classEsc = 'text-success';
+    } elseif (\VuFind\ILS\Logic\ItemStatus::STATUS_UNCERTAIN === $item['availability']) {
+      $icon = 'status-unknown';
+      $classEsc = 'text-warning';
+    } elseif ($item['use_unknown_message'] ?? false) {
+      $icon = $onlyUnknownStatuses ? '' : 'status-unknown';
+      $classEsc = 'text-warning';
+    } else {
+      $icon = 'status-unavailable';
+      $classEsc = 'text-error';
     }
     $locationText = $this->transEscWithPrefix('location_', $item['location']);
     if ($item['locationhref'] ?? false) {
@@ -222,17 +236,17 @@ foreach ($this->statusItems as $item):
         . $locationText . '</a></span>';
     }
     if (!empty($item['department']) && !$groupBranches) {
-      $location = '<span class="branch">' . $locationText . '</span>, <span class="department">' . $this->transEsc($item['department']) . '</span>';
+      $locationHtml = '<span class="branch">' . $locationText . '</span>, <span class="department">' . $this->transEsc($item['department']) . '</span>';
     } elseif ($groupBranches) {
-      $location = '<span class="branch">' . ($this->transEsc($item['branch']) . '</span>, <span class="department">' . $this->transEsc($item['department']) . '</span>');
+      $locationHtml = '<span class="branch">' . ($this->transEsc($item['branch']) . '</span>, <span class="department">' . $this->transEsc($item['department']) . '</span>');
     } else {
-      $location = '<span class="branch">' . $locationText . '</span>';
+      $locationHtml = '<span class="branch">' . $locationText . '</span>';
     }
   ?>
     <div class="<?=$currentRow % 2 == 0 ? 'even' : 'odd'?> clearfix">
       <div class="<?=$groupBranches ? 'group-location-col' : 'no-branches'?>">
         <div class="groupLocation <?= $prevOrganisation && $newOrganisation ? ' new-organisation' : ''; ?>">
-          <i class="fa fa-<?=$classes[0]?> text-<?=$classes[1]?>"></i> <span class="text-<?=$classes[0]?>"><?=$location?></span>
+          <?=$icon ? $this->icon($icon, $classEsc) : ''?> <span class="<?=$classEsc?>"><?=$locationHtml?></span>
         </div>
       <?php if ($groupBranches): ?>
       </div>
@@ -332,7 +346,8 @@ if (!$disableTitleHold
 
 <?php if ($driver && $this->record($driver)->repositoryLibraryRequestEnabled('results')): ?>
   <div class="request">
-    <?php $user = $this->auth()->isLoggedIn(); if ($user): ?>
+    <?php $user = $this->auth()->isLoggedIn();
+    if ($user): ?>
       <?php if ($user->getLibraryCards()->count()): ?>
         <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($driver, 'RepositoryLibraryRequest'))?>" data-lightbox class="btn btn-primary repository-library-request-order"><?=$this->transEsc('repository_library_request_order')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
       <?php else: ?>

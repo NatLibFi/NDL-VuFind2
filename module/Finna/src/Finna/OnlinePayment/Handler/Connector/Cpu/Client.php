@@ -50,7 +50,7 @@ namespace Finna\OnlinePayment\Handler\Connector\Cpu;
  */
 class Client
 {
-    use \Finna\OnlinePayment\OnlinePaymentPostRequestTrait;
+    use \Finna\OnlinePayment\OnlinePaymentHttpRequestTrait;
 
     /**
      * Url of eCommerce service where payment data will be sent.

@@ -1,7 +1,7 @@
 <!-- START of: finna - search/controls/view.phtml -->
 <?php
   $viewList = $this->params->getViewList();
-  if (!isset($isCollection) || !$isCollection){
+  if (!isset($isCollection) || !$isCollection) {
       $viewOptionsIcons = is_callable([$this->params, 'getViewOptionListType'])
           ? $this->params->getViewOptionListType() : null;
   }

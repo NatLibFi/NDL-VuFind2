@@ -83,6 +83,21 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
   }
 
   function initMap() {
+    // If all coordinates are empty, hide map
+    var coordinatesExist = false;
+    $.each(organisationList, function checkEmptyCoordinates(i, obj) {
+      if (obj.address && obj.address.coordinates) {
+        var coordinates = obj.address.coordinates;
+        var isEmpty = Object.values(coordinates).some(value => (value === '' || value === null));
+        if (!isEmpty) {
+          coordinatesExist = true;
+        }
+      }
+    });
+    if (!coordinatesExist) {
+      holder.find('.office.map-ui').hide();
+      holder.find('.map-control-buttons').hide();
+    }
     $.each(organisationList, function handleOrganisation(ind, obj) {
       // Map data (info bubble, icon)
       var bubble = holder.find('.map-bubble-template').clone();
@@ -345,7 +360,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
           timeOpen.find('.times-template').before(item);
           timeOpen.show();
 
-          if (selfServiceTimes.length > 0) {
+          if (selfServiceTimes.length > 0 && staffTimes.length > 0) {
             staffTimesElem.removeClass('hide');
             for (let i = 0; i < staffTimes.length; i++) {
               let schedule = staffTimes[i];

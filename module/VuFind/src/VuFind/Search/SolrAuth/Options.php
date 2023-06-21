@@ -41,13 +41,6 @@ namespace VuFind\Search\SolrAuth;
 class Options extends \VuFind\Search\Solr\Options
 {
     /**
-     * Default view option
-     *
-     * @var string
-     */
-    protected $defaultView = 'condensed';
-
-    /**
      * Constructor
      *
      * @param \VuFind\Config\PluginManager $configLoader Config loader

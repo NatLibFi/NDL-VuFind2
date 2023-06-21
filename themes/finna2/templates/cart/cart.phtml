@@ -21,7 +21,8 @@
         <i class="fa fa-envelope-o" aria-hidden="true"></i>
         <?=$this->transEsc('Email')?>
       </button>
-      <?php $exportOptions = $this->export()->getActiveFormats('bulk'); if (count($exportOptions) > 0): ?>
+      <?php $exportOptions = $this->export()->getActiveFormats('bulk');
+      if (count($exportOptions) > 0): ?>
         <button type="submit" class="btn btn-primary" name="export" title="<?=$this->transEsc('bookbag_export')?>" value="1">
           <i class="fa fa-list-alt" aria-hidden="true"></i>
           <?=$this->transEsc('Export')?>

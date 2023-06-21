@@ -52,8 +52,7 @@
         'search/header.phtml',
         $searchData
     );
-  }
-  elseif (!$browse && $this->fromStreetSearch) {
+  } elseif (!$browse && $this->fromStreetSearch) {
     // Set up Finna Main Header:
     $this->layout()->finnaMainHeader = $this->context($this)->renderInContext(
         'search/header.phtml',
@@ -62,7 +61,7 @@
   }
 
   $filterCount = 0;
-  if (!empty($params->getFilterList(false))){
+  if (!empty($params->getFilterList(false))) {
       // Clone the params object to prevent its manipulation from affecting main facet functionality
       $params = clone $this->params;
       $filterList = $params->getFilterList(true);
@@ -292,7 +291,8 @@
 </div>
 <?php // Close the container div opened in layout: ?>
 </div>
-<?php $pagination = $this->paginationControl($this->results->getPaginator()->setPageRange(5), 'Sliding', 'search/pagination.phtml', ['results' => $this->results]); if (trim($pagination)): ?>
+<?php $pagination = $this->paginationControl($this->results->getPaginator()->setPageRange(5), 'Sliding', 'search/pagination.phtml', ['results' => $this->results]);
+if (trim($pagination)): ?>
 <div class="container-fluid pagination-background">
   <div class="container">
     <div class="<?=$this->layoutClass('mainbody')?> text-center">

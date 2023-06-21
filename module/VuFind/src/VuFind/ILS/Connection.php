@@ -60,6 +60,27 @@ class Connection implements TranslatorAwareInterface, LoggerAwareInterface
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
+     * Status code for unavailable items
+     *
+     * @var int
+     */
+    public const ITEM_STATUS_UNAVAILABLE = 0;
+
+    /**
+     * Status code for available items
+     *
+     * @var int
+     */
+    public const ITEM_STATUS_AVAILABLE = 1;
+
+    /**
+     * Status code for items with uncertain availability
+     *
+     * @var int
+     */
+    public const ITEM_STATUS_UNCERTAIN = 2;
+
+    /**
      * Has the driver been initialized yet?
      *
      * @var bool
@@ -657,7 +678,7 @@ class Connection implements TranslatorAwareInterface, LoggerAwareInterface
      */
     protected function checkMethodchangePassword($functionConfig, $params)
     {
-        if ($this->checkCapability('changePassword', $params ?: [])) {
+        if ($this->checkCapability('changePassword', [$params ?: []])) {
             return ['function' => 'changePassword'];
         }
         return false;

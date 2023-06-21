@@ -102,7 +102,7 @@ class DefaultRecord extends AbstractBase
         $headings = [];
         foreach (['topic', 'geographic', 'genre', 'era'] as $field) {
             if (isset($this->fields[$field])) {
-                $headings = array_merge($headings, (array)$this->fields[$field]);
+                $headings = array_merge($headings, $this->fields[$field]);
             }
         }
 
@@ -1072,18 +1072,6 @@ class DefaultRecord extends AbstractBase
     public function getHumanReadablePublicationDates()
     {
         return $this->getPublicationDates();
-    }
-
-    /**
-     * Get publication date or date range.
-     *
-     * @return ?array Array of one or two dates or null if not available.
-     * If date range is still continuing end year will be an empty string.
-     */
-    public function getPublicationDateRange()
-    {
-        $publicationDates = $this->getPublicationDates();
-        return $publicationDates ? [$publicationDates[0]] : null;
     }
 
     /**
