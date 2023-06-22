@@ -66,11 +66,11 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
     ];
 
     /**
-     * Image mime types
+     * Image media types
      *
      * @var array
      */
-    protected $imageMimeTypes = [
+    protected $imageMediaTypes = [
         'image/jpeg' => 'jpg',
         'image/png' => 'png',
     ];
@@ -239,17 +239,15 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
         foreach ($xml->file as $node) {
             $attributes = $node->attributes();
             $type = (string)($attributes->type ?? '');
+            $url = (string)($attributes->href ?? $node);
             if (
-                $type
-                && !in_array($type, array_keys($this->imageMimeTypes))
+                ($type && !in_array($type, array_keys($this->imageMediaTypes)))
+                || (!$type && !preg_match('/\.(jpg|png)$/i', $url))
             ) {
                 continue;
             }
-            $url = (string)($attributes->href ?? $node);
-            if (
-                !preg_match('/\.(jpg|png)$/i', $url)
-                || !$this->isUrlLoadable($url, $this->getUniqueID())
-            ) {
+            if (!$this->isUrlLoadable($url, $this->getUniqueID())) {
+                var_dump('here');
                 continue;
             }
 
@@ -266,7 +264,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
                         $currentHiRes = [
                             'data' => [],
                             'url' => $url,
-                            'format' => $this->imageMimeTypes[$type] ?? 'jpg',
+                            'format' => $this->imageMediaTypes[$type] ?? 'jpg',
                         ];
                         $highResolution[$size][] = $currentHiRes;
                     }
@@ -303,16 +301,14 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
                 if ((string)$attributes->bundle !== 'ORIGINAL') {
                     continue;
                 }
-                $mimes = ['application/pdf'];
-                if (isset($attributes->type)) {
-                    if (!in_array($attributes->type, $mimes)) {
-                        continue;
-                    }
-                }
+                $mediaTypes = ['application/pdf'];
                 $url = isset($attributes->href)
                     ? (string)$attributes->href : (string)$node;
-
-                if (!preg_match('/\.(pdf)$/i', $url)) {
+                $type = trim((string)$attributes->type);
+                if (
+                    ($type && !in_array($attributes->type, $mediaTypes))
+                    || (!$type && !preg_match('/\.(pdf)$/i', $url))
+                ) {
                     continue;
                 }
                 $urls['small'] = $urls['large'] = $url;
