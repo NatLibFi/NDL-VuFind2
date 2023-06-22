@@ -247,7 +247,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
                 continue;
             }
             if (!$this->isUrlLoadable($url, $this->getUniqueID())) {
-                var_dump('here');
                 continue;
             }
 
