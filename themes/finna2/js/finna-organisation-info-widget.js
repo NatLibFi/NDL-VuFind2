@@ -96,6 +96,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
 
       $.each(schedules, function handleSchedule(ind, obj) {
         var today = 'today' in obj;
+
         var dateRows = dateRowsTpl.clone();
         dateRows.toggleClass('today', today);
         dateRows.appendTo(schedulesHolder);
