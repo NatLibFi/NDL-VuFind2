@@ -96,12 +96,11 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
 
       $.each(schedules, function handleSchedule(ind, obj) {
         var today = 'today' in obj;
-
         var dateRows = dateRowsTpl.clone();
         dateRows.toggleClass('today', today);
         dateRows.appendTo(schedulesHolder);
-
-        if (!('closed' in obj)) {
+        const isClosed = typeof obj.closed !== 'undefined' && obj.closed === true;
+        if (!isClosed) {
           // Add main open times
           var firstOpenDateTime = null;
           var firstOpenTime = null;
