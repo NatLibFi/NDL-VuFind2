@@ -2431,4 +2431,16 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         }
         return $results;
     }
+
+    /**
+     * Get country from field 257, subfield a.
+     *
+     * @return array
+     */
+    public function getCountry()
+    {
+        return $this->stripTrailingPunctuation(
+            $this->getFieldArray('257', ['a'])
+        );
+    }
 }
