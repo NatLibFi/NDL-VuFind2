@@ -289,8 +289,13 @@ trait FinnaRecordTrait
                 return false;
             }
         }
+        // PDF key can be either boolean or an array containing booleans
+        $pdf = $image['pdf'] ?? false;
+        if (!is_bool($pdf)) {
+            $pdf = is_array($pdf) && array_search(true, $image['pdf']) !== false;
+        }
         if (
-            !empty($image['pdf'])
+            $pdf
             && !empty($this->mainConfig->Content->pdfCoverImageDownload)
         ) {
             return !empty(
