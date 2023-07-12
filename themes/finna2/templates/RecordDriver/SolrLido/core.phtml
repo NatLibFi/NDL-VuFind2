@@ -62,11 +62,6 @@
 <?php $this->metadata()->generateMetatags($this->driver);?>
 <div class="media" vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
   <h1 property="name" class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
-  <?php if ($summaryContent): ?>
-    <div class="truncate-wrapper visible-xs">
-      <?=$summaryContent?>
-    </div>
-  <?php endif; ?>
   <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
   <?php endif; ?>
@@ -80,41 +75,49 @@
 
       <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
 
-      <div class="record-core-metadata">
-        <?php if ($results = $this->driver->getNonPresenterAuthors()): ?>
-          <div class="truncate-field">
-            <?php foreach($results as $index => $author): ?>
-              <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a><?php if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><?php endif; ?><?php if (!empty($author['role'])): ?><span class="author-role">, <?=$this->escapeHtml($author['role']) ?></span><?php endif; ?>
-            <?php endforeach; ?>
-            <?php if ($dates = $this->driver->getResultDateRange()): ?>
-              <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
-            <?php endif; ?>
-            <?php if (($results = $this->driver->getSubjectDates()) && !isset($dates[0])): ?>
-              <?=implode('<br>', array_map([$this, 'escapeHtml'], $results))?>
-            <?php endif; ?>
+        <div class="record-core-metadata">
+          <?php if ($results = $this->driver->getNonPresenterAuthors()): ?>
+            <div class="truncate-field">
+              <?php foreach($results as $index => $author): ?>
+                <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a><?php if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><?php endif; ?><?php if (!empty($author['role'])): ?><span class="author-role">, <?=$this->escapeHtml($author['role']) ?></span><?php endif; ?>
+              <?php endforeach; ?>
+              <?php if ($dates = $this->driver->getResultDateRange()): ?>
+                <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
+              <?php endif; ?>
+              <?php if (($results = $this->driver->getSubjectDates()) && !isset($dates[0])): ?>
+                <?=implode('<br>', array_map([$this, 'escapeHtml'], $results))?>
+              <?php endif; ?>
+            </div>
+          <?php endif; ?>
+
+          <?php if ($this->searchOptions($this->driver->getSourceIdentifier())->getVersionsAction()): ?>
+            <?=$this->record($this->driver)->renderTemplate('versions-link.phtml')?>
+          <?php endif; ?>
+        </div>
+        <?php if ($documents = $this->driver->getDocuments()): ?>
+          <div class="record-links">
+            <div class="recordURLs local-available-online-record lido-links">
+              <ul class="truncate-field outer" data-rows="4">
+                <?=$this->record($this->driver)->renderTemplate('document-links.phtml', ['documents' => $documents])?>
+              </ul>
+            </div>
           </div>
         <?php endif; ?>
 
-        <?php if ($this->searchOptions($this->driver->getSourceIdentifier())->getVersionsAction()): ?>
-          <?=$this->record($this->driver)->renderTemplate('versions-link.phtml')?>
+      <div class="summary-wrapper">
+        <div class="description recordSummary">
+        <span id="description_text" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>">
+          <?=$this->icon('spinner') ?>
+        </span>
+        </div>
+
+        <?php if ($summaryContent): ?>
+          <div class="truncate-wrapper">
+            <?=$summaryContent?>
+          </div>
         <?php endif; ?>
       </div>
-      <?php if ($documents = $this->driver->getDocuments()): ?>
-        <div class="record-links">
-          <div class="recordURLs local-available-online-record">
-            <ul class="truncate-field outer" data-rows="4">
-              <?=$this->record($this->driver)->renderTemplate('document-links.phtml', ['documents' => $documents])?>
-            </ul>
-          </div>
-        </div>
-      <?php endif; ?>
-
-      <?php if ($summaryContent): ?>
-        <div class="truncate-wrapper hidden-xs">
-          <?=$summaryContent?>
-        </div>
-      <?php endif; ?>
-
+      
       <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
         <?php /* Display the lists that this record is saved to */ ?>
         <div class="savedLists" id="savedLists">

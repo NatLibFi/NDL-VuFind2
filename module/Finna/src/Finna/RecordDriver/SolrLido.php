@@ -629,6 +629,20 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     }
 
     /**
+     * Return an external URL where a displayable description text
+     * can be retrieved from, if available; false otherwise.
+     *
+     * @return mixed
+     */
+    public function getDescriptionURL()
+    {
+        if ($isbn = $this->getCleanISBN()) {
+            return 'https://kansikuvat.finna.fi/getText.php?query=' . $isbn;
+        }
+        return false;
+    }
+
+    /**
      * Return description as associative array
      * - type Type of the description and text as the value
      *
