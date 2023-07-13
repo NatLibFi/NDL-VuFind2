@@ -2431,4 +2431,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         }
         return $results;
     }
+
+    /**
+     * Get security classification from field 355, subfield a.
+     *
+     * @return array
+     */
+    public function getSecurityClassification()
+    {
+        return $this->stripTrailingPunctuation($this->getFieldArray('355', ['a']));
+    }
 }
