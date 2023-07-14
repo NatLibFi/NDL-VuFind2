@@ -123,6 +123,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Source of Acquisition',
             'Standard Codes',
             'Standard Report Number',
+            'Study Program Information Notes',
             'subjects_extended',
             'System Format',
             'Terms of Use',
