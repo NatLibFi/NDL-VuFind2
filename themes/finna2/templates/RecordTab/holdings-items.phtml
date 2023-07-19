@@ -71,7 +71,11 @@
               } else {
                 $statusClassEsc = 'text-success';
                 $icon = 'status-available';
-                if ((is_int($row['availability']) || is_bool($row['availability'])) && !empty($row['status'])) {
+                if (
+                  (is_int($row['availability']) || is_bool($row['availability']))
+                  && !empty($row['status'])
+                  && !$this->translationEmpty('status_' . $row['status'])
+                ) {
                   $status = 'status_' . $row['status'];
                 } elseif (isset($item['availabilityInfo']['displayText'])) {
                   $status = 'status_' . $item['availabilityInfo']['displayText'];
