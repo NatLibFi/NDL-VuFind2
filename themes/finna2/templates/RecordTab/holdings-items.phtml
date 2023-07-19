@@ -72,7 +72,7 @@
                 $statusClassEsc = 'text-success';
                 $icon = 'status-available';
                 if (
-                  (!empty($row['availability']))
+                  (is_int($row['availability']) || is_bool($row['availability']))
                   && !empty($row['status'])
                   && !$this->translationEmpty('status_' . $row['status'])
                 ) {
