@@ -30,12 +30,12 @@
 
 namespace Finna\OnlinePayment\Handler;
 
-use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailPaymentAPI\Customer;
 use Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI\Client;
 use Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI\Item;
 use Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI\PaymentRequest;
 use Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI\TurkuSignature;
 use Paytrail\SDK\Model\CallbackUrl;
+use Paytrail\SDK\Model\Customer;
 
 /**
  * Turku Payment API handler
@@ -111,7 +111,7 @@ class TurkuPaymentAPI extends AbstractBase
         // Use email from the ILS as default and use the one stored in Finna as a
         // fallback:
         $customer = (new Customer())
-            ->setEmail(trim(($patron['email'] ?? '') ?: $user->email));
+            ->setEmail(trim(($patron['email'] ?? '') ?: trim($user->email)));
 
         $language = $this->languageMap[$this->getCurrentLanguageCode()] ?? 'FI';
         $sapOrganization = [
@@ -223,6 +223,9 @@ class TurkuPaymentAPI extends AbstractBase
                 'exception sending payment: ' . $e->getMessage(),
                 compact('user', 'patron', 'fines', 'request')
             );
+            if (mb_strtolower($e->getMessage()) === 'email is empty') {
+                return 'Payment::email_address_missing';
+            }
             return '';
         }
 
