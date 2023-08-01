@@ -50,12 +50,12 @@ class Component extends \VuFind\View\Helper\Root\Component
      */
     public function __invoke(string $name, $params = []): string
     {
-        if ($name[0] !== '@') {
+        if (!str_starts_with($name, '@@')) {
             return parent::__invoke($name, $params);
         }
 
         $parts = explode('/', $name);
-        $path = substr(array_shift($parts), 1);
+        $path = substr(array_shift($parts), 2);
         $name = implode('/', $parts);
 
         return $this->view->render("components/$path/" . $name, $params);
