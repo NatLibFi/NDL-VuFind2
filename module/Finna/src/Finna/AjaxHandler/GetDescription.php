@@ -183,6 +183,7 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase implements
                     return $this->formatResponse(['html' => $content]);
                 }
             }
+            // For LIDO records the summary is displayed separately from description in the core template
             if (!($driver instanceof \Finna\RecordDriver\SolrLido)) {
                 $language = $this->translator->getLocale();
                 if ($summary = $driver->getSummary($language)) {
