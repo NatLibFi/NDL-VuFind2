@@ -27,7 +27,7 @@
   }
   if (isset($lessLabel)) {
     $__truncateSettings['less-label'] = $lessLabel;
-  } else if (!isset($label)) {
+  } elseif (!isset($label)) {
       // Default to legacy Finna truncate more and less links appearance.
       $__truncateSettings['less-label'] = $this->transEsc('show_less');
   }
@@ -36,7 +36,7 @@
   }
   if (isset($moreLabel)) {
     $__truncateSettings['more-label'] = $moreLabel;
-  } else if (!isset($label)) {
+  } elseif (!isset($label)) {
       // Default to legacy Finna truncate more and less links appearance.
       $__truncateSettings['more-label'] = $this->transEsc('show_more');
   }
