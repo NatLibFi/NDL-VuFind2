@@ -49,11 +49,12 @@
   if (isset($topToggle)) {
     $__truncateSettings['top-toggle'] = $topToggle;
   }
-  $__wrapperClass = 'finna-truncate-btn-wrapper';
   if (isset($wrapperClass)) {
-    $wrapperClass .= ' ' . $wrapperClass;
+    $__truncateSettings['wrapper-class'] = $wrapperClass;
+  } else {
+    // Default to legacy Finna truncate more and less links appearance.
+    $__truncateSettings['wrapper-class'] = 'finna-truncate-btn-wrapper-default';
   }
-  $__truncateSettings['wrapper-class'] = $__wrapperClass;
   if (isset($wrapperTagname)) {
     $__truncateSettings['wrapper-tagname'] = $wrapperTagname;
   }
