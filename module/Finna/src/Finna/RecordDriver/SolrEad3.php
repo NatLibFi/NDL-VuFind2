@@ -1336,7 +1336,11 @@ class SolrEad3 extends SolrEad
         }
         $desc = $this->getAccessRestrictions();
         if ($desc && count($desc)) {
-            $rights['description'] = $desc[0];
+            $description = [];
+            foreach ($desc as $p) {
+                $description[] = (string)$p;
+            }
+            $rights['description'] = $description;
         }
 
         return isset($rights['copyright']) || isset($rights['description'])

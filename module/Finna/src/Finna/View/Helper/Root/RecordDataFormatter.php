@@ -119,6 +119,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Related Items',
             'Related Places',
             'Scale',
+            'Security Classification',
             'Series',
             'Source of Acquisition',
             'Standard Codes',

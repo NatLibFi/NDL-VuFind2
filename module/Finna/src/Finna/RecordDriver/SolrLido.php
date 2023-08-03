@@ -2245,6 +2245,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 $descriptions[] = (string)$item;
             }
         }
+        $descriptions = array_unique($descriptions);
 
         //Collect all titles to be checked
         $displayTitle = $this->getTitle();

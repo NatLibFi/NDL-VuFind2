@@ -32,7 +32,6 @@ finna.organisationMap = (function finnaOrganisationMap() {
       layers: layer,
       minZoom: zoomLevel.far,
       maxZoom: 18,
-      zoomDelta: 0.1,
       zoomSnap: 0.1,
       closePopupOnClick: false
     });

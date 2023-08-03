@@ -484,15 +484,15 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      */
     public function getDissertationNote()
     {
-        $notes = $this->getFirstFieldValue('502', ['a', 'b', 'c']);
+        $notes = $this->stripTrailingPunctuation($this->getFirstFieldValue('502', ['a', 'b', 'c', 'd']));
         if (!$notes) {
             // 509 used in Voyager
             // TODO: Is this used anymore anywhere?
-            $notes = $this->getFirstFieldValue('509', ['a', 'b', 'c']);
+            $notes = $this->stripTrailingPunctuation($this->getFirstFieldValue('509', ['a', 'b', 'c', 'd']));
         }
         if (!$notes) {
             // 920 used in Alma
-            $notes = $this->getFirstFieldValue('920', ['a', 'b', 'c']);
+            $notes = $this->stripTrailingPunctuation($this->getFirstFieldValue('920', ['a', 'b', 'c', 'd']));
         }
         return $notes;
     }
@@ -2430,5 +2430,15 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             }
         }
         return $results;
+    }
+
+    /**
+     * Get security classification from field 355, subfield a.
+     *
+     * @return array
+     */
+    public function getSecurityClassification()
+    {
+        return $this->stripTrailingPunctuation($this->getFieldArray('355', ['a']));
     }
 }
