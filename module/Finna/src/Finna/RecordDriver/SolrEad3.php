@@ -2016,27 +2016,36 @@ class SolrEad3 extends SolrEad
      *
      * @return array
      */
-    protected function getOtherRelatedMaterial()
+    public function getOtherRelatedMaterial()
     {
         $xml = $this->getXmlRecord();
-        $result = [];
-        if (isset($xml->relatedmaterial)) {
-            foreach ($xml->relatedmaterial as $material) {
-                $texts = $this->getDisplayLabel(
-                    $material->p,
-                    'ref'
-                );
-                $text = $texts[0] ?? '';
-                $url = (string)$material->attributes()->href ?? '';
-                if ($this->urlBlocked($url, $text)) {
-                    $url = '';
+        $results = $localeResults = [];
+        foreach ($xml->relatedmaterial as $material) {
+            foreach ($material->p as $p) {
+                $langP = $this->detectNodeLanguage($p);
+                if ($text = trim((string)$p)) {
+                    $results[] = ['text' => $text, 'url' => ''];
+                    if ($langP['preferred'] ?? false) {
+                        $localeResults[] = ['text' => $text, 'url' => ''];
+                    }
                 }
-                if ($text || $url) {
-                    $result[] = ['text' => $text, 'url' => $url];
+                foreach ($p->ref as $ref) {
+                    $text = trim((string)$ref);
+                    $url = (string)($ref->attributes()->href ?? '');
+                    if ($this->urlBlocked($url, $text)) {
+                        $url = '';
+                    }
+                    if ($text || $url) {
+                        $results[] = ['text' => $text ?: $url, 'url' => $url];
+                        $lang = $this->detectNodeLanguage($ref);
+                        if (($lang['preferred'] ?? false) || ($langP['preferred'] ?? false)) {
+                            $localeResults[] = ['text' => $text ?: $url, 'url' => $url];
+                        }
+                    }
                 }
             }
         }
-        return $result;
+        return $localeResults ?: $results;
     }
 
     /**
