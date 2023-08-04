@@ -1,5 +1,5 @@
 /* global VuFind */
 
-$(document).ready(function onTruncateTagReady() {
+$(function onTruncateTagReady() {
   VuFind.truncate.initTruncate('.finna-truncate');
 });
