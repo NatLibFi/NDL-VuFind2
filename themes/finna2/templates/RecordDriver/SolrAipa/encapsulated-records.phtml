@@ -2,7 +2,17 @@
 <?php if ($this->results->getResultTotal() > 0): ?>
   <div class="encapsulated-records">
     <?php foreach ($this->results->getResults() as $result): ?>
-      <div id="encapsulated-record-<?= $this->escapeHtmlAttr($result->getUniqueId()) ?>" class="encapsulated-record">
+      <?php
+        $recordFormat = $result->tryMethod('getRecordFormat');
+        $recordAttributes = $this->htmlAttributes([
+          'id' => 'encapsulated-record-' . $result->getUniqueId(),
+          'class' => [
+            'encapsulated-record',
+            $recordFormat ? 'record-format-' . $recordFormat : '',
+          ],
+        ]);
+      ?>
+      <div<?= $recordAttributes ?>>
         <?php if ($result instanceof \VuFind\RecordDriver\Missing): ?>
           <p><?= $this->transEsc('Cannot find record') . ': ' . $this->escapeHtmlAttr($result->getUniqueID()) ?></p>
         <?php else: ?>

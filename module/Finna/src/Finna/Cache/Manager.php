@@ -62,5 +62,7 @@ class Manager extends \VuFind\Cache\Manager
         foreach ($ids as $cache) {
             $this->createFileCache($cache, $cacheBase . $cache . 's');
         }
+        // Code sets cache should live for as long as possible.
+        $this->createFileCache('codesets', $cacheBase . 'codesets', ['ttl' => 0]);
     }
 }

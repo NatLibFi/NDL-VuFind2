@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Factory for AipaLrmi record drivers.
+ * Finna Code Sets cache factory.
  *
- * PHP version 7
+ * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022-2023.
+ * Copyright (C) The National Library of Finland 2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,30 +20,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * @category VuFind
- * @package  RecordDrivers
+ * @category Finna
+ * @package  Cache
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
+ * @link     https://vufind.org Main Page
  */
 
-namespace Finna\RecordDriver;
+namespace Finna\Cache;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Factory for AipaLrmi record drivers.
+ * Finna Code Sets cache factory.
  *
- * @category VuFind
- * @package  RecordDrivers
+ * @category Finna
+ * @package  Cache
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
+ * @link     https://vufind.org Main Page
  */
-class AipaLrmiFactory extends \Finna\RecordDriver\SolrDefaultFactory
+class CodeSetsCacheFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -57,22 +58,18 @@ class AipaLrmiFactory extends \Finna\RecordDriver\SolrDefaultFactory
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
-     * @throws ContainerException if any other error occurs
+     * @throws ContainerException&\Throwable if any other error occurs
      */
     public function __invoke(
         ContainerInterface $container,
         $requestedName,
         array $options = null
     ) {
-        $driver = parent::__invoke($container, $requestedName, $options);
-        $driver->attachRecordLoader($container->get(\Finna\Record\Loader::class));
-        $driver->attachRecordDriverManager(
-            $container->get(\Finna\RecordDriver\PluginManager::class)
+        if (!empty($options)) {
+            throw new \Exception('Unexpected options sent to factory.');
+        }
+        return new $requestedName(
+            $container->get(\Finna\Cache\Manager::class),
         );
-        $driver->attachCodeSetsLibrary(
-            $container->get(\NatLibFi\FinnaCodeSets\FinnaCodeSets::class)
-        );
-
-        return $driver;
     }
 }

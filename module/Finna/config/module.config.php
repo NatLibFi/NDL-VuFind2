@@ -352,6 +352,7 @@ $config = [
             'Finna\Autocomplete\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Auth\ILSAuthenticator' => 'VuFind\Auth\ILSAuthenticatorFactory',
             'Finna\Auth\Manager' => 'VuFind\Auth\ManagerFactory',
+            'Finna\Cache\CodeSetsCache' => 'Finna\Cache\CodeSetsCacheFactory',
             'Finna\Cache\Manager' => 'VuFind\Cache\ManagerFactory',
             'Finna\Config\SearchSpecsReader' => 'VuFind\Config\YamlReaderFactory',
             'Finna\Config\YamlReader' => 'VuFind\Config\YamlReaderFactory',
@@ -391,6 +392,7 @@ $config = [
             'Finna\Video\Handler\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Video\Video' => 'Finna\Video\VideoFactory',
             'Finna\View\Resolver\AggregateResolver' => 'Finna\View\Resolver\AggregateResolverFactory',
+            'NatLibFi\FinnaCodeSets\FinnaCodeSets' => 'Finna\RecordDriver\CodeSetsFactory',
 
             // Factory overrides for non-Finna classes:
             'VuFind\Config\PathResolver' => 'Finna\Config\PathResolverFactory',

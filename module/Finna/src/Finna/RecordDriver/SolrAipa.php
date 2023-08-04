@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Model for AIPA records in Solr.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver;
 
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
@@ -79,11 +81,11 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
                         'urls' => [
                             'small' => $url,
                             'medium' => $url,
-                            'large' => $url
+                            'large' => $url,
                         ],
                         'description' => '',
                         'rights' => [],
-                        'downloadable' => false
+                        'downloadable' => false,
                     ];
                 }
             }

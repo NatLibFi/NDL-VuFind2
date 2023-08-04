@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Factory for AipaLrmi record drivers.
+ * Aipa view helper factory.
  *
- * PHP version 7
+ * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022-2023.
+ * Copyright (C) The National Library of Finland 2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,29 +21,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  RecordDrivers
+ * @package  View_Helpers
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
-namespace Finna\RecordDriver;
+namespace Finna\View\Helper\Root;
 
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
-use Psr\Container\ContainerExceptionInterface as ContainerException;
-use Psr\Container\ContainerInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 /**
- * Factory for AipaLrmi record drivers.
+ * Aipa view helper factory.
  *
  * @category VuFind
- * @package  RecordDrivers
+ * @package  View_Helpers
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
-class AipaLrmiFactory extends \Finna\RecordDriver\SolrDefaultFactory
+class AipaFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -64,15 +65,11 @@ class AipaLrmiFactory extends \Finna\RecordDriver\SolrDefaultFactory
         $requestedName,
         array $options = null
     ) {
-        $driver = parent::__invoke($container, $requestedName, $options);
-        $driver->attachRecordLoader($container->get(\Finna\Record\Loader::class));
-        $driver->attachRecordDriverManager(
-            $container->get(\Finna\RecordDriver\PluginManager::class)
-        );
-        $driver->attachCodeSetsLibrary(
+        if (!empty($options)) {
+            throw new \Exception('Unexpected options sent to factory.');
+        }
+        return new $requestedName(
             $container->get(\NatLibFi\FinnaCodeSets\FinnaCodeSets::class)
         );
-
-        return $driver;
     }
 }

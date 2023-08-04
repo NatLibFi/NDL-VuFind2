@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Model for AIPA LRMI records.
  *
@@ -25,10 +26,19 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
+
 namespace Finna\RecordDriver;
 
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use Finna\RecordDriver\Feature\ContainerFormatTrait;
+use NatLibFi\FinnaCodeSets\FinnaCodeSets;
+use NatLibFi\FinnaCodeSets\Model\EducationalLevel\EducationalLevelInterface;
+use NatLibFi\FinnaCodeSets\Model\EducationalModule\EducationalModuleInterface;
+use NatLibFi\FinnaCodeSets\Model\EducationalSubject\EducationalSubjectInterface;
+use NatLibFi\FinnaCodeSets\Model\EducationalSyllabus\EducationalSyllabusInterface;
+use NatLibFi\FinnaCodeSets\Model\StudyContents\StudyContentsInterface;
+use NatLibFi\FinnaCodeSets\Model\StudyObjective\StudyObjectiveInterface;
+use NatLibFi\FinnaCodeSets\Utility\EducationalData;
 
 /**
  * Model for AIPA LRMI records.
@@ -44,6 +54,25 @@ class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
     use ContainerFormatTrait;
 
     /**
+     * Finna Code Sets library instance.
+     *
+     * @var FinnaCodeSets
+     */
+    protected FinnaCodeSets $codeSets;
+
+    /**
+     * Attach Finna Code Sets library instance.
+     *
+     * @param FinnaCodeSets $codeSets Finna Code Sets library instance
+     *
+     * @return void
+     */
+    public function attachCodeSetsLibrary(FinnaCodeSets $codeSets): void
+    {
+        $this->codeSets = $codeSets;
+    }
+
+    /**
      * Get an array of formats/extents for the record
      *
      * @return array
@@ -51,6 +80,38 @@ class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
     public function getPhysicalDescriptions(): array
     {
         return [];
+    }
+
+    /**
+     * Return educational levels
+     *
+     * @return array
+     */
+    public function getEducationalLevels()
+    {
+        $xml = $this->getXmlRecord();
+        $levels = [];
+        foreach ($xml->learningResource->educationalLevel ?? [] as $level) {
+            $levels[] = (string)$level->name;
+        }
+        return $levels;
+    }
+
+    /**
+     * Get educational subjects
+     *
+     * @return array
+     */
+    public function getEducationalSubjects()
+    {
+        $xml = $this->getXmlRecord();
+        $subjects = [];
+        foreach ($xml->learningResource->educationalAlignment ?? [] as $alignment) {
+            foreach ($alignment->educationalSubject ?? [] as $subject) {
+                $subjects[] = (string)$subject->targetName;
+            }
+        }
+        return $subjects;
     }
 
     /**
@@ -75,27 +136,18 @@ class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
     }
 
     /**
-     * Return type of access restriction for the record.
+     * Get educational aim
      *
-     * @param string $language Language
-     *
-     * @return mixed array with keys:
-     *   'copyright'   Copyright (e.g. 'CC BY 4.0')
-     *   'link'        Link to copyright info, see IndexRecord::getRightsLink
-     *   or false if no access restriction type is defined.
+     * @return array
      */
-    public function getAccessRestrictionsType($language)
+    public function getEducationalAim()
     {
         $xml = $this->getXmlRecord();
-        $rights = [];
-        if (!empty($xml->rights)) {
-            $rights['copyright'] = $this->getMappedRights((string)$xml->rights);
-            if ($link = $this->getRightsLink($rights['copyright'], $language)) {
-                $rights['link'] = $link;
-            }
-            return $rights;
+        $contentsAndObjectives = [];
+        foreach ($xml->learningResource->teaches ?? [] as $teaches) {
+            $contentsAndObjectives[] = (string)$teaches->name;
         }
-        return false;
+        return $contentsAndObjectives;
     }
 
     /**
@@ -130,6 +182,74 @@ class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
             return (string)$xml->assignmentIdeas;
         }
         return null;
+    }
+
+    /**
+     * Get rich educational data, or false if not possible.
+     *
+     * @return array|false
+     */
+    public function getEducationalData(): array|false
+    {
+        $xml = $this->getXmlRecord();
+        try {
+            $data = [];
+            $data[EducationalData::EDUCATIONAL_LEVELS] = [];
+            $dataUtil = $this->codeSets->educationalData();
+            foreach ($xml->learningResource->educationalLevel ?? [] as $level) {
+                $data[EducationalData::EDUCATIONAL_LEVELS][]
+                    = $dataUtil->getEducationalLevelByCodeValue($level->termCode);
+            }
+            $data[EducationalData::EDUCATIONAL_SUBJECTS] = [];
+            $data[EducationalData::EDUCATIONAL_SYLLABUSES] = [];
+            $data[EducationalData::EDUCATIONAL_MODULES] = [];
+            foreach ($xml->learningResource->educationalAlignment ?? [] as $alignment) {
+                foreach ($alignment->educationalSubject ?? [] as $xmlSubject) {
+                    $subject = $this->codeSets->getEducationalSubjectByUrl($xmlSubject->targetUrl);
+                    if ($subject->getId() !== $xmlSubject->identifier) {
+                        // XML subject is an educational syllabus or module.
+                        $subject = $this->codeSets->getEducationalSubjectById(
+                            $xmlSubject->identifier,
+                            $subject->getRootEducationalLevelCodeValue()
+                        );
+                    }
+                    if ($subject instanceof EducationalSubjectInterface) {
+                        $data[EducationalData::EDUCATIONAL_SUBJECTS][] = $subject;
+                    } elseif ($subject instanceof EducationalSyllabusInterface) {
+                        $data[EducationalData::EDUCATIONAL_SYLLABUSES][] = $subject;
+                    } elseif ($subject instanceof EducationalModuleInterface) {
+                        $data[EducationalData::EDUCATIONAL_MODULES][] = $subject;
+                    } else {
+                        throw new \Exception();
+                    }
+                }
+            }
+            $data[EducationalData::STUDY_CONTENTS] = [];
+            $data[EducationalData::STUDY_OBJECTIVES] = [];
+            foreach ($xml->learningResource->teaches ?? [] as $teaches) {
+                $contentsOrObjective = $dataUtil->getStudyContentsOrObjectiveByIdAndUrl(
+                    $teaches->identifier,
+                    $teaches->inDefinedTermSet->url
+                );
+                if ($contentsOrObjective instanceof StudyContentsInterface) {
+                    $levelOrSubject = $contentsOrObjective->getRoot()->getProxiedObject();
+                    if ($levelOrSubject instanceof EducationalLevelInterface) {
+                        $data[EducationalData::TRANSVERSAL_COMPETENCES][] = $contentsOrObjective;
+                    } elseif ($levelOrSubject instanceof EducationalSubjectInterface) {
+                        $data[EducationalData::STUDY_CONTENTS][] = $contentsOrObjective;
+                    } else {
+                        throw new \Exception();
+                    }
+                } elseif ($contentsOrObjective instanceof StudyObjectiveInterface) {
+                    $data[EducationalData::STUDY_OBJECTIVES][] = $contentsOrObjective;
+                } else {
+                    throw new \Exception();
+                }
+            }
+            return $data;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**
@@ -179,6 +299,8 @@ class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
      * @param \SimpleXMLElement $item Curated record item XML
      *
      * @return CuratedRecord
+     *
+     * @see ContainerFormatTrait::getEncapsulatedRecordDriver()
      */
     protected function getCuratedrecordDriver(\SimpleXMLElement $item): CuratedRecord
     {
