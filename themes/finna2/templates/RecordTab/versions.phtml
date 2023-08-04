@@ -47,7 +47,7 @@ $translations = $this->jsTranslations()->getJSON();
 // required for results loaded via AJAX:
 $script = <<<JS
     VuFind.addTranslations($translations);
-    finna.combinedResults.init($('.results'));
+    finna.common.initResultScripts('.results');
     JS;
 ?>
 <?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET'); ?>

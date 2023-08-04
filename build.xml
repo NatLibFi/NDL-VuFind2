@@ -56,7 +56,7 @@
   <property name="phpunit_remote_coverage" value="" /><!-- set to 1 to enable code coverage for Mink tests  -->
   <property name="retain_coverage_files" value="false" /><!-- set to true to keep temporary coverage files from Mink tests -->
 
-  <property name="version" value="9.0.1" />
+  <property name="version" value="9.0.3" />
 
   <!-- We only need the -p switch if the password is non-blank -->
   <if>
@@ -117,8 +117,8 @@
   <!-- Quality Assurance Javascript Tasks -->
   <target name="qa-js-and-less" description="quality assurance js and less tasks">
     <phingcall target="eslint"/>
-    <phingcall target="eslint-finna"/>
     <phingcall target="jshint"/>
+    <phingcall target="checkLessToSass"/>
   </target>
 
   <!-- Quality Assurance PHP Tasks -->
@@ -189,17 +189,6 @@
     <exec command="npx eslint ${srcdir}/themes/**/*.js -c ${srcdir}/.eslintrc.js --format checkstyle -o ${builddir}/reports/eslint-checkstyle.xml" escape="false" />
   </target>
 
-  <!-- Finna ESLint -->
-  <target name="eslint-finna">
-    <exec command="npx eslint -c ${srcdir}/.eslintrc.js ${srcdir}/themes/finna2/js/*.js" escape="false" checkreturn="true" passthru="true" />
-  </target>
-  <target name="eslint-finna-fix">
-    <exec command="npx eslint -c ${srcdir}/.eslintrc.js ${srcdir}/themes/finna2/js/*.js --fix" escape="false" passthru="true" />
-  </target>
-  <target name="eslint-finna-report">
-    <exec command="npx eslint -c ${srcdir}/.eslintrc.js ${srcdir}/themes/finna2/js/*.js --format checkstyle -o ${builddir}/reports/eslint-finna2.xml" escape="false" />
-  </target>
-
   <!-- JSHint -->
   <target name="jshint">
     <exec command="npx jshint --config=${srcdir}/tests/jshint.json --exclude=themes/*/js/vendor ${srcdir}/themes" checkreturn="true" passthru="true" />
@@ -208,9 +197,14 @@
     <exec command="npx jshint --config=${srcdir}/tests/jshint.json --exclude=themes/*/js/vendor --reporter=checkstyle ${srcdir}/themes &gt; ${builddir}/reports/jshint-checkstyle.xml" />
   </target>
 
-  <!-- Run LessToSass, error if there are uncommitted changes (used by Travis) -->
+  <!-- Run Sass build, error if it fails -->
+  <target name="checkSassBuild">
+    <exec command="npm run build:scss" checkreturn="true" passthru="true" />
+  </target>
+
+  <!-- Run LessToSass, error if there are uncommitted changes (used by continuous integration) -->
   <target name="checkLessToSass">
-    <exec command="grunt lessToSass" checkreturn="true" passthru="true" />
+    <exec command="npm run lessToSass" checkreturn="true" passthru="true" />
     <exec command="git diff --exit-code *.scss" checkreturn="true" passthru="true" />
   </target>
 

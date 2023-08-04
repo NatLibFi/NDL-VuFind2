@@ -708,10 +708,35 @@ lastname = SHIB_sn
 ;            applications.  The existence of functionality in VuFind does not imply
 ;            suitability for any particular situation.
 [Content]
-; You can select Syndetics, LibraryThing, Summon, Amazon, Booksite, OpenLibrary,
-; Contentcafe and/or Google Books.
-;   Note: Summon service takes a Serials Solutions client key, NOT Summon API key!
-;coverimages     = Syndetics:MySyndeticsId,Amazon:MyAccessKeyId,Booksite,LibraryThing:MyLibraryThingId,Google,OpenLibrary,Summon:MySerialsSolutionsClientKey,Contentcafe:MyContentCafeID,NatLibFi,BookyFi,BTJ:customerId
+; You can select Syndetics, LibraryThing, Summon, Booksite, OpenLibrary,
+; You can select Syndetics, LibraryThing, Summon, Booksite, OpenLibrary,
+; Contentcafe, Buchhandel.de, Google, BrowZine, ObalkyKnih, Orb, Koha and/or
+; LocalFile. Service-specific notes:
+;   - BrowZine requires you to have BrowZine.ini configured appropriately.
+;   - Google Books caching behavior can be customized in the [Cache_GoogleCover]
+;       section.
+;   - Koha requires the koha_cover_url setting below. Additionally, for
+;       Koha to be a source of covers, its LocalCoverImages and
+;       OPACLocalCoverImages system preferences must be turned on and local cover
+;       images uploaded to the Koha system. Koha emits only two sizes of cover
+;       images, so small and medium are treated the same in VuFind.
+;   - LocalFile:PathToFile supports a combination of directory path information
+;       and tokens for filename and image type. If you have multiple directories
+;       in which you have stored coverimages, you can specify multiple paths to search
+;       by specifying multiple LocalFile:PathToFile in the coverage images list below.
+;       Allowed tokens:
+;          %anyimage%         - Match known image file extensions (gif, jpg, etc.)
+;          %isbn10%           - 10-digit ISBN
+;          %isbn13%           - 13-digit ISBN
+;          %issn%             - ISSN
+;          %oclc%             - OCLC Number
+;          %recordid%         - Bibliographic record ID
+;          %size%             - Size (small/medium/large)
+;          %source%           - Search backend of record (e.g. Summon, Solr, etc.)
+;          %upc%              - UPC Number
+;          %vufind-home%      - The VUFIND_HOME environment variable
+;          %vufind-local-dir% - The VUFIND_LOCAL_DIR environment variable
+;        Example: LocalFile:%vufind-local-dir%/path/to/file/%size%/issn/%issn%.%anyimage%
 coverimages     = NatLibFi,OpenLibrary
 
 ; List of undisplayable file formats

@@ -18,4 +18,14 @@
     <unittitle label="Reinius Theodor S 3:b) 1" normal="Reinius Theodor S 3:b) 1" lang="fin">Reinius Theodor S 3:b) 1</unittitle>
 
   </did>
+  <relatedmaterial>
+    <p lang="fi">
+      <ref href="https://fi.wikipedia.org/">Wikipedia-artikkeli</ref>
+      <ref>Joku muu liittyvä aineisto</ref>
+    </p>
+    <p lang="en">Some related material</p>
+    <p>
+      <ref lang="sv" href="https://sv.wikipedia.org/">   </ref>
+    </p>
+  </relatedmaterial>
 </c02>

@@ -76,6 +76,70 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Function to get expected other related material data
+     *
+     * @return array
+     */
+    public function getOtherRelatedMaterialData(): array
+    {
+        return [
+            [
+                'fi',
+                [
+                    [
+                        'text' => 'Wikipedia-artikkeli',
+                        'url' => 'https://fi.wikipedia.org/',
+                    ],
+                    [
+                        'text' => 'Joku muu liittyvä aineisto',
+                        'url' => '',
+                    ],
+                ],
+            ],
+            [
+                'en-gb',
+                [
+                    [
+                        'text' => 'Some related material',
+                        'url' => '',
+                    ],
+                ],
+            ],
+            [
+                'sv',
+                [
+                    [
+                        'text' => 'https://sv.wikipedia.org/',
+                        'url' => 'https://sv.wikipedia.org/',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Test getOtherRelatedMaterial
+     *
+     * @param string $language Language
+     * @param array  $expected Result to be expected
+     *
+     * @dataProvider getOtherRelatedMaterialData
+     *
+     * @return void
+     */
+    public function testGetOtherRelatedMaterial(
+        string $language,
+        array $expected
+    ): void {
+        $driver = $this->getDriver();
+        $driver->setPreferredLanguage($language);
+        $this->assertEquals(
+            $expected,
+            $driver->getOtherRelatedMaterial()
+        );
+    }
+
+    /**
      * Get a record driver with fake data.
      *
      * @param array $overrides    Fixture fields to override.

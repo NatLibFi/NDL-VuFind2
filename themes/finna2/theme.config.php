@@ -203,7 +203,6 @@ $config = [
         'finna-popup.js',
         'finna-autocomplete.js',
         'finna-authority.js',
-        'finna-combined-results.js',
         'finna-image-paginator.js',
         'finna-menu-movement.js',
         'finna-comments.js',

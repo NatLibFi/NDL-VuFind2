@@ -31,7 +31,7 @@
             <i class="fa fa-arrow-right<?php if ($this->findby == $findby): ?> fa-arrow-down<?php endif; ?>"></i>
           <?php else: ?>
             <?=$this->transEsc($category['text'])?>
-            <span class="badge"><?=number_format($category['count'])?></span>
+            <span class="badge"><?=$this->localizedNumber($category['count'])?></span>
           <?php endif; ?>
         </a>
       <?php endforeach; ?>
@@ -61,7 +61,7 @@
       <a href="<?=$url ?>" class="list-group-item clearfix<?php if ($this->query == $secondary['value'] . '' || $this->query == $secondary['value'] . '*'): ?> active<?php endif; ?>">
         <?=$this->escapeHtml($secondary['displayText']) ?>
         <?php if ($this->findby != 'alphabetical' && isset($secondary['count'])): ?>
-          <span> (<?=number_format($secondary['count']) ?>)</span>
+          <span> (<?=$this->localizedNumber($secondary['count']) ?>)</span>
         <?php endif; ?>
       </a>
       <?php if($viewRecord): ?>
@@ -77,7 +77,7 @@
     <?php foreach($this->resultList as $result): ?>
         <a class="list-group-item clearfix" href="<?=$SEARCH_BASE ?>?<?=$this->paramTitle ?><?=urlencode($result['value']) ?><?php if ($this->searchParams): foreach($this->searchParams as $var => $val): ?>&amp;<?=$var ?>=<?=urlencode($val) ?><?php endforeach;endif; ?>">
           <?=$this->escapeHtml($result['displayText'])?>
-          <span> (<?=number_format($result['count']) ?>)</span>
+          <span> (<?=$this->localizedNumber($result['count']) ?>)</span>
         </a>
     <?php endforeach; ?>
     </div>

@@ -629,6 +629,20 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     }
 
     /**
+     * Return an external URL where a displayable description text
+     * can be retrieved from, if available; false otherwise.
+     *
+     * @return mixed
+     */
+    public function getDescriptionURL()
+    {
+        if ($isbn = $this->getCleanISBN()) {
+            return 'https://kansikuvat.finna.fi/getText.php?query=' . $isbn;
+        }
+        return false;
+    }
+
+    /**
      * Return description as associative array
      * - type Type of the description and text as the value
      *
@@ -1749,7 +1763,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
 
     /**
      * Get all subject headings associated with this record apart from geographic
-     * places.  Each heading is returned as an array of chunks, increasing from least
+     * places. Each heading is returned as an array of chunks, increasing from least
      * specific to most specific.
      *
      * @param bool $extended Whether to return a keyed array with the following
@@ -1953,7 +1967,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      *
      * @param mixed $data Raw data representing the record; Record Model
      * objects are normally constructed by Record Driver objects using data
-     * passed in from a Search Results object.  The exact nature of the data may
+     * passed in from a Search Results object. The exact nature of the data may
      * vary depending on the data source -- the important thing is that the
      * Record Driver + Search Results objects work together correctly.
      *
