@@ -483,13 +483,15 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      */
     public function getDeweys()
     {
-        $result = [];
+        $results = [];
         foreach ($this->getMarcReader()->getFields('082') as $field) {
+            $result = [];
             if ($result = $this->getSubfield($field, 'a')) {
+                $results[] = $result;
                 break;
             }
         }
-        return $result;
+        return $results;
     }
 
     /**
