@@ -1,0 +1,54 @@
+<?php
+  $__attributes = $this->htmlAttributes($attributes ?? []);
+  $__headingTag = 'h3';
+?>
+<section<?= $__attributes->add('class', 'finna-educational-level-data') ?>>
+  <?php if (!empty($studyContents)): ?>
+    <section>
+      <<?= $__headingTag ?>><?= $studyContentsTitle ?? '' ?></<?= $__headingTag ?>>
+      <ul>
+        <?php foreach ($studyContents ?? [] as $subject => $values): ?>
+          <li>
+            <dl>
+              <dt><?= $subject ?>:</dt>
+              <?php foreach ($values as $value): ?>
+                <dd><?= $value ?></dd>
+              <?php endforeach; ?>
+            </dl>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+    </section>
+  <?php endif; ?>
+  <section>
+    <<?= $__headingTag ?>><?= $studyObjectivesTitle ?? '' ?></<?= $__headingTag ?>>
+    <ul>
+      <?php foreach ($studyObjectives ?? [] as $subject => $values): ?>
+        <li>
+          <dl>
+            <dt><?= $subject ?>:</dt>
+            <?php foreach ($values as $value): ?>
+              <dd><?= $value ?></dd>
+            <?php endforeach; ?>
+          </dl>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+  </section>
+  <?php if (!empty($transversalCompetences)): ?>
+    <section>
+      <<?= $__headingTag ?>><?= $transversalCompetencesTitle ?? '' ?></<?= $__headingTag ?>>
+      <ul>
+        <?php foreach ($transversalCompetences as $transversalCompetence): ?>
+          <li><?= $transversalCompetence ?></li>
+        <?php endforeach; ?>
+      </ul>
+    </section>
+  <?php endif; ?>
+  <?php if (isset($objective)): ?>
+    <section class="finna-educational-level-objective">
+      <<?= $__headingTag ?>><?= $objectiveTitle ?? '' ?></<?= $__headingTag ?>>
+      <p><?= $objective ?></p>
+    </section>
+  <?php endif; ?>
+</section>
