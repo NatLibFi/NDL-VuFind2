@@ -27,7 +27,7 @@ $additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-a
       <?php endforeach; ?>
       <?php if ($this->ids): ?>
         <div class="dynamic-content">
-          <i class="fa fa-spin fa-spinner" aria-hidden="true"></i>
+          <?=$this->icon('spinner') ?>
         </div>
         <?php if ($this->externalLinks): ?>
           <div class="popover-external-links">

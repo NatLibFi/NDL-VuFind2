@@ -151,7 +151,7 @@
           <span class="filter-text">
             <?=$desc?>
           </span>
-          <?php if ($removeLink): ?><a aria-label="<?=$ariaLabel?>" href="<?=$removeLink?>"><i class="fa fa-window-close" aria-hidden="true"></i></a><?php endif; ?>
+          <?php if ($removeLink): ?><a aria-label="<?=$ariaLabel?>" href="<?=$removeLink?>"><?=$this->icon('remove-filter') ?></a><?php endif; ?>
         </span>
       <?php endforeach; ?>
     <?php endif; ?>
@@ -183,7 +183,7 @@
                 <?= $this->transEsc('try_to_remove_geographical_filters') ?>:
                 <span class="filter-value">
                   <?=$this->transEsc($geoFilter)?>
-                  <?php if (isset($geoRemoveLink)) :?><a aria-label="<?=$this->translate('Remove filter') ?>" href="<?=$geoRemoveLink?>"><i class="fa fa-window-close" aria-hidden="true"></i></a><?php endif; ?>
+                  <?php if (isset($geoRemoveLink)) :?><a aria-label="<?=$this->translate('Remove filter') ?>" href="<?=$geoRemoveLink?>"><?=$this->icon('remove-filter') ?></a><?php endif; ?>
                 </span>
               </div>
             <?php endif; ?>
@@ -204,7 +204,7 @@
       <?php if ($this->fromStreetSearch): ?>
         <div class="search-controls">
           <div class="update-location-button">
-            <a class="btn btn-primary" href="<?=$this->url('search-streetsearch')?>?go=1"><i class="fa fa-crosshairs"></i> <span><?=$this->transEsc('street_search_refresh')?></span></a>
+            <a class="btn btn-primary" href="<?=$this->url('search-streetsearch')?>?go=1"><?=$this->icon('crosshairs') ?> <span><?=$this->transEsc('street_search_refresh')?></span></a>
           </div>
         </div>
       <?php endif; ?>
@@ -307,7 +307,7 @@
     <div class="searchtools hidden-print">
       <a href="<?=$this->results->getUrlQuery()->setViewParam('rss')?>"><?=$this->icon('rss-feed') ?> <?=$this->transEsc('Get RSS Feed')?></a>
 
-      <a href="<?=$this->url('search-email')?>" class="mailSearch" data-lightbox id="mailSearch<?=$this->escapeHtmlAttr($this->results->getSearchId())?>" title="<?=$this->transEsc('Email this Search')?>"><?=$this->icon('search-email') ?> <?=$this->transEsc('Email this Search')?></a>
+      <a href="<?=$this->url('search-email')?>" class="mailSearch" data-lightbox id="mailSearch<?=$this->escapeHtmlAttr($this->results->getSearchId())?>" title="<?=$this->transEsc('Email this Search')?>"><?=$this->icon('email') ?> <?=$this->transEsc('Email this Search')?></a>
 
       <?php if (is_numeric($this->results->getSearchId()) && (is_object($account) && $account->loginEnabled())): ?>
         <?php if ($this->results->isSavedSearch()): ?>

@@ -97,6 +97,21 @@
     .holdings, .holdings-container, .no-holdings, .availability-load-indicator {
         clear: both;
     }
+    .holdings-container {
+        .header {
+            .icon.collapse {
+                display: none;
+            }
+            &.open {
+                .icon.expand {
+                    display: none;
+                }
+                .icon.collapse {
+                    display: initial;
+                }
+            }
+        }
+    }
     &.deduplicated {
         .available-total {
             margin-top: 0.5em;

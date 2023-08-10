@@ -54,7 +54,7 @@
         </div>
         <?php if ($list && $user && $list->user_id === $user->id && $list->public): ?>
           <div class="list-public-indicator">
-            <strong><i class="fa fa-public"></i> <?=$this->transEsc('public_list_indicator') ?></strong>
+            <strong><?=$this->icon('list-public') ?> <?=$this->transEsc('public_list_indicator') ?></strong>
           </div>
         <?php endif; ?>
         <?php $markdown = $list ? $this->markdown()->replaceDeprecatedTags($list->description ?? '') : ''; ?>
@@ -157,7 +157,7 @@
 <?php endif; ?>
 <div class="mylist-mobile mobile-navigation visible-xs visible-sm hidden-print">
   <ul>
-    <li class="sidebar-navigation"><i class="fa fa-arrow-up"></i> <?=$this->transEsc('Your Lists')?></li>
+    <li class="sidebar-navigation"><?=$this->icon('sidebar-expand') ?> <?=$this->transEsc('Your Lists')?></li>
   </ul>
 </div>
 

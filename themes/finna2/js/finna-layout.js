@@ -324,12 +324,6 @@ finna.layout = (function finnaLayout() {
         }
 
         $(this).nextAll('.condensed-collapse-data').first().slideToggle(120, 'linear', onSlideComplete);
-
-        var icon = $(this).find('.condensed-body > i');
-        if (icon.length === 0) {
-          icon = $(this).find('.condensed-col-title > i');
-        }
-        icon.toggleClass('fa-arrow-right').toggleClass('fa-arrow-down');
       }
     });
   }
@@ -668,17 +662,17 @@ finna.layout = (function finnaLayout() {
     $('.filters-toggle').on('click', function filterToggleClicked() {
       var button = $(this);
       var filters = button.closest('.finna-filters').find('.filters');
+      button.toggleClass('open');
 
-      function setState(setHidden, arrowClass, text) {
+      function setState(setHidden, text) {
         filters.toggleClass('hidden', setHidden);
-        button.find('.fa').attr('class', arrowClass);
         button.find('.toggle-text').html(VuFind.translate(text));
       }
 
       if (filters.hasClass('hidden')) {
-        setState(false, 'fa fa-arrow-up', 'hide_filters');
+        setState(false, 'hide_filters');
       } else {
-        setState(true, 'fa fa-arrow-down', 'show_filters');
+        setState(true, 'show_filters');
       }
     });
   }

@@ -13,7 +13,7 @@
 <div class="record-container list-view <?=$this->record($this->driver)->getContainerJsClasses()?>" id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>">
   <div class="condensed-collapse-toggle">
     <div class="condensed-body">
-      <i class="fa fa-arrow-right"></i>
+      <?=$this->icon('condensed-expand','condensed-expand') ?><?=$this->icon('condensed-collapse','condensed-collapse') ?>
       <h2 class="title">
         <a class="title" href="<?=$this->escapeHtmlAttr($recordLinker->getUrl($this->driver))?>">
           <?=$this->record($this->driver)->getTitleHtml()?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
@@ -99,7 +99,7 @@
       <?php /*** TODO how to show if this database usage needs authorizing
               <? if  ($database == 'true') && ($authorize == 'true') :?>
         <span class="authorize">
-          <i class="fa fa-lock"></i>
+          <?=$this->icon('authorize') ?>
         </span>
       <? endif; ?>
       ***/ ?>
@@ -191,7 +191,7 @@
                 <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
                 <div class="hierarchyTreeLink">
                   <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId">
-                  <i class="fa fa-sitemap"></i>
+                  <?=$this->icon('hierarchy') ?>
                   <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID]))?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>" data-lightbox-href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID]))?>" data-lightbox-post="tab=hierarchytree">
                       <?=$this->transEsc('hierarchy_view_context')?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?>
                   </a>

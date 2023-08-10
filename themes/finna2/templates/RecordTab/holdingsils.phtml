@@ -279,13 +279,13 @@
       }
     }
     if ($available) {
-      $holdingSummary = '<span class="text-success"><i class="fa fa-ok" aria-hidden="true"></i> ' . $this->translate('status_items_available_html', ['%%count%%' => $available]) . '</span>';
+      $holdingSummary = '<span class="text-success">' .  $this->icon('status-available') . $this->translate('status_items_available_html', ['%%count%%' => $available]) . '</span>';
     } elseif ($firstDueStr) {
-      $holdingSummary = '<span class="text-danger"><i class="fa fa-remove" aria-hidden="true"></i> ' . $this->transEsc('closest_due_date', ['%%date%%' => $firstDueStr]) . '</span>';
+      $holdingSummary = '<span class="text-danger">'. $this->icon('status-unavailable') . $this->transEsc('closest_due_date', ['%%date%%' => $firstDueStr]) . '</span>';
     } elseif ($statuses) {
       $holdingSummary = '<span class="text-danger"> ' . $this->escapeHtml(implode(' ', array_flip($statuses))) . '</span>';
     } else {
-      $holdingSummary = '<span class="text-success"><i class="fa fa-ok" aria-hidden="true"></i> ' . $this->transEsc('Available') . '</span>';
+      $holdingSummary = '<span class="text-success">' . $this->icon('status-available') . $this->transEsc('Available') . '</span>';
     }
 
     $additionalSummary = [];
@@ -360,7 +360,7 @@
     <div class="clearfix"></div>
     <?php if (isset($holding['items'][0]['detailsGroupKey'])): ?>
       <div class="<?=$this->escapeHtmlAttr($holdingsDetails)?>GetDetails <?=$this->escapeHtmlAttr($holdingsDetails)?> hidden" data-key="<?=$this->escapeHtmlAttr($holding['items'][0]['detailsGroupKey'])?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
-        <i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('loading_ellipsis')?>
+        <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
       </div>
     <?php endif; ?>
     <?php if (!$this->holdings()->showDetailsAfterLocationGroup()): ?>

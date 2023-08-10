@@ -74,14 +74,14 @@
               <td data-label="<?=$this->transEsc('Actions')?>" class="library-card-actions">
                 <div>
                   <?php if ($this->ils()->checkFunction('changePassword', (array)$record)): ?>
-                    <a class="btn-link" href="<?=$this->url('newLibraryCardPassword') ?>?id=<?=$this->escapeHtmlAttr($record['id']) ?>" data-lightbox title="<?=$this->transEsc('Change Password')?>"><i class="fa fa-lock bigger gray"></i> <?=$this->transEsc('Change Password')?></a>
+                    <a class="btn-link" href="<?=$this->url('newLibraryCardPassword') ?>?id=<?=$this->escapeHtmlAttr($record['id']) ?>" data-lightbox title="<?=$this->transEsc('Change Password')?>"><?=$this->icon('library-card-password') ?> <?=$this->transEsc('Change Password')?></a>
                   <?php endif; ?>
                   <?php if ($this->auth()->getManager()->allowsUserIlsLogin()): ?>
-                    <a class="btn-link" href="<?=$this->url('editLibraryCard') . $this->escapeHtmlAttr($record['id']) ?>" title="<?=$this->transEsc('Edit Library Card')?>"><i class="fa fa-pen gray" aria-hidden="true"></i> <?=$this->transEsc('Update Card Details')?></a>
+                    <a class="btn-link" href="<?=$this->url('editLibraryCard') . $this->escapeHtmlAttr($record['id']) ?>" title="<?=$this->transEsc('Edit Library Card')?>"><?=$this->icon('library-card-edit') ?> <?=$this->transEsc('Update Card Details')?></a>
                   <?php endif; ?>
                   <div class="dropdown">
                     <a class="btn-link dropdown-toggle" data-toggle="dropdown" href="<?=$this->escapeHtmlAttr($this->url('librarycards-deletecard', [], ['query' => ['cardID' => $record['id']]]))?>">
-                      <i class="fa fa-unlink gray" aria-hidden="true"></i> <?=$this->transEsc('Disconnect Library Card')?>
+                      <?=$this->icon('library-card-disconnect') ?> <?=$this->transEsc('Disconnect Library Card')?>
                     </a>
                     <ul class="dropdown-menu useraccount-confirm">
                       <li class="disabled"><a><?=$this->transEsc('Disconnect Library Card')?>?</a></li>
@@ -98,7 +98,7 @@
 
       <div>
         <?php if ($this->auth()->getManager()->allowsUserIlsLogin()): ?>
-          <a href="<?=$this->url('editLibraryCard') ?>NEW" class="btn btn-primary" title="<?=$this->transEsc('Connect Library Card')?>"><i class="fa fa-link" aria-hidden="true"></i> <?=$this->transEsc('Connect Library Card')?><?=$this->transEsc('eol_ellipsis')?></a>
+          <a href="<?=$this->url('editLibraryCard') ?>NEW" class="btn btn-primary" title="<?=$this->transEsc('Connect Library Card')?>"><?=$this->icon('library-card-connect') ?> <?=$this->transEsc('Connect Library Card')?><?=$this->transEsc('eol_ellipsis')?></a>
         <?php endif; ?>
         <br>
         <br>

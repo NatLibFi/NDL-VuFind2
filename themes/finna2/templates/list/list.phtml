@@ -40,7 +40,7 @@ $this->headScript()->prependScript("var listId = {$list->id}; var publicList = 1
       <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results]) ?>
     </div>
     <div class="save-list-wrapper">
-      <a class="btn btn-primary btn-sm btn-block" data-lightbox role="button" href="<?= $this->url('list-save', [ 'id' => $list->id ]) ?>"><i class="fa fa-files-o" aria-hidden="true"></i> <span class="hidden-xs hidden-sm"><?=$this->transEsc('import_favorites_from_list')?></span></a>
+      <a class="btn btn-primary btn-sm btn-block" data-lightbox role="button" href="<?= $this->url('list-save', [ 'id' => $list->id ]) ?>"><?=$this->icon('list-save') ?> <span class="hidden-xs hidden-sm"><?=$this->transEsc('import_favorites_from_list')?></span></a>
     </div>
     <div class="control-container text-right hidden-print">
       <?=$this->render('search/controls/sort.phtml')?>
@@ -69,7 +69,7 @@ $this->headScript()->prependScript("var listId = {$list->id}; var publicList = 1
   <div class="container">
     <div class="searchtools hidden-print">
       <?php $this->results->getParams()->setPage(1); ?>
-      <a href="<?=$this->results->getUrlQuery()->setViewParam('rss')?>"><i class="fa fa-bell"></i> <?=$this->transEsc('Get RSS Feed')?></a>
+      <a href="<?=$this->results->getUrlQuery()->setViewParam('rss')?>"><?=$this->icon('rss-feed') ?> <?=$this->transEsc('Get RSS Feed')?></a>
     </div>
   </div>
 <?php // NOTE: leave out a closing div to compensate for the one added above ?>

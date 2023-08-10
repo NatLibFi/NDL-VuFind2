@@ -19,9 +19,7 @@
         padding: 0;
         height: 44px;
         margin: 0;
-        i, span.icon {
-          font-size: 20px;
-        }
+
         & > a {
           padding: 10px 9px 0px 9px;
           height: 44px;
@@ -30,20 +28,19 @@
           color: @sidebar-header-text-color;
         }
       }
-      .share-buttons, li.whatsapp {
-        margin: 0;
+      .share-buttons, li.whatsapp, li.mail-record {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .share-buttons-toolbox {
+          flex-flow: column wrap;
+        }
       }
     }
     & .nav-pills.mobile-sharing .whatsapp a, .share-buttons-toolbox a, .nav-pills.mobile-sharing .mail-record a {
-      padding: 6px 10px;
-      display: block;
+      margin: 5px;
       &:hover {
         background: rgba(255, 255, 255, 0.2);
-      }
-      i {
-        margin: 0;
-        padding: 6px;
-        font-size: 20px;
       }
     }
     .dropdown-toggle {
@@ -104,7 +101,6 @@
     }
     li.btn-bookbag-toggle a{
       position: relative;
-
       .blinker {
         position: absolute;
         width: 100%;
@@ -113,21 +109,10 @@
         left: 0;
         background-color: transparent;
       }
-
-      .fa-close {
+      .cart-remove-mobile-icon {
+        font-size: 10px;
         position: absolute;
-        top: 6px;
-        right: 4px;
-        font-size: 11px;
-        border-radius: 50%;
-        box-shadow: 0 0 0 3px @sidebar-background;
-      }
-
-      &:hover {
-        .fa-close {
-          transition: box-shadow .2s ease-in-out;
-          box-shadow: 0 0 0 3px screen(@sidebar-background, rgba(255, 255, 255, 0.2));
-        }
+        top: 5px;
       }
     }
   }

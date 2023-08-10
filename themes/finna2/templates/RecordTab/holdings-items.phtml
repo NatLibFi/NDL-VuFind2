@@ -63,7 +63,6 @@
           <?php if ($row['availability']): ?>
             <?php /* Begin Available Items (Holds) */ ?>
             <span class="text-success">
-              <i class="fa fa-ok" aria-hidden="true"></i>
               <?=$this->icon('status-available', 'status-available-icon') ?>
               <?=isset($row['availabilityInfo']['displayText']) ? $this->transEsc('status_' . $row['availabilityInfo']['displayText'], [], $row['availabilityInfo']['displayText']) : $this->transEsc('Available')?>
               <link property="availability" href="http://schema.org/InStock">
@@ -151,7 +150,7 @@
       <button class="more-link load-more-items-ajax" type="button">
         <?=$this->transEsc('show_more')?> <i class="fa fa-arrow-down"></i>
       </button>
-      <span class="load-more-indicator-ajax hidden"><i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('loading_ellipsis')?></span>
+      <span class="load-more-indicator-ajax hidden"><?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?></span>
     </div>
     <div class="holdings-items-ajax hidden"></div>
   <?php endif; ?>

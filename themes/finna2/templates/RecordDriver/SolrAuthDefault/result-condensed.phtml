@@ -15,7 +15,7 @@
 <div class="record-container list-view authority <?=$this->record($this->driver)->getContainerJsClasses()?>">
   <div class="condensed-collapse-toggle">
     <div class="condensed-body authority">
-      <i class="fa fa-arrow-right"></i>
+      <?=$this->icon('condensed-expand','condensed-expand') ?><?=$this->icon('condensed-collapse','condensed-collapse') ?>
       <div class="resultItemFormat"><?=$this->transEsc($formats[0])?></div>
       <div class="title-container">
         <div>

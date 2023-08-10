@@ -47,7 +47,7 @@
     <?php if ($user): ?>
       <?php if (!empty($this->registerPayment)): ?>
         <div class="alert alert-info">
-          <span class="register-payment-spinner"><i class="fa fa-spinner fa-spin"></i> <?=$this->translate('Registering Payment');?></span>
+          <span class="register-payment-spinner"><?=$this->icon('spinner') ?> <?=$this->translate('Registering Payment');?></span>
           <div id="online-payment-status" class="info hide"></div>
         </div>
       <?php endif; ?>

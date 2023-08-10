@@ -55,7 +55,7 @@
   <?php if (isset($i) && $i >= $this->facets_before_more): ?>
     <?php if ($this->showMoreInLightbox === 'more' && $facetLightbox = $options->getFacetListAction()): ?>
       <a class="facet narrow-toggle more-narrow-toggle" data-lightbox href="<?=$moreUrl ?>" rel="nofollow">
-        <span class="text"><i class="fa fa-list" aria-hidden="true"></i> <?=$this->transEsc('see all')?></span>
+        <span class="text"><?=$this->icon('list') ?> <?=$this->transEsc('see all')?></span>
       </a>
     <?php endif; ?>
   <?php endif; ?>
