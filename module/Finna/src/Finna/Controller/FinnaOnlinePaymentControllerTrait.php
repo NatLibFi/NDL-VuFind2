@@ -416,6 +416,12 @@ trait FinnaOnlinePaymentControllerTrait
                         'Helpers/OnlinePayment/terms-' . $view->paymentHandler
                         . '.phtml'
                     );
+                } else {
+                    // Check for a started transaction:
+                    $view->startedTransaction = $trTable->getStartedPayment(
+                        $patron['cat_username'],
+                        (int)($paymentConfig['transactionMaxDuration'] ?? 15)
+                    );
                 }
             }
         }
