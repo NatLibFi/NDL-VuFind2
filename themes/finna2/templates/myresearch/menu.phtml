@@ -90,7 +90,7 @@
       'logout' => [
         'url' => 'myresearch-logout',
         'translation' => 'Log Out',
-        'iconClass' => 'pull-right fa fa-sign-out fa-lg',
+        'iconClass' => $this->icon('sign-out', 'pull-right'),
         'desktopOnly' => true,
       ],
     ];
@@ -192,7 +192,7 @@
         <a role="menuitem" href="<?=$this->escapeHtmlAttr($this->url($listItem['url']) . ($listItem['query'] ?? ''))?>" class="list-group-item" <?=$activeToLower === $name ? 'aria-current="page"' : ''?>>
           <?=$this->transEsc($listItem['translation'])?>
           <?php if (isset($listItem['iconClass'])): ?>
-            <i class="<?=$listItem['iconClass']?>" aria-hidden="true"></i>
+            <?=$listItem['iconClass']?>
           <?php endif; ?>
           <?php if (!empty($listItem['statusKey'])): ?>
             <span class="<?=$listItem['statusKey']?>-status status hidden"><?=$this->icon('spinner') ?></span>
