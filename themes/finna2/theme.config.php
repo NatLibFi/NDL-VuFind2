@@ -428,6 +428,7 @@ $config = [
             'status-available' => 'FinnaIcons:circle-filled',
             'status-unavailable' => 'FinnaIcons:remove',
             'time-open' => 'FontAwesome:clock-o',
+            'type-dropdown-open' => 'FontAwesome:angle-down',
             'twitter' => 'FinnaIcons:twitter',
             'user' => 'FinnaIcons:user',
             'versions-more-link' => 'FinnaIcons:right',
