@@ -85,7 +85,7 @@ class DefaultRecord extends AbstractBase
     }
 
     /**
-     * Get all subject headings associated with this record.  Each heading is
+     * Get all subject headings associated with this record. Each heading is
      * returned as an array of chunks, increasing from least specific to most
      * specific.
      *
@@ -102,7 +102,7 @@ class DefaultRecord extends AbstractBase
         $headings = [];
         foreach (['topic', 'geographic', 'genre', 'era'] as $field) {
             if (isset($this->fields[$field])) {
-                $headings = array_merge($headings, (array)$this->fields[$field]);
+                $headings = array_merge($headings, $this->fields[$field]);
             }
         }
 
@@ -411,7 +411,7 @@ class DefaultRecord extends AbstractBase
 
     /**
      * Get the date coverage for a record which spans a period of time (i.e. a
-     * journal).  Use getPublicationDates for publication dates of particular
+     * journal). Use getPublicationDates for publication dates of particular
      * monographic items.
      *
      * @return array
@@ -683,7 +683,7 @@ class DefaultRecord extends AbstractBase
             a. Remove it.
             b. Inspect the substring following (to the right of) the (removed)
                hyphen. Then (and assuming that steps 1 and 2 have been carried out):
-                    i.  All these characters should be digits, and there should be
+                    i. All these characters should be digits, and there should be
                     six or less.
                     ii. If the length of the substring is less than 6, left-fill the
                     substring with zeros until  the length is six.
@@ -1075,18 +1075,6 @@ class DefaultRecord extends AbstractBase
     }
 
     /**
-     * Get publication date or date range.
-     *
-     * @return ?array Array of one or two dates or null if not available.
-     * If date range is still continuing end year will be an empty string.
-     */
-    public function getPublicationDateRange()
-    {
-        $publicationDates = $this->getPublicationDates();
-        return $publicationDates ? [$publicationDates[0]] : null;
-    }
-
-    /**
      * Get an array of publication detail lines combining information from
      * getPublicationDates(), getPublishers() and getPlacesOfPublication().
      *
@@ -1192,7 +1180,7 @@ class DefaultRecord extends AbstractBase
     }
 
     /**
-     * Get an array of all series names containing the record.  Array entries may
+     * Get an array of all series names containing the record. Array entries may
      * be either the name string, or an associative array with 'name' and 'number'
      * keys.
      *
@@ -1594,7 +1582,7 @@ class DefaultRecord extends AbstractBase
 
     /**
      * Get an array of strings representing citation formats supported
-     * by this record's data (empty if none).  For possible legal values,
+     * by this record's data (empty if none). For possible legal values,
      * see /application/themes/root/helpers/Citation.php, getCitation()
      * method.
      *

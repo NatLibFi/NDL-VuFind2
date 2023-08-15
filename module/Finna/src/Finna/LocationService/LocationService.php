@@ -109,6 +109,7 @@ class LocationService
         if ($callnum instanceof \VuFind\I18n\TranslatableString) {
             $callnum = $callnum->getDisplayString();
         }
+        [$lang] = explode('-', $language, 2);
         $params = [
             'callno' => $callnum,
             'collection' => $collection,
@@ -116,7 +117,8 @@ class LocationService
             'branch' => $fields['branch'] ?? '',
             'department' => $fields['department'] ?? '',
             'title' => $title,
-            'lang' => substr($language, 0, 2),
+            'lang' => $lang,
+            'locale' => $language,
             'owner' => $this->config[$source]['owner'] ?? '',
         ];
 

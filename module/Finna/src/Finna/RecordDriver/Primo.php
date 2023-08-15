@@ -134,7 +134,7 @@ class Primo extends \VuFind\RecordDriver\Primo
 
     /**
      * Get an array of strings representing citation formats supported
-     * by this record's data (empty if none).  For possible legal values,
+     * by this record's data (empty if none). For possible legal values,
      * see /application/themes/root/helpers/Citation.php, getCitation()
      * method.
      *
@@ -295,7 +295,7 @@ class Primo extends \VuFind\RecordDriver\Primo
     }
 
     /**
-     * Get the publication dates of the record.  See also getDateSpan().
+     * Get the publication dates of the record. See also getDateSpan().
      *
      * @return array
      */

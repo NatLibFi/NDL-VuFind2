@@ -20,14 +20,13 @@
     letter-spacing: 0.2px;
     padding: 0;
     padding-bottom: 2px;
-    span.text-error {
-        vertical-align: middle;
-        margin-right: 10px;
-    }
-    span.text-success {
-        color: inherit;
-        vertical-align: middle;
-        margin-right: 10px;
+    span:not(.icon) {
+        &.text-error, &.text-success, &.text-warning {
+            color: inherit;
+            vertical-align: middle;
+            margin-right: 10px;
+            font-weight: normal;
+        }
     }
     .text-error {
         color: @brand-danger;
@@ -192,6 +191,14 @@
     }
     .holdings-group:not(.headers+.holdings-group) {
         border-top: 2px solid @record-holdings-border-color;
+    }
+    span.icon.text-success {
+        color: @brand-success;
+    }
+    // Fix horizontal alignment of uncertain status icon:
+    span.icon.fa-circle-o {
+        padding-left: 2px;
+        font-size: 90%;
     }
     .holdings-container-heading {
         display: flex;
@@ -483,7 +490,7 @@
     }
     .header {
         margin-bottom: 6px;
-        i {
+        span.icon {
             vertical-align: middle;
             margin-top: -2px;
         }
@@ -575,5 +582,16 @@
     }
     .fa.arrow {
         color: @gray-light;
+    }
+    span.icon {
+        vertical-align: middle;
+        &.text-success {
+            color: @brand-success;
+        }
+        // Fix horizontal alignment of uncertain status icon:
+        &.fa-circle-o {
+            padding-left: 2px;
+            font-size: 90%;
+        }
     }
 }

@@ -1,6 +1,7 @@
 <!-- START of: finna - librarycards/selectcard.phtml -->
 <?php if ($this->user): ?>
-  <?php $cards = $this->user->getLibraryCards(); if ($cards->count() > ($this->limit ?? 1)): ?>
+  <?php $cards = $this->user->getLibraryCards();
+  if ($cards->count() > ($this->limit ?? 1)): ?>
     <?php $targetCount = $this->ils()->checkCapability('getLoginDrivers') ? count($this->ils()->getLoginDrivers()) : 1; ?>
     <?php if (isset($loginMenu) && $loginMenu): ?>
       <li class="logoutOptions card-selection" role="none">

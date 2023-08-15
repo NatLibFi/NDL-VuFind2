@@ -1211,13 +1211,20 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
                 'context' => ['class' => 'extendedAccess'],
             ]
         );
-
         $setTemplateLine(
             'Terms of Use',
             'getTermsOfUse',
             'data-termsOfUse.phtml',
             [
                 'context' => ['class' => 'extendedTermsOfUse'],
+            ]
+        );
+        $setTemplateLine(
+            'Security Classification',
+            'getSecurityClassification',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'security-classification'],
             ]
         );
         $setTemplateLine(

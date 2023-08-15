@@ -1,21 +1,13 @@
 /*global VuFind, finna */
 finna.openUrl = (function finnaOpenUrl() {
+  // This function only exists for back-compatibility.
   function initLinks(_container) {
-    var container = _container || $('body');
-    VuFind.observerManager.createIntersectionObserver(
-      'OpenUrl',
-      (element) => {
-        VuFind.openurl.embedOpenUrlLinks($(element));
-      },
-      $(container).find('.openUrlEmbed a').toArray()
-    );
+    VuFind.openurl.init(_container);
   }
 
   var my = {
     initLinks: initLinks,
-    init: function init() {
-      initLinks();
-    }
+    init: function init() {}
   };
 
   return my;

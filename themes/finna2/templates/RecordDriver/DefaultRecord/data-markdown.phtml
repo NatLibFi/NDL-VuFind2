@@ -1,6 +1,8 @@
 <?php //Don't add START and END comments?>
 <?php if (!empty($data)): ?>
-  <?php if (is_array($data)) $data = implode("\n", $data); ?>
+  <?php if (is_array($data)) {
+  $data = implode("\n", $data);
+  } ?>
   <div class="truncate-field">
     <?= $this->recordFieldMarkdown()->toHtml($data) ?>
   </div>

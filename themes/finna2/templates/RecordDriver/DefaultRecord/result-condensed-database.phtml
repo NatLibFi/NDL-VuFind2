@@ -5,7 +5,8 @@
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource">
     <div class="description">
-    <?php $summ = $this->driver->getSummary(); if (!empty($summ)): ?>
+    <?php $summ = $this->driver->getSummary();
+    if (!empty($summ)): ?>
       <h5><?=$this->transEsc('Summary')?>:</h5>
         <p class="summary">
           <?php foreach ($summ as $field): ?>
@@ -28,8 +29,11 @@
       <?php foreach ($subjects as $field): ?>
       <div class="subjectLine" property="keywords">
         <?php $subject = ''; ?>
-        <?php if(count($field) == 1) $field = explode('--', $field[0]); ?>
-        <?php $i = 0; foreach ($field as $subfield): ?>
+        <?php if(count($field) == 1) {
+          $field = explode('--', $field[0]);
+        } ?>
+        <?php $i = 0;
+        foreach ($field as $subfield): ?>
           <?=($i++ == 0) ? '' : ' &#8594; '?>
           <?php $subject = trim($subject . ' ' . $subfield); ?>
           <a class="backlink" title="<?=$this->escapeHtmlAttr($subject)?>" href="<?=$this->record($this->driver)->getLink('subject', $subject)?>"><?=trim($this->escapeHtml($subfield))?></a>

@@ -44,7 +44,8 @@
       <?=$this->record($this->driver)->getPreviews()?>
     </div>
     <div class="condensed-col-hierarchy">
-      <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
+      <?php $trees = $this->driver->tryMethod('getHierarchyTrees');
+      if (!empty($trees)): ?>
         <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
           <div class="hierarchyTreeLink">
             <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId">
@@ -82,9 +83,11 @@
           <?php if (!($fondsOrCollection = in_array('Document/ArchiveFonds', $this->driver->getFormats()) || in_array('Document/ArchiveCollection', $this->driver->getFormats()))): ?>
             <?php $parentSource = $this->driver->getSourceIdentifier(); ?>
             <?php if ($this->driver->isPartOfArchiveSeries()): ?>
-              <?php $topIds = $this->driver->getHierarchyTopId(); $topTitles = $this->driver->getHierarchyTopTitle(); ?>
+              <?php $topIds = $this->driver->getHierarchyTopId();
+              $topTitles = $this->driver->getHierarchyTopTitle(); ?>
             <?php else: ?>
-              <?php $topIds = $this->driver->getHierarchyParentId(); $topTitles = $this->driver->getHierarchyParentTitle(); ?>
+              <?php $topIds = $this->driver->getHierarchyParentId();
+              $topTitles = $this->driver->getHierarchyParentTitle(); ?>
             <?php endif; ?>
             <?php if (count($topIds) > 0) : ?>
             <span class="archive-label"><?=$this->transEsc('Archive')?>:</span>
@@ -100,7 +103,8 @@
               ['Archive File', \Finna\RecordDriver\SolrEad::FILE_LEVELS],
             ] as [$label, $levels]):
             ?>
-              <?php $parentIds = $this->driver->getHierarchyParentId($levels); $parentTitles = $this->driver->getHierarchyParentTitle($levels); ?>
+              <?php $parentIds = $this->driver->getHierarchyParentId($levels);
+              $parentTitles = $this->driver->getHierarchyParentTitle($levels); ?>
               <?php if ($parentIds): ?>
                 <span class="archive-label"><?=$this->transEsc($label)?>:</span>
                 <?php foreach ($parentIds as $index => $parentId): ?>
@@ -115,7 +119,8 @@
         <?php if($this->driver->isCollection()): ?>
           <?=implode('<br>', array_map([$this, 'escapeHtml'], $this->driver->getSummary())); ?>
         <?php else: ?>
-          <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles'); if (!empty($authors)): ?>
+          <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles');
+          if (!empty($authors)): ?>
             <?php $author = $authors[0]; ?>
             <a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a>
             <?php if (count($authors) > 1): ?> <?=$this->transEsc('more_authors_abbrev')?><?php endif; ?>
@@ -134,7 +139,8 @@
             </span>
             <div class="locationDetails"></div>
           <?php else: ?>
-            <?php $summCallNo = $this->driver->getCallNumber(); if (!empty($summCallNo)): ?>
+            <?php $summCallNo = $this->driver->getCallNumber();
+            if (!empty($summCallNo)): ?>
               <strong><?=$this->transEsc('Call Number')?>:</strong> <?=$this->escapeHtml($summCallNo)?>
             <?php endif; ?>
           <?php endif; ?>

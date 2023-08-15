@@ -182,6 +182,13 @@ abstract class Results
     protected $hierarchicalFacetHelper = null;
 
     /**
+     * Extra search details.
+     *
+     * @var ?array
+     */
+    protected $extraSearchBackendDetails = null;
+
+    /**
      * Constructor
      *
      * @param \VuFind\Search\Base\Params $params        Object representing user
@@ -317,7 +324,7 @@ abstract class Results
 
     /**
      * Abstract support method for performAndProcessSearch -- perform a search based
-     * on the parameters passed to the object.  This method is responsible for
+     * on the parameters passed to the object. This method is responsible for
      * filling in all of the key class properties: results, resultTotal, etc.
      *
      * @return void
@@ -457,7 +464,7 @@ abstract class Results
     public function isSavedSearch()
     {
         // This data is not available until \VuFind\Db\Table\Search::saveSearch()
-        // is called...  blow up if somebody tries to get data that is not yet
+        // is called... blow up if somebody tries to get data that is not yet
         // available.
         if (null === $this->savedSearch) {
             throw new \Exception(
@@ -477,7 +484,7 @@ abstract class Results
     public function getNotificationFrequency(): int
     {
         // This data is not available until \VuFind\Db\Table\Search::saveSearch()
-        // is called...  blow up if somebody tries to get data that is not yet
+        // is called... blow up if somebody tries to get data that is not yet
         // available.
         if (null === $this->notificationFrequency) {
             throw new \Exception(
@@ -505,7 +512,7 @@ abstract class Results
     }
 
     /**
-     * Start the timer to figure out how long a query takes.  Complements
+     * Start the timer to figure out how long a query takes. Complements
      * stopQueryTimer().
      *
      * @return void
@@ -518,7 +525,7 @@ abstract class Results
     }
 
     /**
-     * End the timer to figure out how long a query takes.  Complements
+     * End the timer to figure out how long a query takes. Complements
      * startQueryTimer().
      *
      * @return void
@@ -614,8 +621,6 @@ abstract class Results
      * @param array $data Extra data
      *
      * @return void
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setExtraData(array $data): void
     {
@@ -786,6 +791,16 @@ abstract class Results
             $page++;
         } while ($limit == -1 && !empty($facetfields));
         return $facets;
+    }
+
+    /**
+     * Get the extra search details
+     *
+     * @return ?array
+     */
+    public function getExtraSearchBackendDetails()
+    {
+        return $this->extraSearchBackendDetails;
     }
 
     /**

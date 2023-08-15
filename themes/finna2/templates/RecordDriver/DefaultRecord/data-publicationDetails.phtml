@@ -2,10 +2,13 @@
 <?php if (!empty($data)): ?>
   <?php foreach ($data as $field): ?>
     <span property="publisher" typeof="Organization">
-      <?php $pubPlace = $field->getPlace(); if (!empty($pubPlace)): ?>
+      <?php $pubPlace = $field->getPlace();
+      if (!empty($pubPlace)): ?>
         <span property="location"><?=$this->escapeHtml($pubPlace)?></span>
       <?php endif; ?>
-      <?php $pubName = $field->getName(); $pubDate = $field->getDate(); if (!empty($pubName)): ?>
+      <?php $pubName = $field->getName();
+      $pubDate = $field->getDate();
+      if (!empty($pubName)): ?>
         <span property="name"><?=$this->escapeHtml($pubName)?><?php if (!empty($pubDate)): ?>, <?php endif; ?></span>
       <?php endif; ?>
       <?php if (!empty($pubDate)): ?>

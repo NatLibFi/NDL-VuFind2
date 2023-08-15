@@ -2,7 +2,9 @@
 <?php if (isset($this->link['coverage_details'])): ?>
 <?php
     $details = $this->link['coverage_details'];
-    $from = ''; $to = ''; $embargo = '';
+    $from = '';
+    $to = '';
+    $embargo = '';
     if (isset($details['from'])) {
         if (isset($details['from']['year'])) {
             $from = $this->transEsc('openurl_coverage_from_year', ['%%year%%' => $details['from']['year']]);

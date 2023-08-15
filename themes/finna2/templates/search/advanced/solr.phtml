@@ -34,7 +34,7 @@
             <?= $this->render('search/advanced/multiselect.phtml', ['field' => $field, 'list' => $list, 'hierarchicalFacets' => $this->hierarchicalFacets]); ?>
           <?php endforeach; ?>
         </div>
-        <div class="information"><p class="information-text"><?=$this->transEsc('advanced_search_information_text_facets')?></p></div>
+        <div class="information information-multiselect"><p class="information-text"><?=$this->transEsc('advanced_search_information_text_facets')?></p></div>
       </fieldset>
       <?php if (!empty($this->daterange)): ?>
         <div class="ranges-container well limit-to">

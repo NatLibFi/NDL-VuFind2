@@ -687,7 +687,7 @@ $config = [
             ],
             'ils_driver' => [
                 'factories' => [
-                    'Finna\ILS\Driver\Alma' => 'VuFind\ILS\Driver\AlmaFactory',
+                    'Finna\ILS\Driver\Alma' => 'VuFind\ILS\Driver\DriverWithDateConverterFactory',
                     'Finna\ILS\Driver\AxiellWebServices' => 'Finna\ILS\Driver\AxiellWebServicesFactory',
                     'Finna\ILS\Driver\Demo' => 'VuFind\ILS\Driver\DemoFactory',
                     'Finna\ILS\Driver\KohaRest' => 'VuFind\ILS\Driver\KohaRestFactory',
@@ -1060,7 +1060,7 @@ $recordRoutes = [
 
 // Define non tab record actions
 $nonTabRecordActions = [
-    'Feedback', 'RepositoryLibraryRequest',
+    'Feedback', 'RepositoryLibraryRequest', 'ArchiveRequest',
 ];
 
 // Define dynamic routes -- controller => [route name => action]

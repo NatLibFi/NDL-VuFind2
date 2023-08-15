@@ -23,20 +23,59 @@
         </classificationWrap>
       </objectClassificationWrap>
       <objectIdentificationWrap>
-      <objectDescriptionWrap>
-        <objectDescriptionSet type="introduction">
-          <descriptiveNoteValue lang="fi" label="esittely">Ei saa näkyä.</descriptiveNoteValue>
-        </objectDescriptionSet>
-        <objectDescriptionSet type="description">
-          <descriptiveNoteValue lang="fi" label="kuvaus">Näkyy description typed.</descriptiveNoteValue>
-        </objectDescriptionSet>
-        <objectDescriptionSet type="description">
-          <descriptiveNoteValue lang="en" label="description">Visible description.</descriptiveNoteValue>
-        </objectDescriptionSet>
-        <objectDescriptionSet>
-            <descriptiveNoteValue label="CAPTION">Ei näy description untyped.</descriptiveNoteValue>
-        </objectDescriptionSet>
-      </objectDescriptionWrap>
+        <repositoryWrap>
+          <repositorySet>
+            <displayRepository lang="fi">Tätä paikkaa ei näytetä</displayRepository>
+            <repositoryLocation>
+              <namePlaceSet>
+                <appellationValue label="tarkempi paikka">Stockmann</appellationValue>
+              </namePlaceSet>
+              <partOfPlace>
+                <namePlaceSet>
+                  <appellationValue label="katuosoite">Aleksanterinkatu 52</appellationValue>
+                </namePlaceSet>
+                <partOfPlace>
+                  <namePlaceSet>
+                    <appellationValue label="kunta/kaupunki">Helsinki</appellationValue>
+                  </namePlaceSet>
+                </partOfPlace>
+              </partOfPlace>
+            </repositoryLocation>
+          </repositorySet>
+          <repositorySet type="Current location">
+            <displayRepository lang="fi">Teos on nähtävissä kirjaston aukioloaikoina.</displayRepository>
+            <displayRepository lang="en">The object can be accessed when the library is open.</displayRepository>
+            <repositoryLocation>
+              <namePlaceSet>
+                <appellationValue label="tarkempi paikka">Kansalliskirjaston kupolisali</appellationValue>
+              </namePlaceSet>
+              <partOfPlace>
+                <namePlaceSet>
+                  <appellationValue label="katuosoite">Unioninkatu 36</appellationValue>
+                </namePlaceSet>
+                <partOfPlace>
+                  <namePlaceSet>
+                    <appellationValue label="kunta/kaupunki">Helsinki</appellationValue>
+                  </namePlaceSet>
+                </partOfPlace>
+              </partOfPlace>
+            </repositoryLocation>
+          </repositorySet>
+        </repositoryWrap>
+        <objectDescriptionWrap>
+          <objectDescriptionSet type="introduction">
+            <descriptiveNoteValue lang="fi" label="esittely">Ei saa näkyä.</descriptiveNoteValue>
+          </objectDescriptionSet>
+          <objectDescriptionSet type="description">
+            <descriptiveNoteValue lang="fi" label="kuvaus">Näkyy description typed.</descriptiveNoteValue>
+          </objectDescriptionSet>
+          <objectDescriptionSet type="description">
+            <descriptiveNoteValue lang="en" label="description">Visible description.</descriptiveNoteValue>
+          </objectDescriptionSet>
+          <objectDescriptionSet>
+              <descriptiveNoteValue label="CAPTION">Ei näy description untyped.</descriptiveNoteValue>
+          </objectDescriptionSet>
+        </objectDescriptionWrap>
         <objectMeasurementsWrap>
           <objectMeasurementsSet>
             <displayObjectMeasurements label="extent">1001 neliömetriä</displayObjectMeasurements>

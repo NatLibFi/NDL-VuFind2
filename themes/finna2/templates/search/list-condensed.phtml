@@ -1,8 +1,11 @@
 <!-- START of: finna - search/list-condensed.phtml -->
-<?php if (!isset($this->indexStart)) $this->indexStart = 0; ?>
+<?php if (!isset($this->indexStart)) {
+  $this->indexStart = 0;
+} ?>
 <?php $showCheckboxes = !isset($this->hideCartControls) && $this->cart()->isActive() ?>
 <div class="<?=$this->escapeHtmlAttr(trim('record-list ' . ($this->resultsClass ?? '')))?>">
-  <?php $i = $this->indexStart; foreach ($this->results->getResults() as $current):
+  <?php $i = $this->indexStart;
+  foreach ($this->results->getResults() as $current):
     $recordNumber = $this->results->getStartRecord() + $i - $this->indexStart; ?>
     <div id="result<?=$i++ ?>" class="result condensed-list-view clearfix <?=$this->record($current)->getContainerJsClasses()?>">
       <?php if (isset($this->showCheckboxes) && $this->showCheckboxes): ?>

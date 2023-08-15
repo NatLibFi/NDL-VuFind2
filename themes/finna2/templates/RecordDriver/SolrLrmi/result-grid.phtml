@@ -56,7 +56,8 @@
           <?php endif; ?>
         <?php endif; ?>
 
-        <?php $journalTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDates(); ?>
+        <?php $journalTitle = $this->driver->getContainerTitle();
+        $summDate = $this->driver->getPublicationDates(); ?>
         <?php if (!empty($journalTitle)): ?>
           <?=!empty($summAuthor) ? '' : ' '?>
           <?php $ref = $this->driver->getContainerReference();

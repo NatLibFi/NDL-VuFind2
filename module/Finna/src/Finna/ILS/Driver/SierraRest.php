@@ -57,6 +57,28 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     protected $onlinePayableManualFineDescriptionPatterns = [];
 
     /**
+     * Mappings from item status codes to VuFind strings
+     *
+     * @var array
+     */
+    protected $itemStatusMappings = [
+        '!' => 'On Holdshelf',
+        't' => 'In Transit',
+        'o' => 'On Reference Desk',
+        'k' => 'In Repair',
+        'm' => 'Missing',
+        'n' => 'Long Overdue',
+        '$' => 'lost_loan_and_paid',
+        'p' => 'Withdrawn',
+        'z' => 'Claims Returned',
+        's' => 'On Search',
+        'd' => 'In Process',
+        '-' => 'On Shelf',
+        'Charged' => 'Charged',
+        'Ordered' => 'Ordered',
+    ];
+
+    /**
      * SOAP options for the IMMS connection
      *
      * @var array
@@ -138,8 +160,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      * method.
      * @param array $holdDetails Optional array, only passed in when getting a list
      * in the context of placing a hold; contains most of the same values passed to
-     * placeHold, minus the patron data.  May be used to limit the pickup options
-     * or may be ignored.  The driver must not add new options to the return array
+     * placeHold, minus the patron data. May be used to limit the pickup options
+     * or may be ignored. The driver must not add new options to the return array
      * based on this data or other areas of VuFind may behave incorrectly.
      *
      * @throws ILSException
@@ -214,7 +236,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             [$this->apiBase, 'patrons', $patron['id']],
             [
                 'fields' => 'names,emails,phones,addresses,birthDate,expirationDate'
-                    . ',message,homeLibraryCode',
+                    . ',message,homeLibraryCode,fixedFields',
             ],
             'GET',
             $patron
@@ -294,6 +316,11 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             ) {
                 $profile['expiration_soon'] = true;
             }
+        }
+
+        // PCODE3: self-service library access
+        if ($field = $result['fixedFields'][46] ?? null) {
+            $profile['self_service_library'] = (string)$field['value'] === '1';
         }
 
         // Checkout history:
@@ -490,7 +517,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 if (!empty($item['bibIds'])) {
                     $bibId = $item['bibIds'][0];
                     // Fetch bib information
-                    $bib = $this->getBibRecord($bibId, 'title,publishYear', $patron);
+                    $bib = $this->getBibRecord($bibId, null, $patron);
                     $title = $bib['title'] ?? '';
                 }
             }
@@ -786,6 +813,44 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
+     * Get Status
+     *
+     * This is responsible for retrieving the status information of a certain
+     * record.
+     *
+     * @param string $id The record id to retrieve the holdings for
+     *
+     * @return array An associative array with the following keys:
+     * id, availability (boolean), status, location, reserve, callnumber.
+     */
+    public function getStatus($id)
+    {
+        return $this->getItemStatusesForBib($id, $this->config['Holdings']['check_holdings_in_results'] ?? true);
+    }
+
+    /**
+     * Get Statuses
+     *
+     * This is responsible for retrieving the status information for a
+     * collection of records.
+     *
+     * @param array $ids The array of record ids to retrieve the status for
+     *
+     * @return mixed     An array of getStatus() return values on success.
+     */
+    public function getStatuses($ids)
+    {
+        $items = [];
+        foreach ($ids as $id) {
+            $items[] = $this->getItemStatusesForBib(
+                $id,
+                $this->config['Holdings']['check_holdings_in_results'] ?? true
+            );
+        }
+        return $items;
+    }
+
+    /**
      * Public Function which retrieves renew, hold and cancel settings from the
      * driver ini file.
      *
@@ -902,24 +967,25 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      *
      * @param string $id            The record id to retrieve the holdings for
      * @param bool   $checkHoldings Whether to check holdings records
+     * @param ?array $patron        Patron information, if available
      *
      * @return array An associative array with the following keys:
      * id, availability (boolean), status, location, reserve, callnumber.
      */
-    protected function getItemStatusesForBib($id, $checkHoldings)
+    protected function getItemStatusesForBib(string $id, bool $checkHoldings, ?array $patron = null): array
     {
-        $bibFields = 'bibLevel';
+        $bibFields = ['bibLevel'];
         // If we need to look at bib call numbers, retrieve varFields:
         if (!empty($this->config['CallNumber']['bib_fields'])) {
-            $bibFields .= ',varFields';
+            $bibFields[] = 'varFields';
         }
         // Retrieve orders if needed:
         if (!empty($this->config['Holdings']['display_orders'])) {
-            $bibFields .= ',orders';
+            $bibFields[] = 'orders';
         }
         // Retrieve hold count if needed:
         if ($this->config['Holdings']['display_total_hold_count'] ?? true) {
-            $bibFields .= ',holdCount';
+            $bibFields[] = 'holdCount';
         }
         $bib = $this->getBibRecord($id, $bibFields);
         $bibCallNumber = $this->getBibCallNumber($bib);
@@ -934,8 +1000,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 ['v5', 'holdings'],
                 [
                     'bibIds' => $this->extractBibId($id),
-                    //'deleted' => 'false',
-                    //'suppressed' => 'false',
+                    'deleted' => 'false',
+                    'suppressed' => 'false',
                     'fields' => 'fixedFields,varFields',
                 ],
                 'GET'
@@ -944,7 +1010,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 $location = '';
                 foreach ($entry['fixedFields'] as $code => $field) {
                     if (
-                        $code === static::HOLDINGS_LINE_NUMBER
+                        (string)$code === static::HOLDINGS_LOCATION_FIELD
                         || $field['label'] === 'LOCATION'
                     ) {
                         $location = $field['value'];
@@ -958,99 +1024,81 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             }
         }
 
-        $offset = 0;
-        $limit = 50;
-        $fields = 'location,status,barcode,callNumber,fixedFields,varFields';
+        $fields = [
+            'location',
+            'status',
+            'barcode',
+            'callNumber',
+            'fixedFields',
+            'varFields',
+        ];
         $statuses = [];
         $sort = 0;
-        $result = null;
         // Fetch hold count for items if needed:
         $displayItemHoldCount = $this->config['Holdings']['display_item_hold_counts'] ?? false;
         if ($displayItemHoldCount) {
-            $fields .= ',holdCount';
+            $fields[] = 'holdCount';
         }
-        while (null === $result || $limit === $result['total']) {
-            $result = $this->makeRequest(
-                [$this->apiBase, 'items'],
-                [
-                    'bibIds' => $this->extractBibId($id),
-                    'deleted' => 'false',
-                    'suppressed' => 'false',
-                    'fields' => $fields,
-                    'limit' => $limit,
-                    'offset' => $offset,
-                ],
-                'GET'
-            );
-            if (empty($result['entries'])) {
-                if (!empty($result['httpStatus']) && 404 !== $result['httpStatus']) {
-                    $msg = "Item status request failed: {$result['httpStatus']}";
-                    if (!empty($result['description'])) {
-                        $msg .= " ({$result['description']})";
-                    }
-                    throw new ILSException($msg);
+
+        $items = $this->getItemsForBibRecord(
+            $id,
+            array_unique([...$this->defaultItemFields, ...$fields]),
+            $patron
+        );
+        foreach ($items as $item) {
+            $location = $this->translateLocation($item['location']);
+            [$status, $duedate, $notes] = $this->getItemStatus($item);
+            $available = $status == $this->mapStatusCode('-');
+            // OPAC message
+            if (isset($item['fixedFields']['108'])) {
+                $opacMsg = $item['fixedFields']['108'];
+                $trimmedMsg = trim($opacMsg['value']);
+                if (strlen($trimmedMsg) && $trimmedMsg != '-') {
+                    $notes[] = $this->translateOpacMessage(
+                        trim($opacMsg['value'])
+                    );
                 }
-                break;
+            }
+            $callnumber = isset($item['callNumber'])
+                ? preg_replace('/^\|a/', '', $item['callNumber'])
+                : $bibCallNumber;
+
+            $volume = isset($item['varFields']) ? $this->extractVolume($item)
+                : '';
+
+            $entry = [
+                'id' => $id,
+                'item_id' => $item['id'],
+                'location' => $location,
+                'availability' => $available,
+                'status' => $status,
+                'reserve' => 'N',
+                'callnumber' => $callnumber,
+                'duedate' => $duedate,
+                'number' => $volume,
+                'barcode' => $item['barcode'],
+                'sort' => $sort--,
+                'requests_placed' => $displayItemHoldCount ? ($item['holdCount'] ?? null) : null,
+            ];
+            if ($notes) {
+                $entry['item_notes'] = $notes;
             }
 
-            foreach ($result['entries'] as $item) {
-                $location = $this->translateLocation($item['location']);
-                [$status, $duedate, $notes] = $this->getItemStatus($item);
-                $available = $status == $this->mapStatusCode('-');
-                // OPAC message
-                if (isset($item['fixedFields']['108'])) {
-                    $opacMsg = $item['fixedFields']['108'];
-                    $trimmedMsg = trim($opacMsg['value']);
-                    if (strlen($trimmedMsg) && $trimmedMsg != '-') {
-                        $notes[] = $this->translateOpacMessage(
-                            trim($opacMsg['value'])
-                        );
-                    }
-                }
-                $callnumber = isset($item['callNumber'])
-                    ? preg_replace('/^\|a/', '', $item['callNumber'])
-                    : $bibCallNumber;
-
-                $volume = isset($item['varFields']) ? $this->extractVolume($item)
-                    : '';
-
-                $entry = [
-                    'id' => $id,
-                    'item_id' => $item['id'],
-                    'location' => $location,
-                    'availability' => $available,
-                    'status' => $status,
-                    'reserve' => 'N',
-                    'callnumber' => $callnumber,
-                    'duedate' => $duedate,
-                    'number' => $volume,
-                    'barcode' => $item['barcode'],
-                    'sort' => $sort--,
-                    'requests_placed' => $displayItemHoldCount ? ($item['holdCount'] ?? null) : null,
-                ];
-                if ($notes) {
-                    $entry['item_notes'] = $notes;
-                }
-
-                if (
-                    $this->isHoldable($item) && $this->itemHoldAllowed($item, $bib)
-                ) {
-                    $entry['is_holdable'] = true;
-                    $entry['level'] = 'copy';
-                    $entry['addLink'] = true;
-                } else {
-                    $entry['is_holdable'] = false;
-                }
-
-                $locationCode = $item['location']['code'] ?? '';
-                if (!empty($holdingsData[$locationCode])) {
-                    $entry += $this->getHoldingsData($holdingsData[$locationCode]);
-                    $holdingsData[$locationCode]['_hasItems'] = true;
-                }
-
-                $statuses[] = $entry;
+            if ($this->isHoldable($item, $bib)) {
+                $entry['is_holdable'] = true;
+                $entry['level'] = 'copy';
+                $entry['addLink'] = true;
+            } else {
+                $entry['is_holdable'] = false;
             }
-            $offset += $limit;
+
+            $locationCode = $item['location']['code'] ?? '';
+            if (!empty($holdingsData[$locationCode])) {
+                $entry += $this->getHoldingsData($holdingsData[$locationCode]);
+                $holdingsData[$locationCode]['_hasItems'] = true;
+            }
+
+            $statuses[] = $entry;
         }
 
         // Add holdings that don't have items

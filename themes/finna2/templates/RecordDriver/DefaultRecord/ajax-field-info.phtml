@@ -11,7 +11,8 @@
 ?>
 
 <?php if ($this->authority): ?>
-  <?php $summ = $this->authority->getSummary(); if (!empty($summ)): ?>
+  <?php $summ = $this->authority->getSummary();
+  if (!empty($summ)): ?>
     <div class="truncate-field description">
       <p class="summary">
         <?php foreach ($summ as $field): ?>

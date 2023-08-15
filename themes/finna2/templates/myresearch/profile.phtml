@@ -141,7 +141,8 @@
             <?php if (!empty($profile['addresses'])): ?>
               <?php $updateAddressParam = $updateAddress; ?>
               <?php foreach ($profile['addresses'] as $address): ?>
-                <?php $addressParams['address'] = $address; $addressParams['updateAddress'] = $updateAddressParam; ?>
+                <?php $addressParams['address'] = $address;
+                $addressParams['updateAddress'] = $updateAddressParam; ?>
                 <div class="profile-title profile-address-type">
                   <?=$this->transEsc('Address')?>
                   <?=!empty($address['preferred']) ? (' (' . $this->transEsc('address_preferred') . ')') : '' ?>
@@ -233,6 +234,12 @@
             <?php if (!empty($this->profile['self_service_pin'])): ?>
               <div class="my-profile-col profile-title"><?=$this->transEsc('self_service_pin') ?>:</div>
               <div class="profile-text-value"><?=$this->escapeHtml($this->profile['self_service_pin']) ?></div>
+            <?php endif; ?>
+            <?php if (isset($this->profile['self_service_library'])): ?>
+              <div class="my-profile-col profile-title"><?=$this->transEsc('self_service_library') ?>:</div>
+              <div class="profile-text-value">
+                <?=$this->transEsc($this->profile['self_service_library'] ? 'self_service_library_enabled' : 'self_service_library_disabled') ?>
+              </div>
             <?php endif; ?>
             <?php if ($guarantorFullName): ?>
               <div class="my-profile-col profile-title"><?=$this->transEsc('Guarantor') ?>:</div>

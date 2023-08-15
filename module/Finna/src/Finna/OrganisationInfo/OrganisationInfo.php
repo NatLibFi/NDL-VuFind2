@@ -757,7 +757,7 @@ class OrganisationInfo implements
             $client = $this->httpService->createClient(
                 $url,
                 \Laminas\Http\Request::METHOD_GET,
-                10
+                $this->config->General->timeout ?? 20
             );
             $client->setOptions(['useragent' => 'VuFind']);
             $result = $client->send();
@@ -1492,7 +1492,7 @@ class OrganisationInfo implements
         }
         $details['openTimes']['schedules'] = $this->cleanUpTimes($details['openTimes']['schedules']);
         // Address handling
-        if (!empty($details['address'])) {
+        if (!empty($details['address']['street'])) {
             $mapUrl = $this->config->General->mapUrl;
             $routeUrl = $this->config->General->routeUrl;
             $replace['street'] = $details['address']['street'];

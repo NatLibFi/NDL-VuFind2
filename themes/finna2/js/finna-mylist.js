@@ -198,7 +198,7 @@ finna.myList = (function finnaMyList() {
     } else {
       if (typeof data.descHtml !== 'undefined' && data.descHtml !== '') {
         description.html(data.descHtml);
-        finna.layout.initTruncate(description);
+        VuFind.truncate.initTruncate(description.find('.finna-truncate'));
       }
       $('input[name=listDescription]').val(data.desc);
     }
@@ -277,7 +277,7 @@ finna.myList = (function finnaMyList() {
           && data.data.notesHtml !== '')
         {
           input.html(data.data.notesHtml);
-          finna.layout.initTruncate(input);
+          VuFind.truncate.initTruncate(input.find('.finna-truncate'));
         }
         toggleTitleEditable(true);
         save = false;

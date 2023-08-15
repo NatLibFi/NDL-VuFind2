@@ -3,7 +3,8 @@
   <div class="events-tabs feed-tabs-container feed-tabs">
     <h2><?= $this->transEsc('Events'); ?></h2>
     <ul class="nav nav-tabs" role="tablist">
-      <?php $i = 0; foreach ($this->tabs as $id => $tab): ?>
+      <?php $i = 0;
+      foreach ($this->tabs as $id => $tab): ?>
         <?php
           $tabId = $this->id . '-' . $i++;
           $isActive = $this->active === $tab['title'];
@@ -20,7 +21,8 @@
 
   <div class="feed-accordions event-accordions" role="tablist">
     <h2 class="feed-accordions-title event-accordions-title"><?= $this->transEsc('Events'); ?></h2>
-    <?php $i = 0; foreach ($this->tabs as $id => $tab): ?>
+    <?php $i = 0;
+    foreach ($this->tabs as $id => $tab): ?>
       <?php
         $tabId = $this->id . '-' . $i++;
         $isActive = 0 === strcasecmp($this->active, $tab['title']);

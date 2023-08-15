@@ -38,17 +38,25 @@
   // Enable bulk options if appropriate:
   $this->showCheckboxes = $this->showCartControls || $this->showBulkOptions;
 
+  // Check if any results have version support enabled:
+  $displayVersions = false;
+  foreach (array_keys($this->combinedResults) as $configSection) {
+    [$searchClassId] = explode(':', $configSection);
+    if ($this->searchOptions($searchClassId)->getVersionsAction()) {
+      $displayVersions = true;
+      break;
+    }
+  }
+
   // Load Javascript dependencies into header:
-  $this->headScript()->appendFile("check_save_statuses.js");
-  $this->headScript()->appendFile("check_item_statuses.js");
-  $this->headScript()->appendFile("finna-combined-results.js");
-  $this->headScript()->appendFile("finna-item-status.js");
+  $this->render('search/results-scripts.phtml', compact('displayVersions'));
   // Style
   $this->headLink()->appendStylesheet('combined-search.css');
 ?>
 <?=$this->flashmessages()?>
 <form id="search-cart-form" class="form-inline" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>">
-  <?php $recs = $combinedResults->getRecommendations('top'); if (!empty($recs)): ?>
+  <?php $recs = $combinedResults->getRecommendations('top');
+  if (!empty($recs)): ?>
     <div>
       <?php foreach ($recs as $current): ?>
         <?=$this->recommend($current)?>
@@ -66,7 +74,8 @@
     ];
   ?>
   <?=$this->context($this)->renderInContext('combined/stack-' . $placement . '.phtml', $viewParams)?>
-  <?php $recs = $combinedResults->getRecommendations('bottom'); if (!empty($recs)): ?>
+  <?php $recs = $combinedResults->getRecommendations('bottom');
+  if (!empty($recs)): ?>
     <div>
       <?php foreach ($recs as $current): ?>
         <?=$this->recommend($current)?>

@@ -13,6 +13,9 @@
   <relation type="numberofseries" lang="-">11/2022</relation>
   <relation type="issn" lang="-">1234-5678</relation>
   <rights>CC BY 4.0</rights>
+  <rights type="copyright">This is a copyright description</rights>
+  <rights type="notdisplayable">This is a copyright which should not be displayed</rights>
+  <rights type="copyright">This is a copyright which should also be displayed as description</rights>
   <publisher lang="-">Tielaitos</publisher>
   <file bundle="ORIGINAL" href="https://www.animals.of.earth.fi/duck.pdf" name="duck.pdf" type="application/pdf" length="41070954" sequence="1"/>
   <recordID>10024_138404</recordID>

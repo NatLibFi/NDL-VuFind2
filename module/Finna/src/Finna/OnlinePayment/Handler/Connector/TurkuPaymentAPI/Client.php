@@ -30,10 +30,11 @@
 
 namespace Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI;
 
-use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailPaymentAPI\Client
-as FinnaPaytrailClient;
+use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailPaymentAPI\Client as FinnaPaytrailClient;
+use Laminas\Log\LoggerInterface;
 use Paytrail\SDK\Request\PaymentRequest;
 use Paytrail\SDK\Response\PaymentResponse;
+use VuFindHttp\HttpService;
 
 /**
  * Turku Payment API client
@@ -83,11 +84,32 @@ class Client extends FinnaPaytrailClient
     protected $requestBody;
 
     /**
-     * Url to create request to
+     * Client constructor.
      *
-     * @param string
+     * @param int             $merchantId       The merchant.
+     * @param string          $secretKey        The secret key.
+     * @param string          $platformName     Platform name.
+     * @param HttpService     $http             HTTP service.
+     * @param LoggerInterface $logger           Logger.
+     * @param string          $baseUrl          Service base url.
+     * @param string          $merchantIdString Merchant id as a string.
+     * @param string          $oId              oId.
      */
-    protected $url;
+    public function __construct(
+        int $merchantId,
+        string $secretKey,
+        string $platformName,
+        HttpService $http,
+        LoggerInterface $logger,
+        string $baseUrl,
+        string $merchantIdString,
+        string $oId
+    ) {
+        parent::__construct($merchantId, $secretKey, $platformName, $http, $logger, $baseUrl);
+        $this->setMerchantIdString($merchantIdString);
+        $this->setOId($oId);
+        $this->generateTimeStamp();
+    }
 
     /**
      * Get the merchant id string.
@@ -154,53 +176,6 @@ class Client extends FinnaPaytrailClient
     }
 
     /**
-     * Set url
-     *
-     * @param string $url Api endpoint.
-     *
-     * @return void
-     */
-    public function setUrl(string $url): void
-    {
-        $this->url = $url;
-    }
-
-    /**
-     * Get url
-     *
-     * @return ?string
-     */
-    public function getUrl(): ?string
-    {
-        return $this->url;
-    }
-
-    /**
-     * Client constructor.
-     *
-     * @param string $merchantId   The merchant.
-     * @param string $oId          The oId.
-     * @param string $secretKey    The secret key.
-     * @param string $platformName Platform name.
-     * @param string $url          Api endpoint.
-     */
-    public function __construct(
-        string $merchantId,
-        string $oId,
-        string $secretKey,
-        string $platformName,
-        string $url
-    ) {
-        // N.B. Do not call parent constructor to avoid creating a Guzzle client
-        $this->setMerchantIdString($merchantId);
-        $this->setOId($oId);
-        $this->setSecretKey($secretKey);
-        $this->setPlatformName($platformName);
-        $this->setUrl($url);
-        $this->generateTimeStamp();
-    }
-
-    /**
      * Create a payment request.
      *
      * @param PaymentRequest $payment A payment class instance.
@@ -210,32 +185,34 @@ class Client extends FinnaPaytrailClient
      * @throws ValidationException Thrown if payment validation fails.
      * @throws \Exception          Thrown if the HTTP request fails.
      */
-    public function createPayment(PaymentRequest $payment)
+    public function createPayment(PaymentRequest $payment): PaymentResponse
     {
         $this->validateRequestItem($payment);
         // Create request
         $this->requestBody = json_encode($payment, JSON_UNESCAPED_SLASHES);
         $headers = $this->getHeaders('POST', null, null);
 
-        $response = $this->postRequest(
-            $this->url,
-            $this->requestBody,
-            [],
-            $headers
+        $response = $this->http_client->request(
+            'POST',
+            '',
+            [
+                'body' => $this->requestBody,
+                'headers' => $headers,
+            ]
         );
         if (!$response) {
             throw new \Exception('Request failed');
         }
 
-        $body = $response['response'];
+        $body = $response->getBody();
         // Handle header data and validate authorization field:
-        $responseHeaders = $response['headers'];
+        $responseHeaders = $response->getHeaders();
         TurkuSignature::validateHash(
             [],
             $body,
-            $responseHeaders['Authorization'] ?? '',
+            $responseHeaders['authorization'][0] ?? '',
             $this->secretKey,
-            $responseHeaders['X-TURKU-TS'],
+            $responseHeaders['x-turku-ts'][0],
             $this->platformName
         );
         // Create response:
@@ -265,9 +242,9 @@ class Client extends FinnaPaytrailClient
         string $method,
         string $transactionId = null,
         string $checkoutTokenizationId = null
-    ) {
+    ): array {
         return [
-            'X-TURKU-SP' => $this->getPlatformName(),
+            'X-TURKU-SP' => $this->platformName,
             'X-TURKU-TS' =>  $this->getTimeStamp(),
             'X-TURKU-OID' => $this->getOId(),
             'X-MERCHANT-ID' => $this->getMerchantIdString(),

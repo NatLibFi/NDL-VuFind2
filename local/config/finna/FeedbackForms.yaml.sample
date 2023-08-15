@@ -299,3 +299,45 @@ forms:
         settings:
           - [placeholder, repository_library_request_message]
           - [rows, 3]
+
+# Archive material request form
+  ArchiveRequest:
+      allowLocalOverride: true
+      title: archive_request_reserve_material
+      enabled: true
+      sendMethod: "email"
+
+      onlyForLoggedUsers: true
+      emailSubject: "Varauspyyntö: %%record%%"
+      response: archive_request_response
+      senderInfoRequired: true
+      hideSenderInfo: true
+      hideRecipientInfo: false
+      help:
+        pre: archive_request_pre_information_html
+        post: archive_request_post_information_html
+
+      fields:
+        - name: name
+          type: text
+          label: feedback_name
+          settings:
+            - readonly: true
+        - name: email
+          type: email
+          label: feedback_email
+          required: true
+        - name: phone
+          type: text
+          label: Phone
+        - name: desiredDateForOrder
+          type: textarea
+          label: archive_request_request_info
+          required: true
+          settings:
+            - [rows, 3]
+        - name: message
+          type: textarea
+          label: feedback_message
+          settings:
+            - [rows, 3]

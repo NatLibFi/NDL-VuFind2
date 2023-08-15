@@ -196,6 +196,85 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
     }
 
     /**
+     * Process highlighting tags of the record fields
+     *
+     * @param array $record Record data
+     * @param array $params Request params
+     *
+     * @return void
+     */
+    protected function processHighlighting(&$record, $params)
+    {
+        $highlight = !empty($params['highlight']);
+        $startTag = $params['highlightStart'] ?? '';
+        $endTag = $params['highlightEnd'] ?? '';
+
+        $highlightFields = [
+            'title' => 'title',
+            'creator' => 'author',
+            'description' => 'description',
+        ];
+
+        $hilightDetails = [];
+        foreach ($record as $field => $fieldData) {
+            $values = (array)$fieldData;
+
+            // Collect highlighting details:
+            if (isset($highlightFields[$field])) {
+                $highlightedValues = [];
+                foreach ($values as $value) {
+                    $count = 0;
+                    $value = preg_replace(
+                        $this->highlightRegEx,
+                        "$startTag$1$endTag",
+                        $value,
+                        -1,
+                        $count
+                    );
+                    if ($count) {
+                        // Account for double tags. Yes, it's possible.
+                        $value = preg_replace(
+                            $this->highlightRegEx,
+                            "$1",
+                            $value
+                        );
+                        // Remove extraneous h tags that may be present in the result:
+                        $value = preg_replace('/<h>(.*?)<\/h>/', "$1", $value);
+                        $highlightedValues[] = $value;
+                    }
+                }
+                if ($highlightedValues) {
+                    $hilightDetails[$highlightFields[$field]] = $highlightedValues;
+                }
+            }
+
+            // Strip highlighting tags from all fields:
+            foreach ($values as &$value) {
+                $value = preg_replace(
+                    $this->highlightRegEx,
+                    "$1",
+                    $value
+                );
+                // Account for double tags. Yes, it's possible.
+                $value = preg_replace(
+                    $this->highlightRegEx,
+                    "$1",
+                    $value
+                );
+                // Remove extraneous h tags that may be present in the result:
+                $value = preg_replace('/<h>(.*?)<\/h>/', "$1", $value);
+            }
+            // Unset reference:
+            unset($value);
+            $record[$field] = is_array($fieldData) ? $values : $values[0];
+
+            if ($highlight) {
+                $record['highlightDetails'] = $hilightDetails;
+            }
+        }
+    }
+
+    /**
      * Retrieves a document specified by the ID.
      *
      * @param string $recordId  The document to retrieve from the Primo API

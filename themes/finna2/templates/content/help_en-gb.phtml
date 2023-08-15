@@ -1,4 +1,6 @@
 <!-- START of: finna - content/help_en-gb.phtml -->
+<?php $this->headTitle($this->translate('tabs_help'))?>
+
 <?php if ($this->resolver('content/help-tabs.phtml')): ?>
   <?=$this->render('content/help-tabs.phtml', ['activeTab' => 'help'])?>
 <?php endif; ?>

@@ -29,7 +29,7 @@ if ($otherTitles):?>
         <?php if ($dates = $this->driver->tryMethod('getResultDateRange')): ?>
           <?=implode('&ndash;', array_map($this->escapeHtml, $dates)) ?>
         <?php else: ?>
-          <?php if ($summDate = $this->driver->getPublicationDateRange()): ?>
+          <?php if ($summDate = $this->driver->tryMethod('getPublicationDateRange')): ?>
             <?=implode('&ndash;', array_map($this->escapeHtml, $summDate)) ?>
           <?php endif; ?>
         <?php endif; ?>

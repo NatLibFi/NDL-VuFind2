@@ -111,6 +111,14 @@ class PAIA extends DAIA
     ];
 
     /**
+     * Account blocks that should be reported to the user.
+     *
+     * @see method `getAccountBlocks`
+     * @var array
+     */
+    protected $accountBlockNotificationsForMissingScopes;
+
+    /**
      * PAIA scopes as defined in
      * http://gbv.github.io/paia/paia.html#access-tokens-and-scopes
      *
@@ -224,6 +232,9 @@ class PAIA extends DAIA
         } else {
             $this->debug('Caching not enabled, disabling it by default.');
         }
+
+        $this->accountBlockNotificationsForMissingScopes =
+            $this->config['PAIA']['accountBlockNotificationsForMissingScopes'] ?? [];
     }
 
     // public functions implemented to satisfy Driver Interface
@@ -444,7 +455,7 @@ class PAIA extends DAIA
      * method.
      * @param array $holdDetails Optional array, only passed in when getting a list
      * in the context of placing a hold; contains most of the same values passed to
-     * placeHold, minus the patron data.  May be used to limit the pickup options
+     * placeHold, minus the patron data. May be used to limit the pickup options
      * or may be ignored.
      *
      * @return string       The default pickup location for the patron.
@@ -532,7 +543,7 @@ class PAIA extends DAIA
      *
      * @param string $id     The Bib ID
      * @param array  $data   An Array of item data
-     * @param patron $patron An array of patron data
+     * @param array  $patron An array of patron data
      *
      * @return bool True if request is valid, false if not
      *
@@ -870,10 +881,10 @@ class PAIA extends DAIA
      * @param array $patron      Patron information returned by the patronLogin
      * method.
      * @param array $holdDetails Optional array, only passed in when getting a list
-     * in the context of placing or editing a hold.  When placing a hold, it contains
-     * most of the same values passed to placeHold, minus the patron data.  When
+     * in the context of placing or editing a hold. When placing a hold, it contains
+     * most of the same values passed to placeHold, minus the patron data. When
      * editing a hold it contains all the hold information returned by getMyHolds.
-     * May be used to limit the pickup options or may be ignored.  The driver must
+     * May be used to limit the pickup options or may be ignored. The driver must
      * not add new options to the return array based on this data or other areas of
      * VuFind may behave incorrectly.
      *
@@ -979,7 +990,7 @@ class PAIA extends DAIA
     {
         // TODO: also have exception contain content of 'error' as for at least
         //       error code 403 two differing errors are possible
-        //       (cf.  http://gbv.github.io/paia/paia.html#request-errors)
+        //       (cf. http://gbv.github.io/paia/paia.html#request-errors)
         if (isset($array['error'])) {
             switch ($array['error']) {
                 case 'access_denied':
@@ -1944,7 +1955,7 @@ class PAIA extends DAIA
      *
      * @param string $id     The Bib ID
      * @param array  $data   An Array of item data
-     * @param patron $patron An array of patron data
+     * @param array  $patron An array of patron data
      *
      * @return bool True if request is valid, false if not
      *
@@ -1962,7 +1973,7 @@ class PAIA extends DAIA
      *
      * @param string $id     The Bib ID
      * @param array  $data   An Array of item data
-     * @param patron $patron An array of patron data
+     * @param array  $patron An array of patron data
      *
      * @return bool True if request is valid, false if not
      *
@@ -2170,5 +2181,36 @@ class PAIA extends DAIA
         }
         // return TRUE on success
         return true;
+    }
+
+    /**
+     * Check whether the patron has any blocks on their account.
+     *
+     * @param array $patron Patron data from patronLogin().
+     *
+     * @return mixed A boolean false if no blocks are in place and an array
+     * of block reasons if blocks are in place
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function getAccountBlocks($patron)
+    {
+        $blocks = [];
+
+        foreach ($this->accountBlockNotificationsForMissingScopes as $scope => $message) {
+            if (!$this->paiaCheckScope($scope)) {
+                $blocks[$scope] = $message;
+            }
+        }
+
+        // Special case: if update patron is missing, we don't need to also add
+        // more specific messages.
+        if (isset($blocks[self::SCOPE_UPDATE_PATRON])) {
+            unset($blocks[self::SCOPE_UPDATE_PATRON_NAME]);
+            unset($blocks[self::SCOPE_UPDATE_PATRON_EMAIL]);
+            unset($blocks[self::SCOPE_UPDATE_PATRON_ADDRESS]);
+        }
+
+        return count($blocks) ? array_values($blocks) : false;
     }
 }

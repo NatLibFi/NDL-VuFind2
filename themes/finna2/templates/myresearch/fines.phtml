@@ -113,6 +113,11 @@
             </p>
           </div>
         <?php endif; ?>
+        <?php if ($this->startedTransaction): ?>
+          <div class="alert alert-danger">
+            <?=$this->transEsc('online_payment_in_progress_warning', ['%%startDateTime%%' => $this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $this->startedTransaction->created)]); ?>
+          </div>
+        <?php endif; ?>
       <?php endif; ?>
     </div>
     <?php if ($this->onlinePayment): ?>

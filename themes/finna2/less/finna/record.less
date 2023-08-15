@@ -45,8 +45,10 @@
   }
 
   .recordURLs {
-    margin: 0px 0px 10px;
-    padding-bottom: 10px;
+    &:not(.lido-links) {
+      margin: 0px 0px 10px;
+      padding-bottom: 10px;
+    }
     & .online-source {
       font-size: 0.9em;
       color: @gray-light;
@@ -498,48 +500,77 @@ a.authority {
   margin-bottom: 6px;
 }
 
-.record-links {
+.record-information {
   vertical-align: baseline;
-  .cc-info {
-    margin-left: 5px;
+  button.less-link.top-button {
+    top: 0;
+    position: sticky;
+    background-color: @body-bg;
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: left;
+    @media(max-width: @screen-md) {
+      top: @navbar-height;
+    }
   }
-  a.copyright-description, .iconlabel {
+  ul.truncate-field{
+    margin-bottom: 0;
+  }
+  button.less-link {
+    display: flex;
+    align-items: baseline;
+    i {
+      padding-left: 2px;
+    }
+  }
+  .copyright-wrapper {
+    display: inline-block;
+    margin-left: 3px;
+    .cc-info {
+      margin-left: 5px;
+    }
+    a.copyright-description, .iconlabel {
       font-size: @font-size-small;
       font-weight: normal;
-  }
-  .show-info, .hide-info {
+    }
+    .show-info, .hide-info {
       font-size: @font-size-small;
       text-transform: lowercase;
       font-weight: normal;
-  }
-  span.fa-arrow-down, span.fa-arrow-up {
+    }
+    span.fa-arrow-down, span.fa-arrow-up {
       font-size: 0.8em;
-  }
-  .show-info:first-letter, .hide-info:first-letter {
+    }
+    .show-info:first-letter, .hide-info:first-letter {
       text-transform: none;
-  }
-  .iconlabel {
+    }
+    .iconlabel {
       margin-right: -3px;
       vertical-align: bottom;
-  }
-  .iconlabel:first-child {
+    }
+    .iconlabel:first-child {
       margin-left: 2px;
-  }
-  span {
+    }
+    span {
       font-size: @font-size-small;
-  }
-  p {
-     font-size: @font-size-small;
-     padding: 0;
-     margin: 0;
-  }
-  .copyright-description {
+    }
+    p {
+      font-size: @font-size-small;
+      padding: 0;
+      margin: 0;
+    }
+    .copyright-description {
       margin-right: 5px;
+    }
   }
-}
-.copyright-wrapper {
-    display: inline-block;
-    margin-left: 3px;
+  .summary-wrapper {
+    display:flex;
+    flex-flow:column;
+    gap: 8px;
+    margin-top: 10px;
+    margin-bottom: 8px;
+  }
 }
 
 .summary {
@@ -762,6 +793,9 @@ a.authority {
       margin-left: 4em;
     }
   }
+}
+.comment-text {
+  white-space: pre-line;
 }
 
 // Cart buttons

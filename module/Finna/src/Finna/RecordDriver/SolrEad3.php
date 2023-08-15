@@ -51,6 +51,8 @@ namespace Finna\RecordDriver;
  */
 class SolrEad3 extends SolrEad
 {
+    use Feature\SolrFinnaTrait;
+
     // Image types
     public const IMAGE_MEDIUM = 'medium';
     public const IMAGE_LARGE = 'large';
@@ -216,45 +218,63 @@ class SolrEad3 extends SolrEad
      */
     public function getURLs()
     {
-        $urls = $localeUrls = [];
+        $urls = [];
         $record = $this->getXmlRecord();
         if (!isset($record->did)) {
             return [];
         }
-        $preferredLangCodes = $this->mapLanguageCode($this->preferredLanguage);
-        foreach ($record->did->xpath('//daoset') ?? [] as $daoset) {
-            $localtype = (string)$daoset->attributes()->localtype;
 
-            if ($localtype && in_array($localtype, self::EXTERNAL_DATA_URLS)) {
+        $preferredLangCodes = $this->mapLanguageCode($this->preferredLanguage);
+
+        $isExternalUrl = function ($node) {
+            $localtype = (string)$node->attributes()->localtype;
+            return $localtype && in_array($localtype, self::EXTERNAL_DATA_URLS);
+        };
+        $processURL = function ($node) use ($preferredLangCodes, $isExternalUrl, &$urls) {
+            $attr = $node->attributes();
+            if (
+                (string)$attr->linkrole === 'image/jpeg'
+                || !$attr->href
+                || $isExternalUrl($node)
+            ) {
+                return;
+            }
+            $lang = (string)$attr->lang;
+            $preferredLang = $lang && in_array($lang, $preferredLangCodes);
+
+            $url = (string)$attr->href;
+            $desc = $attr->linktitle ?? $node->descriptivenote->p ?? $url;
+
+            if (!$this->urlBlocked($url, $desc)) {
+                $urlData = [
+                    'url' => $url,
+                    'desc' => (string)$desc,
+                ];
+                if ($preferredLang) {
+                    $urls['localeurls'][] = $urlData;
+                } else {
+                    $urls['urls'][] = $urlData;
+                }
+            }
+        };
+
+        foreach ($record->did->daoset as $daoset) {
+            if ($isExternalUrl($daoset)) {
                 continue;
             }
-            foreach ($daoset->dao as $node) {
-                $attr = $node->attributes();
-                if ((string)$attr->linkrole === 'image/jpeg' || !$attr->href) {
-                    continue;
-                }
-                $lang = (string)$attr->lang;
-                $preferredLang = $lang && in_array($lang, $preferredLangCodes);
-
-                $url = (string)$attr->href;
-                $desc = $attr->linktitle ?? $node->descriptivenote->p ?? $url;
-
-                if (!$this->urlBlocked($url, $desc)) {
-                    $urlData = [
-                        'url' => $url,
-                        'desc' => (string)$desc,
-                    ];
-                    $urls[] = $urlData;
-                    if ($preferredLang) {
-                        $localeUrls[] = $urlData;
-                    }
-                }
+            foreach ($daoset->dao as $dao) {
+                $processURL($dao);
             }
         }
-        if ($localeUrls) {
-            $urls = $localeUrls;
+        foreach ($record->did->dao as $dao) {
+            $processURL($dao);
         }
-        return $this->resolveUrlTypes($urls);
+
+        if (empty($urls)) {
+            return [];
+        }
+
+        return $this->resolveUrlTypes($urls['localeurls'] ?? $urls['urls']);
     }
 
     /**
@@ -390,6 +410,34 @@ class SolrEad3 extends SolrEad
         }
 
         return $localeResults ?: $results;
+    }
+
+    /**
+     * See if holdings tab is shown on current item
+     *
+     * @return bool
+     */
+    public function archiveRequestAllowed()
+    {
+        $xml = $this->getXmlRecord();
+        $attributes = $xml->attributes();
+        $datasourceSettings = $this->datasourceSettings[$this->getDataSource()] ?? [];
+        // Requests only allowed on specified datasource
+        if (!($datasourceSettings['allowArchiveRequest'] ?? false)) {
+            return false;
+        }
+        // Check if specified item hierarchy levels match the item's
+        if ($allowedLevels = $datasourceSettings['archiveRequestAllowedRecordLevels'] ?? false) {
+            $recordLevels = explode(':', $allowedLevels);
+            if (!in_array((string)$attributes->level, $recordLevels)) {
+                return false;
+            }
+        }
+        // Check if required filing unit exists
+        if (($datasourceSettings['archiveRequestRequireFilingUnit'] ?? false) && empty($this->getFilingUnit())) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -1288,7 +1336,11 @@ class SolrEad3 extends SolrEad
         }
         $desc = $this->getAccessRestrictions();
         if ($desc && count($desc)) {
-            $rights['description'] = $desc[0];
+            $description = [];
+            foreach ($desc as $p) {
+                $description[] = (string)$p;
+            }
+            $rights['description'] = $description;
         }
 
         return isset($rights['copyright']) || isset($rights['description'])
@@ -1307,7 +1359,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get all subject headings associated with this record.  Each heading is
+     * Get all subject headings associated with this record. Each heading is
      * returned as an array of chunks, increasing from least specific to most
      * specific.
      *
@@ -1382,42 +1434,41 @@ class SolrEad3 extends SolrEad
     public function getRelatedPlacesExtended($include = [], $exclude = ['aihe'])
     {
         $record = $this->getXmlRecord();
-        if (!isset($record->controlaccess->geogname)) {
-            return [];
-        }
 
         $languageResult = $languageResultDetail = $result = $resultDetail = [];
         $languages = $this->preferredLanguage
             ? $this->mapLanguageCode($this->preferredLanguage)
             : [];
 
-        foreach ($record->controlaccess->geogname as $name) {
-            $attr = $name->attributes();
-            $relator = (string)$attr->relator;
-            if (!empty($include) && !in_array($relator, $include)) {
-                continue;
-            }
-            if (!empty($exclude) && in_array($relator, $exclude)) {
-                continue;
-            }
-            $parts = [];
-            foreach ($name->part ?? [] as $place) {
-                if ($p = trim((string)$place)) {
-                    $parts[] = $p;
+        foreach ($record->controlaccess as $controlaccess) {
+            foreach ($controlaccess->geogname as $name) {
+                $attr = $name->attributes();
+                $relator = (string)$attr->relator;
+                if (!empty($include) && !in_array($relator, $include)) {
+                    continue;
                 }
-            }
-            if ($parts) {
-                $part = implode(', ', $parts);
-                $data = ['data' => $part, 'detail' => $relator];
-                if (
-                    $attr->lang && in_array((string)$attr->lang, $languages)
-                    && !in_array($part, $languageResult)
-                ) {
-                    $languageResultDetail[] = $data;
-                    $languageResult[] = $part;
-                } elseif (!in_array($part, $result)) {
-                    $resultDetail[] = $data;
-                    $result[] = $part;
+                if (!empty($exclude) && in_array($relator, $exclude)) {
+                    continue;
+                }
+                $parts = [];
+                foreach ($name->part ?? [] as $place) {
+                    if ($p = trim((string)$place)) {
+                        $parts[] = $p;
+                    }
+                }
+                if ($parts) {
+                    $part = implode(', ', $parts);
+                    $data = ['data' => $part, 'detail' => $relator];
+                    if (
+                        $attr->lang && in_array((string)$attr->lang, $languages)
+                        && !in_array($part, $languageResult)
+                    ) {
+                        $languageResultDetail[] = $data;
+                        $languageResult[] = $part;
+                    } elseif (!in_array($part, $result)) {
+                        $resultDetail[] = $data;
+                        $result[] = $part;
+                    }
                 }
             }
         }
@@ -1914,9 +1965,9 @@ class SolrEad3 extends SolrEad
         $record = $this->getXmlRecord();
 
         $topics = [];
-        if (isset($record->controlaccess->subject)) {
+        foreach ($record->controlaccess as $controlaccess) {
             foreach ([true, false] as $obeyPreferredLanguage) {
-                foreach ($record->controlaccess->subject as $subject) {
+                foreach ($controlaccess->subject as $subject) {
                     $attr = $subject->attributes();
                     if (
                         $topic = $this->getDisplayLabel(
@@ -1968,24 +2019,36 @@ class SolrEad3 extends SolrEad
      *
      * @return array
      */
-    protected function getOtherRelatedMaterial()
+    public function getOtherRelatedMaterial()
     {
         $xml = $this->getXmlRecord();
-        $result = [];
-        if (isset($xml->relatedmaterial)) {
-            foreach ($xml->relatedmaterial as $material) {
-                $text = $this->getDisplayLabel(
-                    $material->p,
-                    'ref'
-                );
-                $url = (string)$material->attributes()->href ?? '';
-                if ($this->urlBlocked($url, $text[0])) {
-                    $url = '';
+        $results = $localeResults = [];
+        foreach ($xml->relatedmaterial as $material) {
+            foreach ($material->p as $p) {
+                $langP = $this->detectNodeLanguage($p);
+                if ($text = trim((string)$p)) {
+                    $results[] = ['text' => $text, 'url' => ''];
+                    if ($langP['preferred'] ?? false) {
+                        $localeResults[] = ['text' => $text, 'url' => ''];
+                    }
                 }
-                $result[] = ['text' => $text[0], 'url' => $url];
+                foreach ($p->ref as $ref) {
+                    $text = trim((string)$ref);
+                    $url = (string)($ref->attributes()->href ?? '');
+                    if ($this->urlBlocked($url, $text)) {
+                        $url = '';
+                    }
+                    if ($text || $url) {
+                        $results[] = ['text' => $text ?: $url, 'url' => $url];
+                        $lang = $this->detectNodeLanguage($ref);
+                        if (($lang['preferred'] ?? false) || ($langP['preferred'] ?? false)) {
+                            $localeResults[] = ['text' => $text ?: $url, 'url' => $url];
+                        }
+                    }
+                }
             }
         }
-        return $result;
+        return $localeResults ?: $results;
     }
 
     /**

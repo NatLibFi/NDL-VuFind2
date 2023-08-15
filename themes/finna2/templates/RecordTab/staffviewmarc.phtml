@@ -3,11 +3,15 @@
 <?=\VuFind\XSLT\Processor::process('record-marc.xsl', $this->driver->getXML('marc21'))?>
 <h2><?=$this->transEsc('staff_view_finna_index')?></h2>
 <table class="citation table table-striped">
-  <?php $rawData = $this->driver->getRawData(); ksort($rawData); foreach ($rawData as $field => $values): ?>
+  <?php $rawData = $this->driver->getRawData();
+  ksort($rawData);
+  foreach ($rawData as $field => $values): ?>
     <tr>
       <th><?=$this->escapeHtml($field)?></th>
       <td>
-        <?php if (!is_array($values)) { $values = [$values]; } ?>
+        <?php if (!is_array($values)) {
+          $values = [$values];
+        } ?>
         <?php foreach ($values as $value): ?>
           <?=$this->escapeHtml(is_array($value) ? print_r($value, true) : $value)?><br>
         <?php endforeach; ?>

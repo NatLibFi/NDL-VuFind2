@@ -273,7 +273,7 @@ class Virtua extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterfa
                     case '5401':  // 'Staff Use'
                         $available = false;
                         break;
-                // Otherwise it's available
+                        // Otherwise it's available
                     case '7200':  // 'External Loan Only'
                     case '3100':  // 'In Library use only'
                     case '2700':  // 'Limited Loan'
@@ -692,12 +692,11 @@ class Virtua extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterfa
                 $return_string .= $d . " " . $data['data'][$i] . " ";
                 $i++;
             }
-
-        // Chrono
-        // Important note: strtotime() expects
-        // 01/02/2000 = 2nd Jan 2000
-        // 01-02-2000 = 1st Feb 2000 <= Use hyphens
         } else {
+            // Chrono
+            // Important note: strtotime() expects
+            // 01/02/2000 = 2nd Jan 2000
+            // 01-02-2000 = 1st Feb 2000 <= Use hyphens
             $pattern = implode("", $data['pattern']);
             switch (strtolower(trim($pattern))) {
                 // Error case
@@ -1753,7 +1752,7 @@ class Virtua extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterfa
     /**
      * Renew My Items
      *
-     * Function for attempting to renew a patron's items.  The data in
+     * Function for attempting to renew a patron's items. The data in
      * $renewDetails['details'] is determined by getRenewDetails().
      *
      * @param array $renewDetails An array of data required for renewing items
@@ -1880,7 +1879,7 @@ class Virtua extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterfa
     }
 
     /**
-     * Support method -- perform an HTTP request.  This will be a GET request unless
+     * Support method -- perform an HTTP request. This will be a GET request unless
      * either $postParams or $rawPost is set to a non-null value.
      *
      * @param string $url        Target URL for request

@@ -1,4 +1,6 @@
-<?php if (!($data = $this->results)) { return; } ?>
+<?php if (!($data = $this->results)) {
+  return;
+} ?>
 <div class="related-records">
   <h1><?=$this->transEsc('Related Materials')?></h1>
   <ul class="list-group">
@@ -15,7 +17,8 @@
             </a>
             <br>
             <?=$this->record($record)->getFormatList();?>
-            <?php $topTitles = $record->getHierarchyTopTitle(); if ($topTitles): ?>
+            <?php $topTitles = $record->getHierarchyTopTitle();
+            if ($topTitles): ?>
               <?php
                 $topTitle = $topTitles[0];
                 $topIds = $record->getHierarchyTopId();

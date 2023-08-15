@@ -351,14 +351,13 @@ trait FinnaOnlinePaymentControllerTrait
                 $this->logger->warn(
                     "Online payment response for $transactionId result: $result"
                 );
-                if (
-                    $paymentHandler::PAYMENT_SUCCESS === $result
-                    && $markedAsPaid
-                ) {
+                if ($paymentHandler::PAYMENT_SUCCESS === $result) {
                     $this->flashMessenger()
                         ->addSuccessMessage('online_payment_successful');
-                    // Send receipt by email if enabled:
-                    if ($receiptEnabled) {
+                    // Send receipt by email if enabled and the payment was just now
+                    // marked as paid (the notification handler could have done it
+                    // already):
+                    if ($markedAsPaid && $receiptEnabled) {
                         $patronProfile = array_merge(
                             $patron,
                             $catalog->getMyProfile($patron)
@@ -366,11 +365,15 @@ trait FinnaOnlinePaymentControllerTrait
                         $receipt = $this->serviceLocator->get(\Finna\OnlinePayment\Receipt::class);
                         $receipt->sendEmail($user, $patronProfile, $transaction);
                     }
-                    // Display page and mark fees as paid via AJAX:
-                    $view->registerPayment = true;
-                    $view->registerPaymentParams = [
-                        'transactionId' => $transaction->transaction_id,
-                    ];
+                    // Reload transaction and check if registration is still pending:
+                    $transaction = $trTable->getTransaction($transactionId);
+                    if ($transaction && $transaction->needsRegistration()) {
+                        // Display page and mark fees as paid via AJAX:
+                        $view->registerPayment = true;
+                        $view->registerPaymentParams = [
+                            'transactionId' => $transaction->transaction_id,
+                        ];
+                    }
                 } elseif ($paymentHandler::PAYMENT_CANCEL === $result) {
                     $this->flashMessenger()
                         ->addSuccessMessage('online_payment_canceled');
@@ -412,6 +415,12 @@ trait FinnaOnlinePaymentControllerTrait
                     $view->setTemplate(
                         'Helpers/OnlinePayment/terms-' . $view->paymentHandler
                         . '.phtml'
+                    );
+                } else {
+                    // Check for a started transaction:
+                    $view->startedTransaction = $trTable->getStartedPayment(
+                        $patron['cat_username'],
+                        (int)($paymentConfig['transactionMaxDuration'] ?? 15)
                     );
                 }
             }

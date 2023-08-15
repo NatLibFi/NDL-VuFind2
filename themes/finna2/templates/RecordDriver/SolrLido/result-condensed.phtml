@@ -37,7 +37,8 @@
       <div class="dateyeartype">
         <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?></div>
         <?=$this->escapeHtml($this->organisationDisplayName($this->driver)) ?>
-        <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles'); if (!empty($authors)): ?>
+        <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles');
+        if (!empty($authors)): ?>
           <?php $author = $authors[0]; ?>
           <a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a>
           <?php if (count($authors) > 1): ?> <?=$this->transEsc('more_authors_abbrev')?><?php endif; ?>
@@ -66,7 +67,8 @@
     <?php endif; ?>
     <div class="media-body">
       <div class="result-body">
-        <?php $summary = $this->driver->getSummary(); $summary = isset($summary[0]) ? $this->escapeHtml($summary[0]) : false; ?>
+        <?php $summary = $this->driver->getSummary();
+        $summary = isset($summary[0]) ? $this->escapeHtml($summary[0]) : false; ?>
         <?php if ($summary): ?>
           <div class="truncate-field wide">
             <p class="summary"><?=$summary?></p>
@@ -85,7 +87,8 @@
         </div>
 
         <?php /* Hierarchy tree link */ ?>
-        <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
+        <?php $trees = $this->driver->tryMethod('getHierarchyTrees');
+        if (!empty($trees)): ?>
           <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
           <div class="hierarchyTreeLink">
             <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId">

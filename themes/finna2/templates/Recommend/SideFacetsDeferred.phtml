@@ -104,7 +104,7 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
         <span class="facet-title"><?=$this->transEsc($facetName)?></span>
         <?=$this->icon('collapse', 'facet-title-icon') ?>
       </button>
-      <div id="<?=$dataTarget?>" class="collapse<?= !$isCollapsed ? ' in' : '';?>"<?php if (!in_array($field, $hierarchicalFacets)):?> data-facet="<?=$escAttrField ?>"<?php endif ?> aria-expanded="<?= !$isCollapsed ? 'true' : 'false';?>">
+      <div id="<?=$dataTarget?>" class="collapse<?= !$isCollapsed ? ' in' : '';?>"<?php if (!in_array($field, $hierarchicalFacets)):?> data-facet="<?=$escAttrField ?>"<?php endif ?>>
         <span class="facet-load-failed hidden"><?=$msgFailed?></span>
         <?php if (in_array($field, $hierarchicalFacets)): ?>
           <?=

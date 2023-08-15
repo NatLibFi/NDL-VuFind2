@@ -256,7 +256,7 @@ class EDS extends \VuFind\RecordDriver\EDS
     }
 
     /**
-     * Get the publication dates of the record.  See also getDateSpan().
+     * Get the publication dates of the record. See also getDateSpan().
      *
      * @return array
      */

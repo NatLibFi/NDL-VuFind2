@@ -86,7 +86,8 @@
           $selected = $this->homeLibrary ?? false;
         }
       ?>
-      <?php $user = $this->auth()->isLoggedIn(); if ($user->getLibraryCards()->count() > 1): ?>
+      <?php $user = $this->auth()->isLoggedIn();
+      if ($user->getLibraryCards()->count() > 1): ?>
       <?php $cards = $user->getLibraryCards();?>
       <div class="form-group library-card-information">
         <div class="control-label"><strong><?=$this->transEsc("Library Card")?>:</strong></div>

@@ -52,14 +52,16 @@
           <?php if ($this->driver->isCollection()): ?>
             <?=implode('<br>', $this->driver->getSummary()); ?>
           <?php else: ?>
-            <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles'); if (!empty($authors)): ?>
+            <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles');
+            if (!empty($authors)): ?>
               <div class="truncate-field" data-rows="1">
                 <?php foreach($authors as $index => $author): ?>
                   <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
                 <?php endforeach; ?>
               </div>
             <?php endif; ?>
-            <?php $containerTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDates(); ?>
+            <?php $containerTitle = $this->driver->getContainerTitle();
+            $summDate = $this->driver->getPublicationDates(); ?>
             <?php if (!empty($containerTitle)): ?>
               <div class="truncate-field" data-rows="1">
                 <?=$this->transEsc('Published in')?>

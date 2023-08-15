@@ -57,12 +57,14 @@
           <?php if ($this->driver->isCollection()): ?>
             <?=implode('<br>', $this->driver->getSummary()); ?>
           <?php else: ?>
-            <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles'); if (!empty($authors)): ?>
+            <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles');
+            if (!empty($authors)): ?>
               <?php $author = $authors[0]; ?>
                 <?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?>
               <?php if (count($authors) > 1): ?> <?=$this->transEsc('more_authors_abbrev')?><?php endif; ?>
             <?php endif; ?>
-            <?php $journalTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDates(); ?>
+            <?php $journalTitle = $this->driver->getContainerTitle();
+            $summDate = $this->driver->getPublicationDates(); ?>
             <?php if (!empty($journalTitle)): ?>
               <?=!empty($summAuthor) ? '' : ' '?>
               <?php
@@ -81,7 +83,8 @@
               }
               ?>
               <?=/* TODO: handle highlighting more elegantly here */ $this->transEsc('Published in') . ' <a href="' . $parentLink . '">' . $this->highlight($journalTitle) . '</a>';?>
-              <?php $ref = $this->driver->getContainerReference(); if (!empty($ref)): ?>
+              <?php $ref = $this->driver->getContainerReference();
+              if (!empty($ref)): ?>
                 <?=$this->escapeHtml($ref); ?>
               <?php else: ?>
                 <?=!empty($summDate) ? ' (' . $this->escapeHtml($summDate[0]) . ')' : ''?>
@@ -113,7 +116,8 @@
           <?php endif; ?>
           <div class="media-body">
             <div class="result-body">
-              <?php $classifications = $this->driver->tryMethod('getClassifications'); if (!empty($classifications)): ?>
+              <?php $classifications = $this->driver->tryMethod('getClassifications');
+              if (!empty($classifications)): ?>
                 <div class="resultClassification">
                   <?php
                     $result = '';
@@ -130,7 +134,8 @@
                 </div>
               <?php endif; ?>
 
-              <?php $summInCollection = $this->driver->getContainingCollections(); if (!empty($summInCollection)): ?>
+              <?php $summInCollection = $this->driver->getContainingCollections();
+              if (!empty($summInCollection)): ?>
                 <?php foreach ($summInCollection as $collId => $collText): ?>
                   <div>
                     <b><?=$this->transEsc("in_collection_label")?></b>
@@ -156,7 +161,8 @@
                 <?=$this->driver->supportsCoinsOpenUrl() ? '<span class="Z3988" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenUrl()) . '"></span>' : ''?>
               </div>
                 <?php /* Hierarchy tree link */ ?>
-                <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
+                <?php $trees = $this->driver->tryMethod('getHierarchyTrees');
+                if (!empty($trees)): ?>
                     <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
                     <div class="hierarchyTreeLink">
                       <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId">

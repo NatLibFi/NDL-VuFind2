@@ -30,7 +30,8 @@
       <?=$this->record($record)->renderTemplate('core-fields.phtml', ['coreFields' => $coreFields, 'driver' => $record]);?>
     </table>
   <?php endif; ?>
-  <?php $summ = $record->getSummary(); if (!empty($summ)): ?>
+  <?php $summ = $record->getSummary();
+  if (!empty($summ)): ?>
     <div class="wide recordSummary<?=!($this->collapsed ?? false) ? ' truncate-field' : ''?>" data-rows="5">
       <p class="summary">
         <?php // NOTE: the driver is responsible for returning only safe tags ?>

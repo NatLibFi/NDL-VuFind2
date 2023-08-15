@@ -38,7 +38,9 @@
 <h2><?=$this->transEsc('staff_view_finna_index')?></h2>
 <?php endif; ?>
 <table class="staff-view table table-striped">
-  <?php $rawData = $this->driver->getRawData(); ksort($rawData); foreach ($rawData as $field => $values): ?>
+  <?php $rawData = $this->driver->getRawData();
+  ksort($rawData);
+  foreach ($rawData as $field => $values): ?>
     <tr>
       <th><?=$this->escapeHtml($field)?></th>
       <td><?=$this->printArrayHtml($values)?></td>

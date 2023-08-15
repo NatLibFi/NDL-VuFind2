@@ -3,8 +3,7 @@
   $__renderChildren = $renderChildren ?? 'dropdown';
   if (!empty($children) && 'dropdown' === $__renderChildren) {
     $__attributes->add('class', 'dropdown');
-  }
-  elseif (!empty($active)) {
+  } elseif (!empty($active)) {
     $__attributes->add('class', 'active');
     if (isset($ariaCurrent)) {
       $__attributes['aria-current'] = $ariaCurrent;
@@ -47,8 +46,7 @@
         'aria-haspopup' => 'true',
         'aria-expanded' => 'false',
       ]);
-    }
-    else {
+    } else {
       $__linkAttributes['href'] = $link ?? '';
     }
   ?>

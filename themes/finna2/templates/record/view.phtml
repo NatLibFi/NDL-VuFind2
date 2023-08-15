@@ -164,9 +164,15 @@
                 $tabClasses[] = 'initiallyActive';
                 $activeTabObj = $obj;
               }
-              if (!$obj->isVisible()) { $tabClasses[] = 'hidden'; }
-              if (!$obj->supportsAjax()) { $tabClasses[] = 'noajax'; }
-              if (strtolower($tab) == 'details') { $tabClasses[] = 'hidden-xs tab-right'; }
+              if (!$obj->isVisible()) {
+                $tabClasses[] = 'hidden';
+              }
+              if (!$obj->supportsAjax()) {
+                $tabClasses[] = 'noajax';
+              }
+              if (strtolower($tab) == 'details') {
+                $tabClasses[] = 'hidden-xs tab-right';
+              }
             ?>
             <li class="<?=implode(' ', $tabClasses)?>" role="tab" data-tab="<?=$this->escapeHtmlAttr($tabName)?>"<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?> data-background<?php endif ?>>
               <a class="<?=$this->escapeHtmlAttr(strtolower($tab)) ?>" aria-label="<?=$this->transEscAttr($desc)?>"
@@ -196,8 +202,12 @@
             }
             $accordion_classes[] = 'initiallyActive';
           }
-          if (!$obj->isVisible()) { $accordion_classes[] = 'hidden'; }
-          if (!$obj->supportsAjax()) { $accordion_classes[] = 'noajax'; }
+          if (!$obj->isVisible()) {
+            $accordion_classes[] = 'hidden';
+          }
+          if (!$obj->supportsAjax()) {
+            $accordion_classes[] = 'noajax';
+          }
         ?>
         <div class="<?=implode(' ', $accordion_classes)?>">
           <div class="accordion-toggle">

@@ -40,7 +40,8 @@
           <?php if ($this->record($this->driver)->repositoryLibraryRequestEnabled('organisation_info')): ?>
             <li class="repository-library-request"><?=$this->transEsc('repository_library_request')?></li>
             <li>
-              <?php $user = $this->auth()->isLoggedIn(); if ($user): ?>
+              <?php $user = $this->auth()->isLoggedIn();
+              if ($user): ?>
                 <?php if ($user->getLibraryCards()->count()): ?>
                   <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'RepositoryLibraryRequest'))?>" data-lightbox class="btn btn-primary repository-library-request-order"><?=$this->transEsc('repository_library_request_order')?><span class="sr-only"> - <?=$this->escapeHtml($this->driver->getTitle())?></span></a>
                 <?php else: ?>

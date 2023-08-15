@@ -64,8 +64,11 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
                         ],
                         'description' => '',
                         'rights' => [
-                            'copyright' => '',
+                            'copyright' => 'openAccess',
                             'link' => false,
+                            'description' => [
+                                '2023 Finna qa',
+                            ],
                         ],
                         'highResolution' => [
                             'original' => [
@@ -371,6 +374,21 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
             $config,
             new \Laminas\Config\Config($searchConfig)
         );
+        $localeConfig = [
+            'Site' => [
+                'language' => 'fi',
+                'fallback_languages' => 'en-gb,sv',
+                'browserDetectLanguage' => false,
+            ],
+            'Languages' => [
+                'fi' => 'Finnish',
+                'en' => 'English',
+                'sv' => 'Swedish',
+                'en-gb' => 'British English',
+            ],
+        ];
+        $localeConfig = new \Laminas\Config\Config($localeConfig);
+        $record->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
         $record->setRawData(['id' => 'knp-247394', 'fullrecord' => $fixture]);
         return $record;
     }
