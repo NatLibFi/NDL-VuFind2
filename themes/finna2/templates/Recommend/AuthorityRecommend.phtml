@@ -70,7 +70,7 @@ $that = $this;
           $id = $record->getUniqueId();
           $formats = $record->getFormats();
           $authorityUrl = $authorityLinkType === 'search' ? $urlQuery->setAuthorId($id) : $this->url('solrauthrecord', ['id' => $id]);
-          $html = '<span class="authority-page-link"><a class="authority-page" href="' . $authorityUrl . '">' . (!empty($formats) ? $this->icon('authority-' . $this->escapeHtmlAttr($this->record($record)->getFormatClass($formats[0])))  : '')  . $that->escapeHtml($record->getBreadCrumb()) . '</a></span>';
+          $html = '<span class="authority-page-link"><a class="authority-page" href="' . $authorityUrl . '">' . (!empty($formats) ? $this->icon('authority-' . $this->escapeHtmlAttr($this->record($record)->getFormatClass($formats[0]))) : '') . $that->escapeHtml($record->getBreadCrumb()) . '</a></span>';
           return $html;
       };
       $content = implode(', ', array_map($callback, $data));

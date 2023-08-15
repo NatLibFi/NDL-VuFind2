@@ -177,7 +177,7 @@ $config = [
         'vendor/select2.min.css',
         'finna.css',
         'finnaicons.css',
-        'vendor/priority-nav-core.css'
+        'vendor/priority-nav-core.css',
     ],
     'js' => [
         'finna-object-editor.js',
@@ -440,7 +440,7 @@ $config = [
             'video-play' => 'FontAwesome:play-circle',
             'week-next' => 'FontAwesome:arrow-right',
             'week-prev' => 'FontAwesome:arrow-left',
-            'whatsapp' => 'FinnaIcons:phone'
+            'whatsapp' => 'FinnaIcons:phone',
         ],
     ],
 ];

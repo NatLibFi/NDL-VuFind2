@@ -13,7 +13,7 @@
 <div class="record-container list-view <?=$this->record($this->driver)->getContainerJsClasses()?>" id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>">
   <div class="condensed-collapse-toggle">
     <div class="condensed-body">
-      <?=$this->icon('condensed-expand','condensed-expand') ?><?=$this->icon('condensed-collapse','condensed-collapse') ?>
+      <?=$this->icon('condensed-expand', 'condensed-expand') ?><?=$this->icon('condensed-collapse', 'condensed-collapse') ?>
       <h2 class="title">
         <a class="title" href="<?=$this->escapeHtmlAttr($recordLinker->getUrl($this->driver))?>">
           <?=$this->record($this->driver)->getTitleHtml()?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
