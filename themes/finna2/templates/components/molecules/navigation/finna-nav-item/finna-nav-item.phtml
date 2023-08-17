@@ -50,7 +50,7 @@
       $__linkAttributes['href'] = $link ?? '';
     }
   ?>
-  <a<?= $__linkAttributes ?>><?= $label ?? '' ?><?php if ($__hasDropdown): ?> <?=$this->icon('menu-open') ?><?php endif; ?></a>
+  <a<?= $__linkAttributes ?>><?= $label ?? '' ?><?php if ($__hasDropdown): ?> <b class="caret"></b><?php endif; ?></a>
   <?php if (!$__hasDropdown && isset($tooltipBtn)): ?>
     <?= $this->render('components/molecules/tooltips/finna-tooltip-btn', $tooltipBtn) ?>
   <?php endif; ?>
