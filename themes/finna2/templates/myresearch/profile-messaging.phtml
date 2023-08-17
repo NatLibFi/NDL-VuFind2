@@ -77,7 +77,7 @@ if (!isset($capabilityParams)) {
     <?php if ($updateSettings): ?>
       <div class="messaging-last">
         <?php if (in_array($updateSettings['method'], ['database', 'driver'])): ?>
-          <?=$this->icon('edit') ?> <a class="profile-messaging-update" data-lightbox href="<?=$this->escapeHtmlAttr($this->url('myresearch-changemessagingsettings')) ?>"><?= $this->transEsc('request_messaging_settings_change') ?></a>
+          <?=$this->icon('ui-edit') ?> <a class="profile-messaging-update" data-lightbox href="<?=$this->escapeHtmlAttr($this->url('myresearch-changemessagingsettings')) ?>"><?= $this->transEsc('request_messaging_settings_change') ?></a>
         <?php else: ?>
           <?=$this->icon('external-link') ?> <a class="profile-messaging-update" href="<?=$this->escapeHtmlAttr($this->translation()->getStringFromMixed($updateSettings['url'])) ?>" target="_blank"><?= $this->transEsc('request_messaging_settings_change') ?></a>
         <?php endif; ?>
