@@ -120,6 +120,9 @@ class Aipa extends AbstractHelper
             foreach ($levelData[EducationalData::EDUCATIONAL_MODULES] ?? [] as $module) {
                 $items[] = $module->getPrefLabel('fi');
             }
+            foreach ($levelData[EducationalData::VOCATIONAL_QUALIFICATIONS] ?? [] as $vocationalQualification) {
+                $items[] = $vocationalQualification->getPrefLabel('fi');
+            }
             $html .= $component('@@molecules/lists/finna-tag-list', [
                 'title' => $translate('aipa_' . $levelCodeValue) . ':',
                 'items' => $items,

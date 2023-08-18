@@ -38,6 +38,8 @@ use NatLibFi\FinnaCodeSets\Model\EducationalSubject\EducationalSubjectInterface;
 use NatLibFi\FinnaCodeSets\Model\EducationalSyllabus\EducationalSyllabusInterface;
 use NatLibFi\FinnaCodeSets\Model\StudyContents\StudyContentsInterface;
 use NatLibFi\FinnaCodeSets\Model\StudyObjective\StudyObjectiveInterface;
+use NatLibFi\FinnaCodeSets\Model\VocationalQualification\VocationalQualificationInterface;
+use NatLibFi\FinnaCodeSets\Model\VocationalUnit\VocationalUnitInterface;
 use NatLibFi\FinnaCodeSets\Utility\EducationalData;
 
 /**
@@ -203,22 +205,21 @@ class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
             $data[EducationalData::EDUCATIONAL_SUBJECTS] = [];
             $data[EducationalData::EDUCATIONAL_SYLLABUSES] = [];
             $data[EducationalData::EDUCATIONAL_MODULES] = [];
+            $data[EducationalData::VOCATIONAL_QUALIFICATIONS] = [];
+            $data[EducationalData::VOCATIONAL_UNITS] = [];
             foreach ($xml->learningResource->educationalAlignment ?? [] as $alignment) {
                 foreach ($alignment->educationalSubject ?? [] as $xmlSubject) {
                     $subject = $this->codeSets->getEducationalSubjectByUrl($xmlSubject->targetUrl);
-                    if ($subject->getId() !== $xmlSubject->identifier) {
-                        // XML subject is an educational syllabus or module.
-                        $subject = $this->codeSets->getEducationalSubjectById(
-                            $xmlSubject->identifier,
-                            $subject->getRootEducationalLevelCodeValue()
-                        );
-                    }
                     if ($subject instanceof EducationalSubjectInterface) {
                         $data[EducationalData::EDUCATIONAL_SUBJECTS][] = $subject;
                     } elseif ($subject instanceof EducationalSyllabusInterface) {
                         $data[EducationalData::EDUCATIONAL_SYLLABUSES][] = $subject;
                     } elseif ($subject instanceof EducationalModuleInterface) {
                         $data[EducationalData::EDUCATIONAL_MODULES][] = $subject;
+                    } elseif ($subject instanceof  VocationalQualificationInterface) {
+                        $data[EducationalData::VOCATIONAL_QUALIFICATIONS][] = $subject;
+                    } elseif ($subject instanceof  VocationalUnitInterface) {
+                        $data[EducationalData::VOCATIONAL_UNITS][] = $subject;
                     } else {
                         throw new \Exception();
                     }
