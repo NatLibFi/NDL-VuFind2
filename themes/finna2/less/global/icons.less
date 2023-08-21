@@ -295,6 +295,9 @@ table .iconlabel {
     &.disable {
         cursor: default;
     }
+    .model-3d {
+        display: none;
+    }
 }
 .image-popup-trigger {
     .model-trigger {
@@ -605,9 +608,64 @@ table .iconlabel {
     content: "\e023";
   }
 
-  /* Spinner */
-  .fa-spinner {
+/* Spinner */
+.fa-spinner {
     &:before {
         color: gray;
     }
-  }
+}
+
+/* 3D */
+.model-3d-icon:before {
+    font-family: finnaicons;
+    content: "\e8c0";
+}
+.model-fullscreen:before {
+    font-family: finnaicons;
+    content: "\e918";
+}
+.model-statistics:before {
+    font-family: finnaicons;
+    content: "\e801";
+}
+
+/* Share buttons */
+.nav-pills > li.share-buttons {
+    float: right;
+    padding-top: 5px;
+    .share-buttons-toolbox {
+        a {
+            padding: 0;
+        }
+        .icon {
+            color: #fff;
+            margin-left: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            &.facebook-icon {
+                background: #3a5795;
+                border: 2px solid #3a5795;
+                color: #fff;
+            }
+            &.pinterest-icon {
+                background: #cb2027;
+                border: 2px solid #cb2027;
+                color: #fff;
+            }
+            &.twitter-icon {
+                background: #00aced;
+                border: 2px solid #00aced;
+                color: #fff;
+            }
+            &.fa-google-plus {
+                background: #d34836;
+                border: 2px solid #d34836;
+                color: #fff;
+            }
+        }
+    }
+}

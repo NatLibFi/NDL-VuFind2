@@ -37,7 +37,7 @@
       color: darken(@action-link-color,10%);
     }
 
-    & .icon {
+    & i {
       color: tint(@action-link-color, 22%);
       padding-left: 3px;
       padding-right: 3px;
@@ -45,13 +45,14 @@
   }
 
   .recordURLs {
-    &:not(.lido-links) {
-      margin: 0px 0px 10px;
-      padding-bottom: 10px;
-    }
+    margin: 0px 0px 10px;
+    padding-bottom: 10px;
     & .online-source {
       font-size: 0.9em;
       color: @gray-light;
+    }
+    a {
+      font-size: 15px;
     }
     .truncate-field.truncate-done {
       width: 100%;
@@ -247,7 +248,7 @@ a.authority {
   align-items: center;
   font-size: 1em;
   position: relative;
-  .icon {
+  .fa.fa-download {
     margin-right: 4px;
     color: @action-link-color;
     &:hover, &:focus {
@@ -363,7 +364,7 @@ a.authority {
             max-width: 64px;
             flex: 1 1 64px;
             cursor: pointer;
-            i.fa-finna-3d {
+            i.model-3d-icon {
               color: #121212;
               font-size: 24px;
               font-style: initial;
@@ -500,77 +501,48 @@ a.authority {
   margin-bottom: 6px;
 }
 
-.record-information {
+.record-links {
   vertical-align: baseline;
-  button.less-link.top-button {
-    top: 0;
-    position: sticky;
-    background-color: @body-bg;
-    width: 100%;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    text-align: left;
-    @media(max-width: @screen-md) {
-      top: @navbar-height;
-    }
+  .cc-info {
+    margin-left: 5px;
   }
-  ul.truncate-field{
-    margin-bottom: 0;
-  }
-  button.less-link {
-    display: flex;
-    align-items: baseline;
-    i {
-      padding-left: 2px;
-    }
-  }
-  .copyright-wrapper {
-    display: inline-block;
-    margin-left: 3px;
-    .cc-info {
-      margin-left: 5px;
-    }
-    a.copyright-description, .iconlabel {
+  a.copyright-description, .iconlabel {
       font-size: @font-size-small;
       font-weight: normal;
-    }
-    .show-info, .hide-info {
+  }
+  .show-info, .hide-info {
       font-size: @font-size-small;
       text-transform: lowercase;
       font-weight: normal;
-    }
-    span.fa-arrow-down, span.fa-arrow-up {
+  }
+  span.fa-arrow-down, span.fa-arrow-up {
       font-size: 0.8em;
-    }
-    .show-info:first-letter, .hide-info:first-letter {
+  }
+  .show-info:first-letter, .hide-info:first-letter {
       text-transform: none;
-    }
-    .iconlabel {
+  }
+  .iconlabel {
       margin-right: -3px;
       vertical-align: bottom;
-    }
-    .iconlabel:first-child {
+  }
+  .iconlabel:first-child {
       margin-left: 2px;
-    }
-    span {
+  }
+  span {
       font-size: @font-size-small;
-    }
-    p {
-      font-size: @font-size-small;
-      padding: 0;
-      margin: 0;
-    }
-    .copyright-description {
+  }
+  p {
+     font-size: @font-size-small;
+     padding: 0;
+     margin: 0;
+  }
+  .copyright-description {
       margin-right: 5px;
-    }
   }
-  .summary-wrapper {
-    display:flex;
-    flex-flow:column;
-    gap: 8px;
-    margin-top: 10px;
-    margin-bottom: 8px;
-  }
+}
+.copyright-wrapper {
+    display: inline-block;
+    margin-left: 3px;
 }
 
 .summary {
@@ -741,7 +713,7 @@ a.authority {
   & a:hover {
     text-decoration: none;
   }
-  & > li:not(.share-buttons) {
+  & > li:not(.share-buttons):not(.whatsapp) {
     margin: 10px;
     float: left;
     // Links rendered as pills
@@ -759,6 +731,15 @@ a.authority {
     min-width: 150px;
   }
 }
+.nav-pills .share-buttons a {
+  display: inline-block;
+}
+.share-buttons {
+    margin-right: 5px;
+}
+.share-buttons-toolbox {
+    display: inline-block;
+}
 
 // Request forms
 .ill-request-terms {
@@ -770,7 +751,7 @@ a.authority {
 
 // Comment form
 .comment-form {
-  .icon {
+  .fa.fa-info3 {
     font-size: 1.5em;
     float: left;
     color: @brand-primary;
@@ -780,8 +761,8 @@ a.authority {
     margin-left: 2em;
   }
   @media (min-width: @screen-md) {
-    .icon {
-      margin-top: 2.4em;
+    .fa.fa-info3 {
+      margin-top: 2.7em;
       margin-left: 1em;
     }
     .comment-col {
@@ -793,9 +774,6 @@ a.authority {
       margin-left: 4em;
     }
   }
-}
-.comment-text {
-  white-space: pre-line;
 }
 
 // Cart buttons
@@ -1053,14 +1031,14 @@ finna-model-viewer .object-editor {
   display: inline-block;
 
   .show-info {
-    .icon {
+    i {
       font-size: 1.0rem;
       vertical-align: middle;
     }
-    .icon.expand {
+    i.expand {
       display: inline-block;
     }
-    .icon.collapse {
+    i.collapse {
       display: none;
     }
   }
@@ -1104,10 +1082,10 @@ finna-model-viewer .object-editor {
     display: block;
   }
   &.open > .show-info {
-    .icon.expand {
+    i.expand {
       display: none;
     }
-    .icon.collapse {
+    i.collapse {
       display: inline-block;
     }
   }
@@ -1190,46 +1168,5 @@ finna-model-viewer .object-editor {
     .rating__input:hover ~ .rating__label--half .rating__icon--star {
       color: #ddd;
     }
-  }
-}
-
-/* Styling of share buttons */
-.nav-pills > li.share-buttons {
-  float: right;
-}
-.share-buttons-toolbox {
-  display: flex;
-  margin-bottom: 10px;
-  .share-button-facebook {
-    background: #3a5795;
-    border: 2px solid #3a5795;
-    color: #fff;
-  }
-  .share-button-pinterest {
-      background: #cb2027;
-      border: 2px solid #cb2027;
-      color: #fff;
-  }
-  .share-button-twitter {
-      background: #00aced;
-      border: 2px solid #00aced;
-      color: #fff;
-  }
-  .share-button-google-plus-icon {
-      background: #d34836;
-      border: 2px solid #d34836;
-      color: #fff;
-  }
-  a {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    width: 30px;
-    height: 30px;
-    padding: 0;
-    border-radius: 50%;
-    box-sizing: border-box;
-    font-size: 12px;
-    margin-left: 5px;
   }
 }

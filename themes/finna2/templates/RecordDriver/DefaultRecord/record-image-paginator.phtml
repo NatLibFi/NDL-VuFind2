@@ -45,16 +45,16 @@
     </p>
   </div>
   <div class="recordcovers <?=$this->escapeHtmlAttr($type)?>">
-    <button class="left-button" type="button" title="<?= $this->transEsc('previous_images') ?>"><?=$this->icon('images-previous') ?><span class="sr-only"><?= $this->transEsc('previous_images') ?></span></button>
+    <button class="left-button" type="button" title="<?= $this->transEsc('previous_images') ?>"><?=$this->icon('image-previous') ?><span class="sr-only"><?= $this->transEsc('previous_images') ?></span></button>
     <div class="track-holder paginator-mask">
       <div class="finna-element-track"></div>
     </div>
-    <button class="right-button" type="button" title="<?= $this->transEsc('next_images') ?>"><?=$this->icon('images-next') ?><span class="sr-only"><?= $this->transEsc('next_images') ?></span></i></button>
+    <button class="right-button" type="button" title="<?= $this->transEsc('next_images') ?>"><?=$this->icon('image-next') ?><span class="sr-only"><?= $this->transEsc('next_images') ?></span></i></button>
     <div class="paginator-info"><span class="image-index"></span></div>
   </div>
   <div class="recordcovers-more more-area">
-    <button type="button" class="show-more-images"><?= $this->transEsc('more') ?> <?=$this->icon('images-more') ?></button>
-    <button type="button" class="show-less-images"><?= $this->transEsc('less') ?> <?=$this->icon('images-less') ?></button>
+    <button type="button" class="show-more-images"><?= $this->transEsc('more') ?> <?=$this->icon('image-more') ?></button>
+    <button type="button" class="show-less-images"><?= $this->transEsc('less') ?> <?=$this->icon('image-less') ?></button>
   </div>
 <?php endif;?>
 <!-- END of: finna - RecordDriver/DefaultRecord/record-image-paginator.phtml -->
