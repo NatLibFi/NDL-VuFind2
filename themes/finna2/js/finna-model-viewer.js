@@ -560,8 +560,8 @@ class ModelViewerClass extends HTMLElement {
     button.append(srOnly);
 
     const buttons = [
-      {class: 'model-fullscreen', translation: 'asd', info: 'model-fullscreen'},
-      {class: 'model-statistics', target: '#model-statistics-area', translation: 'asd', info: 'model-statistics'},
+      {class: 'model-fullscreen', translation: 'asd', info: 'model-viewer-fullscreen'},
+      {class: 'model-statistics', target: '#model-statistics-area', translation: 'asd', info: 'model-viewer-statistics'},
       {class: 'model-help', target: '#model-help-area', translation: 'asd', info: 'fa-question-circle-o'},
       {class: 'model-settings', target: '#object-editor-settings', translation: 'asd', info: 'fa-cog'},
     ];

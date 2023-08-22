@@ -18,13 +18,13 @@
     <h3>Skapa favoritlista</h3>
     <p>Logga först in på Finna och sök det material som du är intresserad av.
     </p>
-    <p>Lägg till materialet i en favoritlista genom att klicka på knappnålsikonen. <span aria-hidden="true"><i class="fa fa-heart brand-primary"></i></span>
+    <p>Lägg till materialet i en favoritlista genom att klicka på knappnålsikonen. <?=$this->icon('favorite') ?>
     </p>
     <p>Du hittar knappnålsikonen till höger på sidan med sökresultaten.
     </p>
     <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-1_sv.png')?>" aria-hidden="true" alt="">
     </p>
-    <p>I vyn med materialets detaljerade uppgifter finns knappnålsikonen uppe till vänster. <span aria-hidden="true"><i class="fa fa-heart brand-primary" aria-hidden="true">&nbsp;<span class="hidden-xs"><?=$this->transEsc('Add to favorites')?></span></i></span>
+    <p>I vyn med materialets detaljerade uppgifter finns knappnålsikonen uppe till vänster. <?=$this->icon('favorite') ?><span class="hidden-xs"> <?=$this->transEsc('Add to favorites')?></span>
     </p>
     <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-2_sv.png')?>" aria-hidden="true" alt="">
     </p>
@@ -42,16 +42,16 @@
     <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-5_sv.png')?>" aria-hidden="true" alt="">
     </p>
     <h3>Favoritlistans visningsvy och delning</h3>
-    <p>Om du vill granska din favoritlista i visningsvy, välj <strong><?=$this->transEsc('Public')?></strong> synlighet. Då visas ikonen för delning <span aria-hidden="true"><i class="fa fa-public brand-primary"></i></span> efter namnet på listan. Genom att klicka på <strong><?=$this->transEsc('Public List URL')?></strong> visas favoritlistan i visningsvy. Om du inte delar länken i visningsvyn har ingen annan än du tillgång till favoritlistan.
+    <p>Om du vill granska din favoritlista i visningsvy, välj <strong><?=$this->transEsc('Public')?></strong> synlighet. Då visas ikonen för delning <?=$this->icon('list-public') ?> efter namnet på listan. Genom att klicka på <strong><?=$this->transEsc('Public List URL')?></strong> visas favoritlistan i visningsvy. Om du inte delar länken i visningsvyn har ingen annan än du tillgång till favoritlistan.
     </p>
     <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-6_sv.png')?>" aria-hidden="true" alt="">
     </p>
     <p>I visningsvyn kan olika visningssätt väljas. Listan kan sorteras på olika sätt, till exempel efter årtal. Prova även olika alternativ för att visa materialet.
     </p>
     <p><em><?=$this->transEsc('show_as')?></em>
-      <br>&nbsp;<span aria-hidden="true"><i class="fa fa-list brand-primary"></i></span>&nbsp;<?=$this->transEsc('Show As List')?>
-      <br>&nbsp;<span aria-hidden="true"><i class="fa fa-grid brand-primary"></i></span>&nbsp;<?=$this->transEsc('Show As Grid')?>
-      <br>&nbsp;<span aria-hidden="true"><i class="fa fa-condensed brand-primary"></i></span>&nbsp;<?=$this->transEsc('Show As Condensed')?>
+      <br>&nbsp;<?=$this->icon('view-list') ?>&nbsp;<?=$this->transEsc('Show As List')?>
+      <br>&nbsp;<?=$this->icon('view-grid') ?>&nbsp;<?=$this->transEsc('Show As Grid')?>
+      <br>&nbsp;<?=$this->icon('view-condensed') ?>&nbsp;<?=$this->transEsc('Show As Condensed')?>
     </p>
     <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-7_sv.png')?>" aria-hidden="true" alt="">
     </p>
