@@ -36,7 +36,7 @@
             <option value="<?=$this->escapeHtmlAttr($l->id) ?>"><?=$this->escapeHtml($title) ?></option>
           <?php endforeach; ?>
         </select>
-        <i id="add-to-list-spinner" class="fa fa-spinner fa-spin hidden"></i>
+        <span id="add-to-list-spinner" class="hidden"><?=$this->icon('spinner') ?></span>
       <?php endif; ?>
       <?php if ($this->cart()->isActive()): ?>
         <button class="btn btn-primary" id="<?=$this->idPrefix?>updateCart" type="submit" name="add" title="<?=$this->transEsc('Add to Book Bag')?>" disabled<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>><?=$this->transEsc('Bag') ?></button>
