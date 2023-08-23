@@ -1,0 +1,15 @@
+<?php /* Global context Finna icons only */
+
+// Set up Finna icons
+$list = [
+    // Map
+    'map-remove',
+    'map-narrow',
+    'map-marker',
+];
+
+// Zip list together
+// ala 'icon' => 'icon'
+$this->jsIcons()->addStrings(array_combine($list, $list));
+
+echo $this->jsIcons()->getJSON();
