@@ -97,6 +97,6 @@ class FinnaHighlighter extends \VuFind\UrlHighlight\VuFindHighlighter
      */
     protected function getContentBefore(UrlMatch $match): string
     {
-        return $this->icon('external-link');
+        return '<i class="fa fa-external-link"></i> ';
     }
 }
