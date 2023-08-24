@@ -11,7 +11,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
     params.query = $.extend(params.query, limit, lang);
     var spinner = null;
     if (typeof showSpinner === 'undefined' || showSpinner) {
-      spinner = VuFind.icon("map-marker", "map-marker-icon");
+      spinner = VuFind.icon('map-marker', 'map-marker-icon');
       if (append) {
         container.find($('.linked-events-content')).append(spinner);
       } else {
@@ -55,7 +55,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
     var icon = L.divIcon({
       className: 'mapMarker',
       iconSize: null,
-      html: '<div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive">' + VuFind.icon("map-marker", "map-marker-icon open") + '</div>',
+      html: '<div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive">' + VuFind.icon('map-marker', 'map-marker-icon open') + '</div>',
       iconAnchor: [10, 35],
       popupAnchor: [0, -36],
       labelAnchor: [-5, -86]

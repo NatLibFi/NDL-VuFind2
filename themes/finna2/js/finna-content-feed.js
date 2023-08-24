@@ -11,7 +11,7 @@ finna.contentFeed = (function finnaContentFeed() {
     }
 
     // Append spinner
-    contentHolder.append(VuFind.icon("spinner"));
+    contentHolder.append(VuFind.icon('spinner'));
 
     var url = VuFind.path + '/AJAX/JSON';
     var params = {method: 'getContentFeed', id: id, element: element};

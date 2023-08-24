@@ -686,7 +686,7 @@ FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() 
     src += "&sid=" + encodeURIComponent(searchId);
   }
 
-  _.popup.collapseArea.html('<div class="large-spinner">' + VuFind.icon("spinner") + '</div>');
+  _.popup.collapseArea.html('<div class="large-spinner">' + VuFind.icon('spinner') + '</div>');
   $.ajax({
     url: src,
     dataType: 'html'
@@ -757,7 +757,7 @@ FinnaPaginator.prototype.createImagePopup = function createImagePopup(image, ind
       img.src = image.urls.small;
       img.alt = image.description;
       img.title = image.title;
-      holder.append(img, VuFind.icon("spinner","spinner-icon"));
+      holder.append(img, VuFind.icon('spinner', 'spinner-icon'));
       img.onload = function onLoad() {
         $(this).siblings('.spinner-icon').remove();
       };
@@ -765,7 +765,7 @@ FinnaPaginator.prototype.createImagePopup = function createImagePopup(image, ind
       if (_.popup.track) {
         return undefined;
       }
-      holder.append(VuFind.icon("model-3d","model-3d-icon"));
+      holder.append(VuFind.icon('model-3d', 'model-3d-icon'));
     }
   }
   holder.attr({

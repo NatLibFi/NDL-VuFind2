@@ -266,7 +266,7 @@ class FinnaFeedElement extends HTMLElement {
     } else {
       const holder = this;
       // Prepend spinner
-      const spinner = VuFind.icon("spinner","spinner");
+      const spinner = VuFind.icon('spinner', 'spinner');
 
       const url = VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
         method: 'getFeed',
