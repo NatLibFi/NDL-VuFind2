@@ -9,7 +9,7 @@ finna.menu = (function finnaMenu() {
           $element.addClass("hidden");
           return ICON_LEVELS.NONE;
         }
-        $element.html('<i class="fa fa-exclamation-triangle" title="' + VuFind.translate('account_has_alerts') + '" aria-hidden="true"></i>');
+        $element.html('<span title="' + VuFind.translate('account_has_alerts') + '">' + VuFind.icon("warning", "warning-icon"));
         return ICON_LEVELS.DANGER;
       }
     });

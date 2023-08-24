@@ -74,17 +74,17 @@
 
             <div class="edit-tags">
               <div class="toggle" title="<?=$this->transEscAttr('edit-list-tags')?>">
-                <span><?=$this->transEsc('edit-list-tags')?> </span><?=$this->icon('list-edit-tags') ?>
+                <span><?=$this->transEsc('edit-list-tags')?> </span><?=$this->icon('list-tag-edit') ?>
               </div>
               <div class="ui">
-                <p class="info"><i aria-hidden="true" class="fa fa-info"></i> <?=$this->transEsc('add-list-tag-note')?></p>
+                <p class="info"><?=$this->icon('info') ?> <?=$this->transEsc('add-list-tag-note')?></p>
                 <form>
                   <fieldset>
                     <legend></legend>
                     <div class="add-new">
                       <input type="text" class="new-tag" name="new-tag" value="" aria-required="true" required aria-label="<?= $this->transEscAttr('list-tags-info')?>" placeholder="<?= $this->transEscAttr('list-tags-info')?>">
                       <button type="submit" class="btn btn-primary "><?=$this->transEsc('Save')?></button>
-                      <div><i aria-hidden="true" class="fa fa-spin fa-spinner hide"></i></div>
+                      <div><?=$this->icon('spinner','hide') ?></div>
                     </div>
                     <div class="tags editable">
                       <div class="tag-list">

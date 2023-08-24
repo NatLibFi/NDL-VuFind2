@@ -1,9 +1,9 @@
-var previous = '<button class="popup-arrow popup-left-arrow previous-record" type="button"><i class="fa fa-angle-double-left" aria-hidden="true"></i></button>';
-var next = '<button class="popup-arrow popup-right-arrow next-record" type="button"><i class="fa fa-angle-double-right" aria-hidden="true"></i></button>';
-var closeTemplate = '<button class="finna-popup close-button" title="close_translation" aria-label="close_translation">x</button>';
-var srElement = '<span class="sr-only"></span>';
 
 function FinnaPopup(trigger, params, id) {
+  previous = '<button class="popup-arrow popup-left-arrow previous-record" type="button">' + VuFind.icon("record-prev", "record-prev-icon") + '</button>';
+  next = '<button class="popup-arrow popup-right-arrow next-record" type="button">' + VuFind.icon("record-next", "record-next-icon") + '</button>';
+  closeTemplate = '<button class="finna-popup close-button" title="close_translation" aria-label="close_translation">' + VuFind.icon("popup-close", "popup-close-icon") +'</button>';
+  srElement = '<span class="sr-only"></span>';
   var _ = this;
   _.triggers = [];
   _.isOpen = false;

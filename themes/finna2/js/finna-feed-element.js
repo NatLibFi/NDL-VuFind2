@@ -17,7 +17,7 @@ class FinnaFeedElement extends HTMLElement {
   get feedId() {
     return this.getAttribute('feed-id') || '';
   }
-  
+
   /**
    * Set feed id
    *
@@ -186,7 +186,7 @@ class FinnaFeedElement extends HTMLElement {
           };
           holder.querySelectorAll('.feed-item-holder a, .feed-item-holder').forEach(el => {
             el.addEventListener('click', onSlideClick);
-          }); 
+          });
         } else {
           holder.querySelectorAll('.carousel').forEach(el => {
             el.classList.add('carousel-non-touch-device');
@@ -266,9 +266,7 @@ class FinnaFeedElement extends HTMLElement {
     } else {
       const holder = this;
       // Prepend spinner
-      const spinner = document.createElement('i');
-      spinner.className = 'fa fa-spin fa-spinner';
-      holder.insertAdjacentElement('afterbegin', spinner);
+      const spinner = VuFind.icon("spinner","spinner");
 
       const url = VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
         method: 'getFeed',
@@ -301,7 +299,7 @@ class FinnaFeedElement extends HTMLElement {
   disconnectedCallback() {
     this.innerHTML = '';
   }
-  
+
   /**
    * Observed attribute value changed
    *

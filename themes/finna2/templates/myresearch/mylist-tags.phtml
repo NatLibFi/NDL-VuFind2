@@ -2,7 +2,7 @@
   <?php foreach ($this->tags as $tag): ?>
     <li class="tag"><span class="text" data-tag="<?=$this->escapeHtmlAttr($tag->tag)?>"><?= $this->escapeHtml($tag->tag) ?></span>
       <?php if ($this->editable): ?>
-        <button class="delete-tag" aria-label="<?=$this->transEscAttr('Delete')?>"><i aria-hidden="true" class="fa fa-button fa-times"></i></button>
+        <button class="delete-tag" aria-label="<?=$this->transEscAttr('Delete')?>"><?=$this->icon('list-tag-delete') ?></button>
       <?php endif ?>
     </li>
   <?php endforeach ?>

@@ -89,8 +89,8 @@ finna.layout = (function finnaLayout() {
         var moreLabel = self.data('label') || VuFind.translate('show_more');
         var lessLabel = self.data('label') || VuFind.translate('show_less');
 
-        var moreLink = $('<button type="button" class="more-link" aria-hidden="true">' + moreLabel + ' <i class="fa fa-arrow-down" aria-hidden="true"></i></button>');
-        var lessLink = $('<button type="button" class="less-link" aria-hidden="true">' + lessLabel + ' <i class="fa fa-arrow-up" aria-hidden="true"></i></button>');
+        var moreLink = $('<button type="button" class="more-link" aria-hidden="true">' + moreLabel + VuFind.icon("show-more") + '</button>');
+        var lessLink = $('<button type="button" class="less-link" aria-hidden="true">' + lessLabel + VuFind.icon("show-less") + '</button>');
 
         var linkClass = self.data('button-class') || '';
         if (linkClass) {
@@ -255,7 +255,7 @@ finna.layout = (function finnaLayout() {
       var dropdownToggle = $('.type-dropdown .dropdown-toggle');
 
       $('input[name=type]:hidden').val($(this).siblings().val());
-      dropdownToggle.find('span').text($(this).text());
+      dropdownToggle.find('span:not(.icon)').text($(this).text());
       dropdownToggle.attr('aria-label', ($(this).text()));
       dropdownToggle.dropdown('toggle');
       dropdownToggle.focus();

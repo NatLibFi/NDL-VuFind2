@@ -13,7 +13,7 @@
 <div aria-hidden="true" class="geographic-facet">
   <?php if (empty($geoFilters)):?>
     <div class="location-search-info alert alert-info hidden">
-      <div class="fa fa-spinner fa-spin hidden"></div>
+      <?=$this->icon('spinner', 'hidden') ?>
       <div class="info"></div>
     </div>
   <?php else: ?>
