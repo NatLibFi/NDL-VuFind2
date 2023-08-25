@@ -171,7 +171,7 @@
   <?php if (null !== $this->moreLinkPage): ?>
     <div class="copy-details <?=$this->mode?>" data-key="<?=$this->escapeHtmlAttr($this->moreLinkKey)?>" data-page="<?=$this->escapeHtmlAttr($this->moreLinkPage)?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
       <button class="more-link load-more-items-ajax" type="button">
-        <?=$this->transEsc('show_more')?> <i class="fa fa-arrow-down"></i>
+        <?=$this->transEsc('show_more')?> <?=$this->icon('show-more') ?>
       </button>
       <span class="load-more-indicator-ajax hidden"><?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?></span>
     </div>
