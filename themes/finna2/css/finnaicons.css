@@ -217,6 +217,7 @@
 .fi-globe:before { content: '\e8c5'; } /* '' */
 .fi-chevrons-left-circle-filled:before { content: '\e8c6'; } /* '' */
 .fi-chevrons-right-circle-filled:before { content: '\e8c7'; } /* '' */
+.fi-x-twitter:before { content: '\e8c8'; } /* '' */
 .fi-zoom-all:before { content: '\e900'; } /* '' */
 .fi-location-city:before { content: '\e901'; } /* '' */
 .fi-box:before { content: '\e902'; } /* '' */
