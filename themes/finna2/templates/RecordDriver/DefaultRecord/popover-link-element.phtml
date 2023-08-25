@@ -23,7 +23,9 @@ $additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-a
     <div class="content">
       <h2><?=$this->escapeHtml($this->label)?></h2>
       <?php foreach ($this->fieldLinks as $link): ?>
-        <a href="<?=$link['escapedUrl']?>"><?=$this->transEsc($link['linkText'])?></a><br>
+        <span class="<?=$this->escapeHtmlAttr($link['linkType'])?>">
+          <a href="<?=$link['escapedUrl']?>"><?=$this->transEsc($link['linkText'])?></a><br>
+        </span>
       <?php endforeach; ?>
       <?php if ($this->ids): ?>
         <div class="dynamic-content">

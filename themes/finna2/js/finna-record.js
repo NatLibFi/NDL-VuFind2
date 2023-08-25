@@ -513,6 +513,12 @@ finna.record = (function finnaRecord() {
             finna.layout.initTruncate(fieldInfo);
           }
           fixPosition(field.querySelector('.field-info'));
+          if (typeof response.data.isAuthority !== 'undefined' && !response.data.isAuthority) {
+            // No authority record; hide any links that require it:
+            field.querySelectorAll('.authority-page').forEach(el => {
+              el.remove();
+            });
+          }
         }).catch(function handleError() {
           fieldInfo.textContent = VuFind.translate('error_occurred');
         });
