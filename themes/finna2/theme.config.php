@@ -441,6 +441,7 @@ $config = [
             'time-open' => 'FontAwesome:clock-o',
             'type-dropdown-open' => 'FontAwesome:angle-down',
             'twitter' => 'FinnaIcons:x-twitter',
+            'ui-close' => 'FontAwesome:times',
             'ui-edit' => 'FontAwesome:pen',
             'user' => 'FinnaIcons:user',
             'view-condensed' => 'FinnaIcons:list-compressed',
