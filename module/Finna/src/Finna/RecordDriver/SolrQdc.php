@@ -300,13 +300,12 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
                 if ((string)$attributes->bundle !== 'ORIGINAL') {
                     continue;
                 }
-                $mediaTypes = ['application/pdf'];
                 $url = isset($attributes->href)
                     ? (string)$attributes->href : (string)$node;
                 $type = trim((string)$attributes->type);
                 if (
-                    ($type && !in_array($attributes->type, $mediaTypes))
-                    || (!$type && !preg_match('/\.(pdf)$/i', $url))
+                    ($type && $type !== 'application/pdf')
+                    || (!$type && !preg_match('/\.pdf$/i', $url))
                 ) {
                     continue;
                 }
