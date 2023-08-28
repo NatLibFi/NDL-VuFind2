@@ -183,17 +183,20 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase implements
                     return $this->formatResponse(['html' => $content]);
                 }
             }
-            $language = $this->translator->getLocale();
-            if ($summary = $driver->getSummary($language)) {
-                $summary = implode("\n\n", $summary);
+            // For LIDO records the summary is displayed separately from description in the core template
+            if (!($driver instanceof \Finna\RecordDriver\SolrLido)) {
+                $language = $this->translator->getLocale();
+                if ($summary = $driver->getSummary($language)) {
+                    $summary = implode("\n\n", $summary);
 
-                // Replace double hash with a <br>
-                $summary = str_replace('##', "\n\n", $summary);
+                    // Replace double hash with a <br>
+                    $summary = str_replace('##', "\n\n", $summary);
 
-                // Process markdown
-                $summary = $this->renderer->plugin('markdown')->toHtml($summary);
+                    // Process markdown
+                    $summary = $this->renderer->plugin('markdown')->toHtml($summary);
 
-                return $this->formatResponse(['html' => $summary]);
+                    return $this->formatResponse(['html' => $summary]);
+                }
             }
         }
         return $this->formatResponse(['html' => '']);

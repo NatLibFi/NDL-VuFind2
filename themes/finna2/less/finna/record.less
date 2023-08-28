@@ -45,8 +45,10 @@
   }
 
   .recordURLs {
-    margin: 0px 0px 10px;
-    padding-bottom: 10px;
+    &:not(.lido-links) {
+      margin: 0px 0px 10px;
+      padding-bottom: 10px;
+    }
     & .online-source {
       font-size: 0.9em;
       color: @gray-light;
@@ -565,6 +567,13 @@ a.authority {
       margin-right: 5px;
     }
   }
+  .summary-wrapper {
+    display:flex;
+    flex-flow:column;
+    gap: 8px;
+    margin-top: 10px;
+    margin-bottom: 8px;
+  }
 }
 
 .summary {
@@ -796,6 +805,9 @@ a.authority {
       margin-left: 4em;
     }
   }
+}
+.comment-text {
+  white-space: pre-line;
 }
 
 // Cart buttons

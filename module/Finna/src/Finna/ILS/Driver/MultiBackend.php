@@ -169,7 +169,7 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend implements Translator
 
     /**
      * Helper method to determine whether or not a certain method can be
-     * called on this driver.  Required method for any smart drivers.
+     * called on this driver. Required method for any smart drivers.
      *
      * @param string $method The name of the called method.
      * @param array  $params Array of passed parameters.
@@ -188,7 +188,7 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend implements Translator
     }
 
     /**
-     * Get configuration for the ILS driver.  We will load an .ini file named
+     * Get configuration for the ILS driver. We will load an .ini file named
      * after the driver class and number if it exists;
      * otherwise we will return an empty array.
      *

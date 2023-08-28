@@ -757,7 +757,7 @@ class OrganisationInfo implements
             $client = $this->httpService->createClient(
                 $url,
                 \Laminas\Http\Request::METHOD_GET,
-                10
+                $this->config->General->timeout ?? 20
             );
             $client->setOptions(['useragent' => 'VuFind']);
             $result = $client->send();

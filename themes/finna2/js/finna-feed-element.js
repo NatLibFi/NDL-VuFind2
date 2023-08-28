@@ -105,7 +105,7 @@ class FinnaFeedElement extends HTMLElement {
     pauseIcon.append(pauseSpan);
 
     autoPlayButton.append(playIcon, pauseIcon);
-    this.append(autoPlayButton);
+    this.querySelector('.carousel-autoplay').append(autoPlayButton);
   }
 
   /**

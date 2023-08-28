@@ -208,16 +208,35 @@ author = sort_author
 ;       Display catalog search results matching the terms found in the specified
 ;       GET parameter (default = "lookfor"), limited to a specified number of
 ;       matches (default = 5).  This is designed for use with non-catalog modules.
+; DPLATerms:[collapsed]
+;       Display results from the DPLA catalog. Provide a boolean to have the sidebar
+;       collapsed or open on page load.
+; EDSResults:[GET parameter]:[result limit]
+;       Display EDS search results matching the terms found in the specified
+;       GET parameter (default = "lookfor"), limited to a specified number of
+;       matches (default = 5).
+; EDSResultsDeferred:[GET parameter]:[result limit]
+;       Same as EDSResults, but loaded via AJAX.
+; EPFResults:[GET parameter]:[result limit]
+;       Display EPF (EBSCO Publication Finder) search results matching the terms
+;       found in the specified GET parameter (default = "lookfor"), limited to a
+;       specified number of matches (default = 5).
+; EPFResultsDeferred:[GET parameter]:[result limit]
+;       Same as EPFResults, but loaded via AJAX.
 ; EuropeanaResults:[url]:[requestParam]:[limit]:[unwanted data providers]
-;       Display search results from Europeana.eu API. [url] is the base search URL
-;       default "api.europeana.eu/api/opensearch.rss" [requestParam] parameter name
-;       for passing lookup value in url, default is "searchTerms" [limit] defaults to
-;       5, is the number of result items to display [unwanted data providers] comma
-;       separated list of dataproviders to ignore results from; useful for excluding
-;       own results that are also in Europeana. An API key must be set in config.ini
-;       (see europeanaAPI setting in [Content] section).
-; EuropeanaResultsDeferred: [url]:[requestParam][limit]:[unwanted data providers]
-;       See EuropeanaResults, but this version uses AJAX.
+;       Display search results from Europeana.eu API.
+;       Parameters (all are optional):
+;         [url] = base search URL, default api.europeana.eu/api/v2/opensearch.rss
+;         [requestParam] = parameter name for passing lookup value in url, default is
+;             "searchTerms"
+;         [limit] = the number of result items to display (defaults to 5)
+;         [unwanted data providers] = comma separated list of dataproviders to ignore
+;             results from; useful for excluding your own results that are also in
+;             Europeana.
+;       An API key must be set in config.ini (see europeanaAPI setting in [Content]
+;       section).
+; EuropeanaResultsDeferred:[url]:[requestParam]:[limit]:[unwanted data providers]
+;       See EuropeanaResults, but this version uses AJAX for asynchronous loading.
 ; ExpandFacets:[ini section]:[ini name]
 ;       Display facets listed in the specified section of the specified ini file;
 ;       if [ini name] is left out, it defaults to "facets."  Rather than using
@@ -226,6 +245,23 @@ author = sort_author
 ; FacetCloud:[ini section]:[ini name]
 ;       Same functionality as ExpandFacets, but with a more compact interface to
 ;       allow the display of more values.
+; LibGuidesProfile
+;       Display a single LibGuides Profile for a LibGuides user (likely a librarian)
+;       who owns a subject guide whose title most closely matches the search terms.
+;       Uses configuration in LibGuidesAPI.ini and requires configuration in
+;       contentsecuritypolicy.ini.
+; LibGuidesResults:[GET parameter]:[result limit]
+;       Display LibGuides research guides search results matching the terms found in
+;       the specified GET parameter (default = "lookfor"), limited to a specified
+;       number of matches (default = 5).
+; LibGuidesResultsDeferred:[GET parameter]:[result limit]
+;       Same as LibGuidesResults, but loaded via AJAX.
+; LibGuidesAZResults:[GET parameter]:[result limit]
+;       Display LibGuides A-Z Databases search results matching the terms found in
+;       the specified GET parameter (default = "lookfor"), limited to a specified
+;       number of matches (default = 5).
+; LibGuidesAZResultsDeferred:[GET parameter]:[result limit]
+;       Same as LibGuidesAZResults, but loaded via AJAX.
 ; OpenLibrarySubjects:[GET parameter]:[limit]:[date filter]:[Subject types]
 ;       Display full-text, public scans from the Open Library (OL) Subjects API.
 ;       [GET parameter] (default = "lookfor"), [limit] (default = 5),
@@ -240,28 +276,62 @@ author = sort_author
 ; OpenLibrarySubjectsDeferred:[GET parameter]:[limit]:[date filter]:[Subject types]
 ;       The same as OpenLibrarySubjects but uses AJAX to make the API calls after the
 ;           main result set has loaded
+; RandomRecommend:[backend]:[limit]:[display mode]:[random mode]:[minimumset]
+;        :[facet1]:[facetvalue1]:[facet2]:[facetvalue2]:...:[facet-n]:[facetvalue-n]
+;       This module offers random records either from the whole backend or within
+;       the current resultset.
+;       [backend] is the name of the search backend currently in use,
+;       which will help with accurate analysis (default = Solr)
+;       [limit] is the number of records to display (default = 10)
+;       [display mode] determines how the records are displayed. Valid values are
+;       "standard" (for a basic display including titles and authors),
+;       "images" for just images or "mixed" for both. (default = standard)
+;       [random mode] determines if the records are selected from the entire backend
+;       or from the current result set. Valid values are "retain" to limit results
+;       to the current result set or "disregard" to use the entire backend.
+;       (default = retain)
+;       [minimumset] is the minimum result set count required to display random items,
+;       0 = no minimum required. This setting can be used to prevent random items
+;       displaying in a small result set. (default = 0)
+;       [facet-n] A facet to apply to the random selection
+;       [facetvalue-n] The facet value to apply to the random selection
 ; SideFacets:[regular facet section]:[checkbox facet section]:[ini name]
+;       :[include dynamic checkboxes]
 ;       Display the specified facets, where [ini name] is the name of an ini file
 ;       in your config directory (defaults to "facets" if not supplied),
 ;       [regular facet section] is the name of a section of the ini file containing
 ;       standard facet settings (defaults to "Results" if not specified),
-;       and [checkbox facet section] is the name of a section of the ini file
-;       containing checkbox facet settings (leave blank for no checkbox facets).
+;       [checkbox facet section] is the name of a section of the ini file
+;       containing checkbox facet settings (leave blank for no checkbox facets), and
+;       [include dynamic checkboxes] is a true/false value indicating whether or not
+;       to display dynamically-generated checkbox facets (it defaults to true, but
+;       if you use multiple instances of SideFacets to split up your display, you
+;       should set it to false in all but one of the instances to avoid duplication).
 ;       Checkbox facets are normally in filter => label format; prefix the section
 ;       name with ~ to reverse this and use label => filter format (useful if your
 ;       filters contain values that are illegal in configuration keys -- e.g. []).
+;       Note that if you take advantage of this ~ feature, you will also need to
+;       adjust the facets.ini Advanced_Settings/special_facets checkboxes setting
+;       in order to properly display checkboxes on the advanced search screen.
+; SpellingSuggestions
+;       Display spelling suggestions (also requires Spelling settings to be turned
+;       on in config.ini).
 ; SummonBestBets:[GET parameter]
 ;       Display Summon-generated "best bets" recommendations matching the terms found
 ;       in the specified GET parameter.  NOTE: If you are using this module with a
 ;       Summon search, the [GET parameter] setting will be ignored and the actual
 ;       current Summon search will be used instead.  The parameter only needs to be
 ;       specified when combining this module with a non-Summon-based search module.
+; SummonBestBetsDeferred:[GET parameter]
+;       Same as SummonBestBets, but loaded via AJAX.
 ; SummonDatabases:[GET parameter]
 ;       Display Summon-generated database recommendations matching the terms found
 ;       in the specified GET parameter.  NOTE: If you are using this module with a
 ;       Summon search, the [GET parameter] setting will be ignored and the actual
 ;       current Summon search will be used instead.  The parameter only needs to be
 ;       specified when combining this module with a non-Summon-based search module.
+; SummonDatabasesDeferred:[GET parameter]
+;       Same as SummonDatabases, but loaded via AJAX.
 ; SummonResults:[GET parameter]:[result limit]
 ;       Display Summon search results matching the terms found in the specified
 ;       GET parameter (default = "lookfor"), limited to a specified number of
@@ -290,19 +360,36 @@ author = sort_author
 ;       combination with your Solr authority index to pick more appropriate authors;
 ;       this defaults to false if unset.  If you do not have local authority records
 ;       to draw on, the OCLC FAST data works well with the [use_viaf] option; see:
-;       http://vufind.org/wiki/open_data_sources#oclc_fast
+;       https://vufind.org/wiki/indexing:open_data_sources#oclc_fast
 ; AuthorityRecommend:[field1]:[query1]:[field2]:[query2]:...:[field-n]:[query-n]
 ;       Displays see and see also results to user based on search of Authority Index.
 ;       Any number of filter queries may be specified as parameters to limit which
 ;       set of authority records is used for recommendations; for example:
-;           AuthorityRecommend:record_type:Heading* OR Topical*:source:LCNAF
+;           AuthorityRecommend:record_type:Heading* OR Topical*:source:FAST
 ;       limits record_type to strings starting with "Heading" or "Topical" and
-;       limits source to LCNAF.  A special field name of "__resultlimit__" may be
+;       limits source to FAST. A special field name of "__resultlimit__" may be
 ;       used to suppress authority results when the result set contains more items
 ;       than the number specified as the corresponding value (e.g. if you configure
 ;       AuthorityRecommend:__resultlimit__:50 then authority recommendations will
 ;       only display on result screens displaying fewer than 50 hits; by default,
-;       recommendations will always display). Filtering is optional.
+;       recommendations will always display). A special field name of "__mode__"
+;       may be used to control what type of suggestions are presented (default is
+;       both seealso and usefor results, but you can turn on just one of these
+;       options if desired; for example "__mode__:seealso" would only show "see
+;       also" results from records whose main headings match the current search
+;       terms while "__mode__:usefor" would show only main headings from records
+;       whose "use for" headings match the current search. You can use "__mode__:*"
+;       to turn on all options (but this is default behavior if no __mode__ is
+;       set). Filtering is optional. A special field name of "__header__" may be
+;       used to customize the header text above the results (default = "See also").
+; Channels
+;       Display a link to the Channeled Browse functionality leading to channels of
+;       records related to the current search.
+; MapSelection
+;       Enable geographic searching capability by activating this module.
+;       Records must be indexed using the geographic search and display fields.
+;       See the marc_local.properties file for more information on indexing.
+;       See the [MapSelection] section of the geofeatures.ini file for more information.
 ; PubDateVisAjax:[zooming]:[facet field 1]:[facet field 2]:...:[facet field n]
 ;       Display a visualization of publication dates for each of the specified facet
 ;       fields.  This is designed for a field containing four-digit years.  Zooming
@@ -311,26 +398,58 @@ author = sort_author
 ; TopFacets:[ini section]:[ini name]
 ;       Display facets listed in the specified section of the specified ini file;
 ;       if [ini name] is left out, it defaults to "facets."
-; WorldCatIdentities
-;       Use the WorldCat Identities API to find names and related subjects based
-;       on the current search.
-; WorldCatTerms:[vocabulary]
-;       Use the WorldCat Terminologies API to find Library of Congress Subject
-;       Headings related to the current search.  [vocabulary] is the vocabulary to
-;       use for recommendations; default is "lcsh" but other options include "fast",
-;       "mesh", etc.  See http://tspilot.oclc.org/resources/ for details.
+; VisualFacets:[ini section]:[ini name]
+;        Supports visualizing pivot facet information as a treemap or circle
+;        packing visualization. It must be used in combination with the "visual"
+;        view in the [Views] section below -- it will only display in Visual mode.
+;        [ini section] and [ini name] control where the module will load field
+;        configurations from; it defaults to Visual_Settings in facets.ini.
 ; LearningMaterial
 ;       Recommends trying the Learning Material search tab (if configured) if the
 ;       user has selected the Learning Material filter.
 ;
 ; Available modules recommended for use in the "no results" area:
 ;
-; SwitchQuery:[backend]:[checks to skip]
+; AlphaBrowseLink:index
+;       Use the query to generate a link to the specified alphabrowse index
+; DOI:[prefix]:[redirect_exact_match]
+;       Detect DOIs in the user search query. If a DOI makes up part of the search,
+;       display a link to resolve it. If it makes up the entire query, redirect to
+;       the resolver automatically. [prefix] is the URL of the resolver to which
+;       the DOI itself will be appended. [redirect_exact_match] is a boolean; set it
+;       to true if you want a search query that consists only of a DOI to redirect
+;       automatically to the DOI resolver, or set it to false to only display a
+;       message with a link. (Default is "true").
+; ExternalSearch:[link label]:[url template]
+;       Display a link to an external search system. The contents of the <a> tag
+;       will be [link label] (which will be run through the translator -- use a
+;       translation string if you need to display a string containing a colon).
+;       The href will be [url template] with %%lookfor%% replaced with the current
+;       search's lookfor parameter. If you omit the %%lookfor%% placeholder, the
+;       search terms will simply be appended to the end of the URL template.
+; Libraryh3lp:[type]:[id]:[skin]
+;       Display a chat box for the Libraryh3lp service. [type] indicates the type
+;       of chat being used (either "queue" or "user"). [id] is the name of the
+;       queue or user. [skin] is optional and specifies a skin number to use.
+; RecommendLinks:[ini section]:[ini name]
+;       Display a list of recommended links, taken from [ini section] in
+;       [ini name], where the section is a mapping of label => URL. [ini name]
+;       defaults to searches.ini, and [ini section] defaults to RecommendLinks.
+; RemoveFilters
+;       Suggests removing facet filters to retrieve more results.
+; SwitchQuery:[backend]:[opt-out checks to skip]:[opt-in checks to add]
 ;       This module analyzes the user's query and offers suggestions for ways to
 ;       improve it. [backend] is the name of the search backend currently in use,
-;       which will help with accurate analysis (default = Solr). [checks to skip]
-;       is a comma-separated list of checks to disable; see the check*() methods
-;       in the module's code for a complete list of available checks.
+;       which will help with accurate analysis (default = Solr). [opt-out checks
+;       to skip] is a comma-separated list of checks which are on by default but
+;       which you wish to disable. [opt-in checks to add] is a comma-separated
+;       list of transforms that are off by default but which you wish to enable.
+;       See the check*() methods in the module's code for a complete list of
+;       available checks. The $optInMethods property specifies which checks are
+;       turned off by default.
+; SwitchTab
+;       If multiple tabs are active, suggest that the user try searching in a
+;       different one.
 ; SwitchType:[field]:[field description]
 ;       If the current search type is not the same as [field], display a link
 ;       suggesting that the user try switching to [field].  [field description]
@@ -362,8 +481,6 @@ author = sort_author
 
 [TopRecommendations]
 ;Author[]            = AuthorFacets
-;Author[]           = WorldCatIdentities
-;Subject[]          = WorldCatTerms
 ;Author[]            = WikipediaDeferred:Author
 ; Do not show top recommendations for the Versions (WorkKeys) search by default
 WorkKeys[]          = false

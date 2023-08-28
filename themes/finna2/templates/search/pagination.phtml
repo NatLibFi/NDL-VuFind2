@@ -3,10 +3,10 @@
 <nav aria-label="<?=$this->transEsc('pagination_label')?>">
   <ul class="pagination hidden-print">
     <?php if (isset($this->previous)): ?>
-      <li role="button" class="pagination-button">
+      <li class="pagination-button">
         <a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage(1)?>"><i class="fa fa-first-page"></i><span class="sr-only"><?=$this->transEsc('First')?></span></a>
       </li>
-      <li role="button" class="pagination-button">
+      <li class="pagination-button">
         <a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->previous)?>"><i class="fa fa-arrow-alt-left"></i><span class="sr-only"><?=$this->transEsc('Prev')?></span></a>
       </li>
     <?php endif; ?>
@@ -20,10 +20,10 @@
       <?php endforeach; ?>
     <?php endif; ?>
     <?php if (isset($this->next)): ?>
-      <li role="button" class="pagination-button">
+      <li class="pagination-button">
         <a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->next)?>"><i class="fa fa-arrow-alt-right"></i><span class="sr-only"><?=$this->transEsc('Next');?></span></a>
       </li>
-      <li role="button" class="pagination-button">
+      <li class="pagination-button">
         <a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->pageCount)?>"><i class="fa fa-last-page"></i><span class="sr-only"><?=$this->transEsc('Last')?></span></a>
       </li>
     <?php endif; ?>

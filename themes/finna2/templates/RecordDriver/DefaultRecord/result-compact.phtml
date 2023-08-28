@@ -54,7 +54,7 @@
             <?php if (count($authors) > 1): ?> <?=$this->transEsc('more_authors_abbrev')?><?php endif; ?>
           <?php endif; ?>
           <?php $journalTitle = $this->driver->getContainerTitle();
-          $summDate = $this->driver->getPublicationDateRange(); ?>
+          $summDate = $this->driver->tryMethod('getPublicationDateRange'); ?>
           <?php if (!empty($journalTitle)): ?>
             <?=!empty($summAuthor) ? '' : ' '?>
             <?php

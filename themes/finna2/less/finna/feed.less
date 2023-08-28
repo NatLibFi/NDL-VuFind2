@@ -497,19 +497,11 @@
 
 finna-feed {
     display: block;
-    .autoplay-button {
-        border: none;
-        background: none;
-        font-size: 20px;
-        position: absolute;
-        i {
-            cursor: pointer;
-        }
-        &:not(.is-active) {
-            .pause-icon {
-                display: none;
-            }
-        }
+    .feed-content-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        position: relative;
     }
     .carousel-header {
         background: @carousel-header-background;
@@ -538,9 +530,6 @@ finna-feed {
         display: flex;
         justify-content: space-between;
         z-index: 1;
-        align-items: center;
-        top: 0;
-        bottom: 0;
         margin: auto;
         button {
             position: relative;
@@ -550,6 +539,7 @@ finna-feed {
             align-items: center;
             pointer-events: auto;
             border: none;
+            background-color: transparent;
             &[disabled] {
                 display: none;
             }
@@ -585,26 +575,54 @@ finna-feed {
             }
         }
     }
-    .splide__pagination {
-        li {
-            padding: 5px;
-            button {
-                font-size: 1em;
-                line-height: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 5px;
-                height: 5px;
-                padding: 5px;
+    .carousel-pagination-wrapper {
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        .carousel-autoplay, .carousel-block {
+            flex: 1;
+        }
+        .autoplay-button {
+            border: none;
+            background: none;
+            font-size: 20px;
+            padding: 0 5px;
+            i {
                 cursor: pointer;
-                color: #cfcfcf;
-                border: 0;
-                outline: none;
-                background: transparent;
-                border-radius: 50%;
-                &.is-active {
-                    color: #000;
+            }
+            &:not(.is-active) {
+                .pause-icon {
+                    display: none;
+                }
+            }
+        }
+        .splide__pagination {
+            padding: 5px 0;
+            li {
+                padding: 5px;
+                button {
+                    font-size: 1em;
+                    line-height: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 5px;
+                    height: 5px;
+                    padding: 5px;
+                    cursor: pointer;
+                    color: #cfcfcf;
+                    border: 0;
+                    outline: none;
+                    background: transparent;
+                    border-radius: 50%;
+                    &.is-active {
+                        color: @brand-primary;
+                    }
+                }
+                @media (min-width: @screen-md) {
+                    padding: 8px;
                 }
             }
         }
@@ -688,9 +706,11 @@ finna-feed.splide--ltr {
 
 finna-feed.splide--ttb {
     .splide__arrows {
-        height: 100%;
+        height: auto;
         flex-flow: column;
         right: -20px;
+        top: 0;
+        bottom: 0;
         button {
             &.up {
                 top: 0;
