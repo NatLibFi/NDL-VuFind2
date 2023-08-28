@@ -310,6 +310,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                             $patron,
                             ['auth_method' => 'MultiILS'],
                             'myresearch-home',
+                            [],
                             $subject,
                             'Email/registration-login-link.phtml'
                         );
@@ -322,6 +323,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                             ],
                             [],
                             'librarycards-registrationform',
+                            [],
                             $subject,
                             'Email/registration-link.phtml'
                         );

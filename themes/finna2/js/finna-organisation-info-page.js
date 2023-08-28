@@ -304,7 +304,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
       longDesc.html('');
     }
     longDesc.removeAttr('style');
-    longDesc.removeClass('truncate-done');
+    longDesc.parent().removeClass('truncate-done');
 
     if ('links' in data.details) {
       var links = data.details.links;
@@ -475,7 +475,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
 
     $('.office-quick-information').show();
     $('.office-information').show();
-    VuFind.truncate.initTruncate(longDesc);
+    VuFind.truncate.initTruncate(longDesc.parent());
     setOfficeInformationLoader(false);
   }
 

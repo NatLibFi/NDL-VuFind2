@@ -105,7 +105,7 @@ class FinnaFeedElement extends HTMLElement {
     pauseIcon.innerHTML = VuFind.icon('feed-pause', 'pause-icon');
 
     autoPlayButton.append(playIcon, pauseIcon);
-    this.append(autoPlayButton);
+    this.querySelector('.carousel-autoplay').append(autoPlayButton);
   }
 
   /**
