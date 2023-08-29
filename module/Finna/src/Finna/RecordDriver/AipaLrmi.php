@@ -32,15 +32,6 @@ namespace Finna\RecordDriver;
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use Finna\RecordDriver\Feature\ContainerFormatTrait;
 use NatLibFi\FinnaCodeSets\FinnaCodeSets;
-use NatLibFi\FinnaCodeSets\Model\EducationalLevel\EducationalLevelInterface;
-use NatLibFi\FinnaCodeSets\Model\EducationalModule\EducationalModuleInterface;
-use NatLibFi\FinnaCodeSets\Model\EducationalSubject\EducationalSubjectInterface;
-use NatLibFi\FinnaCodeSets\Model\EducationalSyllabus\EducationalSyllabusInterface;
-use NatLibFi\FinnaCodeSets\Model\StudyContents\StudyContentsInterface;
-use NatLibFi\FinnaCodeSets\Model\StudyObjective\StudyObjectiveInterface;
-use NatLibFi\FinnaCodeSets\Model\VocationalQualification\VocationalQualificationInterface;
-use NatLibFi\FinnaCodeSets\Model\VocationalUnit\VocationalUnitInterface;
-use NatLibFi\FinnaCodeSets\Utility\EducationalData;
 
 /**
  * Model for AIPA LRMI records.
@@ -195,59 +186,28 @@ class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
     {
         $xml = $this->getXmlRecord();
         try {
-            $data = [];
-            $data[EducationalData::EDUCATIONAL_LEVELS] = [];
-            $dataUtil = $this->codeSets->educationalData();
+            $educationalLevels = [];
+            $educationalSubjects = [];
+            $teaches = [];
             foreach ($xml->learningResource->educationalLevel ?? [] as $level) {
-                $data[EducationalData::EDUCATIONAL_LEVELS][]
-                    = $dataUtil->getEducationalLevelByCodeValue($level->termCode);
+                $educationalLevels[(string)$level->termCode]
+                    = (string)$level->inDefinedTermSet->url;
             }
-            $data[EducationalData::EDUCATIONAL_SUBJECTS] = [];
-            $data[EducationalData::EDUCATIONAL_SYLLABUSES] = [];
-            $data[EducationalData::EDUCATIONAL_MODULES] = [];
-            $data[EducationalData::VOCATIONAL_QUALIFICATIONS] = [];
-            $data[EducationalData::VOCATIONAL_UNITS] = [];
             foreach ($xml->learningResource->educationalAlignment ?? [] as $alignment) {
-                foreach ($alignment->educationalSubject ?? [] as $xmlSubject) {
-                    $subject = $this->codeSets->getEducationalSubjectByUrl($xmlSubject->targetUrl);
-                    if ($subject instanceof EducationalSubjectInterface) {
-                        $data[EducationalData::EDUCATIONAL_SUBJECTS][] = $subject;
-                    } elseif ($subject instanceof EducationalSyllabusInterface) {
-                        $data[EducationalData::EDUCATIONAL_SYLLABUSES][] = $subject;
-                    } elseif ($subject instanceof EducationalModuleInterface) {
-                        $data[EducationalData::EDUCATIONAL_MODULES][] = $subject;
-                    } elseif ($subject instanceof  VocationalQualificationInterface) {
-                        $data[EducationalData::VOCATIONAL_QUALIFICATIONS][] = $subject;
-                    } elseif ($subject instanceof  VocationalUnitInterface) {
-                        $data[EducationalData::VOCATIONAL_UNITS][] = $subject;
-                    } else {
-                        throw new \Exception();
-                    }
+                foreach ($alignment->educationalSubject ?? [] as $subject) {
+                    $educationalSubjects[(string)$subject->identifier]
+                        = (string)$subject->targetUrl;
                 }
             }
-            $data[EducationalData::STUDY_CONTENTS] = [];
-            $data[EducationalData::STUDY_OBJECTIVES] = [];
-            foreach ($xml->learningResource->teaches ?? [] as $teaches) {
-                $contentsOrObjective = $dataUtil->getStudyContentsOrObjectiveByIdAndUrl(
-                    $teaches->identifier,
-                    $teaches->inDefinedTermSet->url
-                );
-                if ($contentsOrObjective instanceof StudyContentsInterface) {
-                    $levelOrSubject = $contentsOrObjective->getRoot()->getProxiedObject();
-                    if ($levelOrSubject instanceof EducationalLevelInterface) {
-                        $data[EducationalData::TRANSVERSAL_COMPETENCES][] = $contentsOrObjective;
-                    } elseif ($levelOrSubject instanceof EducationalSubjectInterface) {
-                        $data[EducationalData::STUDY_CONTENTS][] = $contentsOrObjective;
-                    } else {
-                        throw new \Exception();
-                    }
-                } elseif ($contentsOrObjective instanceof StudyObjectiveInterface) {
-                    $data[EducationalData::STUDY_OBJECTIVES][] = $contentsOrObjective;
-                } else {
-                    throw new \Exception();
-                }
+            foreach ($xml->learningResource->teaches ?? [] as $xmlTeaches) {
+                $teaches[(string)$xmlTeaches->identifier]
+                    = (string)$xmlTeaches->inDefinedTermSet->url;
             }
-            return $data;
+            return $this->codeSets->educationalData()->getLrmiEducationalData(
+                $educationalLevels,
+                $educationalSubjects,
+                $teaches
+            );
         } catch (\Exception $e) {
             return false;
         }

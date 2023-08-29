@@ -5,14 +5,14 @@
 <section<?= $__attributes->add('class', 'finna-educational-level-data') ?>>
   <?php if (!empty($studyContents)): ?>
     <section>
-      <<?= $__headingTag ?>><?= $studyContentsTitle ?? '' ?></<?= $__headingTag ?>>
+      <<?= $__headingTag ?>><?= $this->escapeHtml($studyContentsTitle ?? '') ?></<?= $__headingTag ?>>
       <ul>
-        <?php foreach ($studyContents ?? [] as $subject => $values): ?>
+        <?php foreach ($studyContents ?? [] as $__subject => $__values): ?>
           <li>
             <dl>
-              <dt><?= $subject ?>:</dt>
-              <?php foreach ($values as $value): ?>
-                <dd><?= $value ?></dd>
+              <dt><?= $this->escapeHtml($__subject) ?>:</dt>
+              <?php foreach ($__values as $__value): ?>
+                <dd><?= $this->escapeHtml($__value) ?></dd>
               <?php endforeach; ?>
             </dl>
           </li>
@@ -20,35 +20,64 @@
       </ul>
     </section>
   <?php endif; ?>
-  <section>
-    <<?= $__headingTag ?>><?= $studyObjectivesTitle ?? '' ?></<?= $__headingTag ?>>
-    <ul>
-      <?php foreach ($studyObjectives ?? [] as $subject => $values): ?>
-        <li>
-          <dl>
-            <dt><?= $subject ?>:</dt>
-            <?php foreach ($values as $value): ?>
-              <dd><?= $value ?></dd>
-            <?php endforeach; ?>
-          </dl>
-        </li>
-      <?php endforeach; ?>
-    </ul>
-  </section>
+  <?php if (!empty($studyObjectives)): ?>
+    <section>
+      <<?= $__headingTag ?>><?= $this->escapeHtml($studyObjectivesTitle ?? '') ?></<?= $__headingTag ?>>
+      <ul>
+        <?php foreach ($studyObjectives ?? [] as $__subject => $__values): ?>
+          <li>
+            <dl>
+              <dt><?= $this->escapeHtml($__subject) ?>:</dt>
+              <?php foreach ($__values as $__value): ?>
+                <dd><?= $this->escapeHtml($__value) ?></dd>
+              <?php endforeach; ?>
+            </dl>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+    </section>
+  <?php endif; ?>
   <?php if (!empty($transversalCompetences)): ?>
     <section>
-      <<?= $__headingTag ?>><?= $transversalCompetencesTitle ?? '' ?></<?= $__headingTag ?>>
+      <<?= $__headingTag ?>><?= $this->escapeHtml($transversalCompetencesTitle ?? '') ?></<?= $__headingTag ?>>
       <ul>
-        <?php foreach ($transversalCompetences as $transversalCompetence): ?>
-          <li><?= $transversalCompetence ?></li>
+        <?php foreach ($transversalCompetences as $__transversalCompetence): ?>
+          <li><?= $this->escapeHtml($__transversalCompetence) ?></li>
+        <?php endforeach; ?>
+      </ul>
+    </section>
+  <?php endif; ?>
+  <?php if (!empty($vocationalUnits)): ?>
+    <section>
+      <<?= $__headingTag ?>><?= $this->escapeHtml($vocationalUnitsTitle ?? '') ?></<?= $__headingTag ?>>
+      <ul>
+        <?php foreach ($vocationalUnits ?? [] as $__subject => $__values): ?>
+          <li>
+            <dl>
+              <dt><?= $this->escapeHtml($__subject) ?>:</dt>
+              <?php foreach ($__values as $__value): ?>
+                <dd><?= $this->escapeHtml($__value) ?></dd>
+              <?php endforeach; ?>
+            </dl>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+    </section>
+  <?php endif; ?>
+  <?php if (!empty($vocationalCommonUnits)): ?>
+    <section>
+      <<?= $__headingTag ?>><?= $this->escapeHtml($vocationalCommonUnitsTitle ?? '') ?></<?= $__headingTag ?>>
+      <ul>
+        <?php foreach ($vocationalCommonUnits as $__vocationalCommonUnit): ?>
+          <li><?= $this->escapeHtml($__vocationalCommonUnit) ?></li>
         <?php endforeach; ?>
       </ul>
     </section>
   <?php endif; ?>
   <?php if (isset($objective)): ?>
     <section class="finna-educational-level-objective">
-      <<?= $__headingTag ?>><?= $objectiveTitle ?? '' ?></<?= $__headingTag ?>>
-      <p><?= $objective ?></p>
+      <<?= $__headingTag ?>><?= $this->escapeHtml($objectiveTitle ?? '') ?></<?= $__headingTag ?>>
+      <p><?= $this->escapeHtml($objective) ?></p>
     </section>
   <?php endif; ?>
 </section>
