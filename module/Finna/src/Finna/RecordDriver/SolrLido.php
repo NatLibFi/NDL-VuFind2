@@ -1810,7 +1810,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         foreach ($this->getXmlRecord()->lido->descriptiveMetadata->eventWrap->eventSet ?? [] as $node) {
             $type = isset($node->event->eventType->term)
                 ? mb_strtolower((string)$node->event->eventType->term, 'UTF-8') : '';
-            if ($type !== 'valmistus') {
+            if (!in_array($type, ['valmistus', 'näyttely'])) {
                 $displayDate = $node->event->eventDate->displayDate ?? null;
                 if (!empty($displayDate)) {
                     $date = (string)($this->getLanguageSpecificItem(
