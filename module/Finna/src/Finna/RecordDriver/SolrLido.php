@@ -1219,6 +1219,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             $places = [];
             foreach ($node->eventPlace ?? [] as $placenode) {
                 $place = trim((string)$placenode->displayPlace ?? '');
+                $placeId = $placenode->place->placeID ?? [];
                 if (!$place) {
                     $eventPlace = [];
                     foreach ($placenode->place->namePlaceSet ?? [] as $nameSet) {
@@ -1245,6 +1246,25 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                             $places[] = implode(', ', $partOfPlaceName);
                         }
                     }
+                } elseif ($place && $placeId) {
+                    $displayPlace = [
+                        'placeName' => $place,
+                    ];
+                    $idTypeFirst = (string)($placeId->attributes()->type ?? '');
+                    $displayPlace['type'] = $idTypeFirst;
+                    $displayPlace['id'] = $idTypeFirst ? "($idTypeFirst)$placeId" : $placeId;
+                    foreach ($placenode->place->placeID ?? [] as $item) {
+                        $details = [];
+                        $id = (string)$item;
+                        $idType = (string)($item->attributes()->type ?? '');
+                        $displayPlace['ids'][] = $idType ? "($idType)$id" : $id;
+                        $typeDesc = $idType ? 'place_id_type_' . $idType : '';
+                        $details[] = $typeDesc;
+                        if ($typeDesc) {
+                            $displayPlace['details'] = $details;
+                        }
+                    }
+                    $places[] = $displayPlace;
                 } else {
                     $places[] = $place;
                 }

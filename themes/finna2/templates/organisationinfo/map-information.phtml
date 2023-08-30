@@ -87,7 +87,13 @@
         <img class="extra-image-2" src="#" alt="">
         <p class="building-name info-element"></p>
         <p class="building-year info-element"><?=$this->transEsc('organisation_info_building_year')?>: <span></span></p>
-        <p class="office-description description-long info-element" data-truncate="<?=$this->htmlSafeJsonEncode(['rows' => 5])?>"></p>
+        <?php ob_start(); ?>
+          <p class="office-description description-long info-element"></p>
+          <?php $content = ob_get_clean(); ?>
+          <?= $this->component('@@molecules/containers/finna-truncate', [
+            'content' => $content,
+            'rows' => 5,
+          ]); ?>
       <?php $content = ob_get_clean(); ?>
       <?= $this->component('@@molecules/containers/finna-panel', [
           'attributes' => ['class' => ['finna-panel-borderless', 'introduction']],
