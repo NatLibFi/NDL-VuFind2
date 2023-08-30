@@ -29,6 +29,7 @@
 
 namespace Finna\RecordDriver;
 
+use Finna\Cache\CodeSetsCacheItemPoolDecorator;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
@@ -70,7 +71,9 @@ class CodeSetsFactory implements FactoryInterface
         }
         return new $requestedName(
             null,
-            $container->get(\Finna\Cache\CodeSetsCache::class),
+            new CodeSetsCacheItemPoolDecorator(
+                $container->get(\Finna\Cache\Manager::class)->getCache('codesets')
+            )
         );
     }
 }

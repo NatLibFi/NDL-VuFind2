@@ -352,7 +352,6 @@ $config = [
             'Finna\Autocomplete\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Auth\ILSAuthenticator' => 'VuFind\Auth\ILSAuthenticatorFactory',
             'Finna\Auth\Manager' => 'VuFind\Auth\ManagerFactory',
-            'Finna\Cache\CodeSetsCache' => 'Finna\Cache\CodeSetsCacheFactory',
             'Finna\Cache\Manager' => 'VuFind\Cache\ManagerFactory',
             'Finna\Config\SearchSpecsReader' => 'VuFind\Config\YamlReaderFactory',
             'Finna\Config\YamlReader' => 'VuFind\Config\YamlReaderFactory',
