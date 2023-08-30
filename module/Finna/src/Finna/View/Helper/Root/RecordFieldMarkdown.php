@@ -52,7 +52,12 @@ class RecordFieldMarkdown extends \VuFind\View\Helper\Root\Markdown
     public function toHtml(string $markdown, ?string $softBreak = null): string
     {
         $cleanHtml = $this->getView()->plugin('cleanHtml');
-        return (string)$this->converter->convert($cleanHtml($markdown), $softBreak);
+        $cleanMarkdown = $cleanHtml($markdown);
+        try {
+            return (string)$this->converter->convert($cleanMarkdown, $softBreak);
+        } catch (\Exception $e) {
+            return $cleanMarkdown;
+        }
     }
 
     /**
