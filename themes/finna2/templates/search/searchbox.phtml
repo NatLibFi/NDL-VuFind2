@@ -248,7 +248,7 @@
           <?php endif; ?>
 
           <?php if ($this->summon()->isAvailable() && ($browse || $this->searchClassId !== 'Summon')) : ?>
-          <a href="<?=$this->url('summon-home');?>" class="btn btn-link btn-primo"><?=$this->icon('summon-search') ?> <?=$this->transEsc("Summon Search")?></a>
+          <a href="<?=$this->url('summon-home');?>" class="btn btn-link btn-primo"><?=$this->icon('search-summon') ?> <?=$this->transEsc("Summon Search")?></a>
           <?php endif; ?>
 
           <?php if ($this->authority()->isAvailable() && ($browse || $this->searchClassId !== 'SolrAuth')) : ?>
@@ -272,7 +272,7 @@
               <?php if ($scrollData['firstRecord']): ?>
                 <li class="disabled" title="<?=$this->transEsc('First Record')?>"><a><?=$this->icon('pager-first') ?></a></li>
               <?php endif; ?>
-                <li class="disabled" title="<?=$this->transEsc('Previous Record')?>"><a><?=$this->icon('pager-first') ?></a></li>
+                <li class="disabled" title="<?=$this->transEsc('Previous Record')?>"><a><?=$this->icon('pager-prev') ?></a></li>
             <?php endif; ?>
           <li class="pager-text">
               <?=$this->transEsc('of_num_results', [
@@ -290,7 +290,7 @@
                 </li>
               <?php endif; ?>
             <?php else: ?>
-              <li class="disabled" title="<?=$this->transEsc('Next Record')?>"><a><?=$this->icon('pager-last') ?></a></li>
+              <li class="disabled" title="<?=$this->transEsc('Next Record')?>"><a><?=$this->icon('pager-next') ?></a></li>
                 <?php if ($scrollData['lastRecord']): ?>
                   <li class="disabled" title="<?=$this->transEsc('Last Record')?>"><a><?=$this->icon('pager-last') ?></a></li>
                 <?php endif; ?>

@@ -57,7 +57,7 @@
                   <?php if ($this->scrollData['previousRecord']): ?>
                       <?php if ($this->scrollData['firstRecord']): ?>
                       <li>
-                        <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->scrollData['firstRecord']))?>" rel="nofollow"><?=$this->icon('remove-filter') ?><?=$this->icon('pager-first') ?><span class="sr-only"><?=$this->transEsc('First Record')?></span></a>
+                        <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->scrollData['firstRecord']))?>" rel="nofollow"><?=$this->icon('pager-first') ?><span class="sr-only"><?=$this->transEsc('First Record')?></span></a>
                       </li>
                       <?php endif; ?>
                     <li class="pager-previous-record">

@@ -149,10 +149,10 @@ FinnaPopup.prototype.checkButtons = function checkButtons() {
  * Main function to open a popup and properly display it
  */
 FinnaPopup.prototype.show = function show() {
-  var next = '<button class="popup-arrow popup-right-arrow next-record" type="button">' + VuFind.icon('record-next', 'record-next-icon') + '</button>';
-  var previous = '<button class="popup-arrow popup-left-arrow previous-record" type="button">' + VuFind.icon('record-prev', 'record-prev-icon') + '</button>';
-  var closeTemplate = '<button class="finna-popup close-button" title="close_translation" aria-label="close_translation">' + VuFind.icon('popup-close', 'popup-close-icon') + '</button>';
-  var srElement = '<span class="sr-only"></span>';
+  const next = '<button class="popup-arrow popup-right-arrow next-record" type="button">' + VuFind.icon('record-next', 'record-next-icon') + '</button>';
+  const previous = '<button class="popup-arrow popup-left-arrow previous-record" type="button">' + VuFind.icon('record-prev', 'record-prev-icon') + '</button>';
+  const closeTemplate = '<button class="finna-popup close-button" title="close_translation" aria-label="close_translation">' + VuFind.icon('popup-close', 'popup-close-icon') + '</button>';
+  const srElement = '<span class="sr-only"></span>';
   var _ = this;
   var hasParent = typeof _.parent !== 'undefined';
   if (!hasParent) {

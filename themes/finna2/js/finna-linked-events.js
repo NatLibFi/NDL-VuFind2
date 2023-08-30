@@ -11,7 +11,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
     params.query = $.extend(params.query, limit, lang);
     var spinner = null;
     if (typeof showSpinner === 'undefined' || showSpinner) {
-      spinner = VuFind.icon('map-marker', 'map-marker-icon');
+      spinner = VuFind.icon('spinner');
       if (append) {
         container.find($('.linked-events-content')).append(spinner);
       } else {

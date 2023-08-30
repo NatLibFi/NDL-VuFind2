@@ -21,8 +21,6 @@
       <?php if ($allowExclude): ?>
         <a class="exclude" href="<?=$results->getUrlQuery()->addFacet($title, $thisFacet['value'], 'NOT') ?>" title="<?=$this->transEsc('exclude_facet') ?>"><?=$this->icon('facet-exclude') ?></a>
       <?php endif; ?>
-    <?php else: ?>
-      <span class="status"><?=$this->icon('facet-status') ?></span>
     <?php endif; ?>
   </div>
   <?php $usageOptions[$thisFacet['value']]['html'] = ob_get_contents(); ?>

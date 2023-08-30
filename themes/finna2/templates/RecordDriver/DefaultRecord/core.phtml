@@ -145,7 +145,7 @@
             $desc = $this->truncateUrl($desc);
           }
           if (!empty($url['desc'])) {
-            $map = ['Database Guide' => 'fa-info-database', 'Database Interface' => 'fa-browse-database'];
+            $map = ['Database Guide' => 'database-info', 'Database Interface' => 'database-browse'];
             if (isset($map[$url['desc']])) {
               $icon = $map[$url['desc']];
             }
@@ -153,7 +153,7 @@
         ?>
         <div class="fulltextField">
           <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" <?php if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<?php endif; ?>>
-            <?=$this->icon('external-link') ?> <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
+            <?=$this->icon($icon) ?> <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
           </a>
           <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?><?php endif; ?>
         </div>
