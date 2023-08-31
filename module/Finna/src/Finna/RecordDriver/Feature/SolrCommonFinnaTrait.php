@@ -219,13 +219,8 @@ trait SolrCommonFinnaTrait
                     $params['fullres'] = 1;
                 }
                 $params['id'] = $this->getUniqueId();
-                $params['pdf'] = false;
-                if (
-                    !empty($images[$index]['pdf'][$size])
-                    || (!empty($images[$index]['pdf']) && $images[$index]['pdf'] === true)
-                ) {
-                    $params['pdf'] = true;
-                }
+                $params['pdf'] = !empty($images[$index]['pdf'][$size])
+                    || true === $images[$index]['pdf'] ?? false;
                 return $params;
             }
         }
