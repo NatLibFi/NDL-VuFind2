@@ -122,14 +122,14 @@
     .expand-map, .contract-map {
         display: inline-block;
         font-size: 1em;
-        i {
+        .icon {
             margin-left: 20px;
             margin-right: 0px;
         }
         @media(max-width: @screen-xs-max) {
             margin-left: -3px;
             font-size: 1em;
-            i {
+            .icon {
                 margin-right: 2px;
             }
         }
@@ -207,21 +207,15 @@
         }
     }
 
-    .leaflet-marker-icon {
+    .map-marker-icon {
         &.open {
-            .map-marker-icon {
-                color: #339911;
-            }
+            color: #339911;
         }
         &.closed {
-            .map-marker-icon {
-                color: #c33b00;
-            }
+            color: #c33b00;
         }
         &.no-schedule {
-            .map-marker-icon {
-                color: #535353;
-            }
+            color: #535353;
         }
     }
 

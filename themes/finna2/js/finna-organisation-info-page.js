@@ -615,11 +615,11 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     var sector = options.sector;
     var mapTileUrl = 'https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png';
     var attribution =
-      '<i class="fa fa-map-marker marker open"></i><span class="map-marker-text">' + VuFind.translate('organisation_info_is_open') + '</span>' +
-      '<i class="fa fa-map-marker marker closed"></i><span class="map-marker-text">' + VuFind.translate('organisation_info_is_closed') + '</span>' +
-      '<i class="fa fa-map-marker marker no-schedule"></i><span class="map-marker-text">' + VuFind.translate('organisation_info_no_schedule') + '</span>' +
-      '<span class="expand expand-map map-marker-text marker"><i class="fa fa-expand"></i>' + VuFind.translate('organisation_info_map_expand') + '</span>' +
-      '<span class="collapse contract-map map-marker-text marker" style="display: none"> <i class="fa fa-condense"></i>' + VuFind.translate('organisation_info_map_collapse') + '</span>';
+      '<span class="map-marker-text">' + VuFind.icon('map-marker', 'map-marker-icon open') + ' ' + VuFind.translate('organisation_info_is_open') + '</span>' +
+      '<span class="map-marker-text">' + VuFind.icon('map-marker', 'map-marker-icon closed') + ' ' + VuFind.translate('organisation_info_is_closed') + '</span>' +
+      '<span class="map-marker-text">' + VuFind.icon('map-marker', 'map-marker-icon no-schedule') + ' ' + VuFind.translate('organisation_info_no_schedule') + '</span>' +
+      '<span class="expand expand-map map-marker-text marker">' + VuFind.icon('map-expand') + ' ' + VuFind.translate('organisation_info_map_expand') + '</span>' +
+      '<span class="collapse contract-map map-marker-text marker" style="display: none">' + VuFind.icon('map-collapse') + ' ' + VuFind.translate('organisation_info_map_collapse') + '</span>';
 
     if (typeof parent == 'undefined') {
       return;
