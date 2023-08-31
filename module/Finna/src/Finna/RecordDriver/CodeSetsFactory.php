@@ -70,7 +70,7 @@ class CodeSetsFactory implements FactoryInterface
             throw new \Exception('Unexpected options sent to factory.');
         }
         return new $requestedName(
-            null,
+            null, // @todo Pass VuFind HTTP client when PSR-18 compliant
             new CodeSetsCacheItemPoolDecorator(
                 $container->get(\Finna\Cache\Manager::class)->getCache('codesets')
             )
