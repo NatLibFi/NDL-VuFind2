@@ -203,6 +203,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     ];
 
     /**
+     * Events excluded from subjects
+     *
+     * @var array
+     */
+    protected $nonPlaceEvents = [
+        'valmistus',
+        'näyttely',
+    ];
+
+    /**
      * Mapping from related work type to possible type attributes
      *
      * @var array
@@ -1810,7 +1820,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         foreach ($this->getXmlRecord()->lido->descriptiveMetadata->eventWrap->eventSet ?? [] as $node) {
             $type = isset($node->event->eventType->term)
                 ? mb_strtolower((string)$node->event->eventType->term, 'UTF-8') : '';
-            if (!in_array($type, ['valmistus', 'näyttely'])) {
+            if (!in_array($type, $this->nonPlaceEvents)) {
                 $displayDate = $node->event->eventDate->displayDate ?? null;
                 if (!empty($displayDate)) {
                     $date = (string)($this->getLanguageSpecificItem(
