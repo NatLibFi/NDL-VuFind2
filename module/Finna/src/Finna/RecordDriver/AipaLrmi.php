@@ -203,7 +203,7 @@ class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
                 $teaches[(string)$xmlTeaches->identifier]
                     = (string)$xmlTeaches->inDefinedTermSet->url;
             }
-            return $this->codeSets->educationalData()->getLrmiEducationalData(
+            return $this->codeSets->getEducationalData()->getLrmiEducationalData(
                 $educationalLevels,
                 $educationalSubjects,
                 $teaches
