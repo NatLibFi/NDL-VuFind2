@@ -1,7 +1,7 @@
 <?php
 
 /**
- * PSR-6 cache item pool decorator used with the Finna Code Sets library.
+ * PSR-6 cache item pool decorator used with Finna Code Sets library.
  *
  * Partial implementation with no support for removing items, deferred items or
  * time to live (TTL).
@@ -37,7 +37,7 @@ use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
 /**
- * PSR-6 cache item pool decorator used with the Finna Code Sets library.
+ * PSR-6 cache item pool decorator used with Finna Code Sets library.
  *
  * @category Finna
  * @package  Cache

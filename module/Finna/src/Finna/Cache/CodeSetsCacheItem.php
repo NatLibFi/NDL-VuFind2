@@ -1,7 +1,7 @@
 <?php
 
 /**
- * PSR-6 cache item implementation used with the Finna Code Sets library.
+ * PSR-6 cache item implementation used with Finna Code Sets library.
  *
  * Partial implementation with no support for time to live (TTL).
  *
@@ -34,7 +34,7 @@ namespace Finna\Cache;
 use Psr\Cache\CacheItemInterface;
 
 /**
- * PSR-6 cache item implementation used with the Finna Code Sets library.
+ * PSR-6 cache item implementation used with Finna Code Sets library.
  *
  * @category Finna
  * @package  Cache
