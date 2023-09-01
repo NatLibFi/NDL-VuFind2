@@ -142,7 +142,7 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
      *
      * @return array
      */
-    protected function markFeesAsPaid(TransactionRow $t): array
+    protected function markFeesAsPaidForTransaction(TransactionRow $t): array
     {
         $patron = $this->getPatronForTransaction($t);
         if (!$patron) {
@@ -208,12 +208,16 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
                 $t->id,
                 ($paymentConfig['selectFines'] ?? false) ? $fineIds : null
             );
-            if (!$res) {
+            if (true !== $res) {
                 $this->logError(
                     'Payment registration error (patron ' . $patron['id'] . '): '
-                    . 'markFeesAsPaid failed'
+                    . 'markFeesAsPaid failed: ' . ($res ?: 'no error information')
                 );
-                $t->setRegistrationFailed('markFeesAsPaid failed');
+                if ('fines_updated' === $res) {
+                    $t->setFinesUpdated();
+                } else {
+                    $t->setRegistrationFailed('Failed to mark fees paid: ' . ($res ?: 'no error information'));
+                }
                 return ['success' => false, 'msg' => 'markFeesAsPaid failed'];
             }
             $t->setRegistered();

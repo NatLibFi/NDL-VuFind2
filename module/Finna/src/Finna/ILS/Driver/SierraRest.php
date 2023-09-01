@@ -615,7 +615,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
      *
      * @throws ILSException
-     * @return bool success
+     * @return true|string True on success, error description on error
      */
     public function markFeesAsPaid(
         $patron,
@@ -632,7 +632,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         $fines = $this->getMyFines($patron);
         if (!$fines) {
             $this->logError('No fines to pay found');
-            return false;
+            return 'fines_updated';
         }
 
         $amountRemaining = $amount;
@@ -653,7 +653,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         }
         if (!$payments) {
             $this->logError('Fine IDs do not match any of the payable fines');
-            return false;
+            return 'fines_updated';
         }
 
         $request = [
@@ -674,7 +674,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 "Payment request failed with status code {$result['statusCode']}: "
                 . (var_export($result['response'] ?? '', true))
             );
-            return false;
+            return 'payment request failed';
         }
         // Sierra doesn't support storing any remaining amount, so we'll just have to
         // live with the assumption that any fine amount didn't somehow get smaller

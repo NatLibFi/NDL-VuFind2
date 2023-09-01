@@ -2445,7 +2445,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
      * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
      *
      * @throws ILSException
-     * @return bool success
+     * @return true|string True on success, error description on error
      */
     public function markFeesAsPaid(
         $patron,

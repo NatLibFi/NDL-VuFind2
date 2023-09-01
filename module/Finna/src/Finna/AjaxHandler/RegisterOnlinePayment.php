@@ -71,7 +71,7 @@ class RegisterOnlinePayment extends AbstractOnlinePaymentAction
             return $this->formatResponse('', self::STATUS_HTTP_ERROR);
         }
 
-        $res = $this->markFeesAsPaid($transaction);
+        $res = $this->markFeesAsPaidForTransaction($transaction);
         return $res['success']
             ? $this->formatResponse('')
             : $this->formatResponse('', self::STATUS_HTTP_ERROR);

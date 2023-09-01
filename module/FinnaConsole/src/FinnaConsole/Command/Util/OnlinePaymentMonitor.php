@@ -345,14 +345,28 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         }
 
         try {
-            $this->catalog->markFeesAsPaid(
+            $res = $this->catalog->markFeesAsPaid(
                 $patron,
                 $t->amount,
                 $t->transaction_id,
                 $t->id
             );
-            $t->setRegistered();
-            $registeredCnt++;
+            if (true === $res) {
+                $t->setRegistered();
+                $registeredCnt++;
+            } else {
+                if ('fines_updated' === $res) {
+                    $t->setFinesUpdated();
+                    $this->err(
+                        '    Registration of transaction '
+                            . $t->transaction_id . " failed for user {$user->username}"
+                            . " (id {$user->id}), card {$t->cat_username}: fines updated",
+                        ''
+                    );
+                    return false;
+                }
+                throw new \Exception('Failed to mark fees paid: ' . ($res ?: 'no error information'));
+            }
         } catch (\Exception $e) {
             $this->err(
                 '    Registration of transaction '
