@@ -222,7 +222,7 @@ trait SolrCommonFinnaTrait
                 }
                 $params['id'] = $this->getUniqueId();
                 $params['pdf'] = !empty($images[$index]['pdf'][$size])
-                    || true === $images[$index]['pdf'] ?? false;
+                    || true === ($images[$index]['pdf'] ?? false);
                 return $params;
             }
         }
