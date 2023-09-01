@@ -108,6 +108,7 @@ CREATE TABLE `finna_transaction` (
   `transaction_fee` int(11) NOT NULL,
   `created` datetime NOT NULL DEFAULT '2000-01-01 00:00:00',
   `paid` datetime NOT NULL DEFAULT '2000-01-01 00:00:00',
+  `registration_started` datetime NOT NULL DEFAULT '2000-01-01 00:00:00',
   `registered` datetime NOT NULL DEFAULT '2000-01-01 00:00:00',
   `complete` tinyint(1) NOT NULL DEFAULT '0',
   `status` varchar(255) DEFAULT '',

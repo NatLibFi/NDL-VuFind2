@@ -280,8 +280,8 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
 
         // Check if the transaction has not been registered for too long
         $now = new \DateTime();
-        $paid_time = new \DateTime($t->paid);
-        $diff = $now->diff($paid_time);
+        $paidTime = new \DateTime($t->paid);
+        $diff = $now->diff($paidTime);
         $diffHours = ($diff->days * 24) + $diff->h;
         if ($diffHours > $this->expireHours) {
             // Transaction has expired
@@ -344,7 +344,18 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
             return false;
         }
 
+        // Check that registration is not already in progress (i.e. registration
+        // started within 120 seconds)
+        if ($t->isRegistrationInProgress()) {
+            $this->msg(
+                '    Transaction ' . $t->transaction_id . ' already being registered since '
+                . $t->registration_started
+            );
+            return false;
+        }
+
         try {
+            $t->setRegistrationStarted();
             $res = $this->catalog->markFeesAsPaid(
                 $patron,
                 $t->amount,
@@ -352,6 +363,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
                 $t->id
             );
             if (true === $res) {
+                $this->msg("    Registration of transaction {$t->transaction_id} successful");
                 $t->setRegistered();
                 $registeredCnt++;
             } else {

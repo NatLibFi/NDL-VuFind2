@@ -201,12 +201,17 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
         }
 
         try {
+            $this->logWarning('Transaction ' . $t->transaction_id . ': start marking fees as paid.');
             $res = $this->ils->markFeesAsPaid(
                 $patron,
                 $t->amount,
                 $t->transaction_id,
                 $t->id,
                 ($paymentConfig['selectFines'] ?? false) ? $fineIds : null
+            );
+            $this->logWarning(
+                'Transaction ' . $t->transaction_id . ': done marking fees as paid, result: '
+                . var_export($res, true)
             );
             if (true !== $res) {
                 $this->logError(

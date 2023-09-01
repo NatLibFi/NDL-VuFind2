@@ -44,9 +44,11 @@ use function in_array;
  * @link     http://vufind.org   Main Site
  *
  * @property int $id
+ * @property string $transaction_id
  * @property int $complete
  * @property string $paid
  * @property string $status
+ * @property string $registration_started
  * @property string $registered
  * @property string $reported
  * @property string $cat_username
@@ -162,7 +164,32 @@ class Transaction extends \VuFind\Db\Row\RowGateway implements \VuFind\Db\Table\
     {
         $this->complete = TransactionTable::STATUS_REGISTRATION_FAILED;
         $this->status = mb_substr($msg, 0, 255, 'UTF-8');
+        $this->registration_started = '2000-01-01 00:00:00';
         $this->save();
+    }
+
+    /**
+     * Set registration start timestamp
+     *
+     * @return void
+     */
+    public function setRegistrationStarted(): void
+    {
+        $this->registration_started = date('Y-m-d H:i:s');
+        $this->save();
+    }
+
+    /**
+     * Check if registration is in progress (i.e. started within 120 seconds)
+     *
+     * @return bool
+     */
+    public function isRegistrationInProgress(): bool
+    {
+        // Ensure fresh data:
+        $transaction = $this->getDbTable('Transaction')->getTransaction($this->transaction_id);
+        $registrationStartTime = new \DateTime($transaction->registration_started);
+        return time() - $registrationStartTime->getTimestamp() < 120;
     }
 
     /**
