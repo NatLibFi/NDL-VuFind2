@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2016-2022.
+ * Copyright (C) The National Library of Finland 2016-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -32,8 +32,10 @@
 
 namespace Finna\OnlinePayment\Handler;
 
+use Finna\Db\Row\Transaction as TransactionRow;
 use Finna\Db\Table\Fee;
 use Finna\Db\Table\Transaction;
+use Finna\Db\Table\TransactionEventLog;
 use Laminas\Log\LoggerAwareInterface;
 use VuFind\I18n\Locale\LocaleSettings;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
@@ -61,6 +63,7 @@ abstract class AbstractBase implements
 {
     use \VuFind\Log\LoggerAwareTrait;
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
+    use \Finna\OnlinePayment\OnlinePaymentEventLogTrait;
 
     /**
      * Result codes for processPaymentResponse
@@ -108,23 +111,33 @@ abstract class AbstractBase implements
     protected $feeTable;
 
     /**
+     * Transaction event log table
+     *
+     * @var TransactionEventLog
+     */
+    protected $eventLogTable;
+
+    /**
      * Constructor
      *
      * @param \VuFindHttp\HttpService $http             HTTP service
      * @param LocaleSettings          $locale           Locale settings
      * @param Transaction             $transactionTable Transaction table
      * @param Fee                     $feeTable         Fee table
+     * @param TransactionEventLog     $eventLogTable    Transaction event log table
      */
     public function __construct(
         \VuFindHttp\HttpService $http,
         LocaleSettings $locale,
         Transaction $transactionTable,
-        Fee $feeTable
+        Fee $feeTable,
+        TransactionEventLog $eventLogTable
     ) {
         $this->http = $http;
         $this->localeSettings = $locale;
         $this->transactionTable = $transactionTable;
         $this->feeTable = $feeTable;
+        $this->eventLogTable = $eventLogTable;
     }
 
     /**
@@ -190,7 +203,7 @@ abstract class AbstractBase implements
      * @param string $currency       Currency
      * @param array  $fines          Fines data
      *
-     * @return boolean success
+     * @return ?TransactionRow
      */
     protected function createTransaction(
         $transactionId,
@@ -201,7 +214,7 @@ abstract class AbstractBase implements
         $transactionFee,
         $currency,
         $fines
-    ) {
+    ): ?TransactionRow {
         $t = $this->transactionTable->createTransaction(
             $transactionId,
             $driver,
@@ -212,14 +225,6 @@ abstract class AbstractBase implements
             $currency
         );
 
-        if (!$t) {
-            $this->logError(
-                'error creating transaction',
-                compact('userId', 'patronId', 'fines')
-            );
-            return false;
-        }
-
         foreach ($fines as $fine) {
             // Sanitize fine strings
             $fine['fine'] = iconv('UTF-8', 'UTF-8//IGNORE', $fine['fine'] ?? '');
@@ -229,11 +234,13 @@ abstract class AbstractBase implements
                     'error adding fee to transaction',
                     compact('userId', 'patronId', 'fines', 'fine')
                 );
-                return false;
+                return null;
             }
         }
 
-        return true;
+        $this->addTransactionEvent($t->id, 'Transaction created');
+
+        return $t;
     }
 
     /**
@@ -258,13 +265,15 @@ abstract class AbstractBase implements
     /**
      * Redirect to payment handler.
      *
-     * @param string $url URL
+     * @param string         $url         URL
+     * @param TransactionRow $transaction Transaction
      *
      * @return void
      */
-    protected function redirectToPayment($url)
+    protected function redirectToPayment(string $url, TransactionRow $transaction): void
     {
         header("Location: $url", true, 302);
+        $this->addTransactionEvent($transaction->id, 'Redirected to payment service');
         exit();
     }
 

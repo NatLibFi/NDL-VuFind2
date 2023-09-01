@@ -298,11 +298,11 @@ class Receipt implements TranslatorAwareInterface
      * @param array       $patronProfile Patron information
      * @param Transaction $transaction   Transaction
      *
-     * @return void
+     * @return bool
      *
      * @todo Add attachment support to Mailer's send method
      */
-    public function sendEmail(User $user, array $patronProfile, Transaction $transaction): void
+    public function sendEmail(User $user, array $patronProfile, Transaction $transaction): bool
     {
         $recipients = array_unique(
             array_filter(
@@ -313,7 +313,7 @@ class Receipt implements TranslatorAwareInterface
             )
         );
         if (!$recipients) {
-            return;
+            return false;
         }
 
         $data = $this->createReceiptPDF($transaction);
@@ -369,6 +369,7 @@ class Receipt implements TranslatorAwareInterface
         $contentTypeHeader->setType('multipart/mixed');
 
         $this->mailer->getTransport()->send($message);
+        return true;
     }
 
     /**

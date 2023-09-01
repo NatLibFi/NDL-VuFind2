@@ -125,6 +125,22 @@ CREATE TABLE `finna_transaction` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `finna_transaction_event_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `transaction_id` int(11) NOT NULL,
+  `date` datetime NOT NULL DEFAULT '2000-01-01 00:00:00',
+  `server_ip` varchar(255) DEFAULT '',
+  `server_name` varchar(255) DEFAULT '',
+  `request_uri` varchar(1024) DEFAULT '',
+  `message` varchar(255) DEFAULT '',
+  `data` mediumtext DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `finna_transaction_event_log_ibfk1` FOREIGN KEY (`transaction_id`) REFERENCES `finna_transaction` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 collate utf8mb4_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `finna_fee` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,

@@ -32,6 +32,7 @@ namespace Finna\AjaxHandler;
 
 use Finna\Db\Row\Transaction as TransactionRow;
 use Finna\Db\Table\Transaction as TransactionTable;
+use Finna\Db\Table\TransactionEventLog;
 use Finna\OnlinePayment\OnlinePayment;
 use Finna\OnlinePayment\Receipt;
 use Laminas\Session\Container as SessionContainer;
@@ -53,6 +54,7 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
     \Laminas\Log\LoggerAwareInterface
 {
     use \VuFind\Log\LoggerAwareTrait;
+    use \Finna\OnlinePayment\OnlinePaymentEventLogTrait;
 
     /**
      * ILS connection
@@ -104,16 +106,24 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
     protected $receipt;
 
     /**
+     * Transaction event log table
+     *
+     * @var TransactionEventLog
+     */
+    protected $eventLogTable;
+
+    /**
      * Constructor
      *
-     * @param SessionSettings  $ss  Session settings
-     * @param Connection       $ils ILS connection
-     * @param TransactionTable $tt  Transaction table
-     * @param UserTable        $ut  User table
-     * @param OnlinePayment    $op  Online payment manager
-     * @param SessionContainer $os  Online payment session
-     * @param array            $ds  Data source configuration
-     * @param Receipt          $rcp Receipt
+     * @param SessionSettings     $ss  Session settings
+     * @param Connection          $ils ILS connection
+     * @param TransactionTable    $tt  Transaction table
+     * @param UserTable           $ut  User table
+     * @param OnlinePayment       $op  Online payment manager
+     * @param SessionContainer    $os  Online payment session
+     * @param array               $ds  Data source configuration
+     * @param Receipt             $rcp Receipt
+     * @param TransactionEventLog $elt Transaction event log table
      */
     public function __construct(
         SessionSettings $ss,
@@ -123,7 +133,8 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
         OnlinePayment $op,
         SessionContainer $os,
         array $ds,
-        Receipt $rcp
+        Receipt $rcp,
+        TransactionEventLog $elt
     ) {
         $this->sessionSettings = $ss;
         $this->ils = $ils;
@@ -133,6 +144,7 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
         $this->onlinePaymentSession = $os;
         $this->dataSourceConfig = $ds;
         $this->receipt = $rcp;
+        $this->eventLogTable = $elt;
     }
 
     /**
@@ -153,6 +165,7 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
             );
 
             $t->setRegistrationFailed('patron login error');
+            $this->addTransactionEvent($t->id, 'Patron login failed');
             return ['success' => false];
         }
 
@@ -193,6 +206,7 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
                     . print_r($finesAmount, true)
                 );
                 $t->setFinesUpdated();
+                $this->addTransactionEvent($t->id, 'Registration with the ILS failed: fines updated');
                 return [
                     'success' => false,
                     'msg' => 'online_payment_registration_failed',
@@ -202,6 +216,7 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
 
         try {
             $this->logWarning('Transaction ' . $t->transaction_id . ': start marking fees as paid.');
+            $this->addTransactionEvent($t->id, 'Started registration with the ILS');
             $res = $this->ils->markFeesAsPaid(
                 $patron,
                 $t->amount,
@@ -220,12 +235,19 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
                 );
                 if ('fines_updated' === $res) {
                     $t->setFinesUpdated();
+                    $this->addTransactionEvent($t->id, 'Registration with the ILS failed: fines updated');
                 } else {
                     $t->setRegistrationFailed('Failed to mark fees paid: ' . ($res ?: 'no error information'));
+                    $this->addTransactionEvent(
+                        $t->id,
+                        'Registration with the ILS failed: ' . ($res ?: 'no error information')
+                    );
                 }
                 return ['success' => false, 'msg' => 'markFeesAsPaid failed'];
             }
             $t->setRegistered();
+            $this->addTransactionEvent($t->id, 'Successfully registered with the ILS');
+
             $this->onlinePaymentSession->paymentOk = true;
         } catch (\Exception $e) {
             $this->logError(
@@ -235,6 +257,7 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
             $this->logException($e);
 
             $t->setRegistrationFailed($e->getMessage());
+            $this->addTransactionEvent($t->id, 'Registration with the ILS failed', ['error' => $e->getMessage()]);
             return ['success' => false, 'msg' => $e->getMessage()];
         }
         return ['success' => true];

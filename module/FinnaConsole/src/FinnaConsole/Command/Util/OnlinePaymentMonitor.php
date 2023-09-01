@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2016-2022.
+ * Copyright (C) The National Library of Finland 2016-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -32,6 +32,7 @@ namespace FinnaConsole\Command\Util;
 
 use Finna\Db\Row\User;
 use Finna\Db\Table\Transaction;
+use Finna\Db\Table\TransactionEventLog;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -51,6 +52,8 @@ use function intval;
  */
 class OnlinePaymentMonitor extends AbstractUtilCommand
 {
+    use \Finna\OnlinePayment\OnlinePaymentEventLogTrait;
+
     /**
      * The name of the command (the part after "public/index.php")
      *
@@ -115,6 +118,13 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
     protected $fromEmail = '';
 
     /**
+     * Transaction event log table
+     *
+     * @var TransactionEventLog
+     */
+    protected $eventLogTable;
+
+    /**
      * Constructor
      *
      * @param \VuFind\ILS\Connection             $catalog          Catalog connection
@@ -123,6 +133,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
      * @param \Laminas\Config\Config             $dsConfig         Data source config
      * @param \Laminas\View\Renderer\PhpRenderer $viewRenderer     View renderer
      * @param \VuFind\Mailer\Mailer              $mailer           Mailer
+     * @param TransactionEventLog                $eventLog         Transaction event log table
      */
     public function __construct(
         \VuFind\ILS\Connection $catalog,
@@ -130,7 +141,8 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         \Finna\Db\Table\User $userTable,
         \Laminas\Config\Config $dsConfig,
         \Laminas\View\Renderer\PhpRenderer $viewRenderer,
-        \VuFind\Mailer\Mailer $mailer
+        \VuFind\Mailer\Mailer $mailer,
+        TransactionEventLog $eventLog
     ) {
         $this->catalog = $catalog;
         $this->transactionTable = $transactionTable;
@@ -138,6 +150,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         $this->datasourceConfig = $dsConfig;
         $this->viewRenderer = $viewRenderer;
         $this->mailer = $mailer;
+        $this->eventLogTable = $eventLog;
 
         parent::__construct();
     }
@@ -292,6 +305,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
             $expiredCnt++;
 
             $t->setReportedAndExpired();
+            $this->addTransactionEvent($t->id, 'Marked as reported and expired');
 
             $this->msg('    Transaction ' . $t->transaction_id . ' expired.');
             return true;
@@ -309,6 +323,14 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
                 . " (id {$user->id}), card {$t->cat_username}"
             );
             $t->setRegistrationFailed('card not found');
+            $this->addTransactionEvent(
+                $t->id,
+                "Library card not found for user {$user->username}",
+                [
+                    'user_id' => $user->id,
+                    'card' => $t->cat_username,
+                ]
+            );
             $failedCnt++;
             return false;
         }
@@ -340,6 +362,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
                 . " (id {$user->id}), card {$t->cat_username}"
             );
             $t->setRegistrationFailed('patron login error');
+            $this->addTransactionEvent($t->id, 'Patron login failed');
             $failedCnt++;
             return false;
         }
@@ -351,11 +374,13 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
                 '    Transaction ' . $t->transaction_id . ' already being registered since '
                 . $t->registration_started
             );
+            $this->addTransactionEvent($t->id, 'Transaction already being registered');
             return false;
         }
 
         try {
             $t->setRegistrationStarted();
+            $this->addTransactionEvent($t->id, 'Started registration with the ILS');
             $res = $this->catalog->markFeesAsPaid(
                 $patron,
                 $t->amount,
@@ -365,6 +390,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
             if (true === $res) {
                 $this->msg("    Registration of transaction {$t->transaction_id} successful");
                 $t->setRegistered();
+                $this->addTransactionEvent($t->id, 'Successfully registered with the ILS');
                 $registeredCnt++;
             } else {
                 if ('fines_updated' === $res) {
@@ -375,6 +401,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
                             . " (id {$user->id}), card {$t->cat_username}: fines updated",
                         ''
                     );
+                    $this->addTransactionEvent($t->id, 'Registration with the ILS failed: fines updated');
                     return false;
                 }
                 throw new \Exception('Failed to mark fees paid: ' . ($res ?: 'no error information'));
@@ -390,6 +417,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
             $this->logException($e);
 
             $t->setRegistrationFailed($e->getMessage());
+            $this->addTransactionEvent($t->id, 'Registration with the ILS failed', ['error' => $e->getMessage()]);
             $failedCnt++;
             return false;
         }

@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2016-2022.
+ * Copyright (C) The National Library of Finland 2016-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -320,7 +320,7 @@ class CPU extends AbstractBase
         if ($status === self::CPU_STATUS_PENDING) {
             // Pending
 
-            $success = $this->createTransaction(
+            $transaction = $this->createTransaction(
                 $transactionId,
                 $driver,
                 $user->id,
@@ -330,10 +330,10 @@ class CPU extends AbstractBase
                 $currency,
                 $fines
             );
-            if (!$success) {
-                return '';
+            if (!$transaction) {
+                return 'Could not create transaction';
             }
-            $this->redirectToPayment($response->PaymentAddress);
+            $this->redirectToPayment($response->PaymentAddress, $transaction);
         }
         return '';
     }
@@ -363,13 +363,16 @@ class CPU extends AbstractBase
         $status = intval($params['Status']);
         if ($status === self::CPU_STATUS_SUCCESS) {
             $marked = $transaction->setPaid();
+            $this->addTransactionEvent($transaction->id, 'Transaction marked as paid');
             return [self::PAYMENT_SUCCESS, $marked];
         } elseif ($status === self::CPU_STATUS_CANCELLED) {
             $transaction->setCanceled();
+            $this->addTransactionEvent($transaction->id, 'Transaction marked as canceled');
             return [self::PAYMENT_CANCEL, false];
         }
 
         $this->logPaymentError("unknown status $status");
+        $this->addTransactionEvent($transaction->id, 'Received unknown status', ['status' => $status]);
         return [self::PAYMENT_FAILURE, false];
     }
 
