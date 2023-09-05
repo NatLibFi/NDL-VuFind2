@@ -657,7 +657,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             'getCountry',
             'data-escapeHtml.phtml',
             [
-                'context' => ['class' => 'recordCountry'],
+                'context' => ['class' => 'record-country'],
             ]
         );
         $setTemplateLine(
