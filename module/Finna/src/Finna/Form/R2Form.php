@@ -29,6 +29,8 @@
 
 namespace Finna\Form;
 
+use function in_array;
+
 /**
  * Configurable R2 form.
  *

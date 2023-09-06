@@ -1,4 +1,4 @@
-/*global Autocomplete, grecaptcha, isPhoneNumberValid */
+/*global Autocomplete, grecaptcha, isPhoneNumberValid, loadCovers */
 /*exported VuFind, bulkFormHandler, deparam, escapeHtmlAttr, getFocusableNodes, getUrlRoot, htmlEncode, phoneNumberFormHandler, recaptchaOnLoad, resetCaptcha, setupMultiILSLoginFields, unwrapJQuery */
 
 // IE 9< console polyfill
@@ -105,18 +105,6 @@ var VuFind = (function VuFind() {
         }
       }
     );
-  };
-
-  var init = function init() {
-    for (var i = 0; i < _submodules.length; i++) {
-      if (this[_submodules[i]].init) {
-        this[_submodules[i]].init();
-      }
-    }
-    _initialized = true;
-
-    initDisableSubmitOnClick();
-    initClickHandlers();
   };
 
   var addTranslations = function addTranslations(s) {
@@ -258,6 +246,65 @@ var VuFind = (function VuFind() {
     _searchId = searchId;
   };
 
+  function setupQRCodeLinks(_container) {
+    var container = _container || $('body');
+
+    container.find('a.qrcodeLink').on('click', function qrcodeToggle() {
+      var holder = $(this).next('.qrcode');
+      if (holder.find('img').length === 0) {
+        // We need to insert the QRCode image
+        var template = holder.find('.qrCodeImgTag').html();
+        holder.html(template);
+      }
+    });
+  }
+
+  /**
+   * Initialize result page scripts.
+   *
+   * @param {string|JQuery} container
+   */
+  var initResultScripts = function initResultScripts(container) {
+    let jqContainer = typeof container === 'string' ? $(container) : container;
+    if (typeof this.openurl !== 'undefined') {
+      this.openurl.init(jqContainer);
+    }
+    if (typeof this.itemStatuses !== 'undefined') {
+      this.itemStatuses.init(jqContainer);
+    }
+    if (typeof this.saveStatuses !== 'undefined') {
+      this.saveStatuses.init(jqContainer);
+    }
+    if (typeof this.recordVersions !== 'undefined') {
+      this.recordVersions.init(jqContainer);
+    }
+    if (typeof this.cart !== 'undefined') {
+      this.cart.registerToggles(jqContainer);
+    }
+    if (typeof this.embedded !== 'undefined') {
+      this.embedded.init(jqContainer);
+    }
+    this.lightbox.bind(jqContainer);
+    setupQRCodeLinks(jqContainer);
+    if (typeof loadCovers === 'function') {
+      loadCovers();
+    }
+  };
+
+  var init = function init() {
+    for (var i = 0; i < _submodules.length; i++) {
+      if (this[_submodules[i]].init) {
+        this[_submodules[i]].init();
+      }
+    }
+    _initialized = true;
+
+    initDisableSubmitOnClick();
+    initClickHandlers();
+    // handle QR code links
+    setupQRCodeLinks();
+  };
+
   //Reveal
   return {
     defaultSearchBackend: defaultSearchBackend,
@@ -281,7 +328,9 @@ var VuFind = (function VuFind() {
     translate: translate,
     updateCspNonce: updateCspNonce,
     getCurrentSearchId: getCurrentSearchId,
-    setCurrentSearchId: setCurrentSearchId
+    setCurrentSearchId: setCurrentSearchId,
+    initResultScripts: initResultScripts,
+    setupQRCodeLinks: setupQRCodeLinks
   };
 })();
 
@@ -527,7 +576,10 @@ function setupAutocomplete() {
       success: function autocompleteJSON(json) {
         const highlighted = json.data.suggestions.map(
           (item) => ({
-            text: item.replace(query, `<b>${query}</b>`),
+            text: item.replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll(query, `<b>${query}</b>`),
             value: item,
           })
         );
@@ -590,23 +642,15 @@ function keyboardShortcuts() {
   }
 }
 
-function setupIeSupport() {
-  // Disable Bootstrap modal focus enforce on IE since it breaks Recaptcha.
-  // Cannot use conditional comments since IE 11 doesn't support them but still has
-  // the issue
-  var ua = window.navigator.userAgent;
-  if (ua.indexOf('MSIE') || ua.indexOf('Trident/')) {
-    $.fn.modal.Constructor.prototype.enforceFocus = function emptyEnforceFocus() { };
-  }
-}
-
 function unwrapJQuery(node) {
   return node instanceof Node ? node : node[0];
 }
 
 function setupJumpMenus(_container) {
   var container = _container || $('body');
-  container.find('select.jumpMenu').change(function jumpMenu(){ $(this).parent('form').trigger("submit"); });
+  container.find('select.jumpMenu').on("change", function jumpMenu() {
+    $(this).parent('form').trigger("submit");
+  });
 }
 
 function setupMultiILSLoginFields(loginMethods, idPrefix) {
@@ -636,19 +680,6 @@ function setupMultiILSLoginFields(loginMethods, idPrefix) {
   }).trigger("change");
 }
 
-function setupQRCodeLinks(_container) {
-  var container = _container || $('body');
-
-  container.find('a.qrcodeLink').click(function qrcodeToggle() {
-    var holder = $(this).next('.qrcode');
-    if (holder.find('img').length === 0) {
-      // We need to insert the QRCode image
-      var template = holder.find('.qrCodeImgTag').html();
-      holder.html(template);
-    }
-  });
-}
-
 $(function commonDocReady() {
   // Start up all of our submodules
   VuFind.init();
@@ -661,9 +692,6 @@ $(function commonDocReady() {
 
   // support "jump menu" dropdown boxes
   setupJumpMenus();
-
-  // handle QR code links
-  setupQRCodeLinks();
 
   // Checkbox select all
   $('.checkbox-select-all').on('change', function selectAllCheckboxes() {
@@ -693,6 +721,26 @@ $(function commonDocReady() {
   if (url.indexOf('?print=') !== -1 || url.indexOf('&print=') !== -1) {
     $("link[media='print']").attr("media", "all");
   }
+});
 
-  setupIeSupport();
+$(function searchFormResetHandler() {
+  const queryInput = $('#searchForm_lookfor');
+  const resetButton = $('#searchForm-reset');
+
+  let query = queryInput.val();
+  if (query !== '') {
+    resetButton.show();
+    queryInput.focus().val('').val(query);
+  }
+  queryInput.on('input', function onInput() {
+    if ($(this).val() === '') {
+      resetButton.hide();
+    } else {
+      resetButton.show();
+    }
+  });
+  resetButton.on('click', function onClick() {
+    queryInput.attr('value', '').focus();
+    resetButton.hide();
+  });
 });

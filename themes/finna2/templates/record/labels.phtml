@@ -1,6 +1,6 @@
 <?php
   // Back-compatibility check for driver
-  $labels = isset($this->driver) ? $this->driver->getRecordLabels() : '';
+  $labels = isset($this->driver) ? $this->driver->tryMethod('getRecordLabels') : '';
   if (empty($labels)) {
     return;
   }

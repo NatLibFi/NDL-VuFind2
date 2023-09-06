@@ -34,6 +34,8 @@ namespace Finna\Db\Row;
 use Laminas\Db\ResultSet\ResultSetInterface;
 use Laminas\Db\Sql\Expression;
 
+use function count;
+
 /**
  * Row Definition for user
  *

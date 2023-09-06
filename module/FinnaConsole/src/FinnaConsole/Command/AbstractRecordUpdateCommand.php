@@ -35,6 +35,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use VuFind\Db\Row\RowGateway;
 
+use function get_class;
+
 /**
  * Abstract base class for a command that updates records.
  *

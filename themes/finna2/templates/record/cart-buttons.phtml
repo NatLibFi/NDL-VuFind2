@@ -4,12 +4,12 @@
     <?php $cartId = $this->source . '|' . $this->id; ?>
     <div class="btn-bookbag-toggle" data-cart-id="<?=$this->escapeHtmlAttr($this->id)?>" data-cart-source="<?=$this->escapeHtmlAttr($this->source)?>">
     <a class="cart-add hidden<?php if(!$cart->contains($cartId)): ?> correct<?php endif ?>" title="<?=$this->transEsc('Add to Book Bag') ?>">
-        <i class="fa fa-suitcase" aria-hidden="true"></i>
+        <?=$this->icon('cart-add') ?>
         <span class="hidden-sm hidden-md hidden-lg"><?=$this->transEsc('Add to Book Bag') ?></span>
         <?= $this->layout()->templateDir == 'record' ? $this->transEsc('Add to Book Bag') : ''?>
     </a>
     <a class="cart-remove hidden<?php if($cart->contains($cartId)): ?> correct<?php endif ?>" title="<?=$this->transEsc('Remove from Book Bag') ?>">
-        <i class="fa fa-close" aria-hidden="true"></i>
+        <?=$this->icon('cart-remove') ?>
         <span class="hidden-sm hidden-md hidden-lg"><?=$this->transEsc('Remove from Book Bag') ?></span>
         <?= $this->layout()->templateDir == 'record' ? $this->transEsc('Remove from Book Bag') : ''?>
     </a>

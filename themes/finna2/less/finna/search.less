@@ -92,18 +92,6 @@ mark, .highlight {
       padding-bottom: 0;
     }
   }
-  // .media and .media-body code added to fix IE11 display: table-cell issues
-  .media {
-    display: table;
-    table-layout: fixed;
-    width: 100%;
-    @media(max-width: @screen-sm) {
-      display: block;
-    }
-  }
-  .media-body {
-    width: auto;
-  }
   .record-versions {
     font-size: 0.9em;
     &:not(.loading) {
@@ -158,6 +146,10 @@ mark, .highlight {
 .available-online-links, .recordURLs {
   a {
     padding-left: 1px;
+    .icon {
+      vertical-align: baseline;
+      font-size: 1.2em;
+    }
   }
 }
 .add-to-favorite-col {

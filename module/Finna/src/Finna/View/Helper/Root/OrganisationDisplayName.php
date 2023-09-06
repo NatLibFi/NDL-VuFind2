@@ -29,6 +29,8 @@
 
 namespace Finna\View\Helper\Root;
 
+use function count;
+
 /**
  * Organisation display name view helper for Solr records.
  *

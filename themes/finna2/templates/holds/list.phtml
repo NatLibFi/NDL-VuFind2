@@ -9,7 +9,7 @@
 ?>
 
 <!-- Leftside navigationbar -->
-<?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'holds']); ?>
+<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'holds']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
   <div class="my-research-content">
@@ -26,15 +26,15 @@
       <?php if (isset($this->noSupport)): ?>
         <?php if ($user->getLibraryCards()->count() > 1): ?>
           <div class="support-notice">
-            <p><?=$this->transEsc("no_ils_support_description") ?></p>
+            <p><?=$this->transEsc('no_ils_support_description') ?></p>
           </div>
         <?php endif; ?>
       <?php else: ?>
-        <?php if ($template = $this->content()->findTemplateForLng("content/Additions/holds-pre-list")): ?>
+        <?php if ($template = $this->content()->findTemplateForLng('content/Additions/holds-pre-list')): ?>
           <div class="holds-pre-list"><?=$this->render($template)?></div>
         <?php endif; ?>
         <?php if (!empty($this->recordList)): ?>
-          <div class="holds-sort"><?=$this->context($this)->renderInContext("myresearch/controls/sort.phtml", ['sortList' => $this->sortList])?></div>
+          <div class="holds-sort"><?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $this->sortList])?></div>
           <?php if ($this->cancelForm || $this->updateForm): ?>
             <form name="updateForm" class="inline" method="post" action="<?=$this->escapeHtmlAttr($this->url('holds-list'))?>" id="update_holds" data-clear-account-cache="holds" data-lightbox>
               <input type="hidden" id="submitType" name="cancelSelected" value="1">
@@ -59,17 +59,17 @@
                     <?php endif; ?>
                     <?php if ($this->cancelForm): ?>
                       <div class="btn-group">
-                        <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEscAttr("hold_cancel_selected") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
+                        <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEscAttr('hold_cancel_selected') ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
                         <ul class="dropdown-menu useraccount-confirm" role="presentation">
-                          <li class="disabled"><a><?=$this->transEsc("confirm_hold_cancel_selected_text") ?></a></li>
+                          <li class="disabled"><a><?=$this->transEsc('confirm_hold_cancel_selected_text') ?></a></li>
                           <li><a href="#" id="confirm_cancel_selected_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
                           <li><a href="#" class="confirm_cancel_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
                         </ul>
                       </div>
                       <div class="btn-group">
-                        <input id="cancelAll" name="cancelAll" type="submit" value="<?=$this->transEscAttr("hold_cancel_all") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
+                        <input id="cancelAll" name="cancelAll" type="submit" value="<?=$this->transEscAttr('hold_cancel_all') ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
                         <ul class="dropdown-menu useraccount-confirm" role="presentation">
-                          <li class="disabled"><a><?=$this->transEsc("confirm_hold_cancel_all_text") ?></a></li>
+                          <li class="disabled"><a><?=$this->transEsc('confirm_hold_cancel_all_text') ?></a></li>
                           <li><a href="#" id="confirm_cancel_all_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
                           <li><a href="#" class="confirm_cancel_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
                         </ul>
@@ -122,43 +122,7 @@
                 </td>
                 <td headers="label-title-column" aria-labelledby="label-title-column">
                   <div class="half-table-column text-left">
-                    <?php
-                      // If this is a non-missing Solr record, we should display a link:
-                      if (is_a($resource, 'VuFind\\RecordDriver\\SolrDefault') && !is_a($resource, 'VuFind\\RecordDriver\\Missing')) {
-                        // Use ILS title if available since it may contain e.g. issue number
-                        if (!empty($ilsDetails['title'])) {
-                          $title = trim($ilsDetails['title'], '/: ');
-                        } else {
-                          $title = $resource->getTitle();
-                          $title = empty($title) ? $this->transEsc('Title not available') : $this->escapeHtml($title);
-                        }
-                        echo '<a href="' . $this->escapeHtmlAttr($this->recordLinker()->getUrl($resource))
-                          . '" class="record-title">' . $title . '</a>';
-                      } elseif (isset($ilsDetails['title']) && !empty($ilsDetails['title'])) {
-                        // If the record is not available in Solr, perhaps the ILS driver sent us a title we can show...
-                        echo '<span class="record-title">' . $this->escapeHtml($ilsDetails['title']) . '</span>';
-                      } else {
-                        // Last resort -- indicate that no title could be found.
-                        echo '<span class="record-title">' . $this->transEsc('Title not available') . '</span>';
-                      }
-                    ?>
-                    <div class="record-core-metadata">
-                      <?php $formats = $resource->getFormats();
-                      if (count($formats) > 0): ?>
-                        <?=$this->record($resource)->getFormatList() ?>
-                        <br>
-                      <?php endif; ?>
-                      <?=$this->partial('myresearch/helpers/record-author.phtml', ['record' => $resource]);?>
-                      <?php if (isset($ilsDetails['volume']) && !empty($ilsDetails['volume'])): ?>
-                        <strong><?=$this->transEsc('Volume')?>:</strong> <?=$this->escapeHtml($ilsDetails['volume'])?>
-                        <br>
-                      <?php endif; ?>
-
-                      <?php if (isset($ilsDetails['publication_year']) && !empty($ilsDetails['publication_year'])): ?>
-                        <strong><?=$this->transEsc('Year of Publication')?>:</strong> <?=$this->escapeHtml($ilsDetails['publication_year'])?>
-                        <br>
-                      <?php endif; ?>
-                    </div>
+                    <?=$this->record($resource)->renderTemplate('account-entry.phtml')?>
                   </div>
                   <div class="half-table-column holds-status-information">
                     <?php if (!empty($ilsDetails['requestGroup'])): ?>
@@ -211,17 +175,17 @@
                         <?php endif; ?>
                         <?php if (isset($ilsDetails['pickupnum'])):?>
                           <br>
-                          <strong><?=$this->transEsc("Pickup number") ?>:</strong> <?=$this->escapeHtml($ilsDetails['pickupnum']) ?>
+                          <strong><?=$this->transEsc('Pickup number') ?>:</strong> <?=$this->escapeHtml($ilsDetails['pickupnum']) ?>
                         <?php endif;?>
                         <?php if (!empty($ilsDetails['holdShelf'])):?>
                           <br>
-                          <strong><?=$this->transEsc("Hold Shelf") ?>:</strong> <?=$this->escapeHtml($ilsDetails['holdShelf']) ?>
+                          <strong><?=$this->transEsc('Hold Shelf') ?>:</strong> <?=$this->escapeHtml($ilsDetails['holdShelf']) ?>
                         <?php endif;?>
                       </div>
                     <?php elseif (isset($ilsDetails['in_transit']) && $ilsDetails['in_transit']): ?>
                       <div class="text-success"><?=$this->transEsc('request_in_transit') . (is_string($ilsDetails['in_transit']) ? ': ' . $this->transEsc('institution_' . $ilsDetails['in_transit'], [], $ilsDetails['in_transit']) : '') ?></div>
                     <?php elseif (isset($ilsDetails['position'])): ?>
-                      <p><strong><?=$this->transEsc("hold_queue_position") ?>:</strong> <?=$this->escapeHtml($ilsDetails['position']) ?></p>
+                      <p><strong><?=$this->transEsc('hold_queue_position') ?>:</strong> <?=$this->escapeHtml($ilsDetails['position']) ?></p>
                     <?php endif; ?>
 
                     <?php if (isset($this->cancelResults['items'])): ?>
@@ -258,7 +222,7 @@
                     <?php endif; ?>
 
                     <?php if (isset($ilsDetails['cancel_link'])): ?>
-                      <p><a href="<?=$this->escapeHtmlAttr($ilsDetails['cancel_link']) ?>"><?=$this->transEsc("hold_cancel") ?></a></p>
+                      <p><a href="<?=$this->escapeHtmlAttr($ilsDetails['cancel_link']) ?>"><?=$this->transEsc('hold_cancel') ?></a></p>
                     <?php endif; ?>
                     <?php if (!empty($ilsDetails['updateDetails'])): ?>
                       <p><a class="hold-edit" href="<?=$this->escapeHtmlAttr($this->url('holds-edit', [], ['query' => ['selectedIDS[]' => $ilsDetails['updateDetails']]])) ?>" data-lightbox><?=$this->transEsc('Edit') ?></a></p>
@@ -269,7 +233,7 @@
             <?php endforeach; ?>
           </table>
           <?php if ($this->cancelForm): ?></form> <?php endif; ?>
-          <?php if ($template = $this->content()->findTemplateForLng("content/Additions/holds-post-list")): ?>
+          <?php if ($template = $this->content()->findTemplateForLng('content/Additions/holds-post-list')): ?>
             <div class="holds-post-list"><?=$this->render($template)?></div>
           <?php endif; ?>
         <?php else: ?>

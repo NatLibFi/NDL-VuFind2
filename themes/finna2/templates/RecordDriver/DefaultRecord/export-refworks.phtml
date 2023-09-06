@@ -10,7 +10,7 @@ if (in_array('0/Book/', $formats)
 
 echo $this->record($this->driver)->getExportFormat('refworks');
 
-$title = rtrim($this->driver->getTitle(), " /");
+$title = rtrim($this->driver->getTitle(), ' /');
 echo "T1 $title\n";
 
 $series = $this->driver->tryMethod('getSeries');
@@ -88,12 +88,12 @@ if (is_array($pubPlaces) && is_array($pubDates) && is_array($pubNames)) {
     }
     for ($i = 0; $i < $total; $i++) {
         if (isset($pubPlaces[$i])) {
-            echo "PP " . rtrim(str_replace(['[', ']'], '', $pubPlaces[$i]), ':, ') . "\n";
+            echo 'PP ' . rtrim(str_replace(['[', ']'], '', $pubPlaces[$i]), ':, ') . "\n";
         }
         if (isset($pubNames[$i])) {
             $pubName = preg_replace('/\s*:[^;:]*\bjakaja\b[^;:]*/', '', $pubNames[$i]);
             if ($pubName) {
-                echo "PB " . rtrim($pubName, ", ") . "\n";
+                echo 'PB ' . rtrim($pubName, ', ') . "\n";
             }
         }
         if (isset($pubDates[$i])) {
@@ -117,9 +117,9 @@ if ($urls = $this->record($this->driver)->getUrlList()) {
     foreach ($urls as $url) {
         echo "UL $url\n";
     }
-    echo "LK " . $this->serverUrl($this->recordLinker()->getUrl($this->driver)) . "\n";
+    echo 'LK ' . $this->serverUrl($this->recordLinker()->getUrl($this->driver)) . "\n";
 } else {
-    echo "UL " . $this->serverUrl($this->recordLinker()->getUrl($this->driver)) . "\n";
+    echo 'UL ' . $this->serverUrl($this->recordLinker()->getUrl($this->driver)) . "\n";
 }
 
 $summary = $this->driver->tryMethod('getSummary');

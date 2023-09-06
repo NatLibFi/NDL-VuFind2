@@ -1,0 +1,257 @@
+@font-face {
+  font-family: 'finnaicons';
+  src: url('fonts/finnaicons.eot?40323169');
+  src: url('fonts/finnaicons.eot?40323169#iefix') format('embedded-opentype'),
+       url('fonts/finnaicons.woff2?40323169') format('woff2'),
+       url('fonts/finnaicons.woff?40323169') format('woff'),
+       url('fonts/finnaicons.ttf?40323169') format('truetype'),
+       url('fonts/finnaicons.svg?40323169#finnaicons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'finnaicons';
+    src: url('fonts/finnaicons.svg?40323169#finnaicons') format('svg');
+  }
+}
+*/
+[class^="fi-"]:before, [class*=" fi-"]:before {
+  font-family: "finnaicons";
+  font-style: normal;
+  font-weight: normal;
+  speak-as: never;
+
+  display: inline-block;
+  text-decoration: inherit;
+  /* width: 1em;
+  /* margin-right: .2em; */
+  /* text-align: center;
+  /* opacity: .8; */
+
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+
+  /* fix buttons height, for twitter bootstrap */
+  /* line-height: 1em;
+
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  /* margin-left: .2em; */
+
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+
+  /* Font smoothing. That was taken from TWBS */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+
+.fi-checked:before { content: '\0e49'; } /* '้' */
+.fi-journalarticle:before { content: '\e001'; } /* '' */
+.fi-map:before { content: '\e002'; } /* '' */
+.fi-physicalobject:before { content: '\e003'; } /* '' */
+.fi-database:before { content: '\e004'; } /* '' */
+.fi-musicalscore:before { content: '\e005'; } /* '' */
+.fi-document:before { content: '\e006'; } /* '' */
+.fi-smallpress:before { content: '\e007'; } /* '' */
+.fi-image:before { content: '\e008'; } /* '' */
+.fi-sound:before { content: '\e009'; } /* '' */
+.fi-video:before { content: '\e00a'; } /* '' */
+.fi-art:before { content: '\e00b'; } /* '' */
+.fi-thesis:before { content: '\e00c'; } /* '' */
+.fi-other:before { content: '\e00d'; } /* '' */
+.fi-user:before { content: '\e00e'; } /* '' */
+.fi-info-circle:before { content: '\e00f'; } /* '' */
+.fi-search:before { content: '\e011'; } /* '' */
+.fi-print:before { content: '\e012'; } /* '' */
+.fi-plus-small:before { content: '\e013'; } /* '' */
+.fi-heart:before { content: '\e015'; } /* '' */
+.fi-pen:before { content: '\e016'; } /* '' */
+.fi-plus-big:before { content: '\e018'; } /* '' */
+.fi-minus:before { content: '\e019'; } /* '' */
+.fi-reset:before { content: '\e01a'; } /* '' */
+.fi-checked-file:before { content: '\e01b'; } /* '' */
+.fi-search-small:before { content: '\e01c'; } /* '' */
+.fi-user-comments:before { content: '\e01d'; } /* '' */
+.fi-user-document:before { content: '\e01e'; } /* '' */
+.fi-envelope:before { content: '\e01f'; } /* '' */
+.fi-send-feedback:before { content: '\e020'; } /* '' */
+.fi-export:before { content: '\e021'; } /* '' */
+.fi-up-circle:before { content: '\e022'; } /* '' */
+.fi-up:before { content: '\e023'; } /* '' */
+.fi-right-circle:before { content: '\e024'; } /* '' */
+.fi-right:before { content: '\e025'; } /* '' */
+.fi-down-circle:before { content: '\e026'; } /* '' */
+.fi-down:before { content: '\e027'; } /* '' */
+.fi-left-circle:before { content: '\e028'; } /* '' */
+.fi-left:before { content: '\e029'; } /* '' */
+.fi-collection-list:before { content: '\e02a'; } /* '' */
+.fi-star:before { content: '\e02b'; } /* '' */
+.fi-sitemap:before { content: '\e02c'; } /* '' */
+.fi-check:before { content: '\e02d'; } /* '' */
+.fi-remove:before { content: '\e02e'; } /* '' */
+.fi-unhappy:before { content: '\e02f'; } /* '' */
+.fi-stop:before { content: '\e030'; } /* '' */
+.fi-list-compact:before { content: '\e031'; } /* '' */
+.fi-cart:before { content: '\e033'; } /* '' */
+.fi-list-compressed:before { content: '\e034'; } /* '' */
+.fi-bell:before { content: '\e035'; } /* '' */
+.fi-facebook:before { content: '\e036'; } /* '' */
+.fi-twitter:before { content: '\e037'; } /* '' */
+.fi-pinterest:before { content: '\e038'; } /* '' */
+.fi-expand:before { content: '\e03a'; } /* '' */
+.fi-external-link-alt:before { content: '\e03b'; } /* '' */
+.fi-qr-code:before { content: '\e03c'; } /* '' */
+.fi-bookmark:before { content: '\e03d'; } /* '' */
+.fi-settings:before { content: '\e03e'; } /* '' */
+.fi-files:before { content: '\e03f'; } /* '' */
+.fi-public:before { content: '\e040'; } /* '' */
+.fi-home:before { content: '\e041'; } /* '' */
+.fi-sign-out:before { content: '\e042'; } /* '' */
+.fi-holdings:before { content: '\e043'; } /* '' */
+.fi-close:before { content: '\e044'; } /* '' */
+.fi-close-big:before { content: '\e045'; } /* '' */
+.fi-new-window:before { content: '\e046'; } /* '' */
+.fi-sign-in:before { content: '\e047'; } /* '' */
+.fi-search-adv:before { content: '\e600'; } /* '' */
+.fi-info:before { content: '\e601'; } /* '' */
+.fi-lock:before { content: '\e602'; } /* '' */
+.fi-zoom-out:before { content: '\e603'; } /* '' */
+.fi-backward:before { content: '\e604'; } /* '' */
+.fi-forward:before { content: '\e605'; } /* '' */
+.fi-zoom-in:before { content: '\e606'; } /* '' */
+.fi-star-half-empty:before { content: '\e607'; } /* '' */
+.fi-info-database:before { content: '\e608'; } /* '' */
+.fi-browse-database:before { content: '\e609'; } /* '' */
+.fi-handle-left:before { content: '\e60a'; } /* '' */
+.fi-pin:before { content: '\e60c'; } /* '' */
+.fi-journal:before { content: '\e60d'; } /* '' */
+.fi-finna-street:before { content: '\e60e'; } /* '' */
+.fi-star-empty:before { content: '\e60f'; } /* '' */
+.fi-question:before { content: '\e610'; } /* '' */
+.fi-handle-right:before { content: '\e611'; } /* '' */
+.fi-handle-close:before { content: '\e612'; } /* '' */
+.fi-handle-open:before { content: '\e613'; } /* '' */
+.fi-datevis:before { content: '\e614'; } /* '' */
+.fi-www:before { content: '\e615'; } /* '' */
+.fi-book:before { content: '\e616'; } /* '' */
+.fi-ebook:before { content: '\e617'; } /* '' */
+.fi-phone:before { content: '\e618'; } /* '' */
+.fi-asterisk:before { content: '\e619'; } /* '' */
+.fi-radio-button-checked :before { content: '\e61a'; } /* '' */
+.fi-radio-button-unchecked:before { content: '\e61b'; } /* '' */
+.fi-cc-sa:before { content: '\e800'; } /* '' */
+.fi-fullscreen:before { content: '\e801'; } /* '' */
+.fi-album:before { content: '\e802'; } /* '' */
+.fi-image-gallery:before { content: '\e803'; } /* '' */
+.fi-google+:before { content: '\e804'; } /* '' */
+.fi-later:before { content: '\e805'; } /* '' */
+.fi-finna-logo:before { content: '\e806'; } /* '' */
+.fi-celiabook:before { content: '\e807'; } /* '' */
+.fi-cc-by:before { content: '\e862'; } /* '' */
+.fi-cc-nd:before { content: '\e864'; } /* '' */
+.fi-cc-nc-eu:before { content: '\e865'; } /* '' */
+.fi-cc-nc-jp:before { content: '\e866'; } /* '' */
+.fi-cc-sampling:before { content: '\e867'; } /* '' */
+.fi-cc-nc:before { content: '\e868'; } /* '' */
+.fi-cc-zero-1:before { content: '\e869'; } /* '' */
+.fi-cc-pd:before { content: '\e86a'; } /* '' */
+.fi-cc-pd-alt:before { content: '\e86b'; } /* '' */
+.fi-cc-remix:before { content: '\e86c'; } /* '' */
+.fi-cc-share:before { content: '\e86d'; } /* '' */
+.fi-cc-srr:before { content: '\e86e'; } /* '' */
+.fi-cc-BY:before { content: '\e86f'; } /* '' */
+.fi-cc-logo:before { content: '\e870'; } /* '' */
+.fi-cc-by-nd:before { content: '\e871'; } /* '' */
+.fi-cc-by-nc-eu:before { content: '\e872'; } /* '' */
+.fi-cc-by-nc-nd-eu:before { content: '\e873'; } /* '' */
+.fi-cc-by-nc-sa-eu:before { content: '\e874'; } /* '' */
+.fi-cc-by-nc-jp:before { content: '\e875'; } /* '' */
+.fi-cc-by-nc-nd-jp:before { content: '\e876'; } /* '' */
+.fi-cc-by-nc-sa-jp:before { content: '\e877'; } /* '' */
+.fi-cc-by-nc-sa:before { content: '\e878'; } /* '' */
+.fi-cc-by-nc:before { content: '\e879'; } /* '' */
+.fi-cc-publicdomain:before { content: '\e87a'; } /* '' */
+.fi-cc-by-nc-nd:before { content: '\e87b'; } /* '' */
+.fi-cc-by-sa:before { content: '\e87c'; } /* '' */
+.fi-cc-ZERO:before { content: '\e87d'; } /* '' */
+.fi-cc-ONE:before { content: '\e87e'; } /* '' */
+.fi-cc-TWO:before { content: '\e87f'; } /* '' */
+.fi-cc-THREE:before { content: '\e880'; } /* '' */
+.fi-cc-FOUR:before { content: '\e881'; } /* '' */
+.fi-cc-FIVE:before { content: '\e882'; } /* '' */
+.fi-cc-SIX:before { content: '\e883'; } /* '' */
+.fi-cc-SEVEN:before { content: '\e884'; } /* '' */
+.fi-cc-EIGHT:before { content: '\e885'; } /* '' */
+.fi-cc-NINE:before { content: '\e886'; } /* '' */
+.fi-research-open:before { content: '\e889'; } /* '' */
+.fi-pagebreak:before { content: '\e8ab'; } /* '' */
+.fi-fullscreen-exit:before { content: '\e8ac'; } /* '' */
+.fi-cassette:before { content: '\e8ad'; } /* '' */
+.fi-information-pics:before { content: '\e8af'; } /* '' */
+.fi-exclamation-circle:before { content: '\e8b0'; } /* '' */
+.fi-bell-circle:before { content: '\e8b1'; } /* '' */
+.fi-bell-solid:before { content: '\e8b2'; } /* '' */
+.fi-exclamation:before { content: '\e8b3'; } /* '' */
+.fi-exclamation-triangle:before { content: '\e8b4'; } /* '' */
+.fi-details-icon:before { content: '\e8b5'; } /* '' */
+.fi-peer-reviewed:before { content: '\e8b6'; } /* '' */
+.fi-authority-familyname:before { content: '\e8ba'; } /* '' */
+.fi-research:before { content: '\e8bb'; } /* '' */
+.fi-rs-inc:before { content: '\e8bc'; } /* '' */
+.fi-rs-noc:before { content: '\e8bd'; } /* '' */
+.fi-rs-other:before { content: '\e8be'; } /* '' */
+.fi-arrow-both:before { content: '\e8bf'; } /* '' */
+.fi-3d:before { content: '\e8c0'; } /* '' */
+.fi-boardgame:before { content: '\e8c2'; } /* '' */
+.fi-star-half:before { content: '\e8c3'; } /* '' */
+.fi-audiobook:before { content: '\e8c4'; } /* '' */
+.fi-globe:before { content: '\e8c5'; } /* '' */
+.fi-chevrons-left-circle-filled:before { content: '\e8c6'; } /* '' */
+.fi-chevrons-right-circle-filled:before { content: '\e8c7'; } /* '' */
+.fi-x-twitter:before { content: '\e8c8'; } /* '' */
+.fi-zoom-all:before { content: '\e900'; } /* '' */
+.fi-location-city:before { content: '\e901'; } /* '' */
+.fi-box:before { content: '\e902'; } /* '' */
+.fi-help-circle:before { content: '\e903'; } /* '' */
+.fi-bars:before { content: '\e904'; } /* '' */
+.fi-cc-cc:before { content: '\e905'; } /* '' */
+.fi-plus-circle:before { content: '\e906'; } /* '' */
+.fi-minus-circle:before { content: '\e907'; } /* '' */
+.fi-arrow-left:before { content: '\e908'; } /* '' */
+.fi-arrow-right:before { content: '\e909'; } /* '' */
+.fi-arrow-up:before { content: '\e90a'; } /* '' */
+.fi-arrow-down:before { content: '\e90b'; } /* '' */
+.fi-arrow-left-circle:before { content: '\e90c'; } /* '' */
+.fi-arrow-right-circle:before { content: '\e90d'; } /* '' */
+.fi-arrow-left-circle-filled:before { content: '\e90e'; } /* '' */
+.fi-arrow-right-circle-filled:before { content: '\e90f'; } /* '' */
+.fi-download:before { content: '\e910'; } /* '' */
+.fi-play:before { content: '\e911'; } /* '' */
+.fi-play-circle:before { content: '\e912'; } /* '' */
+.fi-finna:before { content: '\e913'; } /* '' */
+.fi-chevrons-left:before { content: '\e914'; } /* '' */
+.fi-chevrons-right:before { content: '\e915'; } /* '' */
+.fi-chevron-circle-up:before { content: '\e916'; } /* '' */
+.fi-help-circle-large:before { content: '\e917'; } /* '' */
+.fi-info-circle-large:before { content: '\e918'; } /* '' */
+.fi-info-circle-large-filled:before { content: '\e919'; } /* '' */
+.fi-chevron-circle-down:before { content: '\e91a'; } /* '' */
+.fi-circle-filled:before { content: '\e91b'; } /* '' */
+.fi-condense:before { content: '\e91c'; } /* '' */
+.fi-basic-search:before { content: '\e91d'; } /* '' */
+.fi-adv-search:before { content: '\e91e'; } /* '' */
+.fi-oa:before { content: '\e91f'; } /* '' */
+.fi-authority-corporatename:before { content: '\e921'; } /* '' */
+.fi-authority-personalname:before { content: '\e922'; } /* '' */
+.fi-authority-communityname:before { content: '\e923'; } /* '' */
+.fi-full-text:before { content: '\e96e'; } /* '' */
+.fi-learning-material:before { content: '\e971'; } /* '' */

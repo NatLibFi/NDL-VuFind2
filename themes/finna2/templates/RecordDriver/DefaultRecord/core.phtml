@@ -126,7 +126,7 @@
       <?php // The following template is used in finna-record.js to pull links from real-time holdings ?>
       <div class="fulltextField url-template hidden">
         <a class="fulltext" href="HREF" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>">
-          <i class="fa fa-external-link"></i> DESC
+          <?=$this->icon('external-link') ?> DESC
           <span class="online-source">SOURCE</span>
         </a>
         <?php if (!empty($url['part'])): ?>
@@ -144,9 +144,8 @@
           if ($desc === $url['url']) {
             $desc = $this->truncateUrl($desc);
           }
-          $icon = 'fa-external-link';
           if (!empty($url['desc'])) {
-            $map = ['Database Guide' => 'fa-info-database', 'Database Interface' => 'fa-browse-database'];
+            $map = ['Database Guide' => 'database-info', 'Database Interface' => 'database-browse'];
             if (isset($map[$url['desc']])) {
               $icon = $map[$url['desc']];
             }
@@ -154,7 +153,7 @@
         ?>
         <div class="fulltextField">
           <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" <?php if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<?php endif; ?>>
-            <i class="fa <?=$icon?>"></i> <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
+            <?=$this->icon($icon) ?> <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
           </a>
           <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?><?php endif; ?>
         </div>
@@ -164,7 +163,7 @@
         <?php if ($isRendered($url)) {
           continue;
         } ?>
-        <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><i class="fa fa-external-link"></i> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
+        <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><?=$this->icon('external-link') ?> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
           <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part'])?><?php endif; ?>
           <?php if ($url['source']): ?>
             <span class="online-source">(<?=$this->transEsc('default::source_' . $url['source'], null, $url['source'])?>)</span>
@@ -181,7 +180,7 @@
         ?>
         <div class="merged-urls-wrapper truncate-field" data-button-class="link-buttons" data-row-height="1" data-button-placement="top" data-label="<?=$this->transEscAttr('links_from_other_organisations', ['%%count%%' => $count])?>">
           <?php foreach ($filteredMergedURLs as $url): ?>
-            <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><i class="fa fa-external-link"></i> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
+            <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><?=$this->icon('external-link') ?> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
               <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part'])?><?php endif; ?>
               <?php if ($url['source']): ?>
                 <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source'])?>)</span>
@@ -260,14 +259,14 @@
 
     <div class="description recordSummary">
       <span id="description_text" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>">
-        <i class="fa fa-spinner fa-spin"></i>
+        <?=$this->icon('spinner') ?>
       </span>
     </div>
 
     <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
       <?php /* Display the lists that this record is saved to */ ?>
       <div class="savedLists" id="savedLists">
-        <strong><?=$this->transEsc("Saved in")?>:</strong>
+        <strong><?=$this->transEsc('Saved in')?>:</strong>
       </div>
     <?php endif; ?>
 
@@ -282,7 +281,7 @@
     ?>
     <?/* End Main Details */?>
 
-    <?php if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>
+    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/record-post-metadata')): ?>
     <div>
       <?=$this->render($template)?>
     </div>

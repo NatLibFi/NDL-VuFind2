@@ -89,9 +89,13 @@ finna.layout = (function finnaLayout() {
         var moreLabel = self.data('label') || VuFind.translate('show_more');
         var lessLabel = self.data('label') || VuFind.translate('show_less');
 
-        var moreLink = $('<button type="button" class="more-link" aria-hidden="true">' + moreLabel + ' <i class="fa fa-arrow-down" aria-hidden="true"></i></button>');
-        var lessLink = $('<button type="button" class="less-link" aria-hidden="true">' + lessLabel + ' <i class="fa fa-arrow-up" aria-hidden="true"></i></button>');
+        var moreLink = $('<button type="button" class="more-link" aria-hidden="true">' + moreLabel + VuFind.icon('show-more') + '</button>');
+        var lessLink = $('<button type="button" class="less-link" aria-hidden="true">' + lessLabel + VuFind.icon('show-less') + '</button>');
 
+        if (self.attr('tabindex') === '-1') {
+          moreLink.attr('tabindex', '-1');
+          lessLink.attr('tabindex', '-1');
+        }
         var linkClass = self.data('button-class') || '';
         if (linkClass) {
           moreLink.addClass(linkClass);
@@ -255,7 +259,7 @@ finna.layout = (function finnaLayout() {
       var dropdownToggle = $('.type-dropdown .dropdown-toggle');
 
       $('input[name=type]:hidden').val($(this).siblings().val());
-      dropdownToggle.find('span').text($(this).text());
+      dropdownToggle.find('span:not(.icon)').text($(this).text());
       dropdownToggle.attr('aria-label', ($(this).text()));
       dropdownToggle.dropdown('toggle');
       dropdownToggle.focus();
@@ -323,12 +327,6 @@ finna.layout = (function finnaLayout() {
         }
 
         $(this).nextAll('.condensed-collapse-data').first().slideToggle(120, 'linear', onSlideComplete);
-
-        var icon = $(this).find('.condensed-body > i');
-        if (icon.length === 0) {
-          icon = $(this).find('.condensed-col-title > i');
-        }
-        icon.toggleClass('fa-arrow-right').toggleClass('fa-arrow-down');
       }
     });
   }
@@ -667,17 +665,17 @@ finna.layout = (function finnaLayout() {
     $('.filters-toggle').on('click', function filterToggleClicked() {
       var button = $(this);
       var filters = button.closest('.finna-filters').find('.filters');
+      button.toggleClass('open');
 
-      function setState(setHidden, arrowClass, text) {
+      function setState(setHidden, text) {
         filters.toggleClass('hidden', setHidden);
-        button.find('.fa').attr('class', arrowClass);
         button.find('.toggle-text').html(VuFind.translate(text));
       }
 
       if (filters.hasClass('hidden')) {
-        setState(false, 'fa fa-arrow-up', 'hide_filters');
+        setState(false, 'hide_filters');
       } else {
-        setState(true, 'fa fa-arrow-down', 'show_filters');
+        setState(true, 'show_filters');
       }
     });
   }

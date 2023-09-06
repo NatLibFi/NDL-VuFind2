@@ -35,6 +35,8 @@ use League\CommonMark\Parser\Block\BlockStartParserInterface;
 use League\CommonMark\Parser\Cursor;
 use League\CommonMark\Parser\MarkdownParserStateInterface;
 
+use function strlen;
+
 /**
  * Custom element closing tag block start parser
  *

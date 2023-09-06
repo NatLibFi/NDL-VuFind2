@@ -43,6 +43,10 @@ use VuFind\ILS\Logic\Holds;
 use VuFind\ILS\Logic\ItemStatus;
 use VuFind\Session\Settings as SessionSettings;
 
+use function count;
+use function in_array;
+use function is_array;
+
 /**
  * "Get Item Status" AJAX handler
  *
@@ -571,7 +575,7 @@ class GetItemStatuses extends AbstractBase implements
         }
 
         // In order to detect IDs missing from the status response, create an
-        // array with a key for every requested ID.  We will clear keys as we
+        // array with a key for every requested ID. We will clear keys as we
         // encounter IDs in the response -- anything left will be problems that
         // need special handling.
         $missingIds = array_flip($ids);

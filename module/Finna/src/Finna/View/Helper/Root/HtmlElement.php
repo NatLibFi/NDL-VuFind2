@@ -29,6 +29,9 @@
 
 namespace Finna\View\Helper\Root;
 
+use function in_array;
+use function strlen;
+
 /**
  * HtmlElement helper
  *

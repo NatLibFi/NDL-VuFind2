@@ -1,0 +1,29 @@
+<?php /* Global context Finna icons only */
+
+// Set up Finna icons
+$list = [
+    'record-next',
+    'record-prev',
+    'show-less',
+    'show-more',
+    'warning',
+    // 3D
+    'model-3d',
+    // Feed
+    'feed-pause',
+    'feed-play',
+    // Map
+    'map-expand',
+    'map-collapse',
+    'map-remove',
+    'map-narrow',
+    'map-marker',
+    // Pop-up
+    'popup-close',
+];
+
+// Zip list together
+// ala 'icon' => 'icon'
+$this->jsIcons()->addStrings(array_combine($list, $list));
+
+echo $this->jsIcons()->getJSON();

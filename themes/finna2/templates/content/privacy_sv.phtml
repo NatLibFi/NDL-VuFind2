@@ -79,7 +79,7 @@ $this->content()->setHeading($this->translate('Privacy')); ?>
   </p>
   <p>Om det finns personuppgifter som till exempel behöver rättas eller raderas i användarkommentarer om material i Finna-söktjänsten, kan begäran lämnas via formuläret i samband med kommentarerna.
   </p>
-  <?php if ($template = $this->content()->findTemplateForLng("content/Additions/privacyAdditions")): ?>
+  <?php if ($template = $this->content()->findTemplateForLng('content/Additions/privacyAdditions')): ?>
     <?=$this->render($template)?>
   <?php endif; ?>
   <h2 id="cookies">Kakor</h2>

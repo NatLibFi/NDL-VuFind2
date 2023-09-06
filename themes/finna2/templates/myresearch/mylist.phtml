@@ -11,12 +11,12 @@
   $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc($currPage) . '</li>';
 
   // Load Javascript dependencies into header:
-  $this->headScript()->appendFile("check_item_statuses.js");
+  $this->headScript()->appendFile('check_item_statuses.js');
 
   // Load Javascript only if list view parameter is NOT full:
-  if ($this->params->getOptions()->getListViewOption() != "full") {
-    $this->headScript()->appendFile("record.js");
-    $this->headScript()->appendFile("embedded_record.js");
+  if ($this->params->getOptions()->getListViewOption() != 'full') {
+    $this->headScript()->appendFile('record.js');
+    $this->headScript()->appendFile('embedded_record.js');
   }
 
   $recordTotal = $this->results->getResultTotal();
@@ -31,7 +31,7 @@
 ?>
 
 <!-- Leftside navigationbar -->
-<?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => isset($list) ? 'list' . $list['id'] : 'favorites']); ?>
+<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => isset($list) ? 'list' . $list['id'] : 'favorites']); ?>
 
 <?php foreach ($this->results->getRecommendations('side') as $current): ?>
   <?=$this->recommend($current)?>
@@ -54,11 +54,11 @@
         </div>
         <?php if ($list && $user && $list->user_id === $user->id && $list->public): ?>
           <div class="list-public-indicator">
-            <strong><i class="fa fa-public"></i> <?=$this->transEsc('public_list_indicator') ?></strong>
+            <strong><?=$this->icon('list-public') ?> <?=$this->transEsc('public_list_indicator') ?></strong>
           </div>
         <?php endif; ?>
         <?php $markdown = $list ? $this->markdown()->replaceDeprecatedTags($list->description ?? '') : ''; ?>
-        <?= $this->render('components/organisms/widgets/finna-md-editable', [
+        <?= $this->component('@@organisms/widgets/finna-md-editable', [
             'attributes' => ['class' => 'list-description'],
             'markdown' => $markdown,
             'html' => $markdown ? $this->markdown()->toHtml($markdown, false) : '',
@@ -74,17 +74,17 @@
 
             <div class="edit-tags">
               <div class="toggle" title="<?=$this->transEscAttr('edit-list-tags')?>">
-                <span><?=$this->transEsc('edit-list-tags')?> </span><i aria-hidden="true" class="fa fa-tag" aria-label="<?=$this->transEscAttr('edit-list-tags')?>"></i>
+                <span><?=$this->transEsc('edit-list-tags')?> </span><?=$this->icon('list-tag-edit') ?>
               </div>
               <div class="ui">
-                <p class="info"><i aria-hidden="true" class="fa fa-info"></i> <?=$this->transEsc('add-list-tag-note')?></p>
+                <p class="info"><?=$this->icon('info') ?> <?=$this->transEsc('add-list-tag-note')?></p>
                 <form>
                   <fieldset>
                     <legend></legend>
                     <div class="add-new">
                       <input type="text" class="new-tag" name="new-tag" value="" aria-required="true" required aria-label="<?= $this->transEscAttr('list-tags-info')?>" placeholder="<?= $this->transEscAttr('list-tags-info')?>">
                       <button type="submit" class="btn btn-primary "><?=$this->transEsc('Save')?></button>
-                      <div><i aria-hidden="true" class="fa fa-spin fa-spinner hide"></i></div>
+                      <div><?=$this->icon('spinner', 'hide') ?></div>
                     </div>
                     <div class="tags editable">
                       <div class="tag-list">
@@ -99,12 +99,12 @@
         <?php endif ?>
       <?php else: ?>
         <div class="useraccount-header">
-          <h2 class="list-title no-edit"><span><?=$this->transEsc("All Favourites")?></span></h2>
+          <h2 class="list-title no-edit"><span><?=$this->transEsc('All Favourites')?></span></h2>
         </div>
       <?php endif; ?>
     </div>
   </div>
-  <?php if ($template = $this->content()->findTemplateForLng("content/Additions/myresearch-favorites")): ?>
+  <?php if ($template = $this->content()->findTemplateForLng('content/Additions/myresearch-favorites')): ?>
     <div class="myresearch-favorites">
       <?=$this->render($template)?>
     </div>
@@ -157,7 +157,7 @@
 <?php endif; ?>
 <div class="mylist-mobile mobile-navigation visible-xs visible-sm hidden-print">
   <ul>
-    <li class="sidebar-navigation"><i class="fa fa-arrow-up"></i> <?=$this->transEsc('Your Lists')?></li>
+    <li class="sidebar-navigation"><?=$this->icon('sidebar-expand') ?> <?=$this->transEsc('Your Lists')?></li>
   </ul>
 </div>
 

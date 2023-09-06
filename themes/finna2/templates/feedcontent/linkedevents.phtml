@@ -1,13 +1,13 @@
 <!-- START of: finna - feedcontent/linked-events.phtml -->
 <div class="linked-event-content" data-lang="<?= $this->layout()->userLang; ?>">
-   <div><i class="fa fa-spinner fa-spin"></i></div>
+   <div><?=$this->icon('spinner') ?></div>
    <div class="linked-events-left-col">
       <h2 class="linked-event-title"></h2>
       <span class="linked-event-info">
-         <span class="linked-event-field hidden"><i class="fa fa-calendar"></i> <span class="linked-event-startDate"></span><span class="linked-event-endDate hidden">&nbsp;&ndash;&nbsp;</span></span>
-         <span class="linked-event-field hidden"><i class="fa fa-clock-o"></i> <span class="linked-event-startTime"></span><span class="linked-event-endTime hidden">&nbsp;&ndash;&nbsp;</span></span>
+         <span class="linked-event-field hidden"><?=$this->icon('linked-event-date') ?> <span class="linked-event-startDate"></span><span class="linked-event-endDate hidden">&nbsp;&ndash;&nbsp;</span></span>
+         <span class="linked-event-field hidden"><?=$this->icon('linked-event-time') ?> <span class="linked-event-startTime"></span><span class="linked-event-endTime hidden">&nbsp;&ndash;&nbsp;</span></span>
          <span class="linked-event-field hidden"> <span class="linked-event-price"></span></span>
-         <span class="linked-event-field hidden"><i class="fa fa-users"></i> <span class="linked-event-audience"></span></span>
+         <span class="linked-event-field hidden"><?=$this->icon('linked-event-audience') ?> <span class="linked-event-audience"></span></span>
       </span>
       <img class="linked-event-image" alt="">
       <b><div class="linked-event-short_description"></div></b>
@@ -17,12 +17,12 @@
    <div class="linked-events-right-col">
       <div id="openlayers-canvas" class="linked-events-map"></div>
       <div class="linked-event-map-info">
-         <div class="linked-event-field hidden"><i class="fa fa-map-marker"></i> <span class="linked-event-location-info"></span></div>
+         <div class="linked-event-field hidden"><?=$this->icon('linked-event-location') ?> <span class="linked-event-location-info"></span></div>
          <div class="linked-event-field hidden"><span class="linked-event-address"></span></div>
-         <div class="linked-event-field hidden"><a class="linked-event-providerLink"><i class="fa fa-home"></i> <?= $this->transEsc('linked_event_homepage');?></a></div>
-         <div class="linked-event-field hidden"><i class="fa fa-phone-square"></i> <a class="linked-event-phone"></a></div>
-         <div class="linked-event-field hidden"><i class="fa fa-envelope"></i> <a class="linked-event-email"></a></div>
-         <div class="linked-event-field hidden"><?= $this->transEsc('Organizer'); ?>: <span class="linked-event-provider"></span></div>
+         <div class="linked-event-field hidden"><a class="linked-event-providerLink"><?= $this->icon('linked-event-home') ?> <?= $this->transEsc('linked_event_homepage');?></a></div>
+         <div class="linked-event-field hidden"><?=$this->icon('linked-event-phone') ?> <a class="linked-event-phone"></a></div>
+         <div class="linked-event-field hidden"><?=$this->icon('linked-event-email') ?> <a class="linked-event-email"></a></div>
+         <div class="linked-event-field hidden"><?=$this->transEsc('Organizer'); ?>: <span class="linked-event-provider"></span></div>
       </div>
       <div class="related-events hidden"><h3><?= $this->transEsc('linked_event_related_events'); ?></h3></div>
    </div>

@@ -40,6 +40,10 @@ use VuFind\View\Helper\Root\Record;
 use VuFindHttp\HttpService;
 use VuFindSearch\ParamBag;
 
+use function in_array;
+use function is_array;
+use function strlen;
+
 /**
  * AJAX handler for getting information for a field popover.
  *

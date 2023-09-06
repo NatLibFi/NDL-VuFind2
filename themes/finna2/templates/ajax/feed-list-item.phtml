@@ -14,16 +14,16 @@
   <div class="xcal-fields">
     <?php if (!empty($xcal['startDate'])): ?>
       <?php if ($xcal['singleDay']): ?>
-        <p class="xcal"><i class="fa fa-calendar" aria-label="<?=$this->transEscAttr('xcal_date') ?>"></i> <?=$this->escapeHtml($xcal['startDate']) ?></p>
+        <p class="xcal"><div class="xcal"><?=$this->icon('feed-xcal-date') ?><span class="sr-only"><?=$this->transEscAttr('xcal_date') ?></span> <?=$this->escapeHtml($xcal['startDate']) ?></p>
         <?php if (!empty($xcal['startTime'])): ?>
-          <p class="xcal"><i class="fa fa-clock-o" aria-label="<?=$this->transEscAttr('xcal_time') ?>"></i> <?=$this->escapeHtml($xcal['startTime']) ?>&nbsp;&ndash;&nbsp;<?=$this->escapeHtml($xcal['endTime'] ?? '') ?></p>
+          <p class="xcal"><?=$this->icon('feed-xcal-time') ?><span class="sr-only"><?=$this->transEscAttr('xcal_time') ?></span> <?=$this->escapeHtml($xcal['startTime']) ?>&nbsp;&ndash;&nbsp;<?=$this->escapeHtml($xcal['endTime'] ?? '') ?></p>
         <?php endif; ?>
       <?php else: ?>
-        <p class="xcal"><i class="fa fa-calendar" aria-label="<?=$this->transEscAttr('xcal_date') ?>"></i> <?=$this->escapeHtml($xcal['startDate']) ?> &ndash;&nbsp;<?=$this->escapeHtml($xcal['endDate'])?></p>
+        <p class="xcal"><?=$this->icon('feed-xcal-date') ?><span class="sr-only"><?=$this->transEscAttr('xcal_date') ?></span> <?=$this->escapeHtml($xcal['startDate']) ?> &ndash;&nbsp;<?=$this->escapeHtml($xcal['endDate'])?></p>
       <?php endif; ?>
     <?php endif; ?>
     <?php if (!empty($xcal['location'])): ?>
-      <p class="xcal"><i class="fa fa-map-marker" aria-label="<?=$this->transEscAttr('Location') ?>"></i> <?=$this->escapeHtml($xcal['location']) ?></p>
+      <p class="xcal"><?=$this->icon('feed-xcal-location') ?><span class="sr-only"><?=$this->transEscAttr('Location') ?></span> <?=$this->escapeHtml($xcal['location']) ?></p>
     <?php endif; ?>
   </div>
 <?php endif; ?>

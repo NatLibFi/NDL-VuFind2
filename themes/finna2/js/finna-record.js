@@ -179,6 +179,7 @@ finna.record = (function finnaRecord() {
     });
     $('.record-holdings-table:not(.electronic-holdings) .holdings-container-heading').on('click', function onClickHeading(e) {
       $(this).attr('aria-expanded', function changeAria(i, attr) { return attr === 'false' ? 'true' : 'false'; });
+      $(this).toggleClass('open');
       if ($(e.target).hasClass('location-service') || $(e.target).parents().hasClass('location-service')
         || $(e.target).parents().hasClass('location-service-qrcode')
       ) {
@@ -186,12 +187,7 @@ finna.record = (function finnaRecord() {
         return;
       }
       $(this).nextUntil('.holdings-container-heading').toggleClass('collapsed');
-      if ($('.location .fa', this).hasClass('fa-arrow-down')) {
-        $('.location .fa', this).removeClass('fa-arrow-down');
-        $('.location .fa', this).addClass('fa-arrow-right');
-      } else {
-        $('.location .fa', this).removeClass('fa-arrow-right');
-        $('.location .fa', this).addClass('fa-arrow-down');
+      if ($('.holdings-container-heading', this).hasClass('open')) {
         var rows = $(this).nextUntil('.holdings-container-heading');
         checkRequestsAreValid(rows.find('.collapsedCheckRequest').removeClass('collapsedCheckRequest'), 'Hold', 'holdBlocked');
         checkRequestsAreValid(rows.find('.collapsedCheckStorageRetrievalRequest').removeClass('collapsedCheckStorageRetrievalRequest'), 'StorageRetrievalRequest', 'StorageRetrievalRequestBlocked');

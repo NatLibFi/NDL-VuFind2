@@ -30,6 +30,8 @@
 
 namespace Finna\Controller;
 
+use function in_array;
+
 /**
  * Organisation info page controller.
  *

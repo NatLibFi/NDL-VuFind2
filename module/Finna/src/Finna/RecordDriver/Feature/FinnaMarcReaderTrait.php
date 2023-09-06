@@ -31,6 +31,9 @@
 
 namespace Finna\RecordDriver\Feature;
 
+use function in_array;
+use function is_array;
+
 /**
  * Functions for reading MARC records.
  *

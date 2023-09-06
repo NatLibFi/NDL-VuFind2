@@ -29,6 +29,8 @@
 
 namespace Finna\Video\Handler;
 
+use function in_array;
+
 /**
  * Base for video services.
  *

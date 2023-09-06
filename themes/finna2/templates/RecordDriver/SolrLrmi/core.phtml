@@ -69,7 +69,7 @@
                   <?php if (in_array($material['format'], $linkedFormats)): ?>
                     <a href="<?= $this->escapeHtmlAttr($this->proxyUrl($material['url'])) ?>"
                       aria-label="<?= $this->escapeHtmlAttr($externalLinkText) ?>" target="_blank">
-                      <i class="fa <?= $isHtml ? 'fa-external-link' : 'fa-download' ?>"></i>
+                      <?=$this->icon($isHtml ? 'external-link' : 'download') ?>
                       <?= $title ?>
                     </a>
                     (<?= $isHtml
@@ -78,7 +78,7 @@
                     ?>)
                   <?php elseif ($externalLink): ?>
                     <a href="<?= $externalLink ?>" aria-label="<?= $this->escapeHtmlAttr($externalLinkText) ?>"
-                      target="_blank"><i class="fa fa-external-link"></i><?= $title ?></a>
+                      target="_blank"><?=$this->icon('external-link') ?><?= $title ?></a>
                     <?= $externalLinkAdditionalInfo ?>
                   <?php else: ?>
                     <?= $title ?>
@@ -111,11 +111,11 @@
     <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
       <?php /* Display the lists that this record is saved to */ ?>
       <div class="savedLists" id="savedLists">
-        <strong><?=$this->transEsc("Saved in")?>:</strong>
+        <strong><?=$this->transEsc('Saved in')?>:</strong>
       </div>
     <?php endif; ?>
 
-    <?php if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>
+    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/record-post-metadata')): ?>
       <div>
         <?=$this->render($template)?>
       </div>

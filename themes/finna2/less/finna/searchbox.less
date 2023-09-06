@@ -4,6 +4,16 @@
 .searchbox, .searchbox-flex {
   margin-bottom: 12px;
   margin-top: 12px;
+  .search-help-icon {
+    font-size: 26px;
+  }
+  .searchbox-home {
+    .tooltip-button.tooltip-search-pci, .tooltip-button.tooltip-search-local {
+      .search-help-icon {
+        color: #fff;
+      }
+    }
+  }
   .searchbox-home,
   .searchbox-authority-home,
   .searchbox-authority-search {
@@ -21,8 +31,11 @@
       padding: 0px 5px;
       overflow: hidden;
       text-transform: none;
+      .icon {
+        font-size: 1.5em;
+      }
       .adv-search {
-        i {
+        .icon {
           color:  mix(@body-bg, contrast(@body-bg), 95%);
         }
       }
@@ -40,8 +53,17 @@
       margin: 0px 3px;
       color:  mix(@finna-search-background, contrast(@finna-search-background), 5%);
     }
-    li > a {
-      padding: 0 5px;
+    li {
+      > a {
+        padding: 0 5px;
+        color: @pager-bg;
+        background: transparent;
+        border: none;
+        border-radius: none;
+        .icon {
+          font-size: 2em;
+        }
+      }
     }
   }
   @media (max-width: @screen-sm) {
@@ -113,8 +135,7 @@
   font-size: 1em;
   font-weight: 600;
   color: @finna-search-link-color;
-  i {
-    vertical-align: text-top;
+  .icon {
     font-size: 1.5em;
     margin-right: 5px;
   }
@@ -143,16 +164,13 @@
     button {
       background-color: transparent;
       border: none;
-      i {
+      .icon {
         cursor: pointer;
-      }
-      &.tooltip-button {
-        height: 50px;
       }
     }
     display: flex;
     align-items: center;
-    padding-left: 30px; 
+    padding-left: 30px;
     padding-right: 15px;
     @media (min-width: @screen-sm) {
       height: 50px;
@@ -185,19 +203,11 @@
       margin-left: 6px;
     }
     .disabled {
-      > a {
+      > a,
+      > a:hover,
+      > a:focus {
+        color: @gray-light;
         background-color: transparent;
-        border: 2px solid mix(@finna-search-background, contrast(@finna-search-background), 50%);
-        > .fa {
-          color: mix(@finna-search-background, contrast(@finna-search-background), 50%);
-        }
-      }
-    }
-    li > a {
-      font-size: 20px;
-      border-radius: 50%;
-      .fa {
-        color: white;
       }
     }
   }

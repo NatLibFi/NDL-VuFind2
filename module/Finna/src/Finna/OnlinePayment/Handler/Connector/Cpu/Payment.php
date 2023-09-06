@@ -41,6 +41,9 @@
 
 namespace Finna\OnlinePayment\Handler\Connector\Cpu;
 
+use function count;
+use function intval;
+
 /**
  * Payment data to be sent to CPU payment gateway.
  *

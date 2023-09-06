@@ -29,6 +29,8 @@
 
 namespace Finna\RecordDriver;
 
+use function is_array;
+
 /**
  * Model for Forward authority records in Solr.
  *

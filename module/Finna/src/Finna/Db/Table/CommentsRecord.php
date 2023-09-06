@@ -34,6 +34,8 @@ use VuFind\Db\Row\RowGateway;
 use VuFind\Db\Table\Gateway;
 use VuFind\Db\Table\PluginManager;
 
+use function in_array;
+
 /**
  * Table Definition for CommentsRecord link table.
  *

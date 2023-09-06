@@ -16,13 +16,13 @@
       <p><?=$this->escapeHtml($summary)?></p>
     <?php endif; ?>
           <?php /* Display qrcode if appropriate: */ ?>
-      <?php $QRCode = $this->record($this->driver)->getQRCode("core"); ?>
+      <?php $QRCode = $this->record($this->driver)->getQRCode('core'); ?>
       <?php if ($QRCode): ?>
         <div class="visible-print inline-block"><img alt="<?=$this->transEsc('QR Code')?>" class="qrcode" src="<?=$this->escapeHtmlAttr($QRCode);?>"></div>
       <?php endif; ?>
     <?php /* Display the lists that this record is saved to */ ?>
     <div class="savedLists" id="savedLists">
-      <strong><?=$this->transEsc("Saved in")?>:</strong>
+      <strong><?=$this->transEsc('Saved in')?>:</strong>
     </div>
   </div>
 </div>

@@ -6,8 +6,20 @@
     margin-bottom: 2px;
     transition: background .1s linear;
     background: rgba(100,100,100,0.04);
+    .icon.condensed-expand {
+        display: inline-block;
+      }
+    .icon.condensed-collapse {
+        display: none;
+      }
     &.open {
         background: @body-bg;
+        .icon.condensed-expand {
+            display: none;
+        }
+        .icon.condensed-collapse {
+            display: inline-block;
+        }
     }
     &:first-child {
         padding-top: 6px;
@@ -44,11 +56,10 @@
                 background: transparent;
         }
         .condensed-body {
-            .fa-arrow-right,
-            .fa-arrow-down {
+            .icon.condensed-expand, .icon.condensed-collapse {
                 font-size: 1.2em;
-                margin-left: -24px;
-                margin-right: 5px;
+                margin-left: -1.2em;
+                line-height: 1em;
                 color: @gray-light;
             }
         }

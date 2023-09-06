@@ -31,6 +31,8 @@ namespace FinnaTest\RecordDriver;
 
 use Finna\RecordDriver\SolrQdc;
 
+use function is_callable;
+
 /**
  * SolrQdc Institutional Repository Test Class
  *

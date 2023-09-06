@@ -33,6 +33,9 @@
 
 namespace Finna\RecordDriver;
 
+use function count;
+use function in_array;
+
 /**
  * Model for EAD3 records in Solr.
  *
@@ -86,14 +89,14 @@ class SolrEad3 extends SolrEad
     public const ALTFORM_FORMAT = 'format';
     public const ALTFORM_ACCESS = 'access';
     public const ALTFORM_ONLINE = 'online';
-    public const ALTFORM_ORIGINAL = "original";
+    public const ALTFORM_ORIGINAL = 'original';
     public const ALTFORM_CONDITION = 'condition';
     public const ALTFORM_IMAGE_SIZE = 'imageSize';
     public const ALTFORM_IMAGE_AREA = 'imageArea';
     public const ALTFORM_IMAGE_TYPE = 'imageType';
     public const ALTFORM_MICROFILM_COPY_TYPE = 'microfilmCopyType';
     public const ALTFORM_MICROFILM_SERIES = 'microfilmSeries';
-    public const ALTFORM_MAP_SCALE = "mapScale";
+    public const ALTFORM_MAP_SCALE = 'mapScale';
 
     // Altformavail label map
     public const ALTFORM_MAP = [
@@ -1336,7 +1339,11 @@ class SolrEad3 extends SolrEad
         }
         $desc = $this->getAccessRestrictions();
         if ($desc && count($desc)) {
-            $rights['description'] = $desc[0];
+            $description = [];
+            foreach ($desc as $p) {
+                $description[] = (string)$p;
+            }
+            $rights['description'] = $description;
         }
 
         return isset($rights['copyright']) || isset($rights['description'])
@@ -1355,7 +1362,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get all subject headings associated with this record.  Each heading is
+     * Get all subject headings associated with this record. Each heading is
      * returned as an array of chunks, increasing from least specific to most
      * specific.
      *
@@ -1430,42 +1437,41 @@ class SolrEad3 extends SolrEad
     public function getRelatedPlacesExtended($include = [], $exclude = ['aihe'])
     {
         $record = $this->getXmlRecord();
-        if (!isset($record->controlaccess->geogname)) {
-            return [];
-        }
 
         $languageResult = $languageResultDetail = $result = $resultDetail = [];
         $languages = $this->preferredLanguage
             ? $this->mapLanguageCode($this->preferredLanguage)
             : [];
 
-        foreach ($record->controlaccess->geogname as $name) {
-            $attr = $name->attributes();
-            $relator = (string)$attr->relator;
-            if (!empty($include) && !in_array($relator, $include)) {
-                continue;
-            }
-            if (!empty($exclude) && in_array($relator, $exclude)) {
-                continue;
-            }
-            $parts = [];
-            foreach ($name->part ?? [] as $place) {
-                if ($p = trim((string)$place)) {
-                    $parts[] = $p;
+        foreach ($record->controlaccess as $controlaccess) {
+            foreach ($controlaccess->geogname as $name) {
+                $attr = $name->attributes();
+                $relator = (string)$attr->relator;
+                if (!empty($include) && !in_array($relator, $include)) {
+                    continue;
                 }
-            }
-            if ($parts) {
-                $part = implode(', ', $parts);
-                $data = ['data' => $part, 'detail' => $relator];
-                if (
-                    $attr->lang && in_array((string)$attr->lang, $languages)
-                    && !in_array($part, $languageResult)
-                ) {
-                    $languageResultDetail[] = $data;
-                    $languageResult[] = $part;
-                } elseif (!in_array($part, $result)) {
-                    $resultDetail[] = $data;
-                    $result[] = $part;
+                if (!empty($exclude) && in_array($relator, $exclude)) {
+                    continue;
+                }
+                $parts = [];
+                foreach ($name->part ?? [] as $place) {
+                    if ($p = trim((string)$place)) {
+                        $parts[] = $p;
+                    }
+                }
+                if ($parts) {
+                    $part = implode(', ', $parts);
+                    $data = ['data' => $part, 'detail' => $relator];
+                    if (
+                        $attr->lang && in_array((string)$attr->lang, $languages)
+                        && !in_array($part, $languageResult)
+                    ) {
+                        $languageResultDetail[] = $data;
+                        $languageResult[] = $part;
+                    } elseif (!in_array($part, $result)) {
+                        $resultDetail[] = $data;
+                        $result[] = $part;
+                    }
                 }
             }
         }
@@ -1962,9 +1968,9 @@ class SolrEad3 extends SolrEad
         $record = $this->getXmlRecord();
 
         $topics = [];
-        if (isset($record->controlaccess->subject)) {
+        foreach ($record->controlaccess as $controlaccess) {
             foreach ([true, false] as $obeyPreferredLanguage) {
-                foreach ($record->controlaccess->subject as $subject) {
+                foreach ($controlaccess->subject as $subject) {
                     $attr = $subject->attributes();
                     if (
                         $topic = $this->getDisplayLabel(
@@ -2016,27 +2022,36 @@ class SolrEad3 extends SolrEad
      *
      * @return array
      */
-    protected function getOtherRelatedMaterial()
+    public function getOtherRelatedMaterial()
     {
         $xml = $this->getXmlRecord();
-        $result = [];
-        if (isset($xml->relatedmaterial)) {
-            foreach ($xml->relatedmaterial as $material) {
-                $texts = $this->getDisplayLabel(
-                    $material->p,
-                    'ref'
-                );
-                $text = $texts[0] ?? '';
-                $url = (string)$material->attributes()->href ?? '';
-                if ($this->urlBlocked($url, $text)) {
-                    $url = '';
+        $results = $localeResults = [];
+        foreach ($xml->relatedmaterial as $material) {
+            foreach ($material->p as $p) {
+                $langP = $this->detectNodeLanguage($p);
+                if ($text = trim((string)$p)) {
+                    $results[] = ['text' => $text, 'url' => ''];
+                    if ($langP['preferred'] ?? false) {
+                        $localeResults[] = ['text' => $text, 'url' => ''];
+                    }
                 }
-                if ($text || $url) {
-                    $result[] = ['text' => $text, 'url' => $url];
+                foreach ($p->ref as $ref) {
+                    $text = trim((string)$ref);
+                    $url = (string)($ref->attributes()->href ?? '');
+                    if ($this->urlBlocked($url, $text)) {
+                        $url = '';
+                    }
+                    if ($text || $url) {
+                        $results[] = ['text' => $text ?: $url, 'url' => $url];
+                        $lang = $this->detectNodeLanguage($ref);
+                        if (($lang['preferred'] ?? false) || ($langP['preferred'] ?? false)) {
+                            $localeResults[] = ['text' => $text ?: $url, 'url' => $url];
+                        }
+                    }
                 }
             }
         }
-        return $result;
+        return $localeResults ?: $results;
     }
 
     /**

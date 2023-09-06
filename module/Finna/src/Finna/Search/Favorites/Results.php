@@ -35,6 +35,8 @@ use VuFind\Db\Table\UserResource as UserResourceTable;
 use VuFind\Record\Loader;
 use VuFindSearch\Service as SearchService;
 
+use function intval;
+
 /**
  * Search Favorites Results
  *

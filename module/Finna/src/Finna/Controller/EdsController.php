@@ -29,6 +29,8 @@
 
 namespace Finna\Controller;
 
+use function count;
+
 /**
  * EDS Controller
  *

@@ -1,4 +1,4 @@
-/*global VuFind, finna, setupQRCodeLinks*/
+/*global VuFind, finna */
 finna.common = (function finnaCommon() {
   let cookieSettings = {
     path: '/',
@@ -27,7 +27,7 @@ finna.common = (function finnaCommon() {
   function initQrCodeLink(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
-    setupQRCodeLinks(holder);
+    VuFind.setupQRCodeLinks(holder);
 
     // Reposition the dropdown in location service to escape any truncated div:
     holder.find('.dropdown.location-service-qrcode').on('shown.bs.dropdown', function positionDropdown() {
@@ -39,6 +39,18 @@ finna.common = (function finnaCommon() {
         position: 'fixed'
       });
     });
+  }
+
+  /**
+   * Initialize result page scripts.
+   *
+   * @param {string|JQuery} container
+   */
+  function initResultScripts(container) {
+    finna.layout.initTruncate();
+    finna.layout.initImagePaginators();
+    finna.itemStatus.initDedupRecordSelection(container);
+    VuFind.initResultScripts(container);
   }
 
   function _getCookieSettings() {
@@ -74,6 +86,7 @@ finna.common = (function finnaCommon() {
         }
       );
     },
+    initResultScripts: initResultScripts,
     getCookie: getCookie,
     setCookie: setCookie,
     removeCookie: removeCookie,

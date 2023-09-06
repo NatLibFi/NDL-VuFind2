@@ -26,11 +26,11 @@
   <div class="mobile-toolbar">
     <ul class="nav nav-pills mobile-actions hidden-print">
           <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-          <li><a class="save-record-mobile" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-plus"></i> <span class="sr-only"><?=$this->transEsc('Add to favorites')?></span></a></li>
+          <li><a class="save-record-mobile" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><?=$this->icon('favorite') ?> <span class="sr-only"><?=$this->transEsc('Add to favorites')?></span></a></li>
           <?php endif; ?>
 
           <li class="dropdown dropup nav-pills mobile-sharing">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#" rel="nofollow"><i class="fa fa-bookmark"></i><span class="hidden-xs"> <?=$this->transEsc('Share') ?></span></a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" rel="nofollow"><?=$this->icon('share') ?><span class="hidden-xs"> <?=$this->transEsc('Share') ?></span></a>
             <ul class="dropdown-menu" role="menu">
               <?php if (!empty($shareUrl)): ?>
                 <?=$this->partial('record/share-buttons.phtml', ['shareUrl' => $shareUrl, 'title' => $this->driver->tryMethod('getTitle', [], '')]);?>
@@ -43,10 +43,10 @@
                 <meta property="og:image" content="<?=$this->escapeHtmlAttr($mediumThumb);?>">
                 -->
               <li class="whatsapp">
-                <span class="visible-xs"><a class="whatsapp-record" href="whatsapp://send?text=<?=urlencode($this->serverUrl() . $this->recordLinker()->getUrl($this->driver)) ?>" data-action="share/whatsapp/share" rel="nofollow"><i class="fa fa-phone"></i><span class="sr-only">Whatsapp</span></a></span>
+                <span class="visible-xs"><a class="whatsapp-record" href="whatsapp://send?text=<?=urlencode($this->serverUrl() . $this->recordLinker()->getUrl($this->driver)) ?>" data-action="share/whatsapp/share" rel="nofollow"><?=$this->icon('whatsapp', 'whatsapp-icon') ?><span class="sr-only">Whatsapp</span></a></span>
               </li>
               <?php endif; ?>
-              <li class="mail-record"><a class="mail-record-mobile" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Email')) ?>" title="<?=$this->transEsc('Email this')?>" rel="nofollow"><i class="fa fa-envelope"></i> <span class="sr-only"><?=$this->transEsc('Email this')?></span></a></li>
+              <li class="mail-record"><a class="mail-record-mobile" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Email')) ?>" title="<?=$this->transEsc('Email this')?>" rel="nofollow">?=$this->icon('email') ?> <span class="sr-only"><?=$this->transEsc('Email this')?></span></a></li>
             </ul>
           </li>
 
@@ -71,18 +71,18 @@
           <?php endif; ?>
 
           <?php if (count($this->driver->getCitationFormats()) > 0): ?>
-          <li><a class="cite-record-mobile" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Cite')) ?>" title="<?=$this->transEsc('Cite this')?>" rel="nofollow"><i class="fa fa-asterisk"></i> <span class="sr-only"><?=$this->transEsc('Cite this')?></span></a></li>
+          <li><a class="cite-record-mobile" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Cite')) ?>" title="<?=$this->transEsc('Cite this')?>" rel="nofollow"><?=$this->icon('cite') ?> <span class="sr-only"><?=$this->transEsc('Cite this')?></span></a></li>
           <?php endif; ?>
           <?php if ($cart->isActive()): ?>
             <?php $cartId = $this->driver->getSourceIdentifier() . '|' . $this->driver->getUniqueId(); ?>
             <li class="btn-bookbag-toggle" data-cart-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-cart-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
               <a class="cart-add-mobile cart-add<?php if(!$cart->contains($cartId)): ?> correct<?php endif ?>" title="<?=$this->transEsc('Add to Book Bag')?>" rel="nofollow" href="#">
-                <i class="fa fa-suitcase" aria-hidden="true"></i>
+                <?=$this->icon('cart') ?>
                 <span class="sr-only"><?=$this->transEsc('Add to Book Bag')?></span>
               </a>
               <a class="cart-remove-mobile cart-remove<?php if($cart->contains($cartId)): ?> correct<?php endif ?>" title="<?=$this->transEsc('Remove from Book Bag')?>" rel="nofollow" href="#">
-                <i class="fa fa-suitcase" aria-hidden="true"></i>
-                <i class="fa fa-close" aria-hidden="true"></i>
+                <?=$this->icon('cart') ?>
+                <?=$this->icon('cart-remove', 'cart-remove-mobile-icon') ?>
                 <span class="sr-only"><?=$this->transEsc('Remove from Book Bag')?></span>
                 <div class="blinker"></div>
               </a>

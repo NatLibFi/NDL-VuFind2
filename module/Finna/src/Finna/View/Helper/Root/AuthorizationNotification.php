@@ -32,6 +32,8 @@ namespace Finna\View\Helper\Root;
 
 use LmcRbacMvc\Service\AuthorizationService;
 
+use function in_array;
+
 /**
  * Helper class for displaying a notification for unauthorized users
  * on Primo result pages.

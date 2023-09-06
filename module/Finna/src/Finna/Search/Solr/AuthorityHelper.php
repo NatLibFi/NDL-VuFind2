@@ -29,6 +29,8 @@
 
 namespace Finna\Search\Solr;
 
+use function in_array;
+
 /**
  * Helper for Authority recommendations.
  *

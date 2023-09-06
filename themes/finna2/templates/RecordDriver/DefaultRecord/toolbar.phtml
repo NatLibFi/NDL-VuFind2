@@ -11,9 +11,9 @@
 <div class="hidden-xs">
   <ul class="nav nav-pills hidden-print" aria-label="<?=$this->transEsc('ajaxview_label_tools'); ?>">
   <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-    <li role="none"><a class="save-record" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-plus" aria-hidden="true"></i><span class="hidden-xs"> <?=$this->transEsc('Add to favorites')?></span></a></li>
+    <li role="none"><a class="save-record" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><?=$this->icon('favorite') ?><span class="hidden-xs"> <?=$this->transEsc('Add to favorites')?></span></a></li>
   <?php endif; ?>
-    <li role="none"><a class="mail-record" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Email')) ?>" title="<?=$this->transEsc('Email this')?>" rel="nofollow"><i class="fa fa-envelope" aria-hidden="true"></i><span class="hidden-xs"> <?=$this->transEsc('Email this')?></span></a></li>
+    <li role="none"><a class="mail-record" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Email')) ?>" title="<?=$this->transEsc('Email this')?>" rel="nofollow"><?=$this->icon('email') ?><span class="hidden-xs"> <?=$this->transEsc('Email this')?></span></a></li>
   <?php $exportFormats = $this->export()->getFormatsForRecord($this->driver); ?>
   <?php if(count($exportFormats) > 0): ?>
     <li role="none" class="dropdown">
@@ -33,13 +33,13 @@
     </li>
   <?php endif; ?>
   <?php if (count($this->driver->getCitationFormats()) > 0): ?>
-    <li role="none"><a class="cite-record" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Cite')) ?>" title="<?=$this->transEsc('Cite this')?>" rel="nofollow"><i class="fa fa-asterisk" aria-hidden="true"></i><span class="hidden-xs"> <?=$this->transEsc('Cite this')?></span></a></li>
+    <li role="none"><a class="cite-record" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Cite')) ?>" title="<?=$this->transEsc('Cite this')?>" rel="nofollow"><?=$this->icon('cite') ?><span class="hidden-xs"> <?=$this->transEsc('Cite this')?></span></a></li>
   <?php endif; ?>
-  <li role="none" class="hidden-xs hidden-sm"><span><a href="#" data-trigger-print><i class="fa fa-print" aria-hidden="true"></i> <?=$this->transEsc('Print')?></a></span></li>
-  <?php $QRCode = $this->record($this->driver)->getQRCode("core"); ?>
+  <li role="none" class="hidden-xs hidden-sm"><span><a href="#" data-trigger-print><?=$this->icon('print') ?> <?=$this->transEsc('Print')?></a></span></li>
+  <?php $QRCode = $this->record($this->driver)->getQRCode('core'); ?>
   <?php if($QRCode): ?>
   <li role="none" class="dropdown">
-    <a class="dropdown-toggle qrcodeLink" data-toggle="dropdown" href="<?=$this->escapeHtmlAttr($QRCode);?>" rel="nofollow"><i class="fa fa-qr-code" aria-hidden="true"></i><span class="hidden-xs"> <?=$this->transEsc('QR Code') ?></span></a>
+    <a class="dropdown-toggle qrcodeLink" data-toggle="dropdown" href="<?=$this->escapeHtmlAttr($QRCode);?>" rel="nofollow"><?=$this->icon('qrcode') ?></i><span class="hidden-xs"> <?=$this->transEsc('QR Code') ?></span></a>
     <ul class="dropdown-menu qrcode" role="menu">
       <li class="text-center">
         <script type="text/template" class="qrCodeImgTag">
@@ -55,7 +55,7 @@
     </li>
   <?php endif; ?>
   <?php if ($this->permission()->allowDisplay('access.finna.StaffUiLink') && ($staffLink = $this->recordLinker()->getStaffUiUrl($this->driver))): ?>
-    <li role="none"><a class="staff-ui-link" href="<?=$this->escapeHtmlAttr($staffLink) ?>" title="<?=$this->transEsc('Staff UI')?>" rel="nofollow" target="_blank"><i class="fa fa-user" aria-hidden="true"></i><span class="hidden-xs"> <?=$this->transEsc('Staff UI')?></span></a></li>
+    <li role="none"><a class="staff-ui-link" href="<?=$this->escapeHtmlAttr($staffLink) ?>" title="<?=$this->transEsc('Staff UI')?>" rel="nofollow" target="_blank"><?=$this->icon('staff-link') ?><span class="hidden-xs"> <?=$this->transEsc('Staff UI')?></span></a></li>
   <?php endif; ?>
   <?php if ($template = $this->content()->findTemplateForLng('content/Additions/record-toolbar-tools')): ?>
     <?=$this->render($template)?>

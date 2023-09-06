@@ -4,7 +4,7 @@
  * Advanced Dummy ILS Driver -- Returns sample values based on Solr index.
  *
  * Note that some sample values (holds, transactions, fines) are stored in
- * the session.  You can log out and log back in to get a different set of
+ * the session. You can log out and log back in to get a different set of
  * values.
  *
  * PHP version 8
@@ -36,6 +36,9 @@
 namespace Finna\ILS\Driver;
 
 use VuFind\Exception\ILS as ILSException;
+
+use function in_array;
+use function is_callable;
 
 /**
  * Advanced Dummy ILS Driver -- Returns sample values based on Solr index.
@@ -251,7 +254,7 @@ class Demo extends \VuFind\ILS\Driver\Demo
 
     /**
      * Helper method to determine whether or not a certain method can be
-     * called on this driver.  Required method for any smart drivers.
+     * called on this driver. Required method for any smart drivers.
      *
      * @param string $method The name of the called method.
      * @param array  $params Array of passed parameters

@@ -6,7 +6,7 @@
     foreach ($data as $index => $inscriptions) {
       echo '<span class="record-inscription">';
       foreach ($inscriptions as $item) {
-        echo "<span>";
+        echo '<span>';
         if (!empty($item['type'])) {
           echo $this->transEsc('inscription_type_' . $item['type'], null, $item['type']) . ': ';
         }
@@ -14,9 +14,9 @@
         if (!empty($item['label'])) {
           echo ' (' . $this->translate($item['label']) . ')';
         }
-        echo "</span>";
+        echo '</span>';
       }
-      echo "</span>";
+      echo '</span>';
     }
     ?>
   </div>

@@ -99,14 +99,14 @@
     $repositoryLibraryRequestAllowed = $this->record($this->driver)->repositoryLibraryRequestEnabled('holdings');
 ?>
 
-<?=($offlineMode == "ils-offline") ? $this->render('Helpers/ils-offline.phtml', ['offlineModeMsg' => 'ils_offline_holdings_message']) : ''?>
+<?=($offlineMode == 'ils-offline') ? $this->render('Helpers/ils-offline.phtml', ['offlineModeMsg' => 'ils_offline_holdings_message']) : ''?>
 
 <?php if ($user && $allowArchiveRequest): ?>
   <div class="text-right">
     <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($driver, 'ArchiveRequest'))?>" class="btn btn-primary" data-lightbox="" data-toggle="modal" data-target="order_archive_material_form" data-lightbox><?=$this->transEsc('archive_request_reserve_action')?></a>
   </div>
 <?php elseif (!$user && $allowArchiveRequest && !$holdsAllowed): ?>
-  <div class="text-right">    
+  <div class="text-right">
     <a href="<?=$this->url('myresearch-userlogin') ?>" class="btn btn-primary" data-lightbox><span><?=$this->transEsc('archive_request_login')?></span></a>
   </div>
 <?php endif; ?>
@@ -119,13 +119,13 @@
     <?php if (!$user): ?>
       <?php if (!$repositoryLibraryRequestAllowed): ?>
         <div class="pull-right">
-          <a href="?login=true&amp;catalogLogin=true&amp;target=<?=$this->escapeHtmlAttr($recordSource ?? '')?>" class="btn btn-primary login-link" data-lightbox><?=$this->transEsc("title_hold_login")?></a>
+          <a href="?login=true&amp;catalogLogin=true&amp;target=<?=$this->escapeHtmlAttr($recordSource ?? '')?>" class="btn btn-primary login-link" data-lightbox><?=$this->transEsc('title_hold_login')?></a>
         </div>
         <div class="clearfix"></div>
       <?php endif; ?>
     <?php elseif (!$user->cat_username): ?>
       <div class="alert alert-info">
-        <?=$this->translate("hold_profile_html", ['%%url%%' => $this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, 'Holdings', ['catalogLogin' => 'true']))])?>
+        <?=$this->translate('hold_profile_html', ['%%url%%' => $this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, 'Holdings', ['catalogLogin' => 'true']))])?>
       </div>
     <?php endif; ?>
   <?php endif; ?>
@@ -134,12 +134,12 @@
 <?php if (!empty($urls) || $openUrlActive || $doiActive): ?>
 <div class="table record-holdings-url-table">
   <div class="headers">
-    <span class="holdings-url-title"><?=$this->transEsc("Links")?></span>
+    <span class="holdings-url-title"><?=$this->transEsc('Links')?></span>
   </div>
   <div class="holdings-urls">
     <?php if (!empty($urls)): ?>
       <?php foreach ($urls as $current): ?>
-        <a class="holdings-url-link" href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><i class="fa fa-external-link"></i> <?=$this->transEsc('default::link_' . $current['desc'], null, $current['desc'])?> <?=$current['part'] ?? ''?></a>
+        <a class="holdings-url-link" href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><?=$this->icon('external-link') ?> <?=$this->transEsc('default::link_' . $current['desc'], null, $current['desc'])?> <?=$current['part'] ?? ''?></a>
       <?php endforeach; ?>
     <?php endif; ?>
     <?php if ($doiActive): ?>
@@ -160,7 +160,7 @@
   <div class="place-hold-wrapper text-right hidden-print">
     <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->isLoggedIn(), 'label' => 'Library Card']); ?>
     <?php if ($illRequestLink): ?>
-      <a class="expandedCheckILLRequest placeILLRequest btn btn-primary hidden-print" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getRequestUrl($illRequestLink))?>" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('ill_request_place_text') . ': ' . $this->driver->getTitle()) ?>"><?=$this->transEsc("ill_request_check_text")?></a>
+      <a class="expandedCheckILLRequest placeILLRequest btn btn-primary hidden-print" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getRequestUrl($illRequestLink))?>" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('ill_request_place_text') . ': ' . $this->driver->getTitle()) ?>"><?=$this->transEsc('ill_request_check_text')?></a>
     <?php endif; ?>
     <?php if ($holdsAllowed && !$disableTitleHold): ?>
       <?php $holdingTitleHold = $this->driver->tryMethod('getRealTimeTitleHold');
@@ -245,7 +245,7 @@
         <?php endif; ?>
       </div>
       <div class="total-container hidden-xs text-right">
-        <?=$this->transEsc("shelf_location"); ?>
+        <?=$this->transEsc('shelf_location'); ?>
       </div>
     <?php endif; ?>
   </div>
@@ -349,9 +349,9 @@
         </div>
       <?php endif; ?>
     <?php endif; ?>
-    <div class="holdings-container-heading" tabindex="0" role="button" aria-expanded="<?=$holdingsDetails == 'collapsed' ? 'false' : 'true'?>">
+    <div class="holdings-container-heading <?=$holdingsDetails == 'collapsed' ? '' : 'open'?>" tabindex="0" role="button" aria-expanded="<?=$holdingsDetails == 'collapsed' ? 'false' : 'true'?>">
       <div class="location">
-        <i class="fa fa-arrow-<?=$holdingsDetails == 'collapsed' ? 'right' : 'down'?>" aria-hidden="true"></i>
+        <?=$this->icon('holdings-expand', 'expand') ?><?=$this->icon('holdings-collapse', 'collapse') ?>
         <?php $locationText = $this->transEscWithPrefix('location_', $holding['location']); ?>
         <?php if ($holding['locationhref'] ?? false): ?>
           <a href="<?=$holding['locationhref']?>" target="_blank"><?=$locationText?></a>
@@ -368,14 +368,14 @@
           <?=$this->callnumber()->callnumber($recordSource, $this->driver->getFullTitle(), $data['callnumber'], $data['collection'], $data['location'], $this->layout()->userLang, 'record', $data, !$branchesActive)?>
         <?php endforeach; ?>
         <?php if ($holdsAllowed && isset($holdLinksLocation[$holding['location']])): ?>
-          <a class="expandedCheckRequest inlineblock placehold btn btn-primary hidden-print" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getRequestUrl($holdLinksLocation[$holding['location']]))?>" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('request_place_text') . $dialogTitle); ?>"><?=$this->transEsc("request_place_text")?></a>
+          <a class="expandedCheckRequest inlineblock placehold btn btn-primary hidden-print" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getRequestUrl($holdLinksLocation[$holding['location']]))?>" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('request_place_text') . $dialogTitle); ?>"><?=$this->transEsc('request_place_text')?></a>
         <?php endif; ?>
       </div>
     </div>
     <div class="clearfix"></div>
     <?php if (isset($holding['items'][0]['detailsGroupKey'])): ?>
       <div class="<?=$this->escapeHtmlAttr($holdingsDetails)?>GetDetails <?=$this->escapeHtmlAttr($holdingsDetails)?> hidden" data-key="<?=$this->escapeHtmlAttr($holding['items'][0]['detailsGroupKey'])?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
-        <i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('loading_ellipsis')?>
+        <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
       </div>
     <?php endif; ?>
     <?php if (!$this->holdings()->showDetailsAfterLocationGroup()): ?>
@@ -389,7 +389,7 @@
     <?php endif; ?>
     <?php if (!empty($holding['purchase_history'])): ?>
       <div class="ils-purchase-history <?=$holdingsDetails?>">
-        <div class="title"><?=$this->transEsc("Most Recent Received Issues")?>:</div>
+        <div class="title"><?=$this->transEsc('Most Recent Received Issues')?>:</div>
         <div class="history">
           <?php foreach ($holding['purchase_history'] as $current): ?>
             <?=$this->escapeHtml($current['issue'])?><br>
@@ -416,7 +416,7 @@
 <?php if (is_array($history) && !empty($history)): ?>
 <table class="table record-holdings-table">
   <tr>
-    <th class="headers"><span class="holdings-title"><?=$this->transEsc("Most Recent Received Issues")?></span></th>
+    <th class="headers"><span class="holdings-title"><?=$this->transEsc('Most Recent Received Issues')?></span></th>
   </tr>
   <?php foreach ($history as $row): ?>
     <tr><td><?=$this->escapeHtml($row['issue'])?></td></tr>

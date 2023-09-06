@@ -32,6 +32,10 @@
 
 namespace Finna\RecordDriver;
 
+use function array_slice;
+use function count;
+use function in_array;
+
 /**
  * Model for Qualified Dublin Core records in Solr.
  *
@@ -66,11 +70,11 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
     ];
 
     /**
-     * Image mime types
+     * Image media types
      *
      * @var array
      */
-    protected $imageMimeTypes = [
+    protected $imageMediaTypes = [
         'image/jpeg' => 'jpg',
         'image/png' => 'png',
     ];
@@ -239,17 +243,14 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
         foreach ($xml->file as $node) {
             $attributes = $node->attributes();
             $type = (string)($attributes->type ?? '');
+            $url = (string)($attributes->href ?? $node);
             if (
-                $type
-                && !in_array($type, array_keys($this->imageMimeTypes))
+                ($type && !in_array($type, array_keys($this->imageMediaTypes)))
+                || (!$type && !preg_match('/\.(jpg|png)$/i', $url))
             ) {
                 continue;
             }
-            $url = (string)($attributes->href ?? $node);
-            if (
-                !preg_match('/\.(jpg|png)$/i', $url)
-                || !$this->isUrlLoadable($url, $this->getUniqueID())
-            ) {
+            if (!$this->isUrlLoadable($url, $this->getUniqueID())) {
                 continue;
             }
 
@@ -266,7 +267,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
                         $currentHiRes = [
                             'data' => [],
                             'url' => $url,
-                            'format' => $this->imageMimeTypes[$type] ?? 'jpg',
+                            'format' => $this->imageMediaTypes[$type] ?? 'jpg',
                         ];
                         $highResolution[$size][] = $currentHiRes;
                     }
@@ -303,16 +304,13 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
                 if ((string)$attributes->bundle !== 'ORIGINAL') {
                     continue;
                 }
-                $mimes = ['application/pdf'];
-                if (isset($attributes->type)) {
-                    if (!in_array($attributes->type, $mimes)) {
-                        continue;
-                    }
-                }
                 $url = isset($attributes->href)
                     ? (string)$attributes->href : (string)$node;
-
-                if (!preg_match('/\.(pdf)$/i', $url)) {
+                $type = trim((string)$attributes->type);
+                if (
+                    ($type && $type !== 'application/pdf')
+                    || (!$type && !preg_match('/\.pdf$/i', $url))
+                ) {
                     continue;
                 }
                 $urls['small'] = $urls['large'] = $url;
@@ -609,7 +607,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
      *
      * @param mixed $data Raw data representing the record; Record Model
      * objects are normally constructed by Record Driver objects using data
-     * passed in from a Search Results object.  The exact nature of the data may
+     * passed in from a Search Results object. The exact nature of the data may
      * vary depending on the data source -- the important thing is that the
      * Record Driver + Search Results objects work together correctly.
      *

@@ -40,6 +40,11 @@ use Laminas\Mvc\Controller\Plugin\Url;
 use VuFind\Cache\Manager as CacheManager;
 use VuFindTheme\View\Helper\ImageLink;
 
+use function in_array;
+use function is_object;
+use function is_string;
+use function strlen;
+
 /**
  * Feed service
  *

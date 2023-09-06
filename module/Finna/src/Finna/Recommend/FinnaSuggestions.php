@@ -31,6 +31,8 @@ namespace Finna\Recommend;
 
 use Laminas\Http\Client;
 
+use function in_array;
+
 /**
  * FinnaSuggestions Recommendations Module
  *
@@ -202,7 +204,7 @@ class FinnaSuggestions implements
     }
 
     /**
-     * Called after the Search Results object has performed its main search.  This
+     * Called after the Search Results object has performed its main search. This
      * may be used to extract necessary information from the Search Results object
      * or to perform completely unrelated processing.
      *

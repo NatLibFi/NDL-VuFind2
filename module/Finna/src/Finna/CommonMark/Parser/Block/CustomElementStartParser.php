@@ -36,6 +36,9 @@ use League\CommonMark\Parser\Cursor;
 use League\CommonMark\Parser\MarkdownParserStateInterface;
 use League\CommonMark\Util\RegexHelper;
 
+use function in_array;
+use function strlen;
+
 /**
  * Custom element block start parser
  *

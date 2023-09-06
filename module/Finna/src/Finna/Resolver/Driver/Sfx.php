@@ -62,7 +62,7 @@ class Sfx extends \VuFind\Resolver\Driver\Sfx
             return $records;
         }
 
-        $root = $xml->xpath("//ctx_obj_targets");
+        $root = $xml->xpath('//ctx_obj_targets');
         $xml = $root[0];
         foreach ($xml->children() as $target) {
             if (

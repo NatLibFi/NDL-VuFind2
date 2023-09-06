@@ -45,6 +45,8 @@ use VuFind\I18n\Translator\TranslatorAwareTrait;
 use VuFind\Mailer\Mailer;
 use VuFind\Service\CurrencyFormatter;
 
+use function count;
+
 /**
  * Online payment service
  *

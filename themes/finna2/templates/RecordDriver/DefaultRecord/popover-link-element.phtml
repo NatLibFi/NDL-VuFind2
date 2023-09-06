@@ -15,7 +15,7 @@ $aAttributes->add('title', $this->title ?: $this->translate('field_info_link_tit
 $additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-additional-data\">{$this->additionalDataHtml}</span>" : '';
 ?>
 <div class="inline-linked-field" data-ids="<?=$this->escapeHtmlAttr(json_encode($this->ids))?>" data-auth-ids="<?=$this->escapeHtmlAttr(json_encode($this->authIds))?>" data-type="<?=$this->escapeHtmlAttr($this->type)?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
-  <a<?=$aAttributes?>><span class="field-label"><?=$this->escapeHtml($this->label)?></span> <i class="fa fa-caret-down expand" aria-hidden="true"></i><i class="fa fa-caret-up collapse" aria-hidden="true"></i></a><?=$additionalDataElem?>
+  <a<?=$aAttributes?>><span class="field-label"><?=$this->escapeHtml($this->label)?></span> <?=$this->icon('popover-expand', 'expand') ?><?=$this->icon('popover-collapse', 'collapse') ?></a><?=$additionalDataElem?>
   <?php if (!empty($this->description)): ?>
     <span class="authority-description"><?="({$this->escapeHtml($this->description)})"?></span>
   <?php endif; ?>
@@ -27,14 +27,14 @@ $additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-a
       <?php endforeach; ?>
       <?php if ($this->ids): ?>
         <div class="dynamic-content">
-          <i class="fa fa-spin fa-spinner" aria-hidden="true"></i>
+          <?=$this->icon('spinner') ?>
         </div>
         <?php if ($this->externalLinks): ?>
           <div class="popover-external-links">
             <?php foreach ($this->externalLinks as $i => $link): ?>
               <?=($i > 0) ? '<br>' : ''?>
               <a href="<?=$this->escapeHtmlAttr($link['url'])?>" target="_blank" aria-label="<?=$this->transEscAttr($link['title'])?> (<?=$this->transEscAttr('external_link')?>; <?=$this->transEscAttr('Open in a new window')?>)">
-                <i class="fa fa-external-link"></i> <?=$this->transEsc($link['text'])?>
+                <?=$this->icon('external-link') ?> <?=$this->transEsc($link['text'])?>
               </a>
               <?php if ($link['displayId']): ?>
                 <br>

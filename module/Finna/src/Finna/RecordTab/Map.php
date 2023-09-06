@@ -31,6 +31,9 @@
 
 namespace Finna\RecordTab;
 
+use function count;
+use function in_array;
+
 /**
  * Map tab
  *

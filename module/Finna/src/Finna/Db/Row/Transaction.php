@@ -32,6 +32,8 @@ namespace Finna\Db\Row;
 use Finna\Db\Table\Transaction as TransactionTable;
 use Laminas\Db\ResultSet\ResultSetInterface;
 
+use function in_array;
+
 /**
  * Row definition for online payment transaction
  *

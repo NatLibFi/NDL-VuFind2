@@ -33,6 +33,8 @@ use Laminas\Config\Config;
 use Laminas\EventManager\EventManager;
 use Laminas\Session\Container;
 
+use function in_array;
+
 /**
  * Resource Entitlement Management System (REMS) service
  *

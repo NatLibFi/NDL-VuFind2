@@ -1,5 +1,27 @@
-// Minimal custom element styling for Markdown preview.
+.finna-truncate {
+  overflow: hidden;
+  &.height-based > :last-child {
+    margin-bottom: 0;
+  }
+}
 
+// Default to legacy Finna truncate more and less links appearance.
+.finna-truncate-btn-wrapper-default {
+  .more-btn,
+  .less-btn {
+    cursor: pointer;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border: none;
+    background-color: transparent;
+    padding: 0;
+  }
+}
+
+// Minimal custom element styling for Markdown preview.
 finna-truncate {
   display: block;
   outline: 1px dotted @gray-lighter;

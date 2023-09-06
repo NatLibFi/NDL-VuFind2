@@ -34,6 +34,8 @@ namespace Finna\Search\Factory;
 use Finna\Search\UrlQueryHelper;
 use VuFind\Search\Base\Params;
 
+use function is_callable;
+
 /**
  * Factory to build UrlQueryHelper.
  *

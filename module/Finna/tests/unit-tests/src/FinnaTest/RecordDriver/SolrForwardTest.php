@@ -31,6 +31,8 @@ namespace FinnaTest\RecordDriver;
 
 use Finna\RecordDriver\SolrForward;
 
+use function is_callable;
+
 /**
  * SolrForward Record Driver Test Class
  *
@@ -55,18 +57,18 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             [
                 [
-                    "tag" => "elotekija",
-                    "name" => "Juha Kuoma",
-                    "role" => "drt",
-                    "id" => "elonet_henkilo_1",
-                    "type" => "elonet_henkilo",
-                    "roleName" => "",
-                    "description" => "",
-                    "uncredited" => "",
-                    "idx" => 1,
-                    "tehtava" => "ohjaus",
-                    "finna-activity-code" => "D02",
-                    "relator" => "D02",
+                    'tag' => 'elotekija',
+                    'name' => 'Juha Kuoma',
+                    'role' => 'drt',
+                    'id' => 'elonet_henkilo_1',
+                    'type' => 'elonet_henkilo',
+                    'roleName' => '',
+                    'description' => '',
+                    'uncredited' => '',
+                    'idx' => 1,
+                    'tehtava' => 'ohjaus',
+                    'finna-activity-code' => 'D02',
+                    'relator' => 'D02',
                 ],
             ],
             $driver->getNonPresenterPrimaryAuthors()

@@ -1,8 +1,4 @@
-var previous = '<button class="popup-arrow popup-left-arrow previous-record" type="button"><i class="fa fa-angle-double-left" aria-hidden="true"></i></button>';
-var next = '<button class="popup-arrow popup-right-arrow next-record" type="button"><i class="fa fa-angle-double-right" aria-hidden="true"></i></button>';
-var closeTemplate = '<button class="finna-popup close-button" title="close_translation" aria-label="close_translation">x</button>';
-var srElement = '<span class="sr-only"></span>';
-
+/*global VuFind */
 function FinnaPopup(trigger, params, id) {
   var _ = this;
   _.triggers = [];
@@ -52,7 +48,7 @@ function FinnaPopup(trigger, params, id) {
 
 /**
  * Adjusts a given src to match an embed link in popular services
- * 
+ *
  * @param {string} src
  */
 FinnaPopup.prototype.adjustEmbedLink = function adjustEmbedLink(src) {
@@ -71,7 +67,7 @@ FinnaPopup.prototype.adjustEmbedLink = function adjustEmbedLink(src) {
 
 /**
  * Adds a trigger element to popups internal array, so it can be properly found
- * 
+ *
  * @param {HTMLElement} trigger
  */
 FinnaPopup.prototype.addTrigger = function addTrigger(trigger) {
@@ -124,7 +120,7 @@ FinnaPopup.prototype.currentTrigger = function currentTrigger() {
 
 /**
  * Close a trigger and open the next one found from the internal array
- * 
+ *
  * @param {int} direction
  */
 FinnaPopup.prototype.getTrigger = function getTrigger(direction) {
@@ -153,6 +149,10 @@ FinnaPopup.prototype.checkButtons = function checkButtons() {
  * Main function to open a popup and properly display it
  */
 FinnaPopup.prototype.show = function show() {
+  const next = '<button class="popup-arrow popup-right-arrow next-record" type="button">' + VuFind.icon('record-next', 'record-next-icon') + '</button>';
+  const previous = '<button class="popup-arrow popup-left-arrow previous-record" type="button">' + VuFind.icon('record-prev', 'record-prev-icon') + '</button>';
+  const closeTemplate = '<button class="finna-popup close-button" title="close_translation" aria-label="close_translation">' + VuFind.icon('popup-close', 'popup-close-icon') + '</button>';
+  const srElement = '<span class="sr-only"></span>';
   var _ = this;
   var hasParent = typeof _.parent !== 'undefined';
   if (!hasParent) {
@@ -271,7 +271,7 @@ FinnaPopup.prototype.onPopupInit = function onPopupInit(/*trigger*/) { };
 
 /**
  * Handles the flow of opening modals
- * 
+ *
  * @param {function} open
  * @param {function} close
  */
@@ -294,7 +294,7 @@ FinnaPopup.prototype.onPopupOpen = function onPopupOpen(open, close) {
 
 /**
  * Toggles the document body scroll state
- * 
+ *
  * @param {boolean} value
  */
 FinnaPopup.prototype.toggleScroll = function toggleScroll(value) {
@@ -338,7 +338,7 @@ FinnaPopup.prototype.onPopupClose = function onPopupClose() {
 
 /**
  * Way to keep users tab inside modal elements
- * 
+ *
  * @param {object} e
  */
 FinnaPopup.prototype.focusTrap = function focusTrap(e) {

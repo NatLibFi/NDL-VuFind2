@@ -34,6 +34,8 @@ namespace Finna\AjaxHandler;
 use Laminas\Config\Config;
 use Laminas\View\Renderer\RendererInterface;
 
+use function is_string;
+
 /**
  * Feed support trait
  *

@@ -31,6 +31,12 @@ namespace Finna\ILS\Driver;
 
 use VuFind\Exception\ILS as ILSException;
 
+use function array_key_exists;
+use function count;
+use function in_array;
+use function is_array;
+use function strlen;
+
 /**
  * III Sierra REST API driver
  *
@@ -160,8 +166,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      * method.
      * @param array $holdDetails Optional array, only passed in when getting a list
      * in the context of placing a hold; contains most of the same values passed to
-     * placeHold, minus the patron data.  May be used to limit the pickup options
-     * or may be ignored.  The driver must not add new options to the return array
+     * placeHold, minus the patron data. May be used to limit the pickup options
+     * or may be ignored. The driver must not add new options to the return array
      * based on this data or other areas of VuFind may behave incorrectly.
      *
      * @throws ILSException

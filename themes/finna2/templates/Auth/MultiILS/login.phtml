@@ -27,7 +27,7 @@
   </form>
 </div>
 <div class="login-col">
-  <i class="fa fa-info3" aria-hidden="true"></i>
+  <?=$this->icon('info', 'login-info-icon') ?>
   <div class="login-description">
     <p class="login-info">
       <?=$this->translate('login_desc_library_card_html') ?>
@@ -44,7 +44,7 @@
 </div>
   <div class="clearfix"></div>
 <?php else: ?>
-  <a href="<?=$this->escapeHtmlAttr($sessionInitiator)?>" data-lightbox-ignore><?=$this->transEsc("Institutional Login")?></a>
+  <a href="<?=$this->escapeHtmlAttr($sessionInitiator)?>" data-lightbox-ignore><?=$this->transEsc('Institutional Login')?></a>
 <?php endif; ?>
 
 <?php

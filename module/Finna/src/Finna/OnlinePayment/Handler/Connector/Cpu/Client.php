@@ -41,6 +41,8 @@
 
 namespace Finna\OnlinePayment\Handler\Connector\Cpu;
 
+use function intval;
+
 /**
  * Client example of CPU Verkkomaksu API.
  * Handles validating and sending data to eCommerce service.

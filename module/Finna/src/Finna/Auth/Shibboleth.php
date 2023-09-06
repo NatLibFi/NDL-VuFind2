@@ -32,6 +32,7 @@
 
 namespace Finna\Auth;
 
+use Laminas\Http\PhpEnvironment\Request;
 use VuFind\Auth\Shibboleth\ConfigurationLoaderInterface;
 use VuFind\Exception\Auth as AuthException;
 
@@ -58,19 +59,15 @@ class Shibboleth extends \VuFind\Auth\Shibboleth
     /**
      * Constructor
      *
-     * @param \Laminas\Session\ManagerInterface    $sessionManager      Session
-     * manager
-     * @param ConfigurationLoaderInterface         $configurationLoader Configuration
-     * loader
-     * @param \Laminas\Http\PhpEnvironment\Request $request             Http
-     * request object
-     * @param \Finna\ILS\Connection                $ils                 ILS
-     * connection
+     * @param \Laminas\Session\ManagerInterface $sessionManager      Session manager
+     * @param ConfigurationLoaderInterface      $configurationLoader Configuration loader
+     * @param Request                           $request             Http request object
+     * @param \Finna\ILS\Connection             $ils                 ILS connection
      */
     public function __construct(
         \Laminas\Session\ManagerInterface $sessionManager,
         ConfigurationLoaderInterface $configurationLoader,
-        \Laminas\Http\PhpEnvironment\Request $request,
+        Request $request,
         \Finna\ILS\Connection $ils
     ) {
         $this->sessionManager = $sessionManager;
@@ -80,10 +77,9 @@ class Shibboleth extends \VuFind\Auth\Shibboleth
     }
 
     /**
-     * Attempt to authenticate the current user.  Throws exception if login fails.
+     * Attempt to authenticate the current user. Throws exception if login fails.
      *
-     * @param \Laminas\Http\PhpEnvironment\Request $request Request object containing
-     * account credentials.
+     * @param Request $request Request object containing account credentials.
      *
      * @throws AuthException
      * @return \VuFind\Db\Row\User Object representing logged-in user.
@@ -222,9 +218,8 @@ class Shibboleth extends \VuFind\Auth\Shibboleth
      * Get a server parameter taking into account any environment variables
      * redirected by Apache mod_rewrite.
      *
-     * @param \Laminas\Http\PhpEnvironment\Request $request Request object containing
-     * account credentials.
-     * @param string                               $param   Parameter name
+     * @param Request $request Request object containing account credentials.
+     * @param string  $param   Parameter name
      *
      * @return mixed
      */

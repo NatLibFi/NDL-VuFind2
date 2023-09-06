@@ -36,6 +36,8 @@ use VuFind\Exception\RecordMissing as RecordMissingException;
 use VuFindSearch\Command\SearchCommand;
 use VuFindSearch\ParamBag;
 
+use function count;
+
 /**
  * Record loader
  *

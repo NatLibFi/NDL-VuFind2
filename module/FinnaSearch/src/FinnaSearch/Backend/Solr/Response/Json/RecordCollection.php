@@ -31,6 +31,8 @@
 
 namespace FinnaSearch\Backend\Solr\Response\Json;
 
+use function count;
+
 /**
  * Simple JSON-based record collection.
  *

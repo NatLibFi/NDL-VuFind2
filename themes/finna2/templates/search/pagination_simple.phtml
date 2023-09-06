@@ -2,7 +2,7 @@
 <?php if ($this->pageCount): ?>
   <ul class="paginationSimple">
     <?php if (isset($this->previous)): ?>
-      <li><a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->previous)?>"><span class="sr-only"><?=$this->transEsc('page_prev')?></span><i class="fa fa-arrow-alt-left"></i></a></li>
+      <li><a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->previous)?>"><span class="sr-only"><?=$this->transEsc('page_prev')?></span><?=$this->icon('pagination-prev') ?></a></li>
     <?php endif; ?>
     <li class="pagination-text">
       <?=
@@ -17,7 +17,7 @@
       ?>
     </li>
     <?php if (isset($this->next)): ?>
-      <li><a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->next)?>"><span class="sr-only"><?=$this->transEsc('page_next')?></span><i class="fa fa-arrow-alt-right"></i></a></li>
+      <li><a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->next)?>"><span class="sr-only"><?=$this->transEsc('page_next')?></span><?=$this->icon('pagination-next') ?></a></li>
     <?php endif; ?>
   </ul>
 <?php endif; ?>

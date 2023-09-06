@@ -31,6 +31,8 @@ namespace Finna\AjaxHandler;
 
 use Laminas\Mvc\Controller\Plugin\Params;
 
+use function is_array;
+
 /**
  * AJAX handler for checking that requests are valid.
  *

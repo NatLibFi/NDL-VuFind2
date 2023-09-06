@@ -39,6 +39,10 @@ use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\Log\LoggerAwareTrait;
 use VuFindHttp\HttpServiceAwareInterface;
 
+use function in_array;
+use function is_array;
+use function strval;
+
 /**
  * Class Api
  *

@@ -7,7 +7,7 @@
       <?php endforeach; ?>
   <?php endif; ?>
   <?php if (!empty($data['uncredited']['presenters'])): ?>
-    <div class="subheading"><?=$this->translate("Uncredited")?></div>
+    <div class="subheading"><?=$this->translate('Uncredited')?></div>
       <?php foreach($data['uncredited']['presenters'] as $index => $author): ?>
           <?=($index > 0 ? '<br> ' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
       <?php endforeach; ?>

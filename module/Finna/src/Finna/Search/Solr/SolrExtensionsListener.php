@@ -35,6 +35,9 @@ use Laminas\ServiceManager\ServiceLocatorInterface;
 use VuFindSearch\Query\Query;
 use VuFindSearch\Query\QueryGroup;
 
+use function in_array;
+use function is_array;
+
 /**
  * Finna Solr extensions listener.
  *
@@ -361,7 +364,7 @@ class SolrExtensionsListener
         }
         echo "\n\n";
         echo "Timing:\n";
-        echo "  Total: " . $debugInfo['timing']['time'] . "\n";
+        echo '  Total: ' . $debugInfo['timing']['time'] . "\n";
         echo "  Prepare:\n";
         foreach ($debugInfo['timing']['prepare'] ?? [] as $key => $value) {
             echo "    $key: ";

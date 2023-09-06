@@ -7,14 +7,14 @@
       <?php endforeach; ?>
     <?php endif; ?>
     <?php if (!empty($data['uncredited'])): ?>
-      <div class="subheading"><?=$this->translate("Uncredited")?></div>
+      <div class="subheading"><?=$this->translate('Uncredited')?></div>
       <?php
       foreach ($data['uncredited'] as $index => $author): ?>
         <?=($index++ > 0 ? '<br> ' : '')?><?=$this->record($this->driver)->renderTemplate('data-contributors-single.phtml', ['author' => $author, 'description' => $author['description'] ?? ''])?>
       <?php endforeach; ?>
     <?php endif; ?>
     <?php if (!empty($data['ensembles'])): ?>
-      <div class="subheading"><?=$this->translate("Ensembles")?></div>
+      <div class="subheading"><?=$this->translate('Ensembles')?></div>
       <?php
       foreach ($data['ensembles'] as $index => $author): ?>
         <?=($index++ > 0 ? '<br> ' : '')?><?=$this->record($this->driver)->renderTemplate('data-contributors-single.phtml', ['author' => $author])?>
