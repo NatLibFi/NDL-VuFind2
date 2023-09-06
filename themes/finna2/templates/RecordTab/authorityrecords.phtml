@@ -12,9 +12,6 @@
   $resultCnt = $results->getResultTotal();
   $i = 0;
   $queryHelper = $results->getUrlQuery();
-  $authorityFilter = $queryHelper->getParamArray()['lookfor'];
-  [$field, $id] = explode(':', $authorityFilter);
-  $queryHelper = $queryHelper->setSearchTerms('')->addFilter("{$field}:{$id}");
   $moreUrl = $this->url('search-results') . (string)$queryHelper;
   $moreLabel = $this->transEsc('authority_records_search_link', ['%%count%%' => $this->localizedNumber($results->getResultTotal())]);
 ?>

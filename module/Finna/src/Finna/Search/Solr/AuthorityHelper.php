@@ -29,7 +29,10 @@
 
 namespace Finna\Search\Solr;
 
+use VuFind\RecordDriver\DefaultRecord;
+
 use function in_array;
+use function is_string;
 
 /**
  * Helper for Authority recommendations.
@@ -288,27 +291,27 @@ class AuthorityHelper
     }
 
     /**
-     * Return biblio records that are linked to author.
+     * Return biblio records that are linked to an authority
      *
-     * @param string $id        Authority id
+     * @param string $id        Authority id(s)
      * @param string $field     Solr field to search by (author, topic)
-     * @param bool   $onlyCount Return only record count
-     * (does not fetch record data from index)
+     * @param bool   $onlyCount Return only record count (does not fetch record data from index)
      *
      * @return \VuFind\Search\Results|int
      */
     public function getRecordsByAuthorityId(
-        $id,
-        $field = AuthorityHelper::AUTHOR2_ID_FACET,
-        $onlyCount = false
+        string $id,
+        string $field = AuthorityHelper::AUTHOR2_ID_FACET,
+        bool $onlyCount = false
     ) {
         $query = $this->getRecordsByAuthorityQuery($id, $field);
         $results = $this->searchRunner->run(
-            ['lookfor' => $query, 'fl' => 'id'],
+            [],
             'Solr',
-            function ($runner, $params, $searchId) use ($onlyCount) {
+            function ($runner, $params, $searchId) use ($onlyCount, $query) {
                 $params->setLimit($onlyCount ? 0 : 100);
                 $params->setPage(1);
+                $params->addFilter($query);
                 $options = $params->getOptions();
                 $options->disableHighlighting();
                 $options->spellcheckEnabled(false);
@@ -318,16 +321,45 @@ class AuthorityHelper
     }
 
     /**
+     * Return identifiers for an authority record
+     *
+     * @param DefaultRecord $record Authority record
+     *
+     * @return array
+     */
+    public function getIdentifiersForAuthority(DefaultRecord $record)
+    {
+        $ids = [$record->getUniqueID()];
+        foreach ($record->tryMethod('getOtherIdentifiers', [], []) as $id) {
+            if (preg_match('/^https?:/', $id['data'])) {
+                // Never prefix http(s) url's
+                $ids[] = $id['data'];
+            } else {
+                $ids[] = '(' . $id['detail'] . ')' . $id['data'];
+            }
+        }
+        return $ids;
+    }
+
+    /**
      * Return query for fetching biblio records by authority id.
      *
-     * @param string $id    Authority id
-     * @param string $field Solr field to search by (author, topic)
+     * @param string|array $id    Authority id
+     * @param string       $field Solr field to search by (author, topic)
      *
      * @return string
      */
     public function getRecordsByAuthorityQuery($id, $field)
     {
-        return "$field:\"$id\"";
+        $escapeAndQuote = function ($s): string {
+            return '"' . addcslashes($s, '"') . '"';
+        };
+
+        if (is_string($id)) {
+            return "$field:" . $escapeAndQuote($id);
+        }
+        $ids = array_map($escapeAndQuote, $id);
+        return "$field:(" . implode(' OR ', $ids) . ')';
     }
 
     /**
@@ -376,7 +408,9 @@ class AuthorityHelper
      */
     protected function formatDisplayText($record, $role = null)
     {
-        $displayText = $record->getTitle();
+        $displayText = $record instanceof \VuFind\RecordDriver\Missing
+            ? $this->translator->translate('not_applicable')
+            : $record->getTitle();
         if ($role) {
             $role = mb_strtolower(
                 $this->translator->translate("CreatorRoles::$role")

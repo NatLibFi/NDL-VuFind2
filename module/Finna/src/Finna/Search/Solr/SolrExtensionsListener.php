@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2013-2016.
+ * Copyright (C) The National Library of Finland 2013-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -35,6 +35,7 @@ use Laminas\ServiceManager\ServiceLocatorInterface;
 use VuFindSearch\Query\Query;
 use VuFindSearch\Query\QueryGroup;
 
+use function count;
 use function in_array;
 use function is_array;
 
@@ -142,6 +143,7 @@ class SolrExtensionsListener
             }
             if ('search' === $context) {
                 $this->addGeoFilterBoost($event);
+                $this->addAuthorIdAlternatives($event);
             }
         }
         return $event;
@@ -287,6 +289,44 @@ class SolrExtensionsListener
             $sort = $params->get('sort');
             if (empty($sort) || $sort[0] == 'score desc') {
                 $params->set('sort', 'score desc, first_indexed desc');
+            }
+        }
+    }
+
+    /**
+     * Add alternative authority IDs to authority search
+     *
+     * @param EventInterface $event Event
+     *
+     * @return void
+     */
+    protected function addAuthorIdAlternatives(EventInterface $event)
+    {
+        $params = $event->getParam('command')->getSearchParameters();
+        if ($params) {
+            $filters = $params->get('fq');
+            if (null !== $filters) {
+                $loader = null;
+                $helper = null;
+                $newFilters = [];
+                foreach ($filters as $filter) {
+                    [$field, $value] = explode(':', $filter);
+                    if (AuthorityHelper::AUTHOR2_ID_FACET === $field) {
+                        $loader ??= $this->serviceLocator->get(\VuFind\Record\Loader::class);
+                        $helper ??= $this->serviceLocator->get(\Finna\Search\Solr\AuthorityHelper::class);
+                        $record = $loader->load(trim($value, '"'), 'SolrAuth', true);
+                        $identifiers = $helper->getIdentifiersForAuthority($record);
+                        if (count($identifiers) > 1) {
+                            $newFilters[] = $helper->getRecordsByAuthorityQuery(
+                                $identifiers,
+                                AuthorityHelper::AUTHOR2_ID_FACET
+                            );
+                            continue;
+                        }
+                    }
+                    $newFilters[] = $filter;
+                }
+                $params->set('fq', $newFilters);
             }
         }
     }
