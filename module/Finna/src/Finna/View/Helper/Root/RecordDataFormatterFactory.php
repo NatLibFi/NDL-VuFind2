@@ -1512,7 +1512,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             'getStudyProgramNotes',
             'data-transEsc.phtml',
             [
-                'context' => ['class' => 'recordStudyProgramNotes'],
+                'context' => ['class' => 'record-study-program-notes'],
             ]
         );
         $setTemplateLine(
