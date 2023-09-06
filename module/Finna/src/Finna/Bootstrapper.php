@@ -32,6 +32,8 @@ namespace Finna;
 
 use Laminas\Mvc\MvcEvent;
 
+use function in_array;
+
 /**
  * VuFind Bootstrapper
  *

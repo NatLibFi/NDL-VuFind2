@@ -17,15 +17,12 @@
   }
   @media (max-width: @screen-xxs) {
     & .view-options, & .view-dropdown, & .sort-button {
-      &  .dropdown > a span {
-        padding-right: 20px;
-        max-width: 72px;
+      &  .dropdown > a {
+        max-width: 150px;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
         display: inline-block;
-        height: 17px;
-        margin-bottom: -3px;
       }
     }
   }
@@ -39,14 +36,6 @@
     margin-bottom: 5px;
     margin-top: 5px;
   }
-  .pagination-container {
-    margin-right: 1rem;
-    .paginationSimple{
-      text-align:left;
-      margin-top: 5px;
-      margin-bottom: 5px;
-    }
-  }
   .sort-option-container, .limit-option-container, .view-option-container{
     display: inline-block;
   }
@@ -58,10 +47,6 @@
   .search-controls {
     text-align: right;
   }
-}
-
-.search-controls .pagination {
-  margin-top: 0px;
 }
 
 .view-options, .view-dropdown, .sort-button, .results-per-page-button, .update-location-button {
@@ -77,13 +62,8 @@
     border-radius: @border-radius-small;
     font-size: 1em;
     padding: 5px;
-
     display: inline-block;
     white-space: nowrap;
-    & span {
-      padding-right: 20px;
-      padding-left: 5px;
-    }
     &:hover, &:focus {
       text-decoration: none;
       background: @action-link-color;
@@ -130,15 +110,14 @@
 .view-option-container {
   .view-button {
     display: inline-block;
-    padding: 2px 5px;
-    & i{
+    padding: 5px;
+    & .icon{
       color: @action-link-color;
-      font-size: 1.85em;
     }
     &.selected {
       border: 2px solid @action-link-color;
       border-radius: @border-radius-small;
-      & i{
+      & .icon{
         color: @action-link-color;
       }
     }

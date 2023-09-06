@@ -32,6 +32,8 @@
 
 namespace Finna\Controller;
 
+use function in_array;
+
 /**
  * Loads feed content pages
  *

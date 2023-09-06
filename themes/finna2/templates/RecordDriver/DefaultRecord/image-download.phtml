@@ -7,7 +7,7 @@
 <div class="image-link hidden-print">
     <?php $urls = $image['urls']; ?>
     <?php if ($hiRes): ?>
-        <i aria-hidden="true" class="fa fa-download"></i>
+        <?=$this->icon('download') ?>
         <div class="dropdown">
             <button class="btn btn-default dropdown-toggle download" type="button" id="downloadMenu-<?=$index?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <?=$this->transEsc('Download the image')?> <span class="caret"></span>
@@ -23,14 +23,14 @@
                                 $imgSize = $info['data']['size'] ?? [];
                                 $imageSize = '';
                                 if ($imgSize) {
-                                    $imageSize = !empty($imgSize['value']) && $imgSize['unit'] === 'byte' ? $this->fileSize(preg_replace("/[^0-9]/", "", $imgSize['value'])) : '';
+                                    $imageSize = !empty($imgSize['value']) && $imgSize['unit'] === 'byte' ? $this->fileSize(preg_replace('/[^0-9]/', '', $imgSize['value'])) : '';
                                 }
                                 $width = $info['data']['width'] ?? [];
                                 $height = $info['data']['height'] ?? [];
                                 $dimensions = '';
                                 if (!empty($width['value']) && !empty($height['value']) && $height['unit'] === 'pixel' && $width['unit'] === 'pixel') {
-                                    $cleanWidth = preg_replace("/[^0-9]/", "", $width['value']);
-                                    $cleanHeight = preg_replace("/[^0-9]/", "", $height['value']);
+                                    $cleanWidth = preg_replace('/[^0-9]/', '', $width['value']);
+                                    $cleanHeight = preg_replace('/[^0-9]/', '', $height['value']);
                                     $dimensions = "($cleanWidth x $cleanHeight px)";
                                 }
                                 $downloadName = str_replace('.', '-', $this->driver->getUniqueID()) . '-' . ($info['resourceID'] ?? $index) . '-' . $size;
@@ -49,7 +49,7 @@
         ?>
             <div class="open-link">
                 <a target="_blank" href="<?=$this->escapeHtmlAttr($originalImage) ?>" rel="nofollow" download>
-                    <i aria-hidden="true" class="fa fa-download"></i>
+                    <?=$this->icon('download') ?>
                     <span><?=$this->transEsc('Download the image') ?></span>
                 </a>
                 <span class="image-dimensions"></span>

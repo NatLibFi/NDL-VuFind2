@@ -39,7 +39,7 @@
     <?php endforeach; ?>
   </div>
   <?php if ($this->searchTools !== 'hide'): ?>
-    <div class="events-searchtools-toggle"><?= $this->transEsc('show_filters') ?> <i class="fa fa-arrow-down"></i></div>
+    <div class="events-searchtools-toggle"><?= $this->transEsc('show_filters') ?> <?=$this->icon('show-more') ?></div>
     <div class="events-searchtools-container <?= $this->searchTools === 'show' ? '' : 'hidden'; ?>">
       <span class="event-search-container">
         <label for="event-search" class="sr-only"><?= $this->transEsc('event_name_or_place') ?></label>

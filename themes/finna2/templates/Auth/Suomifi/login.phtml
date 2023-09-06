@@ -4,12 +4,12 @@
 <div>
   <div class="login-col shibboleth-login suomifi-login">
     <a href="<?=$this->escapeHtmlAttr($sessionInitiator)?>" data-lightbox-ignore>
-      <img src="<?=$this->imageLink('login_suomifi.png') ?>" alt="<?=$this->transEscAttr("Suomi.fi Login") ?>">
+      <img src="<?=$this->imageLink('login_suomifi.png') ?>" alt="<?=$this->transEscAttr('Suomi.fi Login') ?>">
       <span class="sr-only"><?=$this->transEsc('Suomi.fi Login')?></span>
     </a>
   </div>
   <div class="login-col">
-    <i class="fa fa-info3" aria-hidden="true"></i>
+    <?=$this->icon('info', 'login-info-icon') ?>
     <div class="login-description">
       <p class="login-info">
         <?=$this->translate('login_desc_suomifi_html')?>

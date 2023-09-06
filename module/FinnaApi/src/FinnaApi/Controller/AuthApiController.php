@@ -31,6 +31,8 @@ namespace FinnaApi\Controller;
 
 use VuFind\Exception\ILS as ILSException;
 
+use function in_array;
+
 /**
  * Provides an API for user authentication.
  *

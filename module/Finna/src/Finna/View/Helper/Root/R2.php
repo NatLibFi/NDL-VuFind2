@@ -33,6 +33,8 @@ use Finna\Db\Row\User;
 use Finna\Service\RemsService;
 use VuFind\RecordDriver\AbstractBase;
 
+use function in_array;
+
 /**
  * Helper class for restricted Solr R2 search.
  *

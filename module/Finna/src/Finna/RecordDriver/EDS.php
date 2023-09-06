@@ -31,6 +31,10 @@
 
 namespace Finna\RecordDriver;
 
+use function in_array;
+use function is_array;
+use function strlen;
+
 /**
  * Model for EDS records.
  *
@@ -256,7 +260,7 @@ class EDS extends \VuFind\RecordDriver\EDS
     }
 
     /**
-     * Get the publication dates of the record.  See also getDateSpan().
+     * Get the publication dates of the record. See also getDateSpan().
      *
      * @return array
      */

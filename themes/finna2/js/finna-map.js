@@ -3,7 +3,7 @@ finna.map = (function finnaMap() {
 
   function addRemoveButton(layer, featureGroup) {
     var button = $('<a/>')
-      .html('<i class="fa fa-times" aria-hidden="true"></i>')
+      .html(VuFind.icon('map-remove'))
       .on('click', function mapOnRemoveButtonClick(/*e*/) {
         layer.editing.disable();
         featureGroup.removeLayer(layer);
@@ -107,7 +107,7 @@ finna.map = (function finnaMap() {
 
       var DeleteButton = FinnaMapButton.extend({
         onAdd: function mapOnDelete(/*mapTarget*/) {
-          var htmlElem = $('<div><i class="fa fa-times"></i>');
+          var htmlElem = $('<div>' + VuFind.icon('map-remove'));
           $('<span/>').text(' ' + VuFind.translate('clearCaption')).appendTo(htmlElem);
           return this.createButton('map-button-clear', htmlElem.html(), function mapClearLayersClick() {
             drawnItems.eachLayer(function disableEditing(layer) {
@@ -121,7 +121,7 @@ finna.map = (function finnaMap() {
 
       var CircleButton = FinnaMapButton.extend({
         onAdd: function mapOnAddCircle(mapTarget) {
-          var htmlElem = $('<div><i class="fa fa-crosshairs"></i>');
+          var htmlElem = $('<div>' + VuFind.icon('map-narrow'));
           $('<span/>').text(' ' + VuFind.translate('circleCaption')).appendTo(htmlElem);
           var button = this.createButton('map-button-circle btn-primary', htmlElem.html(), function mapCircleButtonClick() {
             $('.map-button-circle').addClass('active');

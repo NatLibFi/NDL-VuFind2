@@ -129,7 +129,7 @@
     <?php if ($module == 'record' || $module == 'collection'): ?>
       <div class="record-back hidden-print">
           <?php
-            $html = '<span><i class="fa fa-arrow-alt-left"></i></span>';
+            $html = $this->icon('record-back');
             $html .= '<span class="back-to-search-text hidden-xs hidden-sm">' . $this->transEsc('Back to search results') . '</span>';
             $previousSearch = $this->searchMemory()->getLastSearchLink($html);
             if ($previousSearch !== '' && $this->searchMemory()->getLastSearchClassId() === $this->searchClassId):
@@ -140,9 +140,9 @@
     <?php endif; ?>
     <div class="search">
       <form id="searchForm" role="search" class="searchForm navbar-form navbar-left  <?=$handlerCount < 2 ? 'input-field-only' : ''; ?>" method="get" action="<?=$this->url($basicSearch)?>" name="searchForm" autocomplete="off">
-      <label for="searchForm_lookfor" class="sr-only" hidden><?=$this->transEsc("Find")?></label>
+      <label for="searchForm_lookfor" class="sr-only" hidden><?=$this->transEsc('Find')?></label>
       <input class="searchForm_lookfor form-control search-query<?php if($this->searchbox()->autocompleteEnabled($this->searchClassId)):?> autocomplete-finna searcher:<?=$this->escapeHtmlAttr($this->searchClassId) ?><?= !empty($activeTab) ? ' tab:' . $this->escapeHtmlAttr(str_replace(':', '###', $activeTab)) : ''?><?=!empty($browse) || $activeTab == 'Combined' ? ' onlySuggestions:1' : ''?><?= !$browse && in_array($activeTab, ['Combined','Primo','Summon']) ? ' suggestions:0' : ''?><?= !empty($acHandlers) ? ' handlers:' . implode('|', array_map(function ($h) { return $h['handler']; }, $acHandlers)) : ''?><?= !empty($phrase) ? ' phrase:' . $this->escapeHtmlAttr($phrase) : ''?><?= !empty($acFilters) ? ' filters:' . $this->escapeHtmlAttr(implode('||', array_map(function ($k, $v) { return $k . '|' . $v; }, array_keys($acFilters), $acFilters))) : ''?><?php endif ?>" placeholder="<?=$this->escapeHtmlAttr($placeholder)?>" id="searchForm_lookfor" type="text" name="lookfor" value="<?=$this->escapeHtmlAttr($this->lookfor)?>">
-      <span class="clear-button<?=$this->lookfor ? '' : ' hidden'?>"></span>
+        <?=$this->icon('search-clearform', 'clear-button hidden', $this->lookfor ? '' : 'hidden') ?>
       <?php if ($handlerCount > 1): ?>
         <div class="dropdown form-control type-dropdown">
         <?php
@@ -157,7 +157,7 @@
           }
         ?>
         <input id="searchForm_type" type="hidden" name="type" value="<?=$this->escapeHtmlAttr($value)?>" class="searchForm_type">
-        <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false" aria-label="<?= $this->transEsc('Narrow Search') ?>" data-toggle="dropdown"><span><?=$this->transEsc($label)?></span><b class="caret"></b></a>
+        <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false" aria-label="<?= $this->transEsc('Narrow Search') ?>" data-toggle="dropdown"><span><?=$this->transEsc($label)?></span> <?=$this->icon('type-dropdown-open') ?></a>
         <ul class="dropdown-menu" role="menu">
           <?php foreach ($handlers as $handler): ?>
             <li role="menuitem">
@@ -170,7 +170,7 @@
       <?php elseif ($handlerCount == 1): ?>
         <input type="hidden" name="type" value="<?=$this->escapeHtmlAttr($handlers[0]['value'])?>" class="searchForm_type">
       <?php endif; ?>
-      <button type="submit" class="btn btn-primary <?= $handlerCount <= 1 ? 'wider-searchbutton' : '' ?>"><i class="fa fa-search" aria-hidden="true"></i> <span class="sr-only"><?=$this->transEsc("Find")?></span></button>
+      <button type="submit" class="btn btn-primary <?= $handlerCount <= 1 ? 'wider-searchbutton' : '' ?>"><?=$this->icon('search') ?> <span class="sr-only"><?=$this->transEsc('Find')?></span></button>
 
       <?php $shards = $options->getShards();
       if ($options->showShardCheckboxes() && !empty($shards)): ?>
@@ -216,7 +216,7 @@
     <div class="search-tooltip"><?php
       // There should not be any whitespace in this div if it is empty.
       if (!$browse && !$mainPage && $advSearch): ?>
-        <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced <?=($module === 'record') ? 'visible-lg' : 'hidden-xs'?>"><i class="fa fa-search-adv" aria-hidden="true"></i><?=$this->transEsc("Advanced Search")?></a>
+        <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced <?=($module === 'record') ? 'visible-lg' : 'hidden-xs'?>"><?=$this->icon('search-advanced', 'search-advanced-icon') ?><?=$this->transEsc('Advanced Search')?></a>
       <?php endif; ?><?php
         $searchTypes = ['search' => 'local', 'primo' => 'pci', 'eds' => 'eds', 'r2search' => 'R2', 'summon' => 'summon'];
         if (isset($searchTypes[$module]) && !$this->translationEmpty('tooltip_' . $searchTypes[$module] . '_search_html')) {
@@ -226,33 +226,33 @@
         if (isset($tooltipClass) && isset($tooltipText)):
       ?>
         <button aria-label="<?= $this->transEsc('Search Tips') ?>" class="tooltip-button <?=$tooltipClass?> hidden-xs" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->escapeHtmlAttr($tooltipText)?>">
-          <i class="fa fa-question-circle-big" aria-hidden="true"></i>
+          <?=$this->icon('help', 'search-help-icon') ?>
         </button>
     <?php endif; ?></div>
     <?php if ($module != 'record' && $module != 'collection'): ?>
       <?php if ($browse || $mainPage || ($module === 'authority' && $action === 'search')): ?>
         <div class="search-links">
           <?php if ($advSearch): ?>
-          <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced"><i class="fa fa-search-adv"></i><?=$this->transEsc("Advanced Search")?></a>
+          <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced"><?=$this->icon('search-advanced') ?> <?=$this->transEsc('Advanced Search')?></a>
           <?php endif; ?>
           <?php if ($browse || !in_array($this->searchClassId, ['Solr', 'R2'])): ?>
-          <a href="<?=$this->url('home');?>" class="btn btn-link btn-basic"><i class="fa fa-search"></i> <?=$this->transEsc("Basic Search")?></a>
+          <a href="<?=$this->url('home');?>" class="btn btn-link btn-basic"><?=$this->icon('search-basic') ?> <?=$this->transEsc('Basic Search')?></a>
           <?php endif; ?>
 
           <?php if ($this->primo()->isAvailable() && ($browse || $this->searchClassId !== 'Primo')) : ?>
-          <a href="<?=$this->url('primo-home');?>" class="btn btn-link btn-primo"><i class="fa fa-search"></i> <?=$this->transEsc("Primo Search")?></a>
+          <a href="<?=$this->url('primo-home');?>" class="btn btn-link btn-primo"><?=$this->icon('search-primo') ?> <?=$this->transEsc('Primo Search')?></a>
           <?php endif; ?>
 
           <?php if ($this->eds()->isAvailable() && ($browse || $this->searchClassId !== 'EDS')) : ?>
-          <a href="<?=$this->url('eds-home');?>" class="btn btn-link btn-primo"><i class="fa fa-search"></i> <?=$this->transEsc("EDS Search")?></a>
+          <a href="<?=$this->url('eds-home');?>" class="btn btn-link btn-primo"><?=$this->icon('search-eds') ?> <?=$this->transEsc('EDS Search')?></a>
           <?php endif; ?>
 
           <?php if ($this->summon()->isAvailable() && ($browse || $this->searchClassId !== 'Summon')) : ?>
-          <a href="<?=$this->url('summon-home');?>" class="btn btn-link btn-primo"><i class="fa fa-search"></i> <?=$this->transEsc("Summon Search")?></a>
+          <a href="<?=$this->url('summon-home');?>" class="btn btn-link btn-primo"><?=$this->icon('search-summon') ?> <?=$this->transEsc('Summon Search')?></a>
           <?php endif; ?>
 
           <?php if ($this->authority()->isAvailable() && ($browse || $this->searchClassId !== 'SolrAuth')) : ?>
-            <a href="<?=$this->url('authority-home');?>" class="btn btn-link btn-authority"><i class="fa fa-search"></i> <?=$this->transEsc("Authority Search")?></a>
+            <a href="<?=$this->url('authority-home');?>" class="btn btn-link btn-authority"><?=$this->icon('search-authority') ?> <?=$this->transEsc('Authority Search')?></a>
           <?php endif; ?>
         </div>
       <?php endif; ?>
@@ -262,17 +262,17 @@
             <?php if ($scrollData['previousRecord']): ?>
                 <?php if ($scrollData['firstRecord']): ?>
                 <li>
-                  <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($scrollData['firstRecord']))?>" rel="nofollow"><i class="fa fa-first-page"></i><span class="sr-only"><?=$this->transEsc('First Record')?></span></a>
+                  <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($scrollData['firstRecord']))?>" rel="nofollow"><?=$this->icon('pager-first') ?></i><span class="sr-only"><?=$this->transEsc('First Record')?></span></a>
                 </li>
                 <?php endif; ?>
               <li class="pager-previous-record">
-                <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($scrollData['previousRecord']))?>" rel="nofollow"><i class="fa fa-arrow-alt-left"></i><span class="sr-only"><?=$this->transEsc('Previous Record')?></span></a>
+                <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($scrollData['previousRecord']))?>" rel="nofollow"><?=$this->icon('pager-prev') ?><span class="sr-only"><?=$this->transEsc('Previous Record')?></span></a>
               </li>
             <?php else: ?>
               <?php if ($scrollData['firstRecord']): ?>
-                <li class="disabled" title="<?=$this->transEsc('First Record')?>"><a><i class="fa fa-first-page"></i></a></li>
+                <li class="disabled" title="<?=$this->transEsc('First Record')?>"><a><?=$this->icon('pager-first') ?></a></li>
               <?php endif; ?>
-              <li class="disabled" title="<?=$this->transEsc('Previous Record')?>"><a><i class="fa fa-arrow-alt-left"></i></a></li>
+                <li class="disabled" title="<?=$this->transEsc('Previous Record')?>"><a><?=$this->icon('pager-prev') ?></a></li>
             <?php endif; ?>
           <li class="pager-text">
               <?=$this->transEsc('of_num_results', [
@@ -282,17 +282,17 @@
           </li>
             <?php if ($scrollData['nextRecord']): ?>
               <li class="pager-next-record">
-                <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($scrollData['nextRecord']))?>" rel="nofollow"><i class="fa fa-arrow-alt-right"></i><span class="sr-only"><?=$this->transEsc('Next Record')?></span></a>
+                <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($scrollData['nextRecord']))?>" rel="nofollow"><?=$this->icon('pager-next') ?><span class="sr-only"><?=$this->transEsc('Next Record')?></span></a>
               </li>
               <?php if ($scrollData['lastRecord']): ?>
                 <li>
-                  <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($scrollData['lastRecord']))?>" rel="nofollow"><i class="fa fa-last-page"></i><span class="sr-only"><?=$this->transEsc('Last Record')?></span></a>
+                  <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($scrollData['lastRecord']))?>" rel="nofollow"><?=$this->icon('pager-last') ?><span class="sr-only"><?=$this->transEsc('Last Record')?></span></a>
                 </li>
               <?php endif; ?>
             <?php else: ?>
-              <li class="disabled" title="<?=$this->transEsc('Next Record')?>"><a><i class="fa fa-arrow-alt-right"></i></a></li>
+              <li class="disabled" title="<?=$this->transEsc('Next Record')?>"><a><?=$this->icon('pager-next') ?></a></li>
                 <?php if ($scrollData['lastRecord']): ?>
-                  <li class="disabled" title="<?=$this->transEsc('Last Record')?>"><a><i class="fa fa-last-page"></i></a></li>
+                  <li class="disabled" title="<?=$this->transEsc('Last Record')?>"><a><?=$this->icon('pager-last') ?></a></li>
                 <?php endif; ?>
             <?php endif; ?>
         </ul>

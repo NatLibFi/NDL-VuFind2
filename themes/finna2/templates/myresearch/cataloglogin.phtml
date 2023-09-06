@@ -21,13 +21,13 @@
 ?>
 
 <?php if (!$isPartial): ?>
-  <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => '']); ?>
+  <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => '']); ?>
 
   <!-- Leftside navigationbar -->
   <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
 <?php endif; ?>
 
-<?php if ($offlineMode == "ils-offline"): ?>
+<?php if ($offlineMode == 'ils-offline'): ?>
   <?=$this->render('Helpers/ils-offline.phtml', ['offlineModeMsg' => 'ils_offline_login_message'])?>
 <?php elseif (!$this->auth()->getManager()->allowsUserIlsLogin()): ?>
   <h3><?=$this->transEsc('Library Catalog Profile')?></h3>

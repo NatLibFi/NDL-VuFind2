@@ -35,6 +35,8 @@ namespace Finna\Recommend;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
 
+use function in_array;
+
 /**
  * SideFacets Recommendations Module
  *
@@ -111,7 +113,7 @@ class SideFacets extends \VuFind\Recommend\SideFacets implements TranslatorAware
             $this->newItemsFacets = $config->SpecialFacets->newItems->toArray();
         }
 
-        //Fallback check for older style of enabling the map in facets
+        // Fallback check for older style of enabling the map in facets
         if (isset($config->SpecialFacets->finna_geographic)) {
             $finna_geographic = $config->SpecialFacets->finna_geographic->toArray();
             $this->geographicFacet['map_selection']

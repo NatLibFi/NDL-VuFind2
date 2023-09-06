@@ -132,7 +132,7 @@ class GetDateRangeVisual extends \VuFind\AjaxHandler\AbstractBase
             $count = $f['count'];
             $val = $f['displayText'];
             // Only retain numeric values
-            if (!preg_match("/^-?[0-9]+$/", $val)) {
+            if (!preg_match('/^-?[0-9]+$/', $val)) {
                 continue;
             }
             $min = min($min, (int)$val);

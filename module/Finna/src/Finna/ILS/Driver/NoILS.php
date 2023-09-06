@@ -59,7 +59,7 @@ class NoILS extends \VuFind\ILS\Driver\NoILS
         $result = parent::getStatus($id);
 
         $useStatus = $this->config['settings']['useStatus'] ?? 'none';
-        if ($useStatus == "custom") {
+        if ($useStatus == 'custom') {
             if ($url = $this->config['Status']['locationhref'] ?? '') {
                 $result[0]['locationhref'] = $url;
             }
@@ -91,7 +91,7 @@ class NoILS extends \VuFind\ILS\Driver\NoILS
 
         $useHoldings = $this->config['settings']['useHoldings'] ?? 'none';
 
-        if ($useHoldings == "custom") {
+        if ($useHoldings == 'custom') {
             if ($url = $this->config['Holdings']['locationhref'] ?? '') {
                 $result[0]['locationhref'] = $url;
             }

@@ -33,6 +33,10 @@ namespace Finna\Controller;
 use VuFindCode\ISBN;
 use VuFindSearch\Backend\Exception\BackendException;
 
+use function count;
+use function is_array;
+use function is_callable;
+
 /**
  * Redirects the user to the appropriate default VuFind action.
  *

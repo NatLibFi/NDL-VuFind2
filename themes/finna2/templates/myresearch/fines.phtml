@@ -40,14 +40,14 @@
     $currencyTemplate = $this->safeMoneyFormat(11.22);
 ?>
 <!-- Leftside navigationbar -->
-<?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'fines']); ?>
+<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'fines']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
   <div class="my-research-content">
     <?php if ($user): ?>
       <?php if (!empty($this->registerPayment)): ?>
         <div class="alert alert-info">
-          <span class="register-payment-spinner"><i class="fa fa-spinner fa-spin"></i> <?=$this->translate('Registering Payment');?></span>
+          <span class="register-payment-spinner"><?=$this->icon('spinner') ?> <?=$this->translate('Registering Payment');?></span>
           <div id="online-payment-status" class="info hide"></div>
         </div>
       <?php endif; ?>
@@ -58,7 +58,7 @@
         <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
       </div>
       <div class="useraccount-header">
-        <h2><?=$this->transEsc('Your Fines') . " (" . count($this->fines ?? []) . ")"?></h2>
+        <h2><?=$this->transEsc('Your Fines') . ' (' . count($this->fines ?? []) . ')'?></h2>
       </div>
     </div>
     <?=$this->flashmessages()?>
@@ -113,6 +113,11 @@
             </p>
           </div>
         <?php endif; ?>
+        <?php if ($this->startedTransaction): ?>
+          <div class="alert alert-danger">
+            <?=$this->transEsc('online_payment_in_progress_warning', ['%%startDateTime%%' => $this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $this->startedTransaction->created)]); ?>
+          </div>
+        <?php endif; ?>
       <?php endif; ?>
     </div>
     <?php if ($this->onlinePayment): ?>
@@ -133,11 +138,11 @@
     <?php if (isset($this->noSupport)): ?>
       <?php if ($user->getLibraryCards()->count() > 0): ?>
         <div class="support-notice">
-          <p><?=$this->transEsc("no_ils_support_description") ?></p>
+          <p><?=$this->transEsc('no_ils_support_description') ?></p>
         </div>
       <?php endif; ?>
     <?php else: ?>
-      <?php if ($template = $this->content()->findTemplateForLng("content/Additions/fines-pre-list")): ?>
+      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/fines-pre-list')): ?>
         <div class="fines-pre-list"><?=$this->render($template)?></div>
       <?php endif; ?>
       <?php if (empty($this->fines)): ?>
@@ -174,19 +179,19 @@
                 <th class="user-account-table-select"></th>
               <?php endif; ?>
               <th class="user-account-table-title <?php if ($hideTitle): ?> hidden<?php endif; ?>"><?=$this->transEsc('Title')?></th>
-              <th class="<?= $hideCheckout ? "hidden" : "hidden-xs" ?>">
+              <th class="<?= $hideCheckout ? 'hidden' : 'hidden-xs' ?>">
                 <?=$this->transEsc('fine_checkout_date')?>
               </th>
-              <th class="<?= $hideDueDate ? "hidden" : "" ?>">
+              <th class="<?= $hideDueDate ? 'hidden' : '' ?>">
                 <?=$this->transEsc('Due Date')?>
               </th>
               <th>
                 <?=$this->transEsc('fine_description')?>
               </th>
-              <th class="<?= $hideFineCreationDate ? "hidden" : "hidden-xs" ?>">
+              <th class="<?= $hideFineCreationDate ? 'hidden' : 'hidden-xs' ?>">
                 <?=$this->transEsc('fine_creation_date')?>
               </th>
-              <th class="<?= $hideAmount ? "hidden" : "hidden-xs" ?>">
+              <th class="<?= $hideAmount ? 'hidden' : 'hidden-xs' ?>">
                 <?=$this->transEsc('Fee')?>
               </th>
               <th class="balance"><?=$this->transEsc('Balance')?></th>
@@ -232,17 +237,17 @@
                 <?php else: ?>
                   <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($record['driver']))?>"><?=$this->escapeHtml(trim($record['title'], '/: '))?></a>
                 <?php endif; ?>
-              <td class="<?= $hideCheckout ? "hidden" : "hidden-xs" ?>">
+              <td class="<?= $hideCheckout ? 'hidden' : 'hidden-xs' ?>">
                 <?=isset($record['checkout']) ? $this->escapeHtml($record['checkout']) : ''?>
               </td>
-              <td class="<?=$hideDueDate ? "hidden" : "" ?>">
+              <td class="<?=$hideDueDate ? 'hidden' : '' ?>">
                 <?=isset($record['duedate']) ? $this->escapeHtml($record['duedate']) : ''?>
               </td>
               <td><?=isset($fine) ? $this->transEsc($fine) : ''?></td>
-              <td class="<?=$hideFineCreationDate ? "hidden" : "hidden-xs" ?>">
+              <td class="<?=$hideFineCreationDate ? 'hidden' : 'hidden-xs' ?>">
                 <?=isset($record['createdate']) ? $this->escapeHtml($record['createdate']) : ''?>
               </td>
-              <td class="<?=$hideAmount ? "hidden" : "hidden-xs" ?>">
+              <td class="<?=$hideAmount ? 'hidden' : 'hidden-xs' ?>">
                 <?=isset($record['amount']) ? $this->safeMoneyFormat($record['amount'] / 100.00) : ''?>
               </td>
               <td class="balance">
@@ -266,11 +271,11 @@
         <?php endif; ?>
         <div>
           <?php if ($this->onlinePayment): ?>
-            <?php if ($template = $this->content()->findTemplateForLng("content/Additions/online-payment")): ?>
+            <?php if ($template = $this->content()->findTemplateForLng('content/Additions/online-payment')): ?>
               <div class="online-payment-note"><?=$this->render($template)?></div>
             <?php endif; ?>
           <?php endif; ?>
-          <?php if ($template = $this->content()->findTemplateForLng("content/Additions/fines-post-list")): ?>
+          <?php if ($template = $this->content()->findTemplateForLng('content/Additions/fines-post-list')): ?>
             <div class="fines-post-list"><?=$this->render($template)?></div>
           <?php endif; ?>
         </div>

@@ -12,13 +12,13 @@
   $offlineMode = $this->ils()->getOfflineMode();
 ?>
 
-<?php if ($offlineMode == "ils-offline"): ?>
+<?php if ($offlineMode == 'ils-offline'): ?>
   <?=$this->render('Helpers/ils-offline.phtml', ['offlineModeMsg' => 'ils_offline_login_message'])?>
 <?php endif; ?>
 
 <h2 class="lightbox-header"><?=$this->transEsc('Login')?></h2>
 <?=$this->flashmessages()?>
-<?php if ($template = $this->content()->findTemplateForLng("content/Additions/login-pre")): ?>
+<?php if ($template = $this->content()->findTemplateForLng('content/Additions/login-pre')): ?>
   <div>
     <?=$this->render($template)?>
   </div>
@@ -32,7 +32,7 @@
   <?php endif; ?>
   <?=$this->auth()->getLogin()?>
 <?php endif; ?>
-<?php if ($template = $this->content()->findTemplateForLng("content/Additions/login-post")): ?>
+<?php if ($template = $this->content()->findTemplateForLng('content/Additions/login-post')): ?>
   <div>
     <?=$this->render($template)?>
   </div>

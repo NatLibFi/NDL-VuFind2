@@ -33,10 +33,10 @@ $that = $this;
               $institutions = $record->getInstitutions();
             ?>
             <li data-id="<?= $this->escapeHtmlAttr($record->getUniqueID())?>" <?= $ind === $activeInd ? ' class="active"' : ''?>>
-                <a><i class="fa fa-authority-<?=$this->escapeHtmlAttr($this->record($record)->getFormatClass($formats[0]))?>" aria-label="<?=$this->transEscAttr($formats[0]) ?>"></i> <?=$this->escapeHtml($record->getTitle())?></a>
+                <a><?=$this->icon('authority-' . $this->escapeHtmlAttr($this->record($record)->getFormatClass($formats[0])))?> <?=$this->escapeHtml($record->getTitle())?></a>
             </li>
           <?php endforeach; ?>
-          <li class="spinner hide" aria-hidden="true"><i class="fa fa-spin fa-spinner"></i></li>
+          <li class="spinner hide" aria-hidden="true"><?=$this->icon('spinner') ?></li>
           <li class="toggle<?= $collapseAuthorityInfo ? ' collapsed' : ''?>" aria-hidden="true"></li>
         </ul>
       </div>
@@ -70,7 +70,7 @@ $that = $this;
           $id = $record->getUniqueId();
           $formats = $record->getFormats();
           $authorityUrl = $authorityLinkType === 'search' ? $urlQuery->setAuthorId($id) : $this->url('solrauthrecord', ['id' => $id]);
-          $html = '<span class="authority-page-link"><a class="authority-page" href="' . $authorityUrl . '"><i class="fa' . (!empty($formats) ? ' fa-authority-' . $this->escapeHtmlAttr($this->record($record)->getFormatClass($formats[0])) : '') . '"></i> ' . $that->escapeHtml($record->getBreadCrumb()) . '</a></span>';
+          $html = '<span class="authority-page-link"><a class="authority-page" href="' . $authorityUrl . '">' . (!empty($formats) ? $this->icon('authority-' . $this->escapeHtmlAttr($this->record($record)->getFormatClass($formats[0]))) : '') . $that->escapeHtml($record->getBreadCrumb()) . '</a></span>';
           return $html;
       };
       $content = implode(', ', array_map($callback, $data));

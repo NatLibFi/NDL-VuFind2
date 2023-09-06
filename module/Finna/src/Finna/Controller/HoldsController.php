@@ -31,6 +31,9 @@
 
 namespace Finna\Controller;
 
+use function in_array;
+use function is_array;
+
 /**
  * Controller for the user holds area.
  *

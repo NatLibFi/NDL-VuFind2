@@ -71,14 +71,14 @@
   background-color: @brand-primary;
   padding: 0;
   border-radius: 0;
-  i {
+  .mobilemenu-bars, .mobilemenu-close {
     font-size: 24px;
     cursor: pointer;
   }
-  &.collapsed .fa.fa-times{
+  &.collapsed .mobilemenu-close {
     display: none;
   }
-  &:not(.collapsed) .fa.fa-bars {
+  &:not(.collapsed) .mobilemenu-bars {
     display: none;
   }
   &.activated {

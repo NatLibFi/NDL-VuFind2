@@ -29,6 +29,8 @@
 
 namespace Finna\View\Helper\Root;
 
+use function strlen;
+
 /**
  * URL truncater
  *

@@ -38,6 +38,8 @@ namespace Finna\View\Helper\Root;
 use Finna\View\Helper\Root\RecordDataFormatter\FieldGroupBuilder;
 use VuFind\RecordDriver\AbstractBase as RecordDriver;
 
+use function in_array;
+
 /**
  * Record driver data formatting view helper
  *
@@ -119,6 +121,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Related Items',
             'Related Places',
             'Scale',
+            'Security Classification',
             'Series',
             'Source of Acquisition',
             'Standard Codes',

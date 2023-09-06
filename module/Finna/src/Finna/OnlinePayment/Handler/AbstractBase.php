@@ -38,6 +38,11 @@ use Laminas\Log\LoggerAwareInterface;
 use VuFind\I18n\Locale\LocaleSettings;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 
+use function count;
+use function is_array;
+use function is_object;
+use function strlen;
+
 /**
  * Abstract payment handler
  *

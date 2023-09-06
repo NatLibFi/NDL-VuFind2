@@ -33,6 +33,8 @@
 
 namespace Finna\RecordDriver;
 
+use function in_array;
+
 /**
  * Model for LRMI records in Solr.
  *

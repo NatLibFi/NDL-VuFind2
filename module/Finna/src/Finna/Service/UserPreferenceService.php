@@ -32,6 +32,8 @@ namespace Finna\Service;
 use VuFind\Auth\Manager as AuthManager;
 use VuFind\Cookie\CookieManager;
 
+use function is_array;
+
 /**
  * User preference support service
  *

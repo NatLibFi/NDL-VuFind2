@@ -130,7 +130,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
      */
     public function testReplaceDeprecatedDetailsTag(): void
     {
-        $markdown = "<details><summary markdown=\"1\">Summary</summary>Details</details>";
+        $markdown = '<details><summary markdown="1">Summary</summary>Details</details>';
         $converted = $this->getHelper()->replaceDeprecatedTags($markdown);
         $expected = "<finna-panel>\n  <h3 slot=\"heading\">Summary</h3>\n\nDetails\n</finna-panel>\n";
         $this->assertEquals($expected, $converted);
@@ -143,7 +143,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
      */
     public function testReplaceDeprecatedTruncateTag(): void
     {
-        $markdown = "<truncate><summary>Summary</summary>Truncate</truncate>";
+        $markdown = '<truncate><summary>Summary</summary>Truncate</truncate>';
         $converted = $this->getHelper()->replaceDeprecatedTags($markdown);
         $expected = "<finna-truncate>\n  <span slot=\"label\">Summary</span>\nTruncate\n</finna-truncate>\n";
         $this->assertEquals($expected, $converted);
@@ -211,7 +211,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
      */
     public function testSingleLineCustomElement(): void
     {
-        $markdown = "<finna-panel></finna-panel> Extra content";
+        $markdown = '<finna-panel></finna-panel> Extra content';
         $converted = $this->getHelper()->toHtml($markdown);
         $expected = trim($this->getExpectedFinnaPanel(null, null)) . "\n"
             . "<p>Extra content</p>\n";

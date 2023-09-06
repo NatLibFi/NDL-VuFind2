@@ -33,6 +33,14 @@
 
 namespace Finna\RecordDriver;
 
+use function boolval;
+use function call_user_func_array;
+use function count;
+use function in_array;
+use function is_array;
+use function is_string;
+use function strlen;
+
 /**
  * Model for LIDO records in Solr.
  *
@@ -200,6 +208,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     protected $authorEvents = [
         'suunnittelu' => 1,
         'valmistus' => 2,
+    ];
+
+    /**
+     * Events excluded from subjects
+     *
+     * @var array
+     */
+    protected $nonPlaceEvents = [
+        'valmistus',
+        'näyttely',
     ];
 
     /**
@@ -626,6 +644,20 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
 
         $this->cache[$cacheKey] = $results;
         return $results;
+    }
+
+    /**
+     * Return an external URL where a displayable description text
+     * can be retrieved from, if available; false otherwise.
+     *
+     * @return mixed
+     */
+    public function getDescriptionURL()
+    {
+        if ($isbn = $this->getCleanISBN()) {
+            return 'https://kansikuvat.finna.fi/getText.php?query=' . $isbn;
+        }
+        return false;
     }
 
     /**
@@ -1205,6 +1237,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             $places = [];
             foreach ($node->eventPlace ?? [] as $placenode) {
                 $place = trim((string)$placenode->displayPlace ?? '');
+                $placeId = $placenode->place->placeID ?? [];
                 if (!$place) {
                     $eventPlace = [];
                     foreach ($placenode->place->namePlaceSet ?? [] as $nameSet) {
@@ -1231,6 +1264,25 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                             $places[] = implode(', ', $partOfPlaceName);
                         }
                     }
+                } elseif ($place && $placeId) {
+                    $displayPlace = [
+                        'placeName' => $place,
+                    ];
+                    $idTypeFirst = (string)($placeId->attributes()->type ?? '');
+                    $displayPlace['type'] = $idTypeFirst;
+                    $displayPlace['id'] = $idTypeFirst ? "($idTypeFirst)$placeId" : $placeId;
+                    foreach ($placenode->place->placeID ?? [] as $item) {
+                        $details = [];
+                        $id = (string)$item;
+                        $idType = (string)($item->attributes()->type ?? '');
+                        $displayPlace['ids'][] = $idType ? "($idType)$id" : $id;
+                        $typeDesc = $idType ? 'place_id_type_' . $idType : '';
+                        $details[] = $typeDesc;
+                        if ($typeDesc) {
+                            $displayPlace['details'] = $details;
+                        }
+                    }
+                    $places[] = $displayPlace;
                 } else {
                     $places[] = $place;
                 }
@@ -1749,7 +1801,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
 
     /**
      * Get all subject headings associated with this record apart from geographic
-     * places.  Each heading is returned as an array of chunks, increasing from least
+     * places. Each heading is returned as an array of chunks, increasing from least
      * specific to most specific.
      *
      * @param bool $extended Whether to return a keyed array with the following
@@ -1776,8 +1828,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         foreach ($this->getXmlRecord()->lido->descriptiveMetadata->eventWrap->eventSet ?? [] as $node) {
             $type = isset($node->event->eventType->term)
                 ? mb_strtolower((string)$node->event->eventType->term, 'UTF-8') : '';
-            if ($type !== 'valmistus') {
-                $displayDate = $node->event->eventDate->displayDate;
+            if (!in_array($type, $this->nonPlaceEvents)) {
+                $displayDate = $node->event->eventDate->displayDate ?? null;
                 if (!empty($displayDate)) {
                     $date = (string)($this->getLanguageSpecificItem(
                         $displayDate,
@@ -1953,7 +2005,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      *
      * @param mixed $data Raw data representing the record; Record Model
      * objects are normally constructed by Record Driver objects using data
-     * passed in from a Search Results object.  The exact nature of the data may
+     * passed in from a Search Results object. The exact nature of the data may
      * vary depending on the data source -- the important thing is that the
      * Record Driver + Search Results objects work together correctly.
      *
@@ -2245,6 +2297,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 $descriptions[] = (string)$item;
             }
         }
+        $descriptions = array_unique($descriptions);
 
         //Collect all titles to be checked
         $displayTitle = $this->getTitle();

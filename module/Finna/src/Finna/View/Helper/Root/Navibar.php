@@ -32,6 +32,10 @@ namespace Finna\View\Helper\Root;
 use Laminas\Http\Request;
 use Laminas\Router\Http\TreeRouteStack;
 
+use function count;
+use function is_string;
+use function strlen;
+
 /**
  * Navibar view helper
  *

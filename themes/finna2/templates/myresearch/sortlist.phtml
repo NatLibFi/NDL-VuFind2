@@ -30,7 +30,7 @@
 </form>
 <ol id="sortable" class="sortable-favorite-list">
   <?php foreach ($this->results->getResults() as $i => $current): ?>
-    <li id="<?=$this->escapeHtmlAttr($current->getUniqueID()) ?>"><h4><?=$this->escapeHtml($current->getTitle()) ?><i class="fa fa-arrow-down"></i><i class="fa fa-arrow-up"></i></h4><p><?=$this->record($current)->getFormatList() ?></p></li>
+    <li id="<?=$this->escapeHtmlAttr($current->getUniqueID()) ?>"><h4><?=$this->escapeHtml($current->getTitle()) ?><?=$this->icon('sort', 'sort-icon') ?></h4><p><?=$this->record($current)->getFormatList() ?></p></li>
   <?php endforeach; ?>
 </ol>
 

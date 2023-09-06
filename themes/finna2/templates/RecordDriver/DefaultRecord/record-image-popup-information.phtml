@@ -29,7 +29,7 @@ if ($otherTitles):?>
         <?php if ($dates = $this->driver->tryMethod('getResultDateRange')): ?>
           <?=implode('&ndash;', array_map($this->escapeHtml, $dates)) ?>
         <?php else: ?>
-          <?php if ($summDate = $this->driver->getPublicationDateRange()): ?>
+          <?php if ($summDate = $this->driver->tryMethod('getPublicationDateRange')): ?>
             <?=implode('&ndash;', array_map($this->escapeHtml, $summDate)) ?>
           <?php endif; ?>
         <?php endif; ?>
@@ -54,7 +54,7 @@ if ($otherTitles):?>
     <?=$this->escapeHtml($this->organisationDisplayName($this->driver)) ?>
   </div>
   <div class="popup-link-buttons">
-    <div class="record-link"><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver, ['excludeSearchId' => true]) . '?sid=' . urlencode($this->searchId)) ?>"><i class="fa fa-arrow-circle-right"></i> <span><?=$this->transEsc('To the record') ?></span></a></div>
+    <div class="record-link"><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver, ['excludeSearchId' => true]) . '?sid=' . urlencode($this->searchId)) ?>"><?=$this->icon('popup-link') ?> <span><?=$this->transEsc('To the record') ?></span></a></div>
   </div>
   <div class="summary loading">
     <div data-rows="6" class="truncate-field">
@@ -98,7 +98,7 @@ if ($otherTitles):?>
   <?php endif; ?>
   <div class="popup-link-buttons">
     <?=$this->record($this->driver)->getOnlineUrls('popup')?>
-    <?php if ($this->userlist()->getMode() !== 'disabled'): ?><div class="save-record-link"><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>"><i class="fa fa-heart"></i> <span><?=$this->transEsc('Add to favorites')?></span></a></div><?php endif; ?>
+    <?php if ($this->userlist()->getMode() !== 'disabled'): ?><div class="save-record-link"><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>"><?=$this->icon('favorite') ?> <span><?=$this->transEsc('Add to favorites')?></span></a></div><?php endif; ?>
     <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-download.phtml', ['index' => $this->index, 'rights' => $rights, 'image' => $image, 'hiRes' => $image['highResolution'] ?? false]) ?>
     <?= $this->record($this->driver)->renderTemplate('image-information.phtml', ['index' => 'popup', 'image' => $image]); ?>
   </div>

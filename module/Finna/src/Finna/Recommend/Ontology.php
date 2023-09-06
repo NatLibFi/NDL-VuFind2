@@ -38,6 +38,10 @@ use VuFind\Recommend\RecommendInterface;
 use VuFind\Search\SearchRunner;
 use VuFind\View\Helper\Root\Url;
 
+use function count;
+use function in_array;
+use function is_object;
+
 /**
  * Ontology Recommendations Module.
  *
@@ -299,7 +303,7 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
     }
 
     /**
-     * Called after the Search Results object has performed its main search.  This
+     * Called after the Search Results object has performed its main search. This
      * may be used to extract necessary information from the Search Results object
      * or to perform completely unrelated processing.
      *

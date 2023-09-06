@@ -32,6 +32,8 @@ namespace Finna\AjaxHandler;
 use VuFind\Search\Base\Results;
 use VuFind\Search\RecommendListener;
 
+use function is_callable;
+
 /**
  * "Get Side Facets" AJAX handler
  *

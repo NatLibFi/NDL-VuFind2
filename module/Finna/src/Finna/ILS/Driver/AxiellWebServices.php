@@ -38,6 +38,12 @@ use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\Translator\TranslatorAwareInterface as TranslatorAwareInterface;
 
+use function count;
+use function in_array;
+use function is_callable;
+use function is_object;
+use function strlen;
+
 /**
  * Axiell Web Services ILS Driver
  *
@@ -662,7 +668,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
 
                 $locationsList[] = [
                     'locationID' => $locationID,
-                    'locationDisplay' => $branch->name,
+                    'locationDisplay' => $branch->name ?? '',
                 ];
             }
         }
@@ -682,7 +688,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
      * method.
      * @param array $holdDetails Optional array, only passed in when getting a list
      * in the context of placing a hold; contains most of the same values passed to
-     * placeHold, minus the patron data.  May be used to limit the pickup options
+     * placeHold, minus the patron data. May be used to limit the pickup options
      * or may be ignored.
      *
      * @return string       The default pickup location for the patron.
@@ -719,7 +725,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
      * method.
      * @param array   $holdDetails Optional array, only passed in when getting a list
      * in the context of placing a hold; contains most of the same values passed to
-     * placeHold, minus the patron data.  May be used to limit the request group
+     * placeHold, minus the patron data. May be used to limit the request group
      * options or may be ignored.
      *
      * @return array  False if request groups not in use or an array of
@@ -1521,7 +1527,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
         foreach ($validServices as $service => $validMethods) {
             $typeLabel = 'dueDateAlert' === $service
                 ? $this->translate(
-                    "messaging_settings_type_dueDateAlertEmail"
+                    'messaging_settings_type_dueDateAlertEmail'
                 )
                 : $this->translate("messaging_settings_type_$service");
             $data = [
@@ -1585,7 +1591,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
 
                     if (!$active) {
                         $methodLabel
-                            =  $this->translate("messaging_settings_method_none");
+                            =  $this->translate('messaging_settings_method_none');
                     }
                     $data['method'] = $methodLabel;
                 }
@@ -2452,13 +2458,30 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
         $functionResult = 'addPaymentResponse';
         $functionParam = 'addPaymentRequest';
 
-        $debtIds = [];
         $fines = $this->getMyFines($patron);
-        foreach ($fines as $fine) {
-            if ($fine['payableOnline']) {
-                $debtIds[] = $fine['debt_id'];
+        $payableFines = array_filter(
+            $fines,
+            function ($fine) {
+                return $fine['payableOnline'];
             }
+        );
+        $total = array_reduce(
+            $payableFines,
+            function ($carry, $fine) {
+                $carry += $fine['balance'];
+                return $carry;
+            }
+        );
+
+        $paymentConfig = $this->getConfig('onlinePayment');
+        if (
+            $total < $amount
+            || (!empty($paymentConfig['exactBalanceRequired']) && $total != $amount)
+        ) {
+            return 'fines_updated';
         }
+
+        $debtIds = array_column($payableFines, 'debt_id');
         $request = [
             'arenaMember'       => $this->arenaMember,
             'orderId'           => (string)$transactionNumber,
@@ -3376,7 +3399,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     protected function pickUpLocationsSortFunction($a, $b)
     {
         $pickUpLocationOrder = isset($this->config['Holds']['pickUpLocationOrder'])
-            ? explode(":", $this->config['Holds']['pickUpLocationOrder']) : [];
+            ? explode(':', $this->config['Holds']['pickUpLocationOrder']) : [];
         $pickUpLocationOrder = array_flip($pickUpLocationOrder);
         if (isset($pickUpLocationOrder[$a['locationID']])) {
             if (isset($pickUpLocationOrder[$b['locationID']])) {
@@ -3533,7 +3556,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
 
     /**
      * Helper method to determine whether or not a certain method can be
-     * called on this driver.  Required method for any smart drivers.
+     * called on this driver. Required method for any smart drivers.
      *
      * @param string $method The name of the called method.
      * @param array  $params Array of passed parameters

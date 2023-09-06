@@ -34,6 +34,9 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
+use function defined;
+use function strlen;
+
 /**
  * Factory for PathResolver.
  *

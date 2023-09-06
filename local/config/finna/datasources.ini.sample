@@ -8,7 +8,8 @@
 ; disablePatronFunctions  Set true if datasource does not have patron functionality, can be left out
 ; authority[<type>]       Map to authority index sources where <type> is authority record type
 ;                         (corporateBody, person) or * for any;
-; authority_id_regex[<type>] = Regex for whitelisting allowed authority ids.
+; authority_id_regex[<type>] = Regex for allowed authority ids (to be prefixed with the source from authority setting).
+; authority_plain_id_regex[<type>] = Regex for allowed authority ids (to be used as is).
 ; authority_external_link_label_regex = Regex for parsing external link label into title and subtitle,
 ;                                       parts, for example: /^(Verkkosivut|Kotisivut|Wikipedia),\s*(.*)$/
 ;

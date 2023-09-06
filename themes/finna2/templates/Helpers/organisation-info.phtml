@@ -1,6 +1,6 @@
 <?php
-  $this->headScript()->appendFile("finna-organisation-info.js");
-  $this->headScript()->appendFile("finna-organisation-info-widget.js");
+  $this->headScript()->appendFile('finna-organisation-info.js');
+  $this->headScript()->appendFile('finna-organisation-info-widget.js');
   $this->jsTranslations()->addStrings(
       [
           'external_link' => 'external_link',
@@ -16,7 +16,7 @@
     <h2><?=$this->transEsc('organisation_info_title');?></h2>
   </div>
   <div>
-    <div class="loader"><i class="fa fa-spin fa-spinner"></i></div>
+    <div class="loader"><?=$this->icon('spinner') ?></div>
   </div>
   <div class="content hide">
     <div class="<?=$this->showDetails ? 'info-col ' : ''?>info">
@@ -24,8 +24,8 @@
         <div class="organisation dropdown">
           <button type="button" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-id="">
             <span class="sr-only"><?=$this->transEsc('organisation_info_selected_service_point')?></span>
-            <span></span>
-            <i class="fa fa-arrow-down"></i>
+            <span class="selected"></span>
+            <?=$this->icon('dropdown-open') ?>
           </button>
           <ul class="dropdown-menu" role="menu" aria-label="<?=$this->transEscAttr('organisation_info_select_service_point')?>">
           </ul>
@@ -37,14 +37,14 @@
       <div class="info schedules">
         <div class="week-navi-holder">
           <button type="button" class="prev-week week-navi btn-link" data-dir="-1" aria-label="<?= $this->transEscAttr('organisation_info_previous_week')?>">
-            <i class="fa fa-arrow-left" aria-hidden="true"></i>
+            <?=$this->icon('week-prev') ?>
           </button>
           <span class="week-text"><?=$this->transEsc('organisation_info_schedule_week')?> <span class="num"></span></span>
           <button type="button" class="next-week week-navi btn-link" data-dir="+1" aria-label="<?= $this->transEscAttr('organisation_info_next_week')?>">
-            <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            <?=$this->icon('week-next') ?>
           </button>
         </div>
-        <div class="loader"><i class="fa fa-spin fa-spinner"></i></div>
+        <div class="loader"><?=$this->icon('spinner') ?></div>
 
         <div class="content">
           <div class="opening-times-week">
@@ -80,23 +80,23 @@
       <a href="#" data-href="<?=$this->escapeHtmlAttr($this->url('organisationinfo-home'))?>" class="facility details" aria-label="<?= $this->transEscAttr('organisation_info_more_info') ?>"><img src="<?=$this->imageLink('noCover2.gif')?>" alt="" class="facility-image"></a>
       <div class="contact-links">
         <button type="button" class="btn btn-open-widget emails email info-element btn-link" data-placement="bottom" data-html="true" data-original-title="" aria-label="<?=$this->transEsc('organisation_info_email') ?>">
-          <i class="fa fa-at" aria-hidden="true"></i>
+          <?=$this->icon('contact-email') ?>
         </button>
         <button type="button" class="btn btn-open-widget phone info-element btn-link" data-toggle="tooltip" data-placement="bottom" data-html="true" data-original-title="" aria-label="<?=$this->transEsc('organisation_info_phone_numbers') ?>">
-          <i class="fa fa-phone-square" aria-hidden="true"></i>
+          <?=$this->icon('phone') ?>
         </button>
-        <a href="#" target="_blank" class="route info-element"><span class="btn"><i class="fa fa-bus" aria-hidden="true"></i><span class="sr-only"><?=$this->transEsc('organisation_info_route') . ' (' . $this->transEsc('external_link') . ')' ?></span></span></a>
-        <a href="#" target="_blank" class="facebook info-element"><span class="btn"><i class="fa fa-facebook-square" aria-hidden="true"></i><span class="sr-only"><?=$this->transEsc('organisation_info_facebook') ?></span></span></a>
+        <a href="#" target="_blank" class="route info-element"><span class="btn"><?=$this->icon('route') ?><span class="sr-only"><?=$this->transEsc('organisation_info_route') . ' (' . $this->transEsc('external_link') . ')' ?></span></span></a>
+        <a href="#" target="_blank" class="facebook info-element"><span class="btn"><?=$this->icon('facebook') ?><span class="sr-only"><?=$this->transEsc('organisation_info_facebook') ?></span></span></a>
       </div>
-      <div class="map info-element"><a href="#" target="_blank"><i class="fa fa-map-marker" aria-hidden="true"></i> <span class="map-address"></span></a></div>
-      <div class="details-link info-element"><a href="#" data-href="<?=$this->escapeHtmlAttr($this->url('organisationinfo-home'))?>" class="details"><i class="fa fa-home" aria-hidden="true"></i> <?=$this->transEsc('organisation_info_more_info')?></a></div>
+      <div class="map info-element"><a href="#" target="_blank"><?=$this->icon('map-marker') ?> <span class="map-address"></span></a></div>
+      <div class="details-link info-element"><a href="#" data-href="<?=$this->escapeHtmlAttr($this->url('organisationinfo-home'))?>" class="details"><?=$this->icon('homepage-link') ?> <?=$this->translate('organisation_info_more_info')?></a></div>
       <div class="services">
         <span class="btn btn-open-widget btn-round service-wifi info-element">
-          <i class="fa fa-wifi" title="<?=$this->transEscAttr('organisation_info_service_wifi')?>" aria-hidden="true"></i>
+          <?=$this->icon('wifi') ?>
           <span class="sr-only"><?=$this->transEsc('organisation_info_service_wifi')?></span>
         </span>
         <span class="btn btn-open-widget btn-round service-print info-element">
-          <i class="fa fa-print" title="<?=$this->transEscAttr('organisation_info_service_print')?>" aria-hidden="true"></i>
+          <?=$this->icon('print') ?>
           <span class="sr-only"><?=$this->transEsc('organisation_info_service_print')?></span>
         </span>
       </div>

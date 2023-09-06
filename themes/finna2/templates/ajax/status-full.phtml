@@ -129,7 +129,7 @@ if ($groupBranches) {
           <?=$this->transEsc('status_Charged')?>
         <?php endif; ?>
       </span>
-      <?php if ($collapseLocations): ?><i class="fa fa-arrow-down arrow down"></i><?php endif; ?>
+      <?php if ($collapseLocations): ?><?=$this->icon('holdings-locations-expand', 'expand') ?><?=$this->icon('holdings-locations-collapse', 'collapse') ?><?php endif; ?>
       <?php if (!$journal): ?>
         <span class="info">
           <?php if (!empty($reservationsTotal)): ?>
@@ -191,7 +191,7 @@ foreach ($this->statusItems as $item):
   <?php if ($groupBranches && $newLocation): ?>
     <div class="holdings-container<?=$collapseBranches ? ' collapsible' : ''?> clearfix">
       <div class="header">
-        <?php if ($collapseBranches): ?><i class="fa fa-arrow-right arrow right"></i><?php endif; ?>
+        <?php if ($collapseBranches): ?><?=$this->icon('holdings-expand', 'expand') ?><?=$this->icon('holdings-collapse', 'collapse') ?><?php endif; ?>
         <?php $locationText = $this->transEscWithPrefix('location_', $item['location']); ?>
         <?php if ($item['locationhref'] ?? false): ?>
           <span class="available-online-links">
@@ -381,12 +381,7 @@ if (!$disableTitleHold
       var item = $('.hiddenId[value="{$this->escapeHtmlAttr($id)}"]').closest('.record-container');
       item.find('.holdings-container.collapsible > .header').on('click', function onClickCollapsibleHeader() {
         $(this).next('.holdings').toggleClass('collapsed');
-        $(this).find('.fa.arrow:first.right')
-          .removeClass('fa-arrow-down fa-arrow-right')
-          .addClass('fa-arrow-' + ($(this).next('.holdings').hasClass('collapsed') ? 'right' : 'down'));
-        $(this).find('.fa.arrow:first.down')
-          .removeClass('fa-arrow-down fa-arrow-up')
-          .addClass('fa-arrow-' + ($(this).next('.holdings').hasClass('collapsed') ? 'down' : 'up'));
+        $(this).toggleClass('open');
       });
       JS;
   echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $js, 'SET');

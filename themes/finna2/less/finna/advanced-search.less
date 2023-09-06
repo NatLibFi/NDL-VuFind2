@@ -269,8 +269,6 @@
     }
   }
   .adv-search-group {
-    display: table;
-    width: 100%;
     @media (min-width: @screen-xs) {
       .search-text {
         min-width: initial;
@@ -427,7 +425,7 @@
     align-items: center;
   }
   .facet {
-    margin-bottom: 10px;
+    margin-bottom: 30px;
     @media (min-width: @screen-xs-min) {
       width: 45%;
     }
@@ -497,6 +495,9 @@
               width: (@i * 13px);
             }
             .generate-hierarchy(@n, (@i + 1));
+          }
+          &.option-child:not(.child-width-1) {
+            border-bottom: none;
           }
         }
       }

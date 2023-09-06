@@ -37,6 +37,8 @@ use VuFind\Cover\CachingProxy;
 use VuFind\Cover\Loader;
 use VuFind\Session\Settings as SessionSettings;
 
+use function in_array;
+
 /**
  * Generates record images.
  *

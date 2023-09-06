@@ -33,6 +33,12 @@ namespace FinnaConsole\Command\Util;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function is_array;
+use function is_bool;
+use function is_float;
+use function is_int;
+use function is_object;
+
 /**
  * Trait for logs in console services.
  *

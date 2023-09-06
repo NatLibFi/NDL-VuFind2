@@ -35,6 +35,6 @@
     <?=$this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $coreFieldGroups]);?>
   </table>
 <?php endif; ?>
-<button class="btn show-details-button hidden"><?=$this->transEsc('show_more_details');?> <i class="fa fa-arrow-down"></i></button>
-<button class="btn hide-details-button hidden"><?=$this->transEsc('show_less_details');?> <i class="fa fa-arrow-up"></i></button>
+<button class="btn show-details-button hidden"><?=$this->transEsc('show_more_details');?> <?=$this->icon('show-more') ?></button>
+<button class="btn hide-details-button hidden"><?=$this->transEsc('show_less_details');?> <?=$this->icon('show-less') ?></button>
 <!-- END of: finna - RecordDriver/SolrForward/core-fields.phtml -->

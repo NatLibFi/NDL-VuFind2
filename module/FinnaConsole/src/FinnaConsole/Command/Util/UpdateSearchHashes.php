@@ -32,6 +32,8 @@ namespace FinnaConsole\Command\Util;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function count;
+
 /**
  * Console service for updating search hashes.
  *

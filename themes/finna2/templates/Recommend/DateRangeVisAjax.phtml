@@ -10,7 +10,7 @@
 	    <input id="year-to" class="form-control form-inline input-year year-to" type="number" value="<?=$this->escapeHtmlAttr($this->to) ?>">
 	  </div>
 	  <button class="btn btn-primary submit" type="submit">
-      <i class="fa fa-search"></i><span><?= $this->transEsc($this->submitLabel); ?></span>
+      <?=$this->icon('search') ?><span><?= $this->transEsc($this->submitLabel); ?></span>
     </button>
     </div>
     <div class="content">
@@ -19,14 +19,14 @@
       <?php $this->headScript()->appendFile('vendor/jquery.flot.selection.min.js'); ?>
       <?php $this->headScript()->appendFile('finna-daterange-vis.js'); ?>
       <div class="date-vis"></div>
-      <i class="fa fa-spinner fa-spin"></i>
+      <?=$this->icon('spinner') ?>
     </div>
     <div class="navigation">
-      <div class="zoom-in"><i class="fa fa-zoom-in"></i></div>
-      <div class="zoom-out"><i class="fa fa-zoom-out"></i></div>
-      <div class="prev"><i class="fa fa-arrow-left"></i></div>
-      <div class="next"><i class="fa fa-arrow-right"></i></div>
-      <div class="expand-modal"><i class="fa fa-expand"></i></div>
+      <div class="zoom-in"><?=$this->icon('daterange-zoom-in') ?></div>
+      <div class="zoom-out"><?=$this->icon('daterange-zoom-out') ?></div>
+      <div class="prev"><?=$this->icon('daterange-prev') ?></div>
+      <div class="next"><?=$this->icon('daterange-next') ?></div>
+      <div class="expand-modal"><?=$this->icon('daterange-expand') ?></div>
     </div>
     <?php if ($backend != 'primo' && (!isset($hideType) || !$hideType)): ?>
     <div class="range-type">
@@ -53,7 +53,7 @@ $script = <<<JS
 
 $script .= isset($this->plotFrom) ? "{$this->plotFrom}," : 'false,';
 $script .= isset($this->plotTo) ? "{$this->plotTo}," : 'false,';
-$script .= isset($this->plotImmediately) ? "{$this->plotImmediately}" : "false";
+$script .= isset($this->plotImmediately) ? "{$this->plotImmediately}" : 'false';
 $script .= '
   );
 });';

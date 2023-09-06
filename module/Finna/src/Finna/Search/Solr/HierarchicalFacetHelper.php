@@ -29,6 +29,10 @@
 
 namespace Finna\Search\Solr;
 
+use function array_slice;
+use function count;
+use function strlen;
+
 /**
  * Functions for manipulating facets
  *

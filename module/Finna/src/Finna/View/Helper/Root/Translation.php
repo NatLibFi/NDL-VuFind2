@@ -29,6 +29,9 @@
 
 namespace Finna\View\Helper\Root;
 
+use function is_array;
+use function is_string;
+
 /**
  * Translation helper
  *

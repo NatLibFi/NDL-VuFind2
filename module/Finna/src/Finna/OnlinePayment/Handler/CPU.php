@@ -36,6 +36,11 @@ use Finna\OnlinePayment\Handler\Connector\Cpu\Client;
 use Finna\OnlinePayment\Handler\Connector\Cpu\Payment;
 use Finna\OnlinePayment\Handler\Connector\Cpu\Product;
 
+use function count;
+use function in_array;
+use function intval;
+use function strlen;
+
 /**
  * CPU payment handler module.
  *

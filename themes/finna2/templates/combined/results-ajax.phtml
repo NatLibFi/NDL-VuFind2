@@ -27,7 +27,7 @@
                 if (responseText.length == 0) {
                     holder.hide();
                 } else {
-                    finna.combinedResults.init(holder);
+                    finna.common.initResultScripts(holder);
                 }
             });
         });
@@ -42,7 +42,7 @@
 
 <div>
   <div class="combined-search-results">
-    <p><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> <?=$this->transEsc('loading_ellipsis')?></p>
+    <p><?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?></p>
   </div>
 </div>
 

@@ -40,6 +40,10 @@ use VuFind\View\Helper\Root\Record;
 use VuFindHttp\HttpService;
 use VuFindSearch\ParamBag;
 
+use function in_array;
+use function is_array;
+use function strlen;
+
 /**
  * AJAX handler for getting information for a field popover.
  *
@@ -146,7 +150,6 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
             $authIds
             && $authorityFields
             && ($authIds[0] ?? false)
-            && preg_match('/^[\w_-]+\./', $authIds[0])
         ) {
             try {
                 $authority = $this->loader->load(
@@ -181,7 +184,8 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
             )
         );
 
-        return $this->formatResponse(compact('html'));
+        $isAuthority = $authority ? true : false;
+        return $this->formatResponse(compact('html', 'isAuthority'));
     }
 
     /**

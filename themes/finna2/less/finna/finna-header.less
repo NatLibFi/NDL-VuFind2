@@ -119,24 +119,25 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
   }
 }
 .adv-search-header .adv_search_links {
+  line-height: 1em;
   @media (max-width:@screen-xs-max) {
     position: relative;
   }
-  & a, span {
+  a {
     white-space: nowrap;
     margin-right: 15px;
-    color: @text-color;
+    color: @gray;
     font-weight: 600;
+    .icon {
+      font-size: 1.2em;
+    }
     @media (max-width:@screen-xs-max) {
-      white-space: normal;
-      margin-left: 5px;
+      margin-left: 15px;
       margin-right: 0;
-      .template-name-results & {
-        margin-left: 15px;
-      }
     }
   }
   .adv-search-menu-toggle {
+    margin-left: 15px;
     color: @gray;
     cursor: pointer;
     font-size: @font-size-small;

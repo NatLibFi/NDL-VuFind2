@@ -34,6 +34,8 @@ use Paytrail\SDK\Exception\ClientException;
 use Paytrail\SDK\Exception\RequestException;
 use Paytrail\SDK\Response\CurlResponse;
 
+use function is_array;
+
 /**
  * Paytrail Payment API HTTP request client
  *

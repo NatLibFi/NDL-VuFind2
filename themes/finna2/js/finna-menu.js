@@ -9,7 +9,7 @@ finna.menu = (function finnaMenu() {
           $element.addClass("hidden");
           return ICON_LEVELS.NONE;
         }
-        $element.html('<i class="fa fa-exclamation-triangle" title="' + VuFind.translate('account_has_alerts') + '" aria-hidden="true"></i>');
+        $element.html('<span title="' + VuFind.translate('account_has_alerts') + '">' + VuFind.icon('warning', 'warning-icon') + '</span>');
         return ICON_LEVELS.DANGER;
       }
     });
@@ -34,7 +34,7 @@ finna.menu = (function finnaMenu() {
       toggleSubmenu($(this));
     });
 
-    $('.menu-parent > .caret').on('click', function clickLink(e) {
+    $('.menu-parent > .js-toggle-menu').on('click', function clickLink(e) {
       e.preventDefault();
       $(this).parent().trigger('togglesubmenu');
     });

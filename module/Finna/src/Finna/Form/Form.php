@@ -30,6 +30,8 @@
 
 namespace Finna\Form;
 
+use function in_array;
+
 /**
  * Configurable form.
  *

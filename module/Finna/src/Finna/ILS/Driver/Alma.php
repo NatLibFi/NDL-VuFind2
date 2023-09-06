@@ -33,6 +33,12 @@ use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\Marc\MarcReader;
 
+use function array_key_exists;
+use function count;
+use function floatval;
+use function in_array;
+use function is_array;
+
 /**
  * Alma ILS Driver
  *
@@ -1718,7 +1724,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      * method.
      * @param array $holdDetails Optional array, only passed in when getting a list
      * in the context of placing a hold; contains most of the same values passed to
-     * placeHold, minus the patron data.  May be used to limit the pickup options
+     * placeHold, minus the patron data. May be used to limit the pickup options
      * or may be ignored.
      *
      * @return string       The default pickup location for the patron.
@@ -2187,7 +2193,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
     /**
      * Helper method to determine whether or not a certain method can be
-     * called on this driver.  Required method for any smart drivers.
+     * called on this driver. Required method for any smart drivers.
      *
      * @param string $method The name of the called method.
      * @param array  $params Array of passed parameters
@@ -3114,11 +3120,11 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 ?? (string)$fee->type['desc'];
             $fineList[] = [
                 'fine_id'  => (string)$fee->id,
-                "title"    => (string)($fee->title ?? ''),
-                "amount"   => round(floatval($fee->original_amount) * 100),
-                "balance"  => round(floatval($fee->balance) * 100),
-                "createdate" => $this->parseDate($created, true),
-                "fine"     => $feeType,
+                'title'    => (string)($fee->title ?? ''),
+                'amount'   => round(floatval($fee->original_amount) * 100),
+                'balance'  => round(floatval($fee->balance) * 100),
+                'createdate' => $this->parseDate($created, true),
+                'fine'     => $feeType,
                 'payableOnline' => $payable,
                 '_create_time' => (string)$fee->creation_time,
                 '_status_time' => (string)$fee->status_time,

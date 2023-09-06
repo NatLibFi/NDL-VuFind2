@@ -33,6 +33,9 @@ namespace Finna\View\Helper\Root;
 
 use Laminas\View\Helper\Url;
 
+use function func_get_args;
+use function in_array;
+
 /**
  * Header view helper
  *

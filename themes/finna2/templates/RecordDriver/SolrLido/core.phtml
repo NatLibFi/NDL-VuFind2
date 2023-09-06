@@ -62,11 +62,6 @@
 <?php $this->metadata()->generateMetatags($this->driver);?>
 <div class="media" vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
   <h1 property="name" class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
-  <?php if ($summaryContent): ?>
-    <div class="truncate-wrapper visible-xs">
-      <?=$summaryContent?>
-    </div>
-  <?php endif; ?>
   <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
   <?php endif; ?>
@@ -101,7 +96,7 @@
       </div>
       <?php if ($documents = $this->driver->getDocuments()): ?>
         <div class="record-links">
-          <div class="recordURLs local-available-online-record">
+          <div class="recordURLs local-available-online-record lido-links">
             <ul class="truncate-field outer" data-rows="4">
               <?=$this->record($this->driver)->renderTemplate('document-links.phtml', ['documents' => $documents])?>
             </ul>
@@ -109,16 +104,24 @@
         </div>
       <?php endif; ?>
 
-      <?php if ($summaryContent): ?>
-        <div class="truncate-wrapper hidden-xs">
-          <?=$summaryContent?>
+      <div class="summary-wrapper">
+        <div class="description recordSummary">
+        <span id="description_text" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>">
+          <?=$this->icon('spinner') ?>
+        </span>
         </div>
-      <?php endif; ?>
+
+        <?php if ($summaryContent): ?>
+          <div class="truncate-wrapper">
+            <?=$summaryContent?>
+          </div>
+        <?php endif; ?>
+      </div>
 
       <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
         <?php /* Display the lists that this record is saved to */ ?>
         <div class="savedLists" id="savedLists">
-          <strong><?=$this->transEsc("Saved in")?>:</strong>
+          <strong><?=$this->transEsc('Saved in')?>:</strong>
         </div>
       <?php endif; ?>
 
@@ -133,7 +136,7 @@
       ?>
       <?/* End Main Details */?>
 
-      <?php if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>
+      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/record-post-metadata')): ?>
       <div>
         <?=$this->render($template)?>
       </div>

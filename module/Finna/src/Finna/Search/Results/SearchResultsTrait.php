@@ -32,6 +32,8 @@ namespace Finna\Search\Results;
 
 use Finna\Search\Factory\UrlQueryHelperFactory;
 
+use function is_callable;
+
 /**
  * Finna search results trait
  *

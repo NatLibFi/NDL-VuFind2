@@ -364,7 +364,7 @@ a.authority {
             max-width: 64px;
             flex: 1 1 64px;
             cursor: pointer;
-            i.fa-finna-3d {
+            span.model-3d-icon {
               color: #121212;
               font-size: 24px;
               font-style: initial;
@@ -395,10 +395,11 @@ a.authority {
       background-color: #efefef;
       background-color: #efefefcc;
       margin: 0 1px;
+      padding: 0 4px;
       box-shadow: 1px 1px #c6c6c6;
       height: 24px;
-      i {
-        font-size: 14px;
+      .icon {
+        font-size: 10px;
       }
       &:disabled {
         color: lighten(@gray-light, 30%);
@@ -501,70 +502,48 @@ a.authority {
   margin-bottom: 6px;
 }
 
-.record-information {
+.record-links {
   vertical-align: baseline;
-  button.less-link.top-button {
-    top: 0;
-    position: sticky;
-    background-color: @body-bg;
-    width: 100%;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    text-align: left;
-    @media(max-width: @screen-md) {
-      top: @navbar-height;
-    }
+  .cc-info {
+    margin-left: 5px;
   }
-  ul.truncate-field{
-    margin-bottom: 0;
-  }
-  button.less-link {
-    display: flex;
-    align-items: baseline;
-    i {
-      padding-left: 2px;
-    }
-  }
-  .copyright-wrapper {
-    display: inline-block;
-    margin-left: 3px;
-    .cc-info {
-      margin-left: 5px;
-    }
-    a.copyright-description, .iconlabel {
+  a.copyright-description, .iconlabel {
       font-size: @font-size-small;
       font-weight: normal;
-    }
-    .show-info, .hide-info {
+  }
+  .show-info, .hide-info {
       font-size: @font-size-small;
       text-transform: lowercase;
       font-weight: normal;
-    }
-    span.fa-arrow-down, span.fa-arrow-up {
+  }
+  span.fa-arrow-down, span.fa-arrow-up {
       font-size: 0.8em;
-    }
-    .show-info:first-letter, .hide-info:first-letter {
+  }
+  .show-info:first-letter, .hide-info:first-letter {
       text-transform: none;
-    }
-    .iconlabel {
+  }
+  .iconlabel {
       margin-right: -3px;
       vertical-align: bottom;
-    }
-    .iconlabel:first-child {
-      margin-left: 2px;
-    }
-    span {
-      font-size: @font-size-small;
-    }
-    p {
-      font-size: @font-size-small;
-      padding: 0;
-      margin: 0;
-    }
-    .copyright-description {
-      margin-right: 5px;
-    }
   }
+  .iconlabel:first-child {
+      margin-left: 2px;
+  }
+  span {
+      font-size: @font-size-small;
+  }
+  p {
+     font-size: @font-size-small;
+     padding: 0;
+     margin: 0;
+  }
+  .copyright-description {
+      margin-right: 5px;
+  }
+}
+.copyright-wrapper {
+    display: inline-block;
+    margin-left: 3px;
 }
 
 .summary {

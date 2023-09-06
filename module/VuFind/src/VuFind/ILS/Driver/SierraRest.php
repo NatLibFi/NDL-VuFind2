@@ -35,6 +35,15 @@ use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFindHttp\HttpServiceAwareInterface;
 
+use function call_user_func_array;
+use function func_get_args;
+use function in_array;
+use function intval;
+use function is_array;
+use function is_callable;
+use function is_string;
+use function strlen;
+
 /**
  * III Sierra REST API driver
  *
@@ -58,7 +67,7 @@ class SierraRest extends AbstractBase implements
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFind\I18n\HasSorterTrait;
     use \VuFind\Service\Feature\RetryTrait;
-    use \VuFind\Config\ExplodeSettingTrait;
+    use \VuFind\Config\Feature\ExplodeSettingTrait;
 
     /**
      * Fixed field number for location in holdings records
@@ -482,7 +491,7 @@ class SierraRest extends AbstractBase implements
      */
     public function getStatus($id)
     {
-        return $this->getItemStatusesForBib($id, false);
+        return $this->getItemStatusesForBib($id, $this->config['Holdings']['check_holdings_in_results'] ?? true);
     }
 
     /**
@@ -499,7 +508,7 @@ class SierraRest extends AbstractBase implements
     {
         $items = [];
         foreach ($ids as $id) {
-            $items[] = $this->getItemStatusesForBib($id, false);
+            $items[] = $this->getStatus($id);
         }
         return $items;
     }
@@ -819,7 +828,7 @@ class SierraRest extends AbstractBase implements
     /**
      * Renew My Items
      *
-     * Function for attempting to renew a patron's items.  The data in
+     * Function for attempting to renew a patron's items. The data in
      * $renewDetails['details'] is determined by getRenewDetails().
      *
      * @param array $renewDetails An array of data required for renewing items
@@ -1271,10 +1280,10 @@ class SierraRest extends AbstractBase implements
      * @param array $patron      Patron information returned by the patronLogin
      * method.
      * @param array $holdDetails Optional array, only passed in when getting a list
-     * in the context of placing or editing a hold.  When placing a hold, it contains
-     * most of the same values passed to placeHold, minus the patron data.  When
+     * in the context of placing or editing a hold. When placing a hold, it contains
+     * most of the same values passed to placeHold, minus the patron data. When
      * editing a hold it contains all the hold information returned by getMyHolds.
-     * May be used to limit the pickup options or may be ignored.  The driver must
+     * May be used to limit the pickup options or may be ignored. The driver must
      * not add new options to the return array based on this data or other areas of
      * VuFind may behave incorrectly.
      *
@@ -1345,7 +1354,7 @@ class SierraRest extends AbstractBase implements
      * method.
      * @param array $holdDetails Optional array, only passed in when getting a list
      * in the context of placing a hold; contains most of the same values passed to
-     * placeHold, minus the patron data.  May be used to limit the pickup options
+     * placeHold, minus the patron data. May be used to limit the pickup options
      * or may be ignored.
      *
      * @return false|string      The default pickup location for the patron or false
@@ -1630,7 +1639,7 @@ class SierraRest extends AbstractBase implements
 
     /**
      * Helper method to determine whether or not a certain method can be
-     * called on this driver.  Required method for any smart drivers.
+     * called on this driver. Required method for any smart drivers.
      *
      * @param string $method The name of the called method.
      * @param array  $params Array of passed parameters
@@ -2221,8 +2230,8 @@ class SierraRest extends AbstractBase implements
                 ['v5', 'holdings'],
                 [
                     'bibIds' => $this->extractBibId($id),
-                    //'deleted' => 'false',
-                    //'suppressed' => 'false',
+                    'deleted' => 'false',
+                    'suppressed' => 'false',
                     'fields' => 'fixedFields,varFields',
                 ],
                 'GET'
@@ -2231,7 +2240,7 @@ class SierraRest extends AbstractBase implements
                 $location = '';
                 foreach ($entry['fixedFields'] as $code => $field) {
                     if (
-                        $code === static::HOLDINGS_LOCATION_FIELD
+                        (string)$code === static::HOLDINGS_LOCATION_FIELD
                         || $field['label'] === 'LOCATION'
                     ) {
                         $location = $field['value'];
@@ -2319,8 +2328,10 @@ class SierraRest extends AbstractBase implements
                 'item_id' => 'HLD_' . $holdings[0]['id'],
                 'location' => $location,
                 'requests_placed' => 0,
+                'number' => '',
                 'status' => '',
                 'use_unknown_message' => true,
+                'reserve' => 'N',
                 'availability' => false,
                 'duedate' => '',
                 'barcode' => '',

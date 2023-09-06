@@ -12,7 +12,7 @@
       <?php endif ?>
       <?php if ($this->date): ?>
         <div class="public-list-info">
-          <div><?= $this->transEsc("modified"); ?>: <?=$this->dateTime()->convertToDisplayDate('Y-m-d H:i:s', $this->date); ?></div>
+          <div><?= $this->transEsc('modified'); ?>: <?=$this->dateTime()->convertToDisplayDate('Y-m-d H:i:s', $this->date); ?></div>
         </div>
       <?php endif ?>
     </div>
@@ -50,13 +50,13 @@
           <?=$this->translate('showing_results_of_html', $transParams)?>
         </div>
         <button class="btn btn-outline-primary load-more" aria-label="<?= $this->transEscAttr('See all')?>" data-id="<?= $this->escapeHtmlAttr($this->id)?>" data-start-index="<?= $this->escapeHtmlAttr($this->indexStart + $limit)?>" data-offset="<?= $this->escapeHtmlAttr($limit + 1)?>" data-view="<?= $this->escapeHtmlAttr($this->view)?>"<?= $this->sort ? (' data-sort="' . $this->escapeHtmlAttr($this->sort) . '"') : ''?>><?= $this->transEsc('See all'); ?></button>
-        <i class="fa fa-spinner fa-spin hide"></i>
+        <?=$this->icon('spinner') ?>
       </div>
     <?php endif; ?>
   </div>
 </div>
 <?php
-$this->headScript()->appendFile("finna-userlist-embed.js");
+$this->headScript()->appendFile('finna-userlist-embed.js');
 $js = <<<JS
     $(document).ready(function(){
       finna.userListEmbed.init();

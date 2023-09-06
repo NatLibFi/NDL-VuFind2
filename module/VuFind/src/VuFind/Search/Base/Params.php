@@ -38,6 +38,18 @@ use VuFindSearch\Backend\Solr\LuceneSyntaxHelper;
 use VuFindSearch\Query\Query;
 use VuFindSearch\Query\QueryGroup;
 
+use function call_user_func;
+use function count;
+use function get_class;
+use function in_array;
+use function intval;
+use function is_array;
+use function is_callable;
+use function is_float;
+use function is_int;
+use function is_object;
+use function strlen;
+
 /**
  * Abstract parameters search model.
  *
@@ -438,12 +450,12 @@ class Params
         }
 
         // If lookfor is an array, we may be dealing with a legacy Advanced
-        // Search URL.  If there's only one parameter, we can flatten it,
+        // Search URL. If there's only one parameter, we can flatten it,
         // but otherwise we should treat it as an error -- no point in going
         // to great lengths for compatibility.
         if (is_array($lookfor)) {
             if (count($lookfor) > 1) {
-                throw new \Exception("Unsupported search URL.");
+                throw new \Exception('Unsupported search URL.');
             }
             $lookfor = $lookfor[0];
         }
@@ -500,7 +512,7 @@ class Params
     }
 
     /**
-     * Support method for initSearch() -- handle advanced settings.  Advanced
+     * Support method for initSearch() -- handle advanced settings. Advanced
      * searches have numeric subscripts on the lookfor and type parameters --
      * this is how they are distinguished from basic searches.
      *
@@ -987,8 +999,8 @@ class Params
     }
 
     /**
-     * Add a checkbox facet.  When the checkbox is checked, the specified filter
-     * will be applied to the search.  When the checkbox is not checked, no filter
+     * Add a checkbox facet. When the checkbox is checked, the specified filter
+     * will be applied to the search. When the checkbox is not checked, no filter
      * will be applied.
      *
      * @param string $filter  [field]:[value] pair to associate with checkbox
@@ -1401,7 +1413,7 @@ class Params
     }
 
     /**
-     * Support method for initFilters() -- initialize range filters.  Factored
+     * Support method for initFilters() -- initialize range filters. Factored
      * out as a separate method so that it can be more easily overridden by child
      * classes.
      *
@@ -1848,7 +1860,7 @@ class Params
     }
 
     /**
-     * Get an array of the names of all selected shards.  These should correspond
+     * Get an array of the names of all selected shards. These should correspond
      * with keys in the array returned by the option class's getShards() method.
      *
      * @return array

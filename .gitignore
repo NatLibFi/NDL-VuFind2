@@ -16,6 +16,8 @@
 ChangeLog
 TAGS
 composer.phar
+env.bat
+env.sh
 import/solrmarc.log*
 lessphp_*.list
 module/VuFind/tests/.phpunit.result.cache
@@ -60,6 +62,7 @@ themes/custom/css/finna.css
 *.diff
 vufind.bat
 public/swagger-ui
+local/DirLocations.ini
 local/config/vufind/*.ini
 local/config/vufind/*.json
 local/config/vufind/*.yaml

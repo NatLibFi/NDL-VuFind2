@@ -31,6 +31,8 @@
 
 namespace Finna\RecordDriver;
 
+use function in_array;
+
 /**
  * Model for EAC-CPF records in Solr.
  *

@@ -41,6 +41,8 @@ use VuFindApi\Controller\ApiInterface;
 use VuFindApi\Controller\ApiTrait;
 use VuFindApi\Formatter\RecordFormatter;
 
+use function is_array;
+
 /**
  * List API Controller
  *

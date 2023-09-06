@@ -4,7 +4,7 @@
   <p>Nämä ovat esimerkkejä. Lisää tyhjä home-4.phtml custom/search/home -kansioon, jos et käytä tiedostoa.</p>
   <h3><?=$this->transEsc('most_popular_searches_heading')?></h3>
   <div class="piwik-popular-searches popular-search-col">
-    <span class="load-indicator hidden"><i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('loading_ellipsis')?></span>
+    <span class="load-indicator hidden"><?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?></span>
     <span class="load-failed hidden"> <?=$this->transEsc('An error occurred during execution; please try again later.')?></span>
   </div>
 </div>
