@@ -50,7 +50,10 @@
 </div>
 <div class="office-quick-information info-element hide">
   <div class="office-title">
-    <h3 class="service-title">Template title</h3>
+    <div aria-live="polite">
+      <span class="sr-only"><?=$this->transEsc('organisation_info_selected_service_point')?></span>
+      <h3 class="service-title">Template title</h3>
+    </div>
     <div>
       <p>
         <span class="office-links address"></span>
