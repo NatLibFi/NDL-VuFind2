@@ -144,6 +144,7 @@
           if ($desc === $url['url']) {
             $desc = $this->truncateUrl($desc);
           }
+          $icon = 'external-link';
           if (!empty($url['desc'])) {
             $map = ['Database Guide' => 'database-info', 'Database Interface' => 'database-browse'];
             if (isset($map[$url['desc']])) {
