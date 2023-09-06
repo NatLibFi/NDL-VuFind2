@@ -1033,6 +1033,48 @@ trait SolrFinnaTrait
     }
 
     /**
+     * Check if a URL (typically from getURLs()) is blocked based on the URL
+     * itself and optionally its description.
+     *
+     * @param string $url  URL
+     * @param string $desc Optional description of the URL
+     *
+     * @return bool Whether the URL is blocked
+     */
+    public function urlBlocked($url, $desc = '')
+    {
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+
+        $allowedSchemes = isset($this->recordConfig->Record->allowed_url_schemes)
+            ? $this->recordConfig->Record->allowed_url_schemes->toArray()
+            : ['http', 'https', 'tel', 'mailto', 'maps'];
+        if (!in_array($scheme, $allowedSchemes)) {
+            return true;
+        }
+
+        // Keep old setting name for back-compatibility:
+        $blocklist = $this->recordConfig->Record->url_blocklist
+            ?? $this->recordConfig->Record->url_blacklist
+            ?? [];
+        if (empty($blocklist)) {
+            return false;
+        }
+        foreach ($blocklist as $rule) {
+            if (substr($rule, 0, 1) == '/' && substr($rule, -1, 1) == '/') {
+                if (
+                    preg_match($rule, $url)
+                    || ($desc !== '' && preg_match($rule, $desc))
+                ) {
+                    return true;
+                }
+            } elseif ($rule == $url || $rule == $desc) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * A helper function that merges an array of JSON-encoded URLs
      *
      * @param array $urlArray Array of JSON-encoded URL attributes
@@ -1078,48 +1120,6 @@ trait SolrFinnaTrait
             }
         }
         return $urls;
-    }
-
-    /**
-     * Check if a URL (typically from getURLs()) is blocked based on the URL
-     * itself and optionally its description.
-     *
-     * @param string $url  URL
-     * @param string $desc Optional description of the URL
-     *
-     * @return bool Whether the URL is blocked
-     */
-    protected function urlBlocked($url, $desc = '')
-    {
-        $scheme = parse_url($url, PHP_URL_SCHEME);
-
-        $allowedSchemes = isset($this->recordConfig->Record->allowed_url_schemes)
-            ? $this->recordConfig->Record->allowed_url_schemes->toArray()
-            : ['http', 'https', 'tel', 'mailto', 'maps'];
-        if (!in_array($scheme, $allowedSchemes)) {
-            return true;
-        }
-
-        // Keep old setting name for back-compatibility:
-        $blocklist = $this->recordConfig->Record->url_blocklist
-            ?? $this->recordConfig->Record->url_blacklist
-            ?? [];
-        if (empty($blocklist)) {
-            return false;
-        }
-        foreach ($blocklist as $rule) {
-            if (substr($rule, 0, 1) == '/' && substr($rule, -1, 1) == '/') {
-                if (
-                    preg_match($rule, $url)
-                    || ($desc !== '' && preg_match($rule, $desc))
-                ) {
-                    return true;
-                }
-            } elseif ($rule == $url || $rule == $desc) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

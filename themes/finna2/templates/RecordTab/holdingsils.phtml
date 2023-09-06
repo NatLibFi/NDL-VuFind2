@@ -139,7 +139,9 @@
   <div class="holdings-urls">
     <?php if (!empty($urls)): ?>
       <?php foreach ($urls as $current): ?>
-        <a class="holdings-url-link" href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><?=$this->icon('external-link') ?> <?=$this->transEsc('default::link_' . $current['desc'], null, $current['desc'])?> <?=$current['part'] ?? ''?></a>
+        <?php if (!$this->driver->tryMethod('urlBlocked', [$current['url'], $current['desc']])): ?>
+          <a class="holdings-url-link" href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><?=$this->icon('external-link') ?> <?=$this->transEsc('default::link_' . $current['desc'], null, $current['desc'])?> <?=$current['part'] ?? ''?></a>
+        <?php endif; ?>
       <?php endforeach; ?>
     <?php endif; ?>
     <?php if ($doiActive): ?>
@@ -353,7 +355,7 @@
       <div class="location">
         <?=$this->icon('holdings-expand', 'expand') ?><?=$this->icon('holdings-collapse', 'collapse') ?>
         <?php $locationText = $this->transEscWithPrefix('location_', $holding['location']); ?>
-        <?php if ($holding['locationhref'] ?? false): ?>
+        <?php if (($holding['locationhref'] ?? false) && !$this->driver->tryMethod('urlBlocked', [$holding['locationhref'], $locationText])): ?>
           <a href="<?=$holding['locationhref']?>" target="_blank"><?=$locationText?></a>
         <?php else: ?>
           <?=$locationText?>

@@ -4,9 +4,14 @@
     <span class="holdings-title"><?=$this->transEsc('Electronic')?></span>
   </div>
   <?php foreach ($this->holdings as $item): ?>
+    <?php
+      $locationText = $this->transEscWithPrefix('location_', $item['location']);
+      if ($this->driver->tryMethod('urlBlocked', [$item['locationhref'] ?? '', $locationText])) {
+        continue;
+      }
+    ?>
     <div class="holdings-container-heading">
       <div class="location electronic">
-        <?php $locationText = $this->transEscWithPrefix('location_', $item['location']); ?>
         <?php if ($item['locationhref'] ?? false): ?>
           <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($item['locationhref']))?>" target="_blank">
             <?=$this->icon('external-link') ?> <?=$locationText?>
