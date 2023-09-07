@@ -238,6 +238,8 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
       var dir = parseInt($(this).data('dir'));
 
       holder.find('.week-text .num').text(holder.data('week-num') + dir);
+      holder.find('.week-text').attr("aria-live", "polite");
+      holder.find('.week-text').attr("aria-atomic", "true");
 
       var icon = $(this).children('i').first();
       $(this).data('icon-classes', icon.attr('class'));

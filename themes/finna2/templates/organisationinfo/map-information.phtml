@@ -46,13 +46,13 @@
   </div>
 </div>
 <div class="office-information-loader">
-  <p><?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?></p>
+  <p><?=$this->icon('spinner') ?> <span aria-atomic="true" aria-live="polite"><?=$this->transEsc('loading_ellipsis')?></span></p>
 </div>
 <div class="office-quick-information info-element hide">
   <div class="office-title">
-    <div aria-live="polite">
+    <div aria-atomic="true" aria-live="polite">
       <span class="sr-only"><?=$this->transEsc('organisation_info_selected_service_point')?></span>
-      <h3 class="service-title">Template title</h3>
+      <h3 class="service-title"></h3>
     </div>
     <div>
       <p>

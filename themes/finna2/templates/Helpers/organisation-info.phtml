@@ -23,7 +23,7 @@
       <div class="organisation-dropdown-holder">
         <div class="organisation dropdown">
           <button type="button" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-id="">
-            <span aria-live="polite">
+            <span aria-atomic="true" aria-live="polite">
               <span class="sr-only"><?=$this->transEsc('organisation_info_selected_service_point')?></span>
               <span class="selected"></span>
             </span>
@@ -41,7 +41,7 @@
           <button type="button" class="prev-week week-navi btn-link" data-dir="-1" aria-label="<?= $this->transEscAttr('organisation_info_previous_week')?>">
             <?=$this->icon('week-prev') ?>
           </button>
-          <span class="week-text" aria-live="polite"><?=$this->transEsc('organisation_info_schedule_week')?> <span class="num"></span></span>
+          <span class="week-text"><?=$this->transEsc('organisation_info_schedule_week')?> <span class="num"></span></span>
           <button type="button" class="next-week week-navi btn-link" data-dir="+1" aria-label="<?= $this->transEscAttr('organisation_info_next_week')?>">
             <?=$this->icon('week-next') ?>
           </button>
