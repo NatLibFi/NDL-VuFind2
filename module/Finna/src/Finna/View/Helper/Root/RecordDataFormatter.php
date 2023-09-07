@@ -693,10 +693,10 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     protected function filterFields(array $coreFields, array $include): array
     {
         $intersected = array_intersect_key($coreFields, array_flip($include));
-        $config = $this->getView()->plugin('config')->get('datasource');
+        $config = $this->getView()->plugin('config')->get('datasources');
         $source = $this->driver->getSource();
-        if ($hide = (array)($config->$source->hidden_record_fields ?? [])) {
-            $intersected = array_diff_key($intersected, array_flip($hide));
+        if ($hide = $config->$source->hidden_record_fields ?? []) {
+            $intersected = array_diff_key($intersected, array_flip($hide->toArray()));
         }
         return $intersected;
     }
