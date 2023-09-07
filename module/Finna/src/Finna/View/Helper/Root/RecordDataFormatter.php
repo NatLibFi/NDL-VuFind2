@@ -56,6 +56,8 @@ use function in_array;
  */
 class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
 {
+    protected $hiddenFields;
+
     /**
      * Filter unnecessary fields from Marc records.
      *
@@ -136,7 +138,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Uncontrolled Title',
             'Uniform Title',
         ];
-        return array_intersect_key($coreFields, array_flip($include));
+        return $this->filterFields($coreFields, $include);
     }
 
     /**
@@ -185,7 +187,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Subject Place',
             'SubjectsWithoutPlaces',
         ];
-        return array_intersect_key($coreFields, array_flip($include));
+        return $this->filterFields($coreFields, $include);
     }
 
     /**
@@ -234,7 +236,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Subjects',
             'System Format',
         ];
-        return array_intersect_key($coreFields, array_flip($include));
+        return $this->filterFields($coreFields, $include);
     }
 
     /**
@@ -307,7 +309,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Subjects',
             'System Format',
         ];
-        return array_intersect_key($coreFields, array_flip($include));
+        return $this->filterFields($coreFields, $include);
     }
 
     /**
@@ -363,7 +365,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Unit ID',
             'original_work_language',
         ];
-        return array_intersect_key($coreFields, array_flip($include));
+        return $this->filterFields($coreFields, $include);
     }
 
     /**
@@ -427,7 +429,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'System Format',
             'Unit IDs',
         ];
-        return array_intersect_key($coreFields, array_flip($include));
+        return $this->filterFields($coreFields, $include);
     }
 
     /**
@@ -470,7 +472,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Subjects',
             'System Format',
         ];
-        return array_intersect_key($coreFields, array_flip($include));
+        return $this->filterFields($coreFields, $include);
     }
 
     /**
@@ -548,7 +550,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Subjects',
             'System Format',
         ];
-        return array_intersect_key($coreFields, array_flip($include));
+        return $this->filterFields($coreFields, $include);
     }
 
     /**
@@ -679,5 +681,25 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             ];
         }
         return $result;
+    }
+
+    /**
+     * Returns an array containing core fields suitable to be shown.
+     * If record source has hidden fields, excludes them from result.
+     *
+     * @param array $coreFields Core fields list
+     * @param array $include    Fields to include for the driver
+     *
+     * @return array
+     */
+    protected function filterFields(array $coreFields, array $include): array
+    {
+        $intersected = array_intersect_key($coreFields, array_flip($include));
+        $config = $this->getView()->plugin('config')->get('datasource');
+        $source = $this->driver->getSource();
+        if ($hide = (array)($config->$source->hidden_record_fields ?? [])) {
+            $intersected = array_diff_key($intersected, array_flip($hide));
+        }
+        return $intersected;
     }
 }
