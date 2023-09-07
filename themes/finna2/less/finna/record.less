@@ -732,14 +732,17 @@ a.authority {
     min-width: 150px;
   }
 }
-.nav-pills .share-buttons a {
-  display: inline-block;
-}
-.share-buttons {
-    margin-right: 5px;
-}
-.share-buttons-toolbox {
-    display: inline-block;
+
+// Share buttons
+.nav-pills > li.share-buttons {
+  float: right;
+  padding-top: 5px;
+  .share-buttons-toolbox {
+      a {
+          padding-left: 5px;
+          display: inline-block;
+      }
+  }
 }
 
 // Request forms

@@ -652,42 +652,33 @@ table .iconlabel {
     font-family: finnaicons;
     content: "\e036";
 }
-.nav-pills > li.share-buttons {
-    float: right;
-    padding-top: 5px;
-    .share-buttons-toolbox {
-        a {
-            padding: 0;
-        }
-        .icon {
-            color: #fff;
-            margin-left: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            &.facebook-icon {
-                background: #3a5795;
-                border: 2px solid #3a5795;
-                color: #fff;
-            }
-            &.pinterest-icon {
-                background: #cb2027;
-                border: 2px solid #cb2027;
-                color: #fff;
-            }
-            &.twitter-icon {
-                background: #00aced;
-                border: 2px solid #00aced;
-                color: #fff;
-            }
-            &.fa-google-plus {
-                background: #d34836;
-                border: 2px solid #d34836;
-                color: #fff;
-            }
-        }
+.share-buttons .icon, .whatsapp .icon {
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    &.facebook-icon {
+        background: #3a5795;
+        border: 2px solid #3a5795;
+        color: #fff;
+    }
+    &.pinterest-icon {
+        background: #cb2027;
+        border: 2px solid #cb2027;
+        color: #fff;
+    }
+    &.twitter-icon {
+        background: #00aced;
+        border: 2px solid #00aced;
+        color: #fff;
+    }
+    &.whatsapp-icon {
+        background: #64d448;
+        border: 2px solid #64d448;
+        color: #fff;
     }
 }
+
