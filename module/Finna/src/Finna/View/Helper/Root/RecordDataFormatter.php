@@ -56,8 +56,6 @@ use function in_array;
  */
 class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
 {
-    protected $hiddenFields;
-
     /**
      * Filter unnecessary fields from Marc records.
      *
