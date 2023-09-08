@@ -127,5 +127,6 @@ archiveRequestAllowedRecordLevels = 'file:item'
 archiveRequestRequireFilingUnit = true
 
 ; Hide record fields from record view
+; Each value is a field label defined in RecordDataFormatterFactory
 ;hidden_record_fields[] = 'Archive'
 ;hidden_record_fields[] = 'Subject'
