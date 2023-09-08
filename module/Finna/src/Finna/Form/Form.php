@@ -732,10 +732,15 @@ class Form extends \VuFind\Form\Form
     {
         $elements = parent::getFormElements($config);
 
-        $includeRecordData = $this->formId === self::RECORD_FEEDBACK_FORM
-          || $this->isRecordRequestFormWithBarcode();
+        $includeRecordData = in_array(
+            $this->formId,
+            [
+                self::RECORD_FEEDBACK_FORM,
+                self::ARCHIVE_MATERIAL_REQUEST
+            ]
+        ) || $this->isRecordRequestFormWithBarcode();
 
-        if ($includeRecordData || self::ARCHIVE_MATERIAL_REQUEST === $this->formId) {
+        if ($includeRecordData) {
             // Add hidden fields for record data
             foreach (['record_id', 'record', 'record_info'] as $key) {
                 $elements[$key] = ['type' => 'hidden', 'name' => $key, 'value' => null];
