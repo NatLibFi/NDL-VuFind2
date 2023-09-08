@@ -736,7 +736,7 @@ class Form extends \VuFind\Form\Form
             $this->formId,
             [
                 self::RECORD_FEEDBACK_FORM,
-                self::ARCHIVE_MATERIAL_REQUEST
+                self::ARCHIVE_MATERIAL_REQUEST,
             ]
         ) || $this->isRecordRequestFormWithBarcode();
 
