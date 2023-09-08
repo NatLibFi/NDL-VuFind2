@@ -735,14 +735,9 @@ class Form extends \VuFind\Form\Form
         $includeRecordData = $this->formId === self::RECORD_FEEDBACK_FORM
           || $this->isRecordRequestFormWithBarcode();
 
-        if ($includeRecordData) {
+        if ($includeRecordData || self::ARCHIVE_MATERIAL_REQUEST === $this->formId) {
             // Add hidden fields for record data
             foreach (['record_id', 'record', 'record_info'] as $key) {
-                $elements[$key] = ['type' => 'hidden', 'name' => $key, 'value' => null];
-            }
-        }
-        if ($this->formId === self::ARCHIVE_MATERIAL_REQUEST) {
-            foreach (['record_id', 'record_info'] as $key) {
                 $elements[$key] = ['type' => 'hidden', 'name' => $key, 'value' => null];
             }
         }
