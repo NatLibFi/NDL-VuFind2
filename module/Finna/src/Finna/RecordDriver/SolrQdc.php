@@ -379,7 +379,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
             // Check if there is an rights element with priority.
             $localizedRights = (self::NO_LOCALE !== $lang && $firstElementPriority)
                 ? array_merge($cache[self::NO_LOCALE], $cache[$lang])
-                : $localizedRights = $cache[$lang];
+                : $cache[$lang];
             break;
         }
         if (empty($localizedRights)) {
