@@ -1063,8 +1063,10 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 ? preg_replace('/^\|a/', '', $item['callNumber'])
                 : $bibCallNumber;
 
-            $volume = isset($item['varFields']) ? $this->extractVolume($item)
-                : '';
+            $number = isset($item['varFields']) ? $this->extractVolume($item) : '';
+            if (!$number) {
+                $number = $this->getItemSpecificLocation($item);
+            }
 
             $entry = [
                 'id' => $id,
@@ -1075,7 +1077,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'reserve' => 'N',
                 'callnumber' => $callnumber,
                 'duedate' => $duedate,
-                'number' => $volume,
+                'number' => $number,
                 'barcode' => $item['barcode'],
                 'sort' => $sort--,
                 'requests_placed' => $displayItemHoldCount ? ($item['holdCount'] ?? null) : null,
@@ -1158,6 +1160,40 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         }
 
         return $statuses;
+    }
+
+    /**
+     * Return item-specific location information as configured
+     *
+     * @param array $item Koha item
+     *
+     * @return string
+     */
+    protected function getItemSpecificLocation($item)
+    {
+        if (empty($this->config['Holdings']['display_location_per_item'])) {
+            return '';
+        }
+
+        $result = [];
+        foreach (explode(',', $this->config['Holdings']['display_location_per_item']) as $field) {
+            switch ($field) {
+                case 'location':
+                    if ($location = $this->translateLocation($item['location'])) {
+                        $result[] = $location;
+                    }
+                    break;
+                case 'callnumber':
+                    if ($callNo = $item['callNumber'] ?? false) {
+                        if ($callNo = preg_replace('/^\|a/', '', $callNo)) {
+                            $result[] = $callNo;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        return implode(', ', $result);
     }
 
     /**

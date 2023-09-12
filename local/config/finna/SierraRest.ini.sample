@@ -274,6 +274,12 @@ display_item_hold_counts = false
 display_total_hold_count = true
 ; Whether total item count is displayed in results list
 display_total_item_count_in_results = true
+; A comma-separated list of fields to display as item-specific location when item
+; number is not available. Default is none.
+; The following options are available:
+; location        - Item location
+; callnumber      - Item call number
+;display_location_per_item = "callnumber"
 ; Holdings fields to include in notes. Default is none.
 ;notes = "n"
 ; Holdings fields to include in summary. Default is "h".
