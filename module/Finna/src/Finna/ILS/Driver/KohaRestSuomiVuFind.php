@@ -32,6 +32,11 @@ namespace Finna\ILS\Driver;
 use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
 
+use function count;
+use function in_array;
+use function is_callable;
+use function is_string;
+
 /**
  * KohaRest ILS Driver for KohaSuomi (the VuFind base implementation part)
  *
@@ -2066,7 +2071,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
             }
         } else {
             $this->error(
-                "Unable to determine status for item: " . print_r($item, true)
+                'Unable to determine status for item: ' . print_r($item, true)
             );
         }
 

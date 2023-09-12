@@ -38,6 +38,10 @@ use Laminas\Config\Config;
 use Laminas\Mvc\Controller\Plugin\Url;
 use VuFind\Search\Results\PluginManager;
 
+use function in_array;
+use function is_array;
+use function strlen;
+
 /**
  * Service for querying Kirjastohakemisto database.
  * See: https://api.kirjastot.fi/
@@ -262,7 +266,7 @@ class OrganisationInfo implements
         }
 
         if (empty($parent)) {
-            $this->logError("Missing parent");
+            $this->logError('Missing parent');
             return false;
         }
 
@@ -638,7 +642,7 @@ class OrganisationInfo implements
         $allServices
     ) {
         if (!$id) {
-            $this->logError("Missing id");
+            $this->logError('Missing id');
             return false;
         }
 
@@ -757,7 +761,7 @@ class OrganisationInfo implements
             $client = $this->httpService->createClient(
                 $url,
                 \Laminas\Http\Request::METHOD_GET,
-                10
+                $this->config->General->timeout ?? 20
             );
             $client->setOptions(['useragent' => 'VuFind']);
             $result = $client->send();
@@ -1298,7 +1302,7 @@ class OrganisationInfo implements
 
             $dayTime = strtotime($day['date']);
             if ($dayTime === false) {
-                $this->logError("Error parsing date: " . $day['date']);
+                $this->logError('Error parsing date: ' . $day['date']);
                 continue;
             }
 
@@ -1533,7 +1537,7 @@ class OrganisationInfo implements
         if (!empty($contactInfo)) {
             try {
                 $contactInfoToResult = $this->viewRenderer->partial(
-                    "Helpers/organisation-info-museum-page.phtml",
+                    'Helpers/organisation-info-museum-page.phtml',
                     ['contactInfo' => $contactInfo]
                 );
             } catch (\Exception $e) {

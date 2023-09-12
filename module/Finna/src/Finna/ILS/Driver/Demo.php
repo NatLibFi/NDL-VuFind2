@@ -37,6 +37,9 @@ namespace Finna\ILS\Driver;
 
 use VuFind\Exception\ILS as ILSException;
 
+use function in_array;
+use function is_callable;
+
 /**
  * Advanced Dummy ILS Driver -- Returns sample values based on Solr index.
  *
@@ -210,7 +213,7 @@ class Demo extends \VuFind\ILS\Driver\Demo
      * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
      *
      * @throws ILSException
-     * @return boolean success
+     * @return true|string True on success, error description on error
      */
     public function markFeesAsPaid(
         $patron,

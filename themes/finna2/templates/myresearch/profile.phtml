@@ -22,10 +22,10 @@
       ob_start();
 ?>
         <?php if (in_array($updateAddress['method'], ['database', 'driver'])): ?>
-          <i class="fa fa-pen"></i>
+          <?=$this->icon('ui-edit') ?>
           <a class="profile-library-info-address-update" href="<?=$this->escapeHtmlAttr($this->url('myresearch-changeprofileaddress')) ?>" data-lightbox title="<?=$this->escapeHtmlAttr($linkText) ?>"><?=$this->escapeHtml($linkText) ?></a>
         <?php elseif ($updateAddress['method'] == 'url'): ?>
-          <i class="fa fa-external-link"></i>
+          <?=$this->icon('external-link') ?>
           <a class="profile-library-info-address-update" href="<?=$this->escapeHtmlAttr($this->translation()->getStringFromMixed($updateAddress['url'])) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($linkText) ?>"><?=$this->escapeHtml($linkText) ?></a>
         <?php endif; ?>
 <?php
@@ -41,7 +41,7 @@
 ?>
 
 <!-- Leftside navigationbar -->
-<?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'profile']); ?>
+<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'profile']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
   <h2><?=$this->transEsc('Profile')?></h2>
@@ -70,7 +70,7 @@
       <?=$this->partial('myresearch/profile-messages.phtml', ['messages' => $this->profile['messages'] ?? []]); ?>
       <?php if (is_array($this->profile)): ?>
         <div class="logged-in-as">
-          <i id="account-icon" class="fa fa-user"></i><span class="sr-only"><?=$this->transEsc('logged_in_as')?>: </span><?=$this->escapeHtml($user->getDisplayName()) ?>
+          <?=$this->icon('profile', 'profile-icon') ?><span class="sr-only"><?=$this->transEsc('logged_in_as')?>: </span><?=$this->escapeHtml($user->getDisplayName()) ?>
         </div>
         <div class="myresearch-profile-header"><h3><?=$this->transEsc('Library Card Settings');?></h3></div>
         <div class="myresearch-profile-list library-profile">
@@ -211,7 +211,7 @@
                 <?php $descriptionText = $this->translate(isset($updateLoanHistory['description'][$this->layout()->userLang]) ? $updateLoanHistory['description'][$this->layout()->userLang] : 'loan_history_description_html'); ?>
                 <?php if ($descriptionText): ?>
                   <div class="my-profile-col">
-                    <i class="fa fa-info-big"></i> <?=$descriptionText?>
+                    <?=$this->icon('info') ?> <?=$descriptionText?>
                   </div>
                 <?php endif; ?>
               <?php else: ?>
@@ -272,7 +272,7 @@
             <?php endif; ?>
             <div class="my-profile-row">
               <?php if ($updatePhone || $updateEmail || $updateLoanHistory): ?>
-                <input id="save-library-profile" name="saveLibraryProfile" type="submit" value="<?=$this->transEscAttr("save_my_profile") ?>" class="btn btn-primary my-profile-btn">
+                <input id="save-library-profile" name="saveLibraryProfile" type="submit" value="<?=$this->transEscAttr('save_my_profile') ?>" class="btn btn-primary my-profile-btn">
               <?php endif; ?>
               <div class="clearfix"></div>
             </div>
@@ -281,24 +281,24 @@
       <?php endif; ?>
     </div>
     <div class="myresearch-profile-header">
-      <h3 id="profile-settings"><?= $this->transEsc("finna_account_settings") ?></h3>
+      <h3 id="profile-settings"><?= $this->transEsc('finna_account_settings') ?></h3>
     </div>
     <div class="myresearch-profile-list library-profile">
       <?= $this->partial('myresearch/profile-my-information.phtml', ['user' => $user, 'cards' => $cards, 'hideDueDateReminder' => $this->hideDueDateReminder, 'hideProfileEmailAddress' => $this->hideProfileEmailAddress]); ?>
     </div>
     <div class="myresearch-profile-header">
-      <h3><?= $this->transEsc("my_profile_export_import") . ' / ' . $this->transEsc('delete_account_title') ?></h3>
+      <h3><?= $this->transEsc('my_profile_export_import') . ' / ' . $this->transEsc('delete_account_title') ?></h3>
     </div>
     <div class="myresearch-profile-list library-profile">
       <div class="my-profile-row">
-        <a class="btn btn-primary my-profile-btn" href="<?=$this->url('myresearch-export') ?>" title="<?=$this->transEsc('export_favorites') ?>"><i class="fa fa-download" aria-hidden="true"></i> <?=$this->transEsc('export_favorites') ?></a>
-        <a class="btn btn-primary my-profile-btn" href="<?=$this->url('myresearch-import') ?>"  data-lightbox title="<?=$this->transEsc('import_favorites') ?>"><i class="fa fa-upload" aria-hidden="true"></i> <?=$this->transEsc('import_favorites') ?> </a>
+        <a class="btn btn-primary my-profile-btn" href="<?=$this->url('myresearch-export') ?>" title="<?=$this->transEsc('export_favorites') ?>"><?=$this->icon('profile-export') ?> <?=$this->transEsc('export_favorites') ?></a>
+        <a class="btn btn-primary my-profile-btn" href="<?=$this->url('myresearch-import') ?>"  data-lightbox title="<?=$this->transEsc('import_favorites') ?>"><?=$this->icon('profile-import') ?> <?=$this->transEsc('import_favorites') ?> </a>
         <?php if ($this->accountDeletion): ?>
           <div class="visible-xs separator"></div>
-          <a class="btn btn-danger my-profile-btn" href="<?=$this->url('myresearch-deleteaccount') ?>" data-lightbox><i class="fa fa-times"></i> <?=$this->transEsc('delete_account_title') ?></a>
+          <a class="btn btn-danger my-profile-btn" href="<?=$this->url('myresearch-deleteaccount') ?>" data-lightbox><?=$this->icon('profile-delete') ?> <?=$this->transEsc('delete_account_title') ?></a>
           <?php if (!$this->translationEmpty('your_account_delete_info')): ?>
             <div class="my-profile-row">
-                <i class="fa fa-info-circle-hollow" aria-hidden="true"></i> <?=$this->transEsc('your_account_delete_info');?>
+              <?=$this->icon('info') ?> <?=$this->transEsc('your_account_delete_info');?>
             </div>
           <?php endif;?>
         <?php endif; ?>

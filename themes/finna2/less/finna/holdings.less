@@ -7,6 +7,12 @@
         width: 100%;
     }
 }
+.status-available-icon {
+    color: @brand-success;
+}
+.status-unavailable-icon {
+    color: @brand-danger;
+}
 .dedup-select {
     max-width: 100%;
 }
@@ -89,6 +95,21 @@
     }
     .holdings, .holdings-container, .no-holdings, .availability-load-indicator {
         clear: both;
+    }
+    .holdings-container {
+        .header {
+            .icon.collapse {
+                display: none;
+            }
+            &.open {
+                .icon.expand {
+                    display: none;
+                }
+                .icon.collapse {
+                    display: initial;
+                }
+            }
+        }
     }
     &.deduplicated {
         .available-total {
@@ -183,6 +204,17 @@
         display: flex;
         min-height: 36px;
         flex-flow: row;
+        .icon.collapse {
+            display: none;
+        }
+        &.open {
+            .icon.expand {
+                display: none;
+            }
+            .icon.collapse {
+                display: initial;
+            }
+        }
         @media (max-width: @screen-xs-max) {
             flex-flow: column;
         }

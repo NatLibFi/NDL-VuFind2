@@ -35,6 +35,8 @@ namespace Finna\Recommend;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
 
+use function in_array;
+
 /**
  * SideFacets Recommendations Module
  *

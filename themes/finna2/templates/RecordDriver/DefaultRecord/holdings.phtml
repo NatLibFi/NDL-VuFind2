@@ -32,7 +32,7 @@
     <?php if ($this->driver->supportsAjaxStatus()): ?>
       <span class="callnumber ajax-availability hidden"></span>
       <span class="location ajax-availability hidden">
-        <i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('loading_ellipsis')?>
+        <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
       </span>
       <div class="locationDetails"></div>
     <?php else: ?>

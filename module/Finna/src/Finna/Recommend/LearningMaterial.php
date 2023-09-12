@@ -34,6 +34,8 @@ use VuFind\Log\LoggerAwareTrait;
 use VuFind\Recommend\RecommendInterface;
 use VuFind\Search\Base\Params;
 
+use function in_array;
+
 /**
  * Learning Material Recommendations Module.
  *

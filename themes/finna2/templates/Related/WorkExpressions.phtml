@@ -27,7 +27,7 @@
         </div>
       <?php endforeach; ?>
       <a class="more-link" href="<?=$this->url('search-results')?>?<?=$this->escapeHtmlAttr($this->related->getSearchUrlParams()) ?>&sort=main_date_str+desc" rel="nofollow">
-        <span class="text"><?=$this->transEsc('see all')?> <i class="fa fa-list" aria-hidden="true"></i></span>
+        <span class="text"><?=$this->transEsc('see all')?> <?=$this->icon('list') ?></span>
       </a>
     </div>
   </div>

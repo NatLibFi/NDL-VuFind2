@@ -31,6 +31,14 @@
 
 namespace Finna\RecordDriver;
 
+use function array_slice;
+use function count;
+use function in_array;
+use function intval;
+use function is_array;
+use function is_string;
+use function strlen;
+
 /**
  * Model for MARC records in Solr.
  *
@@ -2227,6 +2235,18 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
+     * Get standard report numbers from field 526, subfields i and a.
+     *
+     * @return array
+     */
+    public function getStudyProgramNotes()
+    {
+        return $this->stripTrailingPunctuation(
+            $this->getFieldArray('526', ['i', 'a'])
+        );
+    }
+
+    /**
      * Get publisher or distributor number from field 028, subfields b and a.
      *
      * @return array
@@ -2440,5 +2460,15 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     public function getSecurityClassification()
     {
         return $this->stripTrailingPunctuation($this->getFieldArray('355', ['a']));
+    }
+
+    /**
+     * Get country from field 257, subfield a.
+     *
+     * @return array
+     */
+    public function getCountry()
+    {
+        return $this->stripTrailingPunctuation($this->getFieldArray('257', ['a']));
     }
 }

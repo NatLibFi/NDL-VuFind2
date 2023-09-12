@@ -31,6 +31,8 @@ namespace Finna\Recommend;
 
 use Laminas\Http\Client;
 
+use function in_array;
+
 /**
  * FinnaSuggestions Recommendations Module
  *

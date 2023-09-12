@@ -41,6 +41,8 @@ use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\Record\Loader;
 use VuFind\Search\Results\PluginManager as ResultsManager;
 
+use function count;
+
 /**
  * AJAX handler for importing favorites.
  *

@@ -34,6 +34,8 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
+use function is_callable;
+
 /**
  * Generic controller factory (with config injection).
  *

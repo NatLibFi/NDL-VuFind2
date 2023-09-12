@@ -33,6 +33,14 @@
 
 namespace Finna\RecordDriver;
 
+use function boolval;
+use function call_user_func_array;
+use function count;
+use function in_array;
+use function is_array;
+use function is_string;
+use function strlen;
+
 /**
  * Model for LIDO records in Solr.
  *
@@ -200,6 +208,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     protected $authorEvents = [
         'suunnittelu' => 1,
         'valmistus' => 2,
+    ];
+
+    /**
+     * Events excluded from subjects
+     *
+     * @var array
+     */
+    protected $nonPlaceEvents = [
+        'valmistus',
+        'näyttely',
     ];
 
     /**
@@ -1219,6 +1237,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             $places = [];
             foreach ($node->eventPlace ?? [] as $placenode) {
                 $place = trim((string)$placenode->displayPlace ?? '');
+                $placeId = $placenode->place->placeID ?? [];
                 if (!$place) {
                     $eventPlace = [];
                     foreach ($placenode->place->namePlaceSet ?? [] as $nameSet) {
@@ -1245,6 +1264,25 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                             $places[] = implode(', ', $partOfPlaceName);
                         }
                     }
+                } elseif ($place && $placeId) {
+                    $displayPlace = [
+                        'placeName' => $place,
+                    ];
+                    $idTypeFirst = (string)($placeId->attributes()->type ?? '');
+                    $displayPlace['type'] = $idTypeFirst;
+                    $displayPlace['id'] = $idTypeFirst ? "($idTypeFirst)$placeId" : $placeId;
+                    foreach ($placenode->place->placeID ?? [] as $item) {
+                        $details = [];
+                        $id = (string)$item;
+                        $idType = (string)($item->attributes()->type ?? '');
+                        $displayPlace['ids'][] = $idType ? "($idType)$id" : $id;
+                        $typeDesc = $idType ? 'place_id_type_' . $idType : '';
+                        $details[] = $typeDesc;
+                        if ($typeDesc) {
+                            $displayPlace['details'] = $details;
+                        }
+                    }
+                    $places[] = $displayPlace;
                 } else {
                     $places[] = $place;
                 }
@@ -1790,8 +1828,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         foreach ($this->getXmlRecord()->lido->descriptiveMetadata->eventWrap->eventSet ?? [] as $node) {
             $type = isset($node->event->eventType->term)
                 ? mb_strtolower((string)$node->event->eventType->term, 'UTF-8') : '';
-            if ($type !== 'valmistus') {
-                $displayDate = $node->event->eventDate->displayDate;
+            if (!in_array($type, $this->nonPlaceEvents)) {
+                $displayDate = $node->event->eventDate->displayDate ?? null;
                 if (!empty($displayDate)) {
                     $date = (string)($this->getLanguageSpecificItem(
                         $displayDate,

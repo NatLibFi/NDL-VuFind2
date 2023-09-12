@@ -403,7 +403,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     var id = toggle.data('id');
     var name = holder.find('.organisation ul.dropdown-menu li[data-id="' + id + '"]').text();
 
-    toggle.find('span:not(.sr-only)').text(name);
+    toggle.find('span.selected').text(name);
     showDetails(id, name, false);
 
     if (disable) {

@@ -66,12 +66,28 @@ deduplication = true
 ; from the actual record by period, e.g. testsrc.12345)
 ;sources = alli,testsrc
 
-; This section controls the search handler options displayed in blended mode.
+; This section controls the search handler options displayed in simple search.
+; The name of each setting below corresponds with a Search/Fields mapping in
+; BlenderMappings.yaml.
 [Basic_Searches]
 AllFields = "All Fields"
 Title = Title
 Author = Author
 Subject = Subject
+
+; This section defines which search options will be included on the advanced
+; search screen.
+; The name of each setting below corresponds with a Search/Fields mapping in
+; BlenderMappings.yaml.
+; Note that you will need to ensure that all enabled backends support advanced
+; searches (Solr, SolrAuth, EDS and Primo do). You can comment out or delete all
+; of the options in this section to disable advanced search in situations where
+; all backends cannot support it.
+[Advanced_Searches]
+AllFields = adv_search_all
+Title = adv_search_title
+Author = adv_search_author
+Subject = adv_search_subject
 
 [Sorting]
 relevance,id asc = sort_relevance

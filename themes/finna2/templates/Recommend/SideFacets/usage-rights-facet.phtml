@@ -19,10 +19,8 @@
         <?=$this->localizedNumber($thisFacet['count'])?>
       </span>
       <?php if ($allowExclude): ?>
-        <a class="exclude" href="<?=$results->getUrlQuery()->addFacet($title, $thisFacet['value'], 'NOT') ?>" title="<?=$this->transEsc('exclude_facet') ?>"><i class="fa fa-times" aria-hidden="true"></i></a>
+        <a class="exclude" href="<?=$results->getUrlQuery()->addFacet($title, $thisFacet['value'], 'NOT') ?>" title="<?=$this->transEsc('exclude_facet') ?>"><?=$this->icon('facet-exclude') ?></a>
       <?php endif; ?>
-    <?php else: ?>
-      <span class="status"><i class="fa fa-check" aria-hidden="true"></i></span>
     <?php endif; ?>
   </div>
   <?php $usageOptions[$thisFacet['value']]['html'] = ob_get_contents(); ?>
@@ -47,11 +45,11 @@
 <?=!empty($usageOptions['usage_F']) ? $usageOptions['usage_F']['html'] : '' ?>
 
 <div class="list-group-item facet-info">
-  <i class="fa fa-info3"></i><div class="info"><?=$this->transEsc('usage_rights_info')?></div><a class="more-info" href="<?=$this->url('content-page', ['page' => 'terms'])?>#terms"><?=$this->transEsc('usage_rights_info_more')?></a>
+  <div class="icon"><?=$this->icon('info') ?></div><div class="info"><?=$this->transEsc('usage_rights_info')?></div><a class="more-info" href="<?=$this->url('content-page', ['page' => 'terms'])?>#terms"><?=$this->transEsc('usage_rights_info_more')?></a>
 </div>
 <?php if (!$this->translationEmpty('usage_rights_details')): ?>
 <div class="list-group-item facet-info">
-  <i class="fa fa-info3"></i><div class="info"><?=$this->transEsc('usage_rights_details')?></div>
+  <div class="icon"><?php $this->icon('info') ?></div><div class="info"><?=$this->transEsc('usage_rights_details')?></div>
 </div>
 <?php endif; ?>
 <!-- END of: finna2 - Recommend/SideFacets/usage-rights-facet.phtml -->

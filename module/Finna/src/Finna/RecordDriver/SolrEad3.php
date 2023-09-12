@@ -33,6 +33,9 @@
 
 namespace Finna\RecordDriver;
 
+use function count;
+use function in_array;
+
 /**
  * Model for EAD3 records in Solr.
  *
@@ -86,14 +89,14 @@ class SolrEad3 extends SolrEad
     public const ALTFORM_FORMAT = 'format';
     public const ALTFORM_ACCESS = 'access';
     public const ALTFORM_ONLINE = 'online';
-    public const ALTFORM_ORIGINAL = "original";
+    public const ALTFORM_ORIGINAL = 'original';
     public const ALTFORM_CONDITION = 'condition';
     public const ALTFORM_IMAGE_SIZE = 'imageSize';
     public const ALTFORM_IMAGE_AREA = 'imageArea';
     public const ALTFORM_IMAGE_TYPE = 'imageType';
     public const ALTFORM_MICROFILM_COPY_TYPE = 'microfilmCopyType';
     public const ALTFORM_MICROFILM_SERIES = 'microfilmSeries';
-    public const ALTFORM_MAP_SCALE = "mapScale";
+    public const ALTFORM_MAP_SCALE = 'mapScale';
 
     // Altformavail label map
     public const ALTFORM_MAP = [
@@ -1495,7 +1498,7 @@ class SolrEad3 extends SolrEad
                     [$start, $end] = explode('/', $normal);
                 } else {
                     $start = $normal;
-                    $unknown = strstr($start, 'u');
+                    $unknown = $this->unknownDateCharsExist($start);
                 }
                 $dates = $this->parseDate($start, true);
                 if (
@@ -1559,22 +1562,41 @@ class SolrEad3 extends SolrEad
         $year = 0;
         $month = 0;
         $day = 0;
-        if (isset($parts[2]) && $parts[2] !== 'uu') {
+        if ($this->unknownDateCharsExist($parts[0])) {
+            return str_ireplace(['u', 'x'], $start ? '0' : '9', $parts[0]);
+        }
+        $year = $parts[0];
+
+        if (!empty($parts[2]) && !$this->unknownDateCharsExist($parts[2])) {
             $day = $parts[2];
+        } else {
+            return $year;
         }
-        if (isset($parts[1]) && $parts[1] !== 'uu') {
+
+        if (!empty($parts[1]) && !$this->unknownDateCharsExist($parts[1])) {
             $month = $parts[1];
-        }
-        $defaultY = $start ? '0' : '9';
-
-        $year = str_replace('u', $defaultY, $parts[0]);
-        $result = '';
-        if ($day && $month && !strstr($parts[0], 'u')) {
-            $result = "{$day}.{$month}.";
+        } else {
+            return $year;
         }
 
-        $result .= $year;
-        return $result;
+        return "{$day}.{$month}.{$year}";
+    }
+
+    /**
+     * Check if date string contains "unknown" characters
+     *
+     * @param string $string The string to be checked
+     *
+     * @return bool
+     */
+    public function unknownDateCharsExist($string)
+    {
+        foreach (['u', 'U', 'x', 'X'] as $char) {
+            if (str_contains($string, $char)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

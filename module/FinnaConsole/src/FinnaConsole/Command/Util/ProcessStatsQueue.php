@@ -34,6 +34,8 @@ use Finna\Statistics\Driver\Redis as RedisDriver;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function call_user_func;
+
 /**
  * Console service for processing the statistics queue.
  *

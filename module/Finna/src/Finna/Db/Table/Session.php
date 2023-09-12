@@ -29,6 +29,8 @@
 
 namespace Finna\Db\Table;
 
+use function call_user_func_array;
+
 /**
  * Table Definition for session
  *

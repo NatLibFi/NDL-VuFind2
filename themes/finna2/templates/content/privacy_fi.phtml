@@ -79,7 +79,7 @@ $this->content()->setHeading($this->translate('Privacy')); ?>
   </p>
   <p>Jos Finna-hakupalvelun aineistojen käyttäjäkommenteissa on henkilötietoa, jota on tarpeen esim. oikaista tai vaatia poistettavaksi, voi pyynnön esittää kommenttien yhteydestä löytyvällä lomakkeella.
   </p>
-  <?php if ($template = $this->content()->findTemplateForLng("content/Additions/privacyAdditions")): ?>
+  <?php if ($template = $this->content()->findTemplateForLng('content/Additions/privacyAdditions')): ?>
     <?=$this->render($template)?>
   <?php endif; ?>
   <h2 id="cookies">Evästeiden käyttö</h2>

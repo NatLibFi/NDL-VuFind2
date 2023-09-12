@@ -90,7 +90,7 @@
       'logout' => [
         'url' => 'myresearch-logout',
         'translation' => 'Log Out',
-        'iconClass' => 'pull-right fa fa-sign-out fa-lg',
+        'iconClass' => $this->icon('sign-out', 'pull-right'),
         'desktopOnly' => true,
       ],
     ];
@@ -132,7 +132,7 @@
       <div class="tab-title">
         <?=$this->transEsc($activeMobileTab)?>
       </div>
-      <div class="more hidden-print"><?= $this->transEsc('Your Account') ?><b class="caret" aria-hidden="true"></b></div>
+      <div class="more hidden-print"><?= $this->transEsc('Your Account') ?><?=$this->icon('menu-open', 'js-toggle-menu') ?></div>
     </div>
     <ul class="dropdown-menu">
       <?php foreach ($menuListItems as $id => $listItem) : ?>
@@ -144,7 +144,7 @@
             <a href="<?=$this->escapeHtmlAttr($this->url($listItem['url']) . ($listItem['query'] ?? ''))?>" class="list-group-item" <?=$activeToLower === $id ? 'aria-current="page"' : ''?>>
             <?=$this->transEsc($listItem['translation'])?>
               <?php if (!empty($listItem['statusKey'])): ?>
-                <span class="<?=$listItem['statusKey']?>-status status hidden"><i class="fa fa-spin fa-spinner" aria-hidden="true"></i></span>
+                <span class="<?=$listItem['statusKey']?>-status status hidden"><?=$this->icon('spinner') ?></span>
               <?php endif; ?>
             </a>
           </li>
@@ -159,7 +159,7 @@
     <h1>
       <?= $this->transEsc('Your Account') ?>
       <?php if (!$this->translationEmpty('tooltip_myaccount_html')): ?>
-        <button class="tooltip-myaccount" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?= $this->transEsc("tooltip_myaccount_html") ?>"><i class="fa fa-info-big"></i><span class="sr-only"><?=$this->transEsc('My account tips');?></span></button>
+        <button class="tooltip-myaccount" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_html') ?>"><?=$this->icon('help') ?><span class="sr-only"><?=$this->transEsc('My account tips');?></span></button>
       <?php endif; ?>
     </h1>
   </li>
@@ -176,12 +176,12 @@
   ?>
     <?php if ($hasPartial): ?>
       <li role="none" class="dropdown <?= $listItem['active'] ? ' active' : ''?>">
-        <a role="menuitem" href="<?=$this->escapeHtmlAttr($this->url($listItem['url']) . ($listItem['query'] ?? ''))?>" id="<?=$id?>" class="menu-parent sticky-menu hidden-xs hidden-sm list-group-item <?= !$listItem['active'] ? 'collapsed' : '' ?>" aria-haspopup="true" aria-expanded="<?=$listItem['active'] ? "true" : "false"?>">
+        <a role="menuitem" href="<?=$this->escapeHtmlAttr($this->url($listItem['url']) . ($listItem['query'] ?? ''))?>" id="<?=$id?>" class="menu-parent sticky-menu hidden-xs hidden-sm list-group-item <?= !$listItem['active'] ? 'collapsed' : '' ?>" aria-haspopup="true" aria-expanded="<?=$listItem['active'] ? 'true' : 'false'?>">
           <?=$this->transEsc($listItem['translation'])?>
           <?php if ($showSpinner) : ?>
-            <i class="hidden fa fa-spinner fa-spin"></i><span class="ajax-error hidden"><small> <?=$this->translate('An error has occurred'); ?></small></span>
+            <?=$this->icon('spinner', ['class' => 'hidden']) ?><span class="ajax-error hidden"><small> <?=$this->translate('An error has occurred'); ?></small></span>
           <?php endif; ?>
-          <span class="caret"></span>
+          <?=$this->icon('collapse-open', 'collapse-icon') ?>
         </a>
         <div class="<?= $value['partial']['wrapperClass'] ?? 'ajax-wrapper'?>">
           <?php if ($listItem['active']): ?>
@@ -194,10 +194,10 @@
         <a role="menuitem" href="<?=$this->escapeHtmlAttr($this->url($listItem['url']) . ($listItem['query'] ?? ''))?>" class="list-group-item" <?=$activeToLower === $name ? 'aria-current="page"' : ''?>>
           <?=$this->transEsc($listItem['translation'])?>
           <?php if (isset($listItem['iconClass'])): ?>
-            <i class="<?=$listItem['iconClass']?>" aria-hidden="true"></i>
+            <?=$listItem['iconClass']?>
           <?php endif; ?>
           <?php if (!empty($listItem['statusKey'])): ?>
-            <span class="<?=$listItem['statusKey']?>-status status hidden"><i class="fa fa-spin fa-spinner" aria-hidden="true"></i></span>
+            <span class="<?=$listItem['statusKey']?>-status status hidden"><?=$this->icon('spinner') ?></span>
           <?php endif; ?>
         </a>
       </li>

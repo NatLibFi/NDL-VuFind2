@@ -19,8 +19,8 @@
 ?>
 <div class="image-details">
   <button class="toggle-image-information collapsed" data-toggle="collapse" data-target="#image_details_<?=$this->index?>" aria-expanded="false" aria-controls="image_details_<?=$this->index?>">
-    <span class="show-image-information"><i class="fa fa-arrow-down" aria-hidden="true"></i> <?=$this->transEsc($this->showButtonText ?? 'Show Image Information')?></span>
-    <span class="hide-image-information"><i class="fa fa-arrow-up" aria-hidden="true"></i> <?=$this->transEsc($this->hideButtonText ?? 'Hide Image Information')?></span>
+    <span class="show-image-information"><?=$this->icon('image-information-show') ?> <?=$this->transEsc($this->showButtonText ?? 'Show Image Information')?></span>
+    <span class="hide-image-information"><?=$this->icon('image-information-hide') ?> <?=$this->transEsc($this->hideButtonText ?? 'Hide Image Information')?></span>
   </button>
   <div id="image_details_<?=$this->index?>" class="collapse">
     <table class="table-condensed">
@@ -39,7 +39,7 @@
               <?php if (++$i > 1): ?><br><?php endif; ?>
               <?php if (!empty($rightsHolder['link'])): ?>
                 <a href="<?=$this->escapeHtmlAttr($rightsHolder['link'])?>" target="_blank">
-                  <i class="fa fa-external-link" aria-hidden="true"></i> <?=$this->escapeHtml($rightsHolder['name'])?>
+                  <?=$this->icon('external-link') ?> <?=$this->escapeHtml($rightsHolder['name'])?>
                 </a>
               <?php else: ?>
                 <?=$this->escapeHtml($rightsHolder['name'])?>

@@ -1,6 +1,6 @@
 <!-- START of: finna - primo/advanced.phtml -->
 <?php
-    $this->headScript()->appendFile("finna-primo-adv-search.js");
+    $this->headScript()->appendFile('finna-primo-adv-search.js');
 
     // Set page title.
     $this->headTitle($this->translate('Advanced Search'));
@@ -45,7 +45,7 @@
   ?>
   <div class="advanced-search">
     <div id="group1SearchHolder">
-      <h4><?=$this->transEsc("adv_search_label")?><?php if (!$this->translationEmpty('tooltip_pci_advanced_html')): ?><span class="tooltip-pci-advanced pull-right" data-toggle="tooltip" data-placement="bottom" data-html="true" data-original-title='<?=$this->transEsc("tooltip_pci_advanced_html") ?>'><i class="fa fa-info-big"></i> <?=$this->transEsc("Help with Advanced Search")?></span><?php endif; ?></h4>
+      <h4><?=$this->transEsc('adv_search_label')?><?php if (!$this->translationEmpty('tooltip_pci_advanced_html')): ?><span class="tooltip-pci-advanced pull-right" data-toggle="tooltip" data-placement="bottom" data-html="true" data-original-title='<?=$this->transEsc('tooltip_pci_advanced_html') ?>'><?=$this->icon('info') ?> <?=$this->transEsc('Help with Advanced Search')?></span><?php endif; ?></h4>
     </div>
 
     <?php for ($i = 0; $i < $numGroups; $i++): ?>
@@ -79,7 +79,7 @@
         </div>
         <?php endfor; ?>
         <a href="#" class="primo-add-search btn btn-primary">
-            <i class="fa fa-plus-small"></i> <?=$this->transEsc("add_search")?>
+            <?=$this->icon('search-add') ?> <?=$this->transEsc('add_search')?>
         </a>
       </div>
     <?php endfor; ?>
@@ -94,7 +94,7 @@
     <?php if (!empty($searchFilters)): ?>
       <div>
         <?php if (!empty($searchFilters)): ?>
-          <h4><?=$this->transEsc("adv_search_filters")?></h4>
+          <h4><?=$this->transEsc('adv_search_filters')?></h4>
           <fieldset class="well limit-to">
             <?=$this->render('search/advanced/filters.phtml', ['searchFilters' => $searchFilters])?>
           </fieldset>
@@ -102,7 +102,7 @@
       </div>
     <?php endif; ?>
     <div class="adv-search-bar primo-search-bar">
-      <button type="submit" class="btn btn-lg btn-primary" name="submit" value="<?=$this->transEscAttr("Find")?>"><i class="fa fa-search-adv"></i> <?=$this->transEsc("Find")?></button>
+      <button type="submit" class="btn btn-lg btn-primary" name="submit" value="<?=$this->transEscAttr('Find')?>"><?=$this->icon('search-advanced') ?>  <?=$this->transEsc('Find')?></button>
     </div>
   </div>
 </form>

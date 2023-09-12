@@ -29,6 +29,8 @@
 
 namespace Finna\Util;
 
+use function is_array;
+
 /**
  * MetadataUtils Class
  *

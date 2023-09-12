@@ -29,6 +29,8 @@
 
 namespace Finna\Content\Covers;
 
+use function in_array;
+
 /**
  * Cover Art Archive cover content loader.
  *

@@ -33,6 +33,9 @@ use Finna\Search\Solr\AuthorityHelper;
 use VuFind\Search\Solr\HierarchicalFacetHelper;
 use VuFindSearch\ParamBag;
 
+use function in_array;
+use function is_callable;
+
 /**
  * Blender Search Parameters
  *

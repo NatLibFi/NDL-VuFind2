@@ -85,7 +85,7 @@ finna.myList = (function finnaMyList() {
       spinner = $('.add-new-list .fa');
     } else if (type === 'visibility') {
       var holder = $('.list-visibility > div').first();
-      holder.hide().after('<i class="fa fa-spinner fa-spin"></i>');
+      holder.hide().after(VuFind.icon('spinner'));
     }
 
     if (spinner) {

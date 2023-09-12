@@ -17,7 +17,7 @@
     <?php foreach ($this->browseOptions as $item => $currentOption): ?>
       <a href="<?=$this->url('browse-' . strtolower($currentOption['action'])); ?>" class="list-group-item<?php if($currentOption['action'] == $this->currentAction): ?> active<?php endif; ?>">
         <?=$this->transEsc($currentOption['description']) ?>
-        <i class="fa fa-arrow-right<?php if($currentOption['action'] == $this->currentAction): ?> fa-arrow-down<?php endif; ?>"></i>
+        <?php if($currentOption['action'] == $this->currentAction): ?><?=$this->icon('browse-selected') ?><?php else: ?><?=$this->icon('browse-unselected') ?><?php endif; ?>
       </a>
     <?php endforeach; ?>
   </div>
@@ -28,7 +28,7 @@
         <a href="<?=$BROWSE_BASE ?>?findby=<?=urlencode($findby) ?>&amp;query_field=<?=$this->browse()->getSolrField($findby, $this->currentAction) ?>" class="list-group-item clearfix<?php if ($this->findby == $findby): ?> active<?php endif; ?>">
           <?php if(is_string($category)): ?>
             <?=$this->transEsc($category)?>
-            <i class="fa fa-arrow-right<?php if ($this->findby == $findby): ?> fa-arrow-down<?php endif; ?>"></i>
+            <?php if ($this->findby == $findby): ?><?=$this->icon('browse-selected') ?><?php else: ?><?=$this->icon('browse-unselected') ?><?php endif; ?>
           <?php else: ?>
             <?=$this->transEsc($category['text'])?>
             <span class="badge"><?=$this->localizedNumber($category['count'])?></span>

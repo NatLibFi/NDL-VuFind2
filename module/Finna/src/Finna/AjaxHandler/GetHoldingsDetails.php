@@ -37,6 +37,8 @@ use VuFind\ILS\Logic\Holds as HoldLogic;
 use VuFind\Record\Loader;
 use VuFind\Session\Settings as SessionSettings;
 
+use function in_array;
+
 /**
  * AJAX handler for fetching holdings details
  *

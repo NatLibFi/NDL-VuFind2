@@ -5,60 +5,36 @@
   }
 }
 .paginationSimple {
+  margin: 0;
   font-size: 0.9em;
-  margin-bottom: 3px;
-  & li {
+  li {
     display: inline-block;
     list-style-type: none;
-  }
-  & li a i {
-    background: @action-link-color;
-    border-radius: 50%;
-    padding: 4px;
-    margin-bottom: 3px;
-    text-align: center;
-    color: @btn-primary-color;
-    font-size: 1.05em;
-    transition: background 0.2s ease;
-    &:hover {
-      background: darken(@action-link-color, 5%);
+    vertical-align: middle;
+    a {
+      .icon {
+        color: @action-link-color;
+        font-size: 1.5em;
+      }
     }
-  }
-  & .fa-arrow-left {
-    margin: 0px 5px 0px 0px;
-  }
-  & .fa-arrow-right {
-    margin: 0px 0px 0px 5px;
-  }
-  @media(max-width: @screen-xs-max) {
-    margin: 0px;
   }
 }
 
 .pagination {
-  font-size: 1.2em;
-  margin: 15px 0px;
-
-  // paginate_button is used in DataTables
-  & > li.pagination-button > a, & > li.paginate_button.next > a, & > li.paginate_button.previous > a {
-    margin-left: 0;
+  font-size: 1.1em;
+  > li.pagination-button > a, > li.paginate_button.next > a, > li.paginate_button.previous > a {
     padding: 0;
-    margin-right: 2px;
-    margin-top: 5px;
     &:hover {
       background-color: transparent;
     }
-    & i {
-      padding: 6px;
-      text-align: center;
-      border-radius: 50%;
-      background: @action-link-color;
-      color: @body-bg;
-      font-size: 1.05em;
+    .icon {
+      color: @action-link-color;
+      font-size: 1.5em;
+      margin-right: 0.1em;
+      margin-left: 0.1em;
       transition: background 0.2s ease;
       &:hover {
-        background: darken(@action-link-color, 5%);
-        color: @body-bg;
+        color: darken(@action-link-color, 5%);
       }
     }
   }
@@ -66,12 +42,7 @@
     display: inline; // Remove list-style and block-level defaults
     & a {
       color: @action-link-color;
-      & i {
-        vertical-align: text-bottom;
-        font-size: 1.1em;
-      }
     }
-
     > a,
     > span {
       border-radius: @border-radius-base;

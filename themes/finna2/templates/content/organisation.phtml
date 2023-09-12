@@ -3,12 +3,12 @@
   $this->headTitle($this->title);
 ?>
 
-<?php if ($template = $this->content()->findTemplateForLng("content/Additions/organisation-page-start")): ?>
+<?php if ($template = $this->content()->findTemplateForLng('content/Additions/organisation-page-start')): ?>
   <?=$this->render($template);?>
 <?php endif; ?>
 
 <?=$this->organisationPage($this->id, $this->buildings)?>
 
-<?php if ($template = $this->content()->findTemplateForLng("content/Additions/organisation-page-end")): ?>
+<?php if ($template = $this->content()->findTemplateForLng('content/Additions/organisation-page-end')): ?>
   <?=$this->render('content/Additions/organisation-page-end.phtml')?>
 <?php endif; ?>

@@ -33,6 +33,9 @@
 
 namespace Finna\RecordDriver\Feature;
 
+use function in_array;
+use function is_callable;
+
 /**
  * Trait for checking external content url validity
  *

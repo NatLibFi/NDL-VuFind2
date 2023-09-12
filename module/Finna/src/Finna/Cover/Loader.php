@@ -33,6 +33,11 @@
 
 namespace Finna\Cover;
 
+use function func_get_args;
+use function is_array;
+use function is_callable;
+use function strlen;
+
 /**
  * Record image loader
  *

@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2022.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -70,8 +70,13 @@ class RegisterOnlinePayment extends AbstractOnlinePaymentAction
             // Bad status, return error:
             return $this->formatResponse('', self::STATUS_HTTP_ERROR);
         }
+        if ($transaction->isRegistrationInProgress()) {
+            // Registration already in progress, return error:
+            return $this->formatResponse('', self::STATUS_HTTP_ERROR);
+        }
+        $transaction->setRegistrationStarted();
 
-        $res = $this->markFeesAsPaid($transaction);
+        $res = $this->markFeesAsPaidForTransaction($transaction);
         return $res['success']
             ? $this->formatResponse('')
             : $this->formatResponse('', self::STATUS_HTTP_ERROR);

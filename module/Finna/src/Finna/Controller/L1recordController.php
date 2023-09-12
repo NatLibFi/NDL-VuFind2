@@ -65,7 +65,6 @@ class L1RecordController extends RecordController
     {
         $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class)
             ->get('L1');
-        return isset($config->Record->next_prev_navigation)
-            && $config->Record->next_prev_navigation;
+        return $config->Record->next_prev_navigation ?? false;
     }
 }

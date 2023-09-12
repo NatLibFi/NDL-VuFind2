@@ -32,6 +32,12 @@ namespace Finna\RecordDriver\Feature;
 
 use Finna\Db\Row\User;
 
+use function count;
+use function in_array;
+use function is_array;
+use function is_bool;
+use function is_callable;
+
 /**
  * Additional functionality for Finna and Primo records.
  *
@@ -366,6 +372,15 @@ trait FinnaRecordTrait
         if ($idRegex && !preg_match($idRegex, $id)) {
             return null;
         }
+
+        $plainIdRegex
+            = $this->datasourceSettings[$recordSource]['authority_plain_id_regex'][$type]
+            ?? $this->datasourceSettings[$recordSource]['authority_plain_id_regex']['*']
+            ?? null;
+        if ($plainIdRegex && preg_match($plainIdRegex, $id)) {
+            return $id;
+        }
+
         return "$authSrc.$id";
     }
 

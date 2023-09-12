@@ -31,6 +31,8 @@ namespace FinnaTest\RecordDriver;
 
 use Finna\RecordDriver\SolrLido;
 
+use function is_callable;
+
 /**
  * SolrLido Record Driver Test Class
  *

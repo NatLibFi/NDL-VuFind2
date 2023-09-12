@@ -31,6 +31,8 @@ namespace Finna\RecordDriver;
 
 use Finna\Util\MetadataUtils;
 
+use function count;
+
 /**
  * Model for Forward authority records in Solr.
  *

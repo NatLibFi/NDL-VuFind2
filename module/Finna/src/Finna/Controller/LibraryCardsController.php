@@ -33,6 +33,9 @@ namespace Finna\Controller;
 
 use VuFind\Exception\Auth as AuthException;
 
+use function in_array;
+use function intval;
+
 /**
  * Controller for the library card functionality.
  *
@@ -310,6 +313,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                             $patron,
                             ['auth_method' => 'MultiILS'],
                             'myresearch-home',
+                            [],
                             $subject,
                             'Email/registration-login-link.phtml'
                         );
@@ -322,6 +326,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                             ],
                             [],
                             'librarycards-registrationform',
+                            [],
                             $subject,
                             'Email/registration-link.phtml'
                         );
@@ -559,7 +564,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             error_log(
                 "Recovery hash expired: $hash, time: $hashtime,"
                 . " lifetime: $hashLifetime, hash age: " . (time() - $hashtime)
-                . ", query: " . $_SERVER['QUERY_STRING']
+                . ', query: ' . $_SERVER['QUERY_STRING']
             );
             $this->flashMessenger()->addErrorMessage('recovery_expired_hash');
             return $this->redirect()->toRoute(

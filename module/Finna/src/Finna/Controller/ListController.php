@@ -34,6 +34,8 @@ use Laminas\Stdlib\Parameters;
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\RecordMissing as RecordMissingException;
 
+use function is_object;
+
 /**
  * Controller for the public favorite lists.
  *

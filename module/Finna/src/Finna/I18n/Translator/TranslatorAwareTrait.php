@@ -31,6 +31,8 @@
 
 namespace Finna\I18n\Translator;
 
+use function count;
+
 /**
  * Lightweight translator aware marker interface (used as an alternative to
  * \Laminas\I18n\Translator\TranslatorAwareInterface, which requires an excessive

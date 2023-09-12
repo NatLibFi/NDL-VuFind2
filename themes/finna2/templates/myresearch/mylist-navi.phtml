@@ -13,7 +13,7 @@
   }
 ?>
 <ul class="dropdown-menu subtabs collapse in" role="presentation">
-  <li><h1 class="visible-xs visible-sm"><i class="fa fa-arrow-down pull-left"></i> <?=$this->transEsc('Your Lists')?></h1></li>
+  <li><h1 class="visible-xs visible-sm"><?=$this->icon('sidebar-collapse') ?> <?=$this->transEsc('Your Lists')?></h1></li>
   <li role="none" class="favorites-menulist-item">
     <a role="menuitem" href="<?=$this->url('myresearch-favorites')?>?limit=<?=$currentLimit;?>" class="<?=!$activeId ? ' active' : ''?>" aria-current="<?= !$activeId ? 'page' : 'false' ?>">
       <div class="favorite-list-holder">
@@ -29,11 +29,11 @@
       <div class="favorite-list-holder">
         <div class="pull-left favorite-list-title"><?=$this->escapeHtml($list['title'])?></div>
         <?php if ($list['public']): ?>
-          <i class="fa fa-public public-favorite-list pull-left"></i>
+          <?=$this->icon('public') ?>
         <?php endif; ?>
         <div class="pull-right">(<?=$list->cnt?>)</div>
         <?php if ($active): ?>
-          <button class="pull-right remove-favorite-list remove"><i class="fa fa-button fa-close"></i></button>
+          <button class="pull-right remove-favorite-list remove"><?=$this->icon('list-remove') ?></button>
         <?php endif; ?>
       </div>
     </a>
@@ -46,7 +46,7 @@
   <li class="add-new-list-holder favorites-menulist-item">
     <div class="list-group-item add-new-list">
       <input type="text" class="new-list-input" placeholder="<?=$this->transEsc('Create a List') ?>">
-      <i class="fa fa-plus-small icon"></i>
+      <?=$this->icon('list-add', 'list-add-icon') ?>
     </div>
   </li>
 </ul>

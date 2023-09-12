@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2020.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -82,6 +82,7 @@ class OnlinePaymentMonitorFactory implements FactoryInterface
             $container->get(\VuFind\Config\PluginManager::class)->get('datasources'),
             $container->get('ViewRenderer'),
             $container->get(\VuFind\Mailer\Mailer::class),
+            $tableManager->get(\Finna\Db\Table\TransactionEventLog::class),
             ...($options ?? [])
         );
     }

@@ -31,6 +31,10 @@
 
 namespace Finna\RecordDriver;
 
+use function in_array;
+use function is_array;
+use function strlen;
+
 /**
  * Model for EDS records.
  *

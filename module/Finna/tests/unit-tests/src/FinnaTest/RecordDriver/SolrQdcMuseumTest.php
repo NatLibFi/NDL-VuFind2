@@ -31,6 +31,8 @@ namespace FinnaTest\RecordDriver;
 
 use Finna\RecordDriver\SolrQdc;
 
+use function is_callable;
+
 /**
  * SolrQdc Museum Test Class
  *
@@ -64,7 +66,7 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
                         ],
                         'description' => '',
                         'rights' => [
-                            'copyright' => 'openAccess',
+                            'copyright' => 'In CopyRight',
                             'link' => false,
                             'description' => [
                                 '2023 Finna qa',

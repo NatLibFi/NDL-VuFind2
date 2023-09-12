@@ -34,6 +34,11 @@ use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\Marc\MarcReader;
 
+use function array_key_exists;
+use function count;
+use function in_array;
+use function is_array;
+
 /**
  * KohaRest ILS Driver for KohaSuomi
  *
@@ -756,7 +761,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
      * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
      *
      * @throws ILSException
-     * @return bool success
+     * @return true|string True on success, error description on error
      */
     public function markFeesAsPaid(
         $patron,

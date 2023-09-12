@@ -3,7 +3,7 @@
 /**
  * Get tangent
  *
- * @param {Integer} deg 
+ * @param {Integer} deg
  */
 function getTanDeg(deg) {
   var rad = deg * Math.PI / 180;
@@ -169,7 +169,7 @@ class ModelViewerClass extends HTMLElement {
             name: 'Meshes',
             prefix: 'mesh',
             objects: this.meshes,
-            created: [], 
+            created: [],
             updateFunction: () => this.meshes,
             assignFunction: (e) => this.meshes = e
           },
@@ -513,7 +513,7 @@ class ModelViewerClass extends HTMLElement {
     found.forEach((key) => {
       delete this.loadScrips[key];
     });
-    
+
     if (scripts.length) {
       const head = document.querySelector('head');
       head.append(...scripts);
@@ -560,8 +560,8 @@ class ModelViewerClass extends HTMLElement {
     button.append(srOnly);
 
     const buttons = [
-      {class: 'model-fullscreen', translation: 'asd', info: 'fa-fullscreen'},
-      {class: 'model-statistics', target: '#model-statistics-area', translation: 'asd', info: 'fa-info-circle-hollow'},
+      {class: 'model-fullscreen', translation: 'asd', info: 'model-viewer-fullscreen'},
+      {class: 'model-statistics', target: '#model-statistics-area', translation: 'asd', info: 'model-viewer-statistics'},
       {class: 'model-help', target: '#model-help-area', translation: 'asd', info: 'fa-question-circle-o'},
       {class: 'model-settings', target: '#object-editor-settings', translation: 'asd', info: 'fa-cog'},
     ];
@@ -836,7 +836,7 @@ class ModelViewerClass extends HTMLElement {
         this.updateScale();
       }
     });
-    
+
     const exitFullscreens = [
       'exitFullscreen',
       'mozCancelFullScreen',
@@ -920,7 +920,7 @@ class ModelViewerClass extends HTMLElement {
     lightBack.userData.name = 'directional_finna_back';
     lightBack.position.set(0, 25, -25);
     lightBack.userData.viewerSet = true;
-  
+
     this.lights.push(lightBack, lightFront, lightLeft, lightRight);
     this.scene.add(lightBack, lightFront, lightLeft, lightRight);
   }
@@ -967,7 +967,7 @@ class ModelViewerClass extends HTMLElement {
         this.renderer.render(this.scene, this.camera);
       }
     };
-  
+
     window.setTimeout(this.loop, 1000 / 60);
   }
 }

@@ -72,4 +72,14 @@ class Config extends \VuFind\View\Helper\Root\Config
         $config = $this->get('facets')->CheckboxFacets ?? null;
         return $config ? $config->toArray() : [];
     }
+
+    /**
+     * Is map selection shown
+     *
+     * @return boolean
+     */
+    public function isGeographicMapVisible()
+    {
+        return !empty($this->get('facets')->Geographical->map_selection);
+    }
 }

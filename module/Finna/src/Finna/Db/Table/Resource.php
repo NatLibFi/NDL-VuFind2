@@ -31,6 +31,8 @@ namespace Finna\Db\Table;
 
 use Laminas\Db\Sql\Expression;
 
+use function in_array;
+
 /**
  * Table Definition for resource
  *

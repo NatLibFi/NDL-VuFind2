@@ -16,7 +16,7 @@
   $resultsTotal = $results->getResultTotal();
 ?>
 <?php if ($resultsTotal > 0): ?>
-  <h2><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?><?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?><span class="tooltip-facet pull-right" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transEsc('tooltip_facet_html')?>"><i class="fa fa-info-big" aria-hidden="true"></i></span><?php endif; ?><span role="button" class="visible-xs sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><i class="fa fa-lg fa-times icon-close" aria-hidden="true"></i></span></h2>
+  <h2><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?><?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?><span class="tooltip-facet pull-right" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transEsc('tooltip_facet_html')?>"><?=$this->icon('help') ?></span><?php endif; ?><span role="button" class="visible-xs sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></span></h2>
   <span class="sr-only"><?=$this->transEscAttr('page_reload_on_select_hint') ?></span>
 <?php endif; ?>
 <?php $checkboxFilters = $results->getParams()->getCheckboxFacets(); ?>
@@ -95,5 +95,5 @@ if ($this->fromStreetSearch) {
     </div>
   <?php endforeach; ?>
 <?php endif; ?>
-<?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, "registerSideFacetTruncation();", 'SET');?>
+<?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, 'registerSideFacetTruncation();', 'SET');?>
 <!-- END of: finna - Recommend/SideFacets.phtml -->

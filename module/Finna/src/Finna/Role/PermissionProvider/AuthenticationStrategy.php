@@ -37,6 +37,9 @@ use Laminas\Session\Container as SessionContainer;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\Role\PermissionProvider\PermissionProviderInterface;
 
+use function in_array;
+use function is_callable;
+
 /**
  * Authentication strategy permission provider for VuFind.
  *

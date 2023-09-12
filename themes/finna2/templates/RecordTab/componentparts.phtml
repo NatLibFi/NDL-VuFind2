@@ -66,8 +66,8 @@ $translations = json_encode(
         'infoFiltered' => $this->transEsc('component_parts_filtered'),
         'info' => $this->transEsc('component_parts_entries_on_page'),
         'paginate' => [
-            'next' => '<i class="fa fa-arrow-right"></i> <span class="sr-only">' . $this->transEsc('component_parts_next') . '</span>',
-            'previous' => '<span class="sr-only">' . $this->transEsc('component_parts_previous') . '</span> <i class="fa fa-arrow-left"></i>',
+            'next' => $this->icon('pagination-next') . ' <span class="sr-only">' . $this->transEsc('component_parts_next') . '</span>',
+            'previous' => '<span class="sr-only">' . $this->transEsc('component_parts_previous') . '</span> ' . $this->icon('pagination-prev'),
         ],
         'thousands' => $this->transEsc('number_thousands_separator'),
         'aria' => [

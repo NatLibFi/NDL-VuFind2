@@ -33,6 +33,12 @@ use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\Marc\MarcReader;
 
+use function array_key_exists;
+use function count;
+use function floatval;
+use function in_array;
+use function is_array;
+
 /**
  * Alma ILS Driver
  *
@@ -370,7 +376,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
      *
      * @throws ILSException
-     * @return bool success
+     * @return true|string True on success, error description on error
      */
     public function markFeesAsPaid(
         $patron,
@@ -3114,11 +3120,11 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 ?? (string)$fee->type['desc'];
             $fineList[] = [
                 'fine_id'  => (string)$fee->id,
-                "title"    => (string)($fee->title ?? ''),
-                "amount"   => round(floatval($fee->original_amount) * 100),
-                "balance"  => round(floatval($fee->balance) * 100),
-                "createdate" => $this->parseDate($created, true),
-                "fine"     => $feeType,
+                'title'    => (string)($fee->title ?? ''),
+                'amount'   => round(floatval($fee->original_amount) * 100),
+                'balance'  => round(floatval($fee->balance) * 100),
+                'createdate' => $this->parseDate($created, true),
+                'fine'     => $feeType,
                 'payableOnline' => $payable,
                 '_create_time' => (string)$fee->creation_time,
                 '_status_time' => (string)$fee->status_time,

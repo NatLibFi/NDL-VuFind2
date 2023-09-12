@@ -40,6 +40,9 @@ use VuFind\Db\Table\Resource;
 use VuFind\Record\Loader as RecordLoader;
 use VuFind\Search\SearchRunner;
 
+use function count;
+use function intval;
+
 /**
  * AJAX handler to comment on a record.
  *

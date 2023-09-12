@@ -60,11 +60,11 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
                 'detail' => 'Ajallinen kattavuus',
             ],
             [
-                'data' => "1661",
+                'data' => '1661',
                 'detail' => 'Ajallinen kattavuus',
             ],
             [
-                'data' => "1660-luku",
+                'data' => '1660-luku',
                 'detail' => 'Ajallinen kattavuus',
             ],
             [

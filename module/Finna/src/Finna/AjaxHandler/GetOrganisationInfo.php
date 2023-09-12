@@ -37,6 +37,8 @@ use VuFind\Cookie\CookieManager;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\Session\Settings as SessionSettings;
 
+use function is_array;
+
 /**
  * AJAX handler for getting organisation info.
  *

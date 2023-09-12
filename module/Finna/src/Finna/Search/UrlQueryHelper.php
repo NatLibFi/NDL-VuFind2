@@ -32,6 +32,8 @@ namespace Finna\Search;
 
 use Finna\Search\Solr\AuthorityHelper;
 
+use function is_array;
+
 /**
  * Class to help build URLs and forms in the view based on search settings.
  *

@@ -31,6 +31,8 @@ namespace Finna\Recommend;
 
 use VuFind\Recommend\RecommendInterface;
 
+use function is_object;
+
 /**
  * OntologyDeferred Recommendations Module.
  *

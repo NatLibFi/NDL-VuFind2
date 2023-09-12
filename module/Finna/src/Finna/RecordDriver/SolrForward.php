@@ -31,6 +31,9 @@
 
 namespace Finna\RecordDriver;
 
+use function in_array;
+use function is_array;
+
 /**
  * Model for FORWARD records in Solr.
  *

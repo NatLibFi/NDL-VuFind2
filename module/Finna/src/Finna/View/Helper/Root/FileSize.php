@@ -29,6 +29,8 @@
 
 namespace Finna\View\Helper\Root;
 
+use function count;
+
 /**
  * File size view helper
  *

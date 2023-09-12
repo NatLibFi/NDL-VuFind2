@@ -18,7 +18,11 @@
 <?php endif; ?>
 <div class="carousel-text" aria-hidden="true">
   <?php if (isset($item['title'])): ?>
-    <p class="carousel-hover-title"><?=$this->escapeHtml($this->truncate($item['title'], 70))?></p>
+    <div class="carousel-hover-title">
+      <p><?=$this->escapeHtml($this->truncate($item['title'], 70))?></p>
+      <p class="carousel-more show-link"><?=$this->icon('carousel-follow-link')?></p>
+    </div>
+    <p class="carousel-more carousel-close hidden"><?=$this->icon('carousel-close')?></p>
   <?php endif; ?>
   <?php if (isset($item['dateFull'])): ?>
     <span class="carousel-date carousel-hover-date"><?=$this->transEsc('Published')?> <?=$this->escapeHtml($item['dateFull'])?></span>
@@ -27,20 +31,21 @@
     <?php if ($xcal = $item['xcal'] ?? []): ?>
       <?php if (!empty($xcal['startDate'])): ?>
         <?php if ($xcal['singleDay']): ?>
-          <p class="xcal"><i class="fa fa-calendar" aria-label="<?=$this->transEscAttr('xcal_date') ?>"></i> <?=$this->escapeHtml($xcal['startDate']) ?></div>
+          <p class="xcal"><?=$this->icon('feed-xcal-date') ?><span class="sr-only"><?=$this->transEscAttr('xcal_date') ?></span> <?=$this->escapeHtml($xcal['startDate']) ?></div>
           <?php if (!empty($xcal['startTime'])): ?>
-            <p class="xcal"><i class="fa fa-clock-o" aria-label="<?=$this->transEscAttr('xcal_time') ?>"></i> <?=$this->escapeHtml($xcal['startTime']) ?>&nbsp;&ndash;&nbsp;<?=$this->escapeHtml($xcal['endTime'] ?? '') ?></p>
+            <p class="xcal"><?=$this->icon('feed-xcal-time') ?><span class="sr-only"><?=$this->transEscAttr('xcal_time') ?></span> <?=$this->escapeHtml($xcal['startTime']) ?>&nbsp;&ndash;&nbsp;<?=$this->escapeHtml($xcal['endTime'] ?? '') ?></p>
           <?php endif; ?>
         <?php else: ?>
-          <p class="xcal"><i class="fa fa-calendar" aria-label="<?=$this->transEscAttr('xcal_date') ?>"></i> <?=$this->escapeHtml($xcal['startDate']) ?> &ndash;&nbsp;<?=$this->escapeHtml($xcal['endDate'])?></p>
+          <p class="xcal"><?=$this->icon('feed-xcal-date') ?><span class="sr-only"><?=$this->transEscAttr('xcal_date') ?></span> <?=$this->escapeHtml($xcal['startDate']) ?> &ndash;&nbsp;<?=$this->escapeHtml($xcal['endDate'])?></p>
         <?php endif; ?>
       <?php endif; ?>
       <?php if (!empty($xcal['location'])): ?>
-        <p class="xcal"><i class="fa fa-map-marker" aria-label="<?=$this->transEscAttr('Location') ?>"></i> <?=$this->escapeHtml($xcal['location']) ?></p>
+        <p class="xcal"><?=$this->icon('feed-xcal-location') ?><span class="sr-only"><?=$this->transEscAttr('Location') ?></span> <?=$this->escapeHtml($xcal['location']) ?></p>
       <?php endif; ?>
     <?php endif; ?>
     <p><?=$this->escapeHtml($item['text']) ?></p>
   </div>
+  <div class="carousel-text-shadow"></div>
   <?php if ($clickableLink): ?>
     <span class="carousel-description"><?= $linkTextEsc ?></span>
   <?php endif; ?>
@@ -60,6 +65,8 @@
       <?php if (isset($item['dateFull'])): ?>
         <span class="carousel-header-date carousel-date"><?=$this->transEsc('Published')?> <?=$this->escapeHtml($item['dateFull'])?></span>
       <?php endif; ?>
+      <span class="carousel-slide-more carousel-show hidden"><?=$this->icon('carousel-show')?></span>
+      <span class="carousel-slide-more carousel-close hidden"><?=$this->icon('carousel-close')?></span>
     </p>
   </div>
 <?php endif; ?>

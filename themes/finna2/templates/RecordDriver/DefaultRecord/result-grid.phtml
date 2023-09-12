@@ -48,7 +48,7 @@
         <?php endif; ?>
 
         <?php $journalTitle = $this->driver->getContainerTitle();
-        $summDate = $this->driver->getPublicationDateRange(); ?>
+        $summDate = $this->driver->tryMethod('getPublicationDateRange'); ?>
         <?php if (!empty($journalTitle)): ?>
           <?=!empty($summAuthor) ? '' : ' '?>
           <?php $ref = $this->driver->getContainerReference();
@@ -66,7 +66,7 @@
         <?php if ($dates): ?>
           <?=implode('&ndash;', array_map($this->escapeHtml, $dates));?>
         <?php endif; ?>
-        <?=$this->render('record/labels.phtml', ['labels' => $this->driver->getRecordLabels(), 'driver' => $this->driver]); ?>
+        <?=$this->render('record/labels.phtml', ['labels' => $this->driver->tryMethod('getRecordLabels'), 'driver' => $this->driver]); ?>
       </div>
       <?php if (!$openUrlActive && empty($urls)): ?>
       <?php if ($this->driver->supportsAjaxStatus()): ?>
@@ -76,7 +76,7 @@
       <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
         <?php /* Add to favorites */ ?>
         <div class="save-record-container">
-          <a href="<?=$this->escapeHtmlAttr($recordLinker->getActionUrl($this->driver, 'Save'))?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-heart"></i> <?=$this->transEsc('Add to favorites')?></a>
+          <a href="<?=$this->escapeHtmlAttr($recordLinker->getActionUrl($this->driver, 'Save'))?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><?=$this->icon('favorite') ?> <?=$this->transEsc('Add to favorites')?></a>
         </div>
       <?php endif; ?>
     </div>

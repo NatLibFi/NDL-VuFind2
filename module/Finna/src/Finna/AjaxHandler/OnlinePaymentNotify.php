@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2022.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -88,7 +88,10 @@ class OnlinePaymentNotify extends AbstractOnlinePaymentAction
             return $this->formatResponse('', self::STATUS_HTTP_BAD_REQUEST);
         }
 
+        $this->addTransactionEvent($t->id, 'Notify handler called');
+
         if ($t->isRegistered()) {
+            $this->addTransactionEvent($t->id, 'Transaction already registered');
             // Already registered, treat as success:
             return $this->formatResponse('');
         }
@@ -125,9 +128,14 @@ class OnlinePaymentNotify extends AbstractOnlinePaymentAction
                 $this->ils->getMyProfile($patron)
             );
             try {
-                $this->receipt->sendEmail($user, $patronProfile, $t);
+                $res = $this->receipt->sendEmail($user, $patronProfile, $t);
+                $this->addTransactionEvent(
+                    $t->id,
+                    $res ? 'Receipt sent' : 'Receipt not sent (no email address)'
+                );
             } catch (\Exception $e) {
                 $this->logger->err("Failed to send email receipt for $transactionId: " . (string)$e);
+                $this->addTransactionEvent($t->id, 'Sending of receipt failed', ['error' => (string)$e]);
             }
         }
 

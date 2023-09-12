@@ -78,7 +78,8 @@ class AbstractOnlinePaymentActionFactory implements \Laminas\ServiceManager\Fact
             $container->get(\Finna\OnlinePayment\OnlinePayment::class),
             $container->get('Finna\OnlinePayment\Session'),
             $container->get(\VuFind\Config\PluginManager::class)->get('datasources')->toArray(),
-            $container->get(\Finna\OnlinePayment\Receipt::class)
+            $container->get(\Finna\OnlinePayment\Receipt::class),
+            $tablePluginManager->get(\Finna\Db\Table\TransactionEventLog::class),
         );
         $result->setLogger($container->get(\VuFind\Log\Logger::class));
         return $result;

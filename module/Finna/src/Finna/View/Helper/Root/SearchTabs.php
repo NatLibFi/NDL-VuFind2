@@ -36,6 +36,9 @@ use VuFind\Search\Results\PluginManager as ResultsManager;
 use VuFind\Search\SearchTabsHelper;
 use VuFind\Search\UrlQueryHelper;
 
+use function in_array;
+use function is_callable;
+
 /**
  * "Search tabs" view helper
  *

@@ -29,6 +29,9 @@
 
 namespace Finna\View\Helper\Root;
 
+use function count;
+use function in_array;
+
 /**
  * Autocomplete view helper
  *

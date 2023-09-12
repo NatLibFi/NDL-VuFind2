@@ -29,6 +29,8 @@
 
 namespace Finna\Search\Primo;
 
+use function in_array;
+
 /**
  * Primo Central Search Parameters
  *

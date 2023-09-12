@@ -12,9 +12,6 @@
   $resultCnt = $results->getResultTotal();
   $i = 0;
   $queryHelper = $results->getUrlQuery();
-  $authorityFilter = $queryHelper->getParamArray()['lookfor'];
-  [$field, $id] = explode(':', $authorityFilter);
-  $queryHelper = $queryHelper->setSearchTerms('')->addFilter("{$field}:{$id}");
   $moreUrl = $this->url('search-results') . (string)$queryHelper;
   $moreLabel = $this->transEsc('authority_records_search_link', ['%%count%%' => $this->localizedNumber($results->getResultTotal())]);
 ?>
@@ -34,7 +31,7 @@
     </div>
   <?php endforeach ?>
   <div class="search-btn-container">
-    <a href="<?=$moreUrl?>" class="btn btn-outline-primary search-btn" aria-label="<?=$moreLabel?>"><i class="fa fa-arrow-right" aria-hidden="true"></i> <?=$moreLabel?></a>
+    <a href="<?=$moreUrl?>" class="btn btn-outline-primary search-btn" aria-label="<?=$moreLabel?>"><?=$this->icon('full-results-link') ?> <?=$moreLabel?></a>
   </div>
 </div>
 <!-- END of: finna - RecordTab/authorityrecords.phtml -->

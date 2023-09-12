@@ -2,7 +2,7 @@
 <div class="alert alert-info authorization-notification">
   <p><?= $this->translate('authorize_user_notification') ?></p>
   <?php if (!$this->auth()->isLoggedIn()): ?>
-  <p><a href="<?=$this->url('myresearch-userlogin')?>" data-lightbox title="<?=$this->transEsc("Login")?>"><i class="fa fa-sign-in"></i> <?=$this->transEsc("Login")?></a></p>
+  <p><a href="<?=$this->url('myresearch-userlogin')?>" data-lightbox title="<?=$this->transEsc('Login')?>"><?=$this->icon('sign-in') ?> <?=$this->transEsc('Login')?></a></p>
   <?php endif ?>
 </div>
 <!-- END of: finna - Helpers/authorizationNote.phtml -->

@@ -31,7 +31,7 @@
 
 namespace Finna\Controller;
 
-use Laminas\Stdlib\Parameters;
+use function count;
 
 /**
  * Online payment controller trait.
@@ -271,7 +271,7 @@ trait FinnaOnlinePaymentControllerTrait
             $csrf = $this->getRequest()->getPost()->get('csrf');
             if (!$csrfValidator->isValid($csrf)) {
                 $this->flashMessenger()->addErrorMessage('online_payment_failed');
-                header("Location: " . $this->getServerUrl('myresearch-fines'));
+                header('Location: ' . $this->getServerUrl('myresearch-fines'));
                 exit();
             }
             // After successful token verification, clear list to shrink session and
@@ -281,7 +281,7 @@ trait FinnaOnlinePaymentControllerTrait
             // Payment requested, do preliminary checks:
             if ($trTable->isPaymentInProgress($patron['cat_username'])) {
                 $this->flashMessenger()->addErrorMessage('online_payment_failed');
-                header("Location: " . $this->getServerUrl('myresearch-fines'));
+                header('Location: ' . $this->getServerUrl('myresearch-fines'));
                 exit();
             }
             if (
@@ -293,7 +293,7 @@ trait FinnaOnlinePaymentControllerTrait
                 // Fines updated, redirect and show updated list.
                 $this->flashMessenger()
                     ->addErrorMessage('online_payment_fines_changed');
-                header("Location: " . $this->getServerUrl('myresearch-fines'));
+                header('Location: ' . $this->getServerUrl('myresearch-fines'));
                 exit();
             }
             $returnUrl = $this->getServerUrl('myresearch-fines');
@@ -322,7 +322,7 @@ trait FinnaOnlinePaymentControllerTrait
                 $result ? $result : 'online_payment_failed',
                 'error'
             );
-            header("Location: " . $this->getServerUrl('myresearch-fines'));
+            header('Location: ' . $this->getServerUrl('myresearch-fines'));
             exit();
         }
 
@@ -337,6 +337,7 @@ trait FinnaOnlinePaymentControllerTrait
                 'Online payment response handler called. Request: '
                 . (string)$request
             );
+            $this->addTransactionEvent($transaction->id, 'Response handler called');
 
             if ($transaction->isRegistered()) {
                 // Already registered, treat as success:
@@ -351,26 +352,34 @@ trait FinnaOnlinePaymentControllerTrait
                 $this->logger->warn(
                     "Online payment response for $transactionId result: $result"
                 );
-                if (
-                    $paymentHandler::PAYMENT_SUCCESS === $result
-                    && $markedAsPaid
-                ) {
+                if ($paymentHandler::PAYMENT_SUCCESS === $result) {
                     $this->flashMessenger()
                         ->addSuccessMessage('online_payment_successful');
-                    // Send receipt by email if enabled:
-                    if ($receiptEnabled) {
+                    // Send receipt by email if enabled and the payment was just now
+                    // marked as paid (the notification handler could have done it
+                    // already):
+                    if ($markedAsPaid && $receiptEnabled) {
                         $patronProfile = array_merge(
                             $patron,
                             $catalog->getMyProfile($patron)
                         );
                         $receipt = $this->serviceLocator->get(\Finna\OnlinePayment\Receipt::class);
-                        $receipt->sendEmail($user, $patronProfile, $transaction);
+                        $res = $receipt->sendEmail($user, $patronProfile, $transaction);
+                        $this->addTransactionEvent(
+                            $transaction->id,
+                            $res ? 'Receipt sent' : 'Receipt not sent (no email address)'
+                        );
                     }
-                    // Display page and mark fees as paid via AJAX:
-                    $view->registerPayment = true;
-                    $view->registerPaymentParams = [
-                        'transactionId' => $transaction->transaction_id,
-                    ];
+                    // Reload transaction and check if registration is still pending:
+                    $transaction = $trTable->getTransaction($transactionId);
+                    if ($transaction && $transaction->needsRegistration()) {
+                        // Display page and mark fees as paid via AJAX:
+                        $view->registerPayment = true;
+                        $view->registerPaymentParams = [
+                            'transactionId' => $transaction->transaction_id,
+                        ];
+                        $this->addTransactionEvent($transaction->id, 'Registration requested');
+                    }
                 } elseif ($paymentHandler::PAYMENT_CANCEL === $result) {
                     $this->flashMessenger()
                         ->addSuccessMessage('online_payment_canceled');
@@ -412,6 +421,12 @@ trait FinnaOnlinePaymentControllerTrait
                     $view->setTemplate(
                         'Helpers/OnlinePayment/terms-' . $view->paymentHandler
                         . '.phtml'
+                    );
+                } else {
+                    // Check for a started transaction:
+                    $view->startedTransaction = $trTable->getStartedPayment(
+                        $patron['cat_username'],
+                        (int)($paymentConfig['transactionMaxDuration'] ?? 15)
                     );
                 }
             }
@@ -472,21 +487,18 @@ trait FinnaOnlinePaymentControllerTrait
     }
 
     /**
-     * Log exception.
+     * Add an event log entry for a transaction
      *
-     * @param Exception $e Exception
+     * @param int    $id     Transaction ID
+     * @param string $status Status message
+     * @param array  $data   Additional data
      *
      * @return void
      */
-    protected function handleException($e)
+    protected function addTransactionEvent(int $id, string $status, array $data = []): void
     {
-        $this->ensureLogger();
-        if (PHP_SAPI !== 'cli') {
-            if ($this->logger instanceof \VuFind\Log\Logger) {
-                $this->logger->logException($e, new Parameters());
-            }
-        } elseif (is_callable([$this, 'logException'])) {
-            $this->logException($e);
-        }
+        $eventTable = $this->getTable(\Finna\Db\Table\TransactionEventLog::class);
+        $data += ['source' => static::class];
+        $eventTable->addEvent($id, $status, $data);
     }
 }

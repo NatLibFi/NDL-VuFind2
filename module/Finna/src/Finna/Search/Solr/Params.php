@@ -33,6 +33,10 @@ namespace Finna\Search\Solr;
 use Laminas\Config\Config;
 use VuFind\Solr\Utils;
 
+use function in_array;
+use function is_array;
+use function strlen;
+
 /**
  * Solr Search Parameters
  *

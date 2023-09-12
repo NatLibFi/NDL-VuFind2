@@ -13,7 +13,7 @@
 <div class="record-container list-view <?=$this->record($this->driver)->getContainerJsClasses()?>" id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>">
   <div class="condensed-collapse-toggle">
     <div class="condensed-body">
-      <i class="fa fa-arrow-right"></i>
+      <?=$this->icon('condensed-expand', 'condensed-expand') ?><?=$this->icon('condensed-collapse', 'condensed-collapse') ?>
       <h2 class="title">
         <a href="<?=$this->escapeHtmlAttr($recordLinker->getUrl($this->driver))?>" class="title">
         <?php
@@ -82,7 +82,7 @@
 
           <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
               <?php /* Add to favorites */ ?>
-            <a href="<?=$this->escapeHtmlAttr($recordLinker->getActionUrl($this->driver, 'Save'))?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-heart"></i> <span class="hidden-sm hidden-md hidden-lg"><?=$this->transEsc('Add to favorites')?></span> <span class="sr-only hidden-xs"><?=$this->transEsc('Add to favorites')?></span></a>
+            <a href="<?=$this->escapeHtmlAttr($recordLinker->getActionUrl($this->driver, 'Save'))?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><?=$this->icon('favorite') ?> <span class="hidden-sm hidden-md hidden-lg"><?=$this->transEsc('Add to favorites')?></span> <span class="sr-only hidden-xs"><?=$this->transEsc('Add to favorites')?></span></a>
           <?php endif; ?>
         </div>
 
@@ -92,7 +92,7 @@
           <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
           <div class="hierarchyTreeLink">
             <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId">
-            <i class="fa fa-sitemap"></i>
+            <?=$this->icon('hierarchy') ?>
             <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID]))?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>" data-lightbox-href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID]))?>" data-lightbox-post="tab=hierarchytree">
                 <?=$this->transEsc('hierarchy_view_context')?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?>
             </a>
@@ -105,7 +105,7 @@
 
         <?php /* Saved lists */ ?>
         <div class="savedLists">
-          <strong><?=$this->transEsc("Saved in")?>:</strong>
+          <strong><?=$this->transEsc('Saved in')?>:</strong>
         </div>
       </div>
     </div>

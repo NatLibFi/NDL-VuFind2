@@ -4,7 +4,7 @@
     $this->headTitle($this->translate('loan_history_purge'));
 
     // Set up myresearch menu
-    $this->layout()->finnaMainTabs = $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'purgehistoricloans']);
+    $this->layout()->finnaMainTabs = $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'purgehistoricloans']);
 
     // Set up breadcrumbs:
     $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('loan_history_purge') . '</li>';

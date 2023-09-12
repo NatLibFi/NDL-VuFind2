@@ -33,6 +33,17 @@
       font-weight: bold;
       height: 40px;
       padding: 0;
+      .icon.collapse {
+        display: none;
+      }
+      &.open {
+        .icon.expand {
+          display: none;
+        }
+        .icon.collapse {
+          display: initial;
+        }
+      }
       @media (max-width: @screen-md-min) {
         font-size: 80%;
         display: flex !important
