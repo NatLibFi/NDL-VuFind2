@@ -166,6 +166,17 @@ class Aipa extends AbstractHelper
 
             $componentData = [];
 
+            // Learning areas.
+            if (!empty($levelData[EducationalData::LEARNING_AREAS])) {
+                $componentData[EducationalData::LEARNING_AREAS]
+                    = EducationalData::getPrefLabels(
+                        $levelData[EducationalData::LEARNING_AREAS],
+                        $langcode
+                    );
+                $componentData[EducationalData::LEARNING_AREAS . 'Title']
+                    = $translate('aipa_' . EducationalData::LEARNING_AREAS);
+            }
+
             // Educational subjects, study contents and objectives.
             foreach (EducationalData::EDUCATIONAL_SUBJECT_LEVEL_KEYS as $subjectLevelKey) {
                 foreach (EducationalData::STUDY_CONTENTS_OR_OBJECTIVES_KEYS as $contentsOrObjectivesKey) {

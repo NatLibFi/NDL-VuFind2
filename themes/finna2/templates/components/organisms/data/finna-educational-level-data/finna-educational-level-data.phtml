@@ -3,6 +3,16 @@
   $__headingTag = 'h3';
 ?>
 <section<?= $__attributes->add('class', 'finna-educational-level-data') ?>>
+  <?php if (!empty($learningAreas)): ?>
+    <section>
+      <<?= $__headingTag ?>><?= $this->escapeHtml($learningAreasTitle ?? '') ?></<?= $__headingTag ?>>
+      <ul>
+        <?php foreach ($learningAreas as $__learningArea): ?>
+          <li><?= $this->escapeHtml($__learningArea) ?></li>
+        <?php endforeach; ?>
+      </ul>
+    </section>
+  <?php endif; ?>
   <?php if (!empty($studyContents)): ?>
     <section>
       <<?= $__headingTag ?>><?= $this->escapeHtml($studyContentsTitle ?? '') ?></<?= $__headingTag ?>>
