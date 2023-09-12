@@ -32,6 +32,8 @@ namespace Finna\RecordDriver;
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use Finna\RecordDriver\Feature\ContainerFormatTrait;
 
+use function in_array;
+
 /**
  * Model for AIPA records in Solr.
  *
