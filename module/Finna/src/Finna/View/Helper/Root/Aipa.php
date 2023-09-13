@@ -107,7 +107,7 @@ class Aipa extends AbstractHelper
         // Basic education levels are mapped to primary school and lower secondary
         // school levels.
         $levelCodeValues = EducationalData::getMappedLevelCodeValues(
-            $educationalData[EducationalData::EDUCATIONAL_LEVELS]
+            $educationalData[EducationalData::EDUCATIONAL_LEVELS] ?? []
         );
 
         usort($levelCodeValues, [$this, 'sortEducationalLevels']);
@@ -152,7 +152,7 @@ class Aipa extends AbstractHelper
         // Basic education levels are mapped to primary school and lower secondary
         // school levels.
         $levelCodeValues = EducationalData::getMappedLevelCodeValues(
-            $educationalData[EducationalData::EDUCATIONAL_LEVELS]
+            $educationalData[EducationalData::EDUCATIONAL_LEVELS] ?? []
         );
 
         usort($levelCodeValues, [$this, 'sortEducationalLevels']);
