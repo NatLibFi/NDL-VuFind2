@@ -891,43 +891,6 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Return summary of holdings items.
-     *
-     * @param array $holdings Parsed holdings items
-     * @param array $bib      Bibliographic data
-     *
-     * @return array summary
-     */
-    protected function getHoldingsSummary($holdings, $bib)
-    {
-        $availableTotal = 0;
-        $locations = [];
-
-        foreach ($holdings as $item) {
-            if (!empty($item['availability'])) {
-                $availableTotal++;
-            }
-            $locations[$item['location']] = true;
-        }
-
-        // Since summary data is appended to the holdings array as a fake item,
-        // we need to add a few dummy-fields that VuFind expects to be
-        // defined for all elements.
-        $result = [
-           'available' => $availableTotal,
-           'total' => count($holdings),
-           'locations' => count($locations),
-           'availability' => null,
-           'callnumber' => null,
-           'location' => '__HOLDINGSSUMMARYLOCATION__',
-        ];
-        if ($this->config['Holdings']['display_total_hold_count'] ?? true) {
-            $result['reservations'] = $bib['holdCount'] ?? null;
-        }
-        return $result;
-    }
-
-    /**
      * Get Item Statuses
      *
      * This is responsible for retrieving the status information of a certain
@@ -1013,6 +976,9 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             array_unique([...$this->defaultItemFields, ...$fields]),
             $patron
         );
+        $itemsTotal = count($items);
+        $itemsAvailable = 0;
+        $itemsOrdered = 0;
         foreach ($items as $item) {
             $location = $this->translateLocation($item['location']);
             [$status, $duedate, $notes] = $this->getItemStatus($item);
@@ -1034,6 +1000,10 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             $number = isset($item['varFields']) ? $this->extractVolume($item) : '';
             if (!$number) {
                 $number = $this->getItemSpecificLocation($item);
+            }
+
+            if ($available) {
+                ++$itemsAvailable;
             }
 
             $entry = [
@@ -1119,12 +1089,31 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'barcode' => '',
                 'sort' => $sort--,
             ];
+            foreach ($orderSet as $order) {
+                $itemsOrdered += $order['copies'];
+            }
         }
 
         usort($statuses, [$this, 'statusSortFunction']);
 
         if ($statuses) {
-            $statuses[] = $this->getHoldingsSummary($statuses, $bib);
+            // Since summary data is appended to the holdings array as a fake item,
+            // we need to add a few dummy-fields that VuFind expects to be
+            // defined for all elements.
+            $summary = [
+                'available' => $itemsAvailable,
+                'total' => $itemsTotal,
+                'ordered' => $itemsOrdered,
+                'locations' => count(array_unique(array_column($statuses, 'location'))),
+                'availability' => null,
+                'callnumber' => null,
+                'location' => '__HOLDINGSSUMMARYLOCATION__',
+            ];
+            if ($this->config['Holdings']['display_total_hold_count'] ?? true) {
+                $summary['reservations'] = $bib['holdCount'] ?? null;
+            }
+
+            $statuses[] = $summary;
         }
 
         return $statuses;

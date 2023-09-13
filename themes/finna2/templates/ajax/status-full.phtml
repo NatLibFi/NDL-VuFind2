@@ -11,10 +11,8 @@ $holdingsConfig = $this->ils()->getConfig('Holdings', [$id]);
 if (($summary['location'] ?? '') === '__HOLDINGSSUMMARYLOCATION__') {
   $itemsTotal = $summary['total'];
   $availableTotal = $summary['available'];
-  $reservationsTotal
-     = $summary['reservations'] ?? null;
-  $orderedTotal
-     = $summary['ordered'] ?? null;
+  $reservationsTotal = $summary['reservations'] ?? null;
+  $orderedTotal = $summary['ordered'] ?? null;
   $locations = $summary['locations'] ?? null;
 } else {
   $holdings[] = $summary;
@@ -156,6 +154,9 @@ if ($groupBranches) {
       <?php endif; ?>
       <?php if (!empty($itemsTotal) && !empty($holdingsConfig['display_total_item_count_in_results'])): ?>
         <span class="total"><?=$this->translate('status_items_total_html', ['%%count%%' => $itemsTotal]);?></span>
+      <?php endif; ?>
+      <?php if (!empty($orderedTotal) && !empty($holdingsConfig['display_ordered_item_count_in_results'])): ?>
+        <span class="ordered"><?=$this->translate('status_items_ordered_html', ['%%count%%' => $orderedTotal]);?></span>
       <?php endif; ?>
     </span>
     </div>

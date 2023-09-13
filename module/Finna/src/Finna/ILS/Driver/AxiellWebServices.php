@@ -1317,7 +1317,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
         return [
            'available' => $availableTotal,
            'ordered' => $orderedTotal,
-           'total' => $itemsTotal,
+           'total' => $itemsTotal - $orderedTotal,
            'reservations' => $reservationsTotal,
            'locations' => count($locations),
            'holdable' => $holdable,

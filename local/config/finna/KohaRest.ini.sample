@@ -94,6 +94,8 @@ display_item_hold_counts = false
 display_total_hold_count = true
 ; Whether total item count is displayed in results list
 display_total_item_count_in_results = true
+; Whether ordered item count is displayed in results list
+display_ordered_item_count_in_results = false
 ; Whether to include item's collection code in the shelf location
 display_ccode = true
 ; Whether to include item's call number in the shelf location
