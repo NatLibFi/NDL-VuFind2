@@ -1108,7 +1108,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 $result['data']['hold_queue_length']]
             );
 
-            if (-1 === $avail['unavailabilities']['Item::NotForLoan']['status'] ?? null) {
+            if (-1 === ($avail['unavailabilities']['Item::NotForLoan']['status'] ?? null)) {
                 ++$orderedTotal;
             } else {
                 ++$itemsTotal;
