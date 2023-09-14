@@ -32,6 +32,9 @@ namespace Finna\View\Helper\Root;
 
 use VuFind\RecordDriver\AbstractBase as RecordDriverBase;
 
+use function in_array;
+use function is_array;
+
 /**
  * Matomo web analytics view helper for Matomo versions >= 4
  *

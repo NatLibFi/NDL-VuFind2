@@ -36,6 +36,8 @@
 
 namespace Finna\View\Helper\Root;
 
+use function func_get_args;
+
 /**
  * RecordLink view helper (DEPRECATED -- use RecordLinker instead)
  *
@@ -157,14 +159,14 @@ class RecordLink extends \Laminas\View\Helper\AbstractHelper
         $embedUrl = '';
         switch ($parts['host']) {
             case 'vimeo.com':
-                $embedUrl = "https://player.vimeo.com/video" . $parts['path'];
+                $embedUrl = 'https://player.vimeo.com/video' . $parts['path'];
                 break;
             case 'youtu.be':
-                $embedUrl = "https://www.youtube.com/embed" . $parts['path'];
+                $embedUrl = 'https://www.youtube.com/embed' . $parts['path'];
                 break;
             case 'youtube.com':
                 parse_str($parts['query'], $query);
-                $embedUrl = "https://www.youtube.com/embed/" . $query['v'];
+                $embedUrl = 'https://www.youtube.com/embed/' . $query['v'];
                 break;
         }
         return $embedUrl;

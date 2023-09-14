@@ -32,6 +32,8 @@ namespace Finna\OnlinePayment;
 
 use Laminas\Stdlib\Parameters;
 
+use function strlen;
+
 /**
  * Online payment HTTP request trait.
  *

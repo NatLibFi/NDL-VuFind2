@@ -3,7 +3,7 @@
   <?php
     $classes = '';
     if ($this->openUrlEmbed) {
-      $classes = "fulltext";
+      $classes = 'fulltext';
     } elseif ($this->openUrlWindow) {
       $classes = 'fulltext openUrlWindow window_settings:' . $this->escapeHtmlAttr($this->openUrlWindow);
     }
@@ -47,7 +47,7 @@
   </span>
 
   <?php if ($this->openUrlEmbed): ?>
-    <div class="resolver hidden"><i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('loading_ellipsis')?></div>
+    <div class="resolver hidden"><?= $this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?></div>
   <?php endif; ?>
 <?php endif; ?>
 <!-- END of: finna - Helpers/openurl.phtml -->

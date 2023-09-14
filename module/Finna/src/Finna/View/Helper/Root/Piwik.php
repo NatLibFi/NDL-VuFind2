@@ -30,6 +30,11 @@
 
 namespace Finna\View\Helper\Root;
 
+use function array_slice;
+use function count;
+use function in_array;
+use function is_array;
+
 /**
  * Piwik Web Analytics view helper
  *

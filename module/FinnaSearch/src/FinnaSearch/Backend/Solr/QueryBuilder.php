@@ -38,6 +38,8 @@ use VuFindSearch\Query\AbstractQuery;
 use VuFindSearch\Query\Query;
 use VuFindSearch\Query\QueryGroup;
 
+use function count;
+
 /**
  * SOLR QueryBuilder.
  *

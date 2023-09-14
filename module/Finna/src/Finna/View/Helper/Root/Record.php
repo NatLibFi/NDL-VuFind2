@@ -42,6 +42,13 @@ use Laminas\Config\Config;
 use VuFind\Record\Loader;
 use VuFind\View\Helper\Root\Url;
 
+use function array_key_exists;
+use function count;
+use function in_array;
+use function intval;
+use function is_array;
+use function is_string;
+
 /**
  * Record driver view helper
  *
@@ -398,7 +405,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             $params
         );
 
-        if ($searchTabsFilters) {
+        if ($result && $searchTabsFilters) {
             $prepend = (!str_contains($result, '?')) ? '?' : '&amp;';
             $result .= $this->getView()->plugin('searchTabs')->getCurrentHiddenFilterParams(
                 $this->driver->getSourceIdentifier(),

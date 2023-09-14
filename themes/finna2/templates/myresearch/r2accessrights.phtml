@@ -8,7 +8,7 @@
 ?>
 
 <!-- Leftside navigationbar -->
-<?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'r2-accessrights']); ?>
+<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'r2-accessrights']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
   <div class="clearfix mylist-header hidden-print">
@@ -43,7 +43,7 @@
           </tbody>
         </table>
         <div class="alert alert-info r2-change-usage-purpose" role="status">
-          <div><i class="fa fa-info3 fa-lg"></i></div>
+          <div><?=$this->icon('info') ?></div>
           <div><?= $this->translate('R2_change_usage_purpose_html', ['%%url%%' => $this->escapeHtmlAttr($this->url('myresearch-logout'))])?></div>
         </div>
       <?php else: ?>

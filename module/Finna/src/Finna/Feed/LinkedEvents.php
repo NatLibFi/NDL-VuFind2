@@ -35,6 +35,9 @@ use Laminas\Config\Config;
 use Laminas\Mvc\Controller\Plugin\Url;
 use VuFind\Cache\Manager as CacheManager;
 
+use function is_array;
+use function strlen;
+
 /**
  * Linked events service
  *

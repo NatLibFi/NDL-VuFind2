@@ -33,6 +33,8 @@ use Laminas\EventManager\EventInterface;
 use VuFindSearch\Query\Query;
 use VuFindSearch\Query\QueryGroup;
 
+use function in_array;
+
 /**
  * Solr merged record handling listener.
  *

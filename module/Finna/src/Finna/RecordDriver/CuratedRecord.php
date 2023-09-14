@@ -32,6 +32,8 @@ namespace Finna\RecordDriver;
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use VuFind\RecordDriver\AbstractBase;
 
+use function count;
+
 /**
  * Model for curated VuFind records.
  *

@@ -24,7 +24,7 @@
 
 <?php if ($layoutLoggedIn): ?>
   <!-- Leftside navigationbar -->
-  <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'history']); ?>
+  <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'history']); ?>
 <?php endif; ?>
 
 <div class="<?=$layoutLoggedIn ? $this->layoutClass('mainbody-myresearch') : $this->layoutClass('mainbody-myresearch-no-menu')?>">
@@ -32,17 +32,17 @@
     <?php if ($scheduledSearches): ?>
       <?php if ($this->alertemail): ?>
         <div class="alert alert-info alert-email-notification">
-          <?=$this->transEsc("alert_email_address") . ': ' . $this->escapeHtml($this->alertemail) . ' (';?><a href="<?=$this->url('myresearch-profile', [], ['fragment' => 'profile-settings']);?>"><?=$this->transEsc("edit");?></a>)
+          <?=$this->transEsc('alert_email_address') . ': ' . $this->escapeHtml($this->alertemail) . ' (';?><a href="<?=$this->url('myresearch-profile', [], ['fragment' => 'profile-settings']);?>"><?=$this->transEsc('edit');?></a>)
         </div>
       <?php elseif ($loggedInUser): ?>
         <div class="alert alert-danger alert-email-notification">
-          <?=$this->transEsc("no_email_address") . ' ';?><a href="<?=$this->url('myresearch-profile', [], ['fragment' => 'profile-settings']);?>"><?=$this->transEsc("check_profile");?></a>
+          <?=$this->transEsc('no_email_address') . ' ';?><a href="<?=$this->url('myresearch-profile', [], ['fragment' => 'profile-settings']);?>"><?=$this->transEsc('check_profile');?></a>
         </div>
       <?php endif; ?>
     <?php endif; ?>
     <?=$this->flashmessages();?>
     <?php if ($saveSupported): ?>
-      <h2><?=$this->transEsc("history_saved_searches")?></h2>
+      <h2><?=$this->transEsc('history_saved_searches')?></h2>
       <?php if (!empty($this->saved)): ?>
         <?=$this->context()->renderInContext('search/history-table.phtml', ['showSaved' => true]);?>
       <?php else: ?>
@@ -54,13 +54,13 @@
       <?php endif; ?>
     <?php endif; ?>
 
-    <h2><?=$this->transEsc("history_recent_searches")?></h2>
+    <h2><?=$this->transEsc('history_recent_searches')?></h2>
     <?php if (!empty($this->unsaved)): ?>
       <?=$this->context()->renderInContext('search/history-table.phtml', ['showSaved' => false]);?>
-      <p class="text-right"><a href="?purge=true"><i class="fa fa-button fa-remove" aria-hidden="true"></i> <?=$this->transEsc("history_purge")?></a></p>
+      <p class="text-right"><a href="?purge=true"><?=$this->icon('remove') ?> <?=$this->transEsc('history_purge')?></a></p>
       <br>
     <?php else: ?>
-      <h4><?=$this->transEsc("history_no_searches")?></h4>
+      <h4><?=$this->transEsc('history_no_searches')?></h4>
       <br>
     <?php endif; ?>
   </div>

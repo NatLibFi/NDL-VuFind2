@@ -35,6 +35,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use VuFind\Exception\RecordMissing as RecordMissingException;
 
+use function count;
+use function strlen;
+
 /**
  * Console service for importing record comments.
  *

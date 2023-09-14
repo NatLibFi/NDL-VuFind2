@@ -29,6 +29,8 @@
 
 namespace Finna\LocationService;
 
+use function is_array;
+
 /**
  * Location Service.
  *

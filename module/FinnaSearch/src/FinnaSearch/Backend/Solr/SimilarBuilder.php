@@ -35,6 +35,9 @@ namespace FinnaSearch\Backend\Solr;
 
 use VuFindSearch\ParamBag;
 
+use function in_array;
+use function strlen;
+
 /**
  * SOLR SimilarBuilder.
  *

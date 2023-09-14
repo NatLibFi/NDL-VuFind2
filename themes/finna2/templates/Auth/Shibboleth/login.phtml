@@ -4,12 +4,12 @@
 <div>
   <div class="login-col shibboleth-login">
     <a href="<?=$this->escapeHtmlAttr($sessionInitiator)?>" data-lightbox-ignore>
-      <img src="<?=$this->imageLink('haka_login_vaaka_lg.png') ?>" alt="<?=$this->transEscAttr("Haka Login") ?>">
+      <img src="<?=$this->imageLink('haka_login_vaaka_lg.png') ?>" alt="<?=$this->transEscAttr('Haka Login') ?>">
       <span class="sr-only"><?=$this->transEsc('Institutional Login')?></span>
     </a>
   </div>
   <div class="login-col">
-    <i class="fa fa-info3" aria-hidden="true"></i>
+    <?=$this->icon('info', 'login-info-icon') ?>
     <div class="login-description">
       <p class="login-info">
        <?=$this->translate('login_desc_connect_card_html') ?>

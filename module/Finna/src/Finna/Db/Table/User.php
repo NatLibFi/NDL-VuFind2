@@ -33,6 +33,8 @@ namespace Finna\Db\Table;
 
 use Laminas\Db\Sql\Select;
 
+use function strlen;
+
 /**
  * Table Definition for user
  *

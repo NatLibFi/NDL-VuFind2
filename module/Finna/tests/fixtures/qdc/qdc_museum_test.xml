@@ -19,6 +19,7 @@
   <file bundle="square">https://www.savanni.art.collection.org/square/ducksinharmony.jpg</file>
   <file bundle="original" sha256="2232ad129bf4d7bdc243a05a407f3cdda4cd45bee4c36538a8d87c20e8df1269" mimetype="image/jpeg">https://www.savanni.art.collection.org/original/ducksinharmony.jpg</file>
   <file bundle="ORIGINAL" href="https://poriartmuseumcollections.pori.fi/files/original/000d586c8b9d30681001a554e1eaf3c5401e4714.jpg"/>
+  <rights>In CopyRight</rights>
   <rights type="accesslevel" lang="en">openAccess</rights>
   <rights type="copyright" lang="en">2023 Finna qa</rights>
   <rights type="copyright" lang="fi">2023 Finna qa which should not show</rights>

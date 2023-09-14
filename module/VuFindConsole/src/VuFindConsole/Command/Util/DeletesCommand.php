@@ -36,6 +36,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use VuFind\Marc\MarcCollectionFile;
 
+use function count;
+use function strlen;
+
 /**
  * Console command: delete from Solr
  *
@@ -72,9 +75,9 @@ class DeletesCommand extends AbstractSolrCommand
                 'format',
                 InputArgument::OPTIONAL,
                 "the format of the file -- it may be one of the following:\n"
-                . "flat - flat text format "
+                . 'flat - flat text format '
                 . "(deletes all IDs in newline-delimited file)\n"
-                . "marc - MARC record in binary or MARCXML format (deletes all "
+                . 'marc - MARC record in binary or MARCXML format (deletes all '
                 . "record IDs from 001 fields)\n"
                 . "marcxml - DEPRECATED; use marc instead\n",
                 'marc'

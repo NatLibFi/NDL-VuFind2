@@ -29,6 +29,8 @@
 
 namespace Finna\RecordDriver;
 
+use function in_array;
+
 /**
  * Model for R2 records.
  *

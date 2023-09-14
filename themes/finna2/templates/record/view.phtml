@@ -1,9 +1,9 @@
 <!-- START of: finna - record/view.phtml -->
 <?php
   // Set up standard record scripts:
-  $this->headScript()->appendFile("record.js");
-  $this->headScript()->appendFile("check_save_statuses.js");
-  $this->headScript()->appendFile("finna-comments.js");
+  $this->headScript()->appendFile('record.js');
+  $this->headScript()->appendFile('check_save_statuses.js');
+  $this->headScript()->appendFile('finna-comments.js');
   // Activate Syndetics Plus if necessary:
   if ($this->syndeticsPlus()->isActive()) {
     echo $this->headScript()->appendFile($this->syndeticsPlus()->getScript());
@@ -128,7 +128,7 @@
     <?php foreach ($this->related()->getList($this->driver) as $current): ?>
         <?=$this->related()->render($current)?>
     <?php endforeach; ?>
-    <?php if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-recommendations")): ?>
+    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/record-post-recommendations')): ?>
       <div>
           <?=$this->render($template)?>
       </div>
@@ -155,7 +155,7 @@
           <?php foreach ($this->tabs as $tab => $obj): ?>
             <?php // add current tab to breadcrumbs if applicable:
               $desc = $obj->getDescription();
-              $tabName = preg_replace("/\W/", "-", strtolower($tab));
+              $tabName = preg_replace("/\W/", '-', strtolower($tab));
               $tabClasses = [ 'record-tab', $tabName ];
               if (0 === strcasecmp($this->activeTab, $tab)) {
                 if (!$this->loadInitialTabWithAjax || !$obj->supportsAjax()) {
@@ -177,7 +177,7 @@
             <li class="<?=implode(' ', $tabClasses)?>" role="tab" data-tab="<?=$this->escapeHtmlAttr($tabName)?>"<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?> data-background<?php endif ?>>
               <a class="<?=$this->escapeHtmlAttr(strtolower($tab)) ?>" aria-label="<?=$this->transEscAttr($desc)?>"
                 href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $tab))?>#tabnav" data-lightbox-ignore>
-                <?php if (strtolower($tab) == 'details'): ?><i aria-hidden="true" class="fa fa-lg fa-<?=$this->escapeHtmlAttr($tab)?>"></i><?php endif; ?>
+                <?php if (strtolower($tab) == 'details'): ?><?=$this->icon('staff-view', 'staff-view-icon') ?><?php endif; ?>
                 <?php if (strtolower($tab) != 'details'): ?><?=$this->transEsc($desc)?><?php endif; ?><?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?>
               </a>
             </li>

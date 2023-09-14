@@ -33,6 +33,8 @@ namespace Finna\Recommend;
 use Finna\Search\Solr\AuthorityHelper;
 use VuFindSearch\Backend\Exception\RequestErrorException;
 
+use function in_array;
+
 /**
  * AuthorityRecommend Module
  *

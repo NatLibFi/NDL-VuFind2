@@ -39,9 +39,8 @@
   <?php else: ?>
     <h2 class="combined-list-title"><?=$this->transEsc($currentSearch['label'])?></h2>
   <?php endif; ?>
-
   <?php if (isset($currentSearch['sublabel'])): ?>
-    <p class="show-list-details pull-right"><?=$this->transEsc('More Information');?> <i class="fa fa-arrow-down"></i></p>
+    <p class="show-list-details pull-right"><?=$this->transEsc('More Information');?> <?=$this->icon('show-more') ?></p>
     <p class="sub-label hidden"><?=$this->translate($currentSearch['sublabel'])?></p>
     <?php
       $script = <<<JS
@@ -80,7 +79,7 @@
   ?>
 <div class="alert alert-info filters-active">
   <a href="<?= $moreUrl ?>"><?= $this->transEsc('Active filters') ?></a>
-  <a href="<?= $removeFiltersUrl ?>" title="<?= $this->transEsc('Remove filters') ?>"><i class="fa fa-times"></i></a>
+  <a href="<?= $removeFiltersUrl ?>" title="<?= $this->transEsc('Remove filters') ?>"><?=$this->icon('remove-filters') ?></a>
 </div>
 <?php endif ?>
 

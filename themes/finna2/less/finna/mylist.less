@@ -107,14 +107,10 @@
         border-style: dotted;
       }
 
-      i {
+      .icon {
         margin-right: 3px;
         color: @action-link-color;
-        background-color: @btn-primary-color;
         font-size: 1em;
-        display: block;
-        margin-top: 3px;
-        padding: 0;
       }
     }
     .favorite-list-holder {
@@ -158,12 +154,10 @@
           font-size: 16px;
         }
       }
-      i {
-        margin-left: auto;
+      .list-add-icon {
+        text-align: right;
+        width: 20px;
         cursor: pointer;
-        width: 22px;
-        font-size: 20px;
-        line-height: 20px;
         color: @action-link-color;
         padding: 1px;
       }
@@ -459,13 +453,10 @@ span.caret {
       margin-top: 2px;
       margin-bottom: 0;
     }
-    .fa.fa-arrow-down, .fa.fa-arrow-up {
+    .sort-icon {
       position: absolute;
-      right: 26px;
-      margin-top: 10px;
-    }
-    .fa.fa-arrow-up {
-      margin-top: 0;
+      right: 2em;
+      font-size: 1.2em;
     }
   }
   .btn {
@@ -475,11 +466,6 @@ span.caret {
   @media (max-width: @screen-xs-max) {
     margin-left: 5px;
     margin-right: 10px;
-    li {
-      .fa.fa-arrow-down, .fa.fa-arrow-up {
-        right: 32px;
-      }
-    }
   }
 }
 

@@ -59,7 +59,7 @@ finna.organisationMap = (function finnaOrganisationMap() {
       icons[obj] = L.divIcon({
         className: 'mapMarker',
         iconSize: null,
-        html: '<div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive"><i class="fa fa-map-marker ' + obj + '" style="position: relative; font-size: 35px;"></i></div>',
+        html: '<div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive">' + VuFind.icon('map-marker', 'map-marker-icon ' + obj) + '</div>',
         iconAnchor: [10, 35],
         popupAnchor: [0, -36],
         labelAnchor: [-5, -86]

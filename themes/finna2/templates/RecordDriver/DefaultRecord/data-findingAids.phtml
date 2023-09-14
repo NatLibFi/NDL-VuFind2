@@ -3,7 +3,7 @@
   <div class="truncate-field" data-rows="5">
     <?php foreach ($data as $field): ?>
       <?php if (!empty($field['url'])): ?>
-        <a href="<?=$this->escapeHtmlAttr($field['url'])?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><i class="fa fa-external-link"></i> <?=$this->escapeHtml($field['label'])?></a>
+        <a href="<?=$this->escapeHtmlAttr($field['url'])?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><?=$this->icon('external-link') ?> <?=$this->escapeHtml($field['label'])?></a>
       <?php else: ?>
         <?=$this->escapeHtml($field['label'])?>
       <?php endif; ?>

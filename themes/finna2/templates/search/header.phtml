@@ -27,7 +27,7 @@
         <?php if ($this->layout()->templateDir === 'record'): ?>
           <div class="record-back hidden-print">
             <?php
-            $html = '<span><i class="fa fa-arrow-alt-left"></i></span>';
+            $html = $this->icon('record-back');
             $html .= '<span class="back-to-search-text hidden-xs hidden-sm">' . $this->transEsc('Back to search results') . '</span>';
             $previousSearch = $this->searchMemory()->getLastSearchLink($html);
             if ($previousSearch !== ''):
@@ -39,15 +39,15 @@
         <div id="searchForm" class="hidden-print">
           <div class="adv_search_links">
             <?php if ($advSearch): ?>
-              <a href="<?=$this->url($advSearch)?>?edit=<?=$this->escapeHtmlAttr($searchId)?>"><i class="fa fa-lg fa-pen"></i> <?=$this->transEsc("Edit this search")?></a>
+              <a href="<?=$this->url($advSearch)?>?edit=<?=$this->escapeHtmlAttr($searchId)?>"><?=$this->icon('search-edit') ?> <?=$this->transEsc('Edit this search')?></a>
             <?php endif; ?>
             <div class="adv-search-menu hidden-xs">
               <?php if ($advSearch): ?>
-                <a href="<?=$this->url($advSearch)?>"><i class="fa fa-lg icon-adv-search"></i> <?=$this->transEsc("Start a new Advanced Search")?></a>
+                <a href="<?=$this->url($advSearch)?>"><?=$this->icon('search-advanced') ?> <?=$this->transEsc('Start a new Advanced Search')?></a>
               <?php endif; ?>
-              <a href="<?=$this->url($searchHome)?>"><i class="fa fa-lg icon-basic-search"></i> <?=$this->transEsc("Start a new Basic Search")?></a>
+              <a href="<?=$this->url($searchHome)?>"><?=$this->icon('search-basic') ?> <?=$this->transEsc('Start a new Basic Search')?></a>
             </div>
-            <span class="visible-xs adv-search-menu-toggle"><?=$this->transEsc("adv_search_menu")?> <b class="caret"></b></span>
+            <span class="visible-xs adv-search-menu-toggle"><?=$this->transEsc('adv_search_menu')?> <?=$this->icon('menu-open') ?></span>
           </div>
         </div>
         <?php if ($this->layout()->templateDir === 'record'): ?>
@@ -57,17 +57,17 @@
                   <?php if ($this->scrollData['previousRecord']): ?>
                       <?php if ($this->scrollData['firstRecord']): ?>
                       <li>
-                        <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->scrollData['firstRecord']))?>" rel="nofollow"><i class="fa fa-first-page"></i><span class="sr-only"><?=$this->transEsc('First Record')?></span></a>
+                        <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->scrollData['firstRecord']))?>" rel="nofollow"><?=$this->icon('pager-first') ?><span class="sr-only"><?=$this->transEsc('First Record')?></span></a>
                       </li>
                       <?php endif; ?>
                     <li class="pager-previous-record">
-                      <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->scrollData['previousRecord']))?>" rel="nofollow"><i class="fa fa-arrow-alt-left"></i><span class="sr-only"><?=$this->transEsc('Previous Record')?></span></a>
+                      <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->scrollData['previousRecord']))?>" rel="nofollow"><?=$this->icon('pager-prev') ?><span class="sr-only"><?=$this->transEsc('Previous Record')?></span></a>
                     </li>
                   <?php else: ?>
                       <?php if ($this->scrollData['firstRecord']): ?>
-                      <li class="disabled" title="<?=$this->transEsc('First Record')?>"><a><i class="fa fa-first-page"></i></a></li>
+                      <li class="disabled" title="<?=$this->transEsc('First Record')?>"><a><?=$this->icon('pager-first') ?></a></li>
                       <?php endif; ?>
-                    <li class="disabled" title="<?=$this->transEsc('Previous Record')?>"><a><i class="fa fa-arrow-alt-left"></i></a></li>
+                    <li class="disabled" title="<?=$this->transEsc('Previous Record')?>"><a><?=$this->icon('pager-first') ?></a></li>
                   <?php endif; ?>
                 <li class="pager-text">
                     <?=$this->transEsc('of_num_results', [
@@ -77,17 +77,17 @@
                 </li>
                   <?php if ($this->scrollData['nextRecord']): ?>
                     <li class="pager-next-record">
-                      <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->scrollData['nextRecord']))?>" rel="nofollow"><i class="fa fa-arrow-alt-right"></i><span class="sr-only"><?=$this->transEsc('Next Record')?></span></a>
+                      <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->scrollData['nextRecord']))?>" rel="nofollow"><?=$this->icon('pager-next') ?><span class="sr-only"><?=$this->transEsc('Next Record')?></span></a>
                     </li>
                       <?php if ($this->scrollData['lastRecord']): ?>
                       <li>
-                        <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->scrollData['lastRecord']))?>" rel="nofollow"><i class="fa fa-last-page"></i><span class="sr-only"><?=$this->transEsc('Last Record')?></span></a>
+                        <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->scrollData['lastRecord']))?>" rel="nofollow"><?=$this->icon('pager-last') ?><span class="sr-only"><?=$this->transEsc('Last Record')?></span></a>
                       </li>
                       <?php endif; ?>
                   <?php else: ?>
-                    <li class="disabled" title="<?=$this->transEsc('Next Record')?>"><a><i class="fa fa-arrow-alt-right"></i></a></li>
+                    <li class="disabled" title="<?=$this->transEsc('Next Record')?>"><a><?=$this->icon('pager-last') ?></a></li>
                       <?php if ($this->scrollData['lastRecord']): ?>
-                      <li class="disabled" title="<?=$this->transEsc('Last Record')?>"><a><i class="fa fa-last-page"></i></a></li>
+                      <li class="disabled" title="<?=$this->transEsc('Last Record')?>"><a><?=$this->icon('pager-last') ?></a></li>
                       <?php endif; ?>
                   <?php endif; ?>
               </ul>
@@ -121,7 +121,7 @@
               <?=$this->transEsc('Search')?>: <strong><?=$this->escapeHtml($lookfor); ?></strong>
             <?php endif; ?>
           <?php elseif ($searchType == 'advanced'): ?>
-            <span class="adv_search_terms"><strong><?=$this->transEsc("Your search terms")?>:</strong> <?=$this->escapeHtml($this->lookfor)?></span>
+            <span class="adv_search_terms"><strong><?=$this->transEsc('Your search terms')?>:</strong> <?=$this->escapeHtml($this->lookfor)?></span>
           <?php endif; ?>
           <?php else: ?>
             <?=$this->transEsc('nohit_heading')?>

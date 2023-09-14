@@ -36,6 +36,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function floatval;
+
 /**
  * Console service for anonymizing expired user accounts.
  *
@@ -169,11 +171,11 @@ class ExpireUsers extends AbstractUtilCommand
             }
         } catch (\Exception $e) {
             $this->err(
-                "Exception: " . $e->getMessage(),
+                'Exception: ' . $e->getMessage(),
                 'Exception occurred'
             );
             while ($e = $e->getPrevious()) {
-                $this->err("  Previous exception: " . $e->getMessage());
+                $this->err('  Previous exception: ' . $e->getMessage());
             }
             return 1;
         }

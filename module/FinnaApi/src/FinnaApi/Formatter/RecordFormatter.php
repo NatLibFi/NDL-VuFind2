@@ -32,6 +32,9 @@ namespace FinnaApi\Formatter;
 
 use Laminas\View\HelperPluginManager;
 
+use function count;
+use function is_array;
+
 /**
  * Record formatter for API responses
  *

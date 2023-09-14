@@ -32,6 +32,11 @@
 
 namespace Finna\RecordDriver;
 
+use function count;
+use function in_array;
+use function is_array;
+use function strlen;
+
 /**
  * Model for Primo Central records.
  *

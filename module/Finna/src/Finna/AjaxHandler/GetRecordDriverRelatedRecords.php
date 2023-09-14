@@ -34,6 +34,9 @@ use Laminas\View\Renderer\RendererInterface;
 use VuFind\Record\Loader;
 use VuFind\Search\SearchRunner;
 
+use function array_slice;
+use function is_string;
+
 /**
  * Get "RecordDriverRelatedRecords" AJAX handler
  *

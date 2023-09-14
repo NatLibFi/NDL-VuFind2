@@ -29,6 +29,8 @@
 
 namespace Finna\Search\Solr;
 
+use function array_slice;
+
 /**
  * Solr Search Parameters
  *

@@ -4,10 +4,10 @@
   <ul class="pagination hidden-print">
     <?php if (isset($this->previous)): ?>
       <li class="pagination-button">
-        <a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage(1)?>"><i class="fa fa-first-page"></i><span class="sr-only"><?=$this->transEsc('First')?></span></a>
+        <a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage(1)?>"><?=$this->icon('pagination-first') ?><span class="sr-only"><?=$this->transEsc('First')?></span></a>
       </li>
       <li class="pagination-button">
-        <a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->previous)?>"><i class="fa fa-arrow-alt-left"></i><span class="sr-only"><?=$this->transEsc('Prev')?></span></a>
+        <a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->previous)?>"><?=$this->icon('pagination-prev') ?><span class="sr-only"><?=$this->transEsc('Prev')?></span></a>
       </li>
     <?php endif; ?>
     <?php if (count($this->pagesInRange) > 1): ?>
@@ -21,10 +21,10 @@
     <?php endif; ?>
     <?php if (isset($this->next)): ?>
       <li class="pagination-button">
-        <a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->next)?>"><i class="fa fa-arrow-alt-right"></i><span class="sr-only"><?=$this->transEsc('Next');?></span></a>
+        <a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->next)?>"><?=$this->icon('pagination-next') ?><span class="sr-only"><?=$this->transEsc('Next');?></span></a>
       </li>
       <li class="pagination-button">
-        <a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->pageCount)?>"><i class="fa fa-last-page"></i><span class="sr-only"><?=$this->transEsc('Last')?></span></a>
+        <a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->pageCount)?>"><?=$this->icon('pagination-last') ?><span class="sr-only"><?=$this->transEsc('Last')?></span></a>
       </li>
     <?php endif; ?>
   </ul>

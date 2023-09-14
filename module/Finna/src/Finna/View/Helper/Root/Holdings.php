@@ -30,6 +30,8 @@
 
 namespace Finna\View\Helper\Root;
 
+use function strlen;
+
 /**
  * Holdings Settings Helper
  *

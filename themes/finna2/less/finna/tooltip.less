@@ -56,7 +56,7 @@
 .tooltip-summon-advanced {
   display: @tooltip-summon-advanced;
 }
-.tooltip-tabs_local, .tooltip-tabs_pci, .tooltip-facet, .tooltip-facet>i, .tooltip-search-pci, .tooltip-search-local, .tooltip-search-eds, .tooltip-myaccount {
+.tooltip-tabs_local, .tooltip-tabs_pci, .tooltip-facet, .tooltip-search-pci, .tooltip-search-local, .tooltip-search-eds, .tooltip-myaccount {
   color: @tooltip-button-color;
 }
 .tooltip-local-advanced, .tooltip-pci-advanced, .tooltip-eds-advanced, .tooltip-summon-advanced {
@@ -64,25 +64,6 @@
   font-size: .8em;
   @media(max-width: @screen-xs-max) {
     font-weight: 500;
-  }
-}
-.tooltip-search-pci, .tooltip-search-local {
-  i {
-    font-size: 36px;
-  }
-}
-
-.searchbox-home {
-  .tooltip-search-pci, .tooltip-search-local {
-    i {
-      font-size: 30px;
-      width: 40px;
-      height: 40px;
-      line-height: 40px;
-      cursor: pointer;
-      background: rgba(255,255,255,.9);
-      border-radius: 50%;
-    }
   }
 }
 .tooltip-image {
@@ -115,13 +96,10 @@
     color: @gray;
   }
 }
-.tooltip-search-pci, .tooltip-search-local {
-  font-size: 1.2em;
-}
 .tooltip-myaccount {
   margin-left: 10px;
   color: @gray;
-  >i {
+  >.icon {
     vertical-align: 0px !important;
   }
 }
@@ -138,7 +116,7 @@
 }
 
 // Disable status tooltip on touch device
-#account-icon.fa-user {
+#account-icon.icon {
   @media (pointer:coarse) {
       pointer-events: none;
   }

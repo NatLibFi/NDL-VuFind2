@@ -77,10 +77,10 @@
             width: 48px;
             height: 96px;
         }
-        i {
+        .icon {
             cursor: pointer;
             color: #fff;
-            -webkit-text-stroke: 1px #000;
+            text-shadow: 1px 0 0 #000, 0 1px 0 #000, -1px 0 0 #000, 0 -1px 0 #000;
         }
         @media (max-width: @screen-xs-max) {
             position: -webkit-sticky;
@@ -98,16 +98,10 @@
             @media (min-width: @screen-sm-min) {
                 left: 0px;
             }
-            i {
-                text-shadow: -2px 2px 4px rgba(128, 128, 128, 0.3);
-            }
         }
         &.popup-right-arrow {
             @media (min-width: @screen-sm-min) {
                 right: 0px;
-            }
-            i {
-                text-shadow: 2px 2px 4px rgba(128, 128, 128, 0.3);
             }
         }
     }

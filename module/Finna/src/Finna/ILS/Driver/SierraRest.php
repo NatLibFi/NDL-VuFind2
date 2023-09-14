@@ -31,6 +31,12 @@ namespace Finna\ILS\Driver;
 
 use VuFind\Exception\ILS as ILSException;
 
+use function array_key_exists;
+use function count;
+use function in_array;
+use function is_array;
+use function strlen;
+
 /**
  * III Sierra REST API driver
  *
@@ -609,7 +615,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
      *
      * @throws ILSException
-     * @return bool success
+     * @return true|string True on success, error description on error
      */
     public function markFeesAsPaid(
         $patron,
@@ -626,7 +632,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         $fines = $this->getMyFines($patron);
         if (!$fines) {
             $this->logError('No fines to pay found');
-            return false;
+            return 'fines_updated';
         }
 
         $amountRemaining = $amount;
@@ -647,7 +653,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         }
         if (!$payments) {
             $this->logError('Fine IDs do not match any of the payable fines');
-            return false;
+            return 'fines_updated';
         }
 
         $request = [
@@ -668,7 +674,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 "Payment request failed with status code {$result['statusCode']}: "
                 . (var_export($result['response'] ?? '', true))
             );
-            return false;
+            return 'payment request failed';
         }
         // Sierra doesn't support storing any remaining amount, so we'll just have to
         // live with the assumption that any fine amount didn't somehow get smaller
@@ -813,44 +819,6 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Get Status
-     *
-     * This is responsible for retrieving the status information of a certain
-     * record.
-     *
-     * @param string $id The record id to retrieve the holdings for
-     *
-     * @return array An associative array with the following keys:
-     * id, availability (boolean), status, location, reserve, callnumber.
-     */
-    public function getStatus($id)
-    {
-        return $this->getItemStatusesForBib($id, $this->config['Holdings']['check_holdings_in_results'] ?? true);
-    }
-
-    /**
-     * Get Statuses
-     *
-     * This is responsible for retrieving the status information for a
-     * collection of records.
-     *
-     * @param array $ids The array of record ids to retrieve the status for
-     *
-     * @return mixed     An array of getStatus() return values on success.
-     */
-    public function getStatuses($ids)
-    {
-        $items = [];
-        foreach ($ids as $id) {
-            $items[] = $this->getItemStatusesForBib(
-                $id,
-                $this->config['Holdings']['check_holdings_in_results'] ?? true
-            );
-        }
-        return $items;
-    }
-
-    /**
      * Public Function which retrieves renew, hold and cancel settings from the
      * driver ini file.
      *
@@ -920,43 +888,6 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         }
 
         return parent::getConfig($function, $params);
-    }
-
-    /**
-     * Return summary of holdings items.
-     *
-     * @param array $holdings Parsed holdings items
-     * @param array $bib      Bibliographic data
-     *
-     * @return array summary
-     */
-    protected function getHoldingsSummary($holdings, $bib)
-    {
-        $availableTotal = 0;
-        $locations = [];
-
-        foreach ($holdings as $item) {
-            if (!empty($item['availability'])) {
-                $availableTotal++;
-            }
-            $locations[$item['location']] = true;
-        }
-
-        // Since summary data is appended to the holdings array as a fake item,
-        // we need to add a few dummy-fields that VuFind expects to be
-        // defined for all elements.
-        $result = [
-           'available' => $availableTotal,
-           'total' => count($holdings),
-           'locations' => count($locations),
-           'availability' => null,
-           'callnumber' => null,
-           'location' => '__HOLDINGSSUMMARYLOCATION__',
-        ];
-        if ($this->config['Holdings']['display_total_hold_count'] ?? true) {
-            $result['reservations'] = $bib['holdCount'] ?? null;
-        }
-        return $result;
     }
 
     /**
@@ -1045,6 +976,9 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             array_unique([...$this->defaultItemFields, ...$fields]),
             $patron
         );
+        $itemsTotal = count($items);
+        $itemsAvailable = 0;
+        $itemsOrdered = 0;
         foreach ($items as $item) {
             $location = $this->translateLocation($item['location']);
             [$status, $duedate, $notes] = $this->getItemStatus($item);
@@ -1066,6 +1000,10 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             $number = isset($item['varFields']) ? $this->extractVolume($item) : '';
             if (!$number) {
                 $number = $this->getItemSpecificLocation($item);
+            }
+
+            if ($available) {
+                ++$itemsAvailable;
             }
 
             $entry = [
@@ -1151,12 +1089,31 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'barcode' => '',
                 'sort' => $sort--,
             ];
+            foreach ($orderSet as $order) {
+                $itemsOrdered += $order['copies'];
+            }
         }
 
         usort($statuses, [$this, 'statusSortFunction']);
 
         if ($statuses) {
-            $statuses[] = $this->getHoldingsSummary($statuses, $bib);
+            // Since summary data is appended to the holdings array as a fake item,
+            // we need to add a few dummy-fields that VuFind expects to be
+            // defined for all elements.
+            $summary = [
+                'available' => $itemsAvailable,
+                'total' => $itemsTotal,
+                'ordered' => $itemsOrdered,
+                'locations' => count(array_unique(array_column($statuses, 'location'))),
+                'availability' => null,
+                'callnumber' => null,
+                'location' => '__HOLDINGSSUMMARYLOCATION__',
+            ];
+            if ($this->config['Holdings']['display_total_hold_count'] ?? true) {
+                $summary['reservations'] = $bib['holdCount'] ?? null;
+            }
+
+            $statuses[] = $summary;
         }
 
         return $statuses;

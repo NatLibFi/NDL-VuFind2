@@ -38,6 +38,10 @@ use VuFind\Recommend\RecommendInterface;
 use VuFind\Search\SearchRunner;
 use VuFind\View\Helper\Root\Url;
 
+use function count;
+use function in_array;
+use function is_object;
+
 /**
  * Ontology Recommendations Module.
  *

@@ -31,6 +31,11 @@
 
 namespace Finna\View\Helper\Root;
 
+use function array_slice;
+use function count;
+use function is_array;
+use function is_string;
+
 /**
  * "Results as feed" view helper
  *

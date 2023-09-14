@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) The National Library of Finland 2022-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -70,7 +70,8 @@ class AbstractBaseFactory implements FactoryInterface
             $container->get(\VuFindHttp\HttpService::class),
             $container->get(\VuFind\I18n\Locale\LocaleSettings::class),
             $tableManager->get('Transaction'),
-            $tableManager->get('Fee')
+            $tableManager->get('Fee'),
+            $tableManager->get(\Finna\Db\Table\TransactionEventLog::class)
         );
     }
 }

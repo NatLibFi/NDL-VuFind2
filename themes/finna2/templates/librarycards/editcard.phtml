@@ -10,7 +10,7 @@
 ?>
 
 <!-- Leftside navigationbar -->
-<?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => '']); ?>
+<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => '']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
   <?=$this->flashmessages()?>
@@ -19,7 +19,7 @@
   <form class="edit-card-form" method="post" name="<?=empty($this->card->id) ? 'newCardForm' : 'editCardForm'?>" autocomplete="off" data-clear-account-cache>
     <input type="hidden" name="id" value="<?=empty($this->card->id) ? 'NEW' : $this->escapeHtmlAttr($this->card->id) ?>">
     <div class="form-group">
-      <label class="control-label" for="card_name"><?=$this->transEsc('Library Card Name'); ?>: <?php if (!$this->translationEmpty('tooltip_library_card_name_html')): ?><span class="tooltip-library-card-name" data-toggle="tooltip" data-placement="top" data-html="true" data-original-title='<?=$this->transEsc("tooltip_library_card_name_html") ?>'><i class="fa fa-info-big"></i> </span><?php endif; ?></label>
+      <label class="control-label" for="card_name"><?=$this->transEsc('Library Card Name'); ?>: <?php if (!$this->translationEmpty('tooltip_library_card_name_html')): ?><span class="tooltip-library-card-name" data-toggle="tooltip" data-placement="top" data-html="true" data-original-title='<?=$this->transEsc('tooltip_library_card_name_html') ?>'><?=$this->icon('info') ?> </span><?php endif; ?></label>
       <input id="card_name" class="form-control" type="text" placeholder="<?=$this->transEsc('library_card_name_placeholder'); ?>" name="card_name" value="<?=$this->escapeHtmlAttr($this->cardName == "{$this->target}.{$this->username}" ? $this->username : $this->cardName)?>">
     </div>
     <?php if ($this->targets !== null): ?>

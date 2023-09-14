@@ -23,7 +23,7 @@
 <div class="container-fluid">
   <div class="container">
     <div>
-      <?=($this->ils()->getOfflineMode() == "ils-offline") ? $this->render('Helpers/ils-offline.phtml', ['offlineModeMsg' => 'ils_offline_home_message']) : ''?>
+      <?=($this->ils()->getOfflineMode() == 'ils-offline') ? $this->render('Helpers/ils-offline.phtml', ['offlineModeMsg' => 'ils_offline_home_message']) : ''?>
     </div>
   </div>
 </div>

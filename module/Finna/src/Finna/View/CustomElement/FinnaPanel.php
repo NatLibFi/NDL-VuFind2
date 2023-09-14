@@ -29,6 +29,8 @@
 
 namespace Finna\View\CustomElement;
 
+use function in_array;
+
 /**
  * Finna-panel custom element
  *

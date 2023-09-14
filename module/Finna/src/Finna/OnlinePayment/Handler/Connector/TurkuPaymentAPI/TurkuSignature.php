@@ -31,6 +31,8 @@ namespace Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI;
 
 use Paytrail\SDK\Exception\HmacException;
 
+use function is_array;
+
 /**
  * Turku Payment API Signature
  *

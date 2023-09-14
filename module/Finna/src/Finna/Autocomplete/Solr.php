@@ -31,6 +31,9 @@ namespace Finna\Autocomplete;
 
 use VuFindCode\ISBN;
 
+use function in_array;
+use function is_bool;
+
 /**
  * Solr Autocomplete Module
  *

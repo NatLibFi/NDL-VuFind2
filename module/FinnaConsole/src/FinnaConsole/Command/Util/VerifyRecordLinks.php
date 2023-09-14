@@ -35,6 +35,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use VuFind\Db\Row\Resource;
 
+use function count;
+use function in_array;
+
 /**
  * Console service for verifying record links, resources and ratings.
  *

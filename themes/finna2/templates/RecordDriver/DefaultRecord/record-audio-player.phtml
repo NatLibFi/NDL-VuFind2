@@ -16,14 +16,14 @@
     </div>
     <div class="audio-accordion-item">
       <a class="play">
-        <i class="fa fa-play-circle"></i>
+        <?=$this->icon('audio-play') ?>
       </a>
       <div class="audio-player-wrapper hide">
         <audio id="audio-<?=$ind?>" class="vjs-default-skin hide" autoplay controls preload="auto">
           <source data-src="<?=$url['url']?>" type="audio/<?= $url['codec'] ?>">
         </audio>
       </div>
-      <div class="open-link"><a target="_blank" href="<?=$url['url'] ?>"><i class="fa fa-download"></i> <?=$this->transEsc('Download recording') ?></a></div>
+      <div class="open-link"><a target="_blank" href="<?=$url['url'] ?>"><?=$this->icon('download') ?> <?=$this->transEsc('Download recording') ?></a></div>
     </div>
   </div>
 <?php endforeach; ?>

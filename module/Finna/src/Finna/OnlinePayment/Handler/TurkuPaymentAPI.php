@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) The National Library of Finland 2022-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -229,7 +229,7 @@ class TurkuPaymentAPI extends AbstractBase
             return '';
         }
 
-        $success = $this->createTransaction(
+        $transaction = $this->createTransaction(
             $transactionId,
             $driver,
             $user->id,
@@ -239,11 +239,11 @@ class TurkuPaymentAPI extends AbstractBase
             $currency,
             $fines
         );
-        if (!$success) {
-            return false;
+        if (!$transaction) {
+            return 'Could not create transaction';
         }
 
-        $this->redirectToPayment($paymentResponse->getHref());
+        $this->redirectToPayment($paymentResponse->getHref(), $transaction);
 
         return '';
     }
@@ -274,17 +274,21 @@ class TurkuPaymentAPI extends AbstractBase
         switch ($status) {
             case 'ok':
                 $marked = $transaction->setPaid();
+                $this->addTransactionEvent($transaction->id, 'Transaction marked as paid');
                 return [self::PAYMENT_SUCCESS, $marked];
             case 'fail':
                 $transaction->setCanceled();
+                $this->addTransactionEvent($transaction->id, 'Transaction marked as canceled');
                 return [self::PAYMENT_CANCEL, false];
             case 'new':
             case 'pending':
             case 'delayed':
+                $this->addTransactionEvent($transaction->id, 'Transaction pending (received status $status)');
                 return [self::PAYMENT_PENDING, false];
         }
 
         $this->logPaymentError("unknown status $status");
+        $this->addTransactionEvent($transaction->id, 'Received unknown status', ['status' => $status]);
         return [self::PAYMENT_FAILURE, false];
     }
 

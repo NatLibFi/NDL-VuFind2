@@ -108,7 +108,7 @@ class Transaction extends \VuFind\Db\Table\Gateway
         $t->amount = $amount;
         $t->transaction_fee = $transactionFee;
         $t->currency = $currency;
-        $t->created = date("Y-m-d H:i:s");
+        $t->created = date('Y-m-d H:i:s');
         $t->complete = 0;
         $t->status = 'started';
         $t->cat_username = $patronId;

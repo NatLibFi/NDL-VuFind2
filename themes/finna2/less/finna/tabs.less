@@ -81,7 +81,7 @@
         border: none;
         font-size: 18px;
         cursor: pointer;
-        i {
+        .icon {
           cursor: pointer;
         }
       }
@@ -160,7 +160,7 @@
     padding: .6em 0 0 0;
     cursor: pointer;
     @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
-      i {
+      .icon {
         display: block;
         text-align: center;
       }
@@ -212,14 +212,13 @@
       &:hover {
         border-bottom-color: @gray-lighter;
       }
-
-      > i:before,
-      > span.status i:before {
-        line-height: 1.6em;
-      }
-      > i.fa-lg:before,
-      > span.status i.fa-spinner:before {
-        line-height: 1.1em;
+      &.menu-parent {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .icon {
+          font-size: 0.8em;
+        }
       }
     }
     &:first-child > a {
@@ -246,10 +245,6 @@
   }
 }
 
-.useraccount-nav .caret {
-  float: right;
-}
-
 .useraccount-nav .collapsing {
   -webkit-transition-delay: -1s;
   transition-delay: -1s;
@@ -265,6 +260,10 @@
 
 .recordTabs.nav {
   margin-top: 20px;
+  .staff-view-icon {
+    font-size: 1.2em;
+    line-height: 1em;
+  }
   @media (max-width: @screen-xs-max) {
     margin-left: -15px;
     margin-right: -15px;
@@ -315,7 +314,7 @@
       font-size: 85%;
       padding-left: 10px;
       white-space: nowrap;
-      b {
+      .icon {
         margin-left: 5px;
         font-size: 20px;
       }

@@ -5,30 +5,30 @@
     <?php if (!$this->hideProfileEmailAddress): ?>
       <div class="my-profile-row">
         <div class="my-profile-col">
-          <label for="email"><?=$this->transEsc("Email") ?>:</label>
+          <label for="email"><?=$this->transEsc('Email') ?>:</label>
         </div>
         <div class="my-profile-col">
           <input id="email" type="email" class="form-control" name="email" value="<?=$this->escapeHtmlAttr($user->email)?>">
         </div>
         <div class="clearfix visible-xs"></div>
         <div class="my-profile-col">
-          <i class="fa fa-info-circle-hollow"></i>  <?=$this->transEsc($this->hideDueDateReminder ? 'email_info_without_ddr' : 'email_info') ?>
+          <?=$this->icon('info') ?> <?=$this->transEsc($this->hideDueDateReminder ? 'email_info_without_ddr' : 'email_info') ?>
         </div>
       </div>
       <div class="my-profile-row">
         <div class="my-profile-col">
-          <label for="finna_nickname"><?=$this->transEsc("finna_nickname") ?>:</label>
+          <label for="finna_nickname"><?=$this->transEsc('finna_nickname') ?>:</label>
         </div>
         <div class="my-profile-col">
           <input id="finna_nickname" type="text" class="form-control profileinfo-fields" name="finna_nickname" value="<?=$this->escapeHtmlAttr(trim($user->finna_nickname ?? ''))?>" pattern="^(?!.*[._\-\s]{2})[A-ZÅÄÖa-zåäö0-9._\-\s]{3,50}$" title="<?=$this->transEsc('finna_nickname_restrictions')?>">
         </div>
         <div class="clearfix visible-xs"></div>
         <div class="my-profile-col">
-          <i class="fa fa-info-circle-hollow"></i> <?=$this->transEsc("finna_nickname_info")?>
+          <?=$this->icon('info') ?> <?=$this->transEsc('finna_nickname_info')?>
         </div>
       </div>
       <div class="my-profile-row">
-          <input id="save-user-profile" name="saveUserProfile" type="submit" value="<?=$this->transEscAttr("Save") ?>" class="btn btn-primary">
+          <input id="save-user-profile" name="saveUserProfile" type="submit" value="<?=$this->transEscAttr('Save') ?>" class="btn btn-primary">
       </div>
     <?php endif; ?>
   </form>
@@ -40,10 +40,10 @@
         </div>
         <div class="my-profile-col">
           <select id="due-date-reminder" name="due_date_reminder" class="jumpMenu form-control">
-            <option value="0" <?= $user->finna_due_date_reminder == 0 ? 'selected="selected"' : '' ?>><?=$this->transEsc("due_date_reminder_none") ?></option>
-            <option value="1" <?= $user->finna_due_date_reminder == 1 ? 'selected="selected"' : '' ?>><?=$this->transEsc("due_date_reminder_one_day") ?></option>
-            <option value="2" <?= $user->finna_due_date_reminder == 2 ? 'selected="selected"' : '' ?>><?=$this->transEsc("due_date_reminder_two_days") ?></option>
-            <option value="3" <?= $user->finna_due_date_reminder == 3 ? 'selected="selected"' : '' ?>><?=$this->transEsc("due_date_reminder_three_days") ?></option>
+            <option value="0" <?= $user->finna_due_date_reminder == 0 ? 'selected="selected"' : '' ?>><?=$this->transEsc('due_date_reminder_none') ?></option>
+            <option value="1" <?= $user->finna_due_date_reminder == 1 ? 'selected="selected"' : '' ?>><?=$this->transEsc('due_date_reminder_one_day') ?></option>
+            <option value="2" <?= $user->finna_due_date_reminder == 2 ? 'selected="selected"' : '' ?>><?=$this->transEsc('due_date_reminder_two_days') ?></option>
+            <option value="3" <?= $user->finna_due_date_reminder == 3 ? 'selected="selected"' : '' ?>><?=$this->transEsc('due_date_reminder_three_days') ?></option>
           </select>
           <?php if ($user->finna_due_date_reminder && empty($user->email)): ?>
             <span class="alert-danger"><?=$this->transEsc('no_email_address')?></span>

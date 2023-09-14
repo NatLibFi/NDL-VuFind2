@@ -25,7 +25,7 @@ finna.favorites = (function finnaFavorites() {
   }
 
   function upload() {
-    var spinner = $('<i>').addClass('fa fa-spinner fa-spin');
+    var spinner = VuFind.icon('spinner');
     submitBtn.attr('disabled', true);
     dialog.prepend(spinner);
     dialog.find('.alert').remove();

@@ -40,10 +40,10 @@
         <?=$this->captcha()->html(true, false) ?>
       <?php endif; ?>
       <input class="btn btn-primary save" data-label-new="<?=$this->transEscAttr('Add your comment') ?>" data-label-edit="<?=$this->transEscAttr('Save') ?>" data-loading-text="<?=$this->transEscAttr('Submitting') ?><?=$this->transEscAttr('eol_ellipsis')?>" type="submit" value="<?=$this->transEscAttr($ratings ? 'Add your rating' : 'Add your comment')?>">
-      <input class="btn btn-primary cancel hide" type="submit" value="<?=$this->transEscAttr("Reset")?>">
+      <input class="btn btn-primary cancel hide" type="submit" value="<?=$this->transEscAttr('Reset')?>">
     </div>
     <div class="comment-col">
-        <i class="fa fa-info3" aria-hidden="true"></i>
+        <?=$this->icon('info') ?>
       <div class="comment-description">
         <?=$this->translate('user_comment_description_html');?>
       </div>
@@ -52,7 +52,7 @@
 <?php else: ?>
   <div>
     <?php $singleSignOn = $this->auth()->getManager()->getSessionInitiator($this->serverUrl(true)); ?>
-    <a href="?login=true&amp;catalogLogin=true" class="btn btn-primary login-link"<?php if (!$singleSignOn): ?> data-lightbox<?php endif; ?> title="<?=$this->transEscAttr("Login")?>"><?= $this->transEsc('Login'); ?></a> <?= $this->transEsc(($ratings ? 'rating' : 'comment') . '_login') ?>
+    <a href="?login=true&amp;catalogLogin=true" class="btn btn-primary login-link"<?php if (!$singleSignOn): ?> data-lightbox<?php endif; ?> title="<?=$this->transEscAttr('Login')?>"><?= $this->transEsc('Login'); ?></a> <?= $this->transEsc(($ratings ? 'rating' : 'comment') . '_login') ?>
   </div>
 <?php endif; ?>
 <!-- END of: finna - RecordTab/usercomments.phtml -->

@@ -41,6 +41,9 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
 
+use function in_array;
+use function is_array;
+
 /**
  * Factory for record driver data formatting view helper
  *
@@ -653,6 +656,14 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             ]
         );
         $setTemplateLine(
+            'Country of Producing Entity',
+            'getCountry',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'record-country'],
+            ]
+        );
+        $setTemplateLine(
             'Classification',
             'getClassifications',
             'data-classification.phtml',
@@ -960,7 +971,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             'getAllRecordLinks',
             'data-allRecordLinks.phtml',
             [
-                'context' => ['class' => 'recordLinks', 'title' => ""],
+                'context' => ['class' => 'recordLinks', 'title' => ''],
             ]
         );
         $setTemplateLine(
@@ -1512,6 +1523,14 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             'data-transEsc.phtml',
             [
                 'context' => ['class' => 'record-standard-report-number'],
+            ]
+        );
+        $setTemplateLine(
+            'Study Program Information Notes',
+            'getStudyProgramNotes',
+            'data-transEsc.phtml',
+            [
+                'context' => ['class' => 'record-study-program-notes'],
             ]
         );
         $setTemplateLine(

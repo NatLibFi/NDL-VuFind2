@@ -30,6 +30,9 @@
 
 namespace Finna\View\Helper\Root;
 
+use function count;
+use function is_array;
+
 /**
  * Citation view helper
  *

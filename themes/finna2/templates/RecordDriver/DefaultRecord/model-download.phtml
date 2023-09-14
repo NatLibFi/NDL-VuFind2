@@ -27,7 +27,7 @@
                             <?=$this->transEscWithPrefix('model_type_', $model['type'])?>
                             <span><?=$this->transEscWithPrefix('model_format_', $model['format'])?></span>
                         </a>
-                    </li> 
+                    </li>
                 <?php endforeach; ?>
             </ul>
         </div>
@@ -50,7 +50,7 @@
                     ) : $this->escapeHtmlAttr($model['url']);
             ?>
             <a download href="<?=$url?>" rel="nofollow">
-                <i aria-hidden="true" class="fa fa-download"></i>
+                <?=$this->icon('download') ?>
                 <span><?=$this->transEsc('Download the file')?></span>
             </a>
         </div>

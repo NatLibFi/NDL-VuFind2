@@ -34,7 +34,7 @@
               ];
             ?>
             <button <?= $this->htmlElement()->getAttributes($tooltip, 'tooltip-element'); ?>>
-              <i class="fa fa-info-big"></i>
+              <?=$this->icon('help') ?>
             </button>
           <?php endif; ?>
         </li>
@@ -56,7 +56,7 @@
           <?php if ($tab['selected']): ?>
             <div class="dropdown-toggle clearfix" data-toggle="dropdown">
               <div class="tab-title"><?=$this->transEsc($tab['label']); ?></div>
-              <div class="more"><?=$this->transEsc("More");?><b class="caret" aria-hidden="true"></b></div>
+              <div class="more"><?=$this->transEsc('More');?><?=$this->icon('menu-open') ?> </div>
             </div>
           <?php endif; ?>
         <?php endforeach; ?>

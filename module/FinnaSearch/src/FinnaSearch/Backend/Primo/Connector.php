@@ -30,6 +30,8 @@
 
 namespace FinnaSearch\Backend\Primo;
 
+use function count;
+
 /**
  * Primo Central connector.
  *

@@ -46,7 +46,7 @@
   </div>
 </div>
 <div class="office-information-loader">
-  <p><i class="fa fa-spinner fa-spin" style="text-align: center;"></i> <?=$this->transEsc('loading_ellipsis')?></p>
+  <p><?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?></p>
 </div>
 <div class="office-quick-information info-element hide">
   <div class="office-title">
@@ -54,11 +54,11 @@
     <div>
       <p>
         <span class="office-links address"></span>
-        <a href="#" target="_blank" class="office-links route info-element"><i class="fa fa-bus"></i> <?=$this->transEsc('organisation_info_route')?></a>
-        <a href="" class="office-links reserve-computer info-element"><i class="fa fa-desktop"></i> <?=$this->transEsc('organisation_info_reserve_computer')?></a>
-        <span class="office-links office-website info-element"><a href="#" target="_blank"><i class="fa fa-home"></i> <?=$this->transEsc('organisation_info_homepage')?></a></span>
+        <a href="#" target="_blank" class="office-links route info-element"><?=$this->icon('route') ?> <?=$this->transEsc('organisation_info_route')?></a>
+        <a href="" class="office-links reserve-computer info-element"><?=$this->icon('reserve-computer') ?> <?=$this->transEsc('organisation_info_reserve_computer')?></a>
+        <span class="office-links office-website info-element"><a href="#" target="_blank"><?=$this->icon('homepage-link') ?> <?=$this->transEsc('organisation_info_homepage')?></a></span>
       </p>
-      <p class="office-links email info-element"><i class="fa fa-envelope"></i> <span class="email"></span></p>
+      <p class="office-links email info-element"><?=$this->icon('email') ?> <span class="email"></span></p>
     </div>
   </div>
   <div class="open-closed-info">
@@ -67,12 +67,12 @@
       <span class="library-is-closed info-element"><?=$this->transEsc('organisation_info_is_closed')?></span>
     </h4>
     <p class="time-open info-element">
-      <span class="opening-times"><i class="fa fa-clock-o"></i> <?=$this->transEsc('organisation_info_open_today')?> <span class="hide times-template"><span class="opens"></span>&ndash;<span class="closes"></span></span></span>
+      <span class="opening-times"><?=$this->icon('time-open') ?> <?=$this->transEsc('organisation_info_open_today')?> <span class="hide times-template"><span class="opens"></span>&ndash;<span class="closes"></span></span></span>
       <span class="hide staff-times">(<?=$this->transEsc('organisation_info_schedule_staff')?> <span class="hide shift-template"><span class="opens"></span>&ndash;<span class="closes"></span></span>)</span>
       <span class="hide closed-times"><br><?=$this->icon('organisation-info-closed')?> <?=$this->transEsc('organisation_info_is_closed')?> <span class="hide gap-template"><span class="opens"></span>&ndash;<span class="closes"></span></span></span>
     </p>
   </div>
-  <div class="social-button info-element"><a aria-label="Facebook" href="#" target="_blank"><i class="fa fa-facebook"></i></a></div>
+  <div class="social-button info-element"><a aria-label="Facebook" href="#" target="_blank"><?=$this->icon('facebook') ?></a></div>
   <div class="clearfix"></div>
   <div><p class="office-description slogan info-element"></p></div>
 </div>

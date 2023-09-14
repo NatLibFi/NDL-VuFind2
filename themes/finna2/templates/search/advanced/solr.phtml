@@ -1,6 +1,7 @@
 <!-- START of: finna - search/advanced/solr.phtml -->
 <?php if (!empty($this->facetList) || !empty($this->checkboxFacets)): ?>
 <?php
+  $mapVisible = $this->config()->isGeographicMapVisible();
   if (isset($this->saved) && is_object($this->saved)) {
     $searchFilters = $this->saved->getParams()->getFilterList(true);
     $checkboxFilters = $this->saved->getParams()->getCheckboxFacets();
@@ -43,17 +44,19 @@
       <?php endif; ?>
     </div>
     <?php if (!empty($searchFilters) || !empty($usedCheckboxFilters)): ?>
-      <h4><?=$this->transEsc("adv_search_filters")?></h4>
+      <h4><?=$this->transEsc('adv_search_filters')?></h4>
       <fieldset class="well limit-to">
         <?=$this->render('search/advanced/filters.phtml', ['usedCheckboxFilters' => $usedCheckboxFilters, 'searchFilters' => $searchFilters])?>
       </fieldset>
     <?php endif; ?>
   </div>
 <?php endif; ?>
-<?=$this->render('search/advanced/map.phtml', ['searchClassId' => $this->searchClassId, 'saved' => $this->saved])?>
+<?php if ($mapVisible): ?>
+  <?=$this->render('search/advanced/map.phtml', ['searchClassId' => $this->searchClassId, 'saved' => $this->saved])?>
+<?php endif; ?>
 <?php if (isset($this->illustratedLimit)): ?>
   <fieldset>
-    <legend><?=$this->transEsc("Illustrated")?>:</legend>
+    <legend><?=$this->transEsc('Illustrated')?>:</legend>
     <?php foreach ($this->illustratedLimit as $current): ?>
       <input id="illustrated_<?=$this->escapeHtmlAttr($current['value'])?>" type="radio" name="illustration" value="<?=$this->escapeHtmlAttr($current['value'])?>"<?=$current['selected'] ? ' checked="checked"' : ''?>>
       <label for="illustrated_<?=$this->escapeHtmlAttr($current['value'])?>"><?=$this->transEsc($current['text'])?></label><br>

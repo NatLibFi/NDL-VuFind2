@@ -33,6 +33,8 @@ namespace Finna\Controller;
 
 use VuFind\Exception\Mail as MailException;
 
+use function is_array;
+
 /**
  * Book Bag / Bulk Action Controller
  *

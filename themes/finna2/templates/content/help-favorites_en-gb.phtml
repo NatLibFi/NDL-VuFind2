@@ -18,13 +18,13 @@
     <h3>Creating a Favourites list</h3>
     <p>First log in to Finna and search for your desired materials.
     </p>
-    <p>Add materials into your Favourites list by clicking the pin icon. <span aria-hidden="true"><i class="fa fa-heart brand-primary"></i></span>
+    <p>Add materials into your Favourites list by clicking the pin icon. <?=$this->icon('favorite') ?>
     </p>
     <p>You can find the pin icon on the right of the materials on the search result page.
     </p>
     <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-1_en-gb.png')?>" aria-hidden="true" alt="">
     </p>
-    <p>In the detailed materials display, the pin icon can be found on the top left corner. <span aria-hidden="true"><i class="fa fa-heart brand-primary" aria-hidden="true">&nbsp;<span class="hidden-xs"><?=$this->transEsc('Add to favorites')?></span></i></span>
+    <p>In the detailed materials display, the pin icon can be found on the top left corner. <?=$this->icon('favorite') ?><span class="hidden-xs"> <?=$this->transEsc('Add to favorites')?></span>
     </p>
     <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-2_en-gb.png')?>" aria-hidden="true" alt="">
     </p>
@@ -42,16 +42,16 @@
     <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-5_en-gb.png')?>" aria-hidden="true" alt="">
     </p>
     <h3>Favourites list content view and sharing</h3>
-    <p>If you wish to view your favourites list in a content view, choose <strong><?=$this->transEsc('Public')?></strong> as your visibility setting. This will add a sharing icon <span aria-hidden="true"><i class="fa fa-public brand-primary"></i></span> after the name of the list. Clicking <strong><?=$this->transEsc('Public List URL')?></strong> will open your list in content view. If you do not share the content view with others, it will remain viewable only by you.
+    <p>If you wish to view your favourites list in a content view, choose <strong><?=$this->transEsc('Public')?></strong> as your visibility setting. This will add a sharing icon <?=$this->icon('list-public') ?> after the name of the list. Clicking <strong><?=$this->transEsc('Public List URL')?></strong> will open your list in content view. If you do not share the content view with others, it will remain viewable only by you.
     </p>
     <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-6_en-gb.png')?>" aria-hidden="true" alt="">
     </p>
     <p>You can select several different presentation methods in the content view. You may organise the list in various ways (e.g. according to year) and experiment with alternative ways of displaying the materials.
     </p>
     <p><em><?=$this->transEsc('show_as')?></em>
-      <br>&nbsp;<span aria-hidden="true"><i class="fa fa-list brand-primary"></i></span>&nbsp;<?=$this->transEsc('Show As List')?>
-      <br>&nbsp;<span aria-hidden="true"><i class="fa fa-grid brand-primary"></i></span>&nbsp;<?=$this->transEsc('Show As Grid')?>
-      <br>&nbsp;<span aria-hidden="true"><i class="fa fa-condensed brand-primary"></i></span>&nbsp;<?=$this->transEsc('Show As Condensed')?>
+      <br>&nbsp;<?=$this->icon('view-list') ?>&nbsp;<?=$this->transEsc('Show As List')?>
+      <br>&nbsp;<?=$this->icon('view-grid') ?>&nbsp;<?=$this->transEsc('Show As Grid')?>
+      <br>&nbsp;<?=$this->icon('view-condensed') ?>&nbsp;<?=$this->transEsc('Show As Condensed')?>
     </p>
     <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-7_en-gb.png')?>" aria-hidden="true" alt="">
     </p>

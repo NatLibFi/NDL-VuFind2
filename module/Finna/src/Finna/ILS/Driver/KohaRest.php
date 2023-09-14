@@ -34,6 +34,11 @@ use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\TranslatableString;
 use VuFind\Marc\MarcReader;
 
+use function array_key_exists;
+use function count;
+use function in_array;
+use function is_array;
+
 /**
  * VuFind Driver for Koha, using REST API
  *
@@ -184,20 +189,14 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     public function getHolding($id, array $patron = null, array $options = [])
     {
         $data = parent::getHolding($id, $patron);
-        if (!empty($data['holdings'])) {
-            $summary = $this->getHoldingsSummary($data['holdings']);
-
-            // Remove request counts before adding the summary if necessary
-            if (
-                isset($this->config['Holdings']['display_item_hold_counts'])
-                && !$this->config['Holdings']['display_item_hold_counts']
-            ) {
-                foreach ($data['holdings'] as &$item) {
+        // Remove request counts if necessary
+        if (!($this->config['Holdings']['display_item_hold_counts'] ?? true)) {
+            foreach ($data['holdings'] ?? [] as &$item) {
+                if ('__HOLDINGSSUMMARYLOCATION__' !== $item['location']) {
                     unset($item['requests_placed']);
                 }
             }
-
-            $data['holdings'][] = $summary;
+            unset($item);
         }
         return $data;
     }
@@ -215,12 +214,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     public function getStatus($id)
     {
-        $data = $this->getItemStatusesForBiblio($id, null, true);
-        if (!empty($data)) {
-            $summary = $this->getHoldingsSummary($data);
-            $data[] = $summary;
-        }
-        return $data;
+        return $this->getItemStatusesForBiblio($id, null, true);
     }
 
     /**
@@ -703,7 +697,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
      *
      * @throws ILSException
-     * @return bool success
+     * @return true|string True on success, error description on error
      */
     public function markFeesAsPaid(
         $patron,
@@ -1050,6 +1044,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         }
 
         $statuses = [];
+        $itemsTotal = 0;
+        $orderedTotal = 0;
+        $availableTotal = 0;
+        $requestsTotal = 0;
         foreach ($result['data']['item_availabilities'] ?? [] as $i => $item) {
             // $holding is a reference!
             unset($holding);
@@ -1105,6 +1103,21 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 $number .= ' ' . $this->getItemSpecificLocation($item);
             }
 
+            $requests = max(
+                [$item['hold_queue_length'],
+                $result['data']['hold_queue_length']]
+            );
+
+            if (-1 === ($avail['unavailabilities']['Item::NotForLoan']['status'] ?? null)) {
+                ++$orderedTotal;
+            } else {
+                ++$itemsTotal;
+            }
+            if ($available) {
+                ++$availableTotal;
+            }
+            $requestsTotal = max($requestsTotal, $requests);
+
             $entry = [
                 'id' => $id,
                 'item_id' => $item['item_id'],
@@ -1118,10 +1131,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 'number' => $number,
                 'barcode' => $item['external_id'],
                 'sort' => $i,
-                'requests_placed' => max(
-                    [$item['hold_queue_length'],
-                    $result['data']['hold_queue_length']]
-                ),
+                'requests_placed' => $requests,
                 'libraryId' => $libraryId,
                 'locationId' => $locationId,
             ];
@@ -1319,6 +1329,22 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
 
         usort($statuses, [$this, 'statusSortFunction']);
         usort($electronic, [$this, 'statusSortFunction']);
+
+        // Add summary
+        $summary = [
+           'available' => $availableTotal,
+           'total' => $itemsTotal,
+           'ordered' => $orderedTotal,
+           'locations' => count(array_unique(array_column($statuses, 'location'))),
+           'availability' => null,
+           'callnumber' => null,
+           'location' => '__HOLDINGSSUMMARYLOCATION__',
+        ];
+        if (!empty($this->config['Holdings']['display_total_hold_count'])) {
+            $summary['reservations'] = $requestsTotal;
+        }
+        $statuses[] = $summary;
+
         return [
             'holdings' => $statuses,
             'electronic_holdings' => $electronic,
@@ -1817,52 +1843,6 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             }
         }
         return $results;
-    }
-
-    /**
-     * Return summary of holdings items.
-     *
-     * @param array $holdings Parsed holdings items
-     *
-     * @return array summary
-     */
-    protected function getHoldingsSummary($holdings)
-    {
-        $availableTotal = $itemsTotal = 0;
-        $requests = 0;
-        $locations = [];
-
-        foreach ($holdings as $item) {
-            if (!empty($item['availability'])) {
-                $availableTotal++;
-            }
-            if (strncmp($item['item_id'], 'HLD_', 4) !== 0) {
-                $itemsTotal++;
-            }
-            $locations[$item['location']] = true;
-            if ($item['requests_placed'] > $requests) {
-                $requests = $item['requests_placed'];
-            }
-        }
-
-        // Since summary data is appended to the holdings array as a fake item,
-        // we need to add a few dummy-fields that VuFind expects to be
-        // defined for all elements.
-
-        // Use a stupid location name to make sure this doesn't get mixed with
-        // real items that don't have a proper location.
-        $result = [
-           'available' => $availableTotal,
-           'total' => $itemsTotal,
-           'locations' => count($locations),
-           'availability' => null,
-           'callnumber' => null,
-           'location' => '__HOLDINGSSUMMARYLOCATION__',
-        ];
-        if (!empty($this->config['Holdings']['display_total_hold_count'])) {
-            $result['reservations'] = $requests;
-        }
-        return $result;
     }
 
     /**

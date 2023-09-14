@@ -13,7 +13,7 @@
 ?>
 
 <!-- Leftside navigationbar -->
-<?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'historicLoans']); ?>
+<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'historicLoans']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
   <div class="my-research-content myresearch-grid-list">
@@ -28,7 +28,7 @@
     <?php if (isset($this->noSupport)): ?>
       <?php if ($user->getLibraryCards()->count() > 1): ?>
         <div class="support-notice">
-          <p><?=$this->transEsc("no_ils_support_description") ?></p>
+          <p><?=$this->transEsc('no_ils_support_description') ?></p>
         </div>
       <?php endif; ?>
     <?php else: ?>
@@ -172,7 +172,7 @@
         <?php endif; ?>
 
         <?=$this->paginator ? $this->paginationControl($this->paginator, 'Sliding', 'Helpers/pagination.phtml', ['params' => $this->params]) : ''?>
-        <?php if ($template = $this->content()->findTemplateForLng("content/Additions/checkout-history-post-list")): ?>
+        <?php if ($template = $this->content()->findTemplateForLng('content/Additions/checkout-history-post-list')): ?>
           <div class="checkout-history-post-list"><?=$this->render($template)?></div>
         <?php endif; ?>
       <?php else: ?>

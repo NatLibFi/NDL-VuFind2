@@ -12,7 +12,7 @@ $this->content()->setHeading($this->translate('Finna - search services as a whol
     <div class="panel-body">
         <h3><a href="https://www.finna.fi">Finna.fi</a></h3>
         <p>Finna.fi gives you access to material provided by all organisations participating in Finna in one location.</p>
-        <?php if ($template = $this->content()->findTemplateForLng("content/about_finnafi")): ?>
+        <?php if ($template = $this->content()->findTemplateForLng('content/about_finnafi')): ?>
             <p><a class="btn btn-primary" href="<?=$this->url('content-page', ['page' => 'about_finnafi'])?>">Read more</a></p>
         <?php endif; ?>
     </div>

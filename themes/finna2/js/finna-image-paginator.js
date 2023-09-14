@@ -686,7 +686,7 @@ FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() 
     src += "&sid=" + encodeURIComponent(searchId);
   }
 
-  _.popup.collapseArea.html('<div class="large-spinner"><i class="fa fa-spinner fa-spin"/></div>');
+  _.popup.collapseArea.html('<div class="large-spinner">' + VuFind.icon('spinner') + '</div>');
   $.ajax({
     url: src,
     dataType: 'html'
@@ -757,15 +757,15 @@ FinnaPaginator.prototype.createImagePopup = function createImagePopup(image, ind
       img.src = image.urls.small;
       img.alt = image.description;
       img.title = image.title;
-      holder.append(img, $('<i class="fa fa-spinner fa-spin"/>'));
+      holder.append(img, VuFind.icon('spinner', 'spinner-icon'));
       img.onload = function onLoad() {
-        $(this).siblings('i').remove();
+        $(this).siblings('.spinner-icon').remove();
       };
     } else if (image.type === 'model') {
       if (_.popup.track) {
         return undefined;
       }
-      holder.append($('<i class="fa-finna-3d"/>'));
+      holder.append(VuFind.icon('model-3d', 'model-3d-icon'));
     }
   }
   holder.attr({

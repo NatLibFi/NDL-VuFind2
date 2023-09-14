@@ -32,6 +32,9 @@ namespace Finna\ILS\Driver;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 
+use function func_get_args;
+use function is_array;
+
 /**
  * Multiple Backend Driver.
  *
