@@ -190,8 +190,11 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     {
         $data = parent::getHolding($id, $patron);
         // Remove request counts if necessary
-        if (!($this->config['Holdings']['display_item_hold_counts'] ?? true)) {
-            foreach ($data['holdings'] ?? [] as &$item) {
+        if (
+            !empty($data['holdings'])
+            && !($this->config['Holdings']['display_item_hold_counts'] ?? true)
+        ) {
+            foreach ($data['holdings'] as &$item) {
                 if ('__HOLDINGSSUMMARYLOCATION__' !== $item['location']) {
                     unset($item['requests_placed']);
                 }
