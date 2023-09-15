@@ -5,18 +5,19 @@ $driver = $this->record($id)->getDriver();
 $source = $driver ? $driver->tryMethod('getDataSource') : '';
 $locations = false;
 $holdings = $this->statusItems;
-$summary = array_pop($holdings);
+foreach ($holdings as $i => $holding) {
+  if (($holding['location'] ?? '') === '__HOLDINGSSUMMARYLOCATION__') {
+    unset($holdings[$i]);
+    $itemsTotal = $holding['total'];
+    $availableTotal = $holding['available'];
+    $reservationsTotal = $holding['reservations'] ?? null;
+    $orderedTotal = $holding['ordered'] ?? null;
+    $locations = $holding['locations'] ?? null;
+    break;
+  }
+}
 $onlyUnknownStatuses = true;
 $holdingsConfig = $this->ils()->getConfig('Holdings', [$id]);
-if (($summary['location'] ?? '') === '__HOLDINGSSUMMARYLOCATION__') {
-  $itemsTotal = $summary['total'];
-  $availableTotal = $summary['available'];
-  $reservationsTotal = $summary['reservations'] ?? null;
-  $orderedTotal = $summary['ordered'] ?? null;
-  $locations = $summary['locations'] ?? null;
-} else {
-  $holdings[] = $summary;
-}
 
 foreach ($holdings as &$holding) {
   if (!empty($holding['availability']) || empty($holding['use_unknown_message'])) {
