@@ -31,6 +31,7 @@ namespace Finna\ILS\Driver;
 
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
+use VuFind\ILS\Logic\ItemStatus;
 use VuFind\Marc\MarcReader;
 
 use function array_key_exists;
@@ -2099,7 +2100,12 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                         $location = $marc->getSubfield($field, 'c');
                         $items = $marc->getSubfield($field, 'f') ?: 0;
                         $unavailable = $marc->getSubfield($field, 'g') ?: 0;
-                        $availableCount = $items - $unavailable;
+                        // Mark all items unavailable if availability indicates so:
+                        if (true !== $available && ItemStatus::STATUS_AVAILABLE !== $available) {
+                            $availableCount = 0;
+                        } else {
+                            $availableCount = $items - $unavailable;
+                        }
                         $holdingId = $marc->getSubfield($field, '8');
                         $total += $items;
                         $totalAvailable += $availableCount;
@@ -2416,7 +2422,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 $duedate = $item->item_data->due_date
                     ? $this->parseDate((string)$item->item_data->due_date) : null;
                 [$available, $status] = $this->getItemAvailabilityAndStatus($item);
-                if ($available) {
+                // Count only certainly available as available:
+                if (true === $available || ItemStatus::STATUS_AVAILABLE === $available) {
                     ++$availableItems;
                 }
 
