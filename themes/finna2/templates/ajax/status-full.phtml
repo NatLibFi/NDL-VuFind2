@@ -153,10 +153,10 @@ if ($groupBranches) {
       <?php if (!empty($reservationsTotal)): ?>
         <span class="reservations"><?=$this->translate('status_requests_html', ['%%count%%' => $reservationsTotal]);?></span>
       <?php endif; ?>
-      <?php if (!empty($itemsTotal) && !empty($holdingsConfig['display_total_item_count_in_results'])): ?>
+      <?php if (!empty($itemsTotal) && ($holdingsConfig['display_total_item_count_in_results'] ?? true)): ?>
         <span class="total"><?=$this->translate('status_items_total_html', ['%%count%%' => $itemsTotal]);?></span>
       <?php endif; ?>
-      <?php if (!empty($orderedTotal) && !empty($holdingsConfig['display_ordered_item_count_in_results'])): ?>
+      <?php if (!empty($orderedTotal) && ($holdingsConfig['display_ordered_item_count_in_results'] ?? false)): ?>
         <span class="ordered"><?=$this->translate('status_items_ordered_html', ['%%count%%' => $orderedTotal]);?></span>
       <?php endif; ?>
     </span>
