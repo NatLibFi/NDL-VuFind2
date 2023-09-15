@@ -187,7 +187,7 @@ finna.record = (function finnaRecord() {
         return;
       }
       $(this).nextUntil('.holdings-container-heading').toggleClass('collapsed');
-      if ($('.holdings-container-heading', this).hasClass('open')) {
+      if ($(this).hasClass('open')) {
         var rows = $(this).nextUntil('.holdings-container-heading');
         checkRequestsAreValid(rows.find('.collapsedCheckRequest').removeClass('collapsedCheckRequest'), 'Hold', 'holdBlocked');
         checkRequestsAreValid(rows.find('.collapsedCheckStorageRetrievalRequest').removeClass('collapsedCheckStorageRetrievalRequest'), 'StorageRetrievalRequest', 'StorageRetrievalRequestBlocked');
