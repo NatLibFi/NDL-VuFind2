@@ -481,14 +481,12 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      *
      * @return array
      */
-    public function getDeweys()
+    public function getDeweyClassifications()
     {
         $results = [];
         foreach ($this->getMarcReader()->getFields('082') as $field) {
-            $result = [];
             if ($result = $this->getSubfield($field, 'a')) {
                 $results[] = $result;
-                break;
             }
         }
         return $results;
