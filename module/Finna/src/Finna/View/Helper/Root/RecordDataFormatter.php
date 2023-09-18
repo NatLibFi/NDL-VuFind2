@@ -79,7 +79,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Copyright Notes',
             'Creator Characteristics',
             'DOI',
-            'Dewey',
+            'Dewey Classification',
             'Dissertation Note',
             'Education Programs',
             'Event Notice',
