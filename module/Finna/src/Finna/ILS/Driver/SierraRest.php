@@ -192,7 +192,12 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 $key .= '__' . ($row['title'] ?? '');
                 $sortKeys[$i] = $key;
             }
-            array_multisort($sortKeys, ($sort[1] ?? 'asc') === 'desc' ? SORT_DESC : SORT_ASC, $result['records']);
+            array_multisort(
+                $sortKeys,
+                ($sort[1] ?? 'asc') === 'desc' ? SORT_DESC : SORT_ASC,
+                SORT_LOCALE_STRING,
+                $result['records']
+            );
         }
 
         return $result;
