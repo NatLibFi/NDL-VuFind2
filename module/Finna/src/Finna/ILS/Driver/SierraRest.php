@@ -1016,7 +1016,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'callnumber' => $callnumber,
                 'duedate' => $duedate,
                 'number' => $number,
-                'barcode' => $item['barcode'],
+                'barcode' => $item['barcode'] ?? '',
                 'sort' => $sort--,
                 'requests_placed' => $displayItemHoldCount ? ($item['holdCount'] ?? null) : null,
             ];
