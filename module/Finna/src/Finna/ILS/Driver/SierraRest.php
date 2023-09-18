@@ -157,6 +157,48 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
+     * Get Patron Transactions
+     *
+     * This is responsible for retrieving all transactions (i.e. checked out items)
+     * by a specific patron.
+     *
+     * @param array $patron The patron array from patronLogin
+     * @param array $params Parameters
+     *
+     * @throws DateException
+     * @throws ILSException
+     * @return array        Array of the patron's transactions on success.
+     */
+    public function getMyTransactions($patron, $params = [])
+    {
+        $result = parent::getMyTransactions($patron, $params);
+        // Sort the loans, but only if all fit in result limit:
+        if ($result['count'] === count($result['records'])) {
+            $sort = explode(' ', $params['sort'] ?? 'checkout desc', 2);
+            $sortKeys = [];
+            foreach ($result['records'] as $i => $row) {
+                switch ($sort[0]) {
+                    case 'title':
+                        $key = '';
+                        break;
+                    case 'due':
+                        $key = $this->dateConverter->convertFromDisplayDate('Y-m-d', $row['duedate']);
+                        break;
+                    default:
+                        $key = sprintf('%012d', $row['checkout_id']);
+                        break;
+                }
+                // Always append title for disambiguation:
+                $key .= '__' . ($row['title'] ?? '');
+                $sortKeys[$i] = $key;
+            }
+            array_multisort($sortKeys, ($sort[1] ?? 'asc') === 'desc' ? SORT_DESC : SORT_ASC, $result['records']);
+        }
+
+        return $result;
+    }
+
+    /**
      * Get Pick Up Locations
      *
      * This is responsible for getting a list of valid library locations for
@@ -831,6 +873,19 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      */
     public function getConfig($function, $params = [])
     {
+        if ('getMyTransactions' === $function) {
+            return [
+                'max_results' => 200,
+                'sort' => [
+                    'checkout desc' => 'sort_checkout_date_desc',
+                    'checkout asc' => 'sort_checkout_date_asc',
+                    'due desc' => 'sort_due_date_desc',
+                    'due asc' => 'sort_due_date_asc',
+                    'title asc' => 'sort_title',
+                ],
+                'default_sort' => 'due asc',
+            ];
+        }
         if ('onlinePayment' === $function) {
             $result = $this->config['OnlinePayment'] ?? [];
             $result['exactBalanceRequired'] = false;
