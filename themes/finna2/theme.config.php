@@ -341,7 +341,6 @@ $config = [
             'image-next' => 'FontAwesome:chevron-right',
             'image-more' => 'FinnaIcons:down',
             'image-previous' => 'FontAwesome:chevron-left',
-            'image-rights-more' => 'FinnaIcons:right',
             'image-zoom-in' => 'FinnaIcons:zoom-in',
             'image-zoom-out' => 'FinnaIcons:zoom-out',
             'image-zoom-reset' => 'FinnaIcons:zoom-all',
