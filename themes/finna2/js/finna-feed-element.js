@@ -175,7 +175,9 @@ class FinnaFeedElement extends HTMLElement {
         // Text hover for touch devices
         if (finna.layout.isTouchDevice() && typeof settings.linkText === 'undefined') {
           holder.querySelectorAll('.carousel-slide-more.carousel-show').forEach(el => {
-            el.classList.remove('hidden');
+            if (holder.querySelector('.carousel-text:not(.no-text)') !== null) {
+              el.classList.remove('hidden');
+            }
           });
           holder.querySelectorAll('.carousel-hover-title').forEach(el => {
             el.style.width = '90%';
