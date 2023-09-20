@@ -48,15 +48,19 @@ use Laminas\ServiceManager\ServiceManager;
 class Factory
 {
     /**
-     * Factory for ExternalData tab plugin.
+     * Factory for HoldingsCollection tab plugin.
      *
      * @param ServiceManager $sm Service manager.
      *
-     * @return ExternalData
+     * @return HoldingsCollection
      */
-    public static function getExternalData(ServiceManager $sm)
+    public static function getHoldingsCollection(ServiceManager $sm)
     {
-        return new ExternalData();
+        $viewHelperManager = $sm->get('ViewHelperManager');
+        return new HoldingsCollection(
+            $viewHelperManager->get('record'),
+            $viewHelperManager->get('openUrl')
+        );
     }
 
     /**

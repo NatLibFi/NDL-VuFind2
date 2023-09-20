@@ -38,25 +38,18 @@ namespace Finna\RecordTab;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
  */
-class ExternalData extends \VuFind\RecordTab\AbstractBase
+class HoldingsCollection extends \VuFind\RecordTab\AbstractBase
 {
-    /**
-     * Is this tab enabled?
-     *
-     * @var bool
-     */
-    protected $enabled;
 
-    /**
-     * Constructor
-     *
-     * @param bool $enabled is this tab enabled?
-     */
-    public function __construct($enabled = true)
+    protected $openUrlHelper;
+
+    protected $recordHelper;
+
+    public function __construct($recordHelper, $openUrlHelper)
     {
-        $this->enabled = $enabled;
+        $this->openUrlHelper = $openUrlHelper;
+        $this->recordHelper = $recordHelper;
     }
-
     /**
      * Is this tab active?
      *
@@ -64,11 +57,23 @@ class ExternalData extends \VuFind\RecordTab\AbstractBase
      */
     public function isActive()
     {
+        $driver = $this->getRecordDriver();
+        $openUrlActive = ($this->openUrlHelper)($driver, 'holdings');
+        $hasLinks = ($this->recordHelper)($driver)->getLinkDetails($openUrlActive);
+        return $this->displayManifestationPart()
+            || $driver->tryMethod('archiveRequestAllowed')
+            || $hasLinks;
+    }
+
+    /**
+     * Display manifestation information?
+     *
+     * @return bool
+     */
+    public function displayManifestationPart()
+    {
         $data = $this->driver->tryMethod('getExternalData');
-        if (empty($data['items'])) {
-            $this->enabled = false;
-        }
-        return $this->enabled;
+        return !empty($data['items']);
     }
 
     /**
@@ -78,6 +83,6 @@ class ExternalData extends \VuFind\RecordTab\AbstractBase
      */
     public function getDescription()
     {
-        return 'external_data';
+        return 'holdings_collection';
     }
 }

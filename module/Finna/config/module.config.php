@@ -963,7 +963,7 @@ $config = [
                     'Finna\RecordTab\AuthorityRecordsAuthor' => 'Finna\RecordTab\AuthorityRecordsFactory',
                     'Finna\RecordTab\AuthorityRecordsTopic' => 'Finna\RecordTab\AuthorityRecordsFactory',
                     'Finna\RecordTab\CollectionHierarchyTree' => 'VuFind\RecordTab\CollectionHierarchyTreeFactory',
-                    'Finna\RecordTab\ExternalData' => 'Finna\RecordTab\Factory::getExternalData',
+                    'Finna\RecordTab\HoldingsCollection' => 'Finna\RecordTab\Factory::getHoldingsCollection',
                     'Finna\RecordTab\HierarchyTree' => 'VuFind\RecordTab\HierarchyTreeFactory',
                     'Finna\RecordTab\HoldingsILS' => 'VuFind\RecordTab\HoldingsILSFactory',
                     'Finna\RecordTab\Map' => 'Finna\RecordTab\Factory::getMap',
@@ -977,7 +977,7 @@ $config = [
                     'authorityrecordsauthor' => 'Finna\RecordTab\AuthorityRecordsAuthor',
                     'authorityrecordstopic' => 'Finna\RecordTab\AuthorityRecordsTopic',
                     'componentparts' => 'Finna\RecordTab\ComponentParts',
-                    'externaldata' => 'Finna\RecordTab\ExternalData',
+                    'holdingscollection' => 'Finna\RecordTab\HoldingsCollection',
                     'r2collectionlist' => 'Finna\RecordTab\R2CollectionList',
 
                     // Overrides:

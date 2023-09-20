@@ -47,10 +47,6 @@ class HoldingsILS extends \VuFind\RecordTab\HoldingsILS
      */
     public function isActive()
     {
-        // Always display holdings tab if request form is enabled
-        if ($this->getRecordDriver()->tryMethod('archiveRequestAllowed')) {
-            return true;
-        }
         return parent::isActive();
     }
 }

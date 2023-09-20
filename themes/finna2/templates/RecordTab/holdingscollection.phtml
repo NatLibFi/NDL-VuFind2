@@ -1,10 +1,34 @@
+
 <?php
-$data = $this->driver->getExternalData();
-$items = $data['items'] ?? [];
-$fullResImages = $items['fullResImages'] ?? null;
-$ocrImages = $items['OCRImages'] ?? null;
-$physicalItems = $items['physicalItems'] ?? null;
-$collection = $this->driver->tryMethod('isCollection');
+  $allowArchiveRequest = $this->driver->tryMethod('archiveRequestAllowed');
+  $account = $this->auth()->getManager();
+  $user = $account->isLoggedIn();
+  $repositoryLibraryRequestAllowed = $this->record($this->driver)->repositoryLibraryRequestEnabled('holdings');
+?>
+
+<div class="text-right">
+  <?php if ($user && $allowArchiveRequest): ?>
+    <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($driver, 'ArchiveRequest'))?>" class="btn btn-primary" data-lightbox="" data-toggle="modal" data-target="order_archive_material_form" data-lightbox><?=$this->transEsc('archive_request_reserve_action')?></a>
+  <?php elseif (!$user && $allowArchiveRequest): ?>
+    <a href="<?=$this->url('myresearch-userlogin') ?>" class="btn btn-primary" data-lightbox><span><?=$this->transEsc('archive_request_login')?></span></a>
+  <?php endif; ?>
+</div>
+
+<?= $this->render('RecordTab/holdings-record-urls'); ?>
+
+<?php
+  if (!$this->tab->displayManifestationPart()) {
+    return;
+  }
+?>
+
+<?php
+  $data = $this->driver->tryMethod('getExternalData');
+  $items = $data['items'] ?? [];
+  $fullResImages = $items['fullResImages'] ?? null;
+  $ocrImages = $items['OCRImages'] ?? null;
+  $physicalItems = $items['physicalItems'] ?? null;
+  $collection = $this->driver->tryMethod('isCollection');
 ?>
 
 <?php if ($fullResImages): ?>
@@ -91,6 +115,6 @@ $collection = $this->driver->tryMethod('isCollection');
   <?php endforeach; ?>
 <?php endif; ?>
 <?php
-  $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, 'finna.record.setupExternalDataTab();', 'SET');
+  $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, 'finna.record.setupHoldingsCollectionTab();', 'SET');
   echo $this->inlineScript();
 ?>

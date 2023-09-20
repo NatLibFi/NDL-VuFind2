@@ -67,7 +67,7 @@ defaultTab = null
 
 [Finna\RecordDriver\SolrEad3]
 tabs[Holdings] = HoldingsILS
-tabs[ExternalData] = ExternalData
+tabs[HoldingsCollection] = HoldingsCollection
 tabs[HierarchyTree] = HierarchyTree
 tabs[UserComments] = UserComments
 tabs[Reviews] = Reviews
