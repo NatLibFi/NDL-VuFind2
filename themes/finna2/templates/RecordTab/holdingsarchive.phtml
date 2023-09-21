@@ -1,17 +1,14 @@
 <!-- START of: finna - RecordTab/holdingsarchive.phtml -->
-<?php
-  $allowArchiveRequest = $this->driver->tryMethod('archiveRequestAllowed');
-  $account = $this->auth()->getManager();
-  $user = $account->isLoggedIn();
-?>
 
-<div class="text-right">
-  <?php if ($user && $allowArchiveRequest): ?>
-    <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($driver, 'ArchiveRequest'))?>" class="btn btn-primary" data-lightbox="" data-toggle="modal" data-target="order_archive_material_form" data-lightbox><?=$this->transEsc('archive_request_reserve_action')?></a>
-  <?php elseif (!$user && $allowArchiveRequest): ?>
-    <a href="<?=$this->url('myresearch-userlogin') ?>" class="btn btn-primary" data-lightbox><span><?=$this->transEsc('archive_request_login')?></span></a>
-  <?php endif; ?>
-</div>
+<?php if ($this->driver->tryMethod('archiveRequestAllowed')): ?>
+  <div class="text-right">
+    <?php if ($this->auth()->getManager()->isLoggedIn()): ?>
+      <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($driver, 'ArchiveRequest'))?>" class="btn btn-primary" data-lightbox="" data-toggle="modal" data-target="order_archive_material_form" data-lightbox><?=$this->transEsc('archive_request_reserve_action')?></a>
+    <?php else: ?>
+      <a href="<?=$this->url('myresearch-userlogin') ?>" class="btn btn-primary" data-lightbox><span><?=$this->transEsc('archive_request_login')?></span></a>
+    <?php endif; ?>
+  </div>
+<?php endif;?>
 
 <?= $this->render('RecordTab/holdings-record-urls'); ?>
 
