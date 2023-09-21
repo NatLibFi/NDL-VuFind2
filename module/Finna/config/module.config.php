@@ -965,7 +965,6 @@ $config = [
                     'Finna\RecordTab\CollectionHierarchyTree' => 'VuFind\RecordTab\CollectionHierarchyTreeFactory',
                     'Finna\RecordTab\HoldingsCollection' => 'Finna\RecordTab\Factory::getHoldingsCollection',
                     'Finna\RecordTab\HierarchyTree' => 'VuFind\RecordTab\HierarchyTreeFactory',
-                    'Finna\RecordTab\HoldingsILS' => 'VuFind\RecordTab\HoldingsILSFactory',
                     'Finna\RecordTab\Map' => 'Finna\RecordTab\Factory::getMap',
                     'Finna\RecordTab\R2CollectionList' => 'VuFind\RecordTab\CollectionListFactory',
                     'Finna\RecordTab\UserComments' => 'Finna\RecordTab\Factory::getUserComments',
@@ -983,7 +982,6 @@ $config = [
                     // Overrides:
                     'VuFind\RecordTab\CollectionHierarchyTree' => 'Finna\RecordTab\CollectionHierarchyTree',
                     'VuFind\RecordTab\HierarchyTree' => 'Finna\RecordTab\HierarchyTree',
-                    'VuFind\RecordTab\HoldingsILS' => 'Finna\RecordTab\HoldingsILS',
                     'VuFind\RecordTab\Map' => 'Finna\RecordTab\Map',
                     'VuFind\RecordTab\UserComments' => 'Finna\RecordTab\UserComments',
                 ],
