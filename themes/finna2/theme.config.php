@@ -275,6 +275,7 @@ $config = [
         'aliases' => [
             'adv-search-group-add' => 'FontAwesome:plus-circle',
             'adv-search-group-remove' => 'FinnaIcons:remove',
+            'audio-play' => 'FontAwesome:play-circle',
             'authority-corporatename' => 'FinnaIcons:authority-communityname',
             'authority-corporatename-alt' => 'FinnaIcons:authority-corporatename',
             'authority-familyname' => 'FinnaIcons:authority-familyname',
