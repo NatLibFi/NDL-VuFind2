@@ -48,16 +48,16 @@ use Laminas\ServiceManager\ServiceManager;
 class Factory
 {
     /**
-     * Factory for HoldingsCollection tab plugin.
+     * Factory for HoldingsArchive tab plugin.
      *
      * @param ServiceManager $sm Service manager.
      *
-     * @return HoldingsCollection
+     * @return HoldingsArchive
      */
-    public static function getHoldingsCollection(ServiceManager $sm)
+    public static function getHoldingsArchive(ServiceManager $sm)
     {
         $viewHelperManager = $sm->get('ViewHelperManager');
-        return new HoldingsCollection(
+        return new HoldingsArchive(
             $viewHelperManager->get('record'),
             $viewHelperManager->get('openUrl')
         );

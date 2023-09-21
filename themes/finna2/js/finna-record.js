@@ -250,7 +250,7 @@ finna.record = (function finnaRecord() {
     });
   }
 
-  function setupHoldingsCollectionTab() {
+  function setupHoldingsArchiveTab() {
     $('.external-data-heading').on('click', function onClickHeading() {
       $(this).toggleClass('collapsed');
     });
@@ -544,7 +544,7 @@ finna.record = (function finnaRecord() {
     init: init,
     setupHoldingsTab: setupHoldingsTab,
     setupLocationsEad3Tab: setupLocationsEad3Tab,
-    setupHoldingsCollectionTab: setupHoldingsCollectionTab,
+    setupHoldingsArchiveTab: setupHoldingsArchiveTab,
     initRecordVersions: initRecordVersions,
     handleRedirect: handleRedirect
   };

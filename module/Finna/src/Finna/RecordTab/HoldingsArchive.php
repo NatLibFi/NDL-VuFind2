@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrEad3 External data tab.
+ * Holdings archive data tab.
  *
  * PHP version 8
  *
@@ -23,29 +23,50 @@
  * @category VuFind
  * @package  RecordTabs
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
  */
 
 namespace Finna\RecordTab;
 
+use \VuFind\View\Helper\Root\OpenUrl;
+use \VuFind\View\Helper\Root\Record;
+
 /**
- * SolrEad3 External data tab.
+ * Holdings archive data tab.
  *
  * @category VuFind
  * @package  RecordTabs
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
  */
-class HoldingsCollection extends \VuFind\RecordTab\AbstractBase
+class HoldingsArchive extends \VuFind\RecordTab\AbstractBase
 {
 
+    /**
+     * OpenUrl helper
+     *
+     * @var OpenUrl
+     */
     protected $openUrlHelper;
 
+    /**
+     * OpenUrl helper
+     *
+     * @var Record
+     */
     protected $recordHelper;
 
-    public function __construct($recordHelper, $openUrlHelper)
+    /**
+     * Constructor
+     *
+     * @param Record  $recordHelper  Record helper
+     * @param OpenUrl $openUrlHelper OpenUrl helper
+     */
+    public function __construct(Record $recordHelper, OpenUrl $openUrlHelper)
     {
         $this->openUrlHelper = $openUrlHelper;
         $this->recordHelper = $recordHelper;
@@ -60,7 +81,7 @@ class HoldingsCollection extends \VuFind\RecordTab\AbstractBase
         $driver = $this->getRecordDriver();
         $openUrlActive = ($this->openUrlHelper)($driver, 'holdings');
         $hasLinks = ($this->recordHelper)($driver)->getLinkDetails($openUrlActive);
-        return $this->displayManifestationPart()
+        return $this->displayManifestationSection()
             || $driver->tryMethod('archiveRequestAllowed')
             || $hasLinks;
     }
@@ -70,9 +91,9 @@ class HoldingsCollection extends \VuFind\RecordTab\AbstractBase
      *
      * @return bool
      */
-    public function displayManifestationPart()
+    public function displayManifestationSection()
     {
-        $data = $this->driver->tryMethod('getExternalData');
+        $data = $this->driver->tryMethod('getManifestationData');
         return !empty($data['items']);
     }
 
@@ -83,6 +104,6 @@ class HoldingsCollection extends \VuFind\RecordTab\AbstractBase
      */
     public function getDescription()
     {
-        return 'holdings_collection';
+        return 'holdings_archive';
     }
 }

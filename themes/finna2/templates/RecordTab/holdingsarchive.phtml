@@ -1,9 +1,8 @@
-
+<!-- START of: finna - RecordTab/holdingsarchive.phtml -->
 <?php
   $allowArchiveRequest = $this->driver->tryMethod('archiveRequestAllowed');
   $account = $this->auth()->getManager();
   $user = $account->isLoggedIn();
-  $repositoryLibraryRequestAllowed = $this->record($this->driver)->repositoryLibraryRequestEnabled('holdings');
 ?>
 
 <div class="text-right">
@@ -17,13 +16,13 @@
 <?= $this->render('RecordTab/holdings-record-urls'); ?>
 
 <?php
-  if (!$this->tab->displayManifestationPart()) {
+  if (!$this->tab->displayManifestationSection()) {
     return;
   }
 ?>
 
 <?php
-  $data = $this->driver->tryMethod('getExternalData');
+  $data = $this->driver->tryMethod('getManifestationData');
   $items = $data['items'] ?? [];
   $fullResImages = $items['fullResImages'] ?? null;
   $ocrImages = $items['OCRImages'] ?? null;
@@ -115,6 +114,7 @@
   <?php endforeach; ?>
 <?php endif; ?>
 <?php
-  $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, 'finna.record.setupHoldingsCollectionTab();', 'SET');
+  $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, 'finna.record.setupHoldingsArchiveTab();', 'SET');
   echo $this->inlineScript();
 ?>
+<!-- END of: finna - RecordTab/holdingsarchive.phtml -->
