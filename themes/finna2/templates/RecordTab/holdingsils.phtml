@@ -3,7 +3,6 @@
     // Set up convenience variables:
     $account = $this->auth()->getManager();
     $user = $account->isLoggedIn();
-    // Account for replace_other_urls setting
     $offlineMode = $this->ils()->getOfflineMode();
     $recordSource = $this->driver->tryMethod('getDataSource');
     try {
