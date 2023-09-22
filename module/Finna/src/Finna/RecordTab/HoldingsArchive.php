@@ -70,6 +70,7 @@ class HoldingsArchive extends \VuFind\RecordTab\AbstractBase
         $this->openUrlHelper = $openUrlHelper;
         $this->recordHelper = $recordHelper;
     }
+
     /**
      * Is this tab active?
      *
