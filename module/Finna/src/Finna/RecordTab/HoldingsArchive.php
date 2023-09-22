@@ -30,8 +30,8 @@
 
 namespace Finna\RecordTab;
 
-use \VuFind\View\Helper\Root\OpenUrl;
-use \VuFind\View\Helper\Root\Record;
+use VuFind\View\Helper\Root\OpenUrl;
+use VuFind\View\Helper\Root\Record;
 
 /**
  * Holdings archive data tab.
@@ -45,7 +45,6 @@ use \VuFind\View\Helper\Root\Record;
  */
 class HoldingsArchive extends \VuFind\RecordTab\AbstractBase
 {
-
     /**
      * OpenUrl helper
      *
