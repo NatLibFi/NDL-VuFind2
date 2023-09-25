@@ -1,225 +1,490 @@
-/*global VuFind, finna */
+/*global VuFind, finna, Donut */
 finna.organisationInfo = (function finnaOrganisationInfo() {
-  var organisationList = {};
+  let params = null;
+  let container = null;
+  let detailsEl = null;
 
-  function query(queryParams, callback) {
-    var url = VuFind.path + '/AJAX/JSON';
-    var org = {'id': queryParams.parent, 'sector': queryParams.sector || ''};
-    delete queryParams.sector;
-    delete queryParams.parent;
+  let mapTileUrl = 'https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png';
 
-    var params = {method: 'getOrganisationInfo', parent: org, params: queryParams};
-    $.getJSON(url, params)
-      .done(function onGetOrganisationInfoDone(response) {
-        if (response.data) {
-          callback(true, response.data);
-          return;
-        }
-        callback(false, 'Error reading organisation info');
-      })
-      .fail(function onGetOrganisationInfoFall(response/*, textStatus, err*/) {
-        var error = false;
-        if (typeof response.responseJSON !== 'undefined') {
-          error = response.responseJSON.data;
-        }
-        callback(false, error);
-      });
+  function updateWindowHash(hash) {
+    if (('#' + hash) === window.location.hash) {
+      // Set hash first to empty value, so that the change event is triggered when
+      // the same menu item is re-selected.
+      window.location.hash = '';
+    }
+    window.location.hash = '#' + hash;
   }
 
-  function getCachedDetails(id) {
-    if (typeof organisationList[id].details !== 'undefined') {
-      return organisationList[id].details;
+  function getLocationFromURL() {
+    if (window.location.hash !== '') {
+      return window.location.hash.replace('#', '');
     }
-    return null;
+    return false;
   }
 
-  function getField(obj, field, organisationId) {
-    var res = finna.common.getField(obj, field);
-    if (res !== null) {
-      return res;
-    }
-    if (organisationId) {
-      var cache = getCachedDetails(organisationId);
-      if (cache) {
-        if (typeof cache[field] != 'undefined') {
-          return cache[field];
-        }
-      }
-    }
-    return null;
-  }
-
-  function cacheSchedules(id, data) {
-    var schedules = finna.common.getField(data, 'openTimes');
-    if (schedules) {
-      organisationList[id].openTimes = schedules;
-      organisationList[id].details.openTimes = schedules;
-    }
-    var scheduleDesc = finna.common.getField(data, 'scheduleDescriptions');
-    if (scheduleDesc) {
-      organisationList[id].details.scheduleDescriptions = scheduleDesc;
-      organisationList[id].scheduleDescriptions = scheduleDesc;
-    }
-  }
-
-  /**
-   * Fetch organisations.
-   *
-   * @param {object}   searchParams   Parameters to form the search query
-   *                                  - target: page
-   *                                  - buildings: list of buildings separated by a comma
-   * @param {function} callback       Callback function, function (response|false, callbackParams)
-   * @returns void
-   */
-  function getOrganisations(searchParams, callback) {
-    const parent = searchParams.parent;
-    if (typeof parent === 'undefined') {
+  function initMap(data)
+  {
+    if (data.mapData.length === 0) {
       return;
     }
-    if (parent in organisationList) {
-      callback(organisationList[parent]);
+
+    let mapContainer = container.querySelector('.js-location-info-map');
+    if (!mapContainer) {
+      return;
     }
-    searchParams.action = 'consortium';
-    query(searchParams, function onQueryDone(success, response) {
-      if (!success) {
-        callback(false);
-        return;
+    let mapWidget = mapContainer.querySelector('.js-map-widget');
+    let mapTooltip = mapContainer.querySelector('.js-marker-tooltip');
+    let mapAttributionTemplate = mapContainer.querySelector('.js-map-attribution');
+    let mapBubbleTemplate = mapContainer.querySelector('.js-map-bubble-template');
+    if (!mapWidget || !mapTooltip || !mapAttributionTemplate || !mapBubbleTemplate) {
+      console.error('Map element(s) not found');
+      return;
+    }
+
+    mapContainer.classList.remove('hidden');
+
+    let map = finna.organisationMap;
+    map.init(mapWidget, mapTileUrl, mapAttributionTemplate.innerHTML);
+
+    function hideMapMarker() {
+      mapTooltip.classList.add('hidden');
+    }
+
+    $(map).on('marker-click', function onClickMarker(ev, id) {
+      window.location.hash = id;
+      hideMapMarker();
+    });
+
+    $(map).on('marker-mouseout', function onMouseOutMarker(/*ev*/) {
+      hideMapMarker();
+    });
+
+    $(map).on('marker-mouseover', function onMouseOverMarker(ev, mapData) {
+      if (mapData.id in data.mapData) {
+        var name = data.mapData[mapData.id].name;
+        mapTooltip.classList.remove('hidden');
+        mapTooltip.textContent = name;
+        mapTooltip.style.left = mapWidget.offsetLeft + mapData.x + 35 + 'px';
+        mapTooltip.style.top = mapWidget.offsetTop + mapData.y + 'px';
       }
-      var list = getField(response, 'list');
-      $.each(list, function handleList(ind, obj) {
-        organisationList[obj.id] = obj;
-        organisationList[obj.id].details = {};
-        cacheSchedules(obj.id, obj);
+    });
+
+    let showLocationEl = mapContainer.querySelector('.js-map-controls .js-show-location');
+    if (showLocationEl) {
+      showLocationEl.addEventListener('click', (ev) => {
+        let id = getLocationFromURL();
+        if (id in data.mapData) {
+          map.reset();
+          map.selectMarker(id);
+        }
+        ev.preventDefault();
       });
-      callback(response);
+    }
+
+    let showAllEl = mapContainer.querySelector('.js-map-controls .js-show-all');
+    if (showAllEl) {
+      showAllEl.addEventListener('click', (ev) => {
+        map.resize();
+        map.reset();
+        ev.preventDefault();
+      });
+    }
+
+    for (const id in data.mapData) {
+      if (Object.hasOwn(data.mapData, id)) {
+        // Map data (info bubble, icon)
+        let locationData = data.mapData[id];
+        let bubble = mapBubbleTemplate.cloneNode(true);
+        let nameEl = bubble.content.querySelector('.js-name');
+        if (nameEl) {
+          nameEl.textContent = locationData.name;
+        }
+        let addressEl = bubble.content.querySelector('.js-address');
+        if (addressEl) {
+          addressEl.textContent = '';
+          let streetEl = document.createElement('span');
+          streetEl.textContent = locationData.address.street;
+          addressEl.append(streetEl);
+          let cityEl = document.createElement('span');
+          cityEl.textContent = locationData.address.zipcode + ' ' + locationData.address.city;
+          addressEl.append(document.createElement('br'));
+          addressEl.append(cityEl);
+        }
+
+        data.mapData[id].map = {
+          info: bubble.innerHTML
+        };
+      }
+    }
+
+    map.draw(data.mapData);
+
+    // Expand/contract map
+    let expandEl = mapContainer.querySelector('.js-expand-map');
+    let contractEl = mapContainer.querySelector('.js-contract-map');
+    if (expandEl && contractEl) {
+      expandEl.addEventListener('click', () => {
+        mapContainer.classList.add('expand');
+        map.resize();
+        expandEl.classList.add('hidden');
+        contractEl.classList.remove('hidden');
+      });
+      contractEl.addEventListener('click', () => {
+        mapContainer.classList.remove('expand');
+        map.resize();
+        expandEl.classList.remove('hidden');
+        contractEl.classList.add('hidden');
+      });
+    }
+  }
+
+  function initLocationSelection(data)
+  {
+    const select = document.querySelector('.js-location-select');
+    if (select) {
+      const placeholder = select.querySelector('option').textContent;
+      $(select).select2({
+        placeholder: placeholder,
+        allowClear: true
+      }).on('select2:select', function updateHash(e) {
+        updateWindowHash(encodeURIComponent(e.params.data.id || 'undefined'));
+      });
+    }
+
+    initMap(data);
+  }
+
+  function initWeekNavi(locationId)
+  {
+    container.querySelectorAll('.js-week-navi-btn').forEach((btn) => {
+      if (btn.dataset.dir) {
+        btn.addEventListener('click', () => {
+          let widgetContainer = btn.closest('.js-schedules');
+          if (!widgetContainer) {
+            console.error('Schedule widget not found');
+            return;
+          }
+          let indicatorEl = widgetContainer.querySelector('.js-loader');
+          let weekNaviEl = btn.closest('.js-week-navi');
+          let timesEl = widgetContainer.querySelector('.js-opening-times-week');
+          if (!indicatorEl || !weekNaviEl || !timesEl) {
+            console.error('Week navi, times or loading indicator not found');
+            return;
+          }
+          let weekNumEl = weekNaviEl.querySelector('.week-text .num');
+          if (!weekNumEl) {
+            console.error('Week num not found');
+            return;
+          }
+          let isoDate = weekNaviEl.dataset.date;
+          if (!isoDate) {
+            console.error('Current date not found');
+            return;
+          }
+          let date = new Date(isoDate);
+          let delta = parseInt(btn.dataset.dir) < 0 ? -7 : 7;
+          date.setDate(date.getDate() + delta);
+          let newIsoDate = date.toISOString().substring(0, 10);
+          indicatorEl.classList.remove('hidden');
+          fetch(VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
+            method: 'getOrganisationInfo',
+            element: 'schedule',
+            id: params.id,
+            locationId: locationId,
+            sectors: params.sectors || '',
+            buildings: params.buildings || '',
+            date: newIsoDate
+          }))
+            .then(response => {
+              indicatorEl.classList.add('hidden');
+              if (!response.ok) {
+                timesEl.textContent = VuFind.translate('error_occurred');
+              } else {
+                response.json().then((result) => {
+                  weekNaviEl.dataset.date = newIsoDate;
+                  weekNumEl.textContent = result.data.weekNum;
+                  let prevBtnEl = weekNaviEl.querySelector('.js-week-navi-btn.prev-week');
+                  if (prevBtnEl) {
+                    prevBtnEl.disabled = result.data.currentWeek;
+                  }
+                  timesEl.outerHTML = result.data.widget;
+                });
+              }
+            });
+        });
+      }
     });
   }
 
-  function getInfo(id) {
-    if (!(id in organisationList)) {
-      return false;
+  function initCoverageGauge()
+  {
+    let gaugeEl = container.querySelector('.js-finna-coverage-gauge');
+    if (gaugeEl) {
+      let opts = {
+        lines: 0,
+        angle: 0.1,
+        lineWidth: 0.09,
+        limitMax: 'true',
+        colorStart: '#00A2B5',
+        colorStop: '#00A2B5',
+        strokeColor: '#e5e5e5',
+        generateGradient: true
+      };
+
+      var gauge = new Donut(gaugeEl).setOptions(opts);
+      gauge.maxValue = 100;
+      gauge.animationSpeed = 20;
+      gauge.set(gaugeEl.dataset.coverage);
     }
-    return organisationList[id];
   }
 
-  function getDetails(id) {
-    if (!(id in organisationList)) {
-      return false;
+  function initLocationDetails(locationId)
+  {
+    detailsEl.querySelectorAll('[data-truncate]').forEach((elem) => {
+      VuFind.truncate.initTruncate(elem);
+    });
+    finna.layout.initToolTips($(detailsEl));
+    initCoverageGauge();
+    initWeekNavi(locationId);
+    finna.organisationMap.selectMarker(locationId);
+  }
+
+  function resetSearch() {
+    $('.js-location-select').val('').trigger('change');
+  }
+
+  function showLocationDetails(locationId)
+  {
+    const indicatorEl = container.querySelector('.js-location-loader');
+    if (!indicatorEl) {
+      console.error('Location load indicator element not found');
+      return;
+    }
+    if (!indicatorEl.classList.contains('hidden')) {
+      // Already loading
+      return;
     }
 
-    var data = organisationList[id];
-    var details = {};
-    var openNow = getField(data, 'openNow');
-    if (openNow !== null) {
-      details.openNow = openNow;
+    const notificationEl = container.querySelector('.js-location-unavailable');
+    if (notificationEl) {
+      notificationEl.classList.add('hidden');
+    }
+    detailsEl.innerHTML = '';
+    const infoEl = container.querySelector('.js-location-quick-information');
+    if (infoEl) {
+      infoEl.innerHTML = '';
     }
 
-    $(['name', 'email', 'homepage', 'routeUrl', 'mapUrl', 'openToday', 'buildingYear', 'openTimes', 'schedule-descriptions'])
-      .each(function handleField(ind, field) {
-        var val = getField(data, field);
-        if (val) {
-          details[field] = val;
+    indicatorEl.classList.remove('hidden');
+    fetch(VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
+      method: 'getOrganisationInfo',
+      element: 'location-details',
+      id: params.id,
+      locationId: locationId,
+      sectors: params.sectors || '',
+      buildings: params.buildings || '',
+      consortiumInfo: params.consortiumInfo
+    }))
+      .then(response => {
+        indicatorEl.classList.add('hidden');
+        if (!response.ok) {
+          detailsEl.textContent = VuFind.translate('error_occurred');
+        } else {
+          response.json().then((result) => {
+            if (!result.data.found) {
+              if (notificationEl) {
+                notificationEl.classList.remove('hidden');
+              }
+              resetSearch();
+              return;
+            }
+            detailsEl.innerHTML = result.data.details;
+            if (infoEl) {
+              infoEl.innerHTML = result.data.info;
+            }
+            initLocationDetails(locationId);
+          });
         }
       });
-
-    var address = '';
-    var mailAddress = '';
-    var street = getField(data.address, 'street');
-    if (street) {
-      address += street;
-    }
-    var zipcode = getField(data.address, 'zipcode');
-    if (zipcode) {
-      address += ', ' + zipcode;
-    }
-    var city = getField(data.address, 'city');
-    if (city) {
-      address += ' ' + city;
-    }
-
-    details.address = address;
-
-    var mail = getField(data, 'mailAddress');
-    if (mail) {
-      var mailStreet = getField(mail, 'street');
-      if (mailStreet) {
-        mailAddress += mailStreet + '<br>';
-      }
-      var mailBoxnumber = getField(mail, 'boxNumber');
-      if (mailBoxnumber) {
-        mailAddress += VuFind.translate('organisation_info_box_number') + ' ' + mailBoxnumber + '<br>';
-      }
-      var mailZipcode = getField(mail, 'zipcode');
-      if (mailZipcode) {
-        mailAddress += mailZipcode;
-      }
-      var mailArea = getField(mail, 'area');
-      if (mailArea) {
-        mailAddress += ' ' + mailArea;
-      }
-      details.mailAddress = mailAddress;
-    }
-
-    var cached = getCachedDetails(id);
-    if (cached) {
-      details = $.extend(details, {details: cached});
-    }
-    return details;
   }
 
-  function cacheDetails(id, details) {
-    if (!('openTimes' in details) && 'openTimes' in organisationList[id]) {
-      details.openTimes = organisationList[id].openTimes;
+  function updateSelectedLocation(locationId, clearSearch) {
+    showLocationDetails(locationId, '', true);
+    if (clearSearch) {
+      resetSearch();
     }
-    organisationList[id].details = details;
   }
 
-  /**
-   * Get building schedules.
-   * @param {object} queryParams Query parameters used:
-   *                             - Parent: Organisation parent id.
-   *                             - Target: Target,
-   *                             - id: Organisation id
-   *                             - periodStart: Start date of period
-   *                             - dir: period paging direction -1 | 1
-   *                             - fullDetails: 0|1
-   *                             - allServices: 0|1
-   * @param {function} callback  Callback function (false | string, object)
-   *
-   * @returns void
-   */
-  function getSchedules(queryParams, callback) {
-    const fullDetails = queryParams.fullDetails || 0;
-    const id = queryParams.id || '';
-    query(queryParams, function onQueryDone(success, obj) {
-      if (!success) {
-        callback(false);
-        return;
-      }
-      if (fullDetails) {
-        cacheDetails(id, obj);
-      }
-      cacheSchedules(id, obj);
-
-      var result = {};
-      $(['openTimes', 'scheduleDescriptions', 'periodStart', 'weekNum', 'currentWeek', 'phone', 'emails', 'links', 'facility-image', 'services', 'pictures', 'rss'])
-        .each(function handleField(ind, field) {
-          var val = getField(obj, field, id);
-          if (val) {
-            result[field] = val;
-          }
-        });
-
-      callback(result);
-    });
+  function updateLocationFromUrlHash()
+  {
+    let location = getLocationFromURL();
+    if (location) {
+      updateSelectedLocation(location, false);
+    }
   }
 
-  var my = {
-    getOrganisations: getOrganisations,
-    getInfo: getInfo,
-    getDetails: getDetails,
-    getSchedules: getSchedules
+  function init(_params)
+  {
+    params = _params;
+
+    container = document.querySelector('.js-organisation-info-container');
+    if (!container) {
+      console.error('Organisation info container element not found');
+      return;
+    }
+    detailsEl = container.querySelector('.js-location-details-container');
+    if (!detailsEl) {
+      console.error('Location details element not found');
+      return;
+    }
+    const infoEl = container.querySelector('.js-consortium-info-container');
+    if (!infoEl) {
+      console.error('Consortium info element not found');
+      return;
+    }
+    const selectionEl = container.querySelector('.js-location-selection-container');
+    if (!selectionEl) {
+      console.error('Location selection element not found');
+      return;
+    }
+    const loadIndicatorEl = container.querySelector('.js-location-selection-loader');
+    if (!loadIndicatorEl) {
+      console.error('Location load indicator element not found');
+      return;
+    }
+
+    addEventListener('hashchange', () => { updateLocationFromUrlHash(); });
+
+    loadIndicatorEl.classList.remove('hidden');
+    fetch(VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
+      method: 'getOrganisationInfo',
+      element: 'info-location-selection',
+      id: params.id,
+      sectors: params.sectors || '',
+      buildings: params.buildings || '',
+      consortiumInfo: params.consortiumInfo
+    }))
+      .then((response) => {
+        loadIndicatorEl.classList.add('hidden');
+        if (!response.ok) {
+          selectionEl.textContent = VuFind.translate('error_occurred');
+        } else {
+          response.json().then((result) => {
+            infoEl.innerHTML = result.data.consortiumInfo;
+            selectionEl.innerHTML = result.data.locationSelection;
+            initLocationSelection(result.data);
+            if (result.data.locationCount === 1) {
+              updateWindowHash(result.data.defaultLocationId);
+            } else {
+              updateLocationFromUrlHash();
+            }
+          });
+        }
+      });
+  }
+
+  function loadWidgetLocation(locationId)
+  {
+    let openStatusEl = container.querySelector('.js-open-status');
+    let scheduleEl = container.querySelector('.js-opening-times');
+    let selectedLocationEl = container.querySelector('.js-location-dropdown .js-selected');
+    if (!openStatusEl || !scheduleEl || !selectedLocationEl) {
+      console.error('Organisation info widget open status, schedule or selected location element not found');
+      return;
+    }
+    const loadIndicatorEl = container.querySelector('.js-loader');
+    if (!loadIndicatorEl) {
+      console.error('Organisation info widget load indicator element not found');
+      return;
+    }
+
+    loadIndicatorEl.classList.remove('hidden');
+    fetch(VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
+      method: 'getOrganisationInfo',
+      element: 'widget-location',
+      id: params.id,
+      locationId: locationId,
+      buildings: params.buildings || '',
+      details: params.details || '1'
+    }))
+      .then((response) => {
+        loadIndicatorEl.classList.add('hidden');
+        if (!response.ok) {
+          scheduleEl.textContent = VuFind.translate('error_occurred');
+        } else {
+          response.json().then((result) => {
+            selectedLocationEl.textContent = result.data.locationName;
+            openStatusEl.innerHTML = result.data.openStatus;
+            scheduleEl.innerHTML = result.data.schedule;
+            if (result.data.details) {
+              if (detailsEl) {
+                detailsEl.innerHTML = result.data.details;
+              }
+            }
+            initWeekNavi(result.data.locationId);
+            finna.layout.initToolTips($(detailsEl));
+          });
+        }
+      });
+  }
+
+  function initWidget(_params)
+  {
+    params = _params;
+    container = document.querySelector('.js-organisation-info-widget');
+    if (!container) {
+      console.error('Organisation info widget element not found');
+      return;
+    }
+
+    let contentEl = container.querySelector('.js-content');
+    if (!contentEl) {
+      console.error('Organisation info widget content element not found');
+      return;
+    }
+    const loadIndicatorEl = container.querySelector('.js-loader');
+    if (!loadIndicatorEl) {
+      console.error('Organisation info widget load indicator element not found');
+      return;
+    }
+
+    loadIndicatorEl.classList.remove('hidden');
+    fetch(VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
+      method: 'getOrganisationInfo',
+      element: 'widget',
+      id: params.id,
+      buildings: params.buildings || '',
+      details: params.details || '1'
+    }))
+      .then((response) => {
+        loadIndicatorEl.classList.add('hidden');
+        if (!response.ok) {
+          contentEl.textContent = VuFind.translate('error_occurred');
+        } else {
+          response.json().then((result) => {
+            contentEl.innerHTML = result.data.widget;
+            detailsEl = container.querySelector('.js-details');
+            initWeekNavi(result.data.locationId);
+            finna.layout.initToolTips($(contentEl));
+            contentEl.querySelectorAll('.js-location-dropdown ul.dropdown-menu li').forEach((el) => {
+              el.addEventListener('click', () => {
+                loadWidgetLocation(el.dataset.id);
+              });
+            });
+            contentEl.querySelectorAll('.js-location-dropdown li').forEach((el) => {
+              el.addEventListener('keydown', (ev) => {
+                if (ev.keyCode === 13) {
+                  el.click();
+                }
+              });
+            });
+          });
+        }
+      });
+  }
+
+  return {
+    init: init,
+    initWidget: initWidget
   };
-
-  return my;
 })();

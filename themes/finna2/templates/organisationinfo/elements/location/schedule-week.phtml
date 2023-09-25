@@ -1,0 +1,90 @@
+<!-- START of: finna - organisationinfo/elements/location/schedule-week.phtml -->
+<?php
+  $renderInterval = function (int $opens, int $closes, bool $minutes): string {
+    return $this->render('organisationinfo/elements/helpers/time-interval.phtml', compact('opens', 'closes', 'minutes'));
+  };
+?>
+
+<div class="js-opening-times-week">
+  <?php
+    $schedules = $orgInfo['openTimes']['schedules'];
+    $hasScheduleDescriptions = !empty($orgInfo['scheduleDescriptions']);
+    $hasLocation = !empty($orgInfo['address']['city']);
+  ?>
+  <?php if ($schedules && ($hasLocation || !$orgInfo['isAlwaysClosed'])): ?>
+    <?php foreach ($schedules as $schedule): ?>
+      <div class="date-rows<?=$schedule['today'] ? ' today' : ''?><?='museum' === $orgInfo['type'] ? ' museum' : ''?>">
+        <div class="time-row<?=$schedule['closed'] ? ' closed' : ''?>">
+          <div class="date-container">
+            <span class="date">
+              <?php if ('museum' !== $orgInfo['type']): ?>
+                <time datetime="<?=$this->escapeHtmlAttr(date('Y-m-d', $schedule['date']))?>">
+                  <?=date('j.n.', $schedule['date'])?>
+                </time>
+              <?php endif; ?>
+            </span>
+          </div>
+          <div class="description">
+            <span class="name"><?=$this->transEscWithPrefix('day-name-short-', $schedule['day'])?></span>
+            <span class="info"><?=$this->escapeHtml($schedule['info'])?>
+          </div>
+          <div class="time-container">
+            <?php if ($schedule['closed']): ?>
+              <span class="closed-today"><?=$this->transEsc('organisation_info_is_closed')?></span>
+            <?php else: ?>
+              <span class="period">
+                <?=$renderInterval($schedule['firstOpeningTime'], $schedule['lastClosingTime'], $schedule['minutePrecision'])?>
+              </span>
+            <?php endif; ?>
+          </div>
+        </div>
+        <?php if ($schedule['selfServiceTimes'] || $schedule['gaps']): ?>
+          <?php foreach ($schedule['times'] as $time): ?>
+            <div class="time-row sub-row">
+              <div class="date-container"></div>
+              <div class="description">
+                <?php if ($time['closed']): ?>
+                  <span class="closed-notice"><?=$this->icon('organisation-info-closed')?> <?=$this->transEsc('organisation_info_is_closed')?></span>
+                <?php elseif ($time['selfservice']): ?>
+                  <span class="selfservice-only"><?=$this->transEsc('organisation_info_only_selfservice')?></span>
+                <?php elseif ($schedule['selfServiceTimes']): ?>
+                  <span class="name-staff"><?=$this->transEsc('organisation_info_schedule_staff')?></span>
+                <?php endif; ?>
+              </div>
+              <div class="time-container">
+                <span class="period">
+                  <?=$renderInterval($time['opens'], $time['closes'], $schedule['minutePrecision'])?>
+                </span>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </div>
+    <?php endforeach; ?>
+  <?php else: ?>
+    <?php if ($orgInfo['mobile']): ?>
+      <div class="mobile-schedules info-element">
+        <?php if ($orgInfo['links']): ?>
+          <?php foreach ($orgInfo['links'] as $link): ?>
+            <div aria-hidden="true">
+              <a href="<?=$this->escapeHtmlAttr($link['url'])?>" target="_blank">
+                <?=$this->escapeHtml($link['name'])?>
+              </a>
+            </div>
+          <?php endforeach; ?>
+        <?php elseif (!$orgInfo['scheduleDescriptions']): ?>
+          <div class="no-schedules info-element"><?=$this->transEsc('organisation_info_no_schedule')?></div>
+        <?php endif; ?>
+      </div>
+    <?php endif; ?>
+  <?php endif; ?>
+
+  <?php if ($orgInfo['scheduleDescriptions']): ?>
+    <div class="schedules-info info-element">
+      <?php foreach ($orgInfo['scheduleDescriptions'] as $description): ?>
+        <?=$this->cleanHtml(preg_replace('/(?:\r\n|\r|\n)/', '<br>', $description))?>
+      <?php endforeach; ?>
+    </div>
+  <?php endif; ?>
+</div>
+<!-- END of: finna - organisationinfo/elements/location/schedule-week.phtml -->

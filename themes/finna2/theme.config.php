@@ -222,9 +222,6 @@ $config = [
         'finna-mylist.js',
         'finna-online-payment.js',
         'finna-organisation-info.js',
-        'finna-organisation-info-page.js',
-        'finna-organisation-info-page-consortium.js',
-        'finna-organisation-info-widget.js',
         'finna-organisation-map-leaflet.js',
         'finna-primo-adv-search.js',
         'finna-R2.js',
@@ -252,6 +249,7 @@ $config = [
         'vendor/priority-nav.min.js',
         'vendor/leaflet.min.js',
         'vendor/leaflet.draw.min.js',
+        'vendor/L.Control.Locate.min.js',
         'vendor/js.cookie.js',
         'jstree-vufind-facet-plugin.js', // Load after jstree
         'finna-multiselect.js',

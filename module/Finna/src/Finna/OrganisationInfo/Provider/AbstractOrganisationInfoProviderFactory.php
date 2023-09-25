@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Organisation info factory.
+ * Organisation info provider factory.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
  * @link     https://vufind.org/wiki/development Wiki
  */
 
-namespace Finna\OrganisationInfo;
+namespace Finna\OrganisationInfo\Provider;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
@@ -39,7 +39,7 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Organisation info factory.
+ * Organisation info provider factory.
  *
  * @category VuFind
  * @package  Service
@@ -49,7 +49,7 @@ use Psr\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class OrganisationInfoFactory implements FactoryInterface
+class AbstractOrganisationInfoProviderFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -77,10 +77,11 @@ class OrganisationInfoFactory implements FactoryInterface
             $container->get(\VuFind\Config\PluginManager::class)
                 ->get('OrganisationInfo'),
             $container->get(\VuFind\Cache\Manager::class),
+            $container->get(\VuFind\Date\Converter::class),
+            $container->get('ControllerPluginManager')->get('url'),
             $container->get(\VuFind\Search\Results\PluginManager::class),
             $container->get(\VuFind\Search\Solr\HierarchicalFacetHelper::class),
-            $container->get(\Finna\OrganisationInfo\Provider\Kirkanta::class),
-            $container->get(\Finna\OrganisationInfo\Provider\MuseotFi::class),
+            $container->get(\VuFind\I18n\Sorter::class)
         );
     }
 }

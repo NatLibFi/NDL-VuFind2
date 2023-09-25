@@ -1,0 +1,18 @@
+<!-- START of: finna - organisationinfo/elements/location/feeds.phtml -->
+<?php foreach ($orgInfo['rss'] as $feed): ?>
+  <?php
+    if ($feedType !== $feed['feedType']) {
+      continue;
+    }
+    $attrs = $this->htmlAttributes(
+        [
+            'class' => "feed-container $feedType-feed",
+            'feed-id' => "organisation-info|{$feed['parent']}|{$feed['id']}|{$feed['orgType']}|$feedType",
+        ]
+    );
+  ?>
+  <finna-feed<?=$attrs?>>
+    <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
+  </finna-feed>
+<?php endforeach; ?>
+<!-- END of: finna - organisationinfo/elements/location/feeds.phtml -->

@@ -1,0 +1,98 @@
+<!-- START of: finna - organisationinfo/elements/consortium-info.phtml -->
+<?php if (!empty($orgInfo['consortium']['name'])): ?>
+  <?php $consortium = $orgInfo['consortium']; ?>
+  <div class="consortium-info navi-section<?=empty($consortium['logo']['small']) ? ' no-logo' : ''?>" id="consortium-info-section">
+    <div>
+      <h3 class="name"><?=$this->escapehtml($consortium['name'])?></h3>
+      <div class="consortium-info-row">
+        <?php
+          $homePageLinkElem = '';
+          if ($consortium['homepage']) {
+            ob_start();
+            ?>
+              <div class="homepage">
+                <a href="<?=$this->escapeHtmlAttr($consortium['homepage'])?>" target="_blank">
+                  <?=$this->escapeHtml($consortium['homepageLabel'])?>
+                </a>
+              </div>
+            <?php
+            $homePageLinkElem = ob_get_clean();
+          }
+        ?>
+        <?php if (!empty($consortium['logo']['small'])): ?>
+          <div class="consortium-logo">
+            <img src="<?=$this->escapeHtmlAttr($consortium['logo']['small'])?>" alt="">
+            <?=$homePageLinkElem?>
+          </div>
+        <?php else: ?>
+          <?=$homePageLinkElem?>
+        <?php endif; ?>
+        <div class="description">
+          <?php if ($consortium['description']): ?>
+            <?=$this->cleanHtml($consortium['description'])?>
+          <?php else: ?>
+            <?=$this->translate('organisation_no_consortium_info_html');?>
+          <?php endif; ?>
+        </div>
+
+        <div class="consortium-search-usage">
+          <span class="consortium-search">
+            <?php $building = "0/{$this->id}/"; ?>
+            <?php $consortiumSearchLink = $this->url('search-results', [], ['query' => ['filter' => $this->buildingFacetOperator . 'building:"' . $building . '"']])?>
+            <a href="<?= $this->escapeHtmlAttr($consortiumSearchLink) ?>"><?=$this->icon('search') ?></i> <?= $this->transEsc('organisation_info_search'); ?></a>
+          </span>
+          <?php if ($coverage = $consortium['finna']['finnaCoverage']): ?>
+            <span class="gauge-meter">
+              <canvas width="75" height="60" class="js-finna-coverage-gauge" data-coverage="<?=$this->escapeHtmlAttr($coverage)?>"></canvas>
+              <span class="gauge-value"><?=$this->escapeHtml(round($coverage))?> %</span>
+              <span class="gauge-label"><?=$this->transEsc('organisation_info_coverage')?></span>
+            </span>
+          <?php endif; ?>
+        </div>
+
+        <?php ob_start(); ?>
+          <div class="consortium-usage-rights navi-section" id="consortium-usage-rights-section">
+            <div class="usage-rights-text">
+              <?php if ($consortium['finna']['usageInfo']): ?>
+                <?=$this->cleanHtml($consortium['finna']['usageInfo'])?>
+              <?php else: ?>
+                <p class="no-info"><?=$this->translate('organisation_no_consortium_info_html');?></p>
+              <?php endif; ?>
+            </div>
+          </div>
+        <?php $content = ob_get_clean(); ?>
+        <?= $this->component('@@molecules/containers/finna-panel', [
+            'attributes' => ['class' => ['finna-panel-default', 'organisation-info-panel']],
+            'heading' => $this->transEsc('organisation_info_navi_usage'),
+            'headingLevel' => 4,
+            'content' => $content,
+            'headingId' => 'heading-usage',
+            'collapseId' => 'collapse-usage',
+          ]); ?>
+
+        <?php if ($finnaLinks = $consortium['finna']['links'] ?? null): ?>
+          <?php ob_start(); ?>
+            <div class="finna-link">
+              <ul class="list-group finna-url">
+                <?php foreach ($finnaLinks as $finnaLink): ?>
+                  <li class="list-group-item">
+                    <a href="<?=$this->escapeHtmlAttr($finnaLink['url'])?>" target="_blank"><?=$this->escapeHtml($finnaLink['name'])?></a>
+                  </li>
+                <?php endforeach; ?>
+              </ul>
+            </div>
+          <?php $content = ob_get_clean(); ?>
+          <?= $this->component('@@molecules/containers/finna-panel', [
+              'attributes' => ['class' => ['finna-panel-default', 'organisation-info-panel', 'links-panel']],
+              'heading' => $this->transEsc('Links'),
+              'headingLevel' => 4,
+              'content' => $content,
+              'headingId' => 'heading-links',
+              'collapseId' => 'collapse-links',
+            ]); ?>
+        <?php endif; ?>
+      </div>
+    </div>
+  </div>
+<?php endif; ?>
+<!-- END of: finna - organisationinfo/elements/consortium-info.phtml -->
