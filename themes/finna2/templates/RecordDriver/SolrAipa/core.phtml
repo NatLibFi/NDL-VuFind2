@@ -171,7 +171,11 @@
         <div class="access-rights">
           <strong><?= $this->transEsc('Access Restrictions') ?>:</strong>
           <?= $this->partial('Helpers/copyright-field-value.phtml', ['data' => $rights]) ?>
-          <span class="rights-info"><?= $this->transEsc('aipa_also_check_material_specific_rights') ?></span>
+          <?php if (!empty($rightsCoverage = $this->driver->getRightsCoverage())): ?>
+            <div class="rights-info">
+              <?= $this->icon('info') ?> <?= $this->transEsc('aipa_rights_coverage_' . $rightsCoverage) ?>
+            </div>
+          <?php endif; ?>
         </div>
       <?php endif; ?>
 

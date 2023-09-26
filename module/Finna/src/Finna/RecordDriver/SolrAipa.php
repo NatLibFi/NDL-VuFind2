@@ -121,6 +121,16 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     }
 
     /**
+     * Return rights coverage for the record.
+     *
+     * @return string
+     */
+    public function getRightsCoverage(): string
+    {
+        return (string)($this->getXmlRecord()->rightsCoverage ?? '');
+    }
+
+    /**
      * Return record driver instance for an encapsulated LRMI record.
      *
      * @param \SimpleXMLElement $item AIPA item XML
