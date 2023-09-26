@@ -214,6 +214,16 @@ class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
     }
 
     /**
+     * Return encapsulated record view type.
+     *
+     * @return string
+     */
+    public function getEncapsulatedRecordViewType(): string
+    {
+        return (string)($this->getXmlRecord()->display ?? 'grid');
+    }
+
+    /**
      * Return all encapsulated record items.
      *
      * @return array

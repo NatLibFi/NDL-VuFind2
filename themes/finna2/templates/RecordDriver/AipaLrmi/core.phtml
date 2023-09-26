@@ -123,7 +123,9 @@
         ]); ?>
     <?php endif; ?>
 
-    <?= $this->record($this->driver)->renderEncapsulatedRecords() ?>
+    <?= $this->record($this->driver)->renderEncapsulatedRecords([
+        'view' => $this->driver->getEncapsulatedRecordViewType(),
+    ]) ?>
 
     <?php if ($template = $this->content()->findTemplateForLng('content/Additions/record-post-metadata')): ?>
       <div>
