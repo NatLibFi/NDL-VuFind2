@@ -112,6 +112,13 @@ class LinkedEvents implements
     protected $mainConfig;
 
     /**
+     * Include super events in response?
+     *
+     * @var Config
+     */
+    protected $includeSuperEvents;
+
+    /**
      * How many related events (if available) are displayed on
      * the events content page
      *
@@ -140,6 +147,8 @@ class LinkedEvents implements
         $this->apiUrl = $config->LinkedEvents->api_url ?? '';
         $this->publisherId = $config->LinkedEvents->publisher_id ?? '';
         $this->language = $config->General->language ?? '';
+        $this->includeSuperEvents
+            = $config->LinkedEvents->include_super_events ?? false;
         $this->dateConverter = $dateConverter;
         $this->url = $url;
         $this->cleanHtml = $cleanHtml;
@@ -202,6 +211,10 @@ class LinkedEvents implements
                 . http_build_query($paramArray)
                 . '&sort=start_time'
                 . '&include=location';
+            }
+            //Exclude super_events from results as default
+            if (empty($this->includeSuperEvents)) {
+                $url .= '&super_event_type=none';
             }
         }
 
