@@ -212,7 +212,7 @@ class LinkedEvents implements
                 . '&sort=start_time'
                 . '&include=location';
             }
-            //Exclude super_events from results as default
+            // Exclude super events from results by default
             if (empty($this->includeSuperEvents)) {
                 $url .= '&super_event_type=none';
             }
