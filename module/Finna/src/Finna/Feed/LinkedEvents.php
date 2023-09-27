@@ -213,7 +213,7 @@ class LinkedEvents implements
                 . '&include=location';
             }
             // Exclude super events from results by default
-            if (empty($this->includeSuperEvents)) {
+            if (!$this->includeSuperEvents) {
                 $url .= '&super_event_type=none';
             }
         }
