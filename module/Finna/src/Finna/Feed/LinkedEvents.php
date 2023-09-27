@@ -114,7 +114,7 @@ class LinkedEvents implements
     /**
      * Include super events in response?
      *
-     * @var Config
+     * @var bool
      */
     protected $includeSuperEvents;
 

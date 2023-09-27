@@ -72,7 +72,7 @@ url = "https://museot.fi/xml"
 ;api_url = ""
 ;publisher_id = ""
 ; Uncomment to include super events in responses
-; include_super_events = true
+;include_super_events = true
 
 [Images]
 ; Allowed hosts for images
