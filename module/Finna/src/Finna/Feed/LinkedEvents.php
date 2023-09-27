@@ -147,6 +147,7 @@ class LinkedEvents implements
         $this->apiUrl = $config->LinkedEvents->api_url ?? '';
         $this->publisherId = $config->LinkedEvents->publisher_id ?? '';
         $this->language = $config->General->language ?? '';
+        // Exclude super events from results by default
         $this->includeSuperEvents
             = $config->LinkedEvents->include_super_events ?? false;
         $this->dateConverter = $dateConverter;
@@ -212,7 +213,6 @@ class LinkedEvents implements
                 . '&sort=start_time'
                 . '&include=location';
             }
-            // Exclude super events from results by default
             if (!$this->includeSuperEvents) {
                 $url .= '&super_event_type=none';
             }
