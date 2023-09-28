@@ -117,9 +117,13 @@ table .iconlabel {
 .iconlabel-smallpress:before, .iconlabel.format-1otherprint:before {
     content: "\e007";
 }
-.fa.fa-TOC:before, .iconlabel.format-1document:before, .iconlabel.format-1documentarchive:before, .iconlabel.format-1documentarchivematerial:before, .iconlabel.format-1documentarchiveitem:before, .iconlabel.format-1documentarchivefonds:before, .iconlabel.format-1documentarchiveseries:before, .iconlabel.format-1documentarchivecollection:before, .iconlabel.format-1documentothercollection:before, .iconlabel.format-1documentcollection:before, .iconlabel.format-1documentdigitizedarchiveitem:before, .iconlabel.format-1othertexttext:before, .iconlabel.format-1othertextdiary:before, .iconlabel.format-1othertextconferenceproceeding:before, .iconlabel.format-1othertextmanuscript:before, .iconlabel.format-1othertextresearchreport:before, .iconlabel.format-1othertextletter:before, .iconlabel.format-0manuscript:before {
+.fa.fa-TOC:before, .iconlabel.format-1document:before, .iconlabel.format-1documentother:before, .iconlabel.format-1documentdigitizedarchiveitem:before, .iconlabel.format-1othertexttext:before, .iconlabel.format-1othertextdiary:before, .iconlabel.format-1othertextconferenceproceeding:before, .iconlabel.format-1othertextmanuscript:before, .iconlabel.format-1othertextresearchreport:before, .iconlabel.format-1othertextletter:before, .iconlabel.format-0manuscript:before {
     font-family: finnaicons;
     content: "\e006";
+}
+.iconlabel[class*="format-1documentarchive"]:before, .iconlabel[class*="format-1documentdigitizedarchive"]:before, .iconlabel[class*="format-1documentseries"]:before, .iconlabel.format-1documentothercollection:before, .iconlabel.format-1documentcollection:before {
+    font-family: finnaicons;
+    content: "\e8cb";
 }
 .iconlabel.format-0note:before, .iconlabel.format-0musicalscore:before, .iconlabel[class*="format-1musicalscore"]:before {
     content: "\e005";
