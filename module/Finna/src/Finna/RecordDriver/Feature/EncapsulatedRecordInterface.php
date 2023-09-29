@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Container record format interface.
+ * Encapsulated record interface.
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022-2023.
+ * Copyright (C) The National Library of Finland 2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -32,7 +32,10 @@ namespace Finna\RecordDriver\Feature;
 use VuFindSearch\Response\RecordInterface;
 
 /**
- * Container record format interface.
+ * Encapsulated record interface.
+ *
+ * This interface should be implemented if an encapsulated record requires the
+ * container record as context.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -40,43 +43,21 @@ use VuFindSearch\Response\RecordInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-interface ContainerFormatInterface extends RecordInterface
+interface EncapsulatedRecordInterface extends RecordInterface
 {
     /**
-     * Separator used in an ID combining the IDs of a container record and an
-     * encapsulated record.
+     * Sets the container record.
+     *
+     * @param ContainerFormatInterface $containerRecord Container record.
+     *
+     * @return void
      */
-    public const ENCAPSULATED_RECORD_ID_SEPARATOR = '|';
+    public function setContainerRecord(ContainerFormatInterface $containerRecord): void;
 
     /**
-     * Get records encapsulated in this container record.
+     * Returns the container record.
      *
-     * @param int  $offset Offset for results
-     * @param ?int $limit  Limit for results (null for none)
-     *
-     * @return RecordInterface[]
-     * @throws \RuntimeException If the format of an encapsulated record is not
-     * supported
+     * @return ContainerFormatInterface
      */
-    public function getEncapsulatedRecords(
-        int $offset = 0,
-        ?int $limit = null
-    ): array;
-
-    /**
-     * Returns the requested encapsulated record or null if not found.
-     *
-     * @param string $id Encapsulated record ID
-     *
-     * @return ?RecordInterface
-     * @throws \RuntimeException If the format is not supported
-     */
-    public function getEncapsulatedRecord(string $id): ?RecordInterface;
-
-    /**
-     * Returns the total number of encapsulated records.
-     *
-     * @return int
-     */
-    public function getEncapsulatedRecordTotal(): int;
+    public function getContainerRecord(): ContainerFormatInterface;
 }

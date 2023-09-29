@@ -31,6 +31,8 @@ namespace Finna\RecordDriver;
 
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use Finna\RecordDriver\Feature\ContainerFormatTrait;
+use Finna\RecordDriver\Feature\EncapsulatedRecordInterface;
+use Finna\RecordDriver\Feature\EncapsulatedRecordTrait;
 use NatLibFi\FinnaCodeSets\FinnaCodeSets;
 
 /**
@@ -42,9 +44,12 @@ use NatLibFi\FinnaCodeSets\FinnaCodeSets;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
+class AipaLrmi extends SolrLrmi implements
+    ContainerFormatInterface,
+    EncapsulatedRecordInterface
 {
     use ContainerFormatTrait;
+    use EncapsulatedRecordTrait;
 
     /**
      * Finna Code Sets library instance.
@@ -275,7 +280,10 @@ class AipaLrmi extends SolrLrmi implements ContainerFormatInterface
      */
     protected function getCuratedrecordDriver(\SimpleXMLElement $item): CuratedRecord
     {
+        /* @var CuratedRecord $driver */
         $driver = $this->recordDriverManager->get('CuratedRecord');
+
+        $driver->setContainerRecord($this);
 
         $encapsulatedRecord = $this->recordLoader->load(
             (string)$item->identifier,

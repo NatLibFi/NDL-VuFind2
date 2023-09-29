@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) The National Library of Finland 2022-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -136,10 +136,15 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      * @param \SimpleXMLElement $item AIPA item XML
      *
      * @return AipaLrmi
+     *
+     * @see ContainerFormatTrait::getEncapsulatedRecordDriver()
      */
     protected function getLrmiDriver(\SimpleXMLElement $item): AipaLrmi
     {
+        /* @var AipaLrmi $driver */
         $driver = $this->recordDriverManager->get('AipaLrmi');
+
+        $driver->setContainerRecord($this);
 
         $data = [
             'id' => $this->getUniqueID()
