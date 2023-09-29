@@ -360,7 +360,7 @@ class Kirkanta extends AbstractOrganisationInfoProvider
             'friday', 'saturday', 'sunday',
         ];
 
-        $openNow = false;
+        $openNow = $data['schedule'] ? false : null;
         $openToday = false;
         $currentWeek = false;
         $currentDateTime = new \DateTime();
