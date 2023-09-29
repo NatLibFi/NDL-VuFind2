@@ -35,6 +35,8 @@ use Finna\RecordDriver\Feature\EncapsulatedRecordInterface;
 use Finna\RecordDriver\Feature\EncapsulatedRecordTrait;
 use NatLibFi\FinnaCodeSets\FinnaCodeSets;
 
+use function is_callable;
+
 /**
  * Model for AIPA LRMI records.
  *
@@ -146,6 +148,36 @@ class AipaLrmi extends SolrLrmi implements
             $contentsAndObjectives[] = (string)$teaches->name;
         }
         return $contentsAndObjectives;
+    }
+
+    /**
+     * Get all authors apart from presenters
+     *
+     * Only returns non-presenter authors if they differ from the container record.
+     * This is a strict comparison: even the same authors in a different order is
+     * considered a difference.
+     *
+     * @return array
+     */
+    public function getNonPresenterAuthors()
+    {
+        $nonPresenterAuthors = parent::getNonPresenterAuthors();
+        if (!is_callable([$this->getContainerRecord(), 'getNonPresenterAuthors'])) {
+            return $nonPresenterAuthors;
+        }
+        $containerNonPresenterAuthors
+            = $this->getContainerRecord()->getNonPresenterAuthors();
+        foreach ($nonPresenterAuthors as $i => $author) {
+            if (
+                !empty(array_diff_assoc(
+                    $nonPresenterAuthors[$i],
+                    $containerNonPresenterAuthors[$i] ?? []
+                ))
+            ) {
+                return $nonPresenterAuthors;
+            }
+        }
+        return [];
     }
 
     /**
