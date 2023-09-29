@@ -21,18 +21,10 @@
         @media (max-width: @screen-sm-max) {
             max-width: @organisation-info-max-w;
         }
-        button {
+        .js-week-navi-btn {
             margin: 0;
             border: 0;
             padding: 0;
-        }
-        i {
-            font-size: 1.6em;
-            vertical-align: middle;
-            color: @link-color;
-            &:hover {
-                cursor: pointer;
-            }
         }
         .week-text {
             display: inline-block;
@@ -46,9 +38,6 @@
 
     .js-opening-times {
         padding-bottom: 20px;
-        h4 {
-            margin: 0;
-        }
 
         .js-opening-times-week {
             display: flex;
@@ -130,11 +119,6 @@
             margin-top: 8px;
             margin-right: 3px;
         }
-        h4 {
-            @media (max-width: @screen-sm-max) {
-                max-width: 400px;
-            }
-        }
 
         .schedules-info {
             margin-top: 20px;
@@ -145,7 +129,7 @@
         }
 
         .mobile-schedules {
-            font-size: 1.2em;
+            font-size: 1.1em;
         }
     }
 }
@@ -344,8 +328,133 @@
             }
         }
 
-        .location-map {
-            width: 100%;
+        .js-location-info-map {
+            display: flex;
+            flex-basis: 30%;
+            &.expand {
+                flex-basis: 60%;
+            }
+
+            .location-map {
+                width: 100%;
+            }
+
+            .map {
+                margin-top: 5px;
+                position: relative;
+                .js-map-widget {
+                    height: 320px;
+                    width: 100%;
+                }
+                &.expand {
+                    .js-map-widget {
+                        height: 600px;
+                    }
+                }
+
+                .leaflet-container {
+                    .leaflet-top {
+                        .leaflet-bar {
+                            z-index: initial;
+                        }
+                    }
+                }
+
+                .map-bubble {
+                    .js-name {
+                        font-size: @font-size-small + 2px;
+                        margin-top: 10.5px;
+                        margin-bottom: 10.5px;
+                        min-width: 120px;
+                        max-width: 200px;
+                    }
+                }
+
+                .marker {
+                    cursor: pointer;
+                }
+
+                .map-marker-text, .marker {
+                    font-size: 1.5em;
+                    padding-right: 5px;
+                }
+
+                .js-marker-tooltip {
+                    position: absolute;
+                    color: @gray;
+                    background: @body-bg;
+                    padding: 5px;
+                    border: 1px solid lightgray;
+                    opacity: 0.9;
+                    z-index: 1000;
+                }
+            }
+            .expand-map, .contract-map {
+                display: inline-block;
+                font-size: 1em;
+                .icon {
+                    margin-left: 20px;
+                    margin-right: 0px;
+                }
+                @media (max-width: @screen-xs-max) {
+                    margin-left: -3px;
+                    font-size: 1em;
+                    .icon {
+                        margin-right: 2px;
+                    }
+                }
+            }
+            .map-control-buttons {
+                margin-top: 5px;
+                margin-bottom: 15px;
+                width: 100%;
+                @media (min-width: @screen-sm-min) {
+                    margin-top: 19px;
+                }
+                @media (max-width: @screen-xs-max) {
+                    margin-bottom: 3px;
+                    margin-left: 10px;
+                    padding-bottom: 10px;
+                }
+                .js-map-controls {
+                    float: right;
+                    a {
+                        color: @gray;
+                        font-weight: 300;
+                        text-decoration: underline;
+                        margin-right: 5px;
+                    }
+                    @media (max-width: @screen-md-max) {
+                        float: none;
+                    }
+                }
+                span {
+                    color: @link-color;
+                    &:hover {
+                        cursor: pointer;
+                    }
+                }
+                .marker {
+                    font-size: 1.5em;
+                    margin-left: 8px;
+                    margin-right: 3px;
+                    @media (max-width: @screen-xs-max) {
+                        margin-left: 5px;
+                    }
+                }
+            }
+
+            .map-marker-icon {
+                &.open {
+                    color: #339911;
+                }
+                &.closed {
+                    color: #c33b00;
+                }
+                &.no-schedule {
+                    color: #535353;
+                }
+            }
         }
     }
 
@@ -354,130 +463,6 @@
         margin-bottom: 1rem;
         h2 {
             &:extend(.finna-panel-default .finna-panel-heading-inner);
-        }
-    }
-
-    .js-location-info-map {
-        display: flex;
-        flex-basis: 30%;
-        &.expand {
-            flex-basis: 60%;
-        }
-
-        .map {
-            position: relative;
-            .js-map-widget {
-                height: 320px;
-                width: 100%;
-            }
-            &.expand {
-                .js-map-widget {
-                    height: 600px;
-                }
-            }
-
-            .leaflet-container {
-                .leaflet-top {
-                    .leaflet-bar {
-                        z-index: initial;
-                    }
-                }
-            }
-
-            .map-bubble {
-                .js-name {
-                    font-size: @font-size-small + 2px;
-                    margin-top: 10.5px;
-                    margin-bottom: 10.5px;
-                    min-width: 120px;
-                    max-width: 200px;
-                }
-            }
-
-            .marker {
-                cursor: pointer;
-            }
-
-            .map-marker-text, .marker {
-                font-size: 1.5em;
-                padding-right: 5px;
-            }
-
-            .js-marker-tooltip {
-                position: absolute;
-                color: @gray;
-                background: @body-bg;
-                padding: 5px;
-                border: 1px solid lightgray;
-                opacity: 0.9;
-                z-index: 1000;
-            }
-        }
-        .expand-map, .contract-map {
-            display: inline-block;
-            font-size: 1em;
-            .icon {
-                margin-left: 20px;
-                margin-right: 0px;
-            }
-            @media (max-width: @screen-xs-max) {
-                margin-left: -3px;
-                font-size: 1em;
-                .icon {
-                    margin-right: 2px;
-                }
-            }
-        }
-        .map-control-buttons {
-            margin-top: 5px;
-            margin-bottom: 15px;
-            width: 100%;
-            @media (min-width: @screen-sm-min) {
-                margin-top: 19px;
-            }
-            @media (max-width: @screen-xs-max) {
-                margin-bottom: 3px;
-                margin-left: 10px;
-                padding-bottom: 10px;
-            }
-            .js-map-controls {
-                float: right;
-                a {
-                    color: @gray;
-                    font-weight: 300;
-                    text-decoration: underline;
-                    margin-right: 5px;
-                }
-                @media (max-width: @screen-md-max) {
-                    float: none;
-                }
-            }
-            span {
-                color: @link-color;
-                &:hover {
-                    cursor: pointer;
-                }
-            }
-            .marker {
-                font-size: 1.5em;
-                margin-left: 8px;
-                margin-right: 3px;
-                @media (max-width: @screen-xs-max) {
-                    margin-left: 5px;
-                }
-            }
-        }
-
-        .map-marker-icon {
-            &.open {
-                color: #339911;
-            }
-            &.closed {
-                color: #c33b00;
-            }
-            &.no-schedule {
-                color: #535353;
-            }
         }
     }
 
@@ -668,44 +653,15 @@
                     border: none;
                     padding: 0;
                 }
-                .service-short-desc {
-                    font-size: .90em;
-                    margin-left: 5px;
-                    max-width: 200px;
-                }
             }
-        }
-        h4 {
-            margin: 0;
         }
 
-        .info {
-            .is-open {
-                font-size: 1.45em;
-                font-weight: bold;
-                float: right;
-                line-height: 1em;
-                margin-top: 0px;
-                margin-right: 3px;
-            }
-            h4 {
-                margin-bottom: 5px;
-                @media (max-width: @screen-sm-max) {
-                    max-width: @organisation-info-max-w;
-                }
-            }
-            .js-schedules {
-                .no-schedules {
-                    margin: 10px;
-                    font-size: 1.1em;
-                    font-weight: bold;
-                }
-            }
+        .info  .js-schedules .no-schedules {
+            margin: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
 
-        }
-        .map {
-            margin-top: 5px;
-        }
         .info-element {
             @media (max-width: 375px) {
                 clear: both;
