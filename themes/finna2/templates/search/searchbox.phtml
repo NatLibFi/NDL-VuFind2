@@ -143,7 +143,7 @@
       <form id="searchForm" role="search" class="searchForm navbar-form navbar-left  <?=$handlerCount < 2 ? 'input-field-only' : ''; ?>" method="get" action="<?=$this->url($basicSearch)?>" name="searchForm" autocomplete="off">
       <label for="searchForm_lookfor" class="sr-only" hidden><?=$this->transEsc('Find')?></label>
       <input class="searchForm_lookfor form-control search-query<?php if($this->searchbox()->autocompleteEnabled($this->searchClassId)):?> autocomplete-finna searcher:<?=$this->escapeHtmlAttr($this->searchClassId) ?><?= !empty($activeTab) ? ' tab:' . $this->escapeHtmlAttr(str_replace(':', '###', $activeTab)) : ''?><?=!empty($browse) || $activeTab == 'Combined' ? ' onlySuggestions:1' : ''?><?= !$browse && in_array($activeTab, ['Combined','Primo','Summon']) ? ' suggestions:0' : ''?><?= !empty($acHandlers) ? ' handlers:' . implode('|', array_map(function ($h) { return $h['handler']; }, $acHandlers)) : ''?><?= !empty($phrase) ? ' phrase:' . $this->escapeHtmlAttr($phrase) : ''?><?= !empty($acFilters) ? ' filters:' . $this->escapeHtmlAttr(implode('||', array_map(function ($k, $v) { return $k . '|' . $v; }, array_keys($acFilters), $acFilters))) : ''?><?php endif ?>" placeholder="<?=$this->escapeHtmlAttr($placeholder)?>" id="searchForm_lookfor" type="text" name="lookfor" value="<?=$this->escapeHtmlAttr($this->lookfor)?>">
-        <?=$this->icon('search-clearform', 'clear-button hidden', $this->lookfor ? '' : 'hidden') ?>
+        <?=$this->icon('search-clear', 'clear-button hidden', $this->lookfor ? '' : 'hidden') ?>
       <?php if ($handlerCount > 1): ?>
         <div class="dropdown form-control type-dropdown">
         <?php
