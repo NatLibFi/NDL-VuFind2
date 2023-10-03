@@ -120,7 +120,6 @@ class PaytrailPaymentAPI extends AbstractBase
         $productCodeMappings = $this->getProductCodeMappings();
         $organizationProductCodeMappings = $this->getOrganizationProductCodeMappings();
         $organizationMerchantIdMappings = $this->getOrganizationMerchantIdMappings();
-        $organizationFineTypeToProductCodeMappings = $this->getOrganizationFineTypeToProductCodeMappings();
 
         $paymentRequest = $organizationMerchantIdMappings
             ? new ShopInShopPaymentRequest() : new PaymentRequest();
@@ -143,7 +142,6 @@ class PaytrailPaymentAPI extends AbstractBase
             || $productCodeMappings
             || $organizationProductCodeMappings
             || $organizationMerchantIdMappings
-            || $organizationFineTypeToProductCodeMappings
         ) {
             // Map fines to items:
             $items = [];
@@ -151,19 +149,16 @@ class PaytrailPaymentAPI extends AbstractBase
                 $fineType = $fine['fine'] ?? '';
                 $fineOrg = $fine['organization'] ?? '';
 
-                $key = "$fineOrg/$fineType";
-                if (null === ($code = $organizationFineTypeToProductCodeMappings[$key] ?? null)) {
-                    if (isset($productCodeMappings[$fineType])) {
-                        $code = $productCodeMappings[$fineType];
-                    } elseif ($productCode) {
-                        $code = $productCode;
-                    } else {
-                        $code = $fineType;
-                    }
-                    if (isset($organizationProductCodeMappings[$fineOrg])) {
-                        $code = $organizationProductCodeMappings[$fineOrg]
-                            . ($productCodeMappings[$fineType] ?? '');
-                    }
+                if (isset($productCodeMappings[$fineType])) {
+                    $code = $productCodeMappings[$fineType];
+                } elseif ($productCode) {
+                    $code = $productCode;
+                } else {
+                    $code = $fineType;
+                }
+                if (isset($organizationProductCodeMappings[$fineOrg])) {
+                    $code = $organizationProductCodeMappings[$fineOrg]
+                        . ($productCodeMappings[$fineType] ?? '');
                 }
                 $code = mb_substr($code, 0, 100, 'UTF-8');
 
