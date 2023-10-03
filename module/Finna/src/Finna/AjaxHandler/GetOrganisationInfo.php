@@ -319,9 +319,9 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     /**
      * Get location details snippet
      *
-     * @param string $id             Organisation id
-     * @param string $locationId     Location id
-     * @param array  $sectors        Sectors
+     * @param string $id         Organisation id
+     * @param string $locationId Location id
+     * @param array  $sectors    Sectors
      *
      * @return array
      */

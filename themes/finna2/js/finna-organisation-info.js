@@ -6,6 +6,10 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   let mapTileUrl = 'https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png';
 
+  function resetSearch() {
+    $(container).find('.js-location-select').val('').trigger('change');
+  }
+
   function updateURLHash(hash) {
     if (('#' + hash) === window.location.hash) {
       // Set hash first to empty value, so that the change event is triggered when
@@ -20,6 +24,24 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       return window.location.hash.replace('#', '');
     }
     return false;
+  }
+
+  // Forward declaration
+  let showLocationDetails = function () {};
+
+  function updateSelectedLocation(locationId, clearSearch) {
+    showLocationDetails(locationId);
+    if (clearSearch) {
+      resetSearch();
+    }
+  }
+
+  function updateLocationFromURLHash()
+  {
+    let location = getLocationFromURLHash();
+    if (location) {
+      updateSelectedLocation(location, false);
+    }
   }
 
   function initMap(data)
@@ -232,11 +254,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     finna.organisationMap.selectMarker(locationId);
   }
 
-  function resetSearch() {
-    $('.js-location-select').val('').trigger('change');
-  }
-
-  function showLocationDetails(locationId)
+  showLocationDetails = function showLocationDetailsImpl(locationId)
   {
     const indicatorEl = container.querySelector('.js-location-loader');
     if (!indicatorEl) {
@@ -294,22 +312,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
           });
         }
       });
-  }
-
-  function updateSelectedLocation(locationId, clearSearch) {
-    showLocationDetails(locationId);
-    if (clearSearch) {
-      resetSearch();
-    }
-  }
-
-  function updateLocationFromURLHash()
-  {
-    let location = getLocationFromURLHash();
-    if (location) {
-      updateSelectedLocation(location, false);
-    }
-  }
+  };
 
   function init(_params)
   {
