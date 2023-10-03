@@ -251,6 +251,16 @@ class AipaLrmi extends SolrLrmi implements
     }
 
     /**
+     * Return record type.
+     *
+     * @return string
+     */
+    public function getType(): string
+    {
+        return (string)($this->getXmlRecord()->type ?? 'content');
+    }
+
+    /**
      * Return encapsulated record view type.
      *
      * @return string

@@ -212,15 +212,23 @@
       ?>
       <?/* End Main Details */?>
 
-      <?php $encapsulatedRecords = $this->driver->getEncapsulatedRecords(); ?>
-      <?php if (count($encapsulatedRecords) > 1): ?>
+      <?php
+        $encapsulatedRecords = $this->driver->getEncapsulatedRecords();
+        $contents = [];
+        foreach ($encapsulatedRecords as $encapsulatedRecord) {
+          if ($encapsulatedRecord->getType() === 'content') {
+            $contents[$encapsulatedRecord->getUniqueId()] = $encapsulatedRecord->getTitle();
+          }
+        }
+      ?>
+      <?php if (count($contents) > 1): ?>
         <div class="record-toc">
-          <p><strong><?= $this->transEsc('aipa_contents') ?>:</strong></p>
+          <p><strong><?= $this->transEsc('Contents') ?>:</strong></p>
           <ul>
-            <?php foreach ($encapsulatedRecords as $encapsulatedRecord): ?>
+            <?php foreach ($contents as $id => $title): ?>
               <li>
-                <a href="#encapsulated-record-<?= $this->escapeHtmlAttr($encapsulatedRecord->getUniqueId()) ?>">
-                  <?= $encapsulatedRecord->getTitle() ?>
+                <a href="#encapsulated-record-<?= $this->escapeHtmlAttr($id) ?>">
+                  <?= $title ?>
                 </a>
               </li>
             <?php endforeach; ?>
