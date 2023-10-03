@@ -3,6 +3,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
   let params = null;
   let container = null;
   let detailsEl = null;
+  let map = null;
 
   let mapTileUrl = 'https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png';
 
@@ -92,7 +93,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
     mapContainer.classList.remove('hidden');
 
-    let map = finna.organisationMap;
+    map = finna.organisationMap;
     map.init(mapWidget, mapTileUrl, mapAttributionTemplate.innerHTML);
 
     function hideMapMarker() {
@@ -295,7 +296,9 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     });
     finna.layout.initToolTips($(detailsEl));
     initWeekNavi(locationId);
-    finna.organisationMap.selectMarker(locationId);
+    if (map) {
+      map.selectMarker(locationId);
+    }
   }
 
   /**
@@ -326,7 +329,9 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       infoEl.classList.toggle('hidden', null === locationId);
     }
 
-    finna.organisationMap.resize();
+    if (map) {
+      map.resize();
+    }
     if (null === locationId) {
       return;
     }
