@@ -605,7 +605,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'id' => $this->formatBibId($bibId),
                 'title' => $title,
                 'fine_id' => $this->extractId($entry['id']),
-                'organization' => $entry['location']['code'] ?? '',
+                'organization' => substr($entry['location']['code'] ?? '', 0, 1),
                 'payableOnline' => $balance > 0 && $this->finePayableOnline($entry),
                 '__invoiceNumber' => $entry['invoiceNumber'],
                 '__productCode' => $this->getFineProductCode($entry),
