@@ -282,8 +282,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       id: params.id,
       locationId: locationId,
       sectors: params.sectors || '',
-      buildings: params.buildings || '',
-      consortiumInfo: params.consortiumInfo
+      buildings: params.buildings || ''
     }))
       .then(response => {
         indicatorEl.classList.add('hidden');

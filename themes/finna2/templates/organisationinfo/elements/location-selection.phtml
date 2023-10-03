@@ -67,7 +67,7 @@
       <div class="location-map">
         <div class="map-buttons">
           <div class="map-ui map-control-buttons" aria-hidden="true">
-            <?php if (count($orgInfo['list']) > 1): ?>
+            <?php if (count($orgInfo['list'] ?? []) > 1): ?>
               <span class="js-map-controls">
                 <span class="js-show-location"><a href="#"><?=$this->transEsc('zoom_center')?></a></span>
                 <span class="js-show-all"><a href="#"><?=$this->transEsc('organisation_info_page_map_show_all')?></a></span>

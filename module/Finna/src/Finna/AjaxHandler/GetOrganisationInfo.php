@@ -164,12 +164,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 } else {
                     $this->setLocationIdCookie($locationId);
                 }
-                $result = $this->getLocationDetails(
-                    $id,
-                    $locationId,
-                    $sectors,
-                    (bool)$params->fromQuery('consortiumInfo', false)
-                );
+                $result = $this->getLocationDetails($id, $locationId, $sectors);
                 break;
 
             case 'schedule':
@@ -327,23 +322,18 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
      * @param string $id             Organisation id
      * @param string $locationId     Location id
      * @param array  $sectors        Sectors
-     * @param bool   $consortiumInfo Whether information of all locations is displayed
      *
      * @return array
      */
-    protected function getLocationDetails(
-        string $id,
-        string $locationId,
-        array $sectors,
-        bool $consortiumInfo
-    ): array {
+    protected function getLocationDetails(string $id, string $locationId, array $sectors): array
+    {
         $orgInfo = $this->organisationInfo->getDetails($sectors, $id, $locationId);
         $found = !empty($orgInfo);
         if ($found) {
-            $info = $consortiumInfo ? $this->renderer->render(
+            $info = $this->renderer->render(
                 'organisationinfo/elements/location-quick-info.phtml',
                 compact('orgInfo')
-            ) : '';
+            );
             $details = $this->renderer->render(
                 'organisationinfo/elements/location-details.phtml',
                 compact('orgInfo')
