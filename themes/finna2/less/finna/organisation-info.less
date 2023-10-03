@@ -310,30 +310,11 @@
                     gap: 2px;
                 }
             }
-            @media (min-width: @screen-sm-min) {
-                .location-basic-info {
-                    width: 55%;
-                    float: left;
-                }
-                .open-closed-info {
-                    width: 40%;
-                    float: left;
-                    margin-top: 0;
-                    margin-bottom: 0;
-                }
-                .social-button {
-                    width: 5%;
-                    float: left;
-                }
-            }
         }
 
         .js-location-info-map {
             display: flex;
-            flex: 1 1 30%;
-            &.expand {
-                flex-basis: 60%;
-            }
+            flex: 1 1 50%;
 
             .location-map {
                 width: 100%;
@@ -347,11 +328,6 @@
                 .js-map-widget {
                     height: 320px;
                     width: 100%;
-                }
-                &.expand {
-                    .js-map-widget {
-                        height: 600px;
-                    }
                 }
 
                 .leaflet-container {
