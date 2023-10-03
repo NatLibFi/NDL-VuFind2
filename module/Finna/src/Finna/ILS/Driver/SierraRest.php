@@ -105,6 +105,13 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     protected $daysBeforeAccountExpirationNotification = 30;
 
     /**
+     * Product code mappings
+     *
+     * @var array
+     */
+    protected $productCodeMappings = [];
+
+    /**
      * Initialize the driver.
      *
      * Validate configuration and perform all resource-intensive tasks needed to
@@ -127,6 +134,19 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         if (isset($this->config['Catalog'][$key])) {
             $this->daysBeforeAccountExpirationNotification
                 = $this->config['Catalog'][$key];
+        }
+
+        if ($mappings = $this->config['OnlinePayment']['productCodeMappings'] ?? []) {
+            foreach ($mappings as $mapping) {
+                $parts = explode('=', $mapping, 2);
+                if (!isset($parts[1])) {
+                    continue;
+                }
+                $this->productCodeMappings[] = [
+                    'productCode' => $parts[0],
+                    'regexp' => $parts[1],
+                ];
+            }
         }
     }
 
@@ -537,8 +557,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             $amount = $entry['itemCharge'] + $entry['processingFee']
                 + $entry['billingFee'];
             $balance = $amount - $entry['paidAmount'];
-            $description = '';
             // Display charge type if it's not manual (code=1)
+            $description = '';
             if (
                 !empty($entry['chargeType'])
                 && $entry['chargeType']['code'] != '1'
@@ -551,10 +571,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 }
                 $description .= $entry['description'];
             }
-            switch ($description) {
-                case 'Overdue Renewal':
-                    $description = 'Overdue';
-                    break;
+            if ('Overdue Renewal' === $description) {
+                $description = 'Overdue';
             }
             $bibId = null;
             $title = null;
@@ -590,6 +608,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'organization' => $entry['location']['code'] ?? '',
                 'payableOnline' => $balance > 0 && $this->finePayableOnline($entry),
                 '__invoiceNumber' => $entry['invoiceNumber'],
+                '__productCode' => $this->getFineProductCode($entry),
             ];
         }
         return $fines;
@@ -1233,6 +1252,28 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             }
         }
         return false;
+    }
+
+    /**
+     * Get a product code for a fine
+     *
+     * @param array $fine Fine
+     *
+     * @return ?string
+     */
+    protected function getFineProductCode(array $fine): ?string
+    {
+        $location = $fine['location']['code'] ?? '';
+        $type = $fine['chargeType']['code'] ?? 0;
+        $desc = $fine['description'] ?? '';
+
+        $key = "$location--$type--$desc";
+        foreach ($this->productCodeMappings as $mapping) {
+            if (preg_match($mapping['regexp'], $key)) {
+                return $mapping['productCode'];
+            }
+        }
+        return null;
     }
 
     /**
