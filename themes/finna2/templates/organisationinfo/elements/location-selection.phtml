@@ -1,4 +1,8 @@
 <!-- START of: finna - organisationinfo/elements/location-selection.phtml -->
+<?php if (!$orgInfo): ?>
+  <?=$this->transEsc('organisation_info_no_schedule'); ?>
+  <?php return; ?>
+<?php endif; ?>
 <div class="navi-section map-ui" id="consortium-service-point-section">
   <div class="locations-title">
     <h2><?=$this->transEsc('organisation_info_navi_service')?></h2>
