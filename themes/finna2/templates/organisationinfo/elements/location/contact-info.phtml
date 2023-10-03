@@ -43,7 +43,8 @@
     </p>
   </div>
 <?php endif; ?>
-<?php if ($orgInfo['phones'] || ($contactInfo = $orgInfo['contactInfo'] ?? [])): ?>
+<?php $contactInfo = $orgInfo['contactInfo'] ?? []; ?>
+<?php if ($orgInfo['phones'] || $contactInfo): ?>
   <div class="phone-numbers info-element">
     <span class="contact-info-header"><?=$this->transEsc('organisation_info_phone_numbers')?></span>
     <ul>
