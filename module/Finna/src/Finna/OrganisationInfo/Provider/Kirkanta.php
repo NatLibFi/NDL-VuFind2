@@ -590,7 +590,7 @@ class Kirkanta extends AbstractOrganisationInfoProvider
                 usort(
                     $serviceType,
                     function ($service1, $service2) {
-                        return strnatcasecmp($service1['name'], $service2['name']);
+                        return $this->sorter->compare($service1['name'], $service2['name']);
                     }
                 );
             }
@@ -611,7 +611,10 @@ class Kirkanta extends AbstractOrganisationInfoProvider
         usort(
             $personnel,
             function ($person1, $person2) {
-                return strnatcasecmp($person1['lastName'], $person2['lastName']);
+                return $this->sorter->compare(
+                    $person1['lastName'] . ', ' . $person1['firstName'],
+                    $person2['lastName'] . ', ' . $person2['firstName']
+                );
             }
         );
         $result['personnel'] = $personnel;
