@@ -6,10 +6,18 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   let mapTileUrl = 'https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png';
 
+  /**
+   * Reset search field
+   */
   function resetSearch() {
     $(container).find('.js-location-select').val('').trigger('change');
   }
 
+  /**
+   * Update URL hash ensuring that the change event is triggered
+   *
+   * @param {String} hash
+   */
   function updateURLHash(hash) {
     if (('#' + hash) === window.location.hash) {
       // Set hash first to empty value, so that the change event is triggered when
@@ -19,6 +27,11 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     window.location.hash = '#' + hash;
   }
 
+  /**
+   * Get location from URL hash
+   *
+   * @returns string
+   */
   function getLocationFromURLHash() {
     if (window.location.hash !== '') {
       return window.location.hash.replace('#', '');
@@ -29,6 +42,12 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
   // Forward declaration
   let showLocationDetails = function () {};
 
+  /**
+   * Update selected location
+   *
+   * @param {String|null} locationId
+   * @param {boolean} clearSearch
+   */
   function updateSelectedLocation(locationId, clearSearch) {
     showLocationDetails(locationId);
     if (clearSearch) {
@@ -36,6 +55,9 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     }
   }
 
+  /**
+   * Get location from URL hash and display it
+   */
   function updateLocationFromURLHash()
   {
     let location = getLocationFromURLHash();
@@ -44,6 +66,11 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     }
   }
 
+  /**
+   * Initialize map
+   *
+   * @param {Object} data Organisation info response for info-location-selection request
+   */
   function initMap(data)
   {
     if (data.mapData.length === 0) {
@@ -143,6 +170,11 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     map.draw(data.mapData);
   }
 
+  /**
+   * Initialize location selection
+   *
+   * @param {Object} data Organisation info response for info-location-selection request
+   */
   function initLocationSelection(data)
   {
     const select = document.querySelector('.js-location-select');
@@ -159,6 +191,11 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     initMap(data);
   }
 
+  /**
+   * Initialize opening times week navigation
+   *
+   * @param {String} locationId
+   */
   function initWeekNavi(locationId)
   {
     container.querySelectorAll('.js-week-navi-btn').forEach((btn) => {
@@ -221,6 +258,9 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     });
   }
 
+  /**
+   * Initialize coverage display
+   */
   function initCoverageGauge()
   {
     let gaugeEl = container.querySelector('.js-finna-coverage-gauge');
@@ -243,17 +283,26 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     }
   }
 
+  /**
+   * Initialize location details container
+   *
+   * @param {String} locationId
+   */
   function initLocationDetails(locationId)
   {
     detailsEl.querySelectorAll('[data-truncate]').forEach((elem) => {
       VuFind.truncate.initTruncate(elem);
     });
     finna.layout.initToolTips($(detailsEl));
-    initCoverageGauge();
     initWeekNavi(locationId);
     finna.organisationMap.selectMarker(locationId);
   }
 
+  /**
+   * Show location details
+   *
+   * @param {String} locationId
+   */
   showLocationDetails = function showLocationDetailsImpl(locationId)
   {
     const indicatorEl = container.querySelector('.js-location-loader');
@@ -314,6 +363,11 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       });
   };
 
+  /**
+   * Initialize organisation info page
+   *
+   * @param {Object} _params Organisation info page params
+   */
   function init(_params)
   {
     params = _params;
@@ -364,6 +418,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
             infoEl.innerHTML = result.data.consortiumInfo;
             selectionEl.innerHTML = result.data.locationSelection;
             initLocationSelection(result.data);
+            initCoverageGauge();
             if (result.data.locationCount === 1) {
               updateURLHash(result.data.defaultLocationId);
             } else {
@@ -374,6 +429,11 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       });
   }
 
+  /**
+   * Load location into the widget
+   *
+   * @param {String} locationId
+   */
   function loadWidgetLocation(locationId)
   {
     let openStatusEl = container.querySelector('.js-open-status');
@@ -419,6 +479,11 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       });
   }
 
+  /**
+   * Initialize organisation info widget
+   *
+   * @param {Object} _params Widget parameters
+   */
   function initWidget(_params)
   {
     params = _params;
