@@ -515,6 +515,7 @@ finna-feed {
         float: left;
         font-size: 14px;
         font-weight: 900;
+        width: 100%;
         color: @carousel-slide-header-color;
         .carousel-more {
             font-size: 1.5em;
@@ -626,13 +627,12 @@ finna-feed {
                     height: 5px;
                     padding: 5px;
                     cursor: pointer;
-                    color: #cfcfcf;
+                    background-color: #cfcfcf;
                     border: 0;
                     outline: none;
-                    background: transparent;
                     border-radius: 50%;
                     &.is-active {
-                        color: @brand-primary;
+                        background-color: @brand-primary;
                     }
                 }
                 @media (min-width: @screen-md) {

@@ -310,8 +310,10 @@ class SolrExtensionsListener
                 $helper = null;
                 $newFilters = [];
                 foreach ($filters as $filter) {
-                    [$field, $value] = explode(':', $filter);
-                    if (AuthorityHelper::AUTHOR2_ID_FACET === $field) {
+                    $parts = explode(':', $filter, 2);
+                    $field = $parts[0];
+                    $value = $parts[1] ?? null;
+                    if (AuthorityHelper::AUTHOR2_ID_FACET === $field && $value) {
                         $loader ??= $this->serviceLocator->get(\VuFind\Record\Loader::class);
                         $helper ??= $this->serviceLocator->get(\Finna\Search\Solr\AuthorityHelper::class);
                         $record = $loader->load(trim($value, '"'), 'SolrAuth', true);

@@ -187,7 +187,7 @@ finna.record = (function finnaRecord() {
         return;
       }
       $(this).nextUntil('.holdings-container-heading').toggleClass('collapsed');
-      if ($('.holdings-container-heading', this).hasClass('open')) {
+      if ($(this).hasClass('open')) {
         var rows = $(this).nextUntil('.holdings-container-heading');
         checkRequestsAreValid(rows.find('.collapsedCheckRequest').removeClass('collapsedCheckRequest'), 'Hold', 'holdBlocked');
         checkRequestsAreValid(rows.find('.collapsedCheckStorageRetrievalRequest').removeClass('collapsedCheckStorageRetrievalRequest'), 'StorageRetrievalRequest', 'StorageRetrievalRequestBlocked');
@@ -250,7 +250,7 @@ finna.record = (function finnaRecord() {
     });
   }
 
-  function setupExternalDataTab() {
+  function setupHoldingsArchiveTab() {
     $('.external-data-heading').on('click', function onClickHeading() {
       $(this).toggleClass('collapsed');
     });
@@ -544,7 +544,7 @@ finna.record = (function finnaRecord() {
     init: init,
     setupHoldingsTab: setupHoldingsTab,
     setupLocationsEad3Tab: setupLocationsEad3Tab,
-    setupExternalDataTab: setupExternalDataTab,
+    setupHoldingsArchiveTab: setupHoldingsArchiveTab,
     initRecordVersions: initRecordVersions,
     handleRedirect: handleRedirect
   };

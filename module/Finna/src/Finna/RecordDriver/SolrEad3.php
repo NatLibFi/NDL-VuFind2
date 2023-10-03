@@ -71,7 +71,7 @@ class SolrEad3 extends SolrEad
         'thumbnail' => self::IMAGE_MEDIUM,
     ];
 
-    // URLs that are displayed on ExternalData record tab
+    // URLs that are displayed on HoldingsArchive record tab
     // (not below record title)
     public const EXTERNAL_DATA_URLS = [
         'Bittikartta - Fullres - Jakelukappale',
@@ -529,7 +529,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get location info to be used in ExternalData-record page tab.
+     * Get location info to be used in HoldingsArchive-record page tab.
      *
      * @param string $id If defined, return only the item with the given id
      *
@@ -777,11 +777,11 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get external data (images, physical items).
+     * Get manifestation data (images, physical items).
      *
      * @return array
      */
-    public function getExternalData()
+    public function getManifestationData()
     {
         $locale = $this->getLocale();
         $images = $this->getImagesAsAssoc($locale);

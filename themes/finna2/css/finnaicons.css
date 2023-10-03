@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'finnaicons';
-  src: url('fonts/finnaicons.eot?40323169');
-  src: url('fonts/finnaicons.eot?40323169#iefix') format('embedded-opentype'),
-       url('fonts/finnaicons.woff2?40323169') format('woff2'),
-       url('fonts/finnaicons.woff?40323169') format('woff'),
-       url('fonts/finnaicons.ttf?40323169') format('truetype'),
-       url('fonts/finnaicons.svg?40323169#finnaicons') format('svg');
+  src: url('fonts/finnaicons.eot?49510501');
+  src: url('fonts/finnaicons.eot?49510501#iefix') format('embedded-opentype'),
+       url('fonts/finnaicons.woff2?49510501') format('woff2'),
+       url('fonts/finnaicons.woff?49510501') format('woff'),
+       url('fonts/finnaicons.ttf?49510501') format('truetype'),
+       url('fonts/finnaicons.svg?49510501#finnaicons') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'finnaicons';
-    src: url('fonts/finnaicons.svg?40323169#finnaicons') format('svg');
+    src: url('fonts/finnaicons.svg?49510501#finnaicons') format('svg');
   }
 }
 */
@@ -218,6 +218,8 @@
 .fi-chevrons-left-circle-filled:before { content: '\e8c6'; } /* '' */
 .fi-chevrons-right-circle-filled:before { content: '\e8c7'; } /* '' */
 .fi-x-twitter:before { content: '\e8c8'; } /* '' */
+.fi-archive:before { content: '\e8cb'; } /* '' */
+.fi-aipa:before { content: '\e8cc'; } /* '' */
 .fi-zoom-all:before { content: '\e900'; } /* '' */
 .fi-location-city:before { content: '\e901'; } /* '' */
 .fi-box:before { content: '\e902'; } /* '' */

@@ -82,6 +82,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Country of Producing Entity',
             'Creator Characteristics',
             'DOI',
+            'Dewey Classification',
             'Dissertation Note',
             'Education Programs',
             'Event Notice',
@@ -696,8 +697,8 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     {
         $intersected = array_intersect_key($coreFields, array_flip($include));
         $config = $this->getView()->plugin('config')->get('datasources');
-        $source = $this->driver->tryMethod('getSource');
-        if ($source && $hide = $config->$source->hidden_record_fields ?? []) {
+        $source = $this->driver?->tryMethod('getSource');
+        if ($source && $hide = $config->$source?->hidden_record_fields) {
             $intersected = array_diff_key($intersected, array_flip($hide->toArray()));
         }
         return $intersected;

@@ -82,17 +82,24 @@ onlinePayment['contactInfo'] = "https://..."
 ; transactionFeeProductCode and productCodeMappings are undefined, and empty values
 ; can be defined to make the system use default values.
 
+; Payment description (supported with CPU only)
 onlinePayment['paymentDescription'] = 'Finna: verkkomaksuja'
 ; Default product code
 onlinePayment['productCode'] = ''
 ; Product code for transaction fees (cannot be used with shop-in-shop functionality)
 onlinePayment['transactionFeeProductCode'] = 'Transaction'
-; Product code mappings from the fine types to product codes
-onlinePayment['productCodeMappings'] = 'Overdue=demo_003:Long Overdue=demo_004'
 ; Mappings to languages supported by the service
 ;onlinePayment['supportedLanguages'] = 'fi=fi:en=en'
+; Product code mappings from organization names/codes and fine types to product codes.
+; First part is organization name or code, then a slash, and then the second part is
+; the fine type.
+; If a mapping is found, productCodeMappings and organizationProductCodeMappings are
+; ignored.
+;onlinePayment['organizationFineTypeToProductCodeMappings'] = 'Helsinki/Overdue=demo_003:Helsinki/Long overdue=demo_004'
+; Product code mappings from the fine types to product codes
+onlinePayment['productCodeMappings'] = 'Overdue=demo_003:Long Overdue=demo_004'
 ; Product code mappings from organization names or codes to product codes. If there's
-; already a product code from other mappings above, this value is prepended to it
+; already a product code from productCodeMappings above, this value is prepended to it
 ; without any delimiter.
 ;onlinePayment['organizationProductCodeMappings'] = 'Helsinki=demo_003:Tampere=demo_004'
 ; Mappings from organization names or codes to merchant id's for shop-in-shop

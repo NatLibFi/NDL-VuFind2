@@ -118,6 +118,13 @@ abstract class AbstractBase implements
     protected $eventLogTable;
 
     /**
+     * Organization id + fine type to product code mappings (use getOrganizationFineTypeToProductCodeMappings)
+     *
+     * @var ?array
+     */
+    protected $organizationFineTypeToProductCodeMappings = null;
+
+    /**
      * Constructor
      *
      * @param \VuFindHttp\HttpService $http             HTTP service
@@ -295,6 +302,20 @@ abstract class AbstractBase implements
     protected function getOrganizationProductCodeMappings()
     {
         return $this->parseMappings($this->config->organizationProductCodeMappings ?? '');
+    }
+
+    /**
+     * Get organization+fine type to product code mappings from configuration
+     *
+     * @return array
+     */
+    protected function getOrganizationFineTypeToProductCodeMappings()
+    {
+        if (null === $this->organizationFineTypeToProductCodeMappings) {
+            $this->organizationFineTypeToProductCodeMappings
+                = $this->parseMappings($this->config->organizationFineTypeToProductCodeMappings ?? '');
+        }
+        return $this->organizationFineTypeToProductCodeMappings;
     }
 
     /**

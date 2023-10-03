@@ -406,7 +406,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             $params
         );
 
-        if ($searchTabsFilters) {
+        if ($result && $searchTabsFilters) {
             $prepend = (!str_contains($result, '?')) ? '?' : '&amp;';
             $result .= $this->getView()->plugin('searchTabs')->getCurrentHiddenFilterParams(
                 $this->driver->getSourceIdentifier(),

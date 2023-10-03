@@ -157,6 +157,53 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
+     * Get Patron Transactions
+     *
+     * This is responsible for retrieving all transactions (i.e. checked out items)
+     * by a specific patron.
+     *
+     * @param array $patron The patron array from patronLogin
+     * @param array $params Parameters
+     *
+     * @throws DateException
+     * @throws ILSException
+     * @return array        Array of the patron's transactions on success.
+     */
+    public function getMyTransactions($patron, $params = [])
+    {
+        $result = parent::getMyTransactions($patron, $params);
+        // Sort the loans, but only if all fit in result limit:
+        if ($result['count'] === count($result['records'])) {
+            $sort = explode(' ', $params['sort'] ?? 'checkout desc', 2);
+            $sortKeys = [];
+            foreach ($result['records'] as $i => $row) {
+                switch ($sort[0]) {
+                    case 'title':
+                        $key = '';
+                        break;
+                    case 'due':
+                        $key = $this->dateConverter->convertFromDisplayDate('Y-m-d', $row['duedate']);
+                        break;
+                    default:
+                        $key = sprintf('%012d', $row['checkout_id']);
+                        break;
+                }
+                // Always append title for disambiguation:
+                $key .= '__' . ($row['title'] ?? '');
+                $sortKeys[$i] = $key;
+            }
+            array_multisort(
+                $sortKeys,
+                ($sort[1] ?? 'asc') === 'desc' ? SORT_DESC : SORT_ASC,
+                SORT_LOCALE_STRING,
+                $result['records']
+            );
+        }
+
+        return $result;
+    }
+
+    /**
      * Get Pick Up Locations
      *
      * This is responsible for getting a list of valid library locations for
@@ -831,6 +878,19 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      */
     public function getConfig($function, $params = [])
     {
+        if ('getMyTransactions' === $function) {
+            return [
+                'max_results' => 200,
+                'sort' => [
+                    'checkout desc' => 'sort_checkout_date_desc',
+                    'checkout asc' => 'sort_checkout_date_asc',
+                    'due desc' => 'sort_due_date_desc',
+                    'due asc' => 'sort_due_date_asc',
+                    'title asc' => 'sort_title',
+                ],
+                'default_sort' => 'due asc',
+            ];
+        }
         if ('onlinePayment' === $function) {
             $result = $this->config['OnlinePayment'] ?? [];
             $result['exactBalanceRequired'] = false;
@@ -888,43 +948,6 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         }
 
         return parent::getConfig($function, $params);
-    }
-
-    /**
-     * Return summary of holdings items.
-     *
-     * @param array $holdings Parsed holdings items
-     * @param array $bib      Bibliographic data
-     *
-     * @return array summary
-     */
-    protected function getHoldingsSummary($holdings, $bib)
-    {
-        $availableTotal = 0;
-        $locations = [];
-
-        foreach ($holdings as $item) {
-            if (!empty($item['availability'])) {
-                $availableTotal++;
-            }
-            $locations[$item['location']] = true;
-        }
-
-        // Since summary data is appended to the holdings array as a fake item,
-        // we need to add a few dummy-fields that VuFind expects to be
-        // defined for all elements.
-        $result = [
-           'available' => $availableTotal,
-           'total' => count($holdings),
-           'locations' => count($locations),
-           'availability' => null,
-           'callnumber' => null,
-           'location' => '__HOLDINGSSUMMARYLOCATION__',
-        ];
-        if ($this->config['Holdings']['display_total_hold_count'] ?? true) {
-            $result['reservations'] = $bib['holdCount'] ?? null;
-        }
-        return $result;
     }
 
     /**
@@ -1013,6 +1036,9 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             array_unique([...$this->defaultItemFields, ...$fields]),
             $patron
         );
+        $itemsTotal = count($items);
+        $itemsAvailable = 0;
+        $itemsOrdered = 0;
         foreach ($items as $item) {
             $location = $this->translateLocation($item['location']);
             [$status, $duedate, $notes] = $this->getItemStatus($item);
@@ -1036,6 +1062,10 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 $number = $this->getItemSpecificLocation($item);
             }
 
+            if ($available) {
+                ++$itemsAvailable;
+            }
+
             $entry = [
                 'id' => $id,
                 'item_id' => $item['id'],
@@ -1043,10 +1073,10 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'availability' => $available,
                 'status' => $status,
                 'reserve' => 'N',
-                'callnumber' => $callnumber,
+                'callnumber' => trim($callnumber),
                 'duedate' => $duedate,
-                'number' => $number,
-                'barcode' => $item['barcode'],
+                'number' => trim($number),
+                'barcode' => $item['barcode'] ?? '',
                 'sort' => $sort--,
                 'requests_placed' => $displayItemHoldCount ? ($item['holdCount'] ?? null) : null,
             ];
@@ -1119,12 +1149,31 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'barcode' => '',
                 'sort' => $sort--,
             ];
+            foreach ($orderSet as $order) {
+                $itemsOrdered += $order['copies'];
+            }
         }
 
         usort($statuses, [$this, 'statusSortFunction']);
 
         if ($statuses) {
-            $statuses[] = $this->getHoldingsSummary($statuses, $bib);
+            // Since summary data is appended to the holdings array as a fake item,
+            // we need to add a few dummy-fields that VuFind expects to be
+            // defined for all elements.
+            $summary = [
+                'available' => $itemsAvailable,
+                'total' => $itemsTotal,
+                'ordered' => $itemsOrdered,
+                'locations' => count(array_unique(array_column($statuses, 'location'))),
+                'availability' => null,
+                'callnumber' => null,
+                'location' => '__HOLDINGSSUMMARYLOCATION__',
+            ];
+            if ($this->config['Holdings']['display_total_hold_count'] ?? true) {
+                $summary['reservations'] = $bib['holdCount'] ?? null;
+            }
+
+            $statuses[] = $summary;
         }
 
         return $statuses;

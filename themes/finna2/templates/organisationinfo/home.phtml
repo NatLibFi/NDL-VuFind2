@@ -1,7 +1,7 @@
 <!-- START of: finna - organisationinfo/home.phtml -->
 <?php
   $this->headTitle($this->title);
-  $this->layout()->finnaMainHeader = '<div><h3>' . $this->escapeHtml($this->title) . '</h3></div>';
+  $this->layout()->finnaMainHeader = '<div><h2>' . $this->escapeHtml($this->title) . '</h2></div>';
 
   $this->headLink()->appendStylesheet('vendor/L.Control.Locate.min.css');
   $this->headScript()->appendFile('vendor/L.Control.Locate.min.js');

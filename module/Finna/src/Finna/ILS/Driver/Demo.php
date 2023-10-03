@@ -37,6 +37,7 @@ namespace Finna\ILS\Driver;
 
 use VuFind\Exception\ILS as ILSException;
 
+use function count;
 use function in_array;
 use function is_callable;
 
@@ -83,7 +84,57 @@ class Demo extends \VuFind\ILS\Driver\Demo
                 ? $this->config['PasswordRecovery'] : false;
         }
 
-        return parent::getConfig($function, $params);
+        $result = parent::getConfig($function, $params);
+        if ($function == 'Holdings') {
+            $result['display_total_item_count_in_results']
+                = $this->config['Holdings']['display_total_item_count_in_results'] ?? true;
+            $result['display_ordered_item_count_in_results']
+                = $this->config['Holdings']['display_ordered_item_count_in_results'] ?? false;
+        }
+        return $result;
+    }
+
+    /**
+     * Get Status
+     *
+     * This is responsible for retrieving the status information of a certain
+     * record.
+     *
+     * @param string $id The record id to retrieve the holdings for
+     *
+     * @return mixed     On success, an associative array with the following keys:
+     * id, availability (boolean), status, location, reserve, callnumber.
+     */
+    public function getStatus($id)
+    {
+        $result = parent::getStatus($id);
+        if (!empty($result)) {
+            $result[] = $this->getHoldingsSummary($result);
+        }
+        return $result;
+    }
+
+    /**
+     * Get Holding
+     *
+     * This is responsible for retrieving the holding information of a certain
+     * record.
+     *
+     * @param string $id      The record id to retrieve the holdings for
+     * @param array  $patron  Patron data
+     * @param array  $options Extra options
+     *
+     * @return array On success, an associative array with the following keys:
+     * id, availability (boolean), status, location, reserve, callnumber,
+     * duedate, number, barcode.
+     */
+    public function getHolding($id, array $patron = null, array $options = [])
+    {
+        $result = parent::getHolding($id, $patron, $options);
+        if (!empty($result['holdings'])) {
+            $result['holdings'][] = $this->getHoldingsSummary($result['holdings']);
+        }
+        return $result;
     }
 
     /**
@@ -428,5 +479,48 @@ class Demo extends \VuFind\ILS\Driver\Demo
             }
         }
         return false;
+    }
+
+    /**
+     * Return summary of holdings items.
+     *
+     * @param array $holdings Parsed holdings items
+     *
+     * @return array summary
+     */
+    protected function getHoldingsSummary($holdings)
+    {
+        $availableTotal = $itemsTotal = 0;
+        $requests = 0;
+        $locations = [];
+
+        foreach ($holdings as $item) {
+            if (!empty($item['availability'])) {
+                $availableTotal++;
+            }
+            $itemsTotal++;
+            $locations[$item['location']] = true;
+            if (($item['requests_placed'] ?? 0) > $requests) {
+                $requests = $item['requests_placed'];
+            }
+        }
+
+        // Since summary data is appended to the holdings array as a fake item,
+        // we need to add a few dummy-fields that VuFind expects to be
+        // defined for all elements.
+
+        // Use a stupid location name to make sure this doesn't get mixed with
+        // real items that don't have a proper location.
+        $result = [
+           'available' => $availableTotal,
+           'total' => $itemsTotal,
+           'locations' => count($locations),
+           'availability' => null,
+           'callnumber' => null,
+           'location' => '__HOLDINGSSUMMARYLOCATION__',
+           'reservations' => rand(0, 8),
+           'ordered' => rand(0, 20),
+        ];
+        return $result;
     }
 }
