@@ -37,7 +37,7 @@
     <div class="js-location-loader hidden">
       <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
     </div>
-    <div class="js-location-quick-information info-element"></div>
+    <div class="js-location-quick-information info-element hidden"></div>
 
     <div class="js-location-info-map hidden">
       <template class="js-map-attribution">
@@ -49,12 +49,6 @@
         </span>
         <span class="map-marker-text">
           <?=$this->icon('map-marker', 'map-marker-icon no-schedule')?>&nbsp;<?=$this->transEsc('organisation_info_no_schedule')?>
-        </span>
-        <span class="js-expand-map map-marker-text marker">
-          <?=$this->icon('map-expand')?>&nbsp;<?=$this->transEsc('organisation_info_map_expand')?>
-        </span>
-        <span class="js-contract-map map-marker-text marker hidden">
-          <?=$this->icon('map-collapse')?>&nbsp;<?=$this->transEsc('organisation_info_map_collapse')?>
         </span>
       </template>
       <template class="js-map-bubble-template">
@@ -75,7 +69,7 @@
             <?php endif; ?>
           </div>
         </div>
-        <div class="map-ui map <?=$this->escapeHtmlAttr($this->mapWidget)?>" aria-hidden="true">
+        <div class="map-ui map" aria-hidden="true">
           <div id="location_map_canvas" class="js-map-widget"></div>
           <div class="js-marker-tooltip hidden"></div>
         </div>

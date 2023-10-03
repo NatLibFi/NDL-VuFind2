@@ -6,7 +6,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   let mapTileUrl = 'https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png';
 
-  function updateWindowHash(hash) {
+  function updateURLHash(hash) {
     if (('#' + hash) === window.location.hash) {
       // Set hash first to empty value, so that the change event is triggered when
       // the same menu item is re-selected.
@@ -15,7 +15,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     window.location.hash = '#' + hash;
   }
 
-  function getLocationFromURL() {
+  function getLocationFromURLHash() {
     if (window.location.hash !== '') {
       return window.location.hash.replace('#', '');
     }
@@ -72,7 +72,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     let showLocationEl = mapContainer.querySelector('.js-map-controls .js-show-location');
     if (showLocationEl) {
       showLocationEl.addEventListener('click', (ev) => {
-        let id = getLocationFromURL();
+        let id = getLocationFromURLHash();
         if (id in data.mapData) {
           map.reset();
           map.selectMarker(id);
@@ -86,6 +86,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       showAllEl.addEventListener('click', (ev) => {
         map.resize();
         map.reset();
+        updateSelectedLocation(null, true);
         ev.preventDefault();
       });
     }
@@ -118,24 +119,6 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     }
 
     map.draw(data.mapData);
-
-    // Expand/contract map
-    let expandEl = mapContainer.querySelector('.js-expand-map');
-    let contractEl = mapContainer.querySelector('.js-contract-map');
-    if (expandEl && contractEl) {
-      expandEl.addEventListener('click', () => {
-        mapContainer.classList.add('expand');
-        map.resize();
-        expandEl.classList.add('hidden');
-        contractEl.classList.remove('hidden');
-      });
-      contractEl.addEventListener('click', () => {
-        mapContainer.classList.remove('expand');
-        map.resize();
-        expandEl.classList.remove('hidden');
-        contractEl.classList.add('hidden');
-      });
-    }
   }
 
   function initLocationSelection(data)
@@ -147,7 +130,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
         placeholder: placeholder,
         allowClear: true
       }).on('select2:select', function updateHash(e) {
-        updateWindowHash(encodeURIComponent(e.params.data.id || 'undefined'));
+        updateURLHash(encodeURIComponent(e.params.data.id || 'undefined'));
       });
     }
 
@@ -272,7 +255,13 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     detailsEl.innerHTML = '';
     const infoEl = container.querySelector('.js-location-quick-information');
     if (infoEl) {
-      infoEl.innerHTML = '';
+      infoEl.innerHTML = '&nbsp;';
+      infoEl.classList.toggle('hidden', null === locationId);
+    }
+
+    finna.organisationMap.resize();
+    if (null === locationId) {
+      return;
     }
 
     indicatorEl.classList.remove('hidden');
@@ -308,15 +297,15 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
   }
 
   function updateSelectedLocation(locationId, clearSearch) {
-    showLocationDetails(locationId, '', true);
+    showLocationDetails(locationId);
     if (clearSearch) {
       resetSearch();
     }
   }
 
-  function updateLocationFromUrlHash()
+  function updateLocationFromURLHash()
   {
-    let location = getLocationFromURL();
+    let location = getLocationFromURLHash();
     if (location) {
       updateSelectedLocation(location, false);
     }
@@ -352,7 +341,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       return;
     }
 
-    addEventListener('hashchange', () => { updateLocationFromUrlHash(); });
+    addEventListener('hashchange', () => { updateLocationFromURLHash(); });
 
     loadIndicatorEl.classList.remove('hidden');
     fetch(VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
@@ -373,9 +362,9 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
             selectionEl.innerHTML = result.data.locationSelection;
             initLocationSelection(result.data);
             if (result.data.locationCount === 1) {
-              updateWindowHash(result.data.defaultLocationId);
+              updateURLHash(result.data.defaultLocationId);
             } else {
-              updateLocationFromUrlHash();
+              updateLocationFromURLHash();
             }
           });
         }
