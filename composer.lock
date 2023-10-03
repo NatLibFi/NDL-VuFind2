@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c9084f9f11ba1d3d06a07a94ae922331",
+    "content-hash": "00b3a5fbf5132ebd0014958170d1a816",
     "packages": [
         {
             "name": "ahand/mobileesp",
@@ -5964,11 +5964,17 @@
         },
         {
             "name": "natlibfi/finna-code-sets",
-            "version": "dev-finna-751",
+            "version": "v0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/NatLibFi/finna-code-sets.git",
+                "reference": "d2e4e5d9070c0400bf82f70e8f9f0c21a35362b0"
+            },
             "dist": {
-                "type": "path",
-                "url": "../finna-code-sets",
-                "reference": "ec88fc972a171456294c942ffcf0254f120ede69"
+                "type": "zip",
+                "url": "https://api.github.com/repos/NatLibFi/finna-code-sets/zipball/d2e4e5d9070c0400bf82f70e8f9f0c21a35362b0",
+                "reference": "d2e4e5d9070c0400bf82f70e8f9f0c21a35362b0",
+                "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "^6.5.8 || ^7.4.5",
@@ -5987,54 +5993,16 @@
                     "NatLibFi\\FinnaCodeSets\\": "src/"
                 }
             },
-            "scripts": {
-                "php-cs-fixer": [
-                    "php-cs-fixer fix -vvv"
-                ],
-                "php-cs-fixer-dryrun": [
-                    "php-cs-fixer fix --dry-run -vvv --diff"
-                ],
-                "phpcbf": [
-                    "phpcbf"
-                ],
-                "phpcs": [
-                    "phpcs"
-                ],
-                "phpstan": [
-                    "phpstan analyse -c phpstan.neon src/"
-                ],
-                "qa": [
-                    "@phpcs",
-                    "@php-cs-fixer-dryrun",
-                    "@phpstan"
-                ],
-                "qa-fix": [
-                    "@phpcbf",
-                    "@php-cs-fixer"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "GPL-2.0-or-later"
             ],
             "description": "Support library for code sets used in Finna record formats",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "natlibfi/finna-ui-components",
-            "version": "dev-alli-7675",
-            "dist": {
-                "type": "path",
-                "url": "../finna-ui-components",
-                "reference": "555625fcc2749130d3d80044ad64e854869aa032"
+            "support": {
+                "issues": "https://github.com/NatLibFi/finna-code-sets/issues",
+                "source": "https://github.com/NatLibFi/finna-code-sets/tree/v0.2.0"
             },
-            "type": "library",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "time": "2023-10-02T10:11:33+00:00"
         },
         {
             "name": "natlibfi/php-html-parser",
@@ -14755,10 +14723,9 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": {
-        "ahand/mobileesp": 20,
-        "natlibfi/finna-ui-components": 20
+        "ahand/mobileesp": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
