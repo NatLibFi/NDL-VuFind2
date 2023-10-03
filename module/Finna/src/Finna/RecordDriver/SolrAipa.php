@@ -48,6 +48,13 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     use ContainerFormatTrait;
 
     /**
+     * Encapsulated content type records.
+     *
+     * @var array
+     */
+    protected array $encapsulatedContentTypeRecords;
+
+    /**
      * Return an array of image URLs associated with this record with keys:
      * - url         Image URL
      * - description Description text
@@ -128,6 +135,25 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     public function getRightsCoverage(): string
     {
         return (string)($this->getXmlRecord()->rightsCoverage ?? '');
+    }
+
+    /**
+     * Return encapsulated content type records.
+     *
+     * @return array Array of encapsulated content type records keyed by unique ID
+     */
+    public function getEncapsulatedContentTypeRecords(): array
+    {
+        if (!isset($this->encapsulatedContentTypeRecords)) {
+            $this->encapsulatedContentTypeRecords = [];
+            foreach ($this->getEncapsulatedRecords() as $encapsulatedRecord) {
+                if ($encapsulatedRecord->getType() === 'content') {
+                    $this->encapsulatedContentTypeRecords[$encapsulatedRecord->getUniqueId()]
+                        = $encapsulatedRecord;
+                }
+            }
+        }
+        return $this->encapsulatedContentTypeRecords;
     }
 
     /**

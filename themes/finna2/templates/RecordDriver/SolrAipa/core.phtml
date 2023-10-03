@@ -133,7 +133,14 @@
           <span class="recordFormat"><?=$this->record($this->driver)->getFormatList()?></span>
         <?php endif; ?>
 
-        <?php if ($results = $this->driver->getNonPresenterAuthors()): ?>
+        <?php
+          $contents = $this->driver->getEncapsulatedContentTypeRecords();
+          if (
+            ($results = $this->driver->getNonPresenterAuthors())
+            || (count($contents) === 1
+              && ($results = reset($contents)->getNonPresenterAuthors()))
+          ):
+        ?>
         <div class="truncate-field recordAuthors">
           <strong><?= $this->transEsc('Curated By') ?>:</strong>
           <span property="author">
@@ -188,7 +195,12 @@
           <?php endif; ?>
         </div>
       <?php endif; ?>
-      <?php if ($descriptions = $this->driver->getDescriptions()): ?>
+      <?php
+        if (($descriptions = $this->driver->getDescriptions())
+          || (count($contents) === 1
+            && ($descriptions = reset($contents)->getSummary()))
+        ):
+      ?>
         <div class="wide summary recordSummary">
           <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", $descriptions)) ?>
         </div>
@@ -212,23 +224,14 @@
       ?>
       <?/* End Main Details */?>
 
-      <?php
-        $encapsulatedRecords = $this->driver->getEncapsulatedRecords();
-        $contents = [];
-        foreach ($encapsulatedRecords as $encapsulatedRecord) {
-          if ($encapsulatedRecord->getType() === 'content') {
-            $contents[$encapsulatedRecord->getUniqueId()] = $encapsulatedRecord->getTitle();
-          }
-        }
-      ?>
       <?php if (count($contents) > 1): ?>
         <div class="record-toc">
           <p><strong><?= $this->transEsc('Contents') ?>:</strong></p>
           <ul>
-            <?php foreach ($contents as $id => $title): ?>
+            <?php foreach ($contents as $id => $record): ?>
               <li>
                 <a href="#encapsulated-record-<?= $this->escapeHtmlAttr($id) ?>">
-                  <?= $title ?>
+                  <?= $record->getTitle() ?>
                 </a>
               </li>
             <?php endforeach; ?>
