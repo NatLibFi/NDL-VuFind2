@@ -197,7 +197,7 @@ class Kirkanta extends AbstractOrganisationInfoProvider
         $params = [
             'id' => $locationId,
             'with' => 'schedules,primaryContactInfo,phoneNumbers,emailAddresses,mailAddress,pictures,links,services'
-                . ',customData,schedules,persons',
+                . ',customData,persons',
             'period.start' => $periodStart,
             'period.end' => $periodEnd,
             'status' => '',
