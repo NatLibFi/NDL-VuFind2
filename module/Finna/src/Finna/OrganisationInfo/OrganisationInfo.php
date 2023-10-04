@@ -256,7 +256,8 @@ class OrganisationInfo implements
                 }
             }
         }
-        return $result;
+        // Assume lib if we didn't find any sources in the index:
+        return $result ?: ['lib'];
     }
 
     /**
@@ -271,7 +272,7 @@ class OrganisationInfo implements
         $locale = $this->getLanguage();
         $cacheFile = "$cacheDir/organisations_list_$locale.json";
         $maxAge = (int)(
-            $this->organisationConfig['General']['organisationListCacheTime'] ?? 60
+            $this->config['General']['organisationListCacheTime'] ?? 60
         );
         $list = [];
         if (
