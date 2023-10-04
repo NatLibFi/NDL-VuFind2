@@ -418,6 +418,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       method: 'getOrganisationInfo',
       element: 'info-location-selection',
       id: params.id,
+      locationId: getLocationFromURLHash(),
       sectors: params.sectors || '',
       buildings: params.buildings || '',
       consortiumInfo: params.consortiumInfo
@@ -432,10 +433,8 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
             selectionEl.innerHTML = result.data.locationSelection;
             initLocationSelection(result.data);
             initCoverageGauge();
-            if (result.data.locationCount === 1) {
+            if (result.data.defaultLocationId) {
               updateURLHash(result.data.defaultLocationId);
-            } else {
-              updateLocationFromURLHash();
             }
           });
         }

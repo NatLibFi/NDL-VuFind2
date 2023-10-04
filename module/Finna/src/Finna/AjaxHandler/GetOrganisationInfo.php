@@ -145,8 +145,10 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 if (!($id = $params->fromQuery('id'))) {
                     return $this->handleError('getOrganisationInfo: missing id');
                 }
+                $locationId = $this->getLocationIdFromCookie();
                 $result = $this->getInfoAndLocationSelection(
                     $id,
+                    $locationId,
                     $sectors,
                     $buildings,
                     (bool)$params->fromQuery('consortiumInfo', false)
@@ -182,9 +184,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
 
             case 'widget':
                 if (!($id = $params->fromQuery('id'))) {
-                    if (!($id = $this->cookieManager->get(static::COOKIE_NAME))) {
-                        return $this->handleError('getOrganisationInfo: missing id');
-                    }
+                    return $this->handleError('getOrganisationInfo: missing id');
                 }
                 if (!($locationId = $params->fromQuery('locationId') ?: null)) {
                     $locationId = $this->getLocationIdFromCookie();
@@ -270,6 +270,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
      */
     protected function getInfoAndLocationSelection(
         string $id,
+        string $locationId,
         array $sectors,
         array $buildings,
         bool $consortiumInfo
@@ -296,7 +297,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
             compact('orgInfo')
         );
         $locationCount = count($orgInfo['list'] ?? []);
-        $defaultLocationId = $orgInfo['consortium']['finna']['servicePoint'] ?? $orgInfo['list'][0]['id'] ?? null;
+        $defaultLocationId = $locationId ?: $orgInfo['consortium']['finna']['servicePoint'] ?? $orgInfo['list'][0]['id'] ?? null;
         $mapData = [];
         foreach ($orgInfo['list'] ?? [] as $org) {
             if ($coordinates = $org['address']['coordinates'] ?? null) {
