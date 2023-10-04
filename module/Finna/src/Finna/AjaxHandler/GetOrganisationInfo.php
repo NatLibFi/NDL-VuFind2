@@ -338,7 +338,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         $locationIdValid = false;
         $mapData = [];
         foreach ($orgInfo['list'] ?? [] as $org) {
-            if ($org['id'] === $locationId) {
+            if ((string)$org['id'] === $locationId) {
                 $locationIdValid = true;
             }
             if ($coordinates = $org['address']['coordinates'] ?? null) {
