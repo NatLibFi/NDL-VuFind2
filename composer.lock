@@ -5964,22 +5964,22 @@
         },
         {
             "name": "natlibfi/finna-code-sets",
-            "version": "v0.2.0",
+            "version": "v0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NatLibFi/finna-code-sets.git",
-                "reference": "d2e4e5d9070c0400bf82f70e8f9f0c21a35362b0"
+                "reference": "c1a0c6c5e90ae402bb72630cac347a780013b67e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NatLibFi/finna-code-sets/zipball/d2e4e5d9070c0400bf82f70e8f9f0c21a35362b0",
-                "reference": "d2e4e5d9070c0400bf82f70e8f9f0c21a35362b0",
+                "url": "https://api.github.com/repos/NatLibFi/finna-code-sets/zipball/c1a0c6c5e90ae402bb72630cac347a780013b67e",
+                "reference": "c1a0c6c5e90ae402bb72630cac347a780013b67e",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "^6.5.8 || ^7.4.5",
                 "php": ">=8.0",
-                "psr/cache": "^1.0.0",
+                "psr/cache": "^1.0.0 || ^2.0.0 || ^3.0.0",
                 "psr/http-client": "^1.0.0"
             },
             "require-dev": {
@@ -6000,9 +6000,9 @@
             "description": "Support library for code sets used in Finna record formats",
             "support": {
                 "issues": "https://github.com/NatLibFi/finna-code-sets/issues",
-                "source": "https://github.com/NatLibFi/finna-code-sets/tree/v0.2.0"
+                "source": "https://github.com/NatLibFi/finna-code-sets/tree/v0.2.1"
             },
-            "time": "2023-10-02T10:11:33+00:00"
+            "time": "2023-10-04T11:49:17+00:00"
         },
         {
             "name": "natlibfi/php-html-parser",
