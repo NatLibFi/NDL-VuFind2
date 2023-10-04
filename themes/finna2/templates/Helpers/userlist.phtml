@@ -50,7 +50,7 @@
           <?=$this->translate('showing_results_of_html', $transParams)?>
         </div>
         <button class="btn btn-outline-primary load-more" aria-label="<?= $this->transEscAttr('See all')?>" data-id="<?= $this->escapeHtmlAttr($this->id)?>" data-start-index="<?= $this->escapeHtmlAttr($this->indexStart + $limit)?>" data-offset="<?= $this->escapeHtmlAttr($limit + 1)?>" data-view="<?= $this->escapeHtmlAttr($this->view)?>"<?= $this->sort ? (' data-sort="' . $this->escapeHtmlAttr($this->sort) . '"') : ''?>><?= $this->transEsc('See all'); ?></button>
-        <?=$this->icon('spinner') ?>
+        <?=$this->icon('spinner', 'spinner-icon hide') ?>
       </div>
     <?php endif; ?>
   </div>
