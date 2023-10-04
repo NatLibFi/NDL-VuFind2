@@ -261,16 +261,17 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     /**
      * Get consortium info and location selection snippet
      *
-     * @param string $id             Organisation id
-     * @param array  $sectors        Sectors
-     * @param array  $buildings      Buildings
-     * @param bool   $consortiumInfo Whether to request information about all locations
+     * @param string  $id             Organisation id
+     * @param ?string $locationId     Selected location id, if any
+     * @param array   $sectors        Sectors
+     * @param array   $buildings      Buildings
+     * @param bool    $consortiumInfo Whether to request information about all locations
      *
      * @return array
      */
     protected function getInfoAndLocationSelection(
         string $id,
-        string $locationId,
+        ?string $locationId,
         array $sectors,
         array $buildings,
         bool $consortiumInfo
@@ -297,7 +298,10 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
             compact('orgInfo')
         );
         $locationCount = count($orgInfo['list'] ?? []);
-        $defaultLocationId = $locationId ?: $orgInfo['consortium']['finna']['servicePoint'] ?? $orgInfo['list'][0]['id'] ?? null;
+        $defaultLocationId = $locationId
+            ?? $orgInfo['consortium']['finna']['servicePoint']
+            ?? $orgInfo['list'][0]['id']
+            ?? null;
         $mapData = [];
         foreach ($orgInfo['list'] ?? [] as $org) {
             if ($coordinates = $org['address']['coordinates'] ?? null) {
