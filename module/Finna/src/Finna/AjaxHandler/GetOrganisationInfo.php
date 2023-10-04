@@ -41,6 +41,7 @@ use VuFind\Session\Settings as SessionSettings;
 
 use function count;
 use function in_array;
+use function is_array;
 
 /**
  * AJAX handler for getting organisation info.
@@ -145,10 +146,9 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 if (!($id = $params->fromQuery('id'))) {
                     return $this->handleError('getOrganisationInfo: missing id');
                 }
-                $locationId = $this->getLocationIdFromCookie();
                 $result = $this->getInfoAndLocationSelection(
                     $id,
-                    $locationId,
+                    $this->getLocationIdFromCookie($id),
                     $sectors,
                     $buildings,
                     (bool)$params->fromQuery('consortiumInfo', false)
@@ -160,11 +160,11 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                     return $this->handleError('getOrganisationInfo: missing id');
                 }
                 if (!($locationId = $params->fromQuery('locationId'))) {
-                    if (!($locationId = $this->getLocationIdFromCookie())) {
+                    if (!($locationId = $this->getLocationIdFromCookie($id))) {
                         return $this->handleError('getOrganisationInfo: missing location id');
                     }
                 } else {
-                    $this->setLocationIdCookie($locationId);
+                    $this->setLocationIdCookie($id, $locationId);
                 }
                 $result = $this->getLocationDetails($id, $locationId, $sectors);
                 break;
@@ -187,9 +187,9 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                     return $this->handleError('getOrganisationInfo: missing id');
                 }
                 if (!($locationId = $params->fromQuery('locationId') ?: null)) {
-                    $locationId = $this->getLocationIdFromCookie();
+                    $locationId = $this->getLocationIdFromCookie($id);
                 } else {
-                    $this->setLocationIdCookie($locationId);
+                    $this->setLocationIdCookie($id, $locationId);
                 }
                 $result = $this->getWidget(
                     $id,
@@ -207,7 +207,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 if (!($locationId = $params->fromQuery('locationId') ?: null)) {
                     return $this->handleError('getOrganisationInfo: missing location id');
                 }
-                $this->setLocationIdCookie($locationId);
+                $this->setLocationIdCookie($id, $locationId);
 
                 $result = $this->getWidgetLocationData(
                     $id,
@@ -238,24 +238,61 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     /**
      * Get any location id from cookie
      *
+     * @param string $id Organisation id
+     *
      * @return mixed
      */
-    protected function getLocationIdFromCookie()
+    protected function getLocationIdFromCookie(string $id)
     {
-        return $this->cookieManager->get(static::COOKIE_NAME);
+        $cookie = $this->cookieManager->get(static::COOKIE_NAME);
+        try {
+            $data = json_decode($cookie, true, 512, JSON_THROW_ON_ERROR);
+            return $data[$id]['loc'] ?? null;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**
      * Set location id to a cookie
      *
+     * @param string $id         Organisation id
      * @param string $locationId Location ID
      *
      * @return void
      */
-    protected function setLocationIdCookie(string $locationId): void
+    protected function setLocationIdCookie(string $id, string $locationId): void
     {
+        $cookie = $this->cookieManager->get(static::COOKIE_NAME);
+        try {
+            $data = json_decode($cookie, true, 512, JSON_THROW_ON_ERROR);
+            if (!is_array($data)) {
+                $data = [];
+            }
+        } catch (\Exception $e) {
+            // Bad cookie, rewrite:
+            $data = [];
+        }
+        $data[$id] = [
+            'loc' => $locationId,
+            'ts' => time(),
+        ];
+        // Remember last five locations:
+        while (count($data) > 5) {
+            // Find oldest:
+            $oldest = null;
+            $oldestKey = null;
+            foreach ($data as $key => $item) {
+                if (null === $oldest || ($item['ts'] ?? null) < ($oldest['ts'] ?? null)) {
+                    $oldest = $item;
+                    $oldestKey = $key;
+                }
+            }
+            unset($data[$oldestKey]);
+        }
+        // Update the cookie:
         $expire = time() + 365 * 60 * 60 * 24; // 1 year
-        $this->cookieManager->set(static::COOKIE_NAME, $locationId, $expire);
+        $this->cookieManager->set(static::COOKIE_NAME, json_encode($data), $expire);
     }
 
     /**
