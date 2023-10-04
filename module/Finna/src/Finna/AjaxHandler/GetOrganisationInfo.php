@@ -298,12 +298,12 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
             compact('orgInfo')
         );
         $locationCount = count($orgInfo['list'] ?? []);
-        $defaultLocationId = $locationId
-            ?? $orgInfo['consortium']['finna']['servicePoint']
-            ?? $orgInfo['list'][0]['id']
-            ?? null;
+        $locationIdValid = false;
         $mapData = [];
         foreach ($orgInfo['list'] ?? [] as $org) {
+            if ($org['id'] === $locationId) {
+                $locationIdValid = true;
+            }
             if ($coordinates = $org['address']['coordinates'] ?? null) {
                 if (($lat = $coordinates['lat'] ?? null) && ($lon = $coordinates['lon'] ?? null)) {
                     $mapData[$org['id']] = [
@@ -318,6 +318,13 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 }
             }
         }
+        if (!$locationIdValid) {
+            $locationId = null;
+        }
+        $defaultLocationId = $locationId
+            ?? $orgInfo['consortium']['finna']['servicePoint']
+            ?? $orgInfo['list'][0]['id']
+            ?? null;
         return compact('consortiumInfo', 'locationSelection', 'locationCount', 'defaultLocationId', 'mapData');
     }
 
