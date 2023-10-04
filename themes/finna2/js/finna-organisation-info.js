@@ -3,6 +3,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
   let params = null;
   let container = null;
   let detailsEl = null;
+  let mapContainer = null;
   let map = null;
 
   let mapTileUrl = 'https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png';
@@ -74,11 +75,11 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    */
   function initMap(data)
   {
-    if (data.mapData.length === 0) {
+    if (Object.keys(data.mapData).length === 0) {
       return;
     }
 
-    let mapContainer = container.querySelector('.js-location-info-map');
+    mapContainer = container.querySelector('.js-location-info-map');
     if (!mapContainer) {
       return;
     }
@@ -133,6 +134,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
     let showAllEl = mapContainer.querySelector('.js-map-controls .js-show-all');
     if (showAllEl) {
+      showAllEl.removeAttribute('disabled');
       showAllEl.addEventListener('click', (ev) => {
         map.resize();
         map.reset();
@@ -329,6 +331,12 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       infoEl.classList.toggle('hidden', null === locationId);
     }
 
+    if (mapContainer) {
+      let showLocationEl = mapContainer.querySelector('.js-map-controls .js-show-location');
+      if (showLocationEl) {
+        showLocationEl.toggleAttribute('disabled', null === locationId);
+      }
+    }
     if (map) {
       map.resize();
     }

@@ -63,15 +63,11 @@
       </template>
 
       <div class="location-map">
-        <div class="map-buttons">
-          <div class="map-ui map-control-buttons" aria-hidden="true">
-            <?php if (count($orgInfo['list'] ?? []) > 1): ?>
-              <span class="js-map-controls">
-                <span class="js-show-location"><a href="#"><?=$this->transEsc('zoom_center')?></a></span>
-                <span class="js-show-all"><a href="#"><?=$this->transEsc('organisation_info_page_map_show_all')?></a></span>
-              </span>
-            <?php endif; ?>
-          </div>
+        <div class="map-ui js-map-controls" aria-hidden="true">
+          <?php if (count($orgInfo['list'] ?? []) > 1): ?>
+            <button class="btn-link js-show-location" type="button" disabled><?=$this->transEsc('zoom_center')?></button>
+            <button class="btn-link js-show-all" type="button"><?=$this->transEsc('organisation_info_page_map_show_all')?></button>
+          <?php endif; ?>
         </div>
         <div class="map-ui map" aria-hidden="true">
           <div id="location_map_canvas" class="js-map-widget"></div>

@@ -382,43 +382,10 @@
                     }
                 }
             }
-            .map-control-buttons {
-                margin-top: 5px;
-                margin-bottom: 15px;
-                width: 100%;
-                @media (min-width: @screen-sm-min) {
-                    margin-top: 19px;
-                }
-                @media (max-width: @screen-xs-max) {
-                    margin-bottom: 3px;
-                    margin-left: 10px;
-                    padding-bottom: 10px;
-                }
-                .js-map-controls {
-                    float: right;
-                    a {
-                        color: @gray;
-                        font-weight: 300;
-                        text-decoration: underline;
-                        margin-right: 5px;
-                    }
-                    @media (max-width: @screen-md-max) {
-                        float: none;
-                    }
-                }
-                span {
-                    color: @link-color;
-                    &:hover {
-                        cursor: pointer;
-                    }
-                }
-                .marker {
-                    font-size: 1.5em;
-                    margin-left: 8px;
-                    margin-right: 3px;
-                    @media (max-width: @screen-xs-max) {
-                        margin-left: 5px;
-                    }
+            .js-map-controls {
+                text-align: right;
+                button[disabled] {
+                    color: @gray;
                 }
             }
 
