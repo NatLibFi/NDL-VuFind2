@@ -82,6 +82,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Country of Producing Entity',
             'Creator Characteristics',
             'DOI',
+            'Dewey Classification',
             'Dissertation Note',
             'Education Programs',
             'Event Notice',

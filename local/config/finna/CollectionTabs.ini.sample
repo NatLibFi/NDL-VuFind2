@@ -4,7 +4,7 @@
 [VuFind\RecordDriver\AbstractBase]
 tabs[CollectionList] = CollectionList
 tabs[HierarchyTree] = CollectionHierarchyTree
-tabs[ExternalData] = ExternalData
+tabs[Holdings] = HoldingsArchive
 tabs[UserComments] = UserComments
 tabs[Details] = StaffViewArray
 defaultTab = null
@@ -12,7 +12,7 @@ defaultTab = null
 [Finna\RecordDriver\R2Ead3]
 tabs[R2CollectionList] = R2CollectionList
 tabs[HierarchyTree] = CollectionHierarchyTree
-tabs[ExternalData] = ExternalData
+tabs[Holdings] = HoldingsArchive
 tabs[UserComments] = UserComments
 tabs[Details] = StaffViewArray
 defaultTab = null

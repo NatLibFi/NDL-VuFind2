@@ -58,6 +58,7 @@ tabs[Details] = StaffViewMARC
 defaultTab = null
 
 [Finna\RecordDriver\SolrEad]
+tabs[Holdings] = HoldingsArchive
 tabs[HierarchyTree] = HierarchyTree
 tabs[UserComments] = UserComments
 tabs[Reviews] = Reviews
@@ -66,8 +67,7 @@ tabs[Details] = StaffViewArray
 defaultTab = null
 
 [Finna\RecordDriver\SolrEad3]
-tabs[Holdings] = HoldingsILS
-tabs[ExternalData] = ExternalData
+tabs[Holdings] = HoldingsArchive
 tabs[HierarchyTree] = HierarchyTree
 tabs[UserComments] = UserComments
 tabs[Reviews] = Reviews

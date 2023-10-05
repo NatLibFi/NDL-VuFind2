@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrEad3 External data tab.
+ * Holdings archive data tab.
  *
  * PHP version 8
  *
@@ -23,38 +23,52 @@
  * @category VuFind
  * @package  RecordTabs
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
  */
 
 namespace Finna\RecordTab;
 
+use VuFind\View\Helper\Root\OpenUrl;
+use VuFind\View\Helper\Root\Record;
+
 /**
- * SolrEad3 External data tab.
+ * Holdings archive data tab.
  *
  * @category VuFind
  * @package  RecordTabs
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
  */
-class ExternalData extends \VuFind\RecordTab\AbstractBase
+class HoldingsArchive extends \VuFind\RecordTab\AbstractBase
 {
     /**
-     * Is this tab enabled?
+     * OpenUrl helper
      *
-     * @var bool
+     * @var OpenUrl
      */
-    protected $enabled;
+    protected $openUrlHelper;
+
+    /**
+     * OpenUrl helper
+     *
+     * @var Record
+     */
+    protected $recordHelper;
 
     /**
      * Constructor
      *
-     * @param bool $enabled is this tab enabled?
+     * @param Record  $recordHelper  Record helper
+     * @param OpenUrl $openUrlHelper OpenUrl helper
      */
-    public function __construct($enabled = true)
+    public function __construct(Record $recordHelper, OpenUrl $openUrlHelper)
     {
-        $this->enabled = $enabled;
+        $this->openUrlHelper = $openUrlHelper;
+        $this->recordHelper = $recordHelper;
     }
 
     /**
@@ -64,11 +78,23 @@ class ExternalData extends \VuFind\RecordTab\AbstractBase
      */
     public function isActive()
     {
-        $data = $this->driver->tryMethod('getExternalData');
-        if (empty($data['items'])) {
-            $this->enabled = false;
-        }
-        return $this->enabled;
+        $driver = $this->getRecordDriver();
+        $openUrlActive = ($this->openUrlHelper)($driver, 'holdings');
+        $hasLinks = ($this->recordHelper)($driver)->getLinkDetails($openUrlActive);
+        return $this->displayManifestationSection()
+            || $driver->tryMethod('archiveRequestAllowed')
+            || $hasLinks;
+    }
+
+    /**
+     * Display manifestation information?
+     *
+     * @return bool
+     */
+    public function displayManifestationSection()
+    {
+        $data = $this->driver->tryMethod('getManifestationData');
+        return !empty($data['items']);
     }
 
     /**
@@ -78,6 +104,6 @@ class ExternalData extends \VuFind\RecordTab\AbstractBase
      */
     public function getDescription()
     {
-        return 'external_data';
+        return 'holdings_archive';
     }
 }

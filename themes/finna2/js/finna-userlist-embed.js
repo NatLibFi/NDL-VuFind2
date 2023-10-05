@@ -7,7 +7,7 @@ finna.userListEmbed = (function userListEmbed() {
         embed.data('inited', '1');
 
         var showMore = embed.find('.show-more');
-        var spinner = embed.find('.fa-spinner');
+        var spinner = embed.find('.spinner-icon');
         embed.find('.btn.load-more').on('click', function initLoadMore() {
           spinner.removeClass('hide').show();
 

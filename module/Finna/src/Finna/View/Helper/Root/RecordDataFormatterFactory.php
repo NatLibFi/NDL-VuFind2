@@ -672,6 +672,14 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             ]
         );
         $setTemplateLine(
+            'Dewey Classification',
+            'getDeweyClassifications',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordClassifications'],
+            ]
+        );
+        $setTemplateLine(
             'lido_editions',
             'getEditions',
             'data-escapeHtml.phtml',
