@@ -468,6 +468,10 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
         } else {
           response.json().then((result) => {
             selectedLocationEl.textContent = result.data.locationName;
+            let ariaEl = container.querySelector('.js-location-dropdown .js-aria');
+            if (ariaEl) {
+              ariaEl.setAttribute('aria-live', 'polite');
+            }
             openStatusEl.innerHTML = result.data.openStatus;
             scheduleEl.innerHTML = result.data.schedule;
             if (result.data.details) {
