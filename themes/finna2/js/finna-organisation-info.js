@@ -212,7 +212,12 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
             console.error('Week navi, times or loading indicator not found');
             return;
           }
-          let weekNumEl = weekNaviEl.querySelector('.week-text .num');
+          let weekTextEl = weekNaviEl.querySelector('.js-week-text');
+          if (!weekTextEl) {
+            console.error('Week text not found');
+            return;
+          }
+          let weekNumEl = weekTextEl.querySelector('.js-num');
           if (!weekNumEl) {
             console.error('Week num not found');
             return;
@@ -244,6 +249,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
                 response.json().then((result) => {
                   weekNaviEl.dataset.date = newIsoDate;
                   weekNumEl.textContent = result.data.weekNum;
+                  weekTextEl.setAttribute('aria-live', 'polite');
                   let prevBtnEl = weekNaviEl.querySelector('.js-week-navi-btn.prev-week');
                   if (prevBtnEl) {
                     prevBtnEl.disabled = result.data.currentWeek;
