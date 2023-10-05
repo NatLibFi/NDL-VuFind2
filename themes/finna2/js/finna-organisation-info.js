@@ -364,6 +364,9 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
                 notificationEl.classList.remove('hidden');
               }
               resetSearch();
+              if (map) {
+                map.reset();
+              }
               return;
             }
             detailsEl.innerHTML = result.data.details;

@@ -24,7 +24,7 @@
               <option value="<?=$this->escapeHtmlAttr($item['id'])?>"><?=$this->escapeHtml($name)?></option>
             <?php endforeach; ?>
           </select>
-          <div class="js-location-unavailable hidden"><?=$this->transEsc('organisation_info_location_not_available')?></div>
+          <div class="alert alert-danger js-location-unavailable hidden"><?=$this->transEsc('organisation_info_location_not_available')?></div>
         </form>
       </div>
     <?php endif; ?>
