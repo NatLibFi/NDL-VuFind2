@@ -182,7 +182,8 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       const placeholder = select.querySelector('option').textContent;
       $(select).select2({
         placeholder: placeholder,
-        allowClear: true
+        allowClear: true,
+        width: '100%'
       }).on('select2:select', function updateHash(e) {
         updateURLHash(encodeURIComponent(e.params.data.id || 'undefined'));
       });
