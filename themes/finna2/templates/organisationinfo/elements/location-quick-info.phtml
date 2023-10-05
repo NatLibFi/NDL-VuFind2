@@ -5,7 +5,9 @@
   };
 ?>
 <div class="location-basic-info">
-  <h3 class="location-title"><?=$this->escapeHtml($orgInfo['name'])?></h3>
+  <h3 class="location-title" aria-atomic="true" aria-live="polite">
+    <span class="sr-only"><?=$this->transEsc('organisation_info_selected_service_point')?></span> <?=$this->escapeHtml($orgInfo['name'])?>
+  </h3>
   <div>
     <p>
       <span class="location-links address info-element"><?=$this->escapeHtml($orgInfo['address']['displayAddress'])?></span>
