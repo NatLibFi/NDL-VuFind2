@@ -77,7 +77,10 @@ finna.organisationMap = (function finnaOrganisationMap() {
 
       var marker = L.marker(
         [obj.lat, obj.lon],
-        {icon: icon}
+        {
+          icon: icon,
+          keyboard: false
+        }
       ).addTo(map);
       marker.on('mouseover', function onMouseOverMarker(ev) {
         if (marker === selectedMarker) {
