@@ -85,8 +85,10 @@ class OrganisationInfoController extends \VuFind\Controller\AbstractBase
 
         $consortiumInfo = $config->OrganisationPage->consortiumInfo ?? false;
 
-        $title = $config->OrganisationPage->title ?? 'organisation_info_page_title';
-        $title = $this->translate($title, ['%%organisation%%' => $organisation]);
+        $title = $this->translate(
+            $config->OrganisationPage->title ?? 'organisation_info_page_title',
+            ['%%organisation%%' => $organisation]
+        );
 
         $facetConfig = $this->serviceLocator
             ->get(\VuFind\Config\PluginManager::class)->get('facets');

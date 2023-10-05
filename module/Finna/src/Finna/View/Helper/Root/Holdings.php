@@ -30,6 +30,8 @@
 
 namespace Finna\View\Helper\Root;
 
+use function strlen;
+
 /**
  * Holdings Settings Helper
  *
@@ -147,7 +149,7 @@ class Holdings extends \VuFind\View\Helper\Root\Holdings
         $callnumbers = [];
         $callNos = [];
         foreach ($items as $item) {
-            if (isset($item['callnumber']) && '' !== $item['callnumber']) {
+            if (isset($item['callnumber']) && strlen($item['callnumber']) > 0) {
                 $callNos[] = $item['callnumber'];
             }
         }

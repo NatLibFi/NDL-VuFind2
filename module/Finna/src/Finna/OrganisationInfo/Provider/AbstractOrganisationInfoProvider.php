@@ -191,10 +191,9 @@ abstract class AbstractOrganisationInfoProvider implements
             ->getOptions()->getCacheDir();
 
         $localFile = "$cacheDir/" . md5($url) . '.json';
-        $maxAge = $this->config->General->cachetime ?? 10;
 
         $response = null;
-        if ($maxAge) {
+        if ($maxAge = $this->config->General->cachetime ?? 10) {
             if (
                 is_readable($localFile)
                 && time() - filemtime($localFile) < $maxAge * 60
@@ -210,15 +209,7 @@ abstract class AbstractOrganisationInfoProvider implements
             );
             $client->setOptions(['useragent' => 'VuFind']);
             $result = $client->send();
-            if ($result->isSuccess()) {
-                if ($result->getStatusCode() != 200) {
-                    $this->logError(
-                        'Error querying organisation info, response code '
-                        . $result->getStatusCode() . ", url: $url"
-                    );
-                    return null;
-                }
-            } else {
+            if (!$result->isSuccess() || $result->getStatusCode() !== 200) {
                 $this->logError(
                     'Error querying organisation info: '
                     . $result->getStatusCode() . ': ' . $result->getReasonPhrase()
@@ -234,6 +225,7 @@ abstract class AbstractOrganisationInfoProvider implements
         }
 
         if (!$response) {
+            $this->logError("Response empty (url: $url)");
             return null;
         }
 
@@ -453,8 +445,7 @@ abstract class AbstractOrganisationInfoProvider implements
                     ],
                 ];
             } else {
-                $accessibility[$heading]['statements'][]
-                    = $this->translate(['OrganisationInfo', $sentence]);
+                $accessibility[$heading]['statements'][] = $sentence;
             }
         }
         $result['accessibilityInfo'] = array_values($accessibility);
