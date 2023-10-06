@@ -36,8 +36,8 @@
   <?php endif; ?>
 
   <div class="location-information">
-    <div class="js-location-loader hidden">
-      <?=$this->icon('spinner') ?> <span aria-live="polite"><?=$this->transEsc('loading_ellipsis')?></span>
+    <div role="status" class="js-location-loader hidden">
+      <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
     </div>
     <div class="js-location-quick-information info-element hidden"></div>
 

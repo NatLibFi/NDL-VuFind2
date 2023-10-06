@@ -11,7 +11,9 @@
     <button type="button" class="btn-link js-week-navi-btn next-week" data-dir="+1" aria-label="<?= $this->transEscAttr('organisation_info_next_week')?>">
       <?=$this->icon('week-next') ?>
     </button>
-    <span class="js-loader hidden"><?=$this->icon('spinner') ?></span>
+    <span status="role" class="js-loader hidden">
+      <?=$this->icon('spinner') ?><span class="sr-only"> <?=$this->transEsc('loading_ellipsis')?></span>
+    </span>
   </div>
 <?php endif; ?>
 <!-- START of: finna - organisationinfo/elements/location/schedule-week-navi.phtml -->

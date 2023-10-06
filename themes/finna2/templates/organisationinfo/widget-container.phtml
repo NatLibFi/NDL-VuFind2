@@ -15,7 +15,12 @@
 ?>
 <div class="organisation-info js-organisation-info-widget">
   <div>
-    <h2><?=$this->transEsc('organisation_info_title')?> <span class="js-loader hidden"><?=$this->icon('spinner') ?></span></h2>
+    <h2>
+      <?=$this->transEsc('organisation_info_title')?>
+      <span role="status" class="js-loader hidden">
+        <?=$this->icon('spinner') ?><span class="sr-only"> <?=$this->transEsc('loading_ellipsis')?></span>
+      </span>
+    </h2>
   </div>
   <div class="js-content"></div>
 </div>

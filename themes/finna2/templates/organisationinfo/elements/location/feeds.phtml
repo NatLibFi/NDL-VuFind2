@@ -12,6 +12,6 @@
     );
   ?>
   <finna-feed<?=$attrs?>>
-    <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
+    <span role="status"><?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?></span>
   </finna-feed>
 <?php endforeach; ?>
