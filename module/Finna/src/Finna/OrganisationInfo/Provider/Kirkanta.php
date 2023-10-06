@@ -50,14 +50,14 @@ use function in_array;
 class Kirkanta extends AbstractOrganisationInfoProvider
 {
     /**
-     * Check if a consortium is found in organisation info and return basic information
+     * Check if a consortium is found in organisation info and return basic information (provider-specific part)
      *
      * @param string $language Language
      * @param string $id       Parent organisation ID
      *
-     * @return array
+     * @return array Associative array with 'id', 'logo' and 'name'
      */
-    public function lookup(string $language, string $id): array
+    protected function doLookup(string $language, string $id): array
     {
         $params = [
             'finna:id' => $id,
@@ -76,14 +76,13 @@ class Kirkanta extends AbstractOrganisationInfoProvider
                 break;
             }
         }
-        $logo = $this->proxifyImageUrl($logo);
         $name = '';
 
         return compact('id', 'logo', 'name');
     }
 
     /**
-     * Get consortium information (includes list of locations)
+     * Get consortium information (includes list of locations) (provider-specific part)
      *
      * @param string $language       Language
      * @param string $id             Parent organisation ID
@@ -91,7 +90,7 @@ class Kirkanta extends AbstractOrganisationInfoProvider
      *
      * @return array
      */
-    public function getConsortiumInfo(string $language, string $id, array $locationFilter = []): array
+    protected function doGetConsortiumInfo(string $language, string $id, array $locationFilter = []): array
     {
         $params = [
             'finna:id' => $id,
@@ -130,11 +129,9 @@ class Kirkanta extends AbstractOrganisationInfoProvider
             $consortium['homepageLabel'] = $parts['host'] ?? $consortium['homepage'];
         }
         if (!empty($response['logo'])) {
-            $consortium['logo']['small'] = $this->proxifyImageUrl(
-                $response['logo']['small']['url']
+            $consortium['logo']['small'] = $response['logo']['small']['url']
                 ?? $response['logo']['medium']['url']
-                ?? ''
-            );
+                ?? '';
         }
 
         // Organisation list for a consortium with schedules for today
@@ -169,7 +166,7 @@ class Kirkanta extends AbstractOrganisationInfoProvider
     }
 
     /**
-     * Get location details
+     * Get location details (provider-specific part)
      *
      * @param string  $language   Language
      * @param string  $id         Parent organisation ID
@@ -179,7 +176,7 @@ class Kirkanta extends AbstractOrganisationInfoProvider
      *
      * @return array
      */
-    public function getDetails(
+    protected function doGetDetails(
         string $language,
         string $id,
         string $locationId,
@@ -225,7 +222,7 @@ class Kirkanta extends AbstractOrganisationInfoProvider
         $result['periodEnd'] = $endDate;
         $result['scheduleDescriptions'] = $scheduleDescriptions;
 
-        return $this->processDetails($result);
+        return $result;
     }
 
     /**
@@ -545,9 +542,7 @@ class Kirkanta extends AbstractOrganisationInfoProvider
 
         $pics = [];
         foreach ($response['pictures'] ?? [] as $pic) {
-            $medium = $pic['files']['medium'];
-            $medium['url'] = $this->proxifyImageUrl($medium['url']);
-            $pics[] = $medium;
+            $pics[] = $pic['files']['medium'];
         }
         $result['pictures'] = $pics;
 

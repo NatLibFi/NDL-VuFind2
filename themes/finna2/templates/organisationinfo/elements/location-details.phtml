@@ -9,6 +9,8 @@
           <img class="building-image" src="<?=$this->escapeHtmlAttr($url)?>" alt="">
           <?php $hasImages = true; ?>
         <?php endif; ?>
+        <?php
+        /* Disable extra images for now, needs a more button or something
         <?php if ('museum' === $orgInfo['type']): ?>
           <?php if ($url = $orgInfo['pictures'][1]['url'] ?? null): ?>
             <img class="extra-image" src="<?=$this->escapeHtmlAttr($url)?>" alt="">
@@ -17,6 +19,7 @@
             <?php endif; ?>
           <?php endif; ?>
         <?php endif; ?>
+        */ ?>
         <?php if ($hasImages): ?>
           <p class="building-name info-element"><?=$this->escapeHtml($orgInfo['name'])?></p>
         <?php endif; ?>

@@ -49,14 +49,14 @@ use function strlen;
 class MuseotFi extends AbstractOrganisationInfoProvider
 {
     /**
-     * Check if a consortium is found in organisation info and return basic information
+     * Check if a consortium is found in organisation info and return basic information (provider-specific part)
      *
      * @param string $language Language
      * @param string $id       Parent organisation ID
      *
-     * @return array
+     * @return array Associative array with 'id', 'logo' and 'name'
      */
-    public function lookup(string $language, string $id): array
+    protected function doLookup(string $language, string $id): array
     {
         $response = $this->fetchData($id);
 
@@ -75,7 +75,7 @@ class MuseotFi extends AbstractOrganisationInfoProvider
     }
 
     /**
-     * Get consortium information (includes list of locations)
+     * Get consortium information (includes list of locations) (provider-specific part)
      *
      * @param string $language       Language
      * @param string $id             Parent organisation ID
@@ -83,13 +83,13 @@ class MuseotFi extends AbstractOrganisationInfoProvider
      *
      * @return array
      */
-    public function getConsortiumInfo(string $language, string $id, array $locationFilter = []): array
+    protected function doGetConsortiumInfo(string $language, string $id, array $locationFilter = []): array
     {
         return $this->getLocationInfo($language, $id, true);
     }
 
     /**
-     * Get location details
+     * Get location details (provider-specific part)
      *
      * @param string  $language   Language
      * @param string  $id         Parent organisation ID
@@ -99,7 +99,7 @@ class MuseotFi extends AbstractOrganisationInfoProvider
      *
      * @return array
      */
-    public function getDetails(
+    protected function doGetDetails(
         string $language,
         string $id,
         string $locationId,
@@ -228,7 +228,7 @@ class MuseotFi extends AbstractOrganisationInfoProvider
         ];
 
         if (!$consortiumInfo) {
-            return $this->processDetails($details);
+            return $details;
         }
 
         // Consortium info

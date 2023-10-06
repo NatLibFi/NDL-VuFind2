@@ -144,9 +144,14 @@ abstract class AbstractOrganisationInfoProvider implements
      * @param string $language Language
      * @param string $id       Parent organisation ID
      *
-     * @return array
+     * @return array Associative array with 'id', 'logo' and 'name'
      */
-    abstract public function lookup(string $language, string $id): array;
+    public function lookup(string $language, string $id): array
+    {
+        $result = $this->doLookup($language, $id);
+        $result['logo'] = $this->proxifyImageUrl($result['logo']);
+        return $result;
+    }
 
     /**
      * Get consortium information (includes list of locations)
@@ -157,7 +162,14 @@ abstract class AbstractOrganisationInfoProvider implements
      *
      * @return array
      */
-    abstract public function getConsortiumInfo(string $language, string $id, array $locationFilter = []): array;
+    public function getConsortiumInfo(string $language, string $id, array $locationFilter = []): array
+    {
+        $result = $this->doGetConsortiumInfo($language, $id, $locationFilter);
+        if (isset($result['consortium']['logo']['small'])) {
+            $result['consortium']['logo']['small'] = $this->proxifyImageUrl($result['consortium']['logo']['small']);
+        }
+        return $result;
+    }
 
     /**
      * Get location details
@@ -170,7 +182,50 @@ abstract class AbstractOrganisationInfoProvider implements
      *
      * @return array
      */
-    abstract public function getDetails(
+    public function getDetails(
+        string $language,
+        string $id,
+        string $locationId,
+        ?string $startDate = null,
+        ?string $endDate = null
+    ): array {
+        $result = $this->doGetDetails($language, $id, $locationId, $startDate, $endDate);
+        return $this->processDetails($result);
+    }
+
+    /**
+     * Check if a consortium is found in organisation info and return basic information (provider-specific part)
+     *
+     * @param string $language Language
+     * @param string $id       Parent organisation ID
+     *
+     * @return array Associative array with 'id', 'logo' and 'name'
+     */
+    abstract protected function doLookup(string $language, string $id): array;
+
+    /**
+     * Get consortium information (includes list of locations) (provider-specific part)
+     *
+     * @param string $language       Language
+     * @param string $id             Parent organisation ID
+     * @param array  $locationFilter Optional list of locations to include
+     *
+     * @return array
+     */
+    abstract protected function doGetConsortiumInfo(string $language, string $id, array $locationFilter = []): array;
+
+    /**
+     * Get location details (provider-specific part)
+     *
+     * @param string  $language   Language
+     * @param string  $id         Parent organisation ID
+     * @param string  $locationId Location ID
+     * @param ?string $startDate  Start date (YYYY-MM-DD) of opening times (default is Monday of current week)
+     * @param ?string $endDate    End date (YYYY-MM-DD) of opening times (default is Sunday of start date week)
+     *
+     * @return array
+     */
+    abstract protected function doGetDetails(
         string $language,
         string $id,
         string $locationId,
@@ -344,6 +399,14 @@ abstract class AbstractOrganisationInfoProvider implements
             $displayAddress .= " $city";
         }
         $result['address']['displayAddress'] = $displayAddress;
+
+        if (isset($result['pictures'])) {
+            foreach ($result['pictures'] as &$picture) {
+                $picture['url'] = $this->proxifyImageUrl($picture['url']);
+            }
+            // Unset reference:
+            unset($picture);
+        }
 
         return $result;
     }
