@@ -146,13 +146,11 @@ class Kirkanta extends AbstractProvider
 
         if (!empty($locationFilter)) {
             foreach ($locationFilter as $location) {
-                if ('' !== $location && !ctype_digit((string)$location)) {
+                if (!ctype_digit((string)$location)) {
                     throw new \Exception('Invalid location in filter: ' . $location);
                 }
             }
-            if (($locationList = implode(',', $location)) != '') {
-                $params['id'] = $locationList;
-            }
+            $params['id'] = implode(',', $locationFilter);
         }
 
         $servicePointResponse = $this->fetchData('service_point', $params);
