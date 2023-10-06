@@ -90,9 +90,6 @@ class OrganisationInfoController extends \VuFind\Controller\AbstractBase
             ['%%organisation%%' => $organisation]
         );
 
-        $facetConfig = $this->serviceLocator
-            ->get(\VuFind\Config\PluginManager::class)->get('facets');
-
         return $this->createViewModel(
             compact('title', 'id', 'buildings', 'consortiumInfo', 'sectors')
         );

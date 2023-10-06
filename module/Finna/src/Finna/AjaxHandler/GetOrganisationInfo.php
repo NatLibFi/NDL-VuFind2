@@ -140,6 +140,9 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         $element = $params->fromQuery('element');
         $sectors = array_filter((array)$params->fromQuery('sectors', []));
         $buildings = array_filter((array)$params->fromQuery('buildings', []));
+        if (!($id = $params->fromQuery('id'))) {
+            return $this->handleError('getOrganisationInfo: missing id');
+        }
 
         // Back-compatibility; allow e.g. lib/pub:
         $sectors = array_map(
@@ -152,9 +155,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
 
         switch ($element) {
             case 'info-location-selection':
-                if (!($id = $params->fromQuery('id'))) {
-                    return $this->handleError('getOrganisationInfo: missing id');
-                }
                 $result = $this->getInfoAndLocationSelection(
                     $id,
                     $this->getLocationIdFromCookie($id),
@@ -165,9 +165,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 break;
 
             case 'location-details':
-                if (!($id = $params->fromQuery('id'))) {
-                    return $this->handleError('getOrganisationInfo: missing id');
-                }
                 if (!($locationId = $params->fromQuery('locationId'))) {
                     if (!($locationId = $this->getLocationIdFromCookie($id))) {
                         return $this->handleError('getOrganisationInfo: missing location id');
@@ -179,9 +176,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 break;
 
             case 'schedule':
-                if (!($id = $params->fromQuery('id'))) {
-                    return $this->handleError('getOrganisationInfo: missing id');
-                }
                 if (!($locationId = $params->fromQuery('locationId'))) {
                     return $this->handleError('getOrganisationInfo: missing location id');
                 }
@@ -192,9 +186,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 break;
 
             case 'widget':
-                if (!($id = $params->fromQuery('id'))) {
-                    return $this->handleError('getOrganisationInfo: missing id');
-                }
                 if (!($locationId = $params->fromQuery('locationId') ?: null)) {
                     $locationId = $this->getLocationIdFromCookie($id);
                 } else {
@@ -210,9 +201,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 break;
 
             case 'widget-location':
-                if (!($id = $params->fromQuery('id'))) {
-                    return $this->handleError('getOrganisationInfo: missing id');
-                }
                 if (!($locationId = $params->fromQuery('locationId') ?: null)) {
                     return $this->handleError('getOrganisationInfo: missing location id');
                 }
@@ -228,9 +216,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 break;
 
             case 'organisation-page-link':
-                if (!($id = $params->fromQuery('id'))) {
-                    return $this->handleError('getOrganisationInfo: missing id');
-                }
                 $result = $this->getOrganisationPageLink(
                     $id,
                     $sectors,
@@ -238,7 +223,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 );
                 break;
             default:
-                return $this->handleError('getOrganisationInfo: missing element');
+                return $this->handleError('getOrganisationInfo: invalid element (' . ($element ?? '(none)') . ')');
         }
 
         return $this->formatResponse($result);

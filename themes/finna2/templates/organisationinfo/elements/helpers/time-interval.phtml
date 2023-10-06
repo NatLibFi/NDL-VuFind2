@@ -3,12 +3,12 @@
 $openingTime = $this->dateTime()->convertToDisplayTime('U', $opens);
 $closingTime = $this->dateTime()->convertToDisplayTime('U', $closes);
 if (!$minutes) {
-if (preg_match('/^(\d+)/', $openingTime, $matches)) {
-    $openingTime = $matches[1];
-}
-if (preg_match('/^(\d+)/', $closingTime, $matches)) {
-    $closingTime = $matches[1];
-}
+    if (preg_match('/^(\d+)/', $openingTime, $matches)) {
+        $openingTime = $matches[1];
+    }
+    if (preg_match('/^(\d+)/', $closingTime, $matches)) {
+        $closingTime = $matches[1];
+    }
 }
 // Avoid extra whitespace by concatenating the results:
 echo '<span class="times"><span class="opens">'
