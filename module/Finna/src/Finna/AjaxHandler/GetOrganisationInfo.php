@@ -139,7 +139,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
 
         $element = $params->fromQuery('element');
         $sectors = array_filter((array)$params->fromQuery('sectors', []));
-        $buildings = array_filter((array)$params->fromQuery('buildings', []));
+        $buildings = array_filter(explode(',', $params->fromQuery('buildings', '')));
         if (!($id = $params->fromQuery('id'))) {
             return $this->handleError('getOrganisationInfo: missing id');
         }
