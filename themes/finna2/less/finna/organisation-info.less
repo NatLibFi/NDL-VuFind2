@@ -269,12 +269,14 @@
 
         .js-location-loader {
             margin-top: 1rem;
+            // Make sure displaying the spinner doesn't shift other elements around:
+            position: absolute;
         }
 
         .js-location-quick-information {
             margin-top: 20px;
             margin-bottom: 20px;
-            flex: 1 1 70%;
+            flex: 1 1 50%;
 
             .location-description {
                 margin-top: 10px;
