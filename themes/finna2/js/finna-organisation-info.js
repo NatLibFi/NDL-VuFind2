@@ -38,7 +38,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     if (window.location.hash !== '') {
       return window.location.hash.replace('#', '');
     }
-    return false;
+    return '';
   }
 
   // Forward declaration
@@ -122,7 +122,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     if (showLocationEl) {
       showLocationEl.addEventListener('click', (ev) => {
         let id = getLocationFromURLHash();
-        if (id in data.mapData) {
+        if (id && id in data.mapData) {
           map.reset();
           map.selectMarker(id);
         }
@@ -142,30 +142,31 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     }
 
     for (const id in data.mapData) {
-      if (Object.hasOwn(data.mapData, id)) {
-        // Map data (info bubble, icon)
-        let locationData = data.mapData[id];
-        let bubble = mapBubbleTemplate.cloneNode(true);
-        let nameEl = bubble.content.querySelector('.js-name');
-        if (nameEl) {
-          nameEl.textContent = locationData.name;
-        }
-        let addressEl = bubble.content.querySelector('.js-address');
-        if (addressEl) {
-          addressEl.textContent = '';
-          let streetEl = document.createElement('span');
-          streetEl.textContent = locationData.address.street;
-          addressEl.append(streetEl);
-          let cityEl = document.createElement('span');
-          cityEl.textContent = locationData.address.zipcode + ' ' + locationData.address.city;
-          addressEl.append(document.createElement('br'));
-          addressEl.append(cityEl);
-        }
-
-        data.mapData[id].map = {
-          info: bubble.innerHTML
-        };
+      if (!Object.hasOwn(data.mapData, id)) {
+        continue;
       }
+      // Map data (info bubble, icon)
+      let locationData = data.mapData[id];
+      let bubble = mapBubbleTemplate.cloneNode(true);
+      let nameEl = bubble.content.querySelector('.js-name');
+      if (nameEl) {
+        nameEl.textContent = locationData.name;
+      }
+      let addressEl = bubble.content.querySelector('.js-address');
+      if (addressEl) {
+        addressEl.textContent = '';
+        let streetEl = document.createElement('span');
+        streetEl.textContent = locationData.address.street;
+        addressEl.append(streetEl);
+        let cityEl = document.createElement('span');
+        cityEl.textContent = locationData.address.zipcode + ' ' + locationData.address.city;
+        addressEl.append(document.createElement('br'));
+        addressEl.append(cityEl);
+      }
+
+      data.mapData[id].map = {
+        info: bubble.innerHTML
+      };
     }
 
     map.draw(data.mapData);
@@ -198,68 +199,69 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    */
   function initWeekNavi(locationId) {
     container.querySelectorAll('.js-week-navi-btn').forEach((btn) => {
-      if (btn.dataset.dir) {
-        btn.addEventListener('click', () => {
-          let widgetContainer = btn.closest('.js-schedules');
-          if (!widgetContainer) {
-            console.error('Schedule widget not found');
-            return;
-          }
-          let indicatorEl = widgetContainer.querySelector('.js-loader');
-          let weekNaviEl = btn.closest('.js-week-navi');
-          let timesEl = widgetContainer.querySelector('.js-opening-times-week');
-          if (!indicatorEl || !weekNaviEl || !timesEl) {
-            console.error('Week navi, times or loading indicator not found');
-            return;
-          }
-          let weekTextEl = weekNaviEl.querySelector('.js-week-text');
-          if (!weekTextEl) {
-            console.error('Week text not found');
-            return;
-          }
-          let weekNumEl = weekTextEl.querySelector('.js-num');
-          if (!weekNumEl) {
-            console.error('Week num not found');
-            return;
-          }
-          let isoDate = weekNaviEl.dataset.date;
-          if (!isoDate) {
-            console.error('Current date not found');
-            return;
-          }
-          let date = new Date(isoDate);
-          let delta = parseInt(btn.dataset.dir) < 0 ? -7 : 7;
-          date.setDate(date.getDate() + delta);
-          let newIsoDate = date.toISOString().substring(0, 10);
-          indicatorEl.classList.remove('hidden');
-          fetch(VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
-            method: 'getOrganisationInfo',
-            element: 'schedule',
-            id: params.id,
-            locationId: locationId,
-            sectors: params.sectors || '',
-            buildings: params.buildings || '',
-            date: newIsoDate
-          }))
-            .then(response => {
-              indicatorEl.classList.add('hidden');
-              if (!response.ok) {
-                timesEl.textContent = VuFind.translate('error_occurred');
-              } else {
-                response.json().then((result) => {
-                  weekNaviEl.dataset.date = newIsoDate;
-                  weekNumEl.textContent = result.data.weekNum;
-                  weekTextEl.setAttribute('aria-live', 'polite');
-                  let prevBtnEl = weekNaviEl.querySelector('.js-week-navi-btn.prev-week');
-                  if (prevBtnEl) {
-                    prevBtnEl.disabled = result.data.currentWeek;
-                  }
-                  timesEl.outerHTML = result.data.widget;
-                });
-              }
-            });
-        });
+      if (!btn.dataset.dir) {
+        return;
       }
+      btn.addEventListener('click', () => {
+        let widgetContainer = btn.closest('.js-schedules');
+        if (!widgetContainer) {
+          console.error('Schedule widget not found');
+          return;
+        }
+        let indicatorEl = widgetContainer.querySelector('.js-loader');
+        let weekNaviEl = btn.closest('.js-week-navi');
+        let timesEl = widgetContainer.querySelector('.js-opening-times-week');
+        if (!indicatorEl || !weekNaviEl || !timesEl) {
+          console.error('Week navi, times or loading indicator not found');
+          return;
+        }
+        let weekTextEl = weekNaviEl.querySelector('.js-week-text');
+        if (!weekTextEl) {
+          console.error('Week text not found');
+          return;
+        }
+        let weekNumEl = weekTextEl.querySelector('.js-num');
+        if (!weekNumEl) {
+          console.error('Week num not found');
+          return;
+        }
+        let isoDate = weekNaviEl.dataset.date;
+        if (!isoDate) {
+          console.error('Current date not found');
+          return;
+        }
+        let date = new Date(isoDate);
+        let delta = parseInt(btn.dataset.dir) < 0 ? -7 : 7;
+        date.setDate(date.getDate() + delta);
+        let newIsoDate = date.toISOString().substring(0, 10);
+        indicatorEl.classList.remove('hidden');
+        fetch(VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
+          method: 'getOrganisationInfo',
+          element: 'schedule',
+          id: params.id,
+          locationId: locationId,
+          sectors: params.sectors || '',
+          buildings: params.buildings || '',
+          date: newIsoDate
+        }))
+          .then(response => {
+            indicatorEl.classList.add('hidden');
+            if (!response.ok) {
+              timesEl.textContent = VuFind.translate('error_occurred');
+            } else {
+              response.json().then((result) => {
+                weekNaviEl.dataset.date = newIsoDate;
+                weekNumEl.textContent = result.data.weekNum;
+                weekTextEl.setAttribute('aria-live', 'polite');
+                let prevBtnEl = weekNaviEl.querySelector('.js-week-navi-btn.prev-week');
+                if (prevBtnEl) {
+                  prevBtnEl.disabled = result.data.currentWeek;
+                }
+                timesEl.outerHTML = result.data.widget;
+              });
+            }
+          });
+      });
     });
   }
 
@@ -544,7 +546,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
             });
             contentEl.querySelectorAll('.js-location-dropdown li').forEach((el) => {
               el.addEventListener('keydown', (ev) => {
-                if (ev.keyCode === 13) {
+                if (ev.key === 'Enter') {
                   el.click();
                 }
               });

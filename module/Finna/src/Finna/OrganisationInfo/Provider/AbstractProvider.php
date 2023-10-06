@@ -346,6 +346,7 @@ abstract class AbstractProvider implements
     protected function processDetails(array $result): array
     {
         $isAlwaysClosed = true;
+        // empty() needed because we can't use null coalescing without breaking the reference:
         if (!empty($result['openTimes']['schedules'])) {
             foreach ($result['openTimes']['schedules'] as &$schedule) {
                 if (!$schedule['closed']) {

@@ -257,15 +257,16 @@ class Kirkanta extends AbstractProvider
         $mapUrls = ['routeUrl', 'mapUrl'];
         $mapUrlConf = [];
         foreach ($mapUrls as $url) {
-            if (isset($this->config->General[$url])) {
-                $base = $this->config->General[$url];
-                $conf = ['base' => $base];
-
-                if (preg_match_all('/{([^}]*)}/', $base, $matches)) {
-                    $conf['params'] = $matches[1];
-                }
-                $mapUrlConf[$url] = $conf;
+            if (!isset($this->config->General[$url])) {
+                continue;
             }
+            $base = $this->config->General[$url];
+            $conf = ['base' => $base];
+
+            if (preg_match_all('/{([^}]*)}/', $base, $matches)) {
+                $conf['params'] = $matches[1];
+            }
+            $mapUrlConf[$url] = $conf;
         }
 
         $result = [];
@@ -476,15 +477,16 @@ class Kirkanta extends AbstractProvider
         if (!empty($response['address'])) {
             $mapUrlConf = [];
             foreach ($mapUrls as $url) {
-                if (isset($this->config->General[$url])) {
-                    $base = $this->config->General[$url];
-                    $conf = ['base' => $base];
-
-                    if (preg_match_all('/{([^}]*)}/', $base, $matches)) {
-                        $conf['params'] = $matches[1];
-                    }
-                    $mapUrlConf[$url] = $conf;
+                if (!isset($this->config->General[$url])) {
+                    continue;
                 }
+                $base = $this->config->General[$url];
+                $conf = ['base' => $base];
+
+                if (preg_match_all('/{([^}]*)}/', $base, $matches)) {
+                    $conf['params'] = $matches[1];
+                }
+                $mapUrlConf[$url] = $conf;
             }
             foreach ($mapUrlConf as $map => $mapConf) {
                 $mapUrl = $mapConf['base'];
@@ -560,8 +562,7 @@ class Kirkanta extends AbstractProvider
         $result['allServices'] = [];
         if (!empty($response['services'])) {
             $servicesMap = [];
-            $servicesConf = $this->config->OpeningTimesWidget->services->toArray();
-            foreach ($servicesConf as $key => $ids) {
+            foreach ($this->config->OpeningTimesWidget?->services?->toArray() ?? [] as $key => $ids) {
                 $servicesMap[$key] = explode(',', $ids);
             }
             $services = $allServices = [];
@@ -571,10 +572,8 @@ class Kirkanta extends AbstractProvider
                         $services[] = $key;
                     }
                 }
-                $name = empty($service['name'])
-                    ? $service['standardName'] : $service['name'];
                 $data = [
-                    'name' => $name,
+                    'name' => ($service['name'] ?? null) ?: ($service['standardName'] ?? ''),
                     'shortDescription' => $service['shortDescription'] ?? '',
                     'description' => $service['description'] ?? '',
                 ];

@@ -163,7 +163,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                     (bool)$params->fromQuery('consortiumInfo', false)
                 );
                 break;
-
             case 'location-details':
                 if (!($locationId = $params->fromQuery('locationId'))) {
                     if (!($locationId = $this->getLocationIdFromCookie($id))) {
@@ -174,7 +173,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 }
                 $result = $this->getLocationDetails($id, $locationId, $sectors);
                 break;
-
             case 'schedule':
                 if (!($locationId = $params->fromQuery('locationId'))) {
                     return $this->handleError('getOrganisationInfo: missing location id');
@@ -184,7 +182,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 }
                 $result = $this->getSchedule($id, $locationId, $sectors, $startDate);
                 break;
-
             case 'widget':
                 if (!($locationId = $params->fromQuery('locationId') ?: null)) {
                     $locationId = $this->getLocationIdFromCookie($id);
@@ -199,7 +196,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                     (bool)$params->fromQuery('details', true),
                 );
                 break;
-
             case 'widget-location':
                 if (!($locationId = $params->fromQuery('locationId') ?: null)) {
                     return $this->handleError('getOrganisationInfo: missing location id');
@@ -214,7 +210,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                     (bool)$params->fromQuery('details', true),
                 );
                 break;
-
             case 'organisation-page-link':
                 $result = $this->getOrganisationPageLink(
                     $id,
