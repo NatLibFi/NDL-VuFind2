@@ -74,22 +74,13 @@ $config = [
                     ],
                 ],
             ],
+            // Should not have a bare route since the functionality returns a URL
+            // for the same host.
             'bazaarApiV1' => [
                 'type' => 'Laminas\Router\Http\Literal',
                 'verb' => 'get,post,options',
                 'options' => [
                     'route'    => '/api/v1/bazaar/browse',
-                    'defaults' => [
-                        'controller' => 'BazaarApi',
-                        'action'     => 'browse',
-                    ],
-                ],
-            ],
-            'bazaarApiBareV1' => [
-                'type' => 'Laminas\Router\Http\Literal',
-                'verb' => 'get,post,options',
-                'options' => [
-                    'route'    => '/v1/bazaar/browse',
                     'defaults' => [
                         'controller' => 'BazaarApi',
                         'action'     => 'browse',
