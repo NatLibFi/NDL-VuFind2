@@ -34,6 +34,7 @@ namespace Finna\OrganisationInfo;
 
 use Finna\OrganisationInfo\Provider\Kirkanta;
 use Finna\OrganisationInfo\Provider\MuseotFi;
+use Finna\OrganisationInfo\Provider\ProviderInterface;
 use Finna\Search\Solr\HierarchicalFacetHelper;
 use VuFind\Search\Results\PluginManager;
 
@@ -154,20 +155,7 @@ class OrganisationInfo implements
      */
     public function lookup(array $sectors, string $id): array
     {
-        if (!$sectors) {
-            $sectors = $this->getSectorsForOrganisation($id);
-        }
-        $orgInfo = [];
-        if (in_array('lib', $sectors)) {
-            $orgInfo = $this->kirkanta->lookup($this->getLanguage(), $id) ?: [];
-        }
-        if (in_array('mus', $sectors)) {
-            $orgInfo = array_merge(
-                $orgInfo,
-                $this->museotFi->lookup($this->getLanguage(), $id)
-            );
-        }
-        return $orgInfo;
+        return $this->getProvider($sectors, $id)->lookup($this->getLanguage(), $id);
     }
 
     /**
@@ -181,20 +169,7 @@ class OrganisationInfo implements
      */
     public function getConsortiumInfo(array $sectors, string $id, array $locationFilter = []): array
     {
-        if (!$sectors) {
-            $sectors = $this->getSectorsForOrganisation($id);
-        }
-        $orgInfo = [];
-        if (in_array('lib', $sectors)) {
-            $orgInfo = $this->kirkanta->getConsortiumInfo($this->getLanguage(), $id);
-        }
-        if (in_array('mus', $sectors)) {
-            $orgInfo = array_merge(
-                $orgInfo,
-                $this->museotFi->getConsortiumInfo($this->getLanguage(), $id)
-            );
-        }
-        return $orgInfo;
+        return $this->getProvider($sectors, $id)->getConsortiumInfo($this->getLanguage(), $id, $locationFilter);
     }
 
     /**
@@ -215,20 +190,8 @@ class OrganisationInfo implements
         ?string $startDate = null,
         ?string $endDate = null
     ): array {
-        if (!$sectors) {
-            $sectors = $this->getSectorsForOrganisation($id);
-        }
-        $orgInfo = [];
-        if (in_array('lib', $sectors)) {
-            $orgInfo = $this->kirkanta->getDetails($this->getLanguage(), $id, $locationId, $startDate, $endDate);
-        }
-        if (in_array('mus', $sectors)) {
-            $orgInfo = array_merge(
-                $orgInfo,
-                $this->museotFi->getDetails($this->getLanguage(), $id, $locationId, $startDate, $endDate)
-            );
-        }
-        return $orgInfo;
+        return $this->getProvider($sectors, $id)
+            ->getDetails($this->getLanguage(), $id, $locationId, $startDate, $endDate);
     }
 
     /**
@@ -427,5 +390,21 @@ class OrganisationInfo implements
         }
 
         return $language;
+    }
+
+    /**
+     * Get organisation info provider based on sector information
+     *
+     * @param array  $sectors Sectors for the organisation
+     * @param string $id      Parent organisation ID
+     *
+     * @return ProviderInterface;
+     */
+    protected function getProvider(array $sectors, string $id): ProviderInterface
+    {
+        if (!$sectors) {
+            $sectors = $this->getSectorsForOrganisation($id);
+        }
+        return in_array('mus', $sectors) ? $this->museotFi : $this->kirkanta;
     }
 }

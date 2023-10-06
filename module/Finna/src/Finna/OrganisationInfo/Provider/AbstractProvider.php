@@ -40,8 +40,7 @@ use VuFind\Search\Results\PluginManager;
 use function strlen;
 
 /**
- * Service for querying Kirjastohakemisto database.
- * See: https://api.kirjastot.fi/
+ * Abstract service for querying organisation info databases.
  *
  * @category VuFind
  * @package  Content
@@ -52,9 +51,10 @@ use function strlen;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-abstract class AbstractOrganisationInfoProvider implements
+abstract class AbstractProvider implements
     \VuFindHttp\HttpServiceAwareInterface,
-    \Laminas\Log\LoggerAwareInterface
+    \Laminas\Log\LoggerAwareInterface,
+    ProviderInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFindHttp\HttpServiceAwareTrait;

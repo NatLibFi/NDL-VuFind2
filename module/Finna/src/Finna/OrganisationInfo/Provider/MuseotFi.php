@@ -46,7 +46,7 @@ use function strlen;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class MuseotFi extends AbstractOrganisationInfoProvider
+class MuseotFi extends AbstractProvider
 {
     /**
      * Check if a consortium is found in organisation info and return basic information (provider-specific part)

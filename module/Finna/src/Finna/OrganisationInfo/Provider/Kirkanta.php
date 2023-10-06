@@ -47,7 +47,7 @@ use function in_array;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class Kirkanta extends AbstractOrganisationInfoProvider
+class Kirkanta extends AbstractProvider
 {
     /**
      * Check if a consortium is found in organisation info and return basic information (provider-specific part)
