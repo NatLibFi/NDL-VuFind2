@@ -141,6 +141,15 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         $sectors = array_filter((array)$params->fromQuery('sectors', []));
         $buildings = array_filter((array)$params->fromQuery('buildings', []));
 
+        // Back-compatibility; allow e.g. lib/pub:
+        $sectors = array_map(
+            function ($s) {
+                [$sector] = explode('/', $s, 2);
+                return $sector;
+            },
+            $sectors
+        );
+
         switch ($element) {
             case 'info-location-selection':
                 if (!($id = $params->fromQuery('id'))) {
