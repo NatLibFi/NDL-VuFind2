@@ -85,6 +85,17 @@ $config = [
                     ],
                 ],
             ],
+            'bazaarApiBareV1' => [
+                'type' => 'Laminas\Router\Http\Literal',
+                'verb' => 'get,post,options',
+                'options' => [
+                    'route'    => '/v1/bazaar/browse',
+                    'defaults' => [
+                        'controller' => 'BazaarApi',
+                        'action'     => 'browse',
+                    ],
+                ],
+            ],
             'listApiV1' => [
                 'type' => 'Laminas\Router\Http\Literal',
                 'verb' => 'get,post,options',
