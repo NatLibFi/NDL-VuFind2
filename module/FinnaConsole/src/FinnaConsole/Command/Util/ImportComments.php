@@ -227,6 +227,13 @@ class ImportComments extends AbstractUtilCommand
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Rating column number (default is 4, set to 0 to disable)'
+            )
+            ->addOption(
+                'comment-filter',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Regular expression used to filter comments. Any filter matching an expression is ignored.'
+                . ' Example: --comment-filter="/([^\p{Latin}\pC\pN\pP\pS\pZ]+)/u"'
             );
     }
 
@@ -254,6 +261,7 @@ class ImportComments extends AbstractUtilCommand
         $dateColumn = (int)($input->getOption('date-column') ?? 2);
         $commentColumn = (int)($input->getOption('comment-column') ?? 3);
         $ratingColumn = (int)($input->getOption('rating-column') ?? 4);
+        $commentFilter = $input->getOption('comment-filter');
         $this->verbose = $output->isVerbose();
 
         if (!$idColumn || (!$commentColumn && !$ratingColumn)) {
@@ -317,7 +325,7 @@ class ImportComments extends AbstractUtilCommand
             }
 
             if (!($driver = $this->findRecord($sourceId, $id, $idFields))) {
-                $this->log("Record $id ($sourceId.$id) not found");
+                $this->log("Record $id ($sourceId.$id) not found (row $count)");
                 continue;
             }
             $recordId = $driver->getUniqueID();
@@ -325,28 +333,40 @@ class ImportComments extends AbstractUtilCommand
             try {
                 $resource = $this->resourceTable->findResource($driver->getUniqueID());
             } catch (RecordMissingException $e) {
-                $this->log('Record ' . $driver->getUniqueID() . ' not found when trying to create a resource entry');
+                $this->log(
+                    'Record ' . $driver->getUniqueID()
+                    . " not found when trying to create a resource entry (row $count)"
+                );
                 continue;
             }
 
-            $duplicate = false;
+            $skip = false;
             if ($commentString) {
+                // Check filter
+                if ($commentFilter && preg_match($commentFilter, $commentString, $matches)) {
+                    $skip = true;
+                    $logMatch = isset($matches[1])
+                        ? (' (match: ' . $matches[1] . ' hex: ' . bin2hex($matches[1]) . ')')
+                        : '';
+                    $this->log("Comment on row $count for $recordId filtered out$logMatch");
+                }
+
                 // Check for duplicates
-                $comments = $this->commentsTable->getForResource($recordId);
-                foreach ($comments as $comment) {
-                    if (
-                        $comment->created === $timestampStr
-                        && $comment->comment === $commentString
-                    ) {
-                        $this->log(
-                            "Comment on row $count for $recordId already exists"
-                        );
-                        $duplicate = true;
-                        break;
+                if (!$skip) {
+                    $comments = $this->commentsTable->getForResource($recordId);
+                    foreach ($comments as $comment) {
+                        if (
+                            $comment->created === $timestampStr
+                            && $comment->comment === $commentString
+                        ) {
+                            $this->log("Comment on row $count for $recordId already exists");
+                            $skip = true;
+                            break;
+                        }
                     }
                 }
 
-                if (!$duplicate) {
+                if (!$skip) {
                     $row = $this->commentsTable->createRow();
                     if ($userId) {
                         $row->user_id = $userId;
@@ -363,7 +383,7 @@ class ImportComments extends AbstractUtilCommand
                     ++$commentCount;
                 }
             }
-            if ($rating && !$duplicate) {
+            if ($rating && !$skip) {
                 $ratingRow = $this->ratingsTable->createRow();
                 $ratingRow->resource_id = $resource->id;
                 $ratingRow->created = $timestampStr;
