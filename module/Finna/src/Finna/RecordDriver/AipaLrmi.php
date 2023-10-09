@@ -289,11 +289,11 @@ class AipaLrmi extends SolrLrmi implements
     /**
      * Return ID for an encapsulated record.
      *
-     * @param mixed $item Encapsulated record item.
+     * @param \SimpleXMLElement $item Encapsulated record item.
      *
      * @return string
      */
-    protected function getEncapsulatedRecordId($item): string
+    protected function getEncapsulatedRecordId(\SimpleXMLElement $item): string
     {
         // Implementation for XML items with ID specified in an 'identifier' element
         return (string)$item->identifier;
@@ -308,7 +308,7 @@ class AipaLrmi extends SolrLrmi implements
      */
     protected function getEncapsulatedRecordFormat($item): string
     {
-        return 'Curatedrecord';
+        return 'CuratedRecord';
     }
 
     /**
@@ -320,7 +320,7 @@ class AipaLrmi extends SolrLrmi implements
      *
      * @see ContainerFormatTrait::getEncapsulatedRecordDriver()
      */
-    protected function getCuratedrecordDriver(\SimpleXMLElement $item): CuratedRecord
+    protected function getCuratedRecordDriver(\SimpleXMLElement $item): CuratedRecord
     {
         /* @var CuratedRecord $driver */
         $driver = $this->recordDriverManager->get('CuratedRecord');

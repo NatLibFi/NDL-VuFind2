@@ -2,12 +2,15 @@
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
-  dt {
+  & dt {
     font-weight: normal;
     padding: 5px 10px 5px 0;
+    &:after {
+      content: ':';
+    }
   }
-  li,
-  dd {
+  & li,
+  & dd {
     border-radius: .5em;
     background-color: #f4f4f4;
     padding: 5px 10px;

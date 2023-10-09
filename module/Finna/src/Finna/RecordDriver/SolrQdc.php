@@ -35,7 +35,6 @@ namespace Finna\RecordDriver;
 use function array_slice;
 use function count;
 use function in_array;
-use function strlen;
 
 /**
  * Model for Qualified Dublin Core records in Solr.
@@ -169,7 +168,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
             }
             $lang = (string)$description['lang'];
             $trimmed = trim((string)$description);
-            if (strlen($trimmed) > 0) {
+            if ('' !== $trimmed) {
                 if ($lang === $locale) {
                     $primary[] = $trimmed;
                 }

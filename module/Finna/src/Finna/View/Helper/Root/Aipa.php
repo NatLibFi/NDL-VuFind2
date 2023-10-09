@@ -100,7 +100,6 @@ class Aipa extends AbstractHelper
      */
     public function renderLevelsAndSubjects(array $educationalData): string
     {
-        $translate = $this->getView()->plugin('translate');
         $component = $this->getView()->plugin('component');
         $langcode = $this->view->layout()->userLang;
 
@@ -128,7 +127,7 @@ class Aipa extends AbstractHelper
 
             if (!empty($items)) {
                 $html .= $component('@@molecules/lists/finna-tag-list', [
-                    'title' => $translate('Aipa::' . $levelCodeValue) . ':',
+                    'title' => 'Aipa::' . $levelCodeValue,
                     'items' => $items,
                 ]);
             }
@@ -145,7 +144,6 @@ class Aipa extends AbstractHelper
      */
     public function renderStudyContentsAndObjectives(array $educationalData): string
     {
-        $translate = $this->getView()->plugin('translate');
         $component = $this->getView()->plugin('component');
         $langcode = $this->view->layout()->userLang;
 
@@ -168,13 +166,13 @@ class Aipa extends AbstractHelper
 
             // Learning areas.
             if (!empty($levelData[EducationalData::LEARNING_AREAS])) {
-                $componentData[EducationalData::LEARNING_AREAS]
+                $componentData['learningAreas']
                     = EducationalData::getPrefLabels(
                         $levelData[EducationalData::LEARNING_AREAS],
                         $langcode
                     );
-                $componentData[EducationalData::LEARNING_AREAS . 'Title']
-                    = $translate('Aipa::' . EducationalData::LEARNING_AREAS);
+                $componentData['learningAreasTitle']
+                    = 'Aipa::' . EducationalData::LEARNING_AREAS;
             }
 
             // Educational subjects, study contents and objectives.
@@ -195,38 +193,38 @@ class Aipa extends AbstractHelper
                     if (!empty($items)) {
                         $componentData[$contentsOrObjectivesKey] = $items;
                         $componentData[$contentsOrObjectivesKey . 'Title']
-                            = $translate('Aipa::' . $contentsOrObjectivesKey);
+                            = 'Aipa::' . $contentsOrObjectivesKey;
                     }
                 }
             }
 
             // Transversal competences.
             if (!empty($levelData[EducationalData::TRANSVERSAL_COMPETENCES])) {
-                $componentData[EducationalData::TRANSVERSAL_COMPETENCES]
+                $componentData['transversalCompetences']
                     = EducationalData::getPrefLabels(
                         $levelData[EducationalData::TRANSVERSAL_COMPETENCES],
                         $langcode
                     );
-                $componentData[EducationalData::TRANSVERSAL_COMPETENCES . 'Title']
-                    = $translate('Aipa::' . EducationalData::TRANSVERSAL_COMPETENCES);
+                $componentData['transversalCompetencesTitle']
+                    = 'Aipa::' . EducationalData::TRANSVERSAL_COMPETENCES;
             }
 
             // Vocational common units.
             if (!empty($levelData[EducationalData::VOCATIONAL_COMMON_UNITS])) {
-                $componentData[EducationalData::VOCATIONAL_COMMON_UNITS]
+                $componentData['vocationalCommonUnits']
                     = EducationalData::getPrefLabels(
                         $levelData[EducationalData::VOCATIONAL_COMMON_UNITS],
                         $langcode
                     );
-                $componentData[EducationalData::VOCATIONAL_COMMON_UNITS . 'Title']
-                    = $translate('Aipa::' . EducationalData::VOCATIONAL_COMMON_UNITS);
+                $componentData['vocationalCommonUnitsTitle']
+                    = 'Aipa::' . EducationalData::VOCATIONAL_COMMON_UNITS;
             }
 
             if (!empty($componentData)) {
                 $levelHtml = $component('@@organisms/data/finna-educational-level-data', $componentData);
                 $html .= $component('@@molecules/containers/finna-truncate', [
                     'content' => $levelHtml,
-                    'label' => $translate('Aipa::' . $levelCodeValue),
+                    'label' => 'Aipa::' . $levelCodeValue,
                     'topToggle' => -1,
                 ]);
             }
