@@ -128,7 +128,7 @@ class Aipa extends AbstractHelper
 
             if (!empty($items)) {
                 $html .= $component('@@molecules/lists/finna-tag-list', [
-                    'title' => $translate('aipa_' . $levelCodeValue) . ':',
+                    'title' => $translate('Aipa::' . $levelCodeValue) . ':',
                     'items' => $items,
                 ]);
             }
@@ -174,7 +174,7 @@ class Aipa extends AbstractHelper
                         $langcode
                     );
                 $componentData[EducationalData::LEARNING_AREAS . 'Title']
-                    = $translate('aipa_' . EducationalData::LEARNING_AREAS);
+                    = $translate('Aipa::' . EducationalData::LEARNING_AREAS);
             }
 
             // Educational subjects, study contents and objectives.
@@ -195,7 +195,7 @@ class Aipa extends AbstractHelper
                     if (!empty($items)) {
                         $componentData[$contentsOrObjectivesKey] = $items;
                         $componentData[$contentsOrObjectivesKey . 'Title']
-                            = $translate('aipa_' . $contentsOrObjectivesKey);
+                            = $translate('Aipa::' . $contentsOrObjectivesKey);
                     }
                 }
             }
@@ -208,7 +208,7 @@ class Aipa extends AbstractHelper
                         $langcode
                     );
                 $componentData[EducationalData::TRANSVERSAL_COMPETENCES . 'Title']
-                    = $translate('aipa_' . EducationalData::TRANSVERSAL_COMPETENCES);
+                    = $translate('Aipa::' . EducationalData::TRANSVERSAL_COMPETENCES);
             }
 
             // Vocational common units.
@@ -219,14 +219,14 @@ class Aipa extends AbstractHelper
                         $langcode
                     );
                 $componentData[EducationalData::VOCATIONAL_COMMON_UNITS . 'Title']
-                    = $translate('aipa_' . EducationalData::VOCATIONAL_COMMON_UNITS);
+                    = $translate('Aipa::' . EducationalData::VOCATIONAL_COMMON_UNITS);
             }
 
             if (!empty($componentData)) {
                 $levelHtml = $component('@@organisms/data/finna-educational-level-data', $componentData);
                 $html .= $component('@@molecules/containers/finna-truncate', [
                     'content' => $levelHtml,
-                    'label' => $translate('aipa_' . $levelCodeValue),
+                    'label' => $translate('Aipa::' . $levelCodeValue),
                     'topToggle' => -1,
                 ]);
             }
