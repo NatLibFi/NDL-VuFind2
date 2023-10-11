@@ -31,7 +31,7 @@ finna.carouselManager = (() => {
         const bp = breakpointSettingMappings[key] || '';
         switch (bp) {
         case 'perPage':
-          perPage = value; 
+          perPage = value;
           break;
         case '':
           break;
@@ -120,14 +120,15 @@ finna.carouselManager = (() => {
   /**
    * Converts settings into compatible Splide settings
    *
-   * @param {Object} settings 
+   * @param {Object} settings
    */
   function toSplideSettings(settings) {
     let splidied = {
       direction: 'ltr',
       gap: 10,
       type: 'slide',
-      rewind: true
+      rewind: true,
+      live: false
     };
     for (const [key, value] of Object.entries(settings)) {
       if (typeof settingNameMappings[key] !== 'undefined') {
