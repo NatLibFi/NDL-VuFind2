@@ -296,8 +296,22 @@ class ImportComments extends AbstractUtilCommand
             }
             // Prepend an element to align column indexes with data:
             array_unshift($data, false);
-            $id = $data[$idColumn] ?? null;
+            if (null === $id = $data[$idColumn] ?? null) {
+                $this->log(
+                    "Could not read CSV line $count (id column found)",
+                    true
+                );
+                continue;
+            }
+
             if ($dateColumn) {
+                if (!isset($data[$dateColumn])) {
+                    $this->log(
+                        "Could not read CSV line $count (date column found)",
+                        true
+                    );
+                    continue;
+                }
                 $timestamp = $data[$dateColumn] === '\N'
                     ? $defaultTimestamp + $count
                     : strtotime($data[$dateColumn]);
@@ -305,10 +319,28 @@ class ImportComments extends AbstractUtilCommand
                 $timestamp = $defaultTimestamp;
             }
             $timestampStr = date('Y-m-d H:i:s', $timestamp);
-            $rating = $ratingColumn ? ($data[$ratingColumn] ?? null) : null;
+            if ($ratingColumn) {
+                if (!isset($data[$ratingColumn])) {
+                    $this->log(
+                        "Could not read CSV line $count (rating column found)",
+                        true
+                    );
+                    continue;
+                }
+                $rating = $data[$ratingColumn];
+            } else {
+                $rating = null;
+            }
             if (!$commentColumn) {
                 $commentString = null;
             } else {
+                if (!isset($data[$commentColumn])) {
+                    $this->log(
+                        "Could not read CSV line $count (comment column found)",
+                        true
+                    );
+                    continue;
+                }
                 $commentString = $data[$commentColumn];
                 $commentString = preg_replace('/\\\\([^\\\\])/', '\1', $commentString);
             }
@@ -325,7 +357,7 @@ class ImportComments extends AbstractUtilCommand
             }
 
             if (!($driver = $this->findRecord($sourceId, $id, $idFields))) {
-                $this->log("Record $id ($sourceId.$id) not found (row $count)");
+                $this->log("Identifier $id not found (row $count)");
                 continue;
             }
             $recordId = $driver->getUniqueID();
@@ -432,8 +464,15 @@ class ImportComments extends AbstractUtilCommand
                     return $driver;
                 }
             } else {
+                $searchId = $id;
+                if ('isbn' === $field) {
+                    // Convert to ISBN-13:
+                    $isbnObj = new \VuFindCode\ISBN($id);
+                    $searchId = $isbnObj->get13();
+                }
+
                 $request = [
-                    'lookfor' => "$field:\"" . addcslashes($id, '"') . '"',
+                    'lookfor' => "$field:\"" . addcslashes($searchId, '"') . '"',
                     'filter' => [
                         'source_str_mv:"' . addcslashes($sourceId, '"') . '"',
                         'finna.deduplication:0',
