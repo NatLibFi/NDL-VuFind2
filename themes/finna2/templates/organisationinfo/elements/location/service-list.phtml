@@ -6,7 +6,7 @@
     }
   ?>
   <h5 class="service-header"><?=$this->transEscWithPrefix('organisation_info_service_type_', $type) ?></h5>
-  <div class="service-list">
+  <div class="service-list" data-track-content data-content-name="Location Services" data-content-piece="<?=$this->escapeHtmlAttr($id . '/' . $orgInfo['name'])?>">
     <?php foreach ($services as $service): ?>
       <div>
         <?php if ($desc = $service['description'] ?: $service['shortDescription']): ?>

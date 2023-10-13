@@ -4,7 +4,7 @@
     return $this->render('organisationinfo/elements/helpers/time-interval.phtml', compact('opens', 'closes', 'minutes'));
   };
 ?>
-<div class="location-basic-info">
+<div class="location-basic-info" data-track-content data-content-name="Location Basic Info" data-content-piece="<?=$this->escapeHtmlAttr($id . '/' . $orgInfo['name'])?>">
   <h3 class="location-title" aria-atomic="true" aria-live="polite">
     <span class="sr-only"><?=$this->transEsc('organisation_info_selected_service_point')?></span> <?=$this->escapeHtml($orgInfo['name'])?>
   </h3>

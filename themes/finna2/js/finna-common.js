@@ -72,6 +72,19 @@ finna.common = (function finnaCommon() {
     window.Cookies.remove(cookie, _getCookieSettings());
   }
 
+  /**
+   * Track content impressions within a node with Matomo
+   *
+   * Needed for dynamically updated content. Static content gets tracked automatically.
+   *
+   * @param {HTMLElement} node
+   */
+  function trackContentImpressions(node) {
+    if (window._paq) {
+      window._paq.push(['trackContentImpressionsWithinNode', node]);
+    }
+  }
+
   var my = {
     decodeHtml: decodeHtml,
     getField: getField,
@@ -91,6 +104,7 @@ finna.common = (function finnaCommon() {
     setCookie: setCookie,
     removeCookie: removeCookie,
     setCookieSettings: setCookieSettings,
+    trackContentImpressions: trackContentImpressions,
   };
 
   return my;

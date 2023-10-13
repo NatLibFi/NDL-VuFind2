@@ -8,6 +8,9 @@
         [
             'class' => "feed-container $feedType-feed",
             'feed-id' => "organisation-info|{$feed['parent']}|{$feed['id']}|{$feed['orgType']}|$feedType",
+            'data-track-content' => '',
+            'data-content-name' => "Location Feed $feedType",
+            'data-content-piece' => $this->escapeHtmlAttr($id . '/' . $orgInfo['name']),
         ]
     );
   ?>
