@@ -2,7 +2,7 @@
 <?php foreach ($data as $field): ?>
   <?=!empty($field['material']) ? $this->escapeHtml($field['material']) . ': ' : '' ?>
   <?=!empty($field['terms']) ? $this->escapeHtml($field['terms']) : '' ?>
-  <?=!empty($field['sourcecode']) ? $this->escapeHtml($this->translate('accessrestriction_source_'.$field['sourcecode'])) : '' ?>
+  <?=!empty($field['sourcecode']) ? $this->escapeHtml($this->translate('accessrestriction_source_' . $field['sourcecode'])) : '' ?>
   <?php if (!empty($field['url'])): ?>
     <a href="<?=$this->escapeHtmlAttr($field['url']) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($field['url']) ?>">
   <?php endif; ?>
