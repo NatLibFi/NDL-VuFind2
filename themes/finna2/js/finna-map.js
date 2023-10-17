@@ -44,7 +44,7 @@ finna.map = (function finnaMap() {
     var defaults = {
       tileLayer: L.tileLayer('https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png', {
         tileSize: 256,
-        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+        attribution: 'Map data &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY</a>'
       }),
       center: new L.LatLng(64.8, 26),
       zoom: 8,
@@ -68,7 +68,6 @@ finna.map = (function finnaMap() {
     }
 
     var map = new L.Map(mapCanvas.get(0), {
-      attributionControl: false,
       layers: [options.tileLayer, drawnItems],
       center: options.center,
       zoom: options.zoom,

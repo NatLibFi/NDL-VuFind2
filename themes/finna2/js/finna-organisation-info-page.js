@@ -613,7 +613,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     consortiumInfo = (options.consortiumInfo || null) === 1;
     var buildings = options.buildings;
     var sector = options.sector;
-    var mapTileUrl = 'https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png';
+    var mapTileUrl = 'https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png?v=2';
     var attribution =
       '<span class="map-marker-text">' + VuFind.icon('map-marker', 'map-marker-icon open') + ' ' + VuFind.translate('organisation_info_is_open') + '</span>' +
       '<span class="map-marker-text">' + VuFind.icon('map-marker', 'map-marker-icon closed') + ' ' + VuFind.translate('organisation_info_is_closed') + '</span>' +
