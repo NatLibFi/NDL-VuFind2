@@ -564,6 +564,8 @@ class Record extends \VuFind\View\Helper\Root\Record
             'fieldLinks' => $fieldLinks,
             'externalLinks' => $externalLinks,
             'fieldIndex' => $fieldIndex,
+            'allowDynamicContent'
+                => $this->config->LinkPopovers->allow_dynamic_content ?? true,
         ];
         if ($additionalData = $this->composeAdditionalData($data, $params)) {
             $elementParams['additionalDataHtml'] = $additionalData;
