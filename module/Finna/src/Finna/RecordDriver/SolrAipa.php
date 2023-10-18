@@ -180,6 +180,7 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
             'fullrecord' => $item->asXML(),
             'position' => (int)$item->position,
             'record_format' => 'lrmi',
+            'datasource_str_mv' => $this->getDataSource(),
         ];
 
         // Facets
