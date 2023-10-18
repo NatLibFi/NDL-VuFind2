@@ -173,6 +173,7 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
             return $this->formatResponse('');
         }
 
+        // Fetch any enrichment data by the first ID:
         $enrichmentData = $this->getEnrichmentData($ids[0], $label);
         $allowAuthoritySummary
             = $this->dynamicContent['authority_summary'] ?? true;
