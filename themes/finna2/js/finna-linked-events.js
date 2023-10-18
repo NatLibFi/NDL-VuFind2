@@ -9,8 +9,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
       lang = {'language': $('.linked-event-content').data('lang')};
     }
     params.query = $.extend(params.query, limit, lang);
-    var spinner = null;
-    spinner = container[0].querySelector(append ? '.js-loader' : '.js-loader-overlay');
+    var spinner = container[0].querySelector(append ? '.js-loader-more' : '.js-loader');
     if (spinner) {
       spinner.classList.remove("hidden");
     }
