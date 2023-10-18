@@ -289,10 +289,10 @@ class ImportComments extends AbstractUtilCommand
             $num = count($data);
             if ($num < 2) {
                 $this->log(
-                    "Could not read CSV line $count (only $num elements found)",
+                    "Could not read CSV line $count (only $num elements found):" . var_export($data, true),
                     true
                 );
-                return 1;
+                continue;
             }
             // Prepend an element to align column indexes with data:
             array_unshift($data, false);
