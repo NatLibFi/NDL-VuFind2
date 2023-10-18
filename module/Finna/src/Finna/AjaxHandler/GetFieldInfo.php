@@ -186,7 +186,7 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
                 'type',
                 'enrichmentData',
                 'driver',
-                'allowAuthoritySummary',
+                'allowAuthoritySummary'
             )
         );
 
