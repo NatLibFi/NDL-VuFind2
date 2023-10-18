@@ -42,7 +42,7 @@ finna.map = (function finnaMap() {
     L.drawLocal.draw.handlers.circle.radius = VuFind.translate('radiusPrefix');
 
     var defaults = {
-      tileLayer: L.tileLayer('https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png', {
+      tileLayer: L.tileLayer('https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png?v=2', {
         tileSize: 256,
         attribution: 'Map data &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY</a>'
       }),
