@@ -1,0 +1,95 @@
+<div class="location-col details-col">
+  <?php if ($url = $orgInfo['pictures'][0]['url'] ?? null): ?>
+    <img class="building-image" src="<?=$this->escapeHtmlAttr($url)?>" alt="">
+  <?php endif; ?>
+
+  <div class="contact-links">
+    <?php if ($orgInfo['emails']): ?>
+      <?php ob_start(); ?>
+      <ul>
+        <?php foreach ($orgInfo['emails'] as $email): ?>
+          <li>
+            <?=$this->icon('contact-email') ?> <a href="mailto:<?=$this->escapeHtmlAttr($email['email'])?>"><?=$this->escapeHtml($email['email'])?></a>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+      <?php $content = ob_get_clean(); ?>
+      <button type="button" class="btn btn-open-widget emails email info-element btn-link" data-placement="bottom" data-html="true" data-original-title="<?=$this->escapeHtmlAttr($content)?>" aria-label="<?=$this->transEscAttr('organisation_info_email')?>" data-toggle="tooltip">
+        <?=$this->icon('contact-email')?>
+      </button>
+    <?php endif; ?>
+
+    <?php if ($orgInfo['phones']): ?>
+      <?php ob_start(); ?>
+      <ul>
+      <?php foreach ($orgInfo['phones'] as $phone): ?>
+        <?php if (isset($phone['name'])): ?>
+          <li><b><?=$this->escapeHtml($phone['name'])?></b></li>
+        <?php endif ?>
+        <li><a href="tel:<?=$this->escapeHtmlAttr($phone['number'])?>"><?=$this->escapeHtml($phone['number'])?></a></li>
+      <?php endforeach ?>
+      </ul>
+      <?php $content = ob_get_clean(); ?>
+      <button type="button" class="btn btn-open-widget phone info-element btn-link" data-toggle="tooltip" data-placement="bottom" data-html="true" data-original-title="<?=$this->transEscAttr($content)?>" aria-label="<?=$this->transEsc('organisation_info_phone_numbers') ?>">
+        <?=$this->icon('phone') ?>
+      </button>
+    <?php endif; ?>
+    <?php if ($orgInfo['routeUrl']): ?>
+      <a href="<?=$this->escapeHtmlAttr($orgInfo['routeUrl'])?>" target="_blank" class="route info-element">
+        <span class="btn">
+          <?=$this->icon('route') ?>
+          <span class="sr-only"><?=$this->transEsc('organisation_info_route') . ' (' . $this->transEsc('external_link') . ')' ?></span>
+        </span>
+      </a>
+    <?php endif; ?>
+
+    <?php foreach ($orgInfo['links'] as $link): ?>
+      <?php if (str_contains($link['name'], 'Facebook')): ?>
+        <a href="<?=$this->escapeHtmlAttr($link['url'])?>" target="_blank" class="facebook info-element">
+          <span class="btn">
+            <?=$this->icon('facebook') ?>
+            <span class="sr-only"><?=$this->transEsc('organisation_info_facebook') ?></span>
+          </span>
+        </a>
+      <?php endif; ?>
+    <?php endforeach; ?>
+  </contact-links>
+
+  <?php if ($orgInfo['address']['displayAddress']): ?>
+    <div class="address info-element">
+      <?php if ($orgInfo['mapUrl']): ?>
+        <a class="map-link" href="<?=$this->escapeHtmlAttr($orgInfo['mapUrl'])?>" target="_blank">
+          <?=$this->icon('map-marker') ?>
+          <?php $label = $this->translate('Location') . ': ' . $orgInfo['address']['displayAddress'] . ' (' . $this->translate('external_link') . ')'; ?>
+          <span class="map-address" aria-label="<?=$this->escapeHtmlAttr($label)?>">
+            <?=$this->escapeHtml($orgInfo['address']['displayAddress'])?>
+          </span>
+        </a>
+      <?php else: ?>
+        <?=$this->escapeHtml($orgInfo['address']['displayAddress'])?>
+      <?php endif; ?>
+    </div>
+  <?php endif; ?>
+
+  <div class="details-link info-element">
+    <a href="<?=$this->url('organisationinfo-home', [], ['fragment' => $orgInfo['id']])?>" class="details">
+      <?=$this->icon('homepage-link') ?> <?=$this->translate('organisation_info_more_info')?>
+    </a>
+  </div>
+  <div class="services">
+    <?php if (in_array('wifi', $orgInfo['services'])): ?>
+      <span class="btn btn-open-widget btn-round service-wifi info-element">
+        <?=$this->icon('wifi') ?>
+        <span class="sr-only"><?=$this->transEsc('organisation_info_service_wifi')?></span>
+      </span>
+    <?php endif; ?>
+    <?php if (in_array('print', $orgInfo['services'])): ?>
+      <span class="btn btn-open-widget btn-round service-print info-element">
+        <?=$this->icon('print') ?>
+        <span class="sr-only"><?=$this->transEsc('organisation_info_service_print')?></span>
+      </span>
+    <?php endif; ?>
+  </div>
+
+  </div>
+</div>

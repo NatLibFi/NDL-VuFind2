@@ -1,0 +1,19 @@
+<!-- START of: finna - organisationinfo/elements/location/schedule-week-navi.phtml -->
+<?php if ('museum' !== $orgInfo['type'] && $firstDate = $orgInfo['openTimes']['schedules'][0]['date'] ?? null): ?>
+  <div class="js-week-navi" data-date="<?=date('Y-m-d', $firstDate)?>">
+    <button type="button" class="btn-link js-week-navi-btn prev-week" data-dir="-1" aria-label="<?= $this->transEscAttr('organisation_info_previous_week')?>"<?=$orgInfo['openTimes']['currentWeek'] ? ' disabled' : ''?>>
+      <?=$this->icon('week-prev') ?>
+    </button>
+    <span class="js-week-text" aria-atomic="true">
+      <?=$this->transEsc('organisation_info_schedule_week')?>
+      <span class="js-num"><?=$this->escapeHtml(date('W', $firstDate))?></span>
+    </span>
+    <button type="button" class="btn-link js-week-navi-btn next-week" data-dir="+1" aria-label="<?= $this->transEscAttr('organisation_info_next_week')?>">
+      <?=$this->icon('week-next') ?>
+    </button>
+    <span status="role" class="js-loader hidden">
+      <?=$this->icon('spinner') ?><span class="sr-only"> <?=$this->transEsc('loading_ellipsis')?></span>
+    </span>
+  </div>
+<?php endif; ?>
+<!-- START of: finna - organisationinfo/elements/location/schedule-week-navi.phtml -->

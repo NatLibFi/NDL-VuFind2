@@ -1,0 +1,98 @@
+<!-- START of: finna - organisationinfo/elements/location-quick-info.phtml -->
+<?php
+  $renderInterval = function (int $opens, int $closes, bool $minutes): string {
+    return $this->render('organisationinfo/elements/helpers/time-interval.phtml', compact('opens', 'closes', 'minutes'));
+  };
+?>
+<div class="location-basic-info">
+  <h3 class="location-title" aria-atomic="true" aria-live="polite">
+    <span class="sr-only"><?=$this->transEsc('organisation_info_selected_service_point')?></span> <?=$this->escapeHtml($orgInfo['name'])?>
+  </h3>
+  <div>
+    <p>
+      <span class="location-links address info-element"><?=$this->escapeHtml($orgInfo['address']['displayAddress'])?></span>
+      <?php if ($orgInfo['routeUrl']): ?>
+        <a href="<?=$this->escapeHtmlAttr($orgInfo['routeUrl'])?>" target="_blank" class="location-links route info-element"><?=$this->icon('route') ?> <?=$this->transEsc('organisation_info_route')?></a>
+      <?php endif; ?>
+    </p>
+    <?php if ($orgInfo['homepage']): ?>
+      <p class="location-links website info-element">
+        <a href="<?=$this->escapeHtmlAttr($orgInfo['homepage'])?>" target="_blank"><?=$this->icon('homepage-link') ?> <?=$this->transEsc('organisation_info_homepage')?></a></span>
+      </p>
+    <?php endif; ?>
+    <?php if ($orgInfo['emails'] && 'museum' === $orgInfo['type']): ?>
+      <?php foreach ($orgInfo['emails'] as $email): ?>
+        <p class="location-links email info-element">
+          <a href="mailto:<?=$this->escapeHtmlAttr($email['email'])?>"><?=$this->icon('email') ?> <?=$this->escapeHtml($email['email'])?></a>
+        </p>
+      <?php endforeach; ?>
+    <?php endif; ?>
+    <?php foreach ($orgInfo['links'] as $link): ?>
+      <?php if (str_contains($link['name'], 'Facebook')): ?>
+        <p class="location-links facebook info-element">
+        <a class="facebook aria-label="Facebook" href="<?=$this->escapeHtmlAttr($link['url'])?>" target="_blank">
+          <?=$this->icon('facebook') ?> <?=$this->escapeHtml($link['name'])?>
+        </a>
+      <?php endif; ?>
+    <?php endforeach; ?>
+  </div>
+</div>
+<div class="open-closed-info">
+  <?php if (!$orgInfo['isAlwaysClosed']): ?>
+    <h4 class="open-or-closed">
+      <?php if ($orgInfo['openNow']): ?>
+        <span class="location-is-open info-element"><?=$this->transEsc('organisation_info_is_open')?></span>
+      <?php else: ?>
+        <span class="location-is-closed info-element"><?=$this->transEsc('organisation_info_is_closed')?></span>
+      <?php endif; ?>
+    </h4>
+    <?php foreach ($orgInfo['openTimes']['schedules'] as $schedule): ?>
+      <?php if ($schedule['today']): ?>
+        <p class="time-open info-element">
+          <?php if ($schedule['closed']): ?>
+            <span class="closed-times">
+              <?=$this->icon('organisation-info-closed')?> <?=$this->transEsc('organisation_info_is_closed')?>
+            </span>
+          <?php else: ?>
+            <span class="opening-times">
+              <?=$this->icon('time-open') ?> <?=$this->transEsc('organisation_info_open_today')?>
+              <?=$renderInterval($schedule['firstOpeningTime'], $schedule['lastClosingTime'], $schedule['minutePrecision'])?>
+            </span>
+            <?php if ($schedule['selfServiceTimes'] && $schedule['staffTimes']): ?>
+              <?php
+                $allTimes = [];
+                foreach ($schedule['staffTimes'] as $staffTime) {
+                  $allTimes[] = $renderInterval($staffTime['opens'], $staffTime['closes'], $schedule['minutePrecision']);
+                }
+              ?>
+              <br>
+              <span class="staff-times">
+                (<?=$this->transEsc('organisation_info_schedule_staff')?> <?=implode(', ', $allTimes)?>)
+              </span>
+            <?php endif; ?>
+            <?php if ($schedule['gaps']): ?>
+              <?php
+                $allTimes = [];
+                foreach ($schedule['staffTimes'] as $staffTime) {
+                  $allTimes[] = $renderInterval($staffTime['opens'], $staffTime['closes'], $schedule['minutePrecision']);
+                }
+              ?>
+              <br>
+              <span class="closed-times">
+                <?=$this->icon('organisation-info-closed')?> <?=$this->transEsc('organisation_info_is_closed')?>
+                <?=implode(', ', $allTimes)?>
+              </span>
+            <?php endif; ?>
+          <?php endif; ?>
+        </p>
+      <?php endif; ?>
+    <?php endforeach; ?>
+  <?php endif; ?>
+</div>
+<?php if ($orgInfo['slogan']): ?>
+  <div class="clearfix"></div>
+  <div>
+    <p class="location-description info-element"><?=$this->cleanHtml($orgInfo['slogan'])?></p>
+  </div>
+<?php endif; ?>
+<!-- END of: finna - organisationinfo/elements/location-quick-info.phtml -->

@@ -46,7 +46,10 @@
 .navbar-brand {
   padding: 0;
   line-height: @navbar-height;
-  max-width: 200px;
+  max-width: 150px;
+  @media (min-width: @grid-float-breakpoint) {
+    max-width: 200px;
+  }
   display: flex;
   align-items: center;
   .navbar-logo {

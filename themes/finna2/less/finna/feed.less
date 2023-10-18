@@ -352,11 +352,16 @@
         }
     }
 }
-.linked-events-content {
-    .fa-spinner {
-        position: relative;
-        left: 50%;
-    }
+.linked-events-tab-spinner {
+    position: absolute;
+    margin-top: -20px;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+.linked-events-page-spinner {
+    position: absolute;
+    display: block;
+    margin-top: 10px;
 }
 .events-searchtools-toggle {
     cursor: pointer;
@@ -521,7 +526,7 @@ finna-feed {
             font-size: 1.5em;
             float: right;
             margin-left: auto;
-            padding-left: 5px;                
+            padding-left: 5px;
             line-height: 14px;
         }
     }
@@ -634,6 +639,10 @@ finna-feed {
                     &.is-active {
                         background-color: @brand-primary;
                     }
+                    &:focus {
+                        outline: 2px solid @action-link-color;
+                        outline-offset: 3px;
+                    }
                 }
                 @media (min-width: @screen-md) {
                     padding: 8px;
@@ -675,7 +684,7 @@ finna-feed.splide--ltr {
                     background-image: linear-gradient(to bottom, transparent 0px, @carousel-slide-header-background 100%);
                     bottom: 0;
                 }
-            } 
+            }
         }
     }
     .feed-item-holder {
@@ -696,7 +705,7 @@ finna-feed.splide--ltr {
                     background-image: linear-gradient(to bottom, transparent 0px, @carousel-slide-header-background 100%);
                     bottom: 0;
                 }
-            } 
+            }
         }
         .feed-link {
             flex-flow: column;

@@ -384,6 +384,13 @@ trait FinnaRecordTrait
             return $id;
         }
 
+        if (!$idRegex && !$plainIdRegex) {
+            if (str_starts_with($id, "$authSrc.")) {
+                return $id;
+            }
+            return "$authSrc.$id";
+        }
+
         return null;
     }
 

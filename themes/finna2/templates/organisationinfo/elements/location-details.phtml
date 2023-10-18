@@ -1,0 +1,130 @@
+<!-- START of: finna - organisationinfo/elements/location-details.phtml -->
+<div class="row location-details info-element">
+  <?php // Information columns ?>
+  <div class="location-row-general">
+    <div class="location-col">
+      <?php ob_start(); ?>
+        <?php $hasImages = false; ?>
+        <?php if ($url = $orgInfo['pictures'][0]['url'] ?? null): ?>
+          <img class="building-image" src="<?=$this->escapeHtmlAttr($url)?>" alt="">
+          <?php $hasImages = true; ?>
+        <?php endif; ?>
+        <?php
+        /* TODO: Disable extra images for now, needs a more button or something
+        <?php if ('museum' === $orgInfo['type']): ?>
+          <?php if ($url = $orgInfo['pictures'][1]['url'] ?? null): ?>
+            <img class="extra-image" src="<?=$this->escapeHtmlAttr($url)?>" alt="">
+            <?php if ($url = $orgInfo['pictures'][2]['url'] ?? null): ?>
+              <img class="extra-image-2" src="<?=$this->escapeHtmlAttr($url)?>" alt="">
+            <?php endif; ?>
+          <?php endif; ?>
+        <?php endif; ?>
+        */ ?>
+        <?php if ($hasImages): ?>
+          <p class="building-name info-element"><?=$this->escapeHtml($orgInfo['name'])?></p>
+        <?php endif; ?>
+        <?php if ($year = $orgInfo['buildingYear'] ?? null): ?>
+          <p class="building-year info-element">
+            <?=$this->transEsc('organisation_info_building_year')?>: <?=$this->escapeHtml($year)?>
+          </p>
+        <?php endif; ?>
+
+        <?php if ($orgInfo['description']): ?>
+          <?php ob_start(); ?>
+            <p class="location-description description-long info-element">
+              <?=$this->cleanHtml($orgInfo['description'])?>
+            </p>
+          <?php $content = ob_get_clean(); ?>
+          <?= $this->component('@@molecules/containers/finna-truncate', [
+            'content' => $content,
+            'rows' => 5,
+          ]); ?>
+        <?php endif; ?>
+        <?php $content = ob_get_clean(); ?>
+        <?= $this->component('@@molecules/containers/finna-panel', [
+          'attributes' => ['class' => ['finna-panel-default', 'introduction']],
+          'heading' => $this->transEsc('organisation_info_general'),
+          'headingLevel' => 4,
+          'content' => $content,
+          'headingId' => 'heading1',
+        ]); ?>
+    </div>
+
+    <div class="location-col opening-times">
+      <?=$this->component('@@molecules/containers/finna-panel', [
+        'attributes' => ['class' => ['finna-panel-default', 'js-opening-times']],
+        'heading' => $this->transEsc('organisation_info_schedules'),
+        'headingLevel' => 4,
+        'content' => $this->render('organisationinfo/elements/location/schedule.phtml'),
+        'headingId' => 'heading2',
+      ]); ?>
+    </div>
+
+    <div class="location-col">
+      <?=$this->render('organisationinfo/elements/location/contact-info.phtml')?>
+    </div>
+  </div>
+
+  <?php // Services ?>
+  <?php if ($content = trim($this->render('organisationinfo/elements/location/service-list.phtml'))): ?>
+    <?= $this->component('@@molecules/containers/finna-panel', [
+        'attributes' => ['class' => ['finna-panel-default', 'services', 'info-element']],
+        'heading' => $this->transEsc('organisation_info_services'),
+        'headingLevel' => 4,
+        'content' => $content,
+        'headingId' => 'heading5',
+        'collapseId' => 'collapse5',
+        'collapsed' => false,
+      ]); ?>
+  <?php endif; ?>
+
+  <?php // Accessibility information ?>
+  <?php if ($content = trim($this->render('organisationinfo/elements/location/accessibility.phtml'))): ?>
+    <?= $this->component('@@molecules/containers/finna-panel', [
+        'attributes' => ['class' => ['finna-panel-default', 'accessibility-details', 'info-element']],
+        'heading' => $this->transEsc('organisation_info_accessibility'),
+        'headingLevel' => 4,
+        'content' => $content,
+        'headingId' => 'heading6',
+        'collapseId' => 'collapse6',
+        'collapsed' => true,
+      ]); ?>
+  <?php endif; ?>
+
+  <?php // Staff ?>
+  <?php if ($content = trim($this->render('organisationinfo/elements/location/staff.phtml'))): ?>
+    <?= $this->component('@@molecules/containers/finna-panel', [
+        'attributes' => ['class' => ['finna-panel-default', 'personnel', 'info-element']],
+        'heading' => $this->transEsc('organisation_info_staff'),
+        'headingLevel' => 4,
+        'content' => $content,
+        'headingId' => 'heading7',
+        'collapseId' => 'collapse7',
+      ]); ?>
+  <?php endif; ?>
+
+  <?php // Feeds ?>
+  <?php if ($content = trim($this->partial('organisationinfo/elements/location/feeds.phtml', ['orgInfo' => $orgInfo, 'feedType' => 'news']))): ?>
+    <?= $this->component('@@molecules/containers/finna-panel', [
+        'attributes' => ['class' => ['finna-panel-default', 'news-feed-container', 'rss-container', 'info-element']],
+        'heading' => $this->transEsc('organisation_info_rss_news'),
+        'headingLevel' => 4,
+        'content' => $content,
+        'headingId' => 'heading8',
+        'collapseId' => 'collapse8',
+      ]); ?>
+  <?php endif; ?>
+
+  <?php // Events ?>
+  <?php if ($content = trim($this->render('organisationinfo/elements/location/feeds.phtml', ['orgInfo' => $orgInfo, 'feedType' => 'events']))): ?>
+    <?= $this->component('@@molecules/containers/finna-panel', [
+        'attributes' => ['class' => ['finna-panel-default', 'events-feed-container', 'rss-container', 'info-element']],
+        'heading' => $this->transEsc('organisation_info_rss_events'),
+        'headingLevel' => 4,
+        'content' => $content,
+        'headingId' => 'heading9',
+        'collapseId' => 'collapse9',
+      ]); ?>
+  <?php endif; ?>
+</div>
+<!-- END of: finna - organisationinfo/elements/location-details.phtml -->

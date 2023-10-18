@@ -507,7 +507,7 @@ class SolrEad3 extends SolrEad
         if (!isset($xml->relations->relation)) {
             return $result;
         }
-        foreach ($xml->controlaccess->name as $node) {
+        foreach ($xml->controlaccess->name ?? [] as $node) {
             $attr = $node->attributes();
             $relator = (string)$attr->relator;
             if (self::RELATOR_ARCHIVE_ORIGINATION === $relator) {
@@ -1039,10 +1039,11 @@ class SolrEad3 extends SolrEad
     /**
      * Get description of content.
      *
-     * @return string
+     * @return array
      */
     public function getContentDescription()
     {
+        $genreforms = [];
         $xml = $this->getXmlRecord();
         if (!isset($xml->controlaccess->genreform)) {
             return [];
@@ -1056,11 +1057,10 @@ class SolrEad3 extends SolrEad
                 continue;
             }
             if ($label = $this->getDisplayLabel($genre)) {
-                return $label[0];
+                $genreforms[] = $label[0];
             }
         }
-
-        return null;
+        return $genreforms;
     }
 
     /**

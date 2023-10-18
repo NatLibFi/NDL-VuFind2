@@ -534,13 +534,11 @@ finna.layout = (function finnaLayout() {
   function getOrganisationPageLink(organisation, organisationName, link, callback) {
     var params = {
       url: VuFind.path + '/AJAX/JSON?method=getOrganisationInfo',
-      dataType: 'json',
-      method: 'POST',
       data: {
         method: 'getOrganisationInfo',
-        'params[action]': 'lookup',
-        link: link ? '1' : '0',
-        parent: organisation
+        element: 'organisation-page-link',
+        id: organisation.id,
+        sector: organisation.sector || ''
       }
     };
     if (organisationName) {
@@ -566,10 +564,8 @@ finna.layout = (function finnaLayout() {
         var organisation = {'id': organisationId, 'sector': organisationSector};
         getOrganisationPageLink(organisation, organisationName, true, function organisationPageCallback(response) {
           holder.toggleClass('done', true);
-          if (response) {
-            $.each(response, function handleLinks(id, item) {
-              holder.html(item).closest('li.record-organisation').toggleClass('organisation-page-link-visible', true);
-            });
+          if (response && response.found) {
+            holder.html(response.html).closest('li.record-organisation').toggleClass('organisation-page-link-visible', true);
           }
         });
       },

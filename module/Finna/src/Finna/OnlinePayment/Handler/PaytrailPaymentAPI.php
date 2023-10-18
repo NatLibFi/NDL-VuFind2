@@ -38,6 +38,8 @@ use Paytrail\SDK\Request\PaymentRequest;
 use Paytrail\SDK\Request\ShopInShopPaymentRequest;
 use Paytrail\SDK\Util\Signature;
 
+use function array_key_exists;
+
 /**
  * Paytrail Payment API handler module.
  *
@@ -120,7 +122,6 @@ class PaytrailPaymentAPI extends AbstractBase
         $productCodeMappings = $this->getProductCodeMappings();
         $organizationProductCodeMappings = $this->getOrganizationProductCodeMappings();
         $organizationMerchantIdMappings = $this->getOrganizationMerchantIdMappings();
-        $organizationFineTypeToProductCodeMappings = $this->getOrganizationFineTypeToProductCodeMappings();
 
         $paymentRequest = $organizationMerchantIdMappings
             ? new ShopInShopPaymentRequest() : new PaymentRequest();
@@ -143,7 +144,7 @@ class PaytrailPaymentAPI extends AbstractBase
             || $productCodeMappings
             || $organizationProductCodeMappings
             || $organizationMerchantIdMappings
-            || $organizationFineTypeToProductCodeMappings
+            || array_key_exists('__productCode', reset($fines))
         ) {
             // Map fines to items:
             $items = [];
@@ -151,8 +152,7 @@ class PaytrailPaymentAPI extends AbstractBase
                 $fineType = $fine['fine'] ?? '';
                 $fineOrg = $fine['organization'] ?? '';
 
-                $key = "$fineOrg/$fineType";
-                if (null === ($code = $organizationFineTypeToProductCodeMappings[$key] ?? null)) {
+                if (null === ($code = $fine['__productCode'] ?? null)) {
                     if (isset($productCodeMappings[$fineType])) {
                         $code = $productCodeMappings[$fineType];
                     } elseif ($productCode) {

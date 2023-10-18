@@ -3,47 +3,17 @@
   $this->headTitle($this->title);
   $this->layout()->finnaMainHeader = '<div><h2>' . $this->escapeHtml($this->title) . '</h2></div>';
 
-  $this->headLink()->appendStylesheet('vendor/L.Control.Locate.min.css');
-  $this->headScript()->appendFile('vendor/L.Control.Locate.min.js');
-
-  $this->headScript()->appendFile('finna-organisation-info.js');
-  if ($this->consortiumInfo) {
-    $this->headScript()->appendFile('finna-organisation-info-page-consortium.js');
-  }
-  $this->headScript()->appendFile('finna-organisation-info-widget.js');
-  $this->headScript()->appendFile('finna-organisation-info-page.js');
-  $this->headScript()->appendFile('finna-organisation-map-leaflet.js');
-
-  $this->jsTranslations()->addStrings([
-    'organisation_info_box_number' => 'organisation_info_box_number',
-     'organisation_info_is_open' => 'organisation_info_is_open',
-     'organisation_info_is_closed' => 'organisation_info_is_closed',
-     'organisation_info_no_schedule' => 'organisation_info_no_schedule',
-     'organisation_info_map_expand' => 'organisation_info_map_expand',
-     'organisation_info_map_collapse' => 'organisation_info_map_collapse',
-     'map_my_location' => 'map_my_location',
-     'map_zoom_in' => 'map_zoom_in',
-     'map_zoom_out' => 'map_zoom_out',
-     'organisationInfoAutocomplete' => 'organisation_info_autocomplete',
-  ]);
-
-  if ($this->consortiumInfo) {
-     foreach (['0/arc/', '0/mus/', '1/lib/pub/', '1/lib/spl/', '1/lib/uni/'] as $sector) {
-        $this->jsTranslations()->addStrings(["usageInfo-{$sector}" => "organisation_usage_rights_{$sector}_html"]);
-     }
-  }
-
   $initParams = json_encode(
       [
           'id' => $this->id,
           'consortiumInfo' => $this->consortiumInfo ? 1 : 0,
           'buildings' => $this->buildings,
-          'sector' => $this->sector ?? null,
+          'sectors' => $this->sectors,
       ]
   );
   $setupJS = <<<JS
-      $(document).ready(function() {
-         finna.organisationInfoPage.init({$initParams});
+      $(function() {
+         finna.organisationInfo.init({$initParams});
       });
       JS;
    $this->headScript()->appendScript($setupJS);
@@ -53,19 +23,16 @@
    <?=$this->render($template);?>
 <?php endif; ?>
 
-<div class="no-information hidden">
-  <?=$this->transEsc('organisation_info_no_schedule')?>
+<div class="organisation-info organisation-info-page js-organisation-info-container">
+  <div role="status" class="js-location-selection-loader hidden">
+    <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
+  </div>
+  <div class="js-consortium-info-container"></div>
+  <div class="js-location-selection-container"></div>
+  <div class="js-location-details-container"></div>
 </div>
 
-<?php
-  if ($this->consortiumInfo) {
-    echo $this->render('organisationinfo/home-consortium.phtml');
-  } else {
-    echo $this->render('organisationinfo/home-standalone.phtml');
-  }
-?>
-
 <?php if ($template = $this->content()->findTemplateForLng('content/Additions/organisation-page-end')): ?>
-  <?=$this->render('content/Additions/organisation-page-end.phtml')?>
+  <?=$this->render($template)?>
 <?php endif; ?>
 <!-- END of: finna - organisationinfo/home.phtml -->

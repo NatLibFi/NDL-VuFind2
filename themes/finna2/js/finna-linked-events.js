@@ -1,6 +1,6 @@
 /*global VuFind, finna, L */
 finna.linkedEvents = (function finnaLinkedEvents() {
-  function getEvents(params, callback, append, container, showSpinner) {
+  function getEvents(params, callback, append, container) {
     var limit = {'page_size': container.data('limit')};
     var lang = {};
     if ($('.linked-events-tabs-container').data('lang')) {
@@ -10,15 +10,9 @@ finna.linkedEvents = (function finnaLinkedEvents() {
     }
     params.query = $.extend(params.query, limit, lang);
     var spinner = null;
-    if (typeof showSpinner === 'undefined' || showSpinner) {
-      spinner = VuFind.icon('spinner');
-      if (append) {
-        container.find($('.linked-events-content')).append(spinner);
-      } else {
-        container.find($('.linked-events-content')).html(spinner);
-      }
-    } else {
-      spinner = container.find('.fa-spinner');
+    spinner = container[0].querySelector('.js-loader');
+    if (spinner) {
+      spinner.classList.remove("hidden");
     }
     var url = VuFind.path + '/AJAX/JSON?method=getLinkedEvents';
     $.ajax({
@@ -34,11 +28,13 @@ finna.linkedEvents = (function finnaLinkedEvents() {
             container[0].querySelectorAll('img[data-src]')
           );
         } else {
-          var err = $('<div></div>').attr('class', 'linked-events-noresults infobox').text(VuFind.translate('nohit_heading'));
+          var err = $('<div></div>').attr('class', 'linked-events-noresults infobox').attr('aria-live', 'polite').text(VuFind.translate('nohit_heading'));
           container.find($('.linked-events-content')).html(err);
           container.find($('.linked-events-next')).addClass('hidden');
         }
-        spinner.remove();
+        if (spinner) {
+          spinner.classList.add("hidden");
+        }
       })
       .fail(function getEventsFail(response/*, textStatus, err*/) {
         var err = '';
@@ -159,7 +155,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
   }
 
   function toggleAccordion(container, accordion) {
-    var tabContent = container.find('.linked-events-content').detach();
+    var tabContent = container.find('.tab-content').detach();
     var searchTools = container.find('.events-searchtools-container').detach();
     var moreButtons = container.find('.linked-events-buttons').detach();
     var toggleSearch = container.find('.events-searchtools-toggle').detach();

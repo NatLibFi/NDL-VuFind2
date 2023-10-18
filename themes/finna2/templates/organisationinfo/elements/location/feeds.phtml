@@ -1,0 +1,17 @@
+<?php // Do not add start and end comments ?>
+<?php foreach ($orgInfo['rss'] as $feed): ?>
+  <?php
+    if ($feedType !== $feed['feedType']) {
+      continue;
+    }
+    $attrs = $this->htmlAttributes(
+        [
+            'class' => "feed-container $feedType-feed",
+            'feed-id' => "organisation-info|{$feed['parent']}|{$feed['id']}|{$feed['orgType']}|$feedType",
+        ]
+    );
+  ?>
+  <finna-feed<?=$attrs?>>
+    <span role="status"><?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?></span>
+  </finna-feed>
+<?php endforeach; ?>

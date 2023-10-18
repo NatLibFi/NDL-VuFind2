@@ -169,17 +169,9 @@ class Feed implements
         // Check for an organisation info feed:
         $idParts = explode('|', $id);
         if ('organisation-info' === $idParts[0] && isset($idParts[4])) {
-            [, $parent, $unitId, $type, $feedType] = $idParts;
-            $result = $this->organisationInfo->query(
-                $parent,
-                [
-                    'id' => $unitId,
-                    'orgType' => $type,
-                    'action' => 'details',
-                    'allServices' => 1,
-                    'fullDetails' => 1,
-                ]
-            );
+            [, $id, $locationId, $type, $feedType] = $idParts;
+            $sectors = 'museum' === $type ? ['mus'] : ['lib'];
+            $result = $this->organisationInfo->getDetails($sectors, $id, $locationId);
 
             $url = '';
             foreach ($result['rss'] as $current) {
