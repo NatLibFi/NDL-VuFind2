@@ -32,7 +32,6 @@ namespace Finna\RecordDriver;
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use Finna\RecordDriver\Feature\EncapsulatedRecordInterface;
 use Finna\RecordDriver\Feature\EncapsulatedRecordTrait;
-use VuFind\RecordDriver\AbstractBase;
 use VuFindSearch\Response\RecordInterface;
 
 use function count;
@@ -49,36 +48,11 @@ use function count;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-class CuratedRecord extends AbstractBase implements
+class CuratedRecord extends SolrDefault implements
     ContainerFormatInterface,
     EncapsulatedRecordInterface
 {
     use EncapsulatedRecordTrait;
-
-    /**
-     * Get text that can be displayed to represent this record in breadcrumbs.
-     *
-     * @return string Breadcrumb text to represent this record.
-     */
-    public function getBreadcrumb()
-    {
-        return $this->getTitle();
-    }
-
-    /**
-     * Return the unique identifier of this record for retrieving additional
-     * information (like tags and user comments) from the external MySQL database.
-     *
-     * @return string Unique identifier.
-     * @throws \Exception
-     */
-    public function getUniqueID()
-    {
-        if (!isset($this->fields['id'])) {
-            throw new \Exception('ID not set!');
-        }
-        return $this->fields['id'];
-    }
 
     /**
      * Get records encapsulated in this container record.
