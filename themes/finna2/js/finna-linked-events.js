@@ -32,7 +32,9 @@ finna.linkedEvents = (function finnaLinkedEvents() {
           container.find($('.linked-events-content')).html(err);
           container.find($('.linked-events-next')).addClass('hidden');
         }
-        spinner.classList.add("hidden");
+        if (spinner) {
+          spinner.classList.add("hidden");
+        }
       })
       .fail(function getEventsFail(response/*, textStatus, err*/) {
         var err = '';
