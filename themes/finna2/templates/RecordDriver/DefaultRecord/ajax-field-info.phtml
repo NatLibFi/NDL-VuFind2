@@ -10,7 +10,7 @@
   }
 ?>
 
-<?php if ($this->authority): ?>
+<?php if ($this->allowAuthoritySummary && $this->authority): ?>
   <?php $summ = $this->authority->getSummary();
   if (!empty($summ)): ?>
     <div class="truncate-field description">
@@ -34,7 +34,7 @@
   </table>
 <?php endif; ?>
 
-<?php if (!empty($this->enrichmentData['altLabels'])): ?>
+<?php if ($allowLabelEnrichment && !empty($this->enrichmentData['altLabels'])): ?>
   <div class="alt-labels">
     <h3><?=$this->transEsc('field_info_alt_labels')?></h3>
     <ul>
@@ -47,11 +47,12 @@
   </div>
 <?php endif; ?>
 
-<?php if (!empty($this->enrichmentData['otherLanguageLabels']) || !empty($this->enrichmentData['otherLanguageAltLabels'])): ?>
+<?php if ($allowLanguageEnrichment && (!empty($this->enrichmentData['otherLanguageLabels']) || !empty($this->enrichmentData['otherLanguageAltLabels']))): ?>
   <div class="alt-labels">
     <h3><?=$this->transEsc('field_info_other_language_alt_labels')?></h3>
     <ul>
-      <?php foreach([...array_values($this->enrichmentData['otherLanguageLabels'] ?? []), ...array_values($this->enrichmentData['otherLanguageAltLabels'] ?? [])] as $labels): ?>
+      <?php foreach(array_merge($this->enrichmentData['otherLanguageLabels'] ?? [], $this->enrichmentData['otherLanguageAltLabels'] ?? []) as $lang => $labels): ?>
+        <li><?=$this->transEsc("$lang", null, $lang); ?></li>
         <?php foreach ($labels as $label): ?>
           <li>
             <?=$this->record($this->driver)->getLinkedFieldElement($this->type ?? 'subject', $label, ['name' => $label], ['class' => ['backlink']])?>

@@ -93,6 +93,13 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
     protected $finnaCache;
 
     /**
+     * Settings for diplaying dynamic content
+     *
+     * @var array
+     */
+    protected $dynamicContent;
+
+    /**
      * Constructor
      *
      * @param Config          $config Main configuration
@@ -116,6 +123,8 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
         $this->recordPlugin = $rp;
         $this->httpService = $http;
         $this->finnaCache = $cache;
+        $this->dynamicContent
+            = $config->LinkPopovers?->dynamic_content?->toArray() ?? [];
     }
 
     /**
@@ -146,11 +155,7 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
         $authority = null;
         $authorityFields = $this->config->LinkPopovers->authority_fields
             ? $this->config->LinkPopovers->authority_fields->toArray() : [];
-        if (
-            $authIds
-            && $authorityFields
-            && ($authIds[0] ?? false)
-        ) {
+        if ($authIds[0] ?? false) {
             try {
                 $authority = $this->loader->load(
                     $authIds[0],
@@ -168,9 +173,9 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
             return $this->formatResponse('');
         }
 
-        // Fetch any enrichment data by the first ID:
         $enrichmentData = $this->getEnrichmentData($ids[0], $label);
-
+        $allowAuthoritySummary
+            = $this->dynamicContent['authority_summary'] ?? true;
         $html = ($this->recordPlugin)($driver)->renderTemplate(
             'ajax-field-info.phtml',
             compact(
@@ -180,7 +185,8 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
                 'authorityFields',
                 'type',
                 'enrichmentData',
-                'driver'
+                'driver',
+                'allowAuthoritySummary',
             )
         );
 
@@ -419,11 +425,15 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
             unset($pref[$labelLang]);
         }
         if (isset($alt[$labelLang])) {
-            $result['altLabels'] = $alt[$labelLang];
+            if (empty($this->dynamicContent['alt_label_enrichment'] ?? true)) {
+                $result['altLabels'] = $alt[$labelLang];
+            }
             unset($alt[$labelLang]);
         }
-        $result['otherLanguageLabels'] = $pref;
-        $result['otherLanguageAltLabels'] = $alt;
+        if (empty($this->dynamicContent['other_language_enrichment'] ?? true)) {
+            $result['otherLanguageLabels'] = $pref;
+            $result['otherLanguageAltLabels'] = $alt;
+        }
 
         return $result;
     }
