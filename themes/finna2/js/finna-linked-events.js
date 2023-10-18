@@ -10,7 +10,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
     }
     params.query = $.extend(params.query, limit, lang);
     var spinner = null;
-    spinner = container[0].querySelector('.js-loader');
+    spinner = container[0].querySelector(append ? '.js-loader' : '.js-loader-overlay');
     if (spinner) {
       spinner.classList.remove("hidden");
     }
@@ -42,6 +42,9 @@ finna.linkedEvents = (function finnaLinkedEvents() {
           err = $('<div></div>').attr('class', 'alert alert-danger').text(response.responseJSON.data);
         }
         $('.linked-events-content').html(err);
+        if (spinner) {
+          spinner.classList.add("hidden");
+        }
       });
   }
 
