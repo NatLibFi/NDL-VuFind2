@@ -1523,6 +1523,7 @@ external_links[] = "external_link_kyppi_mjr||external_link_kyppi_mjr||\(mjr\)(.+
 external_links[] = "external_link_kyppi_rpr||external_link_kyppi_rpr||\(rpr\)(.+)||https://www.kyppi.fi/palveluikkuna/rapea/read/asp/r_kohde_det.aspx?KOHDE_ID={1}||{1}"
 ; The next option allows hiding certain parts from the ajax-field-info.phtml They are enabled as default.
 ;dynamic_content[authority_summary] = false
+;dynamic_content[label_enrichment] = false
 ;dynamic_content[alt_label_enrichment] = false
 ;dynamic_content[other_language_enrichment] = false
 
