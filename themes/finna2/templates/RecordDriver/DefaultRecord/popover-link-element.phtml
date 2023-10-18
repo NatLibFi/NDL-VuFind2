@@ -27,7 +27,7 @@ $additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-a
           <a href="<?=$link['escapedUrl']?>"><?=$this->transEsc($link['linkText'])?></a><br>
         </span>
       <?php endforeach; ?>
-      <?php if ($this->ids && $this->allowDynamicContent): ?>
+      <?php if ($this->ids): ?>
         <div class="dynamic-content">
           <?=$this->icon('spinner') ?>
         </div>
