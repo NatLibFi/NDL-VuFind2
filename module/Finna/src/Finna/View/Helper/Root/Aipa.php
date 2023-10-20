@@ -100,6 +100,10 @@ class Aipa extends AbstractHelper
      */
     public function renderLevelsAndSubjects(array $educationalData): string
     {
+        if (empty($educationalData)) {
+            return '';
+        }
+
         $component = $this->getView()->plugin('component');
         $langcode = $this->view->layout()->userLang;
 
@@ -144,6 +148,10 @@ class Aipa extends AbstractHelper
      */
     public function renderStudyContentsAndObjectives(array $educationalData): string
     {
+        if (empty($educationalData)) {
+            return '';
+        }
+
         $component = $this->getView()->plugin('component');
         $langcode = $this->view->layout()->userLang;
 

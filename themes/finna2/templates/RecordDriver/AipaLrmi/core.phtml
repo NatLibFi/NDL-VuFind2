@@ -57,7 +57,7 @@
           </span>
         </div>
       <?php endif; ?>
-      <?php if ($educationalData = $this->driver->getEducationalData()): ?>
+      <?php if (false !== ($educationalData = $this->driver->getEducationalData())): ?>
         <?= $this->aipa($this->driver)->renderLevelsAndSubjects($educationalData) ?>
       <?php else: ?>
         <?php
@@ -84,7 +84,7 @@
       <?php endif; ?>
     </div>
 
-    <?php if ($educationalData): ?>
+    <?php if (false !== $educationalData): ?>
       <?php $content = $this->aipa($this->driver)->renderStudyContentsAndObjectives($educationalData); ?>
     <?php else: ?>
       <?php
