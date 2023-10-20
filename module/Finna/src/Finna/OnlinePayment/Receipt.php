@@ -250,14 +250,14 @@ class Receipt implements TranslatorAwareInterface
 
             $fineOrg = $fine->organization ?? '';
             $lineBusinessId = $fineOrg ? ($organizationBusinessIdMappings[$fineOrg] ?? '') : '';
-            $this->addLine($pdf, $fine, $sourceName, $businessId, $lineBusinessId, $hasFineOrgs);
+            $this->addLine($pdf, $fine, $source, $sourceName, $businessId, $lineBusinessId, $hasFineOrgs);
             // If we exceed bottom, revert and add a new page:
             if ($pdf->GetY() > $linesBottom) {
                 $pdf = $savePDF;
                 $pdf->AddPage();
                 $pdf->SetY(25);
                 $this->addHeaders($pdf, $hasFineOrgs);
-                $this->addLine($pdf, $fine, $sourceName, $businessId, $lineBusinessId, $hasFineOrgs);
+                $this->addLine($pdf, $fine, $source, $sourceName, $businessId, $lineBusinessId, $hasFineOrgs);
             }
         }
         $pdf->SetY($pdf->GetY() + 1);
@@ -424,6 +424,7 @@ class Receipt implements TranslatorAwareInterface
      *
      * @param TCPDF  $pdf            PDF
      * @param Fee    $fine           Fee or fine
+     * @param string $source         Source ID
      * @param string $sourceName     Source name
      * @param string $businessId     Source business ID
      * @param string $lineBusinessId Line business ID
@@ -434,6 +435,7 @@ class Receipt implements TranslatorAwareInterface
     protected function addLine(
         TCPDF $pdf,
         Fee $fine,
+        string $source,
         string $sourceName,
         string $businessId,
         string $lineBusinessId,
@@ -457,7 +459,7 @@ class Receipt implements TranslatorAwareInterface
 
         if ($recipient) {
             if (($fineOrg = $fine->organization) && $lineBusinessId) {
-                $recipient = $this->translate('Payment::organization_' . $fineOrg, [], $fineOrg)
+                $recipient = $this->translate("Payment::organisation_{$source}_{$fineOrg}", [], $fineOrg)
                     . " ($lineBusinessId)";
             } else {
                 $recipient = $sourceName . ($businessId ? " ($businessId)" : '');
