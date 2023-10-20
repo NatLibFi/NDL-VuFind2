@@ -229,25 +229,57 @@
 // Feed tabs
 .feed-tabs-container {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     margin-top: 20px;
     margin-bottom: 12px;
     border-bottom: 1px solid #919191;
     align-items: center;
     .feed-tabs-title {
-        margin-left: 0;
-        margin-bottom: 5px;
-    }
-    .nav {
+        margin-top: 12px;
         margin-bottom: 0;
-    }
-    .nav-tabs {
-        border-bottom: none;
-        margin-right: 0;
     }
     ul {
         display: flex;
-        justify-content: flex-end;
+        flex-wrap: wrap;
+        margin-top: 12px;
+        margin-bottom: 0;
+    }
+    // Feed tabs style
+    .feed-nav-tabs:extend(.nav-tabs all) {
+        border-bottom: none;
+        justify-content: flex-end safe;
+    };
+    .feed-nav-pills {
+        width: 100%;
+        margin-bottom: 6px;
+            > li {
+              float: left;
+              margin-right: 6px;
+              // Links rendered as pills
+              > a {
+                border-radius: @feed-nav-pills-border-radius;
+                background-color: @feed-nav-pills-bg;
+                color: @feed-nav-pills-color;
+                border: @feed-nav-pills-border;
+                padding: @feed-nav-pills-padding;
+              }
+              + li {
+                margin-bottom: 6px;
+              }
+              // Active state
+              &.active > a {
+                color: @feed-nav-pills-active-color;
+                background-color: @feed-nav-pills-active-bg;
+                border-color: @feed-nav-pills-active-border;
+                &:hover,
+                &:focus {
+                  color: @feed-nav-pills-active-hover-color;
+                  background-color: @feed-nav-pills-active-hover-bg;
+                  border: @feed-nav-pills-active-hover-border;
+                }
+              }
+            }
     }
 }
 
@@ -521,7 +553,7 @@ finna-feed {
             font-size: 1.5em;
             float: right;
             margin-left: auto;
-            padding-left: 5px;                
+            padding-left: 5px;
             line-height: 14px;
         }
     }
@@ -675,7 +707,7 @@ finna-feed.splide--ltr {
                     background-image: linear-gradient(to bottom, transparent 0px, @carousel-slide-header-background 100%);
                     bottom: 0;
                 }
-            } 
+            }
         }
     }
     .feed-item-holder {
@@ -696,7 +728,7 @@ finna-feed.splide--ltr {
                     background-image: linear-gradient(to bottom, transparent 0px, @carousel-slide-header-background 100%);
                     bottom: 0;
                 }
-            } 
+            }
         }
         .feed-link {
             flex-flow: column;
