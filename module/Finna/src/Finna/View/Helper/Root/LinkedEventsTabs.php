@@ -55,7 +55,7 @@ class LinkedEventsTabs extends \Laminas\View\Helper\AbstractHelper
         $active = $params['active'] ?? $tabs[0]['title'];
         $allEventsLink = $params['link'] ?? '';
         $searchTools = $params['searchTools'] ?? 'show';
-        $navStyle = $params['navStyle'] ?? 'tabs';
+        $navStyle = $params['navStyle'] ?? '';
         $limit = $params['limit'] ?? 30;
 
         return $this->getView()->render(
