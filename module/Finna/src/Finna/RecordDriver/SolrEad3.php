@@ -558,7 +558,7 @@ class SolrEad3 extends SolrEad
             }
             // Do not add duplicates
             foreach ($result as $res) {
-                if ($res == $relation) {
+                if ($res === $relation) {
                     continue 2;
                 }
             }
