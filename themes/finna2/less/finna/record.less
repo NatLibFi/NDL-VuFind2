@@ -202,8 +202,8 @@ a.authority {
         }
       }
       .image-popup-trigger {
-        &.no-image {
-          img {
+        &.no-image {
+          img {
             max-width: 200px;
           }
         }
@@ -233,7 +233,7 @@ a.authority {
   }
 }
 
-.model-link {
+.model-link {
   .download-link {
     text-align: left;
     color: #007c90;
@@ -262,7 +262,7 @@ a.authority {
     font-size: 0.8em;
     text-transform: initial;
   }
-  .dropdown-toggle.download {
+  .dropdown-toggle.download {
     padding: 2px 6px;
     font-weight: 600;
     text-transform: uppercase;
@@ -753,29 +753,46 @@ a.authority {
   margin-bottom: 1em;
 }
 
+// Comments
+.comment-wrapper {
+  background-color: lighten(@gray, 78%);
+  border-radius: @border-radius-base;
+
+  .comment-text {
+    // Display line breaks properly in comments:
+    white-space: pre-line;
+  }
+}
+
 // Comment form
-.comment-form {
-  .fa.fa-info3 {
-    font-size: 1.5em;
-    float: left;
-    color: @brand-primary;
-  }
-  .comment-description {
-    margin-top: 1em;
-    margin-left: 2em;
-  }
-  @media (min-width: @screen-md) {
-    .fa.fa-info3 {
-      margin-top: 2.7em;
-      margin-left: 1em;
-    }
-    .comment-col {
-        width: 50%;
-        float: left;
+.comment-form-wrapper {
+  padding: 10px;
+  background-color: lighten(@gray, 78%);
+  border-radius: @border-radius-base;
+
+  .comment-form {
+    .comment-info-icon {
+      font-size: 1.5em;
+      float: left;
+      color: @brand-primary;
     }
     .comment-description {
-      margin-top: 4em;
-      margin-left: 4em;
+      margin-top: 1em;
+      margin-left: 2em;
+    }
+    @media (min-width: @screen-md) {
+      .comment-info-icon {
+        margin-top: 2.7em;
+        margin-left: 1em;
+      }
+      .comment-col {
+          width: 50%;
+          float: left;
+      }
+      .comment-description {
+        margin-top: 4em;
+        margin-left: 4em;
+      }
     }
   }
 }
@@ -1013,7 +1030,7 @@ finna-model-viewer .object-editor {
         align-items: center;
         justify-content: space-between;
         padding-bottom: 2px;
-        &.child {
+        &.child {
           margin-left: 20px;
         }
         input {
@@ -1173,4 +1190,9 @@ finna-model-viewer .object-editor {
       color: #ddd;
     }
   }
+}
+
+/* ------ Record Tabs ------ */
+.record-tab.details .tab-name {
+  display: none;
 }

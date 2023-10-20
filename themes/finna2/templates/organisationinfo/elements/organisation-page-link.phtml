@@ -1,0 +1,13 @@
+<!-- START of: finna - organisationinfo/elements/organisation-page-link.phtml -->
+<?php $url = $this->url('organisationinfo-home', [], ['query' => ['id' => $orgInfo['id'], 'sector' => implode(',', $sectors) ?: null]]); ?>
+<?php if ($orgInfo['logo']): ?>
+  <a href="<?=$url?>">
+    <img src="<?=$orgInfo['logo']?>" class="consortium-logo" alt="" title="<?=$this->transEscAttr('organisation_info_link')?>">
+    <span class="sr-only"><?=$this->transEsc('organisation_info_link')?></span>
+  </a>
+<?php endif ?>
+<span class="organisation-name"><?=$orgInfo['name'] ?: $parentName?></span>
+<div class="link">
+  <a href="<?=$url?>"><?=$this->transEsc('organisation_info_link')?></a>
+</div>
+<!-- START of: finna - organisationinfo/elements/organisation-page-link.phtml -->

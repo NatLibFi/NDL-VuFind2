@@ -339,6 +339,10 @@
         display: none;
     }
 }
+.event-accordions .tab-content {
+    // Relative positioning for the absolutely positioned spinner:
+    position: relative;
+}
 
 .linked-events-pagination {
     display: flex;
@@ -352,11 +356,34 @@
         }
     }
 }
-.linked-events-content {
-    .fa-spinner {
-        position: relative;
-        left: 50%;
+.linked-events-tab-spinner {
+    position: absolute;
+    margin-top: -20px;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+.linked-events-tab-spinner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-height: 30px;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0,0,0,0.4);
+    .fa-spinner::before {
+        color: inherit;
     }
+    .icon {
+        color: white;
+    }
+}
+.linked-events-page-spinner {
+    position: absolute;
+    display: block;
+    margin-top: 10px;
 }
 .events-searchtools-toggle {
     cursor: pointer;
@@ -521,7 +548,7 @@ finna-feed {
             font-size: 1.5em;
             float: right;
             margin-left: auto;
-            padding-left: 5px;                
+            padding-left: 5px;
             line-height: 14px;
         }
     }
@@ -634,6 +661,10 @@ finna-feed {
                     &.is-active {
                         background-color: @brand-primary;
                     }
+                    &:focus {
+                        outline: 2px solid @action-link-color;
+                        outline-offset: 3px;
+                    }
                 }
                 @media (min-width: @screen-md) {
                     padding: 8px;
@@ -675,7 +706,7 @@ finna-feed.splide--ltr {
                     background-image: linear-gradient(to bottom, transparent 0px, @carousel-slide-header-background 100%);
                     bottom: 0;
                 }
-            } 
+            }
         }
     }
     .feed-item-holder {
@@ -696,7 +727,7 @@ finna-feed.splide--ltr {
                     background-image: linear-gradient(to bottom, transparent 0px, @carousel-slide-header-background 100%);
                     bottom: 0;
                 }
-            } 
+            }
         }
         .feed-link {
             flex-flow: column;

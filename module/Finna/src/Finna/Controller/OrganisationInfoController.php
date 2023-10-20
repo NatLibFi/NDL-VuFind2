@@ -30,8 +30,6 @@
 
 namespace Finna\Controller;
 
-use function in_array;
-
 /**
  * Organisation info page controller.
  *
@@ -58,7 +56,7 @@ class OrganisationInfoController extends \VuFind\Controller\AbstractBase
 
         $id = $this->params()->fromQuery('id');
         $buildings = $this->params()->fromQuery('buildings');
-        $sector = $this->params()->fromQuery('sector');
+        $sectors = (array)$this->params()->fromQuery('sector', []);
 
         if (!$id) {
             if (!isset($config->General->defaultOrganisation)) {
@@ -87,45 +85,14 @@ class OrganisationInfoController extends \VuFind\Controller\AbstractBase
 
         $consortiumInfo = $config->OrganisationPage->consortiumInfo ?? false;
 
-        $title = $config->OrganisationPage->title ?? 'organisation_info_page_title';
-
-        $title = str_replace(
-            '%%organisation%%',
-            $organisation,
-            $this->translate($title)
+        $title = $this->translate(
+            $config->OrganisationPage->title ?? 'organisation_info_page_title',
+            ['%%organisation%%' => $organisation]
         );
 
-        $facetConfig = $this->serviceLocator
-            ->get(\VuFind\Config\PluginManager::class)->get('facets');
-
-        $buildingOperator = '';
-        if (isset($facetConfig->Results_Settings->orFacets)) {
-            $orFacets = array_map(
-                'trim',
-                explode(',', $facetConfig->Results_Settings->orFacets)
-            );
-            if (
-                !empty($orFacets[0])
-                && ($orFacets[0] == '*' || in_array('building', $orFacets))
-            ) {
-                $buildingOperator = '~';
-            }
-        }
-
-        $view = $this->createViewModel();
-
-        $view->title = $title;
-        $view->id = $id;
-        if ($buildings) {
-            $view->buildings = implode(',', $buildings);
-        }
-        $view->buildingFacetOperator = $buildingOperator;
-        $view->consortiumInfo = $consortiumInfo;
-        if ($sector) {
-            $view->sector = $sector;
-        }
-
-        return $view;
+        return $this->createViewModel(
+            compact('title', 'id', 'buildings', 'consortiumInfo', 'sectors')
+        );
     }
 
     /**

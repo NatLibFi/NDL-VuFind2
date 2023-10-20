@@ -175,7 +175,9 @@ class FinnaFeedElement extends HTMLElement {
         // Text hover for touch devices
         if (finna.layout.isTouchDevice() && typeof settings.linkText === 'undefined') {
           holder.querySelectorAll('.carousel-slide-more.carousel-show').forEach(el => {
-            el.classList.remove('hidden');
+            if (holder.querySelector('.carousel-text:not(.no-text)') !== null) {
+              el.classList.remove('hidden');
+            }
           });
           holder.querySelectorAll('.carousel-hover-title').forEach(el => {
             el.style.width = '90%';
@@ -184,15 +186,24 @@ class FinnaFeedElement extends HTMLElement {
               element.style.paddingRight = '10px';
             }
           });
-          holder.querySelectorAll('.carousel-text').forEach(el => {
-            el.addEventListener('click', function doNothing(e) {
-              e.stopImmediatePropagation();
-              var slide = this.closest('.feed-item-holder');
-              if (slide && slide.classList.contains('clicked')) {
-                e.preventDefault();
-              }
+          if (!settings.modal) {
+            holder.querySelectorAll('.carousel-text').forEach(el => {
+              el.addEventListener('click', function doNothing(e) {
+                e.stopImmediatePropagation();
+                var slide = this.closest('.feed-item-holder');
+                if (slide && slide.classList.contains('clicked')) {
+                  e.preventDefault();
+                }
+              });
             });
-          });
+          } else {
+            holder.querySelectorAll('.carousel-slide-header p').forEach(el => {
+              el.addEventListener('click', function doNothing(e) {
+                e.stopImmediatePropagation();
+                e.preventDefault();
+              });
+            });
+          }
           holder.querySelectorAll('.carousel-more').forEach(el => {
             var heightEl = el.previousElementSibling.offsetHeight;
             if (heightEl) {

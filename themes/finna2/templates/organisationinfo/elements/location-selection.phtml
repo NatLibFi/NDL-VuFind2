@@ -1,0 +1,79 @@
+<!-- START of: finna - organisationinfo/elements/location-selection.phtml -->
+<?php if (!$orgInfo): ?>
+  <?=$this->transEsc('organisation_info_no_schedule'); ?>
+  <?php return; ?>
+<?php endif; ?>
+<?php $locationCount = count($orgInfo['list'] ?? []); ?>
+<div class="navi-section" id="consortium-service-point-section">
+  <div class="locations-title">
+    <h2><?=$this->transEsc(1 === $locationCount ? 'organisation_info_navi_service_single' : 'organisation_info_navi_service')?></h2>
+  </div>
+  <div class="location-filters">
+    <?php if ($locationCount > 1): ?>
+      <div class="location-filter">
+        <form class="location-selection">
+          <label for="location_select" class="hidden"><?=$this->transEscAttr('Search')?></label>
+          <select id="location_select" class="js-location-select">
+              <option value=""><?=$this->transEsc('organisation_info_autocomplete', ['%%count%%' => $locationCount])?></option>
+            <?php foreach ($orgInfo['list'] as $item): ?>
+              <?php
+                $name = $item['name'];
+                if ($city = $item['address']['city'] ?? null) {
+                  $name .= ", $city";
+                }
+              ?>
+              <option value="<?=$this->escapeHtmlAttr($item['id'])?>"><?=$this->escapeHtml($name)?></option>
+            <?php endforeach; ?>
+          </select>
+          <div class="alert alert-danger js-location-unavailable hidden"><?=$this->transEsc('organisation_info_location_not_available')?></div>
+        </form>
+      </div>
+    <?php endif; ?>
+  </div>
+  <?php if ($notification = $orgInfo['consortium']['finna']['notification'] ?? ''): ?>
+    <div>
+      <p class="consortium-notification"><?=$this->cleanHtml($notification)?></p>
+    </div>
+  <?php endif; ?>
+
+  <div class="location-information">
+    <div role="status" class="js-location-loader hidden">
+      <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
+    </div>
+    <div class="js-location-quick-information info-element hidden"></div>
+
+    <div class="js-location-info-map hidden">
+      <template class="js-map-attribution">
+        <span class="map-marker-text">
+          <?=$this->icon('map-marker', 'map-marker-icon open')?>&nbsp;<?=$this->transEsc('organisation_info_is_open')?>
+        </span>
+        <span class="map-marker-text">
+          <?=$this->icon('map-marker', 'map-marker-icon closed')?>&nbsp;<?=$this->transEsc('organisation_info_is_closed')?>
+        </span>
+        <span class="map-marker-text">
+          <?=$this->icon('map-marker', 'map-marker-icon no-schedule')?>&nbsp;<?=$this->transEsc('organisation_info_no_schedule')?>
+        </span>
+      </template>
+      <template class="js-map-bubble-template">
+        <div class="map-bubble">
+          <h3 class="js-name"></h3>
+          <p><span class="js-address"></span></p>
+        </div>
+      </template>
+
+      <div class="location-map">
+        <div class="js-map-controls">
+          <?php if ($locationCount > 1): ?>
+            <button class="btn-link js-show-location" type="button" disabled><?=$this->transEsc('zoom_center')?></button>
+            <button class="btn-link js-show-all" type="button"><?=$this->transEsc('organisation_info_page_map_show_all')?></button>
+          <?php endif; ?>
+        </div>
+        <div class="map">
+          <div id="location_map_canvas" class="js-map-widget"></div>
+          <div class="js-marker-tooltip hidden"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END of: finna - organisationinfo/elements/location-selection.phtml -->

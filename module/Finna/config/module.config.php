@@ -373,6 +373,8 @@ $config = [
             'Finna\OnlinePayment\Receipt' => 'Finna\OnlinePayment\ReceiptFactory',
             'Finna\OnlinePayment\Session' => 'Finna\OnlinePayment\OnlinePaymentSessionFactory',
             'Finna\OrganisationInfo\OrganisationInfo' => 'Finna\OrganisationInfo\OrganisationInfoFactory',
+            'Finna\OrganisationInfo\Provider\Kirkanta' => 'Finna\OrganisationInfo\Provider\AbstractProviderFactory',
+            'Finna\OrganisationInfo\Provider\MuseotFi' => 'Finna\OrganisationInfo\Provider\AbstractProviderFactory',
             'Finna\Record\Loader' => 'Finna\Record\LoaderFactory',
             'Finna\RecordDriver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\RecordTab\TabManager' => 'VuFind\RecordTab\TabManagerFactory',
@@ -963,7 +965,7 @@ $config = [
                     'Finna\RecordTab\AuthorityRecordsAuthor' => 'Finna\RecordTab\AuthorityRecordsFactory',
                     'Finna\RecordTab\AuthorityRecordsTopic' => 'Finna\RecordTab\AuthorityRecordsFactory',
                     'Finna\RecordTab\CollectionHierarchyTree' => 'VuFind\RecordTab\CollectionHierarchyTreeFactory',
-                    'Finna\RecordTab\ExternalData' => 'Finna\RecordTab\Factory::getExternalData',
+                    'Finna\RecordTab\HoldingsArchive' => 'Finna\RecordTab\Factory::getHoldingsArchive',
                     'Finna\RecordTab\HierarchyTree' => 'VuFind\RecordTab\HierarchyTreeFactory',
                     'Finna\RecordTab\Map' => 'Finna\RecordTab\Factory::getMap',
                     'Finna\RecordTab\R2CollectionList' => 'VuFind\RecordTab\CollectionListFactory',
@@ -976,7 +978,7 @@ $config = [
                     'authorityrecordsauthor' => 'Finna\RecordTab\AuthorityRecordsAuthor',
                     'authorityrecordstopic' => 'Finna\RecordTab\AuthorityRecordsTopic',
                     'componentparts' => 'Finna\RecordTab\ComponentParts',
-                    'externaldata' => 'Finna\RecordTab\ExternalData',
+                    'holdingsarchive' => 'Finna\RecordTab\HoldingsArchive',
                     'r2collectionlist' => 'Finna\RecordTab\R2CollectionList',
 
                     // Overrides:

@@ -2666,6 +2666,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             'mms_id' => implode(',', $ids),
             'expand' => implode(',', array_unique(array_merge($types, ['requests']))),
         ];
+
         if ($bibs = $this->makeRequest('/bibs', $params)) {
             foreach ($bibs as $bib) {
                 $marc = new MarcReader($bib->record->asXML());
@@ -2682,6 +2683,10 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     (string)$bib->mms_id,
                     $this->config['Holdings']['externalInterfaceUrl'] ?? ''
                 );
+
+                $itemsTotal = 0;
+                $itemsAvailable = 0;
+                $itemsOrdered = 0;
 
                 // Physical
                 $physicalItems = $marc->getFields('AVA');
@@ -2720,6 +2725,13 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     $item['sort'] = $sort++;
                     $item['externalInterfaceUrl'] = $externalInterfaceUrl;
                     $status[] = $item;
+
+                    $itemCount = (int)$marc->getSubfield($field, 'f');
+                    $itemsTotal += $itemCount;
+                    if (true === $available || ItemStatus::STATUS_AVAILABLE === $available) {
+                        $unavailable = (int)$marc->getSubfield($field, 'g');
+                        $itemsAvailable += $itemCount - $unavailable;
+                    }
                 }
                 // Electronic
                 $electronicItems = $marc->getFields('AVE');
@@ -2785,6 +2797,9 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     }
                     $item['sort'] = $sort++;
                     $status[] = $item;
+
+                    ++$itemsTotal;
+                    ++$itemsAvailable;
                 }
                 usort($status, [$this, 'statusSortFunction']);
 
@@ -2793,6 +2808,27 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     $item['location'] = $this->translate($item['location']);
                 }
                 unset($item);
+
+                if ($status) {
+                    // Since summary data is appended to the holdings array as a fake item,
+                    // we need to add a few dummy-fields that VuFind expects to be
+                    // defined for all elements.
+                    $summary = [
+                        'available' => $itemsAvailable,
+                        'total' => $itemsTotal,
+                        'ordered' => $itemsOrdered,
+                        'locations' => count(array_unique(array_column($status, 'location'))),
+                        'availability' => null,
+                        'callnumber' => null,
+                        'location' => '__HOLDINGSSUMMARYLOCATION__',
+                        'externalInterfaceUrl' => $externalInterfaceUrl,
+                    ];
+                    if ($this->config['Holdings']['displayTotalHoldCount'] ?? true) {
+                        $summary['reservations'] = (int)$bib->requests ?? 0;
+                    }
+
+                    $status[] = $summary;
+                }
 
                 $results[(string)$bib->mms_id] = $status;
             }

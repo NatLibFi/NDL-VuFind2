@@ -5,10 +5,10 @@
   $markers = $this->tab->getMapMarkers();
   $script = <<<JS
       $(document).ready(function() {
-        var tileLayer = L.tileLayer('https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png', {
+        var tileLayer = L.tileLayer('https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png?v=2', {
           maxZoom: 18,
           tileSize: 256,
-          attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+          attribution: 'Map data &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY</a>'
         });
 
         var drawnItems = new L.FeatureGroup();

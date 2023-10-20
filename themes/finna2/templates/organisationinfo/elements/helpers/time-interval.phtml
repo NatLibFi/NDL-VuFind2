@@ -1,0 +1,18 @@
+<?php // No START and END markers in this file due to high verbosity ?>
+<?php
+$openingTime = $this->dateTime()->convertToDisplayTime('U', $opens);
+$closingTime = $this->dateTime()->convertToDisplayTime('U', $closes);
+if (!$minutes) {
+    if (preg_match('/^(\d+)/', $openingTime, $matches)) {
+        $openingTime = $matches[1];
+    }
+    if (preg_match('/^(\d+)/', $closingTime, $matches)) {
+        $closingTime = $matches[1];
+    }
+}
+// Avoid extra whitespace by concatenating the results:
+echo '<span class="times"><span class="opens">'
+. '<time datetime="' . $this->escapeHtmlAttr(date('H:i', $opens)) . '">' . $this->escapeHtml($openingTime) . '</time>'
+. '</span>&ndash;<span class="closes">'
+. '<time datetime="' . $this->escapeHtmlAttr(date('H:i', $closes)) . '">' . $this->escapeHtml($closingTime) . '</time>'
+. '</span></span>';

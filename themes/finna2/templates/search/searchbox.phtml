@@ -4,45 +4,32 @@
     $module = $this->layout()->templateDir;
     $action = $this->layout()->templateName;
 
-    // Initialize from current search (if available) or defaults:
+    // Initialize from current search (if available and not explicitly overridden) or defaults:
     if ($results = ($this->results ?? $this->searchMemory()->getCurrentSearch())) {
       $params = $results->getParams();
       $this->searchClassId = $params->getSearchClassId();
+    } else {
+      $params = null;
+      $this->searchClassId ??= $this->config()->get('config')->Site->defaultSearchBackend
+        ?? 'Solr';
+    }
+    // Initialize from current search if eligible, defaults otherwise:
+    if (isset($params) && $this->searchClassId === $params->getSearchClassId()) {
       $hiddenFilters = $params->getHiddenFilters();
       $lastSort = $params->getSort();
       $lastLimit = $params->getLimit();
-      $options = $results->getOptions();
+      $options = $params->getOptions();
     } else {
-      if (!isset($this->searchClassId)) {
-        switch ($module) {
-        case 'combined':
-          $this->searchClassId = 'Combined';
-          break;
-        case 'eds':
-          $this->searchClassId = 'EDS';
-          break;
-        case 'summon':
-          $this->searchClassId = 'Summon';
-          break;
-        case 'search2':
-          $this->searchClassId = 'Search2';
-          break;
-        case 'authority':
-          $this->searchClassId = 'SolrAuth';
-          break;
-        case 'r2search':
-          $this->searchClassId = 'R2';
-          break;
-        default:
-          $config = $this->config()->get('config');
-          $this->searchClassId = $config->Site->defaultSearchBackend ?? 'Solr';
-        }
-      }
-      $options = $this->searchOptions($this->searchClassId);
       $hiddenFilters = $this->searchTabs()->getHiddenFilters($this->searchClassId, true, $this->ignoreHiddenFiltersInRequest ?? false);
       $lastSort = $this->searchMemory()->getLastSort($this->searchClassId);
       $lastLimit = $this->searchMemory()->getLastLimit($this->searchClassId);
-      $params = null;
+      $options = $this->searchOptions($this->searchClassId);
+    }
+    // Override search class ID with searchbox-specific settings, if necessary:
+    $overrideSearchClassId = $options->getSearchBoxSearchClassId();
+    if ($overrideSearchClassId !== $this->searchClassId) {
+      $this->searchClassId = $overrideSearchClassId;
+      $options = $this->searchOptions($overrideSearchClassId);
     }
 
     // Load search actions and settings (if any):
@@ -97,7 +84,7 @@
 ?>
 <?php if ($this->searchType != 'advanced'): ?>
   <?php
-     if ($this->searchbox()->autocompleteEnabled($this->searchClassId)) {
+    if ($this->searchbox()->autocompleteEnabled($this->searchClassId)) {
       $phrase = $this->autocomplete()->getPhraseSearch();
       if (!$browse) {
         $activeTab = $this->searchClassId;
@@ -116,14 +103,46 @@
 
         $acHandlers = $this->autocomplete()->getHandlers($activeTab);
       }
-     }
+    }
 
-     $placeholder = $this->searchbox()->getPlaceholderText($searchTabs['selected']['id'] ?? null);
-     if ($placeholder) {
-       $placeholder = $this->translate($placeholder);
-     } else {
-       $placeholder = $this->translate('Find') . $this->translate('eol_ellipsis');
-     }
+    $placeholder = $this->searchbox()->getPlaceholderText($searchTabs['selected']['id'] ?? null);
+    if ($placeholder) {
+      $placeholder = $this->translate($placeholder);
+    } else {
+      $placeholder = $this->translate('Find') . $this->translate('eol_ellipsis');
+    }
+
+    $searchboxAttributes = [
+      'id' => 'searchForm_lookfor',
+      'class' => 'searchForm_lookfor form-control search-query',
+      'type' => 'search',
+      'name' => 'lookfor',
+      'value' => $this->lookfor,
+      'aria-label' => $this->translate('search_terms'),
+      'placeholder' => $placeholder,
+    ];
+    if ($this->searchbox()->autocompleteEnabled($this->searchClassId)) {
+      $searchboxAttributes['class'] .= " autocomplete-finna searcher:{$this->searchClassId}"
+        . ($this->searchbox()->autocompleteAutoSubmit($this->searchClassId) ? ' ac-auto-submit' : '');
+      if (!empty($activeTab)) {
+        $searchboxAttributes['class'] .= ' tab:' . str_replace(':', '###', $activeTab);
+      }
+      if ($browse || $activeTab === 'Combined') {
+        $searchboxAttributes['class'] .= ' onlySuggestions:1';
+      }
+      if (!$browse && in_array($activeTab, ['Combined', 'Primo', 'Summon'])) {
+        $searchboxAttributes['class'] .= ' suggestions:0';
+      }
+      if (!empty($acHandlers)) {
+        $searchboxAttributes['class'] .= ' handlers:' . implode('|', array_map(function ($h) { return $h['handler']; }, $acHandlers));
+      }
+      if ($phrase) {
+        $searchboxAttributes['class'] .= " phrase:$phrase";
+      }
+      if (!empty($acFilters)) {
+        $searchboxAttributes['class'] .= ' filters:' . implode('||', array_map(function ($k, $v) { return $k . '|' . $v; }, array_keys($acFilters), $acFilters));
+      }
+    }
   ?>
 <div class="searchbox hidden-print">
   <div class="<?=$mainPage ? 'searchbox-home' : '' ?> <?= $module == 'record' || $module == 'collection' ? 'searchbox-flex' : 'searchbox-columns' ?> <?=$this->escapeHtmlAttr("searchbox-$module-$action")?>">
@@ -142,8 +161,8 @@
     <div class="search">
       <form id="searchForm" role="search" class="searchForm navbar-form navbar-left  <?=$handlerCount < 2 ? 'input-field-only' : ''; ?>" method="get" action="<?=$this->url($basicSearch)?>" name="searchForm" autocomplete="off">
       <label for="searchForm_lookfor" class="sr-only" hidden><?=$this->transEsc('Find')?></label>
-      <input class="searchForm_lookfor form-control search-query<?php if($this->searchbox()->autocompleteEnabled($this->searchClassId)):?> autocomplete-finna searcher:<?=$this->escapeHtmlAttr($this->searchClassId) ?><?= !empty($activeTab) ? ' tab:' . $this->escapeHtmlAttr(str_replace(':', '###', $activeTab)) : ''?><?=!empty($browse) || $activeTab == 'Combined' ? ' onlySuggestions:1' : ''?><?= !$browse && in_array($activeTab, ['Combined','Primo','Summon']) ? ' suggestions:0' : ''?><?= !empty($acHandlers) ? ' handlers:' . implode('|', array_map(function ($h) { return $h['handler']; }, $acHandlers)) : ''?><?= !empty($phrase) ? ' phrase:' . $this->escapeHtmlAttr($phrase) : ''?><?= !empty($acFilters) ? ' filters:' . $this->escapeHtmlAttr(implode('||', array_map(function ($k, $v) { return $k . '|' . $v; }, array_keys($acFilters), $acFilters))) : ''?><?php endif ?>" placeholder="<?=$this->escapeHtmlAttr($placeholder)?>" id="searchForm_lookfor" type="text" name="lookfor" value="<?=$this->escapeHtmlAttr($this->lookfor)?>">
-        <?=$this->icon('search-clearform', 'clear-button hidden', $this->lookfor ? '' : 'hidden') ?>
+      <input<?=$this->htmlAttributes($searchboxAttributes)?>>
+      <button id="searchForm-reset" class="searchForm-reset hidden" type="reset" tabindex="-1" aria-label="<?=$this->transEsc('searchform_reset_button')?>"><?=$this->icon('ui-reset-search');?></button>
       <?php if ($handlerCount > 1): ?>
         <div class="dropdown form-control type-dropdown">
         <?php

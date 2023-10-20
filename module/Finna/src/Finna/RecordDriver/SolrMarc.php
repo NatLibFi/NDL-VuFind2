@@ -485,6 +485,22 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
+     * Get an array of Dewey classifications for the record.
+     *
+     * @return array
+     */
+    public function getDeweyClassifications()
+    {
+        $results = [];
+        foreach ($this->getMarcReader()->getFields('082') as $field) {
+            if ($result = $this->getSubfield($field, 'a')) {
+                $results[] = $result;
+            }
+        }
+        return $results;
+    }
+
+    /**
      * Get dissertation note for the record.
      * Use field 502 if available. If not, use local field 509 or 920.
      *

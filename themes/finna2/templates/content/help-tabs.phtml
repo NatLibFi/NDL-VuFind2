@@ -6,26 +6,26 @@
       'attributes' => [
         'class' => ['finna-multi-level-nav-content', 'finna-multi-level-nav-lg'],
       ],
-      'brandContent' => $this->transEsc('tabs_' . $activeTab),
+      'brandContent' => $this->transEsc('tabs_' . $this->activeTab),
       'collapseId' => 'nav-help-collapse',
       'items' => [
         [
-          'active' => 'help' === $activeTab,
+          'active' => 'help' === $this->activeTab,
           'label' => $this->translate('tabs_help'),
           'link' => $this->url('content-page', ['page' => 'help']),
         ],
         [
-          'active' => 'help-basic' === $activeTab,
+          'active' => 'help-basic' === $this->activeTab,
           'label' => $this->translate('tabs_help-basic'),
           'link' => $this->url('content-page', ['page' => 'help-basic']),
         ],
         [
-          'active' => 'help-advanced' === $activeTab,
+          'active' => 'help-advanced' === $this->activeTab,
           'label' => $this->translate('tabs_help-advanced'),
           'link' => $this->url('content-page', ['page' => 'help-advanced']),
         ],
         [
-          'active' => 'help-favorites' === $activeTab,
+          'active' => 'help-favorites' === $this->activeTab,
           'label' => $this->translate('tabs_help-favorites'),
           'link' => $this->url('content-page', ['page' => 'help-favorites']),
         ],

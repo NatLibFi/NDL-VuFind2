@@ -3,13 +3,6 @@
     // Set up convenience variables:
     $account = $this->auth()->getManager();
     $user = $account->isLoggedIn();
-    $openUrl = $this->openUrl($this->driver, 'holdings');
-    $openUrlActive = $openUrl->isActive();
-    $doi = $this->doi($this->driver, 'holdings');
-    $doiActive = $doi->isActive();
-    $allowArchiveRequest = $this->driver->tryMethod('archiveRequestAllowed');
-    // Account for replace_other_urls setting
-    $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
     $offlineMode = $this->ils()->getOfflineMode();
     $recordSource = $this->driver->tryMethod('getDataSource');
     try {
@@ -102,15 +95,6 @@
 
 <?=($offlineMode == 'ils-offline') ? $this->render('Helpers/ils-offline.phtml', ['offlineModeMsg' => 'ils_offline_holdings_message']) : ''?>
 
-<?php if ($user && $allowArchiveRequest): ?>
-  <div class="text-right">
-    <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($driver, 'ArchiveRequest'))?>" class="btn btn-primary" data-lightbox="" data-toggle="modal" data-target="order_archive_material_form" data-lightbox><?=$this->transEsc('archive_request_reserve_action')?></a>
-  </div>
-<?php elseif (!$user && $allowArchiveRequest && !$holdsAllowed): ?>
-  <div class="text-right">
-    <a href="<?=$this->url('myresearch-userlogin') ?>" class="btn btn-primary" data-lightbox><span><?=$this->transEsc('archive_request_login')?></span></a>
-  </div>
-<?php endif; ?>
 <?php if ($this->driver && $recordSource && $externalInterfaceUrl):?>
   <?=$this->record($driver)->renderTemplate('external-interface-link.phtml', ['driver' => $driver, 'source' => $recordSource, 'link' => $externalInterfaceUrl ?? ''])?>
 <?php endif;?>
@@ -132,32 +116,7 @@
   <?php endif; ?>
 <?php endif; ?>
 
-<?php if (!empty($urls) || $openUrlActive || $doiActive): ?>
-<div class="table record-holdings-url-table">
-  <div class="headers">
-    <span class="holdings-url-title"><?=$this->transEsc('Links')?></span>
-  </div>
-  <div class="holdings-urls">
-    <?php if (!empty($urls)): ?>
-      <?php foreach ($urls as $current): ?>
-        <?php if (!$this->driver->tryMethod('urlBlocked', [$current['url'], $current['desc']])): ?>
-          <a class="holdings-url-link" href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><?=$this->icon('external-link') ?> <?=$this->transEsc('default::link_' . $current['desc'], null, $current['desc'])?> <?=$current['part'] ?? ''?></a>
-        <?php endif; ?>
-      <?php endforeach; ?>
-    <?php endif; ?>
-    <?php if ($doiActive): ?>
-      <?=$doi->renderTemplate()?>
-    <?php endif; ?>
-    <?php if ($openUrlActive): ?>
-      <?=$openUrl->renderTemplate()?>
-      <?php
-        $loadOpenURLs = "finna.openUrl.initLinks($('.holdings-urls'));";
-        echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $loadOpenURLs, 'SET')
-      ?>
-    <?php endif; ?>
-  </div>
-</div>
-<?php endif; ?>
+<?= $this->render('RecordTab/holdings-record-urls'); ?>
 
 <?php if ($holdsAllowed || $repositoryLibraryRequestAllowed): ?>
   <div class="place-hold-wrapper text-right hidden-print">

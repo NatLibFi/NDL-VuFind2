@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2018.
+ * Copyright (C) The National Library of Finland 2018-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -69,11 +69,14 @@ class GetOrganisationInfoFactory implements \Laminas\ServiceManager\Factory\Fact
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
+        $facetConfig = $container->get(\VuFind\Config\PluginManager::class)->get('facets');
         $result = new $requestedName(
             $container->get(\VuFind\Session\Settings::class),
             $container->get(\VuFind\Cookie\CookieManager::class),
             $container->get(\Finna\OrganisationInfo\OrganisationInfo::class),
-            $container->get(\VuFind\Cache\Manager::class)
+            $container->get(\VuFind\Cache\Manager::class),
+            $container->get('ViewRenderer'),
+            $facetConfig ? $facetConfig->toArray() : []
         );
         $result->setLogger($container->get(\VuFind\Log\Logger::class));
         return $result;

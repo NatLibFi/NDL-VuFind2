@@ -105,6 +105,13 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     protected $daysBeforeAccountExpirationNotification = 30;
 
     /**
+     * Product code mappings
+     *
+     * @var array
+     */
+    protected $productCodeMappings = [];
+
+    /**
      * Initialize the driver.
      *
      * Validate configuration and perform all resource-intensive tasks needed to
@@ -127,6 +134,19 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         if (isset($this->config['Catalog'][$key])) {
             $this->daysBeforeAccountExpirationNotification
                 = $this->config['Catalog'][$key];
+        }
+
+        if ($mappings = $this->config['OnlinePayment']['productCodeMappings'] ?? []) {
+            foreach ($mappings as $mapping) {
+                $parts = explode('=', $mapping, 2);
+                if (!isset($parts[1])) {
+                    continue;
+                }
+                $this->productCodeMappings[] = [
+                    'productCode' => $parts[0],
+                    'regexp' => $parts[1],
+                ];
+            }
         }
     }
 
@@ -154,6 +174,53 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         unset($hold);
 
         return $holds;
+    }
+
+    /**
+     * Get Patron Transactions
+     *
+     * This is responsible for retrieving all transactions (i.e. checked out items)
+     * by a specific patron.
+     *
+     * @param array $patron The patron array from patronLogin
+     * @param array $params Parameters
+     *
+     * @throws DateException
+     * @throws ILSException
+     * @return array        Array of the patron's transactions on success.
+     */
+    public function getMyTransactions($patron, $params = [])
+    {
+        $result = parent::getMyTransactions($patron, $params);
+        // Sort the loans, but only if all fit in result limit:
+        if ($result['count'] === count($result['records'])) {
+            $sort = explode(' ', $params['sort'] ?? 'checkout desc', 2);
+            $sortKeys = [];
+            foreach ($result['records'] as $i => $row) {
+                switch ($sort[0]) {
+                    case 'title':
+                        $key = '';
+                        break;
+                    case 'due':
+                        $key = $this->dateConverter->convertFromDisplayDate('Y-m-d', $row['duedate']);
+                        break;
+                    default:
+                        $key = sprintf('%012d', $row['checkout_id']);
+                        break;
+                }
+                // Always append title for disambiguation:
+                $key .= '__' . ($row['title'] ?? '');
+                $sortKeys[$i] = $key;
+            }
+            array_multisort(
+                $sortKeys,
+                ($sort[1] ?? 'asc') === 'desc' ? SORT_DESC : SORT_ASC,
+                SORT_LOCALE_STRING,
+                $result['records']
+            );
+        }
+
+        return $result;
     }
 
     /**
@@ -490,8 +557,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             $amount = $entry['itemCharge'] + $entry['processingFee']
                 + $entry['billingFee'];
             $balance = $amount - $entry['paidAmount'];
-            $description = '';
             // Display charge type if it's not manual (code=1)
+            $description = '';
             if (
                 !empty($entry['chargeType'])
                 && $entry['chargeType']['code'] != '1'
@@ -504,10 +571,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 }
                 $description .= $entry['description'];
             }
-            switch ($description) {
-                case 'Overdue Renewal':
-                    $description = 'Overdue';
-                    break;
+            if ('Overdue Renewal' === $description) {
+                $description = 'Overdue';
             }
             $bibId = null;
             $title = null;
@@ -540,9 +605,10 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'id' => $this->formatBibId($bibId),
                 'title' => $title,
                 'fine_id' => $this->extractId($entry['id']),
-                'organization' => $entry['location']['code'] ?? '',
+                'organization' => substr($entry['location']['code'] ?? '', 0, 1),
                 'payableOnline' => $balance > 0 && $this->finePayableOnline($entry),
                 '__invoiceNumber' => $entry['invoiceNumber'],
+                '__productCode' => $this->getFineProductCode($entry),
             ];
         }
         return $fines;
@@ -831,6 +897,19 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      */
     public function getConfig($function, $params = [])
     {
+        if ('getMyTransactions' === $function) {
+            return [
+                'max_results' => 200,
+                'sort' => [
+                    'checkout desc' => 'sort_checkout_date_desc',
+                    'checkout asc' => 'sort_checkout_date_asc',
+                    'due desc' => 'sort_due_date_desc',
+                    'due asc' => 'sort_due_date_asc',
+                    'title asc' => 'sort_title',
+                ],
+                'default_sort' => 'due asc',
+            ];
+        }
         if ('onlinePayment' === $function) {
             $result = $this->config['OnlinePayment'] ?? [];
             $result['exactBalanceRequired'] = false;
@@ -994,7 +1073,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 }
             }
             $callnumber = isset($item['callNumber'])
-                ? preg_replace('/^\|a/', '', $item['callNumber'])
+                ? $this->extractCallNumber($item['callNumber'])
                 : $bibCallNumber;
 
             $number = isset($item['varFields']) ? $this->extractVolume($item) : '';
@@ -1013,10 +1092,10 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'availability' => $available,
                 'status' => $status,
                 'reserve' => 'N',
-                'callnumber' => $callnumber,
+                'callnumber' => trim($callnumber),
                 'duedate' => $duedate,
-                'number' => $number,
-                'barcode' => $item['barcode'],
+                'number' => trim($number),
+                'barcode' => $item['barcode'] ?? '',
                 'sort' => $sort--,
                 'requests_placed' => $displayItemHoldCount ? ($item['holdCount'] ?? null) : null,
             ];
@@ -1142,7 +1221,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                     break;
                 case 'callnumber':
                     if ($callNo = $item['callNumber'] ?? false) {
-                        if ($callNo = preg_replace('/^\|a/', '', $callNo)) {
+                        if ($callNo = $this->extractCallNumber($callNo)) {
                             $result[] = $callNo;
                         }
                     }
@@ -1173,6 +1252,28 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             }
         }
         return false;
+    }
+
+    /**
+     * Get a product code for a fine
+     *
+     * @param array $fine Fine
+     *
+     * @return ?string
+     */
+    protected function getFineProductCode(array $fine): ?string
+    {
+        $location = $fine['location']['code'] ?? '';
+        $type = $fine['chargeType']['code'] ?? 0;
+        $desc = $fine['description'] ?? '';
+
+        $key = "$location--$type--$desc";
+        foreach ($this->productCodeMappings as $mapping) {
+            if (preg_match($mapping['regexp'], $key)) {
+                return $mapping['productCode'];
+            }
+        }
+        return null;
     }
 
     /**

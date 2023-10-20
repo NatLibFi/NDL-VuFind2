@@ -1,0 +1,73 @@
+<!-- START of: finna - organisationinfo/elements/location/contact-info.phtml -->
+<?php ob_start(); ?>
+<?php if ($orgInfo['emails']): ?>
+  <div class="email-contact info-element">
+    <span><?=$this->transEsc('organisation_info_email')?></span>
+    <div class="emails">
+      <?php foreach ($orgInfo['emails'] as $email): ?>
+        <p>
+          <?=$this->icon('contact-email') ?> <a href="mailto:<?=$this->escapeHtmlAttr($email['email'])?>"><?=$this->escapeHtml($email['email'])?></a>
+        </p>
+      <?php endforeach; ?>
+    </div>
+  </div>
+<?php endif; ?>
+<?php if ($orgInfo['address']): ?>
+  <div class="address-contact info-element">
+    <span><?=$this->transEsc('organisation_info_address')?></span>
+    <p>
+      <?php
+        $address = $orgInfo['address']['street'] ?? '';
+        if ($orgInfo['address']['zipcode'] || $orgInfo['address']['city']) {
+          $address .= ', ' . ($orgInfo['address']['zipcode'] ?? '') . ' ' . ($orgInfo['address']['city'] ?? '');
+        }
+      ?>
+      <?=$this->escapeHtml($address)?>
+    </p>
+  </div>
+<?php endif; ?>
+<?php if ($orgInfo['mailAddress']): ?>
+  <div class="mail-address-contact info-element">
+    <span><?=$this->transEsc('organisation_info_address_mail')?></span>
+    <p>
+      <?php if ($orgInfo['mailAddress']['street']): ?>
+        <?=$this->escapeHtml($orgInfo['mailAddress']['street'])?>
+        <br>
+      <?php endif; ?>
+      <?php if ($orgInfo['mailAddress']['boxNumber']): ?>
+        <?=$this->transEsc('organisation_info_box_number')?>
+        <?=$this->escapeHtml($orgInfo['mailAddress']['boxNumber'])?>
+        <br>
+      <?php endif; ?>
+      <?=$this->escapeHtml(($orgInfo['mailAddress']['zipcode'] ?? '') . ' ' . ($orgInfo['mailAddress']['area'] ?? '') . ' ' . ($orgInfo['mailAddress']['city'] ?? ''))?>
+    </p>
+  </div>
+<?php endif; ?>
+<?php $contactInfo = $orgInfo['contactInfo'] ?? []; ?>
+<?php if ($orgInfo['phones'] || $contactInfo): ?>
+  <div class="phone-numbers info-element">
+    <span class="contact-info-header"><?=$this->transEsc('organisation_info_phone_numbers')?></span>
+    <ul>
+      <?php foreach ($orgInfo['phones'] as $phone): ?>
+        <li>
+          <p>
+            <?=$this->icon('phone') ?> <a href="tel:<?=$this->escapeHtmlAttr($phone['number'])?>"><?=$this->escapeHtml($phone['number'])?></a><?=$phone['name'] ? (' / ' . $this->escapeHtml($phone['name'])) : ''?>
+          </p>
+        </li>
+      <?php endforeach ?>
+      <?php foreach ($contactInfo as $info): ?>
+        <li class="contact-name"><?=$this->escapeHtml($info['name']);?></li>
+        <li><?=$info['contact']?></li>
+      <?php endforeach ?>
+    </ul>
+  </div>
+<?php endif; ?>
+<?php $content = ob_get_clean(); ?>
+<?=$this->component('@@molecules/containers/finna-panel', [
+  'attributes' => ['class' => ['finna-panel-default', 'contact-details', 'contact-details-no-rss', 'info-element']],
+  'heading' => $this->transEsc('organisation_info_contact'),
+  'headingLevel' => 4,
+  'content' => $content,
+  'headingId' => 'heading4',
+]); ?>
+<!-- END of: finna - organisationinfo/elements/location/contact-info.phtml -->

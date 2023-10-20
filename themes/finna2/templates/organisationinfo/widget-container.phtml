@@ -1,0 +1,26 @@
+<?php
+  $initParams = json_encode(
+    [
+          'id' => $this->id,
+          'buildings' => $this->buildings,
+          'details' => $this->showDetails,
+      ]
+);
+  $setupJS = <<<JS
+      $(function() {
+         finna.organisationInfo.initWidget({$initParams});
+      });
+      JS;
+   $this->headScript()->appendScript($setupJS);
+?>
+<div class="organisation-info js-organisation-info-widget">
+  <div>
+    <h2>
+      <?=$this->transEsc('organisation_info_title')?>
+      <span role="status" class="js-loader hidden">
+        <?=$this->icon('spinner') ?><span class="sr-only"> <?=$this->transEsc('loading_ellipsis')?></span>
+      </span>
+    </h2>
+  </div>
+  <div class="js-content"></div>
+</div>

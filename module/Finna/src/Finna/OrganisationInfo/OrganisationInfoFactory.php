@@ -77,13 +77,10 @@ class OrganisationInfoFactory implements FactoryInterface
             $container->get(\VuFind\Config\PluginManager::class)
                 ->get('OrganisationInfo'),
             $container->get(\VuFind\Cache\Manager::class),
-            $container->get('ViewRenderer'),
-            $container->get(\VuFind\Date\Converter::class),
-            $container->get('ControllerPluginManager')->get('url'),
-            $container->get(\VuFind\Config\PluginManager::class)
-                ->get('OrganisationInfo'),
             $container->get(\VuFind\Search\Results\PluginManager::class),
             $container->get(\VuFind\Search\Solr\HierarchicalFacetHelper::class),
+            $container->get(\Finna\OrganisationInfo\Provider\Kirkanta::class),
+            $container->get(\Finna\OrganisationInfo\Provider\MuseotFi::class),
         );
     }
 }

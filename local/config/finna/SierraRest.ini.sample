@@ -232,6 +232,11 @@ currency = 'EUR'
 ;manualFineDescriptions[] = '/^CD-levyn kotelon korvaus/'
 ;manualFineDescriptions[] = '/^Muun kotelon korvaus/'
 ;manualFineDescriptions[] = '/^Kaukopalvelumaksu/'
+; Online payment product code mappings that override any mappings in datasources.ini.
+; Patterns should match strings in format 'locationcode--finetypecode--description'.
+; First match is used.
+productCodeMappings[] = '123=/^h\w*--1/'
+productCodeMappings[] = '234=/Max myöhästymismaksu/'
 
 [PasswordRecovery]
 enabled = true
