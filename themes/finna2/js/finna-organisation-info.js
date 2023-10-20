@@ -6,7 +6,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
   let mapContainer = null;
   let map = null;
 
-  let mapTileUrl = 'https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png';
+  let mapTileUrl = 'https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png?v=2';
 
   /**
    * Reset search field

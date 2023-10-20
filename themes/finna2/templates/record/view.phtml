@@ -177,8 +177,9 @@
             <li class="<?=implode(' ', $tabClasses)?>" role="tab" data-tab="<?=$this->escapeHtmlAttr($tabName)?>"<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?> data-background<?php endif ?>>
               <a class="<?=$this->escapeHtmlAttr(strtolower($tab)) ?>" aria-label="<?=$this->transEscAttr($desc)?>"
                 href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $tab))?>#tabnav" data-lightbox-ignore>
-                <?php if (strtolower($tab) == 'details'): ?><?=$this->icon('staff-view', 'staff-view-icon') ?><?php endif; ?>
-                <?php if (strtolower($tab) != 'details'): ?><?=$this->transEsc($desc)?><?php endif; ?><?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?>
+                <?php if (strtolower($tab) == 'details'): ?><?=$this->icon('staff-view', 'staff-view-icon')?><?php endif; ?>
+                <span class="tab-name"><?=$this->transEsc($desc)?></span>
+                <?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?>
               </a>
             </li>
           <?php endforeach; ?>

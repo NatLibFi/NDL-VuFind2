@@ -315,12 +315,14 @@ if (!$disableTitleHold
     if ($account->loginEnabled() && $offlineMode != 'ils-offline' && $ilsLoginAvailable) {
       $logged = $account->isLoggedIn();
       $link = null;
+      $lightbox = true;
       if (!$logged) {
         if (!$this->record($driver)->repositoryLibraryRequestEnabled('results')) {
           $link = $holdingsLink . '?login=true&catalogLogin=true&target=' . urlencode($source);
         }
       } elseif ($journal) {
         $link = $holdingsLink;
+        $lightbox = false;
       } else {
         $holdingTitleHold = $driver ? $driver->tryMethod('getRealTimeTitleHold') : false;
         if (!empty($holdingTitleHold)) {
@@ -331,7 +333,7 @@ if (!$disableTitleHold
         if ($logged) {
 ?>
     <div class="title-hold">
-      <a href="<?=$this->escapeHtmlAttr($addSid($link))?>" class="placehold btn btn-primary hidden-print" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('title_hold_place') . ': ' . $driver->getTitle()) ?>" data-lightbox><?=$this->transEsc('title_hold_place')?><span class="sr-only">: <?=$this->escapeHtml($driver->getTitle())?></span></a>
+      <a href="<?=$this->escapeHtmlAttr($addSid($link))?>" class="placehold btn btn-primary hidden-print" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('title_hold_place') . ': ' . $driver->getTitle()) ?>" <?=$lightbox ? ' data-lightbox' : ''?>><?=$this->transEsc('title_hold_place')?><span class="sr-only">: <?=$this->escapeHtml($driver->getTitle())?></span></a>
     </div>
 <?php
         } else {

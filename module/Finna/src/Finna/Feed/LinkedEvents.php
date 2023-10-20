@@ -208,7 +208,7 @@ class LinkedEvents implements
                  'sub_events,super_event';
             } else {
                 $url .= '?'
-                . 'publisher=' . $this->publisherId . '&'
+                . 'publisher=' . urlencode($this->publisherId) . '&'
                 . http_build_query($paramArray)
                 . '&sort=start_time'
                 . '&include=location';

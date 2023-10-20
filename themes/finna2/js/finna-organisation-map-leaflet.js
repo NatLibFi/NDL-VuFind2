@@ -23,7 +23,7 @@ finna.organisationMap = (function finnaOrganisationMap() {
     var organisations = organisationList;
 
     var layer = L.tileLayer(mapTileUrl, {
-      attribution: attribution,
+      attribution: attribution + ' Map data &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC-BY</a>',
       tileSize: 256
     });
 

@@ -157,7 +157,13 @@ finna.carouselManager = (() => {
       settings.i18n = {};
     }
     const splideSettings = toSplideSettings(settings);
-    return new Splide(element, splideSettings).mount();
+    var splide = new Splide(element, splideSettings);
+    splide.on('pagination:updated', function onPaginationUpdate(data) {
+      data.items.forEach(function setTabIndex(item) {
+        item.button.setAttribute('tabindex', 0);
+      });
+    });
+    return splide.mount();
   }
 
   return {
