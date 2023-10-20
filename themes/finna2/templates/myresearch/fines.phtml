@@ -72,7 +72,10 @@
             <?=$this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $this->lastTransaction->paid)?>
           </div>
           <div class="text-right">
-            <a href="?transactionReport=true" class="btn btn-sm btn-primary"><?=$this->transEsc('Payment::download_transaction_breakdown_pdf')?></a>
+            <a href="?transactionReport=true" class="btn btn-sm btn-primary" target="_blank">
+              <?=$this->transEsc('Payment::download_transaction_breakdown_pdf')?>
+              <span class="sr-only"><?=$this->transEscAttr('Open in a new window')?></span>
+            </a>
           </div>
         </div>
       <?php endif; ?>
