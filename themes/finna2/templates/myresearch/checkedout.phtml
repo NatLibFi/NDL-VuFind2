@@ -110,7 +110,7 @@
               <?php $renewDetails = $this->renewResult[$ilsDetails['item_id']]; ?>
               <?php $prefix = $ilsDetails['title'] ?? $ilsDetails['item_id']; ?>
               <?php if (!isset($renewDetails['success']) || !$renewDetails['success']): ?>
-                <div class="alert alert-danger"><?=$this->escapeHtml($prefix . ': ') . $this->transEsc('renew_fail')?><?php if (isset($renewDetails['sysMessage'])): ?>: <?=$this->escapeHtml($renewDetails['sysMessage'])?><?php endif; ?></div>
+                <div class="alert alert-danger"><?=$this->escapeHtml($prefix . ': ') . $this->transEsc('renew_fail')?><?php if (isset($renewDetails['sysMessage'])): ?>: <?=$this->transEsc($renewDetails['sysMessage'])?><?php endif; ?></div>
               <?php endif; ?>
             <?php endif; ?>
             <?php if (isset($ilsDetails['renewable']) && $ilsDetails['renewable'] && isset($ilsDetails['renew_details'])): ?>
@@ -216,7 +216,7 @@
                         <div class="alert alert-success"><?=$this->transEsc('renew_success')?></div>
                       <?php else: ?>
                         <strong><?=$this->transEsc('Due Date')?>: <?=$this->escapeHtml($ilsDetails['duedate'])?><?php if (isset($ilsDetails['dueTime'])): ?> <span class="due-time"><?=$this->escapeHtml($ilsDetails['dueTime'])?></span><?php endif; ?></strong>
-                        <div class="alert alert-danger"><?=rtrim($this->transEsc('renew_fail'), '.')?><?php if (isset($renewDetails['sysMessage'])): ?>: <?=$this->escapeHtml($renewDetails['sysMessage'])?><?php endif; ?></div>
+                        <div class="alert alert-danger"><?=rtrim($this->transEsc('renew_fail'), '.')?><?php if (isset($renewDetails['sysMessage'])): ?>: <?=$this->transEsc($renewDetails['sysMessage'])?><?php endif; ?></div>
                       <?php endif; ?>
                     <?php else: ?>
                       <strong><?=$this->transEsc('Due Date')?>: <?=$this->escapeHtml($ilsDetails['duedate'])?><?php if (isset($ilsDetails['dueTime'])): ?> <span class="due-time"><?=$this->escapeHtml($ilsDetails['dueTime'])?></span><?php endif; ?></strong>
