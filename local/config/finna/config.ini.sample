@@ -1488,6 +1488,7 @@ enabled = true
 ; - search-subject-id             Search for subject id
 ; - search-subject-mixed          Search for subject id (boosted) or string
 ; - subject                       Search for subject string
+; Setting an empty value will load the author, but does not show core fields.
 links[author] = "search_as_author:search-author-mixed|search_as_subject:search-subject-mixed"
 ;links[author] = "More Information:authority-page|search_as_author:search-author-mixed|search_as_subject:search-subject-mixed"
 links[subject] = "search_as_subject:search-subject-mixed|search_as_keyword:keyword"
@@ -1522,7 +1523,6 @@ skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/kauno/"
 external_links[] = "external_link_kyppi_mjr||external_link_kyppi_mjr||\(mjr\)(.+)||https://www.kyppi.fi/palveluikkuna/mjreki/read/asp/r_kohde_det.aspx?KOHDE_ID={1}||{1}"
 external_links[] = "external_link_kyppi_rpr||external_link_kyppi_rpr||\(rpr\)(.+)||https://www.kyppi.fi/palveluikkuna/rapea/read/asp/r_kohde_det.aspx?KOHDE_ID={1}||{1}"
 ; The next option allows hiding certain parts from the ajax-field-info.phtml They are enabled as default.
-;dynamic_content[authority_summary] = false
 ;dynamic_content[label_enrichment] = false
 ;dynamic_content[alt_label_enrichment] = false
 ;dynamic_content[other_language_enrichment] = false
