@@ -1488,7 +1488,6 @@ enabled = true
 ; - search-subject-id             Search for subject id
 ; - search-subject-mixed          Search for subject id (boosted) or string
 ; - subject                       Search for subject string
-; Setting an empty value will load the author, but does not show core fields.
 links[author] = "search_as_author:search-author-mixed|search_as_subject:search-subject-mixed"
 ;links[author] = "More Information:authority-page|search_as_author:search-author-mixed|search_as_subject:search-subject-mixed"
 links[subject] = "search_as_subject:search-subject-mixed|search_as_keyword:keyword"
@@ -1508,6 +1507,7 @@ skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/koko/"
 skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/kauno/"
 ; The following setting controls authority information in the popover. It is disabled
 ; by default. Use "*" to include all fields or specify the fields to show.
+; Setting a single empty value will load the author, but does not show core fields.
 ;authority_fields[] = "Date of birth"
 ;authority_fields[] = "Other Forms of Name"
 ;authority_fields[] = "Identifiers"
