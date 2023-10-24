@@ -168,6 +168,7 @@ class Receipt implements TranslatorAwareInterface
     {
         $source = $this->getSource($transaction);
         $sourceName = $this->getSourceName($transaction);
+        $contactInfo = $this->getContactInfo($source);
 
         $paidDate = $this->dateConverter->convertToDisplayDateAndTime(
             'Y-m-d H:i:s',
@@ -175,20 +176,6 @@ class Receipt implements TranslatorAwareInterface
         );
 
         $dsConfig = $this->dataSourceConfig[$source] ?? [];
-        if ($orgId = $dsConfig['onlinePayment']['organisationInfoId'] ?? '') {
-            $contactInfo = $this->router->assemble(
-                [],
-                [
-                    'name' => 'organisationinfo-home',
-                    'query' => [
-                        'id' => $orgId,
-                    ],
-                    'force_canonical' => true,
-                ]
-            );
-        } else {
-            $contactInfo = $dsConfig['onlinePayment']['contactInfo'] ?? '';
-        }
         $businessId = $dsConfig['onlinePayment']['businessId'] ?? '';
         $organizationBusinessIdMappings = [];
         if ($map = $dsConfig['onlinePayment']['organizationBusinessIdMappings'] ?? '') {
@@ -221,6 +208,14 @@ class Receipt implements TranslatorAwareInterface
         $pdf = new TCPDF();
         $pdf->setLanguageArray($languageConfig);
         $pdf->SetCreator('Finna');
+        $pdf->SetLanguageArray(
+            [
+                'a_meta_charset' => 'UTF-8',
+                'a_meta_dir' => 'ltr',
+                'a_meta_language' => $this->getTranslatorLocale(),
+                'w_page' => $this->translate('page_num', ['%%page%%' => '']),
+            ]
+        );
         $pdf->SetTitle($heading . ' - ' . $paidDate);
         $pdf->SetMargins($this->left, 18);
         $pdf->SetHeaderMargin(10);
@@ -352,9 +347,13 @@ class Receipt implements TranslatorAwareInterface
         $pdf->disposition = 'inline; filename="' .
             addcslashes($data['filename'], '"') . '"';
 
+        $source = $this->getSource($transaction);
+        $sourceName = $this->getSourceName($transaction);
+        $contactInfo = $this->getContactInfo($source);
+
         $messageContent = $this->renderer->partial(
             'Email/receipt.phtml',
-            compact('user', 'patronProfile', 'transaction')
+            compact('user', 'patronProfile', 'transaction', 'source', 'sourceName', 'contactInfo')
         );
         $text = new MimePart($messageContent);
         $text->type = Mime::TYPE_TEXT;
@@ -444,6 +443,14 @@ class Receipt implements TranslatorAwareInterface
         $type = $fine->type;
         $type = $this->translate("fine_status_$type", [], $this->translate("status_$type", [], $type));
 
+        $descriptions = [];
+        if ($fine->description) {
+            $descriptions[] = $fine->description;
+        }
+        if ($fine->title) {
+            $descriptions[] = $fine->title;
+        }
+
         $curY = $pdf->GetY();
 
         $pdf->MultiCell(28, 0, $fine->fine_id ?? '', 0, 'L');
@@ -454,7 +461,7 @@ class Receipt implements TranslatorAwareInterface
         $nextY = max($nextY, $pdf->GetY());
 
         $pdf->SetXY($this->left + 70, $curY);
-        $pdf->MultiCell($recipient ? 48 : 98, 0, $fine->title ?? '', 0, 'L');
+        $pdf->MultiCell($recipient ? 48 : 98, 0, implode(' - ', $descriptions), 0, 'L');
         $nextY = max($nextY, $pdf->GetY());
 
         if ($recipient) {
@@ -541,5 +548,30 @@ class Receipt implements TranslatorAwareInterface
     {
         $source = $this->getSource($transaction);
         return $this->translate('source_' . $source, [], $source);
+    }
+
+    /**
+     * Get contact information URL or such
+     *
+     * @param string $source Source ID
+     *
+     * @return string
+     */
+    protected function getContactInfo(string $source): string
+    {
+        $dsConfig = $this->dataSourceConfig[$source] ?? [];
+        if ($orgId = $dsConfig['onlinePayment']['organisationInfoId'] ?? '') {
+            return $this->router->assemble(
+                [],
+                [
+                    'name' => 'organisationinfo-home',
+                    'query' => [
+                        'id' => $orgId,
+                    ],
+                    'force_canonical' => true,
+                ]
+            );
+        }
+        return $dsConfig['onlinePayment']['contactInfo'] ?? '';
     }
 }

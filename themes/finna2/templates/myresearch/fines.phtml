@@ -13,6 +13,7 @@
       $hideTitle = true;
       $hideCheckout = true;
       $hideDueDate = true;
+      $hideDescription = true;
       $hideFineCreationDate = true;
       $hideAmount = true;
       foreach ($this->fines as $fine) {
@@ -27,6 +28,9 @@
           }
           if (!empty($fine['createdate'])) {
               $hideFineCreationDate = false;
+          }
+          if (!empty($fine['description'])) {
+              $hideDescription = false;
           }
           if (!empty($fine['amount']) && $fine['amount'] !== $fine['balance']) {
               $hideAmount = false;
@@ -189,6 +193,9 @@
                 <?=$this->transEsc('Due Date')?>
               </th>
               <th>
+                <?=$this->transEsc('fine_type')?>
+              </th>
+              <th class="<?= $hideDescription ? 'hidden' : '' ?>">
                 <?=$this->transEsc('fine_description')?>
               </th>
               <th class="<?= $hideFineCreationDate ? 'hidden' : 'hidden-xs' ?>">
@@ -247,6 +254,9 @@
                 <?=isset($record['duedate']) ? $this->escapeHtml($record['duedate']) : ''?>
               </td>
               <td><?=isset($fine) ? $this->transEsc($fine) : ''?></td>
+              <td class="<?=$hideDescription ? 'hidden' : '' ?>">
+                <?=$this->escapeHtml($record['description'] ?? '')?>
+              </td>
               <td class="<?=$hideFineCreationDate ? 'hidden' : 'hidden-xs' ?>">
                 <?=isset($record['createdate']) ? $this->escapeHtml($record['createdate']) : ''?>
               </td>
