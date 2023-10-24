@@ -13,6 +13,7 @@
       $hideTitle = true;
       $hideCheckout = true;
       $hideDueDate = true;
+      $hideDescription = true;
       $hideFineCreationDate = true;
       $hideAmount = true;
       foreach ($this->fines as $fine) {
@@ -27,6 +28,9 @@
           }
           if (!empty($fine['createdate'])) {
               $hideFineCreationDate = false;
+          }
+          if (!empty($fine['description'])) {
+              $hideDescription = false;
           }
           if (!empty($fine['amount']) && $fine['amount'] !== $fine['balance']) {
               $hideAmount = false;
@@ -72,7 +76,10 @@
             <?=$this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $this->lastTransaction->paid)?>
           </div>
           <div class="text-right">
-            <a href="?transactionReport=true" class="btn btn-sm btn-primary"><?=$this->transEsc('Payment::download_transaction_breakdown_pdf')?></a>
+            <a href="?transactionReport=true" class="btn btn-sm btn-primary" target="_blank">
+              <?=$this->transEsc('Payment::download_transaction_breakdown_pdf')?>
+              <span class="sr-only"><?=$this->transEscAttr('Open in a new window')?></span>
+            </a>
           </div>
         </div>
       <?php endif; ?>
@@ -186,6 +193,9 @@
                 <?=$this->transEsc('Due Date')?>
               </th>
               <th>
+                <?=$this->transEsc('fine_type')?>
+              </th>
+              <th class="<?= $hideDescription ? 'hidden' : '' ?>">
                 <?=$this->transEsc('fine_description')?>
               </th>
               <th class="<?= $hideFineCreationDate ? 'hidden' : 'hidden-xs' ?>">
@@ -244,6 +254,9 @@
                 <?=isset($record['duedate']) ? $this->escapeHtml($record['duedate']) : ''?>
               </td>
               <td><?=isset($fine) ? $this->transEsc($fine) : ''?></td>
+              <td class="<?=$hideDescription ? 'hidden' : '' ?>">
+                <?=$this->escapeHtml($record['description'] ?? '')?>
+              </td>
               <td class="<?=$hideFineCreationDate ? 'hidden' : 'hidden-xs' ?>">
                 <?=isset($record['createdate']) ? $this->escapeHtml($record['createdate']) : ''?>
               </td>

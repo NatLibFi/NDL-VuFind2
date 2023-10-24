@@ -122,10 +122,35 @@ class Loader extends \VuFind\Record\Loader
         }
         $result = null;
         $missingException = false;
-        try {
-            $result = parent::load($id, $source, $tolerateMissing, $params);
-        } catch (RecordMissingException $e) {
-            $missingException = $e;
+
+        // Check for an encapsulated record ID
+        $parts = explode(
+            ContainerFormatInterface::ENCAPSULATED_RECORD_ID_SEPARATOR,
+            $id,
+            2
+        );
+        if ($id !== $parts[0]) {
+            // Encapsulated record ID separator was found.
+            // Attempt to load parent record using the first part of the ID.
+            $parentRecord = $this->load($parts[0]);
+            // If the parent record implements ContainerRecordInterface
+            // get encapsulated record using the second part of the ID
+            if ($parentRecord instanceof ContainerFormatInterface) {
+                $result = $parentRecord->getEncapsulatedRecord($parts[1]);
+            }
+            if (null === $result) {
+                throw new RecordMissingException(
+                    'Encapsulated record ' . $source . ':' . $id . ' does not exist.'
+                );
+            }
+        }
+
+        if (null === $result) {
+            try {
+                $result = parent::load($id, $source, $tolerateMissing, $params);
+            } catch (RecordMissingException $e) {
+                $missingException = $e;
+            }
         }
         if (
             null !== $id
@@ -138,27 +163,6 @@ class Loader extends \VuFind\Record\Loader
             if ($redirectedRecord = $this->handleMissingSolrRecord($id, $source)) {
                 $missingException = false;
                 $result = $redirectedRecord;
-            }
-        }
-        if ($missingException) {
-            // Check for an encapsulated record ID
-            $parts = explode(
-                ContainerFormatInterface::ENCAPSULATED_RECORD_ID_SEPARATOR,
-                $id,
-                2
-            );
-            if ($id !== $parts[0]) {
-                // Encapsulated record ID separator was found.
-                // Attempt to load parent record using the first part of the ID.
-                $parentRecord = parent::load($parts[0]);
-                // If the parent record implements ContainerRecordInterface
-                // get encapsulated record using the second part of the ID
-                if ($parentRecord instanceof ContainerFormatInterface) {
-                    $result = $parentRecord->getEncapsulatedRecord($parts[1]);
-                    if (null !== $result) {
-                        $missingException = false;
-                    }
-                }
             }
         }
         if ($missingException) {

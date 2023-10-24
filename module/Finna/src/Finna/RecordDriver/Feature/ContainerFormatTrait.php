@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) The National Library of Finland 2022-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -32,6 +32,7 @@ namespace Finna\RecordDriver\Feature;
 use Finna\Record\Loader;
 use Finna\RecordDriver\PluginManager;
 use VuFind\RecordDriver\AbstractBase;
+use VuFindSearch\Response\RecordInterface;
 
 use function count;
 use function is_callable;
@@ -99,7 +100,7 @@ trait ContainerFormatTrait
      * @param int  $offset Offset for results
      * @param ?int $limit  Limit for results (null for none)
      *
-     * @return AbstractBase[]
+     * @return RecordInterface[]
      * @throws \RuntimeException If the format of an encapsulated record is not
      * supported
      */
@@ -127,10 +128,10 @@ trait ContainerFormatTrait
      *
      * @param string $id Encapsulated record ID
      *
-     * @return ?AbstractBase
+     * @return ?RecordInterface
      * @throws \RuntimeException If the format is not supported
      */
-    public function getEncapsulatedRecord(string $id): ?AbstractBase
+    public function getEncapsulatedRecord(string $id): ?RecordInterface
     {
         $cache = $this->getEncapsulatedRecordCache();
         foreach ($cache as $position => $record) {
@@ -284,7 +285,7 @@ trait ContainerFormatTrait
      */
     protected function getCachedEncapsulatedRecordDriver(
         int $position
-    ): ?AbstractBase {
+    ): ?EncapsulatedRecordInterface {
         // Ensure cache is warm
         $cache = $this->getEncapsulatedRecordCache();
         // Ensure position is valid

@@ -41,6 +41,8 @@ use Finna\View\Helper\Root\Markdown;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
 use League\CommonMark\MarkdownConverter;
+use VuFind\View\Helper\Root\TransEsc;
+use VuFind\View\Helper\Root\Translate;
 
 /**
  * Markdown Test Class
@@ -73,6 +75,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
             'finna-truncate' => FinnaTruncate::class,
         ];
 
+        $transEsc = new TransEsc();
         $view = $this->getPhpRenderer(
             [
                 'adjustHeadingLevel' => new AdjustHeadingLevel(),
@@ -80,9 +83,12 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
                     null,
                     CleanHtmlFactory::getAllowedElements($elements)
                 ),
+                'transEsc' => $transEsc,
+                'translate' => new Translate(),
             ],
             'finna2'
         );
+        $transEsc->setView($view);
 
         // Create Markdown environment.
         $environment = new Environment([

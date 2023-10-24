@@ -240,6 +240,13 @@ class SierraRest extends AbstractBase implements
     protected $patronBlockMappings = [];
 
     /**
+     * Mappings from fine types to VuFind strings
+     *
+     * @var array
+     */
+    protected $fineTypeMappings = [];
+
+    /**
      * Status codes indicating that a hold is available for pickup
      *
      * @var array
@@ -453,6 +460,7 @@ class SierraRest extends AbstractBase implements
             );
         }
         $this->patronBlockMappings = $this->config['PatronBlockMappings'] ?? [];
+        $this->fineTypeMappings = (array)($this->config['FineTypeMappings'] ?? []);
 
         if (isset($this->config['Catalog']['api_version'])) {
             $this->apiVersion = $this->config['Catalog']['api_version'];
@@ -1492,25 +1500,7 @@ class SierraRest extends AbstractBase implements
             $amount = $entry['itemCharge'] + $entry['processingFee']
                 + $entry['billingFee'];
             $balance = $amount - $entry['paidAmount'];
-            $description = '';
-            // Display charge type if it's not manual (code=1)
-            if (
-                !empty($entry['chargeType'])
-                && $entry['chargeType']['code'] != '1'
-            ) {
-                $description = $entry['chargeType']['display'];
-            }
-            if (!empty($entry['description'])) {
-                if ($description) {
-                    $description .= ' - ';
-                }
-                $description .= $entry['description'];
-            }
-            switch ($description) {
-                case 'Overdue Renewal':
-                    $description = 'Overdue';
-                    break;
-            }
+            $type = $entry['chargeType']['display'] ?? '';
             $bibId = null;
             $title = null;
             if (!empty($entry['item'])) {
@@ -1532,7 +1522,8 @@ class SierraRest extends AbstractBase implements
 
             $fines[] = [
                 'amount' => $amount * 100,
-                'fine' => $description,
+                'fine' => $this->fineTypeMappings[$type] ?? $type,
+                'description' => $entry['description'] ?? '',
                 'balance' => $balance * 100,
                 'createdate' => $this->dateConverter->convertToDisplayDate(
                     'Y-m-d',
@@ -2271,6 +2262,9 @@ class SierraRest extends AbstractBase implements
                     );
                 }
             }
+            $callNumber = isset($item['callNumber'])
+                ? $this->extractCallNumber($item['callNumber'])
+                : $bibCallNumber;
             $volume = isset($item['varFields']) ? $this->extractVolume($item) : '';
 
             $entry = [
@@ -2280,12 +2274,10 @@ class SierraRest extends AbstractBase implements
                 'availability' => $available,
                 'status' => $status,
                 'reserve' => 'N',
-                'callnumber' => isset($item['callNumber'])
-                    ? preg_replace('/^\|a/', '', $item['callNumber'])
-                    : $bibCallNumber,
+                'callnumber' => trim($callNumber),
                 'duedate' => $duedate,
-                'number' => $volume,
-                'barcode' => $item['barcode'],
+                'number' => trim($volume),
+                'barcode' => $item['barcode'] ?? '',
                 'sort' => $sort--,
             ];
             if ($notes) {
@@ -2349,7 +2341,7 @@ class SierraRest extends AbstractBase implements
                 'id' => $id,
                 'item_id' => "ORDER_{$id}_$locationCode",
                 'location' => $location,
-                'callnumber' => $bibCallNumber,
+                'callnumber' => trim($bibCallNumber),
                 'number' => '',
                 'status' => $this->mapStatusCode('Ordered'),
                 'reserve' => 'N',
@@ -2363,6 +2355,18 @@ class SierraRest extends AbstractBase implements
 
         usort($statuses, [$this, 'statusSortFunction']);
         return $statuses;
+    }
+
+    /**
+     * Extract the actual call number from item's call number field
+     *
+     * @param string $callNumber Call number field
+     *
+     * @return string
+     */
+    protected function extractCallNumber(string $callNumber): string
+    {
+        return str_starts_with($callNumber, '|a') ? substr($callNumber, 2) : $callNumber;
     }
 
     /**

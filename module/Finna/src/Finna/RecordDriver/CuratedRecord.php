@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) The National Library of Finland 2022-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,7 +30,9 @@
 namespace Finna\RecordDriver;
 
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
-use VuFind\RecordDriver\AbstractBase;
+use Finna\RecordDriver\Feature\EncapsulatedRecordInterface;
+use Finna\RecordDriver\Feature\EncapsulatedRecordTrait;
+use VuFindSearch\Response\RecordInterface;
 
 use function count;
 
@@ -46,32 +48,11 @@ use function count;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-class CuratedRecord extends AbstractBase implements ContainerFormatInterface
+class CuratedRecord extends SolrDefault implements
+    ContainerFormatInterface,
+    EncapsulatedRecordInterface
 {
-    /**
-     * Get text that can be displayed to represent this record in breadcrumbs.
-     *
-     * @return string Breadcrumb text to represent this record.
-     */
-    public function getBreadcrumb()
-    {
-        return $this->getTitle();
-    }
-
-    /**
-     * Return the unique identifier of this record for retrieving additional
-     * information (like tags and user comments) from the external MySQL database.
-     *
-     * @return string Unique identifier.
-     * @throws \Exception
-     */
-    public function getUniqueID()
-    {
-        if (!isset($this->fields['id'])) {
-            throw new \Exception('ID not set!');
-        }
-        return $this->fields['id'];
-    }
+    use EncapsulatedRecordTrait;
 
     /**
      * Get records encapsulated in this container record.
@@ -79,7 +60,7 @@ class CuratedRecord extends AbstractBase implements ContainerFormatInterface
      * @param int  $offset Offset for results
      * @param ?int $limit  Limit for results (null for none)
      *
-     * @return AbstractBase[]
+     * @return RecordInterface[]
      * @throws \RuntimeException If the format of an encapsulated record is not
      * supported
      */
@@ -95,10 +76,10 @@ class CuratedRecord extends AbstractBase implements ContainerFormatInterface
      *
      * @param string $id Encapsulated record ID
      *
-     * @return ?AbstractBase
+     * @return ?RecordInterface
      * @throws \RuntimeException If the format is not supported
      */
-    public function getEncapsulatedRecord(string $id): ?AbstractBase
+    public function getEncapsulatedRecord(string $id): ?RecordInterface
     {
         if ($id !== $this->getUniqueID() || !isset($this->fields['record'])) {
             return null;

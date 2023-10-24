@@ -18,12 +18,6 @@ div.facet > a {
   }
 }
 
-ul.jstree-children {
-  width: 100%;
-  padding: 0;
-  margin: 0;
-}
-
 .facet-group .active {
   font-weight: bold;
   color: @link-color;
@@ -113,49 +107,6 @@ ul.jstree-children {
     color: @link-color;
   }
 
-  // Hierarchical facets
-  .jstree-ocl:before {
-    font-family: finnaicons;
-    // Line height makes sure the icon doesn't overflow the container. That would
-    // cause the layout to shift when opening and closing a facet group.
-    line-height: 1;
-  }
-  .jstree-open > .jstree-ocl:before {
-    content: "\e027";
-  }
-  .jstree-closed > .jstree-ocl:before {
-    content: "\e025";
-  }
-  .jstree-leaf > .jstree-ocl:before {
-    content: " ";
-  }
-  .jstree-facet {
-    .jstree-node {
-      border: 0;
-      padding: 3px 0 3px 5px;
-    }
-
-    .hierarchical-facet-anchor {
-      line-height: inherit;
-    }
-  }
-
-  .jstree-facet .jstree-container-ul .jstree-icon {
-    color: @gray-light;
-  }
-  .jstree-container-ul .jstree-node.active > a, a.list-group-item.active {
-    &:hover {
-      text-decoration: line-through;
-    }
-  }
-  .jstree-ocl:before {
-    padding-top: 0;
-  }
-
-  .jstree-leaf > .jstree-ocl:before {
-    content: " ";
-  }
-
   // tablet mobile facet adjustments
   @media (max-width: @screen-xs-max) {
     .facet:not(.facet-group), .usage-right-group {
@@ -169,9 +120,6 @@ ul.jstree-children {
   @media (max-width: @screen-sm-max) {
     .datepicker.datepicker-dropdown {
         font-size: 1.4em;
-    }
-    .jstree-ocl:before {
-      width: 22px;
     }
   }
 
@@ -213,16 +161,11 @@ span.badge.cb-facet {
     margin-right: 10px;
 }
 
-.jstree-facet .jstree-node .facet {
-  padding: 3px 0;
-}
-
 .facet-group {
   margin-bottom: 1rem;
 
   .facet {
-    line-height: 1.5rem;
-    padding: 5px 0 5px 8px;
+    padding: 3px 0 2px 8px;
     display: flex;
     .text { flex-grow: 1; }
   }
@@ -465,4 +408,89 @@ span.badge.cb-facet {
   padding: .25rem .5rem;
   border: 0;
   white-space: nowrap;
+}
+
+/* ------ Hierarchical Facets ------ */
+.facet-tree {
+  padding-left: 0;
+
+  ul {
+    padding: 0;
+    width: 100%;
+  }
+
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    // Ensure that there is enough room for a button focus outline:
+    padding-left: .2rem;
+
+    .facet-tree__toggle-expanded {
+      flex: 1 1;
+      border: 0;
+      background: none;
+      max-width: 1.5em;
+
+      &:hover {
+        background-color: @list-group-hover-bg;
+      }
+
+      &[aria-expanded=false] {
+        .facet-tree__collapse {
+          display: none;
+        }
+        & ~ ul {
+          display: none;
+        }
+      }
+      &[aria-expanded=true] .facet-tree__expand {
+        display: none;
+      }
+    }
+
+    .facet-tree__item-container {
+      // Leave space for the open/close icon (see above):
+      width: calc(100% - 1.5em);
+
+      .text {
+        // Leave space for the badge:
+        width: calc(100% - 1.5em);
+      }
+
+      &--exclude .text {
+        // Leave space for the badge and exclude link:
+        width: calc(100% - 3.0em);
+      }
+
+      .facet-value {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display: inline;
+      }
+    }
+
+    // Child items:
+    ul {
+      padding-left: 1rem;
+      flex: 1;
+      .facet {
+        // Smaller padding to make the list a bit more condensed:
+        padding-top: 0.3rem;
+        padding-bottom: 0.3rem;
+      }
+    }
+  }
+
+  .facet {
+    border: 0;
+    padding-left: .1rem;
+  }
+
+  // Make the first child level start a bit higher to counter the padding of top
+  // level items:
+  & > ul > li > ul {
+    margin-top: -0.2rem;
+  }
 }

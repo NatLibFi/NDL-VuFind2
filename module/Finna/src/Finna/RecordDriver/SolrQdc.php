@@ -160,12 +160,20 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
         $all = [];
         $primary = [];
         foreach ($xml->description ?? [] as $description) {
+            if (
+                ($format = (string)$description['format'])
+                && str_starts_with($format, 'image/')
+            ) {
+                continue;
+            }
             $lang = (string)$description['lang'];
             $trimmed = trim((string)$description);
-            if ($lang === $locale) {
-                $primary[] = $trimmed;
+            if ('' !== $trimmed) {
+                if ($lang === $locale) {
+                    $primary[] = $trimmed;
+                }
+                $all[] = $trimmed;
             }
-            $all[] = $trimmed;
         }
         return $primary ?: $all;
     }

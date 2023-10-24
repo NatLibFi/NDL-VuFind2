@@ -297,7 +297,8 @@ trait FinnaOnlinePaymentControllerTrait
                 exit();
             }
             $returnUrl = $this->getServerUrl('myresearch-fines');
-            $notifyUrl = $this->getServerUrl('home') . 'AJAX/onlinePaymentNotify';
+            $notifyUrl = $this->getServerUrl('home') . 'AJAX/onlinePaymentNotify?lng='
+                . urlencode($this->getTranslatorLocale());
             [$driver, ] = explode('.', $patron['cat_username'], 2);
 
             $patronProfile = array_merge(

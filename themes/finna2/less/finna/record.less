@@ -202,8 +202,8 @@ a.authority {
         }
       }
       .image-popup-trigger {
-        &.no-image {
-          img {
+        &.no-image {
+          img {
             max-width: 200px;
           }
         }
@@ -262,7 +262,7 @@ a.authority {
     font-size: 0.8em;
     text-transform: initial;
   }
-  .dropdown-toggle.download {
+  .dropdown-toggle.download {
     padding: 2px 6px;
     font-weight: 600;
     text-transform: uppercase;
@@ -1030,7 +1030,7 @@ finna-model-viewer .object-editor {
         align-items: center;
         justify-content: space-between;
         padding-bottom: 2px;
-        &.child {
+        &.child {
           margin-left: 20px;
         }
         input {
@@ -1195,4 +1195,66 @@ finna-model-viewer .object-editor {
 /* ------ Record Tabs ------ */
 .record-tab.details .tab-name {
   display: none;
+}
+
+.record-toc {
+  margin: 15px 0;
+  padding: 10px;
+  background-color: #f7f7f7;
+}
+
+.record.full-width-layout {
+  &,
+  .record-core-metadata,
+  .summary {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+  }
+  h1,
+  .record-title {
+    font-size: 28px;
+    line-height: 1.1;
+    margin-top: 0;
+    padding-top: .7em;
+  }
+  h2,
+  h2.record-title,
+  h3,
+  h3.record-title {
+    font-size: 22px;
+    margin-bottom: 21px;
+    padding-bottom: .1em;
+  }
+  .record-accordions.record-tabs {
+    width: 100%;
+    padding-right: 0;
+    float: none;
+  }
+}
+
+.record-format-aipa {
+  .recordFormat {
+    display: block;
+    margin-bottom: 21px;
+    padding-bottom: .1em;
+  }
+  .access-rights {
+    margin-bottom: 21px;
+  }
+  .finna-educational-level-data {
+    margin-left: 25px;
+    .level-data-section-title {
+      font-size: inherit;
+      margin-bottom: inherit;
+      padding-bottom: inherit;
+    }
+  }
+}
+
+.encapsulated-record {
+  margin-bottom: 15px;
+  .recordAuthors {
+    margin-bottom: 15px;
+  }
 }

@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) The National Library of Finland 2022-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,7 +29,7 @@
 
 namespace Finna\RecordDriver\Feature;
 
-use VuFind\RecordDriver\AbstractBase;
+use VuFindSearch\Response\RecordInterface;
 
 /**
  * Container record format interface.
@@ -40,7 +40,7 @@ use VuFind\RecordDriver\AbstractBase;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-interface ContainerFormatInterface
+interface ContainerFormatInterface extends RecordInterface
 {
     /**
      * Separator used in an ID combining the IDs of a container record and an
@@ -54,7 +54,7 @@ interface ContainerFormatInterface
      * @param int  $offset Offset for results
      * @param ?int $limit  Limit for results (null for none)
      *
-     * @return AbstractBase[]
+     * @return RecordInterface[]
      * @throws \RuntimeException If the format of an encapsulated record is not
      * supported
      */
@@ -68,10 +68,10 @@ interface ContainerFormatInterface
      *
      * @param string $id Encapsulated record ID
      *
-     * @return ?AbstractBase
+     * @return ?RecordInterface
      * @throws \RuntimeException If the format is not supported
      */
-    public function getEncapsulatedRecord(string $id): ?AbstractBase;
+    public function getEncapsulatedRecord(string $id): ?RecordInterface;
 
     /**
      * Returns the total number of encapsulated records.

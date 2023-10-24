@@ -244,12 +244,6 @@ finna.layout = (function finnaLayout() {
       lfor.closest('.searchForm').find('.clear-button').toggleClass('hidden', lfor.val() === '');
     });
 
-    $('.clear-button').on('click', function onClickClear() {
-      var btn = $(this);
-      btn.closest('.searchForm').find('.searchForm_lookfor').val('').focus();
-      btn.addClass('hidden');
-    });
-
     $('.searchForm_lookfor').on('autocomplete:select', function onAutocompleteSelect() {
       $('.navbar-form').trigger("submit");
     });

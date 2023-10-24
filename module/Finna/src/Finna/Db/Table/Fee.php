@@ -80,6 +80,7 @@ class Fee extends \VuFind\Db\Table\Gateway
         $fee->transaction_id = $transactionId;
         $fee->title = mb_substr($fine['title'] ?? '', 0, 255, 'UTF-8');
         $fee->type = mb_substr($fine['fine'], 0, 255, 'UTF-8');
+        $fee->description = mb_substr($fine['description'], 0, 255, 'UTF-8');
         $fee->fine_id = mb_substr($fine['fine_id'] ?? '', 0, 255, 'UTF-8');
         $fee->organization = mb_substr($fine['organization'] ?? '', 0, 255, 'UTF-8');
         $fee->amount = $fine['balance'];
