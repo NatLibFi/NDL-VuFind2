@@ -1583,7 +1583,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
         );
 
         $setTemplateLine(
-            'Archive Authors',
+            'archive_authors',
             'getAuthorsWithoutRoleHeadings',
             'data-authors.phtml',
             [
@@ -1594,7 +1594,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
         );
 
         $setTemplateLine(
-            'Archive Other Authors',
+            'archive_other_authors',
             'getOtherAuthors',
             'data-authors.phtml',
             [
