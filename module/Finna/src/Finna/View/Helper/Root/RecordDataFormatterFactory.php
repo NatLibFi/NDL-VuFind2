@@ -1584,7 +1584,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 
         $setTemplateLine(
             'Archive Authors',
-            'getAuthorsWithoutRoleHeading',
+            'getAuthorsWithoutRoleHeadings',
             'data-authors.phtml',
             [
                 'context' => [

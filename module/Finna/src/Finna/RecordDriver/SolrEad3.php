@@ -451,8 +451,7 @@ class SolrEad3 extends SolrEad
      */
     public function getNonPresenterAuthors()
     {
-        $exclude = self::SUBJECT_ACTOR_ROLES;
-        return $this->getAuthors($exclude);
+        return $this->getAuthors(self::SUBJECT_ACTOR_ROLES);
     }
 
     /**
@@ -461,7 +460,7 @@ class SolrEad3 extends SolrEad
      *
      * @return array
      */
-    public function getAuthorsWithoutRoleHeading()
+    public function getAuthorsWithoutRoleHeadings()
     {
         // If there are authors with role headings, nothing should be displayed here.
         if ($this->getAuthorsWithRoleHeadings()) {
@@ -490,7 +489,7 @@ class SolrEad3 extends SolrEad
 
     /**
      * Get authors to be displayed under Other Authors.
-     * See also getAuthorsWithoutRoleHeading().
+     * See also getAuthorsWithoutRoleHeadings().
      *
      * @return array
      */
@@ -530,7 +529,7 @@ class SolrEad3 extends SolrEad
             $relator = (string)$attr->relator;
             $relatorLC = mb_strtolower($relator, 'UTF-8');
             $role = $this->translateRole($localtype) ?? $this->translateRole($relatorLC);
-            if (!empty($exclude) && in_array($relatorLC, $exclude)) {
+            if ($exclude && in_array($relatorLC, $exclude)) {
                 continue;
             }
             if ((!$role && $translations) || ($role && $unknown)) {
@@ -547,7 +546,7 @@ class SolrEad3 extends SolrEad
             ];
         }
         // Check authors under relations
-        $relations = $this->getRelations('cpfrelation', $exclude);
+        $relations = $this->getRelationsWithType('cpfrelation', $exclude);
         foreach ($relations as $relation) {
             $role = $this->translateRole($relation['role']);
             if ((!$role && $translations) || ($role && $unknown)) {
@@ -557,10 +556,8 @@ class SolrEad3 extends SolrEad
                 $relation['role'] = $role;
             }
             // Do not add duplicates
-            foreach ($result as $res) {
-                if ($res === $relation) {
-                    continue 2;
-                }
+            if (in_array($relation, $result, true)) {
+                continue;
             }
             $result[] = $relation;
         }
@@ -568,14 +565,14 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get relations.
+     * Get relations with type.
      *
      * @param string $relationtype Relationtype to be included
      * @param array  $exclude      Arcroles to be excluded
      *
      * @return array
      */
-    public function getRelations(
+    protected function getRelationsWithType(
         string $relationtype,
         array $exclude = []
     ): array {
@@ -588,7 +585,7 @@ class SolrEad3 extends SolrEad
             }
             $arcrole = trim((string)($relation->attributes()->arcrole ?? ''));
             $arcroleLC = mb_strtolower($arcrole, 'UTF-8');
-            if (!empty($exclude) && in_array($arcroleLC, $exclude)) {
+            if ($exclude && in_array($arcroleLC, $exclude)) {
                 continue;
             }
             $name = $this->getDisplayLabel($relation, 'relationentry');

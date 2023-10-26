@@ -192,7 +192,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
                 ],
             ],
             [
-                'getAuthorsWithoutRoleHeading',
+                'getAuthorsWithoutRoleHeadings',
                 [
                     'ead3_test.xml' => [],
                     'ead3_test2.xml' => [
