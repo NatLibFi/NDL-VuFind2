@@ -367,7 +367,17 @@
         }
     }
 }
-.events-tabs {
+.mobile-accordion-hide {
+    .feed-accordions-title, .accordion {
+        display: none;
+    }
+    .events-tabs {
+        @media (max-width: @screen-sm-max) {
+            margin-bottom: 0;
+        }
+    }
+}
+.mobile-accordion-show .events-tabs {
     @media (max-width: @screen-sm-max) {
         display: none;
     }

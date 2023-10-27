@@ -56,6 +56,7 @@ class LinkedEventsTabs extends \Laminas\View\Helper\AbstractHelper
         $allEventsLink = $params['link'] ?? '';
         $searchTools = $params['searchTools'] ?? 'show';
         $navStyle = $params['navStyle'] ?? '';
+        $showMobileAccordion = $params['showMobileAccordion'] ?? true;
         $limit = $params['limit'] ?? 30;
 
         return $this->getView()->render(
@@ -66,6 +67,7 @@ class LinkedEventsTabs extends \Laminas\View\Helper\AbstractHelper
                 'allEventsLink' => $allEventsLink,
                 'searchTools' => $searchTools,
                 'navStyle' => $navStyle,
+                'showMobileAccordion' => $showMobileAccordion,
                 'limit' => $limit,
                 'id' => md5(json_encode($tabs)),
             ]
