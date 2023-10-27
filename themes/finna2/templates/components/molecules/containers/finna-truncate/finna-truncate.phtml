@@ -14,7 +14,7 @@
     $__truncateSettings['in-place-toggle'] = $inPlaceToggle;
   }
   if (isset($label)) {
-    $__truncateSettings['label'] = $label;
+    $__truncateSettings['label'] = $this->transEsc($label);
   }
   if (isset($labelIcons)) {
     $__truncateSettings['label-icons'] = $labelIcons;
@@ -26,7 +26,7 @@
     $__truncateSettings['less-icon'] = $lessIcon;
   }
   if (isset($lessLabel)) {
-    $__truncateSettings['less-label'] = $lessLabel;
+    $__truncateSettings['less-label'] = $this->transEsc($lessLabel);
   } elseif (!isset($label)) {
       // Default to legacy Finna truncate more and less links appearance.
       $__truncateSettings['less-label'] = $this->transEsc('show_less');
@@ -35,7 +35,7 @@
     $__truncateSettings['more-icon'] = $moreIcon;
   }
   if (isset($moreLabel)) {
-    $__truncateSettings['more-label'] = $moreLabel;
+    $__truncateSettings['more-label'] = $this->transEsc($moreLabel);
   } elseif (!isset($label)) {
       // Default to legacy Finna truncate more and less links appearance.
       $__truncateSettings['more-label'] = $this->transEsc('show_more');

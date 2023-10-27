@@ -35,6 +35,7 @@
 namespace Finna\View\Helper\Root;
 
 use Finna\Form\Form;
+use Finna\RecordDriver\SolrAipa;
 use Finna\RecordTab\TabManager;
 use Finna\Search\Solr\AuthorityHelper;
 use Finna\Service\UserPreferenceService;
@@ -1251,6 +1252,19 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * Check if full width layout should be used for the record
+     *
+     * @return bool
+     */
+    public function hasFullWidthLayout(): bool
+    {
+        if ($this->driver instanceof SolrAipa) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Check if large image layout should be used for the record
      *
      * @return bool
@@ -1453,5 +1467,18 @@ class Record extends \VuFind\View\Helper\Root\Record
         );
 
         return $html;
+    }
+
+    /**
+     * Conditionally render a full width banner.
+     *
+     * @return string
+     */
+    public function getBanner(): string
+    {
+        if ($this->hasFullWidthLayout()) {
+            return $this->renderTemplate('banner.phtml');
+        }
+        return '';
     }
 }

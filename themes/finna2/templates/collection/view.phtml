@@ -106,8 +106,14 @@
           ['label' => 'Context',
             'lines' => ['Archive Origination', 'Archive', 'Archive Series', 'Archive File'],
           ],
+          [
+            'lines' => ['Format', 'Unit ID', 'Unit IDs'],
+          ],
+          ['label' => 'archive_authors',
+          'lines' => ['archive_authors', 'Archive Relations', 'archive_other_authors'],
+          ],
           ['lines' => [
-              'Format', 'Authors', 'Secondary Authors', 'Unit ID', 'Unit IDs','Subjects',
+              'Authors', 'Secondary Authors', 'Subjects',
               'subjects_extended', 'Dates', 'Material Condition'],
           ],
           ['label' => 'access_restrictions_general',
@@ -228,7 +234,7 @@
       <?php endforeach; ?>
     </div>
 
-    <?=$this->driver->supportsCoinsOpenURL() ? '<span class="Z3988" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenURL()) . '"></span>' : ''?>
+    <?=$this->driver->supportsCoinsOpenURL() ? '<span class="Z3988" aria-hidden="true" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenURL()) . '"></span>' : ''?>
   </div>
 
 </div>

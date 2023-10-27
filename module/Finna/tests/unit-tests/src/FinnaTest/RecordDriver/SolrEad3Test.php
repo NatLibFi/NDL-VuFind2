@@ -52,7 +52,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
      */
     public function testGetUnitDates()
     {
-        $driver = $this->getDriver();
+        $driver = $this->getDriver('ead3_test.xml');
         $ndash = html_entity_decode('&#x2013;', ENT_NOQUOTES, 'UTF-8');
         $dates = [
             [
@@ -131,7 +131,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
         string $language,
         array $expected
     ): void {
-        $driver = $this->getDriver();
+        $driver = $this->getDriver('ead3_test.xml');
         $driver->setPreferredLanguage($language);
         $this->assertEquals(
             $expected,
@@ -140,16 +140,154 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Function to get expected author data
+     *
+     * @return array
+     */
+    public function getAuthorData(): array
+    {
+        return [
+            [
+                'getNonPresenterAuthors',
+                [
+                    'ead3_test.xml' => [
+                        [
+                            'id' => 'EAC_102476374',
+                            'role' => 'rda:collector',
+                            'name' => 'Suomalaisen Kirjallisuuden Seura ry',
+                        ],
+                        [
+                            'id' => 'EAC_123456',
+                            'role' => 'ive',
+                            'name' => 'Harri Haastateltava',
+                        ],
+                        [
+                            'id' => '',
+                            'role' => '',
+                            'name' => 'Rolle Rooliton',
+                        ],
+                        [
+                            'id' => '',
+                            'role' => 'tuntematon rooli',
+                            'name' => 'Tuovi Tuntematon',
+                        ],
+                        [
+                            'id' => '',
+                            'role' => 'rda:former-owner',
+                            'name' => 'Lucifer Luovuttaja',
+                        ],
+                    ],
+                    'ead3_test2.xml' => [
+                        [
+                            'id' => 'EAC_76543',
+                            'role' => 'tuntematon rooli',
+                            'name' => 'Tuukka Tuntematon',
+                        ],
+                        [
+                            'id' => '',
+                            'role' => '',
+                            'name' => 'Roope Rooliton',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'getAuthorsWithoutRoleHeadings',
+                [
+                    'ead3_test.xml' => [],
+                    'ead3_test2.xml' => [
+                        [
+                            'id' => 'EAC_76543',
+                            'role' => 'tuntematon rooli',
+                            'name' => 'Tuukka Tuntematon',
+                        ],
+                        [
+                            'id' => '',
+                            'role' => '',
+                            'name' => 'Roope Rooliton',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'getAuthorsWithRoleHeadings',
+                [
+                    'ead3_test.xml' => [
+                        [
+                            'id' => 'EAC_102476374',
+                            'role' => 'rda:collector',
+                            'name' => 'Suomalaisen Kirjallisuuden Seura ry',
+                        ],
+                        [
+                            'id' => 'EAC_123456',
+                            'role' => 'ive',
+                            'name' => 'Harri Haastateltava',
+                        ],
+                        [
+                            'id' => '',
+                            'role' => 'rda:former-owner',
+                            'name' => 'Lucifer Luovuttaja',
+                        ],
+                    ],
+                    'ead3_test2.xml' => [],
+                ],
+            ],
+            [
+                'getOtherAuthors',
+                [
+                    'ead3_test.xml' => [
+                        [
+                            'id' => '',
+                            'role' => '',
+                            'name' => 'Rolle Rooliton',
+                        ],
+                        [
+                            'id' => '',
+                            'role' => 'tuntematon rooli',
+                            'name' => 'Tuovi Tuntematon',
+                        ],
+                    ],
+                    'ead3_test2.xml' => [],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Test authors
+     *
+     * @param string $function Function of the driver to test
+     * @param array  $expected Result to be expected
+     *
+     * @dataProvider getAuthorData
+     *
+     * @return void
+     */
+    public function testAuthors(
+        string $function,
+        array $expected
+    ): void {
+        foreach ($expected as $file => $result) {
+            $driver = $this->getDriver($file);
+            $this->assertEquals(
+                $result,
+                $driver->$function()
+            );
+        }
+    }
+
+    /**
      * Get a record driver with fake data.
      *
-     * @param array $overrides    Fixture fields to override.
-     * @param array $searchConfig Search configuration.
+     * @param string $recordXml    Xml record to use for the test
+     * @param array  $overrides    Fixture fields to override.
+     * @param array  $searchConfig Search configuration.
      *
      * @return SolrEad3
      */
-    protected function getDriver($overrides = [], $searchConfig = []): SolrEad3
+    protected function getDriver(string $recordXml, $overrides = [], $searchConfig = []): SolrEad3
     {
-        $fixture = $this->getFixture('ead3/ead3_test.xml', 'Finna');
+        $fixture = $this->getFixture("ead3/$recordXml", 'Finna');
         $record = new SolrEad3(
             null,
             null,

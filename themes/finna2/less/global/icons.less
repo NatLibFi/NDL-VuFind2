@@ -44,6 +44,9 @@ table .iconlabel {
     letter-spacing: 0px;
     font-size: 1em;
 }
+.iconlabel.format-0aipa:before  {
+    content: "\e00d";
+}
 .iconlabel.format-unknownname:before,
 .iconlabel.format-personalname:before {
     font-family: finnaicons;
@@ -592,6 +595,11 @@ table .iconlabel {
   padding: 0;
   line-height: inherit;
   color: inherit;
+}
+
+/* Unicode Icons */
+.icon--unicode:before {
+    content: attr(data-icon);
 }
 
 /* MD Editable */

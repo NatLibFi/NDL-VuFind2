@@ -321,7 +321,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         ) : '';
         $locationSelection = $this->renderer->render(
             'organisationinfo/elements/location-selection.phtml',
-            compact('orgInfo')
+            compact('id', 'orgInfo')
         );
         $locationCount = count($orgInfo['list'] ?? []);
         $locationIdValid = false;
@@ -351,7 +351,23 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
             ?? $orgInfo['consortium']['finna']['servicePoint']
             ?? $orgInfo['list'][0]['id']
             ?? null;
-        return compact('consortiumInfo', 'locationSelection', 'locationCount', 'defaultLocationId', 'mapData');
+        $defaultLocationName = null;
+        if (null !== $defaultLocationId) {
+            foreach ($orgInfo['list'] ?? [] as $org) {
+                if ((string)$org['id'] === $defaultLocationId) {
+                    $defaultLocationName = $org['name'];
+                    break;
+                }
+            }
+        }
+        return compact(
+            'consortiumInfo',
+            'locationSelection',
+            'locationCount',
+            'defaultLocationId',
+            'defaultLocationName',
+            'mapData'
+        );
     }
 
     /**
@@ -370,11 +386,11 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         if ($found) {
             $info = $this->renderer->render(
                 'organisationinfo/elements/location-quick-info.phtml',
-                compact('orgInfo')
+                compact('id', 'orgInfo')
             );
             $details = $this->renderer->render(
                 'organisationinfo/elements/location-details.phtml',
-                compact('orgInfo')
+                compact('id', 'orgInfo')
             );
         } else {
             $details = '';
@@ -450,9 +466,9 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
 
         $widget = $this->renderer->render(
             'organisationinfo/elements/widget.phtml',
-            compact('orgInfo', 'locationId', 'locationName', 'showDetails')
+            compact('id', 'orgInfo', 'locationId', 'locationName', 'showDetails')
         );
-        return compact('widget', 'locationId');
+        return compact('widget', 'locationId', 'locationName');
     }
 
     /**
@@ -498,7 +514,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         $details = $showDetails
             ? $this->renderer->render(
                 'organisationinfo/elements/location/widget-details.phtml',
-                compact('orgInfo')
+                compact('id', 'orgInfo')
             ) : '';
         return compact('openStatus', 'schedule', 'details', 'locationId', 'locationName');
     }

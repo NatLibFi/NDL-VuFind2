@@ -1,4 +1,4 @@
-<div class="location-col details-col">
+<div class="location-col details-col"<?=$this->matomoTracking('Location Widget', $id . '/' . $orgInfo['name'])?>>
   <?php if ($url = $orgInfo['pictures'][0]['url'] ?? null): ?>
     <img class="building-image" src="<?=$this->escapeHtmlAttr($url)?>" alt="">
   <?php endif; ?>

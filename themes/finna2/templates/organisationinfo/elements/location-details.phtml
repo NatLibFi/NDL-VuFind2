@@ -1,5 +1,10 @@
 <!-- START of: finna - organisationinfo/elements/location-details.phtml -->
-<div class="row location-details info-element">
+<?php
+  $addTrackingWrapper = function (string $name, string $content): string {
+    return '<div' . $this->matomoTracking($name, $this->id . '/' . $this->orgInfo['name']) . '>' . $content . '</div>';
+  };
+?>
+<div class="row location-details info-element"<?=$this->matomoTracking('Location Details', $id . '/' . $orgInfo['name'])?>>
   <?php // Information columns ?>
   <div class="location-row-general">
     <div class="location-col">
@@ -71,7 +76,7 @@
         'attributes' => ['class' => ['finna-panel-default', 'services', 'info-element']],
         'heading' => $this->transEsc('organisation_info_services'),
         'headingLevel' => 4,
-        'content' => $content,
+        'content' => $addTrackingWrapper('Location Services', $content),
         'headingId' => 'heading5',
         'collapseId' => 'collapse5',
         'collapsed' => false,
@@ -84,7 +89,7 @@
         'attributes' => ['class' => ['finna-panel-default', 'accessibility-details', 'info-element']],
         'heading' => $this->transEsc('organisation_info_accessibility'),
         'headingLevel' => 4,
-        'content' => $content,
+        'content' => $addTrackingWrapper('Location Accessibility', $content),
         'headingId' => 'heading6',
         'collapseId' => 'collapse6',
         'collapsed' => true,
@@ -97,7 +102,7 @@
         'attributes' => ['class' => ['finna-panel-default', 'personnel', 'info-element']],
         'heading' => $this->transEsc('organisation_info_staff'),
         'headingLevel' => 4,
-        'content' => $content,
+        'content' => $addTrackingWrapper('Location Staff', $content),
         'headingId' => 'heading7',
         'collapseId' => 'collapse7',
       ]); ?>
@@ -109,7 +114,7 @@
         'attributes' => ['class' => ['finna-panel-default', 'news-feed-container', 'rss-container', 'info-element']],
         'heading' => $this->transEsc('organisation_info_rss_news'),
         'headingLevel' => 4,
-        'content' => $content,
+        'content' => $addTrackingWrapper('Location News', $content),
         'headingId' => 'heading8',
         'collapseId' => 'collapse8',
       ]); ?>
@@ -121,7 +126,7 @@
         'attributes' => ['class' => ['finna-panel-default', 'events-feed-container', 'rss-container', 'info-element']],
         'heading' => $this->transEsc('organisation_info_rss_events'),
         'headingLevel' => 4,
-        'content' => $content,
+        'content' => $addTrackingWrapper('Location Events', $content),
         'headingId' => 'heading9',
         'collapseId' => 'collapse9',
       ]); ?>

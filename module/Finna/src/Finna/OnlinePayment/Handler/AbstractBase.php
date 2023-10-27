@@ -228,6 +228,7 @@ abstract class AbstractBase implements
         foreach ($fines as $fine) {
             // Sanitize fine strings
             $fine['fine'] = iconv('UTF-8', 'UTF-8//IGNORE', $fine['fine'] ?? '');
+            $fine['description'] = iconv('UTF-8', 'UTF-8//IGNORE', $fine['description'] ?? '');
             $fine['title'] = iconv('UTF-8', 'UTF-8//IGNORE', $fine['title'] ?? '');
             if (!$this->feeTable->addFee($t->id, $fine, $t->user_id, $t->currency)) {
                 $this->logError(

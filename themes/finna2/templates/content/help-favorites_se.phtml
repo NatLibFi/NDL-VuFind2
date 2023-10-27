@@ -1,0 +1,84 @@
+<!-- START of: finna - content/help_favorites_se.phtml -->
+<?php $this->headTitle($this->translate('tabs_help-favorites'))?>
+
+<?php if ($this->resolver('content/help-tabs.phtml')): ?>
+    <?=$this->render('content/help-tabs.phtml', ['activeTab' => 'help-favorites'])?>
+<?php endif; ?>
+<div class="sidebar left">
+  <div class="content-navigation-menu">
+  </div>
+</div>
+<div class="mainbody right">
+<div id="favorites" class="content-section">
+  <h2>Oiddotlisttut</h2>
+  <p>Oiddotlisttuide sáhtát furket iežat gávdnan materiálaid ja ordnet daid iežat háliidan vuogi mielde. Oiddotlisttuid mielde gávnnat materiála álkit ođđasit. Juoge oiddotlisttu iežat hálu mielde earáide URL-čujuhussan dehe RSS-fáluhussan. Sáhtát maid sáddet oiddotlisttu materiálaid šleađgaboasttain dehe doalvut daid Refworks-diehtostivrenprográmmii.
+  </p>
+  <p>Buot oiddotlisttut gávdnojit iežat konttus. Sáhtát furket iežat buorrin gávnnahan ohcamiid maid dakkáražžan (gč. <a href="<?=$this->url('content-page', ['page' => 'help-basic'])?>#saving-search">Ohcama furken</a>).
+  </p>
+    <h3>Oiddotlisttu duddjon</h3>
+    <p>Čálihuva vuohččan sisa Finnai ja oza iežat háliidan materiála.
+    </p>
+    <p>Lasit materiála oiddotlistui nu ahte coahkkalat nástágovvasymbola. <?=$this->icon('favorite') ?>
+    </p>
+    <p>Gávnnat nástágovvasymbola ohcanboađussiiddus materiála olgeš bealde.
+    </p>
+    <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-1_fi.png')?>" aria-hidden="true" alt=""/>
+    </p>
+    <p>Materiála dárkilis dieđuin nástágovvasymbola gávdno gurut badječiegas. <?=$this->icon('favorite') ?><span class="hidden-xs"> <?=$this->transEsc('Add to favorites')?></span>
+    </p>
+    <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-2_fi.png')?>" aria-hidden="true" alt=""/>
+    </p>
+    <p>Vállje rahpaseaddji fálus oiddotlisttu, masa háliidat válljejuvvon materiála furket. Visot iežat ovdal duddjon listtut oidnojit <strong><?=$this->transEsc('Choose a List')?></strong> -fálus. Ođđa oiddotlisttu duddjot go válljet <strong><?=$this->transEsc('or create a new list')?></strong>. Lasit iežat hálu mielde muituimerkejumi (man sáhtát maŋŋel hábmet). Loahpas deatte <strong><?=$this->transEsc('Save')?></strong>.
+    </p>
+    <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-3_fi.png')?>" aria-hidden="true" alt="">
+    </p>
+    <h3>Oiddotlisttu hábmen</h3>
+    <p>Hábme oiddotlisttu nu ahte válljet <strong><?=$this->transEsc('Your Account')?></strong> -fálus <strong><?=$this->transEsc('Favorites')?></strong>. Vállje <strong><?=$this->transEsc('All Favourites')?></strong> dehe iežat duddjon oiddotlisttu. Sáhtát hábmet iežat duddjon oiddotlisttu nama ja listtu muituimerkejumi sihke lasihit materiálaide iežat muituimerkejumiid. Sihko dihto materiála oiddotlisttus nu ahte coahkkalat materiála aktiivvalažžan ja vállje sajis <em><?=ucfirst($this->transEsc('with_selected'))?>:</em> <strong><?=$this->transEsc('Delete')?></strong>. Coahkkalettiin aktiivvalažžan <strong><?=$this->transEsc('select_page')?></strong> válljet buot oiddotlisttu materiálaid, mat leat oidnosis.
+    </p>
+    <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-4_fi.png')?>" aria-hidden="true" alt="">
+    </p>
+    <p>Coahkkalettiin <strong><?=$this->transEsc('Sort manually')?></strong> rahpasa láse, mas geassimiin sáhtát hábmet materiálaid ortnega. Loahpas deatte <strong><?=$this->transEsc('Save Order')?></strong>. Du hábmen ortnet gávdno <strong><?=$this->transEsc('Sort')?></strong>-gahčahanfálus namain <strong><?=$this->transEsc('sort_custom_order')?></strong>.
+    </p>
+    <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-5_fi.png')?>" aria-hidden="true" alt="">
+    </p>
+    <h3>Oiddotlisttu geahččanoainnus ja juohkin</h3>
+    <p>Juos háliidat geahčadit iežat oiddotlisttu geahččanoidnosis, vállje oainnusin <strong><?=$this->transEsc('Public')?></strong>. Dalle listtu nama maŋŋel ihtá juohkingovvasymbola <span aria-hidden="true"><i class="fa fa-public brand-primary"></i></span>. Go coahkkalat <strong><?=$this->transEsc('Public List URL')?></strong>, rahpasa du oiddotlistu geahččanoidnosii. Juos it juoge geahččanoidnosa liŋkka earáide, lea oiddotlistu ain dušše iežat anus.
+    </p>
+    <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-6_fi.png')?>" aria-hidden="true" alt="">
+    </p>
+    <p>Geahččanoidnosis sáhtát válljet sierralágán ovdanbuktinvugiid. Sáhtát ordnet listtu sierra vugiid mielde (omd. vuođđalogu mielde) ja geahččalit eará molssaeavttuid materiála čájeheapmái.
+    </p>
+    <p><em><?=$this->transEsc('show_as')?></em>
+      <br>&nbsp;<?=$this->icon('view-list') ?>&nbsp;<?=$this->transEsc('Show As List')?>
+      <br>&nbsp;<?=$this->icon('view-grid') ?>&nbsp;<?=$this->transEsc('Show As Grid')?>
+      <br>&nbsp;<?=$this->icon('view-condensed') ?>&nbsp;<?=$this->transEsc('Show As Condensed')?>
+    </p>
+    <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-7_fi.png')?>" aria-hidden="true" alt="">
+    </p>
+    <p>Don sáhtát juohkit iežat oiddotlisttu geahččanoidnosa nu ahte juogát čujuhusráiddus URL-čujuhusa iežat háliidan vuostáváldái. URL-čujuhus rievdá ovdanbuktinvuogi mielde, nu ahte vállje ovdanbuktinvuogi ovdal URL-čujuhusa juohkima. Ná du válljen ovdanbuktinvuohki oidno navddusin maid vuostáváldái. RSS-fáluhus gávdno geahččanoidnosa vuolleoasis.
+    </p>
+    <h3>Oiddohiid juohkin šleađgaboasttain</h3>
+    <p>Juoge oiddotlisttuide iežat furken materiálaid liŋkkaid njuolga šleađgaboasttain.
+    </p>
+    <ol class="list-numbers">
+      <li>Vállje <strong><?=$this->transEsc('Your Account')?></strong> &rarr; <strong><?=$this->transEsc('Favorites')?></strong>.
+      </li>
+      <li>Sáhtát válljet <strong><?=$this->transEsc('All Favourites')?></strong> dehe ovttaskas oiddotlisttu.
+      </li>
+      <li>Sáhtát válljet  buot materiálaid, mat oidnojit, sajis <strong><?=$this->transEsc('select_page')?></strong> dehe vállje ovttaid-ovttaid materiálaid válljema várás.
+      </li>
+      <li>Coahkkal <em><?=ucfirst($this->transEsc('with_selected'))?>:</em> <strong><?=$this->transEsc('Email')?></strong>. Lasit vuostáváldi šleađgaboastačujuhusa ja čále iežat háliidan sáhkasisdoalu rahpaseaddji gieddái. Deatte loahpas <strong><?=$this->transEsc('Send')?></strong>.
+      </li>
+    </ol>
+    <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-8_fi.png')?>" aria-hidden="true" alt=""/>
+    </p>
+  </div>
+  <div id="saving-searches" class="content-section">
+    <h2>Ohcama furken</h2>
+    <p>Vurke iežat háliidan ozuid ohcanboađussiiddu vuolleravdda <strong><?=$this->transEsc('save_search')?></strong> -boaluin. Gávnnat ozuid go válljet <strong><?=$this->transEsc('Your Account')?></strong> &rarr; <strong><?=$this->transEsc('history_saved_searches')?></strong>. Vurkejuvvon ohcui sáhttá ásahit ođasvuođa fávtta, mii almmuha ozu ođđa materiálain.
+    </p>
+    <p class="hidden-xs"><img src="<?=$this->imageLink('help-favorites-9_fi.png')?>" aria-hidden="true" alt="">
+    </p>
+  </div>
+</div>
+<!-- END of: finna - content/help_favorites_se.phtml -->

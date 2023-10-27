@@ -1,0 +1,67 @@
+<!-- START of: finna - content/help_advanced_se.phtml -->
+<?php $this->headTitle($this->translate('tabs_help-advanced'))?>
+
+<?php if ($this->resolver('content/help-tabs.phtml')): ?>
+    <?=$this->render('content/help-tabs.phtml', ['activeTab' => 'help-advanced'])?>
+<?php endif; ?>
+<div class="sidebar left">
+  <div class="content-navigation-menu">
+  </div>
+</div>
+<div class="mainbody right">
+  <h1>Aiddostahtton ohcama bagadus</h1>
+  <div id="adv-search-fields" class="content-section">
+    <h2>Ohcangiettit</h2>
+    <p><a href="<?=$this->url('search-advanced')?>">Aiddostahtton ohcamiin</a> sáhtát dahkat máŋggamohkat ohcamiid. Aiddostahtton ohcan ohcá visot materiálaid, mat gávdnojit Finnas. Aiddostahtton ohcama siiddus leat máŋggat ohcangiettit, maidda sáhtát čállit ohcansániid ja -gihpuid sihke geavahit Boole ohcanoperáhtoriid (AND, OR, NOT). </p>
+    <p>Juohke ohcangietti guoras lea fállu, man mielde sáhtát ohcat materiálaid ovdamearkka dihte dahkki, fáttá dehe olggosaddi mielde. Sáhtát ovttastahttit máŋggaid ohcansániid, go geavahat máŋga ohcangietti dehe ohcanjoavkku oktanaga.</p>
+  </div>
+  <div id="adv-match-menu" class="content-section">
+    <h2>Ohcanjoavkku Oza-fállu</h2>
+    <p>Ohcanjoavkku siste lea fállu, mainna sáhtát aiddostahttit ja ráddjet ohcama. Sáhtát oažžut ohcanbohtosiid, main leat mielde dihto sánit dehe main leat sihkkojuvvon dihto sánit.</p>
+    <p><strong>Buot ohcansániiguin (AND)</strong> — Ohcanbohtosiin leat mielde buot sánit, maid leat čállán ohcangittiide.</p>
+    <p><strong>Man beare ohcansániin (OR)</strong> — Ohcanbohtosiin leat mielde okta dehe eanet sánit, man leat čállán ohcangieddái. Fuomášupmi! Juos válljet molssaeavttu <strong>Man beare dáin</strong>, sáhtát oažžut eanet ohcanbohtosiid go juos válljet molssaeavttu <strong>Buot ohcansániiguin.</strong>.</p>
+    <p><strong>Ii mainnage ohcansániin (NOT)</strong> — Ohcanbohtosiin ii leat mielde oktage sátni, man leat čállán ohcangieddái. Dát gánnáha adnojuvvot, juos it háliit, ahte juoga dihto ohcansátni lea mielde ohcamis.</p>
+  </div>
+  <div id="adv-search-groups" class="content-section">
+    <h2>Ohcanjoavkkut</h2>
+    <p>Aiddostahtton ohcamis sáhtát geavahit eanet ohcanjoavkkuid ovtta ohcamii.</p>
+    <p><strong>Lasit ohcanjoavku</strong> –boallu lasiha ođđa joavkku ohcangittiid.</p>
+    <p><strong>Sihko ohcanjoavku</strong>–boallu sihkku ohcanjoavkku.</p> 
+    <h3>Ohcanjoavkkuid ovttastahttin</h3>
+    <p>Sáhtát maid ovttastahttit máŋggaid ohcanjoavkkuid. dalle ohcan ohcá bohtosiid máŋgga ohcanjoavkkus ovttain háviin. Juos háliidat meroštallat máŋggaid ohcanjoavkkuid gori, sáhtát válljet juogo <strong>Buot joavkkut (AND)</strong> dehe <strong>Mat beare joavkkut (OR)</strong>.</p>
+    <p><strong>Buot joavkkut (AND)</strong> -fállu ohcá bohtosiid, main gávdnojit buot ohcanjoavkkuid ohcansánit.</p>
+    <p><strong>Mat beare joavkkut (OR)</strong> -fállu ohcá bohtosiid, main gávdno okta dehe eanet ohcanjoavkku ohcansátni.</p>
+    <p><a href="#adv-search-example-combine">Geahča ovdamearkka eanet ohcansániid ja -joavkkuid ovttastahtti ohcamis.</a>.</p>
+  </div>  
+  <div id="adv-search-narrow" class="content-section">
+    <h2>Ráddjemat</h2>
+    <p>Sáhtát ráddjet aiddostahtton ohcama, vai oaččut bohtosiid, main lea dihto giella, materiálatiipa dehe gárvánanjahki. Sáhtát válljet eanet gielaid ja materiálatiippaid seamma ohcamis.</p>
+    <p>Sáhtát ráddjet iežat ohcama lasi ohcanboađussiiddus ovdamearkka dihte geavahanrivttiid dehe materiála fálli mielde.</p>
+  </div>
+  <div id="adv-search-geo" class="content-section">
+    <h2>Eatnandieđalaš guovlu</h2>
+    <p>Sáhtát ohcat materiálaid dihto Suoma guovllus, go válljet guovllu gárttas. Gárta sáhttá lagadit dehe gáidadit dan mielde, man viiddes guvlui háliidat ráddjema. Dušše oassi materiálas gávdno sajádaga vuođul.</p>
+    <p>Geažideapmi! Geahččal ohcat báikenamain, ja soaittát gávdnat eanet materiálaid.</p>
+  </div>
+  <div id="adv-search-examples" class="content-section">
+    <h2>Ovdamearkkat aiddostahtton ohcamis</h2>
+    <h3>Ovtta ohcanjoavkku ohcan</h3>
+    <p>Ozat Jörn Donnera girjjiid, muhto it su bagadallan filmmaid.</p>
+    <ol class="list-numbers">
+      <li>Čále ohcangieddái <i>Jörn Donner čálli</i>.</li>
+      <li>Ráddje ohcama fálus, mii lea ohcangietti guoras. Vállje fálus <strong>Dahkki ja rolla</strong>.
+    </ol>
+    <h3 id="adv-search-example-combine">Eanet ohcansániid ja -joavkkuid ovttastahtti ohcan</h3>
+    <p>Háliidat gávdnat materiálaid Alvar Aalto hábmemis, muhto it arkitektuvrras dehe viessogálvvuin.</p>
+    <ol class="list-numbers">
+      <li>Čále ohcanjoavkku ohcangieddái <i>Aalto Alvar</i> ja vuolibui <i>hábmen</i>.</li>
+      <li>Geahča, ahte válljeneaktun leat válljejuvvon <strong>Buot dáiguin (AND)</strong>. Ohcan čuohcá goappánai ohcangieddái.</li>
+      <li>Lasit ođđa ohcanjoavkku nu ahte válljet <strong>+Lasit ohcanjoavkku</strong>.
+      <li>Čále ođđa ohcanjoavkku ohcangittiide <i>viessogálvvut</i> ja <i>arkitektuvra</i>.</li>
+      <li>Sáhtát válljet dihto fáttá, man háliidat ráddjet eret ohcamis. Vállje <strong>Fáddá</strong> fálus, mii lea ohcangittiid guoras.</li>
+      <li>Ovttastahte ohcanjoavkku ohcangittiid nu ahte válljet Oza-fálus <strong>Ii mainge dáin (NOT)</strong>. Oaččut ohcanbohtosiid, main eai leat du válljen ohcansánit.</li>
+      <li>Ovttastahte loahpas goappašiid ohcanjoavkkuid eavttuin <strong>Buot joavkkut (AND).</strong>.
+    </ol>
+  </div>         
+</div>
+<!-- END of: finna - content/help_advanced_se.phtml -->

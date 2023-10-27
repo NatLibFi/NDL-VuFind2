@@ -303,6 +303,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     if (map) {
       map.selectMarker(locationId);
     }
+    finna.common.trackContentImpressions(detailsEl);
   }
 
   /**
@@ -492,6 +493,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
             }
             initWeekNavi(result.data.locationId);
             finna.layout.initToolTips($(detailsEl));
+            finna.common.trackContentImpressions(container);
           });
         }
       });
