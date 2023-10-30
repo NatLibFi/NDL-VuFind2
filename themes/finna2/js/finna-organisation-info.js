@@ -4,6 +4,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
   let container = null;
   let detailsEl = null;
   let mapContainer = null;
+  let searchContainer = null;
   let map = null;
 
   let mapTileUrl = 'https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png?v=2';
@@ -68,12 +69,136 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
   }
 
   /**
+   * Hide location search dropdown
+   */
+  function hideLocationSearch() {
+    // Hide search:
+    let searchToggle = searchContainer ? searchContainer.querySelector('.js-location-search-toggle') : null;
+    if (searchToggle) {
+      searchToggle.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  /**
+   * Initialize location search
+   *
+   * @param {Object} data Organisation info response for info-location-selection request
+   */
+  function initLocationSearch(data) {
+    searchContainer = container.querySelector('.js-location-search-container');
+    if (!searchContainer) {
+      return;
+    }
+    let searchEl = searchContainer.querySelector('.js-location-search-fields');
+    let resultsEl = searchContainer.querySelector('.js-location-search-results');
+    if (!searchEl || !resultsEl) {
+      searchContainer.classList.add('hidden');
+      return;
+    }
+    searchEl.innerHTML = data.searchFields;
+    if (!('geolocation' in navigator)) {
+      let geoField = searchEl.querySelector('[name="service_nearest"]');
+      if (geoField) {
+        geoField.remove();
+      }
+    }
+    searchContainer.classList.remove('hidden');
+    let searchIndicatorEl = searchContainer.querySelector('.js-results-loader');
+    searchEl.querySelectorAll('select, input').forEach((field) => {
+      field.addEventListener('change', () => {
+        resultsEl.textContent = '';
+        let searchParams = new URLSearchParams({
+          method: 'getOrganisationInfo',
+          element: 'location-search',
+          id: params.id,
+          sectors: params.sectors || '',
+          buildings: params.buildings || ''
+        });
+        searchEl.querySelectorAll('select, input').forEach((field2) => {
+          if (field2.tagName === 'INPUT' && field2.type === 'checkbox') {
+            searchParams.append(field2.name, field2.checked ? '1' : '0');
+          } else {
+            searchParams.append(field2.name, field2.value);
+          }
+        });
+        if (!searchParams.get('service_type')) {
+          return;
+        }
+        if (searchIndicatorEl) {
+          searchIndicatorEl.classList.remove('hidden');
+        }
+        let doSearch = function (searchParams2) {
+          fetch(VuFind.path + '/AJAX/JSON?' + searchParams2)
+            .then(response => {
+              if (searchIndicatorEl) {
+                searchIndicatorEl.classList.add('hidden');
+              }
+              if (!response.ok) {
+                resultsEl.textContent = VuFind.translate('error_occurred');
+              } else {
+                response.json().then((result) => {
+                  resultsEl.innerHTML = result.data.results;
+                  resultsEl.querySelectorAll('a').forEach((resultEl) => {
+                    resultEl.addEventListener('click', hideLocationSearch);
+                  });
+                });
+              }
+            });
+        };
+        if (searchParams.get('service_nearest') === '1') {
+          navigator.geolocation.getCurrentPosition(
+            function success(position) {
+              searchParams.append('lat', position.coords.latitude);
+              searchParams.append('lon', position.coords.longitude);
+              doSearch(searchParams);
+            },
+            function error(err) {
+              var errorString = 'geolocation_other_error';
+              var additionalInfo = '';
+              if (err) {
+                switch (err.code) {
+                case err.POSITION_UNAVAILABLE:
+                  errorString = 'geolocation_position_unavailable';
+                  break;
+                case err.PERMISSION_DENIED:
+                  errorString = 'geolocation_inactive';
+                  break;
+                case err.TIMEOUT:
+                  errorString = 'geolocation_timeout';
+                  break;
+                default:
+                  additionalInfo = err.message;
+                  break;
+                }
+              }
+              errorString = VuFind.translate(errorString);
+              if (additionalInfo) {
+                errorString += ' -- ' + additionalInfo;
+              }
+              let div = document.createElement('div');
+              div.className = 'location-search-result';
+              div.textContent = errorString;
+              resultsEl.append(div);
+              if (searchIndicatorEl) {
+                searchIndicatorEl.classList.add('hidden');
+              }
+            }
+          );
+        } else {
+          doSearch(searchParams);
+        }
+      });
+    });
+  }
+
+  /**
    * Initialize map
    *
    * @param {Object} data Organisation info response for info-location-selection request
    */
   function initMap(data) {
-    if (Object.keys(data.mapData).length === 0) {
+    let mapData = Object.fromEntries(Object.entries(data.locationData).filter((loc) => null !== loc[1].lat && null !== loc[1].lon));
+    if (mapData.length === 0) {
       return;
     }
 
@@ -108,13 +233,13 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       hideMapMarker();
     });
 
-    $(map).on('marker-mouseover', function onMouseOverMarker(ev, mapData) {
-      if (mapData.id in data.mapData) {
-        var name = data.mapData[mapData.id].name;
+    $(map).on('marker-mouseover', function onMouseOverMarker(ev, mapItem) {
+      if (mapItem.id in mapData) {
+        var name = mapData[mapItem.id].name;
         mapTooltip.classList.remove('hidden');
         mapTooltip.textContent = name;
-        mapTooltip.style.left = mapWidget.offsetLeft + mapData.x + 35 + 'px';
-        mapTooltip.style.top = mapWidget.offsetTop + mapData.y + 'px';
+        mapTooltip.style.left = mapWidget.offsetLeft + mapItem.x + 35 + 'px';
+        mapTooltip.style.top = mapWidget.offsetTop + mapItem.y + 'px';
       }
     });
 
@@ -122,7 +247,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     if (showLocationEl) {
       showLocationEl.addEventListener('click', (ev) => {
         let id = getLocationFromURLHash();
-        if (id && id in data.mapData) {
+        if (id && id in mapData) {
           map.reset();
           map.selectMarker(id);
         }
@@ -141,12 +266,12 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       });
     }
 
-    for (const id in data.mapData) {
-      if (!Object.hasOwn(data.mapData, id)) {
+    for (const id in mapData) {
+      if (!Object.hasOwn(mapData, id)) {
         continue;
       }
       // Map data (info bubble, icon)
-      let locationData = data.mapData[id];
+      let locationData = mapData[id];
       let bubble = mapBubbleTemplate.cloneNode(true);
       let nameEl = bubble.content.querySelector('.js-name');
       if (nameEl) {
@@ -164,12 +289,12 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
         addressEl.append(cityEl);
       }
 
-      data.mapData[id].map = {
+      mapData[id].map = {
         info: bubble.innerHTML
       };
     }
 
-    map.draw(data.mapData);
+    map.draw(mapData);
   }
 
   /**
@@ -178,6 +303,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    * @param {Object} data Organisation info response for info-location-selection request
    */
   function initLocationSelection(data) {
+    // Setup location selection
     const select = document.querySelector('.js-location-select');
     if (select) {
       const placeholder = select.querySelector('option').textContent;
@@ -189,6 +315,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       });
     }
 
+    initLocationSearch(data);
     initMap(data);
   }
 
@@ -443,6 +570,28 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
           });
         }
       });
+
+    // Add listeners that close the search dropdown as necessary:
+    document.addEventListener('mouseup', (e) => {
+      if (!searchContainer) {
+        return;
+      }
+      let searchToggleEl = searchContainer.querySelector('.js-location-search-toggle');
+      let searchEl = searchContainer.querySelector('.js-location-search');
+      if ((!searchToggleEl || !searchToggleEl.contains(e.target))
+        && (!searchEl || !searchEl.contains(e.target))
+      ) {
+        hideLocationSearch();
+      }
+    });
+    document.addEventListener('keyup', (e) => {
+      if (e.target && e.target.tagName === 'SELECT') {
+        return;
+      }
+      if (e.code === "Escape" && searchContainer) {
+        hideLocationSearch();
+      }
+    });
   }
 
   /**

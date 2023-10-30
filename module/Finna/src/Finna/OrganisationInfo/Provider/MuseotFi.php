@@ -153,6 +153,9 @@ class MuseotFi extends AbstractProvider
                     'lon' => !empty($json['longitude']) ? $json['longitude'] : '',
                 ],
                 'street' => !empty($json['address']) ? $json['address'] : '',
+                'zipcode' => '',
+                'area' => '',
+                'city' => '',
             ],
             'emails' => array_map(
                 function ($email) {

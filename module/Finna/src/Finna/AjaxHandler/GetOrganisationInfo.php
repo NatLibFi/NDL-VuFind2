@@ -36,6 +36,7 @@ use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\View\Renderer\RendererInterface;
 use VuFind\Cache\Manager as CacheManager;
 use VuFind\Cookie\CookieManager;
+use VuFind\I18n\Sorter;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\Session\Settings as SessionSettings;
 
@@ -101,6 +102,13 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     protected $facetConfig;
 
     /**
+     * Sorter
+     *
+     * @var Sorter
+     */
+    protected $sorter;
+
+    /**
      * Constructor
      *
      * @param SessionSettings   $ss               Session settings
@@ -108,6 +116,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
      * @param OrganisationInfo  $organisationInfo Organisation info
      * @param CacheManager      $cacheManager     Cache manager
      * @param RendererInterface $renderer         View renderer
+     * @param Sorter            $sorter           Sorter
      * @param array             $facetConfig      Facet configuration
      */
     public function __construct(
@@ -116,6 +125,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         OrganisationInfo $organisationInfo,
         CacheManager $cacheManager,
         RendererInterface $renderer,
+        Sorter $sorter,
         array $facetConfig
     ) {
         $this->sessionSettings = $ss;
@@ -123,6 +133,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         $this->organisationInfo = $organisationInfo;
         $this->cacheManager = $cacheManager;
         $this->renderer = $renderer;
+        $this->sorter = $sorter;
         $this->facetConfig = $facetConfig;
     }
 
@@ -161,6 +172,23 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                     $sectors,
                     $buildings,
                     (bool)$params->fromQuery('consortiumInfo', false)
+                );
+                break;
+            case 'location-search':
+                if (null !== ($lat = $params->fromQuery('lat'))) {
+                    $lat = (float)$lat;
+                }
+                if (null !== ($lon = $params->fromQuery('lon'))) {
+                    $lon = (float)$lon;
+                }
+                $result = $this->getLocationSearchResults(
+                    $id,
+                    $sectors,
+                    $params->fromQuery('service_type'),
+                    $params->fromQuery('service_location'),
+                    $lat,
+                    $lon,
+                    $params->fromQuery('service_open') === '1'
                 );
                 break;
             case 'location-details':
@@ -325,23 +353,31 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         );
         $locationCount = count($orgInfo['list'] ?? []);
         $locationIdValid = false;
-        $mapData = [];
+        $locationData = [];
+        $serviceList = [];
+        $cityList = [];
         foreach ($orgInfo['list'] ?? [] as $org) {
             if ((string)$org['id'] === $locationId) {
                 $locationIdValid = true;
             }
-            if ($coordinates = $org['address']['coordinates'] ?? null) {
-                if (($lat = $coordinates['lat'] ?? null) && ($lon = $coordinates['lon'] ?? null)) {
-                    $mapData[$org['id']] = [
-                        'id' => $org['id'],
-                        'name' => $org['name'],
-                        'openNow' => $org['openNow'],
-                        'hasSchedules' => !empty($org['openTimes']['schedules']),
-                        'lat' => $lat,
-                        'lon' => $lon,
-                        'address' => $org['address'],
-                    ];
+            $coordinates = $org['address']['coordinates'] ?? null;
+            $locationData[$org['id']] = [
+                'id' => $org['id'],
+                'name' => $org['name'],
+                'openNow' => $org['openNow'],
+                'hasSchedules' => !empty($org['openTimes']['schedules']),
+                'lat' => $coordinates['lat'] ?? null,
+                'lon' => $coordinates['lon'] ?? null,
+                'address' => $org['address'],
+                'services' => $org['allServices'] ?? [],
+            ];
+            foreach ($org['allServices'] ?? [] as $type => $services) {
+                foreach ($services as $service) {
+                    $serviceList[] = $service['standardName'];
                 }
+            }
+            if ($city = $org['address']['city'] ?? '') {
+                $cityList[] = $city;
             }
         }
         if (!$locationIdValid) {
@@ -360,14 +396,95 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 }
             }
         }
+
+        $cityList = array_unique($cityList);
+        $this->sorter->sort($cityList);
+        $serviceList = array_unique($serviceList);
+        $this->sorter->sort($serviceList);
+        $searchFields = $this->renderer->render(
+            'organisationinfo/elements/location-search-fields.phtml',
+            compact('id', 'orgInfo', 'locationData', 'serviceList', 'cityList')
+        );
+
         return compact(
             'consortiumInfo',
             'locationSelection',
             'locationCount',
             'defaultLocationId',
             'defaultLocationName',
-            'mapData'
+            'locationData',
+            'searchFields',
         );
+    }
+
+    /**
+     * Get location search results snippet
+     *
+     * @param string $id       Organisation id
+     * @param array  $sectors  Sectors
+     * @param string $service  Standard name of service
+     * @param string $city     City
+     * @param ?float $lat      Latitude for sorting
+     * @param ?float $lon      Longitude for sorting
+     * @param bool   $openOnly Include only open locations
+     *
+     * @return array
+     */
+    protected function getLocationSearchResults(
+        string $id,
+        array $sectors,
+        string $service,
+        string $city,
+        ?float $lat,
+        ?float $lon,
+        bool $openOnly
+    ): array {
+        $orgInfo = $this->organisationInfo->getConsortiumInfo($sectors, $id);
+
+        $results = [];
+        foreach ($orgInfo['list'] as $location) {
+            if ('' !== $service && !in_array($service, $location['serviceStandardNames'])) {
+                continue;
+            }
+            if ('' !== $city && $city !== $location['address']['city']) {
+                continue;
+            }
+            if ($openOnly && !$location['openNow']) {
+                continue;
+            }
+            // Calculate distance if we know user's location:
+            if (null !== $lon && null !== $lat) {
+                $locLat = $location['address']['coordinates']['lat'] ?? null;
+                $locLon = $location['address']['coordinates']['lon'] ?? null;
+                if (null !== $locLat && null !== $locLon) {
+                    $location['distance'] = $this->getDistance($lat, $lon, $locLat, $locLon);
+                } else {
+                    $location['distance'] = null;
+                }
+            }
+            $results[] = $location;
+        }
+
+        if (null !== $lon && null !== $lat) {
+            // Sort by distance from user
+            usort(
+                $results,
+                function ($a, $b) {
+                    $result = ($a['distance'] ?? PHP_FLOAT_MAX) <=> $b['distance'] ?? PHP_FLOAT_MAX;
+                    if (0 === $result) {
+                        $result = $this->sorter->compare($a['name'], $b['name']);
+                    }
+                    return $result;
+                }
+            );
+        }
+
+        return [
+            'results' => $this->renderer->render(
+                'organisationinfo/elements/location-search-results.phtml',
+                compact('id', 'orgInfo', 'service', 'city', 'results')
+            ),
+        ];
     }
 
     /**
@@ -579,5 +696,32 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         );
 
         return $this->formatResponse($outputMsg, $httpStatus);
+    }
+
+    /**
+     * Get distance between two points in meters
+     *
+     * @param float $lat1 Latitude of first point
+     * @param float $lon1 Longitude of first point
+     * @param float $lat2 Latitude of second point
+     * @param float $lon2 Longitude of second point
+     *
+     * @return float
+     *
+     * @see https://en.wikipedia.org/wiki/Great-circle_distance#Formulas
+     */
+    protected function getDistance(float $lat1, float $lon1, float $lat2, float $lon2): float
+    {
+        if ($lat1 === $lat2 && $lon1 === $lon2) {
+            return 0;
+        }
+
+        $lat1 = deg2rad($lat1);
+        $lat2 = deg2rad($lat2);
+
+        $dist = sin($lat1) * sin($lat2) + cos($lat1) * cos($lat2) * cos(deg2rad($lon1 - $lon2));
+        $dist = acos($dist);
+        $dist = rad2deg($dist);
+        return $dist * 60 * 1.853;
     }
 }

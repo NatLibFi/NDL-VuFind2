@@ -9,7 +9,7 @@
   <?php
     $schedules = $orgInfo['openTimes']['schedules'];
     $hasScheduleDescriptions = !empty($orgInfo['scheduleDescriptions']);
-    $hasLocation = !empty($orgInfo['address']['city']);
+    $hasLocation = '' !== $orgInfo['address']['city'];
   ?>
   <?php if ($schedules && ($hasLocation || !$orgInfo['isAlwaysClosed'])): ?>
     <?php foreach ($schedules as $schedule): ?>

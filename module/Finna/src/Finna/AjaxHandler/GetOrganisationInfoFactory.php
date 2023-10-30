@@ -76,6 +76,7 @@ class GetOrganisationInfoFactory implements \Laminas\ServiceManager\Factory\Fact
             $container->get(\Finna\OrganisationInfo\OrganisationInfo::class),
             $container->get(\VuFind\Cache\Manager::class),
             $container->get('ViewRenderer'),
+            $container->get(\VuFind\I18n\Sorter::class),
             $facetConfig ? $facetConfig->toArray() : []
         );
         $result->setLogger($container->get(\VuFind\Log\Logger::class));

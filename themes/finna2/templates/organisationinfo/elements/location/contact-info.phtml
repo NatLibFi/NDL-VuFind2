@@ -18,8 +18,15 @@
     <p>
       <?php
         $address = $orgInfo['address']['street'] ?? '';
-        if ($orgInfo['address']['zipcode'] || $orgInfo['address']['city']) {
-          $address .= ', ' . ($orgInfo['address']['zipcode'] ?? '') . ' ' . ($orgInfo['address']['city'] ?? '');
+        if ($orgInfo['address']['zipcode'] || $orgInfo['address']['area'] || $orgInfo['address']['city']) {
+          $address .= ', ' . $orgInfo['address']['zipcode'] . ' ';
+          $area = $orgInfo['address']['area'];
+          $city = $orgInfo['address']['city'];
+          if ('' !== $area && '' !== $city) {
+            $address .= ", $area ($city)";
+          } elseif ('' !== $area || '' !== $city) {
+            $address .= ", $area$city";
+          }
         }
       ?>
       <?=$this->escapeHtml($address)?>
@@ -39,7 +46,7 @@
         <?=$this->escapeHtml($orgInfo['mailAddress']['boxNumber'])?>
         <br>
       <?php endif; ?>
-      <?=$this->escapeHtml(($orgInfo['mailAddress']['zipcode'] ?? '') . ' ' . ($orgInfo['mailAddress']['area'] ?? '') . ' ' . ($orgInfo['mailAddress']['city'] ?? ''))?>
+      <?=$this->escapeHtml($orgInfo['mailAddress']['zipcode'] . ' ' . $orgInfo['mailAddress']['area'] . ' ' . $orgInfo['mailAddress']['city'])?>
     </p>
   </div>
 <?php endif; ?>

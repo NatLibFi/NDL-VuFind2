@@ -168,6 +168,10 @@ abstract class AbstractProvider implements
         if (isset($result['consortium']['logo']['small'])) {
             $result['consortium']['logo']['small'] = $this->proxifyImageUrl($result['consortium']['logo']['small']);
         }
+        foreach ($result['list'] as &$item) {
+            $item = $this->processDetails($item);
+        }
+        unset($item);
         return $result;
     }
 
@@ -392,11 +396,11 @@ abstract class AbstractProvider implements
         $result['isAlwaysClosed'] = $isAlwaysClosed;
 
         $address = $result['address'];
-        $displayAddress = $address['street'] ?? '';
-        if ($zip = $address['zipcode'] ?? null) {
+        $displayAddress = $address['street'];
+        if ($zip = $address['zipcode']) {
             $displayAddress .= ", $zip";
         }
-        if ($city = $address['city'] ?? null) {
+        if ($city = $address['city']) {
             $displayAddress .= " $city";
         }
         $result['address']['displayAddress'] = $displayAddress;
