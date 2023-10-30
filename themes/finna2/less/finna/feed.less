@@ -229,6 +229,7 @@
 // Feed tabs
 .feed-tabs-container {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     margin-top: 20px;
     margin-bottom: 12px;
@@ -247,7 +248,39 @@
     }
     ul {
         display: flex;
-        justify-content: flex-end;
+        flex-wrap: wrap;
+        justify-content: flex-end safe;
+    }
+    .feed-nav-pills {
+        width: 100%;
+        margin-bottom: 6px;
+            > li {
+              float: left;
+              margin-right: 6px;
+              // Links rendered as pills
+              > a {
+                border-radius: @feed-nav-pills-border-radius;
+                background-color: @feed-nav-pills-bg;
+                color: @feed-nav-pills-color;
+                border: @feed-nav-pills-border;
+                padding: @feed-nav-pills-padding;
+              }
+              + li {
+                margin-bottom: 6px;
+              }
+              // Active state
+              &.active > a {
+                color: @feed-nav-pills-active-color;
+                background-color: @feed-nav-pills-active-bg;
+                border-color: @feed-nav-pills-active-border;
+                &:hover,
+                &:focus {
+                  color: @feed-nav-pills-active-hover-color;
+                  background-color: @feed-nav-pills-active-hover-bg;
+                  border: @feed-nav-pills-active-hover-border;
+                }
+              }
+            }
     }
 }
 
@@ -272,10 +305,20 @@
             .title {
                 font-weight: 700;
                 color: @link-color;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
             }
             .xcal {
-                i {
-                    padding-right: 5px;
+                display: inline-flex;
+                align-items: baseline;
+                width: 100%;
+                .icon {
+                    display: inline-flex;
+                    flex-shrink: 0;
+                    flex-basis: 20px;
+                    justify-content: center;
                 }
             }
         }
@@ -334,7 +377,17 @@
         }
     }
 }
-.events-tabs {
+.mobile-accordion-hide {
+    .feed-accordions-title, .accordion {
+        display: none;
+    }
+    .events-tabs {
+        @media (max-width: @screen-sm-max) {
+            margin-bottom: 0;
+        }
+    }
+}
+.mobile-accordion-show .events-tabs {
     @media (max-width: @screen-sm-max) {
         display: none;
     }

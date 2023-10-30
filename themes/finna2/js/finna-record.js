@@ -525,6 +525,26 @@ finna.record = (function finnaRecord() {
     });
   }
 
+  function initSimilarCarousel()
+  {
+    var container = document.querySelector('.similar-carousel .splide');
+    if (container === null) {
+      return;
+    }
+    var settings = {
+      height: 300,
+      width: 200,
+      omitEnd: true,
+      pagination: false,
+      gap: '2px'
+    };
+    finna.carouselManager.createCarousel(container, settings);
+    VuFind.observerManager.observe(
+      'LazyImages',
+      container.querySelectorAll('img[data-src]')
+    );
+  }
+
   function init() {
     initHideDetails();
     initDescription();
@@ -546,7 +566,8 @@ finna.record = (function finnaRecord() {
     setupLocationsEad3Tab: setupLocationsEad3Tab,
     setupHoldingsArchiveTab: setupHoldingsArchiveTab,
     initRecordVersions: initRecordVersions,
-    handleRedirect: handleRedirect
+    handleRedirect: handleRedirect,
+    initSimilarCarousel: initSimilarCarousel
   };
 
   return my;

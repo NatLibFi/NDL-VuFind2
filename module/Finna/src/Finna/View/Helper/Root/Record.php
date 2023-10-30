@@ -6,7 +6,7 @@
  * PHP version 8
  *
  * Copyright (C) Villanova University 2010.
- * Copyright (C) The National Library of Finland 2015-2022.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -1373,6 +1373,16 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * Get Similar Items Carousel tab
+     *
+     * @return \VuFind\RecordTab\SimilarItemsCarousel
+     */
+    public function getSimilarItemsCarousel(): \VuFind\RecordTab\SimilarItemsCarousel
+    {
+        return $this->tabManager->getSimilarItemsCarouselTab($this->driver);
+    }
+
+    /**
      * Get container js classes if the driver supports ajax status and/or has
      * preferred source.
      *
@@ -1428,6 +1438,13 @@ class Record extends \VuFind\View\Helper\Root\Record
 
         $id = $opt['id'] = $this->driver->getUniqueID();
 
+        if (str_contains($id, '._preview')) {
+            // Special case for preview records.
+            // Always request all remaining encapsulated records because the load
+            // more AJAX handler currently has no access to the previewed record.
+            $opt['limit'] = null;
+        }
+
         $loadMore = (int)$offset > 0;
 
         // null is an accepted limit value (no limit)
@@ -1435,9 +1452,10 @@ class Record extends \VuFind\View\Helper\Root\Record
             $opt['limit'] = 6;
         }
         $opt['showAllLink'] ??= true;
-        $view = $opt['view'] = $opt['view'] ?? 'grid';
+        $view = $opt['view'] ??= 'grid';
 
         $resultsCopy = ($this->getEncapsulatedResults)($opt);
+        $resultsCopy->setContainerRecord($this->driver);
 
         $total = $resultsCopy->getResultTotal();
         if (!$loadMore) {
@@ -1461,7 +1479,8 @@ class Record extends \VuFind\View\Helper\Root\Record
                 'view' => $view,
                 'total' => $total,
                 'showAllLink' =>
-                    ($opt['showAllLink'] ?? false)
+                    $opt['showAllLink']
+                    && null !== $opt['limit']
                     && $opt['limit'] < $total,
             ]
         );

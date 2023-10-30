@@ -82,4 +82,15 @@ class Config extends \VuFind\View\Helper\Root\Config
     {
         return !empty($this->get('facets')->Geographical->map_selection);
     }
+
+    /**
+     * Display similar records at the bottom of record view
+     * as a carousel
+     *
+     * @return string
+     */
+    public function getSimilarRecordsCarouselLocation(): string
+    {
+        return $this->get('config')->Record->similar_carousel_display ?? '';
+    }
 }

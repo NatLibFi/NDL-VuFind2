@@ -352,13 +352,6 @@ class FinnaFeedElement extends HTMLElement {
   }
 
   /**
-   * When the element is removed from the dom
-   */
-  disconnectedCallback() {
-    this.innerHTML = '';
-  }
-
-  /**
    * Observed attribute value changed
    *
    * @param {string} name     Name of the attribute

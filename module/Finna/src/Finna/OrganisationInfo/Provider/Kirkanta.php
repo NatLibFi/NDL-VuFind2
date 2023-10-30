@@ -186,8 +186,14 @@ class Kirkanta extends AbstractProvider
             return [];
         }
 
-        $periodStart = $startDate ?? date('Y-m-d', strtotime('last monday'));
-        $periodEnd = $endDate ?? date('Y-m-d', strtotime('next sunday', strtotime($periodStart)));
+        if (null !== $startDate) {
+            $periodStart = $startDate;
+        } else {
+            // Start from today if today is Monday, otherwise start from last Monday:
+            $periodStart = date('Y-m-d', date('N') === '1' ? null : strtotime('last monday'));
+        }
+        // If end date is not specified, use next Sunday relative to start date:
+        $periodEnd = $endDate ?: date('Y-m-d', strtotime('next sunday', strtotime($periodStart)));
 
         $params = [
             'id' => $locationId,

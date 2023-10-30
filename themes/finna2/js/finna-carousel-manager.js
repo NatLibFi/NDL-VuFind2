@@ -24,6 +24,10 @@ finna.carouselManager = (() => {
       return {autoplay: false};
     },
     height: (value) => { return {height: parseInt(value)}; },
+    width: (value) => { return {fixedWidth: parseInt(value)}; },
+    omitEnd: 'omitEnd',
+    pagination: 'pagination',
+    gap: 'gap',
     slidesToShow: (itemsPerPage) => {
       const breakpoints = {};
       let perPage = 0;

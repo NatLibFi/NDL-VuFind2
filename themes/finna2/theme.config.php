@@ -198,7 +198,7 @@ $config = [
         'doi.js',
         'embedded_record.js',
         'facets.js',
-        'hierarchyTree.js',
+        // 'hierarchyTree.js', hierarchyTree only works inline
         'hold.js',
         'ill.js',
         'keep_alive.js',

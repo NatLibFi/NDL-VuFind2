@@ -1191,6 +1191,90 @@ finna-model-viewer .object-editor {
     }
   }
 }
+// Similar items carousel
+.similar-bottom {
+  display: inline-block;
+  max-width: 100%;
+  border-top: 1px solid @gray-lighter;
+}
+.similar-carousel {
+  margin-bottom: 20px;
+}
+.similar-carousel-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+}
+.similar-carousel-item {
+  background-color: @similar-carousel-item-background;
+  border: @similar-carousel-border;
+  border-radius: @similar-carousel-border-radius;
+  box-shadow: @similar-carousel-box-shadow;
+  height: 97%;
+  margin-left: 4px;
+  margin-right: 4px;
+  .similar-carousel-format {
+    color: @similar-carousel-format-text-color;
+    background: @similar-carousel-format-background;
+    padding: 5px 11px 5px 11px;
+    border-radius: 8px;
+    margin-top: 5px;
+    .iconlabel {
+      margin: 0px;
+      &:before {
+        content: '';
+      }
+    }
+  }
+  .similar-carousel-text {
+    color: @similar-carousel-text-color;
+    margin: 10px;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    .similar-carousel-item-title {
+      font-weight: bold;
+    }
+    .similar-carousel-item-title, .similar-carousel-item-author {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    div {
+      margin-top: 7px;
+    }
+  }
+}
+.similar-carousel-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: @similar-carousel-border-radius;
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+  background-color: @similar-carousel-no-image-background;
+  height: 70%;
+  img {
+    max-width: none;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+  .iconlabel {
+    width: 100%;
+    color: @body-bg;
+    display: flex;
+    justify-content: center;
+    margin: 0px;
+    &:before {
+        position: relative;
+        font-size: 45px;
+        color: @similar-carousel-no-image-color;
+    }
+  }
+}
 
 /* ------ Record Tabs ------ */
 .record-tab.details .tab-name {

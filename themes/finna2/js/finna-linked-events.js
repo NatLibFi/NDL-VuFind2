@@ -26,6 +26,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
             'LazyImages',
             container[0].querySelectorAll('img[data-src]')
           );
+          finna.layout.initToolTips(container);
         } else {
           var err = $('<div></div>').attr('class', 'linked-events-noresults infobox').attr('aria-live', 'polite').text(VuFind.translate('nohit_heading'));
           container.find($('.linked-events-content')).html(err);

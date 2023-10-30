@@ -1,0 +1,46 @@
+<!-- START of: finna - Related/Similar-carousel.phtml -->
+<?php $records = $this->tab->getResults(); ?>
+<?php if (!empty($records)): ?>
+  <div class="similar-carousel">
+    <finna-feed class="splide similar-items-carousel">
+      <h2 class="similar-carousel-header"><?=$this->transEsc('Similar Items')?></h2>
+      <div class="similar-carousel-container">
+        <div class="splide__arrows splide__arrows--ltr">
+          <button class="splide__arrow splide__arrow--prev left">
+            <?=$this->icon('chevron-right')?>
+          </button>
+          <button class="splide__arrow splide__arrow--next right">
+            <?=$this->icon('chevron-right')?>
+          </button>
+        </div>
+        <div class="splide__track carousel">
+          <ul class="splide__list carousel-feed">
+            <?php foreach ($records as $item): ?>
+              <li class="splide__slide similar-item-holder">
+                  <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($item))?>">
+                    <?=$this->partial('RecordTab/similar-carousel-item.phtml', compact('item'))?>
+                  </a>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        </div>
+      </div>
+      <div class="carousel-pagination-wrapper">
+        <div class="carousel-autoplay"></div>
+        <ul class="splide__pagination"></ul>
+        <div class="carousel-block"></div>
+      </div>
+   </finna-feed>
+  </div>
+<?php else: ?>
+  <p><?=$this->transEsc('Cannot find similar records')?></p>
+<?php endif; ?>
+<?php
+$script = <<<JS
+    $(document).ready(function() {
+      finna.record.initSimilarCarousel();
+    });
+    JS;
+?>
+<?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET'); ?>
+<!-- END of: finna - Related/Similar-carousel.phtml -->
