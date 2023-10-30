@@ -91,12 +91,12 @@
   }
 }
 // RSS-feed accordions
+
 .feed-accordions {
   .tab-content {
     margin-bottom: 0;
   }
   .feed-accordions-title {
-    font-size: 1.9em;
     @media (min-width: @screen-sm-max) {
       display: none;
     }
@@ -121,6 +121,11 @@
     text-overflow: ellipsis;
     line-height: @content-headings-line-height;
     width: 100%;
+    .feed-accordion-anchor {
+      display: inline-flex;
+      align-items: center;
+      color: @nav-tabs-text-color;
+    }
     .title {
       flex: 1;
       font-size: ceil((@font-size-base * 1.125));
