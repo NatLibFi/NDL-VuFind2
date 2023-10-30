@@ -187,7 +187,6 @@ finna.linkedEvents = (function finnaLinkedEvents() {
     searchTools.insertAfter(accordion);
     toggleSearch.insertAfter(accordion);
     accordion.removeClass('initial-active');
-
     return loadContent;
   }
 

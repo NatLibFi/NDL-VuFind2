@@ -280,6 +280,8 @@ $config = [
             ],
         ],
         'aliases' => [
+            'accordion-collapse' => 'Alias:collapse-close',
+            'accordion-expand' => 'Alias:collapse-open',
             'adv-search-group-add' => 'FontAwesome:plus-circle',
             'adv-search-group-remove' => 'FinnaIcons:remove',
             'audio-play' => 'FontAwesome:play-circle',

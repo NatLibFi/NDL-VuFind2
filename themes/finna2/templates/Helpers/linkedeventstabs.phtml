@@ -33,8 +33,9 @@
            role="tab"
            tabindex="0"
            aria-selected="<?= $isActive ? 'true' : 'false' ?>">
-          <span class="title"><?=$this->transEsc($tab['title'])?></span>
-          <i class="icon"></i>
+           <?=$this->icon('accordion-collapse','js-accordion-open'); ?>
+           <?=$this->icon('accordion-expand','js-accordion-close'); ?>
+           <span class="title"> <?=$this->transEsc($tab['title'])?></span>
       </div>
     <?php endforeach; ?>
   </div>
