@@ -293,7 +293,7 @@ class LinkedEvents implements
                     'location-info' =>
                         $this->getField($eventData['location'], 'name') .
                         (
-                            (isset($eventData['location']) && isset($eventData['location_extra_info']))
+                            (isset($eventData['location']['name']) && isset($eventData['location_extra_info']))
                             ? ', ' . $this->getField($eventData, 'location_extra_info')
                             : $this->getField($eventData, 'location_extra_info')
                         ),
