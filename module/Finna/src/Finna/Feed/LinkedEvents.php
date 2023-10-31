@@ -283,19 +283,27 @@ class LinkedEvents implements
                         'endDate' => $endDate,
                         'singleDay' => $startDate === $endDate,
                         'location' =>
-                            $this->getField($eventData, 'location_extra_info'),
+                            $this->getField(
+                                $eventData['location'],
+                                'name'
+                            ),
                     ],
                     'info_url' => $this->getField($eventData, 'info_url'),
-                    'location-info' =>
-                        $this->getField($eventData, 'location_extra_info'),
                     'location' => $this->getField($eventData, 'location'),
+                    'location-name' =>
+                        $this->getField($eventData['location'], 'name') .
+                        (
+                            (isset($eventData['location']) && isset($eventData['location_extra_info']))
+                            ? ', ' . $this->getField($eventData, 'location_extra_info')
+                            : $this->getField($eventData, 'location_extra_info')
+                        ),
                     'phone' => $this->getField($eventData, 'provider_phone'),
                     'email' => $this->getField($eventData, 'provider_email'),
                     'address' =>
-                        $this->getField(
-                            $eventData['location'],
-                            'street_address'
-                        ),
+                        $this->getField($eventData['location'], 'street_address') .
+                        (isset($eventData['location']['address_locality'])
+                            ? ', ' . $this->getField($eventData['location'], 'address_locality')
+                            : ''),
                     'price' => $this->getField($eventData, 'offers'),
                     'audience' => $this->getField($eventData, 'audience'),
                     'provider' => $this->getField($eventData, 'provider_name'),

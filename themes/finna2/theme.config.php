@@ -367,6 +367,7 @@ $config = [
             'library-card-password' => 'FontAwesome:lock',
             'library-card-selected' => 'FontAwesome:check',
             'linkedin' => 'FinnaIcons:linkedin',
+            'linked-event-address' => 'FinnaIcons:map',
             'linked-event-audience' => 'FontAwesome:users',
             'linked-event-date' => 'FontAwesome:calendar',
             'linked-event-email' => 'FontAwesome:envelope',
