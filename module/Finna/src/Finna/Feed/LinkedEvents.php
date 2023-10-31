@@ -290,7 +290,7 @@ class LinkedEvents implements
                     ],
                     'info_url' => $this->getField($eventData, 'info_url'),
                     'location' => $this->getField($eventData, 'location'),
-                    'location-name' =>
+                    'location-info' =>
                         $this->getField($eventData['location'], 'name') .
                         (
                             (isset($eventData['location']) && isset($eventData['location_extra_info']))
