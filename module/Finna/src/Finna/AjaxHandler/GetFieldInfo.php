@@ -127,7 +127,7 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
             [
                 'label_enrichment' => true,
                 'alt_label_enrichment' => true,
-                'other_language_enrichment' => true
+                'other_language_enrichment' => true,
             ],
             $config->LinkPopovers?->dynamic_content?->toArray() ?? []
         );
