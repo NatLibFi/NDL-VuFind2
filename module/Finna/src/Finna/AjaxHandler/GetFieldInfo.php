@@ -123,8 +123,14 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
         $this->recordPlugin = $rp;
         $this->httpService = $http;
         $this->finnaCache = $cache;
-        $this->dynamicContent
-            = $config->LinkPopovers?->dynamic_content?->toArray() ?? [];
+        $this->dynamicContent = array_merge(
+            [
+                'label_enrichment' => true,
+                'alt_label_enrichment' => true,
+                'other_language_enrichment' => true
+            ],
+            $config->LinkPopovers?->dynamic_content?->toArray() ?? []
+        );
     }
 
     /**
@@ -153,9 +159,7 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
         $params->set('authorityType', $type);
         $params->set('recordSource', $source);
         $authority = null;
-        $authorityFields = $this->config->LinkPopovers->authority_fields
-            ? array_filter($this->config->LinkPopovers->authority_fields->toArray())
-            : [];
+        $authorityFields = array_filter($this->config->LinkPopovers?->authority_fields?->toArray() ?? []);
         if ($authIds[0] ?? false) {
             try {
                 $authority = $this->loader->load(
@@ -175,7 +179,9 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
         }
 
         // Fetch any enrichment data by the first ID:
-        $enrichmentData = $this->getEnrichmentData($ids[0], $label);
+        $enrichmentData = in_array(true, $this->dynamicContent)
+            ? $this->getEnrichmentData($ids[0], $label)
+            : [];
         $html = ($this->recordPlugin)($driver)->renderTemplate(
             'ajax-field-info.phtml',
             compact(
@@ -420,18 +426,18 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
             $labelLang = 'fi';
         }
         if (isset($pref[$labelLang])) {
-            if ($this->dynamicContent['label_enrichment'] ?? true) {
+            if ($this->dynamicContent['label_enrichment']) {
                 $result['labels'] = $pref[$labelLang];
             }
             unset($pref[$labelLang]);
         }
         if (isset($alt[$labelLang])) {
-            if ($this->dynamicContent['alt_label_enrichment'] ?? true) {
+            if ($this->dynamicContent['alt_label_enrichment']) {
                 $result['altLabels'] = $alt[$labelLang];
             }
             unset($alt[$labelLang]);
         }
-        if ($this->dynamicContent['other_language_enrichment'] ?? true) {
+        if ($this->dynamicContent['other_language_enrichment']) {
             $result['otherLanguageLabels'] = $pref;
             $result['otherLanguageAltLabels'] = $alt;
         }
