@@ -313,6 +313,11 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       }).on('select2:select', function updateHash(e) {
         updateURLHash(encodeURIComponent(e.params.data.id || 'undefined'));
       });
+      // Change expand/collapse icons:
+      let iconContainer = select.parentNode.querySelector('.select2-container--default .select2-selection--single .select2-selection__arrow');
+      if (iconContainer) {
+        iconContainer.innerHTML = ' ' + VuFind.icon('filter-expand', 'search-expand') + VuFind.icon('filter-collapse', 'search-collapse');
+      }
     }
 
     initLocationSearch(data);
