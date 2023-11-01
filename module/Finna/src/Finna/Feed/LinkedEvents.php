@@ -250,7 +250,7 @@ class LinkedEvents implements
                 : $response['data'];
             foreach ($responseData ?: [] as $eventData) {
                 $locationInfo = [];
-                if ($name = $this->getField($eventData['location'], 'name')) {
+                if ($name = $this->getField($eventData['location'] ?? [], 'name')) {
                     $locationInfo[] = $name;
                 }
                 if ($extra = $this->getField($eventData, 'location_extra_info')) {
@@ -258,10 +258,10 @@ class LinkedEvents implements
                 }
 
                 $address = [];
-                if ($street = $this->getField($eventData['location'], 'street_address')) {
+                if ($street = $this->getField($eventData['location'] ?? [], 'street_address')) {
                     $address[] = $street;
                 }
-                if ($locality = $this->getField($eventData['location'], 'address_locality')) {
+                if ($locality = $this->getField($eventData['location'] ?? [], 'address_locality')) {
                     $address[] = $locality;
                 }
 
