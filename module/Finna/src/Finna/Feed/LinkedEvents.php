@@ -298,11 +298,7 @@ class LinkedEvents implements
                         'startDate' => $startDate,
                         'endDate' => $endDate,
                         'singleDay' => $startDate === $endDate,
-                        'location' =>
-                            $this->getField(
-                                $eventData['location'],
-                                'name'
-                            ),
+                        'location' => $this->getField($eventData['location'] ?? [], 'name'),
                     ],
                     'info_url' => $this->getField($eventData, 'info_url'),
                     'location' => $this->getField($eventData, 'location'),
