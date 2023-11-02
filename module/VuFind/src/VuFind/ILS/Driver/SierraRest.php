@@ -2262,6 +2262,9 @@ class SierraRest extends AbstractBase implements
                     );
                 }
             }
+            $callNumber = isset($item['callNumber'])
+                ? $this->extractCallNumber($item['callNumber'])
+                : $bibCallNumber;
             $volume = isset($item['varFields']) ? $this->extractVolume($item) : '';
 
             $entry = [
@@ -2271,12 +2274,10 @@ class SierraRest extends AbstractBase implements
                 'availability' => $available,
                 'status' => $status,
                 'reserve' => 'N',
-                'callnumber' => isset($item['callNumber'])
-                    ? preg_replace('/^\|a/', '', $item['callNumber'])
-                    : $bibCallNumber,
+                'callnumber' => trim($callNumber),
                 'duedate' => $duedate,
-                'number' => $volume,
-                'barcode' => $item['barcode'],
+                'number' => trim($volume),
+                'barcode' => $item['barcode'] ?? '',
                 'sort' => $sort--,
             ];
             if ($notes) {
@@ -2340,7 +2341,7 @@ class SierraRest extends AbstractBase implements
                 'id' => $id,
                 'item_id' => "ORDER_{$id}_$locationCode",
                 'location' => $location,
-                'callnumber' => $bibCallNumber,
+                'callnumber' => trim($bibCallNumber),
                 'number' => '',
                 'status' => $this->mapStatusCode('Ordered'),
                 'reserve' => 'N',
@@ -2354,6 +2355,18 @@ class SierraRest extends AbstractBase implements
 
         usort($statuses, [$this, 'statusSortFunction']);
         return $statuses;
+    }
+
+    /**
+     * Extract the actual call number from item's call number field
+     *
+     * @param string $callNumber Call number field
+     *
+     * @return string
+     */
+    protected function extractCallNumber(string $callNumber): string
+    {
+        return str_starts_with($callNumber, '|a') ? substr($callNumber, 2) : $callNumber;
     }
 
     /**

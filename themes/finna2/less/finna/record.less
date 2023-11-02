@@ -202,8 +202,8 @@ a.authority {
         }
       }
       .image-popup-trigger {
-        &.no-image {
-          img {
+        &.no-image {
+          img {
             max-width: 200px;
           }
         }
@@ -233,7 +233,7 @@ a.authority {
   }
 }
 
-.model-link {
+.model-link {
   .download-link {
     text-align: left;
     color: #007c90;
@@ -262,7 +262,7 @@ a.authority {
     font-size: 0.8em;
     text-transform: initial;
   }
-  .dropdown-toggle.download {
+  .dropdown-toggle.download {
     padding: 2px 6px;
     font-weight: 600;
     text-transform: uppercase;
@@ -753,29 +753,46 @@ a.authority {
   margin-bottom: 1em;
 }
 
+// Comments
+.comment-wrapper {
+  background-color: lighten(@gray, 78%);
+  border-radius: @border-radius-base;
+
+  .comment-text {
+    // Display line breaks properly in comments:
+    white-space: pre-line;
+  }
+}
+
 // Comment form
-.comment-form {
-  .comment-info-icon {
-    font-size: 1.5em;
-    float: left;
-    color: @brand-primary;
-  }
-  .comment-description {
-    margin-top: 1em;
-    margin-left: 2em;
-  }
-  @media (min-width: @screen-md) {
+.comment-form-wrapper {
+  padding: 10px;
+  background-color: lighten(@gray, 78%);
+  border-radius: @border-radius-base;
+
+  .comment-form {
     .comment-info-icon {
-      margin-top: 2.7em;
-      margin-left: 1em;
-    }
-    .comment-col {
-        width: 50%;
-        float: left;
+      font-size: 1.5em;
+      float: left;
+      color: @brand-primary;
     }
     .comment-description {
-      margin-top: 4em;
-      margin-left: 4em;
+      margin-top: 1em;
+      margin-left: 2em;
+    }
+    @media (min-width: @screen-md) {
+      .comment-info-icon {
+        margin-top: 2.7em;
+        margin-left: 1em;
+      }
+      .comment-col {
+          width: 50%;
+          float: left;
+      }
+      .comment-description {
+        margin-top: 4em;
+        margin-left: 4em;
+      }
     }
   }
 }
@@ -1017,7 +1034,7 @@ finna-model-viewer .object-editor {
         align-items: center;
         justify-content: space-between;
         padding-bottom: 2px;
-        &.child {
+        &.child {
           margin-left: 20px;
         }
         input {
@@ -1176,5 +1193,156 @@ finna-model-viewer .object-editor {
     .rating__input:hover ~ .rating__label--half .rating__icon--star {
       color: #ddd;
     }
+  }
+}
+// Similar items carousel
+.similar-bottom {
+  display: inline-block;
+  max-width: 100%;
+  border-top: 1px solid @gray-lighter;
+}
+.similar-carousel {
+  margin-bottom: 20px;
+}
+.similar-carousel-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+}
+.similar-carousel-item {
+  background-color: @similar-carousel-item-background;
+  border: @similar-carousel-border;
+  border-radius: @similar-carousel-border-radius;
+  box-shadow: @similar-carousel-box-shadow;
+  height: 97%;
+  margin-left: 4px;
+  margin-right: 4px;
+  .similar-carousel-format {
+    color: @similar-carousel-format-text-color;
+    background: @similar-carousel-format-background;
+    padding: 5px 11px 5px 11px;
+    border-radius: 8px;
+    margin-top: 5px;
+    .iconlabel {
+      margin: 0px;
+      &:before {
+        content: '';
+      }
+    }
+  }
+  .similar-carousel-text {
+    color: @similar-carousel-text-color;
+    margin: 10px;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    .similar-carousel-item-title {
+      font-weight: bold;
+    }
+    .similar-carousel-item-title, .similar-carousel-item-author {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    div {
+      margin-top: 7px;
+    }
+  }
+}
+.similar-carousel-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: @similar-carousel-border-radius;
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+  background-color: @similar-carousel-no-image-background;
+  height: 70%;
+  img {
+    max-width: none;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+  .iconlabel {
+    width: 100%;
+    color: @body-bg;
+    display: flex;
+    justify-content: center;
+    margin: 0px;
+    &:before {
+        position: relative;
+        font-size: 45px;
+        color: @similar-carousel-no-image-color;
+    }
+  }
+}
+
+/* ------ Record Tabs ------ */
+.record-tab.details .tab-name {
+  display: none;
+}
+
+.record-toc {
+  margin: 15px 0;
+  padding: 10px;
+  background-color: #f7f7f7;
+}
+
+.record.full-width-layout {
+  &,
+  .record-core-metadata,
+  .summary {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+  }
+  h1,
+  .record-title {
+    font-size: 28px;
+    line-height: 1.1;
+    margin-top: 0;
+    padding-top: .7em;
+  }
+  h2,
+  h2.record-title,
+  h3,
+  h3.record-title {
+    font-size: 22px;
+    margin-bottom: 21px;
+    padding-bottom: .1em;
+  }
+  .record-accordions.record-tabs {
+    width: 100%;
+    padding-right: 0;
+    float: none;
+  }
+}
+
+.record-format-aipa {
+  .recordFormat {
+    display: block;
+    margin-bottom: 21px;
+    padding-bottom: .1em;
+  }
+  .access-rights {
+    margin-bottom: 21px;
+  }
+  .finna-educational-level-data {
+    margin-left: 25px;
+    .level-data-section-title {
+      font-size: inherit;
+      margin-bottom: inherit;
+      padding-bottom: inherit;
+    }
+  }
+}
+
+.encapsulated-record {
+  margin-bottom: 15px;
+  .recordAuthors {
+    margin-bottom: 15px;
   }
 }

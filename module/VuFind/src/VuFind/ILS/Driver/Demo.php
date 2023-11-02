@@ -1539,7 +1539,7 @@ class Demo extends AbstractBase implements \VuFind\I18n\HasSorterInterface
      * @param array $holdInfo Contains most of the same values passed to
      * placeHold, minus the patron data.
      *
-     * @return int
+     * @return int|null
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -2788,10 +2788,26 @@ class Demo extends AbstractBase implements \VuFind\I18n\HasSorterInterface
      * @param array $patron The patron array with username and password
      *
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getProxiedUsers(array $patron): array
     {
         return $this->config['ProxiedUsers'] ?? [];
+    }
+
+    /**
+     * Get list of users who act as proxies for the provided patron.
+     *
+     * @param array $patron The patron array with username and password
+     *
+     * @return array
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function getProxyingUsers(array $patron): array
+    {
+        return $this->config['ProxyingUsers'] ?? [];
     }
 
     /**

@@ -1058,7 +1058,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 }
             }
             $callnumber = isset($item['callNumber'])
-                ? preg_replace('/^\|a/', '', $item['callNumber'])
+                ? $this->extractCallNumber($item['callNumber'])
                 : $bibCallNumber;
 
             $number = isset($item['varFields']) ? $this->extractVolume($item) : '';
@@ -1206,7 +1206,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                     break;
                 case 'callnumber':
                     if ($callNo = $item['callNumber'] ?? false) {
-                        if ($callNo = preg_replace('/^\|a/', '', $callNo)) {
+                        if ($callNo = $this->extractCallNumber($callNo)) {
                             $result[] = $callNo;
                         }
                     }

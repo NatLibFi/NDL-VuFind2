@@ -51,6 +51,13 @@ use function is_array;
 class SolrExtensionsListener
 {
     /**
+     * Terms filter prefix for a source filter
+     *
+     * @var string
+     */
+    public const TERMS_FILTER_PREFIX_SOURCE = "{!terms f=source_str_mv separator=\"\u{001f}\"}";
+
+    /**
      * Backend identifier.
      *
      * @var string
@@ -177,19 +184,8 @@ class SolrExtensionsListener
     protected function addDataSourceFilter(EventInterface $event)
     {
         if ($recordSources = $this->getActiveSources($event)) {
-            $sources = array_map(
-                function ($input) {
-                    return '"' . addcslashes($input, '"') . '"';
-                },
-                $recordSources
-            );
             $params = $event->getParam('command')->getSearchParameters();
-            if ($params) {
-                $params->add(
-                    'fq',
-                    'source_str_mv:(' . implode(' OR ', $sources) . ')'
-                );
-            }
+            $params->add('fq', static::TERMS_FILTER_PREFIX_SOURCE . implode("\u{001f}", $recordSources));
         }
     }
 

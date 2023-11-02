@@ -43,9 +43,10 @@
       ?>
       <div class="<?=$this->escapeHtmlAttr(implode(' ', $classes))?>" role="tab" aria-selected="<?= $isActive ? 'true' : 'false' ?>">
            <a class="feed-accordion-anchor" tabindex="0" href="<?='#' . $this->escapeHtmlAttr($tabId)?>" id="<?=$this->escapeHtmlAttr($tabId) . '-accordion'?>" data-tab="<?=$this->escapeHtmlAttr($feed)?>" aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>" data-lightbox-ignore>
-              <?= $this->transEsc($desc)?>
-            </a>
-          <i class="icon"></i>
+             <?=$this->icon('accordion-collapse', 'js-accordion-open'); ?>
+             <?=$this->icon('accordion-expand', 'js-accordion-close'); ?>
+             <span class="title"><?= $this->transEsc($desc)?></span>
+          </a>
       </div>
     <?php endforeach; ?>
   </div>

@@ -1,0 +1,36 @@
+<!-- START of: finna - organisationinfo/elements/widget.phtml -->
+<div class="location-details info-element">
+  <div class="<?=$showDetails ? 'info-col ' : ''?>info">
+    <div class="js-location-dropdown dropdown">
+      <button type="button" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-id="">
+        <span class="js-aria" aria-atomic="true">
+          <span class="sr-only"><?=$this->transEsc('organisation_info_selected_service_point')?></span>
+          <span class="js-selected"><?=$this->transEsc($locationName ?: 'choose_from_list')?></span>
+          <?=$this->icon('dropdown-open') ?>
+        </span>
+      </button>
+      <ul class="dropdown-menu" role="menu" aria-label="<?=$this->transEscAttr('organisation_info_select_service_point')?>">
+        <?php foreach ($orgInfo['list'] ?? [] as $location): ?>
+          <li role="menuitem" tabindex="0" data-id="<?=$this->transEscAttr($location['id'])?>">
+            <?=$this->transEsc($location['name'])?>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+    <div class="js-open-status">
+      <?=$this->render('organisationinfo/elements/location/open-status.phtml')?>
+    </div>
+
+    <div class="js-opening-times">
+      <?=$this->render('organisationinfo/elements/location/schedule.phtml')?>
+    </div>
+  </div>
+
+  <?php // Information columns ?>
+  <?php if ($showDetails && $locationId): ?>
+    <div class="location-row-general js-details">
+      <?=$this->render('organisationinfo/elements/location/widget-details.phtml')?>
+    </div>
+  <?php endif; ?>
+</div>
+<!-- END of: finna - organisationinfo/elements/widget.phtml -->

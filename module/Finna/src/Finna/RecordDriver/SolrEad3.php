@@ -155,7 +155,8 @@ class SolrEad3 extends SolrEad
     ];
 
     // Relator attribute for archive origination
-    public const RELATOR_ARCHIVE_ORIGINATION = 'Arkistonmuodostaja';
+    public const RELATOR_ARCHIVE_ORIGINATION = ['arkistonmuodostaja', 'arkivbildare'];
+    public const SUBJECT_ACTOR_ROLES = ['aihe', 'förekommer', 'handlar om', 'refereras till'];
 
     public const RELATOR_TIME_INTERVAL = 'suhteen ajallinen kattavuus';
     public const RELATOR_UNKNOWN_TIME_INTERVAL = 'unknown - open';
@@ -450,81 +451,154 @@ class SolrEad3 extends SolrEad
      */
     public function getNonPresenterAuthors()
     {
-        $result = [];
-        $xml = $this->getXmlRecord();
-
-        $names = [];
-        if (isset($xml->controlaccess->persname)) {
-            foreach ($xml->controlaccess->persname as $name) {
-                $names[] = $name;
-            }
-        }
-        if (isset($xml->controlaccess->corpname)) {
-            foreach ($xml->controlaccess->corpname as $name) {
-                $names[] = $name;
-            }
-        }
-
-        // Attempt to find names in preferred language
-        foreach ($names as $node) {
-            $name = $this->getDisplayLabel($node, 'part', true);
-            if (empty($name) || !$name[0]) {
-                continue;
-            }
-            $result[] = ['name' => $name[0]];
-        }
-        if (!empty($result)) {
-            return $result;
-        }
-
-        // Not found, search again without language filters
-        foreach ($names as $node) {
-            $name = $this->getDisplayLabel($node);
-            if (empty($name) || !$name[0]) {
-                continue;
-            }
-            $result[] = $name[0];
-        }
-        $result = array_map(
-            function ($name) {
-                return ['name' => $name];
-            },
-            array_unique($result)
-        );
-
-        return $result;
+        return $this->getAuthors(self::SUBJECT_ACTOR_ROLES);
     }
 
     /**
-     * Get relations.
+     * Get authors to be displayed under Authors without specific role heading.
+     * See also getOtherAuthors().
      *
      * @return array
      */
-    public function getRelations()
+    public function getAuthorsWithoutRoleHeadings()
     {
-        $result = [];
-        $xml = $this->getXmlRecord();
-        if (!isset($xml->relations->relation)) {
-            return $result;
+        // If there are authors with role headings, nothing should be displayed here.
+        if ($this->getAuthorsWithRoleHeadings()) {
+            return [];
         }
-        foreach ($xml->controlaccess->name ?? [] as $node) {
+        $exclude = [
+            ...self::RELATOR_ARCHIVE_ORIGINATION,
+            ...self::SUBJECT_ACTOR_ROLES,
+        ];
+        return $this->getAuthors($exclude, false, true);
+    }
+
+    /**
+     * Get authors to be displayed with role headings.
+     *
+     * @return array
+     */
+    public function getAuthorsWithRoleHeadings()
+    {
+        $exclude = [
+            ...self::RELATOR_ARCHIVE_ORIGINATION,
+            ...self::SUBJECT_ACTOR_ROLES,
+        ];
+        return $this->getAuthors($exclude, true);
+    }
+
+    /**
+     * Get authors to be displayed under Other Authors.
+     * See also getAuthorsWithoutRoleHeadings().
+     *
+     * @return array
+     */
+    public function getOtherAuthors()
+    {
+        // Display other authors here only if there are authors with role headings.
+        if ($this->getAuthorsWithRoleHeadings()) {
+            $exclude = [
+                ...self::RELATOR_ARCHIVE_ORIGINATION,
+                ...self::SUBJECT_ACTOR_ROLES,
+            ];
+            return $this->getAuthors($exclude, false, true);
+        }
+        return [];
+    }
+
+    /**
+     * Get authors.
+     *
+     * @param array $exclude      Roles to be excluded
+     * @param bool  $translations Include only authors with roles that have translations
+     * @param bool  $unknown      Include only authors with unknown roles or roles without translations
+     *
+     * @return array
+     */
+    public function getAuthors(
+        array $exclude = [],
+        bool $translations = false,
+        bool $unknown = false
+    ): array {
+        $result = [];
+        // Check authors under controlaccess
+        $names = $this->getAuthorElements();
+        foreach ($names as $node) {
             $attr = $node->attributes();
+            $localtype = trim((string)($attr->localtype ?? ''));
             $relator = (string)$attr->relator;
-            if (self::RELATOR_ARCHIVE_ORIGINATION === $relator) {
+            $relatorLC = mb_strtolower($relator, 'UTF-8');
+            $role = $this->translateRole($localtype) ?? $this->translateRole($relatorLC);
+            if ($exclude && in_array($relatorLC, $exclude)) {
                 continue;
             }
-            $role = $this->translateRole((string)$attr->localtype, $relator);
+            if ((!$role && $translations) || ($role && $unknown)) {
+                continue;
+            }
             $name = $this->getDisplayLabel($node);
             if (empty($name) || !$name[0]) {
                 continue;
             }
             $result[] = [
-               'id' => (string)$node->attributes()->identifier,
-               'role' => $role,
-               'name' => $name[0],
+                'id' => (string)$node->attributes()->identifier,
+                'role' => $role ?: $relatorLC,
+                'name' => $name[0],
             ];
         }
+        // Check authors under relations
+        $relations = $this->getRelationsWithType('cpfrelation', $exclude);
+        foreach ($relations as $relation) {
+            $role = $this->translateRole($relation['role']);
+            if ((!$role && $translations) || ($role && $unknown)) {
+                continue;
+            }
+            if ($role) {
+                $relation['role'] = $role;
+            }
+            // Do not add duplicates
+            if (in_array($relation, $result, true)) {
+                continue;
+            }
+            $result[] = $relation;
+        }
+        return $result;
+    }
 
+    /**
+     * Get relations with type.
+     *
+     * @param string $relationtype Relationtype to be included
+     * @param array  $exclude      Arcroles to be excluded
+     *
+     * @return array
+     */
+    protected function getRelationsWithType(
+        string $relationtype,
+        array $exclude = []
+    ): array {
+        $result = [];
+        $xml = $this->getXmlRecord();
+        foreach ($xml->relations->relation ?? [] as $relation) {
+            $type = trim((string)($relation->attributes()->relationtype ?? ''));
+            if ($relationtype && ($relationtype !== $type)) {
+                continue;
+            }
+            $arcrole = trim((string)($relation->attributes()->arcrole ?? ''));
+            $arcroleLC = mb_strtolower($arcrole, 'UTF-8');
+            if ($exclude && in_array($arcroleLC, $exclude)) {
+                continue;
+            }
+            $name = $this->getDisplayLabel($relation, 'relationentry');
+            if (empty($name) || !$name[0]) {
+                continue;
+            }
+            $href = trim((string)($relation->attributes()->href ?? ''));
+            $result[] = [
+                'id' => $href,
+                'role' => $arcroleLC,
+                'name' => $name[0],
+            ];
+        }
         return $result;
     }
 
@@ -2178,7 +2252,7 @@ class SolrEad3 extends SolrEad
         $allResults = [];
         $defaultLanguageResults = [];
         $languageResults = [];
-        $lang = $this->detectNodeLanguage($node);
+        $lang = $langFound = $this->detectNodeLanguage($node);
         $resolveLangFromChildNode = $lang === null;
         foreach ($node->{$childNodeName} as $child) {
             $name = trim((string)$child);
@@ -2186,6 +2260,9 @@ class SolrEad3 extends SolrEad
 
             if ($resolveLangFromChildNode) {
                 $lang = $this->detectNodeLanguage($child);
+                if ($lang) {
+                    $langFound = $lang;
+                }
             }
             if ($lang['default'] ?? false) {
                 $defaultLanguageResults[] = $name;
@@ -2195,7 +2272,7 @@ class SolrEad3 extends SolrEad
             }
         }
 
-        if ($obeyPreferredLanguage && $lang) {
+        if ($obeyPreferredLanguage && $langFound) {
             return $languageResults;
         }
         if (! empty($languageResults)) {
@@ -2203,7 +2280,6 @@ class SolrEad3 extends SolrEad
         } elseif (! empty($defaultLanguageResults)) {
             return $defaultLanguageResults;
         }
-
         return $allResults;
     }
 
@@ -2275,31 +2351,83 @@ class SolrEad3 extends SolrEad
     {
         // Map EAD3 roles to CreatorRole translations
         $roleMap = [
-            'http://rdaregistry.info/Elements/e/P20047' => 'ive',
-            'http://rdaregistry.info/Elements/e/P20032' => 'ivr',
             'http://rdaregistry.info/Elements/w/P10046' => 'pbl',
-            'http://www.rdaregistry.info/Elements/w/#P10311' => 'fac',
-            'http://rdaregistry.info/Elements/e/P20042' => 'ctg',
-            'http://rdaregistry.info/Elements/a/P50190' => 'cng',
-            'http://rdaregistry.info/Elements/w/P10058' => 'art',
-            'http://rdaregistry.info/Elements/w/P10066' => 'drt',
-            'http://rdaregistry.info/Elements/e/P20033' => 'drm',
-            'http://rdaregistry.info/Elements/e/P20024' => 'spk',
-            'http://rdaregistry.info/Elements/w/P10204' => 'lyr',
-            'http://rdaregistry.info/Elements/e/P20029' => 'arr',
             'http://rdaregistry.info/Elements/w/P10053' => 'cmp',
-            'http://rdaregistry.info/Elements/w/P10065' => 'aut',
-            'http://rdaregistry.info/Elements/w/P10298' => 'edt',
-            'http://rdaregistry.info/Elements/w/P10064' => 'pro',
-            'http://www.rdaregistry.info/Elements/u/P60429' => 'pht',
-            'http://www.rdaregistry.info/Elements/e/#P20052' => 'rpy',
-            'http://rdaregistry.info/Elements/w/P10304' => 'rpy',
-
+            'http://www.rdaregistry.info/Elements/w/#P10055' => 'com',
+            'http://rdaregistry.info/Elements/w/P10058' => 'art',
             'http://rdaregistry.info/Elements/w/P10061' => 'rda:writer',
-            'http://rdaregistry.info/Elements/a/P50045' => 'rda:collector',
+            'http://rdaregistry.info/Elements/w/P10064' => 'pro',
+            'http://rdaregistry.info/Elements/w/P10066' => 'drt',
+            'http://rdaregistry.info/Elements/w/P10204' => 'lyr',
+            'http://rdaregistry.info/Elements/w/P10298' => 'edt',
+            'http://rdaregistry.info/Elements/w/P10304' => 'rpy',
+            'http://rdaregistry.info/Elements/e/P20024' => 'spk',
+            'http://www.rdaregistry.info/Elements/e/#P20052' => 'rpy',
+            'http://rdaregistry.info/Elements/e/P20029' => 'arr',
+            'http://rdaregistry.info/Elements/e/P20032' => 'ivr',
+            'http://rdaregistry.info/Elements/e/P20033' => 'drm',
+            'http://rdaregistry.info/Elements/e/P20042' => 'ctg',
+            'http://rdaregistry.info/Elements/e/P20047' => 'ive',
             'http://www.rdaregistry.info/Elements/i/#P40019' => 'rda:former-owner',
+            'http://rdaregistry.info/Elements/a/P50045' => 'rda:collector',
+            'http://rdaregistry.info/Elements/a/P50190' => 'cng',
+            'http://www.rdaregistry.info/Elements/u/#P60066' => 'rda:collector',
+            'http://www.rdaregistry.info/Elements/u/#P60381' => 'drm',
+            'http://www.rdaregistry.info/Elements/u/#P60429' => 'pht',
+            'http://www.rdaregistry.info/Elements/u/#P60401' => 'rda:former-owner',
+            'http://www.rdaregistry.info/Elements/u/#P60431' => 'art',
+            'http://www.rdaregistry.info/Elements/u/#P60432' => 'ive',
+            'http://www.rdaregistry.info/Elements/u/#P60434' => 'rda:writer',
+            'http://www.rdaregistry.info/Elements/u/#P60456' => 'rda:addressee',
+            'http://www.rdaregistry.info/Elements/u/#P60869' => 'edt',
+            'brevmottagare' => 'rda:addressee',
+            'brevskrivare' => 'rda:writer',
+            'donator' => 'rda:donor',
+            'filmare' => 'cng',
+            'fotograf' => 'pht',
+            'författare' => 'rda:writer',
+            'haastateltava' => 'ive',
+            'informant' => 'Informant',
+            'informantti' => 'Informant',
+            'inlämnare' => 'rda:former-owner',
+            'insamlare' => 'com',
+            'inspelare' => 'rce',
+            'intervjuare' => 'ivr',
+            'jäljentäjä' => 'fac',
+            'kerääjä' => 'com',
+            'kirjoittaja' => 'rda:writer',
+            'kokoelmanmuodostaja' => 'rda:collector',
+            'kuvataiteilija' => 'art',
+            'luovuttaja' => 'rda:former-owner',
+            'piirtäjä' => 'drm',
+            'toimittaja' => 'edt',
+            'utgivare' => 'pbl',
+            'valokuvaaja' => 'pht',
+            'vastaanottaja' => 'rda:addressee',
         ];
-
         return $roleMap[$role] ?? $fallback;
+    }
+
+    /**
+     * Get all authors elements
+     *
+     * @return array
+     */
+    protected function getAuthorElements()
+    {
+        $result = [];
+        $xml = $this->getXmlRecord();
+        foreach ($xml->controlaccess as $controlaccess) {
+            foreach ($controlaccess->name as $name) {
+                $result[] = $name;
+            }
+            foreach ($controlaccess->persname as $persname) {
+                $result[] = $persname;
+            }
+            foreach ($controlaccess->corpname as $corpname) {
+                $result[] = $corpname;
+            }
+        }
+        return $result;
     }
 }

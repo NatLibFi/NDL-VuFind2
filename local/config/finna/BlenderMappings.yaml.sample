@@ -355,6 +355,11 @@ Facets:
 # Search type mappings between backends
 Search:
   Fields:
+    Abstract:
+      Mappings:
+        EDS: AB
+        Primo: Abstract
+        Solr: description
     AllFields:
       Mappings:
         EDS: AllFields

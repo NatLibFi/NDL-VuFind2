@@ -30,6 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 use Finna\LocationService\LocationService;
+use Finna\Wayfinder\WayfinderService;
 
 /**
  * Holdings callnumber view helper
@@ -50,14 +51,23 @@ class Callnumber extends \Laminas\View\Helper\AbstractHelper
     protected $locationService = null;
 
     /**
+     * Wayfinder service.
+     *
+     * @var WayfinderService
+     */
+    protected $wayfinderService;
+
+    /**
      * Constructor
      *
-     * @param LocationService $locationService Location Service
+     * @param LocationService  $locationService  Location Service
      * of Finland Location Service
+     * @param WayfinderService $wayfinderService Wayfinder service instance.
      */
-    public function __construct(LocationService $locationService)
+    public function __construct(LocationService $locationService, WayfinderService $wayfinderService)
     {
         $this->locationService = $locationService;
+        $this->wayfinderService = $wayfinderService;
     }
 
     /**
@@ -115,6 +125,11 @@ class Callnumber extends \Laminas\View\Helper\AbstractHelper
             $section = $basePage === 'results' ? 'qrCodeResults' : 'qrCodeRecord';
             $params['qrCode'] = $config[$section];
         }
+
+        if ($this->wayfinderService->isConfigured()) {
+            $params['wayfinder'] = $fields + ['source' => $source];
+        }
+
         return $this->getView()->render('Helpers/holding-callnumber.phtml', $params);
     }
 

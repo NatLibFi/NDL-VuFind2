@@ -10,7 +10,7 @@
   }
 ?>
 
-<?php if ($this->authority): ?>
+<?php if ($this->authorityFields && $this->authority): ?>
   <?php $summ = $this->authority->getSummary();
   if (!empty($summ)): ?>
     <div class="truncate-field description">

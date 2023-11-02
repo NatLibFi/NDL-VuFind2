@@ -34,6 +34,7 @@ use VuFindSearch\Query\Query;
 use VuFindSearch\Query\QueryGroup;
 
 use function in_array;
+use function strlen;
 
 /**
  * Solr merged record handling listener.
@@ -325,14 +326,9 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
         // Check for active sources first in the search params:
         $params = $event->getParam('command')->getSearchParameters();
         foreach ($params->get('fq') ?? [] as $filter) {
-            if (preg_match('/^source_str_mv:\((.+)\)$/', $filter, $matches)) {
-                $recordSources = array_map(
-                    function ($s) {
-                        return trim($s, '\\"');
-                    },
-                    explode(' OR ', $matches[1])
-                );
-                return $recordSources;
+            if (str_starts_with($filter, SolrExtensionsListener::TERMS_FILTER_PREFIX_SOURCE)) {
+                // See the counterpart in SolrExtensionsListener::addDataSourceFilter
+                return explode("\u{001f}", substr($filter, strlen(SolrExtensionsListener::TERMS_FILTER_PREFIX_SOURCE)));
             }
         }
 

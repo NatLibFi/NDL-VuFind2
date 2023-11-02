@@ -6,7 +6,7 @@
  * PHP version 8
  *
  * Copyright (C) Villanova University 2010.
- * Copyright (C) The National Library of Finland 2015-2022.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -35,6 +35,7 @@
 namespace Finna\View\Helper\Root;
 
 use Finna\Form\Form;
+use Finna\RecordDriver\SolrAipa;
 use Finna\RecordTab\TabManager;
 use Finna\Search\Solr\AuthorityHelper;
 use Finna\Service\UserPreferenceService;
@@ -1251,6 +1252,19 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * Check if full width layout should be used for the record
+     *
+     * @return bool
+     */
+    public function hasFullWidthLayout(): bool
+    {
+        if ($this->driver instanceof SolrAipa) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Check if large image layout should be used for the record
      *
      * @return bool
@@ -1342,7 +1356,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                 return $this->driver->tryMethod('getDataSource', [], '');
             }
         }
-        $dedupData = $this->driver->getDedupData();
+        $dedupData = $this->driver->tryMethod('getDedupData', [], []);
         // Return driver's datasource if deduplication data is not set or
         // the count of deduplication data is 1.
         // There cannot be any other sources in this case.
@@ -1356,6 +1370,16 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
         return '';
+    }
+
+    /**
+     * Get Similar Items Carousel tab
+     *
+     * @return \VuFind\RecordTab\SimilarItemsCarousel
+     */
+    public function getSimilarItemsCarousel(): \VuFind\RecordTab\SimilarItemsCarousel
+    {
+        return $this->tabManager->getSimilarItemsCarouselTab($this->driver);
     }
 
     /**
@@ -1414,6 +1438,13 @@ class Record extends \VuFind\View\Helper\Root\Record
 
         $id = $opt['id'] = $this->driver->getUniqueID();
 
+        if (str_contains($id, '._preview')) {
+            // Special case for preview records.
+            // Always request all remaining encapsulated records because the load
+            // more AJAX handler currently has no access to the previewed record.
+            $opt['limit'] = null;
+        }
+
         $loadMore = (int)$offset > 0;
 
         // null is an accepted limit value (no limit)
@@ -1421,9 +1452,10 @@ class Record extends \VuFind\View\Helper\Root\Record
             $opt['limit'] = 6;
         }
         $opt['showAllLink'] ??= true;
-        $view = $opt['view'] = $opt['view'] ?? 'grid';
+        $view = $opt['view'] ??= 'grid';
 
         $resultsCopy = ($this->getEncapsulatedResults)($opt);
+        $resultsCopy->setContainerRecord($this->driver);
 
         $total = $resultsCopy->getResultTotal();
         if (!$loadMore) {
@@ -1447,11 +1479,25 @@ class Record extends \VuFind\View\Helper\Root\Record
                 'view' => $view,
                 'total' => $total,
                 'showAllLink' =>
-                    ($opt['showAllLink'] ?? false)
+                    $opt['showAllLink']
+                    && null !== $opt['limit']
                     && $opt['limit'] < $total,
             ]
         );
 
         return $html;
+    }
+
+    /**
+     * Conditionally render a full width banner.
+     *
+     * @return string
+     */
+    public function getBanner(): string
+    {
+        if ($this->hasFullWidthLayout()) {
+            return $this->renderTemplate('banner.phtml');
+        }
+        return '';
     }
 }

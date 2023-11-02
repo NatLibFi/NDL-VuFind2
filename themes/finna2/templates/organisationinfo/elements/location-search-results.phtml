@@ -1,0 +1,59 @@
+<?php if (!$results): ?>
+  <div class="location-search-result">
+    <div class="location-search-result-main" aria-live="polite">
+      <?=$this->transEsc('nohit_heading')?>
+    </div>
+  </div>
+  <?php return; ?>
+<?php endif; ?>
+
+<span class="sr-only" aria-live="polite"><?=$this->transEsc('result_count', ['%%count%%' => count($results)])?></span>
+<?php foreach ($results as $result): ?>
+  <div class="location-search-result">
+    <div class="location-search-result-main">
+      <a href="#<?=$this->escapeHtmlAttr($result['id'])?>"><?=$this->escapeHtml($result['name'])?></a>
+      <br>
+      <?=$this->escapeHtml($result['address']['displayAddress'])?>
+      <?php if (null !== $result['distance']): ?>
+        <?php
+          $distance = $result['distance'];
+          if ($distance >= 100) {
+            $distance = round($distance);
+          } else {
+            $distance = sprintf('%1.1f', $distance);
+          }
+        ?>
+        <span class="distance">(<?=$distance?>&nbsp;km)</span>
+      <?php endif; ?>
+    </div>
+    <div class="open-times-info">
+      <div class="open-or-closed">
+        <?php if ($result['openNow']): ?>
+          <span class="location-is-open info-element"><?=$this->transEsc('organisation_info_is_open')?></span>
+        <?php else: ?>
+          <span class="location-is-closed info-element"><?=$this->transEsc('organisation_info_is_closed')?></span>
+        <?php endif; ?>
+      </div>
+      <?php foreach ($result['openTimes']['schedules'] as $schedule): ?>
+        <?php if ($schedule['today']): ?>
+          <span class="time-open">
+            <?php if ($schedule['closed']): ?>
+              <span class="closed-times">
+                <?=$this->icon('organisation-info-closed')?> <?=$this->transEsc('organisation_info_is_closed')?>
+              </span>
+            <?php else: ?>
+              <span class="opening-times">
+                <?=
+                  $this->render(
+                      'organisationinfo/elements/helpers/time-interval.phtml',
+                      ['opens' => $schedule['firstOpeningTime'], 'closes' => $schedule['lastClosingTime'], 'minutes' => $schedule['minutePrecision']]
+                  )
+                ?>
+              </span>
+            <?php endif; ?>
+          </span>
+        <?php endif; ?>
+      <?php endforeach; ?>
+    </div>
+  </div>
+<?php endforeach; ?>

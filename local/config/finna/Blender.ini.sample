@@ -88,6 +88,7 @@ AllFields = adv_search_all
 Title = adv_search_title
 Author = adv_search_author
 Subject = adv_search_subject
+Abstract = Abstract
 
 [Sorting]
 relevance,id asc = sort_relevance

@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2014-2021.
+ * Copyright (C) The National Library of Finland 2014-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -259,5 +259,22 @@ class Matomo extends \VuFind\View\Helper\Root\Matomo
         return isset($this->params['action'])
             && $this->params['action'] == 'imagePopup'
             && isset($this->params['record']);
+    }
+
+    /**
+     * Get Page View Tracking Code
+     *
+     * @param array $customData Custom data
+     *
+     * @return string JavaScript Code Fragment
+     */
+    protected function getTrackPageViewCode(array $customData): string
+    {
+        $result = parent::getTrackPageViewCode($customData);
+        $result .= <<<EOT
+            _paq.push(['trackVisibleContentImpressions']);
+
+            EOT;
+        return $result;
     }
 }

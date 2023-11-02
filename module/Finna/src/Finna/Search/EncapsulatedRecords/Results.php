@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) The National Library of Finland 2022-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,6 +30,7 @@
 namespace Finna\Search\EncapsulatedRecords;
 
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
+use VuFind\RecordDriver\AbstractBase;
 
 /**
  * Encapsulated Records Search Results
@@ -45,9 +46,9 @@ class Results extends \VuFind\Search\Base\Results
     /**
      * Active container record (false if none).
      *
-     * @var \VuFind\RecordDriver\AbstractBase|bool
+     * @var AbstractBase|bool
      */
-    protected $containerRecord = false;
+    protected AbstractBase|bool $containerRecord = false;
 
     /**
      * Returns the stored list of facets for the last search
@@ -86,12 +87,24 @@ class Results extends \VuFind\Search\Base\Results
     }
 
     /**
+     * Set the active container record.
+     *
+     * @param AbstractBase $containerRecord Container record
+     *
+     * @return void
+     */
+    public function setContainerRecord(AbstractBase $containerRecord): void
+    {
+        $this->containerRecord = $containerRecord;
+    }
+
+    /**
      * Get the container record associated with the current search (null if no record
      * selected).
      *
-     * @return bool|\VuFind\RecordDriver\AbstractBase|null
+     * @return AbstractBase|bool
      */
-    public function getContainerRecord()
+    public function getContainerRecord(): AbstractBase|bool
     {
         $filters = $this->getParams()->getRawFilters();
         $id = $filters['ids'][0] ?? null;
@@ -103,12 +116,12 @@ class Results extends \VuFind\Search\Base\Results
         //      loaded container record
         if (
             $this->containerRecord === false
-            || ($id && ($this->containerRecord->getUniqueID() ?? null) !== $id)
+            || $this->containerRecord->getUniqueID() !== $id
         ) {
             // Check the filters for a record ID, and load the corresponding object
             // if one is found:
             if (null === $id) {
-                $this->containerRecord = null;
+                $this->containerRecord = false;
             } else {
                 $this->containerRecord = $this->recordLoader->load($id);
             }

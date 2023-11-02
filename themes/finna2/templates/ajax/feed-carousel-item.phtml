@@ -8,15 +8,12 @@
 <?php if ($hasIcon && $hasImg): ?>
   <?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon'], 'wrapper' => true]);?>
 <?php endif; ?>
-<?php if (isset($item['text']) || $clickableLink): ?>
+<?php if (isset($item['title'])): ?>
   <div class="sr-only">
-    <p><?=$this->escapeHtml($item['text'])?></p>
-    <?php if ($clickableLink): ?>
-      <span class="carousel-description"><?= $linkTextEsc ?></span>
-    <?php endif; ?>
+    <p><?=$this->escapeHtml($item['title'])?></p>
   </div>
 <?php endif; ?>
-<div class="carousel-text" aria-hidden="true">
+<div class="carousel-text" aria-hidden="true" tabindex="-1">
   <?php if (isset($item['title'])): ?>
     <div class="carousel-hover-title">
       <p><?=$this->escapeHtml($this->truncate($item['title'], 70))?></p>
@@ -56,7 +53,7 @@
   </div>
 <?php endif; ?>
 <?php if (isset($item['title']) || isset($item['dateFull'])): ?>
-  <div class="carousel-slide-header">
+  <div class="carousel-slide-header" aria-hidden="true">
     <p>
       <?php if ($hasIcon && !$hasImg): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?>
       <?php if (isset($item['title'])): ?>

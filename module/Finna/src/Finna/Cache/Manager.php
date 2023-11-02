@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,6 +23,7 @@
  * @category VuFind
  * @package  Cache
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
@@ -38,6 +39,7 @@ use Laminas\Config\Config;
  * @category VuFind
  * @package  Cache
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
@@ -62,5 +64,9 @@ class Manager extends \VuFind\Cache\Manager
         foreach ($ids as $cache) {
             $this->createFileCache($cache, $cacheBase . $cache . 's');
         }
+        // Code sets cache should live for as long as possible.
+        // Refreshing of the cache is based on a separate setting to safeguard
+        // against API unavailability or errors.
+        $this->createFileCache('codesets', $cacheBase . 'codesets', ['ttl' => 0]);
     }
 }

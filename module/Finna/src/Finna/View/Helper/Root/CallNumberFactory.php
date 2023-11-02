@@ -29,6 +29,7 @@
 
 namespace Finna\View\Helper\Root;
 
+use Finna\Wayfinder\WayfinderService;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
@@ -69,7 +70,8 @@ class CallNumberFactory implements FactoryInterface
             throw new \Exception('Unexpected options sent to factory.');
         }
         return new $requestedName(
-            $container->get(\Finna\LocationService\LocationService::class)
+            $container->get(\Finna\LocationService\LocationService::class),
+            $container->get(WayfinderService::class)
         );
     }
 }

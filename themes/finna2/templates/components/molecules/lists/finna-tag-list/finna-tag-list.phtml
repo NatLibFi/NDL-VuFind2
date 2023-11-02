@@ -1,0 +1,15 @@
+<?php
+  $__attributes = $this->htmlAttributes($attributes ?? []);
+  $__lowercase = $lowercase ?? true;
+  $__listTag = isset($title) ? 'dl' : 'ul';
+  $__itemTag = isset($title) ? 'dd' : 'li';
+?>
+<<?= $__listTag ?><?= $__attributes->add('class', 'finna-tag-list') ?>>
+  <?php if (isset($title)): ?>
+    <dt><?= $this->transEsc($title) ?></dt>
+  <?php endif; ?>
+  <?php foreach ($items ?? [] as $__item): ?>
+    <?php $__item = $this->transEsc($__lowercase ? mb_strtolower($__item, 'UTF-8') : $__item); ?>
+    <<?= $__itemTag ?>><?= $__item ?></<?= $__itemTag ?>>
+  <?php endforeach; ?>
+</<?= $__listTag?>>

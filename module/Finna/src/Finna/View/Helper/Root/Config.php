@@ -76,10 +76,21 @@ class Config extends \VuFind\View\Helper\Root\Config
     /**
      * Is map selection shown
      *
-     * @return boolean
+     * @return bool
      */
-    public function isGeographicMapVisible()
+    public function isGeographicMapVisible(): bool
     {
         return !empty($this->get('facets')->Geographical->map_selection);
+    }
+
+    /**
+     * Display similar records at the bottom of record view
+     * as a carousel
+     *
+     * @return string
+     */
+    public function getSimilarRecordsCarouselLocation(): string
+    {
+        return $this->get('config')->Record->similar_carousel_display ?? '';
     }
 }

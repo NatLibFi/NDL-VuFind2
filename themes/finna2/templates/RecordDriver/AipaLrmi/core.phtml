@@ -1,0 +1,146 @@
+<!-- START of: finna - RecordDriver/AipaLrmi/core.phtml -->
+<?php
+  $rights = $this->driver->getAccessRestrictionsType($this->layout()->userLang);
+  $summary = $this->driver->getSummary();
+  $externalLink = $this->driver->getExternalLink();
+  $materials = $this->driver->getMaterials($this->layout()->userLang);
+  $dateCreated = $this->driver->getDateCreated();
+  $dateModified = $this->driver->getDateModified();
+  $img = $this->recordImage($this->record($this->driver));
+  $thumbnail = false;
+  $thumbnailAlignment = false;
+  $formats = $this->driver->getFormats();
+  ob_start(); ?>
+  <div class="media-<?=$thumbnailAlignment?>">
+    <?= $this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'imageClick' => 'none']) ?>
+
+    <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
+      <div class="organisation-menu">
+        <?=$this->render('record/record-organisation-menu.phtml') ?>
+      </div>
+    <?php endif; ?>
+
+    <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
+  </div>
+  <?php $thumbnail = ob_get_contents(); ?>
+<?php ob_end_clean(); ?>
+<div class="media" vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
+  <?php
+    $contents = $this->driver->getContainerRecord()->getEncapsulatedContentTypeRecords();
+    $showData = count($contents) > 1 || $this->driver->getType() !== 'content';
+  ?>
+  <?php if ($showData): ?>
+    <?php $headingLevel = $this->driver->getType() === 'content' ? 2 : 3; ?>
+    <h<?= $headingLevel ?> property="name" class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h<?= $headingLevel ?>>
+    <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
+      <?= $thumbnail ?>
+    <?php endif; ?>
+  <?php endif; ?>
+  <div class="media-body record-information">
+    <?php if ($showData): ?>
+      <h<?= $headingLevel ?> property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h<?= $headingLevel?>>
+    <?php endif; ?>
+
+    <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
+
+    <?php if (!empty($formats)): ?>
+      <span class="recordFormat"><?=$this->record($this->driver)->getFormatList()?></span>
+    <?php endif; ?>
+    <div class="record-core-metadata">
+      <?php if ($showData && ($results = $this->driver->getNonPresenterAuthors())): ?>
+        <div class="truncate-field recordAuthors">
+          <strong><?= $this->transEsc('Curated By') ?>:</strong>
+          <span property="author">
+            <?php foreach ($results as $index => $author): ?>
+              <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?><?php if (!empty($author['affiliation'])): ?>, <?= $this->escapeHtml($author['affiliation']) ?><?php endif;?></a>
+            <?php endforeach; ?>
+          </span>
+        </div>
+      <?php endif; ?>
+      <?php if (false !== ($educationalData = $this->driver->getEducationalData())): ?>
+        <?= $this->aipa($this->driver)->renderLevelsAndSubjects($educationalData) ?>
+      <?php else: ?>
+        <?php
+          // Fall back to basic data.
+          $formatter = $this->recordDataFormatter($this->driver);
+          $filteredFields = $formatter->getDefaults();
+          $levelFields = $formatter->getGroupedData($this->driver, $formatter->getGroupedFields([
+              ['lines' => [
+                  'Educational Level',
+                  'Educational Subject',
+              ]],
+          ], $filteredFields, null, null, ['skipGroup' => true]));
+        ?>
+        <table class="table table-finna-record record-details record-field-groups" role="presentation">
+          <?= $this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $levelFields]) ?>
+        </table>
+      <?php endif; ?>
+
+      <?= $this->record($this->driver)->getMaterialDisclaimer() ?>
+      <?php if ($showData && !empty($summary)): ?>
+        <div class="material-description">
+          <?= implode('<br>', array_map([$this, 'escapeHtml'], $summary)) ?>
+        </div>
+      <?php endif; ?>
+    </div>
+
+    <?php if (false !== $educationalData): ?>
+      <?php $content = $this->aipa($this->driver)->renderStudyContentsAndObjectives($educationalData); ?>
+    <?php else: ?>
+      <?php
+        // Fall back to basic data.
+        $objectivesFields = $formatter->getGroupedData($this->driver, $formatter->getGroupedFields([
+          ['lines' => [
+            'Objective and Content',
+          ]],
+        ], $filteredFields, null, null, ['skipGroup' => true]));
+        if (!empty($objectivesFields)) {
+          ob_start();
+      ?>
+        <table class="table table-finna-record record-details record-field-groups" role="presentation">
+          <?= $this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $objectivesFields]) ?>
+        </table>
+      <?php
+          $content = ob_get_clean();
+        } else {
+          $content = '';
+        }
+        $content .= $this->markdown()->toHtml($this->driver->getStudyObjectives() ?? '');
+        $content = trim($content);
+      ?>
+    <?php endif; ?>
+    <?php if (!empty($content)): ?>
+      <?= $this->render('components/molecules/containers/finna-panel', [
+          'attributes' => ['class' => ['finna-panel-default', 'organisation-info-panel']],
+          'heading' => $this->transEsc('Aipa::lrmi_objectives'),
+          'headingLevel' => 4,
+          'content' => $content,
+          'headingId' => uniqid('heading-'),
+          'collapseId' => uniqid('collapse-'),
+        ]); ?>
+    <?php endif; ?>
+
+    <?php $content = trim($this->markdown()->toHtml($this->driver->getAssignmentIdeas())); ?>
+    <?php if (!empty($content)): ?>
+      <?= $this->render('components/molecules/containers/finna-panel', [
+          'attributes' => ['class' => ['finna-panel-default', 'organisation-info-panel']],
+          'heading' => $this->transEsc('Aipa::lrmi_assignment_ideas'),
+          'headingLevel' => 4,
+          'content' => $content,
+          'headingId' => uniqid('heading-'),
+          'collapseId' => uniqid('collapse-'),
+        ]); ?>
+    <?php endif; ?>
+
+    <?= $this->record($this->driver)->renderEncapsulatedRecords([
+        'view' => $this->driver->getEncapsulatedRecordViewType(),
+    ]) ?>
+
+    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/record-post-metadata')): ?>
+      <div>
+        <?=$this->render($template)?>
+      </div>
+    <?php endif; ?>
+  </div>
+</div>
+<!-- END of: finna - RecordDriver/AipaLrmi/core.phtml -->

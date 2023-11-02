@@ -67,6 +67,8 @@
   }
 
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
+  $recordFormat = $this->driver->tryMethod('getRecordFormat');
+  $fullWidthLayout = $this->record($this->driver)->hasFullWidthLayout();
   $largeImageLayout = $this->record($this->driver)->hasLargeImageLayout();
 
   if ($oldRecordId = $this->driver->getExtraDetail('redirectedFromId')) {
@@ -87,8 +89,19 @@
   );
 ?>
 </div>
+<?= $this->record($this->driver)->getBanner() ?>
 <div class="container">
-<div class="record source<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?> record-row <?= $largeImageLayout ? 'large-image-layout' : '' ?>">
+<?php $recordAttributes = $this->htmlAttributes([
+    'class' => [
+      'record',
+      'source' . $this->driver->getSourceIdentifier(),
+      $recordFormat ? 'record-format-' . $recordFormat : '',
+      'record-row',
+      $fullWidthLayout ? 'full-width-layout' : '',
+      $largeImageLayout ? 'large-image-layout' : '',
+    ],
+  ]); ?>
+<div<?= $recordAttributes ?>>
   <?= $this->R2()->registeredInfo($this->driver) ?>
   <div>
       <?=$this->record($this->driver)->getToolbar()?>
@@ -109,14 +122,14 @@
       </div>
     <?php endif; ?>
   <?php endif; ?>
-  <div class="record-main <?= !$largeImageLayout ? 'mainbody left' : ''?>">
+  <div class="record-main <?= (!$fullWidthLayout && !$largeImageLayout) ? 'mainbody left' : ''?>">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier()) ?>" class="hiddenSource">
     <?=$this->flashmessages()?>
     <?=$this->record($this->driver)->getMetaTags();?>
     <?=$this->record($this->driver)->getCoreMetadata()?>
 
-    <?=$this->driver->supportsCoinsOpenURL() ? '<span class="Z3988" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenURL()) . '"></span>' : ''?>
+    <?=$this->driver->supportsCoinsOpenURL() ? '<span class="Z3988" aria-hidden="true" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenURL()) . '"></span>' : ''?>
   </div>
 
   <?php ob_start(); ?>
@@ -136,8 +149,9 @@
   <?php $sidebar = ob_get_contents(); ?>
   <?php ob_end_clean(); ?>
 
-  <?php if ($sidebar && !$largeImageLayout):?>
-    <?php // This sidebar is used for larger screens when not in large image layout ?>
+  <?php if ($sidebar && (!$fullWidthLayout && !$largeImageLayout)):?>
+    <?php // This sidebar is used for larger screens when not in full width or
+          // large image layout ?>
     <div class="sidebar right smaller-image-sidebar hidden-xs hidden-sm">
       <?=$sidebar ?>
     </div>
@@ -162,6 +176,7 @@
                     $tabClasses[] = 'active';
                 }
                 $tabClasses[] = 'initiallyActive';
+                $activeTabName = $tabName;
                 $activeTabObj = $obj;
               }
               if (!$obj->isVisible()) {
@@ -174,11 +189,12 @@
                 $tabClasses[] = 'hidden-xs tab-right';
               }
             ?>
-            <li class="<?=implode(' ', $tabClasses)?>" role="tab" data-tab="<?=$this->escapeHtmlAttr($tabName)?>"<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?> data-background<?php endif ?>>
+            <li id="record-tab-<?=$this->escapeHtmlAttr($tabName)?>" class="<?=implode(' ', $tabClasses)?>" role="tab" data-tab="<?=$this->escapeHtmlAttr($tabName)?>"<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?> data-background<?php endif ?>>
               <a class="<?=$this->escapeHtmlAttr(strtolower($tab)) ?>" aria-label="<?=$this->transEscAttr($desc)?>"
                 href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $tab))?>#tabnav" data-lightbox-ignore>
-                <?php if (strtolower($tab) == 'details'): ?><?=$this->icon('staff-view', 'staff-view-icon') ?><?php endif; ?>
-                <?php if (strtolower($tab) != 'details'): ?><?=$this->transEsc($desc)?><?php endif; ?><?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?>
+                <?php if (strtolower($tab) == 'details'): ?><?=$this->icon('staff-view', 'staff-view-icon')?><?php endif; ?>
+                <span class="tab-name"><?=$this->transEsc($desc)?></span>
+                <?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?>
               </a>
             </li>
           <?php endforeach; ?>
@@ -225,7 +241,7 @@
 
     <div class="tab-content">
       <?php if (!$this->loadInitialTabWithAjax || !isset($activeTabObj) || !$activeTabObj->supportsAjax()): ?>
-        <div class="tab-pane active <?=$this->escapeHtmlAttr($this->activeTab) ?>-tab">
+        <div class="tab-pane active <?=$this->escapeHtmlAttr($this->activeTab) ?>-tab" aria-labelledby="record-tab-<?=$this->escapeHtmlAttr($activeTabName ?? '')?>">
             <?=isset($activeTabObj) ? $this->record($this->driver)->getTab($activeTabObj) : '' ?>
         </div>
       <?php endif; ?>
@@ -234,10 +250,16 @@
     <div class="clearfix hidden-lg hidden-md"></div>
   </div>
 
-  <?php if ($sidebar):?>
-    <?php // This sidebar is used for smaller screens and always in large image layout ?>
+  <?php if ($sidebar && !$fullWidthLayout):?>
+    <?php // This sidebar is used for smaller screens and always in large image
+          // layout, but never in full width layout ?>
     <div class="sidebar left large-image-sidebar<?=$largeImageLayout ? '' : ' visible-xs visible-sm'?>">
       <?=$sidebar ?>
+    </div>
+  <?php endif; ?>
+  <?php if ($this->config()->getSimilarRecordsCarouselLocation() === 'after_tabs'): ?>
+    <div class="similar-bottom container">
+      <?=$this->render('RecordTab/similaritemscarousel.phtml', ['tab' => $this->record($this->driver)->getSimilarItemsCarousel()])?>
     </div>
   <?php endif; ?>
 

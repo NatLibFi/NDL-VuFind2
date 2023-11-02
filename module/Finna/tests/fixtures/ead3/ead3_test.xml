@@ -28,4 +28,30 @@
       <ref lang="sv" href="https://sv.wikipedia.org/">   </ref>
     </p>
   </relatedmaterial>
+  <relations>
+    <relation arcrole="kokoelmanmuodostaja" relationtype="cpfrelation" href="EAC_102476374">
+      <relationentry localtype="Ensisijainen nimi">Suomalaisen Kirjallisuuden Seura ry</relationentry>
+    </relation>
+    <relation arcrole="luovuttaja" relationtype="cpfrelation">
+      <relationentry localtype="Ensisijainen nimi">Lucifer Luovuttaja</relationentry>
+    </relation>
+    <relation arcrole="aihe" relationtype="cpfrelation">
+      <relationentry localtype="Ensisijainen nimi">Aino Aihe</relationentry>
+    </relation>
+  </relations>
+  <controlaccess>
+    <name localtype="http://www.rdaregistry.info/Elements/u/#P60066" relator="Kokoelmanmuodostaja" identifier="EAC_102476374">
+      <part localtype="Ensisijainen nimi" lang="fin">Suomalaisen Kirjallisuuden Seura ry</part>
+      <part localtype="suhteen ajallinen kattavuus">unknown - open</part>
+    </name>
+    <name relator="Haastateltava" identifier="EAC_123456">
+      <part localtype="Ensisijainen nimi" lang="fin">Harri Haastateltava</part>
+    </name>
+    <name>
+      <part lang="fin">Rolle Rooliton</part>
+    </name>
+    <name relator="Tuntematon rooli">
+      <part lang="fin">Tuovi Tuntematon</part>
+    </name> 
+  </controlaccess>
 </c02>

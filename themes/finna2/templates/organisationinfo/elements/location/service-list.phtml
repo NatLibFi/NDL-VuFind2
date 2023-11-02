@@ -1,0 +1,23 @@
+<?php // Do not add start and end comments ?>
+<?php foreach ($orgInfo['allServices'] as $type => $services): ?>
+  <?php
+    if (!in_array($type, ['hardware', 'room', 'service', 'collection'])) {
+      continue;
+    }
+  ?>
+  <h5 class="service-header"><?=$this->transEscWithPrefix('organisation_info_service_type_', $type) ?></h5>
+  <div class="service-list">
+    <?php foreach ($services as $service): ?>
+      <div>
+        <?php if ($desc = $service['description'] ?: $service['shortDescription']): ?>
+          <?php $tooltipEsc = $this->transEscAttr('<h6>' . $this->cleanHtml($service['name']) . '</h6>' . $this->cleanHtml($desc)); ?>
+          <button type="button" class="service-tooltip" data-toggle="tooltip" data-placement="bottom" data-html="true" data-original-title="<?=$tooltipEsc?>">
+            <?=$this->cleanHtml($service['name'])?>
+          </button>
+        <?php else: ?>
+          <?=$this->cleanHtml($service['name'])?>
+        <?php endif; ?>
+      </div>
+    <?php endforeach; ?>
+  </div>
+<?php endforeach; ?>

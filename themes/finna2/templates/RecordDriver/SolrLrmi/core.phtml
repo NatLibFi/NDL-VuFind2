@@ -12,7 +12,7 @@
   $formats = $this->driver->getFormats();
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment?>">
-    <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'displayIcon' => true, 'source' => 'L1', 'imageClick' => 'none']);?>
+    <?= $this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'imageClick' => 'none']) ?>
 
     <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
       <div class="organisation-menu">
@@ -92,7 +92,7 @@
       <?= $this->record($this->driver)->getMaterialDisclaimer() ?>
       <?php if (!empty($summary)): ?>
         <div class="material-description">
-          <?= $this->escapeHtml(implode('<br>', $summary)); ?>
+          <?= implode('<br>', array_map([$this, 'escapeHtml'], $summary)) ?>
         </div>
       <?php endif; ?>
       <?/* Display Main Details */?>

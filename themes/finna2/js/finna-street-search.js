@@ -19,18 +19,18 @@ finna.StreetSearch = (function finnaStreetSearch() {
   }
 
   function geoLocationError(error) {
-    var errorString = 'street_search_geolocation_other_error';
+    var errorString = 'geolocation_other_error';
     var additionalInfo = '';
     if (error) {
       switch (error.code) {
       case error.POSITION_UNAVAILABLE:
-        errorString = 'street_search_geolocation_position_unavailable';
+        errorString = 'geolocation_position_unavailable';
         break;
       case error.PERMISSION_DENIED:
-        errorString = 'street_search_geolocation_inactive';
+        errorString = 'geolocation_inactive';
         break;
       case error.TIMEOUT:
-        errorString = 'street_search_timeout';
+        errorString = 'geolocation_timeout';
         break;
       default:
         additionalInfo = error.message;

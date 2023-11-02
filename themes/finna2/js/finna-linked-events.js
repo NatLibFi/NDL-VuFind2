@@ -9,8 +9,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
       lang = {'language': $('.linked-event-content').data('lang')};
     }
     params.query = $.extend(params.query, limit, lang);
-    var spinner = null;
-    spinner = container[0].querySelector('.js-loader');
+    var spinner = container[0].querySelector(append ? '.js-loader-more' : '.js-loader');
     if (spinner) {
       spinner.classList.remove("hidden");
     }
@@ -27,6 +26,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
             'LazyImages',
             container[0].querySelectorAll('img[data-src]')
           );
+          finna.layout.initToolTips(container);
         } else {
           var err = $('<div></div>').attr('class', 'linked-events-noresults infobox').attr('aria-live', 'polite').text(VuFind.translate('nohit_heading'));
           container.find($('.linked-events-content')).html(err);
@@ -42,6 +42,9 @@ finna.linkedEvents = (function finnaLinkedEvents() {
           err = $('<div></div>').attr('class', 'alert alert-danger').text(response.responseJSON.data);
         }
         $('.linked-events-content').html(err);
+        if (spinner) {
+          spinner.classList.add("hidden");
+        }
       });
   }
 
@@ -185,7 +188,6 @@ finna.linkedEvents = (function finnaLinkedEvents() {
     searchTools.insertAfter(accordion);
     toggleSearch.insertAfter(accordion);
     accordion.removeClass('initial-active');
-
     return loadContent;
   }
 

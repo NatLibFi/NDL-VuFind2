@@ -7,7 +7,7 @@ finna.encapsulatedRecords = (function encapsulatedRecords() {
         records.data('inited', '1');
 
         var showMore = records.find('.show-more');
-        var spinner = records.find('.fa-spinner');
+        var spinner = records.find('.js-spinner-icon');
         records.find('.btn.load-more').on('click', function initLoadMore() {
           spinner.removeClass('hide').show();
 
@@ -47,8 +47,6 @@ finna.encapsulatedRecords = (function encapsulatedRecords() {
               finna.layout.initTruncate();
               finna.layout.initImagePaginators();
               finna.openUrl.initLinks(resultsContainer);
-              finna.videoPopup.initIframeEmbed(resultsContainer);
-              finna.videoPopup.initVideoPopup(resultsContainer);
               VuFind.itemStatuses.init(resultsContainer);
               finna.itemStatus.initDedupRecordSelection(resultsContainer);
               VuFind.recordVersions.init(resultsContainer);

@@ -7,10 +7,15 @@
   $loggedInUser = $this->auth()->isLoggedIn();
 
   $layoutLoggedIn = $saveSupported && $loggedInUser;
-  // Set up myresearch menu
+
+  // Hide the account breadcrumb when login is disabled:
+  $account = $this->auth()->getManager();
+  $parentBreadcrumb = is_object($account) && $account->loginEnabled()
+    ? '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li>'
+    : '';
+
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li>'
-    . '<li class="active">' . $this->transEsc('Search History') . '</li>';
+  $this->layout()->breadcrumbs = $parentBreadcrumb . '<li class="active">' . $this->transEsc('Search History') . '</li>';
 
   // Check for scheduled searches
   $scheduledSearches = false;

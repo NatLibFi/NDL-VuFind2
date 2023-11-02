@@ -18,7 +18,7 @@ finna.organisationMap = (function finnaOrganisationMap() {
     selectedMarker = null;
   }
 
-  function draw(organisationList/*, id*/) {
+  function draw(organisationList) {
     var me = $(this);
     var organisations = organisationList;
 
@@ -68,52 +68,46 @@ finna.organisationMap = (function finnaOrganisationMap() {
 
     // Map points
     $.each(organisations, function mapOrganisation(ind, obj) {
-      if (obj.address != null && obj.address.coordinates !== null) {
-        if (typeof obj.address.coordinates === 'undefined') {
-          return true;
-        }
-        var infoWindowContent = obj.map.info;
-        var point = obj.address.coordinates;
+      var infoWindowContent = obj.map.info;
 
-        var icon = icons['no-schedule'];
-        var openTimes = finna.common.getField(obj, 'openTimes');
-        if (openTimes) {
-          var schedules = finna.common.getField(openTimes, 'schedules');
-          var openNow = finna.common.getField(openTimes, 'openNow');
-          icon = schedules && schedules.length > 0 ? (openNow ? icons.open : icons.closed) : icon;
-        }
-
-        var marker = L.marker(
-          [point.lat, point.lon],
-          {icon: icon}
-        ).addTo(map);
-        marker.on('mouseover', function onMouseOverMarker(ev) {
-          if (marker === selectedMarker) {
-            return;
-          }
-          var holderOffset = $(holder).offset();
-          var offset = $(ev.originalEvent.target).offset();
-          var x = offset.left - holderOffset.left;
-          var y = offset.top - holderOffset.top;
-
-          me.trigger('marker-mouseover', {id: obj.id, x: x, y: y});
-        });
-
-        marker.on('mouseout', function onMouseOutMarker(/*ev*/) {
-          me.trigger('marker-mouseout');
-        });
-
-        marker.on('click', function onClickMarker(/*ev*/) {
-          me.trigger('marker-click', obj.id);
-        });
-
-        marker
-          .bindPopup(infoWindowContent, {zoomAnimation: true, autoPan: false})
-          .addTo(map);
-
-        mapMarkers[obj.id] = marker;
-        markers.push(marker);
+      var icon = icons['no-schedule'];
+      if (obj.hasSchedules) {
+        icon = obj.openNow ? icons.open : icons.closed;
       }
+
+      var marker = L.marker(
+        [obj.lat, obj.lon],
+        {
+          icon: icon,
+          keyboard: false
+        }
+      ).addTo(map);
+      marker.on('mouseover', function onMouseOverMarker(ev) {
+        if (marker === selectedMarker) {
+          return;
+        }
+        var holderOffset = $(holder).offset();
+        var offset = $(ev.originalEvent.target).offset();
+        var x = offset.left - holderOffset.left;
+        var y = offset.top - holderOffset.top;
+
+        me.trigger('marker-mouseover', {id: obj.id, x: x, y: y});
+      });
+
+      marker.on('mouseout', function onMouseOutMarker(/*ev*/) {
+        me.trigger('marker-mouseout');
+      });
+
+      marker.on('click', function onClickMarker(/*ev*/) {
+        me.trigger('marker-click', obj.id);
+      });
+
+      marker
+        .bindPopup(infoWindowContent, {zoomAnimation: true, autoPan: false})
+        .addTo(map);
+
+      mapMarkers[obj.id] = marker;
+      markers.push(marker);
     });
 
     reset();
@@ -143,7 +137,9 @@ finna.organisationMap = (function finnaOrganisationMap() {
       }
     }
 
-    marker.openPopup();
+    if (marker) {
+      marker.openPopup();
+    }
     selectedMarker = marker;
   }
 

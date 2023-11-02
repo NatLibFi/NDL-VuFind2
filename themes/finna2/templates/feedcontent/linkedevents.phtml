@@ -1,4 +1,4 @@
-<!-- START of: finna - feedcontent/linked-events.phtml -->
+<!-- START of: finna - feedcontent/linkedevents.phtml -->
 <div class="linked-event-content" data-lang="<?= $this->layout()->userLang; ?>">
    <span role="status" class="js-loader linked-events-page-spinner hidden">
       <?=$this->icon('spinner') ?><span class="sr-only"> <?=$this->transEsc('loading_ellipsis')?></span>
@@ -20,8 +20,8 @@
       <div id="openlayers-canvas" class="linked-events-map"></div>
       <div class="linked-event-map-info">
          <div class="linked-event-field hidden"><?=$this->icon('linked-event-location') ?> <span class="linked-event-location-info"></span></div>
-         <div class="linked-event-field hidden"><span class="linked-event-address"></span></div>
-         <div class="linked-event-field hidden"><a class="linked-event-providerLink"><?= $this->icon('linked-event-home') ?> <?= $this->transEsc('linked_event_homepage');?></a></div>
+         <div class="linked-event-field hidden"><?= $this->icon('linked-event-address') ?> <span class="linked-event-address"></span></div>
+         <div class="linked-event-field hidden"><?= $this->icon('linked-event-home') ?> <a class="linked-event-providerLink"><?= $this->transEsc('linked_event_homepage');?></a></div>
          <div class="linked-event-field hidden"><?=$this->icon('linked-event-phone') ?> <a class="linked-event-phone"></a></div>
          <div class="linked-event-field hidden"><?=$this->icon('linked-event-email') ?> <a class="linked-event-email"></a></div>
          <div class="linked-event-field hidden"><?=$this->transEsc('Organizer'); ?>: <span class="linked-event-provider"></span></div>
@@ -38,4 +38,4 @@
       JS;
     echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $setupJS, 'SET');
 ?>
-<!-- END of: finna - feedcontent/linked-events.phtml -->
+<!-- END of: finna - feedcontent/linkedevents.phtml -->

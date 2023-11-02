@@ -69,7 +69,9 @@ services[print] = "55355,55752,55856,55848,55628,55805,55375,55549,55342,55327,5
 url = "https://museot.fi/xml"
 
 [LinkedEvents]
+; Linked events API URL including a trailing slash
 ;api_url = ""
+; Publisher ID (a single identifier or a comma-separated list of identifiers)
 ;publisher_id = ""
 ; Uncomment to include super events in responses
 ;include_super_events = true

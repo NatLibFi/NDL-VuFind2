@@ -1,0 +1,5 @@
+<?php if ($orgInfo['openNow']): ?>
+  <span class="location-is-open info-element"><?=$this->transEsc('organisation_info_is_open')?></span>
+<?php elseif (false === $orgInfo['openNow']): ?>
+  <span class="location-is-closed info-element"><?=$this->transEsc('organisation_info_is_closed')?></span>
+<?php endif; ?>

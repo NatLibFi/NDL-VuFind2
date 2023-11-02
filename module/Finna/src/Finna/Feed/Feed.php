@@ -37,6 +37,7 @@ use Laminas\Feed\Reader\Entry\AbstractEntry;
 use Laminas\Feed\Reader\Feed\AbstractFeed;
 use Laminas\Feed\Reader\Reader;
 use Laminas\Mvc\Controller\Plugin\Url;
+use Laminas\View\Helper\ServerUrl;
 use VuFind\Cache\Manager as CacheManager;
 use VuFindTheme\View\Helper\ImageLink;
 
@@ -100,6 +101,13 @@ class Feed implements
     protected $urlHelper;
 
     /**
+     * Server URL helper
+     *
+     * @var ServerUrl
+     */
+    protected $serverUrl;
+
+    /**
      * Image link helper
      *
      * @var ImageLink
@@ -129,6 +137,7 @@ class Feed implements
      * configuration
      * @param CacheManager     $cm            Cache manager
      * @param Url              $url           URL helper
+     * @param ServerUrl        $serverUrl     Server URL helper
      * @param ImageLink        $imageLink     Image link helper
      * @param CleanHtml        $cleanHtml     Clean HTML helper
      * @param OrganisationInfo $orgInfo       Organisation info service
@@ -139,6 +148,7 @@ class Feed implements
         Config $orgFeedConfig,
         CacheManager $cm,
         Url $url,
+        ServerUrl $serverUrl,
         ImageLink $imageLink,
         CleanHTML $cleanHtml,
         OrganisationInfo $orgInfo
@@ -148,6 +158,7 @@ class Feed implements
         $this->organisationInfoFeedConfig = $orgFeedConfig;
         $this->cacheManager = $cm;
         $this->urlHelper = $url;
+        $this->serverUrl = $serverUrl;
         $this->imageLinkHelper = $imageLink;
         $this->cleanHtml = $cleanHtml;
         $this->organisationInfo = $orgInfo;
@@ -169,17 +180,9 @@ class Feed implements
         // Check for an organisation info feed:
         $idParts = explode('|', $id);
         if ('organisation-info' === $idParts[0] && isset($idParts[4])) {
-            [, $parent, $unitId, $type, $feedType] = $idParts;
-            $result = $this->organisationInfo->query(
-                $parent,
-                [
-                    'id' => $unitId,
-                    'orgType' => $type,
-                    'action' => 'details',
-                    'allServices' => 1,
-                    'fullDetails' => 1,
-                ]
-            );
+            [, $id, $locationId, $type, $feedType] = $idParts;
+            $sectors = 'museum' === $type ? ['mus'] : ['lib'];
+            $result = $this->organisationInfo->getDetails($sectors, $id, $locationId);
 
             $url = '';
             foreach ($result['rss'] as $current) {
@@ -561,6 +564,11 @@ class Feed implements
                         }
                     } elseif (is_string($value)) {
                         $value = strip_tags($value);
+                        if (filter_var($value, FILTER_VALIDATE_URL)) {
+                            $host = parse_url($this->serverUrl->getHost(), PHP_URL_HOST);
+                            $linkHost = parse_url($value, PHP_URL_HOST);
+                            $data['isExternal'] = $linkHost && $linkHost !== $host;
+                        }
                     }
                     if ($value) {
                         $data[$setting] = $value;

@@ -1291,6 +1291,13 @@ hide_holdings[] = "World Wide Web"
 ;    WorkExpressions - Other expressions or versions of the record
 related[] = "SimilarDeferred"
 
+; Whether to display similar records at the bottom of the record view.
+; Records will be displayed as a carousel. The only available option at the moment
+; is "after_tabs".
+;similar_carousel_display = "after_tabs"
+; How many items will be shown in the similar items carousel. Default is 40.
+;similar_carousel_items = 15
+
 ; Presenter roles that are displayed separately from other authors
 presenter_roles[] = "esitt"
 presenter_roles[] = "joht"
@@ -1507,6 +1514,7 @@ skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/koko/"
 skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/kauno/"
 ; The following setting controls authority information in the popover. It is disabled
 ; by default. Use "*" to include all fields or specify the fields to show.
+; Setting a single empty value will load the author, but does not show core fields.
 ;authority_fields[] = "Date of birth"
 ;authority_fields[] = "Other Forms of Name"
 ;authority_fields[] = "Identifiers"
@@ -1521,6 +1529,10 @@ skosmos_id_prefix_exact_matches[] = "http://www.yso.fi/onto/kauno/"
 ;    or empty for none
 external_links[] = "external_link_kyppi_mjr||external_link_kyppi_mjr||\(mjr\)(.+)||https://www.kyppi.fi/palveluikkuna/mjreki/read/asp/r_kohde_det.aspx?KOHDE_ID={1}||{1}"
 external_links[] = "external_link_kyppi_rpr||external_link_kyppi_rpr||\(rpr\)(.+)||https://www.kyppi.fi/palveluikkuna/rapea/read/asp/r_kohde_det.aspx?KOHDE_ID={1}||{1}"
+; The next option allows hiding certain parts from the ajax-field-info.phtml They are enabled as default.
+;dynamic_content[label_enrichment] = false
+;dynamic_content[alt_label_enrichment] = false
+;dynamic_content[other_language_enrichment] = false
 
 ; The following two sections control the Alphabetic Browse module.
 [AlphaBrowse]
