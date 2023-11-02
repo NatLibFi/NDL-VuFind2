@@ -32,16 +32,21 @@
           <div class="alert alert-danger js-location-unavailable hidden"><?=$this->transEsc('organisation_info_location_not_available')?></div>
         </form>
       </div>
-      <div class="js-location-search-container hidden">
-        <button class="btn btn-default js-location-search-toggle" aria-expanded="false" data-toggle-aria-expanded>
-          <?=$this->transEsc('Search for a Service')?> <?=$this->icon('filter-expand', 'search-expand')?><?=$this->icon('filter-collapse', 'search-collapse')?>
-        </button>
-        <div class="js-location-search">
-          <div class="js-location-search-fields"></div>
-          <div class="js-results-loader hidden" role="status"><?=$this->icon('spinner')?> <?=$this->transEsc('loading_ellipsis')?></div>
-          <div class="js-location-search-results"></div>
+
+      <?php if ($serviceList && count($locationData) >= 2): ?>
+        <div class="js-location-search-container">
+          <button class="btn btn-default js-location-search-toggle" aria-expanded="false" data-toggle-aria-expanded>
+            <?=$this->transEsc('Search for a Service')?> <?=$this->icon('filter-expand', 'search-expand')?><?=$this->icon('filter-collapse', 'search-collapse')?>
+          </button>
+          <div class="js-location-search">
+            <div class="js-location-search-fields">
+              <?=$this->render('organisationinfo/elements/location-search-fields.phtml')?>
+            </div>
+            <div class="js-results-loader hidden" role="status"><?=$this->icon('spinner')?> <?=$this->transEsc('loading_ellipsis')?></div>
+            <div class="js-location-search-results"></div>
+          </div>
         </div>
-      </div>
+      <?php endif; ?>
     <?php endif; ?>
   </div>
   <?php if ($notification = $orgInfo['consortium']['finna']['notification'] ?? ''): ?>

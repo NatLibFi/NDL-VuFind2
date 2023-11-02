@@ -231,7 +231,6 @@ $config = [
         'finna-mylist.js',
         'finna-online-payment.js',
         'finna-organisation-info.js',
-        'finna-organisation-list.js',
         'finna-organisation-map-leaflet.js',
         'finna-primo-adv-search.js',
         'finna-R2.js',

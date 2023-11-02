@@ -368,10 +368,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
             'organisationinfo/elements/consortium-info.phtml',
             compact('id', 'orgInfo', 'buildingFacetOperator', 'buildings')
         ) : '';
-        $locationSelection = $this->renderer->render(
-            'organisationinfo/elements/location-selection.phtml',
-            compact('id', 'orgInfo')
-        );
         $locationCount = count($orgInfo['list'] ?? []);
         $locationIdValid = false;
         $locationData = [];
@@ -422,8 +418,8 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         $this->sorter->sort($cityList);
         $serviceList = array_unique($serviceList);
         $this->sorter->sort($serviceList);
-        $searchFields = $this->renderer->render(
-            'organisationinfo/elements/location-search-fields.phtml',
+        $locationSelection = $this->renderer->render(
+            'organisationinfo/elements/location-selection.phtml',
             compact('id', 'orgInfo', 'locationData', 'serviceList', 'cityList')
         );
 
@@ -433,8 +429,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
             'locationCount',
             'defaultLocationId',
             'defaultLocationName',
-            'locationData',
-            'searchFields',
+            'locationData'
         );
     }
 

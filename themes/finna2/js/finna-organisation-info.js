@@ -81,10 +81,8 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Initialize location search
-   *
-   * @param {Object} data Organisation info response for info-location-selection request
    */
-  function initLocationSearch(data) {
+  function initLocationSearch() {
     searchContainer = container.querySelector('.js-location-search-container');
     if (!searchContainer) {
       return;
@@ -92,17 +90,15 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     let searchEl = searchContainer.querySelector('.js-location-search-fields');
     let resultsEl = searchContainer.querySelector('.js-location-search-results');
     if (!searchEl || !resultsEl) {
-      searchContainer.classList.add('hidden');
+      console.error('Search fields or results element not found');
       return;
     }
-    searchEl.innerHTML = data.searchFields;
     if (!('geolocation' in navigator)) {
       let geoField = searchEl.querySelector('[name="service_nearest"]');
       if (geoField) {
         geoField.remove();
       }
     }
-    searchContainer.classList.remove('hidden');
     let searchIndicatorEl = searchContainer.querySelector('.js-results-loader');
     searchEl.querySelectorAll('select, input').forEach((field) => {
       field.addEventListener('change', () => {
@@ -320,7 +316,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       }
     }
 
-    initLocationSearch(data);
+    initLocationSearch();
     initMap(data);
   }
 
