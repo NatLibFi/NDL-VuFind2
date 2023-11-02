@@ -54,22 +54,22 @@ class MuseotFi extends AbstractProvider
      * @param string $language Language
      * @param string $id       Parent organisation ID
      *
-     * @return array Associative array with 'id', 'logo' and 'name'
+     * @return array Associative array with 'id', 'logo' and 'name', or empty array if not found
      */
     protected function doLookup(string $language, string $id): array
     {
         $response = $this->fetchData($id);
 
         if (!$response || empty($response['museot'])) {
-            return false;
+            return [];
         }
 
         $item = $response['museot'][0];
         if (!$item['finna_publish']) {
-            return false;
+            return [];
         }
         $id = $item['finna_org_id'];
-        $logo = $this->proxifyImageUrl($item['image'] ?? '');
+        $logo = $item['image'] ?? '';
         $name = $item['name'][$language] ?? $this->translator->translate("source_{$id}");
         return compact('id', 'logo', 'name');
     }
@@ -253,7 +253,7 @@ class MuseotFi extends AbstractProvider
             ];
         }
         if (!empty($json['image'])) {
-            $consortium['logo']['small'] = $this->proxifyImageUrl($json['image']);
+            $consortium['logo']['small'] = $json['image'];
         }
 
         // Consortium wrapper

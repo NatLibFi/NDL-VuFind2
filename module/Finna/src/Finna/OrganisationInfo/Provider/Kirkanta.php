@@ -55,7 +55,7 @@ class Kirkanta extends AbstractProvider
      * @param string $language Language
      * @param string $id       Parent organisation ID
      *
-     * @return array Associative array with 'id', 'logo' and 'name'
+     * @return array Associative array with 'id', 'logo' and 'name', or empty array if not found
      */
     protected function doLookup(string $language, string $id): array
     {

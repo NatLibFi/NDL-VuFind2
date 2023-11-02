@@ -20,7 +20,6 @@ var finna = (function finnaModule() {
         'menu',
         'myList',
         'openUrl',
-        'organisationList',
         'primoAdvSearch',
         'record',
         'searchTabsRecommendations',

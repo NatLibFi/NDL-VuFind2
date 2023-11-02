@@ -149,7 +149,9 @@ abstract class AbstractProvider implements
     public function lookup(string $language, string $id): array
     {
         $result = $this->doLookup($language, $id);
-        $result['logo'] = $this->proxifyImageUrl($result['logo']);
+        if (!empty($result['logo'])) {
+            $result['logo'] = $this->proxifyImageUrl($result['logo']);
+        }
         return $result;
     }
 
@@ -165,7 +167,7 @@ abstract class AbstractProvider implements
     public function getConsortiumInfo(string $language, string $id, array $locationFilter = []): array
     {
         $result = $this->doGetConsortiumInfo($language, $id, $locationFilter);
-        if (isset($result['consortium']['logo']['small'])) {
+        if (!empty($result['consortium']['logo']['small'])) {
             $result['consortium']['logo']['small'] = $this->proxifyImageUrl($result['consortium']['logo']['small']);
         }
         foreach ($result['list'] as &$item) {
@@ -203,7 +205,7 @@ abstract class AbstractProvider implements
      * @param string $language Language
      * @param string $id       Parent organisation ID
      *
-     * @return array Associative array with 'id', 'logo' and 'name'
+     * @return array Associative array with 'id', 'logo' and 'name', or empty array if not found
      */
     abstract protected function doLookup(string $language, string $id): array;
 
