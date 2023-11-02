@@ -112,11 +112,11 @@ class Content extends \Laminas\View\Helper\AbstractHelper
     {
         $lng = $this->view->layout()->userLang;
         $resolver = $this->view->resolver();
+
         $template = "{$templateName}_$lng.phtml";
         if ($resolver->resolve($template)) {
             return $template;
         }
-
         if ($fallback) {
             foreach ($this->localeSettings->getFallbackLocales() as $lang) {
                 $template = "{$templateName}_$lang.phtml";
