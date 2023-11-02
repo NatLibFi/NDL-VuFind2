@@ -83,7 +83,7 @@
           </li>
         <?php endif; ?>
 
-        <?php if ($template = $this->content()->findTemplateForLng('content/Additions/header-navibar')): ?>
+        <?php if ($template = $this->content()->findTemplateForLng('content/Additions/header-navibar', true)): ?>
           <?=$this->render($template)?>
         <?php endif; ?>
       </ul>

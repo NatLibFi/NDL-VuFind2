@@ -68,14 +68,8 @@
       <input class="btn btn-primary" type="submit" name="processLogin" value="<?=$this->transEscAttr('Save')?>">
     </div>
   </form>
-  <?php if (empty($this->card->id)): ?>
-    <?php
-      $language = $this->layout()->userLang;
-      if (!in_array($language, ['fi', 'sv', 'en-gb'])) {
-        $language = 'en-gb';
-      }
-    ?>
-    <?=$this->partial("librarycards/library_card_terms_$language.phtml"); ?>
+  <?php if (empty($this->card->id) && $tmpl = $this->content()->findTemplateForLng('librarycards/library_card_terms', true)): ?>
+    <?=$this->partial($tmpl) ?>
   <?php endif; ?>
 <?php endif; ?>
 <?php if (!$isPartial): ?>

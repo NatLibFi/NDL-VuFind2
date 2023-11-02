@@ -34,13 +34,9 @@
     </p>
   </div>
   <div class="clearfix"></div>
-  <?php
-    $language = $this->layout()->userLang;
-    if (!in_array($language, ['fi', 'sv', 'en-gb'])) {
-      $language = 'en-gb';
-    }
-  ?>
-  <?=$this->partial("Auth/MultiILS/terms_$language.phtml") ?>
+  <?php if ($tmpl = $this->content()->findTemplateForLng('Auth/MultiILS/terms', true)): ?>
+    <?=$this->partial($tmpl) ?>
+  <?php endif; ?>
 </div>
   <div class="clearfix"></div>
 <?php else: ?>

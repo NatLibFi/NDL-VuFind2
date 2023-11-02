@@ -29,6 +29,8 @@
 
 namespace Finna\View\Helper\Root;
 
+use VuFind\I18n\Locale\LocaleSettings;
+
 /**
  * Content page view helper
  *
@@ -46,6 +48,23 @@ class Content extends \Laminas\View\Helper\AbstractHelper
      * @var string
      */
     protected $heading;
+
+    /**
+     * Locale Settings
+     *
+     * @var LocaleSettings
+     */
+    protected $localeSettings;
+
+    /**
+     * Constructor
+     *
+     * @param LocaleSettings $localeSettings Locale settings
+     */
+    public function __construct(LocaleSettings $localeSettings)
+    {
+        $this->localeSettings = $localeSettings;
+    }
 
     /**
      * Returns content page view helper.
@@ -83,17 +102,28 @@ class Content extends \Laminas\View\Helper\AbstractHelper
      * Try to find the best template for the current language
      *
      * @param string $templateName Template name without .phtml suffix
+     * @param bool   $fallback     Allow checking for fallback languages.
+     *                             Languages are listed in
+     *                             config > Site > fallback_languages.
      *
      * @return string|boolean Template name or false if not available
      */
-    public function findTemplateForLng($templateName)
+    public function findTemplateForLng($templateName, $fallback = false)
     {
         $lng = $this->view->layout()->userLang;
         $resolver = $this->view->resolver();
-
         $template = "{$templateName}_$lng.phtml";
         if ($resolver->resolve($template)) {
             return $template;
+        }
+
+        if ($fallback) {
+            foreach ($this->localeSettings->getFallbackLocales() as $lang) {
+                $template = "{$templateName}_$lang.phtml";
+                if ($resolver->resolve($template)) {
+                    return $template;
+                }
+            }
         }
         $template = "$templateName.phtml";
         if ($resolver->resolve($template)) {

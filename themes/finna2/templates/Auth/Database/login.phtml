@@ -27,13 +27,9 @@
       </p>
     </div>
     <div class="clearfix"></div>
-    <?php
-      $language = $this->layout()->userLang;
-      if (!in_array($language, ['fi', 'sv', 'en-gb'])) {
-        $language = 'en-gb';
-      }
-    ?>
-    <?=$this->partial("Auth/Database/terms_$language.phtml") ?>
+    <?php if ($tmpl = $this->content()->findTemplateForLng('Auth/Database/terms', true)): ?>
+      <?=$this->partial($tmpl) ?>
+    <?php endif; ?>
   </div>
 </div>
 <div class="clearfix"></div>

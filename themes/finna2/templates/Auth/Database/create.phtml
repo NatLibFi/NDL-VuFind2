@@ -34,13 +34,9 @@
     <div class="help-block with-errors"></div>
   </div>
 </div>
-<div class="login-col">
-  <?php
-    $language = $this->layout()->userLang;
-    if (!in_array($language, ['fi', 'sv', 'en-gb'])) {
-      $language = 'en-gb';
-    }
-  ?>
-  <?=$this->partial("Auth/Database/creation_terms_$language.phtml") ?>
-</div>
+<?php if ($tmpl = $this->content()->findTemplateForLng('Auth/Database/creation_terms', true)): ?>
+  <div class="login-col">
+    <?=$this->partial($tmpl) ?>
+  </div>
+<?php endif; ?>
 <div class="clearfix"></div>
