@@ -2092,6 +2092,21 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      */
     public function getPhysicalLocations(): array
     {
+        $result = $this->getPhysicalLocationsExtended();
+        return array_column($result, 'location');
+    }
+
+    /**
+     * Get physical locations and additional information
+     *
+     * Returns a multidimensional array containing arrays with keys:
+     *  - 'location'        string  Physical location
+     *  - 'locationInfo'    array   Additional information
+     *
+     * @return array
+     */
+    public function getPhysicalLocationsExtended(): array
+    {
         $results = [];
         foreach (
             $this->getXmlRecord()->lido->descriptiveMetadata->objectIdentificationWrap
@@ -2116,7 +2131,24 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 }
             }
             if ($locations) {
-                $results[] = implode(', ', $locations);
+                $locationInfo = [];
+                foreach ($repository->repositoryLocation->placeID ?? [] as $placeId) {
+                    if (!($placeIdStr = trim((string)$placeId))) {
+                        continue;
+                    }
+                    $attr = $placeId->attributes();
+                    $idType = trim((string)$attr->type);
+                    $id = $idType ? "($idType)$placeIdStr" : $placeIdStr;
+                    if ($idType === 'prt') {
+                        $locationInfo['type'] = $idType;
+                        $locationInfo['id'] = $id;
+                    }
+                    $locationInfo['ids'][] = $id;
+                }
+                $results[] = [
+                    'location' => implode(', ', $locations),
+                    'locationInfo' => $locationInfo,
+                ];
             }
             $lang = $this->getLocale();
             if (
@@ -2125,7 +2157,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                     ?? ''
                 )
             ) {
-                $results[] = $display;
+                $results[] = [
+                    'location' => $display,
+                    'locationInfo' => [],
+                ];
             }
         }
         return $results;

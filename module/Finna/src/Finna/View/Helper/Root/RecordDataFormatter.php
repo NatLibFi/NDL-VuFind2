@@ -167,7 +167,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'ISSN',
             'Language',
             'lido_editions',
-            'Location',
+            'Location LIDO',
             'Measurements',
             'Organisation',
             'original_work_language',
