@@ -19,7 +19,7 @@
           $id = $placeEvent['id'] ?? null;
           $ids = $placeEvent['ids'] ?? null;
           $authType = $placeEvent['authType'] ?? null;
-          $detail = $this->transEsc($placeEvent['details'][0]) ?? null;
+          $detail = $this->transEsc($placeEvent['details'][0] ?? '', null, '');
         ?>
         <?=$this->record($this->driver)->getLinkedFieldElement($this->headingType ?? 'subject', $placeEvent['placeName'], ['name' => $placeEvent['placeName'], 'id' => $id, 'ids' => $ids, 'description' => $detail], ['authorityType' => $authType, 'class' => ['backlink'], 'description' => true])?><br>
       <?php endif; ?>
