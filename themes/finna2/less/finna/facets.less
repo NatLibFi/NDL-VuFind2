@@ -167,7 +167,15 @@ span.badge.cb-facet {
   .facet {
     padding: 3px 0 2px 8px;
     display: flex;
-    .text { flex-grow: 1; }
+    .text {
+      flex-grow: 1;
+      overflow: hidden;
+
+      .facet-value {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
   }
   .title {
     display: flex;
