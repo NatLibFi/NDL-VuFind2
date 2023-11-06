@@ -364,7 +364,11 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
         foreach ($xml->rights as $right) {
             $strRight = trim((string)$right);
             $type = trim((string)$right->attributes()->type);
-            $rightLanguage = trim((string)$right->attributes()->lang) ?: self::NO_LOCALE;
+            $rightLanguage = trim((string)$right->attributes()->lang);
+            // QDC sometimes marks languageless elements with a dash
+            if (!$rightLanguage || '-' === $rightLanguage) {
+                $rightLanguage = self::NO_LOCALE;
+            }
             // If no type and language is set and it is the first rights element,
             // then we can assume it is the main copyright to display
             if (null === $firstElementPriority) {
