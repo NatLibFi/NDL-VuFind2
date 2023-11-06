@@ -32,9 +32,7 @@
             <?php if ($schedule['closed']): ?>
               <span class="closed-today"><?=$this->transEsc('organisation_info_is_closed')?></span>
             <?php else: ?>
-              <span class="period">
-                <?=$renderInterval($schedule['firstOpeningTime'], $schedule['lastClosingTime'], $schedule['minutePrecision'])?>
-              </span>
+              <?=$renderInterval($schedule['firstOpeningTime'], $schedule['lastClosingTime'], $schedule['minutePrecision'])?>
             <?php endif; ?>
           </div>
         </div>
@@ -52,9 +50,7 @@
                 <?php endif; ?>
               </div>
               <div class="time-container">
-                <span class="period">
-                  <?=$renderInterval($time['opens'], $time['closes'], $schedule['minutePrecision'])?>
-                </span>
+                <?=$renderInterval($time['opens'], $time['closes'], $schedule['minutePrecision'])?>
               </div>
             </div>
           <?php endforeach; ?>
