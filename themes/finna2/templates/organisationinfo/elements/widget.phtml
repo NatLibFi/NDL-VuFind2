@@ -2,11 +2,12 @@
 <div class="location-details info-element">
   <div class="<?=$showDetails ? 'info-col ' : ''?>info">
     <div class="js-location-dropdown dropdown">
-      <button type="button" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-id="">
+      <?php $disabled = count($orgInfo['list'] ?? []) <= 1; ?>
+      <button type="button" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-id=""<?=$disabled ? ' disabled' : ''?>>
         <span class="js-aria" aria-atomic="true">
           <span class="sr-only"><?=$this->transEsc('organisation_info_selected_service_point')?></span>
           <span class="js-selected"><?=$this->transEsc($locationName ?: 'choose_from_list')?></span>
-          <?=$this->icon('dropdown-open') ?>
+          <?=$this->icon('dropdown-open', 'dropdown-icon') ?>
         </span>
       </button>
       <ul class="dropdown-menu" role="menu" aria-label="<?=$this->transEscAttr('organisation_info_select_service_point')?>">

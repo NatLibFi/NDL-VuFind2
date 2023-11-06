@@ -824,6 +824,16 @@
             border-radius: 10px;
             transition: background .1s linear, color .2s linear;
             margin-right: 2px;
+
+            &[disabled] {
+                border: none;
+                background-color: @body-bg;
+
+                .dropdown-icon {
+                    display: none;
+                }
+            }
+
             &:hover, &:active, &:focus {
                 text-decoration: none;
                 background: @gray-lighter;
@@ -860,9 +870,9 @@
                 padding: 12px 8px;
                 transition: background .2s linear;
                 color: @gray;
+                cursor: pointer;
                 &:hover {
                     background: @gray-lighter;
-                    cursor: pointer;
                     text-decoration: none;
                 }
             }

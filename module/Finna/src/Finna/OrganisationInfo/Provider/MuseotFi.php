@@ -132,6 +132,8 @@ class MuseotFi extends AbstractProvider
 
         // Details info
         $details = [
+            'id' => $id,
+            'type' => 'museum',
             'name' => $json['name'][$language],
             'homepage' => '',
             'slogan' => '',
@@ -163,8 +165,7 @@ class MuseotFi extends AbstractProvider
                 },
                 array_filter(explode(', ', $json['email'] ?? ''))
             ),
-            'id' => $id,
-            'type' => 'museum',
+            'services' => [],
         ];
         // Date handling
         $days = [

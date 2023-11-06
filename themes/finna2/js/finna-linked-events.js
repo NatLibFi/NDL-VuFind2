@@ -205,7 +205,12 @@ finna.linkedEvents = (function finnaLinkedEvents() {
     }).keyup(function onKeyUp(e) {
       return keyHandler(e);
     });
-    container.find('.accordion.active').click();
+    // Setup accordion but avoid reloading the content (initEventTabs loads the initial content):
+    let $activeEl = container.find('.accordion.active');
+    if ($activeEl.length) {
+      toggleAccordion(container, $activeEl);
+    }
+
   }
 
   function initEventsTabs(id) {
