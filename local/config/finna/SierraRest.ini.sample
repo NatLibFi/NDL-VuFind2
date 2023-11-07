@@ -281,6 +281,8 @@ display_total_hold_count = true
 display_total_item_count_in_results = true
 ; Whether ordered item count is displayed in results list
 display_ordered_item_count_in_results = false
+; Whether to display title hold links in results list
+display_title_hold_in_results = true
 ; A comma-separated list of fields to display as item-specific location when item
 ; number is not available. Default is none.
 ; The following options are available:

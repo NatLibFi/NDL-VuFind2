@@ -574,6 +574,14 @@ finna.record = (function finnaRecord() {
       'LazyImages',
       container.querySelectorAll('img[data-src]')
     );
+    container.querySelectorAll('img').forEach(el => {
+      el.onload = function onCarouselImageLoad() {
+        if (this.naturalWidth === 10 && this.naturalHeight === 10) {
+          el.nextElementSibling.classList.remove('hidden');
+          el.classList.add('hidden');
+        }
+      };
+    });
   }
 
   function init() {
