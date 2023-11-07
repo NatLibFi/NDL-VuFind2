@@ -403,7 +403,7 @@ class Primo extends \VuFind\RecordDriver\Primo
      */
     public function getRecordFormat()
     {
-        return $this->fields['format'];
+        return 'primo';
     }
 
     /**
