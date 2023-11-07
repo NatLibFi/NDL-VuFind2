@@ -68,6 +68,9 @@
 
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
   $recordFormat = $this->driver->tryMethod('getRecordFormat');
+  if ($recordFormat && !is_iterable($recordFormat)) {
+    $recordFormat = [$recordFormat];
+  }
   $fullWidthLayout = $this->record($this->driver)->hasFullWidthLayout();
   $largeImageLayout = $this->record($this->driver)->hasLargeImageLayout();
 
@@ -91,16 +94,20 @@
 </div>
 <?= $this->record($this->driver)->getBanner() ?>
 <div class="container">
-<?php $recordAttributes = $this->htmlAttributes([
+<?php
+  $recordAttributes = $this->htmlAttributes([
     'class' => [
       'record',
       'source' . $this->driver->getSourceIdentifier(),
-      $recordFormat ? 'record-format-' . $recordFormat : '',
       'record-row',
       $fullWidthLayout ? 'full-width-layout' : '',
       $largeImageLayout ? 'large-image-layout' : '',
     ],
-  ]); ?>
+  ]);
+  foreach ($recordFormat ?? [] as $format) {
+    $recordAttributes->add('class', 'record-format-' . $format);
+  }
+?>
 <div<?= $recordAttributes ?>>
   <?= $this->R2()->registeredInfo($this->driver) ?>
   <div>
