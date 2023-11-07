@@ -46,6 +46,17 @@ class AuthorityController extends \Finna\Controller\SearchController
     protected $searchClassId = 'SolrAuth';
 
     /**
+     * Home action
+     *
+     * @return mixed
+     */
+    public function homeAction()
+    {
+        $this->layout()->searchClassId = $this->searchClassId;
+        return parent::homeAction();
+    }
+
+    /**
      * Record action -- display a record
      *
      * @return \Laminas\View\Model\ViewModel
