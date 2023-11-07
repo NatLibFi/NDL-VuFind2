@@ -6,8 +6,15 @@
   <?php if (!empty($field['url'])): ?>
     <a href="<?=$this->escapeHtmlAttr($field['url']) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($field['url']) ?>">
   <?php endif; ?>
-  <?=!empty($field['rights']) ? $this->escapeHtml($field['rights']) : $this->truncateUrl($field['url']) ?>
-  <?=!empty($field['source']) ? $this->escapeHtml($field['source']) : $this->truncateUrl($field['url']) ?>
+  <?php 
+    if(!empty($field['rights'])):
+      echo $this->escapeHtml($field['rights']);
+    elseif(!empty($field['source'])): 
+      echo $this->escapeHtml($field['source']);
+    else:
+      echo $this->truncateUrl($field['url']);
+    endif; 
+  ?>
   <?php if (!empty($field['url'])): ?>
     </a>
   <?php endif; ?>
