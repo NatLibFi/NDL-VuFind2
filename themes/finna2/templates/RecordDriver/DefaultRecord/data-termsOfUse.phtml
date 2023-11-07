@@ -2,11 +2,11 @@
 <?php foreach ($data as $field): ?>
   <?=!empty($field['material']) ? $this->escapeHtml($field['material']) . ': ' : '' ?>
   <?=!empty($field['terms']) ? $this->escapeHtml($field['terms']) : '' ?>
-  <?=!empty($field['sourcecode']) ? $this->escapeHtml($this->translate('accessrestriction_source_' . $field['sourcecode'])) : '' ?>
+  <?=!empty($field['rightsSource']) ? $this->escapeHtml($this->transEscWithPrefix('access_restriction_source_' . $field['rightsSource'])) : '' ?>
   <?php if (!empty($field['url'])): ?>
     <a href="<?=$this->escapeHtmlAttr($field['url']) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($field['url']) ?>">
   <?php endif; ?>
-  <?=!empty($field['code']) ? $this->escapeHtml($field['code']) : $this->truncateUrl($field['url']) ?>
+  <?=!empty($field['rights']) ? $this->escapeHtml($field['rights']) : $this->truncateUrl($field['url']) ?>
   <?php if (!empty($field['url'])): ?>
     </a>
   <?php endif; ?>
