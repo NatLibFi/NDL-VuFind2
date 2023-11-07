@@ -1514,7 +1514,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             $rightsSource = $this->getSubfield($field, '2');
             $rights = $this->getSubfield($field, 'f');
             $url = $this->getSubfield($field, 'u');
-            if ($terms || $source || $url || ($sourcecode && $rights)) {
+            if ($terms || $source || $url || ($rightsSource && $rights)) {
                 $result[] = compact('material', 'terms', 'source', 'url', 'rightsSource', 'rights');
             }
         }
