@@ -1499,8 +1499,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      * - terms     Terms as text
      * - source    Source of authority for the restriction
      * - url       URL to terms
-     * - sourcecode Source of the access licence (e.g. Creative Commons)
-     * - code      Licence code
+     * - rightsSource Source of the access licence (e.g. 'cc' for Creative Commons)
+     * - rights    Licence code
      *
      * @return string
      */
@@ -1511,11 +1511,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             $material = $this->getSubfield($field, '3');
             $terms = $this->getSubfield($field, 'a');
             $source = $this->getSubfield($field, 'c');
-            $sourcecode = $this->getSubfield($field, '2');
-            $code = $this->getSubfield($field, 'f');
+            $rightsSource = $this->getSubfield($field, '2');
+            $rights = $this->getSubfield($field, 'f');
             $url = $this->getSubfield($field, 'u');
-            if ($terms || $source || $url || ($sourcecode && $code)) {
-                $result[] = compact('material', 'terms', 'source', 'url', 'sourcecode', 'code');
+            if ($terms || $source || $url || ($sourcecode && $rights)) {
+                $result[] = compact('material', 'terms', 'source', 'url', 'rightsSource', 'rights');
             }
         }
         return $result;
