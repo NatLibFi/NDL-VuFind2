@@ -171,7 +171,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'downloadable' => false,
                         'resourceName' => 'Kuvan nimi',
                     ],
-                    7 => [
+                    2 => [
                         'urls' => [
                             'large' => 'https://kaikkilinkit.com',
                             'small' => 'https://kaikkilinkit.com',
