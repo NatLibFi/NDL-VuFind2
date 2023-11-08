@@ -334,7 +334,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     {
         $language ??= $this->getTranslatorLocale();
         $representations = $this->getRepresentations($language);
-        return array_filter(array_column($representations, 'images'));
+        return array_values(array_filter(array_column($representations, 'images')));
     }
 
     /**
