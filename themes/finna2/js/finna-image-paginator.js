@@ -25,9 +25,9 @@ var translations = {
 /**
  * Initializer function
  *
- * @param {HTMLElement} trigger  Clickable element to trigger popup
- * @param {Array}       images   Array containing objects with image data
- * @param {object}      settings Paginator settings
+ * @param {object} images
+ * @param {object} settings
+ * @param {boolean} isList
  */
 function FinnaPaginator(element, images, settings) {
   var _ = this;
