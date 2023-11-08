@@ -257,7 +257,7 @@
       <?=$sidebar ?>
     </div>
   <?php endif; ?>
-  <?php if ($this->config()->getSimilarRecordsCarouselLocation() === 'after_tabs'): ?>
+  <?php if ($this->config()->getSimilarRecordsCarouselLocation() === 'after_tabs' && $this->driver->getSourceIdentifier() === 'Solr'): ?>
     <div class="similar-bottom container">
       <?=$this->render('RecordTab/similaritemscarousel.phtml', ['tab' => $this->record($this->driver)->getSimilarItemsCarousel()])?>
     </div>
