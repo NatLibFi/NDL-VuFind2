@@ -37,7 +37,7 @@ function FinnaPaginator(element, images, settings) {
   _.images = images;
   // Make sure that images is an array
   if (!Array.isArray(_.images) && typeof _.images === 'object') {
-    _.images = Object.keys(_.images).map((key) => _.images[key]);
+    _.images = Object.values(_.images);
   }
   // Reindex array just in case
   _.images = _.images.filter(val => val);
