@@ -25,9 +25,9 @@ var translations = {
 /**
  * Initializer function
  *
- * @param {object} images
- * @param {object} settings
- * @param {boolean} isList
+ * @param {HTMLElement} trigger  Clickable element to trigger popup
+ * @param {Array}       images   Array containing objects with image data
+ * @param {object}      settings Paginator settings
  */
 function FinnaPaginator(element, images, settings) {
   var _ = this;
@@ -35,6 +35,11 @@ function FinnaPaginator(element, images, settings) {
   _.trigger.removeClass('init');
   _.root = _.trigger.closest('.recordcover-holder');
   _.images = images;
+  // Make sure that images are an array
+  if (!Array.isArray(_.images) && typeof _.images === 'object') {
+    _.images = Object.keys(_.images).map((key) => _.images[key]);
+  }
+  _.images = _.images.filter(val => val);
   _.settings = $.extend({}, defaults, settings);
   _.covers = _.root.find('.' + _.settings.recordCovers);
   _.offSet = 0;
