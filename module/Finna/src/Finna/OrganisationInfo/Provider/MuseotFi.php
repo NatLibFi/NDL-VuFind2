@@ -226,10 +226,9 @@ class MuseotFi extends AbstractProvider
             }
         }
 
-        $details['scheduleDescriptions'] = [
-            !empty($json['opening_info'][$language])
-                ? $json['opening_info'][$language] : '',
-        ];
+        $details['scheduleDescriptions'] = !empty($json['opening_info'][$language])
+            ? [$json['opening_info'][$language]]
+            : [];
 
         if (!$consortiumInfo) {
             return $details;

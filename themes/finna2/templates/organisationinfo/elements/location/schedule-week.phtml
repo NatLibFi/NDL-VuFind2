@@ -77,9 +77,16 @@
 
   <?php if ($orgInfo['scheduleDescriptions']): ?>
     <div class="schedules-info info-element">
-      <?php foreach ($orgInfo['scheduleDescriptions'] as $description): ?>
-        <?=$this->cleanHtml(preg_replace('/(?:\r\n|\r|\n)/', '<br>', $description))?>
-      <?php endforeach; ?>
+      <?=
+      implode(
+          '<br>',
+          array_map(
+              function ($s) {
+                  return $this->cleanHtml(preg_replace('/(?:\r\n|\r|\n)/', '<br>', $s));
+              },
+              $orgInfo['scheduleDescriptions']
+          )
+      )?>
     </div>
   <?php endif; ?>
 </div>

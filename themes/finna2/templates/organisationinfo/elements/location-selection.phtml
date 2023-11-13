@@ -20,6 +20,9 @@
                 $name = $item['name'];
                 $area = $item['address']['area'];
                 $city = $item['address']['city'];
+                if ($area === $city) {
+                  $area = '';
+                }
                 if ('' !== $area && '' !== $city) {
                   $name .= ", $area ($city)";
                 } elseif ('' !== $area || '' !== $city) {
