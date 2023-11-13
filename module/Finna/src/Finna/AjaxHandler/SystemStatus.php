@@ -46,8 +46,10 @@ use Laminas\Mvc\Controller\Plugin\Params;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class SystemStatus extends \VuFind\AjaxHandler\SystemStatus
+class SystemStatus extends \VuFind\AjaxHandler\SystemStatus implements \Laminas\Log\LoggerAwareInterface
 {
+    use \VuFind\Log\LoggerAwareTrait;
+
     /**
      * Handle a request.
      *
@@ -72,6 +74,9 @@ class SystemStatus extends \VuFind\AjaxHandler\SystemStatus
                 self::STATUS_HTTP_UNAVAILABLE
             );
         }
+
+        // Test logging (note that the message doesn't need to get written for the log writer to initialize):
+        $this->log('info', 'SystemStatus log check', [], true);
 
         // Test search index
         if ($params->fromPost('index', $params->fromQuery('index', 1))) {
