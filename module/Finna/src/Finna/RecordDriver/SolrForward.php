@@ -1214,7 +1214,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
         }
         $videos = [];
         foreach ($this->getAllRecordsXML() as $xml) {
-            if (!($production = $xml->ProductionEvent->ProductionEventType ?? '')) {
+            if (empty($xml->ProductionEvent->ProductionEventType)) {
                 continue;
             }
             foreach ($xml->Title as $title) {
