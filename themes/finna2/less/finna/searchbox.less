@@ -126,9 +126,6 @@
 }
 
 .searchbox-home {
-  @media (min-width: @screen-md) {
-    width: 70%;
-  }
   flex-wrap: wrap;
   .search-links {
     flex-basis: 100%;
@@ -143,6 +140,9 @@
   }
   .search {
     flex: 1;
+    @media (min-width: @screen-md) {
+      max-width: 70%;
+    }
   }
   .pager {
     display: flex;
