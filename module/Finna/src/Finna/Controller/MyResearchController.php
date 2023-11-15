@@ -37,6 +37,7 @@ namespace Finna\Controller;
 use VuFind\Exception\Forbidden as ForbiddenException;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\Exception\ListPermission as ListPermissionException;
+use VuFind\Search\RecommendListener;
 
 use function array_key_exists;
 use function count;
@@ -1700,6 +1701,83 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
 
         return $userLists;
+    }
+
+    /**
+     * Reservation list action
+     *
+     * @return \Laminas\View\Model\ViewModel
+     */
+    public function reservationListAction(): \Laminas\View\Model\ViewModel
+    {
+        // Fail if lists are disabled:
+        if (!$this->listsEnabled()) {
+            throw new ForbiddenException('Lists disabled');
+        }
+
+        if ($this->formWasSubmitted('submit')) {
+            var_dump('yeeeeeeeeeeeeaaaaaaaaaa');
+        }
+        $action = $this->params()->fromPost(
+            'action',
+            $this->params()->fromQuery('action')
+        );
+        $source = $this->params()->fromPost(
+            'source',
+            $this->params()->fromQuery(
+                'source',
+                DEFAULT_SEARCH_BACKEND
+            )
+        );
+        $id = $this->params()->fromPost(
+            'recordId',
+            $this->params()->fromQuery(
+                'recordId',
+            )
+        );
+        $driver = $this->getRecordLoader()->load($id, $source, true);
+        $view = $this->createViewModel(
+            [
+                'driver' => $driver,
+            ]
+        );
+        switch ($action) {
+            case 'add':
+                // Display add to list or create new list page
+                $view->setTemplate('myresearch/editreservationlist.phtml');
+                break;
+            case 'newList':
+                // Display newList page
+                break;
+            case 'delete':
+                // Try to delete and delete if plausible
+                break;
+            case 'edit':
+                // Display edit list thingie page
+                break;
+            default:
+                break;
+        }
+        return $view;
+        // Check for "delete item" request; parameter may be in GET or POST depending
+        // on calling context.
+        $deleteId = $this->params()->fromPost(
+            'delete',
+            $this->params()->fromQuery('delete')
+        );
+        if ($deleteId) {
+
+        }
+
+        // If we got this far, we should display a dropdown containing all the lists
+        try {
+
+        } catch (ListPermissionException $e) {
+            if (!$this->getUser()) {
+                return $this->forceLogin();
+            }
+            throw $e;
+        }
     }
 
     /**

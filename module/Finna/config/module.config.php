@@ -389,6 +389,7 @@ $config = [
             'Finna\Statistics\Driver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Statistics\EventHandler' => 'Finna\Statistics\EventHandlerFactory',
             'Finna\Favorites\FavoritesService' => 'Finna\Favorites\FavoritesServiceFactory',
+            'Finna\ReservationList\ReservationListService' => 'Finna\ReservationList\ReservationListServiceFactory',
             'Finna\View\CustomElement\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Video\Handler\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Video\Video' => 'Finna\Video\VideoFactory',
@@ -613,6 +614,7 @@ $config = [
                     'Finna\Db\Row\TransactionEventLog' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\User' => 'Finna\Db\Row\UserFactory',
                     'Finna\Db\Row\UserList' => 'VuFind\Db\Row\UserListFactory',
+                    'Finna\Db\Row\ReservationList' => 'Finna\Db\Row\ReservationListFactory',
                 ],
                 'aliases' => [
                     'VuFind\Db\Row\PrivateUser' => 'Finna\Db\Row\PrivateUser',
@@ -659,6 +661,7 @@ $config = [
                     'Finna\Db\Table\TransactionEventLog' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\User' => 'VuFind\Db\Table\UserFactory',
                     'Finna\Db\Table\UserList' => 'VuFind\Db\Table\GatewayFactory',
+                    'Finna\Db\Table\ReservationList' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\UserResource' => 'VuFind\Db\Table\GatewayFactory',
                 ],
                 'aliases' => [
@@ -1076,14 +1079,17 @@ $recordRoutes = [
 
 // Define non tab record actions
 $nonTabRecordActions = [
-    'Feedback', 'RepositoryLibraryRequest', 'ArchiveRequest',
+    'Feedback', 'RepositoryLibraryRequest', 'ArchiveRequest', 'ReservationList',
 ];
 
 // Define dynamic routes -- controller => [route name => action]
 $dynamicRoutes = [
     'Comments' => ['inappropriate' => 'inappropriate/[:id]'],
     'LibraryCards' => ['newLibraryCardPassword' => 'newPassword/[:id]'],
-    'MyResearch' => ['sortList' => 'SortList/[:id]'],
+    'MyResearch' => [
+        'sortList' => 'SortList/[:id]',
+        'reservationList' => 'ReservationList'
+    ],
     'R2Feedback' => ['r2feedback-form' => 'Form/[:id]'],
 ];
 

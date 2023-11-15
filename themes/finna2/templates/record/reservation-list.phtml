@@ -1,0 +1,11 @@
+<div>
+<a class="btn btn-link" id="make-list" href="<?=$this->url('reservationList')?>?id=NEW&amp;action=add&amp;recordId=<?=urlencode($this->driver->getUniqueId())?>&amp;recordSource=<?=urlencode($this->driver->getSourceIdentifier())?>"><?=$this->transEsc('or create a new list')?></a>
+    <?php if (!empty($this->lists)): ?>
+        eeeeeeeeeeeeeee
+        <?php foreach ($this->lists as $list): ?>
+            asd
+        <?php endforeach; ?>
+    <?php else: ?>
+        Lists are organised with datasources.
+    <?php endif; ?>
+</div>

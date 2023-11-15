@@ -30,6 +30,7 @@
 namespace Finna\Controller;
 
 use Finna\Form\Form;
+use Finna\ReservationList\ReservationListService;
 use VuFindSearch\ParamBag;
 
 use function count;
@@ -90,6 +91,28 @@ class RecordController extends \VuFind\Controller\RecordController
     public function archiveRequestAction()
     {
         return $this->getRecordForm(Form::ARCHIVE_MATERIAL_REQUEST);
+    }
+
+    /**
+     * Display save to reservation list form.
+     *
+     * @return \Laminas\View\Model\ViewModel
+     * @throws \Exception
+     */
+    public function reservationListAction()
+    {
+        $driver = $this->loadRecord();
+        // Now we should try to find all the lists for user.. Lets check if this works somehow or something
+        $reservationListService = $this->serviceLocator->get(ReservationListService::class);
+        $lists = $reservationListService->getListsForUser($this->getUser());
+        $view = $this->createViewModel(
+            compact(
+                'driver',
+                'lists'
+            )
+        );
+        $view->setTemplate('record/reservation-list');
+        return $view;
     }
 
     /**
