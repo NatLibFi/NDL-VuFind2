@@ -48,6 +48,7 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
     protected $aliases = [
         'Elonet' => Elonet::class,
         'Vimeo' => Vimeo::class,
+        'Icareus' => Icareus::class,
         'Default' => DefaultVideo::class,
     ];
 
@@ -59,6 +60,7 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
     protected $factories = [
         Elonet::class => 'Laminas\ServiceManager\Factory\InvokableFactory',
         Vimeo::class => 'Laminas\ServiceManager\Factory\InvokableFactory',
+        Icareus::class => 'Laminas\ServiceManager\Factory\InvokableFactory',
         DefaultVideo::class => 'Laminas\ServiceManager\Factory\InvokableFactory',
     ];
 
