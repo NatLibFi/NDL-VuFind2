@@ -1217,13 +1217,11 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
             if (!($production = $xml->ProductionEvent->ProductionEventType ?? '')) {
                 continue;
             }
-            $eventAttrs = $production->attributes();
-            $vimeoID = trim((string)$eventAttrs->{'vimeo-id'});
             foreach ($xml->Title as $title) {
                 if (!isset($title->TitleText)) {
                     continue;
                 }
-                $videoUrl = $videoID = trim((string)$title->TitleText);
+                $videoID = trim((string)$title->TitleText);
                 $titleValue = $title->PartDesignation->Value ?? '';
                 if (!$titleValue) {
                     continue;
@@ -1249,8 +1247,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
                     }
                 }
                 $videos[] = [
-                    'id' => $vimeoID ?: $videoID,
-                    'url' => $vimeoID ? $videoUrl : '',
+                    'id' => $videoID,
+                    'url' => '',
                     'posterName' => (string)$titleValue,
                     'type' => $videoType,
                     'description' => $videoType,

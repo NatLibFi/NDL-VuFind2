@@ -109,13 +109,6 @@ video['handler'] = "Vimeo"
 video['url'] = "https://vimeo.com/{videoid}"
 video['posterUrl'] = "https://link.to.posterUrl/{filename}"
 
-; ### Elonet:
-video['handler'] = "Elonet"
-video['secret'] = "secretkey"
-video['timestampPrecision'] = 3000
-video['url'] = "https://link.to.video/{filename}"
-video['posterUrl'] = "https://link.to.posterUrl/{filename}"
-
 ; Videosources to check, if an url can be provided for a video
 ; ### Default:
 video_sources[] = "application/x-mpegURL|https://link.to.video/{videoname}.m3u8|smil"
