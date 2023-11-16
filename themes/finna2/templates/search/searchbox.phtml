@@ -234,7 +234,7 @@
     </form>
     </div>
     <?php if (!$browse && !$mainPage && $advSearch): ?>
-      <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced <?=($module === 'record') ? 'visible-lg' : 'hidden-xs'?>"><?=$this->icon('search-advanced', 'search-advanced-icon') ?><?=$this->transEsc('Advanced Search')?></a>
+      <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced <?=($module === 'record') ? 'visible-sm' : 'hidden-xs'?>"><?=$this->icon('search-advanced', 'search-advanced-icon') ?><?=$this->transEsc('Advanced Search')?></a>
     <?php endif; ?>
     <div class="search-tooltip"><?php
         $searchTypes = ['search' => 'local', 'primo' => 'pci', 'eds' => 'eds', 'r2search' => 'R2', 'summon' => 'summon'];
