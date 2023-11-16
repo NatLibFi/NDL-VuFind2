@@ -254,7 +254,7 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper implements TranslatorAw
         ];
         return $this->render(
             implode(' ', $styleParts),
-            'YouTube video player',
+            'Icareus video player',
             'https://players.icareus.com/elonet/embed/vod/' . urlencode($videoId),
             $attributes,
             'https://players.icareus.com/elonet/embed/vod/' . urlencode($videoId),
