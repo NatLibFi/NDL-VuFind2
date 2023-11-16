@@ -1103,11 +1103,24 @@ class SolrEad3 extends SolrEad
     public function getPhysicalDescriptions()
     {
         $xml = $this->getXmlRecord();
-        if (!isset($xml->did->physdesc)) {
+        if (!isset($xml->did)) {
             return [];
         }
+        $results = $this->getDisplayLabel($xml->did, 'physdesc');
+        $localeResults = $this->getDisplayLabel($xml->did, 'physdesc', true);
+        foreach ($xml->did->physdescstructured ?? [] as $desc) {
+            $lang = $this->detectNodeLanguage($desc);
+            $quantity = trim((string)($desc->quantity ?? ''));
+            $unittype = trim((string)($desc->unittype ?? ''));
+            if ($result = trim($quantity . ' ' . mb_strtolower($unittype, 'UTF-8'))) {
+                $results[] = $result;
+                if ($lang['preferred'] ?? false) {
+                    $localeResults[] = $result;
+                }
+            }
+        }
 
-        return $this->getDisplayLabel($xml->did, 'physdesc', true);
+        return $localeResults ?: $results;
     }
 
     /**
@@ -2234,10 +2247,10 @@ class SolrEad3 extends SolrEad
      * @param \SimpleXMLElement $node                  XML node
      * @param string            $childNodeName         Name of the child node that
      * contains the display label.
-     * @param bool              $obeyPreferredLanguage If true, returns the
+     * @param bool              $obeyPreferredLanguage If true, returns only the
      * translation that corresponds with the current locale.
-     * If false, the default language version 'fin' is returned. If not found,
-     * the first display label is retured.
+     * If false, uses the default language version 'fin' as fallback. If not found,
+     * all display labels are returned.
      *
      * @return string[]
      */
@@ -2255,20 +2268,21 @@ class SolrEad3 extends SolrEad
         $lang = $langFound = $this->detectNodeLanguage($node);
         $resolveLangFromChildNode = $lang === null;
         foreach ($node->{$childNodeName} as $child) {
-            $name = trim((string)$child);
-            $allResults[] = $name;
+            if ($name = trim((string)$child)) {
+                $allResults[] = $name;
 
-            if ($resolveLangFromChildNode) {
-                $lang = $this->detectNodeLanguage($child);
-                if ($lang) {
-                    $langFound = $lang;
+                if ($resolveLangFromChildNode) {
+                    $lang = $this->detectNodeLanguage($child);
+                    if ($lang) {
+                        $langFound = $lang;
+                    }
                 }
-            }
-            if ($lang['default'] ?? false) {
-                $defaultLanguageResults[] = $name;
-            }
-            if ($lang['preferred'] ?? false) {
-                $languageResults[] = $name;
+                if ($lang['default'] ?? false) {
+                    $defaultLanguageResults[] = $name;
+                }
+                if ($lang['preferred'] ?? false) {
+                    $languageResults[] = $name;
+                }
             }
         }
 
