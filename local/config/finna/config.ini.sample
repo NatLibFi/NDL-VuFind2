@@ -708,8 +708,7 @@ lastname = SHIB_sn
 ;            applications.  The existence of functionality in VuFind does not imply
 ;            suitability for any particular situation.
 [Content]
-; You can select Syndetics, LibraryThing, Summon, Booksite, OpenLibrary,
-; You can select Syndetics, LibraryThing, Summon, Booksite, OpenLibrary,
+; You can select NatLibFi, Syndetics, LibraryThing, Summon, Booksite, OpenLibrary,
 ; Contentcafe, Buchhandel.de, Google, BrowZine, ObalkyKnih, Orb, Koha and/or
 ; LocalFile. Service-specific notes:
 ;   - BrowZine requires you to have BrowZine.ini configured appropriately.
