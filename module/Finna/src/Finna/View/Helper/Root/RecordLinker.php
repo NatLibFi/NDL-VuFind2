@@ -104,9 +104,8 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
                 $embedUrl = 'https://www.youtube.com/embed/' . $query['v'];
                 break;
             case 'players.icareus.com':
-                $exploded = explode('/', $parts['path']);
-                $id = end($exploded);
-                $embedUrl = "https://players.icareus.com/elonet/embed/vod/$id";
+                // Icareus URLs can be returned as is.
+                $embedUrl = $url;
                 break;
         }
         return $embedUrl;
