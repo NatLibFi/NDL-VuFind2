@@ -48,10 +48,10 @@ class ReservationList extends UserList
     /**
      * Create a new list object.
      *
-     * @param \VuFind\Db\Row\ReservationList|bool $user User object representing owner of
+     * @param bool $user User object representing owner of
      * new list (or false if not logged in)
      *
-     * @return \VuFind\Db\Row\ReservationList
+     * @return \Finna\Db\Row\ReservationList
      * @throws LoginRequiredException
      */
     public function getNew($user)
@@ -63,6 +63,7 @@ class ReservationList extends UserList
         $row = $this->createRow();
         $row->created = date('Y-m-d H:i:s');    // force creation date
         $row->user_id = $user->id;
+        $row->datasource = '';
         return $row;
     }
 }

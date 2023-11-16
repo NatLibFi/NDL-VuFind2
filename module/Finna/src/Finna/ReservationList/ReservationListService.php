@@ -3,6 +3,7 @@
 namespace Finna\ReservationList;
 
 use Finna\Db\Table\ReservationList;
+use Laminas\Stdlib\Parameters;
 use VuFind\Db\Table\Resource as ResourceTable;
 use VuFind\Db\Table\UserResource as UserResourceTable;
 use VuFind\Exception\LoginRequired as LoginRequiredException;
@@ -59,82 +60,80 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
     }
 
     /**
-     * Save this record to the user's favorites.
+     * Checks that if the user has authority over certain reservation list
      *
-     * @param array                 $params  Array with some or all of these keys:
-     *  <ul>
-     *    <li>mytags - Tag array to associate with record (optional)</li>
-     *    <li>notes - Notes to associate with record (optional)</li>
-     *    <li>list - ID of list to save record into (omit to create new list)</li>
-     *  </ul>
-     * @param \VuFind\Db\Row\User   $user    The user saving the record
-     * @param array  RecordDriver[] $drivers Record drivers for record being saved
+     * @param User $user User to check
+     * @param int  $id   Id of the list
      *
-     * @return array list information
+     * @return bool
      */
-    public function saveMany(
-        array $params,
-        \VuFind\Db\Row\User $user,
-        array $drivers
-    ) {
-        // Validate incoming parameters:
-        if (!$user) {
-            throw new LoginRequiredException('You must be logged in first');
-        }
-        $listId = $params['list'] ?? '';
-        // Get or create a list object as needed:
-        $list = $this->getListObject(
-            $listId,
-            $user
-        );
-
-        // check if list has custom order, if so add custom order keys for new items
-        $index = $this->userResourceTable->getNextAvailableCustomOrderIndex($listId);
-
-        // if target list is not in custom order then reverse
-        if (! $this->userResourceTable->isCustomOrderAvailable($listId)) {
-            $drivers = array_reverse($drivers);
-        }
-
-        // Get or create a resource object as needed:
-        $resources = array_map(
-            function ($driver) {
-                $resource = $this->resourceTable->findResource(
-                    $driver->getUniqueId(),
-                    $driver->getSourceIdentifier(),
-                    true,
-                    $driver
-                );
-                // Persist record in the database for "offline" use
-                $this->persistToCache($driver, $resource);
-                return $resource;
-            },
-            $drivers
-        );
-
-        // Add the information to the user's account:
-        $user->saveResources(
-            $resources,
-            $list,
-            $params['mytags'] ?? [],
-            $params['notes'] ?? '',
-            true,
-            $index
-        );
-        return ['listId' => $list->id];
+    public function userHasAuthority($user, $id): bool
+    {
+        return $this->reservationList->getExisting($id)->editAllowed($user);
     }
 
-    public function getListsForUser(\VuFind\Db\Row\User $user)
+    public function addListForUser($user, $desription, $title, $datasource): int
+    {
+        $row = $this->reservationList->getNew($user);
+        $title = $title . '_' . $datasource;
+        return $row->updateFromRequest($user, new Parameters([
+            'description' => $desription,
+            'title' => $title,
+            'datasource' => $datasource,
+        ]));
+    }
+
+    public function getListsForUser(\VuFind\Db\Row\User $user): array
     {
         $lists = $this->reservationList->select(['user_id' => $user->id]);
         $result = [];
         foreach ($lists as $list) {
             $result[] = [
-                $list->id,
-                $list->title
+                'id' => $list->id,
+                'title' => $list->title
             ];
         }
         return $result;
+    }
+
+    public function getListsForDatasource(\VuFind\Db\Row\User $user, string $datasource): array
+    {
+        $lists = $this->reservationList->select(['user_id' => $user->id, 'datasource' => $datasource]);
+        $result = [];
+        foreach ($lists as $list) {
+            $result[] = [
+                'id' => $list->id,
+                'title' => $list->title
+            ];
+        }
+        return $result;
+    }
+
+    /**
+     * Save a record into a reservation list.
+     *
+     * @param User $user User to save to
+     * @param string $recordId Id of the record
+     * @param string $listId   Id of the desired list
+     * @param string $notes    Notes to be added for a reservationlist resource
+     * @param string $source   Source of the search backend where the record is obtained from.
+     *                         Default is 'solr'
+     *
+     * @return bool True on success, fail on error
+     */
+    public function addRecordToList($user, $recordId, $listId, $notes = '', $source = DEFAULT_SEARCH_BACKEND): bool
+    {
+        $resourceTable = $this->reservationList->getDbTable('Resource');
+        $resource = $resourceTable->findResource($recordId, $source);
+
+        $userResourceTable = $this->reservationList->getDbTable(\Finna\Db\Table\ReservationListResource::class);
+        $userResourceTable->createOrUpdateLink(
+            $resource->id,
+            $user->id,
+            $listId,
+            $notes
+        );
+        return true;
     }
 
     public function deleteList($user, $id)

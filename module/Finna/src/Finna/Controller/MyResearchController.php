@@ -34,6 +34,7 @@
 
 namespace Finna\Controller;
 
+use Finna\ReservationList\ReservationListService;
 use VuFind\Exception\Forbidden as ForbiddenException;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\Exception\ListPermission as ListPermissionException;
@@ -1714,10 +1715,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         if (!$this->listsEnabled()) {
             throw new ForbiddenException('Lists disabled');
         }
-
-        if ($this->formWasSubmitted('submit')) {
-            var_dump('yeeeeeeeeeeeeaaaaaaaaaa');
-        }
         $action = $this->params()->fromPost(
             'action',
             $this->params()->fromQuery('action')
@@ -1739,12 +1736,35 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $view = $this->createViewModel(
             [
                 'driver' => $driver,
+                'action' => $action,
             ]
         );
+        if ($this->formWasSubmitted('submit')) {
+            // Check which form was submitted
+            $params = $this->params()->fromPost(null, []);
+            switch ($params['action'] ?? '') {
+                case 'add':
+                    break;
+                case 'edit':
+                    $reservationListService = $this->serviceLocator->get(ReservationListService::class);
+                    // Get the service which handles the lists
+                    $reservationListService->addListForUser(
+                        $this->getUser(),
+                        $params['desc'],
+                        $params['title'],
+                        $params['datasource'],
+                    );
+                    return $this->redirect()->toRoute('record-reservationlist', ['id' => $driver->getUniqueID()]);
+                    break;
+                default:
+                    break;
+            }
+        }
+        var_dump($this->params()->fromPost(null, []));
         switch ($action) {
             case 'add':
-                // Display add to list or create new list page
-                $view->setTemplate('myresearch/editreservationlist.phtml');
+                // Add record to an existing list
+                $view->setTemplate('record/reservation-list.phtml');
                 break;
             case 'newList':
                 // Display newList page
@@ -1753,6 +1773,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 // Try to delete and delete if plausible
                 break;
             case 'edit':
+                $view->setTemplate('myresearch/editreservationlist.phtml');
                 // Display edit list thingie page
                 break;
             default:

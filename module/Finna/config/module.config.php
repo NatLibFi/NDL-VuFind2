@@ -615,6 +615,7 @@ $config = [
                     'Finna\Db\Row\User' => 'Finna\Db\Row\UserFactory',
                     'Finna\Db\Row\UserList' => 'VuFind\Db\Row\UserListFactory',
                     'Finna\Db\Row\ReservationList' => 'Finna\Db\Row\ReservationListFactory',
+                    'Finna\Db\Row\ReservationListResource' => 'VuFind\Db\Row\RowGatewayFactory',
                 ],
                 'aliases' => [
                     'VuFind\Db\Row\PrivateUser' => 'Finna\Db\Row\PrivateUser',
@@ -662,6 +663,7 @@ $config = [
                     'Finna\Db\Table\User' => 'VuFind\Db\Table\UserFactory',
                     'Finna\Db\Table\UserList' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\ReservationList' => 'VuFind\Db\Table\GatewayFactory',
+                    'Finna\Db\Table\ReservationListResource' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\UserResource' => 'VuFind\Db\Table\GatewayFactory',
                 ],
                 'aliases' => [
