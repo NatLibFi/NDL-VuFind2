@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Factory for GetDescription AJAX handler.
+ * Factory for Record description provider.
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2018-2019.
+ * Copyright (C) The National Library of Finland 2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,13 +21,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  AJAX
+ * @package  Service
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 
-namespace Finna\AjaxHandler;
+namespace Finna\Content\Description;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
@@ -35,15 +35,15 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Factory for GetDescription AJAX handler.
+ * Factory for Record description provider.
  *
  * @category VuFind
- * @package  AJAX
+ * @package  Service
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class GetDescriptionFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
+class RecordFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create an object
@@ -69,15 +69,6 @@ class GetDescriptionFactory implements \Laminas\ServiceManager\Factory\FactoryIn
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
-        $config = $container->get(\VuFind\Config\PluginManager::class);
-        $result = new $requestedName(
-            $container->get(\VuFind\Session\Settings::class),
-            $container->get(\VuFind\Cache\Manager::class),
-            $container->get(\VuFind\Record\Loader::class),
-            $container->get(\Finna\Content\Description\PluginManager::class),
-            $config->get('config')->toArray(),
-            $config->get('datasources')->toArray()
-        );
-        return $result;
+        return new $requestedName($container->get('ViewRenderer'));
     }
 }
