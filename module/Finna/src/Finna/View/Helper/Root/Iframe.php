@@ -74,8 +74,6 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper implements TranslatorAw
      * @param string $serviceUrl        URL to the service's own interface
      * @param array  $consentCategories Required cookie consent categories
      * @param string $templateName      Template name (overrides the default)
-     * @param array  $additional        Additional data to embed into the template i.e:
-     *                                  - bool wrapper, should the iframe be wrapped inside a div
      *
      * @return string
      */
@@ -86,8 +84,7 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper implements TranslatorAw
         array $attributes,
         string $serviceUrl,
         array $consentCategories,
-        string $templateName = 'Helpers/iframe.phtml',
-        array $additional = []
+        string $templateName = 'Helpers/iframe.phtml'
     ): string {
         $serviceBaseUrl = $this->getServiceBaseUrl($serviceUrl);
         $consentCategoriesTranslated
@@ -105,8 +102,7 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper implements TranslatorAw
                 'serviceUrl',
                 'consentCategories',
                 'consentCategoriesTranslated',
-                'serviceBaseUrl',
-                'additional'
+                'serviceBaseUrl'
             )
         );
     }
@@ -219,53 +215,6 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper implements TranslatorAw
             $attributes,
             'https://www.youtube.com/watch?v=' . urlencode($videoId),
             $consentCategories
-        );
-    }
-
-    /**
-     * Render an Icareus iframe or link box depending on cookie consent
-     *
-     * @param string $videoId           Video ID
-     * @param array  $consentCategories Required cookie consent categories
-     * @param array  $attributes        Other iframe attributes (if this contains
-     * style, it overrides the style from the $style parameter for the iframe)
-     *
-     * @return string
-     */
-    public function icareus(
-        string $videoId,
-        array $consentCategories,
-        array $attributes = []
-    ): string {
-        $styleParts = [
-            'position: absolute;',
-            'top: 0;',
-            'bottom: 0;',
-            'right: 0;',
-            'left: 0;',
-            'width: 100%;',
-            'height: 100%;',
-        ];
-        $wrapperStyle = [
-            'position: relative;',
-            'width: 100%;',
-            'padding-top: 56.25%;',
-            'clear: both',
-        ];
-        return $this->render(
-            implode(' ', $styleParts),
-            'Icareus video player',
-            'https://players.icareus.com/elonet/embed/vod/' . urlencode($videoId),
-            $attributes,
-            'https://players.icareus.com/elonet/embed/vod/' . urlencode($videoId),
-            $consentCategories,
-            'Helpers/iframe.phtml',
-            [
-                'wrapper' => true,
-                'wrapperAttrs' => [
-                    'style' => implode(' ', $wrapperStyle),
-                ],
-            ]
         );
     }
 

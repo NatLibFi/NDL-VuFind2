@@ -10,18 +10,7 @@
     }
     $attrs['frameborder'] = '0';
   ?>
-  <?php
-    $embedded = !empty($additional['wrapper'])
-      ? $this->makeTag(
-          'div',
-          $this->makeTag('iframe', '', $attrs),
-          $additional['wrapperAttrs'] ?? [],
-          [
-            'escapeContent' => false,
-          ]
-      ) : $this->makeTag('iframe', '', $attrs);
-  ?>
-  <?=$embedded?>
+  <?=$this->makeTag('iframe', '', $attrs)?>
 <?php else: ?>
   <?php
     $attrs = [
@@ -29,9 +18,6 @@
         'style' => $this->style,
     ];
   ?>
-  <?php if (!empty($additional['wrapper'])): ?>
-    <div <?=$this->htmlAttributes($additional['wrapperAttrs'] ?? []);?>>
-  <?php endif; ?>
   <div <?=$this->htmlAttributes($attrs)?>>
     <div class="embedded-content-cookie-info">
       <div class="embedded-content-heading">
@@ -54,7 +40,4 @@
       </div>
     </div>
   </div>
-  <?php if (!empty($additional['wrapper'])): ?>
-    </div>
-  <?php endif; ?>
 <?php endif; ?>
