@@ -1230,13 +1230,11 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
                 if (empty($attributes->{'online-video'})) {
                     continue;
                 }
-                $videoType
-                    = (string)($attributes->{'video-tyyppi'} ?? 'elokuva');
+                $videoType = (string)($attributes->{'video-tyyppi'} ?? 'elokuva');
                 $warnings = [];
                 // Check for warnings
                 if (!empty($attributes->{'video-rating'})) {
-                    $tmpWarnings
-                        = explode(', ', (string)$attributes->{'video-rating'});
+                    $tmpWarnings = explode(', ', (string)$attributes->{'video-rating'});
                     foreach ($tmpWarnings as $warning) {
                         if ($warn = $this->contentDescriptors[$warning] ?? '') {
                             $warnings[] = $warn;
