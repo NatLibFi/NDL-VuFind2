@@ -58,7 +58,7 @@
         </div>
       <?php endif; ?>
       <?php if (false !== ($educationalData = $this->driver->getEducationalData())): ?>
-        <?= $this->aipa($this->driver)->renderLevelsAndSubjects($educationalData) ?>
+        <?= $this->aipa($this->driver)->renderEducationalLevelsAndSubjects($educationalData) ?>
       <?php else: ?>
         <?php
           // Fall back to basic data.

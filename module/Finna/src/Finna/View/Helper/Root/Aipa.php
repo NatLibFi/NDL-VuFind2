@@ -92,13 +92,33 @@ class Aipa extends AbstractHelper
     }
 
     /**
-     * Render educational levels and subjects.
+     * Render subjects.
+     *
+     * @return string
+     */
+    public function renderSubjects()
+    {
+        $html = '';
+        $formatter = $this->getView()->plugin('recordDataFormatter')($this->driver);
+        $defaults = $formatter->getDefaults();
+        if ($subjects = $defaults['Subjects'] ?? []) {
+            $subjects['context']['title'] = 'Subjects';
+            $subjects = $formatter->getData(['Subjects' => $subjects]);
+        }
+        foreach ($subjects as $current) {
+            $html .= $current['value'];
+        }
+        return $html;
+    }
+
+    /**
+     * Render educational levels and educational subjects.
      *
      * @param array $educationalData Educational data from record driver
      *
      * @return string
      */
-    public function renderLevelsAndSubjects(array $educationalData): string
+    public function renderEducationalLevelsAndSubjects(array $educationalData): string
     {
         if (empty($educationalData)) {
             return '';

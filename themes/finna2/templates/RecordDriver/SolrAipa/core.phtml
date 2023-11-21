@@ -186,6 +186,8 @@
         </div>
       <?php endif; ?>
 
+      <?= $this->aipa($this->driver)->renderSubjects() ?>
+
       <?php if ($abstracts = $this->driver->getAbstracts()): ?>
         <div class="wide summary recordSummary">
           <?php if (isset($abstracts[$this->layout()->userLang])): ?>

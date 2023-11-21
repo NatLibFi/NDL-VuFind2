@@ -1,0 +1,30 @@
+<?php //Don't add START and END comments ?>
+<?php if (!empty($data)): ?>
+  <?php
+    $items = [];
+    foreach ($data as $field) {
+      $item = '';
+      $subject = '';
+      if (count($field) == 1) {
+        $field = explode('--', $field[0]);
+      }
+      $i = 0;
+      foreach ($field as $subfield) {
+        $item .= ($i++ == 0) ? '' : ' &#8594; ';
+        $subject = trim($subject . ' ' . $subfield);
+        $item .= $this->record($this->driver)->getLinkedFieldElement(
+            'subject',
+            $subfield,
+            ['name' => $subject],
+            ['class' => ['backlink']]
+        );
+      }
+      $items[] = $item;
+    }
+  ?>
+  <?= $this->component('@@molecules/lists/finna-tag-list', [
+      'title' => $title,
+      'items' => $items,
+      'htmlItems' => true,
+    ]) ?>
+<?php endif; ?>
