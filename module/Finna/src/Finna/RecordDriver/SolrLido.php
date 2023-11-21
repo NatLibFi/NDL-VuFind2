@@ -592,7 +592,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 }
                 // Representation is a document
                 if (in_array($type, $documentTypeKeys)) {
-                    if ($document = $this->getDocument($url, $format, $description)) {
+                    $documentRights = $this->getResourceRights($resourceSet, $language, false);
+                    if ($document = $this->getDocument($url, $format, $description, $documentRights)) {
                         $documentUrls = array_merge($documentUrls, $document);
                     }
                 }
@@ -916,18 +917,21 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      * @param string $url         Url of the document
      * @param string $format      Format of the document
      * @param string $description Description of the document
+     * @param array  $rights      Array of document rights
      *
      * @return array
      */
     protected function getDocument(
         string $url,
         string $format,
-        string $description
+        string $description,
+        array $rights
     ): array {
         return [
             'description' => $description ?: false,
             'url' => $url,
             'format' => strtolower($format),
+            'rights' => $rights,
         ];
     }
 
@@ -936,14 +940,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      *
      * @param \SimpleXmlElement $resourceSet Given resourceSet from lido
      * @param string            $language    Language to look for
+     * @param bool              $useDefault  Use default rights as fallback, default true
      *
      * @return array
      */
     protected function getResourceRights(
         \SimpleXmlElement $resourceSet,
-        string $language
+        string $language,
+        bool $useDefault = true
     ): array {
-        $defaultRights = $this->getImageRights($language, true);
+        $defaultRights = $useDefault ? $this->getImageRights($language, true) : [];
         $rights = [];
         foreach ($resourceSet->rightsResource ?? [] as $rightsResource) {
             if (!empty($rightsResource->rightsType->conceptID)) {
