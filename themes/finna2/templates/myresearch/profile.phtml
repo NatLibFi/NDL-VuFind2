@@ -44,7 +44,9 @@
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'profile']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
-  <h2><?=$this->transEsc('Profile')?></h2>
+  <div class="useraccount-header">
+    <h2><?=$this->transEsc('Profile')?></h2>
+  </div>
   <div class="my-research-content">
     <div>
       <?php if (!$this->translationEmpty('profile_instructions')): ?><p class="no-content-message"><?=$this->transEsc('profile_instructions')?></p><?php endif; ?>

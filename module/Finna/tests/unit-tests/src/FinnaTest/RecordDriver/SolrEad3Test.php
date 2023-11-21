@@ -277,6 +277,72 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Function to get expected physical descriptions data
+     *
+     * @return array
+     */
+    public function getPhysicalDescriptionsData(): array
+    {
+        return [
+            [
+                'fi',
+                [
+                    'ead3_test.xml' => [
+                        'Hyllymetriä järjestetty 0.96 hm',
+                        'Koteloita 5',
+                    ],
+                    'ead3_test2.xml' => [
+                        '9 koteloa',
+                    ],
+                ],
+                'sv',
+                [
+                    'ead3_test.xml' => [
+                        'Hyllmeter ordnat 0.96 hm',
+                    ],
+                    'ead3_test2.xml' => [
+                        '9 mappar',
+                    ],
+                ],
+                'en',
+                [
+                    'ead3_test.xml' => [
+                        'Hyllymetriä järjestetty 0.96 hm',
+                        'Koteloita 5',
+                    ],
+                    'ead3_test2.xml' => [
+                        '9 koteloa',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Test getPhysicalDescriptions
+     *
+     * @param string $language Language
+     * @param array  $expected Result to be expected
+     *
+     * @dataProvider getPhysicalDescriptionsData
+     *
+     * @return void
+     */
+    public function testPhysicalDescriptions(
+        string $language,
+        array $expected
+    ): void {
+        foreach ($expected as $file => $result) {
+            $driver = $this->getDriver($file);
+            $driver->setPreferredLanguage($language);
+            $this->assertEquals(
+                $result,
+                $driver->getPhysicalDescriptions()
+            );
+        }
+    }
+
+    /**
      * Get a record driver with fake data.
      *
      * @param string $recordXml    Xml record to use for the test

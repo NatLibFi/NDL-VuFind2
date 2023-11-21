@@ -141,6 +141,22 @@
                   <span class="holds-status status hidden"><?=$this->icon('spinner') ?></span>
                 </a>
               </li>
+              <?php if ($this->ils()->checkFunction('StorageRetrievalRequests', $capabilityParams)): ?>
+                <li role="none">
+                  <a <?=$this->url('myresearch-storageretrievalrequests') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-storageretrievalrequests')?>">
+                    <?=$this->transEsc('Storage Retrieval Requests')?>
+                    <span class="storageretrievalrequests-status status hidden"><?=$this->icon('spinner') ?></span>
+                  </a>
+                </li>
+              <?php endif; ?>
+              <?php if ($this->ils()->checkFunction('ILLRequests', $capabilityParams)): ?>
+                <li role="none">
+                  <a <?=$this->url('myresearch-illrequests') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-illrequests')?>">
+                    <?=$this->transEsc('Interlibrary Loan Requests')?>
+                    <span class="illrequests-status status hidden"><?=$this->icon('spinner') ?></span>
+                  </a>
+                </li>
+              <?php endif; ?>
               <li role="none">
                 <a <?=$this->url('myresearch-fines') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-fines')?>">
                   <?=$this->transEsc('Fines')?>

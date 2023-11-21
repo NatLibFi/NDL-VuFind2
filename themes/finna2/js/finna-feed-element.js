@@ -179,13 +179,6 @@ class FinnaFeedElement extends HTMLElement {
               el.classList.remove('hidden');
             }
           });
-          holder.querySelectorAll('.carousel-hover-title').forEach(el => {
-            el.style.width = '90%';
-            var element = el.querySelector('p');
-            if (element) {
-              element.style.paddingRight = '10px';
-            }
-          });
           if (!settings.modal) {
             holder.querySelectorAll('.carousel-text').forEach(el => {
               el.addEventListener('click', function doNothing(e) {
@@ -205,10 +198,6 @@ class FinnaFeedElement extends HTMLElement {
             });
           }
           holder.querySelectorAll('.carousel-more').forEach(el => {
-            var heightEl = el.previousElementSibling.offsetHeight;
-            if (heightEl) {
-              el.style.height = heightEl + 'px';
-            }
             if (el.classList.contains('carousel-close')) {
               el.classList.remove('hidden');
               el.firstElementChild.addEventListener('click', function closeDescription(e) {

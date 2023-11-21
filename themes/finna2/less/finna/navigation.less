@@ -62,7 +62,7 @@
       max-width: 80px;
     }
     @media (max-width: @screen-xxs) {
-      display: none;
+      .sr-only;
     }
   }
   .description {
@@ -142,6 +142,9 @@
     }
     #select-card-label-dropdown {
       display: none;
+    }
+    > a {
+      justify-content: left;
     }
     > a:not(.card-header) {
       padding-left: 32px;

@@ -167,6 +167,23 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  function setStickyMyaccountHeader() {
+    const toolbar = document.querySelector('.toolbar-sticky');
+    const finnaNavbar = document.querySelector('.finna-navbar');
+    const observedElement = document.querySelector('.myaccount-sticky-header');
+
+    if (toolbar && finnaNavbar && observedElement) {
+      const observer = new IntersectionObserver(entries => {
+        const intersecting = entries[0].isIntersecting;
+        toolbar.classList.toggle('isSticky', !intersecting);
+      }, {
+        rootMargin: `-${finnaNavbar.offsetHeight}px`,
+      });
+
+      observer.observe(observedElement);
+    }
+  }
+
   function initMobileCartIndicator() {
     $('.btn-bookbag-toggle a').on('click', function onClickMobileCart() {
       if ($(this).hasClass('cart-add')){
@@ -561,7 +578,9 @@ finna.layout = (function finnaLayout() {
     }
     $.ajax(params)
       .done(function onGetOrganisationInfoDone(response) {
-        callback(response.data);
+        // Filter out null values:
+        const data = Object.fromEntries(Object.entries(response.data).filter((item) => null !== item[1]));
+        callback(data);
       })
       .fail(function onGetOrganisationInfoFail() {
         callback(false);
@@ -798,6 +817,39 @@ finna.layout = (function finnaLayout() {
     );
   }
 
+  function toggleButtonsForSelected(element) {
+    if (element.closest('form').id === 'renewals') {
+      var checkedRenewals = document.querySelector('form[name="renewals"] .checkbox input[type=checkbox]:checked');
+      var renewSelected = document.getElementById('renewSelected');
+      if (renewSelected) {
+        renewSelected.toggleAttribute('disabled', checkedRenewals === null);
+      }
+    } else if (element.closest('form').id === 'purge_history') {
+      var checkedHistory = document.querySelector('form[name="purge_history"] .result .checkbox input[type=checkbox]:checked');
+      var purgeSelected = document.getElementById('purgeSelected');
+      var copyToFavourites = document.getElementById('copy_to_favourites');
+      if (purgeSelected) {
+        purgeSelected.toggleAttribute('disabled', checkedHistory === null);
+      }
+      if (copyToFavourites) {
+        copyToFavourites.classList.toggle('disabled', checkedHistory === null);
+      }
+    }
+  }
+  
+  function initSelectAllButtonListeners() {
+    document.querySelectorAll('form[name="renewals"] .checkbox').forEach(element => {
+      element.addEventListener('change', function disableButtons() {
+        toggleButtonsForSelected(element);
+      });
+    });
+    document.querySelectorAll('form[name="purge_history"] .checkbox').forEach(element => {
+      element.addEventListener('change', function disableButtons() {
+        toggleButtonsForSelected(element);
+      });
+    });
+  }
+
   var my = {
     getOrganisationPageLink: getOrganisationPageLink,
     isTouchDevice: isTouchDevice,
@@ -822,6 +874,7 @@ finna.layout = (function finnaLayout() {
       initTruncate();
       initContentNavigation();
       initMobileNarrowSearch();
+      setStickyMyaccountHeader();
       initMobileCartIndicator();
       initCheckboxClicks();
       initToolTips();
@@ -846,6 +899,7 @@ finna.layout = (function finnaLayout() {
       initImagePaginators();
       initHelpTabs();
       initPrintTriggers();
+      initSelectAllButtonListeners();
     },
     showPostLoginLightbox: showPostLoginLightbox
   };
