@@ -4,10 +4,13 @@
         $language = $this->layout()->userLang;
         $description = ($document['description'] ?? $document['desc'] ?? null) ?: $this->translate('Download the file');
         $rights = $document['rights'] ?? [];
+        //$rights = [];
         $copyright = $rights['copyright'] ?? '';
         $link = $rights['link'] ?? '';
         $rightsDescription = $rights['description'] ?? [];
+        //$rightsDescription = [];
         $format = $document['format'] ?? null;
+        //$format = null;
     ?>
     <?php ob_start(); ?>
     <?php if ($showDownloadLinks): ?>
@@ -47,10 +50,7 @@
             <span class="resource-link"><?=$linkToResource ?></span>
             <?php if ($format || $copyright):?>
                 <div class="copyright-wrapper">
-                    <span>(<?php if (!$copyright): ?><span><?=$this->escapeHtml($format)?>)</span><?php else: ?><?php if ($format):?><span><?=$this->escapeHtml($format)?>:</span><?php endif; ?></span>
-                    <span class="copyright-icons">
-                        <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $copyright])?>
-                    </span>
+                    <span>(</span><?php if ($format):?><span><?=$this->escapeHtml($format)?></span><?php endif; ?><?php if (!$copyright): ?><span>)</span><?php else: ?><?php if ($format):?><span>: </span><?php endif; ?><span class="copyright-icons"><?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $copyright])?></span>
                     <?php if ($link): ?>
                             <a class="copyright-description" href="<?=$this->escapeHtml($link)?>" target="_blank"><?=$this->escapeHtmlAttr($copyright)?></a><?php if ($rightsDescription): ?><?=$ccbutton?><?php else: ?><span>)</span><?php endif; ?>
                         <?php else: ?>
