@@ -4,13 +4,10 @@
         $language = $this->layout()->userLang;
         $description = ($document['description'] ?? $document['desc'] ?? null) ?: $this->translate('Download the file');
         $rights = $document['rights'] ?? [];
-        //$rights = [];
         $copyright = $rights['copyright'] ?? '';
         $link = $rights['link'] ?? '';
         $rightsDescription = $rights['description'] ?? [];
-        //$rightsDescription = [];
         $format = $document['format'] ?? null;
-        //$format = null;
     ?>
     <?php ob_start(); ?>
     <?php if ($showDownloadLinks): ?>
