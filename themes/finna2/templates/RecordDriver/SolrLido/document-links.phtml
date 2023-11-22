@@ -8,6 +8,7 @@
         $link = $rights['link'] ?? '';
         $rightsDescription = $rights['description'] ?? [];
         $format = $document['format'] ?? null;
+        $format = null;
     ?>
     <?php ob_start(); ?>
     <?php if ($showDownloadLinks): ?>
@@ -47,7 +48,7 @@
             <span class="resource-link"><?=$linkToResource ?></span>
             <?php if ($format || $copyright):?>
                 <div class="copyright-wrapper">
-                    <span>(<?php if (!$copyright): ?><span><?=$this->escapeHtml($format)?>)</span><?php else: ?><span><?php if ($format):?><?=$this->escapeHtml($format)?>:<?php endif; ?>
+                    <span>(<?php if (!$copyright): ?><span><?=$this->escapeHtml($format)?>)</span><?php else: ?><?php if ($format):?><span><?=$this->escapeHtml($format)?>:</span><?php endif; ?></span>
                     <span class="copyright-icons">
                         <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $copyright])?>
                     </span>
