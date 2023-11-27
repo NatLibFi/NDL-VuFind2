@@ -795,14 +795,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
-     * Return full record as filtered XML for public APIs.
+     * Return full record as a filtered SimpleXMLElement for public APIs.
      *
      * This is not particularly beautiful, but the aim is to do the work with the
      * least effort.
      *
-     * @return string
+     * @return \SimpleXMLElement
      */
-    public function getFilteredXML()
+    public function getFilteredXMLElement(): \SimpleXMLElement
     {
         $collection = new \DOMDocument();
         $collection->preserveWhiteSpace = false;
@@ -850,7 +850,17 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             $record->appendChild($field);
         }
 
-        return $collection->saveXML();
+        return simplexml_import_dom($collection);
+    }
+
+    /**
+     * Return full record as filtered XML for public APIs.
+     *
+     * @return string
+     */
+    public function getFilteredXML()
+    {
+        return $this->getFilteredXMLElement()->asXML();
     }
 
     /**

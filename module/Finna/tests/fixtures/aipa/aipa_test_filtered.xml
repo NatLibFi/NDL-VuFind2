@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<dc schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+  <identifier>oai:aineistopaketit.finna.fi:2785</identifier>
+  <title lang="fi">Testi</title>
+  <date>2023-11-23T10:38:25Z</date>
+  
+  <type>education</type>
+  <item format="lrmi" position="0">
+    <id>oai:aineistopaketit.finna.fi:2784</id>
+    <title>Testi</title>
+    <date>2023-11-23T10:39:05Z</date>
+    
+    <type>content</type>
+    <dateCreated>2023-11-23T10:39:05Z</dateCreated>
+    <dateModified>2023-11-28T08:12:50Z</dateModified>
+    <material>
+      <name lang="fi">Moottorisaha; Partner-moottorisaha</name>
+      <url>https://finna.fi/Record/lusto.knp-8015?sid=3429037636</url>
+      <position>0</position>
+      <inLanguage>fi</inLanguage>
+      <identifier>lusto.knp-8015</identifier>
+      
+    </material>
+    <inLanguage>fi</inLanguage>
+    <learningResource>
+      <educationalLevel>
+        <name>perusopetuksen vuosiluokat 1-2</name>
+        <termCode>basicEducationGrades1-2</termCode>
+        <inDefinedTermSet>
+          <name>Koodistot: Koulutusaste</name>
+          <url>http://uri.suomi.fi/codelist/edtech/Koulutusaste</url>
+        </inDefinedTermSet>
+      </educationalLevel>
+      <educationalAlignment>
+        <educationalSubject>
+          <educationalFramework>Perusopetuksen opetussuunnitelman perusteet 2014</educationalFramework>
+          <targetName>Historia</targetName>
+          <targetUrl>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/419550/perusopetus/oppiaineet/466345</targetUrl>
+          <identifier>466345</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+    </learningResource>
+  </item>
+  <item format="lrmi" position="1">
+    <id>oai:aineistopaketit.finna.fi:2788</id>
+    <title>Testi</title>
+    <date>2023-11-28T08:09:30Z</date>
+    
+    <type>content</type>
+    <dateCreated>2023-11-28T08:09:30Z</dateCreated>
+    <dateModified>2023-11-28T08:09:30Z</dateModified>
+    <material>
+      <name lang="fi">Moottorisaha; Taiga-moottorisaha</name>
+      <url>https://finna.fi/Record/lusto.knp-15935?sid=3429037636</url>
+      <position>0</position>
+      <inLanguage>fi</inLanguage>
+      <identifier>lusto.knp-15935</identifier>
+      
+    </material>
+    <inLanguage>fi</inLanguage>
+  </item>
+  <recordID>node-2785</recordID>
+</dc>
