@@ -700,7 +700,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       method: 'getOrganisationInfo',
       element: 'widget',
       id: params.id,
-      location: getStoredLocation(),
+      locationId: getStoredLocation(),
       buildings: params.buildings || '',
       details: params.details || '1'
     }))
