@@ -27,7 +27,7 @@ finna.common = (function finnaCommon() {
   function initQrCodeLink(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
-    VuFind.setupQRCodeLinks(holder);
+    VuFind.setupQRCodeLinks(holder[0]);
 
     // Reposition the dropdown in location service to escape any truncated div:
     holder.find('.dropdown.location-service-qrcode').on('shown.bs.dropdown', function positionDropdown() {
