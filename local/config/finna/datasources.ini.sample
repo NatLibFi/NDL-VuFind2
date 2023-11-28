@@ -33,7 +33,7 @@ institution = Library
 ; RecordUrl
 ; Kirjavalitys:customerId (customerId is part of the URL, e.g. consortium name in lowercase)
 ; shared (a special one to include the common providers from main configuration)
-;coverimages = Kirjavalitys:customerId,shared
+;descriptions = Kirjavalitys:customerId,shared
 ; Link template for linking to the staff UI. Note that staff UI link is available
 ; only for users with the access.finna.StaffUiLink permission.
 staffUiUrl = "https://server-address/cgi-bin/koha/catalogue/detail.pl?biblionumber=%%id%%"

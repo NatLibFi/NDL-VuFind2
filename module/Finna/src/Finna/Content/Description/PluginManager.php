@@ -32,7 +32,7 @@ namespace Finna\Content\Description;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 
 /**
- * Copyright (C) The National Library of Finland 2023.
+ * Description provider plugin manager
  *
  * @category VuFind
  * @package  Content
