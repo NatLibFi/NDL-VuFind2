@@ -29,9 +29,7 @@
         'style' => $this->style,
     ];
   ?>
-  <?php if ($this->wrapper ?? false): ?>
-    <div <?=$this->htmlAttributes($this->wrapperStyle ?? []);?>>
-  <?php endif; ?>
+  <?php ob_start(); ?>
   <div <?=$this->htmlAttributes($attrs)?>>
     <div class="embedded-content-cookie-info">
       <div class="embedded-content-heading">
@@ -54,7 +52,12 @@
       </div>
     </div>
   </div>
+  <?php $consentDiv = ob_get_clean(); ?>
   <?php if ($this->wrapper ?? false): ?>
+    <div <?=$this->htmlAttributes($this->wrapperStyle ?? []);?>>
+      <?=$consentDiv ?>
     </div>
+  <?php else: ?>
+    <?=$consentDiv ?>
   <?php endif; ?>
 <?php endif; ?>
