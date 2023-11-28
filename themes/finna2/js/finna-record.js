@@ -5,8 +5,11 @@ finna.record = (function finnaRecord() {
   function initDescription() {
     var description = $('#description_text');
     if (description.length) {
-      var id = description.data('id');
-      var url = VuFind.path + '/AJAX/JSON?method=getDescription&id=' + id;
+      let params = new URLSearchParams({
+        id: description.data('id'),
+        source: description.data('source')
+      });
+      var url = VuFind.path + '/AJAX/JSON?method=getDescription&' + params;
       $.getJSON(url)
         .done(function onGetDescriptionDone(response) {
           if (response.data.html.length > 0) {

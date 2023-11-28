@@ -112,6 +112,27 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     protected $productCodeMappings = [];
 
     /**
+     * Number of retries in case an API request fails with a retryable error (see
+     * $retryableRequestExceptionPatterns below).
+     *
+     * @var int
+     */
+    protected $httpRetryCount = 3;
+
+    /**
+     * Exception message regexp patterns for request errors that can be retried
+     *
+     * @var array
+     */
+    protected $retryableRequestExceptionPatterns = [
+        // cURL adapter:
+        '/Error in cURL request: Empty reply from server/',
+        '/Error in cURL request: OpenSSL SSL_read/',
+        // Socket adapter:
+        '/A valid response status line was not found in the provided string/',
+    ];
+
+    /**
      * Initialize the driver.
      *
      * Validate configuration and perform all resource-intensive tasks needed to
@@ -710,6 +731,10 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         $request = [
             'payments' => $payments,
         ];
+        if ($this->statGroup) {
+            $request['statgroup'] = $this->statGroup;
+        }
+
         $result = $this->makeRequest(
             [
                 'v6', 'patrons', $patron['id'], 'fines', 'payment',
@@ -1553,6 +1578,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      * @param array  $patron       Patron information, if available
      * @param bool   $returnStatus Whether to return HTTP status code and response
      * as a keyed array instead of just the response
+     * @param array  $queryParams  Additional query params that are added to the URL
+     * regardless of request type
      *
      * @throws ILSException
      * @return mixed JSON response decoded to an associative array, an array of HTTP
@@ -1561,10 +1588,11 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      */
     protected function makeRequest(
         $hierarchy,
-        $params = false,
+        $params = [],
         $method = 'GET',
         $patron = false,
-        $returnStatus = false
+        $returnStatus = false,
+        $queryParams = []
     ) {
         $url = $this->getApiUrlFromHierarchy($hierarchy);
         // Allow caching of GET requests for bibs and items:
@@ -1577,7 +1605,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             || strncmp($url, $itemsUrl, strlen($itemsUrl)) === 0)
         ) {
             // Cacheable request, check cache:
-            $paramArray = compact('params', 'method', 'patron', 'returnStatus');
+            $paramArray = compact('params', 'method', 'patron', 'returnStatus', 'queryParams');
             $cacheKey = "request|$url|" . md5(var_export($paramArray, true));
             if (null !== ($result = $this->getCachedData($cacheKey))) {
                 return $result;
@@ -1588,7 +1616,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             $params,
             $method,
             $patron,
-            $returnStatus
+            $returnStatus,
+            $queryParams
         );
         if ($cacheKey) {
             // Cache records by default for 300 seconds:

@@ -174,18 +174,6 @@
         <?php endif; ?>
       </div>
 
-      <?php if ($rights = $this->driver->getAccessRestrictionsType($this->layout()->userLang)): ?>
-        <div class="access-rights">
-          <strong><?= $this->transEsc('Access Restrictions') ?>:</strong>
-          <?= $this->partial('Helpers/copyright-field-value.phtml', ['data' => $rights]) ?>
-          <?php if (!empty($rightsCoverage = $this->driver->getRightsCoverage())): ?>
-            <div class="rights-info">
-              <?= $this->icon('info') ?> <?= $this->transEsc('Aipa::rights_coverage_' . $rightsCoverage) ?>
-            </div>
-          <?php endif; ?>
-        </div>
-      <?php endif; ?>
-
       <?php if ($abstracts = $this->driver->getAbstracts()): ?>
         <div class="wide summary recordSummary">
           <?php if (isset($abstracts[$this->layout()->userLang])): ?>

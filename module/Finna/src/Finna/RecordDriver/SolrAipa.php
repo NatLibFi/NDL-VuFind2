@@ -157,6 +157,23 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     }
 
     /**
+     * Return full record as a filtered SimpleXMLElement for public APIs.
+     *
+     * @return \SimpleXMLElement
+     */
+    public function getFilteredXMLElement(): \SimpleXMLElement
+    {
+        $record = parent::getFilteredXMLElement();
+        $filterFields = ['abstract', 'description'];
+        foreach ($filterFields as $filterField) {
+            while ($record->{$filterField}) {
+                unset($record->{$filterField}[0]);
+            }
+        }
+        return $this->filterEncapsulatedRecords($record);
+    }
+
+    /**
      * Return record driver instance for an encapsulated LRMI record.
      *
      * @param \SimpleXMLElement $item AIPA item XML

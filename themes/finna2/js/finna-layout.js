@@ -578,7 +578,9 @@ finna.layout = (function finnaLayout() {
     }
     $.ajax(params)
       .done(function onGetOrganisationInfoDone(response) {
-        callback(response.data);
+        // Filter out null values:
+        const data = Object.fromEntries(Object.entries(response.data).filter((item) => null !== item[1]));
+        callback(data);
       })
       .fail(function onGetOrganisationInfoFail() {
         callback(false);

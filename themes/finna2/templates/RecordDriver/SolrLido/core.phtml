@@ -106,7 +106,7 @@
 
       <div class="summary-wrapper">
         <div class="description recordSummary">
-        <span id="description_text" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>">
+        <span id="description_text" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" data-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
           <?=$this->icon('spinner') ?>
         </span>
         </div>

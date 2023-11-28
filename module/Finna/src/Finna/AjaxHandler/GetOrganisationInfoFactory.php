@@ -72,7 +72,6 @@ class GetOrganisationInfoFactory implements \Laminas\ServiceManager\Factory\Fact
         $facetConfig = $container->get(\VuFind\Config\PluginManager::class)->get('facets');
         $result = new $requestedName(
             $container->get(\VuFind\Session\Settings::class),
-            $container->get(\VuFind\Cookie\CookieManager::class),
             $container->get(\Finna\OrganisationInfo\OrganisationInfo::class),
             $container->get(\VuFind\Cache\Manager::class),
             $container->get('ViewRenderer'),

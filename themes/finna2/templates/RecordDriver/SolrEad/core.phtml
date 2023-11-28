@@ -71,16 +71,11 @@
       <?php endif; ?>
 
       <?php if (!empty($otherUrls)): ?>
-        <div class="recordURLs local-available-online-record">
-          <div class="truncate-field">
-          <?php foreach ($otherUrls as $url): ?>
-              <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"
-                <?php if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<?php endif; ?>
-              >
-                <?=$this->icon('external-link') ?> <?=$this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc']))?>
-              </a>
-              <br>
-          <?php endforeach; ?>
+        <div class="record-links">
+          <div class="recordURLs local-available-online-record">
+            <div class="truncate-field outer" data-rows="4">
+              <?=$this->record($this->driver)->renderTemplate('document-links.phtml', ['documents' => $otherUrls, 'showDownloadLinks' => false])?>
+            </div>
           </div>
         </div>
       <?php endif; ?>

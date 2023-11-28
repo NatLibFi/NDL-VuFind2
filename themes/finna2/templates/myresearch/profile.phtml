@@ -239,8 +239,15 @@
             <?php endif; ?>
             <?php if (isset($this->profile['self_service_library'])): ?>
               <div class="my-profile-col profile-title"><?=$this->transEsc('self_service_library') ?>:</div>
-              <div class="profile-text-value">
+              <div class="my-profile-col profile-text-value">
                 <?=$this->transEsc($this->profile['self_service_library'] ? 'self_service_library_enabled' : 'self_service_library_disabled') ?>
+              </div>
+              <div class="my-profile-col">
+                <?php if (!$this->translationEmpty('self_service_library_description_html')): ?>
+                  <?=$this->icon('info') ?> <?=$this->translate('self_service_library_description_html')?>
+                <?php else: ?>
+                  &nbsp;
+                <?php endif; ?>
               </div>
             <?php endif; ?>
             <?php if ($guarantorFullName): ?>

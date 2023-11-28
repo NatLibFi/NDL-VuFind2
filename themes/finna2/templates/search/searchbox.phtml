@@ -146,12 +146,12 @@
     }
   ?>
 <div class="searchbox hidden-print">
-  <div class="<?=$mainPage ? 'searchbox-home' : '' ?> <?= $module == 'record' || $module == 'collection' ? 'searchbox-flex' : 'searchbox-columns' ?> <?=$this->escapeHtmlAttr("searchbox-$module-$action")?>">
+  <div class="searchbox-flex <?=$mainPage ? 'searchbox-home' : '' ?> <?=$this->escapeHtmlAttr("searchbox-$module-$action")?>">
     <?php if ($module == 'record' || $module == 'collection'): ?>
       <div class="record-back hidden-print">
           <?php
             $html = $this->icon('record-back');
-            $html .= '<span class="back-to-search-text hidden-xs hidden-sm">' . $this->transEsc('Back to search results') . '</span>';
+            $html .= '<span class="back-to-search-text hidden-xs hidden-sm hidden-md">' . $this->transEsc('Back to search results') . '</span>';
             $previousSearch = $this->searchMemory()->getLastSearchLink($html);
             if ($previousSearch !== '' && $this->searchMemory()->getLastSearchClassId() === $this->searchClassId):
           ?>
@@ -265,11 +265,10 @@
       ?>
     </form>
     </div>
+    <?php if (!$browse && !$mainPage && $advSearch): ?>
+      <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced <?=($module === 'record') ? 'hidden-xs' : ''?>"><?=$this->icon('search-advanced', 'search-advanced-icon') ?><?=$this->transEsc('Advanced Search')?></a>
+    <?php endif; ?>
     <div class="search-tooltip"><?php
-      // There should not be any whitespace in this div if it is empty.
-      if (!$browse && !$mainPage && $advSearch): ?>
-        <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced <?=($module === 'record') ? 'visible-lg' : 'hidden-xs'?>"><?=$this->icon('search-advanced', 'search-advanced-icon') ?><?=$this->transEsc('Advanced Search')?></a>
-      <?php endif; ?><?php
         $searchTypes = ['search' => 'local', 'primo' => 'pci', 'eds' => 'eds', 'r2search' => 'R2', 'summon' => 'summon'];
         if (isset($searchTypes[$module]) && !$this->translationEmpty('tooltip_' . $searchTypes[$module] . '_search_html')) {
           $tooltipClass = 'tooltip-search-' . $searchTypes[$module];

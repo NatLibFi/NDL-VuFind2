@@ -504,6 +504,29 @@ a.authority {
 
 .record-links {
   vertical-align: baseline;
+  .link-wrapper {
+    vertical-align: baseline;
+    &.additional-info {
+      .copyright-description {
+        margin-right: 5px;
+      }
+      .iconlabel:first-child {
+        margin-left: 2px;
+      }
+    }
+    &:not(.additional-info) {
+      .copyright-wrapper {
+        font-size: 0;
+        .copyright-icons {
+          line-height: 1.3em;
+        }
+      }
+    }
+  }
+  .copyright-wrapper {
+    display: inline-block;
+    margin-left: 3px;
+  }
   .cc-info {
     margin-left: 5px;
   }
@@ -526,9 +549,6 @@ a.authority {
       margin-right: -3px;
       vertical-align: bottom;
   }
-  .iconlabel:first-child {
-      margin-left: 2px;
-  }
   span {
       font-size: @font-size-small;
   }
@@ -537,13 +557,6 @@ a.authority {
      padding: 0;
      margin: 0;
   }
-  .copyright-description {
-      margin-right: 5px;
-  }
-}
-.copyright-wrapper {
-    display: inline-block;
-    margin-left: 3px;
 }
 
 .summary {
