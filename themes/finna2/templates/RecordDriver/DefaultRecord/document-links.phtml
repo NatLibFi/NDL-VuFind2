@@ -45,20 +45,35 @@
     <?php ob_start(); ?>
     <button class="show-hide-button show-info more-link collapsed" data-toggle="collapse" data-target="#cc_info_<?= $i ?>" aria-expanded="false">
         <?=$this->transEsc('copyright_info_show')?> <?=$this->icon('truncate-more')?>
-    </button><span>)</span>
+    </button>
     <?php $ccbutton = trim(ob_get_clean());?>
     <li class="fulltextField">
         <div class="link-wrapper <?php if ($rightsDescription):?> additional-info<?php endif; ?>">
             <span class="resource-link"><?=$linkToResource ?></span>
             <?php if ($format || $copyright):?>
+                <?php
+                    $content = '(';
+                    if ($format) {
+                        $content .= $this->escapeHtml($format);
+                        if ($copyright) {
+                            $content .= ': ';
+                        }
+                    }
+                    if ($copyright) {
+                        $content .= '<span class="copyright-icons">' . $this->partial('Helpers/copyright-icons.phtml', ['copyright' => $copyright]) . '</span>';
+                        if ($link) {
+                            $content .= ' <a class="copyright-description" href="' . $this->escapeHtml($link) . '" target="_blank">' . $this->escapeHtmlAttr($copyright) . '</a>';
+                        } else {
+                            $content .= $this->escapeHtml($copyright);
+                        }
+                        if ($rightsDescription) {
+                            $content .= $ccbutton;
+                        }
+                    }
+                    $content .= ')';
+                ?>
                 <div class="copyright-wrapper">
-                    <span>(</span><?php if ($format):?><span><?=$this->escapeHtml($format)?></span><?php endif; ?><?php if (!$copyright): ?><span>)</span><?php else: ?><?php if ($format):?><span>: </span><?php endif; ?><span class="copyright-icons"><?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $copyright])?></span>
-                    <?php if ($link): ?>
-                            <a class="copyright-description" href="<?=$this->escapeHtml($link)?>" target="_blank"><?=$this->escapeHtmlAttr($copyright)?></a><?php if ($rightsDescription): ?><?=$ccbutton?><?php else: ?><span>)</span><?php endif; ?>
-                        <?php else: ?>
-                            <?=$this->escapeHtml($copyright);?><?php if ($rightsDescription): ?><?=$ccbutton?><?php else: ?><span>)</span><?php endif; ?>
-                        <?php endif; ?>
-                    <?php endif; ?>
+                    <span><?=$content?></span>
                 </div>
             <?php endif; ?>
         </div>
