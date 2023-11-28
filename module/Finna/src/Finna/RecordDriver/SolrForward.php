@@ -1214,46 +1214,39 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
         }
         $videos = [];
         foreach ($this->getAllRecordsXML() as $xml) {
-            if (!($production = $xml->ProductionEvent->ProductionEventType ?? '')) {
-                continue;
-            }
-
-            $eventAttrs = $production->attributes();
-            $url = (string)$eventAttrs->{'elokuva-elonet-materiaali-video-url'};
-            $vimeoID = (string)$eventAttrs->{'vimeo-id'};
-            if (!$url && !$vimeoID) {
+            if (empty($xml->ProductionEvent->ProductionEventType)) {
                 continue;
             }
             foreach ($xml->Title as $title) {
                 if (!isset($title->TitleText)) {
                     continue;
                 }
-                $videoURL = (string)$title->TitleText;
-                $sourceType = strtolower(pathinfo($videoURL, PATHINFO_EXTENSION));
-                $videoType = 'elokuva';
+                $videoID = trim((string)$title->TitleText);
+                $titleValue = $title->PartDesignation->Value ?? '';
+                if (!$titleValue) {
+                    continue;
+                }
+                $attributes = $titleValue->attributes();
+                if (empty($attributes->{'online-video'})) {
+                    continue;
+                }
+                $videoType = (string)($attributes->{'video-tyyppi'} ?? 'elokuva');
                 $warnings = [];
-                if ($titleValue = $title->PartDesignation->Value ?? '') {
-                    $attributes = $titleValue->attributes();
-                    $videoType
-                        = (string)($attributes->{'video-tyyppi'} ?? 'elokuva');
-
-                    // Check for warnings
-                    if (!empty($attributes->{'video-rating'})) {
-                        $tmpWarnings
-                            = explode(', ', (string)$attributes->{'video-rating'});
-                        foreach ($tmpWarnings as $warning) {
-                            if ($warn = $this->contentDescriptors[$warning] ?? '') {
-                                $warnings[] = $warn;
-                            }
-                            if ($warn = $this->ageRestrictions[$warning] ?? '') {
-                                $warnings[] = $warn;
-                            }
+                // Check for warnings
+                if (!empty($attributes->{'video-rating'})) {
+                    $tmpWarnings = explode(', ', (string)$attributes->{'video-rating'});
+                    foreach ($tmpWarnings as $warning) {
+                        if ($warn = $this->contentDescriptors[$warning] ?? '') {
+                            $warnings[] = $warn;
+                        }
+                        if ($warn = $this->ageRestrictions[$warning] ?? '') {
+                            $warnings[] = $warn;
                         }
                     }
                 }
                 $videos[] = [
-                    'id' => $vimeoID,
-                    'url' => $videoURL,
+                    'id' => $videoID,
+                    'url' => '',
                     'posterName' => (string)$titleValue,
                     'type' => $videoType,
                     'description' => $videoType,

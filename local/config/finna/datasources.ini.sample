@@ -104,16 +104,13 @@ onlinePayment['productCodeMappings'] = 'Overdue=demo_003:Long Overdue=demo_004'
 
 ; ## Video provider specific settings:
 
+; ### Icareus
+video['handler'] = "Icareus"
+video['url'] = "https://players.icareus.com/<org_name_in_icareus>/embed/vod/{videoid}"
+
 ; ### Vimeo:
 video['handler'] = "Vimeo"
 video['url'] = "https://vimeo.com/{videoid}"
-video['posterUrl'] = "https://link.to.posterUrl/{filename}"
-
-; ### Elonet:
-video['handler'] = "Elonet"
-video['secret'] = "secretkey"
-video['timestampPrecision'] = 3000
-video['url'] = "https://link.to.video/{filename}"
 video['posterUrl'] = "https://link.to.posterUrl/{filename}"
 
 ; Videosources to check, if an url can be provided for a video

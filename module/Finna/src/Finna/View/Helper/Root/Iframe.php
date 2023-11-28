@@ -219,6 +219,63 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper implements TranslatorAw
     }
 
     /**
+     * Render an Icareus iframe or link box depending on cookie consent
+     *
+     * @param string $src               Icareus video source
+     * @param array  $consentCategories Required cookie consent categories
+     * @param array  $attributes        Other iframe attributes (if this contains
+     * style, it overrides the style from the $style parameter for the iframe)
+     *
+     * @return string
+     */
+    public function icareus(
+        string $src,
+        array $consentCategories,
+        array $attributes = []
+    ): string {
+        $style = implode(' ', [
+            'position: absolute;',
+            'top: 0;',
+            'bottom: 0;',
+            'right: 0;',
+            'left: 0;',
+            'width: 100%;',
+            'height: 100%;',
+        ]);
+        $wrapper = true;
+        $wrapperStyle['style'] = implode(' ', [
+            'position: relative;',
+            'width: 100%;',
+            'padding-top: 56.25%;',
+            'clear: both',
+        ]);
+        $serviceUrl = $src;
+        $serviceBaseUrl = $this->getServiceBaseUrl($src);
+        $consentCategoriesTranslated
+            = $this->getTranslatedConsentCategories($consentCategories);
+        $embed = $this->hasConsent($consentCategories);
+
+        $title = 'Icareus video player';
+
+        return $this->getView()->render(
+            'Helpers/iframe.phtml',
+            compact(
+                'embed',
+                'style',
+                'title',
+                'src',
+                'attributes',
+                'serviceUrl',
+                'consentCategories',
+                'consentCategoriesTranslated',
+                'serviceBaseUrl',
+                'wrapper',
+                'wrapperStyle'
+            )
+        );
+    }
+
+    /**
      * Render a Twitter timeline iframe or link box depending on cookie consent
      *
      * @param string $screenName        User's screen name
