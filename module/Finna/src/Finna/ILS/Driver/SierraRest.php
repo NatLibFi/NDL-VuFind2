@@ -112,6 +112,27 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     protected $productCodeMappings = [];
 
     /**
+     * Number of retries in case an API request fails with a retryable error (see
+     * $retryableRequestExceptionPatterns below).
+     *
+     * @var int
+     */
+    protected $httpRetryCount = 3;
+
+    /**
+     * Exception message regexp patterns for request errors that can be retried
+     *
+     * @var array
+     */
+    protected $retryableRequestExceptionPatterns = [
+        // cURL adapter:
+        '/Error in cURL request: Empty reply from server/',
+        '/Error in cURL request: OpenSSL SSL_read/',
+        // Socket adapter:
+        '/A valid response status line was not found in the provided string/',
+    ];
+
+    /**
      * Initialize the driver.
      *
      * Validate configuration and perform all resource-intensive tasks needed to
