@@ -332,7 +332,6 @@ trait ContainerFormatTrait
     protected function filterEncapsulatedRecords(\SimpleXMLElement $record): \SimpleXMLElement
     {
         $container = dom_import_simplexml($record);
-        $container->preserveWhiteSpace = false;
         $tagName = $this->getEncapsulatedRecordElementTagName();
         foreach ($container->getElementsByTagName($tagName) as $item) {
             $encapsulated = $this->getEncapsulatedRecord(
