@@ -176,7 +176,7 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
         if (!isset($urlParts[1])) {
             return $item['href'];
         }
-        parse_str(htmlspecialchars_decode($urlParts[1]), $params);
+        parse_str($urlParts[1], $params);
 
         if (!isset($params['filter'])) {
             return $item['href'];
@@ -195,7 +195,7 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
             $newFilters[] = $filter;
         }
         $params['filter'] = $newFilters;
-        return $urlParts[0] . '?' . htmlspecialchars(http_build_query($params));
+        return $urlParts[0] . '?' . http_build_query($params);
     }
 
     /**

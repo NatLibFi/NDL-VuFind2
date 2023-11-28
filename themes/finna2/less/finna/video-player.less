@@ -28,6 +28,28 @@
   height: 100%;
   width: 100%;
 }
+.inline-video, .video-popup, .finna-iframe {
+  &.finna-popup {
+      display: flex;
+      align-content: center;
+      justify-content: center;
+      .popup-iframe-wrapper {
+        // These values are from examples in https://icareus.fi/videosoittimet/
+        position: relative;
+        width: 100%;
+        // This padding-top value prevents the player from overflowing
+        padding-top: 56.25%;
+        margin: auto;
+        iframe {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+        }
+      }
+    }
+}
 .inline-video-container {
   width: 100vw;
   position: relative;
@@ -36,10 +58,12 @@
   background-color: black;
   margin-bottom: 10px;
   .inline-video {
-    height: 400px;
     .embed-responsive-item {
       height: 100%;
       width: 100%;
+    }
+    .finna-iframe.modal-holder {
+      max-width: 800px;
     }
   }
   .video-accordion {

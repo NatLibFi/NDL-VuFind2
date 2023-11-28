@@ -42,6 +42,24 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     return '';
   }
 
+  /**
+   * Get current location from session storage
+   *
+   * @returns string
+   */
+  function getStoredLocation() {
+    return sessionStorage.getItem('location-info-' + params.id) || '';
+  }
+
+  /**
+   * Remember current location in session storage
+   *
+   * @param {String} locationId
+   */
+  function storeCurrentLocation(locationId) {
+    sessionStorage.setItem('location-info-' + params.id, locationId);
+  }
+
   // Forward declaration
   let showLocationDetails = function () {};
 
@@ -474,6 +492,8 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       return;
     }
 
+    storeCurrentLocation(locationId);
+
     indicatorEl.classList.remove('hidden');
     fetch(VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
       method: 'getOrganisationInfo',
@@ -550,7 +570,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       method: 'getOrganisationInfo',
       element: 'info-location-selection',
       id: params.id,
-      locationId: getLocationFromURLHash(),
+      locationId: getLocationFromURLHash() || getStoredLocation(),
       sectors: params.sectors || '',
       buildings: params.buildings || '',
       consortiumInfo: params.consortiumInfo
@@ -613,6 +633,8 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       console.error('Organisation info widget load indicator element not found');
       return;
     }
+
+    storeCurrentLocation(locationId);
 
     loadIndicatorEl.classList.remove('hidden');
     fetch(VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
@@ -678,6 +700,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       method: 'getOrganisationInfo',
       element: 'widget',
       id: params.id,
+      locationId: getStoredLocation(),
       buildings: params.buildings || '',
       details: params.details || '1'
     }))

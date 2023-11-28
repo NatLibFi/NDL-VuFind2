@@ -469,11 +469,11 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
     }
 
     /**
-     * Return full record as filtered XML for public APIs.
+     * Return full record as a filtered SimpleXMLElement for public APIs.
      *
-     * @return string
+     * @return \SimpleXMLElement
      */
-    public function getFilteredXML()
+    public function getFilteredXMLElement(): \SimpleXMLElement
     {
         $record = clone $this->getXmlRecord();
         while ($record->abstract) {
@@ -492,7 +492,18 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
                 unset($record->description[$i]);
             }
         }
-        return $record->asXML();
+
+        return $record;
+    }
+
+    /**
+     * Return full record as filtered XML for public APIs.
+     *
+     * @return string
+     */
+    public function getFilteredXML()
+    {
+        return $this->getFilteredXMLElement()->asXML();
     }
 
     /**
