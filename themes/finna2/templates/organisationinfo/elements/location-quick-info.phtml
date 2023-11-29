@@ -20,12 +20,15 @@
         <a href="<?=$this->escapeHtmlAttr($orgInfo['homepage'])?>" target="_blank"><?=$this->icon('homepage-link') ?> <?=$this->transEsc('organisation_info_homepage')?></a></span>
       </p>
     <?php endif; ?>
-    <?php if ($orgInfo['emails']): ?>
-      <?php foreach ($orgInfo['emails'] as $email): ?>
-        <p class="location-links email info-element">
-          <a href="mailto:<?=$this->escapeHtmlAttr($email['email'])?>"><?=$this->icon('email') ?> <?=$this->escapeHtml($email['email'])?></a>
-        </p>
-      <?php endforeach; ?>
+    <?php if ($orgInfo['email']): ?>
+      <p class="location-links email info-element">
+        <a href="mailto:<?=$this->escapeHtmlAttr($orgInfo['email'])?>">
+          <?=$this->icon('email') ?> <?=$this->escapeHtml($orgInfo['email'])?>
+        </a>
+        <?php if ($name = $orgInfo['emailName'] ?? null): ?>
+          / <?=$this->escapeHtml($name)?>
+        <?php endif; ?>
+      </p>
     <?php endif; ?>
     <?php foreach ($orgInfo['links'] as $link): ?>
       <?php if (str_contains($link['name'], 'Facebook')): ?>
