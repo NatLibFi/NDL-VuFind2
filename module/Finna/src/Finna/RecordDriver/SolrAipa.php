@@ -104,6 +104,41 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     }
 
     /**
+     * Get all subject headings associated with this record. Each heading is
+     * returned as an array of chunks, increasing from least specific to most
+     * specific.
+     *
+     * @param bool $extended Whether to return a keyed array with the following
+     * keys:
+     * - heading: the actual subject heading chunks
+     * - type: heading type
+     * - source: source vocabulary
+     *
+     * @return array
+     */
+    public function getAllSubjectHeadings($extended = false)
+    {
+        $lang = $this->getLocale();
+        $lang = $lang === 'en-gb' ? 'en' : $lang;
+        $xml = $this->getXmlRecord();
+        $headings = [];
+        foreach ($xml->subject as $heading) {
+            $subjectLang = $heading->attributes()->{'lang'} ?? null;
+            if ($lang && $subjectLang && $lang !== (string)$subjectLang) {
+                continue;
+            }
+            $headings[] = (string)$heading;
+        }
+
+        $callback = function ($i) use ($extended) {
+            return $extended
+                ? ['heading' => [$i], 'type' => '', 'source' => '']
+                : [$i];
+        };
+        return array_map($callback, array_unique($headings));
+    }
+
+    /**
      * Return type of access restriction for the record.
      *
      * @param string $language Language
@@ -135,28 +170,6 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     public function getRightsCoverage(): string
     {
         return (string)($this->getXmlRecord()->rightsCoverage ?? '');
-    }
-
-    /**
-     * Return subjects.
-     *
-     * @param ?string $lang Language code (optional)
-     *
-     * @return array
-     */
-    public function getSubjects(?string $lang = null): array
-    {
-        $lang = $lang === 'en-gb' ? 'en' : $lang;
-        $xml = $this->getXmlRecord();
-        $subjects = [];
-        foreach ($xml->subject as $subject) {
-            $subjectLang = $subject->attributes()->{'lang'} ?? null;
-            if ($lang && $subjectLang && $lang !== (string)$subjectLang) {
-                continue;
-            }
-            $subjects[] = (string)$subject;
-        }
-        return $subjects;
     }
 
     /**

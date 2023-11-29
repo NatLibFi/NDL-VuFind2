@@ -36,6 +36,8 @@ use NatLibFi\FinnaCodeSets\FinnaCodeSets;
 use NatLibFi\FinnaCodeSets\Model\EducationalLevel\EducationalLevelInterface;
 use NatLibFi\FinnaCodeSets\Utility\EducationalData;
 
+use function count;
+
 /**
  * AIPA view helper
  *
@@ -93,40 +95,37 @@ class Aipa extends AbstractHelper
     }
 
     /**
-     * Render subjects using RecordDataFormatter and getAllSubjectHeadings().
+     * Render all subject headings.
      *
      * @return string
      */
     public function renderAllSubjectHeadings(): string
     {
-        $html = '';
-        $formatter = $this->getView()->plugin('recordDataFormatter')($this->driver);
-        $defaults = $formatter->getDefaults();
-        if ($subjects = $defaults['Subjects'] ?? []) {
-            $subjects['context']['title'] = 'Subjects';
-            $subjects = $formatter->getData(['Subjects' => $subjects]);
-        }
-        foreach ($subjects as $current) {
-            $html .= $current['value'];
-        }
-        return $html;
-    }
-
-    /**
-     * Render subjects directly from getSubjects().
-     *
-     * @return string
-     */
-    public function renderSubjects(): string
-    {
-        $subjects = $this->driver->getSubjects($this->view->layout()->userLang);
-        if (empty($subjects)) {
+        $headings = $this->driver->getAllSubjectHeadings();
+        if (empty($headings)) {
             return '';
         }
+
+        $items = [];
+        foreach ($headings as $field) {
+            $item = '';
+            $subject = '';
+            if (count($field) == 1) {
+                $field = explode('--', $field[0]);
+            }
+            $i = 0;
+            foreach ($field as $subfield) {
+                $item .= ($i++ == 0) ? '' : ' &#8594; ';
+                $subject = trim($subject . ' ' . $subfield);
+                $item .= $subject;
+            }
+            $items[] = $item;
+        }
+
         $component = $this->getView()->plugin('component');
         return $component('@@molecules/lists/finna-tag-list', [
             'title' => 'Subjects',
-            'items' => $subjects,
+            'items' => $items,
             'translateItems' => false,
         ]);
     }
