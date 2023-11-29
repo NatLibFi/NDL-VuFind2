@@ -1,11 +1,13 @@
 <?php
+  $id = rand() . time();
   $initParams = json_encode(
-    [
+      [
           'id' => $this->id,
           'buildings' => $this->buildings,
           'details' => $this->showDetails,
+          'container' => ".js-widget-$id",
       ]
-);
+  );
   $setupJS = <<<JS
       $(function() {
          finna.organisationInfo.initWidget({$initParams});
@@ -13,7 +15,7 @@
       JS;
    $this->headScript()->appendScript($setupJS);
 ?>
-<div class="organisation-info js-organisation-info-widget">
+<div class="organisation-info organisation-info-widget js-widget-<?=$id?>">
   <div>
     <h2>
       <?=$this->transEsc('organisation_info_title')?>
