@@ -106,6 +106,7 @@ class Aipa extends AbstractHelper
             return '';
         }
 
+        $recordHelper = $this->getView()->plugin('record');
         $items = [];
         foreach ($headings as $field) {
             $item = '';
@@ -117,7 +118,12 @@ class Aipa extends AbstractHelper
             foreach ($field as $subfield) {
                 $item .= ($i++ == 0) ? '' : ' &#8594; ';
                 $subject = trim($subject . ' ' . $subfield);
-                $item .= $subject;
+                $item .= $recordHelper($this->driver)->getLinkedFieldElement(
+                    'subject',
+                    $subfield,
+                    ['name' => $subject],
+                    ['class' => ['backlink']]
+                );
             }
             $items[] = $item;
         }
@@ -126,7 +132,7 @@ class Aipa extends AbstractHelper
         return $component('@@molecules/lists/finna-tag-list', [
             'title' => 'Subjects',
             'items' => $items,
-            'translateItems' => false,
+            'htmlItems' => true,
         ]);
     }
 
