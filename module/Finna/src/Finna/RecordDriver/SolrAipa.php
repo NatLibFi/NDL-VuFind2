@@ -124,7 +124,7 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
         $headings = [];
         foreach ($xml->subject as $heading) {
             $subjectLang = $heading->attributes()->{'lang'} ?? null;
-            if ($lang && $subjectLang && $lang !== (string)$subjectLang) {
+            if ($subjectLang && $lang !== (string)$subjectLang) {
                 continue;
             }
             $headings[] = (string)$heading;
