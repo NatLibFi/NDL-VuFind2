@@ -138,6 +138,28 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     }
 
     /**
+     * Return subjects.
+     *
+     * @param ?string $lang Language code (optional)
+     *
+     * @return array
+     */
+    public function getSubjects(?string $lang = null): array
+    {
+        $lang = $lang === 'en-gb' ? 'en' : $lang;
+        $xml = $this->getXmlRecord();
+        $subjects = [];
+        foreach ($xml->subject as $subject) {
+            $subjectLang = $subject->attributes()->{'lang'} ?? null;
+            if ($lang && $subjectLang && $lang !== (string)$subjectLang) {
+                continue;
+            }
+            $subjects[] = (string)$subject;
+        }
+        return $subjects;
+    }
+
+    /**
      * Return encapsulated content type records.
      *
      * @return array Array of encapsulated content type records keyed by unique ID

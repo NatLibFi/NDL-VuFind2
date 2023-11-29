@@ -29,11 +29,12 @@
 
 namespace Finna\View\Helper\Root;
 
+use Finna\RecordDriver\AipaLrmi;
+use Finna\RecordDriver\SolrAipa;
 use Laminas\View\Helper\AbstractHelper;
 use NatLibFi\FinnaCodeSets\FinnaCodeSets;
 use NatLibFi\FinnaCodeSets\Model\EducationalLevel\EducationalLevelInterface;
 use NatLibFi\FinnaCodeSets\Utility\EducationalData;
-use VuFind\RecordDriver\AbstractBase;
 
 /**
  * AIPA view helper
@@ -64,9 +65,9 @@ class Aipa extends AbstractHelper
     /**
      * Record driver
      *
-     * @var AbstractBase
+     * @var SolrAipa|AipaLrmi
      */
-    protected AbstractBase $driver;
+    protected SolrAipa|AipaLrmi $driver;
 
     /**
      * Constructor
@@ -81,22 +82,22 @@ class Aipa extends AbstractHelper
     /**
      * Store a record driver object and return this object.
      *
-     * @param AbstractBase $driver Record driver object.
+     * @param SolrAipa|AipaLrmi $driver Record driver object.
      *
      * @return Aipa
      */
-    public function __invoke($driver): Aipa
+    public function __invoke(SolrAipa|AipaLrmi $driver): Aipa
     {
         $this->driver = $driver;
         return $this;
     }
 
     /**
-     * Render subjects.
+     * Render subjects using RecordDataFormatter and getAllSubjectHeadings().
      *
      * @return string
      */
-    public function renderSubjects()
+    public function renderAllSubjectHeadings(): string
     {
         $html = '';
         $formatter = $this->getView()->plugin('recordDataFormatter')($this->driver);
@@ -109,6 +110,25 @@ class Aipa extends AbstractHelper
             $html .= $current['value'];
         }
         return $html;
+    }
+
+    /**
+     * Render subjects directly from getSubjects().
+     *
+     * @return string
+     */
+    public function renderSubjects(): string
+    {
+        $subjects = $this->driver->getSubjects($this->view->layout()->userLang);
+        if (empty($subjects)) {
+            return '';
+        }
+        $component = $this->getView()->plugin('component');
+        return $component('@@molecules/lists/finna-tag-list', [
+            'title' => 'Subjects',
+            'items' => $subjects,
+            'translateItems' => false,
+        ]);
     }
 
     /**
