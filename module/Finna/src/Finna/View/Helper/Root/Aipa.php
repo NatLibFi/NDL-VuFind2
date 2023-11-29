@@ -173,6 +173,7 @@ class Aipa extends AbstractHelper
                 $html .= $component('@@molecules/lists/finna-tag-list', [
                     'title' => 'Aipa::' . $levelCodeValue,
                     'items' => $items,
+                    'translateItems' => false,
                 ]);
             }
         }
