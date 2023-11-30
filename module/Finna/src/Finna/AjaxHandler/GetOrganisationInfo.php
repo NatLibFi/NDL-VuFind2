@@ -318,7 +318,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         }
         $defaultLocationId = $locationId
             ?? $orgInfo['consortium']['finna']['servicePoint']
-            ?? $orgInfo['list'][0]['id']
             ?? null;
         $defaultLocationName = null;
         if (null !== $defaultLocationId) {
