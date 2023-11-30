@@ -112,11 +112,10 @@ CookieConsent:
           Domain: '{{vufind_cookie_domain}}'
           Description: CookieConsent::cookie_description_finna_survey_html
           Expiration: session
-        - Name: organisationInfoId
+        - Name: location-info-* (local storage)
           Domain: '{{vufind_cookie_domain}}'
           Description: CookieConsent::cookie_description_finna_organisation_id_html
-          Expiration: 1
-          ExpirationUnit: year
+          Expiration: never
         - Name: preferredRecordSource
           Domain: '{{vufind_cookie_domain}}'
           Description: CookieConsent::cookie_description_preferred_record_source_info_html
