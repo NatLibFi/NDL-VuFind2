@@ -28,10 +28,10 @@
   }
 ?>
 
-<div class="media" vocab="http://schema.org/" resource="#record">
+<div class="media">
   <div class="visible-xs">
     <p class="format"><?=$this->transEsc($formats[0])?></p>
-    <h1 property="name" class="record-title"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+    <h1 class="record-title"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
   </div>
   <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
@@ -39,7 +39,7 @@
   <div class="media-body record-information">
       <div class="hidden-xs">
         <p class="format"><?=$this->transEsc($formats[0])?></p>
-        <h1 property="name" class="record-title"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+        <h1 class="record-title"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
       </div>
 
       <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>

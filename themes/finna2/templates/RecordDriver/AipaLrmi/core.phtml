@@ -24,21 +24,21 @@
   </div>
   <?php $thumbnail = ob_get_contents(); ?>
 <?php ob_end_clean(); ?>
-<div class="media" vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
+<div class="media">
   <?php
     $contents = $this->driver->getContainerRecord()->getEncapsulatedContentTypeRecords();
     $showData = count($contents) > 1 || $this->driver->getType() !== 'content';
   ?>
   <?php if ($showData): ?>
     <?php $headingLevel = $this->driver->getType() === 'content' ? 2 : 3; ?>
-    <h<?= $headingLevel ?> property="name" class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h<?= $headingLevel ?>>
+    <h<?= $headingLevel ?> class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h<?= $headingLevel ?>>
     <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
       <?= $thumbnail ?>
     <?php endif; ?>
   <?php endif; ?>
   <div class="media-body record-information">
     <?php if ($showData): ?>
-      <h<?= $headingLevel ?> property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h<?= $headingLevel?>>
+      <h<?= $headingLevel ?> class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h<?= $headingLevel?>>
     <?php endif; ?>
 
     <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
@@ -50,7 +50,7 @@
       <?php if ($showData && ($results = $this->driver->getNonPresenterAuthors())): ?>
         <div class="truncate-field recordAuthors">
           <strong><?= $this->transEsc('Curated By') ?>:</strong>
-          <span property="author">
+          <span>
             <?php foreach ($results as $index => $author): ?>
               <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?><?php if (!empty($author['affiliation'])): ?>, <?= $this->escapeHtml($author['affiliation']) ?><?php endif;?></a>
             <?php endforeach; ?>

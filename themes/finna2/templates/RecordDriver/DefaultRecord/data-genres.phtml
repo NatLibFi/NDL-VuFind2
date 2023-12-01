@@ -2,7 +2,7 @@
 <?php if (!empty($data)): ?>
   <div class="truncate-field">
     <?php foreach ($data as $field): ?>
-    <div class="subjectLine" property="keywords">
+    <div class="subjectLine">
       <?php $subject = ''; ?>
       <?php if (is_array($field) && count($field) === 1) {
         $field = explode('--', reset($field));
