@@ -4,7 +4,9 @@
     <a class="location-service <?=$this->locationServiceModal ? ' location-service-modal' : ''?>" href="<?=$this->locationServiceUrl?>"<?=$this->locationServiceModal ? ' data-lightbox-href="' . $this->url('locationservice-modal') . '?callnumber=' . urlencode(($this->callnumber instanceof \VuFind\I18n\TranslatableString) ? $this->callnumber->getDisplayString() : $this->callnumber) . '&amp;collection=' . urlencode($this->collection ?? '') . '&amp;location=' . urlencode($this->location ?? '') . '&amp;title=' . urlencode($this->title) . '&amp;source=' . urlencode($this->source) : '' ?>" target="location-service"><?=$this->icon('map-marker') ?> <?=$this->transEsc($this->callnumber)?></a>
   <?php elseif ($this->callnumber): ?>
     <?php if ($this->page === 'results'): ?>
-      (<span><?=$this->transEsc('shelf_location'); ?>: </span><?=$this->transEsc($this->callnumber)?>)
+      <span class="callnumber-text">
+        <span><?=$this->transEsc('shelf_location'); ?>: </span><?=$this->transEsc($this->callnumber)?>
+      </span>
     <?php else: ?>
       <?=$this->transEsc($this->callnumber)?>
     <?php endif; ?>
