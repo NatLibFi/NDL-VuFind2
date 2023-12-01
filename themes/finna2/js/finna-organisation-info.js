@@ -42,7 +42,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
   /**
    * Get current location from local storage
    *
-   * @param {String} id
+   * @param {String} id Organisation ID
    *
    * @returns string
    */
@@ -53,8 +53,8 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
   /**
    * Remember current location in local storage
    *
-   * @param {String} id
-   * @param {String} locationId
+   * @param {String} id Organisation ID
+   * @param {String} locationId Location ID
    */
   function storeCurrentLocation(id, locationId) {
     localStorage.setItem('location-info-' + id, locationId);
