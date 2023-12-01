@@ -183,6 +183,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             'description' => [
                                 0 => 'Tässä on kuvien copyright.',
                                 1 => 'Tässä on mallien copyright.',
+                                2 => 'Tekstitiedoston tarkempi käyttöoikeuskuvaus',
                             ],
                         ],
                         'highResolution' => [],
@@ -220,11 +221,18 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'description' => 'PDFTesti.pdf',
                         'url' => 'https://linkkiPDF.fi',
                         'format' => 'pdf',
+                        'rights' => [],
                     ],
                     1 => [
                         'description' => 'DocxTesti.docx',
                         'url' => 'https://linkkiDocx.fi',
                         'format' => 'docx',
+                        'rights' => [
+                            'copyright' => 'CC BY 4.0',
+                            'description' => [
+                                0 => 'Tekstitiedoston tarkempi käyttöoikeuskuvaus',
+                            ],
+                        ],
                     ],
                 ],
             ],

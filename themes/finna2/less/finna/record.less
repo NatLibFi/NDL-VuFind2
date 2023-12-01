@@ -506,21 +506,24 @@ a.authority {
   vertical-align: baseline;
   .link-wrapper {
     vertical-align: baseline;
-    &.additional-info {
-      .copyright-description {
-        margin-right: 5px;
-      }
-      .iconlabel:first-child {
-        margin-left: 2px;
-      }
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0 0 5px;
+    .iconlabel:first-child {
+      margin-left: 2px;
     }
-    &:not(.additional-info) {
-      .copyright-wrapper {
-        font-size: 0;
-        .copyright-icons {
-          line-height: 1.3em;
-        }
-      }
+    .copyright-icons {
+      display: inline-flex;
+      gap: 3px;
+      align-items: center;
+      line-height: 1.3em;
+    }
+    .resource-link {
+      margin-right: 5px;
+    }
+    .more-link {
+      margin: 0 0 0 8px;
     }
   }
   .copyright-wrapper {

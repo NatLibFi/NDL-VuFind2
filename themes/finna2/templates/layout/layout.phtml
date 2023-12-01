@@ -156,9 +156,6 @@
   <body class="template-dir-<?=$this->templateDir?> template-name-<?=$this->templateName?> <?=$this->layoutClass('offcanvas-row')?><?php if ($this->layout()->rtl): ?> rtl<?php endif; ?>">
     <?=$this->render('search/modals.phtml') ?>
     <header class="hidden-print">
-      <?php if (!$this->cookie()->get('cookieConsent')): ?>
-        <?=$this->partial('Helpers/cookie-consent.phtml');?>
-      <?php endif; ?>
       <?php if ($this->bazaarSession()->isActive()): ?>
         <?=$this->partial('Helpers/bazaar-browse-bar.phtml');?>
       <?php endif; ?>

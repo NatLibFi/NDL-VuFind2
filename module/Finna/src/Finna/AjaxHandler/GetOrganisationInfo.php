@@ -318,7 +318,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         }
         $defaultLocationId = $locationId
             ?? $orgInfo['consortium']['finna']['servicePoint']
-            ?? $orgInfo['list'][0]['id']
             ?? null;
         $defaultLocationName = null;
         if (null !== $defaultLocationId) {
@@ -494,7 +493,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         bool $showDetails
     ): array {
         $consortiumInfo = $this->organisationInfo->getConsortiumInfo($sectors, $id, $buildings);
-        $defaultLocationId = $consortiumInfo['consortium']['finna']['servicePoint'] ?? null;
+        $defaultLocationId = $consortiumInfo['consortium']['finna']['servicePoint'] ?? '';
         if (null === $locationId) {
             $locationId = $defaultLocationId;
         }

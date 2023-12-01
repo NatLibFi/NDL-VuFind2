@@ -40,24 +40,24 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
   }
 
   /**
-   * Get current location from session storage
+   * Get current location from local storage
    *
    * @param {String} id
    *
    * @returns string
    */
   function getStoredLocation(id) {
-    return sessionStorage.getItem('location-info-' + id) || '';
+    return localStorage.getItem('location-info-' + id) || '';
   }
 
   /**
-   * Remember current location in session storage
+   * Remember current location in local storage
    *
    * @param {String} id
    * @param {String} locationId
    */
   function storeCurrentLocation(id, locationId) {
-    sessionStorage.setItem('location-info-' + id, locationId);
+    localStorage.setItem('location-info-' + id, locationId);
   }
 
   // Forward declaration

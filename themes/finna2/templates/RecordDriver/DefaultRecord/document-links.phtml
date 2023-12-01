@@ -3,10 +3,16 @@
     <?php
         $language = $this->layout()->userLang;
         $description = ($document['description'] ?? $document['desc'] ?? null) ?: $this->translate('Download the file');
-        $rights = $this->driver->getAccessRestrictionsType($language);
-        $rightsDescription = $this->driver->getAccessRestrictions($language);
+        if (!isset($document['rights'])) {
+            $rights = $this->driver->getAccessRestrictionsType($language);
+            $rightsDescription = $this->driver->getAccessRestrictions($language);
+        } else {
+            $rights = $document['rights'];
+            $rightsDescription = $rights['description'] ?? [];
+        }
+        $copyright = $rights['copyright'] ?? '';
+        $link = $rights['link'] ?? '';
         $format = $document['format'] ?? null;
-        $hasLink = isset($rights['link']) && !empty($rights['link']);
     ?>
     <?php ob_start(); ?>
     <?php if ($showDownloadLinks): ?>
@@ -36,31 +42,42 @@
         </a>
     <?php endif; ?>
     <?php $linkToResource = trim(ob_get_clean()); ?>
+    <?php ob_start(); ?>
+    <button class="show-hide-button show-info more-link collapsed" data-toggle="collapse" data-target="#cc_info_<?= $i ?>" aria-expanded="false">
+        <?=$this->transEsc('copyright_info_show')?> <?=$this->icon('truncate-more')?>
+    </button>
+    <?php $ccbutton = trim(ob_get_clean());?>
     <li class="fulltextField">
-        <div class="link-wrapper<?php if ($rightsDescription):?> additional-info<?php endif; ?>">
-            <?=$linkToResource ?>
-            <div class="copyright-wrapper">
-                <span>(<?php if ($format):?><?=$this->escapeHtml($format) ?>:<?php endif; ?></span>
-                <span class="copyright-icons">
-                    <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $rights['copyright']])?>
-                </span>
-                <?php if ($hasLink): ?>
-                    <a class="copyright-description" href="<?=$this->escapeHtml($rights['link'])?>" target="_blank"><?=$this->escapeHtmlAttr($rights['copyright'])?></a>
-                <?php else: ?>
-                    <span>
-                        <?=$this->escapeHtml($rights['copyright']);?>
-                    </span>
-                <?php endif; ?>
-                <?php if ($rightsDescription): ?>
-                    <button class="show-hide-button show-info more-link collapsed" data-toggle="collapse" data-target="#cc_info_<?= $i ?>" aria-expanded="false">
-                        <?=$this->transEsc('copyright_info_show')?> <?=$this->icon('truncate-more')?>
-                    </button><span>)</span>
-                <?php else: ?>
-                    <span>)</span>
-                <?php endif; ?>
-            </div>
+        <div class="link-wrapper <?php if ($rightsDescription):?> additional-info<?php endif; ?>">
+            <span class="resource-link"><?=$linkToResource ?></span>
+            <?php if ($format || $copyright):?>
+                <?php
+                    $content = '(';
+                    if ($format) {
+                        $content .= $this->escapeHtml($format);
+                        if ($copyright) {
+                            $content .= ': ';
+                        }
+                    }
+                    if ($copyright) {
+                        $content .= '<span class="copyright-icons">' . $this->partial('Helpers/copyright-icons.phtml', ['copyright' => $copyright]) . '</span>';
+                        if ($link) {
+                            $content .= ' <a class="copyright-description" href="' . $this->escapeHtml($link) . '" target="_blank">' . $this->escapeHtmlAttr($copyright) . '</a>';
+                        } else {
+                            $content .= $this->escapeHtml($copyright);
+                        }
+                        if ($rightsDescription) {
+                            $content .= $ccbutton;
+                        }
+                    }
+                    $content .= ')';
+                ?>
+                <div class="copyright-wrapper">
+                    <span><?=$content?></span>
+                </div>
+            <?php endif; ?>
         </div>
-        <?php if ($rightsDescription): ?>
+        <?php if ($rights && $rightsDescription): ?>
             <div id="cc_info_<?= $i ?>" class="cc-info collapse">
                 <?php foreach ($rightsDescription as $item): ?>
                     <p class="access-rights"><?=$this->escapeHtml((string)$item);?></p>
