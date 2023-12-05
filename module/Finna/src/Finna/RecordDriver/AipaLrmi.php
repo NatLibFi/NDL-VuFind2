@@ -320,13 +320,48 @@ class AipaLrmi extends SolrLrmi implements
     public function getFilteredXMLElement(): \SimpleXMLElement
     {
         $record = parent::getFilteredXMLElement();
-        $filterFields = ['abstract', 'description'];
-        foreach ($filterFields as $filterField) {
-            while ($record->{$filterField}) {
-                unset($record->{$filterField}[0]);
+        $this->doFilterFields($record, ['abstract', 'description', 'assignmentIdeas']);
+        foreach ($record->material as $material) {
+            $this->doFilterFields($material, ['comment']);
+        }
+        foreach ($record->learningResource as $learningResource) {
+            $this->doFilterFields($learningResource, ['studyObjectives']);
+            foreach ($learningResource->educationalLevel as $educationalLevel) {
+                $this->doFilterFields($educationalLevel, ['name']);
+                foreach ($educationalLevel->inDefinedTermSet as $inDefinedTermSet) {
+                    $this->doFilterFields($inDefinedTermSet, ['name']);
+                }
+            }
+            foreach ($learningResource->educationalAlignment as $educationalAlignment) {
+                foreach ($educationalAlignment->educationalSubject as $educationalSubject) {
+                    $this->doFilterFields(
+                        $educationalSubject,
+                        ['educationalFramework', 'targetName']
+                    );
+                }
+            }
+            foreach ($learningResource->teaches as $teaches) {
+                $this->doFilterFields($teaches, ['name']);
             }
         }
-        return $this->filterEncapsulatedRecords($record);
+        return $record;
+    }
+
+    /**
+     * Helper method for filtering fields.
+     *
+     * @param \SimpleXMLElement $baseElement  Base element
+     * @param array             $filterFields Fields to filter
+     *
+     * @return void
+     */
+    protected function doFilterFields($baseElement, $filterFields): void
+    {
+        foreach ($filterFields as $filterField) {
+            while ($baseElement->{$filterField}) {
+                unset($baseElement->{$filterField}[0]);
+            }
+        }
     }
 
     /**
