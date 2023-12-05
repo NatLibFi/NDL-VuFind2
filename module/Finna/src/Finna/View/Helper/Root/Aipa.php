@@ -173,14 +173,11 @@ class Aipa extends AbstractHelper
                     $items[] = $subjectLevel->getPrefLabel($langcode);
                 }
             }
-
-            if (!empty($items)) {
-                $html .= $component('@@molecules/lists/finna-tag-list', [
-                    'title' => 'Aipa::' . $levelCodeValue,
-                    'items' => $items,
-                    'translateItems' => false,
-                ]);
-            }
+            $html .= $component('@@molecules/lists/finna-tag-list', [
+                'title' => 'Aipa::' . $levelCodeValue,
+                'items' => $items,
+                'translateItems' => false,
+            ]);
         }
         return $html;
     }
@@ -199,6 +196,7 @@ class Aipa extends AbstractHelper
         }
 
         $component = $this->getView()->plugin('component');
+        $transEsc = $this->getView()->plugin('transEsc');
         $langcode = $this->view->layout()->userLang;
 
         // Basic education levels are mapped to primary school and lower secondary
@@ -210,6 +208,7 @@ class Aipa extends AbstractHelper
         usort($levelCodeValues, [$this, 'sortEducationalLevels']);
 
         $html = '';
+        $levelsHtml = [];
         foreach ($levelCodeValues as $levelCodeValue) {
             $levelData = EducationalData::getEducationalLevelData($levelCodeValue, $educationalData);
             if (empty($levelData)) {
@@ -275,12 +274,24 @@ class Aipa extends AbstractHelper
             }
 
             if (!empty($componentData)) {
-                $levelHtml = $component('@@organisms/data/finna-educational-level-data', $componentData);
+                $componentData['sectionHeadingLevel'] = 5;
+                $levelsHtml[$levelCodeValue] = $component(
+                    '@@organisms/data/finna-educational-level-data',
+                    $componentData
+                );
+            }
+        }
+        foreach ($levelsHtml as $levelCodeValue => $levelHtml) {
+            if (count($levelsHtml) > 1) {
                 $html .= $component('@@molecules/containers/finna-truncate', [
                     'content' => $levelHtml,
+                    'element' => 'div',
                     'label' => 'Aipa::' . $levelCodeValue,
                     'topToggle' => -1,
                 ]);
+            } else {
+                $html .= '<h4>' . $transEsc('Aipa::' . $levelCodeValue) . '</h4>';
+                $html .= $levelHtml;
             }
         }
         return $html;

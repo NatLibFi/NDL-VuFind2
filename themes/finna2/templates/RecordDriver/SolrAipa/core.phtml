@@ -151,24 +151,6 @@
         </div>
         <?php endif; ?>
 
-        <?php if ($publications = $this->driver->getPublicationDetails()): ?>
-          <div class="recordPublications">
-            <?php foreach ($publications as $field): ?>
-              <span>
-                <?php if ($pubPlace = $field->getPlace()): ?>
-                  <span><?=$this->escapeHtml($pubPlace)?></span>
-                <?php endif; ?>
-                <?php if ($pubName = $field->getName()): ?>
-                  <span><?=$this->escapeHtml($pubName)?></span>
-                <?php endif; ?>
-                <?php if ($pubDate = $field->getDate()): ?>
-                  <span><?=$this->escapeHtml($pubDate)?></span>
-                <?php endif; ?>
-              </span>
-            <?php endforeach; ?>
-          </div>
-        <?php endif; ?>
-
         <?php if ($this->searchOptions($this->driver->getSourceIdentifier())->getVersionsAction()): ?>
           <?=$this->record($this->driver)->renderTemplate('versions-link.phtml')?>
         <?php endif; ?>
@@ -192,7 +174,7 @@
         ):
       ?>
         <div class="wide summary recordSummary">
-          <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", $descriptions)) ?>
+          <?= $this->markdown()->toHTML(implode("\n\n", $descriptions)) ?>
         </div>
       <?php endif; ?>
 
