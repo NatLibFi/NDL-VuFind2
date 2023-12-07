@@ -29,11 +29,14 @@
 
 namespace Finna\View\Helper\Root;
 
+use Finna\RecordDriver\AipaLrmi;
+use Finna\RecordDriver\SolrAipa;
 use Laminas\View\Helper\AbstractHelper;
 use NatLibFi\FinnaCodeSets\FinnaCodeSets;
 use NatLibFi\FinnaCodeSets\Model\EducationalLevel\EducationalLevelInterface;
 use NatLibFi\FinnaCodeSets\Utility\EducationalData;
-use VuFind\RecordDriver\AbstractBase;
+
+use function count;
 
 /**
  * AIPA view helper
@@ -64,9 +67,9 @@ class Aipa extends AbstractHelper
     /**
      * Record driver
      *
-     * @var AbstractBase
+     * @var SolrAipa|AipaLrmi
      */
-    protected AbstractBase $driver;
+    protected SolrAipa|AipaLrmi $driver;
 
     /**
      * Constructor
@@ -81,24 +84,66 @@ class Aipa extends AbstractHelper
     /**
      * Store a record driver object and return this object.
      *
-     * @param AbstractBase $driver Record driver object.
+     * @param SolrAipa|AipaLrmi $driver Record driver object.
      *
      * @return Aipa
      */
-    public function __invoke($driver): Aipa
+    public function __invoke(SolrAipa|AipaLrmi $driver): Aipa
     {
         $this->driver = $driver;
         return $this;
     }
 
     /**
-     * Render educational levels and subjects.
+     * Render all subject headings.
+     *
+     * @return string
+     */
+    public function renderAllSubjectHeadings(): string
+    {
+        $headings = $this->driver->getAllSubjectHeadings();
+        if (empty($headings)) {
+            return '';
+        }
+
+        $recordHelper = $this->getView()->plugin('record');
+        $items = [];
+        foreach ($headings as $field) {
+            $item = '';
+            $subject = '';
+            if (count($field) == 1) {
+                $field = explode('--', $field[0]);
+            }
+            $i = 0;
+            foreach ($field as $subfield) {
+                $item .= ($i++ == 0) ? '' : ' &#8594; ';
+                $subject = trim($subject . ' ' . $subfield);
+                $item .= $recordHelper($this->driver)->getLinkedFieldElement(
+                    'subject',
+                    $subfield,
+                    ['name' => $subject],
+                    ['class' => ['backlink']]
+                );
+            }
+            $items[] = $item;
+        }
+
+        $component = $this->getView()->plugin('component');
+        return $component('@@molecules/lists/finna-tag-list', [
+            'title' => 'Subjects',
+            'items' => $items,
+            'htmlItems' => true,
+        ]);
+    }
+
+    /**
+     * Render educational levels and educational subjects.
      *
      * @param array $educationalData Educational data from record driver
      *
      * @return string
      */
-    public function renderLevelsAndSubjects(array $educationalData): string
+    public function renderEducationalLevelsAndSubjects(array $educationalData): string
     {
         if (empty($educationalData)) {
             return '';
@@ -128,13 +173,11 @@ class Aipa extends AbstractHelper
                     $items[] = $subjectLevel->getPrefLabel($langcode);
                 }
             }
-
-            if (!empty($items)) {
-                $html .= $component('@@molecules/lists/finna-tag-list', [
-                    'title' => 'Aipa::' . $levelCodeValue,
-                    'items' => $items,
-                ]);
-            }
+            $html .= $component('@@molecules/lists/finna-tag-list', [
+                'title' => 'Aipa::' . $levelCodeValue,
+                'items' => $items,
+                'translateItems' => false,
+            ]);
         }
         return $html;
     }
@@ -153,6 +196,7 @@ class Aipa extends AbstractHelper
         }
 
         $component = $this->getView()->plugin('component');
+        $transEsc = $this->getView()->plugin('transEsc');
         $langcode = $this->view->layout()->userLang;
 
         // Basic education levels are mapped to primary school and lower secondary
@@ -164,6 +208,7 @@ class Aipa extends AbstractHelper
         usort($levelCodeValues, [$this, 'sortEducationalLevels']);
 
         $html = '';
+        $levelsHtml = [];
         foreach ($levelCodeValues as $levelCodeValue) {
             $levelData = EducationalData::getEducationalLevelData($levelCodeValue, $educationalData);
             if (empty($levelData)) {
@@ -229,12 +274,24 @@ class Aipa extends AbstractHelper
             }
 
             if (!empty($componentData)) {
-                $levelHtml = $component('@@organisms/data/finna-educational-level-data', $componentData);
+                $componentData['sectionHeadingLevel'] = 5;
+                $levelsHtml[$levelCodeValue] = $component(
+                    '@@organisms/data/finna-educational-level-data',
+                    $componentData
+                );
+            }
+        }
+        foreach ($levelsHtml as $levelCodeValue => $levelHtml) {
+            if (count($levelsHtml) > 1) {
                 $html .= $component('@@molecules/containers/finna-truncate', [
                     'content' => $levelHtml,
+                    'element' => 'div',
                     'label' => 'Aipa::' . $levelCodeValue,
                     'topToggle' => -1,
                 ]);
+            } else {
+                $html .= '<h4>' . $transEsc('Aipa::' . $levelCodeValue) . '</h4>';
+                $html .= $levelHtml;
             }
         }
         return $html;

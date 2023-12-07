@@ -82,8 +82,8 @@
 <?php ob_end_clean(); ?>
 
 <?php $this->metadata()->generateMetatags($this->driver);?>
-<div class="media" vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
-  <h1 property="name" class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+<div class="media">
+  <h1 class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
 
   <?php if (!empty($this->extraControls)): ?>
     <?=$this->extraControls['actionControls'] ?? ''?>
@@ -94,7 +94,7 @@
     <?=$thumbnail ?>
   <?php endif; ?>
   <div class="media-body record-information">
-    <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+    <h1 class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
     <?php foreach ($this->driver->tryMethod('getFullTitlesAltScript', [], []) as $altTitle): ?>
       <div class="record-title-alt-script">
         <?=$this->escapeHtml($altTitle)?>
@@ -209,7 +209,7 @@
 
       <?php $results = $this->driver->getNonPresenterAuthors();?>
       <?php if ($results): ?>
-        <div class="recordAuthors" property="author">
+        <div class="recordAuthors">
           <div class="truncate-field">
             <?php foreach($results as $index => $author): ?>
               <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
@@ -232,15 +232,15 @@
       if (!empty($publications)): ?>
         <span class="recordPublications">
           <?php foreach ($publications as $field): ?>
-            <span property="publisher" typeof="Organization">
+            <span>
               <?php $pubName = $field->getName();
               if (!empty($pubName)): ?>
-                <span property="name"><?=$this->escapeHtml($pubName)?></span>
+                <span><?=$this->escapeHtml($pubName)?></span>
               <?php endif; ?>
             </span>
             <?php $pubDate = $field->getDate();
             if (!empty($pubDate)): ?>
-              <span property="datePublished"><?=$this->escapeHtml($pubDate)?></span>
+              <span><?=$this->escapeHtml($pubDate)?></span>
             <?php endif; ?>
           <?php endforeach; ?>
         </span>
@@ -249,7 +249,7 @@
       <?php $edition = $this->driver->getEdition();
       if (!empty($edition)): ?>
         <span class="recordEdition">
-          <span property="bookEdition"><?=$this->escapeHtml($edition)?></span>
+          <span><?=$this->escapeHtml($edition)?></span>
         </span>
       <?php endif; ?>
 
@@ -259,7 +259,7 @@
     </div> <?php // record-core-metadata ?>
 
     <div class="description recordSummary">
-      <span id="description_text" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>">
+      <span id="description_text" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" data-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
         <?=$this->icon('spinner') ?>
       </span>
     </div>

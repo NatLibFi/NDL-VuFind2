@@ -50,7 +50,10 @@
     <div>
       <?php if ($list): ?>
         <div class="useraccount-header">
-          <h2 class="list-title"><i class="list-title-edit fa fa-pen" aria-label="<?=$this->transEscAttr('edit')?>"></i><span><?=$this->escapeHtml($list->title)?></span></h2>
+          <h2><?=$this->transEsc('Favorites')?></h2>
+        </div>
+        <div class="useraccount-header">
+          <h3 class="list-title"><i class="list-title-edit fa fa-pen" aria-label="<?=$this->transEscAttr('edit')?>"></i><span><?=$this->escapeHtml($list->title)?></span></h3>
         </div>
         <?php if ($list && $user && $list->user_id === $user->id && $list->public): ?>
           <div class="list-public-indicator">
@@ -124,41 +127,46 @@
         </div>
       </div>
       <div>
-        <form class="form" method="post" name="bulkActionForm" action="<?=$this->url('cart-myresearchbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
-          <?=$this->context($this)->renderInContext('myresearch/bulk-action-buttons.phtml', ['idPrefix' => '', 'list' => $list ?? null, 'account' => $this->account, 'lists' => $lists])?>
-          <?php foreach ($this->results->getResults() as $i => $current): ?>
-            <?=$this->record($current)->getListEntry($list, $user)?>
-          <?php endforeach; ?>
-        </form>
-      </div>
-    <?php else: ?>
-      <div class="useraccount-header">
-        <h3><?=$this->transEsc('You do not have any saved resources')?></h3>
-      </div>
-    <?php endif; ?>
-  </div>
-  <?php if ($recordTotal > 0): ?>
-    <div>
-      <div class="text-center">
-        <hr>
-        <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results])?>
-      </div>
+        <div class="myaccount-sticky-header"></div>
+          <div class="toolbar-sticky-container">
+            <form class="form" method="post" name="bulkActionForm" action="<?=$this->url('cart-myresearchbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
+              <div class="toolbar-sticky">
+                <?=$this->context($this)->renderInContext('myresearch/bulk-action-buttons.phtml', ['idPrefix' => '', 'list' => $list ?? null, 'account' => $this->account, 'lists' => $lists])?>
+              </div>
+              <?php foreach ($this->results->getResults() as $i => $current): ?>
+                <?=$this->record($current)->getListEntry($list, $user)?>
+              <?php endforeach; ?>
+            </form>
+          </div>
+        </div>
+      <?php else: ?>
+        <div class="useraccount-header">
+          <h3><?=$this->transEsc('You do not have any saved resources')?></h3>
+        </div>
+      <?php endif; ?>
     </div>
-  <?php endif;?>
-</div>
-<?php if ($user && $list): ?>
-  <form class="pull-left delete-list" action="<?=$this->url('myresearch-deletelist') ?>?listID=<?=urlencode($list->id)?>&confirm=1" method="post">
-    <ul class="dropdown-menu">
-      <li class="disabled"><a><?=$this->transEsc('confirm_delete_list_text')?></a></li>
-      <li class="confirm"><a href="#"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
-      <li class="cancel"><a href="#"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+    <?php if ($recordTotal > 0): ?>
+      <div>
+        <div class="text-center">
+          <hr>
+          <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results])?>
+        </div>
+      </div>
+    <?php endif;?>
+  </div>
+  <?php if ($user && $list): ?>
+    <form class="pull-left delete-list" action="<?=$this->url('myresearch-deletelist') ?>?listID=<?=urlencode($list->id)?>&confirm=1" method="post">
+      <ul class="dropdown-menu">
+        <li class="disabled"><a><?=$this->transEsc('confirm_delete_list_text')?></a></li>
+        <li class="confirm"><a href="#"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
+        <li class="cancel"><a href="#"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+      </ul>
+    </form>
+  <?php endif; ?>
+  <div class="mylist-mobile mobile-navigation visible-xs visible-sm hidden-print">
+    <ul>
+      <li class="sidebar-navigation"><?=$this->icon('sidebar-expand') ?> <?=$this->transEsc('Your Lists')?></li>
     </ul>
-  </form>
-<?php endif; ?>
-<div class="mylist-mobile mobile-navigation visible-xs visible-sm hidden-print">
-  <ul>
-    <li class="sidebar-navigation"><?=$this->icon('sidebar-expand') ?> <?=$this->transEsc('Your Lists')?></li>
-  </ul>
-</div>
+  </div>
 
 <!-- END of: finna - myresearch/mylist.phtml -->

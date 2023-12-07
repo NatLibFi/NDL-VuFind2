@@ -69,13 +69,13 @@
 <?php ob_end_clean(); ?>
 
 <?php $this->metadata()->generateMetatags($this->driver);?>
-<div class="media" vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
-  <h1 property="name" class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+<div>
+  <h1 class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
   <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
   <?php endif; ?>
   <div class="media-body record-information">
-      <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+      <h1 class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
       <?php if ($results = $this->driver->getAlternativeTitles()): ?>
         <div class="recordAltTitles record-alt-titles">
           <?=implode('<br>', array_map([$this, 'escapeHtml'], $results))?>
@@ -143,30 +143,12 @@
         ?>
         <div class="truncate-field recordAuthors">
           <strong><?= $this->transEsc('Aipa::Curated By') ?>:</strong>
-          <span property="author">
-          <?php foreach($results as $index => $author): ?>
-            <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a><?php if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><?php endif; ?><?php if (!empty($author['role'])): ?><span class="author-role">, <?=$this->escapeHtml($author['role']) ?></span><?php endif; ?>
-          <?php endforeach; ?>
+          <span>
+            <?php foreach($results as $index => $author): ?>
+              <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a><?php if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><?php endif; ?><?php if (!empty($author['role'])): ?><span class="author-role">, <?=$this->escapeHtml($author['role']) ?></span><?php endif; ?>
+            <?php endforeach; ?>
           </span>
         </div>
-        <?php endif; ?>
-
-        <?php if ($publications = $this->driver->getPublicationDetails()): ?>
-          <div class="recordPublications">
-            <?php foreach ($publications as $field): ?>
-              <span property="publisher" typeof="Organization">
-                <?php if ($pubPlace = $field->getPlace()): ?>
-                  <span property="location"><?=$this->escapeHtml($pubPlace)?></span>
-                <?php endif; ?>
-                <?php if ($pubName = $field->getName()): ?>
-                  <span property="name"><?=$this->escapeHtml($pubName)?></span>
-                <?php endif; ?>
-                <?php if ($pubDate = $field->getDate()): ?>
-                  <span property="datePublished"><?=$this->escapeHtml($pubDate)?></span>
-                <?php endif; ?>
-              </span>
-            <?php endforeach; ?>
-          </div>
         <?php endif; ?>
 
         <?php if ($this->searchOptions($this->driver->getSourceIdentifier())->getVersionsAction()): ?>
@@ -174,17 +156,7 @@
         <?php endif; ?>
       </div>
 
-      <?php if ($rights = $this->driver->getAccessRestrictionsType($this->layout()->userLang)): ?>
-        <div class="access-rights">
-          <strong><?= $this->transEsc('Access Restrictions') ?>:</strong>
-          <?= $this->partial('Helpers/copyright-field-value.phtml', ['data' => $rights]) ?>
-          <?php if (!empty($rightsCoverage = $this->driver->getRightsCoverage())): ?>
-            <div class="rights-info">
-              <?= $this->icon('info') ?> <?= $this->transEsc('Aipa::rights_coverage_' . $rightsCoverage) ?>
-            </div>
-          <?php endif; ?>
-        </div>
-      <?php endif; ?>
+      <?= $this->aipa($this->driver)->renderAllSubjectHeadings() ?>
 
       <?php if ($abstracts = $this->driver->getAbstracts()): ?>
         <div class="wide summary recordSummary">
@@ -202,7 +174,7 @@
         ):
       ?>
         <div class="wide summary recordSummary">
-          <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", $descriptions)) ?>
+          <?= $this->markdown()->toHTML(implode("\n\n", $descriptions)) ?>
         </div>
       <?php endif; ?>
 

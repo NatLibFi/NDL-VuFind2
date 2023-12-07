@@ -1,6 +1,6 @@
 <!-- START of: finna - RecordDriver/Primo/core.phtml -->
 <?php $this->metadata()->generateMetatags($this->driver);?>
-<div vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
+<div>
 
   <?php // if you have a preview tab but want to move or remove the preview link
       // from this area of the record view, this can be split into
@@ -18,7 +18,7 @@
         </span>
       <?php endif; ?>
     </div>
-    <h1 property="name" class="record-title"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+    <h1 class="record-title"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
 
     <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
 
@@ -58,7 +58,7 @@
         <div><?=$this->record($this->driver)->getFormatList()?></div>
       <?php endif; ?>
       <?php if ($authors = $this->driver->getCreators()): ?>
-        <?php foreach ($authors as $i => $field): ?><?=($i > 0) ? ' ; ' : ''?><span property="author"><a href="<?=$this->record($this->driver)->getLink('author', $field)?>"><?=$this->escapeHtml($field)?></a></span><?php endforeach; ?>
+        <?php foreach ($authors as $i => $field): ?><?=($i > 0) ? ' ; ' : ''?><span><a href="<?=$this->record($this->driver)->getLink('author', $field)?>"><?=$this->escapeHtml($field)?></a></span><?php endforeach; ?>
       <?php endif; ?>
       <?php
         $journalTitle = $this->driver->getContainerTitle();

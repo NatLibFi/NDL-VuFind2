@@ -377,21 +377,6 @@
         }
     }
 }
-.mobile-accordion-hide {
-    .feed-accordions-title, .accordion {
-        display: none;
-    }
-    .events-tabs {
-        @media (max-width: @screen-sm-max) {
-            margin-bottom: 0;
-        }
-    }
-}
-.mobile-accordion-show .events-tabs {
-    @media (max-width: @screen-sm-max) {
-        display: none;
-    }
-}
 .event-accordions .tab-content {
     // Relative positioning for the absolutely positioned spinner:
     position: relative;
@@ -595,22 +580,32 @@ finna-feed {
         float: left;
         font-size: 14px;
         font-weight: 900;
-        width: 100%;
+        width: 85%;
         color: @carousel-slide-header-color;
+        p {
+            margin: 0;
+            width: 100%;
+            overflow-wrap: anywhere;
+        }
         .carousel-more {
             font-size: 1.5em;
             float: right;
             margin-left: auto;
             padding-left: 5px;
             line-height: 14px;
+            &.show-link {
+                flex: 1;
+                text-align: right;
+            }
         }
+    }
+    .carousel-non-touch-device .carousel-hover-title {
+        width: 100%;
     }
     .carousel-more.carousel-close {
         position: sticky;
         top: 0;
-        span {
-            padding: 2px 10px 10px 10px;
-        }
+        width: 100%;
     }
     .carousel-hover-title, .carousel-slide-header p {
         overflow-wrap: break-word;
@@ -618,6 +613,8 @@ finna-feed {
     .carousel-hover-date {
         font-weight: 300;
         color: @gray-lighter;
+        width: 100%;
+        display: inline-block;
     }
     .splide__arrows {
         position: absolute;
@@ -707,7 +704,7 @@ finna-feed {
                     height: 5px;
                     padding: 5px;
                     cursor: pointer;
-                    background-color: #cfcfcf;
+                    background-color: @gray-mid-light;
                     border: 0;
                     outline: none;
                     border-radius: 50%;
@@ -743,8 +740,13 @@ finna-feed.splide--ltr {
     }
     @media (hover:hover) {
         .feed-item-holder:hover {
-            .carousel-text:not(.no-text) {
-                opacity: 1;
+            .carousel-text {
+                &:not(.no-text) {
+                    opacity: 1;
+                }
+                &.no-text.show-hover {
+                    opacity: 1;
+                }
             }
             .carousel-slide-header:not(.title-bottom) {
                 opacity: 0;
@@ -761,6 +763,11 @@ finna-feed.splide--ltr {
                 }
             }
         }
+    }
+    .carousel-non-touch-device {
+            .carousel-text.show-hover:hover {
+                opacity: 1;
+            }
     }
     .feed-item-holder {
         &.clicked {
@@ -812,7 +819,8 @@ finna-feed.splide--ltr {
                 color: @carousel-slide-header-color;
                 text-shadow: @carousel-slide-header-text-shadow;
                 float: right;
-                width: 10%;
+                width: 15%;
+                text-align: right;
             }
         }
 

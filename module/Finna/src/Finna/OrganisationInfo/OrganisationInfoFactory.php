@@ -73,7 +73,7 @@ class OrganisationInfoFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
-        return new $requestedName(
+        $result = new $requestedName(
             $container->get(\VuFind\Config\PluginManager::class)
                 ->get('OrganisationInfo'),
             $container->get(\VuFind\Cache\Manager::class),
@@ -82,5 +82,7 @@ class OrganisationInfoFactory implements FactoryInterface
             $container->get(\Finna\OrganisationInfo\Provider\Kirkanta::class),
             $container->get(\Finna\OrganisationInfo\Provider\MuseotFi::class),
         );
+        $result->setSorter($container->get(\VuFind\I18n\Sorter::class));
+        return $result;
     }
 }

@@ -56,7 +56,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
         $ndash = html_entity_decode('&#x2013;', ENT_NOQUOTES, 'UTF-8');
         $dates = [
             [
-                'data' => "1600{$ndash}1799",
+                'data' => "1600{$ndash}",
                 'detail' => 'Ajallinen kattavuus',
             ],
             [
@@ -70,6 +70,14 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
             [
                 'data' => "01.01.1600{$ndash}01.01.1610",
                 'detail' => 'Ajallinen kattavuus',
+            ],
+            [
+                'data' => '1923',
+                'detail' => '',
+            ],
+            [
+                'data' => "1925{$ndash}",
+                'detail' => '',
             ],
         ];
         $this->assertEquals($dates, $driver->getUnitDates());
@@ -272,6 +280,72 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
             $this->assertEquals(
                 $result,
                 $driver->$function()
+            );
+        }
+    }
+
+    /**
+     * Function to get expected physical descriptions data
+     *
+     * @return array
+     */
+    public function getPhysicalDescriptionsData(): array
+    {
+        return [
+            [
+                'fi',
+                [
+                    'ead3_test.xml' => [
+                        'Hyllymetriä järjestetty 0.96 hm',
+                        'Koteloita 5',
+                    ],
+                    'ead3_test2.xml' => [
+                        '9 koteloa',
+                    ],
+                ],
+                'sv',
+                [
+                    'ead3_test.xml' => [
+                        'Hyllmeter ordnat 0.96 hm',
+                    ],
+                    'ead3_test2.xml' => [
+                        '9 mappar',
+                    ],
+                ],
+                'en',
+                [
+                    'ead3_test.xml' => [
+                        'Hyllymetriä järjestetty 0.96 hm',
+                        'Koteloita 5',
+                    ],
+                    'ead3_test2.xml' => [
+                        '9 koteloa',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Test getPhysicalDescriptions
+     *
+     * @param string $language Language
+     * @param array  $expected Result to be expected
+     *
+     * @dataProvider getPhysicalDescriptionsData
+     *
+     * @return void
+     */
+    public function testPhysicalDescriptions(
+        string $language,
+        array $expected
+    ): void {
+        foreach ($expected as $file => $result) {
+            $driver = $this->getDriver($file);
+            $driver->setPreferredLanguage($language);
+            $this->assertEquals(
+                $result,
+                $driver->getPhysicalDescriptions()
             );
         }
     }

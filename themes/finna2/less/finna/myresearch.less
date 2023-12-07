@@ -50,7 +50,6 @@
 
 .checkboxFilter.mylist-select-all {
   padding-left: 0;
-  padding-top: 2px;
   .checkbox {
     padding-left: 0;
     label {
@@ -92,6 +91,27 @@
     min-width: 30px;
   }
   .toolbar {
+    display: flex;
+    flex-direction: row;
+    &.no-list-functions {
+      justify-content: space-between;
+      .myresearch-notification {
+        height: fit-content;
+        align-self: center;
+      }
+    }
+    .checkbox-col {
+      display: flex;
+      width: fit-content;
+      height: fit-content;
+      .mylist-select-all {
+        align-self: center;
+        padding: 5px 0;
+        @media (max-width: @screen-md) {
+          margin: 6px 0;
+        }
+      }
+    }
     th {
       vertical-align: middle;
       > div {
@@ -102,28 +122,48 @@
         padding-top: 10px;
       }
     }
+    .btn-group {
+      margin-right: 5px;
+    }
+    .list-functions {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 100%;
+    }
   }
-  .renew-button, #renewAll, #renewSelected, #update_selected, #cancelAll, #cancelSelected, #pay_selected, #purgeSelected, #purgeAll, .save-list-wrapper {
-    height: 35px;
-    padding: 0 10px;
-    margin-right: 12px;
+  &.history-table {
+    .toolbar {
+      border-bottom: 1px solid #d1d1d1;
+      .mylist-select-all {
+        margin-right: 0;
+      }
+    }
+  }
+  .btn-finna-toolbar {
+    border: 1px solid @gray-lighter;
+    background: @gray-ultralight;
+    color: @text-color;
+    padding: 5px 10px;
+    font-size: 0.9em;
+    height: 30px;
     @media (max-width: @screen-md) {
-      margin: 6px 12px 6px 0px;
+      margin: 6px 0px;
     }
   }
-  .save-list-wrapper {
-    padding: 0;
-    a {
-      height: 35px;
-      padding-top: 8px;
-    }
+  #update_selected, #purgeSelected {
+    border-radius: 4px 0 0 4px;
   }
-  .sort-col .dropdown-toggle {
-    margin-bottom: 0;
-    @media (max-width: @screen-md) {
-      margin-top: 6px;
-    }
+  #cancel_selected, #copy_to_favourites {
+    border-radius: 0 4px 4px 0;
   }
+  #copy_to_favourites {
+    margin-left: -1px;
+  }
+  .sort-button ul.dropdown-menu li a {
+    font-size: 1em;
+  }
+
   @media(min-width: @screen-sm) {
     .half-table-column {
       width: 50%;
@@ -139,7 +179,7 @@
     }
   }
   @media(min-width: @screen-xs-min) {
-    .renew-button-col {
+    .toolbar-button-col {
       float: left;
       text-align: left;
     }
@@ -152,18 +192,14 @@
     }
   }
   @media(max-width: @screen-xxs-max) {
-    .renew-button-col {
-      width: 100%;
+    .toolbar-button-col {
       float: left;
-      input {
-        min-width: 170px;
-      }
     }
     .sort-col {
       float: left;
     }
   }
-  .checkbox-col{
+  .checkbox-col {
     width: 10%;
   }
   .myresearch-count {
@@ -171,14 +207,6 @@
     font-weight: bold;
     &.no-buttons {
       line-height: inherit;
-    }
-  }
-  .checkboxFilter.mylist-select-all {
-    .checkbox {
-      margin: 5px 0;
-      @media (max-width: @screen-md) {
-        margin-top: 12px;
-      }
     }
   }
 }
@@ -210,15 +238,25 @@
   .myresearch-row:last-child {
     box-shadow: none;
   }
-  .holds-sort {
-    margin-bottom: 6px;
+  #copyToFavourites {
+    padding-top: 5px;
   }
-  #cancelSelected, #cancelAll {
-    height: 35px;
-    padding: 0 10px;
-    margin-right: 12px;
+  .alert {
+    margin: 12px 0;
+  }
+  .sort-option-container {
+    display: flex;
+    align-items: baseline;
+    .button-label {
+      margin-right: 5px;
+    }
+  }
+  .sort-col a.dropdown-toggle {
+    margin-bottom: 0;
+    height: 30px;
+    font-size: 0.9em;
     @media (max-width: @screen-md) {
-      margin: 6px 12px 6px 0;
+      margin-top: 6px;
     }
   }
 }
@@ -288,7 +326,7 @@
   }
 }
 // Custom styles for user account functions
-.template-dir-myresearch, .template-dir-holds, .template-dir-search.template-name-history, .template-dir-librarycards {
+.template-dir-myresearch, .template-dir-holds, .template-dir-checkouts.template-name-history, .template-dir-search.template-name-history, .template-dir-librarycards {
   padding-bottom: 30px;
   h1 {
     font-weight: 500;
@@ -296,6 +334,11 @@
   .my-research-content {
     width: 100%;
     border-radius: @border-radius-base;
+    @media (max-width: @screen-sm) {
+      .select-card-wrapper .select-card .library_card li > a {
+        white-space: normal;
+      }
+    }
   }
   h1 {
     display: inline-block;
@@ -390,11 +433,20 @@
 }
 
 .useraccount-header {
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  justify-content: space-between;
   margin-top: 5px;
   margin-bottom: 5px;
+  @media (max-width: @screen-md-max) {
+    margin-top: 10px;
+  }
   h2, h3 {
     line-height: 1.5;
     font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 10px;
   }
   h2 {
     font-size:@font-size-h2;
@@ -402,7 +454,25 @@
   h3 {
     font-size: @font-size-h4;
   }
+  .list-title {
+    font-size: @font-size-h2;
+  }
+  a.dropdown-toggle {
+    font-size: 0.9em;
+    height: 30px;
+  }
 }
+.sort-col.sort-col-mobile {
+    @media(min-width: @screen-sm) {
+    display: none;
+  }
+}
+
+.toolbar .list-functions .sort-col {
+    @media(max-width: @screen-sm) {
+      display: none;
+    }
+  }
 
 .online-payment-form > .payment-row {
   .online-payment-area {
@@ -483,10 +553,34 @@
   }
 }
 
-#renewals .toolbar, #update_holds .toolbar {
-  @media (max-width:@screen-xs-max) {
-    margin-left: -15px;
+.toolbar-sticky-container {
+  margin: 0;
+  @media (max-width: @screen-md) {
+    .row();
+    padding: 0px 15px;
   }
+  .toolbar-sticky {
+    position: sticky;
+    top: 0;
+    background-color: @body-bg;
+    z-index: 2;
+    &.isSticky {
+      margin: 0px -15px;
+      padding: 0px 15px;
+      @media (max-width: @screen-md) {
+        top: @navbar-height;
+      }
+      @media (max-width: @screen-sm) {
+        box-shadow: 0 3px 3px rgba(0,0,0,.3);
+        .toolbar {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+}
+
+.myresearch-table .toolbar {
   .checkboxFilter.mylist-select-all {
     margin-right: 0;
     float: none;
@@ -505,13 +599,12 @@
   }
 }
 
-#cancelILLRequest .toolbar, #cancelStorageRetrievalRequest .toolbar {
-  padding: 5px;
-  .btn-group {
-    margin: 0;
-  }
-  @media (max-width: @screen-md) {
-    padding: 0;
+.myresearch-table.online-payment .toolbar {
+  align-items: center;
+  margin-bottom: 1rem;
+
+  .checkboxFilter.mylist-select-all {
+    margin-right: 1rem;
   }
 }
 
@@ -519,7 +612,10 @@
   margin: 0;
   margin-top: 5px;
   border-bottom: 1px solid @gray-lighter;
-  padding: 15px 0px;
+  padding: 3px 0;
+  @media(max-width: @screen-md) {
+    margin-top: 0;
+  }
   .status-text {
     float: right;
     line-height: 38px;
@@ -566,6 +662,7 @@
   border-top: none;
   box-shadow: 0 15px 30px -35px @gray;
   border-collapse: separate;
+  margin-top: 10px;
   &.online-payment {
     margin-bottom: 15px;
     td {
@@ -658,6 +755,9 @@
     margin-top: 0px;
     &.mainbody.right {
       padding-left: 0px;
+    }
+    .bulkActionButtons.bulk-action-buttons-col {
+      padding-right: 3px;
     }
   }
 }
@@ -810,7 +910,8 @@
 // Status badges
 .myresearch-menu, #my-info-dropdown-menu {
   a {
-    display: block;
+    display: flex;
+    justify-content: space-between;
     &.flex {
       display: flex;
     }
@@ -894,6 +995,15 @@
   @media (max-width: @screen-xs-max) {
     left: auto;
     right: 0;
+  }
+}
+.myresearch-body .form .mylist-functions {
+  #button_email {
+    border-radius: 4px 0 0 4px;
+  }
+  #add-to-list {
+    box-shadow: none;
+    text-align: left;
   }
 }
 

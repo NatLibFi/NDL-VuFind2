@@ -51,6 +51,8 @@ class FeedTabs extends \Laminas\View\Helper\AbstractHelper
     {
         $title = $feedIds['title'] ?? '';
         $ids = $feedIds['ids'];
+        $navStyle = $feedIds['navStyle'] ?? '';
+        $showMobileAccordion = $feedIds['showMobileAccordion'] ?? true;
         return $this->getView()->render(
             'Helpers/feedtabs.phtml',
             [
@@ -58,6 +60,8 @@ class FeedTabs extends \Laminas\View\Helper\AbstractHelper
                 'id' => md5(json_encode($ids)),
                 'feedIds' => $ids,
                 'active' => array_shift($ids),
+                'navStyle' => $navStyle,
+                'showMobileAccordion' => $showMobileAccordion,
             ]
         );
     }

@@ -159,7 +159,7 @@
           <input type="hidden" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>" name="csrf">
           <div class="myresearch-table online-payment" aria-label="<?=$this->transEscAttr('Actions');?>">
             <div class="toolbar">
-              <div class="text-left checkbox-col">
+              <div class="checkbox-col">
                 <div class="checkboxFilter mylist-select-all">
                   <div class="checkbox">
                     <label>
@@ -170,7 +170,7 @@
                   </div>
                 </div>
               </div>
-              <div class="payment-row fines-info-area">
+              <div class="payment-row">
                 <span id="online_payment_selected_sr" class="sr-only" data-template="<?=$this->transEscAttr('online_payment_selected_to_pay') . ' ' . $this->transEscAttr($currencyTemplate)?>">
                   <?=$this->transEscAttr('online_payment_selected_to_pay') . ' ' . $this->safeMoneyFormat(0)?>
                 </span>

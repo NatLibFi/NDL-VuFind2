@@ -14,6 +14,9 @@ client_secret = ""
 ;   5.1 (technically still v5 but added in a later revision):
 ;     - summary holdings information (especially for serials)
 api_version = 5.1
+; Statistic group to use e.g. when renewing loans or placing holds (requires Sierra
+; 6.0 or later and API version set to 6 or later above):
+;statgroup = 123
 ; Timeout for HTTP requests
 http_timeout = 30
 ; Redirect URL entered in Sierra for the patron-specific authentication (does not

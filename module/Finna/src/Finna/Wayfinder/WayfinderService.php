@@ -32,7 +32,9 @@ namespace Finna\Wayfinder;
 use Finna\Wayfinder\DTO\WayfinderPlacement;
 use Laminas\Http\Response;
 use Laminas\Log\LoggerInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use VuFind\Log\LoggerAwareTrait;
 use VuFindHttp\HttpServiceInterface;
 
@@ -84,10 +86,15 @@ class WayfinderService
     public function getMarker(array $payload): string
     {
         $url = $this->getWayFinderUrl($payload['source'] ?? '');
+        try {
+            $adapter = $this->container->get(
+                $this->getWayFinderAdapter($payload['source'] ?? '')
+            );
+        } catch (NotFoundExceptionInterface | ContainerExceptionInterface $e) {
+            $this->logError((string)$e);
 
-        $adapter = $this->container->get(
-            $this->config['General']['adapter']
-        );
+            return '';
+        }
 
         return $this->fetchMarker($url, $adapter->getLocation($payload));
     }
@@ -102,6 +109,18 @@ class WayfinderService
     public function getWayFinderUrl(string $source): string
     {
         return rtrim($this->config[$source]['wf_url'] ?? '', '/');
+    }
+
+    /**
+     * Gets from config the wayfinder adapter name.
+     *
+     * @param string $source Item source identifier.
+     *
+     * @return string
+     */
+    public function getWayFinderAdapter(string $source): string
+    {
+        return $this->config[$source]['adapter'] ?? '';
     }
 
     /**
@@ -190,8 +209,31 @@ class WayfinderService
         }
 
         $enabled = filter_var($this->config['General']['enabled'], FILTER_VALIDATE_BOOL);
-        $adapter = $this->config['General']['adapter'] ?? '';
 
-        return $enabled && !empty($adapter);
+        $fieldsToValidate = [
+            'wf_url',
+            'marker_url',
+            'adapter',
+        ];
+
+        foreach ($this->config as $k => $v) {
+            if ($k === 'General') {
+                continue;
+            }
+
+            foreach ($fieldsToValidate as $field) {
+                if (empty($this->config[$k][$field] ?? '')) {
+                    $this->logError(sprintf(
+                        'Empty value for Wayfinder config key %s field %s',
+                        $k,
+                        $field
+                    ));
+
+                    return false;
+                }
+            }
+        }
+
+        return $enabled;
     }
 }

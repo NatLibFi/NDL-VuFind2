@@ -114,6 +114,17 @@ class SolrDefaultBackendFactory extends \VuFind\Search\Factory\SolrDefaultBacken
         $specs  = $this->loadSpecs();
         $config = $this->config->get('config');
         $defaultDismax = $config->Index->default_dismax_handler ?? 'dismax';
+
+        // Remove ExactSettings unless explicitly enabled:
+        $search = $this->config->get($this->searchConfig);
+        if (!($search->General->enable_exact_phrase_search ?? false)) {
+            foreach ($specs as $handler => $spec) {
+                if (isset($spec['ExactSettings'])) {
+                    unset($specs[$handler]['ExactSettings']);
+                }
+            }
+        }
+
         $builder = new QueryBuilder($specs, $defaultDismax);
 
         // Configure builder:

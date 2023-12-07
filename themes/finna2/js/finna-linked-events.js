@@ -3,8 +3,8 @@ finna.linkedEvents = (function finnaLinkedEvents() {
   function getEvents(params, callback, append, container) {
     var limit = {'page_size': container.data('limit')};
     var lang = {};
-    if ($('.linked-events-tabs-container').data('lang')) {
-      lang = {'language': $('.linked-events-tabs-container').data('lang')};
+    if ($('.linked-events-tabs').data('lang')) {
+      lang = {'language': $('.linked-events-tabs').data('lang')};
     } else if ($('.linked-event-content').data('lang')) {
       lang = {'language': $('.linked-event-content').data('lang')};
     }
@@ -214,7 +214,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
   }
 
   function initEventsTabs(id) {
-    var container = $('.linked-events-tabs-container[id="' + id + '"]');
+    var container = $('.linked-events-tabs[id="' + id + '"]');
     var initial = container.find($('li.nav-item.event-tab.active'));
     var initialParams = {};
     initialParams.query = initial.data('params');

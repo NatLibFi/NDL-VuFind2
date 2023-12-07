@@ -104,6 +104,41 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     }
 
     /**
+     * Get all subject headings associated with this record. Each heading is
+     * returned as an array of chunks, increasing from least specific to most
+     * specific.
+     *
+     * @param bool $extended Whether to return a keyed array with the following
+     * keys:
+     * - heading: the actual subject heading chunks
+     * - type: heading type
+     * - source: source vocabulary
+     *
+     * @return array
+     */
+    public function getAllSubjectHeadings($extended = false)
+    {
+        $lang = $this->getLocale();
+        $lang = $lang === 'en-gb' ? 'en' : $lang;
+        $xml = $this->getXmlRecord();
+        $headings = [];
+        foreach ($xml->subject as $heading) {
+            $subjectLang = $heading->attributes()->{'lang'} ?? null;
+            if ($subjectLang && $lang !== (string)$subjectLang) {
+                continue;
+            }
+            $headings[] = (string)$heading;
+        }
+
+        $callback = function ($i) use ($extended) {
+            return $extended
+                ? ['heading' => [$i], 'type' => '', 'source' => '']
+                : [$i];
+        };
+        return array_map($callback, array_unique($headings));
+    }
+
+    /**
      * Return type of access restriction for the record.
      *
      * @param string $language Language
@@ -154,6 +189,23 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
             }
         }
         return $this->encapsulatedContentTypeRecords;
+    }
+
+    /**
+     * Return full record as a filtered SimpleXMLElement for public APIs.
+     *
+     * @return \SimpleXMLElement
+     */
+    public function getFilteredXMLElement(): \SimpleXMLElement
+    {
+        $record = parent::getFilteredXMLElement();
+        $filterFields = ['abstract', 'description'];
+        foreach ($filterFields as $filterField) {
+            while ($record->{$filterField}) {
+                unset($record->{$filterField}[0]);
+            }
+        }
+        return $this->filterEncapsulatedRecords($record);
     }
 
     /**

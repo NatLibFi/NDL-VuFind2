@@ -82,6 +82,16 @@ class Options extends \VuFind\Search\Solr\Options
                     = (bool)$config->Record->display_versions;
             }
         }
+
+        // Back-compatibility for hierarchical facet filters:
+        $this->hierarchicalExcludeFilters
+            = $facetSettings?->HierarchicalExcludeFilters?->toArray()
+            ?? $facetSettings?->ExcludeFilters?->toArray()
+            ?? [];
+        $this->hierarchicalFacetFilters
+            = $facetSettings?->HierarchicalFacetFilters?->toArray()
+            ?? $facetSettings?->FacetFilters?->toArray()
+            ?? [];
     }
 
     /**

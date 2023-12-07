@@ -1,9 +1,9 @@
 <!-- START of: finna - Related/Similar-carousel.phtml -->
+<h2 class="similar-carousel-header"><?=$this->transEsc('Similar Items')?></h2>
 <?php $records = $this->tab->getResults(); ?>
-<?php if (!empty($records)): ?>
+<?php if (!empty($records) && count($records) > 0): ?>
   <div class="similar-carousel">
     <finna-feed class="splide similar-items-carousel">
-      <h2 class="similar-carousel-header"><?=$this->transEsc('Similar Items')?></h2>
       <div class="similar-carousel-container">
         <div class="splide__arrows splide__arrows--ltr">
           <button class="splide__arrow splide__arrow--prev left">

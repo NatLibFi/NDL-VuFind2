@@ -17,6 +17,13 @@
     <unitdate label="Ajallinen kattavuus" normal="1600-01-01/1610-01-01"></unitdate>
     <unittitle label="Reinius Theodor S 3:b) 1" normal="Reinius Theodor S 3:b) 1" lang="fin">Reinius Theodor S 3:b) 1</unittitle>
 
+    <unitdate normal="1923-XX-XX">1923</unitdate>
+    <unitdate normal="1925-XX-XX/XXXX-XX-XX">1925</unitdate>
+
+    <physdesc lang="sv">Hyllmeter ordnat 0.96 hm</physdesc>
+    <physdesc lang="fi">Hyllymetriä järjestetty 0.96 hm</physdesc>
+    <physdesc lang="fi">Koteloita 5</physdesc>
+
   </did>
   <relatedmaterial>
     <p lang="fi">

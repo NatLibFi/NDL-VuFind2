@@ -604,10 +604,22 @@
         .email-contact, .address-contact, .phone-numbers, .mail-address-contact {
             margin-bottom: 12px;
             > span:first-child {
+                display: inline-block;
                 margin-top: 0;
-                margin-bottom: 0;
+                margin-bottom: 0.5rem;
                 font-weight: bold;
                 text-transform: uppercase;
+            }
+
+            ul:not(.contact-info) {
+                li {
+                    margin-left: 2rem;
+                    margin-bottom: 0.5rem;
+                    .icon {
+                        width: 2rem;
+                        margin-left: -2rem;
+                    }
+                }
             }
         }
         .contact-name {
@@ -694,6 +706,7 @@
                 }
                 .service-tooltip {
                     color: @link-color;
+                    text-align: left;
                     text-decoration: none;
                     background-color: inherit;
                     border: none;
@@ -729,7 +742,7 @@
 // *** Widget ***
 @organisation-info-max-w: 400px;
 
-.js-organisation-info-widget {
+.organisation-info-widget {
     display: inline-block;
     padding-bottom: 20px;
     width: 100%;

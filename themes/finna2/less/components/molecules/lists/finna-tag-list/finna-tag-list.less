@@ -5,7 +5,7 @@
   & dt {
     font-weight: normal;
     padding: 5px 10px 5px 0;
-    &:after {
+    &:not(:only-child):after {
       content: ':';
     }
   }
@@ -14,5 +14,6 @@
     border-radius: .5em;
     background-color: #f4f4f4;
     padding: 5px 10px;
+    text-transform: lowercase;
   }
 }

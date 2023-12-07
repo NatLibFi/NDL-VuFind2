@@ -19,7 +19,9 @@
   <div class="my-research-content">
       <?=$this->flashmessages()?>
       <?php if (!$this->translationEmpty('library_cards_instructions_html')): ?><p class="no-content-message"><?=$this->translate('library_cards_instructions_html')?></p><?php endif; ?>
-      <h2><?=$this->transEsc('Library Cards Connected To My Account')?></h2>
+        <div class="useraccount-header">
+          <h2><?=$this->transEsc('Library Cards Connected To My Account')?></h2>
+        </div>
       <?php if (empty($this->libraryCards)): ?>
         <h4><?=$this->transEsc('You do not have any library cards')?></h4>
       <?php else: ?>

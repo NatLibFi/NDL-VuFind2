@@ -96,6 +96,16 @@ result_limit = 100000
 ; data source. By default all versions are displayed.
 ;versions_filter = 'same_source'
 
+; Whether to always (when there are active filters) display the "Reset Filters"
+; button regardless of the retain_filters_by_default setting. Default is false.
+always_display_reset_filters = false
+
+; Whether to enable exact matching when the search terms contain only phrases.
+; Note that enabling this setting may lead to unexpected results (or loss of them)
+; due to not all indexed terms being available in the exact search fields.
+; Default is false.
+;enable_exact_phrase_search = false
+
 [Cache]
 ; This controls whether the parsed searchspecs.yaml file will be stored to
 ; improve search performance; legal options are APC (use APC cache), File (store

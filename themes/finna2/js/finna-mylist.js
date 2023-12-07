@@ -245,14 +245,6 @@ finna.myList = (function finnaMyList() {
     refreshLists();
   }
 
-  function updateBulkActionsToolbar() {
-    var buttons = $('.bulk-action-buttons-col');
-    if ($(document).scrollTop() > $('.bulk-action-buttons-row').offset().top) {
-      buttons.addClass('fixed');
-    } else {
-      buttons.removeClass('fixed');
-    }
-  }
 
   function updateListResource(params, input /*, row*/) {
     save = true;
@@ -293,15 +285,6 @@ finna.myList = (function finnaMyList() {
 
   function initEditComponents() {
     var isDefaultList = typeof getActiveListId() == 'undefined';
-
-    // bulk actions
-    var buttons = $('.bulk-action-buttons-col');
-    if (buttons.length) {
-      $(window).on('scroll', function onScrollWindow() {
-        updateBulkActionsToolbar();
-      });
-      updateBulkActionsToolbar();
-    }
 
     //Init mobile navigation collapse after list has been reloaded
     finna.layout.initMobileNarrowSearch();

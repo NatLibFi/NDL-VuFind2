@@ -2,16 +2,24 @@
 <div class="truncate-field" data-rows="5">
   <?php foreach ($data as $field): ?>
     <?php
-      $info = $field['locationInfo'];
-      $id = $info['id'] ?? null;
-      $ids = $info['ids'] ?? null;
+      $locationAsLink = $field['locationAsLink'] ?? true;
+      $location = $field['location'];
     ?>
-    <?=$this->record($this->driver)->getLinkedFieldElement(
-        $this->headingType ?? 'place',
-        $field['location'],
-        ['name' => $field['location'], 'id' => $id, 'ids' => $ids],
-        ['class' => ['backlink'], 'description' => true]
-    )?><br>
+    <?php if ($locationAsLink): ?>
+      <?php
+        $info = $field['locationInfo'];
+        $id = $info['id'] ?? null;
+        $ids = $info['ids'] ?? null;
+      ?>
+      <?=$this->record($this->driver)->getLinkedFieldElement(
+          $this->headingType ?? 'place',
+          $location,
+          ['name' => $location, 'id' => $id, 'ids' => $ids],
+          ['class' => ['backlink'], 'description' => true]
+      )?><br>
+    <?php else: ?>
+      <?=$this->escapeHtml($location); ?><br>
+    <?php endif; ?>
   <?php endforeach; ?>
 </div>
 

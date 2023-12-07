@@ -2,9 +2,6 @@
 finna.organisationInfo = (function finnaOrganisationInfo() {
   let params = null;
   let container = null;
-  let detailsEl = null;
-  let mapContainer = null;
-  let searchContainer = null;
   let map = null;
 
   let mapTileUrl = 'https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png?v=2';
@@ -45,19 +42,22 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
   /**
    * Get current location from local storage
    *
+   * @param {String} id Organisation ID
+   *
    * @returns string
    */
-  function getStoredLocation() {
-    return localStorage.getItem('location-info-' + params.id) || '';
+  function getStoredLocation(id) {
+    return localStorage.getItem('location-info-' + id) || '';
   }
 
   /**
    * Remember current location in local storage
    *
-   * @param {String} locationId
+   * @param {String} id Organisation ID
+   * @param {String} locationId Location ID
    */
-  function storeCurrentLocation(locationId) {
-    localStorage.setItem('location-info-' + params.id, locationId);
+  function storeCurrentLocation(id, locationId) {
+    localStorage.setItem('location-info-' + id, locationId);
   }
 
   // Forward declaration
@@ -91,6 +91,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    */
   function hideLocationSearch() {
     // Hide search:
+    const searchContainer = container.querySelector('.js-location-search-container');
     let searchToggle = searchContainer ? searchContainer.querySelector('.js-location-search-toggle') : null;
     if (searchToggle) {
       searchToggle.setAttribute('aria-expanded', 'false');
@@ -101,7 +102,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    * Initialize location search
    */
   function initLocationSearch() {
-    searchContainer = container.querySelector('.js-location-search-container');
+    const searchContainer = container.querySelector('.js-location-search-container');
     if (!searchContainer) {
       return;
     }
@@ -216,7 +217,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       return;
     }
 
-    mapContainer = container.querySelector('.js-location-info-map');
+    const mapContainer = container.querySelector('.js-location-info-map');
     if (!mapContainer) {
       return;
     }
@@ -341,10 +342,12 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
   /**
    * Initialize opening times week navigation
    *
-   * @param {String} locationId
+   * @param {DOMElement} container Container
+   * @param {Object} _params Organisation info params
+   * @param {String} locationId Location ID
    */
-  function initWeekNavi(locationId) {
-    container.querySelectorAll('.js-week-navi-btn').forEach((btn) => {
+  function initWeekNavi(_container, _params, locationId) {
+    _container.querySelectorAll('.js-week-navi-btn').forEach((btn) => {
       if (!btn.dataset.dir) {
         return;
       }
@@ -384,10 +387,10 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
         fetch(VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
           method: 'getOrganisationInfo',
           element: 'schedule',
-          id: params.id,
+          id: _params.id,
           locationId: locationId,
-          sectors: params.sectors || '',
-          buildings: params.buildings || '',
+          sectors: _params.sectors || '',
+          buildings: _params.buildings || '',
           date: newIsoDate
         }))
           .then(response => {
@@ -441,11 +444,16 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    * @param {String} locationId
    */
   function initLocationDetails(locationId) {
+    const detailsEl = container.querySelector('.js-location-details-container');
+    if (!detailsEl) {
+      console.error('Location details element not found');
+      return;
+    }
     detailsEl.querySelectorAll('[data-truncate]').forEach((elem) => {
       VuFind.truncate.initTruncate(elem);
     });
     finna.layout.initToolTips($(detailsEl));
-    initWeekNavi(locationId);
+    initWeekNavi(container, params, locationId);
     if (map) {
       map.selectMarker(locationId);
     }
@@ -458,6 +466,11 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    * @param {String} locationId
    */
   showLocationDetails = function showLocationDetailsImpl(locationId) {
+    const detailsEl = container.querySelector('.js-location-details-container');
+    if (!detailsEl) {
+      console.error('Location details element not found');
+      return;
+    }
     const indicatorEl = container.querySelector('.js-location-loader');
     if (!indicatorEl) {
       console.error('Location load indicator element not found');
@@ -479,6 +492,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       infoEl.classList.toggle('hidden', null === locationId);
     }
 
+    const mapContainer = container.querySelector('.js-location-info-map');
     if (mapContainer) {
       let showLocationEl = mapContainer.querySelector('.js-map-controls .js-show-location');
       if (showLocationEl) {
@@ -492,7 +506,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       return;
     }
 
-    storeCurrentLocation(locationId);
+    storeCurrentLocation(params.id, locationId);
 
     indicatorEl.classList.remove('hidden');
     fetch(VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
@@ -542,11 +556,6 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       console.error('Organisation info container element not found');
       return;
     }
-    detailsEl = container.querySelector('.js-location-details-container');
-    if (!detailsEl) {
-      console.error('Location details element not found');
-      return;
-    }
     const infoEl = container.querySelector('.js-consortium-info-container');
     if (!infoEl) {
       console.error('Consortium info element not found');
@@ -570,7 +579,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       method: 'getOrganisationInfo',
       element: 'info-location-selection',
       id: params.id,
-      locationId: getLocationFromURLHash() || getStoredLocation(),
+      locationId: getLocationFromURLHash() || getStoredLocation(params.id),
       sectors: params.sectors || '',
       buildings: params.buildings || '',
       consortiumInfo: params.consortiumInfo
@@ -593,6 +602,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       });
 
     // Add listeners that close the search dropdown as necessary:
+    const searchContainer = container.querySelector('.js-location-search-container');
     document.addEventListener('mouseup', (e) => {
       if (!searchContainer) {
         return;
@@ -618,32 +628,34 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
   /**
    * Load location into the widget
    *
-   * @param {String} locationId
+   * @param {DOMElement} _container Widget container
+   * @param {Object} _params Widget parameters
+   * @param {String} locationId Location id
    */
-  function loadWidgetLocation(locationId) {
-    let openStatusEl = container.querySelector('.js-open-status');
-    let scheduleEl = container.querySelector('.js-opening-times');
-    let selectedLocationEl = container.querySelector('.js-location-dropdown .js-selected');
+  function loadWidgetLocation(_container, _params, locationId) {
+    let openStatusEl = _container.querySelector('.js-open-status');
+    let scheduleEl = _container.querySelector('.js-opening-times');
+    let selectedLocationEl = _container.querySelector('.js-location-dropdown .js-selected');
     if (!openStatusEl || !scheduleEl || !selectedLocationEl) {
       console.error('Organisation info widget open status, schedule or selected location element not found');
       return;
     }
-    const loadIndicatorEl = container.querySelector('.js-loader');
+    const loadIndicatorEl = _container.querySelector('.js-loader');
     if (!loadIndicatorEl) {
       console.error('Organisation info widget load indicator element not found');
       return;
     }
 
-    storeCurrentLocation(locationId);
+    storeCurrentLocation(_params.id, locationId);
 
     loadIndicatorEl.classList.remove('hidden');
     fetch(VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
       method: 'getOrganisationInfo',
       element: 'widget-location',
-      id: params.id,
+      id: _params.id,
       locationId: locationId,
-      buildings: params.buildings || '',
-      details: params.details || '1'
+      buildings: _params.buildings || '',
+      details: _params.details || '1'
     }))
       .then((response) => {
         loadIndicatorEl.classList.add('hidden');
@@ -652,20 +664,21 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
         } else {
           response.json().then((result) => {
             selectedLocationEl.textContent = result.data.locationName;
-            let ariaEl = container.querySelector('.js-location-dropdown .js-aria');
+            let ariaEl = _container.querySelector('.js-location-dropdown .js-aria');
             if (ariaEl) {
               ariaEl.setAttribute('aria-live', 'polite');
             }
             openStatusEl.innerHTML = result.data.openStatus;
             scheduleEl.innerHTML = result.data.schedule;
+            const detailsEl = _container.querySelector('.js-details');
             if (result.data.details) {
               if (detailsEl) {
                 detailsEl.innerHTML = result.data.details;
               }
             }
-            initWeekNavi(result.data.locationId);
+            initWeekNavi(_container, _params, result.data.locationId);
             finna.layout.initToolTips($(detailsEl));
-            finna.common.trackContentImpressions(container);
+            finna.common.trackContentImpressions(_container);
           });
         }
       });
@@ -677,19 +690,18 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    * @param {Object} _params Widget parameters
    */
   function initWidget(_params) {
-    params = _params;
-    container = document.querySelector('.js-organisation-info-widget');
-    if (!container) {
-      console.error('Organisation info widget element not found');
+    const _container = document.querySelector(_params.container);
+    if (!_container) {
+      console.error('Organisation info widget element (' + _params.container + ') not found');
       return;
     }
 
-    let contentEl = container.querySelector('.js-content');
+    let contentEl = _container.querySelector('.js-content');
     if (!contentEl) {
       console.error('Organisation info widget content element not found');
       return;
     }
-    const loadIndicatorEl = container.querySelector('.js-loader');
+    const loadIndicatorEl = _container.querySelector('.js-loader');
     if (!loadIndicatorEl) {
       console.error('Organisation info widget load indicator element not found');
       return;
@@ -699,10 +711,10 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     fetch(VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
       method: 'getOrganisationInfo',
       element: 'widget',
-      id: params.id,
-      locationId: getStoredLocation(),
-      buildings: params.buildings || '',
-      details: params.details || '1'
+      id: _params.id,
+      locationId: getStoredLocation(_params.id),
+      buildings: _params.buildings || '',
+      details: _params.details || '1'
     }))
       .then((response) => {
         loadIndicatorEl.classList.add('hidden');
@@ -711,12 +723,11 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
         } else {
           response.json().then((result) => {
             contentEl.innerHTML = result.data.widget;
-            detailsEl = container.querySelector('.js-details');
-            initWeekNavi(result.data.locationId);
+            initWeekNavi(_container, _params, result.data.locationId);
             finna.layout.initToolTips($(contentEl));
             contentEl.querySelectorAll('.js-location-dropdown ul.dropdown-menu li').forEach((el) => {
               el.addEventListener('click', () => {
-                loadWidgetLocation(el.dataset.id);
+                loadWidgetLocation(_container, _params, el.dataset.id);
               });
             });
             contentEl.querySelectorAll('.js-location-dropdown li').forEach((el) => {

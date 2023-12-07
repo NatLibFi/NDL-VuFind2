@@ -179,39 +179,17 @@ class FinnaFeedElement extends HTMLElement {
               el.classList.remove('hidden');
             }
           });
-          holder.querySelectorAll('.carousel-hover-title').forEach(el => {
-            el.style.width = '90%';
-            var element = el.querySelector('p');
-            if (element) {
-              element.style.paddingRight = '10px';
-            }
-          });
           if (!settings.modal) {
             holder.querySelectorAll('.carousel-text').forEach(el => {
               el.addEventListener('click', function doNothing(e) {
                 e.stopImmediatePropagation();
-                var slide = this.closest('.feed-item-holder');
-                if (slide && slide.classList.contains('clicked')) {
-                  e.preventDefault();
-                }
-              });
-            });
-          } else {
-            holder.querySelectorAll('.carousel-slide-header p').forEach(el => {
-              el.addEventListener('click', function doNothing(e) {
-                e.stopImmediatePropagation();
-                e.preventDefault();
               });
             });
           }
           holder.querySelectorAll('.carousel-more').forEach(el => {
-            var heightEl = el.previousElementSibling.offsetHeight;
-            if (heightEl) {
-              el.style.height = heightEl + 'px';
-            }
             if (el.classList.contains('carousel-close')) {
               el.classList.remove('hidden');
-              el.firstElementChild.addEventListener('click', function closeDescription(e) {
+              el.addEventListener('click', function closeDescription(e) {
                 e.stopImmediatePropagation();
                 var slide = this.closest('.feed-item-holder');
                 if (slide && slide.classList.contains('clicked')) {

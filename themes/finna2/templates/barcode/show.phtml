@@ -6,10 +6,15 @@
 <?=$this->doctype('HTML5')?>
 <html lang="<?=$this->layout()->userLang?>">
   <head>
-  <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <?php // Turn off automatic telephone number detection on iOS ?>
     <meta name="format-detection" content="telephone=no">
+    <?php if ($appleTouchIcon = $this->imageSrc()->getSourceAddress('webapp-icon-180.png')): ?>
+      <link rel="apple-touch-icon" sizes="180x180" href="<?=$this->escapeHtmlAttr($appleTouchIcon)?>">
+    <?php endif ?>
+    <?php if ($webAppManifest = $this->imageSrc()->getSourceAddress('manifest.json')): ?>
+      <link rel="manifest" href="<?=$webAppManifest?>">
+    <?php endif ?>
     <?=$this->headTitle()?>
   </head>
   <body>

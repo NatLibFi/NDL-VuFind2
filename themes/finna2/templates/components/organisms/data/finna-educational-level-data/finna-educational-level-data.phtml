@@ -1,30 +1,30 @@
 <?php
   $__attributes = $this->htmlAttributes($attributes ?? []);
-  $__titleElement = $sectionTitleElement ?? 'h3';
-  $__titleStartTag = "<$__titleElement class=\"level-data-section-title\">";
-  $__titleEndTag = "</$__titleElement>";
+  $__headingLevel = $sectionHeadingLevel ?? 3;
+  $__headingStartTag = "<h$__headingLevel class=\"level-data-section-title\">";
+  $__headingEndTag = "</h$__headingLevel>";
 ?>
-<section<?= $__attributes->add('class', 'finna-educational-level-data') ?>>
+<div<?= $__attributes->add('class', 'finna-educational-level-data') ?>>
   <?php if (!empty($learningAreas)): ?>
     <section>
-      <?= $__titleStartTag ?><?= $this->transEsc($learningAreasTitle ?? '') ?><?= $__titleEndTag ?>
+      <?= $__headingStartTag ?><?= $this->transEsc($learningAreasTitle ?? '') ?><?= $__headingEndTag ?>
       <ul>
         <?php foreach ($learningAreas as $__learningArea): ?>
-          <li><?= $this->transEsc($__learningArea) ?></li>
+          <li><?= $this->transEsc(strip_tags($__learningArea)) ?></li>
         <?php endforeach; ?>
       </ul>
     </section>
   <?php endif; ?>
   <?php if (!empty($studyContents)): ?>
     <section>
-      <?= $__titleStartTag ?><?= $this->transEsc($studyContentsTitle ?? '') ?><?= $__titleEndTag ?>
+      <?= $__headingStartTag ?><?= $this->transEsc($studyContentsTitle ?? '') ?><?= $__headingEndTag ?>
       <ul>
         <?php foreach ($studyContents as $__subject => $__values): ?>
           <li>
             <dl>
-              <dt><?= $this->transEsc($__subject) ?>:</dt>
+              <dt><?= $this->transEsc(strip_tags($__subject)) ?>:</dt>
               <?php foreach ($__values as $__value): ?>
-                <dd><?= $this->transEsc($__value) ?></dd>
+                <dd><?= $this->transEsc(strip_tags($__value)) ?></dd>
               <?php endforeach; ?>
             </dl>
           </li>
@@ -34,14 +34,14 @@
   <?php endif; ?>
   <?php if (!empty($studyObjectives)): ?>
     <section>
-      <?= $__titleStartTag ?><?= $this->transEsc($studyObjectivesTitle ?? '') ?><?= $__titleEndTag ?>
+      <?= $__headingStartTag ?><?= $this->transEsc($studyObjectivesTitle ?? '') ?><?= $__headingEndTag ?>
       <ul>
         <?php foreach ($studyObjectives as $__subject => $__values): ?>
           <li>
             <dl>
-              <dt><?= $this->transEsc($__subject) ?>:</dt>
+              <dt><?= $this->transEsc(strip_tags($__subject)) ?>:</dt>
               <?php foreach ($__values as $__value): ?>
-                <dd><?= $this->transEsc($__value) ?></dd>
+                <dd><?= $this->transEsc(strip_tags($__value)) ?></dd>
               <?php endforeach; ?>
             </dl>
           </li>
@@ -51,24 +51,24 @@
   <?php endif; ?>
   <?php if (!empty($transversalCompetences)): ?>
     <section>
-      <?= $__titleStartTag ?><?= $this->transEsc($transversalCompetencesTitle ?? '') ?><?= $__titleEndTag ?>
+      <?= $__headingStartTag ?><?= $this->transEsc($transversalCompetencesTitle ?? '') ?><?= $__headingEndTag ?>
       <ul>
         <?php foreach ($transversalCompetences as $__transversalCompetence): ?>
-          <li><?= $this->transEsc($__transversalCompetence) ?></li>
+          <li><?= $this->transEsc(strip_tags($__transversalCompetence)) ?></li>
         <?php endforeach; ?>
       </ul>
     </section>
   <?php endif; ?>
   <?php if (!empty($vocationalUnits)): ?>
     <section>
-      <?= $__titleStartTag ?><?= $this->transEsc($vocationalUnitsTitle ?? '') ?><?= $__titleEndTag ?>
+      <?= $__headingStartTag ?><?= $this->transEsc($vocationalUnitsTitle ?? '') ?><?= $__headingEndTag ?>
       <ul>
         <?php foreach ($vocationalUnits as $__subject => $__values): ?>
           <li>
             <dl>
-              <dt><?= $this->transEsc($__subject) ?>:</dt>
+              <dt><?= $this->transEsc(strip_tags($__subject)) ?>:</dt>
               <?php foreach ($__values as $__value): ?>
-                <dd><?= $this->transEsc($__value) ?></dd>
+                <dd><?= $this->transEsc(strip_tags($__value)) ?></dd>
               <?php endforeach; ?>
             </dl>
           </li>
@@ -78,18 +78,12 @@
   <?php endif; ?>
   <?php if (!empty($vocationalCommonUnits)): ?>
     <section>
-      <?= $__titleStartTag ?><?= $this->transEsc($vocationalCommonUnitsTitle ?? '') ?><?= $__titleEndTag ?>
+      <?= $__headingStartTag ?><?= $this->transEsc($vocationalCommonUnitsTitle ?? '') ?><?= $__headingEndTag ?>
       <ul>
         <?php foreach ($vocationalCommonUnits as $__vocationalCommonUnit): ?>
-          <li><?= $this->transEsc($__vocationalCommonUnit) ?></li>
+          <li><?= $this->transEsc(strip_tags($__vocationalCommonUnit)) ?></li>
         <?php endforeach; ?>
       </ul>
     </section>
   <?php endif; ?>
-  <?php if (isset($objective)): ?>
-    <section class="educational-level-objective">
-      <?= $__titleStartTag ?><?= $this->transEsc($objectiveTitle ?? '') ?><?= $__titleEndTag ?>
-      <p><?= $this->transEsc($objective) ?></p>
-    </section>
-  <?php endif; ?>
-</section>
+</div>

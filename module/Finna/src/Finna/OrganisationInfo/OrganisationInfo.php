@@ -55,8 +55,10 @@ use function is_array;
  */
 class OrganisationInfo implements
     \Laminas\Log\LoggerAwareInterface,
+    \VuFind\I18n\HasSorterInterface,
     \VuFind\I18n\Translator\TranslatorAwareInterface
 {
+    use \VuFind\I18n\HasSorterTrait;
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
@@ -230,13 +232,11 @@ class OrganisationInfo implements
      */
     public function getOrganisationsList(): array
     {
-        $cacheDir = $this->cacheManager->getCache('organisation-info')->getOptions()
-            ->getCacheDir();
+        $cacheDir = $this->cacheManager->getCache('organisation-info')->getOptions()->getCacheDir();
         $locale = $this->getLanguage();
         $cacheFile = "$cacheDir/organisations_list_$locale.json";
-        $maxAge = (int)(
-            $this->config['General']['organisationListCacheTime'] ?? 60
-        );
+        $maxAge = (int)($this->config['General']['organisationListCacheTime'] ?? 60);
+        $sorter = $this->getSorter();
         $list = [];
         if (
             is_readable($cacheFile)
@@ -245,7 +245,6 @@ class OrganisationInfo implements
             return json_decode(file_get_contents($cacheFile), true);
         } else {
             $emptyResults = $this->resultsManager->get('EmptySet');
-            $collator = \Collator::create($locale);
             try {
                 $sectorFacets = $this->getFacetList('sector_str_mv');
                 foreach ($sectorFacets as $sectorFacet) {
@@ -269,10 +268,7 @@ class OrganisationInfo implements
                                 ->formatDisplayText($displayText)
                                 ->getDisplayString();
                         }
-                        $organisationInfoId
-                            = $this->getOrganisationInfoId(
-                                $item['value']
-                            );
+                        $organisationInfoId = $this->getOrganisationInfoId($item['value']);
 
                         $list[$sector][] = [
                             'name' => $displayText,
@@ -281,7 +277,12 @@ class OrganisationInfo implements
                             'sector' => $sector,
                         ];
                     }
-                    $collator->sort($list[$sector]);
+                    usort(
+                        $list[$sector],
+                        function ($a, $b) use ($sorter) {
+                            return $sorter->compare($a['name'], $b['name']);
+                        }
+                    );
                 }
                 $cacheJson = json_encode($list);
                 file_put_contents($cacheFile, $cacheJson);

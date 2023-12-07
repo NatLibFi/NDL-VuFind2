@@ -2,10 +2,19 @@
 <?php foreach ($data as $field): ?>
   <?=!empty($field['material']) ? $this->escapeHtml($field['material']) . ': ' : '' ?>
   <?=!empty($field['terms']) ? $this->escapeHtml($field['terms']) : '' ?>
+  <?=!empty($field['rightsSource']) ? $this->transEscWithPrefix('access_restriction_source_', $field['rightsSource']) : '' ?>
   <?php if (!empty($field['url'])): ?>
     <a href="<?=$this->escapeHtmlAttr($field['url']) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($field['url']) ?>">
   <?php endif; ?>
-  <?=$this->escapeHtml(!empty($field['source']) ? $field['source'] : $this->truncateUrl($field['url'])) ?>
+  <?php
+    if (!empty($field['rights'])):
+      echo $this->escapeHtml($field['rights']);
+    elseif (!empty($field['source'])):
+      echo $this->escapeHtml($field['source']);
+    else:
+      echo $this->truncateUrl($field['url']);
+    endif;
+  ?>
   <?php if (!empty($field['url'])): ?>
     </a>
   <?php endif; ?>

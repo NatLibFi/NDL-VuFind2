@@ -33,6 +33,7 @@
     }
 
     // Load search actions and settings (if any):
+    $keyboardLayouts = $this->searchbox()->getKeyboardLayouts();
     $handlers = $this->searchbox()->getHandlers($this->searchClassId, $this->searchIndex ?? null);
     $handlerCount = count($handlers);
     $basicSearch = $browse ? "browse-{$browse}" : $options->getSearchAction();
@@ -145,12 +146,12 @@
     }
   ?>
 <div class="searchbox hidden-print">
-  <div class="<?=$mainPage ? 'searchbox-home' : '' ?> <?= $module == 'record' || $module == 'collection' ? 'searchbox-flex' : 'searchbox-columns' ?> <?=$this->escapeHtmlAttr("searchbox-$module-$action")?>">
+  <div class="searchbox-flex <?=$mainPage ? 'searchbox-home' : '' ?> <?=$this->escapeHtmlAttr("searchbox-$module-$action")?>">
     <?php if ($module == 'record' || $module == 'collection'): ?>
       <div class="record-back hidden-print">
           <?php
             $html = $this->icon('record-back');
-            $html .= '<span class="back-to-search-text hidden-xs hidden-sm">' . $this->transEsc('Back to search results') . '</span>';
+            $html .= '<span class="back-to-search-text hidden-xs hidden-sm hidden-md">' . $this->transEsc('Back to search results') . '</span>';
             $previousSearch = $this->searchMemory()->getLastSearchLink($html);
             if ($previousSearch !== '' && $this->searchMemory()->getLastSearchClassId() === $this->searchClassId):
           ?>
@@ -159,6 +160,9 @@
       </div>
     <?php endif; ?>
     <div class="search">
+      <div class="keyboard-box">
+        <div class="simple-keyboard"></div>
+      </div>
       <form id="searchForm" role="search" class="searchForm navbar-form navbar-left  <?=$handlerCount < 2 ? 'input-field-only' : ''; ?>" method="get" action="<?=$this->url($basicSearch)?>" name="searchForm" autocomplete="off">
       <label for="searchForm_lookfor" class="sr-only" hidden><?=$this->transEsc('Find')?></label>
       <input<?=$this->htmlAttributes($searchboxAttributes)?>>
@@ -191,6 +195,34 @@
         <input type="hidden" name="type" value="<?=$this->escapeHtmlAttr($handlers[0]['value'])?>" class="searchForm_type">
       <?php endif; ?>
       <button type="submit" class="btn btn-primary <?= $handlerCount <= 1 ? 'wider-searchbutton' : '' ?>"><?=$this->icon('search') ?> <span class="sr-only"><?=$this->transEsc('Find')?></span></button>
+      <div id="searchForm_controls">
+        <?php if (!empty($keyboardLayouts)): ?>
+          <?php
+          // We don't include these by default in theme config to avoid bloat, but
+          // since searchbox is on almost every page, it doesn't make a huge a huge
+          // difference.
+          $this->headScript()->appendFile('vendor/simple-keyboard/index.js');
+          $this->headScript()->appendFile('vendor/simple-keyboard-layouts/index.js');
+          $this->headLink()->appendStylesheet('vendor/simple-keyboard/index.css');
+          ?>
+          <div class="keyboard-selection dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="keyboard-selection-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <?=$this->icon('keyboard-o') ?>
+              <?=$this->icon('caret-down') ?>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="keyboard-selection-button">
+              <li>
+                <a class="keyboard-selection-item" href="#" data-value="none"><?= $this->transEsc('None') ?></a>
+              </li>
+              <?php foreach ($keyboardLayouts as $keyboardLayout): ?>
+                <li>
+                  <a class="keyboard-selection-item" href="#" data-value="<?= $this->escapeHtmlAttr($keyboardLayout) ?>"><?= $this->transEsc($keyboardLayout) ?></a>
+                </li>
+              <?php endforeach; ?>
+            </ul>
+          </div>
+        <?php endif; ?>
+      </div>
 
       <?php $shards = $options->getShards();
       if ($options->showShardCheckboxes() && !empty($shards)): ?>
@@ -233,11 +265,10 @@
       ?>
     </form>
     </div>
+    <?php if (!$browse && !$mainPage && $advSearch): ?>
+      <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced <?=($module === 'record') ? 'hidden-xs' : ''?>"><?=$this->icon('search-advanced', 'search-advanced-icon') ?><?=$this->transEsc('Advanced Search')?></a>
+    <?php endif; ?>
     <div class="search-tooltip"><?php
-      // There should not be any whitespace in this div if it is empty.
-      if (!$browse && !$mainPage && $advSearch): ?>
-        <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced <?=($module === 'record') ? 'visible-lg' : 'hidden-xs'?>"><?=$this->icon('search-advanced', 'search-advanced-icon') ?><?=$this->transEsc('Advanced Search')?></a>
-      <?php endif; ?><?php
         $searchTypes = ['search' => 'local', 'primo' => 'pci', 'eds' => 'eds', 'r2search' => 'R2', 'summon' => 'summon'];
         if (isset($searchTypes[$module]) && !$this->translationEmpty('tooltip_' . $searchTypes[$module] . '_search_html')) {
           $tooltipClass = 'tooltip-search-' . $searchTypes[$module];

@@ -138,7 +138,7 @@
         <span class="toggle-text"><?=$this->transEsc('show_filters')?></span>
         <span class="active-filter-count">(<?=$filterCount?>)</span><?=$this->icon('filter-expand', 'expand') ?><?=$this->icon('filter-collapse', 'collapse') ?>
       </button>
-      <?php if ($resetLink && $options->getRetainFilterSetting()): ?>
+      <?php if ($resetLink && $options->shouldDisplayResetFilters()): ?>
         <a class="btn btn-default reset-filters-btn" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?></a>
       <?php endif; ?>
     </div>

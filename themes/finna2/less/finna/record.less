@@ -504,6 +504,32 @@ a.authority {
 
 .record-links {
   vertical-align: baseline;
+  .link-wrapper {
+    vertical-align: baseline;
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0 0 5px;
+    .iconlabel:first-child {
+      margin-left: 2px;
+    }
+    .copyright-icons {
+      display: inline-flex;
+      gap: 3px;
+      align-items: center;
+      line-height: 1.3em;
+    }
+    .resource-link {
+      margin-right: 5px;
+    }
+    .more-link {
+      margin: 0 0 0 8px;
+    }
+  }
+  .copyright-wrapper {
+    display: inline-block;
+    margin-left: 3px;
+  }
   .cc-info {
     margin-left: 5px;
   }
@@ -526,9 +552,6 @@ a.authority {
       margin-right: -3px;
       vertical-align: bottom;
   }
-  .iconlabel:first-child {
-      margin-left: 2px;
-  }
   span {
       font-size: @font-size-small;
   }
@@ -537,13 +560,6 @@ a.authority {
      padding: 0;
      margin: 0;
   }
-  .copyright-description {
-      margin-right: 5px;
-  }
-}
-.copyright-wrapper {
-    display: inline-block;
-    margin-left: 3px;
 }
 
 .summary {
@@ -1292,9 +1308,10 @@ finna-model-viewer .object-editor {
 }
 
 .record.full-width-layout {
-  &,
   .record-core-metadata,
-  .summary {
+  .summary,
+  .record-toc,
+  .encapsulated-records {
     font-size: 16px;
     line-height: 1.5;
     margin-bottom: 15px;
@@ -1322,6 +1339,10 @@ finna-model-viewer .object-editor {
 }
 
 .record-format-aipa {
+  & > .record-main > div > .media-body {
+    display: block;
+    width: auto;
+  }
   .recordFormat {
     display: block;
     margin-bottom: 21px;
@@ -1330,12 +1351,38 @@ finna-model-viewer .object-editor {
   .access-rights {
     margin-bottom: 21px;
   }
+  h3.panel-title {
+    font-size: 16px;
+    margin: 0;
+  }
+  .panel-body {
+    > h4 {
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.9em;
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+    ul,
+    ol {
+      margin-left: 25px;
+      & li {
+        list-style-type: unset;
+      }
+    }
+  }
   .finna-educational-level-data {
     margin-left: 25px;
     .level-data-section-title {
       font-size: inherit;
       margin-bottom: inherit;
       padding-bottom: inherit;
+    }
+  }
+  .result-view-grid {
+    h2.title {
+      margin: 0;
+      padding: 0;
     }
   }
 }

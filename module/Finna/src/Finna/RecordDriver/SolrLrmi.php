@@ -83,6 +83,21 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
+     * Get identifier
+     *
+     * @return array
+     */
+    public function getIdentifier()
+    {
+        $xml = $this->getXmlRecord();
+        $identifier = [];
+        foreach ($xml->identifier ?? [] as $identifier) {
+            $identifier[] = trim((string)$identifier);
+        }
+        return $identifier;
+    }
+
+    /**
      * Return type of access restriction for the record.
      *
      * @param string $language Language

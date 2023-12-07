@@ -33,10 +33,8 @@ namespace Finna\AjaxHandler;
 
 use Laminas\Config\Config;
 use Laminas\Mvc\Controller\Plugin\Params;
-use Laminas\Stdlib\Parameters;
 use VuFind\Search\Results\PluginManager as ResultsManager;
 use VuFind\Search\Solr\HierarchicalFacetHelper;
-use VuFind\Search\Solr\Results;
 use VuFind\Session\Settings as SessionSettings;
 
 /**
@@ -83,18 +81,15 @@ class GetFacetData extends \VuFind\AjaxHandler\GetFacetData
      * @param HierarchicalFacetHelper $fh Facet helper
      * @param ResultsManager          $rm Search results manager
      * @param Config                  $bc Browse configuration
-     * @param Config                  $fc Facet configuration
      */
     public function __construct(
         SessionSettings $ss,
         HierarchicalFacetHelper $fh,
         ResultsManager $rm,
-        Config $bc,
-        Config $fc
+        Config $bc
     ) {
         parent::__construct($ss, $fh, $rm);
         $this->browseConfig = $bc;
-        $this->facetConfig = $fc;
     }
 
     /**
@@ -129,31 +124,6 @@ class GetFacetData extends \VuFind\AjaxHandler\GetFacetData
             $query->set('hiddenFilters', $config['filter']->toArray());
         }
 
-        $result = parent::handleRequest($params);
-
-        $facet = $params->fromQuery('facetName');
-        if (
-            (empty($this->facetConfig->FacetFilters->$facet)
-            && empty($this->facetConfig->ExcludeFilters->$facet))
-            || empty($result[0]['facets'])
-        ) {
-            return $result;
-        }
-
-        $facet = $params->fromQuery('facetName');
-        $filters = !empty($this->facetConfig->FacetFilters->$facet)
-            ? $this->facetConfig->FacetFilters->$facet->toArray()
-            : [];
-        $excludeFilters = !empty($this->facetConfig->ExcludeFilters->$facet)
-            ? $this->facetConfig->ExcludeFilters->$facet->toArray()
-            : [];
-
-        $result[0]['facets'] = $this->facetHelper->filterFacets(
-            $result[0]['facets'],
-            $filters,
-            $excludeFilters
-        );
-
-        return $result;
+        return parent::handleRequest($params);
     }
 }
