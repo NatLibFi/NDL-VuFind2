@@ -322,12 +322,11 @@ trait ContainerFormatTrait
     }
 
     /**
-     * Return full record as filtered XML for public APIs.
+     * Filter encapsulated records of this format for public APIs.
      *
-     * @param \SimpleXMLElement $record Copy of container record XML with container
-     *                                  fields already filtered.
+     * @param \SimpleXMLElement $record Container record XML.
      *
-     * @return \SimpleXMLElement
+     * @return \SimpleXMLElement Filtered container record XML.
      */
     protected function filterEncapsulatedRecords(\SimpleXMLElement $record): \SimpleXMLElement
     {
