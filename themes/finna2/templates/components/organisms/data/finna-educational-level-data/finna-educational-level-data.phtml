@@ -15,6 +15,23 @@
       </ul>
     </section>
   <?php endif; ?>
+  <?php if (!empty($educationalModules)): ?>
+    <section>
+      <?= $__headingStartTag ?><?= $this->transEsc($educationalModulesTitle ?? '') ?><?= $__headingEndTag ?>
+      <ul>
+        <?php foreach ($educationalModules as $__subject => $__values): ?>
+          <li>
+            <dl>
+              <dt><?= $this->transEsc(strip_tags($__subject)) ?>:</dt>
+              <?php foreach ($__values as $__value): ?>
+                <dd><?= $this->transEsc(strip_tags($__value)) ?></dd>
+              <?php endforeach; ?>
+            </dl>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+    </section>
+  <?php endif; ?>
   <?php if (!empty($studyContents)): ?>
     <section>
       <?= $__headingStartTag ?><?= $this->transEsc($studyContentsTitle ?? '') ?><?= $__headingEndTag ?>

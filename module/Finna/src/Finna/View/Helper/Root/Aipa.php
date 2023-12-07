@@ -34,6 +34,7 @@ use Finna\RecordDriver\SolrAipa;
 use Laminas\View\Helper\AbstractHelper;
 use NatLibFi\FinnaCodeSets\FinnaCodeSets;
 use NatLibFi\FinnaCodeSets\Model\EducationalLevel\EducationalLevelInterface;
+use NatLibFi\FinnaCodeSets\Model\EducationalModule\EducationalModuleInterface;
 use NatLibFi\FinnaCodeSets\Utility\EducationalData;
 
 use function count;
@@ -170,6 +171,11 @@ class Aipa extends AbstractHelper
             $items = [];
             foreach (EducationalData::EDUCATIONAL_SUBJECT_LEVEL_KEYS as $subjectLevelKey) {
                 foreach ($levelData[$subjectLevelKey] ?? [] as $subjectLevel) {
+                    // Skip educational modules.
+                    if ($subjectLevel instanceof EducationalModuleInterface) {
+                        continue;
+                    }
+
                     $items[] = $subjectLevel->getPrefLabel($langcode);
                 }
             }
@@ -228,7 +234,29 @@ class Aipa extends AbstractHelper
                     = 'Aipa::' . EducationalData::LEARNING_AREAS;
             }
 
-            // Educational subjects, study contents and objectives.
+            // Educational modules.
+            if (!empty($levelData[EducationalData::EDUCATIONAL_MODULES])) {
+                $levelModules = [];
+                foreach ($levelData[EducationalData::EDUCATIONAL_SUBJECTS] ?? [] as $educationalSubject) {
+                    $subjectModules = EducationalData::getEducationalModules(
+                        $educationalSubject,
+                        $levelData[EducationalData::EDUCATIONAL_MODULES]
+                    );
+                    $subjectModuleItems
+                        = EducationalData::getPrefLabels($subjectModules, $langcode);
+                    if (!empty($subjectModules)) {
+                        $levelModules[$educationalSubject->getPrefLabel($langcode)]
+                            = $subjectModuleItems;
+                    }
+                }
+                if (!empty($levelModules)) {
+                    $componentData['educationalModules'] = $levelModules;
+                    $componentData['educationalModulesTitle']
+                        = 'Aipa::' . EducationalData::EDUCATIONAL_MODULES;
+                }
+            }
+
+            // Study contents and objectives.
             foreach (EducationalData::EDUCATIONAL_SUBJECT_LEVEL_KEYS as $subjectLevelKey) {
                 foreach (EducationalData::STUDY_CONTENTS_OR_OBJECTIVES_KEYS as $contentsOrObjectivesKey) {
                     $items = [];
