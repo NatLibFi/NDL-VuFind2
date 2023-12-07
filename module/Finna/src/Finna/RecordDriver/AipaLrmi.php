@@ -321,9 +321,6 @@ class AipaLrmi extends SolrLrmi implements
     {
         $record = parent::getFilteredXMLElement();
         $this->doFilterFields($record, ['abstract', 'description', 'assignmentIdeas']);
-        foreach ($record->material as $material) {
-            $this->doFilterFields($material, ['comment']);
-        }
         foreach ($record->learningResource as $learningResource) {
             $this->doFilterFields($learningResource, ['studyObjectives']);
             foreach ($learningResource->educationalLevel as $educationalLevel) {
@@ -344,7 +341,7 @@ class AipaLrmi extends SolrLrmi implements
                 $this->doFilterFields($teaches, ['name']);
             }
         }
-        return $record;
+        return $this->filterEncapsulatedRecords($record);
     }
 
     /**
@@ -355,8 +352,10 @@ class AipaLrmi extends SolrLrmi implements
      *
      * @return void
      */
-    protected function doFilterFields($baseElement, $filterFields): void
-    {
+    protected function doFilterFields(
+        \SimpleXMLElement $baseElement,
+        array $filterFields
+    ): void {
         foreach ($filterFields as $filterField) {
             while ($baseElement->{$filterField}) {
                 unset($baseElement->{$filterField}[0]);
