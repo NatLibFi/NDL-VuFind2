@@ -17,7 +17,7 @@
   $note = $this->markdown()->toHtml($note);
   $view = $this->params->getView();
 
-  $noteDesc = $this->transEsc('Note');
+  $noteDesc = $this->noteDesc ?? $this->transEsc('Note');
 ?>
 <?php if ($view === 'condensed'): ?>
   <button class="note-button condensed" aria-hidden="true" title="<?=$noteDesc?>"><?=$this->icon('list-note') ?><?=$noteDesc?><span class="caret"></span></button>

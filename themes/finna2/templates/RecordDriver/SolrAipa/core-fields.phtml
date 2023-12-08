@@ -2,6 +2,7 @@
 <?php
   $formatter = $this->recordDataFormatter($this->driver);
   $defaults = $formatter->getDefaults();
+  unset($defaults['Language']); // Not displayed
   unset($defaults['Subjects']); // Subjects are displayed in a different part of the record page
   $coreFields = $formatter->getData($defaults);
 ?>
