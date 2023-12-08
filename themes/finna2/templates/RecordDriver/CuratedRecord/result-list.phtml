@@ -14,6 +14,7 @@
       // Then render the same template using the encapsulated record.
       $this->curatedRecord = $this->driver;
       $this->driver = $record;
+      $this->noteDesc = $this->transEsc('Aipa::More Information');
     ?>
     <?= $this->record($this->driver)->getSearchResult('list', $this->results) ?>
   <?php endif; ?>
