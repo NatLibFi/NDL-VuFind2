@@ -732,7 +732,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
     {
         $xml = $this->getXmlRecord();
         $locale = $this->getLocale();
-        $result = [];     
+        $result = [];
         foreach ($xml->rights as $right) {
             $strRight = trim((string)$right);
             $type = trim((string)$right->attributes()->type);
