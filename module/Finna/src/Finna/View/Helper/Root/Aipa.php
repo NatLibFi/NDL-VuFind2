@@ -153,16 +153,8 @@ class Aipa extends AbstractHelper
         $component = $this->getView()->plugin('component');
         $langcode = $this->view->layout()->userLang;
 
-        // Basic education levels are mapped to primary school and lower secondary
-        // school levels.
-        $levelCodeValues = EducationalData::getMappedLevelCodeValues(
-            $educationalData[EducationalData::EDUCATIONAL_LEVELS] ?? []
-        );
-
-        usort($levelCodeValues, [$this, 'sortEducationalLevels']);
-
         $html = '';
-        foreach ($levelCodeValues as $levelCodeValue) {
+        foreach ($this->getEducationalLevelCodeValues($educationalData) as $levelCodeValue) {
             $levelData = EducationalData::getEducationalLevelData($levelCodeValue, $educationalData);
             if (empty($levelData)) {
                 continue;
@@ -205,17 +197,9 @@ class Aipa extends AbstractHelper
         $transEsc = $this->getView()->plugin('transEsc');
         $langcode = $this->view->layout()->userLang;
 
-        // Basic education levels are mapped to primary school and lower secondary
-        // school levels.
-        $levelCodeValues = EducationalData::getMappedLevelCodeValues(
-            $educationalData[EducationalData::EDUCATIONAL_LEVELS] ?? []
-        );
-
-        usort($levelCodeValues, [$this, 'sortEducationalLevels']);
-
         $html = '';
         $levelsHtml = [];
-        foreach ($levelCodeValues as $levelCodeValue) {
+        foreach ($this->getEducationalLevelCodeValues($educationalData) as $levelCodeValue) {
             $levelData = EducationalData::getEducationalLevelData($levelCodeValue, $educationalData);
             if (empty($levelData)) {
                 continue;
@@ -323,6 +307,29 @@ class Aipa extends AbstractHelper
             }
         }
         return $html;
+    }
+
+    /**
+     * Get processed educational level code values.
+     *
+     * @param array $educationalData Educational data from record driver
+     *
+     * @return array
+     */
+    protected function getEducationalLevelCodeValues(array $educationalData): array
+    {
+        // Basic education levels are mapped to primary school and lower secondary
+        // school levels.
+        $levelCodeValues = EducationalData::getMappedLevelCodeValues(
+            $educationalData[EducationalData::EDUCATIONAL_LEVELS] ?? []
+        );
+
+        // Remove basic education root level, data should be entered at lower levels.
+        unset($levelCodeValues[EducationalLevelInterface::BASIC_EDUCATION]);
+
+        usort($levelCodeValues, [$this, 'sortEducationalLevels']);
+
+        return $levelCodeValues;
     }
 
     /**
