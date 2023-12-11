@@ -35,14 +35,14 @@
         </div>
       <?php endif; ?>
     <?php else: ?>
+      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/historic-loans-pre-list')): ?>
+        <div class="historic-loans-pre-list"><?=$this->render($template)?></div>
+      <?php endif; ?>
       <div class="sort-col sort-col-mobile">
         <?php if ($sortList): ?>
           <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList]); ?>
         <?php endif; ?>
       </div>
-      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/historic-loans-pre-list')): ?>
-        <div class="historic-loans-pre-list"><?=$this->render($template)?></div>
-      <?php endif; ?>
       <?php if (!empty($this->transactions)): ?>
         <?php if ($paginator): ?>
           <div class="pagination-container">
