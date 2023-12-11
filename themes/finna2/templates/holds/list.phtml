@@ -30,13 +30,13 @@
         </div>
       <?php endif; ?>
     <?php else: ?>
+      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/holds-pre-list')): ?>
+        <div class="holds-pre-list"><?=$this->render($template)?></div>
+      <?php endif; ?>
       <?php if (!empty($this->recordList)): ?>
         <div class="sort-col sort-col-mobile">
           <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList])?>
         </div>
-      <?php endif; ?>
-      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/holds-pre-list')): ?>
-        <div class="holds-pre-list"><?=$this->render($template)?></div>
       <?php endif; ?>
       <?php if (!empty($this->recordList)): ?>
 

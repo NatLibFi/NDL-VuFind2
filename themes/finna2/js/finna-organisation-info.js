@@ -204,6 +204,20 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
         }
       });
     });
+
+    $('.js-location-search-service-type').select2({
+      width: '100%'
+    });
+    // Trigger DOM event for the jQuery change event:
+    $('.js-location-search-service-type').on(
+      'change',
+      function triggerChange(ev) {
+        // Trigger only if this is the original event to avoid endless loop:
+        if (typeof ev.originalEvent === 'undefined') {
+          this.dispatchEvent(new Event('change'));
+        }
+      }
+    );
   }
 
   /**
