@@ -1374,7 +1374,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
         );
         $setTemplateLine(
             'Access',
-            'getAccessRights',
+            'getAccessRestrictions',
             'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'accessRights'],

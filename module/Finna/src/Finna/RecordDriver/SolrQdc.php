@@ -728,7 +728,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
      *
      * @return array
      */
-    public function getAccessRights(): array
+    public function getAccessRestrictions(): array
     {
         $xml = $this->getXmlRecord();
         $locale = $this->getLocale();
