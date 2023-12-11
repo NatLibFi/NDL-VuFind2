@@ -293,11 +293,6 @@
             .open-closed-info {
                 margin-top: 0.5em;
                 margin-bottom: 0.5em;
-
-                .times, .shift {
-                    display: inline-flex;
-                    gap: 2px;
-                }
             }
         }
 
@@ -392,6 +387,11 @@
         }
     }
 
+    .times, .shift {
+        display: inline-flex;
+        gap: 2px;
+    }
+
     .locations-title {
         &:extend(.finna-panel-default .panel-heading);
         margin-bottom: 1rem;
@@ -480,8 +480,8 @@
                         flex-wrap: wrap;
                         margin-bottom: 1rem;
 
-                        select {
-                            max-width: 70%;
+                        .service-type-container {
+                            flex: 1 1 70%;
                         }
 
                         label {
@@ -515,6 +515,10 @@
                             .distance {
                                 color: @brand-success;
                             }
+                        }
+
+                        .open-or-closed {
+                            text-align: right;
                         }
                     }
                 }
