@@ -44,7 +44,7 @@ finna.fines = (function finnaFines() {
    */
   function formatAmount(currency, template)
   {
-    return template.replace('11', getWhole(currency)).replace('22', getFraction(currency));
+    return template.replace('{whole}', getWhole(currency)).replace('{fraction}', getFraction(currency));
   }
 
   /**

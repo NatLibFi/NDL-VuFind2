@@ -41,7 +41,7 @@
           }
       }
     }
-    $currencyTemplate = $this->safeMoneyFormat(11.22);
+    $currencyTemplate = '{whole},{fraction}';
 ?>
 <!-- Leftside navigationbar -->
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'fines']); ?>
