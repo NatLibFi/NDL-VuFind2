@@ -44,7 +44,7 @@ finna.fines = (function finnaFines() {
    */
   function formatAmount(currency, template)
   {
-    // Prevent cases where whole with 22 or 122 gets overwritten
+    // Prevent cases where whole with 22 or 122 gets overwritten with the fraction
     return template.replace('11', '{whole}')
       .replace('22', '{fraction}')
       .replace('{whole}', getWhole(currency))
