@@ -409,11 +409,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             ];
         }
 
-        $phoneField = $this->config['Profile']['phoneNumberField']
-            ?? 'mobile';
-
-        $smsField = $this->config['Profile']['smsNumberField']
-            ?? 'sms_number';
+        $phoneField = $this->config['Profile']['phoneNumberField'] ?? 'mobile';
+        $smsField = $this->config['Profile']['smsNumberField'] ?? 'sms_number';
+        $holdIdentifierField = $this->config['Profile']['holdIdentifierField'] ?? 'other_name';
 
         $profile = [
             'firstname' => $result['firstname'],
@@ -428,7 +426,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             'expiration_date' => $expirationDate,
             'expiration_soon' => !empty($result['expiry_date_near']),
             'expired' => !empty($result['blocks']['Patron::CardExpired']),
-            'hold_identifier' => $result['other_name'],
+            'hold_identifier' => $result[$holdIdentifierField] ?? '',
             'guarantors' => $guarantors,
             'guarantees' => $guarantees,
             'loan_history' => $result['privacy'],
