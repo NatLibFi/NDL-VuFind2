@@ -14,7 +14,7 @@
       // Then render the same template using the encapsulated record.
       $this->curatedRecord = $this->driver;
       $this->driver = $record;
-      $this->slot('listNoteTitle')->set($this->translate('Aipa::More Information'));
+      $this->listNoteTitle = $this->translate('Aipa::More Information');
     ?>
     <?= $this->record($this->driver)->getSearchResult('condensed', $this->results) ?>
   <?php endif; ?>

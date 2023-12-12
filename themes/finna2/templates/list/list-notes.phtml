@@ -17,8 +17,7 @@
   $note = $this->markdown()->toHtml($note);
   $view = $this->params->getView();
 
-  $this->slot('listNoteTitle', $this->translate('Note'));
-  $noteTitle = $this->escapeHtml($this->slot('listNoteTitle')->get());
+  $noteTitle = $this->escapeHtml($this->listNoteTitle ?? $this->translate('Note'));
 ?>
 <?php if ($view === 'condensed'): ?>
   <button class="note-button condensed" aria-hidden="true" title="<?=$noteTitle?>"><?=$this->icon('list-note') ?><?=$noteTitle?><span class="caret"></span></button>
