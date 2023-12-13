@@ -5974,16 +5974,16 @@
         },
         {
             "name": "natlibfi/finna-code-sets",
-            "version": "v0.3.0",
+            "version": "v0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NatLibFi/finna-code-sets.git",
-                "reference": "ba7d4c7579f11717bb8935c27799feff154506b1"
+                "reference": "31cc9bdc000f17b538ac27793d13b62d0979aa56"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NatLibFi/finna-code-sets/zipball/ba7d4c7579f11717bb8935c27799feff154506b1",
-                "reference": "ba7d4c7579f11717bb8935c27799feff154506b1",
+                "url": "https://api.github.com/repos/NatLibFi/finna-code-sets/zipball/31cc9bdc000f17b538ac27793d13b62d0979aa56",
+                "reference": "31cc9bdc000f17b538ac27793d13b62d0979aa56",
                 "shasum": ""
             },
             "require": {
@@ -6010,9 +6010,9 @@
             "description": "Support library for code sets used in Finna record formats",
             "support": {
                 "issues": "https://github.com/NatLibFi/finna-code-sets/issues",
-                "source": "https://github.com/NatLibFi/finna-code-sets/tree/v0.3.0"
+                "source": "https://github.com/NatLibFi/finna-code-sets/tree/v0.4.0"
             },
-            "time": "2023-12-07T12:20:26+00:00"
+            "time": "2023-12-12T14:32:05+00:00"
         },
         {
             "name": "natlibfi/php-html-parser",
