@@ -744,7 +744,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
                     $primary[] = $strRight;
                 }
             }
-            
         }
         return $primary ?: $all;
     }
