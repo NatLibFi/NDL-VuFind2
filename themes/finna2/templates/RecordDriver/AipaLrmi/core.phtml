@@ -49,7 +49,7 @@
     <div class="record-core-metadata">
       <?php if ($showData && ($results = $this->driver->getNonPresenterAuthors())): ?>
         <div class="truncate-field recordAuthors">
-          <strong><?= $this->transEsc('Curated By') ?>:</strong>
+          <strong><?= $this->transEsc('Aipa::Curated By') ?>:</strong>
           <span>
             <?php foreach ($results as $index => $author): ?>
               <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?><?php if (!empty($author['affiliation'])): ?>, <?= $this->escapeHtml($author['affiliation']) ?><?php endif;?></a>

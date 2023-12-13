@@ -51,6 +51,13 @@ use function is_array;
 class SolrExtensionsListener
 {
     /**
+     * Terms filter prefix for a filter (%s is the field name)
+     *
+     * @var string
+     */
+    public const TERMS_FILTER_PREFIX = "{!terms f=%s separator=\"\u{001f}\"}";
+
+    /**
      * Terms filter prefix for a source filter
      *
      * @var string
@@ -473,12 +480,6 @@ class SolrExtensionsListener
             $filters = $params->get('fq');
             if (null !== $filters) {
                 $sources = explode(',', $searchConfig->Records->sources);
-                $sources = array_map(
-                    function ($s) {
-                        return "\"$s\"";
-                    },
-                    $sources
-                );
 
                 if (!empty($searchConfig->Records->deduplication)) {
                     $prefixes = [
@@ -488,9 +489,10 @@ class SolrExtensionsListener
                         foreach ($filters as $key => $value) {
                             if ($value === $prefix . '_boolean:"1"') {
                                 unset($filters[$key]);
-                                $filter = $prefix . '_str_mv:('
-                                    . implode(' OR ', $sources) . ')';
-                                $filters[] = $filter;
+                                $filters[] = sprintf(
+                                    static::TERMS_FILTER_PREFIX,
+                                    $prefix . '_str_mv'
+                                ) . implode("\u{001f}", $sources);
                                 $params->set('fq', $filters);
                                 break;
                             }
@@ -501,8 +503,7 @@ class SolrExtensionsListener
                 foreach ($filters as $key => $value) {
                     if ($value === 'source_available_str_mv:*') {
                         $buildings = [];
-                        $buildingRegExp
-                            = '/\{!tag=building_filter\}building:\(building:(".*")/';
+                        $buildingRegExp = '/\{!tag=building_filter\}building:\(building:"(.*)"/';
                         foreach ($filters as $value2) {
                             if (preg_match($buildingRegExp, $value2, $matches)) {
                                 $buildings[] = $matches[1];
@@ -510,11 +511,15 @@ class SolrExtensionsListener
                         }
                         unset($filters[$key]);
                         if ($buildings) {
-                            $filter = 'building_available_str_mv:('
-                                . implode(' OR ', $buildings) . ')';
+                            $filter = sprintf(
+                                static::TERMS_FILTER_PREFIX,
+                                'building_available_str_mv'
+                            ) . implode("\u{001f}", $buildings);
                         } else {
-                            $filter = 'source_available_str_mv:('
-                                . implode(' OR ', $sources) . ')';
+                            $filter = sprintf(
+                                static::TERMS_FILTER_PREFIX,
+                                'source_available_str_mv'
+                            ) . implode("\u{001f}", $sources);
                         }
                         $filters[] = $filter;
                         $params->set('fq', $filters);

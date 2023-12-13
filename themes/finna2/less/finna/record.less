@@ -724,6 +724,14 @@ a.authority {
   }
 }
 
+.marc-row-LEADER,
+.marc-row-005,
+.marc-row-006,
+.marc-row-007,
+.marc-row-008 {
+  white-space: pre-wrap;
+}
+
 .nav-pills {
   padding: 0px;
   margin: 0px;
@@ -1304,7 +1312,28 @@ finna-model-viewer .object-editor {
 }
 
 .record.full-width-layout {
+  .record-accordions.record-tabs {
+    width: 100%;
+    padding-right: 0;
+    float: none;
+  }
+}
+
+.record-format-aipa {
+  .media-body:not(.record-container .media-body) {
+    display: block;
+    width: auto;
+  }
+  .recordFormat {
+    display: block;
+    margin-bottom: 21px;
+    padding-bottom: .1em;
+  }
+  .access-rights {
+    margin-bottom: 21px;
+  }
   .record-core-metadata,
+  .finna-tag-list,
   .summary,
   .record-toc,
   .encapsulated-records {
@@ -1326,26 +1355,6 @@ finna-model-viewer .object-editor {
     font-size: 22px;
     margin-bottom: 21px;
     padding-bottom: .1em;
-  }
-  .record-accordions.record-tabs {
-    width: 100%;
-    padding-right: 0;
-    float: none;
-  }
-}
-
-.record-format-aipa {
-  & > .record-main > div > .media-body {
-    display: block;
-    width: auto;
-  }
-  .recordFormat {
-    display: block;
-    margin-bottom: 21px;
-    padding-bottom: .1em;
-  }
-  .access-rights {
-    margin-bottom: 21px;
   }
   h3.panel-title {
     font-size: 16px;
@@ -1387,5 +1396,11 @@ finna-model-viewer .object-editor {
   margin-bottom: 15px;
   .recordAuthors {
     margin-bottom: 15px;
+  }
+}
+
+.encapsulated-record.record-format-lrmi {
+  .record-core-metadata + .finna-panel {
+    margin-top: 21px;
   }
 }

@@ -189,6 +189,15 @@ enabled = true
 ; The field to display as the SMS number. Default is sms_number.
 ; Set to empty string for "none".
 ;smsNumberField = ""
+; The field to display as the hold identifier number. Default is other_name.
+; Set to empty string for "none".
+;holdIdentifierField = ""
+; The field to display as the hold identifier number. Default is other_name.
+; Set to empty string for "none".
+;holdIdentifierField = ""
+; The field to display as the calling name. Not displayed by default.
+; Set to empty string for "none".
+;callingNameField = ""
 ; Whether to display messaging settings. Default is true.
 ;messagingSettings = false
 
