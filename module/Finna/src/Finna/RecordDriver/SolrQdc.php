@@ -732,15 +732,20 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
     {
         $xml = $this->getXmlRecord();
         $locale = $this->getLocale();
-        $result = [];
+        $primary = [];
+        $all = [];
         foreach ($xml->rights as $right) {
             $strRight = trim((string)$right);
             $type = trim((string)$right->attributes()->type);
             $rightLanguage = trim((string)$right->attributes()->lang);
-            if (('accessrights' === $type) && (!$rightLanguage || $rightLanguage === $locale)) {
-                $result[] = $strRight;
+            if ('accessrights' === $type) {
+                $all[] = $strRight;
+                if ((!$rightLanguage || $rightLanguage === $locale)) {
+                    $primary[] = $strRight;
+                }
             }
+            
         }
-        return $result;
+        return $primary ?: $all;
     }
 }
