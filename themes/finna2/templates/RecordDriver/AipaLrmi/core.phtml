@@ -79,7 +79,7 @@
       <?= $this->record($this->driver)->getMaterialDisclaimer() ?>
       <?php if ($showData && !empty($summary)): ?>
         <div class="material-description">
-          <?= implode('<br>', array_map([$this, 'escapeHtml'], $summary)) ?>
+          <?= implode(array_map([$this->markdown(), 'toHtml'], $summary)) ?>
         </div>
       <?php endif; ?>
     </div>

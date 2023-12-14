@@ -5,7 +5,7 @@
     <div class="media">
       <div class="media-body">
         <p><?= $this->transEsc('Cannot find record') . ': ' . $this->escapeHtmlAttr($record->getUniqueID()) ?></p>
-        <?= $this->recordFieldMarkdown()->toHtml($this->driver->getNotes()) ?>
+        <?= $this->markdown()->toHtml($this->driver->getNotes()) ?>
       </div>
     </div>
   <?php else: ?>
