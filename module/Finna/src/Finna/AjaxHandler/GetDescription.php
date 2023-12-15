@@ -31,7 +31,6 @@
 namespace Finna\AjaxHandler;
 
 use Finna\Content\Description\PluginManager as DescriptionPluginManager;
-use Finna\Content\Description\Record as RecordDescription;
 use Laminas\Config\Config;
 use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Cache\Manager as CacheManager;
@@ -144,7 +143,7 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase implements
         $cacheDir = $this->cacheManager->getCache('description')->getOptions()->getCacheDir();
         $localFile = "$cacheDir/" . urlencode($id) . '_' . $this->langCode . '.txt';
         $maxAge = $this->config->Content->summarycachetime ?? 1440;
-        
+
         if (
             is_readable($localFile)
             && time() - filemtime($localFile) < $maxAge * 60
