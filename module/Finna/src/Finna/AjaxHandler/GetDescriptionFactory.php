@@ -76,7 +76,8 @@ class GetDescriptionFactory implements \Laminas\ServiceManager\Factory\FactoryIn
             $container->get(\VuFind\Record\Loader::class),
             $container->get(\Finna\Content\Description\PluginManager::class),
             $config->get('config')->toArray(),
-            $config->get('datasources')->toArray()
+            $config->get('datasources')->toArray(),
+            $container->get(\VuFind\I18n\Locale\LocaleSettings::class)->getUserLocale()
         );
         return $result;
     }
