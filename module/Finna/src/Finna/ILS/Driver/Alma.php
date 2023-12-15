@@ -2090,9 +2090,20 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
                         if (null === $available) {
                             $availStr = strtolower($marc->getSubfield($field, 'e'));
-                            $available = 'available' === $availStr;
-                            // No status message available, so set it based on availability:
-                            $statusText = $available ? 'Available' : 'Not Available';
+                            switch ($availStr) {
+                                case 'available':
+                                    $available = ItemStatus::STATUS_AVAILABLE;
+                                    $statusText = 'Available';
+                                    break;
+                                case 'check_holdings':
+                                    $available = ItemStatus::STATUS_UNCERTAIN;
+                                    $statusText = 'Check Holdings';
+                                    break;
+                                default:
+                                    $available = ItemStatus::STATUS_UNAVAILABLE;
+                                    $statusText = 'Not Available';
+                                    break;
+                            }
                         }
 
                         $libraryCode = $marc->getSubfield($field, 'b');
@@ -2708,9 +2719,20 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
                     if (null === $available) {
                         $availStr = strtolower($marc->getSubfield($field, 'e'));
-                        $available = 'available' === $availStr;
-                        // No status message available, so set it based on availability:
-                        $statusText = $available ? 'Item in place' : 'Item not in place';
+                        switch ($availStr) {
+                            case 'available':
+                                $available = ItemStatus::STATUS_AVAILABLE;
+                                $statusText = 'Available';
+                                break;
+                            case 'check_holdings':
+                                $available = ItemStatus::STATUS_UNCERTAIN;
+                                $statusText = 'Check Holdings';
+                                break;
+                            default:
+                                $available = ItemStatus::STATUS_UNAVAILABLE;
+                                $statusText = 'Not Available';
+                                break;
+                        }
                     }
 
                     $item = $tmpl;
