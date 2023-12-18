@@ -200,6 +200,12 @@
     </div>
 
     <div class="record-core-metadata">
+      <?php if ($titleStatement = $this->driver->getTitleStatement()): ?>
+        <div class="recordAuthors">
+          <?=$this->escapeHtml($titleStatement)?>
+        </div>
+      <?php endif; ?>
+
       <?php $formats = $this->driver->getFormats();
       if (!empty($formats)): ?>
         <div class="recordFormat">

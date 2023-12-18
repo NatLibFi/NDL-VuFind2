@@ -29,6 +29,12 @@
           </div>
         <?php endif; ?>
 
+        <?php if ($titleStatement = $this->driver->getTitleStatement()): ?>
+          <div class="result-title-statement">
+            <?=$this->escapehtml($titleStatement)?>
+          </div>
+        <?php endif; ?>
+
         <div class="resultOtherLinks">
           <div class="resultItemFormat">
             <?=$this->record($this->driver)->getFormatList() ?>
@@ -60,7 +66,9 @@
             <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles');
             if (!empty($authors)): ?>
               <?php $author = $authors[0]; ?>
+              <div class="result-authors">
                 <?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?>
+              </div>
               <?php if (count($authors) > 1): ?> <?=$this->transEsc('more_authors_abbrev')?><?php endif; ?>
             <?php endif; ?>
             <?php $journalTitle = $this->driver->getContainerTitle();

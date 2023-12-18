@@ -41,6 +41,12 @@
           </div>
         <?php endforeach; ?>
 
+        <?php if ($titleStatement = $this->driver->getTitleStatement()): ?>
+          <div class="result-title-statement">
+            <?=$this->escapehtml($titleStatement)?>
+          </div>
+        <?php endif; ?>
+
         <div class="dateyeartype">
           <div class="resultItemFormat">
             <?=$this->record($this->driver)->getFormatList() ?>
@@ -74,7 +80,7 @@
           <?php else: ?>
             <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles');
             if (!empty($authors)): ?>
-              <div class="truncate-field" data-rows="1" tabindex="-1">
+              <div class="result-authors truncate-field" data-rows="1" tabindex="-1">
                 <?php foreach($authors as $index => $author): ?>
                   <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
                 <?php endforeach; ?>
