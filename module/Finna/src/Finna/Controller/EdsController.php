@@ -44,7 +44,6 @@ class EdsController extends \VuFind\Controller\EdsController
 {
     use FinnaSearchControllerTrait;
 
-
     /**
      * Home action
      *
