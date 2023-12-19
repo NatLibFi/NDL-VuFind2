@@ -336,7 +336,6 @@ $config = [
             'feed-play' => 'FontAwesome:play-circle',
             'filter-collapse' => 'FinnaIcons:up',
             'filter-expand' => 'FinnaIcons:down',
-            'filter-remove' => 'FontAwesome:window-close',
             'finna-suggestions-link' => 'FinnaIcons:arrow-right',
             'full-results-link' => 'FinnaIcons:right',
             'google-plus' => 'FinnaIcons:google+',
