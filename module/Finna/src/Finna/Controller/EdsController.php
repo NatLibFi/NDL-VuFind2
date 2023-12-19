@@ -44,6 +44,18 @@ class EdsController extends \VuFind\Controller\EdsController
 {
     use FinnaSearchControllerTrait;
 
+
+    /**
+     * Home action
+     *
+     * @return mixed
+     */
+    public function homeAction()
+    {
+        $this->layout()->searchClassId = $this->searchClassId;
+        return parent::homeAction();
+    }
+
     /**
      * Handle an advanced search
      *
