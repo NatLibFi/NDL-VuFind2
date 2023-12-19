@@ -5,6 +5,7 @@ $driver = $this->record($id)->getDriver();
 $source = $driver ? $driver->tryMethod('getDataSource') : '';
 $locations = false;
 $holdings = $this->statusItems;
+$externalInterfaceUrl = '';
 foreach ($holdings as $i => $holding) {
   if (($holding['location'] ?? '') === '__HOLDINGSSUMMARYLOCATION__') {
     unset($holdings[$i]);
@@ -13,6 +14,7 @@ foreach ($holdings as $i => $holding) {
     $reservationsTotal = $holding['reservations'] ?? null;
     $orderedTotal = $holding['ordered'] ?? null;
     $locations = $holding['locations'] ?? null;
+    $externalInterfaceUrl = $holding['externalInterfaceUrl'] ?? '';
     break;
   }
 }
@@ -371,7 +373,7 @@ if (!$disableTitleHold
 <?php endif; ?>
 </div>
 
-<?php if ($driver && $source && $externalInterfaceUrl = $summary['externalInterfaceUrl'] ?? ''):?>
+<?php if ($driver && $source && $externalInterfaceUrl):?>
   <?=$this->record($driver)->renderTemplate('external-interface-link.phtml', ['driver' => $driver, 'source' => $source, 'link' => $externalInterfaceUrl ?? ''])?>
 <?php endif;?>
 
