@@ -426,6 +426,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Related Items',
             'Related Materials',
             'Related Places',
+            'Subject Actor',
             'subjects_extended',
             'System Format',
             'Unit IDs',

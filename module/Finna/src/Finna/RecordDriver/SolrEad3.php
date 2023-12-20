@@ -476,7 +476,7 @@ class SolrEad3 extends SolrEad
             ...self::RELATOR_ARCHIVE_ORIGINATION,
             ...self::SUBJECT_ACTOR_ROLES,
         ];
-        return $this->getAuthors($exclude, false, true);
+        return $this->getAuthors($exclude, [], false, true);
     }
 
     /**
@@ -490,7 +490,7 @@ class SolrEad3 extends SolrEad
             ...self::RELATOR_ARCHIVE_ORIGINATION,
             ...self::SUBJECT_ACTOR_ROLES,
         ];
-        return $this->getAuthors($exclude, true);
+        return $this->getAuthors($exclude, [], true);
     }
 
     /**
@@ -507,7 +507,7 @@ class SolrEad3 extends SolrEad
                 ...self::RELATOR_ARCHIVE_ORIGINATION,
                 ...self::SUBJECT_ACTOR_ROLES,
             ];
-            return $this->getAuthors($exclude, false, true);
+            return $this->getAuthors($exclude, [], false, true);
         }
         return [];
     }
@@ -516,6 +516,7 @@ class SolrEad3 extends SolrEad
      * Get authors.
      *
      * @param array $exclude      Roles to be excluded
+     * @param array $include      Roles to be included
      * @param bool  $translations Include only authors with roles that have translations
      * @param bool  $unknown      Include only authors with unknown roles or roles without translations
      *
@@ -523,6 +524,7 @@ class SolrEad3 extends SolrEad
      */
     public function getAuthors(
         array $exclude = [],
+        array $include = [],
         bool $translations = false,
         bool $unknown = false
     ): array {
@@ -536,6 +538,9 @@ class SolrEad3 extends SolrEad
             $relatorLC = mb_strtolower($relator, 'UTF-8');
             $role = $this->translateRole($localtype) ?? $this->translateRole($relatorLC);
             if ($exclude && in_array($relatorLC, $exclude)) {
+                continue;
+            }
+            if ($include && !in_array($relatorLC, $include)) {
                 continue;
             }
             if ((!$role && $translations) || ($role && $unknown)) {
@@ -552,7 +557,7 @@ class SolrEad3 extends SolrEad
             ];
         }
         // Check authors under relations
-        $relations = $this->getRelationsWithType('cpfrelation', $exclude);
+        $relations = $this->getRelationsWithType('cpfrelation', $exclude, $include);
         foreach ($relations as $relation) {
             $role = $this->translateRole($relation['role']);
             if ((!$role && $translations) || ($role && $unknown)) {
@@ -575,12 +580,14 @@ class SolrEad3 extends SolrEad
      *
      * @param string $relationtype Relationtype to be included
      * @param array  $exclude      Arcroles to be excluded
+     * @param array  $include      Arcroles to be included
      *
      * @return array
      */
     protected function getRelationsWithType(
         string $relationtype,
-        array $exclude = []
+        array $exclude = [],
+        array $include = []
     ): array {
         $result = [];
         $xml = $this->getXmlRecord();
@@ -592,6 +599,9 @@ class SolrEad3 extends SolrEad
             $arcrole = trim((string)($relation->attributes()->arcrole ?? ''));
             $arcroleLC = mb_strtolower($arcrole, 'UTF-8');
             if ($exclude && in_array($arcroleLC, $exclude)) {
+                continue;
+            }
+            if ($include && !in_array($arcroleLC, $include)) {
                 continue;
             }
             $name = $this->getDisplayLabel($relation, 'relationentry');
@@ -2115,6 +2125,22 @@ class SolrEad3 extends SolrEad
             }
         }
         return $topics;
+    }
+
+    /**
+     * Get subject actors
+     *
+     * @return array
+     */
+    public function getSubjectActors()
+    {
+        $results = [];
+        foreach ($this->getAuthors([], self::SUBJECT_ACTOR_ROLES) as $actor) {
+            if ($name = $actor['name'] ?? '') {
+                $results[] = $name;
+            }
+        }
+        return $results;
     }
 
     /**
