@@ -537,10 +537,7 @@ class SolrEad3 extends SolrEad
             $relator = (string)$attr->relator;
             $relatorLC = mb_strtolower($relator, 'UTF-8');
             $role = $this->translateRole($localtype) ?? $this->translateRole($relatorLC);
-            if ($exclude && in_array($relatorLC, $exclude)) {
-                continue;
-            }
-            if ($include && !in_array($relatorLC, $include)) {
+            if (($exclude && in_array($relatorLC, $exclude)) || ($include && !in_array($relatorLC, $include))) {
                 continue;
             }
             if ((!$role && $translations) || ($role && $unknown)) {
@@ -598,10 +595,7 @@ class SolrEad3 extends SolrEad
             }
             $arcrole = trim((string)($relation->attributes()->arcrole ?? ''));
             $arcroleLC = mb_strtolower($arcrole, 'UTF-8');
-            if ($exclude && in_array($arcroleLC, $exclude)) {
-                continue;
-            }
-            if ($include && !in_array($arcroleLC, $include)) {
+            if (($exclude && in_array($arcroleLC, $exclude)) || ($include && !in_array($arcroleLC, $include))) {
                 continue;
             }
             $name = $this->getDisplayLabel($relation, 'relationentry');
