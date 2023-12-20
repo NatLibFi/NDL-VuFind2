@@ -54,18 +54,19 @@ trait FinnaPersonalInformationSupportTrait
         }
 
         $availableRecordList = [];
+        $inTransitRecordList = [];
         $recordListBasic = [];
         foreach ($recordList as $item) {
-            if (
-                isset($item->getExtraDetail('ils_details')['available'])
-                && $item->getExtraDetail('ils_details')['available']
-            ) {
+            $ilsDetails = $item->getExtraDetail('ils_details');
+            if ($ilsDetails['available'] ?? false) {
                 $availableRecordList[] = $item;
+            } elseif ($ilsDetails['in_transit'] ?? false) {
+                $inTransitRecordList[] = $item;
             } else {
                 $recordListBasic[] = $item;
             }
         }
-        return array_merge($availableRecordList, $recordListBasic);
+        return array_merge($availableRecordList, $inTransitRecordList, $recordListBasic);
     }
 
     /**
