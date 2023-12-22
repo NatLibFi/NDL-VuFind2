@@ -212,11 +212,14 @@
               $fine = null;
               if (isset($record['fine'])) {
                 $fine = $record['fine'];
-                if (!$this->translationEmpty("fine_status_$fine")) {
-                  $fine = "fine_status_$fine";
-                } elseif (!$this->translationEmpty("status_$fine")) {
-                  // Fallback to item status translations for backwards-compatibility
-                  $fine = "status_$fine";
+                // Only check translations if the type doesn't contain the prefix already:
+                if (!str_starts_with($fine, 'fine_status_')) {
+                  if (!$this->translationEmpty("fine_status_$fine")) {
+                    $fine = "fine_status_$fine";
+                  } elseif (!$this->translationEmpty("status_$fine")) {
+                    // Fallback to item status translations for backwards-compatibility
+                    $fine = "status_$fine";
+                  }
                 }
               }
             ?>
@@ -255,7 +258,7 @@
               </td>
               <td><?=isset($fine) ? $this->transEsc($fine) : ''?></td>
               <td class="<?=$hideDescription ? 'hidden' : '' ?>">
-                <?=$this->escapeHtml($record['description'] ?? '')?>
+                <?=$this->transEscWithPrefix('fine_description_', $record['description'] ?? '')?>
               </td>
               <td class="<?=$hideFineCreationDate ? 'hidden' : 'hidden-xs' ?>">
                 <?=isset($record['createdate']) ? $this->escapeHtml($record['createdate']) : ''?>
