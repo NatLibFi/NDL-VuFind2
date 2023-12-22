@@ -204,5 +204,5 @@ enabled = true
 ;fields = "sms_number,phone"
 
 [FeeTypeMappings]
-ODUE = "Overdue Notice 1"
-ODUE2 = "Overdue Notice 2"
+ODUE = "fine_status_Overdue Return Request"
+ODUE2 = "fine_status_Overdue Return Request"

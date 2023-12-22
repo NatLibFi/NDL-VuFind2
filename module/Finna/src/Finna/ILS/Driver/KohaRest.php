@@ -276,8 +276,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             $debitStatus = trim($entry['status'] ?? '');
             $type = $this->translate($this->feeTypeMappings[$debitType] ?? $debitType);
             $description = trim($entry['description']);
-            if ($description !== $type) {
-                $type .= " - $description";
+            $description = $this->translate("fine_description_$description", [], $description);
+            if ($description === $type) {
+                $description = '';
             }
             $payableOnline = $entry['amount_outstanding'] > 0
                 && !in_array($debitType, $this->nonPayableTypes)
@@ -287,6 +288,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 'amount' => $entry['amount'] * 100,
                 'balance' => $entry['amount_outstanding'] * 100,
                 'fine' => $type,
+                'description' => $description,
                 'createdate' => $this->convertDate($entry['date'] ?? null),
                 'checkout' => '',
                 'payableOnline' => $payableOnline,
