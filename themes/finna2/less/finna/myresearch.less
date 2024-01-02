@@ -141,12 +141,9 @@
     }
   }
   .btn-finna-toolbar {
-    border: 1px solid @gray-lighter;
-    background: @gray-ultralight;
-    color: @text-color;
+    .button-variant(@btn-primary-color; @btn-primary-bg; @btn-primary-border);
     padding: 5px 10px;
     font-size: 0.9em;
-    height: 30px;
     @media (max-width: @screen-md) {
       margin: 6px 0px;
     }
