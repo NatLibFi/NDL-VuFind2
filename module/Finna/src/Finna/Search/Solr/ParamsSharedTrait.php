@@ -85,13 +85,17 @@ trait ParamsSharedTrait
     {
         $domain = $this->getOptions()->getTextDomainForTranslatedFacet($field);
         $parts = explode('/', $value);
-        $result = [];
-        for ($i = 0; $i <= $parts[0]; $i++) {
-            $part = array_slice($parts, 1, $i + 1);
-            $key = $i . '/' . implode('/', $part) . '/';
-            $result[] = $this->translate($key, null, end($part));
+        if (isset($parts[1]) && ctype_digit($parts[0])) {
+            $result = [];
+            for ($i = 0; $i <= $parts[0]; $i++) {
+                $part = array_slice($parts, 1, $i + 1);
+                $key = $i . '/' . implode('/', $part) . '/';
+                $result[] = $this->translate($key, null, end($part));
+            }
+            $displayText = implode(' > ', $result);
+        } else {
+            $displayText = $this->translate($value);
         }
-        $displayText = implode(' > ', $result);
         return compact('value', 'displayText', 'field', 'operator');
     }
 
