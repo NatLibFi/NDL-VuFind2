@@ -74,43 +74,29 @@
   }
 }
 
+.loan-history-purge-all {
+  margin-top: 10px;
+}
+
 .myresearch-table {
   width: 100%;
   margin: 0;
   th,td {
     vertical-align: top;
     padding: 5px;
-    @media(max-width: @screen-sm) {
-      text-align: left;
-    }
-    .record-title {
-      text-align: left;
-    }
   }
   .recordcover {
     min-width: 30px;
   }
   .toolbar {
-    display: flex;
-    flex-direction: row;
     &.no-list-functions {
-      justify-content: space-between;
       .myresearch-notification {
         height: fit-content;
         align-self: center;
       }
     }
     .checkbox-col {
-      display: flex;
-      width: fit-content;
-      height: fit-content;
-      .mylist-select-all {
-        align-self: center;
-        padding: 5px 0;
-        @media (max-width: @screen-md) {
-          margin: 6px 0;
-        }
-      }
+      vertical-align: middle;
     }
     th {
       vertical-align: middle;
@@ -129,7 +115,7 @@
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      width: 100%;
+      align-items: baseline;
     }
   }
   &.history-table {
@@ -141,11 +127,9 @@
     }
   }
   .btn-finna-toolbar {
-    .button-variant(@btn-primary-color; @btn-primary-bg; @btn-primary-border);
-    padding: 5px 10px;
-    font-size: 0.9em;
+    margin: 3px 0px;
     @media (max-width: @screen-md) {
-      margin: 6px 0px;
+      font-size: 0.9em;
     }
   }
   #update_selected, #purgeSelected {
@@ -175,29 +159,8 @@
       float: left;
     }
   }
-  @media(min-width: @screen-xs-min) {
-    .toolbar-button-col {
-      float: left;
-      text-align: left;
-    }
-    .sort-col {
-      float: right;
-      text-align: right;
-      .sort-button {
-        margin-bottom: 0px;
-      }
-    }
-  }
-  @media(max-width: @screen-xxs-max) {
-    .toolbar-button-col {
-      float: left;
-    }
-    .sort-col {
-      float: left;
-    }
-  }
   .checkbox-col {
-    width: 10%;
+    width: 40px;
   }
   .myresearch-count {
     line-height: 35px;
@@ -574,25 +537,6 @@
         }
       }
     }
-  }
-}
-
-.myresearch-table .toolbar {
-  .checkboxFilter.mylist-select-all {
-    margin-right: 0;
-    float: none;
-    span {
-      font-size: 11px;
-      top: 4px;
-      left: ~"-webkit-calc(50% + 10px)";
-      left: ~"-moz-calc(50% + 10px)";
-      left: ~"calc(50% + 10px)";
-      position: absolute;
-      width: 70px;
-    }
-  }
-  .checkboxFilter .checkbox label {
-    font-size: 13px;
   }
 }
 
