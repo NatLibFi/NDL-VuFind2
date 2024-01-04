@@ -89,23 +89,19 @@
     min-width: 30px;
   }
   .toolbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     &.no-list-functions {
       .myresearch-notification {
         height: fit-content;
         align-self: center;
       }
     }
-    .checkbox-col {
-      vertical-align: middle;
-    }
-    th {
-      vertical-align: middle;
-      > div {
-        margin-bottom: 10px;
-      }
-      &:first-child {
-        vertical-align: top;
-        padding-top: 10px;
+    .btn-finna-toolbar {
+      margin: 3px 0px;
+      @media (max-width: @screen-md) {
+        font-size: 0.9em;
       }
     }
     .btn-group {
@@ -114,22 +110,9 @@
     .list-functions {
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
       align-items: baseline;
-    }
-  }
-  &.history-table {
-    .toolbar {
-      border-bottom: 1px solid #d1d1d1;
-      .mylist-select-all {
-        margin-right: 0;
-      }
-    }
-  }
-  .btn-finna-toolbar {
-    margin: 3px 0px;
-    @media (max-width: @screen-md) {
-      font-size: 0.9em;
+      justify-content: space-between;
+      width: 100%;
     }
   }
   #update_selected, #purgeSelected {
@@ -161,6 +144,7 @@
   }
   .checkbox-col {
     width: 40px;
+    padding: 5px;
   }
   .myresearch-count {
     line-height: 35px;
@@ -549,7 +533,7 @@
   }
 }
 
-.template-dir-myresearch .toolbar, .template-dir-holds .toolbar {
+.template-dir-myresearch .toolbar, .template-dir-checkouts .toolbar, .template-dir-holds .toolbar {
   margin: 0;
   margin-top: 5px;
   border-bottom: 1px solid @gray-lighter;

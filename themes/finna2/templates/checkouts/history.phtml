@@ -58,9 +58,9 @@
               <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
             <?php endif; ?>
               <div class="toolbar-sticky">
-                <table class="myresearch-table history-table" role="presentation" aria-label="<?=$this->transEscAttr('Actions');?>">
-                  <tr class="toolbar">
-                    <td class="checkbox-col">
+                <div class="myresearch-table history-table" aria-label="<?=$this->transEscAttr('Actions');?>">
+                  <div class="toolbar">
+                    <div class="checkbox-col">
                       <div class="checkboxFilter mylist-select-all">
                         <div class="checkbox">
                           <label>
@@ -69,8 +69,8 @@
                           </label>
                         </div>
                       </div>
-                    </td>
-                    <td class="list-functions">
+                    </div>
+                    <div class="list-functions">
                       <div class="toolbar-button-col">
                         <div class="btn-group">
                         <?php if ($purgeSelectedAllowed): ?>
@@ -83,16 +83,15 @@
                         <?php endif; ?>
                           <a class="btn btn-primary btn-finna-toolbar disabled" id="copy_to_favourites" data-lightbox role="button" href="<?=$this->url('myresearch-savehistoricloans') ?>"><?=$this->transEsc('loan_history_save')?></a>
                         </div>
-
                       </div>
                       <div class="sort-col">
                         <?php if ($sortList): ?>
                           <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList]); ?>
                         <?php endif; ?>
                       </div>
-                    </td>
-                  </tr>
-                </table>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <table class="myresearch-table" aria-label="<?=$this->transEscAttr('Loan History')?>" tabindex="0">

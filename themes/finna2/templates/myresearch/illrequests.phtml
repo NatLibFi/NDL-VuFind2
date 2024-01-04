@@ -40,9 +40,9 @@
         <div class="toolbar-sticky-container">
         <form name="updateForm" class="inline" method="post" id="cancelILLRequest"  data-clear-account-cache="illRequests">
           <div class="toolbar-sticky">
-            <table class="myresearch-table ill-requests-table" role="presentation" aria-label="<?=$this->transEscAttr('Actions');?>">
-              <tr class="toolbar">
-                <td class="checkbox-col">
+            <div class="myresearch-table ill-requests-table" aria-label="<?=$this->transEscAttr('Actions');?>">
+              <div class="toolbar">
+                <div class="checkbox-col">
                   <div class="checkboxFilter mylist-select-all">
                     <div class="checkbox">
                       <label>
@@ -51,8 +51,8 @@
                       </label>
                     </div>
                   </div>
-                </td>
-                <td class="list-functions">
+                </div>
+                <div class="list-functions">
                   <div class="toolbar-button-col">
                     <div>
                       <input type="hidden" id="submitType" name="cancelSelected" value="1">
@@ -75,8 +75,8 @@
                       </ul>
                     </div>
                   </div>
-                </td>
-            </table>
+                </div>
+              </div>
           </div>
         <?php else: ?>
           <div class="toolbar no-list-functions">
