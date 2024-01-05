@@ -58,13 +58,13 @@
               <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
             <?php endif; ?>
               <div class="toolbar-sticky">
-                <div class="myresearch-table history-table" aria-label="<?=$this->transEscAttr('Actions');?>">
+                <div class="myresearch-table history-table">
                   <div class="toolbar">
                     <div class="checkbox-col">
                       <div class="checkboxFilter mylist-select-all">
                         <div class="checkbox">
                           <label>
-                            <input type="checkbox" name="selectAll" class="checkbox-select-all">
+                            <input type="checkbox" name="selectAll" class="checkbox-select-all" aria-label="<?=$this->transEscAttr('Select All');?>">
                             <span class="selected"></span>
                           </label>
                         </div>

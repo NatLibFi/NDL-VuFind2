@@ -61,13 +61,13 @@
             <input type="hidden" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>" name="csrf">
             <input type="hidden" id="submitType" name="renewSelected" value="1">
             <div class="toolbar-sticky">
-              <div class="myresearch-table" aria-label="<?=$this->transEscAttr('Actions');?>">
+              <div class="myresearch-table">
                 <div class="toolbar">
                   <div class="checkbox-col">
                     <div class="checkboxFilter mylist-select-all">
                       <div class="checkbox">
                         <label>
-                          <input type="checkbox" name="selectAll" class="checkbox-select-all">
+                          <input type="checkbox" name="selectAll" class="checkbox-select-all" aria-label="<?=$this->transEscAttr('Select All');?>">
                           <span class="selected"></span> <span class="loans-renewal-available"></span>
                         </label>
                       </div>
