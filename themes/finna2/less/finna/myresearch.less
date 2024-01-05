@@ -91,7 +91,7 @@
   .toolbar {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: baseline;
     &.no-list-functions {
       .myresearch-notification {
         height: fit-content;
@@ -109,6 +109,11 @@
       &:last-child {
         margin-right: 0;
       }
+    }
+    .checkbox-col {
+      display: flex;
+      align-items: baseline;
+      padding: 5px;
     }
     .list-functions {
       display: flex;
@@ -144,9 +149,6 @@
       width: 40%;
       float: left;
     }
-  }
-  .checkbox-col {
-    padding: 5px;
   }
   .myresearch-count {
     line-height: 35px;
