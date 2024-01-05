@@ -106,6 +106,12 @@
     }
     .btn-group {
       margin-right: 20px;
+      .btn {
+        margin-right: 1px;
+        &:last-child {
+          margin-right: 0;
+        }
+      }
       &:last-child {
         margin-right: 0;
       }
@@ -128,9 +134,6 @@
   }
   #cancel_selected, #copy_to_favourites {
     border-radius: 0 4px 4px 0;
-  }
-  #copy_to_favourites {
-    margin-left: -1px;
   }
   .sort-button ul.dropdown-menu li a {
     font-size: 1em;
@@ -466,7 +469,7 @@
   .toolbar {
     border: 0;
     padding-bottom: 0;
-    padding-left: 9px;
+    padding-left: 4px;
   }
 }
 
