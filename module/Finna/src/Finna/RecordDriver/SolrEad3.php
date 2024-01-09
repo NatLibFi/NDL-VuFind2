@@ -157,6 +157,7 @@ class SolrEad3 extends SolrEad
     // Relator attribute for archive origination
     public const RELATOR_ARCHIVE_ORIGINATION = ['arkistonmuodostaja', 'arkivbildare'];
     public const SUBJECT_ACTOR_ROLES = ['aihe', 'förekommer', 'handlar om', 'refereras till'];
+    public const NAME_TYPE_VARIANT = ['varianttinimi', 'vaihtoehtoinen nimi', 'vanhentunut nimi'];
 
     public const RELATOR_TIME_INTERVAL = 'suhteen ajallinen kattavuus';
     public const RELATOR_UNKNOWN_TIME_INTERVAL = 'unknown - open';
@@ -2089,36 +2090,45 @@ class SolrEad3 extends SolrEad
     protected function getTopics(): array
     {
         $record = $this->getXmlRecord();
-
-        $topics = [];
+        $results = $localeResults = [];
         foreach ($record->controlaccess as $controlaccess) {
-            foreach ([true, false] as $obeyPreferredLanguage) {
-                foreach ($controlaccess->subject as $subject) {
-                    $attr = $subject->attributes();
-                    if (
-                        $topic = $this->getDisplayLabel(
-                            $subject,
-                            'part',
-                            $obeyPreferredLanguage
-                        )
-                    ) {
-                        if (!$topic[0]) {
-                            continue;
+            foreach ($controlaccess->subject as $subject) {
+                $attr = $subject->attributes();
+                $parts = $localeParts = [];
+                $langS = $this-> detectNodeLanguage($subject);
+                // Collect all part elements to be displayed
+                foreach ($subject->part as $part) {
+                    $lang = $this->detectNodeLanguage($part) ?? $langS;
+                    $localtype = mb_strtolower($part->attributes()->localtype ?? '', 'UTF-8');
+                    // Do not display variant names
+                    if (in_array($localtype, self::NAME_TYPE_VARIANT)) {
+                        continue;
+                    }
+                    if ($name = trim((string)$part)) {
+                        $parts[] = $name;
+                        if ($lang['preferred'] ?? false) {
+                            $localeParts[] = $name;
                         }
-                        $topics[] = [
-                            'data' => $topic[0],
-                            'id' => (string)$attr->identifier,
-                            'source' => (string)$attr->source,
-                            'detail' => (string)$subject->attributes()->relator,
-                        ];
                     }
                 }
-                if (!empty($topics)) {
-                    return $topics;
+                if ($localeParts) {
+                    $localeResults[] = [
+                        'data' => implode(', ', $localeParts),
+                        'id' => (string)$attr->identifier,
+                        'source' => (string)$attr->source,
+                        'detail' => (string)$subject->attributes()->relator,
+                    ];
+                } elseif ($parts) {
+                    $results[] = [
+                        'data' => implode(', ', $parts),
+                        'id' => (string)$attr->identifier,
+                        'source' => (string)$attr->source,
+                        'detail' => (string)$subject->attributes()->relator,
+                    ];
                 }
             }
         }
-        return $topics;
+        return $localeResults ?: $results;
     }
 
     /**
