@@ -49,7 +49,7 @@ class BarcodeController extends \VuFind\Controller\AbstractBase
     {
         $this->disableSessionWrites();  // avoid session write timing bug
 
-        $htmlGenerator = new \Picqer\Barcode\BarcodeGeneratorHTML();
+        $htmlGenerator = new \Picqer\Barcode\BarcodeGeneratorSVG();
         $code = $this->getRequest()->getQuery('code', '');
         $type = $this->getRequest()->getQuery('type', $htmlGenerator::TYPE_CODE_39);
 
@@ -57,7 +57,7 @@ class BarcodeController extends \VuFind\Controller\AbstractBase
             [
                 'code' => $code,
                 'type' => $type,
-                'html' => $htmlGenerator->getBarcode($code, $type, 3, 60),
+                'html' => $htmlGenerator->getBarcode($code, $type, 2, 120),
             ]
         );
     }
