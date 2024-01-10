@@ -732,7 +732,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         ];
         // We need to process address fields, phone number fields and email fields
         // as separate sets, so divide them now to gategories
-        $hasAddress = false;
+        $hasSingleAddress = false;
         $hasPhone = false;
         $hasEmail = false;
         $fieldConfig = $this->getUpdateProfileFields();
@@ -742,7 +742,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 $fieldName = $parts[1];
                 if (isset($addressMapping[$fieldName])) {
                     if (isset($details[$fieldName])) {
-                        $hasAddress = true;
+                        $hasSingleAddress = true;
                     }
                 } elseif ('phone' === $fieldName) {
                     if (isset($details[$fieldName])) {
@@ -762,7 +762,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         $contact = $userData->contact_info ?? $userData->addChild('contact_info');
 
         // Pick the configured fields from the request
-        if ($hasAddress) {
+        if ($hasSingleAddress) {
             // Try to find an existing address to modify
             $types = null;
             if (!$contact->addresses) {
@@ -1202,6 +1202,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                             $fields[] = $field;
                         }
                     }
+                    unset($field);
                     if (!$fields) {
                         return false;
                     }
@@ -1276,6 +1277,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                         }
                     }
                 }
+                unset($field);
             }
         }
         if ($config && 'Holds' === $function) {
