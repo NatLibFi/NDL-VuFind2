@@ -60,8 +60,8 @@
       left: 0;
       top: 0;
       flex-wrap: wrap;
-      transform: translatex(calc(50vw - 50%)) translatey(calc(10vh)); /* Fallback */
-      transform: translatex(calc(50svw - 50%)) translatey(calc(10svh));
+      transform: translatex(calc(50vw - 50%)) translatey(calc(20vh)); /* Fallback */
+      transform: translatex(calc(50svw - 50%)) translatey(calc(20svh));
       max-width: 90vw; /* Fallback */
       max-width: 90svw;
     }
@@ -74,9 +74,8 @@
       }
     }
     #barcode svg {
-      display: flex;
-      align-items: center;
-      flex-basis: 100%;
+      margin: auto;
+      max-width: 380px; /* Prevent the barcode from being too big */
     }
     .barcode-instructions {
       text-align: center;
