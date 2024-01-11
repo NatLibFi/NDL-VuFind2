@@ -1159,6 +1159,7 @@ fi          = "Finnish"
 sv          = "Swedish"
 ;pl          = "Polish"
 ;da          = "Danish"
+se          = "Northern Sámi"
 
 ; This section controls the behavior of the Browse module.  The result_limit
 ; setting controls the maximum number of results that may display in any given
