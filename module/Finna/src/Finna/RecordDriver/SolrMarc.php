@@ -2498,4 +2498,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     {
         return $this->stripTrailingPunctuation($this->getFieldArray('257', ['a']));
     }
+
+    /**
+     * Get abstract language from field 041, subfield b.
+     *
+     * @return array
+     */
+    public function getAbstractLanguage()
+    {
+        return $this->stripTrailingPunctuation($this->getFieldArray('041', ['b']));
+    }
 }
