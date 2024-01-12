@@ -91,6 +91,8 @@ class Config extends \VuFind\View\Helper\Root\Config
      */
     public function getSimilarRecordsCarouselLocation(): string
     {
-        return $this->get('config')->Record->similar_carousel_display ?? '';
+        //return $this->get('config')->Record->similar_carousel_display ?? '';
+        // Disabled 12.1.2024 due to performance issues
+        return '';
     }
 }
