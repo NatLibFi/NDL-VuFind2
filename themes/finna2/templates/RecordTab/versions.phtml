@@ -49,8 +49,6 @@
 <?php
 // Add any translations added when processing the search results:
 $translations = $this->jsTranslations()->getJSON();
-// Use combinedSearch.initResultScripts to avoid duplicating the list of scripts
-// required for results loaded via AJAX:
 $script = <<<JS
     VuFind.addTranslations($translations);
     finna.common.initResultScripts('.results');

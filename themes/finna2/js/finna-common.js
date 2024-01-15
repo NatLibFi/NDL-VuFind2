@@ -47,9 +47,11 @@ finna.common = (function finnaCommon() {
    * @param {string|JQuery} container
    */
   function initResultScripts(container, includeVuFind) {
+    finna.layout.initCondensedList($(container));
     finna.layout.initTruncate();
     finna.layout.initImagePaginators();
     finna.itemStatus.initDedupRecordSelection(container);
+    $.fn.finnaPopup.reIndex();
     if (typeof includeVuFind === 'undefined' || includeVuFind) {
       VuFind.initResultScripts(container);
     }

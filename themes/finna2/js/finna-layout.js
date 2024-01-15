@@ -329,7 +329,6 @@ finna.layout = (function finnaLayout() {
    */
   function initCondensedList(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
-    finna.itemStatus.initDedupRecordSelection(holder);
     holder.find('.condensed-collapse-toggle').off('click').on('click', function onClickCollapseToggle(event) {
       if ((event.target.nodeName) !== 'A' && (event.target.nodeName) !== 'MARK') {
         holder = $(this).parent().parent();
