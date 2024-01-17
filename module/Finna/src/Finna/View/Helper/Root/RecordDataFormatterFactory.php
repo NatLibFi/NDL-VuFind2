@@ -1504,6 +1504,14 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             ]
         );
         $setTemplateLine(
+            'Other Version',
+            'getOtherVersions',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordOtherVersion'],
+            ]
+        );        
+        $setTemplateLine(
             'Place of Origin',
             'getAssociatedPlace',
             'data-escapeHtml.phtml',
