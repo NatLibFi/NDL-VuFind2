@@ -14,7 +14,7 @@
 <div class="grid-result<?=$this->driver->supportsAjaxStatus() ? ' ajaxItem' : ''?>">
   <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId">
   <div class="grid-body">
-    <?php if (!isset($this->hideCartControls) && $this->cart()->isActive()): ?>
+    <?php if (!isset($this->hideCartControls) && $this->searchSettings($this->results->getParams())->checkboxesEnabled()): ?>
       <?=$this->record($this->driver)->getCheckbox('', 'search-cart-form') ?><br>
     <?php endif; ?>
     <div class="text-center grid-image">
