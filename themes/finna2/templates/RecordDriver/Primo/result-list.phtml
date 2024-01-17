@@ -28,7 +28,7 @@
         </div>
         <div class="title-container">
           <h2 class="search-title">
-            <a href="<?=$this->escapeHtmlAttr($recordLinker->getUrl($this->driver))?>" class="title">
+            <a href="<?=$this->escapeHtmlAttr($recordLinker->getUrl($this->driver))?>" class="title" title="<?=$this->escapeHtmlAttr($this->driver->getTitle())?>">
             <?php
               $summHighlightedTitle = $this->driver->getHighlightedTitle();
               $summTitle = $this->driver->getTitle();
