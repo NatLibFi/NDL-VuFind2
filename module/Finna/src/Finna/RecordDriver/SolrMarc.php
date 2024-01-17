@@ -1149,6 +1149,26 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
+     * Get information about other version(s) of the work.
+     *
+     * @return array
+     */
+    public function getOtherVersions()
+    {
+        $result = [];
+        foreach ($this->getMarcReader()->getFields('775') as $field) {
+            $line = [];
+            foreach ($this->getAllSubfields($field) as $subfield) {
+                if (!preg_match('/[lw4678]/', $subfield['code'])) {
+                    $line[] = $subfield['data'];
+                }
+            }
+            $result[] = implode(" ", $line);
+        }
+        return $result;
+    }
+
+    /**
      * Get presenters
      *
      * @return array
