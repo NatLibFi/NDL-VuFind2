@@ -108,6 +108,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'original_work_language',
             'Other Links',
             'Other Titles',
+            'Other Version',
             'Physical Description',
             'Place of Origin',
             'Playing Time',
