@@ -1510,7 +1510,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             [
                 'context' => ['class' => 'recordOtherVersion'],
             ]
-        );        
+        );
         $setTemplateLine(
             'Place of Origin',
             'getAssociatedPlace',
