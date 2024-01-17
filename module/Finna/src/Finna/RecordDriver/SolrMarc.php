@@ -1163,7 +1163,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                     $line[] = $subfield['data'];
                 }
             }
-            $result[] = implode(" ", $line);
+            $result[] = implode(' ', $line);
         }
         return $result;
     }
