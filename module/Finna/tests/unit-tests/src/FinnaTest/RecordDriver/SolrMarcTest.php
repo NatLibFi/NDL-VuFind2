@@ -49,7 +49,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getTestTitlePunctuationData(): array
+    public static function getTestTitlePunctuationData(): array
     {
         return [
             [

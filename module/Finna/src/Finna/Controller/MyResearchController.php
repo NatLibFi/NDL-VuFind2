@@ -1382,7 +1382,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
      * Create sort list.
      * If no sort option selected, set first one from the list to default.
      *
-     * @param list $list List object
+     * @param ?\VuFind\Db\Row\UserList $list List object
      *
      * @return array
      */
@@ -1392,9 +1392,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         $sortOptions = self::getFavoritesSortList();
         $sort = $_GET['sort'] ?? false;
+        reset($sortOptions);
+        $defaultSort = key($sortOptions);
         if (!$sort) {
-            reset($sortOptions);
-            $sort = key($sortOptions);
+            $sort = $defaultSort;
         }
         $sortList = [];
 
@@ -1409,6 +1410,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $sortList[$key] = [
                 'desc' => $value,
                 'selected' => $key === $sort,
+                'default' => $key === $defaultSort,
             ];
         }
         return $sortList;

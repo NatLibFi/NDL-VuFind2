@@ -85,23 +85,13 @@
       );
   }
 
-  // Set up Finna Main Tabs:
-  //$this->layout()->finnaMainTabs = '...';
-
-  // Enable cart if appropriate:
   $options = $this->params->getOptions();
-  $this->showBulkOptions = $options->supportsCart() && $this->showBulkOptions;
-  // Checkboxes if appropriate:
-  $this->showCartControls = $options->supportsCart() && $this->cart()->isActive()
-    && ($this->showBulkOptions || !$this->cart()->isActiveInSearch());
-  // Enable bulk options if appropriate:
-  $this->showCheckboxes = $this->showCartControls || $this->showBulkOptions;
-
   $this->render(
       'search/results-scripts.phtml',
       [
           'displayVersions' => !empty($options->getVersionsAction()),
           'listViewOption' => $options->getListViewOption(),
+          'jsResults' => $options->loadResultsWithJsEnabled(),
       ]
   );
 
@@ -302,7 +292,7 @@ if (trim($pagination)): ?>
 
       <?php if (is_numeric($this->results->getSearchId()) && (is_object($account) && $account->loginEnabled())): ?>
         <?php if ($this->results->isSavedSearch()): ?>
-          <a href="<?=$this->url('myresearch-savesearch')?>?delete=<?=urlencode($this->results->getSearchId())?>"><?=$this->icon('search-remove') ?> <?=$this->transEsc('save_search_remove')?></a>
+          <a href="<?=$this->url('myresearch-savesearch')?>?delete=<?=urlencode($this->results->getSearchId())?>"><?=$this->icon('search-delete') ?> <?=$this->transEsc('save_search_remove')?></a>
         <?php else: ?>
           <a href="<?=$this->url('myresearch-savesearch')?>?save=<?=urlencode($this->results->getSearchId())?>"><?=$this->icon('search-save') ?> <?=$this->transEsc('save_search')?></a>
         <?php endif; ?>

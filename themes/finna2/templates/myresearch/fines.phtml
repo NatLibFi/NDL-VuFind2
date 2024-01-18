@@ -8,40 +8,95 @@
 
     $user = $this->auth()->isLoggedIn();
 
-    $totalDue = 0;
-    if (!empty($this->fines)) {
-      $hideTitle = true;
-      $hideCheckout = true;
-      $hideDueDate = true;
-      $hideDescription = true;
-      $hideFineCreationDate = true;
-      $hideAmount = true;
-      foreach ($this->fines as $fine) {
-          if (!empty($fine['title'])) {
-              $hideTitle = false;
-          }
-          if (!empty($fine['checkout'])) {
-              $hideCheckout = false;
-          }
-          if (!empty($fine['duedate'])) {
-              $hideDueDate = false;
-          }
-          if (!empty($fine['createdate'])) {
-              $hideFineCreationDate = false;
-          }
-          if (!empty($fine['description'])) {
-              $hideDescription = false;
-          }
-          if (!empty($fine['amount']) && $fine['amount'] !== $fine['balance']) {
-              $hideAmount = false;
-          }
-
-          if (isset($fine['balance'])) {
-            $totalDue += $fine['balance'];
-          }
-      }
-    }
     $currencyTemplate = $this->safeMoneyFormat(11.22);
+
+    // Collect the data to build the table; we process this in advance so we
+    // can omit empty columns and simplify customization by separating data
+    // processing from rendering.
+    $tableData = [];
+    $totalDue = 0;
+    foreach ($this->fines as $record) {
+      if (empty($record['title'])) {
+          $title = $this->transEsc('not_applicable');
+      } elseif (!is_object($record['driver'] ?? null)) {
+          $title = $this->escapeHtml(trim($record['title'], '/:'));
+      } else {
+          $title = '<a href="'
+              . $this->escapeHtmlAttr($this->recordLinker()->getUrl($record['driver']))
+              . '">' . $this->escapeHtml(trim($record['title'], '/:')) . '</a>';
+      }
+
+      $fine = $record['fine'] ?? '';
+      // Only check translations if the type doesn't contain the prefix already:
+      if (!str_starts_with($fine, 'fine_status_')) {
+        if (!$this->translationEmpty("fine_status_$fine")) {
+          $fine = "fine_status_$fine";
+        } elseif (!$this->translationEmpty("status_$fine")) {
+          // Fallback to item status translations for backwards-compatibility
+          $fine = "status_$fine";
+        }
+      }
+      $balance = isset($record['balance']) ? $this->safeMoneyFormat($record['balance'] / 100.00) : '';
+      if ($this->onlinePayment && !$record['payableOnline']) {
+        // Note: `online_payment_nonpayable_fees` should be translated with transEsc, but is left unescaped
+        // for historical reasons:
+        $balance = '<span class="online-payment-nonpayable">' . $balance
+          . '<br><span class="online-payment-remark"> ' . $this->translate('online_payment_nonpayable_fees') . '</span></span>';
+      }
+
+      // Build 'select' last, it needs $fine:
+      $select = '';
+      if ($this->onlinePaymentEnabled && $this->selectFees) {
+        if ($record['payableOnline']) {
+          ob_start();
+          ?>
+            <div class="checkboxFilter">
+                <label>
+                  <span class="sr-only">
+                    <?=$this->transEsc('Select')?>
+                    <?=$this->escapeHtml(trim($record['title'] ?? '', '/: '))?>
+                    <?=isset($fine) ? ('(' . $this->transEsc($fine) . ')') : ''?>
+                    <?=$this->safeMoneyFormat($record['balance'] / 100.00)?>
+                  </span>
+                  <input class="checkbox-select-item" type="checkbox" name="selectedIDS[]" value="<?=$this->escapeHtmlAttr($record['fine_id'])?>" data-amount="<?=$this->escapeHtmlAttr($record['balance'])?>">
+                </label>
+            </div>
+          <?php
+          $select .= ob_get_clean();
+        }
+      }
+
+      $tableData['Select'][] = $select;
+      $tableData['Title'][] = $title;
+      $tableData['fine_checkout_date'][] = $this->escapeHtml($record['checkout'] ?? '');
+      $tableData['Due Date'][] = $this->escapeHtml($record['duedate'] ?? '');
+      $tableData['fine_type'][] = $this->transEsc($fine);
+      $tableData['fine_description'][] = $this->transEsc($record['description'] ?? '');
+      $tableData['fine_creation_date'][] = $this->escapeHtml($record['createdate'] ?? '');
+      $tableData['Fee'][] = isset($record['amount'])
+          ? $this->safeMoneyFormat($record['amount'] / 100.00) : '';
+      $tableData['Balance'][] = $balance;
+
+      $totalDue += $record['balance'] ?? 0;
+    }
+
+    // Now empty out any unused columns:
+    foreach ($tableData as $column => $values) {
+        $empty = true;
+        foreach ($values as $value) {
+            if ('' !== (string)$value) {
+                $empty = false;
+                break;
+            }
+        }
+        if ($empty) {
+            unset($tableData[$column]);
+        }
+    }
+
+    // Create the final list of columns and count of rows:
+    $columns = array_keys($tableData);
+    $rowCount = count($this->fines);
 ?>
 <!-- Leftside navigationbar -->
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'fines']); ?>
@@ -179,109 +234,46 @@
             </div>
           </div>
         <?php endif; ?>
-        <div class="table-responsive">
-          <table class="table table-striped useraccount-table<?=$this->onlinePayment ? ' online-payment' : ''?>">
+        <table class="table finna-table-striped useraccount-table<?=$this->onlinePayment ? ' online-payment' : ''?> table-responsive fines-table">
+          <caption class="sr-only"><?=$this->transEsc('Your Fines')?></caption>
+          <thead>
             <tr class="headers">
-              <?php if ($this->onlinePaymentEnabled && $this->selectFees): ?>
-                <th class="user-account-table-select"></th>
-              <?php endif; ?>
-              <th class="user-account-table-title <?php if ($hideTitle): ?> hidden<?php endif; ?>"><?=$this->transEsc('Title')?></th>
-              <th class="<?= $hideCheckout ? 'hidden' : 'hidden-xs' ?>">
-                <?=$this->transEsc('fine_checkout_date')?>
-              </th>
-              <th class="<?= $hideDueDate ? 'hidden' : '' ?>">
-                <?=$this->transEsc('Due Date')?>
-              </th>
-              <th>
-                <?=$this->transEsc('fine_type')?>
-              </th>
-              <th class="<?= $hideDescription ? 'hidden' : '' ?>">
-                <?=$this->transEsc('fine_description')?>
-              </th>
-              <th class="<?= $hideFineCreationDate ? 'hidden' : 'hidden-xs' ?>">
-                <?=$this->transEsc('fine_creation_date')?>
-              </th>
-              <th class="<?= $hideAmount ? 'hidden' : 'hidden-xs' ?>">
-                <?=$this->transEsc('Fee')?>
-              </th>
-              <th class="balance"><?=$this->transEsc('Balance')?></th>
-            </tr>
-            <?php foreach ($this->fines as $record): ?>
-            <?php
-              $showNonPayable = $this->onlinePayment && !$record['payableOnline'];
-              $fine = null;
-              if (isset($record['fine'])) {
-                $fine = $record['fine'];
-                // Only check translations if the type doesn't contain the prefix already:
-                if (!str_starts_with($fine, 'fine_status_')) {
-                  if (!$this->translationEmpty("fine_status_$fine")) {
-                    $fine = "fine_status_$fine";
-                  } elseif (!$this->translationEmpty("status_$fine")) {
-                    // Fallback to item status translations for backwards-compatibility
-                    $fine = "status_$fine";
-                  }
-                }
-              }
-            ?>
-            <tr>
-              <?php if ($this->onlinePaymentEnabled && $this->selectFees): ?>
-                <td class="user-account-table-select">
-                  <?php if ($record['payableOnline']): ?>
-                    <div class="checkboxFilter">
-                        <label>
-                          <span class="sr-only">
-                            <?=$this->transEsc('Select');?>
-                            <?=$this->escapeHtml(trim($record['title'] ?? '', '/: '))?>
-                            <?=isset($fine) ? ('(' . $this->transEsc($fine) . ')') : ''?>
-                            <?=$this->safeMoneyFormat($record['balance'] / 100.00)?>
-                          </span>
-                          <input class="checkbox-select-item" type="checkbox" name="selectedIDS[]" value="<?=$this->escapeHtmlAttr($record['fine_id'])?>" data-amount="<?=$this->escapeHtmlAttr($record['balance'])?>">
-                        </label>
-                    </div>
-                  <?php endif; ?>
-                </td>
-              <?php endif; ?>
-
-              <td class="user-account-table-title<?php if ($hideTitle): ?> hidden<?php endif; ?>">
-                <?php if (empty($record['title'])): ?>
-                  <?=$this->transEsc('not_applicable')?>
-                <?php elseif (!isset($record['driver']) || !is_object($record['driver'])): ?>
-                  <?=$this->escapeHtml(trim($record['title'], '/: '))?>
+              <?php foreach ($columns as $header): ?>
+                <?php if ('Select' === $header): ?>
+                  <th scope="col" class="user-account-table-select"></th>
                 <?php else: ?>
-                  <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($record['driver']))?>"><?=$this->escapeHtml(trim($record['title'], '/: '))?></a>
+                  <th scope="col"<?='Title' === $header ? ' class="user-account-table-title"' : ''?>><?=$this->transEsc($header)?></th>
                 <?php endif; ?>
-              <td class="<?= $hideCheckout ? 'hidden' : 'hidden-xs' ?>">
-                <?=isset($record['checkout']) ? $this->escapeHtml($record['checkout']) : ''?>
-              </td>
-              <td class="<?=$hideDueDate ? 'hidden' : '' ?>">
-                <?=isset($record['duedate']) ? $this->escapeHtml($record['duedate']) : ''?>
-              </td>
-              <td><?=isset($fine) ? $this->transEsc($fine) : ''?></td>
-              <td class="<?=$hideDescription ? 'hidden' : '' ?>">
-                <?=$this->transEscWithPrefix('fine_description_', $record['description'] ?? '')?>
-              </td>
-              <td class="<?=$hideFineCreationDate ? 'hidden' : 'hidden-xs' ?>">
-                <?=isset($record['createdate']) ? $this->escapeHtml($record['createdate']) : ''?>
-              </td>
-              <td class="<?=$hideAmount ? 'hidden' : 'hidden-xs' ?>">
-                <?=isset($record['amount']) ? $this->safeMoneyFormat($record['amount'] / 100.00) : ''?>
-              </td>
-              <td class="balance">
-                <?php if ($showNonPayable): ?>
-                  <span class="online-payment-nonpayable">
-                <?php endif; ?>
-                <?=isset($record['balance']) ? $this->safeMoneyFormat($record['balance'] / 100.00) : ''?>
-                <?php if ($showNonPayable): ?>
-                  </span>
-                <?php endif; ?>
-                <?php if ($showNonPayable): ?>
-                  <div class="online-payment-remark"><?=$this->translate('online_payment_nonpayable_fees');?></div>
-                <?php endif; ?>
-              </td>
+              <?php endforeach; ?>
             </tr>
-            <?php endforeach; ?>
-          </table>
-        </div>
+          </thead>
+          <tbody>
+            <?php for ($row = 0; $row < $rowCount; $row++): ?>
+              <tr>
+                <?php foreach ($columns as $column): ?>
+                  <?php if ('Title' == $column): ?>
+                    <th data-label="<?=$this->transEscAttr($column)?>" scope="row"><?=$tableData[$column][$row]?></th>
+                  <?php else: ?>
+                    <?php
+                      $attrs = [
+                          'data-label' => $this->translate($column),
+                      ];
+                      if ('Select' === $column) {
+                        $attrs['class'] = 'user-account-table-select';
+                        if ('' === $tableData[$column][$row]) {
+                          unset($attrs['data-label']);
+                        }
+                      } elseif ('Balance' === $column || 'Fee' === $column) {
+                        $attrs['class'] = 'balance';
+                      }
+                    ?>
+                    <td<?=$this->htmlAttributes($attrs)?>><?=$tableData[$column][$row]?></td>
+                  <?php endif; ?>
+                <?php endforeach; ?>
+              </tr>
+            <?php endfor; ?>
+          </tbody>
+        </table>
         <?php if ($this->onlinePaymentEnabled): ?>
           </form>
         <?php endif; ?>

@@ -75,8 +75,6 @@ class FinnaFeedElement extends HTMLElement {
       if (textElement.innerHTML.trim() !== '') {
         el.classList.add('text-bottom');
         el.style.maxHeight = `${settings.height}px`;
-      } else {
-        el.classList.add('no-text');
       }
     });
     settings.height = +settings.height + maxH;
@@ -162,6 +160,9 @@ class FinnaFeedElement extends HTMLElement {
             holder.querySelectorAll('.carousel-hover-title').forEach(el => {
               el.style.display = 'none';
             });
+            holder.querySelectorAll('.carousel-more.show-link').forEach(el => {
+              el.style.display = 'none';
+            });
             holder.querySelectorAll('.carousel-hover-date').forEach(el => {
               el.style.display = 'none';
             });
@@ -169,6 +170,10 @@ class FinnaFeedElement extends HTMLElement {
             this.splide.options = {
               height: settings.height
             };
+          } else if (!this.isTouchDevice) {
+            this.querySelectorAll('.carousel-feed .carousel-text').forEach(el => {
+              el.classList.remove('no-text');
+            });
           }
         }
 
@@ -177,6 +182,7 @@ class FinnaFeedElement extends HTMLElement {
           holder.querySelectorAll('.carousel-slide-more.carousel-show').forEach(el => {
             if (holder.querySelector('.carousel-text:not(.no-text)') !== null) {
               el.classList.remove('hidden');
+              el.parentNode.style.paddingRight = '30px';
             }
           });
           if (!settings.modal) {
@@ -189,7 +195,7 @@ class FinnaFeedElement extends HTMLElement {
           holder.querySelectorAll('.carousel-more').forEach(el => {
             if (el.classList.contains('carousel-close')) {
               el.classList.remove('hidden');
-              el.addEventListener('click', function closeDescription(e) {
+              el.querySelector('.js-carousel-close').addEventListener('click', function closeDescription(e) {
                 e.stopImmediatePropagation();
                 var slide = this.closest('.feed-item-holder');
                 if (slide && slide.classList.contains('clicked')) {
@@ -228,6 +234,14 @@ class FinnaFeedElement extends HTMLElement {
           el.classList.add('scrollable');
         }
       });
+
+      var items = this.splide.length;
+      var perPage = this.splide.options.perPage;
+      if ( items <= perPage ) {
+        this.splide.options = {
+          pagination: false,
+        };
+      }
 
       // Bind lightbox if feed content is shown in modal
       if (typeof settings.modal !== 'undefined' && settings.modal) {

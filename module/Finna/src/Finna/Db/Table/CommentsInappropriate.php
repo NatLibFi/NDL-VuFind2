@@ -30,6 +30,7 @@
 namespace Finna\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
+use Laminas\Session\SessionManager;
 use VuFind\Db\Row\RowGateway;
 use VuFind\Db\Table\Gateway;
 use VuFind\Db\Table\PluginManager;
@@ -46,36 +47,48 @@ use VuFind\Db\Table\PluginManager;
 class CommentsInappropriate extends Gateway
 {
     /**
+     * Session manager
+     *
+     * @var SessionManager
+     */
+    protected $sessionManager;
+
+    /**
      * Constructor
      *
-     * @param Adapter       $adapter Database adapter
-     * @param PluginManager $tm      Table manager
-     * @param array         $cfg     Laminas configuration
-     * @param RowGateway    $rowObj  Row prototype object (null for default)
-     * @param string        $table   Name of database table to interface with
+     * @param Adapter        $adapter Database adapter
+     * @param PluginManager  $tm      Table manager
+     * @param array          $cfg     Laminas configuration
+     * @param RowGateway     $rowObj  Row prototype object (null for default)
+     * @param string         $table   Name of database table to interface with
+     * @param SessionManager $sm      Session manager
      */
     public function __construct(
         Adapter $adapter,
         PluginManager $tm,
         $cfg,
         RowGateway $rowObj = null,
-        $table = 'finna_comments_inappropriate'
+        $table = 'finna_comments_inappropriate',
+        $sm = null
     ) {
         parent::__construct($adapter, $tm, $cfg, $rowObj, $table);
+        $this->sessionManager = $sm;
     }
 
     /**
      * Get inappropriate comments for a record reported by the given user.
      *
-     * @param string $userId   Reporter user ID
+     * @param ?int   $userId   Reporter ID or null to use current session
      * @param string $recordId Record ID
      *
      * @return array
      */
     public function getForRecord($userId, $recordId)
     {
+        if (null === $userId && null === $this->sessionManager) {
+            return [];
+        }
         $callback = function ($select) use ($userId, $recordId) {
-            $select->where->equalTo('user_id', $userId);
             $select->join(
                 ['cr' => 'finna_comments_record'],
                 'finna_comments_inappropriate.comment_id = cr.comment_id',
@@ -83,7 +96,11 @@ class CommentsInappropriate extends Gateway
             );
 
             $select->where->equalTo('record_id', $recordId);
-            $select->where->equalTo('user_id', $userId);
+            if (null !== $userId) {
+                $select->where->equalTo('user_id', $userId);
+            } else {
+                $select->where->equalTo('session_id', $this->sessionManager->getId());
+            }
         };
 
         $inappropriate = [];

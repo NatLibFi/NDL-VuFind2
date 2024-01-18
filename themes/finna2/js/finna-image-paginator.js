@@ -512,7 +512,7 @@ FinnaPaginator.prototype.setPagerInfo = function setPagerInfo() {
 FinnaPaginator.prototype.setRecordIndex = function setRecordIndex() {
   var _ = this;
   if (_.popup.pagerInfo) {
-    var paginationSimple = $('.paginationSimple').first();
+    var paginationSimple = $('.pagination-simple').first();
     var total = paginationSimple.find('.total').html();
     var current = +paginationSimple.find('.index').html() + $.fn.finnaPopup.getCurrent('paginator');
     if (current && total && _.popup.pagerInfo) {

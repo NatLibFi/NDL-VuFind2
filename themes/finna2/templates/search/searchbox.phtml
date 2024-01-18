@@ -144,6 +144,9 @@
         $searchboxAttributes['class'] .= ' filters:' . implode('||', array_map(function ($k, $v) { return $k . '|' . $v; }, array_keys($acFilters), $acFilters));
       }
     }
+    if (!empty($keyboardLayouts)) {
+      $searchboxAttributes['class'] .= ' with-keyboard-selection';
+    }
   ?>
 <div class="searchbox hidden-print">
   <div class="searchbox-flex <?=$mainPage ? 'searchbox-home' : '' ?> <?=$this->escapeHtmlAttr("searchbox-$module-$action")?>">
@@ -216,7 +219,7 @@
               </li>
               <?php foreach ($keyboardLayouts as $keyboardLayout): ?>
                 <li>
-                  <a class="keyboard-selection-item" href="#" data-value="<?= $this->escapeHtmlAttr($keyboardLayout) ?>"><?= $this->transEsc($keyboardLayout) ?></a>
+                  <a class="keyboard-selection-item" href="#" data-value="<?= $this->escapeHtmlAttr($keyboardLayout) ?>"><?= $this->transEsc("KeyboardLayout::$keyboardLayout") ?></a>
                 </li>
               <?php endforeach; ?>
             </ul>

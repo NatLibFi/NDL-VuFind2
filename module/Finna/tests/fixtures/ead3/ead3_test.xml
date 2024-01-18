@@ -59,6 +59,23 @@
     </name>
     <name relator="Tuntematon rooli">
       <part lang="fin">Tuovi Tuntematon</part>
-    </name> 
+    </name>
+    <name relator="Aihe">
+      <part localtype="Ensisijainen nimi" lang="fin">Anssi Aihe</part>
+    </name>
+    <subject relator="aihe" identifier="EAC_102486375">
+      <part localtype="Ensisijainen nimi" lang="fin">Manner, Eeva-Liisa</part>
+      <part localtype="Varianttinimi" lang="fin">September, Anna</part>
+    </subject>
+    <subject identifier="http://www.yso.fi/onto/yso/p900" lang="fin" relator="aihe" source="YSO">
+      <part>fysiikka</part>
+    </subject>
+    <subject>
+      <part lang="fin">Elintarviketeollisuus</part>
+      <part lang="fin">Myllytuotteiden valmistus</part>
+    </subject>
+    <subject relator="asiasana" source="KOKO" identifier="http://www.yso.fi/onto/koko/p9492" lang="eng">
+      <part>writing contests</part>
+    </subject>
   </controlaccess>
 </c02>

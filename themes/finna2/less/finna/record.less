@@ -502,6 +502,30 @@ a.authority {
   margin-bottom: 6px;
 }
 
+.record-information {
+  button.less-link {
+    display: flex;
+    align-items: baseline;
+    &.top-button {
+      top: 0;
+      position: sticky;
+      background-color: @body-bg;
+      width: 100%;
+      padding: 10px 0;
+      text-align: left;
+      @media(max-width: @screen-md) {
+        top: @navbar-height;
+      }
+    }
+    i {
+      padding-left: 2px;
+    }
+  }
+  ul.truncate-field {
+    margin-bottom: 0;
+  }
+}
+
 .record-links {
   vertical-align: baseline;
   .link-wrapper {
@@ -722,6 +746,14 @@ a.authority {
   th {
     text-align:right;
   }
+}
+
+.marc-row-LEADER,
+.marc-row-005,
+.marc-row-006,
+.marc-row-007,
+.marc-row-008 {
+  white-space: pre-wrap;
 }
 
 .nav-pills {

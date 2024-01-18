@@ -39,7 +39,6 @@
         </div>
       <?php endif; ?>
       <?php if (!empty($this->recordList)): ?>
-
         <?php if ($this->cancelForm || $this->updateForm): ?>
           <div class="myaccount-sticky-header"></div>
           <div class="toolbar-sticky-container">
@@ -47,25 +46,25 @@
             <input type="hidden" id="submitType" name="cancelSelected" value="1">
             <input type="hidden" id="cancelConfirm" name="confirm" value="0">
             <div class="toolbar-sticky">
-              <table class="myresearch-table" role="presentation">
-                <tr class="toolbar">
-                  <td class="checkbox-col">
+              <div class="myresearch-table">
+                <div class="toolbar">
+                  <div class="checkbox-col">
                     <div class="checkboxFilter mylist-select-all">
                       <div class="checkbox">
                         <label>
-                          <input type="checkbox" name="selectAll" class="checkbox-select-all">
+                          <input type="checkbox" name="selectAll" class="checkbox-select-all" aria-label="<?=$this->transEscAttr('Select All');?>">
                         </label>
                       </div>
                     </div>
-                  </td>
-                  <td class="list-functions">
+                  </div>
+                  <div class="list-functions">
                     <div class="toolbar-button-col">
                       <div class="btn-group">
                       <?php if ($this->updateForm): ?>
-                        <input id="update_selected" name="updateSelected" type="submit" value="<?=$this->transEscAttr('hold_edit_selected') ?>" class="btn btn-finna-toolbar hidden">
+                        <input id="update_selected" name="updateSelected" type="submit" value="<?=$this->transEscAttr('hold_edit_selected') ?>" class="btn btn-primary btn-finna-toolbar hidden">
                       <?php endif; ?>
                       <?php if ($this->cancelForm): ?>
-                        <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEscAttr('hold_cancel_selected') ?>" class="btn btn-finna-toolbar dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
+                        <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEscAttr('hold_cancel_selected') ?>" class="btn btn-primary btn-finna-toolbar dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
                         <ul class="dropdown-menu useraccount-confirm" role="presentation">
                           <li class="disabled"><span class="prompt-text"><?=$this->transEsc('confirm_hold_cancel_selected_text') ?></span></li>
                           <li><a href="#" id="confirm_cancel_selected_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
@@ -75,7 +74,7 @@
                       </div>
                       <?php if ($this->cancelForm): ?>
                         <div class="btn-group">
-                          <input id="cancelAll" name="cancelAll" type="submit" value="<?=$this->transEscAttr('hold_cancel_all') ?>" class="btn btn-finna-toolbar dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
+                          <input id="cancelAll" name="cancelAll" type="submit" value="<?=$this->transEscAttr('hold_cancel_all') ?>" class="btn btn-primary btn-finna-toolbar dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
                           <ul class="dropdown-menu useraccount-confirm" role="presentation">
                             <li class="disabled"><span class="prompt-text"><?=$this->transEsc('confirm_hold_cancel_all_text') ?></span></li>
                             <li><a href="#" id="confirm_cancel_all_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
@@ -89,9 +88,9 @@
                         <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList])?>
                       <?php endif; ?>
                     </div>
-                  </td>
-                </tr>
-              </table>
+                  </div>
+                </div>
+              </div>
             </div>
         <?php else: ?>
           <div class="myresearch-table" aria-label="<?=$this->transEscAttr('Your Holds and Recalls')?>">

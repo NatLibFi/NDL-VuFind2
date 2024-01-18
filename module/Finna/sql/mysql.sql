@@ -78,9 +78,11 @@ CREATE TABLE `finna_comments_inappropriate` (
   `created` datetime NOT NULL DEFAULT '2000-01-01 00:00:00',
   `reason` varchar(1000) DEFAULT NULL,
   `message` varchar(1000) DEFAULT NULL,
+  `session_id` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `comment_id` (`comment_id`),
+  KEY `session_id` (`session_id`),
   CONSTRAINT `finna_comments_inappropriate_ibfk_1` FOREIGN KEY (`comment_id`) REFERENCES `comments` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 collate utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

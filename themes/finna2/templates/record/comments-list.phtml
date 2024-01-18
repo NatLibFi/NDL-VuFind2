@@ -4,14 +4,7 @@
   $inappropriateComments = [];
   $user = $this->auth()->isLoggedIn();
   if ($comments) {
-     if ($user) {
-        $inappropriateComments = $this->driver->tryMethod('getInappropriateComments', [$user->id]);
-     } else {
-        $session = new \Laminas\Session\Container('inappropriateComments');
-        if (isset($session->comments)) {
-           $inappropriateComments = $session->comments;
-        }
-     }
+     $inappropriateComments = $this->driver->tryMethod('getInappropriateComments', [$user ? $user->id : null]);
   }
   $ratingAllowed = $this->driver->isRatingAllowed();
 ?>

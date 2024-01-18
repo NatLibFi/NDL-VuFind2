@@ -46,11 +46,60 @@ finna.common = (function finnaCommon() {
    *
    * @param {string|JQuery} container
    */
-  function initResultScripts(container) {
+  function initResultScripts(container, includeVuFind) {
+    finna.layout.initCondensedList($(container));
     finna.layout.initTruncate();
     finna.layout.initImagePaginators();
     finna.itemStatus.initDedupRecordSelection(container);
-    VuFind.initResultScripts(container);
+    $.fn.finnaPopup.reIndex();
+    if (typeof includeVuFind === 'undefined' || includeVuFind) {
+      VuFind.initResultScripts(container);
+    }
+  }
+
+  /**
+   * Add event handlers for managing JS-loaded search results
+   */
+  function initResultsEventHandler() {
+    VuFind.listen('vf-results-loaded', () => {
+      initResultScripts(document.querySelector('.js-result-list'), false);
+    });
+
+    // Set up Finna's dropdown-based sort and limit controls:
+    document.querySelectorAll('.sort-option-container .dropdown-menu a, .limit-option-container .dropdown-menu a').forEach(link => {
+      if (link.dataset.ajaxPagination) {
+        return;
+      }
+      link.dataset.ajaxPagination = true;
+      const type = link.closest('.sort-option-container') ? 'sort' : 'limit';
+      const selectors = {
+        sort: '.search-controls form.search-sort select',
+        limit: '.search-controls form.search-result-limit select'
+      };
+      link.addEventListener('click', function handleClick(event) {
+        event.preventDefault();
+        // Update button text:
+        const dropdownEl = link.closest('.dropdown');
+        if (dropdownEl) {
+          const toggleEl = dropdownEl.querySelector('.dropdown-toggle');
+          if (toggleEl) {
+            const spanEl = toggleEl.querySelector('span');
+            if (spanEl) {
+              spanEl.innerText = link.innerText;
+            }
+          }
+        }
+        // Get relevant data from the link and change the hidden field accordingly:
+        const urlParts = link.getAttribute('href').split('?', 2);
+        const query = new URLSearchParams(urlParts.length > 1 ? urlParts[1] : '');
+        const newValue = query.get(type);
+        const field = document.querySelector(selectors[type]);
+        if (field) {
+          field.value = newValue;
+          field.dispatchEvent(new Event('change'));
+        }
+      });
+    });
   }
 
   function _getCookieSettings() {
@@ -91,6 +140,7 @@ finna.common = (function finnaCommon() {
     initQrCodeLink: initQrCodeLink,
     init: function init() {
       initQrCodeLink();
+      initResultsEventHandler();
       VuFind.observerManager.createIntersectionObserver(
         'LazyImages',
         (element) => {

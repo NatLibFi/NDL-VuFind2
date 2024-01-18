@@ -9,9 +9,10 @@
   $recommendationConfig = $this->searchTabsRecommendations()->getConfig();
   $needRecommendationHolder = !$browse && $this->results->getStartRecord() == 1 && !empty($recommendationConfig['recommendations'][$this->results->getParams()->getSearchClassId()]);
   $haveRecommendationHolder = false;
+  $showCheckboxes = $this->searchSettings($this->results->getParams())->checkboxesEnabled();
 ?>
 <?php $i = $this->indexStart; ?>
-<div class="<?=$this->escapeHtmlAttr(trim('record-list ' . ($this->resultsClass ?? '')))?>">
+<div class="<?=$this->escapeHtmlAttr(trim('record-list ' . ($this->resultsClass ?? '')))?>"<?=isset($this->resultsAttrs) ? ' ' . $this->resultsAttrs : ''?>>
   <?php foreach ($this->results->getResults() as $current): ?>
     <?php $recordNumber = $this->results->getStartRecord() + $i - $this->indexStart; ?>
     <?php if ($needRecommendationHolder && ($recordNumber == ($recommendationConfig['position'] ?? 4) || $recordNumber == $resultCount)): ?>
@@ -21,7 +22,7 @@
       <?php $haveRecommendationHolder = true; ?>
     <?php endif; ?>
     <div<?php if (empty($this->excludeResultIds)): ?> id="result<?=$i++ ?>"<?php endif; ?> class="result clearfix <?=$this->record($this->driver)->getContainerJsClasses()?>">
-        <?php if (isset($this->showCheckboxes) && $this->showCheckboxes): ?>
+        <?php if ($showCheckboxes): ?>
           <div class="record-checkbox">
             <?=$this->record($current)->getCheckbox('', 'search-cart-form')?>
           </div>

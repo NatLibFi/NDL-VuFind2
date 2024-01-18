@@ -1,4 +1,4 @@
-/*global VuFind, videojs, finna, initFacetTree, priorityNav */
+/*global VuFind, videojs, finna, priorityNav */
 finna.layout = (function finnaLayout() {
   var currentOpenTooltips = [];
 
@@ -329,7 +329,6 @@ finna.layout = (function finnaLayout() {
    */
   function initCondensedList(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
-    finna.itemStatus.initDedupRecordSelection(holder);
     holder.find('.condensed-collapse-toggle').off('click').on('click', function onClickCollapseToggle(event) {
       if ((event.target.nodeName) !== 'A' && (event.target.nodeName) !== 'MARK') {
         holder = $(this).parent().parent();
@@ -354,7 +353,7 @@ finna.layout = (function finnaLayout() {
   function initBuildingFilter() {
     $('#building_filter').on('keyup', function onKeyUpFilter() {
       var valThis = this.value.toLowerCase();
-      $('#facet_building>ul>li>div>a .facet-value').each(function doBuildingSearch() {
+      $('#side-collapse-building > ul > li .facet-value').each(function doBuildingSearch() {
         var text = $(this).text().toLowerCase();
         if (text.indexOf(valThis) !== -1) {
           $(this).closest('li').show();
@@ -363,55 +362,6 @@ finna.layout = (function finnaLayout() {
         }
       });
     });
-  }
-
-  function renderFacetSRLabel(tree) {
-    // Add count descriptor to every facet value node for accessibility
-    tree.find('.facet').each(function appendDescriptors() {
-      var badge = $(this).find('.badge');
-      if (badge.length === 0) {
-        return;
-      }
-      badge.attr('aria-hidden', 'true');
-      if ($(this).find('.facet-value .sr-only').length > 0) {
-        return;
-      }
-      $(this).find('.facet-value').append('<span class="sr-only">, ' + VuFind.translate('result_count', {'%%count%%': badge.text()}) + '</span>');
-    });
-  }
-
-  function addJSTreeListeners(treeNode) {
-    treeNode.on('ready.jstree', function onReadyJstree() {
-      var tree = $(this);
-      // if hierarchical facet contains 2 or less top level items, it is opened by default
-      if (tree.find('ul > li').length <= 2) {
-        tree.find('ul > li.jstree-node.jstree-closed > i.jstree-ocl').each(function openNode() {
-          tree.jstree('open_node', this, null, false);
-        });
-      }
-      // show filter if 15+ organisations
-      if (tree.parent().parent().attr('id') === 'side-panel-building' && tree.find('ul.jstree-container-ul > li').length > 15) {
-        $(this).before('<div class="building-filter"><label for="building_filter" class="sr-only">' + VuFind.translate('Organisation') + '</label><input type="search" class="form-control" id="building_filter" placeholder="' + VuFind.translate('Organisation') + '..."></input></div>');
-        initBuildingFilter();
-      }
-
-      renderFacetSRLabel(tree);
-
-      // open facet if it has children and it is selected
-      tree.find('.jstree-node.active.jstree-closed').each(function openNode() {
-        tree.jstree('open_node', this, null, false);
-      });
-    });
-
-    // Update screen reader labels when opening nodes
-    treeNode.on('after_open.jstree', function afterOpenJstree() {
-      renderFacetSRLabel($(this));
-    });
-  }
-
-  function initHierarchicalFacet(treeNode, inSidebar) {
-    addJSTreeListeners(treeNode);
-    initFacetTree(treeNode, inSidebar);
   }
 
   function initJumpMenus(_holder) {
@@ -457,9 +407,6 @@ finna.layout = (function finnaLayout() {
       initToolTips($('.sidebar'));
       initMobileNarrowSearch();
       VuFind.lightbox.bind($('.sidebar'));
-    });
-    document.addEventListener('VuFind.sidefacets.treenodeloaded', function onTreeNodeLoaded(e) {
-      addJSTreeListeners(e.detail.node);
     });
   }
 
@@ -836,7 +783,7 @@ finna.layout = (function finnaLayout() {
       }
     }
   }
-  
+
   function initSelectAllButtonListeners() {
     document.querySelectorAll('form[name="renewals"] .checkbox').forEach(element => {
       element.addEventListener('change', function disableButtons() {
@@ -856,7 +803,7 @@ finna.layout = (function finnaLayout() {
     initCondensedList: initCondensedList,
     initTruncate: initTruncate,
     initLocationService: initLocationService,
-    initHierarchicalFacet: initHierarchicalFacet,
+    initBuildingFilter: initBuildingFilter,
     initJumpMenus: initJumpMenus,
     initMobileNarrowSearch: initMobileNarrowSearch,
     initOrganisationPageLinks: initOrganisationPageLinks,

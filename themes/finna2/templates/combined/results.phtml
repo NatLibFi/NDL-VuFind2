@@ -31,13 +31,6 @@
   // Set up breadcrumbs:
   $this->layout()->breadcrumbs = '<li class="active">' . $this->escapeHtml($headTitle) . '</li>';
 
-  // Enable cart if appropriate:
-  $this->showCartControls = $this->supportsCart && $this->cart()->isActive();
-  // Enable bulk options if appropriate:
-  $this->showBulkOptions = $this->supportsCart && $this->showBulkOptions;
-  // Enable bulk options if appropriate:
-  $this->showCheckboxes = $this->showCartControls || $this->showBulkOptions;
-
   // Check if any results have version support enabled:
   $displayVersions = false;
   foreach (array_keys($this->combinedResults) as $configSection) {
@@ -71,9 +64,6 @@
     $viewParams = [
       'searchClassId' => $searchClassId,
       'combinedResults' => $this->combinedResults,
-      'supportsCartOptions' => $this->supportsCartOptions,
-      'showCartControls' => $this->showCartControls,
-      'showBulkOptions' => $this->showBulkOptions,
     ];
   ?>
   <?=$this->context($this)->renderInContext('combined/stack-' . $placement . '.phtml', $viewParams)?>

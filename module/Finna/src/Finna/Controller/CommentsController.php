@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2016.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,8 +29,6 @@
  */
 
 namespace Finna\Controller;
-
-use Laminas\Session\Container as SessionContainer;
 
 /**
  * Comments Controller.
@@ -79,19 +77,8 @@ class CommentsController extends \VuFind\Controller\AbstractBase
     protected function markCommentInappropriate($id, $reason, $message)
     {
         $user = $this->getUser();
-
+        $sessionId = $this->serviceLocator->get(\Laminas\Session\SessionManager::class)->getId();
         $table = $this->getTable('Comments');
-        $table->markInappropriate($user ? $user->id : null, $id, $reason, $message);
-
-        if (!$user) {
-            $session = new SessionContainer(
-                'inappropriateComments',
-                $this->serviceLocator->get(\Laminas\Session\SessionManager::class)
-            );
-            if (!isset($session->comments)) {
-                $session->comments = [];
-            }
-            $session->comments[] = $id;
-        }
+        $table->markInappropriate($user ? $user->id : null, $id, $reason, $message, $sessionId);
     }
 }
