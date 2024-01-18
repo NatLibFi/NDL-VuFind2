@@ -8,6 +8,20 @@ finna.carouselManager = (() => {
   };
 
   /**
+   * Calculate the gap value from amount of items per page
+   * 
+   * @param {int} perPage The value to calculate gap value from
+   * @returns {int} Gap value 
+   */
+  function calculateGapValue(perPage) {
+    if (perPage % 2 === 0 || perPage === 1) {
+      return 10;
+    } else {
+      return 9;
+    }
+  }
+
+  /**
    * Settings in finna to settings in splide.
    * Key is the setting in the ini file of an rss feed.
    * Value is either a value or a function returning the value.
@@ -32,24 +46,29 @@ finna.carouselManager = (() => {
     slidesToShow: (itemsPerPage) => {
       const breakpoints = {};
       let perPage = 0;
+      let gap;
       for (const [key, value] of Object.entries(itemsPerPage)) {
         const bp = breakpointSettingMappings[key] || '';
         switch (bp) {
         case 'perPage':
           perPage = value;
+          gap = calculateGapValue(value);
           break;
         case '':
           break;
         default:
+          gap = calculateGapValue(value);
           breakpoints[bp] = {
-            perPage: value
+            perPage: value,
+            gap,
           };
           break;
         }
       }
       return {
         breakpoints,
-        perPage
+        perPage,
+        gap,
       };
     },
     type: (value) => {
@@ -130,7 +149,6 @@ finna.carouselManager = (() => {
   function toSplideSettings(settings) {
     let splidied = {
       direction: 'ltr',
-      gap: 10,
       type: 'slide',
       rewind: true,
       live: false

@@ -51,7 +51,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getRepresentationsData(): array
+    public static function getRepresentationsData(): array
     {
         return [
             [
@@ -244,7 +244,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getFormatClassificationsData(): array
+    public static function getFormatClassificationsData(): array
     {
         return [
             [
@@ -269,7 +269,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getOtherClassificationsData(): array
+    public static function getOtherClassificationsData(): array
     {
         return [
             [
@@ -368,7 +368,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getMeasurementsByTypeData(): array
+    public static function getMeasurementsByTypeData(): array
     {
         return [
             [
@@ -428,7 +428,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getPhysicalLocationsData(): array
+    public static function getPhysicalLocationsData(): array
     {
         return [
             [
@@ -533,7 +533,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getDateRangeData(): array
+    public static function getDateRangeData(): array
     {
         return [
             [
@@ -607,7 +607,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getSummaryData(): array
+    public static function getSummaryData(): array
     {
         return [
             [

@@ -43,6 +43,7 @@ use function count;
 use function in_array;
 use function is_array;
 use function is_object;
+use function is_string;
 use function strlen;
 
 /**
@@ -889,10 +890,16 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 return $view;
             }
 
+            $fieldNames = [];
+            foreach (array_keys($fields) as $field) {
+                // Extract field name from single or array style key (e.g. addresses[0][types])
+                $fieldNames[strtok($field, '[')] = true;
+            }
+
             // Filter any undefined fields and bad values from the request:
             $data = array_intersect_key(
                 filter_input_array(INPUT_POST),
-                $fields
+                $fieldNames
             );
 
             if ('driver' === ($updateConfig['method'] ?? '')) {
@@ -902,10 +909,17 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     );
                 }
 
-                foreach ($fields as $fieldName => $fieldConfig) {
+                foreach ($fields as $fieldId => $fieldConfig) {
+                    // Handle array style field id's properly (e.g. addresses[0][types]):
+                    $parts = explode('[', $fieldId);
+                    $fieldContents = $data;
+                    foreach ($parts as $part) {
+                        $part = rtrim($part, ']');
+                        $fieldContents = $fieldContents[$part] ?? null;
+                    }
                     if (
                         $fieldConfig['required']
-                        && (!isset($data[$fieldName]) || '' === $data[$fieldName])
+                        && (null === $fieldContents || '' === $fieldContents)
                     ) {
                         $this->flashMessenger()->addErrorMessage(
                             $this->translate('This field is required') . ': '
@@ -914,8 +928,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                         return $view;
                     }
                     if (
-                        'pin4' === $fieldConfig['type'] && !empty($data[$fieldName])
-                        && !preg_match('/^[0-9]{4}$/', $data[$fieldName])
+                        'pin4' === $fieldConfig['type'] && !empty($fieldContents)
+                        && !preg_match('/^[0-9]{4}$/', $fieldContents)
                     ) {
                         $this->flashMessenger()->addErrorMessage(
                             $this->translate('password_error_invalid') . ': '
@@ -925,7 +939,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     }
                     // Check that select, multiselect and radio contain valid values:
                     if (!empty($fieldConfig['options'])) {
-                        foreach ((array)$data[$fieldName] as $value) {
+                        foreach ((array)$fieldContents as $value) {
+                            if (!is_string($value)) {
+                                continue;
+                            }
                             if (
                                 '' !== $value
                                 && !array_key_exists($value, $fieldConfig['options'])
@@ -941,8 +958,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     $pattern = addcslashes($fieldConfig['pattern'], '/');
                     if (
                         $pattern
-                        && '' !== $data[$fieldName]
-                        && !preg_match("/$pattern/", $data[$fieldName])
+                        && '' !== $fieldContents
+                        && !preg_match("/$pattern/", $fieldContents)
                     ) {
                         $this->flashMessenger()->addErrorMessage(
                             $this->translate('field_contents_invalid') . ': '
@@ -1365,7 +1382,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
      * Create sort list.
      * If no sort option selected, set first one from the list to default.
      *
-     * @param list $list List object
+     * @param ?\VuFind\Db\Row\UserList $list List object
      *
      * @return array
      */
@@ -1375,9 +1392,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         $sortOptions = self::getFavoritesSortList();
         $sort = $_GET['sort'] ?? false;
+        reset($sortOptions);
+        $defaultSort = key($sortOptions);
         if (!$sort) {
-            reset($sortOptions);
-            $sort = key($sortOptions);
+            $sort = $defaultSort;
         }
         $sortList = [];
 
@@ -1392,6 +1410,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $sortList[$key] = [
                 'desc' => $value,
                 'selected' => $key === $sort,
+                'default' => $key === $defaultSort,
             ];
         }
         return $sortList;

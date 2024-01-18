@@ -97,6 +97,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Keywords',
             'Language',
             'Language Notes',
+            'Language of Abstract',
             'Manufacturer',
             'Methodology',
             'Music Compositions Extended',
@@ -426,6 +427,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Related Items',
             'Related Materials',
             'Related Places',
+            'Subject Actor',
             'subjects_extended',
             'System Format',
             'Unit IDs',
@@ -555,6 +557,21 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     }
 
     /**
+     * Filter unnecessary fields from AIPA records.
+     *
+     * @param array $coreFields data to filter.
+     *
+     * @return array
+     */
+    public function filterAipaFields($coreFields)
+    {
+        $aipaFields = $this->filterQDCFields($coreFields);
+        unset($aipaFields['Language']);
+        unset($aipaFields['Subjects']);
+        return $aipaFields;
+    }
+
+    /**
      * Get default configuration.
      *
      * @param string $key Key for configuration to look up.
@@ -575,6 +592,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         }
         switch ($type) {
             case 'aipa':
+                return $this->filterAipaFields($defaults);
             case 'dc':
             case 'qdc':
                 return $this->filterQDCFields($defaults);

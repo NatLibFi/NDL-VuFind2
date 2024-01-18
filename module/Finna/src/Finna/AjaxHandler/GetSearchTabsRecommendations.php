@@ -32,6 +32,7 @@ namespace Finna\AjaxHandler;
 use Laminas\Config\Config;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\View\Renderer\RendererInterface;
+use VuFind\Auth\Manager as AuthManager;
 use VuFind\Db\Table\Search as SearchTable;
 use VuFind\Search\Results\PluginManager as ResultsManager;
 use VuFind\Search\SearchRunner;
@@ -93,11 +94,11 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase impl
     protected $sessionId;
 
     /**
-     * Logged in user (or false)
+     * Auth Manager
      *
-     * @var User|bool
+     * @var AuthManager
      */
-    protected $user;
+    protected $authManager;
 
     /**
      * Constructor
@@ -109,6 +110,7 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase impl
      * @param RendererInterface $renderer  View renderer
      * @param SearchRunner      $sr        Search runner
      * @param string            $sessionId Session ID
+     * @param AuthManager       $authMgr   Auth Manager
      */
     public function __construct(
         SessionSettings $ss,
@@ -117,7 +119,8 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase impl
         ResultsManager $results,
         RendererInterface $renderer,
         SearchRunner $sr,
-        string $sessionId
+        string $sessionId,
+        AuthManager $authMgr
     ) {
         $this->sessionSettings = $ss;
         $this->config = $config;
@@ -126,6 +129,7 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase impl
         $this->renderer = $renderer;
         $this->searchRunner = $sr;
         $this->sessionId = $sessionId;
+        $this->authManager = $authMgr;
     }
 
     /**
@@ -148,7 +152,8 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase impl
         $id = $params->fromPost('searchId', $params->fromQuery('searchId'));
         $limit = $params->fromPost('limit', $params->fromQuery('limit', null));
 
-        $search = $this->searchTable->getOwnedRowById($id, $this->sessionId, null);
+        $user = $this->authManager->isLoggedIn();
+        $search = $this->searchTable->getOwnedRowById($id, $this->sessionId, $user ? $user->id : null);
         if (empty($search)) {
             return $this->formatResponse(
                 'Search not found',

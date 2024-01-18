@@ -35,7 +35,7 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Factory for GetFacetData AJAX handler.
+ * Factory for GetDateRangeVisual AJAX handler.
  *
  * @category VuFind
  * @package  AJAX

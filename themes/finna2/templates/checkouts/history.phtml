@@ -58,50 +58,40 @@
               <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
             <?php endif; ?>
               <div class="toolbar-sticky">
-                <table class="myresearch-table history-table" role="presentation" aria-label="<?=$this->transEscAttr('Actions');?>">
-                  <tr class="toolbar">
-                    <td class="checkbox-col">
+                <div class="myresearch-table history-table">
+                  <div class="toolbar">
+                    <div class="checkbox-col">
                       <div class="checkboxFilter mylist-select-all">
                         <div class="checkbox">
                           <label>
-                            <input type="checkbox" name="selectAll" class="checkbox-select-all">
+                            <input type="checkbox" name="selectAll" class="checkbox-select-all" aria-label="<?=$this->transEscAttr('Select All');?>">
                             <span class="selected"></span>
                           </label>
                         </div>
                       </div>
-                    </td>
-                    <td class="list-functions">
+                    </div>
+                    <div class="list-functions">
                       <div class="toolbar-button-col">
                         <div class="btn-group">
                         <?php if ($purgeSelectedAllowed): ?>
-                          <input type="submit" id="purgeSelected" name="purgeSelected" value="<?=$this->transEscAttr('loan_history_purge_selected')?>" class="btn btn-finna-toolbar dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore disabled="disabled">
+                          <input type="submit" id="purgeSelected" name="purgeSelected" value="<?=$this->transEscAttr('loan_history_purge_selected')?>" class="btn btn-primary btn-finna-toolbar dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore disabled="disabled">
                           <ul class="dropdown-menu useraccount-confirm" role="presentation">
                             <li class="disabled"><span class="prompt-text"><?=$this->transEsc('loan_history_confirm_purge_selected')?></span></li>
                             <li><a href="#" id="confirm_purge_selected_yes"><?=$this->transEsc('confirm_dialog_yes')?></a></li>
                             <li><a href="#" class="confirm_purge_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
                           </ul>
                         <?php endif; ?>
-                          <a class="btn btn-finna-toolbar disabled" id="copy_to_favourites" data-lightbox role="button" href="<?=$this->url('myresearch-savehistoricloans') ?>"><?=$this->transEsc('loan_history_save')?></a>
+                          <a class="btn btn-primary btn-finna-toolbar disabled" id="copy_to_favourites" data-lightbox role="button" href="<?=$this->url('myresearch-savehistoricloans') ?>"><?=$this->transEsc('loan_history_save')?></a>
                         </div>
-                        <?php if ($purgeAllAllowed): ?>
-                          <div class="btn-group">
-                            <input type="submit" id="purgeAll" name="purgeAll" value="<?=$this->transEscAttr('loan_history_purge')?>" class="btn btn-finna-toolbar dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
-                            <ul class="dropdown-menu useraccount-confirm">
-                              <li class="disabled"><span class="prompt-text"><?=$this->transEsc('loan_history_confirm_purge_all')?></span></li>
-                              <li><a href="#" id="confirm_purge_all_yes"><?=$this->transEsc('confirm_dialog_yes')?></a></li>
-                              <li><a href="#" class="confirm_purge_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
-                            </ul>
-                          </div>
-                        <?php endif; ?>
                       </div>
                       <div class="sort-col">
                         <?php if ($sortList): ?>
                           <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList]); ?>
                         <?php endif; ?>
                       </div>
-                    </td>
-                  </tr>
-                </table>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <table class="myresearch-table" aria-label="<?=$this->transEscAttr('Loan History')?>" tabindex="0">
@@ -170,6 +160,16 @@
                   </tr>
                 <?php endforeach; ?>
               </table>
+              <?php if ($purgeAllAllowed): ?>
+                <div class="dropdown loan-history-purge-all">
+                  <input type="submit" id="purgeAll" name="purgeAll" value="<?=$this->transEscAttr('loan_history_purge')?>" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
+                  <ul class="dropdown-menu useraccount-confirm">
+                    <li class="disabled"><span class="prompt-text"><?=$this->transEsc('loan_history_confirm_purge_all')?></span></li>
+                    <li><a href="#" id="confirm_purge_all_yes"><?=$this->transEsc('confirm_dialog_yes')?></a></li>
+                    <li><a href="#" class="confirm_purge_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+                  </ul>
+                </div>
+              <?php endif; ?>
             </form>
           </div>
 

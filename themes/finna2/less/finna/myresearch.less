@@ -74,18 +74,16 @@
   }
 }
 
+.loan-history-purge-all {
+  margin-top: 10px;
+}
+
 .myresearch-table {
   width: 100%;
   margin: 0;
   th,td {
     vertical-align: top;
     padding: 5px;
-    @media(max-width: @screen-sm) {
-      text-align: left;
-    }
-    .record-title {
-      text-align: left;
-    }
   }
   .recordcover {
     min-width: 30px;
@@ -93,62 +91,42 @@
   .toolbar {
     display: flex;
     flex-direction: row;
+    align-items: baseline;
     &.no-list-functions {
-      justify-content: space-between;
       .myresearch-notification {
         height: fit-content;
         align-self: center;
       }
     }
-    .checkbox-col {
-      display: flex;
-      width: fit-content;
-      height: fit-content;
-      .mylist-select-all {
-        align-self: center;
-        padding: 5px 0;
-        @media (max-width: @screen-md) {
-          margin: 6px 0;
-        }
-      }
-    }
-    th {
-      vertical-align: middle;
-      > div {
-        margin-bottom: 10px;
-      }
-      &:first-child {
-        vertical-align: top;
-        padding-top: 10px;
+    .btn-finna-toolbar {
+      margin: 3px 0px;
+      @media (max-width: @screen-md) {
+        font-size: 0.9em;
       }
     }
     .btn-group {
-      margin-right: 5px;
+      margin-right: 20px;
+      .btn {
+        margin-right: 1px;
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+    .checkbox-col {
+      display: flex;
+      align-items: baseline;
+      padding: 5px;
     }
     .list-functions {
       display: flex;
       flex-direction: row;
+      flex-basis: 100%;
+      align-items: baseline;
       justify-content: space-between;
-      width: 100%;
-    }
-  }
-  &.history-table {
-    .toolbar {
-      border-bottom: 1px solid #d1d1d1;
-      .mylist-select-all {
-        margin-right: 0;
-      }
-    }
-  }
-  .btn-finna-toolbar {
-    border: 1px solid @gray-lighter;
-    background: @gray-ultralight;
-    color: @text-color;
-    padding: 5px 10px;
-    font-size: 0.9em;
-    height: 30px;
-    @media (max-width: @screen-md) {
-      margin: 6px 0px;
     }
   }
   #update_selected, #purgeSelected {
@@ -156,9 +134,6 @@
   }
   #cancel_selected, #copy_to_favourites {
     border-radius: 0 4px 4px 0;
-  }
-  #copy_to_favourites {
-    margin-left: -1px;
   }
   .sort-button ul.dropdown-menu li a {
     font-size: 1em;
@@ -177,30 +152,6 @@
       width: 40%;
       float: left;
     }
-  }
-  @media(min-width: @screen-xs-min) {
-    .toolbar-button-col {
-      float: left;
-      text-align: left;
-    }
-    .sort-col {
-      float: right;
-      text-align: right;
-      .sort-button {
-        margin-bottom: 0px;
-      }
-    }
-  }
-  @media(max-width: @screen-xxs-max) {
-    .toolbar-button-col {
-      float: left;
-    }
-    .sort-col {
-      float: left;
-    }
-  }
-  .checkbox-col {
-    width: 10%;
   }
   .myresearch-count {
     line-height: 35px;
@@ -385,11 +336,11 @@
     color: @gray-light;
   }
   @media(max-width:@screen-md-max) {
-    .paginationSimple {
+    .pagination-simple {
       margin-top: 0;
     }
   }
-  .paginationSimple {
+  .pagination-simple {
     margin-left: 5px;
   }
   .no-padding-table {
@@ -518,7 +469,7 @@
   .toolbar {
     border: 0;
     padding-bottom: 0;
-    padding-left: 9px;
+    padding-left: 4px;
   }
 }
 
@@ -580,25 +531,6 @@
   }
 }
 
-.myresearch-table .toolbar {
-  .checkboxFilter.mylist-select-all {
-    margin-right: 0;
-    float: none;
-    span {
-      font-size: 11px;
-      top: 4px;
-      left: ~"-webkit-calc(50% + 10px)";
-      left: ~"-moz-calc(50% + 10px)";
-      left: ~"calc(50% + 10px)";
-      position: absolute;
-      width: 70px;
-    }
-  }
-  .checkboxFilter .checkbox label {
-    font-size: 13px;
-  }
-}
-
 .myresearch-table.online-payment .toolbar {
   align-items: center;
   margin-bottom: 1rem;
@@ -608,7 +540,7 @@
   }
 }
 
-.template-dir-myresearch .toolbar, .template-dir-holds .toolbar {
+.template-dir-myresearch .toolbar, .template-dir-checkouts .toolbar, .template-dir-holds .toolbar {
   margin: 0;
   margin-top: 5px;
   border-bottom: 1px solid @gray-lighter;
@@ -659,7 +591,9 @@
 
 .useraccount-table {
   border: 1px solid @gray-lighter;
-  border-top: none;
+  &:not(.fines-table) {
+    border-top: none;
+  }
   box-shadow: 0 15px 30px -35px @gray;
   border-collapse: separate;
   margin-top: 10px;
@@ -711,8 +645,10 @@
       font-weight: bold;
     }
   }
-  .balance {
-    text-align: right;
+  @media screen and (min-width: 769px) {
+    .balance {
+      text-align: right;
+    }
   }
   .online-payment-remark {
     font-weight: bold;

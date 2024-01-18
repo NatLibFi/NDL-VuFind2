@@ -51,7 +51,7 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getTestFunctionsData(): array
+    public static function getTestFunctionsData(): array
     {
         return [
             [

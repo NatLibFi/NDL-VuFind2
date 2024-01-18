@@ -1,6 +1,5 @@
 <!-- START of: finna - Recommend/SideFacetsDeferred.phtml -->
 <?php
-  $this->headScript()->appendFile('vendor/jsTree/jstree.min.js');
   $this->headScript()->appendFile('facets.js');
   $this->headScript()->appendFile('vendor/jquery.colorhelpers.min.js');
   $this->headScript()->appendFile('vendor/jquery.flot.min.js');
@@ -104,28 +103,11 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
         <span class="facet-title"><?=$this->transEsc($facetName)?></span>
         <?=$this->icon('collapse', 'facet-title-icon') ?>
       </button>
-      <div id="<?=$dataTarget?>" class="collapse<?= !$isCollapsed ? ' in' : '';?>"<?php if (!in_array($field, $hierarchicalFacets)):?> data-facet="<?=$escAttrField ?>"<?php endif ?>>
+      <div id="<?=$dataTarget?>" class="collapse<?= !$isCollapsed ? ' in' : '';?>" data-facet="<?=$escAttrField ?>">
         <span class="facet-load-failed hidden"><?=$msgFailed?></span>
-        <?php if (in_array($field, $hierarchicalFacets)): ?>
-          <?=
-            $this->context($this)->renderInContext(
-                'Recommend/SideFacets/hierarchical-facet.phtml',
-                [
-                  'allowExclude' => $this->recommend->excludeAllowed($field),
-                  // Allow hierarchical facets to be untruncated with showMore setting < 1
-                  'facets_before_more' => $this->recommend->getShowMoreSetting($field, 0),
-                  'title' => $field,
-                  'sortOptions' => $hierarchicalFacetSortOptions[$field] ?? $hierarchicalFacetSortOptions['*'] ?? null,
-                  'collapsedFacets' => $collapsedFacets,
-                  'results' => $this->results,
-                ]
-            );
-          ?>
-        <?php else: ?>
-          <div class="facet-load-indicator hidden">
-            <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
-          </div>
-        <?php endif; ?>
+        <div class="facet-load-indicator hidden">
+          <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
+        </div>
       </div>
     </div>
   <?php endforeach; ?>

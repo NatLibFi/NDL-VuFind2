@@ -89,6 +89,13 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase implements
     protected $descriptionPluginManager;
 
     /**
+     * Language code
+     *
+     * @var string
+     */
+    protected $langCode;
+
+    /**
      * Constructor
      *
      * @param SessionSettings          $ss       Session settings (for disableSessionWrites)
@@ -97,6 +104,7 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase implements
      * @param DescriptionPluginManager $dpm      Description provider plugin manager
      * @param array                    $config   Main configuration
      * @param array                    $dsConfig Data source configuration
+     * @param string                   $langCode Current language code
      */
     public function __construct(
         SessionSettings $ss,
@@ -104,7 +112,8 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase implements
         Loader $loader,
         DescriptionPluginManager $dpm,
         array $config,
-        array $dsConfig
+        array $dsConfig,
+        string $langCode
     ) {
         $this->sessionSettings = $ss;
         $this->cacheManager = $cm;
@@ -112,6 +121,7 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase implements
         $this->descriptionPluginManager = $dpm;
         $this->config = $config;
         $this->dataSourceConfig = $dsConfig;
+        $this->langCode = $langCode;
     }
 
     /**
@@ -131,7 +141,7 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase implements
         $source = $params->fromPost('source') ?? $params->fromQuery('source') ?? 'Solr';
 
         $cacheDir = $this->cacheManager->getCache('description')->getOptions()->getCacheDir();
-        $localFile = "$cacheDir/" . urlencode($id) . '.txt';
+        $localFile = "$cacheDir/" . urlencode($id) . '_' . $this->langCode . '.txt';
         $maxAge = $this->config->Content->summarycachetime ?? 1440;
 
         if (

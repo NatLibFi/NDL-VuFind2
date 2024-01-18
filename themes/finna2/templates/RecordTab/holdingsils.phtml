@@ -342,7 +342,7 @@
     </div>
     <div class="clearfix"></div>
     <?php if (isset($holding['items'][0]['detailsGroupKey'])): ?>
-      <div class="<?=$this->escapeHtmlAttr($holdingsDetails)?>GetDetails <?=$this->escapeHtmlAttr($holdingsDetails)?> hidden" data-key="<?=$this->escapeHtmlAttr($holding['items'][0]['detailsGroupKey'])?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
+      <div class="<?=$this->escapeHtmlAttr($holdingsDetails)?>GetDetails <?=$this->escapeHtmlAttr($holdingsDetails)?> copy-details hidden" data-key="<?=$this->escapeHtmlAttr($holding['items'][0]['detailsGroupKey'])?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
         <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
       </div>
     <?php endif; ?>

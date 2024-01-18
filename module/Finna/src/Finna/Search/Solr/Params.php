@@ -95,13 +95,6 @@ class Params extends \VuFind\Search\Solr\Params
     public const DATERANGE_DEFAULT_TYPE = 'overlap';
 
     /**
-     * Hierarchical facet limit when facets are requested.
-     *
-     * @var int|null
-     */
-    protected $hierarchicalFacetLimit = null;
-
-    /**
      * Helper for formatting authority id filter display texts.
      *
      * @var AuthorityHelper
@@ -317,16 +310,6 @@ class Params extends \VuFind\Search\Solr\Params
     public function getFacetSettings()
     {
         $facetSet = parent::getFacetSettings();
-        if (
-            !empty($facetSet)
-            && null !== $this->hierarchicalFacetLimit
-            && $this->facetLimit !== $this->hierarchicalFacetLimit
-        ) {
-            $hierarchicalFacets = $this->getOptions()->getHierarchicalFacets();
-            foreach ($hierarchicalFacets as $field) {
-                $facetSet["f.{$field}.facet.limit"] = $this->hierarchicalFacetLimit;
-            }
-        }
 
         // For checkbox counts
         if ($this->checkboxFacetCounts && !empty($this->checkboxFacets)) {

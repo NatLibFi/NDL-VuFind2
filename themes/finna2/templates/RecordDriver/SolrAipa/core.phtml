@@ -69,7 +69,7 @@
 <?php ob_end_clean(); ?>
 
 <?php $this->metadata()->generateMetatags($this->driver);?>
-<div>
+<div class="media">
   <h1 class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
   <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>

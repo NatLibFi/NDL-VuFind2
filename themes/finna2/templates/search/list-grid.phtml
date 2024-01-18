@@ -3,7 +3,7 @@
 <?php if (!isset($this->indexStart)) {
   $this->indexStart = 0;
 } ?>
-<div class="<?=$this->escapeHtmlAttr(trim('search-grid ' . ($this->resultsClass ?? '')))?>">
+<div class="<?=$this->escapeHtmlAttr(trim('search-grid ' . ($this->resultsClass ?? '')))?>"<?=isset($this->resultsAttrs) ? ' ' . $this->resultsAttrs : ''?>>
   <?php $i = $this->indexStart; ?>
   <?php foreach ($this->results->getResults() as $current): ?>
     <div id="result<?=$i++ ?>" class="result grid">

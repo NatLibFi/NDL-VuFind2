@@ -38,28 +38,28 @@
         <?php if ($this->cancelForm): ?>
         <div class="myaccount-sticky-header"></div>
         <div class="toolbar-sticky-container">
-        <form name="updateForm" class="inline" method="post" id="cancelILLRequest"  data-clear-account-cache="illRequests">
+        <form name="updateForm" class="inline" method="post" id="cancelILLRequest" data-clear-account-cache="illRequests">
           <div class="toolbar-sticky">
-            <table class="myresearch-table ill-requests-table" role="presentation" aria-label="<?=$this->transEscAttr('Actions');?>">
-              <tr class="toolbar">
-                <td class="checkbox-col">
+            <div class="myresearch-table ill-requests-table">
+              <div class="toolbar">
+                <div class="checkbox-col">
                   <div class="checkboxFilter mylist-select-all">
                     <div class="checkbox">
                       <label>
-                        <input type="checkbox" name="selectAll" class="checkbox-select-all">
+                        <input type="checkbox" name="selectAll" class="checkbox-select-all" aria-label="<?=$this->transEscAttr('Select All');?>">
                         <span class="selected"></span>
                       </label>
                     </div>
                   </div>
-                </td>
-                <td class="list-functions">
+                </div>
+                <div class="list-functions">
                   <div class="toolbar-button-col">
                     <div>
                       <input type="hidden" id="submitType" name="cancelSelected" value="1">
                       <input type="hidden" id="cancelConfirm" name="confirm" value="0">
                     </div>
                     <div class="btn-group">
-                      <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEscAttr('ill_request_cancel_selected') ?>" class="btn btn-finna-toolbar dropdown-toggle" data-toggle="dropdown">
+                      <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEscAttr('ill_request_cancel_selected') ?>" class="btn btn-primary btn-finna-toolbar dropdown-toggle" data-toggle="dropdown">
                       <ul class="dropdown-menu useraccount-confirm">
                         <li class="disabled"><span class="prompt-text"><?=$this->transEsc('confirm_ill_request_cancel_selected_text') ?></span></li>
                         <li><a href="#" id="confirm_cancel_selected_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
@@ -67,7 +67,7 @@
                       </ul>
                     </div>
                     <div class="btn-group">
-                      <input id="cancelAll" name="cancelAll" type="submit" value="<?=$this->transEscAttr('ill_request_cancel_all') ?>" class="btn btn-finna-toolbar dropdown-toggle" data-toggle="dropdown">
+                      <input id="cancelAll" name="cancelAll" type="submit" value="<?=$this->transEscAttr('ill_request_cancel_all') ?>" class="btn btn-primary btn-finna-toolbar dropdown-toggle" data-toggle="dropdown">
                       <ul class="dropdown-menu useraccount-confirm">
                         <li class="disabled"><span class="prompt-text"><?=$this->transEsc('confirm_ill_request_cancel_all_text') ?></span></li>
                         <li><a href="#" id="confirm_cancel_all_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
@@ -75,8 +75,8 @@
                       </ul>
                     </div>
                   </div>
-                </td>
-            </table>
+                </div>
+              </div>
           </div>
         <?php else: ?>
           <div class="toolbar no-list-functions">

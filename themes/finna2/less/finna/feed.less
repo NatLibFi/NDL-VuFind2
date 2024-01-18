@@ -575,37 +575,24 @@ finna-feed {
         color: @carousel-header-color;
     }
     .carousel-hover-title {
-        display: flex;
-        flex-direction: row;
-        float: left;
         font-size: 14px;
         font-weight: 900;
-        width: 85%;
         color: @carousel-slide-header-color;
         p {
             margin: 0;
             width: 100%;
             overflow-wrap: anywhere;
         }
-        .carousel-more {
-            font-size: 1.5em;
-            float: right;
-            margin-left: auto;
-            padding-left: 5px;
-            line-height: 14px;
-            &.show-link {
-                flex: 1;
-                text-align: right;
-            }
-        }
     }
-    .carousel-non-touch-device .carousel-hover-title {
-        width: 100%;
+    .carousel-more {
+        font-size: 1.5em;
+        line-height: 14px;
+        display: flex;
+        justify-content: end;
     }
     .carousel-more.carousel-close {
         position: sticky;
         top: 0;
-        width: 100%;
     }
     .carousel-hover-title, .carousel-slide-header p {
         overflow-wrap: break-word;
@@ -744,9 +731,6 @@ finna-feed.splide--ltr {
                 &:not(.no-text) {
                     opacity: 1;
                 }
-                &.no-text.show-hover {
-                    opacity: 1;
-                }
             }
             .carousel-slide-header:not(.title-bottom) {
                 opacity: 0;
@@ -763,11 +747,6 @@ finna-feed.splide--ltr {
                 }
             }
         }
-    }
-    .carousel-non-touch-device {
-            .carousel-text.show-hover:hover {
-                opacity: 1;
-            }
     }
     .feed-item-holder {
         &.clicked {
@@ -818,9 +797,9 @@ finna-feed.splide--ltr {
                 font-weight: 900;
                 color: @carousel-slide-header-color;
                 text-shadow: @carousel-slide-header-text-shadow;
-                float: right;
-                width: 15%;
-                text-align: right;
+                .js-carousel-close {
+                    padding-left: 12px;
+                }
             }
         }
 
@@ -848,9 +827,6 @@ finna-feed.splide--ltr {
                 margin-bottom: 0;
                 letter-spacing: 0.2px;
                 text-shadow: @carousel-slide-header-text-shadow;
-                @media (max-width: @screen-md-max) {
-                    padding-right: 30px;
-                }
             }
             .carousel-slide-more {
                 top: 0;

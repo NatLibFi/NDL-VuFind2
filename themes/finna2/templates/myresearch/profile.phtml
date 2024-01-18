@@ -139,6 +139,10 @@
               <div class="my-profile-col profile-title"><?=$this->transEsc('Last Name') ?>:</div>
               <div class="profile-text-value"><?=$this->escapeHtml($this->profile['lastname']) ?></div>
             <?php endif; ?>
+            <?php if (!empty($this->profile['calling_name'])): ?>
+              <div class="my-profile-col profile-title"><?=$this->transEsc('Calling Name') ?>:</div>
+              <div class="profile-text-value"><?=$this->escapeHtml($this->profile['calling_name']) ?></div>
+            <?php endif; ?>
             <?php $addressParams = compact('updateAddress', 'updateAddressLink', 'needsApproval', 'updatePhone', 'updateEmail'); ?>
             <?php if (!empty($profile['addresses'])): ?>
               <?php $updateAddressParam = $updateAddress; ?>

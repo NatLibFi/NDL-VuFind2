@@ -61,22 +61,22 @@
             <input type="hidden" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>" name="csrf">
             <input type="hidden" id="submitType" name="renewSelected" value="1">
             <div class="toolbar-sticky">
-              <table class="myresearch-table" role="presentation" aria-label="<?=$this->transEscAttr('Actions');?>">
-                <tr class="toolbar">
-                  <td class="checkbox-col">
+              <div class="myresearch-table">
+                <div class="toolbar">
+                  <div class="checkbox-col">
                     <div class="checkboxFilter mylist-select-all">
                       <div class="checkbox">
                         <label>
-                          <input type="checkbox" name="selectAll" class="checkbox-select-all">
+                          <input type="checkbox" name="selectAll" class="checkbox-select-all" aria-label="<?=$this->transEscAttr('Select All');?>">
                           <span class="selected"></span> <span class="loans-renewal-available"></span>
                         </label>
                       </div>
                     </div>
-                  </td>
-                  <td class="list-functions">
+                  </div>
+                  <div class="list-functions">
                     <div class="toolbar-button-col">
                       <div class="btn-group">
-                        <input type="submit" class="btn btn-finna-toolbar dropdown-toggle" id="renewSelected" name="renewSelected" value="<?=$this->transEscAttr('renew_selected')?>" disabled="disabled" data-toggle="dropdown" data-lightbox-ignore>
+                        <input type="submit" class="btn btn-primary btn-finna-toolbar dropdown-toggle" id="renewSelected" name="renewSelected" value="<?=$this->transEscAttr('renew_selected')?>" disabled="disabled" data-toggle="dropdown" data-lightbox-ignore>
                         <ul class="dropdown-menu useraccount-confirm" role="presentation">
                           <li class="disabled"><span class="prompt-text"><?=$this->transEsc('confirm_renew_selected_text')?></span></li>
                           <li><a href="#" id="confirm_renew_selected_yes"><?=$this->transEsc('confirm_dialog_yes')?></a></li>
@@ -85,7 +85,7 @@
                       </div>
                       <?php if ($renewAll): ?>
                         <div class="btn-group">
-                          <input type="submit" class="btn btn-finna-toolbar dropdown-toggle" id="renewAll" name="renewAll" value="<?=$this->transEscAttr('renew_all')?>" data-toggle="dropdown" data-lightbox-ignore>
+                          <input type="submit" class="btn btn-primary btn-finna-toolbar dropdown-toggle" id="renewAll" name="renewAll" value="<?=$this->transEscAttr('renew_all')?>" data-toggle="dropdown" data-lightbox-ignore>
                           <ul class="dropdown-menu useraccount-confirm" role="presentation">
                             <li class="disabled"><span class="prompt-text"><?=$this->transEsc('confirm_renew_all_text')?></span></li>
                             <li><a href="#" id="confirm_renew_all_yes"><?=$this->transEsc('confirm_dialog_yes')?></a></li>
@@ -99,9 +99,9 @@
                         <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList]); ?>
                       <?php endif; ?>
                     </div>
-                  </td>
-                </tr>
-              </table>
+                  </div>
+                </div>
+              </div>
             </div>
         <?php else: ?>
           <div class="myresearch-table" aria-label="<?=$this->transEscAttr('Your Checked Out Items')?>">
