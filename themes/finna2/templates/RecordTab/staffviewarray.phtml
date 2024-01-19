@@ -1,6 +1,6 @@
 <!-- START of: finna - RecordTab/staffviewarray.phtml -->
 <?php $rawFieldData = $this->driver->getRawData(); ?>
-<?php if (!empty($rawFieldData['fullrecord']) && strncmp($rawFieldData['fullrecord'], '<', 1) == 0): ?>
+<?php if (!empty($rawFieldData['fullrecord']) && is_string($rawFieldData['fullrecord']) && strncmp($rawFieldData['fullrecord'], '<', 1) == 0): ?>
   <?php
     $recordClass = get_class($this->driver);
     if ($p = strrpos($recordClass, '\\')) {
