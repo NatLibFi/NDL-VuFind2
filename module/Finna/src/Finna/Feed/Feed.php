@@ -553,7 +553,7 @@ class Feed implements
                             ['page' => $id],
                             [
                                 'query' => [
-                                    'element' => $itemId,
+                                    'element' => urlencode($itemId),
                                     'lng' => $this->getTranslatorLocale(),
                                 ],
                             ]
