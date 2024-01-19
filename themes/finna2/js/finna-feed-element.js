@@ -227,6 +227,14 @@ class FinnaFeedElement extends HTMLElement {
             el.classList.add('carousel-non-touch-device');
           });
         }
+
+        var items = this.splide.length;
+        var perPage = this.splide.options.perPage;
+        if ( items <= perPage ) {
+          this.splide.options = {
+            pagination: false,
+          };
+        }
       }
 
       this.querySelectorAll('.carousel-text').forEach(el => {
@@ -234,15 +242,6 @@ class FinnaFeedElement extends HTMLElement {
           el.classList.add('scrollable');
         }
       });
-
-      var items = this.splide.length;
-      var perPage = this.splide.options.perPage;
-      if ( items <= perPage ) {
-        this.splide.options = {
-          pagination: false,
-        };
-      }
-
       // Bind lightbox if feed content is shown in modal
       if (typeof settings.modal !== 'undefined' && settings.modal) {
         const onClickHolderLink = function onClickHolderLink() {
