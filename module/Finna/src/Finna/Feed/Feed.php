@@ -553,9 +553,10 @@ class Feed implements
                             ['page' => $id],
                             [
                                 'query' => [
-                                    'element' => urlencode($itemId),
+                                    'element' => $itemId,
                                     'lng' => $this->getTranslatorLocale(),
                                 ],
+                                'normalize_path' => false,
                             ]
                         );
                     } elseif ($setting == 'id') {
