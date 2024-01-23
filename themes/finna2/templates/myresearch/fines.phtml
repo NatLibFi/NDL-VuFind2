@@ -17,7 +17,7 @@
     $totalDue = 0;
     foreach ($this->fines as $record) {
       if (empty($record['title'])) {
-          $title = $this->transEsc('not_applicable');
+          $title = '';
       } elseif (!is_object($record['driver'] ?? null)) {
           $title = $this->escapeHtml(trim($record['title'], '/:'));
       } else {
@@ -241,8 +241,12 @@
               <?php foreach ($columns as $header): ?>
                 <?php if ('Select' === $header): ?>
                   <th scope="col" class="user-account-table-select"></th>
+                <?php elseif ('Balance' === $header || 'Fee' === $header): ?>
+                  <th scope="col" class="balance"><?=$this->transEsc($header)?></th>
+                <?php elseif ('Title' === $header): ?>
+                  <th scope="col" class="user-account-table-title"><?=$this->transEsc($header)?></th>
                 <?php else: ?>
-                  <th scope="col"<?='Title' === $header ? ' class="user-account-table-title"' : ''?>><?=$this->transEsc($header)?></th>
+                  <th scope="col"><?=$this->transEsc($header)?></th>
                 <?php endif; ?>
               <?php endforeach; ?>
             </tr>
@@ -252,7 +256,13 @@
               <tr>
                 <?php foreach ($columns as $column): ?>
                   <?php if ('Title' == $column): ?>
-                    <th data-label="<?=$this->transEscAttr($column)?>" scope="row"><?=$tableData[$column][$row]?></th>
+                    <th data-label="<?=$this->transEscAttr($column)?>" scope="row">
+                      <?php if ('' === $tableData[$column][$row]): ?>
+                        <span class="text-muted"><?=$this->transEsc('Title not available')?></span>
+                      <?php else: ?>
+                        <?=$tableData[$column][$row]?>
+                      <?php endif; ?>
+                    </th>
                   <?php else: ?>
                     <?php
                       $attrs = [
