@@ -247,6 +247,7 @@ class OrganisationInfo implements
             $emptyResults = $this->resultsManager->get('EmptySet');
             try {
                 $sectorFacets = $this->getFacetList('sector_str_mv');
+                $sectorFacets = $this->facetHelper->flattenFacetHierarchy($sectorFacets);
                 foreach ($sectorFacets as $sectorFacet) {
                     $sectorParts = explode('/', $sectorFacet['value']);
                     $sectorParts = array_splice($sectorParts, 1, -1);
