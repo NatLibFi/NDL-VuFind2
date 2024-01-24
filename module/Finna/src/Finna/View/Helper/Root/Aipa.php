@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2023.
+ * Copyright (C) The National Library of Finland 2023-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -34,7 +34,7 @@ use Finna\RecordDriver\SolrAipa;
 use Laminas\View\Helper\AbstractHelper;
 use NatLibFi\FinnaCodeSets\FinnaCodeSets;
 use NatLibFi\FinnaCodeSets\Model\EducationalLevel\EducationalLevelInterface;
-use NatLibFi\FinnaCodeSets\Model\EducationalModule\EducationalModuleInterface;
+use NatLibFi\FinnaCodeSets\Model\HierarchicalProxyDataObjectInterface as HPDOInterface;
 use NatLibFi\FinnaCodeSets\Utility\EducationalData;
 
 use function count;
@@ -50,12 +50,20 @@ use function count;
  */
 class Aipa extends AbstractHelper
 {
+    // Sort order for educational levels.
     protected const EDUCATIONAL_LEVEL_SORT_ORDER = [
-        EducationalLevelInterface::PRIMARY_SCHOOL,
-        EducationalLevelInterface::LOWER_SECONDARY_SCHOOL,
+        EducationalData::PRIMARY_SCHOOL,
+        EducationalData::LOWER_SECONDARY_SCHOOL,
         EducationalLevelInterface::UPPER_SECONDARY_SCHOOL,
         EducationalLevelInterface::VOCATIONAL_EDUCATION,
         EducationalLevelInterface::HIGHER_EDUCATION,
+    ];
+
+    // Educational data rendered as educational subjects.
+    protected const RENDER_EDUCATIONAL_SUBJECTS_KEYS = [
+        EducationalData::LEARNING_AREAS,
+        EducationalData::EDUCATIONAL_SUBJECTS,
+        EducationalData::VOCATIONAL_QUALIFICATIONS,
     ];
 
     /**
@@ -155,19 +163,18 @@ class Aipa extends AbstractHelper
 
         $html = '';
         foreach ($this->getEducationalLevelCodeValues($educationalData) as $levelCodeValue) {
-            $levelData = EducationalData::getEducationalLevelData($levelCodeValue, $educationalData);
+            $levelData = EducationalData::getEducationalLevelData(
+                $levelCodeValue,
+                $educationalData,
+                true
+            );
             if (empty($levelData)) {
                 continue;
             }
 
             $items = [];
-            foreach (EducationalData::EDUCATIONAL_SUBJECT_LEVEL_KEYS as $subjectLevelKey) {
-                foreach ($levelData[$subjectLevelKey] ?? [] as $subjectLevel) {
-                    // Skip educational modules.
-                    if ($subjectLevel instanceof EducationalModuleInterface) {
-                        continue;
-                    }
-
+            foreach (self::RENDER_EDUCATIONAL_SUBJECTS_KEYS as $key) {
+                foreach ($levelData[$key] ?? [] as $subjectLevel) {
                     $items[] = $subjectLevel->getPrefLabel($langcode);
                 }
             }
@@ -181,13 +188,13 @@ class Aipa extends AbstractHelper
     }
 
     /**
-     * Render study contents and objectives.
+     * Render educational data.
      *
      * @param array $educationalData Educational data from record driver
      *
      * @return string
      */
-    public function renderStudyContentsAndObjectives(array $educationalData): string
+    public function renderEducationalData(array $educationalData): string
     {
         if (empty($educationalData)) {
             return '';
@@ -197,102 +204,78 @@ class Aipa extends AbstractHelper
         $transEsc = $this->getView()->plugin('transEsc');
         $langcode = $this->view->layout()->userLang;
 
+        // Iterate through all educational levels.
         $html = '';
         $levelsHtml = [];
         foreach ($this->getEducationalLevelCodeValues($educationalData) as $levelCodeValue) {
-            $levelData = EducationalData::getEducationalLevelData($levelCodeValue, $educationalData);
+            // Get educational level specific data.
+            $levelData = EducationalData::getEducationalLevelData(
+                $levelCodeValue,
+                $educationalData,
+                true
+            );
             if (empty($levelData)) {
                 continue;
             }
 
             $componentData = [];
 
-            // Learning areas.
-            if (!empty($levelData[EducationalData::LEARNING_AREAS])) {
-                $componentData['learningAreas']
-                    = EducationalData::getPrefLabels(
-                        $levelData[EducationalData::LEARNING_AREAS],
+            switch ($levelCodeValue) {
+                case EducationalLevelInterface::EARLY_CHILDHOOD_EDUCATION:
+                    $componentData = $this->addComponentDataForType(
+                        $componentData,
+                        EducationalData::LEARNING_AREAS,
+                        $levelData,
                         $langcode
                     );
-                $componentData['learningAreasTitle']
-                    = 'Aipa::' . EducationalData::LEARNING_AREAS;
-            }
+                    break;
 
-            // Educational modules.
-            if (!empty($levelData[EducationalData::EDUCATIONAL_MODULES])) {
-                $levelModules = [];
-                foreach ($levelData[EducationalData::EDUCATIONAL_SUBJECTS] ?? [] as $educationalSubject) {
-                    $subjectModules = EducationalData::getEducationalModules(
-                        $educationalSubject,
-                        $levelData[EducationalData::EDUCATIONAL_MODULES]
+                case EducationalData::PRIMARY_SCHOOL:
+                case EducationalData::LOWER_SECONDARY_SCHOOL:
+                case EducationalLevelInterface::UPPER_SECONDARY_SCHOOL:
+                    $componentData = $this->addComponentDataForSubjects(
+                        $componentData,
+                        EducationalData::EDUCATIONAL_SUBJECTS,
+                        $levelData,
+                        $langcode,
+                        $levelCodeValue
                     );
-                    $subjectModuleItems
-                        = EducationalData::getPrefLabels($subjectModules, $langcode);
-                    if (!empty($subjectModules)) {
-                        $levelModules[$educationalSubject->getPrefLabel($langcode)]
-                            = $subjectModuleItems;
-                    }
-                }
-                if (!empty($levelModules)) {
-                    $componentData['educationalModules'] = $levelModules;
-                    $componentData['educationalModulesTitle']
-                        = 'Aipa::' . EducationalData::EDUCATIONAL_MODULES;
-                }
-            }
-
-            // Study contents and objectives.
-            foreach (EducationalData::EDUCATIONAL_SUBJECT_LEVEL_KEYS as $subjectLevelKey) {
-                foreach (EducationalData::STUDY_CONTENTS_OR_OBJECTIVES_KEYS as $contentsOrObjectivesKey) {
-                    $items = [];
-                    foreach ($levelData[$subjectLevelKey] ?? [] as $subjectLevel) {
-                        $contentsOrObjectives = EducationalData::getStudyContentsOrObjectives(
-                            $subjectLevel,
-                            $levelData[$contentsOrObjectivesKey]
-                        );
-                        $subjectLevelItems
-                            = EducationalData::getPrefLabels($contentsOrObjectives, $langcode);
-                        if (!empty($subjectLevelItems)) {
-                            $items[$subjectLevel->getPrefLabel($langcode)] = $subjectLevelItems;
-                        }
-                    }
-                    if (!empty($items)) {
-                        $componentData[$contentsOrObjectivesKey] = $items;
-                        $componentData[$contentsOrObjectivesKey . 'Title']
-                            = 'Aipa::' . $contentsOrObjectivesKey;
-                    }
-                }
-            }
-
-            // Transversal competences.
-            if (!empty($levelData[EducationalData::TRANSVERSAL_COMPETENCES])) {
-                $componentData['transversalCompetences']
-                    = EducationalData::getPrefLabels(
-                        $levelData[EducationalData::TRANSVERSAL_COMPETENCES],
+                    $componentData = $this->addComponentDataForType(
+                        $componentData,
+                        EducationalData::TRANSVERSAL_COMPETENCES,
+                        $levelData,
                         $langcode
                     );
-                $componentData['transversalCompetencesTitle']
-                    = 'Aipa::' . EducationalData::TRANSVERSAL_COMPETENCES;
-            }
+                    break;
 
-            // Vocational common units.
-            if (!empty($levelData[EducationalData::VOCATIONAL_COMMON_UNITS])) {
-                $componentData['vocationalCommonUnits']
-                    = EducationalData::getPrefLabels(
-                        $levelData[EducationalData::VOCATIONAL_COMMON_UNITS],
-                        $langcode
+                case EducationalLevelInterface::VOCATIONAL_EDUCATION:
+                    $componentData = $this->addComponentDataForSubjects(
+                        $componentData,
+                        EducationalData::VOCATIONAL_QUALIFICATIONS,
+                        $levelData,
+                        $langcode,
+                        $levelCodeValue
                     );
-                $componentData['vocationalCommonUnitsTitle']
-                    = 'Aipa::' . EducationalData::VOCATIONAL_COMMON_UNITS;
+                    $componentData = $this->addComponentDataForSubjects(
+                        $componentData,
+                        EducationalData::VOCATIONAL_COMMON_UNITS,
+                        $levelData,
+                        $langcode,
+                        $levelCodeValue
+                    );
+                    break;
             }
 
             if (!empty($componentData)) {
-                $componentData['sectionHeadingLevel'] = 5;
-                $levelsHtml[$levelCodeValue] = $component(
-                    '@@organisms/data/finna-educational-level-data',
-                    $componentData
-                );
+                $levelsHtml[$levelCodeValue]
+                    = $component('@@organisms/data/finna-educational-level-data', [
+                        'sectionHeadingLevel' => 5,
+                        'educationalLeveData' => $componentData,
+                    ]);
             }
         }
+
+        // Truncate educational level data there is more than one level.
         foreach ($levelsHtml as $levelCodeValue => $levelHtml) {
             if (count($levelsHtml) > 1) {
                 $html .= $component('@@molecules/containers/finna-truncate', [
@@ -306,6 +289,7 @@ class Aipa extends AbstractHelper
                 $html .= $levelHtml;
             }
         }
+
         return $html;
     }
 
@@ -320,30 +304,183 @@ class Aipa extends AbstractHelper
     {
         // Basic education levels are mapped to primary school and lower secondary
         // school levels.
-        $levelCodeValues = EducationalData::getMappedLevelCodeValues(
-            $educationalData[EducationalData::EDUCATIONAL_LEVELS] ?? []
-        );
+        $levelCodeValues
+            = $this->codeSets->getEducationalData()->getMappedLevelCodeValues(
+                $educationalData[EducationalData::EDUCATIONAL_LEVELS] ?? []
+            );
 
         // Remove basic education root level, data should be entered at lower levels.
         unset($levelCodeValues[EducationalLevelInterface::BASIC_EDUCATION]);
 
-        usort($levelCodeValues, [$this, 'sortEducationalLevels']);
+        // Sort the educational levels according to defined sort order.
+        usort(
+            $levelCodeValues,
+            function (string $a, string $b): int {
+                return array_search($a, self::EDUCATIONAL_LEVEL_SORT_ORDER)
+                    > array_search($b, self::EDUCATIONAL_LEVEL_SORT_ORDER)
+                        ? 1 : -1;
+            }
+        );
 
         return $levelCodeValues;
     }
 
     /**
-     * Sort educational levels.
+     * Add component data for subjects.
      *
-     * @param string $a Level A
-     * @param string $b Level B
+     * @param array  $componentData   Component data array to add to
+     * @param string $type            Educational data array key
+     * @param array  $educationalData Educational data from record driver
+     * @param string $langcode        Language code for the data
+     * @param string $levelCodeValue  Educational level code value
      *
-     * @return int
+     * @return array Component data array with added data, if any
      */
-    protected function sortEducationalLevels(string $a, string $b): int
-    {
-        return array_search($a, self::EDUCATIONAL_LEVEL_SORT_ORDER)
-                > array_search($b, self::EDUCATIONAL_LEVEL_SORT_ORDER)
-            ? 1 : -1;
+    protected function addComponentDataForSubjects(
+        array $componentData,
+        string $type,
+        array $educationalData,
+        string $langcode,
+        string $levelCodeValue
+    ): array {
+        $items = [];
+        foreach ($educationalData[$type] ?? [] as $subject) {
+            $subjectData = EducationalData::getEducationalSubjectData(
+                $subject,
+                $educationalData
+            );
+            $items[] = [
+                'title' => $subject->getPrefLabel($langcode),
+                'items' => $this->getComponentDataForSubject(
+                    $subjectData,
+                    $langcode,
+                    $levelCodeValue
+                ),
+            ];
+        }
+        if (!empty($items)) {
+            $componentData[] = [
+                'attributes' => [
+                    'class' => [$type],
+                ],
+                'title' => 'Aipa::' . $type,
+                'items' => $items,
+            ];
+        }
+        return $componentData;
+    }
+
+    /**
+     * Get component data for an educational subject.
+     *
+     * @param HPDOInterface $subjectData    Hierarchical educational subject data
+     * @param string        $langcode       Language code for the data
+     * @param string        $levelCodeValue Educational level code value
+     *
+     * @return array
+     */
+    protected function getComponentDataForSubject(
+        HPDOInterface $subjectData,
+        string $langcode,
+        string $levelCodeValue
+    ): array {
+        $items = [];
+        if (empty($children = $subjectData->getChildren())) {
+            return $items;
+        }
+
+        // Place children in an educational data array by type.
+        $educationalData = [];
+        foreach ($children as $proxyItem) {
+            $item = $proxyItem->getProxiedObject();
+            $educationalData[EducationalData::getKeyForInstance($item)][]
+                = $proxyItem;
+        }
+
+        // Build component data to be rendered.
+        foreach (EducationalData::EDUCATIONAL_SUBJECT_LEVEL_KEYS as $key) {
+            $subjectLevelItems = [];
+            foreach ($educationalData[$key] ?? [] as $item) {
+                $subjectLevelItems[] = [
+                    'title' => $item->getProxiedObject()->getPrefLabel($langcode),
+                    'items' => $this->getComponentDataForSubject(
+                        $item,
+                        $langcode,
+                        $levelCodeValue
+                    ),
+                ];
+            }
+            if (!empty($subjectLevelItems)) {
+                $items[] = [
+                    'title' => 'Aipa::' . $key,
+                    'items' => $subjectLevelItems,
+                ];
+            }
+        }
+        foreach (EducationalData::STUDY_DATA_KEYS as $key) {
+            if (isset($educationalData[$key])) {
+                $studyDataItems = [];
+
+                // Study data is displayed by educational level.
+                $dataByLevel = EducationalData::getStudyDataKeyedByEducationalLevel(
+                    $educationalData[$key]
+                );
+                foreach ($dataByLevel as $dataLevelCodeValue => $data) {
+                    $levelItems = [];
+                    foreach ($data as $studyData) {
+                        $levelItems[] = [
+                            'title' => $studyData->getPrefLabel($langcode),
+                        ];
+                    }
+                    if ($dataLevelCodeValue !== $levelCodeValue) {
+                        $studyDataItems[] = [
+                            'title' => 'Aipa::' . $dataLevelCodeValue,
+                            'items' => $levelItems,
+                        ];
+                    } else {
+                        $studyDataItems[] = $levelItems;
+                    }
+                }
+
+                $items[] = [
+                    'title' => 'Aipa::' . $key,
+                    'items' => $studyDataItems,
+                ];
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * Add component data of the specified type.
+     *
+     * @param array  $componentData   Component data array to add to
+     * @param string $type            Educational data array key
+     * @param array  $educationalData Educational data from record driver
+     * @param string $langcode        Language code for the data
+     *
+     * @return array Component data array with added data, if any
+     */
+    protected function addComponentDataForType(
+        array $componentData,
+        string $type,
+        array $educationalData,
+        string $langcode
+    ): array {
+        $items = [];
+        foreach ($educationalData[$type] ?? [] as $data) {
+            $items[] = [
+                'title' => $data->getPrefLabel($langcode),
+            ];
+        }
+        if (!empty($items)) {
+            $componentData[] = [
+                'attributes' => ['class' => [$type]],
+                'title' => 'Aipa::' . $type,
+                'items' => $items,
+            ];
+        }
+        return $componentData;
     }
 }
