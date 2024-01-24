@@ -66,7 +66,7 @@ finna.common = (function finnaCommon() {
     });
 
     // Set up Finna's dropdown-based sort and limit controls:
-    document.querySelectorAll('.sort-option-container .dropdown-menu a, .limit-option-container .dropdown-menu a').forEach(link => {
+    document.querySelectorAll('.search-controls .sort-option-container .dropdown-menu a, .search-controls .limit-option-container .dropdown-menu a').forEach(link => {
       if (link.dataset.ajaxPagination) {
         return;
       }
