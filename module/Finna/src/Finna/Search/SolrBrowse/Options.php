@@ -117,4 +117,15 @@ class Options extends \Finna\Search\Solr\Options
     {
         $this->browseType = $type;
     }
+
+    /**
+     * Should we load results with JavaScript?
+     *
+     * @return bool
+     */
+    public function loadResultsWithJsEnabled(): bool
+    {
+        // TODO: not currently supported
+        return false;
+    }
 }
