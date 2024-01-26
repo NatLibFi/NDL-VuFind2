@@ -7,7 +7,7 @@
   $recordLinker = $this->recordLinker($this->results);
   $coverDetails = $this->record($this->driver)->getCoverDetails('result-list', 'medium', $recordLinker->getUrl($this->driver));
   if ($img) {
-    $thumbnail = $img->render('list', ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 250, 'h' => 250]]);
+    $thumbnail = $img->render('list', ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 250, 'h' => 250]], 'Solr', ['imageClick' => 'open']);
   }
 ?>
 <div class="record-container list-view <?=$this->record($this->driver)->getContainerJsClasses()?>">
