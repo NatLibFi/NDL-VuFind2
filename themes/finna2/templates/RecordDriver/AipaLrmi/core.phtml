@@ -88,7 +88,7 @@
     <?php
       $content = trim($this->markdown()->toHtml($this->driver->getStudyObjectives() ?? ''));
       if (!empty($content)) {
-        $content = '<h4 class="study-objectives-title">' . $this->transEsc('Aipa::lrmi_study_objectives') . '</h4>' . $content;
+        $content = '<h4 class="study-objectives-title">' . $this->transEsc('Aipa::lrmi_study_objectives') . ':</h4>' . $content;
       }
     ?>
     <?php if (false !== $educationalData): ?>
