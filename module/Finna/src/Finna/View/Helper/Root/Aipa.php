@@ -222,46 +222,56 @@ class Aipa extends AbstractHelper
 
             switch ($levelCodeValue) {
                 case EducationalLevelInterface::EARLY_CHILDHOOD_EDUCATION:
-                    $componentData = $this->addComponentDataForType(
+                    $componentData = array_merge(
                         $componentData,
-                        EducationalData::LEARNING_AREAS,
-                        $levelData,
-                        $langcode
+                        $this->getComponentDataForType(
+                            EducationalData::LEARNING_AREAS,
+                            $levelData,
+                            $langcode
+                        )
                     );
                     break;
 
                 case EducationalData::PRIMARY_SCHOOL:
                 case EducationalData::LOWER_SECONDARY_SCHOOL:
                 case EducationalLevelInterface::UPPER_SECONDARY_SCHOOL:
-                    $componentData = $this->addComponentDataForSubjects(
+                    $componentData = array_merge(
                         $componentData,
-                        EducationalData::EDUCATIONAL_SUBJECTS,
-                        $levelData,
-                        $langcode,
-                        $levelCodeValue
+                        $this->getComponentDataForSubjects(
+                            EducationalData::EDUCATIONAL_SUBJECTS,
+                            $levelData,
+                            $langcode,
+                            $levelCodeValue
+                        )
                     );
-                    $componentData = $this->addComponentDataForType(
+                    $componentData = array_merge(
                         $componentData,
-                        EducationalData::TRANSVERSAL_COMPETENCES,
-                        $levelData,
-                        $langcode
+                        $this->getComponentDataForType(
+                            EducationalData::TRANSVERSAL_COMPETENCES,
+                            $levelData,
+                            $langcode
+                        )
                     );
                     break;
 
                 case EducationalLevelInterface::VOCATIONAL_EDUCATION:
-                    $componentData = $this->addComponentDataForSubjects(
+                    $componentData = array_merge(
                         $componentData,
-                        EducationalData::VOCATIONAL_QUALIFICATIONS,
-                        $levelData,
-                        $langcode,
-                        $levelCodeValue
+                        $this->getComponentDataForSubjects(
+                            EducationalData::VOCATIONAL_QUALIFICATIONS,
+                            $levelData,
+                            $langcode,
+                            $levelCodeValue
+                        )
                     );
-                    $componentData = $this->addComponentDataForSubjects(
+                    $componentData = array_merge(
                         $componentData,
-                        EducationalData::VOCATIONAL_COMMON_UNITS,
-                        $levelData,
-                        $langcode,
-                        $levelCodeValue
+                        $this->getComponentDataForSubjects(
+                            EducationalData::VOCATIONAL_COMMON_UNITS,
+                            $levelData,
+                            $langcode,
+                            $levelCodeValue
+                        )
                     );
                     break;
             }
@@ -326,23 +336,22 @@ class Aipa extends AbstractHelper
     }
 
     /**
-     * Add component data for subjects.
+     * Get component data for subjects.
      *
-     * @param array  $componentData   Component data array to add to
      * @param string $type            Educational data array key
      * @param array  $educationalData Educational data from record driver
      * @param string $langcode        Language code for the data
      * @param string $levelCodeValue  Educational level code value
      *
-     * @return array Component data array with added data, if any
+     * @return array Component data array for subjects, if any
      */
-    protected function addComponentDataForSubjects(
-        array $componentData,
+    protected function getComponentDataForSubjects(
         string $type,
         array $educationalData,
         string $langcode,
         string $levelCodeValue
     ): array {
+        $componentData = [];
         $items = [];
         foreach ($educationalData[$type] ?? [] as $subject) {
             $subjectData = EducationalData::getEducationalSubjectData(
@@ -453,21 +462,20 @@ class Aipa extends AbstractHelper
     }
 
     /**
-     * Add component data of the specified type.
+     * Get component data of the specified type.
      *
-     * @param array  $componentData   Component data array to add to
      * @param string $type            Educational data array key
      * @param array  $educationalData Educational data from record driver
      * @param string $langcode        Language code for the data
      *
-     * @return array Component data array with added data, if any
+     * @return array Component data of the specified type, if any
      */
-    protected function addComponentDataForType(
-        array $componentData,
+    protected function getComponentDataForType(
         string $type,
         array $educationalData,
         string $langcode
     ): array {
+        $componentData = [];
         $items = [];
         foreach ($educationalData[$type] ?? [] as $data) {
             $items[] = [
