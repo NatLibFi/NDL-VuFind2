@@ -50,6 +50,12 @@ CookieConsent:
           Description: CookieConsent::cookie_description_third_party_marketing_html
           Expiration: 8
           ExpirationUnit: months
+        - Name: icareus-device
+          Domain: players.icareus.com
+          ThirdParty: true
+          Description: CookieConsent::cookie_description_third_party_preferences_html
+          Expiration: 365
+          ExpirationUnit: days
       AutoClearCookies:
         - Name: '/^(yt-player-.*|GPS|VISITOR_INFO1_LIVE|PREF|__Secure-YEC|YSC|CONSENT|SOCS)$/'
     social_media:

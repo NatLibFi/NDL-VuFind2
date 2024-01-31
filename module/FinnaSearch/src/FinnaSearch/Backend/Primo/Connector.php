@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2020.
+ * Copyright (C) The National Library of Finland 2015-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -129,7 +129,11 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
                     $args['pcAvailability'] = (bool)$value;
                 }
             } else {
-                $args['filterList'][$filter][] = $value;
+                $args['filterList'][] = [
+                    'field' => $filter,
+                    'values' => (array)$value,
+                    'facetOp' => 'AND',
+                ];
             }
         }
         return parent::performSearch($institution, $terms, $args);
@@ -145,7 +149,7 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
      */
     protected function process($data, $params = [])
     {
-        $res = parent::process($data, $params);
+        $result = parent::process($data, $params);
 
         // Load API content as XML objects
         $sxe = new \SimpleXmlElement($data);
@@ -172,29 +176,74 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
         for ($i = 0; $i < count($docset); $i++) {
             $doc = $docset[$i];
 
+            // Due to a bug in the primo API, the first result has
+            //   a namespace (prim:) while the rest of the results do not.
+            //   Those child elements do not get added to $doc.
+            //   If the bib parent element (PrimoNMBib) is missing for a $doc,
+            //   that means it has the prim namespace prefix.
+            // So first set the right prefix
+            $prefix = $doc;
+            if ($doc->PrimoNMBib != 'true' && isset($namespaces['prim'])) {
+                // Use the namespace prefix to get those missing child
+                //   elements out of $doc.
+                $prefix = $doc->children($namespaces['prim']);
+            }
+
             // Set OpenURL
             $sear = $doc->children($namespaces['sear']);
             if ($openUrl = $this->getOpenUrl($sear)) {
-                $res['documents'][$i]['url'] = $openUrl;
+                $result['documents'][$i]['url'] = $openUrl;
             } else {
-                unset($res['documents'][$i]['url']);
+                unset($result['documents'][$i]['url']);
             }
 
             // Set any resource url
             // Get the URL, which has a separate namespace
-            $sear = $doc->children($namespaces['sear']);
-            foreach ((array)$sear->LINKS as $type => $urls) {
-                foreach ((array)$urls as $url) {
-                    $res['documents'][$i]['resource_urls'][$type] = (string)$url;
+            foreach ((array)($prefix->PrimoNMBib->record->links ?? []) as $type => $urls) {
+                foreach ((array)$urls as $urlField) {
+                    $parts = explode('$$', (string)$urlField);
+                    $url = '';
+                    $label = '';
+                    foreach ($parts as $part) {
+                        if (str_starts_with($part, 'U')) {
+                            $url = substr($part, 1);
+                        } elseif (str_starts_with($part, 'E')) {
+                            $label = substr($part, 1);
+                        }
+                    }
+                    if (!$url || !parse_url($url, PHP_URL_HOST)) {
+                        continue;
+                    }
+                    $result['documents'][$i]['resource_urls'][$type][] = [
+                        'url' => $url,
+                        'label' => $label,
+                    ];
                 }
             }
 
+            $result['documents'][$i]['date'] = [];
+            foreach ($prefix->PrimoNMBib->record->facets->creationdate ?? [] as $date) {
+                $result['documents'][$i]['date'][] = (string)$date;
+            }
+            $result['documents'][$i]['open_access']
+                = ((string)$prefix->PrimoNMBib->record->display->oa === 'free_for_read');
+            $result['documents'][$i]['sourceid'] = [];
+            foreach ($prefix->PrimoNMBib->control->sourceid ?? [] as $sourceid) {
+                $result['documents'][$i]['sourceid'][] = (string)$sourceid;
+            }
+            $result['documents'][$i]['doi'] = [];
+            foreach ($prefix->PrimoNMBib->record->addata->doi ?? [] as $doi) {
+                $result['documents'][$i]['doi'][] = (string)$doi;
+            }
+            $result['documents'][$i]['peer_reviewed']
+                = ((string)$prefix->PrimoNMBib->record->display->lds50 ?? '') === 'peer_reviewed';
+
             // Prefix records id's
-            $res['documents'][$i]['recordid']
-                = 'pci.' . $res['documents'][$i]['recordid'];
+            $result['documents'][$i]['recordid']
+                = 'pci.' . $result['documents'][$i]['recordid'];
         }
 
-        return $res;
+        return $result;
     }
 
     /**

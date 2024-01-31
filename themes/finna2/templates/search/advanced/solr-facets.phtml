@@ -1,0 +1,54 @@
+<!-- START of: finna - search/advanced/solr-facets.phtml -->
+<?php if (!empty($this->facetList) || !empty($this->checkboxFacets)): ?>
+<?php
+  $mapVisible = $this->config()->isGeographicMapVisible();
+  if (isset($this->saved) && is_object($this->saved)) {
+    $searchFilters = $this->saved->getParams()->getFilterList(true);
+    $checkboxFilters = $this->saved->getParams()->getCheckboxFacets();
+    $usedCheckboxFilters = [];
+    foreach ($checkboxFilters as $filter) {
+        if ($filter['selected']) {
+            array_push($usedCheckboxFilters, $filter);
+        }
+    }
+    // Remove date range filter (search_daterange_mv) and geographic filters so that
+    // they don't get included in the list of active filters
+    $searchFilters = $this->saved->getParams()->removeDateRangeFilter($searchFilters);
+    $searchFilters = $this->saved->getParams()->removeGeographicFilters($searchFilters);
+    $hiddenFilters = $this->saved->getParams()->getHiddenFilters();
+  }
+?>
+  <div>
+    <h3><?=$this->transEsc('Limit To')?></h3>
+  </div>
+  <div>
+    <div class="option-container">
+      <?php if (!empty($this->checkboxFacets)): ?>
+        <div class="checkboxFilter">
+          <?=$this->render('search/advanced/checkbox-filters.phtml')?>
+        </div>
+      <?php endif; ?>
+      <fieldset class="well limit-to facets">
+        <legend class="sr-only"><?=$this->transEsc('Limit To')?></legend>
+        <div class="facet-container">
+          <?php foreach ($this->facetList as $field => $list): ?>
+            <?= $this->render('search/advanced/multiselect.phtml', ['field' => $field, 'list' => $list, 'hierarchicalFacets' => $this->hierarchicalFacets]); ?>
+          <?php endforeach; ?>
+        </div>
+        <div class="information information-multiselect"><p class="information-text"><?=$this->transEsc('advanced_search_information_text_facets')?></p></div>
+      </fieldset>
+      <?php if (!empty($this->daterange)): ?>
+        <div class="ranges-container well limit-to">
+          <?=$this->render('search/advanced/ranges.phtml', ['searchClassId' => $this->searchClassId, 'ranges' => $this->daterange])?>
+        </div>
+      <?php endif; ?>
+    </div>
+    <?php if (!empty($searchFilters) || !empty($usedCheckboxFilters)): ?>
+      <h4><?=$this->transEsc('adv_search_filters')?></h4>
+      <fieldset class="well limit-to">
+        <?=$this->render('search/advanced/filters.phtml', ['usedCheckboxFilters' => $usedCheckboxFilters, 'searchFilters' => $searchFilters])?>
+      </fieldset>
+    <?php endif; ?>
+  </div>
+<?php endif; ?>
+<!-- END of: finna - search/advanced/solr-facets.phtml -->

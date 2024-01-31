@@ -293,6 +293,12 @@
           <resourceRepresentation type="provided_text">
             <linkResource formatResource="docx">https://linkkiDocx.fi</linkResource>
           </resourceRepresentation>
+          <rightsResource>
+            <rightsType>
+              <conceptID type="copyright">CC BY 4.0</conceptID>
+              <term lang="fi">Tekstitiedoston tarkempi käyttöoikeuskuvaus</term>
+            </rightsType>
+          </rightsResource>
         </resourceSet>
         <resourceSet>
           <resourceID type="ID">607644</resourceID>

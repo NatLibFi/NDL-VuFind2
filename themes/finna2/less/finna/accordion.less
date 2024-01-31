@@ -90,8 +90,8 @@
     }
   }
 }
-// RSS-feed accordions
 
+// RSS-feed accordions
 .feed-accordions {
   .tab-content {
     margin-bottom: 0;
@@ -162,6 +162,25 @@
           margin: 10px 0;
         }
       }
+    }
+  }
+}
+
+// Show or hide feed tabs mobile accordion
+.feed-tabs.mobile-accordion-hide, .linked-events-tabs.mobile-accordion-hide {
+  .feed-accordions-title, .accordion {
+      display: none;
+  }
+  .events-tabs {
+      @media (max-width: @screen-sm-max) {
+          margin-bottom: 0;
+      }
+  }
+}
+.feed-tabs.mobile-accordion-show, .linked-events-tabs.mobile-accordion-show {
+  .feed-tabs-container {
+    @media (max-width: @screen-sm-max) {
+      display: none;
     }
   }
 }

@@ -12,72 +12,82 @@
     $user = $this->auth()->isLoggedIn();
 
     $totalCount = $this->paginator ? $this->paginator->getTotalItemCount() : count($this->transactions ?? []);
+
+    $sortList = $this->sortList;
 ?>
 
 <!-- Leftside navigationbar -->
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'checkedout']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
-  <div class="my-research-content">
-    <div class="myresearch-grid-list">
-      <?php if (!$this->translationEmpty('checked_out_instructions_html')): ?><p class="no-content-message"><?=$this->translate('checked_out_instructions_html')?></p><?php endif; ?>
-      <?=$this->flashmessages()?>
-      <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
-      <div class="useraccount-row">
-        <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
-      </div>
-      <div class="useraccount-header">
-        <h2><?=$this->transEsc('Your Checked Out Items')?> (<?=$totalCount?>)</h2>
-      </div>
-      <?php if (isset($this->noSupport)): ?>
-        <?php if ($user->getLibraryCards()->count() > 1): ?>
-          <div class="support-notice">
-            <p><?=$this->transEsc('no_ils_support_description') ?></p>
+  <div class="my-research-content myresearch-grid-list">
+    <?php if (!$this->translationEmpty('checked_out_instructions_html')): ?><p class="no-content-message"><?=$this->translate('checked_out_instructions_html')?></p><?php endif; ?>
+    <?=$this->flashmessages()?>
+    <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
+    <div class="useraccount-row">
+      <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
+    </div>
+    <div class="useraccount-header">
+      <h2><?=$this->transEsc('Your Checked Out Items')?> (<?=$totalCount?>)</h2>
+    </div>
+    <?php if (isset($this->noSupport)): ?>
+      <?php if ($user->getLibraryCards()->count() > 1): ?>
+        <div class="support-notice">
+          <p><?=$this->transEsc('no_ils_support_description') ?></p>
+        </div>
+      <?php endif; ?>
+    <?php else: ?>
+      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/checkedout-pre-list')): ?>
+        <div class="checkedout-pre-list"><?=$this->render($template)?></div>
+      <?php endif; ?>
+      <?php if ($this->renewForm): ?>
+        <div class="sort-col sort-col-mobile">
+          <?php if ($sortList): ?>
+            <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList]); ?>
+          <?php endif; ?>
+        </div>
+      <?php endif; ?>
+      <?php if (!empty($this->transactions)): ?>
+        <?php if ($paginator): ?>
+          <div class="pagination-container">
+            <?=$paginator ? $this->paginationControl($paginator, 'Sliding', 'Helpers/pagination-simple.phtml', ['params' => $params]) : ''?>
           </div>
         <?php endif; ?>
-      <?php else: ?>
-        <?php if ($template = $this->content()->findTemplateForLng('content/Additions/checkedout-pre-list')): ?>
-          <div class="checkedout-pre-list"><?=$this->render($template)?></div>
-        <?php endif; ?>
-        <?php if (!empty($this->transactions)): ?>
-          <?php if ($paginator): ?>
-            <div class="pagination-container">
-              <?=$paginator ? $this->paginationControl($paginator, 'Sliding', 'Helpers/pagination-simple.phtml', ['params' => $params]) : ''?>
-            </div>
-          <?php endif; ?>
 
-          <?php if ($this->renewForm): ?>
-            <form name="renewals" method="post" id="renewals" data-clear-account-cache="checkedOut" data-disable-on-submit>
-              <input type="hidden" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>" name="csrf">
-              <input type="hidden" id="submitType" name="renewSelected" value="1">
-              <table class="myresearch-table" role="presentation" aria-label="<?=$this->transEscAttr('Actions');?>">
-                <tr class="toolbar">
-                  <td class="text-left checkbox-col">
+        <?php if ($this->renewForm): ?>
+          <div class="myaccount-sticky-header"></div>
+          <div class="toolbar-sticky-container">
+          <form name="renewals" method="post" id="renewals" data-clear-account-cache="checkedOut" data-disable-on-submit>
+            <input type="hidden" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>" name="csrf">
+            <input type="hidden" id="submitType" name="renewSelected" value="1">
+            <div class="toolbar-sticky">
+              <div class="myresearch-table">
+                <div class="toolbar">
+                  <div class="checkbox-col">
                     <div class="checkboxFilter mylist-select-all">
                       <div class="checkbox">
                         <label>
-                          <input type="checkbox" name="selectAll" class="checkbox-select-all">
-                          <?=$this->transEsc($this->ilsPaging ? 'select_all_on_page' : 'Select All')?>
+                          <input type="checkbox" name="selectAll" class="checkbox-select-all" aria-label="<?=$this->transEscAttr('Select All');?>">
                           <span class="selected"></span> <span class="loans-renewal-available"></span>
                         </label>
                       </div>
                     </div>
-                  </td>
-                  <td>
-                    <div class="renew-button-col">
+                  </div>
+                  <div class="list-functions">
+                    <div class="toolbar-button-col">
                       <div class="btn-group">
-                        <input type="submit" class="btn btn-primary dropdown-toggle" id="renewSelected" name="renewSelected" value="<?=$this->transEscAttr('renew_selected')?>" data-toggle="dropdown" data-lightbox-ignore>
-                        <ul class="dropdown-menu useraccount-confirm">
-                          <li class="disabled"><a><?=$this->transEsc('confirm_renew_selected_text')?></a></li>
+                        <input type="submit" class="btn btn-primary btn-finna-toolbar dropdown-toggle" id="renewSelected" name="renewSelected" value="<?=$this->transEscAttr('renew_selected')?>" disabled="disabled" data-toggle="dropdown" data-lightbox-ignore>
+                        <ul class="dropdown-menu useraccount-confirm" role="presentation">
+                          <li class="disabled"><span class="prompt-text"><?=$this->transEsc('confirm_renew_selected_text')?></span></li>
                           <li><a href="#" id="confirm_renew_selected_yes"><?=$this->transEsc('confirm_dialog_yes')?></a></li>
                           <li><a href="#" class="confirm_renew_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
                         </ul>
                       </div>
                       <?php if ($renewAll): ?>
                         <div class="btn-group">
-                          <input type="submit" class="btn btn-primary dropdown-toggle" id="renewAll" name="renewAll" value="<?=$this->transEscAttr('renew_all')?>" data-toggle="dropdown" data-lightbox-ignore>
-                          <ul class="dropdown-menu useraccount-confirm">
-                            <li class="disabled"><a><?=$this->transEsc('confirm_renew_all_text')?></a></li>
+                          <input type="submit" class="btn btn-primary btn-finna-toolbar dropdown-toggle" id="renewAll" name="renewAll" value="<?=$this->transEscAttr('renew_all')?>" data-toggle="dropdown" data-lightbox-ignore>
+                          <ul class="dropdown-menu useraccount-confirm" role="presentation">
+                            <li class="disabled"><span class="prompt-text"><?=$this->transEsc('confirm_renew_all_text')?></span></li>
                             <li><a href="#" id="confirm_renew_all_yes"><?=$this->transEsc('confirm_dialog_yes')?></a></li>
                             <li><a href="#" class="confirm_renew_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
                           </ul>
@@ -85,25 +95,28 @@
                       <?php endif; ?>
                     </div>
                     <div class="sort-col">
-                      <?php if ($this->sortList): ?>
-                        <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $this->sortList]); ?>
+                      <?php if ($sortList): ?>
+                        <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList]); ?>
                       <?php endif; ?>
                     </div>
-                  </td>
-                </tr>
-              </table>
-          <?php else: ?>
-            <div class="myresearch-table" aria-label="<?=$this->transEscAttr('Your Checked Out Items')?>">
-              <div class="toolbar">
-                <div class="myresearch-notification"><?=$this->transEsc('cannot renew any checked out items')?></div>
-                <div class="text-right">
-                  <?php if ($this->sortList): ?>
-                    <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $this->sortList]); ?>
+                  </div>
+                </div>
+              </div>
+            </div>
+        <?php else: ?>
+          <div class="myresearch-table" aria-label="<?=$this->transEscAttr('Your Checked Out Items')?>">
+            <div class="toolbar no-list-functions">
+              <div class="myresearch-notification"><?=$this->transEsc('cannot renew any checked out items')?></div>
+              <div class="text-right">
+                <div class="sort-col">
+                  <?php if ($sortList): ?>
+                    <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList]); ?>
                   <?php endif; ?>
                 </div>
               </div>
             </div>
-          <?php endif; ?>
+          </div>
+        <?php endif; ?>
 
           <?php foreach ($hiddenTransactions as $ilsDetails): ?>
             <?php if (isset($this->renewResult[$ilsDetails['item_id']])): ?>
@@ -131,71 +144,71 @@
                 <td class="text-left checkbox-col" headers="label-select-column" aria-labelledby="label-select-column">
                   <?php if ($this->renewForm): ?>
                     <?php if (isset($ilsDetails['renewable']) && $ilsDetails['renewable'] && isset($ilsDetails['renew_details'])): ?>
-                      <?php $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $ilsDetails['renew_details']); ?>
-                      <div class="checkboxFilter">
-                        <div class="checkbox">
-                          <label>
-                            <span class="sr-only"><?=$this->transEsc('Select');?></span>
-                            <input class="checkbox-select-item" type="checkbox" name="renewSelectedIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['renew_details'])?>" id="checkbox_<?=$safeId?>">
-                          </label>
-                        </div>
+                    <?php $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $ilsDetails['renew_details']); ?>
+                    <div class="checkboxFilter">
+                      <div class="checkbox">
+                        <label>
+                          <span class="sr-only"><?=$this->transEsc('Select');?></span>
+                          <input class="checkbox-select-item" type="checkbox" name="renewSelectedIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['renew_details'])?>" id="checkbox_<?=$safeId?>">
+                        </label>
                       </div>
-                      <input type="hidden" name="selectAllIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['renew_details'])?>">
-                      <input type="hidden" name="renewAllIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['renew_details'])?>">
-                    <?php else: ?>
-                      <span class="no-checkbox"><?=$this->transEsc('cannot renew');?></span>
+                    </div>
+                    <input type="hidden" name="selectAllIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['renew_details'])?>">
+                    <input type="hidden" name="renewAllIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['renew_details'])?>">
+                  <?php else: ?>
+                    <span class="no-checkbox"><?=$this->transEsc('cannot renew');?></span>
+                  <?php endif; ?>
+                <?php endif; ?>
+              </td>
+              <td class="text-center hidden-xs" aria-hidden="true">
+                <div class="cover-image">
+                  <?php if ($summThumb = $this->record($resource)->getThumbnail()): ?>
+                    <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->escapeHtmlAttr('Cover Image')?>">
+                  <?php else: ?>
+                    <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->escapeHtmlAttr('No Cover Image')?>">
+                  <?php endif; ?>
+                </div>
+              </td>
+              <td class="checkedout-status-information" headers="label-title-column" aria-labelledby="label-title-column">
+                <div class="title-column text-left">
+                  <?=$this->record($resource)->renderTemplate('account-entry.phtml', ['driver' => $resource, 'displayItemBarcode' => $this->displayItemBarcode])?>
+                </div>
+                <div class="status-column">
+                  <?php if (!empty($ilsDetails['onsite'])): ?>
+                    <div class="alert alert-info"><?=$this->transEsc('onsite_checkout') ?></div>
+                  <?php endif; ?>
+                  <?php $showStatus = true; ?>
+                  <?php if (isset($this->renewResult[$ilsDetails['item_id']])): ?>
+                    <?php $renewDetails = $this->renewResult[$ilsDetails['item_id']]; ?>
+                    <?php if (isset($renewDetails['success']) && $renewDetails['success']): ?>
+                      <?php $showStatus = false; ?>
                     <?php endif; ?>
                   <?php endif; ?>
-                </td>
-                <td class="text-center hidden-xs" aria-hidden="true">
-                  <div class="cover-image">
-                    <?php if ($summThumb = $this->record($resource)->getThumbnail()): ?>
-                      <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->escapeHtmlAttr('Cover Image')?>">
-                    <?php else: ?>
-                      <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->escapeHtmlAttr('No Cover Image')?>">
-                    <?php endif; ?>
-                  </div>
-                </td>
-                <td class="checkedout-status-information" headers="label-title-column" aria-labelledby="label-title-column">
-                  <div class="title-column text-left">
-                    <?=$this->record($resource)->renderTemplate('account-entry.phtml', ['driver' => $resource, 'displayItemBarcode' => $this->displayItemBarcode])?>
-                  </div>
-                  <div class="status-column">
-                    <?php if (!empty($ilsDetails['onsite'])): ?>
-                      <div class="alert alert-info"><?=$this->transEsc('onsite_checkout') ?></div>
-                    <?php endif; ?>
-                    <?php $showStatus = true; ?>
-                    <?php if (isset($this->renewResult[$ilsDetails['item_id']])): ?>
-                      <?php $renewDetails = $this->renewResult[$ilsDetails['item_id']]; ?>
-                      <?php if (isset($renewDetails['success']) && $renewDetails['success']): ?>
-                        <?php $showStatus = false; ?>
-                      <?php endif; ?>
-                    <?php endif; ?>
-                    <?php if ($showStatus && isset($ilsDetails['message']) && !empty($ilsDetails['message'])): ?>
-                      <div class="alert alert-info"><?=$this->translationEmpty('status_' . $ilsDetails['message']) ? $this->transEsc($ilsDetails['message']) : $this->transEsc('status_' . $ilsDetails['message']) ?></div>
-                    <?php endif; ?>
-                    <?php if (isset($ilsDetails['renewable']) && $ilsDetails['renewable'] && isset($ilsDetails['renew_link'])): ?>
-                      <a href="<?=$this->escapeHtmlAttr($ilsDetails['renew_link'])?>"><?=$this->transEsc('renew_item')?></a>
-                    <?php endif; ?>
-                    <?php if (!empty($ilsDetails['institution_name']) && (empty($ilsDetails['borrowingLocation']) || $ilsDetails['institution_name'] != $ilsDetails['borrowingLocation'])): ?>
-                      <strong><?=$this->transEscWithPrefix('location_', $ilsDetails['institution_name'])?></strong>
-                      <br>
-                    <?php endif; ?>
+                  <?php if ($showStatus && isset($ilsDetails['message']) && !empty($ilsDetails['message'])): ?>
+                    <div class="alert alert-info"><?=$this->translationEmpty('status_' . $ilsDetails['message']) ? $this->transEsc($ilsDetails['message']) : $this->transEsc('status_' . $ilsDetails['message']) ?></div>
+                  <?php endif; ?>
+                  <?php if (isset($ilsDetails['renewable']) && $ilsDetails['renewable'] && isset($ilsDetails['renew_link'])): ?>
+                    <a href="<?=$this->escapeHtmlAttr($ilsDetails['renew_link'])?>"><?=$this->transEsc('renew_item')?></a>
+                  <?php endif; ?>
+                  <?php if (!empty($ilsDetails['institution_name']) && (empty($ilsDetails['borrowingLocation']) || $ilsDetails['institution_name'] != $ilsDetails['borrowingLocation'])): ?>
+                    <strong><?=$this->transEscWithPrefix('location_', $ilsDetails['institution_name'])?></strong>
+                    <br>
+                  <?php endif; ?>
 
-                    <?php if (!empty($ilsDetails['checkoutDate'])): ?>
-                      <?=$this->transEsc('Checked Out')?>: <?=$this->escapeHtml($ilsDetails['checkoutDate'])?><?php if (isset($ilsDetails['checkoutTime'])): ?> <span class="checkout-time"><?=$this->escapeHtml($ilsDetails['checkoutTime'])?><?php endif; ?></span>
-                      <br>
-                    <?php endif; ?>
+                  <?php if (!empty($ilsDetails['checkoutDate'])): ?>
+                    <?=$this->transEsc('Checked Out')?>: <?=$this->escapeHtml($ilsDetails['checkoutDate'])?><?php if (isset($ilsDetails['checkoutTime'])): ?> <span class="checkout-time"><?=$this->escapeHtml($ilsDetails['checkoutTime'])?><?php endif; ?></span>
+                    <br>
+                  <?php endif; ?>
 
-                    <?php if (!empty($ilsDetails['borrowingLocation'])): ?>
-                      <strong><?=$this->transEsc('Borrowing Location')?>:</strong> <?=$this->transEscWithPrefix('location_', $ilsDetails['borrowingLocation'])?>
-                      <br>
-                    <?php endif; ?>
+                  <?php if (!empty($ilsDetails['borrowingLocation'])): ?>
+                    <strong><?=$this->transEsc('Borrowing Location')?>:</strong> <?=$this->transEscWithPrefix('location_', $ilsDetails['borrowingLocation'])?>
+                    <br>
+                  <?php endif; ?>
 
-                    <?php if (!empty($ilsDetails['materialType'])): ?>
-                      <strong><?=$this->transEsc('Material Type')?>:</strong> <?=$this->transEsc($ilsDetails['materialType'])?>
-                      <br>
-                    <?php endif; ?>
+                  <?php if (!empty($ilsDetails['materialType'])): ?>
+                    <strong><?=$this->transEsc('Material Type')?>:</strong> <?=$this->transEsc($ilsDetails['materialType'])?>
+                    <br>
+                  <?php endif; ?>
 
                     <?php if (isset($ilsDetails['renew'])): ?>
                       <?php if (isset($ilsDetails['renewLimit']) && $ilsDetails['renewLimit'] >= $ilsDetails['renew']): ?>
@@ -216,7 +229,7 @@
                         <div class="alert alert-success"><?=$this->transEsc('renew_success')?></div>
                       <?php else: ?>
                         <strong><?=$this->transEsc('Due Date')?>: <?=$this->escapeHtml($ilsDetails['duedate'])?><?php if (isset($ilsDetails['dueTime'])): ?> <span class="due-time"><?=$this->escapeHtml($ilsDetails['dueTime'])?></span><?php endif; ?></strong>
-                        <div class="alert alert-danger"><?=rtrim($this->transEsc('renew_fail'), '.')?><?php if (isset($renewDetails['sysMessage'])): ?>: <?=$this->transEsc($renewDetails['sysMessage'])?><?php endif; ?></div>
+                        <div class="alert alert-danger"><?=rtrim($this->transEsc('renew_fail'), '.')?><?php if (isset($renewDetails['sysMessage'])): ?>: <?=$this->escapeHtml($renewDetails['sysMessage'])?><?php endif; ?></div>
                       <?php endif; ?>
                     <?php else: ?>
                       <strong><?=$this->transEsc('Due Date')?>: <?=$this->escapeHtml($ilsDetails['duedate'])?><?php if (isset($ilsDetails['dueTime'])): ?> <span class="due-time"><?=$this->escapeHtml($ilsDetails['dueTime'])?></span><?php endif; ?></strong>
@@ -233,47 +246,18 @@
               </tr>
             <?php endforeach; ?>
             </table>
-            <?php if ($this->renewForm): ?>
-              <?php if ($totalCount > 5): ?>
-                <table class="myresearch-table bottom">
-                  <tr class="toolbar bottom">
-                    <td>
-                      <div class="checkboxFilter mylist-select-all">
-                        <div class="checkbox">
-                          <label>
-                            <input type="checkbox" name="selectAll" class="checkbox-select-all">
-                            <?=$this->transEsc($this->ilsPaging ? 'select_all_on_page' : 'Select All')?>
-                          </label>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="renew-button-col">
-                        <input type="submit" class="btn btn-primary renew-button" name="renewSelected" value="<?=$this->transEscAttr('renew_selected')?>">
-                        <?php if ($renewAll): ?>
-                          <input type="submit" class="btn btn-primary renew-button" name="renewAll" value="<?=$this->transEscAttr('renew_all')?>">
-                        <?php endif; ?>
-                      </div>
-                      <div class="sort-col">
-                        <span class="myresearch-count"><?=$this->transEsc('total_borrowed_items', ['%%count%%' => count($this->transactions) + count($this->hiddenTransactions)]);?></span>
-                      </div>
-                    </td>
-                  </tr>
-                </table>
-              <?php endif;?>
             </form>
-          <?php endif; ?>
           <?php if ($template = $this->content()->findTemplateForLng('content/Additions/checkedout-post-list')): ?>
             <div class="checkedout-post-list"><?=$this->render($template)?></div>
           <?php endif; ?>
           <?=$paginator ? $this->paginationControl($paginator, 'Sliding', 'Helpers/pagination.phtml', ['params' => $params]) : ''?>
-        <?php else: ?>
-          <div class="useraccount-header">
-            <h3><?=$this->transEsc('You do not have any items checked out')?>.</h3>
-          </div>
-        <?php endif; ?>
+        </div>
+      <?php else: ?>
+        <div class="useraccount-header">
+          <h3><?=$this->transEsc('You do not have any items checked out')?>.</h3>
+        </div>
       <?php endif; ?>
-    </div>
+    <?php endif; ?>
   </div>
 </div>
 

@@ -4,6 +4,7 @@
   $clickableLink = !$clickableElement;
   $hasIcon = !empty($item['icon']['name']);
   $hasImg = !empty($item['image']['url']);
+  $noText = empty($item['text']);
 ?>
 <?php if ($hasIcon && $hasImg): ?>
   <?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon'], 'wrapper' => true]);?>
@@ -27,7 +28,7 @@
       </p>
     </div>
   <?php endif; ?>
-  <?php if (!empty($item['text'])): ?>
+  <?php if (!$noText): ?>
     <div class="sr-only">
       <p><?=$this->escapeHtml($item['text'])?></p>
       <?php if ($clickableLink): ?>
@@ -35,7 +36,7 @@
       <?php endif; ?>
     </div>
   <?php endif; ?>
-  <div class="carousel-text" aria-hidden="true">
+  <div class="carousel-text <?php if ($noText): ?>no-text<?php endif; ?>" aria-hidden="true">
     <?php if (!empty($item['title'])): ?>
       <p class="carousel-hover-title"><?=$this->escapeHtml($this->truncate($item['title'], 70))?></p>
     <?php endif; ?>

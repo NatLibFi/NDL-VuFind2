@@ -32,7 +32,8 @@ namespace Finna\RecordDriver\Feature;
 
 use VuFind\RecordDriver\Feature\VersionAwareInterface;
 use VuFindSearch\Command\RetrieveCommand;
-use VuFindSearch\Command\WorkExpressionsCommand;
+use VuFindSearch\Command\SearchCommand;
+use VuFindSearch\Query\WorkKeysQuery;
 
 use function in_array;
 use function intval;
@@ -1239,14 +1240,11 @@ trait SolrFinnaTrait
                 return false;
             }
 
-            $params = new \VuFindSearch\ParamBag();
-            $params->add('rows', 0);
-            $this->addVersionsFilters($params);
-            $command = new WorkExpressionsCommand(
+            $command = new SearchCommand(
                 $this->getSourceIdentifier(),
-                $this->getUniqueID(),
-                $workKeys,
-                $params
+                new WorkKeysQuery($this->getUniqueID(), false, $workKeys),
+                0,
+                0
             );
             $results = $this->searchService->invoke($command)->getResult();
             $this->otherVersionsCount = $results->getTotal();
@@ -1278,17 +1276,15 @@ trait SolrFinnaTrait
 
         if (!isset($this->otherVersions)) {
             $params = new \VuFindSearch\ParamBag();
-            $params->add('rows', $count);
-            $params->add('start', $offset);
             $this->addVersionsFilters($params);
-            $command = new WorkExpressionsCommand(
+            $command = new SearchCommand(
                 $this->getSourceIdentifier(),
-                $includeSelf ? '' : $this->getUniqueID(),
-                $workKeys,
+                new WorkKeysQuery($this->getUniqueID(), $includeSelf, $workKeys),
+                $offset,
+                $count,
                 $params
             );
-            $this->otherVersions = $this->searchService->invoke($command)
-                ->getResult();
+            $this->otherVersions = $this->searchService->invoke($command)->getResult();
         }
         return $this->otherVersions;
     }

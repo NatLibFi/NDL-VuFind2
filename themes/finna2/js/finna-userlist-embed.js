@@ -44,16 +44,6 @@ finna.userListEmbed = (function userListEmbed() {
 
               finna.myList.init();
               finna.layout.initCondensedList(resultsContainer);
-              finna.layout.initTruncate();
-              finna.layout.initImagePaginators();
-              finna.openUrl.initLinks(resultsContainer);
-              VuFind.itemStatuses.init(resultsContainer);
-              finna.itemStatus.initDedupRecordSelection(resultsContainer);
-              VuFind.recordVersions.init(resultsContainer);
-              VuFind.lightbox.bind(resultsContainer);
-              VuFind.cart.init(resultsContainer);
-              $.fn.finnaPopup.reIndex();
-              VuFind.saveStatuses.init(resultsContainer);
             })
             .fail(function onLoadListFail() {
               btn.show();

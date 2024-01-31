@@ -87,12 +87,11 @@ trait ViewPathTrait
                 isset($this->datasourceConfig)
                 && isset($this->datasourceConfig[$institution]['mainView'])
             ) {
-                [$institution, $view]
-                    = explode(
-                        '/',
-                        $this->datasourceConfig[$institution]['mainView'],
-                        2
-                    );
+                $parts = explode('/', $this->datasourceConfig[$institution]['mainView'], 2);
+                $institution = $parts[0];
+                if (isset($parts[1])) {
+                    $view = $parts[1];
+                }
             }
         }
         $path = "{$this->viewBaseDir}/$institution/$view";

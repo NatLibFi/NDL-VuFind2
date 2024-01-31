@@ -17,6 +17,13 @@
     <unitdate label="Ajallinen kattavuus" normal="1600-01-01/1610-01-01"></unitdate>
     <unittitle label="Reinius Theodor S 3:b) 1" normal="Reinius Theodor S 3:b) 1" lang="fin">Reinius Theodor S 3:b) 1</unittitle>
 
+    <unitdate normal="1923-XX-XX">1923</unitdate>
+    <unitdate normal="1925-XX-XX/XXXX-XX-XX">1925</unitdate>
+
+    <physdesc lang="sv">Hyllmeter ordnat 0.96 hm</physdesc>
+    <physdesc lang="fi">Hyllymetriä järjestetty 0.96 hm</physdesc>
+    <physdesc lang="fi">Koteloita 5</physdesc>
+
   </did>
   <relatedmaterial>
     <p lang="fi">
@@ -52,6 +59,23 @@
     </name>
     <name relator="Tuntematon rooli">
       <part lang="fin">Tuovi Tuntematon</part>
-    </name> 
+    </name>
+    <name relator="Aihe">
+      <part localtype="Ensisijainen nimi" lang="fin">Anssi Aihe</part>
+    </name>
+    <subject relator="aihe" identifier="EAC_102486375">
+      <part localtype="Ensisijainen nimi" lang="fin">Manner, Eeva-Liisa</part>
+      <part localtype="Varianttinimi" lang="fin">September, Anna</part>
+    </subject>
+    <subject identifier="http://www.yso.fi/onto/yso/p900" lang="fin" relator="aihe" source="YSO">
+      <part>fysiikka</part>
+    </subject>
+    <subject>
+      <part lang="fin">Elintarviketeollisuus</part>
+      <part lang="fin">Myllytuotteiden valmistus</part>
+    </subject>
+    <subject relator="asiasana" source="KOKO" identifier="http://www.yso.fi/onto/koko/p9492" lang="eng">
+      <part>writing contests</part>
+    </subject>
   </controlaccess>
 </c02>

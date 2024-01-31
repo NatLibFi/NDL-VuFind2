@@ -73,67 +73,6 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
     }
 
     /**
-     * Filter hierarchical facets
-     *
-     * @param array $facets         Facet list
-     * @param array $filters        Facet filters
-     * @param array $excludeFilters Exclusion filters
-     *
-     * @return array
-     */
-    public function filterFacets($facets, $filters, $excludeFilters)
-    {
-        if (!empty($filters)) {
-            foreach ($facets as $key => &$facet) {
-                $value = $facet['value'];
-                [$level] = explode('/', $value);
-                $match = false;
-                $levelSpecified = false;
-                foreach ($filters as $filterItem) {
-                    [$filterLevel] = explode('/', $filterItem);
-                    if ($level == $filterLevel) {
-                        $levelSpecified = true;
-                    }
-                    if (strncmp($value, $filterItem, strlen($filterItem)) == 0) {
-                        $match = true;
-                    }
-                }
-                if (!$match && $levelSpecified) {
-                    unset($facets[$key]);
-                } elseif (!empty($facet['children'])) {
-                    $facet['children'] = $this->filterFacets(
-                        $facet['children'],
-                        $filters,
-                        $excludeFilters
-                    );
-                }
-            }
-        }
-
-        if (!empty($excludeFilters)) {
-            foreach ($facets as $key => &$facet) {
-                $value = $facet['value'];
-                $match = false;
-                foreach ($excludeFilters as $filterItem) {
-                    if (strncmp($value, $filterItem, strlen($filterItem)) == 0) {
-                        unset($facets[$key]);
-                        continue 2;
-                    }
-                }
-                if (!empty($facet['children'])) {
-                    $facet['children'] = $this->filterFacets(
-                        $facet['children'],
-                        $filters,
-                        $excludeFilters
-                    );
-                }
-            }
-        }
-
-        return array_values($facets);
-    }
-
-    /**
      * Check if a filter value is an ancestor of the given facet item
      *
      * @param array  $item   Facet item
@@ -237,7 +176,7 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
         if (!isset($urlParts[1])) {
             return $item['href'];
         }
-        parse_str(htmlspecialchars_decode($urlParts[1]), $params);
+        parse_str($urlParts[1], $params);
 
         if (!isset($params['filter'])) {
             return $item['href'];
@@ -256,7 +195,7 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
             $newFilters[] = $filter;
         }
         $params['filter'] = $newFilters;
-        return $urlParts[0] . '?' . htmlspecialchars(http_build_query($params));
+        return $urlParts[0] . '?' . http_build_query($params);
     }
 
     /**

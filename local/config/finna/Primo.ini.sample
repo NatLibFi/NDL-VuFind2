@@ -158,6 +158,7 @@ translated_facets[] = lang:langcode
 [CheckboxFacets]
 tlevel:online_resources = "online_resources"
 tlevel:peer_reviewed = "peer_reviewed"
+tlevel:open_access = "open_access"
 
 ; This section shows which search types will display in the basic search box at
 ; the top of Primo pages.  The name of each setting below corresponds with an

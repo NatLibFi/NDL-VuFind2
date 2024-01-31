@@ -27,7 +27,7 @@
       $blockILLRequest = !$checkILLRequest && isset($row['addILLRequestLink']) && $row['addILLRequestLink'] === 'block';
       $currentDepartment = '';
     ?>
-    <div vocab="http://schema.org/" typeof="Offer" class="copy-details <?=$this->mode?>">
+    <div class="copy-details <?=$this->mode?>">
       <?php if (isset($row['branch']) || isset($row['department'])): ?>
         <?php
           $parts = [];
@@ -54,7 +54,6 @@
       <?php endif; ?>
       <div class="copy-info">
         <?php if (isset($row['reserve']) && $row['reserve'] == 'Y'): ?>
-          <link property="availability" href="http://schema.org/InStoreOnly">
           <?=$this->transEsc('On Reserve - Ask at Circulation Desk')?><br>
         <?php endif; ?>
         <?php if (isset($row['use_unknown_message']) && $row['use_unknown_message']): ?>
@@ -67,7 +66,6 @@
                 $statusClassEsc = 'text-warning';
                 $icon = 'status-unknown';
                 $status = 'status_' . $row['status'];
-                $schemaAvailEsc = 'http://schema.org/LimitedAvailability';
               } else {
                 $statusClassEsc = 'text-success';
                 $icon = 'status-available';
@@ -82,13 +80,11 @@
                 } else {
                   $status = 'Available';
                 }
-                $schemaAvailEsc = 'http://schema.org/InStock';
               }
             ?>
             <span class="<?=$statusClassEsc?>">
               <?=$this->icon($icon, $statusClassEsc)?>
               <?=$this->transEsc($status)?>
-              <link property="availability" href="<?=$schemaAvailEsc?>">
             </span>
             <?php if (isset($row['requests_placed']) && $row['requests_placed'] > 0): ?>
               &ndash;&nbsp;<span class="small"><?=$this->translate('status_requests_html', ['%%count%%' => $this->escapeHtml($row['requests_placed'])])?></span>
@@ -108,7 +104,7 @@
             </div>
           <?php else: ?>
             <?php /* Begin Unavailable Items (Recalls) */ ?>
-            <span class="text-danger"><?=$row['status'] == 'Ordered' ? '' : $this->icon('status-unavailable');?> <?=$this->transEsc('status_' . $row['status'], null, $this->translate($row['status']))?><link property="availability" href="http://schema.org/OutOfStock"> </span>
+            <span class="text-danger"><?=$row['status'] == 'Ordered' ? '' : $this->icon('status-unavailable');?> <?=$this->transEsc('status_' . $row['status'], null, $this->translate($row['status']))?> </span>
             <?php if (isset($row['returnDate']) && $row['returnDate']): ?>&ndash; <span class="small"><?=$this->escapeHtml($row['returnDate'])?></span><?php endif; ?>
             <?php if (isset($row['duedate']) && $row['duedate']): ?>
               &ndash;&nbsp;<span class="small"><?=$this->transEsc('Due')?>:&nbsp;<?=$this->escapeHtml($row['duedate'])?></span>
@@ -132,19 +128,6 @@
             </div>
           <?php endif; ?>
         <?php endif; ?>
-        <?php /* Embed item structured data: library, barcode, call number */ ?>
-        <?php if ($row['location']): ?>
-          <meta property="seller" content="<?=$this->escapeHtmlAttr($row['location'])?>">
-        <?php endif; ?>
-        <?php if ($row['barcode']): ?>
-          <meta property="serialNumber" content="<?=$this->escapeHtmlAttr($row['barcode'])?>">
-        <?php endif; ?>
-        <?php if ($row['callnumber'] ?? false): ?>
-          <meta property="sku" content="<?=$this->escapeHtmlAttr($row['callnumber'])?>">
-        <?php endif; ?>
-        <?php /* Declare that the item is to be borrowed, not for sale */ ?>
-          <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
-          <link property="itemOffered" href="#record">
         <?php if (isset($row['availabilityInfo'])): ?>
           <div class="copy-available">
             <?php if (!empty($row['availabilityInfo']['ordered'])): ?>

@@ -167,6 +167,9 @@ class MuseotFi extends AbstractProvider
             ),
             'services' => [],
         ];
+        // Use first email as the primary one:
+        $details['email'] = $details['emails'][0]['email'] ?? null;
+
         // Date handling
         $days = [
             0 => 'monday', 1 => 'tuesday', 2 => 'wednesday',
@@ -226,10 +229,9 @@ class MuseotFi extends AbstractProvider
             }
         }
 
-        $details['scheduleDescriptions'] = [
-            !empty($json['opening_info'][$language])
-                ? $json['opening_info'][$language] : '',
-        ];
+        $details['scheduleDescriptions'] = !empty($json['opening_info'][$language])
+            ? [$json['opening_info'][$language]]
+            : [];
 
         if (!$consortiumInfo) {
             return $details;

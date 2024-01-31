@@ -132,34 +132,6 @@
     $activeMobileTab = $menuListItems[$headerKey]['translation'] ?? 'Your Account';
 ?>
 
-<div class="mobile-main-tabs visible-xs visible-sm">
-  <div class="dropdown useraccount-nav-mobile myresearch-menu" role="menu">
-    <div class="dropdown-toggle" data-toggle="dropdown">
-      <div class="tab-title">
-        <?=$this->transEsc($activeMobileTab)?>
-      </div>
-      <div class="more hidden-print"><?= $this->transEsc('Your Account') ?><?=$this->icon('menu-open', 'js-toggle-menu') ?></div>
-    </div>
-    <ul class="dropdown-menu">
-      <?php foreach ($menuListItems as $id => $listItem) : ?>
-        <?php if (isset($listItem['desktopOnly']) && $listItem['desktopOnly']) {
-          continue;
-        } ?>
-        <?php if (!isset($listItem['show']) || $listItem['show'] !== false): ?>
-          <li role="menuitem" class="<?=$id?><?= $activeToLower === $id ? ' active' : ''?>">
-            <a href="<?=$this->escapeHtmlAttr($this->url($listItem['url']) . ($listItem['query'] ?? ''))?>" class="list-group-item" <?=$activeToLower === $id ? 'aria-current="page"' : ''?>>
-            <?=$this->transEsc($listItem['translation'])?>
-              <?php if (!empty($listItem['statusKey'])): ?>
-                <span class="<?=$listItem['statusKey']?>-status status hidden"><?=$this->icon('spinner') ?></span>
-              <?php endif; ?>
-            </a>
-          </li>
-        <?php endif; ?>
-      <?php endforeach; ?>
-    </ul>
-  </div>
-</div>
-
 <ul class="<?=$this->layoutClass('sidebar-myresearch')?> <?= $listOpen ? '' : 'move-list' ?> nav-tabs-personal list-group useraccount-nav nav-tabs finna-movement myresearch-menu account-menu" role="menu">
   <li role="none" class="menu-header hidden-xs hidden-sm">
     <h1>

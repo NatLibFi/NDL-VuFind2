@@ -40,14 +40,20 @@
       <?php
       $embeddedVideo = $this->recordLinker()->getEmbeddedVideo($url['url']);
       $desc = $url['desc'] ?? $this->truncateUrl($url['url']);
-      if (($type ?? '') === 'SolrEad') {
-        $desc = $embeddedVideo === 'data-embed-iframe' ? $this->translate('format_Video') : $this->translate('link_' . $url['desc'], null, $url['desc']);
-      } elseif (($type ?? '') === 'SolrForward') {
-        $desc = $this->translate('default::link_' . $desc, null, $desc);
-      } elseif (($type ?? '') === 'SolrLido') {
-        $desc = $desc ?: $this->translate('format_Video');
-      } else {
-        $desc = $embeddedVideo === 'data-embed-iframe' ? $this->translate('format_Video') : $desc;
+      switch ($this->driver->tryMethod('getRecordFormat', [], '')) {
+        case 'ead':
+        case 'ead3':
+          $desc = $embeddedVideo === 'data-embed-iframe' ? $this->translate('format_Video') : $this->translate('link_' . $url['desc'], null, $url['desc']);
+        break;
+        case 'forward':
+          $desc = $this->translate('default::link_' . $desc, null, $desc);
+        break;
+        case 'lido':
+          $desc = $desc ?: $this->translate('format_Video');
+        break;
+        default:
+          $desc = $embeddedVideo === 'data-embed-iframe' ? $this->translate('format_Video') : $desc;
+        break;
       }
 
       $popupId = ($embeddedVideo ?? '') === 'data-embed-iframe' ? 'finna-iframe' : 'finna-video';

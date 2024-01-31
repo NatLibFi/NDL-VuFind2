@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Factory for GetFacetData AJAX handler.
+ * Factory for GetSearchTabsRecommendations AJAX handler.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Factory for GetFacetData AJAX handler.
+ * Factory for GetSearchTabsRecommendations AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -77,7 +77,8 @@ class GetSearchTabsRecommendationsFactory implements \Laminas\ServiceManager\Fac
             $container->get(\VuFind\Search\Results\PluginManager::class),
             $container->get('ViewRenderer'),
             $container->get(\VuFind\Search\SearchRunner::class),
-            $container->get(\Laminas\Session\SessionManager::class)->getId()
+            $container->get(\Laminas\Session\SessionManager::class)->getId(),
+            $container->get(\VuFind\Auth\Manager::class)
         );
         return $result;
     }

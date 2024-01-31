@@ -708,8 +708,7 @@ lastname = SHIB_sn
 ;            applications.  The existence of functionality in VuFind does not imply
 ;            suitability for any particular situation.
 [Content]
-; You can select Syndetics, LibraryThing, Summon, Booksite, OpenLibrary,
-; You can select Syndetics, LibraryThing, Summon, Booksite, OpenLibrary,
+; You can select NatLibFi, Syndetics, LibraryThing, Summon, Booksite, OpenLibrary,
 ; Contentcafe, Buchhandel.de, Google, BrowZine, ObalkyKnih, Orb, Koha and/or
 ; LocalFile. Service-specific notes:
 ;   - BrowZine requires you to have BrowZine.ini configured appropriately.
@@ -738,6 +737,13 @@ lastname = SHIB_sn
 ;          %vufind-local-dir% - The VUFIND_LOCAL_DIR environment variable
 ;        Example: LocalFile:%vufind-local-dir%/path/to/file/%size%/issn/%issn%.%anyimage%
 coverimages     = NatLibFi,OpenLibrary
+
+; Description providers (a comma-separated list in priority order). Available
+; providers are:
+; NatLibFi
+; Record
+; RecordUrl
+descriptions = NatLibFi,RecordUrl,Record
 
 ; List of undisplayable file formats
 ; undisplayable_file_formats = 'tif:tiff:3d-pdf:3d model:glb:obj:gltf'
@@ -1153,6 +1159,7 @@ fi          = "Finnish"
 sv          = "Swedish"
 ;pl          = "Polish"
 ;da          = "Danish"
+se          = "Northern Sámi"
 
 ; This section controls the behavior of the Browse module.  The result_limit
 ; setting controls the maximum number of results that may display in any given
@@ -1916,3 +1923,14 @@ show_in_holdings = false    ; include in holdings tab of record view
 ; See https://educloud-alliance-technical-documentation.readthedocs.io/en/latest/bazaar/interface_lms.html
 ; for more information.
 ;client[client_id] = secret
+
+[SearchHistoryLabels]
+Blender = tabs_blended
+Combined = tabs_combined
+EDS = tabs_eds
+L1 = tabs_l1
+Primo = tabs_pci
+Search2 = tabs_local
+Solr = tabs_local
+SolrAuthority = tabs_authority
+Summon = tabs_summon

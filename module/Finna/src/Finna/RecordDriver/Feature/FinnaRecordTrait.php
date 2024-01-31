@@ -67,7 +67,7 @@ trait FinnaRecordTrait
     /**
      * Get inappropriate comments for this record reported by the given user.
      *
-     * @param object $userId Reporter ID
+     * @param ?int $userId Reporter ID or null to use current session
      *
      * @return array
      */

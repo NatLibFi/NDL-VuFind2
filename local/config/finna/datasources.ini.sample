@@ -21,10 +21,19 @@ feedbackEmail = email@somewhere.invalid
 mainView = web
 institution = Library
 ;disablePatronFunctions = true
-; You can select BTJ, Syndetics, LibraryThing, Summon, Amazon, Booksite, OpenLibrary,
+; You can select BTJ, Kirjavalitys, Syndetics, LibraryThing, Summon, Amazon, Booksite, OpenLibrary,
 ; Contentcafe and/or Google Books. These settings are used in addition to the ones
 ; defined in config.ini
 ;coverimages = BTJ:customerId
+;coverimages = BTJ:customerId,Kirjavalitys:customerId
+; Description providers (a comma-separated list in priority order). Available
+; providers are:
+; NatLibFi
+; Record
+; RecordUrl
+; Kirjavalitys:customerId (customerId is part of the URL, e.g. consortium name in lowercase)
+; shared (a special one to include the common providers from main configuration)
+;descriptions = Kirjavalitys:customerId,shared
 ; Link template for linking to the staff UI. Note that staff UI link is available
 ; only for users with the access.finna.StaffUiLink permission.
 staffUiUrl = "https://server-address/cgi-bin/koha/catalogue/detail.pl?biblionumber=%%id%%"
@@ -104,16 +113,13 @@ onlinePayment['productCodeMappings'] = 'Overdue=demo_003:Long Overdue=demo_004'
 
 ; ## Video provider specific settings:
 
+; ### Icareus
+video['handler'] = "Icareus"
+video['url'] = "https://players.icareus.com/<org_name_in_icareus>/embed/vod/{videoid}"
+
 ; ### Vimeo:
 video['handler'] = "Vimeo"
 video['url'] = "https://vimeo.com/{videoid}"
-video['posterUrl'] = "https://link.to.posterUrl/{filename}"
-
-; ### Elonet:
-video['handler'] = "Elonet"
-video['secret'] = "secretkey"
-video['timestampPrecision'] = 3000
-video['url'] = "https://link.to.video/{filename}"
 video['posterUrl'] = "https://link.to.posterUrl/{filename}"
 
 ; Videosources to check, if an url can be provided for a video

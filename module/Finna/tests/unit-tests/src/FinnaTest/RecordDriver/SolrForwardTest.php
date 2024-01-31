@@ -108,7 +108,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getPresentersData(): array
+    public static function getPresentersData(): array
     {
         return [
             'creditedPresentersTest' => [
@@ -349,7 +349,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getNonPresenterSecondaryAuthorsData(): array
+    public static function getNonPresenterSecondaryAuthorsData(): array
     {
         return [
             'creditedTests' =>
@@ -612,7 +612,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getEventsArrayData(): array
+    public static function getEventsArrayData(): array
     {
         return [
             [
@@ -758,7 +758,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getEventsStringData(): array
+    public static function getEventsStringData(): array
     {
         return [
             [

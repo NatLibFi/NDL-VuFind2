@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<oai_dc schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+  <identifier>oai:aineistopaketit.finna.fi:2788</identifier>
+  <title lang="fi">Testipaketti</title>
+  <date>2023-12-01T10:45:39Z</date>
+  
+  <creator>Testihenkil&#xF6;</creator>
+  <creator>Testiorganisaatio</creator>
+  <type>education</type>
+  <item format="lrmi" position="0" display="grid">
+    <id>oai:aineistopaketit.finna.fi:2787</id>
+    <title>Testipaketti</title>
+    <date>2023-12-01T10:56:15Z</date>
+    
+    <type>content</type>
+    <dateCreated>2023-12-01T10:56:15Z</dateCreated>
+    <dateModified>2023-12-01T14:59:30Z</dateModified>
+    <author>
+      <person>
+        <name>Testihenkil&#xF6;</name>
+      </person>
+    </author>
+    <material>
+      <name lang="fi">Moottorisaha; Partner-moottorisaha</name>
+      <url>https://finna.fi/Record/lusto.knp-8015?sid=3450530197</url>
+      <position>0</position>
+      <inLanguage>fi</inLanguage>
+      <identifier>lusto.knp-8015</identifier>
+      
+    </material>
+    <material>
+      <name lang="fi">Moottorisaha; Taiga-moottorisaha</name>
+      <url>https://finna.fi/Record/lusto.knp-15935?sid=3450530197</url>
+      <position>1</position>
+      <inLanguage>fi</inLanguage>
+      <identifier>lusto.knp-15935</identifier>
+      
+    </material>
+    <inLanguage>fi</inLanguage>
+    <learningResource>
+      <educationalLevel>
+        
+        <termCode>vocationalEducation</termCode>
+        <inDefinedTermSet>
+          
+          <url>http://uri.suomi.fi/codelist/edtech/Koulutusaste</url>
+        </inDefinedTermSet>
+      </educationalLevel>
+      <educationalLevel>
+        
+        <termCode>upperSecondarySchool</termCode>
+        <inDefinedTermSet>
+          
+          <url>http://uri.suomi.fi/codelist/edtech/Koulutusaste</url>
+        </inDefinedTermSet>
+      </educationalLevel>
+      <educationalLevel>
+        
+        <termCode>basicEducationGrades1-2</termCode>
+        <inDefinedTermSet>
+          
+          <url>http://uri.suomi.fi/codelist/edtech/Koulutusaste</url>
+        </inDefinedTermSet>
+      </educationalLevel>
+      <educationalLevel>
+        
+        <termCode>basicEducationGrades7-9</termCode>
+        <inDefinedTermSet>
+          
+          <url>http://uri.suomi.fi/codelist/edtech/Koulutusaste</url>
+        </inDefinedTermSet>
+      </educationalLevel>
+      <educationalLevel>
+        
+        <termCode>earlyChildhoodEducation</termCode>
+        <inDefinedTermSet>
+          
+          <url>http://uri.suomi.fi/codelist/edtech/Koulutusaste</url>
+        </inDefinedTermSet>
+      </educationalLevel>
+      <educationalAlignment>
+        <educationalSubject>
+          
+          
+          <targetUrl>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/419550/perusopetus/oppiaineet/466340</targetUrl>
+          <identifier>466340</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+      <educationalAlignment>
+        <educationalSubject>
+          
+          
+          <targetUrl>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/6828810/lops2019/oppiaineet/6828950</targetUrl>
+          <identifier>6828950</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+      <educationalAlignment>
+        <educationalSubject>
+          
+          
+          <targetUrl>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/6828810/lops2019/oppiaineet/6828950</targetUrl>
+          <identifier>6829041</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+      <educationalAlignment>
+        <educationalSubject>
+          
+          
+          <targetUrl>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/8419761</targetUrl>
+          <identifier>8419761</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+      <educationalAlignment>
+        <educationalSubject>
+          
+          
+          <targetUrl>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/6930623</targetUrl>
+          <identifier>6930623</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+      <educationalAlignment>
+        <educationalSubject>
+          
+          
+          <targetUrl>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/5116902</targetUrl>
+          <identifier>5116902</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+      <educationalAlignment>
+        <educationalSubject>
+          
+          
+          <targetUrl>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/8419761</targetUrl>
+          <identifier>8531640</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+      <educationalAlignment>
+        <educationalSubject>
+          
+          
+          <targetUrl>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/yto/tutkinnonOsat</targetUrl>
+          <identifier>7283253</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+      <educationalAlignment>
+        <educationalSubject>
+          
+          
+          <targetUrl>https://api.finna.fi/api/v1/code-sets/varhaiskasvatus/osaamisalueet/OA-2022-2</targetUrl>
+          <identifier>OA-2022-2</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+      <teaches>
+        
+        <identifier>466630</identifier>
+        <inDefinedTermSet>
+          <url>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/419550/perusopetus/oppiaineet/466340</url>
+        </inDefinedTermSet>
+      </teaches>
+      <teaches>
+        
+        <identifier>6829080</identifier>
+        <inDefinedTermSet>
+          <url>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/6828810/lops2019/oppiaineet/6828950</url>
+        </inDefinedTermSet>
+      </teaches>
+      <teaches>
+        
+        <identifier>466660</identifier>
+        <inDefinedTermSet>
+          <url>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/419550/perusopetus/oppiaineet/466340</url>
+        </inDefinedTermSet>
+      </teaches>
+      <teaches>
+        
+        <identifier>6829077</identifier>
+        <inDefinedTermSet>
+          <url>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/6828810/lops2019/oppiaineet/6828950</url>
+        </inDefinedTermSet>
+      </teaches>
+      <teaches>
+        
+        <identifier>428670</identifier>
+        <inDefinedTermSet>
+          <url>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/419550/perusopetus/laajaalaisetosaamiset</url>
+        </inDefinedTermSet>
+      </teaches>
+      <teaches>
+        
+        <identifier>6828860</identifier>
+        <inDefinedTermSet>
+          <url>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/6828810/lops2019/laajaAlainenOsaaminen/laajaAlaisetOsaamiset</url>
+        </inDefinedTermSet>
+      </teaches>
+      
+    </learningResource>
+    <format>LRMI</format>
+    <position>0</position>
+    <display>grid</display>
+    
+  </item>
+  <recordID>_preview</recordID>
+</oai_dc>

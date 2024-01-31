@@ -38,8 +38,10 @@
           $ariaLabel = $this->escapeHtmlAttr($this->translate('Remove filter') . ' ' . $desc);
         ?>
         <?=$desc // HTML ?>
-        <?php if($removeLink): ?>
-          <a class="search-filter-remove" aria-label="<?=$ariaLabel?>" href="<?=$removeLink?>"><!--icon from css --></a>
+        <?php if ($removeLink): ?>
+          <a class="search-filter-remove" aria-label="<?=$ariaLabel?>" href="<?=$removeLink?>">
+            <?=$this->icon('search-filter-remove') ?>
+          </a>
         <?php endif; ?>
       </span>
     <?php endif ?>
@@ -55,7 +57,11 @@
             $ariaLabel = $this->translate('Remove filter') . ' ' . $desc;
           ?>
           <?=$this->transEsc($field)?>
-          <?php if($removeLink): ?><a aria-label="<?=$ariaLabel?>" href="<?=$removeLink?>"><?=$this->icon('filter-remove') ?></a><?php endif; ?>
+          <?php if ($removeLink): ?>
+            <a aria-label="<?=$ariaLabel?>" href="<?=$removeLink?>">
+              <?=$this->icon('search-filter-remove') ?>
+            </a>
+          <?php endif; ?>
         </span>
       <?php else: ?>
         <div class="filter-title-group">
@@ -108,7 +114,9 @@
               </span>
               <?php if (isset($this->urlQuery)): ?>
                 <?php $removeLink = $urlQuery->removeFacet($value['field'], $value['value'], $value['operator'])?>
-                <a class="search-filter-remove" aria-label="<?=$this->translate('Remove filter') ?>" href="<?=$removeLink?>"><!--icon from css --></a>
+                <a class="search-filter-remove" aria-label="<?=$this->translate('Remove filter') ?>" href="<?=$removeLink?>">
+                  <?=$this->icon('search-filter-remove') ?>
+                </a>
               <?php endif; ?>
             </span>
             <?php if ($dropdown): ?>
@@ -138,7 +146,7 @@
         <span class="toggle-text"><?=$this->transEsc('show_filters')?></span>
         <span class="active-filter-count">(<?=$filterCount?>)</span><?=$this->icon('filter-expand', 'expand') ?><?=$this->icon('filter-collapse', 'collapse') ?>
       </button>
-      <?php if ($resetLink && $options->getRetainFilterSetting()): ?>
+      <?php if ($resetLink && $options->shouldDisplayResetFilters()): ?>
         <a class="btn btn-default reset-filters-btn" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?></a>
       <?php endif; ?>
     </div>

@@ -32,7 +32,7 @@ namespace Finna\View\Helper\Root;
 use Laminas\Session\SessionManager;
 use Laminas\View\Helper\Url;
 use VuFind\Db\Table\PluginManager as TableManager;
-use VuFind\Search\Results\PluginManager as ResultsManager;
+use VuFind\Search\Results\PluginManager;
 use VuFind\Search\SearchTabsHelper;
 use VuFind\Search\UrlQueryHelper;
 
@@ -81,7 +81,7 @@ class SearchTabs extends \VuFind\View\Helper\Root\SearchTabs
      * @param TableManager     $table   Database manager
      */
     public function __construct(
-        ResultsManager $results,
+        PluginManager $results,
         Url $url,
         SearchTabsHelper $helper,
         SessionManager $session,

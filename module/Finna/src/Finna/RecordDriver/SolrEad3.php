@@ -157,6 +157,7 @@ class SolrEad3 extends SolrEad
     // Relator attribute for archive origination
     public const RELATOR_ARCHIVE_ORIGINATION = ['arkistonmuodostaja', 'arkivbildare'];
     public const SUBJECT_ACTOR_ROLES = ['aihe', 'förekommer', 'handlar om', 'refereras till'];
+    public const NAME_TYPE_VARIANT = ['varianttinimi', 'vaihtoehtoinen nimi', 'vanhentunut nimi'];
 
     public const RELATOR_TIME_INTERVAL = 'suhteen ajallinen kattavuus';
     public const RELATOR_UNKNOWN_TIME_INTERVAL = 'unknown - open';
@@ -236,12 +237,17 @@ class SolrEad3 extends SolrEad
         };
         $processURL = function ($node) use ($preferredLangCodes, $isExternalUrl, &$urls) {
             $attr = $node->attributes();
+            $role = (string)($attr->linkrole ?? '');
             if (
-                (string)$attr->linkrole === 'image/jpeg'
+                $role === 'image/jpeg'
                 || !$attr->href
                 || $isExternalUrl($node)
             ) {
                 return;
+            }
+            $downloadOnly = false;
+            if (str_starts_with($role, 'audio') || str_starts_with($role, 'video')) {
+                $downloadOnly = ((string)$attr->actuate === 'onrequest' && (string)$attr->show === 'none');
             }
             $lang = (string)$attr->lang;
             $preferredLang = $lang && in_array($lang, $preferredLangCodes);
@@ -253,6 +259,7 @@ class SolrEad3 extends SolrEad
                 $urlData = [
                     'url' => $url,
                     'desc' => (string)$desc,
+                    'downloadOnly' => $downloadOnly,
                 ];
                 if ($preferredLang) {
                     $urls['localeurls'][] = $urlData;
@@ -470,7 +477,7 @@ class SolrEad3 extends SolrEad
             ...self::RELATOR_ARCHIVE_ORIGINATION,
             ...self::SUBJECT_ACTOR_ROLES,
         ];
-        return $this->getAuthors($exclude, false, true);
+        return $this->getAuthors($exclude, [], false, true);
     }
 
     /**
@@ -484,7 +491,7 @@ class SolrEad3 extends SolrEad
             ...self::RELATOR_ARCHIVE_ORIGINATION,
             ...self::SUBJECT_ACTOR_ROLES,
         ];
-        return $this->getAuthors($exclude, true);
+        return $this->getAuthors($exclude, [], true);
     }
 
     /**
@@ -501,7 +508,7 @@ class SolrEad3 extends SolrEad
                 ...self::RELATOR_ARCHIVE_ORIGINATION,
                 ...self::SUBJECT_ACTOR_ROLES,
             ];
-            return $this->getAuthors($exclude, false, true);
+            return $this->getAuthors($exclude, [], false, true);
         }
         return [];
     }
@@ -510,6 +517,7 @@ class SolrEad3 extends SolrEad
      * Get authors.
      *
      * @param array $exclude      Roles to be excluded
+     * @param array $include      Roles to be included
      * @param bool  $translations Include only authors with roles that have translations
      * @param bool  $unknown      Include only authors with unknown roles or roles without translations
      *
@@ -517,6 +525,7 @@ class SolrEad3 extends SolrEad
      */
     public function getAuthors(
         array $exclude = [],
+        array $include = [],
         bool $translations = false,
         bool $unknown = false
     ): array {
@@ -529,7 +538,7 @@ class SolrEad3 extends SolrEad
             $relator = (string)$attr->relator;
             $relatorLC = mb_strtolower($relator, 'UTF-8');
             $role = $this->translateRole($localtype) ?? $this->translateRole($relatorLC);
-            if ($exclude && in_array($relatorLC, $exclude)) {
+            if (($exclude && in_array($relatorLC, $exclude)) || ($include && !in_array($relatorLC, $include))) {
                 continue;
             }
             if ((!$role && $translations) || ($role && $unknown)) {
@@ -546,7 +555,7 @@ class SolrEad3 extends SolrEad
             ];
         }
         // Check authors under relations
-        $relations = $this->getRelationsWithType('cpfrelation', $exclude);
+        $relations = $this->getRelationsWithType('cpfrelation', $exclude, $include);
         foreach ($relations as $relation) {
             $role = $this->translateRole($relation['role']);
             if ((!$role && $translations) || ($role && $unknown)) {
@@ -569,12 +578,14 @@ class SolrEad3 extends SolrEad
      *
      * @param string $relationtype Relationtype to be included
      * @param array  $exclude      Arcroles to be excluded
+     * @param array  $include      Arcroles to be included
      *
      * @return array
      */
     protected function getRelationsWithType(
         string $relationtype,
-        array $exclude = []
+        array $exclude = [],
+        array $include = []
     ): array {
         $result = [];
         $xml = $this->getXmlRecord();
@@ -585,7 +596,7 @@ class SolrEad3 extends SolrEad
             }
             $arcrole = trim((string)($relation->attributes()->arcrole ?? ''));
             $arcroleLC = mb_strtolower($arcrole, 'UTF-8');
-            if ($exclude && in_array($arcroleLC, $exclude)) {
+            if (($exclude && in_array($arcroleLC, $exclude)) || ($include && !in_array($arcroleLC, $include))) {
                 continue;
             }
             $name = $this->getDisplayLabel($relation, 'relationentry');
@@ -991,6 +1002,10 @@ class SolrEad3 extends SolrEad
                     ) {
                         continue;
                     }
+                    $show = (string)($attr->show ?? '');
+                    if ($show === 'none') {
+                        continue;
+                    }
                     $type = (string)($attr->localtype ?? $parentType ?: 'none');
                     $role = (string)($attr->linkrole ?? '');
                     $sort = (string)($attr->label ?? '');
@@ -1011,9 +1026,7 @@ class SolrEad3 extends SolrEad
                     if (!$this->isUrlLoadable($url, $this->getUniqueID())) {
                         continue;
                     }
-                    [$fileType, $format] = strpos($role, '/') > 0
-                        ? explode('/', $role, 2)
-                        : ['image', 'jpg'];
+                    [,$format] = explode('/', $role . '/jpg');
                     // Image might be original, can not be displayed in browser.
                     if ($this->isUndisplayableFormat($format)) {
                         $highResolution['original'][] = [
@@ -1103,11 +1116,24 @@ class SolrEad3 extends SolrEad
     public function getPhysicalDescriptions()
     {
         $xml = $this->getXmlRecord();
-        if (!isset($xml->did->physdesc)) {
+        if (!isset($xml->did)) {
             return [];
         }
+        $results = $this->getDisplayLabel($xml->did, 'physdesc');
+        $localeResults = $this->getDisplayLabel($xml->did, 'physdesc', true);
+        foreach ($xml->did->physdescstructured ?? [] as $desc) {
+            $lang = $this->detectNodeLanguage($desc);
+            $quantity = trim((string)($desc->quantity ?? ''));
+            $unittype = trim((string)($desc->unittype ?? ''));
+            if ($result = trim($quantity . ' ' . mb_strtolower($unittype, 'UTF-8'))) {
+                $results[] = $result;
+                if ($lang['preferred'] ?? false) {
+                    $localeResults[] = $result;
+                }
+            }
+        }
 
-        return $this->getDisplayLabel($xml->did, 'physdesc', true);
+        return $localeResults ?: $results;
     }
 
     /**
@@ -1566,13 +1592,14 @@ class SolrEad3 extends SolrEad
             $attr = $udate->attributes();
             $normal = (string)$attr->normal;
             $dates = $start = $end = '';
-            $unknown = false;
+            $yearUncertain = false;
             if ($normal) {
                 if (strstr($normal, '/')) {
                     [$start, $end] = explode('/', $normal);
                 } else {
                     $start = $normal;
-                    $unknown = $this->unknownDateCharsExist($start);
+                    [$startYear] = explode('-', $start);
+                    $yearUncertain = $this->unknownDateCharsExist($startYear);
                 }
                 $dates = $this->parseDate($start, true);
                 if (
@@ -1580,10 +1607,14 @@ class SolrEad3 extends SolrEad
                     && ($parsedEnd = $this->parseDate($end, false)) !== $dates
                     && $parsedEnd
                 ) {
-                    $ndash
-                        = html_entity_decode('&#x2013;', ENT_NOQUOTES, 'UTF-8');
-                    $dates .= "{$ndash}{$parsedEnd}";
-                } elseif ($dates && $unknown) {
+                    [$endYear] = explode('-', $end);
+                    $ndash = html_entity_decode('&#x2013;', ENT_NOQUOTES, 'UTF-8');
+                    if ($this->unknownDateCharsExist($endYear)) {
+                        $dates .= "{$ndash}";
+                    } else {
+                        $dates .= "{$ndash}{$parsedEnd}";
+                    }
+                } elseif ($dates && $yearUncertain) {
                     $dates = $this->translate(
                         'year_decade_or_century',
                         ['%%year%%' => $dates]
@@ -2059,36 +2090,61 @@ class SolrEad3 extends SolrEad
     protected function getTopics(): array
     {
         $record = $this->getXmlRecord();
-
-        $topics = [];
+        $results = $localeResults = [];
         foreach ($record->controlaccess as $controlaccess) {
-            foreach ([true, false] as $obeyPreferredLanguage) {
-                foreach ($controlaccess->subject as $subject) {
-                    $attr = $subject->attributes();
-                    if (
-                        $topic = $this->getDisplayLabel(
-                            $subject,
-                            'part',
-                            $obeyPreferredLanguage
-                        )
-                    ) {
-                        if (!$topic[0]) {
-                            continue;
+            foreach ($controlaccess->subject as $subject) {
+                $attr = $subject->attributes();
+                $parts = $localeParts = [];
+                $langS = $this-> detectNodeLanguage($subject);
+                // Collect all part elements to be displayed
+                foreach ($subject->part as $part) {
+                    $lang = $this->detectNodeLanguage($part) ?? $langS;
+                    $localtype = mb_strtolower($part->attributes()->localtype ?? '', 'UTF-8');
+                    // Do not display variant names
+                    if (in_array($localtype, self::NAME_TYPE_VARIANT)) {
+                        continue;
+                    }
+                    if ($name = trim((string)$part)) {
+                        $parts[] = $name;
+                        if ($lang['preferred'] ?? false) {
+                            $localeParts[] = $name;
                         }
-                        $topics[] = [
-                            'data' => $topic[0],
-                            'id' => (string)$attr->identifier,
-                            'source' => (string)$attr->source,
-                            'detail' => (string)$subject->attributes()->relator,
-                        ];
                     }
                 }
-                if (!empty($topics)) {
-                    return $topics;
+                if ($localeParts) {
+                    $localeResults[] = [
+                        'data' => implode(', ', $localeParts),
+                        'id' => (string)$attr->identifier,
+                        'source' => (string)$attr->source,
+                        'detail' => (string)$subject->attributes()->relator,
+                    ];
+                } elseif ($parts) {
+                    $results[] = [
+                        'data' => implode(', ', $parts),
+                        'id' => (string)$attr->identifier,
+                        'source' => (string)$attr->source,
+                        'detail' => (string)$subject->attributes()->relator,
+                    ];
                 }
             }
         }
-        return $topics;
+        return $localeResults ?: $results;
+    }
+
+    /**
+     * Get subject actors
+     *
+     * @return array
+     */
+    public function getSubjectActors()
+    {
+        $results = [];
+        foreach ($this->getAuthors([], self::SUBJECT_ACTOR_ROLES) as $actor) {
+            if ($name = $actor['name'] ?? '') {
+                $results[] = $name;
+            }
+        }
+        return $results;
     }
 
     /**
@@ -2234,10 +2290,10 @@ class SolrEad3 extends SolrEad
      * @param \SimpleXMLElement $node                  XML node
      * @param string            $childNodeName         Name of the child node that
      * contains the display label.
-     * @param bool              $obeyPreferredLanguage If true, returns the
+     * @param bool              $obeyPreferredLanguage If true, returns only the
      * translation that corresponds with the current locale.
-     * If false, the default language version 'fin' is returned. If not found,
-     * the first display label is retured.
+     * If false, uses the default language version 'fin' as fallback. If not found,
+     * all display labels are returned.
      *
      * @return string[]
      */
@@ -2255,20 +2311,21 @@ class SolrEad3 extends SolrEad
         $lang = $langFound = $this->detectNodeLanguage($node);
         $resolveLangFromChildNode = $lang === null;
         foreach ($node->{$childNodeName} as $child) {
-            $name = trim((string)$child);
-            $allResults[] = $name;
+            if ($name = trim((string)$child)) {
+                $allResults[] = $name;
 
-            if ($resolveLangFromChildNode) {
-                $lang = $this->detectNodeLanguage($child);
-                if ($lang) {
-                    $langFound = $lang;
+                if ($resolveLangFromChildNode) {
+                    $lang = $this->detectNodeLanguage($child);
+                    if ($lang) {
+                        $langFound = $lang;
+                    }
                 }
-            }
-            if ($lang['default'] ?? false) {
-                $defaultLanguageResults[] = $name;
-            }
-            if ($lang['preferred'] ?? false) {
-                $languageResults[] = $name;
+                if ($lang['default'] ?? false) {
+                    $defaultLanguageResults[] = $name;
+                }
+                if ($lang['preferred'] ?? false) {
+                    $languageResults[] = $name;
+                }
             }
         }
 

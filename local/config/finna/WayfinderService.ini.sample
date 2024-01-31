@@ -2,20 +2,13 @@
 
 [General]
 enabled = false
-adapter = "WayfinderSampleAdapter"
 
 [sample]
 wf_url = "http://wf-hambib.stg.easyscreen.io/includes"
 marker_url = "http://wf-hambib.stg.easyscreen.io"
+adapter = "WayfinderSampleAdapter"
 
-[piki]
-wf_url = "http://wf-piki.stg.easyscreen.io/includes"
-marker_url = "http://wf-piki.stg.easyscreen.io"
-
-[vari]
-wf_url = "http://wf-vari.stg.easyscreen.io/includes"
-marker_url = "http://wf-vari.stg.easyscreen.io"
-
-[helmet]
-wf_url = "http://wf-helmet.stg.easyscreen.io/includes"
-marker_url = "http://wf-helmet.stg.easyscreen.io"
+[vanamo]
+wf_url = "http://wf-vanamo.stg.easyscreen.io/includes"
+marker_url = "http://wf-vanamo.stg.easyscreen.io"
+adapter = "WayfinderVanamoAdapter"

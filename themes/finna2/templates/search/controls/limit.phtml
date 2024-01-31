@@ -1,28 +1,39 @@
 <!-- START of: finna - search/controls/limit.phtml -->
 <?php $limitList = $this->params->getLimitList(); ?>
 <?php if (count($limitList) > 1): ?>
-<div class="limit-option-container">
-  <span class="hidden-sm hidden-xs hidden-md button-label" id="limit-label"><?=$this->transEsc('Results per page')?></span>
-  <span class="sr-only hidden-lg hidden-md"><?=$this->transEsc('Results per page')?></span>
-  <div class="sort-button">
-    <div class="dropdown">
-      <?php foreach ($limitList as $limitVal => $limitData): ?>
-        <?php if ($limitData['selected']): ?>
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-label="<?=$this->transEscAttr('Results per page') . ': ' . $this->transEscAttr($limitData['desc'])?>">
-          <span><?=$this->transEsc($limitData['desc'])?></span> <?=$this->icon('dropdown-open') ?>
-        </a>
-        <?php endif; ?>
-      <?php endforeach; ?>
-      <ul class="dropdown-menu" role="menu" aria-labelledby="limit-label">
+  <div class="limit-option-container">
+    <span class="hidden-sm hidden-xs hidden-md button-label" id="limit-label"><?=$this->transEsc('Results per page')?></span>
+    <span class="sr-only hidden-lg hidden-md"><?=$this->transEsc('Results per page')?></span>
+    <div class="sort-button">
+      <div class="dropdown">
         <?php foreach ($limitList as $limitVal => $limitData): ?>
-        <li>
-          <a href="<?=$this->results->getUrlQuery()->setLimit($limitVal)?>" role="menuitem" aria-label="<?=$this->transEscAttr('Results per page') . ': ' . $this->transEscAttr($limitData['desc'])?>"><?=$this->transEsc($limitData['desc'])?></a>
+          <?php if ($limitData['selected']): ?>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-label="<?=$this->transEscAttr('Results per page') . ': ' . $this->transEscAttr($limitData['desc'])?>">
+            <span><?=$this->transEsc($limitData['desc'])?></span> <?=$this->icon('dropdown-open') ?>
+          </a>
+          <?php endif; ?>
         <?php endforeach; ?>
-        </li>
-      </ul>
-      <noscript><input type="submit" class="btn btn-default" value="<?=$this->transEscAttr('Set')?>"></noscript>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="limit-label">
+          <?php foreach ($limitList as $limitVal => $limitData): ?>
+          <li>
+            <a href="Results<?=$this->results->getUrlQuery()->setLimit($limitVal)?>" role="menuitem" aria-label="<?=$this->transEscAttr('Results per page') . ': ' . $this->transEscAttr($limitData['desc'])?>"><?=$this->transEsc($limitData['desc'])?></a>
+          <?php endforeach; ?>
+          </li>
+        </ul>
+        <noscript><input type="submit" class="btn btn-default" value="<?=$this->transEscAttr('Set')?>"></noscript>
+      </div>
     </div>
   </div>
-</div>
+  <?php // Use a hidden form for upstream JS results compatibility: ?>
+  <form class="form-inline search-result-limit hidden" action="<?=$this->currentPath()?>" method="get">
+    <?=$this->results->getUrlQuery()->asHiddenFields(['limit' => '/.*/', 'page' => '/.*/']);?>
+    <label for="limit"><?=$this->transEsc('Results per page')?></label>
+    <select id="limit" name="limit" class="jumpMenu form-control">
+      <?php foreach ($limitList as $limitVal => $limitData): ?>
+        <option value="<?=$this->escapeHtmlAttr($limitVal)?>"<?=$limitData['selected'] ? ' selected="selected"' : ''?><?=$limitData['default'] ? ' data-default' : ''?>><?=$this->escapeHtml($limitData['desc'])?></option>
+      <?php endforeach; ?>
+    </select>
+    <noscript><input type="submit" value="<?=$this->transEscAttr('Set')?>"></noscript>
+  </form>
 <?php endif; ?>
 <!-- END of: finna - search/controls/limit.phtml -->

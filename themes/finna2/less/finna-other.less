@@ -51,7 +51,6 @@
 @import "finna/video-player";
 @import "finna/record";
 @import "finna/primo";
-@import "finna/hierarchytree";
 @import "finna/filters";
 @import "finna/mobile-toolbar";
 @import "finna/mobile-table";
@@ -354,3 +353,78 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
     background-color: mix(@body-bg, contrast(@body-bg), 95%);
     border: 1px solid mix(@body-bg, contrast(@body-bg), 85%);
 }
+
+// Virtual keyboard
+@media (min-width: 401px) {
+    .simple-keyboard.show-keyboard {
+        display: block;
+    }
+}
+
+.keyboard-selection {
+    margin-top: 0;
+}
+
+#keyboard-selection-button {
+    height: 48px;
+}
+
+/* ------ Responsive table for small screen size ------ */
+@media screen and (max-width: 768px) {
+  .table-responsive {
+    border: none;
+    thead, tfoot > tr > th {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+    tbody > tr {
+      display: block;
+      margin-bottom: @line-height-computed;
+      border: 1px solid @gray-lighter;
+    }
+    td, tbody > tr > th {
+      display: flex;
+      align-items: first baseline;
+      background: #fff;
+      &:not(.user-account-table-select):before {
+        display: flex;
+        flex-basis: 40%;
+        flex-shrink: 0;
+        font-weight: bold;
+        content: attr(data-label);
+      }
+    }
+    tbody > tr > td:nth-child(even) {
+      background-color: @table-bg-accent;
+    }
+    tfoot > tr > td {
+      border-top: none;
+    }
+  }
+}
+
+// Inverse of .table-striped
+.finna-table-striped {
+  > tbody > tr:nth-of-type(even) {
+    background-color: @table-bg-accent;
+  }
+}
+
+// Hierarchy tree
+.hierarchy-tree-search-form .btn {
+    &:extend(.form-control);
+}
+.hierarchy-tree__item-container .icon {
+    display: none;
+}
+
+// Collection hierarchy tree width
+/*.collection-hierarchytree {
+    display: block;
+}*/

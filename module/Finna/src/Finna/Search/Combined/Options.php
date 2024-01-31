@@ -45,11 +45,14 @@ class Options extends \VuFind\Search\Combined\Options
     /**
      * Constructor
      *
-     * @param \VuFind\Config\PluginManager $configLoader Config loader
+     * @param \VuFind\Config\PluginManager         $configLoader   Config loader
+     * @param \VuFind\Search\Options\PluginManager $optionsManager Options plugin manager
      */
-    public function __construct(\VuFind\Config\PluginManager $configLoader)
-    {
-        parent::__construct($configLoader);
+    public function __construct(
+        \VuFind\Config\PluginManager $configLoader,
+        \VuFind\Search\Options\PluginManager $optionsManager
+    ) {
+        parent::__construct($configLoader, $optionsManager);
         // Load the search configuration file:
         $searchSettings = $configLoader->get($this->searchIni);
 
@@ -64,5 +67,18 @@ class Options extends \VuFind\Search\Combined\Options
         if (isset($searchSettings->Autocomplete->enabled)) {
             $this->autocompleteEnabled = $searchSettings->Autocomplete->enabled;
         }
+    }
+
+    /**
+     * Get tab configuration based on the full combined results configuration.
+     *
+     * @return array
+     */
+    public function getTabConfig()
+    {
+        $config = parent::getTabConfig();
+        // Strip out additional non-tab sections of the configuration:
+        unset($config['General']);
+        return $config;
     }
 }

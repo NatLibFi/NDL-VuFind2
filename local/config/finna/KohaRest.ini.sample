@@ -189,6 +189,15 @@ enabled = true
 ; The field to display as the SMS number. Default is sms_number.
 ; Set to empty string for "none".
 ;smsNumberField = ""
+; The field to display as the hold identifier number. Default is other_name.
+; Set to empty string for "none".
+;holdIdentifierField = ""
+; The field to display as the hold identifier number. Default is other_name.
+; Set to empty string for "none".
+;holdIdentifierField = ""
+; The field to display as the calling name. Not displayed by default.
+; Set to empty string for "none".
+;callingNameField = ""
 ; Whether to display messaging settings. Default is true.
 ;messagingSettings = false
 
@@ -199,3 +208,7 @@ enabled = true
 ; Link the SMS number to the following Koha fields. Default for Finna is
 ; "sms_number,phone".
 ;fields = "sms_number,phone"
+
+[FeeTypeMappings]
+ODUE = "Overdue Return Request"
+ODUE2 = "Overdue Return Request"

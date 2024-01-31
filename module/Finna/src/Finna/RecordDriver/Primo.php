@@ -6,7 +6,7 @@
  * PHP version 8
  *
  * Copyright (C) Villanova University 2010.
- * Copyright (C) The National Library of Finland 2012-2021.
+ * Copyright (C) The National Library of Finland 2012-2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -32,7 +32,6 @@
 
 namespace Finna\RecordDriver;
 
-use function count;
 use function in_array;
 use function is_array;
 use function strlen;
@@ -51,7 +50,6 @@ use function strlen;
 class Primo extends \VuFind\RecordDriver\Primo
 {
     use Feature\FinnaRecordTrait;
-    use Feature\FinnaXmlReaderTrait;
 
     /**
      * Indicate whether export is disabled for a particular format.
@@ -157,7 +155,7 @@ class Primo extends \VuFind\RecordDriver\Primo
      */
     public function getType()
     {
-        return $this->getXmlRecord()->type ?? null;
+        return $this->fields['format'][0] ?? '';
     }
 
     /**
@@ -177,38 +175,32 @@ class Primo extends \VuFind\RecordDriver\Primo
             return [];
         }
 
-        $urls = [];
-
-        $xml = $this->getXmlRecord();
-
+        $result = [];
         $links = ['linktorsrc' => false, 'backlink' => true];
+
         foreach ($links as $link => $citation) {
-            $url = '';
-            if (isset($xml->links->{$link})) {
-                $url = (string)$xml->links->{$link};
-                $parts = explode('$$', $url);
-                $url = substr($parts[1], 1);
-                $urlParts = parse_url($url);
-                if (empty($urlParts['host'])) {
-                    $url = '';
-                }
-            }
-            if ('' === $url && !empty($this->fields['resource_urls'][$link])) {
-                $url = (string)$this->fields['resource_urls'][$link];
-                $urlParts = parse_url($url);
-            }
-            if (empty($url) || empty($urlParts['host'])) {
+            if (!($urls = $this->fields['resource_urls'][$link] ?? [])) {
                 continue;
             }
-            $urls[] = [
-                'url' => $url,
-                'urlShort' => $urlParts['host'],
-                'citation' => $citation,
-            ];
-            break;
+            foreach ($urls as $current) {
+                if (is_array($current)) {
+                    $desc = $current['label'];
+                    $url = $current['url'];
+                } else {
+                    // Old style, could be cached:
+                    $desc = '';
+                    $url = $current;
+                }
+                $result[] = [
+                    'url' => $url,
+                    'urlShort' => parse_url($url, PHP_URL_HOST),
+                    'citation' => $citation,
+                    'desc' => $desc,
+                ];
+            }
         }
 
-        return $urls;
+        return $result;
     }
 
     /**
@@ -223,23 +215,19 @@ class Primo extends \VuFind\RecordDriver\Primo
             return true;
         }
 
-        $xml = $this->getXmlRecord();
-        if (!isset($xml->search->sourceid)) {
+        if (!$this->fields['sourceid']) {
             return true;
         }
 
         $fulltextAvailable = $this->getFulltextAvailable();
 
         $config = $this->recordConfig->OnlineURLs;
-        $hideFromSource = isset($config->hideFromSource)
-            ? $config->hideFromSource->toArray() : [];
-        $showFromSource = isset($config->showFromSource)
-            ? $config->showFromSource->toArray() : [];
+        $hideFromSource = $config?->hideFromSource?->toArray() ?? [];
+        $showFromSource = $config?->showFromSource?->toArray() ?? [];
 
         if ($fulltextAvailable) {
             if ($config->hideFromSourceWithFulltext) {
-                $hideFromSourceWithFulltext
-                    = $config->hideFromSourceWithFulltext->toArray();
+                $hideFromSourceWithFulltext = $config->hideFromSourceWithFulltext->toArray();
                 if (!is_array($hideFromSourceWithFulltext)) {
                     $hideFromSourceWithFulltext = [$hideFromSourceWithFulltext];
                 }
@@ -250,8 +238,7 @@ class Primo extends \VuFind\RecordDriver\Primo
             }
 
             if ($config->showFromSourceWithFulltext) {
-                $showFromSourceWithFulltext
-                    = $config->showFromSourceWithFulltext->toArray();
+                $showFromSourceWithFulltext = $config->showFromSourceWithFulltext->toArray();
                 if (!is_array($showFromSourceWithFulltext)) {
                     $showFromSourceWithFulltext = [$showFromSourceWithFulltext];
                 }
@@ -266,16 +253,11 @@ class Primo extends \VuFind\RecordDriver\Primo
             return true;
         }
 
-        $source = $xml->search->sourceid;
-
-        if ($showFromSource) {
-            if (!count(array_intersect($showFromSource, ['*', $source]))) {
+        foreach ($this->fields['sourceid'] as $sourceid) {
+            if ($showFromSource && !array_intersect($showFromSource, ['*', $sourceid])) {
                 return false;
             }
-        }
-
-        if ($hideFromSource) {
-            if (count(array_intersect($hideFromSource, ['*', $source]))) {
+            if ($hideFromSource && array_intersect($hideFromSource, ['*', $sourceid])) {
                 return false;
             }
         }
@@ -306,8 +288,7 @@ class Primo extends \VuFind\RecordDriver\Primo
      */
     public function getPublicationDates()
     {
-        $xml = $this->getXmlRecord();
-        return (array)($xml->facets->creationdate ?? []);
+        return $this->fields['date'] ?? [];
     }
 
     /**
@@ -317,9 +298,7 @@ class Primo extends \VuFind\RecordDriver\Primo
      */
     public function getCleanDOI()
     {
-        $xml = $this->getXmlRecord();
-        return isset($xml->addata->doi)
-            ? (string)$xml->addata->doi : false;
+        return $this->fields['doi_str_mv'][0] ?? '';
     }
 
     /**
@@ -423,11 +402,7 @@ class Primo extends \VuFind\RecordDriver\Primo
      */
     public function getFulltextAvailable()
     {
-        $xml = $this->getXmlRecord();
-        if (isset($xml->delivery->fulltext)) {
-            return $xml->delivery->fulltext == 'fulltext';
-        }
-        return false;
+        return 'fulltext' === $this->fields['fulltext'];
     }
 
     /**
@@ -472,11 +447,7 @@ class Primo extends \VuFind\RecordDriver\Primo
      */
     public function getPeerReviewed()
     {
-        $xml = $this->getXmlRecord();
-        if (isset($xml->display->lds50)) {
-            return ((string)$xml->display->lds50) === 'peer_reviewed';
-        }
-        return false;
+        return $this->fields['peer_reviewed'] ?? false;
     }
 
     /**
@@ -486,11 +457,7 @@ class Primo extends \VuFind\RecordDriver\Primo
      */
     public function getOpenAccess()
     {
-        $xml = $this->getXmlRecord();
-        if (isset($xml->display->oa)) {
-            return ((string)$xml->display->oa) === 'free_for_read';
-        }
-        return false;
+        return $this->fields['open_access'] ?? false;
     }
 
     /**

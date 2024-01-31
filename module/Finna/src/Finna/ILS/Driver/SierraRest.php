@@ -112,6 +112,27 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     protected $productCodeMappings = [];
 
     /**
+     * Number of retries in case an API request fails with a retryable error (see
+     * $retryableRequestExceptionPatterns below).
+     *
+     * @var int
+     */
+    protected $httpRetryCount = 3;
+
+    /**
+     * Exception message regexp patterns for request errors that can be retried
+     *
+     * @var array
+     */
+    protected $retryableRequestExceptionPatterns = [
+        // cURL adapter:
+        '/Error in cURL request: Empty reply from server/',
+        '/Error in cURL request: OpenSSL SSL_read/',
+        // Socket adapter:
+        '/A valid response status line was not found in the provided string/',
+    ];
+
+    /**
      * Initialize the driver.
      *
      * Validate configuration and perform all resource-intensive tasks needed to
@@ -148,6 +169,57 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 ];
             }
         }
+    }
+
+    /**
+     * Patron Login
+     *
+     * This is responsible for authenticating a patron against the catalog.
+     *
+     * @param string $username The patron username
+     * @param string $password The patron password
+     *
+     * @return mixed           Associative array of patron info on successful login,
+     * null on unsuccessful login.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function patronLogin($username, $password)
+    {
+        // If we are using a patron-specific access grant, we can bypass
+        // authentication as the credentials are verified when the access token is
+        // requested.
+        if ($this->isPatronSpecificAccess()) {
+            $patron = $this->getPatronInformationFromAuthToken($username, $password);
+            if (!$patron) {
+                return null;
+            }
+        } else {
+            $patron = $this->authenticatePatron($username, $password);
+            if (!$patron) {
+                return null;
+            }
+        }
+
+        $firstname = '';
+        $lastname = '';
+        if (!empty($patron['names'])) {
+            $name = $patron['names'][0];
+            $parts = explode(', ', $name, 2);
+            $lastname = $parts[0];
+            $firstname = $parts[1] ?? '';
+        }
+        return [
+            'id' => $patron['id'],
+            'firstname' => $firstname,
+            'lastname' => $lastname,
+            'cat_username' => $username,
+            'cat_password' => $password,
+            'email' => !empty($patron['emails']) ? $patron['emails'][0] : '',
+            'major' => null,
+            'college' => null,
+            'home_library' => $patron['homeLibraryCode'] ?? '',
+        ];
     }
 
     /**
@@ -552,6 +624,25 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         if (!isset($result['entries'])) {
             return [];
         }
+
+        // Collect all item records to fetch:
+        $itemIds = [];
+        foreach ($result['entries'] as $entry) {
+            if (!empty($entry['item'])) {
+                $itemIds[] = $this->extractId($entry['item']);
+            }
+        }
+        // Fetch items in a batch and list the bibs:
+        $items = $this->getItemRecords($itemIds, null, $patron);
+        $bibIds = [];
+        foreach ($items as $item) {
+            if (!empty($item['bibIds'])) {
+                $bibIds[] = $item['bibIds'][0];
+            }
+        }
+        // Fetch bibs in a batch:
+        $bibs = $this->getBibRecords($bibIds, null, $patron);
+
         $fines = [];
         foreach ($result['entries'] as $entry) {
             $amount = $entry['itemCharge'] + $entry['processingFee']
@@ -563,16 +654,11 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             if (!empty($entry['item'])) {
                 $itemId = $this->extractId($entry['item']);
                 // Fetch bib ID from item
-                $item = $this->makeRequest(
-                    [$this->apiBase, 'items', $itemId],
-                    ['fields' => 'bibIds'],
-                    'GET',
-                    $patron
-                );
+                $item = $items[$itemId] ?? [];
                 if (!empty($item['bibIds'])) {
                     $bibId = $item['bibIds'][0];
                     // Fetch bib information
-                    $bib = $this->getBibRecord($bibId, null, $patron);
+                    $bib = $bibs[$bibId] ?? [];
                     $title = $bib['title'] ?? '';
                 }
             }
@@ -710,6 +796,10 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         $request = [
             'payments' => $payments,
         ];
+        if ($this->statGroup) {
+            $request['statgroup'] = $this->statGroup;
+        }
+
         $result = $this->makeRequest(
             [
                 'v6', 'patrons', $patron['id'], 'fines', 'payment',
@@ -1553,6 +1643,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      * @param array  $patron       Patron information, if available
      * @param bool   $returnStatus Whether to return HTTP status code and response
      * as a keyed array instead of just the response
+     * @param array  $queryParams  Additional query params that are added to the URL
+     * regardless of request type
      *
      * @throws ILSException
      * @return mixed JSON response decoded to an associative array, an array of HTTP
@@ -1561,10 +1653,11 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      */
     protected function makeRequest(
         $hierarchy,
-        $params = false,
+        $params = [],
         $method = 'GET',
         $patron = false,
-        $returnStatus = false
+        $returnStatus = false,
+        $queryParams = []
     ) {
         $url = $this->getApiUrlFromHierarchy($hierarchy);
         // Allow caching of GET requests for bibs and items:
@@ -1577,7 +1670,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             || strncmp($url, $itemsUrl, strlen($itemsUrl)) === 0)
         ) {
             // Cacheable request, check cache:
-            $paramArray = compact('params', 'method', 'patron', 'returnStatus');
+            $paramArray = compact('params', 'method', 'patron', 'returnStatus', 'queryParams');
             $cacheKey = "request|$url|" . md5(var_export($paramArray, true));
             if (null !== ($result = $this->getCachedData($cacheKey))) {
                 return $result;
@@ -1588,7 +1681,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             $params,
             $method,
             $patron,
-            $returnStatus
+            $returnStatus,
+            $queryParams
         );
         if ($cacheKey) {
             // Cache records by default for 300 seconds:
@@ -1639,5 +1733,44 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             }
         }
         return $url;
+    }
+
+    /**
+     * Authenticate a patron using the API version 6 patrons/auth endpoint
+     *
+     * Returns patron information on success and null on failure
+     *
+     * @param string $username Username
+     * @param string $password Password
+     * @param string $method   Authentication method
+     *
+     * @return array|null
+     */
+    protected function authenticatePatronV6(
+        string $username,
+        string $password,
+        string $method
+    ): ?array {
+        $request = [
+            'authMethod' => $method,
+            'patronId' => $username,
+            'patronSecret' => $password,
+        ];
+        $result = $this->makeRequest(
+            ['v6', 'patrons', 'auth'],
+            json_encode($request),
+            'POST'
+        );
+        if (!$result || !empty($result['code'])) {
+            return null;
+        }
+        $result = $this->makeRequest(
+            [$this->apiBase, 'patrons', $result],
+            ['fields' => 'names,emails,homeLibraryCode']
+        );
+        if (!$result || !empty($result['code'])) {
+            return null;
+        }
+        return $result;
     }
 }

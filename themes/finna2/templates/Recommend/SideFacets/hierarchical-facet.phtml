@@ -1,6 +1,4 @@
 <?php
-  $this->headScript()->appendFile('vendor/jsTree/jstree.min.js');
-
   // We need to pass the current URL query to the Javascript; we use substr() to
   // strip off the leading ? character. The "suppress query" option is used for
   // special search types like course reserves / new items. The AJAX handler needs
@@ -12,30 +10,42 @@
   // We also need to inform the helper about any special parameters used in place
   // of the suppressed query:
   $extraUrlFields = $this->results->getUrlQuery()->getParamsWithConfiguredDefaults();
+
+  $clusterList = $this->cluster['list'] ?? [];
+  // Auto-expand top level facets when there are only one or two items by cheating a
+  // bit by claiming they have applied children:
+  if (count($clusterList) <= 2) {
+    foreach ($clusterList as &$item) {
+      $item['hasAppliedChildren'] = true;
+    }
+    unset($item);
+  }
 ?>
-<?php if ('usage_rights_ext_str_mv' === $title): ?>
-  <?=$this->render('Recommend/SideFacets/usage-rights-ext-facet-header.phtml')?>
-<?php endif; ?>
-<div id="facet_<?=$this->escapeHtml($title)?>" class="jstree-facet facet-tree"
-    data-source="<?=$this->escapeHtml($this->searchClassId)?>"
-    data-facet="<?=$this->escapeHtmlAttr($title)?>"
-    data-path=""
-    data-exclude="<?=$allowExclude?>"
-    data-operator="<?=$this->recommend->getFacetOperator($title)?>"
-    data-exclude-title="<?=$this->transEsc('exclude_facet')?>"
-    data-sort="<?=$this->sortOptions ?? ''?>"
-    data-query="<?=$this->escapeHtmlAttr($urlQuery)?>"
-    data-query-suppressed="<?=$querySuppressed ? '1' : '0' ?>"
-    data-extra-fields="<?=$this->escapeHtml(implode(',', $extraUrlFields))?>">
-</div>
-<?php if ('usage_rights_ext_str_mv' === $title): ?>
-  <?=$this->render('Recommend/SideFacets/usage-rights-ext-facet-footer.phtml')?>
-<?php endif; ?>
 <?php
-  $script = <<<JS
-      $(document).ready(function () {
-        finna.layout.initHierarchicalFacet($('#facet_{$this->escapeHtml($this->title)}'), true);
-      });
-      JS;
+  $truncateSettings = $this->facets_before_more < 1 ? false : [
+    'rows' => $this->facets_before_more,
+    'btn-class' => 'facet',
+    'wrapper-class' => false,
+    'wrapper-tagname' => 'li',
+  ];
 ?>
-<?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET'); ?>
+<?php if ('building' === $this->title && count($this->cluster['list']) > 15): ?>
+  <div class="building-filter">
+    <label for="building_filter" class="sr-only"><?=$this->transEsc('Organisation')?></label>
+    <input type="search" class="form-control" id="building_filter" placeholder="<?=$this->transEscAttr('Organisation') . '...'?>">
+  </div>
+  <?php $script = <<<JS
+      $(function () { finna.layout.initBuildingFilter('#side-collapse-{$this->escapeHtml($this->title)}'); });
+    JS;
+  ?>
+  <?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET'); ?>
+<?php endif; ?>
+<ul class="facet-tree<?php if ($truncateSettings): ?> truncate-hierarchical-facets" data-truncate="<?=$this->htmlSafeJsonEncode($truncateSettings)?><?php endif; ?>">
+  <?=$this->render('Recommend/SideFacets/hierarchical-facet-level.phtml', [
+    'allowExclude' => $this->allowExclude,
+    'facetList' => $clusterList,
+    'group' => $this->title,
+    'url' => $this->results->getUrlQuery(),
+    'urlBase' => '',
+  ]) ?>
+</ul>

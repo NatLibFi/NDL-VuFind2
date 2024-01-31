@@ -51,7 +51,7 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getTestFunctionsData(): array
+    public static function getTestFunctionsData(): array
     {
         return [
             [
@@ -193,7 +193,7 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getPublicationDateRangeData(): array
+    public static function getPublicationDateRangeData(): array
     {
         return [
             [
@@ -271,7 +271,7 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getHumanReadablePublicationDatesData(): array
+    public static function getHumanReadablePublicationDatesData(): array
     {
         return [
             [

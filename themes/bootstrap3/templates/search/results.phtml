@@ -29,23 +29,18 @@
   // Store search id:
   $this->layout()->searchId = $this->results->getSearchId();
 
-  // Enable cart if appropriate:
   $options = $this->params->getOptions();
-  $this->showBulkOptions = $options->supportsCart() && $this->showBulkOptions;
-  // Checkboxes if appropriate:
-  $this->showCartControls = $options->supportsCart() && $this->cart()->isActive()
-    && ($this->showBulkOptions || !$this->cart()->isActiveInSearch());
-  // Enable bulk options if appropriate:
-  $this->showCheckboxes = $this->showCartControls || $this->showBulkOptions;
-
   $this->render(
       'search/results-scripts.phtml',
       [
           'displayVersions' => !empty($options->getVersionsAction()),
           'listViewOption' => $options->getListViewOption(),
+          'jsResults' => $options->loadResultsWithJsEnabled(),
       ]
   );
 ?>
+
+<h1 class="sr-only"><?=$this->escapeHtml($headTitle)?></h1>
 
 <div class="<?=$this->layoutClass('mainbody')?>">
   <?php if (($recordTotal = $this->results->getResultTotal()) > 0): // only display these at very top if we have results ?>

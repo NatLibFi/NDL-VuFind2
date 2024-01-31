@@ -1,94 +1,101 @@
-<!-- START of: finna - search/history-table.phtml -->
 <?php
   $scheduleSupported = !empty($this->schedule);
   $saveSupported = $this->accountCapabilities()->getSavedSearchSetting() === 'enabled';
-  $notificationDisplayed = false;
+  $backendDescriptions = [
+    'Combined' => 'tabs_combined',
+    'EDS' => 'tabs_eds',
+    'L1' => 'tabs_l1',
+    'Primo' => 'tabs_pci',
+    'Solr' => 'tabs_local',
+    'SolrAuthority' => 'tabs_authority',
+    'Summon' => 'tabs_summon',
+  ];
+  $displayLabel = false;
+  foreach (($this->showSaved ? $this->saved : $this->unsaved) as $iteration => $info) {
+    if ($info->getParams()->getSearchClassId() !== 'Solr') {
+      $displayLabel = true;
+    }
+  }
 ?>
-<div class="table-responsive">
-<table class="table table-striped useraccount-table">
-  <tr class="headers">
-    <th class="history-time"><?=$this->transEsc('history_time')?></th>
-    <th class="history-search"><?=$this->transEsc('history_search')?></th>
-    <th class="history-limits"><?=$this->transEsc('history_limits')?></th>
-    <?php if ($this->primo()->isAvailable()) : ?><th class="history-search-index"><?=$this->transEsc('history_search_index')?></th><?php endif; ?>
-    <th class="history-results"><?=$this->transEsc('history_results')?></th>
-    <?php if ($scheduleSupported): ?><th class="history-schedule"><?=$this->transEsc('history_schedule')?></th><?php endif; ?>
-    <?php if ($saveSupported): ?><th class="history-save"><?=$this->transEsc($this->showSaved ? 'history_delete' : 'history_save')?></th><?php endif; ?>
-  </tr>
-  <?php foreach (($this->showSaved ? array_reverse($this->saved) : array_reverse($this->unsaved)) as $iteration => $info): ?>
-    <tr class="<?=$iteration % 2 == 1 ? 'even' : 'odd'?>row">
-      <td><?=$this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('U', $info->getStartTime()))?></td>
-
-      <td>
-        <?=$this->historylabel($info->getParams()->getSearchClassId())?>
-        <a href="<?=$this->url($info->getOptions()->getSearchAction()) . $info->getUrlQuery()->getParams()?>"><?php
-          $desc = $info->getParams()->getDisplayQuery();
-          echo empty($desc) ? $this->transEsc('history_empty_search') : $this->escapeHtml($desc);
-        ?></a>
-      </td>
-
-      <td>
-        <?php foreach ($info->getParams()->getFilterList(true) as $field => $filters): ?>
-          <?php $geographic = is_callable([$info->getParams(), 'isGeographicFilter']) && $info->getParams()->isGeographicFilter($filters); ?>
-          <?php foreach ($filters as $i => $filter): ?>
-            <?php if ($filter['operator'] == 'NOT') {
-              echo $this->transEsc('NOT') . ' ';
-            } if ($filter['operator'] == 'OR' && $i > 0) {
-              echo $this->transEsc('OR') . ' ';
-            } ?>
-            <strong><?=$this->transEsc($field)?></strong><?php if (!$geographic && !empty($filter['displayText'])): ?>: <?=$this->escapeHtml($filter['displayText'])?><?php endif; ?><br>
-          <?php endforeach; ?>
-        <?php endforeach; ?>
-        <?php foreach($info->getParams()->getCheckboxFacets() as $facet): ?>
-          <?php if ($facet['selected']): ?>
-            <strong><?=$this->transEsc($facet['desc'])?></strong><br>
-          <?php endif; ?>
-        <?php endforeach; ?>
-      </td>
-
-      <?php if ($this->primo()->isAvailable() || $this->eds()->isAvailable()): ?>
-        <td class="history-search-index">
-          <?php $searchClass = $info->getParams()->getSearchClassId(); ?>
-          <?php if ($searchClass == 'Primo'): ?>
-            <?=$this->transEsc('tabs_pci')?>
-          <?php elseif ($searchClass == 'EDS'): ?>
-            <?=$this->transEsc('tabs_eds')?>
-          <?php else: ?>
-            <?=$this->transEsc('tabs_local')?>
-          <?php endif; ?>
-        </td>
-      <?php endif; ?>
-
-      <td><?=$this->escapeHtml($this->localizedNumber($info->getResultTotal()))?></td>
-
-      <?php if ($scheduleSupported): ?>
-        <td>
-        <?php if (isset($this->schedule[$info->getSearchId()])): ?>
-          <?php $schedule = $this->schedule[$info->getSearchId()]; ?>
-            <form class="form-inline jumpMenuForm" action="<?= $this->url('myresearch-savesearch')?>" method="get" name="schedule">
-              <select name="schedule" class="jumpMenu form-control" aria-haspopup="true" title="<?=$this->transEsc('history_schedule')?>">
-                <?php foreach ($scheduleOptions as $scheduleValue => $scheduleLabel): ?>
-                  <option value="<?=$this->escapeHtmlAttr($scheduleValue)?>"<?=($schedule == $scheduleValue) ? (' selected') : ('')?>><?=$this->transEsc($scheduleLabel)?></option>
-                <?php endforeach; ?>
-              </select>
-              <input type="hidden" name="searchid" value="<?=$this->escapeHtmlAttr($info->getSearchId())?>">
-            </form>
-          <?php else: ?>
-            <span class="disable"><?=$this->transEsc('cannot set')?></span>
-          <?php endif; ?>
-        </td>
-      <?php endif; ?>
-      <?php if ($saveSupported): ?>
-        <td class="history-save">
-        <?php if ($this->showSaved): ?>
-          <a href="<?=$this->url('myresearch-savesearch')?>?delete=<?=urlencode($info->getSearchId())?>&amp;mode=history"><span class="sr-only"><?=$this->transEsc('save_search_remove');?></span><?=$this->icon('search-remove') ?></a>
-        <?php else: ?>
-          <a href="<?=$this->url('myresearch-savesearch')?>?save=<?=urlencode($info->getSearchId())?>&amp;mode=history"><span class="sr-only"><?=$this->transEsc('save_search');?></span><?=$this->icon('search-save') ?></a>
-        <?php endif; ?>
-        </td>
-      <?php endif; ?>
+<table class="search-history-table" id="<?=$this->showSaved ? 'saved-searches' : 'recent-searches'?>">
+  <thead>
+    <tr>
+      <th scope="col" class="history_time"><?=$this->transEsc('history_time')?></th>
+      <th scope="col" class="history_search"><?=$this->transEsc('history_search')?></th>
+      <th scope="col" class="history_limits"><?=$this->transEsc('history_limits')?></th>
+      <th scope="col" class="history_results"><?=$this->transEsc('history_results')?></th>
+      <?php if ($scheduleSupported): ?><th scope="col" class="search-schedule-header"><?=$this->transEsc('history_schedule')?></th><?php endif; ?>
+      <?php if ($saveSupported): ?><th scope="col" class="history_actions"><?=$this->transEsc($this->showSaved ? 'history_delete' : 'history_save')?></th><?php endif; ?>
     </tr>
-  <?php endforeach; ?>
+  </thead>
+  <tbody>
+    <?php foreach (($this->showSaved ? array_reverse($this->saved) : array_reverse($this->unsaved)) as $iteration => $info): ?>
+      <tr class="<?=$iteration % 2 == 1 ? 'even' : 'odd'?>row">
+        <td class="history_time" data-label="<?=$this->transEscAttr('history_time')?>"><?=$this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('U', $info->getStartTime()))?></td>
+        <td class="history_search" data-label="<?=$this->transEscAttr('history_search')?>">
+          <span>
+            <?=$this->historylabel($info->getParams()->getSearchClassId())?>
+            <a href="<?=$this->url($info->getOptions()->getSearchAction()) . $info->getUrlQuery()->getParams()?>"><?php
+              $desc = $info->getParams()->getDisplayQuery();
+              echo empty($desc) ? $this->transEsc('history_empty_search') : $this->escapeHtml($desc);
+            ?></a>
+          </span>
+        </td>
+        <td class="history_limits" data-label="<?=$this->transEscAttr('history_limits')?>">
+          <span class="history_limits_field">
+            <?php foreach ($info->getParams()->getFilterList(true) as $field => $filters): ?>
+              <?php foreach ($filters as $i => $filter): ?>
+                <?php
+                  if ($filter['operator'] == 'NOT') {
+                    echo $this->transEsc('NOT') . ' ';
+                  } elseif ($filter['operator'] == 'OR' && $i > 0) {
+                    echo $this->transEsc('OR') . ' ';
+                  }
+                ?>
+                <strong><?=$this->transEsc($field)?></strong>: <?=$this->escapeHtml($filter['displayText'])?><br>
+              <?php endforeach; ?>
+            <?php endforeach; ?>
+            <?php foreach ($info->getParams()->getCheckboxFacets() as $facet): ?>
+              <?php if ($facet['selected']): ?>
+                <strong><?=$this->transEsc($facet['desc'])?></strong><br>
+              <?php endif; ?>
+            <?php endforeach; ?>
+          </span>
+        </td>
+        <td class="history_results" data-label="<?=$this->transEscAttr('history_results')?>"><?=$this->escapeHtml($this->localizedNumber($info->getResultTotal()))?></td>
+        <?php if ($scheduleSupported): ?>
+          <td class="search-schedule-header" data-label="<?=$this->transEscAttr('history_schedule')?>">
+          <?php if (isset($this->schedule[$info->getSearchId()])): ?>
+            <?php $schedule = $this->schedule[$info->getSearchId()]; ?>
+              <form class="form-inline jumpMenuForm" action="<?= $this->url('myresearch-savesearch')?>" method="get" name="schedule">
+                <select name="schedule" class="jumpMenu form-control" aria-haspopup="true" title="<?=$this->transEscAttr('history_schedule')?>">
+                  <?php foreach ($scheduleOptions as $scheduleValue => $scheduleLabel): ?>
+                    <option value="<?=$this->escapeHtmlAttr($scheduleValue)?>"<?=($schedule == $scheduleValue) ? (' selected') : ('')?>><?=$this->transEsc($scheduleLabel)?></option>
+                  <?php endforeach; ?>
+                </select>
+                <input type="hidden" name="searchid" value="<?=$this->escapeHtmlAttr($info->getSearchId()) ?>">
+              </form>
+            <?php else: ?>
+              <span class="disable"><?=$this->transEsc('cannot set')?></span>
+            <?php endif; ?>
+          </td>
+        <?php endif; ?>
+        <?php if ($saveSupported): ?>
+          <td class="history_actions">
+            <?php if ($this->showSaved): ?>
+              <a class="icon-link text-danger" href="<?=$this->url('myresearch-savesearch')?>?delete=<?=urlencode($info->getSearchId())?>&amp;mode=history">
+                <?=$this->icon('search-delete', 'icon-link__icon') ?>
+                <span class="icon-link__label"><?=$this->transEsc('history_delete_link')?></span>
+              </a>
+            <?php else: ?>
+              <a class="icon-link" href="<?=$this->url('myresearch-savesearch')?>?save=<?=urlencode($info->getSearchId())?>&amp;mode=history">
+                <?=$this->icon('search-save', 'icon-link__icon') ?>
+                <span class="icon-link__label"><?=$this->transEsc('history_save_link')?></span>
+              </a>
+            <?php endif; ?>
+          </td>
+        <?php endif; ?>
+      </tr>
+    <?php endforeach; ?>
+  </tbody>
 </table>
-</div>
-<!-- END of: finna - search/history-table.phtml -->

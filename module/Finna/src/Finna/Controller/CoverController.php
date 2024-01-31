@@ -33,8 +33,8 @@
 
 namespace Finna\Controller;
 
+use Finna\Cover\Loader;
 use VuFind\Cover\CachingProxy;
-use VuFind\Cover\Loader;
 use VuFind\Session\Settings as SessionSettings;
 
 use function in_array;

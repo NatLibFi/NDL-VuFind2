@@ -17,9 +17,6 @@
   .searchbox-home,
   .searchbox-authority-home,
   .searchbox-authority-search {
-    .search-tooltip {
-      width: 30%;
-    }
     .btn.btn-link {
       background: @background-color;
       border-radius: @border-radius-small;
@@ -114,7 +111,6 @@
   left: 0px;
 }
 .searchbox .navbar-form {
-
   &.attached {
     z-index: 1000;
     margin: 0px;
@@ -129,72 +125,27 @@
   }
 }
 
-.back-to-search a {
-  display: flex;
-  align-items: center;
-  font-size: 1em;
-  font-weight: 600;
-  color: @finna-search-link-color;
-  .icon {
-    font-size: 1.5em;
-    margin-right: 5px;
-  }
-  .btn {
-    margin-right: 10px;
-  }
-  .back-to-search-text {
-    vertical-align: middle;
-  }
-}
-
-.searchbox-columns {
-  .search {
-    position: relative;
-    width: 100%;
-    float: left;
-    @media (min-width: @screen-sm) {
-      width: 70%;
+.searchbox-home {
+  flex-wrap: wrap;
+  .search-links {
+    flex-basis: 100%;
+    .btn-link:first-child {
+      margin-left: 0;
     }
-    @media (min-width: @screen-md) {
-      width: 60%;
-    }
-  }
-
-  .search-tooltip {
-    button {
-      background-color: transparent;
-      border: none;
-      .icon {
-        cursor: pointer;
-      }
-    }
-    display: flex;
-    align-items: center;
-    padding-left: 30px;
-    padding-right: 15px;
-    @media (min-width: @screen-sm) {
-      height: 50px;
-    }
-  }
-  a {
-    color: @finna-search-link-color;
   }
 }
 
 .searchbox-flex {
   display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
   align-items: center;
-  -webkit-box-pack: justify;
-  -ms-flex-pack: justify;
-  justify-content: space-between;
   .search-col, .record-back, .adv-search, .pager {
     margin: auto 0;
   }
   .search {
-    width: 50%;
     flex: 1;
+    @media (min-width: @screen-md) {
+      max-width: 70%;
+    }
   }
   .pager {
     display: flex;
@@ -211,14 +162,40 @@
       }
     }
   }
+  .btn-advanced {
+    margin-left: 10px;
+  }
+  .btn-link {
+    font-size: 1em;
+    font-weight: 600;
+    color: @finna-search-link-color;
+  }
   .search-tooltip {
-    line-height: 48px;
-    a {
-      color: @finna-search-link-color;
+    button {
+      background-color: transparent;
+      border: none;
+      margin-left: 30px;
+      color: @tooltip-button-color;
+      .icon {
+        cursor: pointer;
+      }
     }
   }
-  .back-to-search-text{
-    padding-right: 10px;
+  .back-to-search {
+    a {
+      display: flex;
+      align-items: center;
+      font-size: 1em;
+      font-weight: 600;
+      color: @finna-search-link-color;
+      .icon {
+        font-size: 1.5em;
+        margin-right: 5px;
+      }
+      .back-to-search-text {
+        margin-right: 10px;
+      }
+    }
   }
   @media(max-width: @screen-md) {
     .pager {

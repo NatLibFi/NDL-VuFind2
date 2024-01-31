@@ -35,14 +35,12 @@ use Finna\OrganisationInfo\OrganisationInfo;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\View\Renderer\RendererInterface;
 use VuFind\Cache\Manager as CacheManager;
-use VuFind\Cookie\CookieManager;
 use VuFind\I18n\Sorter;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\Session\Settings as SessionSettings;
 
 use function count;
 use function in_array;
-use function is_array;
 
 /**
  * AJAX handler for getting organisation info.
@@ -63,15 +61,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFind\Log\LoggerAwareTrait;
     use \VuFindHttp\HttpServiceAwareTrait;
-
-    public const COOKIE_NAME = 'organisationInfoId';
-
-    /**
-     * Cookie manager
-     *
-     * @var CookieManager
-     */
-    protected $cookieManager;
 
     /**
      * Organisation info
@@ -112,7 +101,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
      * Constructor
      *
      * @param SessionSettings   $ss               Session settings
-     * @param CookieManager     $cookieManager    ILS connection
      * @param OrganisationInfo  $organisationInfo Organisation info
      * @param CacheManager      $cacheManager     Cache manager
      * @param RendererInterface $renderer         View renderer
@@ -121,7 +109,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
      */
     public function __construct(
         SessionSettings $ss,
-        CookieManager $cookieManager,
         OrganisationInfo $organisationInfo,
         CacheManager $cacheManager,
         RendererInterface $renderer,
@@ -129,7 +116,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         array $facetConfig
     ) {
         $this->sessionSettings = $ss;
-        $this->cookieManager = $cookieManager;
         $this->organisationInfo = $organisationInfo;
         $this->cacheManager = $cacheManager;
         $this->renderer = $renderer;
@@ -169,7 +155,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
             case 'info-location-selection':
                 $result = $this->getInfoAndLocationSelection(
                     $id,
-                    $this->getLocationIdFromCookie($id),
+                    $params->fromQuery('locationId'),
                     $sectors,
                     $buildings,
                     (bool)$params->fromQuery('consortiumInfo', false)
@@ -194,11 +180,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 break;
             case 'location-details':
                 if (!($locationId = $params->fromQuery('locationId'))) {
-                    if (!($locationId = $this->getLocationIdFromCookie($id))) {
-                        return $this->handleError('getOrganisationInfo: missing location id');
-                    }
-                } else {
-                    $this->setLocationIdCookie($id, $locationId);
+                    return $this->handleError('getOrganisationInfo: missing location id');
                 }
                 $result = $this->getLocationDetails($id, $locationId, $sectors);
                 break;
@@ -212,14 +194,9 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 $result = $this->getSchedule($id, $locationId, $sectors, $startDate);
                 break;
             case 'widget':
-                if (!($locationId = $params->fromQuery('locationId') ?: null)) {
-                    $locationId = $this->getLocationIdFromCookie($id);
-                } else {
-                    $this->setLocationIdCookie($id, $locationId);
-                }
                 $result = $this->getWidget(
                     $id,
-                    $locationId,
+                    $params->fromQuery('locationId'),
                     $buildings,
                     $sectors,
                     (bool)$params->fromQuery('details', true),
@@ -229,7 +206,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 if (!($locationId = $params->fromQuery('locationId') ?: null)) {
                     return $this->handleError('getOrganisationInfo: missing location id');
                 }
-                $this->setLocationIdCookie($id, $locationId);
 
                 $result = $this->getWidgetLocationData(
                     $id,
@@ -271,66 +247,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         }
 
         return $this->formatResponse($result);
-    }
-
-    /**
-     * Get any location id from cookie
-     *
-     * @param string $id Organisation id
-     *
-     * @return mixed
-     */
-    protected function getLocationIdFromCookie(string $id)
-    {
-        $cookie = $this->cookieManager->get(static::COOKIE_NAME);
-        try {
-            $data = json_decode($cookie, true, 512, JSON_THROW_ON_ERROR);
-            return $data[$id]['loc'] ?? null;
-        } catch (\Exception $e) {
-            return null;
-        }
-    }
-
-    /**
-     * Set location id to a cookie
-     *
-     * @param string $id         Organisation id
-     * @param string $locationId Location ID
-     *
-     * @return void
-     */
-    protected function setLocationIdCookie(string $id, string $locationId): void
-    {
-        $cookie = $this->cookieManager->get(static::COOKIE_NAME);
-        try {
-            $data = json_decode($cookie, true, 512, JSON_THROW_ON_ERROR);
-            if (!is_array($data)) {
-                $data = [];
-            }
-        } catch (\Exception $e) {
-            // Bad cookie, rewrite:
-            $data = [];
-        }
-        $data[$id] = [
-            'loc' => $locationId,
-            'ts' => time(),
-        ];
-        // Remember last five locations:
-        while (count($data) > 5) {
-            // Find oldest:
-            $oldest = null;
-            $oldestKey = null;
-            foreach ($data as $key => $item) {
-                if (null === $oldest || ($item['ts'] ?? null) < ($oldest['ts'] ?? null)) {
-                    $oldest = $item;
-                    $oldestKey = $key;
-                }
-            }
-            unset($data[$oldestKey]);
-        }
-        // Update the cookie:
-        $expire = time() + 365 * 60 * 60 * 24; // 1 year
-        $this->cookieManager->set(static::COOKIE_NAME, json_encode($data), $expire);
     }
 
     /**
@@ -402,7 +318,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         }
         $defaultLocationId = $locationId
             ?? $orgInfo['consortium']['finna']['servicePoint']
-            ?? $orgInfo['list'][0]['id']
             ?? null;
         $defaultLocationName = null;
         if (null !== $defaultLocationId) {
@@ -578,7 +493,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         bool $showDetails
     ): array {
         $consortiumInfo = $this->organisationInfo->getConsortiumInfo($sectors, $id, $buildings);
-        $defaultLocationId = $consortiumInfo['consortium']['finna']['servicePoint'] ?? null;
+        $defaultLocationId = $consortiumInfo['consortium']['finna']['servicePoint'] ?? '';
         if (null === $locationId) {
             $locationId = $defaultLocationId;
         }

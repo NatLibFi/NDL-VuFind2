@@ -5,9 +5,10 @@
     <?=implode(', ', array_map(function ($type) { return $this->transEscWithPrefix('address_type_', $type); }, $this->address['types'])) ?>
   </div>
 <?php endif; ?>
+<?php $address1HeadingEsc = $this->transEsc('Address') . (!empty($this->address['address2']) ? ' 1' : ''); ?>
 <?php if (!empty($this->address['address1']) || $this->updateAddress): ?>
   <?php if ($this->updateAddress): ?>
-    <div class="my-profile-col profile-title profile-long"><?=$this->transEsc('Address') ?> 1:</div>
+    <div class="my-profile-col profile-title profile-long"><?=$address1HeadingEsc ?>:</div>
     <div class="my-profile-col profile-text-value profile-long"><?=empty($this->address['address1']) ? '' : $this->escapeHtml($this->address['address1']) ?></div>
     <div class="my-profile-col profile-long">
       <?php if ($this->needsApproval): ?>
@@ -18,7 +19,7 @@
     </div>
     <div class="clearfix"></div>
   <?php else: ?>
-    <div class="my-profile-col profile-title"><?=$this->transEsc('Address') ?> 1:</div>
+    <div class="my-profile-col profile-title"><?=$address1HeadingEsc ?>:</div>
     <div class="profile-text-value"><?=$this->escapeHtml($this->address['address1']) ?></div>
   <?php endif; ?>
 <?php endif; ?>

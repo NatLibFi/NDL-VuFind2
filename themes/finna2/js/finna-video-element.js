@@ -189,8 +189,8 @@ class VideoElement extends HTMLElement {
     super();
     this.modals = {
       video: `<video class="video-js vjs-big-play-centered video-popup" controls></video>`,
-      iframe: `<div style="height:100%">
-      <iframe class="player finna-popup-iframe" frameborder="0" allowfullscreen></iframe>
+      iframe: `<div class="popup-iframe-wrapper">
+      <iframe class="player finna-popup-iframe" frameborder="0" scrolling="no" allowfullscreen></iframe>
       </div>`,
       audio: `<div class="audio-player-wrapper">
       <audio controls preload="auto">

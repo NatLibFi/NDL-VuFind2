@@ -287,6 +287,7 @@ class Kirkanta extends AbstractProvider
                 'type' => $item['type'],
                 'mobile' => $item['type'] == 'mobile' ? 1 : 0,
                 'email' => $item['primaryContactInfo']['email']['email'] ?? null,
+                'emailName' => $item['primaryContactInfo']['email']['name'] ?? null,
                 'homepage' => $item['primaryContactInfo']['homepage']['url'] ?? null,
             ];
 
@@ -440,6 +441,7 @@ class Kirkanta extends AbstractProvider
             'type' => $response['type'],
             'mobile' => $response['type'] == 'mobile' ? 1 : 0,
             'email' => $response['primaryContactInfo']['email']['email'] ?? null,
+            'emailName' => $response['primaryContactInfo']['email']['name'] ?? null,
             'homepage' => $response['primaryContactInfo']['homepage']['url'] ?? null,
             'slogan' => $response['slogan'] ?? '',
             'description' => $response['description'] ?? '',

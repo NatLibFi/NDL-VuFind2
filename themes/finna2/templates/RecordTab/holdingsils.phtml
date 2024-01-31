@@ -104,7 +104,7 @@
     <?php if (!$user): ?>
       <?php if (!$repositoryLibraryRequestAllowed): ?>
         <div class="pull-right">
-          <a href="?login=true&amp;catalogLogin=true&amp;target=<?=$this->escapeHtmlAttr($recordSource ?? '')?>" class="btn btn-primary login-link" data-lightbox><?=$this->transEsc('title_hold_login')?></a>
+          <a href="<?=$this->serverUrl($this->url('myresearch-completelogin', [], ['query' => ['target' => $recordSource ?? '']]))?>" class="btn btn-primary login-link" data-lightbox><?=$this->transEsc('title_hold_login')?></a>
         </div>
         <div class="clearfix"></div>
       <?php endif; ?>
@@ -342,7 +342,7 @@
     </div>
     <div class="clearfix"></div>
     <?php if (isset($holding['items'][0]['detailsGroupKey'])): ?>
-      <div class="<?=$this->escapeHtmlAttr($holdingsDetails)?>GetDetails <?=$this->escapeHtmlAttr($holdingsDetails)?> hidden" data-key="<?=$this->escapeHtmlAttr($holding['items'][0]['detailsGroupKey'])?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
+      <div class="<?=$this->escapeHtmlAttr($holdingsDetails)?>GetDetails <?=$this->escapeHtmlAttr($holdingsDetails)?> copy-details hidden" data-key="<?=$this->escapeHtmlAttr($holding['items'][0]['detailsGroupKey'])?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
         <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
       </div>
     <?php endif; ?>

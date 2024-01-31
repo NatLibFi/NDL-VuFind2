@@ -267,36 +267,37 @@ class AipaLrmi extends SolrLrmi implements
      */
     public function getEncapsulatedRecordViewType(): string
     {
-        return (string)($this->getXmlRecord()->display ?? 'grid');
+        $attributes = $this->getXmlRecord()->attributes();
+        return (string)($attributes->{'display'} ?? 'grid');
     }
 
     /**
-     * Return all encapsulated record items.
+     * Returns the tag name of XML elements containing an encapsulated record.
      *
-     * @return array
+     * @return string
      */
-    protected function getEncapsulatedRecordItems(): array
+    public function getEncapsulatedRecordElementTagName(): string
     {
-        // Implementation for XML items in 'material' elements.
-        $items = [];
-        $xml = $this->getXmlRecord();
-        foreach ($xml->material as $item) {
-            $items[] = $item;
-        }
-        return $items;
+        return 'material';
     }
 
     /**
      * Return ID for an encapsulated record.
      *
-     * @param \SimpleXMLElement $item Encapsulated record item.
+     * @param mixed $item Encapsulated record item.
      *
      * @return string
      */
-    protected function getEncapsulatedRecordId(\SimpleXMLElement $item): string
+    protected function getEncapsulatedRecordId($item): string
     {
         // Implementation for XML items with ID specified in an 'identifier' element
-        return (string)$item->identifier;
+        if ($item instanceof \SimpleXMLElement) {
+            return (string)$item->identifier;
+        }
+        if ($item instanceof \DOMNode) {
+            return $item->getElementsByTagName('identifier')[0]->nodeValue;
+        }
+        throw new \RuntimeException('Unable to determine ID');
     }
 
     /**
@@ -309,6 +310,57 @@ class AipaLrmi extends SolrLrmi implements
     protected function getEncapsulatedRecordFormat($item): string
     {
         return 'CuratedRecord';
+    }
+
+    /**
+     * Return full record as a filtered SimpleXMLElement for public APIs.
+     *
+     * @return \SimpleXMLElement
+     */
+    public function getFilteredXMLElement(): \SimpleXMLElement
+    {
+        $record = parent::getFilteredXMLElement();
+        $this->doFilterFields($record, ['abstract', 'description', 'assignmentIdeas']);
+        foreach ($record->learningResource as $learningResource) {
+            $this->doFilterFields($learningResource, ['studyObjectives']);
+            foreach ($learningResource->educationalLevel as $educationalLevel) {
+                $this->doFilterFields($educationalLevel, ['name']);
+                foreach ($educationalLevel->inDefinedTermSet as $inDefinedTermSet) {
+                    $this->doFilterFields($inDefinedTermSet, ['name']);
+                }
+            }
+            foreach ($learningResource->educationalAlignment as $educationalAlignment) {
+                foreach ($educationalAlignment->educationalSubject as $educationalSubject) {
+                    $this->doFilterFields(
+                        $educationalSubject,
+                        ['educationalFramework', 'targetName']
+                    );
+                }
+            }
+            foreach ($learningResource->teaches as $teaches) {
+                $this->doFilterFields($teaches, ['name']);
+            }
+        }
+        return $this->filterEncapsulatedRecords($record);
+    }
+
+    /**
+     * Helper method for filtering fields.
+     *
+     * @param \SimpleXMLElement $baseElement  Base element
+     * @param array             $filterFields Fields to filter
+     *
+     * @return void
+     */
+    protected function doFilterFields(
+        \SimpleXMLElement $baseElement,
+        array $filterFields
+    ): void {
+        foreach ($filterFields as $filterField) {
+            while ($baseElement->{$filterField}) {
+                unset($baseElement->{$filterField}[0]);
+            }
+        }
     }
 
     /**
@@ -339,6 +391,7 @@ class AipaLrmi extends SolrLrmi implements
             'title' => $encapsulatedRecord->getTitle(),
             'position' => (int)$item->position,
             'notes' => (string)$item->comment,
+            'fullrecord' => $item->asXML(),
         ];
 
         $driver->setRawData($data);

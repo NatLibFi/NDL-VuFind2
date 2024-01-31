@@ -5,7 +5,7 @@
       <?php if (empty($part['link'])) {
         continue;
       } ?>
-      <div class="containedInLine" property="keywords">
+      <div class="containedInLine">
         <a class="backlink" title="<?=$this->escapeHtmlAttr($part['value'])?>" href="<?=$this->record($this->driver)->getLink($part['link']['type'] ?? 'allFields', $part['link']['value'])?>">
           <?=trim($this->escapeHtml($part['value']))?>
         </a>

@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<oai_dc schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+  <identifier>oai:aineistopaketit.finna.fi:2788</identifier>
+  <title lang="fi">Testipaketti</title>
+  <date>2023-12-01T10:45:39Z</date>
+  <description lang="fi">Ei saa n&#xE4;ky&#xE4;</description>
+  <creator>Testihenkil&#xF6;</creator>
+  <creator>Testiorganisaatio</creator>
+  <type>education</type>
+  <item format="lrmi" position="0" display="grid">
+    <id>oai:aineistopaketit.finna.fi:2787</id>
+    <title>Testipaketti</title>
+    <date>2023-12-01T10:56:15Z</date>
+    <description lang="fi">Ei saa n&#xE4;ky&#xE4;</description>
+    <type>content</type>
+    <dateCreated>2023-12-01T10:56:15Z</dateCreated>
+    <dateModified>2023-12-01T14:59:30Z</dateModified>
+    <author>
+      <person>
+        <name>Testihenkil&#xF6;</name>
+      </person>
+    </author>
+    <material>
+      <name lang="fi">Moottorisaha; Partner-moottorisaha</name>
+      <url>https://finna.fi/Record/lusto.knp-8015?sid=3450530197</url>
+      <position>0</position>
+      <inLanguage>fi</inLanguage>
+      <identifier>lusto.knp-8015</identifier>
+      <comment>Ei saa n&#xE4;ky&#xE4;</comment>
+    </material>
+    <material>
+      <name lang="fi">Moottorisaha; Taiga-moottorisaha</name>
+      <url>https://finna.fi/Record/lusto.knp-15935?sid=3450530197</url>
+      <position>1</position>
+      <inLanguage>fi</inLanguage>
+      <identifier>lusto.knp-15935</identifier>
+      <comment>Ei saa n&#xE4;ky&#xE4;</comment>
+    </material>
+    <inLanguage>fi</inLanguage>
+    <learningResource>
+      <educationalLevel>
+        <name>ammatillinen koulutus</name>
+        <termCode>vocationalEducation</termCode>
+        <inDefinedTermSet>
+          <name>Koodistot: Koulutusaste</name>
+          <url>http://uri.suomi.fi/codelist/edtech/Koulutusaste</url>
+        </inDefinedTermSet>
+      </educationalLevel>
+      <educationalLevel>
+        <name>lukiokoulutus</name>
+        <termCode>upperSecondarySchool</termCode>
+        <inDefinedTermSet>
+          <name>Koodistot: Koulutusaste</name>
+          <url>http://uri.suomi.fi/codelist/edtech/Koulutusaste</url>
+        </inDefinedTermSet>
+      </educationalLevel>
+      <educationalLevel>
+        <name>perusopetuksen vuosiluokat 1-2</name>
+        <termCode>basicEducationGrades1-2</termCode>
+        <inDefinedTermSet>
+          <name>Koodistot: Koulutusaste</name>
+          <url>http://uri.suomi.fi/codelist/edtech/Koulutusaste</url>
+        </inDefinedTermSet>
+      </educationalLevel>
+      <educationalLevel>
+        <name>perusopetuksen vuosiluokat 7-9</name>
+        <termCode>basicEducationGrades7-9</termCode>
+        <inDefinedTermSet>
+          <name>Koodistot: Koulutusaste</name>
+          <url>http://uri.suomi.fi/codelist/edtech/Koulutusaste</url>
+        </inDefinedTermSet>
+      </educationalLevel>
+      <educationalLevel>
+        <name>varhaiskasvatus</name>
+        <termCode>earlyChildhoodEducation</termCode>
+        <inDefinedTermSet>
+          <name>Koodistot: Koulutusaste</name>
+          <url>http://uri.suomi.fi/codelist/edtech/Koulutusaste</url>
+        </inDefinedTermSet>
+      </educationalLevel>
+      <educationalAlignment>
+        <educationalSubject>
+          <educationalFramework>Perusopetuksen opetussuunnitelman perusteet 2014</educationalFramework>
+          <targetName>&#xC4;idinkieli ja kirjallisuus</targetName>
+          <targetUrl>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/419550/perusopetus/oppiaineet/466340</targetUrl>
+          <identifier>466340</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+      <educationalAlignment>
+        <educationalSubject>
+          <educationalFramework/>
+          <targetName>&#xC4;idinkieli ja kirjallisuus</targetName>
+          <targetUrl>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/6828810/lops2019/oppiaineet/6828950</targetUrl>
+          <identifier>6828950</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+      <educationalAlignment>
+        <educationalSubject>
+          <educationalFramework/>
+          <targetName>Kieli- ja tekstitietoisuus</targetName>
+          <targetUrl>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/6828810/lops2019/oppiaineet/6828950</targetUrl>
+          <identifier>6829041</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+      <educationalAlignment>
+        <educationalSubject>
+          <educationalFramework/>
+          <targetName>Mets&#xE4;alan perustutkinto</targetName>
+          <targetUrl>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/8419761</targetUrl>
+          <identifier>8419761</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+      <educationalAlignment>
+        <educationalSubject>
+          <educationalFramework/>
+          <targetName>Mets&#xE4;alan ammattitutkinto</targetName>
+          <targetUrl>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/6930623</targetUrl>
+          <identifier>6930623</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+      <educationalAlignment>
+        <educationalSubject>
+          <educationalFramework/>
+          <targetName>Mets&#xE4;alan erikoisammattitutkinto</targetName>
+          <targetUrl>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/5116902</targetUrl>
+          <identifier>5116902</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+      <educationalAlignment>
+        <educationalSubject>
+          <educationalFramework/>
+          <targetName>Puunkorjuupalvelut</targetName>
+          <targetUrl>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/8419761</targetUrl>
+          <identifier>8531640</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+      <educationalAlignment>
+        <educationalSubject>
+          <educationalFramework/>
+          <targetName>Huippuosaajana toimiminen</targetName>
+          <targetUrl>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/yto/tutkinnonOsat</targetUrl>
+          <identifier>7283253</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+      <educationalAlignment>
+        <educationalSubject>
+          <educationalFramework/>
+          <targetName>Ilmaisun monet muodot</targetName>
+          <targetUrl>https://api.finna.fi/api/v1/code-sets/varhaiskasvatus/osaamisalueet/OA-2022-2</targetUrl>
+          <identifier>OA-2022-2</identifier>
+        </educationalSubject>
+      </educationalAlignment>
+      <teaches>
+        <name>S1 Vuorovaikutustilanteissa toimiminen</name>
+        <identifier>466630</identifier>
+        <inDefinedTermSet>
+          <url>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/419550/perusopetus/oppiaineet/466340</url>
+        </inDefinedTermSet>
+      </teaches>
+      <teaches>
+        <name>erilaiset k&#xE4;sitykset kielest&#xE4;: kieli rakenteena, merkitysten muodostajana, sosiaalisena ja yhteis&#xF6;llisen&#xE4; ilmi&#xF6;n&#xE4; sek&#xE4; vallan v&#xE4;lineen&#xE4;</name>
+        <identifier>6829080</identifier>
+        <inDefinedTermSet>
+          <url>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/6828810/lops2019/oppiaineet/6828950</url>
+        </inDefinedTermSet>
+      </teaches>
+      <teaches>
+        <name>T1 ohjata oppilasta vahvistamaan taitoaan toimia erilaisissa vuorovaikutustilanteissa</name>
+        <identifier>466660</identifier>
+        <inDefinedTermSet>
+          <url>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/419550/perusopetus/oppiaineet/466340</url>
+        </inDefinedTermSet>
+      </teaches>
+      <teaches>
+        <name>kehitt&#xE4;&#xE4; kieli- ja tekstitietoisuuttaan</name>
+        <identifier>6829077</identifier>
+        <inDefinedTermSet>
+          <url>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/6828810/lops2019/oppiaineet/6828950</url>
+        </inDefinedTermSet>
+      </teaches>
+      <teaches>
+        <name>L1 Ajattelu ja oppimaan oppiminen</name>
+        <identifier>428670</identifier>
+        <inDefinedTermSet>
+          <url>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/419550/perusopetus/laajaalaisetosaamiset</url>
+        </inDefinedTermSet>
+      </teaches>
+      <teaches>
+        <name>Eettisyys ja ymp&#xE4;rist&#xF6;osaaminen</name>
+        <identifier>6828860</identifier>
+        <inDefinedTermSet>
+          <url>https://virkailija.opintopolku.fi/eperusteet-service/api/external/peruste/6828810/lops2019/laajaAlainenOsaaminen/laajaAlaisetOsaamiset</url>
+        </inDefinedTermSet>
+      </teaches>
+      <studyObjectives>Ei saa n&#xE4;ky&#xE4;</studyObjectives>
+    </learningResource>
+    <format>LRMI</format>
+    <position>0</position>
+    <display>grid</display>
+    <assignmentIdeas lang="fi">Ei saa n&#xE4;ky&#xE4;</assignmentIdeas>
+  </item>
+  <recordID>_preview</recordID>
+</oai_dc>

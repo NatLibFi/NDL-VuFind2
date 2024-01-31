@@ -696,12 +696,11 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
                 foreach ($searches as $i => $search) {
                     $results = $this->searchRunner->run($search['params']);
                     $resultTotal = $results->getResultTotal();
-                    if (0 === $resultTotal) {
+                    if (0 >= $resultTotal) {
                         // No results for this search so remove the link.
                         unset($this->recommendations[$type][$term][$i]['href']);
                     }
-                    $this->recommendations[$type][$term][$i]['resultTotal']
-                        = $resultTotal;
+                    $this->recommendations[$type][$term][$i]['resultTotal'] = $resultTotal;
                     $grandTotal += $resultTotal;
                     $resultChecksDone += 1;
                 }

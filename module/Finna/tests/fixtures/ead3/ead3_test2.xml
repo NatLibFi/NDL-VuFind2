@@ -17,6 +17,16 @@
     <unitdate label="Ajallinen kattavuus" normal="1600-01-01/1610-01-01"></unitdate>
     <unittitle label="Reinius Theodor S 3:b) 1" normal="Reinius Theodor S 3:b) 1" lang="fin">Reinius Theodor S 3:b) 1</unittitle>
 
+    <physdescstructured coverage="whole" physdescstructuredtype="materialtype" lang="fi">
+      <quantity>9</quantity>
+      <unittype>Koteloa</unittype>
+    </physdescstructured>
+
+    <physdescstructured coverage="whole" physdescstructuredtype="materialtype" lang="sv">
+      <quantity>9</quantity>
+      <unittype>Mappar</unittype>
+    </physdescstructured>
+
   </did>
   <relatedmaterial>
     <p lang="fi">
@@ -39,4 +49,15 @@
       <relationentry localtype="Ensisijainen nimi">Aino Aihe</relationentry>
     </relation>
   </relations>
+  <controlaccess>
+    <subject relator="asiasana" source="KOKO" identifier="http://www.yso.fi/onto/koko/p9492" lang="eng">
+      <part>writing contests</part>
+    </subject>
+    <subject relator="asiasana" source="KOKO" identifier="http://www.yso.fi/onto/koko/p9492" lang="fin">
+      <part>kirjoituskilpailut</part>
+    </subject>
+    <subject relator="asiasana" source="KOKO" identifier="http://www.yso.fi/onto/koko/p9492" lang="swe">
+      <part>skrivartävlingar</part>
+    </subject>
+  </controlaccess>
 </c02>

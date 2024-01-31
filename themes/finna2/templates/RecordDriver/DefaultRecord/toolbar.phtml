@@ -39,7 +39,7 @@
   <?php $QRCode = $this->record($this->driver)->getQRCode('core'); ?>
   <?php if($QRCode): ?>
   <li role="none" class="dropdown">
-    <a class="dropdown-toggle qrcodeLink" data-toggle="dropdown" href="<?=$this->escapeHtmlAttr($QRCode);?>" rel="nofollow"><?=$this->icon('qrcode') ?></i><span class="hidden-xs"> <?=$this->transEsc('QR Code') ?></span></a>
+    <a class="dropdown-toggle qrcodeLink" data-toggle="dropdown" href="<?=$this->escapeHtmlAttr($QRCode);?>" rel="nofollow"><?=$this->icon('qrcode') ?><span class="hidden-xs"> <?=$this->transEsc('QR Code') ?></span></a>
     <ul class="dropdown-menu qrcode" role="menu">
       <li class="text-center">
         <script type="text/template" class="qrCodeImgTag">

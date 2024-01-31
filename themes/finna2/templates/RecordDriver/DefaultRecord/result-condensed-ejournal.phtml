@@ -17,18 +17,18 @@
       <th><?=$this->transEsc('Publisher')?>: </th>
       <td>
       <?php foreach ($publications as $field): ?>
-        <span property="publisher" typeof="Organization">
+        <span>
           <?php $pubPlace = $field->getPlace();
           if (!empty($pubPlace)): ?>
-            <span property="location"><?=$this->escapeHtml($pubPlace)?></span>
+            <span><?=$this->escapeHtml($pubPlace)?></span>
           <?php endif; ?>
           <?php $pubName = $field->getName();
           if (!empty($pubName)): ?>
-            <span property="name"><?=$this->escapeHtml($pubName)?></span>
+            <span><?=$this->escapeHtml($pubName)?></span>
           <?php endif; ?>
           <?php $pubDate = $field->getDate();
           if (!empty($pubDate)): ?>
-            <span property="datePublished"><?=$this->escapeHtml($pubDate)?></span>
+            <span><?=$this->escapeHtml($pubDate)?></span>
           <?php endif; ?>
         </span>
       <?php endforeach; ?>
@@ -55,7 +55,7 @@
       <th><?=$this->transEsc('Subjects')?>:</th>
       <td>
       <?php foreach ($subjects as $field): ?>
-      <div class="subjectLine" property="keywords">
+      <div class="subjectLine">
         <?php $subject = ''; ?>
         <?php if(count($field) == 1) {
           $field = explode('--', $field[0]);

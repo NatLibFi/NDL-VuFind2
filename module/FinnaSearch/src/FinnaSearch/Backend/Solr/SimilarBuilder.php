@@ -142,16 +142,15 @@ class SimilarBuilder extends \VuFindSearch\Backend\Solr\SimilarBuilder
     /// Public API
 
     /**
-     * Return SOLR search parameters based on interesting terms.
+     * Build SOLR search parameters based on interesting terms.
      *
-     * @param array $record Interesting terms to use in the query
+     * @param array    $record Interesting terms to use in the query
+     * @param ParamBag $params Query parameters
      *
-     * @return ParamBag
+     * @return void
      */
-    public function buildInterestingTermQuery($record)
+    public function buildInterestingTermQuery(array $record, ParamBag $params): void
     {
-        $params = new ParamBag();
-
         $boost = true;
         $settings = [];
         $specs = [
@@ -180,28 +179,28 @@ class SimilarBuilder extends \VuFindSearch\Backend\Solr\SimilarBuilder
         }
         $query = [];
         foreach ($settings as $field => $boostValue) {
-            if (isset($record[$field])) {
-                $count = 0;
-                foreach ((array)$record[$field] as $values) {
-                    if (strlen($values) < 3) {
+            $count = 0;
+            foreach ((array)($record[$field] ?? []) as $values) {
+                if (strlen($values) < 3) {
+                    continue;
+                }
+                $escaped = addcslashes($values, $this->escapedChars);
+                $fullBoost = $this->fullMatchBoostMultiplier * $boostValue;
+                $query[] = "$field:($escaped)^$fullBoost";
+                $rest = explode(' ', $values);
+                array_shift($rest);
+                foreach ($rest as $value) {
+                    if (strlen($value) < 3) {
                         continue;
                     }
-                    $escaped = addcslashes($values, $this->escapedChars);
-                    $fullBoost = $this->fullMatchBoostMultiplier * $boostValue;
-                    $query[] = "$field:($escaped)^$fullBoost";
-                    foreach (explode(' ', $values) as $value) {
-                        if (strlen($value) < 3) {
-                            continue;
-                        }
-                        $valueLower = mb_strtolower($value, 'UTF-8');
-                        if (in_array($valueLower, $this->stopWords)) {
-                            continue;
-                        }
-                        $escaped = addcslashes($value, $this->escapedChars);
-                        $query[] = "$field:($escaped)^$boostValue";
-                        if (++$count > 15) {
-                            break;
-                        }
+                    $valueLower = mb_strtolower($value, 'UTF-8');
+                    if (in_array($valueLower, $this->stopWords)) {
+                        continue;
+                    }
+                    $escaped = addcslashes($value, $this->escapedChars);
+                    $query[] = "$field:($escaped)^$boostValue";
+                    if (++$count > 15) {
+                        break;
                     }
                 }
             }
@@ -209,6 +208,7 @@ class SimilarBuilder extends \VuFindSearch\Backend\Solr\SimilarBuilder
         if (!$query) {
             $queryStr = 'noproperinterestingtermsfound';
         } else {
+            $query = array_unique($query);
             $queryStr = implode(' OR ', $query);
             if ($this->excludeOtherVersions) {
                 // Filter out records with same work keys
@@ -228,8 +228,6 @@ class SimilarBuilder extends \VuFindSearch\Backend\Solr\SimilarBuilder
         if (null === $params->get('rows')) {
             $params->set('rows', $this->count);
         }
-
-        return $params;
     }
 
     /**

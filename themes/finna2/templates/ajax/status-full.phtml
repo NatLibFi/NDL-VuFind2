@@ -5,6 +5,7 @@ $driver = $this->record($id)->getDriver();
 $source = $driver ? $driver->tryMethod('getDataSource') : '';
 $locations = false;
 $holdings = $this->statusItems;
+$externalInterfaceUrl = '';
 foreach ($holdings as $i => $holding) {
   if (($holding['location'] ?? '') === '__HOLDINGSSUMMARYLOCATION__') {
     unset($holdings[$i]);
@@ -13,6 +14,7 @@ foreach ($holdings as $i => $holding) {
     $reservationsTotal = $holding['reservations'] ?? null;
     $orderedTotal = $holding['ordered'] ?? null;
     $locations = $holding['locations'] ?? null;
+    $externalInterfaceUrl = $holding['externalInterfaceUrl'] ?? '';
     break;
   }
 }
@@ -318,7 +320,8 @@ if (!$disableTitleHold
       $lightbox = true;
       if (!$logged) {
         if (!$this->record($driver)->repositoryLibraryRequestEnabled('results')) {
-          $link = $holdingsLink . '?login=true&catalogLogin=true&target=' . urlencode($source);
+          $link = $holdingsLink . (!str_contains($holdingsLink, '?') ? '?' : '&')
+            . 'login=true&catalogLogin=true&target=' . urlencode($source);
         }
       } elseif ($journal) {
         $link = $holdingsLink;
@@ -358,7 +361,8 @@ if (!$disableTitleHold
         <a href="<?=$this->url('editLibraryCard', ['id' => 'NEW'])?>" class="btn btn-primary login-link hidden-print"><?=$this->transEsc('repository_library_request_add_library_card')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
       <?php endif; ?>
     <?php else: ?>
-      <a href="<?=$this->escapeHtmlAttr($addSid($holdingsLink . '?login=true&catalogLogin=true'))?>" class="btn btn-primary login-link hidden-print" data-lightbox><?=$this->transEsc('repository_library_request_login')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
+      <?php $link = $holdingsLink . (!str_contains($holdingslink, '?') ? '?' : '&') . '?login=true&catalogLogin=true'; ?>
+      <a href="<?=$this->escapeHtmlAttr($addSid($link))?>" class="btn btn-primary login-link hidden-print" data-lightbox><?=$this->transEsc('repository_library_request_login')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
     <?php endif; ?>
   </div>
   <div class="clearfix"></div>
@@ -371,7 +375,7 @@ if (!$disableTitleHold
 <?php endif; ?>
 </div>
 
-<?php if ($driver && $source && $externalInterfaceUrl = $summary['externalInterfaceUrl'] ?? ''):?>
+<?php if ($driver && $source && $externalInterfaceUrl):?>
   <?=$this->record($driver)->renderTemplate('external-interface-link.phtml', ['driver' => $driver, 'source' => $source, 'link' => $externalInterfaceUrl ?? ''])?>
 <?php endif;?>
 

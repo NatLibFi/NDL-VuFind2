@@ -40,8 +40,6 @@
 <?php endif; ?>
 <?php $extraFilters = $this->extraSideFacetFilters ?? []; ?>
 <?php $collapsedFacets = $this->recommend->getCollapsedFacets(); ?>
-<?php $hierarchicalFacetSortOptions = $this->recommend->getHierarchicalFacetSortOptions(); ?>
-<?php $hierarchicalFacets = $this->recommend->getHierarchicalFacets(); ?>
 <?php $filterList = array_merge($results->getParams()->getFilterList(true), $extraFilters); ?>
 <?php $module = $this->layout()->templateDir; ?>
 <?php

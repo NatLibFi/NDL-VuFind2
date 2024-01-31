@@ -44,7 +44,9 @@
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'profile']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
-  <h2><?=$this->transEsc('Profile')?></h2>
+  <div class="useraccount-header">
+    <h2><?=$this->transEsc('Profile')?></h2>
+  </div>
   <div class="my-research-content">
     <div>
       <?php if (!$this->translationEmpty('profile_instructions')): ?><p class="no-content-message"><?=$this->transEsc('profile_instructions')?></p><?php endif; ?>
@@ -136,6 +138,10 @@
             <?php if (!empty($this->profile['lastname'])): ?>
               <div class="my-profile-col profile-title"><?=$this->transEsc('Last Name') ?>:</div>
               <div class="profile-text-value"><?=$this->escapeHtml($this->profile['lastname']) ?></div>
+            <?php endif; ?>
+            <?php if (!empty($this->profile['calling_name'])): ?>
+              <div class="my-profile-col profile-title"><?=$this->transEsc('Calling Name') ?>:</div>
+              <div class="profile-text-value"><?=$this->escapeHtml($this->profile['calling_name']) ?></div>
             <?php endif; ?>
             <?php $addressParams = compact('updateAddress', 'updateAddressLink', 'needsApproval', 'updatePhone', 'updateEmail'); ?>
             <?php if (!empty($profile['addresses'])): ?>
@@ -237,8 +243,15 @@
             <?php endif; ?>
             <?php if (isset($this->profile['self_service_library'])): ?>
               <div class="my-profile-col profile-title"><?=$this->transEsc('self_service_library') ?>:</div>
-              <div class="profile-text-value">
+              <div class="my-profile-col profile-text-value">
                 <?=$this->transEsc($this->profile['self_service_library'] ? 'self_service_library_enabled' : 'self_service_library_disabled') ?>
+              </div>
+              <div class="my-profile-col">
+                <?php if (!$this->translationEmpty('self_service_library_description_html')): ?>
+                  <?=$this->icon('info') ?> <?=$this->translate('self_service_library_description_html')?>
+                <?php else: ?>
+                  &nbsp;
+                <?php endif; ?>
               </div>
             <?php endif; ?>
             <?php if ($guarantorFullName): ?>

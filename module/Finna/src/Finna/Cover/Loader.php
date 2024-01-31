@@ -452,6 +452,9 @@ class Loader extends \VuFind\Cover\Loader
                 $this->debug("Failed to retrieve image from $url");
                 return false;
             }
+            if (filesize($tempFile) === 0) {
+                throw new \Exception('Received empty file');
+            }
             $this->addHostSuccess($host);
         } catch (\Exception $e) {
             $this->logError(

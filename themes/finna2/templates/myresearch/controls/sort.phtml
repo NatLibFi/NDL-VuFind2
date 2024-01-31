@@ -1,6 +1,6 @@
 <!-- START of: finna - myresearch/controls/sort.phtml -->
 <div class="sort-option-container">
-  <span class="hidden-sm hidden-xs hidden-md button-label"><?=$this->transEsc('Sort')?></span>
+  <span class="button-label"><?=$this->transEsc('Sort')?></span>
   <div class="sort-button">
   <div class="dropdown">
     <?php foreach ($this->sortList as $sortType => $sortData): ?>
@@ -12,7 +12,7 @@
     <?php endforeach; ?>
     <ul class="dropdown-menu" role="menu">
       <?php foreach ($this->sortList as $sortType => $sortData): ?>
-      <li role="menuitem">
+      <li role="menuitem" class="sort-<?=$this->escapeHtmlAttr(str_replace([' ', '_'], '-', $sortType))?>">
         <a href="<?=isset($sortData['url']) ? $this->escapeHtmlAttr($sortData['url']) : $this->results->getUrlQuery()->setSort($sortType)?>"><?=$this->transEsc($sortData['desc'])?></a>
       <?php endforeach; ?>
       </li>

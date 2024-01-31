@@ -69,12 +69,15 @@ class GetDescriptionFactory implements \Laminas\ServiceManager\Factory\FactoryIn
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
+        $config = $container->get(\VuFind\Config\PluginManager::class);
         $result = new $requestedName(
             $container->get(\VuFind\Session\Settings::class),
             $container->get(\VuFind\Cache\Manager::class),
-            $container->get(\VuFind\Config\PluginManager::class)->get('config'),
             $container->get(\VuFind\Record\Loader::class),
-            $container->get('ViewRenderer')
+            $container->get(\Finna\Content\Description\PluginManager::class),
+            $config->get('config')->toArray(),
+            $config->get('datasources')->toArray(),
+            $container->get(\VuFind\I18n\Locale\LocaleSettings::class)->getUserLocale()
         );
         return $result;
     }

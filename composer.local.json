@@ -3,11 +3,11 @@
         "See https://github.com/wikimedia/composer-merge-plugin for more details."
     ],
     "require": {
-        "ezyang/htmlpurifier": "4.12.0",
+        "ezyang/htmlpurifier": "4.17.0",
         "jaybizzle/crawler-detect": "^1.2.111",
         "league/mime-type-detection": "1.9.0",
         "natlibfi/besimple-soap": "2.0.0",
-        "natlibfi/finna-code-sets": "0.2.1",
+        "natlibfi/finna-code-sets": "0.4.0",
         "natlibfi/php-html-parser": "4.0.1",
         "paytrail/paytrail-php-sdk": "2.5.2",
         "picqer/php-barcode-generator": "2.0.1",

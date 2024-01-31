@@ -10,14 +10,17 @@
     $catalog = $this->ils();
     $user = $this->auth()->isLoggedIn();
     $patron = $user ? $this->auth()->getILSPatron() : false;
+    $sortList = $this->sortList;
 ?>
 
 <!-- Leftside navigationbar -->
-<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'historicLoans']); ?>
+<?=$this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'historicLoans']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
   <div class="my-research-content myresearch-grid-list">
-    <?php if (!$this->translationEmpty('loan_history_instructions_html')): ?><p class="no-content-message"><?=$this->translate('loan_history_instructions_html')?></p><?php endif; ?>
+    <?php if (!$this->translationEmpty('loan_history_instructions_html')): ?>
+      <p class="no-content-message"><?=$this->translate('loan_history_instructions_html')?></p>
+    <?php endif; ?>
     <?=$this->flashmessages()?>
     <div class="useraccount-row">
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
@@ -35,152 +38,151 @@
       <?php if ($template = $this->content()->findTemplateForLng('content/Additions/historic-loans-pre-list')): ?>
         <div class="historic-loans-pre-list"><?=$this->render($template)?></div>
       <?php endif; ?>
+      <div class="sort-col sort-col-mobile">
+        <?php if ($sortList): ?>
+          <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList]); ?>
+        <?php endif; ?>
+      </div>
       <?php if (!empty($this->transactions)): ?>
-        <?php if ($purgeAllAllowed || $purgeSelectedAllowed): ?>
-          <form name="purge_history" method="post" action="<?=$this->url('checkouts-purgehistory')?>" id="purge_history" data-disable-on-submit>
-          <input type="hidden" id="submitType" name="purgeSelected" value="1">
-          <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
+        <?php if ($paginator): ?>
+          <div class="pagination-container">
+            <?=$this->paginationControl($paginator, 'Sliding', 'Helpers/pagination-simple.phtml', ['params' => $params]) ?>
+          </div>
         <?php endif; ?>
 
-        <table class="myresearch-table" role="presentation" aria-label="<?=$this->transEscAttr('Actions');?>">
-          <tr class="toolbar">
-            <td<?=$purgeSelectedAllowed ? ' colspan="2"' : '' ?>>
-              <?php if ($paginator): ?>
-                <div class="pagination-container">
-                  <?=$this->paginationControl($paginator, 'Sliding', 'Helpers/pagination-simple.phtml', ['params' => $params])?>
-                </div>
-              <?php endif; ?>
-              <div>
-                <?php if ($this->sortList): ?>
-                  <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $this->sortList]); ?>
-                <?php endif; ?>
-              </div>
-            </td>
-          </tr>
-          <tr class="toolbar">
-            <?php if ($purgeSelectedAllowed): ?>
-              <td class="text-left checkbox-col">
-                <div class="checkboxFilter mylist-select-all">
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" name="selectAll" class="checkbox-select-all">
-                      <?=$this->transEsc($this->ilsPaging ? 'select_all_on_page' : 'Select All')?>
-                      <span class="selected"></span>
-                    </label>
+          <div class="myaccount-sticky-header"></div>
+          <div class="toolbar-sticky-container">
+            <form name="purge_history" method="post" action="<?=$this->url('checkouts-purgehistory')?>" id="purge_history" data-disable-on-submit>
+            <?php if ($purgeAllAllowed || $purgeSelectedAllowed): ?>
+              <input type="hidden" id="submitType" name="purgeSelected" value="1">
+              <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
+            <?php endif; ?>
+              <div class="toolbar-sticky">
+                <div class="myresearch-table history-table">
+                  <div class="toolbar">
+                    <div class="checkbox-col">
+                      <div class="checkboxFilter mylist-select-all">
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox" name="selectAll" class="checkbox-select-all" aria-label="<?=$this->transEscAttr('Select All');?>">
+                            <span class="selected"></span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="list-functions">
+                      <div class="toolbar-button-col">
+                        <div class="btn-group">
+                        <?php if ($purgeSelectedAllowed): ?>
+                          <input type="submit" id="purgeSelected" name="purgeSelected" value="<?=$this->transEscAttr('loan_history_purge_selected')?>" class="btn btn-primary btn-finna-toolbar dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore disabled="disabled">
+                          <ul class="dropdown-menu useraccount-confirm" role="presentation">
+                            <li class="disabled"><span class="prompt-text"><?=$this->transEsc('loan_history_confirm_purge_selected')?></span></li>
+                            <li><a href="#" id="confirm_purge_selected_yes"><?=$this->transEsc('confirm_dialog_yes')?></a></li>
+                            <li><a href="#" class="confirm_purge_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+                          </ul>
+                        <?php endif; ?>
+                          <a class="btn btn-primary btn-finna-toolbar disabled" id="copy_to_favourites" data-lightbox role="button" href="<?=$this->url('myresearch-savehistoricloans') ?>"><?=$this->transEsc('loan_history_save')?></a>
+                        </div>
+                      </div>
+                      <div class="sort-col">
+                        <?php if ($sortList): ?>
+                          <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList]); ?>
+                        <?php endif; ?>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </td>
-            <?php endif; ?>
-            <td>
-              <?php if ($purgeSelectedAllowed): ?>
-                <div class="btn-group">
-                  <input type="submit" id="purgeSelected" name="purgeSelected" value="<?=$this->transEscAttr('loan_history_purge_selected')?>" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
-                  <ul class="dropdown-menu">
-                    <li class="disabled"><span class="prompt-text"><?=$this->transEsc('loan_history_confirm_purge_selected')?></span></li>
-                    <li><a href="#" id="confirm_purge_selected_yes"><?=$this->transEsc('confirm_dialog_yes')?></a></li>
-                    <li><a href="#" class="confirm_purge_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
-                  </ul>
-                </div>
-              <?php endif; ?>
+              </div>
+
+              <table class="myresearch-table" aria-label="<?=$this->transEscAttr('Loan History')?>" tabindex="0">
+                <tr class="sr-only myresearch-row" aria-hidden="true">
+                  <th id="label-select-column"><?=$this->transEsc('Select');?></th>
+                  <th class="hidden-xs"></th>
+                  <th id="label-title-column"><?=$this->transEsc('Loan Details');?></th>
+                  <th id="label-status-column"><?=$this->transEsc('Additional data');?></th>
+                </tr>
+                <?php $i = 0;
+                foreach ($this->transactions as $resource): ?>
+                  <?php $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
+                  <tr class="myresearch-row result">
+                    <td class="checkbox-col" headers="label-select-column" aria-labelledby="label-select-column">
+                      <div class="checkboxFilter">
+                        <div class="checkbox">
+                        <?php if (isset($ilsDetails['row_id'])): ?>
+                          <?php $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $ilsDetails['row_id']); ?>
+                          <label>
+                            <input class="checkbox-select-item" type="checkbox" name="purgeSelectedIDs[]" value="<?=$this->escapeHtmlAttr($ilsDetails['row_id'])?>" id="checkbox_<?=$safeId?>">
+                          </label>
+                        <?php else: ?>
+                          <label> </label>
+                        <?php endif; ?>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="text-left hidden-xs" aria-hidden="true">
+                      <div class="cover-image">
+                      <?php if ($summThumb = $this->record($resource)->getThumbnail()): ?>
+                        <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEscAttr('Cover Image')?>">
+                      <?php else: ?>
+                        <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEscAttr('No Cover Image')?>">
+                      <?php endif; ?>
+                      </div>
+                    </td>
+                    <td headers="label-title-column" aria-labelledby="label-title-column">
+                      <?=$this->record($resource)->renderTemplate('account-entry.phtml')?>
+                    </td>
+                    <td class="checkedout-status-information" headers="label-status-column" aria-labelledby="label-status-column">
+                    <?php if (!empty($ilsDetails['institution_name']) && (empty($ilsDetails['borrowingLocation']) || $ilsDetails['institution_name'] != $ilsDetails['borrowingLocation'])): ?>
+                      <strong><?=$this->transEscWithPrefix('location_', $ilsDetails['institution_name'])?></strong>
+                      <br>
+                    <?php endif; ?>
+
+                    <?php if (!empty($ilsDetails['borrowingLocation'])): ?>
+                      <strong><?=$this->transEsc('Borrowing Location')?>:</strong> <?=$this->transEscWithPrefix('location_', $ilsDetails['borrowingLocation'])?>
+                      <br>
+                    <?php endif; ?>
+
+                    <?php if (!empty($ilsDetails['checkoutDate'])): ?>
+                      <strong><?=$this->transEsc('Checkout Date')?>:</strong> <?=$this->escapeHtml($ilsDetails['checkoutDate'])?>
+                      <br>
+                    <?php endif; ?>
+                    <?php if (!empty($ilsDetails['returnDate'])): ?>
+                      <strong><?=$this->transEsc('Return Date')?>:</strong> <?=$this->escapeHtml($ilsDetails['returnDate'])?>
+                      <br>
+                    <?php endif; ?>
+                    <?php if (!empty($ilsDetails['dueDate'])): ?>
+                      <strong><?=$this->transEsc('Due Date')?>:</strong> <?=$this->escapeHtml($ilsDetails['dueDate'])?>
+                      <?php if (isset($ilsDetails['dueTime'])): ?>
+                        <span class="due-time"><?=$this->escapeHtml($ilsDetails['dueTime'])?></span>
+                      <?php endif; ?>
+                    <?php endif; ?>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+              </table>
               <?php if ($purgeAllAllowed): ?>
-                <div class="btn-group">
-                  <input type="submit" id="purgeAll" name="purgeAll" value="<?=$this->transEscAttr('loan_history_purge_all')?>" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
-                  <ul class="dropdown-menu">
+                <div class="dropdown loan-history-purge-all">
+                  <input type="submit" id="purgeAll" name="purgeAll" value="<?=$this->transEscAttr('loan_history_purge')?>" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
+                  <ul class="dropdown-menu useraccount-confirm">
                     <li class="disabled"><span class="prompt-text"><?=$this->transEsc('loan_history_confirm_purge_all')?></span></li>
                     <li><a href="#" id="confirm_purge_all_yes"><?=$this->transEsc('confirm_dialog_yes')?></a></li>
                     <li><a href="#" class="confirm_purge_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
                   </ul>
                 </div>
               <?php endif; ?>
-              <div class="btn-group save-list-wrapper hidden-print left-control">
-                <a class="btn btn-primary btn-sm" data-lightbox role="button" href="<?=$this->url('myresearch-savehistoricloans') ?>"><?=$this->transEsc('loan_history_save')?></a>
-              </div>
-            </td>
-          </tr>
-        </table>
-        <table class="myresearch-table" aria-label="<?=$this->transEscAttr('Loan History')?>" tabindex="0">
-          <tr class="sr-only myresearch-row" aria-hidden="true">
-            <?php if ($purgeSelectedAllowed): ?>
-              <th id="label-select-column"><?=$this->transEsc('Select');?></th>
-            <?php endif; ?>
-            <th class="hidden-xs"></th>
-            <th id="label-title-column"><?=$this->transEsc('Loan Details');?></th>
-            <th id="label-status-column"><?=$this->transEsc('Additional data');?></th>
-          </tr>
+            </form>
+          </div>
 
-        <?php $i = 0;
-        foreach ($this->transactions as $resource): ?>
-          <?php $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
-          <tr class="myresearch-row">
-            <?php if ($this->purgeSelectedAllowed): ?>
-              <td class="text-left" headers="label-select-column" aria-labelledby="label-select-column">
-                <div class="checkboxFilter">
-                  <div class="checkbox">
-                    <?php if (isset($ilsDetails['row_id'])): ?>
-                      <?php $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $ilsDetails['row_id']); ?>
-                      <label>
-                        <input class="checkbox-select-item" type="checkbox" name="purgeSelectedIDs[]" value="<?=$this->escapeHtmlAttr($ilsDetails['row_id'])?>" id="checkbox_<?=$safeId?>">
-                      </label>
-                    <?php else: ?>
-                      <label> </label>
-                    <?php endif; ?>
-                  </div>
-                </div>
-              </td>
-            <?php endif; ?>
-            <td class="text-left hidden-xs" aria-hidden="true">
-              <div class="cover-image">
-                <?php if ($summThumb = $this->record($resource)->getThumbnail()): ?>
-                  <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEscAttr('Cover Image')?>">
-                <?php else: ?>
-                  <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEscAttr('No Cover Image')?>">
-                <?php endif; ?>
-              </div>
-            </td>
-            <td headers="label-title-column" aria-labelledby="label-title-column">
-              <?=$this->record($resource)->renderTemplate('account-entry.phtml')?>
-            </td>
-            <td class="checkedout-status-information" headers="label-status-column" aria-labelledby="label-status-column">
-              <?php if (!empty($ilsDetails['institution_name']) && (empty($ilsDetails['borrowingLocation']) || $ilsDetails['institution_name'] != $ilsDetails['borrowingLocation'])): ?>
-                <strong><?=$this->transEscWithPrefix('location_', $ilsDetails['institution_name'])?></strong>
-                <br>
-              <?php endif; ?>
-
-              <?php if (!empty($ilsDetails['borrowingLocation'])): ?>
-                <strong><?=$this->transEsc('Borrowing Location')?>:</strong> <?=$this->transEscWithPrefix('location_', $ilsDetails['borrowingLocation'])?>
-                <br>
-              <?php endif; ?>
-
-              <?php if (!empty($ilsDetails['checkoutDate'])): ?>
-                <strong><?=$this->transEsc('Checkout Date')?>:</strong> <?=$this->escapeHtml($ilsDetails['checkoutDate'])?>
-                <br>
-              <?php endif; ?>
-              <?php if (!empty($ilsDetails['returnDate'])): ?>
-                <strong><?=$this->transEsc('Return Date')?>:</strong> <?=$this->escapeHtml($ilsDetails['returnDate'])?>
-                <br>
-              <?php endif; ?>
-              <?php if (!empty($ilsDetails['dueDate'])): ?>
-                <strong><?=$this->transEsc('Due Date')?>:</strong> <?=$this->escapeHtml($ilsDetails['dueDate'])?><?php if (isset($ilsDetails['dueTime'])): ?> <span class="due-time"><?=$this->escapeHtml($ilsDetails['dueTime'])?></span><?php endif; ?>
-              <?php endif; ?>
-            </td>
-          </tr>
-        <?php endforeach; ?>
-        </table>
-
-        <?php if ($purgeAllAllowed || $purgeSelectedAllowed): ?>
-          </form>
+          <?=$this->paginator ? $this->paginationControl($this->paginator, 'Sliding', 'Helpers/pagination.phtml', ['params' => $this->params]) : ''?>
+          <?php if ($template = $this->content()->findTemplateForLng('content/Additions/checkout-history-post-list')): ?>
+            <div class="checkout-history-post-list"><?=$this->render($template)?></div>
+          <?php endif; ?>
+        <?php else: ?>
+          <div class="useraccount-header">
+            <h3><?=$this->transEsc('You do not have any items in the checkout history')?>.</h3>
+          </div>
         <?php endif; ?>
-
-        <?=$this->paginator ? $this->paginationControl($this->paginator, 'Sliding', 'Helpers/pagination.phtml', ['params' => $this->params]) : ''?>
-        <?php if ($template = $this->content()->findTemplateForLng('content/Additions/checkout-history-post-list')): ?>
-          <div class="checkout-history-post-list"><?=$this->render($template)?></div>
-        <?php endif; ?>
-      <?php else: ?>
-        <div class="useraccount-header">
-          <h3><?=$this->transEsc('You do not have any items in the checkout history')?>.</h3>
-        </div>
       <?php endif; ?>
-    <?php endif; ?>
   </div>
 </div>
 <!-- END of: finna - myresearch/historicloans.phtml -->

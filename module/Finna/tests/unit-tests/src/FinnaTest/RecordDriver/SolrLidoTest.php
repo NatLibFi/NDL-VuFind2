@@ -51,7 +51,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getRepresentationsData(): array
+    public static function getRepresentationsData(): array
     {
         return [
             [
@@ -183,6 +183,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             'description' => [
                                 0 => 'Tässä on kuvien copyright.',
                                 1 => 'Tässä on mallien copyright.',
+                                2 => 'Tekstitiedoston tarkempi käyttöoikeuskuvaus',
                             ],
                         ],
                         'highResolution' => [],
@@ -220,11 +221,18 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'description' => 'PDFTesti.pdf',
                         'url' => 'https://linkkiPDF.fi',
                         'format' => 'pdf',
+                        'rights' => [],
                     ],
                     1 => [
                         'description' => 'DocxTesti.docx',
                         'url' => 'https://linkkiDocx.fi',
                         'format' => 'docx',
+                        'rights' => [
+                            'copyright' => 'CC BY 4.0',
+                            'description' => [
+                                0 => 'Tekstitiedoston tarkempi käyttöoikeuskuvaus',
+                            ],
+                        ],
                     ],
                 ],
             ],
@@ -236,7 +244,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getFormatClassificationsData(): array
+    public static function getFormatClassificationsData(): array
     {
         return [
             [
@@ -261,7 +269,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getOtherClassificationsData(): array
+    public static function getOtherClassificationsData(): array
     {
         return [
             [
@@ -360,7 +368,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getMeasurementsByTypeData(): array
+    public static function getMeasurementsByTypeData(): array
     {
         return [
             [
@@ -420,7 +428,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getPhysicalLocationsData(): array
+    public static function getPhysicalLocationsData(): array
     {
         return [
             [
@@ -525,7 +533,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getDateRangeData(): array
+    public static function getDateRangeData(): array
     {
         return [
             [
@@ -599,7 +607,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getSummaryData(): array
+    public static function getSummaryData(): array
     {
         return [
             [

@@ -46,8 +46,10 @@ use function is_object;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class ListController extends \Finna\Controller\MyResearchController
+class ListController extends \VuFind\Controller\AbstractBase
 {
+    use Feature\FinnaUserListTrait;
+
     /**
      * Send user's saved favorites from a particular list to the view
      *
@@ -218,7 +220,7 @@ class ListController extends \Finna\Controller\MyResearchController
         // Perform the save operation:
         $favorites = $this->serviceLocator
             ->get(\VuFind\Favorites\FavoritesService::class);
-        $results = $favorites->saveMany(['list' => $targetListId], $user, $records);
+        $favorites->saveMany(['list' => $targetListId], $user, $records);
     }
 
     /**

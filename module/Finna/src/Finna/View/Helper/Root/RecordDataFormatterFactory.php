@@ -466,6 +466,14 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             ]
         );
         $setTemplateLine(
+            'Language of Abstract',
+            'getAbstractLanguage',
+            'data-transEscLangcode.phtml',
+            [
+                'context' => ['class' => 'abstract-language'],
+            ]
+        );
+        $setTemplateLine(
             'Item Description',
             'getGeneralNotes',
             'data-escapeHtml.phtml',

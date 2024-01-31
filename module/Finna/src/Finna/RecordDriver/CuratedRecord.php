@@ -30,8 +30,10 @@
 namespace Finna\RecordDriver;
 
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
+use Finna\RecordDriver\Feature\ContainerFormatTrait;
 use Finna\RecordDriver\Feature\EncapsulatedRecordInterface;
 use Finna\RecordDriver\Feature\EncapsulatedRecordTrait;
+use Finna\RecordDriver\Feature\FinnaXmlReaderTrait;
 use VuFindSearch\Response\RecordInterface;
 
 use function count;
@@ -52,7 +54,9 @@ class CuratedRecord extends SolrDefault implements
     ContainerFormatInterface,
     EncapsulatedRecordInterface
 {
+    use ContainerFormatTrait;
     use EncapsulatedRecordTrait;
+    use FinnaXmlReaderTrait;
 
     /**
      * Get records encapsulated in this container record.
@@ -125,5 +129,24 @@ class CuratedRecord extends SolrDefault implements
     public function getNotes(): string
     {
         return $this->fields['notes'] ?? '';
+    }
+
+    /**
+     * Return full record as a filtered SimpleXMLElement for public APIs.
+     *
+     * @return \SimpleXMLElement
+     */
+    public function getFilteredXMLElement(): \SimpleXMLElement
+    {
+        $record = clone $this->getXmlRecord();
+        $filterFields = ['comment'];
+        foreach ($filterFields as $filterField) {
+            while ($record->{$filterField}) {
+                unset($record->{$filterField}[0]);
+            }
+        }
+        // Only the URL of the single encapsulated record is in the XML record, so
+        // there is no need to call filterEncapsulatedRecords().
+        return $record;
     }
 }

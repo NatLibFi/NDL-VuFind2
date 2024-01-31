@@ -1,7 +1,16 @@
 <!-- START of: finna - search/pagination.phtml -->
 <?php if ($this->pageCount && (isset($this->previous) || isset($this->next))): ?>
 <nav aria-label="<?=$this->transEsc('pagination_label')?>">
-  <ul class="pagination hidden-print">
+  <?php
+    $ulAttrs = $this->htmlAttributes(['class' => 'pagination hidden-print']);
+    if ($className = $this->options['className'] ?? '') {
+      $ulAttrs->add('class', $className);
+    }
+    if ($this->results->getOptions()->loadResultsWithJsEnabled()) {
+      $ulAttrs->add('class', 'js-pagination');
+    }
+  ?>
+  <ul<?=$ulAttrs?>>
     <?php if (isset($this->previous)): ?>
       <li class="pagination-button">
         <a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage(1)?>"><?=$this->icon('pagination-first') ?><span class="sr-only"><?=$this->transEsc('First')?></span></a>

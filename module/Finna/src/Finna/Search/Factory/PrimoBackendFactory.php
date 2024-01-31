@@ -31,6 +31,7 @@
 namespace Finna\Search\Factory;
 
 use FinnaSearch\Backend\Primo\Connector;
+use FinnaSearch\Backend\Primo\RestConnector;
 
 /**
  * Factory for Primo Central backends.
@@ -52,6 +53,13 @@ class PrimoBackendFactory extends \VuFind\Search\Factory\PrimoBackendFactory
     protected $connectorClass = Connector::class;
 
     /**
+     * Primo REST API connector class
+     *
+     * @var string
+     */
+    protected $restConnectorClass = RestConnector::class;
+
+    /**
      * Create the Primo Central connector.
      *
      * Finna: Add hidden filters and set cache manager
@@ -61,6 +69,24 @@ class PrimoBackendFactory extends \VuFind\Search\Factory\PrimoBackendFactory
     protected function createConnector()
     {
         $connector = parent::createConnector();
+
+        if ($this->primoConfig->HiddenFilters) {
+            $connector->setHiddenFilters(
+                $this->primoConfig->HiddenFilters->toArray()
+            );
+        }
+
+        return $connector;
+    }
+
+    /**
+     * Create the Primo Central REST connector.
+     *
+     * @return RestConnector
+     */
+    protected function createRestConnector()
+    {
+        $connector = parent::createRestConnector();
 
         if ($this->primoConfig->HiddenFilters) {
             $connector->setHiddenFilters(

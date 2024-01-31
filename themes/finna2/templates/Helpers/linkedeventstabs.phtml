@@ -1,8 +1,8 @@
 <!-- START of: finna - Helpers/linkedeventstabs.phtml -->
-<div class="linked-events-tabs-container <?= $showMobileAccordion ? 'mobile-accordion-show' : 'mobile-accordion-hide'; ?>" id="<?= $this->escapeHtmlAttr($this->id) ?>" data-limit="<?= $this->escapeHtmlAttr($this->limit) ?>" data-lang="<?= $this->layout()->userLang; ?>">
-  <div class="events-tabs feed-tabs-container feed-tabs">
+<div class="linked-events-tabs <?= $showMobileAccordion ? 'mobile-accordion-show' : 'mobile-accordion-hide'; ?>" id="<?= $this->escapeHtmlAttr($this->id) ?>" data-limit="<?= $this->escapeHtmlAttr($this->limit) ?>" data-lang="<?= $this->layout()->userLang; ?>">
+  <div class="feed-tabs-container">
     <h2 class="feed-tabs-title"><?= $this->transEsc('Events'); ?></h2>
-    <ul class="nav  <?= !empty($navStyle) ? 'feed-nav-' . $this->escapeHtmlAttr($this->navStyle) : 'nav-tabs' ?>" role="tablist">
+    <ul class="nav <?= !empty($navStyle) ? 'feed-nav-' . $this->escapeHtmlAttr($this->navStyle) : 'nav-tabs' ?>" role="tablist">
       <?php $i = 0;
       foreach ($this->tabs as $id => $tab): ?>
         <?php

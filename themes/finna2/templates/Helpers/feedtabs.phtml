@@ -1,12 +1,8 @@
 <!-- START of: finna - Helpers/feedtabs.phtml -->
-<div class="feed-tabs" id="feed-tabs-<?=$this->escapeHtmlAttr($this->id)?>">
-  <?php if (count($this->feedIds) > 3): ?>
-    <div class="tabs-responsive">
-  <?php endif; ?>
-  <div class="visible-md visible-lg">
+<div class="feed-tabs <?= $showMobileAccordion ? 'mobile-accordion-show' : 'mobile-accordion-hide'; ?>" id="feed-tabs-<?=$this->escapeHtmlAttr($this->id)?>">
     <div class="feed-tabs-container">
       <h2 class="feed-tabs-title"><?= $this->transEsc($this->title);?></h2>
-      <ul class="nav nav-tabs" role="tablist">
+      <ul class="nav <?= !empty($navStyle) ? 'feed-nav-' . $this->escapeHtmlAttr($this->navStyle) : 'nav-tabs' ?>" role="tablist">
       <?php $tabNames = []; ?>
       <?php $id = 0; ?>
       <?php foreach ($this->feedIds as $desc => $feed): ?>
@@ -24,11 +20,6 @@
         <?php endforeach; ?>
       </ul>
     </div>
-  </div>
-  <?php if (count($this->feedIds) > 3): ?>
-    </div>
-  <?php endif; ?>
-
   <div class="feed-accordions" role="tablist">
     <h2 class="feed-accordions-title"><?= $this->transEsc($this->title); ?></h2>
     <?php $i = 0;

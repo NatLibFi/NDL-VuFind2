@@ -24,13 +24,13 @@
   </div>
   <?php $thumbnail = ob_get_contents(); ?>
 <?php ob_end_clean(); ?>
-<div class="media" vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
-  <h1 property="name" class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+<div class="media">
+  <h1 class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
   <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
   <?php endif; ?>
   <div class="media-body record-information">
-    <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+    <h1 class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
 
     <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
 
@@ -40,7 +40,7 @@
     <div class="record-core-metadata">
       <?php if ($results = $this->driver->getNonPresenterAuthors()): ?>
         <div class="truncate-field recordAuthors">
-          <span property="author">
+          <span>
             <?php foreach ($results as $index => $author): ?>
               <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?><?php if (!empty($author['affiliation'])): ?>, <?= $this->escapeHtml($author['affiliation']) ?><?php endif;?></a>
             <?php endforeach; ?>

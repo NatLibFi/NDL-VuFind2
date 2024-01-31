@@ -153,16 +153,27 @@ trait ContainerFormatTrait
     }
 
     /**
+     * Returns the tag name of XML elements containing an encapsulated record.
+     *
+     * @return string
+     */
+    protected function getEncapsulatedRecordElementTagName(): string
+    {
+        return 'item';
+    }
+
+    /**
      * Return all encapsulated record items.
      *
      * @return array
      */
     protected function getEncapsulatedRecordItems(): array
     {
-        // Implementation for XML items in 'item' elements
+        // Implementation for XML items
         $items = [];
         $xml = $this->getXmlRecord();
-        foreach ($xml->item as $item) {
+        $tagName = $this->getEncapsulatedRecordElementTagName();
+        foreach ($xml->{$tagName} as $item) {
             $items[] = $item;
         }
         return $items;
@@ -178,7 +189,13 @@ trait ContainerFormatTrait
     protected function getEncapsulatedRecordId($item): string
     {
         // Implementation for XML items with ID specified in an 'id' element
-        return (string)$item->id;
+        if ($item instanceof \SimpleXMLElement) {
+            return (string)$item->id;
+        }
+        if ($item instanceof \DOMNode) {
+            return $item->getElementsByTagName('id')[0]->nodeValue;
+        }
+        throw new \RuntimeException('Unable to determine ID');
     }
 
     /**
@@ -191,9 +208,10 @@ trait ContainerFormatTrait
      */
     protected function getEncapsulatedRecordFormat($item): string
     {
-        // Implementation for XML items with format specified in a 'format' element
-        if (isset($item->format)) {
-            return ucfirst(strtolower((string)$item->format));
+        // Implementation for XML items with format specified in a 'format' attribute
+        $format = $item->attributes()->{'format'} ?? null;
+        if (isset($format)) {
+            return ucfirst(strtolower((string)$format));
         }
         throw new \RuntimeException('Unable to determine format');
     }
@@ -208,8 +226,9 @@ trait ContainerFormatTrait
     protected function getEncapsulatedRecordPosition($item): ?int
     {
         // Implementation for XML items with position optionally specified in a
-        // 'position' element
-        if (isset($item->position)) {
+        // 'position' attribute
+        $position = $item->attributes()->{'position'} ?? null;
+        if (isset($position)) {
             return (int)$item->position;
         }
         return null;
@@ -300,5 +319,52 @@ trait ContainerFormatTrait
                     = $this->getEncapsulatedRecordDriver($cache[$position]['item']);
         }
         return $driver;
+    }
+
+    /**
+     * Filter encapsulated records of this format for public APIs.
+     *
+     * @param \SimpleXMLElement $record Container record XML.
+     *
+     * @return \SimpleXMLElement Filtered container record XML.
+     */
+    protected function filterEncapsulatedRecords(\SimpleXMLElement $record): \SimpleXMLElement
+    {
+        $container = dom_import_simplexml($record);
+        $tagName = $this->getEncapsulatedRecordElementTagName();
+        foreach ($container->getElementsByTagName($tagName) as $item) {
+            $encapsulated = $this->getEncapsulatedRecord(
+                $this->getEncapsulatedRecordId($item)
+            );
+            if (is_callable([$encapsulated, 'getFilteredXMLElement'])) {
+                $filtered = dom_import_simplexml($encapsulated->getFilteredXMLElement());
+                $container->replaceChild(
+                    $container->ownerDocument->importNode($filtered, true),
+                    $item
+                );
+            }
+        }
+        return simplexml_import_dom($container);
+    }
+
+    /**
+     * Return full record as a filtered SimpleXMLElement for public APIs.
+     *
+     * @return \SimpleXMLElement
+     */
+    public function getFilteredXMLElement(): \SimpleXMLElement
+    {
+        $record = clone $this->getXmlRecord();
+        return $this->filterEncapsulatedRecords($record);
+    }
+
+    /**
+     * Return full record as filtered XML for public APIs.
+     *
+     * @return string
+     */
+    public function getFilteredXML()
+    {
+        return $this->getFilteredXMLElement()->asXML();
     }
 }
