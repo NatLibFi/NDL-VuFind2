@@ -145,6 +145,9 @@ class LinkedEvents implements
         Config $mainConfig
     ) {
         $this->apiUrl = $config->LinkedEvents->api_url ?? '';
+        if (!str_ends_with($this->apiUrl, '/')) {
+            $this->apiUrl .= '/';
+        }
         $this->publisherId = $config->LinkedEvents->publisher_id ?? '';
         $this->language = $config->General->language ?? '';
         // Exclude super events from results by default
@@ -219,9 +222,8 @@ class LinkedEvents implements
         }
 
         // Check for cached version
-        $cacheDir
-            = $this->cacheManager->getCache('feed')->getOptions()->getCacheDir();
-        $localFile = "$cacheDir/" . md5(var_export($params, true)) . '.json';
+        $cacheDir = $this->cacheManager->getCache('feed')->getOptions()->getCacheDir();
+        $localFile = "$cacheDir/" . md5($url . '||' . var_export($params, true)) . '.json';
         $maxAge = isset($this->mainConfig->Content->feedcachetime)
             && '' !== $this->mainConfig->Content->feedcachetime
             ? $this->mainConfig->Content->feedcachetime : 10;
