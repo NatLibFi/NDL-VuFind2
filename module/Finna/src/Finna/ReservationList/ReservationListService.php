@@ -72,14 +72,15 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         return $this->reservationList->getExisting($id)->editAllowed($user);
     }
 
-    public function addListForUser($user, $desription, $title, $datasource): int
+    public function addListForUser($user, $desription, $title, $datasource, $building): int
     {
         $row = $this->reservationList->getNew($user);
-        $title = $title . '_' . $datasource;
+        $title = $title;
         return $row->updateFromRequest($user, new Parameters([
             'description' => $desription,
             'title' => $title,
             'datasource' => $datasource,
+            'building' => $building
         ]));
     }
 
@@ -107,6 +108,24 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
             ];
         }
         return $result;
+    }
+
+    public function getListsForBuilding(\VuFind\Db\Row\User $user, string $building): array
+    {
+        $lists = $this->reservationList->select(['user_id' => $user->id, 'building' => $building]);
+        $result = [];
+        foreach ($lists as $list) {
+            $result[] = [
+                'id' => $list->id,
+                'title' => $list->title
+            ];
+        }
+        return $result;
+    }
+
+    public function getListForUser($user, $id)
+    {
+        return $this->reservationList->select(['user_id' => $user->id, 'id' => $id]);
     }
 
     /**

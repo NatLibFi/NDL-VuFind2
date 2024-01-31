@@ -1,0 +1,25 @@
+<div>
+  <?php if (!empty($this->lists)): ?>
+  <form method="post" name="reservationListAdd">
+    <input type="hidden" name="action" value="add">
+    <label class="control-label" for="save_list"><?=$this->transEsc('Choose a List') ?></label>
+    <div class="form-group">
+      <select class="form-control" id="save_list" name="list">
+        <?php foreach ($this->lists as $list): ?>
+          <option value="<?=$this->escapeHtmlAttr($list['id'])?>"><?=$this->escapeHtml($list['title'])?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="control-label" for="add_notes"><?=$this->transEsc('Add a Note') ?></label>
+      <textarea class="form-control" id="add_notes" name="notes" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+      <input class="btn btn-primary" type="submit" value="<?=$this->transEscAttr('Save') ?>">
+    </div>
+  </form>
+  <?php else: ?>
+    No lists found for datasource. Please create a new one.
+  <?php endif; ?>
+  <a class="btn btn-link" id="make-list" href="<?=$this->url('reservationlist-addlist', ['query' => ['id' => 'NEW']])?>?id=NEW&amp;action=edit&amp;recordId=<?=urlencode($this->driver->getUniqueId())?>&amp;recordSource=<?=urlencode($this->driver->getSourceIdentifier())?>"><?=$this->transEsc('or create a new list')?></a>
+</div>

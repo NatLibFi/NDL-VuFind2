@@ -187,6 +187,16 @@ $config = [
                     ],
                 ],
             ],
+            'reservationlist-additem' => [
+                'type'    => 'Laminas\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/ReservationList/AddItem[/:id]',
+                    'defaults' => [
+                        'controller' => 'ReservationList',
+                        'action'     => 'AddItem',
+                    ],
+                ],
+            ],
             'organisation-info-image' => [
                 'type'    => 'Laminas\Router\Http\Literal',
                 'options' => [
@@ -272,6 +282,7 @@ $config = [
             'Finna\Controller\R2CollectionController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\R2SearchController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\RecordController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
+            'Finna\Controller\ReservationListController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\RobotsController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\SearchController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\ShibbolethLogoutNotificationController' => 'Finna\Controller\ShibbolethLogoutNotificationControllerFactory',
@@ -311,6 +322,9 @@ $config = [
             'R2Record' => 'Finna\Controller\R2RecordController',
             'r2feedback' => 'Finna\Controller\R2FeedbackController',
             'R2Feedback' => 'Finna\Controller\R2FeedbackController',
+            'ReservationList' => 'Finna\Controller\ReservationListController',
+            'reservationList' => 'Finna\Controller\ReservationListController',
+            'reservationlist' => 'Finna\Controller\ReservationListController',
             'Robots' => 'Finna\Controller\RobotsController',
 
             // Overrides:
@@ -787,6 +801,7 @@ $config = [
                     'Finna\Search\Blender\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\Combined\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\EDS\Options' => 'VuFind\Search\EDS\OptionsFactory',
+                    'Finna\Search\ReservationList\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\R2\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\Primo\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\Solr\Options' => 'VuFind\Search\Options\OptionsFactory',
@@ -808,6 +823,7 @@ $config = [
                     // Counterpart for EmptySet Params:
                     'Finna\Search\EmptySet\Options' => 'VuFind\Search\EmptySet\Options',
                     'Finna\Search\MixedList\Options' => 'VuFind\Search\MixedList\Options',
+                    'ReservationList' => 'Finna\Search\ReservationList\Params',
                     'R2' => 'Finna\Search\R2\Options',
                     'R2Collection' => 'VuFind\Search\SolrCollection\Options',
                     'SolrAuth' => 'Finna\Search\SolrAuth\Options',
@@ -823,6 +839,7 @@ $config = [
                     'Finna\Search\EmptySet\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\Favorites\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\R2\Params' => 'Finna\Search\Solr\ParamsFactory',
+                    'Finna\Search\ReservationList\Params' => 'Finna\Search\Solr\ParamsFactory',
                     'Finna\Search\R2Collection\Params' => 'Finna\Search\Solr\ParamsFactory',
                     'Finna\Search\MixedList\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\Solr\Params' => 'Finna\Search\Solr\ParamsFactory',
@@ -841,7 +858,7 @@ $config = [
                     'VuFind\Search\Solr\Params' => 'Finna\Search\Solr\Params',
 
                     'VuFind\Search\SolrAuth\Params' => 'Finna\Search\SolrAuth\Params',
-
+                    'ReservationList' => 'Finna\Search\ReservationList\Params',
                     'R2' => 'Finna\Search\R2\Params',
                     'R2Collection' => 'Finna\Search\R2Collection\Params',
                     'SolrAuth' => 'Finna\Search\SolrAuth\Params',
@@ -854,6 +871,7 @@ $config = [
                     'Finna\Search\Combined\Results' => 'VuFind\Search\Results\ResultsFactory',
                     'Finna\Search\EncapsulatedRecords\Results' => 'VuFind\Search\Results\ResultsFactory',
                     'Finna\Search\Favorites\Results' => 'Finna\Search\Favorites\ResultsFactory',
+                    'Finna\Search\ReservationList\Results' => 'Finna\Search\ReservationList\ResultsFactory',
                     'Finna\Search\R2\Results' => 'VuFind\Search\Solr\ResultsFactory',
                     'Finna\Search\R2Collection\Results' => 'VuFind\Search\Solr\ResultsFactory',
                     'Finna\Search\Primo\Results' => 'VuFind\Search\Results\ResultsFactory',
@@ -872,6 +890,7 @@ $config = [
 
                     'EncapsulatedRecords' => 'Finna\Search\EncapsulatedRecords\Results',
                     'L1' => 'Finna\Search\L1\Results',
+                    'ReservationList' => 'Finna\Search\ReservationList\Results',
                     'R2' => 'Finna\Search\R2\Results',
                     'R2Collection' => 'Finna\Search\R2Collection\Results',
                     'SolrBrowse' => 'Finna\Search\SolrBrowse\Results',
@@ -1081,17 +1100,15 @@ $recordRoutes = [
 
 // Define non tab record actions
 $nonTabRecordActions = [
-    'Feedback', 'RepositoryLibraryRequest', 'ArchiveRequest', 'ReservationList',
+    'Feedback', 'RepositoryLibraryRequest', 'ArchiveRequest', 'addToReservationList',
 ];
 
 // Define dynamic routes -- controller => [route name => action]
 $dynamicRoutes = [
     'Comments' => ['inappropriate' => 'inappropriate/[:id]'],
     'LibraryCards' => ['newLibraryCardPassword' => 'newPassword/[:id]'],
-    'MyResearch' => [
-        'sortList' => 'SortList/[:id]',
-        'reservationList' => 'ReservationList'
-    ],
+    'MyResearch' => ['sortList' => 'SortList/[:id]'],
+    'ReservationList' => ['reservationlist-home' => 'Home/[:id]'],
     'R2Feedback' => ['r2feedback-form' => 'Form/[:id]'],
 ];
 
@@ -1113,6 +1130,7 @@ $staticRoutes = [
     'Record/DownloadModel',
     'Record/DownloadFile',
     'Bazaar/Home', 'Bazaar/Cancel',
+    'ReservationList/AddList',
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();

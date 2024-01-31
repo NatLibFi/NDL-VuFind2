@@ -1,6 +1,6 @@
 <?php
   // Set up page title:
-  $pageTitle = empty($this->list->id) ? 'Create a List' : 'edit_list';
+  $pageTitle = empty($this->list->id) ? 'Create a Reservation List' : 'Edit Reservation List';
   $this->headTitle($this->translate($pageTitle));
 
   // Set up breadcrumbs:
@@ -15,9 +15,7 @@
 <form class="form-edit-list" method="post" name="reservationList">
   <input type="hidden" name="id" value="<?=empty($this->list->id) ? 'NEW' : $this->escapeHtmlAttr($this->list->id) ?>">
   <input type="hidden" name="recordId" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>">
-  <input type="hidden" name="datasource" value="<?=$this->escapeHtmlAttr($this->driver->getDatasource())?>">
   <input type="hidden" name="action" value="<?=$this->escapeHtmlAttr($this->action)?>">
-  <input type="hidden" name="followup" value="<?=$this->escapeHtmlAttr($this->followup) ?>">
   <div class="form-group">
     <label class="control-label" for="list_title"><?=$this->transEsc('List'); ?>:</label>
     <input id="list_title" class="form-control" type="text" name="title" value="<?=isset($this->list['title']) ? $this->escapeHtmlAttr($this->list['title']) : ''?>">

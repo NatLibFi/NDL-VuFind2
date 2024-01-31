@@ -1715,81 +1715,16 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         if (!$this->listsEnabled()) {
             throw new ForbiddenException('Lists disabled');
         }
-        $action = $this->params()->fromPost(
-            'action',
-            $this->params()->fromQuery('action')
-        );
-        $source = $this->params()->fromPost(
-            'source',
-            $this->params()->fromQuery(
-                'source',
-                DEFAULT_SEARCH_BACKEND
-            )
-        );
-        $id = $this->params()->fromPost(
-            'recordId',
-            $this->params()->fromQuery(
-                'recordId',
-            )
-        );
-        $driver = $this->getRecordLoader()->load($id, $source, true);
+        var_dump($this->params()->fromRoute('id'));
+        $reservationListService = $this->serviceLocator->get(ReservationListService::class);
+        // Return view with lists available
         $view = $this->createViewModel(
             [
-                'driver' => $driver,
-                'action' => $action,
+                'lists' => $reservationListService->getListsForUser($this->getUser()),
+                'activeId' => $this->params()->fromRoute('id')
             ]
         );
-        if ($this->formWasSubmitted('submit')) {
-            // Check which form was submitted
-            $params = $this->params()->fromPost(null, []);
-            switch ($params['action'] ?? '') {
-                case 'add':
-                    break;
-                case 'edit':
-                    $reservationListService = $this->serviceLocator->get(ReservationListService::class);
-                    // Get the service which handles the lists
-                    $reservationListService->addListForUser(
-                        $this->getUser(),
-                        $params['desc'],
-                        $params['title'],
-                        $params['datasource'],
-                    );
-                    return $this->redirect()->toRoute('record-reservationlist', ['id' => $driver->getUniqueID()]);
-                    break;
-                default:
-                    break;
-            }
-        }
-        var_dump($this->params()->fromPost(null, []));
-        switch ($action) {
-            case 'add':
-                // Add record to an existing list
-                $view->setTemplate('record/reservation-list.phtml');
-                break;
-            case 'newList':
-                // Display newList page
-                break;
-            case 'delete':
-                // Try to delete and delete if plausible
-                break;
-            case 'edit':
-                $view->setTemplate('myresearch/editreservationlist.phtml');
-                // Display edit list thingie page
-                break;
-            default:
-                break;
-        }
         return $view;
-        // Check for "delete item" request; parameter may be in GET or POST depending
-        // on calling context.
-        $deleteId = $this->params()->fromPost(
-            'delete',
-            $this->params()->fromQuery('delete')
-        );
-        if ($deleteId) {
-
-        }
-
         // If we got this far, we should display a dropdown containing all the lists
         try {
 

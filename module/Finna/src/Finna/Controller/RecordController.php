@@ -94,38 +94,6 @@ class RecordController extends \VuFind\Controller\RecordController
     }
 
     /**
-     * Display save to reservation list form.
-     *
-     * @return \Laminas\View\Model\ViewModel
-     * @throws \Exception
-     */
-    public function reservationListAction()
-    {
-        $driver = $this->loadRecord();
-        // Now we should try to find all the lists for user.. Lets check if this works somehow or something
-        $reservationListService = $this->serviceLocator->get(ReservationListService::class);
-        $lists = $reservationListService->getListsForDatasource($this->getUser(), $driver->getDatasource());
-
-        if ($this->formWasSubmitted('submit')) {
-            $params = $this->params()->fromPost();
-            // Seems like someone wants to save stuff into a list.
-            // Lets process it like a champ. Not the mushroom champ.
-            $result = $reservationListService->addRecordToList($this->getUser(), $driver->getUniqueID(), $params['list']);
-            if ($result) {
-                var_dump('yay');
-            }
-        }
-        $view = $this->createViewModel(
-            compact(
-                'driver',
-                'lists'
-            )
-        );
-        $view->setTemplate('record/reservation-list');
-        return $view;
-    }
-
-    /**
      * Home (default) action -- forward to requested (or default) tab.
      *
      * @return mixed

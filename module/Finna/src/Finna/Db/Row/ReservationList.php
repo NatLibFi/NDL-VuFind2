@@ -89,6 +89,7 @@ class ReservationList extends UserList
         $this->title = $request->get('title');
         $this->description = $request->get('desc');
         $this->datasource = $request->get('datasource');
+        $this->building = $request->get('building');
         $this->save($user);
         return $this->id;
     }

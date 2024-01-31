@@ -88,7 +88,7 @@
         'show' => $this->userlist()->getMode() !== 'disabled',
       ],
       'reservationList' => [
-        'url' => 'myresearch-reservation-list',
+        'url' => 'reservationlist-home',
         'translation' => 'Reservation List',
         'show' => $this->userlist()->getMode() !== 'disabled',
       ],
@@ -124,6 +124,7 @@
           'params' => $listParams ?? [],
         ],
       ],
+      'reservationList',
       'logout',
     ];
 

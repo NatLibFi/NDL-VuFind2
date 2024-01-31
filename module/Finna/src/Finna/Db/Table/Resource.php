@@ -138,6 +138,65 @@ class Resource extends \VuFind\Db\Table\Resource
         );
     }
 
+    public function getReservationResources(
+        $user,
+        $list = null,
+        $sort = null,
+        $offset = 0,
+        $limit = null
+    ) {
+        return $this->select(
+            function ($s) use ($user, $list, $sort, $offset, $limit) {
+                $s->columns(
+                    [
+                        new Expression(
+                            'DISTINCT(?)',
+                            ['resource.id'],
+                            [Expression::TYPE_IDENTIFIER]
+                        ), '*',
+                    ]
+                );
+                $urColumns = $list === null ?
+                    [
+                    'id' => new Expression(
+                        'MAX(?)',
+                        ['ur.id'],
+                        [Expression::TYPE_IDENTIFIER]
+                    ),
+                    ]
+                    : [
+                    'id' => new Expression(
+                        'MAX(?)',
+                        ['ur.id'],
+                        [Expression::TYPE_IDENTIFIER]
+                    ),
+                    ];
+                $s->join(
+                    ['ur' => 'user_resource'],
+                    'resource.id = ur.resource_id',
+                    $urColumns
+                );
+                $s->where->equalTo('ur.user_id', $user);
+
+                // Adjust for list if necessary:
+                if (null !== $list) {
+                    $s->where->equalTo('ur.list_id', $list);
+                }
+
+                if ($offset > 0) {
+                    $s->offset($offset);
+                }
+                if (null !== $limit) {
+                    $s->limit($limit);
+                }
+                $s->group('resource.id');
+                if (!empty($sort)) {
+                    Resource::applySort($s, $sort);
+                }
+            }
+        );
+    }
+
     /**
      * Check whether the list includes records from the given source (backend).
      *
