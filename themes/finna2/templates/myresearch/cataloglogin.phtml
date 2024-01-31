@@ -7,6 +7,7 @@
 
     // Check if this page has been added as a part of another page
     $isPartial = $this->layout()->templateName === 'profile';
+    $isLightbox = $this->layout()->getTemplate() === 'layout/lightbox';
 
     // Set up page title:
     if (!$isPartial) {
@@ -20,7 +21,7 @@
     $offlineMode = $this->ils()->getOfflineMode();
 ?>
 
-<?php if (!$isPartial): ?>
+<?php if (!$isPartial && !$isLightbox): ?>
   <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => '']); ?>
 
   <!-- Leftside navigationbar -->
