@@ -339,7 +339,7 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
                     }
                     $lng = $label['lang'] ?? '-';
                     // Try to determine the language of the display label:
-                    if ($label === $displayLabel) {
+                    if ($value === $displayLabel) {
                         $labelLang = $lng;
                     } else {
                         $pref[$lng][] = $value;
