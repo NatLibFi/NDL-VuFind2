@@ -67,7 +67,7 @@ class Barcode extends \Laminas\View\Helper\AbstractHelper
      * Create a CODE 39 as SVG from a barcode string
      *
      * @param string $barcode         Barcode
-     * @param int    $widthFactor     Minimum width of a single bar in user units.
+     * @param float  $widthFactor     Minimum width of a single bar in user units.
      * @param int    $height          Height of barcode in user units.
      * @param string $foregroundColor Foreground color (in SVG format) for bar elements (background is transparent).
      *
@@ -75,7 +75,7 @@ class Barcode extends \Laminas\View\Helper\AbstractHelper
      */
     public function createCode39SVG(
         string $barcode,
-        int $widthFactor = 2,
+        float $widthFactor = 2,
         int $height = 30,
         string $foregroundColor = 'black'
     ): string {
