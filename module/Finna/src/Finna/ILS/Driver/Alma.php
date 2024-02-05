@@ -2538,7 +2538,10 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      */
     protected function createHoldingEntry($id, $holding)
     {
-        $location = $this->getTranslatableString($holding->library);
+        $location = $this->getTranslatableStringForCode(
+            (string)$holding->location,
+            $this->getLocationExternalName((string)$holding->library, (string)$holding->location)
+        );
         $callnumber = $holding->call_number
             ? $this->getTranslatableString($holding->call_number) : '';
 
