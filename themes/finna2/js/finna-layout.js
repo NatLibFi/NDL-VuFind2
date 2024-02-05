@@ -749,6 +749,11 @@ finna.layout = (function finnaLayout() {
     );
   }
 
+  /**
+   * Set select checkboxes in correct myresearch pages.
+   *
+   * @param {HTMLInputElement} element Checkbox element for which the change event occurs
+   */
   function toggleButtonsForSelected(element) {
     if (element.closest('form').id === 'renewals') {
       var checkedRenewals = document.querySelector('form[name="renewals"] .checkbox input[type=checkbox]:checked');
@@ -759,12 +764,8 @@ finna.layout = (function finnaLayout() {
     } else if (element.closest('form').id === 'purge_history') {
       var checkedHistory = document.querySelector('form[name="purge_history"] .result .checkbox input[type=checkbox]:checked');
       var purgeSelected = document.getElementById('purgeSelected');
-      var copyToFavourites = document.getElementById('copy_to_favourites');
       if (purgeSelected) {
         purgeSelected.toggleAttribute('disabled', checkedHistory === null);
-      }
-      if (copyToFavourites) {
-        copyToFavourites.classList.toggle('disabled', checkedHistory === null);
       }
     }
   }
