@@ -50,7 +50,7 @@
         <span class="event-date-container">
           <span class="event-date-title"><?= $this->transEsc('Time Period'); ?>:</span>
           <label for="event-date-start" class="sr-only"><?=$this->transEsc('event_date_start');?></label>
-          <input id="event-date-start" class="event-date-start event-datepicker"> &ndash; <label for="event-date-end" class="sr-only"><?=$this->transEsc('event_date_end');?></label><input id="event-date-end" class="event-date-end event-datepicker">
+          <input autocomplete="off" id="event-date-start" class="event-date-start event-datepicker"> &ndash; <label for="event-date-end" class="sr-only"><?=$this->transEsc('event_date_end');?></label><input autocomplete="off" id="event-date-end" class="event-date-end event-datepicker">
         </span>
         <button class="btn btn-primary linked-event-search"><?= $this->transEsc('linked_event_search') ?></button>
         <span class="event-geolocation-container hidden">
