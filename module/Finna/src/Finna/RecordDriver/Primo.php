@@ -99,22 +99,6 @@ class Primo extends \VuFind\RecordDriver\Primo
     }
 
     /**
-     * Get an array of all the formats associated with the record.
-     *
-     * @return array
-     */
-    public function getFormats()
-    {
-        if (isset($this->fields['format'])) {
-            // No casting since the format may be a TranslatableString object as well
-            return is_array(($this->fields['format']))
-                ? $this->fields['format']
-                : [$this->fields['format']];
-        }
-        return [];
-    }
-
-    /**
      * Get a full, free-form reference to the context of the item that contains this
      * record (i.e. volume, year, issue, pages).
      *
