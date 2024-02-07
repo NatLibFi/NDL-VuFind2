@@ -330,7 +330,7 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
                     continue;
                 }
                 [$key, $val] = explode('=', $param, 2);
-                $val = trim($val);
+                $val = trim(urldecode($val));
                 if (
                     $val == ''
                     || isset($blacklist[$key]) && $blacklist[$key] == $val
