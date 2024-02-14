@@ -1825,6 +1825,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         if ($places = $this->getSubjectPlaces($extended, false)) {
             $headings = [...$headings, ...$places];
         }
+        // Ensure that all the values are an array
+        if (!$extended) {
+            foreach ($headings as $key => &$value) {
+                if (!is_array($value)) {
+                    $value = [$value];
+                }
+            }
+            unset($value);
+        }
         return $headings;
     }
 
