@@ -548,6 +548,70 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test getAllSubjectHeadings function
+     *
+     * @return void
+     */
+    public function testGetAllSubjectHeadings(): void
+    {
+        $driver = $this->getDriver('lido_test2.xml');
+        $expected = [
+            [
+                'heading' => ['porkkana'],
+                'type' => 'topic',
+                'source' => 'yso',
+                'id' => 'http://www.yso.fi/onto/yso/p5066',
+                'authType' => null,
+            ],
+            [
+                'heading' => ['morot'],
+                'type' => 'topic',
+                'source' => 'yso',
+                'id' => 'http://www.yso.fi/onto/yso/p5066',
+                'authType' => null,
+            ],
+            [
+                'heading' => ['juures'],
+                'type' => 'topic',
+                'source' => '',
+            ],
+            [
+                'heading' => ['Jussi, Jänö'],
+                'type' => 'topic',
+                'source' => '',
+            ],
+            [
+                'heading' => ['Etelä-Suomi'],
+                'type' => 'URI',
+                'id' => 'http://www.yso.fi/onto/yso/p105917',
+                'ids' => [
+                    'http://www.yso.fi/onto/yso/p105917',
+                ],
+            ],
+            [
+                'heading' => ['Lohja'],
+                'type' => 'mjr',
+                'id' => '123456',
+                'ids' => [
+                    '123456',
+                    'extraid',
+                ],
+            ],
+        ];
+        $this->assertEquals($expected, $driver->getAllSubjectHeadings(true));
+
+        $expected = [
+            ['porkkana'],
+            ['morot'],
+            ['juures'],
+            ['Jussi, Jänö'],
+            ['Etelä-Suomi'],
+            ['Lohja'],
+        ];
+        $this->assertEquals($expected, $driver->getAllSubjectHeadings());
+    }
+
+    /**
      * Function to get expected physical locations data
      *
      * @return array
