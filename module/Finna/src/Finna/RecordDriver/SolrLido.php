@@ -1806,6 +1806,29 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     }
 
     /**
+     * Return all subject headings
+     *
+     * @param bool $extended Whether to return a keyed array with the following
+     * keys:
+     * - heading: the actual subject heading
+     * - type: heading type
+     * - source: source vocabulary
+     * - id: first authority id (if defined)
+     * - ids: multiple authority ids (if defined)
+     * - authType: authority type (if id is defined)
+     *
+     * @return array
+     */
+    public function getAllSubjectHeadings($extended = false)
+    {
+        $headings = $this->getAllSubjectHeadingsWithoutPlaces($extended);
+        if ($places = $this->getSubjectPlaces($extended, false)) {
+            $headings = [...$headings, ...$places];
+        }
+        return $headings;
+    }
+
+    /**
      * Get all subject headings associated with this record apart from geographic
      * places. Each heading is returned as an array of chunks, increasing from least
      * specific to most specific.
@@ -1981,7 +2004,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     /**
      * Get subject places
      *
-     * @param bool $extended Whether to return a keyed array with the following
+     * @param bool $extended    Whether to return a keyed array with the following
      * keys:
      * - heading: the actual subject heading chunks
      * - type: heading type
@@ -1990,10 +2013,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      * - id: authority id (if defined)
      * - ids: multiple authority ids (if defined)
      * - authType: authority type (if id is defined)
+     * @param bool $prependType Should type be prepended in front of an id. Default is true.
      *
      * @return array
      */
-    public function getSubjectPlaces(bool $extended = false)
+    public function getSubjectPlaces(bool $extended = false, bool $prependType = true)
     {
         $results = [];
         $xpath = 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/'
@@ -2011,7 +2035,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 foreach ($subjectPlace->place->placeID ?? [] as $placeId) {
                     $id = (string)$placeId;
                     $type = (string)($placeId->attributes()->type ?? '');
-                    if ($type) {
+                    if ($type && $prependType) {
                         $id = "($type)$id";
                     }
                     $typeDesc = $this->translate('place_id_type_' . $type, [], '');
