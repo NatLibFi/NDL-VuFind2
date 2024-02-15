@@ -42,6 +42,8 @@ use Laminas\Db\TableGateway\AbstractTableGateway;
 use Laminas\Log\LoggerAwareInterface;
 use VuFind\Log\LoggerAwareTrait;
 
+use function strlen;
+
 /**
  * Database driver for statistics
  *
@@ -145,6 +147,22 @@ class Database implements DriverInterface, LoggerAwareInterface
      * @var FinnaRecordViewInstView
      */
     protected $cachedViewInstView = null;
+
+    /**
+     * Maximum field lengths
+     *
+     * @var array
+     */
+    protected $fieldLengths = [
+        'institution' => 255,
+        'view' => 255,
+        'backend' => 128,
+        'source' => 128,
+        'record_id' => 255,
+        'formats' => 255,
+        'usage_rights' => 255,
+        'extra_metadata' => 16777215,
+    ];
 
     /**
      * Constructor
@@ -348,6 +366,7 @@ class Database implements DriverInterface, LoggerAwareInterface
      */
     public function addDetailedRecordViewEntry(array $logEntry): void
     {
+        $this->constrainLengths($logEntry);
         $formatId = $this->getRecordViewFormatId($logEntry['formats']);
         $rightsId
             = $this->getRecordViewUsageRightsId($logEntry['usage_rights']);
@@ -389,6 +408,7 @@ class Database implements DriverInterface, LoggerAwareInterface
      */
     protected function processAdd(AbstractTableGateway $table, array $params): void
     {
+        $this->constrainLengths($params);
         $exception = null;
         for ($try = 1; $try < 5; $try++) {
             try {
@@ -506,5 +526,21 @@ class Database implements DriverInterface, LoggerAwareInterface
                 = $this->recordViewRecordRights->getByUsageRights($usageRights)->id;
         }
         return $this->usageRightsCache[$usageRights];
+    }
+
+    /**
+     * Constrain field lengths for the database limits
+     *
+     * @param array $fields Fields
+     *
+     * @return void
+     */
+    protected function constrainLengths(array &$fields): void
+    {
+        foreach ($this->fieldLengths as $field => $length) {
+            if (isset($fields[$field]) && strlen($fields[$field] > $length)) {
+                $fields[$field] = substr($fields[$field], 0, $length);
+            }
+        }
     }
 }
