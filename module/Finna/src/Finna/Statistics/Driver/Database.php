@@ -538,7 +538,7 @@ class Database implements DriverInterface, LoggerAwareInterface
     protected function constrainLengths(array &$fields): void
     {
         foreach ($this->fieldLengths as $field => $length) {
-            if (isset($fields[$field]) && strlen($fields[$field] > $length)) {
+            if (isset($fields[$field]) && strlen($fields[$field]) > $length) {
                 $fields[$field] = substr($fields[$field], 0, $length);
             }
         }
