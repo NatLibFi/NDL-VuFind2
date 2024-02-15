@@ -16,7 +16,12 @@
   </div>
   <div class="splide__track carousel">
     <ul class="splide__list carousel-feed">
-      <?php $items = isset($this->visualItems) ? array_splice($this->items, 0, $this->visualItems) : $this->items; ?>
+      <?php
+        $items = $this->items;
+        if (isset($this->visualItems)) {
+          $items = array_splice($items, 0, $this->visualItems);
+        }
+      ?>
       <?php foreach ($items as $item): ?>
         <li class="splide__slide feed-item-holder">
           <?php if (isset($item['link'])): ?>
