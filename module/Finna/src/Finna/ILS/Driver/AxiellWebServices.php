@@ -198,14 +198,14 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     /**
      * Institution settings for the order of organisations
      *
-     * @var string
+     * @var array
      */
     protected $holdingsOrganisationOrder;
 
     /**
      * Institution settings for the order of branches
      *
-     * @var string
+     * @var array
      */
     protected $holdingsBranchOrder;
 
@@ -1108,7 +1108,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
         if (!empty($result)) {
             usort($result, [$this, 'holdingsSortFunction']);
 
-            $summary = $this->getHoldingsSummary($result);
+            $summary = $this->getHoldingsSummary($result, $id);
             $result[] = $summary;
         }
 
@@ -1273,11 +1273,12 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     /**
      * Return summary of holdings items.
      *
-     * @param array $holdings Parsed holdings items
+     * @param array  $holdings Parsed holdings items
+     * @param string $id       Record id
      *
      * @return array summary
      */
-    protected function getHoldingsSummary($holdings)
+    protected function getHoldingsSummary($holdings, $id)
     {
         $holdable = false;
         $journal = isset($holdings[0]['journalInfo']);
@@ -1315,15 +1316,16 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
         // we need to add a few dummy-fields that VuFind expects to be
         // defined for all elements.
         return [
-           'available' => $availableTotal,
-           'ordered' => $orderedTotal,
-           'total' => $itemsTotal - $orderedTotal,
-           'reservations' => $reservationsTotal,
-           'locations' => count($locations),
-           'holdable' => $holdable,
-           'availability' => null,
-           'callnumber' => '',
-           'location' => '__HOLDINGSSUMMARYLOCATION__',
+            'id' => $id,
+            'available' => $availableTotal,
+            'ordered' => $orderedTotal,
+            'total' => $itemsTotal - $orderedTotal,
+            'reservations' => $reservationsTotal,
+            'locations' => count($locations),
+            'holdable' => $holdable,
+            'availability' => null,
+            'callnumber' => '',
+            'location' => '__HOLDINGSSUMMARYLOCATION__',
         ];
     }
 

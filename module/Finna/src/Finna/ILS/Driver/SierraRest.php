@@ -1255,12 +1255,13 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             // we need to add a few dummy-fields that VuFind expects to be
             // defined for all elements.
             $summary = [
+                'id' => $id,
                 'available' => $itemsAvailable,
                 'total' => $itemsTotal,
                 'ordered' => $itemsOrdered,
                 'locations' => count(array_unique(array_column($statuses, 'location'))),
                 'availability' => null,
-                'callnumber' => null,
+                'callnumber' => '',
                 'location' => '__HOLDINGSSUMMARYLOCATION__',
             ];
             if ($this->config['Holdings']['display_total_hold_count'] ?? true) {

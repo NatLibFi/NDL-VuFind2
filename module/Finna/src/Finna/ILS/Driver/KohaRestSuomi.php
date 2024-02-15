@@ -153,7 +153,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     {
         $data = parent::getHolding($id, $patron);
         if (!empty($data['holdings'])) {
-            $summary = $this->getHoldingsSummary($data['holdings']);
+            $summary = $this->getHoldingsSummary($data['holdings'], $id);
 
             // Remove request counts before adding the summary if necessary
             if (
@@ -185,7 +185,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     {
         $data = parent::getStatus($id);
         if (!empty($data)) {
-            $summary = $this->getHoldingsSummary($data);
+            $summary = $this->getHoldingsSummary($data, $id);
             $data[] = $summary;
         }
         return $data;
@@ -1078,13 +1078,14 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     /**
      * Return summary of holdings items.
      *
-     * @param array $holdings Parsed holdings items
+     * @param array  $holdings Parsed holdings items
+     * @param string $id       Record id
      *
      * @return array summary
      */
-    protected function getHoldingsSummary($holdings)
+    protected function getHoldingsSummary($holdings, $id)
     {
-        $availableTotal = $itemsTotal = $reservationsTotal = 0;
+        $availableTotal = $itemsTotal = 0;
         $requests = 0;
         $locations = [];
 
@@ -1108,12 +1109,13 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
         // Use a stupid location name to make sure this doesn't get mixed with
         // real items that don't have a proper location.
         $result = [
-           'available' => $availableTotal,
-           'total' => $itemsTotal,
-           'locations' => count($locations),
-           'availability' => null,
-           'callnumber' => null,
-           'location' => '__HOLDINGSSUMMARYLOCATION__',
+            'id' => $id,
+            'available' => $availableTotal,
+            'total' => $itemsTotal,
+            'locations' => count($locations),
+            'availability' => null,
+            'callnumber' => '',
+            'location' => '__HOLDINGSSUMMARYLOCATION__',
         ];
         if (!empty($this->config['Holdings']['display_total_hold_count'])) {
             $result['reservations'] = $requests;
