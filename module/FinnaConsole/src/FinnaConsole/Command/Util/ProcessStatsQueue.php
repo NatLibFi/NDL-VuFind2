@@ -195,7 +195,7 @@ class ProcessStatsQueue extends AbstractUtilCommand
                     );
                     $this->err(
                         'Failed to add record view entry: ' . (string)$e
-                        . '. Entry: ' + var_export($logEntry, true)
+                        . '. Entry: ' . var_export($logEntry, true)
                     );
                     throw $e;
                 }
