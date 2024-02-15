@@ -100,6 +100,7 @@
   $recordTotal = $this->results->getResultTotal();
 ?>
 
+<h1 class="sr-only"><?= $this->transEsc('Search Results'); ?></h1>
 <?php if ($recordTotal > 0): ?>
   <div class="finna-search-filter-toggle-trigger visible-xs hidden-print"></div>
   <div class="finna-search-filter-toggle visible-xs hidden-print">
@@ -226,7 +227,6 @@
     <?php endforeach; ?>
 
     <?php /* End Listing Options */ ?>
-    <h1 class="sr-only"><?= $this->transEsc('Search Results'); ?></h1>
     <?php if ($recordTotal < 1): ?>
       <?php foreach ($topRecommendations as $index => $current): ?>
         <?php if (! $current instanceof \Finna\Recommend\AuthorityRecommend): ?>
