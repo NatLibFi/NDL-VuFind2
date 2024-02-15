@@ -60,28 +60,32 @@
               <div class="toolbar-sticky">
                 <div class="myresearch-table history-table">
                   <div class="toolbar">
-                    <div class="checkbox-col">
-                      <div class="checkboxFilter mylist-select-all">
-                        <div class="checkbox">
-                          <label>
-                            <input type="checkbox" name="selectAll" class="checkbox-select-all" aria-label="<?=$this->transEscAttr('Select All');?>">
-                            <span class="selected"></span>
-                          </label>
+                    <?php if ($purgeSelectedAllowed): ?>
+                      <div class="checkbox-col">
+                        <div class="checkboxFilter mylist-select-all">
+                          <div class="checkbox">
+                            <label>
+                              <input type="checkbox" name="selectAll" class="checkbox-select-all" aria-label="<?=$this->transEscAttr('Select All');?>">
+                              <span class="selected"></span>
+                            </label>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    <?php endif; ?>
                     <div class="list-functions">
                       <div class="toolbar-button-col">
                         <div class="btn-group">
-                        <?php if ($purgeSelectedAllowed): ?>
-                          <input type="submit" id="purgeSelected" name="purgeSelected" value="<?=$this->transEscAttr('loan_history_purge_selected')?>" class="btn btn-primary btn-finna-toolbar dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore disabled="disabled">
-                          <ul class="dropdown-menu useraccount-confirm" role="presentation">
-                            <li class="disabled"><span class="prompt-text"><?=$this->transEsc('loan_history_confirm_purge_selected')?></span></li>
-                            <li><a href="#" id="confirm_purge_selected_yes"><?=$this->transEsc('confirm_dialog_yes')?></a></li>
-                            <li><a href="#" class="confirm_purge_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
-                          </ul>
-                        <?php endif; ?>
-                          <a class="btn btn-primary btn-finna-toolbar disabled" id="copy_to_favourites" data-lightbox role="button" href="<?=$this->url('myresearch-savehistoricloans') ?>"><?=$this->transEsc('loan_history_save')?></a>
+                          <?php if ($purgeSelectedAllowed): ?>
+                            <input type="submit" id="purgeSelected" name="purgeSelected" value="<?=$this->transEscAttr('loan_history_purge_selected')?>" class="btn btn-primary btn-finna-toolbar dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore disabled="disabled">
+                            <ul class="dropdown-menu useraccount-confirm" role="presentation">
+                              <li class="disabled"><span class="prompt-text"><?=$this->transEsc('loan_history_confirm_purge_selected')?></span></li>
+                              <li><a href="#" id="confirm_purge_selected_yes"><?=$this->transEsc('confirm_dialog_yes')?></a></li>
+                              <li><a href="#" class="confirm_purge_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+                            </ul>
+                          <?php endif; ?>
+                        </div>
+                        <div class="btn-group">
+                          <a class="btn btn-primary btn-finna-toolbar" data-lightbox role="button" href="<?=$this->url('myresearch-savehistoricloans') ?>"><?=$this->transEsc('loan_history_save')?></a>
                         </div>
                       </div>
                       <div class="sort-col">

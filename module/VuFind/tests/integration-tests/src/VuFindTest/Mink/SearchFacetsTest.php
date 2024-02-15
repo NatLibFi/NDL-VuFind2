@@ -32,6 +32,7 @@
 namespace VuFindTest\Mink;
 
 use Behat\Mink\Element\Element;
+use VuFindTest\Feature\SearchFacetFilterTrait;
 use VuFindTest\Feature\SearchSortTrait;
 
 use function count;
@@ -45,60 +46,11 @@ use function count;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
- * @retry    4
  */
 class SearchFacetsTest extends \VuFindTest\Integration\MinkTestCase
 {
     use SearchSortTrait;
-
-    /**
-     * CSS selector for finding the active filter values
-     *
-     * @var string
-     */
-    protected $activeFilterSelector = '.active-filters.hidden-xs .filters .filter-value';
-
-    /**
-     * CSS selector for finding the active filter labels
-     *
-     * @var string
-     */
-    protected $activeFilterLabelSelector = '.active-filters.hidden-xs .filters .filters-title';
-
-    /**
-     * CSS selector for finding the first hierarchical facet expand button
-     *
-     * @var string
-     */
-    protected $facetExpandSelector = '.facet-tree .facet-tree__toggle-expanded .facet-tree__expand';
-
-    /**
-     * CSS selector for finding the first expanded hierarchical facet
-     *
-     * @var string
-     */
-    protected $facetExpandedSelector = '.facet-tree button[aria-expanded=true] ~ ul';
-
-    /**
-     * CSS selector for finding the first second level hierarchical facet
-     *
-     * @var string
-     */
-    protected $facetSecondLevelLinkSelector = '.facet-tree button[aria-expanded=true] ~ ul a';
-
-    /**
-     * CSS selector for finding the first active second level hierarchical facet
-     *
-     * @var string
-     */
-    protected $facetSecondLevelActiveLinkSelector = '.facet-tree button[aria-expanded=true] ~ ul a.active';
-
-    /**
-     * CSS selector for finding the first second level hierarchical facet
-     *
-     * @var string
-     */
-    protected $facetSecondLevelExcludeLinkSelector = '.facet-tree button[aria-expanded=true] ~ ul a.exclude';
+    use SearchFacetFilterTrait;
 
     /**
      * Get filtered search
@@ -122,10 +74,9 @@ class SearchFacetsTest extends \VuFindTest\Integration\MinkTestCase
     protected function facetApplyProcedure(Element $page): void
     {
         // Confirm that we have 9 results and no filters to begin with:
-        $stats = $this->findCss($page, '.search-stats');
         $this->assertStringStartsWith(
             'Showing 1 - 9 results of 9',
-            $stats->getText()
+            $this->findCssAndGetText($page, '.search-stats')
         );
         $items = $page->findAll('css', $this->activeFilterSelector);
         $this->assertCount(0, $items);
@@ -137,10 +88,9 @@ class SearchFacetsTest extends \VuFindTest\Integration\MinkTestCase
 
         // Check that when the page reloads, we have fewer results and a filter:
         $this->waitForPageLoad($page);
-        $stats = $this->findCss($page, '.search-stats');
         $this->assertStringStartsWith(
             'Showing 1 - 7 results of 7',
-            $stats->getText()
+            $this->findCssAndGetText($page, '.search-stats')
         );
         $items = $page->findAll('css', $this->activeFilterSelector);
         $this->assertCount(1, $items);
@@ -179,7 +129,7 @@ class SearchFacetsTest extends \VuFindTest\Integration\MinkTestCase
             . 'The Study of +\'s? 1 results 1 ' . $excludeControl
             . 'The Study of @Twitter #test 1 results 1 ' . $excludeControl
             . 'more…',
-            $this->findCss($page, '#modal #facet-list-count')->getText()
+            $this->findCssAndGetText($page, '#modal #facet-list-count')
         );
         $excludes = $page
             ->findAll('css', '#modal #facet-list-count .exclude');
@@ -196,7 +146,7 @@ class SearchFacetsTest extends \VuFindTest\Integration\MinkTestCase
             . 'The Study and Scor_ng of Dots.and-Dashes:Colons 1 results 1 ' . $excludeControl
             . 'The Study of "Important" Things 1 results 1 ' . $excludeControl
             . 'more…',
-            $this->findCss($page, '#modal #facet-list-index')->getText()
+            $this->findCssAndGetText($page, '#modal #facet-list-index')
         );
         $excludes = $page
             ->findAll('css', '#modal #facet-list-index .exclude');
@@ -223,7 +173,7 @@ class SearchFacetsTest extends \VuFindTest\Integration\MinkTestCase
             . 'The Study of @Twitter #test 1 results 1 ' . $excludeControl
             . 'The Study of Back S\ashes 1 results 1 ' . $excludeControl
             . 'more…',
-            $this->findCss($page, '#modal #facet-list-index')->getText()
+            $this->findCssAndGetText($page, '#modal #facet-list-index')
         );
         // back to count one last time...
         $this->clickCss($page, '[data-sort="count"]');
@@ -421,7 +371,7 @@ class SearchFacetsTest extends \VuFindTest\Integration\MinkTestCase
             . 'The Study of +\'s? 1 results 1 '
             . 'The Study of @Twitter #test 1 results 1 '
             . 'more…',
-            $this->findCss($page, '#modal #facet-list-count')->getText()
+            $this->findCssAndGetText($page, '#modal #facet-list-count')
         );
     }
 
@@ -441,10 +391,7 @@ class SearchFacetsTest extends \VuFindTest\Integration\MinkTestCase
         // Click second level facet:
         $this->clickCss($page, $this->facetSecondLevelLinkSelector);
         // Check the active filter:
-        $filter = $this->findCss($page, $this->activeFilterSelector);
-        $label = $this->findCss($page, $this->activeFilterLabelSelector);
-        $this->assertEquals('hierarchy:', $label->getText());
-        $this->assertEquals('Remove Filter level1a/level2a', $filter->getText());
+        $this->assertAppliedFilter($page, 'level1a/level2a');
         // Check that the applied facet is displayed properly:
         $this->findCss($page, $this->facetSecondLevelActiveLinkSelector);
     }
@@ -507,21 +454,20 @@ class SearchFacetsTest extends \VuFindTest\Integration\MinkTestCase
             return $parts[0];
         };
         $page = $this->performSearch('building:"hierarchy.mrc"');
-        $stats = $this->findCss($page, '.search-stats');
         $this->assertEquals(
             'Showing 1 - 10 results of 10',
-            $extractCount($stats->getText())
+            $extractCount($this->findCssAndGetText($page, '.search-stats'))
         );
         $this->clickCss($page, $this->facetExpandSelector);
         $this->clickCss($page, $this->facetSecondLevelExcludeLinkSelector);
-        $filter = $this->findCss($page, $this->activeFilterSelector);
-        $label = $this->findCss($page, '.filters .filters-title');
-        $this->assertEquals('hierarchy:', $label->getText());
-        $this->assertEquals('Remove Filter level1a/level2a', $filter->getText());
-        $stats = $this->findCss($page, '.search-stats');
+        $this->assertEquals('hierarchy:', $this->findCssAndGetText($page, '.filters .filters-title'));
+        $this->assertEquals(
+            'Remove Filter level1a/level2a',
+            $this->findCssAndGetText($page, $this->activeFilterSelector)
+        );
         $this->assertEquals(
             'Showing 1 - 7 results of 7',
-            $extractCount($stats->getText())
+            $extractCount($this->findCssAndGetText($page, '.search-stats'))
         );
     }
 
@@ -627,18 +573,16 @@ class SearchFacetsTest extends \VuFindTest\Integration\MinkTestCase
         $page = $this->performSearch('building:"hierarchy.mrc"');
         foreach ($expected as $index => $facet) {
             $topLi = $this->findCss($page, '#side-collapse-hierarchical_facet_str_mv ul.facet-tree > li', null, $index);
-            $item = $this->findCss($topLi, '.facet-value');
             $this->assertEquals(
                 $facet['value'],
-                $item->getText(),
+                $this->findCssAndGetText($topLi, '.facet-value'),
                 "Hierarchical facet item $index"
             );
             foreach ($facet['children'] as $childIndex => $childFacet) {
                 $childLi = $this->findCss($topLi, 'ul > li.facet-tree__parent', null, $childIndex);
-                $childItem = $this->findCss($childLi, '.facet-value');
                 $this->assertEquals(
                     $childFacet,
-                    $childItem->getText(),
+                    $this->findCssAndGetText($childLi, '.facet-value'),
                     "Hierarchical facet item $index child $childIndex"
                 );
             }
@@ -692,8 +636,10 @@ class SearchFacetsTest extends \VuFindTest\Integration\MinkTestCase
      */
     protected function assertFilterIsStillThere(Element $page): void
     {
-        $filter = $this->findCss($page, $this->activeFilterSelector);
-        $this->assertEquals('Remove Filter weird_ids.mrc', $filter->getText());
+        $this->assertEquals(
+            'Remove Filter weird_ids.mrc',
+            $this->findCssAndGetText($page, $this->activeFilterSelector)
+        );
     }
 
     /**
@@ -926,7 +872,7 @@ class SearchFacetsTest extends \VuFindTest\Integration\MinkTestCase
         $page = $session->getPage();
 
         // Extract information about the top two facets from the list:
-        $facets = $this->findCss($page, '#side-collapse-building')->getText();
+        $facets = $this->findCssAndGetText($page, '#side-collapse-building');
         $list = explode(' ', $facets);
         $firstFacet = array_shift($list);
         $firstFacetCount = array_shift($list);
@@ -948,7 +894,7 @@ class SearchFacetsTest extends \VuFindTest\Integration\MinkTestCase
         );
         $this->assertStringContainsString(
             "Showing 1 - 20 results of $secondFacetCount",
-            $this->findCss($page, '.search-header .search-stats')->getText()
+            $this->findCssAndGetText($page, '.search-header .search-stats')
         );
 
         // Now clicking the first facet should EXPAND the result list:
@@ -959,7 +905,7 @@ class SearchFacetsTest extends \VuFindTest\Integration\MinkTestCase
         );
         $this->assertStringContainsString(
             "Showing 1 - 20 results of $expectedTotal",
-            $this->findCss($page, '.search-header .search-stats')->getText()
+            $this->findCssAndGetText($page, '.search-header .search-stats')
         );
     }
 }

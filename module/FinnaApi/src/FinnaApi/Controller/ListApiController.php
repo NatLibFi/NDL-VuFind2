@@ -30,7 +30,6 @@
 namespace FinnaApi\Controller;
 
 use Exception;
-use Finna\Controller\ListController;
 use Laminas\Http\Response;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\Stdlib\Parameters;
@@ -54,9 +53,10 @@ use function is_array;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
-class ListApiController extends ListController implements ApiInterface
+class ListApiController extends \VuFind\Controller\AbstractBase implements ApiInterface
 {
     use ApiTrait;
+    use \Finna\Controller\Feature\FinnaUserListTrait;
 
     /**
      * Record formatter

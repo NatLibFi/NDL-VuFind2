@@ -15,7 +15,7 @@
     <div class="condensed-body">
       <?=$this->icon('condensed-expand', 'condensed-expand') ?><?=$this->icon('condensed-collapse', 'condensed-collapse') ?>
       <h2 class="title">
-        <a href="<?=$this->escapeHtmlAttr($recordLinker->getUrl($this->driver))?>" class="title">
+        <a href="<?=$this->escapeHtmlAttr($recordLinker->getUrl($this->driver))?>" class="title" title="<?=$this->escapeHtmlAttr($this->driver->getTitle())?>">
         <?php
           $summHighlightedTitle = $this->driver->getHighlightedTitle();
           $summTitle = $this->driver->getTitle();
@@ -92,7 +92,7 @@
           <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
           <div class="hierarchyTreeLink">
             <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId">
-            <?=$this->icon('hierarchy') ?>
+            <?=$this->icon('hierarchy-tree') ?>
             <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID]))?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>" data-lightbox-href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID]))?>" data-lightbox-post="tab=hierarchytree">
                 <?=$this->transEsc('hierarchy_view_context')?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?>
             </a>

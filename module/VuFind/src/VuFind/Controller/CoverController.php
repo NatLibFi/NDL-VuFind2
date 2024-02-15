@@ -33,6 +33,8 @@ use VuFind\Cover\CachingProxy;
 use VuFind\Cover\Loader;
 use VuFind\Session\Settings as SessionSettings;
 
+use function in_array;
+
 /**
  * Generates covers for book entries
  *
@@ -147,6 +149,20 @@ class CoverController extends \Laminas\Mvc\Controller\AbstractActionController
     }
 
     /**
+     * Is the content type allowed by the cover proxy?
+     *
+     * @param string $contentType Type to check
+     *
+     * @return bool
+     */
+    protected function isValidProxyImageContentType(string $contentType): bool
+    {
+        $validTypes = $this->config['coverproxyAllowedTypes']
+            ?? ['image/gif', 'image/jpeg', 'image/png'];
+        return in_array(strtolower($contentType), array_map('strtolower', $validTypes));
+    }
+
+    /**
      * Send image data for display in the view
      *
      * @return \Laminas\Http\Response
@@ -160,10 +176,13 @@ class CoverController extends \Laminas\Mvc\Controller\AbstractActionController
         if (!empty($url) && $this->proxyAllowedForUrl($url)) {
             try {
                 $image = $this->proxy->fetch($url);
-                return $this->displayImage(
-                    $image->getHeaders()->get('content-type')->getFieldValue(),
-                    $image->getContent()
-                );
+                $contentType = $image?->getHeaders()?->get('content-type')?->getFieldValue() ?? '';
+                if ($this->isValidProxyImageContentType($contentType)) {
+                    return $this->displayImage(
+                        $contentType,
+                        $image->getContent()
+                    );
+                }
             } catch (\Exception $e) {
                 // If an exception occurs, drop through to the standard case
                 // to display an image unavailable graphic.

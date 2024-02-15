@@ -33,6 +33,7 @@ namespace Finna\Controller;
 
 use VuFind\Exception\Mail as MailException;
 
+use function count;
 use function is_array;
 
 /**
@@ -56,15 +57,28 @@ class CartController extends \VuFind\Controller\CartController
     {
         // Retrieve ID list:
         $ids = null === $this->params()->fromPost('selectAll')
-            ? $this->params()->fromPost('ids')
-            : $this->params()->fromPost('idsAll');
+            ? $this->params()->fromPost('ids', [])
+            : $this->params()->fromPost('idsAll', []);
 
         // Retrieve follow-up information if necessary:
         if (!is_array($ids) || empty($ids)) {
-            $ids = $this->followup()->retrieveAndClear('cartIds');
+            $ids = $this->followup()->retrieveAndClear('cartIds') ?? [];
         }
+        $actionLimit = $this->getBulkActionLimit('email');
         if (!is_array($ids) || empty($ids)) {
-            return $this->redirectToSource('error', 'bulk_noitems_advice');
+            if ($redirect = $this->redirectToSource('error', 'bulk_noitems_advice')) {
+                return $redirect;
+            }
+            $submitDisabled = true;
+        } elseif (count($ids) > $actionLimit) {
+            $errorMsg = $this->translate(
+                'bulk_limit_exceeded',
+                ['%%count%%' => count($ids), '%%limit%%' => $actionLimit],
+            );
+            if ($redirect = $this->redirectToSource('error', $errorMsg)) {
+                return $redirect;
+            }
+            $submitDisabled = true;
         }
 
         // Force login if necessary:
@@ -88,7 +102,7 @@ class CartController extends \VuFind\Controller\CartController
         $view->useCaptcha = $this->captcha()->active('email');
 
         // Process form submission:
-        if ($this->formWasSubmitted('submit', $view->useCaptcha)) {
+        if (!($submitDisabled ?? false) && $this->formWasSubmitted('submit', $view->useCaptcha)) {
             // Attempt to send the email and show an appropriate flash message:
             try {
                 // If we got this far, we're ready to send the email:
@@ -105,7 +119,7 @@ class CartController extends \VuFind\Controller\CartController
                     $view->subject,
                     $cc
                 );
-                return $this->redirectToSource('success', 'bulk_email_success');
+                return $this->redirectToSource('success', 'bulk_email_success', true);
             } catch (MailException $e) {
                 $this->flashMessenger()->addMessage(
                     $e->getDisplayMessage(),

@@ -51,7 +51,6 @@
 @import "finna/video-player";
 @import "finna/record";
 @import "finna/primo";
-@import "finna/hierarchytree";
 @import "finna/filters";
 @import "finna/mobile-toolbar";
 @import "finna/mobile-table";
@@ -416,3 +415,16 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
     background-color: @table-bg-accent;
   }
 }
+
+// Hierarchy tree
+.hierarchy-tree-search-form .btn {
+    &:extend(.form-control);
+}
+.hierarchy-tree__item-container .icon {
+    display: none;
+}
+
+// Collection hierarchy tree width
+/*.collection-hierarchytree {
+    display: block;
+}*/

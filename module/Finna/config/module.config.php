@@ -262,7 +262,7 @@ $config = [
             'Finna\Controller\LocationServiceController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\MetaLibController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\MetalibRecordController' => 'VuFind\Controller\AbstractBaseFactory',
-            'Finna\Controller\MyResearchController' => 'VuFind\Controller\AbstractBaseFactory',
+            'Finna\Controller\MyResearchController' => 'VuFind\Controller\MyResearchControllerFactory',
             'Finna\Controller\OrganisationInfoController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\PCIController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\PrimoController' => 'VuFind\Controller\AbstractBaseFactory',
@@ -499,6 +499,7 @@ $config = [
                         'Finna\AjaxHandler\GetRecordInfoByAuthorityFactory',
                     'Finna\AjaxHandler\GetRequestGroupPickupLocations' =>
                         'VuFind\AjaxHandler\AbstractIlsAndUserActionFactory',
+                    'Finna\AjaxHandler\GetSearchResults' => 'VuFind\AjaxHandler\GetSearchResultsFactory',
                     'Finna\AjaxHandler\GetSearchTabsRecommendations' =>
                         'Finna\AjaxHandler\GetSearchTabsRecommendationsFactory',
                     'Finna\AjaxHandler\GetSideFacets' =>
@@ -559,6 +560,7 @@ $config = [
                     'VuFind\AjaxHandler\GetACSuggestions' => 'Finna\AjaxHandler\GetACSuggestions',
                     'VuFind\AjaxHandler\GetItemStatuses' => 'Finna\AjaxHandler\GetItemStatuses',
                     'VuFind\AjaxHandler\GetRequestGroupPickupLocations' => 'Finna\AjaxHandler\GetRequestGroupPickupLocations',
+                    'VuFind\AjaxHandler\GetSearchResults' => 'Finna\AjaxHandler\GetSearchResults',
                     'VuFind\AjaxHandler\GetSideFacets' => 'Finna\AjaxHandler\GetSideFacets',
                     'VuFind\AjaxHandler\SystemStatus' => 'Finna\AjaxHandler\SystemStatus',
                 ],

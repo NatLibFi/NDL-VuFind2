@@ -1,8 +1,7 @@
 // Finna Facet styling
 
 // No inverse active items
-.facet-group .active,
-.jstree-facet .active > .jstree-anchor .facet
+.facet-group .active
 {
   background: @list-group-bg;
   color: @action-link-color;
@@ -433,6 +432,7 @@ span.badge.cb-facet {
     align-items: baseline;
     // Ensure that there is enough room for a button focus outline:
     padding-left: .2rem;
+    border-bottom: none;
 
     .facet-tree__toggle-expanded {
       flex: 1 1;

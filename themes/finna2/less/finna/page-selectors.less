@@ -21,8 +21,18 @@
 }
 
 .pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   font-size: 1.1em;
-  > li.pagination-button > a, > li.paginate_button.next > a, > li.paginate_button.previous > a {
+
+  // paginate_button is used in DataTables
+  > li.page-first > a,
+  > li.page-prev > a,
+  > li.page-next > a,
+  > li.page-last > a,
+  > li.paginate_button.next > a,
+  > li.paginate_button.previous > a {
     padding: 0;
     &:hover {
       background-color: transparent;
@@ -40,11 +50,10 @@
   }
   > li {
     display: inline; // Remove list-style and block-level defaults
-    & a {
+    a {
       color: @action-link-color;
     }
-    > a,
-    > span {
+    > a {
       border-radius: @border-radius-base;
       @media(max-width:@screen-xs-max) {
         font-size: 1em;
@@ -60,8 +69,7 @@
     }
   }
 
-  > li > a,
-  > li > span {
+  > li > a {
     &:hover,
     &:focus {
       color: @pagination-hover-color;

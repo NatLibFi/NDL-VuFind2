@@ -1,0 +1,19 @@
+<?php
+  $classes = array_merge(['page-item'], $this->liClasses ?? []);
+  $aAttrs = $this->htmlAttributes([
+    'class' => 'page-link',
+    'aria-label' => $this->label,
+  ]);
+  $newParams = $this->params;
+  $newParams['page'] = $this->page;
+  $aAttrs['href'] = $this->currentPath() . '?' . http_build_query($newParams);
+  if ($this->page === $this->current) {
+    $classes[] = 'active';
+    $aAttrs['aria-current'] = 'page';
+  }
+?>
+<li class="<?=implode(' ', $classes)?>">
+  <a<?=$aAttrs?>>
+    <?=$contentHtml?>
+  </a>
+</li>

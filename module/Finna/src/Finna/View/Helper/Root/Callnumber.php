@@ -73,16 +73,15 @@ class Callnumber extends \Laminas\View\Helper\AbstractHelper
     /**
      * Returns HTML for a holding callnumber.
      *
-     * @param string $source             Record source
-     * @param string $title              Record title
-     * @param string $callnumber         Callnumber
-     * @param string $collection         Collection
-     * @param string $location           Location
-     * @param string $language           Language
-     * @param string $page               Page (record|results)
-     * @param array  $fields             Additional data fields
-     * @param bool   $useLocationService Whether to display location service links
-     * (if available)
+     * @param string  $source             Record source
+     * @param string  $title              Record title
+     * @param ?string $callnumber         Callnumber
+     * @param ?string $collection         Collection
+     * @param ?string $location           Location
+     * @param string  $language           Language
+     * @param string  $page               Page (record|results)
+     * @param array   $fields             Additional data fields
+     * @param bool    $useLocationService Whether to display location service links (if available)
      *
      * @return string
      */

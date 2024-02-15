@@ -25,7 +25,7 @@ if ($img):
       <div class="result-body">
         <div class="title-container">
           <h2 class="search-title">
-            <a class="title" href="<?=$this->escapeHtmlAttr($recordLinker->getUrl($this->driver))?>">
+            <a class="title" href="<?=$this->escapeHtmlAttr($recordLinker->getUrl($this->driver))?>" title="<?=$this->escapeHtmlAttr($this->driver->getTitle())?>">
             <?php
               $summHighlightedTitle = $this->driver->getHighlightedTitle();
               $summTitle = $this->driver->getTitle();
@@ -95,7 +95,7 @@ if ($img):
               <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId">
               <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchySource)?>" class="hiddenHierarchySource">
               <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID, 'source' => $hierarchySource]))?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>" data-lightbox-href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID]))?>" data-lightbox-post="tab=hierarchytree">
-                <?=$this->icon('hierarchy') ?>
+                <?=$this->icon('hierarchy-tree') ?>
                 <?=$this->transEsc('hierarchy_view_collection_structure')?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?>
               </a>
             </div>

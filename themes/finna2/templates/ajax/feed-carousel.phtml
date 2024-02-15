@@ -26,7 +26,7 @@
               if (isset($item['link'])) {
                 $linkElement['href'] = $item['link'];
               }
-              if ($item['isExternal']) {
+              if (!empty($item['isExternal'])) {
                 $ariaLabelParts[] = $this->transEsc('external_link');
               }
               if ($this->linkTarget) {

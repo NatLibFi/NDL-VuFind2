@@ -93,7 +93,7 @@ class GetLinkedEvents extends \VuFind\AjaxHandler\AbstractBase implements Transl
                 self::STATUS_HTTP_ERROR
             );
         }
-        $response = false;
+        $response = [];
         if (!empty($events)) {
             if (isset($param['query']['id'])) {
                 $relatedEvents = $events['events']['relatedEvents'] ?? '';

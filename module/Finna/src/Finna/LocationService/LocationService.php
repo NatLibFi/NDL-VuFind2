@@ -62,13 +62,13 @@ class LocationService
     /**
      * Return configuration parameter for a Location Service link.
      *
-     * @param string $source     Record source
-     * @param string $title      Record title
-     * @param string $callnumber Callnumber that is used as a location code.
-     * @param string $collection Collection
-     * @param string $location   Location
-     * @param string $language   Language
-     * @param array  $fields     Additional data fields
+     * @param string  $source     Record source
+     * @param string  $title      Record title
+     * @param ?string $callnumber Callnumber that is used as a location code.
+     * @param ?string $collection Collection
+     * @param ?string $location   Location
+     * @param string  $language   Language
+     * @param array   $fields     Additional data fields
      *
      * @return array Array with the following keys:
      *   [url]   string  URL to the Location Service map.

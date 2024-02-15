@@ -46,6 +46,41 @@ use Laminas\Config\Config;
 class Manager extends \VuFind\Cache\Manager
 {
     /**
+     * Cache configuration.
+     *
+     * Following settings are supported:
+     *
+     *   cliOverride   Set to false to not allow cache directory override in CLI mode (optional, enabled by default)
+     *   directory     Cache directory (required)
+     *   options       Array of cache options (optional, e.g. disabled, ttl)
+     *
+     * @var array
+     */
+    protected $finnaCacheSpecs = [
+        'codesets' => [
+            'directory' => 'codesets',
+            'options' => [
+                // Code sets cache should live for as long as possible.
+                // Refreshing of the cache is based on a separate setting to safeguard
+                // against API unavailability or errors.
+                'ttl' => 0,
+            ],
+        ],
+        'description' => [
+            'directory' => 'descriptions',
+        ],
+        'feed' => [
+            'directory' => 'feeds',
+        ],
+        'organisation-info' => [
+            'directory' => 'organisation-infos',
+        ],
+        'stylesheet' => [
+            'directory' => 'stylesheets',
+        ],
+    ];
+
+    /**
      * Constructor
      *
      * @param Config                $config       Main VuFind configuration
@@ -57,16 +92,7 @@ class Manager extends \VuFind\Cache\Manager
         Config $searchConfig,
         StorageAdapterFactory $factory
     ) {
+        $this->cacheSpecs = array_merge($this->cacheSpecs, $this->finnaCacheSpecs);
         parent::__construct($config, $searchConfig, $factory);
-
-        $cacheBase = $this->getCacheDir();
-        $ids = ['feed', 'description', 'organisation-info', 'stylesheet'];
-        foreach ($ids as $cache) {
-            $this->createFileCache($cache, $cacheBase . $cache . 's');
-        }
-        // Code sets cache should live for as long as possible.
-        // Refreshing of the cache is based on a separate setting to safeguard
-        // against API unavailability or errors.
-        $this->createFileCache('codesets', $cacheBase . 'codesets', ['ttl' => 0]);
     }
 }

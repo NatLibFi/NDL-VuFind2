@@ -38,7 +38,11 @@
     <h3><?=$this->transEsc('catalog_login_change_card_heading') ?></h3>
     <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'displaySelected' => false, 'label' => 'catalog_login_change_card_label'])?>
   <?php endif; ?>
-  <h3><?=$this->transEsc('Library Catalog Profile')?></h3>
+  <?php if ($isPartial && !$isLightbox): ?>
+    <h3><?=$this->transEsc('Library Catalog Profile')?></h3>
+  <?php else: ?>
+    <h2><?=$this->transEsc('Library Catalog Profile')?></h2>
+  <?php endif; ?>
   <?=$this->flashmessages()?>
   <p><?=$this->transEsc('cat_establish_account')?></p>
   <form method="post" autocomplete="off">

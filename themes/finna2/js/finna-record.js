@@ -118,6 +118,7 @@ finna.record = (function finnaRecord() {
           var element = elements[idx];
           if (response.status) {
             $(element).removeClass('disabled')
+              .removeClass('request-check')
               .html(VuFind.updateCspNonce(response.msg));
           } else {
             $(element).remove();

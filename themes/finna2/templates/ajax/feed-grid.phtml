@@ -13,7 +13,7 @@
           if ($this->linkTarget) {
             $linkElement['target'] = $this->linkTarget;
           }
-          if ($item['modal']) {
+          if ($item['modal'] ?? false) {
             $linkElement['data-lightbox'] = '';
             $linkElement['data-lightbox-title'] = $item['title'];
           }

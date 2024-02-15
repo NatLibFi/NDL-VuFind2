@@ -9,20 +9,31 @@
     <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($account->getCsrfHash())?>">
     <div class="clearfix"></div>
     <div class="form-group">
-        <?php if ($account->supportsCreation()): ?>
-          <a class="btn btn-link createAccountLink" href="<?=$this->url('myresearch-account') ?>?auth_method=<?=$account->getAuthMethod()?>"><?=$this->transEsc('Create New Account')?></a>
-        <?php endif; ?>
-        <input class="btn btn-primary" type="submit" name="processLogin" value="<?=$this->transEscAttr('Login')?>">
-        <?php if ($account->supportsRecovery()): ?>
-          <br>
-          <a class="btn btn-link" href="<?=$this->url('myresearch-recover') ?>?auth_method=<?=$account->getAuthMethod()?>"><?=$this->transEsc('Forgot Password')?></a>
-        <?php endif; ?>
-        <p>
-          <a id="login_library_card_register" class="btn btn-link" href="<?=$this->url('librarycards-register') ?>"><?=$this->transEsc('new_ils_account')?></a>
-        </p>
-        <p>
-          <a id="login_library_card_recovery" class="btn btn-link" href="<?=$this->url('librarycards-recover') ?>"><?=$this->transEsc('Forgot Password')?></a>
-        </p>
+      <input class="btn btn-primary" type="submit" name="processLogin" value="<?=$this->transEscAttr('Login')?>">
+    </div>
+    <?php if ($account->supportsPersistentLogin()): ?>
+      <div class="form-group">
+        <div class="remember-me-ils">
+          <label>
+            <input type="checkbox" name="remember_me"> <?=$this->transEsc('remember_me', ['%%days%%' => $account->getPersistentLoginLifetime()])?>
+          </label>
+        </div>
+      </div>
+    <?php endif; ?>
+    <div class="form-group">
+      <?php if ($account->supportsCreation()): ?>
+        <a class="btn btn-link createAccountLink" href="<?=$this->url('myresearch-account') ?>?auth_method=<?=$account->getAuthMethod()?>"><?=$this->transEsc('Create New Account')?></a>
+      <?php endif; ?>
+      <?php if ($account->supportsRecovery()): ?>
+        <br>
+        <a class="btn btn-link" href="<?=$this->url('myresearch-recover') ?>?auth_method=<?=$account->getAuthMethod()?>"><?=$this->transEsc('Forgot Password')?></a>
+      <?php endif; ?>
+      <p>
+        <a id="login_library_card_register" class="btn btn-link" href="<?=$this->url('librarycards-register') ?>"><?=$this->transEsc('new_ils_account')?></a>
+      </p>
+      <p>
+        <a id="login_library_card_recovery" class="btn btn-link" href="<?=$this->url('librarycards-recover') ?>"><?=$this->transEsc('Forgot Password')?></a>
+      </p>
     </div>
   </form>
 </div>

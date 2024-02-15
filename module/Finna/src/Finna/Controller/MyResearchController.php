@@ -64,6 +64,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     use FinnaOnlinePaymentControllerTrait;
     use FinnaUnsupportedFunctionViewTrait;
     use FinnaPersonalInformationSupportTrait;
+    use Feature\FinnaUserListTrait;
 
     /**
      * Catalog Login Action
@@ -1124,25 +1125,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Return the Favorites sort list options.
-     *
-     * @return array
-     */
-    public static function getFavoritesSortList()
-    {
-        return [
-            'custom_order' => 'sort_custom_order',
-            'id desc' => 'sort_saved',
-            'id' => 'sort_saved asc',
-            'title' => 'sort_title',
-            'author' => 'sort_author',
-            'year desc' => 'sort_year',
-            'year' => 'sort_year asc',
-            'format' => 'sort_format',
-        ];
-    }
-
-    /**
      * Save favorite custom order into DB
      *
      * @return mixed
@@ -1379,44 +1361,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Create sort list.
-     * If no sort option selected, set first one from the list to default.
-     *
-     * @param ?\VuFind\Db\Row\UserList $list List object
-     *
-     * @return array
-     */
-    protected function createSortList($list)
-    {
-        $table = $this->getTable('UserResource');
-
-        $sortOptions = self::getFavoritesSortList();
-        $sort = $_GET['sort'] ?? false;
-        reset($sortOptions);
-        $defaultSort = key($sortOptions);
-        if (!$sort) {
-            $sort = $defaultSort;
-        }
-        $sortList = [];
-
-        if (empty($list) || !$table->isCustomOrderAvailable($list->id)) {
-            array_shift($sortOptions);
-            if ($sort == 'custom_order') {
-                $sort = 'id desc';
-            }
-        }
-
-        foreach ($sortOptions as $key => $value) {
-            $sortList[$key] = [
-                'desc' => $value,
-                'selected' => $key === $sort,
-                'default' => $key === $defaultSort,
-            ];
-        }
-        return $sortList;
-    }
-
-    /**
      * Utility function for generating a token.
      *
      * @param object $user current user
@@ -1434,19 +1378,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         ];
         $token = new \VuFind\Crypt\HMAC('usersecret');
         return $token->generate(array_keys($data), $data);
-    }
-
-    /**
-     * Append current URL to search memory so that return links on
-     * record pages opened from a list point back to the list page.
-     *
-     * @return void
-     */
-    protected function rememberCurrentSearchUrl()
-    {
-        $memory  = $this->serviceLocator->get(\VuFind\Search\Memory::class);
-        $listUrl = $this->getRequest()->getRequestUri();
-        $memory->rememberSearch($listUrl);
     }
 
     /**

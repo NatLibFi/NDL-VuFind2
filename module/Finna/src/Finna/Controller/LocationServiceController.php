@@ -59,9 +59,9 @@ class LocationServiceController extends \VuFind\Controller\AbstractBase
         }
         $source = $request['source'];
         $callnumber = $request['callnumber'];
-        $collection = $request['collection'];
-        $location = $request['location'];
-        $title = $request['title'];
+        $collection = $request['collection'] ?? null;
+        $location = $request['location'] ?? null;
+        $title = $request['title'] ?? '';
 
         $locationService = $this->serviceLocator
             ->get(\Finna\LocationService\LocationService::class);

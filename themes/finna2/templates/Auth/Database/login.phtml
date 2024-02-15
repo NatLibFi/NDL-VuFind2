@@ -9,6 +9,13 @@
       <div class="form-group">
         <input class="btn btn-primary" type="submit" name="processLogin" value="<?=$this->transEscAttr('Login')?>">
       </div>
+      <?php if ($account->supportsPersistentLogin()): ?>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="remember_me"> <?=$this->transEsc('remember_me', ['%%days%%' => $account->getPersistentLoginLifetime()])?>
+          </label>
+        </div>
+      <?php endif; ?>
       <div class="form-group">
         <?php if ($account->supportsCreation()): ?>
           <a class="btn btn-link createAccountLink" href="<?=$this->url('myresearch-account') ?>?auth_method=<?=$account->getAuthMethod()?>"><?=$this->transEsc('Create New Account')?></a>

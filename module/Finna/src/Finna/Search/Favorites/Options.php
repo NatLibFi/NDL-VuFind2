@@ -58,8 +58,7 @@ class Options extends \VuFind\Search\Favorites\Options
             $this->defaultLimit = $searchSettings->General->default_limit;
         }
         if (isset($searchSettings->General->limit_options)) {
-            $this->limitOptions
-                = explode(',', $searchSettings->General->limit_options);
+            $this->limitOptions = $this->explodeListSetting($searchSettings->General->limit_options);
         }
         // Load view preferences (or defaults if none in .ini file):
         if (isset($searchSettings->Views)) {
