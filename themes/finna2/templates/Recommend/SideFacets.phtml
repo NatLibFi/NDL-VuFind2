@@ -6,13 +6,6 @@
   $this->results = $results = $this->recommend->getResults();
   $this->options = $options = $results->getOptions();
 
-  $language = $this->layout()->userLang;
-  $datePickerLang = 'en';
-  $datepickerLanguages = ['en-gb' => 'en-GB', 'fi' => 'fi', 'sv' => 'sv'];
-  if (isset($datepickerLanguages[$language])) {
-    $datePickerLang = $datepickerLanguages[$language];
-  }
-
   $resultsTotal = $results->getResultTotal();
 ?>
 <?php if ($resultsTotal > 0): ?>
@@ -86,7 +79,6 @@ if ($this->fromStreetSearch) {
                   'facet' => $title,
                   'cluster' => $cluster,
                   'collapsedFacets' => $collapsedFacets,
-                  'datePickerLang' => $datePickerLang,
               ]
           )?>
       </div>
