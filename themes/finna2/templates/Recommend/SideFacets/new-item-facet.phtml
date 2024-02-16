@@ -21,6 +21,12 @@ $newItemValues = [
     <?php
     $component = $this->escapeHtmlAttr($title) . 'from';
     $endDate = $this->dateTime()->convertToDisplayDate('U', time());
+    $language = $this->layout()->userLang;
+    $datePickerLang = 'en-GB';
+    $datepickerLanguages = ['en-gb' => 'en-GB', 'fi' => 'fi', 'sv' => 'sv'];
+    if (isset($datepickerLanguages[$language])) {
+      $datePickerLang = $datepickerLanguages[$language];
+    }
     // Load the script inline to support asynchronously loaded sidefacets:
     $script = <<<EOT
         if ($.isReady) {

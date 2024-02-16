@@ -57,7 +57,7 @@
   }
 ?>
 <?php if (isset($newItemsFacets[$facet])): ?>
-  <?=$this->context($this)->renderInContext('Recommend/SideFacets/new-item-facet.phtml', ['results' => $results, 'title' => $facet, 'newItemsFacets' => $newItemsFacets, 'datePickerLang' => $datePickerLang]); ?>
+  <?=$this->context($this)->renderInContext('Recommend/SideFacets/new-item-facet.phtml', ['results' => $results, 'title' => $facet, 'newItemsFacets' => $newItemsFacets]); ?>
 <?php elseif ($daterangeFacet): ?>
   <div class="list-group-item daterange">
     <?=$this->partial('Recommend/DateRangeVisAjax.phtml', [
