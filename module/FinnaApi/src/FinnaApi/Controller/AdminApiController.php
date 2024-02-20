@@ -43,6 +43,13 @@ namespace FinnaApi\Controller;
 class AdminApiController extends \VuFindApi\Controller\AdminApiController
 {
     /**
+     * Caches that are not cleared by the clearCache command by default
+     *
+     * @var array
+     */
+    protected $defaultIgnoredCaches = ['cover', 'browscap'];
+
+    /**
      * Returns available core record fields as an associative array of
      * cssClass => translated label pairs.
      *
