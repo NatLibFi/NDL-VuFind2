@@ -91,8 +91,8 @@ class SolrLrmi extends SolrQdc
     {
         $xml = $this->getXmlRecord();
         $identifier = [];
-        foreach ($xml->identifier ?? [] as $identifier) {
-            $identifier[] = trim((string)$identifier);
+        foreach ($xml->identifier ?? [] as $id) {
+            $identifier[] = trim((string)$id);
         }
         return $identifier;
     }
@@ -129,14 +129,25 @@ class SolrLrmi extends SolrQdc
     public function getSummary()
     {
         $xml = $this->getXmlRecord();
-        $locale = $this->getLocale();
+        $descriptions = [];
+        $first = '';
         foreach ($xml->description as $d) {
             if (!empty($d['format'])) {
                 continue;
             }
-            if ($locale === (string)$d['lang']) {
-                return [(string)$d];
+            if ($desc = trim((string)$d)) {
+                $lang = trim((string)$d['lang']) ?? 'no_locale';
+                $first = $first ?: $lang;
+                $descriptions[$lang][] = $desc;
             }
+        }
+        if ($descriptions) {
+            foreach ($this->getPrioritizedLanguages() as $l) {
+                if ($descriptions[$l] ?? []) {
+                    return $descriptions[$l];
+                }
+            }
+            return $descriptions[$first];
         }
         return [];
     }
@@ -500,7 +511,7 @@ class SolrLrmi extends SolrQdc
     {
         $xml = $this->getXmlRecord();
         $uses = [];
-        foreach ($xml->educationalUse as $use) {
+        foreach ($xml->learningResource->educationalUse ?? [] as $use) {
             $uses[] = trim((string)$use);
         }
         return $uses;
