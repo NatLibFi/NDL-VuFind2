@@ -132,7 +132,8 @@ class FinnaFeedElement extends HTMLElement {
     const holder = this;
     if (jsonResponse.data) {
       holder.innerHTML = VuFind.updateCspNonce(jsonResponse.data.html);
-      var settings = jsonResponse.data.settings;
+      // Copy object so the reference to original is broken
+      var settings = Object.assign({}, jsonResponse.data.settings);
       settings.height = settings.height || 300;
       const type = settings.type;
       const carousel = ['carousel', 'carousel-vertical'].includes(type);
