@@ -47,7 +47,7 @@ class AdminApiController extends \VuFindApi\Controller\AdminApiController
      *
      * @var array
      */
-    protected $defaultIgnoredCaches = ['cover', 'browscap'];
+    protected $defaultIgnoredCaches = ['browscap', 'codesets', 'cover'];
 
     /**
      * Returns available core record fields as an associative array of
