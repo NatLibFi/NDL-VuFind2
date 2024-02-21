@@ -1485,9 +1485,11 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                     $response->getStatusCode()
                 );
             }
-            $data = json_decode($response->getBody(), true);
-            $indexVar = $data['data'][0]['index_var'] ?? null;
-            $indexDayId = $data['data'][0]['index_day_id'] ?? null;
+            $result = json_decode($response->getBody(), true);
+            $data = $result['data'] ?? [];
+            $lastItem = array_pop($data);
+            $indexVar = $lastItem['index_var'] ?? null;
+            $indexDayId = $lastItem['index_day_id'] ?? null;
             if (null === $indexVar || null === $indexDayId) {
                 throw new \Exception(
                     "index_var or index_day_id not found in BMA response for $url: "
