@@ -2376,7 +2376,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
-     * Get uncontrolled title from field 740, subfield a.
+     * Get uncontrolled title from field 740, subfields a, n and p.
      *
      * @return array
      */
@@ -2384,12 +2384,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     {
         $results = [];
         foreach ($this->getMarcReader()->getFields('740') as $field) {
-            if ($subfield = $this->getSubfield($field, 'a')) {
+            foreach ($this->getSubfieldArray($field, ['a', 'n', 'p'], false) as $subfield) {
                 $subfield = $this->stripTrailingPunctuation($subfield);
                 if (($ind1 = $field['i1']) && ctype_digit($ind1)) {
-                    $results[] = substr($subfield, $ind1);
+                    $substr = substr($subfield, $ind1);
+                    $results[] = mb_convert_case(mb_substr($substr, 0, 1), MB_CASE_TITLE) . mb_substr($substr, 1);
                 } else {
-                    $results[] = $this->stripTrailingPunctuation($subfield);
+                    $results[] = $subfield;
                 }
             }
         }
