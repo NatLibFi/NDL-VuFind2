@@ -299,7 +299,7 @@
     <div class="myresearch-profile-list library-profile">
       <?= $this->partial('myresearch/profile-my-information.phtml', ['user' => $user, 'cards' => $cards, 'hideDueDateReminder' => $this->hideDueDateReminder, 'hideProfileEmailAddress' => $this->hideProfileEmailAddress]); ?>
     </div>
-    <?php if ($this->auth()->getManager()->supportsPersistentLogin()): ?>
+    <?php if ($this->auth()->getManager()->supportsPersistentLogin($user->auth_method)): ?>
       <div class="myresearch-profile-header">
         <h3><?=$this->transEsc('Saved Logins')?></h3>
       </div>

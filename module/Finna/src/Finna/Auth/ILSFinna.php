@@ -94,14 +94,15 @@ trait ILSFinna
      * @param string $username    User name
      * @param string $password    Password
      * @param string $loginMethod Login method
+     * @param bool   $rememberMe  Whether to remember the login
      *
      * @throws AuthException
      * @return \VuFind\Db\Row\User Processed User object.
      */
-    protected function handleLogin($username, $password, $loginMethod)
+    protected function handleLogin($username, $password, $loginMethod, $rememberMe)
     {
         $username = str_replace(' ', '', $username);
-        return parent::handleLogin($username, $password, $loginMethod);
+        return parent::handleLogin($username, $password, $loginMethod, $rememberMe);
     }
 
     /**
