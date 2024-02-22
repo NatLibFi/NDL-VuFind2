@@ -127,19 +127,14 @@ class Solr extends \VuFind\Autocomplete\Solr implements \VuFind\I18n\Translator\
         $urlHelper
     ) {
         $settings = [];
-        $facets = isset($searchConfig->Autocomplete_Sections->facets)
-            ? $searchConfig->Autocomplete_Sections->facets->toArray() : null;
+        $facets = $searchConfig?->Autocomplete_Sections?->facets?->toArray() ?? [];
 
-        $this->hierarchicalFacets
-            = isset($facetConfig->SpecialFacets->hierarchical)
-            ? $facetConfig->SpecialFacets->hierarchical->toArray() : [];
+        $this->hierarchicalFacets = $facetConfig?->SpecialFacets?->hierarchical?->toArray() ?? [];
 
         $this->checkboxFacets = [];
-        if (isset($facetConfig->CheckboxFacets)) {
-            foreach ($facetConfig->CheckboxFacets as $facet => $label) {
-                [$field, $val] = explode(':', $facet, 2);
-                $this->checkboxFacets[] = $field;
-            }
+        foreach ($facetConfig->CheckboxFacets ?? [] as $facet => $label) {
+            [$field, $val] = explode(':', $facet, 2);
+            $this->checkboxFacets[] = $field;
         }
         $this->urlHelper = $urlHelper;
         $pos = 0;
