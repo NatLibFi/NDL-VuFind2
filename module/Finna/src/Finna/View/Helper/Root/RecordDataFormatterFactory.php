@@ -618,7 +618,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
         $setTemplateLine(
             'Publisher',
             'getPublicationDetails',
-            'data-escapeHtml.phtml',
+            'data-publicationDetails.phtml',
             [
                 'context' => ['class' => 'recordPublications'],
             ]
