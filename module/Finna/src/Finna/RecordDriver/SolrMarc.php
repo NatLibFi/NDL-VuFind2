@@ -2382,19 +2382,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      */
     public function getUncontrolledTitle()
     {
-        $results = [];
-        foreach ($this->getMarcReader()->getFields('740') as $field) {
-            foreach ($this->getSubfieldArray($field, ['a', 'n', 'p'], false) as $subfield) {
-                $subfield = $this->stripTrailingPunctuation($subfield);
-                if (($ind1 = $field['i1']) && ctype_digit($ind1)) {
-                    $substr = substr($subfield, $ind1);
-                    $results[] = mb_convert_case(mb_substr($substr, 0, 1), MB_CASE_TITLE) . mb_substr($substr, 1);
-                } else {
-                    $results[] = $subfield;
-                }
-            }
-        }
-        return $results;
+        return $this->stripTrailingPunctuation(
+            $this->getFieldArray('740', ['a', 'n', 'p'], false)
+        );
+        
     }
 
     /**
