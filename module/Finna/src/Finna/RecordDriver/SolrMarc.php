@@ -72,6 +72,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         '651' => 'geographic',
         '653' => '',
         '656' => 'occupation',
+        '690' => 'topic',
     ];
 
     /**
