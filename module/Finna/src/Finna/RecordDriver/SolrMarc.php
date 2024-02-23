@@ -2384,8 +2384,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     {
         return $this->stripTrailingPunctuation(
             $this->getFieldArray('740', ['a', 'n', 'p'], false)
-        );
-        
+        );        
     }
 
     /**
