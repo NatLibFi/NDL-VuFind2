@@ -464,6 +464,7 @@ class Feed implements
             'id' => 'getId',
             'title' => 'getTitle',
             'text' => 'getContent',
+            'description' => 'getDescription',
             'image' => 'getEnclosure',
             'link' => 'getLink',
             'date' => 'getDateCreated',

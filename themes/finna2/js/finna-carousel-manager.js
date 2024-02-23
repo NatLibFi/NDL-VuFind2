@@ -38,6 +38,9 @@ finna.carouselManager = (() => {
       return {autoplay: false};
     },
     height: (value) => { return {height: parseInt(value)}; },
+    stackedHeight: (value) => { return {stackedHeight: parseInt(value)}; },
+    backgroundColor: (value) => { return {backgroundColor: value}; },
+    imagePlacement: (value) => { return {imagePlacement: value}; },
     width: (value) => { return {fixedWidth: parseInt(value)}; },
     omitEnd: 'omitEnd',
     pagination: 'pagination',
@@ -86,6 +89,7 @@ finna.carouselManager = (() => {
         direction = 'ttb';
         break;
       case 'carousel':
+      case 'slider':
         direction = 'ltr';
         classes.prev += 'left';
         classes.next += 'right';

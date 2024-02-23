@@ -1,7 +1,7 @@
 ;; Mandatory settings:
 
 ; active = [0|1]
-; type = "[list|carousel|carousel-vertical|grid]"
+; type = "[list|carousel|carousel-vertical|grid|slider]"
 
 ; url[language code|*] = "<url>" Feed URL, for example:
 ;    Absolute URL: http://blogs.helsinki.fi/scriptaselecta/feed/
@@ -94,7 +94,12 @@
 ; autoplay = [false|milliseconds] Autoplay slide change interval (autoplay is off by default).
 ; dots = [0|1] Display current slide indicator (default 1).
 
+;; Optional slider settings:
 
+; This type only displays one item per page, but otherwise uses carousel settings.
+; backgroundColor = "#f7f7f7" Background colour of the slider (default none).
+; stackedHeight = [pixels] The height of the slider when it uses the stacked (vertical) layout, e.g. on mobile device (sets regular height value by default).
+; imagePlacement = [left|right] The side of which the image is on the slider when it uses the horizontal layout (default left).
 
 ; Number of visible items in the carousel
 
@@ -117,7 +122,7 @@
 ; content[link] = 0
 ; content[image] = 0
 ; content[date] = 0
-
+; content[description] = 0
 
 [carousel]
 type = "carousel"
@@ -175,4 +180,14 @@ title = "rss"
 content[text] = 0
 content[image] = 0
 linkTarget  = "_blank"
+
+[slider]
+type = "slider"
+active = 1
+url[*] = "https://musasto.wordpress.com/feed/"
+title = "rss"
+height = 450
+stackedHeight = 600
+backgroundColor = "#f7f7f7"
+imagePlacement = "left"
 
