@@ -2383,7 +2383,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     public function getUncontrolledTitle()
     {
         return $this->stripTrailingPunctuation(
-            $this->getFieldArray('740', ['a', 'n', 'p'], false)
+            $this->getFieldArray('740', ['a', 'n', 'p'])
         );
     }
 
