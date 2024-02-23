@@ -186,10 +186,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                         }
                     }
                 }
-                
+
                 // Get data for field
                 $tmp = $this->getFieldData($field);
-                
+
                 if ($value == '730') {
                     // getfieldData doesn't handle subfield a (it's not the same for
                     // other fields), so do it now if we didn't get a title:
@@ -211,7 +211,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                     }
                     $tmp['value'] = implode(" ", $line);
                 }
-                
+
                 if (null === $result) {
                     $result = [];
                 }
