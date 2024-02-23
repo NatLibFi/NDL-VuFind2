@@ -5,12 +5,6 @@
 <div class="login-col">
   <form method="post" class="form-vertical" action="<?=$this->url('myresearch-home')?>" name="loginForm" id="loginForm">
     <?=$this->auth()->getLoginFields()?>
-    <input type="hidden" name="auth_method" value="<?=$this->escapeHtmlAttr($account->getAuthMethod())?>">
-    <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($account->getCsrfHash())?>">
-    <div class="clearfix"></div>
-    <div class="form-group">
-      <input class="btn btn-primary" type="submit" name="processLogin" value="<?=$this->transEscAttr('Login')?>">
-    </div>
     <?php if ($account->supportsPersistentLogin()): ?>
       <div class="form-group">
         <div class="remember-me-ils">
@@ -20,6 +14,12 @@
         </div>
       </div>
     <?php endif; ?>
+    <input type="hidden" name="auth_method" value="<?=$this->escapeHtmlAttr($account->getAuthMethod())?>">
+    <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($account->getCsrfHash())?>">
+    <div class="clearfix"></div>
+    <div class="form-group">
+      <input class="btn btn-primary" type="submit" name="processLogin" value="<?=$this->transEscAttr('Login')?>">
+    </div>
     <div class="form-group">
       <?php if ($account->supportsCreation()): ?>
         <a class="btn btn-link createAccountLink" href="<?=$this->url('myresearch-account') ?>?auth_method=<?=$account->getAuthMethod()?>"><?=$this->transEsc('Create New Account')?></a>

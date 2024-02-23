@@ -1,0 +1,29 @@
+<!-- START of: finna - ajax/feed-slider-item.phtml -->
+<?php
+  $hasIcon = !empty($item['icon']['name']);
+  $hasImg = !empty($item['image']['url']);
+?>
+<?php if ($hasImg): ?>
+  <div class="slider-image" aria-hidden="true">
+    <img data-src="<?=$this->escapeHtmlAttr($item['image']['url']) ?>" alt="<?=$this->transEsc('Image');?><?php if (isset($item['title'])): ?>: <?=$this->escapeHtml($item['title']) ?><?php endif; ?>">
+  </div>
+<?php endif; ?>
+<div class="slider-text-part">
+  <div class="slider-text-container">
+    <div class="carousel-text">
+      <?php if (!empty($feedTitleEsc)): ?>
+        <h2 class="slider-header"><?=$feedTitleEsc;?></h2>
+      <?php endif; ?>
+      <?php if (!empty($item['title'])): ?>
+        <h3 class="slider-title"><?=$this->escapeHtml($this->truncate($item['title'], 70))?></h3>
+      <?php endif; ?>
+      <div class="text">
+        <p><?=$this->cleanHtml($item['description'] ?? '') ?></p>
+      </div>
+      <?php if ($hasLinkText): ?>
+        <span class="slider-link-text"><?= $linkTextEsc ?></span>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
+<!-- END of: finna - ajax/feed-slider-item.phtml -->

@@ -123,7 +123,7 @@ finna.myList = (function finnaMyList() {
       });
   }
 
-  function addResourcesToList(listId) {
+  function addResourcesToList(listId, currentListId = '') {
     toggleErrorMessage(false);
 
     var ids = [];
@@ -145,7 +145,7 @@ finna.myList = (function finnaMyList() {
       type: 'POST',
       dataType: 'json',
       url: VuFind.path + '/AJAX/JSON?method=addToList',
-      data: {params: {'listId': listId, 'source': 'Solr', 'ids': ids}}
+      data: {params: {'listId': listId, 'currentListId': currentListId, 'source': 'Solr', 'ids': ids}}
     })
       .done(function onAddToListDone(/*data*/) {
         // Don't reload to avoid trouble with POST requests
@@ -362,7 +362,7 @@ finna.myList = (function finnaMyList() {
     $('.mylist-functions #add-to-list').off('change').on("change", function onChangeAddToList(/*e*/) {
       var val = $(this).val();
       if (val !== '') {
-        addResourcesToList(val);
+        addResourcesToList(val, getActiveListId());
       }
     });
 

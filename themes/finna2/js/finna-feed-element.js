@@ -136,7 +136,7 @@ class FinnaFeedElement extends HTMLElement {
       var settings = Object.assign({}, jsonResponse.data.settings);
       settings.height = settings.height || 300;
       const type = settings.type;
-      const carousel = ['carousel', 'carousel-vertical'].includes(type);
+      const carousel = ['carousel', 'carousel-vertical', 'slider'].includes(type);
       if (carousel) {
         const hasContent = holder.querySelector('.carousel-feed > li, .carousel-feed > div');
         if (!hasContent) {
@@ -151,11 +151,13 @@ class FinnaFeedElement extends HTMLElement {
         }
 
         const vertical = 'carousel-vertical' === settings.type;
+        const slider = 'slider' === settings.type;
         this.adjustArrowButtons(vertical);
         settings.vertical = vertical;
         this.splide = finna.carouselManager.createCarousel(this, settings);
         var titleBottom = typeof settings.titlePosition !== 'undefined' && settings.titlePosition === 'bottom';
-        if (!vertical) {
+        if (!vertical && !slider) {
+          holder.classList.add('carousel');
           if (titleBottom) {
             holder.setTitleBottom(settings);
             holder.querySelectorAll('.carousel-hover-title').forEach(el => {
@@ -177,9 +179,31 @@ class FinnaFeedElement extends HTMLElement {
             });
           }
         }
+        if (slider) {
+          holder.classList.add('carousel-slider');
+          if (settings.backgroundColor) {
+            holder.classList.add('slider-with-background');
+            holder.style.setProperty('--background-color', settings.backgroundColor);
+          }
+          if (settings.imagePlacement && settings.imagePlacement === 'right') {
+            holder.classList.add('image-right');
+          }
+          if (settings.stackedHeight) {
+            holder.style.setProperty('--height', `${settings.stackedHeight}px`);
+          } else {
+            holder.style.setProperty('--height', `${settings.height}px`);
+          }
+          holder.querySelectorAll('.slider-text-container').forEach(el => {
+            if (el.clientHeight < el.scrollHeight) {
+              el.classList.add('scrollable');
+            } else {
+              el.parentElement.style.alignItems = 'center';
+            }
+          });
+        }
 
         // Text hover for touch devices
-        if (finna.layout.isTouchDevice() && typeof settings.linkText === 'undefined') {
+        if (!slider && finna.layout.isTouchDevice() && typeof settings.linkText === 'undefined') {
           holder.querySelectorAll('.carousel-slide-more.carousel-show').forEach(el => {
             if (holder.querySelector('.carousel-text:not(.no-text)') !== null) {
               el.classList.remove('hidden');

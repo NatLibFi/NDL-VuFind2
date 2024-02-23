@@ -72,6 +72,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         '651' => 'geographic',
         '653' => '',
         '656' => 'occupation',
+        '690' => 'topic',
     ];
 
     /**
@@ -2376,24 +2377,15 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
-     * Get uncontrolled title from field 740, subfield a.
+     * Get uncontrolled title from field 740, subfields a, n and p.
      *
      * @return array
      */
     public function getUncontrolledTitle()
     {
-        $results = [];
-        foreach ($this->getMarcReader()->getFields('740') as $field) {
-            if ($subfield = $this->getSubfield($field, 'a')) {
-                $subfield = $this->stripTrailingPunctuation($subfield);
-                if (($ind1 = $field['i1']) && ctype_digit($ind1)) {
-                    $results[] = substr($subfield, $ind1);
-                } else {
-                    $results[] = $this->stripTrailingPunctuation($subfield);
-                }
-            }
-        }
-        return $results;
+        return $this->stripTrailingPunctuation(
+            $this->getFieldArray('740', ['a', 'n', 'p'])
+        );
     }
 
     /**
