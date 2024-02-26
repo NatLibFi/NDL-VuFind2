@@ -168,7 +168,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         if (!in_array('730', $fieldsNames)) {
             $fieldsNames[] = '730';
         }
-            
+
         $result = [];
         foreach ($fieldsNames as $value) {
             $value = trim($value);
