@@ -165,7 +165,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             = $this->mainConfig->Record->marc_links_use_visibility_indicator ?? true;
 
         // Temporarily add 730 as a link field by default, may be removed later
-        if (!in_array('730'), $fieldsNames) {
+        if (!in_array('730', $fieldsNames)) {
             $fieldsNames[] = '730';
         }
             
