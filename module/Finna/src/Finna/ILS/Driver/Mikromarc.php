@@ -257,7 +257,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     {
         $data = $this->getItemStatusesForBiblio($id, $patron);
         if (!empty($data)) {
-            $summary = $this->getHoldingsSummary($data);
+            $summary = $this->getHoldingsSummary($data, $id);
             $data[] = $summary;
         }
         return $data;
@@ -1769,11 +1769,12 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     /**
      * Return summary of holdings items.
      *
-     * @param array $holdings Parsed holdings items
+     * @param array  $holdings Parsed holdings items
+     * @param string $id       Record id
      *
      * @return array summary
      */
-    protected function getHoldingsSummary($holdings)
+    protected function getHoldingsSummary($holdings, $id)
     {
         $holdable = false;
         $titleHold = true;
@@ -1803,17 +1804,18 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         // we need to add a few dummy-fields that VuFind expects to be
         // defined for all elements.
         return [
-           'available' => $availableTotal,
-           'ordered' => $orderedTotal,
-           'total' => $itemsTotal,
-           'reservations' => $reservationsTotal,
-           'locations' => count($locations),
-           'holdable' => $holdable,
-           'availability' => null,
-           'callnumber' => null,
-           'location' => '__HOLDINGSSUMMARYLOCATION__',
-           'groupBranches' => false,
-           'titleHold' => $titleHold,
+            'id' => $id,
+            'available' => $availableTotal,
+            'ordered' => $orderedTotal,
+            'total' => $itemsTotal,
+            'reservations' => $reservationsTotal,
+            'locations' => count($locations),
+            'holdable' => $holdable,
+            'availability' => null,
+            'callnumber' => '',
+            'location' => '__HOLDINGSSUMMARYLOCATION__',
+            'groupBranches' => false,
+            'titleHold' => $titleHold,
         ];
     }
 

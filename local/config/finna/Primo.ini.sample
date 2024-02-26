@@ -15,13 +15,30 @@ case_sensitive_bools = true
 ; HTTP timeout
 timeout = 30
 
+; Primo API to use. Possible values are:
+;   legacy     Legacy brief search API (default, and the only option before VuFind 10)
+;   rest       REST API (less buggy, supports also boolean NOT and cites/cited by functions)
+api = rest
+
+; ONLY when `api = legacy` above:
 ; URL of the Primo server. For hosted services typically of the form
-; http://XYZ.hosted.exlibrisgroup.com:1701 where XYZ is the ID of the Primo
-; instance (e.g. primoapac01). Use http://mlplus.hosted.exlibrisgroup.com for
-; MetaLib Plus.
-; You may also enter the full URL including a path to the brief search and
-; a query string if necessary.
+; https://XYZ.hosted.exlibrisgroup.com where XYZ is the ID of the Primo
+; instance (e.g. primoapac01).
+; You may also enter the full URL including a path to the brief search if necessary.
 url = "https://ndl-pc-fe1.hosted.exlibrisgroup.com"
+
+; ONLY when `api = rest` above:
+; Search URL of the Primo server. For hosted services typically of the form
+; https://api-XY.hosted.exlibrisgroup.com/primo/v1/search?vid=...&tab=...&scope=...&apikey=...
+; where XY is the region ID of the Primo instance (na, eu, ap, ca or cn). The URL
+; should also contain scope, vid, tab etc. as well.
+; See https://developers.exlibrisgroup.com/primo/apis/docs/primoSearch/R0VUIC9wcmltby92MS9zZWFyY2g=/
+; for more information.
+; {{INSTCODE}} in the URL is replaced with the institution code determined by the
+; rules in the [Institutions] section.
+;search_url = "https://api-XY.hosted.exlibrisgroup.com/primo/v1/search?vid={{INSTCODE}}&tab=default_tab&scope=default_scope&apikey=<apikey>"
+; On-premises example:
+;search_url = "https://onpremises-primo-host/primo_library/libweb/webservices/rest/primo-explore/v1/pnxs?vid={{INSTCODE}}&tab={{INSTCODE}}&scope=CDI&inst={{INSTCODE}}"
 
 ; This section controls the result limit options for search results. default_limit
 ; sets the default number of results per page. limit_options is a comma-separated

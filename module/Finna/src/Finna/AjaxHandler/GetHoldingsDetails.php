@@ -159,7 +159,7 @@ class GetHoldingsDetails extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
         $holdingItems = reset($result['holdings']);
         $moreLinkPage = $result['page'] * $result['itemLimit'] < $result['total']
             ? $result['page'] + 1 : null;
-        $items = $this->renderer->partial(
+        $items = $holdingItems ? $this->renderer->partial(
             'RecordTab/holdings-items.phtml',
             [
                 'driver'
@@ -169,7 +169,7 @@ class GetHoldingsDetails extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
                 'moreLinkPage' => $moreLinkPage,
                 'moreLinkKey' => $detailsGroupKey,
             ]
-        );
+        ) : '';
 
         return $this->formatResponse(compact('details', 'items'));
     }

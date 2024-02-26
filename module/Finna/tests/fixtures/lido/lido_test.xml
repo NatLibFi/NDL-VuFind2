@@ -118,6 +118,44 @@
             <displaySubject label="">Ei näy subject unlabeled.</displaySubject>
             <displaySubject>Ei näy, no label.</displaySubject>
           </subjectSet>
+          <subjectSet>
+            <subject>
+              <subjectConcept>
+                <conceptID source="sanaston nimi">Yleinen suomalainen asiasanasto</conceptID>
+                <term label="asiasana">sohvat</term>
+                <conceptID type="URI"/>
+                <term label="asiasana"/>
+                <conceptID source="asiasanateksti"/>
+                <term label="asiasana"/>
+              </subjectConcept>
+              <subjectConcept>
+                <conceptID type="URI"/>
+                <term label="asiasana"/>
+              </subjectConcept>
+            </subject>
+          </subjectSet>
+          <subjectSet>
+            <subject>
+              <subjectConcept>
+                <conceptID type="URI">http://www.yso.fi/onto/koko/p31096</conceptID>
+                <term label="asiasana">maalaukset</term>
+                <conceptID source="asiasanateksti"/>
+                <term label="asiasana"/>
+              </subjectConcept>
+              <subjectConcept>
+                <conceptID type="URI">http://www.yso.fi/onto/koko/p31096</conceptID>
+                <term label="asiasana">maalaukset, ei pilkottu</term>
+              </subjectConcept>
+              <subjectConcept>
+                <conceptID type="URI"></conceptID>
+                <term label="asiasana">maalaukset, pilkottuna</term>
+              </subjectConcept>
+              <subjectConcept>
+                <conceptID type="URI"/>
+                <term label="asiasana"/>
+              </subjectConcept>
+            </subject>
+          </subjectSet>
         </subjectWrap>
       </objectRelationWrap>
       <eventWrap>

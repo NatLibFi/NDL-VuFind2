@@ -1,6 +1,7 @@
 <!-- START of: finna - ajax/feed-carousel.phtml -->
 <?php if ($this->title || $this->translateTitle): ?>
-  <h2 class="carousel-header"><?=$this->translateTitle ? $this->transEsc($this->translateTitle) : $this->escapeHtml($this->title); ?></h2>
+  <?php $feedTitleEsc = $this->translateTitle ? $this->transEsc($this->translateTitle) : $this->escapeHtml($this->title); ?>
+  <h2 class="carousel-header"><?=$feedTitleEsc?></h2>
 <?php endif; ?>
 <?php if (isset($this->description)): ?>
   <p class="additional-description"><?=$this->translate($this->description) // HTML, intentionally left unescaped ?></p>
@@ -16,7 +17,7 @@
   </div>
   <div class="splide__track carousel">
     <ul class="splide__list carousel-feed">
-      <?php $items = isset($this->visualItems) ? array_splice($this->items, 0, $this->visualItems) : $this->items; ?>
+      <?php $items = isset($this->visualItems) ? array_slice($this->items, 0, $this->visualItems) : $this->items; ?>
       <?php foreach ($items as $item): ?>
         <li class="splide__slide feed-item-holder">
           <?php if (isset($item['link'])): ?>
@@ -26,7 +27,7 @@
               if (isset($item['link'])) {
                 $linkElement['href'] = $item['link'];
               }
-              if ($item['isExternal']) {
+              if (!empty($item['isExternal'])) {
                 $ariaLabelParts[] = $this->transEsc('external_link');
               }
               if ($this->linkTarget) {
@@ -43,9 +44,10 @@
                 $linkElement['data-lightbox-title'] = $item['title'];
               }
               $linkTextEsc = $this->transEsc($this->linkText ? $this->linkText : 'To the record');
+              $hasLinkText = isset($this->linkText);
             ?>
             <a class="feed-link" <?=$this->htmlElement()->getAttributes($linkElement)?>>
-              <?=$this->partial("ajax/feed-$this->type-item.phtml", compact('item', 'linkTextEsc'))?>
+              <?=$this->partial("ajax/feed-$this->type-item.phtml", compact('item', 'linkTextEsc', 'hasLinkText', 'feedTitleEsc'))?>
             </a>
           <?php else: ?>
             <?=$this->partial("ajax/feed-$this->type-item.phtml", compact('item', 'linkTextEsc'))?>

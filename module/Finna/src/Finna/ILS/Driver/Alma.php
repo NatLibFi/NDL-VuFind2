@@ -2031,10 +2031,11 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     $this->config['Holdings']['externalInterfaceUrl'] ?? ''
                 );
                 $summary = [
+                    'id' => $id,
                     'available' => $items['available'],
                     'total' => $items['total'],
                     'availability' => null,
-                    'callnumber' => null,
+                    'callnumber' => '',
                     'location' => '__HOLDINGSSUMMARYLOCATION__',
                     'externalInterfaceUrl' => $externalInterfaceUrl,
                 ];
@@ -2160,11 +2161,12 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
                 // Add summary
                 $summary = [
+                    'id' => $id,
                     'available' => $totalAvailable,
                     'total' => $total,
                     'locations' => count($locations),
                     'availability' => null,
-                    'callnumber' => null,
+                    'callnumber' => '',
                     'location' => '__HOLDINGSSUMMARYLOCATION__',
                 ];
                 if ($displayRequests) {
@@ -2538,7 +2540,10 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      */
     protected function createHoldingEntry($id, $holding)
     {
-        $location = $this->getTranslatableString($holding->library);
+        $location = $this->getTranslatableStringForCode(
+            (string)$holding->location,
+            $this->getLocationExternalName((string)$holding->library, (string)$holding->location)
+        );
         $callnumber = $holding->call_number
             ? $this->getTranslatableString($holding->call_number) : '';
 
@@ -2838,12 +2843,13 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     // we need to add a few dummy-fields that VuFind expects to be
                     // defined for all elements.
                     $summary = [
+                        'id' => (string)$bib->mms_id,
                         'available' => $itemsAvailable,
                         'total' => $itemsTotal,
                         'ordered' => $itemsOrdered,
                         'locations' => count(array_unique(array_column($status, 'location'))),
                         'availability' => null,
-                        'callnumber' => null,
+                        'callnumber' => '',
                         'location' => '__HOLDINGSSUMMARYLOCATION__',
                         'externalInterfaceUrl' => $externalInterfaceUrl,
                     ];

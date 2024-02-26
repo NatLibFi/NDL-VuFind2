@@ -7,13 +7,16 @@
       'content/header.phtml',
       ['heading' => $this->content()->getHeading()]
   );
-  $this->jsTranslations()->addStrings([
+  $translations = [
     'rss_article_not_found' => 'rss_article_not_found',
     'rss_article_channel_link' => 'rss_article_channel_link',
-  ]);
+  ];
+  $this->jsTranslations()->addStrings($translations);
 
   if ($this->modal) {
+    $jsonTranslations = $this->jsTranslations()->getJSONFromArray($translations);
     $setupJS = <<<JS
+        VuFind.addTranslations($jsonTranslations);
         $(document).ready(function() {
           finna.contentFeed.loadFeed($('#modal .feed-content'), true);
         });

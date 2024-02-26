@@ -128,6 +128,65 @@
             <displaySubject lang="fi" label="">Näkyy subject unlabeled.</displaySubject>
             <displaySubject label="">Näkyy subject unlabeled.</displaySubject>
           </subjectSet>
+          <subjectSet>
+            <subject>
+              <subjectActor>
+                <actor>
+                  <nameActorSet>
+                    <appellationValue>Jussi, J&#xE4;n&#xF6;</appellationValue>
+                  </nameActorSet>
+                </actor>
+              </subjectActor>
+            </subject>
+          </subjectSet>
+          <subjectSet>
+            <subject>
+              <subjectPlace>
+                <displayPlace>Etelä-Suomi</displayPlace>
+                <place>
+                  <placeID type="URI" source="YSO">http://www.yso.fi/onto/yso/p105917</placeID>
+                  <gml>
+                    <Point>
+                      <pos/>
+                    </Point>
+                  </gml>
+                </place>
+              </subjectPlace>
+              <subjectPlace>
+                <displayPlace>Lohja</displayPlace>
+                <place>
+                  <placeID type="mjr">123456</placeID>
+                  <placeID>extraid</placeID>
+                </place>
+              </subjectPlace>
+              <subjectPlace>
+                <displayPlace><!--empty data--></displayPlace>
+                <place>
+                  <placeID type="asd"></placeID>
+                  <placeID></placeID>
+                </place>
+              </subjectPlace>
+            </subject>
+          </subjectSet>
+          <subjectSet>
+            <subject>
+              <subjectConcept>
+                <conceptID source="yso" type="URI">http://www.yso.fi/onto/yso/p5066</conceptID>
+                <term label="asiasana" lang="fi">porkkana</term>
+              </subjectConcept>
+              <subjectConcept>
+                <conceptID source="yso" type="URI">http://www.yso.fi/onto/yso/p5066</conceptID>
+                <term label="asiasana" lang="sv">morot</term>
+              </subjectConcept>
+              <subjectConcept>
+                <term label="asiasana">juures</term>
+              </subjectConcept>
+              <subjectConcept>
+                <conceptID source="yso" type="URI"><!-- empty data --></conceptID>
+                <term label="asiasana" lang="sv"><!-- no value --></term>
+              </subjectConcept>
+            </subject>
+          </subjectSet>
         </subjectWrap>
       </objectRelationWrap>
     </descriptiveMetadata>

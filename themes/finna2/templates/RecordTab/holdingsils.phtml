@@ -23,16 +23,6 @@
         $holdings['total'] = 0;
         $holdings['page'] = 1;
         $holdings['itemLimit'] = 10;
-    } else {
-      if (!isset($holdings['total'])) {
-        $holdings['total'] = count($holdings['holdings']);
-      }
-      if (!isset($holdings['page'])) {
-        $holdings['page'] = 1;
-      }
-      if (!isset($holdings['itemLimit'])) {
-        $holdings['itemLimit'] = $holdings['total'];
-      }
     }
 
     $illRequestLink = false;
@@ -58,6 +48,16 @@
       if (!$summary) {
          $holdings['holdings'][] = $last;
       }
+    }
+
+    if (!isset($holdings['total'])) {
+      $holdings['total'] = count($holdings['holdings']);
+    }
+    if (!isset($holdings['page'])) {
+      $holdings['page'] = 1;
+    }
+    if (!isset($holdings['itemLimit'])) {
+      $holdings['itemLimit'] = $holdings['total'];
     }
 
     $disableTitleHold = empty($holdings['holdings']) || (isset($summary['holdable']) && !$summary['holdable']);
@@ -376,7 +376,8 @@
 <?php endif; ?>
 </div>
 
-<?php if (!isset($holding['items'][0]['detailsGroupKey']) && ($paginator = $this->tab->getPaginator($holdings['total'], $holdings['page'], $holdings['itemLimit']))): ?>
+<?php // $holdings['total'] may be off due to summary and grouped holdings, so use count for paginator: ?>
+<?php if (!isset($holding['items'][0]['detailsGroupKey']) && ($paginator = $this->tab->getPaginator(count($holdings['holdings']), $holdings['page'], $holdings['itemLimit']))): ?>
   <?=$this->paginationControl($paginator, 'Sliding', 'Helpers/pagination.phtml', ['page' => $holdings['page']])?>
 <?php endif; ?>
 

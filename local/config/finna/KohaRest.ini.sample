@@ -192,9 +192,6 @@ enabled = true
 ; The field to display as the hold identifier number. Default is other_name.
 ; Set to empty string for "none".
 ;holdIdentifierField = ""
-; The field to display as the hold identifier number. Default is other_name.
-; Set to empty string for "none".
-;holdIdentifierField = ""
 ; The field to display as the calling name. Not displayed by default.
 ; Set to empty string for "none".
 ;callingNameField = ""

@@ -1333,13 +1333,14 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
 
         // Add summary
         $summary = [
-           'available' => $availableTotal,
-           'total' => $itemsTotal,
-           'ordered' => $orderedTotal,
-           'locations' => count(array_unique(array_column($statuses, 'location'))),
-           'availability' => null,
-           'callnumber' => null,
-           'location' => '__HOLDINGSSUMMARYLOCATION__',
+            'id' => $id,
+            'available' => $availableTotal,
+            'total' => $itemsTotal,
+            'ordered' => $orderedTotal,
+            'locations' => count(array_unique(array_column($statuses, 'location'))),
+            'availability' => null,
+            'callnumber' => '',
+            'location' => '__HOLDINGSSUMMARYLOCATION__',
         ];
         if (!empty($this->config['Holdings']['display_total_hold_count'])) {
             $summary['reservations'] = $requestsTotal;

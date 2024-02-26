@@ -122,7 +122,8 @@ trait FeedTrait
             $feed['visualItems'] = $config->visualItems;
         }
 
-        $template = str_contains($type, 'carousel') ? 'carousel' : $type;
+        $isCarouselStyle = str_contains($type, 'carousel') || $type === 'slider';
+        $template = $isCarouselStyle ? 'carousel' : $type;
         $html = $viewRenderer->partial("ajax/feed-$template.phtml", $feed);
 
         $settings = [
@@ -132,8 +133,17 @@ trait FeedTrait
         if (isset($config->height)) {
             $settings['height'] = $config->height;
         }
+        if (isset($config->stackedHeight)) {
+            $settings['stackedHeight'] = $config->stackedHeight;
+        }
+        if (isset($config->backgroundColor)) {
+            $settings['backgroundColor'] = $config->backgroundColor;
+        }
+        if (isset($config->imagePlacement)) {
+            $settings['imagePlacement'] = $config->imagePlacement;
+        }
 
-        if ('carousel' === $type || 'carousel-vertical' === $type) {
+        if ($isCarouselStyle) {
             $settings['images'] = $images;
             $settings['autoplay']
                 = $config->autoplay ?? false;
@@ -144,16 +154,19 @@ trait FeedTrait
             $breakPoints = [
                 'desktop' => 4, 'desktop-small' => 3, 'tablet' => 2, 'mobile' => 1,
             ];
+            if ('slider' === $type) {
+                $settings['slidesToShow']['desktop'] = $settings['scrolledItems']['desktop'] = 1;
+            } else {
+                foreach ($breakPoints as $breakPoint => $default) {
+                    $settings['slidesToShow'][$breakPoint]
+                        = isset($config->itemsPerPage[$breakPoint])
+                        ? (int)$config->itemsPerPage[$breakPoint] : $default;
 
-            foreach ($breakPoints as $breakPoint => $default) {
-                $settings['slidesToShow'][$breakPoint]
-                    = isset($config->itemsPerPage[$breakPoint])
-                    ? (int)$config->itemsPerPage[$breakPoint] : $default;
-
-                $settings['scrolledItems'][$breakPoint]
-                    = isset($config->scrolledItems[$breakPoint])
-                    ? (int)$config->scrolledItems[$breakPoint]
-                    : $settings['slidesToShow'][$breakPoint];
+                    $settings['scrolledItems'][$breakPoint]
+                        = isset($config->scrolledItems[$breakPoint])
+                        ? (int)$config->scrolledItems[$breakPoint]
+                        : $settings['slidesToShow'][$breakPoint];
+                }
             }
 
             if ('carousel' === $type) {

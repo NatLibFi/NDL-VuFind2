@@ -130,6 +130,7 @@ class Bootstrapper
                 || ($controller == 'record' && $action == 'ajaxtab')
                 || ($controller == 'record' && $action == 'holdings')
                 || ($controller == 'record' && $action == 'details')
+                || ($controller == 'record' && $action == 'downloadfile')
                 || ($controller == 'record' && $action == 'map')
                 || ($controller == 'record' && $action == 'usercomments')
                 || ($controller == 'record' && $action == 'similar')

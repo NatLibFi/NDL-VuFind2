@@ -301,18 +301,17 @@ class Manager implements
     }
 
     /**
-     * Is persistent login supported?
+     * Is persistent login supported by the authentication method?
+     *
+     * @param string $method Authentication method (overrides currently selected method)
      *
      * @return bool
      */
-    public function supportsPersistentLogin()
+    public function supportsPersistentLogin(?string $method = null): bool
     {
         if (!empty($this->config->Authentication->persistent_login)) {
-            $method = $this->getAuth() instanceof ChoiceAuth
-                ? $this->getAuth()->getSelectedAuthOption() : $this->getAuthMethod();
-
             return in_array(
-                strtolower($method),
+                strtolower($method ?? $this->getSelectedAuthMethod()),
                 explode(',', strtolower($this->config->Authentication->persistent_login))
             );
         }
@@ -465,6 +464,20 @@ class Manager implements
     }
 
     /**
+     * Get the name of the currently selected authentication method (if applicable)
+     * or the active authentication method.
+     *
+     * @return string
+     */
+    public function getSelectedAuthMethod()
+    {
+        $auth = $this->getAuth();
+        return is_callable([$auth, 'getSelectedAuthOption'])
+            ? $auth->getSelectedAuthOption()
+            : $this->getAuthMethod();
+    }
+
+    /**
      * Is login currently allowed?
      *
      * @return bool
@@ -589,17 +602,15 @@ class Manager implements
                 $results = $this->userTable->createRow();
                 $results->exchangeArray($this->session->userDetails);
                 $this->currentUser = $results;
-            } elseif ($this->cookieManager->get('loginToken')) {
-                if ($user = $this->loginTokenManager->tokenLogin($this->sessionManager->getId())) {
-                    if ($this->getAuth() instanceof ChoiceAuth) {
-                        $this->getAuth()->setStrategy($user->auth_method);
-                    }
-                    if ($this->supportsPersistentLogin()) {
-                        $this->updateUser($user);
-                        $this->updateSession($user);
-                    } else {
-                        $this->currentUser = false;
-                    }
+            } elseif ($user = $this->loginTokenManager->tokenLogin($this->sessionManager->getId())) {
+                if ($this->getAuth() instanceof ChoiceAuth) {
+                    $this->getAuth()->setStrategy($user->auth_method);
+                }
+                if ($this->supportsPersistentLogin()) {
+                    $this->updateUser($user, null);
+                    $this->updateSession($user);
+                } else {
+                    $this->currentUser = false;
                 }
             } else {
                 // not logged in
@@ -691,7 +702,7 @@ class Manager implements
     public function create($request)
     {
         $user = $this->getAuth()->create($request);
-        $this->updateUser($user);
+        $this->updateUser($user, $this->getSelectedAuthMethod());
         $this->updateSession($user);
         return $user;
     }
@@ -753,61 +764,70 @@ class Manager implements
      */
     public function login($request)
     {
-        // Allow the auth module to inspect the request (used by ChoiceAuth,
-        // for example):
-        $this->getAuth()->preLoginCheck($request);
-
-        // Check if the current auth method wants to delegate the request to another
-        // method:
-        if ($delegate = $this->getAuth()->getDelegateAuthMethod($request)) {
-            $this->setAuthMethod($delegate, true);
-        }
-
-        // Validate CSRF for form-based authentication methods:
-        if (
-            !$this->getAuth()->getSessionInitiator('')
-            && $this->getAuth()->needsCsrfCheck($request)
-        ) {
-            if (!$this->csrf->isValid($request->getPost()->get('csrf'))) {
-                $this->getAuth()->resetState();
-                $this->logWarning('Invalid CSRF token passed to login');
-                throw new AuthException('authentication_error_technical');
-            } else {
-                // After successful token verification, clear list to shrink session:
-                $this->csrf->trimTokenList(0);
-            }
-        }
-
-        // Perform authentication:
+        // Wrap everything in try-catch so that we can reset the state on failure:
         try {
-            $user = $this->getAuth()->authenticate($request);
-        } catch (AuthException $e) {
-            // Pass authentication exceptions through unmodified
-            throw $e;
-        } catch (\VuFind\Exception\PasswordSecurity $e) {
-            // Pass password security exceptions through unmodified
-            throw $e;
-        } catch (\Exception $e) {
-            // Catch other exceptions, log verbosely, and treat them as technical
-            // difficulties
-            $this->logError((string)$e);
-            throw new AuthException('authentication_error_technical', 0, $e);
-        }
+            // Allow the auth module to inspect the request (used by ChoiceAuth,
+            // for example):
+            $this->getAuth()->preLoginCheck($request);
 
-        // Update user object
-        $this->updateUser($user);
+            // Get the main auth method before switching to any delegate:
+            $mainAuthMethod = $this->getSelectedAuthMethod();
 
-        if ($request->getPost()->get('remember_me') && $this->supportsPersistentLogin()) {
+            // Check if the current auth method wants to delegate the request to another
+            // method:
+            if ($delegate = $this->getAuth()->getDelegateAuthMethod($request)) {
+                $this->setAuthMethod($delegate, true);
+            }
+
+            // Validate CSRF for form-based authentication methods:
+            if (
+                !$this->getAuth()->getSessionInitiator('')
+                && $this->getAuth()->needsCsrfCheck($request)
+            ) {
+                if (!$this->csrf->isValid($request->getPost()->get('csrf'))) {
+                    $this->getAuth()->resetState();
+                    $this->logWarning('Invalid CSRF token passed to login');
+                    throw new AuthException('authentication_error_technical');
+                } else {
+                    // After successful token verification, clear list to shrink session:
+                    $this->csrf->trimTokenList(0);
+                }
+            }
+
+            // Perform authentication:
             try {
-                $this->loginTokenManager->createToken($user, '', $this->sessionManager->getId());
+                $user = $this->getAuth()->authenticate($request);
+            } catch (AuthException $e) {
+                // Pass authentication exceptions through unmodified
+                throw $e;
+            } catch (\VuFind\Exception\PasswordSecurity $e) {
+                // Pass password security exceptions through unmodified
+                throw $e;
             } catch (\Exception $e) {
+                // Catch other exceptions, log verbosely, and treat them as technical
+                // difficulties
                 $this->logError((string)$e);
                 throw new AuthException('authentication_error_technical', 0, $e);
             }
+
+            // Update user object
+            $this->updateUser($user, $mainAuthMethod);
+
+            if ($request->getPost()->get('remember_me') && $this->supportsPersistentLogin($mainAuthMethod)) {
+                try {
+                    $this->loginTokenManager->createToken($user, '', $this->sessionManager->getId());
+                } catch (\Exception $e) {
+                    $this->logError((string)$e);
+                    throw new AuthException('authentication_error_technical', 0, $e);
+                }
+            }
+            // Store the user in the session and send it back to the caller:
+            $this->updateSession($user);
+            return $user;
+        } catch (\Exception $e) {
+            $this->getAuth()->resetState();
+            throw $e;
         }
-        // Store the user in the session and send it back to the caller:
-        $this->updateSession($user);
-        return $user;
     }
 
     /**
@@ -927,18 +947,16 @@ class Manager implements
     /**
      * Update common user attributes on login
      *
-     * @param \VuFind\Db\Row\User $user User object
+     * @param \VuFind\Db\Row\User $user       User object
+     * @param ?string             $authMethod Authentication method to user
      *
      * @return void
      */
-    protected function updateUser($user)
+    protected function updateUser($user, $authMethod)
     {
-        if ($this->getAuth() instanceof ChoiceAuth) {
-            $method = $this->getAuth()->getSelectedAuthOption();
-        } else {
-            $method = $this->activeAuth;
+        if ($authMethod) {
+            $user->auth_method = strtolower($authMethod);
         }
-        $user->auth_method = strtolower($method);
         $user->last_login = date('Y-m-d H:i:s');
         $user->save();
     }

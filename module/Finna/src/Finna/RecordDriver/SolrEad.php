@@ -90,13 +90,8 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
      */
     public function getAccessRestrictions()
     {
-        $origination = $this->getOrigination();
         $record = $this->getXmlRecord();
-        if ($origination == 'Kotimaisten kielten keskus') {
-            return $record->userestrict->p ?? [];
-        } else {
-            return $record->accessrestrict->p ?? [];
-        }
+        return $record->userestrict->p ?? $record->accessrestrict->p ?? [];
     }
 
     /**

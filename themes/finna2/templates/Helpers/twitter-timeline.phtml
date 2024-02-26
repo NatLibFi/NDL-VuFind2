@@ -8,7 +8,7 @@
     ];
   ?>
   <?=$this->makeTag('a', 'Tweets by ' . $this->screenName, $attrs)?>
-  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8" nonce="<?=$this->cspNonce()?>"></script>
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8" nonce="<?=$this->csp()->getNonce()?>"></script>
 <?php else: ?>
   <?=$this->context($this)->renderinContext('Helpers/iframe.phtml', ['embed' => false, 'serviceBaseUrl' => 'https://twitter.com', 'serviceUrl' => 'https://twitter.com/' . rawurlencode($this->screenName)])?>
 <?php endif; ?>

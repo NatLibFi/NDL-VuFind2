@@ -139,6 +139,7 @@ class AddToList extends \VuFind\AjaxHandler\AbstractBase implements TranslatorAw
             );
         }
         $listId = $listParams['listId'];
+        $currentListId = $listParams['currentListId'];
         $ids = (array)$listParams['ids'];
 
         $list = $this->userList->getExisting($listId);
@@ -154,7 +155,9 @@ class AddToList extends \VuFind\AjaxHandler\AbstractBase implements TranslatorAw
             $recId = $id[1];
             try {
                 $driver = $this->recordLoader->load($recId, $source, true);
-                $this->favorites->save(['list' => $listId], $this->user, $driver);
+                $notes = $driver->getListNotes($currentListId ?: null, $this->user->id);
+                $notes = implode(PHP_EOL, $notes);
+                $this->favorites->save(['list' => $listId, 'notes' => $notes], $this->user, $driver);
             } catch (\Exception $e) {
                 return $this->formatResponse(
                     $this->translate('Failed'),

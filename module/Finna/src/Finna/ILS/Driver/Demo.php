@@ -109,7 +109,7 @@ class Demo extends \VuFind\ILS\Driver\Demo
     {
         $result = parent::getStatus($id);
         if (!empty($result)) {
-            $result[] = $this->getHoldingsSummary($result);
+            $result[] = $this->getHoldingsSummary($result, $id);
         }
         return $result;
     }
@@ -132,7 +132,7 @@ class Demo extends \VuFind\ILS\Driver\Demo
     {
         $result = parent::getHolding($id, $patron, $options);
         if (!empty($result['holdings'])) {
-            $result['holdings'][] = $this->getHoldingsSummary($result['holdings']);
+            $result['holdings'][] = $this->getHoldingsSummary($result['holdings'], $id);
         }
         return $result;
     }
@@ -484,11 +484,12 @@ class Demo extends \VuFind\ILS\Driver\Demo
     /**
      * Return summary of holdings items.
      *
-     * @param array $holdings Parsed holdings items
+     * @param array  $holdings Parsed holdings items
+     * @param string $id       Record id
      *
      * @return array summary
      */
-    protected function getHoldingsSummary($holdings)
+    protected function getHoldingsSummary($holdings, $id)
     {
         $availableTotal = $itemsTotal = 0;
         $requests = 0;
@@ -512,14 +513,15 @@ class Demo extends \VuFind\ILS\Driver\Demo
         // Use a stupid location name to make sure this doesn't get mixed with
         // real items that don't have a proper location.
         $result = [
-           'available' => $availableTotal,
-           'total' => $itemsTotal,
-           'locations' => count($locations),
-           'availability' => null,
-           'callnumber' => null,
-           'location' => '__HOLDINGSSUMMARYLOCATION__',
-           'reservations' => rand(0, 8),
-           'ordered' => rand(0, 20),
+            'id' => $id,
+            'available' => $availableTotal,
+            'total' => $itemsTotal,
+            'locations' => count($locations),
+            'availability' => null,
+            'callnumber' => '',
+            'location' => '__HOLDINGSSUMMARYLOCATION__',
+            'reservations' => rand(0, 8),
+            'ordered' => rand(0, 20),
         ];
         return $result;
     }

@@ -57,6 +57,14 @@
           </span>
         </div>
       <?php endif; ?>
+
+      <?= $this->record($this->driver)->getMaterialDisclaimer() ?>
+      <?php if ($showData && !empty($summary)): ?>
+        <div class="material-description">
+          <?= implode(array_map([$this->markdown(), 'toHtml'], $summary)) ?>
+        </div>
+      <?php endif; ?>
+
       <?php if (false !== ($educationalData = $this->driver->getEducationalData())): ?>
         <?= $this->aipa($this->driver)->renderEducationalLevelsAndSubjects($educationalData) ?>
       <?php else: ?>
@@ -75,18 +83,16 @@
           <?= $this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $levelFields]) ?>
         </table>
       <?php endif; ?>
-
-      <?= $this->record($this->driver)->getMaterialDisclaimer() ?>
-      <?php if ($showData && !empty($summary)): ?>
-        <div class="material-description">
-          <?= implode(array_map([$this->markdown(), 'toHtml'], $summary)) ?>
-        </div>
-      <?php endif; ?>
     </div>
 
-    <?php $content = trim($this->markdown()->toHtml($this->driver->getStudyObjectives() ?? '')); ?>
+    <?php
+      $content = trim($this->markdown()->toHtml($this->driver->getStudyObjectives() ?? ''));
+      if (!empty($content)) {
+        $content = '<h4 class="study-objectives-title">' . $this->transEsc('Aipa::lrmi_study_objectives') . ':</h4>' . $content;
+      }
+    ?>
     <?php if (false !== $educationalData): ?>
-      <?php $content .= $this->aipa($this->driver)->renderStudyContentsAndObjectives($educationalData); ?>
+      <?php $content .= $this->aipa($this->driver)->renderEducationalData($educationalData); ?>
     <?php else: ?>
       <?php
         // Fall back to basic data.
@@ -109,7 +115,7 @@
     <?php if (!empty($content)): ?>
       <?= $this->render('components/molecules/containers/finna-panel', [
           'attributes' => ['class' => ['finna-panel-default']],
-          'heading' => $this->transEsc('Aipa::lrmi_objectives'),
+          'heading' => $this->transEsc('Aipa::educational_data'),
           'headingLevel' => 3,
           'content' => $content,
           'headingId' => uniqid('heading-'),

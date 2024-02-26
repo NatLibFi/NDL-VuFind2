@@ -1082,7 +1082,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         $holdingsData = [];
         if ($checkHoldings && $this->apiVersion >= 5.1) {
             $holdingsResult = $this->makeRequest(
-                ['v5', 'holdings'],
+                [$this->apiBase, 'holdings'],
                 [
                     'bibIds' => $this->extractBibId($id),
                     'deleted' => 'false',
@@ -1255,12 +1255,13 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             // we need to add a few dummy-fields that VuFind expects to be
             // defined for all elements.
             $summary = [
+                'id' => $id,
                 'available' => $itemsAvailable,
                 'total' => $itemsTotal,
                 'ordered' => $itemsOrdered,
                 'locations' => count(array_unique(array_column($statuses, 'location'))),
                 'availability' => null,
-                'callnumber' => null,
+                'callnumber' => '',
                 'location' => '__HOLDINGSSUMMARYLOCATION__',
             ];
             if ($this->config['Holdings']['display_total_hold_count'] ?? true) {
@@ -1484,9 +1485,11 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                     $response->getStatusCode()
                 );
             }
-            $data = json_decode($response->getBody(), true);
-            $indexVar = $data['data'][0]['index_var'] ?? null;
-            $indexDayId = $data['data'][0]['index_day_id'] ?? null;
+            $result = json_decode($response->getBody(), true);
+            $data = $result['data'] ?? [];
+            $lastItem = array_pop($data);
+            $indexVar = $lastItem['index_var'] ?? null;
+            $indexDayId = $lastItem['index_day_id'] ?? null;
             if (null === $indexVar || null === $indexDayId) {
                 throw new \Exception(
                     "index_var or index_day_id not found in BMA response for $url: "

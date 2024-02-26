@@ -55,7 +55,6 @@ trait FinnaUserListTrait
         $memory->rememberSearch($listUrl);
     }
 
-
     /**
      * Are list tags enabled?
      *

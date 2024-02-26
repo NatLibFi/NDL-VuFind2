@@ -1,106 +1,32 @@
-<?php
-  $__attributes = $this->htmlAttributes($attributes ?? []);
-  $__headingLevel = $sectionHeadingLevel ?? 3;
-  $__headingStartTag = "<h$__headingLevel class=\"level-data-section-title\">";
-  $__headingEndTag = "</h$__headingLevel>";
-?>
-<div<?= $__attributes->add('class', 'finna-educational-level-data') ?>>
-  <?php if (!empty($learningAreas)): ?>
-    <section>
-      <?= $__headingStartTag ?><?= $this->transEsc($learningAreasTitle ?? '') ?><?= $__headingEndTag ?>
-      <ul>
-        <?php foreach ($learningAreas as $__learningArea): ?>
-          <li><?= $this->transEsc(strip_tags($__learningArea)) ?></li>
-        <?php endforeach; ?>
-      </ul>
-    </section>
-  <?php endif; ?>
-  <?php if (!empty($educationalModules)): ?>
-    <section>
-      <?= $__headingStartTag ?><?= $this->transEsc($educationalModulesTitle ?? '') ?><?= $__headingEndTag ?>
-      <ul>
-        <?php foreach ($educationalModules as $__subject => $__values): ?>
-          <li>
-            <dl>
-              <dt><?= $this->transEsc(strip_tags($__subject)) ?>:</dt>
-              <?php foreach ($__values as $__value): ?>
-                <dd><?= $this->transEsc(strip_tags($__value)) ?></dd>
-              <?php endforeach; ?>
-            </dl>
-          </li>
-        <?php endforeach; ?>
-      </ul>
-    </section>
-  <?php endif; ?>
-  <?php if (!empty($studyContents)): ?>
-    <section>
-      <?= $__headingStartTag ?><?= $this->transEsc($studyContentsTitle ?? '') ?><?= $__headingEndTag ?>
-      <ul>
-        <?php foreach ($studyContents as $__subject => $__values): ?>
-          <li>
-            <dl>
-              <dt><?= $this->transEsc(strip_tags($__subject)) ?>:</dt>
-              <?php foreach ($__values as $__value): ?>
-                <dd><?= $this->transEsc(strip_tags($__value)) ?></dd>
-              <?php endforeach; ?>
-            </dl>
-          </li>
-        <?php endforeach; ?>
-      </ul>
-    </section>
-  <?php endif; ?>
-  <?php if (!empty($studyObjectives)): ?>
-    <section>
-      <?= $__headingStartTag ?><?= $this->transEsc($studyObjectivesTitle ?? '') ?><?= $__headingEndTag ?>
-      <ul>
-        <?php foreach ($studyObjectives as $__subject => $__values): ?>
-          <li>
-            <dl>
-              <dt><?= $this->transEsc(strip_tags($__subject)) ?>:</dt>
-              <?php foreach ($__values as $__value): ?>
-                <dd><?= $this->transEsc(strip_tags($__value)) ?></dd>
-              <?php endforeach; ?>
-            </dl>
-          </li>
-        <?php endforeach; ?>
-      </ul>
-    </section>
-  <?php endif; ?>
-  <?php if (!empty($transversalCompetences)): ?>
-    <section>
-      <?= $__headingStartTag ?><?= $this->transEsc($transversalCompetencesTitle ?? '') ?><?= $__headingEndTag ?>
-      <ul>
-        <?php foreach ($transversalCompetences as $__transversalCompetence): ?>
-          <li><?= $this->transEsc(strip_tags($__transversalCompetence)) ?></li>
-        <?php endforeach; ?>
-      </ul>
-    </section>
-  <?php endif; ?>
-  <?php if (!empty($vocationalUnits)): ?>
-    <section>
-      <?= $__headingStartTag ?><?= $this->transEsc($vocationalUnitsTitle ?? '') ?><?= $__headingEndTag ?>
-      <ul>
-        <?php foreach ($vocationalUnits as $__subject => $__values): ?>
-          <li>
-            <dl>
-              <dt><?= $this->transEsc(strip_tags($__subject)) ?>:</dt>
-              <?php foreach ($__values as $__value): ?>
-                <dd><?= $this->transEsc(strip_tags($__value)) ?></dd>
-              <?php endforeach; ?>
-            </dl>
-          </li>
-        <?php endforeach; ?>
-      </ul>
-    </section>
-  <?php endif; ?>
-  <?php if (!empty($vocationalCommonUnits)): ?>
-    <section>
-      <?= $__headingStartTag ?><?= $this->transEsc($vocationalCommonUnitsTitle ?? '') ?><?= $__headingEndTag ?>
-      <ul>
-        <?php foreach ($vocationalCommonUnits as $__vocationalCommonUnit): ?>
-          <li><?= $this->transEsc(strip_tags($__vocationalCommonUnit)) ?></li>
-        <?php endforeach; ?>
-      </ul>
-    </section>
-  <?php endif; ?>
-</div>
+<?php if (!empty($educationalLeveData)): ?>
+  <?php
+    $__attributes = $this->htmlAttributes($attributes ?? []);
+    $__headingLevel = $sectionHeadingLevel ?? 3;
+    $__titleStartTagName = "h$__headingLevel";
+    $__titleEndTag = "</h$__headingLevel>";
+
+    $__renderItems = function (array $__items) use (&$__renderItems) {
+      $__levelHtml = '<ul>';
+      foreach ($__items as $__item) {
+        $__levelHtml .= '<li>' . $this->transEsc(strip_tags($__item['title']));
+        if (!empty($__item['items'])) {
+          $__levelHtml .= $__renderItems($__item['items']);
+        }
+        $__levelHtml .= '</li>';
+      }
+      $__levelHtml .= '</ul>';
+      return $__levelHtml;
+    };
+  ?>
+  <div<?= $__attributes->add('class', 'finna-educational-level-data') ?>>
+    <?php foreach ($educationalLeveData as $__section): ?>
+      <section<?= $this->htmlAttributes($__section['attributes'] ?? []) ?>>
+        <?php $__titleAttributes = $this->htmlAttributes($__section['titleAttributes'] ?? []); ?>
+        <<?= $__titleStartTagName ?><?= $__titleAttributes->add('class', 'level-data-section-title') ?>>
+          <?= $this->transEsc($__section['title']) ?>
+        <?= $__titleEndTag ?>
+        <?= $__renderItems($__section['items']) ?>
+      </section>
+    <?php endforeach; ?>
+  </div>
+<?php endif; ?>

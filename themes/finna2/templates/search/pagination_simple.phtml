@@ -8,7 +8,7 @@
   ?>
   <ul<?=$ulAttrs?>>
     <?php if (isset($this->previous)): ?>
-      <li><a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->previous)?>"><span class="sr-only"><?=$this->transEsc('page_prev')?></span><?=$this->icon('pagination-prev') ?></a></li>
+      <li><a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->previous)?>"><span class="sr-only"><?=$this->transEsc('page_prev')?></span><?=$this->icon('page-prev') ?></a></li>
     <?php endif; ?>
     <?php // Note: search-stats class is the scroll target for loading results with JS: ?>
     <li class="pagination-text search-stats js-search-stats" data-key="showing_results_of_html">
@@ -24,7 +24,7 @@
       ?>
     </li>
     <?php if (isset($this->next)): ?>
-      <li><a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->next)?>"><span class="sr-only"><?=$this->transEsc('page_next')?></span><?=$this->icon('pagination-next') ?></a></li>
+      <li><a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->next)?>"><span class="sr-only"><?=$this->transEsc('page_next')?></span><?=$this->icon('page-next') ?></a></li>
     <?php endif; ?>
   </ul>
 <?php endif; ?>

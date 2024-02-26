@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<dc schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+  <identifier>urn:nbn:fi:oerfi-202402_00027263_1</identifier>
+  <title lang="fi">#MyFriendToo-julisteet</title>
+  <title lang="en">#MyFriendToo- posters</title>
+  <title lang="sv">#MyFriendToo- affischer</title>
+  <date>2024-02-02T09:51:24Z</date>
+  <description lang="fi">Suomenkielinen kuvausteksti</description>
+  <description lang="en">Description in English</description>
+  <description lang="sv">Deskription på svenska</description>
+  <description lang="fi">Toinen suomenkielinen kuvausteksti</description>
+  <description format="image/png">https://kuvalinkki.png</description>
+  <rights>CCBYNCND4.0</rights>
+  <publisher>Suojellaan Lapsia ry</publisher>
+  <type>kuva</type>
+  <dateCreated>2024-02-02T09:51:24Z</dateCreated>
+  <dateModified>2024-02-02T11:15:53Z</dateModified>
+  <author>
+    <organization>
+      <legalName>Suojellaan Lapsia ry, Protect Children</legalName>
+    </organization>
+  </author>
+  <about>
+    <thing>
+      <name>digitaalinen media</name>
+      <identifier>https://www.yso.fi/onto/yso/p5575</identifier>
+    </thing>
+  </about>
+  <about>
+    <thing>
+      <name>digitalisaatio</name>
+      <identifier>https://www.yso.fi/onto/yso/p8692</identifier>
+    </thing>
+  </about>
+  <material>
+    <name lang="en">MyFriendToo_juliste 1</name>
+    <name lang="fi">MyFriendToo-juliste 1</name>
+    <name lang="sv">MyFriendToo_juliste 1</name>
+    <url>https://materiaalilinkki1.pdf</url>
+    <position>2</position>
+    <format>application/pdf</format>
+    <filesize>146204</filesize>
+    <inLanguage>fi</inLanguage>
+  </material>
+  <material>
+    <name lang="en">MyFriendToo_juliste fi 2</name>
+    <name lang="fi">MyFriendToo-juliste 2</name>
+    <name lang="sv">MyFriendToo_juliste fi 2</name>
+    <url>https://materiaalilinkki2.pdf</url>
+    <position>3</position>
+    <format>application/pdf</format>
+    <filesize>159732</filesize>
+    <inLanguage>fi</inLanguage>
+  </material>
+
+  <material>
+    <name lang="en">MyFriendToo_poster 1</name>
+    <name lang="fi">MyFriendToo-poster 1</name>
+    <name lang="sv">MyFriendToo_poster 1</name>
+    <url>https://materiaalilinkkienglanti.pdf</url>
+    <position>5</position>
+    <format>application/pdf</format>
+    <filesize>157766</filesize>
+    <inLanguage>en</inLanguage>
+  </material>
+  <material>
+    <name lang="en">MyFriendToo_affisch 1</name>
+    <name lang="fi">MyFriendToo-affisch 1</name>
+    <name lang="sv">MyFriendToo_affisch 1</name>
+    <url>https://materiaalilinkkiruotsi.pdf</url>
+    <position>7</position>
+    <format>application/pdf</format>
+    <filesize>156683</filesize>
+    <inLanguage>sv</inLanguage>
+  </material>
+  <educationalAudience>
+    <educationalRole>Oppija</educationalRole>
+  </educationalAudience>
+  <isBasedOn>
+    <url>https://www.suojellaanlapsia.fi/myfriendtoo</url>
+    <name>Suojellaan Lapsia ry </name>
+    <author>Suojellaan Lapsia ry</author>
+  </isBasedOn>
+  <inLanguage>fi</inLanguage>
+  <inLanguage>sv</inLanguage>
+  <inLanguage>en</inLanguage>
+  <learningResource>
+    <educationalLevel>perusopetus</educationalLevel>
+    <educationalUse>Ohjeistus</educationalUse>
+    <educationalAlignment>
+      <educationalSubject>Yhteiskuntaoppi</educationalSubject>
+    </educationalAlignment>
+    <educationalAlignment>
+      <educationalSubject>Terveystieto</educationalSubject>
+    </educationalAlignment>
+    <teaches>L1 Ajattelu ja oppimaan oppiminen</teaches>
+    <teaches>S4 Tutkiminen ja kokeileminen</teaches>
+    <teaches>S2 Etiikan perusteita</teaches>
+  </learningResource>
+  <recordID>3607</recordID>
+</dc>

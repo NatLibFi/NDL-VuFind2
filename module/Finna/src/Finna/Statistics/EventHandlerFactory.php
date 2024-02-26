@@ -114,6 +114,9 @@ class EventHandlerFactory implements FactoryInterface
         string $clientIp,
         array $config
     ): bool {
+        if ('cli' === PHP_SAPI) {
+            return true;
+        }
         if ($ranges = ($config['Statistics']['exclude_ips'] ?? [])) {
             return $ipUtils->isInRange($clientIp, (array)$ranges);
         }

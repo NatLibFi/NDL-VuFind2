@@ -59,7 +59,7 @@ class ProcessStatsQueue extends AbstractUtilCommand
     /**
      * Statistics database driver
      *
-     * @var DatabaseDriver;
+     * @var DatabaseDriver
      */
     protected $dbHandler;
 
@@ -192,6 +192,10 @@ class ProcessStatsQueue extends AbstractUtilCommand
                     $this->redisClient->rPush(
                         $this->keyPrefix . $queueKey,
                         $logEntryStr
+                    );
+                    $this->err(
+                        'Failed to add record view entry: ' . (string)$e
+                        . '. Entry: ' . var_export($logEntry, true)
                     );
                     throw $e;
                 }

@@ -41,7 +41,7 @@
         <p class="xcal"><?=$this->icon('feed-xcal-location') ?><span class="sr-only"><?=$this->transEscAttr('Location') ?></span> <?=$this->escapeHtml($xcal['location']) ?></p>
       <?php endif; ?>
     <?php endif; ?>
-    <p><?=$this->escapeHtml($item['text']) ?></p>
+    <p><?=$this->escapeHtml($item['text'] ?? '') ?></p>
   </div>
   <div class="carousel-text-shadow"></div>
   <?php if ($clickableLink): ?>

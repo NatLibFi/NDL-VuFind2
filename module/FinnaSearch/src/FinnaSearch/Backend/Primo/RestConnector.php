@@ -74,6 +74,8 @@ class RestConnector extends \VuFindSearch\Backend\Primo\RestConnector
      */
     protected function performSearch($terms, $args)
     {
+        $terms = $this->convertContainsOps($terms);
+
         foreach ($this->hiddenFilters as $filter => $value) {
             if ($filter == 'pcAvailability') {
                 // Toggle the setting unless we are told to ignore the hidden filter:
@@ -90,6 +92,47 @@ class RestConnector extends \VuFindSearch\Backend\Primo\RestConnector
         }
 
         return parent::performSearch($terms, $args);
+    }
+
+    /**
+     * Convert contains and contains_all to boolean searches
+     *
+     * @param array $terms Search terms
+     *
+     * @return array
+     */
+    protected function convertContainsOps(array $terms): array
+    {
+        $map = ['contains_all' => 'AND', 'contains' => 'OR'];
+
+        // Regex for quoted words
+        $pattern = '/"(.*?)"/';
+
+        foreach ($terms as &$term) {
+            if (isset($term['op']) && isset($map[$term['op']])) {
+                $lookfor = trim($term['lookfor']);
+                $op = $map[$term['op']] ?? 'AND';
+                $words = $quoted = [];
+                if (preg_match_all($pattern, $lookfor, $quoted)) {
+                    // Search term includes quoted words, preserve them as groups.
+                    $quoted = $quoted[0];
+                    $unquoted = preg_replace($pattern, '', $lookfor);
+                    $unquoted = preg_replace('/\s\s+/', ' ', $unquoted);
+                    $unquoted = explode(' ', $unquoted);
+                    $words = array_merge($unquoted, $quoted);
+                } else {
+                    // No quoted words in search term
+                    $words = explode(' ', $lookfor);
+                }
+                $words = array_filter($words);
+
+                $lookfor = implode(" $op ", $words);
+                $term['op'] = 'contains';
+                $term['lookfor'] = $lookfor;
+            }
+        }
+
+        return $terms;
     }
 
     /**
