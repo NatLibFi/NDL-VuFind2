@@ -165,8 +165,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             = $this->mainConfig->Record->marc_links_use_visibility_indicator ?? true;
 
         // Temporarily add 730 as a link field by default, may be removed later
-        $fieldsNames[] = '730';
-
+        if (!in_array('730'), $fieldsNames) {
+            $fieldsNames[] = '730';
+        }
+            
         $result = [];
         foreach ($fieldsNames as $value) {
             $value = trim($value);
@@ -193,7 +195,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 if ($value == '730') {
                     // getfieldData doesn't handle subfield a (it's not the same for
                     // other fields), so do it now if we didn't get a title:
-                    if (is_array($tmp)) {
+                    if ($tmp) {
                         if ('' === $tmp['value']) {
                             $tmp['value'] = $this->getSubfield($field, 'a');
                             if ('title' === $tmp['link']['type']) {
@@ -205,28 +207,22 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                     // We need to display most of the subfields in this case
                     $line = [];
                     foreach ($this->getAllSubfields($field) as $subfield) {
-                        if (!preg_match('/[ilw4678]/', $subfield['code'])) {
+                        if (!in_array($subfield['code'], ['i', 'l', 'w', '4', '6', '7', '8'])) {
                             $line[] = $subfield['data'];
                         }
                     }
                     $tmp['value'] = implode(' ', $line);
                 }
-
-                if (null === $result) {
-                    $result = [];
-                }
                 $result[] = $tmp;
             }
         }
 
-        if ($result !== null) {
-            foreach ($result as &$link) {
-                if (isset($link['value'])) {
-                    $link['value'] = $this->stripTrailingPunctuation($link['value']);
-                }
+        foreach ($result as &$link) {
+            if (isset($link['value'])) {
+                $link['value'] = $this->stripTrailingPunctuation($link['value']);
             }
-            unset($link);
         }
+        unset($link);
 
         $this->cache[__FUNCTION__] = $result;
         return $result;
