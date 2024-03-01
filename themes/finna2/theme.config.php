@@ -457,6 +457,7 @@ $config = [
             'status-available' => 'FinnaIcons:circle-filled',
             'status-unavailable' => 'FinnaIcons:remove',
             'status-unknown' => 'FontAwesome:circle-o',
+            'survey-close' => 'FontAwesome:close',
             'popup-close' => 'FontAwesome:close',
             'time-open' => 'FontAwesome:clock-o',
             'type-dropdown-open' => 'FontAwesome:angle-down',
