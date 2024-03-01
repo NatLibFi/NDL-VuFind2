@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2023.
+ * Copyright (C) The National Library of Finland 2015-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -24,6 +24,7 @@
  * @package  Cache
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
@@ -40,6 +41,7 @@ use Laminas\Config\Config;
  * @package  Cache
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
@@ -94,5 +96,20 @@ class Manager extends \VuFind\Cache\Manager
     ) {
         $this->cacheSpecs = array_merge($this->cacheSpecs, $this->finnaCacheSpecs);
         parent::__construct($config, $searchConfig, $factory);
+    }
+
+    /**
+     * Create a downloader-specific file cache.
+     *
+     * @param string $downloaderName Name of the downloader.
+     * @param array  $opts           Cache options.
+     *
+     * @return string
+     */
+    public function addDownloaderCache($downloaderName, $opts = [])
+    {
+        $cacheName = 'downloader-' . $downloaderName;
+        $this->createNoCache($cacheName);
+        return $cacheName;
     }
 }
