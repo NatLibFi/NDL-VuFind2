@@ -2,13 +2,7 @@
 finna.linkedEvents = (function finnaLinkedEvents() {
   function getEvents(params, callback, append, container) {
     var limit = {'page_size': container.data('limit')};
-    var lang = {};
-    if ($('.linked-events-tabs').data('lang')) {
-      lang = {'language': $('.linked-events-tabs').data('lang')};
-    } else if ($('.linked-event-content').data('lang')) {
-      lang = {'language': $('.linked-event-content').data('lang')};
-    }
-    params.query = $.extend(params.query, limit, lang);
+    params.query = $.extend(params.query, limit);
     var spinner = container[0].querySelector(append ? '.js-loader-more' : '.js-loader');
     if (spinner) {
       spinner.classList.remove("hidden");
