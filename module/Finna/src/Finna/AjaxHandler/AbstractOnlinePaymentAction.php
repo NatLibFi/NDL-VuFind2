@@ -55,6 +55,7 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
 {
     use \VuFind\Log\LoggerAwareTrait;
     use \Finna\OnlinePayment\OnlinePaymentEventLogTrait;
+    use \Finna\OnlinePayment\OnlinePaymentHandlerTrait;
 
     /**
      * ILS connection
@@ -152,12 +153,11 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
      *
      * @param TransactionRow $t Transaction
      *
-     * @return array
+     * @return bool
      */
-    protected function markFeesAsPaidForTransaction(TransactionRow $t): array
+    protected function markFeesAsPaidForTransaction(TransactionRow $t): bool
     {
-        $patron = $this->getPatronForTransaction($t);
-        if (!$patron) {
+        if (!($patron = $this->getPatronForTransaction($t, $user))) {
             $this->logError(
                 'Error processing transaction id ' . $t->id
                 . ': patronLogin error (cat_username: ' . $t->cat_username
@@ -166,164 +166,14 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
 
             $t->setRegistrationFailed('patron login error');
             $this->addTransactionEvent($t->id, 'Patron login failed');
-            return ['success' => false];
+            return false;
         }
 
-        $paymentConfig = $this->ils->getConfig('onlinePayment', $patron);
-        $fineIds = $t->getFineIds();
-
-        if (
-            ($paymentConfig['exactBalanceRequired'] ?? true)
-            || !empty($paymentConfig['creditUnsupported'])
-        ) {
-            try {
-                $fines = $this->ils->getMyFines($patron);
-                // Filter by fines selected for the transaction if fine_id field is
-                // available:
-                $finesAmount = $this->ils->getOnlinePaymentDetails(
-                    $patron,
-                    $fines,
-                    $fineIds ?: null
-                );
-            } catch (\Exception $e) {
-                $this->logException($e);
-                return ['success' => false];
-            }
-
-            // Check that payable sum has not been updated
-            $exact = $paymentConfig['exactBalanceRequired'] ?? true;
-            $noCredit = $exact || !empty($paymentConfig['creditUnsupported']);
-            if (
-                $finesAmount['payable'] && !empty($finesAmount['amount'])
-                && (($exact && $t->amount != $finesAmount['amount'])
-                || ($noCredit && $t->amount > $finesAmount['amount']))
-            ) {
-                // Payable sum updated. Skip registration and inform user
-                // that payment processing has been delayed.
-                $this->logError(
-                    'Transaction ' . $t->transaction_id . ': payable sum updated.'
-                    . ' Paid amount: ' . $t->amount . ', payable: '
-                    . print_r($finesAmount, true)
-                );
-                $t->setFinesUpdated();
-                $this->addTransactionEvent($t->id, 'Registration with the ILS failed: fines updated');
-                return [
-                    'success' => false,
-                    'msg' => 'online_payment_registration_failed',
-                ];
-            }
-        }
-
-        try {
-            $this->logWarning('Transaction ' . $t->transaction_id . ': start marking fees as paid.');
-            $this->addTransactionEvent($t->id, 'Started registration with the ILS');
-            $res = $this->ils->markFeesAsPaid(
-                $patron,
-                $t->amount,
-                $t->transaction_id,
-                $t->id,
-                ($paymentConfig['selectFines'] ?? false) ? $fineIds : null
-            );
-            $this->logWarning(
-                'Transaction ' . $t->transaction_id . ': done marking fees as paid, result: '
-                . var_export($res, true)
-            );
-            if (true !== $res) {
-                $this->logError(
-                    'Payment registration error (patron ' . $patron['id'] . '): '
-                    . 'markFeesAsPaid failed: ' . ($res ?: 'no error information')
-                );
-                if ('fines_updated' === $res) {
-                    $t->setFinesUpdated();
-                    $this->addTransactionEvent($t->id, 'Registration with the ILS failed: fines updated');
-                } else {
-                    $t->setRegistrationFailed('Failed to mark fees paid: ' . ($res ?: 'no error information'));
-                    $this->addTransactionEvent(
-                        $t->id,
-                        'Registration with the ILS failed: ' . ($res ?: 'no error information')
-                    );
-                }
-                return ['success' => false, 'msg' => 'markFeesAsPaid failed'];
-            }
-            $t->setRegistered();
-            $this->addTransactionEvent($t->id, 'Successfully registered with the ILS');
-
+        $result = $this->markFeesAsPaidForPatron($patron, $t);
+        if ($result) {
             $this->onlinePaymentSession->paymentOk = true;
-        } catch (\Exception $e) {
-            $this->logError(
-                'Payment registration error (patron ' . $patron['id'] . '): '
-                . $e->getMessage()
-            );
-            $this->logException($e);
-
-            $t->setRegistrationFailed($e->getMessage());
-            $this->addTransactionEvent($t->id, 'Registration with the ILS failed', ['error' => $e->getMessage()]);
-            return ['success' => false, 'msg' => $e->getMessage()];
         }
-        return ['success' => true];
-    }
-
-    /**
-     * Find patron credentials from a transaction
-     *
-     * @param TransactionRow $t Transaction
-     *
-     * @return array Patron information or null on failure
-     */
-    protected function getPatronForTransaction(TransactionRow $t): ?array
-    {
-        $catCreds = $this->getPatronCredentials($t);
-        if (!$catCreds) {
-            $this->logError(
-                'Error processing transaction id ' . $t->id
-                . ': user card not found (cat_username: ' . $t->cat_username
-                . ', user id: ' . $t->user_id . ')'
-            );
-            return null;
-        }
-
-        try {
-            return $this->ils->patronLogin($catCreds['user'], $catCreds['password']);
-        } catch (\Exception $e) {
-            $this->logException($e);
-        }
-        return null;
-    }
-
-    /**
-     * Find patron credentials from a transaction
-     *
-     * @param TransactionRow $t Transaction
-     *
-     * @return array Array with keys 'user' and 'password', or null on failure
-     */
-    protected function getPatronCredentials(TransactionRow $t): ?array
-    {
-        if ($user = $this->userTable->getById($t->user_id)) {
-            // Check if user's current credentials match (typical case):
-            $match = mb_strtolower($user->cat_username, 'UTF-8')
-                === mb_strtolower($t->cat_username, 'UTF-8');
-            if ($match) {
-                return [
-                    'user' => $user->cat_username,
-                    'password' => $user->getCatPassword(),
-                ];
-            }
-
-            // Check for a matching library card:
-            $userCards = $user->getLibraryCardsByUserName($t->cat_username);
-            $first = $userCards->current();
-            // Read the card with a separate call to decrypt password:
-            $userCard = $first ? $user->getLibraryCard($first->id) : null;
-            if ($userCard) {
-                return [
-                    'user' => $userCard->cat_username,
-                    'password' => $userCard->cat_password,
-                ];
-            }
-        }
-
-        return null;
+        return $result;
     }
 
     /**
@@ -362,5 +212,17 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
             $this->logger
                 ->logException($exception, new \Laminas\Stdlib\Parameters());
         }
+    }
+
+    /**
+     * Log a payment info message
+     *
+     * @param string $msg Message
+     *
+     * @return void
+     */
+    protected function logPaymentInfo(string $msg): void
+    {
+        $this->logWarning($msg);
     }
 }

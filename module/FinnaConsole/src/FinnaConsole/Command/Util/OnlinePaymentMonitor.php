@@ -30,8 +30,7 @@
 
 namespace FinnaConsole\Command\Util;
 
-use Finna\Db\Row\User;
-use Finna\Db\Table\Transaction;
+use Finna\Db\Row\Transaction as TransactionRow;
 use Finna\Db\Table\TransactionEventLog;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -53,6 +52,7 @@ use function intval;
 class OnlinePaymentMonitor extends AbstractUtilCommand
 {
     use \Finna\OnlinePayment\OnlinePaymentEventLogTrait;
+    use \Finna\OnlinePayment\OnlinePaymentHandlerTrait;
 
     /**
      * The name of the command (the part after "public/index.php")
@@ -66,7 +66,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
      *
      * @var \VuFind\ILS\Connection
      */
-    protected $catalog;
+    protected $ils;
 
     /**
      * Datasource configuration
@@ -127,7 +127,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
     /**
      * Constructor
      *
-     * @param \VuFind\ILS\Connection             $catalog          Catalog connection
+     * @param \VuFind\ILS\Connection             $ils              Catalog connection
      * @param \Finna\Db\Table\Transaction        $transactionTable Transaction table
      * @param \Finna\Db\Table\User               $userTable        User table
      * @param \Laminas\Config\Config             $dsConfig         Data source config
@@ -136,7 +136,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
      * @param TransactionEventLog                $eventLog         Transaction event log table
      */
     public function __construct(
-        \VuFind\ILS\Connection $catalog,
+        \VuFind\ILS\Connection $ils,
         \Finna\Db\Table\Transaction $transactionTable,
         \Finna\Db\Table\User $userTable,
         \Laminas\Config\Config $dsConfig,
@@ -144,7 +144,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         \VuFind\Mailer\Mailer $mailer,
         TransactionEventLog $eventLog
     ) {
-        $this->catalog = $catalog;
+        $this->ils = $ils;
         $this->transactionTable = $transactionTable;
         $this->userTable = $userTable;
         $this->datasourceConfig = $dsConfig;
@@ -223,7 +223,6 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         $this->msg('OnlinePayment monitor started');
         $expiredCnt = $failedCnt = $registeredCnt = $remindCnt = 0;
         $report = [];
-        $user = false;
         $failed = $this->transactionTable->getFailedTransactions($minimumPaidAge);
         foreach ($failed as $t) {
             $this->processTransaction(
@@ -231,8 +230,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
                 $report,
                 $registeredCnt,
                 $expiredCnt,
-                $failedCnt,
-                $user
+                $failedCnt
             );
         }
 
@@ -269,12 +267,11 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
     /**
      * Try to register a failed transaction.
      *
-     * @param Transaction $t             Transaction
-     * @param array       $report        Transactions to be reported.
-     * @param int         $registeredCnt Number of registered transactions.
-     * @param int         $expiredCnt    Number of expired transactions.
-     * @param int         $failedCnt     Number of failed transactions.
-     * @param User        $user          User object.
+     * @param TransactionRow $t             Transaction
+     * @param array          $report        Transactions to be reported.
+     * @param int            $registeredCnt Number of registered transactions.
+     * @param int            $expiredCnt    Number of expired transactions.
+     * @param int            $failedCnt     Number of failed transactions.
      *
      * @return bool success
      */
@@ -283,8 +280,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         &$report,
         &$registeredCnt,
         &$expiredCnt,
-        &$failedCnt,
-        &$user
+        &$failedCnt
     ) {
         $this->msg(
             "  Registering transaction id {$t->id} / {$t->transaction_id}"
@@ -311,121 +307,34 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
             return true;
         }
 
-        if ($user === false || $t->user_id != $user->id) {
-            $user = $this->userTable->getById($t->user_id);
-        }
-
-        $patron = null;
-        $cards = $user->getLibraryCardsByUserName($t->cat_username);
-        if (!$cards) {
-            $this->warn(
-                "Library card not found for user {$user->username}"
-                . " (id {$user->id}), card {$t->cat_username}"
-            );
-            $t->setRegistrationFailed('card not found');
-            $this->addTransactionEvent(
-                $t->id,
-                "Library card not found for user {$user->username}",
-                [
-                    'user_id' => $user->id,
-                    'card' => $t->cat_username,
-                ]
-            );
-            $failedCnt++;
-            return false;
-        }
-        // Make sure to try all cards with a matching user name:
-        foreach ($cards as $card) {
-            // Read the card with a separate call to decrypt password:
-            $card = $user->getLibraryCard($card->id);
-            if (!$card) {
-                continue;
-            }
-            try {
-                $patron = $this->catalog
-                    ->patronLogin($card->cat_username, $card->cat_password);
-                if ($patron) {
-                    break;
-                }
-            } catch (\Exception $e) {
-                $this->err(
-                    'Patron login error: ' . $e->getMessage(),
-                    'Patron login failed for a user'
+        $user = null;
+        if (!($patron = $this->getPatronForTransaction($t, $user))) {
+            if ($user) {
+                $this->warn(
+                    "Catalog login failed for user {$user->username} (id {$user->id}), card {$t->cat_username}"
                 );
-                $this->logException($e);
-            }
-        }
-
-        if (!$patron) {
-            $this->warn(
-                "Catalog login failed for user {$user->username}"
-                . " (id {$user->id}), card {$t->cat_username}"
-            );
-            $t->setRegistrationFailed('patron login error');
-            $this->addTransactionEvent($t->id, 'Patron login failed');
-            $failedCnt++;
-            return false;
-        }
-
-        // Check that registration is not already in progress (i.e. registration
-        // started within 120 seconds)
-        if ($t->isRegistrationInProgress()) {
-            $this->msg(
-                '    Transaction ' . $t->transaction_id . ' already being registered since '
-                . $t->registration_started
-            );
-            $this->addTransactionEvent($t->id, 'Transaction already being registered');
-            return false;
-        }
-
-        $paymentConfig = $this->catalog->getConfig('onlinePayment', $patron);
-        $fineIds = $t->getFineIds();
-
-        try {
-            $t->setRegistrationStarted();
-            $this->addTransactionEvent($t->id, 'Started registration with the ILS');
-            $res = $this->catalog->markFeesAsPaid(
-                $patron,
-                $t->amount,
-                $t->transaction_id,
-                $t->id,
-                ($paymentConfig['selectFines'] ?? false) ? $fineIds : null
-            );
-            if (true === $res) {
-                $this->msg("    Registration of transaction {$t->transaction_id} successful");
-                $t->setRegistered();
-                $this->addTransactionEvent($t->id, 'Successfully registered with the ILS');
-                $registeredCnt++;
+                $t->setRegistrationFailed('patron login error');
+                $this->addTransactionEvent($t->id, 'Patron login failed');
             } else {
-                if ('fines_updated' === $res) {
-                    $t->setFinesUpdated();
-                    $this->err(
-                        '    Registration of transaction '
-                            . $t->transaction_id . " failed for user {$user->username}"
-                            . " (id {$user->id}), card {$t->cat_username}: fines updated",
-                        ''
-                    );
-                    $this->addTransactionEvent($t->id, 'Registration with the ILS failed: fines updated');
-                    return false;
-                }
-                throw new \Exception('Failed to mark fees paid: ' . ($res ?: 'no error information'));
+                $this->warn("Library card not found for user {$t->user_id}, card {$t->cat_username}");
+                $t->setRegistrationFailed('card not found');
+                $this->addTransactionEvent(
+                    $t->id,
+                    "Library card not found for user id {$t->user_id}",
+                    [
+                        'user_id' => $t->user_id,
+                        'card' => $t->cat_username,
+                    ]
+                );
             }
-        } catch (\Exception $e) {
-            $this->err(
-                '    Registration of transaction '
-                    . $t->transaction_id . " failed for user {$user->username}"
-                    . " (id {$user->id}), card {$t->cat_username}",
-                ''
-            );
-            $this->err('      ' . $e->getMessage());
-            $this->logException($e);
-
-            $t->setRegistrationFailed($e->getMessage());
-            $this->addTransactionEvent($t->id, 'Registration with the ILS failed', ['error' => $e->getMessage()]);
             $failedCnt++;
             return false;
         }
 
+        if (!$this->markFeesAsPaidForPatron($patron, $t)) {
+            $failedCnt++;
+            return false;
+        }
         return true;
     }
 
@@ -465,7 +374,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
 
         foreach ($report as $driver => $cnt) {
             if ($cnt) {
-                $settings = $this->catalog->getConfig(
+                $settings = $this->ils->getConfig(
                     'onlinePayment',
                     ['id' => "$driver.123"]
                 );
@@ -522,5 +431,17 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
                 }
             }
         }
+    }
+
+    /**
+     * Log a payment info message
+     *
+     * @param string $msg Message
+     *
+     * @return void
+     */
+    protected function logPaymentInfo(string $msg): void
+    {
+        $this->msg($msg);
     }
 }
