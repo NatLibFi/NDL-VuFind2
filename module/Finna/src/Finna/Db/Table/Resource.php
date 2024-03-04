@@ -160,27 +160,27 @@ class Resource extends \VuFind\Db\Table\Resource
                     [
                     'id' => new Expression(
                         'MAX(?)',
-                        ['ur.id'],
+                        ['frlr.id'],
                         [Expression::TYPE_IDENTIFIER]
                     ),
                     ]
                     : [
                     'id' => new Expression(
                         'MAX(?)',
-                        ['ur.id'],
+                        ['frlr.id'],
                         [Expression::TYPE_IDENTIFIER]
                     ),
                     ];
                 $s->join(
-                    ['ur' => 'user_resource'],
-                    'resource.id = ur.resource_id',
+                    ['frlr' => 'finna_reservation_list_resource'],
+                    'resource.id = frlr.resource_id',
                     $urColumns
                 );
-                $s->where->equalTo('ur.user_id', $user);
+                $s->where->equalTo('frlr.user_id', $user);
 
                 // Adjust for list if necessary:
                 if (null !== $list) {
-                    $s->where->equalTo('ur.list_id', $list);
+                    $s->where->equalTo('frlr.list_id', $list);
                 }
 
                 if ($offset > 0) {

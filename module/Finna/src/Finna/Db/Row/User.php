@@ -33,6 +33,7 @@ namespace Finna\Db\Row;
 
 use Laminas\Db\ResultSet\ResultSetInterface;
 use Laminas\Db\Sql\Expression;
+use Finna\ReservationList\ReservationListTrait;
 
 use function count;
 
@@ -51,6 +52,7 @@ use function count;
 class User extends \VuFind\Db\Row\User
 {
     use FinnaUserTrait;
+    use ReservationListTrait;
 
     /**
      * ILS Connection

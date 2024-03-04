@@ -3,12 +3,9 @@
 namespace Finna\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\Select;
 use Laminas\Session\Container;
 use VuFind\Db\Row\RowGateway;
 use VuFind\Exception\LoginRequired as LoginRequiredException;
-use VuFind\Exception\RecordMissing as RecordMissingException;
 use VuFind\Db\Table\PluginManager;
 use VuFind\Db\Table\UserList;
 use VuFind\Db\Table\Gateway;
@@ -48,7 +45,7 @@ class ReservationList extends UserList
     /**
      * Create a new list object.
      *
-     * @param bool $user User object representing owner of
+     * @param mixed $user User object representing owner of
      * new list (or false if not logged in)
      *
      * @return \Finna\Db\Row\ReservationList

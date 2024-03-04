@@ -8,16 +8,21 @@
     $ilsOffline = 'ils-none' === $this->ils()->getOfflineMode();
     $r2SearchEnabled = $this->R2()->isAvailable();
     $listOpen = $this->active == 'favorites' || substr($this->active, 0, 4) == 'list';
+    $reservationListOpen = $this->active == 'reservationList';
     $activeToLower = strtolower($this->active ?? '');
     //Get the data for vertical menu to show lists on correct site
-    if ($listOpen) {
+    if ($listOpen || $reservationListOpen) {
       $list = $this->results->getListObject();
       $listParams = [
         'activeId' => $list['id'] ?? null,
-        'lists' => $user ? $user->getLists() : null,
         'results' => $this->results,
         'user' => $user,
       ];
+      if ($listOpen) {
+        $listParams['lists'] = $user?->getLists();
+      } elseif ($reservationListOpen) {
+        $listParams['lists'] = $user?->getReservationLists();
+      }
     }
 
     $menuListItems = [];
@@ -124,7 +129,17 @@
           'params' => $listParams ?? [],
         ],
       ],
-      'reservationList',
+      'reservationList' => [
+        'active' => $reservationListOpen,
+        'url' => 'reservationlist-home',
+        'translation' => 'Reservation List',
+        'show' => $this->userlist()->getMode() !== 'disabled',
+        'partial' => [
+          'url' => 'reservationlist/reservationlist-navi.phtml',
+          'wrapperClass' => 'reservationlist-bar',
+          'params' => $listParams ?? [],
+        ],
+      ],
       'logout',
     ];
 

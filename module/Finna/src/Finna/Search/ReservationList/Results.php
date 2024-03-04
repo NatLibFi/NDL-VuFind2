@@ -31,7 +31,7 @@ namespace Finna\Search\ReservationList;
 
 use LmcRbacMvc\Service\AuthorizationServiceAwareInterface;
 use LmcRbacMvc\Service\AuthorizationServiceAwareTrait;
-use Finna\Db\Table\ReservationListResource as ResourceTable;
+use Finna\Db\Table\Resource as ResourceTable;
 use Finna\Db\Table\ReservationList as ListTable;
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Record\Cache;
@@ -179,16 +179,16 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
         // How many results were there?
         $userId = null === $list ? $this->user->id : $list->user_id;
         $listId = null === $list ? null : $list->id;
-        $rawResults = $this->resourceTable->getFavorites(
+        $rawResults = $this->resourceTable->getReservationResources(
             $userId,
             $listId
         );
         $this->resultTotal = count($rawResults);
-
+        var_dump($this->resultTotal);
         // Apply offset and limit if necessary!
         $limit = $this->getParams()->getLimit();
         if ($this->resultTotal > $limit) {
-            $rawResults = $this->resourceTable->getFavorites(
+            $rawResults = $this->resourceTable->getReservationResources(
                 $userId,
                 $listId,
                 [],
@@ -227,8 +227,6 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
             // if one is found:
             $filters = $this->getParams()->getRawFilters();
             $listId = $filters['lists'][0] ?? null;
-            var_dump($filters);
-            die();
             $this->list = (null === $listId)
                 ? null : $this->listTable->getExisting($listId);
         }

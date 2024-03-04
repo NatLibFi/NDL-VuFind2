@@ -1655,38 +1655,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Reservation list action
-     *
-     * @return \Laminas\View\Model\ViewModel
-     */
-    public function reservationListAction(): \Laminas\View\Model\ViewModel
-    {
-        // Fail if lists are disabled:
-        if (!$this->listsEnabled()) {
-            throw new ForbiddenException('Lists disabled');
-        }
-        var_dump($this->params()->fromRoute('id'));
-        $reservationListService = $this->serviceLocator->get(ReservationListService::class);
-        // Return view with lists available
-        $view = $this->createViewModel(
-            [
-                'lists' => $reservationListService->getListsForUser($this->getUser()),
-                'activeId' => $this->params()->fromRoute('id')
-            ]
-        );
-        return $view;
-        // If we got this far, we should display a dropdown containing all the lists
-        try {
-
-        } catch (ListPermissionException $e) {
-            if (!$this->getUser()) {
-                return $this->forceLogin();
-            }
-            throw $e;
-        }
-    }
-
-    /**
      * Check if nickname is available
      *
      * @param string $nickname User nickname

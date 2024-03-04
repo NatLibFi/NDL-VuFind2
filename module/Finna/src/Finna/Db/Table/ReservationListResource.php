@@ -29,6 +29,7 @@
 
 namespace Finna\Db\Table;
 
+use Laminas\Db\Sql\Expression;
 /**
  * Table Definition for finna_reservation_list_resource
  *

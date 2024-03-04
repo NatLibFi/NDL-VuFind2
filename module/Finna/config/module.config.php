@@ -197,6 +197,16 @@ $config = [
                     ],
                 ],
             ],
+            'reservationlist-home' => [
+                'type'    => 'Laminas\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/ReservationList/Home[/:id]',
+                    'defaults' => [
+                        'controller' => 'ReservationList',
+                        'action'     => 'Home',
+                    ],
+                ],
+            ],
             'organisation-info-image' => [
                 'type'    => 'Laminas\Router\Http\Literal',
                 'options' => [

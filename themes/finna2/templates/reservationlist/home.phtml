@@ -18,23 +18,35 @@
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
   <div class="my-research-content">
     <div class="menu-flex">
-      <?php if (!empty($this->lists)): ?>
-        <div class="select-group">
-          <label>Listat:</label>
-          <select>
-            <?php foreach ($this->lists ?? [] as $list): ?>
-              <option value="<?=$this->escapeHtmlAttr($list['id'])?>" <?php if ($this->activeId === $list['id']): ?>selected="selected"<?php endif; ?>><?= $this->escapeHtml($list['title']) ?></option>
-            <?php endforeach; ?>
-          </select>
-        </div>
-      <?php endif; ?>
       <div class="sorting-stuff">
         <!-- Do Later, order list, delete list, creation of a list happens at the same time with adding an item to a list -->
       </div>
     </div>
     <div class="useraccount-header">
-      <h2><?=$this->transEsc('Reservation List') ?> (<?=count($this->recordList ?? []);?>)</h2>
+      <h2>Title: <?=$this->escapeHtml($this->title) ?> (<?=count($this->recordList ?? []);?>)</h2>
     </div>
+    <div class="description-wrapper">
+      <p>Description: <?= $this->escapeHtml($this->description); ?></p>
+    </div>
+    <div class="datasource-wrapper">
+      <p>Datasource: <?= $this->escapeHtml($this->datasource); ?></p>
+    </div>
+    <div class="building-wrapper">
+      <p>Building: <?= $this->escapeHtml($this->building); ?></p>
+    </div>
+    <div class="created-wrapper">
+      <p>Creared: <?= $this->escapeHtml($this->created); ?></p>
+    </div>
+    <div class="orered-wrapper">
+      <p>Ordered: <?= $this->escapeHtml($this->ordered) ?></p>
+    </div>
+    <?php if (count($this->results->getResults()) && !$this->ordered): ?>
+      <!-- Add order buttons if the list has not been ordered yet. -->
+      <button type="button" class="btn btn-primary">Tilaa lista</button>
+    <?php endif; ?>
+    <?php foreach ($this->results->getResults() as $i => $current): ?>
+      <?=$this->record($current)->getListEntry(null, false)?>
+    <?php endforeach; ?>
   </div>
 </div>
 <!-- END of: finna - myresearch/reservationlist.phtml -->

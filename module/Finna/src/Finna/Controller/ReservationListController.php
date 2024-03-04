@@ -62,9 +62,9 @@ class ReservationListController extends AbstractBase
    */
   public function addItemAction()
   {
-    $user = $this->getAuthManager();
+    $user = $this->getUser();
     if (!$user) {
-      // Route to log in
+        return $this->forceLogin();
     }
     $driver = $this->getRecordLoader()->load(
       $this->getParam('id'),
@@ -98,10 +98,17 @@ class ReservationListController extends AbstractBase
     return $view;
   }
 
+  /**
+   * Home 
+   */
   public function homeAction(): \Laminas\View\Model\ViewModel
   {
+    $user = $this->getUser();
+    if (!$user) {
+        return $this->forceLogin();
+    }
     // Fail if lists are disabled:
-        if (!$this->listsEnabled()) {
+    if (!$this->listsEnabled()) {
         throw new ForbiddenException('Lists disabled');
     }
 
@@ -140,7 +147,8 @@ class ReservationListController extends AbstractBase
     
     if (!isset($request['id'])) {
         $lists = $reservationListService->getListsForUser($this->getUser());
-        $request['id'] = reset($lists)['id'] ?? null;
+        $firstList = reset($lists);
+        $request['id'] = $firstList['id'] ?? null;
     }
 
     if (isset($request['id'])) {
@@ -148,11 +156,8 @@ class ReservationListController extends AbstractBase
         try {
             $runner = $this->serviceLocator->get(\VuFind\Search\SearchRunner::class);
 
-            // We want to merge together GET, POST and route parameters to
-            // initialize our search object:
-            $request = $this->getRequest()->getQuery()->toArray()
-                + $this->getRequest()->getPost()->toArray()
-                + ['id' => $this->params()->fromRoute('id')];
+            // Get the current list for user
+            $currentList = $reservationListService->getListForUser($user, $request['id']);
 
             // Set up listener for recommendations:
             $rManager = $this->serviceLocator
@@ -168,7 +173,14 @@ class ReservationListController extends AbstractBase
             $results = $runner->run($request, 'ReservationList', $setupCallback);
             return $this->createViewModel(
                 [
-                    'params' => $results->getParams(), 'results' => $results
+                    'params' => $results->getParams(),
+                    'results' => $results,
+                    'title' => $currentList->title,
+                    'description' => $currentList->description,
+                    'datasource' => $currentList->datasource,
+                    'created' => $currentList->created,
+                    'ordered' => $currentList->ordered,
+                    'building' => $currentList->building,
                 ]
             );
         } catch (ListPermissionException $e) {
@@ -180,7 +192,6 @@ class ReservationListController extends AbstractBase
     }
 
     $view = $this->createViewModel();
-    $view->lists = $reservationListService->getListsForUser($this->getUser());
     return $view;
   }
 

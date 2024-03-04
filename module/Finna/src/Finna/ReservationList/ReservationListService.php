@@ -6,7 +6,6 @@ use Finna\Db\Table\ReservationList;
 use Laminas\Stdlib\Parameters;
 use VuFind\Db\Table\Resource as ResourceTable;
 use VuFind\Db\Table\UserResource as UserResourceTable;
-use VuFind\Exception\LoginRequired as LoginRequiredException;
 use VuFind\Record\Cache as RecordCache;
 
 class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareInterface
@@ -84,6 +83,18 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         ]));
     }
 
+    public function getListItemCount($user, $list): int
+    {
+        $resource = $this->getDbTable(\Finna\Db\Table\ReservationListResource::class);
+        $result = $resource->getReservationList(
+            $this->id,
+            $list->id,
+            null,
+            null
+        );
+        return count($result);
+    }
+
     public function getListsForUser(\VuFind\Db\Row\User $user): array
     {
         $lists = $this->reservationList->select(['user_id' => $user->id]);
@@ -125,7 +136,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
 
     public function getListForUser($user, $id)
     {
-        return $this->reservationList->select(['user_id' => $user->id, 'id' => $id]);
+        return $this->reservationList->select(['user_id' => $user->id, 'id' => $id])->current();
     }
 
     /**

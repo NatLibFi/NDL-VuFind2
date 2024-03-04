@@ -36,7 +36,7 @@ use VuFind\Db\Row\RowGateway;
 use Laminas\Session\Container;
 
 /**
- * Row Definition for user_list
+ * Row Definition for reservation_list
  *
  * @category VuFind
  * @package  Db_Row

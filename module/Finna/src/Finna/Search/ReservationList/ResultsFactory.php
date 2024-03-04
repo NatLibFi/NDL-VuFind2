@@ -71,7 +71,7 @@ class ResultsFactory extends \VuFind\Search\Results\ResultsFactory
         $obj = parent::__invoke(
             $container,
             $requestedName,
-            [$tm->get(\Finna\Db\Table\ReservationListResource::class), $tm->get(\Finna\Db\Table\ReservationList::class)]
+            [$tm->get(\Finna\Db\Table\Resource::class), $tm->get(\Finna\Db\Table\ReservationList::class)]
         );
         $init = new \LmcRbacMvc\Initializer\AuthorizationServiceInitializer();
         $init($container, $obj);
