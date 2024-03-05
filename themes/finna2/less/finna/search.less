@@ -180,6 +180,9 @@ mark, .highlight {
     }
   }
 }
+.result-citation-links {
+  margin: 0.5rem 0;
+}
 .add-to-favorite-col {
   @media(max-width: @screen-xs-max) {
     margin-top: 10px;
@@ -203,6 +206,33 @@ mark, .highlight {
 .bulkActionButtons .checkbox,
 .bulkActionButtons label { display: inline-block; }
 .bulkActionButtons label input { margin-top: 2px; }
+
+.selection-controls-bar {
+  margin: 0 0 0.5rem 10px;
+  padding: 0;
+  list-style: none;
+  line-height: 25px;
+
+  li {
+    display: inline-block;
+
+    &.bulk-checkbox {
+      padding-inline-end: 1rem;
+      margin-top: .25rem;
+    }
+
+    label input { margin-top: 2px; }
+  }
+
+  // Like .bulkActionButtons .btn-group .btn
+  .clear-selection {
+    border: 1px solid @gray-lighter;
+    border-radius: 4px;
+    background: @gray-ultralight;
+    color: @text-color;
+    font-size: 0.9em;
+  }
+}
 
 .result-body { padding-left: 1rem; }
 @media (min-width: 768px) {

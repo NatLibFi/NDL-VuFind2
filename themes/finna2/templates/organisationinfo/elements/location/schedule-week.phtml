@@ -36,7 +36,7 @@
             <?php endif; ?>
           </div>
         </div>
-        <?php if ($schedule['selfServiceTimes'] || $schedule['gaps']): ?>
+        <?php if ($orgInfo['hasSelfServiceTimes'] || $schedule['gaps']): ?>
           <?php foreach ($schedule['times'] as $time): ?>
             <div class="time-row sub-row">
               <div class="date-container"></div>
@@ -45,7 +45,7 @@
                   <span class="closed-notice"><?=$this->icon('organisation-info-closed')?> <?=$this->transEsc('organisation_info_is_closed')?></span>
                 <?php elseif ($time['selfservice']): ?>
                   <span class="selfservice-only"><?=$this->transEsc('organisation_info_only_selfservice')?></span>
-                <?php elseif ($schedule['selfServiceTimes']): ?>
+                <?php else: ?>
                   <span class="name-staff"><?=$this->transEsc('organisation_info_schedule_staff')?></span>
                 <?php endif; ?>
               </div>

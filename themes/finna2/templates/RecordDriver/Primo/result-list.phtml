@@ -151,7 +151,8 @@
             <?php endif; ?>
           <?php endif; ?>
         </div>
-        <?=$this->record($this->driver)->getPreviews()?>
+        <?php $recordHelper = $this->record($this->driver); ?>
+        <?=$recordHelper->getPreviews()?>
         <?php
           $summary = false;
           $highlightedSummary = $this->driver->getHighlightedSummary();
@@ -171,12 +172,13 @@
         <?php endif; ?>
         <?=$this->render('record/labels.phtml', ['driver' => $this->driver]); ?>
         <div>
-            <?=$this->record($this->driver)->getOnlineUrls('results')?>
+            <?=$recordHelper->getOnlineUrls('results')?>
+            <?=$recordHelper->getCitationLinks();?>
         </div>
         <div class="hidden-print add-to-favorite-col">
             <?php
               // Display qrcode if appropriate:
-              echo $this->record($this->driver)->renderTemplate('result-qrcode.phtml', ['driver' => $this->driver]);
+              echo $recordHelper->renderTemplate('result-qrcode.phtml', ['driver' => $this->driver]);
             ?>
 
             <?php if ($this->userlist()->getMode() !== 'disabled'): ?>

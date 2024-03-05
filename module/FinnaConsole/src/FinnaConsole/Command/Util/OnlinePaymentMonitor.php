@@ -378,6 +378,9 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
             return false;
         }
 
+        $paymentConfig = $this->catalog->getConfig('onlinePayment', $patron);
+        $fineIds = $t->getFineIds();
+
         try {
             $t->setRegistrationStarted();
             $this->addTransactionEvent($t->id, 'Started registration with the ILS');
@@ -385,7 +388,8 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
                 $patron,
                 $t->amount,
                 $t->transaction_id,
-                $t->id
+                $t->id,
+                ($paymentConfig['selectFines'] ?? false) ? $fineIds : null
             );
             if (true === $res) {
                 $this->msg("    Registration of transaction {$t->transaction_id} successful");

@@ -47,11 +47,12 @@ class LayoutClass extends \VuFind\View\Helper\Bootstrap3\LayoutClass
      * name, return appropriate CSS classes to lay out the page according to
      * the current configuration file settings.
      *
-     * @param string $class Type of class to return ('mainbody' or 'sidebar')
+     * @param string $class      Type of class to return ('mainbody' or 'sidebar')
+     * @param bool   $hasSidebar Whether sidebar is available
      *
      * @return string       CSS classes to apply
      */
-    public function __invoke($class)
+    public function __invoke($class, $hasSidebar = true)
     {
         // Special styles for MyResearch to keep menu on left
         if ('mainbody-myresearch' === $class) {
@@ -62,7 +63,7 @@ class LayoutClass extends \VuFind\View\Helper\Bootstrap3\LayoutClass
             return 'mainbody myresearch-body';
         }
 
-        $result = parent::__invoke($class);
+        $result = parent::__invoke($class, $hasSidebar);
         if ($class == 'sidebar' && $this->sidebarOnLeft) {
             $result .= ' sidebar-on-left';
         }

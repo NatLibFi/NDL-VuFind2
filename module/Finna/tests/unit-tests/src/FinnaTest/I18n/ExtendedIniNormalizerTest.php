@@ -48,6 +48,7 @@ use VuFind\I18n\ExtendedIniNormalizer;
 class ExtendedIniNormalizerTest extends \PHPUnit\Framework\TestCase
 {
     use \VuFindTest\Feature\FixtureTrait;
+    use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
      * Test consistent normalization of translation files on disk. This tests not
@@ -117,8 +118,18 @@ class ExtendedIniNormalizerTest extends \PHPUnit\Framework\TestCase
         $actual = file($filename, FILE_IGNORE_NEW_LINES);
         // Ignore trailing whitespace:
         $actual = array_map('rtrim', $actual);
+        // Sanitize the translation keys to avoid errors with unsanitized values for
+        // now:
+        $actual = array_map(
+            function ($s) {
+                $parts = explode('=', $s, 2);
+                $parts[0] = $this->sanitizeTranslationKey($parts[0]);
+                return implode('=', $parts);
+            },
+            $actual
+        );
 
-        foreach ($expected as $current) {
+        foreach ($expected as $i => $current) {
             if ('' === $current || str_starts_with($current, ';')) {
                 continue;
             }

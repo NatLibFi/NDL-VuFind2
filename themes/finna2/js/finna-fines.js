@@ -1,7 +1,8 @@
 /*global finna */
 finna.fines = (function finnaFines() {
 
-  const CHECKBOX_SELECTOR = 'form#online_payment_form .checkbox-select-item';
+  const CHECKBOX_ITEM_SELECTOR = 'form#online_payment_form .checkbox-select-item';
+  const CHECKBOX_ALL_SELECTOR = 'form#online_payment_form .checkbox-select-all';
 
   var paySelectedDefaultText;
 
@@ -93,7 +94,7 @@ finna.fines = (function finnaFines() {
     const checkCheckboxes = function () {
       // Count the balance for selected fees:
       var selectedAmount = 0;
-      document.querySelectorAll(CHECKBOX_SELECTOR + ':checked').forEach((cb) => {
+      document.querySelectorAll(CHECKBOX_ITEM_SELECTOR + ':checked').forEach((cb) => {
         selectedAmount += parseInt(cb.dataset.amount, 10);
       });
 
@@ -133,7 +134,7 @@ finna.fines = (function finnaFines() {
       remainingElem.textContent = formatAmount(remainingAmount, remainingElem.dataset.template);
     };
 
-    document.querySelectorAll(CHECKBOX_SELECTOR).forEach((checkbox) => {
+    document.querySelectorAll(CHECKBOX_ITEM_SELECTOR + ',' + CHECKBOX_ALL_SELECTOR).forEach((checkbox) => {
       checkbox.addEventListener('change', checkCheckboxes);
     });
   }

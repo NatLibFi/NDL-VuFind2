@@ -195,21 +195,6 @@ finna.layout = (function finnaLayout() {
     });
   }
 
-  function initCheckboxClicks() {
-    $('.template-name-mylist input.checkbox-select-item').on('click', function onClickCheckbox() {
-      var actions = $('.mylist-functions button, .mylist-functions select');
-      var aria = $('.mylist-functions .sr-only');
-      var noneChecked = $('.template-name-mylist input.checkbox-select-item:checked').length === 0;
-      if (noneChecked) {
-        actions.attr('disabled', true);
-        aria.removeAttr('aria-hidden');
-      } else {
-        actions.removeAttr('disabled');
-        aria.attr('aria-hidden', 'true');
-      }
-    });
-  }
-
   function initScrollLinks() {
     $('.library-link').on('click', function onClickLibraryLink() {
       $('html, body').animate({
@@ -809,7 +794,6 @@ finna.layout = (function finnaLayout() {
       initMobileNarrowSearch();
       setStickyMyaccountHeader();
       initMobileCartIndicator();
-      initCheckboxClicks();
       initToolTips();
       initModalToolTips();
       initScrollLinks();
