@@ -1055,16 +1055,16 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
-     * Get producer
+     * Get producers
      *
      * @return array
      */
-    public function getProducer()
+    public function getProducers()
     {
         $result = [];
         foreach ($this->getMarcReader()->getFields('264') as $field) {
             if ($field['i2'] == 0) {
-                $result = $this->stripTrailingPunctuation($this->getSubfieldArray($field, ['a', 'b', 'c']));
+                $result[] = $this->stripTrailingPunctuation($this->getSubfieldArray($field, ['a', 'b', 'c']));
             }
         }
         return $result;
