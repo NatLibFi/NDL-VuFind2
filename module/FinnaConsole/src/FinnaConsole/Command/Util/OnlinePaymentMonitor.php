@@ -335,6 +335,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
             $failedCnt++;
             return false;
         }
+        $registeredCnt++;
         return true;
     }
 
