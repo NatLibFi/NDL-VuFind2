@@ -1443,6 +1443,14 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             ]
         );
         $setTemplateLine(
+            'Capture Information',
+            'getCaptureInformation',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'record-capture-information'],
+            ]
+        );
+        $setTemplateLine(
             'First Lyrics',
             'getFirstLyrics',
             'data-escapeHtml.phtml',

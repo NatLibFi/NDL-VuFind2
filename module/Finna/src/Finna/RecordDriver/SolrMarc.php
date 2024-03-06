@@ -2016,6 +2016,16 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
+     * Get an array of capture information.
+     *
+     * @return array
+     */
+    public function getCaptureInformation()
+    {
+        return $this->stripTrailingPunctuation($this->getFieldArray('518', ['3', 'o', 'd', 'p']));
+    }
+
+    /**
      * Get composition information from field 382.
      *
      * @return array
