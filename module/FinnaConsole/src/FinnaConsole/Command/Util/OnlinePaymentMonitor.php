@@ -243,16 +243,16 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         }
 
         if ($registeredCnt) {
-            $this->msg("  Total registered: $registeredCnt");
+            $this->msg("Total registered: $registeredCnt");
         }
         if ($expiredCnt) {
-            $this->msg("  Total expired: $expiredCnt");
+            $this->msg("Total expired: $expiredCnt");
         }
         if ($failedCnt) {
-            $this->msg("  Total failed: $failedCnt");
+            $this->msg("Total failed: $failedCnt");
         }
         if ($remindCnt) {
-            $this->msg("  Total to be reminded: $remindCnt");
+            $this->msg("Total to be reminded: $remindCnt");
         }
 
         if (!$disableEmail) {
@@ -283,7 +283,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         &$failedCnt
     ) {
         $this->msg(
-            "  Registering transaction id {$t->id} / {$t->transaction_id}"
+            "Registering transaction id {$t->id} / {$t->transaction_id}"
             . " (status: {$t->complete} / {$t->status}, paid: {$t->paid})"
         );
 
@@ -303,7 +303,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
             $t->setReportedAndExpired();
             $this->addTransactionEvent($t->id, 'Marked as reported and expired');
 
-            $this->msg('    Transaction ' . $t->transaction_id . ' expired.');
+            $this->msg('Transaction ' . $t->transaction_id . ' expired.');
             return true;
         }
 
@@ -351,7 +351,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
      */
     protected function processUnresolvedTransaction($t, &$report, &$remindCnt)
     {
-        $this->msg("  Transaction id {$t->transaction_id} still unresolved.");
+        $this->msg("Transaction id {$t->transaction_id} still unresolved.");
 
         $t->setReportedAndExpired();
         if (!isset($report[$t->driver])) {
@@ -400,7 +400,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
 
                 $email = $settings['errorEmail'];
                 $this->msg(
-                    "  [$driver] Inform $cnt expired transactions "
+                    "[$driver] Inform $cnt expired transactions "
                     . "for driver $driver to $email"
                 );
 
