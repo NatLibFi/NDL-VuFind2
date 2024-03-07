@@ -580,7 +580,7 @@ trait SolrFinnaTrait
     {
         $sortingArr = $this->getLanguages();
         $result = $this->fields['original_lng_str_mv'] ?? [];
-        uasort($result, function($a, $b) use ($sortingArr) {
+        uasort($result, function ($a, $b) use ($sortingArr) {
             return array_search($a, $sortingArr) <=> array_search($b, $sortingArr);
         });
         return $result;
