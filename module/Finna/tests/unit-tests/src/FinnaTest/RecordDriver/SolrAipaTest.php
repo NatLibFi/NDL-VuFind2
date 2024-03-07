@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2023.
+ * Copyright (C) The National Library of Finland 2023-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -129,8 +129,10 @@ class SolrAipaTest extends TestCase
             $recordLoader = $this->createMock(Loader::class);
             $recordLoader
                 ->method('load')
-                ->willReturnCallback(function () {
-                    return new SolrDefault();
+                ->willReturnCallback(function ($id) {
+                    $record = new SolrDefault();
+                    $record->setRawData(['id' => $id]);
+                    return $record;
                 });
             $this->recordLoader = $recordLoader;
         }

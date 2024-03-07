@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2023.
+ * Copyright (C) The National Library of Finland 2023-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -28,6 +28,8 @@
  */
 
 namespace Finna\RecordDriver\Feature;
+
+use VuFind\RecordDriver\AbstractBase;
 
 /**
  * Common functionality for encapsulated records.
@@ -67,5 +69,45 @@ trait EncapsulatedRecordTrait
     public function getContainerRecord(): ContainerFormatInterface
     {
         return $this->containerRecord;
+    }
+
+    /**
+     * Does the encapsulated record need a record to be loaded?
+     *
+     * @return string|false ID of record that needs loading, or false
+     */
+    public function needsRecordLoaded(): string|false
+    {
+        return false;
+    }
+
+    /**
+     * Set the loaded record specified by needsRecordLoaded().
+     *
+     * @param AbstractBase $record Loaded record
+     *
+     * @return void
+     * @throws \LogicException If the record should not be set
+     */
+    public function setLoadedRecord(AbstractBase $record): void
+    {
+        $this->checkSetLoadedRecord($record);
+    }
+
+    /**
+     * Checks that the provided record is valid for setting as a loaded record.
+     *
+     * @param AbstractBase $record Loaded record
+     *
+     * @return void
+     * @throws \LogicException If the record should not be set
+     */
+    protected function checkSetLoadedRecord(AbstractBase $record): void
+    {
+        if (false === ($needed = $this->needsRecordLoaded())) {
+            throw new \LogicException('Record loading not needed');
+        } elseif ($record->getUniqueID() !== $needed) {
+            throw new \LogicException('Record ID does not match needed record ID');
+        }
     }
 }
