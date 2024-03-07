@@ -194,8 +194,8 @@ class PaytrailPaymentAPI extends AbstractBase
                     ->setUnitPrice(round($fine['balance']))
                     ->setUnits(1)
                     ->setVatPercentage(0)
-                    ->setStamp("$transactionId $itemId")
-                    ->setReference($itemId);
+                    ->setStamp(mb_substr("$transactionId $itemId", 0, 200, 'UTF-8'))
+                    ->setReference(mb_substr($itemId, 0, 200));
 
                 if ($itemMerchant = $organizationMerchantIdMappings[$fineOrg] ?? null) {
                     $item->setMerchant($itemMerchant);
