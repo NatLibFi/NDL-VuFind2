@@ -64,9 +64,10 @@ interface EncapsulatedRecordInterface extends RecordInterface
     /**
      * Does the encapsulated record need a record to be loaded?
      *
-     * @return string|false ID of record that needs loading, or false
+     * @return array|false Associative array specifying the record that needs loading
+     * (contains 'id' and 'source' keys), or false
      */
-    public function needsRecordLoaded(): string|false;
+    public function needsRecordLoaded(): array|false;
 
     /**
      * Set the loaded record specified by needsRecordLoaded().

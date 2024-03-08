@@ -74,9 +74,10 @@ trait EncapsulatedRecordTrait
     /**
      * Does the encapsulated record need a record to be loaded?
      *
-     * @return string|false ID of record that needs loading, or false
+     * @return array|false Associative array specifying the record that needs loading
+     * (contains 'id' and 'source' keys), or false
      */
-    public function needsRecordLoaded(): string|false
+    public function needsRecordLoaded(): array|false
     {
         return false;
     }
@@ -106,7 +107,7 @@ trait EncapsulatedRecordTrait
     {
         if (false === ($needed = $this->needsRecordLoaded())) {
             throw new \LogicException('Record loading not needed');
-        } elseif ($record->getUniqueID() !== $needed) {
+        } elseif ($record->getUniqueID() !== $needed['id']) {
             throw new \LogicException('Record ID does not match needed record ID');
         }
     }

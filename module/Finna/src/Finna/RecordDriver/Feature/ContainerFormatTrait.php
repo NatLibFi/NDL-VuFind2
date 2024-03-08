@@ -140,10 +140,10 @@ trait ContainerFormatTrait
                 $driver = $this->getCachedEncapsulatedRecordDriver($position);
                 if (
                     $driver instanceof EncapsulatedRecordInterface
-                    && $id = $driver->needsRecordLoaded()
+                    && $needed = $driver->needsRecordLoaded()
                 ) {
                     $driver->setLoadedRecord(
-                        $this->recordLoader->load($id, DEFAULT_SEARCH_BACKEND, true)
+                        $this->recordLoader->load($needed['id'], $needed['source'])
                     );
                 }
                 return $driver;
@@ -345,13 +345,10 @@ trait ContainerFormatTrait
         foreach ($records as $i => $record) {
             if (
                 $record instanceof EncapsulatedRecordInterface
-                && $id = $record->needsRecordLoaded()
+                && $needed = $record->needsRecordLoaded()
             ) {
-                $neededMap[$id] = $i;
-                $ids[] = [
-                    'source' => DEFAULT_SEARCH_BACKEND,
-                    'id' => $id,
-                ];
+                $neededMap[$needed['id']] = $i;
+                $ids[] = $needed;
             }
         }
         if (!empty($ids)) {
