@@ -143,7 +143,7 @@ trait ContainerFormatTrait
                     && $needed = $driver->needsRecordLoaded()
                 ) {
                     $driver->setLoadedRecord(
-                        $this->recordLoader->load($needed['id'], $needed['source'])
+                        $this->recordLoader->load($needed['id'], $needed['source'], true)
                     );
                 }
                 return $driver;
