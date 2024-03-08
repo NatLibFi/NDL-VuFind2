@@ -347,14 +347,16 @@ trait ContainerFormatTrait
                 $record instanceof EncapsulatedRecordInterface
                 && $needed = $record->needsRecordLoaded()
             ) {
-                $neededMap[$needed['id']] = $i;
+                $neededMap[$needed['source']][$needed['id']] = $i;
                 $ids[] = $needed;
             }
         }
         if (!empty($ids)) {
             $loadedRecords = $this->recordLoader->loadBatch($ids);
             foreach ($loadedRecords as $loadedRecord) {
-                $records[$neededMap[$loadedRecord->getUniqueID()]]->setLoadedRecord($loadedRecord);
+                $loadedSource = $loadedRecord->getSourceIdentifier();
+                $loadedId = $loadedRecord->getUniqueID();
+                $records[$neededMap[$loadedSource][$loadedId]]->setLoadedRecord($loadedRecord);
             }
         }
     }
