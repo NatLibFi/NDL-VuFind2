@@ -18,7 +18,7 @@
         </option>
       <?php endforeach; ?>
     <?php else: ?>
-      <option value=""><?=$this->transEsc('My Favorites') ?></option>
+      <option value=""><?=$this->transEsc('saved_items') ?></option>
     <?php endif; ?>
     </select>
     <a class="btn btn-link" id="make-list" href="<?=$this->url('editList', ['id' => 'NEW'], ['query' => ['saveHistoricLoans' => 1]]) ?>"><?=$this->transEsc('or create a new list'); ?></a>

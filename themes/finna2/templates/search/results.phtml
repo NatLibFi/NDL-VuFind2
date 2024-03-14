@@ -98,6 +98,7 @@
   $topRecommendations = $this->results->getRecommendations('top');
 
   $recordTotal = $this->results->getResultTotal();
+  $recommendations = $this->results->getRecommendations('side');
 ?>
 
 <h1 class="sr-only"><?= $this->transEsc('Search Results'); ?></h1>
@@ -191,7 +192,7 @@
       <?php endif; ?>
     </p>
   <?php endif; ?>
-  <div class="<?=$recordTotal < 1 ? 'empty-list' : $this->layoutClass('mainbody')?>">
+  <div class="<?=$recordTotal < 1 ? 'empty-list' : $this->layoutClass('mainbody', (bool)$recommendations)?>">
     <?=$this->flashmessages()?>
     <?php if ($recordTotal > 0): ?>
       <?php if ($browse): ?>
@@ -238,7 +239,7 @@
       <?php endif; ?>
     <?php else: ?>
     <div>
-      <?= $this->authorizationNote($searchClassId) ?>
+      <?=!in_array($this->layout()->templateName, ['cites', 'citedby']) ? $this->authorizationNote($searchClassId) : '' ?>
       <form id="search-cart-form" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
       </form>
       <?=$this->context($this)->renderInContext('search/bulk-action-buttons.phtml', ['idPrefix' => '', 'formAttr' => 'search-cart-form'])?>
@@ -250,24 +251,26 @@
   <?php /* End Main Listing */ ?>
 
   <?php /* Narrow Search Options */ ?>
-  <div id="sidebar" class="<?=$recordTotal < 1 ? 'empty-list' : $this->layoutClass('sidebar')?>">
-    <?php $messageAdded = false; ?>
-    <?php foreach ($this->results->getRecommendations('side') as $index => $current): ?>
-      <?=$this->recommend($current, 'side', $index)?>
-      <?php if (!$messageAdded) {
-        if (!isset($this->layout()->skiplink)) {
-          $this->layout()->skiplink = '';
-        }
-        $this->layout()->skiplink .= ' <a class="sr-only sr-only-focusable" href="#sidebar">' . $this->transEsc('Skip to narrowing options') . '</a>';
-        $messageAdded = true;
-      }?>
-    <?php endforeach; ?>
-    <?php if (($template = $this->content()->findTemplateForLng('content/Additions/search-post-facets')) && ($recordTotal > 0)): ?>
-      <div>
-          <?=$this->render($template)?>
-      </div>
-    <?php endif; ?>
-  </div>
+  <?php if ($recommendations): ?>
+    <div id="sidebar" class="<?=$recordTotal < 1 ? 'empty-list' : $this->layoutClass('sidebar')?>">
+      <?php $messageAdded = false; ?>
+      <?php foreach ($recommendations as $index => $current): ?>
+        <?=$this->recommend($current, 'side', $index)?>
+        <?php if (!$messageAdded) {
+          if (!isset($this->layout()->skiplink)) {
+            $this->layout()->skiplink = '';
+          }
+          $this->layout()->skiplink .= ' <a class="sr-only sr-only-focusable" href="#sidebar">' . $this->transEsc('Skip to narrowing options') . '</a>';
+          $messageAdded = true;
+        }?>
+      <?php endforeach; ?>
+      <?php if (($template = $this->content()->findTemplateForLng('content/Additions/search-post-facets')) && ($recordTotal > 0)): ?>
+        <div>
+            <?=$this->render($template)?>
+        </div>
+      <?php endif; ?>
+    </div>
+  <?php endif; ?>
   <?php /* End Narrow Search Options */ ?>
 </div>
 <?php // Close the container div opened in layout: ?>
@@ -276,7 +279,7 @@
 if (trim($pagination)): ?>
 <div class="container-fluid pagination-background">
   <div class="container">
-    <div class="<?=$this->layoutClass('mainbody')?> text-center">
+    <div class="<?=$this->layoutClass('mainbody', (bool)$recommendations)?> text-center">
       <?=$pagination ?>
     </div>
   </div>

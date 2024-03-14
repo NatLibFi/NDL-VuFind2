@@ -1,6 +1,6 @@
 <!-- START of: finna - navibar.phtml -->
 <?php
-    $user = $this->auth()->isLoggedIn();
+    $user = $this->auth()->getUserObject();
     $patron = $user ? $this->auth()->getILSPatron() : false;
     $capabilityParams = $patron ? ['patron' => $patron] : [];
     $account = $this->auth()->getManager();
@@ -190,7 +190,7 @@
             <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
               <li role="none">
                 <a <?=$this->url('myresearch-favorites') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role ="menuitem" href="<?=$this->url('myresearch-favorites')?>">
-                  <?=$this->transEsc('Favorites')?>
+                  <?=$this->transEsc('saved_items')?>
                 </a>
               </li>
             <?php endif; ?>
@@ -200,7 +200,7 @@
           </ul>
         </li>
       <?php endif; ?>
-      <li id="loginOptions"<?= $account->isLoggedIn() ? " class='hidden'" : '';?>>
+      <li id="loginOptions"<?= $account->getUserObject() ? " class='hidden'" : '';?>>
         <?php if ($sessionInitiator = $account->getSessionInitiator($this->serverUrl($this->url('myresearch-home')))): ?>
           <a <?=$this->url('myresearch-userlogin') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> href="<?=$this->url('myresearch-userlogin')?>"><?=$this->icon('login', 'login-icon') ?> <?=$this->transEsc('Institutional Login')?></a>
         <?php else: ?>

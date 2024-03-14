@@ -67,6 +67,7 @@ class Manager extends \VuFind\Cache\Manager
                 // against API unavailability or errors.
                 'ttl' => 0,
             ],
+            'persistent' => true,
         ],
         'description' => [
             'directory' => 'descriptions',

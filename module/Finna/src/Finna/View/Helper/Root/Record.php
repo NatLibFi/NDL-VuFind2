@@ -935,6 +935,30 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * Render citation links
+     *
+     * @return string
+     */
+    public function getCitationLinks()
+    {
+        $searchOptions = $this->getView()->plugin('searchOptions');
+        if (
+            !$searchOptions($this->driver->getSourceIdentifier())->displayCitationLinksInResults()
+            || !($links = $this->driver->tryMethod('getCitations'))
+        ) {
+            return '';
+        }
+
+        return $this->renderTemplate(
+            'result-citation-links.phtml',
+            [
+                'driver' => $this->driver,
+                'links' => $links,
+            ]
+        );
+    }
+
+    /**
      * Render meta tags for use on the record view.
      *
      * @return string

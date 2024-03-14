@@ -113,6 +113,7 @@
           <?php $recordHelper = $this->record($this->driver); ?>
           <?=$recordHelper->renderTemplate('holdings.phtml');?>
           <?=$recordHelper->getOnlineUrls('results');?>
+          <?=$recordHelper->getCitationLinks();?>
           <?=$recordHelper->getPreviews();?>
         </div>
         <div class="myresearch-notes">

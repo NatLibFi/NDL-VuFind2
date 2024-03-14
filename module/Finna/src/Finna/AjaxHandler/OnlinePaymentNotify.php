@@ -115,20 +115,15 @@ class OnlinePaymentNotify extends AbstractOnlinePaymentAction
             return $this->formatResponse('', self::STATUS_HTTP_ERROR);
         }
 
+        $user = null;
         if (
             $handler::PAYMENT_SUCCESS === $paymentResult
             && $markedAsPaid
-            && ($user = $this->userTable->getById($t->user_id))
-            && ($patron = $this->getPatronForTransaction($t))
+            && ($patron = $this->getPatronForTransaction($t, $user))
             && ($this->dataSourceConfig[$patron['source']]['onlinePayment']['receipt'] ?? false)
         ) {
-            // Send receipt by email if enabled:
-            $patronProfile = array_merge(
-                $patron,
-                $this->ils->getMyProfile($patron)
-            );
             try {
-                $res = $this->receipt->sendEmail($user, $patronProfile, $t);
+                $res = $this->receipt->sendEmail($user, $patron, $t);
                 $this->addTransactionEvent(
                     $t->id,
                     $res ? 'Receipt sent' : 'Receipt not sent (no email address)'

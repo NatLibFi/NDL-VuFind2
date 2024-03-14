@@ -123,12 +123,11 @@ finna.myList = (function finnaMyList() {
       });
   }
 
-  function addResourcesToList(listId) {
+  function addResourcesToList(listId, currentListId = '') {
     toggleErrorMessage(false);
 
     var ids = [];
-    $('input.checkbox-select-item[name="ids[]"]:checked').each(function processRecordId() {
-      var recId = $(this).val();
+    VuFind.listItemSelection.getAllSelected(document.getElementById('form-favorites')).forEach(recId => {
       var pos = recId.indexOf('|');
       var source = recId.substring(0, pos);
       var id = recId.substring(pos + 1);
@@ -145,7 +144,7 @@ finna.myList = (function finnaMyList() {
       type: 'POST',
       dataType: 'json',
       url: VuFind.path + '/AJAX/JSON?method=addToList',
-      data: {params: {'listId': listId, 'source': 'Solr', 'ids': ids}}
+      data: {params: {'listId': listId, 'currentListId': currentListId, 'source': 'Solr', 'ids': ids}}
     })
       .done(function onAddToListDone(/*data*/) {
         // Don't reload to avoid trouble with POST requests
@@ -362,7 +361,7 @@ finna.myList = (function finnaMyList() {
     $('.mylist-functions #add-to-list').off('change').on("change", function onChangeAddToList(/*e*/) {
       var val = $(this).val();
       if (val !== '') {
-        addResourcesToList(val);
+        addResourcesToList(val, getActiveListId());
       }
     });
 
@@ -470,11 +469,38 @@ finna.myList = (function finnaMyList() {
     });
   }
 
+  function initMultiPageSelection() {
+    const favoriteForm = document.querySelector('form[name=bulkActionForm]');
+    if (!favoriteForm) {
+      return;
+    }
+    const updateFunctionButtons = function updateButtonStatesFunc() {
+      var actions = $('.mylist-functions button, .mylist-functions select');
+      var aria = $('.mylist-functions .sr-only');
+      var noneChecked = VuFind.listItemSelection.getAllSelected(favoriteForm).length === 0;
+      if (noneChecked) {
+        actions.attr('disabled', true);
+        aria.removeAttr('aria-hidden');
+      } else {
+        actions.removeAttr('disabled');
+        aria.attr('aria-hidden', 'true');
+      }
+    };
+    document.querySelectorAll('.template-name-mylist .selection-controls-bar input, .template-name-mylist input.checkbox-select-item').forEach(el => el.addEventListener('change', updateFunctionButtons));
+    const clearButton = document.querySelector('.template-name-mylist .clear-selection');
+    if (clearButton) {
+      clearButton.addEventListener('click', updateFunctionButtons);
+    }
+
+    updateFunctionButtons();
+  }
+
   var my = {
     initFavoriteOrderingFunctionality: initFavoriteOrderingFunctionality,
     init: function init() {
       initEditComponents();
       initListeners();
+      initMultiPageSelection();
     }
   };
 

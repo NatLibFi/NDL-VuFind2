@@ -177,15 +177,16 @@ class Resource extends \VuFind\Db\Table\Resource
     /**
      * Apply a sort parameter to a query on the resource table.
      *
-     * @param \Laminas\Db\Sql\Select $query Query to modify
-     * @param string                 $sort  Field to use for sorting (may include
+     * @param \Laminas\Db\Sql\Select $query   Query to modify
+     * @param string                 $sort    Field to use for sorting (may include
      * 'desc' qualifier)
-     * @param string                 $alias Alias to the resource table (defaults to
+     * @param string                 $alias   Alias to the resource table (defaults to
      * 'resource')
+     * @param array                  $columns Existing list of columns to select
      *
      * @return void
      */
-    public static function applySort($query, $sort, $alias = 'resource')
+    public static function applySort($query, $sort, $alias = 'resource', $columns = [])
     {
         // Apply sorting, if necessary:
         $legalSorts = [
@@ -212,11 +213,13 @@ class Resource extends \VuFind\Db\Table\Resource
                 ['title', 'id', 'finna_custom_order_index']
             );
             if (!$special) {
-                $order[] = new Expression(
-                    'isnull(?)',
+                $expression = new Expression(
+                    'case when ? is null then 1 else 0 end',
                     [$alias . '.' . $rawField],
                     [Expression::TYPE_IDENTIFIER]
                 );
+                $query->columns(array_merge($columns, [$expression]));
+                $order[] = $expression;
             }
 
             // Apply the user-specified sort:

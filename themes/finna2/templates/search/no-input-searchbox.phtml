@@ -3,7 +3,7 @@
     $searchHome = $options->getSearchHomeAction();
     $advSearch = $options->getAdvancedSearchAction();
 ?>
-<div class="adv-search-header versions-search-header">
+<div class="adv-search-header no-input-search-header">
   <div class="adv_search_links">
     <?php if ($advSearch): ?>
       <a href="<?=$this->url($advSearch)?>"><?=$this->icon('search-advanced') ?> <?=$this->transEsc('Start a new Advanced Search')?></a>

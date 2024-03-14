@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022-2023.
+ * Copyright (C) The National Library of Finland 2022-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -379,16 +379,8 @@ class AipaLrmi extends SolrLrmi implements
 
         $driver->setContainerRecord($this);
 
-        $encapsulatedRecord = $this->recordLoader->load(
-            (string)$item->identifier,
-            DEFAULT_SEARCH_BACKEND,
-            true
-        );
-
         $data = [
             'id' => (string)$item->identifier,
-            'record' => $encapsulatedRecord,
-            'title' => $encapsulatedRecord->getTitle(),
             'position' => (int)$item->position,
             'notes' => (string)$item->comment,
             'fullrecord' => $item->asXML(),

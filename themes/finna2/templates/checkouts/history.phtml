@@ -8,7 +8,7 @@
 
     $recordCount = $this->paginator ? $this->paginator->getTotalItemCount() : count($this->transactions ?? []);
     $catalog = $this->ils();
-    $user = $this->auth()->isLoggedIn();
+    $user = $this->auth()->getUserObject();
     $patron = $user ? $this->auth()->getILSPatron() : false;
     $sortList = $this->sortList;
 ?>

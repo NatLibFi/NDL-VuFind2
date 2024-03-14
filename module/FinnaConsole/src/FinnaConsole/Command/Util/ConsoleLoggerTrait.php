@@ -60,6 +60,18 @@ trait ConsoleLoggerTrait
     protected $output = null;
 
     /**
+     * Log an error
+     *
+     * @param string $msg Message
+     *
+     * @return void
+     */
+    public function logError($msg)
+    {
+        $this->msg("ERROR: $msg");
+    }
+
+    /**
      * Log an exception triggered by ZF2 for administrative purposes.
      *
      * @param \Exception $error Exception to log

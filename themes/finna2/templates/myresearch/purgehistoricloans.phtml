@@ -9,7 +9,7 @@
     // Set up breadcrumbs:
     $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('loan_history_purge') . '</li>';
 
-    $user = $this->auth()->isLoggedIn();
+    $user = $this->auth()->getUserObject();
 ?>
 <h2><?=$this->transEsc('loan_history_purge')?></h2>
 

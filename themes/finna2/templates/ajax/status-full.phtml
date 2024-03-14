@@ -315,7 +315,7 @@ if (!$disableTitleHold
 ?>
 <?php
     if ($account->loginEnabled() && $offlineMode != 'ils-offline' && $ilsLoginAvailable) {
-      $logged = $account->isLoggedIn();
+      $logged = $account->getUserObject();
       $link = null;
       $lightbox = true;
       if (!$logged) {
@@ -353,7 +353,7 @@ if (!$disableTitleHold
 
 <?php if ($driver && $this->record($driver)->repositoryLibraryRequestEnabled('results')): ?>
   <div class="request">
-    <?php $user = $this->auth()->isLoggedIn();
+    <?php $user = $this->auth()->getUserObject();
     if ($user): ?>
       <?php if ($user->getLibraryCards()->count()): ?>
         <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($driver, 'RepositoryLibraryRequest'))?>" data-lightbox class="btn btn-primary repository-library-request-order"><?=$this->transEsc('repository_library_request_order')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>

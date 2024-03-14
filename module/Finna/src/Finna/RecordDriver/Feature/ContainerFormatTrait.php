@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022-2023.
+ * Copyright (C) The National Library of Finland 2022-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -120,6 +120,7 @@ trait ContainerFormatTrait
             }
             $results[] = $this->getCachedEncapsulatedRecordDriver($p);
         }
+        $this->loadNeededRecords($results);
         return $results;
     }
 
@@ -136,7 +137,16 @@ trait ContainerFormatTrait
         $cache = $this->getEncapsulatedRecordCache();
         foreach ($cache as $position => $record) {
             if ($id === $record['id']) {
-                return $this->getCachedEncapsulatedRecordDriver($position);
+                $driver = $this->getCachedEncapsulatedRecordDriver($position);
+                if (
+                    $driver instanceof EncapsulatedRecordInterface
+                    && $needed = $driver->needsRecordLoaded()
+                ) {
+                    $driver->setLoadedRecord(
+                        $this->recordLoader->load($needed['id'], $needed['source'], true)
+                    );
+                }
+                return $driver;
             }
         }
         return null;
@@ -319,6 +329,36 @@ trait ContainerFormatTrait
                     = $this->getEncapsulatedRecordDriver($cache[$position]['item']);
         }
         return $driver;
+    }
+
+    /**
+     * Loads any records needed by encapsulated record drivers to be loaded.
+     *
+     * @param array $records Record drivers
+     *
+     * @return void
+     */
+    protected function loadNeededRecords(array $records): void
+    {
+        $neededMap = [];
+        $ids = [];
+        foreach ($records as $i => $record) {
+            if (
+                $record instanceof EncapsulatedRecordInterface
+                && $needed = $record->needsRecordLoaded()
+            ) {
+                $neededMap[$needed['source']][$needed['id']] = $i;
+                $ids[] = $needed;
+            }
+        }
+        if (!empty($ids)) {
+            $loadedRecords = $this->recordLoader->loadBatch($ids);
+            foreach ($loadedRecords as $loadedRecord) {
+                $loadedSource = $loadedRecord->getSourceIdentifier();
+                $loadedId = $loadedRecord->getUniqueID();
+                $records[$neededMap[$loadedSource][$loadedId]]->setLoadedRecord($loadedRecord);
+            }
+        }
     }
 
     /**

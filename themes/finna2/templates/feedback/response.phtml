@@ -4,9 +4,8 @@
 
   $title = $form->getTitle();
   $title = !empty($title) ? $this->translate($title) : null;
-  $lightbox = $this->layout()->getTemplate() === 'layout/lightbox';
 ?>
-<?php if (!$lightbox): ?>
+<?php if (!$this->inLightbox): ?>
 <div class="feedback-content">
 <?php endif; ?>
   <?php if ($title): ?>
@@ -18,6 +17,6 @@
     <?php endif; ?>
   <?php endif; ?>
   <p role="status"><?= $this->translate($this->successMessage) ?></p>
-<?php if (!$lightbox): ?>
+<?php if (!$this->inLightbox): ?>
 </div>
 <?php endif; ?>

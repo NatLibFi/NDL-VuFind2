@@ -158,40 +158,71 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         if (isset($this->cache[__FUNCTION__])) {
             return $this->cache[__FUNCTION__];
         }
-        $result = parent::getAllRecordLinks();
+        // Load configurations:
+        $fieldsNames = isset($this->mainConfig->Record->marc_links)
+            ? explode(',', $this->mainConfig->Record->marc_links) : [];
+        $useVisibilityIndicator
+            = $this->mainConfig->Record->marc_links_use_visibility_indicator ?? true;
 
-        // Handle 730 separately so that ind2 can be checked.
-        foreach ($this->getMarcReader()->getFields('730') as $field) {
-            if ($field['i2'] !== ' ') {
-                continue;
-            }
+        // Temporarily add 730 as a link field by default, may be removed later
+        if (!in_array('730', $fieldsNames)) {
+            $fieldsNames[] = '730';
+        }
 
-            // Get data for field
-            $tmp = $this->getFieldData($field);
-            if (is_array($tmp)) {
-                if ('' === $tmp['value']) {
-                    // getfieldData doesn't handle subfield a (it's not the same for
-                    // other fields), so do it now if we didn't get a title:
-                    $tmp['value'] = $this->getSubfield($field, 'a');
-                    if ('title' === $tmp['link']['type']) {
-                        $tmp['link']['value'] = $tmp['value'];
+        $result = [];
+        foreach ($fieldsNames as $value) {
+            $value = trim($value);
+            $fields = $this->getMarcReader()->getFields($value);
+            foreach ($fields as $field) {
+                if ($value == '730') {
+                    // Handle 730 separately so that ind2 can be checked.
+                    if ($field['i2'] !== ' ') {
+                        continue;
+                    }
+                } else {
+                    // Check to see if we should display at all
+                    if ($useVisibilityIndicator) {
+                        $visibilityIndicator = $field['i1'];
+                        if ($visibilityIndicator == '1') {
+                            continue;
+                        }
                     }
                 }
-                if (null === $result) {
-                    $result = [];
+
+                // Get data for field
+                $tmp = $this->getFieldData($field);
+
+                if ($value == '730') {
+                    // getfieldData doesn't handle subfield a (it's not the same for
+                    // other fields), so do it now if we didn't get a title:
+                    if ($tmp) {
+                        if ('' === $tmp['value']) {
+                            $tmp['value'] = $this->getSubfield($field, 'a');
+                            if ('title' === $tmp['link']['type']) {
+                                $tmp['link']['value'] = $tmp['value'];
+                            }
+                        }
+                    }
+                } elseif ($value == '775' || $value == '776') {
+                    // We need to display most of the subfields in this case
+                    $line = [];
+                    foreach ($this->getAllSubfields($field) as $subfield) {
+                        if (!in_array($subfield['code'], ['i', 'l', 'w', '4', '6', '7', '8'])) {
+                            $line[] = $subfield['data'];
+                        }
+                    }
+                    $tmp['value'] = implode(' ', $line);
                 }
                 $result[] = $tmp;
             }
         }
 
-        if ($result !== null) {
-            foreach ($result as &$link) {
-                if (isset($link['value'])) {
-                    $link['value'] = $this->stripTrailingPunctuation($link['value']);
-                }
+        foreach ($result as &$link) {
+            if (isset($link['value'])) {
+                $link['value'] = $this->stripTrailingPunctuation($link['value']);
             }
-            unset($link);
         }
+        unset($link);
 
         $this->cache[__FUNCTION__] = $result;
         return $result;
@@ -1985,6 +2016,16 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
+     * Get an array of capture information.
+     *
+     * @return array
+     */
+    public function getCaptureInformation()
+    {
+        return $this->stripTrailingPunctuation($this->getFieldArray('518', ['3', 'o', 'd', 'p']));
+    }
+
+    /**
      * Get composition information from field 382.
      *
      * @return array
@@ -2377,24 +2418,15 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
-     * Get uncontrolled title from field 740, subfield a.
+     * Get uncontrolled title from field 740, subfields a, n and p.
      *
      * @return array
      */
     public function getUncontrolledTitle()
     {
-        $results = [];
-        foreach ($this->getMarcReader()->getFields('740') as $field) {
-            if ($subfield = $this->getSubfield($field, 'a')) {
-                $subfield = $this->stripTrailingPunctuation($subfield);
-                if (($ind1 = $field['i1']) && ctype_digit($ind1)) {
-                    $results[] = substr($subfield, $ind1);
-                } else {
-                    $results[] = $this->stripTrailingPunctuation($subfield);
-                }
-            }
-        }
-        return $results;
+        return $this->stripTrailingPunctuation(
+            $this->getFieldArray('740', ['a', 'n', 'p'])
+        );
     }
 
     /**

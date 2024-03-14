@@ -72,7 +72,7 @@ class ImportFavoritesFactory implements FactoryInterface
         }
         $tablePluginManager = $container->get(\VuFind\Db\Table\PluginManager::class);
         return new $requestedName(
-            $container->get(\VuFind\Auth\Manager::class)->isLoggedIn(),
+            $container->get(\VuFind\Auth\Manager::class)->getUserObject(),
             $container->get('ViewRenderer'),
             $tablePluginManager->get(\VuFind\Db\Table\Search::class),
             $tablePluginManager->get(\VuFind\Db\Table\UserList::class),

@@ -68,7 +68,7 @@ class GetUserListsFactory implements \Laminas\ServiceManager\Factory\FactoryInte
         }
         $capabilities = $container->get(\VuFind\Config\AccountCapabilities::class);
         return new $requestedName(
-            $container->get(\VuFind\Auth\Manager::class)->isLoggedIn(),
+            $container->get(\VuFind\Auth\Manager::class)->getUserObject(),
             $container->get('ViewRenderer'),
             $capabilities->getListSetting() !== 'disabled'
         );

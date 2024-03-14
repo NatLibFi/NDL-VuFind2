@@ -74,10 +74,8 @@ class RegisterOnlinePayment extends AbstractOnlinePaymentAction
             // Registration already in progress, return error:
             return $this->formatResponse('', self::STATUS_HTTP_ERROR);
         }
-        $transaction->setRegistrationStarted();
 
-        $res = $this->markFeesAsPaidForTransaction($transaction);
-        return $res['success']
+        return $this->markFeesAsPaidForTransaction($transaction)
             ? $this->formatResponse('')
             : $this->formatResponse('', self::STATUS_HTTP_ERROR);
     }

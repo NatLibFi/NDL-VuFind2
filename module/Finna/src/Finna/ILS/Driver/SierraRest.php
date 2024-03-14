@@ -1083,7 +1083,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         $holdingsData = [];
         if ($checkHoldings && $this->apiVersion >= 5.1) {
             $holdingsResult = $this->makeRequest(
-                ['v5', 'holdings'],
+                [$this->apiBase, 'holdings'],
                 [
                     'bibIds' => $this->extractBibId($id),
                     'deleted' => 'false',
