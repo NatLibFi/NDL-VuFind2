@@ -1,8 +1,7 @@
 <!-- START of: finna - ajax/feed-carousel.phtml -->
 <?php
-  $feedTitleEsc = '';
-  if ($this->title || $this->translateTitle):
-  $feedTitleEsc = $this->translateTitle ? $this->transEsc($this->translateTitle) : $this->escapeHtml($this->title);
+  $feedTitleEsc = !empty($this->translateTitle) ? $this->transEsc($this->translateTitle) : $this->escapeHtml($this->title ?? '');
+  if ($feedTitleEsc):
 ?>
   <h2 class="carousel-header"><?=$feedTitleEsc?></h2>
 <?php endif; ?>
