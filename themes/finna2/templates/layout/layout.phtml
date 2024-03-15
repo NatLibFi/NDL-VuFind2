@@ -164,7 +164,7 @@
       <?=$this->render($template)?>
     <?php endif; ?>
   </head>
-  <body class="template-dir-<?=$this->templateDir . ('content' === $this->templateDir ? ' template-name-content' : '')?> template-name-<?=$this->templateName?> <?=$this->layoutClass('offcanvas-row')?><?php if ($this->layout()->rtl): ?> rtl<?php endif; ?>">
+  <body class="template-dir-<?=$this->templateDir?> template-name-<?=$this->templateName?> <?=$this->layoutClass('offcanvas-row')?><?php if ($this->layout()->rtl): ?> rtl<?php endif; ?>">
     <?=$this->render('search/modals.phtml') ?>
     <header class="hidden-print">
       <?php if ($this->bazaarSession()->isActive()): ?>
@@ -255,7 +255,7 @@
       </nav>
     <?php endif; ?>
     <?php // TODO: get rid of template-dir-* and template-name-* here ?>
-    <section role="main" class="main template-dir-<?=$this->templateDir . ('content' === $this->templateDir ? ' template-name-content' : '')?> template-name-<?=$this->templateName?><?=$this->browse ? ' browse' : '' ?><?=$currentTabClass?>">
+    <section role="main" class="main template-dir-<?=$this->templateDir?> template-name-<?=$this->templateName?><?=$this->browse ? ' browse' : '' ?><?=$currentTabClass?>">
       <?php if (!empty($this->layout()->advSearchHeader)): ?>
         <?=$this->layout()->advSearchHeader; ?>
       <?php endif; ?>
