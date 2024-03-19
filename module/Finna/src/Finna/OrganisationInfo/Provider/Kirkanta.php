@@ -532,7 +532,7 @@ class Kirkanta extends AbstractProvider
         $dedupEmails = array_unique($response['emailAddresses'] ?? [], SORT_REGULAR);
         foreach ($dedupEmails as $address) {
             $emails[] = [
-                'name' => $address['name'],
+                'name' => $address['name'] ?? '',
                 'email' => $address['email'],
             ];
         }
