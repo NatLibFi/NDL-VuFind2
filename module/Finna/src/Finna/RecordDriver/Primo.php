@@ -199,7 +199,7 @@ class Primo extends \VuFind\RecordDriver\Primo
             return true;
         }
 
-        if (!$this->fields['sourceid']) {
+        if (empty($this->fields['sourceid'])) {
             return true;
         }
 
