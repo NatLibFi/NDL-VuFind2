@@ -10,7 +10,7 @@
 <?php endif; ?>
   <?php if ($title): ?>
     <?php $this->headTitle($title); ?>
-    <?php if (!$lightbox): ?>
+    <?php if (!$this->inLightbox): ?>
       <h1><?=$this->escapeHtml($title)?></h1>
     <?php else: ?>
       <h2><?=$this->escapeHtml($title)?></h2>

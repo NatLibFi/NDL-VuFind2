@@ -361,7 +361,7 @@ if (!$disableTitleHold
         <a href="<?=$this->url('editLibraryCard', ['id' => 'NEW'])?>" class="btn btn-primary login-link hidden-print"><?=$this->transEsc('repository_library_request_add_library_card')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
       <?php endif; ?>
     <?php else: ?>
-      <?php $link = $holdingsLink . (!str_contains($holdingslink, '?') ? '?' : '&') . '?login=true&catalogLogin=true'; ?>
+      <?php $link = $holdingsLink . (!str_contains($holdingsLink, '?') ? '?' : '&') . 'login=true&catalogLogin=true'; ?>
       <a href="<?=$this->escapeHtmlAttr($addSid($link))?>" class="btn btn-primary login-link hidden-print" data-lightbox><?=$this->transEsc('repository_library_request_login')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
     <?php endif; ?>
   </div>
