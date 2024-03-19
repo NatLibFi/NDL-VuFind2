@@ -30,6 +30,7 @@
 namespace Finna\Db\Table;
 
 use Laminas\Db\Sql\Expression;
+use Laminas\Db\Sql\Select;
 
 use function in_array;
 
@@ -70,15 +71,14 @@ class Resource extends \VuFind\Db\Table\Resource
         $obj = & $this;
         return $this->select(
             function ($s) use ($user, $list, $tags, $sort, $offset, $limit, $obj) {
-                $s->columns(
-                    [
-                        new Expression(
-                            'DISTINCT(?)',
-                            ['resource.id'],
-                            [Expression::TYPE_IDENTIFIER]
-                        ), '*',
-                    ]
-                );
+                $columns = [
+                    new Expression(
+                        'DISTINCT(?)',
+                        ['resource.id'],
+                        [Expression::TYPE_IDENTIFIER]
+                    ), Select::SQL_STAR,
+                ];
+                $s->columns($columns);
                 $urColumns = $list === null ?
                     [
                     'id' => new Expression(
@@ -132,7 +132,7 @@ class Resource extends \VuFind\Db\Table\Resource
                 }
                 $s->group('resource.id');
                 if (!empty($sort)) {
-                    Resource::applySort($s, $sort);
+                    Resource::applySort($s, $sort, 'resource', $columns);
                 }
             }
         );
