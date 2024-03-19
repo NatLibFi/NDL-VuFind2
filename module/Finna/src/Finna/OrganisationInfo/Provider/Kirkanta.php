@@ -519,7 +519,7 @@ class Kirkanta extends AbstractProvider
             if (str_contains($phone['number'], '@')) {
                 continue;
             }
-            if ($name = $phone['name']) {
+            if ($name = $phone['name'] ?? null) {
                 $phones[] = [
                     'name' => $name,
                     'number' => $phone['number'],
