@@ -213,6 +213,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     protected $excludedSubjectTypes = ['aihe', 'iconclass'];
 
     /**
+     * Array of types for linkResources to be displayed as external URL
+     */
+    protected $displayExternalLinks = ['provided_3D'];
+
+    /**
      * Events used for author information.
      *
      * Key is event type, value is priority (lower is more important),
@@ -556,7 +561,21 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                                 ?? reset($foundDescriptions);
                     }
                 }
-
+                // Add url into documents as a displayable link in the recordpage
+                if (in_array($type, $this->displayExternalLinks) && $host = $this->safeParseUrl($url, PHP_URL_HOST)) {
+                    if (str_contains($host, '.')) {
+                        $host = mb_substr($host, 0, strrpos($host, '.'));
+                    }
+                    $resourceRights = $this->getResourceRights($resourceSet, $language, false);
+                    $document = $this->getDocument(
+                        $url,
+                        '',
+                        $description ?: "external_$host",
+                        $resourceRights,
+                        true
+                    );
+                    $documentUrls = array_merge($documentUrls, $document);
+                }
                 // Representation is an image
                 if (in_array($type, $imageTypeKeys)) {
                     $image = $this->getImage(
@@ -775,9 +794,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     ): array {
         $type = $this->modelTypes[$type];
         $format = strtolower($format);
-        if ('preview' === $type && !in_array($format, $this->displayableModelFormats)) {
-            // If we can not display the file, then tag it as a provided 3D model
-            $type = 'provided';
+        if ('preview' !== $type || !in_array($format, $this->displayableModelFormats)) {
+            return [];
         }
         return [
             'url' => $url,
@@ -914,10 +932,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     /**
      * Function to return document in associative array
      *
-     * @param string $url         Url of the document
-     * @param string $format      Format of the document
-     * @param string $description Description of the document
-     * @param array  $rights      Array of document rights
+     * @param string $url               Url of the document
+     * @param string $format            Format of the document
+     * @param string $description       Description of the document
+     * @param array  $rights            Array of document rights
+     * @param bool   $displayAsExternal Should the document be displayed as an external link
      *
      * @return array
      */
@@ -925,13 +944,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $url,
         string $format,
         string $description,
-        array $rights
+        array $rights,
+        bool $displayAsExternal = false
     ): array {
         return [
             'description' => $description ?: false,
             'url' => $url,
             'format' => strtolower($format),
             'rights' => $rights,
+            'displayAsExternal' => $displayAsExternal,
         ];
     }
 

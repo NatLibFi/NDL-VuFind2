@@ -15,7 +15,7 @@
         $format = $document['format'] ?? null;
     ?>
     <?php ob_start(); ?>
-    <?php if ($showDownloadLinks): ?>
+    <?php if ($showDownloadLinks && !($document['displayAsExternal'] ?? false)): ?>
         <?php $aAttrs = [
             'download' => '',
             'rel' => 'nofollow',
@@ -38,7 +38,7 @@
         } ?>
         <a <?=$this->htmlAttributes($aAttrs)?>>
             <?=$this->icon('external-link')?>
-            <?=$this->transEscWithPrefix('link_', $description)?>
+            <?=$this->transEscWithPrefix('link_', $description, [], $this->translate('external_online_link'))?>
         </a>
     <?php endif; ?>
     <?php $linkToResource = trim(ob_get_clean()); ?>
