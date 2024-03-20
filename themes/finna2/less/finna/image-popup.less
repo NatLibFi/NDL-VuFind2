@@ -660,69 +660,69 @@
                 }
             }
         }
-    .track-holder {
-        display: inline-block;
-        flex: 1 1 auto;
-        .finna-element-track {
-            max-height: 100%;
-            touch-action: none;
-            display: flex;
-            flex-flow: column;
-            align-items: center;
-            width: 100%;
-            min-width: 100%;
-            div {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 100%;
-                a {
-                background-color: #efefefcc;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 64px;
-                overflow: hidden;
-                margin: 2px 4px;
-                padding: 2px;
-                flex: 0 1 64px;
-                span.model-3d-icon {
-                    color: #121212;
-                    font-size: 24px;
-                    font-style: initial;
-                }
-                &.current {
-                    border: 0.2em solid @brand-primary;
-                }
-                &.truncate-change {
-                    opacity: 0;
-                }
-                }
-            }
-            }
-        }
-      &.mini-paginator {
-        position: absolute;
-        left: 0;
-        padding: 0;
-        top: 0;
-        justify-content: start;
-        button {
-            background-color: #efefefcc;
-            margin: 0 1px;
-            padding: 0 4px;
-            height: 24px;
-            .icon {
-                font-size: 10px;
-            }
-            &:disabled {
-                color: lighten(@gray-light, 30%);
-            }
-        }
         .track-holder {
-            display: none;
+            display: inline-block;
+            flex: 1 1 auto;
+            .finna-element-track {
+                max-height: 100%;
+                touch-action: none;
+                display: flex;
+                flex-flow: column;
+                align-items: center;
+                width: 100%;
+                min-width: 100%;
+                div {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 100%;
+                    a {
+                        background-color: #efefefcc;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: 64px;
+                        overflow: hidden;
+                        margin: 2px 4px;
+                        padding: 2px;
+                        flex: 0 1 64px;
+                        span.model-3d-icon {
+                            color: #121212;
+                            font-size: 24px;
+                            font-style: initial;
+                        }
+                        &.current {
+                            border: 0.2em solid @brand-primary;
+                        }
+                        &.truncate-change {
+                            opacity: 0;
+                        }
+                    }
+                }
+            }
         }
-    }
+        &.mini-paginator {
+            position: absolute;
+            left: 0;
+            padding: 0;
+            top: 0;
+            justify-content: start;
+            button {
+                background-color: #efefefcc;
+                margin: 0 1px;
+                padding: 0 4px;
+                height: 24px;
+                .icon {
+                    font-size: 10px;
+                }
+                &:disabled {
+                    color: lighten(@gray-light, 30%);
+                }
+            }
+            .track-holder {
+                display: none;
+            }
+        }
     }
 } 
 .recordcovers-more {
