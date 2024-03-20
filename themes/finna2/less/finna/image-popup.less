@@ -571,66 +571,214 @@
     }
 }
 
-.record-image-container {
-    .recordcover-holder {
-        .recordcover-container {
-            min-width: 60px;
-            .image-popup-trigger {
+.recordcover-container {
+    min-width: 60px;
+    .image-popup-trigger {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        aspect-ratio: 1/1;
+        .paginator-info {
+            position: absolute;
+            right: 10px;
+            top: 0px;
+            color: black;
+            z-index: 6;
+            .image-index {
+                background-color: #efefefcc;
+                padding: 2px;
+            }
+        }
+        .iconlabel {
+            display: none;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+        img {
+            object-fit: contain;
+            padding:5px;
+        }
+        &.no-image {
+            ::before {
+                font-size: 39px;
+                color: @gray-lighter;
+                @media (max-width:@screen-sm-max) {
+                    font-size: 26px;
+                }
+            }
+            img {
+                display: none;
+            }
+            .iconlabel {
                 display: flex;
-                justify-content: center;
-                height: 100%;
-                width: 100%;
-                aspect-ratio: 1/1;
-                .paginator-info {
-                    position: absolute;
-                    right: 10px;
-                    top: 0px;
-                    color: black;
-                    z-index: 6;
-                    .image-index {
-                        background-color: #d6d6d6;
-                        background-color: #efefefcc;
-                        padding: 2px;
-                    }
-                }
-                .iconlabel {
-                    display: none;
-                    width: 100%;
-                    height: 100%;
-                    justify-content: center;
-                    align-items: center;
-                    box-shadow: 0px 0px 0px 2px @gray-lighter inset;
-                }
-                img {
-                    object-fit: contain;
-                    display: inline-block;
-                    padding:5px;
-                    width: 100%;
-                    height: 100%;
-                }
-                &.no-image {
-                    ::before {
-                        font-size: 39px;
-                        color: @gray-lighter;
-                        @media (min-width:@screen-xs-min) and (max-width:@screen-sm-max) {
-                            font-size: 26px;
-                        }
-                    }
-                    img {
-                        display: none;
-                    }
-                    .iconlabel {
-                        display: flex;
-                        margin-right: 0;
-                    }
-                    &.disable {
-                        cursor: default;
-                    }
-                    .model-3d {
-                        display: none;
-                    }
-                }
+                margin-right: 0;
+                box-shadow: 0px 0px 0px 2px @gray-lighter inset;
+            }
+            &.disable {
+                cursor: default;
+            }
+            .model-3d {
+                display: none;
             }
         }
     }
 }
+
+.grid-image .image-popup-trigger.no-image .iconlabel {
+    box-shadow: initial;
+}
+
+.recordcovers {
+    &.paginated {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      .paginator-info {
+        position: absolute;
+        right: 40px;
+        font-size: 0.9em;
+        bottom: -22px;
+      }
+      > button {
+        appearance: none;
+        -webkit-appearance: none;
+        height: 44px;
+        border: none;
+        background-color: transparent;
+        padding: 0 2px;
+        flex: 0 0 0;
+        i {
+          cursor: pointer;
+          font-size: 24px;
+        }
+        .finna-popup &:not(:disabled){
+          color: white;
+        }
+        &:disabled {
+          background-color: #d6d6d600;
+          color: lighten(@gray-light, 30%);
+          color: transparent;
+          i {
+            cursor: not-allowed;
+          }
+        }
+      }
+  
+      .track-holder {
+        display: inline-block;
+        flex: 1 1 auto;
+        .finna-element-track {
+          max-height: 100%;
+          touch-action: none;
+          display: flex;
+          flex-flow: column;
+          align-items: center;
+          width: 100%;
+          min-width: 100%;
+          div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            a {
+              background-color: #efefefcc;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              height: 64px;
+              overflow: hidden;
+              margin: 2px 4px;
+              padding: 2px;
+              max-width: 64px;
+              flex: 1 1 64px;
+              cursor: pointer;
+              span.model-3d-icon {
+                color: #121212;
+                font-size: 24px;
+                font-style: initial;
+              }
+              &.current {
+                border: 0.2em solid @brand-primary;
+              }
+  
+              &.truncate-change {
+                opacity: 0;
+              }
+            }
+          }
+        }
+      }
+    }
+  
+    &.mini-paginator.paginated {
+      position: absolute;
+      left: 0;
+      padding: 0;
+      z-index: 3;
+      min-height: 20px;
+      top: 0;
+      align-items: center;
+      justify-content: start;
+      button {
+        background-color: #efefef;
+        background-color: #efefefcc;
+        margin: 0 1px;
+        padding: 0 4px;
+        box-shadow: 1px 1px #c6c6c6;
+        height: 24px;
+        .icon {
+          font-size: 10px;
+        }
+        &:disabled {
+          color: lighten(@gray-light, 30%);
+        }
+      }
+  
+      .paginator-info {
+        text-align: left;
+        width: initial;
+        position: initial;
+        margin: 0 2px;
+        .image-index {
+          background-color: #efefef;
+          background-color: #efefefcc;
+        }
+      }
+  
+      .track-holder {
+        margin: 0 1px;
+        display: none;
+      }
+    }
+  }
+  
+  .recordcovers-more {
+    display: flex;
+    align-items: center;
+  
+    .show-more-images, .show-less-images {
+      cursor: pointer;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: .9em;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      border: none;
+      background-color: transparent;
+      padding: 0;
+    }
+    button {
+      flex: 1;
+      appearance: none;
+      -webkit-appearance: none;
+      border: none;
+      i {
+        cursor: pointer;
+      }
+    }
+    button:disabled i {
+      cursor: initial;
+    }
+  }
