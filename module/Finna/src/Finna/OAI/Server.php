@@ -55,6 +55,9 @@ class Server extends \VuFind\OAI\Server
         $this->metadataFormats['oai_ead'] = [
             'schema' => 'https://www.loc.gov/ead/ead.xsd',
             'namespace' => 'http://www.loc.gov/ead/'];
+        $this->metadataFormats['oai_ead3'] = [
+            'schema' => 'https://www.loc.gov/ead/ead3.xsd',
+            'namespace' => 'http://ead3.archivists.org/schema/'];
         $this->metadataFormats['oai_forward'] = [
             'schema' => 'http://forward.cineca.it/schema/EN15907-forward-v1.0.xsd',
             'namespace' => 'http://project9forward.eu/schemas/EN15907-forward'];
