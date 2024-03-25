@@ -67,4 +67,63 @@ class Server extends \VuFind\OAI\Server
             'schema' => $qdc,
             'namespace' => 'urn:dc:qdc:container'];
     }
+
+    /**
+     * Validate the from and until parameters for the listRecords method.
+     *
+     * @param int $from  String for start date.
+     * @param int $until String for end date.
+     *
+     * @return bool      True if invalid, false if not.
+     */
+    protected function isBadDate($from, $until)
+    {
+        $dt = \DateTime::createFromFormat('Y-m-d', substr($until, 0, 10));
+        if (!$this->dateTimeCreationSuccessful($dt)) {
+            return true;
+        }
+        $dt = \DateTime::createFromFormat('Y-m-d', substr($from, 0, 10));
+        if (!$this->dateTimeCreationSuccessful($dt)) {
+            return true;
+        }
+        // Check for different date granularity
+        if (strpos($from, 'T') && strpos($from, 'Z')) {
+            if (strpos($until, 'T') && strpos($until, 'Z')) {
+                // This is good
+            } else {
+                return true;
+            }
+        } elseif (strpos($until, 'T') && strpos($until, 'Z')) {
+            return true;
+        }
+
+        $from_time = $this->normalizeDate($from);
+        $until_time = $this->normalizeDate($until, '23:59:59');
+        if ($from_time > $until_time) {
+            throw new \Exception('noRecordsMatch:from vs. until');
+        }
+        if ($from_time < $this->normalizeDate($this->earliestDatestamp)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Check if a DateTime was successfully created without errors or warnings
+     *
+     * @param \DateTime|false $dt DateTime or false (return value of createFromFormat)
+     *
+     * @return bool
+     */
+    protected function dateTimeCreationSuccessful(\DateTime|false $dt): bool
+    {
+        if (false === $dt) {
+            return false;
+        }
+        $errors = $dt->getLastErrors();
+        if (false === $errors) {
+            return true;
+        }
+        return empty($errors['errors']) && empty($errors['warnings']);
+    }
 }
