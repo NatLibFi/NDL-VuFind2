@@ -35,10 +35,12 @@
         }
         if ($downloadOnly = $document['downloadOnly'] ?? null) {
             $aAttrs['download'] = $downloadOnly;
-        } ?>
+        }
+        $descriptionDefault = ($document['displayAsLink'] ?? false) ? $this->translate('external_online_link') : null;
+        ?>
         <a <?=$this->htmlAttributes($aAttrs)?>>
             <?=$this->icon('external-link')?>
-            <?=$this->transEscWithPrefix('link_', $description, [], $this->translate('external_online_link'))?>
+            <?=$this->transEscWithPrefix('link_', $description, [], $descriptionDefault)?>
         </a>
     <?php endif; ?>
     <?php $linkToResource = trim(ob_get_clean()); ?>
