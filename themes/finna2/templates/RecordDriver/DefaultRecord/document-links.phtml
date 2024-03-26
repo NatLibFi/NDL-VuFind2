@@ -15,7 +15,7 @@
         $format = $document['format'] ?? null;
     ?>
     <?php ob_start(); ?>
-    <?php if ($showDownloadLinks && !($document['displayAsExternal'] ?? false)): ?>
+    <?php if ($showDownloadLinks && empty($document['displayAsLink'])): ?>
         <?php $aAttrs = [
             'download' => '',
             'rel' => 'nofollow',

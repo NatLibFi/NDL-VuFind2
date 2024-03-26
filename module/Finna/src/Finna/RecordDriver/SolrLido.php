@@ -561,20 +561,31 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                                 ?? reset($foundDescriptions);
                     }
                 }
-                // Add url into documents as a displayable link in the recordpage
-                if (in_array($type, $this->displayExternalLinks) && $host = $this->safeParseUrl($url, PHP_URL_HOST)) {
-                    if (str_contains($host, '.')) {
-                        $host = mb_substr($host, 0, strrpos($host, '.'));
+                // Representation is a document or wanted to be displayed also as an document
+                if (
+                    in_array($type, $documentTypeKeys)
+                    || ($displayAsLink = in_array($type, $this->displayExternalLinks))
+                ) {
+                    $documentDesc = $description;
+                    if ($displayAsLink ??= false && !$documentDesc) {
+                        $host = $this->safeParseUrl($url, PHP_URL_HOST);
+                        if (str_contains($host, '.')) {
+                            $host = mb_substr($host, 0, strrpos($host, '.'));
+                        }
+                        $documentDesc = "external_$host";
                     }
-                    $resourceRights = $this->getResourceRights($resourceSet, $language, false);
-                    $document = $this->getDocument(
-                        $url,
-                        '',
-                        $description ?: "external_$host",
-                        $resourceRights,
-                        true
-                    );
-                    $documentUrls = array_merge($documentUrls, $document);
+                    $documentRights = $this->getResourceRights($resourceSet, $language, false);
+                    if (
+                        $document = $this->getDocument(
+                            $url,
+                            $format,
+                            $documentDesc,
+                            $documentRights,
+                            $displayAsLink
+                        )
+                    ) {
+                        $documentUrls = array_merge($documentUrls, $document);
+                    }
                 }
                 // Representation is an image
                 if (in_array($type, $imageTypeKeys)) {
@@ -622,13 +633,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                         $videoUrls = array_merge($videoUrls, $video);
                     }
                     continue;
-                }
-                // Representation is a document
-                if (in_array($type, $documentTypeKeys)) {
-                    $documentRights = $this->getResourceRights($resourceSet, $language, false);
-                    if ($document = $this->getDocument($url, $format, $description, $documentRights)) {
-                        $documentUrls = array_merge($documentUrls, $document);
-                    }
                 }
             }
             // Save all the found results here as a new object
@@ -932,11 +936,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     /**
      * Function to return document in associative array
      *
-     * @param string $url               Url of the document
-     * @param string $format            Format of the document
-     * @param string $description       Description of the document
-     * @param array  $rights            Array of document rights
-     * @param bool   $displayAsExternal Should the document be displayed as an external link
+     * @param string $url           Url of the document
+     * @param string $format        Format of the document
+     * @param string $description   Description of the document
+     * @param array  $rights        Array of document rights
+     * @param bool   $displayAsLink Display the document as a link, default is false
      *
      * @return array
      */
@@ -945,14 +949,46 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $format,
         string $description,
         array $rights,
-        bool $displayAsExternal = false
+        bool $displayAsLink = false
     ): array {
+        $format = strtolower($format);
+        // Do not display text/html mediatype
+        if ('text/html' === $format) {
+            $format = '';
+        }
+        return [
+            'description' => $description ?: false,
+            'url' => $url,
+            'format' => $format,
+            'rights' => $rights,
+            'displayAsLink' => $displayAsLink,
+        ];
+    }
+
+    /**
+     * Function to return URL as associative array
+     *
+     * @param string $url         Url of the document
+     * @param string $format      Format of the document
+     * @param string $description Description of the document
+     * @param array  $rights      Array of document rights
+     *
+     * @return array
+     */
+    public function getURL(
+        string $url,
+        string $format,
+        string $description,
+        array $rights
+    ): array {
+        if ($format === 'text/html') {
+            $format = '';
+        }
         return [
             'description' => $description ?: false,
             'url' => $url,
             'format' => strtolower($format),
             'rights' => $rights,
-            'displayAsExternal' => $displayAsExternal,
         ];
     }
 
