@@ -966,33 +966,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     }
 
     /**
-     * Function to return URL as associative array
-     *
-     * @param string $url         Url of the document
-     * @param string $format      Format of the document
-     * @param string $description Description of the document
-     * @param array  $rights      Array of document rights
-     *
-     * @return array
-     */
-    public function getURL(
-        string $url,
-        string $format,
-        string $description,
-        array $rights
-    ): array {
-        if ($format === 'text/html') {
-            $format = '';
-        }
-        return [
-            'description' => $description ?: false,
-            'url' => $url,
-            'format' => strtolower($format),
-            'rights' => $rights,
-        ];
-    }
-
-    /**
      * Get rights from the given resourceSet
      *
      * @param \SimpleXmlElement $resourceSet Given resourceSet from lido
