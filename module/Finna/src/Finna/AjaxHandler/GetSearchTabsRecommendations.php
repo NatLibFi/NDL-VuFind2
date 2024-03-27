@@ -152,7 +152,7 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase impl
         $id = $params->fromPost('searchId', $params->fromQuery('searchId'));
         $limit = $params->fromPost('limit', $params->fromQuery('limit', null));
 
-        $user = $this->authManager->isLoggedIn();
+        $user = $this->authManager->getUserObject();
         $search = $this->searchTable->getOwnedRowById($id, $this->sessionId, $user ? $user->id : null);
         if (empty($search)) {
             return $this->formatResponse(

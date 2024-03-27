@@ -55,14 +55,15 @@ class SolrExtensionsListener
      *
      * @var string
      */
-    public const TERMS_FILTER_PREFIX = "{!terms f=%s separator=\"\u{001f}\"}";
+    public const TERMS_FILTER_PREFIX = "{!terms f=%s separator=\"\u{001f}\" method=docValuesTermsFilter}";
 
     /**
      * Terms filter prefix for a source filter
      *
      * @var string
      */
-    public const TERMS_FILTER_PREFIX_SOURCE = "{!terms f=source_str_mv separator=\"\u{001f}\"}";
+    public const TERMS_FILTER_PREFIX_SOURCE
+        = "{!terms f=source_str_mv separator=\"\u{001f}\" method=docValuesTermsFilter}";
 
     /**
      * Backend identifier.

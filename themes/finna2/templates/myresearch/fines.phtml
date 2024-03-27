@@ -6,7 +6,7 @@
     // Set up breadcrumbs:
     $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Fines') . '</li>';
 
-    $user = $this->auth()->isLoggedIn();
+    $user = $this->auth()->getUserObject();
 
     $currencyTemplate = $this->safeMoneyFormat(11.22);
 
@@ -15,7 +15,7 @@
     // processing from rendering.
     $tableData = [];
     $totalDue = 0;
-    foreach ($this->fines as $record) {
+    foreach ($this->fines ?? [] as $record) {
       if (empty($record['title'])) {
           $title = '';
       } elseif (!is_object($record['driver'] ?? null)) {
@@ -96,7 +96,7 @@
 
     // Create the final list of columns and count of rows:
     $columns = array_keys($tableData);
-    $rowCount = count($this->fines);
+    $rowCount = count($this->fines ?? []);
 ?>
 <!-- Leftside navigationbar -->
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'fines']); ?>

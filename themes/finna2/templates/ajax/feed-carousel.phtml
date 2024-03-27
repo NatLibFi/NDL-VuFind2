@@ -1,6 +1,10 @@
 <!-- START of: finna - ajax/feed-carousel.phtml -->
-<?php if ($this->title || $this->translateTitle): ?>
-  <?php $feedTitleEsc = $this->translateTitle ? $this->transEsc($this->translateTitle) : $this->escapeHtml($this->title); ?>
+<?php
+  $hasLinkText = isset($this->linkText);
+  $linkTextEsc = $this->transEsc($this->linkText ? $this->linkText : 'To the record');
+  $feedTitleEsc = !empty($this->translateTitle) ? $this->transEsc($this->translateTitle) : $this->escapeHtml($this->title ?? '');
+  if ($feedTitleEsc):
+?>
   <h2 class="carousel-header"><?=$feedTitleEsc?></h2>
 <?php endif; ?>
 <?php if (isset($this->description)): ?>
@@ -43,14 +47,12 @@
                 $linkElement['data-lightbox'] = '';
                 $linkElement['data-lightbox-title'] = $item['title'];
               }
-              $linkTextEsc = $this->transEsc($this->linkText ? $this->linkText : 'To the record');
-              $hasLinkText = isset($this->linkText);
             ?>
             <a class="feed-link" <?=$this->htmlElement()->getAttributes($linkElement)?>>
               <?=$this->partial("ajax/feed-$this->type-item.phtml", compact('item', 'linkTextEsc', 'hasLinkText', 'feedTitleEsc'))?>
             </a>
           <?php else: ?>
-            <?=$this->partial("ajax/feed-$this->type-item.phtml", compact('item', 'linkTextEsc'))?>
+            <?=$this->partial("ajax/feed-$this->type-item.phtml", compact('item', 'linkTextEsc', 'hasLinkText'))?>
           <?php endif; ?>
         </li>
       <?php endforeach; ?>

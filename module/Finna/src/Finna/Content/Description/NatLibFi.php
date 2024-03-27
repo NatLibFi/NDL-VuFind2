@@ -59,8 +59,7 @@ class NatLibFi extends AbstractDescriptionProvider implements HttpServiceAwareIn
         if (!($isbn = $record->getCleanISBN())) {
             return '';
         }
-        $url = 'https://media.kirjavalitys.fi/library/description/' . rawurlencode($key) . '/' . urlencode($isbn)
-            . '?format=html';
+        $url = 'https://kansikuvat.finna.fi/getText.php?query=' . urlencode($isbn);
         $response = $this->httpService->get($url, [], 60);
         if (!$response->isSuccess()) {
             return '';

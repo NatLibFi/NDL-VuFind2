@@ -2,7 +2,7 @@
 <?php
   $comments = $this->driver->getComments();
   $inappropriateComments = [];
-  $user = $this->auth()->isLoggedIn();
+  $user = $this->auth()->getUserObject();
   if ($comments) {
      $inappropriateComments = $this->driver->tryMethod('getInappropriateComments', [$user ? $user->id : null]);
   }

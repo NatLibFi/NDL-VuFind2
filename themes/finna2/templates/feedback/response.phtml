@@ -4,20 +4,19 @@
 
   $title = $form->getTitle();
   $title = !empty($title) ? $this->translate($title) : null;
-  $lightbox = $this->layout()->getTemplate() === 'layout/lightbox';
 ?>
-<?php if (!$lightbox): ?>
+<?php if (!$this->inLightbox): ?>
 <div class="feedback-content">
 <?php endif; ?>
   <?php if ($title): ?>
     <?php $this->headTitle($title); ?>
-    <?php if (!$lightbox): ?>
+    <?php if (!$this->inLightbox): ?>
       <h1><?=$this->escapeHtml($title)?></h1>
     <?php else: ?>
       <h2><?=$this->escapeHtml($title)?></h2>
     <?php endif; ?>
   <?php endif; ?>
   <p role="status"><?= $this->translate($this->successMessage) ?></p>
-<?php if (!$lightbox): ?>
+<?php if (!$this->inLightbox): ?>
 </div>
 <?php endif; ?>

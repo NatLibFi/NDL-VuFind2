@@ -127,7 +127,7 @@ finna.myList = (function finnaMyList() {
     toggleErrorMessage(false);
 
     var ids = [];
-    VuFind.listItemSelection.getAllSelected(document.getElementById('form-favorites')).forEach(recId => {
+    VuFind.listItemSelection.getAllSelected(document.querySelector('form[name="bulkActionForm"]')).forEach(recId => {
       var pos = recId.indexOf('|');
       var source = recId.substring(0, pos);
       var id = recId.substring(pos + 1);

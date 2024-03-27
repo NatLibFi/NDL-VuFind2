@@ -57,9 +57,27 @@ class Sfx extends \VuFind\Resolver\Driver\Sfx
     {
         $records = []; // array to return
         try {
+            libxml_use_internal_errors(true);
+            libxml_clear_errors();
             $xml = new \SimpleXmlElement($xmlstr);
+            if ($errors = libxml_get_errors()) {
+                $fatal = false;
+                foreach ($errors as $error) {
+                    error_log('SFX: Error parsing XML: ' . $error->message);
+                    if ($error->level === LIBXML_ERR_FATAL) {
+                        $fatal = true;
+                    }
+                }
+                error_log("SFX: XML: $xmlstr");
+                if ($fatal) {
+                    return [];
+                }
+            }
         } catch (\Exception $e) {
+            error_log('SFX: Exception parsing XML: ' . (string)$e . ", XML: $xmlstr");
             return $records;
+        } finally {
+            libxml_use_internal_errors(false);
         }
 
         $root = $xml->xpath('//ctx_obj_targets');

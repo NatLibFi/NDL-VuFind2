@@ -47,12 +47,12 @@ class OpenUrl extends \VuFind\View\Helper\Root\OpenUrl
      */
     public function renderMoreOptions()
     {
-        if (null !== $this->config && isset($this->config->url)) {
+        if (null !== $this->config && !empty($this->config->url)) {
             // Trim off any parameters (for legacy compatibility -- default config
             // used to include extraneous parameters):
             [$base] = explode('?', $this->config->url);
         } else {
-            $base = false;
+            return '';
         }
 
         // Build parameters needed to display the control:

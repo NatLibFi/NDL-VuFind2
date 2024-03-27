@@ -37,6 +37,15 @@
   // Set up breadcrumbs:
   $this->layout()->breadcrumbs .= '<li class="active">' . $this->escapeHtml($headTitle) . '</li>';
 
+  // Set up search controls (avoiding unnecessary rendering):
+  if (!$this->slot('search-controls')->isset()) {
+      $this->slot('search-controls')->set(
+          $this->render('search/controls/sort.phtml')
+          . ' ' . $this->render('search/controls/limit.phtml')
+          . ' ' . $this->render('search/controls/view.phtml')
+      );
+  }
+
   $searchData = [
       'results' => $this->results,
       'params' => $this->params,
@@ -212,9 +221,7 @@
         </div>
         <div class="control-container text-right hidden-print">
           <?php if (!$browse): ?>
-            <?=$this->render('search/controls/sort.phtml')?>
-            <?=$this->render('search/controls/limit.phtml')?>
-            <?=$this->render('search/controls/view.phtml')?>
+            <?=$this->slot('search-controls')?>
           <?php endif; ?>
         </div>
       </div>

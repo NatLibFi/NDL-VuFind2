@@ -83,7 +83,7 @@ class RemsServiceFactory implements FactoryInterface
         $auth = $container->get(\LmcRbacMvc\Service\AuthorizationService::class);
         $r2 = $container->get(\Finna\Service\R2SupportService::class);
         $user = $r2->isEnabled()
-            ? $container->get(\VuFind\Auth\Manager::class)->isLoggedIn()
+            ? $container->get(\VuFind\Auth\Manager::class)->getUserObject()
             : false;
 
         return new $requestedName(

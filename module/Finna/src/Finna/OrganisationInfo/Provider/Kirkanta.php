@@ -519,7 +519,7 @@ class Kirkanta extends AbstractProvider
             if (str_contains($phone['number'], '@')) {
                 continue;
             }
-            if ($name = $phone['name']) {
+            if ($name = $phone['name'] ?? null) {
                 $phones[] = [
                     'name' => $name,
                     'number' => $phone['number'],
@@ -532,7 +532,7 @@ class Kirkanta extends AbstractProvider
         $dedupEmails = array_unique($response['emailAddresses'] ?? [], SORT_REGULAR);
         foreach ($dedupEmails as $address) {
             $emails[] = [
-                'name' => $address['name'],
+                'name' => $address['name'] ?? '',
                 'email' => $address['email'],
             ];
         }

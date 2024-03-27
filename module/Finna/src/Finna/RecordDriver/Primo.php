@@ -166,7 +166,7 @@ class Primo extends \VuFind\RecordDriver\Primo
             if (!($urls = $this->fields['resource_urls'][$link] ?? [])) {
                 continue;
             }
-            foreach ($urls as $current) {
+            foreach ((array)$urls as $current) {
                 if (is_array($current)) {
                     $desc = $current['label'];
                     $url = $current['url'];
@@ -199,7 +199,7 @@ class Primo extends \VuFind\RecordDriver\Primo
             return true;
         }
 
-        if (!$this->fields['sourceid']) {
+        if (empty($this->fields['sourceid'])) {
             return true;
         }
 

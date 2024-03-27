@@ -600,8 +600,8 @@ class Feed implements
 
                                 $data['xcal']['featured'] = $imgLink;
                                 if (
-                                    $elements['image'] != 0
-                                    || !isset($elements['image'])
+                                    !isset($elements['image'])
+                                    || $elements['image'] != 0
                                 ) {
                                     $data['image']['url'] = $imgLink;
                                 }

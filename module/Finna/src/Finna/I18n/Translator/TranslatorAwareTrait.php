@@ -58,11 +58,18 @@ trait TranslatorAwareTrait
      *                                             found (null for no default).
      * @param bool                $useIcuFormatter Should we use an ICU message formatter instead
      * of the default behavior?
+     * @param string[]            $fallbackDomains Text domains to check if no match is found in
+     * the domain specified in $target
      *
      * @return string
      */
-    public function translate($target, $tokens = [], $default = null, $useIcuFormatter = false)
-    {
+    public function translate(
+        $target,
+        $tokens = [],
+        $default = null,
+        $useIcuFormatter = false,
+        $fallbackDomains = []
+    ) {
         // Figure out the text domain for the string:
         [$domain, $str] = $this->extractTextDomain($target);
 
@@ -110,6 +117,18 @@ trait TranslatorAwareTrait
         $translated = $this->translateHierarchicalString((string)$str, $domain, $tokens, $useIcuFormatter);
         if (null !== $translated) {
             return $translated;
+        }
+
+        // If we have fallback domains, apply them now:
+        while ($defaultTranslation === (string)($default ?? $str) && !empty($fallbackDomains)) {
+            $domain = array_shift($fallbackDomains);
+            $defaultTranslation = $this->translateString(
+                (string)$str,
+                $tokens,
+                $default,
+                $domain,
+                $useIcuFormatter
+            );
         }
 
         return $defaultTranslation;

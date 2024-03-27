@@ -17,7 +17,7 @@
   <li role="none" class="favorites-menulist-item">
     <a role="menuitem" href="<?=$this->url('myresearch-favorites')?>?limit=<?=$currentLimit;?>" class="<?=!$activeId ? ' active' : ''?>" aria-current="<?= !$activeId ? 'page' : 'false' ?>">
       <div class="favorite-list-holder">
-        <div class="pull-left favorite-list-title"><?=$this->transEsc('All Favourites')?></div>
+        <div class="pull-left favorite-list-title"><?=$this->transEsc('default_list_title')?></div>
         <div class="pull-right">(<?=$numOfResources;?>)</div>
       </div>
     </a>

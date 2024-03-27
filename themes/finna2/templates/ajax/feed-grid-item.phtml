@@ -19,8 +19,8 @@
   <?php if (isset($item['dateFull'])): ?>
     <div><?=$this->escapeHtml($item['dateFull']) ?></div>
   <?php endif; ?>
-  <div class="title" data-toggle="tooltip-hover" data-original-title="<?=$this->escapeHtmlAttr($item['title'])?>">
-    <?php if ($hasIcon && !$hasImg): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?> <?=$this->escapeHtml($item['title']) ?>
+  <div class="title" data-toggle="tooltip-hover" data-original-title="<?=$this->escapeHtmlAttr($item['title'] ?? '')?>">
+    <?php if ($hasIcon && !$hasImg): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?> <?=$this->escapeHtml($item['title'] ?? '') ?>
   </div>
   <?php if ($xcal = $item['xcal'] ?? []): ?>
     <?php if (!empty($xcal['startDate'])): ?>

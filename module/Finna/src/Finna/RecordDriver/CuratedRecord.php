@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022-2023.
+ * Copyright (C) The National Library of Finland 2022-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -34,6 +34,7 @@ use Finna\RecordDriver\Feature\ContainerFormatTrait;
 use Finna\RecordDriver\Feature\EncapsulatedRecordInterface;
 use Finna\RecordDriver\Feature\EncapsulatedRecordTrait;
 use Finna\RecordDriver\Feature\FinnaXmlReaderTrait;
+use VuFind\RecordDriver\AbstractBase;
 use VuFindSearch\Response\RecordInterface;
 
 use function count;
@@ -99,6 +100,38 @@ class CuratedRecord extends SolrDefault implements
     public function getEncapsulatedRecordTotal(): int
     {
         return count($this->getEncapsulatedRecords());
+    }
+
+    /**
+     * Does the encapsulated record need a record to be loaded?
+     *
+     * @return array|false Associative array specifying the record that needs loading
+     * (contains 'id' and 'source' keys), or false
+     */
+    public function needsRecordLoaded(): array|false
+    {
+        if (!isset($this->fields['record'])) {
+            return [
+                'id' => $this->getUniqueID(),
+                'source' => $this->getSourceIdentifier(),
+            ];
+        }
+        return false;
+    }
+
+    /**
+     * Set the loaded record specified by needsRecordLoaded().
+     *
+     * @param AbstractBase $record Loaded record
+     *
+     * @return void
+     * @throws \LogicException If the record should not be set
+     */
+    public function setLoadedRecord(AbstractBase $record): void
+    {
+        $this->checkSetLoadedRecord($record);
+        $this->fields['record'] = $record;
+        $this->fields['title'] = $record->getTitle();
     }
 
     /**

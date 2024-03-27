@@ -76,7 +76,7 @@ class GetImageInformationFactory implements \Laminas\ServiceManager\Factory\Fact
             $container->get(\VuFind\Record\Loader::class),
             $tablePluginManager->get(\VuFind\Db\Table\User::class),
             $tablePluginManager->get(\VuFind\Db\Table\UserList::class),
-            $container->get(\VuFind\Auth\Manager::class)->isLoggedIn(),
+            $container->get(\VuFind\Auth\Manager::class)->getUserObject(),
             $container->get('ViewRenderer')->plugin('record')
         );
         $result->setStatisticsEventHandler(
