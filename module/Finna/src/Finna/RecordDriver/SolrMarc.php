@@ -1086,11 +1086,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
-     * Get producers
+     * Get production
      *
      * @return array
      */
-    public function getProducers()
+    public function getProduction()
     {
         $result = [];
         foreach ($this->getMarcReader()->getFields('264') as $field) {

@@ -113,7 +113,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Playing Time',
             'Presenters',
             'Previous Title',
-            'Producer',
+            'Production',
             'Production Credits',
             'Projected Publication Date',
             'Publication Frequency',
