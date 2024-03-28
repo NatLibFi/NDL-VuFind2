@@ -463,6 +463,14 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  function initResultsLoadFocus () {
+    VuFind.listen('vf-results-load', () => {
+      if (document.getElementById("results-heading")) {
+          document.getElementById("results-heading").focus();
+      }
+    });
+  }
+
   function initLightboxLogin() {
     if (!document.addEventListener) {
       return;
@@ -797,6 +805,7 @@ finna.layout = (function finnaLayout() {
     init: function init() {
       initResizeListener();
       initScrollRecord();
+      initResultsLoadFocus(),
       initJumpMenus();
       initAnchorNavigationLinks();
       initTruncate();
