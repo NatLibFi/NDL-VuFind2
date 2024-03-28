@@ -130,124 +130,120 @@
     <?=$this->record($this->driver)->getCoreMetadata()?>
 
     <?=$this->driver->supportsCoinsOpenURL() ? '<span class="Z3988" aria-hidden="true" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenURL()) . '"></span>' : ''?>
-  </div>
-
-  <?php ob_start(); ?>
-    <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'sidebar'): ?>
-      <div class="organisation-menu">
-          <?=$this->render('record/record-organisation-menu.phtml') ?>
-      </div>
-    <?php endif; ?>
-    <?php foreach ($this->related()->getList($this->driver) as $current): ?>
-        <?=$this->related()->render($current)?>
-    <?php endforeach; ?>
-    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/record-post-recommendations')): ?>
-      <div>
-          <?=$this->render($template)?>
-      </div>
-    <?php endif; ?>
-  <?php $sidebar = ob_get_contents(); ?>
-  <?php ob_end_clean(); ?>
-
-  <?php if ($sidebar && (!$fullWidthLayout && !$largeImageLayout)):?>
-    <?php // This sidebar is used for larger screens when not in full width or
-          // large image layout ?>
-    <div class="sidebar right smaller-image-sidebar hidden-xs hidden-sm">
-      <?=$sidebar ?>
-    </div>
-  <?php endif; ?>
-
-  <div class="clearfix hidden-lg hidden-md"></div>
-
-  <div class="record-tabs record-accordions">
-    <?php if (count($this->tabs) > 0): ?>
-      <a id="tabnav"></a>
-        <?php if (count($this->tabs) > 3): ?>
-        <div class="tabs-responsive">
-        <?php endif; ?>
-        <ul class="recordTabs nav nav-tabs visible-md visible-lg" role="tablist">
-          <?php foreach ($this->tabs as $tab => $obj): ?>
-            <?php // add current tab to breadcrumbs if applicable:
-              $desc = $obj->getDescription();
-              $tabName = preg_replace("/\W/", '-', strtolower($tab));
-              $tabClasses = [ 'record-tab', $tabName ];
-              if (0 === strcasecmp($this->activeTab, $tab)) {
-                if (!$this->loadInitialTabWithAjax || !$obj->supportsAjax()) {
-                    $tabClasses[] = 'active';
-                }
-                $tabClasses[] = 'initiallyActive';
-                $activeTabName = $tabName;
-                $activeTabObj = $obj;
-              }
-              if (!$obj->isVisible()) {
-                $tabClasses[] = 'hidden';
-              }
-              if (!$obj->supportsAjax()) {
-                $tabClasses[] = 'noajax';
-              }
-              if (strtolower($tab) == 'details') {
-                $tabClasses[] = 'hidden-xs tab-right';
-              }
-            ?>
-            <li id="record-tab-<?=$this->escapeHtmlAttr($tabName)?>" class="<?=implode(' ', $tabClasses)?>" role="tab" data-tab="<?=$this->escapeHtmlAttr($tabName)?>"<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?> data-background<?php endif ?>>
-              <a class="<?=$this->escapeHtmlAttr(strtolower($tab)) ?>" aria-label="<?=$this->transEscAttr($desc)?>"
-                href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $tab))?>#tabnav" data-lightbox-ignore>
-                <?php if (strtolower($tab) == 'details'): ?><?=$this->icon('staff-view', 'staff-view-icon')?><?php endif; ?>
-                <span class="tab-name"><?=$this->transEsc($desc)?></span>
-                <?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?>
-              </a>
-            </li>
-          <?php endforeach; ?>
-        </ul>
-        <?php if (count($this->tabs) > 3): ?>
-        </div>
-        <?php endif; ?>
-    <?php endif; ?>
-
-    <div class="record-accordions">
-      <?php foreach ($this->tabs as $accordion => $obj): ?>
-        <?php
-          $desc = $obj->getDescription();
-          $accordion_classes = [
-            'accordion',
-            'accordion-' . strtolower($accordion),
-          ];
-          if (0 === strcasecmp($this->activeTab, $accordion)) {
-            if (!$this->loadInitialTabWithAjax || !$obj->supportsAjax()) {
-              $accordion_classes[] = 'active';
-            }
-            $accordion_classes[] = 'initiallyActive';
-          }
-          if (!$obj->isVisible()) {
-            $accordion_classes[] = 'hidden';
-          }
-          if (!$obj->supportsAjax()) {
-            $accordion_classes[] = 'noajax';
-          }
-        ?>
-        <div class="<?=implode(' ', $accordion_classes)?>">
-          <div class="accordion-toggle">
-            <a data-tab="<?=$this->escapeHtmlAttr(strtolower($accordion)) ?>" class="accordion-title"
-              href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $accordion))?>#tabnav"<?php if ($obj->supportsAjax() && in_array($accordion, $this->backgroundTabs)):?>
-              data-background<?php endif ?>
-            >
-              <span class="title"><?=$this->transEsc($desc)?><?php if (strtolower($accordion) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?></span>
-              <i class="icon"></i>
-            </a>
-          </div>
-        </div>
-      <?php endforeach; ?>
-    </div>
-
-    <div class="tab-content">
-      <?php if (!$this->loadInitialTabWithAjax || !isset($activeTabObj) || !$activeTabObj->supportsAjax()): ?>
-        <div class="tab-pane active <?=$this->escapeHtmlAttr($this->activeTab) ?>-tab" aria-labelledby="record-tab-<?=$this->escapeHtmlAttr($activeTabName ?? '')?>">
-            <?=isset($activeTabObj) ? $this->record($this->driver)->getTab($activeTabObj) : '' ?>
-        </div>
-      <?php endif; ?>
-    </div>
 
     <div class="clearfix hidden-lg hidden-md"></div>
+
+    <div class="record-tabs record-accordions">
+      <?php if (count($this->tabs) > 0): ?>
+        <a id="tabnav"></a>
+          <?php if (count($this->tabs) > 3): ?>
+            <div class="tabs-responsive">
+          <?php endif; ?>
+          <ul class="recordTabs nav nav-tabs visible-md visible-lg" role="tablist">
+            <?php foreach ($this->tabs as $tab => $obj): ?>
+              <?php // add current tab to breadcrumbs if applicable:
+                $desc = $obj->getDescription();
+                $tabName = preg_replace("/\W/", '-', strtolower($tab));
+                $tabClasses = [ 'record-tab', $tabName ];
+                if (0 === strcasecmp($this->activeTab, $tab)) {
+                  if (!$this->loadInitialTabWithAjax || !$obj->supportsAjax()) {
+                      $tabClasses[] = 'active';
+                  }
+                  $tabClasses[] = 'initiallyActive';
+                  $activeTabName = $tabName;
+                  $activeTabObj = $obj;
+                }
+                if (!$obj->isVisible()) {
+                  $tabClasses[] = 'hidden';
+                }
+                if (!$obj->supportsAjax()) {
+                  $tabClasses[] = 'noajax';
+                }
+                if (strtolower($tab) == 'details') {
+                  $tabClasses[] = 'hidden-xs tab-right';
+                }
+              ?>
+              <li id="record-tab-<?=$this->escapeHtmlAttr($tabName)?>" class="<?=implode(' ', $tabClasses)?>" role="tab" data-tab="<?=$this->escapeHtmlAttr($tabName)?>"<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?> data-background<?php endif ?>>
+                <a class="<?=$this->escapeHtmlAttr(strtolower($tab)) ?>" aria-label="<?=$this->transEscAttr($desc)?>"
+                  href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $tab))?>#tabnav" data-lightbox-ignore>
+                  <?php if (strtolower($tab) == 'details'): ?><?=$this->icon('staff-view', 'staff-view-icon')?><?php endif; ?>
+                  <span class="tab-name"><?=$this->transEsc($desc)?></span>
+                  <?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?>
+                </a>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+          <?php if (count($this->tabs) > 3): ?>
+            </div>
+          <?php endif; ?>
+      <?php endif; ?>
+
+      <div class="record-accordions">
+        <?php foreach ($this->tabs as $accordion => $obj): ?>
+          <?php
+            $desc = $obj->getDescription();
+            $accordion_classes = [
+              'accordion',
+              'accordion-' . strtolower($accordion),
+            ];
+            if (0 === strcasecmp($this->activeTab, $accordion)) {
+              if (!$this->loadInitialTabWithAjax || !$obj->supportsAjax()) {
+                $accordion_classes[] = 'active';
+              }
+              $accordion_classes[] = 'initiallyActive';
+            }
+            if (!$obj->isVisible()) {
+              $accordion_classes[] = 'hidden';
+            }
+            if (!$obj->supportsAjax()) {
+              $accordion_classes[] = 'noajax';
+            }
+          ?>
+          <div class="<?=implode(' ', $accordion_classes)?>">
+            <div class="accordion-toggle">
+              <a data-tab="<?=$this->escapeHtmlAttr(strtolower($accordion)) ?>" class="accordion-title">
+                href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $accordion))?>#tabnav"<?php if ($obj->supportsAjax() && in_array($accordion, $this->backgroundTabs)):?>
+                data-background<?php endif ?>
+                <span class="title"><?=$this->transEsc($desc)?><?php if (strtolower($accordion) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?></span>
+                <i class="icon"></i>
+              </a>
+            </div>
+          </div>
+        <?php endforeach; ?>
+        <div class="tab-content">
+          <?php if (!$this->loadInitialTabWithAjax || !isset($activeTabObj) || !$activeTabObj->supportsAjax()): ?>
+            <div class="tab-pane active <?=$this->escapeHtmlAttr($this->activeTab) ?>-tab" aria-labelledby="record-tab-<?=$this->escapeHtmlAttr($activeTabName ?? '')?>">
+              <?=isset($activeTabObj) ? $this->record($this->driver)->getTab($activeTabObj) : '' ?>
+            </div>
+          <?php endif; ?>
+        </div>
+      </div>
+      <div class="clearfix hidden-lg hidden-md"></div>
+    </div>
+  </div>
+  <?php ob_start(); ?>
+      <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'sidebar'): ?>
+        <div class="organisation-menu">
+            <?=$this->render('record/record-organisation-menu.phtml') ?>
+        </div>
+      <?php endif; ?>
+      <?php foreach ($this->related()->getList($this->driver) as $current): ?>
+          <?=$this->related()->render($current)?>
+      <?php endforeach; ?>
+      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/record-post-recommendations')): ?>
+        <div>
+            <?=$this->render($template)?>
+        </div>
+      <?php endif; ?>
+    <?php $sidebar = ob_get_contents(); ?>
+    <?php ob_end_clean(); ?>
+    <?php if ($sidebar && (!$fullWidthLayout && !$largeImageLayout)):?>
+      <?php // This sidebar is used for larger screens when not in full width or
+            // large image layout ?>
+      <div class="sidebar right smaller-image-sidebar hidden-xs hidden-sm">
+        <?=$sidebar ?>
+      </div>
+    <?php endif; ?>
   </div>
 
   <?php if ($sidebar && !$fullWidthLayout):?>
@@ -263,7 +259,6 @@
     </div>
   <?php endif; ?>
 
-  </div>
 </div>
 <?=$this->record($this->driver)->renderTemplate('toolbar_mobile.phtml') ?>
 <div>
