@@ -465,8 +465,9 @@ finna.layout = (function finnaLayout() {
 
   function initResultsLoadFocus () {
     VuFind.listen('vf-results-load', () => {
-      if (document.getElementById("results-heading")) {
-        document.getElementById("results-heading").focus();
+      const heading = document.getElementById("results-heading");
+      if (heading) {
+        heading.focus();
       }
     });
   }
