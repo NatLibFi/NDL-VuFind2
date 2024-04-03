@@ -88,9 +88,7 @@
       $this->driver->getTitle()
   );
 ?>
-</div>
 <?= $this->record($this->driver)->getBanner() ?>
-<div class="container">
 <?php $recordAttributes = $this->htmlAttributes([
     'class' => [
       'record',
@@ -259,8 +257,6 @@
     </div>
   <?php endif; ?>
 
-</div>
 <?=$this->record($this->driver)->renderTemplate('toolbar_mobile.phtml') ?>
-<div>
 <?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, '$(document).ready(recordDocReady);', 'SET') ?>
 <!-- END of: finna - record/view.phtml -->
