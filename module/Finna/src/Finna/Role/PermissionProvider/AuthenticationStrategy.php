@@ -158,7 +158,7 @@ class AuthenticationStrategy implements PermissionProviderInterface
         $key = null;
         try {
             if (
-                ($user = $this->authManager->isLoggedIn())
+                ($user = $this->authManager->getUserObject())
                 && !empty($user->cat_username)
             ) {
                 $key = $user->cat_username;

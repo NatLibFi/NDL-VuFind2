@@ -4,7 +4,7 @@
   <input type="hidden" name="listName" value="<?=$this->escapeHtmlAttr($list->title)?>">
   <input type="hidden" name="listDescription" value="<?=$this->escapeHtmlAttr($list->description)?>">
 <?php endif; ?>
-<?php $user = $this->auth()->isLoggedIn(); ?>
+<?php $user = $this->auth()->getUserObject(); ?>
 <div class="bulk-action-buttons-row hidden-print">
   <?php
   $socialConfig = $this->config()->get('config')['Social'];

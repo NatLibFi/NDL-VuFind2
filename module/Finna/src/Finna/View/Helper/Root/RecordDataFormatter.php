@@ -77,6 +77,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Awards',
             'Bibliography',
             'child_records',
+            'Capture Information',
             'Classification',
             'Copyright Notes',
             'Country of Producing Entity',
@@ -474,6 +475,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Source Collection',
             'Subjects',
             'System Format',
+            'Citations',
         ];
         return $this->filterFields($coreFields, $include);
     }

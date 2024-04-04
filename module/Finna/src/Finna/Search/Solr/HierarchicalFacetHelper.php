@@ -219,7 +219,7 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
                 $tmpFacet['opt_group_start'] = true;
             }
             unset($tmpFacet['children']);
-            if (++$i === $count && ($tmpFacet['level'] !== '0' && !$children)) {
+            if (++$i === $count && (($tmpFacet['level'] ?? '0') !== '0' && !$children)) {
                 $tmpFacet['opt_group_end'] = true;
                 $i = 0;
             }

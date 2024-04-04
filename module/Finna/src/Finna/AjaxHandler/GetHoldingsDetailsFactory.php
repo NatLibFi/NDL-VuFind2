@@ -70,7 +70,7 @@ class GetHoldingsDetailsFactory implements \Laminas\ServiceManager\Factory\Facto
             $container->get(\VuFind\Session\Settings::class),
             $container->get(\VuFind\ILS\Connection::class),
             $container->get(\VuFind\Auth\ILSAuthenticator::class),
-            $container->get(\VuFind\Auth\Manager::class)->isLoggedIn(),
+            $container->get(\VuFind\Auth\Manager::class)->getUserObject(),
             $container->get('ViewRenderer'),
             $container->get(\VuFind\Record\Loader::class),
             $container->get(\VuFind\ILS\Logic\Holds::class),

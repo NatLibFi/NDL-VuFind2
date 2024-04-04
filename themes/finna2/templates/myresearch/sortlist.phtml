@@ -2,7 +2,7 @@
 <?php
   $this->headScript()->appendFile('finna-mylist.js');
   $list = $this->results->getListObject();
-  $user = $this->auth()->isLoggedIn();
+  $user = $this->auth()->getUserObject();
 
   // Set up page title:
   $this->headTitle($this->translate('Sort manually'));

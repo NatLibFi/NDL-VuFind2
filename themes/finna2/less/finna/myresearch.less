@@ -72,6 +72,10 @@
   @media (min-width: @screen-sm) {
     margin-bottom: 0.5em;
   }
+  svg {
+    background-color: white;
+    padding: .1em;
+  }
 }
 
 .loan-history-purge-all {
@@ -272,7 +276,9 @@
 }
 // Custom styles for user account functions
 .template-dir-myresearch, .template-dir-holds, .template-dir-checkouts.template-name-history, .template-dir-search.template-name-history, .template-dir-librarycards {
-  padding-bottom: 30px;
+  &.main {
+    padding-bottom: 30px;
+  }
   h1 {
     font-weight: 500;
   }
@@ -319,6 +325,10 @@
   }
   #card_name {
     width: 205px;
+  }
+  .tooltip-library-card-name {
+    background: none;
+    border: none;
   }
 
   .resource-note {

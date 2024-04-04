@@ -9,7 +9,7 @@
     // Check if "Renew All" button can be displayed:
     $renewAll = !$this->ilsPaging || !$paginator;
 
-    $user = $this->auth()->isLoggedIn();
+    $user = $this->auth()->getUserObject();
 
     $totalCount = $this->paginator ? $this->paginator->getTotalItemCount() : count($this->transactions ?? []);
 

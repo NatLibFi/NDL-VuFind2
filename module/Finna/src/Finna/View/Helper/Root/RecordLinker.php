@@ -100,7 +100,10 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
                 $embedUrl = 'https://www.youtube.com/embed' . $parts['path'];
                 break;
             case 'youtube.com':
-                parse_str($parts['query'], $query);
+                parse_str($parts['query'] ?? '', $query);
+                if (!isset($query['v'])) {
+                    return '';
+                }
                 $embedUrl = 'https://www.youtube.com/embed/' . $query['v'];
                 break;
             case 'players.icareus.com':

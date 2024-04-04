@@ -3,7 +3,7 @@
     echo $externalRatingLink;
     return;
   }
-  $user = $this->auth()->isLoggedIn();
+  $user = $this->auth()->getUserObject();
   $ratings = $this->driver->isRatingAllowed();
 ?>
 <!-- START of: finna - RecordTab/usercomments.phtml -->

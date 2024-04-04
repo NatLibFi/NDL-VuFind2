@@ -4,10 +4,10 @@
   $list = $this->results->getListObject();
 
   // Set up page title:
-  $this->headTitle(isset($list) ? $list->title : $this->translate('Favorites'));
+  $this->headTitle(isset($list) ? $list->title : $this->translate('saved_items'));
 
   // Set up breadcrumbs:
-  $currPage = isset($list) ? 'List' : 'Favorites';
+  $currPage = isset($list) ? 'List' : 'saved_items';
   $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc($currPage) . '</li>';
 
   // Load Javascript dependencies into header:
@@ -23,7 +23,7 @@
 
   // Convenience variable:
   $account = $this->auth()->getManager();
-  $user = $this->auth()->isLoggedIn();
+  $user = $this->auth()->getUserObject();
 
   $lists = $user ? $user->getLists() : null;
 
@@ -50,7 +50,7 @@
     <div>
       <?php if ($list): ?>
         <div class="useraccount-header">
-          <h2><?=$this->transEsc('Favorites')?></h2>
+          <h2><?=$this->transEsc('saved_items')?></h2>
         </div>
         <div class="useraccount-header">
           <h3 class="list-title"><i class="list-title-edit fa fa-pen" aria-label="<?=$this->transEscAttr('edit')?>"></i><span><?=$this->escapeHtml($list->title)?></span></h3>
@@ -102,7 +102,7 @@
         <?php endif ?>
       <?php else: ?>
         <div class="useraccount-header">
-          <h2 class="list-title no-edit"><span><?=$this->transEsc('All Favourites')?></span></h2>
+          <h2 class="list-title no-edit"><span><?=$this->transEsc('default_list_title')?></span></h2>
         </div>
       <?php endif; ?>
     </div>

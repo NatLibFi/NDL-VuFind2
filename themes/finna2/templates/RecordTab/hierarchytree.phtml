@@ -5,7 +5,7 @@
   $activeTree = $this->tab->getActiveTree();
 ?>
 <div class="hierarchy-tree-container js-hierarchy-tree-container">
-  <?php if ($this->layout()->getTemplate() == 'layout/lightbox'): ?>
+  <?php if ($this->inLightbox): ?>
     <h2><?=$this->transEsc($this->tab->getDescription())?></h2>
   <?php endif; ?>
   <?php if (count($hierarchyTreeList) > 1): ?>
@@ -56,7 +56,7 @@
         'data-hierarchy-id' => $activeTree,
         'data-context' => $this->treeContext ?? 'Record',
         'data-preview-element' => $this->treePreviewElement ?? '',
-        'data-lightbox' => $this->layout()->getTemplate() === 'layout/lightbox',
+        'data-lightbox' => $this->inLightbox,
         'data-full-hierarchy' => $this->tab->isFullHierarchyVisible(),
       ]);
     ?>

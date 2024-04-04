@@ -149,7 +149,7 @@ FinnaPaginator.prototype.setReferences = function setReferences() {
   _.leftBrowseBtn = _.root.find('.next-image.left');
   _.rightBrowseBtn = _.root.find('.next-image.right');
   _.triggerImage = _.trigger.find('img');
-  _.pagerInfo = _.settings.isList ? _.covers.find('.paginator-info') : _.trigger.find('.paginator-info');
+  _.pagerInfo = _.trigger.find('.paginator-info');
   if (_.images.length < 2) {
     _.covers.hide();
     _.pagerInfo.hide();
@@ -563,6 +563,9 @@ FinnaPaginator.prototype.changeTriggerImage = function changeTriggerImage(imageP
     }
     setImageProperties(this);
   });
+  if (_.trigger.hasClass('no-image')) {
+    _.trigger.removeClass('no-image');
+  }
   VuFind.observerManager.observe(
     'LazyImages',
     img[0].parentNode.querySelectorAll('img[data-src]')

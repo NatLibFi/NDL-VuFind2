@@ -79,7 +79,7 @@ class EventHandlerFactory implements FactoryInterface
         $clientIp = $remoteAddress->getIpAddress();
         if (
             !empty($config['Statistics']['driver'])
-            && !$this->isRequestsExluded($ipUtils, $clientIp, $config)
+            && !$this->isRequestsExcluded($ipUtils, $clientIp, $config)
         ) {
             $driverManager
                 = $container->get(\Finna\Statistics\Driver\PluginManager::class);
@@ -109,7 +109,7 @@ class EventHandlerFactory implements FactoryInterface
      *
      * @return bool
      */
-    protected function isRequestsExluded(
+    protected function isRequestsExcluded(
         IpAddressUtils $ipUtils,
         string $clientIp,
         array $config
