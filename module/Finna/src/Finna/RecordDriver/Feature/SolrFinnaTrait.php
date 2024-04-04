@@ -30,6 +30,7 @@
 
 namespace Finna\RecordDriver\Feature;
 
+use VuFind\Marc\MarcReader;
 use VuFind\RecordDriver\Feature\VersionAwareInterface;
 use VuFindSearch\Command\RetrieveCommand;
 use VuFindSearch\Command\SearchCommand;
@@ -587,6 +588,7 @@ trait SolrFinnaTrait
         if (!empty($languages)) {
             foreach ($this->getMarcReader()->getFields('041') as $field) {
                 if ($field['i1'] != 0) {
+                    $sortingArr = [];
                     foreach ($this->getLanguages() as $lang) {
                         $sortingArr[] = $lang;
                     }
@@ -599,7 +601,7 @@ trait SolrFinnaTrait
             $result = [];
         }
         if (!isset($result)) {
-            $result = $languages;
+          $result = $languages;
         }
         return $result;
     }
