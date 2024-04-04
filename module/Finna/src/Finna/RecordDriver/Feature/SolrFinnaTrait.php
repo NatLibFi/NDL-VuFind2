@@ -601,7 +601,7 @@ trait SolrFinnaTrait
             $result = [];
         }
         if (!isset($result)) {
-          $result = $languages;
+            $result = $languages;
         }
         return $result;
     }
