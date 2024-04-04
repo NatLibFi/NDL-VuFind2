@@ -275,7 +275,7 @@
           if (!isset($this->layout()->skiplink)) {
             $this->layout()->skiplink = '';
           }
-          $this->layout()->skiplink .= ' <a class="sr-only sr-only-focusable" href="#sidebar">' . $this->transEsc('Skip to narrowing options') . '</a>';
+          $this->layout()->skiplink .= ' <a class="visually-hidden" href="#sidebar">' . $this->transEsc('Skip to narrowing options') . '</a>';
           $messageAdded = true;
         }?>
       <?php endforeach; ?>
