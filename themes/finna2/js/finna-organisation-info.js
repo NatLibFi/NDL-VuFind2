@@ -205,9 +205,20 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       });
     });
 
-    $('.js-location-search-service-type').select2({
-      width: '100%'
-    });
+    const selectServiceLocation = document.querySelector('.js-location-search-service-location');
+    if (selectServiceLocation) {
+      new SelectA11y(selectServiceLocation, {
+        useLabelAsButton: true,
+      });
+    }
+
+    const selectServiceType = document.querySelector('.js-location-search-service-type');
+    if (selectServiceType) {
+      new SelectA11y(selectServiceType, {
+        useLabelAsButton: true,
+      });
+    }
+
     // Trigger DOM event for the jQuery change event:
     $('.js-location-search-service-type').on(
       'change',
@@ -333,20 +344,14 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    */
   function initLocationSelection(data) {
     // Setup location selection
-    const select = document.querySelector('.js-location-select');
-    if (select) {
-      const placeholder = select.querySelector('option').textContent;
-      $(select).select2({
-        placeholder: placeholder,
-        width: '100%'
-      }).on('select2:select', function updateHash(e) {
-        updateURLHash(encodeURIComponent(e.params.data.id || 'undefined'));
+    const selectLocation = document.querySelector('.js-location-select');
+    if (selectLocation) {
+      new SelectA11y(selectLocation, {
+        useLabelAsButton: true
       });
-      // Change expand/collapse icons:
-      let iconContainer = select.parentNode.querySelector('.select2-container--default .select2-selection--single .select2-selection__arrow');
-      if (iconContainer) {
-        iconContainer.innerHTML = ' ' + VuFind.icon('filter-expand', 'search-expand') + VuFind.icon('filter-collapse', 'search-collapse');
-      }
+      selectLocation.addEventListener('change', event => {
+        updateURLHash(encodeURIComponent(event.target.value || 'undefined'));
+      });
     }
 
     initLocationSearch();

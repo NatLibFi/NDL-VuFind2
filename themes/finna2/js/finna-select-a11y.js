@@ -45,7 +45,7 @@ function preserveOptgroupAsData (option) {
   return option
 }
 
-class Select {
+class SelectA11y {
   /**
    * @param {HTMLSelectElement} el - Select HTML element
    * @param {object} [options] - options to control select-a11y behavior
@@ -60,7 +60,6 @@ class Select {
    * @param {FillSuggestions} [options.fillSuggestions] - fill suggestions based on search input content
    * @param {boolean} [options.showSelected=true] - show selected options for multiple select
    * @param {boolean} [options.useLabelAsButton=false] - use label as button even for single select.
-   * @param {boolean} [options.showLabelAsText=false] - show label as text (role="presentation").
    * Only work if select value is set to `null` otherwise its value defaults to first option.
    * @param {boolean} [options.clearable=false] - show clear icon for single select.
    * Only work if select value is set. It resets it to `null`.
@@ -92,7 +91,6 @@ class Select {
       text: textOptions,
       showSelected: true,
       fillSuggestions: this._defaultSearch,
-      showLabelAsText: false,
       useLabelAsButton: false,
       clearable: false,
     }, passedOptions);
@@ -887,12 +885,6 @@ class Select {
     const tagHidden = document.createElement('div');
     tagHidden.classList.add('select-a11y__hidden');
     tagHidden.setAttribute('aria-hidden', 'true');
-
-    if (this._options.showLabelAsText) {
-      const textElement = document.createElement('div');
-      textElement.innerHTML = this.label.innerHTML;
-      this.label.parentNode.replaceChild(textElement, this.label);
-    }
 
     if (this._options.useLabelAsButton) {
       tagHidden.appendChild(this.label);

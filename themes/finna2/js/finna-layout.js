@@ -765,15 +765,6 @@ finna.layout = (function finnaLayout() {
     }
   }
 
-  function initAccessibilitySelect () {
-    var selects = document.querySelectorAll('select[data-select-a11y]');
-    Array.prototype.forEach.call(selects, function(select){
-      let options = {};
-      options.useLabelAsButton = false;
-      options.showLabelAsText = true;
-      new Select(select, options);
-    });
-  }
   function initSelectAllButtonListeners() {
     document.querySelectorAll('form[name="renewals"] .checkbox').forEach(element => {
       element.addEventListener('change', function disableButtons() {
@@ -834,7 +825,6 @@ finna.layout = (function finnaLayout() {
       initImagePaginators();
       initHelpTabs();
       initPrintTriggers();
-      initAccessibilitySelect();
       initSelectAllButtonListeners();
     },
     showPostLoginLightbox: showPostLoginLightbox

@@ -12,9 +12,9 @@
     <?php if ($locationCount > 1): ?>
       <div class="location-filter">
         <form class="location-selection">
-          <label for="location_select" class="hidden"><?=$this->transEscAttr('Search')?></label>
-          <select id="location_select" class="js-location-select">
-              <option value=""><?=$this->transEsc('organisation_info_autocomplete', ['%%count%%' => $locationCount])?></option>
+          <label for="location_select"><?=$this->transEscAttr('Search')?></label>
+          <select id="location_select" class="js-location-select form-control">
+              <option hidden value=""><?=$this->transEsc('organisation_info_autocomplete', ['%%count%%' => $locationCount])?></option>
             <?php foreach ($orgInfo['list'] as $item): ?>
               <?php
                 $name = $item['name'];

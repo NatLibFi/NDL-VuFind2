@@ -179,7 +179,6 @@ $config = [
         'vendor/splide-core.min.css',
         'vendor/video-js.min.css',
         'vendor/select2.min.css',
-        'vendor/select-a11y.css',
         'finna.css',
         'finnaicons.css',
         'vendor/priority-nav-core.css',
@@ -236,7 +235,6 @@ $config = [
         'finna-R2.js',
         'finna-recommendation-memory.js',
         'finna-record.js',
-        'finna-select-a11y.js',
         'finna-search-tabs-recommendations.js',
         'finna-street-search.js',
         'vendor/bootstrap-datepicker.min.js',
@@ -265,6 +263,7 @@ $config = [
         'finna-video-element.js',
         'finna-feed-element.js',
         'finna-carousel-manager.js',
+        'finna-select-a11y.js',
     ],
     'less' => [
         'active' => false,
