@@ -578,11 +578,29 @@ trait SolrFinnaTrait
      */
     public function getOriginalLanguages()
     {
-        $sortingArr = $this->getLanguages();
-        $result = $this->fields['original_lng_str_mv'] ?? [];
-        uasort($result, function ($a, $b) use ($sortingArr) {
-            return array_search($a, $sortingArr) <=> array_search($b, $sortingArr);
-        });
+        $languages = array_unique(array_filter(array_merge(
+            // 041h - language code of original
+            $this->getMarcReader()->getFieldsSubfields('041', ['h'], false, true, true),
+            // 979i - component part original language
+            $this->getMarcReader()->getFieldsSubfields('979', ['i'], false, true, true)
+        )));
+        if (!empty($languages)) {
+            foreach ($this->getMarcReader()->getFields('041') as $field) {
+                if ($field['i1'] != 0) {
+                    foreach ($this->getLanguages() as $lang) {
+                        $sortingArr[] = $lang;
+                    }
+                    uasort($languages, function ($a, $b) use ($sortingArr) {
+                        return array_search($a, $sortingArr) <=> array_search($b, $sortingArr);
+                    });
+                }
+            }
+        } else {
+            $result = [];
+        }
+        if (!isset($result)) {
+          $result = $languages;
+        }
         return $result;
     }
 
