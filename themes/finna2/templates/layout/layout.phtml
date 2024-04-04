@@ -181,7 +181,7 @@
           $contentElementId = 'content-main-tabs';
         }
       ?>
-      <a class="visually-hidden" href="#<?=$contentElementId?>"><?=$this->transEsc('Skip to content') // skip to content ?></a>
+      <a class="skip-link" href="#<?=$contentElementId?>"><?=$this->transEsc('Skip to content') // skip to content ?></a>
     </div>
     <header class="hidden-print">
       <?php if ($this->bazaarSession()->isActive()): ?>
