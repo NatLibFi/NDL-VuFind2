@@ -169,7 +169,6 @@
     <?php if (isset($this->layout()->srmessage)): // message for benefit of screen-reader users ?>
       <span class="sr-only"><?=$this->layout()->srmessage ?></span>
     <?php endif; ?>
-    <div class="container-fluid skip-links">
       <?php if (isset($this->layout()->skiplink)): // additional skip links ?>
         <?=$this->layout()->skiplink ?>
       <?php endif; ?>
@@ -182,7 +181,6 @@
         }
       ?>
       <a class="skip-link" href="#<?=$contentElementId?>"><?=$this->transEsc('Skip to content') // skip to content ?></a>
-    </div>
     <header class="hidden-print">
       <?php if ($this->bazaarSession()->isActive()): ?>
         <?=$this->partial('Helpers/bazaar-browse-bar.phtml');?>

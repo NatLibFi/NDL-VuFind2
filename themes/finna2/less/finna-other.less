@@ -437,20 +437,22 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
     display: block;
 }*/
 
-// Skip links
-.skip-links {
-    width: 100%;
-    max-width: 1300px;
-    background: #fff;
-}
-
 //  Visually hidden skip links
-.skip-link:not(:focus):not(:active) {
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    height: 1px;
-    overflow: hidden;
+a.skip-link {
     position: absolute;
-    white-space: nowrap;
-    width: 1px;
+    z-index: @zindex-skip-link;
+    padding: 4px;
+    top: 0;
+    left: 0;
+    background: @skip-link-background-color;
+    color: @skip-link-color;
+    &:not(:focus):not(:active) {
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        height: 1px;
+        overflow: hidden;
+        position: absolute;
+        white-space: nowrap;
+        width: 1px;
+    }
 }
