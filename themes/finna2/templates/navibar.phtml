@@ -10,8 +10,8 @@
 <div role="navigation" aria-label="<?=$this->transEscAttr('Main Menu')?>" class="finna-navbar">
   <div class="navbar-header">
     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-collapse" aria-label="<?=$this->transEscAttr('Mobile Menu') ?>" aria-expanded="false">
-        <span class="mobilemenu-bars"><?=$this->icon('mobilemenu-bars') ?></span>
-        <span class="mobilemenu-close"><?=$this->icon('mobilemenu-close') ?></span>
+      <span class="mobilemenu-bars"><?=$this->icon('mobilemenu-bars') ?></span>
+      <span class="mobilemenu-close"><?=$this->icon('mobilemenu-close') ?></span>
     </button>
     <?php if ($this->resolver('navibar-logo.phtml')): ?><a class="navbar-brand" href="<?=$this->url('home')?>"><?=$this->render('navibar-logo.phtml')?></a><?php endif ?>
   </div>
