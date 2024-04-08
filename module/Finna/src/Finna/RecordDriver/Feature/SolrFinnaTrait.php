@@ -30,7 +30,6 @@
 
 namespace Finna\RecordDriver\Feature;
 
-use VuFind\RecordDriver\Feature\MarcReaderTrait;
 use VuFind\RecordDriver\Feature\VersionAwareInterface;
 use VuFindSearch\Command\RetrieveCommand;
 use VuFindSearch\Command\SearchCommand;
@@ -58,6 +57,7 @@ use function strlen;
 trait SolrFinnaTrait
 {
     use SolrCommonFinnaTrait;
+    use Vufind\RecordDriver\Feature\MarcReaderTrait;
 
     /**
      * Search settings
