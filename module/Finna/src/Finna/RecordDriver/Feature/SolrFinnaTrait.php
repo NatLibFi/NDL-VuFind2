@@ -30,11 +30,16 @@
 
 namespace Finna\RecordDriver\Feature;
 
+use Vufind\RecordDriver\Feature\MarcReaderTrait;
 use VuFind\RecordDriver\Feature\VersionAwareInterface;
 use VuFindSearch\Command\RetrieveCommand;
 use VuFindSearch\Command\SearchCommand;
 use VuFindSearch\Query\WorkKeysQuery;
 
+use function array_filter;
+use function array_merge;
+use function array_search;
+use function array_unique;
 use function in_array;
 use function intval;
 use function is_array;
@@ -57,7 +62,6 @@ use function strlen;
 trait SolrFinnaTrait
 {
     use SolrCommonFinnaTrait;
-    use \Vufind\RecordDriver\Feature\MarcReaderTrait;
 
     /**
      * Search settings
