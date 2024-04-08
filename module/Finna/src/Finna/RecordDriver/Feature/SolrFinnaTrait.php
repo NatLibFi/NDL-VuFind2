@@ -57,7 +57,7 @@ use function strlen;
 trait SolrFinnaTrait
 {
     use SolrCommonFinnaTrait;
-    use Vufind\RecordDriver\Feature\MarcReaderTrait;
+    use \Vufind\RecordDriver\Feature\MarcReaderTrait;
 
     /**
      * Search settings
