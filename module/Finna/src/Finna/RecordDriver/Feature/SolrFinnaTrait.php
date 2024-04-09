@@ -30,15 +30,12 @@
 
 namespace Finna\RecordDriver\Feature;
 
+use Vufind\RecordDriver\Feature\MarcReaderTrait;
 use VuFind\RecordDriver\Feature\VersionAwareInterface;
 use VuFindSearch\Command\RetrieveCommand;
 use VuFindSearch\Command\SearchCommand;
 use VuFindSearch\Query\WorkKeysQuery;
 
-use function array_filter;
-use function array_merge;
-use function array_search;
-use function array_unique;
 use function in_array;
 use function intval;
 use function is_array;
@@ -584,9 +581,9 @@ trait SolrFinnaTrait
     {
         $languages = array_unique(array_filter(array_merge(
             // 041h - language code of original
-            $this->getMarcReader()->getFieldsSubfields('041', ['h'], false, true, true),
+            $this->getFieldArray('041', ['h'], false, true, true),
             // 979i - component part original language
-            $this->getMarcReader()->getFieldsSubfields('979', ['i'], false, true, true)
+            $this->getFieldArray('979', ['i'], false, true, true)
         )));
         if (!empty($languages)) {
             foreach ($this->getMarcReader()->getFields('041') as $field) {
