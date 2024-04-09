@@ -30,7 +30,6 @@
 
 namespace Finna\RecordDriver\Feature;
 
-use Vufind\RecordDriver\Feature\MarcReaderTrait;
 use VuFind\RecordDriver\Feature\VersionAwareInterface;
 use VuFindSearch\Command\RetrieveCommand;
 use VuFindSearch\Command\SearchCommand;
