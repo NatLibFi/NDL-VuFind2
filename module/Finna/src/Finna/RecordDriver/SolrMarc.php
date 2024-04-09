@@ -2541,4 +2541,38 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     {
         return $this->stripTrailingPunctuation($this->getFieldArray('041', ['b']));
     }
+
+    /**
+     * Get original languages from fields 041, subfield h and 979, subfield i
+     *
+     * @return array
+     */
+    public function getOriginalLanguages()
+    {
+        $languages = array_unique(array_filter(array_merge(
+            // 041h - language code of original
+            $this->getFieldArray('041', ['h'], false, true, true),
+            // 979i - component part original language
+            $this->getFieldArray('979', ['i'], false, true, true)
+        )));
+        if (!empty($languages)) {
+            foreach ($this->getMarcReader()->getFields('041') as $field) {
+                if ($field['i1'] != 0) {
+                    $sortingArr = [];
+                    foreach ($this->getLanguages() as $lang) {
+                        $sortingArr[] = $lang;
+                    }
+                    uasort($languages, function ($a, $b) use ($sortingArr) {
+                        return array_search($a, $sortingArr) <=> array_search($b, $sortingArr);
+                    });
+                }
+            }
+        } else {
+            $result = [];
+        }
+        if (!isset($result)) {
+            $result = $languages;
+        }
+        return $result;
+    }
 }
