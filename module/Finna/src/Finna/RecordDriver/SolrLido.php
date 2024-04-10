@@ -33,6 +33,8 @@
 
 namespace Finna\RecordDriver;
 
+use VuFind\I18n\TranslatableString;
+
 use function boolval;
 use function call_user_func_array;
 use function count;
@@ -569,10 +571,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                     $documentDesc = $description;
                     if ($displayAsLink ??= false && !$documentDesc) {
                         $host = $this->safeParseUrl($url, PHP_URL_HOST);
-                        if (str_contains($host, '.')) {
-                            $host = mb_substr($host, 0, strrpos($host, '.'));
-                        }
-                        $documentDesc = "external_$host";
+                        $documentDesc = new TranslatableString(
+                            "external_$host",
+                            $host
+                        );
                     }
                     $documentRights = $this->getResourceRights($resourceSet, $language, false);
                     if (

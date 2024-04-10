@@ -218,7 +218,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 'getDocuments',
                 [
                     0 => [
-                        'description' => 'external_sketchfab',
+                        'description' => 'external_sketchfab.com',
                         'url' => 'https://sketchfab.com/test',
                         'format' => '',
                         'rights' => [
