@@ -258,6 +258,7 @@ $config = [
         'vendor/leaflet.draw.min.js',
         'vendor/L.Control.Locate.min.js',
         'vendor/js.cookie.js',
+        'vendor/select-a11y.iife.js',
         'finna-multiselect.js',
         'finna-model-viewer.js',
         'finna-video-element.js',
