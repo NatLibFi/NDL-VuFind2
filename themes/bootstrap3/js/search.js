@@ -253,8 +253,6 @@ VuFind.register('search', function search() {
     if (scrollEl && window.scrollY > scrollEl.offsetTop) {
       const style = typeof _style !== 'undefined' ? _style : 'smooth';
       scrollEl.scrollIntoView({behavior: style});
-      document.getElementById("search-results-heading").focus();
-
     }
   }
 
