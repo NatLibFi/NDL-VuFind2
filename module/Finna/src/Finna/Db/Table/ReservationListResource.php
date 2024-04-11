@@ -65,7 +65,7 @@ class ReservationListResource extends \VuFind\Db\Table\UserResource
     }
 
     /**
-     * Unlink rows for the specified resource.  This will also automatically remove
+     * Unlink rows for the specified resource. This will also automatically remove
      * any tags associated with the relationship.
      *
      * @param string|array $resource_id ID (or array of IDs) of resource(s) to
@@ -80,10 +80,31 @@ class ReservationListResource extends \VuFind\Db\Table\UserResource
      */
     public function destroyLinks($resource_id, $user_id, $list_id = null)
     {
-        parent::destroyLinks($resource_id, $user_id, $list_id);
         if (null !== $list_id && true !== $list_id) {
             $this->updateListDate($list_id, $user_id);
         }
+
+        // Now build the where clause to figure out which rows to remove:
+        $callback = function ($select) use ($resource_id, $user_id, $list_id) {
+            $select->where->equalTo('user_id', $user_id);
+            if (null !== $resource_id) {
+                if (!is_array($resource_id)) {
+                    $resource_id = [$resource_id];
+                }
+                $select->where->in('resource_id', $resource_id);
+            }
+            // null or true values of $list_id have different meanings in the
+            // context of the $resourceTags->destroyResourceLinks() call above, since
+            // some tags have a null $list_id value. In the case of user_resource
+            // rows, however, every row has a non-null $list_id value, so the
+            // two cases are equivalent and may be handled identically.
+            if (null !== $list_id && true !== $list_id) {
+                $select->where->equalTo('list_id', $list_id);
+            }
+        };
+
+        // Delete the rows:
+        $this->delete($callback);
     }
 
     /**

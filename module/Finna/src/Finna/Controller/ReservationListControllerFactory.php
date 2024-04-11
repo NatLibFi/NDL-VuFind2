@@ -34,6 +34,7 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Controller\AbstractBaseFactory;
 
 /**
  * Shibboleth Logout Notification controller factory.
@@ -44,7 +45,7 @@ use Psr\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class ReservationListControllerFactory implements FactoryInterface
+class ReservationListControllerFactory extends AbstractBaseFactory
 {
     /**
      * Create an object
@@ -68,8 +69,13 @@ class ReservationListControllerFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        return new $requestedName(
-            $container->get(\VuFind\Record\Loader::class)
+        $session = new \Laminas\Session\Container(
+            'cart_followup',
+            $container->get(\Laminas\Session\SessionManager::class)
         );
+        $configLoader = $container->get(\VuFind\Config\PluginManager::class);
+        $export = $container->get(\VuFind\Export::class);
+        $reservationListService = $container->get(\Finna\ReservationList\ReservationListService::class);
+        return parent::__invoke($container, $requestedName, [$session, $configLoader, $export, $reservationListService]);
     }
 }

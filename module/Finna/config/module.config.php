@@ -292,7 +292,7 @@ $config = [
             'Finna\Controller\R2CollectionController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\R2SearchController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\RecordController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
-            'Finna\Controller\ReservationListController' => 'VuFind\Controller\AbstractBaseFactory',
+            'Finna\Controller\ReservationListController' => 'Finna\Controller\ReservationListControllerFactory',
             'Finna\Controller\RobotsController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\SearchController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\ShibbolethLogoutNotificationController' => 'Finna\Controller\ShibbolethLogoutNotificationControllerFactory',
@@ -1123,7 +1123,11 @@ $dynamicRoutes = [
     'Comments' => ['inappropriate' => 'inappropriate/[:id]'],
     'LibraryCards' => ['newLibraryCardPassword' => 'newPassword/[:id]'],
     'MyResearch' => ['sortList' => 'SortList/[:id]'],
-    'ReservationList' => ['reservationlist-home' => 'Home/[:id]'],
+    'ReservationList' => [
+        'reservationlist-home' => 'Home/[:id]',
+        'reservationlist-order' => 'Order/[:id]',
+        'reservationlist-delete' => 'Delete/[:id]'
+    ],
     'R2Feedback' => ['r2feedback-form' => 'Form/[:id]'],
 ];
 

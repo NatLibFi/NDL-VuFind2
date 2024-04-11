@@ -115,4 +115,27 @@ class ReservationList extends UserList
     {
         return false;
     }
+
+    /**
+     * Destroy the list.
+     *
+     * @param \VuFind\Db\Row\User|bool $user  Logged-in user (false if none)
+     * @param bool                     $force Should we force the delete without
+     * checking permissions?
+     *
+     * @return int The number of rows deleted.
+     */
+    public function delete($user = false, $force = false)
+    {
+        if (!$force && !$this->editAllowed($user)) {
+            throw new ListPermissionException('list_access_denied');
+        }
+
+        // Remove user_resource and resource_tags rows:
+        $reservationListResource = $this->getDbTable(\Finna\Db\Table\ReservationListResource::class);
+        $reservationListResource->destroyLinks(null, $this->user_id, $this->id);
+
+        // Remove the list itself:
+        return parent::delete();
+    }
 }

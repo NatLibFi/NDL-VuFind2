@@ -31,6 +31,8 @@ namespace Finna\Controller;
 
 use Exception;
 use Finna\ReservationList\ReservationListService;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\Session\Container;
 use VuFind\Controller\AbstractBase;
 
 /**
@@ -44,6 +46,34 @@ use VuFind\Controller\AbstractBase;
  */
 class ReservationListController extends AbstractBase
 {
+
+  /**
+   * Reservation list service
+   *
+   * @var ReservationListService
+   */
+  protected $reservationListService;
+
+  /**
+   * Constructor
+   *
+   * @param ServiceLocatorInterface      $sm                     Service locator
+   * @param Container                    $container              Session container
+   * @param \VuFind\Config\PluginManager $configLoader           Configuration loader
+   * @param \VuFind\Export               $export                 Export support class
+   * @param ReservationListService       $reservationListService Reservation list service
+   */
+  public function __construct(
+    ServiceLocatorInterface $sm,
+    Container $container,
+    \VuFind\Config\PluginManager $configLoader,
+    \VuFind\Export $export,
+    ReservationListService $reservationListService
+  ) {
+      parent::__construct($sm, $container, $configLoader, $export);
+      $this->reservationListService = $reservationListService;
+  }
+
   protected function getParam(string $param): mixed
   {
     return $this->params()->fromRoute(
@@ -138,57 +168,43 @@ class ReservationListController extends AbstractBase
             return $this->confirmDeleteFavorite($deleteId, $deleteSource);
         }
     }
-    $reservationListService = $this->serviceLocator->get(ReservationListService::class);
     // We want to merge together GET, POST and route parameters to
     // initialize our search object:
     $request = $this->getRequest()->getQuery()->toArray()
         + $this->getRequest()->getPost()->toArray()
         + ['id' => $this->params()->fromRoute('id')];
     
+    // Get first list for user to show if none is displayed
     if (!isset($request['id'])) {
-        $lists = $reservationListService->getListsForUser($this->getUser());
+        $lists = $this->reservationListService->getListsForUser($this->getUser());
         $firstList = reset($lists);
         $request['id'] = $firstList['id'] ?? null;
     }
 
     if (isset($request['id'])) {
-        // If we got this far, we just need to display the favorites:
-        try {
-            $runner = $this->serviceLocator->get(\VuFind\Search\SearchRunner::class);
-
-            // Get the current list for user
-            $currentList = $reservationListService->getListForUser($user, $request['id']);
-
-            // Set up listener for recommendations:
-            $rManager = $this->serviceLocator
-                ->get(\VuFind\Recommend\PluginManager::class);
-            $setupCallback = function ($runner, $params, $searchId) use ($rManager) {
-                $listener = new \VuFind\Search\RecommendListener($rManager, $searchId);
-                $listener->setConfig(
-                    $params->getOptions()->getRecommendationSettings()
-                );
-                $listener->attach($runner->getEventManager()->getSharedManager());
-            };
-
-            $results = $runner->run($request, 'ReservationList', $setupCallback);
-            return $this->createViewModel(
-                [
-                    'params' => $results->getParams(),
-                    'results' => $results,
-                    'title' => $currentList->title,
-                    'description' => $currentList->description,
-                    'datasource' => $currentList->datasource,
-                    'created' => $currentList->created,
-                    'ordered' => $currentList->ordered,
-                    'building' => $currentList->building,
-                ]
-            );
-        } catch (ListPermissionException $e) {
-            if (!$this->getUser()) {
-                return $this->forceLogin();
-            }
-            throw $e;
-        }
+      $results = $this->getListAsResults($request);
+      $currentList = $this->reservationListService->getListForUser($user, $request['id']);
+      // If we got this far, we just need to display the favorites:
+      try {
+          return $this->createViewModel(
+              [
+                  'params' => $results->getParams(),
+                  'results' => $results,
+                  'title' => $currentList->title,
+                  'description' => $currentList->description,
+                  'datasource' => $currentList->datasource,
+                  'created' => $currentList->created,
+                  'ordered' => $currentList->ordered,
+                  'building' => $currentList->building,
+                  'listId' => $request['id'],
+              ]
+          );
+      } catch (ListPermissionException $e) {
+          if (!$this->getUser()) {
+              return $this->forceLogin();
+          }
+          throw $e;
+      }
     }
 
     $view = $this->createViewModel();
@@ -237,15 +253,15 @@ class ReservationListController extends AbstractBase
           case 'add':
               break;
           case 'edit':
-              $reservationListService = $this->serviceLocator->get(ReservationListService::class);
               // Get the service which handles the lists
-              $reservationListService->addListForUser(
+              $this->reservationListService->addListForUser(
                   $this->getUser(),
                   $params['desc'],
                   $params['title'],
-                  $params['datasource'],
+                  $datasource,
+                  $building,
               );
-              return $this->redirect()->toRoute('record-reservationlist', ['id' => $driver->getUniqueID()]);
+              return $this->redirect()->toRoute('reservationlist-additem', ['id' => $driver->getUniqueID()]);
               break;
           default:
               break;
@@ -270,5 +286,77 @@ class ReservationListController extends AbstractBase
             break;
     }
     return $view;
+  }
+
+  /**
+   * Display save to reservation list form.
+   *
+   * @return \Laminas\View\Model\ViewModel
+   * @throws \Exception
+   */
+  public function orderAction(): \Laminas\View\Model\ViewModel
+  {
+    // We want to merge together GET, POST and route parameters to
+    // initialize our search object:
+    $request = $this->getRequestAsArray();
+
+    if ($this->formWasSubmitted('submit')) {
+      // Gather data here, and be ready to send an email.
+      var_dump($this->params()->fromPost(null, []));
+    }
+    $results = $this->getListAsResults($request);
+    $currentDate = date('Y-m-d');
+    $earliestPickup = date('Y-m-d', strtotime('+ 2 days'));
+    $view = $this->createViewModel(
+      compact('results', 'earliestPickup', 'currentDate'),
+    );
+    return $view;
+  }
+
+  /**
+   * 
+   */
+  public function deleteAction()
+  {
+    // We want to merge together GET, POST and route parameters to
+    // initialize our search object:
+    $request = $this->getRequestAsArray();
+    if ($this->formWasSubmitted('submit')) {
+      var_dump($request);
+      $this->reservationListService->deleteList($this->getUser(), $request['id']);
+    }
+
+    $view = $this->createViewModel(
+      ['id' => $request['id']]
+    );
+    return $view;
+  }
+
+  protected function getRequestAsArray(): array
+  {
+    $request = $this->getRequest()->getQuery()->toArray()
+      + $this->getRequest()->getPost()->toArray();
+    
+    if (!null !== $this->params()->fromRoute('id')) {
+      $request += ['id' => $this->params()->fromRoute('id')];
+    }
+    return $request;
+  }
+
+  protected function getListAsResults($request)
+  {
+    $runner = $this->serviceLocator->get(\VuFind\Search\SearchRunner::class);
+    // Set up listener for recommendations:
+    $rManager = $this->serviceLocator
+        ->get(\VuFind\Recommend\PluginManager::class);
+    $setupCallback = function ($runner, $params, $searchId) use ($rManager) {
+        $listener = new \VuFind\Search\RecommendListener($rManager, $searchId);
+        $listener->setConfig(
+            $params->getOptions()->getRecommendationSettings()
+        );
+        $listener->attach($runner->getEventManager()->getSharedManager());
+    };
+
+    return $runner->run($request, 'ReservationList', $setupCallback);
   }
 }

@@ -184,7 +184,6 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
             $listId
         );
         $this->resultTotal = count($rawResults);
-        var_dump($this->resultTotal);
         // Apply offset and limit if necessary!
         $limit = $this->getParams()->getLimit();
         if ($this->resultTotal > $limit) {
