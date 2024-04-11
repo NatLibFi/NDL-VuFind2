@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2016-2023.
+ * Copyright (C) The National Library of Finland 2016-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -614,6 +614,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         $result = $this->makeRequest(
             [$this->apiBase, 'patrons', $patron['id'], 'fines'],
             [
+                'limit' => 10000,
                 'fields' => 'item,assessedDate,description,chargeType,itemCharge'
                     . ',processingFee,billingFee,paidAmount,location,invoiceNumber',
             ],
@@ -664,10 +665,10 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             }
 
             $fines[] = [
-                'amount' => $amount * 100,
+                'amount' => (int)round($amount * 100),
                 'fine' => $this->fineTypeMappings[$type] ?? $type,
                 'description' => $entry['description'] ?? '',
-                'balance' => $balance * 100,
+                'balance' => (int)round($balance * 100),
                 'createdate' => $this->dateConverter->convertToDisplayDate(
                     'Y-m-d',
                     $entry['assessedDate']
@@ -779,7 +780,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 in_array($fine['fine_id'], $fineIds)
                 && $fine['payableOnline'] && $fine['balance'] > 0
             ) {
-                $pay = min($fine['balance'], $amountRemaining);
+                $pay = (int)round(min($fine['balance'], $amountRemaining));
                 $payments[] = [
                     'amount' => $pay,
                     'paymentType' => 1,

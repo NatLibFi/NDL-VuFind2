@@ -152,7 +152,7 @@ CREATE TABLE `finna_fee` (
   `description` varchar(255) NOT NULL DEFAULT '',
   `amount` float NOT NULL DEFAULT '0',
   `currency` varchar(3) NOT NULL DEFAULT 'EUR',
-  `fine_id` varchar(255) NOT NULL DEFAULT '',
+  `fine_id` mediumtext NOT NULL DEFAULT '',
   `organization` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),

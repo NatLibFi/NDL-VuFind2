@@ -2,7 +2,7 @@
 <?php
 $list = $this->results->getListObject();
 // Set up page title:
-$this->headTitle(isset($list) ? $list->title : $this->translate('Favorites'));
+$this->headTitle(isset($list) ? $list->title : $this->translate('saved_items'));
 // Set up Finna Main Header:
 $this->layout()->finnaMainHeader = $this->context($this)->renderInContext(
     'list/header.phtml',

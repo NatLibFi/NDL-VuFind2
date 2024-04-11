@@ -66,7 +66,7 @@ class ILSAuthenticator extends \VuFind\Auth\ILSAuthenticator
             return false;
         }
         if ($result) {
-            $user = $this->getAuthManager()->isLoggedIn();
+            $user = $this->getAuthManager()->getUserObject();
             if ($user) {
                 $user->saveCredentials($username, $password);
                 $this->getAuthManager()->updateSession($user);

@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2023.
+ * Copyright (C) The National Library of Finland 2023-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,13 +29,13 @@
 
 namespace Finna\RecordDriver\Feature;
 
+use VuFind\RecordDriver\AbstractBase;
 use VuFindSearch\Response\RecordInterface;
 
 /**
  * Encapsulated record interface.
  *
- * This interface should be implemented if an encapsulated record requires the
- * container record as context.
+ * Can be implemented if the features specified in this interface are required.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -60,4 +60,22 @@ interface EncapsulatedRecordInterface extends RecordInterface
      * @return ContainerFormatInterface
      */
     public function getContainerRecord(): ContainerFormatInterface;
+
+    /**
+     * Does the encapsulated record need a record to be loaded?
+     *
+     * @return array|false Associative array specifying the record that needs loading
+     * (contains 'id' and 'source' keys), or false
+     */
+    public function needsRecordLoaded(): array|false;
+
+    /**
+     * Set the loaded record specified by needsRecordLoaded().
+     *
+     * @param AbstractBase $record Loaded record
+     *
+     * @return void
+     * @throws \LogicException If the record should not be set
+     */
+    public function setLoadedRecord(AbstractBase $record): void;
 }

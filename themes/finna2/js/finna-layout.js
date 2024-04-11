@@ -195,21 +195,6 @@ finna.layout = (function finnaLayout() {
     });
   }
 
-  function initCheckboxClicks() {
-    $('.template-name-mylist input.checkbox-select-item').on('click', function onClickCheckbox() {
-      var actions = $('.mylist-functions button, .mylist-functions select');
-      var aria = $('.mylist-functions .sr-only');
-      var noneChecked = $('.template-name-mylist input.checkbox-select-item:checked').length === 0;
-      if (noneChecked) {
-        actions.attr('disabled', true);
-        aria.removeAttr('aria-hidden');
-      } else {
-        actions.removeAttr('disabled');
-        aria.attr('aria-hidden', 'true');
-      }
-    });
-  }
-
   function initScrollLinks() {
     $('.library-link').on('click', function onClickLibraryLink() {
       $('html, body').animate({
@@ -287,6 +272,7 @@ finna.layout = (function finnaLayout() {
     holder.find('[data-toggle="tooltip"]')
       .on('show.bs.tooltip', function onShowTooltip() {
         var self = $(this);
+        $(this).attr('aria-expanded', 'true');
         $(currentOpenTooltips).each(function hideOtherTooltips() {
           if ($(this)[0] !== self[0]) {
             $(this).tooltip('hide');
@@ -295,9 +281,11 @@ finna.layout = (function finnaLayout() {
         currentOpenTooltips = [self];
       })
       .on('hidden.bs.tooltip', function onHideTooltip(e) {
+        $(e.target).attr('aria-expanded', 'false');
         $(e.target).data('bs.tooltip').inState.click = false;
       })
-      .tooltip({trigger: 'click', viewport: '.container'});
+      .tooltip({trigger: 'click', viewport: '.container'})
+      .attr('aria-expanded', 'false');
 
     holder.find('[data-toggle="tooltip-hover')
       .tooltip({trigger: 'hover', delay: {show: 1000, hide: 200}});
@@ -308,6 +296,13 @@ finna.layout = (function finnaLayout() {
     // close tooltip if user clicks anything else than tooltip button
     $('html').on('click', function onClickHtml(e) {
       if (typeof $(e.target).parent().data('original-title') == 'undefined' && typeof $(e.target).data('original-title') == 'undefined') {
+        $('[data-toggle="tooltip"]').tooltip('hide');
+        currentOpenTooltips = [];
+      }
+    });
+    // close tooltip if esc-key pressed
+    $('html').on('keydown', function onClickHtml(e) {
+      if (e.which === 27) {
         $('[data-toggle="tooltip"]').tooltip('hide');
         currentOpenTooltips = [];
       }
@@ -809,7 +804,6 @@ finna.layout = (function finnaLayout() {
       initMobileNarrowSearch();
       setStickyMyaccountHeader();
       initMobileCartIndicator();
-      initCheckboxClicks();
       initToolTips();
       initModalToolTips();
       initScrollLinks();

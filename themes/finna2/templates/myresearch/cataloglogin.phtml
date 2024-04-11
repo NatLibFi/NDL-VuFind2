@@ -5,23 +5,22 @@
       return;
     }
 
-    // Check if this page has been added as a part of another page
-    $isPartial = $this->layout()->templateName === 'profile';
-    $isLightbox = $this->layout()->getTemplate() === 'layout/lightbox';
-
-    // Set up page title:
-    if (!$isPartial) {
-        $this->headTitle($this->translate('Login'));
-    }
-
     // Set up breadcrumbs:
     $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Login') . '</li>';
 
     // Convenience variable:
     $offlineMode = $this->ils()->getOfflineMode();
+
+    // We should show the account menu unless it's been switched off or we're in the lightbox:
+    $showMenu = ($this->showMenu ?? true) && !$this->inLightbox;
+
+    // Set up page title:
+    if ($showMenu) {
+        $this->headTitle($this->translate('Login'));
+    }
 ?>
 
-<?php if (!$isPartial && !$isLightbox): ?>
+<?php if ($showMenu): ?>
   <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => '']); ?>
 
   <!-- Leftside navigationbar -->
@@ -34,11 +33,11 @@
   <h3><?=$this->transEsc('Library Catalog Profile')?></h3>
   <div class="alert alert-warning"><?=$this->transEsc('ils_connection_failed')?></div>
 <?php elseif ($this->targets === null || !empty($this->targets)): ?>
-  <?php if (($user = $this->auth()->isLoggedIn()) && count($user->getLibraryCards()) >= 1): ?>
+  <?php if (($user = $this->auth()->getUserObject()) && count($user->getLibraryCards()) >= 1): ?>
     <h3><?=$this->transEsc('catalog_login_change_card_heading') ?></h3>
     <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'displaySelected' => false, 'label' => 'catalog_login_change_card_label'])?>
   <?php endif; ?>
-  <?php if ($isPartial && !$isLightbox): ?>
+  <?php if ($showMenu): ?>
     <h3><?=$this->transEsc('Library Catalog Profile')?></h3>
   <?php else: ?>
     <h2><?=$this->transEsc('Library Catalog Profile')?></h2>
@@ -83,7 +82,7 @@
     <?=$this->partial("librarycards/library_card_terms_$language.phtml"); ?>
   <?php endif; ?>
 <?php endif; ?>
-<?php if (!$isPartial): ?>
+<?php if (!$showMenu): ?>
   </div>
 <?php endif; ?>
 

@@ -352,6 +352,7 @@ abstract class AbstractProvider implements
     protected function processDetails(array $result): array
     {
         $isAlwaysClosed = true;
+        $hasSelfServiceTimes = false;
         // empty() needed because we can't use null coalescing without breaking the reference:
         if (!empty($result['openTimes']['schedules'])) {
             foreach ($result['openTimes']['schedules'] as &$schedule) {
@@ -378,6 +379,7 @@ abstract class AbstractProvider implements
                         }
                         if ($time['selfservice']) {
                             $selfServiceTimes[] = $time;
+                            $hasSelfServiceTimes = true;
                         } else {
                             $staffTimes[] = $time;
                         }
@@ -396,6 +398,7 @@ abstract class AbstractProvider implements
             }
         }
         $result['isAlwaysClosed'] = $isAlwaysClosed;
+        $result['hasSelfServiceTimes'] = $hasSelfServiceTimes;
 
         $address = $result['address'];
         $displayAddress = $address['street'];

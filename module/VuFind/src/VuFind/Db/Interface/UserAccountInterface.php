@@ -1,12 +1,11 @@
 <?php
 
 /**
- * Obsolete Abstract SearchObject Recommendations Module (kept for backward
- * compatibility only).
+ * Interface for representing a user account record.
  *
  * PHP version 8
  *
- * Copyright (C) Villanova University 2010.
+ * Copyright (C) Villanova University 2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,26 +21,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Recommendations
+ * @package  Db_Interface
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
+ * @link     https://vufind.org Main Site
  */
 
-namespace VuFind\Recommend;
+namespace VuFind\Db\Interface;
 
 /**
- * Obsolete Abstract SearchObject Recommendations Module (kept for backward
- * compatibility only).
+ * Interface for representing a user account record.
  *
  * @category VuFind
- * @package  Recommendations
+ * @package  Db_Interface
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
- *
- * @deprecated Use AbstractSearchObject instead
+ * @link     https://vufind.org Main Site
  */
-abstract class SearchObject extends AbstractSearchObject
+interface UserAccountInterface
 {
 }

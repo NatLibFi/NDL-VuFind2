@@ -293,10 +293,10 @@ class Kirkanta extends AbstractProvider
 
             if (!empty($item['mailAddress'])) {
                 $mailAddress = [
-                    'boxNumber' => $item['mailAddress']['boxNumber'],
-                    'street' => $item['mailAddress']['street'],
-                    'zipcode' => $item['mailAddress']['zipcode'],
-                    'area' => $item['mailAddress']['area'],
+                    'boxNumber' => $item['mailAddress']['boxNumber'] ?? '',
+                    'street' => $item['mailAddress']['street'] ?? '',
+                    'zipcode' => $item['mailAddress']['zipcode'] ?? '',
+                    'area' => $item['mailAddress']['area'] ?? '',
                     'city' => $item['mailAddress']['city'] ?? '',
                 ];
             }
@@ -519,7 +519,7 @@ class Kirkanta extends AbstractProvider
             if (str_contains($phone['number'], '@')) {
                 continue;
             }
-            if ($name = $phone['name']) {
+            if ($name = $phone['name'] ?? null) {
                 $phones[] = [
                     'name' => $name,
                     'number' => $phone['number'],
@@ -532,7 +532,7 @@ class Kirkanta extends AbstractProvider
         $dedupEmails = array_unique($response['emailAddresses'] ?? [], SORT_REGULAR);
         foreach ($dedupEmails as $address) {
             $emails[] = [
-                'name' => $address['name'],
+                'name' => $address['name'] ?? '',
                 'email' => $address['email'],
             ];
         }
@@ -546,8 +546,8 @@ class Kirkanta extends AbstractProvider
 
         $links = [];
         foreach ($response['links'] ?? [] as $link) {
-            $name = $link['name'];
-            $url = $link['url'];
+            $name = $link['name'] ?? null;
+            $url = $link['url'] ?? null;
             if ($name && $url) {
                 $links[] = ['name' => $name, 'url' => $url];
             }

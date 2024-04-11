@@ -2,7 +2,7 @@
 
 <?php if ($this->driver->tryMethod('archiveRequestAllowed')): ?>
   <div class="text-right">
-    <?php if ($this->auth()->getManager()->isLoggedIn()): ?>
+    <?php if ($this->auth()->getManager()->getUserObject()): ?>
       <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($driver, 'ArchiveRequest'))?>" class="btn btn-primary" data-lightbox="" data-toggle="modal" data-target="order_archive_material_form" data-lightbox><?=$this->transEsc('archive_request_reserve_action')?></a>
       <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-additem', ['id' => $this->driver->getUniqueID()], ['query' => ['source' => $this->driver->getSourceIdentifier()]]))?>" class="btn btn-primary" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?=$this->transEsc('Lisää tilauslistaan')?></a>
     <?php else: ?>

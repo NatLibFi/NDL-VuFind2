@@ -5,7 +5,7 @@
 ?>
 <?php if ($hasImg): ?>
   <div class="slider-image" aria-hidden="true">
-    <img data-src="<?=$this->escapeHtmlAttr($item['image']['url']) ?>" alt="<?=$this->transEsc('Image');?><?php if (isset($item['title'])): ?>: <?=$this->escapeHtml($item['title']) ?><?php endif; ?>">
+    <img data-src="<?=$this->escapeHtmlAttr($item['image']['url']) ?>" alt="<?=$this->transEscAttr('Image');?><?php if (isset($item['title'])): ?>: <?=$this->escapeHtmlAttr($item['title']) ?><?php endif; ?>">
   </div>
 <?php endif; ?>
 <div class="slider-text-part">

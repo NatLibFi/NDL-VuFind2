@@ -1827,6 +1827,27 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Return an XML representation of the record using the specified format.
+     * Return false if the format is unsupported.
+     *
+     * @param string     $format     Name of format to use (corresponds with OAI-PMH
+     * metadataPrefix parameter).
+     * @param string     $baseUrl    Base URL of host containing VuFind (optional;
+     * may be used to inject record URLs into XML when appropriate).
+     * @param RecordLink $recordLink Record link helper (optional; may be used to
+     * inject record URLs into XML when appropriate).
+     *
+     * @return mixed         XML, or false if format unsupported.
+     */
+    public function getXML($format, $baseUrl = null, $recordLink = null)
+    {
+        if ('oai_ead3' === $format) {
+            return $this->fields['fullrecord'];
+        }
+        return parent::getXML($format, $baseUrl, $recordLink);
+    }
+
+    /**
      * Get the hierarchy parents associated with this item (empty if none).
      * The parents are listed starting from the root of the hierarchy,
      * i.e. the closest parent is at the end of the result array.

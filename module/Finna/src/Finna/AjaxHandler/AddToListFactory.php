@@ -75,7 +75,7 @@ class AddToListFactory implements \Laminas\ServiceManager\Factory\FactoryInterfa
             $tablePluginManager->get(\VuFind\Db\Table\UserList::class),
             $container->get(\VuFind\Favorites\FavoritesService::class),
             $container->get(\VuFind\Record\Loader::class),
-            $container->get(\VuFind\Auth\Manager::class)->isLoggedIn(),
+            $container->get(\VuFind\Auth\Manager::class)->getUserObject(),
             $capabilities->getListSetting() !== 'disabled'
         );
     }

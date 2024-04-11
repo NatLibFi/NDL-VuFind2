@@ -1,6 +1,6 @@
 <!-- START of: finna - ajax/feed-carousel-item.phtml -->
 <?php
-  $clickableElement = !$this->touchDevice && !isset($this->linkText);
+  $clickableElement = !$this->touchDevice && !$this->$hasLinkText;
   $clickableLink = !$clickableElement;
   $hasIcon = !empty($item['icon']['name']);
   $hasImg = !empty($item['image']['url']);
@@ -42,11 +42,11 @@
       <?php endif; ?>
     <?php endif; ?>
     <p><?=$this->escapeHtml($item['text'] ?? '') ?></p>
+    <?php if ($clickableLink): ?>
+      <span class="carousel-description"><?= $linkTextEsc ?></span>
+    <?php endif; ?>
   </div>
   <div class="carousel-text-shadow"></div>
-  <?php if ($clickableLink): ?>
-    <span class="carousel-description"><?= $linkTextEsc ?></span>
-  <?php endif; ?>
 </div>
 <?php if ($hasImg): ?>
   <div class="wrapper" aria-hidden="true">

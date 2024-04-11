@@ -1,7 +1,7 @@
 <!-- START of: finna - myresearch/menu.phtml -->
 <?php
     $capabilityParams = [];
-    $user = $this->auth()->isLoggedIn();
+    $user = $this->auth()->getUserObject();
     $patron = $user ? $this->auth()->getILSPatron() : false;
     $capabilityParams = $patron ? ['patron' => $patron] : [];
     $showLibraryTabs = $this->ils()->loginAvailable();
@@ -89,7 +89,7 @@
       ],
       'favorites' => [
         'url' => 'myresearch-favorites',
-        'translation' => 'Favorites',
+        'translation' => 'saved_items',
         'show' => $this->userlist()->getMode() !== 'disabled',
       ],
       'reservationList' => [
@@ -121,7 +121,7 @@
       'open-list' => [
         'active' => $listOpen,
         'url' => 'myresearch-favorites',
-        'translation' => 'Favorites',
+        'translation' => 'saved_items',
         'show' => $this->userlist()->getMode() !== 'disabled',
         'partial' => [
           'url' => 'myresearch/mylist-navi.phtml',

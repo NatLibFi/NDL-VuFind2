@@ -137,13 +137,13 @@ class FinnaFeedElement extends HTMLElement {
       settings.height = settings.height || 300;
       const type = settings.type;
       const carousel = ['carousel', 'carousel-vertical', 'slider'].includes(type);
+      const hasContent = holder.querySelector('.list-feed > ul > li, .carousel-feed > li, .feed-grid > div');
+      if (!hasContent) {
+        holder.style.display = 'none';
+        holder.innerHTML = `<!-- No content received -->`;
+        return;
+      }
       if (carousel) {
-        const hasContent = holder.querySelector('.carousel-feed > li, .carousel-feed > div');
-        if (!hasContent) {
-          holder.style.display = 'none';
-          holder.innerHTML = `<!-- No content received -->`;
-          return;
-        }
         this.classList.add('splide');
 
         if (settings.autoplay && settings.autoplay > 0) {

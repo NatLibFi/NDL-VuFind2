@@ -110,6 +110,15 @@
   background-color: @breadcrumb-bg;
   display: none;
 }
+.template-name-cites, .template-name-citedby {
+  .breadcrumbs {
+    display: block;
+    font-weight: 600;
+    .breadcrumb {
+      padding-left: 0;
+    }
+  }
+}
 .breadcrumbs when (@breadcrumbs = true) {
   display: block;
 }

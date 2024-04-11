@@ -56,38 +56,17 @@ use function intval;
 class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
 {
     /**
-     * Comments table
-     *
-     * @var Comments
-     */
-    protected $commentsTable;
-
-    /**
-     * CommentsRecord table
-     *
-     * @var CommentsRecord
-     */
-    protected $commentsRecordTable;
-
-    /**
-     * Search runner
-     *
-     * @var SearchRunner
-     */
-    protected $searchRunner;
-
-    /**
      * Constructor
      *
-     * @param Resource            $table          Resource database table
-     * @param Captcha             $captcha        Captcha controller plugin
-     * @param User|bool           $user           Logged in user (or false)
-     * @param bool                $enabled        Are comments enabled?
-     * @param RecordLoader        $loader         Record loader
-     * @param AccountCapabilities $ac             Account capabilities helper
-     * @param Comments            $comments       Comments table
-     * @param CommmentsRecord     $commentsRecord CommentsRecord table
-     * @param SearchRunner        $searchRunner   Search runner
+     * @param Resource            $table               Resource database table
+     * @param Captcha             $captcha             Captcha controller plugin
+     * @param User|bool           $user                Logged in user (or false)
+     * @param bool                $enabled             Are comments enabled?
+     * @param RecordLoader        $loader              Record loader
+     * @param AccountCapabilities $ac                  Account capabilities helper
+     * @param ?Comments           $commentsTable       Comments table
+     * @param ?CommmentsRecord    $commentsRecordTable CommentsRecord table
+     * @param ?SearchRunner       $searchRunner        Search runner
      */
     public function __construct(
         Resource $table,
@@ -96,14 +75,11 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
         $enabled,
         RecordLoader $loader,
         AccountCapabilities $ac,
-        Comments $comments = null,
-        CommentsRecord $commentsRecord = null,
-        SearchRunner $searchRunner = null
+        protected ?Comments $commentsTable = null,
+        protected ?CommentsRecord $commentsRecordTable = null,
+        protected ?SearchRunner $searchRunner = null
     ) {
         parent::__construct($table, $captcha, $user, $enabled, $loader, $ac);
-        $this->commentsTable = $comments;
-        $this->commentsRecordTable = $commentsRecord;
-        $this->searchRunner = $searchRunner;
     }
 
     /**

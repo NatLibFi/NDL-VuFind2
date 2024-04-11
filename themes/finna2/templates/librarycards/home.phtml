@@ -9,7 +9,7 @@
     // Additional translations
     $this->jsTranslations()->addStrings(['new_password_success' => 'new_password_success']);
 
-    $user = $this->auth()->isLoggedIn();
+    $user = $this->auth()->getUserObject();
 ?>
 
 <!-- Leftside navigationbar -->

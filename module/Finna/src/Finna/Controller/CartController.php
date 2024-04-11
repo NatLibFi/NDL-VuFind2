@@ -31,6 +31,7 @@
 
 namespace Finna\Controller;
 
+use VuFind\Controller\Feature\ListItemSelectionTrait;
 use VuFind\Exception\Mail as MailException;
 
 use function count;
@@ -48,6 +49,8 @@ use function is_array;
  */
 class CartController extends \VuFind\Controller\CartController
 {
+    use ListItemSelectionTrait;
+
     /**
      * Email a batch of records.
      *
@@ -56,9 +59,7 @@ class CartController extends \VuFind\Controller\CartController
     public function emailAction()
     {
         // Retrieve ID list:
-        $ids = null === $this->params()->fromPost('selectAll')
-            ? $this->params()->fromPost('ids', [])
-            : $this->params()->fromPost('idsAll', []);
+        $ids = $this->getSelectedIds();
 
         // Retrieve follow-up information if necessary:
         if (!is_array($ids) || empty($ids)) {

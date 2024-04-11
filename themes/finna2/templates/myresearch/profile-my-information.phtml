@@ -54,7 +54,7 @@
     <div class="clearfix"></div>
   <?php endif; ?>
   <div class="myresearch-profile-list">
-    <?php if ($this->auth()->isLoggedIn() && !in_array($this->auth()->getManager()->getAuthClassForTemplateRendering(), ['Finna\Auth\ILS', 'Finna\Auth\MultiILS']) && $this->auth()->getManager()->supportsPasswordChange()): ?>
+    <?php if ($this->auth()->getUserObject() && !in_array($this->auth()->getManager()->getAuthClassForTemplateRendering(), ['Finna\Auth\ILS', 'Finna\Auth\MultiILS']) && $this->auth()->getManager()->supportsPasswordChange()): ?>
       <a href="<?=$this->url('myresearch-changepassword') ?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('Change Password') ?></a>
     <?php endif; ?>
   </div>

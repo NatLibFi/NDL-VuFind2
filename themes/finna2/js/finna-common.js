@@ -61,6 +61,17 @@ finna.common = (function finnaCommon() {
    * Add event handlers for managing JS-loaded search results
    */
   function initResultsEventHandler() {
+    VuFind.listen('vf-results-load', () => {
+      setTimeout(
+        function focusHeading() {
+          const heading = document.getElementById("results-heading");
+          if (heading) {
+            heading.focus();
+          }
+        },
+        200
+      );
+    });
     VuFind.listen('vf-results-loaded', () => {
       initResultScripts(document.querySelector('.js-result-list'), false);
     });

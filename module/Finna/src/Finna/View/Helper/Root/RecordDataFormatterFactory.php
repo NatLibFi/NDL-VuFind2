@@ -294,7 +294,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             [
                 'labelFunction'  => function ($data) {
                     $label = isset($data[0]) ? $data[0]['heading'] : '';
-                    return $label;
+                    return $label ?: 'Other Related Material';
                 },
                 'context' => ['class' => 'recordOtherLink'],
             ]
@@ -1443,6 +1443,14 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             ]
         );
         $setTemplateLine(
+            'Capture Information',
+            'getCaptureInformation',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'record-capture-information'],
+            ]
+        );
+        $setTemplateLine(
             'First Lyrics',
             'getFirstLyrics',
             'data-escapeHtml.phtml',
@@ -1712,6 +1720,14 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'creator-characteristics'],
+            ]
+        );
+        $setTemplateLine(
+            'Citations',
+            'getCitations',
+            'data-citations.phtml',
+            [
+                'context' => ['class' => 'record-citations'],
             ]
         );
 
