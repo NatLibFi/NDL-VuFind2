@@ -2549,29 +2549,18 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      */
     public function getOriginalLanguages()
     {
-        $languages = array_unique(array_filter(array_merge(
-            // 041h - language code of original
-            $this->getFieldArray('041', ['h']),
-            // 979i - component part original language
-            $this->getFieldArray('979', ['i'])
-        )));
-        if (!empty($languages)) {
-            foreach ($this->getMarcReader()->getFields('041') as $field) {
-                if ($field['i1'] != 0) {
-                    $sortingArr = [];
-                    foreach ($this->getLanguages() as $lang) {
-                        $sortingArr[] = $lang;
-                    }
-                    uasort($languages, function ($a, $b) use ($sortingArr) {
-                        return array_search($a, $sortingArr) <=> array_search($b, $sortingArr);
-                    });
+        $result = [];
+        foreach ($this->getMarcReader()->getFields('041') as $field) {
+            if ($field['i1'] != 0) {
+                foreach (array_unique(array_merge(
+                    // 041h - language code of original
+                    $this->getFieldArray('041',['h']),
+                    // 979i - component part original language
+                    $this->getFieldArray('979', ['i'])
+                )) as $lang) {
+                    $result[] = $lang;
                 }
             }
-        } else {
-            $result = [];
-        }
-        if (!isset($result)) {
-            $result = $languages;
         }
         return $result;
     }
