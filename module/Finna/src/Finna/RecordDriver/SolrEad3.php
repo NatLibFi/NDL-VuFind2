@@ -164,8 +164,8 @@ class SolrEad3 extends SolrEad
 
     // unitid is shown when label-attribute is missing or is one of:
     public const UNIT_IDS = [
-        'Tekninen', 'Analoginen', 'Vanha analoginen', 'Vanha tekninen',
-        'Diaarinumero', 'Asiaryhmän numero',
+        'Tekninen', 'Analoginen', 'Vanha analoginen', 'Diaarinumero',
+        'Asiaryhmän numero', 'Arkistotunnus',
     ];
 
     // If any of these values are found in ocr image title, do not place

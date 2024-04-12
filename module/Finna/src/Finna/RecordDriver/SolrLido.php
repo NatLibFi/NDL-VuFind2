@@ -33,6 +33,8 @@
 
 namespace Finna\RecordDriver;
 
+use VuFind\I18n\TranslatableString;
+
 use function boolval;
 use function call_user_func_array;
 use function count;
@@ -211,6 +213,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      * @var array
      */
     protected $excludedSubjectTypes = ['aihe', 'iconclass'];
+
+    /**
+     * Array of types for linkResources to be displayed as external URL
+     */
+    protected $displayExternalLinks = ['provided_3D'];
 
     /**
      * Events used for author information.
@@ -556,7 +563,32 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                                 ?? reset($foundDescriptions);
                     }
                 }
-
+                // Representation is a document or wanted to be displayed also as an document
+                if (
+                    in_array($type, $documentTypeKeys)
+                    || ($displayAsLink = in_array($type, $this->displayExternalLinks))
+                ) {
+                    $documentDesc = $description;
+                    if ($displayAsLink ??= false && !$documentDesc) {
+                        $host = $this->safeParseUrl($url, PHP_URL_HOST);
+                        $documentDesc = new TranslatableString(
+                            "external_$host",
+                            $host
+                        );
+                    }
+                    $documentRights = $this->getResourceRights($resourceSet, $language, false);
+                    if (
+                        $document = $this->getDocument(
+                            $url,
+                            $format,
+                            $documentDesc,
+                            $documentRights,
+                            $displayAsLink
+                        )
+                    ) {
+                        $documentUrls = array_merge($documentUrls, $document);
+                    }
+                }
                 // Representation is an image
                 if (in_array($type, $imageTypeKeys)) {
                     $image = $this->getImage(
@@ -603,13 +635,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                         $videoUrls = array_merge($videoUrls, $video);
                     }
                     continue;
-                }
-                // Representation is a document
-                if (in_array($type, $documentTypeKeys)) {
-                    $documentRights = $this->getResourceRights($resourceSet, $language, false);
-                    if ($document = $this->getDocument($url, $format, $description, $documentRights)) {
-                        $documentUrls = array_merge($documentUrls, $document);
-                    }
                 }
             }
             // Save all the found results here as a new object
@@ -775,9 +800,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     ): array {
         $type = $this->modelTypes[$type];
         $format = strtolower($format);
-        if ('preview' === $type && !in_array($format, $this->displayableModelFormats)) {
-            // If we can not display the file, then tag it as a provided 3D model
-            $type = 'provided';
+        if ('preview' !== $type || !in_array($format, $this->displayableModelFormats)) {
+            return [];
         }
         return [
             'url' => $url,
@@ -914,10 +938,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     /**
      * Function to return document in associative array
      *
-     * @param string $url         Url of the document
-     * @param string $format      Format of the document
-     * @param string $description Description of the document
-     * @param array  $rights      Array of document rights
+     * @param string $url           Url of the document
+     * @param string $format        Format of the document
+     * @param string $description   Description of the document
+     * @param array  $rights        Array of document rights
+     * @param bool   $displayAsLink Display the document as a link, default is false
      *
      * @return array
      */
@@ -925,13 +950,20 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $url,
         string $format,
         string $description,
-        array $rights
+        array $rights,
+        bool $displayAsLink = false
     ): array {
+        $format = strtolower($format);
+        // Do not display text/html mediatype
+        if ('text/html' === $format) {
+            $format = '';
+        }
         return [
             'description' => $description ?: false,
             'url' => $url,
-            'format' => strtolower($format),
+            'format' => $format,
             'rights' => $rights,
+            'displayAsLink' => $displayAsLink,
         ];
     }
 

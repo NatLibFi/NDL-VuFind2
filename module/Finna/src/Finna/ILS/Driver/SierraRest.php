@@ -335,7 +335,6 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             [
                 'limit' => 10000,
                 'offset' => 0,
-                'fields' => 'code,name',
                 'language' => $this->getTranslatorLocale(),
             ],
             'GET',
@@ -380,8 +379,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         $result = $this->makeRequest(
             [$this->apiBase, 'patrons', $patron['id']],
             [
-                'fields' => 'names,emails,phones,addresses,birthDate,expirationDate'
-                    . ',message,homeLibraryCode,fixedFields',
+                'fields' => 'default,names,emails,phones,addresses,message,homeLibraryCode,fixedFields',
             ],
             'GET',
             $patron
@@ -615,8 +613,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             [$this->apiBase, 'patrons', $patron['id'], 'fines'],
             [
                 'limit' => 10000,
-                'fields' => 'item,assessedDate,description,chargeType,itemCharge'
-                    . ',processingFee,billingFee,paidAmount,location,invoiceNumber',
+                'fields' => 'default,invoiceNumber',
             ],
             'GET',
             $patron
@@ -1110,14 +1107,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             }
         }
 
-        $fields = [
-            'location',
-            'status',
-            'barcode',
-            'callNumber',
-            'fixedFields',
-            'varFields',
-        ];
+        $fields = ['default', 'fixedFields', 'varFields'];
         $statuses = [];
         $sort = 0;
         // Fetch hold count for items if needed:
@@ -1618,19 +1608,9 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      */
     protected function getItemBarcode(string $itemId, array $patron): string
     {
-        // Get item barcode using same request as elsewhere for cacheability
-        $item = $this->makeRequest(
-            [$this->apiBase, 'items', $itemId],
-            ['fields' => 'bibIds,varFields'],
-            'GET',
-            $patron
-        );
-        foreach ($item['varFields'] ?? [] as $field) {
-            if ('b' === $field['fieldTag']) {
-                return $field['content'];
-            }
-        }
-        return '';
+        $items = $this->getItemRecords([$itemId], null, $patron);
+        $item = reset($items);
+        return $item['barcode'] ?? '';
     }
 
     /**
