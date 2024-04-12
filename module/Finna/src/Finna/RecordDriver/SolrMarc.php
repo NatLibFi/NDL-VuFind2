@@ -2552,12 +2552,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         $result = [];
         foreach ($this->getMarcReader()->getFields('041') as $field) {
             if ($field['i1'] != 0) {
-                foreach (array_unique(array_merge(
-                    // 041h - language code of original
-                    $this->getFieldArray('041',['h']),
-                    // 979i - component part original language
-                    $this->getFieldArray('979', ['i'])
-                )) as $lang) {
+                foreach (array_unique(
+                    array_merge(
+                        // 041h - language code of original
+                        $this->stripTrailingPunctuation($this->getFieldArray('041', ['h'])),
+                        // 979i - component part original language
+                        $this->stripTrailingPunctuation($this->getFieldArray('979', ['i']))
+                    )
+                ) as $lang) {
                     $result[] = $lang;
                 }
             }
