@@ -301,6 +301,9 @@
           <resourceRepresentation type="preview_3D">
             <linkResource formatResource="glb">https://glbmalli.glb</linkResource>
           </resourceRepresentation>
+          <resourceRepresentation type="provided_3D">
+            <linkResource formatResource="text/html">https://sketchfab.com/test</linkResource>
+          </resourceRepresentation>
           <rightsResource>
             <rightsType>
               <conceptID type="copyright">InC</conceptID>
