@@ -1568,7 +1568,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             );
             $locations = [];
             foreach ($result['data'] as $location) {
-                $locations[$location['authorised_value']] = $location;
+                $locations[$location['value']] = $location;
             }
             $this->putCachedData($cacheKey, $locations, 3600);
         }
