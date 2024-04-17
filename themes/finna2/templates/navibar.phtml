@@ -21,7 +21,7 @@
         <?php foreach ($this->navibar()->getMenuItems($this->layout()->userLang) as $key => $val): ?>
           <?php if (count($val['items']) > 1): ?>
             <li class="dropdown" id="<?= $val['label'] ?>">
-              <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?= $this->icon($val['label']) ?><?= $this->transEsc($val['label']) ?> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
+              <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><?= $this->icon($val['label']) ?><?= $this->transEsc($val['label']) ?> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
               <ul role="menu" class="dropdown-menu">
                 <?php foreach ($val['items'] as $itemKey => $itemVal): ?>
                 <?php
@@ -89,27 +89,27 @@
       </ul>
     </div>
   <?php endif; ?>
-  <ul class="nav navbar-nav header-navbar-right">
+  <ul role="presentation" class="nav navbar-nav header-navbar-right">
     <li id="language_menu" class="dropdown">
-      <a href="#" id="language_menu_dropdown_button" class="btn dropdown-toggle" role="button" data-toggle="dropdown" aria-label="<?=$this->transEscAttr('Language')?>" aria-haspopup="true" aria-expanded="false">
+      <a href="#" id="language_menu_dropdown_button" class="btn dropdown-toggle" role="button" data-toggle="dropdown" aria-label="<?=$this->transEscAttr('Language')?>" aria-description="<?=$this->displayLanguageOption($selectedLang)?> <?=$this->transEscAttr('selected')?>" aria-expanded="false">
         <?=$this->icon('language', 'lang-icon') ?>
         <span class="hidden-xs"><?=$this->displayLanguageOption($selectedLang)?></span>
         <?=$this->icon('collapse-open', 'collapse-open-icon') ?>
       </a>
-      <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="language_menu_dropdown_button" >
+      <ul class="dropdown-menu dropdown-menu-right" role="menu">
         <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
           <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
             <?php if ($this->layout()->userLang == $langCode): ?>
-              <li class="dropdown-item" role="none">
-                <a class="preserve-anchor active" role="menuitem" lang="<?=$this->escapeHtmlAttr($langCode)?>"> <?=$this->displayLanguageOption($langName)?></a>
+              <li>
+                <a class="preserve-anchor active" role="button" aria-description="<?=$this->transEscAttr('selected')?>" lang="<?=$this->escapeHtmlAttr($langCode)?>"> <?=$this->displayLanguageOption($langName)?></a>
               </li>
               <?php break; ?>
             <?php endif ?>
           <?php endforeach; ?>
           <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
             <?php if ($this->layout()->userLang != $langCode): ?>
-              <li class="dropdown-item" role="none">
-                <a class="preserve-anchor" role="menuitem" lang="<?=$this->escapeHtmlAttr($langCode)?>" href="<?=$this->escapeHtmlAttr($this->navibar()->getLanguageUrl($langCode))?>"><?=$this->displayLanguageOption($langName)?></a>
+              <li>
+                <a class="preserve-anchor" role="button" lang="<?=$this->escapeHtmlAttr($langCode)?>" href="<?=$this->escapeHtmlAttr($this->navibar()->getLanguageUrl($langCode))?>"><?=$this->displayLanguageOption($langName)?></a>
               </li>
             <?php endif ?>
           <?php endforeach; ?>

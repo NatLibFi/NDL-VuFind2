@@ -263,6 +263,7 @@ $config = [
         'finna-video-element.js',
         'finna-feed-element.js',
         'finna-carousel-manager.js',
+        'finna-a11y.js',
     ],
     'less' => [
         'active' => false,
