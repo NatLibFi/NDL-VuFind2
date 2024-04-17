@@ -184,6 +184,7 @@ $config = [
         'vendor/priority-nav-core.css',
     ],
     'js' => [
+        ['file' => 'vendor/bootstrap-accessibility.min.js', 'disabled'  => true],
         'finna-object-editor.js',
         'account_ajax.js',
         'advanced_search.js',
