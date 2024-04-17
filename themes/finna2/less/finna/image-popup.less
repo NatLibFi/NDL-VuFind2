@@ -156,7 +156,7 @@
 }
 .next-image {
     position: absolute;
-    z-index: 400;
+    z-index: 600;
     appearance: none;
     border: none;
     background-color: rgba(138, 138, 138, 0.5);
@@ -170,12 +170,18 @@
     color: white;
     margin: 0 4px;
     height: 40px;
-    &:disabled {
-        display: none;
-    }
-    .fa {
+    display: flex;
+    align-items: center;
+    .icon {
         text-shadow: 1px 1px 2px #555;
         cursor: pointer;
+    }
+    &:disabled {
+        color: lighten(@gray-lighter, 5%);
+        cursor: not-allowed;
+        .icon {
+            cursor: not-allowed;
+        }
     }
     &.left {
         left: 0%;
@@ -627,6 +633,9 @@
     right: initial;
     left: 35px;
 }
+.result .recordcover-holder .next-image {
+    display: none;
+} 
 .grid-image .image-popup-trigger.no-image .iconlabel {
     box-shadow: initial;
 }

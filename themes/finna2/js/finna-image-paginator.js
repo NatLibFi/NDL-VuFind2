@@ -153,6 +153,8 @@ FinnaPaginator.prototype.setReferences = function setReferences() {
   if (_.images.length < 2) {
     _.covers.hide();
     _.pagerInfo.hide();
+    _.leftBrowseBtn.hide();
+    _.rightBrowseBtn.hide();
   }
   if (_.images.length <= _.settings.imagesPerRow) {
     $('.recordcovers-more').hide();
@@ -873,6 +875,8 @@ FinnaPaginator.prototype.createPopupObject = function createPopupObject(popup) {
   _.canvasElements.video.attr('id', 'video-player');
   if (_.images.length < 2) {
     _.popup.covers.parent().hide();
+    _.popup.leftBrowseBtn.hide();
+    _.popup.rightBrowseBtn.hide();
   }
   popup.toggleClass('nonzoomable', !_.settings.enableImageZoom);
 

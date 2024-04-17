@@ -335,7 +335,6 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             [
                 'limit' => 10000,
                 'offset' => 0,
-                'fields' => 'code,name',
                 'language' => $this->getTranslatorLocale(),
             ],
             'GET',
@@ -380,8 +379,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         $result = $this->makeRequest(
             [$this->apiBase, 'patrons', $patron['id']],
             [
-                'fields' => 'names,emails,phones,addresses,birthDate,expirationDate'
-                    . ',message,homeLibraryCode,fixedFields',
+                'fields' => 'default,names,emails,phones,addresses,message,homeLibraryCode,fixedFields',
             ],
             'GET',
             $patron
@@ -615,8 +613,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             [$this->apiBase, 'patrons', $patron['id'], 'fines'],
             [
                 'limit' => 10000,
-                'fields' => 'item,assessedDate,description,chargeType,itemCharge'
-                    . ',processingFee,billingFee,paidAmount,location,invoiceNumber',
+                'fields' => 'default,invoiceNumber',
             ],
             'GET',
             $patron
@@ -961,6 +958,64 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
+     * Update holds
+     *
+     * This is responsible for changing the status of hold requests
+     *
+     * @param array $holdsDetails The details identifying the holds
+     * @param array $fields       An associative array of fields to be updated
+     * @param array $patron       Patron array
+     *
+     * @return array Associative array of the results
+     */
+    public function updateHolds(
+        array $holdsDetails,
+        array $fields,
+        array $patron
+    ): array {
+        $results = [];
+        foreach ($holdsDetails as $requestId) {
+            // Check if we can do the requested changes:
+            $updateFields = [];
+            if (isset($fields['frozen'])) {
+                $updateFields['freeze'] = $fields['frozen'];
+            }
+            if (isset($fields['pickUpLocation'])) {
+                $updateFields['pickupLocation'] = $fields['pickUpLocation'];
+            }
+
+            if (!$updateFields) {
+                $results[$requestId] = [
+                    'success' => false,
+                    'status' => 'hold_error_update_blocked_status',
+                ];
+            } else {
+                $result = $this->makeRequest(
+                    [$this->apiBase, 'patrons', 'holds', $requestId],
+                    json_encode($updateFields),
+                    'PUT',
+                    $patron
+                );
+
+                if (!empty($result['code'])) {
+                    $results[$requestId] = [
+                        'success' => false,
+                        'status' => $this->formatErrorMessage(
+                            $result['description'] ?? $result['name']
+                        ),
+                    ];
+                } else {
+                    $results[$requestId] = [
+                        'success' => true,
+                    ];
+                }
+            }
+        }
+
+        return $results;
+    }
+
+    /**
      * Public Function which retrieves renew, hold and cancel settings from the
      * driver ini file.
      *
@@ -1110,14 +1165,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             }
         }
 
-        $fields = [
-            'location',
-            'status',
-            'barcode',
-            'callNumber',
-            'fixedFields',
-            'varFields',
-        ];
+        $fields = ['default', 'fixedFields', 'varFields'];
         $statuses = [];
         $sort = 0;
         // Fetch hold count for items if needed:
@@ -1618,19 +1666,9 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      */
     protected function getItemBarcode(string $itemId, array $patron): string
     {
-        // Get item barcode using same request as elsewhere for cacheability
-        $item = $this->makeRequest(
-            [$this->apiBase, 'items', $itemId],
-            ['fields' => 'bibIds,varFields'],
-            'GET',
-            $patron
-        );
-        foreach ($item['varFields'] ?? [] as $field) {
-            if ('b' === $field['fieldTag']) {
-                return $field['content'];
-            }
-        }
-        return '';
+        $items = $this->getItemRecords([$itemId], null, $patron);
+        $item = reset($items);
+        return $item['barcode'] ?? '';
     }
 
     /**

@@ -1321,4 +1321,26 @@ trait SolrFinnaTrait
             );
         }
     }
+
+    /**
+     * Parse an URL safely. Checks if the URL contains http or https for parse_url to work properly
+     *
+     * @param string $url       The URL to parse.
+     * @param int    $component Specify one of PHP_URL_SCHEME, PHP_URL_HOST, PHP_URL_PORT,
+     * PHP_URL_USER, PHP_URL_PASS, PHP_URL_PATH, PHP_URL_QUERY or PHP_URL_FRAGMENT
+     * to retrieve just a specific URL component as a string (except when PHP_URL_PORT is given,
+     * in which case the return value will be an int).
+     *
+     * @return int|string|array
+     */
+    protected function safeParseUrl(string $url, int $component = -1): int|string|array
+    {
+        if (!$url) {
+            return [];
+        }
+        if (!preg_match('/^https?:/', $url)) {
+            $url = '//' . $url;
+        }
+        return parse_url($url, $component);
+    }
 }
