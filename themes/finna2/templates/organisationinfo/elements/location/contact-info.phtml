@@ -39,7 +39,7 @@
     </p>
   </div>
 <?php endif; ?>
-<?php if ($orgInfo['mailAddress']): ?>
+<?php if ($orgInfo['mailAddress'] ?? null): ?>
   <div class="mail-address-contact info-element">
     <span><?=$this->transEsc('organisation_info_address_mail')?></span>
     <p>

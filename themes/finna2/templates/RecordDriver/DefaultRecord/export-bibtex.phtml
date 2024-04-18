@@ -1,0 +1,182 @@
+<?php
+// TODO: fold this logic into record driver methods at some point:
+$marc = $this->driver->tryMethod('getMarcReader');
+if (is_object($marc)) {
+    $marcPhdField = $marc->getField('502');
+    $marcProceedingsField = $marc->getField('711');
+} else {
+    $marcPhdField = $marcProceedingsField = false;
+}
+$isCollection = $this->driver->getHierarchyType();
+$journalTitle = $this->driver->tryMethod('getContainerTitle');
+$formats = $this->driver->tryMethod('getFormats');
+if ($marcProceedingsField) {
+    $format = 'proceedings';
+} elseif ($marcPhdField) {
+    $format = 'phdthesis';
+} elseif (!empty($journalTitle) || (is_array($formats) && in_array('Article', $formats))) {
+    $format = 'article';
+} elseif (is_array($formats) && in_array('Journal', $formats)) {
+    $format = 'misc';
+} elseif ($isCollection) {
+    $format = 'inproceedings';
+} else {
+    $format = 'book';
+}
+
+// Open format tag:
+echo '@' . $format . "{\n";
+
+// Citation key:
+echo $this->driver->getSourceIdentifier() . '-' . $this->driver->getUniqueID() . ",\n";
+
+$title = rtrim($this->driver->getTitle(), ' /');
+echo "title = {{$title}},\n";
+
+if (!empty($journalTitle)) {
+    echo "journal = {{$journalTitle}},\n";
+    $volume = $this->driver->tryMethod('getContainerVolume');
+    if (!empty($volume)) {
+        echo "volume = {{$volume}},\n";
+    }
+    $number = $this->driver->tryMethod('getContainerIssue');
+    if (!empty($number)) {
+        echo "number = {{$number}},\n";
+    }
+    $start = $this->driver->tryMethod('getContainerStartPage');
+    $end = $this->driver->tryMethod('getContainerEndPage');
+    if (!empty($start)) {
+        // use page range if possible
+        if (!empty($end)) {
+            echo "pages = {{$start}-{$end}},\n";
+        } else {
+            // use only start page
+            echo "pages = {{$start}},\n";
+        }
+    }
+}
+
+$series = $this->driver->tryMethod('getSeries');
+if (is_array($series)) {
+    foreach ($series as $current) {
+        echo 'series = {' . (is_array($current) ? $current['name'] : $current) . "},\n";
+    }
+}
+
+$mergeAuthors = function (array $a): string {
+    return implode(
+        ' and ',
+        array_map(
+            function ($s) {
+                return str_replace(' and ', ' {and} ', $s);
+            },
+            $a
+        )
+    );
+};
+
+if ($isCollection) {
+    if ($archives = $this->driver->tryMethod('getHierarchyTopTitle')) {
+        foreach ($archives as $archive) {
+            echo "booktitle = {{$archive}},\n";
+        }
+    }
+    if ($this->driver->getRecordFormat() === 'ead3') {
+        if ($archiveAuthors = $this->driver->tryMethod('getAuthorsWithoutRoleHeadings')) {
+            foreach ($archiveAuthors as $archiveAuthor) {
+                if ($archiveAuthor['name']) {
+                    echo "author = {{$archiveAuthor['name']}}\n";
+                }
+            }
+        }
+    }
+    if ($locations = $this->driver->tryMethod('getBuildings')) {
+        $archiveLocation = [];
+        foreach ($locations as $location) {
+            $archiveLocation[] = $this->translate($location);
+        }
+        echo 'organization = {' . implode(', ', $archiveLocation) . "},\n";
+    }
+    if ($address = $this->driver->tryMethod('getPhysicalLocations')) {
+        if (is_array($address)) {
+            foreach ($address as $place) {
+                echo "address = {{$place}},\n";
+            }
+        } else {
+            echo "address = {{$address}},\n";
+        }
+    }
+    if ($year = $this->driver->tryMethod('getYear')) {
+        echo "year = {{$year}},\n";
+    }
+} else {
+    if ($authors = $mergeAuthors($this->driver->tryMethod('getPrimaryAuthors', [], []))) {
+        echo "author = {{$authors}},\n";
+    }
+    if ($editors = $mergeAuthors($this->driver->tryMethod('getSecondaryAuthors', [], []))) {
+        echo "editor = {{$editors}},\n";
+    }
+}
+
+$pubPlaces = $this->driver->tryMethod('getPlacesOfPublication');
+$pubDates = $this->driver->tryMethod('getPublicationDates');
+$pubNames = $this->driver->tryMethod('getPublishers');
+if (is_array($pubPlaces) && is_array($pubDates) && is_array($pubNames)) {
+    $total = min(count($pubPlaces), count($pubDates), count($pubNames));
+    // if we have pub dates but no other details, we still want to export the year:
+    if ($total == 0 && count($pubDates) > 0) {
+        $total = 1;
+    }
+    for ($i = 0; $i < $total; $i++) {
+        if (isset($pubPlaces[$i])) {
+            echo 'address = {' . rtrim(str_replace(['[', ']'], '', $pubPlaces[$i]), ': ') . "},\n";
+        }
+        if (isset($pubNames[$i])) {
+            echo 'publisher = {' . rtrim($pubNames[$i], ', ') . "},\n";
+        }
+        $date = trim($pubDates[$i], '[]. ');
+        if (strlen($date) > 4) {
+            $date = $this->dateTime()->extractYear($date);
+        }
+        if ($date) {
+            echo "year = {{$date}},\n";
+        }
+    }
+}
+
+$edition = $this->driver->tryMethod('getEdition');
+if (!empty($edition)) {
+    echo "edition = {{$edition}},\n";
+}
+
+if ($marcPhdField && $subfield = $marc->getSubfield($marcPhdField, 'a')) {
+    echo 'school = {' . $subfield . "},\n";
+}
+
+// Try to find a page count in the physical description:
+$physical = $this->driver->tryMethod('getPhysicalDescriptions');
+if (is_array($physical)) {
+    foreach ($physical as $current) {
+        if (preg_match('/([0-9]+)\s*p/', $current, $matches)) {
+            echo "pages = {{$matches[1]}},\n";
+            break;
+        }
+    }
+}
+
+$notes = $this->driver->tryMethod('getGeneralNotes');
+if (is_array($notes)) {
+    foreach ($notes as $note) {
+        echo "note = {{$note}},\n";
+    }
+}
+
+if ($urls = $this->record($this->driver)->getUrlList()) {
+    foreach ($urls as $url) {
+        echo "url = {{$url}},\n";
+    }
+}
+echo 'url = {' . $this->serverUrl($this->recordLinker()->getUrl($this->driver)) . "}\n";
+
+// Record separator:
+echo "}\n\n";

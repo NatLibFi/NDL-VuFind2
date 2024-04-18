@@ -119,38 +119,6 @@
   }
 }
 
-.next-image {
-  position: absolute;
-  z-index: 100;
-  appearance: none;
-  -webkit-appearance: none;
-  border: none;
-  background-color: rgba(138, 138, 138, 0.5);
-  align-self: center;
-  .paginator-canvas & {
-    background-color: rgba(138, 138, 138, 0.9);
-  }
-  font-size: 22px;
-  border-radius: 2px;
-  padding: 0 4px;
-  color: white;
-  margin: 0 4px;
-  height: 40px;
-  &:disabled {
-    display: none;
-  }
-  .fa {
-    text-shadow: 1px 1px 2px #555;
-    cursor: pointer;
-  }
-  &.left {
-    left: 0%;
-  }
-  &.right {
-    right: 0%;
-  }
-}
-
 a.authority {
   float: left;
   clear: left;
@@ -180,35 +148,6 @@ a.authority {
       width: 50%;
     }
     .record-image-container {
-      text-align: center;
-      .image-popup-trigger {
-        position: relative;
-        display: inline-block;
-        height: 100%;
-        max-width: 100%;
-        img {
-          max-height: 600px;
-        }
-        .paginator-info {
-          position: absolute;
-          right: 10px;
-          top: 0px;
-          color: black;
-          z-index: 6;
-          .image-index {
-            background-color: #d6d6d6;
-            background-color: #efefefcc;
-            padding: 2px;
-          }
-        }
-      }
-      .image-popup-trigger {
-        &.no-image {
-          img {
-            max-width: 200px;
-          }
-        }
-      }
       .open-link {
         margin-top: 10px;
       }
@@ -297,160 +236,6 @@ a.authority {
     background: white;
     padding: 4px;
     max-width: 400px;
-  }
-}
-
-.recordcovers {
-  &.paginated {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    .paginator-info {
-      position: absolute;
-      right: 40px;
-      font-size: 0.9em;
-      bottom: -22px;
-    }
-    > button {
-      appearance: none;
-      -webkit-appearance: none;
-      height: 44px;
-      border: none;
-      background-color: transparent;
-      padding: 0 2px;
-      flex: 0 0 0;
-      i {
-        cursor: pointer;
-        font-size: 24px;
-      }
-      .finna-popup &:not(:disabled){
-        color: white;
-      }
-      &:disabled {
-        background-color: #d6d6d600;
-        color: lighten(@gray-light, 30%);
-        color: transparent;
-        i {
-          cursor: not-allowed;
-        }
-      }
-    }
-
-    .track-holder {
-      display: inline-block;
-      flex: 1 1 auto;
-      .finna-element-track {
-        max-height: 100%;
-        touch-action: none;
-        display: flex;
-        flex-flow: column;
-        align-items: center;
-        width: 100%;
-        min-width: 100%;
-        div {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 100%;
-          a {
-            background-color: #efefefcc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 64px;
-            overflow: hidden;
-            margin: 2px 4px;
-            padding: 2px;
-            max-width: 64px;
-            flex: 1 1 64px;
-            cursor: pointer;
-            span.model-3d-icon {
-              color: #121212;
-              font-size: 24px;
-              font-style: initial;
-            }
-            &.current {
-              border: 0.2em solid @brand-primary;
-            }
-
-            &.truncate-change {
-              opacity: 0;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  &.mini-paginator.paginated {
-    position: absolute;
-    left: 0;
-    padding: 0;
-    z-index: 3;
-    min-height: 20px;
-    top: 0;
-    align-items: center;
-    justify-content: start;
-    button {
-      background-color: #efefef;
-      background-color: #efefefcc;
-      margin: 0 1px;
-      padding: 0 4px;
-      box-shadow: 1px 1px #c6c6c6;
-      height: 24px;
-      .icon {
-        font-size: 10px;
-      }
-      &:disabled {
-        color: lighten(@gray-light, 30%);
-      }
-    }
-
-    .paginator-info {
-      text-align: left;
-      width: initial;
-      position: initial;
-      margin: 0 2px;
-      .image-index {
-        background-color: #efefef;
-        background-color: #efefefcc;
-      }
-    }
-
-    .track-holder {
-      margin: 0 1px;
-      display: none;
-    }
-  }
-}
-
-.recordcovers-more {
-  display: flex;
-  align-items: center;
-
-  .show-more-images, .show-less-images {
-    cursor: pointer;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: .9em;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    border: none;
-    background-color: transparent;
-    padding: 0;
-  }
-  button {
-    flex: 1;
-    appearance: none;
-    -webkit-appearance: none;
-    border: none;
-    i {
-      cursor: pointer;
-    }
-  }
-  button:disabled i {
-    cursor: initial;
   }
 }
 
@@ -976,10 +761,6 @@ finna-model-viewer {
   .wrapper {
     flex: 1 1 100%;
     background-color: #efefefcc;
-    img {
-      top: 50%;
-      transform: translateY(-50%);
-    }
     &.filedrop {
       box-shadow: 0px 0px 2px 2px @brand-primary;
     }

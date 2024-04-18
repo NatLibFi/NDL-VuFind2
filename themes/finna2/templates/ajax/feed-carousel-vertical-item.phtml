@@ -1,6 +1,6 @@
 <!-- START of: finna - ajax/feed-carousel-vertical-item.phtml -->
 <?php
-  $clickableElement = !$this->touchDevice && !isset($this->linkText);
+  $clickableElement = !$this->touchDevice && !$hasLinkText;
   $clickableLink = !$clickableElement;
   $hasIcon = !empty($item['icon']['name']);
   $hasImg = !empty($item['image']['url']);

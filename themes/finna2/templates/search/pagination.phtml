@@ -20,6 +20,20 @@
       }
     ?>
     <ul<?=$ulAttrs?>>
+    <?php if (isset($this->next)): ?>
+        <?=
+          $this->render(
+              'Helpers/pagination-item.phtml',
+              [
+                'results' => $this->results,
+                'current' => $this->current,
+                'page' => $this->next,
+                'liClasses' => ['sr-only'],
+                'contentHtml' => '<h2>' . $this->translate('page_next') . '</h2>',
+            ]
+          )
+        ?>
+      <?php endif; ?>
       <?php if (isset($this->previous)): ?>
         <?php if ($showFirstLast): ?>
           <?=
