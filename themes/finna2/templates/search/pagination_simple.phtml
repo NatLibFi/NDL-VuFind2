@@ -6,7 +6,7 @@
       $ulAttrs->add('class', 'js-pagination-simple');
     }
   ?>
-  <ul<?=$ulAttrs?>>
+  <ul role="presentation" <?=$ulAttrs?>>
     <?php if (isset($this->previous)): ?>
       <li><a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->previous)?>"><span class="sr-only"><?=$this->transEsc('page_prev')?></span><?=$this->icon('page-prev') ?></a></li>
     <?php endif; ?>

@@ -187,9 +187,9 @@
         <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false" aria-label="<?= $this->transEsc('Narrow Search') ?>" data-toggle="dropdown"><span><?=$this->transEsc($label)?></span> <?=$this->icon('type-dropdown-open') ?></a>
         <ul class="dropdown-menu" role="menu">
           <?php foreach ($handlers as $handler): ?>
-            <li role="menuitem">
+            <li>
               <input type="hidden" value="<?=$this->escapeHtmlAttr($handler['value'])?>">
-              <a class="select-type" href="#"><?=$this->transEsc($handler['label'])?></a>
+              <a role="menuitem" class="select-type" href="#"><?=$this->transEsc($handler['label'])?></a>
             </li>
           <?php endforeach; ?>
         </ul>
