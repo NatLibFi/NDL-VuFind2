@@ -11,7 +11,7 @@ finna.a11y = (function a11y() {
 
       // Set focus on the first link in the dropdown
       setTimeout(function shiftFocus() {
-        dropdown.find('.dropdown-menu li:first-child a').focus(); }, 10);
+        dropdown.find('.dropdown-menu li:first-child a').trigger("focus"); }, 10);
     });
 
     // On dropdown close
@@ -22,7 +22,7 @@ finna.a11y = (function a11y() {
       dropdown.find('.dropdown-menu').attr('aria-expanded', false);
 
       // Set focus back to dropdown toggle
-      dropdown.find('.dropdown-toggle').focus();
+      dropdown.find('.dropdown-toggle').trigger("focus");
     });
 
     // Restore focus back to trigger element after lightbox is closed.

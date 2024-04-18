@@ -101,7 +101,7 @@
           <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
             <?php if ($this->layout()->userLang == $langCode): ?>
               <li>
-                <a class="preserve-anchor active" role="button" aria-description="<?=$this->transEscAttr('selected')?>" lang="<?=$this->escapeHtmlAttr($langCode)?>"> <?=$this->displayLanguageOption($langName)?></a>
+                <a class="preserve-anchor active" role="menuitem" aria-description="<?=$this->transEscAttr('selected')?>" lang="<?=$this->escapeHtmlAttr($langCode)?>"> <?=$this->displayLanguageOption($langName)?></a>
               </li>
               <?php break; ?>
             <?php endif ?>
@@ -109,7 +109,7 @@
           <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
             <?php if ($this->layout()->userLang != $langCode): ?>
               <li>
-                <a class="preserve-anchor" role="button" lang="<?=$this->escapeHtmlAttr($langCode)?>" href="<?=$this->escapeHtmlAttr($this->navibar()->getLanguageUrl($langCode))?>"><?=$this->displayLanguageOption($langName)?></a>
+                <a class="preserve-anchor" role="menuitem" lang="<?=$this->escapeHtmlAttr($langCode)?>" href="<?=$this->escapeHtmlAttr($this->navibar()->getLanguageUrl($langCode))?>"><?=$this->displayLanguageOption($langName)?></a>
               </li>
             <?php endif ?>
           <?php endforeach; ?>
