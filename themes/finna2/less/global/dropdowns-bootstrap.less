@@ -37,14 +37,14 @@
 }
 
 .dropdown-menu > li > a {
+  &:focus {
+    background-color: inherit;
+  }
   &:hover,
   &:active {
     text-decoration: none;
     color: @dropdown-link-hover-color;
     background-color: @dropdown-link-hover-bg;
-  }
-  &:focus {
-    background-color: inherit;
   }
 }
 
