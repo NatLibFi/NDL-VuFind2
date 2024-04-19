@@ -801,7 +801,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             'getProducers',
             'data-producers.phtml',
             [
-                'context' => ['class' => 'recordManufacturer'],
+                'context' => ['class' => 'record-production'],
             ]
         );
         $setTemplateLine(

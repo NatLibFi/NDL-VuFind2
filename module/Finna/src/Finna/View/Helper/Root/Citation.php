@@ -30,6 +30,8 @@
 
 namespace Finna\View\Helper\Root;
 
+use VuFind\Record\Loader;
+
 use function count;
 use function is_array;
 
@@ -44,6 +46,27 @@ use function is_array;
  */
 class Citation extends \VuFind\View\Helper\Root\Citation
 {
+    /**
+     * Record loader
+     *
+     * @var Loader
+     */
+    protected $recordLoader;
+
+    /**
+     * Constructor
+     *
+     * @param \VuFind\Date\Converter $converter Date converter
+     * @param Loader                 $loader    Record loader
+     */
+    public function __construct(
+        \VuFind\Date\Converter $converter,
+        Loader $loader,
+    ) {
+        parent::__construct($converter);
+        $this->recordLoader = $loader;
+    }
+
     /**
      * Get Harvard citation.
      *
@@ -79,6 +102,40 @@ class Citation extends \VuFind\View\Helper\Root\Citation
             }
             return $partial('Citation/harvard-article.phtml', $harvard);
         }
+    }
+
+    /**
+     * Get Archive citation.
+     *
+     * This function returns a citation for archive items.
+     *
+     * @return string
+     */
+    public function getCitationArchive(): string
+    {
+        $serverUrl = $this->getView()->plugin('serverUrl');
+        $recordLinker = $this->getView()->plugin('recordLinker');
+        $archive = [
+            'title' => $this->stripPunctuation($this->details['title']),
+            'signum' => $this->details['subtitle'],
+            'url' => $serverUrl($recordLinker->getUrl($this->driver, ['excludeSearchId' => true])),
+        ];
+        if ($topId = $this->driver->tryMethod('getHierarchyTopId')[0]) {
+            if ($topId !== $this->driver->getUniqueID()) {
+                $originationDriver = $this->recordLoader->load($topId);
+                $origination = $this->stripPunctuation($originationDriver->tryMethod('getTitle'));
+                $archive['origination'] = $origination;
+            }
+        }
+        if ($locations = $this->driver->tryMethod('getBuildings')) {
+            $archiveLocation = [];
+            foreach ($locations as $location) {
+                $archiveLocation[] = $this->translate($location);
+            }
+            $archive['location'] = implode(', ', $archiveLocation);
+        }
+        $partial = $this->getView()->plugin('partial');
+        return $partial('Citation/archive-article.phtml', $archive);
     }
 
     /**

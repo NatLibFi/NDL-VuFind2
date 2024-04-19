@@ -12,8 +12,8 @@
     <?php endforeach; ?>
     <ul class="dropdown-menu" role="menu">
       <?php foreach ($this->sortList as $sortType => $sortData): ?>
-      <li role="menuitem" class="sort-<?=$this->escapeHtmlAttr(str_replace([' ', '_'], '-', $sortType))?>">
-        <a href="<?=isset($sortData['url']) ? $this->escapeHtmlAttr($sortData['url']) : $this->results->getUrlQuery()->setSort($sortType)?>"><?=$this->transEsc($sortData['desc'])?></a>
+      <li class="sort-<?=$this->escapeHtmlAttr(str_replace([' ', '_'], '-', $sortType))?>">
+        <a role="menuitem" href="<?=isset($sortData['url']) ? $this->escapeHtmlAttr($sortData['url']) : $this->results->getUrlQuery()->setSort($sortType)?>"><?=$this->transEsc($sortData['desc'])?></a>
       <?php endforeach; ?>
       </li>
     </ul>

@@ -27,7 +27,8 @@ var finna = (function finnaModule() {
         'finnaSurvey',
         'multiSelect',
         'finnaMovement',
-        'mdEditable'
+        'mdEditable',
+        'a11y'
       ];
 
       $.each(modules, function initModule(ind, module) {

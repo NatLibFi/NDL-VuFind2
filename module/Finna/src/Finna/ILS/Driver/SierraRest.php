@@ -958,6 +958,64 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
+     * Update holds
+     *
+     * This is responsible for changing the status of hold requests
+     *
+     * @param array $holdsDetails The details identifying the holds
+     * @param array $fields       An associative array of fields to be updated
+     * @param array $patron       Patron array
+     *
+     * @return array Associative array of the results
+     */
+    public function updateHolds(
+        array $holdsDetails,
+        array $fields,
+        array $patron
+    ): array {
+        $results = [];
+        foreach ($holdsDetails as $requestId) {
+            // Check if we can do the requested changes:
+            $updateFields = [];
+            if (isset($fields['frozen'])) {
+                $updateFields['freeze'] = $fields['frozen'];
+            }
+            if (isset($fields['pickUpLocation'])) {
+                $updateFields['pickupLocation'] = $fields['pickUpLocation'];
+            }
+
+            if (!$updateFields) {
+                $results[$requestId] = [
+                    'success' => false,
+                    'status' => 'hold_error_update_blocked_status',
+                ];
+            } else {
+                $result = $this->makeRequest(
+                    [$this->apiBase, 'patrons', 'holds', $requestId],
+                    json_encode($updateFields),
+                    'PUT',
+                    $patron
+                );
+
+                if (!empty($result['code'])) {
+                    $results[$requestId] = [
+                        'success' => false,
+                        'status' => $this->formatErrorMessage(
+                            $result['description'] ?? $result['name']
+                        ),
+                    ];
+                } else {
+                    $results[$requestId] = [
+                        'success' => true,
+                    ];
+                }
+            }
+        }
+
+        return $results;
+    }
+
+    /**
      * Public Function which retrieves renew, hold and cancel settings from the
      * driver ini file.
      *
