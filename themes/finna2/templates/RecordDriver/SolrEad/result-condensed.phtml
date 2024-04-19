@@ -29,6 +29,11 @@
         ?>
         </a>
       </h2>
+      <?php if ($otherTitles = $this->driver->tryMethod('getAlternativeTitles')): ?>
+        <div class="result-alt-titles">
+          <?=implode(' &ndash; ', array_map($this->escapeHtml, $otherTitles)) ?>
+        </div>
+      <?php endif; ?>
       <div class="dateyeartype">
         <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?></div>
         <?=$this->render('record/labels.phtml', ['driver' => $this->driver]); ?>
