@@ -11,7 +11,7 @@ finna.a11y = (function a11y() {
 
       // Set focus on the first link in the dropdown
       setTimeout(function shiftFocus() {
-        dropdown.find('.dropdown-menu li:first-child a').trigger("focus"); }, 10);
+        dropdown.find('.dropdown-menu li:first-child a').trigger("focus"); }, 50);
     });
 
     // On dropdown close
