@@ -7,11 +7,12 @@ finna.a11y = (function a11y() {
       var dropdown = $(event.target);
 
       // Set aria-expanded to true
-      dropdown.find('.dropdown-menu').attr('aria-expanded', true);
+      dropdown.find('.dropdown-toggle').attr('aria-expanded', true);
 
       // Set focus on the first link in the dropdown
       setTimeout(function shiftFocus() {
-        dropdown.find('.dropdown-menu li:first-child a').trigger("focus"); }, 50);
+        dropdown.find('.dropdown-menu li:first-child a').trigger("focus");
+      }, 50);
     });
 
     // On dropdown close
@@ -19,7 +20,7 @@ finna.a11y = (function a11y() {
       var dropdown = $(event.target);
 
       // Set aria-expanded to false
-      dropdown.find('.dropdown-menu').attr('aria-expanded', false);
+      dropdown.find('.dropdown-toggle').attr('aria-expanded', false);
 
       // Set focus back to dropdown toggle
       dropdown.find('.dropdown-toggle').trigger("focus");
