@@ -344,7 +344,7 @@ FinnaPopup.prototype.focusTrap = function focusTrap(e) {
   const element = unwrapJQuery(_.content);
   if (!$.contains(element, e.target)) {
     const nodes = getFocusableNodes(element);
-    if (nodes[0]) {
+    if (nodes.length) {
       nodes[0].focus();    
     }
   }
