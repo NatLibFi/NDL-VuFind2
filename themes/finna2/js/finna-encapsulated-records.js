@@ -2,9 +2,9 @@
 finna.encapsulatedRecords = (function encapsulatedRecords() {
   var my = {
     init: function init() {
-      $('.encapsulated-records.show-all').not(':data(inited)').each(function initRecords() {
+      $('.encapsulated-records.show-all').not('[data-inited="1"]').each(function initRecords() {
         var records = $(this);
-        records.data('inited', '1');
+        records.attr('data-inited', '1');
 
         var showMore = records.find('.show-more');
         var spinner = records.find('.js-spinner-icon');

@@ -1,4 +1,4 @@
-/*global VuFind */
+/*global VuFind, unwrapJQuery, getFocusableNodes */
 function FinnaPopup(trigger, params, id) {
   var _ = this;
   _.triggers = [];
@@ -68,13 +68,14 @@ FinnaPopup.prototype.adjustEmbedLink = function adjustEmbedLink(src) {
 /**
  * Adds a trigger element to popups internal array, so it can be properly found
  *
- * @param {HTMLElement} trigger
+ * @param {jQuery} trigger
  */
 FinnaPopup.prototype.addTrigger = function addTrigger(trigger) {
   var _ = this;
   if (typeof trigger.data(_.triggerId) === 'undefined') {
     _.triggers.push(trigger);
     trigger.data('popup-id', _.id);
+    trigger.attr('data-popup-id', _.id);
     trigger.data(_.triggerId, _.triggers.length - 1);
     _.onPopupInit(trigger);
   }
@@ -101,12 +102,10 @@ FinnaPopup.prototype.customClose = function customClose(){};
 FinnaPopup.prototype.reIndex = function reIndex() {
   var _ = this;
   _.triggers = [];
-  $(':data(popup-id)').each(function toList() {
+  $(`[data-popup-id="${_.id}"]`).each(function toList() {
     var trigger = $(this);
-    if (trigger.data('popup-id') === _.id) {
-      trigger.removeData(_.triggerId);
-      _.addTrigger(trigger);
-    }
+    trigger.removeData(_.triggerId);
+    _.addTrigger(trigger);
   });
 };
 
@@ -343,8 +342,12 @@ FinnaPopup.prototype.onPopupClose = function onPopupClose() {
  */
 FinnaPopup.prototype.focusTrap = function focusTrap(e) {
   var _ = this;
-  if (!$.contains(_.content[0], e.target)) {
-    _.content.find(':focusable').eq(0).focus();
+  const element = unwrapJQuery(_.content);
+  if (!$.contains(element, e.target)) {
+    const nodes = getFocusableNodes(element);
+    if (nodes[0]) {
+      nodes[0].focus();    
+    }
   }
 };
 
