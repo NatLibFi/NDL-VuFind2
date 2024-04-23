@@ -1095,7 +1095,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         $result = [];
         foreach ($this->getMarcReader()->getFields('264') as $field) {
             if ($field['i2'] == 0) {
-                $result[] = $this->stripTrailingPunctuation($this->getSubfieldArray($field, ['a', 'b', 'c']));
+                if ($name = $this->stripTrailingPunctuation($this->getSubfieldArray($field, ['a', 'b', 'c']))) {
+                    $result[] = [
+                        'name' => $name[0],
+                    ];
+                }
             }
         }
         return $result;
