@@ -2,28 +2,19 @@
 finna.a11y = (function a11y() {
   function initA11y() {
 
-    // On dropdown open
-    $(document).on('shown.bs.dropdown', function dropdownOpen(event) {
-      var dropdown = $(event.target);
-
-      // Set aria-expanded to true
-      dropdown.find('.dropdown-toggle').attr('aria-expanded', true);
-
-      // Set focus on the first link in the dropdown
-      setTimeout(function shiftFocus() {
-        dropdown.find('.dropdown-menu li:first-child a').trigger("focus");
-      }, 50);
-    });
-
-    // On dropdown close
-    $(document).on('hidden.bs.dropdown', function dropdownClose(event) {
-      var dropdown = $(event.target);
-
-      // Set aria-expanded to false
-      dropdown.find('.dropdown-toggle').attr('aria-expanded', false);
-
-      // Set focus back to dropdown toggle
-      dropdown.find('.dropdown-toggle').trigger("focus");
+    // On dropdown keydown.
+    $(document).on('keydown.bs.dropdown.data-api', function dropdownKeyDown(e) {
+      // On dropdown close.
+      $(e.target).on('hidden.bs.dropdown', function dropdownClose(ev) {
+        var dropdown = $(ev.target);
+        var toggle = '[data-toggle="dropdown"]';
+        var toggleElement = dropdown.find(toggle)[0];
+        // Set a slight delay to address focus shift problems experienced by some screen readers.
+        setTimeout(function shiftFocus() {
+          // Set focus back to dropdown toggle.
+          toggleElement.focus();
+        }, 150);
+      });
     });
 
     // Restore focus back to trigger element after lightbox is closed.

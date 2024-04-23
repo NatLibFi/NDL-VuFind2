@@ -22,7 +22,7 @@
           <?php if (count($val['items']) > 1): ?>
             <li class="dropdown" id="<?= $val['label'] ?>">
               <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><?= $this->icon($val['label']) ?><?= $this->transEsc($val['label']) ?> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
-              <ul role="menu" class="dropdown-menu">
+              <ul class="dropdown-menu">
                 <?php foreach ($val['items'] as $itemKey => $itemVal): ?>
                 <?php
                   if (!($itemUrl = $this->navibar()->getMenuItemUrl($itemVal))) {
@@ -34,7 +34,7 @@
                   $desc = !empty($itemVal['desc']) ? $itemVal['desc'] : null;
                 ?>
                   <li>
-                    <a <?=$url === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" <?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?=$this->escapeHtmlAttr($url)?>">
+                    <a <?=$url === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> <?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?=$this->escapeHtmlAttr($url)?>">
                       <div><?= $this->transEsc($label) ?></div>
                       <?php if ($desc): ?>
                         <div class="description"><?= $this->transEsc($desc) ?></div>
@@ -53,7 +53,7 @@
             $target = $itemUrl['target'] ?? null;
             $label = $itemVal['label'];
           ?>
-            <li role="none"><a <?=$url === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="button" <?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?= $url ?>"><?= $this->icon($label) ?><?= $this->transEsc($label) ?></a></li>
+            <li role="none"><a <?=$url === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> <?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?= $url ?>"><?= $this->icon($label) ?><?= $this->transEsc($label) ?></a></li>
           <?php endif; ?>
         <?php endforeach; ?>
         <?php $cart = $this->cart();
@@ -64,7 +64,7 @@
         <?php endif; ?>
         <?php if ($this->feedback()->tabEnabled()): ?>
           <li role="none">
-            <a <?=$this->url('feedback-home') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="button" id="feedback-link" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
+            <a <?=$this->url('feedback-home') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?>  id="feedback-link" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
           </li>
         <?php endif; ?>
 
@@ -96,12 +96,12 @@
         <span class="hidden-xs"><?=$this->displayLanguageOption($selectedLang)?></span>
         <?=$this->icon('collapse-open', 'collapse-open-icon') ?>
       </a>
-      <ul class="dropdown-menu dropdown-menu-right" role="menu">
+      <ul class="dropdown-menu dropdown-menu-right">
         <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
           <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
             <?php if ($this->layout()->userLang == $langCode): ?>
               <li>
-                <a class="preserve-anchor active" role="menuitem" aria-description="<?=$this->transEscAttr('selected')?>" lang="<?=$this->escapeHtmlAttr($langCode)?>"> <?=$this->displayLanguageOption($langName)?></a>
+                <a class="preserve-anchor active" aria-description="<?=$this->transEscAttr('selected')?>" lang="<?=$this->escapeHtmlAttr($langCode)?>"> <?=$this->displayLanguageOption($langName)?></a>
               </li>
               <?php break; ?>
             <?php endif ?>
@@ -109,7 +109,7 @@
           <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
             <?php if ($this->layout()->userLang != $langCode): ?>
               <li>
-                <a class="preserve-anchor" role="menuitem" lang="<?=$this->escapeHtmlAttr($langCode)?>" href="<?=$this->escapeHtmlAttr($this->navibar()->getLanguageUrl($langCode))?>"><?=$this->displayLanguageOption($langName)?></a>
+                <a class="preserve-anchor" lang="<?=$this->escapeHtmlAttr($langCode)?>" href="<?=$this->escapeHtmlAttr($this->navibar()->getLanguageUrl($langCode))?>"><?=$this->displayLanguageOption($langName)?></a>
               </li>
             <?php endif ?>
           <?php endforeach; ?>
