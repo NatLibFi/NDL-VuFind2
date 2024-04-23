@@ -65,8 +65,8 @@
             <?php if ($tab['selected']) {
               $this->layout()->currentTabId = $tab['id'];
             } ?>
-            <li role="menuitem" class="<?=$tab['selected'] ? 'active' : ''?>">
-              <a <?=$tab['selected'] ? 'aria-current="true"' : 'href="' . $this->escapeHtmlAttr($tab['url']) . '"' ?>><?=$this->transEsc($tab['label']); ?></a>
+            <li class="<?=$tab['selected'] ? 'active' : ''?>">
+              <a role="menuitem" <?=$tab['selected'] ? 'aria-current="true"' : 'href="' . $this->escapeHtmlAttr($tab['url']) . '"' ?>><?=$this->transEsc($tab['label']); ?></a>
             </li>
           <?php endforeach; ?>
         </ul>

@@ -41,6 +41,11 @@ if ($img):
             ?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
             </a>
           </h2>
+          <?php if ($altTitles = $this->driver->tryMethod('getAlternativeTitles')): ?>
+            <div class="result-alt-titles truncate-field" data-rows="5">
+              <?=implode('<br>', array_map([$this, 'escapeHtml'], $altTitles))?>
+            </div>
+          <?php endif; ?>
         </div>
         <div class="dateyeartype">
           <div class="resultItemFormat">

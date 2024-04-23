@@ -82,28 +82,31 @@ class QueryBuilder extends \VuFindSearch\Backend\Solr\QueryBuilder
     /**
      * Return SOLR search parameters based on a user query and params.
      *
-     * @param AbstractQuery $query User query
+     * @param AbstractQuery $query  User query
+     * @param ?ParamBag     $params Search backend parameters
      *
      * @return ParamBag
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function build(AbstractQuery $query)
+    public function build(AbstractQuery $query, ?ParamBag $params = null)
     {
-        $params = parent::build($query);
+        $newParams = parent::build($query, $params);
 
-        if ($this->createSpellingQuery && ($sq = $params->get('spellcheck.q'))) {
+        if ($this->createSpellingQuery && ($sq = $newParams->get('spellcheck.q'))) {
             if (count(preg_split("/[\s,]/u", trim(end($sq)))) > $this->maxSpellcheckWords) {
-                $params->set('spellcheck.q', '');
+                $newParams->set('spellcheck.q', '');
             }
         }
 
         if (!($query instanceof QueryGroup)) {
-            $q = $params->get('q');
+            $q = $newParams->get('q');
             foreach ($q as &$value) {
                 $value = $this->getLuceneHelper()->finalizeSearchString($value);
             }
-            $params->set('q', $q);
+            $newParams->set('q', $q);
         }
-        return $params;
+        return $newParams;
     }
 
     /**

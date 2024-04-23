@@ -37,8 +37,10 @@
 }
 
 .dropdown-menu > li > a {
+  &:focus {
+    background-color: inherit;
+  }
   &:hover,
-  &:focus,
   &:active {
     text-decoration: none;
     color: @dropdown-link-hover-color;
