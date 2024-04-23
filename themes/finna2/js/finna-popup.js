@@ -74,7 +74,6 @@ FinnaPopup.prototype.addTrigger = function addTrigger(trigger) {
   var _ = this;
   if (typeof trigger.data(_.triggerId) === 'undefined') {
     _.triggers.push(trigger);
-    trigger.data('popup-id', _.id);
     trigger.attr('data-popup-id', _.id);
     trigger.data(_.triggerId, _.triggers.length - 1);
     _.onPopupInit(trigger);
