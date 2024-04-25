@@ -307,36 +307,52 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
             return true;
         }
 
-        $user = null;
-        if (!($patron = $this->getPatronForTransaction($t, $user))) {
-            if ($user) {
-                $this->warn(
-                    "Catalog login failed for user {$user->username} (id {$user->id}), card {$t->cat_username}"
-                );
-                $t->setRegistrationFailed('patron login error');
-                $this->addTransactionEvent($t->id, 'Patron login failed');
-            } else {
-                $this->warn("Library card not found for user {$t->user_id}, card {$t->cat_username}");
-                $t->setRegistrationFailed('card not found');
-                $this->addTransactionEvent(
-                    $t->id,
-                    "Library card not found for user id {$t->user_id}",
-                    [
-                        'user_id' => $t->user_id,
-                        'card' => $t->cat_username,
-                    ]
-                );
+        try {
+            $user = null;
+            if (!($patron = $this->getPatronForTransaction($t, $user))) {
+                if ($user) {
+                    $this->warn(
+                        "Catalog login failed for user {$user->username} (id {$user->id}), card {$t->cat_username}"
+                    );
+                    $t->setRegistrationFailed('patron login error');
+                    $this->addTransactionEvent($t->id, 'Patron login failed');
+                } else {
+                    $this->warn("Library card not found for user {$t->user_id}, card {$t->cat_username}");
+                    $t->setRegistrationFailed('card not found');
+                    $this->addTransactionEvent(
+                        $t->id,
+                        "Library card not found for user id {$t->user_id}",
+                        [
+                            'user_id' => $t->user_id,
+                            'card' => $t->cat_username,
+                        ]
+                    );
+                }
+                $failedCnt++;
+                return false;
             }
-            $failedCnt++;
-            return false;
-        }
 
-        if (!$this->markFeesAsPaidForPatron($patron, $t)) {
+            if (!$this->markFeesAsPaidForPatron($patron, $t)) {
+                $failedCnt++;
+                return false;
+            }
+            $registeredCnt++;
+            return true;
+        } catch (\Exception $e) {
+            $this->warn(
+                "Exception while processing transaction {$t->id} for user id {$t->user_id}, card {$t->cat_username}: "
+                . (string)$e
+            );
+            $this->addTransactionEvent(
+                $t->id,
+                'Exception while processing transaction',
+                [
+                    'exception' => (string)$e,
+                ]
+            );
             $failedCnt++;
             return false;
         }
-        $registeredCnt++;
-        return true;
     }
 
     /**
