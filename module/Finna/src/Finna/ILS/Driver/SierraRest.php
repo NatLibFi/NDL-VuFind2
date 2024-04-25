@@ -1262,6 +1262,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'id' => $id,
                 'item_id' => 'HLD_' . $holdings[0]['id'],
                 'location' => $location,
+                'callnumber' => '',
                 'requests_placed' => 0,
                 'status' => '',
                 'use_unknown_message' => true,
