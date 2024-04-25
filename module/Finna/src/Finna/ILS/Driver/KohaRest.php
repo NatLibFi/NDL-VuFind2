@@ -1510,9 +1510,12 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 case 'sub_location':
                     if (!empty($item['sub_location'])) {
                         $subLocations = $this->getSubLocations();
+                        // Before Koha 23.11, authorized values contained authorised_value and lib_opac.
+                        // From 23.11, they are 'value' and 'opac_description' (see Koha bug 32981):
+                        $subLocation = $subLocations[$item['sub_location']] ?? [];
                         $result[] = $this->translateSubLocation(
                             $item['sub_location'],
-                            $subLocations[$item['sub_location']]['lib_opac'] ?? null
+                            $subLocation['opac_description'] ?? $subLocation['lib_opac'] ?? null
                         );
                     }
                     break;
@@ -1568,7 +1571,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             );
             $locations = [];
             foreach ($result['data'] as $location) {
-                $locations[$location['authorised_value']] = $location;
+                // Before Koha 23.11, authorized values contained authorised_value field.
+                // From 23.11, it is 'value' (see Koha bug 32981):
+                $locations[$location['value'] ?? $location['authorised_value']] = $location;
             }
             $this->putCachedData($cacheKey, $locations, 3600);
         }

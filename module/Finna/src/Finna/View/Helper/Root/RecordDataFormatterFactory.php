@@ -294,7 +294,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             [
                 'labelFunction'  => function ($data) {
                     $label = isset($data[0]) ? $data[0]['heading'] : '';
-                    return $label;
+                    return $label ?: 'Other Related Material';
                 },
                 'context' => ['class' => 'recordOtherLink'],
             ]
@@ -801,7 +801,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             'getProducers',
             'data-producers.phtml',
             [
-                'context' => ['class' => 'recordManufacturer'],
+                'context' => ['class' => 'record-production'],
             ]
         );
         $setTemplateLine(

@@ -1086,6 +1086,26 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
+     * Get producers
+     *
+     * @return array
+     */
+    public function getProducers()
+    {
+        $result = [];
+        foreach ($this->getMarcReader()->getFields('264') as $field) {
+            if ($field['i2'] == 0) {
+                if ($name = $this->stripTrailingPunctuation($this->getSubfieldArray($field, ['a', 'b', 'c']))) {
+                    $result[] = [
+                        'name' => $name[0],
+                    ];
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * Get all authors apart from presenters
      *
      * @return array
@@ -2540,5 +2560,24 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     public function getAbstractLanguage()
     {
         return $this->stripTrailingPunctuation($this->getFieldArray('041', ['b']));
+    }
+
+    /**
+     * Get original languages from fields 041, subfield h and 979, subfield i
+     *
+     * @return array
+     */
+    public function getOriginalLanguages()
+    {
+        $result = [];
+        foreach ($this->getMarcReader()->getFields('041') as $field) {
+            if ($field['i1'] != 0) {
+                $result[] = $this->stripTrailingPunctuation($this->getSubfield($field, 'h')) ?? '';
+            }
+        }
+        foreach ($this->stripTrailingPunctuation($this->getFieldArray('979', ['i'])) as $lang) {
+            $result[] = $lang;
+        }
+        return array_unique(array_filter($result));
     }
 }

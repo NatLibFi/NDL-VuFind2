@@ -184,6 +184,7 @@ $config = [
         'vendor/priority-nav-core.css',
     ],
     'js' => [
+        ['file' => 'vendor/bootstrap-accessibility.min.js', 'disabled' => true],
         'finna-object-editor.js',
         'account_ajax.js',
         'advanced_search.js',
@@ -265,6 +266,7 @@ $config = [
         'finna-feed-element.js',
         'finna-carousel-manager.js',
         'finna-select-a11y.js',
+        'finna-a11y.js',
     ],
     'less' => [
         'active' => false,

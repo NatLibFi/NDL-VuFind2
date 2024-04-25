@@ -166,6 +166,21 @@
   </head>
   <body class="template-dir-<?=$this->templateDir?> template-name-<?=$this->templateName?> <?=$this->layoutClass('offcanvas-row')?><?php if ($this->layout()->rtl): ?> rtl<?php endif; ?>">
     <?=$this->render('search/modals.phtml') ?>
+    <?php if (isset($this->layout()->srmessage)): // message for benefit of screen-reader users ?>
+      <span class="sr-only"><?=$this->layout()->srmessage ?></span>
+    <?php endif; ?>
+      <?php if (isset($this->layout()->skiplink)): // additional skip links ?>
+        <?=$this->layout()->skiplink ?>
+      <?php endif; ?>
+      <?php
+        $contentElementId = 'main';
+        if (!empty($this->layout()->finnaMainHeader)) {
+          $contentElementId = 'content-heading';
+        } elseif (!empty($this->layout()->finnaMainTabs)) {
+          $contentElementId = 'content-main-tabs';
+        }
+      ?>
+      <a class="skip-link" href="#<?=$contentElementId?>"><?=$this->transEsc('Skip to content') // skip to content ?></a>
     <header class="hidden-print">
       <?php if ($this->bazaarSession()->isActive()): ?>
         <?=$this->partial('Helpers/bazaar-browse-bar.phtml');?>
@@ -186,21 +201,6 @@
         </div>
       <?php endif; ?>
       <div class="container-fluid navbar">
-        <?php if (isset($this->layout()->srmessage)): // message for benefit of screen-reader users ?>
-          <span class="sr-only"><?=$this->layout()->srmessage ?></span>
-        <?php endif; ?>
-        <?php if (isset($this->layout()->skiplink)): // additional skip links ?>
-          <?=$this->layout()->skiplink ?>
-        <?php endif; ?>
-        <?php
-          $contentElementId = 'content';
-          if (!empty($this->layout()->finnaMainHeader)) {
-            $contentElementId = 'content-heading';
-          } elseif (!empty($this->layout()->finnaMainTabs)) {
-            $contentElementId = 'content-main-tabs';
-          }
-        ?>
-        <a class="sr-only sr-only-focusable" href="#<?=$contentElementId?>"><?=$this->transEsc('Skip to content') // skip to content ?></a>
         <?=$this->render('navibar.phtml')?>
       </div>
     </header>
@@ -255,7 +255,7 @@
       </nav>
     <?php endif; ?>
     <?php // TODO: get rid of template-dir-* and template-name-* here ?>
-    <section role="main" class="main template-dir-<?=$this->templateDir?> template-name-<?=$this->templateName?><?=$this->browse ? ' browse' : '' ?><?=$currentTabClass?>">
+    <section id="main" role="main" class="main template-dir-<?=$this->templateDir?> template-name-<?=$this->templateName?><?=$this->browse ? ' browse' : '' ?><?=$currentTabClass?>">
       <?php if (!empty($this->layout()->advSearchHeader)): ?>
         <?=$this->layout()->advSearchHeader; ?>
       <?php endif; ?>

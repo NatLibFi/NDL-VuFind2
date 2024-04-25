@@ -110,7 +110,7 @@
   $recommendations = $this->results->getRecommendations('side');
 ?>
 
-<h1 class="sr-only"><?= $this->transEsc('Search Results'); ?></h1>
+<h1 tabindex="-1" id="results-heading" class="sr-only"><?= $this->transEsc('Search Results'); ?></h1>
 <?php if ($recordTotal > 0): ?>
   <div class="finna-search-filter-toggle-trigger visible-xs hidden-print"></div>
   <div class="finna-search-filter-toggle visible-xs hidden-print">
@@ -254,6 +254,14 @@
       <?=$this->context($this)->renderInContext('search/bulk-action-buttons.phtml', ['idPrefix' => 'bottom_', 'formAttr' => 'search-cart-form'])?>
     </div>
     <?php endif; ?>
+    <?php $pagination = $this->paginationControl($this->results->getPaginator()->setPageRange(5), 'Sliding', 'search/pagination.phtml', ['results' => $this->results]);
+      if (trim($pagination)): ?>
+      <div class="pagination">
+        <div class="<?=$this->layoutClass('mainbody', (bool)$recommendations)?> text-center">
+          <?=$pagination ?>
+        </div>
+      </div>
+    <?php endif; ?>
   </div>
   <?php /* End Main Listing */ ?>
 
@@ -267,7 +275,7 @@
           if (!isset($this->layout()->skiplink)) {
             $this->layout()->skiplink = '';
           }
-          $this->layout()->skiplink .= ' <a class="sr-only sr-only-focusable" href="#sidebar">' . $this->transEsc('Skip to narrowing options') . '</a>';
+          $this->layout()->skiplink .= ' <a class="skip-link" href="#sidebar">' . $this->transEsc('Skip to narrowing options') . '</a>';
           $messageAdded = true;
         }?>
       <?php endforeach; ?>
@@ -282,16 +290,6 @@
 </div>
 <?php // Close the container div opened in layout: ?>
 </div>
-<?php $pagination = $this->paginationControl($this->results->getPaginator()->setPageRange(5), 'Sliding', 'search/pagination.phtml', ['results' => $this->results]);
-if (trim($pagination)): ?>
-<div class="container-fluid pagination-background">
-  <div class="container">
-    <div class="<?=$this->layoutClass('mainbody', (bool)$recommendations)?> text-center">
-      <?=$pagination ?>
-    </div>
-  </div>
-</div>
-<?php endif; ?>
 <?php if (!$browse): ?>
 <div class="container-fluid searchtools-background">
   <div class="container">

@@ -17,12 +17,12 @@
   </div>
   <?php if (!isset($this->layout()->renderingError)): ?>
     <div class="collapse navbar-collapse" id="header-collapse">
-      <ul role="menubar" class="nav navbar-nav navbar-main">
+      <ul role="presentation" class="nav navbar-nav navbar-main">
         <?php foreach ($this->navibar()->getMenuItems($this->layout()->userLang) as $key => $val): ?>
           <?php if (count($val['items']) > 1): ?>
-            <li role="none" class="dropdown" id="<?= $val['label'] ?>">
-              <a href="#" role="menuitem" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?= $this->icon($val['label']) ?><?= $this->transEsc($val['label']) ?> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
-              <ul role="menu" class="dropdown-menu" aria-labelledby="<?= $val['label'] ?>">
+            <li class="dropdown" id="<?= $val['label'] ?>">
+              <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><?= $this->icon($val['label']) ?><?= $this->transEsc($val['label']) ?> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
+              <ul role="menu" class="dropdown-menu">
                 <?php foreach ($val['items'] as $itemKey => $itemVal): ?>
                 <?php
                   if (!($itemUrl = $this->navibar()->getMenuItemUrl($itemVal))) {
@@ -37,7 +37,7 @@
                     <a <?=$url === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" <?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?=$this->escapeHtmlAttr($url)?>">
                       <div><?= $this->transEsc($label) ?></div>
                       <?php if ($desc): ?>
-                        <div class="description" role="note"><?= $this->transEsc($desc) ?></div>
+                        <div class="description"><?= $this->transEsc($desc) ?></div>
                       <?php endif; ?>
                     </a>
                   </li>
@@ -53,28 +53,28 @@
             $target = $itemUrl['target'] ?? null;
             $label = $itemVal['label'];
           ?>
-            <li role="none"><a <?=$url === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" <?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?= $url ?>"><?= $this->icon($label) ?><?= $this->transEsc($label) ?></a></li>
+            <li role="none"><a <?=$url === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="button" <?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?= $url ?>"><?= $this->icon($label) ?><?= $this->transEsc($label) ?></a></li>
           <?php endif; ?>
         <?php endforeach; ?>
         <?php $cart = $this->cart();
         if ($cart->isActive()): ?>
           <li role="none" id="cartSummary" aria-live="polite" aria-atomic="true">
-            <a <?=$this->url('cart-home') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" id="cartItems" data-lightbox title="<?=$this->transEsc('View Book Bag')?>" href="<?=$this->url('cart-home')?>"><?=$this->icon('cart') ?> <strong><?=count($cart->getItems())?></strong> <span class="sr-only"><?=$this->transEsc('items')?></span></a>
+            <a <?=$this->url('cart-home') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="button" id="cartItems" data-lightbox title="<?=$this->transEsc('View Book Bag')?>" href="<?=$this->url('cart-home')?>"><?=$this->icon('cart') ?> <strong><?=count($cart->getItems())?></strong> <span class="sr-only"><?=$this->transEsc('items')?></span></a>
           </li>
         <?php endif; ?>
         <?php if ($this->feedback()->tabEnabled()): ?>
           <li role="none">
-            <a <?=$this->url('feedback-home') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" id="feedback-link" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
+            <a <?=$this->url('feedback-home') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="button" id="feedback-link" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
           </li>
         <?php endif; ?>
 
         <?php if (isset($this->layout()->themeOptions) && count($this->layout()->themeOptions) > 1): ?>
           <li class="theme dropdown">
-            <a role="menuitem" href="#" class="dropdown-toggle" data-toggle="dropdown"><?=$this->transEsc('Theme')?> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
+            <a role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"><?=$this->transEsc('Theme')?> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
             <ul role="menu" class="dropdown-menu">
               <?php foreach ($this->layout()->themeOptions as $current): ?>
                 <li <?=$current['selected'] ? ' class="active"' : '' ?>>
-                  <a role="menuitem" href="<?=$this->escapeHtmlAttr($this->url()->addQueryParameters(['ui' => $current['name']])) ?>" rel="nofollow">
+                  <a role="button" href="<?=$this->escapeHtmlAttr($this->url()->addQueryParameters(['ui' => $current['name']])) ?>" rel="nofollow">
                     <?=$this->transEsc($current['desc']) ?>
                   </a>
                 </li>
@@ -89,26 +89,26 @@
       </ul>
     </div>
   <?php endif; ?>
-  <ul class="nav navbar-nav header-navbar-right">
+  <ul role="presentation" class="nav navbar-nav header-navbar-right">
     <li id="language_menu" class="dropdown">
-      <a href="#" id="language_menu_dropdown_button" class="btn dropdown-toggle" role="button" data-toggle="dropdown" aria-label="<?=$this->transEscAttr('Language')?>" aria-haspopup="true" aria-expanded="false">
+      <a href="#" id="language_menu_dropdown_button" class="btn dropdown-toggle" role="button" data-toggle="dropdown" aria-label="<?=$this->transEscAttr('Language')?>" aria-description="<?=$this->displayLanguageOption($selectedLang)?> <?=$this->transEscAttr('selected')?>" aria-expanded="false">
         <?=$this->icon('language', 'lang-icon') ?>
         <span class="hidden-xs"><?=$this->displayLanguageOption($selectedLang)?></span>
         <?=$this->icon('collapse-open', 'collapse-open-icon') ?>
       </a>
-      <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="language_menu_dropdown_button" >
+      <ul class="dropdown-menu dropdown-menu-right" role="menu">
         <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
           <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
             <?php if ($this->layout()->userLang == $langCode): ?>
-              <li class="dropdown-item" role="none">
-                <a class="preserve-anchor active" role="menuitem" lang="<?=$this->escapeHtmlAttr($langCode)?>"> <?=$this->displayLanguageOption($langName)?></a>
+              <li>
+                <a class="preserve-anchor active" role="menuitem" aria-description="<?=$this->transEscAttr('selected')?>" lang="<?=$this->escapeHtmlAttr($langCode)?>"> <?=$this->displayLanguageOption($langName)?></a>
               </li>
               <?php break; ?>
             <?php endif ?>
           <?php endforeach; ?>
           <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
             <?php if ($this->layout()->userLang != $langCode): ?>
-              <li class="dropdown-item" role="none">
+              <li>
                 <a class="preserve-anchor" role="menuitem" lang="<?=$this->escapeHtmlAttr($langCode)?>" href="<?=$this->escapeHtmlAttr($this->navibar()->getLanguageUrl($langCode))?>"><?=$this->displayLanguageOption($langName)?></a>
               </li>
             <?php endif ?>
@@ -122,7 +122,7 @@
           <a href="#" class="btn" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="account-icon"></span><?=$this->icon('my-account', 'my-account-icon') ?> <span class="username login-text"><?=$this->transEsc('Your Account')?></span> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
           <ul role="menu" id="my-info-dropdown-menu" class="dropdown-menu dropdown-menu-right">
             <?php if ($user->getLibraryCards()->count() > 0): ?>
-              <li role="none">
+              <li>
                 <a <?=$this->url('myresearch-checkedout') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-checkedout')?>">
                   <?=$this->transEsc('Checked Out Items')?>
                   <span class="checkedout-status status hidden"><?=$this->icon('spinner') ?></span>
@@ -135,14 +135,14 @@
                   </a>
                 </li>
               <?php endif; ?>
-              <li role="none">
+              <li>
                 <a <?=$this->url('holds-list') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('holds-list')?>">
                   <?=$this->transEsc('Holds and Recalls')?>
                   <span class="holds-status status hidden"><?=$this->icon('spinner') ?></span>
                 </a>
               </li>
               <?php if ($this->ils()->checkFunction('StorageRetrievalRequests', $capabilityParams)): ?>
-                <li role="none">
+                <li>
                   <a <?=$this->url('myresearch-storageretrievalrequests') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-storageretrievalrequests')?>">
                     <?=$this->transEsc('Storage Retrieval Requests')?>
                     <span class="storageretrievalrequests-status status hidden"><?=$this->icon('spinner') ?></span>
@@ -157,7 +157,7 @@
                   </a>
                 </li>
               <?php endif; ?>
-              <li role="none">
+              <li>
                 <a <?=$this->url('myresearch-fines') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-fines')?>">
                   <?=$this->transEsc('Fines')?>
                   <span class="fines-status status hidden"><?=$this->icon('spinner') ?></span>
@@ -165,7 +165,7 @@
               </li>
             <?php endif; ?>
             <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'loginMenu' => 'true', 'label' => 'Library Cards','limit' => 0]);?>
-            <li role="none">
+            <li>
               <a <?=$this->url('myresearch-profile') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-profile')?>">
                 <?=$this->transEsc('Profile')?>
                 <span class="profile-status status hidden"><?=$this->icon('spinner') ?></span>
@@ -182,19 +182,19 @@
                 </a>
               </li>
             <?php endif; ?>
-            <li role="none">
+            <li>
               <a <?=$this->url('search-history') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('search-history')?>?require_login">
                 <?=$this->transEsc('history_saved_searches')?>
               </a>
             </li>
             <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-              <li role="none">
+              <li>
                 <a <?=$this->url('myresearch-favorites') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role ="menuitem" href="<?=$this->url('myresearch-favorites')?>">
                   <?=$this->transEsc('saved_items')?>
                 </a>
               </li>
             <?php endif; ?>
-            <li role="none">
+            <li>
               <a <?=$this->url('myresearch-logout') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-logout')?>" title="<?=$this->transEsc('Log Out')?>"><?=$this->transEsc('Log Out')?><?=$this->icon('sign-out', 'sign-out-icon pull-right') ?></a>
             </li>
           </ul>
@@ -206,11 +206,11 @@
         <?php else: ?>
           <?php if ($this->templateDir === 'myresearch' && $this->templateName === 'login'): ?>
             <div>
-              <a class="btn btn-primary btn-uppercase"><?=$this->icon('login', 'login-icon') ?> <span class="login-text"><?=$this->transEsc('Login')?></span></a>
+              <a role="button" class="btn btn-primary btn-uppercase"><?=$this->icon('login', 'login-icon') ?> <span class="login-text"><?=$this->transEsc('Login')?></span></a>
             </div>
           <?php else: ?>
             <div>
-              <a <?=$this->url('myresearch-userlogin') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> href="<?=$this->url('myresearch-userlogin')?>" class="btn btn-primary btn-uppercase" data-lightbox data-lightbox-onclose="window.location.href='<?=$this->escapeHtmlAttr($this->url('myresearch-home')) ?>'"><?=$this->icon('login', 'login-icon') ?> <span class="login-text"><?=$this->transEsc('Login')?></span></a>
+              <a role="button" <?=$this->url('myresearch-userlogin') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> href="<?=$this->url('myresearch-userlogin')?>" class="btn btn-primary btn-uppercase" data-lightbox data-lightbox-onclose="window.location.href='<?=$this->escapeHtmlAttr($this->url('myresearch-home')) ?>'"><?=$this->icon('login', 'login-icon') ?> <span class="login-text"><?=$this->transEsc('Login')?></span></a>
             </div>
           <?php endif; ?>
         <?php endif; ?>

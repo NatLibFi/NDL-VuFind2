@@ -30,6 +30,8 @@
 
 namespace FinnaApi\Controller;
 
+use VuFind\Service\Feature\RetryTrait;
+
 /**
  * Provides web api for different admin tasks.
  *
@@ -42,6 +44,36 @@ namespace FinnaApi\Controller;
  */
 class AdminApiController extends \VuFindApi\Controller\AdminApiController
 {
+    use RetryTrait;
+
+    /**
+     * Clear the cache
+     *
+     * @return \Laminas\Http\Response
+     */
+    public function clearCacheAction()
+    {
+        $this->disableSessionWrites();
+        $this->determineOutputMode();
+
+        if ($result = $this->isAccessDenied($this->cacheAccessPermission)) {
+            return $result;
+        }
+
+        try {
+            $cacheList = $this->getRequest()->getQuery()->get('id')
+                ?: $this->getDefaultCachesToClear();
+            foreach ((array)$cacheList as $id) {
+                // Try a couple of times in case we fail to remove something due to a race condition:
+                $this->callWithRetry([$this->cacheManager->getCache($id), 'flush']);
+            }
+        } catch (\Exception $e) {
+            return $this->output([], self::STATUS_ERROR, 500, (string)$e);
+        }
+
+        return $this->output([], self::STATUS_OK);
+    }
+
     /**
      * Returns available core record fields as an associative array of
      * cssClass => translated label pairs.

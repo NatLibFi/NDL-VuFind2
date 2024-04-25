@@ -218,12 +218,25 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 'getDocuments',
                 [
                     0 => [
+                        'description' => 'external_sketchfab.com',
+                        'url' => 'https://sketchfab.com/test',
+                        'format' => '',
+                        'rights' => [
+                            'copyright' => 'InC',
+                            'description' => [
+                                0 => 'Tässä on mallien copyright.',
+                            ],
+                        ],
+                        'displayAsLink' => true,
+                    ],
+                    1 => [
                         'description' => 'PDFTesti.pdf',
                         'url' => 'https://linkkiPDF.fi',
                         'format' => 'pdf',
                         'rights' => [],
+                        'displayAsLink' => false,
                     ],
-                    1 => [
+                    2 => [
                         'description' => 'DocxTesti.docx',
                         'url' => 'https://linkkiDocx.fi',
                         'format' => 'docx',
@@ -233,6 +246,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 0 => 'Tekstitiedoston tarkempi käyttöoikeuskuvaus',
                             ],
                         ],
+                        'displayAsLink' => false,
                     ],
                 ],
             ],

@@ -1,0 +1,7 @@
+<?php if (!empty($this->location)): ?><?=$this->escapeHtml($this->location)?>. <?php endif; ?>
+<?php if (!empty($this->origination)): ?><?=$this->escapeHtml($this->origination)?>. <?php endif; ?>
+<?php if (!empty($this->collection)): ?><?=$this->escapeHtml($this->collection)?>. <?php endif; ?>
+<span style="font-style:italic;"><?=$this->escapeHtml($this->title)?>,
+<?php if (!empty($this->signum)): ?> <?=$this->escapeHtml($this->signum)?>,<?php endif; ?></span>
+<?php if (!empty($this->url)): ?><?=$this->escapeHtml($this->url)?>. <?php endif; ?>
+<?=$this->transEsc('citation_accessed')?> <?=$this->dateTime()->convertToDisplayDate('U', time())?>
