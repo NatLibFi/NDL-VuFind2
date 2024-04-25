@@ -136,6 +136,8 @@ class Bootstrapper
                 || ($controller == 'record' && $action == 'similar')
                 || ($controller == 'qrcode')
                 || ($controller == 'oai')
+                || ($controller == 'search' && $action == 'results')
+                || ($controller == 'search2' && $action == 'results')
                 || ($controller == 'pci' && $action == 'search')
                 || ($controller == 'primo' && $action == 'search')
                 || ($controller == 'primorecord')
