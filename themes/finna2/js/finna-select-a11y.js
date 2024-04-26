@@ -3,13 +3,12 @@
 /**
  *  Extend Select-a11y (https://sr.ht/~nicolaskempf57/select-a11y/)
  */
-// eslint-disable-next-line no-unused-vars
 class finnaSelectA11y extends SelectA11y.Select {
   constructor(el, options) {
     const finnaSelectA11yText = {
       help: VuFind.translate('select_a11y_help'),
       placeholder: VuFind.translate('select_a11y_placeholder'),
-      noResult: VuFind.translate('select_a11y_noresults'),
+      noResult: VuFind.translate('select_a11y_noresult'),
       results: "{x} " + VuFind.translate('select_a11y_results'),
       delete: VuFind.translate('select_a11y_delete'),
       deleteItem: VuFind.translate('select_a11y_delete') + " {t}",
@@ -30,3 +29,5 @@ class finnaSelectA11y extends SelectA11y.Select {
     }
   }
 }
+// Add global space.
+window.finnaSelectA11y = finnaSelectA11y;

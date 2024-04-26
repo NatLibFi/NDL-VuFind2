@@ -95,6 +95,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     let searchToggle = searchContainer ? searchContainer.querySelector('.js-location-search-toggle') : null;
     if (searchToggle) {
       searchToggle.setAttribute('aria-expanded', 'false');
+      searchToggle.focus();
     }
   }
 
@@ -245,27 +246,9 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     searchContainer.addEventListener('keyup', (e) => {
       let searchLocationEl = searchContainer.querySelector('.js-location-search');
       if (e.code === "Escape" && searchLocationEl) {
-        let searchToggleEl = searchContainer.querySelector('.js-location-search-toggle');
-        if (searchToggleEl) {
-          searchToggleEl.focus();
-          hideLocationSearch();
-
-        }
+        hideLocationSearch();
       }
     });
-
-    // Shift focus to location title from search result link:
-    const locationSearchResults = searchContainer.querySelectorAll('.js-location-search-results');
-    if (locationSearchResults.length > 0) {
-      locationSearchResults.forEach(a => {
-        a.addEventListener('click', () => {
-          let headerLocationTitle = document.getElementById('header-location-title');
-          if (headerLocationTitle) {
-            headerLocationTitle.focus();
-          }
-        });
-      });
-    }
   }
 
   /**
