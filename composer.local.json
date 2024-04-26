@@ -7,7 +7,7 @@
         "jaybizzle/crawler-detect": "^1.2.118",
         "league/mime-type-detection": "1.9.0",
         "natlibfi/besimple-soap": "2.0.0",
-        "natlibfi/finna-code-sets": "0.5.0",
+        "natlibfi/finna-code-sets": "0.5.1",
         "natlibfi/php-html-parser": "4.0.1",
         "paytrail/paytrail-php-sdk": "2.5.2",
         "picqer/php-barcode-generator": "2.0.1",
