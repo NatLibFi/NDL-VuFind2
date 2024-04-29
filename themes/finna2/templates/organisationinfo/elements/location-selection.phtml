@@ -12,6 +12,7 @@
     <?php if ($locationCount > 1): ?>
       <div class="location-filter">
         <form class="location-selection">
+          <h2 class="sr-only"><?=$this->transEscAttr('organisation_info_location_search')?></h2>
           <label for="location_select"><?=$this->transEscAttr('Search')?></label>
           <select id="location_select" class="js-location-select">
               <option hidden value=""><?=$this->transEsc('organisation_info_autocomplete', ['%%count%%' => $locationCount])?></option>
@@ -83,14 +84,14 @@
         </div>
       </template>
 
-      <div class="location-map">
+      <div class="location-map" aria-hidden="true">
         <div class="js-map-controls">
           <?php if ($locationCount > 1): ?>
             <button class="btn-link js-show-location" type="button" disabled><?=$this->transEsc('zoom_center')?></button>
             <button class="btn-link js-show-all" type="button"><?=$this->transEsc('organisation_info_page_map_show_all')?></button>
           <?php endif; ?>
         </div>
-        <div class="map">
+        <div class="map" role="presentation">
           <div id="location_map_canvas" class="js-map-widget"></div>
           <div class="js-marker-tooltip hidden"></div>
         </div>

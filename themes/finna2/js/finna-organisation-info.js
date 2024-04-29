@@ -231,15 +231,13 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     );
 
     // Add listeners that close the search dropdown as necessary:
-    document.addEventListener('mouseup', (e) => {
-      if (!searchContainer) {
+    window.addEventListener('mousedown', (e) => {
+      let searchLocationEl = searchContainer.querySelector('.js-location-search');
+      if (!searchLocationEl) {
         return;
       }
-      let searchToggleEl = searchContainer.querySelector('.js-location-search-toggle');
-      let searchLocationEl = searchContainer.querySelector('.js-location-search');
-      if ((!searchToggleEl || !searchToggleEl.contains(e.target))
-        && (!searchLocationEl || !searchEl.contains(e.target))
-      ) {
+      let searchLocationIsActive = searchContainer.querySelector('.js-location-search-toggle').ariaExpanded;
+      if (searchLocationIsActive === "true" && !searchLocationEl.contains(e.target)) {
         hideLocationSearch();
       }
     });

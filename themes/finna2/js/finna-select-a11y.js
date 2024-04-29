@@ -1,7 +1,7 @@
 /* global VuFind, SelectA11y  */
 
 /**
- *  Extend Select-a11y (https://sr.ht/~nicolaskempf57/select-a11y/)
+ *   Extend Select-a11y with Finna translations and icons.
  */
 class finnaSelectA11y extends SelectA11y.Select {
   constructor(el, options) {
