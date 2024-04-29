@@ -231,7 +231,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     );
 
     // Add listeners that close the search dropdown as necessary:
-    window.addEventListener('mousedown', (e) => {
+    document.addEventListener('mousedown', (e) => {
       let searchLocationEl = searchContainer.querySelector('.js-location-search');
       if (!searchLocationEl) {
         return;
