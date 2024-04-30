@@ -232,16 +232,13 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
     // Add listeners that close the search dropdown as necessary:
     document.addEventListener('mousedown', (e) => {
-      let searchLocationEl = searchContainer.querySelector('.js-location-search');
-      if (!searchLocationEl) {
-        return;
-      }
-      let searchLocationIsActive = searchContainer.querySelector('.js-location-search-toggle').ariaExpanded;
-      if (searchLocationIsActive === "true" && !searchLocationEl.contains(e.target)) {
+      let searchLocationToggle = searchContainer.querySelector('.js-location-search-toggle');
+      let searchLocationIsActive = searchLocationToggle.ariaExpanded;
+      if (searchLocationIsActive === "true" && !searchContainer.contains(e.target)) {
         hideLocationSearch();
       }
     });
-    searchContainer.addEventListener('keyup', (e) => {
+    searchContainer.addEventListener('keydown', (e) => {
       let searchLocationEl = searchContainer.querySelector('.js-location-search');
       if (e.code === "Escape" && searchLocationEl) {
         hideLocationSearch();
