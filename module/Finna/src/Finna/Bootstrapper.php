@@ -127,8 +127,9 @@ class Bootstrapper
             $action = strtolower($routeMatch->getParam('action'));
             if (
                 ($controller == 'ajax' && !in_array($action, $ajaxAllowed))
-                || ($controller == 'browse')
+                || ($controller == 'browsesearch')
                 || ($controller == 'l1' && $action == 'results')
+                || ($controller == 'l1record' && $action == 'ajaxtab')
                 || ($controller == 'myresearch')
                 || ($controller == 'record' && $action == 'ajaxtab')
                 || ($controller == 'record' && $action == 'holdings')
@@ -137,6 +138,7 @@ class Bootstrapper
                 || ($controller == 'record' && $action == 'map')
                 || ($controller == 'record' && $action == 'usercomments')
                 || ($controller == 'record' && $action == 'similar')
+                || ($controller == 'record2' && $action == 'ajaxtab')
                 || ($controller == 'qrcode')
                 || ($controller == 'oai')
                 || ($controller == 'authority' && $action == 'search')
