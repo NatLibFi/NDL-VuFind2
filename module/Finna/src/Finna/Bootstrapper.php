@@ -128,6 +128,8 @@ class Bootstrapper
             if (
                 ($controller == 'ajax' && !in_array($action, $ajaxAllowed))
                 || ($controller == 'browse')
+                || ($controller == 'l1' && $action == 'results')
+                || ($controller == 'myresearch')
                 || ($controller == 'record' && $action == 'ajaxtab')
                 || ($controller == 'record' && $action == 'holdings')
                 || ($controller == 'record' && $action == 'details')
