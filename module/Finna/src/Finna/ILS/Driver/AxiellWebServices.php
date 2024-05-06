@@ -2698,6 +2698,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
      */
     public function renewMyItems($renewDetails)
     {
+        $succeeded = 0;
         $results = ['blocks' => [], 'details' => []];
 
         $username = $renewDetails['patron']['cat_username'];
