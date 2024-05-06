@@ -410,11 +410,11 @@ class Quria extends AxiellWebServices
                     if (isset($statusArray[$status])) {
                         $status = $statusArray[$status];
                     } else {
-                        // $this->debug(
-                        //     'Unhandled status ' +
-                        //     $department->status +
-                        //     " for '$this->arenaMember'.'$id'"
-                        // );
+                        $this->debug(
+                            'Unhandled status ' +
+                            $department->status +
+                            " for '$this->arenaMember'.'$id'"
+                        );
                     }
                     $holdable
                         = $branch->reservationButtonStatus ?? '' == 'reservationOk';
@@ -732,10 +732,7 @@ class Quria extends AxiellWebServices
             // renewals/renewalLimit is displayed as "renewed/limit"
             $renewals = null;
             $renewalLimit = null;
-            if (
-                isset($loan->loanStatus->status)
-                && $this->isPermanentRenewalBlock($loan->loanStatus->status)
-            ) {
+            if ($this->isPermanentRenewalBlock($loan->loanStatus->status ?? '')) {
                 // No changes
             } elseif (isset($this->config['Loans']['renewalLimit'])) {
                 $renewalLimit = $this->config['Loans']['renewalLimit'];
@@ -1296,7 +1293,10 @@ class Quria extends AxiellWebServices
      */
     public function placeHold($holdDetails)
     {
-        $entityId = $holdDetails['item_id'];
+        $entityId = !empty($holdDetails['item_id'])
+            ? $holdDetails['item_id']
+            : ($holdDetails['id'] ?? '');
+
         $reservationSource = 'catalogueRecordDetail';
 
         $username = $holdDetails['patron']['cat_username'];
@@ -1320,15 +1320,16 @@ class Quria extends AxiellWebServices
         $function = 'addReservation';
         $functionResult = 'addReservationResult';
         $functionParam = 'addReservationParam';
-
+        $patronId = $this->authenticatePatron($username, $password);
+        // TODO: only normal implemented at this moment
         $holdType = 'normal';
-        $patronId = $holdDetails['patron']['patronId'];
+
         $conf = [
-            'arenaMember'  => $this->arenaMember,
-            'user'         => $username,
-            'password'     => $password,
-            'patronId'     => $patronId,
-            'language'     => 'en',
+            'arenaMember' => $this->arenaMember,
+            'user' => $username,
+            'password' => $password,
+            'patronId' => $patronId,
+            'language' => 'fi',
             'reservationEntities' => $entityId,
             'reservationSource' => $reservationSource,
             'reservationType' => $holdType,
@@ -1600,7 +1601,6 @@ class Quria extends AxiellWebServices
      */
     public function renewMyItems($renewDetails)
     {
-        $succeeded = 0;
         $results = ['blocks' => [], 'details' => []];
 
         $username = $renewDetails['patron']['cat_username'];
