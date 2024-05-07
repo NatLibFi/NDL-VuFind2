@@ -387,6 +387,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 'getMeasurements',
+                'fi',
                 [
                     'lido_test.xml' => [
                         'pituus 73.0 cm, leveys 14 cm (kohde 2, kohde 3)',
@@ -398,7 +399,34 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             [
+                'getMeasurements',
+                'sv',
+                [
+                    'lido_test.xml' => [
+                        'pituus 73.0 cm, leveys 14 cm (kohde 2, kohde 3)',
+                    ],
+                    'lido_test2.xml' => [
+                        'syvyys 50 cm (kohde 1)',
+                        'pituus 0.73 m',
+                    ],
+                ],
+            ],
+            [
+                'getMeasurements',
+                'en',
+                [
+                    'lido_test.xml' => [
+                        'height 73.0 cm, width 14 cm (subjects 2 and 3)',
+                    ],
+                    'lido_test2.xml' => [
+                        'depth 50 cm (subject 1)',
+                        'pituus 0.73 m',
+                    ],
+                ],
+            ],
+            [
                 'getPhysicalDescriptions',
+                'fi',
                 [
                     'lido_test.xml' => [
                         '1001 neliömetriä',
@@ -410,6 +438,34 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
             ],
+            [
+                'getPhysicalDescriptions',
+                'sv',
+                [
+                    'lido_test.xml' => [
+                        '1001 neliömetriä',
+                    ],
+                    'lido_test2.xml' => [
+                        '1200 kpl (kohde 1)',
+                        '12 yksikköä (kohde 1)',
+                        '100 hyllymetriä',
+                    ],
+                ],
+            ],
+            [
+                'getPhysicalDescriptions',
+                'en',
+                [
+                    'lido_test.xml' => [
+                        '1001 square meters',
+                    ],
+                    'lido_test2.xml' => [
+                        '1200 pcs (subject 1)',
+                        '12 yksikköä (subject 1)',
+                        '100 hyllymetriä',
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -417,6 +473,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      * Test getMeasurementsByType
      *
      * @param string $function Function of the driver to test
+     * @param string $language Language
      * @param array  $expected Result to be expected
      *
      * @dataProvider getMeasurementsByTypeData
@@ -425,10 +482,18 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetMeasurementsByType(
         string $function,
+        string $language,
         array $expected
     ): void {
         foreach ($expected as $file => $result) {
+            $translator = $this
+            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+            $translator->setLocale($language);
             $driver = $this->getDriver($file);
+            $driver->setTranslator($translator);
             $this->assertTrue(is_callable([$driver, $function], true));
             $this->assertEquals(
                 $result,
