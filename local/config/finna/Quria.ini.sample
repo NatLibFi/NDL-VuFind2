@@ -166,7 +166,6 @@ options[0] = loan_history_never
 enabled = true
 max_results = 100
 
-
 ; Settings for messaging Settings
 [messagingSettings]
 ; A colon-separated list used to display messaging settings

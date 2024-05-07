@@ -339,7 +339,7 @@ class Quria extends AxiellWebServices
                 $reservableId = $branch->reservable ?? '';
                 $holdable = $branch->reservationButtonStatus ?? '' == 'reservationOk';
                 $departments = $this->objectToArray($branch->holdings->holding ?? []);
-
+                $organisationId = $branch->id ?? '';
                 foreach ($departments as $department) {
                     // Get holding data
                     $dueDate = isset($department->firstLoanDueDate)
@@ -413,7 +413,7 @@ class Quria extends AxiellWebServices
                         );
                     }
                     $holdable
-                        = $branch->reservationButtonStatus ?? '' == 'reservationOk';
+                        = ($branch->reservationButtonStatus ?? '') === 'reservationOk';
                     $requests = 0;
                     if (
                         !$this->singleReservationQueue
@@ -439,7 +439,7 @@ class Quria extends AxiellWebServices
                         'availabilityInfo' => $availabilityInfo,
                         'status' => $status,
                         'location' => $group ?? $branchName,
-                        'organisation_id' => $organisationId ?? '',
+                        'organisation_id' => $organisationId,
                         'branch' => $branchName,
                         'branch_id' => $branchId,
                         'department' => $departmentName,
