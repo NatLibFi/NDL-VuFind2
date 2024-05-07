@@ -2412,7 +2412,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 $first = $first ?: $lang;
                 if (in_array($lang, $languages)) {
                     $items[] = $item;
-                } elseif (!$useFirst || ($useFirst && $lang === $first)) {
+                } elseif (!$useFirst || $lang === $first) {
                     $allItems[] = $item;
                 }
             }
