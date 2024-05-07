@@ -618,6 +618,7 @@ class Quria extends AxiellWebServices
                     $userCached['city'] = $address->city ?? '';
                     $userCached['country'] = $address->country ?? '';
                     $userCached['addressId'] = $address->id ?? '';
+                    break;
                 }
             }
         }
