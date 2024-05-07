@@ -1595,6 +1595,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             ->objectIdentificationWrap->objectMeasurementsWrap
             ->objectMeasurementsSet ?? [] as $set
         ) {
+            // Get set extents to be displayed
             $extentNodes = $extentMeasurements = [];
             foreach ($set->objectMeasurements->extentMeasurements ?? [] as $node) {
                 $extentNodes[] = $node;
@@ -1607,24 +1608,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             $displayNode = $this->getLanguageSpecificItem($set->displayObjectMeasurements, $language);
             if ($displayMeasurements = trim((string)$displayNode)) {
                 $label = $displayNode->attributes()->label ?? '';
-                if (
-                    ($include && !in_array($label, $include))
-                    || ($exclude && in_array($label, $exclude))
-                ) {
+                if (($include && !in_array($label, $include)) || ($exclude && in_array($label, $exclude))) {
                     continue;
                 }
-                $results[] = $displayExtents ? $displayMeasurements . " ($displayExtents)" : $displayMeasurements;
+                $results[] = $displayExtents ? "$displayMeasurements ($displayExtents)" : $displayMeasurements;
                 continue;
             }
             // Use measurementsSet only if no display elements exist
             foreach ($set->objectMeasurements->measurementsSet ?? [] as $measurements) {
-                $type = trim(
-                    (string)($measurements->measurementType->term ?? '')
-                );
-                if (
-                    ($include && !in_array($type, $include))
-                    || ($exclude && in_array($type, $exclude))
-                ) {
+                $type = trim((string)($measurements->measurementType->term ?? ''));
+                if (($include && !in_array($type, $include)) || ($exclude && in_array($type, $exclude))) {
                     continue;
                 }
                 $parts = [];
@@ -1637,11 +1630,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 if ($unit = trim((string)$this->getLanguageSpecificItem($measurements->measurementUnit, $language))) {
                     $parts[] = $unit;
                 }
-                if ($parts) {
-                    if ($displayExtents) {
-                        $parts[] = "($displayExtents)";
-                    }
-                    $results[] = implode(' ', $parts);
+                if ($combined = implode(' ', $parts)) {
+                    $results[] = $displayExtents ? "$combined ($displayExtents)" : $combined;
                 }
             }
         }
