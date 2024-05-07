@@ -601,15 +601,14 @@ class Quria extends AxiellWebServices
         if (!empty($info->emailAddresses->emailAddress)) {
             $emailAddresses
                 =  $this->objectToArray($info->emailAddresses->emailAddress);
-
             foreach ($emailAddresses as $emailAddress) {
                 if ($emailAddress->isActive == 'yes' || empty($userCached['email'])) {
                     $userCached['email'] = $emailAddress->address ?? '';
                     $userCached['emailId'] = $emailAddress->id ?? '';
+                    break;
                 }
             }
         }
-
         if (isset($info->addresses->address)) {
             $addresses = $this->objectToArray($info->addresses->address);
             foreach ($addresses as $address) {
@@ -622,7 +621,6 @@ class Quria extends AxiellWebServices
                 }
             }
         }
-
         if (isset($info->phoneNumbers->phoneNumber)) {
             $phoneNumbers = $this->objectToArray($info->phoneNumbers->phoneNumber);
             foreach ($phoneNumbers as $phoneNumber) {
@@ -636,6 +634,7 @@ class Quria extends AxiellWebServices
                     if (isset($phoneNumber->id)) {
                         $userCached['phoneId'] = $phoneNumber->id;
                     }
+                    break;
                 }
             }
         }
