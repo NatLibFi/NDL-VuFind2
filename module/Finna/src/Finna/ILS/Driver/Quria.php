@@ -29,12 +29,9 @@
 
 namespace Finna\ILS\Driver;
 
-use DOMDocument;
 use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
-use VuFind\I18n\Translator\TranslatorAwareInterface as TranslatorAwareInterface;
 
-use function count;
 use function in_array;
 use function is_callable;
 use function is_object;
@@ -145,7 +142,7 @@ class Quria extends AxiellWebServices
             'country' => 'FI',
             'reservationEntities' => $id,
             'reservationType' => $holdType,
-            'patronId' => $user['patronId']
+            'patronId' => $user['patronId'],
         ];
 
         $result = $this->doSOAPRequest(
@@ -229,7 +226,6 @@ class Quria extends AxiellWebServices
         return $locationsList;
     }
 
-
     /**
      * Get Holding
      *
@@ -255,7 +251,7 @@ class Quria extends AxiellWebServices
             'arenaMember' => $this->arenaMember,
             'id' => $id,
             'language' => $this->getLanguage(),
-            'holdings' => ['enable' => 'yes']
+            'holdings' => ['enable' => 'yes'],
         ];
         $response = $this->doSOAPRequest(
             $this->catalogue_wsdl,
@@ -281,7 +277,7 @@ class Quria extends AxiellWebServices
         $holdings = $this->objectToArray(
             $response->$functionResult->compositeHoldings
         );
-  
+
         $hol = $this->objectToArray($holdings[0]->compositeHolding);
         if (isset($hol[0]->type) && $hol[0]->type == 'year') {
             $result = [];
@@ -482,9 +478,9 @@ class Quria extends AxiellWebServices
             return strnatcasecmp($b['journalInfo']['edition'], $a['journalInfo']['edition']);
         } else {
             return strnatcasecmp($yearB, $yearA);
-        
         }
     }
+
     /**
      * Patron Login
      *
@@ -686,7 +682,7 @@ class Quria extends AxiellWebServices
             'user' => $username,
             'password' => $password,
             'language' => $this->getLanguage(),
-            'patronId' => $user['patronId']
+            'patronId' => $user['patronId'],
         ];
 
         $result = $this->doSOAPRequest(
@@ -940,7 +936,7 @@ class Quria extends AxiellWebServices
             'user' => $username,
             'password' => $password,
             'language' => $this->getLanguage(),
-            'patronId' => $user['patronId']
+            'patronId' => $user['patronId'],
         ];
 
         $result = $this->doSOAPRequest(
@@ -982,9 +978,12 @@ class Quria extends AxiellWebServices
             $cancelDetails = '';
             // Regional holds have isEditable 'no' even when they're editable, so
             // check for isDeletetable for them:
-            if ('yes' === $reservation->isEditable
-                || ('regional' === ($reservation->reservationType ?? '')
-                /*&& 'yes' === $reservation->isDeletable*/)
+            if (
+                'yes' === $reservation->isEditable
+                || (
+                    'regional' === ($reservation->reservationType ?? '')
+                    /*&& 'yes' === $reservation->isDeletable*/
+                )
             ) {
                 $updateDetails = $detailsStr;
             }
@@ -1556,7 +1555,7 @@ class Quria extends AxiellWebServices
                         'password' => $password,
                         'language' => 'en',
                         'id' => $id,
-                        'patronId' => $cancelDetails['patron']['patronId']
+                        'patronId' => $cancelDetails['patron']['patronId'],
                     ],
                 ]
             );
