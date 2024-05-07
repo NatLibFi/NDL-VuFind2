@@ -3,7 +3,7 @@
 /**
  * Quria ILS Driver
  *
- * PHP version 8
+ * PHP version 8.1
  *
  * Copyright (C) The National Library of Finland 2024.
  *
@@ -23,6 +23,11 @@
  * @category VuFind
  * @package  ILS_Drivers
  * @author   Jaro Ravila <jaro.ravila@helsinki.fi>
+ * @author   Bjarne Beckmann <bjarne.beckmann@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
@@ -43,6 +48,11 @@ use function strlen;
  * @category VuFind
  * @package  ILS_Drivers
  * @author   Jaro Ravila <jaro.ravila@helsinki.fi>
+ * @author   Bjarne Beckmann <bjarne.beckmann@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
