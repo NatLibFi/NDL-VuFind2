@@ -417,8 +417,8 @@ class Quria extends AxiellWebServices
                         $status = $statusArray[$status];
                     } else {
                         $this->debug(
-                            'Unhandled status ' +
-                            $department->status +
+                            'Unhandled status ' .
+                            $department->status .
                             " for '$this->arenaMember'.'$id'"
                         );
                     }
