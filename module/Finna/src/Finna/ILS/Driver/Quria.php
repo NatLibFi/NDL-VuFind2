@@ -762,7 +762,7 @@ class Quria extends AxiellWebServices
                 'title' => $title,
                 'duedate' => $loan->loanDueDate,
                 'dueStatus' => $dueStatus,
-                'renewable' => (string)$loan->loanStatus->isRenewable == 'yes',
+                'renewable' => (string)($loan->loanStatus->isRenewable ?? '') === 'yes',
                 'message' => $message,
                 'renew' => $renew,
                 'renewLimit' => $renewLimit,
@@ -1643,15 +1643,11 @@ class Quria extends AxiellWebServices
 
         foreach ($loans as $loan) {
             $id = $loan->id;
-            $success = true;
-            //TODO: Check statuses properly
-          //  $status = $loan->loanStatus->status;
-          //  $success = $status === 'isRenewedToday';
-
+            $isRenewed = (string)($loan->loanStatus->isRenewable ?? '') === 'yes';
             $results['details'][$id] = [
-                'success' => $success,
-                'status' => $success ? 'Loan renewed' : 'Renewal failed',
-             //   'sysMessage' => $this->mapStatus($status, $function),
+                'success' => $isRenewed,
+                'status' => $isRenewed ? 'Loan renewed' : 'Renewal failed',
+                'sysMessage' => $this->mapStatus($loan->loanStatus->status ?? '-', $function),
                 'item_id' => $id,
                 'new_date' => $this->formatDate(
                     $loan->loanDueDate
