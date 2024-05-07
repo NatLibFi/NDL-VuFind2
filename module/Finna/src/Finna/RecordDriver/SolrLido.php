@@ -2418,18 +2418,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         $first = '';
         foreach ($elements as $item) {
             if ('' !== trim((string)$item)) {
-                if ($lang = (string)($item->attributes()->lang ?? '')) {
-                    if (in_array($lang, $languages)) {
-                        $items[] = $item;
-                    } elseif ($useFirst) {
-                        $first = $first ?: $lang;
-                        if ($lang === $first) {
-                            $allItems[] = $item;
-                        }
-                        continue;
-                    }
+                $lang = (string)($item->attributes()->lang ?? 'no_locale');
+                $first = $first ?: $lang;
+                if (in_array($lang, $languages)) {
+                    $items[] = $item;
+                } elseif (!$useFirst || ($useFirst && $lang === $first)) {
+                    $allItems[] = $item;
                 }
-                $allItems[] = $item;
             }
         }
         // Return either language specific results or all given items.
