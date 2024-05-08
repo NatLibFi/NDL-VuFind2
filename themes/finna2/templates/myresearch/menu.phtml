@@ -10,7 +10,6 @@
     $listOpen = $this->active == 'favorites' || substr($this->active, 0, 4) == 'list';
     $reservationListOpen = $this->active == 'reservationList';
     $activeToLower = strtolower($this->active ?? '');
-    var_dump($user->getReservationLists());
     //Get the data for vertical menu to show lists on correct site
     if ($listOpen || $reservationListOpen) {
       $list = $this->results?->getListObject() ?? [];
