@@ -5,10 +5,11 @@ namespace Finna\Db\Table;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Session\Container;
 use VuFind\Db\Row\RowGateway;
-use VuFind\Exception\LoginRequired as LoginRequiredException;
 use VuFind\Db\Table\PluginManager;
 use VuFind\Db\Table\UserList;
 use VuFind\Db\Table\Gateway;
+use VuFind\Exception\LoginRequired as LoginRequiredException;
+use VuFind\Exception\RecordMissing as RecordMissingException;
 
 class ReservationList extends UserList
 {
@@ -62,5 +63,22 @@ class ReservationList extends UserList
         $row->user_id = $user->id;
         $row->datasource = '';
         return $row;
+    }
+
+    /**
+     * Retrieve a list object.
+     *
+     * @param int $id Numeric ID for existing list.
+     *
+     * @return \Finna\Db\Row\ReservationList
+     * @throws RecordMissingException
+     */
+    public function getExisting($id)
+    {
+        $result = $this->select(['id' => $id])->current();
+        if (empty($result)) {
+            throw new RecordMissingException('Cannot load list ' . $id);
+        }
+        return $result;
     }
 }

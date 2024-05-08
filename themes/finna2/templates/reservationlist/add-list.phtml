@@ -1,7 +1,6 @@
 <?php
   // Set up page title:
-  $pageTitle = empty($this->list->id) ? 'Create a Reservation List' : 'Edit Reservation List';
-  $this->headTitle($this->translate($pageTitle));
+  $this->headTitle($this->translate('reservation_list_add_list'));
 
   // Set up breadcrumbs:
   $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li>'
@@ -13,18 +12,18 @@
 <h2><?=$this->transEsc($pageTitle); ?></h2>
 
 <form class="form-edit-list" method="post" name="reservationList">
-  <input type="hidden" name="id" value="<?=empty($this->list->id) ? 'NEW' : $this->escapeHtmlAttr($this->list->id) ?>">
-  <input type="hidden" name="recordId" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>">
-  <input type="hidden" name="action" value="<?=$this->escapeHtmlAttr($this->action)?>">
+  <input type="hidden" name="recordId" value="<?=$this->escapeHtmlAttr($this->recordId)?>">
+  <input type="hidden" name="source" value="<?=$this->escapeHtmlAttr($this->source)?>">
+  <input type="hidden" name="state" value="saveList">
   <div class="form-group">
-    <label class="control-label" for="list_title"><?=$this->transEsc('List'); ?>:</label>
+    <label class="control-label" for="list_title"><?=$this->transEsc('reservation_list_title'); ?>:</label>
     <input id="list_title" class="form-control" type="text" name="title" value="<?=isset($this->list['title']) ? $this->escapeHtmlAttr($this->list['title']) : ''?>">
   </div>
   <div class="form-group">
-    <label class="control-label" for="list_desc"><?=$this->transEsc('Description') ?></label>
+    <label class="control-label" for="list_desc"><?=$this->transEsc('reservation_list_description') ?></label>
     <textarea id="list_desc" class="form-control" name="desc" rows="3"><?=isset($this->list['description']) ? $this->escapeHtml($this->list['description']) : ''?></textarea>
   </div>
   <div class="form-group">
-    <input class="btn btn-primary" type="submit" name="submit" value="<?=$this->transEscAttr('Save') ?>">
+    <input class="btn btn-primary" type="submit" name="submit" value="<?=$this->transEscAttr('reservation_list_save') ?>">
   </div>
 </form>

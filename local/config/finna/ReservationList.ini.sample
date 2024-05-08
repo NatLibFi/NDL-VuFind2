@@ -1,0 +1,7 @@
+; Reservation list settings for datasources
+; Keep settings separated so there is no mishappenings
+
+[test]
+archive_request_information['name'] = Organisaation nimi
+archive_request_information['address'] = Osoitekatu 2 A
+archive_request_information['postal'] = 00100 Helsinki

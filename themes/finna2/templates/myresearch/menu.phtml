@@ -10,9 +10,10 @@
     $listOpen = $this->active == 'favorites' || substr($this->active, 0, 4) == 'list';
     $reservationListOpen = $this->active == 'reservationList';
     $activeToLower = strtolower($this->active ?? '');
+    var_dump($user->getReservationLists());
     //Get the data for vertical menu to show lists on correct site
     if ($listOpen || $reservationListOpen) {
-      $list = $this->results->getListObject();
+      $list = $this->results?->getListObject() ?? [];
       $listParams = [
         'activeId' => $list['id'] ?? null,
         'results' => $this->results,
@@ -95,7 +96,7 @@
       'reservationList' => [
         'url' => 'reservationlist-home',
         'translation' => 'Reservation List',
-        'show' => $this->userlist()->getMode() !== 'disabled',
+        'show' => $this->userlist()->getMode() !== 'disabled' && $user->getReservationLists()
       ],
       'logout' => [
         'url' => 'myresearch-logout',
@@ -133,7 +134,7 @@
         'active' => $reservationListOpen,
         'url' => 'reservationlist-home',
         'translation' => 'Reservation List',
-        'show' => $this->userlist()->getMode() !== 'disabled',
+        'show' => $this->userlist()->getMode() !== 'disabled' && $user->getReservationLists(),
         'partial' => [
           'url' => 'reservationlist/reservationlist-navi.phtml',
           'wrapperClass' => 'reservationlist-bar',

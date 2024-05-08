@@ -1,7 +1,8 @@
+<!-- I am here and here i am-->
 <div>
   <?php if (!empty($this->lists)): ?>
   <form method="post" name="reservationListAdd">
-    <input type="hidden" name="action" value="add">
+    <input type="hidden" name="state" value="saveItem">
     <label class="control-label" for="save_list"><?=$this->transEsc('Choose a List') ?></label>
     <div class="form-group">
       <select class="form-control" id="save_list" name="list">
@@ -21,5 +22,5 @@
   <?php else: ?>
     No lists found for datasource. Please create a new one.
   <?php endif; ?>
-  <a class="btn btn-link" id="make-list" href="<?=$this->url('reservationlist-addlist', ['query' => ['id' => 'NEW']])?>?id=NEW&amp;action=edit&amp;recordId=<?=urlencode($this->driver->getUniqueId())?>&amp;recordSource=<?=urlencode($this->driver->getSourceIdentifier())?>"><?=$this->transEsc('or create a new list')?></a>
+  <a class="btn btn-link" id="make-list" href="<?=$this->url('reservationlist-additem', [], ['query' => ['newList' => '1', 'recordId' => urlencode($this->driver->getUniqueId()), 'source' => urlencode($this->driver->getSourceIdentifier())]])?>"><?=$this->transEsc('or create a new list')?></a>
 </div>

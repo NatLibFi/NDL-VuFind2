@@ -1,0 +1,15 @@
+Listan aineistot:
+-------------------------------------------------------------
+<?php foreach ($this->results->getResults() as $record): ?>
+<?=$this->escapeHtml($record->getUniqueID()) . PHP_EOL ?>
+<?=$this->escapeHtml($record->getTitle()) . PHP_EOL ?>
+-------------------------------------------------------------
+<?php endforeach; ?>
+Varaaja:
+<?=$this->escapeHtml($this->user->username) . PHP_EOL?>
+Yhteydenotto:
+<?=$this->escapeHtml($this->contactInfo) . PHP_EOL ?>
+Toivottu alkamisajankohta:
+<?=$this->escapeHtml($this->dateToPickUp) . PHP_EOL ?>
+Kommentti:
+<?=$this->escapeHtml($this->comment) . PHP_EOL ?>

@@ -85,6 +85,7 @@ class ReservationListResource extends \VuFind\Db\Table\UserResource
         }
 
         // Now build the where clause to figure out which rows to remove:
+        // Do not destroy resource, if it is present in user_list
         $callback = function ($select) use ($resource_id, $user_id, $list_id) {
             $select->where->equalTo('user_id', $user_id);
             if (null !== $resource_id) {

@@ -40,12 +40,12 @@
     <div class="orered-wrapper">
       <p>Ordered: <?= $this->escapeHtml($this->ordered) ?></p>
     </div>
-    <?php if (count($this->results->getResults()) && !$this->ordered): ?>
+    <?php if (count($this->results?->getResults() ?? []) && !$this->ordered): ?>
       <!-- Add order buttons if the list has not been ordered yet. -->
       <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-order', ['id' => $this->listId]))?>" class="btn btn-primary" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?=$this->transEsc('Tilaa lista')?></a>
     <?php endif; ?>
     <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-delete', ['id' => $this->listId]))?>" class="btn btn-primary" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?=$this->transEsc('Poista lista')?></a>
-    <?php foreach ($this->results->getResults() as $i => $current): ?>
+    <?php foreach ($this->results?->getResults() ?? [] as $i => $current): ?>
       <?=$this->record($current)->getListEntry(null, false)?>
     <?php endforeach; ?>
   </div>

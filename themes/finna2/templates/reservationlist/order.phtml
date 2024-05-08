@@ -12,33 +12,49 @@
 
 <h2><?=$this->transEsc($pageTitle); ?></h2>
 
-<p>Varauspyynnöllä voit tiedustella aineiston käyttöä tovottuna ajankohtana organisaation luku- tai tutkijasalissa. <b>Varaous on voimassa vasta kun organisaatio on hyväksynyt pyynnön ja vahvistanut sen</b></p>
+<?=$this->transEsc('reservation_list_order_information')?>:
 
 <form class="form-edit-list" method="post" name="order">
-  <p>Varauksen aineistot:</p>
+  <input type="hidden" name="list-id" value="<?= $this->escapeHtmlAttr($this->listId); ?>"/>
+  <p><?=$this->transEsc('reservation_list_order_items')?>:</p>
   <ul>
     <?php foreach ($this->results->getResults() as $result): ?>
       <li><?= $result->getTitle(); ?></li>
     <?php endforeach; ?>
   </ul>
   <div class="form-group">
-    <p>Organisaation luku-tai tutkijasalin toimipiste:</p>
+    <h5><?=$this->transEsc('reservation_list_order_location')?>:</h5>
+    <?= $this->transEsc($this->organisationInfo['name'] ?? ''); ?><br/>
+    <?= $this->transEsc($this->organisationInfo['address'] ?? ''); ?><br/>
+    <?= $this->transEsc($this->organisationInfo['postal'] ?? ''); ?> <?= $this->transEsc($this->organisationInfo['city'] ?? ''); ?>
   </div>
   <!-- need current date and -->
   <div class="form-group">
-    <p>Toimitusaikatoive XX-organisaation luku- tai tutkijasalissa:</p>
-    <input name="order-pickup-date" value="<?= $this->escapeHtmlAttr($this->earliestPickup); ?>" min="<?= $this->escapeHtmlAttr($this->earliestPickup); ?>" type="date"/>
+    <label>
+      <p><?=$this->transEsc('reservation_list_order_date')?>:</p>
+      <input name="order-pickup-date" value="<?= $this->escapeHtmlAttr($this->earliestPickup); ?>" min="<?= $this->escapeHtmlAttr($this->earliestPickup); ?>" type="date"/>
+    </label>
   </div>
   <div class="form-group">
-  <input type="email" name="order-email" value="test@viiadolorosa.com">
+    <label>
+      <p><?=$this->transEsc('reservation_list_order_email')?>:</p>
+      <input type="email" name="order-email" value="test@viiadolorosa.com">
+    </label>
   </div>
   <div class="form-group">
-  <p>Viesti:</p>
-  <textarea>
-    Tähän kommentti sit joo
-  </textarea>
+    <label>
+      <p><?=$this->transEsc('reservation_list_order_phone')?>:</p>
+      <input type="phone" name="order-phone" value="0401231234">
+    </label>
   </div>
   <div class="form-group">
-  <button class="btn btn-primary" type="submit">Tilaa lista</button>
+    <label>
+      <p><?=$this->transEsc('reservation_list_order_message')?>:</p>
+      <textarea>
+      </textarea>
+    </label>
+  </div>
+  <div class="form-group">
+    <button class="btn btn-primary" type="submit"><?=$this->transEsc('reservation_list_order_confirm')?></button>
   </div>
 </form>

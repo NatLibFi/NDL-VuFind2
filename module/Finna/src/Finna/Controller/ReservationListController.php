@@ -34,6 +34,7 @@ use Finna\ReservationList\ReservationListService;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\Session\Container;
 use VuFind\Controller\AbstractBase;
+use VuFind\Mailer\Mailer;
 
 /**
  * Reservation List Controller
@@ -85,7 +86,7 @@ class ReservationListController extends AbstractBase
     );
   }
   /**
-   * Display save to reservation list form.
+   * Add item to list action.
    *
    * @return \Laminas\View\Model\ViewModel
    * @throws \Exception
@@ -96,33 +97,58 @@ class ReservationListController extends AbstractBase
     if (!$user) {
         return $this->forceLogin();
     }
-    $driver = $this->getRecordLoader()->load(
-      $this->getParam('id'),
-      $this->getParam('source') ?: DEFAULT_SEARCH_BACKEND,
-      false
-    );
+
     // Now we should try to find all the lists for user.. Lets check if this works somehow or something
     $reservationListService = $this->serviceLocator->get(ReservationListService::class);
-    $view = $this->createViewModel(
-      compact(
-        'driver'
-      )
-    );
-    if ($this->formWasSubmitted('submit')) {
-      $params = $this->params()->fromPost();
-      // Seems like someone wants to save stuff into a list.
-      // Lets process it like a champ. Not the mushroom champ.
-      $reservationListService->addRecordToList(
-        $this->getUser(),
-        $driver->getUniqueID(),
-        $params['list'],
-        $params['notes'],
-        $driver->getSourceIdentifier()
-      );
-      // After this we can display the you did it, lets continue screen
-      $view->setTemplate('reservationlist/add-success');
+    $view = $this->createViewModel();
+    $recordId = $this->getParam('recordId');
+    $source = $this->getParam('source');
+    $newList = $this->getParam('newList');
+    if ($newList && !$this->formWasSubmitted('submit')) {
+      $view->setTemplate('reservationlist/add-list');
+      $view->source = $source;
+      $view->recordId = $recordId;
       return $view;
     }
+    $driver = $this->getRecordLoader()->load(
+      $recordId,
+      $source ?: DEFAULT_SEARCH_BACKEND,
+      false
+    );
+    // At this point we should check if the record is proper
+
+    $view->driver = $driver;
+    if ($this->formWasSubmitted('submit')) {
+      $state = $this->getParam('state');
+      if ('saveList' === $state) {
+        $building = $driver->getBuildings()[0] ?? '';
+        $datasource = $driver->getDataSource();
+        $this->reservationListService->addListForUser(
+          $this->getUser(),
+          $this->getParam('desc') ?? '',
+          $this->getParam('title') ?? '',
+          $datasource,
+          $building,
+        );
+        $view->lists = $reservationListService->getListsForDatasource($this->getUser(), $driver->getDatasource());
+        $view->setTemplate('reservationlist/select-list');
+      } elseif ('saveItem' === $state) {
+        $params = $this->params()->fromPost();
+        // Seems like someone wants to save stuff into a list.
+        // Lets process it like a champ. Not the mushroom champ.
+        $reservationListService->addRecordToList(
+          $this->getUser(),
+          $driver->getUniqueID(),
+          $params['list'],
+          $params['notes'],
+          $driver->getSourceIdentifier()
+        );
+        // After this we can display the you did it, lets continue screen
+        $view->setTemplate('reservationlist/add-success');
+      }
+      return $view;
+    }
+
     $view->lists = $reservationListService->getListsForDatasource($this->getUser(), $driver->getDatasource());
     $view->setTemplate('reservationlist/select-list');
     return $view;
@@ -217,104 +243,70 @@ class ReservationListController extends AbstractBase
    * @return \Laminas\View\Model\ViewModel
    * @throws \Exception
    */
-  public function addListAction(): \Laminas\View\Model\ViewModel
-  {
-    $action = $this->params()->fromPost(
-      'action',
-      $this->params()->fromQuery('action')
-    );
-    $source = $this->params()->fromPost(
-        'source',
-        $this->params()->fromQuery(
-            'source',
-            DEFAULT_SEARCH_BACKEND
-        )
-    );
-    $id = $this->params()->fromPost(
-        'recordId',
-        $this->params()->fromQuery(
-            'recordId',
-        )
-    );
-    $driver = $this->getRecordLoader()->load($id, $source, true);
-    $view = $this->createViewModel(
-        [
-            'driver' => $driver,
-            'action' => $action,
-        ]
-    );
-
-    if ($this->formWasSubmitted('submit')) {
-      // Check which form was submitted
-      $params = $this->params()->fromPost(null, []);
-      $building = $driver->getBuildings()[0] ?? '';
-      $datasource = $driver->getDataSource();
-      switch ($params['action'] ?? '') {
-          case 'add':
-              break;
-          case 'edit':
-              // Get the service which handles the lists
-              $this->reservationListService->addListForUser(
-                  $this->getUser(),
-                  $params['desc'],
-                  $params['title'],
-                  $datasource,
-                  $building,
-              );
-              return $this->redirect()->toRoute('reservationlist-additem', ['id' => $driver->getUniqueID()]);
-              break;
-          default:
-              break;
-      }
-    }
-    switch ($action) {
-        case 'add':
-            // Add record to an existing list
-            $view->setTemplate('record/reservation-list.phtml');
-            break;
-        case 'newList':
-            // Display newList page
-            break;
-        case 'delete':
-            // Try to delete and delete if plausible
-            break;
-        case 'edit':
-            $view->setTemplate('reservationlist/add-list.phtml');
-            // Display edit list thingie page
-            break;
-        default:
-            break;
-    }
-    return $view;
-  }
-
-  /**
-   * Display save to reservation list form.
-   *
-   * @return \Laminas\View\Model\ViewModel
-   * @throws \Exception
-   */
   public function orderAction(): \Laminas\View\Model\ViewModel
   {
     // We want to merge together GET, POST and route parameters to
     // initialize our search object:
     $request = $this->getRequestAsArray();
-
-    if ($this->formWasSubmitted('submit')) {
-      // Gather data here, and be ready to send an email.
-      var_dump($this->params()->fromPost(null, []));
-    }
-    $results = $this->getListAsResults($request);
     $currentDate = date('Y-m-d');
     $earliestPickup = date('Y-m-d', strtotime('+ 2 days'));
+    $listId = $request['list-id'] ?? $request['id'] ?? '';
+    $list = $this->reservationListService->getListForUser($this->getUser(), $listId);
+    $results = $this->getListAsResults($request);
+    $listConfg = $this->getConfig('ReservationList')[$list['datasource']];
+    if ($this->formWasSubmitted('submit')) {
+      // Gather data here, and be ready to send an email.
+      // Or let the reservationlistservice to handle the sending.
+      $dateToPickUp = $request['order-pickup-date'] ?? false;
+      $contactInfo = $request['order-email'] ?? $request['order-phone'] ?? false;
+      // If any of the following information is missing, return the list and add a small warning
+      if (in_array(false, [$dateToPickUp, $contactInfo, $listId])) {
+        // Do an error check here
+      }
+      $user = $this->getUser();
+      // Start order process
+      $config = $this->getConfig();
+      $message = $this->getViewRenderer()->render(
+        'Email/reservation-list.phtml',
+        compact(
+          'dateToPickUp',
+          'contactInfo',
+          'results',
+          'user'
+        ),
+      );
+      $to = 'testemail@test.test';
+      $config = $this->getConfig();
+      $from = $this->getConfig()->Site->email;
+      $this->serviceLocator->get(Mailer::class)->send(
+        $listConfg['email'],
+        $from,
+        $this->translate('tilauslista tilaus'),
+        $message
+    );
+    }
+
+    $organisationInfo = [
+      'name' => $listConfg['name'] ?? '-',
+      'address' => $listConfg['address'] ?? '-',
+      'postal' => $listConfg['postal'] ?? '-',
+      'city' => $listConfg['city'] ?? '-',
+    ];
+
     $view = $this->createViewModel(
-      compact('results', 'earliestPickup', 'currentDate'),
+      compact(
+        'results',
+        'earliestPickup',
+        'currentDate',
+        'organisationInfo',
+        'listId'
+      ),
     );
     return $view;
   }
 
   /**
-   * 
+   * Delete a list
    */
   public function deleteAction()
   {
@@ -322,8 +314,11 @@ class ReservationListController extends AbstractBase
     // initialize our search object:
     $request = $this->getRequestAsArray();
     if ($this->formWasSubmitted('submit')) {
-      var_dump($request);
-      $this->reservationListService->deleteList($this->getUser(), $request['id']);
+      $result = $this->reservationListService->deleteList($this->getUser(), $request['id']);
+      if ($result) {
+        $this->flashMessenger()->addMessage('List removed successfully');
+        return $this->redirect()->toRoute('reservationlist-home');
+      }
     }
 
     $view = $this->createViewModel(

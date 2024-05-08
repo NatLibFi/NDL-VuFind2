@@ -31,7 +31,6 @@ namespace Finna\Db\Row;
 
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\MissingField as MissingFieldException;
-use VuFind\Db\Row\UserList;
 use VuFind\Db\Row\RowGateway;
 use Laminas\Session\Container;
 
@@ -44,10 +43,25 @@ use Laminas\Session\Container;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  *
- * @property string $finna_updated
+ * @property int    $id
+ * @property int    $user_id
+ * @property string $title
+ * @property string $description
+ * @property string $created
+ * @property bool   $public
+ * @property string $finna_ordered
  */
-class ReservationList extends UserList
+class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwareInterface
 {
+    use \VuFind\Db\Table\DbTableAwareTrait;
+
+    /**
+     * Session container for last list information.
+     *
+     * @var Container
+     */
+    protected $session = null;
+
     /**
      * Constructor
      *
@@ -59,7 +73,7 @@ class ReservationList extends UserList
     {
         $this->session = $session;
         // Parents parent
-        RowGateway::__construct('id', 'finna_reservation_list', $adapter);
+        parent::__construct('id', 'finna_reservation_list', $adapter);
     }
 
     /**
@@ -69,7 +83,7 @@ class ReservationList extends UserList
      */
     public function setOrdered($user = false)
     {
-        $this->finna_rl_ordered = date('Y-m-d H:i:s');
+        $this->finna_ordered = date('Y-m-d H:i:s');
         return parent::save($user);
     }
 
@@ -117,6 +131,21 @@ class ReservationList extends UserList
     }
 
     /**
+     * Is the current user allowed to edit this list?
+     *
+     * @param ?\VuFind\Db\Row\User $user Logged-in user (null if none)
+     *
+     * @return bool
+     */
+    public function editAllowed($user)
+    {
+        if ($user && $user->id == $this->user_id) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Destroy the list.
      *
      * @param \VuFind\Db\Row\User|bool $user  Logged-in user (false if none)
@@ -137,5 +166,45 @@ class ReservationList extends UserList
 
         // Remove the list itself:
         return parent::delete();
+    }
+
+    /**
+     * Saves the properties to the database.
+     *
+     * This performs an intelligent insert/update, and reloads the
+     * properties with fresh data from the table on success.
+     *
+     * @param \VuFind\Db\Row\User|bool $user Logged-in user (false if none)
+     *
+     * @return mixed The primary key value(s), as an associative array if the
+     *     key is compound, or a scalar if the key is single-column.
+     * @throws ListPermissionException
+     * @throws MissingFieldException
+     */
+    public function save($user = false)
+    {
+        if (!$this->editAllowed($user ?: null)) {
+            throw new ListPermissionException('list_access_denied');
+        }
+        if (empty($this->title)) {
+            throw new MissingFieldException('list_edit_name_required');
+        }
+
+        parent::save();
+        $this->rememberLastUsed();
+        return $this->id;
+    }
+
+    /**
+     * Remember that this list was used so that it can become the default in
+     * dialog boxes.
+     *
+     * @return void
+     */
+    public function rememberLastUsed()
+    {
+        if (null !== $this->session) {
+            $this->session->lastUsed = $this->id;
+        }
     }
 }
