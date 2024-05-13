@@ -233,7 +233,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     // Add listeners that close the search dropdown as necessary:
     document.addEventListener('mousedown', (e) => {
       let searchLocationToggle = searchContainer.querySelector('.js-location-search-toggle');
-      let searchLocationIsActive = searchLocationToggle.ariaExpanded;
+      let searchLocationIsActive = searchLocationToggle.getAttribute('aria-expanded');
       if (searchLocationIsActive === "true" && !searchContainer.contains(e.target)) {
         hideLocationSearch();
       }
