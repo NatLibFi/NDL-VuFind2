@@ -1,6 +1,7 @@
 <?php
   // Set up page title:
-  $this->headTitle($this->translate('reservation_list_add_list'));
+  $pageTitle = 'reservation_list_add_list';
+  $this->headTitle($this->translate($pageTitle));
 
   // Set up breadcrumbs:
   $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li>'

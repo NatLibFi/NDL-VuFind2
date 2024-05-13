@@ -84,6 +84,7 @@ class ReservationListResource extends \VuFind\Db\Table\UserResource
             $this->updateListDate($list_id, $user_id);
         }
 
+        // We should not deleted resources
         // Now build the where clause to figure out which rows to remove:
         // Do not destroy resource, if it is present in user_list
         $callback = function ($select) use ($resource_id, $user_id, $list_id) {

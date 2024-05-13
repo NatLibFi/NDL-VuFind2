@@ -49,7 +49,7 @@ use Laminas\Session\Container;
  * @property string $description
  * @property string $created
  * @property bool   $public
- * @property string $finna_ordered
+ * @property string $ordered
  */
 class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwareInterface
 {
@@ -83,7 +83,7 @@ class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwar
      */
     public function setOrdered($user = false)
     {
-        $this->finna_ordered = date('Y-m-d H:i:s');
+        $this->ordered = date('Y-m-d H:i:s');
         return parent::save($user);
     }
 
@@ -101,7 +101,7 @@ class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwar
     public function updateFromRequest($user, $request)
     {
         $this->title = $request->get('title');
-        $this->description = $request->get('desc');
+        $this->description = $request->get('description');
         $this->datasource = $request->get('datasource');
         $this->building = $request->get('building');
         $this->save($user);

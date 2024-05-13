@@ -3,7 +3,7 @@
   <?php if (!empty($this->lists)): ?>
   <form method="post" name="reservationListAdd">
     <input type="hidden" name="state" value="saveItem">
-    <label class="control-label" for="save_list"><?=$this->transEsc('Choose a List') ?></label>
+    <label class="control-label" for="save_list"><?=$this->transEsc('reservation_list_choose_a_list') ?></label>
     <div class="form-group">
       <select class="form-control" id="save_list" name="list">
         <?php foreach ($this->lists as $list): ?>
@@ -12,15 +12,15 @@
       </select>
     </div>
     <div class="form-group">
-      <label class="control-label" for="add_notes"><?=$this->transEsc('Add a Note') ?></label>
-      <textarea class="form-control" id="add_notes" name="notes" rows="3"></textarea>
+      <label class="control-label" for="add_notes"><?=$this->transEsc('reservation_list_add_note') ?></label>
+      <textarea class="form-control" id="add_notes" name="desc" rows="3"></textarea>
     </div>
     <div class="form-group">
-      <input class="btn btn-primary" type="submit" value="<?=$this->transEscAttr('Save') ?>">
+      <input class="btn btn-primary" type="submit" value="<?=$this->transEscAttr('reservation_list_save') ?>">
     </div>
   </form>
   <?php else: ?>
-    No lists found for datasource. Please create a new one.
+    <?= $this->transEsc('reservation_lists_no_lists_found') ?>
   <?php endif; ?>
-  <a class="btn btn-link" id="make-list" href="<?=$this->url('reservationlist-additem', [], ['query' => ['newList' => '1', 'recordId' => urlencode($this->driver->getUniqueId()), 'source' => urlencode($this->driver->getSourceIdentifier())]])?>"><?=$this->transEsc('or create a new list')?></a>
+  <a class="btn btn-link" id="make-list" href="<?=$this->url('reservationlist-additem', [], ['query' => ['newList' => '1', 'recordId' => urlencode($this->driver->getUniqueId()), 'source' => urlencode($this->driver->getSourceIdentifier())]])?>"><?=$this->transEsc('reservation_list_create_new_list')?></a>
 </div>

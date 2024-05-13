@@ -19,7 +19,7 @@
     <li role="none" class="favorites-menulist-item">
       <a role="menuitem" href="<?= $active ? '#' : $this->url('reservationlist-home', ['id' => $list['id']])?>?limit=<?=$currentLimit;?>" class="<?=$list && $active ? ' active' : ''?>" aria-current="<?=$active ? 'page' : 'false' ?>">
         <div class="favorite-list-holder">
-          <div class="pull-left favorite-list-title"><?=$this->escapeHtml($list['title'])?></div>
+          <div class="pull-left favorite-list-title"><?=$this->escapeHtml($list['title'])?></div><?php if ($list['ordered']): ?><div>(<?= $this->transEsc('reservation_list_ordered')?>)</div><?php endif; ?>
         </div>
       </a>
     </li>

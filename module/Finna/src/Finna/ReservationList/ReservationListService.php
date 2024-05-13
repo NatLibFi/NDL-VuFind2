@@ -97,7 +97,8 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         foreach ($lists as $list) {
             $result[] = [
                 'id' => $list->id,
-                'title' => $list->title
+                'title' => $list->title,
+                'ordered' => $list->ordered,
             ];
         }
         return $result;
@@ -159,6 +160,20 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
             $notes
         );
         return true;
+    }
+
+    /**
+     * Delete list from the user, returns bool if the removal was successful
+     *
+     * @param User   $user    User
+     * @param string $list_id Id of the list
+     * @return bool
+     */
+    public function setOrdered($user, $list_id)
+    {
+        $currentList = $this->reservationList->getExisting($list_id);
+        $result = $currentList->setOrdered($user);
+        return !!$result;
     }
 
     /**

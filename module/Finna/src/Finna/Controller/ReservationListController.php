@@ -133,14 +133,13 @@ class ReservationListController extends AbstractBase
         $view->lists = $reservationListService->getListsForDatasource($this->getUser(), $driver->getDatasource());
         $view->setTemplate('reservationlist/select-list');
       } elseif ('saveItem' === $state) {
-        $params = $this->params()->fromPost();
         // Seems like someone wants to save stuff into a list.
         // Lets process it like a champ. Not the mushroom champ.
-        $reservationListService->addRecordToList(
+        $this->reservationListService->addRecordToList(
           $this->getUser(),
           $driver->getUniqueID(),
-          $params['list'],
-          $params['notes'],
+          $this->getParam('list'),
+          $this->getParam('desc') ?? '',
           $driver->getSourceIdentifier()
         );
         // After this we can display the you did it, lets continue screen
@@ -253,6 +252,7 @@ class ReservationListController extends AbstractBase
     $listId = $request['list-id'] ?? $request['id'] ?? '';
     $list = $this->reservationListService->getListForUser($this->getUser(), $listId);
     $results = $this->getListAsResults($request);
+    // Building or datasource, depends?
     $listConfg = $this->getConfig('ReservationList')[$list['datasource']];
     if ($this->formWasSubmitted('submit')) {
       // Gather data here, and be ready to send an email.
@@ -278,12 +278,18 @@ class ReservationListController extends AbstractBase
       $to = 'testemail@test.test';
       $config = $this->getConfig();
       $from = $this->getConfig()->Site->email;
-      $this->serviceLocator->get(Mailer::class)->send(
-        $listConfg['email'],
-        $from,
-        $this->translate('tilauslista tilaus'),
-        $message
-    );
+      // If everything goes right, save the ordered timestamp, otherwise return with message about what went wrong
+      try {
+        $this->serviceLocator->get(Mailer::class)->send(
+          $listConfg['email'],
+          $from,
+          $this->translate('tilauslista tilaus'),
+          $message
+        );
+        $this->reservationListService->setOrdered($user, $listId);
+      } catch (\VuFind\Exception\Mail $e) {
+        $this->flashMessenger()->addMessage($e->getDisplayMessage());
+      }
     }
 
     $organisationInfo = [

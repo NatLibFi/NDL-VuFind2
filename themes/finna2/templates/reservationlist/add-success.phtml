@@ -1,7 +1,4 @@
-<div>yaaay added to list.</div>
-<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-    <?=$this->transEsc('Continue browsing') ?>
-</button>
-<a href="<?=$this->url('reservationlist-home') ?>" class="btn btn-primary" title="<?=$this->transEscAttr('Continue browsing')?>">
-    <?=$this->transEsc('Move to this list') ?>
+<?= $this->transEsc('reservation_list_record_added_to_list') ?>
+<a href="<?=$this->url('reservationlist-home') ?>" class="btn btn-primary">
+    <?=$this->transEsc('reservation_list_move_to_list') ?>
 </a>
