@@ -230,8 +230,8 @@ class RecordController extends \VuFind\Controller\RecordController
         $recordFactory = $this->serviceLocator
             ->get(\VuFind\RecordDriver\PluginManager::class);
         $this->driver = $recordFactory->getSolrRecord($metadata);
-        $translator = $this->serviceLocator->get(\Laminas\Mvc\I18n\Translator::class);
-        $this->driver->tryMethod('setPreferredLanguage', [$translator->getLocale()]);
+        $locale = $this->serviceLocator->get(\VuFind\I18n\Locale\LocaleSettings::class)->getUserLocale();
+        $this->driver->tryMethod('setPreferredLanguage', [$locale]);
         return $this->driver;
     }
 
