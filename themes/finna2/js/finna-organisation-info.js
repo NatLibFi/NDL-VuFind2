@@ -130,7 +130,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
           sectors: params.sectors || '',
           buildings: params.buildings || ''
         });
-        searchEl.querySelectorAll('select, input').forEach((field2) => {
+        searchEl.querySelectorAll('select, input[type="checkbox"]').forEach((field2) => {
           if (field2.tagName === 'INPUT' && field2.type === 'checkbox') {
             searchParams.append(field2.name, field2.checked ? '1' : '0');
           } else {
@@ -232,14 +232,16 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
     // Add listeners that close the search dropdown as necessary:
     document.addEventListener('mousedown', (e) => {
-      let searchLocationToggle = searchContainer.querySelector('.js-location-search-toggle');
-      let searchLocationIsActive = searchLocationToggle.getAttribute('aria-expanded');
-      if (searchLocationIsActive === "true" && !searchContainer.contains(e.target)) {
-        hideLocationSearch();
+      const searchLocationToggle = searchContainer.querySelector('.js-location-search-toggle');
+      const searchLocationIsActive = searchLocationToggle.getAttribute('aria-expanded');
+      if (searchLocationToggle && searchLocationIsActive) {
+        if (searchLocationIsActive === "true" && !searchContainer.contains(e.target)) {
+          hideLocationSearch();
+        }
       }
     });
     searchContainer.addEventListener('keydown', (e) => {
-      let searchLocationEl = searchContainer.querySelector('.js-location-search');
+      const searchLocationEl = searchContainer.querySelector('.js-location-search');
       if (e.code === "Escape" && searchLocationEl) {
         hideLocationSearch();
       }

@@ -2,7 +2,7 @@
   <div class="service-type-container">
     <label for="select-service-type"></label>
     <select id="select-service-type" name="service_type" class="js-location-search-service-type">
-      <option hidden value=""><?=$this->transEscAttr('Select Service')?></option>
+      <option hidden value=""><?=$this->transEsc('Select Service')?></option>
       <?php foreach ($serviceList as $service): ?>
         <option value="<?=$this->escapeHtmlAttr($service)?>"><?=$this->escapeHtml($service)?></option>
       <?php endforeach; ?>
@@ -11,7 +11,7 @@
   <div class="service-location-container">
     <label for="select-service-location"><?=$this->transEscAttr('Location')?></label>
     <select id="select-service-location" name="service_location" class="js-location-search-service-location">
-      <option hidden value=""><?=$this->transEsc('All Municipalities')?></option>
+      <option value=""><?=$this->transEsc('All Municipalities')?></option>
       <?php foreach ($cityList as $city): ?>
         <option value="<?=$this->escapeHtmlAttr($city)?>"><?=$this->escapeHtml($city)?></option>
       <?php endforeach; ?>
