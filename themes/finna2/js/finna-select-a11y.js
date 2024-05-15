@@ -29,5 +29,5 @@ class finnaSelectA11y extends SelectA11y.Select {
     }
   }
 }
-// Add global space.
+// Add to global namespace.
 window.finnaSelectA11y = finnaSelectA11y;
