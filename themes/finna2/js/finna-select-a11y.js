@@ -8,7 +8,7 @@ class finnaSelectA11y extends SelectA11y.Select {
     const finnaSelectA11yText = {
       help: VuFind.translate('select_a11y_help'),
       placeholder: VuFind.translate('select_a11y_placeholder'),
-      noResult: VuFind.translate('select_a11y_noresult'),
+      noResult: VuFind.translate('select_a11y_noresults'),
       results: "{x} " + VuFind.translate('select_a11y_results'),
       delete: VuFind.translate('select_a11y_delete'),
       deleteItem: VuFind.translate('select_a11y_delete') + " {t}",
