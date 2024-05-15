@@ -125,10 +125,12 @@ class Bootstrapper
             $routeMatch = $event->getRouteMatch();
             $controller = strtolower($routeMatch->getParam('controller'));
             $action = strtolower($routeMatch->getParam('action'));
+            $request = $event->getRequest();
+            $view = $request->getPost('view') ?? $request->getQuery('view');
             if (
                 ($controller == 'ajax' && !in_array($action, $ajaxAllowed))
                 || ($controller == 'browsesearch')
-                || ($controller == 'l1' && $action == 'results')
+                || ($controller == 'l1' && $action == 'results' && $view !== 'rss')
                 || ($controller == 'l1record' && $action == 'ajaxtab')
                 || ($controller == 'myresearch')
                 || ($controller == 'record' && $action == 'ajaxtab')
@@ -142,8 +144,8 @@ class Bootstrapper
                 || ($controller == 'qrcode')
                 || ($controller == 'oai')
                 || ($controller == 'authority' && $action == 'search')
-                || ($controller == 'search' && $action == 'results')
-                || ($controller == 'search2' && $action == 'results')
+                || ($controller == 'search' && $action == 'results' && $view !== 'rss')
+                || ($controller == 'search2' && $action == 'results' && $view !== 'rss')
                 || ($controller == 'pci' && $action == 'search')
                 || ($controller == 'primo' && $action == 'search')
                 || ($controller == 'primorecord')
