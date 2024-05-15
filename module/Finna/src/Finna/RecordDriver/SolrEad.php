@@ -757,8 +757,9 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
         // Get unit id for comparison with it:
         $unitId = '';
         foreach ($xml->did->unitid ?? [] as $id) {
-            if ('Analoginen' === (string)$id['label']) {
-                $unitId = (string)$id . ' ';
+            $checkedId = (string)$id . ' ';
+            if (str_starts_with($mainTitle, \Normalizer::normalize($checkedId, \Normalizer::FORM_KC))) {
+                $unitId = $checkedId;
                 break;
             }
         }

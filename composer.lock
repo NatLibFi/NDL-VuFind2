@@ -1752,16 +1752,16 @@
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.116",
+            "version": "v1.2.118",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "97e9fe30219e60092e107651abb379a38b342921"
+                "reference": "9b8912ac5b78b780a0ead552b4c3dc9ddfdea4fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/97e9fe30219e60092e107651abb379a38b342921",
-                "reference": "97e9fe30219e60092e107651abb379a38b342921",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/9b8912ac5b78b780a0ead552b4c3dc9ddfdea4fd",
+                "reference": "9b8912ac5b78b780a0ead552b4c3dc9ddfdea4fd",
                 "shasum": ""
             },
             "require": {
@@ -1798,9 +1798,9 @@
             ],
             "support": {
                 "issues": "https://github.com/JayBizzle/Crawler-Detect/issues",
-                "source": "https://github.com/JayBizzle/Crawler-Detect/tree/v1.2.116"
+                "source": "https://github.com/JayBizzle/Crawler-Detect/tree/v1.2.118"
             },
-            "time": "2023-07-21T15:49:49+00:00"
+            "time": "2024-04-23T17:07:05+00:00"
         },
         {
             "name": "laminas/laminas-cache",
@@ -6597,16 +6597,16 @@
         },
         {
             "name": "natlibfi/finna-code-sets",
-            "version": "v0.5.0",
+            "version": "v0.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NatLibFi/finna-code-sets.git",
-                "reference": "55bc7c33a332a47669d4165ee19503a639c6bd77"
+                "reference": "e06fb270b7aa453791a8afc2090b936539c217bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NatLibFi/finna-code-sets/zipball/55bc7c33a332a47669d4165ee19503a639c6bd77",
-                "reference": "55bc7c33a332a47669d4165ee19503a639c6bd77",
+                "url": "https://api.github.com/repos/NatLibFi/finna-code-sets/zipball/e06fb270b7aa453791a8afc2090b936539c217bf",
+                "reference": "e06fb270b7aa453791a8afc2090b936539c217bf",
                 "shasum": ""
             },
             "require": {
@@ -6616,9 +6616,9 @@
                 "psr/http-client": "^1.0.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "3.14.4",
-                "phpstan/phpstan": "1.10.3",
-                "squizlabs/php_codesniffer": "3.7.2"
+                "friendsofphp/php-cs-fixer": "3.49.0",
+                "phpstan/phpstan": "1.10.57",
+                "squizlabs/php_codesniffer": "3.8.1"
             },
             "type": "library",
             "autoload": {
@@ -6633,9 +6633,9 @@
             "description": "Support library for code sets used in Finna record formats",
             "support": {
                 "issues": "https://github.com/NatLibFi/finna-code-sets/issues",
-                "source": "https://github.com/NatLibFi/finna-code-sets/tree/v0.5.0"
+                "source": "https://github.com/NatLibFi/finna-code-sets/tree/v0.5.1"
             },
-            "time": "2024-01-26T09:33:35+00:00"
+            "time": "2024-04-26T12:02:16+00:00"
         },
         {
             "name": "natlibfi/php-html-parser",

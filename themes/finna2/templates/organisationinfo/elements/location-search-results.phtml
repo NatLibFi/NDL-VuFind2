@@ -14,9 +14,8 @@
       <a href="#<?=$this->escapeHtmlAttr($result['id'])?>"><?=$this->escapeHtml($result['name'])?></a>
       <br>
       <?=$this->escapeHtml($result['address']['displayAddress'])?>
-      <?php if (null !== $result['distance']): ?>
+      <?php if (null !== ($distance = $result['distance'] ?? null)): ?>
         <?php
-          $distance = $result['distance'];
           if ($distance >= 100) {
             $distance = round($distance);
           } else {

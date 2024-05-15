@@ -25,15 +25,5 @@
       </ul>
     </div>
   <?php endif; ?>
-  <?php if ($this->wayfinder): ?>
-    <div class="js-wayfinder-placeholder" data-location="<?=$this->htmlSafeJsonEncode($this->wayfinder)?>">
-      <template class="js-wayfinder-link">
-        <a class="icon-link__label" target="_blank" href="#">
-          <?=$this->icon('map-marker');?>
-          <span class="sr-only"><?=$this->transEsc('Location Service')?></span>
-        </a>
-      </template>
-    </div>
-  <?php endif; ?>
 </div>
 <!-- END of: finna - Helpers/holding-callnumber.phtml -->

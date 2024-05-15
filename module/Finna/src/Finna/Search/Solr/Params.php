@@ -727,7 +727,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Initialize new items filter (first_indexed)
+     * Initialize new items filter (first_indexed and other configured ones)
      *
      * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
@@ -736,15 +736,15 @@ class Params extends \VuFind\Search\Solr\Params
      */
     protected function initNewItemsFilter($request)
     {
-        // first_indexed filter automatically included, no query param required
-        // (compatible with Finna 1 implementation)
-        $from = $request->get('first_indexedfrom', '');
-        $from = $this->formatDateForFullDateRange($from);
+        // first_indexed filter automatically included (compatible with Finna 1 implementation)
+        foreach (array_unique([...$this->newItemsFacets, 'first_indexed']) as $field) {
+            $queryField = $field . 'from';
+            $from = $request->get($queryField, '');
+            $from = $this->formatDateForFullDateRange($from);
 
-        if ($from != '*') {
-            $rangeFacet
-                = $this->buildFullDateRangeFilter('first_indexed', $from, '*');
-            $this->addFilter($rangeFacet);
+            if ($from != '*') {
+                $this->addFilter($this->buildFullDateRangeFilter($field, $from, '*'));
+            }
         }
     }
 

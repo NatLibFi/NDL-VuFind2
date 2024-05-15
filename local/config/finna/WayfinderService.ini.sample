@@ -2,13 +2,4 @@
 
 [General]
 enabled = false
-
-[sample]
-wf_url = "http://wf-hambib.stg.easyscreen.io/includes"
-marker_url = "http://wf-hambib.stg.easyscreen.io"
-adapter = "WayfinderSampleAdapter"
-
-[vanamo]
-wf_url = "http://wf-vanamo.stg.easyscreen.io/includes"
-marker_url = "http://wf-vanamo.stg.easyscreen.io"
-adapter = "WayfinderVanamoAdapter"
+url = "http://wf-pro.stg.easyscreen.io/"

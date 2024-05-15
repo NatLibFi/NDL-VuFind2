@@ -1333,7 +1333,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                         ?? ''
                     );
                     if ($appellationValue !== '') {
-                        $role = (string)($actor->actorInRole->roleActor->term ?? '');
+                        $langRoles = [];
+                        $role = '';
+                        if ($term = $actor->actorInRole->roleActor->term) {
+                            $langRoles = iterator_to_array($term, false);
+                        }
+                        if ($langRoles) {
+                            $roles = $this->getAllLanguageSpecificItems($langRoles, $language);
+                            $role = implode(', ', $roles);
+                        }
                         $earliestDate = (string)($actor->actorInRole->actor
                             ->vitalDatesActor->earliestDate ?? '');
                         $latestDate = (string)($actor->actorInRole->actor
@@ -1663,6 +1671,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     {
         $authors = [];
         $index = 0;
+        $language = $this->getLocale();
         foreach ($this->getXmlRecord()->lido->descriptiveMetadata->eventWrap->eventSet ?? [] as $set) {
             if (!($event = $set->event ?? '')) {
                 continue;
@@ -1680,7 +1689,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                         ?? '')
                     );
                 if ($name) {
-                    $role = (string)($actor->actorInRole->roleActor->term ?? '');
+                    $langRoles = [];
+                    $role = '';
+                    if ($term = $actor->actorInRole->roleActor->term) {
+                        $langRoles = iterator_to_array($term, false);
+                    }
+                    if ($langRoles) {
+                        $roles = $this->getAllLanguageSpecificItems($langRoles, $language);
+                        $role = implode(', ', $roles);
+                    }
                     $key = $priority * 1000 + $index++;
                     $authors[$key] = compact(
                         'name',

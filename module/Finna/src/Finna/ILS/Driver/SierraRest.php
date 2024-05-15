@@ -133,6 +133,13 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     ];
 
     /**
+     * Material types that may have holdings records attached to the bibs.
+     *
+     * @var array
+     */
+    protected $materialTypesWithHoldings = ['9', 'j'];
+
+    /**
      * Initialize the driver.
      *
      * Validate configuration and perform all resource-intensive tasks needed to
@@ -1115,7 +1122,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      */
     protected function getItemStatusesForBib(string $id, bool $checkHoldings, ?array $patron = null): array
     {
-        $bibFields = ['bibLevel'];
+        $bibFields = ['default'];
         // If we need to look at bib call numbers, retrieve varFields:
         if (!empty($this->config['CallNumber']['bib_fields'])) {
             $bibFields[] = 'varFields';
@@ -1136,7 +1143,8 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             $orders[$location][] = $order;
         }
         $holdingsData = [];
-        if ($checkHoldings && $this->apiVersion >= 5.1) {
+        $matType = trim($bib['materialType']['code'] ?? '');
+        if ($checkHoldings && $this->apiVersion >= 5.1 && in_array($matType, $this->materialTypesWithHoldings)) {
             $holdingsResult = $this->makeRequest(
                 [$this->apiBase, 'holdings'],
                 [

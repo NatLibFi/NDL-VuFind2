@@ -149,6 +149,16 @@
           </div>
         <?php endif; ?>
       </div>
+      <?php if ($this->callnumber()->useWayfinderService()): ?>
+        <div class="js-wayfinder-placeholder" data-location="<?=$this->htmlSafeJsonEncode(array_intersect_key($row, array_flip(['id','branch','department','location','callnumber'])))?>">
+          <template class="js-wayfinder-link">
+            <a class="icon-link__label" target="_blank" href="#">
+              <?=$this->icon('map-marker');?>
+              <span class="sr-only"><?=$this->transEsc('Location Service')?></span>
+            </a>
+          </template>
+        </div>
+      <?php endif; ?>
     </div>
   <?php endforeach; ?>
   <?php if (null !== $this->moreLinkPage): ?>
