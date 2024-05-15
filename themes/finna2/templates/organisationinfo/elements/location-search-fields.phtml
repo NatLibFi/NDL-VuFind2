@@ -1,6 +1,6 @@
 <div class="input-row">
   <div class="service-type-container">
-    <label for="select-service-type"><?=$this->transEscAttr('Service')?></label>
+    <label for="select-service-type"><?=$this->transEsc('Service')?></label>
     <select id="select-service-type" name="service_type" class="js-location-search-service-type">
       <option hidden value=""><?=$this->transEsc('Select Service')?></option>
       <?php foreach ($serviceList as $service): ?>
