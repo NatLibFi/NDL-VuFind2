@@ -116,6 +116,20 @@ class Loader extends \VuFind\Cover\Loader
     protected $datasourceCoverConfig = null;
 
     /**
+     * Name for the unsized image used as a base for resizing new images
+     *
+     * @var string
+     */
+    protected $unsizedImageFile = '';
+
+    /**
+     * Name for the unsized image used as a base for resizing new images
+     *
+     * @var string
+     */
+    protected $cacheFile = '';
+
+    /**
      * Set datasource spesific cover image configuration.
      *
      * @param string $providers Comma separated list of cover image providers
@@ -206,6 +220,7 @@ class Loader extends \VuFind\Cover\Loader
             $this->id = $driver->getUniqueID();
             $this->url = $params['url'];
             $this->imageParams = $params;
+            $this->unsizedImageFile = $this->determineLocalFile($this->getIdentifiers(), 'default', true);
             return parent::fetchFromAPI();
         }
     }
@@ -233,10 +248,11 @@ class Loader extends \VuFind\Cover\Loader
      *
      * @param array  $ids     IDs returned by getIdentifiers() method
      * @param string $apiName Name of the API
+     * @param bool   $unsized Get unsized image name used for scaling other images
      *
      * @return string
      */
-    protected function determineLocalFile($ids, $apiName = 'default')
+    protected function determineLocalFile($ids, $apiName = 'default', bool $unsized = false)
     {
         $keys = [];
 
@@ -244,21 +260,17 @@ class Loader extends \VuFind\Cover\Loader
             $keys['url'] = md5($this->url);
             $host = parse_url($this->url, PHP_URL_HOST);
             $keys['host'] = substr($host, 0, 100);
+        } elseif (isset($ids['isbn'])) {
+            $keys['isbn'] = $ids['isbn']->get13();
+        } elseif (isset($ids['issn'])) {
+            $keys['issn'] = $ids['issn'];
+        } elseif (isset($ids['oclc'])) {
+            $keys['oclc'] = $ids['oclc'];
+        } elseif (isset($ids['upc'])) {
+            $keys['upc'] = $ids['upc'];
+        } elseif (isset($ids['invisbn'])) {
+            $keys['invisbn'] = $ids['invisbn'];
         } else {
-            if (isset($ids['isbn'])) {
-                $keys['isbn'] = $ids['isbn']->get13();
-            } elseif (isset($ids['issn'])) {
-                $keys['issn'] = $ids['issn'];
-            } elseif (isset($ids['oclc'])) {
-                $keys['oclc'] = $ids['oclc'];
-            } elseif (isset($ids['upc'])) {
-                $keys['upc'] = $ids['upc'];
-            } elseif (isset($ids['invisbn'])) {
-                $keys['invisbn'] = $ids['invisbn'];
-            }
-        }
-
-        if (!$keys) {
             if (isset($ids['recordid'])) {
                 $keys['recordid'] = $ids['recordid'];
             }
@@ -267,11 +279,13 @@ class Loader extends \VuFind\Cover\Loader
             }
         }
 
-        $keys = array_merge(
+        $keys = $unsized ? array_merge(
+            $keys,
+            [$this->index, 0, 0, $this->size]
+        ) : array_merge(
             $keys,
             [$this->index, $this->width, $this->height, $this->size]
         );
-
         $file = implode('-', $keys);
         return $this->getCachePath('finna', "$apiName-$file");
     }
@@ -311,12 +325,16 @@ class Loader extends \VuFind\Cover\Loader
                 ) {
                     continue;
                 }
-
-                $localFile = $this->determineLocalFile($ids, $apiName);
-                if (is_readable($localFile)) {
+                $this->localFile = $this->determineLocalFile($ids, $apiName);
+                $this->unsizedImageFile = $this->determineLocalFile($ids, $apiName, true);
+                if (is_readable($this->localFile)) {
                     // Load local cache if available
                     $this->contentType = 'image/jpeg';
-                    $this->image = file_get_contents($localFile);
+                    $this->image = file_get_contents($this->localFile);
+                    return true;
+                } elseif (is_readable($this->unsizedImageFile) && $this->createImage(true)) {
+                    $this->contentType = 'image/jpeg';
+                    $this->image = file_get_contents($this->localFile);
                     return true;
                 }
             } catch (\Exception $e) {
@@ -332,6 +350,7 @@ class Loader extends \VuFind\Cover\Loader
             $apiName = strtolower(trim($provider[0]));
             // Set up local file path:
             $this->localFile = $this->determineLocalFile($ids, $apiName);
+            $this->unsizedImageFile = $this->determineLocalFile($ids, $apiName, true);
             $key = isset($provider[1]) ? trim($provider[1]) : null;
             try {
                 $handler = $this->apiManager->get($apiName);
@@ -397,18 +416,52 @@ class Loader extends \VuFind\Cover\Loader
             return false;
         }
 
+        if (!$this->getUnsizedImage($url)) {
+            return false;
+        }
+
+        // Now create the requested image or if width and height is 0, then i suppose we could return the unsized file
+        if (!$this->width && !$this->height) {
+            $this->localFile = $this->unsizedImageFile;
+        } elseif (!$this->createImage()) {
+            return false;
+        }
+
+        if (!$this->localFile) {
+            return false;
+        }
+        // Display the image:
+        $this->contentType = 'image/jpeg';
+        $this->image = file_get_contents($this->localFile);
+        // If we don't want to cache the image, delete it now that we're done.
+        if (!$cache) {
+            @unlink($this->unsizedImageFile);
+            @unlink($this->localFile);
+        }
+
+        return true;
+    }
+
+    /**
+     * Try to get the full size image to be used for scaling other images
+     *
+     * @param string $url URL to load image from
+     *
+     * @return bool
+     */
+    protected function getUnsizedImage(string $url)
+    {
+
         $url = str_replace(
             [' ', 'ä','ö','å','Ä','Ö','Å'],
             ['%20','%C3%A4','%C3%B6','%C3%A5','%C3%84','%C3%96','%C3%85'],
             trim($url)
         );
-
         // Figure out file paths -- $tempFile will be used to store the
         // image for analysis. $finalFile will be used for long-term storage if
         // $cache is true or for temporary display purposes if $cache is false.
         // $statusFile is used for blocking a non-responding server for a while.
-        $tempFile = str_replace('.jpg', uniqid(), $this->localFile);
-        $finalFile = $cache ? $this->localFile : $tempFile . '.jpg';
+        $tempFile = str_replace('.jpg', uniqid(), $this->unsizedImageFile . '-jeppis-');
 
         $pdfFile
             = ($this->imageParams['pdf'] ?? false) || preg_match('/\.pdf$/i', $url);
@@ -468,7 +521,7 @@ class Loader extends \VuFind\Cover\Loader
         $image = file_get_contents($tempFile);
 
         // We no longer need the temp file:
-        @unlink($tempFile);
+        unlink($tempFile);
 
         if (strlen($image) === 0) {
             return false;
@@ -479,8 +532,57 @@ class Loader extends \VuFind\Cover\Loader
             return false;
         }
 
+        if (isset($exif['Orientation'])) {
+            $orientation = $exif['Orientation'];
+            if ($orientation > 1 && $orientation < 9) {
+                $imageGD = $this->rotateImage(
+                    $imageGD,
+                    $orientation
+                );
+            }
+        }
+
+        [$width, $height, $type] = @getimagesizefromstring($image);
+        // Save unsized image, with quality 100,
+        if ($type !== IMG_JPG) {
+            if (!@imagejpeg($imageGD, $this->unsizedImageFile, 100)) {
+                // If this fails, then return false
+                return false;
+            }
+        } elseif (false === file_put_contents($this->unsizedImageFile, $image)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Create an image from the unsized file.
+     *
+     * @param bool $cache Allow caching
+     *
+     * @return bool True if image created, false on failure.
+     */
+    protected function createImage(bool $cache = true)
+    {
+        if (!file_exists($this->unsizedImageFile)) {
+            return false;
+        }
+
+        $image = file_get_contents($this->unsizedImageFile);
         [$width, $height, $type] = @getimagesizefromstring($image);
 
+        // Figure out file paths -- $tempFile will be used to store the
+        // image for analysis. $finalFile will be used for long-term storage if
+        // $cache is true or for temporary display purposes if $cache is false.
+        // $statusFile is used for blocking a non-responding server for a while.
+        $tempFile = str_replace('.jpg', uniqid(), $this->localFile);
+        $this->localFile = $cache ? $this->localFile : $tempFile . '.jpg';
+        // Try to create a GD image and rewrite as JPEG, fail if we can't:
+        if (!($imageGD = @imagecreatefromstring($image))) {
+            return false;
+        }
+        // If image width and size is requested, then create a new image from the unsized image
         $reqWidth = $this->width ?: $width;
         $reqHeight = $this->height ?: $height;
 
@@ -506,35 +608,16 @@ class Loader extends \VuFind\Cover\Loader
                 $width,
                 $height
             );
-            if (isset($exif['Orientation'])) {
-                $orientation = $exif['Orientation'];
-                if ($orientation > 1 && $orientation < 9) {
-                    $imageGDResized = $this->rotateImage(
-                        $imageGDResized,
-                        $orientation
-                    );
-                }
+
+            if (!@imagejpeg($imageGDResized, $this->localFile, $quality)) {
+                return false;
             }
-            if (!@imagejpeg($imageGDResized, $finalFile, $quality)) {
+        } elseif ($type !== IMG_JPG) {
+            if (!@imagejpeg($imageGD, $this->localFile, $quality)) {
                 return false;
             }
         } else {
-            if ($type !== IMG_JPG) {
-                if (!@imagejpeg($imageGD, $finalFile, $quality)) {
-                    return false;
-                }
-            } else {
-                file_put_contents($finalFile, $image);
-            }
-        }
-
-        // Display the image:
-        $this->contentType = 'image/jpeg';
-        $this->image = file_get_contents($finalFile);
-
-        // If we don't want to cache the image, delete it now that we're done.
-        if (!$cache) {
-            @unlink($finalFile);
+            file_put_contents($this->localFile, $image);
         }
 
         return true;
