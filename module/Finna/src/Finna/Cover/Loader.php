@@ -413,7 +413,7 @@ class Loader extends \VuFind\Cover\Loader
             return false;
         }
 
-        // Now create the requested image or if width and height is 0, then i suppose we could return the unsized file
+        // If the requested image has width and height of 0, then reuturn the unsized image
         if (!$this->width && !$this->height) {
             $this->localFile = $this->unsizedImageFile;
         } elseif (!$this->createImage()) {
@@ -426,7 +426,6 @@ class Loader extends \VuFind\Cover\Loader
         // Display the image:
         $this->contentType = 'image/jpeg';
         $this->image = file_get_contents($this->localFile);
-        // If we don't want to cache the image, delete it now that we're done.
         if (!$cache) {
             @unlink($this->unsizedImageFile);
             @unlink($this->localFile);
