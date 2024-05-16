@@ -234,4 +234,14 @@ class User extends \VuFind\Db\Row\User
             ]
         );
     }
+
+    /**
+     * Get identifier (returns null for an uninitialized or non-persisted object).
+     *
+     * @return ?int
+     */
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 }

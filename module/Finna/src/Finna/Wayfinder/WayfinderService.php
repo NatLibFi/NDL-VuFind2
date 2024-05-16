@@ -157,8 +157,8 @@ class WayfinderService
             return false;
         }
 
-        $enabled = filter_var($this->config['General']['enabled'], FILTER_VALIDATE_BOOL);
-        $urlValid = filter_var($this->config['General']['url'], FILTER_VALIDATE_URL);
+        $enabled = filter_var($this->config['General']['enabled'] ?? false, FILTER_VALIDATE_BOOL);
+        $urlValid = filter_var($this->config['General']['url'] ?? null, FILTER_VALIDATE_URL);
 
         return $enabled && $urlValid;
     }
