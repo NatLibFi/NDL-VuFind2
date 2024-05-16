@@ -29,12 +29,9 @@
 
 namespace Finna\Wayfinder;
 
-use Finna\Wayfinder\DTO\WayfinderPlacement;
 use Laminas\Http\Response;
 use Laminas\Log\LoggerInterface;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use VuFind\Log\LoggerAwareTrait;
 use VuFindHttp\HttpServiceInterface;
 
@@ -85,54 +82,7 @@ class WayfinderService
      */
     public function getMarker(array $payload): string
     {
-        $url = $this->getWayFinderUrl($payload['source'] ?? '');
-        try {
-            $adapter = $this->container->get(
-                $this->getWayFinderAdapter($payload['source'] ?? '')
-            );
-        } catch (NotFoundExceptionInterface | ContainerExceptionInterface $e) {
-            $this->logError((string)$e);
-
-            return '';
-        }
-
-        return $this->fetchMarker($url, $adapter->getLocation($payload));
-    }
-
-    /**
-     * Gets from config the wayfinder service url.
-     *
-     * @param string $source Item source identifier.
-     *
-     * @return string
-     */
-    public function getWayFinderUrl(string $source): string
-    {
-        return rtrim($this->config[$source]['wf_url'] ?? '', '/');
-    }
-
-    /**
-     * Gets from config the wayfinder adapter name.
-     *
-     * @param string $source Item source identifier.
-     *
-     * @return string
-     */
-    public function getWayFinderAdapter(string $source): string
-    {
-        return $this->config[$source]['adapter'] ?? '';
-    }
-
-    /**
-     * Get from config the marker url.
-     *
-     * @param string $source Item source identifier.
-     *
-     * @return string
-     */
-    public function getMarkerUrl(string $source): string
-    {
-        return rtrim($this->config[$source]['marker_url'] ?? '', '/');
+        return $this->fetchMarker($this->config['General']['url'], $payload);
     }
 
     /**
@@ -148,32 +98,31 @@ class WayfinderService
     /**
      * Fetches map link from wayfinder based on holding information.
      *
-     * @param string             $url       Wayfinder service url.
-     * @param WayfinderPlacement $placement Placement DTO.
+     * @param string $url       Wayfinder service url.
+     * @param array  $placement Placement information.
      *
      * @return string
      */
-    protected function fetchMarker(string $url, WayfinderPlacement $placement): string
+    protected function fetchMarker(string $url, array $placement): string
     {
-        $args = array_map(
-            static function ($v) {
-                return trim($v);
-            },
-            array_filter($placement->toArray())
-        );
-
         if (!$this->isConfigured()) {
             $this->logWarning('Service not configured.');
             return '';
         }
 
-        $response = $this->httpService->get($url, $args);
+        $response = $this->httpService->post(
+            $url,
+            json_encode(['placement' => $placement]),
+            'application/json; charset=UTF-8'
+        );
 
         if ($response->getStatusCode() !== Response::STATUS_CODE_200) {
             $this->logError(
                 'Failed to read placement marker'
-                . ' from url [' . $url . '].'
+                . ' from url [' . $url . ']'
+                . ' with args [' . var_export($placement, true) . '].'
                 . ' Status code [' . $response->getStatusCode() . '].'
+                . ' Response message [' . $response->getContent() . '].'
             );
             return '';
         }
@@ -194,7 +143,7 @@ class WayfinderService
             return '';
         }
 
-        return $this->getMarkerUrl($placement->getBranch()) . $decoded['link'];
+        return $decoded['link'];
     }
 
     /**
@@ -209,31 +158,8 @@ class WayfinderService
         }
 
         $enabled = filter_var($this->config['General']['enabled'], FILTER_VALIDATE_BOOL);
+        $urlValid = filter_var($this->config['General']['url'], FILTER_VALIDATE_URL);
 
-        $fieldsToValidate = [
-            'wf_url',
-            'marker_url',
-            'adapter',
-        ];
-
-        foreach ($this->config as $k => $v) {
-            if ($k === 'General') {
-                continue;
-            }
-
-            foreach ($fieldsToValidate as $field) {
-                if (empty($this->config[$k][$field] ?? '')) {
-                    $this->logError(sprintf(
-                        'Empty value for Wayfinder config key %s field %s',
-                        $k,
-                        $field
-                    ));
-
-                    return false;
-                }
-            }
-        }
-
-        return $enabled;
+        return $enabled && $urlValid;
     }
 }

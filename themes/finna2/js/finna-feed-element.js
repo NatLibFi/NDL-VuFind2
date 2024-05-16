@@ -129,18 +129,17 @@ class FinnaFeedElement extends HTMLElement {
    * @param {object} jsonResponse The response obtained from the backend.
    */
   buildFeedDom(jsonResponse) {
-    const holder = this;
     if (jsonResponse.data) {
-      holder.innerHTML = VuFind.updateCspNonce(jsonResponse.data.html);
+      this.innerHTML = VuFind.updateCspNonce(jsonResponse.data.html);
       // Copy object so the reference to original is broken
       var settings = Object.assign({}, jsonResponse.data.settings);
       settings.height = settings.height || 300;
       const type = settings.type;
       const carousel = ['carousel', 'carousel-vertical', 'slider'].includes(type);
-      const hasContent = holder.querySelector('.list-feed > ul > li, .carousel-feed > li, .feed-grid > div');
+      const hasContent = this.querySelector('.list-feed > ul > li, .carousel-feed > li, .feed-grid > div');
       if (!hasContent) {
-        holder.style.display = 'none';
-        holder.innerHTML = `<!-- No content received -->`;
+        this.classList.add('hidden');
+        this.innerHTML = `<!-- No content received -->`;
         return;
       }
       if (carousel) {
@@ -157,16 +156,16 @@ class FinnaFeedElement extends HTMLElement {
         this.splide = finna.carouselManager.createCarousel(this, settings);
         var titleBottom = typeof settings.titlePosition !== 'undefined' && settings.titlePosition === 'bottom';
         if (!vertical && !slider) {
-          holder.classList.add('carousel');
+          this.classList.add('carousel');
           if (titleBottom) {
-            holder.setTitleBottom(settings);
-            holder.querySelectorAll('.carousel-hover-title').forEach(el => {
+            this.setTitleBottom(settings);
+            this.querySelectorAll('.carousel-hover-title').forEach(el => {
               el.style.display = 'none';
             });
-            holder.querySelectorAll('.carousel-more.show-link').forEach(el => {
+            this.querySelectorAll('.carousel-more.show-link').forEach(el => {
               el.style.display = 'none';
             });
-            holder.querySelectorAll('.carousel-hover-date').forEach(el => {
+            this.querySelectorAll('.carousel-hover-date').forEach(el => {
               el.style.display = 'none';
             });
             // Update the height of the splide component for title-bottom to display properly
@@ -180,20 +179,20 @@ class FinnaFeedElement extends HTMLElement {
           }
         }
         if (slider) {
-          holder.classList.add('carousel-slider');
+          this.classList.add('carousel-slider');
           if (settings.backgroundColor) {
-            holder.classList.add('slider-with-background');
-            holder.style.setProperty('--background-color', settings.backgroundColor);
+            this.classList.add('slider-with-background');
+            this.style.setProperty('--background-color', settings.backgroundColor);
           }
           if (settings.imagePlacement && settings.imagePlacement === 'right') {
-            holder.classList.add('image-right');
+            this.classList.add('image-right');
           }
           if (settings.stackedHeight) {
-            holder.style.setProperty('--height', `${settings.stackedHeight}px`);
+            this.style.setProperty('--height', `${settings.stackedHeight}px`);
           } else {
-            holder.style.setProperty('--height', `${settings.height}px`);
+            this.style.setProperty('--height', `${settings.height}px`);
           }
-          holder.querySelectorAll('.slider-text-container').forEach(el => {
+          this.querySelectorAll('.slider-text-container').forEach(el => {
             if (el.clientHeight < el.scrollHeight) {
               el.classList.add('scrollable');
             } else {
@@ -204,20 +203,20 @@ class FinnaFeedElement extends HTMLElement {
 
         // Text hover for touch devices
         if (!slider && finna.layout.isTouchDevice() && typeof settings.linkText === 'undefined') {
-          holder.querySelectorAll('.carousel-slide-more.carousel-show').forEach(el => {
-            if (holder.querySelector('.carousel-text:not(.no-text)') !== null) {
+          this.querySelectorAll('.carousel-slide-more.carousel-show').forEach(el => {
+            if (this.querySelector('.carousel-text:not(.no-text)') !== null) {
               el.classList.remove('hidden');
               el.parentNode.style.paddingRight = '30px';
             }
           });
           if (!settings.modal) {
-            holder.querySelectorAll('.carousel-text').forEach(el => {
+            this.querySelectorAll('.carousel-text').forEach(el => {
               el.addEventListener('click', function doNothing(e) {
                 e.stopImmediatePropagation();
               });
             });
           }
-          holder.querySelectorAll('.carousel-more').forEach(el => {
+          this.querySelectorAll('.carousel-more').forEach(el => {
             if (el.classList.contains('carousel-close')) {
               el.classList.remove('hidden');
               el.querySelector('.js-carousel-close').addEventListener('click', function closeDescription(e) {
@@ -237,18 +236,18 @@ class FinnaFeedElement extends HTMLElement {
             e.stopImmediatePropagation();
             const slide = this.closest('.feed-item-holder');
             if (slide && !slide.classList.contains('clicked')) {
-              holder.querySelectorAll('.feed-item-holder.clicked').forEach(el => {
+              this.querySelectorAll('.feed-item-holder.clicked').forEach(el => {
                 el.classList.remove('.clicked');
               });
               slide.classList.add('clicked');
               e.preventDefault();
             }
           };
-          holder.querySelectorAll('.carousel-slide-more.carousel-show').forEach(el => {
+          this.querySelectorAll('.carousel-slide-more.carousel-show').forEach(el => {
             el.addEventListener('click', onSlideClick);
           });
         } else {
-          holder.querySelectorAll('.carousel').forEach(el => {
+          this.querySelectorAll('.carousel').forEach(el => {
             el.classList.add('carousel-non-touch-device');
           });
         }
@@ -275,20 +274,20 @@ class FinnaFeedElement extends HTMLElement {
             modal.classList.add('feed-content');
           }
         };
-        holder.querySelectorAll('a').forEach(el => {
+        this.querySelectorAll('a').forEach(el => {
           el.addEventListener('click', onClickHolderLink);
         });
-        VuFind.lightbox.bind(holder);
+        VuFind.lightbox.bind(this);
       }
     }
-    const truncatedGrid = holder.querySelectorAll('.grid-item.truncate');
+    const truncatedGrid = this.querySelectorAll('.grid-item.truncate');
     if (truncatedGrid.length) {
-      holder.querySelectorAll('.show-more-feeds').forEach(el => {
+      this.querySelectorAll('.show-more-feeds').forEach(el => {
         el.classList.remove('hidden');
       });
     }
-    const showMoreFeeds = holder.querySelector('.show-more-feeds');
-    const showLessFeeds = holder.querySelector('.show-less-feeds');
+    const showMoreFeeds = this.querySelector('.show-more-feeds');
+    const showLessFeeds = this.querySelector('.show-less-feeds');
     if (showMoreFeeds) {
       showMoreFeeds.addEventListener('click', () => {
         truncatedGrid.forEach(el => {
@@ -307,7 +306,7 @@ class FinnaFeedElement extends HTMLElement {
         showLessFeeds.classList.add('hidden');
       });
     }
-    const feedGrid = holder.querySelector('.feed-grid:not(.news-feed .feed-grid, .events-feed .feed-grid)');
+    const feedGrid = this.querySelector('.feed-grid:not(.news-feed .feed-grid, .events-feed .feed-grid)');
     if (feedGrid) {
       if (feedGrid.getBoundingClientRect().width <= 500) {
         feedGrid.querySelectorAll('.grid-item').forEach(el => {
@@ -320,12 +319,12 @@ class FinnaFeedElement extends HTMLElement {
       }
     }
 
-    if (typeof holder.onFeedLoaded === 'function') {
-      holder.onFeedLoaded();
+    if (typeof this.onFeedLoaded === 'function') {
+      this.onFeedLoaded();
     }
     VuFind.observerManager.observe(
       'LazyImages',
-      holder.querySelectorAll('img[data-src]')
+      this.querySelectorAll('img[data-src]')
     );
   }
 
@@ -374,6 +373,7 @@ class FinnaFeedElement extends HTMLElement {
    */
   attributeChangedCallback(name) {
     if ('feed-id' === name) {
+      this.classList.remove('hidden');
       this.addToObserver();
     }
   }

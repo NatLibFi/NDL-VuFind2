@@ -164,16 +164,30 @@
                   </tr>
                 <?php endforeach; ?>
               </table>
-              <?php if ($purgeAllAllowed): ?>
-                <div class="dropdown loan-history-purge-all">
-                  <input type="submit" id="purgeAll" name="purgeAll" value="<?=$this->transEscAttr('loan_history_purge')?>" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
-                  <ul class="dropdown-menu useraccount-confirm">
-                    <li class="disabled"><span class="prompt-text"><?=$this->transEsc('loan_history_confirm_purge_all')?></span></li>
-                    <li><a href="#" id="confirm_purge_all_yes"><?=$this->transEsc('confirm_dialog_yes')?></a></li>
-                    <li><a href="#" class="confirm_purge_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+              <div class="loan-history-buttons-bottom">
+                <div class="dropdown loan-history-download">
+                  <button class="btn btn-default dropdown-toggle download" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <?=$this->icon('download')?> <?=$this->transEsc('loan_history_download')?> <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu download">
+                    <?php foreach (['csv', 'ods', 'xlsx'] as $format): ?>
+                      <li>
+                        <a href="<?=$this->url('myresearch-downloadloanhistory', [], ['query' => ['format' => $format]])?>"><?=$this->transEsc('loan_history_download_' . $format)?></a>
+                      </li>
+                    <?php endforeach; ?>
                   </ul>
                 </div>
-              <?php endif; ?>
+                <?php if ($purgeAllAllowed): ?>
+                  <div class="dropdown loan-history-purge-all">
+                    <input type="submit" id="purgeAll" name="purgeAll" value="<?=$this->transEscAttr('loan_history_purge')?>" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
+                    <ul class="dropdown-menu useraccount-confirm">
+                      <li class="disabled"><span class="prompt-text"><?=$this->transEsc('loan_history_confirm_purge_all')?></span></li>
+                      <li><a href="#" id="confirm_purge_all_yes"><?=$this->transEsc('confirm_dialog_yes')?></a></li>
+                      <li><a href="#" class="confirm_purge_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+                    </ul>
+                  </div>
+                <?php endif; ?>
+              </div>
             </form>
           </div>
 
