@@ -123,13 +123,6 @@ class Loader extends \VuFind\Cover\Loader
     protected $unsizedImageFile = '';
 
     /**
-     * Name for the unsized image used as a base for resizing new images
-     *
-     * @var string
-     */
-    protected $cacheFile = '';
-
-    /**
      * Set datasource spesific cover image configuration.
      *
      * @param string $providers Comma separated list of cover image providers
