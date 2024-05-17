@@ -3,6 +3,9 @@
   <title lang="-">SolrQdc Institutional Repository test</title>
   <subject lang="-">Duck</subject>
   <subject lang="-">Tasmanian Devil</subject>
+  <description>Kuvausteksti</description>
+  <description>Lisäkuvaus</description>
+  <description type="notification">Huomautusteksti</description>
   <available>2017-06-27T09:23:48Z</available>
   <issued>1992</issued>
   <type lang="-">julkaisu</type>
