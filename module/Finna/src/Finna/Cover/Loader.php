@@ -513,7 +513,7 @@ class Loader extends \VuFind\Cover\Loader
         $image = file_get_contents($tempFile);
 
         // We no longer need the temp file:
-        unlink($tempFile);
+        @unlink($tempFile);
 
         if (strlen($image) === 0) {
             return false;
