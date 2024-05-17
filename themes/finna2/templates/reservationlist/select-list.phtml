@@ -1,7 +1,7 @@
 <!-- I am here and here i am-->
 <div>
   <?php if (!empty($this->lists)): ?>
-  <form method="post" name="reservationListAdd">
+  <form method="post" name="reservationListAdd" data-lightbox-onclose="VuFind.refreshPage">
     <input type="hidden" name="state" value="saveItem">
     <label class="control-label" for="save_list"><?=$this->transEsc('reservation_list_choose_a_list') ?></label>
     <div class="form-group">
@@ -16,7 +16,7 @@
       <textarea class="form-control" id="add_notes" name="desc" rows="3"></textarea>
     </div>
     <div class="form-group">
-      <input class="btn btn-primary" type="submit" value="<?=$this->transEscAttr('reservation_list_save') ?>">
+      <input class="btn btn-primary" type="submit" name="submit" value="<?=$this->transEscAttr('reservation_list_save') ?>">
     </div>
   </form>
   <?php else: ?>

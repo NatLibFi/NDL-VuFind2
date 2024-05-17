@@ -189,4 +189,17 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         $result = $currentList->delete($user);
         return !!$result;
     }
+
+    public function getListsContaining($user, $recordId, $source)
+    {
+        $lists = $this->reservationList->getListsContainingResource($recordId, $source, $user);
+        $results = [];
+        foreach ($lists as $list) {
+            $results[] = [
+                'id' => $list->id,
+                'title' => $list->title,
+            ];
+        }
+        return $results;
+    }
 }

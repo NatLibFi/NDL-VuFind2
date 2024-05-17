@@ -120,6 +120,10 @@ class ReservationListController extends AbstractBase
     $view->driver = $driver;
     if ($this->formWasSubmitted('submit')) {
       $state = $this->getParam('state');
+      $title = $this->getParam('title');
+      if (!$title) {
+        $this->flashMessenger('reservation_list_missing_title');
+      }
       if ('saveList' === $state) {
         $building = $driver->getBuildings()[0] ?? '';
         $datasource = $driver->getDataSource();
@@ -142,10 +146,12 @@ class ReservationListController extends AbstractBase
           $this->getParam('desc') ?? '',
           $driver->getSourceIdentifier()
         );
+        $this->flashMessenger('reservation_list_added_succesfully');
         // After this we can display the you did it, lets continue screen
-        $view->setTemplate('reservationlist/add-success');
+        return $this->inLightbox()  // different behavior for lightbox context
+          ? $this->getRefreshResponse()
+          : $this->redirect()->toRoute('home'); // somehow if we are in this spot, someone is not in the popup so lets direct them somewhere else
       }
-      return $view;
     }
 
     $view->lists = $reservationListService->getListsForDatasource($this->getUser(), $driver->getDatasource());

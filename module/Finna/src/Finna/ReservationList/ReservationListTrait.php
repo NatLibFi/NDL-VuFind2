@@ -18,4 +18,9 @@ trait ReservationListTrait
   {
     return $this->reservationListService->getListsForUser($this);
   }
+
+  public function getReservationListContainedIn(string $recordId, string $source): array
+  {
+    return $this->reservationListService->getListsContaining($this, $recordId, $source);
+  }
 }

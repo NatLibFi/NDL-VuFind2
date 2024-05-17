@@ -1,14 +1,27 @@
 <!-- START of: finna - RecordTab/holdingsarchive.phtml -->
 
 <?php if ($this->driver->tryMethod('archiveRequestAllowed')): ?>
+  <!-- Display lists where it has been saved: -->
+  <?php
+    $user = $this->auth()->getManager()->getUserObject();
+    $listsContainingRecord = $user->getReservationListContainedIn($this->driver->getUniqueID(), $this->driver->getSourceIdentifier());
+  ?>
   <div class="text-right">
-    <?php if ($this->auth()->getManager()->getUserObject()): ?>
+    <?php if ($user): ?>
       <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($driver, 'ArchiveRequest'))?>" class="btn btn-primary" data-lightbox="" data-toggle="modal" data-target="order_archive_material_form" data-lightbox><?=$this->transEsc('archive_request_reserve_action')?></a>
       <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-additem', [], ['query' => ['recordId' => $this->driver->getUniqueID(), 'source' => $this->driver->getSourceIdentifier()]]))?>" class="btn btn-primary" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?=$this->transEsc('Add To Reservation List')?></a>
     <?php else: ?>
       <a href="<?=$this->url('myresearch-userlogin') ?>" class="btn btn-primary" data-lightbox><span><?=$this->transEsc('archive_request_login')?></span></a>
     <?php endif; ?>
   </div>
+  <?php if ($user && $listsContainingRecord): ?>
+  <div class="saved-reservation-lists text-right">
+    <strong><?=$this->transEsc('Saved in')?>:</strong><br/>
+    <?php foreach ($listsContainingRecord as $list): ?>
+      <?= $list['title']; ?><br/>
+    <?php endforeach; ?>
+  </div>
+  <?php endif; ?>
 <?php endif;?>
 
 <?= $this->render('RecordTab/holdings-record-urls'); ?>
