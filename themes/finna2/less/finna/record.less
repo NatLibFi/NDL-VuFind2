@@ -142,20 +142,22 @@ a.authority {
 
 .authoritybox,
 .large-image-layout.record {
-  .media-left,
-  .media-right {
-    @media (min-width: @screen-sm) {
-      width: 50%;
-    }
-    .record-image-container {
-      .open-link {
-        margin-top: 10px;
+  :not('.record-accordions') {
+    .media-left,
+    .media-right {
+      @media (min-width: @screen-sm) {
+        width: 50%;
       }
-      .open-link, .model-link {
-        i, b {
-          color: tint(@action-link-color, 22%);
-          margin-right: 0;
-          font-style: normal;
+      .record-image-container {
+        .open-link {
+          margin-top: 10px;
+        }
+        .open-link, .model-link {
+          i, b {
+            color: tint(@action-link-color, 22%);
+            margin-right: 0;
+            font-style: normal;
+          }
         }
       }
     }
