@@ -49,7 +49,7 @@
   </div>
 <?php endif; ?>
 <?php if (isset($item['title']) || isset($item['dateFull'])): ?>
-  <div class="carousel-slide-header" aria-hidden="true">
+  <div class="carousel-slide-header">
     <p>
       <?php if ($hasIcon && !$hasImg): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?>
       <?php if (isset($item['title'])): ?>
