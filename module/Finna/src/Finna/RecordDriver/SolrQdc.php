@@ -748,8 +748,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
     /**
      * Get descriptions by type
      *
-     * @param array $include Description types to include, otherwise all but
-     * excluded types
+     * @param array $include Description types to include, otherwise all but excluded types
      *
      * @return array
      */
