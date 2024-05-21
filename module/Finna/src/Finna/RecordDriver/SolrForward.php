@@ -1238,7 +1238,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
                 }
                 $attributes = $titleValue->attributes();
                 $videoType = (string)($attributes->{'video-tyyppi'} ?? 'elokuva');
-                if (empty($attributes->{'online-video'}) && $videoType !== 'traileri') {
+                if ($videoType !== 'traileri' && empty($attributes->{'online-video'})) {
                     continue;
                 }
                 $warnings = [];
