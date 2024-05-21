@@ -141,12 +141,15 @@ a.authority {
 }
 
 .authoritybox,
-.large-image-layout.record {
-  :not('.record-accordions') {
-    .media-left,
-    .media-right {
-      @media (min-width: @screen-sm) {
-        width: 50%;
+.large-image-layout.record .record-main > :not(.record-tabs) {
+  .media-left,
+  .media-right {
+    @media (min-width: @screen-sm) {
+      width: 50%;
+    }
+    .record-image-container {
+      .open-link {
+        margin-top: 10px;
       }
       .record-image-container {
         .open-link {
