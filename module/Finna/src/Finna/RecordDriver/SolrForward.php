@@ -1241,7 +1241,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
                 if (empty($attributes->{'online-video'}) && $videoType !== 'traileri') {
                     continue;
                 }
-
                 $warnings = [];
                 // Check for warnings
                 if (!empty($attributes->{'video-rating'})) {
