@@ -288,16 +288,16 @@ class Quria extends AxiellWebServices
             $response->$functionResult->compositeHoldings
         );
 
-        $hol = $this->objectToArray($holdings[0]->compositeHolding);
+        $hol = $this->objectToArray($holdings[0]->compositeHolding ?? []);
         if (isset($hol[0]->type) && $hol[0]->type == 'year') {
             $result = [];
             foreach ($hol as $holding) {
                 $year = $holding->value;
-                $holdingsEditions = $this->objectToArray($holding->compositeHolding);
+                $holdingsEditions = $this->objectToArray($holding->compositeHolding  ?? []);
                 foreach ($holdingsEditions as $holdingsEdition) {
                     $edition = $holdingsEdition->value;
                     $holdingsOrganisations
-                        = $this->objectToArray($holdingsEdition->compositeHolding);
+                        = $this->objectToArray($holdingsEdition->compositeHolding  ?? []);
                     $journalInfo = [
                         'year' => $year,
                         'edition' => $edition,
@@ -406,6 +406,7 @@ class Quria extends AxiellWebServices
                         'notAvailable' => 'Not Available',
                         'nonAvailableForLoan' => 'On Reference Desk',
                         'onRefDesk' => 'On Reference Desk',
+                        'referenceOnly' => 'Not Available',
                         'overdueLoan' => 'overdueLoan',
                         'ordered' => 'Ordered',
                         'returnedToday' => 'Returned today',
