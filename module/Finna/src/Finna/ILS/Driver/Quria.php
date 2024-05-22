@@ -1199,6 +1199,165 @@ class Quria extends AxiellWebServices
     }
 
     /**
+     * Returns translated value of a fine type.
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    protected function mapAndTranslateFineType(string $key): string
+    {
+        $fines = [
+            'claim1FeeDebt' => '',
+            'claim2FeeDebt' => '',
+            'claim3FeeDebt' => '',
+            'claim4FeeDebt' => '',
+            'claim5FeeDebt' => '',
+            'deleteReservationFeeDebt' => '',
+            'emailReminderFeeDebt' => '',
+            'illFeeDebt' => 'Interlibrary Loan',
+            'illReservationFeeDebt' => '',
+            'internetUsageFeeDebt' => '',
+            'librarySubscriptionFeeDebt' => '',
+            'loanFeeDebt' => '',
+            'messageFeeDebt' => '',
+            'otherFeeDebt' => 'Other',
+            'overdueFeeDebt' => 'Overdue',
+            'overdueFeeInvoiceDebt' => '',
+            'photocopyFeeDebt' => '',
+            'renewFeeDebt' => '',
+            'replacementFeeDebt' => '',
+            'reservationFeeDebt' => 'Hold Expired',
+            'reservationPickupFeeDebt' => '',
+            'smsIllFeeDebt' => '',
+            'smsRecall1FeeDebt' => '',
+            'smsRecall2FeeDebt' => '',
+            'smsRecall3FeeDebt' => '',
+            'smsRecall4FeeDebt' => '',
+            'smsRecall5FeeDebt' => '',
+            'smsReminderFeeDebt' => '',
+            'smsReservationFeeDebt' => '',
+            'partOfPaymentDebt' => '',
+            'transferFeeDebt' => '',
+        ];
+        $found = $fines[$key] ?? $key;
+        return $this->translateWithPrefix('fine_status', $found ?: $key, [], $key);
+    }
+    /**
+     * Get Patron Fines
+     *
+     * This is responsible for retrieving all fines by a specific patron.
+     *
+     * @param array $user The patron array from patronLogin
+     *
+     * @throws ILSException
+     * @return array        Array of the patron's fines on success.
+     */
+    public function getMyFines($user)
+    {
+        $username = $user['cat_username'];
+        $password = $user['cat_password'];
+
+        $paymentConfig = $this->config['onlinePayment'] ?? [];
+        $blockedTypes = $paymentConfig['nonPayable'] ?? [];
+        $payableMinDate
+            = strtotime($paymentConfig['payableFineDateThreshold'] ?? '-5 years');
+
+        $function = 'GetDebts';
+        $functionResult = 'debtsResponse';
+        $conf = [
+            'arenaMember' => $this->arenaMember,
+            'user' => $username,
+            'password' => $password,
+            'language' => $this->getLanguage(),
+            'fromDate' => '1699-12-31',
+            'toDate' => time(),
+        ];
+
+        $result = $this->doSOAPRequest(
+            $this->payments_wsdl,
+            $function,
+            $functionResult,
+            $username,
+            ['debtsRequest' => $conf]
+        );
+
+        $statusAWS = $result->$functionResult->status;
+
+        if ($statusAWS->type != 'ok') {
+            $message = $this->handleError($function, $statusAWS, $username);
+            if ($message == 'ils_connection_failed') {
+                throw new ILSException($message);
+            }
+            return [];
+        }
+        if (!isset($result->$functionResult->debts->debt)) {
+            return [];
+        }
+
+        $finesList = [];
+        $debts = $this->objectToArray($result->$functionResult->debts->debt);
+        foreach ($debts as $debt) {
+            // Have to use debtAmountFormatted, because debtAmount shows negative
+            // values as positive. Try to extract the numeric part from the formatted
+            // amount.
+            if (preg_match('/([\d\.\,-]+)/', $debt->debtAmountFormatted, $matches)) {
+                $amount = str_replace(',', '.', $matches[1]) * 100;
+            } else {
+                $amount = str_replace(',', '.', $debt->debtAmountFormatted) * 100;
+            }
+            // Round the amount in case it's a weird decimal number:
+            $amount = round($amount);
+            $description = $this->mapAndTranslateFineType($debt->debtType) . ' - ' . $debt->debtNote;
+            $debtDate = $this->dateFormat->convertFromDisplayDate(
+                'U',
+                $this->formatDate($debt->debtDate)
+            );
+            $payable = $amount > 0 && $debtDate >= $payableMinDate;
+            if ($payable) {
+                foreach ($blockedTypes as $blockedType) {
+                    if (
+                        $blockedType === $description
+                        || (strncmp($blockedType, '/', 1) === 0
+                        && substr_compare($blockedType, '/', -1) === 0
+                        && preg_match($blockedType, $description))
+                    ) {
+                        $payable = false;
+                        break;
+                    }
+                }
+            }
+            $fine = [
+                'debt_id' => $debt->id,
+                'fine_id' => $debt->id,
+                'amount' => $amount,
+                'checkout' => '',
+                'fine' => $description,
+                'balance' => $amount,
+                'createdate' => $debt->debtDate,
+                'payableOnline' => $payable,
+                'organization' => trim($debt->organisation ?? ''),
+            ];
+            $finesList[] = $fine;
+        }
+
+        // Sort the Fines
+        $date = [];
+        foreach ($finesList as $key => $row) {
+            $date[$key] = $row['createdate'];
+        }
+
+        array_multisort($date, SORT_DESC, $finesList);
+
+        // Convert Axiell format to display date format
+        foreach ($finesList as &$row) {
+            $row['createdate'] = $this->formatDate($row['createdate']);
+        }
+
+        return $finesList;
+    }
+
+    /**
      * Update holds
      *
      * This is responsible for changing the status of hold requests
