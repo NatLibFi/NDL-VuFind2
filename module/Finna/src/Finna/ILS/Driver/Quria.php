@@ -1201,7 +1201,7 @@ class Quria extends AxiellWebServices
     /**
      * Returns translated value of a fine type.
      *
-     * @param string $key
+     * @param string $key Key to check for mapping
      *
      * @return string
      */
