@@ -1201,6 +1201,8 @@ class Quria extends AxiellWebServices
 
     /**
      * Returns translated value of a fine type.
+     * Maps Quria message in to more unified version in VuFind
+     * I.E reservationFeeDebt => 'fine_status_Hold Expired'
      *
      * @param string $key Key to check for mapping
      *
@@ -1208,16 +1210,17 @@ class Quria extends AxiellWebServices
      */
     protected function mapAndTranslateFineType(string $key): string
     {
+        // All of the finetypes in quria backend.
         $fines = [
-            'claim1FeeDebt' => '',
-            'claim2FeeDebt' => '',
-            'claim3FeeDebt' => '',
-            'claim4FeeDebt' => '',
-            'claim5FeeDebt' => '',
+            'claim1FeeDebt' => 'Lost Item',
+            'claim2FeeDebt' => 'Lost Item',
+            'claim3FeeDebt' => 'Lost Item',
+            'claim4FeeDebt' => 'Lost Item',
+            'claim5FeeDebt' => 'Lost Item',
             'deleteReservationFeeDebt' => '',
             'emailReminderFeeDebt' => '',
             'illFeeDebt' => 'Interlibrary Loan',
-            'illReservationFeeDebt' => '',
+            'illReservationFeeDebt' => 'Hold Expired',
             'internetUsageFeeDebt' => '',
             'librarySubscriptionFeeDebt' => '',
             'loanFeeDebt' => '',
@@ -1242,7 +1245,7 @@ class Quria extends AxiellWebServices
             'transferFeeDebt' => '',
         ];
         $found = $fines[$key] ?? $key;
-        return $this->translateWithPrefix('fine_status', $found ?: $key, [], $key);
+        return $this->translateWithPrefix('fine_status_', $found ?: $key, [], $key);
     }
     /**
      * Get Patron Fines
