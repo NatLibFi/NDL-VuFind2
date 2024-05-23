@@ -293,11 +293,11 @@ class Quria extends AxiellWebServices
             $result = [];
             foreach ($hol as $holding) {
                 $year = $holding->value;
-                $holdingsEditions = $this->objectToArray($holding->compositeHolding  ?? []);
+                $holdingsEditions = $this->objectToArray($holding->compositeHolding ?? []);
                 foreach ($holdingsEditions as $holdingsEdition) {
                     $edition = $holdingsEdition->value;
                     $holdingsOrganisations
-                        = $this->objectToArray($holdingsEdition->compositeHolding  ?? []);
+                        = $this->objectToArray($holdingsEdition->compositeHolding ?? []);
                     $journalInfo = [
                         'year' => $year,
                         'edition' => $edition,
@@ -1247,6 +1247,7 @@ class Quria extends AxiellWebServices
         $found = $fines[$key] ?? $key;
         return $this->translateWithPrefix('fine_status_', $found ?: $key, [], $key);
     }
+
     /**
      * Get Patron Fines
      *
