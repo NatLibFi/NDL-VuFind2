@@ -112,7 +112,7 @@ class Bootstrapper
             if (!$headers->has('User-Agent')) {
                 return;
             }
-            $agent = $headers->get('User-Agent')->toString();
+            $agent = $headers->get('User-Agent')->getFieldValue();
             $crawlerDetect = new \Jaybizzle\CrawlerDetect\CrawlerDetect();
             if (!$crawlerDetect->isCrawler($agent)) {
                 return;
