@@ -391,6 +391,6 @@ class Bootstrapper
                 return $response;
             }
         };
-        $this->events->attach('dispatch', $callback, 11000);
+        $this->events->attach('dispatch', $callback, 12000);
     }
 }
