@@ -154,7 +154,12 @@ class ReservationListController extends AbstractBase
       }
     }
 
-    $view->lists = $reservationListService->getListsForDatasource($this->getUser(), $driver->getDatasource());
+    $view->lists = $reservationListService->getListsWithoutRecord(
+      $this->getUser(),
+      $driver->getUniqueID(),
+      $driver->getSourceIdentifier(),
+      $driver->getDatasource()
+    );
     $view->setTemplate('reservationlist/select-list');
     return $view;
   }

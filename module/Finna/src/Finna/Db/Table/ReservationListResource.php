@@ -30,6 +30,7 @@
 namespace Finna\Db\Table;
 
 use Laminas\Db\Sql\Expression;
+use Laminas\Db\Sql\Select;
 /**
  * Table Definition for finna_reservation_list_resource
  *
@@ -131,5 +132,53 @@ class ReservationListResource extends \VuFind\Db\Table\UserResource
             $list->title = '-';
         }
         $list->save($user);
+    }
+
+    /**
+     * Get information saved in a user's favorites for a particular record.
+     *
+     * @param string $resourceId ID of record being checked.
+     * @param string $source     Source of record to look up
+     * @param int    $listId     Optional list ID (to limit results to a particular
+     * list).
+     * @param int    $userId     Optional user ID (to limit results to a particular
+     * user).
+     *
+     * @return \Laminas\Db\ResultSet\AbstractResultSet
+     */
+    public function getSavedData(
+        $resourceId,
+        $source = DEFAULT_SEARCH_BACKEND,
+        $listId = null,
+        $userId = null
+    ) {
+        $callback = function ($select) use ($resourceId, $source, $listId, $userId) {
+            $select->columns(
+                [
+                    new Expression(
+                        'DISTINCT(?)',
+                        ['finna_reservation_list_resource.id'],
+                        [Expression::TYPE_IDENTIFIER]
+                    ), Select::SQL_STAR,
+                ]
+            );
+            $select->join(
+                ['r' => 'resource'],
+                'r.id = finna_reservation_list_resource.resource_id',
+                []
+            );
+            $select->join(
+                ['rl' => 'finna_reservation_list'],
+                'finna_reservation_list_resource.list_id = ul.id',
+                ['list_title' => 'title', 'list_id' => 'id']
+            );
+            $select->where->equalTo('r.source', $source)
+                ->equalTo('r.record_id', $resourceId);
+
+            if (null !== $userId) {
+                $select->where->equalTo('user_resource.user_id', $userId);
+            }
+        };
+        return $this->select($callback);
     }
 }

@@ -134,6 +134,34 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
     {
         return $this->reservationList->select(['user_id' => $user->id, 'id' => $id])->current();
     }
+    public function getListsContaining($user, $recordId, $source) {
+        $lists = $this->reservationList->getListsContainingResource($recordId, $source, $user);
+        $result = [];
+        foreach ($lists as $list) {
+            $result[] = [
+                'id' => $list->id,
+                'title' => $list->title,
+                'ordered' => $list->ordered,
+            ];
+        }
+        return $result;
+    }
+    public function getListsWithoutRecord($user, $recordId, $source, $datasource): array
+    {
+        $lists = $this->getListsContaining($user, $recordId, $source);
+        $datasourced = $this->getListsForDatasource($user, $datasource);
+        $result = [];
+        foreach ($datasourced as $compare) {
+            foreach ($lists as $list) {
+                if ($list['id'] === $compare['id']) {
+                    continue 2;
+                }
+
+            }
+            $result[] = $compare;
+        }
+        return $result;
+    }
 
     /**
      * Save a record into a reservation list.
@@ -188,18 +216,5 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         $currentList = $this->reservationList->getExisting($list_id);
         $result = $currentList->delete($user);
         return !!$result;
-    }
-
-    public function getListsContaining($user, $recordId, $source)
-    {
-        $lists = $this->reservationList->getListsContainingResource($recordId, $source, $user);
-        $results = [];
-        foreach ($lists as $list) {
-            $results[] = [
-                'id' => $list->id,
-                'title' => $list->title,
-            ];
-        }
-        return $results;
     }
 }
