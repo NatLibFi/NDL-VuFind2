@@ -1245,7 +1245,7 @@ class Quria extends AxiellWebServices
             'transferFeeDebt' => '',
         ];
         $found = $fines[$key] ?? $key;
-        return $this->translateWithPrefix('fine_status_', $found ?: $key, [], $key);
+        return $this->translateWithPrefix('fine_status_', $found, [], $key);
     }
 
     /**
@@ -1559,10 +1559,7 @@ class Quria extends AxiellWebServices
         $functionParam = '';
 
         // Workaround for AWS issue where a bare plus sign gets converted to a space
-        if (
-            !isset($this->config['updateEmail']['encodeEmailPlusSign'])
-            || $this->config['updateEmail']['encodeEmailPlusSign']
-        ) {
+        if ($this->config['updateEmail']['encodeEmailPlusSign'] ?? false) {
             $email = str_replace('+', '%2B', $email);
         }
 
