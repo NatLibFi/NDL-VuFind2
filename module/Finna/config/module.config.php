@@ -425,11 +425,6 @@ $config = [
             'Wayfinder' => 'Finna\Wayfinder\WayfinderService',
         ],
     ],
-    'view_manager' => [
-        'template_path_stack' => [
-            APPLICATION_PATH . '/vendor/natlibfi/finna-ui-components/source',
-        ],
-    ],
     'listeners' => [
         \Finna\AppBootstrapListener::class,
     ],

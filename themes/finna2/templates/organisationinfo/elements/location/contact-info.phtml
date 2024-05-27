@@ -81,7 +81,7 @@
   </div>
 <?php endif; ?>
 <?php $content = ob_get_clean(); ?>
-<?=$this->component('@@molecules/containers/finna-panel', [
+<?=$this->component('finna-panel', [
   'attributes' => ['class' => ['finna-panel-default', 'contact-details', 'contact-details-no-rss', 'info-element']],
   'heading' => $this->transEsc('organisation_info_contact'),
   'headingLevel' => 4,

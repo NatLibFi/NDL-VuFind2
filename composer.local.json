@@ -13,13 +13,6 @@
         "swen100/geophp": "^1.0.8",
         "tecnickcom/tcpdf": "6.6.2"
     },
-    "extra": {
-        "merge-plugin": {
-            "include": [
-                "composer.components.json"
-            ]
-        }
-    },
     "scripts": {
         "create-translation-files": "touch local/languages/finna/fi-datasources.ini; touch local/languages/finna/sv-datasources.ini; touch local/languages/finna/en-gb-datasources.ini; touch local/languages/finna/se-datasources.ini;",
         "post-install-cmd": ["@phing-install-dependencies", "@create-translation-files"],
