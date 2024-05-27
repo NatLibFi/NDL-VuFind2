@@ -316,7 +316,6 @@ VuFind.register('lightbox', function Lightbox() {
     var buttonData = { name: 'submit', value: 1 };
     if (submit.length > 0) {
       if (typeof submit.data('lightbox-close') !== 'undefined') {
-        console.log('i am here now why');
         close();
         return false;
       }
@@ -339,7 +338,6 @@ VuFind.register('lightbox', function Lightbox() {
     }
     // onclose behavior
     if ('string' === typeof $(form).data('lightboxOnclose')) {
-      console.log('and should be here too what');
       document.addEventListener('VuFind.lightbox.closed', function lightboxClosed(e) {
         this.removeEventListener('VuFind.lightbox.closed', arguments.callee);
         VuFind.evalCallback($(form).data('lightboxOnclose'), e, form);
