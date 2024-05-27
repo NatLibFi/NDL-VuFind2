@@ -99,19 +99,19 @@ method = driver
 
 ; Uncomment the following lines to enable updating of address information.
 ; Choose a method on how to update the address information (email or url).
-; if you have patronaurora you can use driver method.
+; if you have patron quria you can use driver method.
 [updateAddress]
 method = driver
 ; emailAddress is required for the email method
 ;emailAddress =
-; Uncomment needsApproval and keep it as false when using driver and patronaurora
+; Uncomment needsApproval and keep it as false when using driver and patron quria
 needsApproval = false
 ; Uncomment the following lines to change which fields are included in the form
 ; when using the email method. Format for the fields is label:profile_field
 ; Default is address, zip, city and country. Email and phone are included unless
 ; they have their own sections [updateEmail] or [updatePhone] defined. Also custom
 ; fields can be defined.
-; When using patronaurora and driver method, you need to
+; When using patron quria and driver method, you need to
 ; uncomment address, zip and city for updateAddress to work correctly via driver.
 fields[] = Address:address1
 fields[] = Zip:zip
