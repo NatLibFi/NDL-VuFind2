@@ -275,6 +275,9 @@ class OAuth2Controller extends AbstractBase implements LoggerAwareInterface
 
         $patron = $this->catalogLogin();
         $patronLoginView = is_array($patron) ? null : $patron;
+        if ($patronLoginView instanceof \Laminas\View\Model\ViewModel) {
+            $patronLoginView->showMenu = false;
+        }
         return $this->createViewModel(
             compact('authRequest', 'user', 'patron', 'patronLoginView')
         );
