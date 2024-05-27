@@ -88,8 +88,15 @@ class EventHandlerFactory implements FactoryInterface
 
         $request = $container->get('Request');
         $headers = $request->getHeaders();
-        $userAgent = $headers->has('User-Agent')
-            ? $headers->get('User-Agent')->toString() : '';
+        $userAgent = $headers->has('User-Agent') ? $headers->get('User-Agent')->getFieldValue() : '';
+
+        // Don't collect stats about bots by default:
+        if ($config['Statistics']['exclude_bots'] ?? true) {
+            $crawlerDetect = new \Jaybizzle\CrawlerDetect\CrawlerDetect();
+            if ($crawlerDetect->isCrawler($userAgent)) {
+                $driver = null;
+            }
+        }
 
         return new $requestedName(
             $config['Site']['institution'] ?? '',
