@@ -56,30 +56,24 @@ class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwar
     use \VuFind\Db\Table\DbTableAwareTrait;
 
     /**
-     * Session container for last list information.
-     *
-     * @var Container
-     */
-    protected $session = null;
-
-    /**
      * Constructor
      *
      * @param \Laminas\Db\Adapter\Adapter $adapter   Database adapter
      * @param Tags                        $tagParser Tag parser
      * @param Container                   $session   Session container
      */
-    public function __construct($adapter, Container $session = null)
+    public function __construct($adapter, protected Container $session = null)
     {
-        $this->session = $session;
         // Parents parent
         parent::__construct('id', 'finna_reservation_list', $adapter);
     }
 
     /**
-     * Set list as ordered and save.
+     * Sets the ordered status for the reservation list.
      *
-     * 
+     * @param mixed $user User or false.
+     *
+     * @return void
      */
     public function setOrdered($user = false)
     {
@@ -106,28 +100,6 @@ class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwar
         $this->building = $request->get('building');
         $this->save($user);
         return $this->id;
-    }
-
-    /**
-     * Get an array of tags assigned to this list.
-     * Overwritten to return only an empty array if called.
-     *
-     * @return array
-     */
-    public function getListTags()
-    {
-        return [];
-    }
-
-    /**
-     * Is this a public list?
-     * Overwritten to return false.
-     *
-     * @return bool
-     */
-    public function isPublic()
-    {
-        return false;
     }
 
     /**

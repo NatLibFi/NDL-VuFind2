@@ -7,50 +7,27 @@ use Laminas\Stdlib\Parameters;
 use VuFind\Db\Table\Resource as ResourceTable;
 use VuFind\Db\Table\UserResource as UserResourceTable;
 use VuFind\Record\Cache as RecordCache;
+use VuFind\Db\Row\User;
 
 class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * UserResource table
+     * Constructs a new ReservationListService object.
      *
-     * @var UserResourceTable
+     * @param ReservationList   $reservationList   Reservation list table
+     * @param ResourceTable     $resource          Resource database table
+     * @param RecordCache       $cache             Record cache
+     * @param UserResourceTable $userResourceTable UserResource table
      */
-    protected $userResourceTable;
-
-    /**
-     * Reservation list table
-     *
-     * @var ReservationList
-     */
-    protected $reservationList;
-
-    /**
-     * Resource database table
-     *
-     * @var ResourceTable
-     */
-    protected $resourceTable;
-
-    /**
-     * Record cache
-     *
-     * @var RecordCache
-     */
-    protected $recordCache = null;
-
-
     public function __construct(
-        ReservationList $reservationList,
-        ResourceTable $resource,
-        RecordCache $cache = null,
-        UserResourceTable $userResourceTable
-    ) {
-        $this->recordCache = $cache;
-        $this->reservationList = $reservationList;
-        $this->resourceTable = $resource;
-        $this->userResourceTable = $userResourceTable;
+        protected ReservationList $reservationList,
+        protected ResourceTable $resource,
+        protected RecordCache $cache = null,
+        protected UserResourceTable $userResourceTable
+    )
+    {
     }
 
     /**
@@ -66,12 +43,21 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         return $this->reservationList->getExisting($id)->editAllowed($user);
     }
 
-    public function addListForUser($user, $desription, $title, $datasource, $building): int
+    /**
+     * Adds a reservation list for a user.
+     *
+     * @param User $user The user for whom the reservation list is being added.
+     * @param string $description The description of the reservation list.
+     * @param string $title The title of the reservation list.
+     * @param string $datasource The data source of the reservation list.
+     * @param string $building The building associated with the reservation list.
+     * @return int The ID of the newly added reservation list.
+     */
+    public function addListForUser(User $user, string $description, string $title, string $datasource, string $building): int
     {
         $row = $this->reservationList->getNew($user);
-        $title = $title;
         return $row->updateFromRequest($user, new Parameters([
-            'description' => $desription,
+            'description' => $description,
             'title' => $title,
             'datasource' => $datasource,
             'building' => $building
@@ -90,7 +76,14 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         return count($result);
     }
 
-    public function getListsForUser(\VuFind\Db\Row\User $user): array
+    /**
+     * Retrieves reservation lists for a given user.
+     *
+     * @param User $user User for whom to retrieve the reservation lists.
+     *
+     * @return array An array of reservation lists.
+     */
+    public function getListsForUser(User $user): array
     {
         $lists = $this->reservationList->select(['user_id' => $user->id]);
         $result = [];
@@ -104,7 +97,15 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         return $result;
     }
 
-    public function getListsForDatasource(\VuFind\Db\Row\User $user, string $datasource): array
+    /**
+     * Retrieves reservation lists for a specific datasource.
+     *
+     * @param User   $user       User for whom to retrieve the reservation lists.
+     * @param string $datasource Datasource for which to retrieve the reservation lists.
+     *
+     * @return array An array of reservation lists for the specified datasource.
+     */
+    public function getListsForDatasource(User $user, string $datasource): array
     {
         $lists = $this->reservationList->select(['user_id' => $user->id, 'datasource' => $datasource]);
         $result = [];
@@ -117,7 +118,15 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         return $result;
     }
 
-    public function getListsForBuilding(\VuFind\Db\Row\User $user, string $building): array
+    /**
+     * Retrieves reservation lists associated with a specific building for a given user.
+     *
+     * @param  User   $user     The user for whom to retrieve the lists.
+     * @param  string $building The name of the building.
+     *
+     * @return array  An array of reservation lists, each containing 'id' and 'title'.
+     */
+    public function getListsForBuilding(User $user, string $building): array
     {
         $lists = $this->reservationList->select(['user_id' => $user->id, 'building' => $building]);
         $result = [];
@@ -130,11 +139,28 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         return $result;
     }
 
-    public function getListForUser($user, $id)
+    /**
+     * Retrieves reservation list for a specific user.
+     *
+     * @param User $user User for whom to retrieve the reservation list.
+     * @param int  $id   ID of the reservation list.
+     *
+     * @return void
+     */
+    public function getListForUser(User $user, $id)
     {
         return $this->reservationList->select(['user_id' => $user->id, 'id' => $id])->current();
     }
-    public function getListsContaining($user, $recordId, $source) {
+    /**
+     * Retrieves the lists containing a specific record for a given user and source.
+     *
+     * @param  User   $user     The user identifier.
+     * @param  string $recordId The ID of the record.
+     * @param  string $source   The source of the record.
+     *
+     * @return array  An array of lists containing the specified record.
+     */
+    public function getListsContaining(User $user, string $recordId, string $source) {
         $lists = $this->reservationList->getListsContainingResource($recordId, $source, $user);
         $result = [];
         foreach ($lists as $list) {
@@ -146,7 +172,17 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         }
         return $result;
     }
-    public function getListsWithoutRecord($user, $recordId, $source, $datasource): array
+    /**
+     * Retrieves reservation lists without a record.
+     *
+     * @param User   $user       User object.
+     * @param string $recordId   ID of the record.
+     * @param string $source     Source of the record.
+     * @param string $datasource Datasource of the record.
+     *
+     * @return array An array of reservations without a record.
+     */
+    public function getListsWithoutRecord(User $user, string $recordId, string $source, string $datasource): array
     {
         $lists = $this->getListsContaining($user, $recordId, $source);
         $datasourced = $this->getListsForDatasource($user, $datasource);
@@ -166,7 +202,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
     /**
      * Save a record into a reservation list.
      *
-     * @param User $user User to save to
+     * @param User   $user     User to save to
      * @param string $recordId Id of the record
      * @param string $listId   Id of the desired list
      * @param string $notes    Notes to be added for a reservationlist resource
