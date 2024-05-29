@@ -14,8 +14,8 @@ class ReservationListServiceFactory implements FactoryInterface
         return new ReservationListService(
             $tableManager->get(\Finna\Db\Table\ReservationList::class),
             $tableManager->get('resource'),
-            $sm->get(\VuFind\Record\Cache::class),
-            $tableManager->get(\VuFind\Db\Table\UserResource::class)
+            $tableManager->get(\VuFind\Db\Table\UserResource::class),
+            $sm->get(\VuFind\Record\Cache::class)
         );
     }
 }

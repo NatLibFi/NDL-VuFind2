@@ -18,14 +18,14 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      *
      * @param ReservationList   $reservationList   Reservation list table
      * @param ResourceTable     $resource          Resource database table
-     * @param RecordCache       $cache             Record cache
      * @param UserResourceTable $userResourceTable UserResource table
+     * @param ?RecordCache      $cache             Record cache
      */
     public function __construct(
         protected ReservationList $reservationList,
         protected ResourceTable $resource,
-        protected RecordCache $cache = null,
-        protected UserResourceTable $userResourceTable
+        protected UserResourceTable $userResourceTable,
+        protected ?RecordCache $cache = null
     )
     {
     }
@@ -46,12 +46,13 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
     /**
      * Adds a reservation list for a user.
      *
-     * @param User $user The user for whom the reservation list is being added.
-     * @param string $description The description of the reservation list.
-     * @param string $title The title of the reservation list.
-     * @param string $datasource The data source of the reservation list.
-     * @param string $building The building associated with the reservation list.
-     * @return int The ID of the newly added reservation list.
+     * @param User   $user        User for whom the reservation list is being added.
+     * @param string $description Description of the reservation list.
+     * @param string $title       Title of the reservation list.
+     * @param string $datasource  Data source of the reservation list.
+     * @param string $building    Building associated with the reservation list.
+     *
+     * @return int ID of the newly added reservation list.
      */
     public function addListForUser(User $user, string $description, string $title, string $datasource, string $building): int
     {
@@ -145,7 +146,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      * @param User $user User for whom to retrieve the reservation list.
      * @param int  $id   ID of the reservation list.
      *
-     * @return void
+     * @return \Laminas\Db\ResultSet\ResultSetInterface;
      */
     public function getListForUser(User $user, $id)
     {
@@ -209,10 +210,15 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      * @param string $source   Source of the search backend where the record is obtained from.
      *                         Default is 'solr'
      *
-     * @return bool True on success, fail on error
+     * @return bool True
      */
-    public function addRecordToList($user, $recordId, $listId, $notes = '', $source = DEFAULT_SEARCH_BACKEND): bool
-    {
+    public function addRecordToList(
+        User $user,
+        string $recordId,
+        string $listId,
+        string $notes = '',
+        string $source = DEFAULT_SEARCH_BACKEND
+    ): bool {
         $resourceTable = $this->reservationList->getDbTable('Resource');
         $resource = $resourceTable->findResource($recordId, $source);
 

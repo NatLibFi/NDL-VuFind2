@@ -35,6 +35,8 @@ use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\Session\Container;
 use VuFind\Controller\AbstractBase;
 use VuFind\Mailer\Mailer;
+use VuFind\Exception\ListPermission as ListPermissionException;
+use VuFind\Exception\Forbidden as ForbiddenException;
 
 /**
  * Reservation List Controller
@@ -75,6 +77,13 @@ class ReservationListController extends AbstractBase
       $this->reservationListService = $reservationListService;
   }
 
+  /**
+   * Retrieves the value of the specified parameter.
+   *
+   * @param string $param The name of the parameter to retrieve.
+   *
+   * @return mixed The value of the specified parameter.
+   */
   protected function getParam(string $param): mixed
   {
     return $this->params()->fromRoute(
@@ -165,7 +174,11 @@ class ReservationListController extends AbstractBase
   }
 
   /**
-   * Home 
+   * Home action for the ReservationListController.
+   *
+   * This method is responsible for rendering the home page of the Reservation List module.
+   *
+   * @return \Laminas\View\Model\ViewModel View model for the home page.
    */
   public function homeAction(): \Laminas\View\Model\ViewModel
   {
@@ -323,7 +336,9 @@ class ReservationListController extends AbstractBase
   }
 
   /**
-   * Delete a list
+   * Deletes a reservation.
+   *
+   * @return Response The response object.
    */
   public function deleteAction()
   {
@@ -344,6 +359,11 @@ class ReservationListController extends AbstractBase
     return $view;
   }
 
+  /**
+   * Retrieves the request as an array.
+   *
+   * @return array The request as an array.
+   */
   protected function getRequestAsArray(): array
   {
     $request = $this->getRequest()->getQuery()->toArray()
@@ -355,6 +375,13 @@ class ReservationListController extends AbstractBase
     return $request;
   }
 
+  /**
+   * Retrieves list of reservations as results.
+   *
+   * @param mixed $request The request object.
+   *
+   * @return \VuFind\Search\Base\Results
+   */
   protected function getListAsResults($request)
   {
     $runner = $this->serviceLocator->get(\VuFind\Search\SearchRunner::class);

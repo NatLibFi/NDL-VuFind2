@@ -60,9 +60,9 @@ class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwar
      *
      * @param \Laminas\Db\Adapter\Adapter $adapter   Database adapter
      * @param Tags                        $tagParser Tag parser
-     * @param Container                   $session   Session container
+     * @param ?Container                  $session   Session container
      */
-    public function __construct($adapter, protected Container $session = null)
+    public function __construct($adapter, protected ?Container $session = null)
     {
         // Parents parent
         parent::__construct('id', 'finna_reservation_list', $adapter);
