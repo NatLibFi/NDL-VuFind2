@@ -65,6 +65,7 @@ class RobotsController extends \VuFind\Controller\AbstractBase
     protected $alwaysDisallowed = [
         'AJAX',
         'Blender',
+        'Browse',
         'EDS',
         'EDSRecord',
         'L1',
