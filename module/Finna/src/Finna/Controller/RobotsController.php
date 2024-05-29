@@ -62,20 +62,53 @@ class RobotsController extends \VuFind\Controller\AbstractBase
         'sitemapIndex.xml',
     ];
 
-    protected $alwaysDisallowed = [
-        'AJAX',
-        'Blender',
-        'Browse',
-        'EDS',
-        'EDSRecord',
-        'L1',
-        'MyResearch',
-        'Primo',
-        'PrimoRecord',
-        'Search',
-        'Search2',
-        'Summon',
-        'SummonRecord',
+    /**
+     * Always disallowed paths
+     *
+     * @var array
+     */
+    protected $alwaysDisallowedPaths = [
+        'AJAX/',
+        'Blender/',
+        'Browse/',
+        'EDS/',
+        'EDSRecord/',
+        'L1/',
+        'MyResearch/',
+        'Primo/',
+        'PrimoRecord/',
+        'QRCode/',
+        'Search/',
+        'Search2/',
+        'Summon/',
+        'SummonRecord/',
+    ];
+
+    /**
+     * Always disallowed user agents
+     *
+     * @var array
+     */
+    protected $alwaysDisallowedUAs = [
+        'Bytespider',
+        'Sogou web spider',
+        'Sogou inst spider',
+        'anthropic-ai',
+        'ClaudeBot',
+        'ClaudeBot/1.0',
+        'Claude-Web',
+        'CCBot',
+        'ChatGPT-User',
+        'Diffbot',
+        'FacebookBot',
+        'Google-Extended',
+        'omgili',
+        'AcademicBotRTU',
+        'DataForSeoBot',
+        'GPTBot',
+        'PetalBot',
+        'SemrushBot',
+        'test-bot',
     ];
 
     /**
@@ -107,7 +140,7 @@ class RobotsController extends \VuFind\Controller\AbstractBase
         $robotsTxtFile = getcwd() . '/robots.txt';
         $robots = file_exists($robotsTxtFile) ? file_get_contents($robotsTxtFile) : '';
         $parsed = $this->parseRobotsTxt($robots);
-        foreach ($this->alwaysDisallowed as $item) {
+        foreach ($this->alwaysDisallowedPaths as $item) {
             if (!in_array("/$item", $parsed['*'] ?? [])) {
                 $parsed['*'][] = "Disallow: /$item";
             }
@@ -176,11 +209,16 @@ class RobotsController extends \VuFind\Controller\AbstractBase
     protected function renderRobotsTxt(array $parsed): string
     {
         $results = [];
+        foreach ($this->alwaysDisallowedUAs as $ua) {
+            $results[] = "User-agent: $ua";
+            $results[] = 'Disallow: /';
+            $results[] = '';
+        }
         foreach ($parsed as $userAgent => $lines) {
             $results[] = "User-agent: $userAgent";
             $results = array_merge($results, $lines);
+            $results[] = '';
         }
-        $results[] = '';
         return implode("\n", $results);
     }
 }
