@@ -987,21 +987,11 @@ class Quria extends AxiellWebServices
                 . $reservation->pickUpBranchId;
             $updateDetails = '';
             $cancelDetails = '';
-            // Regional holds have isEditable 'no' even when they're editable, so
-            // check for isDeletetable for them:
-            if (
-                'yes' === $reservation->isEditable
-                || (
-                    'regional' === ($reservation->reservationType ?? '')
-                    /*&& 'yes' === $reservation->isDeletable*/
-                )
-            ) {
+            // TODO: Regional holds are not yet implemented
+            if ('yes' === $reservation->isEditable) {
                 $updateDetails = $detailsStr;
             }
             $cancelDetails = $detailsStr;
-            // if ('yes' === $reservation->isDeletable) {
-            //     $cancelDetails = $detailsStr;
-            // }
             $frozen = $reservation->validFromDate > date('Y-m-d');
             if (
                 $frozen && $reservation->validFromDate != $reservation->validToDate
@@ -1609,10 +1599,10 @@ class Quria extends AxiellWebServices
         $this->putCachedData($cacheKey, null);
 
         return [
-                'success' => true,
-                'status' => 'Email address changed',
-                'sys_message' => '',
-            ];
+            'success' => true,
+            'status' => 'Email address changed',
+            'sys_message' => '',
+        ];
     }
 
     /**

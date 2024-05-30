@@ -71,6 +71,8 @@ regionalHold = true
 ;acceptTermsText = "I accept the terms in any language."
 ;acceptTermsText[en-gb] = "I accept the terms in English."
 
+; Fields that can be updated for holds (unless the hold is already in transit or
+; available for pickup). Supported values are "pickUpLocation" and "requiredByDate".
 updateFields = pickUpLocation:requiredByDate
 
 [getMyTransactionHistory]
@@ -98,20 +100,19 @@ maxLength = 4
 method = driver
 
 ; Uncomment the following lines to enable updating of address information.
-; Choose a method on how to update the address information (email or url).
-; if you have patron quria you can use driver method.
+; Choose a method on how to update the address information (driver, email or url).
 [updateAddress]
 method = driver
 ; emailAddress is required for the email method
 ;emailAddress =
-; Uncomment needsApproval and keep it as false when using driver and patron quria
+; Uncomment needsApproval and keep it as false when using driver
 needsApproval = false
 ; Uncomment the following lines to change which fields are included in the form
 ; when using the email method. Format for the fields is label:profile_field
 ; Default is address, zip, city and country. Email and phone are included unless
 ; they have their own sections [updateEmail] or [updatePhone] defined. Also custom
 ; fields can be defined.
-; When using patron quria and driver method, you need to
+; When using driver method, you need to
 ; uncomment address, zip and city for updateAddress to work correctly via driver.
 fields[] = Address:address1
 fields[] = Zip:zip
@@ -154,6 +155,7 @@ method = driver
 ;url[sv] = http://address.of.change.form/swedish
 ;url[en-gb] = http://address.of.change.form/english
 
+; Changing of loan history state is enabled if method parameter is set. Only
 ; valid value is 'driver'.
 [updateTransactionHistoryState]
 method = driver
