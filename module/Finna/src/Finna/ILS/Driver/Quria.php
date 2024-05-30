@@ -989,9 +989,8 @@ class Quria extends AxiellWebServices
             $cancelDetails = '';
             // TODO: Regional holds are not yet implemented
             if ('yes' === $reservation->isEditable) {
-                $updateDetails = $detailsStr;
+                $cancelDetails = $updateDetails = $detailsStr;
             }
-            $cancelDetails = $detailsStr;
             $frozen = $reservation->validFromDate > date('Y-m-d');
             if (
                 $frozen && $reservation->validFromDate != $reservation->validToDate
