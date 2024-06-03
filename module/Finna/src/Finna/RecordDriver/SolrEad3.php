@@ -196,20 +196,6 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Return buildings from index.
-     *
-     * @return array
-     */
-    public function getBuildings()
-    {
-        if ($this->preferredLanguage && $name = $this->getRepositoryName()) {
-            return [$name];
-        }
-
-        return parent::getBuildings();
-    }
-
-    /**
      * Return an array of associative URL arrays with one or more of the following
      * keys:
      *
