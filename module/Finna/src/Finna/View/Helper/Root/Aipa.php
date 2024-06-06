@@ -447,7 +447,7 @@ class Aipa extends AbstractHelper
                             'items' => $levelItems,
                         ];
                     } else {
-                        $studyDataItems[] = $levelItems;
+                        $studyDataItems = $levelItems;
                     }
                 }
 

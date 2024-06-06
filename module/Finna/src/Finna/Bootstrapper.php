@@ -112,7 +112,7 @@ class Bootstrapper
             if (!$headers->has('User-Agent')) {
                 return;
             }
-            $agent = $headers->get('User-Agent')->toString();
+            $agent = $headers->get('User-Agent')->getFieldValue();
             $crawlerDetect = new \Jaybizzle\CrawlerDetect\CrawlerDetect();
             if (!$crawlerDetect->isCrawler($agent)) {
                 return;
@@ -129,6 +129,7 @@ class Bootstrapper
             $view = $request->getPost('view') ?? $request->getQuery('view');
             if (
                 ($controller == 'ajax' && !in_array($action, $ajaxAllowed))
+                || ($controller == 'browse')
                 || ($controller == 'browsesearch')
                 || ($controller == 'l1' && $action == 'results' && $view !== 'rss')
                 || ($controller == 'l1record' && $action == 'ajaxtab')
@@ -163,7 +164,7 @@ class Bootstrapper
         };
 
         // Attach with a high priority
-        $this->events->attach('dispatch', $callback, 11000);
+        $this->events->attach('dispatch', $callback, 12000);
     }
 
     /**
