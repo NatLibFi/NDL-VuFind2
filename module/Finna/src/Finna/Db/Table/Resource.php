@@ -138,6 +138,17 @@ class Resource extends \VuFind\Db\Table\Resource
         );
     }
 
+    /**
+     * Retrieves reservation resources.
+     *
+     * @param string  $user   User ID.
+     * @param ?string $list   List ID.
+     * @param ?string $sort   Sort field.
+     * @param int     $offset Offset.
+     * @param ?int    $limit  Limit.
+     * 
+     * @return array The reservation resources.
+     */
     public function getReservationResources(
         $user,
         $list = null,

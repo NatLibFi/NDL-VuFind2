@@ -49,14 +49,6 @@ use VuFind\Exception\Forbidden as ForbiddenException;
  */
 class ReservationListController extends AbstractBase
 {
-
-  /**
-   * Reservation list service
-   *
-   * @var ReservationListService
-   */
-  protected $reservationListService;
-
   /**
    * Constructor
    *
@@ -71,10 +63,9 @@ class ReservationListController extends AbstractBase
     Container $container,
     \VuFind\Config\PluginManager $configLoader,
     \VuFind\Export $export,
-    ReservationListService $reservationListService
+    protected ReservationListService $reservationListService
   ) {
       parent::__construct($sm, $container, $configLoader, $export);
-      $this->reservationListService = $reservationListService;
   }
 
   /**
@@ -107,8 +98,6 @@ class ReservationListController extends AbstractBase
         return $this->forceLogin();
     }
 
-    // Now we should try to find all the lists for user.. Lets check if this works somehow or something
-    $reservationListService = $this->serviceLocator->get(ReservationListService::class);
     $view = $this->createViewModel();
     $recordId = $this->getParam('recordId');
     $source = $this->getParam('source');
@@ -124,7 +113,6 @@ class ReservationListController extends AbstractBase
       $source ?: DEFAULT_SEARCH_BACKEND,
       false
     );
-    // At this point we should check if the record is proper
 
     $view->driver = $driver;
     if ($this->formWasSubmitted('submit')) {
@@ -143,7 +131,7 @@ class ReservationListController extends AbstractBase
           $datasource,
           $building,
         );
-        $view->lists = $reservationListService->getListsForDatasource($this->getUser(), $driver->getDatasource());
+        $view->lists = $this->reservationListService->getListsForDatasource($this->getUser(), $driver->getDatasource());
         $view->setTemplate('reservationlist/select-list');
       } elseif ('saveItem' === $state) {
         // Seems like someone wants to save stuff into a list.
@@ -163,7 +151,7 @@ class ReservationListController extends AbstractBase
       }
     }
 
-    $view->lists = $reservationListService->getListsWithoutRecord(
+    $view->lists = $this->reservationListService->getListsWithoutRecord(
       $this->getUser(),
       $driver->getUniqueID(),
       $driver->getSourceIdentifier(),
@@ -362,7 +350,7 @@ class ReservationListController extends AbstractBase
   /**
    * Retrieves the request as an array.
    *
-   * @return array The request as an array.
+   * @return array Request as an array.
    */
   protected function getRequestAsArray(): array
   {
