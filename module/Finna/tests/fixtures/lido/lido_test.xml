@@ -78,7 +78,8 @@
         </objectDescriptionWrap>
         <objectMeasurementsWrap>
           <objectMeasurementsSet>
-            <displayObjectMeasurements label="extent">1001 neliömetriä</displayObjectMeasurements>
+            <displayObjectMeasurements label="extent" lang="fi">1001 neliömetriä</displayObjectMeasurements>
+            <displayObjectMeasurements label="extent" lang="en">1001 square meters</displayObjectMeasurements>
             <objectMeasurements>
               <measurementsSet>
                 <measurementType>
@@ -91,7 +92,8 @@
             </objectMeasurements>
           </objectMeasurementsSet>
           <objectMeasurementsSet>
-            <displayObjectMeasurements>pituus 73.0 cm, leveys 14 cm</displayObjectMeasurements>
+            <displayObjectMeasurements lang="fi">pituus 73.0 cm, leveys 14 cm</displayObjectMeasurements>
+            <displayObjectMeasurements lang="en">height 73.0 cm, width 14 cm</displayObjectMeasurements>
             <objectMeasurements>
               <measurementsSet>
                 <measurementType>pituus</measurementType>
@@ -103,8 +105,9 @@
                 <measurementUnit>m</measurementUnit>
                 <measurementValue>1</measurementValue>
               </measurementsSet>
-              <extentMeasurements>kohde 2</extentMeasurements>
-              <extentMeasurements>kohde 3</extentMeasurements>
+              <extentMeasurements lang="fi">kohde 2</extentMeasurements>
+              <extentMeasurements lang="fi">kohde 3</extentMeasurements>
+              <extentMeasurements lang="en">subjects 2 and 3</extentMeasurements>
             </objectMeasurements>
           </objectMeasurementsSet>
         </objectMeasurementsWrap>

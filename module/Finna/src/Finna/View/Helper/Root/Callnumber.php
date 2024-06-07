@@ -125,11 +125,17 @@ class Callnumber extends \Laminas\View\Helper\AbstractHelper
             $params['qrCode'] = $config[$section];
         }
 
-        if ($this->wayfinderService->isConfigured()) {
-            $params['wayfinder'] = $fields + ['source' => $source];
-        }
-
         return $this->getView()->render('Helpers/holding-callnumber.phtml', $params);
+    }
+
+    /**
+     * Whether wayfinder service is enabled.
+     *
+     * @return bool
+     */
+    public function useWayfinderService(): bool
+    {
+        return $this->wayfinderService->isConfigured();
     }
 
     /**

@@ -1333,7 +1333,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                         ?? ''
                     );
                     if ($appellationValue !== '') {
-                        $role = (string)($actor->actorInRole->roleActor->term ?? '');
+                        $langRoles = [];
+                        $role = '';
+                        if ($term = $actor->actorInRole->roleActor->term) {
+                            $langRoles = iterator_to_array($term, false);
+                        }
+                        if ($langRoles) {
+                            $roles = $this->getAllLanguageSpecificItems($langRoles, $language);
+                            $role = implode(', ', $roles);
+                        }
                         $earliestDate = (string)($actor->actorInRole->actor
                             ->vitalDatesActor->earliestDate ?? '');
                         $latestDate = (string)($actor->actorInRole->actor
@@ -1350,11 +1358,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             $culture = (string)($node->culture->term ?? '');
             $descriptions = [];
             foreach ($node->eventDescriptionSet ?? [] as $set) {
-                if ($note = trim((string)($set->descriptiveNoteValue ?? ''))) {
-                    $descriptions[] = $note;
+                if ($desc = trim((string)$this->getLanguageSpecificItem($set->descriptiveNoteValue, $language))) {
+                    $descriptions[] = $desc;
                 }
             }
-
             $event = [
                 'type' => $type,
                 'name' => $name,
@@ -1590,64 +1597,49 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     {
         $results = [];
         $exclude = $include ? [] : $this->excludedMeasurements;
+        $language = $this->getLocale();
         foreach (
             $this->getXmlRecord()->lido->descriptiveMetadata
             ->objectIdentificationWrap->objectMeasurementsWrap
             ->objectMeasurementsSet ?? [] as $set
         ) {
-            $setExtents = [];
-            foreach ($set->objectMeasurements->extentMeasurements ?? [] as $extent) {
-                if ($value = trim((string)$extent)) {
-                    $setExtents[] = $value;
-                }
+            // Get set extents to be displayed
+            $extentNodes = $extentMeasurements = [];
+            foreach ($set->objectMeasurements->extentMeasurements ?? [] as $node) {
+                $extentNodes[] = $node;
             }
-            $setExtents = implode(', ', $setExtents);
-            // Use allowed display elements
-            $displayFound = false;
-            foreach ($set->displayObjectMeasurements as $measurements) {
-                if ($value = trim((string)$measurements)) {
-                    $displayFound = true;
-                    $label = $measurements->attributes()->label ?? '';
-                    if (
-                        ($include && !in_array($label, $include))
-                        || ($exclude && in_array($label, $exclude))
-                    ) {
-                        continue;
-                    }
-                    if ($setExtents) {
-                        $value .= " ($setExtents)";
-                    }
-                    $results[] = $value;
+            foreach ($this->getAllLanguageSpecificItems($extentNodes, $language, true) as $extent) {
+                $extentMeasurements[] = trim((string)$extent);
+            }
+            $displayExtents = implode(', ', $extentMeasurements);
+            // Use display element with allowed type
+            $displayNode = $this->getLanguageSpecificItem($set->displayObjectMeasurements, $language);
+            if ($displayMeasurements = trim((string)$displayNode)) {
+                $label = $displayNode->attributes()->label ?? '';
+                if (($include && !in_array($label, $include)) || ($exclude && in_array($label, $exclude))) {
+                    continue;
                 }
+                $results[] = $displayExtents ? "$displayMeasurements ($displayExtents)" : $displayMeasurements;
+                continue;
             }
             // Use measurementsSet only if no display elements exist
-            if (!$displayFound) {
-                foreach ($set->objectMeasurements->measurementsSet ?? [] as $measurements) {
-                    $type = trim(
-                        (string)($measurements->measurementType->term ?? '')
-                    );
-                    if (
-                        ($include && !in_array($type, $include))
-                        || ($exclude && in_array($type, $exclude))
-                    ) {
-                        continue;
-                    }
-                    $parts = [];
-                    if ($type = trim((string)($measurements->measurementType ?? ''))) {
-                        $parts[] = $type;
-                    }
-                    if ($val = trim((string)($measurements->measurementValue ?? ''))) {
-                        $parts[] = $val;
-                    }
-                    if ($unit = trim((string)($measurements->measurementUnit ?? ''))) {
-                        $parts[] = $unit;
-                    }
-                    if ($parts) {
-                        if ($setExtents) {
-                            $parts[] = "($setExtents)";
-                        }
-                        $results[] = implode(' ', $parts);
-                    }
+            foreach ($set->objectMeasurements->measurementsSet ?? [] as $measurements) {
+                $type = trim((string)($measurements->measurementType->term ?? ''));
+                if (($include && !in_array($type, $include)) || ($exclude && in_array($type, $exclude))) {
+                    continue;
+                }
+                $parts = [];
+                if ($type = trim((string)$this->getLanguageSpecificItem($measurements->measurementType, $language))) {
+                    $parts[] = $type;
+                }
+                if ($val = trim((string)$this->getLanguageSpecificItem($measurements->measurementValue, $language))) {
+                    $parts[] = $val;
+                }
+                if ($unit = trim((string)$this->getLanguageSpecificItem($measurements->measurementUnit, $language))) {
+                    $parts[] = $unit;
+                }
+                if ($combined = implode(' ', $parts)) {
+                    $results[] = $displayExtents ? "$combined ($displayExtents)" : $combined;
                 }
             }
         }
@@ -1663,6 +1655,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     {
         $authors = [];
         $index = 0;
+        $language = $this->getLocale();
         foreach ($this->getXmlRecord()->lido->descriptiveMetadata->eventWrap->eventSet ?? [] as $set) {
             if (!($event = $set->event ?? '')) {
                 continue;
@@ -1680,7 +1673,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                         ?? '')
                     );
                 if ($name) {
-                    $role = (string)($actor->actorInRole->roleActor->term ?? '');
+                    $langRoles = [];
+                    $role = '';
+                    if ($term = $actor->actorInRole->roleActor->term) {
+                        $langRoles = iterator_to_array($term, false);
+                    }
+                    if ($langRoles) {
+                        $roles = $this->getAllLanguageSpecificItems($langRoles, $language);
+                        $role = implode(', ', $roles);
+                    }
                     $key = $priority * 1000 + $index++;
                     $authors[$key] = compact(
                         'name',
@@ -2403,12 +2404,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      *
      * @param array  $elements Array of elements to use
      * @param string $language Language to look for
+     * @param bool   $useFirst Use first appearing language as fallback, otherwise returns all items
      *
      * @return array
      */
     protected function getAllLanguageSpecificItems(
         array $elements,
-        string $language
+        string $language,
+        bool $useFirst = false
     ): array {
         $languages = [];
         $items = [];
@@ -2419,15 +2422,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 $languages[] = substr($language, 0, 2);
             }
         }
+        $first = '';
         foreach ($elements as $item) {
             if ('' !== trim((string)$item)) {
-                $allItems[] = $item;
-                $attrs = $item->attributes();
-                if (
-                    !empty($attrs->lang)
-                    && in_array((string)$attrs->lang, $languages)
-                ) {
+                $lang = (string)($item->attributes()->lang ?? 'no_locale');
+                $first = $first ?: $lang;
+                if (in_array($lang, $languages)) {
                     $items[] = $item;
+                } elseif (!$useFirst || $lang === $first) {
+                    $allItems[] = $item;
                 }
             }
         }

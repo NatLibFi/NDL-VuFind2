@@ -112,7 +112,7 @@ class Bootstrapper
             if (!$headers->has('User-Agent')) {
                 return;
             }
-            $agent = $headers->get('User-Agent')->toString();
+            $agent = $headers->get('User-Agent')->getFieldValue();
             $crawlerDetect = new \Jaybizzle\CrawlerDetect\CrawlerDetect();
             if (!$crawlerDetect->isCrawler($agent)) {
                 return;
@@ -125,8 +125,15 @@ class Bootstrapper
             $routeMatch = $event->getRouteMatch();
             $controller = strtolower($routeMatch->getParam('controller'));
             $action = strtolower($routeMatch->getParam('action'));
+            $request = $event->getRequest();
+            $view = $request->getPost('view') ?? $request->getQuery('view');
             if (
                 ($controller == 'ajax' && !in_array($action, $ajaxAllowed))
+                || ($controller == 'browse')
+                || ($controller == 'browsesearch')
+                || ($controller == 'l1' && $action == 'results' && $view !== 'rss')
+                || ($controller == 'l1record' && $action == 'ajaxtab')
+                || ($controller == 'myresearch')
                 || ($controller == 'record' && $action == 'ajaxtab')
                 || ($controller == 'record' && $action == 'holdings')
                 || ($controller == 'record' && $action == 'details')
@@ -134,8 +141,12 @@ class Bootstrapper
                 || ($controller == 'record' && $action == 'map')
                 || ($controller == 'record' && $action == 'usercomments')
                 || ($controller == 'record' && $action == 'similar')
+                || ($controller == 'record2' && $action == 'ajaxtab')
                 || ($controller == 'qrcode')
                 || ($controller == 'oai')
+                || ($controller == 'authority' && $action == 'search')
+                || ($controller == 'search' && $action == 'results' && $view !== 'rss')
+                || ($controller == 'search2' && $action == 'results' && $view !== 'rss')
                 || ($controller == 'pci' && $action == 'search')
                 || ($controller == 'primo' && $action == 'search')
                 || ($controller == 'primorecord')
@@ -153,7 +164,7 @@ class Bootstrapper
         };
 
         // Attach with a high priority
-        $this->events->attach('dispatch', $callback, 11000);
+        $this->events->attach('dispatch', $callback, 12000);
     }
 
     /**

@@ -35,6 +35,7 @@ namespace Finna\OrganisationInfo\Provider;
 use Finna\Search\Solr\HierarchicalFacetHelper;
 use Laminas\Mvc\Controller\Plugin\Url;
 use VuFind\I18n\Sorter;
+use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\Search\Results\PluginManager;
 
 use function strlen;
@@ -52,6 +53,7 @@ use function strlen;
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 abstract class AbstractProvider implements
+    TranslatorAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface,
     \Laminas\Log\LoggerAwareInterface,
     ProviderInterface
@@ -496,31 +498,41 @@ abstract class AbstractProvider implements
         }
         $url = "$baseUrl/v4/unit/" . rawurlencode($customDataId);
 
-        if (!($json = $this->fetchJson($url))) {
-            return;
-        }
-        $headingKey = "sentence_group_$language";
-        $sentenceKey = "sentence_$language";
+        try {
+            if (!($json = $this->fetchJson($url))) {
+                return;
+            }
+            $headingKey = "sentence_group_$language";
+            $sentenceKey = "sentence_$language";
 
-        $accessibility = [];
-        foreach ($json['accessibility_sentences'] ?? [] as $sentence) {
-            if (
-                !($heading = $sentence[$headingKey] ?? '')
-                || !($sentence = $sentence[$sentenceKey] ?? '')
-            ) {
-                continue;
+            $accessibility = [];
+            foreach ($json['accessibility_sentences'] ?? [] as $sentence) {
+                if (
+                    !($heading = $sentence[$headingKey] ?? '')
+                    || !($sentence = $sentence[$sentenceKey] ?? '')
+                ) {
+                    continue;
+                }
+                if (!isset($accessibility[$heading])) {
+                    $accessibility[$heading] = [
+                        'heading' => $this->translate(['OrganisationInfo', $heading]),
+                        'statements' => [
+                            $sentence,
+                        ],
+                    ];
+                } else {
+                    $accessibility[$heading]['statements'][] = $sentence;
+                }
             }
-            if (!isset($accessibility[$heading])) {
-                $accessibility[$heading] = [
-                    'heading' => $this->translate(['OrganisationInfo', $heading]),
-                    'statements' => [
-                        $sentence,
-                    ],
-                ];
-            } else {
-                $accessibility[$heading]['statements'][] = $sentence;
-            }
+            $result['accessibilityInfo'] = array_values($accessibility);
+        } catch (\Exception $e) {
+            $this->logError("TPR request '$url' failed: " . (string)$e);
+            $result['accessibilityInfo'] = [
+                [
+                    'heading' => $this->translate('An error has occurred'),
+                    'statements' => [],
+                ],
+            ];
         }
-        $result['accessibilityInfo'] = array_values($accessibility);
     }
 }

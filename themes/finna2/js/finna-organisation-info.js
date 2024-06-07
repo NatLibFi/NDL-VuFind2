@@ -1,4 +1,4 @@
-/*global VuFind, finna, Donut */
+/*global VuFind, finna, Donut, finnaSelectA11y */
 finna.organisationInfo = (function finnaOrganisationInfo() {
   let params = null;
   let container = null;
@@ -95,6 +95,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     let searchToggle = searchContainer ? searchContainer.querySelector('.js-location-search-toggle') : null;
     if (searchToggle) {
       searchToggle.setAttribute('aria-expanded', 'false');
+      searchToggle.focus();
     }
   }
 
@@ -129,7 +130,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
           sectors: params.sectors || '',
           buildings: params.buildings || ''
         });
-        searchEl.querySelectorAll('select, input').forEach((field2) => {
+        searchEl.querySelectorAll('select, input[type="checkbox"]').forEach((field2) => {
           if (field2.tagName === 'INPUT' && field2.type === 'checkbox') {
             searchParams.append(field2.name, field2.checked ? '1' : '0');
           } else {
@@ -205,9 +206,19 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       });
     });
 
-    $('.js-location-search-service-type').select2({
-      width: '100%'
-    });
+    const selectServiceLocation = document.querySelector('.js-location-search-service-location');
+    if (selectServiceLocation) {
+      new finnaSelectA11y(selectServiceLocation, {
+        useLabelAsButton: true,
+      });
+    }
+
+    const selectServiceType = document.querySelector('.js-location-search-service-type');
+    if (selectServiceType) {
+      new finnaSelectA11y(selectServiceType, {
+        useLabelAsButton: true,
+      });
+    }
     // Trigger DOM event for the jQuery change event:
     $('.js-location-search-service-type').on(
       'change',
@@ -218,6 +229,23 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
         }
       }
     );
+
+    // Add listeners that close the search dropdown as necessary:
+    document.addEventListener('mousedown', (e) => {
+      const searchLocationToggle = searchContainer.querySelector('.js-location-search-toggle');
+      const searchLocationIsActive = searchLocationToggle.getAttribute('aria-expanded');
+      if (searchLocationToggle && searchLocationIsActive) {
+        if (searchLocationIsActive === "true" && !searchContainer.contains(e.target)) {
+          hideLocationSearch();
+        }
+      }
+    });
+    searchContainer.addEventListener('keydown', (e) => {
+      const searchLocationEl = searchContainer.querySelector('.js-location-search');
+      if (e.code === "Escape" && searchLocationEl) {
+        hideLocationSearch();
+      }
+    });
   }
 
   /**
@@ -333,20 +361,14 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    */
   function initLocationSelection(data) {
     // Setup location selection
-    const select = document.querySelector('.js-location-select');
-    if (select) {
-      const placeholder = select.querySelector('option').textContent;
-      $(select).select2({
-        placeholder: placeholder,
-        width: '100%'
-      }).on('select2:select', function updateHash(e) {
-        updateURLHash(encodeURIComponent(e.params.data.id || 'undefined'));
+    const selectLocation = document.querySelector('.js-location-select');
+    if (selectLocation) {
+      new finnaSelectA11y(selectLocation, {
+        useLabelAsButton: true,
       });
-      // Change expand/collapse icons:
-      let iconContainer = select.parentNode.querySelector('.select2-container--default .select2-selection--single .select2-selection__arrow');
-      if (iconContainer) {
-        iconContainer.innerHTML = ' ' + VuFind.icon('filter-expand', 'search-expand') + VuFind.icon('filter-collapse', 'search-collapse');
-      }
+      selectLocation.addEventListener('change', event => {
+        updateURLHash(encodeURIComponent(event.target.value || 'undefined'));
+      });
     }
 
     initLocationSearch();
@@ -614,29 +636,6 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
           });
         }
       });
-
-    // Add listeners that close the search dropdown as necessary:
-    const searchContainer = container.querySelector('.js-location-search-container');
-    document.addEventListener('mouseup', (e) => {
-      if (!searchContainer) {
-        return;
-      }
-      let searchToggleEl = searchContainer.querySelector('.js-location-search-toggle');
-      let searchEl = searchContainer.querySelector('.js-location-search');
-      if ((!searchToggleEl || !searchToggleEl.contains(e.target))
-        && (!searchEl || !searchEl.contains(e.target))
-      ) {
-        hideLocationSearch();
-      }
-    });
-    document.addEventListener('keyup', (e) => {
-      if (e.target && e.target.tagName === 'SELECT') {
-        return;
-      }
-      if (e.code === "Escape" && searchContainer) {
-        hideLocationSearch();
-      }
-    });
   }
 
   /**

@@ -51,7 +51,7 @@
     </h4>
     <?php foreach ($orgInfo['openTimes']['schedules'] as $schedule): ?>
       <?php if ($schedule['today']): ?>
-        <p class="time-open info-element">
+        <div class="time-open info-element">
           <?php if ($schedule['closed']): ?>
             <span class="closed-times">
               <?=$this->icon('organisation-info-closed')?> <?=$this->transEsc('organisation_info_is_closed')?>
@@ -61,33 +61,33 @@
               <?=$this->icon('time-open') ?> <?=$this->transEsc('organisation_info_open_today')?>
               <?=$renderInterval($schedule['firstOpeningTime'], $schedule['lastClosingTime'], $schedule['minutePrecision'])?>
             </span>
-            <?php if ($schedule['selfServiceTimes'] && $schedule['staffTimes']): ?>
-              <?php
-                $allTimes = [];
-                foreach ($schedule['staffTimes'] as $staffTime) {
-                  $allTimes[] = $renderInterval($staffTime['opens'], $staffTime['closes'], $schedule['minutePrecision']);
-                }
-              ?>
-              <br>
-              <span class="staff-times">
-                (<?=$this->transEsc('organisation_info_schedule_staff')?> <?=implode(', ', $allTimes)?>)
-              </span>
-            <?php endif; ?>
-            <?php if ($schedule['gaps']): ?>
-              <?php
-                $allTimes = [];
-                foreach ($schedule['staffTimes'] as $staffTime) {
-                  $allTimes[] = $renderInterval($staffTime['opens'], $staffTime['closes'], $schedule['minutePrecision']);
-                }
-              ?>
-              <br>
-              <span class="closed-times">
-                <?=$this->icon('organisation-info-closed')?> <?=$this->transEsc('organisation_info_is_closed')?>
-                <?=implode(', ', $allTimes)?>
-              </span>
+            <?php if ($orgInfo['hasSelfServiceTimes'] || $schedule['gaps']): ?>
+              <?php foreach ($schedule['times'] as $time): ?>
+                <div class="time-row sub-row">
+                  <div class="date-container"></div>
+                  <div class="description">
+                    <?php if ($time['closed']): ?>
+                      <span class="closed-times">
+                        <?=$this->icon('organisation-info-closed')?> <?=$this->transEsc('organisation_info_is_closed')?>
+                        <?=$renderInterval($time['opens'], $time['closes'], $schedule['minutePrecision'])?>
+                      </span>
+                    <?php elseif ($time['selfservice']): ?>
+                      <span class="selfservice-times">
+                        <?=$this->transEsc('organisation_info_only_selfservice')?>
+                        <?=$renderInterval($time['opens'], $time['closes'], $schedule['minutePrecision'])?>
+                      </span>
+                    <?php else: ?>
+                      <span class="staff-times">
+                        <?=$this->transEsc('organisation_info_schedule_staff')?>
+                        <?=$renderInterval($time['opens'], $time['closes'], $schedule['minutePrecision'])?>
+                      </span>
+                    <?php endif; ?>
+                  </div>
+                </div>
+              <?php endforeach; ?>
             <?php endif; ?>
           <?php endif; ?>
-        </p>
+        </div>
       <?php endif; ?>
     <?php endforeach; ?>
   <?php endif; ?>

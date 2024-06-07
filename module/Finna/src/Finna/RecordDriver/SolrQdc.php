@@ -97,6 +97,13 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
     protected const NO_LOCALE = 'no_locale';
 
     /**
+     * Array of excluded descriptions
+     *
+     * @var array
+     */
+    protected $excludedDescriptions = ['notification'];
+
+    /**
      * Constructor
      *
      * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
@@ -155,27 +162,17 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
      */
     public function getDescriptions(): array
     {
-        $xml = $this->getXmlRecord();
-        $locale = $this->getLocale();
-        $all = [];
-        $primary = [];
-        foreach ($xml->description ?? [] as $description) {
-            if (
-                ($format = (string)$description['format'])
-                && str_starts_with($format, 'image/')
-            ) {
-                continue;
-            }
-            $lang = (string)$description['lang'];
-            $trimmed = trim((string)$description);
-            if ('' !== $trimmed) {
-                if ($lang === $locale) {
-                    $primary[] = $trimmed;
-                }
-                $all[] = $trimmed;
-            }
-        }
-        return $primary ?: $all;
+        return $this->getDescriptionsByType();
+    }
+
+    /**
+     * Get general notes on the record.
+     *
+     * @return array
+     */
+    public function getGeneralNotes()
+    {
+        return $this->getDescriptionsByType(['notification']);
     }
 
     /**
@@ -746,5 +743,43 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
             }
         }
         return $primary ?: $all;
+    }
+
+    /**
+     * Get descriptions by type
+     *
+     * @param array $include Description types to include, otherwise all but excluded types
+     *
+     * @return array
+     */
+    protected function getDescriptionsByType(array $include = []): array
+    {
+        $xml = $this->getXmlRecord();
+        $descriptions = [];
+        $first = '';
+        $exclude = $include ? [] : $this->excludedDescriptions;
+        foreach ($xml->description ?? [] as $description) {
+            $type = (string)$description['type'];
+            if (($include && !in_array($type, $include)) || ($exclude && in_array($type, $exclude))) {
+                continue;
+            }
+            if (($format = (string)$description['format']) && str_starts_with($format, 'image/')) {
+                continue;
+            }
+            if ($trimmed = trim((string)$description)) {
+                $lang = trim((string)$description['lang']) ?? self::NO_LOCALE;
+                $first = $first ?: $lang;
+                $descriptions[$lang][] = $trimmed;
+            }
+        }
+        if ($descriptions) {
+            foreach ($this->getPrioritizedLanguages() as $l) {
+                if ($descriptions[$l] ?? []) {
+                    return $descriptions[$l];
+                }
+            }
+            return $descriptions[$first];
+        }
+        return [];
     }
 }

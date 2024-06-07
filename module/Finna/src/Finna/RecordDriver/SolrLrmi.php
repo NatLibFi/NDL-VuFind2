@@ -73,6 +73,13 @@ class SolrLrmi extends SolrQdc
     ];
 
     /**
+     * Array of excluded descriptions
+     *
+     * @var array
+     */
+    protected $excludedDescriptions = [];
+
+    /**
      * Returns a list of downloadable file formats.
      *
      * @return array
@@ -149,6 +156,16 @@ class SolrLrmi extends SolrQdc
             }
             return $descriptions[$first];
         }
+        return [];
+    }
+
+    /**
+     * Get general notes on the record.
+     *
+     * @return array
+     */
+    public function getGeneralNotes()
+    {
         return [];
     }
 

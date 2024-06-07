@@ -78,7 +78,8 @@
                   <conceptID type="URI">http://urn.fi/URN:NBN:fi:au:mts:m8</conceptID>
                   <term lang="en">extent</term>
                 </measurementType>
-                <measurementUnit>kpl</measurementUnit>
+                <measurementUnit lang="fi">kpl</measurementUnit>
+                <measurementUnit lang="en">pcs</measurementUnit>
                 <measurementValue>1200</measurementValue>
               </measurementsSet>
               <measurementsSet>
@@ -90,11 +91,13 @@
                 <measurementValue>12</measurementValue>
               </measurementsSet>
               <measurementsSet>
-                <measurementType>syvyys</measurementType>
+                <measurementType lang="fi">syvyys</measurementType>
+                <measurementType lang="en">depth</measurementType>
                 <measurementUnit>cm</measurementUnit>
                 <measurementValue>50</measurementValue>
               </measurementsSet>
-              <extentMeasurements>kohde 1</extentMeasurements>
+              <extentMeasurements lang="fi">kohde 1</extentMeasurements>
+              <extentMeasurements lang="en">subject 1</extentMeasurements>
             </objectMeasurements>
           </objectMeasurementsSet>
           <objectMeasurementsSet>

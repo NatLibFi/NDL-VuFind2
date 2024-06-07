@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2021.
+ * Copyright (C) The National Library of Finland 2021-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -31,6 +31,8 @@ namespace Finna\Controller;
 
 use Laminas\Config\Config;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+
+use function in_array;
 
 /**
  * Robots Controller
@@ -61,6 +63,55 @@ class RobotsController extends \VuFind\Controller\AbstractBase
     ];
 
     /**
+     * Always disallowed paths
+     *
+     * @var array
+     */
+    protected $alwaysDisallowedPaths = [
+        'AJAX/',
+        'Blender/',
+        'Browse/',
+        'EDS/',
+        'EDSRecord/',
+        'L1/',
+        'MyResearch/',
+        'Primo/',
+        'PrimoRecord/',
+        'QRCode/',
+        'Search/',
+        'Search2/',
+        'Summon/',
+        'SummonRecord/',
+    ];
+
+    /**
+     * Always disallowed user agents
+     *
+     * @var array
+     */
+    protected $alwaysDisallowedUAs = [
+        'Bytespider',
+        'Sogou web spider',
+        'Sogou inst spider',
+        'anthropic-ai',
+        'ClaudeBot',
+        'ClaudeBot/1.0',
+        'Claude-Web',
+        'CCBot',
+        'ChatGPT-User',
+        'Diffbot',
+        'FacebookBot',
+        'Google-Extended',
+        'omgili',
+        'AcademicBotRTU',
+        'DataForSeoBot',
+        'GPTBot',
+        'PetalBot',
+        'SemrushBot',
+        'test-bot',
+    ];
+
+    /**
      * Constructor
      *
      * @param ServiceLocatorInterface $sm     Service manager
@@ -87,22 +138,24 @@ class RobotsController extends \VuFind\Controller\AbstractBase
         $headers = $response->getHeaders();
         $headers->addHeaderLine('Content-type', 'text/plain; charset=UTF-8');
         $robotsTxtFile = getcwd() . '/robots.txt';
-        if (!file_exists($robotsTxtFile)) {
-            $response->setStatusCode(404);
-            $response->setContent('404 Not Found');
-            return $response;
+        $robots = file_exists($robotsTxtFile) ? file_get_contents($robotsTxtFile) : '';
+        $parsed = $this->parseRobotsTxt($robots);
+        foreach ($this->alwaysDisallowedPaths as $item) {
+            if (!in_array("/$item", $parsed['*'] ?? [])) {
+                $parsed['*'][] = "Disallow: /$item";
+            }
+            if (!in_array("*/$item", $parsed['*'] ?? [])) {
+                $parsed['*'][] = "Disallow: */$item";
+            }
         }
-        $robots = file_get_contents($robotsTxtFile);
 
         foreach ($this->indexFileNames as $indexFileName) {
             if (file_exists(getcwd() . '/' . $indexFileName)) {
-                $parsed = $this->parseRobotsTxt($robots);
                 $parsed['*'][] = "Sitemap: $requestPath/$indexFileName";
-                $robots = $this->renderRobotsTxt($parsed);
                 break;
             }
         }
-        $response->setContent($robots);
+        $response->setContent($this->renderRobotsTxt($parsed));
         return $response;
     }
 
@@ -156,11 +209,16 @@ class RobotsController extends \VuFind\Controller\AbstractBase
     protected function renderRobotsTxt(array $parsed): string
     {
         $results = [];
+        foreach ($this->alwaysDisallowedUAs as $ua) {
+            $results[] = "User-agent: $ua";
+            $results[] = 'Disallow: /';
+            $results[] = '';
+        }
         foreach ($parsed as $userAgent => $lines) {
             $results[] = "User-agent: $userAgent";
             $results = array_merge($results, $lines);
+            $results[] = '';
         }
-        $results[] = '';
         return implode("\n", $results);
     }
 }

@@ -310,6 +310,7 @@
                 clear: both;
 
                 .js-map-widget {
+                    z-index: 0;
                     height: 320px;
                     width: 100%;
                 }
@@ -409,30 +410,6 @@
         .location-selection {
             max-width: 30rem;
             margin-right: 1rem;
-
-            // Part of the kludgish solution for using our own icons for expand/collapse:
-            .select2-container--default .select2-selection--single {
-                .select2-selection__rendered {
-                    margin-right: 0.2em;
-                }
-
-                .select2-selection__arrow {
-                    display: flex;
-                    align-items: center;
-
-                    .search-collapse {
-                        display: none;
-                    }
-                }
-            }
-            .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow {
-                .search-expand {
-                    display: none;
-                }
-                .search-collapse {
-                    display: initial;
-                }
-            }
         }
 
         .js-location-unavailable {
@@ -481,7 +458,10 @@
                         margin-bottom: 1rem;
 
                         .service-type-container {
-                            flex: 1 1 70%;
+                            flex: 0 1 60%;
+                        }
+                        .service-location-container {
+                            min-width: 150px;
                         }
 
                         label {
