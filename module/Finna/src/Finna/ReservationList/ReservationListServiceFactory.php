@@ -31,7 +31,6 @@ namespace Finna\ReservationList;
 
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
-use Finna\ReservationList\ReservationListService;
 
 /**
  * Reservation list service factory.
@@ -46,11 +45,11 @@ class ReservationListServiceFactory implements FactoryInterface
 {
     /**
      * Create a ReservationListService object.
-     * 
+     *
      * @param ContainerInterface $sm      Service manager
      * @param string             $name    Service being created
      * @param array              $options Extra options (optional)
-     * 
+     *
      * @return ReservationListService
      */
     public function __invoke(ContainerInterface $sm, $name, array $options = null)

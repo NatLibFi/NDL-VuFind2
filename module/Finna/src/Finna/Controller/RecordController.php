@@ -30,7 +30,6 @@
 namespace Finna\Controller;
 
 use Finna\Form\Form;
-use Finna\ReservationList\ReservationListService;
 use VuFindSearch\ParamBag;
 
 use function count;

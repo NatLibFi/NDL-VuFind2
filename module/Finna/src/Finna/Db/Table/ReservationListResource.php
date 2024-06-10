@@ -31,6 +31,9 @@ namespace Finna\Db\Table;
 
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
+
+use function is_array;
+
 /**
  * Table Definition for finna_reservation_list_resource
  *

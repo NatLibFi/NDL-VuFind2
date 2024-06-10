@@ -29,8 +29,6 @@
 
 namespace Finna\ReservationList;
 
-use Finna\ReservationList\ReservationListService;
-
 /**
  * Reservation list trait
  *
@@ -42,40 +40,40 @@ use Finna\ReservationList\ReservationListService;
  */
 trait ReservationListTrait
 {
-  protected $reservationListService;
+    protected $reservationListService;
 
-  /**
-   * Sets the ReservationListService.
-   *
-   * @param ReservationListService $service ReservationListService to set.
-   *
-   * @return void
-   */
-  public function setReservationListService(ReservationListService $service): void
-  {
-    $this->reservationListService = $service;
-  }
+    /**
+     * Sets the ReservationListService.
+     *
+     * @param ReservationListService $service ReservationListService to set.
+     *
+     * @return void
+     */
+    public function setReservationListService(ReservationListService $service): void
+    {
+        $this->reservationListService = $service;
+    }
 
-  /**
-   * Retrieves reservation lists.
-   *
-   * @return array Reservation lists.
-   */
-  public function getReservationLists(): array
-  {
-    return $this->reservationListService->getListsForUser($this);
-  }
+    /**
+     * Retrieves reservation lists.
+     *
+     * @return array Reservation lists.
+     */
+    public function getReservationLists(): array
+    {
+        return $this->reservationListService->getListsForUser($this);
+    }
 
-  /**
-   * Retrieves the reservation list contained in a specific record and source.
-   *
-   * @param string $recordId ID of the record.
-   * @param string $source   Source of the reservation list.
-   *
-   * @return array The reservation list contained in the specified record and source.
-   */
-  public function getReservationListContainedIn(string $recordId, string $source): array
-  {
-    return $this->reservationListService->getListsContaining($this, $recordId, $source);
-  }
+    /**
+     * Retrieves the reservation list contained in a specific record and source.
+     *
+     * @param string $recordId ID of the record.
+     * @param string $source   Source of the reservation list.
+     *
+     * @return array The reservation list contained in the specified record and source.
+     */
+    public function getReservationListContainedIn(string $recordId, string $source): array
+    {
+        return $this->reservationListService->getListsContaining($this, $recordId, $source);
+    }
 }

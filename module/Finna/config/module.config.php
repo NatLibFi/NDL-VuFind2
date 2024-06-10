@@ -1124,7 +1124,7 @@ $dynamicRoutes = [
     'ReservationList' => [
         'reservationlist-home' => 'Home/[:id]',
         'reservationlist-order' => 'Order/[:id]',
-        'reservationlist-delete' => 'Delete/[:id]'
+        'reservationlist-delete' => 'Delete/[:id]',
     ],
     'R2Feedback' => ['r2feedback-form' => 'Form/[:id]'],
 ];

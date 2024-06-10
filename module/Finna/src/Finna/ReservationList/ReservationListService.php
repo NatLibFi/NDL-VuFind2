@@ -1,14 +1,50 @@
 <?php
 
+/**
+ * Reservation List Service
+ *
+ * PHP version 8
+ *
+ * Copyright (C) The National Library of Finland 2024.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * @category VuFind
+ * @package  Controller
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     http://vufind.org   Main Site
+ */
+
 namespace Finna\ReservationList;
 
 use Finna\Db\Table\ReservationList;
 use Laminas\Stdlib\Parameters;
+use VuFind\Db\Row\User;
 use VuFind\Db\Table\Resource as ResourceTable;
 use VuFind\Db\Table\UserResource as UserResourceTable;
 use VuFind\Record\Cache as RecordCache;
-use VuFind\Db\Row\User;
 
+/**
+ * Reservation List Service
+ *
+ * @category VuFind
+ * @package  Controller
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://vufind.org/wiki/development Wiki
+ */
 class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
@@ -26,8 +62,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         protected ResourceTable $resource,
         protected UserResourceTable $userResourceTable,
         protected ?RecordCache $cache = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -54,27 +89,20 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      *
      * @return int ID of the newly added reservation list.
      */
-    public function addListForUser(User $user, string $description, string $title, string $datasource, string $building): int
-    {
+    public function addListForUser(
+        User $user,
+        string $description,
+        string $title,
+        string $datasource,
+        string $building
+    ): int {
         $row = $this->reservationList->getNew($user);
         return $row->updateFromRequest($user, new Parameters([
             'description' => $description,
             'title' => $title,
             'datasource' => $datasource,
-            'building' => $building
+            'building' => $building,
         ]));
-    }
-
-    public function getListItemCount($user, $list): int
-    {
-        $resource = $this->getDbTable(\Finna\Db\Table\ReservationListResource::class);
-        $result = $resource->getReservationList(
-            $this->id,
-            $list->id,
-            null,
-            null
-        );
-        return count($result);
     }
 
     /**
@@ -113,7 +141,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         foreach ($lists as $list) {
             $result[] = [
                 'id' => $list->id,
-                'title' => $list->title
+                'title' => $list->title,
             ];
         }
         return $result;
@@ -122,8 +150,8 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
     /**
      * Retrieves reservation lists associated with a specific building for a given user.
      *
-     * @param  User   $user     The user for whom to retrieve the lists.
-     * @param  string $building The name of the building.
+     * @param User   $user     The user for whom to retrieve the lists.
+     * @param string $building The name of the building.
      *
      * @return array  An array of reservation lists, each containing 'id' and 'title'.
      */
@@ -134,7 +162,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         foreach ($lists as $list) {
             $result[] = [
                 'id' => $list->id,
-                'title' => $list->title
+                'title' => $list->title,
             ];
         }
         return $result;
@@ -152,16 +180,18 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
     {
         return $this->reservationList->select(['user_id' => $user->id, 'id' => $id])->current();
     }
+
     /**
      * Retrieves the lists containing a specific record for a given user and source.
      *
-     * @param  User   $user     The user identifier.
-     * @param  string $recordId The ID of the record.
-     * @param  string $source   The source of the record.
+     * @param User   $user     The user identifier.
+     * @param string $recordId The ID of the record.
+     * @param string $source   The source of the record.
      *
      * @return array  An array of lists containing the specified record.
      */
-    public function getListsContaining(User $user, string $recordId, string $source) {
+    public function getListsContaining(User $user, string $recordId, string $source)
+    {
         $lists = $this->reservationList->getListsContainingResource($recordId, $source, $user);
         $result = [];
         foreach ($lists as $list) {
@@ -173,6 +203,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         }
         return $result;
     }
+
     /**
      * Retrieves reservation lists without a record.
      *
@@ -193,7 +224,6 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
                 if ($list['id'] === $compare['id']) {
                     continue 2;
                 }
-
             }
             $result[] = $compare;
         }
@@ -237,6 +267,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      *
      * @param User   $user    User
      * @param string $list_id Id of the list
+     *
      * @return bool
      */
     public function setOrdered($user, $list_id)
@@ -251,6 +282,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      *
      * @param User   $user    User
      * @param string $list_id Id of the list
+     *
      * @return bool
      */
     public function deleteList($user, $list_id)

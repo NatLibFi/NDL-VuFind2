@@ -29,10 +29,10 @@
 
 namespace Finna\Search\ReservationList;
 
+use Finna\Db\Table\ReservationList as ListTable;
+use Finna\Db\Table\Resource as ResourceTable;
 use LmcRbacMvc\Service\AuthorizationServiceAwareInterface;
 use LmcRbacMvc\Service\AuthorizationServiceAwareTrait;
-use Finna\Db\Table\Resource as ResourceTable;
-use Finna\Db\Table\ReservationList as ListTable;
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Record\Cache;
 use VuFind\Record\Loader;

@@ -146,7 +146,7 @@ class Resource extends \VuFind\Db\Table\Resource
      * @param ?string $sort   Sort field.
      * @param int     $offset Offset.
      * @param ?int    $limit  Limit.
-     * 
+     *
      * @return array The reservation resources.
      */
     public function getReservationResources(

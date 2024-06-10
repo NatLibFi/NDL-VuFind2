@@ -31,9 +31,9 @@
 
 namespace Finna\Db\Row;
 
+use Finna\ReservationList\ReservationListTrait;
 use Laminas\Db\ResultSet\ResultSetInterface;
 use Laminas\Db\Sql\Expression;
-use Finna\ReservationList\ReservationListTrait;
 
 use function count;
 

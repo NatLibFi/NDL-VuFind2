@@ -34,7 +34,6 @@
 
 namespace Finna\Controller;
 
-use Finna\ReservationList\ReservationListService;
 use PhpOffice\PhpSpreadsheet\Cell\AdvancedValueBinder;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -44,7 +43,6 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use VuFind\Exception\Forbidden as ForbiddenException;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\Exception\ListPermission as ListPermissionException;
-use VuFind\Search\RecommendListener;
 
 use function array_key_exists;
 use function count;

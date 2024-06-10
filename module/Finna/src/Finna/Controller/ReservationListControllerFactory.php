@@ -31,7 +31,6 @@ namespace Finna\Controller;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
-use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 use VuFind\Controller\AbstractBaseFactory;
@@ -76,6 +75,15 @@ class ReservationListControllerFactory extends AbstractBaseFactory
         $configLoader = $container->get(\VuFind\Config\PluginManager::class);
         $export = $container->get(\VuFind\Export::class);
         $reservationListService = $container->get(\Finna\ReservationList\ReservationListService::class);
-        return parent::__invoke($container, $requestedName, [$session, $configLoader, $export, $reservationListService]);
+        return parent::__invoke(
+            $container,
+            $requestedName,
+            [
+                $session,
+                $configLoader,
+                $export,
+                $reservationListService,
+            ]
+        );
     }
 }

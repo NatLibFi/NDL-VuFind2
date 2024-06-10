@@ -29,10 +29,10 @@
 
 namespace Finna\Db\Row;
 
+use Laminas\Session\Container;
+use VuFind\Db\Row\RowGateway;
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\MissingField as MissingFieldException;
-use VuFind\Db\Row\RowGateway;
-use Laminas\Session\Container;
 
 /**
  * Row Definition for reservation_list
@@ -58,9 +58,8 @@ class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwar
     /**
      * Constructor
      *
-     * @param \Laminas\Db\Adapter\Adapter $adapter   Database adapter
-     * @param Tags                        $tagParser Tag parser
-     * @param ?Container                  $session   Session container
+     * @param \Laminas\Db\Adapter\Adapter $adapter Database adapter
+     * @param ?Container                  $session Session container
      */
     public function __construct($adapter, protected ?Container $session = null)
     {
@@ -78,7 +77,7 @@ class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwar
     public function setOrdered($user = false)
     {
         $this->ordered = date('Y-m-d H:i:s');
-        return parent::save($user);
+        return $this->save($user);
     }
 
     /**
