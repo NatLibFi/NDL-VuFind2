@@ -414,10 +414,7 @@ class Loader extends \VuFind\Cover\Loader
         if (!$this->getUnsizedImage($url)) {
             return false;
         }
-        // Figure out file paths -- $tempFile will be used to store the
-        // image for analysis. $finalFile will be used for long-term storage if
-        // $cache is true or for temporary display purposes if $cache is false.
-        // $statusFile is used for blocking a non-responding server for a while.
+        // Set local file path to temporary file if the image is not to be cached
         $targetFile = $cache ? $this->localFile : str_replace('.jpg', uniqid(), $this->localFile) . '.jpg';
         // If the requested image has width and height of 0, then return the unsized image
         if (!$this->width && !$this->height) {
