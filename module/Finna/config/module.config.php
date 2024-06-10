@@ -699,12 +699,14 @@ $config = [
                     'Finna\ILS\Driver\Mikromarc' => 'Finna\ILS\Driver\MikromarcFactory',
                     'Finna\ILS\Driver\MultiBackend' => 'Finna\ILS\Driver\MultiBackendFactory',
                     'Finna\ILS\Driver\NoILS' => 'VuFind\ILS\Driver\NoILSFactory',
+                    'Finna\ILS\Driver\Quria' => 'Finna\ILS\Driver\AxiellWebServicesFactory',
                     'Finna\ILS\Driver\SierraRest' => 'VuFind\ILS\Driver\SierraRestFactory',
                 ],
                 'aliases' => [
                     'axiellwebservices' => 'Finna\ILS\Driver\AxiellWebServices',
                     'mikromarc' => 'Finna\ILS\Driver\Mikromarc',
                     'koharestsuomi' => 'Finna\ILS\Driver\KohaRestSuomi',
+                    'quria' => 'Finna\ILS\Driver\Quria',
 
                     'VuFind\ILS\Driver\Alma' => 'Finna\ILS\Driver\Alma',
                     'VuFind\ILS\Driver\Demo' => 'Finna\ILS\Driver\Demo',

@@ -55,6 +55,13 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     protected array $encapsulatedContentTypeRecords;
 
     /**
+     * Array of excluded descriptions
+     *
+     * @var array
+     */
+    protected $excludedDescriptions = [];
+
+    /**
      * Return an array of image URLs associated with this record with keys:
      * - url         Image URL
      * - description Description text
@@ -170,6 +177,16 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     public function getRightsCoverage(): string
     {
         return (string)($this->getXmlRecord()->rightsCoverage ?? '');
+    }
+
+    /**
+     * Get general notes on the record.
+     *
+     * @return array
+     */
+    public function getGeneralNotes()
+    {
+        return [];
     }
 
     /**

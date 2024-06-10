@@ -132,7 +132,16 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'getDescriptions',
-                [],
+                [
+                    'Description text',
+                    'Additional description',
+                ],
+            ],
+            [
+                'getGeneralNotes',
+                [
+                    'Notification text',
+                ],
             ],
             [
                 'getAbstracts',
