@@ -1,0 +1,184 @@
+[Catalog]
+arena_member = 
+
+patron_wsdl = 
+reservations_wsdl = 
+catalogue_wsdl = 
+payments_wsdl = 
+
+[Loans]
+; The renewal limit in order to display the remaining amount of renewals
+renewalLimit = 3
+
+[Holdings]
+; By default the holdings location list is sorted alphabetically. This setting can be
+; used to manually set the order by entering location IDs as a colon-separated list.
+;holdingsOrganisationOrder = 1
+;holdingsBranchOrder = 001:095:100:110:115:120:130:135:160:200:210:230:240:260:270:300
+; Whether to display title hold links in results list
+display_title_hold_in_results = true
+
+[Holds]
+
+; HMACKeys - A list of hold form element names that will be analyzed for consistency
+; during hold form processing. Most users should not need to change this setting.
+;HMACKeys = id
+HMACKeys = id:item_id:holdtype:level
+
+; defaultRequiredDate - A colon-separated list used to set the default "not required
+; after" date for holds in the format days:months:years
+; e.g. 0:1:0 will set a "not required after" date of 1 month from the current date
+defaultRequiredDate = 0:0:3
+
+; extraHoldFields - A colon-separated list used to display extra visible fields in the
+; place holds form. Supported values are "comments", "requiredByDate",
+; "pickUpLocation", "requestGroup" and "acceptTerms"
+extraHoldFields = pickUpLocation
+
+; A Pick Up Location Code used to pre-select the pick up location drop down list and
+; provide a default option if others are not available. Must correspond with one of
+; the Location IDs returned by getPickUpLocations()
+;defaultPickUpLocation = 1.001
+
+; A colon-separated list used to exclude certain pick up locations
+;excludePickUpLocations = "1.001:7.115:12.160"
+
+; A request group ID used to pre-select the request group drop down list and
+; provide a default option if others are not available. Must be one of the following:
+; 1) empty string to indicate that the first group is default (default setting is
+; normal hold)
+; 2) "user-selected" to indicate that the user always has to choose the group
+; 3) "regional" in order to select regional hold as the default.
+; This setting is only effective if requestGroup is specified in extraHoldFields.
+;defaultRequestGroup = ""
+
+; By default item holds are enabled. Uncomment this setting to disable item holds.
+;enableItemHolds = false
+
+; Uncomment this setting to enable regional holds.
+regionalHold = true
+
+; This setting is for organisations with a single reservation queue.
+; By default multiple reservation queues are shown. Uncomment this setting to show only
+; a single reservation queue.
+;singleReservationQueue = true
+
+; Optional help texts that can be displayed on the hold form
+;helpText = "Help text for all languages."
+;helpText[en-gb] = "Help text for English language."
+
+; Optional label for the "acceptTerms" extra field
+;acceptTermsText = "I accept the terms in any language."
+;acceptTermsText[en-gb] = "I accept the terms in English."
+
+; Fields that can be updated for holds (unless the hold is already in transit or
+; available for pickup). Supported values are "pickUpLocation" and "requiredByDate".
+updateFields = pickUpLocation:requiredByDate
+
+[getMyTransactionHistory]
+max_results = 100
+default_sort = "CHECK_OUT_DATE DESCENDING"
+
+sort['CHECK_OUT_DATE DESCENDING'] = "sort_checkout_date_desc"
+sort['CHECK_OUT_DATE ASCENDING'] = "sort_checkout_date_asc"
+sort['CHECK_IN_DATE DESCENDING'] = "sort_return_date_desc"
+sort['CHECK_IN_DATE ASCENDING'] = 'sort_return_date_asc'
+sort['AUTHOR ASCENDING'] = 'sort_author'
+sort['TITLE ASCENDING'] = 'sort_title'
+
+[cancelHolds]
+HMACKeys = id
+
+; Uncomment the following lines to enable password (PIN) change
+[changePassword]
+; PIN change parameters.
+minLength = 4
+maxLength = 4
+
+; Uncomment the following line to enable changePickupLocation
+[changePickupLocation]
+method = driver
+
+; Uncomment the following lines to enable updating of address information.
+; Choose a method on how to update the address information (driver, email or url).
+[updateAddress]
+method = driver
+; emailAddress is required for the email method
+;emailAddress =
+; Uncomment needsApproval and keep it as false when using driver
+needsApproval = false
+; Uncomment the following lines to change which fields are included in the form
+; when using the email method. Format for the fields is label:profile_field
+; Default is address, zip, city and country. Email and phone are included unless
+; they have their own sections [updateEmail] or [updatePhone] defined. Also custom
+; fields can be defined.
+; When using driver method, you need to
+; uncomment address, zip and city for updateAddress to work correctly via driver.
+fields[] = Address:address1
+fields[] = Zip:zip
+fields[] = City:city
+fields[] = Country:country
+;fields[] = Phone:phone
+;fields[] = Email:email
+;fields[] = Additional info:info
+; url is required for the url method. url can be a single address or an array of
+; language-specific addresses. First example is a single one:
+;url = http://address.of.change.form
+; Alternatively different links can be specified for each language:
+;url[fi] = http://address.of.change.form/finnish
+;url[sv] = http://address.of.change.form/swedish
+;url[en-gb] = http://address.of.change.form/english
+
+; Uncomment the following lines to enable updating of email address.
+; Choose a method on how to update the email address.
+; Only 'driver' is currently supported.
+[updateEmail]
+method = driver
+
+; Uncomment the following lines to enable updating of phone number.
+; Choose a method on how to update the phone number.
+; Only 'driver' is currently supported.
+[updatePhone]
+method = driver
+
+; Uncomment the following lines to enable update messaging settings
+; Choose a method on how to update the phone number (email, url or driver)
+[updateMessagingSettings]
+;method = email
+; emailAddress is required for the email method
+;emailAddress = "kirjasto@leppavirta.fi"
+; url is required for the url method. url can be a single address or an array of
+; language-specific addresses. First example is a single one:
+;url = "http://address.of.change.form"
+; Alternatively different links can be specified for each language:
+;url[fi] = http://address.of.change.form/finnish
+;url[sv] = http://address.of.change.form/swedish
+;url[en-gb] = http://address.of.change.form/english
+
+; Changing of loan history state is enabled if method parameter is set. Only
+; valid value is 'driver'.
+[updateTransactionHistoryState]
+method = driver
+options[1] = loan_history_forever
+options[0] = loan_history_never
+
+; Uncomment the following lines to enable transaction history
+; Only 'driver' is currently supported method.
+[getMyTransactionHistory]
+enabled = true
+max_results = 100
+
+; Settings for messaging Settings
+[messagingSettings]
+; A colon-separated list used to display messaging settings
+; Valid options for pickUpNotice and overdueNotice are letter, email, sms and none
+; Valid options for dueDateAlert are none and email
+pickUpNotice = "letter:email:sms"
+overdueNotice = "letter:email"
+dueDateAlert = "none:email"
+
+; Due date reminder settings
+[dueDateReminder]
+; By default due date reminder is disabled in Finna since the ILS does the job
+enabled = false
+

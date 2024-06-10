@@ -526,11 +526,11 @@ class AccountExpirationReminders extends AbstractUtilCommand
             $configPath = str_repeat('../', count($parts))
                 . ".$viewPath/local/config/vufind";
             $this->currentSiteConfig = $this->configManager->get(
-                'config.ini',
+                'config',
                 compact('configPath')
             );
             $this->currentMultiBackendConfig = $this->configManager->get(
-                'MultiBackend.ini',
+                'MultiBackend',
                 compact('configPath')
             );
         }

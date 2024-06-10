@@ -108,6 +108,16 @@ $config = [
                     ],
                 ],
             ],
+            'oidc-wellknown-configuration' => [
+                'type' => 'Laminas\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/.well-known/openid-configuration',
+                    'defaults' => [
+                        'controller' => 'OAuth2',
+                        'action'     => 'wellKnownConfiguration',
+                    ],
+                ],
+            ],
             'soap-shibboleth-logout-notification-handler' => [
                 'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
@@ -453,6 +463,7 @@ $config = [
             'VuFind\OAuth2\Repository\RefreshTokenRepository' => 'VuFind\OAuth2\Repository\RepositoryWithAccessTokenTableFactory',
             'VuFind\OAuth2\Repository\ScopeRepository' => 'VuFind\OAuth2\Repository\RepositoryWithOAuth2ConfigFactory',
             'VuFind\QRCode\Loader' => 'VuFind\QRCode\LoaderFactory',
+            'VuFind\RateLimiter\RateLimiterManager' => 'VuFind\RateLimiter\RateLimiterManagerFactory',
             'VuFind\Recommend\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'VuFind\Record\Cache' => 'VuFind\Record\CacheFactory',
             'VuFind\Record\FallbackLoader\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
