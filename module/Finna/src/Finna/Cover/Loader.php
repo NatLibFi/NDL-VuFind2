@@ -213,8 +213,7 @@ class Loader extends \VuFind\Cover\Loader
             $this->id = $driver->getUniqueID();
             $this->url = $params['url'];
             $this->imageParams = $params;
-            $this->unsizedImageFile = $this->determineLocalFile($this->getIdentifiers(), 'default', true);
-            return parent::fetchFromAPI();
+            return $this->fetchFromAPI();
         }
     }
 
@@ -413,7 +412,7 @@ class Loader extends \VuFind\Cover\Loader
             return false;
         }
 
-        // If the requested image has width and height of 0, then reuturn the unsized image
+        // If the requested image has width and height of 0, then return the unsized image
         if (!$this->width && !$this->height) {
             $this->localFile = $this->unsizedImageFile;
         } elseif (!$this->createImage()) {
@@ -453,7 +452,7 @@ class Loader extends \VuFind\Cover\Loader
         // image for analysis. $finalFile will be used for long-term storage if
         // $cache is true or for temporary display purposes if $cache is false.
         // $statusFile is used for blocking a non-responding server for a while.
-        $tempFile = str_replace('.jpg', uniqid(), $this->unsizedImageFile . '-jeppis-');
+        $tempFile = str_replace('.jpg', uniqid(), $this->unsizedImageFile);
 
         $pdfFile
             = ($this->imageParams['pdf'] ?? false) || preg_match('/\.pdf$/i', $url);
