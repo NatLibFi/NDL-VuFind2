@@ -324,7 +324,10 @@ class Loader extends \VuFind\Cover\Loader
                     $this->contentType = 'image/jpeg';
                     $this->image = file_get_contents($this->localFile);
                     return true;
-                } elseif (is_readable($this->unsizedImageFile) && $this->createImage(true)) {
+                } elseif (
+                    is_readable($this->unsizedImageFile)
+                    && $this->createResizedImage($this->unsizedImageFile, $this->localFile, true)
+                ) {
                     $this->contentType = 'image/jpeg';
                     $this->image = file_get_contents($this->localFile);
                     return true;
@@ -415,7 +418,7 @@ class Loader extends \VuFind\Cover\Loader
         // If the requested image has width and height of 0, then return the unsized image
         if (!$this->width && !$this->height) {
             $this->localFile = $this->unsizedImageFile;
-        } elseif (!$this->createImage()) {
+        } elseif (!$this->createResizedImage($this->unsizedImageFile, $this->localFile, $cache)) {
             return false;
         }
 
@@ -548,27 +551,29 @@ class Loader extends \VuFind\Cover\Loader
     }
 
     /**
-     * Create an image from the unsized file.
+     * Create a resized image from the unsized file.
      *
-     * @param bool $cache Allow caching
+     * @param string $originalFile Original file path
+     * @param string $targetFile   Target file path
+     * @param bool   $cache        Allow caching
      *
      * @return bool True if image created, false on failure.
      */
-    protected function createImage(bool $cache = true)
+    protected function createResizedImage(string $originalFile, string $targetFile, bool $cache = true)
     {
-        if (!file_exists($this->unsizedImageFile)) {
+        if (!file_exists($originalFile)) {
             return false;
         }
 
-        $image = file_get_contents($this->unsizedImageFile);
+        $image = file_get_contents($originalFile);
         [$width, $height, $type] = @getimagesizefromstring($image);
 
         // Figure out file paths -- $tempFile will be used to store the
         // image for analysis. $finalFile will be used for long-term storage if
         // $cache is true or for temporary display purposes if $cache is false.
         // $statusFile is used for blocking a non-responding server for a while.
-        $tempFile = str_replace('.jpg', uniqid(), $this->localFile);
-        $this->localFile = $cache ? $this->localFile : $tempFile . '.jpg';
+        $tempFile = str_replace('.jpg', uniqid(), $targetFile);
+        $this->localFile = $cache ? $targetFile : $tempFile . '.jpg';
         // Try to create a GD image and rewrite as JPEG, fail if we can't:
         if (!($imageGD = @imagecreatefromstring($image))) {
             return false;
