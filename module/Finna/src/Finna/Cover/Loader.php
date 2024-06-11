@@ -326,7 +326,7 @@ class Loader extends \VuFind\Cover\Loader
                     return true;
                 } elseif (
                     is_readable($this->unsizedImageFile)
-                    && $this->createResizedImage($this->unsizedImageFile, $this->localFile)
+                    && $this->localFile = $this->createResizedImage($this->unsizedImageFile, $this->localFile)
                 ) {
                     $this->contentType = 'image/jpeg';
                     $this->image = file_get_contents($this->localFile);
@@ -419,11 +419,7 @@ class Loader extends \VuFind\Cover\Loader
         // If the requested image has width and height of 0, then return the unsized image
         if (!$this->width && !$this->height) {
             $this->localFile = $this->unsizedImageFile;
-        } elseif (!$this->createResizedImage($this->unsizedImageFile, $targetFile)) {
-            return false;
-        }
-
-        if (!$this->localFile) {
+        } elseif (!($this->localFile = $this->createResizedImage($this->unsizedImageFile, $targetFile))) {
             return false;
         }
         // Display the image:
@@ -446,7 +442,6 @@ class Loader extends \VuFind\Cover\Loader
      */
     protected function getUnsizedImage(string $url)
     {
-
         $url = str_replace(
             [' ', 'ä','ö','å','Ä','Ö','Å'],
             ['%20','%C3%A4','%C3%B6','%C3%A5','%C3%84','%C3%96','%C3%85'],
@@ -538,10 +533,9 @@ class Loader extends \VuFind\Cover\Loader
         }
 
         [$width, $height, $type] = @getimagesizefromstring($image);
-        // Save unsized image, with quality 100,
+        // Save unsized image, with quality 100
         if ($type !== IMG_JPG) {
             if (!@imagejpeg($imageGD, $this->unsizedImageFile, 100)) {
-                // If this fails, then return false
                 return false;
             }
         } elseif (false === file_put_contents($this->unsizedImageFile, $image)) {
@@ -557,9 +551,9 @@ class Loader extends \VuFind\Cover\Loader
      * @param string $originalFile Original file path
      * @param string $targetFile   Target file path
      *
-     * @return bool True if image created, false on failure.
+     * @return string|false Returns the target file if successful, false on failure
      */
-    protected function createResizedImage(string $originalFile, string $targetFile)
+    protected function createResizedImage(string $originalFile, string $targetFile): string|false
     {
         if (!file_exists($originalFile)) {
             return false;
@@ -599,18 +593,18 @@ class Loader extends \VuFind\Cover\Loader
                 $height
             );
 
-            if (!@imagejpeg($imageGDResized, $this->localFile, $quality)) {
+            if (!@imagejpeg($imageGDResized, $targetFile, $quality)) {
                 return false;
             }
         } elseif ($type !== IMG_JPG) {
-            if (!@imagejpeg($imageGD, $this->localFile, $quality)) {
+            if (!@imagejpeg($imageGD, $targetFile, $quality)) {
                 return false;
             }
         } else {
-            file_put_contents($this->localFile, $image);
+            file_put_contents($targetFile, $image);
         }
 
-        return true;
+        return $targetFile;
     }
 
     /**
