@@ -91,7 +91,6 @@
   <?php endif; ?>
   <ul role="presentation" class="nav navbar-nav header-navbar-right">
   <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
-
     <li id="language_menu" class="dropdown">
       <a href="#" id="language_menu_dropdown_button" class="btn dropdown-toggle" role="button" data-toggle="dropdown" aria-label="<?=$this->transEscAttr('Language')?>" aria-description="<?=$this->displayLanguageOption($selectedLang)?> <?=$this->transEscAttr('selected')?>" aria-expanded="false">
         <?=$this->icon('language', 'lang-icon') ?>
