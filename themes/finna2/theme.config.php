@@ -258,6 +258,8 @@ $config = [
         'vendor/L.Control.Locate.min.js',
         'vendor/js.cookie.js',
         'vendor/select-a11y.iife.js',
+        'vendor/popper.min.js',
+        'vendor/cally.iife.js',
         'finna-multiselect.js',
         'finna-model-viewer.js',
         'finna-video-element.js',
@@ -265,6 +267,7 @@ $config = [
         'finna-carousel-manager.js',
         'finna-select-a11y.js',
         'finna-a11y.js',
+        'finna-datepicker.js',
     ],
     'less' => [
         'active' => false,
