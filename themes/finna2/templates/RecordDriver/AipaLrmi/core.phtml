@@ -113,7 +113,7 @@
       ?>
     <?php endif; ?>
     <?php if (!empty($content)): ?>
-      <?= $this->render('components/molecules/containers/finna-panel', [
+      <?= $this->component('finna-panel', [
           'attributes' => ['class' => ['finna-panel-default']],
           'heading' => $this->transEsc('Aipa::educational_data'),
           'headingLevel' => 3,
@@ -125,7 +125,7 @@
 
     <?php $content = trim($this->markdown()->toHtml($this->driver->getAssignmentIdeas())); ?>
     <?php if (!empty($content)): ?>
-      <?= $this->render('components/molecules/containers/finna-panel', [
+      <?= $this->component('finna-panel', [
           'attributes' => ['class' => ['finna-panel-default']],
           'heading' => $this->transEsc('Aipa::lrmi_assignment_ideas'),
           'headingLevel' => 3,
