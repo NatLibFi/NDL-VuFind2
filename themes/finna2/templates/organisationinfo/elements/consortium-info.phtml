@@ -61,7 +61,7 @@
             </div>
           </div>
         <?php $content = ob_get_clean(); ?>
-        <?= $this->component('@@molecules/containers/finna-panel', [
+        <?= $this->component('finna-panel', [
             'attributes' => ['class' => ['finna-panel-default', 'organisation-info-panel']],
             'heading' => $this->transEsc('organisation_info_navi_usage'),
             'headingLevel' => 4,
@@ -82,7 +82,7 @@
               </ul>
             </div>
           <?php $content = ob_get_clean(); ?>
-          <?= $this->component('@@molecules/containers/finna-panel', [
+          <?= $this->component('finna-panel', [
               'attributes' => ['class' => ['finna-panel-default', 'organisation-info-panel', 'links-panel']],
               'heading' => $this->transEsc('Links'),
               'headingLevel' => 4,

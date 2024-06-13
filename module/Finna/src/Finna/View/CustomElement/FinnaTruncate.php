@@ -95,7 +95,7 @@ class FinnaTruncate extends AbstractBase
      */
     public static function getTemplateName(): ?string
     {
-        return 'components/molecules/containers/finna-truncate/finna-truncate';
+        return '_ui/components/finna-truncate';
     }
 
     /**

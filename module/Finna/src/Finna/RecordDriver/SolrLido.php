@@ -1145,6 +1145,28 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     }
 
     /**
+     * Return attributes of an element as an associative array.
+     * - id            Id attribute
+     * - source        Source attribute
+     *
+     * @param \SimpleXmlElement $conceptID The element to get attributes from
+     *
+     * @return array
+     */
+    public function getSubjectConceptIdAttributes($conceptID): array
+    {
+        $results = [];
+        if ($id = trim((string)$conceptID)) {
+            $type = mb_strtolower((string)($conceptID->attributes()->type ?? ''), 'UTF-8');
+            if (in_array($type, $this->subjectConceptIDTypes)) {
+                $results['id'] = $id;
+                $results['source'] = trim($conceptID->attributes()->source ?? '');
+            }
+        }
+        return $results;
+    }
+
+    /**
      * Get the collections of the current record.
      *
      * @return array
@@ -1154,16 +1176,20 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         $results = [];
         $allowedTypes = ['Kokoelma', 'kuuluu kokoelmaan', 'kokoelma', 'Alakokoelma',
             'Erityiskokoelma'];
-        $xpath = 'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
-            . 'relatedWorkSet';
-        foreach ($this->getXmlRecord()->xpath($xpath) as $node) {
-            $term = $node->relatedWorkRelType->term ?? '';
-            $collection = trim((string)$node->relatedWork->displayObject ?? '');
-            if ($collection && in_array($term, $allowedTypes)) {
-                $results[] = $collection;
+        foreach (
+            $this->getXmlRecord()->lido->descriptiveMetadata->objectRelationWrap->relatedWorksWrap
+            ->relatedWorkSet ?? [] as $set
+        ) {
+            $term = $set->relatedWorkRelType->term ?? '';
+            if (in_array($term, $allowedTypes)) {
+                foreach ($set->relatedWork->displayObject ?? [] as $object) {
+                    if ('' !== trim((string)$object)) {
+                        $results[] = $object;
+                    }
+                }
             }
         }
-        return $results;
+        return $this->getAllLanguageSpecificItems($results, $this->getLocale());
     }
 
     /**
@@ -1235,27 +1261,58 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 }
             }
             $methods = [];
+            $methodsExtended = [];
+            $langMethodsExtended = [];
             foreach ($node->eventMethod ?? [] as $eventMethod) {
                 foreach ($eventMethod->term ?? [] as $term) {
-                    if ($method = trim((string)$term)) {
-                        $methods[] = $method;
+                    $termStr = trim((string)$term);
+                    if ($termStr === '') {
+                        continue;
+                    }
+                    $methods[] = $termStr;
+                    $id = $source = '';
+                    $lang = trim((string)$term->attributes()->lang ?? '');
+                    foreach ($node->eventMethod->conceptID ?? [] as $conceptID) {
+                        if ($values = $this->getSubjectConceptIdAttributes($conceptID)) {
+                            $id = $values['id'];
+                            $source = $values['source'];
+                            break;
+                        }
+                    }
+                    $methodsExtended[] = [
+                        'data' => $termStr,
+                        'id' => $id,
+                        'source' => $source,
+                    ];
+                    if ($lang === $language) {
+                        $langMethodsExtended[] = [
+                            'data' => $termStr,
+                            'id' => $id,
+                            'source' => $source,
+                        ];
                     }
                 }
             }
             $materials = [];
-
+            $materialsExtended = [];
+            $langMaterialsExtended = [];
             if (isset($node->eventMaterialsTech->displayMaterialsTech)) {
                 // Use displayMaterialTech (default)
                 $materials[] = (string)$node->eventMaterialsTech
                     ->displayMaterialsTech;
             } elseif (isset($node->eventMaterialsTech->materialsTech)) {
                 // display label not defined, build from materialsTech
-                $materials = [];
-                foreach ($node->xpath('eventMaterialsTech/materialsTech') as $materialsTech) {
-                    if ($terms = $materialsTech->xpath('termMaterialsTech/term')) {
-                        foreach ($terms as $term) {
+                foreach ($node->eventMaterialsTech->materialsTech as $materialsTech) {
+                    foreach ($materialsTech->termMaterialsTech ?? [] as $termMaterialsTech) {
+                        foreach ($termMaterialsTech->term ?? [] as $term) {
+                            $termStr = trim((string)$term);
+                            if ($termStr === '') {
+                                continue;
+                            }
                             $label = null;
                             $attributes = $term->attributes();
+                            $id = $source = '';
+                            $lang = trim((string)$attributes->lang ?? '');
                             if (isset($attributes->label)) {
                                 // Musketti
                                 $label = $attributes->label;
@@ -1264,9 +1321,28 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                                 $label = $materialsTech->extentMaterialsTech;
                             }
                             if ($label) {
-                                $term = "$term ($label)";
+                                $termStr = "$termStr ($label)";
                             }
-                            $materials[] = $term;
+                            foreach ($termMaterialsTech->conceptID ?? [] as $conceptID) {
+                                if ($values = $this->getSubjectConceptIdAttributes($conceptID)) {
+                                    $id = $values['id'];
+                                    $source = $values['source'];
+                                    break;
+                                }
+                            }
+                            $materialsExtended[] = [
+                                'data' => $termStr,
+                                'id' => $id,
+                                'source' => $source,
+                            ];
+                            if ($lang === $language) {
+                                $langMaterialsExtended[] = [
+                                    'data' => $termStr,
+                                    'id' => $id,
+                                    'source' => $source,
+                                ];
+                            }
+                            $materials[] = $termStr;
                         }
                     }
                 }
@@ -1367,7 +1443,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 'name' => $name,
                 'date' => $date,
                 'methods' => $methods,
+                'methodsExtended' => $langMethodsExtended ?: $methodsExtended,
                 'materials' => $materials,
+                'materialsExtended' => $langMaterialsExtended ?: $materialsExtended,
                 'places' => $places,
                 'actors' => $actors,
                 'culture' => $culture,
@@ -1988,16 +2066,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                         $id = $source = '';
                         $langAttr = trim((string)$term->attributes()->lang ?? '');
                         foreach ($concept->conceptID as $conceptID) {
-                            if ($item = trim((string)$conceptID)) {
-                                $type = mb_strtolower(
-                                    (string)($conceptID['type'] ?? ''),
-                                    'UTF-8'
-                                );
-                                if (in_array($type, $this->subjectConceptIDTypes)) {
-                                    $id = $item;
-                                    $source = trim($conceptID->attributes()->source ?? '');
-                                    break;
-                                }
+                            if ($values = $this->getSubjectConceptIdAttributes($conceptID)) {
+                                $id = $values['id'];
+                                $source = $values['source'];
+                                break;
                             }
                         }
                         if ($id !== '') {

@@ -11,11 +11,10 @@
       $__navAttributes->add('class', 'finna-nav-lg');
     }
   ?>
-  <?= $this->render('components/molecules/navigation/finna-nav', [
+  <?= $this->component('finna-nav', [
       'ariaCurrent' => $ariaCurrent ?? null,
       'attributes' => $__navAttributes,
       'items' => $items ?? [],
       'renderChildren' => 'simple',
     ]); ?>
 </nav>
-<?php $this->headScript()->appendFile('components/organisms/navigation/finna-tabs-nav/finna-tabs-nav.js'); ?>

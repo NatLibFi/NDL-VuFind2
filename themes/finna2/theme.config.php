@@ -1,5 +1,5 @@
 <?php
-$config = [
+return [
     'extends' => 'bootstrap3',
     'helpers' => [
         'factories' => [
@@ -17,7 +17,6 @@ $config = [
             'Finna\View\Helper\Root\Citation' => 'Finna\View\Helper\Root\CitationFactory',
             'Finna\View\Helper\Root\CleanHtml' => 'Finna\View\Helper\Root\CleanHtmlFactory',
             'Finna\View\Helper\Root\Combined' => 'Finna\View\Helper\Root\CombinedFactory',
-            'Finna\View\Helper\Root\Component' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\Config' => 'VuFind\View\Helper\Root\ConfigFactory',
             'Finna\View\Helper\Root\Content' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\Cookie' => 'Finna\View\Helper\Root\CookieFactory',
@@ -90,7 +89,6 @@ $config = [
             'callnumber' => 'Finna\View\Helper\Root\Callnumber',
             'cleanHtml' => 'Finna\View\Helper\Root\CleanHtml',
             'combined' => 'Finna\View\Helper\Root\Combined',
-            'component' => 'Finna\View\Helper\Root\Component',
             'content' => 'Finna\View\Helper\Root\Content',
             'cookie' => 'Finna\View\Helper\Root\Cookie',
             'cookieConsent' => 'Finna\View\Helper\Root\CookieConsent',
@@ -265,6 +263,10 @@ $config = [
         'finna-carousel-manager.js',
         'finna-select-a11y.js',
         'finna-a11y.js',
+        'components/finna-bazaar-browse-bar.js',
+        'components/finna-md-editable.js',
+        'components/finna-tabs-nav.js',
+        'components/finna-truncate.js',
     ],
     'less' => [
         'active' => false,
@@ -478,5 +480,3 @@ $config = [
         ],
     ],
 ];
-include 'components.config.php';
-return $config;

@@ -90,6 +90,7 @@
     </div>
   <?php endif; ?>
   <ul role="presentation" class="nav navbar-nav header-navbar-right">
+  <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
     <li id="language_menu" class="dropdown">
       <a href="#" id="language_menu_dropdown_button" class="btn dropdown-toggle" role="button" data-toggle="dropdown" aria-label="<?=$this->transEscAttr('Language')?>" aria-description="<?=$this->displayLanguageOption($selectedLang)?> <?=$this->transEscAttr('selected')?>" aria-expanded="false">
         <?=$this->icon('language', 'lang-icon') ?>
@@ -97,7 +98,6 @@
         <?=$this->icon('collapse-open', 'collapse-open-icon') ?>
       </a>
       <ul class="dropdown-menu dropdown-menu-right" role="menu">
-        <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
           <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
             <?php if ($this->layout()->userLang == $langCode): ?>
               <li>
@@ -113,9 +113,9 @@
               </li>
             <?php endif ?>
           <?php endforeach; ?>
-        <?php endif; ?>
       </ul>
     </li>
+    <?php endif; ?>
     <?php if (is_object($account) && $account->loginEnabled()): ?>
       <?php if ($user): ?>
         <li class="logoutOptions">

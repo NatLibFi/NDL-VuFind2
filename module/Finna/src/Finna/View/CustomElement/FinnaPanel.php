@@ -148,7 +148,7 @@ class FinnaPanel extends AbstractBase
      */
     public static function getTemplateName(): ?string
     {
-        return 'components/molecules/containers/finna-panel/finna-panel';
+        return '_ui/components/finna-panel';
     }
 
     /**

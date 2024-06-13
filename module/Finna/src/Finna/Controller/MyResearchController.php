@@ -1344,7 +1344,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             'lists' => $this->exportUserLists($user->id),
         ];
         $json = json_encode($exportData);
-        $timestamp = strftime('%Y-%m-%d-%H%M');
+        $timestamp = (new \DateTime('now'))->format('Y-m-d-H-i');
         $filename = "finna-export-$timestamp.json";
         $response = $this->getResponse();
         $response->setContent($json);

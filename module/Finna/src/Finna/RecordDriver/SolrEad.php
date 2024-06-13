@@ -53,7 +53,9 @@ use function is_array;
  */
 class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
 {
-    use Feature\SolrFinnaTrait;
+    use Feature\SolrFinnaTrait {
+        getSupportedCitationFormats as getSupportedCitationFormatsFinna;
+    }
     use Feature\FinnaXmlReaderTrait;
     use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
@@ -625,6 +627,23 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
             && $this->fields['hierarchy_parent_id'][0]
                 != $this->fields['hierarchy_top_id'][0]
             && $this->fields['hierarchy_top_id'] != $this->fields['id'];
+    }
+
+    /**
+     * Get an array of strings representing citation formats supported
+     * by this record's data (empty if none).  For possible legal values,
+     * see /application/themes/root/helpers/Citation.php, getCitation()
+     * method.
+     *
+     * @return array Strings representing citation formats.
+     */
+    protected function getSupportedCitationFormats()
+    {
+        $supportedFormats = $this->getSupportedCitationFormatsFinna();
+        if (isset($this->fields['hierarchy_top_id'])) {
+            $supportedFormats[] = 'Archive';
+        }
+        return $supportedFormats;
     }
 
     /**
