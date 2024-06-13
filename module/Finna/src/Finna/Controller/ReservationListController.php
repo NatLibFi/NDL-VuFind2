@@ -31,7 +31,6 @@ namespace Finna\Controller;
 
 use Finna\ReservationList\ReservationListService;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use Laminas\Session\Container;
 use VuFind\Controller\AbstractBase;
 use VuFind\Exception\Forbidden as ForbiddenException;
 use VuFind\Exception\ListPermission as ListPermissionException;
@@ -53,8 +52,8 @@ class ReservationListController extends AbstractBase
     /**
      * Constructor
      *
-     * @param ServiceLocatorInterface      $sm                     Service locator
-     * @param ReservationListService       $reservationListService Reservation list service
+     * @param ServiceLocatorInterface $sm                     Service locator
+     * @param ReservationListService  $reservationListService Reservation list service
      */
     public function __construct(
         ServiceLocatorInterface $sm,
