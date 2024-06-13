@@ -155,7 +155,7 @@ class ReservationListResource extends \VuFind\Db\Table\UserResource
         $listId = null,
         $userId = null
     ) {
-        $callback = function ($select) use ($resourceId, $source, $listId, $userId) {
+        $callback = function ($select) use ($resourceId, $source, $userId) {
             $select->columns(
                 [
                     new Expression(
