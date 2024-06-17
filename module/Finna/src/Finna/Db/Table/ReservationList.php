@@ -53,9 +53,6 @@ use VuFind\Exception\RecordMissing as RecordMissingException;
  */
 class ReservationList extends UserList
 {
-
-    protected ?Container $session = null;
-
     /**
      * Constructor
      *
@@ -63,7 +60,7 @@ class ReservationList extends UserList
      * @param PluginManager $tm      Table manager
      * @param array         $cfg     Laminas configuration
      * @param RowGateway    $rowObj  Row prototype object (null for default)
-     * @param Container     $session Session container (must use same
+     * @param ?Container    $session Session container (must use same
      * namespace as container provided to \VuFind\View\Helper\Root\UserList).
      * @param string        $table   Name of database table to interface with
      */
@@ -72,7 +69,7 @@ class ReservationList extends UserList
         PluginManager $tm,
         $cfg,
         ?RowGateway $rowObj = null,
-        $session = null,
+        protected $session = null,
         $table = 'finna_reservation_list'
     ) {
         Gateway::__construct($adapter, $tm, $cfg, $rowObj, $table);
