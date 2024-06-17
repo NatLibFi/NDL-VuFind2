@@ -46,7 +46,9 @@ use VuFind\Exception\MissingField as MissingFieldException;
  * @property int    $id
  * @property int    $user_id
  * @property string $title
+ * @property string $datasource
  * @property string $description
+ * @property string $building
  * @property string $created
  * @property bool   $public
  * @property string $ordered
