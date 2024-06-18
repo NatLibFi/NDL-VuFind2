@@ -40,6 +40,10 @@ namespace Finna\View\Helper\Root;
  */
 class Component extends \VuFind\View\Helper\Root\Component
 {
+    public const BC_REPLACEMENTS = [
+        '@@molecules/containers/finna-panel' => 'finna-panel',
+    ];
+
     /**
      * Expand path and render template
      *
@@ -50,9 +54,11 @@ class Component extends \VuFind\View\Helper\Root\Component
      */
     public function __invoke(string $name, $params = []): string
     {
-        // Backwards compatibility support for old @@ prefix.
-        if (str_starts_with($name, '@@')) {
-            $name = substr($name, 2);
+        // Backwards compatibility support.
+        foreach (self::BC_REPLACEMENTS as $needle => $replacement) {
+            if (str_starts_with($name, $needle)) {
+                $name = $replacement . substr($name, strlen($needle));
+            }
         }
         return parent::__invoke($name, $params);
     }
