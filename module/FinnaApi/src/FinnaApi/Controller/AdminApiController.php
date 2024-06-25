@@ -65,7 +65,13 @@ class AdminApiController extends \VuFindApi\Controller\AdminApiController
                 ?: $this->getDefaultCachesToClear();
             foreach ((array)$cacheList as $id) {
                 // Try a couple of times in case we fail to remove something due to a race condition:
-                $this->callWithRetry([$this->cacheManager->getCache($id), 'flush']);
+                $this->callWithRetry(
+                    [$this->cacheManager->getCache($id), 'flush'],
+                    options: [
+                        'retryCount' => 50,
+                        'maximumBackoff' => 0,
+                    ]
+                );
             }
         } catch (\Exception $e) {
             return $this->output([], self::STATUS_ERROR, 500, (string)$e);
