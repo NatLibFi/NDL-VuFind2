@@ -29,7 +29,7 @@ var finna = (function finnaModule() {
         'finnaMovement',
         'mdEditable',
         'a11y',
-        'datepicker'
+        'finnaDatepicker',
       ];
 
       $.each(modules, function initModule(ind, module) {

@@ -208,6 +208,7 @@ $config = [
         'resultcount.js',
         'lib/autocomplete.js',
         'finna.js',
+        'finna-dom-utils.js',
         'finna-script-loader.js',
         'finna-popup.js',
         'finna-autocomplete.js',

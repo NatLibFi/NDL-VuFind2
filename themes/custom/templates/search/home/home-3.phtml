@@ -59,64 +59,8 @@
   'limit' => 9,
 ]); ?>
 
-<calendar-date>
-  <calendar-month></calendar-month>
-</calendar-date>
-
-<style>
-      #tooltip {
-        background: #333;
-        color: white;
-        font-weight: bold;
-        padding: 4px 8px;
-        font-size: 13px;
-        border-radius: 4px;
-        display: none;
-      }
-
-      #tooltip[data-show] {
-        display: block;
-      }
-
-      #arrow,
-      #arrow::before {
-        position: absolute;
-        width: 8px;
-        height: 8px;
-        background: inherit;
-      }
-
-      #arrow {
-        visibility: hidden;
-      }
-
-      #arrow::before {
-        visibility: visible;
-        content: '';
-        transform: rotate(45deg);
-      }
-
-      #tooltip[data-popper-placement^='top'] > #arrow {
-        bottom: -4px;
-      }
-
-      #tooltip[data-popper-placement^='bottom'] > #arrow {
-        top: -4px;
-      }
-
-      #tooltip[data-popper-placement^='left'] > #arrow {
-        right: -4px;
-      }
-
-      #tooltip[data-popper-placement^='right'] > #arrow {
-        left: -4px;
-      }
-    </style>
-<button id="button" aria-describedby="tooltip">I'm a button</button>
-<button id="button" aria-describedby="tooltip">I'm a button</button>
-
-<div id="tooltip" role="tooltip">I'm a tooltip</div>
-
+<?=$this->component('finna-dateinput', ['dateinputId' => 'event-date-start', 'dateinputPicker' => 'single', 'dateinputLabel' => 'testi2', 'dateinputValue' => date('d.m.Y')]) ?>
+<?=$this->component('finna-dateinput', ['dateinputId' => 'event-date-start2', 'dateinputPicker' => 'single', 'dateinputLabel' => 'testi2', 'dateinputValue' => date('d.m.Y')]) ?>
 
 <div><h2>home-3.phtml</h2><p>Nämä ovat esimerkkejä, lisää tyhjä home-3.phtml custom/search/home -kansioon, jos et käytä tiedostoa</p></div>
 <div class="home-column"><?= $this->feed('news'); ?></div>
