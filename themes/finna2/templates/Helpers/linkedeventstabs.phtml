@@ -44,13 +44,13 @@
       <div class="events-searchtools-toggle"><?= $this->transEsc('search_events') ?> <?=$this->icon('show-more') ?></div>
       <div class="events-searchtools-container <?= $this->searchTools === 'show' ? '' : 'hidden'; ?>">
         <span class="event-search-container">
-          <label for="event-search" class="sr-only"><?= $this->transEsc('event_name_or_place') ?></label>
-          <input id="event-search" class="event-text-search" type="text" placeholder="<?= $this->transEsc('event_name_or_place') ?>" size="26">
+          <label for="event-search"><?= $this->transEsc('event_name_or_place') ?></label>
+          <input id="event-search" class="event-text-search" type="text" size="26">
         </span>
         <span class="event-date-container">
           <span class="event-date-title"><?= $this->transEsc('Time Period'); ?>:</span>
-          <label for="event-date-start" class="sr-only"><?=$this->transEsc('event_date_start');?></label>
-          <input value="<?= date('d.m.Y') ?>" autocomplete="off" id="event-date-start" class="event-date-start event-datepicker"> &ndash; <label for="event-date-end" class="sr-only"><?=$this->transEsc('event_date_end');?></label><input autocomplete="off" id="event-date-end" class="event-date-end">
+          <?=$this->component('finna-dateinput', ['dateinputId' => 'event-date-start', 'dateinputClass' => 'event-date-start', 'dateinputPicker' => 'single', 'dateinputLabel' => $this->transEsc('event_date_start'), 'dateinputValue' => date('d.m.Y')]) ?>
+          <?=$this->component('finna-dateinput', ['dateinputId' => 'event-date-end', 'dateinputClass' => 'event-date-end', 'dateinputPicker' => 'single', 'dateinputLabel' => $this->transEsc('event_date_end')]) ?>
         </span>
         <button class="btn btn-primary linked-event-search"><?= $this->transEsc('linked_event_search') ?></button>
         <span class="event-geolocation-container hidden">

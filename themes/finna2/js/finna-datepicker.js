@@ -7,30 +7,44 @@ finna.finnaDatepicker = (function finnaDatepicker() {
       const datepickerToggle = datepicker.querySelector('.datepicker-toggle');
       const datepickerPopover = datepicker.querySelector('.datepicker-popover');
       const datepickerCalendar = datepicker.querySelector('calendar-date');
-      // Instalize Popper.js.
-      const datepickerInstance = Popper.createPopper(datepickerToggle, datepickerPopover, {
-        modifiers: [
-          {
-            name: 'offset',
-            options: {
-              offset: [0, 8],
-            },
-          },
-        ],
-      });
+      let popperInstance = null;
+
+      // Create popper instance
+      function createPopperInstance() {
+        popperInstance = Popper.createPopper(datepickerToggle, datepickerPopover, {
+          placement: "bottom",
+          modifiers: [
+            {
+              name: "offset", //offsets popper from the reference/button
+              options: {
+                offset: [0, 8]
+              }
+            }
+          ]
+        });
+      }
+
+      // Destroy popper instance
+      function destroyPopperInstance() {
+        if (popperInstance) {
+          popperInstance.destroy();
+          popperInstance = null;
+        }
+      }
 
       // Open the datepicker popover
       function datepickerOpen() {
+        createPopperInstance();
         datepickerPopover.show();
-        // Update Popper to correctly position the tooltip after showing it
-        datepickerInstance.update();
         datepickerCalendar.focus();
         trapFocus(datepickerPopover);
+;
       }
 
       // Close the datepicker popover
       function datepickerClose() {
         datepickerPopover.close();
+        destroyPopperInstance();
         datepickerToggle.focus();
       }
 

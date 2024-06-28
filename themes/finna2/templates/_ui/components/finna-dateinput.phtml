@@ -1,33 +1,25 @@
 <?php
-  $dateinputId = $this->dateinputId ?? 'div';
+  $dateinputId = $this->dateinputId ?? '';
+  $dateinputClass = $this->dateinputId ?? '';
   $dateinputLabel = $this->dateinputLabel ?? 'Testi2';
   $dateinputPlaceholder = $this->dateinputPlaceholder ?? '';
   $dateinputValue = $this->dateinputValue ?? '';
   $dateinputPicker = $this->dateinputPicker ?? '';
 ?>
-<style>
-  .datepicker-popover {
-      background: #fff;
-      border: 1px solid #ccc;
-      padding: 10px;
-      border-radius: 5px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  }
-</style>
-<div class="finna-dateinput">
+<span class="finna-dateinput">
   <label for="<?=$dateinputId ?>"><?=$dateinputLabel ?></label>
-  <input class="input" value="<?=$dateinputValue ?>" autocomplete="off" id="<?=$dateinputId ?>">
-  <div class="datepicker">
+  <input class="input <?=$dateinputClass ?>" id="<?=$dateinputId ?>" value="<?=$dateinputValue ?>" autocomplete="off">
+  <span class="datepicker">
     <button class="datepicker-toggle">
-      <?=$this->transEsc('datepicker_select_date')?>
-      <span class="sr-only"><span class="datepicker-date-selected"></span>
+      <?=$this->icon('calendar') ?>
+      <span class="sr-only"><?=$this->transEsc('datepicker_select_date')?><span class="datepicker-date-selected"></span></span>
     </button>
     <dialog tabindex="-1" id="datepicker-<?=$dateinputId ?>" class="datepicker-popover">
       <calendar-date locale="<?=$this->layout()->userLang?>">
-        <div role="button" slot="previous"><?=  $this->transEsc('Prev')?></div><div role="button" slot="next"><?=$this->transEsc('Next')?></div>
+        <div role="button" slot="previous"><?=$this->transEsc('Prev')?></div><div role="button" slot="next"><?=$this->transEsc('Next')?></div>
         <calendar-month></calendar-month>
       </calendar-date>
-      <button class="btn-datepicker-close">Sulje</button>
+      <button class="btn-datepicker-close"><?=$this->transEsc('close')?></button>
     </dialog>
-  </div>
-</div>
+  </span>
+</span>
