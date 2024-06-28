@@ -1,5 +1,5 @@
 <?php
-$config = [
+return [
     'extends' => 'bootstrap3',
     'helpers' => [
         'factories' => [
@@ -90,7 +90,6 @@ $config = [
             'callnumber' => 'Finna\View\Helper\Root\Callnumber',
             'cleanHtml' => 'Finna\View\Helper\Root\CleanHtml',
             'combined' => 'Finna\View\Helper\Root\Combined',
-            'component' => 'Finna\View\Helper\Root\Component',
             'content' => 'Finna\View\Helper\Root\Content',
             'cookie' => 'Finna\View\Helper\Root\Cookie',
             'cookieConsent' => 'Finna\View\Helper\Root\CookieConsent',
@@ -142,6 +141,7 @@ $config = [
             // Overrides
             'VuFind\View\Helper\Root\Browse' => 'Finna\View\Helper\Root\Browse',
             'VuFind\View\Helper\Root\Citation' => 'Finna\View\Helper\Root\Citation',
+            'VuFind\View\Helper\Root\Component' => 'Finna\View\Helper\Root\Component',
             'VuFind\View\Helper\Root\Config' => 'Finna\View\Helper\Root\Config',
             'VuFind\View\Helper\Root\Holdings' => 'Finna\View\Helper\Root\Holdings',
             'VuFind\View\Helper\Root\Matomo' => 'Finna\View\Helper\Root\Matomo',
@@ -269,6 +269,10 @@ $config = [
         'finna-select-a11y.js',
         'finna-a11y.js',
         'finna-datepicker.js',
+        'components/finna-bazaar-browse-bar.js',
+        'components/finna-md-editable.js',
+        'components/finna-tabs-nav.js',
+        'components/finna-truncate.js',
     ],
     'less' => [
         'active' => false,
@@ -482,5 +486,3 @@ $config = [
         ],
     ],
 ];
-include 'components.config.php';
-return $config;

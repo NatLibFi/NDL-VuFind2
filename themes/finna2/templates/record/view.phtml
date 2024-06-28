@@ -25,7 +25,7 @@
   $this->headMeta()->appendName('format-detection', 'telephone=no');
 
   // Set page title.
-  $title = $this->driver->getTitle();
+  $title = $this->truncate($this->driver->getTitle(), 180);
   $this->layout()->title = $title;
 
   $headText = $title;

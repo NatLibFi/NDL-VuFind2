@@ -393,7 +393,6 @@ $config = [
             'Finna\View\CustomElement\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Video\Handler\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Video\Video' => 'Finna\Video\VideoFactory',
-            'Finna\View\Resolver\AggregateResolver' => 'Finna\View\Resolver\AggregateResolverFactory',
             'Finna\Wayfinder\WayfinderService' => 'Finna\Wayfinder\WayfinderServiceFactory',
             'NatLibFi\FinnaCodeSets\FinnaCodeSets' => 'Finna\RecordDriver\CodeSetsFactory',
 
@@ -421,13 +420,7 @@ $config = [
             'VuFind\Role\PermissionManager' => 'Finna\Role\PermissionManager',
             'VuFind\Search\Solr\HierarchicalFacetHelper' => 'Finna\Search\Solr\HierarchicalFacetHelper',
 
-            'ViewResolver' => 'Finna\View\Resolver\AggregateResolver',
             'Wayfinder' => 'Finna\Wayfinder\WayfinderService',
-        ],
-    ],
-    'view_manager' => [
-        'template_path_stack' => [
-            APPLICATION_PATH . '/vendor/natlibfi/finna-ui-components/source',
         ],
     ],
     'listeners' => [
@@ -704,12 +697,14 @@ $config = [
                     'Finna\ILS\Driver\Mikromarc' => 'Finna\ILS\Driver\MikromarcFactory',
                     'Finna\ILS\Driver\MultiBackend' => 'Finna\ILS\Driver\MultiBackendFactory',
                     'Finna\ILS\Driver\NoILS' => 'VuFind\ILS\Driver\NoILSFactory',
+                    'Finna\ILS\Driver\Quria' => 'Finna\ILS\Driver\AxiellWebServicesFactory',
                     'Finna\ILS\Driver\SierraRest' => 'VuFind\ILS\Driver\SierraRestFactory',
                 ],
                 'aliases' => [
                     'axiellwebservices' => 'Finna\ILS\Driver\AxiellWebServices',
                     'mikromarc' => 'Finna\ILS\Driver\Mikromarc',
                     'koharestsuomi' => 'Finna\ILS\Driver\KohaRestSuomi',
+                    'quria' => 'Finna\ILS\Driver\Quria',
 
                     'VuFind\ILS\Driver\Alma' => 'Finna\ILS\Driver\Alma',
                     'VuFind\ILS\Driver\Demo' => 'Finna\ILS\Driver\Demo',

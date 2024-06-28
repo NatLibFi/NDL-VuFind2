@@ -88,6 +88,18 @@
         <?php if ($hasOnlineURLs || $openUrlActive || $doiActive): ?>
         <div class="recordURLs local-available-online-record">
           <div class="truncate-field">
+            <?php if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
+              <?php foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $url): ?>
+                <?php if (isset($images[$url['url']])) {
+                  continue;
+                } ?>
+                <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><?=$this->icon('external-link') ?> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
+                <?php if ($url['source']): ?>
+                  <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source']) ?>)</span>
+                <?php endif; ?>
+                </div>
+              <?php endforeach; ?>
+            <?php endif; ?>
             <?php if (!empty($otherUrls)): ?>
               <?php foreach ($otherUrls as $url): ?>
                 <?php if (isset($images[$url['url']])) {
@@ -100,18 +112,6 @@
                   >
                     <?=$this->icon('external-link') ?> <?=$this->transEsc('default::link_' . $desc, null, $desc) ?>
                   </a>
-                </div>
-              <?php endforeach; ?>
-            <?php endif; ?>
-            <?php if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
-              <?php foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $url): ?>
-                <?php if (isset($images[$url['url']])) {
-                  continue;
-                } ?>
-                <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><?=$this->icon('external-link') ?> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
-                <?php if ($url['source']): ?>
-                  <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source']) ?>)</span>
-                <?php endif; ?>
                 </div>
               <?php endforeach; ?>
             <?php endif; ?>

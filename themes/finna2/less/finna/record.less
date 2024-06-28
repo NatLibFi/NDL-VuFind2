@@ -141,7 +141,7 @@ a.authority {
 }
 
 .authoritybox,
-.large-image-layout.record {
+.large-image-layout.record .record-main > .media {
   .media-left,
   .media-right {
     @media (min-width: @screen-sm) {
@@ -151,11 +151,16 @@ a.authority {
       .open-link {
         margin-top: 10px;
       }
-      .open-link, .model-link {
-        i, b {
-          color: tint(@action-link-color, 22%);
-          margin-right: 0;
-          font-style: normal;
+      .record-image-container {
+        .open-link {
+          margin-top: 10px;
+        }
+        .open-link, .model-link {
+          i, b {
+            color: tint(@action-link-color, 22%);
+            margin-right: 0;
+            font-style: normal;
+          }
         }
       }
     }
@@ -373,7 +378,6 @@ a.authority {
 }
 
 .summary {
-  color: @gray-light;
   font-size: 1.05em;
   line-height: 1.35em;
   margin-bottom: 10px;

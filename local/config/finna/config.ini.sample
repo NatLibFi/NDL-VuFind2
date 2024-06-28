@@ -1660,6 +1660,9 @@ treeSearchLimit = 100
 ; at a time e.g. unless custom record drivers are used.
 simpleContainerLinks = true
 
+; On collection list tab, display all collection items also on lower archive levels
+; showFullHierarchyTree = true
+
 ; This section will be used to configure the feedback module.
 ; Set "tab_enabled" to true in order to enable the feedback module.
 [Feedback]

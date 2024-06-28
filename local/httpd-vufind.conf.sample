@@ -17,21 +17,6 @@ AliasMatch ^/vufind2/themes/([0-9a-zA-Z-_]*)/(assets|css|files|images|js)/(.*)$ 
   RewriteRule ^/vufind2/themes/([0-9a-zA-Z-_]*)/(css|js)/components/(.*) /vufind2/themes/$1/components/$3 [R]
 </Directory>
 
-# Configuration for component-specific resources
-# For development use only
-AliasMatch ^/vufind2/themes/([0-9a-zA-Z-_]*)/components/(.*\.(css|js))$ /vufind2/vendor/natlibfi/finna-ui-components/source/components/$2
-<Directory ~ "^/path-to/NDL-VuFind2/vendor/natlibfi/finna-ui-components/source/components/">
-  <IfModule !mod_authz_core.c>
-    Order allow,deny
-    Allow from all
-  </IfModule>
-  <IfModule mod_authz_core.c>
-    Require all granted
-  </IfModule>
-  AllowOverride All
-  FallbackResource /vufind2/index.php
-</Directory>
-
 # Configuration for public cache (used for asset pipeline minification)
 AliasMatch ^/vufind2/cache/(.*)$ /path-to/NDL-VuFind2/local/cache/public/$1
 <Directory /path-to/NDL-VuFind2/local/cache/public/>

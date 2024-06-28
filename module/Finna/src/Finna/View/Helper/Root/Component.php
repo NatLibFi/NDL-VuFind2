@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2023.
+ * Copyright (C) The National Library of Finland 2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,6 +29,8 @@
 
 namespace Finna\View\Helper\Root;
 
+use function strlen;
+
 /**
  * Component view helper
  *
@@ -40,6 +42,10 @@ namespace Finna\View\Helper\Root;
  */
 class Component extends \VuFind\View\Helper\Root\Component
 {
+    public const BC_REPLACEMENTS = [
+        '@@molecules/containers/finna-panel' => 'finna-panel',
+    ];
+
     /**
      * Expand path and render template
      *
@@ -50,14 +56,12 @@ class Component extends \VuFind\View\Helper\Root\Component
      */
     public function __invoke(string $name, $params = []): string
     {
-        if (!str_starts_with($name, '@@')) {
-            return parent::__invoke($name, $params);
+        // Backwards compatibility support.
+        foreach (self::BC_REPLACEMENTS as $needle => $replacement) {
+            if (str_starts_with($name, $needle)) {
+                $name = $replacement . substr($name, strlen($needle));
+            }
         }
-
-        $parts = explode('/', $name);
-        $path = substr(array_shift($parts), 2);
-        $name = implode('/', $parts);
-
-        return $this->view->render("components/$path/" . $name, $params);
+        return parent::__invoke($name, $params);
     }
 }

@@ -6,6 +6,9 @@
     $this->layout()->breadcrumbs = $this->searchMemory()->getLastSearchLink($this->transEsc('Search'), '<li>', '</li> ')
         . '<li>' . $this->recordLinker()->getBreadcrumbHtml($this->driver) . '</li> '
         . '<li class="active">' . $this->transEsc('request_place_text') . '</li>';
+
+    // Make sure extra hold fields is an array (might not be if ILS connection failed):
+    $this->extraHoldFields ??= [];
 ?>
 <h2><?=$this->transEsc('request_place_text')?></h2>
 <?php if ($this->helpText): ?>
