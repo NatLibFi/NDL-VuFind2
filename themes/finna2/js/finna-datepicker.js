@@ -38,7 +38,6 @@ finna.finnaDatepicker = (function finnaDatepicker() {
         datepickerPopover.show();
         datepickerCalendar.focus();
         trapFocus(datepickerPopover);
-;
       }
 
       // Close the datepicker popover
