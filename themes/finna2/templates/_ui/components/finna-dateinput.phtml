@@ -1,14 +1,16 @@
 <?php
   $dateinputId = $this->dateinputId ?? '';
   $dateinputClass = $this->dateinputId ?? '';
-  $dateinputLabel = $this->dateinputLabel ?? 'Testi2';
+  $dateinputLabel = $this->dateinputLabel ?? '';
   $dateinputPlaceholder = $this->dateinputPlaceholder ?? '';
   $dateinputValue = $this->dateinputValue ?? '';
-  $dateinputPicker = $this->dateinputPicker ?? '';
+  $dateinputPicker = $this->dateinputPicker ?? 'single';
+  $dateinputRequired = $this->dateinputRequired ?? true;
 ?>
 <span class="finna-dateinput">
   <label for="<?=$dateinputId ?>"><?=$dateinputLabel ?></label>
-  <input class="input <?=$dateinputClass ?>" id="<?=$dateinputId ?>" value="<?=$dateinputValue ?>" autocomplete="off">
+  <input class="input <?=$dateinputClass ?>" id="<?=$dateinputId ?>" value="<?=$dateinputValue ?>" placeholder="<?=$dateinputValue ?>" <?php if ($dateinputRequired): ?>required<?php endif; ?> autocomplete="off">
+  <?php if($this->dateinputPicker === 'single'): ?>
   <span class="datepicker">
     <button class="datepicker-toggle">
       <?=$this->icon('calendar') ?>
@@ -23,3 +25,4 @@
     </dialog>
   </span>
 </span>
+<?php endif; ?>
