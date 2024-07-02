@@ -1,53 +1,26 @@
 <!-- START of: finna - myresearch/reservationlist.phtml -->
 <?php
+  $title = $this->transEsc('ReservationList::Research Room Reservations');
   // Set up page title:
-  $this->headTitle($this->translate('Library Cards'));
+  $this->headTitle($title);
 
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Library Cards') . '</li>';
-
-  // Additional translations
-  $this->jsTranslations()->addStrings(['new_password_success' => 'new_password_success']);
-
-  $user = $this->auth()->isLoggedIn();
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('reservationlist-home') . '">' . $title . '</a></li> <li class="active">' . $this->transEsc('ReservationList::Reservation List') . '</li>';
 ?>
 
 <!-- Leftside navigationbar -->
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'reservationList']); ?>
 
-<div class="<?=$this->layoutClass('mainbody-myresearch')?>">
-  <div class="my-research-content">
-    <div class="menu-flex">
-      <div class="sorting-stuff">
-        <!-- Do Later, order list, delete list, creation of a list happens at the same time with adding an item to a list -->
-      </div>
-    </div>
-    <div class="useraccount-header">
-      <h2>Title: <?=$this->escapeHtml($this->title) ?> (<?=count($this->recordList ?? []);?>)</h2>
-    </div>
-    <div class="description-wrapper">
-      <p>Description: <?= $this->escapeHtml($this->description); ?></p>
-    </div>
-    <div class="datasource-wrapper">
-      <p>Datasource: <?= $this->escapeHtml($this->datasource); ?></p>
-    </div>
-    <div class="building-wrapper">
-      <p>Building: <?= $this->escapeHtml($this->building); ?></p>
-    </div>
-    <div class="created-wrapper">
-      <p>Creared: <?= $this->escapeHtml($this->created); ?></p>
-    </div>
-    <div class="orered-wrapper">
-      <p>Ordered: <?= $this->escapeHtml($this->ordered) ?></p>
-    </div>
-    <?php if (count($this->results?->getResults() ?? []) && !$this->ordered): ?>
-      <!-- Add order buttons if the list has not been ordered yet. -->
-      <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-order', ['id' => $this->listId]))?>" class="btn btn-primary" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?=$this->transEsc('Tilaa lista')?></a>
-    <?php endif; ?>
-    <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-delete', ['id' => $this->listId]))?>" class="btn btn-primary" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?=$this->transEsc('Poista lista')?></a>
-    <?php foreach ($this->results?->getResults() ?? [] as $i => $current): ?>
-      <?=$this->record($current)->getListEntry(null, false)?>
-    <?php endforeach; ?>
-  </div>
+
+<div class="<?=$this->layoutClass('mainbody-myresearch')?> reservation-list-body">
+  <h2><?=$title ?></h2>
+  <ul class="reservations-list">
+    <?php foreach ($this->lists as $list): ?>
+      <li>
+        <a href="<?= $this->url('reservationlist-list', ['id' => $list['id']])?>"><?= $this->escapeHtml($list['title']) ?></a>
+        <?php if ($list['ordered_formatted']): ?><span class="list-ordered"><?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $list['ordered_formatted']])?></span><?php endif; ?>
+      </li>
+      <?php endforeach; ?>
+  </ul>
 </div>
 <!-- END of: finna - myresearch/reservationlist.phtml -->

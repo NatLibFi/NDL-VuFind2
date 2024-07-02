@@ -47,9 +47,10 @@
 #   response (string) Reponse after form submit (translation key)
 #
 #   primaryHandler (string) Determines how submitted form data is handled (formerly known as sendMethod):
-#     email    Form data is sent via email to 'recipient'
-#     database Form data is saved to the database.
-#     api      Form data is sent as a JSON message to an external API
+#     email           Form data is sent via email to 'recipient'
+#     database        Form data is saved to the database.
+#     reservationlist Form data is sent through
+#     api             Form data is sent as a JSON message to an external API
 #
 #   apiSettings:
 #     url          (string) URL to use with sendMethod api (use "test" to just output the API request)

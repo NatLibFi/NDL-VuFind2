@@ -147,7 +147,7 @@ class Resource extends \VuFind\Db\Table\Resource
      * @param int     $offset Offset.
      * @param ?int    $limit  Limit.
      *
-     * @return array The reservation resources.
+     * @return ResultSetInterface The reservation resources.
      */
     public function getReservationResources(
         $user,
@@ -158,15 +158,14 @@ class Resource extends \VuFind\Db\Table\Resource
     ) {
         return $this->select(
             function ($s) use ($user, $list, $sort, $offset, $limit) {
-                $s->columns(
-                    [
-                        new Expression(
-                            'DISTINCT(?)',
-                            ['resource.id'],
-                            [Expression::TYPE_IDENTIFIER]
-                        ), '*',
-                    ]
-                );
+                $columns = [
+                    new Expression(
+                        'DISTINCT(?)',
+                        ['resource.id'],
+                        [Expression::TYPE_IDENTIFIER]
+                    ), Select::SQL_STAR,
+                ];
+                $s->columns($columns);
                 $urColumns = $list === null ?
                     [
                     'id' => new Expression(
@@ -202,7 +201,7 @@ class Resource extends \VuFind\Db\Table\Resource
                 }
                 $s->group('resource.id');
                 if (!empty($sort)) {
-                    Resource::applySort($s, $sort);
+                    Resource::applySort($s, $sort, 'resource', $columns);
                 }
             }
         );

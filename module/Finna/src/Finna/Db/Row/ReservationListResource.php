@@ -41,6 +41,13 @@ use VuFind\Db\Row\RowGateway;
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
+ * 
+ * @property int     $id
+ * @property int     $user_id
+ * @property int     $resource_id
+ * @property ?int    $list_id
+ * @property ?string $notes
+ * @property string  $saved
  */
 class ReservationListResource extends RowGateway
 {

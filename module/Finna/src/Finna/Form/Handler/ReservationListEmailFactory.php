@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Shibboleth Logout Notification controller factory.
+ * Class ReservationListEmailFactory
  *
- * PHP version 8
+ * PHP version 8.1
  *
- * Copyright (C) The National Library of Finland 2020.
+ * Copyright (C) The National Library of Finland 2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,30 +21,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Controller
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
- * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @package  Form
+ * @author   Josef Moravec <moravec@mzk.cz>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @license  https://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
 
-namespace Finna\Controller;
+declare(strict_types=1);
+
+namespace Finna\Form\Handler;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
-use VuFind\Controller\AbstractBaseFactory;
 
 /**
- * Shibboleth Logout Notification controller factory.
+ * Class ReservationListEmailFactory
  *
  * @category VuFind
- * @package  Controller
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
- * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @package  Form
+ * @author   Josef Moravec <moravec@mzk.cz>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @license  https://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class ReservationListControllerFactory extends AbstractBaseFactory
+class ReservationListEmailFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -58,7 +62,7 @@ class ReservationListControllerFactory extends AbstractBaseFactory
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
-     * @throws ContainerException if any other error occurs
+     * @throws ContainerException&\Throwable if any other error occurs
      */
     public function __invoke(
         ContainerInterface $container,
@@ -68,12 +72,14 @@ class ReservationListControllerFactory extends AbstractBaseFactory
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        return parent::__invoke(
-            $container,
-            $requestedName,
-            [
-                $container->get(\Finna\ReservationList\ReservationListService::class)
-            ]
+        $reserervationListService = $container->get(\Finna\ReservationList\ReservationListService::class);
+        $configLoader = $container->get(\VuFind\Config\PluginManager::class);
+        return new $requestedName(
+            $container->get('ViewRenderer'),
+            $configLoader->get('config'),
+            $container->get(\VuFind\Mailer\Mailer::class),
+            $reserervationListService,
+            $configLoader->get('ReservationList')
         );
     }
 }

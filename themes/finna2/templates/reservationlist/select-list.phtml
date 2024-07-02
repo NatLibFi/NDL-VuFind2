@@ -1,8 +1,20 @@
+<?php
+  $pageTitle = 'ReservationList::Add To Reservation List';
+  // Set up page title:
+  $this->headTitle($this->translate($pageTitle));
+
+  // Set up breadcrumbs:
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('reservationlist-additem') . '">' . $this->transEsc('ReservationList::Add To Reservation List') . '</a></li>'
+    . '<li>' . $this->transEsc($pageTitle) . '</li>';
+?>
+
+<h2><?=$this->transEsc($pageTitle); ?></h2>
+
 <div>
   <?php if (!empty($this->lists)): ?>
   <form method="post" name="reservationListAdd" data-lightbox-onclose="VuFind.refreshPage">
     <input type="hidden" name="state" value="saveItem">
-    <label class="control-label" for="save_list"><?=$this->transEsc('reservation_list_choose_a_list') ?></label>
+    <label class="control-label" for="save_list"><?=$this->transEsc('ReservationList::Choose a List') ?></label>
     <div class="form-group">
       <select class="form-control" id="save_list" name="list">
         <?php foreach ($this->lists as $list): ?>
@@ -11,15 +23,15 @@
       </select>
     </div>
     <div class="form-group">
-      <label class="control-label" for="add_notes"><?=$this->transEsc('reservation_list_add_note') ?></label>
+      <label class="control-label" for="add_notes"><?=$this->transEsc('ReservationList::Description') ?></label>
       <textarea class="form-control" id="add_notes" name="desc" rows="3"></textarea>
     </div>
     <div class="form-group">
-      <input class="btn btn-primary" type="submit" name="submit" value="<?=$this->transEscAttr('reservation_list_save') ?>">
+      <input class="btn btn-primary" type="submit" name="submit" value="<?=$this->transEscAttr('ReservationList::Add To Reservation List') ?>">
     </div>
   </form>
   <?php else: ?>
-    <?= $this->transEsc('reservation_lists_no_lists_found') ?>
+    <?= $this->transEsc('ReservationList::No Lists Found') ?>
   <?php endif; ?>
-  <a class="btn btn-link" id="make-list" href="<?=$this->url('reservationlist-additem', [], ['query' => ['newList' => '1', 'recordId' => urlencode($this->driver->getUniqueId()), 'source' => urlencode($this->driver->getSourceIdentifier())]])?>"><?=$this->transEsc('reservation_list_create_new_list')?></a>
+  <a class="btn btn-link" id="make-list" href="<?=$this->url('reservationlist-additem', [], ['query' => ['newList' => '1', 'recordId' => urlencode($this->driver->getUniqueId()), 'source' => urlencode($this->driver->getSourceIdentifier())]])?>"><?=$this->transEsc('ReservationList::Create New Reservation List')?></a>
 </div>

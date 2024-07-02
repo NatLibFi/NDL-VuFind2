@@ -34,14 +34,13 @@
 
 namespace Finna\Controller;
 
+use Finna\Form\ReservationListForm;
 use Finna\ReservationList\ReservationListService;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use VuFind\Controller\AbstractBase;
 use VuFind\Exception\Forbidden as ForbiddenException;
 use VuFind\Exception\ListPermission as ListPermissionException;
-use VuFind\Mailer\Mailer;
-
-use function in_array;
+use VuFind\Exception\LoginRequired as LoginRequiredException;
 
 /**
  * Reservation List Controller
@@ -120,15 +119,26 @@ class ReservationListController extends AbstractBase
         );
 
         $view->driver = $driver;
+        $view->lists = $this->reservationListService->getListsWithoutRecord(
+            $this->getUser(),
+            $driver->getUniqueID(),
+            $driver->getSourceIdentifier(),
+            $driver->getDatasource()
+        );
         if ($this->formWasSubmitted('submit')) {
             $state = $this->getParam('state');
             $title = $this->getParam('title');
-            if (!$title) {
-                $this->flashMessenger()->addErrorMessage('reservation_list_missing_title');
-            }
+
             if ('saveList' === $state) {
                 $building = $driver->getBuildings()[0] ?? '';
                 $datasource = $driver->getDataSource();
+                if (!$title) {
+                    $this->flashMessenger()->addErrorMessage('reservation_list_missing_title');
+                    $view->setTemplate('reservationlist/add-list');
+                    $view->source = $source;
+                    $view->recordId = $recordId;
+                    return $view;
+                }
                 $this->reservationListService->addListForUser(
                     $this->getUser(),
                     $this->getParam('desc') ?? '',
@@ -140,10 +150,8 @@ class ReservationListController extends AbstractBase
                     $this->getUser(),
                     $driver->getDatasource()
                 );
-                $view->setTemplate('reservationlist/select-list');
             } elseif ('saveItem' === $state) {
                 // Seems like someone wants to save stuff into a list.
-                // Lets process it like a champ. Not the mushroom champ.
                 $this->reservationListService->addRecordToList(
                     $this->getUser(),
                     $driver->getUniqueID(),
@@ -151,32 +159,22 @@ class ReservationListController extends AbstractBase
                     $this->getParam('desc') ?? '',
                     $driver->getSourceIdentifier()
                 );
-                $this->flashMessenger()->addMessage('reservation_list_added_succesfully');
-                // After this we can display the you did it, lets continue screen
                 return $this->inLightbox()  // different behavior for lightbox context
                   ? $this->getRefreshResponse()
                   : $this->redirect()->toRoute('home');
             }
         }
 
-        $view->lists = $this->reservationListService->getListsWithoutRecord(
-            $this->getUser(),
-            $driver->getUniqueID(),
-            $driver->getSourceIdentifier(),
-            $driver->getDatasource()
-        );
         $view->setTemplate('reservationlist/select-list');
         return $view;
     }
 
     /**
-     * Home action for the ReservationListController.
+     * List action for the ReservationListController.
      *
-     * This method is responsible for rendering the home page of the Reservation List module.
-     *
-     * @return \Laminas\View\Model\ViewModel View model for the home page.
+     * @return \Laminas\View\Model\ViewModel View model for the list page.
      */
-    public function homeAction(): \Laminas\View\Model\ViewModel
+    public function listAction(): \Laminas\View\Model\ViewModel
     {
         $user = $this->getUser();
         if (!$user) {
@@ -193,120 +191,100 @@ class ReservationListController extends AbstractBase
             + $this->getRequest()->getPost()->toArray()
             + ['id' => $this->params()->fromRoute('id')];
 
-        // Get first list for user to show if none is displayed
-        if (!isset($request['id'])) {
-            $lists = $this->reservationListService->getListsForUser($this->getUser());
-            $firstList = reset($lists);
-            $request['id'] = $firstList['id'] ?? null;
-        }
-
-        if (isset($request['id'])) {
+        // Try to open the list page, if the list is not found, redirect to home.
+        try {
             $results = $this->getListAsResults($request);
             $currentList = $this->reservationListService->getListForUser($user, $request['id']);
+            $params = $currentList + [
+                'results' => $results,
+                'params' => $results->getParams(),
+                'enabled' => $this->listsEnabledForDatasource($currentList['datasource']),
+            ];
             // If we got this far, we just need to display the favorites:
             try {
-                return $this->createViewModel(
-                    [
-                        'params' => $results->getParams(),
-                        'results' => $results,
-                        'title' => $currentList->title,
-                        'description' => $currentList->description,
-                        'datasource' => $currentList->datasource,
-                        'created' => $currentList->created,
-                        'ordered' => $currentList->ordered,
-                        'building' => $currentList->building,
-                        'listId' => $request['id'],
-                    ]
-                );
+                return $this->createViewModel($params);
             } catch (ListPermissionException $e) {
                 if (!$this->getUser()) {
                     return $this->forceLogin();
                 }
                 throw $e;
             }
+        } catch (\Exception $e) {
+            return $this->redirect()->toRoute('reservationlist-home');
         }
-
-        $view = $this->createViewModel();
-        return $view;
     }
 
     /**
-     * Display save to reservation list form.
+     * Handles rendering and submit of dynamic forms.
+     * Form configurations are specified in FeedbackForms.yaml.
      *
-     * @return \Laminas\View\Model\ViewModel
-     * @throws \Exception
+     * @return mixed
      */
-    public function orderAction(): \Laminas\View\Model\ViewModel
+    public function orderAction()
     {
-        // We want to merge together GET, POST and route parameters to
-        // initialize our search object:
         $request = $this->getRequestAsArray();
-        $currentDate = date('Y-m-d');
-        $earliestPickup = date('Y-m-d', strtotime('+ 2 days'));
         $listId = $request['list-id'] ?? $request['id'] ?? '';
-        $list = $this->reservationListService->getListForUser($this->getUser(), $listId);
-        $results = $this->getListAsResults($request);
-        // Building or datasource, depends?
-        $listConfg = $this->getConfig('ReservationList')[$list['datasource']];
-        if ($this->formWasSubmitted('submit')) {
-            // Gather data here, and be ready to send an email.
-            // Or let the reservationlistservice to handle the sending.
-            $dateToPickUp = $request['order-pickup-date'] ?? false;
-            $contactInfo = $request['order-email'] ?? $request['order-phone'] ?? false;
-            // If any of the following information is missing, return the list and add a small warning
-            if (in_array(false, [$dateToPickUp, $contactInfo, $listId])) {
-                // Do an error check here
-            }
-            $user = $this->getUser();
-            // Start order process
-            $config = $this->getConfig();
-            $message = $this->getViewRenderer()->render(
-                'Email/reservation-list.phtml',
-                compact(
-                    'dateToPickUp',
-                    'contactInfo',
-                    'results',
-                    'user'
-                ),
-            );
-            $to = 'testemail@test.test';
-            $config = $this->getConfig();
-            $from = $this->getConfig()->Site->email;
-            // If everything goes right, save the ordered timestamp, otherwise return with message about what went wrong
-            try {
-                $this->serviceLocator->get(Mailer::class)->send(
-                    $listConfg['email'],
-                    $from,
-                    $this->translate('tilauslista tilaus'),
-                    $message
-                );
-                $this->reservationListService->setOrdered($user, $listId);
-            } catch (\VuFind\Exception\Mail $e) {
-                $this->flashMessenger()->addMessage($e->getDisplayMessage());
-            }
+        $user = $this->getUser();
+        $formId = ReservationListForm::RESERVATION_LIST_REQUEST;
+        /** @var ReservationListForm $form */
+        $form = $this->serviceLocator->get(\Finna\Form\ReservationListForm::class);
+        $params = [];
+        if ($refererHeader = $this->getRequest()->getHeader('Referer')) {
+            $params['referrer'] = $refererHeader->getFieldValue();
+        }
+        if ($userAgentHeader = $this->getRequest()->getHeader('User-Agent')) {
+            $params['userAgent'] = $userAgentHeader->getFieldValue();
+        }
+        $form->setFormId($formId, $params);
+
+        if (!$form->isEnabled()) {
+            throw new \VuFind\Exception\Forbidden("Form '$formId' is disabled");
         }
 
-        $organisationInfo = [
-          'name' => $listConfg['name'] ?? '-',
-          'address' => $listConfg['address'] ?? '-',
-          'postal' => $listConfg['postal'] ?? '-',
-          'city' => $listConfg['city'] ?? '-',
-        ];
+        if (!$user) {
+            return $this->forceLogin();
+        }
 
-        $view = $this->createViewModel(
-            compact(
-                'results',
-                'earliestPickup',
-                'currentDate',
-                'organisationInfo',
-                'listId'
-            ),
-        );
+        $view = $this->createViewModel(compact('form', 'formId', 'user'));
+        $view->setTemplate('feedback/form');
+        $view->useCaptcha
+            = $this->captcha()->active('feedback') && $form->useCaptcha();
+
+        $params = $this->params();
+        $form->setData($params->fromPost());
+
+        if (!$this->formWasSubmitted('submit', $view->useCaptcha)) {
+            $records = $this->reservationListService->getRecordsForList($user, $listId);
+            $form->setReservableMaterials($records);
+            $form->setData(
+                [
+                 'name' => $user->firstname . ' ' . $user->lastname,
+                 'email' => $user['email'],
+                ]
+            );
+            return $view;
+        }
+
+        if (!$form->isValid()) {
+            return $view;
+        }
+
+        $form->setListId($listId);
+        $success = $form->getPrimaryHandler()->handle($form, $params, $user ?: null);
+        if ($success) {
+            $view->setVariable('successMessage', $form->getSubmitResponse());
+            $view->setTemplate('feedback/response');
+        } else {
+            $this->flashMessenger()->addErrorMessage(
+                $this->translate('could_not_process_feedback')
+            );
+        }
+
         return $view;
     }
 
     /**
-     * Deletes a reservation.
+     * Deletes a list.
      *
      * @return Response The response object.
      */
@@ -315,16 +293,177 @@ class ReservationListController extends AbstractBase
         // We want to merge together GET, POST and route parameters to
         // initialize our search object:
         $request = $this->getRequestAsArray();
-        if ($this->formWasSubmitted('submit')) {
-            $result = $this->reservationListService->deleteList($this->getUser(), $request['id']);
-            if ($result) {
-                $this->flashMessenger()->addMessage('List removed successfully');
-                return $this->redirect()->toRoute('reservationlist-home');
+        // If the user already confirmed the operation, perform the delete now;
+        // otherwise prompt for confirmation:
+        $confirm = $this->params()->fromPost(
+            'confirm',
+            $this->params()->fromQuery('confirm')
+        );
+        if ($confirm) {
+            try {
+                $this->reservationListService->deleteList($this->getUser(), $request['id'] ?? null);
+            } catch (LoginRequiredException | ListPermissionException $e) {
+                $user = $this->getUser();
+                if ($user == false) {
+                    return $this->forceLogin();
+                }
+                // Logged in? Then we have to rethrow the exception!
+                throw $e;
             }
+            // Redirect to MyResearch home
+            return $this->inLightbox()  // different behavior for lightbox context
+                ? $this->getRefreshResponse()
+                : $this->redirect()->toRoute('reservationlist-home');
+        }
+        return $this->confirmDelete(
+            $request['id'] ?? null,
+            $this->url()->fromRoute('reservationlist-delete'),
+            $this->url()->fromRoute('reservationlist-home'),
+            'ReservationList::confirm_delete_list',
+            [],
+            ['id' => $request['id'] ?? '']
+        );
+    }
+
+    /**
+     * Delete group of records from a list.
+     *
+     * @return mixed
+     */
+    public function deleteBulkAction()
+    {
+        // Force login:
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->forceLogin();
         }
 
+        // Get target URL for after deletion:
+        $listID = $this->params()->fromPost('listID');
+
+        // Fail if we have nothing to delete:
+        $ids = $this->params()->fromPost('ids') ?? $this->params()->fromQuery('ids');
+
+        $actionLimit = 100;
+
+        // If the user already confirmed the operation, perform the delete now;
+        // otherwise prompt for confirmation:
+        $confirm = $this->params()->fromPost(
+            'confirm',
+            $this->params()->fromQuery('confirm')
+        );
+        if ($confirm) {
+            $success = $this->performDeleteReservation($deleteId, $deleteSource);
+            if ($success !== true) {
+                return $success;
+            }
+        } else {
+            return $this->confirmDeleteReservation($deleteId, $deleteSource);
+        }
+        // If we got this far, the operation has not been confirmed yet; show
+        // the necessary dialog box:
+        if (empty($listID)) {
+            $list = false;
+        } else {
+            $list = $this->reservationListService->getListForUser($user, $listID);
+        }
+        return $this->createViewModel(
+            [
+                'list' => $list,
+                'deleteIDS' => $ids,
+                'records' => $this->getRecordLoader()->loadBatch($ids),
+            ]
+        );
+    }
+
+    /**
+     * Delete record
+     *
+     * @param string $id     ID of record to delete
+     * @param string $source Source of record to delete
+     *
+     * @return mixed         True on success; otherwise returns a value that can
+     * be returned by the controller to forward to another action (i.e. force login)
+     */
+    public function performDeleteReservation($id, $source)
+    {
+        // Force login:
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->forceLogin();
+        }
+
+        // Load/check incoming parameters:
+        $listID = $this->params()->fromRoute('id');
+        $listID = empty($listID) ? null : $listID;
+        if (empty($id)) {
+            throw new \Exception('Cannot delete empty ID!');
+        }
+
+        // Perform delete and send appropriate flash message:
+        if (null !== $listID) {
+            // ...Specific List
+            $table = $this->getTable('UserList');
+            $list = $table->getExisting($listID);
+            $list->removeResourcesById($user, [$id], $source);
+            $this->flashMessenger()->addMessage('Item removed from list', 'success');
+        } else {
+            // ...All Saved Items
+            $user->removeResourcesById([$id], $source);
+            $this->flashMessenger()
+                ->addMessage('Item removed from favorites', 'success');
+        }
+
+        // All done -- return true to indicate success.
+        return true;
+    }
+
+    /**
+     * Confirm a request to delete a reservation item.
+     *
+     * @param string       $id          ID of object to delete
+     * @param string       $url         URL to return to if deletion is confirmed
+     * @param string       $fallbackUrl URL to return to if deletion is not confirmed
+     * @param string       $title       Title of the confirmation dialog
+     * @param string|array $messages    Message key for the confirmation dialog
+     * @param array        $extras      Additional parameters to pass to the confirmation dialog
+     *
+     * @return mixed
+     */
+    protected function confirmDelete(
+        $id,
+        $url,
+        $fallbackUrl,
+        $title = 'ReservationList::confirm_delete',
+        $messages = 'confirm_delete',
+        $extras = []
+    ) {
+        if (empty($id)) {
+            $url = $fallbackUrl;
+        }
+        return $this->confirm(
+            $title,
+            $url,
+            $url,
+            $messages,
+            $extras
+        );
+    }
+
+    /**
+     * Home action for the ReservationListController.
+     *
+     * @return \Laminas\View\Model\ViewModel
+     */
+    public function homeAction()
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->forceLogin();
+        }
+        $lists = $this->reservationListService->getListsForUser($user);
         $view = $this->createViewModel(
-            ['id' => $request['id']]
+            ['lists' => $lists]
         );
         return $view;
     }
@@ -367,5 +506,17 @@ class ReservationListController extends AbstractBase
         };
 
         return $runner->run($request, 'ReservationList', $setupCallback);
+    }
+
+    /**
+     * Check if lists are enabled for datasource.
+     *
+     * @param string $datasource Datasource to check for.
+     *
+     * @return bool True if lists are enabled for datasource, false otherwise
+     */
+    protected function listsEnabledForDatasource(string $datasource): bool
+    {
+        return $this->getConfig('ReservationList')[$datasource]['enabled'] ?? false;
     }
 }

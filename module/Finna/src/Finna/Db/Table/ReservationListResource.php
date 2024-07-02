@@ -29,8 +29,11 @@
 
 namespace Finna\Db\Table;
 
+use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
+use VuFind\Db\Row\RowGateway;
+use VuFind\Db\Table\PluginManager;
 
 use function is_array;
 
@@ -45,6 +48,25 @@ use function is_array;
  */
 class ReservationListResource extends \VuFind\Db\Table\UserResource
 {
+    /**
+     * Constructor
+     *
+     * @param Adapter       $adapter Database adapter
+     * @param PluginManager $tm      Table manager
+     * @param array         $cfg     Laminas configuration
+     * @param RowGateway    $rowObj  Row prototype object (null for default)
+     * @param string        $table   Name of database table to interface with
+     */
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
+        $cfg,
+        ?RowGateway $rowObj = null,
+        $table = 'finna_reservation_list_resource'
+    ) {
+        parent::__construct($adapter, $tm, $cfg, $rowObj, $table);
+    }
+
     /**
      * Create link if one does not exist; update notes if one does.
      *
@@ -99,11 +121,6 @@ class ReservationListResource extends \VuFind\Db\Table\UserResource
                 }
                 $select->where->in('resource_id', $resource_id);
             }
-            // null or true values of $list_id have different meanings in the
-            // context of the $resourceTags->destroyResourceLinks() call above, since
-            // some tags have a null $list_id value. In the case of user_resource
-            // rows, however, every row has a non-null $list_id value, so the
-            // two cases are equivalent and may be handled identically.
             if (null !== $list_id && true !== $list_id) {
                 $select->where->equalTo('list_id', $list_id);
             }
@@ -181,6 +198,37 @@ class ReservationListResource extends \VuFind\Db\Table\UserResource
             if (null !== $userId) {
                 $select->where->equalTo('user_resource.user_id', $userId);
             }
+        };
+        return $this->select($callback);
+    }
+
+    /**
+     * Get records for a list.
+     *
+     * @param int $listId ID of list to retrieve.
+     * @param int $userId ID of user to retrieve list for.
+     *
+     * @return \Laminas\Db\ResultSet\AbstractResultSet
+     */
+    public function getRecordsForList($listId, $userId): \Laminas\Db\ResultSet\AbstractResultSet
+    {
+        $callback = function ($select) use ($listId, $userId) {
+            $select->columns(
+                [
+                    new Expression(
+                        'DISTINCT(?)',
+                        ['finna_reservation_list_resource.id'],
+                        [Expression::TYPE_IDENTIFIER]
+                    ), Select::SQL_STAR,
+                ]
+            );
+            $select->join(
+                ['r' => 'resource'],
+                'r.id = finna_reservation_list_resource.resource_id',
+                []
+            );
+            $select->where->equalTo('finna_reservation_list_resource.list_id', $listId)
+                ->equalTo('finna_reservation_list_resource.user_id', $userId);
         };
         return $this->select($callback);
     }

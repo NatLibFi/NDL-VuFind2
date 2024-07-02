@@ -30,11 +30,13 @@
 namespace Finna\ReservationList;
 
 use Finna\Db\Table\ReservationList;
+use Laminas\Db\ResultSet\ResultSetInterface;
 use Laminas\Stdlib\Parameters;
 use VuFind\Db\Row\User;
 use VuFind\Db\Table\Resource as ResourceTable;
 use VuFind\Db\Table\UserResource as UserResourceTable;
 use VuFind\Record\Cache as RecordCache;
+use VuFind\Exception\ListPermission as ListPermissionException;
 
 /**
  * Reservation List Service
@@ -116,14 +118,40 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
     {
         $lists = $this->reservationList->select(['user_id' => $user->id]);
         $result = [];
+
         foreach ($lists as $list) {
+            $pickupDateStr = '';
+            if ($list->pickup_date) {
+                $pickupDateStr = strtotime($list->pickup_date);
+                $pickupDateStr = date('d.m.Y', $pickupDateStr);
+            }
+            $orderedDateStr = '';
+            if ($list->ordered) {
+                $orderedDateStr = strtotime($list->ordered);
+                $orderedDateStr = date('d.m.Y', $orderedDateStr);
+            }
             $result[] = [
                 'id' => $list->id,
                 'title' => $list->title,
                 'ordered' => $list->ordered,
+                'pickup_date' => $list->pickup_date,
+                'ordered_formatted' => $orderedDateStr,
+                'pickup_date_formatted' => $pickupDateStr,
             ];
         }
         return $result;
+    }
+
+    /**
+     * Retrieves reservation lists for a given user.
+     *
+     * @param User $user User for whom to retrieve the reservation lists.
+     *
+     * @return ResultSetInterface
+     */
+    public function getListsForUserAsObjects(User $user): ResultSetInterface
+    {
+        return $this->reservationList->select(['user_id' => $user->id]);
     }
 
     /**
@@ -142,6 +170,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
             $result[] = [
                 'id' => $list->id,
                 'title' => $list->title,
+                'ordered' => $list->ordered,
             ];
         }
         return $result;
@@ -174,11 +203,38 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      * @param User $user User for whom to retrieve the reservation list.
      * @param int  $id   ID of the reservation list.
      *
-     * @return \Laminas\Db\ResultSet\ResultSetInterface;
+     * @return array
      */
-    public function getListForUser(User $user, $id)
+    public function getListForUser(User $user, $id): array
     {
-        return $this->reservationList->select(['user_id' => $user->id, 'id' => $id])->current();
+        $list = $this->reservationList->getExisting($id);
+        if (!$list->editAllowed($user)) {
+            throw new ListPermissionException('list_access_denied');
+        }
+        $result = [];
+        if ($list) {
+            $pickupDateStr = '';
+            if ($list->pickup_date) {
+                $pickupDateStr = strtotime($list->pickup_date);
+                $pickupDateStr = date('d.m.Y', $pickupDateStr);
+            }
+            $orderedDateStr = '';
+            if ($list->ordered) {
+                $orderedDateStr = strtotime($list->ordered);
+                $orderedDateStr = date('d.m.Y', $orderedDateStr);
+            }
+            $result = [
+                'id' => $list->id,
+                'title' => $list->title,
+                'ordered' => $list->ordered,
+                'datasource' => $list->datasource,
+                'building' => $list->building,
+                'pickup_date' => $list->pickup_date,
+                'ordered_formatted' => $orderedDateStr,
+                'pickup_date_formatted' => $pickupDateStr,
+            ];
+        }
+        return $result;
     }
 
     /**
@@ -220,6 +276,9 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         $datasourced = $this->getListsForDatasource($user, $datasource);
         $result = [];
         foreach ($datasourced as $compare) {
+            if ($compare['ordered']) {
+                continue;
+            }
             foreach ($lists as $list) {
                 if ($list['id'] === $compare['id']) {
                     continue 2;
@@ -249,9 +308,13 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         string $notes = '',
         string $source = DEFAULT_SEARCH_BACKEND
     ): bool {
+        if (!$this->userHasAuthority($user, $listId)) {
+            throw new ListPermissionException('list_access_denied');
+        }
         $resourceTable = $this->reservationList->getDbTable('Resource');
         $resource = $resourceTable->findResource($recordId, $source);
 
+        /** @var \Finna\Db\Table\ReservationListResource */
         $userResourceTable = $this->reservationList->getDbTable(\Finna\Db\Table\ReservationListResource::class);
         $userResourceTable->createOrUpdateLink(
             $resource->id,
@@ -263,7 +326,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
     }
 
     /**
-     * Delete list from the user, returns bool if the removal was successful
+     * Set list ordered, returns bool if the setting was successful
      *
      * @param User   $user    User
      * @param string $list_id Id of the list
@@ -272,6 +335,9 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      */
     public function setOrdered($user, $list_id)
     {
+        if (!$this->userHasAuthority($user, $listId)) {
+            throw new ListPermissionException('list_access_denied');
+        }
         $currentList = $this->reservationList->getExisting($list_id);
         $result = $currentList->setOrdered($user);
         return !!$result;
@@ -287,8 +353,88 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      */
     public function deleteList($user, $list_id)
     {
+        if (!$this->userHasAuthority($user, $list_id)) {
+            throw new ListPermissionException('list_access_denied');
+        }
         $currentList = $this->reservationList->getExisting($list_id);
         $result = $currentList->delete($user);
         return !!$result;
+    }
+
+    /**
+     * Set pickup date for a reservation list.
+     *
+     * @param User   $user    User
+     * @param string $list_id Id of the list
+     * @param string $date    Date to set
+     * 
+     * @return bool
+     */
+    public function setPickupDate($user, $list_id, $date)
+    {
+        if (!$this->userHasAuthority($user, $listId)) {
+            throw new ListPermissionException('list_access_denied');
+        }
+        $currentList = $this->reservationList->getExisting($list_id);
+        $result = $currentList->setPickupDate($user, $date);
+        return !!$result;
+    }
+
+    /**
+     * Delete a group of items from a reservation list.
+     *
+     * @param array $ids    Array of IDs in source|id format.
+     * @param int   $listId ID of list to delete from
+     * @param User  $user   Logged in user
+     *
+     * @return void
+     */
+    public function deleteItems($ids, $listId, $user)
+    {
+        if (!$this->userHasAuthority($user, $listId)) {
+            throw new ListPermissionException('list_access_denied');
+        }
+        // Sort $ids into useful array:
+        $sorted = [];
+        foreach ($ids as $current) {
+            [$source, $id] = explode('|', $current, 2);
+            if (!isset($sorted[$source])) {
+                $sorted[$source] = [];
+            }
+            $sorted[$source][] = $id;
+        }
+
+        /** @var \Finna\Db\Table\ReservationListResource */
+        $reservationListResource = $this->reservationList->getDbTable(\Finna\Db\Table\ReservationListResource::class);
+        foreach ($sorted as $source => $ids) {
+            $reservationListResource->destroyLinks($ids, $user->id, $listId);
+        }
+    }
+
+    /**
+     * Get records for a list
+     *
+     * @param User $user   User
+     * @param int  $listId ID of the list
+     *
+     * @return array
+     */
+    public function getRecordsForList($user, $listId): array
+    {
+        if (!$this->userHasAuthority($user, $listId)) {
+            throw new ListPermissionException('list_access_denied');
+        }
+        /** @var \Finna\Db\Table\Resource */
+        $resource = $this->reservationList->getDbTable(\Finna\Db\Table\Resource::class);
+        $records = $resource->getReservationResources($user->id, $listId);
+        $result = [];
+        foreach ($records as $record) {
+            $result[] = [
+                'id' => $record->id,
+                'record_id' => $record->record_id,
+                'title' => $record->title,
+            ];
+        }
+        return $result;
     }
 }

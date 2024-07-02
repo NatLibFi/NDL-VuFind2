@@ -1,5 +1,5 @@
 <?php
-  $pageTitle = 'Lähetä varauslista (luku- tai tutkijasaliin)';
+  $pageTitle = 'ReservationList::Send Reservation List to Research Room';
   // Set up page title:
   $this->headTitle($this->translate($pageTitle));
 
@@ -8,53 +8,43 @@
     . '<li>' . $this->transEsc($pageTitle) . '</li>';
 ?>
 
-<?=$this->flashmessages()?>
-
 <h2><?=$this->transEsc($pageTitle); ?></h2>
 
-<?=$this->transEsc('reservation_list_order_information')?>:
+<?=$this->flashmessages()?>
 
-<form class="form-edit-list" method="post" name="order">
+
+<form class="form-edit-list" method="post" name="order" data-lightbox-onclose="VuFind.refreshPage">
   <input type="hidden" name="list-id" value="<?= $this->escapeHtmlAttr($this->listId); ?>"/>
-  <p><?=$this->transEsc('reservation_list_order_items')?>:</p>
+  <p><?=$this->transEsc('ReservationList::Reservable Material')?>:</p>
   <ul>
     <?php foreach ($this->results->getResults() as $result): ?>
       <li><?= $result->getTitle(); ?></li>
     <?php endforeach; ?>
   </ul>
   <div class="form-group">
-    <h5><?=$this->transEsc('reservation_list_order_location')?>:</h5>
+    <h3><?=$this->transEsc('ReservationList::Organisations Research Room Office')?>:</h3>
     <?= $this->transEsc($this->organisationInfo['name'] ?? ''); ?><br/>
     <?= $this->transEsc($this->organisationInfo['address'] ?? ''); ?><br/>
     <?= $this->transEsc($this->organisationInfo['postal'] ?? ''); ?> <?= $this->transEsc($this->organisationInfo['city'] ?? ''); ?>
   </div>
   <!-- need current date and -->
   <div class="form-group">
-    <label>
-      <p><?=$this->transEsc('reservation_list_order_date')?>:</p>
-      <input name="order-pickup-date" value="<?= $this->escapeHtmlAttr($this->earliestPickup); ?>" min="<?= $this->escapeHtmlAttr($this->earliestPickup); ?>" type="date"/>
-    </label>
+    <label for="reservation_pickup_date"><?=$this->transEsc('ReservationList::Delivery Time Request to Organisations Research Room')?>:</label><br>
+    <input id="reservation_pickup_date" name="order-pickup-date" value="<?= $this->escapeHtmlAttr($this->earliestPickup); ?>" min="<?= $this->escapeHtmlAttr($this->earliestPickup); ?>" type="date"/>
   </div>
   <div class="form-group">
-    <label>
-      <p><?=$this->transEsc('reservation_list_order_email')?>:</p>
-      <input type="email" name="order-email" value="test@viiadolorosa.com">
-    </label>
+    <label for="reservation_email"><?=$this->transEsc('ReservationList::Email')?>:</label><br>
+    <input id="reservation_email" type="email" name="order-email" value="test@viiadolorosa.com">
   </div>
   <div class="form-group">
-    <label>
-      <p><?=$this->transEsc('reservation_list_order_phone')?>:</p>
-      <input type="phone" name="order-phone" value="0401231234">
-    </label>
+    <label for="reservation_phone"><?=$this->transEsc('ReservationList::Phonenumber')?>:</label><br>
+    <input id="reservation_phone" type="phone" name="order-phone" value="0401231234">
   </div>
   <div class="form-group">
-    <label>
-      <p><?=$this->transEsc('reservation_list_order_message')?>:</p>
-      <textarea>
-      </textarea>
-    </label>
+    <label for="reservation_message"><?=$this->transEsc('ReservationList::Message')?>:</label><br>
+    <textarea id="reservation_message"></textarea>
   </div>
   <div class="form-group">
-    <button class="btn btn-primary" type="submit"><?=$this->transEsc('reservation_list_order_confirm')?></button>
+    <button class="btn btn-primary" type="submit"><?=$this->transEsc('ReservationList::Send Reservation Request')?></button>
   </div>
 </form>

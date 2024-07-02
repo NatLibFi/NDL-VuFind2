@@ -52,6 +52,7 @@ use VuFind\Exception\MissingField as MissingFieldException;
  * @property string $created
  * @property bool   $public
  * @property string $ordered
+ * @property string $pickup_date
  */
 class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwareInterface
 {
@@ -112,10 +113,7 @@ class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwar
      */
     public function editAllowed($user)
     {
-        if ($user && $user->id == $this->user_id) {
-            return true;
-        }
-        return false;
+        return $user && $user->id == $this->user_id;
     }
 
     /**
@@ -166,6 +164,26 @@ class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwar
         parent::save();
         $this->rememberLastUsed();
         return $this->id;
+    }
+
+    /**
+     * Set the pickup date for the list.
+     *
+     * @param \VuFind\Db\Row\User $user Logged-in user
+     * @param string              $date Date to set
+     *
+     * @return mixed
+     */
+    public function setPickupDate($user, $date)
+    {
+        if (!$this->editAllowed($user ?: null)) {
+            throw new ListPermissionException('list_access_denied');
+        }
+        if (empty($this->title)) {
+            throw new MissingFieldException('list_edit_name_required');
+        }
+        $this->pickup_date = $date;
+        return $this->save($user);
     }
 
     /**

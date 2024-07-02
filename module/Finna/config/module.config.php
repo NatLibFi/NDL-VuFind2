@@ -197,13 +197,13 @@ $config = [
                     ],
                 ],
             ],
-            'reservationlist-home' => [
+            'reservationlist-list' => [
                 'type'    => 'Laminas\Router\Http\Segment',
                 'options' => [
-                    'route'    => '/ReservationList/Home[/:id]',
+                    'route'    => '/ReservationList/List[/:id]',
                     'defaults' => [
                         'controller' => 'ReservationList',
-                        'action'     => 'Home',
+                        'action'     => 'List',
                     ],
                 ],
             ],
@@ -389,6 +389,7 @@ $config = [
             'Finna\Feed\LinkedEvents' => 'Finna\Feed\LinkedEventsFactory',
             'Finna\Form\Form' => 'Finna\Form\FormFactory',
             'Finna\Form\R2Form' => 'Finna\Form\FormFactory',
+            'Finna\Form\ReservationListForm' => 'Finna\Form\ReservationListFormFactory',
             'Finna\ILS\Connection' => 'VuFind\ILS\ConnectionFactory',
             'Finna\LocationService\LocationService' => 'Finna\LocationService\LocationServiceFactory',
             'Finna\Mailer\Mailer' => 'VuFind\Mailer\Factory',
@@ -715,10 +716,11 @@ $config = [
                     'Finna\Form\Handler\Api' => 'Finna\Form\Handler\ApiFactory',
                     'Finna\Form\Handler\Database' => 'Finna\Form\Handler\DatabaseFactory',
                     'Finna\Form\Handler\Email' => 'VuFind\Form\Handler\EmailFactory',
+                    'Finna\Form\Handler\ReservationListEmail' => 'Finna\Form\Handler\ReservationListEmailFactory',
                 ],
                 'aliases' => [
                     'api' => 'Finna\Form\Handler\Api',
-
+                    'reservationlistemail' => 'Finna\Form\Handler\ReservationList',
                     'VuFind\Form\Handler\Database' => 'Finna\Form\Handler\Database',
                     'VuFind\Form\Handler\Email' => 'Finna\Form\Handler\Email',
                 ],
@@ -1122,9 +1124,11 @@ $dynamicRoutes = [
     'LibraryCards' => ['newLibraryCardPassword' => 'newPassword/[:id]'],
     'MyResearch' => ['sortList' => 'SortList/[:id]'],
     'ReservationList' => [
-        'reservationlist-home' => 'Home/[:id]',
+        'reservationlist-home' => 'Home',
+        'reservationlist-list' => 'List/[:id]',
         'reservationlist-order' => 'Order/[:id]',
         'reservationlist-delete' => 'Delete/[:id]',
+        'reservationlist-deletebulk' => 'DeleteBulk/[:id]',
     ],
     'R2Feedback' => ['r2feedback-form' => 'Form/[:id]'],
 ];
@@ -1148,6 +1152,7 @@ $staticRoutes = [
     'Record/DownloadFile',
     'Bazaar/Home', 'Bazaar/Cancel',
     'ReservationList/AddList',
+    'ReservationList/Home',
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();

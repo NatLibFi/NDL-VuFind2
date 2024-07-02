@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Shibboleth Logout Notification controller factory.
+ * Factory for reservation list form.
  *
- * PHP version 8
+ * PHP version 8.1
  *
- * Copyright (C) The National Library of Finland 2020.
+ * Copyright (C) The National Library of Finland 2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,30 +21,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Controller
+ * @package  Config
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
 
-namespace Finna\Controller;
+namespace Finna\Form;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
-use VuFind\Controller\AbstractBaseFactory;
 
 /**
- * Shibboleth Logout Notification controller factory.
+ * Factory for reservation list form.
  *
  * @category VuFind
- * @package  Controller
+ * @package  Config
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class ReservationListControllerFactory extends AbstractBaseFactory
+class ReservationListFormFactory extends \Finna\Form\FormFactory
 {
     /**
      * Create an object
@@ -65,15 +68,28 @@ class ReservationListControllerFactory extends AbstractBaseFactory
         $requestedName,
         array $options = null
     ) {
-        if (!empty($options)) {
-            throw new \Exception('Unexpected options sent to factory.');
+        $configManager = $container->get(\VuFind\Config\PluginManager::class);
+        $config = $configManager->get('ReservationList')->toArray();
+
+        $form = parent::__invoke($container, $requestedName, $options);
+        if ($user = $container->get(\VuFind\Auth\Manager::class)->getUserObject()) {
+            $roles = $container->get(\VuFind\Role\PermissionManager::class)
+                ->getActivePermissions();
+            try {
+                $patron = $container->get(\VuFind\Auth\ILSAuthenticator::class)
+                    ->storedCatalogLogin();
+            } catch (\Exception $e) {
+                $patron = [];
+            }
+            $form->setUser($user, $roles, $patron ?: []);
+        } else {
+            throw new \Exception('User not logged in');
         }
-        return parent::__invoke(
-            $container,
-            $requestedName,
-            [
-                $container->get(\Finna\ReservationList\ReservationListService::class)
-            ]
+        $form->setRecordRequestFormsWithBarcode(
+            (array)($config['Record']['repository_library_request_form'] ?? null)
         );
+        $form->setDataSourceConfig($configManager->get('datasources')->toArray());
+        $form->setRecordLoader($container->get(\VuFind\Record\Loader::class));
+        return $form;
     }
 }
