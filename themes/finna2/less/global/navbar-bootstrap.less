@@ -74,6 +74,10 @@
   background-color: @brand-primary;
   padding: 0;
   border-radius: 0;
+  &:focus {
+    background: darken(@brand-primary, 10%);
+    outline: 5px auto -webkit-focus-ring-color;
+  }
   .mobilemenu-bars, .mobilemenu-close {
     font-size: 24px;
     cursor: pointer;
