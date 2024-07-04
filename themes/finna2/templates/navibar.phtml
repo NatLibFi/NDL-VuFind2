@@ -91,6 +91,7 @@
     </div>
   <?php endif; ?>
   <ul role="presentation" class="nav navbar-nav header-navbar-right">
+  <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
     <li id="language_menu" class="dropdown">
       <a href="#" id="language_menu_dropdown_button" class="btn dropdown-toggle" role="button" data-toggle="dropdown" aria-label="<?=$this->transEscAttr('Language')?>" aria-description="<?=$this->displayLanguageOption($selectedLang)?> <?=$this->transEscAttr('selected')?>" aria-expanded="false">
         <?=$this->icon('language', 'lang-icon') ?>
@@ -98,7 +99,6 @@
         <?=$this->icon('collapse-open', 'collapse-open-icon') ?>
       </a>
       <ul class="dropdown-menu dropdown-menu-right" role="menu">
-        <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
           <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
             <?php if ($this->layout()->userLang == $langCode): ?>
               <li>
@@ -114,9 +114,9 @@
               </li>
             <?php endif ?>
           <?php endforeach; ?>
-        <?php endif; ?>
       </ul>
     </li>
+    <?php endif; ?>
     <?php if (is_object($account) && $account->loginEnabled()): ?>
       <?php if ($user): ?>
         <li class="logoutOptions">
@@ -129,13 +129,6 @@
                   <span class="checkedout-status status hidden"><?=$this->icon('spinner') ?></span>
                 </a>
               </li>
-              <?php if ($this->ils()->checkCapability('getMyTransactionHistory', $capabilityParams)): ?>
-                <li role="none">
-                  <a <?=$this->url('checkouts-history') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-historicloans')?>">
-                    <?=$this->transEsc('Loan History')?>
-                  </a>
-                </li>
-              <?php endif; ?>
               <li>
                 <a <?=$this->url('holds-list') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('holds-list')?>">
                   <?=$this->transEsc('Holds and Recalls')?>
@@ -155,6 +148,13 @@
                   <a <?=$this->url('myresearch-illrequests') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-illrequests')?>">
                     <?=$this->transEsc('Interlibrary Loan Requests')?>
                     <span class="illrequests-status status hidden"><?=$this->icon('spinner') ?></span>
+                  </a>
+                </li>
+              <?php endif; ?>
+              <?php if ($this->ils()->checkCapability('getMyTransactionHistory', $capabilityParams)): ?>
+                <li role="none">
+                  <a <?=$this->url('checkouts-history') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-historicloans')?>">
+                    <?=$this->transEsc('Loan History')?>
                   </a>
                 </li>
               <?php endif; ?>

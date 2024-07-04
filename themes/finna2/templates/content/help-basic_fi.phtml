@@ -109,28 +109,27 @@
     <h2>Jokerimerkkien käyttö hakusanoissa</h2>
     <p>Jokerimerkeillä * ja ? voidaan korvata hakusanassa esiintyviä merkkejä, jotta hakutuloksessa saadaan huomioitua laajemmin hakusanan mahdolliset erilaiset sanapäätteet.</p>
     <p>Suomenkielisten hakusanojen kohdalla jokerimerkkien käyttöä ei suositella, sillä jokerimerkkejä käyttäessä osa hakuehdon käsittelytoimenpiteistä jää pois. Tällaisia ovat esimerkiksi synonyymien käsittely ja termien jakaminen väliviivan kohdalta.</p>
-    <p>Finna huomioi automaattisesti hakusanojen erilaiset taivutukset ja sanapäätteet. Hakusanan ollessa "taulu", hakukone tunnistaa myös sanan taivutetut muodot, kuten "taulut" ja "taulujen". Jokerimerkin käyttö voi sekoittaa hakukoneen automaattisia käsittelytoimenpiteitä.</p>
+    <p>Finna huomioi automaattisesti suomenkielisten hakusanojen erilaiset taivutukset ja sanapäätteet. Hakusanan ollessa "taulu", hakukone tunnistaa myös sanan taivutetut muodot, kuten "taulut" ja "taulujen". Jokerimerkin käyttö voi sekoittaa hakukoneen automaattisia käsittelytoimenpiteitä. Haussa s-päätteinen monikko hakee automaattisesti myös yksikön ja yksikkö s-päätteisen monikon. Esimerkiksi hakusanalla “paintings” löytää myös muodon “painting”.</p>
     <h3>Jokerimerkkien käyttö</h3>
-    <p>Huom! Jokerimerkkejä ei voi käyttää hakusanan ensimmäisenä merkkinä.</p>
-    <h4>*</h4>
-    <p>*-merkki korvaa yhden tai useamman merkin hakusanasta. Hakutuloksiin sisältyy myös se hakusanan muoto, jolla haku tehdään.</p>
+    <p>Huom! Jokerimerkkejä (* ja ?) ei voi käyttää hakusanan ensimmäisenä merkkinä.</p>
+    <h4>* (tähtimerkki)</h4>
+    <p>Tähtimerkki korvaa yhden tai useamman merkin hakusanasta. Hakutuloksiin sisältyy myös se hakusanan muoto, jolla haku tehdään.</p>
     <p>Voit katkaista hakusanan lopusta tähtimerkillä. Esimerkiksi termejä <i>competition</i>, <i>competitions</i>, <i>competitor</i> ja <i>competitiveness</i> voidaan hakea hakusanalla:</p>
     <pre class="code">competit*</pre>
     <p>Voit käyttää tähtimerkkiä myös hakusanan keskellä korvaamaan yhden tai useamman merkin. Esimerkiksi termejä <i>color</i> ja <i>colour</i> voidaan hakea hakusanalla:</p>
     <pre class="code">colo*r</pre>
-    <h4>? </h4>
-    <p>Jokerimerkki ? korvaa yhden merkin hakusanasta, mikä mahdollistaa useammat sanamuodot.</p>
+    <h4>? (kysymysmerkki)</h4>
+    <p>Kysymysmerkki korvaa yhden merkin hakusanasta, mikä mahdollistaa useammat sanamuodot.</p>
     <p>Esimerkiksi termejä <i>woman</i> ja <i>women</i> voidaan hakea yhdellä hakusanalla:
     <pre class="code">wom?n</pre>
   </div>
   <div id="phrase-search" class="content-section">
     <h2>Fraasihaku</h2>
-    <p>Fraasihakua kannattaa käyttää, jos haluat hakutulokseen vain tietyn sanan tai sanaliiton sisältävät aineistot. Fraasihaku tehdään kirjoittamalla hakusanat lainausmerkkeihin.</p>
-    <p>Esimerkissä haetaan aineistoja, joissa esiintyy sanaliitto <i>Helsingin yliopisto</i>, eikä esimerkiksi <i>Helsingin kaupunki</i>:</p>
-    <pre class="code">”Helsingin yliopisto”</pre>
-    <p>Fraasihaku toimii myös yksittäisen hakusanan kohdalla, jolloin haku kohdistuu vain annettuun hakusanaan ja sen taivutusmuotoon.</p>
-    <p>Esimerkissä haetaan aineistoa hakusanalla <i>taulu</i> lainausmerkeissä, hakutulos sulkee pois esimerkiksi sanat <i>liitutaulu</i>, <i>valkotaulu</i> ja <i>taulut</i>:</p>
-    <pre class="code">"taulu"</pre>
+    <p>Fraasihakua kannattaa käyttää, jos haluat tuloksia missä sanaliitto esiintyy tietyssä järjestyksessä. Suomenkielisessä haussa fraasihaku etsii laajasti eri kentistä fraasin taivutus-ja yhdyssanamuotoja. Muunkielisessä haussa eri sanamuotoja ei haeta, paitsi yksiköistä s-päätteiset monikot ja toisinpäin. Tarkat osumat saavat suuremman painoarvon ja siksi näkyvät ylempänä relevanssin mukaan järjestetyssä hakutuloslistassa. Fraasihaku tehdään kirjoittamalla hakusanat lainausmerkkeihin.</p>
+    <p>Esimerkin fraasihaku <i>Helsingin yliopisto</i> hakee lisäksi osumia kuten <i>Helsingin yliopistossa</i>:</p>
+    <pre class="code">"Helsingin yliopisto"</pre>
+    <p>Kun haet muilla kielillä, esimerkiksi <i>classroom board</i> hakutulos hakee tulokset <i>classroom boards</i> mutta ei <i>classroom chalkboard</i>:</p>
+    <pre class="code">"classroom board"</pre>
   </div>
   <div id="isbn-issn-search" class="content-section">
     <h2>ISBN/ISSN -haku</h2>

@@ -105,29 +105,27 @@
     <h2>The use of wildcards in search terms</h2>
     <p>The wildcard symbols * and ? can be used to replace characters in search terms to ensure that the search results include all inflected forms of the search term.</p>
     <p>The use of wildcard symbols is not recommended for search terms in Finnish, since their use will exclude some processing measures related to the search terms. These include, for example, the processing of synonyms and splitting terms at a hyphen.</p>
-    <p>Finna takes the various inflected forms of the search terms into account automatically. For example, if the search term is “taulu”, the search engine will also recognise its inflected forms, such as “taulut” and “taulujen”. The use of wildcards may confuse the search engine’s automatic processes.</p>
+    <p>Finna automatically takes into account the various inflected forms and word endings of Finnish search terms. For example, if the search term is “taulu”, the search engine will also recognise its inflected forms, such as “taulut” and “taulujen”. The use of wildcards may confuse the search engine’s automatic processes. A search for a plural with an ‘s’ ending automatically returns singular versions of the word as well, and vice versa. For example, the search for “paintings” also finds “painting”.</p>
     <h3>Use of wildcards</h3>
-    <p>NB! The wildcard symbols cannot be the first character of a search term.</p>
-    <h4>* </h4>
-    <p>The * symbol replaces one or several characters in the search term. The search results will also include the form of the search term that was used when performing a search.</p>
-    <p>
-The search term may be truncated at the end with an asterisk. For example, to find search results for the terms competition, competitions, competitor and competitiveness, use the search term:</p>
+    <p>NB! The wildcard symbols (* and ?) cannot be the first character of a search term.</p>
+    <h4>* (Asterisk)</h4>
+    <p>The asterisk symbol replaces one or several characters in the search term. The search results will also include the form of the search term that was used when performing a search.</p>
+    <p>The search term may be truncated at the end with an asterisk. For example, to find search results for the terms competition, competitions, competitor and competitiveness, use the search term:</p>
     <pre class="code">competit*</pre>
     <p>The asterisk may also be used in the middle of a search term to replace one or more characters. For example, to search for both the terms <i>color</i> and <i>colour</i>, use the search term:</p>
     <pre class="code">colo*r</pre>
-    <h4>? </h4>
-    <p>The wildcard symbol ? replaces a single character in a search term, enabling the use of different word forms.</p>
+    <h4>? (Question Mark)</h4>
+    <p>The question mark symbol replaces one character in the search term, enabling the use of different word forms.</p>
     <p>For example, to find results for both the terms <i>woman</i> and <i>women</i>, use the search term:</p>
     <pre class="code">wom?n</pre>
   </div>
   <div id="phrase-search" class="content-section">
     <h2>Phrase search</h2>
-    <p>Use the phrase search if you want your search results to only feature entries with a specific word or phrase. To perform a phrase search, enter your search terms within quotation marks.</p>
-    <p>For example, if you want to find material that feature the phrase <i>University of Helsinki</i> but not <i>City of Helsinki</i>, search with:</p>
-    <pre class="code">“University of Helsinki”</pre>
-    <p>A phrase search may also be used for individual words. In this case, the search will target only the specific term as entered.</p>
-    <p>For example, if you search with the term <i>“board”</i> in quotation marks, the results will exclude hits for <i>chalkboard</i>, <i>whiteboard</i> and <i>boards</i>:</p>
-    <pre class="code">"board"</pre>
+    <p>A phrase search is useful for obtaining results with words in a certain order. In a Finnish-language search, a phrase search will extensively seek inflected and compound forms of your phrase in different fields. In a search conducted in languages other than Finnish, a phrase search will not include inflected or compound forms, with the exception of singular nouns whose plural forms end in -s and vice versa. Accurate results will be given greater priority and therefore will feature higher in search results arranged in order of relevance. To perform a phrase search, enter your search terms within quotation marks.</p>
+    <p>The phrase search <i>Helsingin yliopisto</i> will also search for results such as <i>Helsingin yliopistossa</i>:</p>
+    <pre class="code">"Helsingin yliopisto"</pre>
+    <p>When conducting a search in other languages, a phrase search such as <i>classroom board</i> will also display results for <i>classroom boards</i> but not for <i>classroom chalkboard</i>:</p>
+    <pre class="code">"classroom board"</pre>
   </div>
   <div id="isbn-issn-search" class="content-section">
     <h2>ISBN/ISSN search</h2>
