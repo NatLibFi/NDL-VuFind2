@@ -231,17 +231,16 @@ button.list-group-item {
 
 #first_indexedFilter {
   margin-top: 10px;
-  margin-bottom: 10px;
-  label {
-
-    @media (min-width:@screen-sm-min) and (max-width: @screen-sm-max) {
-      display: block;
+  margin-bottom: 20px;
+  .form-group {
+    display: flex;
+    align-items: flex-end;
+    .finna-dateinput {
+      display: flex;
+      flex-direction: column;
     }
-  }
-  .date-picker-button {
-    margin-left: -12px;
-    padding: 6px 10px;
-    border-bottom-left-radius: 0px;
-    border-top-left-radius: 0px;
+    button[type=submit] {
+      margin-left: 10px;
+    }
   }
 }

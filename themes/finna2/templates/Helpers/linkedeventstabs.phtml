@@ -41,14 +41,14 @@
   </div>
   <div class="tab-content">
     <?php if ($this->searchTools !== 'hide'): ?>
-      <div class="events-searchtools-toggle"><?= $this->transEsc('search_events') ?> <?=$this->icon('show-more') ?></div>
+      <div type="button" class="btn btn-primary events-searchtools-toggle"><?= $this->transEsc('search_events') ?> <?=$this->icon('show-more', 'show-more-icon') ?></div>
       <div class="events-searchtools-container <?= $this->searchTools === 'show' ? '' : 'hidden'; ?>">
         <span class="event-search-container">
           <label for="event-search"><?= $this->transEsc('event_name_or_place') ?></label>
-          <input id="event-search" class="event-text-search" type="text" size="26">
+          <input id="event-search" class="event-text-search form-control" type="text" size="26">
         </span>
         <span class="event-date-container">
-          <?=$this->component('finna-dateinput', ['dateinputId' => 'event-date-start', 'dateinputClass' => 'event-date-start', 'dateinputPicker' => 'single', 'dateinputLabel' => $this->transEsc('event_date_start'), 'dateinputValue' => date('d.m.Y')]) ?>
+          <?=$this->component('finna-dateinput', ['dateinputId' => 'event-date-start', 'dateinputClass' => 'event-date-start', 'dateinputPicker' => 'single', 'dateinputLabel' => $this->transEsc('event_date_start'), 'dateinputValue' => date('j.n.Y')]) ?>
           <?=$this->component('finna-dateinput', ['dateinputId' => 'event-date-end', 'dateinputClass' => 'event-date-end', 'dateinputPicker' => 'single', 'dateinputLabel' => $this->transEsc('event_date_end')]) ?>
         </span>
         <button class="btn btn-primary linked-event-search"><?= $this->transEsc('linked_event_search') ?></button>

@@ -1,8 +1,53 @@
-.datepicker-popover {
-    background: #fff;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    z-index: 1000;
+.finna-dateinput {
+    position: relative;
+    .input-group {
+        .datepicker-toggle {
+            padding: @padding-base-vertical 6px;
+            border-color: @input-border;
+        }
+    }
+    .hint-text {
+        position: absolute;
+        bottom: -20px;
+        left: 0;
+        display: inline-block;
+        color: @gray-light;
+        font-size: 0.8em;
+        text-wrap: nowrap;
+    }
+    .datepicker-dialog {
+        background: #fff;
+        padding: 10px;
+        border: 1px solid #666;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        z-index: @zindex-datepicker;
+        calendar-date {
+            &::part(container) {
+                gap: 0;
+            }
+            &::part(button) {
+                background-color: transparent;
+                border: none;
+                border-radius: 0;
+                margin: 0;
+                padding: 0;
+                text-align: inherit;
+                font: inherit;
+                font-size: 24px;
+                color: @action-link-color;
+            }
+            &::part(button):focus-visible {
+              outline: 2px solid @action-link-color;
+            }
+          }
+        .btn-datepicker-close {
+            display: flex;
+            margin-left: auto;
+            line-height: 1;
+        }
+    }
+}
+.finna-dateinput input:not(:focus) ~ .hint-text {
+    display: none;
 }

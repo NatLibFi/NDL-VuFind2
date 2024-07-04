@@ -231,6 +231,7 @@
 .feed-tabs-container {
     display: flex;
     flex-wrap: wrap;
+    width: 100%;
     justify-content: space-between;
     margin-top: 20px;
     margin-bottom: 12px;
@@ -425,15 +426,10 @@
     margin-top: 10px;
 }
 .events-searchtools-toggle {
-    cursor: pointer;
     display: none;
-    color: black;
-    text-transform: uppercase;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    font-weight: bold;
-    font-size: 0.84em;
-    &.open i {
+    margin-top: 0;
+    margin-bottom: 15px;
+    &.open .show-more-icon {
         transform: rotate(180deg);
     }
     @media (max-width: @screen-xs-max) {
@@ -442,43 +438,33 @@
 }
 .events-searchtools-container {
     display: flex;
-    align-items: baseline;
-    margin-top: 15px;
-    margin-bottom: 15px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    row-gap: 20px;
+    column-gap: 15px;
+    margin-bottom: 30px;
     @media (max-width: @screen-xs-max) {
         display: none;
         &.open {
-            display: inherit;
+            display: flex;
         }
     }
-    .event-search-container, .event-date-container {
-        margin-right: 10px;
-        margin-left: 5px;
+    .event-search-container {
+        flex: 0;
     }
     .event-date-container {
-        @media (max-width: @screen-xs-max) {
-            display: block;
-         }
+        display: flex;
+        flex: 0;
+        column-gap: 15px;
     }
     .finna-dateinput {
-        margin-top: 2em;
-        margin-right: 10px;
-        @media (max-width: @screen-xs-max) {
-            display: block;
-         }
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
     }
     label {
-        position: absolute;
-        margin-top: -1.5em;
         font-size: 0.8em;
-    }
-    input {
-        border-radius: 5px;
-        border: 1px solid @gray-lighter;
-        padding: 5px;
-    }
-    .event-datepicker {
-        width: 100px;
+        width: 100%;
     }
     .event-date-title {
         @media (max-width: @screen-xs-max) {
@@ -486,10 +472,7 @@
         }
     }
     .linked-event-search {
-        @media (max-width: @screen-xs-max) {
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
+        padding: 7px 12px;
     }
     .event-geolocation {
         text-transform: uppercase;
