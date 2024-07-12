@@ -53,6 +53,7 @@ use VuFind\Exception\MissingField as MissingFieldException;
  * @property bool   $public
  * @property string $ordered
  * @property string $pickup_date
+ * @property string $handler
  */
 class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwareInterface
 {
@@ -73,13 +74,15 @@ class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwar
     /**
      * Sets the ordered status for the reservation list.
      *
-     * @param mixed $user User or false.
+     * @param User   $user        User or false.
+     * @param string $pickup_date Set pickup date
      *
-     * @return void
+     * @return mixed
      */
-    public function setOrdered($user = false)
+    public function setOrdered($user, $pickup_date)
     {
         $this->ordered = date('Y-m-d H:i:s');
+        $this->pickup_date = $pickup_date;
         return $this->save($user);
     }
 
@@ -100,6 +103,7 @@ class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwar
         $this->description = $request->get('description');
         $this->datasource = $request->get('datasource');
         $this->building = $request->get('building');
+        $this->handler = $request->get('handler');
         $this->save($user);
         return $this->id;
     }
@@ -164,26 +168,6 @@ class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwar
         parent::save();
         $this->rememberLastUsed();
         return $this->id;
-    }
-
-    /**
-     * Set the pickup date for the list.
-     *
-     * @param \VuFind\Db\Row\User $user Logged-in user
-     * @param string              $date Date to set
-     *
-     * @return mixed
-     */
-    public function setPickupDate($user, $date)
-    {
-        if (!$this->editAllowed($user ?: null)) {
-            throw new ListPermissionException('list_access_denied');
-        }
-        if (empty($this->title)) {
-            throw new MissingFieldException('list_edit_name_required');
-        }
-        $this->pickup_date = $date;
-        return $this->save($user);
     }
 
     /**

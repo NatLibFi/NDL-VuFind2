@@ -1,8 +1,8 @@
 <!-- START of: finna - myresearch/bulk-action-buttons.phtml -->
 <?php if (isset($list)): ?>
-  <input type="hidden" name="listID" value="<?=$this->escapeHtmlAttr($list->id)?>">
-  <input type="hidden" name="listName" value="<?=$this->escapeHtmlAttr($list->title)?>">
-  <input type="hidden" name="listDescription" value="<?=$this->escapeHtmlAttr($list->description)?>">
+  <input type="hidden" name="listID" value="<?=$this->escapeHtmlAttr($list['id'])?>">
+  <input type="hidden" name="listName" value="<?=$this->escapeHtmlAttr($list['title'])?>">
+  <input type="hidden" name="listDescription" value="<?=$this->escapeHtmlAttr($list['description'])?>">
 <?php endif; ?>
 <?php $user = $this->auth()->getUserObject(); ?>
 <div class="bulk-action-buttons-row hidden-print">
@@ -14,8 +14,8 @@
   <div class="bulkActionButtons bulk-action-buttons-col">
     <div class="mylist-functions btn-group">
       <span class="sr-only"><?=$this->transEsc('bulk_noitems_advice')?></span>
-      <?php if ((null !== $this->list && $this->list->editAllowed($user)) || (null === $this->list && $user)): ?>
-        <button class="btn btn-primary" id="<?=$this->idPrefix?>delete_list_items_<?=null !== $this->list ? $this->escapeHtmlAttr($this->list->id) : ''?>" type="submit" name="delete" value="<?=$this->transEscAttr('Delete')?>" title="<?=$this->transEsc('delete_selected')?>" disabled<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>><?=$this->transEsc('Delete')?></button>
+      <?php if ($this->list && $user): ?>
+        <button class="btn btn-primary" id="<?=$this->idPrefix?>delete_list_items_<?=null !== $this->list ? $this->escapeHtmlAttr($this->list['id']) : ''?>" type="submit" name="delete" value="<?=$this->transEscAttr('Delete')?>" title="<?=$this->transEsc('delete_selected')?>" disabled<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>><?=$this->transEsc('Delete')?></button>
       <?php endif; ?>
     </div>
   </div>

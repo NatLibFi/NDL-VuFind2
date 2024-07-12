@@ -374,7 +374,7 @@ class AipaLrmi extends SolrLrmi implements
      */
     protected function getCuratedRecordDriver(\SimpleXMLElement $item): CuratedRecord
     {
-        /** @var CuratedRecord $driver */
+        /* @var CuratedRecord $driver */
         $driver = $this->recordDriverManager->get('CuratedRecord');
 
         $driver->setContainerRecord($this);

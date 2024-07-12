@@ -20,9 +20,15 @@
     <div class="title-wrapper">
       <h2><?=$this->transEsc('ReservationList::reservation_list_title', ['%%title%%' => $this->title]) ?></h2>
     </div>
+    <?= $this->flashmessages() ?>
     <?php if ($this->description): ?>
       <div class="description-wrapper">
         <p><?=$this->escapeHtml($this->description); ?></p>
+      </div>
+    <?php endif; ?>
+    <?php if ($this->created_formatted): ?>
+      <div class="list-info">
+        <p><?= $this->transEsc('ReservationList::list_created', ['%%date%%' => $this->created_formatted]) ?></p>
       </div>
     <?php endif; ?>
     <?php if ($this->ordered_formatted): ?>
@@ -59,13 +65,17 @@
         <div class="myaccount-sticky-header"></div>
           <div class="toolbar-sticky-container">
             <?php $multiPageSelection = ($this->config()->get('config')['Social']['multi_page_favorites_selection'] ?? true) ? ' multi-page-selection' : ''; ?>
-            <form class="form<?= $multiPageSelection ?>" id="form-reservation<?= ($list && !empty($list->id)) ? '-' . $list->id : ''?>" method="post" name="bulkActionForm" action="<?=$this->url('reservationlist-deletebulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
+            <form class="form<?= $multiPageSelection ?>" id="form-reservation<?= ($list && !empty($list['id'])) ? '-' . $list['id'] : ''?>" method="post" name="bulkActionForm" action="<?=$this->url('reservationlist-deletebulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
               <input class="hidden all-ids-global" type="text" name="all_ids_global" value="<?= $this->escapeHtmlAttr(json_encode($this->results->getAllIds())) ?>">
               <div class="toolbar-sticky">
-                <?=$this->context($this)->renderInContext('reservationlist/bulk-action-buttons.phtml', ['idPrefix' => '', 'list' => $list ?? null, 'account' => $this->account, 'lists' => $user->getReservationListsAsObjects()])?>
+                <?=$this->context($this)->renderInContext('reservationlist/bulk-action-buttons.phtml', ['idPrefix' => '', 'list' => $list ?? null, 'account' => $this->account, 'lists' => $user->getReservationLists()])?>
               </div>
               <?php foreach ($this->results->getResults() as $i => $current): ?>
-                <?=$this->record($current)->getListEntry($list, $user)?>
+                <?php
+                  /** @var \Finna\View\Helper\Root\Record */
+                  $recordHelper = $this->record($current);
+                ?>
+                <?= $recordHelper->renderTemplate('reservation-list-entry.phtml', ['driver' => $current, 'user' => $this->user]) ?>
               <?php endforeach; ?>
             </form>
           </div>
@@ -77,5 +87,10 @@
       <?php endif; ?>
     </div>
   </div>
+</div>
+<div class="mylist-mobile mobile-navigation visible-xs visible-sm hidden-print">
+  <ul>
+    <li class="sidebar-navigation"><?=$this->icon('sidebar-expand') ?> <?=$this->transEsc('Your Lists')?></li>
+  </ul>
 </div>
 <!-- END of: finna - myresearch/reservationlist.phtml -->

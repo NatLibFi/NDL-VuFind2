@@ -34,7 +34,7 @@
 
 namespace Finna\Controller;
 
-use Finna\Form\ReservationListForm;
+use Finna\Form\Form;
 use Finna\ReservationList\ReservationListService;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use VuFind\Controller\AbstractBase;
@@ -117,14 +117,7 @@ class ReservationListController extends AbstractBase
             $source ?: DEFAULT_SEARCH_BACKEND,
             false
         );
-
         $view->driver = $driver;
-        $view->lists = $this->reservationListService->getListsWithoutRecord(
-            $this->getUser(),
-            $driver->getUniqueID(),
-            $driver->getSourceIdentifier(),
-            $driver->getDatasource()
-        );
         if ($this->formWasSubmitted('submit')) {
             $state = $this->getParam('state');
             $title = $this->getParam('title');
@@ -146,10 +139,6 @@ class ReservationListController extends AbstractBase
                     $datasource,
                     $building,
                 );
-                $view->lists = $this->reservationListService->getListsForDatasource(
-                    $this->getUser(),
-                    $driver->getDatasource()
-                );
             } elseif ('saveItem' === $state) {
                 // Seems like someone wants to save stuff into a list.
                 $this->reservationListService->addRecordToList(
@@ -164,7 +153,12 @@ class ReservationListController extends AbstractBase
                   : $this->redirect()->toRoute('home');
             }
         }
-
+        $view->lists = $this->reservationListService->getListsWithoutRecord(
+            $this->getUser(),
+            $driver->getUniqueID(),
+            $driver->getSourceIdentifier(),
+            $driver->getDatasource()
+        );
         $view->setTemplate('reservationlist/select-list');
         return $view;
     }
@@ -172,9 +166,9 @@ class ReservationListController extends AbstractBase
     /**
      * List action for the ReservationListController.
      *
-     * @return \Laminas\View\Model\ViewModel View model for the list page.
+     * @return \Laminas\View\Model\ViewModel|\Laminas\Http\Response
      */
-    public function listAction(): \Laminas\View\Model\ViewModel
+    public function listAction(): \Laminas\View\Model\ViewModel|\Laminas\Http\Response
     {
         $user = $this->getUser();
         if (!$user) {
@@ -195,14 +189,14 @@ class ReservationListController extends AbstractBase
         try {
             $results = $this->getListAsResults($request);
             $currentList = $this->reservationListService->getListForUser($user, $request['id']);
-            $params = $currentList + [
+            $viewParams = $currentList + [
                 'results' => $results,
                 'params' => $results->getParams(),
                 'enabled' => $this->listsEnabledForDatasource($currentList['datasource']),
             ];
             // If we got this far, we just need to display the favorites:
             try {
-                return $this->createViewModel($params);
+                return $this->createViewModel($viewParams);
             } catch (ListPermissionException $e) {
                 if (!$this->getUser()) {
                     return $this->forceLogin();
@@ -222,12 +216,33 @@ class ReservationListController extends AbstractBase
      */
     public function orderAction()
     {
-        $request = $this->getRequestAsArray();
-        $listId = $request['list-id'] ?? $request['id'] ?? '';
         $user = $this->getUser();
-        $formId = ReservationListForm::RESERVATION_LIST_REQUEST;
-        /** @var ReservationListForm $form */
-        $form = $this->serviceLocator->get(\Finna\Form\ReservationListForm::class);
+        if (!$user) {
+            return $this->forceLogin();
+        }
+        $listId = $this->getParam('id');
+        // Check that list is not ordered or deleted
+        $list = $this->reservationListService->getListForUser($user, $listId);
+        if (!$list || $list['ordered']) {
+            throw new \VuFind\Exception\Forbidden('List not found or ordered');
+        }
+        // Fill out records to form
+        $recordsHTML = $this->reservationListService->getRecordsForListHTML($user, $listId);
+        $request = $this->getRequest();
+        $post = $request->getPost();
+        $post->set('materials', $recordsHTML);
+        $request->setPost($post);
+        $request = $this->getRequestAsArray();
+        $formId = Form::RESERVATION_LIST_REQUEST;
+        /**
+         * Finna Form
+         *
+         * @var Form
+         */
+        $form = $this->serviceLocator->get(Form::class);
+        if (!$form->isEnabled()) {
+            throw new \VuFind\Exception\Forbidden("Form '$formId' is disabled");
+        }
         $params = [];
         if ($refererHeader = $this->getRequest()->getHeader('Referer')) {
             $params['referrer'] = $refererHeader->getFieldValue();
@@ -236,44 +251,36 @@ class ReservationListController extends AbstractBase
             $params['userAgent'] = $userAgentHeader->getFieldValue();
         }
         $form->setFormId($formId, $params);
-
-        if (!$form->isEnabled()) {
-            throw new \VuFind\Exception\Forbidden("Form '$formId' is disabled");
-        }
-
-        if (!$user) {
-            return $this->forceLogin();
-        }
-
-        $view = $this->createViewModel(compact('form', 'formId', 'user'));
-        $view->setTemplate('feedback/form');
-        $view->useCaptcha
-            = $this->captcha()->active('feedback') && $form->useCaptcha();
+        $view = $this->createViewModel(compact('form', 'formId', 'user', 'listId'));
+        $view->setTemplate('reservationlist/form');
 
         $params = $this->params();
-        $form->setData($params->fromPost());
-
-        if (!$this->formWasSubmitted('submit', $view->useCaptcha)) {
-            $records = $this->reservationListService->getRecordsForList($user, $listId);
-            $form->setReservableMaterials($records);
+        $recordsHTML = $this->reservationListService->getRecordsForListHTML($user, $listId);
+        if (!$this->formWasSubmitted('submit')) {
             $form->setData(
-                [
-                 'name' => $user->firstname . ' ' . $user->lastname,
-                 'email' => $user['email'],
+                $params->fromPost() + [
+                    'name' => $user->firstname . ' ' . $user->lastname,
+                    'email' => $user['email'],
                 ]
             );
             return $view;
         }
-
+        $form->setData($params->fromPost());
         if (!$form->isValid()) {
             return $view;
         }
-
-        $form->setListId($listId);
-        $success = $form->getPrimaryHandler()->handle($form, $params, $user ?: null);
+        $handler = $form->getPrimaryHandler();
+        if (!($handler instanceof \Finna\Form\Handler\ReservationListEmail)) {
+            throw new \Exception('Invalid form handler');
+        }
+        $handler->setListId($listId);
+        $success = $handler->handle($form, $this->params(), $user);
         if ($success) {
-            $view->setVariable('successMessage', $form->getSubmitResponse());
-            $view->setTemplate('feedback/response');
+            $this->flashMessenger()->addSuccessMessage('ReservationList::form_response');
+            $this->reservationListService->setOrdered($user, $listId, $request['pickup_date'] ?? '');
+            return $this->inLightbox()  // different behavior for lightbox context
+                ? $this->getRefreshResponse()
+                : $this->redirect()->toRoute('reservationlist-list', ['id' => $listId]);
         } else {
             $this->flashMessenger()->addErrorMessage(
                 $this->translate('could_not_process_feedback')
@@ -353,7 +360,7 @@ class ReservationListController extends AbstractBase
             $this->params()->fromQuery('confirm')
         );
         if ($confirm) {
-            $success = $this->performDeleteReservation($deleteId, $deleteSource);
+            $success = $this->performDeleteReservation($ids, $deleteSource);
             if ($success !== true) {
                 return $success;
             }

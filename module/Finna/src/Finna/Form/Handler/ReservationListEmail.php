@@ -49,26 +49,54 @@ use VuFind\Mailer\Mailer;
  */
 class ReservationListEmail extends \Finna\Form\Handler\Email
 {
+    /**
+     * Reservation list id
+     *
+     * @var int
+     */
+    protected $listId;
 
-  /**
-   * Constructor.
-   * 
-   * @param RendererInterface      $viewRenderer           View renderer
-   * @param Config                 $config                 Reservation List Configuration
-   * @param Mailer                 $mailer                 Mailer
-   * @param ReservationListService $reservationListService Reservation list service
-   * @param Config                 $reservationListConfig  Reservation list configuration
-   */
-  public function __construct(
-    protected RendererInterface $viewRenderer,
-    protected Config $config,
-    protected Mailer $mailer,
-    protected ReservationListService $reservationListService,
-    protected Config $reservationListConfig
-  )
-  {
-    parent::__construct($viewRenderer, $config, $mailer);
-  }
+    /**
+     * Set reservation list id
+     *
+     * @param int $listId Reservation list id
+     *
+     * @return void
+     */
+    public function setListId(int $listId): void
+    {
+        $this->listId = $listId;
+    }
+
+    /**
+     * Get reservation list id
+     *
+     * @return int
+     */
+    public function getListId(): int
+    {
+        return $this->listId;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param RendererInterface      $viewRenderer           View renderer
+     * @param Config                 $config                 Reservation List Configuration
+     * @param Mailer                 $mailer                 Mailer
+     * @param ReservationListService $reservationListService Reservation list service
+     * @param Config                 $reservationListConfig  Reservation list configuration
+     */
+    public function __construct(
+        RendererInterface $viewRenderer,
+        Config $config,
+        Mailer $mailer,
+        protected ReservationListService $reservationListService,
+        protected Config $reservationListConfig
+    ) {
+        parent::__construct($viewRenderer, $config, $mailer);
+    }
+
     /**
      * Get data from submitted form and process them.
      *
@@ -79,52 +107,49 @@ class ReservationListEmail extends \Finna\Form\Handler\Email
      * @return bool
      */
     public function handle(
-      \VuFind\Form\Form $form,
-      \Laminas\Mvc\Controller\Plugin\Params $params,
-      ?\VuFind\Db\Row\User $user = null
+        \VuFind\Form\Form $form,
+        \Laminas\Mvc\Controller\Plugin\Params $params,
+        ?\VuFind\Db\Row\User $user = null
     ): bool {
-      if (
-        !$form instanceof \Finna\Form\ReservationListForm ||
-        !$user ||
-        $this->reservationListService->userHasAuthority($user, $form->getListId())
-      ) {
-        return false;
-      }
-      $records = $this->reservationListService->getRecordsForList($user, $form->getListId());
-      $fields = $form->mapRequestParamsToFieldValues($params->fromPost());
-      $emailMessage = $this->viewRenderer->partial(
-          'Email/form.phtml',
-          compact('fields')
-      );
-
-      [$senderName, $senderEmail] = $this->getSender($form);
-
-      $replyToName = $params->fromPost(
-          'name',
-          $user ? trim($user->firstname . ' ' . $user->lastname) : null
-      );
-      $replyToEmail = $params->fromPost(
-          'email',
-          $user ? $user->email : null
-      );
-      $recipients = $form->getRecipient($params->fromPost());
-      $emailSubject = $form->getEmailSubject($params->fromPost());
-
-      $result = true;
-      foreach ($recipients as $recipient) {
-        $success = $this->sendEmail(
-            $recipient['name'],
-            $recipient['email'],
-            $senderName,
-            $senderEmail,
-            $replyToName,
-            $replyToEmail,
-            $emailSubject,
-            $emailMessage
+        if (
+            !$user || !$this->reservationListService->userHasAuthority($user, $this->getListId())
+        ) {
+            return false;
+        }
+        $fields = $form->mapRequestParamsToFieldValues($params->fromPost());
+        $emailMessage = $this->viewRenderer->partial(
+            'Email/form.phtml',
+            compact('fields')
         );
 
-        $result = $result && $success;
-      }
-      return $result;
-  }
+        [$senderName, $senderEmail] = $this->getSender($form);
+
+        $replyToName = $params->fromPost(
+            'name',
+            $user ? trim($user->firstname . ' ' . $user->lastname) : null
+        );
+        $replyToEmail = $params->fromPost(
+            'email',
+            $user ? $user->email : null
+        );
+        $recipients = $form->getRecipient($params->fromPost());
+        $emailSubject = $form->getEmailSubject($params->fromPost());
+
+        $result = true;
+        foreach ($recipients as $recipient) {
+            $success = $this->sendEmail(
+                $recipient['name'],
+                $recipient['email'],
+                $senderName,
+                $senderEmail,
+                $replyToName,
+                $replyToEmail,
+                $emailSubject,
+                $emailMessage
+            );
+
+            $result = $result && $success;
+        }
+        return $result;
+    }
 }

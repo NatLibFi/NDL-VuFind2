@@ -147,7 +147,7 @@ class Resource extends \VuFind\Db\Table\Resource
      * @param int     $offset Offset.
      * @param ?int    $limit  Limit.
      *
-     * @return ResultSetInterface The reservation resources.
+     * @return \Laminas\Db\ResultSet\AbstractResultSet
      */
     public function getReservationResources(
         $user,

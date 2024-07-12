@@ -14,11 +14,16 @@
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?> reservation-list-body">
   <h2><?=$title ?></h2>
+  <?= $this->flashmessages() ?>
   <ul class="reservations-list">
     <?php foreach ($this->lists as $list): ?>
       <li>
         <a href="<?= $this->url('reservationlist-list', ['id' => $list['id']])?>"><?= $this->escapeHtml($list['title']) ?></a>
-        <?php if ($list['ordered_formatted']): ?><span class="list-ordered"><?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $list['ordered_formatted']])?></span><?php endif; ?>
+        <span class="list-info pull-right">
+          <?php if ($list['created_formatted']): ?><span class="list-created"><?= $this->transEsc('ReservationList::list_created', ['%%date%%' => $list['created_formatted']])?></span><?php endif; ?>
+          <?php if ($list['ordered_formatted']): ?><span class="list-ordered"><?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $list['ordered_formatted']])?></span><?php endif; ?>
+          <a href="<?= $this->url('reservationlist-delete', ['id' => $list['id']])?>" data-lightbox=""><?= $this->transEsc('ReservationList::Delete List') ?></a>
+        </span>
       </li>
       <?php endforeach; ?>
   </ul>

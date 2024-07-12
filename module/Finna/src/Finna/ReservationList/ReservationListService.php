@@ -29,13 +29,9 @@
 
 namespace Finna\ReservationList;
 
-use Finna\Db\Table\ReservationList;
-use Laminas\Db\ResultSet\ResultSetInterface;
-use Laminas\Stdlib\Parameters;
+use Finna\ReservationList\Handler\PluginManager;
+use Laminas\Config\Config;
 use VuFind\Db\Row\User;
-use VuFind\Db\Table\Resource as ResourceTable;
-use VuFind\Db\Table\UserResource as UserResourceTable;
-use VuFind\Record\Cache as RecordCache;
 use VuFind\Exception\ListPermission as ListPermissionException;
 
 /**
@@ -52,19 +48,30 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * Constructs a new ReservationListService object.
+     * Reservation list function result cache
      *
-     * @param ReservationList   $reservationList   Reservation list table
-     * @param ResourceTable     $resource          Resource database table
-     * @param UserResourceTable $userResourceTable UserResource table
-     * @param ?RecordCache      $cache             Record cache
+     * @var array
+     */
+    protected array $reservationListCache = [];
+
+    /**
+     * Default handler
+     *
+     * @var \Finna\ReservationList\Handler\HandlerInterface
+     */
+    protected \Finna\ReservationList\Handler\HandlerInterface $defaultHandler;
+
+    /**
+     * Construct.
+     *
+     * @param PluginManager $pluginManager         Reservation list pluginmanager
+     * @param Config        $reservationListConfig Reservation List ini as Config
      */
     public function __construct(
-        protected ReservationList $reservationList,
-        protected ResourceTable $resource,
-        protected UserResourceTable $userResourceTable,
-        protected ?RecordCache $cache = null
+        protected PluginManager $pluginManager,
+        protected Config $reservationListConfig
     ) {
+        $this->defaultHandler = $pluginManager->get(PluginManager::DEFAULT_HANDLER);
     }
 
     /**
@@ -77,7 +84,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      */
     public function userHasAuthority($user, $id): bool
     {
-        return $this->reservationList->getExisting($id)->editAllowed($user);
+        return $this->defaultHandler->hasAuthority($user, $id);
     }
 
     /**
@@ -98,17 +105,19 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         string $datasource,
         string $building
     ): int {
-        $row = $this->reservationList->getNew($user);
-        return $row->updateFromRequest($user, new Parameters([
-            'description' => $description,
-            'title' => $title,
-            'datasource' => $datasource,
-            'building' => $building,
-        ]));
+        $this->flushCache();
+        return $this->defaultHandler->addList(
+            $user,
+            $title,
+            $description,
+            $datasource,
+            $building
+        );
     }
 
     /**
      * Retrieves reservation lists for a given user.
+     * Lists can exist in database or in an api provided service in future.
      *
      * @param User $user User for whom to retrieve the reservation lists.
      *
@@ -116,46 +125,35 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      */
     public function getListsForUser(User $user): array
     {
-        $lists = $this->reservationList->select(['user_id' => $user->id]);
+        if (isset($this->reservationListCache[__FUNCTION__])) {
+            return $this->reservationListCache[__FUNCTION__];
+        }
+        $lists = $this->defaultHandler->getLists($user);
         $result = [];
-
+        $dateFormatter = function ($date) {
+            return $date ? date('d.m.Y', strtotime($date)) : '';
+        };
         foreach ($lists as $list) {
-            $pickupDateStr = '';
-            if ($list->pickup_date) {
-                $pickupDateStr = strtotime($list->pickup_date);
-                $pickupDateStr = date('d.m.Y', $pickupDateStr);
-            }
-            $orderedDateStr = '';
-            if ($list->ordered) {
-                $orderedDateStr = strtotime($list->ordered);
-                $orderedDateStr = date('d.m.Y', $orderedDateStr);
-            }
             $result[] = [
-                'id' => $list->id,
-                'title' => $list->title,
-                'ordered' => $list->ordered,
-                'pickup_date' => $list->pickup_date,
-                'ordered_formatted' => $orderedDateStr,
-                'pickup_date_formatted' => $pickupDateStr,
+                'id' => $list['id'],
+                'title' => $list['title'],
+                'ordered' => $list['ordered'],
+                'created' => $list['created'],
+                'datasource' => $list['datasource'],
+                'handler' => $list['handler'],
+                'count' => '',
+                'pickup_date' => $list['pickup_date'],
+                'ordered_formatted' => $dateFormatter($list['ordered']),
+                'pickup_date_formatted' => $dateFormatter($list['pickup_date']),
+                'created_formatted' => $dateFormatter($list['created']),
             ];
         }
-        return $result;
-    }
-
-    /**
-     * Retrieves reservation lists for a given user.
-     *
-     * @param User $user User for whom to retrieve the reservation lists.
-     *
-     * @return ResultSetInterface
-     */
-    public function getListsForUserAsObjects(User $user): ResultSetInterface
-    {
-        return $this->reservationList->select(['user_id' => $user->id]);
+        return $this->reservationListCache[__FUNCTION__] = $result;
     }
 
     /**
      * Retrieves reservation lists for a specific datasource.
+     * Lists can coexist in database or external api in future.
      *
      * @param User   $user       User for whom to retrieve the reservation lists.
      * @param string $datasource Datasource for which to retrieve the reservation lists.
@@ -164,37 +162,23 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      */
     public function getListsForDatasource(User $user, string $datasource): array
     {
-        $lists = $this->reservationList->select(['user_id' => $user->id, 'datasource' => $datasource]);
+        if (isset($this->reservationListCache[__FUNCTION__])) {
+            return $this->reservationListCache[__FUNCTION__];
+        }
+        $lists = $this->getListsForUser($user);
         $result = [];
         foreach ($lists as $list) {
+            if ($list['datasource'] !== $datasource) {
+                continue;
+            }
             $result[] = [
-                'id' => $list->id,
-                'title' => $list->title,
-                'ordered' => $list->ordered,
+                'id' => $list['id'],
+                'title' => $list['title'],
+                'datasource' => $list['datasource'],
+                'ordered' => $list['ordered'],
             ];
         }
-        return $result;
-    }
-
-    /**
-     * Retrieves reservation lists associated with a specific building for a given user.
-     *
-     * @param User   $user     The user for whom to retrieve the lists.
-     * @param string $building The name of the building.
-     *
-     * @return array  An array of reservation lists, each containing 'id' and 'title'.
-     */
-    public function getListsForBuilding(User $user, string $building): array
-    {
-        $lists = $this->reservationList->select(['user_id' => $user->id, 'building' => $building]);
-        $result = [];
-        foreach ($lists as $list) {
-            $result[] = [
-                'id' => $list->id,
-                'title' => $list->title,
-            ];
-        }
-        return $result;
+        return $this->reservationListCache[__FUNCTION__] = $result;
     }
 
     /**
@@ -205,36 +189,33 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      *
      * @return array
      */
-    public function getListForUser(User $user, $id): array
+    public function getListForUser(User $user, int $id): array
     {
-        $list = $this->reservationList->getExisting($id);
-        if (!$list->editAllowed($user)) {
-            throw new ListPermissionException('list_access_denied');
+        $cacheKey = implode('|', [__FUNCTION__, $user->id, $id]);
+        if (isset($this->reservationListCache[$cacheKey])) {
+            return $this->reservationListCache[$cacheKey];
         }
+        $list = $this->defaultHandler->getList($user, $id);
+        $dateFormatter = function ($date) {
+            return $date ? date('d.m.Y', strtotime($date)) : '';
+        };
         $result = [];
         if ($list) {
-            $pickupDateStr = '';
-            if ($list->pickup_date) {
-                $pickupDateStr = strtotime($list->pickup_date);
-                $pickupDateStr = date('d.m.Y', $pickupDateStr);
-            }
-            $orderedDateStr = '';
-            if ($list->ordered) {
-                $orderedDateStr = strtotime($list->ordered);
-                $orderedDateStr = date('d.m.Y', $orderedDateStr);
-            }
             $result = [
-                'id' => $list->id,
-                'title' => $list->title,
-                'ordered' => $list->ordered,
-                'datasource' => $list->datasource,
-                'building' => $list->building,
-                'pickup_date' => $list->pickup_date,
-                'ordered_formatted' => $orderedDateStr,
-                'pickup_date_formatted' => $pickupDateStr,
+                'id' => $list['id'],
+                'title' => $list['title'],
+                'ordered' => $list['ordered'],
+                'created' => $list['created'],
+                'building' => $list['building'],
+                'description' => $list['description'],
+                'datasource' => $list['datasource'],
+                'pickup_date' => $list['pickup_date'],
+                'ordered_formatted' => $dateFormatter($list['ordered']),
+                'pickup_date_formatted' => $dateFormatter($list['pickup_date']),
+                'created_formatted' => $dateFormatter($list['created']),
             ];
         }
-        return $result;
+        return $this->reservationListCache[$cacheKey] = $result;
     }
 
     /**
@@ -248,7 +229,11 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      */
     public function getListsContaining(User $user, string $recordId, string $source)
     {
-        $lists = $this->reservationList->getListsContainingResource($recordId, $source, $user);
+        $cacheKey = __FUNCTION__ . '|' . $recordId . '|' . $source;
+        if (isset($this->reservationListCache[$cacheKey])) {
+            return $this->reservationListCache[$cacheKey];
+        }
+        $lists = $this->defaultHandler->getListsContaining($user, $recordId, $source);
         $result = [];
         foreach ($lists as $list) {
             $result[] = [
@@ -257,7 +242,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
                 'ordered' => $list->ordered,
             ];
         }
-        return $result;
+        return $this->reservationListCache[$cacheKey] = $result;
     }
 
     /**
@@ -272,6 +257,10 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      */
     public function getListsWithoutRecord(User $user, string $recordId, string $source, string $datasource): array
     {
+        $cacheKey = __FUNCTION__ . '|' . $recordId . '|' . $source . '|' . $datasource;
+        if (isset($this->reservationListCache[$cacheKey])) {
+            return $this->reservationListCache[$cacheKey];
+        }
         $lists = $this->getListsContaining($user, $recordId, $source);
         $datasourced = $this->getListsForDatasource($user, $datasource);
         $result = [];
@@ -286,7 +275,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
             }
             $result[] = $compare;
         }
-        return $result;
+        return $this->reservationListCache[$cacheKey] = $result;
     }
 
     /**
@@ -311,36 +300,35 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         if (!$this->userHasAuthority($user, $listId)) {
             throw new ListPermissionException('list_access_denied');
         }
-        $resourceTable = $this->reservationList->getDbTable('Resource');
-        $resource = $resourceTable->findResource($recordId, $source);
-
-        /** @var \Finna\Db\Table\ReservationListResource */
-        $userResourceTable = $this->reservationList->getDbTable(\Finna\Db\Table\ReservationListResource::class);
-        $userResourceTable->createOrUpdateLink(
-            $resource->id,
-            $user->id,
+        $this->defaultHandler->addItem(
+            $user,
             $listId,
-            $notes
+            $recordId,
+            $notes,
+            $source
         );
+        // Clear cache after changes
+        $this->flushCache();
         return true;
     }
 
     /**
      * Set list ordered, returns bool if the setting was successful
      *
-     * @param User   $user    User
-     * @param string $list_id Id of the list
+     * @param User   $user        User
+     * @param string $list_id     Id of the list
+     * @param string $pickup_date $pickup_date
      *
      * @return bool
      */
-    public function setOrdered($user, $list_id)
+    public function setOrdered($user, $list_id, $pickup_date)
     {
-        if (!$this->userHasAuthority($user, $listId)) {
+        if (!$this->userHasAuthority($user, $list_id)) {
             throw new ListPermissionException('list_access_denied');
         }
-        $currentList = $this->reservationList->getExisting($list_id);
-        $result = $currentList->setOrdered($user);
-        return !!$result;
+        // Clear cache after changes
+        $this->flushCache();
+        return $this->defaultHandler->orderList($user, $list_id, $pickup_date);
     }
 
     /**
@@ -356,28 +344,10 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         if (!$this->userHasAuthority($user, $list_id)) {
             throw new ListPermissionException('list_access_denied');
         }
-        $currentList = $this->reservationList->getExisting($list_id);
-        $result = $currentList->delete($user);
-        return !!$result;
-    }
-
-    /**
-     * Set pickup date for a reservation list.
-     *
-     * @param User   $user    User
-     * @param string $list_id Id of the list
-     * @param string $date    Date to set
-     * 
-     * @return bool
-     */
-    public function setPickupDate($user, $list_id, $date)
-    {
-        if (!$this->userHasAuthority($user, $listId)) {
-            throw new ListPermissionException('list_access_denied');
-        }
-        $currentList = $this->reservationList->getExisting($list_id);
-        $result = $currentList->setPickupDate($user, $date);
-        return !!$result;
+        $result = $this->defaultHandler->deleteList($user, $list_id);
+        // Clear cache after changes
+        $this->flushCache();
+        return $result;
     }
 
     /**
@@ -389,27 +359,27 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      *
      * @return void
      */
-    public function deleteItems($ids, $listId, $user)
-    {
-        if (!$this->userHasAuthority($user, $listId)) {
-            throw new ListPermissionException('list_access_denied');
-        }
-        // Sort $ids into useful array:
-        $sorted = [];
-        foreach ($ids as $current) {
-            [$source, $id] = explode('|', $current, 2);
-            if (!isset($sorted[$source])) {
-                $sorted[$source] = [];
-            }
-            $sorted[$source][] = $id;
-        }
+    /* public function deleteItems($ids, $listId, $user)
+     {
+         if (!$this->userHasAuthority($user, $listId)) {
+             throw new ListPermissionException('list_access_denied');
+         }
+         $sorted = [];
+         foreach ($ids as $current) {
+             [$source, $id] = explode('|', $current, 2);
+             if (!isset($sorted[$source])) {
+                 $sorted[$source] = [];
+             }
+             $sorted[$source][] = $id;
+         }
 
-        /** @var \Finna\Db\Table\ReservationListResource */
-        $reservationListResource = $this->reservationList->getDbTable(\Finna\Db\Table\ReservationListResource::class);
-        foreach ($sorted as $source => $ids) {
-            $reservationListResource->destroyLinks($ids, $user->id, $listId);
-        }
-    }
+          @var \Finna\Db\Table\ReservationListResource
+         $reservationListResource = $this->reservationList->getDbTable(\Finna\Db\Table\ReservationListResource::class);
+         foreach ($sorted as $source => $ids) {
+             $reservationListResource->destroyLinks($ids, $user->id, $listId);
+         }
+         $this->flushCache();
+     }*/
 
     /**
      * Get records for a list
@@ -421,20 +391,50 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      */
     public function getRecordsForList($user, $listId): array
     {
+        $cacheKey = __FUNCTION__ . '|' . $listId;
+        if (isset($this->reservationListCache[$cacheKey])) {
+            return $this->reservationListCache[$cacheKey];
+        }
         if (!$this->userHasAuthority($user, $listId)) {
             throw new ListPermissionException('list_access_denied');
         }
-        /** @var \Finna\Db\Table\Resource */
-        $resource = $this->reservationList->getDbTable(\Finna\Db\Table\Resource::class);
-        $records = $resource->getReservationResources($user->id, $listId);
+        $records = $this->defaultHandler->getItems($user, $listId);
         $result = [];
         foreach ($records as $record) {
             $result[] = [
-                'id' => $record->id,
-                'record_id' => $record->record_id,
-                'title' => $record->title,
+                'id' => $record['id'],
+                'record_id' => $record['record_id'],
+                'title' => $record['title'],
             ];
         }
-        return $result;
+        return $this->reservationListCache[$cacheKey] = $result;
+    }
+
+    /**
+     * Get records for list as HTML
+     *
+     * @param User $user    User
+     * @param int  $list_id ID of the list
+     *
+     * @return string
+     */
+    public function getRecordsForListHTML($user, $list_id): string
+    {
+        $records = $this->getRecordsForList($user, $list_id);
+        $text = '';
+        foreach ($records as $record) {
+            $text .= $record['title'] . ' (' . $record['record_id'] . ') ' . PHP_EOL;
+        }
+        return $text;
+    }
+
+    /**
+     * Flush runtime cache
+     *
+     * @return void
+     */
+    protected function flushCache(): void
+    {
+        $this->reservationListCache = [];
     }
 }

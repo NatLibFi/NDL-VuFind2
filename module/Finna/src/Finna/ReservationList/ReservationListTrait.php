@@ -29,8 +29,6 @@
 
 namespace Finna\ReservationList;
 
-use Laminas\Db\ResultSet\ResultSetInterface;
-
 /**
  * Reservation list trait
  *
@@ -64,16 +62,6 @@ trait ReservationListTrait
     public function getReservationLists(): array
     {
         return $this->reservationListService->getListsForUser($this);
-    }
-
-    /**
-     * Retrieves reservation lists as objects.
-     *
-     * @return ResultInterface Reservation lists as objects.
-     */
-    public function getReservationListsAsObjects(): ResultSetInterface
-    {
-        return $this->reservationListService->getListsForUserAsObjects($this);
     }
 
     /**

@@ -66,6 +66,13 @@ class Form extends \VuFind\Form\Form
     public const ARCHIVE_MATERIAL_REQUEST = 'ArchiveRequest';
 
     /**
+     * Reservation request form id.
+     *
+     * @var string
+     */
+    public const RESERVATION_LIST_REQUEST = 'ReservationListRequest';
+
+    /**
      * Handlers that are considered safe for transmitting information about the user
      *
      * @var array

@@ -41,7 +41,7 @@ use VuFind\Db\Row\RowGateway;
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
- * 
+ *
  * @property int     $id
  * @property int     $user_id
  * @property int     $resource_id
@@ -59,5 +59,41 @@ class ReservationListResource extends RowGateway
     public function __construct($adapter)
     {
         parent::__construct('id', 'finna_reservation_list_resource', $adapter);
+    }
+
+        /**
+     * Given an array of item ids, remove them from all lists
+     *
+     * @param \VuFind\Db\Row\User|bool $user   Logged-in user (false if none)
+     * @param array                    $ids    IDs to remove from the list
+     * @param string                   $source Type of resource identified by IDs
+     *
+     * @return void
+     */
+    public function removeResourcesById(
+        $user,
+        $ids,
+        $source = DEFAULT_SEARCH_BACKEND
+    ) {
+        if (!$this->editAllowed($user ?: null)) {
+            throw new ListPermissionException('list_access_denied');
+        }
+
+        // Retrieve a list of resource IDs:
+        $resourceTable = $this->getDbTable('Resource');
+        $resources = $resourceTable->findResources($ids, $source);
+
+        $resourceIDs = [];
+        foreach ($resources as $current) {
+            $resourceIDs[] = $current->id;
+        }
+
+        // Remove Resource (related tags are also removed implicitly)
+        $userResourceTable = $this->getDbTable('UserResource');
+        $userResourceTable->destroyLinks(
+            $resourceIDs,
+            $this->user_id,
+            $this->id
+        );
     }
 }
