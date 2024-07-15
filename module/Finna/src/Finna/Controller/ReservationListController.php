@@ -38,7 +38,6 @@ use Finna\Form\Form;
 use Finna\ReservationList\ReservationListService;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use VuFind\Controller\AbstractBase;
-use VuFind\Exception\Forbidden as ForbiddenException;
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\LoginRequired as LoginRequiredException;
 

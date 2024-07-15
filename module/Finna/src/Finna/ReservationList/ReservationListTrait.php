@@ -40,6 +40,11 @@ namespace Finna\ReservationList;
  */
 trait ReservationListTrait
 {
+    /**
+     * Reservation list service
+     *
+     * @var ReservationListService
+     */
     protected $reservationListService;
 
     /**

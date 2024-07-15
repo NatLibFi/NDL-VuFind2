@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Shibboleth Logout Notification controller factory.
+ * Reservation list controller factory.
  *
- * PHP version 8
+ * PHP version 8.1
  *
- * Copyright (C) The National Library of Finland 2020.
+ * Copyright (C) The National Library of Finland 2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,6 +23,7 @@
  * @category VuFind
  * @package  Controller
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
@@ -36,11 +37,12 @@ use Psr\Container\ContainerInterface;
 use VuFind\Controller\AbstractBaseFactory;
 
 /**
- * Shibboleth Logout Notification controller factory.
+ * Reservation list controller factory.
  *
  * @category VuFind
  * @package  Controller
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */

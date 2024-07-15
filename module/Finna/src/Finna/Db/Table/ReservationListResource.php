@@ -3,9 +3,9 @@
 /**
  * Table Definition for finna_reservation_list_resource
  *
- * PHP version 8
+ * PHP version 8.1
  *
- * Copyright (C) The National Library of Finland 2016-2019.
+ * Copyright (C) The National Library of Finland 2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,6 +23,7 @@
  * @category VuFind
  * @package  Db_Table
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
@@ -43,10 +44,11 @@ use function is_array;
  * @category VuFind
  * @package  Db_Table
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
-class ReservationListResource extends \VuFind\Db\Table\UserResource
+class ReservationListResource extends \VuFind\Db\Table\Gateway
 {
     /**
      * Constructor
@@ -74,7 +76,6 @@ class ReservationListResource extends \VuFind\Db\Table\UserResource
      * @param string $user_id     ID of user creating link
      * @param string $list_id     ID of list to link up
      * @param string $notes       Notes to associate with link
-     * @param int    $order       Custom order index for the resource in list
      *
      * @return void
      */
@@ -82,11 +83,25 @@ class ReservationListResource extends \VuFind\Db\Table\UserResource
         $resource_id,
         $user_id,
         $list_id,
-        $notes = '',
-        $order = null
+        $notes = ''
     ) {
-        $row = parent::createOrUpdateLink($resource_id, $user_id, $list_id, $notes);
-        $row->save();
+        $params = [
+            'resource_id' => $resource_id, 'list_id' => $list_id,
+            'user_id' => $user_id,
+        ];
+        $result = $this->select($params)->current();
+
+        // Only create row if it does not already exist:
+        if (empty($result)) {
+            $result = $this->createRow();
+            $result->resource_id = $resource_id;
+            $result->list_id = $list_id;
+            $result->user_id = $user_id;
+        }
+
+        // Update the notes:
+        $result->notes = $notes;
+        $result->save();
         $this->updateListDate($list_id, $user_id);
     }
 
@@ -161,54 +176,6 @@ class ReservationListResource extends \VuFind\Db\Table\UserResource
             $list->title = '-';
         }
         $list->save($user);
-    }
-
-    /**
-     * Get information saved in a user's favorites for a particular record.
-     *
-     * @param string $resourceId ID of record being checked.
-     * @param string $source     Source of record to look up
-     * @param int    $listId     Optional list ID (to limit results to a particular
-     * list).
-     * @param int    $userId     Optional user ID (to limit results to a particular
-     * user).
-     *
-     * @return \Laminas\Db\ResultSet\AbstractResultSet
-     */
-    public function getSavedData(
-        $resourceId,
-        $source = DEFAULT_SEARCH_BACKEND,
-        $listId = null,
-        $userId = null
-    ) {
-        $callback = function ($select) use ($resourceId, $source, $userId) {
-            $select->columns(
-                [
-                    new Expression(
-                        'DISTINCT(?)',
-                        ['finna_reservation_list_resource.id'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ), Select::SQL_STAR,
-                ]
-            );
-            $select->join(
-                ['r' => 'resource'],
-                'r.id = finna_reservation_list_resource.resource_id',
-                []
-            );
-            $select->join(
-                ['rl' => 'finna_reservation_list'],
-                'finna_reservation_list_resource.list_id = ul.id',
-                ['list_title' => 'title', 'list_id' => 'id']
-            );
-            $select->where->equalTo('r.source', $source)
-                ->equalTo('r.record_id', $resourceId);
-
-            if (null !== $userId) {
-                $select->where->equalTo('user_resource.user_id', $userId);
-            }
-        };
-        return $this->select($callback);
     }
 
     /**

@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Row Definition for user_list
+ * Row Definition for finna_reservation_list
  *
- * PHP version 8
+ * PHP version 8.1
  *
- * Copyright (C) The National Library of Finland 2016.
+ * Copyright (C) The National Library of Finland 2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,6 +23,7 @@
  * @category VuFind
  * @package  Db_Row
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -35,11 +36,12 @@ use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\MissingField as MissingFieldException;
 
 /**
- * Row Definition for reservation_list
+ * Row Definition for finna_reservation_list
  *
  * @category VuFind
  * @package  Db_Row
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  *
@@ -72,7 +74,7 @@ class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwar
     }
 
     /**
-     * Sets the ordered status for the reservation list.
+     * Sets the ordered data for the reservation list.
      *
      * @param User   $user        User or false.
      * @param string $pickup_date Set pickup date
