@@ -74,17 +74,21 @@ class ReservationListController extends AbstractBase
     /**
      * Retrieves the value of the specified parameter.
      *
-     * @param string $param The name of the parameter to retrieve.
+     * @param string $param   The name of the parameter to retrieve.
+     * @param mixed  $default Default value to return if not found
      *
      * @return mixed The value of the specified parameter.
      */
-    protected function getParam(string $param): mixed
+    protected function getParam(string $param, mixed $default = null): mixed
     {
         return $this->params()->fromRoute(
             $param,
             $this->params()->fromPost(
                 $param,
-                $this->params()->fromQuery($param)
+                $this->params()->fromQuery(
+                    $param,
+                    $default
+                )
             )
         );
     }
@@ -299,16 +303,13 @@ class ReservationListController extends AbstractBase
     {
         // We want to merge together GET, POST and route parameters to
         // initialize our search object:
-        $request = $this->getRequestAsArray();
+        $listID = $this->getParam('id');
         // If the user already confirmed the operation, perform the delete now;
         // otherwise prompt for confirmation:
-        $confirm = $this->params()->fromPost(
-            'confirm',
-            $this->params()->fromQuery('confirm')
-        );
+        $confirm = $this->getParam('confirm');
         if ($confirm) {
             try {
-                $this->reservationListService->deleteList($this->getUser(), $request['id'] ?? null);
+                $this->reservationListService->deleteList($this->getUser(), $listID);
             } catch (LoginRequiredException | ListPermissionException $e) {
                 $user = $this->getUser();
                 if ($user == false) {
@@ -323,12 +324,12 @@ class ReservationListController extends AbstractBase
                 : $this->redirect()->toRoute('reservationlist-home');
         }
         return $this->confirmDelete(
-            $request['id'] ?? null,
+            $listID,
             $this->url()->fromRoute('reservationlist-delete'),
             $this->url()->fromRoute('reservationlist-home'),
             'ReservationList::confirm_delete_list',
             [],
-            ['id' => $request['id'] ?? '']
+            ['id' => $listID]
         );
     }
 
@@ -345,40 +346,37 @@ class ReservationListController extends AbstractBase
             return $this->forceLogin();
         }
 
-        // Get target URL for after deletion:
-        $listID = $this->params()->fromPost('listID');
-
-        // Fail if we have nothing to delete:
-        $ids = $this->params()->fromPost('ids') ?? $this->params()->fromQuery('ids');
-
-        $actionLimit = 100;
+        $listID = $this->getParam('listID', false);
+        $ids = $this->getParam('ids');
 
         // If the user already confirmed the operation, perform the delete now;
         // otherwise prompt for confirmation:
-        $confirm = $this->params()->fromPost(
-            'confirm',
-            $this->params()->fromQuery('confirm')
-        );
+        $confirm = $this->getParam('confirm');
         if ($confirm) {
-            $success = $this->performDeleteReservation($ids, $deleteSource);
-            if ($success !== true) {
-                return $success;
+            try {
+                $this->reservationListService->deleteItems($ids, $listID, $user);
+            } catch (LoginRequiredException | ListPermissionException $e) {
+                $user = $this->getUser();
+                if ($user == false) {
+                    return $this->forceLogin();
+                }
+                // Logged in? Then we have to rethrow the exception!
+                throw $e;
             }
-        } else {
-            return $this->confirmDeleteReservation($deleteId, $deleteSource);
+            // Redirect to MyResearch home
+            return $this->inLightbox()  // different behavior for lightbox context
+                ? $this->getRefreshResponse()
+                : $this->redirect()->toRoute('reservationlist-list', ['id' => $listID]);
         }
-        // If we got this far, the operation has not been confirmed yet; show
-        // the necessary dialog box:
-        if (empty($listID)) {
-            $list = false;
-        } else {
-            $list = $this->reservationListService->getListForUser($user, $listID);
-        }
-        return $this->createViewModel(
+        return $this->confirmDelete(
+            $listID,
+            $this->url()->fromRoute('reservationlist-deletebulk'),
+            $this->url()->fromRoute('reservationlist-home'),
+            'ReservationList::confirm_delete_bulk',
+            [],
             [
-                'list' => $list,
-                'deleteIDS' => $ids,
-                'records' => $this->getRecordLoader()->loadBatch($ids),
+                'listID' => $listID,
+                'ids' => $ids,
             ]
         );
     }
@@ -386,39 +384,32 @@ class ReservationListController extends AbstractBase
     /**
      * Delete record
      *
-     * @param string $id     ID of record to delete
+     * @param array  $ids    ID of record to delete
      * @param string $source Source of record to delete
      *
      * @return mixed         True on success; otherwise returns a value that can
      * be returned by the controller to forward to another action (i.e. force login)
      */
-    public function performDeleteReservation($id, $source)
+    public function performDeleteReservations($ids, $source)
     {
+        if (empty($ids)) {
+            throw new \Exception('IDs not defined in performDeleteReservation');
+        }
         // Force login:
         $user = $this->getUser();
         if (!$user) {
             return $this->forceLogin();
         }
-
-        // Load/check incoming parameters:
-        $listID = $this->params()->fromRoute('id');
-        $listID = empty($listID) ? null : $listID;
-        if (empty($id)) {
-            throw new \Exception('Cannot delete empty ID!');
+        $listID = $this->getParam('id');
+        if (null === $listID) {
+            throw new \Exception('List ID not defined in performDeleteReservation');
         }
+
+        $this->reservationListService->deleteItems($ids, $listID, $user);
 
         // Perform delete and send appropriate flash message:
         if (null !== $listID) {
-            // ...Specific List
-            $table = $this->getTable('UserList');
-            $list = $table->getExisting($listID);
-            $list->removeResourcesById($user, [$id], $source);
             $this->flashMessenger()->addMessage('Item removed from list', 'success');
-        } else {
-            // ...All Saved Items
-            $user->removeResourcesById([$id], $source);
-            $this->flashMessenger()
-                ->addMessage('Item removed from favorites', 'success');
         }
 
         // All done -- return true to indicate success.

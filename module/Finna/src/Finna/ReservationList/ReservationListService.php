@@ -357,29 +357,15 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      * @param int   $listId ID of list to delete from
      * @param User  $user   Logged in user
      *
-     * @return void
+     * @return bool
      */
-    /* public function deleteItems($ids, $listId, $user)
-     {
-         if (!$this->userHasAuthority($user, $listId)) {
-             throw new ListPermissionException('list_access_denied');
-         }
-         $sorted = [];
-         foreach ($ids as $current) {
-             [$source, $id] = explode('|', $current, 2);
-             if (!isset($sorted[$source])) {
-                 $sorted[$source] = [];
-             }
-             $sorted[$source][] = $id;
-         }
-
-          @var \Finna\Db\Table\ReservationListResource
-         $reservationListResource = $this->reservationList->getDbTable(\Finna\Db\Table\ReservationListResource::class);
-         foreach ($sorted as $source => $ids) {
-             $reservationListResource->destroyLinks($ids, $user->id, $listId);
-         }
-         $this->flushCache();
-     }*/
+    public function deleteItems($ids, $listId, $user): bool
+    {
+        if (!$this->userHasAuthority($user, $listId)) {
+            throw new ListPermissionException('list_access_denied');
+        }
+        return $this->defaultHandler->deleteItems($user, $listId, $ids);
+    }
 
     /**
      * Get records for a list

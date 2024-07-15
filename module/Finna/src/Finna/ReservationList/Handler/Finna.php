@@ -222,7 +222,7 @@ class Finna implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
     public function deleteList(User $user, int $list_id): bool
     {
         $currentList = $this->reservationList->getExisting($list_id);
-        return !!$currentList->delete();
+        return !!$currentList->delete($user);
     }
 
     /**
@@ -236,6 +236,20 @@ class Finna implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
      */
     public function deleteItems(User $user, int $list_id, array $ids): bool
     {
+        // Sort $ids into useful array:
+        $sorted = [];
+        foreach ($ids as $current) {
+            [$source, $id] = explode('|', $current, 2);
+            if (!isset($sorted[$source])) {
+                $sorted[$source] = [];
+            }
+            $sorted[$source][] = $id;
+        }
+
+        $list = $this->reservationList->getExisting($list_id);
+        foreach ($sorted as $source => $ids) {
+            $list->removeResourcesById($user, $ids, $source);
+        }
         return false;
     }
 

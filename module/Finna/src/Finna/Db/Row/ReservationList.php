@@ -111,7 +111,7 @@ class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwar
     /**
      * Is the current user allowed to edit this list?
      *
-     * @param ?\VuFind\Db\Row\User $user Logged-in user (null if none)
+     * @param \VuFind\Db\Row\User $user Logged-in user
      *
      * @return bool
      */
@@ -181,5 +181,49 @@ class ReservationList extends RowGateway implements \VuFind\Db\Table\DbTableAwar
         if (null !== $this->session) {
             $this->session->lastUsed = $this->id;
         }
+    }
+
+    /**
+     * Given an array of item ids, remove them from this list
+     *
+     * @param \VuFind\Db\Row\User $user   Logged-in user (false if none)
+     * @param array               $ids    IDs to remove from the list
+     * @param string              $source Type of resource identified by IDs
+     *
+     * @return void
+     */
+    public function removeResourcesById(
+        $user,
+        $ids,
+        $source = DEFAULT_SEARCH_BACKEND
+    ) {
+        if (!$this->editAllowed($user)) {
+            throw new ListPermissionException('list_access_denied');
+        }
+
+        /**
+         * Resource table
+         *
+         * @var \VuFind\Db\Table\Resource
+         */
+        $resourceTable = $this->getDbTable('Resource');
+        $resources = $resourceTable->findResources($ids, $source);
+
+        $resourceIDs = [];
+        foreach ($resources as $current) {
+            $resourceIDs[] = $current?->id ?? $current['id'];
+        }
+
+        /**
+         * Reservation list to resource relation
+         *
+         * @var \Finna\Db\Table\ReservationListResource
+         */
+        $listResourceTable = $this->getDbTable(\Finna\Db\Table\ReservationListResource::class);
+        $listResourceTable->destroyLinks(
+            $resourceIDs,
+            $this->user_id,
+            $this->id
+        );
     }
 }
