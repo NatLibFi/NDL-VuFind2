@@ -3,7 +3,7 @@
 /**
  * Reservation List Service
  *
- * PHP version 8
+ * PHP version 8.1
  *
  * Copyright (C) The National Library of Finland 2024.
  *
@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Controller
+ * @package  ReservationList
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
@@ -38,7 +38,7 @@ use VuFind\Exception\ListPermission as ListPermissionException;
  * Reservation List Service
  *
  * @category VuFind
- * @package  Controller
+ * @package  ReservationList
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
@@ -46,13 +46,6 @@ use VuFind\Exception\ListPermission as ListPermissionException;
 class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
-
-    /**
-     * Reservation list function result cache
-     *
-     * @var array
-     */
-    protected array $reservationListCache = [];
 
     /**
      * Default handler
@@ -105,7 +98,6 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         string $datasource,
         string $building
     ): int {
-        $this->flushCache();
         return $this->defaultHandler->addList(
             $user,
             $title,
@@ -125,9 +117,6 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      */
     public function getListsForUser(User $user): array
     {
-        if (isset($this->reservationListCache[__FUNCTION__])) {
-            return $this->reservationListCache[__FUNCTION__];
-        }
         $lists = $this->defaultHandler->getLists($user);
         $result = [];
         $dateFormatter = function ($date) {
@@ -148,7 +137,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
                 'created_formatted' => $dateFormatter($list['created']),
             ];
         }
-        return $this->reservationListCache[__FUNCTION__] = $result;
+        return $result;
     }
 
     /**
@@ -162,9 +151,6 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      */
     public function getListsForDatasource(User $user, string $datasource): array
     {
-        if (isset($this->reservationListCache[__FUNCTION__])) {
-            return $this->reservationListCache[__FUNCTION__];
-        }
         $lists = $this->getListsForUser($user);
         $result = [];
         foreach ($lists as $list) {
@@ -178,7 +164,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
                 'ordered' => $list['ordered'],
             ];
         }
-        return $this->reservationListCache[__FUNCTION__] = $result;
+        return $result;
     }
 
     /**
@@ -191,10 +177,6 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      */
     public function getListForUser(User $user, int $id): array
     {
-        $cacheKey = implode('|', [__FUNCTION__, $user->id, $id]);
-        if (isset($this->reservationListCache[$cacheKey])) {
-            return $this->reservationListCache[$cacheKey];
-        }
         $list = $this->defaultHandler->getList($user, $id);
         $dateFormatter = function ($date) {
             return $date ? date('d.m.Y', strtotime($date)) : '';
@@ -215,7 +197,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
                 'created_formatted' => $dateFormatter($list['created']),
             ];
         }
-        return $this->reservationListCache[$cacheKey] = $result;
+        return $result;
     }
 
     /**
@@ -229,10 +211,6 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      */
     public function getListsContaining(User $user, string $recordId, string $source)
     {
-        $cacheKey = __FUNCTION__ . '|' . $recordId . '|' . $source;
-        if (isset($this->reservationListCache[$cacheKey])) {
-            return $this->reservationListCache[$cacheKey];
-        }
         $lists = $this->defaultHandler->getListsContaining($user, $recordId, $source);
         $result = [];
         foreach ($lists as $list) {
@@ -242,7 +220,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
                 'ordered' => $list->ordered,
             ];
         }
-        return $this->reservationListCache[$cacheKey] = $result;
+        return $result;
     }
 
     /**
@@ -257,10 +235,6 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      */
     public function getListsWithoutRecord(User $user, string $recordId, string $source, string $datasource): array
     {
-        $cacheKey = __FUNCTION__ . '|' . $recordId . '|' . $source . '|' . $datasource;
-        if (isset($this->reservationListCache[$cacheKey])) {
-            return $this->reservationListCache[$cacheKey];
-        }
         $lists = $this->getListsContaining($user, $recordId, $source);
         $datasourced = $this->getListsForDatasource($user, $datasource);
         $result = [];
@@ -275,7 +249,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
             }
             $result[] = $compare;
         }
-        return $this->reservationListCache[$cacheKey] = $result;
+        return $result;
     }
 
     /**
@@ -307,8 +281,6 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
             $notes,
             $source
         );
-        // Clear cache after changes
-        $this->flushCache();
         return true;
     }
 
@@ -326,8 +298,6 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         if (!$this->userHasAuthority($user, $list_id)) {
             throw new ListPermissionException('list_access_denied');
         }
-        // Clear cache after changes
-        $this->flushCache();
         return $this->defaultHandler->orderList($user, $list_id, $pickup_date);
     }
 
@@ -344,10 +314,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
         if (!$this->userHasAuthority($user, $list_id)) {
             throw new ListPermissionException('list_access_denied');
         }
-        $result = $this->defaultHandler->deleteList($user, $list_id);
-        // Clear cache after changes
-        $this->flushCache();
-        return $result;
+        return $this->defaultHandler->deleteList($user, $list_id);
     }
 
     /**
@@ -377,10 +344,6 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      */
     public function getRecordsForList($user, $listId): array
     {
-        $cacheKey = __FUNCTION__ . '|' . $listId;
-        if (isset($this->reservationListCache[$cacheKey])) {
-            return $this->reservationListCache[$cacheKey];
-        }
         if (!$this->userHasAuthority($user, $listId)) {
             throw new ListPermissionException('list_access_denied');
         }
@@ -393,7 +356,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
                 'title' => $record['title'],
             ];
         }
-        return $this->reservationListCache[$cacheKey] = $result;
+        return $result;
     }
 
     /**
@@ -412,15 +375,5 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
             $text .= $record['title'] . ' (' . $record['record_id'] . ') ' . PHP_EOL;
         }
         return $text;
-    }
-
-    /**
-     * Flush runtime cache
-     *
-     * @return void
-     */
-    protected function flushCache(): void
-    {
-        $this->reservationListCache = [];
     }
 }
