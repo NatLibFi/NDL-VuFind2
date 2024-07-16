@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Form handler plugin manager
+ * Reservation list plugin manager
  *
  * PHP version 8.1
  *

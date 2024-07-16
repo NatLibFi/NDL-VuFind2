@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Auth handler plugin factory
+ * Reservation list handler plugin factory
  *
- * PHP version 8
+ * PHP version 8.1
  *
- * Copyright (C) Villanova University 2010.
+ * Copyright (C) National Library of Finland 2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,8 +21,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Authentication
+ * @package  ReservationList
  * @author   Demian Katz <demian.katz@villanova.edu>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
@@ -30,11 +31,12 @@
 namespace Finna\ReservationList\Handler;
 
 /**
- * Auth handler plugin factory
+ * Reservation list handler plugin factory
  *
  * @category VuFind
- * @package  Authentication
+ * @package  ReservationList
  * @author   Demian Katz <demian.katz@villanova.edu>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */

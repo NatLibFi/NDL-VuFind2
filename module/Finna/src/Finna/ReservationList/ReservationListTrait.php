@@ -3,7 +3,7 @@
 /**
  * Reservation List Trait
  *
- * PHP version 8
+ * PHP version 8.1
  *
  * Copyright (C) The National Library of Finland 2024.
  *
@@ -33,7 +33,7 @@ namespace Finna\ReservationList;
  * Reservation list trait
  *
  * @category VuFind
- * @package  Controller
+ * @package  ReservationList
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
