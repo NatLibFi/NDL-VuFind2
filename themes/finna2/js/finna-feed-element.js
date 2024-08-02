@@ -322,14 +322,12 @@ class FinnaFeedElement extends HTMLElement {
     if (typeof this.onFeedLoaded === 'function') {
       this.onFeedLoaded();
     }
-    VuFind.observerManager.createIntersectionObserver(
-      'LazyImages',
-      (element) => {
-        element.src = element.dataset.src;
-        delete element.dataset.src;
-      },
-      this.querySelectorAll('img[data-src]')
-    );
+    finna.getPromise('lazyImages').then(() => {
+      VuFind.observerManager.observe(
+        'LazyImages',
+        this.querySelectorAll('img[data-src]')
+      );
+    });
   }
 
   /**

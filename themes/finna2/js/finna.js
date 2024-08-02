@@ -1,6 +1,22 @@
 /*global finnaCustomInit */
 /*exported finna */
+
 var finna = (function finnaModule() {
+
+  let resolves = {};
+
+  /**
+   * Object which holds promises, key is the name for the promise to wait for.
+   *
+   * @var {Object}
+   */
+  let promises = {
+    lazyImages: new Promise((resolve) => { resolves.lazyImages = resolve; })
+  };
+
+  /**
+   * Object which holds resolves, key is the name for the promise to resolve.
+   */
 
   var my = {
     init: function init() {
@@ -36,7 +52,15 @@ var finna = (function finnaModule() {
           finna[module].init();
         }
       });
-    }
+    },
+    resolvePromise: (name) => {
+      if (resolves[name]) {
+        resolves[name]();
+      }
+    },
+    getPromise: (name) => {
+      return promises[name];
+    },
   };
 
   return my;
