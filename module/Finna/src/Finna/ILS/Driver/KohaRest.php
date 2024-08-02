@@ -264,7 +264,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         $result = $this->makeRequest(['v1', 'patrons', $patron['id'], 'account']);
 
         $fines = [];
-        foreach ($result['data']['outstanding_debits']['lines'] ?? [] as $entry) {
+        foreach (array_reverse($result['data']['outstanding_debits']['lines'] ?? []) as $entry) {
             $bibId = null;
             if (!empty($entry['item_id'])) {
                 $item = $this->getItem($entry['item_id']);
