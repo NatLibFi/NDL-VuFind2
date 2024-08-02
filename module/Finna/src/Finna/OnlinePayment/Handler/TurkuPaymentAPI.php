@@ -129,7 +129,7 @@ class TurkuPaymentAPI extends AbstractBase
             ->setReference($reference)
             ->setCurrency('EUR')
             ->setLanguage($language)
-            ->setAmount($amount + $transactionFee)
+            ->setAmount(round($amount) + $transactionFee)
             ->setCustomer($customer);
 
         // Payment description in $this->config->paymentDescription is not supported
