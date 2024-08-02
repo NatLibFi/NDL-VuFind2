@@ -159,6 +159,7 @@ finna.common = (function finnaCommon() {
           delete element.dataset.src;
         }
       );
+      finna.resolvePromise('lazyImages');
     },
     initResultScripts: initResultScripts,
     getCookie: getCookie,
