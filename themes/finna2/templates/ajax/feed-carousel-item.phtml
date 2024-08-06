@@ -14,7 +14,7 @@
   <div class="carousel-more show-link" aria-hidden="true"><?=$this->icon('carousel-follow-link')?></div>
   <?php if (isset($item['title'])): ?>
     <div class="carousel-hover-title">
-      <p><?=$this->escapeHtml($this->truncate($item['title'], 70))?></p>
+      <p><?=$this->escapeHtml($this->truncate($item['title'], $item['titleTruncateSize']))?></p>
     </div>
   <?php endif; ?>
   <?php if (isset($item['dateFull'])): ?>
@@ -44,7 +44,7 @@
   <div class="carousel-text-shadow"></div>
 </div>
 <?php if ($hasImg): ?>
-  <div class="wrapper" aria-hidden="true">
+  <div class="wrapper <?php if (isset($item['format'])): ?><?=$this->transEsc('iconlabel format-' . preg_replace('/[^a-z0-9]/', '', strtolower($item['format'])));?><?php endif; ?>" aria-hidden="true">
     <img data-src="<?=$this->escapeHtmlAttr($item['image']['url']) ?>" alt="<?=$this->transEsc('Image');?><?php if (isset($item['title'])): ?>: <?=$this->escapeHtml($item['title']) ?><?php endif; ?>">
   </div>
 <?php endif; ?>
@@ -53,7 +53,10 @@
     <p>
       <?php if ($hasIcon && !$hasImg): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?>
       <?php if (isset($item['title'])): ?>
-        <?=$this->escapeHtml($this->truncate($item['title'], 70));?>
+        <span class="carousel-header-title"><?=$this->escapeHtml($this->truncate($item['title'], $item['titleTruncateSize']));?></span>
+      <?php endif; ?>
+      <?php if (isset($item['format'])): ?>
+          <span class="carousel-header-format"><?=$this->transEsc('format_' . $item['format']);?></span>
       <?php endif; ?>
       <?php if (isset($item['dateFull'])): ?>
         <span class="carousel-header-date carousel-date"><?=$this->transEsc('Published')?> <?=$this->escapeHtml($item['dateFull'])?></span>

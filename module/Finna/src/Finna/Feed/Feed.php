@@ -38,6 +38,7 @@ use Laminas\Feed\Reader\Feed\AbstractFeed;
 use Laminas\Feed\Reader\Reader;
 use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\View\Helper\ServerUrl;
+use Psr\Container\ContainerInterface;
 use VuFind\Cache\Manager as CacheManager;
 use VuFindTheme\View\Helper\ImageLink;
 
@@ -450,6 +451,7 @@ class Feed implements
         $contentDateFormat = $config->contentDateFormat ?? 'j.n.Y';
         $fullDateFormat = $config->fullDateFormat ?? 'j.n.Y';
         $cleanContent = $config->cleanContent ?? true;
+        $titleTruncateSize = (int)($config->titleTruncateSize ?? 70);
 
         $contentNavigation = $config->feedcontentNavigation ?? true;
         $nextArticles = $config->feedcontentNextArticles ?? false;
@@ -465,6 +467,7 @@ class Feed implements
             'title' => 'getTitle',
             'text' => 'getContent',
             'description' => 'getDescription',
+            'format' => 'getFormat',
             'image' => 'getEnclosure',
             'link' => 'getLink',
             'date' => 'getDateCreated',
@@ -501,6 +504,7 @@ class Feed implements
             }
             $data = [];
             $data['modal'] = $modal;
+            $data['titleTruncateSize'] = $titleTruncateSize;
             foreach ($content as $setting => $method) {
                 if (
                     !isset($elements[$setting])
@@ -684,8 +688,27 @@ class Feed implements
             'allowedImages',
             'contentNavigation',
             'nextArticles',
-            'additionalHtml'
+            'additionalHtml',
+            'titleTruncateSize'
         );
+    }
+
+    /**
+     * Set up custom extensions (should be called by factory).
+     *
+     * @param ContainerInterface $container Service container
+     *
+     * @return void
+     */
+    public function registerExtensions(ContainerInterface $container)
+    {
+        $manager = new \Laminas\Feed\Reader\ExtensionPluginManager($container);
+        $manager->setInvokableClass(
+            'DublinCore\Entry',
+            \Finna\Feed\Reader\Extension\DublinCore\Entry::class
+        );
+        Reader::setExtensionManager($manager);
+        Reader::registerExtension('DublinCore');
     }
 
     /**
