@@ -17,6 +17,7 @@ return [
             'Finna\View\Helper\Root\Citation' => 'Finna\View\Helper\Root\CitationFactory',
             'Finna\View\Helper\Root\CleanHtml' => 'Finna\View\Helper\Root\CleanHtmlFactory',
             'Finna\View\Helper\Root\Combined' => 'Finna\View\Helper\Root\CombinedFactory',
+            'Finna\View\Helper\Root\Component' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\Config' => 'VuFind\View\Helper\Root\ConfigFactory',
             'Finna\View\Helper\Root\Content' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\Cookie' => 'Finna\View\Helper\Root\CookieFactory',
@@ -140,6 +141,7 @@ return [
             // Overrides
             'VuFind\View\Helper\Root\Browse' => 'Finna\View\Helper\Root\Browse',
             'VuFind\View\Helper\Root\Citation' => 'Finna\View\Helper\Root\Citation',
+            'VuFind\View\Helper\Root\Component' => 'Finna\View\Helper\Root\Component',
             'VuFind\View\Helper\Root\Config' => 'Finna\View\Helper\Root\Config',
             'VuFind\View\Helper\Root\Holdings' => 'Finna\View\Helper\Root\Holdings',
             'VuFind\View\Helper\Root\Matomo' => 'Finna\View\Helper\Root\Matomo',

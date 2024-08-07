@@ -107,28 +107,27 @@
     <h2>Användning av jokertecken i sökord</h2>
     <p>Jokertecknen * och ? kan användas för att ersätta tecken som förekommer i ett sökord, så att sökresultatet i större utsträckning omfattar olika eventuella ändelser.</p>
     <p>När det gäller finskspråkiga sökord rekommenderas inte användning av jokertecken, eftersom en del av de funktioner som utförs för det givna sökkriteriet då uteblir. Exempel på sådana funktioner är synonymhantering och uppdelning av termer vid bindestrecket.</p>
-    <p>Finna tar automatiskt hänsyn till sökordets olika böjningsformer och ändelser. Om ditt sökord är ”taulu” så känner sökmotorn även igen ordets böjda former, såsom ”taulut” och ”taulujen”. Användning av jokertecken kan förvilla sökmotorns automatiska sökfunktioner.</p>
+    <p>Finna tar automatiskt hänsyn till finska sökords olika böjningsformer och ändelser. Om ditt sökord är ”taulu” så känner sökmotorn även igen ordets böjda former, såsom ”taulut” och ”taulujen”. Användning av jokertecken kan förvilla sökmotorns automatiska sökfunktioner. Om du använder ett sökord med plural-s inkluderar sökningen automatiskt också sökordet i singularis. Om du till exempel söker med sökordet "paintings" får du också träffar på formen "painting".</p>
     <h3>Användning av jokertecken</h3>
-    <p>Obs! Jokertecknet får inte användas som sökordets första tecken.</p>
-    <h4>* </h4>
-    <p>*-tecknet ersätter ett eller flera tecken i sökordet. I sökresultaten ingår också den form av sökordet som använts för sökningen.</p>
+    <p>Obs! Jokertecknet (* och ?) får inte användas som sökordets första tecken.</p>
+    <h4>* (asterisk)</h4>
+    <p>Asterisken ersätter ett eller flera tecken i sökordet. I sökresultaten ingår också den form av sökordet som använts för sökningen.</p>
     <p>Sökordet kan trunkeras med asterisk. Till exempel kan orden konkurrens, konkurrent, konkurrensutsättning och konkurrenslagstiftning alla sökas med sökordet:</p>
     <pre class="code">konkurren*</pre>
     <p>Asterisk kan också användas inuti ett ord för att ersätta ett eller flera tecken. Exempelvis kan stavningsvarianterna color och colour sökas med sökordet:</p>
     <pre class="code">colo*r</pre>
-    <h4>? </h4>
-    <p>Jokertecknet ? ersätter ett tecken i ett sökord, vilket möjliggör flera ordformer.</p>
+    <h4>? (frågetecken)</h4>
+    <p>Frågetecknet ersätter ett tecken i sökordet, vilket möjliggör flera ordformer.</p>
     <p>Exempelvis kan orden <i>woman</i> och <i>women</i> sökas med samma sökord:</p>
     <pre class="code">wom?n</pre>
   </div>
   <div id="phrase-search" class="content-section">
     <h2>Frassökning</h2>
-    <p>Frassökning bör användas om du enbart vill få fram material om ett visst ord eller en viss ordkombination. Frassökningar görs genom att sökorden skrivs inom citationstecken.</p>
-    <p>Om du till exempel ska söka material som innehåller ordkombinationen <i>Helsingfors universitet</i> men exkluderar <i>Helsingfors stad</i> skriver du</p>
-    <pre class="code">”Helsingfors universitet”</pre>
-    <p>Frassökning kan också användas för enskilda sökord. Sökningen gäller då enbart det angivna sökordet och dess specifika böjningsform.</p>
-    <p>Om du exempelvis gör en sökning på ordet tecken inom citationstecken, utesluts ord som <i>utropstecken</i>, <i>utmärkelsetecken</i> och <i>teckenspråk</i>.</p>
-    <pre class="code">”tecken”"</pre>
+    <p>Det kan vara bra att använda frassökning om du vill ha resultat med ordfogningar, där ord förekommer i en viss ordning. Vid en sökning på finska kan du med hjälp av frassökning göra omfattande sökningar i olika fält efter böjningsformer och sammansatta former av frasen. Vid sökningar på andra språk görs inga sökningar på ordens böjningsformer eller sammansatta former, förutom när det gäller ord i singularform som har pluralformer med s-ändelse, och omvänt. Exakta träffar ges större vikt och visas därför överst enligt sökträffens relevans på listan över sökresultat. Frassökningar görs genom att sökorden skrivs inom citationstecken.</p>
+    <p>Exempelvis ger frassökningen <i>Helsingin yliopisto</i> även sökträffar såsom <i>Helsingin yliopistossa</i>:</p>
+    <pre class="code">"Helsingin yliopisto"</pre>
+    <p>När du söker på andra språk, ger till exempel sökningen <i>classroom board</i> sökresultatet <i>classroom boards</i> men inte <i>classroom chalkboard</i>:</p>
+    <pre class="code">"classroom board"</pre>
   </div>
   <div id="isbn-issn-search" class="content-section">
     <h2>ISBN/ISSN-sökning</h2>

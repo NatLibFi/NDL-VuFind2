@@ -28,11 +28,6 @@
           'translation' => 'Checked Out Items',
           'statusKey' => 'checkedout',
         ],
-        'historicloans' => [
-          'url' => 'checkouts-history',
-          'translation' => 'Loan History',
-          'show' => $this->ils()->checkCapability('getMyTransactionHistory', $capabilityParams),
-        ],
         'holds' => [
           'url' => 'holds-list',
           'translation' => 'Holds and Recalls',
@@ -49,6 +44,11 @@
           'translation' => 'Interlibrary Loan Requests',
           'show' => $this->ils()->checkFunction('ILLRequests', $capabilityParams),
           'statusKey' => 'illrequests',
+        ],
+        'historicloans' => [
+          'url' => 'checkouts-history',
+          'translation' => 'Loan History',
+          'show' => $this->ils()->checkCapability('getMyTransactionHistory', $capabilityParams),
         ],
         'fines' => [
           'url' => 'myresearch-fines',
@@ -100,10 +100,10 @@
     $desktopList = [
       'r2-accessrights',
       'checkedout',
-      'historicloans',
       'holds',
       'storageretrievalrequests',
       'illrequests',
+      'historicloans',
       'fines',
       'librarycards',
       'profile',
