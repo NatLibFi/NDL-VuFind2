@@ -68,8 +68,10 @@ class AdminApiController extends \VuFindApi\Controller\AdminApiController
                 $this->callWithRetry(
                     [$this->cacheManager->getCache($id), 'flush'],
                     options: [
-                        'retryCount' => 50,
-                        'maximumBackoff' => 0,
+                        'retryCount' => 10,
+                        'firstBackoff' => 0,
+                        'subsequentBackoff' => 0,
+                        'exponentialBackoff' => false,
                     ]
                 );
             }
