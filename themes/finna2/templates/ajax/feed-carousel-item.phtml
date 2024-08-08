@@ -45,7 +45,7 @@
 </div>
 <?php if ($hasImg): ?>
   <div class="wrapper <?php if (isset($item['format'])): ?><?=$this->transEsc('iconlabel format-' . preg_replace('/[^a-z0-9]/', '', strtolower($item['format'])));?><?php endif; ?>" aria-hidden="true">
-    <img data-src="<?=$this->escapeHtmlAttr($item['image']['url']) ?>" alt="<?=$this->transEsc('Image');?><?php if (isset($item['title'])): ?>: <?=$this->escapeHtml($item['title']) ?><?php endif; ?>">
+    <img data-src="<?=$this->escapeHtmlAttr($item['image']['url']) ?>" alt="">
   </div>
 <?php endif; ?>
 <?php if (isset($item['title']) || isset($item['dateFull'])): ?>

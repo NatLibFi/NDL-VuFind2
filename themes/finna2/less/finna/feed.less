@@ -755,7 +755,7 @@ finna-feed.carousel.splide--ltr {
             .carousel-text:not(.no-text) {
                 opacity: 1;
             }
-            .carousel-slide-header p:not(ptitle-bottom) {
+            .carousel-slide-header p:not(.title-bottom) {
                 opacity: 0;
             }
             .carousel-text.scrollable {
@@ -788,9 +788,10 @@ finna-feed.carousel.splide--ltr {
             flex: 1 1 100%;
             width: 100%;
             &.iconlabel::before {
-                color: #fff;
+                color: white;
+                mix-blend-mode: difference;
                 position: absolute;
-                font-size: 48px;
+                font-size: 39px;
             }
             img {
                 max-width: none;

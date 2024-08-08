@@ -694,7 +694,7 @@ class Feed implements
     }
 
     /**
-     * Set up custom extensions (should be called by factory).
+     * Set up custom extensions
      *
      * @param ContainerInterface $container Service container
      *

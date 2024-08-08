@@ -90,6 +90,7 @@
 ;; Optional carousel settings:
 
 ; titlePosition = "bottom" Display item title below image.
+; titleTruncateSize = [size] // Title truncation size (default: 70).
 ; height = [pixels] Carousel height
 ; autoplay = [false|milliseconds] Autoplay slide change interval (autoplay is off by default).
 ; dots = [0|1] Display current slide indicator (default 1).
@@ -123,6 +124,7 @@
 ; content[image] = 0
 ; content[date] = 0
 ; content[description] = 0
+; content[format] = 0
 
 [carousel]
 type = "carousel"
