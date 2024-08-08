@@ -16,7 +16,7 @@ $newItemValues = [
         <?=$results->getUrlQuery()->asHiddenFields(['page' => '/./', 'filter' => "/^{$title}:.*/"])?>
         <div class="form-group">
         <?=$this->component('finna-dateinput', ['dateinputId' => $this->escapeHtmlAttr($title . 'from'), 'dateinputPicker' => 'single', 'dateinputName' => $this->escapeHtmlAttr($title . 'from'), 'dateinputLabel' => $this->transEsc('date_from'), 'dateinputValue' => $this->escapeHtmlAttr($this->dateTime()->convertToDisplayDate('Y-m-d', $newItemsFacets[$title]['date']))]) ?>
-        <button class="btn btn-xs btn-primary" type="submit" value=""><?=$this->transEsc('Search');?></button>
+        <button class="btn btn-xs btn-primary" type="submit" value=""><?=$this->transEsc('Find');?></button>
       </div>
     </form>
     <?php
