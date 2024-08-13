@@ -1249,18 +1249,14 @@ class SolrEad3 extends SolrEad
             if (! isset($attr->encodinganalog)) {
                 $restrictions['general'] = array_merge(
                     $restrictions['general'],
-                    $this->getDisplayLabel($access, 'p', true)
+                    $this->getDisplayLabel($access, 'p')
                 );
             } else {
                 $type = (string)$attr->encodinganalog;
                 if (in_array($type, self::ACCESS_RESTRICT_TYPES)) {
                     switch ($type) {
                         case 'ahaa:KR7':
-                            $label = $this->getDisplayLabel(
-                                $access->p->name,
-                                'part',
-                                true
-                            );
+                            $label = $this->getDisplayLabel($access->p->name, 'part');
                             break;
                         case 'ahaa:KR9':
                             $label = [(string)($access->p->date ?? '')];
