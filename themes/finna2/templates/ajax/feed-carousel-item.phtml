@@ -5,6 +5,7 @@
   $hasIcon = !empty($item['icon']['name']);
   $hasImg = !empty($item['image']['url']);
   $noText = empty($item['text']);
+  $displayFormatHeader = $item['displayFormatHeader'];
 ?>
 <?php if ($hasIcon && $hasImg): ?>
   <?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon'], 'wrapper' => true]);?>
@@ -55,7 +56,7 @@
       <?php if (isset($item['title'])): ?>
         <span class="carousel-header-title"><?=$this->escapeHtml($this->truncate($item['title'], $item['titleTruncateSize']));?></span>
       <?php endif; ?>
-      <?php if (isset($item['format'])): ?>
+      <?php if (isset($item['format']) && $displayFormatHeader): ?>
           <span class="carousel-header-format"><?=$this->transEsc('format_' . $item['format']);?></span>
       <?php endif; ?>
       <?php if (isset($item['dateFull'])): ?>

@@ -452,6 +452,7 @@ class Feed implements
         $fullDateFormat = $config->fullDateFormat ?? 'j.n.Y';
         $cleanContent = $config->cleanContent ?? true;
         $titleTruncateSize = (int)($config->titleTruncateSize ?? 70);
+        $displayFormatHeader = $config->displayFormatHeader ?? false;
 
         $contentNavigation = $config->feedcontentNavigation ?? true;
         $nextArticles = $config->feedcontentNextArticles ?? false;
@@ -505,6 +506,7 @@ class Feed implements
             $data = [];
             $data['modal'] = $modal;
             $data['titleTruncateSize'] = $titleTruncateSize;
+            $data['displayFormatHeader'] = $displayFormatHeader;
             foreach ($content as $setting => $method) {
                 if (
                     !isset($elements[$setting])

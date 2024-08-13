@@ -94,6 +94,7 @@
 ; height = [pixels] Carousel height
 ; autoplay = [false|milliseconds] Autoplay slide change interval (autoplay is off by default).
 ; dots = [0|1] Display current slide indicator (default 1).
+; displayFormatHeader = [true|false] Determines whether to display the format in the carousel item's header (default: false).
 
 ;; Optional slider settings:
 
