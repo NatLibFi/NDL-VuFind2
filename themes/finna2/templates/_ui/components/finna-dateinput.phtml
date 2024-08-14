@@ -4,7 +4,7 @@
   $dateinputClass = $this->dateinputId ?? '';
   $dateinputLabel = $this->dateinputLabel ?? '';
   $dateinputPlaceholder = $this->dateinputPlaceholder ?? '';
-  $dateinputHintText = $this->dateinputHintText ?? $this->transEsc('datepicker_hint_text');
+  $dateinputHintText = $this->dateinputHintText ?? $this->transEsc('datepicker_hint_text') . ' ' . $this->dateTime()->getDisplayDateFormat();
   $dateinputValue = $this->dateinputValue ?? '';
   $dateinputPicker = $this->dateinputPicker ?? '';
   $dateinputRequired = $this->dateinputRequired ?? false;

@@ -1,4 +1,8 @@
 <!-- START of: finna - Helpers/linkedeventstabs.phtml -->
+ <?php
+ $config = $this->config()->get('config');
+ $dateFormat = $config->Site->displayDateFormat ?? 'j.n.Y';
+ ?>
 <div class="linked-events-tabs <?= $showMobileAccordion ? 'mobile-accordion-show' : 'mobile-accordion-hide'; ?>" id="<?= $this->escapeHtmlAttr($this->id) ?>" data-limit="<?= $this->escapeHtmlAttr($this->limit) ?>" data-lang="<?= $this->layout()->userLang; ?>">
   <div class="feed-tabs-container">
     <h2 class="feed-tabs-title"><?= $this->transEsc('Events'); ?></h2>
@@ -48,7 +52,7 @@
           <input id="event-search" class="event-text-search form-control" type="text" size="26">
         </span>
         <span class="event-date-container">
-          <?=$this->component('finna-dateinput', ['dateinputId' => 'event-date-start', 'dateinputClass' => 'event-date-start', 'dateinputPicker' => 'single', 'dateinputLabel' => $this->transEsc('event_date_start'), 'dateinputValue' => date('j.n.Y')]) ?>
+          <?=$this->component('finna-dateinput', ['dateinputId' => 'event-date-start', 'dateinputClass' => 'event-date-start', 'dateinputPicker' => 'single', 'dateinputLabel' => $this->transEsc('event_date_start'), 'dateinputValue' => date($dateFormat)]) ?>
           <?=$this->component('finna-dateinput', ['dateinputId' => 'event-date-end', 'dateinputClass' => 'event-date-end', 'dateinputPicker' => 'single', 'dateinputLabel' => $this->transEsc('event_date_end')]) ?>
         </span>
         <button class="btn btn-primary linked-event-search"><?= $this->transEsc('linked_event_search') ?></button>

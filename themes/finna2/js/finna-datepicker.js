@@ -29,7 +29,7 @@ finna.finnaDatepicker = (function finnaDatepicker() {
       const datepickerOpen = () => {
         createPopperInstance();
         datepickerDialog.show();
-        datepickerCalendar.focus({ preventScroll: true });
+        datepickerCalendar.focus({ preventScroll: true, focusVisible: true });
         trapFocus(datepickerDialog);
       };
 
