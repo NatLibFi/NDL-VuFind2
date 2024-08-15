@@ -281,8 +281,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 && !in_array($debitStatus, $this->nonPayableStatuses);
             $fine = [
                 'fine_id' => $entry['account_line_id'],
-                'amount' => $entry['amount'] * 100,
-                'balance' => $entry['amount_outstanding'] * 100,
+                'amount' => (int)round($entry['amount'] * 100),
+                'balance' => (int)round($entry['amount_outstanding'] * 100),
                 'fine' => $type,
                 'description' => $description,
                 'createdate' => $this->convertDate($entry['date'] ?? null),
