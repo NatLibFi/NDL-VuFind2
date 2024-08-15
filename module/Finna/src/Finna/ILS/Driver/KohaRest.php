@@ -1028,15 +1028,19 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             }
         }
 
-        $result = $this->makeRequest(
-            [
-                'path' => [
-                    'v1', 'contrib', 'kohasuomi', 'availability', 'biblios', $id,
-                    'search',
-                ],
-                'errors' => true,
-            ]
-        );
+        $requestParams = [
+            'path' => [
+                'v1', 'contrib', 'kohasuomi', 'availability', 'biblios', $id,
+                'search',
+            ],
+            'errors' => true,
+            'query' => [],
+        ];
+        if ($this->includeSuspendedHoldsInQueueLength) {
+            $requestParams['query']['include_suspended_in_hold_queue'] = '1';
+        }
+
+        $result = $this->makeRequest($requestParams);
         if (404 === $result['code']) {
             return [];
         }
@@ -2026,7 +2030,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             $message = '';
             if (!$renewable && !$checkedIn) {
                 $message = $this->mapRenewalBlockReason(
-                    $entry['renewability_blocks']
+                    $entry['renewability_blocks'],
+                    $entry['item_itype']
                 );
                 $permanent = in_array(
                     $entry['renewability_blocks'],

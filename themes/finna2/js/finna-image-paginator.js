@@ -370,11 +370,17 @@ FinnaPaginator.prototype.onLeafletImageClick = function onLeafletImageClick(imag
       if (imageHeight >= boundHeight) {
         newHeight = boundHeight - (boundHeight / 100 * offsetPercentage);
         heightPercentage = 100 - (newHeight / imageHeight * 100);
+      } else {
+        newHeight = boundHeight - imageHeight / 100;
+        heightPercentage = 100 - (newHeight / boundHeight * 100);
       }
 
       if (imageWidth >= boundWidth) {
         newWidth = boundWidth - (boundWidth / 100 * offsetPercentage);
         widthPercentage = 100 - (newWidth / imageWidth * 100);
+      } else {
+        newWidth = boundWidth - imageWidth / 100;
+        widthPercentage = 100 - (newWidth / boundWidth * 100);
       }
 
       if (heightPercentage > widthPercentage) {
@@ -540,18 +546,29 @@ FinnaPaginator.prototype.changeTriggerImage = function changeTriggerImage(imageP
   function setImageProperties(image) {
     $(image).css('opacity', '');
     _.setDimensions();
-    if (image.naturalWidth && image.naturalWidth === 10 && image.naturalHeight === 10) {
-      _.trigger.addClass('no-image').trigger('removeclick');
-      $(image).attr('alt', '');
-      if (_.settings.isList) {
-        if (_.images.length < 2) {
-          _.settings.enableImageZoom = false;
+    var width = image.naturalWidth;
+    var height = image.naturalHeight;
+    const recordCoverContainer = img.closest('.recordcover-container');
+    var containerWidth = recordCoverContainer.width();
+    var containerHeight = recordCoverContainer.height();
+    if (width) {
+      if (width === 10 && height === 10) {
+        _.trigger.addClass('no-image').trigger('removeclick');
+        $(image).attr('alt', '');
+        if (_.settings.isList) {
+          if (_.images.length < 2) {
+            _.settings.enableImageZoom = false;
+          }
+          $(image).parents('.grid').addClass('no-image');
         }
-        $(image).parents('.grid').addClass('no-image');
-      }
-      if (!_.settings.isList && _.images.length <= 1) {
-        _.root.css('display', 'none');
-        _.root.siblings('.image-details-container:not(:has(.image-rights))').addClass('hidden');
+        if (!_.settings.isList && _.images.length <= 1) {
+          _.root.css('display', 'none');
+          _.root.siblings('.image-details-container:not(:has(.image-rights))').addClass('hidden');
+        }
+      // If the image measurements are less than 60% of their container's measurements
+      } else if (_.root.parents().hasClass('record-main') && (width / containerWidth < 0.6) && (height / containerHeight < 0.6)) {
+        _.trigger.css('aspect-ratio', 'auto');
+        $('.image-description').css('text-align', 'center');
       }
     } else if (_.trigger.hasClass('no-image')) {
       _.trigger.removeClass('no-image');

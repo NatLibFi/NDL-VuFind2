@@ -128,13 +128,6 @@
                   <span class="checkedout-status status hidden"><?=$this->icon('spinner') ?></span>
                 </a>
               </li>
-              <?php if ($this->ils()->checkCapability('getMyTransactionHistory', $capabilityParams)): ?>
-                <li role="none">
-                  <a <?=$this->url('checkouts-history') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-historicloans')?>">
-                    <?=$this->transEsc('Loan History')?>
-                  </a>
-                </li>
-              <?php endif; ?>
               <li>
                 <a <?=$this->url('holds-list') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('holds-list')?>">
                   <?=$this->transEsc('Holds and Recalls')?>
@@ -154,6 +147,13 @@
                   <a <?=$this->url('myresearch-illrequests') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-illrequests')?>">
                     <?=$this->transEsc('Interlibrary Loan Requests')?>
                     <span class="illrequests-status status hidden"><?=$this->icon('spinner') ?></span>
+                  </a>
+                </li>
+              <?php endif; ?>
+              <?php if ($this->ils()->checkCapability('getMyTransactionHistory', $capabilityParams)): ?>
+                <li role="none">
+                  <a <?=$this->url('checkouts-history') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-historicloans')?>">
+                    <?=$this->transEsc('Loan History')?>
                   </a>
                 </li>
               <?php endif; ?>
