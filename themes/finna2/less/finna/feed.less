@@ -441,8 +441,7 @@
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
-    row-gap: 20px;
-    column-gap: 15px;
+    gap: 15px;
     margin-bottom: 30px;
     @media (max-width: @screen-xs-max) {
         display: none;
@@ -452,11 +451,18 @@
     }
     .event-search-container {
         flex: 0;
+        width: 100%;
     }
     .event-date-container {
         display: flex;
         flex: 0;
-        column-gap: 15px;
+        gap: 10px;
+        .input-field {
+            width: 100px;
+            @media (min-width: @screen-sm) {
+                width: 150px;
+            }
+        }
     }
     .finna-dateinput {
         display: flex;
@@ -465,7 +471,9 @@
     }
     label {
         font-size: 0.8em;
-        width: 100%;
+        display: inline-flex;
+        flex-wrap: wrap;
+        column-gap: 5px;
     }
     .event-date-title {
         @media (max-width: @screen-xs-max) {

@@ -4,20 +4,19 @@
   $dateinputClass = $this->dateinputId ?? '';
   $dateinputLabel = $this->dateinputLabel ?? '';
   $dateinputPlaceholder = $this->dateinputPlaceholder ?? '';
-  $dateinputHintText = $this->dateinputHintText ?? $this->transEsc('datepicker_hint_text') . ' ' . $this->dateTime()->getDisplayDateFormat();
+  $dateinputDateFormatHint = '<span class="sr-only">' . $this->transEsc('dateformat_hint_screenreader') . '</span>' . $this->dateTime()->getDisplayDateFormat();
   $dateinputValue = $this->dateinputValue ?? '';
   $dateinputPicker = $this->dateinputPicker ?? '';
   $dateinputRequired = $this->dateinputRequired ?? false;
-  $dateinputSize = $this->dateinputSize ?? '8';
+  $dateinputSize = $this->dateinputSize ?? '10';
   $dateinputMaxlength = $this->dateinputMaxlength ?? '10';
   $dateinputAutocomplete = $this->dateinputAutocomplete ?? 'off';
 ?>
 <div class="finna-dateinput <?php if($dateinputPicker === 'single'): ?>finna-datepicker<?php endif; ?>">
-  <label for="<?=$dateinputId ?>"><?=$dateinputLabel ?></label>
+  <label for="<?=$dateinputId ?>"><?=$dateinputLabel ?> <span class="dateformat-hint">(<?=$dateinputDateFormatHint ?>)</span></label>
   <?php if($dateinputPicker === 'single'): ?>
     <div class="input-group">
-      <input type="text" class="input-field form-control <?=$dateinputClass ?>" id="<?=$dateinputId ?>" name="<?=$dateinputName ?>" aria-describedby="hint-text-<?=$dateinputId ?>" value="<?=$dateinputValue ?>" placeholder="<?=$dateinputPlaceholder ?>" size="<?=$dateinputSize ?>" maxlength="<?=$dateinputMaxlength ?>" <?php if ($dateinputRequired): ?>required<?php endif; ?> autocomplete="<?=$dateinputAutocomplete ?>">
-      <?php if ($dateinputHintText): ?><span aria-hidden="true" id="hint-text-<?=$dateinputId ?>" class="hint-text"><?=$dateinputHintText ?></span><?php endif; ?>
+      <input type="text" class="input-field form-control <?=$dateinputClass ?>" id="<?=$dateinputId ?>" name="<?=$dateinputName ?>" value="<?=$dateinputValue ?>" placeholder="<?=$dateinputPlaceholder ?>" size="<?=$dateinputSize ?>" maxlength="<?=$dateinputMaxlength ?>" <?php if ($dateinputRequired): ?>required<?php endif; ?> autocomplete="<?=$dateinputAutocomplete ?>">
         <div class="input-group-btn">
           <button type="button" class="btn btn-default datepicker-toggle">
             <?=$this->icon('calendar') ?>
@@ -33,7 +32,6 @@
       <button type="button" class="btn btn-primary btn-xs btn-datepicker-close"><?=$this->transEsc('close')?></button>
     </dialog>
   <?php else: ?>
-    <input type="text" class="input-field form-control <?=$dateinputClass ?>" id="<?=$dateinputId ?>" name="<?=$dateinputName ?>" aria-describedby="hint-text-<?=$dateinputId ?>" value="<?=$dateinputValue ?>" placeholder="<?=$dateinputPlaceholder ?>" size="<?=$dateinputSize ?>" maxlength="<?=$dateinputMaxlength ?>" <?php if ($dateinputRequired): ?>required<?php endif; ?> autocomplete="<?=$dateinputAutocomplete ?>">
-    <?php if ($dateinputHintText): ?><span aria-hidden="true" id="hint-text-<?=$dateinputId ?>" class="hint-text"><?=$dateinputHintText ?></span><?php endif; ?>
+    <input type="text" class="input-field form-control <?=$dateinputClass ?>" id="<?=$dateinputId ?>" name="<?=$dateinputName ?>" value="<?=$dateinputValue ?>" placeholder="<?=$dateinputPlaceholder ?>" size="<?=$dateinputSize ?>" maxlength="<?=$dateinputMaxlength ?>" <?php if ($dateinputRequired): ?>required<?php endif; ?> autocomplete="<?=$dateinputAutocomplete ?>">
   <?php endif; ?>
 </div>
