@@ -1972,12 +1972,16 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     protected function getTransactions($patron, $params, $checkedIn)
     {
         $pageSize = $params['limit'] ?? 50;
-        $sort = $params['sort'] ?? '+due_date';
-        if ('+title' === $sort) {
-            $sort = '+title|+subtitle';
-        } elseif ('-title' === $sort) {
-            $sort = '-title|-subtitle';
-        }
+        $sort = match ($params['sort'] ?? null) {
+            '-checkout_date',
+            '+checkout_date',
+            '-checkin_date',
+            '+checkin_date',
+            '-due_date',
+            '+due_date' => $params['sort'],
+            '+title' => '+title,+subtitle',
+            default => $checkedIn ? '-checkout_date' : '+due_date',
+        };
         $queryParams = [
             '_order_by' => $sort,
             '_page' => $params['page'] ?? 1,
