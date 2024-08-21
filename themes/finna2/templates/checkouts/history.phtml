@@ -90,7 +90,7 @@
                               <button class="btn btn-primary dropdown-toggle download" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <?=$this->transEsc('loan_history_download')?> <span class="caret"></span>
                               </button>
-                              <ul class="dropdown-menu dropdown-menu-right download">
+                              <ul class="dropdown-menu dropdown-menu-<?php if ($purgeSelectedAllowed): ?>right<?php else: ?>left<?php endif;?> download">
                                 <li>
                                   <a data-lightbox href="<?=$this->url('myresearch-savehistoricloans') ?>"><?=$this->transEsc('loan_history_save')?></a>
                                 </li>
