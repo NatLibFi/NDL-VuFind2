@@ -171,17 +171,6 @@
                 <span class="profile-status status hidden"><?=$this->icon('spinner') ?></span>
               </a>
             </li>
-            <?php if ($this->R2()->isAvailable()): ?>
-            <?php $registered = $this->R2()->isRegistered(); ?>
-              <li role="none">
-                <a <?=$this->url('myresearch-r2accessrights') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-r2accessrights')?>">
-                  <?=$this->transEsc($registered ? 'R2_accessrights_title' : 'R2_menu_heading_register')?>
-                  <?php if (!$registered): ?>
-                    <?=$this->icon('research', 'pull-right') ?>
-                  <?php endif; ?>
-                </a>
-              </li>
-            <?php endif; ?>
             <li>
               <a <?=$this->url('search-history') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('search-history')?>?require_login">
                 <?=$this->transEsc('history_saved_searches')?>

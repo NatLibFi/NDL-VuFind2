@@ -72,7 +72,6 @@
          || ($module === 'eds' && $action === 'search' && $this->searchType != 'advanced')
          || ($module === 'summon' && $action === 'search' && $this->searchType != 'advanced')
          || ($module == 'combined' && $action == 'results')
-         || ($module === 'r2search' && $action === 'results' && $this->searchType != 'advanced')
          || ($module === 'l1' && $action === 'results')
          || ($module === 'blender' && $action === 'results' && $this->searchType != 'advanced')
       ) {
@@ -80,7 +79,7 @@
          $this->layout()->searchTabs = $searchTabs;
       }
     }
-    $mainPage = $action === 'home' && in_array($module, ['combined', 'primo', 'search', 'r2search', 'eds', 'summon', 'authority']);
+    $mainPage = $action === 'home' && in_array($module, ['combined', 'primo', 'search', 'eds', 'summon', 'authority']);
     $scrollData = $this->scrollData ?? $this->layout()->scrollData ?? null;
 ?>
 <?php if ($this->searchType != 'advanced'): ?>
@@ -272,7 +271,7 @@
       <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced hidden-xs"><?=$this->icon('search-advanced', 'search-advanced-icon') ?><?=$this->transEsc('Advanced Search')?></a>
     <?php endif; ?>
     <div class="search-tooltip"><?php
-        $searchTypes = ['search' => 'local', 'primo' => 'pci', 'eds' => 'eds', 'r2search' => 'R2', 'summon' => 'summon'];
+        $searchTypes = ['search' => 'local', 'primo' => 'pci', 'eds' => 'eds', 'summon' => 'summon'];
         if (isset($searchTypes[$module]) && !$this->translationEmpty('tooltip_' . $searchTypes[$module] . '_search_html')) {
           $tooltipClass = 'tooltip-search-' . $searchTypes[$module];
           $tooltipText = $this->translate('tooltip_' . $searchTypes[$module] . '_search_html');
@@ -289,7 +288,7 @@
           <?php if ($advSearch): ?>
           <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced"><?=$this->icon('search-advanced') ?> <?=$this->transEsc('Advanced Search')?></a>
           <?php endif; ?>
-          <?php if ($browse || !in_array($this->searchClassId, ['Solr', 'R2'])): ?>
+          <?php if ($browse || !in_array($this->searchClassId, ['Solr'])): ?>
           <a href="<?=$this->url('home');?>" class="btn btn-link btn-basic"><?=$this->icon('search-basic') ?> <?=$this->transEsc('Basic Search')?></a>
           <?php endif; ?>
 

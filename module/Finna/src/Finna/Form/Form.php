@@ -73,13 +73,6 @@ class Form extends \VuFind\Form\Form
     protected $secureHandlers = ['api', 'database'];
 
     /**
-     * Form id
-     *
-     * @var string
-     */
-    protected $formId = '';
-
-    /**
      * Institution name
      *
      * @var string
@@ -158,23 +151,6 @@ class Form extends \VuFind\Form\Form
     protected $recordLoader = null;
 
     /**
-     * Form settings (from YAML without parsing)
-     *
-     * @var array
-     */
-    protected $formSettings = [];
-
-    /**
-     * Get form id
-     *
-     * @return string
-     */
-    public function getFormId(): string
-    {
-        return $this->formId;
-    }
-
-    /**
      * Set form id
      *
      * @param string $formId  Form id
@@ -186,15 +162,6 @@ class Form extends \VuFind\Form\Form
      */
     public function setFormId($formId, $params = [], $prefill = [])
     {
-        // First set up our customized parameters needed during initialization:
-        if (!$config = $this->getFormConfig($formId)) {
-            throw new \VuFind\Exception\RecordMissing("Form '$formId' not found");
-        }
-        $this->formId = $formId;
-        $this->formSettings = $config;
-
-        // Call parent's setFormId to initialize form settings now that the above has
-        // been done:
         parent::setFormId($formId, $params, $prefill);
 
         if ($this->reportPatronBarcode()) {
@@ -442,7 +409,7 @@ class Form extends \VuFind\Form\Form
         $datasource = null !== $this->record ? $this->record->tryMethod('getDataSource') : '';
 
         // 'feedback_instructions_html' translation
-        if ($this->formId === self::FEEDBACK_FORM) {
+        if ($this->getFormId() === self::FEEDBACK_FORM) {
             $key = 'feedback_instructions_html';
             $instructions = $this->translate($key);
             if ($instructions !== $key && !$translationEmpty($instructions)) {
@@ -450,7 +417,7 @@ class Form extends \VuFind\Form\Form
             }
         }
         // 'archive_request_{$datasource}_reserve_material_pre_html' translation
-        if ($this->formId === self::ARCHIVE_MATERIAL_REQUEST) {
+        if ($this->getFormId() === self::ARCHIVE_MATERIAL_REQUEST) {
             $text = $this->translateCombinedString('archive_request', $datasource, 'reserve_material_pre_html');
             if ($text) {
                 $preParagraphs[] = $text;
@@ -473,7 +440,7 @@ class Form extends \VuFind\Form\Form
             $postParagraphs[] = $post;
         }
 
-        if ($this->formId === self::RECORD_FEEDBACK_FORM && null !== $this->record) {
+        if ($this->getFormId() === self::RECORD_FEEDBACK_FORM && null !== $this->record) {
             // Append receiver info after general record feedback instructions
             // (translation key for this is defined in FeedbackForms.yaml)
             if (!$translationEmpty('feedback_recipient_info_record')) {
@@ -493,7 +460,7 @@ class Form extends \VuFind\Form\Form
             }
         }
         if (
-            $this->formId === self::ARCHIVE_MATERIAL_REQUEST
+            $this->getFormId() === self::ARCHIVE_MATERIAL_REQUEST
             && null !== $this->record
         ) {
             $text = $this->translateCombinedString('archive_request', $datasource, 'info');
@@ -541,8 +508,8 @@ class Form extends \VuFind\Form\Form
         // Append record title
         if (
             null !== $this->record
-            && ($this->formId === self::RECORD_FEEDBACK_FORM
-            || $this->formId === self::ARCHIVE_MATERIAL_REQUEST
+            && ($this->getFormId() === self::RECORD_FEEDBACK_FORM
+            || $this->getFormId() === self::ARCHIVE_MATERIAL_REQUEST
             || $this->isRecordRequestFormWithBarcode())
         ) {
             $preParagraphs[] = '<strong>'
@@ -552,7 +519,7 @@ class Form extends \VuFind\Form\Form
 
         if (
             null !== $this->record
-            && $this->formId === self::ARCHIVE_MATERIAL_REQUEST
+            && $this->getFormId() === self::ARCHIVE_MATERIAL_REQUEST
         ) {
             $identifier = $this->record->tryMethod('getIdentifier');
             if ($identifier) {
@@ -577,7 +544,7 @@ class Form extends \VuFind\Form\Form
 
         if (
             null !== $this->record
-            && $this->formId === self::ARCHIVE_MATERIAL_REQUEST
+            && $this->getFormId() === self::ARCHIVE_MATERIAL_REQUEST
         ) {
             $text = $this->translateCombinedString('archive_request', $datasource, 'material_arrival_info_html');
             if ($text) {
@@ -733,7 +700,7 @@ class Form extends \VuFind\Form\Form
         $elements = parent::getFormElements($config);
 
         $includeRecordData = in_array(
-            $this->formId,
+            $this->getFormId(),
             [
                 self::RECORD_FEEDBACK_FORM,
                 self::ARCHIVE_MATERIAL_REQUEST,
@@ -927,6 +894,6 @@ class Form extends \VuFind\Form\Form
      */
     protected function isRecordRequestFormWithBarcode(): bool
     {
-        return in_array($this->formId, $this->recordRequestFormsWithBarcode);
+        return in_array($this->getFormId(), $this->recordRequestFormsWithBarcode);
     }
 }

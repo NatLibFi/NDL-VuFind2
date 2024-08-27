@@ -1348,7 +1348,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getOrganisationMenuPosition()
     {
-        $localSources = ['Solr', 'SolrAuth', 'L1', 'R2'];
+        $localSources = ['Solr', 'SolrAuth', 'L1'];
         $source = $this->driver->getSourceIdentifier();
         if (!in_array($source, $localSources)) {
             return false;
