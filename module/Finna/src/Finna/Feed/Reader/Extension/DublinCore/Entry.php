@@ -56,17 +56,9 @@ class Entry extends ParentEntry
             return $this->data['format'];
         }
 
-        $format = $this->getXpath()->evaluate('string(' . $this->getXpathPrefix() . '/dc11:format)');
+        $format = (string)$this->getXpath()->evaluate('string(' . $this->getXpathPrefix() . '/dc11:format)')
+        ?: (string)$this->getXpath()->evaluate('string(' . $this->getXpathPrefix() . '/dc10:format)');
 
-        if (! $format) {
-            $format = $this->getXpath()->evaluate('string(' . $this->getXpathPrefix() . '/dc10:format)');
-        }
-
-        if (! $format) {
-            $format = null;
-        }
-
-        $this->data['format'] = $format;
-        return $this->data['format'];
+        return $this->data['format'] = $format ?: null;
     }
 }
