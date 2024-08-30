@@ -2624,6 +2624,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 }
             }
         }
+        foreach ($this->getAlternativeTitles() as $title) {
+            $titlesNotInDesc[] = $title;
+        }
         //Get language specific titles
         if ($titleValues) {
             $titleValues = $this->getAllLanguageSpecificItems(
