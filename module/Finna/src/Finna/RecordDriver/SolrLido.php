@@ -1302,13 +1302,23 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             $materials = [];
             $materialsExtended = [];
             $langMaterialsExtended = [];
-            if (isset($node->eventMaterialsTech->displayMaterialsTech)) {
-                // Use displayMaterialTech (default)
-                $materials[] = (string)$node->eventMaterialsTech
-                    ->displayMaterialsTech;
-            } elseif (isset($node->eventMaterialsTech->materialsTech)) {
-                // display label not defined, build from materialsTech
-                foreach ($node->eventMaterialsTech->materialsTech as $materialsTech) {
+            foreach ($node->eventMaterialsTech ?? [] as $eventMaterialsTech) {
+                if (
+                    $display = trim(
+                        (string)(
+                            $this->getLanguageSpecificItem($eventMaterialsTech->displayMaterialsTech, $language) ?? ''
+                        )
+                    )
+                ) {
+                    $materials[] = $display;
+                    $langMaterialsExtended[] = [
+                        'data' => $display,
+                        'id' => '',
+                        'source' => '',
+                    ];
+                    continue;
+                }
+                foreach ($eventMaterialsTech->materialsTech as $materialsTech) {
                     foreach ($materialsTech->termMaterialsTech ?? [] as $termMaterialsTech) {
                         foreach ($termMaterialsTech->term ?? [] as $term) {
                             $termStr = trim((string)$term);
