@@ -61,7 +61,6 @@
 
       <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
 
-      <?= $this->R2()->register($this->driver, ['brief' => true])?>
       <?php if ($serviceURLs = $this->driver->getServiceURLs()): ?>
         <div class="recordURLs">
           <?php foreach ($serviceURLs as $current): ?>
@@ -73,9 +72,9 @@
       <?php if (!empty($otherUrls)): ?>
         <div class="record-links">
           <div class="recordURLs local-available-online-record">
-            <div class="truncate-field outer" data-rows="4">
-              <?=$this->record($this->driver)->renderTemplate('document-links.phtml', ['documents' => $otherUrls, 'showDownloadLinks' => false])?>
-            </div>
+            <ul class="truncate-field outer" data-rows="4">
+              <?=$this->record($this->driver)->renderTemplate('document-links.phtml', ['documents' => $otherUrls])?>
+            </ul>
           </div>
         </div>
       <?php endif; ?>

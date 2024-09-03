@@ -25,7 +25,7 @@
   $this->headMeta()->appendName('format-detection', 'telephone=no');
 
   // Set page title.
-  $title = $this->driver->getTitle();
+  $title = $this->truncate($this->driver->getTitle(), 180);
   $this->layout()->title = $title;
 
   $headText = $title;
@@ -100,7 +100,6 @@
     ],
   ]); ?>
 <div<?= $recordAttributes ?>>
-  <?= $this->R2()->registeredInfo($this->driver) ?>
   <div>
       <?=$this->record($this->driver)->getToolbar()?>
   </div>
@@ -130,7 +129,7 @@
     <?=$this->driver->supportsCoinsOpenURL() ? '<span class="Z3988" aria-hidden="true" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenURL()) . '"></span>' : ''?>
 
     <div class="clearfix hidden-lg hidden-md"></div>
-
+    <h2 class="sr-only"><?=$this->transEsc('Additional Information')?></h2>
     <div class="record-tabs record-accordions">
       <?php if (count($this->tabs) > 0): ?>
         <a id="tabnav"></a>

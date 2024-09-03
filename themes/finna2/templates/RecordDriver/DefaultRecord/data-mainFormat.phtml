@@ -4,11 +4,31 @@
   <?php if ($event != $data[0]): ?><br><?php endif; ?>
   <?php if (!empty($event['name'])): ?><?=$this->escapeHtml($event['name'])?><br><?php endif; ?>
   <?php if (!empty($event['date'])): ?><?=$this->escapeHtml($event['date'])?><br><?php endif; ?>
-  <?php if (!empty($event['methods'])): ?>
-    <?=implode('<br>', array_map([$this, 'escapeHtml'], $event['methods']))?><br>
+  <?php if (!empty($event['methodsExtended'])): ?>
+    <?php foreach ($event['methodsExtended'] as $method): ?>
+      <?php
+          $id = $method['id'] ?? null;
+          $source = $method['source'] ?? null;
+        ?>
+      <?php if (!$id): ?>
+        <?=$this->escapeHtml($method['data']);?></br>
+      <?php else: ?>
+        <?=$this->record($this->driver)->getLinkedFieldElement($this->headingType ?? 'subject', $method['data'], ['name' => $method['data'], 'id' => $id, 'source' => $source], ['class' => ['backlink']])?><br>
+      <?php endif; ?>
+    <?php endforeach; ?>
   <?php endif; ?>
-  <?php if (!empty($event['materials'])): ?>
-    <?=implode('<br>', array_map([$this, 'escapeHtml'], $event['materials']))?><br>
+  <?php if (!empty($event['materialsExtended'])): ?>
+    <?php foreach ($event['materialsExtended'] as $material): ?>
+      <?php
+          $id = $material['id'] ?? null;
+          $source = $material['source'] ?? null;
+        ?>
+      <?php if (!$id): ?>
+        <?=$this->escapeHtml($material['data']);?></br>
+      <?php else: ?>
+        <?=$this->record($this->driver)->getLinkedFieldElement($this->headingType ?? 'subject', $material['data'], ['name' => $material['data'], 'id' => $id, 'source' => $source], ['class' => ['backlink']])?><br>
+      <?php endif; ?>
+    <?php endforeach; ?>
   <?php endif; ?>
   <?php if (!empty($event['places'])): ?>
     <?php foreach ($event['places'] as $placeEvent): ?>

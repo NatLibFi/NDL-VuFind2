@@ -54,10 +54,6 @@ use function in_array;
  */
 class SolrEad3 extends SolrEad
 {
-    use Feature\SolrFinnaTrait {
-        getSupportedCitationFormats as getSupportedCitationFormatsFinna;
-    }
-
     // Image types
     public const IMAGE_MEDIUM = 'medium';
     public const IMAGE_LARGE = 'large';
@@ -196,20 +192,6 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Return buildings from index.
-     *
-     * @return array
-     */
-    public function getBuildings()
-    {
-        if ($this->preferredLanguage && $name = $this->getRepositoryName()) {
-            return [$name];
-        }
-
-        return parent::getBuildings();
-    }
-
-    /**
      * Return an array of associative URL arrays with one or more of the following
      * keys:
      *
@@ -247,9 +229,14 @@ class SolrEad3 extends SolrEad
             ) {
                 return;
             }
-            $downloadOnly = false;
+            $linkType = 'external-link';
             if (str_starts_with($role, 'audio') || str_starts_with($role, 'video')) {
-                $downloadOnly = ((string)$attr->actuate === 'onrequest' && (string)$attr->show === 'none');
+                if ((string)$attr->actuate === 'onrequest' && (string)$attr->show === 'none') {
+                    $linkType = 'download';
+                }
+            }
+            if ($role === 'image/tiff') {
+                $linkType = 'download';
             }
             $lang = (string)$attr->lang;
             $preferredLang = $lang && in_array($lang, $preferredLangCodes);
@@ -261,7 +248,7 @@ class SolrEad3 extends SolrEad
                 $urlData = [
                     'url' => $url,
                     'desc' => (string)$desc,
-                    'downloadOnly' => $downloadOnly,
+                    'linkType' => $linkType,
                 ];
                 if ($preferredLang) {
                     $urls['localeurls'][] = $urlData;
@@ -1267,18 +1254,14 @@ class SolrEad3 extends SolrEad
             if (! isset($attr->encodinganalog)) {
                 $restrictions['general'] = array_merge(
                     $restrictions['general'],
-                    $this->getDisplayLabel($access, 'p', true)
+                    $this->getDisplayLabel($access, 'p')
                 );
             } else {
                 $type = (string)$attr->encodinganalog;
                 if (in_array($type, self::ACCESS_RESTRICT_TYPES)) {
                     switch ($type) {
                         case 'ahaa:KR7':
-                            $label = $this->getDisplayLabel(
-                                $access->p->name,
-                                'part',
-                                true
-                            );
+                            $label = $this->getDisplayLabel($access->p->name, 'part');
                             break;
                         case 'ahaa:KR9':
                             $label = [(string)($access->p->date ?? '')];
@@ -2168,23 +2151,6 @@ class SolrEad3 extends SolrEad
             }
         }
         return $results;
-    }
-
-    /**
-     * Get an array of strings representing citation formats supported
-     * by this record's data (empty if none).  For possible legal values,
-     * see /application/themes/root/helpers/Citation.php, getCitation()
-     * method.
-     *
-     * @return array Strings representing citation formats.
-     */
-    protected function getSupportedCitationFormats()
-    {
-        $supportedFormats = $this->getSupportedCitationFormatsFinna();
-        if (isset($this->fields['hierarchy_top_id'])) {
-            $supportedFormats[] = 'Archive';
-        }
-        return $supportedFormats;
     }
 
     /**

@@ -29,10 +29,11 @@
 
 namespace Finna\File;
 
+use GuzzleHttp\RequestOptions;
 use Laminas\Config\Config;
+use Psr\Http\Message\ResponseInterface;
 use VuFind\Cache\Manager as CacheManager;
-
-use function strlen;
+use VuFind\Http\GuzzleService;
 
 /**
  * File loader
@@ -49,29 +50,17 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
-     * Config
-     *
-     * @var Config
-     */
-    protected $config;
-
-    /**
-     * Cache Manager
-     *
-     * @var CacheManager
-     */
-    protected $cacheManager;
-
-    /**
      * Constructor
      *
-     * @param CacheManager $cm     Cache Manager
-     * @param Config       $config Config
+     * @param CacheManager  $cacheManager  Cache Manager
+     * @param Config        $config        Main configuration
+     * @param GuzzleService $guzzleService Guzzle HTTP Service
      */
-    public function __construct(CacheManager $cm, Config $config)
-    {
-        $this->cacheManager = $cm;
-        $this->config = $config;
+    public function __construct(
+        protected CacheManager $cacheManager,
+        protected Config $config,
+        protected GuzzleService $guzzleService
+    ) {
     }
 
     /**
@@ -93,8 +82,8 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
      *
      * @param string $url           Url to download
      * @param string $fileName      Name of the file to save
-     * @param string $configSection Section of the configFile to get cacheTime from
-     * @param string $cacheFolder   What cache folder to use
+     * @param string $configSection Section of the configuration to get cacheTime from
+     * @param string $cacheId       Cache to use
      *
      * @return array
      */
@@ -102,10 +91,9 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
         string $url,
         string $fileName,
         string $configSection,
-        string $cacheFolder
+        string $cacheId
     ): array {
-        $cacheDir = $this->cacheManager->getCache($cacheFolder)
-            ->getOptions()->getCacheDir();
+        $cacheDir = $this->cacheManager->getCache($cacheId)->getOptions()->getCacheDir();
         $path = "$cacheDir/$fileName";
         $maxAge = $this->config->$configSection->cacheTime ?? 43200;
         $result = true;
@@ -116,25 +104,17 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
                 \Laminas\Http\Request::METHOD_GET,
                 300
             );
+            $client->setStream($path);
             $client->setOptions(['useragent' => 'VuFind']);
-            $client->setStream();
             $adapter = new \Laminas\Http\Client\Adapter\Curl();
             $client->setAdapter($adapter);
-            $result = $client->send();
+            $response = $client->send();
 
-            if (!$result->isSuccess()) {
-                $error = "Failed to retrieve file from $url";
+            if (!$response->isSuccess()) {
+                $error = "Failed to retrieve file from $url: "
+                    . $response->getStatusCode() . ' ' . $response->getReasonPhrase();
                 $this->debug($error);
                 $result = false;
-            } else {
-                if ($fp = fopen($path, 'w')) {
-                    $result = stream_copy_to_stream($result->getStream(), $fp);
-                    fclose($fp);
-                } else {
-                    $result = false;
-                    $error = "Failed to open $path with for writing";
-                    $this->debug($error);
-                }
             }
         }
 
@@ -155,42 +135,42 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
         string $fileName,
         string $format
     ): bool {
-        if (ob_get_level()) {
-            ob_end_clean();
-        }
-        $client = $this->httpService->createClient(
+        $stdoutStream = new StdoutStream();
+        $client = $this->guzzleService->createClient($url, 300);
+        $response = $client->request(
+            'GET',
             $url,
-            \Laminas\Http\Request::METHOD_GET,
-            300
-        );
-        $contentType = $this->getMimeType($format);
-        header('Pragma: public');
-        header("Content-Type: {$contentType}");
-        header("Content-disposition: attachment; filename=\"{$fileName}\"");
-        header('Cache-Control: public');
-        $client->setOptions(['useragent' => 'VuFind']);
-        $client->setStream();
-        $adapter = new \Laminas\Http\Client\Adapter\Curl();
-        $adapter->setOptions(
             [
-                'curloptions' => [
-                    CURLOPT_WRITEFUNCTION => function ($ch, $str) {
-                        echo $str;
-                        return strlen($str);
-                    },
-                    CURLOPT_HEADER => true,
-                    CURLOPT_RETURNTRANSFER => 1,
-                ],
-            ]
+                RequestOptions::SINK => $stdoutStream,
+                RequestOptions::ON_HEADERS => function (ResponseInterface $response) use (
+                    &$stdoutStream,
+                    $format,
+                    $fileName
+                ) {
+                    // Send headers and start output when the correct status code is received:
+                    if ($response->getStatusCode() === 200) {
+                        $contentType = $response->getHeader('Content-Type');
+                        if (!$contentType) {
+                            $contentType = [$this->getMimeType($format)];
+                        }
+                        if (ob_get_level()) {
+                            ob_end_clean();
+                        }
+                        header('Pragma: public');
+                        header("Content-Type: {$contentType[0]}");
+                        header("Content-disposition: attachment; filename=\"{$fileName}\"");
+                        header('Cache-Control: public');
+                        $stdoutStream->setOutputActive(true);
+                    }
+                },
+            ],
         );
-        $client->setAdapter($adapter);
-        $result = $client->send();
-
-        if (!$result->isSuccess()) {
-            $this->debug("Failed to retrieve file from $url");
+        if ($response->getStatusCode() !== 200) {
+            $this->logError(
+                "Failed to retrieve file from $url: " . $response->getStatusCode() . ' ' . $response->getReasonPhrase()
+            );
             return false;
         }
-
         return true;
     }
 }

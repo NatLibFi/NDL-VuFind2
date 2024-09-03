@@ -588,22 +588,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             }
             if ($list) {
                 $this->rememberCurrentSearchUrl();
-
-                $r2 = $this->serviceLocator->get(
-                    \Finna\Service\R2SupportService::class
-                );
-                if ($r2->isEnabled()) {
-                    $table = $this->getTable('Resource');
-                    $includesR2 = $table->doesListIncludeRecordsFromSource(
-                        $user->id,
-                        $list->id,
-                        'R2'
-                    );
-                    if ($includesR2) {
-                        $this->flashMessenger()
-                            ->addMessage('R2_mylist_restricted', 'info');
-                    }
-                }
             } else {
                 $memory  = $this->serviceLocator->get(\VuFind\Search\Memory::class);
                 $memory->rememberSearch(
@@ -1246,30 +1230,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * R2 search access rights.
-     *
-     * @return mixed
-     */
-    public function r2AccessRightsAction()
-    {
-        $user = $this->getUser();
-        if ($user == false) {
-            return $this->forceLogin();
-        }
-
-        $rems = $this->serviceLocator->get(\Finna\Service\RemsService::class);
-        $error = false;
-        $hasAccess = $usagePurpose = null;
-        try {
-            $hasAccess = $rems->hasUserAccess(true);
-            $usagePurpose = $rems->getUsagePurpose();
-        } catch (\Exception $e) {
-            $error = true;
-        }
-        return $this->createViewModel(compact('error', 'hasAccess', 'usagePurpose'));
-    }
-
-    /**
      * Unsubscribe a scheduled alert for a saved search.
      *
      * @return mixed
@@ -1344,7 +1304,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             'lists' => $this->exportUserLists($user->id),
         ];
         $json = json_encode($exportData);
-        $timestamp = strftime('%Y-%m-%d-%H%M');
+        $timestamp = (new \DateTime('now'))->format('Y-m-d-H-i');
         $filename = "finna-export-$timestamp.json";
         $response = $this->getResponse();
         $response->setContent($json);

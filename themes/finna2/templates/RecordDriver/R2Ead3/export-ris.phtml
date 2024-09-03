@@ -1,9 +1,0 @@
-<?php
-  $url = $this->recordLinker()->getUrl($this->driver);
-  $url = isset($info['baseUrl']) ? ($info['baseUrl'] . $url) : $this->serverUrl($url);
-?>
-UR  - <?= "$url\r\n" ?>
-<?php
-// End of Record:
-echo "ER  -\r\n\r\n";
-?>

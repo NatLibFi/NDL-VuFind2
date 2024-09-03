@@ -1,5 +1,5 @@
 <?php
-$config = [
+return [
     'extends' => 'bootstrap3',
     'helpers' => [
         'factories' => [
@@ -41,7 +41,6 @@ $config = [
             'Finna\View\Helper\Root\MatomoTracking' => 'Finna\View\Helper\Root\MatomoTrackingFactory',
             'Finna\View\Helper\Root\MetaLib' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\Navibar' => 'Finna\View\Helper\Root\NavibarFactory',
-            'Finna\View\Helper\Root\R2' => 'Finna\View\Helper\Root\R2Factory',
             'Finna\View\Helper\Root\OnlinePayment' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\OpenUrl' => 'VuFind\View\Helper\Root\OpenUrlFactory',
             'Finna\View\Helper\Root\OrganisationDisplayName' => 'Laminas\ServiceManager\Factory\InvokableFactory',
@@ -90,7 +89,6 @@ $config = [
             'callnumber' => 'Finna\View\Helper\Root\Callnumber',
             'cleanHtml' => 'Finna\View\Helper\Root\CleanHtml',
             'combined' => 'Finna\View\Helper\Root\Combined',
-            'component' => 'Finna\View\Helper\Root\Component',
             'content' => 'Finna\View\Helper\Root\Content',
             'cookie' => 'Finna\View\Helper\Root\Cookie',
             'cookieConsent' => 'Finna\View\Helper\Root\CookieConsent',
@@ -115,7 +113,6 @@ $config = [
             'matomoTracking' => 'Finna\View\Helper\Root\MatomoTracking',
             'metaLib' => 'Finna\View\Helper\Root\MetaLib',
             'navibar' => 'Finna\View\Helper\Root\Navibar',
-            'R2' => 'Finna\View\Helper\Root\R2',
             'onlinePayment' => 'Finna\View\Helper\Root\OnlinePayment',
             'organisationInfo' => 'Finna\View\Helper\Root\OrganisationInfo',
             'organisationDisplayName' => 'Finna\View\Helper\Root\OrganisationDisplayName',
@@ -142,6 +139,7 @@ $config = [
             // Overrides
             'VuFind\View\Helper\Root\Browse' => 'Finna\View\Helper\Root\Browse',
             'VuFind\View\Helper\Root\Citation' => 'Finna\View\Helper\Root\Citation',
+            'VuFind\View\Helper\Root\Component' => 'Finna\View\Helper\Root\Component',
             'VuFind\View\Helper\Root\Config' => 'Finna\View\Helper\Root\Config',
             'VuFind\View\Helper\Root\Holdings' => 'Finna\View\Helper\Root\Holdings',
             'VuFind\View\Helper\Root\Matomo' => 'Finna\View\Helper\Root\Matomo',
@@ -232,7 +230,6 @@ $config = [
         'finna-organisation-info.js',
         'finna-organisation-map-leaflet.js',
         'finna-primo-adv-search.js',
-        'finna-R2.js',
         'finna-recommendation-memory.js',
         'finna-record.js',
         'finna-search-tabs-recommendations.js',
@@ -265,6 +262,10 @@ $config = [
         'finna-carousel-manager.js',
         'finna-select-a11y.js',
         'finna-a11y.js',
+        'components/finna-bazaar-browse-bar.js',
+        'components/finna-md-editable.js',
+        'components/finna-tabs-nav.js',
+        'components/finna-truncate.js',
     ],
     'less' => [
         'active' => false,
@@ -339,8 +340,9 @@ $config = [
             'full-results-link' => 'FinnaIcons:right',
             'google-plus' => 'FinnaIcons:google+',
             'help' => 'FinnaIcons:help-circle',
-            'homepage-link' => 'FinnaIcons:home',
             'hierarchy-tree' => 'FinnaIcons:sitemap',
+            'history-export' => 'FontAwesome:upload',
+            'homepage-link' => 'FinnaIcons:home',
             'holdings-collapse' => 'FontAwesome:arrow-down',
             'holdings-expand' => 'FontAwesome:arrow-right',
             'holdings-locations-collapse' => 'FinnaIcons:up',
@@ -359,6 +361,7 @@ $config = [
             'information-pics-view' => 'FinnaIcons:information-pics',
             'instagram' => 'FontAwesome:instagram',
             'language' => 'FinnaIcons:globe',
+            'library-card-barcode' => 'FinnaIcons:library-card-barcode',
             'library-card-connect' => 'FontAwesome:link',
             'library-card-disconnect' => 'FontAwesome:unlink',
             'library-card-edit' => 'FontAwesome:pen',
@@ -427,8 +430,6 @@ $config = [
             'resolver-more-options' => 'FinnaIcons:new-window',
             'route' => 'FontAwesome:bus',
             'rss-feed' => 'FinnaIcons:bell',
-            'r2-registered' => 'FinnaIcons:research-open',
-            'r2-restricted' => 'FinnaIcons:research',
             'search' => 'FinnaIcons:basic-search',
             'search-add' => 'FinnaIcons:plus-small',
             'search-advanced' => 'FinnaIcons:adv-search',
@@ -461,6 +462,7 @@ $config = [
             'status-unknown' => 'FontAwesome:circle-o',
             'survey-close' => 'FontAwesome:close',
             'popup-close' => 'FontAwesome:close',
+            'threads' => 'FinnaIcons:threads-solid',
             'time-open' => 'FontAwesome:clock-o',
             'type-dropdown-open' => 'FontAwesome:angle-down',
             'twitter' => 'FinnaIcons:x-twitter',
@@ -478,5 +480,3 @@ $config = [
         ],
     ],
 ];
-include 'components.config.php';
-return $config;

@@ -287,15 +287,10 @@ $config = [
             'Finna\Controller\PCIController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\PrimoController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\PrimorecordController' => 'Finna\Controller\AbstractBaseFactory',
-            'Finna\Controller\R2FeedbackController' => 'VuFind\Controller\AbstractBaseFactory',
-            'Finna\Controller\R2RecordController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
-            'Finna\Controller\R2CollectionController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
-            'Finna\Controller\R2SearchController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\RecordController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
             \Finna\Controller\ReservationListController::class => \Finna\Controller\ReservationListControllerFactory::class,
             'Finna\Controller\RobotsController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\SearchController' => 'VuFind\Controller\AbstractBaseFactory',
-            'Finna\Controller\ShibbolethLogoutNotificationController' => 'Finna\Controller\ShibbolethLogoutNotificationControllerFactory',
         ],
         'aliases' => [
             'AuthorityRecord' => 'Finna\Controller\AuthorityRecordController',
@@ -324,14 +319,6 @@ $config = [
             'MetaLibRecord' => 'Finna\Controller\MetaLibrecordController',
             'metalibrecord' => 'Finna\Controller\MetaLibrecordController',
             'OrganisationInfo' => 'Finna\Controller\OrganisationInfoController',
-            'organisationinfo' => 'Finna\Controller\OrganisationInfoController',
-            'R2' => 'Finna\Controller\R2SearchController',
-            'r2collection' => 'Finna\Controller\R2CollectionController',
-            'R2Collection' => 'Finna\Controller\R2CollectionController',
-            'r2record' => 'Finna\Controller\R2RecordController',
-            'R2Record' => 'Finna\Controller\R2RecordController',
-            'r2feedback' => 'Finna\Controller\R2FeedbackController',
-            'R2Feedback' => 'Finna\Controller\R2FeedbackController',
             'ReservationList' => \Finna\Controller\ReservationListController::class,
             'reservationList' => \Finna\Controller\ReservationListController::class,
             'reservationlist' => \Finna\Controller\ReservationListController::class,
@@ -357,7 +344,6 @@ $config = [
             'VuFind\Controller\PrimorecordController' => 'Finna\Controller\PrimorecordController',
             'VuFind\Controller\RecordController' => 'Finna\Controller\RecordController',
             'VuFind\Controller\SearchController' => 'Finna\Controller\SearchController',
-            'VuFind\Controller\ShibbolethLogoutNotificationController' => 'Finna\Controller\ShibbolethLogoutNotificationController',
 
             // Legacy:
             'PCI' => 'Finna\Controller\PrimoController',
@@ -388,7 +374,6 @@ $config = [
             'Finna\Feed\Feed' => 'Finna\Feed\FeedFactory',
             'Finna\Feed\LinkedEvents' => 'Finna\Feed\LinkedEventsFactory',
             'Finna\Form\Form' => 'Finna\Form\FormFactory',
-            'Finna\Form\R2Form' => 'Finna\Form\FormFactory',
             'Finna\ILS\Connection' => 'VuFind\ILS\ConnectionFactory',
             'Finna\LocationService\LocationService' => 'Finna\LocationService\LocationServiceFactory',
             'Finna\Mailer\Mailer' => 'VuFind\Mailer\Factory',
@@ -407,9 +392,7 @@ $config = [
             'Finna\Search\Solr\AuthorityHelper' => 'Finna\Search\Solr\AuthorityHelperFactory',
             'Finna\Search\Solr\HierarchicalFacetHelper' => 'VuFind\Search\Solr\HierarchicalFacetHelperFactory',
             'Finna\Service\BazaarService' => 'Finna\Service\BazaarServiceFactory',
-            'Finna\Service\R2SupportService' => 'Finna\Service\R2SupportServiceFactory',
             'Finna\Service\RecordFieldMarkdown' => 'Laminas\ServiceManager\Factory\InvokableFactory',
-            'Finna\Service\RemsService' => 'Finna\Service\RemsServiceFactory',
             'Finna\Service\UserPreferenceService' => 'Finna\Service\UserPreferenceServiceFactory',
             'Finna\Statistics\Driver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Statistics\EventHandler' => 'Finna\Statistics\EventHandlerFactory',
@@ -419,7 +402,6 @@ $config = [
             'Finna\View\CustomElement\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Video\Handler\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Video\Video' => 'Finna\Video\VideoFactory',
-            'Finna\View\Resolver\AggregateResolver' => 'Finna\View\Resolver\AggregateResolverFactory',
             'Finna\Wayfinder\WayfinderService' => 'Finna\Wayfinder\WayfinderServiceFactory',
             'NatLibFi\FinnaCodeSets\FinnaCodeSets' => 'Finna\RecordDriver\CodeSetsFactory',
 
@@ -447,13 +429,7 @@ $config = [
             'VuFind\Role\PermissionManager' => 'Finna\Role\PermissionManager',
             'VuFind\Search\Solr\HierarchicalFacetHelper' => 'Finna\Search\Solr\HierarchicalFacetHelper',
 
-            'ViewResolver' => 'Finna\View\Resolver\AggregateResolver',
             'Wayfinder' => 'Finna\Wayfinder\WayfinderService',
-        ],
-    ],
-    'view_manager' => [
-        'template_path_stack' => [
-            APPLICATION_PATH . '/vendor/natlibfi/finna-ui-components/source',
         ],
     ],
     'listeners' => [
@@ -592,24 +568,20 @@ $config = [
                     'Finna\Auth\ILS' => 'VuFind\Auth\ILSFactory',
                     'Finna\Auth\MultiILS' => 'VuFind\Auth\ILSFactory',
                     'Finna\Auth\Shibboleth' => 'Finna\Auth\ShibbolethFactory',
-                    'Finna\Auth\Suomifi' => 'Finna\Auth\SuomifiFactory',
                 ],
                 'aliases' => [
                     'VuFind\Auth\ILS' => 'Finna\Auth\ILS',
                     'VuFind\Auth\MultiILS' => 'Finna\Auth\MultiILS',
                     'VuFind\Auth\Shibboleth' => 'Finna\Auth\Shibboleth',
-                    'Suomifi' => 'Finna\Auth\Suomifi',
                 ],
             ],
             'autocomplete' => [
                 'factories' => [
-                    'Finna\Autocomplete\R2' => 'Finna\Autocomplete\SolrFactory',
                     'Finna\Autocomplete\Solr' => 'Finna\Autocomplete\SolrFactory',
                     'Finna\Autocomplete\L1' => 'Finna\Autocomplete\SolrFactory',
                 ],
                 'aliases' => [
                     'VuFind\Autocomplete\Solr' => 'Finna\Autocomplete\Solr',
-                    'r2' => 'Finna\Autocomplete\R2',
                 ],
             ],
             'content_description' => [],
@@ -795,19 +767,9 @@ $config = [
                 'factories' => [
                     'L1' => 'Finna\Search\Factory\L1BackendFactory',
                     'Primo' => 'Finna\Search\Factory\PrimoBackendFactory',
-                    'R2' => 'Finna\Search\Factory\R2BackendFactory',
-                    'R2Collection' => 'Finna\Search\Factory\R2BackendFactory',
                     'Solr' => 'Finna\Search\Factory\SolrDefaultBackendFactory',
                     'SolrAuth' => 'Finna\Search\Factory\SolrAuthBackendFactory',
                     'SolrBrowse' => 'Finna\Search\Factory\SolrDefaultBackendFactory',
-                ],
-            ],
-            'search_facetcache' => [
-                'factories' => [
-                    'Finna\Search\R2\FacetCache' => 'VuFind\Search\Solr\FacetCacheFactory',
-                ],
-                'aliases' => [
-                    'R2' => 'Finna\Search\R2\FacetCache',
                 ],
             ],
             'search_options' => [
@@ -816,7 +778,6 @@ $config = [
                     'Finna\Search\Combined\Options' => 'VuFind\Search\Combined\OptionsFactory',
                     'Finna\Search\EDS\Options' => 'VuFind\Search\EDS\OptionsFactory',
                     \Finna\Search\ReservationList\Options::class => \VuFind\Search\Options\OptionsFactory::class,
-                    'Finna\Search\R2\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\Primo\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\Solr\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\SolrAuth\Options' => 'VuFind\Search\Options\OptionsFactory',
@@ -832,14 +793,10 @@ $config = [
                     'VuFind\Search\Solr\Options' => 'Finna\Search\Solr\Options',
                     'VuFind\Search\SolrAuth\Options' => 'Finna\Search\SolrAuth\Options',
 
-                    'Finna\Search\R2Collection\Options' => 'VuFind\Search\SolrCollection\Options',
-
                     // Counterpart for EmptySet Params:
                     'Finna\Search\EmptySet\Options' => 'VuFind\Search\EmptySet\Options',
                     'Finna\Search\MixedList\Options' => 'VuFind\Search\MixedList\Options',
                     'ReservationList' => \Finna\Search\ReservationList\Params::class,
-                    'R2' => 'Finna\Search\R2\Options',
-                    'R2Collection' => 'VuFind\Search\SolrCollection\Options',
                     'SolrAuth' => 'Finna\Search\SolrAuth\Options',
                     'SolrBrowse' => 'Finna\Search\SolrBrowse\Options',
                     'L1' => 'Finna\Search\L1\Options',
@@ -852,9 +809,7 @@ $config = [
                     'Finna\Search\EDS\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\EmptySet\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\Favorites\Params' => 'VuFind\Search\Params\ParamsFactory',
-                    'Finna\Search\R2\Params' => 'Finna\Search\Solr\ParamsFactory',
                     \Finna\Search\ReservationList\Params::class => \Finna\Search\Solr\ParamsFactory::class,
-                    'Finna\Search\R2Collection\Params' => 'Finna\Search\Solr\ParamsFactory',
                     'Finna\Search\MixedList\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\Solr\Params' => 'Finna\Search\Solr\ParamsFactory',
                     'Finna\Search\SolrAuth\Params' => 'Finna\Search\Solr\ParamsFactory',
@@ -873,8 +828,6 @@ $config = [
 
                     'VuFind\Search\SolrAuth\Params' => 'Finna\Search\SolrAuth\Params',
                     'ReservationList' => \Finna\Search\ReservationList\Params::class,
-                    'R2' => 'Finna\Search\R2\Params',
-                    'R2Collection' => 'Finna\Search\R2Collection\Params',
                     'SolrAuth' => 'Finna\Search\SolrAuth\Params',
                     'L1' => 'Finna\Search\L1\Params',
                 ],
@@ -886,8 +839,6 @@ $config = [
                     'Finna\Search\EncapsulatedRecords\Results' => 'VuFind\Search\Results\ResultsFactory',
                     'Finna\Search\Favorites\Results' => 'Finna\Search\Favorites\ResultsFactory',
                     \Finna\Search\ReservationList\Results::class => \Finna\Search\ReservationList\ResultsFactory::class,
-                    'Finna\Search\R2\Results' => 'VuFind\Search\Solr\ResultsFactory',
-                    'Finna\Search\R2Collection\Results' => 'VuFind\Search\Solr\ResultsFactory',
                     'Finna\Search\Primo\Results' => 'VuFind\Search\Results\ResultsFactory',
                     'Finna\Search\Solr\Results' => 'VuFind\Search\Solr\ResultsFactory',
                     'Finna\Search\SolrAuth\Results' => 'VuFind\Search\Solr\ResultsFactory',
@@ -905,8 +856,6 @@ $config = [
                     'EncapsulatedRecords' => 'Finna\Search\EncapsulatedRecords\Results',
                     'L1' => 'Finna\Search\L1\Results',
                     'ReservationList' => \Finna\Search\ReservationList\Results::class,
-                    'R2' => 'Finna\Search\R2\Results',
-                    'R2Collection' => 'Finna\Search\R2Collection\Results',
                     'SolrBrowse' => 'Finna\Search\SolrBrowse\Results',
                 ],
             ],
@@ -952,10 +901,6 @@ $config = [
                         'VuFind\RecordDriver\AbstractBaseFactory',
                     'Finna\RecordDriver\EDS' =>
                         'VuFind\RecordDriver\NameBasedConfigFactory',
-                    'Finna\RecordDriver\R2Ead3' =>
-                        'VuFind\RecordDriver\NameBasedConfigFactory',
-                    'Finna\RecordDriver\R2Ead3Missing' =>
-                        'VuFind\RecordDriver\NameBasedConfigFactory',
                     'Finna\RecordDriver\SolrDefault' =>
                         'Finna\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrAipa' =>
@@ -984,9 +929,6 @@ $config = [
                         'VuFind\RecordDriver\NameBasedConfigFactory',
                 ],
                 'aliases' => [
-                    'r2ead3' => 'Finna\RecordDriver\R2Ead3',
-                    'r2ead3missing' => 'Finna\RecordDriver\R2Ead3Missing',
-
                     'AipaLrmi' => 'Finna\RecordDriver\AipaLrmi',
                     'CuratedRecord' => 'Finna\RecordDriver\CuratedRecord',
                     'SolrAipa' => 'Finna\RecordDriver\SolrAipa',
@@ -1020,7 +962,6 @@ $config = [
                     'Finna\RecordTab\HoldingsArchive' => 'Finna\RecordTab\Factory::getHoldingsArchive',
                     'Finna\RecordTab\HierarchyTree' => 'VuFind\RecordTab\HierarchyTreeFactory',
                     'Finna\RecordTab\Map' => 'Finna\RecordTab\Factory::getMap',
-                    'Finna\RecordTab\R2CollectionList' => 'VuFind\RecordTab\CollectionListFactory',
                     'Finna\RecordTab\UserComments' => 'Finna\RecordTab\Factory::getUserComments',
                 ],
                 'invokables' => [
@@ -1031,7 +972,6 @@ $config = [
                     'authorityrecordstopic' => 'Finna\RecordTab\AuthorityRecordsTopic',
                     'componentparts' => 'Finna\RecordTab\ComponentParts',
                     'holdingsarchive' => 'Finna\RecordTab\HoldingsArchive',
-                    'r2collectionlist' => 'Finna\RecordTab\R2CollectionList',
 
                     // Overrides:
                     'VuFind\RecordTab\CollectionHierarchyTree' => 'Finna\RecordTab\CollectionHierarchyTree',
@@ -1053,23 +993,6 @@ $config = [
                     'similardeferred' => 'Finna\Related\SimilarDeferred',
                     'workexpressions' => 'Finna\Related\WorkExpressions',
                 ],
-            ],
-            'hierarchy_driver' => [
-                'factories' => [
-                    'Finna\Hierarchy\Driver\HierarchyR2' => 'VuFind\Hierarchy\Driver\ConfigurationBasedFactory',
-                ],
-                'aliases' => [
-                    'R2' => 'Finna\Hierarchy\Driver\HierarchyR2',
-                ],
-            ],
-            'hierarchy_treedatasource' => [
-                'aliases' => [
-                    'R2' => 'Finna\Hierarchy\TreeDataSource\R2',
-                ],
-                'factories' => [
-                    'Finna\Hierarchy\TreeDataSource\R2' => 'Finna\Hierarchy\TreeDataSource\R2Factory',
-                ],
-
             ],
             'view_customelement' => [
                 'factories' => [
@@ -1108,9 +1031,6 @@ $recordRoutes = [
     // BrowseRecord is practically just the same as Record, but the route must be
     // distinct so that getMatchedRouteName returns the correct one:
     'solrbrowserecord' => 'BrowseRecord',
-    'r2record' => 'R2Record',
-    'r2collection' => 'R2Collection',
-    'r2collectionrecord' => 'R2Record',
     'l1record' => 'L1Record',
 ];
 
@@ -1131,7 +1051,6 @@ $dynamicRoutes = [
         'reservationlist-delete' => 'Delete/[:id]',
         'reservationlist-deletebulk' => 'DeleteBulk/[:id]',
     ],
-    'R2Feedback' => ['r2feedback-form' => 'Form/[:id]'],
 ];
 
 $staticRoutes = [
@@ -1140,12 +1059,10 @@ $staticRoutes = [
     'LibraryCards/ResetPassword',
     'LocationService/Modal',
     'MetaLib/Home', 'MetaLib/Search', 'MetaLib/Advanced',
-    'MyResearch/DownloadLoanHistory', 'MyResearch/R2AccessRights',
+    'MyResearch/DownloadLoanHistory',
     'MyResearch/SaveCustomOrder', 'MyResearch/SaveHistoricLoans',
-    'MyResearch/R2AccessRights',
     'OrganisationInfo/Home',
     'PCI/Home', 'PCI/Search', 'PCI/Record',
-    'R2/Advanced', 'R2/FacetList', 'R2/Home', 'R2/Results',
     'Search/StreetSearch',
     'Barcode/Show', 'Search/MapFacet',
     'L1/Advanced', 'L1/FacetList', 'L1/Home', 'L1/Results',
@@ -1173,20 +1090,6 @@ $config['router']['routes']['l1record-feedback'] = [
         ],
         'defaults' => [
             'controller' => 'L1Record',
-            'action'     => 'Feedback',
-        ],
-    ],
-];
-$config['router']['routes']['r2record-feedback'] = [
-    'type'    => 'Laminas\Router\Http\Segment',
-    'options' => [
-        'route'    => '/R2Record/[:id]/Feedback',
-        'constraints' => [
-            'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-            'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-        ],
-        'defaults' => [
-            'controller' => 'R2Record',
             'action'     => 'Feedback',
         ],
     ],

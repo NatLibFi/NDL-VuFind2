@@ -71,12 +71,15 @@ class Manager extends \VuFind\Cache\Manager
         ],
         'description' => [
             'directory' => 'descriptions',
+            'persistent' => true,
         ],
         'feed' => [
             'directory' => 'feeds',
+            'persistent' => true,
         ],
         'organisation-info' => [
             'directory' => 'organisation-infos',
+            'persistent' => true,
         ],
         'stylesheet' => [
             'directory' => 'stylesheets',

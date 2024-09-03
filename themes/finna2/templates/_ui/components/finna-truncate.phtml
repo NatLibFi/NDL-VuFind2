@@ -1,0 +1,67 @@
+<?php
+  $__attributes = $this->htmlAttributes($attributes ?? []);
+  $__truncateSettings = [];
+  if (isset($btnClass)) {
+    $__truncateSettings['btn-class'] = $btnClass;
+  }
+  if (isset($element)) {
+    $__truncateSettings['element'] = $element;
+    $__attributes->add('class', 'element-based');
+  } else {
+    $__attributes->add('class', 'height-based');
+  }
+  if (isset($inPlaceToggle)) {
+    $__truncateSettings['in-place-toggle'] = $inPlaceToggle;
+  }
+  if (isset($label)) {
+    $__truncateSettings['label'] = $this->transEsc($label);
+  }
+  if (isset($labelIcons)) {
+    $__truncateSettings['label-icons'] = $labelIcons;
+  } else {
+      // Default to legacy Finna truncate more and less links appearance.
+      $__truncateSettings['label-icons'] = 'after';
+  }
+  if (isset($lessIcon)) {
+    $__truncateSettings['less-icon'] = $lessIcon;
+  }
+  if (isset($lessLabel)) {
+    $__truncateSettings['less-label'] = $this->transEsc($lessLabel);
+  } elseif (!isset($label)) {
+      // Default to legacy Finna truncate more and less links appearance.
+      $__truncateSettings['less-label'] = $this->transEsc('show_less');
+  }
+  if (isset($moreIcon)) {
+    $__truncateSettings['more-icon'] = $moreIcon;
+  }
+  if (isset($moreLabel)) {
+    $__truncateSettings['more-label'] = $this->transEsc($moreLabel);
+  } elseif (!isset($label)) {
+      // Default to legacy Finna truncate more and less links appearance.
+      $__truncateSettings['more-label'] = $this->transEsc('show_more');
+  }
+  if (isset($rows)) {
+    $__truncateSettings['rows'] = $rows;
+  } else {
+    // Default to legacy Finna truncate more and less links appearance.
+    $__truncateSettings['rows'] = 0;
+  }
+  if (isset($topToggle)) {
+    $__truncateSettings['top-toggle'] = $topToggle;
+  }
+  if (isset($wrapperClass)) {
+    $__truncateSettings['wrapper-class'] = $wrapperClass;
+  } else {
+    // Default to legacy Finna truncate more and less links appearance.
+    $__truncateSettings['wrapper-class'] = 'finna-truncate-btn-wrapper-default';
+  }
+  if (isset($wrapperTagname)) {
+    $__truncateSettings['wrapper-tagname'] = $wrapperTagname;
+  }
+  if (!empty($__truncateSettings)) {
+    $__attributes['data-truncate'] = json_encode($__truncateSettings);
+  }
+?>
+<div<?= $__attributes->add('class', 'finna-truncate') ?>>
+  <?= $content ?? '' ?>
+</div>

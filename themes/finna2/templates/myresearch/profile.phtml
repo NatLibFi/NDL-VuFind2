@@ -51,11 +51,6 @@
     <div>
       <?php if (!$this->translationEmpty('profile_instructions')): ?><p class="no-content-message"><?=$this->transEsc('profile_instructions')?></p><?php endif; ?>
       <?=$this->flashmessages();?>
-      <?php if (count($cards) > 1): ?>
-        <div class="myresearch-profile-list library-card-holder">
-          <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
-        </div>
-      <?php endif; ?>
       <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
       <?php if (!empty($this->profile['expiration_date'])): ?>
         <?php $cardExpired = !empty($this->profile['expired']) ?>
@@ -70,10 +65,24 @@
         <?php endif; ?>
       <?php endif; ?>
       <?=$this->partial('myresearch/profile-messages.phtml', ['messages' => $this->profile['messages'] ?? []]); ?>
-      <?php if (is_array($this->profile)): ?>
-        <div class="logged-in-as">
+      <div class="logged-in-as">
+        <div class="display-name">
           <?=$this->icon('profile', 'profile-icon') ?><span class="sr-only"><?=$this->transEsc('logged_in_as')?>: </span><?=$this->escapeHtml($user->getDisplayName()) ?>
         </div>
+        <div>
+          <?php if ($user->getDisplayName() !== $user->getUsername()): ?>
+            <div><span class="profile-title"><?=$this->transEsc('account_username')?>: </span><span><?=$this->escapeHtml($user->getUsername())?></span></div>
+          <?php endif; ?>
+          <div><span class="profile-title"><?=$this->transEsc('account_login_method')?>: </span><span><?=$this->transEscWithPrefix('login_method_', $user->auth_method)?></span></div>
+          <div><span class="profile-title"><?=$this->transEsc('account_creation_date')?>: </span><span><?=$this->dateTime()->convertToDisplayDate('Y-m-d', $user->created)?></span></div>
+        </div>
+      </div>
+      <?php if (is_array($this->profile)): ?>
+        <?php if (count($cards) > 1): ?>
+          <div class="myresearch-profile-list library-card-holder">
+            <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
+          </div>
+        <?php endif; ?>
         <div class="myresearch-profile-header"><h3><?=$this->transEsc('Library Card Settings');?></h3></div>
         <div class="myresearch-profile-list library-profile">
           <?php if ($showHomeLibForm): ?>

@@ -138,7 +138,7 @@ class Aipa extends AbstractHelper
         }
 
         $component = $this->getView()->plugin('component');
-        return $component('@@molecules/lists/finna-tag-list', [
+        return $component('finna-tag-list', [
             'title' => 'Subjects',
             'items' => $items,
             'htmlItems' => true,
@@ -178,7 +178,7 @@ class Aipa extends AbstractHelper
                     $items[] = $subjectLevel->getPrefLabel($langcode);
                 }
             }
-            $html .= $component('@@molecules/lists/finna-tag-list', [
+            $html .= $component('finna-tag-list', [
                 'title' => 'Aipa::' . $levelCodeValue,
                 'items' => $items,
                 'translateItems' => false,
@@ -278,7 +278,7 @@ class Aipa extends AbstractHelper
 
             if (!empty($componentData)) {
                 $levelsHtml[$levelCodeValue]
-                    = $component('@@organisms/data/finna-educational-level-data', [
+                    = $component('finna-educational-level-data', [
                         'sectionHeadingLevel' => 5,
                         'educationalLeveData' => $componentData,
                     ]);
@@ -288,7 +288,7 @@ class Aipa extends AbstractHelper
         // Truncate educational level data there is more than one level.
         foreach ($levelsHtml as $levelCodeValue => $levelHtml) {
             if (count($levelsHtml) > 1) {
-                $html .= $component('@@molecules/containers/finna-truncate', [
+                $html .= $component('finna-truncate', [
                     'content' => $levelHtml,
                     'element' => 'div',
                     'label' => 'Aipa::' . $levelCodeValue,

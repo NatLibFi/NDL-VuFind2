@@ -82,8 +82,19 @@ trait FinnaUserTrait
         if ($this->email) {
             return $this->email;
         }
+        return $this->getUsername();
+    }
+
+    /**
+     * Get username
+     *
+     * @return string
+     */
+    public function getUsername(): string
+    {
         [, $username] = explode(':', $this->username);
-        return $username;
+        $parts = explode('.', $username, 2);
+        return $parts[1] ?? $parts[0];
     }
 
     /**
