@@ -339,7 +339,7 @@ class VideoElement extends HTMLElement {
   connectedCallback() {
     // Wait for the cookie consent to be initialized
     if (VuFind.cookie.getConsentConfig() === null) {
-      VuFind.listen('cookie-consent-initialized', () => this.onConsentInitialized());
+      VuFind.listen('cookie-consent-initialized', () => this.onConsentInitialized(), {once: true});
     } else {
       this.onConsentInitialized();
     }
