@@ -402,7 +402,7 @@ finna.layout = (function finnaLayout() {
       initToolTips($('.sidebar'));
       initMobileNarrowSearch();
       VuFind.lightbox.bind($('.sidebar'));
-    });
+    }, {once: true});
   }
 
   function initPiwikPopularSearches() {
