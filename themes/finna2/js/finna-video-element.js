@@ -218,6 +218,7 @@ class VideoElement extends HTMLElement {
    * Called after consent settings have been initialized.
    */
   onConsentInitialized() {
+    console.log('plop');
     // Check if this video is inside a record
     const record = this.closest('div.record');
     const self = this;
@@ -339,9 +340,7 @@ class VideoElement extends HTMLElement {
   connectedCallback() {
     // Wait for the cookie consent to be initialized
     if (VuFind.cookie.getConsentConfig() === null) {
-      document.addEventListener('vf-cookie-consent-initialized', () => {
-        this.onConsentInitialized();
-      });
+      VuFind.listen('cookie-consent-initialized', () => this.onConsentInitialized());
     } else {
       this.onConsentInitialized();
     }
