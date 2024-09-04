@@ -218,7 +218,6 @@ class VideoElement extends HTMLElement {
    * Called after consent settings have been initialized.
    */
   onConsentInitialized() {
-    console.log('plop');
     // Check if this video is inside a record
     const record = this.closest('div.record');
     const self = this;

@@ -397,7 +397,7 @@ finna.layout = (function finnaLayout() {
     if (!document.addEventListener) {
       return;
     }
-    document.addEventListener('VuFind.sidefacets.loaded', function onSideFacetsLoaded() {
+    VuFind.listen('VuFind.sidefacets.loaded', function onSideFacetsLoaded() {
       finna.dateRangeVis.init();
       initToolTips($('.sidebar'));
       initMobileNarrowSearch();
@@ -467,7 +467,7 @@ finna.layout = (function finnaLayout() {
     if (!document.addEventListener) {
       return;
     }
-    document.addEventListener('VuFind.lightbox.login', function onLightboxLogin(e) {
+    VuFind.listen('lightbox.login', function onLightboxLogin(e) {
       if ($('body').hasClass('template-name-home') && !e.detail.formUrl.match(/catalogLogin/) && !e.detail.formUrl.match(/\Save/) && !e.detail.formUrl.match(/%2[fF]Save/)) {
         window.location.href = VuFind.path + '/MyResearch/Home';
         e.preventDefault();
