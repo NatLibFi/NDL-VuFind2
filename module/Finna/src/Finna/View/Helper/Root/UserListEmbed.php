@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2019.
+ * Copyright (C) The National Library of Finland 2019-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,8 +29,12 @@
 
 namespace Finna\View\Helper\Root;
 
+use Finna\Db\Entity\FinnaUserListEntityInterface;
 use Laminas\Stdlib\Parameters;
+use VuFind\Db\Service\TagServiceInterface;
+use VuFind\Db\Service\UserListServiceInterface;
 
+use function assert;
 use function in_array;
 
 /**
@@ -45,34 +49,6 @@ use function in_array;
 class UserListEmbed extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Favorites results
-     *
-     * @var \VuFind\Search\Favorites\Results
-     */
-    protected $results;
-
-    /**
-     * UserList table
-     *
-     * @var \VuFind\Search\Favorites\Results
-     */
-    protected $listTable;
-
-    /**
-     * Tags table
-     *
-     * @var \VuFind\Db\Table\Tags
-     */
-    protected $tagsTable;
-
-    /**
-     * Whether list tags are enabled.
-     *
-     * @var bool
-     */
-    protected $listTagsEnabled;
-
-    /**
      * Counter used to ensure unique id attributes when several lists are displayed
      *
      * @var int
@@ -80,34 +56,21 @@ class UserListEmbed extends \Laminas\View\Helper\AbstractHelper
     protected $indexStart = 0;
 
     /**
-     * View model
-     *
-     * @var \Laminas\View\Model\ViewModel
-     */
-    protected $viewModel;
-
-    /**
      * Constructor
      *
-     * @param \VuFind\Search\Favorites\Results $results   Results
-     * @param \VuFind\Db\Table\UserList        $listTable UserList table
-     * @param \VuFind\Db\Table\Tags            $tagsTable Tags table
-     * @param \Laminas\View\Model\ViewModel    $viewModel View model
-     * @param bool                             $listTags  Whether list tags
-     *                                                    are enabled
+     * @param \VuFind\Search\Favorites\Results $results         Results
+     * @param UserListServiceInterface         $userListService User list database service
+     * @param TagServiceInterface              $tagService      Tag db servce
+     * @param \Laminas\View\Model\ViewModel    $viewModel       View model
+     * @param bool                             $listTagsEnabled Whether list tags are enabled
      */
     public function __construct(
-        \VuFind\Search\Favorites\Results $results,
-        \VuFind\Db\Table\UserList $listTable,
-        \VuFind\Db\Table\Tags $tagsTable,
-        \Laminas\View\Model\ViewModel $viewModel,
-        bool $listTags
+        protected \VuFind\Search\Favorites\Results $results,
+        protected UserListServiceInterface $userListService,
+        protected TagServiceInterface $tagService,
+        protected \Laminas\View\Model\ViewModel $viewModel,
+        protected bool $listTagsEnabled
     ) {
-        $this->results = $results;
-        $this->listTable = $listTable;
-        $this->tagsTable = $tagsTable;
-        $this->viewModel = $viewModel;
-        $this->listTagsEnabled = $listTags;
     }
 
     /**
@@ -142,7 +105,7 @@ class UserListEmbed extends \Laminas\View\Helper\AbstractHelper
         }
 
         try {
-            $list = $this->listTable->getExisting($id);
+            $list = $this->userListService->getUserListById($id);
             if (!$list->isPublic()) {
                 return $this->error('List is private');
             }
@@ -171,11 +134,11 @@ class UserListEmbed extends \Laminas\View\Helper\AbstractHelper
 
         $resultsCopy->performAndProcessSearch();
         $list = $resultsCopy->getListObject();
+        assert($list instanceof FinnaUserListEntityInterface);
 
         $listTags = null;
         if (($opt['tags'] ?? false) && $this->listTagsEnabled) {
-            $listTags = $this->tagsTable
-                ->getForList($list->id, $list->user_id);
+            $listTags = $this->tagService->getListTags($list);
         }
 
         $html = $this->getView()->render(
@@ -193,13 +156,13 @@ class UserListEmbed extends \Laminas\View\Helper\AbstractHelper
                     && $opt['limit'] < $total,
                 'title' =>
                     (isset($opt['title']) && $opt['title'] === false)
-                    ? null : $list->title,
+                    ? null : $list->getTitle(),
                 'description' =>
                     (isset($opt['description']) && $opt['description'] === false)
                     ? null : $list->description,
                 'date' =>
                     (isset($opt['date']) && $opt['date'] === false)
-                    ? null : $list->finna_updated ?? $list->created,
+                    ? null : $list->getFinnaUpdated() ?? $list->getCreated(),
                 'listTags' => $listTags,
                 'headingLevel' => $opt['headingLevel'] ?? 2,
                 'allowCopy' => $opt['allowCopy'] ?? false,

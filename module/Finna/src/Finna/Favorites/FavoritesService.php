@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2016.
+ * Copyright (C) The National Library of Finland 2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -24,121 +24,93 @@
  *
  * @category VuFind
  * @package  Favorites
- * @author   Tuure Ilmarinen <tuure.ilmarinen@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
 
 namespace Finna\Favorites;
 
-use VuFind\Db\Table\Resource as ResourceTable;
-use VuFind\Db\Table\UserList as UserListTable;
-use VuFind\Db\Table\UserResource as UserResourceTable;
-use VuFind\Exception\LoginRequired as LoginRequiredException;
+use Finna\Db\Service\UserListService;
+use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Record\Cache as RecordCache;
+
+use function assert;
 
 /**
  *  Favorites service
  *
  * @category VuFind
  * @package  Favorites
- * @author   Tuure Ilmarinen <tuure.ilmarinen@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
 class FavoritesService extends \VuFind\Favorites\FavoritesService
 {
     /**
-     * UserResource table
+     * Save a group of records to the user's favorites.
      *
-     * @var UserResourceTable
-     */
-    protected $userResourceTable;
-
-    /**
-     * Constructor
+     * Finna: Handle custom order
      *
-     * @param UserListTable     $userList          UserList table object
-     * @param ResourceTable     $resource          Resource table object
-     * @param RecordCache       $cache             Record cache
-     * @param UserResourceTable $userResourceTable User Resource join table
-     */
-    public function __construct(
-        UserListTable $userList,
-        ResourceTable $resource,
-        RecordCache $cache = null,
-        UserResourceTable $userResourceTable
-    ) {
-        $this->recordCache = $cache;
-        $this->userListTable = $userList;
-        $this->resourceTable = $resource;
-        parent::__construct($userList, $resource, $cache);
-        $this->userResourceTable = $userResourceTable;
-    }
-
-    /**
-     * Save this record to the user's favorites.
-     *
-     * @param array                 $params  Array with some or all of these keys:
-     *  <ul>
-     *    <li>mytags - Tag array to associate with record (optional)</li>
-     *    <li>notes - Notes to associate with record (optional)</li>
-     *    <li>list - ID of list to save record into (omit to create new list)</li>
-     *  </ul>
-     * @param \VuFind\Db\Row\User   $user    The user saving the record
-     * @param array  RecordDriver[] $drivers Record drivers for record being saved
+     * @param array               $params  Array with some or all of these keys:
+     *                                     <ul> <li>ids - Array of IDs in
+     *                                     source|id format</li> <li>mytags -
+     *                                     Unparsed tag string to associate with
+     *                                     record (optional)</li> <li>list - ID
+     *                                     of list to save record into (omit to
+     *                                     create new list)</li> </ul>
+     * @param UserEntityInterface $user    The user saving the record
+     * @param array               $records Record drivers
      *
      * @return array list information
      */
-    public function saveMany(
-        array $params,
-        \VuFind\Db\Row\User $user,
-        array $drivers
-    ) {
-        // Validate incoming parameters:
-        if (!$user) {
-            throw new LoginRequiredException('You must be logged in first');
-        }
-        $listId = $params['list'] ?? '';
-        // Get or create a list object as needed:
-        $list = $this->getListObject(
-            $listId,
-            $user
-        );
+    public function saveMany(array $params, UserEntityInterface $user, array $records): array
+    {
+        // Load helper objects needed for the saving process:
+        $list = $this->getAndRememberListObject($this->getListIdFromParams($params), $user);
+        $this->recordCache?->setContext(RecordCache::CONTEXT_FAVORITE);
 
-        // check if list has custom order, if so add custom order keys for new items
-        $index = $this->userResourceTable->getNextAvailableCustomOrderIndex($listId);
+        assert($this->userListService instanceof UserListService);
 
-        // if target list is not in custom order then reverse
-        if (! $this->userResourceTable->isCustomOrderAvailable($listId)) {
-            $drivers = array_reverse($drivers);
+        // Add custom order keys for new items if the list has custom order
+        $index = $this->userListService->getNextAvailableCustomOrderIndex($list->getId());
+
+        // If target list is not in custom order then reverse
+        if (!$this->userListService->isCustomOrderAvailable($list->getId())) {
+            $params['ids'] = array_reverse($params['ids']);
         }
 
-        // Get or create a resource object as needed:
-        $resources = array_map(
-            function ($driver) {
-                $resource = $this->resourceTable->findResource(
-                    $driver->getUniqueId(),
-                    $driver->getSourceIdentifier(),
-                    true,
-                    $driver
+        $tags = isset($params['mytags']) ? $this->tagsService->parse($params['mytags']) : [];
+
+        foreach ($records as $record) {
+            // Get or create a resource object as needed:
+            $resource = $this->resourcePopulator->getOrCreateResourceForDriver($record);
+
+            // Create the resource link if it doesn't exist:
+            $resource = $this->userResourceService->createOrUpdateLink($resource, $user, $list);
+            // Update custom order index:
+            if ($index) {
+                $resource->finna_custom_order_index = $index;
+                $resource->save();
+                ++$index;
+            }
+
+            // Add the new tags:
+            foreach ($tags as $tag) {
+                $this->tagsService->linkTagToResource($tag, $resource, $user, $list);
+            }
+
+            // Cache record:
+            if ($this->recordCache?->isCachable($resource->getSource())) {
+                $this->recordCache->createOrUpdate(
+                    $record->getUniqueID(),
+                    $record->getSourceIdentifier(),
+                    $record->getRawData()
                 );
-                // Persist record in the database for "offline" use
-                $this->persistToCache($driver, $resource);
-                return $resource;
-            },
-            $drivers
-        );
+            }
+        }
 
-        // Add the information to the user's account:
-        $user->saveResources(
-            $resources,
-            $list,
-            $params['mytags'] ?? [],
-            $params['notes'] ?? '',
-            true,
-            $index
-        );
-        return ['listId' => $list->id];
+        return ['listId' => $list->getId()];
     }
 }

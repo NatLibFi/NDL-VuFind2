@@ -34,6 +34,7 @@ namespace Finna\Auth;
 
 use Laminas\Http\PhpEnvironment\Request;
 use VuFind\Auth\Shibboleth\ConfigurationLoaderInterface;
+use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Exception\Auth as AuthException;
 
 /**
@@ -82,59 +83,13 @@ class Shibboleth extends \VuFind\Auth\Shibboleth
      * @param Request $request Request object containing account credentials.
      *
      * @throws AuthException
-     * @return \VuFind\Db\Row\User Object representing logged-in user.
+     * @return UserEntityInterface Object representing logged-in user.
      */
     public function authenticate($request)
     {
-        // Check if username is set.
+        $user = parent::authenticate($request);
+
         $shib = $this->getConfig()->Shibboleth;
-        $username = $this->getServerParam($request, $shib->username);
-        if (empty($username)) {
-            $this->debug(
-                "No username attribute ({$shib->username}) present in request: "
-                . print_r($request->getServer()->toArray(), true)
-            );
-            throw new AuthException('authentication_error_admin');
-        }
-
-        // Check if required attributes match up:
-        foreach ($this->getRequiredAttributes($shib) as $key => $value) {
-            $attrValue = $this->getServerParam($request, $key);
-            if (!preg_match('/' . $value . '/', $attrValue)) {
-                $this->debug(
-                    "Attribute '$key' does not match required value '$value' in"
-                    . ' request: ' . print_r($request->getServer()->toArray(), true)
-                );
-                throw new AuthException('authentication_error_invalid_attributes');
-            }
-        }
-
-        // If we made it this far, we should log in the user!
-        $user = $this->getUserTable()->getByUsername($username);
-
-        // Variable to hold catalog password (handled separately from other
-        // attributes since we need to use saveCredentials method to store it):
-        $catPassword = null;
-
-        // Has the user configured attributes to use for populating the user table?
-        foreach ($this->attribsToCheck as $attribute) {
-            if (isset($shib[$attribute])) {
-                $value = $this->getAttribute($request, $shib[$attribute]);
-                if ($attribute == 'email') {
-                    $user->updateEmail($value);
-                } elseif (
-                    $attribute == 'cat_username' && isset($shib['prefix'])
-                    && !empty($value)
-                ) {
-                    $user->cat_username = $shib['prefix'] . '.' . $value;
-                } elseif ($attribute == 'cat_password') {
-                    $catPassword = $value;
-                } else {
-                    $user->$attribute = ($value === null) ? '' : $value;
-                }
-            }
-        }
-
         $idpParam = $shib->idpserverparam ?? self::DEFAULT_IDPSERVERPARAM;
         $idp = $this->getServerParam($request, $idpParam);
         if (!empty($shib->idp_to_ils_map[$idp])) {
@@ -149,14 +104,15 @@ class Shibboleth extends \VuFind\Auth\Shibboleth
                 $catUsername = "$driver.$catUsername";
                 try {
                     if ($this->ils->patronLogin($catUsername, null)) {
-                        $user->cat_username = $catUsername;
+                        $this->ilsAuthenticator->setUserCatalogCredentials($user, $catUsername, null);
+                        $this->getUserService()->persistEntity($user);
                         $this->debug(
-                            "ILS account '$catUsername' linked to user '$username'"
+                            "ILS account '$catUsername' linked to user '{$user->getUsername()}'"
                         );
                         break;
                     }
                     $this->debug(
-                        "ILS account '$catUsername' not valid for user '$username'"
+                        "ILS account '$catUsername' not valid for user '{$user->getUsername()}'"
                     );
                 } catch (\Exception $e) {
                     $this->logError(
@@ -164,14 +120,6 @@ class Shibboleth extends \VuFind\Auth\Shibboleth
                     );
                 }
             }
-        }
-
-        // Save credentials if applicable:
-        if (!empty($user->cat_username)) {
-            $user->saveCredentials(
-                $user->cat_username,
-                $catPassword ?? $user->getCatPassword()
-            );
         }
 
         // Store logout URL in session:
@@ -188,8 +136,6 @@ class Shibboleth extends \VuFind\Auth\Shibboleth
 
         $this->storeShibbolethSession($request);
 
-        // Save and return the user object:
-        $user->save();
         return $user;
     }
 

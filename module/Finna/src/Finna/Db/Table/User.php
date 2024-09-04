@@ -33,8 +33,6 @@ namespace Finna\Db\Table;
 
 use Laminas\Db\Sql\Select;
 
-use function strlen;
-
 /**
  * Table Definition for user
  *
@@ -49,44 +47,13 @@ use function strlen;
 class User extends \VuFind\Db\Table\User
 {
     /**
-     * Create a row for the specified username.
-     *
-     * @param string $username Username to use for retrieval.
-     *
-     * @return UserRow
-     */
-    public function createRowForUsername($username)
-    {
-        // Prefix username with the institution code if set
-        $username = isset($this->config->Site->institution)
-            ? $this->config->Site->institution . ":$username"
-            : $username;
-        return parent::createRowForUsername($username);
-    }
-
-    /**
-     * Retrieve a user object from the database based on catalog ID.
-     *
-     * @param string $catId Catalog ID.
-     *
-     * @return UserRow
-     */
-    public function getByCatalogId($catId)
-    {
-        if (isset($this->config->Site->institution)) {
-            $catId = $this->config->Site->institution . ":$catId";
-        }
-        return parent::getByCatalogId($catId);
-    }
-
-    /**
-     * Retrieve a user object from the database based on email.
+     * Retrieve a user object from the database based on email and institution prefix.
      *
      * @param string $email email to use for retrieval.
      *
      * @return UserRow
      */
-    public function getByEmail($email)
+    public function getByEmailAndInstitutionPrefix($email)
     {
         $row = $this->select(
             function (Select $select) use ($email) {
@@ -95,37 +62,13 @@ class User extends \VuFind\Db\Table\User
                 // method to keep e.g. Shibboleth accounts intact.
                 $where->and->equalTo('auth_method', 'database');
                 // Limit by institution code if set
-                if (isset($this->config->Site->institution)) {
-                    $prefix = $this->config->Site->institution . ':';
+                if ($prefix = $this->config->Site->institution ?? null) {
+                    $prefix .= ':';
                     $where->and->like('username', "$prefix%");
                 }
             }
         );
         return $row->current();
-    }
-
-    /**
-     * Retrieve a user object from the database based on username; create a new
-     * row if no existing match is found.
-     *
-     * @param string $username Username to use for retrieval.
-     * @param bool   $create   Should we create users that don't already exist?
-     *
-     * @return UserRow
-     */
-    public function getByUsername($username, $create = true)
-    {
-        // Prefix username with the institution code if set and not already prefixed
-        $searchUsername = $username;
-        if (isset($this->config->Site->institution)) {
-            $prefix = $this->config->Site->institution . ':';
-            if (strncmp($username, $prefix, strlen($prefix)) !== 0) {
-                $searchUsername = $prefix . $username;
-            }
-        }
-        $row = $this->select(['username' => $searchUsername])->current();
-        return ($create && empty($row))
-            ? $this->createRowForUsername($username) : $row;
     }
 
     /**
@@ -160,17 +103,5 @@ class User extends \VuFind\Db\Table\User
                 $select->order('username desc');
             }
         );
-    }
-
-    /**
-     * Check if user input for nickname exists already in database.
-     *
-     * @param string $nickname to compare with user table column finna_nickname
-     *
-     * @return boolean true if taken nickname, false if available
-     */
-    public function nicknameIsTaken($nickname): bool
-    {
-        return ! empty($this->select(['finna_nickname' => $nickname])->current());
     }
 }

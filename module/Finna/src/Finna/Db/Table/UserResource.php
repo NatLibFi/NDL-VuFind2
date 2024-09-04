@@ -94,6 +94,8 @@ class UserResource extends \VuFind\Db\Table\UserResource
      * @param array $resourceList Ordered List of Resources
      *
      * @return boolean
+     *
+     * @deprecated Use \Finna\Db\Service\UserListService::saveCustomFavoriteOrder()
      */
     public function saveCustomFavoriteOrder($userId, $listId, $resourceList)
     {
@@ -127,69 +129,24 @@ class UserResource extends \VuFind\Db\Table\UserResource
     }
 
     /**
-     * Check if custom favorite order is used in a list
-     *
-     * @param int $listId List id
-     *
-     * @return bool
-     */
-    public function isCustomOrderAvailable($listId)
-    {
-        $callback = function ($select) use ($listId) {
-            $select->where->equalTo('list_id', $listId);
-            $select->join(
-                ['r' => 'resource'],
-                'user_resource.resource_id = r.id',
-                ['record_id']
-            );
-            $select->where->isNotNull('finna_custom_order_index');
-        };
-        return $this->select($callback)->count() > 0;
-    }
-
-    /**
-     * Get next available custom order index
-     *
-     * @param int $listId List id
-     *
-     * @return int Results next available index or zero if custom order is not
-     *             used or list is empty
-     */
-    public function getNextAvailableCustomOrderIndex($listId)
-    {
-        $callback = function ($select) use ($listId) {
-            $select->where->equalTo('list_id', $listId);
-            $select->where->isNotNull('finna_custom_order_index');
-            $select->order('finna_custom_order_index DESC');
-        };
-        $result = $this->select($callback);
-        if ($result->count() > 0) {
-            return $result->current()->finna_custom_order_index + 1;
-        }
-        return 0;
-    }
-
-    /**
      * Update the date of a list
      *
-     * @param string $listId ID of list to unlink
-     * @param string $userId ID of user removing links
+     * @param string $listId List ID
+     * @param string $userId User ID
      *
      * @return void
      */
     protected function updateListDate($listId, $userId)
     {
-        $userTable = $this->getDbTable('User');
-        $user = $userTable->select(['id' => $userId])->current();
-        if (empty($user)) {
-            return;
-        }
         $listTable = $this->getDbTable('UserList');
         $list = $listTable->getExisting($listId);
+        if (!$list || $list->user_id !== $userId) {
+            return;
+        }
         if (empty($list->title)) {
             // Save throws an exception unless the list has a title
             $list->title = '-';
         }
-        $list->save($user);
+        $list->save();
     }
 }

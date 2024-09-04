@@ -31,6 +31,9 @@
 
 namespace Finna\OnlinePayment\Handler;
 
+use Finna\Db\Entity\FinnaTransactionEntityInterface;
+use VuFind\Db\Entity\UserEntityInterface;
+
 /**
  * Online payment handler interface.
  *
@@ -47,43 +50,43 @@ interface HandlerInterface
     /**
      * Start transaction.
      *
-     * @param string             $returnBaseUrl  Return URL
-     * @param string             $notifyBaseUrl  Notify URL
-     * @param \Finna\Db\Row\User $user           User
-     * @param array              $patron         Patron information
-     * @param string             $driver         Patron MultiBackend ILS source
-     * @param int                $amount         Amount (excluding transaction fee)
-     * @param int                $transactionFee Transaction fee
-     * @param array              $fines          Fines data
-     * @param string             $currency       Currency
-     * @param string             $paymentParam   Payment status URL parameter
+     * @param string              $returnBaseUrl  Return URL
+     * @param string              $notifyBaseUrl  Notify URL
+     * @param UserEntityInterface $user           User
+     * @param array               $patron         Patron information
+     * @param string              $driver         Patron MultiBackend ILS source
+     * @param int                 $amount         Amount (excluding transaction fee)
+     * @param int                 $transactionFee Transaction fee
+     * @param array               $fines          Fines data
+     * @param string              $currency       Currency
+     * @param string              $paymentParam   Payment status URL parameter
      *
      * @return string Error message on error, otherwise redirects to payment handler.
      */
     public function startPayment(
-        $returnBaseUrl,
-        $notifyBaseUrl,
-        $user,
-        $patron,
-        $driver,
-        $amount,
-        $transactionFee,
-        $fines,
-        $currency,
-        $paymentParam
+        string $returnBaseUrl,
+        string $notifyBaseUrl,
+        UserEntityInterface $user,
+        array $patron,
+        string $driver,
+        int $amount,
+        int $transactionFee,
+        array $fines,
+        string $currency,
+        string $paymentParam
     );
 
     /**
      * Process the response from payment service.
      *
-     * @param \Finna\Db\Row\Transaction $transaction Transaction
-     * @param \Laminas\Http\Request     $request     Request
+     * @param FinnaTransactionEntityInterface $transaction Transaction
+     * @param \Laminas\Http\Request           $request     Request
      *
      * @return array One of the result codes defined in AbstractBase and bool
      * indicating whether the transaction was just now marked as paid
      */
     public function processPaymentResponse(
-        \Finna\Db\Row\Transaction $transaction,
+        FinnaTransactionEntityInterface $transaction,
         \Laminas\Http\Request $request
     ): array;
 }

@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2016.
+ * Copyright (C) The National Library of Finland 2016-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,6 +29,8 @@
 
 namespace Finna\Db\Row;
 
+use DateTime;
+use Finna\Db\Entity\FinnaUserListEntityInterface;
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\MissingField as MissingFieldException;
 
@@ -42,25 +44,73 @@ use VuFind\Exception\MissingField as MissingFieldException;
  * @link     http://vufind.org   Main Site
  *
  * @property string $finna_updated
+ * @property bool $finna_protected
  */
-class UserList extends \VuFind\Db\Row\UserList
+class UserList extends \VuFind\Db\Row\UserList implements FinnaUserListEntityInterface
 {
+    public const NO_DATE = '2000-01-01 00:00:00';
+
     /**
      * Saves the properties to the database.
      *
      * This performs an intelligent insert/update, and reloads the
      * properties with fresh data from the table on success.
      *
-     * @param \VuFind\Db\Row\User|bool $user Logged-in user (false if none)
-     *
      * @return mixed The primary key value(s), as an associative array if the
      *     key is compound, or a scalar if the key is single-column.
      * @throws ListPermissionException
      * @throws MissingFieldException
      */
-    public function save($user = false)
+    public function save()
     {
         $this->finna_updated = date('Y-m-d H:i:s');
-        return parent::save($user);
+        return parent::save();
+    }
+
+    /**
+     * Protection status setter
+     *
+     * @param bool $protected Is the user protected
+     *
+     * @return static
+     */
+    public function setFinnaProtected(bool $protected): static
+    {
+        $this->finna_protected = $protected ? 1 : 0;
+        return $this;
+    }
+
+    /**
+     * Protection status getter
+     *
+     * @return bool
+     */
+    public function getFinnaProtected(): bool
+    {
+        return $this->finna_protected;
+    }
+
+    /**
+     * Last update date setter
+     *
+     * @param ?DateTime $dateTime Last updated
+     *
+     * @return static
+     */
+    public function setFinnaUpdated(?DateTime $dateTime): static
+    {
+        $this->finna_updated = $dateTime ? $dateTime->format('Y-m-d H:i:s') : static::NO_DATE;
+        return $this;
+    }
+
+    /**
+     * Last update date getter
+     *
+     * @return DateTime
+     */
+    public function getFinnaUpdated(): ?Datetime
+    {
+        return $this->finna_updated !== static::NO_DATE
+            ? DateTime::createFromFormat('Y-m-d H:i:s', $this->finna_updated) : null;
     }
 }

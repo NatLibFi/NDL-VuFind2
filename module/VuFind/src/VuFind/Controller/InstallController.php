@@ -32,6 +32,9 @@ namespace VuFind\Controller;
 use Laminas\Crypt\Password\Bcrypt;
 use Laminas\Mvc\MvcEvent;
 use VuFind\Config\Writer as ConfigWriter;
+use VuFind\Db\Service\TagServiceInterface;
+use VuFind\Db\Service\UserCardServiceInterface;
+use VuFind\Db\Service\UserServiceInterface;
 use VuFindSearch\Command\RetrieveCommand;
 
 use function count;
@@ -154,7 +157,7 @@ class InstallController extends AbstractBase
      */
     protected function getSolrUrlFromImportConfig()
     {
-        $resolver = $this->serviceLocator->get(\VuFind\Config\PathResolver::class);
+        $resolver = $this->getService(\VuFind\Config\PathResolver::class);
         $importConfig = $resolver->getLocalConfigPath('import.properties', 'import');
         if (file_exists($importConfig)) {
             $props = file_get_contents($importConfig);
@@ -209,7 +212,7 @@ class InstallController extends AbstractBase
      */
     protected function checkCache()
     {
-        $cache = $this->serviceLocator->get(\VuFind\Cache\Manager::class);
+        $cache = $this->getService(\VuFind\Cache\Manager::class);
         return [
             'title' => 'Cache',
             'status' => !$cache->hasDirectoryCreationError(),
@@ -224,7 +227,7 @@ class InstallController extends AbstractBase
      */
     public function fixcacheAction()
     {
-        $cache = $this->serviceLocator->get(\VuFind\Cache\Manager::class);
+        $cache = $this->getService(\VuFind\Cache\Manager::class);
         $view = $this->createViewModel();
         $view->cacheDir = $cache->getCacheDir();
         if (function_exists('posix_getpwuid') && function_exists('posix_geteuid')) {
@@ -243,8 +246,7 @@ class InstallController extends AbstractBase
     {
         try {
             // Try to read the tags table just to see if we can connect to the DB:
-            $tags = $this->getTable('Tags');
-            $tags->getByText('test', false);
+            $this->getDbService(TagServiceInterface::class)->getTagsByText('test');
             $status = true;
         } catch (\Exception $e) {
             $status = false;
@@ -394,7 +396,7 @@ class InstallController extends AbstractBase
         } elseif (!preg_match('/^\w*$/', $view->dbuser)) {
             $this->flashMessenger()
                 ->addMessage('Database user must be alphanumeric.', 'error');
-        } elseif ($skip || $this->formWasSubmitted('submit')) {
+        } elseif ($skip || $this->formWasSubmitted()) {
             $newpass = $this->params()->fromPost('dbpass');
             $newpassConf = $this->params()->fromPost('dbpassconfirm');
             if ((empty($newpass) || empty($newpassConf))) {
@@ -411,8 +413,7 @@ class InstallController extends AbstractBase
                 try {
                     $dbName = ($view->driver == 'pgsql')
                         ? 'template1' : $view->driver;
-                    $db = $this->serviceLocator
-                        ->get(\VuFind\Db\AdapterFactory::class)
+                    $db = $this->getService(\VuFind\Db\AdapterFactory::class)
                         ->getAdapterFromConnectionString("{$connection}/{$dbName}");
                 } catch (\Exception $e) {
                     $this->flashMessenger()
@@ -449,8 +450,7 @@ class InstallController extends AbstractBase
                         foreach ($preCommands as $query) {
                             $db->query($query, $db::QUERY_MODE_EXECUTE);
                         }
-                        $dbFactory = $this->serviceLocator
-                            ->get(\VuFind\Db\AdapterFactory::class);
+                        $dbFactory = $this->getService(\VuFind\Db\AdapterFactory::class);
                         $db = $dbFactory->getAdapterFromConnectionString(
                             $connection . '/' . $view->dbname
                         );
@@ -569,7 +569,11 @@ class InstallController extends AbstractBase
         if (in_array($config->Catalog->driver, ['Sample', 'Demo'])) {
             $status = false;
         } else {
-            $status = 'ils-offline' !== $this->getILS()->getOfflineMode(true);
+            try {
+                $status = 'ils-offline' !== $this->getILS()->getOfflineMode(true);
+            } catch (\Exception $e) {
+                $status = false;
+            }
         }
         return ['title' => 'ILS', 'status' => $status, 'fix' => 'fixils'];
     }
@@ -644,7 +648,7 @@ class InstallController extends AbstractBase
     protected function testSearchService()
     {
         // Try to retrieve an arbitrary ID -- this will fail if Solr is down:
-        $searchService = $this->serviceLocator->get(\VuFindSearch\Service::class);
+        $searchService = $this->getService(\VuFindSearch\Service::class);
         $command = new RetrieveCommand('Solr', '1');
         $searchService->invoke($command)->getResult();
     }
@@ -768,8 +772,8 @@ class InstallController extends AbstractBase
         }
 
         // If we don't need to prompt the user, or if they confirmed, do the fix:
-        $userRows = $this->getTable('user')->getInsecureRows();
-        $cardRows = $this->getTable('usercard')->getInsecureRows();
+        $userRows = $this->getDbService(UserServiceInterface::class)->getInsecureRows();
+        $cardRows = $this->getDbService(UserCardServiceInterface::class)->getInsecureRows();
         if (count($userRows) + count($cardRows) == 0 || $userConfirmation == 'Yes') {
             return $this->forwardTo('Install', 'performsecurityfix');
         }
@@ -806,16 +810,17 @@ class InstallController extends AbstractBase
 
         // Now we want to loop through the database and update passwords (if
         // necessary).
-        $userRows = $this->getTable('user')->getInsecureRows();
+        $ilsAuthenticator = $this->getService(\VuFind\Auth\ILSAuthenticator::class);
+        $userRows = $this->getDbService(UserServiceInterface::class)->getInsecureRows();
         if (count($userRows) > 0) {
             $bcrypt = new Bcrypt();
             foreach ($userRows as $row) {
-                if ($row->password != '') {
-                    $row->pass_hash = $bcrypt->create($row->password);
-                    $row->password = '';
+                if ($row->getRawPassword() != '') {
+                    $row->setPasswordHash($bcrypt->create($row->getRawPassword()));
+                    $row->setRawPassword('');
                 }
-                if ($row->cat_password) {
-                    $row->saveCredentials($row->cat_username, $row->cat_password);
+                if ($rawPassword = $row->getRawCatPassword()) {
+                    $ilsAuthenticator->saveUserCatalogCredentials($row, $row->getCatUsername(), $rawPassword);
                 } else {
                     $row->save();
                 }
@@ -823,15 +828,13 @@ class InstallController extends AbstractBase
             $msg = count($userRows) . ' user row(s) encrypted.';
             $this->flashMessenger()->addMessage($msg, 'info');
         }
-        $cardRows = $this->getTable('usercard')->getInsecureRows();
+        $cardService = $this->getDbService(UserCardServiceInterface::class);
+        $cardRows = $cardService->getInsecureRows();
         if (count($cardRows) > 0) {
-            // Create a dummy user for encryption purposes...
-            $dummyUser = $this->getTable('user')->createRow();
             foreach ($cardRows as $row) {
-                $dummyUser->setCredentials($row->cat_username, $row->cat_password);
-                $row->cat_pass_enc = $dummyUser->cat_pass_enc;
-                $row->cat_password = null;
-                $row->save();
+                $row->setCatPassEnc($ilsAuthenticator->encrypt($row->getRawCatPassword()));
+                $row->setRawCatPassword(null);
+                $cardService->persistEntity($row);
             }
             $msg = count($cardRows) . ' user_card row(s) encrypted.';
             $this->flashMessenger()->addMessage($msg, 'info');
@@ -848,7 +851,7 @@ class InstallController extends AbstractBase
     {
         // Try to retrieve an SSL URL; if we're misconfigured, it will fail.
         try {
-            $this->serviceLocator->get(\VuFindHttp\HttpService::class)
+            $this->getService(\VuFindHttp\HttpService::class)
                 ->get('https://google.com');
             $status = true;
         } catch (\VuFindHttp\Exception\RuntimeException $e) {

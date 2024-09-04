@@ -30,6 +30,8 @@
 
 namespace Finna\Form;
 
+use VuFind\Db\Entity\UserEntityInterface;
+
 use function in_array;
 
 /**
@@ -96,7 +98,7 @@ class Form extends \VuFind\Form\Form
     /**
      * User
      *
-     * @var User
+     * @var ?UserEntityInterface
      */
     protected $user = null;
 
@@ -117,14 +119,14 @@ class Form extends \VuFind\Form\Form
     /**
      * User library card barcode.
      *
-     * @var string|null
+     * @var ?string
      */
     protected $userCatUsername = null;
 
     /**
      * User patron id in library.
      *
-     * @var string|null
+     * @var ?string
      */
     protected $userCatId = null;
 
@@ -172,7 +174,7 @@ class Form extends \VuFind\Form\Form
         parent::setFormId($formId, $params, $prefill);
 
         if ($this->reportPatronBarcode()) {
-            if ($this->user && ($catUsername = $this->user->cat_username)) {
+            if ($this->user && ($catUsername = $this->user->getCatUsername())) {
                 [, $barcode] = explode('.', $catUsername);
                 $this->userCatUsername = $barcode;
             }
@@ -235,13 +237,13 @@ class Form extends \VuFind\Form\Form
     /**
      * Set user
      *
-     * @param User  $user      User
-     * @param array $roles     User roles
-     * @param array $ilsPatron ILS patron account
+     * @param UserEntityInterface $user      User
+     * @param array               $roles     User roles
+     * @param ?array              $ilsPatron ILS patron account
      *
      * @return void
      */
-    public function setUser($user, $roles, ?array $ilsPatron)
+    public function setUser(UserEntityInterface $user, array $roles, ?array $ilsPatron)
     {
         $this->user = $user;
         $this->userRoles = $roles;
@@ -642,9 +644,9 @@ class Form extends \VuFind\Form\Form
             // Append user logged status and permissions
             $loginMethod = $this->user ?
                 $this->translate(
-                    'login_method_' . $this->user->auth_method,
+                    'login_method_' . $this->user->getAuthMethod(),
                     null,
-                    $this->user->auth_method
+                    $this->user->getAuthMethod(),
                 ) : $this->translate('feedback_user_anonymous');
 
             $label = $this->translate('feedback_user_login_method');

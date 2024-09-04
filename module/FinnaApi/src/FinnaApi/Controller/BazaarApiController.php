@@ -31,6 +31,7 @@
 namespace FinnaApi\Controller;
 
 use Laminas\Http\Response;
+use VuFind\Db\Service\AuthHashServiceInterface;
 use VuFindApi\Controller\ApiController;
 use VuFindApi\Controller\ApiInterface;
 use VuFindApi\Controller\ApiTrait;
@@ -83,14 +84,12 @@ class BazaarApiController extends ApiController implements ApiInterface
             'add_resource_callback_url' => $callbackUrl,
             'cancel_url' => $cancelUrl,
         ];
-        $authHash = $this->getTable(\VuFind\Db\Table\AuthHash::class);
-        $authHash->insert(
-            [
-                'hash' => $hash,
-                'type' => 'bazaar',
-                'data' => json_encode($data, JSON_UNESCAPED_UNICODE),
-            ]
-        );
+        $authHashService = $this->getDbService(AuthHashServiceInterface::class);
+        $authHash = $authHashService->createEntity()
+            ->setHash($hash)
+            ->setHashType('bazaar')
+            ->setData(json_encode($data, JSON_UNESCAPED_UNICODE));
+        $authHashService->persistEntity($authHash);
 
         $browseUrl = $this->getServerUrl('bazaar-home')
             . '?hash=' . urlencode($hash);

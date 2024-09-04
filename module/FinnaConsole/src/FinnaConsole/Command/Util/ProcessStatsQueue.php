@@ -29,8 +29,11 @@
 
 namespace FinnaConsole\Command\Util;
 
-use Finna\Statistics\Driver\Database as DatabaseDriver;
+use DateTime;
+use Finna\Db\Service\FinnaStatisticsServiceInterface;
+use Finna\Db\Type\FinnaStatisticsClientType;
 use Finna\Statistics\Driver\Redis as RedisDriver;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -47,52 +50,23 @@ use function call_user_func;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+#[AsCommand(
+    name: 'util/process_stats_queue'
+)]
 class ProcessStatsQueue extends AbstractUtilCommand
 {
     /**
-     * The name of the command (the part after "public/index.php")
-     *
-     * @var string
-     */
-    protected static $defaultName = 'util/process_stats_queue';
-
-    /**
-     * Statistics database driver
-     *
-     * @var DatabaseDriver
-     */
-    protected $dbHandler;
-
-    /**
-     * Redis client
-     *
-     * @var \Credis_Client
-     */
-    protected $redisClient;
-
-    /**
-     * Redis key prefix
-     *
-     * @var string
-     */
-    protected $keyPrefix;
-
-    /**
      * Constructor
      *
-     * @param DatabaseDriver $dbHandler   Statistics database driver
-     * @param \Credis_Client $redisClient Redis client
-     * @param string         $keyPrefix   Redis key prefix
+     * @param FinnaStatisticsServiceInterface $statisticsService Statistics service
+     * @param \Credis_Client                  $redisClient       Redis client
+     * @param string                          $keyPrefix         Redis key prefix
      */
     public function __construct(
-        DatabaseDriver $dbHandler,
-        \Credis_Client $redisClient,
-        string $keyPrefix
+        protected FinnaStatisticsServiceInterface $statisticsService,
+        protected \Credis_Client $redisClient,
+        protected string $keyPrefix
     ) {
-        $this->dbHandler = $dbHandler;
-        $this->redisClient = $redisClient;
-        $this->keyPrefix = $keyPrefix;
-
         parent::__construct();
     }
 
@@ -134,11 +108,17 @@ class ProcessStatsQueue extends AbstractUtilCommand
      */
     protected function processSessions(): void
     {
-        $this->processQueue(
-            'session',
-            RedisDriver::KEY_SESSION,
-            [$this->dbHandler, 'addNewSessionEntry']
-        );
+        $callback = function (array $entry) {
+            $logEntry = $this->statisticsService->createSessionEntity()
+                ->setInstitution($entry['institution'])
+                ->setView($entry['view'])
+                ->setType(FinnaStatisticsClientType::from($entry['crawler']))
+                ->setDate(DateTime::createFromFormat('Y-m-d', $entry['date']));
+
+            $this->statisticsService->addSession($logEntry);
+        };
+
+        $this->processQueue('session', RedisDriver::KEY_SESSION, $callback);
     }
 
     /**
@@ -148,11 +128,19 @@ class ProcessStatsQueue extends AbstractUtilCommand
      */
     protected function processPageViews(): void
     {
-        $this->processQueue(
-            'page view',
-            RedisDriver::KEY_PAGE_VIEW,
-            [$this->dbHandler, 'addPageViewEntry']
-        );
+        $callback = function (array $entry) {
+            $logEntry = $this->statisticsService->createPageViewEntity()
+                ->setInstitution($entry['institution'])
+                ->setView($entry['view'])
+                ->setType(FinnaStatisticsClientType::from($entry['crawler']))
+                ->setDate(DateTime::createFromFormat('Y-m-d', $entry['date']))
+                ->setController($entry['controller'])
+                ->setAction($entry['action']);
+
+            $this->statisticsService->addPageView($logEntry);
+        };
+
+        $this->processQueue('page view', RedisDriver::KEY_PAGE_VIEW, $callback);
     }
 
     /**
@@ -215,20 +203,24 @@ class ProcessStatsQueue extends AbstractUtilCommand
      */
     protected function processRecordViews(): void
     {
-        $callback = function (array $logEntry) {
-            $this->dbHandler->addRecordViewEntry(
-                [
-                    'institution' => $logEntry['institution'],
-                    'view' => $logEntry['view'],
-                    'crawler' => $logEntry['crawler'],
-                    'date' => $logEntry['date'],
-                    'backend' => $logEntry['backend'],
-                    'source' => $logEntry['source'],
-                ]
-            );
+        $callback = function (array $entry) {
+            $logEntry = $this->statisticsService->createRecordStatsLogEntity()
+                ->setInstitution($entry['institution'])
+                ->setView($entry['view'])
+                ->setType(FinnaStatisticsClientType::from($entry['crawler']))
+                ->setDate(DateTime::createFromFormat('Y-m-d', $entry['date']))
+                ->setBackend($entry['backend'])
+                ->setSource($entry['source'])
+                ->setRecordId($entry['record_id'])
+                ->setFormats($entry['formats'])
+                ->setUsageRights($entry['usage_rights'])
+                ->setOnline($entry['online'])
+                ->setExtraMetadata(null);
+
+            $this->statisticsService->addRecordView($logEntry);
 
             // Add detailed log entry:
-            $this->dbHandler->addDetailedRecordViewEntry($logEntry);
+            $this->statisticsService->addDetailedRecordView($logEntry);
         };
 
         $this->processQueue('record view', RedisDriver::KEY_RECORD_VIEW, $callback);

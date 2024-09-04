@@ -6,15 +6,15 @@
 <?=$this->flashmessages()?>
 <p><?=$this->transEsc('loan_history_save_info_html') ?></p>
 <form class="form-record-save" method="post" action="<?=$this->url('myresearch-savehistoricloans')?>" name="saveLoans" data-lightbox-onclose="VuFind.saveStatuses.refresh">
-  <input type="hidden" name="submit" value="1">
+  <input type="hidden" name="submitButton" value="1">
 
   <div class="form-group">
     <label class="control-label" for="save_list"><?=$this->transEsc('Choose a List') ?></label>
     <select class="form-control" id="save_list" name="list">
     <?php if ($this->lists): ?>
       <?php foreach ($this->lists as $list): ?>
-        <option value="<?=$this->escapeHtmlAttr($list['id']) ?>"<?php if ($list['id'] == $this->userlist()->lastUsed()): ?> selected="selected"<?php endif; ?>>
-          <?=$this->escapeHtml($list['title'])?><?php if ($list['public']):?> (<?=mb_strtolower($this->transEsc('public_list_indicator'), 'utf-8')?>)<?php endif; ?>
+        <option value="<?=$this->escapeHtmlAttr($list->getId()) ?>"<?php if ($list->getId() == $this->userlist()->lastUsed()): ?> selected="selected"<?php endif; ?>>
+          <?=$this->escapeHtml($list['title'])?><?php if ($list->isPublic()):?> (<?=mb_strtolower($this->transEsc('public_list_indicator'), 'utf-8')?>)<?php endif; ?>
         </option>
       <?php endforeach; ?>
     <?php else: ?>

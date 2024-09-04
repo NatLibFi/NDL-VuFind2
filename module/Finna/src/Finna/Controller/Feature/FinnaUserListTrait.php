@@ -30,6 +30,8 @@
 
 namespace Finna\Controller\Feature;
 
+use VuFind\Db\Entity\UserListEntityInterface;
+
 /**
  * Finna user list support trait.
  *
@@ -70,13 +72,13 @@ trait FinnaUserListTrait
      * Create sort list.
      * If no sort option selected, set first one from the list to default.
      *
-     * @param ?\VuFind\Db\Row\UserList $list List object
+     * @param ?UserListEntityInterface $list List object
      *
      * @return array
      */
-    protected function createSortList(?\VuFind\Db\Row\UserList $list): array
+    protected function createSortList(?UserListEntityInterface $list): array
     {
-        $table = $this->getTable('UserResource');
+        $userListService = $this->getDbService(\VuFind\Db\Service\UserListService::class);
 
         $sortOptions = self::getFavoritesSortList();
         $sort = $_GET['sort'] ?? false;
@@ -87,7 +89,7 @@ trait FinnaUserListTrait
         }
         $sortList = [];
 
-        if (empty($list) || !$table->isCustomOrderAvailable($list->id)) {
+        if (null === $list || !$userListService->isCustomOrderAvailable($list)) {
             array_shift($sortOptions);
             if ($sort == 'custom_order') {
                 $sort = 'id desc';
@@ -118,7 +120,7 @@ trait FinnaUserListTrait
             'title' => 'sort_title',
             'author' => 'sort_author',
             'year desc' => 'sort_year',
-            'year' => 'sort_year asc',
+            'year' => 'sort_year_asc',
             'format' => 'sort_format',
         ];
     }

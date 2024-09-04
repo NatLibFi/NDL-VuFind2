@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2021.
+ * Copyright (C) The National Library of Finland 2015-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,11 +30,20 @@
 
 namespace FinnaConsole\Command\Util;
 
+use Finna\Db\Service\FinnaDueDateReminderServiceInterface;
+use Laminas\Mvc\I18n\Translator;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Auth\ILSAuthenticator;
+use VuFind\Crypt\SecretCalculator;
+use VuFind\Db\Service\UserCardServiceInterface;
+use VuFind\Db\Service\UserServiceInterface;
+use VuFind\ILS\Connection;
+use VuFind\Mailer\Mailer;
+use VuFind\Record\Loader;
 
 /**
  * Factory for the "due date reminders" task.
@@ -67,7 +76,6 @@ class DueDateRemindersFactory implements FactoryInterface
         $requestedName,
         array $options = null
     ) {
-        $tableManager = $container->get(\VuFind\Db\Table\PluginManager::class);
         $configReader = $container->get(\VuFind\Config\PluginManager::class);
 
         // We need to initialize the theme so that the view renderer works:
@@ -75,17 +83,20 @@ class DueDateRemindersFactory implements FactoryInterface
         $theme = new \VuFindTheme\Initializer($mainConfig->Site, $container);
         $theme->init();
 
+        $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
         return new $requestedName(
-            $tableManager->get('User'),
-            $tableManager->get('DueDateReminder'),
-            $container->get(\VuFind\ILS\Connection::class),
+            $dbServiceManager->get(UserServiceInterface::class),
+            $dbServiceManager->get(UserCardServiceInterface::class),
+            $dbServiceManager->get(FinnaDueDateReminderServiceInterface::class),
+            $container->get(Connection::class),
+            $container->get(ILSAuthenticator::class),
             $configReader->get('config'),
             $configReader->get('datasources'),
             $container->get('ViewRenderer'),
-            $container->get(\VuFind\Record\Loader::class),
-            $container->get(\VuFind\Crypt\HMAC::class),
-            $container->get(\VuFind\Mailer\Mailer::class),
-            $container->get(\Laminas\Mvc\I18n\Translator::class),
+            $container->get(Loader::class),
+            $container->get(Mailer::class),
+            $container->get(Translator::class),
+            $container->get(SecretCalculator::class),
             ...($options ?? [])
         );
     }

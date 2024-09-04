@@ -248,7 +248,7 @@ class Quria extends AxiellWebServices
      *
      * @throws \VuFind\Exception\ILS
      * @return array         On success, an associative array with the following
-     * keys: id, availability (boolean), status, location, reserve, callnumber,
+     * keys: id, availability, location, reserve, callnumber,
      * duedate, number, barcode.
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -383,9 +383,7 @@ class Quria extends AxiellWebServices
 
                     // Status & availability
                     $status = $department->status;
-                    $available
-                        = $status == 'availableForLoan'
-                            || $status == 'returnedToday';
+                    $available = $status == 'availableForLoan' || $status == 'returnedToday';
 
                     // Special status: On reference desk
                     if (
@@ -423,8 +421,7 @@ class Quria extends AxiellWebServices
                             " for '$this->arenaMember'.'$id'"
                         );
                     }
-                    $holdable
-                        = ($branch->reservationButtonStatus ?? '') === 'reservationOk';
+                    $holdable = ($branch->reservationButtonStatus ?? '') === 'reservationOk';
                     $requests = 0;
                     if (
                         !$this->singleReservationQueue
@@ -446,7 +443,7 @@ class Quria extends AxiellWebServices
                         'barcode' => $id,
                         'item_id' => $reservableId,
                         'holdings_id' => $group ?? '',
-                        'availability' => $available,
+                        'availability' => $this->availabilityStatusManager->createAvailabilityStatus($available),
                         'availabilityInfo' => $availabilityInfo,
                         'status' => $status,
                         'location' => $group ?? $branchName,

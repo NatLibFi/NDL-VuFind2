@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2023.
+ * Copyright (C) The National Library of Finland 2015-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,13 +30,15 @@
 
 namespace Finna\AjaxHandler;
 
-use Finna\Db\Row\Transaction as TransactionRow;
-use Finna\Db\Table\Transaction as TransactionTable;
-use Finna\Db\Table\TransactionEventLog;
+use Finna\Db\Entity\FinnaTransactionEntityInterface;
+use Finna\Db\Service\FinnaTransactionEventLogServiceInterface;
+use Finna\Db\Service\FinnaTransactionServiceInterface;
 use Finna\OnlinePayment\OnlinePayment;
 use Finna\OnlinePayment\Receipt;
 use Laminas\Session\Container as SessionContainer;
-use VuFind\Db\Table\User as UserTable;
+use VuFind\Auth\ILSAuthenticator;
+use VuFind\Db\Service\UserCardServiceInterface;
+use VuFind\Db\Service\UserServiceInterface;
 use VuFind\ILS\Connection;
 use VuFind\Session\Settings as SessionSettings;
 
@@ -58,114 +60,57 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
     use \Finna\OnlinePayment\OnlinePaymentHandlerTrait;
 
     /**
-     * ILS connection
-     *
-     * @var Connection
-     */
-    protected $ils;
-
-    /**
-     * Transaction table
-     *
-     * @var TransactionTable
-     */
-    protected $transactionTable;
-
-    /**
-     * User table
-     *
-     * @var UserTable
-     */
-    protected $userTable;
-
-    /**
-     * Online payment manager
-     *
-     * @var OnlinePayment
-     */
-    protected $onlinePayment;
-
-    /**
-     * Online payment session
-     *
-     * @var SessionContainer
-     */
-    protected $onlinePaymentSession;
-
-    /**
-     * Data source configuration
-     *
-     * @var array
-     */
-    protected $dataSourceConfig;
-
-    /**
-     * Receipt
-     *
-     * @var \Finna\OnlinePayment\Receipt
-     */
-    protected $receipt;
-
-    /**
-     * Transaction event log table
-     *
-     * @var TransactionEventLog
-     */
-    protected $eventLogTable;
-
-    /**
      * Constructor
      *
-     * @param SessionSettings     $ss  Session settings
-     * @param Connection          $ils ILS connection
-     * @param TransactionTable    $tt  Transaction table
-     * @param UserTable           $ut  User table
-     * @param OnlinePayment       $op  Online payment manager
-     * @param SessionContainer    $os  Online payment session
-     * @param array               $ds  Data source configuration
-     * @param Receipt             $rcp Receipt
-     * @param TransactionEventLog $elt Transaction event log table
+     * @param SessionSettings                          $sessionSettings      Session settings
+     * @param Connection                               $ils                  ILS connection
+     * @param ILSAuthenticator                         $ilsAuthenticator     ILS Authenticator
+     * @param FinnaTransactionServiceInterface         $transactionService   Transaction database service
+     * @param UserServiceInterface                     $userService          User database service
+     * @param UserCardServiceInterface                 $userCardService      User card database service (for
+     * OnlinePaymentHandlerTrait)
+     * @param OnlinePayment                            $onlinePayment        Online payment manager
+     * @param SessionContainer                         $onlinePaymentSession Online payment session
+     * @param array                                    $dataSourceConfig     Data source configuration
+     * @param Receipt                                  $receipt              Receipt
+     * @param FinnaTransactionEventLogServiceInterface $eventLogService      Transaction event log database service
      */
     public function __construct(
-        SessionSettings $ss,
-        Connection $ils,
-        TransactionTable $tt,
-        UserTable $ut,
-        OnlinePayment $op,
-        SessionContainer $os,
-        array $ds,
-        Receipt $rcp,
-        TransactionEventLog $elt
+        SessionSettings $sessionSettings,
+        protected Connection $ils,
+        protected ILSAuthenticator $ilsAuthenticator,
+        protected FinnaTransactionServiceInterface $transactionService,
+        protected UserServiceInterface $userService,
+        protected UserCardServiceInterface $userCardService,
+        protected OnlinePayment $onlinePayment,
+        protected SessionContainer $onlinePaymentSession,
+        protected array $dataSourceConfig,
+        protected Receipt $receipt,
+        FinnaTransactionEventLogServiceInterface $eventLogService
     ) {
-        $this->sessionSettings = $ss;
-        $this->ils = $ils;
-        $this->transactionTable = $tt;
-        $this->userTable = $ut;
-        $this->onlinePayment = $op;
-        $this->onlinePaymentSession = $os;
-        $this->dataSourceConfig = $ds;
-        $this->receipt = $rcp;
-        $this->eventLogTable = $elt;
+        $this->sessionSettings = $sessionSettings;
+        $this->eventLogService = $eventLogService;
     }
 
     /**
      * Mark fees paid for the given transaction
      *
-     * @param TransactionRow $t Transaction
+     * @param FinnaTransactionEntityInterface $t Transaction
      *
      * @return bool
      */
-    protected function markFeesAsPaidForTransaction(TransactionRow $t): bool
+    protected function markFeesAsPaidForTransaction(FinnaTransactionEntityInterface $t): bool
     {
-        if (!($patron = $this->getPatronForTransaction($t, $user))) {
+        if (!($patron = $this->getPatronForTransaction($t))) {
             $this->logError(
-                'Error processing transaction id ' . $t->id
-                . ': patronLogin error (cat_username: ' . $t->cat_username
-                . ', user id: ' . $t->user_id . ')'
+                'Error processing transaction id ' . $t->getId()
+                . ': patronLogin error (cat_username: ' . $t->getCatUsername()
+                . ', user id: ' . $t->getUserId() . ')'
             );
 
             $t->setRegistrationFailed('patron login error');
-            $this->addTransactionEvent($t->id, 'Patron login failed');
+            $this->transactionService->persistEntity($t);
+            $this->addTransactionEvent($t, 'Patron login failed');
             return false;
         }
 

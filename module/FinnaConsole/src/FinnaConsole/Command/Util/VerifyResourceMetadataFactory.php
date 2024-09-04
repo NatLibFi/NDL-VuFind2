@@ -30,6 +30,7 @@
 
 namespace FinnaConsole\Command\Util;
 
+use Finna\Db\Service\FinnaRecordServiceInterface;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
@@ -67,8 +68,9 @@ class VerifyResourceMetadataFactory implements FactoryInterface
         $requestedName,
         array $options = null
     ) {
+        $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
         return new $requestedName(
-            $container->get(\VuFind\Db\Table\PluginManager::class)->get('Resource'),
+            $dbServiceManager->get(FinnaRecordServiceInterface::class),
             $container->get(\VuFind\Date\Converter::class),
             $container->get(\VuFind\Record\Loader::class),
             ...($options ?? [])

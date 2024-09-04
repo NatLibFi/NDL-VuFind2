@@ -68,9 +68,9 @@ class ExpireFinnaCacheCommandFactory implements FactoryInterface
         $requestedName,
         array $options = null
     ) {
-        $tableManager = $container->get(\VuFind\Db\Table\PluginManager::class);
+        $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
         return new $requestedName(
-            $tableManager->get(\Finna\Db\Table\FinnaCache::class),
+            $dbServiceManager->get(\Finna\Db\Service\FinnaCacheService::class),
             ...($options ?? [])
         );
     }

@@ -22,26 +22,27 @@
       </div>
     </a>
   </li>
-  <?php foreach ($lists as $list): ?>
-  <?php $active = ($list['id'] === $activeId); ?>
-  <li role="none" class="favorites-menulist-item">
-    <a role="menuitem" href="<?= $active ? '#' : $this->url('userList', ['id' => $list['id']])?>?limit=<?=$currentLimit;?>" class="<?=$list && $active ? ' active' : ''?>" aria-current="<?=$active ? 'page' : 'false' ?>">
-      <div class="favorite-list-holder">
-        <div class="pull-left favorite-list-title"><?=$this->escapeHtml($list['title'])?></div>
-        <?php if ($list['public']): ?>
-          <?=$this->icon('public') ?>
-        <?php endif; ?>
-        <div class="pull-right">(<?=$list->cnt?>)</div>
-        <?php if ($active): ?>
-          <button class="pull-right remove-favorite-list remove"><?=$this->icon('list-remove') ?></button>
-        <?php endif; ?>
-      </div>
-    </a>
-    <?php if ($active): ?>
-      <?php $url = $this->url('list-page', ['lid' => $list['id']], ['force_canonical' => true]) ?>
-      <?= $this->partial('myresearch/list-visibility.phtml', ['listUrl' => $url, 'public' => $list['public']]); ?>
-    <?php endif; ?>
-  </li>
+  <?php foreach ($lists as $current): ?>
+    <?php $list = $current['list_entity']; ?>
+    <?php $active = ($list->getId() === $activeId); ?>
+    <li role="none" class="favorites-menulist-item">
+      <a role="menuitem" href="<?= $active ? '#' : $this->url('userList', ['id' => $list->getId()])?>?limit=<?=$currentLimit;?>" class="<?=$list && $active ? ' active' : ''?>" aria-current="<?=$active ? 'page' : 'false' ?>">
+        <div class="favorite-list-holder">
+          <div class="pull-left favorite-list-title"><?=$this->escapeHtml($list->getTitle())?></div>
+          <?php if ($list->isPublic()): ?>
+            <?=$this->icon('public') ?>
+          <?php endif; ?>
+          <div class="pull-right">(<?=$current['count']?>)</div>
+          <?php if ($active): ?>
+            <button class="pull-right remove-favorite-list remove"><?=$this->icon('list-remove') ?></button>
+          <?php endif; ?>
+        </div>
+      </a>
+      <?php if ($active): ?>
+        <?php $url = $this->url('list-page', ['lid' => $list->getId()], ['force_canonical' => true]) ?>
+        <?= $this->partial('myresearch/list-visibility.phtml', ['listUrl' => $url, 'public' => $list->isPublic()]); ?>
+      <?php endif; ?>
+    </li>
   <?php endforeach; ?>
   <li class="add-new-list-holder favorites-menulist-item">
     <div class="list-group-item add-new-list">

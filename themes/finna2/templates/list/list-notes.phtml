@@ -4,7 +4,7 @@
     return;
   }
   if (is_callable([$this->results, 'getListObject'])) {
-      $notes = $this->driver->getListNotes($this->results->getListObject()->id);
+      $notes = $this->record($this->driver)->getListNotes($this->results->getListObject());
   } elseif (isset($this->curatedRecord) && !empty($notes = $this->curatedRecord->getNotes())) {
       $notes = [$notes];
   }
@@ -17,10 +17,10 @@
   $note = $this->markdown()->toHtml($note);
   $view = $this->params->getView();
 
-  $noteTitle = $this->escapeHtml($this->listNoteTitle ?? $this->translate('Note'));
+  $noteTitleEsc = $this->escapeHtml($this->listNoteTitle ?? $this->translate('Note'));
 ?>
 <?php if ($view === 'condensed'): ?>
-  <button class="note-button condensed" aria-hidden="true" title="<?=$noteTitle?>"><?=$this->icon('list-note') ?><?=$noteTitle?><span class="caret"></span></button>
+  <button class="note-button condensed" aria-hidden="true" title="<?=$noteTitleEsc?>"><?=$this->icon('list-note') ?><?=$noteTitleEsc?><span class="caret"></span></button>
 <?php endif; ?>
 <div class="<?= in_array($view, ['grid', 'condensed']) ? "note-overlay-$view note-hide" : 'note-overlay-list' ?>">
   <div class="notes">
@@ -29,13 +29,13 @@
     <?php endif; ?>
     <div class="note-rows">
       <?php if ($view === 'list' || $view === 'compact'): ?>
-        <?=$this->icon('list-note') ?><span><?=$noteTitle?>:</span>
+        <?=$this->icon('list-note') ?><span><?=$noteTitleEsc?>:</span>
       <?php endif; ?>
       <?=$note;?>
     </div>
   </div>
 </div>
 <?php if ($view === 'grid'): ?>
-  <button class="note-button" aria-hidden="true" title="<?=$noteTitle?>"><?=$this->icon('list-note') ?><?=$noteTitle?><span class="caret"></span></button>
+  <button class="note-button" aria-hidden="true" title="<?=$noteTitleEsc?>"><?=$this->icon('list-note') ?><?=$noteTitleEsc?><span class="caret"></span></button>
 <?php endif; ?>
 <!-- END of: finna - list/list-notes.phtml -->

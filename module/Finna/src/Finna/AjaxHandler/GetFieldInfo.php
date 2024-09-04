@@ -29,7 +29,7 @@
 
 namespace Finna\AjaxHandler;
 
-use Finna\Db\Table\FinnaCache;
+use Finna\Db\Service\FinnaCacheServiceInterface;
 use Laminas\Config\Config;
 use Laminas\Log\LoggerAwareInterface;
 use Laminas\Mvc\Controller\Plugin\Params;
@@ -58,41 +58,6 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
     use LoggerAwareTrait;
 
     /**
-     * Main configuration
-     *
-     * @var Config
-     */
-    protected $config;
-
-    /**
-     * Record loader
-     *
-     * @var Loader
-     */
-    protected $loader;
-
-    /**
-     * Record plugin
-     *
-     * @var Record
-     */
-    protected $recordPlugin;
-
-    /**
-     * HTTP service
-     *
-     * @var HttpService
-     */
-    protected $httpService;
-
-    /**
-     * Cache table
-     *
-     * @var FinnaCache
-     */
-    protected $finnaCache;
-
-    /**
      * Settings for diplaying dynamic content
      *
      * @var array
@@ -102,27 +67,22 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
     /**
      * Constructor
      *
-     * @param Config          $config Main configuration
-     * @param SessionSettings $ss     Session settings
-     * @param Loader          $loader Record loader
-     * @param Record          $rp     Record plugin
-     * @param HttpService     $http   HTTP Service
-     * @param FinnaCache      $cache  Cache table
+     * @param Config                     $config            Main configuration
+     * @param SessionSettings            $sessionSettings   Session settings
+     * @param Loader                     $loader            Record loader
+     * @param Record                     $recordPlugin      Record plugin
+     * @param HttpService                $httpService       HTTP Service
+     * @param FinnaCacheServiceInterface $finnaCacheService Cache database service
      */
     public function __construct(
-        Config $config,
-        SessionSettings $ss,
-        Loader $loader,
-        Record $rp,
-        HttpService $http,
-        FinnaCache $cache
+        protected Config $config,
+        SessionSettings $sessionSettings,
+        protected Loader $loader,
+        protected Record $recordPlugin,
+        protected HttpService $httpService,
+        protected FinnaCacheServiceInterface $finnaCacheService
     ) {
-        $this->config = $config;
-        $this->sessionSettings = $ss;
-        $this->loader = $loader;
-        $this->recordPlugin = $rp;
-        $this->httpService = $http;
-        $this->finnaCache = $cache;
+        $this->sessionSettings = $sessionSettings;
         $this->dynamicContent = array_merge(
             [
                 'label_enrichment' => true,
@@ -242,8 +202,8 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
 
         // Check cache:
         $cacheId = strlen($id) < 255 ? $id : md5($id);
-        if ($cached = $this->finnaCache->getByResourceId($cacheId)) {
-            return $this->parseSkosmos($cached['data'], $id, $label);
+        if ($cached = $this->finnaCacheService->getByResourceId($cacheId)) {
+            return $this->parseSkosmos($cached->getData(), $id, $label);
         }
 
         // Fetch from external API:
@@ -251,11 +211,11 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
             return [];
         }
 
-        $row = $this->finnaCache->createRow();
-        $row['mtime'] = time();
-        $row['resource_id'] = $cacheId;
-        $row['data'] = $data;
-        $row->save();
+        $row = $this->finnaCacheService->createEntity()
+            ->setModificationTimestamp(time())
+            ->setResourceId($cacheId)
+            ->setData($data);
+        $this->finnaCacheService->persistEntity($row);
 
         return $this->parseSkosmos($data, $id, $label);
     }

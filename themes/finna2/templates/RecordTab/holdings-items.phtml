@@ -56,35 +56,25 @@
         <?php if (isset($row['reserve']) && $row['reserve'] == 'Y'): ?>
           <?=$this->transEsc('On Reserve - Ask at Circulation Desk')?><br>
         <?php endif; ?>
-        <?php if (isset($row['use_unknown_message']) && $row['use_unknown_message']): ?>
-          <span class="text-muted"><?=$this->transEsc('status_unknown_message')?></span>
+        <?php if ($row['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNKNOWN)): ?>
+          <span class="text-muted"><?=$this->transEsc($row['availability']->getStatusDescription())?></span>
         <?php else: ?>
-          <?php if ($row['availability']): ?>
+          <?php $status = $row['availability']->getStatusDescription(); ?>
+          <?php if ($row['availability']->isAvailable()): ?>
             <?php /* Begin Available Items (Holds) */ ?>
             <?php
-              if ((int)$row['availability'] === \VuFind\ILS\Logic\ItemStatus::STATUS_UNCERTAIN) {
+              if ($row['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNCERTAIN)) {
                 $statusClassEsc = 'text-warning';
                 $icon = 'status-unknown';
-                $status = 'status_' . $row['status'];
               } else {
                 $statusClassEsc = 'text-success';
                 $icon = 'status-available';
-                if (
-                  (is_int($row['availability']) || is_bool($row['availability']))
-                  && !empty($row['status'])
-                  && !$this->translationEmpty('status_' . $row['status'])
-                ) {
-                  $status = 'status_' . $row['status'];
-                } elseif (isset($item['availabilityInfo']['displayText'])) {
-                  $status = 'status_' . $item['availabilityInfo']['displayText'];
-                } else {
-                  $status = 'Available';
-                }
               }
             ?>
             <span class="<?=$statusClassEsc?>">
               <?=$this->icon($icon, $statusClassEsc)?>
-              <?=$this->transEsc($status)?>
+              <?php $statusKey = "status_$status"; ?>
+              <?=$this->transEsc(!$this->translationEmpty($statusKey) ? $statusKey : 'Available')?>
             </span>
             <?php if (isset($row['requests_placed']) && $row['requests_placed'] > 0): ?>
               &ndash;&nbsp;<span class="small"><?=$this->translate('status_requests_html', ['%%count%%' => $this->escapeHtml($row['requests_placed'])])?></span>
@@ -104,7 +94,7 @@
             </div>
           <?php else: ?>
             <?php /* Begin Unavailable Items (Recalls) */ ?>
-            <span class="text-danger"><?=$row['status'] == 'Ordered' ? '' : $this->icon('status-unavailable');?> <?=$this->transEsc('status_' . $row['status'], null, $this->translate($row['status']))?> </span>
+            <span class="text-danger"><?=$status == 'Ordered' ? '' : $this->icon('status-unavailable');?> <?=$this->transEsc('status_' . $status, null, $this->translate($status))?> </span>
             <?php if (isset($row['returnDate']) && $row['returnDate']): ?>&ndash; <span class="small"><?=$this->escapeHtml($row['returnDate'])?></span><?php endif; ?>
             <?php if (isset($row['duedate']) && $row['duedate']): ?>
               &ndash;&nbsp;<span class="small"><?=$this->transEsc('Due')?>:&nbsp;<?=$this->escapeHtml($row['duedate'])?></span>

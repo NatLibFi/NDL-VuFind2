@@ -5,6 +5,8 @@
  *
  * Dependencies:
  *   $this->ils
+ *   $this->transactionService
+ *   $this->userCardService
  *   $this->logError
  *   $this->logException
  *   $this->logPaymentInfo
@@ -36,8 +38,7 @@
 
 namespace Finna\OnlinePayment;
 
-use Finna\Db\Row\Transaction as TransactionRow;
-use Finna\Db\Row\User as UserRow;
+use Finna\Db\Entity\FinnaTransactionEntityInterface;
 
 /**
  * Online payment handler support trait.
@@ -53,27 +54,29 @@ trait OnlinePaymentHandlerTrait
     /**
      * Mark fees paid for the given transaction and patron
      *
-     * @param array          $patron Patron information
-     * @param TransactionRow $t      Transaction
+     * @param array                           $patron Patron information
+     * @param FinnaTransactionEntityInterface $t      Transaction
      *
      * @return bool
      */
-    protected function markFeesAsPaidForPatron(array $patron, TransactionRow $t): bool
+    protected function markFeesAsPaidForPatron(array $patron, FinnaTransactionEntityInterface $t): bool
     {
         // Check that registration is not already in progress (i.e. registration started within 120 seconds)
         if ($t->isRegistrationInProgress()) {
             $this->logPaymentInfo(
-                '    Transaction ' . $t->transaction_id . ' already being registered since ' . $t->registration_started
+                '    Transaction ' . $t->getTransactionIdentifier() . ' already being registered since '
+                . $t->getRegistrationStartDate()->format('Y-m-d H:i:s')
             );
-            $this->addTransactionEvent($t->id, 'Transaction already being registered');
+            $this->addTransactionEvent($t, 'Transaction already being registered');
             return false;
         }
 
         $t->setRegistrationStarted();
-        $this->addTransactionEvent($t->id, 'Started registration with the ILS');
+        $this->transactionService->persistEntity($t);
+        $this->addTransactionEvent($t, 'Started registration with the ILS');
 
         $paymentConfig = $this->ils->getConfig('onlinePayment', $patron);
-        $fineIds = $t->getFineIds();
+        $fineIds = $this->transactionService->getFineIds($t);
 
         if (
             ($paymentConfig['exactBalanceRequired'] ?? true)
@@ -98,33 +101,34 @@ trait OnlinePaymentHandlerTrait
             $noCredit = $exact || !empty($paymentConfig['creditUnsupported']);
             if (
                 $finesAmount['payable'] && !empty($finesAmount['amount'])
-                && (($exact && $t->amount != $finesAmount['amount'])
-                || ($noCredit && $t->amount > $finesAmount['amount']))
+                && (($exact && $t->getAmount() != $finesAmount['amount'])
+                || ($noCredit && $t->getAmount() > $finesAmount['amount']))
             ) {
                 // Payable sum updated. Skip registration and inform user
                 // that payment processing has been delayed.
                 $this->logError(
-                    'Transaction ' . $t->transaction_id . ': payable sum updated.'
-                    . ' Paid amount: ' . $t->amount . ', payable: '
+                    'Transaction ' . $t->getTransactionIdentifier() . ': payable sum updated.'
+                    . ' Paid amount: ' . $t->getAmount() . ', payable: '
                     . print_r($finesAmount, true)
                 );
                 $t->setFinesUpdated();
-                $this->addTransactionEvent($t->id, 'Registration with the ILS failed: fines updated');
+                $this->transactionService->persistEntity($t);
+                $this->addTransactionEvent($t, 'Registration with the ILS failed: fines updated');
                 return false;
             }
         }
 
         try {
-            $this->logPaymentInfo('Transaction ' . $t->transaction_id . ': start marking fees as paid.');
+            $this->logPaymentInfo('Transaction ' . $t->getTransactionIdentifier() . ': start marking fees as paid.');
             $res = $this->ils->markFeesAsPaid(
                 $patron,
-                $t->amount,
-                $t->transaction_id,
-                $t->id,
+                $t->getAmount(),
+                $t->getTransactionIdentifier(),
+                $t->getId(),
                 ($paymentConfig['selectFines'] ?? false) ? $fineIds : null
             );
             $this->logPaymentInfo(
-                'Transaction ' . $t->transaction_id . ': done marking fees as paid, result: '
+                'Transaction ' . $t->getTransactionIdentifier() . ': done marking fees as paid, result: '
                 . var_export($res, true)
             );
             if (true !== $res) {
@@ -134,26 +138,28 @@ trait OnlinePaymentHandlerTrait
                 );
                 if ('fines_updated' === $res) {
                     $t->setFinesUpdated();
-                    $this->addTransactionEvent($t->id, 'Registration with the ILS failed: fines updated');
+                    $this->transactionService->persistEntity($t);
+                    $this->addTransactionEvent($t, 'Registration with the ILS failed: fines updated');
                 } else {
                     $t->setRegistrationFailed('Failed to mark fees paid: ' . ($res ?: 'no error information'));
+                    $this->transactionService->persistEntity($t);
                     $this->addTransactionEvent(
-                        $t->id,
+                        $t->getId(),
                         'Registration with the ILS failed: ' . ($res ?: 'no error information')
                     );
                 }
                 return false;
             }
             $t->setRegistered();
-            $this->logPaymentInfo("Registration of transaction {$t->transaction_id} successful");
-            $this->addTransactionEvent($t->id, 'Successfully registered with the ILS');
+            $this->transactionService->persistEntity($t);
+            $this->logPaymentInfo("Registration of transaction {$t->getTransactionIdentifier()} successful");
+            $this->addTransactionEvent($t, 'Successfully registered with the ILS');
         } catch (\Exception $e) {
-            $this->logError(
-                'Payment registration error (patron ' . $patron['id'] . '): ' . $e->getMessage()
-            );
+            $this->logError('Payment registration error (patron ' . $patron['id'] . '): ' . $e->getMessage());
             $this->logException($e);
             $t->setRegistrationFailed($e->getMessage());
-            $this->addTransactionEvent($t->id, 'Registration with the ILS failed', ['error' => $e->getMessage()]);
+            $this->transactionService->persistEntity($t);
+            $this->addTransactionEvent($t, 'Registration with the ILS failed', ['error' => $e->getMessage()]);
             return false;
         }
         return true;
@@ -162,37 +168,40 @@ trait OnlinePaymentHandlerTrait
     /**
      * Find patron for a transaction
      *
-     * @param TransactionRow $t    Transaction
-     * @param UserRow        $user User
+     * @param FinnaTransactionEntityInterface $t Transaction
      *
      * @return array Patron, or null on failure
      */
-    protected function getPatronForTransaction(TransactionRow $t, &$user): ?array
+    protected function getPatronForTransaction(FinnaTransactionEntityInterface $t): ?array
     {
-        if (!($user = $this->userTable->getById($t->user_id))) {
+        if (!($user = $t->getUser())) {
             return null;
         }
 
         // Check if user's current credentials match (typical case):
+        $catPassword = $this->ilsAuthenticator->getCatPasswordForUser($user);
         if (
-            mb_strtolower($user->cat_username, 'UTF-8') === mb_strtolower($t->cat_username, 'UTF-8')
-            && ($patron = $this->ils->patronLogin($user->cat_username, $user->getCatPassword()))
+            mb_strtolower($user->getCatUsername(), 'UTF-8') === mb_strtolower($t->getCatUsername(), 'UTF-8')
+            && ($patron = $this->ils->patronLogin($user->getCatUsername(), $catPassword))
         ) {
             // Success!
             return $patron;
         }
 
         // Check for a matching library card:
-        $cards = $user->getLibraryCardsByUserName($t->cat_username);
+        $cards = $this->userCardService->getLibraryCards($user, null, $t->getCatUsername());
 
         // Make sure to try all cards with a matching user name:
         foreach ($cards as $card) {
-            // Read the card with a separate call to decrypt password:
-            if (!($card = $user->getLibraryCard($card->id))) {
-                continue;
-            }
+            $userCopy = clone $user;
+            // Note: these changes are not persisted, so there's no harm in setting them here:
+            $userCopy->setCatUsername($card->getCatUsername());
+            $userCopy->setRawCatPassword($card->getRawCatPassword());
+            $userCopy->setCatPassEnc($card->getCatPassEnc());
+            $catPassword = $this->ilsAuthenticator->getCatPasswordForUser($userCopy);
+
             try {
-                if ($patron = $this->ils->patronLogin($card->cat_username, $card->cat_password)) {
+                if ($patron = $this->ils->patronLogin($userCopy->getCatUsername(), $catPassword)) {
                     // Success!
                     return $patron;
                 }

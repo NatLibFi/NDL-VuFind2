@@ -1220,7 +1220,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                             if (!$issue['received']) {
                                 continue;
                             }
-                            [$year] = explode('-', $issue['publisheddate']);
+                            [$year] = explode('-', $issue['publisheddate'] ?? '');
                             if ($year > $latestReceived) {
                                 $latestReceived = $year;
                             }
@@ -1230,7 +1230,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                         if (!$issue['received']) {
                             continue;
                         }
-                        [$year] = explode('-', $issue['publisheddate']);
+                        [$year] = explode('-', $issue['publisheddate'] ?? '');
                         if ($yearFilter) {
                             // Limit to current and last year
                             if (

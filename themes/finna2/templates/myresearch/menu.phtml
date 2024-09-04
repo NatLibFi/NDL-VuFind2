@@ -13,7 +13,8 @@
     if ($listOpen || $reservationListOpen) {
       $list = $this->results?->getListObject() ?? [];
       $listParams = [
-        'activeId' => $list['id'] ?? null,
+        'activeId' => $list?->getId(),
+        'lists' => $user ? $this->userlist()->getUserListsAndCountsByUser($user) : null,
         'results' => $this->results,
         'user' => $user,
       ];

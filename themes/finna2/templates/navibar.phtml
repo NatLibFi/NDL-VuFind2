@@ -121,7 +121,7 @@
         <li class="logoutOptions">
           <a href="#" class="btn" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="account-icon"></span><?=$this->icon('my-account', 'my-account-icon') ?> <span class="username login-text"><?=$this->transEsc('Your Account')?></span> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
           <ul role="menu" id="my-info-dropdown-menu" class="dropdown-menu dropdown-menu-right">
-            <?php if ($user->getLibraryCards()->count() > 0): ?>
+            <?php if ($this->libraryCards()->getCardsForUser($user)): ?>
               <li>
                 <a <?=$this->url('myresearch-checkedout') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-checkedout')?>">
                   <?=$this->transEsc('Checked Out Items')?>

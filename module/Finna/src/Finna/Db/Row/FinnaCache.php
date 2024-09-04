@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2017.
+ * Copyright (C) The National Library of Finland 2017-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,6 +29,9 @@
 
 namespace Finna\Db\Row;
 
+use Datetime;
+use Finna\Db\Entity\FinnaCacheEntityInterface;
+
 /**
  * Row definition for cache
  *
@@ -37,8 +40,14 @@ namespace Finna\Db\Row;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
+ *
+ * @property int $id
+ * @property string $resource_id
+ * @property string $created
+ * @property int $mtime
+ * @property string $data
  */
-class FinnaCache extends \VuFind\Db\Row\RowGateway
+class FinnaCache extends \VuFind\Db\Row\RowGateway implements FinnaCacheEntityInterface
 {
     /**
      * Constructor
@@ -48,5 +57,107 @@ class FinnaCache extends \VuFind\Db\Row\RowGateway
     public function __construct($adapter)
     {
         parent::__construct('id', 'finna_cache', $adapter);
+    }
+
+    /**
+     * Id getter
+     *
+     * @return ?int
+     */
+    public function getId(): ?int
+    {
+        return $this->id ?? null;
+    }
+
+    /**
+     * Resource ID setter
+     *
+     * @param string $id Resource ID
+     *
+     * @return FinnaCacheEntityInterface
+     */
+    public function setResourceId(string $id): FinnaCacheEntityInterface
+    {
+        $this->resource_id = $id;
+        return $this;
+    }
+
+    /**
+     * Resource ID getter
+     *
+     * @return string
+     */
+    public function getResourceId(): string
+    {
+        return $this->resource_id;
+    }
+
+    /**
+     * Created setter
+     *
+     * @param DateTime $dateTime Created date
+     *
+     * @return FinnaCacheEntityInterface
+     */
+    public function setCreated(Datetime $dateTime): FinnaCacheEntityInterface
+    {
+        $this->created = $dateTime->format('Y-m-d H:i:s');
+        return $this;
+    }
+
+    /**
+     * Created getter
+     *
+     * @return DateTime
+     */
+    public function getCreated(): Datetime
+    {
+        return DateTime::createFromFormat('Y-m-d H:i:s', $this->created);
+    }
+
+    /**
+     * Modification timestamp setter
+     *
+     * @param int $mtime Unix timestamp of modification
+     *
+     * @return FinnaCacheEntityInterface
+     */
+    public function setModificationTimestamp(int $mtime): FinnaCacheEntityInterface
+    {
+        $this->mtime = $mtime;
+        return $this;
+    }
+
+    /**
+     * Modification timestamp getter
+     *
+     * @return bool
+     */
+    public function getModificationTimestamp(): int
+    {
+        return $this->mtime;
+    }
+
+    /**
+     * Data setter
+     *
+     * @param string $data Data
+     *
+     * @return FinnaCacheEntityInterface
+     */
+    public function setData(string $data): FinnaCacheEntityInterface
+    {
+        $this->data = $data;
+        return $this;
+    }
+
+    /**
+     * Data getter
+     *
+     * @return string
+     */
+    public function getData(): string
+    {
+        return $this->data;
     }
 }

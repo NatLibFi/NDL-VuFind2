@@ -179,7 +179,7 @@
               href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $tab))?>#tabnav" data-lightbox-ignore<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?>
               data-background<?php endif ?>>
               <?php if (strtolower($tab) == 'details'): ?><?=$this->icon('staff-view', 'staff-view-icon') ?><?php endif; ?>
-              <?php if (strtolower($tab) != 'details'): ?><?=$this->transEsc($desc)?><?php endif; ?><?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?>
+              <?php if (strtolower($tab) != 'details'): ?><?=$this->transEsc($desc)?><?php endif; ?><?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->record($this->driver)->getComments()) ?></span>)<?php endif; ?>
             </a>
             </li>
           <?php endforeach; ?>
@@ -224,7 +224,7 @@
               href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $accordion))?>#tabnav"<?php if ($obj->supportsAjax() && in_array($accordion, $this->backgroundTabs)):?>
               data-background<?php endif ?>
             >
-              <span class="title"><?=$this->transEsc($desc)?><?php if (strtolower($accordion) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?></span>
+              <span class="title"><?=$this->transEsc($desc)?><?php if (strtolower($accordion) == 'usercomments') : ?> (<span class="count"><?= count($this->record($this->driver)->getComments()) ?></span>)<?php endif; ?></span>
               <i class="icon"></i>
             </a>
           </div>

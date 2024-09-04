@@ -159,9 +159,8 @@ class AuthenticationStrategy implements PermissionProviderInterface
         try {
             if (
                 ($user = $this->authManager->getUserObject())
-                && !empty($user->cat_username)
+                && !empty($key = $user->getCatUsername())
             ) {
-                $key = $user->cat_username;
                 if (!isset($this->sessionContainer->{$code})) {
                     $this->sessionContainer->{$code} = [];
                 }

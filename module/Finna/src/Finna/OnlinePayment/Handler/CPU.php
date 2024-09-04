@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2016-2023.
+ * Copyright (C) The National Library of Finland 2016-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -32,9 +32,11 @@
 
 namespace Finna\OnlinePayment\Handler;
 
+use Finna\Db\Entity\FinnaTransactionEntityInterface;
 use Finna\OnlinePayment\Handler\Connector\Cpu\Client;
 use Finna\OnlinePayment\Handler\Connector\Cpu\Payment;
 use Finna\OnlinePayment\Handler\Connector\Cpu\Product;
+use VuFind\Db\Entity\UserEntityInterface;
 
 use function count;
 use function in_array;
@@ -65,30 +67,30 @@ class CPU extends AbstractBase
     /**
      * Start transaction.
      *
-     * @param string             $returnBaseUrl  Return URL
-     * @param string             $notifyBaseUrl  Notify URL
-     * @param \Finna\Db\Row\User $user           User
-     * @param array              $patron         Patron information
-     * @param string             $driver         Patron MultiBackend ILS source
-     * @param int                $amount         Amount (excluding transaction fee)
-     * @param int                $transactionFee Transaction fee
-     * @param array              $fines          Fines data
-     * @param string             $currency       Currency
-     * @param string             $paymentParam   Payment status URL parameter
+     * @param string              $returnBaseUrl  Return URL
+     * @param string              $notifyBaseUrl  Notify URL
+     * @param UserEntityInterface $user           User
+     * @param array               $patron         Patron information
+     * @param string              $driver         Patron MultiBackend ILS source
+     * @param int                 $amount         Amount (excluding transaction fee)
+     * @param int                 $transactionFee Transaction fee
+     * @param array               $fines          Fines data
+     * @param string              $currency       Currency
+     * @param string              $paymentParam   Payment status URL parameter
      *
      * @return string Error message on error, otherwise redirects to payment handler.
      */
     public function startPayment(
-        $returnBaseUrl,
-        $notifyBaseUrl,
-        $user,
-        $patron,
-        $driver,
-        $amount,
-        $transactionFee,
-        $fines,
-        $currency,
-        $paymentParam
+        string $returnBaseUrl,
+        string $notifyBaseUrl,
+        UserEntityInterface $user,
+        array $patron,
+        string $driver,
+        int $amount,
+        int $transactionFee,
+        array $fines,
+        string $currency,
+        string $paymentParam
     ) {
         $patronId = $patron['cat_username'];
         $transactionId = $this->generateTransactionId($patronId);
@@ -103,13 +105,13 @@ class CPU extends AbstractBase
         );
 
         $payment = new Payment($transactionId);
-        $email = trim($user->email);
+        $email = trim($user->getEmail());
         if ($email) {
             $payment->Email = $email;
         }
-        $lastname = $user->lastname;
-        if (!empty($user->firstname)) {
-            $payment->FirstName = $user->firstname;
+        $lastname = $user->getLastname();
+        if (!empty($user->getFirstname())) {
+            $payment->FirstName = $user->getFirstname();
         } else {
             // We don't have both names separately, try to extract first name from
             // last name.
@@ -320,10 +322,10 @@ class CPU extends AbstractBase
         if ($status === self::CPU_STATUS_PENDING) {
             // Pending
 
-            $transaction = $this->createTransaction(
+            $transaction = $this->createTransactionEntity(
                 $transactionId,
                 $driver,
-                $user->id,
+                $user,
                 $patronId,
                 $amount,
                 $transactionFee,
@@ -341,14 +343,14 @@ class CPU extends AbstractBase
     /**
      * Process the response from payment service.
      *
-     * @param \Finna\Db\Row\Transaction $transaction Transaction
-     * @param \Laminas\Http\Request     $request     Request
+     * @param FinnaTransactionEntityInterface $transaction Transaction
+     * @param \Laminas\Http\Request           $request     Request
      *
      * @return array One of the result codes defined in AbstractBase and bool
      * indicating whether the transaction was just now marked as paid
      */
     public function processPaymentResponse(
-        \Finna\Db\Row\Transaction $transaction,
+        FinnaTransactionEntityInterface $transaction,
         \Laminas\Http\Request $request
     ): array {
         if (!($params = $this->getPaymentResponseParams($request))) {
@@ -356,23 +358,27 @@ class CPU extends AbstractBase
         }
 
         // Make sure the transaction IDs match:
-        if ($transaction->transaction_id !== $params['Id']) {
+        if ($transaction->getTransactionIdentifier() !== $params['Id']) {
             return [self::PAYMENT_FAILURE, false];
         }
 
         $status = intval($params['Status']);
         if ($status === self::CPU_STATUS_SUCCESS) {
-            $marked = $transaction->setPaid();
-            $this->addTransactionEvent($transaction->id, 'Transaction marked as paid');
+            if ($marked = $transaction->isInProgress()) {
+                $transaction->setPaid();
+                $this->transactionService->persistEntity($transaction);
+            }
+            $this->addTransactionEvent($transaction, 'Transaction marked as paid');
             return [self::PAYMENT_SUCCESS, $marked];
         } elseif ($status === self::CPU_STATUS_CANCELLED) {
             $transaction->setCanceled();
-            $this->addTransactionEvent($transaction->id, 'Transaction marked as canceled');
+            $this->transactionService->persistEntity($transaction);
+            $this->addTransactionEvent($transaction, 'Transaction marked as canceled');
             return [self::PAYMENT_CANCEL, false];
         }
 
         $this->logPaymentError("unknown status $status");
-        $this->addTransactionEvent($transaction->id, 'Received unknown status', ['status' => $status]);
+        $this->addTransactionEvent($transaction, 'Received unknown status', ['status' => $status]);
         return [self::PAYMENT_FAILURE, false];
     }
 

@@ -37,6 +37,7 @@ use DOMDocument;
 use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\Translator\TranslatorAwareInterface as TranslatorAwareInterface;
+use VuFind\ILS\Logic\AvailabilityStatusManager;
 
 use function count;
 use function in_array;
@@ -306,12 +307,14 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     /**
      * Constructor
      *
-     * @param \VuFind\Date\Converter      $dateConverter Date converter object
-     * @param \VuFind\Config\PathResolver $pathResolver  Config file path resolver
+     * @param \VuFind\Date\Converter      $dateConverter             Date converter object
+     * @param \VuFind\Config\PathResolver $pathResolver              Config file path resolver
+     * @param AvailabilityStatusManager   $availabilityStatusManager Availability status manager
      */
     public function __construct(
         \VuFind\Date\Converter $dateConverter,
-        \VuFind\Config\PathResolver $pathResolver
+        \VuFind\Config\PathResolver $pathResolver,
+        protected AvailabilityStatusManager $availabilityStatusManager
     ) {
         $this->dateFormat = $dateConverter;
         $this->pathResolver = $pathResolver;
@@ -1036,7 +1039,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
      *
      * @throws \VuFind\Exception\ILS
      * @return array         On success, an associative array with the following
-     * keys: id, availability (boolean), status, location, reserve, callnumber,
+     * keys: id, availability, location, reserve, callnumber,
      * duedate, number, barcode.
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -1242,7 +1245,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
                             'barcode' => $id,
                             'item_id' => $reservableId,
                             'holdings_id' => $group,
-                            'availability' => $available,
+                            'availability' => $this->availabilityStatusManager->createAvailabilityStatus($available),
                             'availabilityInfo' => $availabilityInfo,
                             'status' => $status,
                             'location' => $group,
@@ -3144,14 +3147,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
      */
     protected function doSOAPRequest($wsdl, $function, $functionResult, $id, $params)
     {
-        $client = new ProxySoapClient($this->httpService, $wsdl, $this->soapOptions);
-
         $this->debug("$function Request for '$this->arenaMember'.'$id'");
 
         $startTime = microtime(true);
         try {
+            $client = new ProxySoapClient($this->httpService, $wsdl, $this->soapOptions);
             $result = $client->$function($params);
-        } catch (\SoapFault $e) {
+        } catch (\SoapFault | \ErrorException $e) {
             $this->error(
                 "$function Request for '$this->arenaMember'.'$id' failed: "
                 . $e->getMessage()

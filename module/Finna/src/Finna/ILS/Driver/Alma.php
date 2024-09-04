@@ -31,7 +31,7 @@ namespace Finna\ILS\Driver;
 
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
-use VuFind\ILS\Logic\ItemStatus;
+use VuFind\ILS\Logic\AvailabilityStatus;
 use VuFind\Marc\MarcReader;
 
 use function array_key_exists;
@@ -2095,15 +2095,15 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                             $availStr = strtolower($marc->getSubfield($field, 'e'));
                             switch ($availStr) {
                                 case 'available':
-                                    $available = ItemStatus::STATUS_AVAILABLE;
+                                    $available = AvailabilityStatus::STATUS_AVAILABLE;
                                     $statusText = 'Available';
                                     break;
                                 case 'check_holdings':
-                                    $available = ItemStatus::STATUS_UNCERTAIN;
+                                    $available = AvailabilityStatus::STATUS_UNCERTAIN;
                                     $statusText = 'Check Holdings';
                                     break;
                                 default:
-                                    $available = ItemStatus::STATUS_UNAVAILABLE;
+                                    $available = AvailabilityStatus::STATUS_UNAVAILABLE;
                                     $statusText = 'Not Available';
                                     break;
                             }
@@ -2115,7 +2115,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                         $items = $marc->getSubfield($field, 'f') ?: 0;
                         $unavailable = $marc->getSubfield($field, 'g') ?: 0;
                         // Mark all items unavailable if availability indicates so:
-                        if (true !== $available && ItemStatus::STATUS_AVAILABLE !== $available) {
+                        if (true !== $available && AvailabilityStatus::STATUS_AVAILABLE !== $available) {
                             $availableCount = 0;
                         } else {
                             $availableCount = $items - $unavailable;
@@ -2438,7 +2438,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     ? $this->parseDate((string)$item->item_data->due_date) : null;
                 [$available, $status] = $this->getItemAvailabilityAndStatus($item);
                 // Count only certainly available as available:
-                if (true === $available || ItemStatus::STATUS_AVAILABLE === $available) {
+                if (true === $available || AvailabilityStatus::STATUS_AVAILABLE === $available) {
                     ++$availableItems;
                 }
 
@@ -2728,15 +2728,15 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                         $availStr = strtolower($marc->getSubfield($field, 'e'));
                         switch ($availStr) {
                             case 'available':
-                                $available = ItemStatus::STATUS_AVAILABLE;
+                                $available = AvailabilityStatus::STATUS_AVAILABLE;
                                 $statusText = 'Available';
                                 break;
                             case 'check_holdings':
-                                $available = ItemStatus::STATUS_UNCERTAIN;
+                                $available = AvailabilityStatus::STATUS_UNCERTAIN;
                                 $statusText = 'Check Holdings';
                                 break;
                             default:
-                                $available = ItemStatus::STATUS_UNAVAILABLE;
+                                $available = AvailabilityStatus::STATUS_UNAVAILABLE;
                                 $statusText = 'Not Available';
                                 break;
                         }
@@ -2757,7 +2757,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
                     $itemCount = (int)$marc->getSubfield($field, 'f');
                     $itemsTotal += $itemCount;
-                    if (true === $available || ItemStatus::STATUS_AVAILABLE === $available) {
+                    if (true === $available || AvailabilityStatus::STATUS_AVAILABLE === $available) {
                         $unavailable = (int)$marc->getSubfield($field, 'g');
                         $itemsAvailable += $itemCount - $unavailable;
                     }

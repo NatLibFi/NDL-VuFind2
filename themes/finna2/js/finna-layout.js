@@ -397,12 +397,12 @@ finna.layout = (function finnaLayout() {
     if (!document.addEventListener) {
       return;
     }
-    document.addEventListener('VuFind.sidefacets.loaded', function onSideFacetsLoaded() {
+    VuFind.listen('VuFind.sidefacets.loaded', function onSideFacetsLoaded() {
       finna.dateRangeVis.init();
       initToolTips($('.sidebar'));
       initMobileNarrowSearch();
       VuFind.lightbox.bind($('.sidebar'));
-    });
+    }, {once: true});
   }
 
   function initPiwikPopularSearches() {
@@ -467,7 +467,7 @@ finna.layout = (function finnaLayout() {
     if (!document.addEventListener) {
       return;
     }
-    document.addEventListener('VuFind.lightbox.login', function onLightboxLogin(e) {
+    VuFind.listen('lightbox.login', function onLightboxLogin(e) {
       if ($('body').hasClass('template-name-home') && !e.detail.formUrl.match(/catalogLogin/) && !e.detail.formUrl.match(/\Save/) && !e.detail.formUrl.match(/%2[fF]Save/)) {
         window.location.href = VuFind.path + '/MyResearch/Home';
         e.preventDefault();
@@ -646,8 +646,8 @@ finna.layout = (function finnaLayout() {
       });
       $('.cookie-consent').removeClass('hidden');
     }
-    VuFind.listen('vf-cookie-consent-first-done', VuFind.refreshPage);
-    VuFind.listen('vf-cookie-consent-changed', VuFind.refreshPage);
+    VuFind.listen('cookie-consent-first-done', VuFind.refreshPage);
+    VuFind.listen('cookie-consent-changed', VuFind.refreshPage);
   }
 
   // The accordion has a delicate relationship with the tabs. Handle with care!

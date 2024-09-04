@@ -6,7 +6,7 @@
  * PHP version 8
  *
  * Copyright (C) Villanova University 2018.
- * Copyright (C) The National Library of Finland 2018.
+ * Copyright (C) The National Library of Finland 2018-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -36,6 +36,7 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Db\Service\SearchServiceInterface;
 
 /**
  * SearchTabs helper factory.
@@ -76,7 +77,7 @@ class SearchTabsFactory implements FactoryInterface
             $container->get('ViewHelperManager')->get('url'),
             $container->get(\VuFind\Search\SearchTabsHelper::class),
             $container->get(\Laminas\Session\SessionManager::class),
-            $container->get(\VuFind\Db\Table\PluginManager::class)
+            $container->get(\VuFind\Db\Service\PluginManager::class)->get(SearchServiceInterface::class)
         );
     }
 }

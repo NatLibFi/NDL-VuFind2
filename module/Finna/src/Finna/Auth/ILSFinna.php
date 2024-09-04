@@ -29,6 +29,7 @@
 
 namespace Finna\Auth;
 
+use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Exception\Auth as AuthException;
 
 /**
@@ -97,7 +98,7 @@ trait ILSFinna
      * @param bool   $rememberMe  Whether to remember the login
      *
      * @throws AuthException
-     * @return \VuFind\Db\Row\User Processed User object.
+     * @return UserEntityInterface Processed User object.
      */
     protected function handleLogin($username, $password, $loginMethod, $rememberMe)
     {
@@ -111,7 +112,7 @@ trait ILSFinna
      * @param array $info User details returned by ILS driver.
      *
      * @throws AuthException
-     * @return \VuFind\Db\Row\User Processed User object.
+     * @return UserEntityInterface Processed User object.
      */
     protected function processILSUser($info)
     {
@@ -123,47 +124,12 @@ trait ILSFinna
             }
         }
 
-        // Figure out which field of the response to use as an identifier; fail
-        // if the expected field is missing or empty:
-        $config = $this->getConfig();
-        $usernameField = $config->Authentication->ILS_username_field
-            ?? 'cat_username';
-        if (!isset($info[$usernameField]) || empty($info[$usernameField])) {
-            throw new AuthException('authentication_error_technical');
-        }
-
-        // Check to see if we already have an account for this user:
-        $userTable = $this->getUserTable();
-        if (!empty($info['id'])) {
-            $user = $userTable->getByCatalogId($info['id'], false);
-            if (empty($user)) {
-                $user = $userTable->getByUsername($info[$usernameField]);
-                $user->saveCatalogId($info['id']);
-            }
-        } else {
-            $user = $userTable->getByUsername($info[$usernameField]);
-        }
-
-        // No need to store the ILS password in VuFind's main password field:
-        $user->password = '';
-
-        // Update user information based on ILS data:
-        $fields = ['firstname', 'lastname', 'major', 'college'];
-        foreach ($fields as $field) {
-            $user->$field = $info[$field] ?? ' ';
-        }
-        $user->updateEmail($info['email'] ?? '');
+        $user = parent::processILSUser($info);
 
         // Set home library if not already set
-        if (!empty($info['home_library']) && empty($user->home_library)) {
-            $user->home_library = $info['home_library'];
+        if (!empty($info['home_library']) && empty($user->getHomeLibrary())) {
+            $user->setHomeLibrary($info['home_library']);
         }
-
-        // Update the user in the database, then return it to the caller:
-        $user->saveCredentials(
-            $info['cat_username'] ?? ' ',
-            $info['cat_password'] ?? ' '
-        );
 
         return $user;
     }

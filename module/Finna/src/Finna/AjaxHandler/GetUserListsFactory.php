@@ -30,6 +30,7 @@
 namespace Finna\AjaxHandler;
 
 use Psr\Container\ContainerInterface;
+use VuFind\Db\Service\UserListServiceInterface;
 
 /**
  * Factory for GetUserLists AJAX handler.
@@ -69,6 +70,7 @@ class GetUserListsFactory implements \Laminas\ServiceManager\Factory\FactoryInte
         $capabilities = $container->get(\VuFind\Config\AccountCapabilities::class);
         return new $requestedName(
             $container->get(\VuFind\Auth\Manager::class)->getUserObject(),
+            $container->get(\VuFind\Db\Service\PluginManager::class)->get(UserListServiceInterface::class),
             $container->get('ViewRenderer'),
             $capabilities->getListSetting() !== 'disabled'
         );

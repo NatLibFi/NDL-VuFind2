@@ -108,7 +108,7 @@
         </div>
         <div class="clearfix"></div>
       <?php endif; ?>
-    <?php elseif (!$user->cat_username): ?>
+    <?php elseif (!$user->getCatUsername()): ?>
       <div class="alert alert-info">
         <?php
           // Add a data-lightbox attribute to the link in the translation; we do this here to keep
@@ -162,7 +162,7 @@
 
     <?php if ($repositoryLibraryRequestAllowed): ?>
       <?php if ($user): ?>
-        <?php if ($user->getLibraryCards()->count()): ?>
+        <?php if ($this->libraryCards()->getCardsForUser($user)): ?>
           <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'RepositoryLibraryRequest'))?>" data-lightbox class="btn btn-primary repository-library-request-order"><?=$this->transEsc('repository_library_request_order')?><span class="sr-only"> - <?=$this->escapeHtml($this->driver->getTitle())?></span></a>
         <?php else: ?>
           <a href="<?=$this->url('editLibraryCard', ['id' => 'NEW'])?>" class="btn btn-primary login-link hidden-print"><?=$this->transEsc('repository_library_request_add_library_card')?><span class="sr-only"> - <?=$this->escapeHtml($this->driver->getTitle())?></span></a>
@@ -243,9 +243,9 @@
     $statuses = [];
     $requests = 0;
     foreach ($holding['items'] as $row) {
-      if ((int)$row['availability'] === \VuFind\ILS\Logic\ItemStatus::STATUS_AVAILABLE) {
+      if ($row['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_AVAILABLE)) {
         $available += $row['availabilityInfo']['available'] ?? 1;
-      } elseif ($row['availability'] === \VuFind\ILS\Logic\ItemStatus::STATUS_UNCERTAIN) {
+      } elseif ($row['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNCERTAIN)) {
         $uncertain = true;
       }
       if (!empty($row['duedate']) && empty($row['ignoreDueDate'])) {
@@ -255,7 +255,8 @@
           $firstDueStr = $row['duedate'];
         }
       }
-      $statuses[$this->translate('status_' . $row['status'], null, $this->translate($row['status']))] = 1;
+      $statusDesc = $row['availability']->getStatusDescription();
+      $statuses[$this->translate("status_$statusDesc", null, $this->translate($statusDesc))] = 1;
       if (!isset($row['branch'])) {
         if (isset($row['requests_placed']) && $row['requests_placed'] > $requests) {
           $requests = $row['requests_placed'];

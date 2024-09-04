@@ -32,6 +32,9 @@
 
 namespace Finna\View\Helper\Root;
 
+use Finna\Db\Entity\FinnaUserEntityInterface;
+use VuFind\Db\Entity\UserEntityInterface;
+
 /**
  * User public name view helper
  *
@@ -52,25 +55,24 @@ class UserPublicName extends \Laminas\View\Helper\AbstractHelper implements
     /**
      * Create publicly shown user name
      *
-     * @param object $user current user information
+     * @param ?UserEntityInterface $user User, if any
      *
      * @return string
      */
-    public function __invoke($user)
+    public function __invoke(?UserEntityInterface $user)
     {
         $username = '';
-        if ($user) {
-            if (!empty($user->finna_nickname)) {
-                $nicknameTranslation
-                    = strtolower($this->translate('finna_nickname'));
-                $username = $user->finna_nickname . " ($nicknameTranslation)";
+        if ($user instanceof FinnaUserEntityInterface) {
+            if (!empty($nickname = $user->getFinnaNickname())) {
+                $nicknameDescription = strtolower($this->translate('finna_nickname'));
+                $username = "$nickname ($nicknameDescription)";
             } elseif (
-                $user->email
-                && ($pos = strpos($user->email, '@')) !== false
+                ($email = $user->getEmail())
+                && ($pos = strpos($email, '@')) !== false
             ) {
-                [$username] = explode('+', substr($user->email, 0, $pos));
-            } elseif ($user->firstname && $user->lastname) {
-                $username = "$user->firstname $user->lastname";
+                [$username] = explode('+', substr($email, 0, $pos));
+            } elseif ($firstname = $user->getFirstname() && $lastname = $user->getLastname()) {
+                $username = "$firstname $lastname";
             }
         }
         return $username;

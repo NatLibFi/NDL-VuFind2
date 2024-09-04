@@ -48,16 +48,15 @@ class Resource extends \VuFind\Db\Table\Resource
     /**
      * Get a set of records from the requested favorite list.
      *
-     * @param string $user   ID of user owning favorite list
-     * @param string $list   ID of list to retrieve (null for all favorites)
-     * @param array  $tags   Tags to use for limiting results
-     * @param string $sort   Resource table field to use for sorting (null for
-     * no particular sort).
-     * @param int    $offset Offset for results
-     * @param int    $limit  Limit for results (null for none)
+     * @param string $user              ID of user owning favorite list
+     * @param string $list              ID of list to retrieve (null for all favorites)
+     * @param array  $tags              Tags to use for limiting results
+     * @param string $sort              Resource table field to use for sorting (null for no particular sort).
+     * @param int    $offset            Offset for results
+     * @param int    $limit             Limit for results (null for none)
+     * @param ?bool  $caseSensitiveTags Should tags be searched case sensitively (null for configured default)
      *
      * @return \Laminas\Db\ResultSet\AbstractResultSet
-     * @todo   Refactor to avoid duplication
      */
     public function getFavorites(
         $user,
@@ -65,12 +64,12 @@ class Resource extends \VuFind\Db\Table\Resource
         $tags = [],
         $sort = null,
         $offset = 0,
-        $limit = null
+        $limit = null,
+        $caseSensitiveTags = null
     ) {
         // Set up base query:
-        $obj = & $this;
         return $this->select(
-            function ($s) use ($user, $list, $tags, $sort, $offset, $limit, $obj) {
+            function ($s) use ($user, $list, $tags, $sort, $offset, $limit, $caseSensitiveTags) {
                 $columns = [
                     new Expression(
                         'DISTINCT(?)',
@@ -120,10 +119,10 @@ class Resource extends \VuFind\Db\Table\Resource
 
                 // Adjust for tags if necessary:
                 if (!empty($tags)) {
-                    $linkingTable = $obj->getDbTable('ResourceTags');
+                    $linkingTable = $this->getDbTable('ResourceTags');
                     foreach ($tags as $tag) {
                         $matches = $linkingTable
-                            ->getResourcesForTag($tag, $user, $list)->toArray();
+                            ->getResourcesForTag($tag, $user, $list, $caseSensitiveTags)->toArray();
                         $getId = function ($i) {
                             return $i['resource_id'];
                         };

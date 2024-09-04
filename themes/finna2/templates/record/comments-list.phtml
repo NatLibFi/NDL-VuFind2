@@ -1,26 +1,26 @@
 <!-- START of: finna - record/comments-list.phtml -->
 <?php
-  $comments = $this->driver->getComments();
+  $comments = $this->record($this->driver)->getComments();
   $inappropriateComments = [];
   $user = $this->auth()->getUserObject();
   if ($comments) {
-     $inappropriateComments = $this->driver->tryMethod('getInappropriateComments', [$user ? $user->id : null]);
+     $inappropriateComments = $this->driver->tryMethod('getInappropriateComments', [$user?->getId()]);
   }
   $ratingAllowed = $this->driver->isRatingAllowed();
 ?>
-<?php if (count($comments) == 0): ?>
+<?php if (!$comments): ?>
   <div class="alert alert-info"><?=$this->transEsc('Be the first to leave a comment')?></div>
 <?php else: ?>
   <?php
     foreach ($comments as $comment):
-      $reported = $inappropriateComments && in_array($comment->id, $inappropriateComments);
-      $own = $user && $comment->user_id === $user->id;
+      $reported = $inappropriateComments && in_array($comment->getId(), $inappropriateComments);
+      $own = $user && $comment->getUser()->getId() === $user->getId();
   ?>
-  <div class="comment-wrapper comment" data-id="<?=$comment->id?>">
+  <div class="comment-wrapper comment" data-id="<?=$comment->getId()?>">
     <div class="name text-right">
       <?php if ($ratingAllowed): ?>
         <div class="comment-rating">
-          <?php $ratingData = $this->driver->getRatingData($comment->user_id); ?>
+          <?php $ratingData = $this->ratings()->getRatingData($this->driver, $comment->getUser()->getId()); ?>
           <?php if ($ratingData['count']): ?>
             <?=$this->render('Helpers/star-rating.phtml', ['readonly' => true, 'ratingData' => $ratingData]);?>
           <?php endif; ?>
@@ -28,28 +28,27 @@
       <?php endif; ?>
       <div class="comment-info">
         <small>
-          <?php $commenter = $this->driver->tryMethod('getUserById', [$comment->user_id]); ?>
-          <strong><?=null === $comment->user_id ? $this->transEsc('comment_anonymous_user') : $this->escapeHtml(trim($this->userPublicName($commenter)))?></strong>
-          <?=$this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $comment->created))?>
-          <?php if ($comment->finna_updated): ?>
+          <strong><?=null === $comment->getUser() ? $this->transEsc('comment_anonymous_user') : $this->escapeHtml(trim($this->userPublicName($comment->getUser())))?></strong>
+          <?=$this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('U', $comment->getCreated()->getTimestamp()))?>
+          <?php if ($comment->getFinnaUpdated()): ?>
             <br>
             <?=$this->transEsc('modified')?>
-            <?=$this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $comment->finna_updated))?>
+            <?=$this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('U', $comment->getFinnaUpdated()->getTimestamp()))?>
           <?php endif; ?>
           <?php if ($own): ?>
             <br>
             <a href="#" class="edit"><?=$this->transEsc('Edit')?></a>
-            <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'DeleteComment', ['delete' => $comment->id]))?>" id="recordComment<?=$this->escapeHtml($comment->id)?>" class="delete text-danger"><?=$this->transEsc('Delete')?></a>
+            <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'DeleteComment', ['delete' => $comment->getId()]))?>" id="recordComment<?=$this->escapeHtml($comment->getId())?>" class="delete text-danger"><?=$this->transEsc('Delete')?></a>
           <?php endif; ?>
         </small>
       </div>
     </div>
-    <div class="comment-text"><?=$this->escapeHtml($comment->comment)?></div>
+    <div class="comment-text"><?=$this->escapeHtml($comment->getComment())?></div>
     <?php if (!$own): ?>
       <div class="comment-inappropriate<?= $reported ? '-reported' : ''?> text-right">
         <small>
           <?php if (!$reported): ?>
-            <a title="<?=$this->transEscAttr('Report inappropriate') ?>" href="<?=$this->url('comments-inappropriate', ['id' => $comment->id]) ?>" data-lightbox><?=$this->translate('Report inappropriate')?></a>
+            <a title="<?=$this->transEscAttr('Report inappropriate') ?>" href="<?=$this->url('comments-inappropriate', ['id' => $comment->getId()]) ?>" data-lightbox><?=$this->translate('Report inappropriate')?></a>
           <?php else: ?>
             <?=$this->translate('Reported inappropriate'); ?>
           <?php endif; ?>

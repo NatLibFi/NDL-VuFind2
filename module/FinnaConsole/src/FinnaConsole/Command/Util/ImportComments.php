@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2018-2023.
+ * Copyright (C) The National Library of Finland 2018-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,11 +29,18 @@
 
 namespace FinnaConsole\Command\Util;
 
+use DateTime;
+use Finna\Db\Service\FinnaCommentsServiceInterface;
+use Finna\Db\Service\FinnaRatingsServiceInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use VuFind\Exception\RecordMissing as RecordMissingException;
+use VuFind\Db\Service\UserServiceInterface;
+use VuFind\Record\Loader as RecordLoader;
+use VuFind\Record\ResourcePopulator;
+use VuFind\Search\SearchRunner;
 
 use function count;
 
@@ -46,57 +53,11 @@ use function count;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+#[AsCommand(
+    name: 'util/import_comments'
+)]
 class ImportComments extends AbstractUtilCommand
 {
-    /**
-     * The name of the command (the part after "public/index.php")
-     *
-     * @var string
-     */
-    protected static $defaultName = 'util/import_comments';
-
-    /**
-     * Comments table
-     *
-     * @var \Finna\Db\Table\Comments
-     */
-    protected $commentsTable;
-
-    /**
-     * CommentsRecord table
-     *
-     * @var \Finna\Db\Table\CommentsRecord
-     */
-    protected $commentsRecordTable;
-
-    /**
-     * Resource table
-     *
-     * @var \Finna\Db\Table\Comments
-     */
-    protected $resourceTable;
-
-    /**
-     * Ratings table
-     *
-     * @var \VuFind\Db\Table\Ratings
-     */
-    protected $ratingsTable;
-
-    /**
-     * Record loader
-     *
-     * @var \VuFind\Record\Loader
-     */
-    protected $recordLoader;
-
-    /**
-     * Search runner
-     *
-     * @var \VuFind\Search\SearchRunner
-     */
-    protected $searchRunner;
-
     /**
      * Log file
      *
@@ -114,27 +75,21 @@ class ImportComments extends AbstractUtilCommand
     /**
      * Constructor
      *
-     * @param \Finna\Db\Table\Comments       $comments       Comments table
-     * @param \Finna\Db\Table\CommentsRecord $commentsRecord CommentsRecord table
-     * @param \Finna\Db\Table\Resource       $resource       Resource table
-     * @param \VuFind\Db\Table\Ratings       $ratings        Ratings table
-     * @param \VuFind\Record\Loader          $recordLoader   Record loader
-     * @param \VuFind\Search\SearchRunner    $searchRunner   Search runner
+     * @param UserServiceInterface          $userService       User database service
+     * @param FinnaCommentsServiceInterface $commentsService   Comments database service
+     * @param FinnaRatingsServiceInterface  $ratingsService    Ratings database service
+     * @param ResourcePopulator             $resourcePopulator Resource populator
+     * @param RecordLoader                  $recordLoader      Record loader
+     * @param SearchRunner                  $searchRunner      Search runner
      */
     public function __construct(
-        \Finna\Db\Table\Comments $comments,
-        \Finna\Db\Table\CommentsRecord $commentsRecord,
-        \Finna\Db\Table\Resource $resource,
-        \VuFind\Db\Table\Ratings $ratings,
-        \VuFind\Record\Loader $recordLoader,
-        \VuFind\Search\SearchRunner $searchRunner
+        protected UserServiceInterface $userService,
+        protected FinnaCommentsServiceInterface $commentsService,
+        protected FinnaRatingsServiceInterface $ratingsService,
+        protected ResourcePopulator $resourcePopulator,
+        protected RecordLoader $recordLoader,
+        protected SearchRunner $searchRunner
     ) {
-        $this->commentsTable = $comments;
-        $this->commentsRecordTable = $commentsRecord;
-        $this->resourceTable = $resource;
-        $this->ratingsTable = $ratings;
-        $this->recordLoader = $recordLoader;
-        $this->searchRunner = $searchRunner;
         parent::__construct();
     }
 
@@ -272,6 +227,7 @@ class ImportComments extends AbstractUtilCommand
         $defaultTimestamp = strtotime(
             date('Y-m-d', $defaultDate ? strtotime($defaultDate) : time())
         );
+        $user = $userId ? $this->userService->getUserById($userId) : null;
 
         $this->log("Started import of $importFile", true);
         $this->log('Default date is ' . date('Y-m-d', $defaultTimestamp), true);
@@ -319,6 +275,7 @@ class ImportComments extends AbstractUtilCommand
                 $timestamp = $defaultTimestamp;
             }
             $timestampStr = date('Y-m-d H:i:s', $timestamp);
+            $timestampDateTime = DateTime::createFromFormat('U', $timestamp);
             if ($ratingColumn) {
                 if (!isset($data[$ratingColumn])) {
                     $this->log(
@@ -361,16 +318,7 @@ class ImportComments extends AbstractUtilCommand
                 continue;
             }
             $recordId = $driver->getUniqueID();
-
-            try {
-                $resource = $this->resourceTable->findResource($driver->getUniqueID());
-            } catch (RecordMissingException $e) {
-                $this->log(
-                    'Record ' . $driver->getUniqueID()
-                    . " not found when trying to create a resource entry (row $count)"
-                );
-                continue;
-            }
+            $resource = $this->resourcePopulator->getOrCreateResourceForRecordId($recordId, $sourceId);
 
             $skip = false;
             if ($commentString) {
@@ -385,11 +333,10 @@ class ImportComments extends AbstractUtilCommand
 
                 // Check for duplicates
                 if (!$skip) {
-                    $comments = $this->commentsTable->getForResource($recordId);
-                    foreach ($comments as $comment) {
+                    foreach ($this->commentsService->getRecordComments($recordId, $sourceId) as $comment) {
                         if (
-                            $comment->created === $timestampStr
-                            && $comment->comment === $commentString
+                            $comment->getCreated()->format('Y-m-d H:i:s') === $timestampStr
+                            && $comment->getComment() === $commentString
                         ) {
                             $this->log("Comment on row $count for $recordId already exists");
                             $skip = true;
@@ -399,29 +346,24 @@ class ImportComments extends AbstractUtilCommand
                 }
 
                 if (!$skip) {
-                    $row = $this->commentsTable->createRow();
-                    if ($userId) {
-                        $row->user_id = $userId;
-                    }
-                    $row->resource_id = $resource->id;
-                    $row->comment = $commentString;
-                    $row->created = $timestampStr;
-                    $row->save();
-                    $cr = $this->commentsRecordTable->createRow();
-                    $cr->record_id = $recordId;
-                    $cr->comment_id = $row->id;
-                    $cr->save();
-                    $this->log("Added comment {$row->id} for record $recordId (row $count)");
+                    $newComment = $this->commentsService->createEntity()
+                        ->setUser($user)
+                        ->setComment($commentString)
+                        ->setResource($resource)
+                        ->setCreated($timestampDateTime);
+                    $this->commentsService->persistEntity($newComment);
+                    $this->commentsService->addRecordLinks($newComment, [$recordId]);
+                    $this->log("Added comment {$newComment->getId()} for record $recordId (row $count)");
                     ++$commentCount;
                 }
             }
             if ($rating && !$skip) {
-                $ratingRow = $this->ratingsTable->createRow();
-                $ratingRow->resource_id = $resource->id;
-                $ratingRow->created = $timestampStr;
-                $ratingRow->rating = $rating;
-                $ratingRow->save();
-                $this->log("Added rating {$ratingRow->id} for record $recordId (row $count)");
+                $newRating = $this->ratingsService->createEntity()
+                    ->setResource($resource)
+                    ->setCreated($timestampDateTime)
+                    ->setRating($rating);
+                $this->ratingsService->persistEntity($newRating);
+                $this->log("Added rating {$newRating->getId()} for record $recordId (row $count)");
                 ++$ratingCount;
             }
             if ($count % 1000 === 0) {

@@ -33,6 +33,7 @@ use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\AjaxHandler\AbstractIlsAndUserActionFactory;
 
 /**
  * Factory for GetHoldingsDetails AJAX handler.
@@ -43,7 +44,7 @@ use Psr\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class GetHoldingsDetailsFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
+class GetHoldingsDetailsFactory extends AbstractIlsAndUserActionFactory
 {
     /**
      * Create an object
@@ -66,15 +67,14 @@ class GetHoldingsDetailsFactory implements \Laminas\ServiceManager\Factory\Facto
         $requestedName,
         array $options = null
     ) {
-        return new $requestedName(
-            $container->get(\VuFind\Session\Settings::class),
-            $container->get(\VuFind\ILS\Connection::class),
-            $container->get(\VuFind\Auth\ILSAuthenticator::class),
-            $container->get(\VuFind\Auth\Manager::class)->getUserObject(),
-            $container->get('ViewRenderer'),
-            $container->get(\VuFind\Record\Loader::class),
-            $container->get(\VuFind\ILS\Logic\Holds::class),
-            ...($options ?: [])
+        return parent::__invoke(
+            $container,
+            $requestedName,
+            [
+                $container->get('ViewRenderer'),
+                $container->get(\VuFind\Record\Loader::class),
+                $container->get(\VuFind\ILS\Logic\Holds::class),
+            ]
         );
     }
 }

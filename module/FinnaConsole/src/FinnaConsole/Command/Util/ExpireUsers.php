@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2022.
+ * Copyright (C) The National Library of Finland 2015-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -31,10 +31,13 @@
 
 namespace FinnaConsole\Command\Util;
 
-use Laminas\Db\Sql\Select;
+use Finna\Db\Service\FinnaUserServiceInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use VuFind\Account\UserAccountService;
+use VuFind\Db\Entity\UserEntityInterface;
 
 use function floatval;
 
@@ -52,28 +55,22 @@ use function floatval;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+#[AsCommand(
+    name: 'util/expire_users'
+)]
 class ExpireUsers extends AbstractUtilCommand
 {
     use \FinnaConsole\Command\Util\ConsoleLoggerTrait;
 
     /**
-     * The name of the command (the part after "public/index.php")
-     *
-     * @var string
-     */
-    protected static $defaultName = 'util/expire_users';
-
-    /**
-     * Table on which to expire rows
-     *
-     * @var \VuFind\Db\Table\User
-     */
-    protected $table;
-
-    /**
      * Whether comments are deleted
      */
     protected $removeComments;
+
+    /**
+     * Whether ratingd are deleted
+     */
+    protected $removeRatings;
 
     /**
      * Minimum (and default) legal age of rows to delete.
@@ -85,16 +82,17 @@ class ExpireUsers extends AbstractUtilCommand
     /**
      * Constructor
      *
-     * @param \Finna\Db\Table\User   $table  Table on which to expire rows
-     * @param \Laminas\Config\Config $config Main configuration
+     * @param FinnaUserServiceInterface $userService        User database service
+     * @param UserAccountService        $userAccountService User account database service
+     * @param \Laminas\Config\Config    $config             Main configuration
      */
     public function __construct(
-        \VuFind\Db\Table\User $table,
+        protected FinnaUserServiceInterface $userService,
+        protected UserAccountService $userAccountService,
         \Laminas\Config\Config $config
     ) {
-        $this->table = $table;
-        $this->removeComments
-            = $config->Authentication->delete_comments_with_user ?? true;
+        $this->removeComments = $config->Authentication->delete_comments_with_user ?? true;
+        $this->removeRatings = $config->Authentication->delete_ratings_with_user ?? true;
         parent::__construct();
     }
 
@@ -156,10 +154,10 @@ class ExpireUsers extends AbstractUtilCommand
             $users = $this->getExpiredUsers($daysOld);
             foreach ($users as $user) {
                 $this->msg(
-                    'Removing user: ' . $user->username . ' (' . $user->id . ')'
+                    'Removing user: ' . $user->getUsername() . ' (' . $user->getId() . ')'
                 );
                 if (!$reportOnly) {
-                    $user->delete($this->removeComments);
+                    $this->userAccountService->purgeUserData($user, $this->removeComments, $this->removeRatings);
                 }
                 $count++;
             }
@@ -192,26 +190,11 @@ class ExpireUsers extends AbstractUtilCommand
      *
      * @param int $days Preserve users active less than provided amount of days ago
      *
-     * @return \Finna\Db\Row\User[]
+     * @return UserEntityInterface[]
      */
-    protected function getExpiredUsers($days)
+    protected function getExpiredUsers($days): array
     {
         $expireDate = date('Y-m-d', strtotime(sprintf('-%d days', (int)$days)));
-
-        $listSelect = new Select('user_list');
-        $listSelect->columns(['user_id']);
-        $listSelect->where->equalTo('finna_protected', 1);
-
-        return $this->table->select(
-            function (Select $select) use ($expireDate, $listSelect) {
-                $select->where->lessThan('last_login', $expireDate);
-                $select->where->notEqualTo(
-                    'last_login',
-                    '2000-01-01 00:00:00'
-                );
-                $select->where->equalTo('finna_protected', 0);
-                $select->where->notIn('id', $listSelect);
-            }
-        );
+        return $this->userService->getExpiringUsers($expireDate);
     }
 }

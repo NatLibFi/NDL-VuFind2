@@ -34,6 +34,7 @@ declare(strict_types=1);
 namespace Finna\Form\Handler;
 
 use Laminas\Log\LoggerAwareInterface;
+use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Form\Handler\HandlerInterface;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\Log\LoggerAwareTrait;
@@ -84,14 +85,14 @@ class Api implements
      *
      * @param \VuFind\Form\Form                     $form   Submitted form
      * @param \Laminas\Mvc\Controller\Plugin\Params $params Request params
-     * @param ?\VuFind\Db\Row\User                  $user   Authenticated user
+     * @param ?UserEntityInterface                  $user   Authenticated user
      *
      * @return bool
      */
     public function handle(
         \VuFind\Form\Form $form,
         \Laminas\Mvc\Controller\Plugin\Params $params,
-        ?\VuFind\Db\Row\User $user = null
+        ?UserEntityInterface $user = null
     ): bool {
         if (!($form instanceof \Finna\Form\Form)) {
             throw new \VuFind\Exception\BadConfig('Unexpected form class');
@@ -132,7 +133,7 @@ class Api implements
             }
         }
         $message['emailSubject'] = $form->getEmailSubject($params->fromPost());
-        $message['internalUserId'] = $user ? $user->id : null;
+        $message['internalUserId'] = $user?->getId();
         $message['viewBaseUrl'] = $this->baseUrl;
         if ($driver = $form->getRecord()) {
             $message['recordMetadata'] = [

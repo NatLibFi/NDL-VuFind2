@@ -29,6 +29,7 @@
 
 namespace FinnaConsole\Command\Util;
 
+use Finna\Db\Service\FinnaStatisticsServiceInterface;
 use Finna\Statistics\Driver\Redis as RedisDriver;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
@@ -66,12 +67,10 @@ class ProcessStatsQueueFactory implements FactoryInterface
         $requestedName,
         array $options = null
     ) {
-        $config = $container->get(\VuFind\Config\PluginManager::class)
-            ->get('config')->Statistics ?? null;
-        $tableManager = $container->get(\VuFind\Db\Table\PluginManager::class);
+        $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
+        $config = $container->get(\VuFind\Config\PluginManager::class)->get('config')->Statistics ?? null;
         return new $requestedName(
-            $container->get(\Finna\Statistics\Driver\PluginManager::class)
-                ->get('Database'),
+            $dbServiceManager->get(FinnaStatisticsServiceInterface::class),
             $this->getConnection($config),
             $config->redis_key_prefix ?? RedisDriver::DEFAULT_KEY_PREFIX,
             ...($options ?? [])

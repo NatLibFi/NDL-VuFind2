@@ -29,6 +29,7 @@
 
 namespace Finna\View\Helper\Root;
 
+use Laminas\Cache\Storage\StorageInterface as CacheAdapter;
 use Laminas\Config\Config;
 use VuFind\Net\IpAddressUtils;
 
@@ -70,15 +71,17 @@ class ProxyUrl extends \VuFind\View\Helper\Root\ProxyUrl
      * Constructor
      *
      * @param \Laminas\Config\Config $config      VuFind configuration
+     * @param CacheAdapter           $cache       Cache for web service responses
      * @param \Laminas\Config\Config $permissions Permissions configuration
      * @param IpAddressUtils         $ipUtils     IP address utils
      */
     public function __construct(
         Config $config,
+        CacheAdapter $cache,
         Config $permissions,
         IpAddressUtils $ipUtils
     ) {
-        parent::__construct($config);
+        parent::__construct($config, $cache);
 
         $this->ipAddressUtils = $ipUtils;
         $this->permissions = $permissions;

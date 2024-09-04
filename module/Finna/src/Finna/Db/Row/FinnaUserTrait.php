@@ -29,6 +29,8 @@
 
 namespace Finna\Db\Row;
 
+use DateTime;
+
 /**
  * Fake database row to represent a user in privacy mode.
  *
@@ -86,61 +88,95 @@ trait FinnaUserTrait
     }
 
     /**
-     * Get username
-     *
-     * @return string
-     */
-    public function getUsername(): string
-    {
-        [, $username] = explode(':', $this->username);
-        $parts = explode('.', $username, 2);
-        return $parts[1] ?? $parts[0];
-    }
-
-    /**
-     * Change due date reminder setting.
+     * Due date reminder setting setter
      *
      * @param int $remind New due date reminder setting.
      *
-     * @return mixed           The output of the save method.
+     * @return static
      */
-    public function setFinnaDueDateReminder($remind)
+    public function setFinnaDueDateReminder(int $remind): static
     {
         $this->finna_due_date_reminder = $remind;
-        $this->updateLibraryCardEntry();
-        return $this->save();
+        return $this;
     }
 
     /**
-     * Verify that the current card information exists in user's library cards
-     * (if enabled) and is up to date.
+     * Due date reminder setting getter
      *
-     * @return void
-     * @throws \VuFind\Exception\PasswordSecurity
+     * @return int
      */
-    protected function updateLibraryCardEntry()
+    public function getFinnaDueDateReminder(): int
     {
-        if (!$this->libraryCardsEnabled() || empty($this->cat_username)) {
-            return;
-        }
+        return $this->finna_due_date_reminder;
+    }
 
-        $userCard = $this->getDbTable('UserCard');
-        $row = $userCard->select(
-            ['user_id' => $this->id, 'cat_username' => $this->cat_username]
-        )->current();
-        if (empty($row)) {
-            $row = $userCard->createRow();
-            $row->user_id = $this->id;
-            $row->cat_username = $this->cat_username;
-            $row->card_name = $this->cat_username;
-            $row->created = date('Y-m-d H:i:s');
-        }
-        // Always update home library, password and due date reminder
-        $row->home_library = $this->home_library;
-        $row->cat_password = $this->cat_password;
-        $row->cat_pass_enc = $this->cat_pass_enc;
-        $row->finna_due_date_reminder = $this->finna_due_date_reminder;
+    /**
+     * Nickname setter
+     *
+     * @param ?string $nickname Nickname or null for none
+     *
+     * @return static
+     */
+    public function setFinnaNickname(?string $nickname): static
+    {
+        $this->finna_nickname = $nickname;
+        return $this;
+    }
 
-        $row->save();
+    /**
+     * Nickname getter
+     *
+     * @return ?string
+     */
+    public function getFinnaNickName(): ?string
+    {
+        return $this->finna_nickname;
+    }
+
+    /**
+     * Protection status setter
+     *
+     * @param bool $protected Is the user protected
+     *
+     * @return static
+     */
+    public function setFinnaProtected(bool $protected): static
+    {
+        $this->finna_protected = $protected ? 1 : 0;
+        return $this;
+    }
+
+    /**
+     * Protection status getter
+     *
+     * @return bool
+     */
+    public function getFinnaProtected(): bool
+    {
+        return $this->finna_protected ? true : false;
+    }
+
+    /**
+     * Last expiration reminder date setter
+     *
+     * @param ?DateTime $dateTime Expiration reminder date
+     *
+     * @return static
+     */
+    public function setFinnaLastExpirationReminderDate(?DateTime $dateTime): static
+    {
+        $this->finna_last_expiration_reminder = $dateTime ? $dateTime->format('Y-m-d H:i:s') : '2000-01-01 00:00:00';
+        return $this;
+    }
+
+    /**
+     * Last expiration reminder date getter
+     *
+     * @return DateTime
+     */
+    public function getFinnaLastExpirationReminderDate(): ?Datetime
+    {
+        return $this->finna_last_expiration_reminder !== '2000-01-01 00:00:00'
+            ? DateTime::createFromFormat('Y-m-d H:i:s', $this->finna_last_expiration_reminder) : null;
     }
 }

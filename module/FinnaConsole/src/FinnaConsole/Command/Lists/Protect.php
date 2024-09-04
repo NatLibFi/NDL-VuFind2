@@ -29,7 +29,10 @@
 
 namespace FinnaConsole\Command\Lists;
 
-use VuFind\Db\Row\RowGateway;
+use Finna\Db\Entity\FinnaUserListEntityInterface;
+use VuFind\Db\Entity\EntityInterface;
+
+use function assert;
 
 /**
  * Console service for protecting lists
@@ -59,20 +62,17 @@ class Protect extends \FinnaConsole\Command\AbstractRecordUpdateCommand
     /**
      * Update a record
      *
-     * @param RowGateway $record Record
+     * @param EntityInterface $record Record
      *
      * @return bool Whether changes were made
      */
-    protected function changeRecord(RowGateway $record): bool
+    protected function changeRecord(EntityInterface $record): bool
     {
-        if ($record->finna_protected === 1) {
+        assert($record instanceof FinnaUserListEntityInterface);
+        if ($record->getFinnaProtected()) {
             return false;
         }
-        $record->finna_protected = 1;
-        // Fake a user to pass owner check:
-        $user = new \StdClass();
-        $user->id = $record->user_id;
-        $record->save($user);
+        $record->setFinnaProtected(true);
         return true;
     }
 }

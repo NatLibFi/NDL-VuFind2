@@ -7,9 +7,9 @@
 
 <div class="js-opening-times-week">
   <?php
-    $schedules = $orgInfo['openTimes']['schedules'];
+    $schedules = $orgInfo['openTimes']['schedules'] ?? null;
     $hasScheduleDescriptions = !empty($orgInfo['scheduleDescriptions']);
-    $hasLocation = '' !== $orgInfo['address']['city'];
+    $hasLocation = '' !== ($orgInfo['address']['city'] ?? '');
   ?>
   <?php if ($schedules && ($hasLocation || !$orgInfo['isAlwaysClosed'])): ?>
     <?php foreach ($schedules as $schedule): ?>
@@ -58,7 +58,7 @@
       </div>
     <?php endforeach; ?>
   <?php else: ?>
-    <?php if ($orgInfo['mobile']): ?>
+    <?php if ($orgInfo['mobile'] ?? null): ?>
       <div class="mobile-schedules info-element">
         <?php if ($orgInfo['links']): ?>
           <?php foreach ($orgInfo['links'] as $link): ?>
@@ -75,7 +75,7 @@
     <?php endif; ?>
   <?php endif; ?>
 
-  <?php if ($orgInfo['scheduleDescriptions']): ?>
+  <?php if ($orgInfo['scheduleDescriptions'] ?? null): ?>
     <div class="schedules-info info-element">
       <?=
       implode(

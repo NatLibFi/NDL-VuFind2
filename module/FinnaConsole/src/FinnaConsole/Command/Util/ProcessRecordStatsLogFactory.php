@@ -29,6 +29,7 @@
 
 namespace FinnaConsole\Command\Util;
 
+use Finna\Db\Service\FinnaStatisticsServiceInterface;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
@@ -65,11 +66,9 @@ class ProcessRecordStatsLogFactory implements FactoryInterface
         $requestedName,
         array $options = null
     ) {
-        $tableManager = $container->get(\VuFind\Db\Table\PluginManager::class);
+        $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
         return new $requestedName(
-            $tableManager->get(\Finna\Db\Table\FinnaRecordStatsLog::class),
-            $container->get(\Finna\Statistics\Driver\PluginManager::class)
-                ->get('Database'),
+            $dbServiceManager->get(FinnaStatisticsServiceInterface::class),
             ...($options ?? [])
         );
     }

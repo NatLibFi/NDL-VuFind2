@@ -131,18 +131,18 @@
     <?php endif; ?>
 
     <?php $user = $this->auth()->getUserObject();
-    if ($user->getLibraryCards()->count() > 1): ?>
-    <?php $cards = $user->getLibraryCards();?>
+    if (count($this->libraryCards()->getCardsForUser($user)) > 1): ?>
+    <?php $cards = $this->libraryCards()->getCardsForUser($user);?>
     <div class="form-group library-card-information">
       <div class="control-label"><strong><?=$this->transEsc('Library Card')?>:</strong></div>
       <?php foreach ($cards as $card): ?>
         <?php
           $target = '';
-          $username = $card->cat_username;
+          $username = $card->getCatUsername();
           if (strstr($username, '.')) {
             [$target, $username] = explode('.', $username, 2);
           }
-          $display = $this->transEsc($card->card_name ? $card->card_name : $username);
+          $display = $this->transEsc($card->getCardName() ?? $username);
           if ($display == "$target.$username") {
             $display = $username;
           }
@@ -150,7 +150,7 @@
             $display .= ' (' . $this->transEsc("source_$target", null, $target) . ')';
           }
         ?>
-        <?php if (strcasecmp($card->cat_username, $user->cat_username) === 0): ?>
+        <?php if (strcasecmp($card->getCatUsername(), $user->getCatUsername()) === 0): ?>
           <?=$display ?>
           <?php break; ?>
         <?php endif; ?>

@@ -30,6 +30,7 @@
 namespace Finna\Controller;
 
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use VuFind\Db\Entity\UserEntityInterface;
 
 /**
  * External Authentication/Authorization Controller
@@ -57,17 +58,17 @@ class ExternalAuthController extends \VuFind\Controller\ExternalAuthController
     }
 
     /**
-     * Get the user object if logged in, false otherwise.
+     * Get the user object if logged in, null otherwise.
      *
-     * @return object|bool
+     * @return ?UserEntityInterface
      */
-    protected function getUser()
+    protected function getUser(): ?UserEntityInterface
     {
         $user = parent::getUser();
         if ($user) {
-            $parts = explode(':', $user->username, 2);
+            $parts = explode(':', $user->getUsername(), 2);
             if (isset($parts[1])) {
-                $user->username = $parts[1];
+                $user->setUsername($parts[1]);
             }
         }
         return $user;

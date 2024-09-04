@@ -30,8 +30,6 @@
 
 namespace Finna\RecordDriver\Feature;
 
-use Finna\Db\Row\User;
-
 use function count;
 use function in_array;
 use function is_array;
@@ -256,18 +254,6 @@ trait FinnaRecordTrait
     public function setPreferredLanguage($language)
     {
         $this->preferredLanguage = $language;
-    }
-
-    /**
-     * Get user id from db
-     *
-     * @param int $user_id user user_id
-     *
-     * @return User|boolean
-     */
-    public function getUserById($user_id)
-    {
-        return $this->getDbTable('User')->getById($user_id);
     }
 
     /**

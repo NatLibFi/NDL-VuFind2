@@ -31,7 +31,7 @@ namespace Finna\View\Helper\Root;
 
 use Laminas\Session\SessionManager;
 use Laminas\View\Helper\Url;
-use VuFind\Db\Table\PluginManager as TableManager;
+use VuFind\Db\Service\SearchServiceInterface;
 use VuFind\Search\Results\PluginManager;
 use VuFind\Search\SearchTabsHelper;
 use VuFind\Search\UrlQueryHelper;
@@ -51,45 +51,29 @@ use function is_callable;
 class SearchTabs extends \VuFind\View\Helper\Root\SearchTabs
 {
     /**
-     * Database manager
-     *
-     * @var TableManager
-     */
-    protected $table;
-
-    /**
-     * Session manager
-     *
-     * @var SessionManager
-     */
-    protected $session;
-
-    /**
      * Active search class
      *
      * @var string
      */
-    protected $activeSearchClass;
+    protected $activeSearchClass = null;
 
     /**
      * Constructor
      *
-     * @param PluginManager    $results Search results plugin manager
-     * @param Url              $url     URL helper
-     * @param SearchTabsHelper $helper  Search tabs helper
-     * @param SessionManager   $session Session manager
-     * @param TableManager     $table   Database manager
+     * @param PluginManager          $results       Search results plugin manager
+     * @param Url                    $url           URL helper
+     * @param SearchTabsHelper       $helper        Search tabs helper
+     * @param SessionManager         $session       Session manager
+     * @param SearchServiceInterface $searchService Search database service
      */
     public function __construct(
         PluginManager $results,
         Url $url,
         SearchTabsHelper $helper,
-        SessionManager $session,
-        TableManager $table
+        protected SessionManager $session,
+        protected SearchServiceInterface $searchService
     ) {
         parent::__construct($results, $url, $helper);
-        $this->session = $session;
-        $this->table = $table;
     }
 
     /**
@@ -290,15 +274,13 @@ class SearchTabs extends \VuFind\View\Helper\Root\SearchTabs
      */
     protected function getSearchSettings($id)
     {
-        $search
-            = $this->table->get('Search')
-            ->select(['id' => $id])->current();
+        $search = $this->searchService->getSearchById($id);
         if (empty($search)) {
             return false;
         }
 
         $sessId = $this->session->getId();
-        if ($search->session_id == $sessId) {
+        if ($search->getSessionId() == $sessId) {
             $minSO = $search->getSearchObject();
             $savedSearch = $minSO->deminify($this->results);
 
