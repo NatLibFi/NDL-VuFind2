@@ -72,7 +72,7 @@
       <input class="btn btn-primary" type="submit" name="processLogin" value="<?=$this->transEscAttr('Save')?>">
     </div>
   </form>
-  <?php if (null !== $this->card->getId()): ?>
+  <?php if (null !== $this->card?->getId()): ?>
     <?php
       $language = $this->layout()->userLang;
       if (!in_array($language, ['fi', 'sv', 'en-gb'])) {
