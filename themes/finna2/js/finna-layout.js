@@ -469,7 +469,7 @@ finna.layout = (function finnaLayout() {
     }
     // Lightbox passes an object as an event containing keys: {formUrl, originalUrl}
     VuFind.listen('lightbox.login', function onLightboxLogin(e) {
-      if ($('body').hasClass('template-name-home') && !e.formUrl.match(/catalogLogin/) && !e.formUrl.match(/\Save/) && !e.formUrl.match(/%2[fF]Save/)) {
+      if ($('body').hasClass('template-name-home') && !e.formUrl.match(/catalogLogin/) && !e.formUrl.match(/\/Save/) && !e.formUrl.match(/%2[fF]Save/)) {
         window.location.href = VuFind.path + '/MyResearch/Home';
         e.preventDefault();
       }
