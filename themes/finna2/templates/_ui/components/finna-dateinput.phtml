@@ -1,6 +1,6 @@
 <?php
   $dateinputId = $this->dateinputId ?? '';
-  $dateinputName = $this->dateinputName ?? '';
+  $dateinputName = $this->dateinputName ?? null;
   $dateinputClass = $this->dateinputClass ?? '';
   $dateinputLabel = $this->dateinputLabel ?? '';
   $dateinputPlaceholder = $this->dateinputPlaceholder ?? '';
@@ -16,21 +16,21 @@
   <label for="<?=$dateinputId ?>"><?=$dateinputLabel ?> <span class="dateformat-hint">(<?=$dateinputDateFormatHint ?>)</span></label>
   <?php if($dateinputPicker === 'single'): ?>
     <span class="input-group">
-      <input type="text" class="input-field form-control <?=$dateinputClass ?>" id="<?=$dateinputId ?>" name="<?=$dateinputName ?>" value="<?=$dateinputValue ?>" placeholder="<?=$dateinputPlaceholder ?>" size="<?=$dateinputSize ?>" maxlength="<?=$dateinputMaxlength ?>" <?php if ($dateinputRequired): ?>required<?php endif; ?> autocomplete="<?=$dateinputAutocomplete ?>">
-        <span class="input-group-btn">
-          <button type="button" class="btn btn-default datepicker-toggle">
-            <?=$this->icon('calendar') ?>
-            <span class="sr-only"><?=$this->transEsc('datepicker_select_date')?> <span class="datepicker-date-selected"></span></span>
-          </button>
+      <input type="text" class="input-field form-control <?=$dateinputClass ?>" id="<?=$dateinputId ?>" <?php if (isset($dateinputName)): ?>name="<?=$dateinputName ?>"<?php endif; ?> value="<?=$dateinputValue ?>" placeholder="<?=$dateinputPlaceholder ?>" size="<?=$dateinputSize ?>" maxlength="<?=$dateinputMaxlength ?>" <?php if ($dateinputRequired): ?>required<?php endif; ?> autocomplete="<?=$dateinputAutocomplete ?>">
+      <span class="input-group-btn">
+        <button type="button" class="btn btn-default datepicker-toggle">
+          <?=$this->icon('calendar') ?>
+          <span class="sr-only"><?=$this->transEsc('datepicker_select_date')?> <span class="datepicker-date-selected"></span></span>
+        </button>
       </span>
     </span>
-    <dialog tabindex="-1" id="datepicker-<?=$dateinputId ?>" class="datepicker-dialog">
+    <span role="dialog" tabindex="-1" id="datepicker-<?=$dateinputId ?>" class="datepicker-dialog">
       <calendar-date locale="<?=$this->layout()->userLang?>">
         <span class="btn-datepicker-prev" role="button" slot="previous"><?=$this->icon('datepicker-prev') ?><span class="sr-only"><?=$this->transEsc('Prev')?></span></span><span class="btn-datepicker-next" role="button" slot="next"><?=$this->icon('datepicker-next') ?><span class="sr-only"><?=$this->transEsc('Next')?></span></span>
         <calendar-month></calendar-month>
       </calendar-date>
       <button type="button" class="btn btn-primary btn-xs btn-datepicker-close"><?=$this->transEsc('close')?></button>
-    </dialog>
+    </span>
   <?php else: ?>
     <input type="text" class="input-field form-control <?=$dateinputClass ?>" id="<?=$dateinputId ?>" name="<?=$dateinputName ?>" value="<?=$dateinputValue ?>" placeholder="<?=$dateinputPlaceholder ?>" size="<?=$dateinputSize ?>" maxlength="<?=$dateinputMaxlength ?>" <?php if ($dateinputRequired): ?>required<?php endif; ?> autocomplete="<?=$dateinputAutocomplete ?>">
   <?php endif; ?>

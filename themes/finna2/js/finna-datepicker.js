@@ -28,19 +28,20 @@ finna.finnaDatepicker = (function finnaDatepicker() {
       // Open the datepicker dialog
       const datepickerOpen = () => {
         createPopperInstance();
-        datepickerDialog.show();
+        datepickerDialog.setAttribute('data-show', '');
+        popperInstance.update()
         datepickerCalendar.focus({ preventScroll: true, focusVisible: true });
         trapFocus(datepickerDialog);
       };
 
       // Close the datepicker dialog
       const datepickerClose = () => {
-        datepickerDialog.close();
+        datepickerDialog.removeAttribute('data-show');
         destroyPopperInstance();
         datepickerToggle.focus({ preventScroll: true });
       };
 
-      // Event listener for the datepicker close button to close the datepicker dialog
+      // Event listener to date picker for handling date selection
       datepickerCalendar.addEventListener("change", event => {
         const datepickerSelected = VuFind.translate('datepicker_selected');
         const [year, month, day] = event.target.value.split('-');
@@ -52,17 +53,19 @@ finna.finnaDatepicker = (function finnaDatepicker() {
         datepickerClose();
       });
 
-      // Event listener for keydown events on the calendar
+      // Event listener for keydown events on the datepicker
       datepickerDialog.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
           datepickerClose();
         }
       });
 
+      // Add event listener to close button, if it exists
       if (datepickerCloseBtn) {
         datepickerCloseBtn.addEventListener("click", datepickerClose);
       }
 
+      // Event listener to close datepicker on "Escape" key press
       datepickerDialog.addEventListener("keydown", event => {
         if (event.key === "Escape") {
           datepickerClose();
@@ -78,9 +81,9 @@ finna.finnaDatepicker = (function finnaDatepicker() {
         }
       });
 
-      // Event listener for down clicks outside the datepicker dialog
+      // Event listener for down clicks outside the datepicker
       document.addEventListener('mousedown', event => {
-        if (datepickerDialog.open && !datepickerDialog.contains(event.target)) {
+        if (datepickerDialog.hasAttribute('data-show') && !datepickerDialog.contains(event.target)) {
           datepickerClose();
         }
       });

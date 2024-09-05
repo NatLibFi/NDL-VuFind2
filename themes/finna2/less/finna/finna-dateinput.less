@@ -12,6 +12,7 @@
         font-weight: normal;
     }
     .datepicker-dialog {
+        display: none;
         background: #fff;
         padding: 10px;
         border: 1px solid #666;
@@ -57,7 +58,7 @@
               }
         }
     }
-}
-.finna-dateinput input:not(:focus) ~ .hint-text {
-    display: none;
+    .datepicker-dialog[data-show] {
+        display: block;
+      }
 }
