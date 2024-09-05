@@ -57,7 +57,7 @@
         <span class="carousel-header-title"><?=$this->escapeHtml($this->truncate($item['title'], $item['titleTruncateSize']));?></span>
       <?php endif; ?>
       <?php if (isset($item['format']) && $displayFormatHeader): ?>
-          <span class="carousel-header-format"><?=$this->transEscWithPrefix('format_' . $item['format']);?></span>
+          <span class="carousel-header-format"><?=$this->transEscWithPrefix('format_', $item['format']);?></span>
       <?php endif; ?>
       <?php if (isset($item['dateFull'])): ?>
         <span class="carousel-header-date carousel-date"><?=$this->transEsc('Published')?> <?=$this->escapeHtml($item['dateFull'])?></span>
