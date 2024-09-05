@@ -7,10 +7,9 @@
     $showLibraryTabs = $this->ils()->loginAvailable();
     $ilsOffline = 'ils-none' === $this->ils()->getOfflineMode();
     $listOpen = $this->active == 'favorites' || substr($this->active, 0, 4) == 'list';
-    $reservationListOpen = $this->active == 'reservationList';
     $activeToLower = strtolower($this->active ?? '');
     //Get the data for vertical menu to show lists on correct site
-    if ($listOpen || $reservationListOpen) {
+    if ($listOpen) {
       $list = $this->results?->getListObject() ?? [];
       $listParams = [
         'activeId' => $list?->getId(),
@@ -18,11 +17,17 @@
         'results' => $this->results,
         'user' => $user,
       ];
-      if ($listOpen) {
-        $listParams['lists'] = $user?->getLists();
-      } elseif ($reservationListOpen) {
-        $listParams['lists'] = $user?->getReservationLists();
-      }
+      $listParams['lists'] = $user?->getLists();
+    }
+    if ($reservationListOpen = $this->active === 'reservationList') {
+      $list = $this->results?->getListObject() ?? [];
+      $listParams = [
+        'activeId' => $list['id'] ?? false,
+        'lists' => $user ? $this->userlist()->getUserListsAndCountsByUser($user) : null,
+        'results' => $this->results,
+        'user' => $user,
+      ];
+      $listParams['lists'] = $user?->getReservationLists();
     }
 
     $menuListItems = [];

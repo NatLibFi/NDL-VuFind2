@@ -31,8 +31,8 @@
 
 namespace Finna\Db\Row;
 
-use Finna\ReservationList\ReservationListTrait;
 use Finna\Db\Entity\FinnaUserEntityInterface;
+use Finna\ReservationList\ReservationListTrait;
 use Laminas\Db\ResultSet\ResultSetInterface;
 use Laminas\Db\Sql\Expression;
 use VuFind\Db\Entity\UserEntityInterface;

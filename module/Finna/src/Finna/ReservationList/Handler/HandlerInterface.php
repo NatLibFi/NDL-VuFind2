@@ -31,7 +31,7 @@ declare(strict_types=1);
 
 namespace Finna\ReservationList\Handler;
 
-use VuFind\Db\Row\User;
+use VuFind\Db\Entity\UserEntityInterface as User;
 
 /**
  * Interface HandlerInterface

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Reservation list service factory.
+ * Database factory.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 
 /**
- * Reservation list service factory.
+ * Database factory.
  *
  * @category VuFind
  * @package  ReservationList
@@ -41,7 +41,7 @@ use Psr\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class FinnaFactory implements FactoryInterface
+class DatabaseFactory implements FactoryInterface
 {
     /**
      * Create a Finna object.
@@ -50,12 +50,12 @@ class FinnaFactory implements FactoryInterface
      * @param string             $name    Service being created
      * @param array              $options Extra options (optional)
      *
-     * @return Finna
+     * @return Database
      */
     public function __invoke(ContainerInterface $sm, $name, array $options = null)
     {
         $tableManager = $sm->get(\VuFind\Db\Table\PluginManager::class);
-        return new Finna(
+        return new Database(
             $tableManager->get(\Finna\Db\Table\ReservationList::class),
             $tableManager->get('resource'),
             $tableManager->get(\VuFind\Db\Table\UserResource::class)

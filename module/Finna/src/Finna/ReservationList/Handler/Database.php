@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Finna
+ * Class Database
  *
  * PHP version 8.1
  *
@@ -33,12 +33,12 @@ namespace Finna\ReservationList\Handler;
 
 use Finna\Db\Table\ReservationList;
 use Laminas\Stdlib\Parameters;
-use VuFind\Db\Row\User;
+use VuFind\Db\Entity\UserEntityInterface as User;
 use VuFind\Db\Table\Resource as ResourceTable;
 use VuFind\Db\Table\UserResource as UserResourceTable;
 
 /**
- * Class Finna. Controls the data of forms in Finna.
+ * Class Database. Controls the data of lists in database.
  *
  * @category VuFind
  * @package  ReservationList
@@ -46,7 +46,7 @@ use VuFind\Db\Table\UserResource as UserResourceTable;
  * @license  https://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class Finna implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
+class Database implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
 {
     use \VuFind\Log\LoggerAwareTrait;
 
@@ -59,7 +59,7 @@ class Finna implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
      */
     public function getHandlerName(): string
     {
-        return 'finna';
+        return 'database';
     }
 
     /**
@@ -179,7 +179,7 @@ class Finna implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
          * @var \Finna\Db\Table\Resource
          */
         $resourceTable = $this->reservationList->getDbTable('Resource');
-        $resource = $resourceTable->findResource($recordId, $source);
+        $resource = $resourceTable->getOr($recordId, $source);
 
         /**
          * List to Resource

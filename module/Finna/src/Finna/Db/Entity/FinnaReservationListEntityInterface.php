@@ -28,11 +28,10 @@
  * @link     http://vufind.org   Main Site
  */
 
-namespace Finna\Db\Row;
+namespace Finna\Db\Entity;
 
-use Finna\Db\Entity\FinnaReservationListEntityInterface;
-use Laminas\Session\Container;
-use VuFind\Db\Row\RowGateway;
+use VuFind\Db\Entity\EntityInterface;
+use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\MissingField as MissingFieldException;
 
@@ -58,22 +57,8 @@ use VuFind\Exception\MissingField as MissingFieldException;
  * @property string $pickup_date
  * @property string $handler
  */
-class ReservationList extends RowGateway implements FinnaReservationListEntityInterface
+interface FinnaReservationListEntityInterface extends EntityInterface
 {
-    use \VuFind\Db\Table\DbTableAwareTrait;
-
-    /**
-     * Constructor
-     *
-     * @param \Laminas\Db\Adapter\Adapter $adapter Database adapter
-     * @param ?Container                  $session Session container
-     */
-    public function __construct($adapter, protected ?Container $session = null)
-    {
-        // Parents parent
-        parent::__construct('id', 'finna_reservation_list', $adapter);
-    }
-
     /**
      * Sets the ordered data for the reservation list.
      *
@@ -82,12 +67,7 @@ class ReservationList extends RowGateway implements FinnaReservationListEntityIn
      *
      * @return mixed
      */
-    public function setOrdered($user, $pickup_date)
-    {
-        $this->ordered = date('Y-m-d H:i:s');
-        $this->pickup_date = $pickup_date;
-        return $this->save($user);
-    }
+    public function setOrdered($user, $pickup_date);
 
     /**
      * Update and save the list object using a request object -- useful for
@@ -100,16 +80,7 @@ class ReservationList extends RowGateway implements FinnaReservationListEntityIn
      * @throws ListPermissionException
      * @throws MissingFieldException
      */
-    public function updateFromRequest($user, $request): int
-    {
-        $this->title = $request->get('title');
-        $this->description = $request->get('description');
-        $this->datasource = $request->get('datasource');
-        $this->building = $request->get('building');
-        $this->handler = $request->get('handler');
-        $this->save($user);
-        return $this->id;
-    }
+    public function updateFromRequest($user, $request): int;
 
     /**
      * Is the current user allowed to edit this list?
@@ -118,10 +89,7 @@ class ReservationList extends RowGateway implements FinnaReservationListEntityIn
      *
      * @return bool
      */
-    public function editAllowed($user): bool
-    {
-        return $user && $user->id == $this->user_id;
-    }
+    public function editAllowed($user): bool;
 
     /**
      * Destroy the list.
@@ -132,19 +100,7 @@ class ReservationList extends RowGateway implements FinnaReservationListEntityIn
      *
      * @return int The number of rows deleted.
      */
-    public function delete($user = false, $force = false): int
-    {
-        if (!$force && !$this->editAllowed($user)) {
-            throw new ListPermissionException('list_access_denied');
-        }
-
-        // Remove user_resource and resource_tags rows:
-        $reservationListResource = $this->getDbTable(\Finna\Db\Table\ReservationListResource::class);
-        $reservationListResource->destroyLinks(null, $this->user_id, $this->id);
-
-        // Remove the list itself:
-        return parent::delete();
-    }
+    public function delete($user = false, $force = false): int;
 
     /**
      * Saves the properties to the database.
@@ -159,19 +115,7 @@ class ReservationList extends RowGateway implements FinnaReservationListEntityIn
      * @throws ListPermissionException
      * @throws MissingFieldException
      */
-    public function save($user = false): array|int
-    {
-        if (!$this->editAllowed($user ?: null)) {
-            throw new ListPermissionException('list_access_denied');
-        }
-        if (empty($this->title)) {
-            throw new MissingFieldException('list_edit_name_required');
-        }
-
-        parent::save();
-        $this->rememberLastUsed();
-        return $this->id;
-    }
+    public function save($user = false): array|int;
 
     /**
      * Remember that this list was used so that it can become the default in
@@ -179,12 +123,7 @@ class ReservationList extends RowGateway implements FinnaReservationListEntityIn
      *
      * @return void
      */
-    public function rememberLastUsed(): void
-    {
-        if (null !== $this->session) {
-            $this->session->lastUsed = $this->id;
-        }
-    }
+    public function rememberLastUsed(): void;
 
     /**
      * Given an array of item ids, remove them from this list
@@ -195,35 +134,5 @@ class ReservationList extends RowGateway implements FinnaReservationListEntityIn
      *
      * @return void
      */
-    public function removeResourcesById($user, $ids, $source = DEFAULT_SEARCH_BACKEND): void
-    {
-        if (!$this->editAllowed($user)) {
-            throw new ListPermissionException('list_access_denied');
-        }
-
-        /**
-         * Resource table
-         *
-         * @var \VuFind\Db\Table\Resource
-         */
-        $resourceTable = $this->getDbTable('Resource');
-        $resources = $resourceTable->getResourcesByRecordIds($ids, $source);
-
-        $resourceIDs = [];
-        foreach ($resources as $current) {
-            $resourceIDs[] = $current?->id ?? $current['id'];
-        }
-
-        /**
-         * Reservation list to resource relation
-         *
-         * @var \Finna\Db\Table\ReservationListResource
-         */
-        $listResourceTable = $this->getDbTable(\Finna\Db\Table\ReservationListResource::class);
-        $listResourceTable->destroyLinks(
-            $resourceIDs,
-            $this->user_id,
-            $this->id
-        );
-    }
+    public function removeResourcesById($user, $ids, $source = DEFAULT_SEARCH_BACKEND): void;
 }

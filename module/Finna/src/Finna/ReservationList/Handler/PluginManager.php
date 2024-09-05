@@ -45,7 +45,7 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
      *
      * @var string
      */
-    public const DEFAULT_HANDLER = 'finna';
+    public const DEFAULT_HANDLER = 'database';
 
     /**
      * Default plugin aliases.
@@ -53,7 +53,7 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
      * @var array
      */
     protected $aliases = [
-        'finna' => Finna::class,
+        'database' => Database::class,
     ];
 
     /**
@@ -62,7 +62,7 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
      * @var array
      */
     protected $factories = [
-        Finna::class => FinnaFactory::class,
+        Database::class => DatabaseFactory::class,
     ];
 
     /**

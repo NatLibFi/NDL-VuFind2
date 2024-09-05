@@ -31,7 +31,7 @@ namespace Finna\ReservationList;
 
 use Finna\ReservationList\Handler\PluginManager;
 use Laminas\Config\Config;
-use VuFind\Db\Row\User;
+use VuFind\Db\Entity\UserEntityInterface as User;
 use VuFind\Exception\ListPermission as ListPermissionException;
 
 /**
