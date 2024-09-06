@@ -4,7 +4,7 @@
   <!-- Display lists where it has been saved: -->
   <?php
     $user = $this->auth()->getManager()->getUserObject();
-    $listsContainingRecord = $user->getReservationListContainedIn($this->driver->getUniqueID(), $this->driver->getSourceIdentifier());
+    $listsContainingRecord = $user?->getReservationListContainedIn($this->driver->getUniqueID(), $this->driver->getSourceIdentifier());
   ?>
   <div class="archive-request-table table record-holdings-url-table">
     <div class="headers">
@@ -12,9 +12,11 @@
     </div>
     <div class="archive-request-buttons">
       <?php if ($user): ?>
+
         <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($driver, 'ArchiveRequest'))?>" class="btn btn-default" data-lightbox="" data-toggle="modal" data-target="order_archive_material_form" data-lightbox><?=$this->transEsc('archive_request_reserve_action')?></a>
         <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-additem', [], ['query' => ['recordId' => $this->driver->getUniqueID(), 'source' => $this->driver->getSourceIdentifier()]]))?>" class="btn btn-default" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?=$this->transEsc('ReservationList::Add To Reservation List')?></a>
       <?php else: ?>
+        <?= $this->reservationList($this->driver)->renderAddTemplate(); ?>
         <a href="<?=$this->url('myresearch-userlogin') ?>" class="btn btn-primary" data-lightbox><span><?=$this->transEsc('archive_request_login')?></span></a>
       <?php endif; ?>
     </div>

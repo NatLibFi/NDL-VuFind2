@@ -71,6 +71,18 @@ CREATE TABLE `finna_comments_record` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `finna_reservation_list_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `list_id` int(11) NOT NULL,
+  `list_type` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `list_id` (`list_id`),
+  CONSTRAINT `reservation_list_type_ibfk_1` FOREIGN KEY (`list_id`) REFERENCES `finna_reservation_list` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 collate utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `finna_comments_inappropriate` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,

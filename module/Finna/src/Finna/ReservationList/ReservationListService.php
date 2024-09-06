@@ -33,6 +33,11 @@ use Finna\ReservationList\Handler\PluginManager;
 use Laminas\Config\Config;
 use VuFind\Db\Entity\UserEntityInterface as User;
 use VuFind\Exception\ListPermission as ListPermissionException;
+use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\Db\Entity\UserListEntityInterface;
+use VuFind\Db\Service\AbstractDbService;
+use VuFind\Db\Table\DbTableAwareInterface;
+use VuFind\Db\Table\DbTableAwareTrait;
 
 /**
  * Reservation List Service
@@ -43,9 +48,9 @@ use VuFind\Exception\ListPermission as ListPermissionException;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareInterface
+class ReservationListService extends AbstractDbService implements DbTableAwareInterface, ReservationListServiceInterface
 {
-    use \VuFind\I18n\Translator\TranslatorAwareTrait;
+    use DbTableAwareTrait;
 
     /**
      * Default handler
@@ -293,7 +298,7 @@ class ReservationListService implements \VuFind\I18n\Translator\TranslatorAwareI
      *
      * @return bool
      */
-    public function setOrdered($user, $list_id, $pickup_date)
+    public function setOrdered($user, $list_id, $pickup_date):bool
     {
         if (!$this->userHasAuthority($user, $list_id)) {
             throw new ListPermissionException('list_access_denied');

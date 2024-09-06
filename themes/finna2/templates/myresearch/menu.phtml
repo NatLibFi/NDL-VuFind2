@@ -10,7 +10,7 @@
     $activeToLower = strtolower($this->active ?? '');
     //Get the data for vertical menu to show lists on correct site
     if ($listOpen) {
-      $list = $this->results?->getListObject() ?? [];
+      $list = $this->results?->getListObject();
       $listParams = [
         'activeId' => $list?->getId(),
         'lists' => $user ? $this->userlist()->getUserListsAndCountsByUser($user) : null,

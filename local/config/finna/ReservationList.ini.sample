@@ -1,10 +1,21 @@
-; Reservation list settings for datasources
-; Keep settings separated so there is no mishappenings
+; Reservation list settings for organisations
 
-[example]
-enabled = false
+[OrganisationName]
 name = 'Example Organisation'
 address = 'Examplestreet 1'
 postal = '11111'
 city = 'Exemple city'
 email = 'example@example.example.fi'
+
+; Default settings for a list
+;ResearchRoom[enabled] = false
+;ResearchRoom[name] = 'Organisation name to display in order forms or omit for default'
+;ResearchRoom[address] = 'Organisation address to display in order forms or omit for default'
+;ResearchRoom[postal] = 'Postcode or omit for default'
+;ResearchRoom[city] = 'City or omit for default'
+;ResearchRoom[email] = 'example@example.example.fi or omit for default'
+;ResearchRoom[record_datasources] = 'fonte;fikka' ;Allowed datasource items to be saved in to the list, comma separated
+
+; Connection / database specific settings
+;ResearchRoom[connection] = 'database' ;Where the lists are saved, currently supported database
+;ResearchRoom[identifier] = 'ResearchRoom' ;Unique identifier for organisations list, will be saved into database as type ResearchRoom

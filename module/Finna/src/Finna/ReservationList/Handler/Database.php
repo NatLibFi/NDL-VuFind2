@@ -116,16 +116,41 @@ class Database implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
         ]));
     }
 
-    /**
-     * Retrieve all lists for a user.
-     *
-     * @param User $user User
-     *
-     * @return iterable
-     */
-    public function getLists(User $user): iterable
+    public function getUserListsAndCountsByUser(UserEntityInterface|int $userOrId): array
     {
-        return $this->reservationList->select(['user_id' => $user->id]);
+        $userId = $userOrId instanceof UserEntityInterface ? $userOrId->getId() : $userOrId;
+        $callback = function (Select $select) use ($userId) {
+            $select->columns(
+                [
+                    Select::SQL_STAR,
+                    'cnt' => new Expression(
+                        'COUNT(DISTINCT(?))',
+                        ['ur.resource_id'],
+                        [ExpressionInterface::TYPE_IDENTIFIER]
+                    ),
+                ]
+            );
+            $select->join(
+                ['ur' => 'user_resource'],
+                'user_list.id = ur.list_id',
+                [],
+                $select::JOIN_LEFT
+            );
+            $select->where->equalTo('user_list.user_id', $userId);
+            $select->group(
+                [
+                    'user_list.id', 'user_list.user_id', 'title', 'description',
+                    'created', 'public',
+                ]
+            );
+            $select->order(['title']);
+        };
+
+        $result = [];
+        foreach ($this->getDbTable('UserList')->select($callback) as $row) {
+            $result[] = ['list_entity' => $row, 'count' => $row->cnt];
+        }
+        return $result;
     }
 
     /**

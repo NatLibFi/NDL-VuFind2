@@ -1,0 +1,15 @@
+
+Example Organisation:
+  Information:
+    name: Example Organisation Name
+    address: Example Organisation address
+    postal: Example Organisation postal
+    city: Example Organisation city
+    email: Example Organisation email
+  Lists:
+    - Identifier: ResearchRoom
+      Datasources:
+        - fonte
+        - fikka
+      Connection:
+        - type: Database
