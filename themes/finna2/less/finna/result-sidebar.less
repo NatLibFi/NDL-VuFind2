@@ -236,7 +236,10 @@ button.list-group-item {
     display: flex;
     align-items: flex-end;
     .finna-dateinput {
-      flex-basis: min-content;
+      flex: 0;
+      label > .dateformat-hint {
+        font-size: 10px;
+      }
     }
     button[type=submit] {
       margin-left: 10px;
