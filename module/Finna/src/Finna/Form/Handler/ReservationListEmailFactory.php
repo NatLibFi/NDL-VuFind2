@@ -72,7 +72,7 @@ class ReservationListEmailFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        $reserervationListService = $container->get(\Finna\ReservationList\ReservationListService::class);
+        $reserervationListService = $container->get(\Finna\Db\Service\ReservationListServiceInterface::class);
         $configLoader = $container->get(\VuFind\Config\PluginManager::class);
         return new $requestedName(
             $container->get('ViewRenderer'),

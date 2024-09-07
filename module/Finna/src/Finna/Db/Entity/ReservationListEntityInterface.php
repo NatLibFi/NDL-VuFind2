@@ -57,7 +57,7 @@ use VuFind\Exception\MissingField as MissingFieldException;
  * @property string $pickup_date
  * @property string $handler
  */
-interface FinnaReservationListEntityInterface extends EntityInterface
+interface ReservationListEntityInterface extends EntityInterface
 {
     /**
      * Sets the ordered data for the reservation list.

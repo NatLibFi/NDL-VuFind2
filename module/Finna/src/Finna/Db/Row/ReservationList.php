@@ -30,7 +30,7 @@
 
 namespace Finna\Db\Row;
 
-use Finna\Db\Entity\FinnaReservationListEntityInterface;
+use Finna\Db\Entity\ReservationListEntityInterface;
 use Laminas\Session\Container;
 use VuFind\Db\Row\RowGateway;
 use VuFind\Exception\ListPermission as ListPermissionException;
@@ -58,7 +58,7 @@ use VuFind\Exception\MissingField as MissingFieldException;
  * @property string $pickup_date
  * @property string $handler
  */
-class ReservationList extends RowGateway implements FinnaReservationListEntityInterface
+class ReservationList extends RowGateway implements ReservationListEntityInterface
 {
     use \VuFind\Db\Table\DbTableAwareTrait;
 

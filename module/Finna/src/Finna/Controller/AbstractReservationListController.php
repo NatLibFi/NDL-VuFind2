@@ -35,7 +35,7 @@
 namespace Finna\Controller;
 
 use Finna\Form\Form;
-use Finna\ReservationList\ReservationListService;
+use Finna\Db\Service\ReservationListServiceInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use VuFind\Controller\AbstractBase;
 use VuFind\Exception\ListPermission as ListPermissionException;
@@ -406,7 +406,7 @@ abstract class AbstractReservationListController extends AbstractBase
         if (!$user) {
             return $this->forceLogin();
         }
-        $lists = $this->reservationListService->getListsForUser($user);
+        $lists = $this->reservationListService->getUserListsByUser($user);
         $view = $this->createViewModel(
             ['lists' => $lists]
         );

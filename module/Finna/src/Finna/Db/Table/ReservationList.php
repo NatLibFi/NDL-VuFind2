@@ -35,6 +35,8 @@ use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
 use Laminas\Session\Container;
 use VuFind\Db\Row\RowGateway;
+use VuFind\Db\Service\UserListServiceInterface;
+use VuFind\Db\Service\DbServiceAwareTrait;
 use VuFind\Db\Table\Gateway;
 use VuFind\Db\Table\PluginManager;
 use VuFind\Db\Table\UserList;
@@ -53,6 +55,45 @@ use VuFind\Exception\RecordMissing as RecordMissingException;
  */
 class ReservationList extends UserList
 {
+    use DbServiceAwareTrait;
+    /**
+     * Create a new list object.
+     *
+     * @param \VuFind\Db\Row\UserList|bool $user User object representing owner of
+     * new list (or false if not logged in)
+     *
+     * @return \VuFind\Db\Row\UserList
+     * @throws LoginRequiredException
+     *
+     * @deprecated Use \VuFind\Favorites\FavoritesService::createListForUser()
+     */
+    public function getNew($user)
+    {
+        if (!$user) {
+            throw new LoginRequiredException('Log in to create lists.');
+        }
+
+        $row = $this->createRow();
+        $row->created = date('Y-m-d H:i:s');    // force creation date
+        $row->user_id = $user->id;
+        return $row;
+    }
+
+    /**
+     * Retrieve a list object.
+     *
+     * @param int $id Numeric ID for existing list.
+     *
+     * @return \VuFind\Db\Row\UserList
+     * @throws RecordMissingException
+     *
+     * @deprecated Use \VuFind\Db\Service\UserListServiceInterface::getUserListById()
+     */
+    public function getExisting($id)
+    {
+        return $this->getDbService(UserListServiceInterface::class)->getUserListById($id);
+    }
+
     /**
      * Constructor
      *
@@ -74,45 +115,6 @@ class ReservationList extends UserList
     ) {
         Gateway::__construct($adapter, $tm, $cfg, $rowObj, $table);
         $this->session = $session;
-    }
-
-    /**
-     * Create a new list object.
-     *
-     * @param mixed $user User object representing owner of
-     * new list (or false if not logged in)
-     *
-     * @return \Finna\Db\Row\ReservationList
-     * @throws LoginRequiredException
-     */
-    public function getNew($user)
-    {
-        if (!$user) {
-            throw new LoginRequiredException('Log in to create lists.');
-        }
-
-        $row = $this->createRow();
-        $row->created = date('Y-m-d H:i:s');    // force creation date
-        $row->user_id = $user->id;
-        $row->datasource = '';
-        return $row;
-    }
-
-    /**
-     * Retrieve a list object.
-     *
-     * @param int $id Numeric ID for existing list.
-     *
-     * @return \Finna\Db\Row\ReservationList
-     * @throws RecordMissingException
-     */
-    public function getExisting($id)
-    {
-        $result = $this->select(['id' => $id])->current();
-        if (empty($result)) {
-            throw new RecordMissingException('Cannot load list ' . $id);
-        }
-        return $result;
     }
 
     /**

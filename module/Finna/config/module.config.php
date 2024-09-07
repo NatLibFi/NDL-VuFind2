@@ -398,7 +398,6 @@ $config = [
             'Finna\Statistics\Driver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Statistics\EventHandler' => 'Finna\Statistics\EventHandlerFactory',
             'Finna\Favorites\FavoritesService' => 'VuFind\Favorites\FavoritesServiceFactory',
-            \Finna\ReservationList\ReservationListService::class => \Finna\ReservationList\ReservationListServiceFactory::class,
             \Finna\ReservationList\Handler\PluginManager::class => \VuFind\ServiceManager\AbstractPluginManagerFactory::class,
             'Finna\View\CustomElement\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Video\Handler\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
@@ -654,6 +653,7 @@ $config = [
                         => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\RatingsService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\RecordService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
+                    \Finna\Db\Service\ReservationListService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\SearchService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\UserListService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\UserResourceService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
@@ -676,6 +676,7 @@ $config = [
                         => \Finna\Db\Service\FinnaFeedbackService::class,
                     \Finna\Db\Service\FinnaRecordServiceInterface::class
                         => \Finna\Db\Service\RecordService::class,
+                    \Finna\Db\Service\ReservationListServiceInterface::class => \Finna\Db\Service\ReservationListService::class,
                     \Finna\Db\Service\FinnaStatisticsServiceInterface::class
                         => \Finna\Db\Service\FinnaStatisticsService::class,
                     \Finna\Db\Service\FinnaTransactionServiceInterface::class

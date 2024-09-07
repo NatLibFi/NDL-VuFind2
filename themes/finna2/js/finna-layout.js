@@ -468,7 +468,7 @@ finna.layout = (function finnaLayout() {
       return;
     }
     VuFind.listen('lightbox.login', function onLightboxLogin(e) {
-      if ($('body').hasClass('template-name-home') && !e.detail.formUrl.match(/catalogLogin/) && !e.detail.formUrl.match(/\Save/) && !e.detail.formUrl.match(/%2[fF]Save/)) {
+      if ($('body').hasClass('template-name-home') && !e.formUrl.match(/catalogLogin/) && !e.formUrl.match(/\Save/) && !e.formUrl.match(/%2[fF]Save/)) {
         window.location.href = VuFind.path + '/MyResearch/Home';
         e.preventDefault();
       }

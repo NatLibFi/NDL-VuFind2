@@ -29,6 +29,8 @@
 
 namespace Finna\ReservationList;
 
+use \Finna\Db\Service\ReservationListServiceInterface;
+
 /**
  * Reservation list trait
  *
@@ -43,18 +45,18 @@ trait ReservationListTrait
     /**
      * Reservation list service
      *
-     * @var ReservationListService
+     * @var ReservationListServiceInterface
      */
     protected $reservationListService;
 
     /**
      * Sets the ReservationListService.
      *
-     * @param ReservationListService $service ReservationListService to set.
+     * @param ReservationListServiceInterface $service ReservationListService to set.
      *
      * @return void
      */
-    public function setReservationListService(ReservationListService $service): void
+    public function setReservationListService(ReservationListServiceInterface $service): void
     {
         $this->reservationListService = $service;
     }
@@ -66,7 +68,7 @@ trait ReservationListTrait
      */
     public function getReservationLists(): array
     {
-        return $this->reservationListService->getListsForUser($this);
+        return $this->reservationListService->getUserListsByUser($this);
     }
 
     /**
