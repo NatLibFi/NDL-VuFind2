@@ -20,8 +20,8 @@
       <li>
         <a href="<?= $this->url('reservationlist-list', ['id' => $list['id']])?>"><?= $this->escapeHtml($list['title']) ?></a>
         <span class="list-info pull-right">
-          <?php if ($list['created_formatted']): ?><span class="list-created"><?= $this->transEsc('ReservationList::list_created', ['%%date%%' => $list['created_formatted']])?></span><?php endif; ?>
-          <?php if ($list['ordered_formatted']): ?><span class="list-ordered"><?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $list['ordered_formatted']])?></span><?php endif; ?>
+          <?php if ($list['created_formatted'] ?? false): ?><span class="list-created"><?= $this->transEsc('ReservationList::list_created', ['%%date%%' => $list['created_formatted']])?></span><?php endif; ?>
+          <?php if ($list['ordered_formatted'] ?? false): ?><span class="list-ordered"><?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $list['ordered_formatted']])?></span><?php endif; ?>
           <a href="<?= $this->url('reservationlist-delete', ['id' => $list['id']])?>" data-lightbox=""><?= $this->transEsc('ReservationList::Delete List') ?></a>
         </span>
       </li>

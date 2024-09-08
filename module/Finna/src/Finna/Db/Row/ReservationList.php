@@ -74,6 +74,11 @@ class ReservationList extends RowGateway implements ReservationListEntityInterfa
         parent::__construct('id', 'finna_reservation_list', $adapter);
     }
 
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
     /**
      * Sets the ordered data for the reservation list.
      *

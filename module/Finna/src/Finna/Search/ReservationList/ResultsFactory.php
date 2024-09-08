@@ -29,10 +29,14 @@
 
 namespace Finna\Search\ReservationList;
 
+use Finna\Db\Service\ReservationListResourceServiceInterface;
+use Finna\Db\Service\ReservationListServiceInterface;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Db\Service\ResourceServiceInterface;
+use VuFind\Tags\TagsService;
 
 /**
  * Factory for Favorites search results objects.
@@ -67,11 +71,13 @@ class ResultsFactory extends \VuFind\Search\Results\ResultsFactory
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory!');
         }
-        $tm = $container->get(\VuFind\Db\Table\PluginManager::class);
+        $serviceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
+        $resourceService = $serviceManager->get(ReservationListResourceServiceInterface::class);
+        $listService = $serviceManager->get(ReservationListServiceInterface::class);
         $obj = parent::__invoke(
             $container,
             $requestedName,
-            [$tm->get(\Finna\Db\Table\Resource::class), $tm->get(\Finna\Db\Table\ReservationList::class)]
+            [$resourceService, $listService]
         );
         $init = new \LmcRbacMvc\Initializer\AuthorizationServiceInitializer();
         $init($container, $obj);

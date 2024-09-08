@@ -70,11 +70,12 @@ class ReservationListControllerFactory extends AbstractBaseFactory
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
+        $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
         return parent::__invoke(
             $container,
             $requestedName,
             [
-                $container->get(\Finna\Db\Service\ReservationListServiceInterface::class),
+                $dbServiceManager->get(\Finna\Db\Service\ReservationListServiceInterface::class),
             ]
         );
     }

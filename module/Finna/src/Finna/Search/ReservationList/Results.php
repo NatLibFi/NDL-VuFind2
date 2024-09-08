@@ -29,8 +29,10 @@
 
 namespace Finna\Search\ReservationList;
 
-use Finna\Db\Table\ReservationList as ListTable;
+use Finna\Db\Service\ReservationListResourceServiceInterface;
+use Finna\Db\Service\ReservationListServiceInterface;
 use Finna\Db\Table\Resource as ResourceTable;
+use VuFind\Db\Service\ResourceServiceInterface;
 use LmcRbacMvc\Service\AuthorizationServiceAwareInterface;
 use LmcRbacMvc\Service\AuthorizationServiceAwareTrait;
 use VuFind\Exception\ListPermission as ListPermissionException;
@@ -64,23 +66,23 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
     /**
      * Active user list (false if none).
      *
-     * @var \VuFind\Db\Row\UserList|bool
+     * @var ReservationListEntityInterface|bool
      */
     protected $list = false;
 
     /**
      * Resource table
      *
-     * @var ResourceTable
+     * @var ReservationListResourceServiceInterface
      */
-    protected $resourceTable;
+    protected $reservationListResourceService;
 
     /**
      * UserList table
      *
-     * @var ReservationListTable
+     * @var ReservationListServiceInterface
      */
-    protected $listTable;
+    protected $listService;
 
     /**
      * Facet list
@@ -104,18 +106,18 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
      * @param SearchService              $searchService Search service
      * @param Loader                     $recordLoader  Record loader
      * @param ResourceTable              $resourceTable Resource table
-     * @param ListTable                  $listTable     Reservation list table
+     * @param ReservationListServiceInterface           $listTable     Reservation list table
      */
     public function __construct(
         \VuFind\Search\Base\Params $params,
         SearchService $searchService,
         Loader $recordLoader,
-        ResourceTable $resourceTable,
-        ListTable $listTable
+        ReservationListResourceServiceInterface $resourceService,
+        ReservationListServiceInterface $listService
     ) {
         parent::__construct($params, $searchService, $recordLoader);
-        $this->resourceTable = $resourceTable;
-        $this->listTable = $listTable;
+        $this->reservationListResourceService = $resourceService;
+        $this->listService = $listService;
     }
 
     /**
@@ -186,24 +188,18 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
         // How many results were there?
         $userId = null === $list ? $this->user->id : $list->user_id;
         $listId = null === $list ? null : $list->id;
-        $rawResults = $this->resourceTable->getReservationResources(
-            $userId,
-            $listId,
-            $this->getParams()->getSort()
-        );
-        $this->resultTotal = count($rawResults->toArray());
+        $rawResults = $this->reservationListResourceService->getResourcesForList($list);
+        $this->resultTotal = count($rawResults);
+        var_dump($this->resultTotal);
+        die();
         $this->allIds = array_map(function ($result) {
             return $result['source'] . '|' . $result['record_id'];
-        }, $rawResults->toArray());
+        }, $rawResults);
         // Apply offset and limit if necessary!
         $limit = $this->getParams()->getLimit();
         if ($this->resultTotal > $limit) {
-            $rawResults = $this->resourceTable->getReservationResources(
-                $userId,
-                $listId,
-                $this->getParams()->getSort(),
-                $this->getStartRecord() - 1,
-                $limit
+            $rawResults = $this->reservationListResourceService->getResourcesForList(
+                $list
             );
         }
 
@@ -211,9 +207,9 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
         $recordsToRequest = [];
         foreach ($rawResults as $row) {
             $recordsToRequest[] = [
-                'id' => $row->record_id, 'source' => $row->source,
+                'id' => $row->getRecordId(), 'source' => $row->getSource(),
                 'extra_fields' => [
-                    'title' => $row->title,
+                    'title' => $row->getTitle(),
                 ],
             ];
         }
@@ -226,7 +222,7 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
      * Get the list object associated with the current search (null if no list
      * selected).
      *
-     * @return \VuFind\Db\Row\UserList|null
+     * @return ReservationListEntityInterface|null
      */
     public function getListObject()
     {
@@ -237,7 +233,7 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
             $filters = $this->getParams()->getRawFilters();
             $listId = $filters['lists'][0] ?? null;
             $this->list = (null === $listId)
-                ? null : $this->listTable->getExisting($listId);
+                ? null : $this->listService->getReservationListById($listId);
         }
         return $this->list;
     }

@@ -9,7 +9,7 @@ use \Finna\Db\Entity\ReservationListEntityInterface;
 interface ReservationListServiceInterface extends DbServiceInterface
 {
     /**
-     * Create a UserList entity object.
+     * Create a ReservationList entity object.
      *
      * @return ReservationListEntityInterface
      */
@@ -22,7 +22,7 @@ interface ReservationListServiceInterface extends DbServiceInterface
      *
      * @return void
      */
-    public function deleteUserList(ReservationListEntityInterface|int $listOrId): void;
+    public function deleteReservationList(ReservationListEntityInterface|int $listOrId): void;
 
     /**
      * Retrieve a list object.
@@ -32,7 +32,7 @@ interface ReservationListServiceInterface extends DbServiceInterface
      * @return ReservationListEntityInterface
      * @throws RecordMissingException
      */
-    public function getUserListById(int $id): ReservationListEntityInterface;
+    public function getReservationListById(int $id): ReservationListEntityInterface;
 
     /**
      * Get public lists.
@@ -53,7 +53,7 @@ interface ReservationListServiceInterface extends DbServiceInterface
      * @return array
      * @throws Exception
      */
-    public function getUserListsAndCountsByUser(UserEntityInterface|int $userOrId): array;
+    public function getReservationListsAndCountsByUser(UserEntityInterface|int $userOrId): array;
 
     /**
      * Get lists associated with a particular tag and/or list of IDs. If IDs and
@@ -65,9 +65,9 @@ interface ReservationListServiceInterface extends DbServiceInterface
      * @param bool                 $andTags           Use AND operator when filtering by tag.
      * @param bool                 $caseSensitiveTags Should we treat tags case-sensitively?
      *
-     * @return UserListEntityInterface[]
+     * @return ReservationListEntityInterface[]
      */
-    public function getUserListsByTagAndId(
+    public function getReservationListsByTagAndId(
         string|array|null $tag = null,
         int|array|null $listId = null,
         bool $publicOnly = true,
@@ -80,9 +80,9 @@ interface ReservationListServiceInterface extends DbServiceInterface
      *
      * @param UserEntityInterface|int $userOrId User entity object or ID
      *
-     * @return UserListEntityInterface[]
+     * @return ReservationListEntityInterface[]
      */
-    public function getUserListsByUser(UserEntityInterface|int $userOrId): array;
+    public function getReservationListsByUser(UserEntityInterface|int $userOrId): array;
 
     /**
      * Get lists containing a specific record.

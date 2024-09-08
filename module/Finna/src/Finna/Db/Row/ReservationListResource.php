@@ -30,7 +30,10 @@
 
 namespace Finna\Db\Row;
 
-use VuFind\Db\Row\RowGateway;
+use DateTime;
+use Finna\Db\Entity\ReservationListResourceEntityInterface;
+use Finna\Db\Entity\ReservationListEntityInterface;
+use VuFind\Db\Entity\ResourceEntityInterface;
 
 /**
  * Table Definition for finna_reservation_list_resource
@@ -49,7 +52,7 @@ use VuFind\Db\Row\RowGateway;
  * @property ?string $notes
  * @property string  $saved
  */
-class ReservationListResource extends RowGateway
+class ReservationListResource extends \VuFind\Db\Row\RowGateway implements ReservationListResourceEntityInterface
 {
     /**
      * Constructor
@@ -59,5 +62,107 @@ class ReservationListResource extends RowGateway
     public function __construct($adapter)
     {
         parent::__construct('id', 'finna_reservation_list_resource', $adapter);
+    }
+
+    /**
+     * Id getter
+     *
+     * @return ?int
+     */
+    public function getId(): ?int
+    {
+        return $this->id ?? null;
+    }
+
+    /**
+     * Resource ID getter
+     *
+     * @return int
+     */
+    public function getResourceId(): int
+    {
+        return $this->resource_id;
+    }
+
+    /**
+     * Resource ID setter
+     *
+     * @param ResourceEntityInterface $id Resource ID
+     *
+     * @return ReservationListResourceEntityInterface
+     */
+    public function setResource(ResourceEntityInterface $resource): ReservationListResourceEntityInterface
+    {
+        $this->resource_id = $resource->getId();
+        return $this;
+    }
+
+    /**
+     * Get list id
+     *
+     * @return int
+     */
+    public function getListId(): int
+    {
+        return $this->list_id;
+    }
+
+    /**
+     * Set list id
+     *
+     * @param ReservationListEntityInterface $listId Id of list
+     *
+     * @return ReservationListResourceEntityInterface
+     */
+    public function setList(ReservationListEntityInterface $list): ReservationListResourceEntityInterface
+    {
+        $this->list_id = $list->getId();
+        return $this;
+    }
+
+    /**
+     * Created setter
+     *
+     * @param DateTime $dateTime Created date
+     *
+     * @return ReservationListResourceEntityInterface
+     */
+    public function setSaved(DateTime $dateTime): ReservationListResourceEntityInterface
+    {
+        $this->saved = $dateTime->format('Y-m-d H:i:s');
+        return $this;
+    }
+
+    /**
+     * Created getter
+     *
+     * @return DateTime
+     */
+    public function getSaved(): Datetime
+    {
+        return DateTime::createFromFormat('Y-m-d H:i:s', $this->saved);
+    }
+
+    /**
+     * Data setter
+     *
+     * @param string $data Data
+     *
+     * @return ReservationListResourceEntityInterface
+     */
+    public function setNotes(string $note): ReservationListResourceEntityInterface
+    {
+        $this->notes = $note;
+        return $this;
+    }
+
+    /**
+     * Data getter
+     *
+     * @return string
+     */
+    public function getNotes(): string
+    {
+        return $this->notes;
     }
 }

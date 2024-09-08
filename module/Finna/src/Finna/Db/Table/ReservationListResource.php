@@ -35,6 +35,7 @@ use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
 use VuFind\Db\Row\RowGateway;
 use VuFind\Db\Table\PluginManager;
+use Finna\Db\Entity\ReservationListEntityInterface;
 
 use function is_array;
 
@@ -181,30 +182,29 @@ class ReservationListResource extends \VuFind\Db\Table\Gateway
     /**
      * Get records for a list.
      *
-     * @param int $listId ID of list to retrieve.
-     * @param int $userId ID of user to retrieve list for.
+     * @param ReservationListEntityInterface $listId ID of list to retrieve.
      *
      * @return \Laminas\Db\ResultSet\AbstractResultSet
      */
-    public function getRecordsForList($listId, $userId): \Laminas\Db\ResultSet\AbstractResultSet
+    public function getRecordsForList(ReservationListEntityInterface $list): \Laminas\Db\ResultSet\AbstractResultSet
     {
-        $callback = function ($select) use ($listId, $userId) {
+        $listId = $list->getId();
+        $callback = function ($select) use ($listId) {
             $select->columns(
                 [
                     new Expression(
                         'DISTINCT(?)',
-                        ['finna_reservation_list_resource.id'],
+                        ['resource.id'],
                         [Expression::TYPE_IDENTIFIER]
                     ), Select::SQL_STAR,
                 ]
             );
             $select->join(
-                ['r' => 'resource'],
-                'r.id = finna_reservation_list_resource.resource_id',
+                ['r' => 'finna_reservation_list_resource'],
+                'r.resource_id = resource.id',
                 []
             );
-            $select->where->equalTo('finna_reservation_list_resource.list_id', $listId)
-                ->equalTo('finna_reservation_list_resource.user_id', $userId);
+            $select->where->equalTo('finna_reservation_list_resource.list_id', $listId);
         };
         return $this->select($callback);
     }

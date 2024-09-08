@@ -31,17 +31,14 @@
 namespace Finna\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\Select;
 use Laminas\Session\Container;
 use VuFind\Db\Row\RowGateway;
-use VuFind\Db\Service\UserListServiceInterface;
 use VuFind\Db\Service\DbServiceAwareTrait;
+use VuFind\Db\Service\DbServiceAwareInterface;
 use VuFind\Db\Table\Gateway;
 use VuFind\Db\Table\PluginManager;
-use VuFind\Db\Table\UserList;
-use VuFind\Exception\LoginRequired as LoginRequiredException;
-use VuFind\Exception\RecordMissing as RecordMissingException;
+use Laminas\Db\Sql\Expression;
+use Laminas\Db\Sql\Select;
 
 /**
  * Table Definition for finna_reservation_list
@@ -53,46 +50,9 @@ use VuFind\Exception\RecordMissing as RecordMissingException;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
-class ReservationList extends UserList
+class ReservationList extends Gateway implements DbServiceAwareInterface
 {
     use DbServiceAwareTrait;
-    /**
-     * Create a new list object.
-     *
-     * @param \VuFind\Db\Row\UserList|bool $user User object representing owner of
-     * new list (or false if not logged in)
-     *
-     * @return \VuFind\Db\Row\UserList
-     * @throws LoginRequiredException
-     *
-     * @deprecated Use \VuFind\Favorites\FavoritesService::createListForUser()
-     */
-    public function getNew($user)
-    {
-        if (!$user) {
-            throw new LoginRequiredException('Log in to create lists.');
-        }
-
-        $row = $this->createRow();
-        $row->created = date('Y-m-d H:i:s');    // force creation date
-        $row->user_id = $user->id;
-        return $row;
-    }
-
-    /**
-     * Retrieve a list object.
-     *
-     * @param int $id Numeric ID for existing list.
-     *
-     * @return \VuFind\Db\Row\UserList
-     * @throws RecordMissingException
-     *
-     * @deprecated Use \VuFind\Db\Service\UserListServiceInterface::getUserListById()
-     */
-    public function getExisting($id)
-    {
-        return $this->getDbService(UserListServiceInterface::class)->getUserListById($id);
-    }
 
     /**
      * Constructor
@@ -122,7 +82,7 @@ class ReservationList extends UserList
      *
      * @param string $resourceId ID of record being checked.
      * @param string $source     Source of record to look up
-     * @param User   $user       Optional user (to limit results to a particular
+     * @param int    $userId     Optional user ID (to limit results to a particular
      * user).
      *
      * @return array
@@ -130,9 +90,8 @@ class ReservationList extends UserList
     public function getListsContainingResource(
         $resourceId,
         $source = DEFAULT_SEARCH_BACKEND,
-        $user = null
+        $userId = null
     ) {
-        $userId = $user->id;
         // Set up base query:
         $callback = function ($select) use ($resourceId, $source, $userId) {
             $select->columns(
@@ -145,13 +104,13 @@ class ReservationList extends UserList
                 ]
             );
             $select->join(
-                ['rl' => 'finna_reservation_list_resource'],
-                'rl.list_id = finna_reservation_list.id',
+                ['ur' => 'finna_reservation_list_resource'],
+                'ur.list_id = finna_reservation_list.id',
                 []
             );
             $select->join(
                 ['r' => 'resource'],
-                'r.id = rl.resource_id',
+                'r.id = ur.resource_id',
                 []
             );
             $select->where->equalTo('r.source', $source)
@@ -159,7 +118,7 @@ class ReservationList extends UserList
             $select->order(['title']);
 
             if (null !== $userId) {
-                $select->where->equalTo('rl.user_id', $userId);
+                $select->where->equalTo('ur.user_id', $userId);
             }
         };
         return $this->select($callback);

@@ -59,6 +59,8 @@ use VuFind\Exception\MissingField as MissingFieldException;
  */
 interface ReservationListEntityInterface extends EntityInterface
 {
+    public function getId(): int;
+
     /**
      * Sets the ordered data for the reservation list.
      *

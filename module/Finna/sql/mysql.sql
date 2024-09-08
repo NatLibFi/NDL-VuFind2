@@ -343,7 +343,6 @@ CREATE TABLE `finna_record_view` (
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `finna_reservation_list_resource` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
   `resource_id` int(11) NOT NULL,
   `list_id` int(11) NOT NULL,
   `notes` text DEFAULT NULL,
@@ -352,7 +351,6 @@ CREATE TABLE `finna_reservation_list_resource` (
   KEY `resource_id` (`resource_id`),
   KEY `user_id` (`user_id`),
   KEY `list_id` (`list_id`),
-  CONSTRAINT `finna_reservation_list_resource_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
   CONSTRAINT `finna_reservation_list_resource_ibfk_2` FOREIGN KEY (`resource_id`) REFERENCES `resource` (`id`) ON DELETE CASCADE,
   CONSTRAINT `finna_reservation_list_resource_ibfk_5` FOREIGN KEY (`list_id`) REFERENCES `finna_reservation_list` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -29,18 +29,13 @@
 
 namespace Finna\Db\Service;
 
-use Finna\ReservationList\Handler\PluginManager;
-use Laminas\Config\Config;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Select;
 use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\RecordMissing as RecordMissingException;
-use VuFind\Db\Service\UserListServiceInterface;
 use Finna\Db\Entity\ReservationListEntityInterface;
 use Finna\Db\Service\ReservationListServiceInterface;
-use VuFind\Db\Entity\UserListEntityInterface;
 use VuFind\Db\Service\AbstractDbService;
 use VuFind\Db\Table\DbTableAwareInterface;
 use VuFind\Db\Table\DbTableAwareTrait;
@@ -60,7 +55,7 @@ class ReservationListService extends AbstractDbService implements DbTableAwareIn
     use DbTableAwareTrait;
 
     /**
-     * Create a UserList entity object.
+     * Create a ReservationList entity object.
      *
      * @return ReservationListEntityInterface
      */
@@ -76,7 +71,7 @@ class ReservationListService extends AbstractDbService implements DbTableAwareIn
      *
      * @return void
      */
-    public function deleteUserList(ReservationListEntityInterface|int $listOrId): void
+    public function deleteReservationList(ReservationListEntityInterface|int $listOrId): void
     {
         $listId = $listOrId instanceof ReservationListEntityInterface ? $listOrId->getId() : $listOrId;
         $this->getDbTable(\Finna\Db\Table\ReservationListResource::class)->delete(['id' => $listId]);
@@ -90,11 +85,11 @@ class ReservationListService extends AbstractDbService implements DbTableAwareIn
      * @return ReservationListEntityInterface
      * @throws RecordMissingException
      */
-    public function getUserListById(int $id): ReservationListEntityInterface
+    public function getReservationListById(int $id): ReservationListEntityInterface
     {
-        $result = $this->getDbTable(\Finna\Db\Table\ReservationListResource::class)->select(['id' => $id])->current();
+        $result = $this->getDbTable(\Finna\Db\Table\ReservationList::class)->select(['id' => $id])->current();
         if (empty($result)) {
-            throw new RecordMissingException('Cannot load list ' . $id);
+            throw new RecordMissingException('Cannot load reservation list ' . $id);
         }
         return $result;
     }
@@ -105,7 +100,7 @@ class ReservationListService extends AbstractDbService implements DbTableAwareIn
      * @param array $includeFilter List of list ids or entities to include in result.
      * @param array $excludeFilter List of list ids or entities to exclude from result.
      *
-     * @return UserListEntityInterface[]
+     * @return ReservationListEntityInterface[]
      */
     public function getPublicLists(array $includeFilter = [], array $excludeFilter = []): array
     {
@@ -121,7 +116,7 @@ class ReservationListService extends AbstractDbService implements DbTableAwareIn
      * @return array
      * @throws Exception
      */
-    public function getUserListsAndCountsByUser(UserEntityInterface|int $userOrId): array
+    public function getReservationListsAndCountsByUser(UserEntityInterface|int $userOrId): array
     {
         $userId = $userOrId instanceof UserEntityInterface ? $userOrId->getId() : $userOrId;
         $callback = function (Select $select) use ($userId) {
@@ -168,9 +163,9 @@ class ReservationListService extends AbstractDbService implements DbTableAwareIn
      * @param bool                 $andTags           Use AND operator when filtering by tag.
      * @param bool                 $caseSensitiveTags Should we treat tags case-sensitively?
      *
-     * @return UserListEntityInterface[]
+     * @return ReservationListEntityInterface[]
      */
-    public function getUserListsByTagAndId(
+    public function getReservationListsByTagAndId(
         string|array|null $tag = null,
         int|array|null $listId = null,
         bool $publicOnly = true,
@@ -185,16 +180,16 @@ class ReservationListService extends AbstractDbService implements DbTableAwareIn
      *
      * @param UserEntityInterface|int $userOrId User entity object or ID
      *
-     * @return UserListEntityInterface[]
+     * @return ReservationListEntityInterface[]
      */
-    public function getUserListsByUser(UserEntityInterface|int $userOrId): array
+    public function getReservationListsByUser(UserEntityInterface|int $userOrId): array
     {
         $userId = $userOrId instanceof UserEntityInterface ? $userOrId->getId() : $userOrId;
         $callback = function ($select) use ($userId) {
             $select->where->equalTo('user_id', $userId);
             $select->order(['title']);
         };
-        return iterator_to_array($this->getDbTable(\Finna\Db\Table\ReservationListResource::class)->select($callback));
+        return iterator_to_array($this->getDbTable(\Finna\Db\Table\ReservationList::class)->select($callback));
     }
 
     /**
@@ -205,7 +200,7 @@ class ReservationListService extends AbstractDbService implements DbTableAwareIn
      * @param UserEntityInterface|int|null $userOrId Optional user ID or entity object (to limit results
      * to a particular user).
      *
-     * @return UserListEntityInterface[]
+     * @return ReservationListEntityInterface[]
      */
     public function getListsContainingRecord(
         string $recordId,

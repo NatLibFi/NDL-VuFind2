@@ -61,11 +61,11 @@ abstract class AbstractReservationListController extends AbstractBase
      * Constructor
      *
      * @param ServiceLocatorInterface $sm                     Service locator
-     * @param ReservationListService  $reservationListService Reservation list service
+     * @param ReservationListServiceInterface  $reservationListService Reservation list service
      */
     public function __construct(
         ServiceLocatorInterface $sm,
-        protected ReservationListService $reservationListService
+        protected ReservationListServiceInterface $reservationListService
     ) {
         parent::__construct($sm);
     }
@@ -196,7 +196,7 @@ abstract class AbstractReservationListController extends AbstractBase
                 throw $e;
             }
         } catch (\Exception $e) {
-            return $this->redirect()->toRoute('reservationlist-home');
+            throw $e;
         }
     }
 
