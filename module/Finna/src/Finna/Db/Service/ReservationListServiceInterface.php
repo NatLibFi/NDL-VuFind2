@@ -2,9 +2,9 @@
 
 namespace Finna\Db\Service;
 
-use \VuFind\Db\Service\DbServiceInterface;
-use \VuFind\Db\Entity\UserEntityInterface;
-use \Finna\Db\Entity\ReservationListEntityInterface;
+use Finna\Db\Entity\ReservationListEntityInterface;
+use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\Db\Service\DbServiceInterface;
 
 interface ReservationListServiceInterface extends DbServiceInterface
 {

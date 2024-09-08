@@ -3,12 +3,12 @@
 namespace Finna\Db\Service;
 
 use Finna\Db\Entity\ReservationListEntityInterface;
+use Finna\Db\Entity\ReservationListResourceEntityInterface;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Entity\UserListEntityInterface;
 use VuFind\Db\Entity\UserResourceEntityInterface;
 use VuFind\Db\Service\DbServiceInterface;
-use Finna\Db\Entity\ReservationListResourceEntityInterface;
 
 interface ReservationListResourceServiceInterface extends DbServiceInterface
 {
@@ -41,10 +41,10 @@ interface ReservationListResourceServiceInterface extends DbServiceInterface
     /**
      * Create user/resource/list link if one does not exist; update notes if one does.
      *
-     * @param ResourceEntityInterface|int $resourceOrId Entity or ID of resource to link up
-     * @param UserEntityInterface|int     $userOrId     Entity or ID of user creating link
+     * @param ResourceEntityInterface|int        $resourceOrId Entity or ID of resource to link up
+     * @param UserEntityInterface|int            $userOrId     Entity or ID of user creating link
      * @param ReservationListEntityInterface|int $listOrId     Entity or ID of list to link up
-     * @param string                      $notes        Notes to associate with link
+     * @param string                             $notes        Notes to associate with link
      *
      * @return UserResource|false
      */
@@ -58,9 +58,9 @@ interface ReservationListResourceServiceInterface extends DbServiceInterface
     /**
      * Unlink rows for the specified resource.
      *
-     * @param int|int[]|null              $resourceId ID (or array of IDs) of resource(s) to unlink (null for ALL
-     * matching resources)
-     * @param UserEntityInterface|int     $userOrId   ID or entity representing user removing links
+     * @param int|int[]|null                     $resourceId ID (or array of IDs) of resource(s) to unlink (null for ALL
+     *                                                       matching resources)
+     * @param UserEntityInterface|int            $userOrId   ID or entity representing user removing links
      * @param ReservationListEntityInterface|int $listOrId   ID or entity representing list to unlink (null for ALL
      * matching lists)
      *

@@ -32,7 +32,6 @@ declare(strict_types=1);
 
 namespace Finna\Form\Handler;
 
-use Finna\Db\Service\ReservationListServiceInterface;
 use Laminas\Config\Config;
 use Laminas\View\Renderer\RendererInterface;
 use VuFind\Mailer\Mailer;

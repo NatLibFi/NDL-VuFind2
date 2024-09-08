@@ -29,17 +29,17 @@
 
 namespace Finna\Db\Service;
 
+use Finna\Db\Entity\ReservationListEntityInterface;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Select;
 use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\Exception\RecordMissing as RecordMissingException;
-use Finna\Db\Entity\ReservationListEntityInterface;
-use Finna\Db\Service\ReservationListServiceInterface;
 use VuFind\Db\Service\AbstractDbService;
 use VuFind\Db\Table\DbTableAwareInterface;
 use VuFind\Db\Table\DbTableAwareTrait;
+use VuFind\Exception\RecordMissing as RecordMissingException;
 
+use function is_int;
 
 /**
  * Reservation List Service

@@ -50,5 +50,4 @@ namespace Finna\Controller;
  */
 class ReservationListController extends AbstractReservationListController
 {
-
 }

@@ -31,14 +31,14 @@
 namespace Finna\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
-use Laminas\Session\Container;
-use VuFind\Db\Row\RowGateway;
-use VuFind\Db\Service\DbServiceAwareTrait;
-use VuFind\Db\Service\DbServiceAwareInterface;
-use VuFind\Db\Table\Gateway;
-use VuFind\Db\Table\PluginManager;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
+use Laminas\Session\Container;
+use VuFind\Db\Row\RowGateway;
+use VuFind\Db\Service\DbServiceAwareInterface;
+use VuFind\Db\Service\DbServiceAwareTrait;
+use VuFind\Db\Table\Gateway;
+use VuFind\Db\Table\PluginManager;
 
 /**
  * Table Definition for finna_reservation_list

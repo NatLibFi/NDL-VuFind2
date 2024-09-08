@@ -32,7 +32,6 @@ namespace Finna\Search\ReservationList;
 use Finna\Db\Service\ReservationListResourceServiceInterface;
 use Finna\Db\Service\ReservationListServiceInterface;
 use Finna\Db\Table\Resource as ResourceTable;
-use VuFind\Db\Service\ResourceServiceInterface;
 use LmcRbacMvc\Service\AuthorizationServiceAwareInterface;
 use LmcRbacMvc\Service\AuthorizationServiceAwareTrait;
 use VuFind\Exception\ListPermission as ListPermissionException;
@@ -101,12 +100,12 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
     /**
      * Constructor
      *
-     * @param \VuFind\Search\Base\Params $params        Object representing user
-     * search parameters.
-     * @param SearchService              $searchService Search service
-     * @param Loader                     $recordLoader  Record loader
-     * @param ResourceTable              $resourceTable Resource table
-     * @param ReservationListServiceInterface           $listTable     Reservation list table
+     * @param \VuFind\Search\Base\Params      $params        Object representing user
+     *                                                       search parameters.
+     * @param SearchService                   $searchService Search service
+     * @param Loader                          $recordLoader  Record loader
+     * @param ResourceTable                   $resourceTable Resource table
+     * @param ReservationListServiceInterface $listTable     Reservation list table
      */
     public function __construct(
         \VuFind\Search\Base\Params $params,

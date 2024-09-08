@@ -3,62 +3,62 @@
 namespace Finna\View\Helper\Root;
 
 use VuFind\RecordDriver\DefaultRecord;
-use Laminas\Config\Config;
+
+use function in_array;
 
 class ReservationList extends \Laminas\View\Helper\AbstractHelper
 {
+    /**
+     * Record driver
+     *
+     * @var DefaultRecord|null
+     */
+    protected ?DefaultRecord $driver = null;
 
-  /**
-   * Record driver
-   *
-   * @var DefaultRecord|null
-   */
-  protected ?DefaultRecord $driver = null;
-
-  /**
-   * Constructor
-   *
-   * @param array $config Reservation list yaml as an array
-   */
-  public function __construct(protected array $config = [])
-  {
-  }
-
-  public function __invoke(DefaultRecord $driver)
-  {
-    if (!$this->driver) {
-      $this->driver = $driver;
+    /**
+     * Constructor
+     *
+     * @param array $config Reservation list yaml as an array
+     */
+    public function __construct(protected array $config = [])
+    {
     }
-    return $this;
-  }
 
-  protected function getListsAvailableForRecord(): array
-  {
-    $recordOrganisation = $this->driver->getOrganisationInfoId();
-    $result = [];
-    if ($institutionConfig = $this->config[$recordOrganisation] ?? false) {
-      $datasource = $this->driver->getDatasource();
-      foreach ($institutionConfig['Lists'] ?? [] as $list) {
-        if (in_array($datasource, $list['Datasources'] ?? []) && $list['Identifier'] ?? false) {
-          $result[] = $list['Identifier'];
+    public function __invoke(DefaultRecord $driver)
+    {
+        if (!$this->driver) {
+            $this->driver = $driver;
         }
-      }
+        return $this;
     }
-    var_dump($result);
-    return $result;
-  }
 
-  /**
-   * Display buttons which routes the request to proper list procedures
-   *
-   * @return string
-   */
-  public function renderAddTemplate(): string
-  {
-    // Collect lists where we could potentially save this:
-    $lists = $this->getListsAvailableForRecord();
-    // Set up the needed context in the view:
-    $view = $this->getView();
-    return $view->render('Helpers/reservationlist-add.phtml');
-  }
+    protected function getListsAvailableForRecord(): array
+    {
+        $recordOrganisation = $this->driver->getOrganisationInfoId();
+        $result = [];
+        if ($institutionConfig = $this->config[$recordOrganisation] ?? false) {
+            $datasource = $this->driver->getDatasource();
+            foreach ($institutionConfig['Lists'] ?? [] as $list) {
+                if (in_array($datasource, $list['Datasources'] ?? []) && $list['Identifier'] ?? false) {
+                    $result[] = $list['Identifier'];
+                }
+            }
+        }
+        var_dump($result);
+        return $result;
+    }
+
+    /**
+     * Display buttons which routes the request to proper list procedures
+     *
+     * @return string
+     */
+    public function renderAddTemplate(): string
+    {
+        // Collect lists where we could potentially save this:
+        $lists = $this->getListsAvailableForRecord();
+        // Set up the needed context in the view:
+        $view = $this->getView();
+        return $view->render('Helpers/reservationlist-add.phtml');
+    }
 }

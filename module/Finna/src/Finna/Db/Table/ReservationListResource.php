@@ -30,12 +30,12 @@
 
 namespace Finna\Db\Table;
 
+use Finna\Db\Entity\ReservationListEntityInterface;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
 use VuFind\Db\Row\RowGateway;
 use VuFind\Db\Table\PluginManager;
-use Finna\Db\Entity\ReservationListEntityInterface;
 
 use function is_array;
 

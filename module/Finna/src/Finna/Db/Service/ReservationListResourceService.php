@@ -4,20 +4,19 @@ namespace Finna\Db\Service;
 
 use Exception;
 use Finna\Db\Entity\ReservationListEntityInterface;
+use Finna\Db\Entity\ReservationListResourceEntityInterface;
+use Finna\Db\Table\ReservationListResource;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Entity\UserListEntityInterface;
 use VuFind\Db\Entity\UserResourceEntityInterface;
-use VuFind\Db\Table\DbTableAwareInterface;
-use VuFind\Db\Table\DbTableAwareTrait;
 use VuFind\Db\Service\AbstractDbService;
 use VuFind\Db\Service\DbServiceAwareInterface;
 use VuFind\Db\Service\DbServiceAwareTrait;
 use VuFind\Db\Service\ResourceServiceInterface;
 use VuFind\Db\Service\UserServiceInterface;
-use Finna\Db\Service\ReservationListResourceServiceInterface;
-use Finna\Db\Table\ReservationListResource;
-use Finna\Db\Entity\ReservationListResourceEntityInterface;
+use VuFind\Db\Table\DbTableAwareInterface;
+use VuFind\Db\Table\DbTableAwareTrait;
 
 use function is_int;
 

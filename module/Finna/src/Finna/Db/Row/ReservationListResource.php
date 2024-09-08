@@ -31,8 +31,8 @@
 namespace Finna\Db\Row;
 
 use DateTime;
-use Finna\Db\Entity\ReservationListResourceEntityInterface;
 use Finna\Db\Entity\ReservationListEntityInterface;
+use Finna\Db\Entity\ReservationListResourceEntityInterface;
 use VuFind\Db\Entity\ResourceEntityInterface;
 
 /**

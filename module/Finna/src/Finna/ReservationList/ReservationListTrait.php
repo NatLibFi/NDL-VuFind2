@@ -29,7 +29,7 @@
 
 namespace Finna\ReservationList;
 
-use \Finna\Db\Service\ReservationListServiceInterface;
+use Finna\Db\Service\ReservationListServiceInterface;
 
 /**
  * Reservation list trait

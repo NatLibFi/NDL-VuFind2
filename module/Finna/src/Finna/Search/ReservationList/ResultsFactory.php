@@ -35,8 +35,6 @@ use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
-use VuFind\Db\Service\ResourceServiceInterface;
-use VuFind\Tags\TagsService;
 
 /**
  * Factory for Favorites search results objects.
