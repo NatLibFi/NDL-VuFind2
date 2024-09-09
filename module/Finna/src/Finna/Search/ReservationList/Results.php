@@ -185,12 +185,11 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
         }
 
         // How many results were there?
-        $userId = null === $list ? $this->user->id : $list->user_id;
-        $listId = null === $list ? null : $list->id;
-        $rawResults = $this->reservationListResourceService->getResourcesForList($list);
+        $rawResults = $this->reservationListResourceService->getResourcesForList(
+            $this->user,
+            $list
+        );
         $this->resultTotal = count($rawResults);
-        var_dump($this->resultTotal);
-        die();
         $this->allIds = array_map(function ($result) {
             return $result['source'] . '|' . $result['record_id'];
         }, $rawResults);
@@ -198,7 +197,11 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
         $limit = $this->getParams()->getLimit();
         if ($this->resultTotal > $limit) {
             $rawResults = $this->reservationListResourceService->getResourcesForList(
-                $list
+                $this->user,
+                $list,
+                null,
+                0,
+                $limit
             );
         }
 

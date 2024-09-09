@@ -103,5 +103,11 @@ interface ReservationListResourceServiceInterface extends DbServiceInterface
      *
      * @return array
      */
-    public function getResourcesForList(ReservationListEntityInterface $list): array;
+    public function getResourcesForList(
+        UserEntityInterface $user,
+        ?ReservationListEntityInterface $list = null,
+        ?string $sort = null,
+        int $offset = 0,
+        int $limit = null
+    ): array;
 }

@@ -181,8 +181,9 @@ abstract class AbstractReservationListController extends AbstractBase
         // Try to open the list page, if the list is not found, redirect to home.
         try {
             $results = $this->getListAsResults($request);
-            $currentList = $this->reservationListService->getListForUser($user, $request['id']);
-            $viewParams = $currentList + [
+            $currentList = $this->reservationListService->getReservationListById($request['id']);
+            $viewParams = [
+                'list' => $currentList,
                 'results' => $results,
                 'params' => $results->getParams(),
                 'enabled' => $this->listsEnabledForDatasource($currentList['datasource']),
@@ -406,7 +407,7 @@ abstract class AbstractReservationListController extends AbstractBase
         if (!$user) {
             return $this->forceLogin();
         }
-        $lists = $this->reservationListService->getUserListsByUser($user);
+        $lists = $this->reservationListService->getReservationListsByUser($user);
         $view = $this->createViewModel(
             ['lists' => $lists]
         );

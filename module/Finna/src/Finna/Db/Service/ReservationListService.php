@@ -61,7 +61,7 @@ class ReservationListService extends AbstractDbService implements DbTableAwareIn
      */
     public function createEntity(): ReservationListEntityInterface
     {
-        return $this->getDbTable(\Finna\Db\Table\ReservationListResource::class)->createRow();
+        return $this->getDbTable(\Finna\Db\Table\ReservationList::class)->createRow();
     }
 
     /**
@@ -74,7 +74,7 @@ class ReservationListService extends AbstractDbService implements DbTableAwareIn
     public function deleteReservationList(ReservationListEntityInterface|int $listOrId): void
     {
         $listId = $listOrId instanceof ReservationListEntityInterface ? $listOrId->getId() : $listOrId;
-        $this->getDbTable(\Finna\Db\Table\ReservationListResource::class)->delete(['id' => $listId]);
+        $this->getDbTable(\Finna\Db\Table\ReservationList::class)->delete(['id' => $listId]);
     }
 
     /**
@@ -208,11 +208,24 @@ class ReservationListService extends AbstractDbService implements DbTableAwareIn
         UserEntityInterface|int|null $userOrId = null
     ): array {
         return iterator_to_array(
-            $this->getDbTable(\Finna\Db\Table\ReservationListResource::class)->getListsContainingResource(
+            $this->getDbTable(\Finna\Db\Table\ReservationList::class)->getListsContainingResource(
                 $recordId,
                 $source,
                 is_int($userOrId) ? $userOrId : $userOrId->getId()
             )
         );
+    }
+
+    /**
+     * Is the provided user allowed to edit the provided list?
+     *
+     * @param ?UserEntityInterface    $user Logged-in user (null if none)
+     * @param UserListEntityInterface $list List to check
+     *
+     * @return bool
+     */
+    public function userCanEditList(?UserEntityInterface $user, ReservationListEntityInterface $list): bool
+    {
+        return $this->reservationlist->userCanEditList($user, $list);
     }
 }

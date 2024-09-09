@@ -194,14 +194,14 @@ class ReservationListResource extends \VuFind\Db\Table\Gateway
                 [
                     new Expression(
                         'DISTINCT(?)',
-                        ['resource.id'],
+                        ['finna_reservation_list_resource.id'],
                         [Expression::TYPE_IDENTIFIER]
                     ), Select::SQL_STAR,
                 ]
             );
             $select->join(
-                ['r' => 'finna_reservation_list_resource'],
-                'r.resource_id = resource.id',
+                ['r' => 'resource'],
+                'r.id = finna_reservation_list_resource.resource_id',
                 []
             );
             $select->where->equalTo('finna_reservation_list_resource.list_id', $listId);

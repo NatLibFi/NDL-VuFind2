@@ -68,7 +68,7 @@ trait ReservationListTrait
      */
     public function getReservationLists(): array
     {
-        return $this->reservationListService->getUserListsByUser($this);
+        return $this->reservationListService->getReservationListsByUser($this);
     }
 
     /**
@@ -81,6 +81,6 @@ trait ReservationListTrait
      */
     public function getReservationListContainedIn(string $recordId, string $source): array
     {
-        return $this->reservationListService->getListsContaining($this, $recordId, $source);
+        return $this->reservationListService->getListsContainingRecord($recordId, $source, $this);
     }
 }

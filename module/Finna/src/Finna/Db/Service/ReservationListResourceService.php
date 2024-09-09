@@ -6,6 +6,7 @@ use Exception;
 use Finna\Db\Entity\ReservationListEntityInterface;
 use Finna\Db\Entity\ReservationListResourceEntityInterface;
 use Finna\Db\Table\ReservationListResource;
+use Finna\Db\Table\Resource;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Entity\UserListEntityInterface;
@@ -172,10 +173,22 @@ class ReservationListResourceService extends AbstractDbService implements
      *
      * @return array
      */
-    public function getResourcesForList(ReservationListEntityInterface $list): array
+    public function getResourcesForList(
+        UserEntityInterface $user,
+        ?ReservationListEntityInterface $list = null,
+        ?string $sort = null,
+        int $offset = 0,
+        int $limit = null
+    ): array
     {
         return iterator_to_array(
-            $this->getDbTable(ReservationListResource::class)->getRecordsForList($list)
+            $this->getDbTable(Resource::class)->getReservationResources(
+                $user?->getId() ?? null,
+                $list?->getId() ?? null,
+                $sort,
+                $offset,
+                $limit
+                )
         );
     }
 
