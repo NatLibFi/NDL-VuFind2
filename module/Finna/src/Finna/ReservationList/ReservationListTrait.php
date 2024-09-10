@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  ReservationList
+ * @package  FinnaResourceList
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
@@ -29,13 +29,14 @@
 
 namespace Finna\ReservationList;
 
-use Finna\Db\Service\ReservationListServiceInterface;
+use Finna\Db\Entity\FinnaResourceListEntityInterface;
+use Finna\Db\Service\FinnaResourceListServiceInterface;
 
 /**
  * Reservation list trait
  *
  * @category VuFind
- * @package  ReservationList
+ * @package  FinnaResourceList
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
@@ -45,30 +46,30 @@ trait ReservationListTrait
     /**
      * Reservation list service
      *
-     * @var ReservationListServiceInterface
+     * @var FinnaResourceListServiceInterface
      */
-    protected $reservationListService;
+    protected $finnaResourceListService;
 
     /**
-     * Sets the ReservationListService.
+     * Sets the FinnaResourceListService.
      *
-     * @param ReservationListServiceInterface $service ReservationListService to set.
+     * @param FinnaResourceListServiceInterface $service FinnaResourceListService to set.
      *
      * @return void
      */
-    public function setReservationListService(ReservationListServiceInterface $service): void
+    public function setFinnaResourceListService(FinnaResourceListServiceInterface $service): void
     {
-        $this->reservationListService = $service;
+        $this->finnaResourceListService = $service;
     }
 
     /**
      * Retrieves reservation lists.
      *
-     * @return array Reservation lists.
+     * @return FinnaResourceListEntityInterface[] Reservation lists.
      */
-    public function getReservationLists(): array
+    public function getFinnaResourceLists(): array
     {
-        return $this->reservationListService->getReservationListsByUser($this);
+        return $this->finnaResourceListService->getFinnaResourceListsByUser($this);
     }
 
     /**
@@ -79,8 +80,8 @@ trait ReservationListTrait
      *
      * @return array The reservation list contained in the specified record and source.
      */
-    public function getReservationListContainedIn(string $recordId, string $source): array
+    public function getFinnaResourceListContainedIn(string $recordId, string $source): array
     {
-        return $this->reservationListService->getListsContainingRecord($recordId, $source, $this);
+        return $this->finnaResourceListService->getListsContainingRecord($recordId, $source, $this);
     }
 }

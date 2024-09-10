@@ -181,7 +181,7 @@ class Resource extends \VuFind\Db\Table\Resource
                     ),
                     ];
                 $s->join(
-                    ['frlr' => 'finna_reservation_list_resource'],
+                    ['frlr' => 'finna_resource_list_resource'],
                     'resource.id = frlr.resource_id',
                     $urColumns
                 );

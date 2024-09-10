@@ -3,9 +3,9 @@
 namespace Finna\Db\Service;
 
 use Exception;
-use Finna\Db\Entity\ReservationListEntityInterface;
-use Finna\Db\Entity\ReservationListResourceEntityInterface;
-use Finna\Db\Table\ReservationListResource;
+use Finna\Db\Entity\FinnaResourceListEntityInterface;
+use Finna\Db\Entity\FinnaResourceListResourceEntityInterface;
+use Finna\Db\Table\FinnaResourceListResource;
 use Finna\Db\Table\Resource;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
@@ -21,10 +21,10 @@ use VuFind\Db\Table\DbTableAwareTrait;
 
 use function is_int;
 
-class ReservationListResourceService extends AbstractDbService implements
+class FinnaResourceListResourceService extends AbstractDbService implements
     DbTableAwareInterface,
     DbServiceAwareInterface,
-    ReservationListResourceServiceInterface
+    FinnaResourceListResourceServiceInterface
 {
     use DbServiceAwareTrait;
     use DbTableAwareTrait;
@@ -44,13 +44,13 @@ class ReservationListResourceService extends AbstractDbService implements
     public function getFavoritesForRecord(
         string $recordId,
         string $source = DEFAULT_SEARCH_BACKEND,
-        ReservationListEntityInterface|int|null $listOrId = null,
+        FinnaResourceListEntityInterface|int|null $listOrId = null,
         UserEntityInterface|int|null $userOrId = null
     ): array {
         $listId = is_int($listOrId) ? $listOrId : $listOrId?->getId();
         $userId = is_int($userOrId) ? $userOrId : $userOrId?->getId();
         return iterator_to_array(
-            $this->getDbTable(ReservationListResource::class)->getSavedData($recordId, $source, $listId, $userId)
+            $this->getDbTable(FinnaResourceListResource::class)->getSavedData($recordId, $source, $listId, $userId)
         );
     }
 
@@ -61,7 +61,7 @@ class ReservationListResourceService extends AbstractDbService implements
      */
     public function getStatistics(): array
     {
-        return $this->getDbTable(ReservationListResource::class)->getStatistics();
+        return $this->getDbTable(FinnaResourceListResource::class)->getStatistics();
     }
 
     /**
@@ -77,16 +77,16 @@ class ReservationListResourceService extends AbstractDbService implements
     public function createOrUpdateLink(
         ResourceEntityInterface|int $resourceOrId,
         UserEntityInterface|int $userOrId,
-        ReservationListEntityInterface|int $listOrId,
+        FinnaResourceListEntityInterface|int $listOrId,
         string $notes = ''
-    ): ReservationListResourceEntityInterface {
+    ): FinnaResourceListResourceEntityInterface {
         $resource = $resourceOrId instanceof ResourceEntityInterface
             ? $resourceOrId : $this->getDbService(ResourceServiceInterface::class)->getResourceById($resourceOrId);
         if (!$resource) {
             throw new Exception("Cannot retrieve resource $resourceOrId");
         }
         $list = $listOrId instanceof UserListEntityInterface
-            ? $listOrId : $this->getDbService(ReservationListServiceInterface::class)->getReservationListById($listOrId);
+            ? $listOrId : $this->getDbService(FinnaResourceListServiceInterface::class)->getFinnaResourceListById($listOrId);
         if (!$list) {
             throw new Exception("Cannot retrieve list $listOrId");
         }
@@ -99,7 +99,7 @@ class ReservationListResourceService extends AbstractDbService implements
             'resource_id' => $resource->getId(),
             'list_id' => $list->getId(),
         ];
-        if (!($result = $this->getDbTable(ReservationListResource::class)->select($params)->current())) {
+        if (!($result = $this->getDbTable(FinnaResourceListResource::class)->select($params)->current())) {
             $result = $this->createEntity()
                 ->setResource($resource)
                 ->setList($list);
@@ -124,7 +124,7 @@ class ReservationListResourceService extends AbstractDbService implements
     public function unlinkFavorites(
         int|array|null $resourceId,
         UserEntityInterface|int $userOrId,
-        ReservationListEntityInterface|int|null $listOrId = null
+        FinnaResourceListEntityInterface|int|null $listOrId = null
     ): void {
         // Build the where clause to figure out which rows to remove:
         $listId = is_int($listOrId) ? $listOrId : $listOrId?->getId();
@@ -140,17 +140,17 @@ class ReservationListResourceService extends AbstractDbService implements
         };
 
         // Delete the rows:
-        $this->getDbTable(ReservationListResource::class)->delete($callback);
+        $this->getDbTable(FinnaResourceListResource::class)->delete($callback);
     }
 
     /**
      * Create a UserResource entity object.
      *
-     * @return ReservationListResourceEntityInterface
+     * @return FinnaResourceListResourceEntityInterface
      */
-    public function createEntity(): ReservationListResourceEntityInterface
+    public function createEntity(): FinnaResourceListResourceEntityInterface
     {
-        return $this->getDbTable(ReservationListResource::class)->createRow();
+        return $this->getDbTable(FinnaResourceListResource::class)->createRow();
     }
 
     /**
@@ -163,24 +163,23 @@ class ReservationListResourceService extends AbstractDbService implements
      */
     public function changeResourceId(int $old, int $new): void
     {
-        $this->getDbTable(ReservationListResource::class)->update(['resource_id' => $new], ['resource_id' => $old]);
+        $this->getDbTable(FinnaResourceListResource::class)->update(['resource_id' => $new], ['resource_id' => $old]);
     }
 
     /**
      * Get resources for a reservation list
      *
-     * @param ReservationListEntityInterface $list
+     * @param FinnaResourceListEntityInterface $list
      *
      * @return array
      */
     public function getResourcesForList(
         UserEntityInterface $user,
-        ?ReservationListEntityInterface $list = null,
+        ?FinnaResourceListEntityInterface $list = null,
         ?string $sort = null,
         int $offset = 0,
         int $limit = null
-    ): array
-    {
+    ): array {
         return iterator_to_array(
             $this->getDbTable(Resource::class)->getReservationResources(
                 $user?->getId() ?? null,
@@ -188,7 +187,7 @@ class ReservationListResourceService extends AbstractDbService implements
                 $sort,
                 $offset,
                 $limit
-                )
+            )
         );
     }
 
@@ -199,6 +198,6 @@ class ReservationListResourceService extends AbstractDbService implements
      */
     public function deduplicate(): void
     {
-        $this->getDbTable(ReservationListResource::class)->deduplicate();
+        $this->getDbTable(FinnaResourceListResource::class)->deduplicate();
     }
 }

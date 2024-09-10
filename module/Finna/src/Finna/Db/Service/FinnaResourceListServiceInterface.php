@@ -2,37 +2,37 @@
 
 namespace Finna\Db\Service;
 
-use Finna\Db\Entity\ReservationListEntityInterface;
+use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\DbServiceInterface;
 
-interface ReservationListServiceInterface extends DbServiceInterface
+interface FinnaResourceListServiceInterface extends DbServiceInterface
 {
     /**
-     * Create a ReservationList entity object.
+     * Create a FinnaResourceList entity object.
      *
-     * @return ReservationListEntityInterface
+     * @return FinnaResourceListEntityInterface
      */
-    public function createEntity(): ReservationListEntityInterface;
+    public function createEntity(): FinnaResourceListEntityInterface;
 
     /**
      * Delete a user list entity.
      *
-     * @param ReservationListEntityInterface|int $listOrId List entity object or ID to delete
+     * @param FinnaResourceListEntityInterface|int $listOrId List entity object or ID to delete
      *
      * @return void
      */
-    public function deleteReservationList(ReservationListEntityInterface|int $listOrId): void;
+    public function deleteFinnaResourceList(FinnaResourceListEntityInterface|int $listOrId): void;
 
     /**
      * Retrieve a list object.
      *
      * @param int $id Numeric ID for existing list.
      *
-     * @return ReservationListEntityInterface
+     * @return FinnaResourceListEntityInterface
      * @throws RecordMissingException
      */
-    public function getReservationListById(int $id): ReservationListEntityInterface;
+    public function getFinnaResourceListById(int $id): FinnaResourceListEntityInterface;
 
     /**
      * Get public lists.
@@ -40,7 +40,7 @@ interface ReservationListServiceInterface extends DbServiceInterface
      * @param array $includeFilter List of list ids or entities to include in result.
      * @param array $excludeFilter List of list ids or entities to exclude from result.
      *
-     * @return ReservationListEntityInterface[]
+     * @return FinnaResourceListEntityInterface[]
      */
     public function getPublicLists(array $includeFilter = [], array $excludeFilter = []): array;
 
@@ -53,7 +53,7 @@ interface ReservationListServiceInterface extends DbServiceInterface
      * @return array
      * @throws Exception
      */
-    public function getReservationListsAndCountsByUser(UserEntityInterface|int $userOrId): array;
+    public function getFinnaResourceListsAndCountsByUser(UserEntityInterface|int $userOrId): array;
 
     /**
      * Get lists associated with a particular tag and/or list of IDs. If IDs and
@@ -65,9 +65,9 @@ interface ReservationListServiceInterface extends DbServiceInterface
      * @param bool                 $andTags           Use AND operator when filtering by tag.
      * @param bool                 $caseSensitiveTags Should we treat tags case-sensitively?
      *
-     * @return ReservationListEntityInterface[]
+     * @return FinnaResourceListEntityInterface[]
      */
-    public function getReservationListsByTagAndId(
+    public function getFinnaResourceListsByTagAndId(
         string|array|null $tag = null,
         int|array|null $listId = null,
         bool $publicOnly = true,
@@ -80,9 +80,9 @@ interface ReservationListServiceInterface extends DbServiceInterface
      *
      * @param UserEntityInterface|int $userOrId User entity object or ID
      *
-     * @return ReservationListEntityInterface[]
+     * @return FinnaResourceListEntityInterface[]
      */
-    public function getReservationListsByUser(UserEntityInterface|int $userOrId): array;
+    public function getFinnaResourceListsByUser(UserEntityInterface|int $userOrId): array;
 
     /**
      * Get lists containing a specific record.
@@ -92,11 +92,21 @@ interface ReservationListServiceInterface extends DbServiceInterface
      * @param UserEntityInterface|int|null $userOrId Optional user ID or entity object (to limit results
      * to a particular user).
      *
-     * @return ReservationListEntityInterface[]
+     * @return FinnaResourceListEntityInterface[]
      */
     public function getListsContainingRecord(
         string $recordId,
         string $source = DEFAULT_SEARCH_BACKEND,
         UserEntityInterface|int|null $userOrId = null
     ): array;
+
+            /**
+     * Retrieve a list object.
+     *
+     * @param int $id Numeric ID for existing list.
+     *
+     * @return FinnaResourceListEntityInterface
+     * @throws RecordMissingException
+     */
+    public function getUserListById(int $id): FinnaResourceListEntityInterface;
 }

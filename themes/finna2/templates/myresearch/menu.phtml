@@ -19,7 +19,7 @@
       ];
       $listParams['lists'] = $user?->getLists();
     }
-    if ($reservationListOpen = $this->active === 'reservationList') {
+    if ($finnaResourceListOpen = $this->active === 'FinnaResourceList') {
       $list = $this->results?->getListObject() ?? [];
       $listParams = [
         'activeId' => $list['id'] ?? false,
@@ -27,7 +27,7 @@
         'results' => $this->results,
         'user' => $user,
       ];
-      $listParams['lists'] = $user?->getReservationLists();
+      $listParams['lists'] = $user?->getFinnaResourceLists();
     }
 
     $menuListItems = [];
@@ -91,10 +91,10 @@
         'translation' => 'saved_items',
         'show' => $this->userlist()->getMode() !== 'disabled',
       ],
-      'reservationList' => [
-        'url' => 'reservationlist-home',
+      'FinnaResourceList' => [
+        'url' => 'FinnaResourceList-home',
         'translation' => 'Reservation List',
-        'show' => $this->userlist()->getMode() !== 'disabled' && $user->getReservationLists(),
+        'show' => $this->userlist()->getMode() !== 'disabled' && $user->getFinnaResourceLists(),
       ],
       'logout' => [
         'url' => 'myresearch-logout',
@@ -127,14 +127,14 @@
           'params' => $listParams ?? [],
         ],
       ],
-      'reservationList' => [
-        'active' => $reservationListOpen,
-        'url' => 'reservationlist-home',
-        'translation' => 'ReservationList::Research Room Reservations',
-        'show' => $this->userlist()->getMode() !== 'disabled' && $user->getReservationLists(),
+      'FinnaResourceList' => [
+        'active' => $finnaResourceListOpen,
+        'url' => 'FinnaResourceList-home',
+        'translation' => 'FinnaResourceList::Research Room Reservations',
+        'show' => $this->userlist()->getMode() !== 'disabled' && $user->getFinnaResourceLists(),
         'partial' => [
-          'url' => 'reservationlist/reservationlist-navi.phtml',
-          'wrapperClass' => 'reservationlist-bar',
+          'url' => 'FinnaResourceList/FinnaResourceList-navi.phtml',
+          'wrapperClass' => 'FinnaResourceList-bar',
           'params' => $listParams ?? [],
         ],
       ],

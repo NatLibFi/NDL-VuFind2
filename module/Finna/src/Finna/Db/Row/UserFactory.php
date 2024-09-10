@@ -65,7 +65,7 @@ class UserFactory extends \VuFind\Db\Row\UserFactory
         $ils = $container->get(\VuFind\ILS\Connection::class);
         $result->setILS($ils);
         $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
-        $result->setReservationListService($dbServiceManager->get(\Finna\Db\Service\ReservationListServiceInterface::class));
+        $result->setFinnaResourceListService($dbServiceManager->get(\Finna\Db\Service\FinnaResourceListServiceInterface::class));
         return $result;
     }
 }

@@ -2,15 +2,15 @@
 
 namespace Finna\Db\Service;
 
-use Finna\Db\Entity\ReservationListEntityInterface;
-use Finna\Db\Entity\ReservationListResourceEntityInterface;
+use Finna\Db\Entity\FinnaResourceListEntityInterface;
+use Finna\Db\Entity\FinnaResourceListResourceEntityInterface;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Entity\UserListEntityInterface;
 use VuFind\Db\Entity\UserResourceEntityInterface;
 use VuFind\Db\Service\DbServiceInterface;
 
-interface ReservationListResourceServiceInterface extends DbServiceInterface
+interface FinnaResourceListResourceServiceInterface extends DbServiceInterface
 {
     /**
      * Get information saved in a user's favorites for a particular record.
@@ -27,7 +27,7 @@ interface ReservationListResourceServiceInterface extends DbServiceInterface
     public function getFavoritesForRecord(
         string $recordId,
         string $source = DEFAULT_SEARCH_BACKEND,
-        ReservationListEntityInterface|int|null $listOrId = null,
+        FinnaResourceListEntityInterface|int|null $listOrId = null,
         UserEntityInterface|int|null $userOrId = null
     ): array;
 
@@ -41,27 +41,27 @@ interface ReservationListResourceServiceInterface extends DbServiceInterface
     /**
      * Create user/resource/list link if one does not exist; update notes if one does.
      *
-     * @param ResourceEntityInterface|int        $resourceOrId Entity or ID of resource to link up
-     * @param UserEntityInterface|int            $userOrId     Entity or ID of user creating link
-     * @param ReservationListEntityInterface|int $listOrId     Entity or ID of list to link up
-     * @param string                             $notes        Notes to associate with link
+     * @param ResourceEntityInterface|int          $resourceOrId Entity or ID of resource to link up
+     * @param UserEntityInterface|int              $userOrId     Entity or ID of user creating link
+     * @param FinnaResourceListEntityInterface|int $listOrId     Entity or ID of list to link up
+     * @param string                               $notes        Notes to associate with link
      *
      * @return UserResource|false
      */
     public function createOrUpdateLink(
         ResourceEntityInterface|int $resourceOrId,
         UserEntityInterface|int $userOrId,
-        ReservationListEntityInterface|int $listOrId,
+        FinnaResourceListEntityInterface|int $listOrId,
         string $notes = ''
-    ): ReservationListResourceEntityInterface;
+    ): FinnaResourceListResourceEntityInterface;
 
     /**
      * Unlink rows for the specified resource.
      *
-     * @param int|int[]|null                     $resourceId ID (or array of IDs) of resource(s) to unlink (null for ALL
-     *                                                       matching resources)
-     * @param UserEntityInterface|int            $userOrId   ID or entity representing user removing links
-     * @param ReservationListEntityInterface|int $listOrId   ID or entity representing list to unlink (null for ALL
+     * @param int|int[]|null                       $resourceId ID (or array of IDs) of resource(s) to unlink (null for ALL
+     *                                                         matching resources)
+     * @param UserEntityInterface|int              $userOrId   ID or entity representing user removing links
+     * @param FinnaResourceListEntityInterface|int $listOrId   ID or entity representing list to unlink (null for ALL
      * matching lists)
      *
      * @return void
@@ -69,15 +69,15 @@ interface ReservationListResourceServiceInterface extends DbServiceInterface
     public function unlinkFavorites(
         int|array|null $resourceId,
         UserEntityInterface|int $userOrId,
-        ReservationListEntityInterface|int|null $listOrId = null
+        FinnaResourceListEntityInterface|int|null $listOrId = null
     ): void;
 
     /**
      * Create a UserResource entity object.
      *
-     * @return ReservationListResourceEntityInterface
+     * @return FinnaResourceListResourceEntityInterface
      */
-    public function createEntity(): ReservationListResourceEntityInterface;
+    public function createEntity(): FinnaResourceListResourceEntityInterface;
 
     /**
      * Change all matching rows to use the new resource ID instead of the old one (called when an ID changes).
@@ -99,13 +99,13 @@ interface ReservationListResourceServiceInterface extends DbServiceInterface
     /**
      * Get resources for a reservation list
      *
-     * @param ReservationListEntityInterface $list
+     * @param FinnaResourceListEntityInterface $list
      *
      * @return array
      */
     public function getResourcesForList(
         UserEntityInterface $user,
-        ?ReservationListEntityInterface $list = null,
+        ?FinnaResourceListEntityInterface $list = null,
         ?string $sort = null,
         int $offset = 0,
         int $limit = null

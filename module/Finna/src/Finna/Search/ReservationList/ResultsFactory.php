@@ -27,10 +27,10 @@
  * @link     https://vufind.org/wiki/development Wiki
  */
 
-namespace Finna\Search\ReservationList;
+namespace Finna\Search\FinnaResourceList;
 
-use Finna\Db\Service\ReservationListResourceServiceInterface;
-use Finna\Db\Service\ReservationListServiceInterface;
+use Finna\Db\Service\FinnaResourceListResourceServiceInterface;
+use Finna\Db\Service\FinnaResourceListServiceInterface;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
@@ -70,8 +70,8 @@ class ResultsFactory extends \VuFind\Search\Results\ResultsFactory
             throw new \Exception('Unexpected options sent to factory!');
         }
         $serviceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
-        $resourceService = $serviceManager->get(ReservationListResourceServiceInterface::class);
-        $listService = $serviceManager->get(ReservationListServiceInterface::class);
+        $resourceService = $serviceManager->get(FinnaResourceListResourceServiceInterface::class);
+        $listService = $serviceManager->get(FinnaResourceListServiceInterface::class);
         $obj = parent::__invoke(
             $container,
             $requestedName,

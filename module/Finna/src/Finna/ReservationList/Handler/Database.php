@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  ReservationList
+ * @package  FinnaResourceList
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  https://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
@@ -29,9 +29,9 @@
 
 declare(strict_types=1);
 
-namespace Finna\ReservationList\Handler;
+namespace Finna\FinnaResourceList\Handler;
 
-use Finna\Db\Table\ReservationList;
+use Finna\Db\Table\FinnaResourceList;
 use Laminas\Stdlib\Parameters;
 use VuFind\Db\Entity\UserEntityInterface as User;
 use VuFind\Db\Table\Resource as ResourceTable;
@@ -41,7 +41,7 @@ use VuFind\Db\Table\UserResource as UserResourceTable;
  * Class Database. Controls the data of lists in database.
  *
  * @category VuFind
- * @package  ReservationList
+ * @package  FinnaResourceList
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  https://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
@@ -65,12 +65,12 @@ class Database implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
     /**
      * Construct.
      *
-     * @param ReservationList   $reservationList   Reservation list table
+     * @param FinnaResourceList $finnaResourceList Reservation list table
      * @param ResourceTable     $resource          Resource database table
      * @param UserResourceTable $userResourceTable UserResource table
      */
     public function __construct(
-        protected ReservationList $reservationList,
+        protected FinnaResourceList $finnaResourceList,
         protected ResourceTable $resource,
         protected UserResourceTable $userResourceTable,
     ) {
@@ -86,7 +86,7 @@ class Database implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
      */
     public function hasAuthority(User $user, int $list_id): bool
     {
-        return $this->reservationList->getExisting($list_id)->editAllowed($user);
+        return $this->resourceList->getExisting($list_id)->editAllowed($user);
     }
 
     /**
@@ -107,7 +107,7 @@ class Database implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
         string $datasource,
         string $building
     ): int {
-        return $this->reservationList->getNew($user)->updateFromRequest($user, new Parameters([
+        return $this->resourceList->getNew($user)->updateFromRequest($user, new Parameters([
             'description' => $description,
             'title' => $title,
             'datasource' => $datasource,
@@ -163,7 +163,7 @@ class Database implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
      */
     public function getList(User $user, int $list_id): iterable
     {
-        return $this->reservationList->getExisting($list_id)->toArray();
+        return $this->resourceList->getExisting($list_id)->toArray();
     }
 
     /**
@@ -177,7 +177,7 @@ class Database implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
      */
     public function getListsContaining(User $user, string $recordId, string $source = ''): iterable
     {
-        return $this->reservationList->getListsContainingResource($recordId, $source, $user);
+        return $this->resourceList->getListsContainingResource($recordId, $source, $user);
     }
 
     /**
@@ -203,16 +203,16 @@ class Database implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
          *
          * @var \Finna\Db\Table\Resource
          */
-        $resourceTable = $this->reservationList->getDbTable('Resource');
+        $resourceTable = $this->resourceList->getDbTable('Resource');
         $resource = $resourceTable->getOr($recordId, $source);
 
         /**
          * List to Resource
          *
-         * @var \Finna\Db\Table\ReservationListResource
+         * @var \Finna\Db\Table\FinnaResourceListResource
          */
-        $reservationListResource = $this->reservationList->getDbTable(\Finna\Db\Table\ReservationListResource::class);
-        $reservationListResource->createOrUpdateLink(
+        $finnaResourceListResource = $this->resourceList->getDbTable(\Finna\Db\Table\FinnaResourceListResource::class);
+        $finnaResourceListResource->createOrUpdateLink(
             $resource->id,
             $user->id,
             $list_id,
@@ -231,7 +231,7 @@ class Database implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
      */
     public function orderList(User $user, int $list_id, string $pickup_date): bool
     {
-        $currentList = $this->reservationList->getExisting($list_id);
+        $currentList = $this->resourceList->getExisting($list_id);
         $result = $currentList->setOrdered($user, $pickup_date);
         return !!$result;
     }
@@ -246,7 +246,7 @@ class Database implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
      */
     public function deleteList(User $user, int $list_id): bool
     {
-        $currentList = $this->reservationList->getExisting($list_id);
+        $currentList = $this->resourceList->getExisting($list_id);
         return !!$currentList->delete($user);
     }
 
@@ -271,7 +271,7 @@ class Database implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
             $sorted[$source][] = $id;
         }
 
-        $list = $this->reservationList->getExisting($list_id);
+        $list = $this->resourceList->getExisting($list_id);
         foreach ($sorted as $source => $ids) {
             $list->removeResourcesById($user, $ids, $source);
         }
@@ -293,7 +293,7 @@ class Database implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
          *
          * @var \Finna\Db\Table\Resource
          */
-        $resourceTable = $this->reservationList->getDbTable(\Finna\Db\Table\Resource::class);
+        $resourceTable = $this->resourceList->getDbTable(\Finna\Db\Table\Resource::class);
         return $resourceTable->getReservationResources($user->id, $list_id);
     }
 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Table Definition for finna_reservation_list
+ * Table Definition for finna_resource_list
  *
  * PHP version 8.1
  *
@@ -41,7 +41,7 @@ use VuFind\Db\Table\Gateway;
 use VuFind\Db\Table\PluginManager;
 
 /**
- * Table Definition for finna_reservation_list
+ * Table Definition for finna_resource_list
  *
  * @category VuFind
  * @package  Db_Table
@@ -50,7 +50,7 @@ use VuFind\Db\Table\PluginManager;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
-class ReservationList extends Gateway implements DbServiceAwareInterface
+class FinnaResourceList extends Gateway implements DbServiceAwareInterface
 {
     use DbServiceAwareTrait;
 
@@ -71,7 +71,7 @@ class ReservationList extends Gateway implements DbServiceAwareInterface
         $cfg,
         ?RowGateway $rowObj = null,
         protected $session = null,
-        $table = 'finna_reservation_list'
+        $table = 'finna_resource_list'
     ) {
         Gateway::__construct($adapter, $tm, $cfg, $rowObj, $table);
         $this->session = $session;
@@ -98,14 +98,14 @@ class ReservationList extends Gateway implements DbServiceAwareInterface
                 [
                     new Expression(
                         'DISTINCT(?)',
-                        ['finna_reservation_list.id'],
+                        ['finna_resource_list.id'],
                         [Expression::TYPE_IDENTIFIER]
                     ), Select::SQL_STAR,
                 ]
             );
             $select->join(
-                ['ur' => 'finna_reservation_list_resource'],
-                'ur.list_id = finna_reservation_list.id',
+                ['ur' => 'finna_resource_list_resource'],
+                'ur.list_id = finna_resource_list.id',
                 []
             );
             $select->join(

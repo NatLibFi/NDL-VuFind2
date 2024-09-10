@@ -34,8 +34,9 @@
 
 namespace Finna\Controller;
 
-use Finna\Db\Service\ReservationListServiceInterface;
+use Finna\Db\Service\FinnaResourceListServiceInterface;
 use Finna\Form\Form;
+use Finna\ReservationList\ReservationListService;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use VuFind\Controller\AbstractBase;
 use VuFind\Exception\ListPermission as ListPermissionException;
@@ -55,17 +56,17 @@ use VuFind\Exception\LoginRequired as LoginRequiredException;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-abstract class AbstractReservationListController extends AbstractBase
+class FinnaResourceListController extends AbstractBase
 {
     /**
      * Constructor
      *
-     * @param ServiceLocatorInterface         $sm                     Service locator
-     * @param ReservationListServiceInterface $reservationListService Reservation list service
+     * @param ServiceLocatorInterface           $sm                  Service locator
+     * @param ReservationListService $resourceListService Reservation list service
      */
     public function __construct(
         ServiceLocatorInterface $sm,
-        protected ReservationListServiceInterface $reservationListService
+        protected ReservationListService $finnaResourceListService
     ) {
         parent::__construct($sm);
     }
@@ -110,7 +111,7 @@ abstract class AbstractReservationListController extends AbstractBase
         $source = $this->getParam('source');
         $newList = $this->getParam('newList');
         if ($newList && !$this->formWasSubmitted('submit')) {
-            $view->setTemplate('reservationlist/add-list');
+            $view->setTemplate('FinnaResourceList/add-list');
             $view->source = $source;
             $view->recordId = $recordId;
             return $view;
@@ -129,22 +130,18 @@ abstract class AbstractReservationListController extends AbstractBase
                 $building = $driver->getBuildings()[0] ?? '';
                 $datasource = $driver->getDataSource();
                 if (!$title) {
-                    $this->flashMessenger()->addErrorMessage('reservation_list_missing_title');
-                    $view->setTemplate('reservationlist/add-list');
+                    $this->flashMessenger()->addErrorMessage('inventory_list_missing_title');
+                    $view->setTemplate('FinnaResourceList/add-list');
                     $view->source = $source;
                     $view->recordId = $recordId;
                     return $view;
                 }
-                $this->reservationListService->addListForUser(
+                $this->finnaResourceListService->createListForUser(
                     $this->getUser(),
-                    $this->getParam('desc') ?? '',
-                    $this->getParam('title') ?? '',
-                    $datasource,
-                    $building,
                 );
             } elseif ('saveItem' === $state) {
                 // Seems like someone wants to save stuff into a list.
-                $this->reservationListService->addRecordToList(
+                $this->finnaResourceListService->addRecordToList(
                     $this->getUser(),
                     $driver->getUniqueID(),
                     $this->getParam('list'),
@@ -156,18 +153,18 @@ abstract class AbstractReservationListController extends AbstractBase
                   : $this->redirect()->toRoute('home');
             }
         }
-        $view->lists = $this->reservationListService->getListsWithoutRecord(
+        $view->lists = $this->finnaResourceListService->getLists(
             $this->getUser(),
             $driver->getUniqueID(),
             $driver->getSourceIdentifier(),
             $driver->getDatasource()
         );
-        $view->setTemplate('reservationlist/select-list');
+        $view->setTemplate('FinnaResourceList/select-list');
         return $view;
     }
 
     /**
-     * List action for the ReservationListController.
+     * List action for the FinnaResourceListController.
      *
      * @return \Laminas\View\Model\ViewModel|\Laminas\Http\Response
      */
@@ -181,7 +178,7 @@ abstract class AbstractReservationListController extends AbstractBase
         // Try to open the list page, if the list is not found, redirect to home.
         try {
             $results = $this->getListAsResults($request);
-            $currentList = $this->reservationListService->getReservationListById($request['id']);
+            $currentList = $this->finnaResourceListService->getFinnaResourceListById($request['id']);
             $viewParams = [
                 'list' => $currentList,
                 'results' => $results,
@@ -215,12 +212,12 @@ abstract class AbstractReservationListController extends AbstractBase
         }
         $listId = $this->getParam('id');
         // Check that list is not ordered or deleted
-        $list = $this->reservationListService->getListForUser($user, $listId);
+        $list = $this->finnaResourceListService->getListForUser($user, $listId);
         if (!$list || $list['ordered']) {
             throw new \VuFind\Exception\Forbidden('List not found or ordered');
         }
         // Fill out records to form
-        $recordsHTML = $this->reservationListService->getRecordsForListHTML($user, $listId);
+        $recordsHTML = $this->finnaResourceListService->getRecordsForListHTML($user, $listId);
         $request = $this->getRequest();
         $post = $request->getPost();
         $post->set('materials', $recordsHTML);
@@ -245,10 +242,10 @@ abstract class AbstractReservationListController extends AbstractBase
         }
         $form->setFormId($formId, $params);
         $view = $this->createViewModel(compact('form', 'formId', 'user', 'listId'));
-        $view->setTemplate('reservationlist/form');
+        $view->setTemplate('FinnaResourceList/form');
 
         $params = $this->params();
-        $recordsHTML = $this->reservationListService->getRecordsForListHTML($user, $listId);
+        $recordsHTML = $this->finnaResourceListService->getRecordsForListHTML($user, $listId);
         if (!$this->formWasSubmitted('submit')) {
             $form->setData(
                 $params->fromPost() + [
@@ -263,17 +260,17 @@ abstract class AbstractReservationListController extends AbstractBase
             return $view;
         }
         $handler = $form->getPrimaryHandler();
-        if (!($handler instanceof \Finna\Form\Handler\ReservationListEmail)) {
+        if (!($handler instanceof \Finna\Form\Handler\FinnaResourceListEmail)) {
             throw new \Exception('Invalid form handler');
         }
         $handler->setListId($listId);
         $success = $handler->handle($form, $this->params(), $user);
         if ($success) {
-            $this->flashMessenger()->addSuccessMessage('ReservationList::form_response');
-            $this->reservationListService->setOrdered($user, $listId, $request['pickup_date'] ?? '');
+            $this->flashMessenger()->addSuccessMessage('FinnaResourceList::form_response');
+            $this->finnaResourceListService->setOrdered($user, $listId, $request['pickup_date'] ?? '');
             return $this->inLightbox()  // different behavior for lightbox context
                 ? $this->getRefreshResponse()
-                : $this->redirect()->toRoute('reservationlist-list', ['id' => $listId]);
+                : $this->redirect()->toRoute('FinnaResourceList-list', ['id' => $listId]);
         } else {
             $this->flashMessenger()->addErrorMessage(
                 $this->translate('could_not_process_feedback')
@@ -293,7 +290,7 @@ abstract class AbstractReservationListController extends AbstractBase
         $listID = $this->getParam('id');
         if ($this->getParam('confirm')) {
             try {
-                $this->reservationListService->deleteList($this->getUser(), $listID);
+                $this->finnaResourceListService->deleteList($this->getUser(), $listID);
             } catch (LoginRequiredException | ListPermissionException $e) {
                 $user = $this->getUser();
                 if ($user == false) {
@@ -305,13 +302,13 @@ abstract class AbstractReservationListController extends AbstractBase
             // Redirect to MyResearch home
             return $this->inLightbox()  // different behavior for lightbox context
                 ? $this->getRefreshResponse()
-                : $this->redirect()->toRoute('reservationlist-home');
+                : $this->redirect()->toRoute('FinnaResourceList-home');
         }
         return $this->confirmDelete(
             $listID,
-            $this->url()->fromRoute('reservationlist-delete'),
-            $this->url()->fromRoute('reservationlist-home'),
-            'ReservationList::confirm_delete_list',
+            $this->url()->fromRoute('FinnaResourceList-delete'),
+            $this->url()->fromRoute('FinnaResourceList-home'),
+            'FinnaResourceList::confirm_delete_list',
             [],
             ['id' => $listID]
         );
@@ -337,7 +334,7 @@ abstract class AbstractReservationListController extends AbstractBase
         }
         if ($this->getParam('confirm')) {
             try {
-                $this->reservationListService->deleteItems($ids, $listID, $user);
+                $this->finnaResourceListService->deleteItems($ids, $listID, $user);
             } catch (LoginRequiredException | ListPermissionException $e) {
                 $user = $this->getUser();
                 if ($user == false) {
@@ -349,13 +346,13 @@ abstract class AbstractReservationListController extends AbstractBase
             // Redirect to MyResearch home
             return $this->inLightbox()  // different behavior for lightbox context
                 ? $this->getRefreshResponse()
-                : $this->redirect()->toRoute('reservationlist-list', ['id' => $listID]);
+                : $this->redirect()->toRoute('FinnaResourceList-list', ['id' => $listID]);
         }
         return $this->confirmDelete(
             $listID,
-            $this->url()->fromRoute('reservationlist-deletebulk'),
-            $this->url()->fromRoute('reservationlist-home'),
-            'ReservationList::confirm_delete_bulk',
+            $this->url()->fromRoute('FinnaResourceList-deletebulk'),
+            $this->url()->fromRoute('FinnaResourceList-home'),
+            'FinnaResourceList::confirm_delete_bulk',
             [],
             [
                 'listID' => $listID,
@@ -380,7 +377,7 @@ abstract class AbstractReservationListController extends AbstractBase
         $id,
         $url,
         $fallbackUrl,
-        $title = 'ReservationList::confirm_delete',
+        $title = 'FinnaResourceList::confirm_delete',
         $messages = 'confirm_delete',
         $extras = []
     ) {
@@ -397,7 +394,7 @@ abstract class AbstractReservationListController extends AbstractBase
     }
 
     /**
-     * Home action for the ReservationListController.
+     * Home action for the FinnaResourceListController.
      *
      * @return \Laminas\View\Model\ViewModel
      */
@@ -407,7 +404,7 @@ abstract class AbstractReservationListController extends AbstractBase
         if (!$user) {
             return $this->forceLogin();
         }
-        $lists = $this->reservationListService->getReservationListsByUser($user);
+        $lists = $this->finnaResourceListService->getFinnaResourceListsByUser($user);
         $view = $this->createViewModel(
             ['lists' => $lists]
         );
@@ -451,7 +448,7 @@ abstract class AbstractReservationListController extends AbstractBase
             $listener->attach($runner->getEventManager()->getSharedManager());
         };
 
-        return $runner->run($request, 'ReservationList', $setupCallback);
+        return $runner->run($request, 'FinnaResourceList', $setupCallback);
     }
 
     /**
@@ -463,6 +460,6 @@ abstract class AbstractReservationListController extends AbstractBase
      */
     protected function listsEnabledForDatasource(string $datasource): bool
     {
-        return $this->getConfig('ReservationList')[$datasource]['enabled'] ?? false;
+        return $this->getConfig('FinnaResourceList')[$datasource]['enabled'] ?? false;
     }
 }

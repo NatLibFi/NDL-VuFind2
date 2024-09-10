@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class ReservationListEmail
+ * Class FinnaResourceListEmail
  *
  * PHP version 8.1
  *
@@ -37,7 +37,7 @@ use Laminas\View\Renderer\RendererInterface;
 use VuFind\Mailer\Mailer;
 
 /**
- * Class ReservationListEmail
+ * Class FinnaResourceListEmail
  *
  * @category VuFind
  * @package  Form
@@ -46,7 +46,7 @@ use VuFind\Mailer\Mailer;
  * @license  https://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class ReservationListEmail extends \Finna\Form\Handler\Email
+class FinnaResourceListEmail extends \Finna\Form\Handler\Email
 {
     /**
      * Reservation list id
@@ -80,18 +80,18 @@ class ReservationListEmail extends \Finna\Form\Handler\Email
     /**
      * Constructor.
      *
-     * @param RendererInterface      $viewRenderer           View renderer
-     * @param Config                 $config                 Reservation List Configuration
-     * @param Mailer                 $mailer                 Mailer
-     * @param ReservationListService $reservationListService Reservation list service
-     * @param Config                 $reservationListConfig  Reservation list configuration
+     * @param RendererInterface        $viewRenderer             View renderer
+     * @param Config                   $config                   Reservation List Configuration
+     * @param Mailer                   $mailer                   Mailer
+     * @param FinnaResourceListService $finnaResourceListService Reservation list service
+     * @param Config                   $finnaResourceListConfig  Reservation list configuration
      */
     public function __construct(
         RendererInterface $viewRenderer,
         Config $config,
         Mailer $mailer,
-        protected ReservationListService $reservationListService,
-        protected Config $reservationListConfig
+        protected FinnaResourceListService $finnaResourceListService,
+        protected Config $finnaResourceListConfig
     ) {
         parent::__construct($viewRenderer, $config, $mailer);
     }
@@ -111,7 +111,7 @@ class ReservationListEmail extends \Finna\Form\Handler\Email
         ?\VuFind\Db\Row\User $user = null
     ): bool {
         if (
-            !$user || !$this->reservationListService->userHasAuthority($user, $this->getListId())
+            !$user || !$this->finnaResourceListService->userHasAuthority($user, $this->getListId())
         ) {
             return false;
         }

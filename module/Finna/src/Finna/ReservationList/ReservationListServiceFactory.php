@@ -29,6 +29,7 @@
 
 namespace Finna\ReservationList;
 
+use Finna\ReservationList\ReservationListService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 
@@ -36,7 +37,7 @@ use Psr\Container\ContainerInterface;
  * Reservation list service factory.
  *
  * @category VuFind
- * @package  ReservationList
+ * @package  FinnaResourceList
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
@@ -44,7 +45,7 @@ use Psr\Container\ContainerInterface;
 class ReservationListServiceFactory implements FactoryInterface
 {
     /**
-     * Create a ReservationListService object.
+     * Create a FinnaResourceListService object.
      *
      * @param ContainerInterface $sm      Service manager
      * @param string             $name    Service being created
@@ -55,8 +56,8 @@ class ReservationListServiceFactory implements FactoryInterface
     public function __invoke(ContainerInterface $sm, $name, array $options = null)
     {
         return new ReservationListService(
-            $sm->get(\Finna\ReservationList\Handler\PluginManager::class),
-            $sm->get(\VuFind\Config\PluginManager::class)->get('ReservationList')
+            $sm->get(\Finna\FinnaResourceList\Handler\PluginManager::class),
+            $sm->get(\VuFind\Config\PluginManager::class)->get('FinnaResourceList')
         );
     }
 }

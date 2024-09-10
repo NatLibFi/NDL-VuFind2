@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Table Definition for finna_reservation_list_resource
+ * Table Definition for finna_resource_list_resource
  *
  * PHP version 8.1
  *
@@ -30,7 +30,7 @@
 
 namespace Finna\Db\Table;
 
-use Finna\Db\Entity\ReservationListEntityInterface;
+use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
@@ -40,7 +40,7 @@ use VuFind\Db\Table\PluginManager;
 use function is_array;
 
 /**
- * Table Definition for finna_reservation_list_resource
+ * Table Definition for finna_resource_list_resource
  *
  * @category VuFind
  * @package  Db_Table
@@ -49,7 +49,7 @@ use function is_array;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
-class ReservationListResource extends \VuFind\Db\Table\Gateway
+class FinnaResourceListResource extends \VuFind\Db\Table\Gateway
 {
     /**
      * Constructor
@@ -65,7 +65,7 @@ class ReservationListResource extends \VuFind\Db\Table\Gateway
         PluginManager $tm,
         $cfg,
         ?RowGateway $rowObj = null,
-        $table = 'finna_reservation_list_resource'
+        $table = 'finna_resource_list_resource'
     ) {
         parent::__construct($adapter, $tm, $cfg, $rowObj, $table);
     }
@@ -163,13 +163,13 @@ class ReservationListResource extends \VuFind\Db\Table\Gateway
         /**
          * Reservation List Table
          *
-         * @var \Finna\Db\Table\ReservationList
+         * @var \Finna\Db\Table\FinnaResourceList
          */
-        $listTable = $this->getDbTable(\Finna\Db\Table\ReservationList::class);
+        $listTable = $this->getDbTable(\Finna\Db\Table\FinnaResourceList::class);
         /**
          * Reservation List row
          *
-         * @var \Finna\Db\Row\ReservationList
+         * @var \Finna\Db\Row\FinnaResourceList
          */
         $list = $listTable->getExisting($listId);
         if (empty($list->title)) {
@@ -182,11 +182,11 @@ class ReservationListResource extends \VuFind\Db\Table\Gateway
     /**
      * Get records for a list.
      *
-     * @param ReservationListEntityInterface $listId ID of list to retrieve.
+     * @param FinnaResourceListEntityInterface $listId ID of list to retrieve.
      *
      * @return \Laminas\Db\ResultSet\AbstractResultSet
      */
-    public function getRecordsForList(ReservationListEntityInterface $list): \Laminas\Db\ResultSet\AbstractResultSet
+    public function getRecordsForList(FinnaResourceListEntityInterface $list): \Laminas\Db\ResultSet\AbstractResultSet
     {
         $listId = $list->getId();
         $callback = function ($select) use ($listId) {
@@ -194,17 +194,17 @@ class ReservationListResource extends \VuFind\Db\Table\Gateway
                 [
                     new Expression(
                         'DISTINCT(?)',
-                        ['finna_reservation_list_resource.id'],
+                        ['finna_resource_list_resource.id'],
                         [Expression::TYPE_IDENTIFIER]
                     ), Select::SQL_STAR,
                 ]
             );
             $select->join(
                 ['r' => 'resource'],
-                'r.id = finna_reservation_list_resource.resource_id',
+                'r.id = finna_resource_list_resource.resource_id',
                 []
             );
-            $select->where->equalTo('finna_reservation_list_resource.list_id', $listId);
+            $select->where->equalTo('finna_resource_list_resource.list_id', $listId);
         };
         return $this->select($callback);
     }

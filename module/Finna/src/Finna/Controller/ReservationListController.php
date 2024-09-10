@@ -48,6 +48,6 @@ namespace Finna\Controller;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class ReservationListController extends AbstractReservationListController
+class ReservationListController extends FinnaResourceListController
 {
 }

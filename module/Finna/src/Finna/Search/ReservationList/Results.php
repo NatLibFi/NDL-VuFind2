@@ -27,10 +27,10 @@
  * @link     https://vufind.org Main Site
  */
 
-namespace Finna\Search\ReservationList;
+namespace Finna\Search\FinnaResourceList;
 
-use Finna\Db\Service\ReservationListResourceServiceInterface;
-use Finna\Db\Service\ReservationListServiceInterface;
+use Finna\Db\Service\FinnaResourceListResourceServiceInterface;
+use Finna\Db\Service\FinnaResourceListServiceInterface;
 use Finna\Db\Table\Resource as ResourceTable;
 use LmcRbacMvc\Service\AuthorizationServiceAwareInterface;
 use LmcRbacMvc\Service\AuthorizationServiceAwareTrait;
@@ -65,21 +65,21 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
     /**
      * Active user list (false if none).
      *
-     * @var ReservationListEntityInterface|bool
+     * @var FinnaResourceListEntityInterface|bool
      */
     protected $list = false;
 
     /**
      * Resource table
      *
-     * @var ReservationListResourceServiceInterface
+     * @var FinnaResourceListResourceServiceInterface
      */
-    protected $reservationListResourceService;
+    protected $resourceListResourceService;
 
     /**
      * UserList table
      *
-     * @var ReservationListServiceInterface
+     * @var FinnaResourceListServiceInterface
      */
     protected $listService;
 
@@ -100,22 +100,22 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
     /**
      * Constructor
      *
-     * @param \VuFind\Search\Base\Params      $params        Object representing user
-     *                                                       search parameters.
-     * @param SearchService                   $searchService Search service
-     * @param Loader                          $recordLoader  Record loader
-     * @param ResourceTable                   $resourceTable Resource table
-     * @param ReservationListServiceInterface $listTable     Reservation list table
+     * @param \VuFind\Search\Base\Params        $params        Object representing user
+     *                                                         search parameters.
+     * @param SearchService                     $searchService Search service
+     * @param Loader                            $recordLoader  Record loader
+     * @param ResourceTable                     $resourceTable Resource table
+     * @param FinnaResourceListServiceInterface $listTable     Reservation list table
      */
     public function __construct(
         \VuFind\Search\Base\Params $params,
         SearchService $searchService,
         Loader $recordLoader,
-        ReservationListResourceServiceInterface $resourceService,
-        ReservationListServiceInterface $listService
+        FinnaResourceListResourceServiceInterface $resourceService,
+        FinnaResourceListServiceInterface $listService
     ) {
         parent::__construct($params, $searchService, $recordLoader);
-        $this->reservationListResourceService = $resourceService;
+        $this->resourceListResourceService = $resourceService;
         $this->listService = $listService;
     }
 
@@ -185,7 +185,7 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
         }
 
         // How many results were there?
-        $rawResults = $this->reservationListResourceService->getResourcesForList(
+        $rawResults = $this->resourceListResourceService->getResourcesForList(
             $this->user,
             $list
         );
@@ -196,7 +196,7 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
         // Apply offset and limit if necessary!
         $limit = $this->getParams()->getLimit();
         if ($this->resultTotal > $limit) {
-            $rawResults = $this->reservationListResourceService->getResourcesForList(
+            $rawResults = $this->resourceListResourceService->getResourcesForList(
                 $this->user,
                 $list,
                 null,
@@ -224,7 +224,7 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
      * Get the list object associated with the current search (null if no list
      * selected).
      *
-     * @return ReservationListEntityInterface|null
+     * @return FinnaResourceListEntityInterface|null
      */
     public function getListObject()
     {
@@ -235,7 +235,7 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
             $filters = $this->getParams()->getRawFilters();
             $listId = $filters['lists'][0] ?? null;
             $this->list = (null === $listId)
-                ? null : $this->listService->getReservationListById($listId);
+                ? null : $this->listService->getFinnaResourceListById($listId);
         }
         return $this->list;
     }

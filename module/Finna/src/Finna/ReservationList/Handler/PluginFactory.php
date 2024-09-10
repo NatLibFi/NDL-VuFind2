@@ -21,20 +21,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  ReservationList
+ * @package  FinnaResourceList
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
 
-namespace Finna\ReservationList\Handler;
+namespace Finna\FinnaResourceList\Handler;
 
 /**
  * Reservation list handler plugin factory
  *
  * @category VuFind
- * @package  ReservationList
+ * @package  FinnaResourceList
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
@@ -47,6 +47,6 @@ class PluginFactory extends \VuFind\ServiceManager\AbstractPluginFactory
      */
     public function __construct()
     {
-        $this->defaultNamespace = 'Finna\ReservationList\Handler';
+        $this->defaultNamespace = 'Finna\FinnaResourceList\Handler';
     }
 }

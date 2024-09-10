@@ -1,10 +1,10 @@
-<!-- START of: finna - myresearch/reservationlist.phtml -->
+<!-- START of: finna - myresearch/FinnaResourceList.phtml -->
 <?php
   // Set up page title:
-  $this->headTitle($this->translate('ReservationList::Reservation List'));
+  $this->headTitle($this->translate('FinnaResourceList::Reservation List'));
 
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('reservationlist-list', ['id' => $this->id]) . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('ReservationList::Reservation List') . '</li>';
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('FinnaResourceList-list', ['id' => $this->id]) . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('FinnaResourceList::Reservation List') . '</li>';
 
   $user = $this->auth()->isLoggedIn();
   $recordTotal = $this->results->getResultTotal();
@@ -13,12 +13,12 @@
 ?>
 
 <!-- Leftside navigationbar -->
-<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'reservationList']); ?>
+<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'FinnaResourceList']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?> reservation-list-body">
   <div class="my-research-content">
     <div class="title-wrapper">
-      <h2><?=$this->transEsc('ReservationList::reservation_list_title', ['%%title%%' => $this->title]) ?></h2>
+      <h2><?=$this->transEsc('FinnaResourceList::reservation_list_title', ['%%title%%' => $this->title]) ?></h2>
     </div>
     <?= $this->flashmessages() ?>
     <?php if ($this->description): ?>
@@ -28,26 +28,26 @@
     <?php endif; ?>
     <?php if ($this->created_formatted): ?>
       <div class="list-info">
-        <p><?= $this->transEsc('ReservationList::list_created', ['%%date%%' => $this->created_formatted]) ?></p>
+        <p><?= $this->transEsc('FinnaResourceList::list_created', ['%%date%%' => $this->created_formatted]) ?></p>
       </div>
     <?php endif; ?>
     <?php if ($this->ordered_formatted): ?>
       <div class="list-info">
-        <p><?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $this->ordered_formatted]) ?></p>
+        <p><?= $this->transEsc('FinnaResourceList::list_ordered', ['%%date%%' => $this->ordered_formatted]) ?></p>
       </div>
     <?php endif; ?>
     <?php if ($this->pickup_date_formatted): ?>
       <div class="list-info">
-        <p><?= $this->transEsc('ReservationList::list_pickup_date', ['%%date%%' => $this->pickup_date_formatted]) ?></p>
+        <p><?= $this->transEsc('FinnaResourceList::list_pickup_date', ['%%date%%' => $this->pickup_date_formatted]) ?></p>
       </div>
     <?php endif; ?>
     <?php if ($this->enabled): ?>
       <div class="list-controls">
         <?php if (!$this->ordered && $this->results?->getResults() ?? []): ?>
           <!-- Add order buttons if the list has not been ordered yet. -->
-          <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-order', ['id' => $this->id]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('ReservationList::Order List')?></a>
+          <a href="<?=$this->escapeHtmlAttr($this->url('FinnaResourceList-order', ['id' => $this->id]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('FinnaResourceList::Order List')?></a>
         <?php endif; ?>
-        <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-delete', ['id' => $this->id]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('ReservationList::Delete List')?></a>
+        <a href="<?=$this->escapeHtmlAttr($this->url('FinnaResourceList-delete', ['id' => $this->id]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('FinnaResourceList::Delete List')?></a>
       </div>
     <?php endif; ?>
     <div class="mylist-header">
@@ -65,10 +65,10 @@
         <div class="myaccount-sticky-header"></div>
           <div class="toolbar-sticky-container">
             <?php $multiPageSelection = ($this->config()->get('config')['Social']['multi_page_favorites_selection'] ?? true) ? ' multi-page-selection' : ''; ?>
-            <form class="form<?= $multiPageSelection ?>" id="form-reservation<?= ($list && !empty($list['id'])) ? '-' . $list['id'] : ''?>" method="post" name="bulkActionForm" action="<?=$this->url('reservationlist-deletebulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
+            <form class="form<?= $multiPageSelection ?>" id="form-reservation<?= ($list && !empty($list['id'])) ? '-' . $list['id'] : ''?>" method="post" name="bulkActionForm" action="<?=$this->url('FinnaResourceList-deletebulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
               <input class="hidden all-ids-global" type="text" name="all_ids_global" value="<?= $this->escapeHtmlAttr(json_encode($this->results->getAllIds())) ?>">
               <div class="toolbar-sticky">
-                <?=$this->context($this)->renderInContext('reservationlist/bulk-action-buttons.phtml', ['idPrefix' => '', 'list' => $list ?? null, 'account' => $this->account, 'lists' => $user->getReservationLists()])?>
+                <?=$this->context($this)->renderInContext('FinnaResourceList/bulk-action-buttons.phtml', ['idPrefix' => '', 'list' => $list ?? null, 'account' => $this->account, 'lists' => $user->getFinnaResourceLists()])?>
               </div>
               <?php foreach ($this->results->getResults() as $i => $current): ?>
                 <?php
@@ -93,4 +93,4 @@
     <li class="sidebar-navigation"><?=$this->icon('sidebar-expand') ?> <?=$this->transEsc('Your Lists')?></li>
   </ul>
 </div>
-<!-- END of: finna - myresearch/reservationlist.phtml -->
+<!-- END of: finna - myresearch/FinnaResourceList.phtml -->

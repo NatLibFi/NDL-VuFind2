@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Reservation List factory.
+ * Reservation list controller factory.
  *
  * PHP version 8.1
  *
@@ -21,30 +21,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Record
+ * @package  Controller
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org   Main Site
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
-namespace Finna\Db\Row;
+namespace Finna\Controller;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
-use VuFind\Db\Row\RowGatewayFactory;
+use VuFind\Controller\AbstractBaseFactory;
 
 /**
- * Reservation List factory.
+ * Reservation list controller factory.
  *
  * @category VuFind
- * @package  Record
+ * @package  Controller
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org   Main Site
+ * @link     https://vufind.org/wiki/development Wiki
  */
-class ReservationListFactory extends RowGatewayFactory
+class FinnaResourceListControllerFactory extends AbstractBaseFactory
 {
     /**
      * Create an object
@@ -58,7 +60,7 @@ class ReservationListFactory extends RowGatewayFactory
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
-     * @throws ContainerException&\Throwable if any other error occurs
+     * @throws ContainerException if any other error occurs
      */
     public function __invoke(
         ContainerInterface $container,
@@ -66,14 +68,14 @@ class ReservationListFactory extends RowGatewayFactory
         array $options = null
     ) {
         if (!empty($options)) {
-            throw new \Exception('Unexpected options sent to factory!');
+            throw new \Exception('Unexpected options sent to factory.');
         }
-        $sessionManager = $container->get(\Laminas\Session\SessionManager::class);
-        $session = new \Laminas\Session\Container('ReservationList', $sessionManager);
         return parent::__invoke(
             $container,
             $requestedName,
-            [$session]
+            [
+                $container->get(\Finna\ReservationList\ReservationListService::class),
+            ]
         );
     }
 }

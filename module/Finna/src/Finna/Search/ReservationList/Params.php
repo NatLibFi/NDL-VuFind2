@@ -27,7 +27,7 @@
  * @link     http://vufind.org   Main Site
  */
 
-namespace Finna\Search\ReservationList;
+namespace Finna\Search\FinnaResourceList;
 
 /**
  * Search Favorites Parameters

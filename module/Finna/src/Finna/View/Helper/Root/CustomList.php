@@ -6,7 +6,7 @@ use VuFind\RecordDriver\DefaultRecord;
 
 use function in_array;
 
-class FinnaResourceList extends \Laminas\View\Helper\AbstractHelper
+class CustomList extends \Laminas\View\Helper\AbstractHelper
 {
     /**
      * Record driver

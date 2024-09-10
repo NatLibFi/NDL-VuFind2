@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  ReservationList
+ * @package  FinnaResourceList
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  https://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
@@ -29,7 +29,7 @@
 
 declare(strict_types=1);
 
-namespace Finna\ReservationList\Handler;
+namespace Finna\FinnaResourceList\Handler;
 
 use VuFind\Db\Entity\UserEntityInterface as User;
 
@@ -37,7 +37,7 @@ use VuFind\Db\Entity\UserEntityInterface as User;
  * Interface HandlerInterface
  *
  * @category VuFind
- * @package  ReservationList
+ * @package  FinnaResourceList
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  https://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki

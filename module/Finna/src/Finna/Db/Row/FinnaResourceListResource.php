@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Table Definition for finna_reservation_list_resource
+ * Table Definition for finna_resource_list_resource
  *
  * PHP version 8.1
  *
@@ -31,12 +31,14 @@
 namespace Finna\Db\Row;
 
 use DateTime;
-use Finna\Db\Entity\ReservationListEntityInterface;
-use Finna\Db\Entity\ReservationListResourceEntityInterface;
+use Finna\Db\Entity\FinnaResourceListEntityInterface;
+use Finna\Db\Entity\FinnaResourceListResourceEntityInterface;
 use VuFind\Db\Entity\ResourceEntityInterface;
+use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\OAuth2\Entity\UserEntity;
 
 /**
- * Table Definition for finna_reservation_list_resource
+ * Table Definition for finna_resource_list_resource
  *
  * @category VuFind
  * @package  Db_Table
@@ -52,7 +54,7 @@ use VuFind\Db\Entity\ResourceEntityInterface;
  * @property ?string $notes
  * @property string  $saved
  */
-class ReservationListResource extends \VuFind\Db\Row\RowGateway implements ReservationListResourceEntityInterface
+class FinnaResourceListResource extends \VuFind\Db\Row\RowGateway implements FinnaResourceListResourceEntityInterface
 {
     /**
      * Constructor
@@ -61,7 +63,7 @@ class ReservationListResource extends \VuFind\Db\Row\RowGateway implements Reser
      */
     public function __construct($adapter)
     {
-        parent::__construct('id', 'finna_reservation_list_resource', $adapter);
+        parent::__construct('id', 'finna_resource_list_resource', $adapter);
     }
 
     /**
@@ -72,6 +74,29 @@ class ReservationListResource extends \VuFind\Db\Row\RowGateway implements Reser
     public function getId(): ?int
     {
         return $this->id ?? null;
+    }
+
+    /**
+     * Get user id
+     *
+     * @return int
+     */
+    public function getUserId(): int
+    {
+        return $this->user_id;
+    }
+
+    /**
+     * Set user
+     *
+     * @param UserEntityInterface $user User entity
+     *
+     * @return FinnaResourceListResourceEntityInterface
+     */
+    public function setUser(UserEntityInterface $user): FinnaResourceListResourceEntityInterface
+    {
+        $this->user_id = $user?->getId();
+        return $this;
     }
 
     /**
@@ -89,9 +114,9 @@ class ReservationListResource extends \VuFind\Db\Row\RowGateway implements Reser
      *
      * @param ResourceEntityInterface $id Resource ID
      *
-     * @return ReservationListResourceEntityInterface
+     * @return FinnaResourceListResourceEntityInterface
      */
-    public function setResource(ResourceEntityInterface $resource): ReservationListResourceEntityInterface
+    public function setResource(ResourceEntityInterface $resource): FinnaResourceListResourceEntityInterface
     {
         $this->resource_id = $resource->getId();
         return $this;
@@ -110,11 +135,11 @@ class ReservationListResource extends \VuFind\Db\Row\RowGateway implements Reser
     /**
      * Set list id
      *
-     * @param ReservationListEntityInterface $listId Id of list
+     * @param FinnaResourceListEntityInterface $listId Id of list
      *
-     * @return ReservationListResourceEntityInterface
+     * @return FinnaResourceListResourceEntityInterface
      */
-    public function setList(ReservationListEntityInterface $list): ReservationListResourceEntityInterface
+    public function setList(FinnaResourceListEntityInterface $list): FinnaResourceListResourceEntityInterface
     {
         $this->list_id = $list->getId();
         return $this;
@@ -125,9 +150,9 @@ class ReservationListResource extends \VuFind\Db\Row\RowGateway implements Reser
      *
      * @param DateTime $dateTime Created date
      *
-     * @return ReservationListResourceEntityInterface
+     * @return FinnaResourceListResourceEntityInterface
      */
-    public function setSaved(DateTime $dateTime): ReservationListResourceEntityInterface
+    public function setSaved(DateTime $dateTime): FinnaResourceListResourceEntityInterface
     {
         $this->saved = $dateTime->format('Y-m-d H:i:s');
         return $this;
@@ -148,9 +173,9 @@ class ReservationListResource extends \VuFind\Db\Row\RowGateway implements Reser
      *
      * @param string $data Data
      *
-     * @return ReservationListResourceEntityInterface
+     * @return FinnaResourceListResourceEntityInterface
      */
-    public function setNotes(string $note): ReservationListResourceEntityInterface
+    public function setNotes(string $note): FinnaResourceListResourceEntityInterface
     {
         $this->notes = $note;
         return $this;

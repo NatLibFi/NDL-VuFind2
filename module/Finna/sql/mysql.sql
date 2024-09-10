@@ -341,24 +341,26 @@ CREATE TABLE `finna_record_view` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `finna_reservation_list_resource` (
+CREATE TABLE `finna_resource_list_resource` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `resource_id` int(11) NOT NULL,
   `list_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `notes` text DEFAULT NULL,
   `saved` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `resource_id` (`resource_id`),
   KEY `user_id` (`user_id`),
   KEY `list_id` (`list_id`),
-  CONSTRAINT `finna_reservation_list_resource_ibfk_2` FOREIGN KEY (`resource_id`) REFERENCES `resource` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `finna_reservation_list_resource_ibfk_5` FOREIGN KEY (`list_id`) REFERENCES `finna_reservation_list` (`id`) ON DELETE CASCADE
+  CONSTRAINT `finna_resource_list_resource_ibfk_1` FOREIGN KEY (`resource_id`) REFERENCES `resource` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `finna_resource_list_resource_ibfk_2` FOREIGN KEY (`list_id`) REFERENCES `finna_resource_list` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `finna_resource_list_resource_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `finna_reservation_list` (
+CREATE TABLE `finna_resource_list` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `title` varchar(200) NOT NULL,
@@ -371,7 +373,7 @@ CREATE TABLE `finna_reservation_list` (
   `handler` varchar(40) NOT NULL DEFAULT 'finna',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
-  CONSTRAINT `reservation_list_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+  CONSTRAINT `resource_list_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 /*!40101 SET character_set_client = @saved_cs_client */;
 

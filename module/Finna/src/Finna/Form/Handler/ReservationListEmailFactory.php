@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class ReservationListEmailFactory
+ * Class FinnaResourceListEmailFactory
  *
  * PHP version 8.1
  *
@@ -39,7 +39,7 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Class ReservationListEmailFactory
+ * Class FinnaResourceListEmailFactory
  *
  * @category VuFind
  * @package  Form
@@ -48,7 +48,7 @@ use Psr\Container\ContainerInterface;
  * @license  https://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class ReservationListEmailFactory implements FactoryInterface
+class FinnaResourceListEmailFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -72,14 +72,14 @@ class ReservationListEmailFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        $reserervationListService = $container->get(\Finna\Db\Service\ReservationListServiceInterface::class);
+        $reserervationListService = $container->get(\Finna\Db\Service\FinnaResourceListServiceInterface::class);
         $configLoader = $container->get(\VuFind\Config\PluginManager::class);
         return new $requestedName(
             $container->get('ViewRenderer'),
             $configLoader->get('config'),
             $container->get(\VuFind\Mailer\Mailer::class),
             $reserervationListService,
-            $configLoader->get('ReservationList')
+            $configLoader->get('FinnaResourceList')
         );
     }
 }

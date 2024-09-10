@@ -21,20 +21,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  ReservationList
+ * @package  FinnaResourceList
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
  */
 
-namespace Finna\Search\ReservationList;
+namespace Finna\Search\FinnaResourceList;
 
 /**
  * Reservation List Options
  *
  * @category VuFind
- * @package  ReservationList
+ * @package  FinnaResourceList
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
@@ -75,7 +75,7 @@ class Options extends \VuFind\Search\Base\Options
      */
     public function getSearchAction()
     {
-        return 'reservationlist-home';
+        return 'FinnaResourceList-home';
     }
 
     /**

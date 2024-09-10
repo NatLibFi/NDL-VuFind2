@@ -1,10 +1,10 @@
 <?php
   // Set up page title:
-  $pageTitle = 'ReservationList::Delete List';
+  $pageTitle = 'FinnaResourceList::Delete List';
   $this->headTitle($this->translate($pageTitle));
 
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('reservationlist-delete', ['id' => $this->id]) . '">' . $this->transEsc('Poista lista') . '</a></li>'
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('FinnaResourceList-delete', ['id' => $this->id]) . '">' . $this->transEsc('Poista lista') . '</a></li>'
     . '<li>' . $this->transEsc($pageTitle) . '</li>';
 ?>
 
@@ -13,6 +13,6 @@
 <h2><?=$this->transEsc($pageTitle); ?></h2>
 <form method="post" name="delete" data-lightbox-onclose="VuFind.refreshPage">
   <input type="hidden" name="id" value="<?=$this->escapeHtmlAttr($this->id)?>">
-  <button type="submit" class="btn btn-primary" value="1"><?=$this->transEsc('ReservationList::Confirm')?></button>
-  <button class="btn btn-primary" data-dismiss="modal" aria-label="sulje" value="0"><?=$this->transEsc('ReservationList::Cancel')?></button>
+  <button type="submit" class="btn btn-primary" value="1"><?=$this->transEsc('FinnaResourceList::Confirm')?></button>
+  <button class="btn btn-primary" data-dismiss="modal" aria-label="sulje" value="0"><?=$this->transEsc('FinnaResourceList::Cancel')?></button>
 </form>

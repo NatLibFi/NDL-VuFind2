@@ -27,7 +27,7 @@
  * @link     http://vufind.org   Main Site
  */
 
-namespace Finna\ReservationList\Handler;
+namespace Finna\FinnaResourceList\Handler;
 
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
@@ -36,7 +36,7 @@ use Psr\Container\ContainerInterface;
  * Database factory.
  *
  * @category VuFind
- * @package  ReservationList
+ * @package  FinnaResourceList
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
@@ -56,7 +56,7 @@ class DatabaseFactory implements FactoryInterface
     {
         $tableManager = $sm->get(\VuFind\Db\Table\PluginManager::class);
         return new Database(
-            $tableManager->get(\Finna\Db\Table\ReservationList::class),
+            $tableManager->get(\Finna\Db\Table\FinnaResourceList::class),
             $tableManager->get('resource'),
             $tableManager->get(\VuFind\Db\Table\UserResource::class)
         );

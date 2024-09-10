@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Reservation list controller factory.
+ * Reservation List factory.
  *
  * PHP version 8.1
  *
@@ -21,32 +21,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Controller
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @package  Record
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     http://vufind.org   Main Site
  */
 
-namespace Finna\Controller;
+namespace Finna\Db\Row;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
-use VuFind\Controller\AbstractBaseFactory;
+use VuFind\Db\Row\RowGatewayFactory;
 
 /**
- * Reservation list controller factory.
+ * Reservation List factory.
  *
  * @category VuFind
- * @package  Controller
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @package  Record
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     http://vufind.org   Main Site
  */
-class ReservationListControllerFactory extends AbstractBaseFactory
+class FinnaResourceListFactory extends RowGatewayFactory
 {
     /**
      * Create an object
@@ -60,7 +58,7 @@ class ReservationListControllerFactory extends AbstractBaseFactory
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
-     * @throws ContainerException if any other error occurs
+     * @throws ContainerException&\Throwable if any other error occurs
      */
     public function __invoke(
         ContainerInterface $container,
@@ -68,15 +66,14 @@ class ReservationListControllerFactory extends AbstractBaseFactory
         array $options = null
     ) {
         if (!empty($options)) {
-            throw new \Exception('Unexpected options sent to factory.');
+            throw new \Exception('Unexpected options sent to factory!');
         }
-        $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
+        $sessionManager = $container->get(\Laminas\Session\SessionManager::class);
+        $session = new \Laminas\Session\Container('FinnaResourceList', $sessionManager);
         return parent::__invoke(
             $container,
             $requestedName,
-            [
-                $dbServiceManager->get(\Finna\Db\Service\ReservationListServiceInterface::class),
-            ]
+            [$session]
         );
     }
 }
