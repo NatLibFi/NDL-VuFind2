@@ -174,14 +174,20 @@ table .iconlabel {
 .iconlabel[class*="format-1documentdigitizedarchive"]:before,
 .iconlabel[class*="format-1documentseries"]:before,
 .iconlabel.format-1documentothercollection:before,
-.iconlabel.format-1documentcollection:before {
+.iconlabel.format-1documentcollection:before,
+.iconlabel[class*="format-feed-documentarchive"]:before,
+.iconlabel[class*="format-feed-documentdigitizedarchive"]:before,
+.iconlabel[class*="format-feed-documentseries"]:before,
+.iconlabel.format-feed-documentothercollection:before,
+.iconlabel.format-feed-documentcollection:before
+{
     content: "\e8cb";
 }
 .iconlabel.format-0note:before,
 .iconlabel.format-0musicalscore:before,
 .iconlabel[class*="format-1musicalscore"]:before,
-.iconlabel.format-note:before,
-.iconlabel.format-musicalscore:before {
+.iconlabel.format-feed-note:before,
+.iconlabel.format-feed-musicalscore:before {
     content: "\e005";
 }
 .iconlabel.format-0database:before,
@@ -207,12 +213,13 @@ table .iconlabel {
     content: "\e971";
 }
 .iconlabel[class*="format-1gameboardgame"]:before,
-.iconlabel[class*="format-1gameboardgame"]:before
+.iconlabel[class*="format-feed-gameboardgame"]:before
 {
 	content: "\e8c2";
 }
 .iconlabel[class*="format-1gamevideogame"]:before,
-.iconlabel[class*="format-2gamevideogame"]:before {
+.iconlabel[class*="format-2gamevideogame"]:before,
+.iconlabel[class*="format-feed-gamevideogame"]:before {
 	font-family: FontAwesome;
 	content: @fa-var-gamepad;
 }
