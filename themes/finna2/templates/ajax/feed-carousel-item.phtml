@@ -10,7 +10,7 @@
 <?php if ($hasIcon && $hasImg): ?>
   <?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon'], 'wrapper' => true]);?>
 <?php endif; ?>
-<div class="carousel-text <?php if ($noText): ?>no-text<?php endif; ?>" tabindex="-1">
+<div aria-hidden="true" class="carousel-text <?php if ($noText): ?>no-text<?php endif; ?>" tabindex="-1">
   <div class="carousel-more carousel-close hidden" aria-hidden="true"><?=$this->icon('carousel-close', 'js-carousel-close')?></div>
   <div class="carousel-more show-link" aria-hidden="true"><?=$this->icon('carousel-follow-link')?></div>
   <?php if (isset($item['title'])): ?>
