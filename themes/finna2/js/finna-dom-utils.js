@@ -2,6 +2,8 @@
 
 /**
  * Utility function to get active element in the DOM and shadow DOMs
+ *  @param {Document|HTMLElement} [root=document] - The root element or document to search for the active element.
+ *  @returns {HTMLElement|null} - The currently active element within the root (or shadow DOM), or `null` if no active element is found.
  */
 function getActiveElement(root = document) {
   // Get the active element within the provided root
@@ -22,6 +24,8 @@ function getActiveElement(root = document) {
 
 /**
  * Utility function to check if an element is focusable
+ * @param {HTMLElement} element - The DOM element to check for focusability.
+ * @returns {boolean} - Returns `true` if the element is focusable, `false` otherwise.
  */
 function isFocusable(element) {
   if (element.tabIndex >= 0) {
@@ -36,6 +40,8 @@ function isFocusable(element) {
 
 /**
  * Utility function to find all focusable elements in the DOM and shadow DOMs
+ * @param {HTMLElement|Document} [root=document] - The root element or document to start the search from.
+ * @returns {HTMLElement[]} - An array of all focusable elements found within the root and any shadow DOMs.
  */
 function getFocusableElements(root = document) {
   const focusableElements = [];
@@ -58,6 +64,7 @@ function getFocusableElements(root = document) {
 
 /**
  * Utility function to trap the focus inside the given element
+ * @param {HTMLElement} element - The container element to trap focus inside.
  */
 function trapFocus(element) {
   const focusableElements = getFocusableElements(element);
