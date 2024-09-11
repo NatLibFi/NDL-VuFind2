@@ -470,7 +470,7 @@ class ModelViewerClass extends HTMLElement {
     });
   }
 
-  attributeChangedCallback(name, oldValue, newValue)
+  attributeChangedCallback(name/*, oldValue, newValue*/)
   {
     switch (name) {
     case 'scripts':
