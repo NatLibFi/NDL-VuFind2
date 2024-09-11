@@ -1,4 +1,4 @@
-/* global THREE, ObjectEditor */
+/* global THREE, ObjectEditor, VuFind */
 
 /**
  * Get tangent
@@ -425,7 +425,7 @@ class ModelViewerClass extends HTMLElement {
       /**
        * Start to load the model from the provider to cache
        */
-      this.loadInfo.textContent = this.translations['loading file'] || 'Model loading.';
+      this.loadInfo.innerHTML = `<span>${this.translations['loading file'] || 'Model loading.'} ${VuFind.spinner()}</span>`;
       fetch(this.src)
         .then(response => response.json())
         .then(responseJSON => {
