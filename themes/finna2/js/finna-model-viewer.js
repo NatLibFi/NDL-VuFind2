@@ -35,14 +35,6 @@ class ModelViewerClass extends HTMLElement {
     this.setAttribute('src', newValue);
   }
 
-  get cacheSrc() {
-    return this.getAttribute('cacheSrc');
-  }
-
-  set cacheSrc(value) {
-    this.setAttribute('cacheSrc', value);
-  }
-
   get texture() {
     return this.getAttribute('texture');
   }
@@ -437,8 +429,12 @@ class ModelViewerClass extends HTMLElement {
       fetch(this.src)
         .then(response => response.json())
         .then(responseJSON => {
-          this.src = responseJSON.data.url;
-          this.createElement();
+          if (responseJSON.data && responseJSON.data.url) {
+            this.src = responseJSON.data.url;
+            this.createElement();
+            return;
+          }
+          this.loadInfo.textContent = this.translations['An error has occurred'] || 'An error has occurred';
         });
     }, {once: true});
     
