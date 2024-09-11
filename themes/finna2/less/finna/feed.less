@@ -759,6 +759,7 @@ finna-feed.carousel.splide--ltr {
                 opacity: 0;
             }
             .carousel-text.scrollable {
+                z-index: 1;
                 padding-bottom: 0;
                 .carousel-text-shadow {
                     position: sticky;
@@ -794,8 +795,6 @@ finna-feed.carousel.splide--ltr {
                 font-size: 39px;
             }
             img {
-                // FIXME: min-width is required for proper title height calculation
-                min-width: 50px;
                 max-width: none;
                 max-height: 100%;
                 position: relative;
@@ -843,7 +842,7 @@ finna-feed.carousel.splide--ltr {
                         width: 100%;
                     }
                 }
-                position: absolute;
+                position: relative;
                 bottom: 0;
                 width: 100%;
                 min-height: 30px;
