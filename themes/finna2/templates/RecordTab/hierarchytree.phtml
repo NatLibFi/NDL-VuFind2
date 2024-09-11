@@ -1,13 +1,14 @@
 <?php
   // Set page title.
-  $this->headTitle($this->translate('hierarchy_tree') . ': ' . $this->driver->getBreadcrumb());
+  $this->headTitle($this->translate($this->tab->getDescription()) . ': ' . $this->driver->getBreadcrumb());
   $hierarchyTreeList = $this->tab->getTreeList();
   $activeTree = $this->tab->getActiveTree();
 ?>
+<?php if ($this->inLightbox && $heading = $this->slot('hierarchy-tree-heading')->get($this->tab->getDescription())): ?>
+  <?php // Note: h2 must be the first element to display properly in lightbox ?>
+  <h2><?=$this->transEsc($heading)?></h2>
+<?php endif; ?>
 <div class="hierarchy-tree-container js-hierarchy-tree-container">
-  <?php if ($this->inLightbox): ?>
-    <h2><?=$this->transEsc($this->tab->getDescription())?></h2>
-  <?php endif; ?>
   <?php if (count($hierarchyTreeList) > 1): ?>
     <div class="hierarchy-tree-selector">
       <?php foreach ($hierarchyTreeList as $hierarchy => $hierarchyTitle): ?>
@@ -43,7 +44,7 @@
       </div>
       <div class="js-search-error alert alert-danger hidden"><?=$this->transEsc('An error has occurred')?></div>
       <div class="js-no-results alert alert-danger hidden"><?=$this->transEsc('nohit_heading')?></div>
-      <div class="js-limit-reached alert alert-danger hidden">
+      <div class="js-limit-reached alert alert-info hidden" role="alert">
         <?=$this->translate('tree_search_limit_reached_html', ['%%limit%%' => $this->tab->getSearchLimit()])?>
       </div>
     <?php endif; ?>

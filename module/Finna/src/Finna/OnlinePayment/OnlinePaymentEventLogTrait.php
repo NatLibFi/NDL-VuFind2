@@ -29,7 +29,9 @@
 
 namespace Finna\OnlinePayment;
 
-use Finna\Db\Table\TransactionEventLog;
+use Finna\Db\Entity\FinnaTransactionEntityInterface;
+use Finna\Db\Service\FinnaTransactionEventLogServiceInterface;
+use VuFind\Controller\AbstractBase;
 
 /**
  * Online payment event log support trait.
@@ -43,27 +45,34 @@ use Finna\Db\Table\TransactionEventLog;
 trait OnlinePaymentEventLogTrait
 {
     /**
-     * Transaction event log table
+     * Transaction event log service
      *
-     * @var TransactionEventLog
+     * @var ?FinnaTransactionEventLogServiceInterface
      */
-    protected $eventLogTable = null;
+    protected $eventLogService = null;
 
     /**
      * Add an event log entry for a transaction
      *
-     * @param int    $id     Transaction ID
-     * @param string $status Status message
-     * @param array  $data   Additional data
+     * @param FinnaTransactionEntityInterface $transaction Transaction
+     * @param string                          $status      Status message
+     * @param array                           $data        Additional data
      *
      * @return void
      */
-    protected function addTransactionEvent(int $id, string $status, array $data = []): void
-    {
-        if (null === $this->eventLogTable) {
-            throw new \Exception('Event log table not set');
+    protected function addTransactionEvent(
+        FinnaTransactionEntityInterface $transaction,
+        string $status,
+        array $data = []
+    ): void {
+        if (null === $this->eventLogService) {
+            if ($this instanceof AbstractBase) {
+                $this->eventLogService = $this->getDbService(FinnaTransactionEventLogServiceInterface::class);
+            } else {
+                throw new \Exception('Event log service not set');
+            }
         }
         $data += ['source' => static::class];
-        $this->eventLogTable->addEvent($id, $status, $data);
+        $this->eventLogService->addEvent($transaction, $status, $data);
     }
 }

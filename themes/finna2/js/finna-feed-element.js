@@ -60,11 +60,11 @@ class FinnaFeedElement extends HTMLElement {
     // Move title field below image
     let maxH = 0;
     this.querySelectorAll('.carousel-slide-header p').forEach(el => {
-      maxH = Math.max(maxH, el.getBoundingClientRect().height + 10);
       el.classList.add('title-bottom');
-      el.parentNode.classList.add('title-bottom');
+      maxH = Math.max(maxH, el.getBoundingClientRect().height);
+
     });
-    this.querySelectorAll('.carousel-slide-header, .carousel-slide-header p').forEach(el => {
+    this.querySelectorAll('.carousel-slide-header p').forEach(el => {
       el.style.minHeight = el.style.height = `${maxH}px`;
     });
     this.querySelectorAll('.carousel-feed .carousel-text').forEach(el => {
@@ -322,10 +322,12 @@ class FinnaFeedElement extends HTMLElement {
     if (typeof this.onFeedLoaded === 'function') {
       this.onFeedLoaded();
     }
-    VuFind.observerManager.observe(
-      'LazyImages',
-      this.querySelectorAll('img[data-src]')
-    );
+    finna.getPromise('lazyImages').then(() => {
+      VuFind.observerManager.observe(
+        'LazyImages',
+        this.querySelectorAll('img[data-src]')
+      );
+    });
   }
 
   /**

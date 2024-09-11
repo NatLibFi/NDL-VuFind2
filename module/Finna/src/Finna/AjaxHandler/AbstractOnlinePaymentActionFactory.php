@@ -29,10 +29,15 @@
 
 namespace Finna\AjaxHandler;
 
+use Finna\Db\Service\FinnaTransactionEventLogServiceInterface;
+use Finna\Db\Service\FinnaTransactionServiceInterface;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Auth\ILSAuthenticator;
+use VuFind\Db\Service\UserCardServiceInterface;
+use VuFind\Db\Service\UserServiceInterface;
 
 /**
  * Factory for AbstractOnlinePaymentAction AJAX handlers.
@@ -69,17 +74,19 @@ class AbstractOnlinePaymentActionFactory implements \Laminas\ServiceManager\Fact
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
-        $tablePluginManager = $container->get(\VuFind\Db\Table\PluginManager::class);
+        $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
         $result = new $requestedName(
             $container->get(\VuFind\Session\Settings::class),
             $container->get(\VuFind\ILS\Connection::class),
-            $tablePluginManager->get(\Finna\Db\Table\Transaction::class),
-            $tablePluginManager->get(\VuFind\Db\Table\User::class),
+            $container->get(ILSAuthenticator::class),
+            $dbServiceManager->get(FinnaTransactionServiceInterface::class),
+            $dbServiceManager->get(UserServiceInterface::class),
+            $dbServiceManager->get(UserCardServiceInterface::class),
             $container->get(\Finna\OnlinePayment\OnlinePayment::class),
             $container->get('Finna\OnlinePayment\Session'),
             $container->get(\VuFind\Config\PluginManager::class)->get('datasources')->toArray(),
             $container->get(\Finna\OnlinePayment\Receipt::class),
-            $tablePluginManager->get(\Finna\Db\Table\TransactionEventLog::class),
+            $dbServiceManager->get(FinnaTransactionEventLogServiceInterface::class),
         );
         $result->setLogger($container->get(\VuFind\Log\Logger::class));
         return $result;

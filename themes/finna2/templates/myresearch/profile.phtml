@@ -7,7 +7,7 @@
     // Only display home library form if we have multiple pickup locations:
     $showHomeLibForm = (isset($this->pickup) && count($this->pickup) > 1);
     $user = $this->auth()->getUserObject();
-    $cards = $user->getLibraryCards();
+    $cards = $this->libraryCards()->getCardsForUser($user);
     $patron = $user ? $this->auth()->getILSPatron() : false;
     $capabilityParams = $patron ? ['patron' => $patron] : [];
     $updateAddress = $this->ils()->checkFunction('updateAddress', $capabilityParams);
@@ -51,11 +51,6 @@
     <div>
       <?php if (!$this->translationEmpty('profile_instructions')): ?><p class="no-content-message"><?=$this->transEsc('profile_instructions')?></p><?php endif; ?>
       <?=$this->flashmessages();?>
-      <?php if (count($cards) > 1): ?>
-        <div class="myresearch-profile-list library-card-holder">
-          <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
-        </div>
-      <?php endif; ?>
       <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
       <?php if (!empty($this->profile['expiration_date'])): ?>
         <?php $cardExpired = !empty($this->profile['expired']) ?>
@@ -70,10 +65,24 @@
         <?php endif; ?>
       <?php endif; ?>
       <?=$this->partial('myresearch/profile-messages.phtml', ['messages' => $this->profile['messages'] ?? []]); ?>
-      <?php if (is_array($this->profile)): ?>
-        <div class="logged-in-as">
+      <div class="logged-in-as">
+        <div class="display-name">
           <?=$this->icon('profile', 'profile-icon') ?><span class="sr-only"><?=$this->transEsc('logged_in_as')?>: </span><?=$this->escapeHtml($user->getDisplayName()) ?>
         </div>
+        <div>
+          <?php if ($user->getDisplayName() !== $user->getUsername()): ?>
+            <div><span class="profile-title"><?=$this->transEsc('account_username')?>: </span><span><?=$this->escapeHtml($user->getUsername())?></span></div>
+          <?php endif; ?>
+          <div><span class="profile-title"><?=$this->transEsc('account_login_method')?>: </span><span><?=$this->transEscWithPrefix('login_method_', $user->getAuthMethod())?></span></div>
+          <div><span class="profile-title"><?=$this->transEsc('account_creation_date')?>: </span><span><?=$user->getCreated()->format($this->config()->dateFormat())?></span></div>
+        </div>
+      </div>
+      <?php if (is_array($this->profile)): ?>
+        <?php if (count($cards) > 1): ?>
+          <div class="myresearch-profile-list library-card-holder">
+            <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
+          </div>
+        <?php endif; ?>
         <div class="myresearch-profile-header"><h3><?=$this->transEsc('Library Card Settings');?></h3></div>
         <div class="myresearch-profile-list library-profile">
           <?php if ($showHomeLibForm): ?>
@@ -109,7 +118,7 @@
           <?php
             $selectedCard = null;
             foreach ($cards as $card) {
-                if (strcasecmp($card->cat_username, $user->cat_username) === 0) {
+                if (strcasecmp($card->getCatUsername(), $user->getCatUsername()) === 0) {
                     $selectedCard = $card;
                     break;
                 }
@@ -299,12 +308,12 @@
     <div class="myresearch-profile-list library-profile">
       <?= $this->partial('myresearch/profile-my-information.phtml', ['user' => $user, 'cards' => $cards, 'hideDueDateReminder' => $this->hideDueDateReminder, 'hideProfileEmailAddress' => $this->hideProfileEmailAddress]); ?>
     </div>
-    <?php if ($this->auth()->getManager()->supportsPersistentLogin($user->auth_method)): ?>
+    <?php if ($this->auth()->getManager()->supportsPersistentLogin($user->getAuthMethod())): ?>
       <div class="myresearch-profile-header">
         <h3><?=$this->transEsc('Saved Logins')?></h3>
       </div>
       <div class="myresearch-profile-list library-profile login-tokens-section">
-        <?php $tokens = $user->getLoginTokens($user->id); ?>
+        <?php $tokens = $this->auth()->getLoginTokens($user->getId()); ?>
         <?php if (!$tokens): ?>
           <div class="my-profile-col"><?=$this->transEsc('No saved logins')?></div>
         <?php else: ?>
@@ -319,12 +328,12 @@
               <?php foreach ($tokens as $i => $token): ?>
                 <tr>
                   <td data-label="<?=$this->transEsc('saved_login_platform_and_browser')?>" id="login_platform_<?=$i?>"><?=$this->transEsc($token->platform)?> / <?=$this->transEsc($token->browser)?></td>
-                  <td data-label="<?=$this->transEsc('Last Login')?>" id="login_date_<?=$i?>"><?=$this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $token->last_login)?></td>
+                  <td data-label="<?=$this->transEsc('Last Login')?>" id="login_date_<?=$i?>"><?=$token->getLastLogin()->format($this->config()->dateTimeFormat())?></td>
                   <td>
                     <form id="delete-login-token" method="post" action="<?=$this->url('myresearch-deletelogintoken')?>">
                       <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
                       <input type="hidden" name="series" value="<?=$this->escapeHtmlAttr($token->series)?>">
-                      <input id="delete-login-token-submit" class="btn btn-danger" type="submit" name="submit" value="<?=$this->transEscAttr('Forget Login'); ?>" aria-labelledby="delete-login-token-submit login_platform_<?=$i?> login_date_<?=$i?>">
+                      <input id="delete-login-token-submit" class="btn btn-danger" type="submit" name="submitButton" value="<?=$this->transEscAttr('Forget Login'); ?>" aria-labelledby="delete-login-token-submit login_platform_<?=$i?> login_date_<?=$i?>">
                     </form>
                   </td>
                 </tr>
@@ -333,7 +342,7 @@
           </table>
           <form id="delete-user-login-tokens" method="post" action="<?=$this->url('myresearch-deleteuserlogintokens')?>">
             <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
-            <input id="delete-user-login-tokens-submit" class="btn btn-danger delete-all-tokens" type="submit" name="submit" value="<?=$this->transEscAttr('Forget All')?>">
+            <input id="delete-user-login-tokens-submit" class="btn btn-danger delete-all-tokens" type="submit" name="submitButton" value="<?=$this->transEscAttr('Forget All')?>">
           </form>
         <?php endif; ?>
       </div>

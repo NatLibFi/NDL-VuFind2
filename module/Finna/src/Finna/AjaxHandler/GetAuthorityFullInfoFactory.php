@@ -34,6 +34,7 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Db\Service\SearchServiceInterface;
 
 /**
  * Factory for GetAuthorityFullInfo AJAX handler.
@@ -72,15 +73,14 @@ class GetAuthorityFullInfoFactory implements FactoryInterface
         }
 
         $recommendManager = $container->get(\VuFind\Recommend\PluginManager::class);
-        $resultsManager
-            = $container->get(\VuFind\Search\Results\PluginManager::class);
-        $tablePluginManager = $container->get(\VuFind\Db\Table\PluginManager::class);
+        $resultsManager = $container->get(\VuFind\Search\Results\PluginManager::class);
+        $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
 
         $result = new $requestedName(
             $container->get('ViewRenderer'),
             $recommendManager->get('authorityrecommend'),
             $resultsManager,
-            $tablePluginManager->get(\VuFind\Db\Table\Search::class),
+            $dbServiceManager->get(SearchServiceInterface::class),
             new \Laminas\Session\Container(
                 'Authority',
                 $container->get(\Laminas\Session\SessionManager::class)

@@ -61,7 +61,7 @@ finna.common = (function finnaCommon() {
    * Add event handlers for managing JS-loaded search results
    */
   function initResultsEventHandler() {
-    VuFind.listen('vf-results-load', () => {
+    VuFind.listen('results-load', () => {
       setTimeout(
         function focusHeading() {
           const heading = document.getElementById("results-heading");
@@ -72,7 +72,7 @@ finna.common = (function finnaCommon() {
         200
       );
     });
-    VuFind.listen('vf-results-loaded', () => {
+    VuFind.listen('results-loaded', () => {
       initResultScripts(document.querySelector('.js-result-list'), false);
     });
 
@@ -159,6 +159,7 @@ finna.common = (function finnaCommon() {
           delete element.dataset.src;
         }
       );
+      finna.resolvePromise('lazyImages');
     },
     initResultScripts: initResultScripts,
     getCookie: getCookie,

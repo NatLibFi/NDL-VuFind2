@@ -1026,12 +1026,12 @@ class RecordController extends \VuFind\Controller\RecordController
                     ?? $representation['desc']
                     ?? $formedFilename;
                 $fileLoader = $this->serviceLocator->get(\Finna\File\Loader::class);
-                $file = $fileLoader->proxyFileLoad(
+                $success = $fileLoader->proxyFileLoad(
                     $url,
                     $fileName,
                     $format
                 );
-                if (empty($file['result'])) {
+                if (!$success) {
                     $response->setStatusCode(500);
                 }
             } else {

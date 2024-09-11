@@ -70,7 +70,9 @@ class AxiellWebServicesFactory extends \VuFind\ILS\Driver\DriverWithDateConverte
         return parent::__invoke(
             $container,
             $requestedName,
-            [$container->get(\VuFind\Config\PathResolver::class)]
+            [
+                $container->get(\VuFind\Config\PathResolver::class),
+            ]
         );
     }
 }

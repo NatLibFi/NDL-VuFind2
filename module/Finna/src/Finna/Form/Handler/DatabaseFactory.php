@@ -33,6 +33,7 @@ declare(strict_types=1);
 
 namespace Finna\Form\Handler;
 
+use Finna\Db\Service\FinnaFeedbackServiceInterface;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
@@ -74,12 +75,12 @@ class DatabaseFactory implements FactoryInterface
             throw new \Exception('Unexpected options sent to factory.');
         }
 
-        $dbTableManager = $container->get(\VuFind\Db\Table\PluginManager::class);
+        $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
         $router = $container->get('HttpRouter');
         $serverUrl = $container->get('ViewRenderer')->plugin('serverurl');
         $baseUrl = $serverUrl($router->assemble([], ['name' => 'home']));
         return new $requestedName(
-            $dbTableManager->get(\Finna\Db\Table\FinnaFeedback::class),
+            $dbServiceManager->get(FinnaFeedbackServiceInterface::class),
             $baseUrl,
             $container->get('ViewRenderer'),
         );

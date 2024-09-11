@@ -6,7 +6,7 @@
  * PHP version 8
  *
  * Copyright (C) Villanova University 2010.
- * Copyright (C) The National Library of Finland 2015-2018.
+ * Copyright (C) The National Library of Finland 2015-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -31,6 +31,11 @@
 
 namespace Finna\Controller;
 
+use Finna\Db\Service\FinnaCacheServiceInterface;
+use VuFind\Db\Entity\UserCardEntityInterface;
+use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\Db\Service\UserCardServiceInterface;
+use VuFind\Db\Service\UserServiceInterface;
 use VuFind\Exception\Auth as AuthException;
 
 use function in_array;
@@ -94,8 +99,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
     public function editCardAction()
     {
         // Check login here so that we know not to mess with AuthManager
-        $user = $this->getUser();
-        if ($user == false) {
+        if (!($user = $this->getUser())) {
             return $this->forceLogin();
         }
 
@@ -136,19 +140,21 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
     public function newPasswordAction()
     {
         // User must be logged in to edit library cards:
-        $user = $this->getUser();
-        if ($user == false) {
+        if (!($user = $this->getUser())) {
             return $this->forceLogin();
         }
 
-        $id = $this->params()->fromRoute('id', $this->params()->fromQuery('id'));
-        $card = $user->getLibraryCard($id);
-        if ($id == null || !$card->rowExistsInDatabase()) {
+        if (null === ($id = $this->params()->fromRoute('id', $this->params()->fromQuery('id')))) {
+            throw new \Exception('Changing password not supported for this card');
+        }
+        $cards = $this->getDbService(UserCardServiceInterface::class)->getLibraryCards($user, $id);
+        $card = current($cards);
+        if (!$card) {
             throw new \Exception('Changing password not supported for this card');
         }
 
         // Process form submission:
-        if ($this->formWasSubmitted('submit')) {
+        if ($this->formWasSubmitted()) {
             if ($redirect = $this->processPasswordChange($user, $card)) {
                 return $redirect;
             }
@@ -156,27 +162,27 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
 
         // Connect to the ILS and check if it supports changing password
         $catalog = $this->getILS();
-        if (!$catalog->checkFunction('changePassword', $card->toArray())) {
-            $this->flashMessenger()
-                ->addErrorMessage('Changing password not supported for this card');
+        $ilsParams = ['cat_username' => $card->getCatUsername()];
+        if (!$catalog->checkFunction('changePassword', $ilsParams)) {
+            $this->flashMessenger()->addErrorMessage('Changing password not supported for this card');
             return $this->createViewModel();
         }
         // It's not exactly correct to send a card to getPasswordPolicy, but it has
         // the required fields..
-        $policy = $catalog->getPasswordPolicy($card->toArray());
+        $policy = $catalog->getPasswordPolicy($ilsParams);
         if (isset($policy['pattern']) && empty($policy['hint'])) {
             $pattern = $policy['pattern'];
             $policy['hint'] = in_array($pattern, ['numeric', 'alphanumeric'])
                 ? 'password_only_' . $pattern : null;
         }
 
-        $user->updateHash();
+        $this->getAuthManager()->updateUserVerifyHash($user);
 
         // Send the card to the view:
         return $this->createViewModel(
             [
                 'card' => $card,
-                'hash' => $user->verify_hash,
+                'hash' => $user->getVerifyHash(),
                 'passwordPolicy' => $policy,
                 'verifyold' => true,
             ]
@@ -212,7 +218,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         // If we have a submitted form
         if (
             $recoveryConfig
-            && $this->formWasSubmitted('submit', $view->useCaptcha)
+            && $this->formWasSubmitted(null, $view->useCaptcha)
         ) {
             // Check if we have a submitted form, and use the information
             // to get the user's information
@@ -228,23 +234,24 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
 
             if (!empty($result['success'])) {
                 // Make totally sure the timestamp is exactly 10 characters:
-                $time
-                    = str_pad(substr((string)time(), 0, 10), 10, '0', STR_PAD_LEFT);
+                $time = str_pad(substr((string)time(), 0, 10), 10, '0', STR_PAD_LEFT);
                 $hash = md5($username . $email . rand()) . $time;
 
-                $finnaCache = $this->getTable('FinnaCache');
-                $row = $finnaCache->createRow();
-                $row->resource_id = $hash . '.recovery_hash';
-                $row->mtime = time();
-                $row->data = json_encode(
-                    [
-                        'target' => $target,
-                        'username' => $username,
-                        'email' => $email,
-                        'token' => $result['token'],
-                    ]
-                );
-                $row->save();
+                $finnaCacheService = $this->getDbService(FinnaCacheServiceInterface::class);
+                $row = $finnaCacheService->createEntity()
+                    ->setResourceId($hash . '.recovery_hash')
+                    ->setModificationTimestamp(time())
+                    ->setData(
+                        json_encode(
+                            [
+                                'target' => $target,
+                                'username' => $username,
+                                'email' => $email,
+                                'token' => $result['token'],
+                            ]
+                        )
+                    );
+                $finnaCacheService->persistEntity($row);
                 $this->sendRecoveryEmail(
                     $email,
                     $target,
@@ -291,7 +298,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         );
         $view->useCaptcha = $this->captcha()->active('passwordRecovery');
         // If we have a submitted form
-        if ($this->formWasSubmitted('submit', $view->useCaptcha)) {
+        if ($this->formWasSubmitted(null, $view->useCaptcha)) {
             $email = trim($this->params()->fromPost('email'));
             if (empty($email)) {
                 $this->flashMessenger()->addErrorMessage('no_email_address');
@@ -451,7 +458,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         $view->registrationHelpText = $registerConfig['registrationHelpText'] ?? '';
 
         // If we have a submitted form
-        if ($this->formWasSubmitted('submit')) {
+        if ($this->formWasSubmitted()) {
             $missingFields = false;
             foreach ($fields as $id => $field) {
                 // Don't let the user override the email address
@@ -574,8 +581,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             );
         }
 
-        $finnaCache = $this->getTable('FinnaCache');
-        $recoveryRecord = $finnaCache->getByResourceId("$hash.recovery_hash");
+        $finnaCacheService = $this->getDbService(FinnaCacheServiceInterface::class);
+        $recoveryRecord = $finnaCacheService->getByResourceId("$hash.recovery_hash");
         if (!$recoveryRecord) {
             $this->flashMessenger()->addMessage('recovery_invalid_hash', 'error');
             return $this->redirect()->toRoute(
@@ -584,7 +591,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 ['query' => ['redirect' => 0]]
             );
         }
-        $recoveryData = json_decode($recoveryRecord->data, true);
+        $recoveryData = json_decode($recoveryRecord->getData(), true);
 
         $target = $recoveryData['target'];
         $catalog = $this->getILS();
@@ -615,7 +622,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         );
         $view->useCaptcha = $this->captcha()->active('changePassword');
         // Check Captcha
-        if ($this->formWasSubmitted('submit', $view->useCaptcha)) {
+        if ($this->formWasSubmitted(null, $view->useCaptcha)) {
             $password = $this->params()->fromPost('password', '');
             $password2 = $this->params()->fromPost('password2', '');
             if ($password !== $password2) {
@@ -634,7 +641,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
 
             if (!empty($result['success'])) {
                 $this->flashMessenger()->addSuccessMessage('new_password_success');
-                $recoveryRecord->delete();
+                $finnaCacheService->deleteCacheEntry($recoveryRecord);
                 return $this->redirect()->toRoute(
                     'myresearch-home',
                     [],
@@ -653,7 +660,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
     /**
      * Process the "edit library card" submission.
      *
-     * @param \VuFind\Db\Row\User $user Logged in user
+     * @param UserEntityInterface $user Logged in user
      *
      * @return object|bool        Response object if redirect is
      * needed, false if form needs to be redisplayed.
@@ -710,16 +717,17 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             return $this->redirect()->toRoute('librarycards-home');
         }
 
+        $userCardService = $this->getDbService(UserCardServiceInterface::class);
         if (!empty($cardName)) {
             [$cardInstitution] = explode('.', $username, 2);
-            foreach ($user->getLibraryCards() as $otherCard) {
-                if ($otherCard->id == $id) {
+            foreach ($userCardService->getLibraryCards($user) as $otherCard) {
+                if ($otherCard->getId() == $id) {
                     continue;
                 }
-                [$otherInstitution] = explode('.', $otherCard->cat_username, 2);
+                [$otherInstitution] = explode('.', $otherCard->getCatUsername(), 2);
                 if (
                     $cardInstitution == $otherInstitution
-                    && strcasecmp($cardName, $otherCard->card_name) == 0
+                    && strcasecmp($cardName, $otherCard->getCardName()) == 0
                 ) {
                     $this->flashMessenger()->addMessage(
                         'library_card_name_exists',
@@ -731,7 +739,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         }
 
         try {
-            $user->saveLibraryCard(
+            $userCardService->persistLibraryCardData(
+                $user,
                 $id == 'NEW' ? null : $id,
                 $cardName,
                 $username,
@@ -748,18 +757,18 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
     /**
      * Process the "change password" submission.
      *
-     * @param \VuFind\Db\Row\User     $user Logged in user
-     * @param \VuFind\Db\Row\UserCard $card Library card
+     * @param UserEntityInterface     $user Logged in user
+     * @param UserCardEntityInterface $card Library card
      *
      * @return object|bool Response object if redirect is needed, false if form
      * needs to be redisplayed.
      */
-    protected function processPasswordChange($user, $card)
+    protected function processPasswordChange(UserEntityInterface $user, UserCardEntityInterface $card)
     {
         $post = $this->getRequest()->getPost();
         $userFromHash = isset($post->hash)
-            ? $this->getTable('User')->getByVerifyHash($post->hash)
-            : false;
+            ? $this->getDbService(UserServiceInterface::class)->getUserByVerifyHash($post->hash)
+            : null;
 
         $oldPassword = $this->params()->fromPost('oldpwd', '');
         $password = $this->params()->fromPost('password', '');
@@ -767,32 +776,27 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
 
         // Validate new password
         try {
-            $ilsAuth = $this->serviceLocator->get(\VuFind\Auth\PluginManager::class)
-                ->get('ILS');
-            $ilsAuth->validatePasswordInUpdate(
-                ['password' => $password, 'password2' => $password2]
-            );
+            $ilsAuth = $this->serviceLocator->get(\VuFind\Auth\PluginManager::class)->get('ILS');
+            $ilsAuth->validatePasswordInUpdate(['password' => $password, 'password2' => $password2]);
         } catch (AuthException $e) {
             $this->flashMessenger()->addMessage($e->getMessage(), 'error');
             return false;
         }
 
         // Missing or invalid hash
-        if (false == $userFromHash) {
+        if (null === $userFromHash) {
             $this->flashMessenger()->addMessage('recovery_user_not_found', 'error');
             return false;
-        } elseif ($userFromHash->username !== $user->username) {
-            $this->flashMessenger()
-                ->addMessage('authentication_error_invalid', 'error');
+        } elseif ($userFromHash->getUsername() !== $user->getUsername()) {
+            $this->flashMessenger()->addMessage('authentication_error_invalid', 'error');
             return false;
         }
 
         // Connect to the ILS and check that the credentials are correct:
         $catalog = $this->getILS();
-        $patron = $catalog->patronLogin($card->cat_username, $oldPassword);
+        $patron = $catalog->patronLogin($card->getCatUsername(), $oldPassword);
         if (!$patron) {
-            $this->flashMessenger()
-                ->addMessage('authentication_error_invalid', 'error');
+            $this->flashMessenger()->addMessage('authentication_error_invalid', 'error');
             return false;
         }
 
@@ -822,16 +826,18 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             $this->flashMessenger()->addMessage($result['status'], 'error');
             return false;
         }
-        $user->saveLibraryCard(
-            $card->id,
-            $card->card_name,
-            $card->cat_username,
+        $userCardService = $this->getDbService(UserCardServiceInterface::class);
+        $userCardService->persistLibraryCardData(
+            $user,
+            $card,
+            $card->getCardName(),
+            $card->getCatUsername(),
             $password
         );
-        if (strcasecmp($user->cat_username, $card->cat_username) === 0) {
-            $user->saveCredentials($card->cat_username, $password);
+        if (strcasecmp($user->getCatUsername(), $card->getCatUsername()) === 0) {
+            $userCardService->activateLibraryCard($user, $card->getId());
         }
-        $user->updateHash();
+        $this->getAuthManager()->updateUserVerifyHash($user);
 
         $this->flashMessenger()->addSuccessMessage('new_password_success');
 

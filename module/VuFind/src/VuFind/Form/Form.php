@@ -160,7 +160,7 @@ class Form extends \Laminas\Form\Form implements
      * @param array  $prefill Prefill form with these values.
      *
      * @return void
-     * @throws Exception
+     * @throws \Exception
      */
     public function setFormId($formId, $params = [], $prefill = [])
     {
@@ -561,7 +561,7 @@ class Form extends \Laminas\Form\Form implements
      * @param string $formId Form id
      *
      * @return mixed null|array
-     * @throws Exception
+     * @throws \Exception
      */
     protected function getFormConfig($formId = null)
     {
@@ -753,7 +753,7 @@ class Form extends \Laminas\Form\Form implements
 
         $elements[] = [
             'type' => 'submit',
-            'name' => 'submit',
+            'name' => 'submitButton',
             'label' => 'Send',
         ];
 
@@ -956,7 +956,7 @@ class Form extends \Laminas\Form\Form implements
             !empty($el['label']) && 'hidden' !== $type
             && !isset($attributes['aria-label'])
         ) {
-            $attributes['aria-label'] = $el['label'];
+            $attributes['aria-label'] = $this->translate($el['label']);
         }
 
         switch ($type) {

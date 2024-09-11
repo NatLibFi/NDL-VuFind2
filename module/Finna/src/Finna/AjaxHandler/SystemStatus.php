@@ -106,7 +106,7 @@ class SystemStatus extends \VuFind\AjaxHandler\SystemStatus implements \Laminas\
         // Test database connection
         $dbStartTime = microtime(true);
         try {
-            $this->sessionTable->getBySessionId('healthcheck', false);
+            $this->sessionService->getSessionById('healthcheck', false);
         } catch (\Exception $e) {
             error_log('SystemStatus ERROR: Database error: ' . $e->getMessage());
             return $this->formatResponse(

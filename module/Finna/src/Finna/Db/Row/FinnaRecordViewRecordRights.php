@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) The National Library of Finland 2022-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,6 +29,8 @@
 
 namespace Finna\Db\Row;
 
+use Finna\Db\Entity\FinnaRecordViewRecordRightsEntityInterface;
+
 /**
  * Row definition for finna_record_view_record_rights
  *
@@ -37,8 +39,12 @@ namespace Finna\Db\Row;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
+ *
+ * @property int $id
+ * @property string $usage_rights
  */
-class FinnaRecordViewRecordRights extends \VuFind\Db\Row\RowGateway
+class FinnaRecordViewRecordRights extends \VuFind\Db\Row\RowGateway implements
+    FinnaRecordViewRecordRightsEntityInterface
 {
     /**
      * Constructor
@@ -48,5 +54,38 @@ class FinnaRecordViewRecordRights extends \VuFind\Db\Row\RowGateway
     public function __construct($adapter)
     {
         parent::__construct('id', 'finna_record_view_record_rights', $adapter);
+    }
+
+    /**
+     * Id getter
+     *
+     * @return ?int
+     */
+    public function getId(): ?int
+    {
+        return $this->id ?? null;
+    }
+
+    /**
+     * Rights setter
+     *
+     * @param string $rights Rights
+     *
+     * @return FinnaRecordViewRecordRightsEntityInterface
+     */
+    public function setRights(string $rights): FinnaRecordViewRecordRightsEntityInterface
+    {
+        $this->usage_rights = mb_substr($rights, 0, 255, 'UTF-8');
+        return $this;
+    }
+
+    /**
+     * Rights getter
+     *
+     * @return string
+     */
+    public function getRights(): string
+    {
+        return $this->usage_rights;
     }
 }

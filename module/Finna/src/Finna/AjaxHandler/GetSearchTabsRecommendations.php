@@ -33,7 +33,7 @@ use Laminas\Config\Config;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\View\Renderer\RendererInterface;
 use VuFind\Auth\Manager as AuthManager;
-use VuFind\Db\Table\Search as SearchTable;
+use VuFind\Db\Service\SearchServiceInterface;
 use VuFind\Search\Results\PluginManager as ResultsManager;
 use VuFind\Search\SearchRunner;
 use VuFind\Session\Settings as SessionSettings;
@@ -52,84 +52,28 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase impl
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
-     * Config
-     *
-     * @var Config
-     */
-    protected $config;
-
-    /**
-     * Search table
-     *
-     * @var SearchTable
-     */
-    protected $searchTable;
-
-    /**
-     * Results plugin manager
-     *
-     * @var ResultsManager
-     */
-    protected $resultsManager;
-
-    /**
-     * View renderer
-     *
-     * @var RendererInterface
-     */
-    protected $renderer;
-
-    /**
-     * Search runner
-     *
-     * @var SearchRunner
-     */
-    protected $searchRunner;
-
-    /**
-     * Session ID
-     *
-     * @var string
-     */
-    protected $sessionId;
-
-    /**
-     * Auth Manager
-     *
-     * @var AuthManager
-     */
-    protected $authManager;
-
-    /**
      * Constructor
      *
-     * @param SessionSettings   $ss        Session settings
-     * @param Config            $config    Main config
-     * @param SearchTable       $st        Search table
-     * @param ResultsManager    $results   Results manager
-     * @param RendererInterface $renderer  View renderer
-     * @param SearchRunner      $sr        Search runner
-     * @param string            $sessionId Session ID
-     * @param AuthManager       $authMgr   Auth Manager
+     * @param SessionSettings        $sessionSettings Session settings
+     * @param Config                 $config          Main config
+     * @param SearchServiceInterface $searchService   Search database service
+     * @param ResultsManager         $resultsManager  Results manager
+     * @param RendererInterface      $renderer        View renderer
+     * @param SearchRunner           $searchRunner    Search runner
+     * @param string                 $sessionId       Session ID
+     * @param AuthManager            $authManager     Auth Manager
      */
     public function __construct(
-        SessionSettings $ss,
-        Config $config,
-        SearchTable $st,
-        ResultsManager $results,
-        RendererInterface $renderer,
-        SearchRunner $sr,
-        string $sessionId,
-        AuthManager $authMgr
+        SessionSettings $sessionSettings,
+        protected Config $config,
+        protected SearchServiceInterface $searchService,
+        protected ResultsManager $resultsManager,
+        protected RendererInterface $renderer,
+        protected SearchRunner $searchRunner,
+        protected string $sessionId,
+        protected AuthManager $authManager
     ) {
-        $this->sessionSettings = $ss;
-        $this->config = $config;
-        $this->searchTable = $st;
-        $this->resultsManager = $results;
-        $this->renderer = $renderer;
-        $this->searchRunner = $sr;
-        $this->sessionId = $sessionId;
-        $this->authManager = $authMgr;
+        $this->sessionSettings = $sessionSettings;
     }
 
     /**
@@ -153,7 +97,7 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase impl
         $limit = $params->fromPost('limit', $params->fromQuery('limit', null));
 
         $user = $this->authManager->getUserObject();
-        $search = $this->searchTable->getOwnedRowById($id, $this->sessionId, $user ? $user->id : null);
+        $search = $this->searchService->getSearchByIdAndOwner($id, $this->sessionId, $user);
         if (empty($search)) {
             return $this->formatResponse(
                 'Search not found',

@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022-2023.
+ * Copyright (C) The National Library of Finland 2022-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,6 +30,7 @@
 
 namespace Finna\OnlinePayment\Handler;
 
+use Finna\Db\Entity\FinnaTransactionEntityInterface;
 use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailPaymentAPI\Client;
 use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailPaymentAPI\Customer;
 use Paytrail\SDK\Model\CallbackUrl;
@@ -37,6 +38,7 @@ use Paytrail\SDK\Model\Item;
 use Paytrail\SDK\Request\PaymentRequest;
 use Paytrail\SDK\Request\ShopInShopPaymentRequest;
 use Paytrail\SDK\Util\Signature;
+use VuFind\Db\Entity\UserEntityInterface;
 
 use function array_key_exists;
 
@@ -66,30 +68,30 @@ class PaytrailPaymentAPI extends AbstractBase
     /**
      * Start transaction.
      *
-     * @param string             $returnBaseUrl  Return URL
-     * @param string             $notifyBaseUrl  Notify URL
-     * @param \Finna\Db\Row\User $user           User
-     * @param array              $patron         Patron information
-     * @param string             $driver         Patron MultiBackend ILS source
-     * @param int                $amount         Amount (excluding transaction fee)
-     * @param int                $transactionFee Transaction fee
-     * @param array              $fines          Fines data
-     * @param string             $currency       Currency
-     * @param string             $paymentParam   Payment status URL parameter
+     * @param string              $returnBaseUrl  Return URL
+     * @param string              $notifyBaseUrl  Notify URL
+     * @param UserEntityInterface $user           User
+     * @param array               $patron         Patron information
+     * @param string              $driver         Patron MultiBackend ILS source
+     * @param int                 $amount         Amount (excluding transaction fee)
+     * @param int                 $transactionFee Transaction fee
+     * @param array               $fines          Fines data
+     * @param string              $currency       Currency
+     * @param string              $paymentParam   Payment status URL parameter
      *
      * @return string Error message on error, otherwise redirects to payment handler.
      */
     public function startPayment(
-        $returnBaseUrl,
-        $notifyBaseUrl,
-        $user,
-        $patron,
-        $driver,
-        $amount,
-        $transactionFee,
-        $fines,
-        $currency,
-        $paymentParam
+        string $returnBaseUrl,
+        string $notifyBaseUrl,
+        UserEntityInterface $user,
+        array $patron,
+        string $driver,
+        int $amount,
+        int $transactionFee,
+        array $fines,
+        string $currency,
+        string $paymentParam
     ) {
         $patronId = $patron['cat_username'];
         $transactionId = $this->generateTransactionId($patronId);
@@ -115,7 +117,7 @@ class PaytrailPaymentAPI extends AbstractBase
         $customer = (new Customer())
             ->setFirstName($names['firstname'] ?: 'ei tietoa')
             ->setLastName($names['lastname'] ?: 'ei tietoa')
-            ->setEmail(trim($user->email));
+            ->setEmail(trim($user->getEmail()));
 
         $language = $this->languageMap[$this->getCurrentLanguageCode()] ?? 'EN';
 
@@ -229,10 +231,10 @@ class PaytrailPaymentAPI extends AbstractBase
             return '';
         }
 
-        $transaction = $this->createTransaction(
+        $transaction = $this->createTransactionEntity(
             $transactionId,
             $driver,
-            $user->id,
+            $user,
             $patronId,
             $amount,
             $transactionFee,
@@ -251,14 +253,14 @@ class PaytrailPaymentAPI extends AbstractBase
     /**
      * Process the response from payment service.
      *
-     * @param \Finna\Db\Row\Transaction $transaction Transaction
-     * @param \Laminas\Http\Request     $request     Request
+     * @param FinnaTransactionEntityInterface $transaction Transaction
+     * @param \Laminas\Http\Request           $request     Request
      *
      * @return array One of the result codes defined in AbstractBase and bool
      * indicating whether the transaction was just now marked as paid
      */
     public function processPaymentResponse(
-        \Finna\Db\Row\Transaction $transaction,
+        FinnaTransactionEntityInterface $transaction,
         \Laminas\Http\Request $request
     ): array {
         if (!($params = $this->getPaymentResponseParams($request))) {
@@ -266,29 +268,33 @@ class PaytrailPaymentAPI extends AbstractBase
         }
 
         // Make sure the transaction IDs match:
-        if ($transaction->transaction_id !== $params['checkout-stamp']) {
+        if ($transaction->getTransactionIdentifier() !== $params['checkout-stamp']) {
             return [self::PAYMENT_FAILURE, false];
         }
 
         $status = $params['checkout-status'];
         switch ($status) {
             case 'ok':
-                $marked = $transaction->setPaid();
-                $this->addTransactionEvent($transaction->id, 'Transaction marked as paid');
+                if ($marked = $transaction->isInProgress()) {
+                    $transaction->setPaid();
+                    $this->transactionService->persistEntity($transaction);
+                }
+                $this->addTransactionEvent($transaction, 'Transaction marked as paid');
                 return [self::PAYMENT_SUCCESS, $marked];
             case 'fail':
                 $transaction->setCanceled();
-                $this->addTransactionEvent($transaction->id, 'Transaction marked as canceled');
+                $this->transactionService->persistEntity($transaction);
+                $this->addTransactionEvent($transaction, 'Transaction marked as canceled');
                 return [self::PAYMENT_CANCEL, false];
             case 'new':
             case 'pending':
             case 'delayed':
-                $this->addTransactionEvent($transaction->id, 'Transaction pending (received status $status)');
+                $this->addTransactionEvent($transaction, 'Transaction pending (received status $status)');
                 return [self::PAYMENT_PENDING, false];
         }
 
         $this->logPaymentError("unknown status $status");
-        $this->addTransactionEvent($transaction->id, 'Received unknown status', ['status' => $status]);
+        $this->addTransactionEvent($transaction, 'Received unknown status', ['status' => $status]);
         return [self::PAYMENT_FAILURE, false];
     }
 

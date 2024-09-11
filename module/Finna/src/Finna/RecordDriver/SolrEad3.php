@@ -229,9 +229,14 @@ class SolrEad3 extends SolrEad
             ) {
                 return;
             }
-            $downloadOnly = false;
+            $linkType = 'external-link';
             if (str_starts_with($role, 'audio') || str_starts_with($role, 'video')) {
-                $downloadOnly = ((string)$attr->actuate === 'onrequest' && (string)$attr->show === 'none');
+                if ((string)$attr->actuate === 'onrequest' && (string)$attr->show === 'none') {
+                    $linkType = 'download';
+                }
+            }
+            if ($role === 'image/tiff') {
+                $linkType = 'download';
             }
             $lang = (string)$attr->lang;
             $preferredLang = $lang && in_array($lang, $preferredLangCodes);
@@ -243,7 +248,7 @@ class SolrEad3 extends SolrEad
                 $urlData = [
                     'url' => $url,
                     'desc' => (string)$desc,
-                    'downloadOnly' => $downloadOnly,
+                    'linkType' => $linkType,
                 ];
                 if ($preferredLang) {
                     $urls['localeurls'][] = $urlData;
@@ -1249,18 +1254,14 @@ class SolrEad3 extends SolrEad
             if (! isset($attr->encodinganalog)) {
                 $restrictions['general'] = array_merge(
                     $restrictions['general'],
-                    $this->getDisplayLabel($access, 'p', true)
+                    $this->getDisplayLabel($access, 'p')
                 );
             } else {
                 $type = (string)$attr->encodinganalog;
                 if (in_array($type, self::ACCESS_RESTRICT_TYPES)) {
                     switch ($type) {
                         case 'ahaa:KR7':
-                            $label = $this->getDisplayLabel(
-                                $access->p->name,
-                                'part',
-                                true
-                            );
+                            $label = $this->getDisplayLabel($access->p->name, 'part');
                             break;
                         case 'ahaa:KR9':
                             $label = [(string)($access->p->date ?? '')];

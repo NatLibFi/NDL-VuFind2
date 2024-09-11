@@ -32,6 +32,7 @@ namespace Finna\ILS\Driver;
 
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\TranslatableString;
+use VuFind\ILS\Logic\AvailabilityStatus;
 use VuFind\Marc\MarcReader;
 
 use function array_key_exists;
@@ -281,8 +282,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 && !in_array($debitStatus, $this->nonPayableStatuses);
             $fine = [
                 'fine_id' => $entry['account_line_id'],
-                'amount' => $entry['amount'] * 100,
-                'balance' => $entry['amount_outstanding'] * 100,
+                'amount' => (int)round($entry['amount'] * 100),
+                'balance' => (int)round($entry['amount_outstanding'] * 100),
                 'fine' => $type,
                 'description' => $description,
                 'createdate' => $this->convertDate($entry['date'] ?? null),
@@ -1028,15 +1029,19 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             }
         }
 
-        $result = $this->makeRequest(
-            [
-                'path' => [
-                    'v1', 'contrib', 'kohasuomi', 'availability', 'biblios', $id,
-                    'search',
-                ],
-                'errors' => true,
-            ]
-        );
+        $requestParams = [
+            'path' => [
+                'v1', 'contrib', 'kohasuomi', 'availability', 'biblios', $id,
+                'search',
+            ],
+            'errors' => true,
+            'query' => [],
+        ];
+        if ($this->includeSuspendedHoldsInQueueLength) {
+            $requestParams['query']['include_suspended_in_hold_queue'] = '1';
+        }
+
+        $result = $this->makeRequest($requestParams);
         if (404 === $result['code']) {
             return [];
         }
@@ -1119,11 +1124,24 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             }
             $requestsTotal = max($requestsTotal, $requests);
 
+            $extraStatusInformation = [];
+            if ($transit = $avail['unavailabilities']['Item::Transfer'] ?? null) {
+                if (null !== ($toLibrary = $transit['to_library'] ?? null)) {
+                    $extraStatusInformation['location'] = $this->getLibraryName($toLibrary);
+                    if ($status == 'HoldingStatus::transit_to_date') {
+                        $extraStatusInformation['date'] = $this->convertDate(
+                            $transit['datesent'],
+                            true
+                        );
+                    }
+                }
+            }
+
             $entry = [
                 'id' => $id,
                 'item_id' => $item['item_id'],
                 'location' => $location,
-                'availability' => $available,
+                'availability' => new AvailabilityStatus($available, $status, $extraStatusInformation),
                 'status' => $status,
                 'status_array' => $statusCodes,
                 'reserve' => 'N',
@@ -1216,7 +1234,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                             if (!$issue['received']) {
                                 continue;
                             }
-                            [$year] = explode('-', $issue['publisheddate']);
+                            [$year] = explode('-', $issue['publisheddate'] ?? '');
                             if ($year > $latestReceived) {
                                 $latestReceived = $year;
                             }
@@ -1226,7 +1244,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                         if (!$issue['received']) {
                             continue;
                         }
-                        [$year] = explode('-', $issue['publisheddate']);
+                        [$year] = explode('-', $issue['publisheddate'] ?? '');
                         if ($yearFilter) {
                             // Limit to current and last year
                             if (
@@ -1968,12 +1986,16 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     protected function getTransactions($patron, $params, $checkedIn)
     {
         $pageSize = $params['limit'] ?? 50;
-        $sort = $params['sort'] ?? '+due_date';
-        if ('+title' === $sort) {
-            $sort = '+title|+subtitle';
-        } elseif ('-title' === $sort) {
-            $sort = '-title|-subtitle';
-        }
+        $sort = match ($params['sort'] ?? null) {
+            '-checkout_date',
+            '+checkout_date',
+            '-checkin_date',
+            '+checkin_date',
+            '-due_date',
+            '+due_date' => $params['sort'],
+            '+title' => '+title,+subtitle',
+            default => $checkedIn ? '-checkout_date' : '+due_date',
+        };
         $queryParams = [
             '_order_by' => $sort,
             '_page' => $params['page'] ?? 1,
@@ -2026,7 +2048,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             $message = '';
             if (!$renewable && !$checkedIn) {
                 $message = $this->mapRenewalBlockReason(
-                    $entry['renewability_blocks']
+                    $entry['renewability_blocks'],
+                    $entry['item_itype']
                 );
                 $permanent = in_array(
                     $entry['renewability_blocks'],

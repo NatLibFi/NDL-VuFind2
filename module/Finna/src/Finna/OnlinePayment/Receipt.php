@@ -5,7 +5,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2023.
+ * Copyright (C) The National Library of Finland 2023-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,8 +29,9 @@
 
 namespace Finna\OnlinePayment;
 
-use Finna\Db\Row\Fee;
-use Finna\Db\Row\Transaction;
+use Finna\Db\Entity\FinnaFeeEntityInterface;
+use Finna\Db\Entity\FinnaTransactionEntityInterface;
+use Finna\Db\Service\FinnaTransactionServiceInterface;
 use Laminas\Mail\Address;
 use Laminas\Mime\Message as MimeMessage;
 use Laminas\Mime\Mime;
@@ -39,7 +40,7 @@ use Laminas\Router\RouteInterface;
 use Laminas\View\Renderer\RendererInterface;
 use TCPDF;
 use VuFind\Date\Converter as DateConverter;
-use VuFind\Db\Row\User;
+use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
 use VuFind\Mailer\Mailer;
@@ -59,55 +60,6 @@ use function count;
 class Receipt implements TranslatorAwareInterface
 {
     use TranslatorAwareTrait;
-
-    /**
-     * Main configuration
-     *
-     * @var array
-     */
-    protected $config;
-
-    /**
-     * Data source configuration
-     *
-     * @var array
-     */
-    protected $dataSourceConfig;
-
-    /**
-     * Date converter
-     *
-     * @var DateConverter
-     */
-    protected $dateConverter;
-
-    /**
-     * Currency formatter
-     *
-     * @var CurrencyFormatter
-     */
-    protected $currencyFormatter;
-
-    /**
-     * Router
-     *
-     * @var RouteInterface
-     */
-    protected $router;
-
-    /**
-     * Mailer
-     *
-     * @var Mailer
-     */
-    protected $mailer;
-
-    /**
-     * View renderer
-     *
-     * @var RendererInterface;
-     */
-    protected $renderer;
 
     /**
      * Left margin of PDF (millimeters)
@@ -131,48 +83,43 @@ class Receipt implements TranslatorAwareInterface
     /**
      * Constructor.
      *
-     * @param array             $config            Main configuration
-     * @param array             $dsConfig          Data source configuration
-     * @param DateConverter     $dateConverter     Date converter
-     * @param CurrencyFormatter $currencyFormatter Currency formatter
-     * @param RouteInterface    $router            Router
-     * @param Mailer            $mailer            Mailer
-     * @param RendererInterface $renderer          View renderer
+     * @param array                            $config             Main configuration
+     * @param array                            $dataSourceConfig   Data source configuration
+     * @param DateConverter                    $dateConverter      Date converter
+     * @param CurrencyFormatter                $currencyFormatter  Currency formatter
+     * @param RouteInterface                   $router             Router
+     * @param Mailer                           $mailer             Mailer
+     * @param RendererInterface                $renderer           View renderer
+     * @param FinnaTransactionServiceInterface $transactionService Transaction database service
      */
     public function __construct(
-        array $config,
-        array $dsConfig,
-        DateConverter $dateConverter,
-        CurrencyFormatter $currencyFormatter,
-        RouteInterface $router,
-        Mailer $mailer,
-        RendererInterface $renderer
+        protected array $config,
+        protected array $dataSourceConfig,
+        protected DateConverter $dateConverter,
+        protected CurrencyFormatter $currencyFormatter,
+        protected RouteInterface $router,
+        protected Mailer $mailer,
+        protected RendererInterface $renderer,
+        protected FinnaTransactionServiceInterface $transactionService
     ) {
-        $this->config = $config;
-        $this->dataSourceConfig = $dsConfig;
-        $this->dateConverter = $dateConverter;
-        $this->currencyFormatter = $currencyFormatter;
-        $this->router = $router;
-        $this->mailer = $mailer;
-        $this->renderer = $renderer;
     }
 
     /**
      * Create a receipt PDF
      *
-     * @param Transaction $transaction Transaction
+     * @param FinnaTransactionEntityInterface $transaction Transaction
      *
      * @return array
      */
-    public function createReceiptPDF(Transaction $transaction): array
+    public function createReceiptPDF(FinnaTransactionEntityInterface $transaction): array
     {
         $source = $this->getSource($transaction);
         $sourceName = $this->getSourceName($transaction);
         $contactInfo = $this->getContactInfo($source);
 
         $paidDate = $this->dateConverter->convertToDisplayDateAndTime(
-            'Y-m-d H:i:s',
-            $transaction->paid
+            'U',
+            $transaction->getPaidDate()->getTimestamp()
         );
 
         $dsConfig = $this->dataSourceConfig[$source] ?? [];
@@ -189,8 +136,9 @@ class Receipt implements TranslatorAwareInterface
         }
         // Check if we have recipient organizations:
         $hasFineOrgs = false;
-        foreach ($transaction->getFines() as $fine) {
-            $fineOrg = $fine->organization;
+        $fines = $this->transactionService->getFines($transaction);
+        foreach ($fines as $fine) {
+            $fineOrg = $fine->getOrganization();
             if ($fineOrg && ($organizationBusinessIdMappings[$fineOrg] ?? false)) {
                 $hasFineOrgs = true;
                 break;
@@ -230,7 +178,7 @@ class Receipt implements TranslatorAwareInterface
             $this->addInfo($pdf, 'Payment::Recipient', $sourceName . ($businessId ? " ($businessId)" : ''));
         }
         $this->addInfo($pdf, 'Payment::Date', $paidDate);
-        $this->addInfo($pdf, 'Payment::Identifier', $transaction->transaction_id);
+        $this->addInfo($pdf, 'Payment::Identifier', $transaction->getTransactionIdentifier());
         if ($contactInfo) {
             $this->addInfo($pdf, 'Payment::Contact Information', $contactInfo);
         }
@@ -240,10 +188,10 @@ class Receipt implements TranslatorAwareInterface
         $this->addHeaders($pdf, $hasFineOrgs);
         // Account for the "Total" line:
         $linesBottom = $this->bottom - 7;
-        foreach ($transaction->getFines() as $fine) {
+        foreach ($fines as $fine) {
             $savePDF = clone $pdf;
 
-            $fineOrg = $fine->organization ?? '';
+            $fineOrg = $fine->getOrganization();
             $lineBusinessId = $fineOrg ? ($organizationBusinessIdMappings[$fineOrg] ?? '') : '';
             $this->addLine($pdf, $fine, $source, $sourceName, $businessId, $lineBusinessId, $hasFineOrgs);
             // If we exceed bottom, revert and add a new page:
@@ -258,8 +206,8 @@ class Receipt implements TranslatorAwareInterface
         $pdf->SetY($pdf->GetY() + 1);
         $pdf->SetFont('helvetica', 'B', 10);
         $amount = $this->currencyFormatter->convertToDisplayFormat(
-            $transaction->amount / 100.00,
-            $transaction->currency
+            $transaction->getAmount() / 100.00,
+            $transaction->getCurrency()
         );
         $pdf->Cell(
             190,
@@ -279,31 +227,33 @@ class Receipt implements TranslatorAwareInterface
             $this->addVATSummary($pdf, $transaction);
         }
 
-        $date = strtotime($transaction->paid);
         return [
             'pdf' => $pdf->getPDFData(),
-            'filename' => $heading . ' - ' . date('Y-m-d H-i', $date),
+            'filename' => $heading . ' - ' . $transaction->getPaidDate()->format('Y-m-d H-i'),
         ];
     }
 
     /**
      * Send receipt by email
      *
-     * @param User        $user          User
-     * @param array       $patronProfile Patron information
-     * @param Transaction $transaction   Transaction
+     * @param UserEntityInterface             $user          User
+     * @param array                           $patronProfile Patron information
+     * @param FinnaTransactionEntityInterface $transaction   Transaction
      *
      * @return bool
      *
      * @todo Add attachment support to Mailer's send method
      */
-    public function sendEmail(User $user, array $patronProfile, Transaction $transaction): bool
-    {
+    public function sendEmail(
+        UserEntityInterface $user,
+        array $patronProfile,
+        FinnaTransactionEntityInterface $transaction
+    ): bool {
         $recipients = array_unique(
             array_filter(
                 [
                     trim($patronProfile['email'] ?? ''),
-                    trim($user->email),
+                    trim($user->getEmail()),
                 ]
             )
         );
@@ -433,27 +383,27 @@ class Receipt implements TranslatorAwareInterface
      */
     protected function addLine(
         TCPDF $pdf,
-        Fee $fine,
+        FinnaFeeEntityInterface $fine,
         string $source,
         string $sourceName,
         string $businessId,
         string $lineBusinessId,
         bool $recipient
     ): void {
-        $type = $fine->type;
+        $type = $fine->getType();
         $type = $this->translate("fine_status_$type", [], $this->translate("status_$type", [], $type));
 
         $descriptions = [];
-        if ($fine->description) {
-            $descriptions[] = $fine->description;
+        if ($desc = $fine->getDescription()) {
+            $descriptions[] = $desc;
         }
-        if ($fine->title) {
-            $descriptions[] = $fine->title;
+        if ($title = $fine->getTitle()) {
+            $descriptions[] = $title;
         }
 
         $curY = $pdf->GetY();
 
-        $pdf->MultiCell(28, 0, $fine->fine_id ?? '', 0, 'L');
+        $pdf->MultiCell(28, 0, $fine->getFineId(), 0, 'L');
         $nextY = $pdf->GetY();
 
         $pdf->SetXY($this->left + 30, $curY);
@@ -465,7 +415,7 @@ class Receipt implements TranslatorAwareInterface
         $nextY = max($nextY, $pdf->GetY());
 
         if ($recipient) {
-            if (($fineOrg = $fine->organization) && $lineBusinessId) {
+            if (($fineOrg = $fine->getOrganization()) && $lineBusinessId) {
                 $recipient = $this->translate("Payment::organisation_{$source}_{$fineOrg}", [], $fineOrg)
                     . " ($lineBusinessId)";
             } else {
@@ -480,7 +430,7 @@ class Receipt implements TranslatorAwareInterface
         $pdf->Cell(
             20,
             0,
-            $this->currencyFormatter->convertToDisplayFormat($fine->amount / 100.00, $fine->currency),
+            $this->currencyFormatter->convertToDisplayFormat($fine->getAmount() / 100.00, $fine->getCurrency()),
             0,
             0,
             'R'
@@ -496,11 +446,11 @@ class Receipt implements TranslatorAwareInterface
      *
      * @return void
      */
-    protected function addVATSummary(TCPDF $pdf, Transaction $transaction): void
+    protected function addVATSummary(TCPDF $pdf, FinnaTransactionEntityInterface $transaction): void
     {
         $amount = $this->currencyFormatter->convertToDisplayFormat(
-            $transaction->amount / 100.00,
-            $transaction->currency
+            $transaction->getAmount() / 100.00,
+            $transaction->getCurrency()
         );
 
         $pdf->SetY($pdf->GetY() + 15);
@@ -520,7 +470,7 @@ class Receipt implements TranslatorAwareInterface
         $pdf->SetXY($vatLeft + 30, $y + 1);
         $pdf->Cell(20, 0, '0 %');
         $pdf->Cell(30, 0, $amount, 0, 0, 'R');
-        $pdf->Cell(30, 0, $this->currencyFormatter->convertToDisplayFormat(0, $transaction->currency), 0, 0, 'R');
+        $pdf->Cell(30, 0, $this->currencyFormatter->convertToDisplayFormat(0, $transaction->getCurrency()), 0, 0, 'R');
         $pdf->Cell(30, 0, $amount, 0, 1, 'R');
     }
 
@@ -531,20 +481,20 @@ class Receipt implements TranslatorAwareInterface
      *
      * @return string
      */
-    protected function getSource(Transaction $transaction): string
+    protected function getSource(FinnaTransactionEntityInterface $transaction): string
     {
-        [$source] = explode('.', $transaction->cat_username);
+        [$source] = explode('.', $transaction->getCatUsername());
         return $source;
     }
 
     /**
      * Get source name from transaction
      *
-     * @param Transaction $transaction Transaction
+     * @param FinnaTransactionEntityInterface $transaction Transaction
      *
      * @return string
      */
-    protected function getSourceName(Transaction $transaction): string
+    protected function getSourceName(FinnaTransactionEntityInterface $transaction): string
     {
         $source = $this->getSource($transaction);
         return $this->translate('source_' . $source, [], $source);

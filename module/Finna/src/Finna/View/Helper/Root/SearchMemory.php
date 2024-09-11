@@ -75,18 +75,6 @@ class SearchMemory extends \VuFind\View\Helper\Root\SearchMemory
     }
 
     /**
-     * Retrieve the last search url
-     *
-     * @return string
-     *
-     * @deprecated Non-functional -- For template back-compatibility only
-     */
-    public function getLastSearchUrl()
-    {
-        return $this->memory->retrieveSearch();
-    }
-
-    /**
      * Retrieve the scroll data
      *
      * @return array

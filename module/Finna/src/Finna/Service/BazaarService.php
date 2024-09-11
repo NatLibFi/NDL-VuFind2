@@ -32,7 +32,7 @@ namespace Finna\Service;
 use Laminas\Session\Container;
 use Laminas\Session\SessionManager;
 use Laminas\Stdlib\ArrayObject;
-use VuFind\Db\Table\AuthHash as AuthHashTable;
+use VuFind\Db\Service\AuthHashServiceInterface;
 use VuFind\Exception\Auth as AuthException;
 
 /**
@@ -54,20 +54,6 @@ class BazaarService
     public const NAMESPACE = 'bazaar';
 
     /**
-     * Database table for authentication hashes.
-     *
-     * @var AuthHashTable
-     */
-    protected AuthHashTable $authHashTable;
-
-    /**
-     * Session manager.
-     *
-     * @var SessionManager
-     */
-    protected SessionManager $session;
-
-    /**
      * Bazaar session storage container.
      *
      * @var ?ArrayObject
@@ -84,15 +70,13 @@ class BazaarService
     /**
      * Constructor.
      *
-     * @param AuthHashTable  $authHashTable Database table for authentication hashes
-     * @param SessionManager $session       Session manager
+     * @param AuthHashServiceInterface $authHashService Database service authentication hashes
+     * @param SessionManager           $session         Session manager
      */
     public function __construct(
-        AuthHashTable $authHashTable,
-        SessionManager $session
+        protected AuthHashServiceInterface $authHashService,
+        protected SessionManager $session
     ) {
-        $this->authHashTable = $authHashTable;
-        $this->session = $session;
     }
 
     /**
@@ -105,16 +89,16 @@ class BazaarService
      */
     public function createSession(string $hash): void
     {
-        $row = $this->authHashTable->getByHashAndType($hash, 'bazaar', false);
+        $row = $this->authHashService->getByHashAndType($hash, 'bazaar', false);
 
         if (!$row) {
             // The hash has already been used or is invalid.
             throw new AuthException('authentication_error_invalid');
         }
 
-        if (time() - strtotime($row['created']) > 600) {
+        if (time() - $row->getCreated()->getTimestamp() > 600) {
             // The hash has expired.
-            $row->delete();
+            $this->authHashService->deleteAuthHash($row);
             throw new AuthException('authentication_error_expired');
         }
 
@@ -124,7 +108,7 @@ class BazaarService
         foreach ($data as $key => $value) {
             $this->container[$key] = $value;
         }
-        $row->delete();
+        $this->authHashService->deleteAuthHash($row);
     }
 
     /**

@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2019.
+ * Copyright (C) The National Library of Finland 2015-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,6 +23,7 @@
  * @category VuFind
  * @package  AJAX
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
@@ -31,9 +32,10 @@ namespace Finna\AjaxHandler;
 
 use Laminas\Config\Config;
 use Laminas\Mvc\Controller\Plugin\Params;
-use VuFind\Db\Row\User;
-use VuFind\Db\Table\User as UserTable;
-use VuFind\Db\Table\UserList;
+use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\Db\Service\UserListServiceInterface;
+use VuFind\Db\Service\UserResourceServiceInterface;
+use VuFind\Favorites\FavoritesService;
 use VuFind\Record\Loader;
 use VuFind\Session\Settings as SessionSettings;
 use VuFind\View\Helper\Root\Record;
@@ -44,6 +46,7 @@ use VuFind\View\Helper\Root\Record;
  * @category VuFind
  * @package  AJAX
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
@@ -52,74 +55,28 @@ class GetImageInformation extends \VuFind\AjaxHandler\AbstractBase
     use \Finna\Statistics\ReporterTrait;
 
     /**
-     * Config
-     *
-     * @var Config
-     */
-    protected $config;
-
-    /**
-     * Record loader
-     *
-     * @var Loader
-     */
-    protected $recordLoader;
-
-    /**
-     * User table
-     *
-     * @var UserTable
-     */
-    protected $userTable;
-
-    /**
-     * UserList table
-     *
-     * @var UserList
-     */
-    protected $userListTable;
-
-    /**
-     * Logged in user (or false)
-     *
-     * @var User|bool
-     */
-    protected $user;
-
-    /**
-     * Record plugin
-     *
-     * @var Record
-     */
-    protected $recordPlugin;
-
-    /**
      * Constructor
      *
-     * @param SessionSettings $ss        Session settings
-     * @param Config          $config    Main configuration
-     * @param Loader          $loader    Record loader
-     * @param UserTable       $userTable User table
-     * @param UserList        $userList  UserList table
-     * @param User|bool       $user      Logged in user (or false)
-     * @param Record          $rp        Record plugin
+     * @param SessionSettings              $sessionSettings     Session settings
+     * @param Config                       $config              Main configuration
+     * @param Loader                       $recordLoader        Record loader
+     * @param ?UserEntityInterface         $user                Logged in user (or null)
+     * @param UserListServiceInterface     $userListService     UserList database service
+     * @param UserResourceServiceInterface $userResourceService UserResource database service
+     * @param FavoritesService             $favoritesService    Favorites service
+     * @param Record                       $recordPlugin        Record plugin
      */
     public function __construct(
-        SessionSettings $ss,
-        Config $config,
-        Loader $loader,
-        UserTable $userTable,
-        UserList $userList,
-        $user,
-        Record $rp
+        SessionSettings $sessionSettings,
+        protected Config $config,
+        protected Loader $recordLoader,
+        protected ?UserEntityInterface $user,
+        protected UserListServiceInterface $userListService,
+        protected UserResourceServiceInterface $userResourceService,
+        protected FavoritesService $favoritesService,
+        protected Record $recordPlugin
     ) {
-        $this->sessionSettings = $ss;
-        $this->config = $config;
-        $this->recordLoader = $loader;
-        $this->userTable = $userTable;
-        $this->userListTable = $userList;
-        $this->user = $user;
-        $this->recordPlugin = $rp;
+        $this->sessionSettings = $sessionSettings;
     }
 
     /**
@@ -140,7 +97,7 @@ class GetImageInformation extends \VuFind\AjaxHandler\AbstractBase
         $searchId = $params->fromQuery('sid');
 
         if (null === ($source = $params->fromQuery('source'))) {
-            [$source, $recId] = explode('.', $id, 2);
+            [$source] = explode('.', $id, 2);
             if ('pci' === $source) {
                 $source = 'Primo';
             } else {
@@ -157,20 +114,20 @@ class GetImageInformation extends \VuFind\AjaxHandler\AbstractBase
         $user = null;
         if ($publicList) {
             // Public list view: fetch list owner
-            $list = $this->userListTable->select(['id' => $listId])->current();
+            $list = $this->userListService->getUserListById($listId);
             if ($list && $list->isPublic()) {
-                $user = $this->userTable->getById($list->user_id);
+                $user = $list->getUser();
             }
         } else {
             // otherwise, use logged-in user if available
             $user = $this->user;
         }
 
-        if ($user && $data = $user->getSavedData($id, $listId)) {
+        if ($user && $data = $this->userResourceService->getFavoritesForRecord($id, $source, $listId, $user)) {
             $notes = [];
             foreach ($data as $list) {
-                if (!empty($list->notes)) {
-                    $notes[] = $list->notes;
+                if ($listNotes = $list->getNotes()) {
+                    $notes[] = $listNotes;
                 }
             }
             $context['listNotes'] = $notes;

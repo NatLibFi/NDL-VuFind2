@@ -32,6 +32,8 @@ namespace FinnaApi\Controller;
 
 use VuFind\Service\Feature\RetryTrait;
 
+use function ini_get;
+
 /**
  * Provides web api for different admin tasks.
  *
@@ -60,6 +62,11 @@ class AdminApiController extends \VuFindApi\Controller\AdminApiController
             return $result;
         }
 
+        // Check time limit; increase if necessary:
+        if (ini_get('max_execution_time') < 3600) {
+            ini_set('max_execution_time', '3600');
+        }
+
         try {
             $cacheList = $this->getRequest()->getQuery()->get('id')
                 ?: $this->getDefaultCachesToClear();
@@ -68,8 +75,10 @@ class AdminApiController extends \VuFindApi\Controller\AdminApiController
                 $this->callWithRetry(
                     [$this->cacheManager->getCache($id), 'flush'],
                     options: [
-                        'retryCount' => 50,
-                        'maximumBackoff' => 0,
+                        'retryCount' => 10,
+                        'firstBackoff' => 0,
+                        'subsequentBackoff' => 0,
+                        'exponentialBackoff' => false,
                     ]
                 );
             }

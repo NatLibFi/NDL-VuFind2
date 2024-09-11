@@ -49,7 +49,7 @@
       <?php elseif ($corporateType = $this->driver->getCorporateType()): ?>
         <div class="corporate-type"><?=$corporateType?></div>
       <?php endif; ?>
-      <?/* Display anchor links to authority records tabs */?>
+      <?php /* Display anchor links to authority records tabs */?>
       <?php if ($authSummary = $this->record($this->driver)->getAuthoritySummary(true)): ?>
         <div class="authority-records-summary">
           <?= $authSummary ?>
@@ -74,7 +74,7 @@
         </div>
       <?php endif; ?>
 
-      <?/* Display Main Details */?>
+      <?php /* Display Main Details */?>
       <?=
         $this->record($this->driver)->renderTemplate(
             'core-fields.phtml',
@@ -83,7 +83,7 @@
             ]
         );
       ?>
-      <?/* End Main Details */?>
+      <?php /* End Main Details */?>
 
       <?php if ($template = $this->content()->findTemplateForLng('content/Additions/record-post-metadata')): ?>
       <div>

@@ -30,6 +30,7 @@
 
 namespace FinnaConsole\Command\Util;
 
+use Finna\Db\Service\FinnaRecordServiceInterface;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
@@ -67,13 +68,9 @@ class VerifyRecordLinksFactory implements FactoryInterface
         $requestedName,
         array $options = null
     ) {
-        $tableManager = $container->get(\VuFind\Db\Table\PluginManager::class);
-
+        $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
         return new $requestedName(
-            $tableManager->get('Comments'),
-            $tableManager->get('CommentsRecord'),
-            $tableManager->get('Resource'),
-            $tableManager->get('Ratings'),
+            $dbServiceManager->get(FinnaRecordServiceInterface::class),
             $container->get(\VuFind\Search\BackendManager::class)->get('Solr'),
             $container->get(\VuFind\Record\Loader::class),
             $container->get(\VuFind\Config\PluginManager::class)->get('searches'),

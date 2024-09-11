@@ -41,6 +41,7 @@ use Finna\Search\Solr\AuthorityHelper;
 use Finna\Service\UserPreferenceService;
 use Laminas\Config\Config;
 use VuFind\Record\Loader;
+use VuFind\Tags\TagsService;
 use VuFind\View\Helper\Root\Url;
 
 use function array_key_exists;
@@ -153,6 +154,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Constructor
      *
+     * @param TagsService           $tagsService            Tags service
      * @param Config                $config                 VuFind config
      * @param Loader                $loader                 Record loader
      * @param RecordImage           $recordImage            Record image helper
@@ -168,6 +170,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      *                                                      records results
      */
     public function __construct(
+        TagsService $tagsService,
         Config $config,
         Loader $loader,
         RecordImage $recordImage,
@@ -179,7 +182,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         UserPreferenceService $userPreferenceService,
         callable $getEncapsulatedResults
     ) {
-        parent::__construct($config);
+        parent::__construct($tagsService, $config);
         $this->loader = $loader;
         $this->recordImageHelper = $recordImage;
         $this->authorityHelper = $authorityHelper;
@@ -646,6 +649,20 @@ class Record extends \VuFind\View\Helper\Root\Record
         return
             $this->config->Authority
             && (bool)$this->config->Authority->enabled ?? false;
+    }
+
+    /**
+     * Get comments associated with the current record.
+     *
+     * @return CommentsEntityInterface[]
+     */
+    public function getComments(): array
+    {
+        $cacheKey = __FUNCTION__ . "{$this->driver->getUniqueId()}\t{$this->driver->getSourceIdentifier()}";
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
+        return $this->cache[$cacheKey] = parent::getComments();
     }
 
     /**
@@ -1348,7 +1365,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getOrganisationMenuPosition()
     {
-        $localSources = ['Solr', 'SolrAuth', 'L1', 'R2'];
+        $localSources = ['Solr', 'SolrAuth', 'L1'];
         $source = $this->driver->getSourceIdentifier();
         if (!in_array($source, $localSources)) {
             return false;

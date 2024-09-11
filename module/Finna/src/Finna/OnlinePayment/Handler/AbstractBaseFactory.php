@@ -29,6 +29,9 @@
 
 namespace Finna\OnlinePayment\Handler;
 
+use Finna\Db\Service\FinnaFeeServiceInterface;
+use Finna\Db\Service\FinnaTransactionEventLogServiceInterface;
+use Finna\Db\Service\FinnaTransactionServiceInterface;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
@@ -65,13 +68,13 @@ class AbstractBaseFactory implements FactoryInterface
         $requestedName,
         array $options = null
     ) {
-        $tableManager = $container->get(\VuFind\Db\Table\PluginManager::class);
+        $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
         return new $requestedName(
             $container->get(\VuFindHttp\HttpService::class),
             $container->get(\VuFind\I18n\Locale\LocaleSettings::class),
-            $tableManager->get('Transaction'),
-            $tableManager->get('Fee'),
-            $tableManager->get(\Finna\Db\Table\TransactionEventLog::class)
+            $dbServiceManager->get(FinnaTransactionServiceInterface::class),
+            $dbServiceManager->get(FinnaFeeServiceInterface::class),
+            $dbServiceManager->get(FinnaTransactionEventLogServiceInterface::class)
         );
     }
 }

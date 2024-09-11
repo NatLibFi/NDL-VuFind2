@@ -29,8 +29,8 @@
 
 namespace FinnaConsole\Command\Util;
 
-use Finna\Db\Table\FinnaRecordStatsLog;
-use Finna\Statistics\Driver\Database as DatabaseDriver;
+use Finna\Db\Service\FinnaStatisticsServiceInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -44,29 +44,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+#[AsCommand(
+    name: 'util/process_record_stats_log'
+)]
 class ProcessRecordStatsLog extends AbstractUtilCommand
 {
-    /**
-     * The name of the command (the part after "public/index.php")
-     *
-     * @var string
-     */
-    protected static $defaultName = 'util/process_record_stats_log';
-
-    /**
-     * Record stats log table
-     *
-     * @var FinnaRecordStatsLog
-     */
-    protected $recordStatsLog;
-
-    /**
-     * Statistics database driver
-     *
-     * @var DatabaseDriver;
-     */
-    protected $dbHandler;
-
     /**
      * Record batch size to process at a time
      *
@@ -77,16 +59,10 @@ class ProcessRecordStatsLog extends AbstractUtilCommand
     /**
      * Constructor
      *
-     * @param FinnaRecordStatsLog $recordStatsLog Record stats log table
-     * @param DatabaseDriver      $dbHandler      Statistics database driver
+     * @param protected FinnaStatisticsServiceInterface $statisticsService Statics database service
      */
-    public function __construct(
-        FinnaRecordStatsLog $recordStatsLog,
-        DatabaseDriver $dbHandler
-    ) {
-        $this->recordStatsLog = $recordStatsLog;
-        $this->dbHandler = $dbHandler;
-
+    public function __construct(protected FinnaStatisticsServiceInterface $statisticsService)
+    {
         parent::__construct();
     }
 
@@ -128,15 +104,10 @@ class ProcessRecordStatsLog extends AbstractUtilCommand
 
         $count = 0;
         do {
-            $callback = function ($select) {
-                $select->where->lessThan('date', date('Y-m-d'));
-                $select->limit($this->batchSize);
-            };
             $rows = 0;
-            foreach ($this->recordStatsLog->select($callback) as $logEntry) {
-                $this->dbHandler->addDetailedRecordViewEntry($logEntry->toArray());
-
-                $logEntry->delete();
+            foreach ($this->statisticsService->getRecordStatsLogEntriesToProcess($this->batchSize) as $logEntry) {
+                $this->statisticsService->addDetailedRecordView($logEntry);
+                $this->statisticsService->deleteRecordStatsLogEntry($logEntry);
 
                 ++$rows;
                 ++$count;

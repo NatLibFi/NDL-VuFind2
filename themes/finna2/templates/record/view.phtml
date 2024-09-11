@@ -100,7 +100,6 @@
     ],
   ]); ?>
 <div<?= $recordAttributes ?>>
-  <?= $this->R2()->registeredInfo($this->driver) ?>
   <div>
       <?=$this->record($this->driver)->getToolbar()?>
   </div>
@@ -130,7 +129,7 @@
     <?=$this->driver->supportsCoinsOpenURL() ? '<span class="Z3988" aria-hidden="true" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenURL()) . '"></span>' : ''?>
 
     <div class="clearfix hidden-lg hidden-md"></div>
-
+    <h2 class="sr-only"><?=$this->transEsc('Additional Information')?></h2>
     <div class="record-tabs record-accordions">
       <?php if (count($this->tabs) > 0): ?>
         <a id="tabnav"></a>
@@ -166,7 +165,7 @@
                   href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $tab))?>#tabnav" data-lightbox-ignore>
                   <?php if (strtolower($tab) == 'details'): ?><?=$this->icon('staff-view', 'staff-view-icon')?><?php endif; ?>
                   <span class="tab-name"><?=$this->transEsc($desc)?></span>
-                  <?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?>
+                  <?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->record($this->driver)->getComments()) ?></span>)<?php endif; ?>
                 </a>
               </li>
             <?php endforeach; ?>
@@ -202,7 +201,7 @@
               <a data-tab="<?=$this->escapeHtmlAttr(strtolower($accordion)) ?>" class="accordion-title"
                 href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $accordion))?>#tabnav"<?php if ($obj->supportsAjax() && in_array($accordion, $this->backgroundTabs)):?>
                 data-background<?php endif ?>
-                <span class="title"><?=$this->transEsc($desc)?><?php if (strtolower($accordion) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?></span>
+                <span class="title"><?=$this->transEsc($desc)?><?php if (strtolower($accordion) == 'usercomments') : ?> (<span class="count"><?= count($this->record($this->driver)->getComments()) ?></span>)<?php endif; ?></span>
                 <i class="icon"></i>
               </a>
             </div>

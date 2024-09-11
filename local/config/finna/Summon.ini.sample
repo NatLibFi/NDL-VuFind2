@@ -265,7 +265,7 @@ TableOfContents     = adv_search_toc
 [Sorting]
 relevance = sort_relevance
 PublicationDate:desc = sort_year
-PublicationDate:asc = "sort_year asc"
+PublicationDate:asc = "sort_year_asc"
 
 ; This section controls spell checking -- it can be disabled if desired.
 [Spelling]

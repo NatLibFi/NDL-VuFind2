@@ -32,6 +32,7 @@
 namespace Finna\Controller;
 
 use VuFind\Controller\Feature\ListItemSelectionTrait;
+use VuFind\Exception\Forbidden as ForbiddenException;
 use VuFind\Exception\Mail as MailException;
 
 use function count;
@@ -82,10 +83,13 @@ class CartController extends \VuFind\Controller\CartController
             $submitDisabled = true;
         }
 
+        $emailActionSettings = $this->getService(\VuFind\Config\AccountCapabilities::class)->getEmailActionSetting();
+        if ($emailActionSettings === 'disabled') {
+            throw new ForbiddenException('Email action disabled');
+        }
         // Force login if necessary:
-        $config = $this->getConfig();
         if (
-            (!isset($config->Mail->require_login) || $config->Mail->require_login)
+            $emailActionSettings !== 'enabled'
             && !$this->getUser()
         ) {
             return $this->forceLogin(
@@ -103,7 +107,7 @@ class CartController extends \VuFind\Controller\CartController
         $view->useCaptcha = $this->captcha()->active('email');
 
         // Process form submission:
-        if (!($submitDisabled ?? false) && $this->formWasSubmitted('submit', $view->useCaptcha)) {
+        if (!($submitDisabled ?? false) && $this->formWasSubmitted(null, $view->useCaptcha)) {
             // Attempt to send the email and show an appropriate flash message:
             try {
                 // If we got this far, we're ready to send the email:

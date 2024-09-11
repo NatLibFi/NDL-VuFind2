@@ -1,5 +1,5 @@
 <!-- START of: finna - organisationinfo/elements/location/schedule-week-navi.phtml -->
-<?php if ('museum' !== $orgInfo['type'] && $firstDate = $orgInfo['openTimes']['schedules'][0]['date'] ?? null): ?>
+<?php if ('museum' !== ($orgInfo['type'] ?? null) && $firstDate = $orgInfo['openTimes']['schedules'][0]['date'] ?? null): ?>
   <div class="js-week-navi" data-date="<?=date('Y-m-d', $firstDate)?>">
     <button type="button" class="btn-link js-week-navi-btn prev-week" data-dir="-1" aria-label="<?= $this->transEscAttr('organisation_info_previous_week')?>"<?=$orgInfo['openTimes']['currentWeek'] ? ' disabled' : ''?>>
       <?=$this->icon('week-prev') ?>

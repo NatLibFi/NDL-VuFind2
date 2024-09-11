@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2016-2023.
+ * Copyright (C) The National Library of Finland 2016-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,12 +30,19 @@
 
 namespace FinnaConsole\Command\Util;
 
-use Finna\Db\Row\Transaction as TransactionRow;
-use Finna\Db\Table\TransactionEventLog;
+use Finna\Db\Entity\FinnaTransactionEntityInterface;
+use Finna\Db\Service\FinnaTransactionEventLogServiceInterface;
+use Finna\Db\Service\FinnaTransactionServiceInterface;
+use Finna\OnlinePayment\OnlinePaymentEventLogTrait;
+use Finna\OnlinePayment\OnlinePaymentHandlerTrait;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use VuFind\Auth\ILSAuthenticator;
+use VuFind\Db\Service\UserCardServiceInterface;
+use VuFind\Db\Service\UserServiceInterface;
 
 use function intval;
 
@@ -49,59 +56,13 @@ use function intval;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+#[AsCommand(
+    name: 'util/online_payment_monitor'
+)]
 class OnlinePaymentMonitor extends AbstractUtilCommand
 {
-    use \Finna\OnlinePayment\OnlinePaymentEventLogTrait;
-    use \Finna\OnlinePayment\OnlinePaymentHandlerTrait;
-
-    /**
-     * The name of the command (the part after "public/index.php")
-     *
-     * @var string
-     */
-    protected static $defaultName = 'util/online_payment_monitor';
-
-    /**
-     * ILS connection.
-     *
-     * @var \VuFind\ILS\Connection
-     */
-    protected $ils;
-
-    /**
-     * Datasource configuration
-     *
-     * @var \Laminas\Config\Config
-     */
-    protected $datasourceConfig;
-
-    /**
-     * Transaction table
-     *
-     * @var \Finna\Db\Table\Transaction
-     */
-    protected $transactionTable;
-
-    /**
-     * User account table
-     *
-     * @var \Finna\Db\Table\User
-     */
-    protected $userTable;
-
-    /**
-     * Mailer
-     *
-     * @var \VuFind\Mailer\Mailer
-     */
-    protected $mailer;
-
-    /**
-     * View renderer
-     *
-     * @var \Laminas\View\Renderer\PhpRenderer
-     */
-    protected $viewRenderer;
+    use OnlinePaymentEventLogTrait;
+    use OnlinePaymentHandlerTrait;
 
     /**
      * Number of hours before considering unregistered transactions to be expired.
@@ -118,40 +79,31 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
     protected $fromEmail = '';
 
     /**
-     * Transaction event log table
-     *
-     * @var TransactionEventLog
-     */
-    protected $eventLogTable;
-
-    /**
      * Constructor
      *
-     * @param \VuFind\ILS\Connection             $ils              Catalog connection
-     * @param \Finna\Db\Table\Transaction        $transactionTable Transaction table
-     * @param \Finna\Db\Table\User               $userTable        User table
-     * @param \Laminas\Config\Config             $dsConfig         Data source config
-     * @param \Laminas\View\Renderer\PhpRenderer $viewRenderer     View renderer
-     * @param \VuFind\Mailer\Mailer              $mailer           Mailer
-     * @param TransactionEventLog                $eventLog         Transaction event log table
+     * @param \VuFind\ILS\Connection                   $ils                Catalog connection
+     * @param ILSAuthenticator                         $ilsAuthenticator   ILS Authenticator
+     * @param FinnaTransactionServiceInterface         $transactionService Transaction database service
+     * @param UserServiceInterface                     $userService        User database service
+     * @param UserCardServiceInterface                 $userCardService    User card database service (for
+     * OnlinePaymentHandlerTrait)
+     * @param \Laminas\Config\Config                   $datasourceConfig   Data source config
+     * @param \Laminas\View\Renderer\PhpRenderer       $viewRenderer       View renderer
+     * @param \VuFind\Mailer\Mailer                    $mailer             Mailer
+     * @param FinnaTransactionEventLogServiceInterface $eventLogService    Transaction event log database service
      */
     public function __construct(
-        \VuFind\ILS\Connection $ils,
-        \Finna\Db\Table\Transaction $transactionTable,
-        \Finna\Db\Table\User $userTable,
-        \Laminas\Config\Config $dsConfig,
-        \Laminas\View\Renderer\PhpRenderer $viewRenderer,
-        \VuFind\Mailer\Mailer $mailer,
-        TransactionEventLog $eventLog
+        protected \VuFind\ILS\Connection $ils,
+        protected ILSAuthenticator $ilsAuthenticator,
+        protected FinnaTransactionServiceInterface $transactionService,
+        protected UserServiceInterface $userService,
+        protected UserCardServiceInterface $userCardService,
+        protected \Laminas\Config\Config $datasourceConfig,
+        protected \Laminas\View\Renderer\PhpRenderer $viewRenderer,
+        protected \VuFind\Mailer\Mailer $mailer,
+        FinnaTransactionEventLogServiceInterface $eventLogService
     ) {
-        $this->ils = $ils;
-        $this->transactionTable = $transactionTable;
-        $this->userTable = $userTable;
-        $this->datasourceConfig = $dsConfig;
-        $this->viewRenderer = $viewRenderer;
-        $this->mailer = $mailer;
-        $this->eventLogTable = $eventLog;
-
+        $this->eventLogService = $eventLogService;
         parent::__construct();
     }
 
@@ -223,7 +175,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         $this->msg('OnlinePayment monitor started');
         $expiredCnt = $failedCnt = $registeredCnt = $remindCnt = 0;
         $report = [];
-        $failed = $this->transactionTable->getFailedTransactions($minimumPaidAge);
+        $failed = $this->transactionService->getFailedTransactions($minimumPaidAge);
         foreach ($failed as $t) {
             $this->processTransaction(
                 $t,
@@ -236,8 +188,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
 
         // Report paid and unregistered transactions whose registration
         // can not be re-tried:
-        $unresolved = $this->transactionTable
-            ->getUnresolvedTransactions($reportIntervalHours);
+        $unresolved = $this->transactionService->getUnresolvedTransactions($reportIntervalHours);
         foreach ($unresolved as $t) {
             $this->processUnresolvedTransaction($t, $report, $remindCnt);
         }
@@ -267,64 +218,68 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
     /**
      * Try to register a failed transaction.
      *
-     * @param TransactionRow $t             Transaction
-     * @param array          $report        Transactions to be reported.
-     * @param int            $registeredCnt Number of registered transactions.
-     * @param int            $expiredCnt    Number of expired transactions.
-     * @param int            $failedCnt     Number of failed transactions.
+     * @param FinnaTransactionEntityInterface $t             Transaction
+     * @param array                           $report        Transactions to be reported.
+     * @param int                             $registeredCnt Number of registered transactions.
+     * @param int                             $expiredCnt    Number of expired transactions.
+     * @param int                             $failedCnt     Number of failed transactions.
      *
      * @return bool success
      */
     protected function processTransaction(
-        $t,
-        &$report,
-        &$registeredCnt,
-        &$expiredCnt,
-        &$failedCnt
+        FinnaTransactionEntityInterface $t,
+        array &$report,
+        int &$registeredCnt,
+        int &$expiredCnt,
+        int &$failedCnt
     ) {
         $this->msg(
-            "Registering transaction id {$t->id} / {$t->transaction_id}"
-            . " (status: {$t->complete} / {$t->status}, paid: {$t->paid})"
+            "Registering transaction id {$t->getId()} / {$t->getTransactionIdentifier()}"
+            . " (status: {$t->getStatus()->value} / {$t->getStatusMessage()}"
+            . ", paid: {$t->getPaidDate()->format('Y-m-d H:i:s')})"
         );
 
         // Check if the transaction has not been registered for too long
         $now = new \DateTime();
-        $paidTime = new \DateTime($t->paid);
-        $diff = $now->diff($paidTime);
+        $diff = $now->diff($t->getPaidDate());
         $diffHours = ($diff->days * 24) + $diff->h;
         if ($diffHours > $this->expireHours) {
             // Transaction has expired
-            if (!isset($report[$t->driver])) {
-                $report[$t->driver] = 0;
+            if (!isset($report[$t->getSourceId()])) {
+                $report[$t->getSourceId()] = 0;
             }
-            $report[$t->driver]++;
+            $report[$t->getSourceId()]++;
             $expiredCnt++;
 
             $t->setReportedAndExpired();
-            $this->addTransactionEvent($t->id, 'Marked as reported and expired');
+            $this->transactionService->persistEntity($t);
+            $this->addTransactionEvent($t, 'Marked as reported and expired');
 
-            $this->msg('Transaction ' . $t->transaction_id . ' expired.');
+            $this->msg('Transaction ' . $t->getTransactionIdentifier() . ' expired.');
             return true;
         }
 
         try {
-            $user = null;
-            if (!($patron = $this->getPatronForTransaction($t, $user))) {
+            $user = $t->getUser();
+            if (!($patron = $this->getPatronForTransaction($t))) {
                 if ($user) {
                     $this->warn(
-                        "Catalog login failed for user {$user->username} (id {$user->id}), card {$t->cat_username}"
+                        "Catalog login failed for user {$user->getUsername()} (id {$user->getId()}),"
+                        . " card {$t->getCatUsername()}"
                     );
                     $t->setRegistrationFailed('patron login error');
-                    $this->addTransactionEvent($t->id, 'Patron login failed');
+                    $this->transactionService->persistEntity($t);
+                    $this->addTransactionEvent($t, 'Patron login failed');
                 } else {
-                    $this->warn("Library card not found for user {$t->user_id}, card {$t->cat_username}");
+                    $this->warn("Library card not found for user {$t->getUserId()}, card {$t->getCatUsername()}");
                     $t->setRegistrationFailed('card not found');
+                    $this->transactionService->persistEntity($t);
                     $this->addTransactionEvent(
-                        $t->id,
-                        "Library card not found for user id {$t->user_id}",
+                        $t,
+                        "Library card not found for user id {$t->getUserId()}",
                         [
-                            'user_id' => $t->user_id,
-                            'card' => $t->cat_username,
+                            'user_id' => $t->getUserId(),
+                            'card' => $t->getCatUsername(),
                         ]
                     );
                 }
@@ -340,11 +295,12 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
             return true;
         } catch (\Exception $e) {
             $this->warn(
-                "Exception while processing transaction {$t->id} for user id {$t->user_id}, card {$t->cat_username}: "
+                "Exception while processing transaction {$t->getId()} for user id {$t->getUserId()}"
+                . ", card {$t->getCatUsername()}: "
                 . (string)$e
             );
             $this->addTransactionEvent(
-                $t->id,
+                $t,
                 'Exception while processing transaction',
                 [
                     'exception' => (string)$e,
@@ -358,22 +314,22 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
     /**
      * Process an unresolved transaction.
      *
-     * @param \Finna\Db\Row\Transaction $t         Transaction
-     * @param array                     $report    Transactions to be reported.
-     * @param int                       $remindCnt Number of transactions to be
-     * reported as unresolved.
+     * @param FinnaTransactionEntityInterface $t         Transaction
+     * @param array                           $report    Transactions to be reported.
+     * @param int                             $remindCnt Number of transactions to be reported as unresolved.
      *
      * @return void
      */
-    protected function processUnresolvedTransaction($t, &$report, &$remindCnt)
+    protected function processUnresolvedTransaction(FinnaTransactionEntityInterface $t, &$report, &$remindCnt)
     {
-        $this->msg("Transaction id {$t->transaction_id} still unresolved.");
+        $this->msg("Transaction {$t->getId()} with identifier {$t->getTransactionIdentifier()} still unresolved.");
 
         $t->setReportedAndExpired();
-        if (!isset($report[$t->driver])) {
-            $report[$t->driver] = 0;
+        $this->transactionService->persistEntity($t);
+        if (!isset($report[$t->getSourceId()])) {
+            $report[$t->getSourceId()] = 0;
         }
-        $report[$t->driver]++;
+        $report[$t->getSourceId()]++;
         $remindCnt++;
     }
 
@@ -425,9 +381,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
                    'cnt' => $cnt,
                 ];
                 $messageSubject = sprintf($subject, $driver);
-
-                $message = $this->viewRenderer
-                    ->render('Email/online-payment-alert.phtml', $params);
+                $message = $this->viewRenderer->render('Email/online-payment-alert.phtml', $params);
 
                 try {
                     $this->mailer->setMaxRecipients(0);

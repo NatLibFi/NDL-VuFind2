@@ -30,11 +30,12 @@
 namespace Finna\AjaxHandler;
 
 use Laminas\Mvc\Controller\Plugin\Params;
-use VuFind\Db\Row\User;
-use VuFind\Db\Table\UserList;
+use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\Db\Service\UserListServiceInterface;
 use VuFind\Favorites\FavoritesService;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\Record\Loader;
+use VuFind\View\Helper\Root\Record as RecordHelper;
 
 /**
  * AJAX handler for editing a list.
@@ -50,61 +51,23 @@ class AddToList extends \VuFind\AjaxHandler\AbstractBase implements TranslatorAw
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * UserList database table
-     *
-     * @var UserList
-     */
-    protected $userList;
-
-    /**
-     * Favorites service
-     *
-     * @var FavoritesService
-     */
-    protected $favorites;
-
-    /**
-     * Record loader
-     *
-     * @var Loader
-     */
-    protected $recordLoader;
-
-    /**
-     * Logged in user (or false)
-     *
-     * @var User|bool
-     */
-    protected $user;
-
-    /**
-     * Are lists enabled?
-     *
-     * @var bool
-     */
-    protected $enabled;
-
-    /**
      * Constructor
      *
-     * @param UserList         $userList  UserList database table
-     * @param FavoritesService $favorites Favorites service
-     * @param Loader           $loader    Record loader
-     * @param User|bool        $user      Logged in user (or false)
-     * @param bool             $enabled   Are lists enabled?
+     * @param ?UserEntityInterface     $user            Logged in user (or null)
+     * @param UserListServiceInterface $userListService User list database service
+     * @param FavoritesService         $favorites       Favorites service
+     * @param Loader                   $recordLoader    Record loader
+     * @param RecordHelper             $recordHelper    Record helper
+     * @param bool                     $enabled         Are lists enabled?
      */
     public function __construct(
-        UserList $userList,
-        FavoritesService $favorites,
-        Loader $loader,
-        $user,
-        $enabled = true
+        protected ?UserEntityInterface $user,
+        protected UserListServiceInterface $userListService,
+        protected FavoritesService $favorites,
+        protected Loader $recordLoader,
+        protected RecordHelper $recordHelper,
+        protected $enabled = true
     ) {
-        $this->userList = $userList;
-        $this->favorites = $favorites;
-        $this->recordLoader = $loader;
-        $this->user = $user;
-        $this->enabled = $enabled;
     }
 
     /**
@@ -124,7 +87,7 @@ class AddToList extends \VuFind\AjaxHandler\AbstractBase implements TranslatorAw
             );
         }
 
-        if ($this->user === false) {
+        if (null === $this->user) {
             return $this->formatResponse(
                 $this->translate('You must be logged in first'),
                 self::STATUS_HTTP_NEED_AUTH
@@ -142,8 +105,8 @@ class AddToList extends \VuFind\AjaxHandler\AbstractBase implements TranslatorAw
         $currentListId = $listParams['currentListId'];
         $ids = (array)$listParams['ids'];
 
-        $list = $this->userList->getExisting($listId);
-        if ($list->user_id !== $this->user->id) {
+        $list = $this->userListService->getUserListById($listId);
+        if ($list->getUser()?->getId() !== $this->user->getId()) {
             return $this->formatResponse(
                 $this->translate('Invalid list id'),
                 self::STATUS_HTTP_BAD_REQUEST
@@ -155,9 +118,12 @@ class AddToList extends \VuFind\AjaxHandler\AbstractBase implements TranslatorAw
             $recId = $id[1];
             try {
                 $driver = $this->recordLoader->load($recId, $source, true);
-                $notes = $driver->getListNotes($currentListId ?: null, $this->user->id);
-                $notes = implode(PHP_EOL, $notes);
-                $this->favorites->save(['list' => $listId, 'notes' => $notes], $this->user, $driver);
+                $notes = implode(
+                    PHP_EOL,
+                    ($this->recordHelper)($driver)->getListNotes($currentListId ?: null, $this->user)
+                );
+
+                $this->favorites->saveRecordToFavorites(['list' => $listId, 'notes' => $notes], $this->user, $driver);
             } catch (\Exception $e) {
                 return $this->formatResponse(
                     $this->translate('Failed'),

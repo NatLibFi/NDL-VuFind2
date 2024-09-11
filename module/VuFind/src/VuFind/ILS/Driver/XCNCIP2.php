@@ -2133,7 +2133,7 @@ class XCNCIP2 extends AbstractBase implements
             },
             $blocks
         );
-        return empty($blocks) ? false : array_unique($blocks);
+        return empty($blocks) ? false : array_values(array_unique($blocks));
     }
 
     /**
@@ -2907,7 +2907,7 @@ class XCNCIP2 extends AbstractBase implements
      * @param array $idList     List of bibliographic IDs.
      * @param array $agencyList List of possible toAgency values
      *
-     * @return array|false|\SimpleXMLElement[]
+     * @return \SimpleXMLElement[]
      * @throws ILSException
      */
     protected function getBibs(array $idList, array $agencyList): array

@@ -56,14 +56,6 @@ class FeedbackController extends \VuFind\Controller\FeedbackController implement
      */
     public function formAction()
     {
-        if ($this->formWasSubmitted('submit')) {
-            $formId
-                = $this->params()->fromRoute('id', $this->params()->fromQuery('id'));
-            if (\Finna\Form\R2Form::isR2RegisterForm($formId)) {
-                return $this->forwardTo('R2Feedback', 'Form', ['id' => $formId]);
-            }
-        }
-
         // Copy any record_id from query params to post params so that it's available
         // for the form:
         $request = $this->getRequest();

@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2018.
+ * Copyright (C) The National Library of Finland 2018-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -33,9 +33,12 @@ use Finna\View\Helper\Root\Markdown;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Stdlib\Parameters;
 use Laminas\View\Renderer\RendererInterface;
-use VuFind\Db\Row\User;
-use VuFind\Db\Table\UserList;
+use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\Db\Service\UserListServiceInterface;
+use VuFind\Exception\ListPermission as ListPermissionException;
+use VuFind\Favorites\FavoritesService;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
+use VuFind\Tags\TagsService;
 
 /**
  * AJAX handler for editing a list.
@@ -51,71 +54,27 @@ class EditList extends \VuFind\AjaxHandler\AbstractBase implements TranslatorAwa
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * UserList database table
-     *
-     * @var UserList
-     */
-    protected $userList;
-
-    /**
-     * Logged in user (or false)
-     *
-     * @var User|bool
-     */
-    protected $user;
-
-    /**
-     * View renderer
-     *
-     * @var RendererInterface
-     */
-    protected $renderer;
-
-    /**
-     * Are lists enabled?
-     *
-     * @var bool
-     */
-    protected $enabled;
-
-    /**
-     * Are list tags enabled?
-     *
-     * @var bool
-     */
-    protected $listTagsEnabled;
-
-    /**
-     * Markdown view helper
-     *
-     * @var Markdown
-     */
-    protected $markdownHelper;
-
-    /**
      * Constructor
      *
-     * @param UserList          $userList        UserList database table
-     * @param User|bool         $user            Logged in user (or false)
-     * @param RendererInterface $renderer        View renderer
-     * @param bool              $enabled         Are lists enabled?
-     * @param bool              $listTagsEnabled Are list tags enabled?
-     * @param Markdown          $markdownHelper  Markdown view helper
+     * @param ?UserEntityInterface     $user             Logged in user (or null)
+     * @param UserListServiceInterface $userListService  UserList database service
+     * @param FavoritesService         $favoritesService Favorites service
+     * @param TagsService              $tagsService      Tags service
+     * @param RendererInterface        $renderer         View renderer
+     * @param bool                     $enabled          Are lists enabled?
+     * @param bool                     $listTagsEnabled  Are list tags enabled?
+     * @param ?Markdown                $markdownHelper   Markdown view helper
      */
     public function __construct(
-        UserList $userList,
-        $user,
-        RendererInterface $renderer,
-        $enabled = true,
-        $listTagsEnabled = false,
-        $markdownHelper = null
+        protected ?UserEntityInterface $user,
+        protected UserListServiceInterface $userListService,
+        protected FavoritesService $favoritesService,
+        protected TagsService $tagsService,
+        protected RendererInterface $renderer,
+        protected bool $enabled = true,
+        protected bool $listTagsEnabled = false,
+        protected ?Markdown $markdownHelper = null
     ) {
-        $this->userList = $userList;
-        $this->user = $user;
-        $this->renderer = $renderer;
-        $this->enabled = $enabled;
-        $this->listTagsEnabled = $listTagsEnabled;
-        $this->markdownHelper = $markdownHelper;
     }
 
     /**
@@ -135,7 +94,7 @@ class EditList extends \VuFind\AjaxHandler\AbstractBase implements TranslatorAwa
             );
         }
 
-        if ($this->user === false) {
+        if (null === $this->user) {
             return $this->formatResponse(
                 $this->translate('You must be logged in first'),
                 self::STATUS_HTTP_NEED_AUTH
@@ -152,8 +111,13 @@ class EditList extends \VuFind\AjaxHandler\AbstractBase implements TranslatorAwa
 
         // Is this a new list or an existing list?  Handle the special 'NEW' value
         // of the ID parameter:
-        $list = 'NEW' === $listParams['id'] ? $this->userList->getNew($this->user)
-            : $this->userList->getExisting($listParams['id']);
+        $newList = 'NEW' === $listParams['id'];
+        $list = $newList ? $this->favoritesService->createListForUser($this->user)
+            : $this->userListService->getUserListById($listParams['id']);
+
+        if (!$newList && !$this->favoritesService->userCanEditList($this->user, $list)) {
+            throw new ListPermissionException('Access denied.');
+        }
 
         if ($this->listTagsEnabled && isset($listParams['tags'])) {
             $tags = array_map(
@@ -171,15 +135,12 @@ class EditList extends \VuFind\AjaxHandler\AbstractBase implements TranslatorAwa
             unset($listParams['tags']);
         }
 
-        $finalId = $list->updateFromRequest(
-            $this->user,
-            new Parameters($listParams)
-        );
+        $finalId = $this->favoritesService->updateListFromRequest($list, $this->user, new Parameters($listParams));
 
         $listParams['id'] = $finalId;
 
         if ($this->listTagsEnabled) {
-            $tags = $list->getListTags();
+            $tags = $this->tagsService->getListTags($list, $list->getUser());
             $listParams['tags-edit'] = $this->renderer->partial(
                 'myresearch/mylist-tags.phtml',
                 ['tags' => $tags, 'editable' => true]
@@ -193,8 +154,7 @@ class EditList extends \VuFind\AjaxHandler\AbstractBase implements TranslatorAwa
         }
 
         if (!empty($listParams['desc']) && null !== $this->markdownHelper) {
-            $listParams['descHtml']
-                = $this->markdownHelper->toHtml($listParams['desc']);
+            $listParams['descHtml'] = $this->markdownHelper->toHtml($listParams['desc']);
         }
 
         return $this->formatResponse($listParams);

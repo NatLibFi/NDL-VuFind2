@@ -33,7 +33,7 @@
   <h3><?=$this->transEsc('Library Catalog Profile')?></h3>
   <div class="alert alert-warning"><?=$this->transEsc('ils_connection_failed')?></div>
 <?php elseif ($this->targets === null || !empty($this->targets)): ?>
-  <?php if (($user = $this->auth()->getUserObject()) && count($user->getLibraryCards()) >= 1): ?>
+  <?php if (($user = $this->auth()->getUserObject()) && count($this->libraryCards()->getCardsForUser($user)) >= 1): ?>
     <h3><?=$this->transEsc('catalog_login_change_card_heading') ?></h3>
     <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'displaySelected' => false, 'label' => 'catalog_login_change_card_label'])?>
   <?php endif; ?>
@@ -72,7 +72,7 @@
       <input class="btn btn-primary" type="submit" name="processLogin" value="<?=$this->transEscAttr('Save')?>">
     </div>
   </form>
-  <?php if (empty($this->card->id)): ?>
+  <?php if (null !== $this->card?->getId()): ?>
     <?php
       $language = $this->layout()->userLang;
       if (!in_array($language, ['fi', 'sv', 'en-gb'])) {

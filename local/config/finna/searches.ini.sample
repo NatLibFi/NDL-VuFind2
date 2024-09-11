@@ -169,7 +169,7 @@ Holdings            = adv_search_callnumber
 [Sorting]
 relevance,id asc = sort_relevance
 main_date_str desc = sort_year
-main_date_str asc = "sort_year asc"
+main_date_str asc = "sort_year_asc"
 
 ; Use the "callnumber" line for LC or the "dewey-sort" line for Dewey Decimal.
 ; If you want to enable both systems for sorting, you can uncomment both lines,
@@ -196,7 +196,7 @@ WorkKeys = "main_date_str desc"
 hierarchy_sequence_str = sort_sequence
 title = sort_title
 main_date_str desc = sort_year
-main_date_str asc = "sort_year asc"
+main_date_str asc = "sort_year_asc"
 author = sort_author
 
 ; Each search type defined in searchspecs.yaml can have one or more "recommendations

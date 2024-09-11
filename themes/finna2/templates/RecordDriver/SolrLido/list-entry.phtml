@@ -4,11 +4,11 @@
   $id = $this->driver->getUniqueId();
   $source = $this->driver->getSourceIdentifier();
   if (isset($this->list) && is_object($this->list)) {
-    $list_id = $this->list->id;
-    $user_id = $this->list->user_id;
+    $list_id = $this->list->getId();
+    $user_id = $this->list->GetUser()->getId();
   } else {
     $list_id = null;
-    $user_id = $this->user ? $this->user->id : null;
+    $user_id = $this->user ? $this->user->getId() : null;
   }
   // Thumbnail
   $img = $this->recordImage($this->record($this->driver));
@@ -127,7 +127,7 @@
           <?php if (count($listTags) > 0): ?>
             <strong><?=$this->transEsc('Your Tags')?>:</strong>
             <?php $i = 0;
-            foreach ($listTags as $tag): ?><?=($i++ == 0) ? '' : ', '?><a href="<?=$this->currentPath() . $results->getUrlQuery()->addFacet('tags', $tag->tag)?>"><?=$this->escapeHtml($tag->tag)?></a><?php endforeach; ?>
+            foreach ($listTags as $tag): ?><?=($i++ == 0) ? '' : ', '?><a href="<?=$this->currentPath() . $results->getUrlQuery()->addFacet('tags', $tag->getTag())?>"><?=$this->escapeHtml($tag->getTag())?></a><?php endforeach; ?>
             <br>
           <?php endif; ?>
 
@@ -135,16 +135,14 @@
           <?=$recordHelper->getOnlineUrls('results');?>
           <?=$recordHelper->getPreviews();?>
         </div>
-        <div class="myresearch-notes">
         <?php
-          $notes = $list_id != null ? $this->driver->getListNotes($list_id, $user_id) : false;
-          if ($notes) {
-            $notes = trim(implode('', $notes));
-          }
+          $notes = $list_id != null ? $this->record($this->driver)->getListNotes($list_id, $user_id) : [];
+          $notesTxt = $notes ? trim(implode('', $notes)) : null;
         ?>
-          <div class="note-info <?= $notes ? '' : ' hide' ?>"><strong><?=$this->transEsc('Note')?>:</strong></div>
+        <div class="myresearch-notes">
+          <div class="note-info <?= $notesTxt ? '' : ' hide' ?>"><strong><?=$this->transEsc('Note')?>:</strong></div>
           <?php if ($list_id): ?>
-            <?php $markdown = $notes ? $this->markdown()->replaceDeprecatedTags($notes) : ''; ?>
+            <?php $markdown = $notesTxt ? $this->markdown()->replaceDeprecatedTags($notesTxt) : ''; ?>
             <?= $this->component('finna-md-editable', [
                 'attributes' => ['class' => 'resource-note'],
                 'markdown' => $markdown,
@@ -159,13 +157,13 @@
             <strong><?=$this->transEsc('Saved in')?>:</strong>
             <?php $i = 0;
             foreach($this->lists as $current): ?>
-              <a href="<?=$this->url('userList', ['id' => $current->id])?>"><?=$this->escapeHtml($current->title)?></a><?php if($i++ < count($this->lists) - 1): ?>,<?php endif; ?>
+              <a href="<?=$this->url('userList', ['id' => $current->getId()])?>"><?=$this->escapeHtml($current->getTitle())?></a><?php if ($i++ < count($this->lists) - 1): ?>,<?php endif; ?>
             <?php endforeach; ?>
             <br>
           </div>
         <?php endif; ?>
 
-        <?php $countNotes = count($this->driver->getListNotes($list_id, $user_id)); ?>
+        <?php $countNotes = count($notes); ?>
         <?php if ($countNotes > 0 && !$list): ?>
           <strong><?=$this->transEsc('note_count', ['%%count%%' => $countNotes])?></strong>
         <?php endif; ?>

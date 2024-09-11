@@ -125,7 +125,7 @@
         </div>
       <?php endif; ?>
 
-      <?/* Display Main Details */?>
+      <?php /* Display Main Details */?>
       <?=
         $this->record($this->driver)->renderTemplate(
             'core-fields.phtml',
@@ -134,7 +134,7 @@
             ]
         );
       ?>
-      <?/* End Main Details */?>
+      <?php /* End Main Details */?>
 
       <?php if ($template = $this->content()->findTemplateForLng('content/Additions/record-post-metadata')): ?>
       <div>

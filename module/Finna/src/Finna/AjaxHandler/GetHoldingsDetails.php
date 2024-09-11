@@ -32,6 +32,7 @@ namespace Finna\AjaxHandler;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\View\Renderer\RendererInterface;
 use VuFind\Auth\ILSAuthenticator;
+use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\ILS\Connection;
 use VuFind\ILS\Logic\Holds as HoldLogic;
 use VuFind\Record\Loader;
@@ -51,51 +52,26 @@ use function in_array;
 class GetHoldingsDetails extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
 {
     /**
-     * View renderer
-     *
-     * @var RendererInterface
-     */
-    protected $renderer;
-
-    /**
-     * Record loader
-     *
-     * @var Loader
-     */
-    protected $recordLoader;
-
-    /**
-     * Hold Logic
-     *
-     * @var HoldLogic
-     */
-    protected $holdLogic;
-
-    /**
      * Constructor
      *
-     * @param SessionSettings   $ss               Session settings
-     * @param Connection        $ils              ILS connection
-     * @param ILSAuthenticator  $ilsAuthenticator ILS authenticator
-     * @param User|bool         $user             Logged in user (or false)
-     * @param RendererInterface $renderer         View renderer
-     * @param Loader            $loader           Record loader
-     * @param HoldLogic         $holdLogic        Hold Logic
+     * @param SessionSettings      $ss               Session settings
+     * @param Connection           $ils              ILS connection
+     * @param ILSAuthenticator     $ilsAuthenticator ILS authenticator
+     * @param ?UserEntityInterface $user             Logged in user (or null)
+     * @param RendererInterface    $renderer         View renderer
+     * @param Loader               $recordLoader     Record loader
+     * @param HoldLogic            $holdLogic        Hold Logic
      */
     public function __construct(
         SessionSettings $ss,
         Connection $ils,
         ILSAuthenticator $ilsAuthenticator,
-        $user,
-        RendererInterface $renderer,
-        Loader $loader,
-        HoldLogic $holdLogic
+        ?UserEntityInterface $user,
+        protected RendererInterface $renderer,
+        protected Loader $recordLoader,
+        protected HoldLogic $holdLogic
     ) {
         parent::__construct($ss, $ils, $ilsAuthenticator, $user);
-
-        $this->renderer = $renderer;
-        $this->recordLoader = $loader;
-        $this->holdLogic = $holdLogic;
     }
 
     /**

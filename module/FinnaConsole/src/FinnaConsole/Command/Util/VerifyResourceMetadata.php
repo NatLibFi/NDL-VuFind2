@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2016-2022.
+ * Copyright (C) The National Library of Finland 2016-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,7 +30,9 @@
 
 namespace FinnaConsole\Command\Util;
 
-use Finna\Db\Table\Resource as ResourceTable;
+use Closure;
+use Finna\Db\Service\FinnaRecordServiceInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -45,59 +47,23 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+#[AsCommand(
+    name: 'util/verify_resource_metadata'
+)]
 class VerifyResourceMetadata extends AbstractUtilCommand
 {
     /**
-     * The name of the command (the part after "public/index.php")
-     *
-     * @var string
-     */
-    protected static $defaultName = 'util/verify_resource_metadata';
-
-    /**
-     * Resource table.
-     *
-     * @var ResourceTable
-     */
-    protected $resourceTable;
-
-    /**
-     * Date converter
-     *
-     * @var DateConverter
-     */
-    protected $dateConverter;
-
-    /**
-     * Record loader
-     *
-     * @var \VuFind\Record\Loader
-     */
-    protected $recordLoader;
-
-    /**
-     * SearchRunner
-     *
-     * @var SearchRunner
-     */
-    protected $searchRunner = null;
-
-    /**
      * Constructor
      *
-     * @param ResourceTable          $resourceTable Resource table
-     * @param \VuFind\Date\Converter $dateConverter Date converter
-     * @param \VuFind\Record\Loader  $recordLoader  Record loader
+     * @param FinnaRecordServiceInterface $recordService Record database service
+     * @param \VuFind\Date\Converter      $dateConverter Date converter
+     * @param \VuFind\Record\Loader       $recordLoader  Record loader
      */
     public function __construct(
-        ResourceTable $resourceTable,
-        \VuFind\Date\Converter $dateConverter,
-        \VuFind\Record\Loader $recordLoader
+        protected FinnaRecordServiceInterface $recordService,
+        protected \VuFind\Date\Converter $dateConverter,
+        protected \VuFind\Record\Loader $recordLoader
     ) {
-        $this->resourceTable = $resourceTable;
-        $this->dateConverter = $dateConverter;
-        $this->recordLoader = $recordLoader;
-
         parent::__construct();
     }
 
@@ -114,7 +80,7 @@ class VerifyResourceMetadata extends AbstractUtilCommand
                 'index',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'Search index to check (by default all indexes are checked)'
+                'Search index (backend) to check (by default all indexes are checked)'
             );
     }
 
@@ -128,68 +94,11 @@ class VerifyResourceMetadata extends AbstractUtilCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->msg('Resource metadata verification started');
-        $count = $fixed = 0;
-        $index = $input->getOption('index');
-        $callback = function ($select) use ($index) {
-            if ($index) {
-                $select->where->equalTo('source', $index);
-            }
-        };
-        $resources = $this->resourceTable->select($callback);
-        if (!$resources) {
-            $this->msg('No resources found');
-            return 0;
-        }
-
-        $count = 0;
-        $fixed = 0;
-        $this->msg($resources->count() . ' records to check');
-        $this->recordLoader->setCacheContext(\VuFind\Record\Cache::CONTEXT_FAVORITE);
-        foreach ($resources as $resource) {
-            $this->msg(
-                "Checking record $resource->source:$resource->record_id",
-                OutputInterface::VERBOSITY_VERBOSE
-            );
-            try {
-                $driver = $this->recordLoader
-                    ->load($resource->record_id, $resource->source);
-                $original = clone $resource;
-                // Reset metadata first, otherwise assignMetadata doesn't do anything
-                $resource->title = '';
-                $resource->author = '';
-                $resource->year = '';
-                $resource->assignMetadata($driver, $this->dateConverter);
-                if ($original != $resource) {
-                    $resource->save();
-                    ++$fixed;
-                    $this->msg(
-                        "Updated record $resource->source:$resource->record_id",
-                        OutputInterface::VERBOSITY_VERBOSE
-                    );
-                }
-            } catch (\Exception $e) {
-                $this->msg(
-                    'Unable to load metadata for record '
-                    . "{$resource->source}:{$resource->record_id}: "
-                    . $e->getMessage()
-                );
-            } catch (\TypeError $e) {
-                $this->msg(
-                    'Unable to load metadata for record '
-                    . "{$resource->source}:{$resource->record_id}: "
-                    . $e->getMessage()
-                );
-            }
-            ++$count;
-            if ($count % 1000 == 0) {
-                $this->msg("$count resources processed, $fixed fixed");
-            }
-        }
-
-        $this->msg(
-            "Resource metadata verification completed with $count resources"
-            . " processed, $fixed fixed"
+        $this->recordService->verifyResourceMetadata(
+            $this->recordLoader,
+            $this->dateConverter,
+            $input->getOption('index'),
+            Closure::fromCallable([$this, 'msg'])
         );
         return 0;
     }

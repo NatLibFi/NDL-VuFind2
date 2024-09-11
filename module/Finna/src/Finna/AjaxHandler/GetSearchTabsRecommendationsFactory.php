@@ -69,11 +69,11 @@ class GetSearchTabsRecommendationsFactory implements \Laminas\ServiceManager\Fac
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
-        $tablePluginManager = $container->get(\VuFind\Db\Table\PluginManager::class);
+        $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
         $result = new $requestedName(
             $container->get(\VuFind\Session\Settings::class),
             $container->get(\VuFind\Config\PluginManager::class)->get('config'),
-            $tablePluginManager->get(\VuFind\Db\Table\Search::class),
+            $dbServiceManager->get(\VuFind\Db\Service\SearchServiceInterface::class),
             $container->get(\VuFind\Search\Results\PluginManager::class),
             $container->get('ViewRenderer'),
             $container->get(\VuFind\Search\SearchRunner::class),

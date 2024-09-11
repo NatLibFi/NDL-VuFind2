@@ -98,7 +98,10 @@ trait ViewPathTrait
 
         // Assume that view is functional if index.php exists.
         if (!is_file("$path/public/index.php")) {
-            $this->err("Could not resolve view path for $institution/$view", '=');
+            $this->err(
+                "Could not resolve view path for $institution/$view ($path/public/index.php does not exist)",
+                "Could not resolve view path for $institution/$view"
+            );
             return false;
         }
 

@@ -29,7 +29,10 @@
 
 namespace FinnaConsole\Command\Users;
 
-use VuFind\Db\Row\RowGateway;
+use Finna\Db\Entity\FinnaUserEntityInterface;
+use VuFind\Db\Entity\EntityInterface;
+
+use function assert;
 
 /**
  * Console service for unprotecting users
@@ -59,17 +62,17 @@ class Unprotect extends \FinnaConsole\Command\AbstractRecordUpdateCommand
     /**
      * Update a record
      *
-     * @param RowGateway $record Record
+     * @param EntityInterface $record Record
      *
      * @return bool Whether changes were made
      */
-    protected function changeRecord(RowGateway $record): bool
+    protected function changeRecord(EntityInterface $record): bool
     {
-        if ($record->finna_protected === 0) {
+        assert($record instanceof FinnaUserEntityInterface);
+        if (!$record->getFinnaProtected()) {
             return false;
         }
-        $record->finna_protected = 0;
-        $record->save();
+        $record->setFinnaProtected(false);
         return true;
     }
 }

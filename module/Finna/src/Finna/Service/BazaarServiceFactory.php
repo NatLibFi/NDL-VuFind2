@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2023.
+ * Copyright (C) The National Library of Finland 2023-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -34,6 +34,7 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Db\Service\AuthHashServiceInterface;
 
 /**
  * BazaarService factory.
@@ -70,8 +71,7 @@ class BazaarServiceFactory implements FactoryInterface
         }
 
         return new $requestedName(
-            $container->get(\VuFind\Db\Table\PluginManager::class)
-                ->get(\VuFind\Db\Table\AuthHash::class),
+            $container->get(\VuFind\Db\Service\PluginManager::class)->get(AuthHashServiceInterface::class),
             $container->get(\Laminas\Session\SessionManager::class)
         );
     }

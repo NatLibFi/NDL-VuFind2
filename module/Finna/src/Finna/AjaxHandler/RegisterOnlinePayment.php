@@ -58,7 +58,7 @@ class RegisterOnlinePayment extends AbstractOnlinePaymentAction
         if (!$transactionId) {
             return $this->formatResponse('', self::STATUS_HTTP_BAD_REQUEST);
         }
-        $transaction = $this->transactionTable->getTransaction($transactionId);
+        $transaction = $this->transactionService->getTransactionByIdentifier($transactionId);
         if (!$transaction) {
             return $this->formatResponse('', self::STATUS_HTTP_BAD_REQUEST);
         }

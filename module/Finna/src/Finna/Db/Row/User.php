@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2019.
+ * Copyright (C) The National Library of Finland 2015-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -31,8 +31,10 @@
 
 namespace Finna\Db\Row;
 
+use Finna\Db\Entity\FinnaUserEntityInterface;
 use Laminas\Db\ResultSet\ResultSetInterface;
 use Laminas\Db\Sql\Expression;
+use VuFind\Db\Entity\UserEntityInterface;
 
 use function count;
 
@@ -46,9 +48,12 @@ use function count;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  *
- * @property string $finna_due_date_reminder
+ * @property int $finna_due_date_reminder
+ * @property string $finna_last_expiration_reminder
+ * @property string $finna_nickname
+ * @property bool $finna_protected
  */
-class User extends \VuFind\Db\Row\User
+class User extends \VuFind\Db\Row\User implements FinnaUserEntityInterface
 {
     use FinnaUserTrait;
 
@@ -69,25 +74,6 @@ class User extends \VuFind\Db\Row\User
     public function setILS(\VuFind\ILS\Connection $ils)
     {
         $this->ils = $ils;
-    }
-
-    /**
-     * Get all of the lists associated with this user.
-     *
-     * @return \Laminas\Db\ResultSet\AbstractResultSet
-     */
-    public function getLists()
-    {
-        $lists = parent::getLists();
-
-        // Sort lists by id
-        $listsSorted = [];
-        foreach ($lists as $l) {
-            $listsSorted[$l['id']] = $l;
-        }
-        ksort($listsSorted);
-
-        return array_values($listsSorted);
     }
 
     /**
@@ -121,6 +107,21 @@ class User extends \VuFind\Db\Row\User
             $catId = $this->config->Site->institution . ":$catId";
         }
         return parent::saveCatalogId($catId);
+    }
+
+    /**
+     * Catalog id setter
+     *
+     * @param ?string $catId Catalog id
+     *
+     * @return UserEntityInterface
+     */
+    public function setCatId(?string $catId): UserEntityInterface
+    {
+        if ($catId && null !== ($institution = $this->config->Site->institution ?? null)) {
+            $catId = "$institution:$catId";
+        }
+        return parent::setCatId($catId);
     }
 
     /**

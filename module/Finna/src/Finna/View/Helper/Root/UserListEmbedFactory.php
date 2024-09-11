@@ -34,6 +34,8 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Db\Service\TagServiceInterface;
+use VuFind\Db\Service\UserListServiceInterface;
 
 /**
  * UserListEmbed helper factory.
@@ -69,16 +71,14 @@ class UserListEmbedFactory implements FactoryInterface
             throw new \Exception('Unexpected options sent to factory.');
         }
 
-        $check = $container
-            ->get(\VuFind\Config\AccountCapabilities::class);
-
+        $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
+        $accountCapabilities = $container->get(\VuFind\Config\AccountCapabilities::class);
         return new $requestedName(
-            $container->get(\VuFind\Search\Results\PluginManager::class)
-                ->get('Favorites'),
-            $container->get(\VuFind\Db\Table\PluginManager::class)->get('UserList'),
-            $container->get(\VuFind\Db\Table\PluginManager::class)->get('Tags'),
+            $container->get(\VuFind\Search\Results\PluginManager::class)->get('Favorites'),
+            $dbServiceManager->get(UserListServiceInterface::class),
+            $dbServiceManager->get(TagServiceInterface::class),
             $container->get('ViewManager')->getViewModel(),
-            $check->getListTagSetting() === 'enabled'
+            $accountCapabilities->getListTagSetting() === 'enabled'
         );
     }
 }

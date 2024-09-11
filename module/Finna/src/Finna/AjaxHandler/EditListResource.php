@@ -31,8 +31,8 @@ namespace Finna\AjaxHandler;
 
 use Finna\View\Helper\Root\Markdown;
 use Laminas\Mvc\Controller\Plugin\Params;
-use VuFind\Db\Row\User;
-use VuFind\Db\Table\UserResource;
+use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\Db\Service\UserResourceServiceInterface;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 
 /**
@@ -49,51 +49,19 @@ class EditListResource extends \VuFind\AjaxHandler\AbstractBase implements Trans
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * UserResource database table
-     *
-     * @var UserResource
-     */
-    protected $userResource;
-
-    /**
-     * Logged in user (or false)
-     *
-     * @var User|bool
-     */
-    protected $user;
-
-    /**
-     * Are lists enabled?
-     *
-     * @var bool
-     */
-    protected $enabled;
-
-    /**
-     * Markdown view helper
-     *
-     * @var Markdown
-     */
-    protected $markdownHelper;
-
-    /**
      * Constructor
      *
-     * @param UserResource $userResource   UserResource database table
-     * @param User|bool    $user           Logged in user (or false)
-     * @param bool         $enabled        Are lists enabled?
-     * @param Markdown     $markdownHelper Markdown view helper
+     * @param ?UserEntityInterface         $user                Logged in user (or null)
+     * @param UserResourceServiceInterface $userResourceService UserResource database service
+     * @param bool                         $enabled             Are lists enabled?
+     * @param Markdown                     $markdownHelper      Markdown view helper
      */
     public function __construct(
-        UserResource $userResource,
-        $user,
-        $enabled = true,
-        $markdownHelper = null
+        protected ?UserEntityInterface $user,
+        protected UserResourceServiceInterface $userResourceService,
+        protected $enabled = true,
+        protected $markdownHelper = null
     ) {
-        $this->userResource = $userResource;
-        $this->user = $user;
-        $this->enabled = $enabled;
-        $this->markdownHelper = $markdownHelper;
     }
 
     /**
@@ -113,7 +81,7 @@ class EditListResource extends \VuFind\AjaxHandler\AbstractBase implements Trans
             );
         }
 
-        if ($this->user === false) {
+        if (null === $this->user) {
             return $this->formatResponse(
                 $this->translate('You must be logged in first'),
                 self::STATUS_HTTP_NEED_AUTH
@@ -131,18 +99,19 @@ class EditListResource extends \VuFind\AjaxHandler\AbstractBase implements Trans
             );
         }
 
-        [$source, $id] = explode('.', $listParams['id'], 2);
         if (!empty($listParams['source'])) {
             $source = $listParams['source'];
         } else {
             $map = ['pci' => 'Primo', 'eds' => 'Eds', 'summon' => 'Summon'];
+            [$source] = explode('.', $listParams['id'], 2);
             $source = $map[$source] ?? DEFAULT_SEARCH_BACKEND;
         }
 
         $listId = $listParams['listId'];
         $notes = $listParams['notes'];
 
-        $resources = $this->user->getSavedData($listParams['id'], $listId, $source);
+        $resources = $this->userResourceService
+            ->getFavoritesForRecord($listParams['id'], $source, $listId, $this->user);
         if (empty($resources)) {
             return $this->formatResponse(
                 'User resource not found',
@@ -150,10 +119,9 @@ class EditListResource extends \VuFind\AjaxHandler\AbstractBase implements Trans
             );
         }
 
-        foreach ($resources as $res) {
-            $row = $this->userResource->select(['id' => $res->id])->current();
-            $row->notes = $notes;
-            $row->save();
+        foreach ($resources as $resource) {
+            $resource->setNotes($notes);
+            $this->userResourceService->persistEntity($resource);
         }
 
         $response = [];

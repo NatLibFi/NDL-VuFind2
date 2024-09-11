@@ -73,7 +73,7 @@ tag                 = Tag
 [Sorting]
 relevance = sort_relevance
 main_date_str desc = sort_year
-main_date_str asc = "sort_year asc"
+main_date_str asc = "sort_year_asc"
 callnumber-sort = sort_callnumber
 ;dewey-sort = sort_callnumber
 author = sort_author

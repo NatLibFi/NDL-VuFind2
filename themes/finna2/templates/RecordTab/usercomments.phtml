@@ -12,7 +12,7 @@
 </div>
 
 <?php if ($user): ?>
-  <div class="comment-form-wrapper <?=count($this->driver->getComments()) % 2 ? 'even' : 'odd'?>">
+  <div class="comment-form-wrapper <?=count($this->record($this->driver)->getComments()) % 2 ? 'even' : 'odd'?>">
     <form class="comment-form" action="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'AddComment'))?>" method="post">
       <div class="comment-col">
         <div>
@@ -24,7 +24,7 @@
           <?php if ($ratings): ?>
             <div class="comment-rating">
               <?=$this->transEsc('Rating by stars')?>:
-              <?php $ratingData = $this->driver->getRatingData($user->id); ?>
+              <?php $ratingData = $this->ratings()->getRatingData($this->driver, $user->getId()); ?>
               <?=$this->render('Helpers/star-rating.phtml', ['ratingData' => $ratingData, 'allowClear' => 0 === $ratingData['count'] || $this->accountCapabilities()->isRatingRemovalAllowed()]);?>
             </div>
           <?php endif; ?>
