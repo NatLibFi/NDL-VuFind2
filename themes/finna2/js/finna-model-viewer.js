@@ -16,7 +16,7 @@ var dracoLoader;
 class ModelViewerClass extends HTMLElement {
 
   static get observedAttributes() {
-    return ['lazyload', 'proxy', 'scripts'];
+    return ['lazyload', 'scripts'];
   }
 
   get scripts() {
@@ -35,12 +35,12 @@ class ModelViewerClass extends HTMLElement {
     this.setAttribute('src', newValue);
   }
 
-  get proxy() {
-    return this.getAttribute('proxy');
+  get cacheSrc() {
+    return this.getAttribute('cacheSrc');
   }
 
-  set proxy(newValue) {
-    this.setAttribute('proxy', newValue);
+  set cacheSrc(value) {
+    this.setAttribute('cacheSrc', value);
   }
 
   get texture() {
@@ -429,12 +429,19 @@ class ModelViewerClass extends HTMLElement {
       if (!this.dependenciesLoaded) {
         return;
       }
-      if (!this.src) {
-        console.error('Missing src from model-viewer');
-        return;
-      }
-      this.createElement();
-    });
+      this.changeLoadInfoButtonToStateDisplay();
+      /**
+       * Start to load the model from the provider to cache
+       */
+      this.loadInfo.textContent = this.translations['loading file'] || 'Model loading.';
+      fetch(this.src)
+        .then(response => response.json())
+        .then(responseJSON => {
+          this.src = responseJSON.data.url;
+          this.createElement();
+        });
+    }, {once: true});
+    
     this.root.append(this.loadInfo);
     const highlight = () => {
       this.root.classList.add('filedrop');
@@ -466,15 +473,6 @@ class ModelViewerClass extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue)
   {
     switch (name) {
-    case 'proxy':
-      if (!this.src) {
-        fetch(newValue)
-          .then(response => response.json())
-          .then(responseJSON => {
-            this.src = responseJSON.data.url;
-          });
-      }
-      break;
     case 'scripts':
       this.load();
       break;
@@ -524,7 +522,6 @@ class ModelViewerClass extends HTMLElement {
 
   createElement()
   {
-    this.loadInfo.remove();
     if (this.preview) {
       this.preview.remove();
       delete this.preview;
@@ -533,10 +530,6 @@ class ModelViewerClass extends HTMLElement {
 
     this.loaded = false;
     this.scene = new THREE.Scene();
-
-    this.loadInfo = document.createElement('div');
-    this.loadInfo.classList.add('state');
-    this.root.append(this.loadInfo);
 
     const optionsArea = document.createElement('div');
     optionsArea.classList.add('options');
@@ -638,9 +631,16 @@ class ModelViewerClass extends HTMLElement {
     );
   }
 
+  changeLoadInfoButtonToStateDisplay()
+  {
+    this.loadInfo.remove();
+    this.loadInfo = document.createElement('div');
+    this.loadInfo.classList.add('state');
+    this.root.append(this.loadInfo);
+  }
+
   loadGLTF()
   {
-    this.loadInfo.textContent = this.translations['loading file'] || 'Model loading.';
     if (!loader) {
       loader = new THREE.GLTFLoader();
       if (this.decoder) {
