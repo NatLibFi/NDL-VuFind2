@@ -187,22 +187,22 @@ $config = [
                     ],
                 ],
             ],
-            'FinnaResourceList-additem' => [
+            'reservationlist-additem' => [
                 'type'    => 'Laminas\Router\Http\Segment',
                 'options' => [
-                    'route'    => '/FinnaResourceList/AddItem[/:id]',
+                    'route'    => '/ReservationList/AddItem[/:id]',
                     'defaults' => [
-                        'controller' => 'FinnaResourceList',
+                        'controller' => 'ReservationList',
                         'action'     => 'AddItem',
                     ],
                 ],
             ],
-            'FinnaResourceList-list' => [
+            'reservationlist-list' => [
                 'type'    => 'Laminas\Router\Http\Segment',
                 'options' => [
-                    'route'    => '/FinnaResourceList/List[/:id]',
+                    'route'    => '/ReservationList/List[/:id]',
                     'defaults' => [
-                        'controller' => 'FinnaResourceList',
+                        'controller' => 'ReservationList',
                         'action'     => 'List',
                     ],
                 ],
@@ -288,7 +288,7 @@ $config = [
             'Finna\Controller\PrimoController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\PrimorecordController' => 'Finna\Controller\AbstractBaseFactory',
             'Finna\Controller\RecordController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
-            \Finna\Controller\FinnaResourceListController::class => \Finna\Controller\FinnaResourceListControllerFactory::class,
+            \Finna\Controller\ReservationListController::class => \Finna\Controller\ReservationListControllerFactory::class,
             'Finna\Controller\RobotsController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\SearchController' => 'VuFind\Controller\AbstractBaseFactory',
         ],
@@ -319,9 +319,9 @@ $config = [
             'MetaLibRecord' => 'Finna\Controller\MetaLibrecordController',
             'metalibrecord' => 'Finna\Controller\MetaLibrecordController',
             'OrganisationInfo' => 'Finna\Controller\OrganisationInfoController',
-            'FinnaResourceList' => \Finna\Controller\FinnaResourceListController::class,
-            'FinnaResourceList' => \Finna\Controller\FinnaResourceListController::class,
-            'FinnaResourceList' => \Finna\Controller\FinnaResourceListController::class,
+            'ReservationList' => \Finna\Controller\ReservationListController::class,
+            'reservationList' => \Finna\Controller\ReservationListController::class,
+            'reservationlist' => \Finna\Controller\ReservationListController::class,
             'Robots' => 'Finna\Controller\RobotsController',
 
             // Overrides:
@@ -831,7 +831,7 @@ $config = [
                     'Finna\Search\Blender\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\Combined\Options' => 'VuFind\Search\Combined\OptionsFactory',
                     'Finna\Search\EDS\Options' => 'VuFind\Search\EDS\OptionsFactory',
-                    \Finna\Search\FinnaResourceList\Options::class => \VuFind\Search\Options\OptionsFactory::class,
+                    \Finna\Search\ReservationList\Options::class => \VuFind\Search\Options\OptionsFactory::class,
                     'Finna\Search\Primo\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\Solr\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\SolrAuth\Options' => 'VuFind\Search\Options\OptionsFactory',
@@ -850,7 +850,7 @@ $config = [
                     // Counterpart for EmptySet Params:
                     'Finna\Search\EmptySet\Options' => 'VuFind\Search\EmptySet\Options',
                     'Finna\Search\MixedList\Options' => 'VuFind\Search\MixedList\Options',
-                    'FinnaResourceList' => \Finna\Search\FinnaResourceList\Params::class,
+                    'ReservationList' => \Finna\Search\ReservationList\Params::class,
                     'SolrAuth' => 'Finna\Search\SolrAuth\Options',
                     'SolrBrowse' => 'Finna\Search\SolrBrowse\Options',
                     'L1' => 'Finna\Search\L1\Options',
@@ -863,7 +863,7 @@ $config = [
                     'Finna\Search\EDS\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\EmptySet\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\Favorites\Params' => 'VuFind\Search\Params\ParamsFactory',
-                    \Finna\Search\FinnaResourceList\Params::class => \Finna\Search\Solr\ParamsFactory::class,
+                    \Finna\Search\ReservationList\Params::class => \Finna\Search\Solr\ParamsFactory::class,
                     'Finna\Search\MixedList\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\Solr\Params' => 'Finna\Search\Solr\ParamsFactory',
                     'Finna\Search\SolrAuth\Params' => 'Finna\Search\Solr\ParamsFactory',
@@ -881,7 +881,7 @@ $config = [
                     'VuFind\Search\Solr\Params' => 'Finna\Search\Solr\Params',
 
                     'VuFind\Search\SolrAuth\Params' => 'Finna\Search\SolrAuth\Params',
-                    'FinnaResourceList' => \Finna\Search\FinnaResourceList\Params::class,
+                    'ReservationList' => \Finna\Search\ReservationList\Params::class,
                     'SolrAuth' => 'Finna\Search\SolrAuth\Params',
                     'L1' => 'Finna\Search\L1\Params',
                 ],
@@ -892,7 +892,7 @@ $config = [
                     'Finna\Search\Combined\Results' => 'VuFind\Search\Results\ResultsFactory',
                     'Finna\Search\EncapsulatedRecords\Results' => 'VuFind\Search\Results\ResultsFactory',
                     'Finna\Search\Favorites\Results' => 'VuFind\Search\Favorites\ResultsFactory',
-                    \Finna\Search\FinnaResourceList\Results::class => \Finna\Search\FinnaResourceList\ResultsFactory::class,
+                    \Finna\Search\ReservationList\Results::class => \Finna\Search\ReservationList\ResultsFactory::class,
                     'Finna\Search\Primo\Results' => 'VuFind\Search\Results\ResultsFactory',
                     'Finna\Search\Solr\Results' => 'VuFind\Search\Solr\ResultsFactory',
                     'Finna\Search\SolrAuth\Results' => 'VuFind\Search\Solr\ResultsFactory',
@@ -909,7 +909,7 @@ $config = [
 
                     'EncapsulatedRecords' => 'Finna\Search\EncapsulatedRecords\Results',
                     'L1' => 'Finna\Search\L1\Results',
-                    'FinnaResourceList' => \Finna\Search\FinnaResourceList\Results::class,
+                    'ReservationList' => \Finna\Search\ReservationList\Results::class,
                     'SolrBrowse' => 'Finna\Search\SolrBrowse\Results',
                 ],
             ],
@@ -1098,12 +1098,12 @@ $dynamicRoutes = [
     'Comments' => ['inappropriate' => 'inappropriate/[:id]'],
     'LibraryCards' => ['newLibraryCardPassword' => 'newPassword/[:id]'],
     'MyResearch' => ['sortList' => 'SortList/[:id]'],
-    'FinnaResourceList' => [
-        'FinnaResourceList-home' => 'Home',
-        'FinnaResourceList-list' => 'List/[:id]',
-        'FinnaResourceList-order' => 'Order/[:id]',
-        'FinnaResourceList-delete' => 'Delete/[:id]',
-        'FinnaResourceList-deletebulk' => 'DeleteBulk/[:id]',
+    'ReservationList' => [
+        'reservationlist-home' => 'Home',
+        'reservationlist-list' => 'List/[:id]',
+        'reservationlist-order' => 'Order/[:id]',
+        'reservationlist-delete' => 'Delete/[:id]',
+        'reservationlist-deletebulk' => 'DeleteBulk/[:id]',
     ],
 ];
 
@@ -1123,8 +1123,8 @@ $staticRoutes = [
     'Record/DownloadModel',
     'Record/DownloadFile',
     'Bazaar/Home', 'Bazaar/Cancel',
-    'FinnaResourceList/AddList',
-    'FinnaResourceList/Home',
+    'ReservationList/AddList',
+    'ReservationList/Home',
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();

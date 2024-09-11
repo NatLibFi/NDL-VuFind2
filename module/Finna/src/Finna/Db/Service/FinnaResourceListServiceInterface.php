@@ -82,7 +82,7 @@ interface FinnaResourceListServiceInterface extends DbServiceInterface
      *
      * @return FinnaResourceListEntityInterface[]
      */
-    public function getFinnaResourceListsByUser(UserEntityInterface|int $userOrId): array;
+    public function getResourceListsByUser(UserEntityInterface|int $userOrId): array;
 
     /**
      * Get lists containing a specific record.
@@ -108,5 +108,21 @@ interface FinnaResourceListServiceInterface extends DbServiceInterface
      * @return FinnaResourceListEntityInterface
      * @throws RecordMissingException
      */
-    public function getUserListById(int $id): FinnaResourceListEntityInterface;
+    public function getResourceListById(int $id): FinnaResourceListEntityInterface;
+
+    /**
+     * Get lists containing a specific record.
+     *
+     * @param string                       $recordId ID of record being checked.
+     * @param string                       $source   Source of record to look up
+     * @param UserEntityInterface|int|null $userOrId Optional user ID or entity object (to limit results
+     * to a particular user).
+     *
+     * @return FinnaResourceListEntityInterface[]
+     */
+    public function getListsNotContainingRecord(
+        string $recordId,
+        string $source = DEFAULT_SEARCH_BACKEND,
+        UserEntityInterface|int|null $userOrId = null
+    ): array;
 }

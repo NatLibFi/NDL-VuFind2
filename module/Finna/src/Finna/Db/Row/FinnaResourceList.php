@@ -60,9 +60,10 @@ use DateTime;
  * @property string $pickup_date
  * @property string $handler
  */
-class FinnaResourceList extends RowGateway implements FinnaResourceListEntityInterface
+class FinnaResourceList extends RowGateway implements \VuFind\Db\Service\DbServiceAwareInterface, FinnaResourceListEntityInterface
 {
     use \VuFind\Db\Table\DbTableAwareTrait;
+    use \VuFind\Db\Service\DbServiceAwareTrait;
 
     /**
      * Constructor
@@ -91,6 +92,11 @@ class FinnaResourceList extends RowGateway implements FinnaResourceListEntityInt
         return $this->user_id;
     }
 
+    public function getUser(): UserEntityInterface
+    {
+        return $this->getDbService(\VuFind\Db\Service\UserServiceInterface::class)->getUserById($this->user_id);
+    }
+
     /**
      * Set user
      *
@@ -115,18 +121,18 @@ class FinnaResourceList extends RowGateway implements FinnaResourceListEntityInt
         return $this;
     }
 
-    public function getDatasource(): string
+    public function getDataSource(): string
     {
         return $this->datasource;
     }
 
-    public function setDatasource(string $datasource): FinnaResourceListEntityInterface
+    public function setDataSource(string $dataSource): FinnaResourceListEntityInterface
     {
-        $this->datasource = $datasource;
+        $this->datasource = $dataSource;
         return $this;
     }
 
-    public function setBuilding(string $building): FinnaResourceListEntityInterface
+    public function setBuilding(string $building = ''): FinnaResourceListEntityInterface
     {
         $this->building = $building;
         return $this;
@@ -173,6 +179,17 @@ class FinnaResourceList extends RowGateway implements FinnaResourceListEntityInt
         $this->ordered = date('Y-m-d H:i:s');
         $this->pickup_date = $pickup_date;
         return $this->save($user);
+    }
+    
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description = ''): FinnaResourceListEntityInterface
+    {
+        $this->description = $description;
+        return $this;
     }
 
     /**
@@ -238,25 +255,14 @@ class FinnaResourceList extends RowGateway implements FinnaResourceListEntityInt
      * This performs an intelligent insert/update, and reloads the
      * properties with fresh data from the table on success.
      *
-     * @param UserEntityInterface|bool $user Logged-in user (false if none)
-     *
      * @return mixed The primary key value(s), as an associative array if the
      *     key is compound, or a scalar if the key is single-column.
      * @throws ListPermissionException
      * @throws MissingFieldException
      */
-    public function save($user = false): array|int
+    public function save()
     {
-        if (!$this->editAllowed($user ?: null)) {
-            throw new ListPermissionException('list_access_denied');
-        }
-        if (empty($this->title)) {
-            throw new MissingFieldException('list_edit_name_required');
-        }
-
-        parent::save();
-        $this->rememberLastUsed();
-        return $this->id;
+        return parent::save();
     }
 
     /**

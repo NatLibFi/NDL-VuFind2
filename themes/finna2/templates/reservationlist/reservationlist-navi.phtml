@@ -15,11 +15,11 @@
 <ul class="dropdown-menu subtabs collapse in" role="presentation">
   <li><h1 class="visible-xs visible-sm"><?=$this->icon('sidebar-collapse') ?> <?=$this->transEsc('Your Lists')?></h1></li>
   <?php $active = empty($activeId); ?>
-  <li><a class="<?=$active ? ' active' : ''?>" role="menuitem" href="<?= $active ? '#' : $this->url('FinnaResourceList-home') ?>" aria-current="<?=$active ? 'page' : 'false'?>"><?= $this->transEsc('FinnaResourceList::All Lists') ?></a></li>
+  <li><a class="<?=$active ? ' active' : ''?>" role="menuitem" href="<?= $active ? '#' : $this->url('reservationlist-home') ?>" aria-current="<?=$active ? 'page' : 'false'?>"><?= $this->transEsc('FinnaResourceList::All Lists') ?></a></li>
   <?php foreach ($lists as $list): ?>
     <?php $active = ($list['id'] === $activeId); ?>
     <li role="none" class="favorites-menulist-item">
-      <a role="menuitem" href="<?= $active ? '#' : $this->url('FinnaResourceList-list', ['id' => $list['id']])?>?limit=<?=$currentLimit;?>" class="<?=$list && $active ? ' active' : ''?>" aria-current="<?=$active ? 'page' : 'false' ?>">
+      <a role="menuitem" href="<?= $active ? '#' : $this->url('reservationlist-list', ['id' => $list['id']])?>?limit=<?=$currentLimit;?>" class="<?=$list && $active ? ' active' : ''?>" aria-current="<?=$active ? 'page' : 'false' ?>">
         <div class="favorite-list-holder">
           <div class="pull-left favorite-list-title"><?=$this->escapeHtml($list['title'])?></div><?php if ($list['ordered']): ?><div>(<?= $this->transEsc('FinnaResourceList::Ordered')?>)</div><?php endif; ?>
         </div>

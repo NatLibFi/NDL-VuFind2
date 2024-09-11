@@ -34,7 +34,7 @@ use Laminas\Session\Container;
 use Laminas\Stdlib\Parameters;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\Db\Entity\FinnaResourceListEntityInterface;
+use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use VuFind\Db\Service\Feature\TransactionInterface;
 use VuFind\Db\Service\ResourceServiceInterface;
 use VuFind\Db\Service\ResourceTagsServiceInterface;
@@ -52,7 +52,6 @@ use VuFind\RecordDriver\AbstractBase as RecordDriver;
 use VuFind\Tags\TagsService;
 use Finna\Db\Service\FinnaResourceListServiceInterface;
 use Finna\Db\Service\FinnaResourceListResourceService;
-use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\Db\Service\FinnaResourceListResourceServiceInterface;
 
 use function count;
@@ -140,16 +139,8 @@ class ReservationListService implements TranslatorAwareInterface
 
         // Remove user_resource and resource_tags rows for favorites tags:
         $listUser = $list->getUser();
-        $this->resourceTagsService->destroyResourceTagsLinksForUser(null, $listUser, $list);
-        $this->userResourceService->unlinkFavorites(null, $listUser, $list);
-
-        // Remove resource_tags rows for list tags:
-        $this->resourceTagsService->destroyUserListLinks($list, $user);
-
-        // Clean up orphaned tags:
-        $this->tagsService->deleteOrphanedTags();
-
-        $this->userListService->deleteUserList($list);
+        $this->resourceListResourceServiceInterface->unlinkFavorites(null, $listUser, $list);
+        $this->resourceListServiceInterface->deleteFinnaResourceList($list);
     }
 
     /**
@@ -186,7 +177,7 @@ class ReservationListService implements TranslatorAwareInterface
                 ->setTitle($this->translate('default_list_title'));
             $this->saveListForUser($list, $user);
         } else {
-            $list = $this->userListService->getUserListById($listId);
+            $list = $this->resourceListServiceInterface->getResourceListById($listId);
             // Validate incoming list ID:
             if (!$this->userCanEditList($user, $list)) {
                 throw new \VuFind\Exception\ListPermission('Access denied.');
@@ -295,11 +286,7 @@ class ReservationListService implements TranslatorAwareInterface
         foreach ($resources as $current) {
             $resourceIDs[] = $current->getId();
         }
-
-        // Remove resource and related tags:
-        $this->resourceTagsService->destroyAllListResourceTagsLinksForUser($resourceIDs, $user);
-        $this->userResourceService->unlinkFavorites($resourceIDs, $user->getId(), null);
-        $this->tagsService->deleteOrphanedTags();
+        $this->resourceListResourceServiceInterface->unlinkFavorites($resourceIDs, $user->getId(), null);
     }
 
     /**
@@ -338,7 +325,7 @@ class ReservationListService implements TranslatorAwareInterface
             : $this->resourceService->getResourceById($resourceOrId);
         $list = $listOrId instanceof FinnaResourceListEntityInterface
             ? $listOrId
-            : $this->resourceListServiceInterface->getUserListById($listOrId);
+            : $this->resourceListServiceInterface->getResourceListById($listOrId);
 
         // Create the resource link if it doesn't exist and update the notes in any
         // case:
@@ -359,7 +346,7 @@ class ReservationListService implements TranslatorAwareInterface
      *
      * @return array list information
      */
-    public function saveRecordToFavorites(
+    public function saveRecordToResourceList(
         array $params,
         UserEntityInterface $user,
         RecordDriver $driver
@@ -383,7 +370,6 @@ class ReservationListService implements TranslatorAwareInterface
             $user,
             $resource,
             $list,
-            $params['mytags'] ?? [],
             $params['notes'] ?? ''
         );
         return ['listId' => $list->getId()];
@@ -409,7 +395,7 @@ class ReservationListService implements TranslatorAwareInterface
             throw new MissingFieldException('list_edit_name_required');
         }
 
-        $this->userListService->persistEntity($list);
+        $this->resourceListServiceInterface->persistEntity($list);
         $this->rememberLastUsedList($list);
     }
 
@@ -424,14 +410,7 @@ class ReservationListService implements TranslatorAwareInterface
      */
     public function addListTag(string $tagText, FinnaResourceListEntityInterface $list, UserEntityInterface $user): void
     {
-        $tagText = trim($tagText);
-        if (!empty($tagText)) {
-            // Create and link tag in a transaction so we don't accidentally purge it as an orphan:
-            $this->resourceTagsService->beginTransaction();
-            $tag = $this->tagsService->getOrCreateTagByText($tagText);
-            $this->resourceTagsService->createLink(null, $tag, $user, $list);
-            $this->resourceTagsService->commitTransaction();
-        }
+
     }
 
     /**
@@ -452,17 +431,10 @@ class ReservationListService implements TranslatorAwareInterface
         Parameters $request
     ): int {
         $list->setTitle($request->get('title'))
-          ->setDatasource($request->get('datasource'))
-            ->setDescription($request->get('desc'))
-            ->setPublic((bool)$request->get('public'));
+            ->setDatasource($request->get('datasource'))
+            ->setBuilding($request->get('building'))
+            ->setDescription($request->get('desc'));
         $this->saveListForUser($list, $user);
-
-        if (null !== ($tags = $request->get('tags'))) {
-            $this->resourceTagsService->destroyUserListLinks($list, $user);
-            foreach ($this->tagsService->parse($tags) as $tag) {
-                $this->addListTag($tag, $list, $user);
-            }
-        }
 
         return $list->getId();
     }
@@ -519,7 +491,7 @@ class ReservationListService implements TranslatorAwareInterface
      *
      * @return array list information
      */
-    public function saveRecordsToFavorites(array $params, UserEntityInterface $user): array
+    public function saveRecordsToResourceList(array $params, UserEntityInterface $user): array
     {
         // Load helper objects needed for the saving process:
         $list = $this->getAndRememberListObject($this->getListIdFromParams($params), $user);
@@ -533,9 +505,7 @@ class ReservationListService implements TranslatorAwareInterface
             // Get or create a resource object as needed:
             $resource = $this->resourcePopulator->getOrCreateResourceForRecordId($id, $source);
 
-            // Add the information to the user's account:
-            $tags = isset($params['mytags']) ? $this->tagsService->parse($params['mytags']) : [];
-            $this->saveResourceToFavorites($user, $resource, $list, $tags, '', false);
+            $this->saveResourceToFavorites($user, $resource, $list, '', false);
 
             // Collect record IDs for caching
             if ($this->recordCache?->isCachable($resource->getSource())) {
@@ -575,7 +545,7 @@ class ReservationListService implements TranslatorAwareInterface
                 $this->removeUserResourcesById($user, $ids, $source);
             }
         } else {
-            $list = $this->userListService->getUserListById($listID);
+            $list = $this->resourceListServiceInterface->getResourceListById($listID);
             foreach ($sorted as $source => $ids) {
                 $this->removeListResourcesById($list, $user, $ids, $source);
             }
@@ -601,14 +571,7 @@ class ReservationListService implements TranslatorAwareInterface
         ?string $recordId = null,
         ?string $source = null
     ): string {
-        return $this->formatTagStringForEditing(
-            $this->tagsService->getUserTagsFromFavorites(
-                $userOrId,
-                $listOrId,
-                $recordId,
-                $source
-            )
-        );
+        return '';
     }
 
     /**
@@ -620,16 +583,30 @@ class ReservationListService implements TranslatorAwareInterface
      */
     public function formatTagStringForEditing($tags): string
     {
-        $tagStr = '';
-        if (count($tags) > 0) {
-            foreach ($tags as $tag) {
-                if (strstr($tag['tag'], ' ')) {
-                    $tagStr .= "\"{$tag['tag']}\" ";
-                } else {
-                    $tagStr .= "{$tag['tag']} ";
-                }
-            }
-        }
-        return trim($tagStr);
+        return '';
     }
+
+    /**
+     * Get resource lists identified as reservation list for user
+     *
+     * @param UserEntityInterface|int|null $userOrId Optional user ID or entity object (to limit results
+     * to a particular user).
+     *
+     * @return FinnaResourceListEntityInterface[]
+     */
+    public function getReservationListsForUser(UserEntityInterface|int $userOrId)
+    {
+        return $this->resourceListServiceInterface->getResourceListsByUser($userOrId);
+    }
+
+    public function getListsNotContainingRecord(
+        UserEntityInterface $user,
+        string $recordId,
+        string $source = DEFAULT_SEARCH_BACKEND,
+        string $datasource = ''
+    ): array {
+        return $this->resourceListServiceInterface->getListsNotContainingRecord($recordId, $source, $user);
+    }
+
+    
 }

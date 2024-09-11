@@ -28,7 +28,7 @@
  * @link     https://vufind.org Main Site
  */
 
-namespace Finna\Search\FinnaResourceList;
+namespace Finna\Search\ReservationList;
 
 /**
  * Reservation List Options
@@ -75,7 +75,7 @@ class Options extends \VuFind\Search\Base\Options
      */
     public function getSearchAction()
     {
-        return 'FinnaResourceList-home';
+        return 'reservationlist-home';
     }
 
     /**

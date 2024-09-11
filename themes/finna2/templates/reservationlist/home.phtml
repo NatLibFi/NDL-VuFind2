@@ -5,24 +5,24 @@
   $this->headTitle($title);
 
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('FinnaResourceList-home') . '">' . $title . '</a></li> <li class="active">' . $this->transEsc('FinnaResourceList::Reservation List') . '</li>';
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('reservationlist-home') . '">' . $title . '</a></li> <li class="active">' . $this->transEsc('FinnaResourceList::Reservation List') . '</li>';
 ?>
 
 <!-- Leftside navigationbar -->
-<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'FinnaResourceList']); ?>
+<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'reservationlist']); ?>
 
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?> reservation-list-body">
   <h2><?=$title ?></h2>
   <?= $this->flashmessages() ?>
   <ul class="reservations-list">
-    <?php foreach ($this->lists as $list): ?>
+    <?php foreach ($this->lists ?? [] as $list): ?>
       <li>
-        <a href="<?= $this->url('FinnaResourceList-list', ['id' => $list['id']])?>"><?= $this->escapeHtml($list['title']) ?></a>
+        <a href="<?= $this->url('reservationlist-list', ['id' => $list['id']])?>"><?= $this->escapeHtml($list['title']) ?></a>
         <span class="list-info pull-right">
           <?php if ($list['created_formatted'] ?? false): ?><span class="list-created"><?= $this->transEsc('FinnaResourceList::list_created', ['%%date%%' => $list['created_formatted']])?></span><?php endif; ?>
           <?php if ($list['ordered_formatted'] ?? false): ?><span class="list-ordered"><?= $this->transEsc('FinnaResourceList::list_ordered', ['%%date%%' => $list['ordered_formatted']])?></span><?php endif; ?>
-          <a href="<?= $this->url('FinnaResourceList-delete', ['id' => $list['id']])?>" data-lightbox=""><?= $this->transEsc('FinnaResourceList::Delete List') ?></a>
+          <a href="<?= $this->url('reservationlist-delete', ['id' => $list['id']])?>" data-lightbox=""><?= $this->transEsc('FinnaResourceList::Delete List') ?></a>
         </span>
       </li>
       <?php endforeach; ?>

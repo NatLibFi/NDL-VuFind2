@@ -27,7 +27,7 @@
  * @link     https://vufind.org/wiki/development Wiki
  */
 
-namespace Finna\Search\FinnaResourceList;
+namespace Finna\Search\ReservationList;
 
 use Finna\Db\Service\FinnaResourceListResourceServiceInterface;
 use Finna\Db\Service\FinnaResourceListServiceInterface;

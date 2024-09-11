@@ -17,17 +17,16 @@
         'results' => $this->results,
         'user' => $user,
       ];
-      $listParams['lists'] = $user?->getLists();
     }
-    if ($finnaResourceListOpen = $this->active === 'FinnaResourceList') {
+    if ($reservationListOpen = $this->active === 'reservationlist') {
+
       $list = $this->results?->getListObject() ?? [];
       $listParams = [
         'activeId' => $list['id'] ?? false,
-        'lists' => $user ? $this->userlist()->getUserListsAndCountsByUser($user) : null,
+        'lists' => $this->reservationList()->getReservationListsForUser($user),
         'results' => $this->results,
         'user' => $user,
       ];
-      $listParams['lists'] = $user?->getFinnaResourceLists();
     }
 
     $menuListItems = [];
@@ -91,10 +90,10 @@
         'translation' => 'saved_items',
         'show' => $this->userlist()->getMode() !== 'disabled',
       ],
-      'FinnaResourceList' => [
-        'url' => 'FinnaResourceList-home',
+      'reservationlist' => [
+        'url' => 'reservationlist-home',
         'translation' => 'Reservation List',
-        'show' => $this->userlist()->getMode() !== 'disabled' && $user->getFinnaResourceLists(),
+        'show' => $this->userlist()->getMode() !== 'disabled' && $this->reservationList()->getReservationListsForUser($user),
       ],
       'logout' => [
         'url' => 'myresearch-logout',
@@ -127,14 +126,14 @@
           'params' => $listParams ?? [],
         ],
       ],
-      'FinnaResourceList' => [
-        'active' => $finnaResourceListOpen,
-        'url' => 'FinnaResourceList-home',
+      'reservationlist' => [
+        'active' => $reservationListOpen,
+        'url' => 'reservationlist-home',
         'translation' => 'FinnaResourceList::Research Room Reservations',
-        'show' => $this->userlist()->getMode() !== 'disabled' && $user->getFinnaResourceLists(),
+        'show' => $this->userlist()->getMode() !== 'disabled' && $this->reservationList()->getReservationListsForUser($user),
         'partial' => [
-          'url' => 'FinnaResourceList/FinnaResourceList-navi.phtml',
-          'wrapperClass' => 'FinnaResourceList-bar',
+          'url' => 'reservationlist/reservationlist-navi.phtml',
+          'wrapperClass' => 'reservationlist-bar',
           'params' => $listParams ?? [],
         ],
       ],

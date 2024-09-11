@@ -4,7 +4,7 @@
   $this->headTitle($this->translate($pageTitle));
 
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('FinnaResourceList-delete', ['id' => $this->id]) . '">' . $this->transEsc('Poista lista') . '</a></li>'
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('reservationlist-delete', ['id' => $this->id]) . '">' . $this->transEsc('Poista lista') . '</a></li>'
     . '<li>' . $this->transEsc($pageTitle) . '</li>';
 ?>
 

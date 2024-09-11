@@ -182,7 +182,7 @@ class FinnaResourceListService extends AbstractDbService implements DbTableAware
      *
      * @return FinnaResourceListEntityInterface[]
      */
-    public function getFinnaResourceListsByUser(UserEntityInterface|int $userOrId): array
+    public function getResourceListsByUser(UserEntityInterface|int $userOrId): array
     {
         $userId = $userOrId instanceof UserEntityInterface ? $userOrId->getId() : $userOrId;
         $callback = function ($select) use ($userId) {
@@ -217,6 +217,36 @@ class FinnaResourceListService extends AbstractDbService implements DbTableAware
     }
 
     /**
+     * Get lists containing a specific record.
+     *
+     * @param string                       $recordId ID of record being checked.
+     * @param string                       $source   Source of record to look up
+     * @param UserEntityInterface|int|null $userOrId Optional user ID or entity object (to limit results
+     * to a particular user).
+     *
+     * @return FinnaResourceListEntityInterface[]
+     */
+    public function getListsNotContainingRecord(
+        string $recordId,
+        string $source = DEFAULT_SEARCH_BACKEND,
+        UserEntityInterface|int|null $userOrId = null
+    ): array {
+        $listsContaining = $this->getListsContainingRecord($recordId, $source, $userOrId);
+        $allLists = $this->getResourceListsByUser($userOrId);
+        $ids = array_map(
+            function($obj) {
+                return $obj->getId();
+            },
+            $listsContaining
+        );
+        var_dump(count($listsContaining));
+        var_dump(count($allLists));
+        return array_filter($allLists, function($obj) use ($ids) {
+            return !in_array($obj->getId(), $ids);
+        });
+    }
+
+    /**
      * Is the provided user allowed to edit the provided list?
      *
      * @param ?UserEntityInterface    $user Logged-in user (null if none)
@@ -237,7 +267,7 @@ class FinnaResourceListService extends AbstractDbService implements DbTableAware
      * @return FinnaResourceListEntityInterface
      * @throws RecordMissingException
      */
-    public function getUserListById(int $id): FinnaResourceListEntityInterface
+    public function getResourceListById(int $id): FinnaResourceListEntityInterface
     {
         $result = $this->getDbTable(\Finna\Db\Table\FinnaResourceList::class)->select(['id' => $id])->current();
         if (empty($result)) {

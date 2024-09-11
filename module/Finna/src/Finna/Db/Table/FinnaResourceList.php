@@ -116,10 +116,7 @@ class FinnaResourceList extends Gateway implements DbServiceAwareInterface
             $select->where->equalTo('r.source', $source)
                 ->equalTo('r.record_id', $resourceId);
             $select->order(['title']);
-
-            if (null !== $userId) {
-                $select->where->equalTo('ur.user_id', $userId);
-            }
+            $select->where->equalTo('ur.user_id', $userId);
         };
         return $this->select($callback);
     }

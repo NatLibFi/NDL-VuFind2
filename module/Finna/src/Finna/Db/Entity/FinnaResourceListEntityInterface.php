@@ -110,14 +110,12 @@ interface FinnaResourceListEntityInterface extends EntityInterface
      * This performs an intelligent insert/update, and reloads the
      * properties with fresh data from the table on success.
      *
-     * @param UserEntityInterface|bool $user Logged-in user (false if none)
-     *
      * @return mixed The primary key value(s), as an associative array if the
      *     key is compound, or a scalar if the key is single-column.
      * @throws ListPermissionException
      * @throws MissingFieldException
      */
-    public function save($user = false): array|int;
+    public function save();
 
     /**
      * Remember that this list was used so that it can become the default in
@@ -145,6 +143,8 @@ interface FinnaResourceListEntityInterface extends EntityInterface
      */
     public function getUserId(): int;
 
+    public function getUser(): UserEntityInterface;
+
     /**
      * Set user
      *
@@ -153,4 +153,32 @@ interface FinnaResourceListEntityInterface extends EntityInterface
      * @return FinnaResourceListEntityInterface
      */
     public function setUser(UserEntityInterface $user): FinnaResourceListEntityInterface;
+
+        /**
+     * Set title.
+     *
+     * @param string $title Title
+     *
+     * @return FinnaResourceListEntityInterface
+     */
+    public function setTitle(string $title): FinnaResourceListEntityInterface;
+
+    /**
+     * Get title.
+     *
+     * @return string
+     */
+    public function getTitle(): string;
+
+    public function getDataSource(): string;
+
+    public function setDataSource(string $dataSource): FinnaResourceListEntityInterface;
+
+    public function getDescription(): string;
+
+    public function setDescription(string $description = ''): FinnaResourceListEntityInterface;
+
+    public function getBuilding(): string;
+
+    public function setBuilding(string $building = ''): FinnaResourceListEntityInterface;
 }

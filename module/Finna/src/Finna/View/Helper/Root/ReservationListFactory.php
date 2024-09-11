@@ -8,7 +8,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
-class FinnaResourceListFactory implements FactoryInterface
+class ReservationListFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -33,6 +33,7 @@ class FinnaResourceListFactory implements FactoryInterface
             throw new \Exception('Unexpected options sent to factory.');
         }
         return new $requestedName(
+            $container->get(\Finna\ReservationList\ReservationListService::class),
             $container->get(\VuFind\Config\YamlReader::class)->get('FinnaResourceList.yaml', true, false)
         );
     }

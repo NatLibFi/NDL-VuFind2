@@ -69,7 +69,7 @@ trait ReservationListTrait
      */
     public function getFinnaResourceLists(): array
     {
-        return $this->finnaResourceListService->getFinnaResourceListsByUser($this);
+        return $this->finnaResourceListService->getResourceListsByUser($this);
     }
 
     /**

@@ -14,7 +14,7 @@
       <?php if ($user): ?>
 
         <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($driver, 'ArchiveRequest'))?>" class="btn btn-default" data-lightbox="" data-toggle="modal" data-target="order_archive_material_form" data-lightbox><?=$this->transEsc('archive_request_reserve_action')?></a>
-        <a href="<?=$this->escapeHtmlAttr($this->url('FinnaResourceList-additem', [], ['query' => ['recordId' => $this->driver->getUniqueID(), 'source' => $this->driver->getSourceIdentifier()]]))?>" class="btn btn-default" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?=$this->transEsc('FinnaResourceList::Add To Reservation List')?></a>
+        <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-additem', [], ['query' => ['recordId' => $this->driver->getUniqueID(), 'source' => $this->driver->getSourceIdentifier()]]))?>" class="btn btn-default" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?=$this->transEsc('FinnaResourceList::Add To Reservation List')?></a>
       <?php else: ?>
         <?= $this->resourceList($this->driver)->renderAddTemplate(); ?>
         <a href="<?=$this->url('myresearch-userlogin') ?>" class="btn btn-primary" data-lightbox><span><?=$this->transEsc('archive_request_login')?></span></a>
