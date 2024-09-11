@@ -627,6 +627,9 @@ class ModelViewerClass extends HTMLElement {
     );
   }
 
+  /**
+   * Changes the button which is used to start the model download process into a state div
+   */
   changeLoadInfoButtonToStateDisplay()
   {
     this.loadInfo.remove();
