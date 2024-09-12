@@ -941,16 +941,24 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $description
     ): array {
         if ($codec = $this->supportedVideoFormats[$format] ?? false) {
-            return [
-                'desc' => $description ?: false,
-                'url' => $url,
-                'embed' => 'video',
-                'format' => $format,
-                'videoSources' => [
-                    'src' => $url,
-                    'type' => $codec,
+            return match ($codec) {
+                'iframe' => [
+                    'desc' => $description ?: false,
+                    'url' => $url,
+                    'embed' => 'iframe',
+                    'format' => $format,
                 ],
-            ];
+                default => [
+                    'desc' => $description ?: false,
+                    'url' => $url,
+                    'embed' => $codec !== 'iframe' ? 'video' : 'iframe',
+                    'format' => $format,
+                    'videoSources' => [
+                        'src' => $url,
+                        'type' => $codec,
+                    ],
+                ],
+            };
         }
         return [];
     }
