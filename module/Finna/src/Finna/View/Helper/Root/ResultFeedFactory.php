@@ -73,8 +73,10 @@ class ResultFeedFactory implements FactoryInterface
             throw new \Exception('Unexpected options sent to factory.');
         }
         $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
+        $viewRenderer = $container->get('ViewRenderer');
         $helper = new $requestedName(
-            $container->get('ViewRenderer')->plugin('record'),
+            $viewRenderer->plugin('record'),
+            $viewRenderer->plugin('recordImage'),
             $dbServiceManager->get(CommentsServiceInterface::class)
         );
         $helper->registerExtensions($container);
