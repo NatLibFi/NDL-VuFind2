@@ -37,7 +37,7 @@ use DOMDocument;
 use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\Translator\TranslatorAwareInterface as TranslatorAwareInterface;
-use VuFind\ILS\Logic\AvailabilityStatusManager;
+use VuFind\ILS\Logic\AvailabilityStatus;
 
 use function count;
 use function in_array;
@@ -307,14 +307,12 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     /**
      * Constructor
      *
-     * @param \VuFind\Date\Converter      $dateConverter             Date converter object
-     * @param \VuFind\Config\PathResolver $pathResolver              Config file path resolver
-     * @param AvailabilityStatusManager   $availabilityStatusManager Availability status manager
+     * @param \VuFind\Date\Converter      $dateConverter Date converter object
+     * @param \VuFind\Config\PathResolver $pathResolver  Config file path resolver
      */
     public function __construct(
         \VuFind\Date\Converter $dateConverter,
-        \VuFind\Config\PathResolver $pathResolver,
-        protected AvailabilityStatusManager $availabilityStatusManager
+        \VuFind\Config\PathResolver $pathResolver
     ) {
         $this->dateFormat = $dateConverter;
         $this->pathResolver = $pathResolver;
@@ -1245,7 +1243,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
                             'barcode' => $id,
                             'item_id' => $reservableId,
                             'holdings_id' => $group,
-                            'availability' => $this->availabilityStatusManager->createAvailabilityStatus($available),
+                            'availability' => new AvailabilityStatus($available, $status),
                             'availabilityInfo' => $availabilityInfo,
                             'status' => $status,
                             'location' => $group,

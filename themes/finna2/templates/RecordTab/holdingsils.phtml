@@ -256,7 +256,8 @@
         }
       }
       $statusDesc = $row['availability']->getStatusDescription();
-      $statuses[$this->translate("status_$statusDesc", null, $this->translate($statusDesc))] = 1;
+      $statusDescriptionTokens = $row['availability']->getStatusDescriptionTokens();
+      $statuses[$this->translate("status_$statusDesc", $statusDescriptionTokens, $this->translate($statusDesc, $statusDescriptionTokens))] = 1;
       if (!isset($row['branch'])) {
         if (isset($row['requests_placed']) && $row['requests_placed'] > $requests) {
           $requests = $row['requests_placed'];

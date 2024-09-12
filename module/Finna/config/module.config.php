@@ -554,10 +554,12 @@ $config = [
             'autocomplete' => [
                 'factories' => [
                     'Finna\Autocomplete\Solr' => 'Finna\Autocomplete\SolrFactory',
+                    \Finna\Autocomplete\SolrAuth::class => \Finna\Autocomplete\SolrAuthFactory::class,
                     'Finna\Autocomplete\L1' => 'Finna\Autocomplete\SolrFactory',
                 ],
                 'aliases' => [
                     'VuFind\Autocomplete\Solr' => 'Finna\Autocomplete\Solr',
+                    \VuFind\Autocomplete\SolrAuth::class => \Finna\Autocomplete\SolrAuth::class,
                 ],
             ],
             'content_description' => [],

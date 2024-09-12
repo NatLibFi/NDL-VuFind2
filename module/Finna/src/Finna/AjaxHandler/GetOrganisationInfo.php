@@ -333,10 +333,10 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         $this->sorter->sort($cityList);
         $serviceList = array_unique($serviceList);
         $this->sorter->sort($serviceList);
-        $locationSelection = $this->renderer->render(
+        $locationSelection = $locationData ? $this->renderer->render(
             'organisationinfo/elements/location-selection.phtml',
             compact('id', 'orgInfo', 'locationData', 'serviceList', 'cityList')
-        );
+        ) : '';
 
         return compact(
             'consortiumInfo',

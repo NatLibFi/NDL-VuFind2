@@ -1,16 +1,48 @@
 <!-- START of: finna - RecordDriver/EDS/core-fields.phtml -->
+<?php
+  $edsConfig = $this->config()->get('EDS');
+  $authorDisplay = strtolower($edsConfig->AuthorDisplay->DetailPageFormat ?? 'Long');
+?>
 <div class="record-details">
   <table class="table table-condensed table-finna-record" summary="<?=$this->transEsc('Bibliographic Details')?>" role="presentation">
     <?php foreach ($this->driver->getItems($this->defaults) as $key => $item): ?>
       <?php if (!empty($item['Data']) && !in_array($item['Label'], $this->ignoreDetailsFields ?? [])): ?>
-      <tr class="record-<?=strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $item['Label']))?>">
-        <th><?php if (!empty($item['Label'])): ?><?=$this->transEsc($item['Label'])?>:<?php endif; ?></th>
-        <td class="record__biblio-value">
-          <div class="truncate-field">
-            <p><?=$this->driver->linkUrls($item['Data'])?></p>
-          </div>
-        </td>
-      </tr>
+        <?php if ('Au' == $item['Group'] && $authorDisplay == 'short'): ?>
+          <tr class="record-<?=strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $item['Label']))?>">
+            <th><?=empty($item['Label']) ? '' : $this->transEsc($item['Label']) . ':'?></th>
+            <?php
+              $authors = $driver->getPrimaryAuthorsWithHighlighting();
+              $authorCount = count($authors);
+              $authorNameLimit = $edsConfig->AuthorDisplay->ShortAuthorLimit ?? 3;
+            ?>
+            <?php if ($authorCount > 1): ?>
+              <td class="record__biblio-value">
+              <?php foreach ($authors as $i => $author): ?>
+                <span class="author"><a href="<?=$this->record($driver)->getLink('author', $this->highlight($author, null, true, false))?>"><?=$this->highlight($author)?></a></span><?php
+                  if ($authorCount == ($i + 1)) {
+                    break;
+                  } elseif (($i + 1) >= $authorNameLimit) {
+                    echo ' ' . $this->transEsc('more_authors_abbrev');
+                    break;
+                  }
+                ?><?php endforeach; ?>
+              </td>
+            <?php else: ?>
+              <?=$this->driver->linkUrls($item['Data'])?>
+            <?php endif; ?>
+          </tr>
+        <?php elseif ('AuInfo' == $item['Group'] && $authorDisplay == 'short'): ?>
+          <?php /* Do nothing: skip AuInfo data in short author mode... */ ?>
+        <?php else: ?>
+          <tr class="record-<?=strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $item['Label']))?>">
+            <th><?php if (!empty($item['Label'])): ?><?=$this->transEsc($item['Label'])?>:<?php endif; ?></th>
+            <td class="record__biblio-value">
+              <div class="truncate-field">
+                <p><?=$this->driver->linkUrls($item['Data'])?></p>
+              </div>
+            </td>
+          </tr>
+        <?php endif; ?>
       <?php endif; ?>
     <?php endforeach; ?>
 

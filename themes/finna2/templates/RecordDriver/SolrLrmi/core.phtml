@@ -95,7 +95,7 @@
           <?= implode('<br>', array_map([$this, 'escapeHtml'], $summary)) ?>
         </div>
       <?php endif; ?>
-      <?/* Display Main Details */?>
+      <?php /* Display Main Details */?>
       <?=
         $this->record($this->driver)->renderTemplate(
             'core-fields.phtml',
@@ -105,7 +105,7 @@
             ]
         );
       ?>
-      <?/* End Main Details */?>
+      <?php /* End Main Details */?>
     </div>
 
     <?php if ($this->userlist()->getMode() !== 'disabled'): ?>

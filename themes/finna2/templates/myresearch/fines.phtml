@@ -128,7 +128,7 @@
           <div>
             <?=$this->transEsc('Payment::Last Paid')?>:
             <span class="amount"><?=$this->safeMoneyFormat($this->lastTransaction->getAmount() / 100.00)?></span>
-            <?=$this->dateTime()->convertToDisplayDateAndTime('U', $this->lastTransaction->getPaidDate()->getTimestamp())?>
+            <?=$this->lastTransaction->getPaidDate()->format($this->config()->dateTimeFormat())?>
           </div>
           <div class="text-right">
             <a href="?transactionReport=true" class="btn btn-sm btn-primary" target="_blank">
@@ -177,7 +177,7 @@
         <?php endif; ?>
         <?php if ($this->startedTransaction): ?>
           <div class="alert alert-danger">
-            <?=$this->transEsc('online_payment_in_progress_warning', ['%%startDateTime%%' => $this->dateTime()->convertToDisplayDateAndTime('U', $this->startedTransaction->getCreated()->getTimestamp())]); ?>
+            <?=$this->transEsc('online_payment_in_progress_warning', ['%%startDateTime%%' => $this->startedTransaction->getCreated()->format($this->config()->dateTimeFormat())]); ?>
           </div>
         <?php endif; ?>
       <?php endif; ?>

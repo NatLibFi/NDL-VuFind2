@@ -1,3 +1,7 @@
+input, input.form-control {
+  font-size: 16px; // avoid the automatic zoom-in on input fields
+}
+
 .form-control {
   width: initial;
   padding: 0px 5px;
@@ -21,6 +25,7 @@
     box-shadow: 0 0 2px 1px rgba(255, 0, 0, 0.9);
   }
 }
+
 
 .form-inline {
   display: inline-block;
@@ -171,19 +176,6 @@ button.multiselect {
   position: inherit;
 }
 
-.input-group {
-  input, button{
-    height: 42px;
-    border-radius: 0;
-  }
-  button {
-    border: none;
-    color: @body-bg;
-  }
-  .input-group-btn {
-    width: auto;
-  }
-}
 .template-dir-feedback .template-name-form form,
 .modal-dialog .feedback-content form,
 .modal-dialog form.dynamic-form {

@@ -16,7 +16,7 @@
   <?=$this->render('Helpers/ils-offline.phtml', ['offlineModeMsg' => 'ils_offline_login_message'])?>
 <?php endif; ?>
 
-<h2 class="lightbox-header"><?=$this->transEsc('Login')?></h2>
+<h2 class="lightbox-header"<?=$this->inLightbox ? ' tabindex="0"' : ''?>><?=$this->transEsc('Login')?></h2>
 <?=$this->flashmessages()?>
 <?php if ($template = $this->content()->findTemplateForLng('content/Additions/login-pre')): ?>
   <div>

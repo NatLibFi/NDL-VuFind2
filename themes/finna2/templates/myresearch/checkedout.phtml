@@ -67,7 +67,8 @@
                     <div class="checkboxFilter mylist-select-all">
                       <div class="checkbox">
                         <label>
-                          <input type="checkbox" name="selectAll" class="checkbox-select-all" aria-label="<?=$this->transEscAttr('Select All');?>">
+                          <input type="checkbox" name="selectAll" class="checkbox-select-all" aria-label="<?=$this->transEsc($this->ilsPaging ? 'select_all_on_page' : 'Select All');?>">
+                          <?=$this->transEsc($this->ilsPaging ? 'select_all_on_page' : 'Select All');?>
                           <span class="selected"></span> <span class="loans-renewal-available"></span>
                         </label>
                       </div>
@@ -107,12 +108,10 @@
           <div class="myresearch-table" aria-label="<?=$this->transEscAttr('Your Checked Out Items')?>">
             <div class="toolbar no-list-functions">
               <div class="myresearch-notification"><?=$this->transEsc('cannot renew any checked out items')?></div>
-              <div class="text-right">
-                <div class="sort-col">
-                  <?php if ($sortList): ?>
-                    <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList]); ?>
-                  <?php endif; ?>
-                </div>
+              <div class="sort-col">
+                <?php if ($sortList): ?>
+                  <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList]); ?>
+                <?php endif; ?>
               </div>
             </div>
           </div>

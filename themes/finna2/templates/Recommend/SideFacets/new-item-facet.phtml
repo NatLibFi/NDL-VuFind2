@@ -14,32 +14,21 @@ $newItemValues = [
 <div class="facet list-group-item">
     <form name="<?=$this->escapeHtmlAttr($title)?>Filter" id="<?=$this->escapeHtmlAttr($title)?>Filter" class="form-inline">
         <?=$results->getUrlQuery()->asHiddenFields(['page' => '/./', 'filter' => "/^{$title}:.*/"])?>
-        <label for="<?=$this->escapeHtmlAttr($title)?>from"><?=$this->transEsc('new_items_from')?></label>
-        <input type="text" class="form-control form-inline date-picker-field" autocomplete="off" name="<?=$this->escapeHtmlAttr($title)?>from" id="<?=$this->escapeHtmlAttr($title)?>from" maxlength="10" size="10" value="<?=$this->escapeHtmlAttr($this->dateTime()->convertToDisplayDate('Y-m-d', $newItemsFacets[$title]['date'])) ?>" placeholder="<?=$this->dateTime()->getDisplayDateFormat() ?>">
-        <button class="btn btn-primary btn-default date-picker-button" type="submit" value=""><?=$this->icon('search') ?><span class="sr-only"><?=$this->transEsc('Search');?></span></button>
+        <div class="form-group">
+        <?=$this->component('finna-dateinput', ['dateinputId' => $this->escapeHtmlAttr($title . 'from'), 'dateinputPicker' => 'single', 'dateinputName' => $this->escapeHtmlAttr($title . 'from'), 'dateinputLabel' => $this->transEsc('date_from'), 'dateinputValue' => $this->escapeHtmlAttr($this->dateTime()->convertToDisplayDate('Y-m-d', $newItemsFacets[$title]['date']))]) ?>
+        <button class="btn btn-xs btn-primary" type="submit" value=""><?=$this->transEsc('Find');?></button>
+      </div>
     </form>
     <?php
     $component = $this->escapeHtmlAttr($title) . 'from';
     $endDate = $this->dateTime()->convertToDisplayDate('U', time());
 
-    $datepickerLanguages = ['en-gb' => 'en-GB', 'fi' => 'fi', 'sv' => 'sv'];
-    $datePickerLang = $datepickerLanguages[$this->layout()->userLang] ?? 'en-GB';
-
     // Load the script inline to support asynchronously loaded sidefacets:
     $script = <<<EOT
-        if ($.isReady) {
-          initDatePicker();
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', finna.finnaDatepicker.init);
         } else {
-          $(document).ready(initDatePicker);
-        }
-        function initDatePicker() {
-          $('#$component').datepicker({
-            'language': '$datePickerLang',
-            'format': 'd.m.yyyy',
-            'weekStart': 1,
-            'endDate': '$endDate',
-            'autoclose': true
-          });
+          finna.finnaDatepicker.init();
         }
         EOT
     ;

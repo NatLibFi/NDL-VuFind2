@@ -42,7 +42,8 @@ var finna = (function finnaModule() {
         'multiSelect',
         'finnaMovement',
         'mdEditable',
-        'a11y'
+        'a11y',
+        'finnaDatepicker',
       ];
 
       $.each(modules, function initModule(ind, module) {

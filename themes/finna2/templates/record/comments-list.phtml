@@ -29,11 +29,11 @@
       <div class="comment-info">
         <small>
           <strong><?=null === $comment->getUser() ? $this->transEsc('comment_anonymous_user') : $this->escapeHtml(trim($this->userPublicName($comment->getUser())))?></strong>
-          <?=$this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('U', $comment->getCreated()->getTimestamp()))?>
+          <?=$this->escapeHtml($comment->getCreated()->format($this->config()->dateTimeFormat()))?>
           <?php if ($comment->getFinnaUpdated()): ?>
             <br>
             <?=$this->transEsc('modified')?>
-            <?=$this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('U', $comment->getFinnaUpdated()->getTimestamp()))?>
+            <?=$this->escapeHtml($comment->getFinnaUpdated()->format($this->config()->dateTimeFormat()))?>
           <?php endif; ?>
           <?php if ($own): ?>
             <br>

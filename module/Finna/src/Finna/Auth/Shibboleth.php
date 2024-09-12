@@ -33,6 +33,7 @@
 namespace Finna\Auth;
 
 use Laminas\Http\PhpEnvironment\Request;
+use VuFind\Auth\ILSAuthenticator;
 use VuFind\Auth\Shibboleth\ConfigurationLoaderInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Exception\Auth as AuthException;
@@ -51,29 +52,22 @@ use VuFind\Exception\Auth as AuthException;
 class Shibboleth extends \VuFind\Auth\Shibboleth
 {
     /**
-     * ILS connection
-     *
-     * @var \Finna\ILS\Connection
-     */
-    protected $ils;
-
-    /**
      * Constructor
      *
      * @param \Laminas\Session\ManagerInterface $sessionManager      Session manager
      * @param ConfigurationLoaderInterface      $configurationLoader Configuration loader
      * @param Request                           $request             Http request object
+     * @param ILSAuthenticator                  $ilsAuthenticator    ILS authenticator
      * @param \Finna\ILS\Connection             $ils                 ILS connection
      */
     public function __construct(
         \Laminas\Session\ManagerInterface $sessionManager,
         ConfigurationLoaderInterface $configurationLoader,
         Request $request,
-        \Finna\ILS\Connection $ils
+        ILSAuthenticator $ilsAuthenticator,
+        protected \Finna\ILS\Connection $ils
     ) {
-        $this->sessionManager = $sessionManager;
-        $this->configurationLoader = $configurationLoader;
-        $this->request = $request;
+        parent::__construct($sessionManager, $configurationLoader, $request, $ilsAuthenticator);
         $this->ils = $ils;
     }
 
