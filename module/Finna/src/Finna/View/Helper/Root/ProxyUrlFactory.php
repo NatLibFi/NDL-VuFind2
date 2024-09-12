@@ -71,6 +71,7 @@ class ProxyUrlFactory implements FactoryInterface
         $config = $container->get(\VuFind\Config\PluginManager::class);
         return new $requestedName(
             $config->get('config'),
+            $container->get(\VuFind\Cache\Manager::class)->getCache('object'),
             $config->get('permissions'),
             $container->get(\VuFind\Net\IpAddressUtils::class)
         );

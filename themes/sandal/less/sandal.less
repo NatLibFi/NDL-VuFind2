@@ -23,7 +23,13 @@ body {
 
 /* -- Layout --- */
 .main .container { background-color: @white; }
-.mainbody { padding-top: 1rem; }
+.mainbody {
+  padding-top: 1rem;
+  // If an h2 is the first element in mainbody, avoid excessive space due to the padding:
+  & > h2:first-child {
+    margin-top: 0;
+  }
+}
 
 /* --- Header --- */
 .navbar { border-radius: 0; }
@@ -86,13 +92,18 @@ header {
     padding-right: 1rem;
     font-size: @reduced-font-size;
   }
-  .dropdown-menu a { color: @black; }
-  .dropdown-menu a:hover {
-    background-color: @header-light;
-    color: @black;
+  .navbar-nav .open .dropdown-menu {
+    background-color: @white;
+    a { color: @black; }
+    .active a { background-color: @header-bg; }
   }
-  .dropdown-menu .active a,
-  .dropdown-menu .active a:hover { background-color: @header-bg; }
+  @media (min-width: 768px) {
+    .dropdown-menu a:hover {
+      background-color: @header-light;
+      color: @black;
+    }
+    .dropdown-menu .active a:hover { background-color: @header-bg; }
+  }
 
   .navbar-brand {
     width: 200px;
@@ -182,7 +193,6 @@ a:hover .login-dropdown-caret {
 .comment { margin-bottom: .5rem; }
 .comment .delete { font-size: @reduced-font-size; }
 .comment-form .btn-primary { margin-top: .25rem; }
-.tagList { line-height: 2rem; }
 .tagList .tag .fa-close { margin: 0; }
 
 /* --- Sidebar --- */

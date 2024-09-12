@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2023.
+ * Copyright (C) The National Library of Finland 2015-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -31,6 +31,8 @@
 
 namespace Finna\Controller;
 
+use Finna\OnlinePayment\OnlinePaymentEventLogTrait;
+
 use function count;
 
 /**
@@ -47,6 +49,7 @@ use function count;
 trait FinnaOnlinePaymentControllerTrait
 {
     use \VuFind\Log\LoggerAwareTrait;
+    use OnlinePaymentEventLogTrait;
 
     /**
      * Checks if the given list of fines is identical to the listing
@@ -235,12 +238,12 @@ trait FinnaOnlinePaymentControllerTrait
         $view->registerPayment = false;
         $view->selectFees = $selectFees;
 
-        $trTable = $this->getTable('transaction');
+        $transactionService = $this->getDbService(\Finna\Db\Service\FinnaTransactionServiceInterface::class);
         $lastTransaction = null;
         $dataSourceConfig = $this->getConfig('datasources')->toArray();
         $receiptEnabled = $dataSourceConfig[$patron['source']]['onlinePayment']['receipt'] ?? false;
         if ($receiptEnabled) {
-            $lastTransaction = $trTable->getLastPaidForPatron($patron['cat_username']);
+            $lastTransaction = $transactionService->getLastPaidTransactionForPatron($patron['cat_username']);
         }
         if (
             $lastTransaction
@@ -258,7 +261,7 @@ trait FinnaOnlinePaymentControllerTrait
         }
         $view->lastTransaction = $lastTransaction;
 
-        $paymentInProgress = $trTable->isPaymentInProgress($patron['cat_username']);
+        $paymentInProgress = $transactionService->isPaymentInProgressForPatron($patron['cat_username']);
         $transactionIdParam = 'finna_payment_id';
         if (
             $pay && $session && $payableOnline
@@ -266,8 +269,7 @@ trait FinnaOnlinePaymentControllerTrait
             && !$paymentInProgress
         ) {
             // Check CSRF:
-            $csrfValidator = $this->serviceLocator
-                ->get(\VuFind\Validator\CsrfInterface::class);
+            $csrfValidator = $this->serviceLocator->get(\VuFind\Validator\CsrfInterface::class);
             $csrf = $this->getRequest()->getPost()->get('csrf');
             if (!$csrfValidator->isValid($csrf)) {
                 $this->flashMessenger()->addErrorMessage('online_payment_failed');
@@ -279,7 +281,7 @@ trait FinnaOnlinePaymentControllerTrait
             $csrfValidator->trimTokenList(0);
 
             // Payment requested, do preliminary checks:
-            if ($trTable->isPaymentInProgress($patron['cat_username'])) {
+            if ($transactionService->isPaymentInProgressForPatron($patron['cat_username'])) {
                 $this->flashMessenger()->addErrorMessage('online_payment_failed');
                 header('Location: ' . $this->getServerUrl('myresearch-fines'));
                 exit();
@@ -328,17 +330,17 @@ trait FinnaOnlinePaymentControllerTrait
         }
 
         $request = $this->getRequest();
-        $transactionId = $request->getQuery()->get($transactionIdParam);
+        $transactionIdentifier = $request->getQuery()->get($transactionIdParam);
         if (
-            $transactionId
-            && ($transaction = $trTable->getTransaction($transactionId))
+            $transactionIdentifier
+            && ($transaction = $transactionService->getTransactionByIdentifier($transactionIdentifier))
         ) {
             $this->ensureLogger();
             $this->logger->warn(
                 'Online payment response handler called. Request: '
                 . (string)$request
             );
-            $this->addTransactionEvent($transaction->id, 'Response handler called');
+            $this->addTransactionEvent($transaction, 'Response handler called');
 
             if ($transaction->isRegistered()) {
                 // Already registered, treat as success:
@@ -351,7 +353,7 @@ trait FinnaOnlinePaymentControllerTrait
                     $this->getRequest()
                 );
                 $this->logger->warn(
-                    "Online payment response for $transactionId result: $result"
+                    "Online payment response for $transactionIdentifier result: $result"
                 );
                 if ($paymentHandler::PAYMENT_SUCCESS === $result) {
                     $this->flashMessenger()
@@ -367,19 +369,19 @@ trait FinnaOnlinePaymentControllerTrait
                         $receipt = $this->serviceLocator->get(\Finna\OnlinePayment\Receipt::class);
                         $res = $receipt->sendEmail($user, $patronProfile, $transaction);
                         $this->addTransactionEvent(
-                            $transaction->id,
+                            $transaction,
                             $res ? 'Receipt sent' : 'Receipt not sent (no email address)'
                         );
                     }
                     // Reload transaction and check if registration is still pending:
-                    $transaction = $trTable->getTransaction($transactionId);
+                    $transaction = $transactionService->getTransactionByIdentifier($transactionIdentifier);
                     if ($transaction && $transaction->needsRegistration()) {
                         // Display page and mark fees as paid via AJAX:
                         $view->registerPayment = true;
                         $view->registerPaymentParams = [
-                            'transactionId' => $transaction->transaction_id,
+                            'transactionId' => $transaction->getTransactionIdentifier(),
                         ];
-                        $this->addTransactionEvent($transaction->id, 'Registration requested');
+                        $this->addTransactionEvent($transaction, 'Registration requested');
                     }
                 } elseif ($paymentHandler::PAYMENT_CANCEL === $result) {
                     $this->flashMessenger()
@@ -414,8 +416,7 @@ trait FinnaOnlinePaymentControllerTrait
                 }
 
                 $view->onlinePaymentEnabled = $allowPayment;
-                $view->selectedIds
-                    = $this->getRequest()->getPost()->get('selectedIDS', []);
+                $view->selectedIds = $this->getRequest()->getPost()->get('selectedIDS', []);
                 if (!empty($payableOnline['reason'])) {
                     $view->nonPayableReason = $payableOnline['reason'];
                 } elseif ($this->formWasSubmitted('pay')) {
@@ -425,7 +426,7 @@ trait FinnaOnlinePaymentControllerTrait
                     );
                 } else {
                     // Check for a started transaction:
-                    $view->startedTransaction = $trTable->getStartedPayment(
+                    $view->startedTransaction = $transactionService->getStartedTransactionForPatron(
                         $patron['cat_username'],
                         (int)($paymentConfig['transactionMaxDuration'] ?? 15)
                     );
@@ -485,21 +486,5 @@ trait FinnaOnlinePaymentControllerTrait
     {
         $this->ensureLogger();
         $this->logger->debug($msg);
-    }
-
-    /**
-     * Add an event log entry for a transaction
-     *
-     * @param int    $id     Transaction ID
-     * @param string $status Status message
-     * @param array  $data   Additional data
-     *
-     * @return void
-     */
-    protected function addTransactionEvent(int $id, string $status, array $data = []): void
-    {
-        $eventTable = $this->getTable(\Finna\Db\Table\TransactionEventLog::class);
-        $data += ['source' => static::class];
-        $eventTable->addEvent($id, $status, $data);
     }
 }

@@ -33,15 +33,23 @@ namespace FinnaConsole\Command\Util;
 
 use DateInterval;
 use DateTime;
-use Laminas\Db\Sql\Select;
-use Laminas\Mvc\I18n\Translator;
+use Finna\Db\Entity\FinnaUserEntityInterface;
+use Finna\Db\Service\FinnaUserServiceInterface;
+use Laminas\I18n\Translator\Translator;
+use Laminas\I18n\Translator\TranslatorInterface;
 use Laminas\View\Resolver\AggregateResolver;
 use Laminas\View\Resolver\TemplatePathStack;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use VuFind\Db\Service\ResourceServiceInterface;
+use VuFind\Db\Service\SearchServiceInterface;
+use VuFind\Db\Service\TagServiceInterface;
+use VuFind\Db\Service\UserListServiceInterface;
 use VuFind\Mailer\Mailer;
 
+use function assert;
 use function count;
 use function in_array;
 
@@ -56,17 +64,13 @@ use function in_array;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+#[AsCommand(
+    name: 'util/account_expiration_reminders'
+)]
 class AccountExpirationReminders extends AbstractUtilCommand
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use EmailWithRetryTrait;
-
-    /**
-     * The name of the command (the part after "public/index.php")
-     *
-     * @var string
-     */
-    protected static $defaultName = 'util/account_expiration_reminders';
 
     /**
      * Current view local configuration directory.
@@ -81,69 +85,6 @@ class AccountExpirationReminders extends AbstractUtilCommand
      * @var string
      */
     protected $viewBaseDir = null;
-
-    /**
-     * Table for user accounts
-     *
-     * @var \VuFind\Db\Table\User
-     */
-    protected $userTable;
-
-    /**
-     * Table for searches
-     *
-     * @var \VuFind\Db\Table\Search
-     */
-    protected $searchTable;
-
-    /**
-     * Table for resources
-     *
-     * @var \VuFind\Db\Table\Resource
-     */
-    protected $resourceTable;
-
-    /**
-     * View renderer
-     *
-     * @var Laminas\View\Renderer\PhpRenderer
-     */
-    protected $renderer = null;
-
-    /**
-     * Datasource configuration
-     *
-     * @var \Laminas\Config\Config
-     */
-    protected $datasourceConfig;
-
-    /**
-     * Mailer factory callable
-     *
-     * @var callable
-     */
-    protected $mailerFactory;
-
-    /**
-     * Mailer
-     *
-     * @var \VuFind\Mailer\Mailer
-     */
-    protected $mailer = null;
-
-    /**
-     * Translator
-     *
-     * @var \Laminas\Mvc\I18n\Translator
-     */
-    protected $translator;
-
-    /**
-     * Config manager
-     *
-     * @var \VuFind\Config\PluginManager
-     */
-    protected $configManager;
 
     /**
      * UrllHelper
@@ -211,34 +152,32 @@ class AccountExpirationReminders extends AbstractUtilCommand
     /**
      * Constructor
      *
-     * @param \VuFind\Db\Table\User              $userTable   User table
-     * @param \VuFind\Db\Table\Search            $searchTable Search table
-     * @param \VuFind\Db\Table\Resource          $resTable    Resource table
-     * @param \Laminas\View\Renderer\PhpRenderer $renderer    View renderer
-     * @param \Laminas\Config\Config             $dsConfig    Data source config
-     * @param Mailer                             $mailer      Mailer
-     * @param Translator                         $translator  Translator
-     * @param \VuFind\Config\PluginManager       $configMgr   Config manager
+     * @param FinnaUserServiceInterface          $userService      User database service
+     * @param SearchServiceInterface             $searchService    Search database service
+     * @param ResourceServiceInterface           $resourceService  Resource database service
+     * @param UserListServiceInterface           $userListService  User list database service
+     * @param TagServiceInterface                $tagService       Tag database service
+     * @param \Laminas\View\Renderer\PhpRenderer $renderer         View renderer
+     * @param \Laminas\Config\Config             $datasourceConfig Data source config
+     * @param Mailer                             $mailer           Mailer
+     * @param TranslatorInterface                $translator       Translator
+     * @param \VuFind\Config\PluginManager       $configManager    Config manager
      */
     public function __construct(
-        \Finna\Db\Table\User $userTable,
-        \Finna\Db\Table\Search $searchTable,
-        \Finna\Db\Table\Resource $resTable,
-        \Laminas\View\Renderer\PhpRenderer $renderer,
-        \Laminas\Config\Config $dsConfig,
+        protected FinnaUserServiceInterface $userService,
+        protected SearchServiceInterface $searchService,
+        protected ResourceServiceInterface $resourceService,
+        protected UserListServiceInterface $userListService,
+        protected TagServiceInterface $tagService,
+        protected \Laminas\View\Renderer\PhpRenderer $renderer,
+        protected \Laminas\Config\Config $datasourceConfig,
         Mailer $mailer,
-        Translator $translator,
-        \VuFind\Config\PluginManager $configMgr
+        TranslatorInterface $translator,
+        protected \VuFind\Config\PluginManager $configManager
     ) {
-        $this->userTable = $userTable;
-        $this->searchTable = $searchTable;
-        $this->resourceTable = $resTable;
-        $this->renderer = $renderer;
-        $this->datasourceConfig = $dsConfig;
-        $this->mailer = $mailer;
-        $this->translator = $translator;
-        $this->configManager = $configMgr;
         $this->urlHelper = $renderer->plugin('url');
+        $this->translator = $translator;
+        $this->mailer = $mailer;
 
         parent::__construct();
     }
@@ -335,8 +274,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
 
             foreach ($users as $user) {
                 $this->msg(
-                    "Sending expiration reminder for user {$user->username}"
-                    . " (id {$user->id})"
+                    "Sending expiration reminder for user {$user->getUsername()} (id {$user->getId()})"
                 );
                 $this->sendAccountExpirationReminder($user, $this->expirationDays);
                 $count++;
@@ -370,9 +308,9 @@ class AccountExpirationReminders extends AbstractUtilCommand
      * @param int $remindDaysBefore How many days before expiration reminder starts
      * @param int $frequency        The freqency in days for reminding the user
      *
-     * @return User[] users to remind on expiration
+     * @return FinnaUserEntityInterface[]
      */
-    protected function getUsersToRemind($days, $remindDaysBefore, $frequency)
+    protected function getUsersToRemind($days, $remindDaysBefore, $frequency): array
     {
         if ($remindDaysBefore >= $days) {
             throw new \Exception(
@@ -392,33 +330,19 @@ class AccountExpirationReminders extends AbstractUtilCommand
 
         $initialReminderThreshold = time() + $frequency * 86400;
 
-        $listSelect = new Select('user_list');
-        $listSelect->columns(['user_id']);
-        $listSelect->where->equalTo('finna_protected', 1);
-
-        $users = $this->userTable->select(
-            function (Select $select) use ($limitDate, $listSelect) {
-                $select->where->lessThan('last_login', $limitDate);
-                $select->where->notEqualTo(
-                    'last_login',
-                    '2000-01-01 00:00:00'
-                );
-                $select->where->equalTo('finna_protected', 0);
-                $select->where->notIn('id', $listSelect);
-            }
-        );
+        $users = $this->userService->getExpiringUsers($limitDate);
 
         $results = [];
         foreach ($users as $user) {
-            $secsSinceLast = time()
-                - strtotime($user->finna_last_expiration_reminder);
+            assert($user instanceof FinnaUserEntityInterface);
+            $secsSinceLast = time() - ($user->getFinnaLastExpirationReminderDate()?->getTimestamp() ?? 0);
             if ($secsSinceLast < $frequency * 86400) {
                 continue;
             }
 
-            if (!$user->email || trim($user->email) == '') {
+            if (trim($user->getEmail()) === '') {
                 $this->msg(
-                    "User {$user->username} (id {$user->id}) does not have an"
+                    "User {$user->getUsername()} (id {$user->getId()}) does not have an"
                     . ' email address, bypassing expiration reminder'
                 );
                 continue;
@@ -427,17 +351,18 @@ class AccountExpirationReminders extends AbstractUtilCommand
             // Avoid sending a reminder if it comes too late (i.e. no reminders have
             // been sent before and there's less than $frequency days before
             // expiration)
-            $expirationDatetime = new DateTime($user->last_login);
+            $expirationDatetime = $user->getLastLogin();
             $expirationDatetime->add(new DateInterval('P' . $days . 'D'));
 
+            $lastExpirationReminder = $user->getFinnaLastExpirationReminderDate()?->getTimestamp() ?? 0;
             if (
-                ($user->finna_last_expiration_reminder < $user->last_login
+                (($lastExpirationReminder) < $user->getLastLogin()->getTimestamp()
                 && $expirationDatetime->getTimestamp() < $initialReminderThreshold)
                 || $expirationDatetime->getTimestamp() < time()
             ) {
                 $expires = $expirationDatetime->format('Y-m-d');
                 $this->msg(
-                    "User {$user->username} (id {$user->id}) expires already on"
+                    "User {$user->getUsername()} (id {$user->getId()}) expires already on"
                     . " $expires without previous reminders, bypassing expiration"
                     . ' reminder'
                 );
@@ -447,14 +372,13 @@ class AccountExpirationReminders extends AbstractUtilCommand
             // Check that the user has some saved content so that no reminder is sent
             // if there is none.
             if (
-                $user->finna_due_date_reminder === 0
-                && $user->getTags()->count() === 0
-                && count($this->searchTable->getSearches('', $user->id)) === 0
-                && count($this->resourceTable->getFavorites($user->id)) === 0
+                $user->getFinnaDueDateReminder() === 0
+                && !$this->tagService->getUserTagsFromFavorites($user)
+                && !$this->searchService->getSearches('-', $user)
+                && !$this->resourceService->getFavorites($user)
             ) {
                 $this->msg(
-                    "User {$user->username} (id {$user->id}) has no saved content"
-                    . ', bypassing expiration'
+                    "User {$user->getUsername()} (id {$user->getId()}) has no saved content, bypassing expiration"
                 );
                 continue;
             }
@@ -468,28 +392,25 @@ class AccountExpirationReminders extends AbstractUtilCommand
     /**
      * Send account expiration reminder for a user.
      *
-     * @param \Finna\Db\Table\Row\User $user           User.
-     * @param int                      $expirationDays Number of days after
-     * the account expires.
+     * @param FinnaUserEntityInterface $user           User.
+     * @param int                      $expirationDays Number of days after the account expires.
      *
-     * @return boolean
+     * @return bool
      */
-    protected function sendAccountExpirationReminder($user, $expirationDays)
+    protected function sendAccountExpirationReminder(FinnaUserEntityInterface $user, int $expirationDays): bool
     {
-        if (str_contains($user->username, ':')) {
-            [$userInstitution, $userName] = explode(':', $user->username, 2);
+        if (str_contains($user->getUsername(), ':')) {
+            [$userInstitution, $userName] = explode(':', $user->getUsername(), 2);
         } else {
             $userInstitution = 'national';
-            $userName = $user->username;
+            $userName = $user->getUsername();
         }
+
+        $consoleMsgPrefix = "User {$user->getUsername()} (id {$user->getId()}) institution $userInstitution";
 
         $dsConfig = $this->datasourceConfig[$userInstitution] ?? [];
         if (!empty($dsConfig['disableAccountExpirationReminders'])) {
-            $this->msg(
-                "User {$user->username} (id {$user->id}) institution"
-                . " $userInstitution has reminders disabled, bypassing expiration"
-                . ' reminder'
-            );
+            $this->msg("$consoleMsgPrefix has reminders disabled, bypassing expiration reminder");
             return false;
         }
 
@@ -502,8 +423,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
             ];
             if (!$viewPath = $this->resolveViewPath($userInstitution)) {
                 $this->err(
-                    "Could not resolve view path for user {$user->username}"
-                    . " (id {$user->id})",
+                    "$consoleMsgPrefix: Could not resolve view path",
                     'Could not resolve view path for a user'
                 );
                 return false;
@@ -523,8 +443,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
             // This is a bit of a hack, but the configuration plugin manager doesn't
             // currently support specifying an absolute path alone.
             $parts = explode('/', LOCAL_OVERRIDE_DIR);
-            $configPath = str_repeat('../', count($parts))
-                . ".$viewPath/local/config/vufind";
+            $configPath = str_repeat('../', count($parts)) . ".$viewPath/local/config/vufind";
             $this->currentSiteConfig = $this->configManager->get(
                 'config',
                 compact('configPath')
@@ -539,20 +458,12 @@ class AccountExpirationReminders extends AbstractUtilCommand
             isset($this->currentSiteConfig['System']['available'])
             && !$this->currentSiteConfig['System']['available']
         ) {
-            $this->msg(
-                "User {$user->username} (id {$user->id}) institution"
-                . " $userInstitution: site is marked unavailable,"
-                . ' bypassing expiration reminder'
-            );
+            $this->msg("$consoleMsgPrefix: site is marked unavailable, bypassing expiration reminder");
             return false;
         }
 
         if (!empty($this->currentSiteConfig['Authentication']['hideLogin'])) {
-            $this->msg(
-                "User {$user->username} (id {$user->id}) institution"
-                . " $userInstitution: site has login disabled,"
-                . ' bypassing expiration reminder'
-            );
+            $this->msg("$consoleMsgPrefix: site has login disabled, bypassing expiration reminder");
             return false;
         }
 
@@ -567,7 +478,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
         }
         // Map user's authentication method 'email' to 'ils' or 'multiils'
         // accordingly:
-        $userAuthMethod = $user->auth_method;
+        $userAuthMethod = $user->getAuthMethod();
         if ('email' === $userAuthMethod) {
             if (in_array('ILS', $authOptions)) {
                 $userAuthMethod = 'ils';
@@ -584,11 +495,8 @@ class AccountExpirationReminders extends AbstractUtilCommand
         }
         if (!$match) {
             $this->msg(
-                "User {$user->username} (id {$user->id}) institution"
-                . " $userInstitution: user's authentication method "
-                . " '$userAuthMethod' is not in available authentication"
-                . ' methods (' . implode(',', $authOptions)
-                . '), bypassing expiration reminder'
+                "$consoleMsgPrefix: user's authentication method '$userAuthMethod' is not in available authentication"
+                . ' methods (' . implode(',', $authOptions) . '), bypassing expiration reminder'
             );
             return false;
         }
@@ -596,11 +504,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
         if (strcasecmp($userAuthMethod, 'multiils') === 0) {
             [$target] = explode('.', $userName);
             if (empty($this->currentMultiBackendConfig['Drivers'][$target])) {
-                $this->msg(
-                    "User {$user->username} (id {$user->id}) institution"
-                    . " $userInstitution: unknown MultiILS login target,"
-                    . ' bypassing expiration reminder'
-                );
+                $this->msg("$consoleMsgPrefix: unknown MultiILS login target, bypassing expiration reminder");
                 return false;
             }
             $loginTargets = $this->currentMultiBackendConfig['Login']['drivers']
@@ -608,27 +512,24 @@ class AccountExpirationReminders extends AbstractUtilCommand
                 : [];
             if (!in_array($target, (array)$loginTargets)) {
                 $this->msg(
-                    "User {$user->username} (id {$user->id}) institution"
-                    . " $userInstitution: MultiILS target '$target' not available"
-                    . ' for login, bypassing expiration reminder'
+                    "$consoleMsgPrefix: MultiILS target '$target' not available for login, bypassing expiration"
+                    . ' reminder'
                 );
                 return false;
             }
         }
 
-        $expirationDatetime = new DateTime($user->last_login);
+        $expirationDatetime = $user->getLastLogin();
         $expirationDatetime->add(new DateInterval('P' . $expirationDays . 'D'));
 
         $language = $this->currentSiteConfig['Site']['language'] ?? 'fi';
         $validLanguages = array_keys((array)$this->currentSiteConfig['Languages']);
 
-        if (
-            !empty($user->last_language)
-            && in_array($user->last_language, $validLanguages)
-        ) {
-            $language = $user->last_language;
+        if (in_array($user->getLastLanguage(), $validLanguages, true)) {
+            $language = $user->getLastLanguage();
         }
 
+        assert($this->translator instanceof Translator);
         $this->translator
             ->addTranslationFile('ExtendedIni', null, 'default', $language)
             ->setLocale($language);
@@ -650,24 +551,24 @@ class AccountExpirationReminders extends AbstractUtilCommand
 
         $serviceName = !empty($this->currentSiteConfig['Site']['title'])
             ? $this->currentSiteConfig['Site']['title'] : $serviceAddress;
-        $firstName = $user->firstname;
+        $firstName = $user->getFirstname();
         if (!$firstName) {
-            $firstName = $user->lastname;
+            $firstName = $user->getLastname();
         }
         if (!$firstName) {
             $firstName = $userName;
         }
 
-        $savedSearchCnt = count($this->searchTable->getSavedSearches($user->id));
+        $savedSearchCnt = count($this->searchService->getSearches('-', $user));
         $publicListCnt = $privateListCnt = 0;
 
-        $userLists = $user->getLists();
-        if (!empty($userLists)) {
+        $userLists = $this->userListService->getUserListsByUser($user);
+        if ($userLists) {
             $publicListCnt = count(
                 array_filter(
                     $userLists,
                     function ($list) {
-                        return $list['public'];
+                        return $list->isPublic();
                     }
                 )
             );
@@ -700,7 +601,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
             $params
         );
 
-        $to = $user->email;
+        $to = $user->getEmail();
         try {
             $from = $this->currentSiteConfig['Site']['email'];
 
@@ -717,13 +618,12 @@ class AccountExpirationReminders extends AbstractUtilCommand
                     EOT;
             } else {
                 $this->sendEmailWithRetry($to, $from, $subject, $message);
-                $user->finna_last_expiration_reminder = date('Y-m-d H:i:s');
-                $user->save();
+                $user->setFinnaLastExpirationReminderDate(new DateTime());
+                $this->userService->persistEntity($user);
             }
         } catch (\Exception $e) {
             $this->err(
-                "Failed to send an expiration reminder to user {$user->username}"
-                    . " (id {$user->id}, email '$to')",
+                "$consoleMsgPrefix: Failed to send an expiration reminder, email '$to')",
                 'Failed to send an expiration reminder to a user'
             );
             $this->err('   ' . $e->getMessage());

@@ -33,6 +33,7 @@ use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Db\Service\UserListServiceInterface;
 
 /**
  * Factory for EditList AJAX handler.
@@ -69,11 +70,12 @@ class EditListFactory implements \Laminas\ServiceManager\Factory\FactoryInterfac
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
-        $tablePluginManager = $container->get(\VuFind\Db\Table\PluginManager::class);
         $capabilities = $container->get(\VuFind\Config\AccountCapabilities::class);
         return new $requestedName(
-            $tablePluginManager->get(\VuFind\Db\Table\UserList::class),
             $container->get(\VuFind\Auth\Manager::class)->getUserObject(),
+            $container->get(\VuFind\Db\Service\PluginManager::class)->get(UserListServiceInterface::class),
+            $container->get(\VuFind\Favorites\FavoritesService::class),
+            $container->get(\VuFind\Tags\TagsService::class),
             $container->get('ViewRenderer'),
             $capabilities->getListSetting() !== 'disabled',
             $capabilities->getListTagSetting() !== 'disabled',

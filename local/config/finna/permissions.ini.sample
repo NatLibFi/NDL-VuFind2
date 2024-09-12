@@ -164,10 +164,3 @@ permission = access.StaffViewTab
 [default.Favorites]
 role[] = loggedin
 permission = feature.Favorites
-
-; Restricted Solr (R2) Search:
-; precondition for filling REMS registration form.
-; [access.R2Authenticated]
-; require = ALL
-; authenticationStrategy[] = Suomifi
-; permission[] = access.R2Authenticated

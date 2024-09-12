@@ -4,10 +4,10 @@
   $list = $this->results->getListObject();
 
   // Set up page title:
-  $this->headTitle(isset($list) ? $list->title : $this->translate('saved_items'));
+  $this->headTitle($list ? $list->getTitle() : $this->translate('saved_items'));
 
   // Set up breadcrumbs:
-  $currPage = isset($list) ? 'List' : 'saved_items';
+  $currPage = $list ? 'List' : 'saved_items';
   $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc($currPage) . '</li>';
 
   // Load Javascript dependencies into header:
@@ -25,13 +25,13 @@
   $account = $this->auth()->getManager();
   $user = $this->auth()->getUserObject();
 
-  $lists = $user ? $user->getLists() : null;
+  $lists = $user ? $this->userlist()->getUserListsAndCountsByUser($user) : null;
 
   $this->jsTranslations()->addStrings(['add_list_description' => 'Add list description', 'loading' => 'Loading']);
 ?>
 
 <!-- Leftside navigationbar -->
-<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => isset($list) ? 'list' . $list['id'] : 'favorites']); ?>
+<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => $list ? 'list' . $list->getId() : 'favorites']); ?>
 
 <?php foreach ($this->results->getRecommendations('side') as $current): ?>
   <?=$this->recommend($current)?>
@@ -39,9 +39,9 @@
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
   <div class="mylist-error hidden"><?=$this->translate('An error has occurred'); ?></div>
-  <?php if (isset($list)): ?>
-    <input type="hidden" name="listID" value="<?=$this->escapeHtmlAttr($list->id)?>">
-    <input type="hidden" name="listName" value="<?=$this->escapeHtmlAttr($list->title)?>">
+  <?php if ($list): ?>
+    <input type="hidden" name="listID" value="<?=$this->escapeHtmlAttr($list->getId())?>">
+    <input type="hidden" name="listName" value="<?=$this->escapeHtmlAttr($list->getTitle())?>">
   <?php endif; ?>
   <div class="clearfix mylist-header hidden-print">
     <div>
@@ -53,14 +53,14 @@
           <h2><?=$this->transEsc('saved_items')?></h2>
         </div>
         <div class="useraccount-header">
-          <h3 class="list-title"><i class="list-title-edit fa fa-pen" aria-label="<?=$this->transEscAttr('edit')?>"></i><span><?=$this->escapeHtml($list->title)?></span></h3>
+          <h3 class="list-title"><i class="list-title-edit fa fa-pen" aria-label="<?=$this->transEscAttr('edit')?>"></i><span><?=$this->escapeHtml($list->getTitle())?></span></h3>
         </div>
-        <?php if ($list && $user && $list->user_id === $user->id && $list->public): ?>
+        <?php if ($list && $user && $list->getUser()->getId() === $user->getId() && $list->isPublic()): ?>
           <div class="list-public-indicator">
             <strong><?=$this->icon('list-public') ?> <?=$this->transEsc('public_list_indicator') ?></strong>
           </div>
         <?php endif; ?>
-        <?php $markdown = $list ? $this->markdown()->replaceDeprecatedTags($list->description ?? '') : ''; ?>
+        <?php $markdown = $list ? $this->markdown()->replaceDeprecatedTags($list->getDescription() ?? '') : ''; ?>
         <?= $this->component('finna-md-editable', [
             'attributes' => ['class' => 'list-description'],
             'markdown' => $markdown,
@@ -69,7 +69,7 @@
             'preview' => true,
           ]); ?>
         <?php if ($this->usertags()->getListMode() === 'enabled'): ?>
-          <?php $listTags = $list->getListTags(); ?>
+          <?php $listTags = $this->tags()->getListTags($list, $user); ?>
           <div class="list-tags">
             <div class="tags view-tags">
               <?= $this->partial('mylist-tags.phtml', ['tags' => $listTags, 'editable' => false])?>
@@ -119,8 +119,8 @@
           <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results])?>
         </div>
         <div class="control-container hidden-print">
-          <?php if (isset($list)): ?>
-            <a class="btn btn-sm btn-primary btn-sort-order" href="<?=$this->url('sortList', ['id' => $list->id]) ?>" data-backdrop=”static” data-lightbox><span class="fa fa-sort" aria-hidden="true"></span> <span class="hidden-xs"><?=$this->transEsc('Sort manually');?></span></a>
+          <?php if ($list): ?>
+            <a class="btn btn-sm btn-primary btn-sort-order" href="<?=$this->url('sortList', ['id' => $list->getId()]) ?>" data-backdrop=”static” data-lightbox><span class="fa fa-sort" aria-hidden="true"></span> <span class="hidden-xs"><?=$this->transEsc('Sort manually');?></span></a>
           <?php endif; ?>
           <?=$this->render('search/controls/sort.phtml')?>
           <?=$this->render('search/controls/limit.phtml')?>
@@ -130,7 +130,7 @@
         <div class="myaccount-sticky-header"></div>
           <div class="toolbar-sticky-container">
             <?php $multiPageSelection = ($this->config()->get('config')['Social']['multi_page_favorites_selection'] ?? true) ? ' multi-page-selection' : ''; ?>
-            <form class="form<?= $multiPageSelection ?>" id="form-favorites<?= ($list && !empty($list->id)) ? '-' . $list->id : ''?>" method="post" name="bulkActionForm" action="<?=$this->url('cart-myresearchbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
+            <form class="form<?= $multiPageSelection ?>" id="form-favorites<?= ($list && null !== $list->getId()) ? '-' . $list->getId() : ''?>" method="post" name="bulkActionForm" action="<?=$this->url('cart-myresearchbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
               <input class="hidden all-ids-global" type="text" name="all_ids_global" value="<?= $this->escapeHtmlAttr(json_encode($this->results->getAllIds())) ?>">
               <div class="toolbar-sticky">
                 <?=$this->context($this)->renderInContext('myresearch/bulk-action-buttons.phtml', ['idPrefix' => '', 'list' => $list ?? null, 'account' => $this->account, 'lists' => $lists])?>
@@ -157,7 +157,7 @@
     <?php endif;?>
   </div>
   <?php if ($user && $list): ?>
-    <form class="pull-left delete-list" action="<?=$this->url('myresearch-deletelist') ?>?listID=<?=urlencode($list->id)?>&confirm=1" method="post">
+    <form class="pull-left delete-list" action="<?=$this->url('myresearch-deletelist') ?>?listID=<?=urlencode($list->getId())?>&confirm=1" method="post">
       <ul class="dropdown-menu">
         <li class="disabled"><a><?=$this->transEsc('confirm_delete_list_text')?></a></li>
         <li class="confirm"><a href="#"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>

@@ -30,6 +30,8 @@
 
 namespace Finna\Controller;
 
+use VuFind\Db\Service\SearchServiceInterface;
+
 /**
  * Finna search controller trait.
  *
@@ -79,7 +81,7 @@ trait FinnaSearchControllerTrait
         }
 
         $searchId = $combined[$this->searchClassId];
-        $search = $this->getTable('Search')->getRowById($searchId, false);
+        $search = $this->getDbService(SearchServiceInterface::class)->getSearchById($searchId);
         if (!$search) {
             return;
         }

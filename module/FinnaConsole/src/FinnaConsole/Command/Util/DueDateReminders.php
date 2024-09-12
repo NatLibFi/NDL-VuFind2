@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2013-2021.
+ * Copyright (C) The National Library of Finland 2013-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -31,15 +31,23 @@
 
 namespace FinnaConsole\Command\Util;
 
+use Finna\Crypt\SecretCalculator;
+use Finna\Db\Entity\FinnaUserCardEntityInterface;
+use Finna\Db\Entity\FinnaUserEntityInterface;
+use Finna\Db\Service\FinnaDueDateReminderServiceInterface;
+use Finna\Db\Service\FinnaUserServiceInterface;
 use Laminas\Mvc\I18n\Translator;
 use Laminas\View\Renderer\PhpRenderer;
 use Laminas\View\Resolver\AggregateResolver;
 use Laminas\View\Resolver\TemplatePathStack;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use VuFind\Db\Service\UserCardServiceInterface;
 use VuFind\Mailer\Mailer;
 
+use function assert;
 use function count;
 use function in_array;
 
@@ -54,16 +62,12 @@ use function in_array;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+#[AsCommand(
+    name: 'util/due_date_reminders'
+)]
 class DueDateReminders extends AbstractUtilCommand
 {
     use EmailWithRetryTrait;
-
-    /**
-     * The name of the command (the part after "public/index.php")
-     *
-     * @var string
-     */
-    protected static $defaultName = 'util/due_date_reminders';
 
     /**
      * Date format for due dates in database.
@@ -71,77 +75,11 @@ class DueDateReminders extends AbstractUtilCommand
     public const DUE_DATE_FORMAT = 'Y-m-d H:i:s';
 
     /**
-     * ILS connection.
-     *
-     * @var \Finna\ILS\Connection
-     */
-    protected $catalog;
-
-    /**
-     * Main configuration
-     *
-     * @var \Laminas\Config\Config
-     */
-    protected $mainConfig;
-
-    /**
-     * Datasource configuration
-     *
-     * @var \Laminas\Config\Config
-     */
-    protected $datasourceConfig;
-
-    /**
-     * Due date reminders table
-     *
-     * @var \Finna\Db\Table\DueDateReminder
-     */
-    protected $dueDateReminderTable;
-
-    /**
-     * User account table
-     *
-     * @var \Finna\Db\Table\User
-     */
-    protected $userTable;
-
-    /**
-     * Record loader
-     *
-     * @var \VuFind\Record\Loader
-     */
-    protected $recordLoader;
-
-    /**
      * URL Helper
      *
      * @var \VuFind\View\Helper\Root\Url
      */
     protected $urlHelper;
-
-    /**
-     * HMAC
-     *
-     * @var \VuFind\Crypt\HMAC
-     */
-    protected $hmac;
-
-    /**
-     * View renderer
-     *
-     * @var PhpRenderer
-     */
-    protected $viewRenderer;
-
-    /**
-     * Translator
-     *
-     * We don't use the interface and trait since the trait only defines an interface
-     * and we need the actual class for addTranslationFile().
-     *
-     * @var Translator
-     */
-    protected $translator;
 
     /**
      * Current view local configuration directory.
@@ -181,36 +119,33 @@ class DueDateReminders extends AbstractUtilCommand
     /**
      * Constructor
      *
-     * @param \Finna\Db\Table\User            $userTable            User table
-     * @param \Finna\Db\Table\DueDateReminder $dueDateReminderTable Due date
-     * reminder table
-     * @param \VuFind\ILS\Connection          $catalog              ILS connection
-     * @param \Laminas\Config\Config          $mainConfig           Main config
-     * @param \Laminas\Config\Config          $dsConfig             Data source
-     * config
-     * @param PhpRenderer                     $renderer             View renderer
-     * @param \VuFind\Record\Loader           $recordLoader         Record loader
-     * @param \VuFind\Crypt\HMAC              $hmac                 HMAC
-     * @param Mailer                          $mailer               Mailer
-     * @param Translator                      $translator           Translator
+     * @param FinnaUserServiceInterface            $userService            User database service
+     * @param UserCardServiceInterface             $userCardService        User card database service
+     * @param FinnaDueDateReminderServiceInterface $dueDateReminderService Due date reminder database service
+     * @param \VuFind\ILS\Connection               $catalog                ILS connection
+     * @param \VuFind\Auth\ILSAuthenticator        $ilsAuthenticator       ILS authenticator
+     * @param \Laminas\Config\Config               $mainConfig             Main config
+     * @param \Laminas\Config\Config               $datasourceConfig       Data source config
+     * @param PhpRenderer                          $viewRenderer           View renderer
+     * @param \VuFind\Record\Loader                $recordLoader           Record loader
+     * @param Mailer                               $mailer                 Mailer
+     * @param Translator                           $translator             Translator
+     * @param SecretCalculator                     $secretCalculator       Secret calculator
      */
     public function __construct(
-        \Finna\Db\Table\User $userTable,
-        \Finna\Db\Table\DueDateReminder $dueDateReminderTable,
-        \VuFind\ILS\Connection $catalog,
-        \Laminas\Config\Config $mainConfig,
-        \Laminas\Config\Config $dsConfig,
-        PhpRenderer $renderer,
-        \VuFind\Record\Loader $recordLoader,
-        \VuFind\Crypt\HMAC $hmac,
+        protected FinnaUserServiceInterface $userService,
+        protected UserCardServiceInterface $userCardService,
+        protected FinnaDueDateReminderServiceInterface $dueDateReminderService,
+        protected \VuFind\ILS\Connection $catalog,
+        protected \VuFind\Auth\ILSAuthenticator $ilsAuthenticator,
+        protected \Laminas\Config\Config $mainConfig,
+        protected \Laminas\Config\Config $datasourceConfig,
+        protected PhpRenderer $viewRenderer,
+        protected \VuFind\Record\Loader $recordLoader,
         Mailer $mailer,
-        Translator $translator
+        protected Translator $translator,
+        protected SecretCalculator $secretCalculator
     ) {
-        $this->userTable = $userTable;
-        $this->dueDateReminderTable = $dueDateReminderTable;
-        $this->catalog = $catalog;
-        $this->mainConfig = $mainConfig;
-
         if (
             isset($this->mainConfig->Catalog->loadNoILSOnFailure)
             && $this->mainConfig->Catalog->loadNoILSOnFailure
@@ -218,13 +153,9 @@ class DueDateReminders extends AbstractUtilCommand
             throw new \Exception('Catalog/loadNoILSOnFailure must not be enabled');
         }
 
-        $this->datasourceConfig = $dsConfig;
-        $this->viewRenderer = $renderer;
-        $this->urlHelper = $renderer->plugin('url');
-        $this->recordLoader = $recordLoader;
-        $this->hmac = $hmac;
+        $this->urlHelper = $viewRenderer->plugin('url');
         $this->mailer = $mailer;
-        $this->translator = $translator;
+
         parent::__construct();
     }
 
@@ -264,7 +195,7 @@ class DueDateReminders extends AbstractUtilCommand
 
         $this->msg('Sending due date reminders');
         try {
-            $users = $this->userTable->getUsersWithDueDateReminders();
+            $users = $this->userService->getUsersWithDueDateReminders();
             $this->msg('Processing ' . count($users) . ' users');
 
             foreach ($users as $user) {
@@ -277,18 +208,18 @@ class DueDateReminders extends AbstractUtilCommand
                     if ($remindCnt || $errorCnt) {
                         $this->msg(
                             "$remindCnt reminders and $errorCnt errors to send for"
-                            . " user {$user->username} (id {$user->id})"
+                            . " user {$user->getUsername()} (id {$user->getId()})"
                         );
                         $this->sendReminder($user, $remindLoans, $errors);
                     } else {
                         $this->msg(
-                            "No loans to remind for user {$user->username}"
-                            . " (id {$user->id})"
+                            "No loans to remind for user {$user->getUsername()}"
+                            . " (id {$user->getId()})"
                         );
                     }
                 } catch (\Exception $e) {
                     $this->err(
-                        "Exception while processing user {$user->id}: "
+                        "Exception while processing user {$user->getId()}: "
                             . $e->getMessage(),
                         'Exception occurred while processing a user'
                     );
@@ -317,15 +248,15 @@ class DueDateReminders extends AbstractUtilCommand
     /**
      * Get reminders for a user.
      *
-     * @param \Finna\Db\Table\Row\User $user User.
+     * @param FinnaUserEntityInterface $user User.
      *
      * @return array Array of loans to be reminded and possible login errors.
      */
-    protected function getReminders($user)
+    protected function getReminders(FinnaUserEntityInterface $user): array
     {
-        if (!$user->email || trim($user->email) == '') {
+        if (trim($user->getEmail()) === '') {
             $this->warn(
-                "User {$user->username} (id {$user->id})"
+                "User {$user->getUsername()} (id {$user->getId()})"
                 . ' does not have an email address, bypassing due date reminders'
             );
             return ['remindLoans' => [], 'errors' => []];
@@ -333,13 +264,14 @@ class DueDateReminders extends AbstractUtilCommand
 
         $remindLoans = [];
         $errors = [];
-        foreach ($user->getLibraryCards() as $card) {
-            if (!$card->id || $card->finna_due_date_reminder == 0) {
+        foreach ($this->userCardService->getLibraryCards($user) as $card) {
+            assert($card instanceof FinnaUserCardEntityInterface);
+            if (!$card->getId() || $card->getFinnaDueDateReminder() === 0) {
                 continue;
             }
             $ddrConfig = $this->catalog->getConfig(
                 'dueDateReminder',
-                ['cat_username' => $card->cat_username]
+                ['cat_username' => $card->getCatUsername()]
             );
             // Assume ddrConfig['enabled'] may contain also something else than a
             // boolean..
@@ -349,18 +281,22 @@ class DueDateReminders extends AbstractUtilCommand
             }
 
             $patron = null;
-            // Retrieve a complete UserCard object
-            $card = $user->getLibraryCard($card['id']);
             try {
+                // Note: these changes are not persisted, so there's no harm in setting them here:
+                $loginUser = clone $user;
+                $loginUser->setCatUsername($card->getCatUsername());
+                $loginUser->setRawCatPassword($card->getRawCatPassword());
+                $loginUser->setCatPassEnc($card->getCatPassEnc());
+
                 $patron = $this->catalog->patronLogin(
-                    $card->cat_username,
-                    $card->cat_password
+                    $loginUser->getCatUsername(),
+                    $this->ilsAuthenticator->getCatPasswordForUser($loginUser)
                 );
             } catch (\Exception $e) {
                 $this->err(
-                    "Catalog login error for user {$user->username}"
-                        . " (id {$user->id}), card {$card->cat_username}"
-                        . " (id {$card->id}): " . $e->getMessage(),
+                    "Catalog login error for user {$user->getUsername()}"
+                        . " (id {$user->getId()}), card {$card->getCatUsername()}"
+                        . " (id {$card->getId()}): " . $e->getMessage(),
                     'Catalog login error for a user'
                 );
                 continue;
@@ -368,21 +304,20 @@ class DueDateReminders extends AbstractUtilCommand
 
             if (null === $patron) {
                 $this->warn(
-                    "Catalog login failed for user {$user->username}"
-                    . " (id {$user->id}), card {$card->cat_username}"
-                    . " (id {$card->id}) -- disabling due date reminders for the"
+                    "Catalog login failed for user {$user->getUsername()}"
+                    . " (id {$user->getId()}), card {$card->getCatUsername()}"
+                    . " (id {$card->getId()}) -- disabling due date reminders for the"
                     . ' card'
                 );
                 $errors[] = ['card' => $card['cat_username']];
                 // Disable due date reminders for this card
-                if ($user->cat_username == $card->cat_username) {
-                    // Card is the active one, update via user
+                if ($user->getCatUsername() === $card->getCatUsername()) {
+                    // Card is the active one, update user too:
                     $user->setFinnaDueDateReminder(0);
-                } else {
-                    // Update just the card
-                    $card->finna_due_date_reminder = 0;
-                    $card->save();
+                    $this->userService->persistEntity($user);
                 }
+                $card->setFinnaDueDateReminder(0);
+                $this->userCardService->persistEntity($card);
                 continue;
             }
 
@@ -398,9 +333,9 @@ class DueDateReminders extends AbstractUtilCommand
                 }
             } catch (\Exception $e) {
                 $this->err(
-                    "Exception trying to get loans for user {$user->username}"
-                        . " (id {$user->id}), card {$card->cat_username}"
-                        . " (id {$card->id}): "
+                    "Exception trying to get loans for user {$user->getUsername()}"
+                        . " (id {$user->getId()}), card {$card->getCatUsername()}"
+                        . " (id {$card->getId()}): "
                         . $e->getMessage(),
                     'Exception trying to get loans for a user'
                 );
@@ -411,24 +346,12 @@ class DueDateReminders extends AbstractUtilCommand
                 $dayDiff = $dueDate->diff($todayTime)->days;
                 if (
                     $todayTime >= $dueDate
-                    || $dayDiff <= $card->finna_due_date_reminder
+                    || $dayDiff <= $card->getFinnaDueDateReminder()
                 ) {
-                    $params = [
-                       'user_id' => $user->id,
-                       'loan_id' => $loan['item_id'],
-                       'due_date'
-                          => $dueDate->format($this::DUE_DATE_FORMAT),
-                    ];
-
-                    $reminder = $this->dueDateReminderTable->select($params);
-                    if (count($reminder)) {
+                    if ($this->dueDateReminderService->getRemindedLoan($user, $loan['item_id'], $dueDate)) {
                         // Reminder already sent
                         continue;
                     }
-
-                    // Store also title for display in email
-                    $title = $loan['title']
-                        ?? null;
 
                     $record = null;
                     if (isset($loan['id'])) {
@@ -447,7 +370,7 @@ class DueDateReminders extends AbstractUtilCommand
                         'loanId' => $loan['item_id'],
                         'dueDate' => $loan['duedate'],
                         'dueDateFormatted' => $dueDate->format($dateFormat),
-                        'title' => $title,
+                        'title' => $loan['title'] ?? null,
                         'record' => $record,
                     ];
                 }
@@ -459,17 +382,17 @@ class DueDateReminders extends AbstractUtilCommand
     /**
      * Send reminders for a user.
      *
-     * @param \Finna\Db\Table\Row\User $user        User.
+     * @param FinnaUserEntityInterface $user        User.
      * @param array                    $remindLoans Loans to be reminded.
      * @param array                    $errors      Errors in due date checking.
      *
      * @return boolean success.
      */
-    protected function sendReminder($user, $remindLoans, $errors)
+    protected function sendReminder(FinnaUserEntityInterface $user, $remindLoans, $errors)
     {
-        if (!$user->email || trim($user->email) == '') {
+        if (trim($user->getEmail()) === '') {
             $this->msg(
-                "User {$user->username} (id {$user->id})"
+                "User {$user->getUsername()} (id {$user->getId()})"
                 . ' does not have an email address, bypassing due date reminders'
             );
             return false;
@@ -486,8 +409,8 @@ class DueDateReminders extends AbstractUtilCommand
             ];
             if (!$viewPath = $this->resolveViewPath($userInstitution)) {
                 $this->err(
-                    "Could not resolve view path for user {$user->username}"
-                        . " (id {$user->id})",
+                    "Could not resolve view path for user {$user->getUsername()}"
+                        . " (id {$user->getId()})",
                     'Could not resolve view path for a user'
                 );
                 return false;
@@ -509,22 +432,18 @@ class DueDateReminders extends AbstractUtilCommand
         $language = $this->currentSiteConfig['Site']['language'] ?? 'fi';
         $validLanguages = array_keys($this->currentSiteConfig['Languages']);
         if (
-            !empty($user->last_language)
-            && in_array($user->last_language, $validLanguages)
+            in_array($user->getLastLanguage(), $validLanguages, true)
         ) {
-            $language = $user->last_language;
+            $language = $user->getLastLanguage();
         }
+        assert($this->translator instanceof Translator);
         $this->translator
             ->addTranslationFile('ExtendedIni', null, 'default', $language)
             ->setLocale($language);
 
-        $key = $this->dueDateReminderTable->getUnsubscribeSecret(
-            $this->hmac,
-            $user,
-            $user->id
-        );
+        $key = $this->secretCalculator->getDueDateReminderUnsubscribeSecret($user);
         $urlParams = [
-            'id' => $user->id,
+            'id' => $user->getId(),
             'type' => 'reminder',
             'key' => $key,
         ];
@@ -543,8 +462,8 @@ class DueDateReminders extends AbstractUtilCommand
             $baseUrl .= "/$urlView";
         }
         $serviceName = $urlInstitution . '.finna.fi';
-        $lastLogin = new \DateTime($user->last_login);
-        $loginMethod = strtolower($user->auth_method);
+        $lastLogin = $user->getLastLogin();
+        $loginMethod = strtolower($user->getAuthMethod());
         $dateFormat = $this->currentSiteConfig['Site']['displayDateFormat']
             ?? $this->mainConfig->Site->displayDateFormat;
 
@@ -562,24 +481,21 @@ class DueDateReminders extends AbstractUtilCommand
         $urlHelper = $this->urlHelper;
         if (!empty($errors)) {
             $subject = $this->translator->translate('due_date_email_error');
-            $params['url'] = $baseUrl
-                . $urlHelper('librarycards-home');
+            $params['url'] = $baseUrl . $urlHelper('librarycards-home');
             $params['errors'] = $errors;
         } else {
             $subject = $this->translator->translate('due_date_email_subject');
-            $params['url'] = $baseUrl
-                . $urlHelper('myresearch-checkedout');
+            $params['url'] = $baseUrl . $urlHelper('myresearch-checkedout');
         }
-        $message = $this->viewRenderer
-            ->render('Email/due-date-reminder.phtml', $params);
-        $to = $user->email;
+        $message = $this->viewRenderer->render('Email/due-date-reminder.phtml', $params);
+        $to = $user->getEmail();
         $from = $this->currentSiteConfig['Site']['email'];
         try {
             $this->sendEmailWithRetry($to, $from, $subject, $message);
         } catch (\Exception $e) {
             $this->err(
-                "Failed to send due date reminders to user {$user->username}"
-                    . " (id {$user->id}, email '$to')",
+                "Failed to send due date reminders to user {$user->getUsername()}"
+                    . " (id {$user->getId()}, email '$to')",
                 'Failed to send due date reminders to a user'
             );
             $this->err('   ' . $e->getMessage());
@@ -587,14 +503,8 @@ class DueDateReminders extends AbstractUtilCommand
         }
 
         foreach ($remindLoans as $loan) {
-            $params = ['user_id' => $user->id, 'loan_id' => $loan['loanId']];
-            $this->dueDateReminderTable->delete($params);
-
-            $dueDate = new \DateTime($loan['dueDate']);
-            $params['due_date'] = $dueDate->format($this::DUE_DATE_FORMAT);
-            $params['notification_date'] = date($this::DUE_DATE_FORMAT, time());
-
-            $this->dueDateReminderTable->insert($params);
+            $this->dueDateReminderService->deleteRemindedLoan($user, $loan['loanId']);
+            $this->dueDateReminderService->addRemindedLoan($user, $loan['loanId'], new \DateTime($loan['dueDate']));
         }
 
         return true;

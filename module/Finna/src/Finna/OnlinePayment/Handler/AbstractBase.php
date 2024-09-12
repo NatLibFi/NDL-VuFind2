@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2016-2023.
+ * Copyright (C) The National Library of Finland 2016-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -32,11 +32,12 @@
 
 namespace Finna\OnlinePayment\Handler;
 
-use Finna\Db\Row\Transaction as TransactionRow;
-use Finna\Db\Table\Fee;
-use Finna\Db\Table\Transaction;
-use Finna\Db\Table\TransactionEventLog;
+use Finna\Db\Entity\FinnaTransactionEntityInterface;
+use Finna\Db\Service\FinnaFeeServiceInterface;
+use Finna\Db\Service\FinnaTransactionEventLogServiceInterface;
+use Finna\Db\Service\FinnaTransactionServiceInterface;
 use Laminas\Log\LoggerAwareInterface;
+use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\I18n\Locale\LocaleSettings;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 
@@ -78,66 +79,27 @@ abstract class AbstractBase implements
     /**
      * Configuration.
      *
-     * @var \Laminas\Config\Config
+     * @var ?\Laminas\Config\Config
      */
-    protected $config;
-
-    /**
-     * HTTP service.
-     *
-     * @var \VuFindHttp\HttpService
-     */
-    protected $http;
-
-    /**
-     * Locale settings
-     *
-     * @var LocaleSettings
-     */
-    protected $localeSettings;
-
-    /**
-     * Transaction table
-     *
-     * @var Transaction
-     */
-    protected $transactionTable;
-
-    /**
-     * Fee table
-     *
-     * @var Fee
-     */
-    protected $feeTable;
-
-    /**
-     * Transaction event log table
-     *
-     * @var TransactionEventLog
-     */
-    protected $eventLogTable;
+    protected $config = null;
 
     /**
      * Constructor
      *
-     * @param \VuFindHttp\HttpService $http             HTTP service
-     * @param LocaleSettings          $locale           Locale settings
-     * @param Transaction             $transactionTable Transaction table
-     * @param Fee                     $feeTable         Fee table
-     * @param TransactionEventLog     $eventLogTable    Transaction event log table
+     * @param \VuFindHttp\HttpService                  $http               HTTP service
+     * @param LocaleSettings                           $localeSettings     Locale settings
+     * @param FinnaTransactionServiceInterface         $transactionService Transaction database service
+     * @param FinnaFeeServiceInterface                 $feeService         Transaction fee database service
+     * @param FinnaTransactionEventLogServiceInterface $eventLogService    Transaction event log database service
      */
     public function __construct(
-        \VuFindHttp\HttpService $http,
-        LocaleSettings $locale,
-        Transaction $transactionTable,
-        Fee $feeTable,
-        TransactionEventLog $eventLogTable
+        protected \VuFindHttp\HttpService $http,
+        protected LocaleSettings $localeSettings,
+        protected FinnaTransactionServiceInterface $transactionService,
+        protected FinnaFeeServiceInterface $feeService,
+        FinnaTransactionEventLogServiceInterface $eventLogService
     ) {
-        $this->http = $http;
-        $this->localeSettings = $locale;
-        $this->transactionTable = $transactionTable;
-        $this->feeTable = $feeTable;
-        $this->eventLogTable = $eventLogTable;
+        $this->eventLogService = $eventLogService;
     }
 
     /**
@@ -192,73 +154,49 @@ abstract class AbstractBase implements
     /**
      * Store transaction to database.
      *
-     * @param string $transactionId  Transaction ID
-     * @param string $driver         Patron MultiBackend ILS source
-     * @param int    $userId         User ID
-     * @param string $patronId       Patron's catalog username
-     * (e.g. barcode)
-     * @param int    $amount         Amount
-     * (excluding transaction fee)
-     * @param int    $transactionFee Transaction fee
-     * @param string $currency       Currency
-     * @param array  $fines          Fines data
+     * @param string              $transactionId  Transaction ID
+     * @param string              $driver         Patron MultiBackend ILS source
+     * @param UserEntityInterface $user           User
+     * @param string              $patronId       Patron's catalog username (e.g. barcode)
+     * @param int                 $amount         Amount (excluding transaction fee)
+     * @param int                 $transactionFee Transaction fee
+     * @param string              $currency       Currency
+     * @param array               $fines          Fines data
      *
-     * @return ?TransactionRow
+     * @return FinnaTransactionEntityInterface
      */
-    protected function createTransaction(
+    protected function createTransactionEntity(
         $transactionId,
         $driver,
-        $userId,
+        $user,
         $patronId,
         $amount,
         $transactionFee,
         $currency,
         $fines
-    ): ?TransactionRow {
-        $t = $this->transactionTable->createTransaction(
-            $transactionId,
-            $driver,
-            $userId,
-            $patronId,
-            $amount,
-            $transactionFee,
-            $currency
-        );
+    ): FinnaTransactionEntityInterface {
+        $t = $this->transactionService->createEntity()
+            ->setTransactionIdentifier($transactionId)
+            ->setSourceId($driver)
+            ->setUser($user)
+            ->setCatUsername($patronId)
+            ->setAmount($amount)
+            ->setTransactionFee($transactionFee)
+            ->setCurrency($currency);
+        $this->transactionService->persistEntity($t);
 
         foreach ($fines as $fine) {
             // Sanitize fine strings
-            $fine['fine'] = iconv('UTF-8', 'UTF-8//IGNORE', $fine['fine'] ?? '');
-            $fine['description'] = iconv('UTF-8', 'UTF-8//IGNORE', $fine['description'] ?? '');
-            $fine['title'] = iconv('UTF-8', 'UTF-8//IGNORE', $fine['title'] ?? '');
-            if (!$this->feeTable->addFee($t->id, $fine, $t->user_id, $t->currency)) {
-                $this->logError(
-                    'error adding fee to transaction',
-                    compact('userId', 'patronId', 'fines', 'fine')
-                );
-                return null;
-            }
+            $fee = $this->feeService->createEntity()
+                ->setUser($user)
+                ->setTransaction($t)
+                ->setType(iconv('UTF-8', 'UTF-8//IGNORE', $fine['fine'] ?? ''))
+                ->setDescription(iconv('UTF-8', 'UTF-8//IGNORE', $fine['description'] ?? ''))
+                ->setTitle(iconv('UTF-8', 'UTF-8//IGNORE', $fine['title'] ?? ''));
+            $this->feeService->persistEntity($fee);
         }
 
-        $this->addTransactionEvent($t->id, 'Transaction created');
-
-        return $t;
-    }
-
-    /**
-     * Return transaction from database.
-     *
-     * @param string $id Transaction ID
-     *
-     * @return ?\Finna\Db\Row\Transaction
-     */
-    protected function getTransaction($id)
-    {
-        if (!($t = $this->transactionTable->getTransaction($id))) {
-            $this->logError(
-                "error retrieving transaction $id: transaction not found"
-            );
-            return null;
-        }
+        $this->addTransactionEvent($t, 'Transaction created');
 
         return $t;
     }
@@ -266,15 +204,15 @@ abstract class AbstractBase implements
     /**
      * Redirect to payment handler.
      *
-     * @param string         $url         URL
-     * @param TransactionRow $transaction Transaction
+     * @param string                          $url         URL
+     * @param FinnaTransactionEntityInterface $transaction Transaction
      *
      * @return void
      */
-    protected function redirectToPayment(string $url, TransactionRow $transaction): void
+    protected function redirectToPayment(string $url, FinnaTransactionEntityInterface $transaction): void
     {
         header("Location: $url", true, 302);
-        $this->addTransactionEvent($transaction->id, 'Redirected to payment service');
+        $this->addTransactionEvent($transaction, 'Redirected to payment service');
         exit();
     }
 
@@ -355,15 +293,15 @@ abstract class AbstractBase implements
     /**
      * Extract first name and last name from user
      *
-     * @param \Finna\Db\Row\User $user User
+     * @param UserEntityInterface $user User
      *
      * @return array Associative array with 'firstname' and 'lastname'
      */
-    protected function extractUserNames(\Finna\Db\Row\User $user): array
+    protected function extractUserNames(UserEntityInterface $user): array
     {
-        $lastname = trim($user->lastname);
-        if (!empty($user->firstname)) {
-            $firstname = trim($user->firstname);
+        $lastname = trim($user->getLastname());
+        if (!empty($user->getFirstname())) {
+            $firstname = trim($user->getFirstname());
         } else {
             // We don't have both names separately, try to extract first name from
             // last name.

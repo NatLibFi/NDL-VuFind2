@@ -65,7 +65,7 @@
                   <p><?=$this->escapeHtml($username)?></p>
                 <?php endif; ?>
                 <a href="<?=$this->url('barcode-show') ?>?code=<?=$this->escapeHtmlAttr(urlencode($barcode)) ?>" title="<?=$this->transEscAttr('show_barcode_title')?>">
-                  <?php if (strcasecmp($record['cat_username'], $user->cat_username) === 0 && ($barcodeSvg = $this->barcode()->createCode39SVG($barcode, 1.3, 50))): ?>
+                  <?php if (strcasecmp($record['cat_username'], $user->getCatUsername()) === 0 && ($barcodeSvg = $this->barcode()->createCode39SVG($barcode, 1.3, 50))): ?>
                     <div class="librarycard-barcode">
                       <?=$barcodeSvg?>
                     </div>

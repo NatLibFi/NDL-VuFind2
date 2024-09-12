@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2023.
+ * Copyright (C) The National Library of Finland 2015-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -35,6 +35,7 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Auth\ILSAuthenticator;
 
 /**
  * Factory for online payment monitor.
@@ -67,22 +68,24 @@ class OnlinePaymentMonitorFactory implements FactoryInterface
         $requestedName,
         array $options = null
     ) {
-        $tableManager = $container->get(\VuFind\Db\Table\PluginManager::class);
-
         // We need to initialize the theme so that the view renderer works:
         $mainConfig = $container->get(\VuFind\Config\PluginManager::class)
             ->get('config');
         $theme = new \VuFindTheme\Initializer($mainConfig->Site, $container);
         $theme->init();
 
+        $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
+
         return new $requestedName(
             $container->get(\VuFind\ILS\Connection::class),
-            $tableManager->get('Transaction'),
-            $tableManager->get('User'),
+            $container->get(ILSAuthenticator::class),
+            $dbServiceManager->get(\Finna\Db\Service\FinnaTransactionServiceInterface::class),
+            $dbServiceManager->get(\VuFind\Db\Service\UserServiceInterface::class),
+            $dbServiceManager->get(\VuFind\Db\Service\UserCardServiceInterface::class),
             $container->get(\VuFind\Config\PluginManager::class)->get('datasources'),
             $container->get('ViewRenderer'),
             $container->get(\VuFind\Mailer\Mailer::class),
-            $tableManager->get(\Finna\Db\Table\TransactionEventLog::class),
+            $dbServiceManager->get(\Finna\Db\Service\FinnaTransactionEventLogServiceInterface::class),
             ...($options ?? [])
         );
     }

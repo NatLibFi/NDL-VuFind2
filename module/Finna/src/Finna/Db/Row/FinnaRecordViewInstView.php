@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) The National Library of Finland 2022-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,6 +29,8 @@
 
 namespace Finna\Db\Row;
 
+use Finna\Db\Entity\FinnaRecordViewInstitutionViewEntityInterface;
+
 /**
  * Row definition for finna_record_view_inst_view
  *
@@ -37,8 +39,12 @@ namespace Finna\Db\Row;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
+ *
+ * @property int $id
+ * @property string $institution
+ * @property string $view
  */
-class FinnaRecordViewInstView extends \VuFind\Db\Row\RowGateway
+class FinnaRecordViewInstView extends \VuFind\Db\Row\RowGateway implements FinnaRecordViewInstitutionViewEntityInterface
 {
     /**
      * Constructor
@@ -48,5 +54,61 @@ class FinnaRecordViewInstView extends \VuFind\Db\Row\RowGateway
     public function __construct($adapter)
     {
         parent::__construct('id', 'finna_record_view_inst_view', $adapter);
+    }
+
+    /**
+     * Id getter
+     *
+     * @return ?int
+     */
+    public function getId(): ?int
+    {
+        return $this->id ?? null;
+    }
+
+    /**
+     * Institution setter
+     *
+     * @param string $institution Institution
+     *
+     * @return FinnaRecordViewInstitutionViewEntityInterface
+     */
+    public function setInstitution(string $institution): FinnaRecordViewInstitutionViewEntityInterface
+    {
+        $this->institution = $institution;
+        return $this;
+    }
+
+    /**
+     * Institution getter
+     *
+     * @return string
+     */
+    public function getInstitution(): string
+    {
+        return $this->institution;
+    }
+
+    /**
+     * View setter
+     *
+     * @param string $view View
+     *
+     * @return FinnaRecordViewInstitutionViewEntityInterface
+     */
+    public function setView(string $view): FinnaRecordViewInstitutionViewEntityInterface
+    {
+        $this->view = $view;
+        return $this;
+    }
+
+    /**
+     * View getter
+     *
+     * @return string
+     */
+    public function getView(): string
+    {
+        return $this->view;
     }
 }

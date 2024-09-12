@@ -32,6 +32,7 @@ namespace Finna\AjaxHandler;
 use Finna\Recommend\AuthorityRecommend;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\View\Renderer\RendererInterface;
+use VuFind\Db\Service\SearchServiceInterface;
 
 /**
  * AJAX handler for getting authority information for recommendations.
@@ -45,74 +46,24 @@ use Laminas\View\Renderer\RendererInterface;
 class GetAuthorityFullInfo extends \VuFind\AjaxHandler\AbstractBase
 {
     /**
-     * View renderer
-     *
-     * @var RendererInterface
-     */
-    protected $renderer;
-
-    /**
-     * AuthorityRecommend
-     *
-     * @var AuthorityRecommend
-     */
-    protected $authorityRecommend;
-
-    /**
-     * Search Results manager
-     *
-     * @var \VuFind\Search\Results\PluginManager
-     */
-    protected $resultsManager;
-
-    /**
-     * Search table
-     *
-     * @var \VuFind\Db\Table\Search
-     */
-    protected $searchTable;
-
-    /**
-     * Session
-     *
-     * @var \Laminas\Session\Container
-     */
-    protected $session;
-
-    /**
-     * Session manager
-     *
-     * @var \Laminas\Session\SessionManager
-     */
-    protected $sessionManager;
-
-    /**
      * Constructor
      *
      * @param RendererInterface                    $renderer           View renderer
-     * @param AuthorityRecommend                   $authorityRecommend Authority
-     * Recommend
-     * @param \VuFind\Search\Results\PluginManager $resultsManager     Search
-     * results manager
-     * @param \VuFInd\Db\Table\Search              $searchTable        Search table
+     * @param AuthorityRecommend                   $authorityRecommend Authority Recommend
+     * @param \VuFind\Search\Results\PluginManager $resultsManager     Search results manager
+     * @param SearchServiceInterface               $searchService      Search database service
      * @param \Laminas\Session\Container           $session            Session
-     * @param \Laminas\Session\SessionManager      $sessionManager     Session
+     * @param \Laminas\Session\SessionManager      $sessionManager     Session manager
      * manager
      */
     public function __construct(
-        RendererInterface $renderer,
-        AuthorityRecommend $authorityRecommend,
-        \VuFind\Search\Results\PluginManager $resultsManager,
-        \VuFInd\Db\Table\Search $searchTable,
-        \Laminas\Session\Container $session,
-        \Laminas\Session\SessionManager $sessionManager
+        protected RendererInterface $renderer,
+        protected AuthorityRecommend $authorityRecommend,
+        protected \VuFind\Search\Results\PluginManager $resultsManager,
+        protected SearchServiceInterface $searchService,
+        protected \Laminas\Session\Container $session,
+        protected \Laminas\Session\SessionManager $sessionManager
     ) {
-        $this->renderer = $renderer;
-        $this->authorityRecommend = $authorityRecommend;
-        $this->resultsManager = $resultsManager;
-        $this->searchTable = $searchTable;
-        $this->session = $session;
-        $this->sessionManager = $sessionManager;
     }
 
     /**
@@ -131,7 +82,7 @@ class GetAuthorityFullInfo extends \VuFind\AjaxHandler\AbstractBase
             return $this->formatResponse('', self::STATUS_HTTP_BAD_REQUEST);
         }
         $sessId = $this->sessionManager->getId();
-        $search = $this->searchTable->getOwnedRowById($searchId, $sessId, null);
+        $search = $this->searchService->getSearchByIdAndOwner($searchId, $sessId, null);
         if (empty($search)) {
             return $this->formatResponse(
                 'Search not found',
@@ -143,8 +94,7 @@ class GetAuthorityFullInfo extends \VuFind\AjaxHandler\AbstractBase
         $savedSearch = $minSO->deminify($this->resultsManager);
         $searchParams = $savedSearch->getParams();
 
-        $this->authorityRecommend
-            ->init($searchParams, $params->getController()->getRequest());
+        $this->authorityRecommend->init($searchParams, $params->getController()->getRequest());
         $this->authorityRecommend->process($savedSearch);
         $recommendations = $this->authorityRecommend->getRecommendations();
 

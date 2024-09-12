@@ -33,13 +33,16 @@ use Exception;
 use Laminas\Http\Response;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\Stdlib\Parameters;
+use VuFind\Db\Service\TagServiceInterface;
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\RecordMissing as RecordMissingException;
 use VuFind\Search\Results\PluginManager;
+use VuFind\View\Helper\Root\Record as RecordHelper;
 use VuFindApi\Controller\ApiInterface;
 use VuFindApi\Controller\ApiTrait;
 use VuFindApi\Formatter\RecordFormatter;
 
+use function count;
 use function is_array;
 
 /**
@@ -59,13 +62,6 @@ class ListApiController extends \VuFind\Controller\AbstractBase implements ApiIn
     use \Finna\Controller\Feature\FinnaUserListTrait;
 
     /**
-     * Record formatter
-     *
-     * @var RecordFormatter
-     */
-    protected $recordFormatter;
-
-    /**
      * Default record fields to return if a request does not define the fields
      *
      * @var array
@@ -82,14 +78,17 @@ class ListApiController extends \VuFind\Controller\AbstractBase implements ApiIn
     /**
      * Constructor
      *
-     * @param ServiceLocatorInterface $sm Service manager
-     * @param RecordFormatter         $rf Record formatter
+     * @param ServiceLocatorInterface $sm              Service manager
+     * @param RecordFormatter         $recordFormatter Record formatter
+     * @param RecordHelper            $recordHelper    Record view helper
      */
-    public function __construct(ServiceLocatorInterface $sm, RecordFormatter $rf)
-    {
+    public function __construct(
+        ServiceLocatorInterface $sm,
+        protected RecordFormatter $recordFormatter,
+        protected RecordHelper $recordHelper
+    ) {
         parent::__construct($sm);
-        $this->recordFormatter = $rf;
-        foreach ($rf->getRecordFields() as $fieldName => $fieldSpec) {
+        foreach ($recordFormatter->getRecordFields() as $fieldName => $fieldSpec) {
             if (!empty($fieldSpec['vufind.default'])) {
                 $this->defaultRecordFields[] = $fieldName;
             }
@@ -148,29 +147,28 @@ class ListApiController extends \VuFind\Controller\AbstractBase implements ApiIn
         }
 
         try {
-            $results = $this->serviceLocator
-                ->get(PluginManager::class)->get('Favorites');
+            $results = $this->serviceLocator->get(PluginManager::class)->get('Favorites');
             $results->getParams()->initFromRequest(new Parameters($request));
             $results->performAndProcessSearch();
             $listObj = $results->getListObject();
 
             $response = [
-                'id' => $listObj->id,
-                'title' => $listObj->title,
+                'id' => $listObj->getId(),
+                'title' => $listObj->getTitle(),
                 'recordCount' => $results->getResultTotal(),
             ];
 
-            $description = $listObj->description;
+            $description = $listObj->getDescription();
             if ('' !== $description) {
                 $response['description'] = $description;
             }
 
             if ($this->listTagsEnabled()) {
-                $tags = $this->getTable('Tags')->getForList($listObj->id);
-                if ($tags->count() > 0) {
+                $tags = $this->getDbService(TagServiceInterface::class)->getListTags($listObj, $listObj->getUser());
+                if (count($tags) > 0) {
                     $response['tags'] = [];
                     foreach ($tags as $tag) {
-                        $response['tags'][] = $tag->tag;
+                        $response['tags'][] = $tag->getTag();
                     }
                 }
             }
@@ -185,17 +183,17 @@ class ListApiController extends \VuFind\Controller\AbstractBase implements ApiIn
                             ->format([$result], $requestedFields))[0],
                     ];
 
-                    $notes = $result->getListNotes($listObj->id);
+                    $notes = ($this->recordHelper)($result)->getListNotes($listObj);
                     if (!empty($notes)) {
                         $record['notes'] = $notes[0];
                     }
 
                     if ($this->tagsEnabled()) {
-                        $tags = $result->getTags($listObj->id);
-                        if ($tags->count() > 0) {
+                        $tags = ($this->recordHelper)($result)->getTags($listObj);
+                        if ($tags) {
                             $record['tags'] = [];
                             foreach ($tags as $tag) {
-                                $record['tags'][] = $tag->tag;
+                                $record['tags'][] = $tag->getTag();
                             }
                         }
                     }

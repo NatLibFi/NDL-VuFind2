@@ -44,109 +44,182 @@ table .iconlabel {
     letter-spacing: 0px;
     font-size: 1em;
 }
-.iconlabel.format-0aipa:before  {
-    content: "\e8cc";
-}
-.iconlabel.format-unknownname:before,
-.iconlabel.format-personalname:before {
-    font-family: finnaicons;
+.iconlabel[class*="unknownname"]:before,
+.iconlabel[class*="personalname"]:before {
     content: "\e922";
 }
-.iconlabel.format-corporatename-alt:before {
-    font-family: finnaicons;
+.iconlabel[class*="corporatename-alt"]:before {
     content: "\e921";
 }
-.iconlabel.format-corporatename:before {
-    font-family: finnaicons;
+.iconlabel[class*="corporatename"]:before {
     content: "\e923";
 }
-.iconlabel.format-familyname:before {
-    font-family: finnaicons;
+.iconlabel[class*="familyname"]:before {
     content: "\e8ba";
 }
-.iconlabel.format-1bookebook:before, .iconlabel.format-1bookebooksection:before, .iconlabel.format-1otherelectronic:before, .iconlabel.format-ebook:before {
-    content: "\e617";
-}
-.iconlabel[class*="format-2bookaudiobook"]:before {
-    content: "\e8c4";
-}
-.iconlabel.format-2bookaudiobookdaisy:before {
-    content: "\e807";
-}
-.iconlabel.format-kirja:before, .iconlabel.format-book:before, .iconlabel.format-1bookbook:before, .iconlabel.kirja:before, .iconlabel.format-1bookbooksection:before, .iconlabel.format-1bookbraille:before {
-    content: "\e616";
-}
-.iconlabel.format-1journalarticle:before, .iconlabel.format-1journaljournal:before, .iconlabel.format-1journalserial:before, .iconlabel.format-1journalnewspaper:before, .iconlabel.format-1journalappendix:before, .iconlabel.format-1journalnewspaperarticle:before, .iconlabel.format-journal:before, .iconlabel.format-newspaper:before, .iconlabel.format-news:before, .iconlabel.format-report:before, .iconlabel.format-review:before, .iconlabel.format-academicjournal:before, .iconlabel.format-1othertextephemera:before {
-    content: "\e001";
-}
-.iconlabel.format-1journaleserial:before, .iconlabel.format-1journalearticle:before, .iconlabel.format-1journalejournal:before, .iconlabel.format-1journalenewspaper:before {
-    content: "\e60d";
-}
-.iconlabel.format-1placebuilding:before, .iconlabel.format-1placeplace:before, .iconlabel.format-1placearchaeologicalsite:before {
-    content: "\e901";
-}
-.iconlabel.format-1otherother:before, .iconlabel.format-1othercollection:before, .iconlabel.format-1othersubunit:before, .iconlabel.format-1otherkit:before, .iconlabel.format-1othermanuscript:before, .iconlabel.format-1othertext:before, .iconlabel.format-1othercdrom:before  {
+.iconlabel[class*="format-1other"]:before,
+.iconlabel[class*="format-feed-other"]:before {
     content: "\e00d";
 }
-.iconlabel.format-1othermicrofilm:before {
+.iconlabel[class*="format-1othermicrofilm"]:before,
+.iconlabel[class*="format-feed-othermicrofilm"]:before {
     font-family: FontAwesome;
     content: @fa-var-film;
 }
-.iconlabel.format-1otherinterview:before {
+.iconlabel[class*="format-1otherinterview"]:before,
+.iconlabel[class*="format-feed-otherinterview"]:before {
     font-family: FontAwesome;
     content: @fa-var-microphone;
 }
-.iconlabel.format-manuscript:before, .iconlabel.format-1thesisother:before, .iconlabel.format-1thesisgradu:before, .iconlabel.format-1thesisthesis:before, .iconlabel.format-1thesislaudatur:before, .iconlabel.format-1thesismasters:before, .iconlabel.format-1thesisbachelorspolytechnic:before, .iconlabel.format-1thesisbachelors:before, .iconlabel.format-1thesismasterspolytechnic:before, .iconlabel.yamk:before, .iconlabel.format-1thesislicentiate:before, .iconlabel.format-1otherresearchdata:before {
+.iconlabel.format-book:before,
+.iconlabel[class*="format-1book"]:before,
+.iconlabel[class*="format-feed-book"]:before {
+    content: "\e616";
+}
+.iconlabel[class*="format-1bookebook"]:before,
+.iconlabel[class*="format-1bookebooksection"]:before,
+.iconlabel.format-1bookotherelectronic:before,
+.iconlabel[class*="format-feed-bookebook"]:before,
+.iconlabel[class*="format-feed-bookbooksection"]:before,
+.iconlabel.format-feed-bookotherelectronic:before {
+    content: "\e617";
+}
+.iconlabel[class*="format-1bookaudiobook"]:before,
+.iconlabel[class*="format-2bookaudiobook"]:before,
+.iconlabel[class*="format-feed-bookaudiobook"]:before {
+    content: "\e8c4";
+}
+.iconlabel.format-bookaudiobookdaisy:before,
+.iconlabel.format-feed-bookaudiobookdaisy:before {
+    content: "\e807";
+}
+.iconlabel.format-newspaper:before,
+.iconlabel.format-journal:before,
+.iconlabel[class*="format-1journal"]:before,
+.iconlabel[class*="format-feed-journal"]:before,
+.iconlabel.format-1othertextephemera:before {
+    content: "\e001";
+}
+.iconlabel[class*="format-1journaleserial"]:before,
+.iconlabel[class*="format-1journalearticle"]:before,
+.iconlabel[class*="format-1journalejournal"]:before,
+.iconlabel[class*="format-1journalenewspaper"]:before,
+.iconlabel[class*="format-feed-journaleserial"]:before,
+.iconlabel[class*="format-feed-journalearticle"]:before,
+.iconlabel[class*="format-feed-journalejournal"]:before,
+.iconlabel[class*="format-feed-journalenewspaper"]:before {
+    content: "\e60d";
+}
+.iconlabel[class*="format-1place"]:before,
+.iconlabel[class*="format-feed-place"]:before {
+    content: "\e901";
+}
+.iconlabel.format-manuscript:before,
+.iconlabel[class*="format-1othertextmanuscript"]:before,
+.iconlabel[class*="format-1otherresearchdata"]:before,
+.iconlabel[class*="format-1thesis"]:before,
+.iconlabel[class*="format-feed-othertextmanuscript"]:before,
+.iconlabel[class*="format-feed-otherresearchdata"]:before,
+.iconlabel[class*="format-feed-thesis"]:before {
     content: "\e00c";
 }
-.iconlabel.format-0workofart:before, .iconlabel[class*="format-1workofart"]:before {
+.iconlabel.format-0workofart:before,
+.iconlabel[class*="format-1workofart"]:before,
+.iconlabel[class*="format-feed-workofart"]:before {
     content: "\e00b";
 }
-.iconlabel[class*="format-1video"]:before {
+.iconlabel.format-video:before,
+.iconlabel[class*="format-1video"]:before,
+.iconlabel[class*="format-feed-video"]:before {
     content: "\e00a";
 }
-.iconlabel[class*="format-1sound"]:before {
+.iconlabel[class*="format-1sound"]:before,
+.iconlabel[class*="format-feed-sound"]:before {
     content: "\e009";
 }
- .iconlabel.format-1soundcd:before, .iconlabel.format-1soundsounddisc:before, .iconlabel.format-1soundnonmusicalcd:before, .iconlabel.format-1soundnonmusicaldisc:before {
+ .iconlabel.format-1soundcd:before,
+ .iconlabel.format-1soundsounddisc:before,
+ .iconlabel.format-1soundnonmusicalcd:before,
+ .iconlabel.format-1soundnonmusicaldisc:before,
+ .iconlabel.format-feed-soundcd:before,
+ .iconlabel.format-feed-sounddisc:before,
+ .iconlabel.format-feed-soundnonmusicalcd:before,
+ .iconlabel.format-feed-soundnonmusicaldisc:before {
     content: "\e802";
 }
-.iconlabel.format-1soundsoundcassette:before, .iconlabel.format-1soundnonmusicalcassette:before, .iconlabel.format-1othertapecassette:before, .iconlabel.format-1otherdisccartridge:before {
+.iconlabel.format-1soundsoundcassette:before,
+.iconlabel.format-1soundnonmusicalcassette:before,
+.iconlabel.format-1othertapecassette:before,
+.iconlabel.format-1otherdisccartridge:before,
+.iconlabel.format-feed-soundsoundcassette:before,
+.iconlabel.format-feed-soundnonmusicalcassette:before,
+.iconlabel.format-feed-othertapecassette:before,
+.iconlabel.format-feed-otherdisccartridge:before {
     content: "\e8ad";
 }
-.iconlabel[class*="format-1image"]:before {
+.iconlabel.format-photo:before,
+.iconlabel[class*="format-1image"]:before,
+.iconlabel[class*="format-feed-image"]:before {
     content: "\e008";
 }
-.iconlabel-smallpress:before, .iconlabel.format-1otherprint:before {
-    content: "\e007";
-}
-.fa.fa-TOC:before, .iconlabel.format-1document:before, .iconlabel.format-1documentother:before, .iconlabel.format-1documentdigitizedarchiveitem:before, .iconlabel.format-1othertexttext:before, .iconlabel.format-1othertextdiary:before, .iconlabel.format-1othertextconferenceproceeding:before, .iconlabel.format-1othertextmanuscript:before, .iconlabel.format-1othertextresearchreport:before, .iconlabel.format-1othertextletter:before, .iconlabel.format-0manuscript:before {
-    font-family: finnaicons;
+.iconlabel[class*="format-1document"]:before,
+.iconlabel[class*="format-1othertext"]:before,
+.iconlabel.format-0manuscript:before,
+.iconlabel[class*="format-feed-document"]:before,
+.iconlabel[class*="format-feed-othertext"]:before,
+.iconlabel.format-feed-manuscript:before {
     content: "\e006";
 }
-.iconlabel[class*="format-1documentarchive"]:before, .iconlabel[class*="format-1documentdigitizedarchive"]:before, .iconlabel[class*="format-1documentseries"]:before, .iconlabel.format-1documentothercollection:before, .iconlabel.format-1documentcollection:before {
-    font-family: finnaicons;
+.iconlabel[class*="format-1documentarchive"]:before,
+.iconlabel[class*="format-1documentdigitizedarchive"]:before,
+.iconlabel[class*="format-1documentseries"]:before,
+.iconlabel.format-1documentothercollection:before,
+.iconlabel.format-1documentcollection:before,
+.iconlabel[class*="format-feed-documentarchive"]:before,
+.iconlabel[class*="format-feed-documentdigitizedarchive"]:before,
+.iconlabel[class*="format-feed-documentseries"]:before,
+.iconlabel.format-feed-documentothercollection:before,
+.iconlabel.format-feed-documentcollection:before
+{
     content: "\e8cb";
 }
-.iconlabel.format-0note:before, .iconlabel.format-0musicalscore:before, .iconlabel[class*="format-1musicalscore"]:before {
+.iconlabel.format-0note:before,
+.iconlabel.format-0musicalscore:before,
+.iconlabel[class*="format-1musicalscore"]:before,
+.iconlabel.format-feed-note:before,
+.iconlabel.format-feed-musicalscore:before {
     content: "\e005";
 }
-.iconlabel.format-0database:before {
+.iconlabel.format-0database:before,
+.iconlabel.format-feed-database:before {
     content: "\e004";
 }
-.iconlabel.esine:before, .iconlabel.format-1physicalobjectother:before, .iconlabel.format-1physicalobjectculturehistoricalobject:before, .iconlabel.format-0physicalobject:before {
+.iconlabel[class*="format-0physicalobject"]:before,
+.iconlabel[class*="format-1physicalobject"]:before,
+.iconlabel[class*="format-feed-physicalobject"]:before {
     content: "\e003";
 }
-.iconlabel[class*="format-1map"]:before, .iconlabel.karttapallo:before {
+.iconlabel[class*="format-1map"]:before,
+.iconlabel[class*="format-feed-map"]:before
+{
     content: "\e002";
 }
-.iconlabel.format-0learningmaterial:before {
+.iconlabel.format-0aipa:before,
+.iconlabel.format-feed-aipa:before {
+    content: "\e8cc";
+}
+.iconlabel.format-0learningmaterial:before,
+.iconlabel.format-feed-learningmaterial:before {
     content: "\e971";
 }
-.iconlabel[class*="format-1gameboardgame"]:before {
+.iconlabel[class*="format-1gameboardgame"]:before,
+.iconlabel[class*="format-feed-gameboardgame"]:before
+{
 	content: "\e8c2";
 }
-.iconlabel[class*="format-1gamevideogame"]:before, .iconlabel[class*="format-2gamevideogame"]:before {
+.iconlabel[class*="format-1gamevideogame"]:before,
+.iconlabel[class*="format-2gamevideogame"]:before,
+.iconlabel[class*="format-feed-gamevideogame"]:before {
 	font-family: FontAwesome;
 	content: @fa-var-gamepad;
 }
@@ -158,12 +231,6 @@ table .iconlabel {
 }
 .iconlabel.open-access:before {
     content: "\e91f";
-}
-.iconlabel.R2-restricted-metadata-available:before {
-    content: "\e8bb";
-}
-.iconlabel.R2-restricted-metadata-included:before {
-    content: "\e889";
 }
 .iconlabel.cc-license:before {
     content: "\e905";

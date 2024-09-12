@@ -1,4 +1,5 @@
 <div class="location-col details-col"<?=$this->matomoTracking('Location Widget', $id . '/' . $orgInfo['name'])?>>
+  <h2 class="sr-only"><?=$this->transEsc('organisation_info_contact')?></h2>
   <?php if ($url = $orgInfo['pictures'][0]['url'] ?? null): ?>
     <img class="building-image" src="<?=$this->escapeHtmlAttr($url)?>" alt="">
   <?php endif; ?>

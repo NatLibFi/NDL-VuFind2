@@ -73,7 +73,7 @@ class FeedFactory implements FactoryInterface
         }
         $config = $container->get(\VuFind\Config\PluginManager::class);
         $renderer = $container->get('ViewRenderer');
-        return new $requestedName(
+        $feed = new $requestedName(
             $config->get('config'),
             $config->get('rss'),
             $config->get('rss-organisation-page'),
@@ -84,5 +84,7 @@ class FeedFactory implements FactoryInterface
             $renderer->plugin('cleanHtml'),
             $container->get(\Finna\OrganisationInfo\OrganisationInfo::class)
         );
+        $feed->registerExtensions($container);
+        return $feed;
     }
 }

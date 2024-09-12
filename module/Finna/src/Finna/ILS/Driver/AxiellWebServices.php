@@ -37,6 +37,7 @@ use DOMDocument;
 use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\Translator\TranslatorAwareInterface as TranslatorAwareInterface;
+use VuFind\ILS\Logic\AvailabilityStatus;
 
 use function count;
 use function in_array;
@@ -1036,7 +1037,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
      *
      * @throws \VuFind\Exception\ILS
      * @return array         On success, an associative array with the following
-     * keys: id, availability (boolean), status, location, reserve, callnumber,
+     * keys: id, availability, location, reserve, callnumber,
      * duedate, number, barcode.
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -1242,7 +1243,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
                             'barcode' => $id,
                             'item_id' => $reservableId,
                             'holdings_id' => $group,
-                            'availability' => $available,
+                            'availability' => new AvailabilityStatus($available, $status),
                             'availabilityInfo' => $availabilityInfo,
                             'status' => $status,
                             'location' => $group,
@@ -3144,14 +3145,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
      */
     protected function doSOAPRequest($wsdl, $function, $functionResult, $id, $params)
     {
-        $client = new ProxySoapClient($this->httpService, $wsdl, $this->soapOptions);
-
         $this->debug("$function Request for '$this->arenaMember'.'$id'");
 
         $startTime = microtime(true);
         try {
+            $client = new ProxySoapClient($this->httpService, $wsdl, $this->soapOptions);
             $result = $client->$function($params);
-        } catch (\SoapFault $e) {
+        } catch (\SoapFault | \ErrorException $e) {
             $this->error(
                 "$function Request for '$this->arenaMember'.'$id' failed: "
                 . $e->getMessage()

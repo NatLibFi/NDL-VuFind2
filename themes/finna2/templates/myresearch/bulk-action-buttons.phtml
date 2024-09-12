@@ -1,8 +1,8 @@
 <!-- START of: finna - myresearch/bulk-action-buttons.phtml -->
-<?php if (isset($list)): ?>
-  <input type="hidden" name="listID" value="<?=$this->escapeHtmlAttr($list->id)?>">
-  <input type="hidden" name="listName" value="<?=$this->escapeHtmlAttr($list->title)?>">
-  <input type="hidden" name="listDescription" value="<?=$this->escapeHtmlAttr($list->description)?>">
+<?php if ($list): ?>
+  <input type="hidden" name="listID" value="<?=$this->escapeHtmlAttr($list->getId())?>">
+  <input type="hidden" name="listName" value="<?=$this->escapeHtmlAttr($list->getTitle())?>">
+  <input type="hidden" name="listDescription" value="<?=$this->escapeHtmlAttr($list->getDescription() ?? '')?>">
 <?php endif; ?>
 <?php $user = $this->auth()->getUserObject(); ?>
 <div class="bulk-action-buttons-row hidden-print">
@@ -20,17 +20,18 @@
         <button class="btn btn-primary" type="submit" name="export" value="<?=$this->transEscAttr('Export')?>" title="<?=$this->transEscAttr('bulk_export')?>" disabled<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>><?=$this->transEsc('Export')?></button>
       <?php endif; ?>
       <?php if ((null !== $this->list && $this->list->editAllowed($user)) || (null === $this->list && $user)): ?>
-        <button class="btn btn-primary" id="<?=$this->idPrefix?>delete_list_items_<?=null !== $this->list ? $this->escapeHtmlAttr($this->list->id) : ''?>" type="submit" name="delete" value="<?=$this->transEscAttr('Delete')?>" title="<?=$this->transEsc('delete_selected')?>" disabled<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>><?=$this->transEsc('Delete')?></button>
+        <button class="btn btn-primary" id="<?=$this->idPrefix?>delete_list_items_<?=null !== $this->list ? $this->escapeHtmlAttr($this->list->getId()) : ''?>" type="submit" name="delete" value="<?=$this->transEscAttr('Delete')?>" title="<?=$this->transEsc('delete_selected')?>" disabled<?php if ($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>><?=$this->transEsc('Delete')?></button>
       <?php endif; ?>
         <?php if ($lists): ?>
         <select id="add-to-list" class="btn btn-primary form-control" autocomplete="off" aria-label="<?= $this->translate('Add to List'); ?>" disabled<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>>
           <option value=""><?= $this->translate('Add to List'); ?>&hellip;</option>
-          <?php foreach ($lists as $l): ?>
-            <?php if ($list && $list->id == $l->id) {
+          <?php foreach ($lists as $current): ?>
+            <?php $l = $current['list_entity']; ?>
+            <?php if ($list && $list->getId() === $l->getId()) {
               continue;
             } ?>
-            <?php $title = $this->truncate($l->title, 20) ?>
-            <option value="<?=$this->escapeHtmlAttr($l->id) ?>"><?=$this->escapeHtml($title) ?></option>
+            <?php $title = $this->truncate($l->getTitle(), 20) ?>
+            <option value="<?=$this->escapeHtmlAttr($l->getId()) ?>"><?=$this->escapeHtml($title) ?></option>
           <?php endforeach; ?>
         </select>
       <?php endif; ?>

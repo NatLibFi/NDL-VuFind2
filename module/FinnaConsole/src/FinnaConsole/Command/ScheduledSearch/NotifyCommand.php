@@ -32,10 +32,15 @@
 
 namespace FinnaConsole\Command\ScheduledSearch;
 
+use DateTime;
+use Exception;
+use Finna\Db\Service\FinnaSearchServiceInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function assert;
 use function count;
 
 /**
@@ -61,19 +66,13 @@ use function count;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
+#[AsCommand(
+    name: 'scheduledsearch/notify'
+)]
 class NotifyCommand extends \VuFindConsole\Command\ScheduledSearch\NotifyCommand
 {
     use \FinnaConsole\Command\Util\ConsoleLoggerTrait;
     use \FinnaConsole\Command\Util\ViewPathTrait;
-
-    /**
-     * The name of the command (the part after "public/index.php")
-     *
-     * Used via reflection, don't remove even though it's the same as in parent class
-     *
-     * @var string
-     */
-    protected static $defaultName = 'scheduledsearch/notify';
 
     /**
      * Local configuration directory name
@@ -198,7 +197,8 @@ class NotifyCommand extends \VuFindConsole\Command\ScheduledSearch\NotifyCommand
      */
     protected function processAlerts()
     {
-        $baseDirs = $this->searchTable->getScheduleBaseUrls();
+        assert($this->searchService instanceof FinnaSearchServiceInterface);
+        $baseDirs = $this->searchService->getScheduledNotificationBaseUrls();
         $this->msg('Processing alerts for ' . count($baseDirs) . ' views: ');
         $this->msg('  ' . implode(', ', $baseDirs));
         foreach ($baseDirs as $url) {
@@ -270,12 +270,18 @@ class NotifyCommand extends \VuFindConsole\Command\ScheduledSearch\NotifyCommand
      */
     protected function processViewAlerts()
     {
+        assert($this->searchService instanceof FinnaSearchServiceInterface);
         $todayTime = new \DateTime();
-        $scheduled = $this->searchTable
-            ->getScheduledSearches($this->scheduleBaseUrl);
+        $scheduled = $this->searchService->getScheduledSearchesByBaseUrl($this->scheduleBaseUrl);
+        $scheduled = array_filter(
+            $scheduled,
+            function ($s) {
+                return strcasecmp($s['notification_base_url'], $this->scheduleBaseUrl) === 0;
+            }
+        );
         $this->msg(sprintf('Processing %d searches', count($scheduled)));
         foreach ($scheduled as $s) {
-            $lastTime = new \DateTime($s->last_notification_sent);
+            $lastTime = $s->getLastNotificationSent();
             if (
                 !$this->validateSchedule($todayTime, $lastTime, $s)
                 || !($user = $this->getUserForSearch($s))
@@ -285,7 +291,7 @@ class NotifyCommand extends \VuFindConsole\Command\ScheduledSearch\NotifyCommand
                 continue;
             }
             // Set email language
-            $this->setLanguage($user->last_language);
+            $this->setLanguage($user->getLastLanguage());
 
             // Prepare email content
             $message = $this->buildEmail($s, $user, $searchObject, $newRecords);
@@ -294,9 +300,11 @@ class NotifyCommand extends \VuFindConsole\Command\ScheduledSearch\NotifyCommand
                 // the database table.
                 continue;
             }
-            $searchTime = date('Y-m-d H:i:s');
-            if ($s->setLastExecuted($searchTime) === 0) {
-                $this->err("Error updating last_executed date for search {$s->id}");
+            try {
+                $s->setLastNotificationSent(new DateTime());
+                $this->searchService->persistEntity($s);
+            } catch (Exception) {
+                $this->err("Error updating last_executed date for search {$s->getId()}");
             }
         }
         $this->msg('Done processing searches');

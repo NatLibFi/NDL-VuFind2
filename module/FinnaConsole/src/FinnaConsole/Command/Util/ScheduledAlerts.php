@@ -29,6 +29,8 @@
 
 namespace FinnaConsole\Command\Util;
 
+use Symfony\Component\Console\Attribute\AsCommand;
+
 /**
  * Back-compatibility class for ScheduledSearch/Notify
  *
@@ -38,17 +40,11 @@ namespace FinnaConsole\Command\Util;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
+#[AsCommand(
+    name: 'util/scheduled_alerts'
+)]
 class ScheduledAlerts extends \FinnaConsole\Command\ScheduledSearch\NotifyCommand
 {
-    /**
-     * The name of the command (the part after "public/index.php")
-     *
-     * Used via reflection, don't remove even though it's the same as in parent class
-     *
-     * @var string
-     */
-    protected static $defaultName = 'util/scheduled_alerts';
-
     /**
      * Configure the command.
      *

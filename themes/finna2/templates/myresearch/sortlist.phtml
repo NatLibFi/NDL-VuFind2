@@ -16,8 +16,8 @@
 
 <?=$this->flashmessages()?>
 <form method="post" id="sort_form" name="sortForm">
-  <input type="hidden" name="user_id" value="<?=$this->escapeHtmlAttr($user->id) ?>">
-  <input type="hidden" name="list_id" value="<?=$this->escapeHtmlAttr($list->id) ?>">
+  <input type="hidden" name="user_id" value="<?=$this->escapeHtmlAttr($user->getId()) ?>">
+  <input type="hidden" name="list_id" value="<?=$this->escapeHtmlAttr($list->getId()) ?>">
   <input type="hidden" id="orderedList" name="orderedList" value="">
 
   <div>

@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) The National Library of Finland 2022-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -37,6 +37,14 @@ namespace Finna\Db\Row;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
+ *
+ * @property string $institution
+ * @property string $view
+ * @property int $crawler
+ * @property string $date
+ * @property string $backend
+ * @property string $source
+ * @property int $count
  */
 class FinnaRecordStats extends \VuFind\Db\Row\RowGateway
 {

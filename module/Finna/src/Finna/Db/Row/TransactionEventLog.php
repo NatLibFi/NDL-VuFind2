@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2023.
+ * Copyright (C) The National Library of Finland 2023-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,6 +29,10 @@
 
 namespace Finna\Db\Row;
 
+use DateTime;
+use Finna\Db\Entity\FinnaTransactionEntityInterface;
+use Finna\Db\Entity\FinnaTransactionEventEntityInterface;
+
 /**
  * Row definition for online payment transaction event log
  *
@@ -47,8 +51,12 @@ namespace Finna\Db\Row;
  * @property string $message
  * @property string $data
  */
-class TransactionEventLog extends \VuFind\Db\Row\RowGateway implements \VuFind\Db\Table\DbTableAwareInterface
+class TransactionEventLog extends \VuFind\Db\Row\RowGateway implements
+    FinnaTransactionEventEntityInterface,
+    \VuFind\Db\Service\DbServiceAwareInterface,
+    \VuFind\Db\Table\DbTableAwareInterface
 {
+    use \VuFind\Db\Service\DbServiceAwareTrait;
     use \VuFind\Db\Table\DbTableAwareTrait;
 
     /**
@@ -59,5 +67,192 @@ class TransactionEventLog extends \VuFind\Db\Row\RowGateway implements \VuFind\D
     public function __construct($adapter)
     {
         parent::__construct('id', 'finna_transaction_event_log', $adapter);
+    }
+
+    /**
+     * Transaction setter
+     *
+     * @param FinnaTransactionEntityInterface $transaction Transaction
+     *
+     * @return FinnaTransactionEventEntityInterface
+     */
+    public function setTransaction(FinnaTransactionEntityInterface $transaction): FinnaTransactionEventEntityInterface
+    {
+        $this->transaction_id = $transaction->getId();
+        return $this;
+    }
+
+    /**
+     * Transaction getter
+     *
+     * @return FinnaTransactionEntityInterface
+     */
+    public function getTransaction(): FinnaTransactionEntityInterface
+    {
+        return $this->getDbService(\Finna\Db\Service\FinnaTransactionServiceInterface::class)
+            ->getTransactionById($this->transaction_id);
+    }
+
+    /**
+     * Transaction Identifier setter
+     *
+     * @param ?string $transactionIdentifier Transaction Identifier.
+     *
+     * @return FinnaTransactionEventEntityInterface
+     */
+    public function setTransactionIdentifier(?string $transactionIdentifier): FinnaTransactionEventEntityInterface
+    {
+        $this->transaction_id = $transactionIdentifier;
+        return $this;
+    }
+
+    /**
+     * Transaction Identifier getter
+     *
+     * @return ?string
+     */
+    public function getTransactionIdentifier(): ?string
+    {
+        return $this->transaction_id;
+    }
+
+    /**
+     * Date setter
+     *
+     * @param DateTime $dateTime Created date
+     *
+     * @return FinnaTransactionEventEntityInterface
+     */
+    public function setDate(DateTime $dateTime): FinnaTransactionEventEntityInterface
+    {
+        $this->date = $dateTime->format('Y-m-d H:i:s');
+        return $this;
+    }
+
+    /**
+     * Date getter
+     *
+     * @return DateTime
+     */
+    public function getDate(): Datetime
+    {
+        return DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
+    }
+
+    /**
+     * Server IP address setter
+     *
+     * @param ?string $serverIp Server IP address
+     *
+     * @return FinnaTransactionEventEntityInterface
+     */
+    public function setServerIp(?string $serverIp): FinnaTransactionEventEntityInterface
+    {
+        $this->server_ip = $serverIp;
+        return $this;
+    }
+
+    /**
+     * Server IP address getter
+     *
+     * @return ?string
+     */
+    public function getServerIp(): ?string
+    {
+        return $this->server_ip;
+    }
+
+    /**
+     * Server name setter
+     *
+     * @param ?string $serverName Server name
+     *
+     * @return FinnaTransactionEventEntityInterface
+     */
+    public function setServerName(?string $serverName): FinnaTransactionEventEntityInterface
+    {
+        $this->server_name = $serverName;
+        return $this;
+    }
+
+    /**
+     * Server name getter
+     *
+     * @return ?string
+     */
+    public function getServerName(): ?string
+    {
+        return $this->server_name;
+    }
+
+    /**
+     * Request URI setter
+     *
+     * @param ?string $requestUri Request URI
+     *
+     * @return FinnaTransactionEventEntityInterface
+     */
+    public function setRequestUri(?string $requestUri): FinnaTransactionEventEntityInterface
+    {
+        $this->request_uri = $requestUri;
+        return $this;
+    }
+
+    /**
+     * Request URI getter
+     *
+     * @return ?string
+     */
+    public function getRequestUri(): ?string
+    {
+        return $this->request_uri;
+    }
+
+    /**
+     * Message setter
+     *
+     * @param ?string $message Message
+     *
+     * @return FinnaTransactionEventEntityInterface
+     */
+    public function setMessage(?string $message): FinnaTransactionEventEntityInterface
+    {
+        $this->message = $message;
+        return $this;
+    }
+
+    /**
+     * Message getter
+     *
+     * @return ?string
+     */
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    /**
+     * Additional Data setter
+     *
+     * @param ?string $data Data
+     *
+     * @return FinnaTransactionEventEntityInterface
+     */
+    public function setData(?string $data): FinnaTransactionEventEntityInterface
+    {
+        // Avoid messing with $this->data that RowGateway uses for storing the values:
+        $this->offsetSet('data', $data);
+        return $this;
+    }
+
+    /**
+     * Additional data getter
+     *
+     * @return ?string
+     */
+    public function getData(): ?string
+    {
+        // Avoid messing with $this->data that RowGateway uses for storing the values:
+        return $this->offsetGet('data');
     }
 }

@@ -111,8 +111,8 @@ class UserPreferenceService
 
         // Selected library card is used as secondary/fallback:
         if ($user = $this->authManager->getUserObject()) {
-            if ($user->cat_username) {
-                [$source] = explode('.', $user->cat_username, 2);
+            if ($catUsername = $user->getCatUsername()) {
+                [$source] = explode('.', $catUsername, 2);
                 $result[] = $source;
             }
         }

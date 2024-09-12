@@ -147,7 +147,7 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase implements \VuFindHttp\H
             return $this->formatResponse(compact('url'));
         } else {
             return $this->formatResponse(
-                ['json' => ['status' => self::STATUS_HTTP_ERROR]]
+                ['status' => self::STATUS_HTTP_ERROR]
             );
         }
     }

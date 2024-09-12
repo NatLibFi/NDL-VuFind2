@@ -22,7 +22,7 @@ $onlyUnknownStatuses = true;
 $holdingsConfig = $this->ils()->getConfig('Holdings', [$id]);
 
 foreach ($holdings as &$holding) {
-  if (!empty($holding['availability']) || empty($holding['use_unknown_message'])) {
+  if (!$holding['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNKNOWN)) {
     $onlyUnknownStatuses = false;
   }
 }
@@ -40,10 +40,7 @@ if ($groupBranches) {
       $illRequestLink = $row['ILLRequestLink'];
     }
 
-    if (
-      true === $item['availability']
-      || \VuFind\ILS\Logic\ItemStatus::STATUS_AVAILABLE === $item['availability']
-    ) {
+    if ($item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_AVAILABLE)) {
       if (empty($availableLocations[$item['location']])) {
         $availableLocations[$item['location']] = 0;
       }
@@ -88,11 +85,7 @@ if ($groupBranches) {
       // Check if availability is better while taking into account non-boolean
       // statuses as well (anything is better than unavailable, available better than
       // uncertain):
-      if (
-        (!$statusItemsFiltered[$location]['availability'] && $item['availability'])
-        || (\VuFind\ILS\Logic\ItemStatus::STATUS_UNCERTAIN === $statusItemsFiltered[$location]['availability']
-        && (true === $item['availability'] || \VuFind\ILS\Logic\ItemStatus::STATUS_AVAILABLE === $item['availability']))
-      ) {
+      if ($item['availability']->compareTo($statusItemsFiltered[$location]['availability']) == -1) {
         // Copy keys one by one so as to not overwrite callnumbers or any other existing field
         foreach (array_keys($item) as $key) {
           $statusItemsFiltered[$location][$key] = $item[$key];
@@ -104,11 +97,10 @@ if ($groupBranches) {
   if ($this->holdings()->overrideSortOrder()) {
     $items = $this->statusItems;
     usort($items, function ($a, $b) {
-      if ($a['availability'] != $b['availability']) {
-        return $a['availability'] ? -1 : 1;
-      } else {
-        return strcasecmp($a['location'], $b['location']);
+      if ($res = $a['availability']->compareTo($b['availability'])) {
+        return $res;
       }
+      return strcasecmp($a['location'], $b['location']);
     });
     $this->statusItems = $items;
   }
@@ -211,7 +203,9 @@ foreach ($this->statusItems as $item):
             <?php elseif (!empty($closestDueDateInLocation[$item['location']])): ?>
               (<?= str_replace('%%date%%', $closestDueDateInLocation[$item['location']], $this->transEsc('closest_due_date')); ?>)
             <?php else: ?>
-              (<?=$this->transEsc('status_' . $item['status'])?>)
+              <?php $statusDesc = $item['availability']->getStatusDescription(); ?>
+              <?php $statusDescriptionTokens = $item['availability']->getStatusDescriptionTokens(); ?>
+              (<?=$this->transEscWithPrefix('status_', $statusDesc, $statusDescriptionTokens, $this->translate($statusDesc, $statusDescriptionTokens))?>)
             <?php endif; ?>
           </span>
         <?php endif; ?>
@@ -221,13 +215,13 @@ foreach ($this->statusItems as $item):
   <?php endif; ?>
   <?php
     $classes = null;
-    if (true === $item['availability'] || \VuFind\ILS\Logic\ItemStatus::STATUS_AVAILABLE === $item['availability']) {
+    if ($item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_AVAILABLE)) {
       $icon = 'status-available';
       $classEsc = 'text-success';
-    } elseif (\VuFind\ILS\Logic\ItemStatus::STATUS_UNCERTAIN === $item['availability']) {
+    } elseif ($item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNCERTAIN)) {
       $icon = 'status-unknown';
       $classEsc = 'text-warning';
-    } elseif ($item['use_unknown_message'] ?? false) {
+    } elseif ($item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNKNOWN)) {
       $icon = $onlyUnknownStatuses ? '' : 'status-unknown';
       $classEsc = 'text-warning';
     } else {
@@ -256,9 +250,9 @@ foreach ($this->statusItems as $item):
       </div>
       <div class="group-branches">
           <span class="branchInfo">
-            <?php if ($item['availability'] && !empty($item['availabilityInfo']['available'])): ?>
+            <?php if ($item['availability']->isAvailable() && !empty($item['availabilityInfo']['available'])): ?>
               <?= sprintf('%s: %d', $this->transEsc('Available items'), $item['availabilityInfo']['available']); ?>
-            <?php elseif (!empty($item['duedate']) && !$item['availability']): ?>
+            <?php elseif (!empty($item['duedate']) && !$item['availability']->isAvailable()): ?>
               <?= str_replace('%%date%%', $item['duedate'], $this->transEsc('closest_due_date')); ?>
             <?php elseif ($item['availabilityInfo']['ordered'] > 0): ?>
               <?= sprintf('%s: %d', $this->transEsc('status_Ordered'), $item['availabilityInfo']['ordered']); ?>
@@ -268,7 +262,7 @@ foreach ($this->statusItems as $item):
             <?=$this->callnumber()->callnumber($source, $driver ? $driver->getFullTitle() : '', '', $item['collection'] ?? null, $item['location'] ?? null, $this->layout()->userLang, ($item['locationhref'] ?? false) ? 'results-online' : 'results', $item, true)?>
           </span>
         <?php else: ?>
-          <?php if ($item['availability'] && !empty($item['availabilityInfo']['coverage'])): ?>
+          <?php if ($item['availability']->isAvailable() && !empty($item['availabilityInfo']['coverage'])): ?>
             <span class="status-availability-coverage">
               <?= $this->transEsc('status_' . $item['availabilityInfo']['coverage'], [], $item['availabilityInfo']['coverage']); ?>
             </span>
@@ -355,7 +349,7 @@ if (!$disableTitleHold
   <div class="request">
     <?php $user = $this->auth()->getUserObject();
     if ($user): ?>
-      <?php if ($user->getLibraryCards()->count()): ?>
+      <?php if ($this->libraryCards()->getCardsForUser($user)): ?>
         <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($driver, 'RepositoryLibraryRequest'))?>" data-lightbox class="btn btn-primary repository-library-request-order"><?=$this->transEsc('repository_library_request_order')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
       <?php else: ?>
         <a href="<?=$this->url('editLibraryCard', ['id' => 'NEW'])?>" class="btn btn-primary login-link hidden-print"><?=$this->transEsc('repository_library_request_add_library_card')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>

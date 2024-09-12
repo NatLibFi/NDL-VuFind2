@@ -1,4 +1,4 @@
-/* global THREE, ObjectEditor */
+/* global THREE, ObjectEditor, VuFind */
 
 /**
  * Get tangent
@@ -16,7 +16,7 @@ var dracoLoader;
 class ModelViewerClass extends HTMLElement {
 
   static get observedAttributes() {
-    return ['lazyload', 'proxy', 'scripts'];
+    return ['lazyload', 'scripts'];
   }
 
   get scripts() {
@@ -33,14 +33,6 @@ class ModelViewerClass extends HTMLElement {
 
   set src(newValue) {
     this.setAttribute('src', newValue);
-  }
-
-  get proxy() {
-    return this.getAttribute('proxy');
-  }
-
-  set proxy(newValue) {
-    this.setAttribute('proxy', newValue);
   }
 
   get texture() {
@@ -429,12 +421,23 @@ class ModelViewerClass extends HTMLElement {
       if (!this.dependenciesLoaded) {
         return;
       }
-      if (!this.src) {
-        console.error('Missing src from model-viewer');
-        return;
-      }
-      this.createElement();
-    });
+      this.changeLoadInfoButtonToStateDisplay();
+      /**
+       * Start to load the model from the provider to cache
+       */
+      this.loadInfo.innerHTML = `<span>${this.translations['loading file'] || 'Model loading.'} ${VuFind.spinner()}</span>`;
+      fetch(this.src)
+        .then(response => response.json())
+        .then(responseJSON => {
+          if (responseJSON.data && responseJSON.data.url) {
+            this.src = responseJSON.data.url;
+            this.createElement();
+            return;
+          }
+          this.loadInfo.textContent = this.translations['An error has occurred'] || 'An error has occurred';
+        });
+    }, {once: true});
+    
     this.root.append(this.loadInfo);
     const highlight = () => {
       this.root.classList.add('filedrop');
@@ -463,18 +466,9 @@ class ModelViewerClass extends HTMLElement {
     });
   }
 
-  attributeChangedCallback(name, oldValue, newValue)
+  attributeChangedCallback(name/*, oldValue, newValue*/)
   {
     switch (name) {
-    case 'proxy':
-      if (!this.src) {
-        fetch(newValue)
-          .then(response => response.json())
-          .then(responseJSON => {
-            this.src = responseJSON.data.url;
-          });
-      }
-      break;
     case 'scripts':
       this.load();
       break;
@@ -524,7 +518,6 @@ class ModelViewerClass extends HTMLElement {
 
   createElement()
   {
-    this.loadInfo.remove();
     if (this.preview) {
       this.preview.remove();
       delete this.preview;
@@ -533,10 +526,6 @@ class ModelViewerClass extends HTMLElement {
 
     this.loaded = false;
     this.scene = new THREE.Scene();
-
-    this.loadInfo = document.createElement('div');
-    this.loadInfo.classList.add('state');
-    this.root.append(this.loadInfo);
 
     const optionsArea = document.createElement('div');
     optionsArea.classList.add('options');
@@ -638,9 +627,19 @@ class ModelViewerClass extends HTMLElement {
     );
   }
 
+  /**
+   * Changes the button which is used to start the model download process into a state div
+   */
+  changeLoadInfoButtonToStateDisplay()
+  {
+    this.loadInfo.remove();
+    this.loadInfo = document.createElement('div');
+    this.loadInfo.classList.add('state');
+    this.root.append(this.loadInfo);
+  }
+
   loadGLTF()
   {
-    this.loadInfo.textContent = this.translations['loading file'] || 'Model loading.';
     if (!loader) {
       loader = new THREE.GLTFLoader();
       if (this.decoder) {

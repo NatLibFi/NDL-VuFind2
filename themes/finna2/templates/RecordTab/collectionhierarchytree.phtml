@@ -1,0 +1,24 @@
+<?php
+  $this->treeContext = 'Collection';
+  $this->treePreviewElement = '#tree-preview';
+?>
+
+<?php if ($this->inLightbox): ?>
+  <?php // Note: h2 must be the first element to display properly in lightbox ?>
+  <h2><?=$this->transEsc($this->tab->getDescription())?></h2>
+  <?php $this->slot('hierarchy-tree-heading')->set(''); ?>
+<?php endif; ?>
+<div class="collection-hierarchytree">
+  <div class="tree-panel">
+    <?=$this->render('RecordTab/hierarchytree.phtml')?>
+  </div>
+  <div id="tree-preview">
+    <?php if (($collectionRecord = $this->tab->getActiveRecord()) !== false): ?>
+      <?php if ($collectionRecord === null): ?>
+        <?=$this->render('collection/collection-record-error.phtml')?>
+      <?php else: ?>
+        <?=$this->record($collectionRecord)->getCollectionBriefRecord()?>
+      <?php endif; ?>
+    <?php endif; ?>
+  </div>
+</div>

@@ -30,7 +30,6 @@
 namespace Finna\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
-use VuFind\Crypt\HMAC;
 use VuFind\Db\Row\RowGateway;
 use VuFind\Db\Table\PluginManager;
 
@@ -62,25 +61,5 @@ class DueDateReminder extends \VuFind\Db\Table\Gateway
         $table = 'finna_due_date_reminder'
     ) {
         parent::__construct($adapter, $tm, $cfg, $rowObj, $table);
-    }
-
-    /**
-     * Utility function for generating a token for unsubscribing a
-     * due date alert.
-     *
-     * @param VuFind\Crypt\HMAC $hmac HMAC hash generator
-     * @param object            $user User object
-     * @param int               $id   ID
-     *
-     * @return string token
-     */
-    public function getUnsubscribeSecret(HMAC $hmac, $user, $id)
-    {
-        $data = [
-            'id' => $id,
-            'user_id' => $user->id,
-            'created' => $user->created,
-        ];
-        return $hmac->generate(array_keys($data), $data);
     }
 }

@@ -38,7 +38,7 @@
 <?php
   $plotFrom = null;
   $daterangeFacetField = null;
-  if (null === $module || in_array($module, ['blender', 'search', 'primo', 'r2search'])) {
+  if (null === $module || in_array($module, ['blender', 'search', 'primo'])) {
     $options = $results->getOptions();
     if (is_callable([$options, 'getDateRangeSearchField'])) {
       $daterangeFacetField = $options->getDateRangeSearchField();

@@ -79,7 +79,7 @@ if ($otherTitles):?>
             <?php endforeach ?>
           <?php elseif ($summary = $summaries[0] ?? false): ?>
             <div class="truncate-field wide">
-              <p class="summary"><?$this->cleanHtml($summary)?></p>
+              <p class="summary"><?=$this->cleanHtml($summary)?></p>
             </div>
           <?php endif; ?>
         <?php endif; ?>

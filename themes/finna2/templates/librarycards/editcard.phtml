@@ -1,7 +1,7 @@
 <!-- START of: finna - librarycards/editcard.phtml -->
 <?php
   // Set up page title:
-  $pageTitle = empty($this->card->id) ? 'Connect Library Card' : 'Update Card Details';
+  $pageTitle = empty($this->card->getId()) ? 'Connect Library Card' : 'Update Card Details';
   $this->headTitle($this->translate($pageTitle));
   // Set up breadcrumbs:
   $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li>'
@@ -16,8 +16,8 @@
   <?=$this->flashmessages()?>
 
   <h2><?=$this->transEsc($pageTitle); ?></h2>
-  <form class="edit-card-form" method="post" name="<?=empty($this->card->id) ? 'newCardForm' : 'editCardForm'?>" autocomplete="off" data-clear-account-cache>
-    <input type="hidden" name="id" value="<?=empty($this->card->id) ? 'NEW' : $this->escapeHtmlAttr($this->card->id) ?>">
+  <form class="edit-card-form" method="post" name="<?=empty($this->card->getId()) ? 'newCardForm' : 'editCardForm'?>" autocomplete="off" data-clear-account-cache>
+    <input type="hidden" name="id" value="<?=empty($this->card->getId()) ? 'NEW' : $this->escapeHtmlAttr($this->card->getId()) ?>">
     <div class="form-group">
       <label class="control-label" for="card_name"><?=$this->transEsc('Library Card Name'); ?>: <?php if (!$this->translationEmpty('tooltip_library_card_name_html')): ?><?php endif; ?></label><button class="tooltip-button tooltip-library-card-name" type="button" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title='<?=$this->transEsc('tooltip_library_card_name_html') ?>'><?=$this->icon('info') ?> </button>
       <input id="card_name" class="form-control" type="text" placeholder="<?=$this->transEsc('library_card_name_placeholder'); ?>" name="card_name" value="<?=$this->escapeHtmlAttr($this->cardName == "{$this->target}.{$this->username}" ? $this->username : $this->cardName)?>">
@@ -50,13 +50,13 @@
     <?php if (null === $this->loginMethod || 'password' === $this->loginMethod): ?>
       <div class="form-group">
         <label class="control-label" for="login_password"><?=$this->transEsc('Password')?>:</label>
-        <input id="login_password" type="password" name="password" value="" placeholder="<?=!empty($this->card->id) ? $this->transEscAttr('library_card_edit_password_placeholder') : ''?>" class="form-control">
+        <input id="login_password" type="password" name="password" value="" placeholder="<?=!empty($this->card->getId()) ? $this->transEscAttr('library_card_edit_password_placeholder') : ''?>" class="form-control">
       </div>
     <?php endif; ?>
     <div class="form-group">
-      <input class="btn btn-primary" type="submit" name="submit" value="<?=$this->transEscAttr('Save') ?>">
+      <input class="btn btn-primary" type="submit" name="submitButton" value="<?=$this->transEscAttr('Save') ?>">
     </div>
-    <?php if (empty($this->card->id)): ?>
+    <?php if (empty($this->card->getId())): ?>
       <?php
         $language = $this->layout()->userLang;
         if (!in_array($language, ['fi', 'sv', 'en-gb', 'se'])) {
@@ -66,7 +66,7 @@
       <?=$this->partial("librarycards/library_card_terms_$language.phtml"); ?>
     <?php endif; ?>
   </form>
-  <?php if (!$this->translationEmpty('login_desc_add_library_card_html') && empty($this->card->id)): ?>
+  <?php if (!$this->translationEmpty('login_desc_add_library_card_html') && empty($this->card->getId())): ?>
   <div class="login-description">
     <p class="login-info"><?=$this->translate('login_desc_add_library_card_html');?></p>
   </div>

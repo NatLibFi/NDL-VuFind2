@@ -29,12 +29,10 @@
 
 namespace Finna\Search\Favorites;
 
-use VuFind\Db\Table\Resource as ResourceTable;
-use VuFind\Db\Table\UserList as ListTable;
-use VuFind\Db\Table\UserResource as UserResourceTable;
-use VuFind\Record\Loader;
-use VuFindSearch\Service as SearchService;
+use Finna\Db\Service\FinnaUserListServiceInterface;
+use VuFind\Db\Entity\UserListEntityInterface;
 
+use function assert;
 use function intval;
 
 /**
@@ -49,42 +47,6 @@ use function intval;
 class Results extends \VuFind\Search\Favorites\Results
 {
     /**
-     * UserResource table
-     *
-     * @var UserResourceTable
-     */
-    protected $userResourceTable;
-
-    /**
-     * Constructor
-     *
-     * @param \VuFind\Search\Base\Params $params            Object representing user
-     * search parameters.
-     * @param SearchService              $searchService     Search service
-     * @param Loader                     $recordLoader      Record loader
-     * @param ResourceTable              $resourceTable     Resource table
-     * @param ListTable                  $listTable         UserList table
-     * @param UserResourceTable          $userResourceTable UserResource table
-     */
-    public function __construct(
-        \VuFind\Search\Base\Params $params,
-        SearchService $searchService,
-        Loader $recordLoader,
-        ResourceTable $resourceTable,
-        ListTable $listTable,
-        UserResourceTable $userResourceTable
-    ) {
-        parent::__construct(
-            $params,
-            $searchService,
-            $recordLoader,
-            $resourceTable,
-            $listTable
-        );
-        $this->userResourceTable = $userResourceTable;
-    }
-
-    /**
      * Support method for performAndProcessSearch -- perform a search based on the
      * parameters passed to the object.
      *
@@ -95,10 +57,12 @@ class Results extends \VuFind\Search\Favorites\Results
         $list = $this->getListObject();
         $sort = $this->getParams()->getSort();
 
+        assert($this->userListService instanceof FinnaUserListServiceInterface);
+
         if (
             $sort == 'custom_order'
             && (empty($list)
-            || !$this->userResourceTable->isCustomOrderAvailable($list->id))
+            || !$this->userListService->isCustomOrderAvailable($list->getId()))
         ) {
             $sort = 'id desc';
         }
@@ -138,9 +102,9 @@ class Results extends \VuFind\Search\Favorites\Results
      * Get the list object associated with the current search (null if no list
      * selected).
      *
-     * @return \VuFind\Db\Row\UserList|null
+     * @return ?UserListEntityInterface
      */
-    public function getListObject()
+    public function getListObject(): ?UserListEntityInterface
     {
         $filters = $this->getParams()->getRawFilters();
         $listId = $filters['lists'][0] ?? null;
@@ -153,15 +117,11 @@ class Results extends \VuFind\Search\Favorites\Results
         //   b. the requested list is not the same as previously loaded list
         if (
             $this->list === false
-            || ($listId && ($this->list['id'] ?? null) !== $listId)
+            || ($listId && $this->list?->getId() !== $listId)
         ) {
             // Check the filters for a list ID, and load the corresponding object
             // if one is found:
-            if (null === $listId) {
-                $this->list = null;
-            } else {
-                $this->list = $this->listTable->getExisting($listId);
-            }
+            $this->list = (null === $listId) ? null : $this->userListService->getUserListById($listId);
         }
         return $this->list;
     }

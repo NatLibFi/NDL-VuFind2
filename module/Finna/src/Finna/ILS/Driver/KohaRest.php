@@ -32,6 +32,7 @@ namespace Finna\ILS\Driver;
 
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\TranslatableString;
+use VuFind\ILS\Logic\AvailabilityStatus;
 use VuFind\Marc\MarcReader;
 
 use function array_key_exists;
@@ -1123,11 +1124,24 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             }
             $requestsTotal = max($requestsTotal, $requests);
 
+            $extraStatusInformation = [];
+            if ($transit = $avail['unavailabilities']['Item::Transfer'] ?? null) {
+                if (null !== ($toLibrary = $transit['to_library'] ?? null)) {
+                    $extraStatusInformation['location'] = $this->getLibraryName($toLibrary);
+                    if ($status == 'HoldingStatus::transit_to_date') {
+                        $extraStatusInformation['date'] = $this->convertDate(
+                            $transit['datesent'],
+                            true
+                        );
+                    }
+                }
+            }
+
             $entry = [
                 'id' => $id,
                 'item_id' => $item['item_id'],
                 'location' => $location,
-                'availability' => $available,
+                'availability' => new AvailabilityStatus($available, $status, $extraStatusInformation),
                 'status' => $status,
                 'status_array' => $statusCodes,
                 'reserve' => 'N',
@@ -1220,7 +1234,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                             if (!$issue['received']) {
                                 continue;
                             }
-                            [$year] = explode('-', $issue['publisheddate']);
+                            [$year] = explode('-', $issue['publisheddate'] ?? '');
                             if ($year > $latestReceived) {
                                 $latestReceived = $year;
                             }
@@ -1230,7 +1244,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                         if (!$issue['received']) {
                             continue;
                         }
-                        [$year] = explode('-', $issue['publisheddate']);
+                        [$year] = explode('-', $issue['publisheddate'] ?? '');
                         if ($yearFilter) {
                             // Limit to current and last year
                             if (

@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2021.
+ * Copyright (C) The National Library of Finland 2015-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -35,6 +35,12 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Db\Service\ResourceServiceInterface;
+use VuFind\Db\Service\SearchServiceInterface;
+use VuFind\Db\Service\TagServiceInterface;
+use VuFind\Db\Service\UserListServiceInterface;
+use VuFind\Db\Service\UserServiceInterface;
+use VuFind\Mailer\Mailer;
 
 /**
  * Factory for the "account expiration reminders" task.
@@ -67,7 +73,6 @@ class AccountExpirationRemindersFactory implements FactoryInterface
         $requestedName,
         array $options = null
     ) {
-        $tableManager = $container->get(\VuFind\Db\Table\PluginManager::class);
         $configManager = $container->get(\VuFind\Config\PluginManager::class);
 
         // We need to initialize the theme so that the view renderer works:
@@ -75,14 +80,17 @@ class AccountExpirationRemindersFactory implements FactoryInterface
         $theme = new \VuFindTheme\Initializer($mainConfig->Site, $container);
         $theme->init();
 
+        $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
         return new $requestedName(
-            $tableManager->get('User'),
-            $tableManager->get('Search'),
-            $tableManager->get('Resource'),
+            $dbServiceManager->get(UserServiceInterface::class),
+            $dbServiceManager->get(SearchServiceInterface::class),
+            $dbServiceManager->get(ResourceServiceInterface::class),
+            $dbServiceManager->get(UserListServiceInterface::class),
+            $dbServiceManager->get(TagServiceInterface::class),
             $container->get('ViewRenderer'),
             $configManager->get('datasources'),
-            $container->get(\VuFind\Mailer\Mailer::class),
-            $container->get(\Laminas\Mvc\I18n\Translator::class),
+            $container->get(Mailer::class),
+            $container->get(\Laminas\I18n\Translator\TranslatorInterface::class),
             $configManager,
             ...($options ?? [])
         );

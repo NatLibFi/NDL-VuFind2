@@ -34,6 +34,9 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Db\Service\SearchServiceInterface;
+use VuFind\Db\Service\UserListServiceInterface;
+use VuFind\Db\Service\UserResourceServiceInterface;
 
 /**
  * Factory for ImportFavorites AJAX handler.
@@ -70,16 +73,18 @@ class ImportFavoritesFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
-        $tablePluginManager = $container->get(\VuFind\Db\Table\PluginManager::class);
+        $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
         return new $requestedName(
             $container->get(\VuFind\Auth\Manager::class)->getUserObject(),
-            $container->get('ViewRenderer'),
-            $tablePluginManager->get(\VuFind\Db\Table\Search::class),
-            $tablePluginManager->get(\VuFind\Db\Table\UserList::class),
-            $tablePluginManager->get(\VuFind\Db\Table\UserResource::class),
-            $container->get(\VuFind\Search\Results\PluginManager::class),
+            $container->get(\VuFind\Search\SearchNormalizer::class),
+            $dbServiceManager->get(SearchServiceInterface::class),
+            $dbServiceManager->get(UserListServiceInterface::class),
+            $dbServiceManager->get(UserResourceServiceInterface::class),
+            $container->get(\VuFind\Favorites\FavoritesService::class),
+            $container->get(\Laminas\Session\SessionManager::class),
             $container->get(\VuFind\Record\Loader::class),
-            $container->get(\VuFind\Favorites\FavoritesService::class)
+            $container->get(\VuFind\Record\ResourcePopulator::class),
+            $container->get('ViewRenderer')
         );
     }
 }

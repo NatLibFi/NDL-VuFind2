@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2023.
+ * Copyright (C) The National Library of Finland 2015-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,8 +29,10 @@
 
 namespace Finna\Db\Row;
 
-use Finna\Db\Table\Transaction as TransactionTable;
-use Laminas\Db\ResultSet\ResultSetInterface;
+use DateTime;
+use Finna\Db\Entity\FinnaTransactionEntityInterface;
+use Finna\Db\Type\FinnaTransactionStatus;
+use VuFind\Db\Entity\UserEntityInterface;
 
 use function in_array;
 
@@ -45,17 +47,29 @@ use function in_array;
  *
  * @property int $id
  * @property string $transaction_id
- * @property int $complete
+ * @property int $user_id
+ * @property string $driver
+ * @property int $amount
+ * @property string $currency
+ * @property int $transaction_fee
+ * @property string $created
  * @property string $paid
- * @property string $status
  * @property string $registration_started
  * @property string $registered
- * @property string $reported
+ * @property int $complete
+ * @property string $status
  * @property string $cat_username
+ * @property string $reported
  */
-class Transaction extends \VuFind\Db\Row\RowGateway implements \VuFind\Db\Table\DbTableAwareInterface
+class Transaction extends \VuFind\Db\Row\RowGateway implements
+    FinnaTransactionEntityInterface,
+    \VuFind\Db\Service\DbServiceAwareInterface,
+    \VuFind\Db\Table\DbTableAwareInterface
 {
+    use \VuFind\Db\Service\DbServiceAwareTrait;
     use \VuFind\Db\Table\DbTableAwareTrait;
+
+    public const NO_DATE = '2000-01-01 00:00:00';
 
     /**
      * Constructor
@@ -68,19 +82,334 @@ class Transaction extends \VuFind\Db\Row\RowGateway implements \VuFind\Db\Table\
     }
 
     /**
+     * Id getter
+     *
+     * @return ?int
+     */
+    public function getId(): ?int
+    {
+        return $this->id ?? null;
+    }
+
+    /**
+     * Transaction Identifier setter
+     *
+     * @param ?string $transactionIdentifier Transaction Identifier.
+     *
+     * @return FinnaTransactionEntityInterface
+     */
+    public function setTransactionIdentifier(?string $transactionIdentifier): FinnaTransactionEntityInterface
+    {
+        $this->transaction_id = $transactionIdentifier;
+        return $this;
+    }
+
+    /**
+     * Transaction Identifier getter
+     *
+     * @return ?string
+     */
+    public function getTransactionIdentifier(): ?string
+    {
+        return $this->transaction_id;
+    }
+
+    /**
+     * Set user.
+     *
+     * @param UserEntityInterface $user User owning the list.
+     *
+     * @return FinnaTransactionEntityInterface
+     */
+    public function setUser(UserEntityInterface $user): FinnaTransactionEntityInterface
+    {
+        $this->user_id = $user->getId();
+        return $this;
+    }
+
+    /**
+     * Get user.
+     *
+     * @return UserEntityInterface
+     */
+    public function getUser(): UserEntityInterface
+    {
+        return $this->getDbService(\VuFind\Db\Service\UserServiceInterface::class)->getUserById($this->user_id);
+    }
+
+    /**
+     * Get user id
+     *
+     * @return int
+     */
+    public function getUserId(): int
+    {
+        return $this->user_id;
+    }
+
+    /**
+     * Source Id (driver) setter
+     *
+     * @param string $sourceId Source Id
+     *
+     * @return FinnaTransactionEntityInterface
+     */
+    public function setSourceId(string $sourceId): FinnaTransactionEntityInterface
+    {
+        $this->driver = $sourceId;
+        return $this;
+    }
+
+    /**
+     * Source Id (driver) getter
+     *
+     * @return string
+     */
+    public function getSourceId(): string
+    {
+        return $this->driver;
+    }
+
+    /**
+     * Amount setter
+     *
+     * @param int $amount Amount
+     *
+     * @return FinnaTransactionEntityInterface
+     */
+    public function setAmount(int $amount): FinnaTransactionEntityInterface
+    {
+        $this->amount = $amount;
+        return $this;
+    }
+
+    /**
+     * Amount getter
+     *
+     * @return int
+     */
+    public function getAmount(): int
+    {
+        return $this->amount;
+    }
+
+    /**
+     * Currency setter
+     *
+     * @param string $currency Currency.
+     *
+     * @return FinnaTransactionEntityInterface
+     */
+    public function setCurrency(string $currency): FinnaTransactionEntityInterface
+    {
+        $this->currency = $currency;
+        return $this;
+    }
+
+    /**
+     * Currency getter
+     *
+     * @return string
+     */
+    public function getCurrency(): string
+    {
+        return $this->currency;
+    }
+
+    /**
+     * Transaction fee setter
+     *
+     * @param int $amount Amount
+     *
+     * @return FinnaTransactionEntityInterface
+     */
+    public function setTransactionFee(int $amount): FinnaTransactionEntityInterface
+    {
+        $this->transaction_fee = $amount;
+        return $this;
+    }
+
+    /**
+     * Transaction fee getter
+     *
+     * @return int
+     */
+    public function getTransactionFee(): int
+    {
+        return $this->transaction_fee;
+    }
+
+    /**
+     * Created setter
+     *
+     * @param DateTime $dateTime Created date
+     *
+     * @return FinnaTransactionEntityInterface
+     */
+    public function setCreated(DateTime $dateTime): FinnaTransactionEntityInterface
+    {
+        $this->created = $dateTime->format('Y-m-d H:i:s');
+        return $this;
+    }
+
+    /**
+     * Created getter
+     *
+     * @return DateTime
+     */
+    public function getCreated(): Datetime
+    {
+        return DateTime::createFromFormat('Y-m-d H:i:s', $this->created);
+    }
+
+    /**
+     * Paid date setter
+     *
+     * @param ?DateTime $dateTime Paid date
+     *
+     * @return FinnaTransactionEntityInterface
+     */
+    public function setPaidDate(?DateTime $dateTime): FinnaTransactionEntityInterface
+    {
+        $this->paid = $dateTime ? $dateTime->format('Y-m-d H:i:s') : static::NO_DATE;
+        return $this;
+    }
+
+    /**
+     * Paid date getter
+     *
+     * @return DateTime
+     */
+    public function getPaidDate(): ?Datetime
+    {
+        return $this->paid !== static::NO_DATE ? DateTime::createFromFormat('Y-m-d H:i:s', $this->paid) : null;
+    }
+
+    /**
+     * Registration started setter
+     *
+     * @param ?DateTime $dateTime Registration start date
+     *
+     * @return FinnaTransactionEntityInterface
+     */
+    public function setRegistrationStartDate(?DateTime $dateTime): FinnaTransactionEntityInterface
+    {
+        $this->registration_started = $dateTime ? $dateTime->format('Y-m-d H:i:s') : static::NO_DATE;
+        return $this;
+    }
+
+    /**
+     * Registration started getter
+     *
+     * @return ?DateTime
+     */
+    public function getRegistrationStartDate(): ?Datetime
+    {
+        return $this->registration_started !== static::NO_DATE
+            ? DateTime::createFromFormat('Y-m-d H:i:s', $this->registration_started) : null;
+    }
+
+    /**
+     * Registration date setter
+     *
+     * @param ?DateTime $dateTime Registration date
+     *
+     * @return FinnaTransactionEntityInterface
+     */
+    public function setRegistrationDate(?DateTime $dateTime): FinnaTransactionEntityInterface
+    {
+        $this->registered = $dateTime ? $dateTime->format('Y-m-d H:i:s') : static::NO_DATE;
+        return $this;
+    }
+
+    /**
+     * Registration date getter
+     *
+     * @return ?DateTime
+     */
+    public function getRegistrationDate(): ?Datetime
+    {
+        return $this->registered !== static::NO_DATE
+            ? DateTime::createFromFormat('Y-m-d H:i:s', $this->registered) : null;
+    }
+
+    /**
+     * Status setter
+     *
+     * @param FinnaTransactionStatus $status Status
+     *
+     * @return FinnaTransactionEntityInterface
+     */
+    public function setStatus(FinnaTransactionStatus $status): FinnaTransactionEntityInterface
+    {
+        $this->complete = $status->value;
+        return $this;
+    }
+
+    /**
+     * Status getter
+     *
+     * @return FinnaTransactionStatus
+     */
+    public function getStatus(): FinnaTransactionStatus
+    {
+        return FinnaTransactionStatus::from($this->complete);
+    }
+
+    /**
+     * Status message setter
+     *
+     * @param string $description Status message
+     *
+     * @return FinnaTransactionEntityInterface
+     */
+    public function setStatusMessage(string $description): FinnaTransactionEntityInterface
+    {
+        $this->status = $description;
+        return $this;
+    }
+
+    /**
+     * Status message getter
+     *
+     * @return string
+     */
+    public function getStatusMessage(): string
+    {
+        return $this->status;
+    }
+
+    /**
+     * Catalog username setter
+     *
+     * @param string $catUsername Catalog username
+     *
+     * @return FinnaTransactionEntityInterface
+     */
+    public function setCatUsername(string $catUsername): FinnaTransactionEntityInterface
+    {
+        $this->cat_username = $catUsername;
+        return $this;
+    }
+
+    /**
+     * Get catalog username.
+     *
+     * @return string
+     */
+    public function getCatUsername(): string
+    {
+        return $this->cat_username;
+    }
+
+    /**
      * Check if the transaction is in progress
      *
      * @return bool
      */
-    public function isInProgress()
+    public function isInProgress(): bool
     {
-        return in_array(
-            $this->complete,
-            [
-                TransactionTable::STATUS_PROGRESS,
-                TransactionTable::STATUS_REGISTRATION_FAILED,
-            ]
-        );
+        return $this->complete === FinnaTransactionStatus::InProgress->value;
     }
 
     /**
@@ -88,21 +417,21 @@ class Transaction extends \VuFind\Db\Row\RowGateway implements \VuFind\Db\Table\
      *
      * @return bool
      */
-    public function isRegistered()
+    public function isRegistered(): bool
     {
-        return $this->complete === TransactionTable::STATUS_COMPLETE;
+        return $this->complete === FinnaTransactionStatus::Complete->value;
     }
 
     /**
      * Set transaction canceled
      *
-     * @return void
+     * @return FinnaTransactionEntityInterface
      */
-    public function setCanceled(): void
+    public function setCanceled(): FinnaTransactionEntityInterface
     {
-        $this->complete = TransactionTable::STATUS_CANCELED;
+        $this->complete = FinnaTransactionStatus::Canceled->value;
         $this->status = 'cancel';
-        $this->save();
+        return $this;
     }
 
     /**
@@ -110,13 +439,13 @@ class Transaction extends \VuFind\Db\Row\RowGateway implements \VuFind\Db\Table\
      *
      * @return bool
      */
-    public function needsRegistration()
+    public function needsRegistration(): bool
     {
         return in_array(
             $this->complete,
             [
-                TransactionTable::STATUS_PAID,
-                TransactionTable::STATUS_REGISTRATION_FAILED,
+                FinnaTransactionStatus::Paid->value,
+                FinnaTransactionStatus::RegistrationFailed->value,
             ]
         );
     }
@@ -124,33 +453,27 @@ class Transaction extends \VuFind\Db\Row\RowGateway implements \VuFind\Db\Table\
     /**
      * Set transaction paid
      *
-     * @param int $timestamp Optional payment unix timestamp
-     *
-     * @return bool
+     * @return FinnaTransactionEntityInterface
      */
-    public function setPaid(int $timestamp = null): bool
+    public function setPaid(): FinnaTransactionEntityInterface
     {
-        if ($this->complete !== TransactionTable::STATUS_PROGRESS) {
-            return false;
-        }
-        $this->paid = date('Y-m-d H:i:s', $timestamp ?: time());
-        $this->complete = TransactionTable::STATUS_PAID;
+        $this->paid = date('Y-m-d H:i:s', time());
+        $this->complete = FinnaTransactionStatus::Paid->value;
         $this->status = 'paid';
-        $this->save();
-        return true;
+        return $this;
     }
 
     /**
      * Set transaction registered
      *
-     * @return void
+     * @return FinnaTransactionEntityInterface
      */
-    public function setRegistered(): void
+    public function setRegistered(): FinnaTransactionEntityInterface
     {
         $this->registered = date('Y-m-d H:i:s');
-        $this->complete = TransactionTable::STATUS_COMPLETE;
+        $this->complete = FinnaTransactionStatus::Complete->value;
         $this->status = 'register_ok';
-        $this->save();
+        return $this;
     }
 
     /**
@@ -158,25 +481,25 @@ class Transaction extends \VuFind\Db\Row\RowGateway implements \VuFind\Db\Table\
      *
      * @param string $msg Message
      *
-     * @return void
+     * @return FinnaTransactionEntityInterface
      */
-    public function setRegistrationFailed(string $msg): void
+    public function setRegistrationFailed(string $msg): FinnaTransactionEntityInterface
     {
-        $this->complete = TransactionTable::STATUS_REGISTRATION_FAILED;
+        $this->complete = FinnaTransactionStatus::RegistrationFailed->value;
         $this->status = mb_substr($msg, 0, 255, 'UTF-8');
         $this->registration_started = '2000-01-01 00:00:00';
-        $this->save();
+        return $this;
     }
 
     /**
      * Set registration start timestamp
      *
-     * @return void
+     * @return FinnaTransactionEntityInterface
      */
-    public function setRegistrationStarted(): void
+    public function setRegistrationStarted(): FinnaTransactionEntityInterface
     {
         $this->registration_started = date('Y-m-d H:i:s');
-        $this->save();
+        return $this;
     }
 
     /**
@@ -187,60 +510,32 @@ class Transaction extends \VuFind\Db\Row\RowGateway implements \VuFind\Db\Table\
     public function isRegistrationInProgress(): bool
     {
         // Ensure fresh data:
-        $transaction = $this->getDbTable('Transaction')->getTransaction($this->transaction_id);
-        $registrationStartTime = new \DateTime($transaction->registration_started);
-        return time() - $registrationStartTime->getTimestamp() < 120;
+        $transaction = $this->getDbTable('Transaction')->select(['id' => $this->id])->current();
+        $startDate = $transaction->getRegistrationStartDate();
+        return $startDate && (time() - $startDate->getTimestamp() < 120);
     }
 
     /**
      * Set transaction reported date and status to "registration expired"
      *
-     * @return void
+     * @return FinnaTransactionEntityInterface
      */
-    public function setReportedAndExpired(): void
+    public function setReportedAndExpired(): FinnaTransactionEntityInterface
     {
-        $this->complete = TransactionTable::STATUS_REGISTRATION_EXPIRED;
+        $this->complete = FinnaTransactionStatus::RegistrationExpired->value;
         $this->reported = date('Y-m-d H:i:s');
-        $this->save();
+        return $this;
     }
 
     /**
      * Set transaction status to "fines updated"
      *
-     * @return void
+     * @return FinnaTransactionEntityInterface
      */
-    public function setFinesUpdated(): void
+    public function setFinesUpdated(): FinnaTransactionEntityInterface
     {
-        $this->complete = TransactionTable::STATUS_FINES_UPDATED;
+        $this->complete = FinnaTransactionStatus::FinesUpdated->value;
         $this->status = 'fines_updated';
-        $this->save();
-    }
-
-    /**
-     * Get fine IDs from associated fees
-     *
-     * @return array
-     */
-    public function getFineIds(): array
-    {
-        $feeTable = $this->getDbTable('Fee');
-        $fineIds = [];
-        foreach ($feeTable->select(['transaction_id' => $this->id]) as $fee) {
-            if (!empty($fee['fine_id'])) {
-                $fineIds[] = $fee['fine_id'];
-            }
-        }
-        return $fineIds;
-    }
-
-    /**
-     * Get associated fees
-     *
-     * @return ResultSetInterface
-     */
-    public function getFines(): ResultSetInterface
-    {
-        $feeTable = $this->getDbTable('Fee');
-        return $feeTable->select(['transaction_id' => $this->id]);
+        return $this;
     }
 }

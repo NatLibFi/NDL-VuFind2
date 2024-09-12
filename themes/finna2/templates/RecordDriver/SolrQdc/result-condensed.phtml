@@ -101,11 +101,11 @@
       <?=$this->record($this->driver)->getOnlineUrls('results')?>
       <?=$this->record($this->driver)->getPreviews()?>
       <?php /*** TODO how to show if this database usage needs authorizing
-              <? if  ($database == 'true') && ($authorize == 'true') :?>
+      <?php if  ($database == 'true') && ($authorize == 'true') :?>
         <span class="authorize">
           <?=$this->icon('authorize') ?>
         </span>
-      <? endif; ?>
+      <?php endif; ?>
       ***/ ?>
     </div>
     <div class="condensed-notes">

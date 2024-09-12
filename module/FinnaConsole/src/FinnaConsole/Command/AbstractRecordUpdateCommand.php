@@ -33,7 +33,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use VuFind\Db\Row\RowGateway;
+use VuFind\Db\Entity\EntityInterface;
+use VuFind\Db\Service\UserListServiceInterface;
+use VuFind\Db\Service\UserServiceInterface;
 
 use function get_class;
 
@@ -49,13 +51,6 @@ use function get_class;
 abstract class AbstractRecordUpdateCommand extends Command
 {
     /**
-     * The name of the command (the part after "public/index.php")
-     *
-     * @var string
-     */
-    protected static $defaultName = null;
-
-    /**
      * Table display name
      *
      * @var string
@@ -70,18 +65,11 @@ abstract class AbstractRecordUpdateCommand extends Command
     protected $description = null;
 
     /**
-     * Table
-     *
-     * @var \VuFind\Db\Table\Gateway
-     */
-    protected $table;
-
-    /**
      * Constructor
      *
-     * @param \VuFind\Db\Table\Gateway $table UserList table
+     * @param UserServiceInterface|UserListServiceInterface $dbService Database service
      */
-    public function __construct(\VuFind\Db\Table\Gateway $table)
+    public function __construct(protected UserServiceInterface|UserListServiceInterface $dbService)
     {
         if (null === $this->tableName) {
             throw new \Exception('tableName empty');
@@ -103,7 +91,6 @@ abstract class AbstractRecordUpdateCommand extends Command
             $name = strtolower(array_pop($parts)) . "/$name";
         }
         parent::__construct($name);
-        $this->table = $table;
     }
 
     /**
@@ -136,19 +123,23 @@ abstract class AbstractRecordUpdateCommand extends Command
     ) {
         $count = 0;
         foreach (explode(',', $input->getArgument('ids')) as $id) {
-            if ($record = $this->table->select(['id' => $id])->current()) {
+            if ($this->dbService instanceof UserListServiceInterface) {
+                $record = $this->dbService->getUserListById($id);
+            } elseif ($this->dbService instanceof UserServiceInterface) {
+                $record = $this->dbService->getUserById($id);
+            } else {
+                throw new \Exception('Unexpected database service class');
+            }
+            if ($record) {
                 if ($this->changeRecord($record)) {
+                    $this->dbService->persistEntity($record);
                     ++$count;
-                    $output->writeln(
-                        "Record {$record->id} updated"
-                    );
+                    $output->writeln("Record $id updated");
                 } else {
-                    $output->writeln(
-                        "Record {$record->id} already up to date"
-                    );
+                    $output->writeln("Record $id already up to date");
                 }
             } else {
-                $output->writeln("Record {$record->id} not found");
+                $output->writeln("Record $id not found");
             }
         }
         $output->writeln("Total $count {$this->tableName}(s) updated");
@@ -158,9 +149,9 @@ abstract class AbstractRecordUpdateCommand extends Command
     /**
      * Update a record
      *
-     * @param RowGateway $record Record
+     * @param EntityInterface $record Record
      *
      * @return bool Whether changes were made
      */
-    abstract protected function changeRecord(RowGateway $record): bool;
+    abstract protected function changeRecord(EntityInterface $record): bool;
 }

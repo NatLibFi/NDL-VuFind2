@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2023.
+ * Copyright (C) The National Library of Finland 2015-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,16 +30,11 @@
 
 namespace Finna\AjaxHandler;
 
-use Finna\Db\Table\CommentsRecord;
+use Finna\Db\Service\FinnaCommentsServiceInterface;
 use Laminas\Mvc\Controller\Plugin\Params;
-use VuFind\Config\AccountCapabilities;
-use VuFind\Controller\Plugin\Captcha;
-use VuFind\Db\Row\User;
-use VuFind\Db\Table\Comments;
-use VuFind\Db\Table\Resource;
-use VuFind\Record\Loader as RecordLoader;
 use VuFind\Search\SearchRunner;
 
+use function assert;
 use function count;
 use function intval;
 
@@ -56,30 +51,22 @@ use function intval;
 class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
 {
     /**
-     * Constructor
+     * Search runner
      *
-     * @param Resource            $table               Resource database table
-     * @param Captcha             $captcha             Captcha controller plugin
-     * @param User|bool           $user                Logged in user (or false)
-     * @param bool                $enabled             Are comments enabled?
-     * @param RecordLoader        $loader              Record loader
-     * @param AccountCapabilities $ac                  Account capabilities helper
-     * @param ?Comments           $commentsTable       Comments table
-     * @param ?CommmentsRecord    $commentsRecordTable CommentsRecord table
-     * @param ?SearchRunner       $searchRunner        Search runner
+     * @var ?SearchRunner
      */
-    public function __construct(
-        Resource $table,
-        Captcha $captcha,
-        $user,
-        $enabled,
-        RecordLoader $loader,
-        AccountCapabilities $ac,
-        protected ?Comments $commentsTable = null,
-        protected ?CommentsRecord $commentsRecordTable = null,
-        protected ?SearchRunner $searchRunner = null
-    ) {
-        parent::__construct($table, $captcha, $user, $enabled, $loader, $ac);
+    protected ?SearchRunner $searchRunner = null;
+
+    /**
+     * Setter for search runner
+     *
+     * @param SearchRunner $runner Search runner
+     *
+     * @return void
+     */
+    public function setSearchRunner(SearchRunner $runner): void
+    {
+        $this->searchRunner = $runner;
     }
 
     /**
@@ -91,6 +78,8 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
      */
     public function handleRequest(Params $params)
     {
+        assert($this->commentsService instanceof FinnaCommentsServiceInterface);
+
         // Make sure comments are enabled:
         if (!$this->enabled) {
             return $this->formatResponse(
@@ -99,7 +88,7 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
             );
         }
 
-        if ($this->user === false) {
+        if (null === $this->user) {
             return $this->formatResponse(
                 $this->translate('You must be logged in first'),
                 self::STATUS_HTTP_NEED_AUTH
@@ -117,10 +106,10 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
         }
         $driver = $this->recordLoader->load($id, $source, false);
 
-        $resource = $this->table->findResource($id, $source);
+        $resource = $this->resourcePopulator->getOrCreateResourceForRecordId($id, $source);
         if ($commentId = $params->fromPost('commentId')) {
             // Edit existing comment
-            $this->commentsTable->edit($this->user->id, $commentId, $comment);
+            $this->commentsService->editComment($this->user->id, $commentId, $comment);
         } else {
             // Add new comment
             if (!$this->checkCaptcha()) {
@@ -130,7 +119,11 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
                 );
             }
 
-            $commentId = $resource->addComment($comment, $this->user);
+            $commentId = $this->commentsService->addComment(
+                $comment,
+                $this->user,
+                $resource
+            );
 
             // Add comment to deduplicated records
             $results = $this->searchRunner->run(
@@ -157,7 +150,7 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
             $ids[] = $id;
             $ids = array_values(array_unique($ids));
 
-            $this->commentsRecordTable->addLinks($commentId, $ids);
+            $this->commentsService->addRecordLinks($commentId, $ids);
         }
 
         $rating = $params->fromPost('rating', '');
@@ -166,8 +159,9 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
             && ('' !== $rating
             || $this->accountCapabilities->isRatingRemovalAllowed())
         ) {
-            $driver->addOrUpdateRating(
-                $this->user->id,
+            $this->ratingsService->saveRating(
+                $driver,
+                $this->user->getId(),
                 '' === $rating ? null : intval($rating)
             );
         }

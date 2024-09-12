@@ -69,6 +69,7 @@ class ReceiptFactory implements FactoryInterface
             throw new \Exception('Unexpected options passed to factory.');
         }
         $configManager = $container->get(\VuFind\Config\PluginManager::class);
+        $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
         return new $requestedName(
             $configManager->get('config')->toArray(),
             $configManager->get('datasources')->toArray(),
@@ -76,7 +77,8 @@ class ReceiptFactory implements FactoryInterface
             $container->get(\VuFind\Service\CurrencyFormatter::class),
             $container->get('HttpRouter'),
             $container->get(\VuFind\Mailer\Mailer::class),
-            $container->get('ViewRenderer')
+            $container->get('ViewRenderer'),
+            $dbServiceManager->get(\Finna\Db\Service\FinnaTransactionServiceInterface::class)
         );
     }
 }

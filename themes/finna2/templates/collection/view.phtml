@@ -51,7 +51,6 @@
 <div class="container">
 <?php endif; ?>
 <div class="record record-row source<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?><?=$largeImageLayout ? ' large-image-layout' : '' ?>">
-  <?= $this->R2()->registeredInfo($this->driver) ?>
   <div>
     <?=$this->record($this->driver)->getToolbar()?>
   </div>
@@ -64,7 +63,6 @@
       <?=$this->record($this->driver)->getCoreMetadata()?>
     <?php else: ?>
       <h2 class="collection-title"><?=$this->driver->getTitle();?></h2>
-      <?= $this->R2()->register($this->driver, ['brief' => true])?>
       <?php $formats = $this->driver->getFormats();
       if (!empty($formats)): ?>
         <div class="recordFormat collection-format">
@@ -98,7 +96,7 @@
           <?php endforeach; ?>
         </div>
       <?php endif; ?>
-      <?/* Display Main Details from records */?>
+      <?php /* Display Main Details from records */?>
       <?php
         $formatter = $this->recordDataFormatter($driver);
         $coreFields = $formatter->getDefaults();
@@ -125,7 +123,7 @@
             <?=$this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $coreFieldGroups]);?>
           </table>
         <?php endif; ?>
-      <?/* End Main Details */?>
+      <?php /* End Main Details */?>
     <?php endif; ?>
   </div>
   <?php ob_start(); ?>
@@ -181,7 +179,7 @@
               href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $tab))?>#tabnav" data-lightbox-ignore<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?>
               data-background<?php endif ?>>
               <?php if (strtolower($tab) == 'details'): ?><?=$this->icon('staff-view', 'staff-view-icon') ?><?php endif; ?>
-              <?php if (strtolower($tab) != 'details'): ?><?=$this->transEsc($desc)?><?php endif; ?><?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?>
+              <?php if (strtolower($tab) != 'details'): ?><?=$this->transEsc($desc)?><?php endif; ?><?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->record($this->driver)->getComments()) ?></span>)<?php endif; ?>
             </a>
             </li>
           <?php endforeach; ?>
@@ -226,7 +224,7 @@
               href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $accordion))?>#tabnav"<?php if ($obj->supportsAjax() && in_array($accordion, $this->backgroundTabs)):?>
               data-background<?php endif ?>
             >
-              <span class="title"><?=$this->transEsc($desc)?><?php if (strtolower($accordion) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?></span>
+              <span class="title"><?=$this->transEsc($desc)?><?php if (strtolower($accordion) == 'usercomments') : ?> (<span class="count"><?= count($this->record($this->driver)->getComments()) ?></span>)<?php endif; ?></span>
               <i class="icon"></i>
             </a>
           </div>

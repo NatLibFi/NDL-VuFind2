@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) The National Library of Finland 2022-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,6 +29,8 @@
 
 namespace FinnaConsole\Command\Lists;
 
+use Finna\Db\Service\FinnaUserListServiceInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -42,30 +44,18 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+#[AsCommand(
+    name: 'lists/list_protected'
+)]
 class ListProtected extends Command
 {
     /**
-     * The name of the command (the part after "public/index.php")
-     *
-     * @var string
-     */
-    protected static $defaultName = 'lists/list_protected';
-
-    /**
-     * UserList table
-     *
-     * @var \VuFind\Db\Table\UserList
-     */
-    protected $table;
-
-    /**
      * Constructor
      *
-     * @param \Finna\Db\Table\UserList $table UserList table
+     * @param FinnaUserListServiceInterface $userListService User list database service
      */
-    public function __construct(\VuFind\Db\Table\UserList $table)
+    public function __construct(protected FinnaUserListServiceInterface $userListService)
     {
-        $this->table = $table;
         parent::__construct();
     }
 
@@ -89,10 +79,9 @@ class ListProtected extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        foreach ($this->table->select(['finna_protected' => 1]) as $list) {
+        foreach ($this->userListService->getProtectedLists() as $list) {
             $output->writeln(
-                $list->id . ' (user ' . $list->user_id . ' "' . ($list->title ?? '')
-                . '")'
+                $list->getId() . ' (user ' . $list->getUser()->getId() . ' "' . $list->getTitle() . '")'
             );
         }
         return 0;

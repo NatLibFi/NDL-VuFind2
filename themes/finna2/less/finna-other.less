@@ -6,6 +6,7 @@
 @import "finna/channels";
 @import "finna/facets";
 @import "finna/date-range";
+@import "finna/finna-dateinput.less";
 @import "finna/tabs";
 @import "finna/image-popup";
 @import "finna/finna-header";
@@ -24,7 +25,6 @@
 @import "finna/map";
 @import "finna/location-service";
 @import "finna/organisation-info";
-@import "finna/r2";
 @import "finna/survey";
 @import "finna/terms-of-service";
 @import "finna/search";
@@ -426,11 +426,49 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
 }
 
 // Hierarchy tree
-.hierarchy-tree-search-form .btn {
-    &:extend(.form-control);
+.hierarchy-tree-container .hierarchy-tree-search-form {
+    .collection-list-controls;
+    width: 250px;
+    margin: 0;
+    align-items: normal;
+    gap: 0;
+    .search-query {
+        height: 40px;
+        border-right: none;
+        border-radius: 4px 0 0 4px;
+    }
+    .js-load-indicator {
+        margin: 10px;
+    }
+    button.btn-primary {
+        width: auto;
+        padding: 0 10px;
+        font-size: @font-size-base;
+        font-weight: @btn-font-weight;
+        border-radius: 0 4px 4px 0;
+    }
 }
 .hierarchy-tree__item-container .icon {
     display: none;
+}
+.hierarchy-tree-container div.alert {
+    margin-top: 10px;
+}
+.hierarchy-tree .hierarchy-tree__search-match > .hierarchy-tree__item-container > a {
+    color: @link-color;
+}
+.collection-hierarchytree {
+    .tree-panel {
+        padding: 0 15px 0 0;
+    }
+    #tree-preview {
+        padding: 0;
+        & > a {
+            .btn;
+            .btn-primary;
+            margin-bottom: 15px;
+        }
+    }
 }
 
 // Collection hierarchy tree width

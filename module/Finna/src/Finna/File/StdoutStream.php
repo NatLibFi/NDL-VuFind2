@@ -88,7 +88,7 @@ class StdoutStream implements StreamInterface
      *
      * @return void
      */
-    public function close()
+    public function close(): void
     {
     }
 
@@ -109,7 +109,7 @@ class StdoutStream implements StreamInterface
      *
      * @return int|null Returns the size in bytes if known, or null if unknown.
      */
-    public function getSize()
+    public function getSize(): ?int
     {
         return null;
     }
@@ -120,7 +120,7 @@ class StdoutStream implements StreamInterface
      * @return int Position of the file pointer
      * @throws \RuntimeException on error.
      */
-    public function tell()
+    public function tell(): int
     {
         return 0;
     }
@@ -130,7 +130,7 @@ class StdoutStream implements StreamInterface
      *
      * @return bool
      */
-    public function eof()
+    public function eof(): bool
     {
         return true;
     }
@@ -140,7 +140,7 @@ class StdoutStream implements StreamInterface
      *
      * @return bool
      */
-    public function isSeekable()
+    public function isSeekable(): bool
     {
         return true;
     }
@@ -161,7 +161,7 @@ class StdoutStream implements StreamInterface
      *
      * @throws \RuntimeException on failure.
      */
-    public function seek(int $offset, int $whence = SEEK_SET)
+    public function seek(int $offset, int $whence = SEEK_SET): void
     {
     }
 
@@ -179,7 +179,7 @@ class StdoutStream implements StreamInterface
      *
      * @throws \RuntimeException on failure.
      */
-    public function rewind()
+    public function rewind(): void
     {
     }
 
@@ -188,7 +188,7 @@ class StdoutStream implements StreamInterface
      *
      * @return bool
      */
-    public function isWritable()
+    public function isWritable(): bool
     {
         return true;
     }
@@ -202,7 +202,7 @@ class StdoutStream implements StreamInterface
      *
      * @throws \RuntimeException on failure.
      */
-    public function write(string $string)
+    public function write(string $string): int
     {
         if ($this->outputActive) {
             echo $string;
@@ -215,7 +215,7 @@ class StdoutStream implements StreamInterface
      *
      * @return bool
      */
-    public function isReadable()
+    public function isReadable(): bool
     {
         return true;
     }
@@ -232,7 +232,7 @@ class StdoutStream implements StreamInterface
      *
      * @throws \RuntimeException if an error occurs.
      */
-    public function read(int $length)
+    public function read(int $length): string
     {
         return '';
     }
@@ -245,7 +245,7 @@ class StdoutStream implements StreamInterface
      * @throws \RuntimeException if unable to read or an error occurs while
      *     reading.
      */
-    public function getContents()
+    public function getContents(): string
     {
         return '';
     }

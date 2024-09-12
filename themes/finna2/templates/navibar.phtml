@@ -9,11 +9,11 @@
 ?>
 <div role="navigation" aria-label="<?=$this->transEscAttr('Main Menu')?>" class="finna-navbar">
   <div class="navbar-header">
+    <?php if ($this->resolver('navibar-logo.phtml')): ?><a class="navbar-brand" href="<?=$this->url('home')?>"><?=$this->render('navibar-logo.phtml')?></a><?php endif ?>
     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-collapse" aria-label="<?=$this->transEscAttr('Mobile Menu') ?>" aria-expanded="false">
       <span class="mobilemenu-bars"><?=$this->icon('mobilemenu-bars') ?></span>
       <span class="mobilemenu-close"><?=$this->icon('mobilemenu-close') ?></span>
     </button>
-    <?php if ($this->resolver('navibar-logo.phtml')): ?><a class="navbar-brand" href="<?=$this->url('home')?>"><?=$this->render('navibar-logo.phtml')?></a><?php endif ?>
   </div>
   <?php if (!isset($this->layout()->renderingError)): ?>
     <div class="collapse navbar-collapse" id="header-collapse">
@@ -121,7 +121,7 @@
         <li class="logoutOptions">
           <a href="#" class="btn" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="account-icon"></span><?=$this->icon('my-account', 'my-account-icon') ?> <span class="username login-text"><?=$this->transEsc('Your Account')?></span> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
           <ul role="menu" id="my-info-dropdown-menu" class="dropdown-menu dropdown-menu-right">
-            <?php if ($user->getLibraryCards()->count() > 0): ?>
+            <?php if ($this->libraryCards()->getCardsForUser($user)): ?>
               <li>
                 <a <?=$this->url('myresearch-checkedout') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-checkedout')?>">
                   <?=$this->transEsc('Checked Out Items')?>
@@ -171,17 +171,6 @@
                 <span class="profile-status status hidden"><?=$this->icon('spinner') ?></span>
               </a>
             </li>
-            <?php if ($this->R2()->isAvailable()): ?>
-            <?php $registered = $this->R2()->isRegistered(); ?>
-              <li role="none">
-                <a <?=$this->url('myresearch-r2accessrights') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-r2accessrights')?>">
-                  <?=$this->transEsc($registered ? 'R2_accessrights_title' : 'R2_menu_heading_register')?>
-                  <?php if (!$registered): ?>
-                    <?=$this->icon('research', 'pull-right') ?>
-                  <?php endif; ?>
-                </a>
-              </li>
-            <?php endif; ?>
             <li>
               <a <?=$this->url('search-history') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('search-history')?>?require_login">
                 <?=$this->transEsc('history_saved_searches')?>

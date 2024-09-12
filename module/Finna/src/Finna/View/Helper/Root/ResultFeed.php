@@ -31,6 +31,11 @@
 
 namespace Finna\View\Helper\Root;
 
+use Finna\View\Helper\Root\RecordImage as RecordImageHelper;
+use VuFind\Db\Entity\UserListEntityInterface;
+use VuFind\Db\Service\CommentsServiceInterface;
+use VuFind\View\Helper\Root\Record as RecordHelper;
+
 use function array_slice;
 use function count;
 use function is_array;
@@ -51,18 +56,32 @@ class ResultFeed extends \VuFind\View\Helper\Root\ResultFeed
     /**
      * User list object
      *
-     * @var Db\Row\UserList
+     * @var UserListEntityInterface
      */
     protected $list = null;
 
     /**
+     * Constructor
+     *
+     * @param RecordHelper             $recordHelper      Record helper
+     * @param RecordImageHelper        $recordImageHelper Record image helper
+     * @param CommentsServiceInterface $commentsService   Comments database service
+     */
+    public function __construct(
+        protected RecordHelper $recordHelper,
+        protected RecordImageHelper $recordImageHelper,
+        protected CommentsServiceInterface $commentsService
+    ) {
+    }
+
+    /**
      * Set user list for this feed.
      *
-     * @param Db\Row\UserList $list List
+     * @param UserListEntityInterface $list List
      *
      * @return void
      */
-    public function setList($list)
+    public function setList(UserListEntityInterface $list): void
     {
         $this->list = $list;
     }
@@ -126,10 +145,8 @@ class ResultFeed extends \VuFind\View\Helper\Root\ResultFeed
         if (!empty($dcDate)) {
             $entry->setDCDate($dcDate);
         }
-        $recordHelper = $this->getView()->plugin('record');
-        $recordImage = $this->getView()->plugin('recordImage');
-        $imageUrl = $recordImage($recordHelper($record))->getLargeImage()
-            . '&w=1024&h=1024&imgext=.jpeg';
+        $recordHelperInst = ($this->recordHelper)($record);
+        $imageUrl = ($this->recordImageHelper)($recordHelperInst)->getLargeImage() . '&w=1024&h=1024&imgext=.jpeg';
         $entry->setEnclosure(
             [
                 'uri' => $serverUrl($imageUrl),
@@ -137,10 +154,11 @@ class ResultFeed extends \VuFind\View\Helper\Root\ResultFeed
                 'length' => 0,
             ]
         );
-        $entry->setCommentCount(count($record->getComments()));
+        $comments = $this->commentsService->getRecordComments($record->getUniqueID(), $record->getSourceIdentifier());
+        $entry->setCommentCount(count($comments));
         $summaries = [];
         if (isset($this->list)) {
-            $summaries = $record->getListNotes($this->list->id);
+            $summaries = $recordHelperInst->getListNotes($this->list->getId());
         }
         if (empty($summaries)) {
             $summaries = array_filter($record->tryMethod('getSummary'));

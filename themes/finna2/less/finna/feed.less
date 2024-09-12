@@ -231,6 +231,7 @@
 .feed-tabs-container {
     display: flex;
     flex-wrap: wrap;
+    width: 100%;
     justify-content: space-between;
     margin-top: 20px;
     margin-bottom: 12px;
@@ -411,6 +412,7 @@
     min-height: 30px;
     align-items: center;
     justify-content: center;
+    z-index: @zindex-spinner-overlay;
     background-color: rgba(0,0,0,0.4);
     .fa-spinner::before {
         color: inherit;
@@ -425,15 +427,11 @@
     margin-top: 10px;
 }
 .events-searchtools-toggle {
-    cursor: pointer;
     display: none;
-    color: black;
-    text-transform: uppercase;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    font-weight: bold;
-    font-size: 0.84em;
-    &.open i {
+    margin-top: 0;
+    margin-bottom: 15px;
+    width: 100%;
+    &.open .show-more-icon {
         transform: rotate(180deg);
     }
     @media (max-width: @screen-xs-max) {
@@ -441,30 +439,42 @@
     }
 }
 .events-searchtools-container {
-    display: block;
-    margin-bottom: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 15px;
+    margin-bottom: 30px;
     @media (max-width: @screen-xs-max) {
         display: none;
         &.open {
-            display: inherit;
+            display: flex;
         }
     }
-    .event-search-container, .event-date-container {
-        margin-right: 10px;
-        margin-left: 5px;
+    .event-search-container {
+        flex: 0;
+        width: 100%;
     }
     .event-date-container {
-        @media (max-width: @screen-xs-max) {
-            display: block;
-         }
+        display: flex;
+        flex: 0;
+        gap: 10px;
+        .input-field {
+            width: 100px;
+            @media (min-width: @screen-sm) {
+                width: 140px;
+            }
+        }
     }
-    input {
-        border-radius: 5px;
-        border: 1px solid @gray-lighter;
-        padding: 5px;
+    .finna-dateinput {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
     }
-    .event-datepicker {
-        width: 100px;
+    label {
+        font-size: 0.8em;
+        display: inline-flex;
+        flex-wrap: wrap;
+        column-gap: 5px;
     }
     .event-date-title {
         @media (max-width: @screen-xs-max) {
@@ -472,10 +482,7 @@
         }
     }
     .linked-event-search {
-        @media (max-width: @screen-xs-max) {
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
+        padding: 7px 12px;
     }
     .event-geolocation {
         text-transform: uppercase;
@@ -731,9 +738,10 @@ finna-feed.carousel.splide--ltr {
             .carousel-text {
                 &:not(.no-text) {
                     opacity: 1;
+                    z-index: 1;
                 }
             }
-            .carousel-slide-header:not(.title-bottom) {
+            .carousel-slide-header p:not(.title-bottom) {
                 opacity: 0;
             }
             .carousel-text.scrollable {
@@ -754,10 +762,11 @@ finna-feed.carousel.splide--ltr {
             .carousel-text:not(.no-text) {
                 opacity: 1;
             }
-            .carousel-slide-header:not(.title-bottom) {
+            .carousel-slide-header p:not(.title-bottom) {
                 opacity: 0;
             }
             .carousel-text.scrollable {
+                z-index: 1;
                 padding-bottom: 0;
                 .carousel-text-shadow {
                     position: sticky;
@@ -769,15 +778,32 @@ finna-feed.carousel.splide--ltr {
                 }
             }
         }
+        .carousel-header-format {
+            display: inline-block;
+            font-weight: normal;
+            font-size: 10px;
+            border: 1px solid #fff;
+            margin-top: 2px;
+            margin-bottom: 2px;
+            padding: 2px 6px 2px 6px;
+            border-radius: 10px;
+            text-shadow: none;
+        }
         .feed-link {
             flex-flow: column;
         }
         .wrapper {
             flex: 1 1 100%;
             width: 100%;
+            &.iconlabel::before {
+                color: @carousel-slider-iconlabel-color;
+                position: absolute;
+                font-size: 39px;
+            }
             img {
                 max-width: none;
                 max-height: 100%;
+                position: relative;
             }
         }
         .carousel-text {
@@ -809,12 +835,20 @@ finna-feed.carousel.splide--ltr {
             flex-direction: column;
             position: relative;
             p {
+                .carousel-header-title {
+                    display: block;
+                }
                 &.title-bottom {
                     position: initial;
                     height: 100%;
                     width: 100%;
+                    padding-bottom: 10px;
+                    .carousel-header-title {
+                        display: inline-block;
+                        width: 100%;
+                    }
                 }
-                position: absolute;
+                position: relative;
                 bottom: 0;
                 width: 100%;
                 min-height: 30px;
@@ -926,7 +960,7 @@ finna-feed.carousel-slider.splide--ltr {
     finna-feed.carousel-slider.splide--ltr {
         .slider-text-part {
             .slider-title {
-                font-size: @font-size-h2;                
+                font-size: @font-size-h2;
             }
         }
         &.image-right .feed-link {

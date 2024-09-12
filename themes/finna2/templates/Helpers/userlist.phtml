@@ -6,13 +6,13 @@
       <?php if ($this->listTags): ?>
         <div class="public-list-tags">
           <?php foreach ($this->listTags as $tag): ?>
-            <div class="tag"><?= $this->escapeHtml($tag->tag) ?></div>
+            <div class="tag"><?= $this->escapeHtml($tag->getTag()) ?></div>
           <?php endforeach ?>
         </div>
       <?php endif ?>
       <?php if ($this->date): ?>
         <div class="public-list-info">
-          <div><?= $this->transEsc('modified'); ?>: <?=$this->dateTime()->convertToDisplayDate('Y-m-d H:i:s', $this->date); ?></div>
+          <div><?= $this->transEsc('modified'); ?>: <?=$this->date->format($this->config()->dateFormat()); ?></div>
         </div>
       <?php endif ?>
     </div>

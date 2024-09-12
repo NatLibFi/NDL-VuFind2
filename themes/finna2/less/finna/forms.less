@@ -1,3 +1,7 @@
+input, input.form-control {
+  font-size: 16px; // avoid the automatic zoom-in on input fields
+}
+
 .form-control {
   width: initial;
   padding: 0px 5px;
@@ -21,6 +25,7 @@
     box-shadow: 0 0 2px 1px rgba(255, 0, 0, 0.9);
   }
 }
+
 
 .form-inline {
   display: inline-block;
@@ -171,19 +176,6 @@ button.multiselect {
   position: inherit;
 }
 
-.input-group {
-  input, button{
-    height: 42px;
-    border-radius: 0;
-  }
-  button {
-    border: none;
-    color: @body-bg;
-  }
-  .input-group-btn {
-    width: auto;
-  }
-}
 .template-dir-feedback .template-name-form form,
 .modal-dialog .feedback-content form,
 .modal-dialog form.dynamic-form {
@@ -246,21 +238,5 @@ button.multiselect {
     color: @link-color;
     padding-top: 8px;
     background-color: white;
-  }
-}
-
-// R2 registration form
-form.dynamic-form#R2Register,
-form.dynamic-form#R2RegisterReturningUser {
-  .form-info {
-    font-weight: initial;
-  }
-  .form-group.group-usage_purpose label,
-  .form-group.group-firstname .info.pre {
-    font-size: 16px;
-    font-weight: bold;
-  }
-  .form-group .info.post {
-    margin-top: 10px;
   }
 }

@@ -31,6 +31,8 @@
 
 namespace FinnaConsole\Command\Util;
 
+use Symfony\Component\Console\Attribute\AsCommand;
+
 /**
  * Console command: expire Finna cache records.
  *
@@ -41,6 +43,9 @@ namespace FinnaConsole\Command\Util;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
+#[AsCommand(
+    name: 'util/expire_finna_cache'
+)]
 class ExpireFinnaCacheCommand extends \VuFindConsole\Command\Util\AbstractExpireCommand
 {
     /**
@@ -56,11 +61,4 @@ class ExpireFinnaCacheCommand extends \VuFindConsole\Command\Util\AbstractExpire
      * @var string
      */
     protected $rowLabel = 'Finna cache records';
-
-    /**
-     * The name of the command (the part after "public/index.php")
-     *
-     * @var string
-     */
-    protected static $defaultName = 'util/expire_finna_cache';
 }
