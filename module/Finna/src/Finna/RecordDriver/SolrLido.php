@@ -942,27 +942,26 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $format,
         string $description
     ): array {
-        if ($mediaType = $this->supportedVideoFormats[$format] ?? false) {
-            return match ($mediaType) {
-                'text/html' => [
-                    'desc' => $description ?: false,
-                    'url' => $url,
-                    'embed' => 'iframe',
-                    'format' => $format,
+        $mediaType = $this->supportedVideoFormats[$format] ?? false;
+        return match ($mediaType) {
+            'text/html' => [
+                'desc' => $description ?: false,
+                'url' => $url,
+                'embed' => 'iframe',
+                'format' => $format,
+            ],
+            false => [],
+            default => [
+                'desc' => $description ?: false,
+                'url' => $url,
+                'embed' => 'video',
+                'format' => $format,
+                'videoSources' => [
+                    'src' => $url,
+                    'type' => $mediaType,
                 ],
-                default => [
-                    'desc' => $description ?: false,
-                    'url' => $url,
-                    'embed' => 'video',
-                    'format' => $format,
-                    'videoSources' => [
-                        'src' => $url,
-                        'type' => $mediaType,
-                    ],
-                ],
-            };
-        }
-        return [];
+            ],
+        };
     }
 
     /**
