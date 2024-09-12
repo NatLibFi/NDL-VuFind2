@@ -245,4 +245,17 @@ class User extends \VuFind\Db\Row\User implements FinnaUserEntityInterface
     {
         return $this->id;
     }
+
+    /**
+     * Get login token.
+     *
+     * @param string $userId User ID
+     *
+     * @return array
+     */
+    public function getLoginTokens(string $userId): array
+    {
+        $tokenTable = $this->getDbTable('LoginToken');
+        return $tokenTable->getByUserId($userId);
+    }
 }
