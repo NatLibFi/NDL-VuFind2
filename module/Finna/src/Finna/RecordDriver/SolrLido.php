@@ -143,8 +143,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      */
     protected $supportedVideoFormats = [
         'mp4' => 'video/mp4',
+        'video/mp4' => 'video/mp4',
         'mov' => 'video/quicktime',
-        'text/html' => 'iframe',
+        'video/quicktime' => 'video/quicktime',
+        'text/html' => 'text/html',
     ];
 
     /**
@@ -942,7 +944,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     ): array {
         if ($codec = $this->supportedVideoFormats[$format] ?? false) {
             return match ($codec) {
-                'iframe' => [
+                'text/html' => [
                     'desc' => $description ?: false,
                     'url' => $url,
                     'embed' => 'iframe',
