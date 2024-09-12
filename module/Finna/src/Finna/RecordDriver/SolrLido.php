@@ -942,8 +942,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $format,
         string $description
     ): array {
-        if ($codec = $this->supportedVideoFormats[$format] ?? false) {
-            return match ($codec) {
+        if ($mediaType = $this->supportedVideoFormats[$format] ?? false) {
+            return match ($mediaType) {
                 'text/html' => [
                     'desc' => $description ?: false,
                     'url' => $url,
@@ -957,7 +957,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                     'format' => $format,
                     'videoSources' => [
                         'src' => $url,
-                        'type' => $codec,
+                        'type' => $mediaType,
                     ],
                 ],
             };
