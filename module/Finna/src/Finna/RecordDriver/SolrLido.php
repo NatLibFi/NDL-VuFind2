@@ -143,6 +143,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      */
     protected $supportedVideoFormats = [
         'mp4' => 'video/mp4',
+        'text/html' => 'iframe',
     ];
 
     /**
