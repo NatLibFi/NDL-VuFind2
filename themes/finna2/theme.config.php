@@ -57,7 +57,7 @@ return [
             'Finna\View\Helper\Root\RecordImage' => 'Finna\View\Helper\Root\RecordImageFactory',
             'Finna\View\Helper\Root\RecordLink' => 'Finna\View\Helper\Root\RecordLinkFactory',
             'Finna\View\Helper\Root\RecordLinker' => 'Finna\View\Helper\Root\RecordLinkerFactory',
-            'Finna\View\Helper\Root\ResultFeed' => 'VuFind\View\Helper\Root\ResultFeedFactory',
+            'Finna\View\Helper\Root\ResultFeed' => 'Finna\View\Helper\Root\ResultFeedFactory',
             'Finna\View\Helper\Root\ScriptSrc' => 'Finna\View\Helper\Root\HelperWithThemeInfoFactory',
             'Finna\View\Helper\Root\Search' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\SearchBox' => 'VuFind\View\Helper\Root\SearchBoxFactory',
