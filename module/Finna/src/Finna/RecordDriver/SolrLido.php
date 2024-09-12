@@ -951,7 +951,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 default => [
                     'desc' => $description ?: false,
                     'url' => $url,
-                    'embed' => $codec !== 'iframe' ? 'video' : 'iframe',
+                    'embed' => 'video',
                     'format' => $format,
                     'videoSources' => [
                         'src' => $url,
