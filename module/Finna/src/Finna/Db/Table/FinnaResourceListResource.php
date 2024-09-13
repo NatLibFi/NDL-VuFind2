@@ -182,7 +182,7 @@ class FinnaResourceListResource extends \VuFind\Db\Table\Gateway
     /**
      * Get records for a list.
      *
-     * @param FinnaResourceListEntityInterface $listId ID of list to retrieve.
+     * @param FinnaResourceListEntityInterface $list List entity
      *
      * @return \Laminas\Db\ResultSet\AbstractResultSet
      */

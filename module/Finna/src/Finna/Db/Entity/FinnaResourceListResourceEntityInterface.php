@@ -1,5 +1,29 @@
 <?php
 
+/**
+ * Finna resource list resource entity interface.
+ *
+ * PHP version 8
+ *
+ * Copyright (C) The National Library of Finland 2024.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2,
+ * as published by the Free Software Foundation.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * @category VuFind
+ * @package  Finna_Db
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://vufind.org/wiki/development Wiki
+ */
+
 namespace Finna\Db\Entity;
 
 use DateTime;
@@ -7,6 +31,15 @@ use VuFind\Db\Entity\EntityInterface;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 
+/**
+ * Finna resource list resource entity interface.
+ *
+ * @category VuFind
+ * @package  Finna_Db
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://vufind.org/wiki/development Wiki
+ */
 interface FinnaResourceListResourceEntityInterface extends EntityInterface
 {
     /**
@@ -19,7 +52,7 @@ interface FinnaResourceListResourceEntityInterface extends EntityInterface
     /**
      * Resource ID setter
      *
-     * @param ResourceEntityInterface $id Resource ID
+     * @param ResourceEntityInterface $resource Resource entity
      *
      * @return FinnaResourceListResourceEntityInterface
      */
@@ -42,7 +75,7 @@ interface FinnaResourceListResourceEntityInterface extends EntityInterface
     /**
      * Set list id
      *
-     * @param FinnaResourceListEntityInterface $listId Id of list
+     * @param FinnaResourceListEntityInterface $list List entity
      *
      * @return FinnaResourceListResourceEntityInterface
      */
@@ -67,7 +100,7 @@ interface FinnaResourceListResourceEntityInterface extends EntityInterface
     /**
      * Data setter
      *
-     * @param string $data Data
+     * @param string $note Note
      *
      * @return FinnaResourceListResourceEntityInterface
      */

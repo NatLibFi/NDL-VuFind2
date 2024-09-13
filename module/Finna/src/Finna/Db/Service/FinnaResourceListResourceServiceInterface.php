@@ -1,5 +1,29 @@
 <?php
 
+/**
+ * Finna resource list resource service interface.
+ *
+ * PHP version 8
+ *
+ * Copyright (C) The National Library of Finland 2024.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2,
+ * as published by the Free Software Foundation.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * @category VuFind
+ * @package  FinnaResourceList
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://vufind.org/wiki/development Wiki
+ */
+
 namespace Finna\Db\Service;
 
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
@@ -10,6 +34,15 @@ use VuFind\Db\Entity\UserListEntityInterface;
 use VuFind\Db\Entity\UserResourceEntityInterface;
 use VuFind\Db\Service\DbServiceInterface;
 
+/**
+ * Finna resource list resource service interface.
+ *
+ * @category VuFind
+ * @package  FinnaResourceList
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://vufind.org/wiki/development Wiki
+ */
 interface FinnaResourceListResourceServiceInterface extends DbServiceInterface
 {
     /**
@@ -58,11 +91,11 @@ interface FinnaResourceListResourceServiceInterface extends DbServiceInterface
     /**
      * Unlink rows for the specified resource.
      *
-     * @param int|int[]|null                       $resourceId ID (or array of IDs) of resource(s) to unlink (null for ALL
-     *                                                         matching resources)
+     * @param int|int[]|null                       $resourceId ID (or array of IDs) of resource(s) to unlink
+     *                                                         (null for ALL matching resources)
      * @param UserEntityInterface|int              $userOrId   ID or entity representing user removing links
-     * @param FinnaResourceListEntityInterface|int $listOrId   ID or entity representing list to unlink (null for ALL
-     * matching lists)
+     * @param FinnaResourceListEntityInterface|int $listOrId   ID or entity representing list to unlink
+     *                                                         (null for ALL matching lists)
      *
      * @return void
      */
@@ -99,7 +132,11 @@ interface FinnaResourceListResourceServiceInterface extends DbServiceInterface
     /**
      * Get resources for a reservation list
      *
-     * @param FinnaResourceListEntityInterface $list
+     * @param UserEntityInterface              $user   User entity
+     * @param FinnaResourceListEntityInterface $list   List entity
+     * @param string|null                      $sort   Sort order
+     * @param int                              $offset Offset
+     * @param int|null                         $limit  Limit
      *
      * @return array
      */

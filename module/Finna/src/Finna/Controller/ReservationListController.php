@@ -61,8 +61,8 @@ class ReservationListController extends AbstractBase
     /**
      * Constructor
      *
-     * @param ServiceLocatorInterface           $sm                  Service locator
-     * @param ReservationListService $reservationListService Reservation list service
+     * @param ServiceLocatorInterface $sm                     Service locator
+     * @param ReservationListService  $reservationListService Reservation list service
      */
     public function __construct(
         ServiceLocatorInterface $sm,
@@ -107,6 +107,8 @@ class ReservationListController extends AbstractBase
         }
 
         $view = $this->createViewModel();
+        $view->organisation = $this->getParam('organisation');
+        $view->listIdentifier = $this->getParam('listIdentifier');
         $recordId = $this->getParam('recordId');
         $source = $this->getParam('source');
         $newList = $this->getParam('newList');
@@ -129,7 +131,6 @@ class ReservationListController extends AbstractBase
             $params['datasource'] = $driver->getDataSource();
             $params['building'] = $driver->getBuildings()[0] ?? '';
             if ('saveList' === $state) {
-
                 if (!$title) {
                     $this->flashMessenger()->addErrorMessage('inventory_list_missing_title');
                     $view->setTemplate('reservationlist/add-list');
@@ -139,7 +140,7 @@ class ReservationListController extends AbstractBase
                 }
 
                 $list = $this->reservationListService->createListForUser(
-                    $this->getUser(),
+                    $this->getUser()
                 );
                 $this->reservationListService->updateListFromRequest($list, $user, new Parameters($params));
             } elseif ('saveItem' === $state) {
@@ -160,8 +161,9 @@ class ReservationListController extends AbstractBase
             $driver->getSourceIdentifier(),
             $driver->getDataSource()
         );
-        var_dump(count($view->lists));
+
         $view->setTemplate('reservationlist/select-list');
+
         return $view;
     }
 
@@ -180,12 +182,13 @@ class ReservationListController extends AbstractBase
         // Try to open the list page, if the list is not found, redirect to home.
         try {
             $results = $this->getListAsResults($request);
-            $currentList = $this->reservationListService->getAndRememberListObject($request['id'], $user);
+            $list = $this->reservationListService->getResourceListAsFormattedArray($request['id']);
+
             $viewParams = [
-                'list' => $currentList,
+                'list' => $list,
                 'results' => $results,
                 'params' => $results->getParams(),
-                'enabled' => $this->listsEnabledForDatasource($currentList['datasource']),
+                'enabled' => $this->listsEnabledForDatasource($list['datasource']),
             ];
             try {
                 return $this->createViewModel($viewParams);
@@ -268,8 +271,8 @@ class ReservationListController extends AbstractBase
         $handler->setListId($listId);
         $success = $handler->handle($form, $this->params(), $user);
         if ($success) {
-            $this->flashMessenger()->addSuccessMessage('FinnaResourceList::form_response');
-            $this->reservationListService->setOrdered($user, $listId, $request['pickup_date'] ?? '');
+            $this->flashMessenger()->addSuccessMessage('ReservationList::form_response');
+            $this->reservationListService->updateListFromRequest($user, $listId, $request['pickup_date'] ?? '');
             return $this->inLightbox()  // different behavior for lightbox context
                 ? $this->getRefreshResponse()
                 : $this->redirect()->toRoute('reservationlist-list', ['id' => $listId]);
@@ -310,7 +313,7 @@ class ReservationListController extends AbstractBase
             $listID,
             $this->url()->fromRoute('reservationlist-delete'),
             $this->url()->fromRoute('reservationlist-home'),
-            'FinnaResourceList::confirm_delete_list',
+            'ReservationList::confirm_delete_list',
             [],
             ['id' => $listID]
         );
@@ -336,7 +339,7 @@ class ReservationListController extends AbstractBase
         }
         if ($this->getParam('confirm')) {
             try {
-                $this->reservationListService->deleteItems($ids, $listID, $user);
+                $this->reservationListService->deleteResourcesFromList($ids, $listID, $user);
             } catch (LoginRequiredException | ListPermissionException $e) {
                 $user = $this->getUser();
                 if ($user == false) {
@@ -354,7 +357,7 @@ class ReservationListController extends AbstractBase
             $listID,
             $this->url()->fromRoute('reservationlist-deletebulk'),
             $this->url()->fromRoute('reservationlist-home'),
-            'FinnaResourceList::confirm_delete_bulk',
+            'ReservationList::confirm_delete_bulk',
             [],
             [
                 'listID' => $listID,
@@ -379,7 +382,7 @@ class ReservationListController extends AbstractBase
         $id,
         $url,
         $fallbackUrl,
-        $title = 'FinnaResourceList::confirm_delete',
+        $title = 'ReservationList::confirm_delete',
         $messages = 'confirm_delete',
         $extras = []
     ) {

@@ -740,7 +740,6 @@ $config = [
             'form_handler' => [
                 'factories' => [
                     'Finna\Form\Handler\Api' => 'Finna\Form\Handler\ApiFactory',
-                    'Finna\Form\Handler\Database' => 'Finna\Form\Handler\DatabaseFactory',
                     'Finna\Form\Handler\Email' => 'VuFind\Form\Handler\EmailFactory',
                     \Finna\Form\Handler\FinnaResourceListEmail::class => \Finna\Form\Handler\FinnaResourceListEmailFactory::class,
                 ],

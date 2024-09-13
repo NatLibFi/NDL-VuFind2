@@ -1,0 +1,38 @@
+<!-- START of: -->
+<?php if (empty($this->lists)) {
+return;
+} ?>
+
+<?php
+  $user = $this->auth()->getManager()->getUserObject();
+  $listsContainingRecord = $this->reservationList()->getListsContainingRecord(
+      $this->driver,
+      $user,
+      $this->driver->getSourceIdentifier()
+  );
+?>
+
+<div class="archive-request-table table record-holdings-url-table">
+    <div class="headers">
+      <span class="holdings-url-title"><?=$this->transEsc('ReservationList::Add Resource to a Reservation List')?></span>
+    </div>
+    <?php foreach ($this->lists as $organisation => $lists): ?>
+      <?php foreach ($lists as $list): ?>
+        <?php $translationKeys = $this->reservationList()->getListTranslations($organisation, $list); ?>
+        <div class="reservation-list-wrapper">
+          <div class="reservation-list-description"><?= $this->transEsc(['ReservationList', $translationKeys['description']]); ?>: 
+            <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-additem', [], ['query' => ['recordId' => $this->driver->getUniqueID(), 'source' => $this->driver->getSourceIdentifier(), 'organisation' => $organisation, 'listIdentifier' => $list['Identifier']]]))?>" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?= $this->icon('save') . ' ' . $this->transEsc(['ReservationList', 'Add To Reservation List'])?></a>
+          </div>
+        </div>
+      <?php endforeach; ?>
+    <?php endforeach; ?>
+    <?php if ($user && $listsContainingRecord): ?>
+    <div class="saved-reservation-lists alert-info">
+      <strong><?=$this->transEsc('Saved in')?>:</strong><br/>
+      <?php foreach ($listsContainingRecord as $list): ?>
+        <?= $list['title']; ?><br/>
+      <?php endforeach; ?>
+    </div>
+  <?php endif; ?>
+</div>
+<!-- END of: -->

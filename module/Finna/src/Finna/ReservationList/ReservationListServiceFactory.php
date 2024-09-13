@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Record
+ * @package  ReservationList
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
@@ -29,7 +29,6 @@
 
 namespace Finna\ReservationList;
 
-use Finna\ReservationList\ReservationListService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 
@@ -37,7 +36,7 @@ use Psr\Container\ContainerInterface;
  * Reservation list service factory.
  *
  * @category VuFind
- * @package  FinnaResourceList
+ * @package  ReservationList
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
@@ -47,9 +46,9 @@ class ReservationListServiceFactory implements FactoryInterface
     /**
      * Create a FinnaResourceListService object.
      *
-     * @param ContainerInterface $sm      Service manager
-     * @param string             $name    Service being created
-     * @param array              $options Extra options (optional)
+     * @param ContainerInterface $container Service manager
+     * @param string             $name      Service being created
+     * @param array              $options   Extra options (optional)
      *
      * @return ReservationListService
      */

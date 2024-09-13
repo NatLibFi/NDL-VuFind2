@@ -30,16 +30,14 @@
 namespace Finna\ReservationList;
 
 use DateTime;
+use Finna\Db\Entity\FinnaResourceListEntityInterface;
+use Finna\Db\Service\FinnaResourceListResourceServiceInterface;
+use Finna\Db\Service\FinnaResourceListServiceInterface;
 use Laminas\Session\Container;
 use Laminas\Stdlib\Parameters;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
-use Finna\Db\Entity\FinnaResourceListEntityInterface;
-use VuFind\Db\Service\Feature\TransactionInterface;
 use VuFind\Db\Service\ResourceServiceInterface;
-use VuFind\Db\Service\ResourceTagsServiceInterface;
-use VuFind\Db\Service\UserListServiceInterface;
-use VuFind\Db\Service\UserResourceServiceInterface;
 use VuFind\Db\Service\UserServiceInterface;
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\LoginRequired as LoginRequiredException;
@@ -49,13 +47,9 @@ use VuFind\Record\Cache as RecordCache;
 use VuFind\Record\Loader as RecordLoader;
 use VuFind\Record\ResourcePopulator;
 use VuFind\RecordDriver\AbstractBase as RecordDriver;
+use VuFind\RecordDriver\DefaultRecord;
 use VuFind\Tags\TagsService;
-use Finna\Db\Service\FinnaResourceListServiceInterface;
-use Finna\Db\Service\FinnaResourceListResourceService;
-use Finna\Db\Service\FinnaResourceListResourceServiceInterface;
 
-use function count;
-use function func_get_args;
 use function intval;
 
 /**
@@ -74,23 +68,19 @@ class ReservationListService implements TranslatorAwareInterface
     /**
      * Constructor
      *
-     * @param FinnaResourceListServiceInterface                 $resourceListServiceInterface         Resource list database service
-     * @param FinnaResourceListResourceServiceInterface         $resourceListResourceServiceInterface Resource list database service
-     * @param ResourceServiceInterface                          $resourceService                      Resource database service
-     * @param ResourceTagsServiceInterface&TransactionInterface $resourceTagsService                  Resource tags database service
-     * @param UserListServiceInterface                          $userListService                      UserList database service
-     * @param UserResourceServiceInterface                      $userResourceService                  UserResource database service
-     * @param UserServiceInterface                              $userService                          User database service
-     * @param ResourcePopulator                                 $resourcePopulator                    Resource populator service
-     * @param TagsService                                       $tagsService                          Tags service
-     * @param RecordLoader                                      $recordLoader                         Record loader
-     * @param ?RecordCache                                      $recordCache                          Record cache (optional)
-     * @param ?Container                                        $session                              Session container for remembering
-     *                                                                                                state (optional)
+     * @param FinnaResourceListServiceInterface         $resourceListService         Resource list database service
+     * @param FinnaResourceListResourceServiceInterface $resourceListResourceService Resource list database service
+     * @param ResourceServiceInterface                  $resourceService             Resource database service
+     * @param UserServiceInterface                      $userService                 User database service
+     * @param ResourcePopulator                         $resourcePopulator           Resource populator service
+     * @param RecordLoader                              $recordLoader                Record loader
+     * @param ?RecordCache                              $recordCache                 Record cache (optional)
+     * @param ?Container                                $session                     Session container for remembering
+     *                                                                               state (optional)
      */
     public function __construct(
-        protected FinnaResourceListServiceInterface $resourceListServiceInterface,
-        protected FinnaResourceListResourceServiceInterface $resourceListResourceServiceInterface,
+        protected FinnaResourceListServiceInterface $resourceListService,
+        protected FinnaResourceListResourceServiceInterface $resourceListResourceService,
         protected ResourceServiceInterface $resourceService,
         protected UserServiceInterface $userService,
         protected ResourcePopulator $resourcePopulator,
@@ -114,8 +104,9 @@ class ReservationListService implements TranslatorAwareInterface
             throw new LoginRequiredException('Log in to create lists.');
         }
 
-        return $this->resourceListServiceInterface->createEntity()
-            ->setUser($user);
+        return $this->resourceListService->createEntity()
+            ->setUser($user)
+            ->setCreated(new DateTime());
     }
 
     /**
@@ -139,8 +130,8 @@ class ReservationListService implements TranslatorAwareInterface
 
         // Remove user_resource and resource_tags rows for favorites tags:
         $listUser = $list->getUser();
-        $this->resourceListResourceServiceInterface->unlinkFavorites(null, $listUser, $list);
-        $this->resourceListServiceInterface->deleteFinnaResourceList($list);
+        $this->resourceListResourceService->unlinkFavorites(null, $listUser, $list);
+        $this->resourceListService->deleteFinnaResourceList($list);
     }
 
     /**
@@ -177,7 +168,7 @@ class ReservationListService implements TranslatorAwareInterface
                 ->setTitle($this->translate('default_list_title'));
             $this->saveListForUser($list, $user);
         } else {
-            $list = $this->resourceListServiceInterface->getResourceListById($listId);
+            $list = $this->resourceListService->getResourceListById($listId);
             // Validate incoming list ID:
             if (!$this->userCanEditList($user, $list)) {
                 throw new \VuFind\Exception\ListPermission('Access denied.');
@@ -262,7 +253,7 @@ class ReservationListService implements TranslatorAwareInterface
 
         // Remove Resource and related tags:
         $listUser = $list->getUser();
-        $this->resourceListResourceServiceInterface->unlinkFavorites($resourceIDs, $listUser, $list);
+        $this->resourceListResourceService->unlinkFavorites($resourceIDs, $listUser, $list);
     }
 
     /**
@@ -286,28 +277,16 @@ class ReservationListService implements TranslatorAwareInterface
         foreach ($resources as $current) {
             $resourceIDs[] = $current->getId();
         }
-        $this->resourceListResourceServiceInterface->unlinkFavorites($resourceIDs, $user->getId(), null);
-    }
-
-    /**
-     * Legacy name for saveRecordToFavorites()
-     *
-     * @return array
-     *
-     * @deprecated Use saveRecordToFavorites()
-     */
-    public function save()
-    {
-        return $this->saveRecordToFavorites(...func_get_args());
+        $this->resourceListResourceService->unlinkFavorites($resourceIDs, $user->getId(), null);
     }
 
     /**
      * Add/update a resource in the user's account.
      *
-     * @param UserEntityInterface|int              $userOrId        The user entity or ID saving the favorites
-     * @param ResourceEntityInterface|int          $resourceOrId    The resource entity or ID to add/update
-     * @param FinnaResourceListEntityInterface|int $listOrId        The list entity or ID to store the resource in.
-     * @param string                               $notes           User notes about the resource.
+     * @param UserEntityInterface|int              $userOrId     The user entity or ID saving the favorites
+     * @param ResourceEntityInterface|int          $resourceOrId The resource entity or ID to add/update
+     * @param FinnaResourceListEntityInterface|int $listOrId     The list entity or ID to store the resource in.
+     * @param string                               $notes        User notes about the resource.
      *
      * @return void
      */
@@ -325,11 +304,11 @@ class ReservationListService implements TranslatorAwareInterface
             : $this->resourceService->getResourceById($resourceOrId);
         $list = $listOrId instanceof FinnaResourceListEntityInterface
             ? $listOrId
-            : $this->resourceListServiceInterface->getResourceListById($listOrId);
+            : $this->resourceListService->getResourceListById($listOrId);
 
         // Create the resource link if it doesn't exist and update the notes in any
         // case:
-        $this->resourceListResourceServiceInterface->createOrUpdateLink($resource, $user, $list, $notes);
+        $this->resourceListResourceService->createOrUpdateLink($resource, $user, $list, $notes);
     }
 
     /**
@@ -376,6 +355,12 @@ class ReservationListService implements TranslatorAwareInterface
     }
 
     /**
+     * Set reservation list ordered timestamp
+     *
+     * @param
+     */
+
+    /**
      * Saves the provided list to the database and remembers it in the session if it is valid;
      * throws an exception otherwise.
      *
@@ -395,7 +380,7 @@ class ReservationListService implements TranslatorAwareInterface
             throw new MissingFieldException('list_edit_name_required');
         }
 
-        $this->resourceListServiceInterface->persistEntity($list);
+        $this->resourceListService->persistEntity($list);
         $this->rememberLastUsedList($list);
     }
 
@@ -410,7 +395,6 @@ class ReservationListService implements TranslatorAwareInterface
      */
     public function addListTag(string $tagText, FinnaResourceListEntityInterface $list, UserEntityInterface $user): void
     {
-
     }
 
     /**
@@ -518,7 +502,7 @@ class ReservationListService implements TranslatorAwareInterface
     }
 
     /**
-     * Delete a group of favorites.
+     * Delete a group of resources.
      *
      * @param string[]            $ids    Array of IDs in source|id format.
      * @param ?int                $listID ID of list to delete from (null for all lists)
@@ -526,7 +510,7 @@ class ReservationListService implements TranslatorAwareInterface
      *
      * @return void
      */
-    public function deleteFavorites(array $ids, ?int $listID, UserEntityInterface $user): void
+    public function deleteResourcesFromList(array $ids, ?int $listID, UserEntityInterface $user): void
     {
         // Sort $ids into useful array:
         $sorted = [];
@@ -545,7 +529,7 @@ class ReservationListService implements TranslatorAwareInterface
                 $this->removeUserResourcesById($user, $ids, $source);
             }
         } else {
-            $list = $this->resourceListServiceInterface->getResourceListById($listID);
+            $list = $this->resourceListService->getResourceListById($listID);
             foreach ($sorted as $source => $ids) {
                 $this->removeListResourcesById($list, $user, $ids, $source);
             }
@@ -553,14 +537,33 @@ class ReservationListService implements TranslatorAwareInterface
     }
 
     /**
+     * Get resource list as an array containing formatted dates to be displayed in templates
+     *
+     * @param FinnaResourceListEntityInterface|int|null $listOrId List to change into an array containing
+     *                                                            keys as objects keys and values
+     *
+     * @return array<string,string|int>
+     */
+    public function getResourceListAsFormattedArray(FinnaResourceListEntityInterface|int|null $listOrId): array
+    {
+        $list = $listOrId instanceof FinnaResourceListEntityInterface
+            ? $listOrId
+            : $this->resourceListService->getFinnaResourceListById($listOrId);
+        return $list->toArray();
+    }
+
+    /**
      * Call TagsService::getUserTagsFromFavorites() and format the results for editing.
      *
      * @param UserEntityInterface|int                   $userOrId User ID to look up.
-     * @param FinnaResourceListEntityInterface|int|null $listOrId Filter for tags tied to a specific list (null for no
+     * @param FinnaResourceListEntityInterface|int|null $listOrId Filter for tags tied to a specific list
+     * (null for no
      * filter).
-     * @param ?string                                   $recordId Filter for tags tied to a specific resource (null for no
+     * @param ?string                                   $recordId Filter for tags tied to a specific resource
+     * (null for no
      *                                                            filter).
-     * @param ?string                                   $source   Filter for tags tied to a specific record source (null for
+     * @param ?string                                   $source   Filter for tags tied to a specific record
+     * source (null for
      *                                                            no filter).
      *
      * @return string
@@ -596,17 +599,41 @@ class ReservationListService implements TranslatorAwareInterface
      */
     public function getReservationListsForUser(UserEntityInterface|int $userOrId)
     {
-        return $this->resourceListServiceInterface->getResourceListsByUser($userOrId);
+        return $this->resourceListService->getResourceListsByUser($userOrId);
     }
 
+    /**
+     * Get lists not containing a specific record.
+     *
+     * @param UserEntityInterface $user     User to check for lists
+     * @param string              $recordId ID of record being checked
+     * @param string              $source   Source of record to look up
+     *
+     * @return FinnaResourceListEntityInterface[]
+     */
     public function getListsNotContainingRecord(
         UserEntityInterface $user,
         string $recordId,
         string $source = DEFAULT_SEARCH_BACKEND,
-        string $datasource = ''
     ): array {
-        return $this->resourceListServiceInterface->getListsNotContainingRecord($recordId, $source, $user);
+        return $this->resourceListService->getListsNotContainingRecord($recordId, $source, $user);
     }
 
-    
+    /**
+     * Get lists containing a specific record.
+     *
+     * @param DefaultRecord|string         $recordOrId Record or ID of record being checked.
+     * @param string                       $source     Source of record to look up
+     * @param UserEntityInterface|int|null $userOrId   Optional user ID or entity object (to limit results
+     *                                                 to a particular user).
+     *
+     * @return FinnaResourceListEntityInterface[]
+     */
+    public function getListsContainingRecord(
+        DefaultRecord|string $recordOrId,
+        string $source = DEFAULT_SEARCH_BACKEND,
+        UserEntityInterface|int|null $userOrId = null
+    ): array {
+        return $this->resourceListService->getListsContainingRecord($recordOrId, $source, $userOrId);
+    }
 }

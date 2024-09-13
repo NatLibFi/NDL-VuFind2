@@ -35,7 +35,6 @@ use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\Db\Entity\FinnaResourceListResourceEntityInterface;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\OAuth2\Entity\UserEntity;
 
 /**
  * Table Definition for finna_resource_list_resource
@@ -112,7 +111,7 @@ class FinnaResourceListResource extends \VuFind\Db\Row\RowGateway implements Fin
     /**
      * Resource ID setter
      *
-     * @param ResourceEntityInterface $id Resource ID
+     * @param ResourceEntityInterface $resource Resource entity
      *
      * @return FinnaResourceListResourceEntityInterface
      */
@@ -135,7 +134,7 @@ class FinnaResourceListResource extends \VuFind\Db\Row\RowGateway implements Fin
     /**
      * Set list id
      *
-     * @param FinnaResourceListEntityInterface $listId Id of list
+     * @param FinnaResourceListEntityInterface $list List entity
      *
      * @return FinnaResourceListResourceEntityInterface
      */
@@ -171,7 +170,7 @@ class FinnaResourceListResource extends \VuFind\Db\Row\RowGateway implements Fin
     /**
      * Data setter
      *
-     * @param string $data Data
+     * @param string $note Note
      *
      * @return FinnaResourceListResourceEntityInterface
      */

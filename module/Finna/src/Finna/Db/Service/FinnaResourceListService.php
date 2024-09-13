@@ -38,7 +38,9 @@ use VuFind\Db\Service\AbstractDbService;
 use VuFind\Db\Table\DbTableAwareInterface;
 use VuFind\Db\Table\DbTableAwareTrait;
 use VuFind\Exception\RecordMissing as RecordMissingException;
+use VuFind\RecordDriver\DefaultRecord;
 
+use function in_array;
 use function is_int;
 
 /**
@@ -50,7 +52,9 @@ use function is_int;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class FinnaResourceListService extends AbstractDbService implements DbTableAwareInterface, FinnaResourceListServiceInterface
+class FinnaResourceListService extends AbstractDbService implements
+    DbTableAwareInterface,
+    FinnaResourceListServiceInterface
 {
     use DbTableAwareTrait;
 
@@ -195,18 +199,19 @@ class FinnaResourceListService extends AbstractDbService implements DbTableAware
     /**
      * Get lists containing a specific record.
      *
-     * @param string                       $recordId ID of record being checked.
-     * @param string                       $source   Source of record to look up
-     * @param UserEntityInterface|int|null $userOrId Optional user ID or entity object (to limit results
-     * to a particular user).
+     * @param string                       $recordOrId Record or ID of record being checked.
+     * @param string                       $source     Source of record to look up
+     * @param UserEntityInterface|int|null $userOrId   Optional user ID or entity object (to limit results
+     *                                                 to a particular user).
      *
      * @return FinnaResourceListEntityInterface[]
      */
     public function getListsContainingRecord(
-        string $recordId,
+        DefaultRecord|string $recordOrId,
         string $source = DEFAULT_SEARCH_BACKEND,
         UserEntityInterface|int|null $userOrId = null
     ): array {
+        $recordId = $recordOrId instanceof DefaultRecord ? $recordOrId->getUniqueID() : $recordOrId;
         return iterator_to_array(
             $this->getDbTable(\Finna\Db\Table\FinnaResourceList::class)->getListsContainingResource(
                 $recordId,
@@ -234,14 +239,12 @@ class FinnaResourceListService extends AbstractDbService implements DbTableAware
         $listsContaining = $this->getListsContainingRecord($recordId, $source, $userOrId);
         $allLists = $this->getResourceListsByUser($userOrId);
         $ids = array_map(
-            function($obj) {
+            function ($obj) {
                 return $obj->getId();
             },
             $listsContaining
         );
-        var_dump(count($listsContaining));
-        var_dump(count($allLists));
-        return array_filter($allLists, function($obj) use ($ids) {
+        return array_filter($allLists, function ($obj) use ($ids) {
             return !in_array($obj->getId(), $ids);
         });
     }
@@ -259,7 +262,7 @@ class FinnaResourceListService extends AbstractDbService implements DbTableAware
         return $this->resourceList->userCanEditList($user, $list);
     }
 
-        /**
+    /**
      * Retrieve a list object.
      *
      * @param int $id Numeric ID for existing list.

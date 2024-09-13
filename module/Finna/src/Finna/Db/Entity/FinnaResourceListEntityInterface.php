@@ -30,6 +30,7 @@
 
 namespace Finna\Db\Entity;
 
+use DateTime;
 use VuFind\Db\Entity\EntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Exception\ListPermission as ListPermissionException;
@@ -59,6 +60,11 @@ use VuFind\Exception\MissingField as MissingFieldException;
  */
 interface FinnaResourceListEntityInterface extends EntityInterface
 {
+    /**
+     * Get the ID of the list.
+     *
+     * @return int
+     */
     public function getId(): int;
 
     /**
@@ -143,6 +149,11 @@ interface FinnaResourceListEntityInterface extends EntityInterface
      */
     public function getUserId(): int;
 
+    /**
+     * Get user entity
+     *
+     * @return UserEntityInterface
+     */
     public function getUser(): UserEntityInterface;
 
     /**
@@ -154,7 +165,7 @@ interface FinnaResourceListEntityInterface extends EntityInterface
      */
     public function setUser(UserEntityInterface $user): FinnaResourceListEntityInterface;
 
-        /**
+    /**
      * Set title.
      *
      * @param string $title Title
@@ -170,15 +181,67 @@ interface FinnaResourceListEntityInterface extends EntityInterface
      */
     public function getTitle(): string;
 
+    /**
+     * Get datasource.
+     *
+     * @return string
+     */
     public function getDataSource(): string;
 
+    /**
+     * Set datasource.
+     *
+     * @param string $dataSource Datasource
+     *
+     * @return FinnaResourceListEntityInterface
+     */
     public function setDataSource(string $dataSource): FinnaResourceListEntityInterface;
 
+    /**
+     * Get description.
+     *
+     * @return string
+     */
     public function getDescription(): string;
 
+    /**
+     * Set description.
+     *
+     * @param string $description Description
+     *
+     * @return FinnaResourceListEntityInterface
+     */
     public function setDescription(string $description = ''): FinnaResourceListEntityInterface;
 
+    /**
+     * Get building.
+     *
+     * @return string
+     */
     public function getBuilding(): string;
 
+    /**
+     * Set building.
+     *
+     * @param string $building Building
+     *
+     * @return FinnaResourceListEntityInterface
+     */
     public function setBuilding(string $building = ''): FinnaResourceListEntityInterface;
+
+    /**
+     * Created setter
+     *
+     * @param DateTime $dateTime Created date
+     *
+     * @return FinnaResourceListEntityInterface
+     */
+    public function setCreated(Datetime $dateTime): FinnaResourceListEntityInterface;
+
+    /**
+     * Created getter
+     *
+     * @return DateTime
+     */
+    public function getCreated(): DateTime;
 }

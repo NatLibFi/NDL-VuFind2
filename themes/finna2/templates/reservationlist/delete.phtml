@@ -1,6 +1,6 @@
 <?php
   // Set up page title:
-  $pageTitle = 'FinnaResourceList::Delete List';
+  $pageTitle = 'ReservationList::Delete List';
   $this->headTitle($this->translate($pageTitle));
 
   // Set up breadcrumbs:
@@ -13,6 +13,6 @@
 <h2><?=$this->transEsc($pageTitle); ?></h2>
 <form method="post" name="delete" data-lightbox-onclose="VuFind.refreshPage">
   <input type="hidden" name="id" value="<?=$this->escapeHtmlAttr($this->id)?>">
-  <button type="submit" class="btn btn-primary" value="1"><?=$this->transEsc('FinnaResourceList::Confirm')?></button>
-  <button class="btn btn-primary" data-dismiss="modal" aria-label="sulje" value="0"><?=$this->transEsc('FinnaResourceList::Cancel')?></button>
+  <button type="submit" class="btn btn-primary" value="1"><?=$this->transEsc('ReservationList::Confirm')?></button>
+  <button class="btn btn-primary" data-dismiss="modal" aria-label="sulje" value="0"><?=$this->transEsc('ReservationList::Cancel')?></button>
 </form>

@@ -1,5 +1,29 @@
 <?php
 
+/**
+ * Finna resource list resource service.
+ *
+ * PHP version 8
+ *
+ * Copyright (C) The National Library of Finland 2024.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2,
+ * as published by the Free Software Foundation.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * @category VuFind
+ * @package  FinnaResourceList
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://vufind.org/wiki/development Wiki
+ */
+
 namespace Finna\Db\Service;
 
 use Exception;
@@ -21,6 +45,15 @@ use VuFind\Db\Table\DbTableAwareTrait;
 
 use function is_int;
 
+/**
+ * Finna resource list resource service.
+ *
+ * @category VuFind
+ * @package  FinnaResourceList
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://vufind.org/wiki/development Wiki
+ */
 class FinnaResourceListResourceService extends AbstractDbService implements
     DbTableAwareInterface,
     DbServiceAwareInterface,
@@ -85,8 +118,9 @@ class FinnaResourceListResourceService extends AbstractDbService implements
         if (!$resource) {
             throw new Exception("Cannot retrieve resource $resourceOrId");
         }
-        $list = $listOrId instanceof UserListEntityInterface
-            ? $listOrId : $this->getDbService(FinnaResourceListServiceInterface::class)->getFinnaResourceListById($listOrId);
+        $list = $listOrId instanceof FinnaResourceListEntityInterface
+            ? $listOrId
+            : $this->getDbService(FinnaResourceListServiceInterface::class)->getFinnaResourceListById($listOrId);
         if (!$list) {
             throw new Exception("Cannot retrieve list $listOrId");
         }
@@ -101,6 +135,7 @@ class FinnaResourceListResourceService extends AbstractDbService implements
         ];
         if (!($result = $this->getDbTable(FinnaResourceListResource::class)->select($params)->current())) {
             $result = $this->createEntity()
+                ->setUser($user)
                 ->setResource($resource)
                 ->setList($list);
         }
@@ -169,7 +204,11 @@ class FinnaResourceListResourceService extends AbstractDbService implements
     /**
      * Get resources for a reservation list
      *
-     * @param FinnaResourceListEntityInterface $list
+     * @param UserEntityInterface                   $user   User entity
+     * @param FinnaResourceListEntityInterface|null $list   List entity
+     * @param string|null                           $sort   Sort order
+     * @param int                                   $offset Offset
+     * @param int|null                              $limit  Limit
      *
      * @return array
      */

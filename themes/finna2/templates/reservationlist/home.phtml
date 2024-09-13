@@ -1,11 +1,11 @@
 <!-- START of: finna - myresearch/FinnaResourceList.phtml -->
 <?php
-  $title = $this->transEsc('FinnaResourceList::Research Room Reservations');
+  $title = $this->transEsc('ReservationList::Research Room Reservations');
   // Set up page title:
   $this->headTitle($title);
 
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('reservationlist-home') . '">' . $title . '</a></li> <li class="active">' . $this->transEsc('FinnaResourceList::Reservation List') . '</li>';
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('reservationlist-home') . '">' . $title . '</a></li> <li class="active">' . $this->transEsc('ReservationList::Reservation List') . '</li>';
 ?>
 
 <!-- Leftside navigationbar -->
@@ -20,9 +20,9 @@
       <li>
         <a href="<?= $this->url('reservationlist-list', ['id' => $list['id']])?>"><?= $this->escapeHtml($list['title']) ?></a>
         <span class="list-info pull-right">
-          <?php if ($list['created_formatted'] ?? false): ?><span class="list-created"><?= $this->transEsc('FinnaResourceList::list_created', ['%%date%%' => $list['created_formatted']])?></span><?php endif; ?>
-          <?php if ($list['ordered_formatted'] ?? false): ?><span class="list-ordered"><?= $this->transEsc('FinnaResourceList::list_ordered', ['%%date%%' => $list['ordered_formatted']])?></span><?php endif; ?>
-          <a href="<?= $this->url('reservationlist-delete', ['id' => $list['id']])?>" data-lightbox=""><?= $this->transEsc('FinnaResourceList::Delete List') ?></a>
+          <?php if ($list['created_formatted'] ?? false): ?><span class="list-created"><?= $this->transEsc('ReservationList::list_created', ['%%date%%' => $list['created_formatted']])?></span><?php endif; ?>
+          <?php if ($list['ordered_formatted'] ?? false): ?><span class="list-ordered"><?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $list['ordered_formatted']])?></span><?php endif; ?>
+          <a href="<?= $this->url('reservationlist-delete', ['id' => $list['id']])?>" data-lightbox=""><?= $this->transEsc('ReservationList::Delete List') ?></a>
         </span>
       </li>
       <?php endforeach; ?>

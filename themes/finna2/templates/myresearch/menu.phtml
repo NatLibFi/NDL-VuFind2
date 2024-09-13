@@ -129,7 +129,7 @@
       'reservationlist' => [
         'active' => $reservationListOpen,
         'url' => 'reservationlist-home',
-        'translation' => 'FinnaResourceList::Research Room Reservations',
+        'translation' => 'ReservationList::Reservation Lists',
         'show' => $this->userlist()->getMode() !== 'disabled' && $this->reservationList()->getReservationListsForUser($user),
         'partial' => [
           'url' => 'reservationlist/reservationlist-navi.phtml',

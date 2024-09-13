@@ -30,13 +30,13 @@
 
 namespace Finna\Db\Row;
 
+use DateTime;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Laminas\Session\Container;
-use VuFind\Db\Row\RowGateway;
 use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\Db\Row\RowGateway;
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\MissingField as MissingFieldException;
-use DateTime;
 
 /**
  * Row Definition for finna_resource_list
@@ -60,7 +60,9 @@ use DateTime;
  * @property string $pickup_date
  * @property string $handler
  */
-class FinnaResourceList extends RowGateway implements \VuFind\Db\Service\DbServiceAwareInterface, FinnaResourceListEntityInterface
+class FinnaResourceList extends RowGateway implements
+    \VuFind\Db\Service\DbServiceAwareInterface,
+    FinnaResourceListEntityInterface
 {
     use \VuFind\Db\Table\DbTableAwareTrait;
     use \VuFind\Db\Service\DbServiceAwareTrait;
@@ -77,21 +79,31 @@ class FinnaResourceList extends RowGateway implements \VuFind\Db\Service\DbServi
         parent::__construct('id', 'finna_resource_list', $adapter);
     }
 
+    /**
+     * Get the ID of the list.
+     *
+     * @return int
+     */
     public function getId(): int
     {
         return $this->id;
     }
 
-        /**
-         * Get user id
-         *
-         * @return int
-         */
+    /**
+     * Get user id
+     *
+     * @return int
+     */
     public function getUserId(): int
     {
         return $this->user_id;
     }
 
+    /**
+     * Get user
+     *
+     * @return UserEntityInterface
+     */
     public function getUser(): UserEntityInterface
     {
         return $this->getDbService(\VuFind\Db\Service\UserServiceInterface::class)->getUserById($this->user_id);
@@ -109,35 +121,71 @@ class FinnaResourceList extends RowGateway implements \VuFind\Db\Service\DbServi
         $this->user_id = $user->getId();
         return $this;
     }
-    
+
+    /**
+     * Get title.
+     *
+     * @return string
+     */
     public function getTitle(): string
     {
         return $this->title;
     }
 
+    /**
+     * Set title.
+     *
+     * @param string $title Title
+     *
+     * @return FinnaResourceListEntityInterface
+     */
     public function setTitle(string $title): FinnaResourceListEntityInterface
     {
         $this->title = $title;
         return $this;
     }
 
+    /**
+     * Get datasource.
+     *
+     * @return string
+     */
     public function getDataSource(): string
     {
         return $this->datasource;
     }
 
+    /**
+     * Set datasource.
+     *
+     * @param string $dataSource Datasource
+     *
+     * @return FinnaResourceListEntityInterface
+     */
     public function setDataSource(string $dataSource): FinnaResourceListEntityInterface
     {
         $this->datasource = $dataSource;
         return $this;
     }
 
+    /**
+     * Set building
+     *
+     * @param string $building Building
+     *
+     * @return FinnaResourceListEntityInterface
+     */
     public function setBuilding(string $building = ''): FinnaResourceListEntityInterface
     {
         $this->building = $building;
         return $this;
     }
 
+    /**
+     * Get building
+     *
+     * @return string
+     */
     public function getBuilding(): string
     {
         return $this->building;
@@ -180,12 +228,24 @@ class FinnaResourceList extends RowGateway implements \VuFind\Db\Service\DbServi
         $this->pickup_date = $pickup_date;
         return $this->save($user);
     }
-    
+
+    /**
+     * Get description.
+     *
+     * @return string
+     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
+    /**
+     * Set description.
+     *
+     * @param string $description Description
+     *
+     * @return FinnaResourceListEntityInterface
+     */
     public function setDescription(string $description = ''): FinnaResourceListEntityInterface
     {
         $this->description = $description;
