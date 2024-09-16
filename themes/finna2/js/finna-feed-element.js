@@ -59,12 +59,11 @@ class FinnaFeedElement extends HTMLElement {
   setTitleBottom(settings) {
     // Move title field below image
     let maxH = 0;
-    this.querySelectorAll('.carousel-slide-header').forEach(el => {
-      el.classList.add('carousel-slide-header-bottom');
+    this.querySelectorAll('.carousel-slide-header p').forEach(el => {
+      el.classList.add('title-bottom');
       maxH = Math.max(maxH, el.getBoundingClientRect().height);
     });
     this.querySelectorAll('.carousel-slide-header p').forEach(el => {
-      el.classList.add('title-bottom');
       el.style.minHeight = el.style.height = `${maxH}px`;
     });
     this.querySelectorAll('.carousel-feed .carousel-text').forEach(el => {

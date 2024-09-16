@@ -6,6 +6,7 @@
   $hasImg = !empty($item['image']['url']);
   $noText = empty($item['text']);
   $displayFormatHeader = $item['displayFormatHeader'];
+  $titleBottom = ($item['titlePosition'] === 'bottom');
 ?>
 <?php if ($hasIcon && $hasImg): ?>
   <?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon'], 'wrapper' => true]);?>
@@ -50,7 +51,7 @@
   </div>
 <?php endif; ?>
 <?php if (isset($item['title']) || isset($item['dateFull'])): ?>
-  <div class="carousel-slide-header">
+  <div class="carousel-slide-header <?php if ($titleBottom): ?>carousel-slide-header-bottom<?php endif; ?>">
     <p>
       <?php if ($hasIcon && !$hasImg): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?>
       <?php if (isset($item['title'])): ?>
