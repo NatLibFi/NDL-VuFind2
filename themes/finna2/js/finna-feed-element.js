@@ -62,7 +62,6 @@ class FinnaFeedElement extends HTMLElement {
     this.querySelectorAll('.carousel-slide-header p').forEach(el => {
       el.classList.add('title-bottom');
       maxH = Math.max(maxH, el.getBoundingClientRect().height);
-
     });
     this.querySelectorAll('.carousel-slide-header p').forEach(el => {
       el.style.minHeight = el.style.height = `${maxH}px`;

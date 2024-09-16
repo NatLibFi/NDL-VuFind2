@@ -835,7 +835,11 @@ finna-feed.carousel.splide--ltr {
         .carousel-slide-header {
             display: flex;
             flex-direction: column;
-            position: relative;
+            position: absolute;
+            bottom: 0;
+            &.carousel-slide-header-bottom {
+                position: relative;
+            }
             p {
                 .carousel-header-title {
                     display: block;
