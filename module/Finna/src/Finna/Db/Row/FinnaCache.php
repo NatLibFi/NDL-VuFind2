@@ -147,7 +147,7 @@ class FinnaCache extends \VuFind\Db\Row\RowGateway implements FinnaCacheEntityIn
      */
     public function setData(string $data): FinnaCacheEntityInterface
     {
-        $this->data = $data;
+        $this->__set('data', $data);
         return $this;
     }
 
