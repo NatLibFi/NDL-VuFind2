@@ -1,0 +1,47 @@
+<!-- START of: finna - RecordTab/controls/sort.phtml -->
+<?php $list = $this->sortList ? $this->sortList : $this->params->getSortList();
+if (empty($list)) {
+  return;
+}?>
+<div class="sort-option-container">
+  <span class="hidden-sm hidden-xs hidden-md button-label" id="sort-label"><?=$this->transEsc('Sort')?></span>
+  <span class="sr-only hidden-lg hidden-md"><?=$this->transEsc('Sort')?></span>
+  <div class="sort-button">
+    <div class="dropdown">
+      <?php $selectedFound = false; ?>
+      <?php foreach ($list as $sortType => $sortData): ?>
+        <?php if ($sortData['selected']): ?>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-label="<?= $this->transEsc('Sort') . ': ' . $this->transEsc($sortData['desc'])?>">
+            <span><?=$this->transEsc($sortData['desc'])?></span> <?=$this->icon('dropdown-open') ?>
+          </a>
+          <?php $selectedFound = true; ?>
+        <?php endif; ?>
+      <?php endforeach; ?>
+      <?php if (!$selectedFound): ?>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          <span><?=$this->transEsc('choose_from_list')?></span> <?=$this->icon('dropdown-open') ?>
+        </a>
+      <?php endif; ?>
+      <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="sort-label">
+        <?php foreach ($list as $sortType => $sortData): ?>
+        <li>
+          <a href="Results<?=isset($sortData['url']) ? $this->escapeHtmlAttr($sortData['url']) : $this->results->getUrlQuery()->setSort($sortType)?>" role="menuitem" aria-label="<?= $this->transEsc('Sort') . ': ' . $this->transEsc($sortData['desc'])?>"><?=$this->transEsc($sortData['desc'])?></a>
+        <?php endforeach; ?>
+        </li>
+      </ul>
+      <noscript><input type="submit" class="btn btn-default" value="<?=$this->transEscAttr('Set')?>"></noscript>
+    </div>
+  </div>
+</div>
+<?php // Use a hidden form for upstream JS results compatibility: ?>
+<form class="search-sort hidden" action="<?=$this->currentPath()?>" method="get" name="sort">
+  <?=$this->results->getUrlQuery()->asHiddenFields(['sort' => '/.*/', 'page' => '/.*/']);?>
+  <label for="sort_options_1"><?=$this->transEsc('Sort')?></label>
+  <select id="sort_options_1" name="sort" class="jumpMenu form-control">
+    <?php foreach ($list as $sortType => $sortData): ?>
+      <option value="<?=$this->escapeHtmlAttr($sortType)?>"<?=$sortData['selected'] ? ' selected="selected"' : ''?><?=$sortData['default'] ? ' data-default' : ''?>><?=$this->transEsc($sortData['desc'])?></option>
+    <?php endforeach; ?>
+  </select>
+  <noscript><input type="submit" class="btn btn-default" value="<?=$this->transEscAttr('Set')?>"></noscript>
+</form>
+<!-- END of: finna - RecordTab/controls/sort.phtml -->
