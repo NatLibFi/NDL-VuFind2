@@ -4,7 +4,7 @@
   if (count($viewList) <= 1) {
     return;
   }
-  $viewOptionsIcons = (!($isCollection ?? false))  && is_callable([$this->params, 'getViewOptionListType']) ? $this->params->getViewOptionListType() : null;
+  $viewOptionsIcons = (!($isCollection ?? false)) && is_callable([$this->params, 'getViewOptionListType']) ? $this->params->getViewOptionListType() : null;
 ?>
 <div class="view-option-container text-right">
   <span class="hidden-sm hidden-xs hidden-md button-label"<?php if (!$viewOptionsIcons): ?> id="show-as-label"<?php endif;?>><?=$this->transEsc('show_as')?></span>
