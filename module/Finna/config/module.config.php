@@ -632,6 +632,7 @@ $config = [
                     \Finna\Db\Service\UserListService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\UserResourceService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\UserService::class => \Finna\Db\Service\UserServiceFactory::class,
+                    \Finna\Db\Service\UserCardService::class => \Finna\Db\Service\UserCardServiceFactory::class,
                 ],
                 'aliases' => [
                     \VuFind\Db\Service\CommentsService::class => \Finna\Db\Service\CommentsService::class,
@@ -641,6 +642,7 @@ $config = [
                     \VuFind\Db\Service\UserListService::class => \Finna\Db\Service\UserListService::class,
                     \VuFind\Db\Service\UserResourceService::class => \Finna\Db\Service\UserResourceService::class,
                     \VuFind\Db\Service\UserService::class => \Finna\Db\Service\UserService::class,
+                    \VuFind\Db\Service\UserCardService::class => \Finna\Db\Service\UserCardService::class,
 
                     \Finna\Db\Service\FinnaCacheServiceInterface::class => \Finna\Db\Service\FinnaCacheService::class,
                     \Finna\Db\Service\FinnaDueDateReminderServiceInterface::class
