@@ -3,36 +3,38 @@
   // Get search results
   $results = $this->tab->getResults();
   $params = $this->tab->getParams();
-  $searchDetails = ['results' => $results, 'params' => $params, 'indexStart' => 1, 'isCollection' => $this->driver->isCollection()];
+  $searchDetails = ['results' => $results, 'params' => $params, 'indexStart' => 1, 'isCollection' => $this->driver->isCollection(), 'isCollectionTab' => true];
 ?>
+
+<div class="collection-list-controls">
+  <div class="filter-input">
+    <form class="form-inline" method="get" name="keywordFilterForm" id="keywordFilterForm">
+      <div class="input-group">
+        <input id="keywordFilter_lookfor" type="text" name="lookfor" aria-label="<?=$this->transEscAttr('Search from collection')?>" placeholder="<?=$this->transEscAttr('Search from collection')?>" value="<?=$this->escapeHtmlAttr($params->getDisplayQuery())?>" class="form-control">
+          <?php foreach ($params->getFilterList(true) as $field => $filters): ?>
+            <?php foreach ($filters as $filter): ?>
+              <input type="hidden" name="filter[]" value="<?=$this->escapeHtmlAttr($filter['field'])?>:&quot;<?=$this->escapeHtmlAttr($filter['value'])?>&quot;">
+            <?php endforeach; ?>
+          <?php endforeach; ?>
+          <input type="hidden" name="view" value="<?=$this->escapeHtmlAttr($params->getView()) ?>">
+          <input type="hidden" name="sort" value="<?=$this->escapeHtmlAttr($params->getSort()) ?>">
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="submit" name="submitButton" aria-label="<?=$this->transEsc('Search')?>">
+              <?=$this->icon('search')?>
+            </button>
+          </span>
+      </div>
+    </form>
+  </div>
+  <?=$this->render('search/controls/view.phtml', $searchDetails)?>
+  <?=$this->render('search/controls/sort.phtml', $searchDetails)?>
+</div>
+
 <div class="mainbody left">
   <?php foreach ($results->getRecommendations('top') as $current): ?>
     <?=$this->recommend($current)?>
   <?php endforeach; ?>
 
-  <div class="collection-list-controls">
-    <div class="filter-input">
-      <form class="form-inline" method="get" name="keywordFilterForm" id="keywordFilterForm">
-        <div class="input-group">
-          <input id="keywordFilter_lookfor" type="text" name="lookfor" aria-label="<?=$this->transEscAttr('Search from collection')?>" placeholder="<?=$this->transEscAttr('Search from collection')?>" value="<?=$this->escapeHtmlAttr($params->getDisplayQuery())?>" class="form-control">
-            <?php foreach ($params->getFilterList(true) as $field => $filters): ?>
-              <?php foreach ($filters as $filter): ?>
-                <input type="hidden" name="filter[]" value="<?=$this->escapeHtmlAttr($filter['field'])?>:&quot;<?=$this->escapeHtmlAttr($filter['value'])?>&quot;">
-              <?php endforeach; ?>
-            <?php endforeach; ?>
-            <input type="hidden" name="view" value="<?=$this->escapeHtmlAttr($params->getView()) ?>">
-            <input type="hidden" name="sort" value="<?=$this->escapeHtmlAttr($params->getSort()) ?>">
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="submit" name="submitButton" aria-label="<?=$this->transEsc('Search')?>">
-                <?=$this->icon('search')?>
-              </button>
-            </span>
-        </div>
-      </form>
-    </div>
-    <?=$this->render('search/controls/view.phtml', $searchDetails)?>
-    <?=$this->render('search/controls/sort.phtml', $searchDetails)?>
-  </div>
 
   <?php
     $filterList = $params->getFilterList(true);
