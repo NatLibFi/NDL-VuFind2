@@ -1,0 +1,534 @@
+//
+// Variables for Custom theme
+// --------------------------------------------------
+
+// Brand Colors
+// $brand-primary: #00a3b5 !default;
+// $brand-secondary: #B3E3E9 !default;
+// $brand-third: #d8f4ed !default;
+// $brand-fourth: #ebd4f0 !default;
+// $brand-success: #00b270 !default;
+// $brand-warning: #fff48c !default;
+// $brand-danger: #ff461e !default;
+// $brand-info: #b2e3ea !default;
+// $logo-color: #fff !default;
+
+//== Custom styling
+//== Background
+//$background-image-url: url('../images/customhomebg') !default;
+//$background-image-attachment: scroll !default;  // set to fixed or scroll (fixed doesnt scoll along with page)
+//$background-start-color: rgba(1,1,1,0.01) !default; // gradient color for background image
+//$background-end-color:  rgba(1,1,1,0.3) !default; // gradient color for background image
+//$background-start-percent: 15% !default;
+//$background-end-percent: 100% !default;
+
+//$header-height: 43px !default;
+//$navbar-logo-height: 35px !default;
+//$logo-height: 66px !default;
+//$logo-separator-color: #fff !default; // Color of hr line under main logo
+//$header-background-color: rgba(1,1,1,0.8) !default; // Color of main navigation bar top
+//$footer-background: $gray !default;
+//$footer-text-color: $body-bg !default;
+//$finna-main-header-background: $brand-secondary !default; // Color of page header background and search results tabs
+//$finna-searchbox-link-color: #fff !default; // style searchbox link text color contrast with background
+//$finna-searchbox-link-background: rgba(100,100,100,0.3) !default; // style searchbox links (advanced search etc.) background contrast with background
+//$finna-record-header-background: $gray-lighter !default;
+//$background-image-gradient: #000, #000, 55%, 30% !default;
+//$finna-text-shadow: 1px 1px 1px black !default;
+//$finna-button-radius: 10px !default; // Defines some radiuses
+//$finna-header-font-size: 1.6em !default; // Adjust header of each page
+//$record-title-font-size: 1.7em !default; // adjust record view header title size
+//$main-tabs-background-color: $brand-primary !default;
+//$main-tabs-link-color: #fff !default;
+
+//== Finna home page
+//$introduction-header: 2.7em !default;    // adjust slogan size on main page
+//$home-content-background: $body-bg !default; // Add custom background color for home main section
+//$home-1-background: $body-bg !default;
+//$home-2-background: $body-bg !default;
+//$home-3-background: $body-bg !default;
+//$home-4-background: $body-bg !default;
+//$home-left-column-background: $body-bg !default;
+//$home-right-column-background: $body-bg !default;
+//$infobox-background: $brand-third !default;
+//$infobox-border: none !default;
+//$infobox-text-color: $gray !default;
+//$infobox-box-shadow: none !default;
+
+//== Finna facets
+//$sidebar-header-text-color: #fff !default;   // adjust all sidebar headers text color
+//$sidebar-header-icon-color: #fff !default; // adjust sidebar headers icon color
+//$sidebar-background: $brand-primary !default;    // adjust all sidebar headers background
+//$facet-background:  $gray !default;  // adjust finna facet headers
+// $facet-text-color: $body-bg !default;
+// $facet-link-hover-background: rgba(1,1,1,0.05) !default;
+//$display-checkbox-facet-amount: none !default;    // set to none or inline-block (show results of online material next to selection)
+
+//== Generated carousel styles
+    //== Carousel images background-color
+//$carousel-slider-background: #000 !default;
+   //== Styling the header of carousel
+//$carousel-header-background: none !default;
+//$carousel-header-color: $gray !default;
+   //== Styling the horizontal header of each slide
+//$carousel-slide-header-background: rgba(1, 1, 1, 0.6) !default;
+//$carousel-slide-header-color: $link-color !default;
+//$carousel-slide-header-text-shadow: none !default;
+    //== Vertical slider background
+//$carousel-verticalslide-header-background: none !default;
+   //== Styling the text color and background of each slide
+//$carousel-text-background-color: rgba(1,1,1,0.75) !default;
+//$carousel-slide-text-color: rgb(255, 255, 255) !default;
+//$carousel-slide-link-color: #fdf07f !default;
+
+//== List feed styles
+//$list-feed-background: $body-bg !default;
+//$list-feed-padding: 10px !default;
+
+//== List feed header style
+//$list-feed-header-background: none !default;
+//$list-feed-header-padding: none !default;
+//$list-feed-header-color: $gray !default;
+
+
+//== Myreresearch custom styles
+//$myresearch-header-background: #b0e9db !default;
+//$myresearch-tabs-color: $gray !default;
+
+//== Scaffolding
+//
+// ## Settings for some of the most global styles.
+
+//$body-bg: #fff !default;
+//$text-color: $gray !default;
+//$link-color: $brand-primary !default; // defines all link color, also for linked icons
+//$link-hover-color: $link-color !default;
+//$link-hover-decoration: #fff !default;
+// $component-active-bg: $brand-primary !default;
+
+
+//== Typography
+//
+//## Font, line-height, and color for body text, headings, and more.
+
+//$font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, sans-serif !default;
+//$font-family-serif: PT Serif !default;
+//$font-family-monospace: Monaco !default;
+//$font-family-base: $font-family-sans-serif !default;
+//$headings-font-family: $font-family-base !default;
+//$headings-font-weight: 500 !default;
+//$headings-line-height: 1.1 !default;
+//$headings-color: inherit !default;
+
+
+//## Font size, line-height for content pages
+//$content-font-size-base: 14px !default;
+//$content-line-height-base: 1.6 !default;
+//$headings-font-weight: 700 !default;
+//$content-headings-line-height: $headings-line-height !default;
+//$content-headings-color: $gray-dark !default;
+//$content-heading-background: #f3ec7a !default;
+
+//** Global color for active items (e.g., navs or dropdowns).
+//$component-active-color:    #fff !default;
+//** Global background color for active items (e.g., navs or dropdowns).
+//$component-active-bg:       $brand-primary !default;
+
+//** Width of the `border` for generating carets that indicator dropdowns.
+//$caret-width-base:          4px !default;
+//** Carets increase slightly in size for larger components.
+//$caret-width-large:         5px !default;
+
+
+//== Tables
+//
+//## Customizes the `.table` component with basic values, each used across all table variations.
+
+
+//** Finna tables
+//$table-finna-record-cell-padding:  3px 0px !default;
+//** Default background color used for all tables.
+//$table-bg:                      transparent !default;
+//** Background color used for `.table-striped`.
+//$table-bg-accent:               #F7F7F7 !default;    // Defines color for striped tables used in record details and holdings
+//** Background color used for `.table-hover`.
+//$table-bg-hover:                #f5f5f5 !default;
+//$table-bg-active:               $table-bg-hover !default;
+
+//** Border color for table and cell borders.
+//$table-border-color:            transparent !default;
+
+
+//== Buttons
+//
+//## For each of Bootstrap's buttons, define text, background and border color.
+
+//$btn-default-color: #333 !default;
+//$btn-default-bg: #fff !default;
+//$btn-default-border: #ccc !default;
+//$btn-primary-color: #fff !default;    // search button text and icon color
+//$btn-primary-bg: $link-color !default;  // search button background
+//$btn-primary-border: darken($btn-primary-bg, 0%) !default;
+//$btn-success-color: #fff !default;
+//$btn-success-bg: $brand-success !default;
+//$btn-success-border: darken($btn-success-bg, 5%) !default;
+//$btn-warning-color: $gray-light !default;
+//$btn-warning-bg: $brand-warning !default;
+//$btn-warning-border: darken($btn-warning-bg, 5%) !default;
+//$btn-danger-color: #fff !default;
+//$btn-danger-bg: $brand-danger !default;
+//$btn-danger-border: darken($btn-danger-bg, 5%) !default;
+//$btn-info-color: #fff !default;
+//$btn-info-bg: $brand-info !default;
+//$btn-info-border: darken($btn-info-bg, 5%) !default;
+//$btn-link-disabled-color: $gray-light !default;
+
+//== Dropdowns
+//
+//## Dropdown menu container and contents.
+
+//$dropdown-bg: #fff !default;
+//$dropdown-border: rgba(0,0,0,.15) !default;
+//$dropdown-divider-bg: #e5e5e5 !default;
+//$dropdown-link-active-color: #fff !default;
+//$dropdown-link-active-bg: $component-active-bg !default;
+//$dropdown-link-color: $gray-dark !default;
+//$dropdown-link-hover-color: $dropdown-link-color !default;
+//$dropdown-link-hover-bg: rgba(1,1,1,0.1) !default;
+//$dropdown-link-disabled-color: $gray-light !default;
+//$dropdown-header-color: $gray-light !default;
+//$dropdown-caret-color: #000 !default;
+//$dropdown-fallback-border: none !default;
+
+//-- Z-index master list
+//
+// Warning: Avoid customizing these values. They're used for a bird's eye view
+// of components dependent on the z-axis and are designed to all work together.
+//
+// Note: These variables are not generated into the Customizer.
+
+//$zindex-navbar:            1000 !default;
+//$zindex-dropdown:          1000 !default;
+//$zindex-popover:           1010 !default;
+//$zindex-tooltip:           1030 !default;
+//$zindex-navbar-fixed:      1030 !default;
+//$zindex-modal-background:  1040 !default;
+//$zindex-modal:             1050 !default;
+
+//== Navbar
+//
+//##
+
+// Basics of a Finna navbar
+//$navbar-height:                    45px !default;
+//$navbar-margin-bottom:             0px !default;
+//$navbar-border-radius:             $border-radius-base !default;
+//$navbar-padding-horizontal:        floor(($grid-gutter-width / 2)) !default;
+//$navbar-padding-vertical:          0px !default;
+//$navbar-collapse-max-height:       auto !default;
+
+//$navbar-default-color:             #777 !default;
+//$navbar-default-bg:                #fff !default;
+//$navbar-default-border:            darken($navbar-default-bg, 6.5%) !default;
+
+// Navbar links
+//$navbar-default-link-color:                #fff !default;  // Color of link texts in navbar
+//$navbar-font-size:                         1.05em !default; // Font-size of navbar links
+//$navbar-font-weight:                       500 !default; // Font weight for navbar texts
+//$navbar-default-link-hover-color:          #333 !default;
+//$navbar-default-link-hover-bg:             transparent !default;
+//$navbar-default-link-active-color:         #555 !default;
+//$navbar-default-link-active-bg:            darken($navbar-default-bg, 6.5%) !default;
+//$navbar-default-link-disabled-color:       #ccc !default;
+//$navbar-default-link-disabled-bg:          transparent !default;
+
+// Navbar brand label
+//$navbar-default-brand-color:               $navbar-default-link-color !default;
+//$navbar-default-brand-hover-color:         darken($navbar-default-brand-color, 10%) !default;
+//$navbar-default-brand-hover-bg:            transparent !default;
+
+// Navbar toggle
+//$navbar-toggle-color:                      $navbar-default-link-color !default;
+//$navbar-default-toggle-hover-bg:           #ddd !default;
+//$navbar-default-toggle-icon-bar-bg:        #888 !default;
+//$navbar-default-toggle-border-color:       #ddd !default;
+
+
+// Inverted navbar
+// Reset inverted navbar basics
+//$navbar-inverse-color:                      $gray-light !default;
+//$navbar-inverse-bg:                         #222 !default;
+//$navbar-inverse-border:                     darken($navbar-inverse-bg, 10%) !default;
+
+// Inverted navbar links
+//$navbar-inverse-link-color:                 $gray-light !default;
+//$navbar-inverse-link-hover-color:           #fff !default;
+//$navbar-inverse-link-hover-bg:              transparent !default;
+//$navbar-inverse-link-active-color:          $navbar-inverse-link-hover-color !default;
+//$navbar-inverse-link-active-bg:             darken($navbar-inverse-bg, 10%) !default;
+//$navbar-inverse-link-disabled-color:        #444 !default;
+//$navbar-inverse-link-disabled-bg:           transparent !default;
+
+// Inverted navbar brand label
+//$navbar-inverse-brand-color:                $navbar-inverse-link-color !default;
+//$navbar-inverse-brand-hover-color:          #fff !default;
+//$navbar-inverse-brand-hover-bg:             transparent !default;
+
+// Inverted navbar toggle
+//$navbar-inverse-toggle-hover-bg:            #333 !default;
+//$navbar-inverse-toggle-icon-bar-bg:         #fff !default;
+//$navbar-inverse-toggle-border-color:        #333 !default;
+
+
+//== Navs
+//
+//##
+
+//=== Shared nav styles
+//$nav-link-padding:                          0px 15px !default;
+//$nav-link-hover-bg:                         rgba(255,255,255,0.2) !default;
+
+//$nav-disabled-link-color:                   $gray-light !default;
+//$nav-disabled-link-hover-color:             $gray-light !default;
+
+//$nav-open-link-hover-color:                 #fff !default;
+
+//== Finna record Tabs
+//$nav-tabs-background-color:                 #fff !default;
+//$nav-tabs-text-color:                       $gray !default;
+//$nav-tabs-border-color:                     $brand-secondary !default;   // this will set the background and border color of tabs in record
+//$nav-tabs-link-hover-border-color:          $brand-secondary !default;
+//$nav-tabs-link-hover-color:                 $nav-tabs-active-link-hover-color !default;
+//$tabs-border-radius:                        10px !default;
+
+//$nav-tabs-active-link-hover-bg:             $body-bg !default;
+//$nav-tabs-active-link-hover-color:          $gray !default;
+//$nav-tabs-active-link-hover-border-color:   #ddd !default;
+
+//$nav-tabs-justified-link-border-color:            #ddd !default;
+//$nav-tabs-justified-active-link-border-color:     $body-bg !default;
+
+//== Pills
+//$nav-pills-border-radius:                   $border-radius-base !default;
+//$nav-pills-active-link-hover-bg:            $component-active-bg !default;
+//$nav-pills-active-link-hover-color:         $component-active-color !default;
+
+
+//== Pagination in Finna
+//
+//##
+//$pagination-background:                $body-bg !default;
+//$pagination-color:                     $link-color !default;
+//$pagination-bg:                        $body-bg !default;
+//$pagination-border:                    transparent !default;
+
+//$pagination-hover-color:               $link-hover-color !default;
+//$pagination-hover-bg:                  #f5f5f5 !default;
+//$pagination-hover-border:              #ddd !default;
+
+//$pagination-active-color:              $gray-light !default;
+//$pagination-active-bg:                 #f5f5f5 !default;
+//$pagination-active-border:             none !default;
+
+//$pagination-disabled-color:            $gray-light !default;
+//$pagination-disabled-bg:               #fff !default;
+//$pagination-disabled-border:           transparent !default;
+
+
+//== Pager
+//
+//##
+
+//$pager-bg:                             $link-color !default;
+//$pager-border:                         $pagination-border !default;
+//$pager-border-radius:                  15px !default;
+
+//$pager-hover-bg:                       $brand-primary !default;
+
+//$pager-active-bg:                      $pagination-active-bg !default;
+//$pager-active-color:                   $pagination-active-color !default;
+
+//$pager-disabled-color:                 $pagination-disabled-color !default;
+
+
+
+//== Form states and alerts
+//
+//## Define colors for form feedback states and, by default, alerts.
+
+//$state-success-text:             #2d4821 !default;
+//$state-success-bg:               #dff0d8 !default;
+//$state-success-border:           darken(adjust-hue($state-success-bg, -10), 5%) !default;
+
+//$state-info-text:                #31708f !default;
+//$state-info-bg:                  #d9edf7 !default;
+//$state-info-border:              darken(adjust-hue($state-info-bg, -10), 7%) !default;
+
+//$state-warning-text:             #8a6d3b !default;
+//$state-warning-bg:               #fcf8e3 !default;
+//$state-warning-border:           darken(adjust-hue($state-warning-bg, -10), 5%) !default;
+
+//$state-danger-text:              #a94442 !default;
+//$state-danger-bg:                #f2dede !default;
+//$state-danger-border:            darken(adjust-hue($state-danger-bg, -10), 5%) !default;
+
+
+//== Tooltips
+//
+//##
+
+//** Tooltip max width
+//$tooltip-max-width:           200px !default;
+//** Tooltip text color
+//$tooltip-color:               $body-bg !default;
+//** Tooltip background color
+//$tooltip-bg:                  $gray-light !default;
+//$tooltip-opacity:             .9 !default;
+
+//** Tooltip arrow width
+//$tooltip-arrow-width:         5px !default;
+//** Tooltip arrow color
+//$tooltip-arrow-color:         $body-bg !default;
+//$tooltip-header-color:        $gray-light !default;
+
+//== Labels
+//
+//##
+
+//** Default label background color
+//$label-default-bg:            $gray-light !default;
+//** Primary label background color
+//$label-primary-bg:            $brand-primary !default;
+//** Success label background color
+//$label-success-bg:            $brand-success !default;
+//** Info label background color
+//$label-info-bg:               $brand-info !default;
+//** Warning label background color
+//$label-warning-bg:            $brand-warning !default;
+//** Danger label background color
+//$label-danger-bg:             $brand-danger !default;
+
+//** Default label text color
+//$label-color:                 #fff !default;
+//** Default text color of a linked label
+//$label-link-hover-color:      #fff !default;
+
+
+//== Modals
+//
+//##
+//$modal-header-background: $brand-primary !default;
+//$modal-header-color: $body-bg !default;
+//** Padding applied to the modal body
+//$modal-inner-padding:         20px !default;
+
+//** Padding applied to the modal title
+//$modal-title-padding:         15px !default;
+//** Modal title line-height
+//$modal-title-line-height:     $line-height-base !default;
+
+//** Background color of modal content area
+//$modal-content-bg:                             #fff !default;
+//** Modal content border color
+//$modal-content-border-color:                   rgba(0,0,0,.2) !default;
+//** Modal content border color **for IE8**
+//$modal-content-fallback-border-color:          #999 !default;
+
+//** Modal backdrop background color
+//$modal-backdrop-bg:           #000 !default;
+//** Modal backdrop opacity
+//$modal-backdrop-opacity:      .7 !default;
+//** Modal header border color
+//$modal-header-border-color:   #e5e5e5 !default;
+//** Modal footer border color
+//$modal-footer-border-color:   $modal-header-border-color !default;
+
+//$modal-lg:                    900px !default;
+//$modal-md:                    600px !default;
+//$modal-sm:                    300px !default;
+
+
+//== List group
+//
+//##
+
+//** Background color on `.list-group-item`
+//$list-group-bg:                 #f5f5f5 !default;
+//** `.list-group-item` border color
+//$list-group-border:             #ddd !default;
+//** List group border radius
+//$list-group-border-radius:      $border-radius-base !default;
+
+//** Background color of single list elements on hover
+//$list-group-hover-bg:           #f5f5f5 !default;
+//** Text color of active list elements
+//$list-group-active-color:       $component-active-color !default;
+//** Background color of active list elements
+//$list-group-active-bg:          $component-active-bg !default;
+//** Border color of active list elements
+//$list-group-active-border:      $list-group-active-bg !default;
+//$list-group-active-text-color:  lighten($list-group-active-bg, 40%) !default;
+
+//$list-group-link-color:         #555 !default;
+//$list-group-link-heading-color: #333 !default;
+
+//== Badges
+//
+//##
+
+//$badge-color:                 $gray-light !default; // color of facet count
+//** Linked badge text color on hover
+//$badge-link-hover-color:      #fff !default;
+//$badge-bg:                    none !default;
+
+//** Badge text color in active nav link
+//$badge-active-color:          $link-color !default;
+//** Badge background color in active nav link
+//$badge-active-bg:             #fff !default;
+//$badge-font-size:             0.9em !default;
+//$badge-font-weight:           400 !default;
+//$badge-line-height:           1 !default;
+//$badge-border-radius:         10px !default;
+
+
+//== Breadcrumbs
+//
+//##
+
+//$breadcrumb-padding-vertical:   5px !default;
+//$breadcrumb-padding-horizontal: 5px !default;
+//** Breadcrumb background color
+//$breadcrumb-bg:                 rgba(1, 1, 1, 0.4) !default;
+//** Breadcrumb text color
+//$breadcrumb-color:              #fff !default;
+//** Text color of current page in the breadcrumb
+//$breadcrumb-active-color:       #fff !default;
+//** Textual separator for between breadcrumb elements
+//$breadcrumb-separator:          "/ " !default;
+
+//== Close
+//
+//##
+
+//$close-font-weight:           bold !default;
+//$close-color:                 #000 !default;
+//$close-text-shadow:           0 1px 0 #fff !default;
+
+
+//** Text muted color
+//$text-muted:                  $gray-light !default;
+//** Abbreviations and acronyms border color
+//$abbr-border-color:           $gray-light !default;
+//** Headings small color
+//$headings-small-color:        $gray-light !default;
+//** Blockquote small color
+//$blockquote-small-color:      $gray-light !default;
+//** Blockquote font size
+//$blockquote-font-size:        ($font-size-base * 1.25) !default;
+//** Blockquote border color
+//$blockquote-border-color:     $gray-lighter !default;
+//** Page header border color
+//$page-header-border-color:    $gray-lighter !default;
+
+
+//$accordion-details-display: inherit !default;

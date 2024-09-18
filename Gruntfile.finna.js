@@ -111,6 +111,13 @@ module.exports = function(grunt) {
             ext: '.scss',
             dest: 'themes/finna2/scss'
           },
+          {
+            expand: true,
+            cwd: 'themes/custom/less',
+            src: ['*.less', 'components/**/*.less', 'finna/**/*.less', 'global/**/*.less'],
+            ext: '.scss',
+            dest: 'themes/custom/scss'
+          },
         ],
         options: {
           replacements: [
@@ -186,6 +193,11 @@ module.exports = function(grunt) {
               pattern: / ==< /gi,
               replacement: ' <= ',
               order: 7
+            },
+            { // Add !default
+              pattern: /(\$.+):(.+);/g,
+              replacement: '$1:$2 !default;',
+              order: 8
             }
           ]
         }

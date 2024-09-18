@@ -43,28 +43,28 @@
 
 // Content navbar variation with own variables for customization.
 
-$finna-navbar-content-color:             mix($brand-primary, contrast($brand-primary), 5%);;
-$finna-navbar-content-bg:                $brand-primary;
-$finna-navbar-content-border:            $finna-navbar-content-bg;
+$finna-navbar-content-color:             mix($brand-primary, contrast($brand-primary), 5%) !default;
+$finna-navbar-content-bg:                $brand-primary !default;
+$finna-navbar-content-border:            $finna-navbar-content-bg !default;
 
 // Navbar links
-$finna-navbar-content-link-color:                $finna-navbar-content-color;
-$finna-navbar-content-link-hover-color:          $finna-navbar-content-link-color;
-$finna-navbar-content-link-hover-bg:             $finna-navbar-content-bg;
-$finna-navbar-content-link-active-color:         $finna-navbar-content-link-color;
-$finna-navbar-content-link-active-bg:            $finna-navbar-content-bg;
-$finna-navbar-content-link-disabled-color:       $finna-navbar-content-link-color;
-$finna-navbar-content-link-disabled-bg:          $finna-navbar-content-bg;
+$finna-navbar-content-link-color:                $finna-navbar-content-color !default;
+$finna-navbar-content-link-hover-color:          $finna-navbar-content-link-color !default;
+$finna-navbar-content-link-hover-bg:             $finna-navbar-content-bg !default;
+$finna-navbar-content-link-active-color:         $finna-navbar-content-link-color !default;
+$finna-navbar-content-link-active-bg:            $finna-navbar-content-bg !default;
+$finna-navbar-content-link-disabled-color:       $finna-navbar-content-link-color !default;
+$finna-navbar-content-link-disabled-bg:          $finna-navbar-content-bg !default;
 
 // Navbar brand label
-$finna-navbar-content-brand-color:               $finna-navbar-content-color;
-$finna-navbar-content-brand-hover-color:         $finna-navbar-content-brand-color;
-$finna-navbar-content-brand-hover-bg:            $finna-navbar-content-bg;
+$finna-navbar-content-brand-color:               $finna-navbar-content-color !default;
+$finna-navbar-content-brand-hover-color:         $finna-navbar-content-brand-color !default;
+$finna-navbar-content-brand-hover-bg:            $finna-navbar-content-bg !default;
 
 // Navbar toggle
-$finna-navbar-content-toggle-hover-bg:           $finna-navbar-content-bg;
-$finna-navbar-content-toggle-icon-bar-bg:        $finna-navbar-content-bg;
-$finna-navbar-content-toggle-border-color:       $finna-navbar-content-border;
+$finna-navbar-content-toggle-hover-bg:           $finna-navbar-content-bg !default;
+$finna-navbar-content-toggle-icon-bar-bg:        $finna-navbar-content-bg !default;
+$finna-navbar-content-toggle-border-color:       $finna-navbar-content-border !default;
 
 .finna-navbar-content {
   background-color: $finna-navbar-content-bg;
