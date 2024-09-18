@@ -23,8 +23,11 @@
     </a>
   </li>
   <?php foreach ($lists as $current): ?>
-    <?php $list = $current['list_entity']; ?>
-    <?php $active = ($list->getId() === $activeId); ?>
+    <?php
+      // Back-compatibility:
+      $list = $current['list_entity'] ?? $current;
+    ?>
+    <?php $active = ($list && $list->getId() === $activeId); ?>
     <li role="none" class="favorites-menulist-item">
       <a role="menuitem" href="<?= $active ? '#' : $this->url('userList', ['id' => $list->getId()])?>?limit=<?=$currentLimit;?>" class="<?=$list && $active ? ' active' : ''?>" aria-current="<?=$active ? 'page' : 'false' ?>">
         <div class="favorite-list-holder">

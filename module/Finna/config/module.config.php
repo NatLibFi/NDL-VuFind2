@@ -263,6 +263,7 @@ $config = [
             'Finna\Controller\MetaLibController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\MetalibRecordController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\MyResearchController' => 'VuFind\Controller\MyResearchControllerFactory',
+            \Finna\Controller\OAuth2Controller::class => \VuFind\Controller\OAuth2ControllerFactory::class,
             'Finna\Controller\OrganisationInfoController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\PCIController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\PrimoController' => 'VuFind\Controller\AbstractBaseFactory',
@@ -316,6 +317,7 @@ $config = [
             'VuFind\Controller\HoldsController' => 'Finna\Controller\HoldsController',
             'VuFind\Controller\LibraryCardsController' => 'Finna\Controller\LibraryCardsController',
             'VuFind\Controller\MyResearchController' => 'Finna\Controller\MyResearchController',
+            \VuFind\Controller\OAuth2Controller::class => \Finna\Controller\OAuth2Controller::class,
             'VuFind\Controller\PrimoController' => 'Finna\Controller\PrimoController',
             'VuFind\Controller\PrimorecordController' => 'Finna\Controller\PrimorecordController',
             'VuFind\Controller\RecordController' => 'Finna\Controller\RecordController',
@@ -632,6 +634,7 @@ $config = [
                     \Finna\Db\Service\UserListService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\UserResourceService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\UserService::class => \Finna\Db\Service\UserServiceFactory::class,
+                    \Finna\Db\Service\UserCardService::class => \Finna\Db\Service\UserCardServiceFactory::class,
                 ],
                 'aliases' => [
                     \VuFind\Db\Service\CommentsService::class => \Finna\Db\Service\CommentsService::class,
@@ -641,6 +644,7 @@ $config = [
                     \VuFind\Db\Service\UserListService::class => \Finna\Db\Service\UserListService::class,
                     \VuFind\Db\Service\UserResourceService::class => \Finna\Db\Service\UserResourceService::class,
                     \VuFind\Db\Service\UserService::class => \Finna\Db\Service\UserService::class,
+                    \VuFind\Db\Service\UserCardService::class => \Finna\Db\Service\UserCardService::class,
 
                     \Finna\Db\Service\FinnaCacheServiceInterface::class => \Finna\Db\Service\FinnaCacheService::class,
                     \Finna\Db\Service\FinnaDueDateReminderServiceInterface::class

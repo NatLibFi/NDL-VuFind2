@@ -453,6 +453,7 @@ class Feed implements
         $cleanContent = $config->cleanContent ?? true;
         $titleTruncateSize = (int)($config->titleTruncateSize ?? 70);
         $displayFormatHeader = $config->displayFormatHeader ?? false;
+        $titlePosition = $config->titlePosition ?? null;
 
         $contentNavigation = $config->feedcontentNavigation ?? true;
         $nextArticles = $config->feedcontentNextArticles ?? false;
@@ -507,6 +508,7 @@ class Feed implements
             $data['modal'] = $modal;
             $data['titleTruncateSize'] = $titleTruncateSize;
             $data['displayFormatHeader'] = $displayFormatHeader;
+            $data['titlePosition'] = $titlePosition;
             foreach ($content as $setting => $method) {
                 if (
                     !isset($elements[$setting])
@@ -691,7 +693,8 @@ class Feed implements
             'contentNavigation',
             'nextArticles',
             'additionalHtml',
-            'titleTruncateSize'
+            'titleTruncateSize',
+            'titlePosition'
         );
     }
 
