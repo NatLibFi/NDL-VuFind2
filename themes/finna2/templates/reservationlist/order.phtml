@@ -17,8 +17,6 @@
   <input type="hidden" name="list-id" value="<?= $this->escapeHtmlAttr($this->listId); ?>"/>
   <p><?=$this->transEsc('ReservationList::Reservable Material')?>:</p>
   <ul>
-    <?php var_dump(get_class($this->materials));
-    die();?>
     <?php foreach ($this->materials as $result): ?>
 
     <?php endforeach; ?>
