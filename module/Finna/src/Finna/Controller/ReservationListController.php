@@ -36,11 +36,13 @@ namespace Finna\Controller;
 
 use Finna\Form\Form;
 use Finna\ReservationList\ReservationListService;
+use Finna\View\Helper\Root\ReservationList;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\Stdlib\Parameters;
 use VuFind\Controller\AbstractBase;
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\LoginRequired as LoginRequiredException;
+use VuFind\Exception\RecordMissing as RecordMissingException;
 
 /**
  * Reservation List Controller
@@ -63,10 +65,12 @@ class ReservationListController extends AbstractBase
      *
      * @param ServiceLocatorInterface $sm                     Service locator
      * @param ReservationListService  $reservationListService Reservation list service
+     * @param ReservationList         $reservationListHelper  Reservation list helper
      */
     public function __construct(
         ServiceLocatorInterface $sm,
-        protected ReservationListService $reservationListService
+        protected ReservationListService $reservationListService,
+        protected ReservationList $reservationListHelper
     ) {
         parent::__construct($sm);
     }
@@ -105,10 +109,10 @@ class ReservationListController extends AbstractBase
         if (!$user) {
             return $this->forceLogin();
         }
-
         $view = $this->createViewModel();
-        $view->organisation = $this->getParam('organisation');
-        $view->listIdentifier = $this->getParam('listIdentifier');
+        $view->institution = $institution = $this->getParam('institution');
+        $view->listIdentifier = $listIdentifier = $this->getParam('listIdentifier');
+
         $recordId = $this->getParam('recordId');
         $source = $this->getParam('source');
         $newList = $this->getParam('newList');
@@ -123,6 +127,13 @@ class ReservationListController extends AbstractBase
             $source ?: DEFAULT_SEARCH_BACKEND,
             false
         );
+        $configuration = $this->reservationListHelper->getListConfiguration($institution, $listIdentifier, $driver);
+        /**
+         * Check if the driver is really compatible with given list
+         */
+        if (!$configuration) {
+            throw new \VuFind\Exception\Forbidden('Record is not allowed in the list');
+        }
         $view->driver = $driver;
         if ($this->formWasSubmitted('submit')) {
             $state = $this->getParam('state');
@@ -138,13 +149,16 @@ class ReservationListController extends AbstractBase
                     $view->recordId = $recordId;
                     return $view;
                 }
-
                 $list = $this->reservationListService->createListForUser(
                     $this->getUser()
                 );
-                $this->reservationListService->updateListFromRequest($list, $user, new Parameters($params));
+                $this->reservationListService->updateListFromRequest(
+                    $list['list_entity'],
+                    $list['details_entity'],
+                    $user,
+                    new Parameters($params)
+                );
             } elseif ('saveItem' === $state) {
-                // Seems like someone wants to save stuff into a list.
                 $this->reservationListService->saveRecordToResourceList(
                     $params,
                     $this->getUser(),
@@ -158,8 +172,9 @@ class ReservationListController extends AbstractBase
         $view->lists = $this->reservationListService->getListsNotContainingRecord(
             $this->getUser(),
             $driver->getUniqueID(),
-            $driver->getSourceIdentifier(),
-            $driver->getDataSource()
+            $source,
+            $listIdentifier,
+            $institution
         );
 
         $view->setTemplate('reservationlist/select-list');
@@ -179,26 +194,25 @@ class ReservationListController extends AbstractBase
             return $this->forceLogin();
         }
         $request = $this->getRequestAsArray();
-        // Try to open the list page, if the list is not found, redirect to home.
         try {
-            $results = $this->getListAsResults($request);
-            $list = $this->reservationListService->getResourceListAsFormattedArray($request['id']);
-
-            $viewParams = [
-                'list' => $list,
-                'results' => $results,
-                'params' => $results->getParams(),
-                'enabled' => $this->listsEnabledForDatasource($list['datasource']),
-            ];
-            try {
-                return $this->createViewModel($viewParams);
-            } catch (ListPermissionException $e) {
-                if (!$this->getUser()) {
-                    return $this->forceLogin();
-                }
-                throw $e;
+            $list = $this->reservationListService->getListAndSettingsByListId($request['id'], $user);
+        } catch (RecordMissingException $e) {
+            return $this->redirect()->toRoute('reservationlist-home');
+        }
+        $results = $this->getListAsResults($request);
+        $viewParams = [
+            'list' => $list['list_entity'],
+            'details' => $list['details_entity'],
+            'results' => $results,
+            'params' => $results->getParams(),
+            'enabled' => true,
+        ];
+        try {
+            return $this->createViewModel($viewParams);
+        } catch (ListPermissionException $e) {
+            if (!$this->getUser()) {
+                return $this->forceLogin();
             }
-        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -217,18 +231,23 @@ class ReservationListController extends AbstractBase
         }
         $listId = $this->getParam('id');
         // Check that list is not ordered or deleted
-        $list = $this->reservationListService->getListForUser($user, $listId);
-        if (!$list || $list['ordered']) {
+        $list = $this->reservationListService->getListAndSettingsByListId($listId, $user);
+        $details = $list['details_entity'];
+        if ($details->getOrdered()) {
             throw new \VuFind\Exception\Forbidden('List not found or ordered');
         }
         // Fill out records to form
-        $recordsHTML = $this->reservationListService->getRecordsForListHTML($user, $listId);
+        $records = $this->reservationListService->getResourcesForList($list['list_entity'], $user);
+        $configuration = $this->reservationListHelper->getListConfiguration(
+            $details->getInstitution(),
+            $details->getListConfigIdentifier()
+        );
         $request = $this->getRequest();
         $post = $request->getPost();
-        $post->set('materials', $recordsHTML);
+        $post->set('materials', $records);
         $request->setPost($post);
         $request = $this->getRequestAsArray();
-        $formId = Form::RESERVATION_LIST_REQUEST;
+        $formId = $configuration['FormIdentifier'] ?? Form::RESERVATION_LIST_REQUEST;
         /**
          * Finna Form
          *
@@ -247,10 +266,8 @@ class ReservationListController extends AbstractBase
         }
         $form->setFormId($formId, $params);
         $view = $this->createViewModel(compact('form', 'formId', 'user', 'listId'));
-        $view->setTemplate('FinnaResourceList/form');
 
         $params = $this->params();
-        $recordsHTML = $this->reservationListService->getRecordsForListHTML($user, $listId);
         if (!$this->formWasSubmitted('submit')) {
             $form->setData(
                 $params->fromPost() + [
@@ -265,9 +282,6 @@ class ReservationListController extends AbstractBase
             return $view;
         }
         $handler = $form->getPrimaryHandler();
-        if (!($handler instanceof \Finna\Form\Handler\FinnaResourceListEmail)) {
-            throw new \Exception('Invalid form handler');
-        }
         $handler->setListId($listId);
         $success = $handler->handle($form, $this->params(), $user);
         if ($success) {
@@ -295,7 +309,9 @@ class ReservationListController extends AbstractBase
         $listID = $this->getParam('id');
         if ($this->getParam('confirm')) {
             try {
-                $this->reservationListService->deleteList($this->getUser(), $listID);
+                $user = $this->getUser();
+                $list = $this->reservationListService->getAndRememberListObject($listID, $user);
+                $this->reservationListService->destroyList($list, $user);
             } catch (LoginRequiredException | ListPermissionException $e) {
                 $user = $this->getUser();
                 if ($user == false) {
@@ -333,7 +349,6 @@ class ReservationListController extends AbstractBase
 
         $listID = $this->getParam('listID', false);
         $ids = $this->getParam('ids');
-
         if (false === $listID) {
             throw new \Exception('List ID not defined in deleteBulkAction');
         }
@@ -454,17 +469,5 @@ class ReservationListController extends AbstractBase
         };
 
         return $runner->run($request, 'ReservationList', $setupCallback);
-    }
-
-    /**
-     * Check if lists are enabled for datasource.
-     *
-     * @param string $datasource Datasource to check for.
-     *
-     * @return bool True if lists are enabled for datasource, false otherwise
-     */
-    protected function listsEnabledForDatasource(string $datasource): bool
-    {
-        return $this->getConfig('FinnaResourceList')[$datasource]['enabled'] ?? false;
     }
 }

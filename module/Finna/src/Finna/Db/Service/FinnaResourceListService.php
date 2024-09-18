@@ -35,12 +35,12 @@ use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Select;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\AbstractDbService;
+use VuFind\Db\Service\DbServiceAwareTrait;
 use VuFind\Db\Table\DbTableAwareInterface;
 use VuFind\Db\Table\DbTableAwareTrait;
 use VuFind\Exception\RecordMissing as RecordMissingException;
 use VuFind\RecordDriver\DefaultRecord;
 
-use function in_array;
 use function is_int;
 
 /**
@@ -57,6 +57,7 @@ class FinnaResourceListService extends AbstractDbService implements
     FinnaResourceListServiceInterface
 {
     use DbTableAwareTrait;
+    use DbServiceAwareTrait;
 
     /**
      * Create a FinnaResourceList entity object.
@@ -96,19 +97,6 @@ class FinnaResourceListService extends AbstractDbService implements
             throw new RecordMissingException('Cannot load reservation list ' . $id);
         }
         return $result;
-    }
-
-    /**
-     * Get public lists.
-     *
-     * @param array $includeFilter List of list ids or entities to include in result.
-     * @param array $excludeFilter List of list ids or entities to exclude from result.
-     *
-     * @return FinnaResourceListEntityInterface[]
-     */
-    public function getPublicLists(array $includeFilter = [], array $excludeFilter = []): array
-    {
-        return [];
     }
 
     /**
@@ -158,28 +146,6 @@ class FinnaResourceListService extends AbstractDbService implements
     }
 
     /**
-     * Get lists associated with a particular tag and/or list of IDs. If IDs and
-     * tags are both provided, only the intersection of matches will be returned.
-     *
-     * @param string|string[]|null $tag               Tag or tags to match (by text, not ID; null for all)
-     * @param int|int[]|null       $listId            List ID or IDs to match (null for all)
-     * @param bool                 $publicOnly        Whether to return only public lists
-     * @param bool                 $andTags           Use AND operator when filtering by tag.
-     * @param bool                 $caseSensitiveTags Should we treat tags case-sensitively?
-     *
-     * @return FinnaResourceListEntityInterface[]
-     */
-    public function getFinnaResourceListsByTagAndId(
-        string|array|null $tag = null,
-        int|array|null $listId = null,
-        bool $publicOnly = true,
-        bool $andTags = true,
-        bool $caseSensitiveTags = false
-    ): array {
-        return [];
-    }
-
-    /**
      * Get list objects belonging to the specified user.
      *
      * @param UserEntityInterface|int $userOrId User entity object or ID
@@ -222,47 +188,6 @@ class FinnaResourceListService extends AbstractDbService implements
     }
 
     /**
-     * Get lists containing a specific record.
-     *
-     * @param string                       $recordId ID of record being checked.
-     * @param string                       $source   Source of record to look up
-     * @param UserEntityInterface|int|null $userOrId Optional user ID or entity object (to limit results
-     * to a particular user).
-     *
-     * @return FinnaResourceListEntityInterface[]
-     */
-    public function getListsNotContainingRecord(
-        string $recordId,
-        string $source = DEFAULT_SEARCH_BACKEND,
-        UserEntityInterface|int|null $userOrId = null
-    ): array {
-        $listsContaining = $this->getListsContainingRecord($recordId, $source, $userOrId);
-        $allLists = $this->getResourceListsByUser($userOrId);
-        $ids = array_map(
-            function ($obj) {
-                return $obj->getId();
-            },
-            $listsContaining
-        );
-        return array_filter($allLists, function ($obj) use ($ids) {
-            return !in_array($obj->getId(), $ids);
-        });
-    }
-
-    /**
-     * Is the provided user allowed to edit the provided list?
-     *
-     * @param ?UserEntityInterface    $user Logged-in user (null if none)
-     * @param UserListEntityInterface $list List to check
-     *
-     * @return bool
-     */
-    public function userCanEditList(?UserEntityInterface $user, FinnaResourceListEntityInterface $list): bool
-    {
-        return $this->resourceList->userCanEditList($user, $list);
-    }
-
-    /**
      * Retrieve a list object.
      *
      * @param int $id Numeric ID for existing list.
@@ -277,5 +202,23 @@ class FinnaResourceListService extends AbstractDbService implements
             throw new RecordMissingException('Cannot load list ' . $id);
         }
         return $result;
+    }
+
+    /**
+     * Retrieve list objects with ids.
+     *
+     * @param array $ids Array containing ids of lists.
+     *
+     * @return FinnaResourceListEntityInterface[]
+     * @throws RecordMissingException
+     */
+    public function getResourceListsByIds(array $ids): array
+    {
+        $callback = function ($select) use ($ids) {
+            $select->where->in('id', $ids);
+        };
+        return iterator_to_array(
+            $this->getDbTable(\Finna\Db\Table\FinnaResourceList::class)->select($callback)
+        );
     }
 }

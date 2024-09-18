@@ -16,12 +16,12 @@ return;
     <div class="headers">
       <span class="holdings-url-title"><?=$this->transEsc('ReservationList::Add Resource to a Reservation List')?></span>
     </div>
-    <?php foreach ($this->lists as $organisation => $lists): ?>
+    <?php foreach ($this->lists as $institution => $lists): ?>
       <?php foreach ($lists as $list): ?>
-        <?php $translationKeys = $this->reservationList()->getListTranslations($organisation, $list); ?>
+        <?php $translationKeys = $this->reservationList()->getListTranslations($institution, $list); ?>
         <div class="reservation-list-wrapper">
           <div class="reservation-list-description"><?= $this->transEsc(['ReservationList', $translationKeys['description']]); ?>: 
-            <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-additem', [], ['query' => ['recordId' => $this->driver->getUniqueID(), 'source' => $this->driver->getSourceIdentifier(), 'organisation' => $organisation, 'listIdentifier' => $list['Identifier']]]))?>" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?= $this->icon('save') . ' ' . $this->transEsc(['ReservationList', 'Add To Reservation List'])?></a>
+            <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-additem', [], ['query' => ['recordId' => $this->driver->getUniqueID(), 'source' => $this->driver->getSourceIdentifier(), 'institution' => $institution, 'listIdentifier' => $list['Identifier']]]))?>" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?= $this->icon('save') . ' ' . $this->transEsc(['ReservationList', 'Add To Reservation List'])?></a>
           </div>
         </div>
       <?php endforeach; ?>

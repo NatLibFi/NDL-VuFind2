@@ -53,12 +53,7 @@ use VuFind\Exception\MissingField as MissingFieldException;
  * @property string $title
  * @property string $datasource
  * @property string $description
- * @property string $building
  * @property string $created
- * @property bool   $public
- * @property string $ordered
- * @property string $pickup_date
- * @property string $handler
  */
 class FinnaResourceList extends RowGateway implements
     \VuFind\Db\Service\DbServiceAwareInterface,
@@ -146,52 +141,6 @@ class FinnaResourceList extends RowGateway implements
     }
 
     /**
-     * Get datasource.
-     *
-     * @return string
-     */
-    public function getDataSource(): string
-    {
-        return $this->datasource;
-    }
-
-    /**
-     * Set datasource.
-     *
-     * @param string $dataSource Datasource
-     *
-     * @return FinnaResourceListEntityInterface
-     */
-    public function setDataSource(string $dataSource): FinnaResourceListEntityInterface
-    {
-        $this->datasource = $dataSource;
-        return $this;
-    }
-
-    /**
-     * Set building
-     *
-     * @param string $building Building
-     *
-     * @return FinnaResourceListEntityInterface
-     */
-    public function setBuilding(string $building = ''): FinnaResourceListEntityInterface
-    {
-        $this->building = $building;
-        return $this;
-    }
-
-    /**
-     * Get building
-     *
-     * @return string
-     */
-    public function getBuilding(): string
-    {
-        return $this->building;
-    }
-
-    /**
      * Created setter
      *
      * @param DateTime $dateTime Created date
@@ -215,21 +164,6 @@ class FinnaResourceList extends RowGateway implements
     }
 
     /**
-     * Sets the ordered data for the reservation list.
-     *
-     * @param User   $user        User or false.
-     * @param string $pickup_date Set pickup date
-     *
-     * @return mixed
-     */
-    public function setOrdered($user, $pickup_date)
-    {
-        $this->ordered = date('Y-m-d H:i:s');
-        $this->pickup_date = $pickup_date;
-        return $this->save($user);
-    }
-
-    /**
      * Get description.
      *
      * @return string
@@ -250,28 +184,6 @@ class FinnaResourceList extends RowGateway implements
     {
         $this->description = $description;
         return $this;
-    }
-
-    /**
-     * Update and save the list object using a request object -- useful for
-     * sharing form processing between multiple actions.
-     *
-     * @param UserEntityInterface|bool   $user    Logged-in user (false if none)
-     * @param \Laminas\Stdlib\Parameters $request Request to process
-     *
-     * @return int ID of newly created row
-     * @throws ListPermissionException
-     * @throws MissingFieldException
-     */
-    public function updateFromRequest($user, $request): int
-    {
-        $this->title = $request->get('title');
-        $this->description = $request->get('description');
-        $this->datasource = $request->get('datasource');
-        $this->building = $request->get('building');
-        $this->handler = $request->get('handler');
-        $this->save($user);
-        return $this->id;
     }
 
     /**

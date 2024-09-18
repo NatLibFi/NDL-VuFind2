@@ -19,33 +19,33 @@
       <h2><?=$this->transEsc('ReservationList::reservation_list_title', ['%%title%%' => $this->list['title']]) ?></h2>
     </div>
     <?= $this->flashmessages() ?>
-    <?php if ($this->list['description']): ?>
+    <?php if ($this->list?->getDescription() ?? false): ?>
       <div class="description-wrapper">
-        <p><?=$this->escapeHtml($this->list['description']); ?></p>
+        <p><?=$this->escapeHtml($this->list->getDescription()); ?></p>
       </div>
     <?php endif; ?>
-    <?php if ($this->list['created']): ?>
+    <?php if ($this->list?->getCreated() ?? false): ?>
       <div class="list-info">
-        <p><?= $this->transEsc('ReservationList::list_created', ['%%date%%' => $this->list['created']]) ?></p>
+        <p><?= $this->transEsc('ReservationList::list_created', ['%%date%%' => $this->list->getCreated()->format('Y-m-d H:i:s')]) ?></p>
       </div>
     <?php endif; ?>
-    <?php if ($this->list['ordered']): ?>
+    <?php if ($this->details?->getOrdered() ?? false): ?>
       <div class="list-info">
-        <p><?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $this->list['ordered']]) ?></p>
+        <p><?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $this->details->getOrdered()]) ?></p>
       </div>
     <?php endif; ?>
-    <?php if ($this->list['pickup_date']): ?>
+    <?php if ($this->details?->getPickupDate() ?? false): ?>
       <div class="list-info">
-        <p><?= $this->transEsc('ReservationList::list_pickup_date', ['%%date%%' => $this->list['pickup_date']]) ?></p>
+        <p><?= $this->transEsc('ReservationList::list_pickup_date', ['%%date%%' => $this->details->getPickupDate()]) ?></p>
       </div>
     <?php endif; ?>
     <?php if ($this->enabled): ?>
       <div class="list-controls">
-        <?php if (!$this->ordered && $this->results?->getResults() ?? []): ?>
+        <?php if (!$this->details?->getOrdered() && $this->results?->getResults() ?? []): ?>
           <!-- Add order buttons if the list has not been ordered yet. -->
-          <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-order', ['id' => $this->id]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('ReservationList::Order List')?></a>
+          <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-order', ['id' => $this->list?->getId()]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('ReservationList::Order List')?></a>
         <?php endif; ?>
-        <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-delete', ['id' => $this->id]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('ReservationList::Delete List')?></a>
+        <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-delete', ['id' => $this->list?->getId()]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('ReservationList::Delete List')?></a>
       </div>
     <?php endif; ?>
     <div class="mylist-header">
@@ -63,7 +63,7 @@
         <div class="myaccount-sticky-header"></div>
           <div class="toolbar-sticky-container">
             <?php $multiPageSelection = ($this->config()->get('config')['Social']['multi_page_favorites_selection'] ?? true) ? ' multi-page-selection' : ''; ?>
-            <form class="form<?= $multiPageSelection ?>" id="form-reservation<?= ($list && !empty($list['id'])) ? '-' . $list['id'] : ''?>" method="post" name="bulkActionForm" action="<?=$this->url('reservationlist-deletebulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
+            <form class="form<?= $multiPageSelection ?>" id="form-reservation-<?= $this->list?->getId() ?? ''?>" method="post" name="bulkActionForm" action="<?=$this->url('reservationlist-deletebulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
               <input class="hidden all-ids-global" type="text" name="all_ids_global" value="<?= $this->escapeHtmlAttr(json_encode($this->results->getAllIds())) ?>">
               <div class="toolbar-sticky">
                 <?=$this->context($this)->renderInContext('reservationlist/bulk-action-buttons.phtml', ['idPrefix' => 'reservationlist_', 'list' => $list ?? null, 'account' => $this->account, 'lists' => $this->reservationList()->getReservationListsForUser($user)])?>

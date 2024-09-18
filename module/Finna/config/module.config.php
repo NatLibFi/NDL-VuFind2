@@ -399,7 +399,6 @@ $config = [
             'Finna\Statistics\EventHandler' => 'Finna\Statistics\EventHandlerFactory',
             'Finna\Favorites\FavoritesService' => 'VuFind\Favorites\FavoritesServiceFactory',
             \Finna\ReservationList\ReservationListService::class => \Finna\ReservationList\ReservationListServiceFactory::class,
-            \Finna\FinnaResourceList\Handler\PluginManager::class => \VuFind\ServiceManager\AbstractPluginManagerFactory::class,
             'Finna\View\CustomElement\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Video\Handler\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Video\Video' => 'Finna\Video\VideoFactory',
@@ -616,6 +615,7 @@ $config = [
                     'Finna\Db\Row\UserList' => 'VuFind\Db\Row\UserListFactory',
                     \Finna\Db\Row\FinnaResourceList::class => \Finna\Db\Row\FinnaResourceListFactory::class,
                     \Finna\Db\Row\FinnaResourceListResource::class => \VuFind\Db\Row\RowGatewayFactory::class,
+                    \Finna\Db\Row\FinnaResourceListDetails::class => \VuFind\Db\Row\RowGatewayFactory::class,
                     'Finna\Db\Row\UserResource' => 'VuFind\Db\Row\RowGatewayFactory',
                 ],
                 'aliases' => [
@@ -655,6 +655,7 @@ $config = [
                     \Finna\Db\Service\RatingsService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\RecordService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\FinnaResourceListService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
+                    \Finna\Db\Service\FinnaResourceListDetailsService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\FinnaResourceListResourceService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\SearchService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\UserListService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
@@ -679,6 +680,8 @@ $config = [
                     \Finna\Db\Service\FinnaRecordServiceInterface::class
                         => \Finna\Db\Service\RecordService::class,
                     \Finna\Db\Service\FinnaResourceListServiceInterface::class => \Finna\Db\Service\FinnaResourceListService::class,
+                    \Finna\Db\Service\FinnaResourceListDetailsServiceInterface::class
+                        => \Finna\Db\Service\FinnaResourceListDetailsService::class,
                     \Finna\Db\Service\FinnaResourceListResourceServiceInterface::class => \Finna\Db\Service\FinnaResourceListResourceService::class,
                     \Finna\Db\Service\FinnaStatisticsServiceInterface::class
                         => \Finna\Db\Service\FinnaStatisticsService::class,
@@ -714,6 +717,7 @@ $config = [
                     'Finna\Db\Table\UserList' => 'VuFind\Db\Table\GatewayFactory',
                     \Finna\Db\Table\FinnaResourceList::class => \VuFind\Db\Table\GatewayFactory::class,
                     \Finna\Db\Table\FinnaResourceListResource::class => \VuFind\Db\Table\GatewayFactory::class,
+                    \Finna\Db\Table\FinnaResourceListDetails::class => \VuFind\Db\Table\GatewayFactory::class,
                     'Finna\Db\Table\UserResource' => 'VuFind\Db\Table\GatewayFactory',
                 ],
                 'aliases' => [
@@ -741,11 +745,9 @@ $config = [
                 'factories' => [
                     'Finna\Form\Handler\Api' => 'Finna\Form\Handler\ApiFactory',
                     'Finna\Form\Handler\Email' => 'VuFind\Form\Handler\EmailFactory',
-                    \Finna\Form\Handler\FinnaResourceListEmail::class => \Finna\Form\Handler\FinnaResourceListEmailFactory::class,
                 ],
                 'aliases' => [
                     'api' => 'Finna\Form\Handler\Api',
-                    'FinnaResourceListemail' => \Finna\Form\Handler\FinnaResourceListEmail::class,
                     'VuFind\Form\Handler\Database' => 'Finna\Form\Handler\Database',
                     'VuFind\Form\Handler\Email' => 'Finna\Form\Handler\Email',
                 ],
@@ -805,7 +807,6 @@ $config = [
                     'sidefacetsdeferred' => 'Finna\Recommend\SideFacetsDeferred',
                 ],
             ],
-            'FinnaResourceList_handler' => [/* see Finna\FinnaResourceList\Handler\PluginManager for defaults */ ],
             'resolver_driver' => [
                 'factories' => [
                     'Finna\Resolver\Driver\Sfx' => 'VuFind\Resolver\Driver\DriverWithHttpClientFactory',

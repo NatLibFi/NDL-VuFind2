@@ -29,6 +29,7 @@
 
 namespace Finna\View\Helper\Root;
 
+use Finna\Db\Entity\FinnaResourceListDetailsEntityInterface;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\ReservationList\ReservationListService;
 use VuFind\Db\Entity\UserEntityInterface;
@@ -82,19 +83,19 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     /**
      * Get associative array of [organisation => configurated lists] where driver matches
      *
-     * @param string               $organisation Organisation name
-     * @param DefaultRecord|string $driver       Record driver or datasource
+     * @param string                    $organisation Organisation name
+     * @param DefaultRecord|string|null $driver       Record driver or datasource
      *
      * @return array
      */
-    protected function getListConfigurations(string $organisation, DefaultRecord|string $driver): array
+    protected function getListConfigurations(string $organisation, DefaultRecord|string|null $driver): array
     {
         $result = [];
         if ($institutionConfig = $this->config[$organisation] ?? false) {
             $datasource = $driver instanceof DefaultRecord ? $driver->getDatasource() : $driver;
             $lists = [];
             foreach ($institutionConfig['Lists'] ?? [] as $list) {
-                if (in_array($datasource, $list['Datasources'] ?? []) && $list['Identifier'] ?? false) {
+                if (!$driver || (in_array($datasource, $list['Datasources'] ?? []) && $list['Identifier'] ?? false)) {
                     $lists[] = $list;
                 }
             }
@@ -106,16 +107,19 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Get list configuration defined by organisation and list identifier
+     * Get list configuration defined by organisation and list identifier in ReservationList.yaml
      *
-     * @param DefaultRecord $record         Record object
-     * @param string        $organisation   Lists controlling organisation
-     * @param string        $listIdentifier List identifier
+     * @param string         $organisation   Lists controlling organisation
+     * @param string         $listIdentifier List identifier
+     * @param ?DefaultRecord $record         Record object
      *
      * @return array
      */
-    public function getListConfiguration(DefaultRecord $record, string $organisation, string $listIdentifier): array
-    {
+    public function getListConfiguration(
+        string $organisation,
+        string $listIdentifier,
+        ?DefaultRecord $record = null
+    ): array {
         $configuration = $this->getListConfigurations($organisation, $record);
         foreach ($configuration as $organisation => $lists) {
             foreach ($lists as $list) {
@@ -164,7 +168,11 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      *
      * @param UserEntityInterface|int $userOrId User entity or user id
      *
-     * @return array
+     * @return array An array containing arrays:
+     *               [
+     *                  'list_entity' => FinnaResourceListEntityInterface,
+     *                  'details_entity' => FinnaResourceListDetailsEntityInterface
+     *               ]
      */
     public function getReservationListsForUser(UserEntityInterface|int $userOrId): array
     {
@@ -186,5 +194,32 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
         string $source = DEFAULT_SEARCH_BACKEND
     ): array {
         return $this->reservationListService->getListsContainingRecord($recordOrId, $source, $userOrId);
+    }
+
+    /**
+     * Get list details
+     *
+     * @param FinnaResourceListEntityInterface|int $listOrId List id
+     *
+     * @return FinnaResourceListDetailsEntityInterface
+     */
+    public function getListDetails(
+        FinnaResourceListEntityInterface|int $listOrId
+    ): FinnaResourceListDetailsEntityInterface {
+        return $this->reservationListService->getListDetails($listOrId);
+    }
+
+    /**
+     * Check if the driver is proper for desired list configuration
+     *
+     * @param DefaultRecord $driver         Driver to check
+     * @param string        $institution    Key in yaml file to find lists for
+     * @param string        $listIdentifier Value of list identifier in yaml to check if the driver passes
+     *
+     * @return bool
+     */
+    public function canRecordBeAddedToList(DefaultRecord $driver, string $institution, string $listIdentifier): bool
+    {
+        return !!$this->getListConfiguration($institution, $listIdentifier, $driver);
     }
 }

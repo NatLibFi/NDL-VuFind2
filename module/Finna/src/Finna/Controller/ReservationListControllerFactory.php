@@ -75,6 +75,7 @@ class ReservationListControllerFactory extends AbstractBaseFactory
             $requestedName,
             [
                 $container->get(\Finna\ReservationList\ReservationListService::class),
+                $container->get('ViewHelperManager')->get('reservationList'),
             ]
         );
     }

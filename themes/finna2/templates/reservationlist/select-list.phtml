@@ -6,8 +6,8 @@
   // Set up breadcrumbs:
   $this->layout()->breadcrumbs = '<li><a href="' . $this->url('reservationlist-additem') . '">' . $this->transEsc('ReservationList::Add To Reservation List') . '</a></li>'
     . '<li>' . $this->transEsc($pageTitle) . '</li>';
-  $listConfiguration = $this->reservationList()->getListConfiguration($driver, $this->organisation, $this->listIdentifier);
-  $listTranslations = $this->reservationList()->getListTranslations($this->organisation, $listConfiguration);
+  $listConfiguration = $this->reservationList()->getListConfiguration($this->institution, $this->listIdentifier, $driver);
+  $listTranslations = $this->reservationList()->getListTranslations($this->institution, $listConfiguration);
 ?>
 
 <h2><?= $this->transEsc($pageTitle); ?></h2>
@@ -20,7 +20,8 @@
     <div class="form-group">
       <select class="form-control" id="save_list" name="list">
         <?php foreach ($this->lists as $list): ?>
-          <option value="<?=$this->escapeHtmlAttr($list['id'])?>"><?=$this->escapeHtml($list['title'])?></option>
+          <?php $listEntity = $list['list_entity']; ?>
+          <option value="<?=$this->escapeHtmlAttr($listEntity->getId())?>"><?=$this->escapeHtml($listEntity->getTitle())?></option>
         <?php endforeach; ?>
       </select>
     </div>
@@ -35,5 +36,5 @@
   <?php else: ?>
     <?= $this->transEsc('ReservationList::No Lists Found') ?>
   <?php endif; ?>
-  <a class="btn btn-link" id="make-list" href="<?=$this->url('reservationlist-additem', [], ['query' => ['newList' => '1', 'recordId' => urlencode($this->driver->getUniqueId()), 'source' => urlencode($this->driver->getSourceIdentifier())]])?>"><?=$this->transEsc('ReservationList::Create New Reservation List')?></a>
+  <a class="btn btn-link" id="make-list" href="<?=$this->url('reservationlist-additem', [], ['query' => ['institution' => $this->institution, 'listIdentifier' => $this->listIdentifier, 'newList' => '1', 'recordId' => urlencode($this->driver->getUniqueId()), 'source' => urlencode($this->driver->getSourceIdentifier())]])?>"><?=$this->transEsc('ReservationList::Create New Reservation List')?></a>
 </div>

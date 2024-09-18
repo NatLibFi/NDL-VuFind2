@@ -19,7 +19,6 @@
       ];
     }
     if ($reservationListOpen = $this->active === 'reservationlist') {
-
       $list = $this->results?->getListObject() ?? [];
       $listParams = [
         'activeId' => $list['id'] ?? false,

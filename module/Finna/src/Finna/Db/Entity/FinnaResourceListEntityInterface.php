@@ -51,12 +51,7 @@ use VuFind\Exception\MissingField as MissingFieldException;
  * @property string $title
  * @property string $datasource
  * @property string $description
- * @property string $building
  * @property string $created
- * @property bool   $public
- * @property string $ordered
- * @property string $pickup_date
- * @property string $handler
  */
 interface FinnaResourceListEntityInterface extends EntityInterface
 {
@@ -66,29 +61,6 @@ interface FinnaResourceListEntityInterface extends EntityInterface
      * @return int
      */
     public function getId(): int;
-
-    /**
-     * Sets the ordered data for the reservation list.
-     *
-     * @param User   $user        User or false.
-     * @param string $pickup_date Set pickup date
-     *
-     * @return mixed
-     */
-    public function setOrdered($user, $pickup_date);
-
-    /**
-     * Update and save the list object using a request object -- useful for
-     * sharing form processing between multiple actions.
-     *
-     * @param UserEntityInterface|bool   $user    Logged-in user (false if none)
-     * @param \Laminas\Stdlib\Parameters $request Request to process
-     *
-     * @return int ID of newly created row
-     * @throws ListPermissionException
-     * @throws MissingFieldException
-     */
-    public function updateFromRequest($user, $request): int;
 
     /**
      * Is the current user allowed to edit this list?
@@ -182,22 +154,6 @@ interface FinnaResourceListEntityInterface extends EntityInterface
     public function getTitle(): string;
 
     /**
-     * Get datasource.
-     *
-     * @return string
-     */
-    public function getDataSource(): string;
-
-    /**
-     * Set datasource.
-     *
-     * @param string $dataSource Datasource
-     *
-     * @return FinnaResourceListEntityInterface
-     */
-    public function setDataSource(string $dataSource): FinnaResourceListEntityInterface;
-
-    /**
      * Get description.
      *
      * @return string
@@ -212,22 +168,6 @@ interface FinnaResourceListEntityInterface extends EntityInterface
      * @return FinnaResourceListEntityInterface
      */
     public function setDescription(string $description = ''): FinnaResourceListEntityInterface;
-
-    /**
-     * Get building.
-     *
-     * @return string
-     */
-    public function getBuilding(): string;
-
-    /**
-     * Set building.
-     *
-     * @param string $building Building
-     *
-     * @return FinnaResourceListEntityInterface
-     */
-    public function setBuilding(string $building = ''): FinnaResourceListEntityInterface;
 
     /**
      * Created setter
