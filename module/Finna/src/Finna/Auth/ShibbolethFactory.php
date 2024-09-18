@@ -77,6 +77,7 @@ class ShibbolethFactory extends \VuFind\Auth\ShibbolethFactory
             $container->get(\Laminas\Session\SessionManager::class),
             $loader,
             $request,
+            $container->get(\VuFind\Auth\ILSAuthenticator::class),
             $container->get(\VuFind\ILS\Connection::class)
         );
     }

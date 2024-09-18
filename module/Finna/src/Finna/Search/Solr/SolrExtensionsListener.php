@@ -38,6 +38,7 @@ use VuFindSearch\Query\QueryGroup;
 use function count;
 use function in_array;
 use function is_array;
+use function sprintf;
 
 /**
  * Finna Solr extensions listener.

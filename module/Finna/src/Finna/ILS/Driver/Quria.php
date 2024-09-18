@@ -36,6 +36,7 @@ namespace Finna\ILS\Driver;
 
 use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
+use VuFind\ILS\Logic\AvailabilityStatus;
 
 use function in_array;
 use function is_callable;
@@ -443,7 +444,7 @@ class Quria extends AxiellWebServices
                         'barcode' => $id,
                         'item_id' => $reservableId,
                         'holdings_id' => $group ?? '',
-                        'availability' => $this->availabilityStatusManager->createAvailabilityStatus($available),
+                        'availability' => new AvailabilityStatus($available, $status),
                         'availabilityInfo' => $availabilityInfo,
                         'status' => $status,
                         'location' => $group ?? $branchName,

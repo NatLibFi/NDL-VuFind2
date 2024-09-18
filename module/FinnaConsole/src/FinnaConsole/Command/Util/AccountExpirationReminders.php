@@ -52,6 +52,7 @@ use VuFind\Mailer\Mailer;
 use function assert;
 use function count;
 use function in_array;
+use function sprintf;
 
 /**
  * Console service for reminding users x days before account expiration

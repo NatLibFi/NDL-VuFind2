@@ -242,14 +242,6 @@ finna.linkedEvents = (function finnaLinkedEvents() {
         }
       });
     }
-    var datepickerLang = container.data('lang');
-    $('.event-datepicker').datepicker({
-      'language': datepickerLang,
-      'format': 'dd.mm.yyyy',
-      'weekStart': 1,
-      'todayHighlight': true,
-      'autoclose': true
-    });
 
     if (container.find($('.events-searchtools-container'))[0]) {
       var searchClick = function onSearchClick() {

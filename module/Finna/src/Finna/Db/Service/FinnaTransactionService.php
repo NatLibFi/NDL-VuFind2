@@ -36,6 +36,8 @@ use VuFind\Db\Table\DbTableAwareInterface;
 use VuFind\Db\Table\DbTableAwareTrait;
 use VuFind\Exception\RecordMissing as RecordMissingException;
 
+use function sprintf;
+
 /**
  * Database service for Finna transactions.
  *

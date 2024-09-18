@@ -31,7 +31,7 @@ $this->headScript()->prependScript("var listId = {$list->getId()}; var publicLis
         </div>
       <?php endif ?>
       <div class="public-list-info">
-        <div><?= $this->transEsc('modified'); ?>: <?=$this->dateTime()->convertToDisplayDate('U', $list->getFinnaUpdated()?->getTimestamp() ?: $list->getCreated()->getTimestamp()); ?></div>
+        <div><?= $this->transEsc('modified'); ?>: <?=($list->getFinnaUpdated() ?? $list->getCreated())->format($this->config()->dateFormat()); ?></div>
       </div>
     </div>
 </div>
@@ -40,7 +40,7 @@ $this->headScript()->prependScript("var listId = {$list->getId()}; var publicLis
       <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results]) ?>
     </div>
     <div class="save-list-wrapper">
-      <a class="btn btn-primary btn-sm btn-block" data-lightbox role="button" href="<?= $this->url('list-save', [ 'id' => $list->getId() ]) ?>"><?=$this->icon('list-save') ?> <span class="hidden-xs hidden-sm"><?=$this->transEsc('import_favorites_from_list')?></span></a>
+      <a class="btn btn-primary btn-sm btn-block" data-lightbox role="button" href="<?= $this->url('list-save', [ 'id' => $list->getId() ]) ?>" aria-label="<?=$this->transEsc('import_favorites_from_list')?>"><?=$this->icon('list-save') ?> <span class="hidden-xs hidden-sm"><?=$this->transEsc('import_favorites_from_list')?></span></a>
     </div>
     <div class="control-container text-right hidden-print">
       <?=$this->render('search/controls/sort.phtml')?>

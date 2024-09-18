@@ -949,7 +949,7 @@ FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
   }
   if (imageType === 'model') {
     _.viewer = document.createElement('finna-model-viewer');
-    _.viewer.proxy = `${VuFind.path}/AJAX/JSON?${imagePopup.data('params')}`;
+    _.viewer.src = `${VuFind.path}/AJAX/JSON?${imagePopup.data('params')}`;
     _.viewer.texture = `${VuFind.path}${imagePopup.data('texture')}`;
     _.viewer.scripts = `${VuFind.path}${imagePopup.data('scripts')}`;
     _.viewer.translations = _.settings.modelTranslations;
@@ -959,6 +959,7 @@ FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
     }
     _.trigger.append(_.viewer);
     _.trigger.trigger('removeclick.finna');
+    _.trigger.removeClass('no-image');
     _.trigger.on('click', (e) => { e.preventDefault(); });
   } else {
     _.trigger.finnaPopup({

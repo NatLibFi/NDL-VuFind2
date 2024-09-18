@@ -1,13 +1,11 @@
 <?php
-// Use echo to ensure we don't return a line feed
-$searchRoute = $this->searchAction ?: $this->searchOptions($this->driver->getSearchBackendIdentifier())->getSearchAction();
-echo $this->url(
-    $searchRoute,
-    [],
-    [
-        'query' => [
-            'lookfor' => '"' . $this->lookfor . '"',
-            'type' => 'geographic',
-        ],
-    ]
-);
+  $searchBackendId = $this->driver->getSearchBackendIdentifier();
+  $options = $this->searchOptions($searchBackendId);
+  $searchRoute = $this->searchAction ?: $options->getSearchAction();
+  $query = ['lookfor' => '"' . $this->lookfor . '"', 'type' => 'geographic'];
+  if (($limit = $this->searchMemory()->getLastLimit($searchBackendId))
+    && $limit !== $options->getDefaultLimit()
+  ) {
+    $query['limit'] = $limit;
+  }
+  echo $this->url($searchRoute, [], compact('query'));

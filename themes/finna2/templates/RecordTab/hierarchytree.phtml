@@ -4,10 +4,11 @@
   $hierarchyTreeList = $this->tab->getTreeList();
   $activeTree = $this->tab->getActiveTree();
 ?>
+<?php if ($this->inLightbox && $heading = $this->slot('hierarchy-tree-heading')->get($this->tab->getDescription())): ?>
+  <?php // Note: h2 must be the first element to display properly in lightbox ?>
+  <h2><?=$this->transEsc($heading)?></h2>
+<?php endif; ?>
 <div class="hierarchy-tree-container js-hierarchy-tree-container">
-  <?php if ($this->inLightbox): ?>
-    <h2><?=$this->transEsc($this->tab->getDescription())?></h2>
-  <?php endif; ?>
   <?php if (count($hierarchyTreeList) > 1): ?>
     <div class="hierarchy-tree-selector">
       <?php foreach ($hierarchyTreeList as $hierarchy => $hierarchyTitle): ?>
@@ -32,18 +33,20 @@
       </div>
     <?php endif; ?>
     <?php if ($this->tab->searchActive()): ?>
-      <div class="form-inline hidden hierarchy-tree-search-form js-tree-search">
-        <input type="text" class="form-control search-query js-search-text" value="">
-        <select class="form-control js-search-type" name="type">
+      <div class="hidden hierarchy-tree-search-form input-group js-tree-search">
+        <input type="text" class="form-control search-query js-search-text" aria-label="<?=$this->transEscAttr('Search from archive')?>" value="">
+        <select class="form-control hidden js-search-type" name="type">
           <option value="AllFields"><?=$this->transEsc('All Fields')?></option>
-          <option value="Title"><?=$this->transEsc('Title')?></option>
         </select>
-        <input type="submit" class="btn btn-default js-submit" value="<?=$this->transEscAttr('Search') ?>">
-        <?=$this->icon('spinner', 'js-load-indicator hidden') ?>
+        <button class="btn btn-primary js-submit" type="submit" name="submit">
+          <span class="hidden-xs"><?=$this->icon('search') ?></span>
+          <span><?=$this->transEsc('Find')?></span>
+        </button>
+        <span class="hidden js-load-indicator"><?=$this->icon('spinner') ?></span>
       </div>
       <div class="js-search-error alert alert-danger hidden"><?=$this->transEsc('An error has occurred')?></div>
       <div class="js-no-results alert alert-danger hidden"><?=$this->transEsc('nohit_heading')?></div>
-      <div class="js-limit-reached alert alert-danger hidden">
+      <div class="js-limit-reached alert alert-info hidden" role="alert">
         <?=$this->translate('tree_search_limit_reached_html', ['%%limit%%' => $this->tab->getSearchLimit()])?>
       </div>
     <?php endif; ?>

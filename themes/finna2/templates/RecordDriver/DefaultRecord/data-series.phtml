@@ -14,7 +14,7 @@
       }
       $lookfor = implode(', ', $terms);
     ?>
-    <?/* Depending on the record driver, $field may either be an array with
+    <?php /* Depending on the record driver, $field may either be an array with
        "name" and "number" keys or a flat string containing only the series
        name.  We should account for both cases to maximize compatibility. */?>
     <?php if (is_array($field)): ?>

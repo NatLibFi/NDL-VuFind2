@@ -1,10 +1,15 @@
 <?php
-if (!($id = $this->id ?: $this->localId)) {
+  if (!($id = $this->id ?: $this->localId)) {
     return;
-}
-// Use echo to ensure we don't return a line feed
-echo $this->url(
-    $this->searchAction ?: $this->searchOptions($this->driver->getSourceIdentifier())->getSearchAction(),
-    [],
-    ['query' => ['filter[]' => sprintf('%s:"%s"', \Finna\Search\Solr\AuthorityHelper::GEOGRAPHIC_ID_FACET, $id)]]
-);
+  }
+
+  $searchBackendId = $this->driver->getSearchBackendIdentifier();
+  $options = $this->searchOptions($searchBackendId);
+  $searchRoute = $this->searchAction ?: $options->getSearchAction();
+  $query = ['filter[]' => sprintf('%s:"%s"', \Finna\Search\Solr\AuthorityHelper::GEOGRAPHIC_ID_FACET, $id)];
+  if (($limit = $this->searchMemory()->getLastLimit($searchBackendId))
+    && $limit !== $options->getDefaultLimit()
+  ) {
+    $query['limit'] = $limit;
+  }
+  echo $this->url($searchRoute, [], compact('query'));

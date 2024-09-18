@@ -946,6 +946,213 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Function to get expected events data
+     *
+     * @return array
+     */
+    public static function getEventsData(): array
+    {
+        return [
+            [
+                'fi',
+                [
+                    'valmistus' => [
+                        0 => [
+                            'type' => 'valmistus',
+                            'name' => '',
+                            'date' => 'valmistusaika noin 1910–1920',
+                            'methods' => ['tekniikka: ompelu', 'technique: sewing'],
+                            'methodsExtended' => [
+                                [
+                                    'data' => 'tekniikka: ompelu',
+                                    'id' => 'http://www.yso.fi/onto/koko/p72845',
+                                    'source' => 'koko',
+                                ],
+                            ],
+                            'materials' => ['materiaali: villa', 'material: wool', 'vuori: sarka'],
+                            'materialsExtended' => [
+                                [
+                                    'data' => 'materiaali: villa',
+                                    'id' => 'http://www.yso.fi/onto/koko/p33150',
+                                    'source' => '',
+                                ],
+                                [
+                                    'data' => 'vuori: sarka',
+                                    'id' => '',
+                                    'source' => '',
+                                ],
+                            ],
+                            'places' => [
+                                [
+                                    'placeName' => 'Bulevardi, Helsinki',
+                                    'type' => 'URI',
+                                    'id' => 'http://www.yso.fi/onto/yso/p202484',
+                                    'ids' => [
+                                        'http://www.yso.fi/onto/yso/p202484',
+                                    ],
+                                    'details' => ['place_id_type_URI'],
+                                ],
+                            ],
+                            'actors' => [
+                                [
+                                    'name' => 'Mattilainen, Meikä',
+                                    'role' => 'haaveilija',
+                                    'birth' => '',
+                                    'death' => '',
+                                ],
+                                [
+                                    'name' => 'Tiistai, Nietos',
+                                    'role' => 'Työntekijä',
+                                    'birth' => '',
+                                    'death' => '',
+                                ],
+                            ],
+                            'culture' => 'kulttuuri',
+                            'descriptions' => ['valmistusprosessin kuvaus'],
+                            'description' => 'valmistusprosessin kuvaus',
+                        ],
+                    ],
+                    'suunnittelu' => [
+                        0 => [
+                            'type' => 'suunnittelu',
+                            'name' => '',
+                            'date' => '',
+                            'methods' => [],
+                            'methodsExtended' => [],
+                            'materials' => [],
+                            'materialsExtended' => [],
+                            'places' => [],
+                            'actors' => [
+                                [
+                                    'name' => 'Puu, Teisto',
+                                    'role' => 'suunnittelija',
+                                    'birth' => '',
+                                    'death' => '',
+                                ],
+                            ],
+                            'culture' => '',
+                            'descriptions' => [],
+                            'description' => '',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'en',
+                [
+                    'valmistus' => [
+                        0 => [
+                            'type' => 'valmistus',
+                            'name' => '',
+                            'date' => 'created ca 1910–1920',
+                            'methods' => ['tekniikka: ompelu', 'technique: sewing'],
+                            'methodsExtended' => [
+                                [
+                                    'data' => 'technique: sewing',
+                                    'id' => 'http://www.yso.fi/onto/koko/p72845',
+                                    'source' => 'koko',
+                                ],
+                            ],
+                            'materials' => ['materiaali: villa', 'material: wool', 'lining: frieze'],
+                            'materialsExtended' => [
+                                [
+                                    'data' => 'material: wool',
+                                    'id' => 'http://www.yso.fi/onto/koko/p33150',
+                                    'source' => '',
+                                ],
+                                [
+                                    'data' => 'lining: frieze',
+                                    'id' => '',
+                                    'source' => '',
+                                ],
+                            ],
+                            'places' => [
+                                [
+                                    'placeName' => 'Bulevardi, Helsinki',
+                                    'type' => 'URI',
+                                    'id' => 'http://www.yso.fi/onto/yso/p202484',
+                                    'ids' => [
+                                        'http://www.yso.fi/onto/yso/p202484',
+                                    ],
+                                    'details' => ['place_id_type_URI'],
+                                ],
+                            ],
+                            'actors' => [
+                                [
+                                    'name' => 'Mattilainen, Meikä',
+                                    'role' => 'haaveilija',
+                                    'birth' => '',
+                                    'death' => '',
+                                ],
+                                [
+                                    'name' => 'Tiistai, Nietos',
+                                    'role' => 'Työntekijä',
+                                    'birth' => '',
+                                    'death' => '',
+                                ],
+                            ],
+                            'culture' => 'kulttuuri',
+                            'descriptions' => ['description of the production process'],
+                            'description' => 'description of the production process',
+                        ],
+                    ],
+                    'suunnittelu' => [
+                        0 => [
+                            'type' => 'suunnittelu',
+                            'name' => '',
+                            'date' => '',
+                            'methods' => [],
+                            'methodsExtended' => [],
+                            'materials' => [],
+                            'materialsExtended' => [],
+                            'places' => [],
+                            'actors' => [
+                                [
+                                    'name' => 'Puu, Teisto',
+                                    'role' => 'suunnittelija',
+                                    'birth' => '',
+                                    'death' => '',
+                                ],
+                            ],
+                            'culture' => '',
+                            'descriptions' => [],
+                            'description' => '',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Test getEvents
+     *
+     * @param string $language Language
+     * @param array  $expected Result to be expected
+     *
+     * @dataProvider getEventsData
+     *
+     * @return void
+     */
+    public function testGetEvents(
+        string $language,
+        array $expected
+    ): void {
+        $translator = $this
+            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+        $translator->setLocale($language);
+        $driver = $this->getDriver('lido_test.xml');
+        $driver->setTranslator($translator);
+        $this->assertEquals(
+            $expected,
+            $driver->getEvents()
+        );
+    }
+
+    /**
      * Get a record driver with fake data
      *
      * @param string $recordXml    Xml record to use for the test

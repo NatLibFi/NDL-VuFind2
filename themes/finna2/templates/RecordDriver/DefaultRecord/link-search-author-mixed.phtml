@@ -1,13 +1,15 @@
 <?php
-$searchRoute = $this->searchAction ?: $this->searchOptions($this->driver->getSearchBackendIdentifier())->getSearchAction();
-if (!($id = $this->id ?: $this->localId)) {
-    // Use echo to ensure we don't return a line feed
-    echo $this->url($searchRoute, [], ['query' => ['lookfor' => '"' . $this->lookfor . '"', 'type' => 'Author']]);
-} else {
-    // Use echo to ensure we don't return a line feed
-    echo $this->url(
-        $searchRoute,
-        [],
-        ['query' => ['lookfor' => sprintf('author:("%s") OR %s:("%s")^100000', $this->lookfor, \Finna\Search\Solr\AuthorityHelper::AUTHOR2_ID_FACET, $id)]]
-    );
-}
+  $searchBackendId = $this->driver->getSearchBackendIdentifier();
+  $options = $this->searchOptions($searchBackendId);
+  $searchRoute = $options->getSearchAction();
+  if (!($id = $this->id ?: $this->localId)) {
+    $query = ['lookfor' => '"' . $this->lookfor . '"', 'type' => 'Author'];
+  } else {
+    $query = ['lookfor' => sprintf('author:("%s") OR %s:("%s")^100000', $this->lookfor, \Finna\Search\Solr\AuthorityHelper::AUTHOR2_ID_FACET, $id)];
+  }
+  if (($limit = $this->searchMemory()->getLastLimit($searchBackendId))
+    && $limit !== $options->getDefaultLimit()
+  ) {
+    $query['limit'] = $limit;
+  }
+  echo $this->url($searchRoute, [], compact('query'));

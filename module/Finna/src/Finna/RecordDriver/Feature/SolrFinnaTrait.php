@@ -40,6 +40,7 @@ use function intval;
 use function is_array;
 use function is_callable;
 use function is_string;
+use function sprintf;
 use function strlen;
 
 /**

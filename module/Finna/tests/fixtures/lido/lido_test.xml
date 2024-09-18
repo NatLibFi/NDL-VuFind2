@@ -192,6 +192,65 @@
                 </roleActor>
               </actorInRole>
             </eventActor>
+            <culture>
+              <term>kulttuuri</term>
+            </culture>
+            <eventDate>
+              <displayDate lang="fi">valmistusaika noin 1910–1920</displayDate>
+              <displayDate lang="en">created ca 1910–1920</displayDate>
+              <date>
+                <earliestDate>1910</earliestDate>
+                <latestDate>1920</latestDate>
+              </date>
+            </eventDate>
+            <eventPlace>
+              <displayPlace lang="fi">Bulevardi, Helsinki</displayPlace>
+              <displayPlace lang="en">Bulevardi, Helsinki</displayPlace>
+              <place>
+                <placeID type="URI">http://www.yso.fi/onto/yso/p202484</placeID>
+                <namePlaceSet>
+                  <appellationValue lang="fi">Bulevardi</appellationValue>
+                </namePlaceSet>
+                <partOfPlace>
+                  <namePlaceSet>
+                    <appellationValue lang="fi">Helsinki</appellationValue>
+                  </namePlaceSet>
+                  <partOfPlace>
+                    <namePlaceSet>
+                      <appellationValue lang="fi">Suomi</appellationValue>
+                    </namePlaceSet>
+                  </partOfPlace>
+                </partOfPlace>
+              </place>
+            </eventPlace>
+            <eventMethod>
+              <conceptID type="URI" source="koko">http://www.yso.fi/onto/koko/p72845</conceptID>
+              <term lang="fi">tekniikka: ompelu</term>
+              <term lang="en">technique: sewing</term>
+            </eventMethod>
+            <eventMaterialsTech>
+              <materialsTech>
+                <termMaterialsTech>
+                  <conceptID type="URI">http://www.yso.fi/onto/koko/p33150</conceptID>
+                  <term lang="fi">materiaali: villa</term>
+                  <term lang="en">material: wool</term>
+                </termMaterialsTech>
+              </materialsTech>
+            </eventMaterialsTech>
+            <eventMaterialsTech>
+              <displayMaterialsTech lang="fi">vuori: sarka</displayMaterialsTech>
+              <displayMaterialsTech lang="en">lining: frieze</displayMaterialsTech>
+                <materialsTech>
+                  <termMaterialsTech>
+                    <conceptID type="URI">http://www.yso.fi/onto/koko/p30796</conceptID>
+                    <term lang="fi">sarka</term>
+                  </termMaterialsTech>
+                </materialsTech>
+            </eventMaterialsTech>
+            <eventDescriptionSet>
+              <descriptiveNoteValue lang="fi">valmistusprosessin kuvaus</descriptiveNoteValue>
+              <descriptiveNoteValue lang="en">description of the production process</descriptiveNoteValue>
+            </eventDescriptionSet>
           </event>
         </eventSet>
          <eventSet>

@@ -31,7 +31,7 @@
 ?>
 
 <!-- Leftside navigationbar -->
-<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => $list ? 'list' . $list->getId() : 'favorites']); ?>
+<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => $list ? ('list' . $list->getId()) : 'favorites']); ?>
 
 <?php foreach ($this->results->getRecommendations('side') as $current): ?>
   <?=$this->recommend($current)?>

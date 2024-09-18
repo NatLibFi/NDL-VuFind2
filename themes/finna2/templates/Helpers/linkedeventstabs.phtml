@@ -1,4 +1,8 @@
 <!-- START of: finna - Helpers/linkedeventstabs.phtml -->
+ <?php
+ $config = $this->config()->get('config');
+ $dateFormat = $config->Site->displayDateFormat ?? 'j.n.Y';
+ ?>
 <div class="linked-events-tabs <?= $showMobileAccordion ? 'mobile-accordion-show' : 'mobile-accordion-hide'; ?>" id="<?= $this->escapeHtmlAttr($this->id) ?>" data-limit="<?= $this->escapeHtmlAttr($this->limit) ?>" data-lang="<?= $this->layout()->userLang; ?>">
   <div class="feed-tabs-container">
     <h2 class="feed-tabs-title"><?= $this->transEsc('Events'); ?></h2>
@@ -41,16 +45,15 @@
   </div>
   <div class="tab-content">
     <?php if ($this->searchTools !== 'hide'): ?>
-      <div class="events-searchtools-toggle"><?= $this->transEsc('search_events') ?> <?=$this->icon('show-more') ?></div>
+      <button class="btn btn-primary events-searchtools-toggle"><?= $this->transEsc('search_events') ?> <?=$this->icon('show-more', 'show-more-icon') ?></button>
       <div class="events-searchtools-container <?= $this->searchTools === 'show' ? '' : 'hidden'; ?>">
         <span class="event-search-container">
-          <label for="event-search" class="sr-only"><?= $this->transEsc('event_name_or_place') ?></label>
-          <input id="event-search" class="event-text-search" type="text" placeholder="<?= $this->transEsc('event_name_or_place') ?>" size="26">
+          <label for="event-search"><?= $this->transEsc('event_name_or_place') ?></label>
+          <input id="event-search" class="event-text-search form-control" type="text" size="26">
         </span>
         <span class="event-date-container">
-          <span class="event-date-title"><?= $this->transEsc('Time Period'); ?>:</span>
-          <label for="event-date-start" class="sr-only"><?=$this->transEsc('event_date_start');?></label>
-          <input autocomplete="off" id="event-date-start" class="event-date-start event-datepicker"> &ndash; <label for="event-date-end" class="sr-only"><?=$this->transEsc('event_date_end');?></label><input autocomplete="off" id="event-date-end" class="event-date-end event-datepicker">
+          <?=$this->component('finna-dateinput', ['dateinputId' => 'event-date-start', 'dateinputClass' => 'event-date-start', 'dateinputPicker' => 'single', 'dateinputPicker' => 'single', 'dateinputLabel' => $this->transEsc('event_date_start'), 'dateinputValue' => date($dateFormat)]) ?>
+          <?=$this->component('finna-dateinput', ['dateinputId' => 'event-date-end', 'dateinputClass' => 'event-date-end', 'dateinputPicker' => 'single', 'dateinputLabel' => $this->transEsc('event_date_end')]) ?>
         </span>
         <button class="btn btn-primary linked-event-search"><?= $this->transEsc('linked_event_search') ?></button>
         <span class="event-geolocation-container hidden">

@@ -96,7 +96,7 @@
           <?php endforeach; ?>
         </div>
       <?php endif; ?>
-      <?/* Display Main Details from records */?>
+      <?php /* Display Main Details from records */?>
       <?php
         $formatter = $this->recordDataFormatter($driver);
         $coreFields = $formatter->getDefaults();
@@ -123,7 +123,7 @@
             <?=$this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $coreFieldGroups]);?>
           </table>
         <?php endif; ?>
-      <?/* End Main Details */?>
+      <?php /* End Main Details */?>
     <?php endif; ?>
   </div>
   <?php ob_start(); ?>

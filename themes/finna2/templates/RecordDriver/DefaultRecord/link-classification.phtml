@@ -1,3 +1,11 @@
 <?php
-// Use echo to ensure we don't return a line feed
-echo $this->url($this->searchAction ?: $this->searchOptions($this->driver->getSourceIdentifier())->getSearchAction()) . '?lookfor=%22' . urlencode($this->lookfor) . '%22&amp;type=Classification';
+  $searchBackendId = $this->driver->getSearchBackendIdentifier();
+  $options = $this->searchOptions($searchBackendId);
+  $searchRoute = $this->searchAction ?: $options->getSearchAction();
+  $query = ['lookfor' => '"' . $this->lookfor . '"', 'type' => 'Classification'];
+  if (($limit = $this->searchMemory()->getLastLimit($searchBackendId))
+    && $limit !== $options->getDefaultLimit()
+  ) {
+    $query['limit'] = $limit;
+  }
+  echo $this->url($searchRoute, [], compact('query'));

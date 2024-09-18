@@ -143,6 +143,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      */
     protected $supportedVideoFormats = [
         'mp4' => 'video/mp4',
+        'mov' => 'video/quicktime',
     ];
 
     /**
@@ -155,6 +156,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         'preview_audio' => 'displayLink',
         'preview_text' => 'displayLink',
         'provided_text' => 'displayLink',
+        'provided_video' => 'displayLink',
     ];
 
     /**
@@ -225,6 +227,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      * Array of types for linkResources to be displayed as external URL
      */
     protected $displayExternalLinks = ['provided_3D'];
+
+    /**
+     * Array of types displayed as download links with documents
+     *
+     * @var array
+     */
+    protected $displayDownloadLinks = ['provided_video'];
 
     /**
      * Events used for author information.
@@ -572,7 +581,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 }
                 // Representation is a document or wanted to be displayed also as an document
                 $displayAsLink = in_array($type, $this->displayExternalLinks);
-                if (in_array($type, $documentTypeKeys) || $displayAsLink) {
+                if (
+                    in_array($type, $documentTypeKeys)
+                    || in_array($type, $this->displayDownloadLinks)
+                    || $displayAsLink
+                ) {
                     $documentDesc = $description;
                     $linkType = $displayAsLink ? 'external-link' : 'proxy-link';
                     if ($displayAsLink && !$documentDesc) {
@@ -1302,13 +1315,23 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             $materials = [];
             $materialsExtended = [];
             $langMaterialsExtended = [];
-            if (isset($node->eventMaterialsTech->displayMaterialsTech)) {
-                // Use displayMaterialTech (default)
-                $materials[] = (string)$node->eventMaterialsTech
-                    ->displayMaterialsTech;
-            } elseif (isset($node->eventMaterialsTech->materialsTech)) {
-                // display label not defined, build from materialsTech
-                foreach ($node->eventMaterialsTech->materialsTech as $materialsTech) {
+            foreach ($node->eventMaterialsTech ?? [] as $eventMaterialsTech) {
+                if (
+                    $display = trim(
+                        (string)(
+                            $this->getLanguageSpecificItem($eventMaterialsTech->displayMaterialsTech, $language) ?? ''
+                        )
+                    )
+                ) {
+                    $materials[] = $display;
+                    $langMaterialsExtended[] = [
+                        'data' => $display,
+                        'id' => '',
+                        'source' => '',
+                    ];
+                    continue;
+                }
+                foreach ($eventMaterialsTech->materialsTech as $materialsTech) {
                     foreach ($materialsTech->termMaterialsTech ?? [] as $termMaterialsTech) {
                         foreach ($termMaterialsTech->term ?? [] as $term) {
                             $termStr = trim((string)$term);
@@ -2623,6 +2646,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                     $titlesNotInDesc[] = $title;
                 }
             }
+        }
+        foreach ($this->getAlternativeTitles() as $title) {
+            $titlesNotInDesc[] = $title;
         }
         //Get language specific titles
         if ($titleValues) {

@@ -21,15 +21,16 @@
         <?php endif; ?>
       </div>
       <div class="holdings-details electronic">
+        <?php $statusDescriptionTokens = $item['availability']->getStatusDescriptionTokens(); ?>
         <?php if ($item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNKNOWN)): ?>
           <span><?=$this->transEsc('status_unknown_message')?></span>
         <?php elseif ($item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNAVAILABLE)): ?>
-          <span class="text-danger"><?=$this->transEsc($item['availability']->getStatusDescription())?></span>
+          <span class="text-danger"><?=$this->transEsc($item['availability']->getStatusDescription(), $statusDescriptionTokens)?></span>
         <?php elseif ((int)$item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNCERTAIN)): ?>
-          <span class="text-warning"><?=$this->transEsc($item['availability']->getStatusDescription())?></span>
+          <span class="text-warning"><?=$this->transEsc($item['availability']->getStatusDescription(), $statusDescriptionTokens)?></span>
         <?php else: ?>
           <span class="text-success">
-            <?=$this->transEsc($item['availability']->getStatusDescription())?>
+            <?=$this->transEsc($item['availability']->getStatusDescription(), $statusDescriptionTokens)?>
           </span>
         <?php endif; ?>
         <?php if (isset($item['item_notes'])): ?>
