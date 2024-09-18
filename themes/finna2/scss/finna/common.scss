@@ -1,3 +1,7 @@
+/* #SCSS> */
+@use 'sass:color';
+/* <#SCSS */
+
 .page-content {
   width: 100%;
   @media (min-width: $screen-lg) {
@@ -291,7 +295,10 @@ table#componentparts {
     }
   }
   .even td {
-    background: rgba($nav-tabs-border-color, (5/100));
+/* #SCSS> */
+    background: color.adjust($nav-tabs-border-color, $alpha: 0.8);
+/* <#SCSS */
+
   }
   td a {
     font-weight: bold;
