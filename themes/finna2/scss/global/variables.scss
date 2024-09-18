@@ -1,0 +1,343 @@
+//
+// Finna Variables
+// --------------------------------------------------
+
+
+//== Colors
+//
+
+// Brand Colors
+
+$logo-color: #fff;
+$aoe-brand-primary: #ccf5e7;
+$action-link-color: $brand-primary;
+
+// Extra extra small screen / phone (e.g. iPhone 5)
+$screen-xxs: 400px;
+$screen-xxs-min: $screen-xxs;
+$screen-xxs-max: ($screen-xs-min - 1);
+
+$screen-xlg: 1400px;
+$screen-xlg-min: $screen-xlg;
+
+//== Custom Finna styling
+$background-image-url: url('../images/logo_background.jpg');
+$background-image-attachment: scroll;  // set to fixed or scroll (fixed doesnt scoll along with page);
+$background-start-color: transparent; // gradient color for background image
+$background-end-color:  transparent; // gradient color for background image
+$background-start-percent: 10%;
+$background-end-percent: 100%;
+$header-height: 43px;
+$navbar-logo-height: 40px;
+$logo-height: 66px;
+$logo-separator-color: #fff; // Color of hr line under main logo
+$header-background-color: $body-bg; // Color of navigation bar top
+$header-text-color: $navbar-default-link-color;
+$footer-background: $gray-ultralight;
+$footer-text-color: $gray;
+$finna-search-background: mix($body-bg, contrast($body-bg), 95%); // Background color of finna searchbox section
+$finna-search-link-color: $text-color;
+$finna-main-header-background: $body-bg; // Color of page header background and search results tabs
+$finna-searchbox-link-color: $body-bg; // style searchbox link text color contrast with background
+$finna-searchbox-link-background: rgba(1,1,1,0.6); // style searchbox links (advanced search etc.) background contrast with background
+$finna-record-header-background: $gray-ultralight;
+$finna-feedback-color: #fff;
+$finna-feedback-background: $brand-primary;
+$field-margin-vertical: 20px;
+$field-margin-horizontal: 15px;
+$finna-text-shadow: 1px 1px 1px black;
+$finna-search-input-width: 0.655; //== THIS is percentage Change this if no prefilter-select change to 0.88
+$finna-button-radius: 4px; // Defines all button radiuses
+$finna-header-font-size: 1.6em;
+$record-title-font-size: 1.65em;
+$record-holdings-title-background: $brand-primary;
+$record-holdings-title-color: mix($record-holdings-title-background, contrast($record-holdings-title-background), 5%);
+$record-holdings-border-color: $gray-lighter;
+
+$finna-searchtools-background: $gray-lighter;
+$finna-searchtools-color: $gray;
+
+//== Finna home page
+$introduction-text-color: #fff;
+$introduction-text-small-color: #fff;
+$introduction-header: 3em;
+$home-content-background: $body-bg; // Add custom background color for home main section
+$home-1-background: $body-bg;
+$home-2-background: $body-bg;
+$home-3-background: $body-bg; // change the color of right column
+$home-4-background: $body-bg;
+$home-left-column-background: none;
+$home-right-column-background: $body-bg;
+$infobox-background: #f5f5f5;
+$infobox-border: none;
+$infobox-text-color: $gray;
+$infobox-box-shadow: none;
+
+//== Finna facets
+$sidebar-background: $brand-primary;
+$sidebar-header-text-color: mix($sidebar-background, contrast($sidebar-background), 5%);
+$sidebar-header-icon-color: #fff;
+$sidebar-border-color: mix($body-bg, contrast($body-bg), 80%);
+$sidebar-border: 1px solid $sidebar-border-color;
+$facet-header-background: $gray-ultralight;
+$facet-text-color: mix($facet-header-background, contrast($facet-header-background), 5%);
+$facet-border-color: mix($facet-header-background, contrast($facet-header-background), 80%);
+
+$display-checkbox-facet-amount: inline-block;    // set to none or inline-block
+// Applied filters
+$filters-background-color: $action-link-color;
+$filters-text-color: $body-bg;
+$filters-icon-color: $body-bg;
+$filterContent-background: $body-bg;
+$filterContent-border-color: mix($filterContent-background, contrast($filterContent-background), 80%);
+$filterContent-text-color: $text-color;
+//Search tools
+$finna-searchtools-background: $brand-primary;
+$finna-searchtools-color: $body-bg;
+
+
+//== Browsebar
+$finna-browsebar-background: $brand-primary;
+$finna-browsebar-highlight-background: darken($finna-browsebar-background, 10%);
+$finna-browsebar-link-color: $body-bg;
+
+//== Generated horizontal carousel styles
+//== Carousel images background-color
+$carousel-slider-background: $gray;
+//== Carousel iconlabel color
+$carousel-slider-iconlabel-color: #fff;
+//== Styling the header of carousel
+$carousel-header-background: transparent;
+$carousel-header-color: $gray;
+$carousel-header-padding: 0;
+//== Styling the horizontal header of each slide
+$carousel-slide-header-background: rgba(1, 1, 1, 0.6);
+$carousel-slide-header-color: #fff;
+$carousel-slide-header-text-shadow: 1px 1px 1px black;
+//== Vertical slider background
+$carousel-verticalslide-header-background: none;
+//== Styling the text color and background of each slide
+$carousel-text-background-color: rgba(1,1,1,0.75);
+$carousel-slide-text-color: rgb(255, 255, 255);
+$carousel-slide-link-color: rgb(255, 255, 255);
+
+//== Similar items carousel styles
+$similar-carousel-no-image-background: #f2f2f2;
+$similar-carousel-no-image-color: $gray-light;
+$similar-carousel-border: none;
+$similar-carousel-border-radius: 8px;
+$similar-carousel-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.25);
+$similar-carousel-text-color: $text-color;
+$similar-carousel-item-background: #fff;
+$similar-carousel-format-text-color: $text-color;
+$similar-carousel-format-background: #f2f2f2;
+
+//== Breakpoint for slider layout
+$slider-stacked-breakpoint: $screen-sm;
+
+//== List feed styles
+$list-feed-background: $body-bg;
+$list-feed-padding: 10px;
+
+//== List feed header style
+$list-feed-header-background: none;
+$list-feed-header-padding: none;
+$list-feed-header-color: $gray;
+
+//== Myreresearch custom styles
+$myresearch-header-background:  $body-bg;
+$myresearch-tabs-color: $gray;
+$myresearch-menu-header-font-color: #fff;
+
+// Finna info box
+$finna-infobox-bg: lighten($brand-primary, 70%);
+$finna-infobox-border: 4px solid $brand-primary;
+$finna-infobox-color: $brand-primary;
+
+
+//== Typography
+//
+
+$font-size-icon-small: 14px;
+$font-size-icon-large: 1.5em;
+
+
+//## Font size, line-height for content pages
+$content-font-size-base: 16px;
+$content-line-height-base: 1.5;
+$content-headings-font-size-h1: floor(($content-font-size-base * 1.777));
+$content-headings-font-size-h2: floor(($content-font-size-base * 1.5));
+$content-headings-font-size-h3: floor(($content-font-size-base * 1.333));
+$content-headings-font-size-h4: floor(($content-font-size-base * 1.15));
+$content-headings-font-size-h5: $content-font-size-base;
+$content-headings-font-size-h6: floor(($content-font-size-base * 0.875));
+$content-headings-line-height: $headings-line-height;
+$content-headings-color: $gray-dark;
+$content-heading-background: $brand-secondary;
+$content-nav-bg: $gray-ultralight;
+
+
+//-- Iconography
+//
+
+$full-text-icon-color: #037c90;
+$open-access-icon-color: #e88636;
+$peer-reviewed-icon-color: #179003;
+
+
+//== Tables
+//** Finna tables
+$table-finna-record-cell-padding:  3px 0px;
+
+
+//== Forms
+//
+//##
+
+$search-input-bg: #fff;
+
+
+//-- Finna Z-index list
+//
+// These are designed to work with Bootstrap Z-index master list (see bootstrap-variable-overrides).
+// Warning: Avoid customizing these values. They're designed to all work together.
+//
+
+$zindex-cookie-consent:    1034;
+$zindex-header:            1035;
+$zindex-sidebar:           1036;
+$zindex-skip-link:         1037;
+$zindex-datepicker:        1038;
+$zindex-spinner-overlay:   1100;
+
+
+//== Navbar
+//
+//##
+
+// Basics of a navbar
+$navbar-right:                     64px;
+
+// Navbar links
+$navbar-font-size:                         1.1em; // Font-size of navbar links
+$navbar-font-weight:                       500; // Font weight for navbar texts
+// Navbar toggle
+$navbar-toggle-color:                      $navbar-default-link-color;
+
+
+//== Navs
+//
+//##
+
+//=== Shared nav styles
+//== Tabs
+$nav-tabs-active-color:                     $action-link-color;
+$nav-tabs-background-color:                 $body-bg;
+$nav-tabs-text-color:                       $text-color;
+$nav-tabs-link-hover-color:                 $nav-tabs-active-link-hover-color;
+$tabs-border-radius:                        4px;
+
+//== Feed nav pills styles
+$feed-nav-pills-border-radius:              $border-radius-base;
+$feed-nav-pills-padding:                    0 15px;
+
+$feed-nav-pills-color:                      $action-link-color;
+$feed-nav-pills-bg:                         $body-bg;
+$feed-nav-pills-border:                     1px solid $action-link-color;
+
+$feed-nav-pills-active-color:               $component-active-color;
+$feed-nav-pills-active-bg:                  $component-active-bg;
+$feed-nav-pills-active-border:              $feed-nav-pills-border;
+
+$feed-nav-pills-active-hover-bg:            $component-active-bg;
+$feed-nav-pills-active-hover-color:         $component-active-color;
+$feed-nav-pills-active-hover-border:        $feed-nav-pills-border;
+
+// Main nav
+$main-tabs-active-color: $nav-tabs-active-color;
+$main-tabs-background-color: $nav-tabs-background-color;
+$main-tabs-text-color: $nav-tabs-text-color;
+$main-tabs-border-color: $nav-tabs-border-color;
+
+//== Pagination
+//
+//##
+$pagination-background:                $body-bg;
+
+
+//== Tooltips
+//
+//##
+//** Tooltips for Finna, set to inline or none;
+$tooltip-tabs-pci:            inline;
+$tooltip-tabs-local:          inline;
+$tooltip-facet:               inline;
+$tooltip-search-local:        inline;
+$tooltip-search-pci:          inline;
+$tooltip-myaccount:           inline;
+$tooltip-local-advanced:      inline;
+$tooltip-pci-advanced:        inline;
+$tooltip-eds-advanced:        inline;
+$tooltip-summon-advanced:     inline;
+$tooltip-button-color:        $action-link-color;
+
+$tooltip-min-width:           250px;
+
+
+//== Modals
+//
+//##
+$modal-header-background: $brand-primary;
+$modal-header-color: mix($modal-header-background, contrast($modal-header-background), 5%);
+
+
+//== Badges
+//
+//##
+
+$badge-font-size:             0.9em;
+
+
+//== Breadcrumbs
+//
+//##
+//** $breadcrumbs: false/true
+$breadcrumbs: false;
+//** Textual separator for between breadcrumb elements (obsolete)
+$breadcrumb-separator:          "|";
+
+
+//== Cookie Consent
+//
+//##
+$cookie-consent-background-color: $gray-light;
+$cookie-consent-color: #fff;
+$cookie-consent-link-color: #fff;
+$cookie-consent-button-border: 2px solid #fff;
+
+//== Cookie Consent Component
+:root {
+    --cc-cookie-category-block-bg: #{lighten($gray-base, 93.5%)};
+    --cc-btn-border-radius: #{$finna-button-radius};
+}
+
+//== Bazaar Browse Bar
+$bazaar-browse-bar-background-color: $gray-light;
+$bazaar-browse-bar-color: #fff;
+
+//== Miscellaneous
+//
+//##
+
+
+$accordion-details-display:   none;
+$search-tab-tip-bg: #CCF5E7;
+
+// Airplay icon
+$icon-airplay--default:             url('../../finna2/images/videojs/ic_airplay_white_24px.svg');
+$icon-airplay--hover:               url('../../finna2/images/videojs/ic_airplay_white_24px.svg');
+$icon-airplay-size:                 22px;
+
+// Skip link
+$skip-link-color: #fff;
+$skip-link-background-color: $action-link-color;

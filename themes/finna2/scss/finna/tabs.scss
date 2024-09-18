@@ -1,0 +1,317 @@
+.finna-main-tabs,
+.authority-recommend
+{
+  background-color: transparent;
+  padding-bottom: 15px;
+  @media(max-width: $screen-sm-max) {
+    margin: 0px;
+    padding: 0px;
+  }
+  .container {
+    @media(max-width: $screen-xs-max) {
+      width: 100%;
+    }
+    .tabs-table {
+      display: table;
+      width: 100%;
+    }
+  }
+  ul.nav-tabs {
+    display: flex;
+    @media(max-width: $screen-xs-max) {
+      padding-top: 10px;
+    }
+    @media(max-width: 390px) {
+      &.many-tabs > li {
+        max-width: 64px;
+        a {
+          min-height: 70px;
+          padding: 4px 4px;
+          font-size: .8em;
+        }
+      }
+    }
+    > li {
+      color: $body-bg;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-top: 4px solid transparent;
+      border-bottom: 1px solid transparent;
+      border-left: 1px solid transparent;
+      border-right: 1px solid transparent;
+      background-color: #EDEDED;
+      border-bottom: 1px solid #919191;
+      @media (max-width: $screen-sm) {
+        &:not(.many-tabs) {
+          flex-basis: 50%;
+        }
+      }
+      &.active {
+        border-top: 4px solid $main-tabs-active-color;
+        border-left: 1px solid $main-tabs-border-color;
+        border-right: 1px solid $main-tabs-border-color;
+        border-bottom: 1px solid $body-bg;
+        background-color: $main-tabs-background-color;
+        box-shadow: -1px -1px 2px rgba(0, 0, 0, 0.25);
+        a:hover {
+          border: none;
+        }
+      }
+      > a {
+        padding: 10px 5px;
+        margin-bottom: 0;
+        border: 0;
+        font-size: 1em;
+        font-weight: 600;
+        color: $main-tabs-text-color;
+        transition: none;
+        @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+          word-break: break-word;
+        }
+      }
+      >button {
+        opacity: 1;
+        padding-left: 0;
+        color: $main-tabs-active-color;
+        position: inherit;
+        z-index: 200;
+        background-color: transparent;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        .icon {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+
+.search-tabs-recommendations {
+  border-top: 2px solid $brand-primary;
+  border-bottom: 2px solid $brand-primary;
+  padding: $padding-large-horizontal 0 0 0;
+
+  a.title {
+    display: inline-block;
+    margin-bottom: 5px;
+    .searchterms {
+      font-weight: bold;
+    }
+    @media (max-width: $screen-xs-max) {
+      display: block;
+    }
+  }
+
+  .count {
+    color: $text-muted;
+  }
+
+  .tab-icon:before {
+    color: $gray-mid-light;
+    font-size: 2.5em;
+  }
+}
+
+// add classes when there are too many tabs to fit on the screen
+.tabs-responsive {
+  width: 100%;
+  overflow-x: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  @media (max-width: $screen-xs-max) {
+    > .recordTabs {
+      width: 150%;
+      margin-left: 0px;
+      margin-right: 0px;
+    }
+  }
+}
+
+// RSS-feed and Linked Events tabs
+.feed-tabs .nav-tabs, .linked-events-tabs .nav-tabs {
+  border-bottom: 1px solid $nav-tabs-border-color;
+  margin-left: 6px;
+  > li {
+    // Make the list-items overlay the bottom border
+    margin-bottom: -1px;
+    font-size: 1.1em;
+    font-weight: 500;
+    background-color: transparent;
+    color: $nav-tabs-text-color;
+    border-bottom: 1px solid transparent;
+    margin: 0;
+    padding: .6em 0 0 0;
+    cursor: pointer;
+    @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+      .icon {
+        display: block;
+        text-align: center;
+      }
+    }
+    @media (max-width: $screen-sm-max) {
+      font-size: .9em;
+    }
+    &:hover {
+      color: $nav-tabs-link-hover-color;
+      border-color: transparent;
+    }
+    // Active state, and its :hover to override normal :hover
+    &.active {
+      cursor: initial;
+      &,
+      &:hover,
+      &:focus {
+        background-color: $body-bg;
+        color: $text-color;
+        margin-bottom: -1px;
+        border-bottom: none;
+        transition: 0s;
+      }
+    }
+    a {
+      margin-right: 0px;
+      height: 100%;
+    }
+  }
+}
+
+
+.useraccount-nav.nav-tabs {
+  border-bottom: none;
+  // style 5 tabs to make sure they stay as tabs
+  li:first-child:nth-last-child(5), li:first-child:nth-last-child(5) ~ li {
+    @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+      max-width: 100%;
+    }
+    @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+      max-width: 100%;
+    }
+  }
+  > li {
+    margin-bottom: 0;
+    > a {
+      border: none;
+      font-weight: 400;
+      &:hover {
+        border-bottom-color: $gray-lighter;
+      }
+      &.menu-parent {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .icon {
+          font-size: 0.8em;
+        }
+      }
+    }
+    &:first-child > a {
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+    }
+    &:last-child > a {
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+    &.active > a {
+      background-color: $gray-ultralight;
+      border-color: transparent;
+      border-bottom-color: $gray-lighter;
+      &,
+      &:hover,
+      &:focus {
+        border: 1px solid transparent;
+        border-top: 1px solid transparent;
+        cursor: auto;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+.useraccount-nav .collapsing {
+  -webkit-transition-delay: -1s;
+  transition-delay: -1s;
+  visibility: hidden;
+}
+
+.useraccount-nav.nav-tabs .dropdown-menu {
+  float: none;
+  position: relative;
+  top: initial;
+  left: initial;
+}
+
+.recordTabs.nav {
+  margin-top: 20px;
+  .staff-view-icon {
+    font-size: 1.2em;
+    line-height: 1em;
+  }
+  @media (max-width: $screen-xs-max) {
+    margin-left: -15px;
+    margin-right: -15px;
+  }
+  @media print {
+    .record-tab.versions {
+      display: none;
+    }
+    li.record-tab.active {
+      > a {
+        border-bottom-color: $nav-tabs-background-color;
+      }
+    }
+  }
+  li.tab-right {
+    float:right
+  }
+}
+
+.record .recordTabs.nav > li > a {
+  color: $gray;
+}
+
+.mobile-main-tabs {
+  width: 100%;
+  .dropdown-toggle {
+    line-height: 50px;
+    margin-top: 15px;
+    background-color: $main-tabs-active-color;
+    color: mix($main-tabs-active-color, contrast($main-tabs-active-color), 5%);
+    padding: 0 15px;
+    border-radius: 5px;
+    display: flex;
+    cursor: pointer;
+    .tab-title {
+      font-size: $font-size-h2;
+      font-weight: 500;
+      background: transparent;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      flex-grow: 1;
+      margin-right: 10px;
+    }
+    .more {
+      display: flex;
+      align-items: center;
+      font-size: 85%;
+      padding-left: 10px;
+      white-space: nowrap;
+      .icon {
+        margin-left: 5px;
+        font-size: 20px;
+      }
+    }
+  }
+  .tooltip {
+    display: none;
+  }
+}
+
+.loginTabs a {
+  cursor: default;
+}

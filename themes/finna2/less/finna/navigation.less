@@ -62,7 +62,7 @@
       max-width: 80px;
     }
     @media (max-width: @screen-xxs) {
-      .sr-only;
+      .sr-only();
     }
   }
   .description {
@@ -119,12 +119,22 @@
     }
   }
 }
+/* #SCSS>
+.breadcrumbs {
+  display: if ($breadcrumbs == true) block;
+}
+.record.record-row {
+  margin-top: if ($breadcrumbs == true) 0;
+}
+<#SCSS */
+/* #LESS> */
 .breadcrumbs when (@breadcrumbs = true) {
   display: block;
 }
 .record.record-row when (@breadcrumbs = true) {
   margin-top: 0;
 }
+/* <#LESS */
 .breadcrumb {
   border-radius: 0;
   margin-bottom: 0;

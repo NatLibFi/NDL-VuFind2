@@ -1,4 +1,25 @@
 /* --- Advanced Search --- */
+
+// Mixin for generating hierarchical elements
+/* #SCSS>
+.generate-hierarchy($n, $i: 1) {
+  @if ($i <= $n) {
+    &.child-width-${i} {
+      width: ($i * 13px);
+    }
+    .generate-hierarchy($n, ($i + 1));
+  }
+}
+<#SCSS */
+/* #LESS> */
+.generate-hierarchy(@n, @i: 1) when (@i =< @n) {
+  &.child-width-@{i} {
+    width: (@i * 13px);
+  }
+  .generate-hierarchy(@n, (@i + 1));
+}
+/* <#LESS */
+
 .template-name-advanced {
   h1.content-header {
     padding-left: 75px;
@@ -478,12 +499,6 @@
           top: -50%;
 
           .generate-hierarchy(6);
-          .generate-hierarchy(@n, @i: 1) when (@i =< @n) {
-            &.child-width-@{i} {
-              width: (@i * 13px);
-            }
-            .generate-hierarchy(@n, (@i + 1));
-          }
           &.option-child:not(.child-width-1) {
             border-bottom: none;
           }

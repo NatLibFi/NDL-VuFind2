@@ -1,0 +1,14 @@
+h1, .h1,
+h2, .h2,
+h3, .h3 {
+  margin-top: $line-height-computed;
+  margin-bottom: ($line-height-computed);
+}
+
+// Finna text styles
+.finna-main-header h3 {
+  margin: 0;
+}
+h4 a[id] {
+  color: $header-text-color;
+}

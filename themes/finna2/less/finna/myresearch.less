@@ -2,8 +2,8 @@
   padding: 10px;
   margin: 0;
   word-wrap: break-word;
-  @media(max-width:@screen-xs-max) {
-    .row();
+  @media(max-width: @screen-xs-max) {
+    .make-row();
   }
   &:nth-child(odd) {
     background: @table-bg-accent;
@@ -232,7 +232,7 @@
       .dropdown-menu > li > a {
         max-width: 270px;
       }
-      .dropdown-toggle span:not('.icon'), .dropdown-menu > li > a {
+      .dropdown-toggle span:not(.icon), .dropdown-menu > li > a {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -548,7 +548,7 @@
 .toolbar-sticky-container {
   margin: 0;
   @media (max-width: @screen-md) {
-    .row();
+    .make-row();
     padding: 0px 15px;
   }
   .toolbar-sticky {
@@ -940,20 +940,28 @@ form#renewals, form#update_holds, form#purge_history {
 }
 
 .useraccount-confirm {
-  min-width: 205px;
+  min-width: 210px;
 }
 .useraccount-confirm > li {
   border-bottom: none;
-  &:not(.disabled) {
-    float: left;
-    width: 100px;
+  &:not(.disabled), &:not(.dropdown-header) {
+    width: 100%;
     padding: 10px;
-    text-align: center;
     a {
+      width: 80px;
+      text-align: center;
       border-radius: @border-radius-base;
       background: @link-color;
       color: @body-bg;
+      display: inline-block;
+      margin-right: 10px;
     }
+  }
+  .dropdown-header {
+    max-width: 300px;
+    font-size: 1em;
+    padding: 0;
+    white-space: initial;
   }
 }
 .main.template-dir-myresearch.template-name-unsubscribe {

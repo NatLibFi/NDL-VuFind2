@@ -99,7 +99,7 @@
 }
 
 .navbar-nav {
-  margin: (@navbar-padding-vertical / 2) -@navbar-padding-horizontal;
+  margin: (@navbar-padding-vertical / 2) - @navbar-padding-horizontal;
 
   > li > a {
     padding-top: @navbar-padding-vertical;
@@ -322,7 +322,12 @@
   }
   .navbar-collapse.in {
     box-shadow: 0 3px 5px @gray;
+/* #SCSS>
+    max-height: calc(100vh - #{$navbar-height});
+<#SCSS */
+/* #LESS> */
     max-height: ~"calc(100vh - "@navbar-height~")";
+/* <#LESS */
   }
   .navbar-header {
     padding-left: 10px;

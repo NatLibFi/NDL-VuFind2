@@ -1,4 +1,6 @@
 // *** Common styles for organisation info page and widget ***
+@organisation-info-max-w: 400px;
+
 .organisation-info {
     .finna-panel {
         .panel-collapse, .panel-body {
@@ -394,11 +396,7 @@
     }
 
     .locations-title {
-        &:extend(.finna-panel-default .panel-heading);
-        margin-bottom: 1rem;
-        h2 {
-            &:extend(.finna-panel-default .finna-panel-heading-inner);
-        }
+        padding: 10px;
     }
 
     .location-filters {
@@ -724,7 +722,6 @@
 }
 
 // *** Widget ***
-@organisation-info-max-w: 400px;
 
 .organisation-info-widget {
     display: inline-block;
