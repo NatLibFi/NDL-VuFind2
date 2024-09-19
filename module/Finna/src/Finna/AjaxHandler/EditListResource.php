@@ -53,14 +53,14 @@ class EditListResource extends \VuFind\AjaxHandler\AbstractBase implements Trans
      *
      * @param ?UserEntityInterface         $user                Logged in user (or null)
      * @param UserResourceServiceInterface $userResourceService UserResource database service
-     * @param bool                         $enabled             Are lists enabled?
      * @param Markdown                     $markdownHelper      Markdown view helper
+     * @param bool                         $enabled             Are lists enabled?
      */
     public function __construct(
         protected ?UserEntityInterface $user,
         protected UserResourceServiceInterface $userResourceService,
-        protected $enabled = true,
-        protected $markdownHelper = null
+        protected Markdown $markdownHelper,
+        protected $enabled = true
     ) {
     }
 
@@ -110,18 +110,22 @@ class EditListResource extends \VuFind\AjaxHandler\AbstractBase implements Trans
         $listId = $listParams['listId'];
         $notes = $listParams['notes'];
 
-        $resources = $this->userResourceService
+        $userResources = $this->userResourceService
             ->getFavoritesForRecord($listParams['id'], $source, $listId, $this->user);
-        if (empty($resources)) {
+        if (empty($userResources)) {
             return $this->formatResponse(
                 'User resource not found',
                 self::STATUS_HTTP_BAD_REQUEST
             );
         }
 
-        foreach ($resources as $resource) {
-            $resource->setNotes($notes);
-            $this->userResourceService->persistEntity($resource);
+        foreach ($userResources as $userResource) {
+            $this->userResourceService->createOrUpdateLink(
+                $userResource->getResource(),
+                $userResource->getUser(),
+                $userResource->getUserList(),
+                $notes
+            );
         }
 
         $response = [];

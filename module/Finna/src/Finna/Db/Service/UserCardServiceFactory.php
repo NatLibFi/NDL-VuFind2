@@ -1,11 +1,12 @@
 <?php
 
 /**
- * Factory for EditListResource AJAX handler.
+ * Database usercard service factory
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2018.
+ * Copyright (C) Villanova University 2024.
+ * Copyright (C) The National Library of Finland 2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,30 +22,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  AJAX
+ * @package  Database
+ * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
 
-namespace Finna\AjaxHandler;
+namespace Finna\Db\Service;
 
+use Closure;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
-use VuFind\Db\Service\UserResourceServiceInterface;
+use VuFind\Db\Service\AbstractDbServiceFactory;
 
 /**
- * Factory for EditListResource AJAX handler.
+ * Database usercard service factory
  *
  * @category VuFind
- * @package  AJAX
+ * @package  Database
+ * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
-class EditListResourceFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
+class UserCardServiceFactory extends AbstractDbServiceFactory
 {
     /**
      * Create an object
@@ -58,9 +62,7 @@ class EditListResourceFactory implements \Laminas\ServiceManager\Factory\Factory
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
-     * @throws ContainerException if any other error occurs
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @throws ContainerException&\Throwable if any other error occurs
      */
     public function __invoke(
         ContainerInterface $container,
@@ -68,14 +70,30 @@ class EditListResourceFactory implements \Laminas\ServiceManager\Factory\Factory
         array $options = null
     ) {
         if (!empty($options)) {
-            throw new \Exception('Unexpected options passed to factory.');
+            throw new \Exception('Unexpected options sent to factory!');
         }
-        $capabilities = $container->get(\VuFind\Config\AccountCapabilities::class);
-        return new $requestedName(
-            $container->get(\VuFind\Auth\Manager::class)->getUserObject(),
-            $container->get(\VuFind\Db\Service\PluginManager::class)->get(UserResourceServiceInterface::class),
-            $container->get('ViewRenderer')->plugin('markdown'),
-            $capabilities->getListSetting() !== 'disabled',
+        $getLoginTargetPrefixes = function () use ($container) {
+            $ils = $container->get(\VuFind\ILS\Connection::class);
+            if (!$ils->checkCapability('getLoginDrivers')) {
+                return [];
+            }
+            $loginTargets = $ils->getLoginDrivers();
+            $loginTargets = array_map(
+                function ($a) {
+                    return "$a.";
+                },
+                $loginTargets
+            );
+            return $loginTargets;
+        };
+        return parent::__invoke(
+            $container,
+            $requestedName,
+            [
+                $container->get(\VuFind\Auth\ILSAuthenticator::class),
+                $container->get(\VuFind\Config\AccountCapabilities::class),
+                Closure::fromCallable($getLoginTargetPrefixes),
+            ],
         );
     }
 }

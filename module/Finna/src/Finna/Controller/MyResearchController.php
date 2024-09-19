@@ -649,13 +649,11 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $userListService = $this->getDbService(UserListServiceInterface::class);
             assert($userListService instanceof FinnaUserListService);
             $listID = $this->params()->fromPost('list_id');
-            if (
-                empty($listID) || empty($orderedList)
-                || !$userListService->saveCustomFavoriteOrder($user, $listID, $orderedList)
-            ) {
+            if (empty($listID) || empty($orderedList)) {
                 $this->flashMessenger()->addErrorMessage('An error has occurred');
             } else {
-                $this->flashMessenger()->addMessage('list_order_saved', 'success');
+                $userListService->saveCustomFavoriteOrder($user, $listID, $orderedList);
+                $this->flashMessenger()->addSuccessMessage('list_order_saved');
             }
             if ($this->inLightbox()) {
                 return $this->getRefreshResponse();

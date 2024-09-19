@@ -1285,7 +1285,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
         $availableTotal = $itemsTotal = $orderedTotal = $reservationsTotal = 0;
         $locations = [];
         foreach ($holdings as $item) {
-            if (!empty($item['availability'])) {
+            if ($item['availability']->isAvailable()) {
                 $availableTotal++;
             }
             if (isset($item['availabilityInfo']['total'])) {
