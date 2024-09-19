@@ -468,10 +468,10 @@ finna.layout = (function finnaLayout() {
       return;
     }
     // Lightbox passes an object as an event containing keys: {formUrl, originalUrl}
-    VuFind.listen('lightbox.login', function onLightboxLogin(e) {
+    VuFind.listen('lightbox.login', function onLightboxLogin(e, cancelRefresh) {
       if ($('body').hasClass('template-name-home') && !e.formUrl.match(/catalogLogin/) && !e.formUrl.match(/\/Save/) && !e.formUrl.match(/%2[fF]Save/)) {
         window.location.href = VuFind.path + '/MyResearch/Home';
-        e.preventDefault();
+        cancelRefresh();
       }
     });
     $('#modal').on('show.bs.modal', function onShowModal() {
