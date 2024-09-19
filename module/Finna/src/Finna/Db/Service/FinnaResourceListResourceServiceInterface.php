@@ -65,13 +65,6 @@ interface FinnaResourceListResourceServiceInterface extends DbServiceInterface
     ): array;
 
     /**
-     * Get statistics on use of UserResource.
-     *
-     * @return array
-     */
-    public function getStatistics(): array;
-
-    /**
      * Create user/resource/list link if one does not exist; update notes if one does.
      *
      * @param ResourceEntityInterface|int          $resourceOrId Entity or ID of resource to link up
@@ -99,14 +92,14 @@ interface FinnaResourceListResourceServiceInterface extends DbServiceInterface
      *
      * @return void
      */
-    public function unlinkFavorites(
+    public function unlinkResources(
         int|array|null $resourceId,
         UserEntityInterface|int $userOrId,
         FinnaResourceListEntityInterface|int|null $listOrId = null
     ): void;
 
     /**
-     * Create a UserResource entity object.
+     * Create a FinnaResourceListResource entity object.
      *
      * @return FinnaResourceListResourceEntityInterface
      */

@@ -88,16 +88,6 @@ class FinnaResourceListResourceService extends AbstractDbService implements
     }
 
     /**
-     * Get statistics on use of UserResource.
-     *
-     * @return array
-     */
-    public function getStatistics(): array
-    {
-        return $this->getDbTable(FinnaResourceListResource::class)->getStatistics();
-    }
-
-    /**
      * Create user/resource/list link if one does not exist; update notes if one does.
      *
      * @param ResourceEntityInterface|int $resourceOrId Entity or ID of resource to link up
@@ -156,7 +146,7 @@ class FinnaResourceListResourceService extends AbstractDbService implements
      *
      * @return void
      */
-    public function unlinkFavorites(
+    public function unlinkResources(
         int|array|null $resourceId,
         UserEntityInterface|int $userOrId,
         FinnaResourceListEntityInterface|int|null $listOrId = null

@@ -149,7 +149,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
 
         // Remove user_resource and resource_tags rows for favorites tags:
         $listUser = $list->getUser();
-        $this->resourceListResourceService->unlinkFavorites(null, $listUser, $list);
+        $this->resourceListResourceService->unlinkResources(null, $listUser, $list);
         $this->resourceListService->deleteFinnaResourceList($list);
     }
 
@@ -272,7 +272,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
 
         // Remove Resource and related tags:
         $listUser = $list->getUser();
-        $this->resourceListResourceService->unlinkFavorites($resourceIDs, $listUser, $list);
+        $this->resourceListResourceService->unlinkResources($resourceIDs, $listUser, $list);
     }
 
     /**
@@ -296,7 +296,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         foreach ($resources as $current) {
             $resourceIDs[] = $current->getId();
         }
-        $this->resourceListResourceService->unlinkFavorites($resourceIDs, $user->getId(), null);
+        $this->resourceListResourceService->unlinkResources($resourceIDs, $user->getId(), null);
     }
 
     /**

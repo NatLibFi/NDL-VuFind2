@@ -63,58 +63,6 @@ interface FinnaResourceListEntityInterface extends EntityInterface
     public function getId(): int;
 
     /**
-     * Is the current user allowed to edit this list?
-     *
-     * @param UserEntityInterface $user Logged-in user
-     *
-     * @return bool
-     */
-    public function editAllowed($user): bool;
-
-    /**
-     * Destroy the list.
-     *
-     * @param UserEntityInterface|bool $user  Logged-in user (false if none)
-     * @param bool                     $force Should we force the delete without
-     * checking permissions?
-     *
-     * @return int The number of rows deleted.
-     */
-    public function delete($user = false, $force = false): int;
-
-    /**
-     * Saves the properties to the database.
-     *
-     * This performs an intelligent insert/update, and reloads the
-     * properties with fresh data from the table on success.
-     *
-     * @return mixed The primary key value(s), as an associative array if the
-     *     key is compound, or a scalar if the key is single-column.
-     * @throws ListPermissionException
-     * @throws MissingFieldException
-     */
-    public function save();
-
-    /**
-     * Remember that this list was used so that it can become the default in
-     * dialog boxes.
-     *
-     * @return void
-     */
-    public function rememberLastUsed(): void;
-
-    /**
-     * Given an array of item ids, remove them from this list
-     *
-     * @param UserEntityInterface $user   Logged-in user (false if none)
-     * @param array               $ids    IDs to remove from the list
-     * @param string              $source Type of resource identified by IDs
-     *
-     * @return void
-     */
-    public function removeResourcesById($user, $ids, $source = DEFAULT_SEARCH_BACKEND): void;
-
-    /**
      * Get user id
      *
      * @return int
