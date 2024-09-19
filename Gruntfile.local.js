@@ -10,6 +10,14 @@ module.exports = function(grunt) {
     grunt.task.run('dart-sass');
   });
 
+  grunt.registerTask('finna:check:scss', function sassCheck() {
+    const config = getFinnaSassConfig({
+        quietDeps: true
+      }, true);
+    grunt.config.set('dart-sass', config);
+    grunt.task.run('dart-sass');
+  });
+
   grunt.registerTask("finna:lessToSass", function finnaLessToSassFunc() {
     grunt.config.set('lessToSass', {
      convert: {
