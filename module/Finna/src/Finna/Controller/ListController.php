@@ -31,12 +31,14 @@
 namespace Finna\Controller;
 
 use Laminas\Stdlib\Parameters;
+use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\TagServiceInterface;
 use VuFind\Db\Service\UserListService;
 use VuFind\Db\Service\UserListServiceInterface;
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\RecordMissing as RecordMissingException;
 
+use function assert;
 use function is_object;
 
 /**
@@ -222,6 +224,7 @@ class ListController extends \VuFind\Controller\AbstractBase
 
         // Perform the save operation:
         $favorites = $this->serviceLocator->get(\VuFind\Favorites\FavoritesService::class);
+        assert($favorites instanceof \Finna\Favorites\FavoritesService);
         $favorites->saveMany(['list' => $targetListId], $user, $records);
     }
 
