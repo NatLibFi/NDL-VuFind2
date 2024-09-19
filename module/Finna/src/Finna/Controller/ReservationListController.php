@@ -127,7 +127,7 @@ class ReservationListController extends AbstractBase
             $source ?: DEFAULT_SEARCH_BACKEND,
             false
         );
-        $configuration = $this->reservationListHelper->getListConfiguration($institution, $listIdentifier, $driver);
+        $configuration = ($this->reservationListHelper)($user)->getListConfiguration($institution, $listIdentifier);
         /**
          * Check if the driver is really compatible with given list
          */
@@ -236,67 +236,26 @@ class ReservationListController extends AbstractBase
         if ($details->getOrdered()) {
             throw new \VuFind\Exception\Forbidden('List not found or ordered');
         }
-        // Fill out records to form
-        $records = $this->reservationListService->getResourcesForList($list['list_entity'], $user);
+        // Get all resources in the list as recordsIds
+        $sourceRecordIds = array_map(
+            fn ($resource) => $resource->getSource() . '|' . $resource->getRecordId(),
+            $this->reservationListService->getResourcesForList($list['list_entity'], $user)
+        );
+
         $configuration = $this->reservationListHelper->getListConfiguration(
             $details->getInstitution(),
             $details->getListConfigIdentifier()
         );
-        $request = $this->getRequest();
-        $post = $request->getPost();
-        $post->set('materials', $records);
-        $request->setPost($post);
-        $request = $this->getRequestAsArray();
         $formId = $configuration['FormIdentifier'] ?? Form::RESERVATION_LIST_REQUEST;
-        /**
-         * Finna Form
-         *
-         * @var Form
-         */
-        $form = $this->serviceLocator->get(Form::class);
-        if (!$form->isEnabled()) {
-            throw new \VuFind\Exception\Forbidden("Form '$formId' is disabled");
-        }
-        $params = [];
-        if ($refererHeader = $this->getRequest()->getHeader('Referer')) {
-            $params['referrer'] = $refererHeader->getFieldValue();
-        }
-        if ($userAgentHeader = $this->getRequest()->getHeader('User-Agent')) {
-            $params['userAgent'] = $userAgentHeader->getFieldValue();
-        }
-        $form->setFormId($formId, $params);
-        $view = $this->createViewModel(compact('form', 'formId', 'user', 'listId'));
 
-        $params = $this->params();
-        if (!$this->formWasSubmitted('submit')) {
-            $form->setData(
-                $params->fromPost() + [
-                    'name' => $user->firstname . ' ' . $user->lastname,
-                    'email' => $user->email,
-                ]
-            );
-            return $view;
-        }
-        $form->setData($params->fromPost());
-        if (!$form->isValid()) {
-            return $view;
-        }
-        $handler = $form->getPrimaryHandler();
-        $handler->setListId($listId);
-        $success = $handler->handle($form, $this->params(), $user);
-        if ($success) {
-            $this->flashMessenger()->addSuccessMessage('ReservationList::form_response');
-            $this->reservationListService->updateListFromRequest($user, $listId, $request['pickup_date'] ?? '');
-            return $this->inLightbox()  // different behavior for lightbox context
-                ? $this->getRefreshResponse()
-                : $this->redirect()->toRoute('reservationlist-list', ['id' => $listId]);
-        } else {
-            $this->flashMessenger()->addErrorMessage(
-                $this->translate('could_not_process_feedback')
-            );
-        }
-
-        return $view;
+        return $this->redirect()->toRoute(
+            'feedback-form',
+            ['id' => $formId],
+            ['query' => [
+                'layout' => $this->getRequest()->getQuery('layout', false),
+                'record_ids' => $sourceRecordIds,
+            ]]
+        );
     }
 
     /**

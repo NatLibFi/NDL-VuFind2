@@ -16,7 +16,7 @@
     </div>
 <?php endif;?>
 
-<?= $this->reservationList()->renderReserveTemplate($driver); ?>  
+<?= $this->reservationList($this->auth()->getUserObject())->renderReserveTemplate($driver); ?>  
 
 <?= $this->render('RecordTab/holdings-record-urls'); ?>
 

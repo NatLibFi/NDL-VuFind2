@@ -127,6 +127,7 @@ class FinnaResourceListResourceService extends AbstractDbService implements
             $result = $this->createEntity()
                 ->setUser($user)
                 ->setResource($resource)
+                ->setNotes($notes)
                 ->setList($list);
         }
         // Update the notes:

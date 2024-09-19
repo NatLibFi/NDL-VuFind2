@@ -85,7 +85,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      *                                                                               database service
      * @param ResourceServiceInterface                  $resourceService             Resource database service
      * @param UserServiceInterface                      $userService                 User database service
-     * @param FinnaResourceListDetailsServiceInterface  $resourceListDetailsService Resource list details service
+     * @param FinnaResourceListDetailsServiceInterface  $resourceListDetailsService  Resource list details service
      * @param ResourcePopulator                         $resourcePopulator           Resource populator service
      * @param RecordLoader                              $recordLoader                Record loader
      * @param ?RecordCache                              $recordCache                 Record cache (optional)
@@ -358,7 +358,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
             $user,
             $resource,
             $list,
-            $params['notes'] ?? ''
+            $params['desc'] ?? ''
         );
         return ['listId' => $list->getId()];
     }

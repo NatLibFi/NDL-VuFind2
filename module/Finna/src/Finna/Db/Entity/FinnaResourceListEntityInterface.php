@@ -33,8 +33,6 @@ namespace Finna\Db\Entity;
 use DateTime;
 use VuFind\Db\Entity\EntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\Exception\ListPermission as ListPermissionException;
-use VuFind\Exception\MissingField as MissingFieldException;
 
 /**
  * Row Definition for finna_resource_list

@@ -22,7 +22,7 @@
       $list = $this->results?->getListObject() ?? [];
       $listParams = [
         'activeId' => $list['id'] ?? false,
-        'lists' => $this->reservationList()->getReservationListsForUser($user),
+        'lists' => $this->reservationList($user)->getReservationListsForUser($user),
         'results' => $this->results,
         'user' => $user,
       ];

@@ -31,6 +31,7 @@
 namespace Finna\Form;
 
 use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\RecordDriver\DefaultRecord;
 
 use function in_array;
 
@@ -72,7 +73,7 @@ class Form extends \VuFind\Form\Form
      *
      * @var string
      */
-    public const RESERVATION_LIST_REQUEST = 'FinnaResourceListRequest';
+    public const RESERVATION_LIST_REQUEST = 'ReservationListRequest';
 
     /**
      * Handlers that are considered safe for transmitting information about the user
@@ -148,9 +149,16 @@ class Form extends \VuFind\Form\Form
     /**
      * Record driver
      *
-     * @var \VuFind\RecordDriver\DefaultRecord
+     * @var DefaultRecord
      */
     protected $record = null;
+
+    /**
+     * An array containing records
+     *
+     * @var DefaultRecord[]
+     */
+    protected array $records = [];
 
     /**
      * Record loader
@@ -179,7 +187,10 @@ class Form extends \VuFind\Form\Form
                 $this->userCatUsername = $barcode;
             }
         }
-
+        if ($this->reportPatronId() && $catId = $this->user?->getCatId() ?? '') {
+            [, $id] = explode('.', $catId);
+            $this->userCatId = $id;
+        }
         $this->setName($formId);
     }
 
@@ -206,6 +217,27 @@ class Form extends \VuFind\Form\Form
             [$source, $recId] = explode('|', $data['record_id'], 2);
             $driver = $this->recordLoader->load($recId, $source);
             $this->setRecord($driver);
+        }
+        if (!empty($data['record_ids'])) {
+            if (!$this->recordLoader) {
+                throw new \Exception('Record loader not set');
+            }
+            $sourceAndRecords = [];
+            foreach ($data['record_ids'] as $id) {
+                [$source, $recId] = explode('|', $id, 2);
+                if (!isset($sourceAndRecords[$source])) {
+                    $sourceAndRecords[$source] = [];
+                }
+                $sourceAndRecords[$source] = $recId;
+            }
+            $drivers = [];
+            foreach ($sourceAndRecords as $source => $ids) {
+                $drivers = [
+                    ...$drivers,
+                    ...$this->recordLoader->loadBatchForSource($ids, $source),
+                ];
+            }
+            $this->setRecords($drivers);
         }
         return parent::setData($data);
     }
@@ -253,9 +285,9 @@ class Form extends \VuFind\Form\Form
     /**
      * Get record driver
      *
-     * @return ?\VuFind\RecordDriver\DefaultRecord
+     * @return ?DefaultRecord
      */
-    public function getRecord(): ?\VuFind\RecordDriver\DefaultRecord
+    public function getRecord(): ?DefaultRecord
     {
         return $this->record;
     }
@@ -263,13 +295,36 @@ class Form extends \VuFind\Form\Form
     /**
      * Set record driver
      *
-     * @param \VuFind\RecordDriver\DefaultRecord $record Record
+     * @param DefaultRecord $record Record
      *
      * @return void
      */
-    protected function setRecord(\VuFind\RecordDriver\DefaultRecord $record): void
+    protected function setRecord(DefaultRecord $record): void
     {
         $this->record = $record;
+    }
+
+    /**
+     * Get array containing records
+     *
+     * @return DefaultRecord[]
+     */
+    public function getRecords(): array
+    {
+        return $this->records;
+    }
+
+    /**
+     * Set records
+     *
+     * @param array $records Records to set for form
+     *
+     * @return self
+     */
+    protected function setRecords(array $records): self
+    {
+        $this->records = $records;
+        return $this;
     }
 
     /**
@@ -317,6 +372,16 @@ class Form extends \VuFind\Form\Form
     public function reportPatronBarcode()
     {
         return (bool)($this->formConfig['includeBarcode'] ?? false);
+    }
+
+    /**
+     * Check if the form should report patron's id
+     *
+     * @return bool
+     */
+    public function reportPatronId(): bool
+    {
+        return (bool)($this->formConfig['includePatronId'] ?? false);
     }
 
     /**
@@ -721,6 +786,16 @@ class Form extends \VuFind\Form\Form
             foreach (['record_id', 'record', 'record_info'] as $key) {
                 $elements[$key] = ['type' => 'hidden', 'name' => $key, 'value' => null];
             }
+        }
+
+        // Add information about multiple records
+        if (self::RESERVATION_LIST_REQUEST === $this->getFormId()) {
+            $elements =  array_merge(
+                [
+                    'records' => ['type' => 'textarea', 'name' => 'records', 'readonly' => ''],
+                ],
+                $elements
+            );
         }
 
         return $elements;
