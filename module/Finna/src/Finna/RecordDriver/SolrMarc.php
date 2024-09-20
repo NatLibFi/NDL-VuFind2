@@ -255,7 +255,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
 
         $urls = [];
         foreach ($this->getMarcReader()->getFields('856') as $url) {
-            if (!in_array($url['i2'], [' ', 0])) {
+            if (!in_array($url['i2'], [' ', '0'])) {
                 continue;
             }
             $address = $this->getSubfield($url, 'u');
