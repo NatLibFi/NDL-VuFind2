@@ -626,11 +626,12 @@ $organisation-info-max-w: 400px;
             }
         }
         .location-col {
+            position:relative;
+
             @media (min-width: $screen-sm-min) {
                 width: 32%;
                 float: left;
             }
-            position:relative;
         }
         .personnel {
             table {

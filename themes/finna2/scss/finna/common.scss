@@ -433,11 +433,12 @@ ol {
   }
   .cm--bar .cm__btn, .pm__btn {
     font-size: 14px;
+    padding: $padding-base-vertical $padding-base-horizontal;
+
     &:hover {
       color: $btn-primary-color;
       background: darken($btn-primary-bg, 5%);
     }
-    padding: $padding-base-vertical $padding-base-horizontal;
   }
   .cm--bar .cm__btn {
     flex: none;

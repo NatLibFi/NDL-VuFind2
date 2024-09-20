@@ -57,11 +57,12 @@
       margin: 0;
       height: 40px;
       label {
+        display: inline-block;
+        padding: 10px 0px;
+
         @media (max-width: @screen-xxs) {
           font-size: 80%;
         }
-        display: inline-block;
-        padding: 10px 0px;
       }
     }
   }
@@ -118,10 +119,11 @@
 }
 .results .noresults {
   flex-direction: column;
+  padding: 10px;
+
   p {
     flex: 1;
   }
-  padding: 10px;
 }
 
 .finna-filters .title-value-pair {

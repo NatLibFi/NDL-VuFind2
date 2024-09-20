@@ -126,12 +126,13 @@ button.list-group-item {
 
 .list-group {
   &.record-organisation {
+    padding: 3px 15px 10px;
+    margin-bottom: 0px;
+
     h3 {
       margin-top: 0;
       margin-bottom: 10px;
     }
-    padding: 3px 15px 10px;
-    margin-bottom: 0px;
     a {
       font-weight: bold;
     }

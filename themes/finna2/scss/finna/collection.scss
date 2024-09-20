@@ -4,11 +4,11 @@
   .filter-input {
     flex-grow: 1;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
     span:not(.icon) {
       margin-right: 10px;
     }
-    display: flex;
-    align-items: center;
   }
   button.btn-primary {
     font-size: 20px;
