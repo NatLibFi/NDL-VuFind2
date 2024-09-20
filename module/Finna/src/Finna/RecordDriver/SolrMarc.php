@@ -255,9 +255,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
 
         $urls = [];
         foreach ($this->getMarcReader()->getFields('856') as $url) {
-            if (!in_array($url['i2'], [' ', '0'])) {
-                continue;
-            }
             $address = $this->getSubfield($url, 'u');
             if (!$address) {
                 continue;
@@ -266,7 +263,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             $type = $this->getSubfield($url, 'q');
             $image = 'image/jpeg' === $type || strcasecmp('image', $type) === 0;
             $pdf = 'application/pdf' === $type || preg_match('/\.pdf$/i', $address);
-
+            if ($pdf && !in_array($url['i2'], [' ', '0'])) {
+                continue;
+            }
             if (!$image && !$pdf) {
                 // Overdrive records only have a subfield 3, check for that
                 $part = $this->getSubfield($url, '3');
