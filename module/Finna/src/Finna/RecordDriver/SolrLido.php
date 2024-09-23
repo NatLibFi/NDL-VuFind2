@@ -1770,7 +1770,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             if (!($event = $set->event ?? '')) {
                 continue;
             }
-            $eventType = (string)($event->eventType->term ?? '');
+            $eventType = mb_strtolower((string)($event->eventType->term ?? ''), 'UTF-8');
             $priority = $this->authorEvents[$eventType] ?? null;
             if (null === $priority) {
                 continue;
