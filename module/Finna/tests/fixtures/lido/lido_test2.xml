@@ -169,6 +169,18 @@
                   <placeID></placeID>
                 </place>
               </subjectPlace>
+              <subjectPlace>
+                <place>
+                  <namePlaceSet>
+                    <appellationValue>Uusimaa</appellationValue>
+                  </namePlaceSet>
+                  <partOfPlace>
+                    <namePlaceSet>
+                      <appellationValue>Suomi</appellationValue>
+                    </namePlaceSet>
+                  </partOfPlace>
+                </place>
+              </subjectPlace>
             </subject>
           </subjectSet>
           <subjectSet>

@@ -2170,6 +2170,23 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             . 'subjectSet/subject/subjectPlace';
         foreach ($this->getXmlRecord()->xpath($xpath) as $subjectPlace) {
             if (!($displayPlace = (string)($subjectPlace->displayPlace ?? ''))) {
+                $placeNames = [];
+                foreach ($subjectPlace->place->namePlaceSet ?? [] as $nameSet) {
+                    if ($name = trim((string)$nameSet->appellationValue ?? '')) {
+                        $placeNames[] = $name;
+                    }
+                }
+                foreach ($subjectPlace->place->partOfPlace ?? [] as $part) {
+                    while ($part->namePlaceSet ?? false) {
+                        if ($partName = trim((string)$part->namePlaceSet->appellationValue ?? '')) {
+                            $placeNames[] = $partName;
+                        }
+                        $part = $part->partOfPlace;
+                    }
+                }
+                $displayPlace = implode(', ', $placeNames);
+            }
+            if (!$displayPlace) {
                 continue;
             }
             if ($extended) {
