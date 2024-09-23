@@ -811,7 +811,7 @@ class Form extends \VuFind\Form\Form
                         'name' => 'reservation_records',
                         'class' => 'form-control area-wide',
                         'settings' => [
-                            ['rows' => 10],
+                            ['rows' => 4],
                             ['readonly' => true],
                         ],
                         'label' => 'ReservationList::Resources',

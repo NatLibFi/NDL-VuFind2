@@ -32,8 +32,10 @@ namespace Finna\View\Helper\Root;
 use Finna\Db\Entity\FinnaResourceListDetailsEntityInterface;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\ReservationList\ReservationListService;
+use VuFind\Auth\ILSAuthenticator;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\DbServiceAwareTrait;
+use VuFind\ILS\Connection;
 use VuFind\RecordDriver\DefaultRecord;
 
 use function in_array;
@@ -69,10 +71,14 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      * Constructor
      *
      * @param ReservationListService $reservationListService Reservation list service
+     * @param ILSAuthenticator       $ilsAuthenticator       Authenticator to ILS
+     * @param Connection             $catalog                Current connection catalog
      * @param array                  $config                 Reservation list yaml as an array
      */
     public function __construct(
         protected ReservationListService $reservationListService,
+        protected ILSAuthenticator $ilsAuthenticator,
+        protected Connection $catalog,
         protected array $config = []
     ) {
     }
@@ -161,11 +167,17 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      *
      * @return array
      */
-    public function getListTranslations(string $building, array $list): array
+    public function getListTranslationKeys(string $building, array $list): array
     {
-        return [
-            'description' => 'list_description_' . $building . '_' . $list['Identifier'],
+        $formed = '_' . $building . '_' . $list['Identifier'];
+        $keysAndValues = [
+            'title' => 'list_title',
+            'description' => 'list_description',
         ];
+        return array_map(
+            fn ($value) => $value . $formed,
+            $keysAndValues
+        );
     }
 
     /**
@@ -177,15 +189,15 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      */
     protected function checkUserRightsForList(array $list): bool
     {
-        if ($catId = $this->user?->getCatId() ?? false) {
-            if (str_contains($catId, ':')) {
-                $removedView = explode(':', $catId, 2);
-                $catId = $removedView[1];
-            }
-            [$id,] = explode('.', str_replace(':', '.', $catId), 2);
-            return in_array($id, $list['LibraryCardSources'] ?? []);
+        $sources = $list['LibraryCardSources'] ?? false;
+        if (!$sources) {
+            return true;
         }
-        return false;
+        $patron = $this->ilsAuthenticator->storedCatalogLogin();
+        if (!$patron) {
+            return false;
+        }
+        return in_array($patron['source'], $sources);
     }
 
     /**
@@ -225,18 +237,21 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     /**
      * Get lists containing record
      *
-     * @param DefaultRecord|string    $recordOrId Record or id
-     * @param UserEntityInterface|int $userOrId   User or user id
-     * @param string                  $source     Search backend identifier
+     * @param DefaultRecord $record Record
      *
      * @return FinnaResourceListEntityInterface[]
      */
     public function getListsContainingRecord(
-        DefaultRecord|string $recordOrId,
-        UserEntityInterface|int $userOrId,
-        string $source = DEFAULT_SEARCH_BACKEND
+        DefaultRecord $record,
     ): array {
-        return $this->reservationListService->getListsContainingRecord($recordOrId, $source, $userOrId);
+        if (!$this->user) {
+            return [];
+        }
+        return $this->reservationListService->getListsContainingRecord(
+            $record,
+            $record->getSourceIdentifier(),
+            $this->user
+        );
     }
 
     /**

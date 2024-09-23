@@ -7,7 +7,7 @@
   $this->layout()->breadcrumbs = '<li><a href="' . $this->url('reservationlist-additem') . '">' . $this->transEsc('ReservationList::Add To Reservation List') . '</a></li>'
     . '<li>' . $this->transEsc($pageTitle) . '</li>';
   $listConfiguration = $this->reservationList($this->auth()->getUserObject())->getListConfiguration($this->institution, $this->listIdentifier, $driver);
-  $listTranslations = $this->reservationList()->getListTranslations($this->institution, $listConfiguration);
+  $listTranslations = $this->reservationList()->getListTranslationKeys($this->institution, $listConfiguration);
 ?>
 
 <h2><?= $this->transEsc($pageTitle); ?></h2>

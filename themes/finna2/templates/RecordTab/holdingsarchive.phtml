@@ -14,8 +14,9 @@
         <a href="<?=$this->url('myresearch-userlogin') ?>" class="btn btn-primary" data-lightbox><span><?=$this->transEsc('archive_request_login')?></span></a>
       <?php endif; ?>
     </div>
+  </div>
 <?php endif;?>
-
+<br>
 <?= $this->reservationList($this->auth()->getUserObject())->renderReserveTemplate($driver); ?>  
 
 <?= $this->render('RecordTab/holdings-record-urls'); ?>
