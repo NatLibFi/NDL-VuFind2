@@ -677,7 +677,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             [
-                'heading' => ['Uusimaa, Suomi'],
+                'heading' => ['Kauppakatu 5, Lohja, Uusimaa, Suomi'],
             ],
         ];
         $this->assertEquals($expected, $driver->getAllSubjectHeadings(true));
@@ -689,7 +689,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             ['Jussi, Jänö'],
             ['Etelä-Suomi'],
             ['Lohja'],
-            ['Uusimaa, Suomi'],
+            ['Kauppakatu 5, Lohja, Uusimaa, Suomi'],
         ];
         $this->assertEquals($expected, $driver->getAllSubjectHeadings());
     }

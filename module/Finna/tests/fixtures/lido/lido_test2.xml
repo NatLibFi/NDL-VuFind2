@@ -172,12 +172,22 @@
               <subjectPlace>
                 <place>
                   <namePlaceSet>
-                    <appellationValue>Uusimaa</appellationValue>
+                    <appellationValue>Kauppakatu 5</appellationValue>
                   </namePlaceSet>
                   <partOfPlace>
                     <namePlaceSet>
-                      <appellationValue>Suomi</appellationValue>
+                      <appellationValue>Lohja</appellationValue>
                     </namePlaceSet>
+                    <partOfPlace>
+                      <namePlaceSet>
+                        <appellationValue>Uusimaa</appellationValue>
+                      </namePlaceSet>
+                      <partOfPlace>
+                        <namePlaceSet>
+                          <appellationValue>Suomi</appellationValue>
+                        </namePlaceSet>
+                      </partOfPlace>
+                    </partOfPlace>
                   </partOfPlace>
                 </place>
               </subjectPlace>
