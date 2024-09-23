@@ -117,8 +117,8 @@ module.exports = function(grunt) {
               replacement: ' <= ',
               order: 7
             },
-            { // Add !default
-              pattern: /(^\s*\$.+):(.+);/g,
+            { // Add !default (but avoid messing with function params):
+              pattern: /(?<!\(.*)(\$.+):(.+);/g,
               replacement: '$1:$2 !default;',
               order: 8
             }
