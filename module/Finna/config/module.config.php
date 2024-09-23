@@ -187,16 +187,6 @@ $config = [
                     ],
                 ],
             ],
-            'reservationlist-additem' => [
-                'type'    => 'Laminas\Router\Http\Segment',
-                'options' => [
-                    'route'    => '/ReservationList/AddItem[/:id]',
-                    'defaults' => [
-                        'controller' => 'ReservationList',
-                        'action'     => 'AddItem',
-                    ],
-                ],
-            ],
             'reservationlist-list' => [
                 'type'    => 'Laminas\Router\Http\Segment',
                 'options' => [
@@ -1110,6 +1100,7 @@ $dynamicRoutes = [
         'reservationlist-order' => 'Order/[:id]',
         'reservationlist-delete' => 'Delete/[:id]',
         'reservationlist-deletebulk' => 'DeleteBulk/[:id]',
+        'reservationlist-additem' => 'AddItem',
     ],
 ];
 
