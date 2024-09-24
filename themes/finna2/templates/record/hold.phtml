@@ -50,20 +50,20 @@
         <div class="form-group hold-request-group">
           <?php
             if (isset($this->gatheredDetails['requestGroupId']) && $this->gatheredDetails['requestGroupId'] !== '') {
-                $selected = $this->gatheredDetails['requestGroupId'];
+                $selectedGroup = $this->gatheredDetails['requestGroupId'];
             } else {
-                $selected = $this->defaultRequestGroup;
+                $selectedGroup = $this->defaultRequestGroup;
             }
           ?>
           <label class="control-label"><?=$this->transEsc('hold_request_group')?>:</label>
           <select id="requestGroupId" name="gatheredDetails[requestGroupId]" class="form-control">
-          <?php if ($selected === false): ?>
+          <?php if ($selectedGroup === false): ?>
             <option value="" selected="selected">
               <?=$this->transEsc('select_request_group')?>
             </option>
           <?php endif; ?>
           <?php foreach ($this->requestGroups as $group): ?>
-            <option value="<?=$this->escapeHtmlAttr($group['id'])?>"<?=($selected == $group['id']) ? ' selected="selected"' : ''?>>
+            <option value="<?=$this->escapeHtmlAttr($group['id'])?>"<?=($selectedGroup == $group['id']) ? ' selected="selected"' : ''?>>
               <?=$this->transEsc('request_group_' . $group['name'], null, $group['name'])?>
             </option>
           <?php endforeach; ?>
