@@ -1,5 +1,6 @@
 module.exports = function(grunt) {
   const fs = require("fs");
+  const os = require("node:os");
 
   grunt.registerTask("finna:scss", function finnaScssFunc() {
     const config = getFinnaSassConfig({
@@ -179,7 +180,7 @@ module.exports = function(grunt) {
             expand: true,
             cwd: path.join('themes', themeList[i], 'scss'),
             src: ['finna.scss'],
-            dest: checkOnly ? null : path.join('themes', themeList[i], 'css'),
+            dest: path.join(checkOnly ? os.tmpdir() : 'themes', themeList[i], 'css'),
             ext: '.css'
           }]
         };
