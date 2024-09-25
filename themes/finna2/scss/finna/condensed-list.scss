@@ -1,0 +1,160 @@
+.result.compact-list-view,
+.result.condensed-list-view {
+    padding-top: 6px;
+    padding-left: 2em;
+    padding-bottom: 6px;
+    margin-bottom: 2px;
+    transition: background .1s linear;
+    background: rgba(100,100,100,0.04);
+    .icon.condensed-expand {
+        display: inline-block;
+      }
+    .icon.condensed-collapse {
+        display: none;
+      }
+    &.open {
+        background: $body-bg;
+        .icon.condensed-expand {
+            display: none;
+        }
+        .icon.condensed-collapse {
+            display: inline-block;
+        }
+    }
+    &:first-child {
+        padding-top: 6px;
+
+    }
+    & .authorize {
+        position: absolute;
+        top: 0;
+        right: -7px;
+        color: $gray-light;
+        font-size: 1.1em;
+        @media(max-width: $screen-xs-max) {
+            left: -8px;
+            top: 8px;
+        }
+    }
+    & .fa-info-database, .fa-browse-database {
+        margin-right: 3px;
+    }
+    .condensed-collapse-toggle {
+        display: flex;
+        flex-flow: wrap;
+        & h2.title {
+            font-size: 1.25em;
+            font-weight: 400;
+            line-height: 1.1em;
+            margin: 0;
+            display: inline;
+        }
+        &:hover {
+            cursor: pointer;
+        }
+        & a:hover {
+                background: transparent;
+        }
+        .condensed-body {
+            .icon.condensed-expand, .icon.condensed-collapse {
+                font-size: 1.2em;
+                margin-left: -1.2em;
+                line-height: 1em;
+                color: $gray-light;
+            }
+        }
+        .resultItemFormat, .available-online-links, .resultOtherLinks {
+            margin-left: 0px;
+        }
+        & .resultItemFormat {
+            display: inline;
+        }
+        .available-online-links {
+            margin-bottom: 0px;
+            margin-top: 0px;
+            @media(max-width:400px) {
+                margin: 0px;
+                margin-left: 0px;
+            }
+            strong {
+                display: none;
+            }
+        }
+        .resultOtherLinks {
+            @include date-and-year();
+        }
+        .condensed-body {
+            width: 50%;
+            @media (max-width: $screen-xs-max) {
+                width: 100%;
+            }
+        }
+        .condensed-links {
+            width: 50%;
+            @media (max-width: $screen-xs-max) {
+                width: 100%;
+            }
+        }
+        .condensed-col-title {
+            width: 50%;
+            @media (max-width: $screen-xs-max) {
+                width: 100%;
+            }
+        }
+        .condensed-col-link {
+             width: 50%;
+             @media (min-width: $screen-md-min) {
+                 width: 25%;
+             }
+        }
+        .condensed-col-hierarchy {
+            width: 25%;
+            .hierarchyTreeLink {
+                margin-top: 0;
+            }
+            @media (max-width: $screen-xs-max) {
+                width: 100%;
+            }
+        }
+    }
+    .condensed-collapse-data {
+        display: none;
+        padding: 10px 0;
+        margin-top: 0px;
+
+        & .resultClassification {
+            margin-bottom: 10px;
+        }
+        & .holding-details {
+            margin-top: 0;
+        }
+        & .summary {
+            line-height: 1.4em;
+        }
+        & .table-condensed tbody>tr>th {
+            width: 150px;
+        }
+        .media-left {
+            width: 40%;
+            min-width: 120px;
+            @media (min-width: $screen-md-min) {
+                width: 25%;
+                min-width: 100px;
+            }
+        }
+        @media (min-width: $screen-sm-min) {
+            .media-body {
+                width: 10000px;
+            }
+        }
+        .result-database {
+            @media (min-width: $screen-sm-min) {
+                display: flex;
+                .database-subject {
+                    min-width: 200px;
+                    padding-left: 15px;
+                }
+            }
+        }
+    }
+}

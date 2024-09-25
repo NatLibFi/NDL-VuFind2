@@ -4,10 +4,8 @@
   <?php return; ?>
 <?php endif; ?>
 <?php $locationCount = count($orgInfo['list'] ?? []); ?>
-<div class="navi-section" id="consortium-service-point-section">
-  <div class="locations-title">
-    <h2><?=$this->transEsc(1 === $locationCount ? 'organisation_info_navi_service_single' : 'organisation_info_navi_service')?></h2>
-  </div>
+<div class="navi-section finna-panel-default" id="consortium-service-point-section">
+  <h2 class="panel-heading locations-title"><?=$this->transEsc(1 === $locationCount ? 'organisation_info_navi_service_single' : 'organisation_info_navi_service')?></h2>
   <div class="location-filters">
     <?php if ($locationCount > 1): ?>
       <div class="location-filter">

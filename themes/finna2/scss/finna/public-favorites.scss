@@ -1,0 +1,138 @@
+/* Public favorites list styles. */
+.template-dir-list,
+.public-list-embed {
+    .public-list-desc {
+        word-wrap: break-word;
+    }
+
+    .public-list-desc, .notes {
+        ul, ol {
+            margin-left: 25px;
+        }
+        ul li {
+            list-style-type: disc;
+        }
+        ol li {
+            list-style-type: decimal;
+        }
+    }
+
+    h1.public-list-header {
+        margin: 10px 0;
+    }
+
+    .public-list-info {
+        color: $gray-light;
+    }
+    .public-list-view {
+        margin-top: 20px;
+    }
+
+    .notes {
+        display: inline-block;
+        margin-top: 10px;
+        .heading {
+            font-weight: bold;
+        }
+        .note-heading p {
+            margin: 0;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            i {
+                padding-right: 2px;
+            }
+        }
+        .note-rows p {
+            margin-top: 3px;
+        }
+        .note-rows span {
+            margin-left: 5px;
+        }
+    }
+
+    .note-button {
+        z-index: 6;
+        color: #121212;
+        background-color: #f7f7f7;
+        padding: 2px;
+        font-size: 1em;
+        border: 1px solid #121212;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        align-self: flex-end;
+        >.icon {
+            margin-left: 4px;
+            margin-right: 4px;
+        }
+        &.note-show {
+            >.caret {
+                transform: rotate(180deg);
+                -ms-transform: rotate(180deg);
+                -webkit-transform: rotate(180deg);
+                -moz-transform: rotate(180deg);
+            }
+        }
+        &.condensed {
+            background: none;
+            border: none;
+        }
+    }
+    .condensed-notes {
+        width: 100%;
+    }
+
+    .note-overlay-list {
+        .notes {
+            .note-rows p{
+                margin-top: 10px;
+            }
+        }
+    }
+
+    .note-overlay-condensed {
+        color: #121212;
+        overflow-x: hidden;
+        overflow-y: auto;
+        text-align: left;
+        width: 100%;
+        max-height: 200px;
+        &.note-hide {
+            display: none;
+        }
+        &.note-show {
+            display: block;
+            border-bottom: 1px solid #cccccc;
+        }
+        p {
+            display: block;
+            padding: 0 10px;
+        }
+    }
+    .note-overlay-grid {
+        position: absolute;
+        z-index: 4;
+        color: #121212;
+        background-color: #f7f7f7;
+        overflow-x: hidden;
+        overflow-y: auto;
+        text-align: left;
+        top: 0;
+        right: 0;
+        left: 0;
+        max-height: 100%;
+        p {
+            display: block;
+            padding: 0 10px;
+        }
+        &.note-hide {
+            display: none;
+        }
+        &.note-show {
+            display: block;
+        }
+    }
+    .finna-panel {
+        margin-bottom: 12px;
+    }
+}

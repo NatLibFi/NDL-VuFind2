@@ -1,0 +1,53 @@
+.finna-editable {
+  position: relative;
+  width: 100%;
+  border: 1px solid transparent;
+  padding: 5px;
+  .finna-editable-btn, .finna-editable-spinner {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: none;
+    padding: 3px 5px;
+    color: $gray-light;
+    background-color: transparent;
+    cursor: default;
+  }
+  .finna-editable-btn-icon {
+    cursor: default;
+  }
+  .finna-editable-spinner {
+    display: none;
+  }
+  .finna-editable-container {
+    min-height: 1em;
+  }
+
+  // :not rules are used instead of a default variation to make variation changes via JavaScript easier.
+  &:not(.finna-editable-open) {
+    &:hover,
+    &:active,
+    &:focus {
+      border: 1px solid $gray-lighter;
+      .finna-editable-btn {
+        transition: all 0.2s linear;
+        color: $gray;
+      }
+    }
+  }
+}
+
+.finna-editable-open {
+  .finna-editable-btn {
+    display: none;
+  }
+}
+
+.finna-editable-busy {
+  .finna-editable-btn {
+    display: none;
+  }
+  .finna-editable-spinner {
+    display: initial;
+  }
+}

@@ -1,0 +1,1088 @@
+.myresearch-row {
+  padding: 10px;
+  margin: 0;
+  word-wrap: break-word;
+  @media(max-width: $screen-xs-max) {
+    @include make-row();
+  }
+  &:nth-child(odd) {
+    background: $table-bg-accent;
+  }
+  .record-title {
+    margin: 0;
+    font-weight: 400;
+    font-size: 1.2em;
+    margin-bottom: 2px;
+  }
+  .no-checkbox {
+    font-size: 0.8em;
+    color: $gray-light;
+  }
+  .alert {
+    padding: 4px;
+    margin-bottom: 3px;
+    margin-top: 3px;
+  }
+  // row for holds information
+  .holds-status-information, .checkedout-status-information {
+    @media(min-width: $screen-sm-min) {
+      text-align: right;
+    }
+  }
+  .checkboxFilter {
+    padding-left: 0;
+    .checkbox {
+      padding-left: 0;
+      margin-top: 0;
+      label {
+        margin-left: 0;
+      }
+    }
+  }
+  #label-title-column span {
+    float: right;
+  }
+}
+
+.useraccount-table.online-payment .checkboxFilter {
+  margin-top: 2px;
+}
+
+.checkboxFilter.mylist-select-all {
+  padding-left: 0;
+  white-space: nowrap;
+
+  .checkbox {
+    padding-left: 0;
+    label {
+      margin-left: 0;
+    }
+  }
+}
+
+.changeHolds {
+  display: inline-block;
+}
+
+.myresearch-grid-list .cover-image {
+  max-width: 100px;
+  max-height: 200px;
+}
+
+.librarycard-barcode {
+  @media (min-width: $screen-sm) {
+    margin-bottom: 0.5em;
+  }
+  svg {
+    background-color: white;
+    padding: .1em;
+  }
+}
+
+.loan-history-purge-all, .button-bottom {
+  margin-top: 10px;
+}
+.loan-history-buttons-bottom {
+  display: flex;
+}
+
+.myresearch-table {
+  width: 100%;
+  margin: 0;
+  th,td {
+    vertical-align: top;
+    padding: 5px;
+  }
+  .recordcover {
+    min-width: 30px;
+  }
+  .toolbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    &.no-list-functions {
+      justify-content: space-between;
+      align-items: baseline;
+      @media(max-width: $screen-xs-max) {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+      }
+      .myresearch-notification {
+        height: fit-content;
+      }
+    }
+    .btn-finna-toolbar {
+      margin: 3px 0px;
+      @media (max-width: $screen-sm-max) {
+        font-size: 0.9em;
+      }
+    }
+    .btn-group {
+      margin-right: 20px;
+      .btn {
+        margin-right: 1px;
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+      &:last-child {
+        margin-right: 0;
+      }
+      @media(max-width: $screen-xs-max) {
+        margin-right: 10px;
+      }
+    }
+    .checkbox-col {
+      display: flex;
+      align-items: baseline;
+      padding: 5px;
+    }
+    .list-functions {
+      display: flex;
+      flex-direction: row;
+      flex-basis: 100%;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+    @media(max-width: $screen-xs-max) {
+      align-items: baseline;
+    }
+  }
+  .sort-button ul.dropdown-menu li a {
+    font-size: 1em;
+  }
+
+  @media(min-width: $screen-sm) {
+    .half-table-column {
+      width: 50%;
+      float: left;
+    }
+    .title-column{
+      width: 60%;
+      float: left;
+    }
+    .status-column{
+      width: 40%;
+      float: left;
+    }
+  }
+  .myresearch-count {
+    line-height: 35px;
+    font-weight: bold;
+    &.no-buttons {
+      line-height: inherit;
+    }
+  }
+}
+
+.myresearch-notes {
+  clear: both;
+  margin-top: 10px;
+}
+.myresearch-notes a, .myresearch-notes i {
+  color: $gray-light;
+}
+.row.record-container.myresearch-row:last-child {
+  margin-bottom: 20px;
+  box-shadow: 0px 15px 30px -25px $gray;
+}
+
+.myresearch-grid-list {
+  margin-bottom: 20px;
+  > h2 {
+    margin-top: 0;
+    border-bottom: none;
+    padding: 10px;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+  }
+  > h4 {
+    margin-left: 10px;
+  }
+  .myresearch-row:last-child {
+    box-shadow: none;
+  }
+  #copyToFavourites {
+    padding-top: 5px;
+  }
+  .alert {
+    margin: 12px 0;
+  }
+  .sort-option-container {
+    display: flex;
+    align-items: baseline;
+    .button-label {
+      margin-right: 5px;
+    }
+  }
+  .sort-col  {
+    a.dropdown-toggle {
+      margin-bottom: 0;
+      height: 30px;
+      font-size: 0.9em;
+      @media (max-width: $screen-md) {
+        margin-top: 6px;
+      }
+      @media (max-width: $screen-sm) {
+        span {
+          max-width: 200px;
+        }
+      }
+    }
+    @media (max-width: $screen-sm) {
+      .dropdown-menu > li > a {
+        max-width: 270px;
+      }
+      .dropdown-toggle span:not(.icon), .dropdown-menu > li > a {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        vertical-align: bottom;
+      }
+    }
+  }
+
+}
+.list-description,
+.public-list-desc,
+.myresearch-notes,
+.template-dir-list .notes,
+.public-list-embed .notes {
+  details {
+    margin-bottom: 10.5px;
+    outline: 1px solid #d1d1d1;
+    background: white;
+    padding-left: 5px;
+    p {
+      padding-left: 5px;
+    }
+    summary::-webkit-details-marker {
+      display: none;
+    }
+    summary:before {
+      content: ' ';
+      border: solid $gray;
+      border-width: 0 2px 2px 0;
+      display: inline-block;
+      padding: 0 5px 5px 0;
+      transform: rotate(45deg);
+      margin-right: 10px;
+      margin-top: 5px;
+      margin-bottom: 3px;
+    }
+    summary {
+      display: block;
+      margin-right: 0;
+      outline: 1px solid #d1d1d1;
+      background: #fafafa;
+      padding: 10px;
+      margin-left: -5px;
+      p {
+        display: inline;
+        padding-left: 0;
+      }
+    }
+  }
+  details[open] {
+    padding-bottom: 5px;
+    summary::before {
+      transform: rotate(-135deg);
+      margin-bottom: 0;
+      margin-top: 10px;
+    }
+    summary {
+      margin-bottom: 10px;
+    }
+  }
+  .truncate-field.truncate-done {
+    div:first-child {
+      padding-top: 5px;
+    }
+    details {
+      margin-left: 1px;
+      margin-right: 1px;
+    }
+  }
+  .more-link,
+  .less-link {
+    margin-bottom: 15px;
+  }
+}
+// Custom styles for user account functions
+.template-dir-myresearch, .template-dir-holds, .template-dir-checkouts.template-name-history, .template-dir-search.template-name-history, .template-dir-librarycards {
+  &.main {
+    padding-bottom: 30px;
+  }
+  h1 {
+    font-weight: 500;
+  }
+  .my-research-content {
+    width: 100%;
+    border-radius: $border-radius-base;
+    @media (max-width: $screen-sm) {
+      .select-card-wrapper .select-card .library_card {
+        right: auto;
+        left: 0;
+        max-width: 250px;
+        & li > a {
+          white-space: normal;
+        }
+      }
+    }
+  }
+  h1 {
+    display: inline-block;
+  }
+  #account-actions {
+    margin-bottom: 20px;
+    #import-export-buttons {
+      margin-right: 20px;
+    }
+    .btn {
+      margin-bottom: 5px;
+    }
+  }
+  .pickup-location {
+    margin-top: 3px;
+    margin-bottom: 3px;
+  }
+  .pickup-locations {
+    overflow-y: auto;
+    max-height: 280px;
+    left: auto;
+    max-width: 280px;
+    overflow-x: hidden;
+    position: absolute;
+    right: 0;
+    @media(max-width: $screen-xs-max) {
+      left: -40px;
+      right: auto;
+    }
+    a {
+      cursor: pointer;
+    }
+  }
+  #card_name {
+    width: 205px;
+  }
+  .tooltip-library-card-name {
+    background: none;
+    border: none;
+  }
+
+  .resource-note {
+    margin-left: -5px;
+  }
+
+  .checkboxFilter label.checkbox {
+    padding-left: 5px;
+    color: $gray-light;
+  }
+  @media(max-width:$screen-md-max) {
+    .pagination-simple {
+      margin-top: 0;
+    }
+  }
+  .pagination-simple {
+    margin-left: 5px;
+  }
+  .no-padding-table {
+    th, td {
+      padding: 8px 0;
+      vertical-align: middle;
+    }
+    th {
+      width: 25%;
+    }
+    td {
+      width: 75%;
+    }
+  }
+
+  p.no-content-message {
+    margin-top: 5px;
+  }
+  .borrowing-block-container {
+    p.borrowing-block {
+      padding: 0;
+      margin-bottom: 0;
+    }
+  }
+  .support-notice {
+    margin: 0;
+    margin-top: 5px;
+    padding: 10px 15px;
+  }
+
+  .library-card-terms {
+    background-color: $state-info-bg;
+    padding: 2em;
+    padding-left: 2.5em;
+    margin-bottom: 1em;
+  }
+
+  .profile-status i::before {
+    display: inline-block;
+  }
+}
+
+.useraccount-header {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  @media (max-width: $screen-md-max) {
+    margin-top: 10px;
+  }
+  h2, h3 {
+    line-height: 1.5;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+  h2 {
+    font-size:$font-size-h2;
+  }
+  h3 {
+    font-size: $font-size-h4;
+  }
+  .list-title {
+    font-size: $font-size-h2;
+  }
+  a.dropdown-toggle {
+    font-size: 0.9em;
+    height: 30px;
+  }
+}
+.sort-col.sort-col-mobile {
+    @media(min-width: $screen-sm) {
+    display: none;
+  }
+}
+
+.toolbar .list-functions .sort-col {
+    @media(max-width: $screen-xs-max) {
+      display: none;
+    }
+  }
+
+.online-payment-form > .payment-row {
+  .online-payment-area {
+    display: inline-block;
+    margin-bottom: 15px;
+
+    .online-payment-form {
+      display: inline-block;
+      input {
+        font-weight: bold;
+      }
+    }
+  }
+  @media (min-width: $screen-sm) {
+    > img {
+      position: relative;
+      bottom: 100px;
+      float: right;
+    }
+  }
+  @media (max-width: $screen-sm-min) {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 64px;
+    background-color: white;
+    width: 100%;
+    padding: 12px 0px;
+    input[type=submit] {
+      margin-top: 10px;
+    }
+    > img {
+      width: 15%;
+      min-width: 40px;
+      max-width: 60px;
+      margin-top: 10px;
+    }
+  }
+}
+
+.myresearch-table.online-payment {
+  .checkbox-col {
+    width: initial;
+  }
+  .toolbar {
+    border: 0;
+    padding-bottom: 0;
+    padding-left: 4px;
+  }
+}
+
+.fines-info-area {
+  margin-bottom: 15px;
+  div.card-holder {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+  }
+  .amount {
+    font-weight: bold;
+  }
+  .online-payment-info {
+    display: flex;
+    align-items: baseline;
+  }
+  #online_payment_minimum_payment {
+    margin: 0 0 0 1em;
+    padding: 6px;
+  }
+  .last-transaction-information {
+    @extend .alert;
+
+    background: $gray-ultralight;
+    border: 1px solid $gray-lighter;
+    display: flex;
+    align-items: center;
+    div {
+      flex: 1 1;
+    }
+  }
+}
+
+.toolbar-sticky-container {
+  margin: 0;
+  @media (max-width: $screen-md) {
+    padding: 0px 15px;
+    @include make-row();
+  }
+  .toolbar-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: $body-bg;
+    &.isSticky {
+      margin: 0px -15px;
+      padding: 0px 15px;
+      @media (max-width: $screen-md) {
+        top: $navbar-height;
+      }
+      @media (max-width: $screen-sm) {
+        box-shadow: 0 3px 3px rgba(0,0,0,.3);
+        .toolbar {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+}
+
+.myresearch-table.online-payment .toolbar {
+  align-items: center;
+  margin-bottom: 1rem;
+
+  .checkboxFilter.mylist-select-all {
+    margin-right: 1rem;
+  }
+}
+
+.template-dir-myresearch .toolbar, .template-dir-checkouts .toolbar, .template-dir-holds .toolbar {
+  margin: 0;
+  margin-top: 5px;
+  border-bottom: 1px solid $gray-lighter;
+  padding: 3px 0;
+  @media(max-width: $screen-sm-max) {
+    margin-top: 0;
+  }
+  .status-text {
+    float: right;
+    line-height: 38px;
+  }
+  &.bottom {
+    border-top: 1px solid $gray-lighter;
+    border-bottom: none;
+    td {
+      vertical-align: middle;
+      &:first-child {
+        vertical-align: top;
+        padding-top: 10px;
+      }
+      &:nth-child(2) {
+        width: 100%;
+      }
+    }
+  }
+}
+
+form#renewals, form#update_holds, form#purge_history {
+  .toolbar {
+    @media (max-width: $screen-xs) {
+      flex-direction: column-reverse;
+    }
+  }
+}
+
+.online-payment-data {
+  font-size: 1.2em;
+  margin-bottom: 40px;
+  padding-right: 8px;
+  @media (min-width: $screen-sm) {
+    width: 50%;
+    float: right;
+  }
+  .amount {
+    font-weight: bold;
+  }
+}
+
+.online-payment-note {
+  margin-bottom: 40px;
+  @media (min-width: $screen-sm) {
+    width: 50%;
+    float: left;
+  }
+}
+
+.useraccount-table {
+  border: 1px solid $gray-lighter;
+  box-shadow: 0 15px 30px -35px $gray;
+  border-collapse: separate;
+  margin-top: 10px;
+
+  &:not(.fines-table) {
+    border-top: none;
+  }
+  &.online-payment {
+    margin-bottom: 15px;
+    td {
+      @media (max-width: $screen-xs-max) {
+        white-space: normal !important;
+      }
+    }
+  }
+  &.library-cards {
+    @media (max-width: $screen-xs-max) {
+      table-layout: fixed;
+    }
+  }
+  .headers {
+    background: $gray-ultralight;
+    color: $text-color;
+  }
+  .headers th {
+    background: none;
+    border-top: 1px solid #d1d1d1;
+    &:last-child {
+      border-right: none;
+    }
+  }
+  td {
+    border-right: 1px solid $body-bg;
+    vertical-align: middle;
+    &:last-child {
+      border-right: none;
+    }
+  }
+  .user-account-table-title {
+    min-width: 25%;
+    @media (max-width: $screen-xs-max) {
+      white-space: normal !important;
+      min-width: 30%;
+    }
+  }
+  .total-balance {
+    background: none;
+    border-top: 2px solid $gray-lighter;
+    text-align: right;
+    line-height: 2em;
+    font-size: 1.2em;
+    .amount {
+      font-weight: bold;
+    }
+  }
+  @media screen and (min-width: 769px) {
+    .balance {
+      text-align: right;
+    }
+  }
+  .online-payment-remark {
+    font-weight: bold;
+  }
+  tr.payment-data>th {
+    background: $body-bg;
+  }
+  th {
+    font-size: 1.1em;
+  }
+  .history-time {
+    width: 20%;
+  }
+  .history-save {
+    text-align: center;
+    width: 15%;
+    a {
+      color: $action-link-color;
+    }
+  }
+  .history-results {
+    width: 15%;
+  }
+  .actions {
+    width: 15%;
+  }
+  .library-card-actions a {
+    display: block;
+    margin: 4px 0;
+  }
+  td.history-search-index, td.history-schedule .disable {
+    color: $gray-light;
+    font-size: .9em;
+  }
+}
+
+.myresearch-body {
+  margin-top: 15px;
+  @media (max-width: $screen-sm-max) {
+    margin-top: 0px;
+    &.mainbody.right {
+      padding-left: 0px;
+    }
+    .bulkActionButtons.bulk-action-buttons-col {
+      padding-right: 3px;
+    }
+  }
+}
+
+.useraccount-nav {
+  border: solid 1px $gray-lighter;
+  border-top: none;
+  box-shadow: 2px 2px 3px 0 $gray-lighter;
+  display: block;
+  z-index: 2;
+  margin-top: 15px;
+
+  .status {
+    padding-left: 5px;
+  }
+  .dropdown-menu {
+    border-left: none;
+    border-right: none;
+    @include box-shadow(none);
+    padding: 0;
+    > li {
+      border: none;
+    }
+    > li:last-child > a, li:last-child {
+      @include border-bottom-radius(0);
+    }
+    > li:first-child > a, li:first-child {
+      @include border-top-radius(0);
+    }
+    .active a {
+      font-weight: 600;
+      text-decoration: none;
+      color: $dropdown-link-color;;
+      background-color: $gray-ultralight;
+    }
+  }
+  @media (min-width: $screen-md) {
+    &.move-list {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 30px;
+    }
+  }
+  .subtabs.mylist-nav {
+    border-top-width: 0px;
+    li.hidden-xs.hidden-sm, li.mylist-menu-favorites {
+      max-width: none;
+      h4 {
+        text-transform: none;
+        @media (max-width: $screen-sm-max) {
+          text-align: center;
+        }
+      }
+    }
+    li:first-child {
+      a {
+        padding-top: 9px;
+      }
+    }
+  }
+
+  &.list-group {
+    border-radius: 4px;
+  }
+  li {
+    border-top: 1px solid $gray-lighter;
+    float: left;
+    width: 100%;
+    &:first-child {
+      border-top: none;
+    }
+    &.menu-header {
+      background-color: $brand-third;
+      > h1 {
+        text-transform: none;
+        color: $myresearch-menu-header-font-color;
+        padding: 15px 12px 15px 10px;
+        display: block;
+        margin-bottom: 0px;
+        span {
+          float: right;
+          > i {
+            color: $myresearch-menu-header-font-color;
+            font-size: 25px;
+            margin-top: -4px;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+    li > a {
+      padding-left: 20px;
+    }
+    a {
+      padding: 12px 10px;
+      margin-right: 0px;
+      &#open-loans {
+        display: flex;
+        align-items: center;
+        span {
+          cursor: pointer;
+          &.caret {
+            margin-left: auto;
+          }
+        }
+      }
+
+      &:not(.collapsed) {
+        > .icon.collapse-icon {
+          transform: rotate(180deg);
+          -ms-transform: rotate(180deg);
+          -webkit-transform: rotate(180deg);
+          -moz-transform: rotate(180deg);
+        }
+      }
+    }
+    @media (max-width: $screen-md-max) {
+      font-size: 14px;
+      a {
+        padding: 10px;
+      }
+    }
+    .tooltip-myaccount {
+      background: initial;
+      border: none;
+      float: right;
+      padding: 0;
+      margin: 0;
+      > .icon {
+        color: white;
+        cursor: pointer;
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+}
+
+// Status badges
+.myresearch-menu, #my-info-dropdown-menu {
+  a {
+    display: flex;
+    justify-content: space-between;
+    &.flex {
+      display: flex;
+    }
+    &:hover {
+      background-color: $gray-lighter;
+    }
+    &:focus {
+      background-color: $nav-link-hover-bg;
+    }
+    &.user-list-link i {
+      margin-left: 0.5rem;
+    }
+    &.active {
+      background-color: $brand-primary;
+      color: #fff;
+    }
+  }
+
+  .status {
+    float: right;
+    .badge {
+      border-radius: 2px;
+      margin: 0 2px;
+      border: 1px solid; /* color inherited from bootstrap */
+      height: 22px;
+      padding: 0 7px;
+
+      &.account-info {
+        color: $state-success-text;
+        background-color: $state-success-bg;
+      }
+      &.account-warning {
+        color: $state-warning-text;
+        background-color: $state-warning-bg;
+      }
+      &.account-alert {
+        color: $state-danger-text;
+        background-color: $state-danger-bg;
+      }
+    }
+  }
+}
+
+// Search history
+.history-holder {
+  .table-responsive .table tbody {
+    tr, td {
+      vertical-align: middle;
+    }
+  }
+}
+
+.useraccount-confirm {
+  min-width: 210px;
+}
+.useraccount-confirm > li {
+  border-bottom: none;
+  &:not(.disabled), &:not(.dropdown-header) {
+    width: 100%;
+    padding: 10px;
+    a {
+      width: 80px;
+      text-align: center;
+      border-radius: $border-radius-base;
+      background: $link-color;
+      color: $body-bg;
+      display: inline-block;
+      margin-right: 10px;
+    }
+  }
+  .dropdown-header {
+    max-width: 300px;
+    font-size: 1em;
+    padding: 0;
+    white-space: initial;
+  }
+}
+.main.template-dir-myresearch.template-name-unsubscribe {
+  .unsubscribe {
+    margin-bottom: 20px;
+  }
+}
+.template-dir-librarycards .dropdown-menu.useraccount-confirm {
+  left: auto;
+  right: 0;
+  top: auto;
+}
+.template-dir-myresearch .toolbar > .btn-group:last-of-type .dropdown-menu.useraccount-confirm {
+  @media (max-width: $screen-xs-max) {
+    left: auto;
+    right: 0;
+  }
+}
+.myresearch-body .form .mylist-functions {
+  #button_email {
+    border-radius: 4px 0 0 4px;
+  }
+  #add-to-list {
+    box-shadow: none;
+    text-align: left;
+  }
+}
+
+.own-favorite-list-button-area {
+  display: block;
+  float: left;
+  height: 36px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.history-controls {
+  @media (min-width: $screen-sm) {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: baseline;
+  }
+  .right-control {
+    @media (max-width: $screen-sm) {
+      text-align: right;
+      float: right;
+      width: 50%;
+    }
+  }
+  .left-control {
+    margin-bottom: 10px;
+
+    @media (min-width: $screen-sm) {
+      flex-grow: 1;
+      text-align:left;
+    }
+    @media (max-width: $screen-sm) {
+      text-align: left;
+      width: 35%;
+    }
+  }
+  .pagination-container {
+    @media (min-width: $screen-sm) {
+      flex-grow: 1;
+      text-align:left;
+    }
+  }
+}
+
+@media(max-width: $screen-sm-max) {
+  .hidden-print.nav-tabs-personal.list-group {
+    position: fixed;
+    top: 120%;
+    transition: top 0.5s ease;
+    background: $body-bg;
+    z-index: $zindex-sidebar;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 40px;
+    &.open {
+      top: 0%;
+      right: 0;
+    }
+    .list-group.facet:last-child {
+      margin-bottom: 44px;
+    }
+    .list-group-item.active i.fa.fa-check-square-o:before {
+      content: "\f00c" !important;
+    }
+    .list-group.facet {
+      margin: 0 10px;
+      margin-bottom: 5px;
+    }
+  }
+}
+
+.template-dir-myresearch.template-name-checkedout .pagination-container {
+  padding-top: 15px;
+}
+
+.message-body {
+  margin: 5px;
+}
+
+.delete-all-tokens {
+  margin: 10px;
+}
+
+.login-tokens-section.library-profile {
+  padding: 10px;
+}
+
+.login-tokens-table {
+  margin-bottom: 0px;
+  tbody > tr > td {
+    vertical-align: middle;
+  }
+}

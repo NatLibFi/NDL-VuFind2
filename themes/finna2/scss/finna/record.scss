@@ -1,0 +1,1212 @@
+.authoritybox,
+.record {
+  .media-body {
+    @media(max-width: $screen-xs-max) {
+      width: 100%;
+    }
+  }
+
+  .media-left,
+  .media-right {
+    width: 25%;
+    @media(max-width: $screen-xs-max) {
+      display: block;
+      width: 100%;
+      float: none;
+    }
+    .recordcover-container {
+      position: relative;
+      margin-bottom: 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
+  @media(min-width: $screen-xs){
+    .media-left { padding-right: 20px; }
+    .media-right { padding-left: 20px; }
+  }
+
+  & .nav>li:not(.share-buttons) a {
+    color: $action-link-color;
+    font-size: 1em;
+    font-weight: 600;
+
+    & :hover {
+      color: darken($action-link-color,10%);
+    }
+
+    & i {
+      color: mix(#ffffff, $action-link-color, 22%);
+      padding-left: 3px;
+      padding-right: 3px;
+    }
+  }
+
+  .recordURLs {
+    margin: 0px 0px 10px;
+    padding-bottom: 10px;
+    & .online-source {
+      font-size: 0.9em;
+      color: $gray-light;
+    }
+    a {
+      font-size: 15px;
+    }
+    .truncate-field.truncate-done {
+      width: 100%;
+    }
+    .btn.btn-primary {
+      border-radius: 0;
+      padding: 0px;
+      height: 48px;
+      width: 48px;
+      font-size: 20px;
+      margin-right: 10px;
+      float: left;
+    }
+    @media print {
+      a[href]::after {
+        content: " (" attr(href) ")";
+      }
+    }
+  }
+  finna-video.videourl, button.videourl {
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: $btn-default-color;
+    margin-bottom: 6px;
+    i {
+      margin-right: 4px;
+      font-size: 24px;
+    }
+  }
+
+  @media print {
+    .organisation-menu {
+      display: none;
+    }
+
+    a[href]::after {
+      content: "";
+    }
+  }
+
+  .record-title {
+    margin: 0;
+    margin-bottom: 3px;
+    font-size: $record-title-font-size;
+    line-height: 1.2;
+    @media (max-width: $screen-sm) {
+      margin-bottom: 20px;
+    }
+  }
+  .label {
+    display: inline-block;
+    @media print {
+      border: 0;
+    }
+  }
+  .record-versions {
+    font-size: 0.9em;
+    margin-top: 6px;
+    &:not(.loading) {
+      text-transform: uppercase;
+    }
+  }
+}
+
+a.authority {
+  float: left;
+  clear: left;
+}
+
+.record-image-container {
+  margin-bottom: 20px;
+}
+
+.image-details, .model-details {
+  table {
+    margin-left: 20px;
+  }
+  .toggle-image-information.collapsed .hide-image-information {
+    display: none;
+  }
+  .toggle-image-information:not(.collapsed) .show-image-information {
+    display: none;
+  }
+}
+
+.authoritybox,
+.large-image-layout.record .record-main > .media {
+  .media-left,
+  .media-right {
+    @media (min-width: $screen-sm) {
+      width: 50%;
+    }
+    .record-image-container {
+      .open-link {
+        margin-top: 10px;
+      }
+      .record-image-container {
+        .open-link {
+          margin-top: 10px;
+        }
+        .open-link, .model-link {
+          i, b {
+            color: mix(#ffffff, $action-link-color, 22%);
+            margin-right: 0;
+            font-style: normal;
+          }
+        }
+      }
+    }
+  }
+  .smaller-image-sidebar {
+    display: none;
+  }
+  .sidebar .organisation-menu {
+    display: none
+  }
+  @media(max-width: $screen-md-max){
+    .mainbody.record-tabs {
+      width: 100%;
+    }
+  }
+}
+
+.model-link {
+  .download-link {
+    text-align: left;
+    color: #007c90;
+    font-size: 1em;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+}
+
+.image-link {
+  display: flex;
+  align-items: center;
+  font-size: 1em;
+  position: relative;
+  .fa.fa-download {
+    margin-right: 4px;
+    color: $action-link-color;
+    &:hover, &:focus {
+      color: $action-link-color;
+    }
+  }
+  .dropdown {
+    position: initial;
+  }
+  .image-dimensions, .image-size {
+    font-size: 0.8em;
+    text-transform: initial;
+  }
+  .dropdown-toggle.download {
+    padding: 2px 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: $gray-light;
+  }
+  .dropdown-menu.download {
+    border-radius: 5px;
+    padding: 2px 6px;
+
+    @media(max-width:$screen-xs) {
+      left: -4%;
+    }
+    > li {
+      border-bottom: none;
+      > a {
+        border-radius: 0;
+        padding: 2px 6px;
+        white-space: initial;
+      }
+    }
+  }
+}
+
+.recordcover-image-detail {
+  .image-description {
+    text-align: left;
+    color: $gray-light;
+  }
+}
+.finna-popup.help-wrapper {
+  .finna-popup.help-modal {
+    background: white;
+    padding: 4px;
+    max-width: 400px;
+  }
+}
+
+.record-uniform-titles {
+  font-size: 1.05em;
+  margin: 0 0 3px;
+}
+// record-authors is no longer used, but is retained here for locally customized templates
+.record-authors, .record-title-alt-script {
+  @include date-and-year();
+  margin-top: 6px;
+}
+.record-core-metadata {
+  @include date-and-year();
+  margin-top: 6px;
+  .recordContainerReference {
+    padding-bottom: 1em;
+    padding-top: 1em;
+    a {
+      font-size: 1.2em;
+      text-decoration: underline;
+      font-weight: 700;
+    }
+  }
+  .recordPublished {
+    font-weight: 700;
+  }
+}
+
+.record-details {
+  & th {
+    width: 30%;
+  }
+  .subheading{
+    text-transform: uppercase;
+    margin-top: 10px;
+  }
+  table.record-data {
+    width: 100%;
+    tr {
+      line-height: 25px;
+      td:nth-child(2) {
+        padding-left: 10px;
+      }
+    }
+  }
+}
+.record-alt-titles {
+  color: $gray-slightly-lighter;
+  margin-bottom: 12px;
+}
+
+.record-information {
+  button.less-link {
+    display: flex;
+    align-items: baseline;
+    &.top-button {
+      top: 0;
+      position: sticky;
+      background-color: $body-bg;
+      width: 100%;
+      padding: 10px 0;
+      text-align: left;
+      @media(max-width: $screen-md) {
+        top: $navbar-height;
+      }
+    }
+    i {
+      padding-left: 2px;
+    }
+  }
+  ul.truncate-field {
+    margin-bottom: 0;
+  }
+}
+
+.record-links {
+  vertical-align: baseline;
+  .link-wrapper {
+    vertical-align: baseline;
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0 0 5px;
+    .iconlabel:first-child {
+      margin-left: 2px;
+    }
+    .copyright-icons {
+      display: inline-flex;
+      gap: 3px;
+      align-items: center;
+      line-height: 1.3em;
+    }
+    .resource-link {
+      margin-right: 5px;
+    }
+    .more-link {
+      margin: 0 0 0 8px;
+    }
+  }
+  .copyright-wrapper {
+    display: inline-block;
+    margin-left: 3px;
+  }
+  .cc-info {
+    margin-left: 5px;
+  }
+  a.copyright-description, .iconlabel {
+      font-size: $font-size-small;
+      font-weight: normal;
+  }
+  .show-info, .hide-info {
+      font-size: $font-size-small;
+      text-transform: lowercase;
+      font-weight: normal;
+  }
+  span.fa-arrow-down, span.fa-arrow-up {
+      font-size: 0.8em;
+  }
+  .show-info:first-letter, .hide-info:first-letter {
+      text-transform: none;
+  }
+  .iconlabel {
+      margin-right: -3px;
+      vertical-align: bottom;
+  }
+  span {
+      font-size: $font-size-small;
+  }
+  p {
+     font-size: $font-size-small;
+     padding: 0;
+     margin: 0;
+  }
+}
+
+.summary {
+  font-size: 1.05em;
+  line-height: 1.35em;
+  margin-bottom: 10px;
+}
+.show-details-button, .hide-details-button, .toggle-image-information {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  padding-left: 0;
+  background: $body-bg;
+  text-transform: uppercase;
+}
+.show-details-button, .hide-details-button {
+  width: 100%;
+  font-size: .9em;
+  color: $link-color;
+  &:hover, &:focus {
+    color: $link-color;
+  }
+}
+.toggle-image-information {
+  border: 0;
+  font-weight: 600;
+  color: $action-link-color;
+  &:hover, &:focus {
+    color: $action-link-color;
+  }
+}
+
+.show-details
+.record-details {
+  margin: 10px 0px;
+}
+.physical-details {
+  color: $gray-light;
+}
+.access-rights {
+  color: $gray-light;
+  margin-top: 5px;
+  padding-top: 5px;
+}
+.dataTables_wrapper {
+  width: 100%;
+}
+.part-authors-padded {
+  padding-left: 10px;
+}
+.nickname-holder {
+  margin-bottom: 5px;
+}
+.recordInscriptions {
+  .record-inscription {
+    display: block;
+    margin-bottom: 7px;
+  }
+  .truncate-field {
+    .record-inscription {
+      span {
+        display: block;
+        > span {
+            margin-bottom: 5px;
+        }
+      }
+    }
+  }
+}
+.record-other-screenings-region,
+.record-broadcasting-info-place {
+  flex-grow: 2;
+}
+.recordInspection {
+  dt {
+    font-weight: normal;
+  }
+}
+
+@media(max-width:$screen-xs-max) {
+  .cover-wrapper {
+    text-align: center;
+  }
+  .template-name-view .record .record-title {
+    margin-top: 10px;
+  }
+}
+
+@media print {
+  .template-dir-record .search-filters {
+    display: none;
+  }
+}
+
+.open-link, .save-record-link, .record-link {
+  text-align: left;
+  margin-top: 5px;
+  color: $action-link-color;
+  font-size: 1em;
+  font-weight: 600;
+  text-transform: uppercase;
+  a, a span {
+    color: $action-link-color;
+    &:hover {
+      text-decoration: none;
+      color: $action-link-color;
+    }
+  }
+  .image-dimensions {
+    color: $gray-mid-light;
+    font-size: .8em;
+  }
+}
+
+.record .recordcover-holder {
+  margin-bottom: 12px;
+  .more-link {
+    width: 100%;
+  }
+}
+
+.recordcover-holder.paginate {
+  button {
+    display: none;
+  }
+}
+
+@media(max-width: $screen-sm-max) {
+  .large-image-sidebar {
+    width: 100%;
+  }
+}
+
+.related-records {
+  margin-bottom: 1em;
+
+  li.list-group-item p {
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 0;
+  }
+}
+
+#similar-records{
+  .details {
+    font-size: 0.9em;
+    line-height: 25px;
+    margin-top: -5px;
+  }
+}
+
+.staff-view {
+  .pace-car {
+    th,td {
+      border:0;
+      padding:0;
+    }
+  }
+  th {
+    text-align:right;
+  }
+}
+
+.marc-row-LEADER,
+.marc-row-005,
+.marc-row-006,
+.marc-row-007,
+.marc-row-008 {
+  white-space: pre-wrap;
+}
+
+.nav-pills {
+  padding: 0px;
+  margin: 0px;
+  & a:hover {
+    text-decoration: none;
+  }
+  & > li:not(.share-buttons):not(.whatsapp) {
+    margin: 10px;
+    float: left;
+    // Links rendered as pills
+    & > a {
+      border-radius: $nav-pills-border-radius;
+      padding: 0px;
+    }
+  }
+}
+
+// QRCode in record view
+.nav-pills {
+  img.qrcode {
+    border-radius: 8px;
+    min-width: 150px;
+  }
+}
+
+// Share buttons
+.nav-pills > li.share-buttons {
+  float: right;
+  padding-top: 5px;
+  .share-buttons-toolbox {
+      a {
+          padding-left: 5px;
+          display: inline-block;
+      }
+  }
+}
+
+// Request forms
+.ill-request-terms {
+  background-color: $state-info-bg;
+  padding: 2em;
+  padding-left: 2.5em;
+  margin-bottom: 1em;
+}
+
+// Comments
+.comment-wrapper {
+  background-color: lighten($gray, 78%);
+  border-radius: $border-radius-base;
+
+  .comment-text {
+    // Display line breaks properly in comments:
+    white-space: pre-line;
+  }
+}
+
+// Comment form
+.comment-form-wrapper {
+  padding: 10px;
+  background-color: lighten($gray, 78%);
+  border-radius: $border-radius-base;
+
+  .comment-form {
+    .comment-info-icon {
+      font-size: 1.5em;
+      float: left;
+      color: $brand-primary;
+    }
+    .comment-description {
+      margin-top: 1em;
+      margin-left: 2em;
+    }
+    @media (min-width: $screen-md) {
+      .comment-info-icon {
+        margin-top: 2.7em;
+        margin-left: 1em;
+      }
+      .comment-col {
+          width: 50%;
+          float: left;
+      }
+      .comment-description {
+        margin-top: 4em;
+        margin-left: 4em;
+      }
+    }
+  }
+}
+
+// Cart buttons
+.cart-add, .cart-remove {
+  cursor: pointer;
+}
+
+// Record Preview Form
+.preview-record-form {
+  #data {
+    width: 100%;
+    min-height: 400px;
+  }
+}
+
+// Learning material record
+.date-created.date-modified {
+  color: $gray-light;
+  font-size: 0.9em;
+  margin-top: 5px;
+  margin-bottom: 21px;
+}
+.learning-material {
+  margin-top: 12px;
+  h3 {
+    margin-top: 0;
+    margin-bottom: 6px;
+    font-size: 1em;
+  }
+  .recordURLs {
+    margin-top: 0;
+    margin-bottom: 21px;
+    padding: 0;
+  }
+  .fa-download,
+  .fa-external-link,
+  .fa-info3 {
+    margin-right: 5px;
+  }
+}
+.alert-aoe {
+  background-color: $aoe-brand-primary;
+}
+.material-description {
+  margin-bottom: 21px;
+}
+
+// Copyright field value, also used in search result lists
+.rights-icons {
+  margin-right: 10px;
+  .iconlabel {
+    margin-right: 0;
+  }
+}
+.rights-text {
+  color: $brand-primary;
+}
+
+// Material provided by
+
+.recordProvidedBy {
+  .record-organisation {
+    img.consortium-logo {
+      margin: 8px 0 12px;
+    }
+    li.organisation-page-link {
+      padding-top: 5px;
+    }
+    li.material-questions-feedback {
+      font-weight: bold;
+      padding-top: 10px
+    }
+  }
+  .repository-library-request {
+    font-weight: bold;
+    padding-top: 10px;
+  }
+  .repository-library-request-order {
+    margin-top: 0.3em;
+  }
+}
+
+.sidebar .recordProvidedBy {
+  border-top: none;
+  margin-top: 0px;
+  .record-type.organisations {
+    padding: 15px;
+    font-size: 1em;
+    margin-bottom: 0;
+  }
+  .record-organisation-box {
+    border: $sidebar-border;
+    margin-bottom: 1em;
+  }
+}
+
+.record-main .recordProvidedBy {
+  border: $sidebar-border;
+  padding: 0 15px 10px 15px;
+  margin-bottom: 10px;
+  h2 {
+    font-size: 20px;
+  }
+  @media (min-width: $screen-sm-min) {
+    max-width: 300px;
+  }
+}
+
+// Record feedback
+.feedback-record {
+  margin-top: 0.3em;
+}
+
+.model-details {
+  .model-download {
+    i {
+      padding-right: 2px;
+    }
+  }
+}
+
+finna-model-viewer {
+  display: flex;
+  min-height: 400px;
+  position: relative;
+  .wrapper {
+    flex: 1 1 100%;
+    background-color: #efefefcc;
+    &.filedrop {
+      box-shadow: 0px 0px 2px 2px $brand-primary;
+    }
+  }
+  .options {
+    position: absolute;
+    color: black;
+    width: 200px;
+    .statistics-area {
+      .model-stats, .model-help {
+        background-color: white;
+        padding: 2px;
+      }
+    }
+    .viewer-table {
+      width: 100%;
+    }
+    .buttons {
+      text-align: start;
+    }
+    button {
+      appearance: none;
+      -webkit-appearance: none;
+      border: none;
+      padding: 0;
+      background-color: #1f1f1f;
+      color: white;
+      height: 30px;
+      line-height: 30px;
+      width: 20px;
+      margin: 2px;
+      i {
+        cursor: pointer;
+      }
+      &.collapsed {
+        background-color: white;
+        color: #1f1f1f;
+      }
+    }
+  }
+  .state {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 50px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $brand-primary;
+    padding: 10px 12px;
+    font-weight: 500;
+    line-height: 1.5;
+    border-radius: 4px;
+    span.fa-spinner::before {
+      color: white;
+    }
+  }
+  &.fullscreen {
+    position: absolute;
+    left: 0;
+    z-index: 10000;
+  }
+}
+
+
+finna-model-viewer .object-editor {
+  position: absolute;
+  right: 0;
+  width: 200px;
+  color: black;
+  background-color: #f2f2f2;
+  overflow-y: scroll;
+  max-height: 100%;
+  text-align: center;
+  .holder-title {
+    border-bottom: 1px solid black;
+    cursor: pointer;
+  }
+  .custom-holder {
+    display: flex;
+    flex-flow: column;
+    button {
+      padding-bottom: 2px;
+    }
+  }
+  form {
+    display: flex;
+    flex-flow: column;
+    text-align: start;
+    color: black;
+    background: #f2f2f2;
+    border: 1px solid lightgray;
+    border-bottom: none;
+    padding: 2px;
+    div.setting-child {
+      display: flex;
+      flex-flow: column;
+      div.setting-group {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 2px;
+        &.child {
+          margin-left: 20px;
+        }
+        input {
+          min-width: 0;
+          margin-left: 2px;
+          border: none;
+          border-bottom: 1px solid #2f2f2f;
+          border-radius: 0;
+          &[type=number] {
+            max-width: 50px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.inline-linked-field {
+  display: inline-block;
+
+  .show-info {
+    i {
+      font-size: 1.0rem;
+      vertical-align: middle;
+    }
+    i.expand {
+      display: inline-block;
+    }
+    i.collapse {
+      display: none;
+    }
+  }
+
+  .field-popover {
+    display: none;
+    position: absolute;
+    z-index: $zindex-tooltip;
+    @include reset-text();
+    font-size: $font-size-base;
+    background-color: $modal-content-bg;
+    padding: 10px;
+    min-width: 200px;
+    max-width: 400px;
+    margin-left: 8px;
+    margin-right: 8px;
+    border: 1px solid $modal-content-border-color;
+    border-radius: $border-radius-base;
+    box-shadow: 0px 0px 20px -10px $gray-light;
+
+    .content {
+      margin-bottom: 1.5rem;
+    }
+    h2 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+    h3 {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .popover-external-links {
+      margin-top: 1.5rem;
+    }
+  }
+  // Note: there can be nested popovers, so make sure to match the immediate child:
+  &.open > .field-popover {
+    display: block;
+  }
+  &.open > .show-info {
+    i.expand {
+      display: none;
+    }
+    i.collapse {
+      display: inline-block;
+    }
+  }
+}
+
+/* ------ Star Rating ------ */
+.record .media-left .rating {
+  margin-bottom: 1rem;
+
+  .rating-summary {
+    display: block;
+  }
+}
+
+.rating-breakdown {
+  margin-bottom: 1rem;
+
+  .rating-breakdown-stars {
+    display: inline-block;
+  }
+
+  .rating-breakdown-percentage {
+    display: inline-block;
+    width: 4rem;
+    text-align: right;
+  }
+}
+
+.star-rating {
+  /* Use display:inline-flex to prevent whitespace issues. Alternatively, you can put all the children of .rating-group on a single line. */
+  display: inline-flex;
+
+  /* Make hover effect work properly in IE, reset width */
+  .rating__icon {
+    pointer-events: none;
+    width: initial;
+  }
+
+  /* Hide radio inputs, but keep them accessible by keyboard */
+  .rating__input {
+    position: absolute !important;
+    left: -9999px !important;
+  }
+
+  /* Set icon padding and size */
+  .rating__label {
+    cursor: pointer;
+    /* If you change the left/right padding, update the margin-right property of .rating__label--half as well. */
+    padding: 0;
+    margin: 0;
+    font-size: 1.8rem;
+  }
+
+  /* Add padding and positioning to half star labels */
+  .rating__label--half {
+    padding-right: 0;
+    margin-right: -0.5em;
+    z-index: 2;
+  }
+
+  /* Set default star color */
+  .rating__icon--star {
+    color: $text-color;
+  }
+
+  /* If any input is checked, make its following siblings grey */
+  .rating__input:checked ~ .rating__label .rating__icon--star {
+    color: #ddd;
+  }
+
+  /* Make all stars highlight on rating group hover */
+  &:not(.readonly)
+  {
+    &:hover .rating__label .rating__icon--star,
+    &:hover .rating__label--half .rating__icon--star {
+      color: $text-color;
+    }
+    /* Make hovered input's following siblings grey on hover */
+    .rating__input:hover ~ .rating__label .rating__icon--star,
+    .rating__input:hover ~ .rating__label--half .rating__icon--star {
+      color: #ddd;
+    }
+  }
+}
+// Similar items carousel
+.similar-bottom {
+  display: inline-block;
+  max-width: 100%;
+  border-top: 1px solid $gray-lighter;
+}
+.similar-carousel {
+  margin-bottom: 20px;
+}
+.similar-carousel-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+}
+.similar-carousel-item {
+  background-color: $similar-carousel-item-background;
+  border: $similar-carousel-border;
+  border-radius: $similar-carousel-border-radius;
+  box-shadow: $similar-carousel-box-shadow;
+  height: 97%;
+  margin-left: 4px;
+  margin-right: 4px;
+  .similar-carousel-format {
+    color: $similar-carousel-format-text-color;
+    background: $similar-carousel-format-background;
+    padding: 5px 11px 5px 11px;
+    border-radius: 8px;
+    margin-top: 5px;
+    .iconlabel {
+      margin: 0px;
+      &:before {
+        content: '';
+      }
+    }
+  }
+  .similar-carousel-text {
+    color: $similar-carousel-text-color;
+    margin: 10px;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    .similar-carousel-item-title {
+      font-weight: bold;
+    }
+    .similar-carousel-item-title, .similar-carousel-item-author {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    div {
+      margin-top: 7px;
+    }
+  }
+}
+.similar-carousel-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: $similar-carousel-border-radius;
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+  background-color: $similar-carousel-no-image-background;
+  height: 70%;
+  img {
+    max-width: none;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+  .iconlabel {
+    width: 100%;
+    color: $body-bg;
+    display: flex;
+    justify-content: center;
+    margin: 0px;
+    &:before {
+        position: relative;
+        font-size: 45px;
+        color: $similar-carousel-no-image-color;
+    }
+  }
+}
+
+/* ------ Record Tabs ------ */
+.record-tab.details .tab-name {
+  display: none;
+}
+
+.record-toc {
+  margin: 15px 0;
+  padding: 10px;
+  background-color: #f7f7f7;
+}
+
+.record.full-width-layout {
+  .record-accordions.record-tabs {
+    width: 100%;
+    padding-right: 0;
+    float: none;
+  }
+}
+
+.record-format-aipa {
+  .media-body:not(.record-container .media-body) {
+    display: block;
+    width: auto;
+  }
+  .recordFormat {
+    display: block;
+    margin-bottom: 21px;
+  }
+  .access-rights {
+    margin-bottom: 21px;
+  }
+  .record-core-metadata,
+  .finna-tag-list,
+  .summary,
+  .record-toc,
+  .encapsulated-records {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+  }
+  h1,
+  .record-title {
+    font-size: 28px;
+    line-height: 1.1;
+    margin-top: 0;
+    padding-top: .7em;
+  }
+  h2,
+  h2.record-title,
+  h3,
+  h3.record-title {
+    font-size: 22px;
+    margin-bottom: 21px;
+  }
+  h3.panel-title {
+    font-size: 16px;
+    margin: 0;
+  }
+  .panel-body {
+    ul,
+    ol {
+      margin-left: 25px;
+      & li {
+        list-style-type: unset;
+      }
+    }
+  }
+  .study-objectives-title {
+    font-size: 14px;
+  }
+  .finna-educational-level-data {
+    margin-left: 25px;
+    .level-data-section-title {
+      font-size: inherit;
+    }
+  }
+  .result-view-grid {
+    h2.title {
+      margin: 0;
+      padding: 0;
+    }
+  }
+}
+
+.encapsulated-record {
+  margin-bottom: 15px;
+  .recordAuthors {
+    margin-bottom: 15px;
+  }
+}
+
+.encapsulated-record.record-format-lrmi {
+  .record-core-metadata + .finna-panel {
+    margin-top: 21px;
+  }
+}

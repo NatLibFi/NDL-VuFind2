@@ -8,18 +8,19 @@
         max-width: 85% !important;
     }
     &.checkbox-active {
-        margin-top: 40px !important;   
+        margin-top: 40px !important;
     }
     & .item {
         display: block;
         padding: 7px;
-        border-bottom: none; 
+        border-bottom: none;
         color: @gray;
         position: relative;
-        &:hover {
-            text-decoration: none;   
-        }
         cursor: pointer;
+
+        &:hover {
+            text-decoration: none;
+        }
         &.first {border-top-left-radius: 10px; border-top-right-radius: 10px;}
         &.last {border: 0; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;}
         &.selected {
@@ -37,7 +38,7 @@
                   color: @gray-light;
                   font-size: 1.2em;
                   margin-right: 5px;
-                  .fa-spin();
+                  &:extend(.fa-spin);
             }
         }
     }
@@ -47,10 +48,10 @@
         margin-top: 0px;
         border-bottom: 1px solid @gray-lighter;
         &:first-child {
-            margin-top: 5px;   
+            margin-top: 5px;
         }
         &:last-child {
-            border-bottom: none; 
+            border-bottom: none;
             padding-bottom: 0px;
         }
     }

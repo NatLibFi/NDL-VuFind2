@@ -143,7 +143,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      */
     protected $supportedVideoFormats = [
         'mp4' => 'video/mp4',
+        'video/mp4' => 'video/mp4',
         'mov' => 'video/quicktime',
+        'video/quicktime' => 'video/quicktime',
+        'text/html' => 'text/html',
     ];
 
     /**
@@ -939,19 +942,26 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $format,
         string $description
     ): array {
-        if ($codec = $this->supportedVideoFormats[$format] ?? false) {
-            return [
+        $mediaType = $this->supportedVideoFormats[$format] ?? false;
+        return match ($mediaType) {
+            'text/html' => [
+                'desc' => $description ?: false,
+                'url' => $url,
+                'embed' => 'iframe',
+                'format' => $format,
+            ],
+            false => [],
+            default => [
                 'desc' => $description ?: false,
                 'url' => $url,
                 'embed' => 'video',
                 'format' => $format,
                 'videoSources' => [
                     'src' => $url,
-                    'type' => $codec,
+                    'type' => $mediaType,
                 ],
-            ];
-        }
-        return [];
+            ],
+        };
     }
 
     /**
@@ -1770,7 +1780,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             if (!($event = $set->event ?? '')) {
                 continue;
             }
-            $eventType = (string)($event->eventType->term ?? '');
+            $eventType = mb_strtolower((string)($event->eventType->term ?? ''), 'UTF-8');
             $priority = $this->authorEvents[$eventType] ?? null;
             if (null === $priority) {
                 continue;
@@ -2170,6 +2180,23 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             . 'subjectSet/subject/subjectPlace';
         foreach ($this->getXmlRecord()->xpath($xpath) as $subjectPlace) {
             if (!($displayPlace = (string)($subjectPlace->displayPlace ?? ''))) {
+                $placeNames = [];
+                foreach ($subjectPlace->place->namePlaceSet ?? [] as $nameSet) {
+                    if ($name = trim((string)$nameSet->appellationValue ?? '')) {
+                        $placeNames[] = $name;
+                    }
+                }
+                foreach ($subjectPlace->place->partOfPlace ?? [] as $part) {
+                    while ($part->namePlaceSet ?? false) {
+                        if ($partName = trim((string)$part->namePlaceSet->appellationValue ?? '')) {
+                            $placeNames[] = $partName;
+                        }
+                        $part = $part->partOfPlace;
+                    }
+                }
+                $displayPlace = implode(', ', $placeNames);
+            }
+            if (!$displayPlace) {
                 continue;
             }
             if ($extended) {

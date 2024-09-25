@@ -96,7 +96,7 @@
 }
 
 // mixin for image prosessing on fulltext rss feeds
-.rss-content-image {
+.rss-content-image() {
     height: auto;
     max-width: 100%;
     margin-top: 15px;
@@ -178,12 +178,13 @@
             }
             .article-image {
                 flex-shrink: 0;
+                margin-right: 10px;
+
                 img {
                     object-fit: cover;
-                    aspect-ratio: (3 / 2);
+                    aspect-ratio: calc(3 / 2);
                     width: 150px;
                 }
-                margin-right: 10px;
             }
         }
     }
@@ -842,19 +843,6 @@ finna-feed.carousel.splide--ltr {
                 position: relative;
             }
             p {
-                .carousel-header-title {
-                    display: block;
-                }
-                &.title-bottom {
-                    position: initial;
-                    height: 100%;
-                    width: 100%;
-                    padding-bottom: 10px;
-                    .carousel-header-title {
-                        display: inline-block;
-                        width: 100%;
-                    }
-                }
                 position: relative;
                 bottom: 0;
                 width: 100%;
@@ -869,6 +857,20 @@ finna-feed.carousel.splide--ltr {
                 margin-bottom: 0;
                 letter-spacing: 0.2px;
                 text-shadow: @carousel-slide-header-text-shadow;
+
+                .carousel-header-title {
+                    display: block;
+                }
+                &.title-bottom {
+                    position: initial;
+                    height: 100%;
+                    width: 100%;
+                    padding-bottom: 10px;
+                    .carousel-header-title {
+                        display: inline-block;
+                        width: 100%;
+                    }
+                }
             }
             .carousel-slide-more {
                 top: 0;
@@ -890,6 +892,8 @@ finna-feed.carousel.splide--ltr {
 
 finna-feed.carousel-slider.splide--ltr {
     container-type: inline-size;
+    --background-color: transparent;
+
     .splide__arrows {
         width: 100%;
         left: 0;
@@ -904,7 +908,6 @@ finna-feed.carousel-slider.splide--ltr {
             }
         }
     }
-    --background-color: transparent;
     &.slider-with-background {
         &::before {
             content: '';

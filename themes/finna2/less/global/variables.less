@@ -5,28 +5,12 @@
 
 //== Colors
 //
-//## Gray and brand colors for use across Bootstrap.
-@gray: #2b2b2b;
-
-@gray-darker:            darken(@gray, 40%);
-@gray-dark:              darken(@gray, 10%);
-@gray-light:             lighten(@gray, 18%); // mix(@body-bg, contrast(@body-bg), 40%)
-@gray-slightly-lighter:  lighten(@gray, 29%);
-@gray-mid-light:         lighten(@gray, 40%); // dark background: mix(@body-bg, contrast(@body-bg), 65%)
-@gray-lighter:           lighten(@gray, 65%); // dark background: mix(@body-bg, contrast(@body-bg), 80%)
-@gray-ultralight:        lighten(@gray, 80%); // dark background: mix(@body-bg, contrast(@body-bg), 95%)
 
 // Brand Colors
-@brand-primary: #007c90;
-@brand-secondary: #007c90;
-@brand-third: #007c90;
-@brand-fourth: #007c90;
-@brand-success: #33843B;
-@brand-warning: #9E943D;
-@brand-danger: #a94442;
-@brand-info: #007c90;
+
 @logo-color: #fff;
 @aoe-brand-primary: #ccf5e7;
+@action-link-color: @brand-primary;
 
 // Extra extra small screen / phone (e.g. iPhone 5)
 @screen-xxs: 400px;
@@ -38,7 +22,6 @@
 
 //== Custom Finna styling
 @background-image-url: url('../images/logo_background.jpg');
-@background-color: @gray-light;
 @background-image-attachment: scroll;  // set to fixed or scroll (fixed doesnt scoll along with page);
 @background-start-color: transparent; // gradient color for background image
 @background-end-color:  transparent; // gradient color for background image
@@ -52,7 +35,6 @@
 @header-text-color: @navbar-default-link-color;
 @footer-background: @gray-ultralight;
 @footer-text-color: @gray;
-@action-link-color: @brand-primary;
 @finna-search-background: mix(@body-bg, contrast(@body-bg), 95%); // Background color of finna searchbox section
 @finna-search-link-color: @text-color;
 @finna-main-header-background: @body-bg; // Color of page header background and search results tabs
@@ -71,10 +53,6 @@
 @record-holdings-title-background: @brand-primary;
 @record-holdings-title-color: mix(@record-holdings-title-background, contrast(@record-holdings-title-background), 5%);
 @record-holdings-border-color: @gray-lighter;
-@main-tabs-active-color: @nav-tabs-active-color;
-@main-tabs-background-color: @nav-tabs-background-color;
-@main-tabs-text-color: @nav-tabs-text-color;
-@main-tabs-border-color: @nav-tabs-border-color;
 
 @finna-searchtools-background: @gray-lighter;
 @finna-searchtools-color: @gray;
@@ -96,9 +74,9 @@
 @infobox-box-shadow: none;
 
 //== Finna facets
+@sidebar-background: @brand-primary;
 @sidebar-header-text-color: mix(@sidebar-background, contrast(@sidebar-background), 5%);
 @sidebar-header-icon-color: #fff;
-@sidebar-background: @brand-primary;
 @sidebar-border-color: mix(@body-bg, contrast(@body-bg), 80%);
 @sidebar-border: 1px solid @sidebar-border-color;
 @facet-header-background: @gray-ultralight;
@@ -176,52 +154,12 @@
 @finna-infobox-border: 4px solid @brand-primary;
 @finna-infobox-color: @brand-primary;
 
-//== Scaffolding
-//
-// ## Settings for some of the most global styles.
-
-@body-bg: #fff;
-@text-color: @gray-dark;
-@link-color:  #007c90; // defines all link color, also for linked icons
-@link-hover-color: @link-color;
-@link-hover-decoration: #fff;
-@padding-base-vertical: 6px;
-@padding-base-horizontal: 12px;
-@padding-large-vertical: 10px;
-@padding-large-horizontal: 16px;
-@padding-small-vertical: 5px;
-@padding-small-horizontal: 10px;
-@line-height-large: 1.33;
-@line-height-small: 1.5;
-@component-active-bg: @brand-primary;
-
 
 //== Typography
 //
 
-@fa-font-path: "../../bootstrap3/css/fonts";
-
-//## Font, line-height, and color for body text, headings, and more.
-@font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-@font-family-serif: PT Serif;
-@font-family-monospace: Monaco;
-@font-family-base: @font-family-sans-serif;
-@font-size-base: 14px;
 @font-size-icon-small: 14px;
 @font-size-icon-large: 1.5em;
-@font-size-large: ceil((@font-size-base * 1.3));
-@font-size-small: ceil((@font-size-base * 0.85));
-@font-size-h1: floor((@font-size-base * 2.6));
-@font-size-h2: floor((@font-size-base * 1.76));
-@font-size-h3: floor((@font-size-base * 1.6));
-@font-size-h4: floor((@font-size-base * 1.3));
-@font-size-h5: @font-size-base;
-@font-size-h6: floor((@font-size-base * 0.85));
-@line-height-base: 1.5;
-@line-height-computed: floor((@font-size-base * @line-height-base));
-@headings-font-family: @font-family-base;
-@headings-line-height: 1.1;
-@headings-color: inherit;
 
 
 //## Font size, line-height for content pages
@@ -233,121 +171,44 @@
 @content-headings-font-size-h4: floor((@content-font-size-base * 1.15));
 @content-headings-font-size-h5: @content-font-size-base;
 @content-headings-font-size-h6: floor((@content-font-size-base * 0.875));
-@headings-font-weight: 700;
 @content-headings-line-height: @headings-line-height;
 @content-headings-color: @gray-dark;
 @content-heading-background: @brand-secondary;
 @content-nav-bg: @gray-ultralight;
 
+
 //-- Iconography
 //
-//## Specify custom locations of the include Glyphicons icon font. Useful for those including Bootstrap via Bower.
-
-@icon-font-path:          "../../finna/css/fonts/";
-@icon-font-name:          "finnaicons";
-@icon-font-svg-id:        "finnaicons";
-
 
 @full-text-icon-color: #037c90;
 @open-access-icon-color: #e88636;
 @peer-reviewed-icon-color: #179003;
-
-//== Components
-//
-//## Define common padding and border radius sizes and more. Values based on 14px text and 1.428 line-height (~20px to start).
-@border-radius-base:        10px;
-@border-radius-large:       20px;
-@border-radius-small:       5px;
 
 
 //== Tables
 //** Finna tables
 @table-finna-record-cell-padding:  3px 0px;
 
-@table-bg-accent:               @gray-ultralight;    // Defines color for striped tables used in record details and holdings
-
-//** Border color for table and cell borders.
-@table-border-color:            transparent;
-
-
-
-//== Buttons
-//
-//## For each of Bootstrap's buttons, define text, background and border color.
-
-@btn-font-weight: 600;
-@btn-default-color: @text-color;
-@btn-default-bg: #fff;
-@btn-default-border: #ccc;
-@btn-primary-color: #fff;
-@btn-primary-bg: @brand-primary;
-@btn-primary-border: darken(@btn-primary-bg, 0%);
-@btn-success-color: #fff;
-@btn-success-bg: @brand-success;
-@btn-success-border: darken(@btn-success-bg, 5%);
-@btn-warning-color: @gray-light;
-@btn-warning-bg: @brand-warning;
-@btn-warning-border: darken(@btn-warning-bg, 5%);
-@btn-danger-color: #fff;
-@btn-danger-bg: @brand-danger;
-@btn-danger-border: darken(@btn-danger-bg, 5%);
-@btn-info-color: #fff;
-@btn-info-bg: @brand-info;
-@btn-info-border: darken(@btn-info-bg, 5%);
-@btn-link-disabled-color: @gray-light;
-
 
 //== Forms
 //
 //##
 
-@input-border: #666;
-@input-border-radius: @border-radius-small;
-@input-bg: #fff;
 @search-input-bg: #fff;
 
-//== Dropdowns
-//
-//## Dropdown menu container and contents.
 
-@dropdown-bg: @body-bg;
-@dropdown-border: mix(@body-bg, contrast(@dropdown-bg), 80%);
-@dropdown-divider-bg: #e5e5e5;
-@dropdown-link-active-color: #fff;
-@dropdown-link-active-bg: @component-active-bg;
-@dropdown-link-color: @text-color;
-@dropdown-link-hover-color: darken(@text-color, 7%);
-@dropdown-link-hover-bg: rgba(1,1,1,0.1);
-@dropdown-link-disabled-color: @gray-light;
-@dropdown-header-color: @gray-light;
-@dropdown-caret-color: #000;
-@dropdown-fallback-border: none;
-
-//-- Z-index master list
+//-- Finna Z-index list
 //
-// Warning: Avoid customizing these values. They're used for a bird's eye view
-// of components dependent on the z-axis and are designed to all work together.
+// These are designed to work with Bootstrap Z-index master list (see bootstrap-variable-overrides).
+// Warning: Avoid customizing these values. They're designed to all work together.
 //
-// Note: These variables are not generated into the Customizer.
 
-@zindex-navbar:            1000;
-@zindex-dropdown:          1001;
-@zindex-popover:           1010;
-@zindex-tooltip:           1020;
-@zindex-navbar-fixed:      1030;
 @zindex-cookie-consent:    1034;
 @zindex-header:            1035;
 @zindex-sidebar:           1036;
 @zindex-skip-link:         1037;
 @zindex-datepicker:        1038;
-@zindex-modal-background:  1040;
-@zindex-modal:             1050;
 @zindex-spinner-overlay:   1100;
-
-
-//== Grid System
-//
-@grid-float-breakpoint:     @screen-md-min;
 
 
 //== Navbar
@@ -355,16 +216,9 @@
 //##
 
 // Basics of a navbar
-@navbar-height:                    64px;
 @navbar-right:                     64px;
-@navbar-margin-bottom:             0px;
-@navbar-padding-vertical:          0px;
-@navbar-collapse-max-height:       auto;
-
-@navbar-default-bg:                #fff;
 
 // Navbar links
-@navbar-default-link-color:                @text-color;  // Color of link texts in navbar
 @navbar-font-size:                         1.1em; // Font-size of navbar links
 @navbar-font-weight:                       500; // Font weight for navbar texts
 // Navbar toggle
@@ -376,14 +230,10 @@
 //##
 
 //=== Shared nav styles
-@nav-link-padding:                          0px 15px;
-@nav-link-hover-bg:                         rgba(255,255,255,0.2);
 //== Tabs
 @nav-tabs-active-color:                     @action-link-color;
 @nav-tabs-background-color:                 @body-bg;
 @nav-tabs-text-color:                       @text-color;
-@nav-tabs-border-color:                     @gray-mid-light;
-@nav-tabs-link-hover-border-color:          @gray-mid-light;
 @nav-tabs-link-hover-color:                 @nav-tabs-active-link-hover-color;
 @tabs-border-radius:                        4px;
 
@@ -403,38 +253,16 @@
 @feed-nav-pills-active-hover-color:         @component-active-color;
 @feed-nav-pills-active-hover-border:        @feed-nav-pills-border;
 
+// Main nav
+@main-tabs-active-color: @nav-tabs-active-color;
+@main-tabs-background-color: @nav-tabs-background-color;
+@main-tabs-text-color: @nav-tabs-text-color;
+@main-tabs-border-color: @nav-tabs-border-color;
+
 //== Pagination
 //
 //##
 @pagination-background:                @body-bg;
-@pagination-color:                     @link-color;
-@pagination-bg:                        @body-bg;
-@pagination-border:                    transparent;
-
-@pagination-hover-color:               @action-link-color;
-@pagination-hover-bg:                  #f5f5f5;
-@pagination-hover-border:              transparent;
-
-@pagination-active-color:              #fff;
-@pagination-active-bg:                 @action-link-color;
-@pagination-active-border:             transparent;
-
-
-//== Pager
-//
-//##
-
-@pager-bg:                             @action-link-color;
-@pager-hover-bg:                       darken(@action-link-color, 0.5%);
-@pager-disabled-color:                 @gray-mid-light;
-
-
-
-//== Form states and alerts
-//
-//## Define colors for form feedback states and, by default, alerts.
-
-@state-success-text:             #2d4821;
 
 
 //== Tooltips
@@ -453,70 +281,21 @@
 @tooltip-summon-advanced:     inline;
 @tooltip-button-color:        @action-link-color;
 
-//** Tooltip max width
-@tooltip-max-width:           300px;
 @tooltip-min-width:           250px;
-//** Tooltip text color
-@tooltip-color:               @text-color;
-//** Tooltip background color
-@tooltip-bg:                  @body-bg;
-@tooltip-opacity:             1;
 
-//** Tooltip arrow width
-@tooltip-arrow-width:         6px;
-//** Tooltip arrow color
-@tooltip-arrow-color:         @brand-primary;
-@tooltip-header-color:        mix(@tooltip-arrow-color, contrast(@tooltip-arrow-color), 5%);
 
 //== Modals
 //
 //##
-@modal-content-bg: @body-bg;
 @modal-header-background: @brand-primary;
 @modal-header-color: mix(@modal-header-background, contrast(@modal-header-background), 5%);
-//** Padding applied to the modal body (only a single value allowed!)
-
-
-//== Alerts
-//
-//## Define alert colors, border radius, and padding.
-
-@alert-padding:               10px;
-
-
-//== List group
-//
-//##
-
-//** Background color on `.list-group-item`
-@list-group-bg: @body-bg;
-@list-group-link-color: @text-color;
-
-
-//== Panels
-//
-//##
-@panel-border-radius:         0px;
-
-
-//== thumbnail
-//
-//##
-@thumbnail-border:            none;
-
 
 
 //== Badges
 //
 //##
 
-@badge-color:                 lighten(@text-color, 18%);
-//** Linked badge text color on hover
-@badge-link-hover-color:      #fff;
-@badge-bg:                    none;
 @badge-font-size:             0.9em;
-@badge-font-weight:           400;
-
 
 
 //== Breadcrumbs
@@ -524,24 +303,9 @@
 //##
 //** @breadcrumbs: false/true
 @breadcrumbs: false;
-//** Breadcrumb background color
-@breadcrumb-bg                : #fff;
-//** Breadcrumb text color
-@breadcrumb-color             : @gray-light;
-//** Text color of current page in the breadcrumb
-@breadcrumb-active-color      : @gray-dark;
-@breadcrumb-padding-vertical:   10px;
-@breadcrumb-padding-horizontal: 10px;
-//** Textual separator for between breadcrumb elements
+//** Textual separator for between breadcrumb elements (obsolete)
 @breadcrumb-separator:          "|";
 
-
-//== Wells
-//
-//##
-
-@well-bg:                     mix(@body-bg, contrast(@body-bg), 95%);
-@well-border:                 mix(@body-bg, contrast(@body-bg), 80%);
 
 //== Cookie Consent
 //
@@ -565,13 +329,6 @@
 //
 //##
 
-//** Horizontal line color.
-@hr-border:                   rgba(255,255,255,0.2);
-
-@cursor-disabled: pointer;
-@progress-border-radius: none;
-@panel-heading-padding: 0;
-@panel-footer-padding: 0;
 
 @accordion-details-display:   none;
 @search-tab-tip-bg: #CCF5E7;

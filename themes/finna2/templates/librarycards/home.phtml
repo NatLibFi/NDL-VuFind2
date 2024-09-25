@@ -87,8 +87,10 @@
                     </a>
                     <ul class="dropdown-menu useraccount-confirm">
                       <li class="disabled"><a><?=$this->transEsc('Disconnect Library Card')?>?</a></li>
-                      <li><a href="<?=$this->escapeHtmlAttr($this->url('librarycards-deletecard', [], ['query' => ['cardID' => $record['id'], 'confirm' => 1]]))?>" data-clear-account-cache><?=$this->transEsc('confirm_dialog_yes')?></a></li>
-                      <li><a href="#"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+                      <li>
+                        <a href="<?=$this->escapeHtmlAttr($this->url('librarycards-deletecard', [], ['query' => ['cardID' => $record['id'], 'confirm' => 1]]))?>" data-clear-account-cache><?=$this->transEsc('confirm_dialog_yes')?></a>
+                        <a href="#"><?=$this->transEsc('confirm_dialog_no')?></a>
+                      </li>
                     </ul>
                   </div>
                 </div>
