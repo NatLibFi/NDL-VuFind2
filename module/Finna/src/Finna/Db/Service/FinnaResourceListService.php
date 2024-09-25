@@ -30,9 +30,6 @@
 namespace Finna\Db\Service;
 
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
-use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\ExpressionInterface;
-use Laminas\Db\Sql\Select;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\AbstractDbService;
 use VuFind\Db\Service\DbServiceAwareTrait;
@@ -58,6 +55,39 @@ class FinnaResourceListService extends AbstractDbService implements
 {
     use DbTableAwareTrait;
     use DbServiceAwareTrait;
+
+    /**
+     * Begin a database transaction.
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function beginTransaction(): void
+    {
+        $this->getDbTable(\Finna\Db\Table\FinnaResourceList::class)->beginTransaction();
+    }
+
+    /**
+     * Commit a database transaction.
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function commitTransaction(): void
+    {
+        $this->getDbTable(\Finna\Db\Table\FinnaResourceList::class)->commitTransaction();
+    }
+
+    /**
+     * Roll back a database transaction.
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function rollBackTransaction(): void
+    {
+        $this->getDbTable(\Finna\Db\Table\FinnaResourceList::class)->rollbackTransaction();
+    }
 
     /**
      * Create a FinnaResourceList entity object.
@@ -97,69 +127,6 @@ class FinnaResourceListService extends AbstractDbService implements
             throw new RecordMissingException('Cannot load reservation list ' . $id);
         }
         return $result;
-    }
-
-    /**
-     * Get lists belonging to the user and their count. Returns an array of arrays with
-     * list_entity and count keys.
-     *
-     * @param UserEntityInterface|int $userOrId User entity object or ID
-     *
-     * @return array
-     * @throws Exception
-     */
-    public function getFinnaResourceListsAndCountsByUser(UserEntityInterface|int $userOrId): array
-    {
-        $userId = $userOrId instanceof UserEntityInterface ? $userOrId->getId() : $userOrId;
-        $callback = function (Select $select) use ($userId) {
-            $select->columns(
-                [
-                    Select::SQL_STAR,
-                    'cnt' => new Expression(
-                        'COUNT(DISTINCT(?))',
-                        ['ur.resource_id'],
-                        [ExpressionInterface::TYPE_IDENTIFIER]
-                    ),
-                ]
-            );
-            $select->join(
-                ['ur' => 'finna_resource_list_resource'],
-                'finna_resource_list.id = ur.list_id',
-                [],
-                $select::JOIN_LEFT
-            );
-            $select->where->equalTo('finna_resource_list.user_id', $userId);
-            $select->group(
-                [
-                    'finna_resource_list.id', 'finna_resource_list.user_id', 'title', 'description',
-                    'created',
-                ]
-            );
-            $select->order(['title']);
-        };
-
-        $result = [];
-        foreach ($this->getDbTable(\Finna\Db\Table\FinnaResourceList::class)->select($callback) as $row) {
-            $result[] = ['list_entity' => $row, 'count' => $row->cnt];
-        }
-        return $result;
-    }
-
-    /**
-     * Get list objects belonging to the specified user.
-     *
-     * @param UserEntityInterface|int $userOrId User entity object or ID
-     *
-     * @return FinnaResourceListEntityInterface[]
-     */
-    public function getResourceListsByUser(UserEntityInterface|int $userOrId): array
-    {
-        $userId = $userOrId instanceof UserEntityInterface ? $userOrId->getId() : $userOrId;
-        $callback = function ($select) use ($userId) {
-            $select->where->equalTo('user_id', $userId);
-            $select->order(['title']);
-        };
-        return iterator_to_array($this->getDbTable(\Finna\Db\Table\FinnaResourceList::class)->select($callback));
     }
 
     /**

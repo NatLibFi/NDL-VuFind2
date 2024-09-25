@@ -30,6 +30,7 @@
 
 namespace Finna\Form;
 
+use Exception;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\RecordDriver\DefaultRecord;
 
@@ -425,6 +426,22 @@ class Form extends \VuFind\Form\Form
             ];
         }
 
+        if ($this->getFormId() === self::RESERVATION_LIST_REQUEST) {
+            try {
+                $reservationListHelper = $this->viewHelperManager->get('reservationList');
+                $listConfiguration = $reservationListHelper->getListConfiguration(
+                    $postParams['rl_institution'],
+                    $postParams['rl_list_identifier']
+                );
+                if (!$reservationListHelper->checkUserRightsForList($listConfiguration)) {
+                    throw new \VuFind\Exception\ListPermission('list_access_denied');
+                }
+                return $listConfiguration['Recipient'];
+            } catch (Exception $e) {
+                throw new Exception('Invalid form configuration in ReservationList.yaml');
+            }
+        }
+
         if ($recipient = $this->getRecipientFromFormData($postParams)) {
             return [$recipient];
         }
@@ -804,6 +821,9 @@ class Form extends \VuFind\Form\Form
             }
         }
         if (self::RESERVATION_LIST_REQUEST === $this->getFormId()) {
+            $elements['rl_institution'] = ['type' => 'hidden', 'name' => 'rl_institution', 'value' => null];
+            $elements['rl_list_identifier'] = ['type' => 'hidden', 'name' => 'rl_list_identifier', 'value' => null];
+            $elements['rl_list_id'] = ['type' => 'hidden', 'name' => 'rl_list_id', 'value' => null];
             $elements = array_merge(
                 [
                     'reservation_records' => [

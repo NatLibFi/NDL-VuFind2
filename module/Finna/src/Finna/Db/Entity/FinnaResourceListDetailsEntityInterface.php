@@ -30,6 +30,7 @@
 
 namespace Finna\Db\Entity;
 
+use DateTime;
 use VuFind\Db\Entity\EntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 
@@ -129,9 +130,9 @@ interface FinnaResourceListDetailsEntityInterface extends EntityInterface
     /**
      * Get the ordered flag
      *
-     * @return ?string
+     * @return ?DateTime
      */
-    public function getOrdered(): ?string;
+    public function getOrdered(): ?DateTime;
 
     /**
      * Set the ordered flag
@@ -143,9 +144,9 @@ interface FinnaResourceListDetailsEntityInterface extends EntityInterface
     /**
      * Get the pickup date
      *
-     * @return ?string
+     * @return ?DateTime
      */
-    public function getPickupDate(): ?string;
+    public function getPickupDate(): ?DateTime;
 
     /**
      * Set the pickup date

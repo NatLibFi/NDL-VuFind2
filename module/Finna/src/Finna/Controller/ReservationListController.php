@@ -248,12 +248,16 @@ class ReservationListController extends AbstractBase
         );
         $formId = $configuration['FormIdentifier'] ?? Form::RESERVATION_LIST_REQUEST;
 
+        // Call form handler here instead of feedback-formaction
         return $this->redirect()->toRoute(
             'feedback-form',
             ['id' => $formId],
             ['query' => [
                 'layout' => $this->getRequest()->getQuery('layout', false),
                 'record_ids' => $sourceRecordIds,
+                'rl_list_id' => $listId,
+                'rl_institution' => $details->getInstitution(),
+                'rl_list_identifier' => $details->getListConfigIdentifier(),
             ]]
         );
     }

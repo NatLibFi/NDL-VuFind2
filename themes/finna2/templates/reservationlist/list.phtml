@@ -8,6 +8,9 @@
 
   $user = $this->auth()->isLoggedIn();
   $recordTotal = $this->results->getResultTotal();
+  $listConfiguration = $this->reservationList($user)->getListConfiguration($this->details->getInstitution(), $this->details->getListConfigIdentifier());
+  $listTranslations = $this->reservationList($user)->getListTranslationKeys($this->details->getInstitution(), $this->details->getListConfigIdentifier());
+  $institutionInformation = $this->reservationList()->getInstitutionInformation($this->details->getInstitution());
 ?>
 
 <!-- Leftside navigationbar -->
@@ -16,9 +19,17 @@
 <div class="<?=$this->layoutClass('mainbody-myresearch')?> reservation-list-body">
   <div class="my-research-content">
     <div class="title-wrapper">
-      <h2><?=$this->transEsc('ReservationList::reservation_list_title', ['%%title%%' => $this->list['title']]) ?></h2>
+      <h2><?=$this->transEsc('ReservationList::Reservation List') . ': ' . $this->transEsc($list->getTitle()) ?></h2>
     </div>
     <?= $this->flashmessages() ?>
+    <div class="description-wrapper">
+      <p><?= $this->transEsc(['ReservationList', $listTranslations['title']]);?></p>
+    </div>
+    <div class="description-wrapper">
+      <?php foreach ($listConfiguration['Information'] ?? $institutionInformation as $value): ?>
+        <p><?=$this->escapeHtml($value);?></p>
+      <?php endforeach; ?>
+    </div>
     <?php if ($this->list?->getDescription() ?? false): ?>
       <div class="description-wrapper">
         <p><?=$this->escapeHtml($this->list->getDescription()); ?></p>
@@ -26,17 +37,17 @@
     <?php endif; ?>
     <?php if ($this->list?->getCreated() ?? false): ?>
       <div class="list-info">
-        <p><?= $this->transEsc('ReservationList::list_created', ['%%date%%' => $this->list->getCreated()->format('Y-m-d H:i:s')]) ?></p>
+        <p><?= $this->transEsc('ReservationList::list_created', ['%%date%%' => $this->list->getCreated()->format('d.m.Y')]) ?></p>
       </div>
     <?php endif; ?>
     <?php if ($this->details?->getOrdered() ?? false): ?>
       <div class="list-info">
-        <p><?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $this->details->getOrdered()]) ?></p>
+        <p><?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $this->details->getOrdered()->format('d.m.Y')]) ?></p>
       </div>
     <?php endif; ?>
     <?php if ($this->details?->getPickupDate() ?? false): ?>
       <div class="list-info">
-        <p><?= $this->transEsc('ReservationList::list_pickup_date', ['%%date%%' => $this->details->getPickupDate()]) ?></p>
+        <p><?= $this->transEsc('ReservationList::list_pickup_date', ['%%date%%' => $this->details->getPickupDate()->format('d.m.Y')]) ?></p>
       </div>
     <?php endif; ?>
     <?php if ($this->enabled): ?>

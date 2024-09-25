@@ -39,6 +39,7 @@ use VuFind\ILS\Connection;
 use VuFind\RecordDriver\DefaultRecord;
 
 use function in_array;
+use function is_array;
 
 /**
  * Reservation list view helper
@@ -160,19 +161,36 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Get list translations keys for list
+     * Get organisation information from ReservationList.yaml information section
      *
-     * @param string $building Building to use in translation keys
-     * @param array  $list     List configuration
+     * @param string $institution Institution to look for
      *
      * @return array
      */
-    public function getListTranslationKeys(string $building, array $list): array
+    public function getInstitutionInformation(string $institution): array
     {
-        $formed = '_' . $building . '_' . $list['Identifier'];
+        return $this->config[$institution]['Information'] ?? [];
+    }
+
+    /**
+     * Get list translations keys for list
+     *
+     * @param string       $building         Building to use in translation keys
+     * @param array|string $listOrIdentifier List configuration
+     *
+     * @return array
+     */
+    public function getListTranslationKeys(string $building, array|string $listOrIdentifier): array
+    {
+        $formed = '_' . $building . '_' . (
+            is_array($listOrIdentifier)
+            ? $listOrIdentifier['Identifier']
+            : $listOrIdentifier
+        );
         $keysAndValues = [
             'title' => 'list_title',
             'description' => 'list_description',
+            'location' => 'list_location',
         ];
         return array_map(
             fn ($value) => $value . $formed,
@@ -183,11 +201,11 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     /**
      * Check if the user has proper requirements to order records
      *
-     * @param array $list Lists as configurations
+     * @param array $list List as configuration
      *
      * @return bool
      */
-    protected function checkUserRightsForList(array $list): bool
+    public function checkUserRightsForList(array $list): bool
     {
         $sources = $list['LibraryCardSources'] ?? false;
         if (!$sources) {
@@ -265,5 +283,18 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
         FinnaResourceListEntityInterface|int $listOrId
     ): FinnaResourceListDetailsEntityInterface {
         return $this->reservationListService->getListDetails($listOrId);
+    }
+
+    /**
+     * Set list ordered
+     *
+     * @param int    $listId     Id of the list to set ordered
+     * @param string $pickupDate Pickupdate in string format
+     *
+     * @return bool
+     */
+    public function setListOrdered(int $listId, string $pickupDate): bool
+    {
+        return $this->reservationListService->setListOrdered($this->user, $listId, $pickupDate);
     }
 }

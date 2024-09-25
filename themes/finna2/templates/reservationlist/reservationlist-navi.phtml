@@ -18,10 +18,11 @@
   <li>
     <a class="<?=$active ? ' active' : ''?>" role="menuitem" href="<?= $active ? '#' : $this->url('reservationlist-home') ?>" aria-current="<?=$active ? 'page' : 'false'?>"><?= $this->transEsc('ReservationList::All Lists') ?></a>
   </li>
-  <?php foreach ($lists as $index => $list): ?>
+  <?php foreach ($lists as $index => $wrapper): ?>
     <?php
+      $list = $wrapper['list_entity'];
+      $details = $wrapper['details_entity'];
       $active = ($list->getId() === $activeId);
-      $details = $this->reservationList()->getListDetails($list->getId());
     ?>
     <li role="none" class="favorites-menulist-item">
       <a role="menuitem" href="<?= $active ? '#' : $this->url('reservationlist-list', ['id' => $list->getId()])?>?limit=<?=$currentLimit;?>" class="<?=$list && $active ? ' active' : ''?>" aria-current="<?=$active ? 'page' : 'false' ?>">

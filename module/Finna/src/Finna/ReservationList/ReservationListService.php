@@ -182,18 +182,12 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      */
     public function getAndRememberListObject(?int $listId, UserEntityInterface $user): FinnaResourceListEntityInterface
     {
-        if (empty($listId)) {
-            $list = $this->createListForUser($user)
-                ->setTitle($this->translate('default_list_title'));
-            $this->saveListForUser($list['list_entity'], $user);
-        } else {
-            $list = $this->resourceListService->getResourceListById($listId);
-            // Validate incoming list ID:
-            if (!$this->userCanEditList($user, $list)) {
-                throw new \VuFind\Exception\ListPermission('Access denied.');
-            }
-            $this->rememberLastUsedList($list); // handled by saveListForUser() in other case
+        $list = $this->resourceListService->getResourceListById($listId);
+        // Validate incoming list ID:
+        if (!$this->userCanEditList($user, $list)) {
+            throw new \VuFind\Exception\ListPermission('Access denied.');
         }
+        $this->rememberLastUsedList($list); // handled by saveListForUser() in other case
         return $list;
     }
 
@@ -364,6 +358,31 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
+     * Set list ordered
+     *
+     * @param UserEntityInterface $user       User to check for rights to list
+     * @param int                 $listId     Id of the list to set ordered
+     * @param string              $pickupDate Date for the order to be picked up
+     *
+     * @return bool
+     */
+    public function setListOrdered(UserEntityInterface $user, int $listId, string $pickupDate): bool
+    {
+        try {
+            $list = $this->resourceListService->getResourceListById($listId);
+            if (!$this->userCanEditList($user, $list)) {
+                throw new ListPermissionException('list_access_denied');
+            }
+            $details = $this->resourceListDetailsService->getSettingsForFinnaResourceList($list);
+            $details->setPickupDate($pickupDate)->setOrdered();
+            $this->resourceListDetailsService->persistEntity($details);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
      * Saves the provided list to the database and remembers it in the session if it is valid;
      * throws an exception otherwise.
      *
@@ -430,15 +449,22 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         ?UserEntityInterface $user,
         Parameters $request
     ): int {
-        $list->setTitle($request->get('title'))->setDescription($request->get('desc'));
-        $this->saveListForUser($list, $user);
-        $details->setInstitution($request->get('institution'))
-            ->setListConfigIdentifier($request->get('listIdentifier'))
-            ->setUserId($user->getId())
-            ->setListId($list->getId())
-            ->setListType(self::RESOURCE_LIST_TYPE)
-            ->setConnection($request->get('connection', 'database'));
-        $this->saveDetailsForList($list, $details, $user);
+        try {
+            $this->resourceListService->beginTransaction();
+            $list->setTitle($request->get('title'))->setDescription($request->get('desc'));
+            $this->saveListForUser($list, $user);
+            $details->setInstitution($request->get('institution'))
+                ->setListConfigIdentifier($request->get('listIdentifier'))
+                ->setUserId($user->getId())
+                ->setListId($list->getId())
+                ->setListType(self::RESOURCE_LIST_TYPE)
+                ->setConnection($request->get('connection', 'database'));
+            $this->saveDetailsForList($list, $details, $user);
+            $this->resourceListService->commitTransaction();
+        } catch (\Exception $e) {
+            $this->resourceListService->rollbackTransaction();
+        }
+
         return $list->getId();
     }
 
@@ -564,10 +590,14 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
             $institution,
             self::RESOURCE_LIST_TYPE
         );
-        return $this->resourceListService->getResourceListsByIds(array_map(
-            fn ($setting) => $setting->getListId(),
-            $settings
-        ));
+        $result = [];
+        foreach ($settings as $detail) {
+            $result[] = [
+                'list_entity' => $this->resourceListService->getResourceListById($detail->getListId()),
+                'details_entity' => $detail,
+            ];
+        }
+        return $result;
     }
 
     /**

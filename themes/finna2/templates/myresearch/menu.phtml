@@ -18,11 +18,12 @@
         'user' => $user,
       ];
     }
+    $reservationLists = $this->reservationList($user)->getReservationListsForUser($user);
     if ($reservationListOpen = $this->active === 'reservationlist') {
       $list = $this->results?->getListObject() ?? [];
       $listParams = [
         'activeId' => $list['id'] ?? false,
-        'lists' => $this->reservationList($user)->getReservationListsForUser($user),
+        'lists' => $reservationLists,
         'results' => $this->results,
         'user' => $user,
       ];
@@ -92,7 +93,7 @@
       'reservationlist' => [
         'url' => 'reservationlist-home',
         'translation' => 'Reservation List',
-        'show' => $this->userlist()->getMode() !== 'disabled' && $this->reservationList()->getReservationListsForUser($user),
+        'show' => $this->userlist()->getMode() !== 'disabled' && $reservationLists,
       ],
       'logout' => [
         'url' => 'myresearch-logout',
@@ -129,7 +130,7 @@
         'active' => $reservationListOpen,
         'url' => 'reservationlist-home',
         'translation' => 'ReservationList::Reservation Lists',
-        'show' => $this->userlist()->getMode() !== 'disabled' && $this->reservationList()->getReservationListsForUser($user),
+        'show' => $this->userlist()->getMode() !== 'disabled' && ($reservationLists ?? false),
         'partial' => [
           'url' => 'reservationlist/reservationlist-navi.phtml',
           'wrapperClass' => 'reservationlist-bar',

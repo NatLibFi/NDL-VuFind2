@@ -181,21 +181,21 @@ class FinnaResourceListDetails extends RowGateway implements
     /**
      * Get list ordered date.
      *
-     * @return ?string
+     * @return ?DateTime
      */
-    public function getOrdered(): ?string
+    public function getOrdered(): ?DateTime
     {
-        return $this->ordered;
+        return $this->ordered ? DateTime::createFromFormat('Y-m-d H:i:s', $this->ordered) : null;
     }
 
     /**
      * Get list pickup date.
      *
-     * @return ?string
+     * @return ?DateTime
      */
-    public function getPickupDate(): ?string
+    public function getPickupDate(): ?DateTime
     {
-        return $this->pickup_date;
+        return $this->pickup_date ? DateTime::createFromFormat('Y-m-d H:i:s', $this->pickup_date) : null;
     }
 
     /**

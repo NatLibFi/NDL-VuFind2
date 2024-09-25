@@ -46,6 +46,30 @@ use VuFind\RecordDriver\DefaultRecord;
 interface FinnaResourceListServiceInterface extends DbServiceInterface
 {
     /**
+     * Begin a database transaction.
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function beginTransaction(): void;
+
+    /**
+     * Commit a database transaction.
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function commitTransaction(): void;
+
+    /**
+     * Roll back a database transaction.
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function rollBackTransaction(): void;
+
+    /**
      * Create a FinnaResourceList entity object.
      *
      * @return FinnaResourceListEntityInterface
@@ -70,26 +94,6 @@ interface FinnaResourceListServiceInterface extends DbServiceInterface
      * @throws RecordMissingException
      */
     public function getFinnaResourceListById(int $id): FinnaResourceListEntityInterface;
-
-    /**
-     * Get lists belonging to the user and their count. Returns an array of arrays with
-     * list_entity and count keys.
-     *
-     * @param UserEntityInterface|int $userOrId User entity object or ID
-     *
-     * @return array
-     * @throws Exception
-     */
-    public function getFinnaResourceListsAndCountsByUser(UserEntityInterface|int $userOrId): array;
-
-    /**
-     * Get list objects belonging to the specified user.
-     *
-     * @param UserEntityInterface|int $userOrId User entity object or ID
-     *
-     * @return FinnaResourceListEntityInterface[]
-     */
-    public function getResourceListsByUser(UserEntityInterface|int $userOrId): array;
 
     /**
      * Get lists containing a specific record.

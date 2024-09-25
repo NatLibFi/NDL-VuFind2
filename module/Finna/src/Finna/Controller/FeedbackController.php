@@ -78,10 +78,11 @@ class FeedbackController extends \VuFind\Controller\FeedbackController implement
                 $request->getPost()->set('record', $driver->getBreadcrumb());
             }
         }
-        if (null === $request->getPost('record_ids') && $recordIds = $request->getQuery('record_ids')) {
-            $request->getPost()->set('record_ids', $recordIds);
+        foreach (['rl_list_identifier', 'rl_institution', 'rl_list_id', 'record_ids'] as $key) {
+            if (null === $request->getPost($key) && $queryValue = $request->getQuery($key)) {
+                $request->getPost()->set($key, $queryValue);
+            }
         }
-
         return parent::formAction();
     }
 }
