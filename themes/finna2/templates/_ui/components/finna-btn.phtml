@@ -1,17 +1,23 @@
 <?php
-  $__attributes = $this->htmlAttributes($attributes ?? []);
-  if (!isset($__attributes['type'])) {
-    $__attributes['type'] = 'button';
+$__attributes = $this->htmlAttributes($attributes ?? []);
+if (!isset($__attributes['type'])) {
+  $__attributes['type'] = 'button';
+}
+if (!isset($label) && isset($ariaLabel)) {
+  $__attributes['aria-label'] = $ariaLabel;
+}
+// Avoid unwanted whitespace in all possible variations with echo statements
+echo '<button' . $__attributes->add('class', 'finna-btn') . '>';
+if (isset($icon) || isset($iconClass) || isset($label)) {
+  if (isset($icon)) {
+    echo $this->icon($icon, $iconClass ?? null);
+  } elseif (isset($iconClass)) {
+    // Back-compatibility with iconClass specifying the whole style:
+    echo '<i class="' . $iconClass . '" aria-hidden="true"></i>';
   }
-  if (!isset($label) && isset($ariaLabel)) {
-    $__attributes['aria-label'] = $ariaLabel;
+  if ((isset($icon) || isset($iconClass)) && isset($label)) {
+    echo ' ';
   }
-  // Avoid unwanted whitespace in all possible variations.
-?>
-<button<?= $__attributes->add('class', 'finna-btn') ?>><?php
-  if (isset($iconClass) || isset($label)): ?><?php
-    if (isset($iconClass)): ?><i class="<?= $iconClass ?>" aria-hidden="true"></i><?php endif; ?><?php
-    if (isset($iconClass) && isset($label)): ?> <?php endif; ?><?=
-    $label ?? '' ?><?php
-  endif;
-?></button>
+  echo $label ?? '';
+}
+echo '</button>';

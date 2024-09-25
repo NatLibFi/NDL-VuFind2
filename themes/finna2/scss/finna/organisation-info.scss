@@ -1,0 +1,931 @@
+// *** Common styles for organisation info page and widget ***
+$organisation-info-max-w: 400px !default;
+
+.organisation-info {
+    .finna-panel {
+        .panel-collapse, .panel-body {
+            outline: 0;
+        }
+    }
+
+    .location-is-open {
+        color: green;
+    }
+    .location-is-closed {
+        color: #c33b00;
+    }
+
+    .js-week-navi {
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 10px;
+        font-size: 1.1em;
+        @media (max-width: $screen-sm-max) {
+            max-width: $organisation-info-max-w;
+        }
+        .js-week-navi-btn {
+            margin: 0;
+            border: 0;
+            padding: 0;
+        }
+        .js-week-text {
+            display: inline-block;
+            margin: 0 4px;
+        }
+        .js-loader {
+            // Make sure displaying the spinner doesn't shift other elements around:
+            position: absolute;
+        }
+    }
+
+    .js-opening-times {
+        padding-bottom: 20px;
+
+        .js-opening-times-week {
+            display: flex;
+            flex-flow: column nowrap;
+            font-size: 1.0em;
+            width: 100%;
+            margin-bottom: 20px;
+            @media (max-width: $screen-sm-max) {
+                max-width: $organisation-info-max-w;
+            }
+            .date-rows {
+                padding: 5px;
+                &:not(:last-child) {
+                    border-bottom: 1px solid $gray-lighter;
+                }
+                &.today {
+                    background: $gray-lighter;
+                    font-weight: bold;
+                }
+                &.museum {
+                    .time-row {
+                        .date-container {
+                            display: none;
+                        }
+                    }
+                }
+
+                .time-row {
+                    display: flex;
+                    flex-flow: row nowrap;
+                    gap: 4px;
+                    width: 100%;
+                    line-height: 1.26em;
+
+                    &.sub-row {
+                        padding-top: 3px;
+                        color: $gray-light;
+                        font-size: .94em;
+                    }
+
+                    .date-container {
+                        flex: 1 0 20%;
+                        display: flex;
+                        flex-flow: nowrap;
+                        padding-right: 5px;
+                        .name {
+                            padding-left: 5px;
+                        }
+                    }
+                    .description {
+                        flex: 1 1 60%;
+                        display: flex;
+                        padding-left: 10px;
+
+                        .info {
+                            padding-left: 10px;
+                        }
+                    }
+                    .time-container {
+                        flex: 1 0 20%;
+                        display: flex;
+                        flex-flow: nowrap;
+                        .times, .closed-today {
+                            width: 100%;
+                            display: inline-flex;
+                            justify-content: end;
+                            gap: 2px;
+                        }
+                    }
+                }
+                .name.staff {
+                    color: $gray-light;
+                }
+            }
+        }
+
+        .location-is-open, .location-is-closed {
+            float: right;
+            margin-top: 8px;
+            margin-right: 3px;
+        }
+
+        .schedules-info {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            @media (max-width: $screen-sm-max) {
+                max-width: $organisation-info-max-w;
+            }
+        }
+
+        .mobile-schedules {
+            font-size: 1.1em;
+        }
+    }
+}
+
+// *** Organisation info page ***
+.organisation-info-page {
+    padding-bottom: 25px;
+
+    h2 {
+        font-size: $font-size-large + 3px;
+    }
+
+    .consortium-info {
+        margin-bottom: 20px;
+
+        h3 {
+            font-size: $font-size-large + 17px;
+            margin-top: 0;
+        }
+
+        .consortium-logo {
+            float: left;
+            width: 28%;
+            img {
+                max-width: 100%;
+                max-height: 150px;
+                margin-right: 30px;
+            }
+            @media (max-width: $screen-xs-max) {
+                margin-bottom: 10px;
+                margin-right: 0px;
+                float: none;
+            }
+        }
+
+        .description {
+            width: 70%;
+            float: right;
+            max-width: 900px;
+            @media (max-width: $screen-xs-max) {
+                float: none;
+                width: 100%;
+            }
+        }
+        .organisation-info-panel {
+            width: 70%;
+            float: right;
+            margin-top: 20px;
+            margin-bottom: 0;
+            @media (max-width: $screen-xs-max) {
+                float: none;
+                width: 100%;
+            }
+        }
+
+        .consortium-search-usage {
+            margin-bottom: 9.5px;
+            float: right;
+            width: 70%;
+            margin-top: 15px;
+            @media (max-width: $screen-xs-max) {
+                float: none;
+                width: 100%;
+            }
+            .gauge-meter {
+                margin-top: -15px;
+                float: right;
+                width: 50%;
+                #finna-coverage-gauge {
+                    float: left;
+                    @media (min-width: $screen-sm-min) {
+                        margin-left: -20px;
+                    }
+                }
+                .gauge-value {
+                    margin-top: 15px;
+                    position: absolute;
+                    margin-left: -54px;
+                    font-weight: bold;
+                }
+                .gauge-label {
+                    margin-top: 15px;
+                    position: absolute;
+                }
+                @media (max-width: $screen-md-max) {
+                    display: block;
+                    float: none;
+                    margin-top: 20px;
+                }
+            }
+        }
+
+        &.no-logo {
+            .description {
+                padding-left: 0;
+                width: 100%;
+                float: none;
+            }
+            .consortium-search-usage, #collapse-usage, #collapse-links {
+                float: none;
+            }
+            .organisation-info-panel {
+                float: none;
+            }
+        }
+
+        .consortium-info-row {
+            display: table;
+            width: 100%;
+        }
+
+        .consortium-usage-rights {
+            .usage-rights-text {
+                margin-bottom: 10px;
+                .no-info {
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                }
+            }
+        }
+    }
+    .consortium-notification {
+        background-color: $gray-lighter;
+        padding: 10px;
+        font-weight: bold;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .location-information {
+        margin-bottom: 2rem;
+
+        @media (min-width: $screen-sm-min) {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .js-location-loader {
+            margin-top: 1rem;
+            // Make sure displaying the spinner doesn't shift other elements around:
+            position: absolute;
+        }
+
+        .js-location-quick-information {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            flex: 1 1 50%;
+
+            .location-description {
+                margin-top: 10px;
+                color: $gray-light;
+                margin-bottom: 0;
+            }
+            h2 {
+                margin: 0;
+                padding: 0 !important;
+            }
+            h3 {
+                margin-top: 0;
+            }
+            .open-closed-info {
+                margin-top: 0.5em;
+                margin-bottom: 0.5em;
+            }
+        }
+
+        .js-location-info-map {
+            display: flex;
+            flex: 1 1 50%;
+
+            .location-map {
+                width: 100%;
+            }
+
+            .map {
+                margin-top: 5px;
+                position: relative;
+                clear: both;
+
+                .js-map-widget {
+                    z-index: 0;
+                    height: 320px;
+                    width: 100%;
+                }
+
+                .leaflet-container {
+                    .leaflet-top {
+                        .leaflet-bar {
+                            z-index: initial;
+                        }
+                    }
+                }
+
+                .map-bubble {
+                    .js-name {
+                        font-size: $font-size-small + 2px;
+                        margin-top: 10.5px;
+                        margin-bottom: 10.5px;
+                        min-width: 120px;
+                        max-width: 200px;
+                    }
+                }
+
+                .marker {
+                    cursor: pointer;
+                }
+
+                .map-marker-text, .marker {
+                    font-size: 1.5em;
+                    padding-right: 5px;
+                }
+
+                .js-marker-tooltip {
+                    position: absolute;
+                    color: $gray;
+                    background: $body-bg;
+                    padding: 5px;
+                    border: 1px solid lightgray;
+                    opacity: 0.9;
+                    z-index: 1000;
+                }
+            }
+            .expand-map, .contract-map {
+                display: inline-block;
+                font-size: 1em;
+                .icon {
+                    margin-left: 20px;
+                    margin-right: 0px;
+                }
+                @media (max-width: $screen-xs-max) {
+                    margin-left: -3px;
+                    font-size: 1em;
+                    .icon {
+                        margin-right: 2px;
+                    }
+                }
+            }
+            .js-map-controls {
+                text-align: right;
+                button[disabled] {
+                    color: $gray;
+                }
+            }
+
+            .map-marker-icon {
+                &.open {
+                    color: #339911;
+                }
+                &.closed {
+                    color: #c33b00;
+                }
+                &.no-schedule {
+                    color: #535353;
+                }
+            }
+        }
+    }
+
+    .times, .shift {
+        display: inline-flex;
+        gap: 2px;
+    }
+
+    .locations-title {
+        padding: 10px;
+    }
+
+    .location-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+
+        .location-selection {
+            max-width: 30rem;
+            margin-right: 1rem;
+        }
+
+        .js-location-unavailable {
+            margin-top: 10px;
+            position: absolute;
+        }
+
+        .js-location-search-container {
+            flex-basis: 60%;
+
+            .js-location-search-toggle {
+                padding: 2px 8px;
+                font-weight: normal;
+
+                &[aria-expanded=false] {
+                    .search-collapse {
+                        display: none;
+                    }
+                    & ~ div {
+                        display: none;
+                    }
+                }
+                &[aria-expanded=true] .search-expand {
+                    display: none;
+                }
+            }
+
+            .js-location-search {
+                // Styling alike .dropdown-menu:
+                border: 1px solid $dropdown-border;
+                @include box-shadow(0 6px 12px rgba(0, 0, 0, .275));
+                position: absolute;
+                background: $gray-ultralight;
+                z-index: 1001;
+                margin-right: 1em;
+                max-width: calc(100% - 2em);
+
+                .js-location-search-fields {
+                    padding: 1.5rem 1rem 0.5rem 1rem;
+                    border-bottom: 1px solid $gray-lighter;
+
+                    .input-row {
+                        display: flex;
+                        gap: 1rem;
+                        flex-wrap: wrap;
+                        margin-bottom: 1rem;
+
+                        .service-type-container {
+                            flex: 1 1 60%;
+                        }
+                        .service-location-container {
+                            min-width: 150px;
+                        }
+
+                        label {
+                            font-weight: normal;
+                        }
+                    }
+                }
+
+                .js-results-loader {
+                    width: 100%;
+                    padding: 1rem;
+                    background: $body-bg;
+                }
+
+                .js-location-search-results {
+                    max-height: calc(100vh - 170px);
+                    overflow-y: scroll;
+
+                    .location-search-result {
+                        padding: 1rem;
+                        display: flex;
+                        gap: 1rem;
+
+                        &:nth-child(odd) {
+                            background: $body-bg;
+                        }
+
+                        .location-search-result-main {
+                            flex: 1;
+
+                            .distance {
+                                color: $brand-success;
+                            }
+                        }
+
+                        .open-or-closed {
+                            text-align: right;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .location-details {
+        margin-top: 1em;
+
+        @media (max-width: $screen-xs-max) {
+            // Override negative margins of .row on narrow screens:
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .finna-panel {
+            clear: both;
+            margin-bottom: 1rem;
+            &.js-opening-times {
+                .panel-title {
+                    @media (max-width: $screen-xs-max) {
+                        max-width: none;
+                    }
+                }
+                .panel-body {
+                    padding-left: 0;
+                    padding-right: 0;
+                }
+            }
+            p {
+                margin-bottom: 0 !important;
+                padding-bottom: 0;
+                overflow-wrap: break-word;
+            }
+            img {
+                margin-bottom: 5px;
+                margin-top: 1em;
+            }
+            .location-description {
+                font-weight: normal;
+                margin-bottom: 1em;
+                margin-top: 1.1em;
+                overflow: hidden;
+            }
+            .building-year, .building-name {
+                font-size: 0.9em;
+            }
+            .feed-container {
+                margin-bottom: 10px;
+                .list-feed.with-image {
+                    img {
+                        max-width: 30%;
+                    }
+                    span.date {
+                        position: inherit;
+                    }
+                    .text, .title, .xcal {
+                        width: 65%;
+                        line-height: 1.5em;
+                    }
+                    .xcal-fields {
+                        width: 65%;
+                        float: right;
+                        font-size: 85%;
+                        margin-bottom: 1em;
+                    }
+                    .xcal {
+                        float: none;
+                    }
+                    .text {
+                        max-height: 12em;
+                        overflow: hidden;
+                        margin-bottom: 20px;
+                    }
+                    .title {
+                        margin-top: -3px;
+                    }
+                }
+            }
+        }
+
+        .js-opening-times {
+            padding-bottom: 0;
+        }
+
+        .email-contact, .address-contact, .phone-numbers, .mail-address-contact {
+            margin-bottom: 12px;
+            > span:first-child {
+                display: inline-block;
+                margin-top: 0;
+                margin-bottom: 0.5rem;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+
+            ul:not(.contact-info) {
+                li {
+                    margin-left: 2rem;
+                    margin-bottom: 0.5rem;
+                    .icon {
+                        width: 2rem;
+                        margin-left: -2rem;
+                    }
+                }
+            }
+        }
+        .contact-name {
+            font-weight: bold;
+        }
+
+        .service-list div {
+            line-height: 2em;
+            break-inside: avoid-column;
+            page-break-inside: avoid;
+            .tooltip-inner {
+                line-height: 1.5em;
+            }
+            > strong {
+                text-transform: uppercase;
+            }
+        }
+        .location-row-general {
+            @media (min-width: $screen-sm-min) {
+                display: flex;
+                justify-content: space-between;
+            }
+        }
+        .location-col {
+            position:relative;
+
+            @media (min-width: $screen-sm-min) {
+                width: 32%;
+                float: left;
+            }
+        }
+        .personnel {
+            table {
+                th,
+                td {
+                    width: 50%;
+                }
+                th:nth-of-type(2),
+                td:nth-of-type(2) {
+                    display: none;
+                }
+                .job-title {
+                    display: block;
+                }
+            }
+            @media (min-width: $screen-sm-min) {
+                table {
+                    th,
+                    td {
+                        width: calc(100%/3);
+                    }
+                    th:nth-of-type(2),
+                    td:nth-of-type(2) {
+                        display: table-cell;
+                    }
+                    .job-title {
+                        display: none;
+                    }
+                }
+            }
+        }
+        .accessibility-details {
+            .panel-body {
+                padding-bottom: 15px;
+            }
+            .accessibility-group-heading {
+                font-size: 1.5em;
+            }
+            .accessibility-group-statements p {
+                padding-bottom: 0.8em;
+            }
+        }
+        .services {
+            .service-header {
+                font-size: 1.5em;
+            }
+            @media (min-width: $screen-sm-min) {
+                width: 100%;
+                display: inline-block;
+            }
+            .service-list {
+                column-count: 1;
+                @media (min-width: $screen-sm-min) {
+                    column-count: 3;
+                }
+                .service-tooltip {
+                    color: $link-color;
+                    text-align: left;
+                    text-decoration: none;
+                    background-color: inherit;
+                    border: none;
+                    padding: 0;
+                }
+            }
+        }
+
+        .info  .js-schedules .no-schedules {
+            margin: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .info-element {
+            @media (max-width: 375px) {
+                clear: both;
+            }
+            @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+                clear: both;
+            }
+        }
+        .address {
+            margin-top: 5px;
+            letter-spacing: .3px;
+            @media (max-width: 336px) {
+                clear: both;
+            }
+        }
+    }
+}
+
+// *** Widget ***
+
+.organisation-info-widget {
+    display: inline-block;
+    padding-bottom: 20px;
+    width: 100%;
+
+    .js-open-status {
+        // Let the status drop down on narrow screens:
+        float: right;
+        .location-is-open, .location-is-closed {
+            font-size: 1.45em;
+            font-weight: bold;
+            margin-left: 1rem;
+        }
+    }
+
+    .btn {
+        background: $link-color;
+        border-radius: 0px;
+        margin-top: 5px;
+        margin-right: 2px;
+        color: $body-bg;
+        font-size: 1.6em;
+        font-weight: normal;
+        padding: 0px;
+        line-height: 35px;
+        height: 35px;
+        width: 35px;
+        &:hover {
+            background: darken($link-color, 10%);
+        }
+        i[class^='fa-'],[class*='fa-'] {
+            font-family: 'FontAwesome';
+        }
+        &.btn-round {
+            border-radius: 50px;
+        }
+    }
+    .address {
+        margin-top: 5px;
+        letter-spacing: .3px;
+        @media (max-width: 336px) {
+            clear: both;
+        }
+    }
+
+    .info-element {
+        @media (max-width: 375px) {
+            clear: both;
+        }
+        @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+            clear: both;
+        }
+    }
+    .address {
+        margin-top: 5px;
+        letter-spacing: .3px;
+        @media (max-width: 336px) {
+            clear: both;
+        }
+    }
+    .services {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    @media (min-width: $screen-md-min) {
+        .info-col {
+            width: 65%;
+            padding-right: 15px
+        }
+        .details-col {
+            width: 35%;
+            padding-left: 15px;
+        }
+        .details-col, .info-col {
+            float: left;
+        }
+    }
+    @media (min-width: $screen-lg-min) {
+        .info-col { width: 60%; }
+        .details-col { width: 40%; }
+    }
+
+    .js-location-dropdown {
+        font-weight: normal;
+        margin-bottom: 15px;
+        display: inline-block;
+        > .dropdown-toggle {
+            width: 100%;
+            color: $gray;
+            border: 1px solid $gray-lighter;
+            padding: 5px;
+            border-radius: 10px;
+            transition: background .1s linear, color .2s linear;
+            margin-right: 2px;
+
+            &[disabled] {
+                border: none;
+                background-color: $body-bg;
+
+                .dropdown-icon {
+                    display: none;
+                }
+            }
+
+            &:hover, &:active, &:focus {
+                text-decoration: none;
+                background: $gray-lighter;
+                color: #000;
+                .icon {
+                    color: #000;
+                }
+            }
+            .js-aria {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 4px;
+            }
+            .js-selected  {
+                display: inline-block;
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .icon {
+                color: $gray-light;
+                display: flex;
+                align-items: center;
+            }
+        }
+        > .dropdown-menu {
+            max-height: 80vh;
+            overflow: auto;
+            margin-top: 4px;
+            min-width: 200px;
+            overflow-x: hidden;
+            > li {
+                padding: 12px 8px;
+                transition: background .2s linear;
+                color: $gray;
+                cursor: pointer;
+                &:hover {
+                    background: $gray-lighter;
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+
+    .js-week-navi {
+        // Improve alignment with open/close status on narrow screens:
+        margin: 4px 0 8px 0;
+    }
+}
+
+//*** Record and image sidebar ***
+.recordProvidedBy .record-organisation {
+    &.organisation-page-link-visible > .organisation-name {
+        display: none;
+    }
+    > a:first-child {
+        line-height: 1;
+    }
+    li {
+        line-height: 1.5;
+        &.organisation-page-link {
+            .organisation-name {
+                font-weight: bold;
+            }
+        }
+    }
+    img.consortium-logo {
+        display: block;
+        margin-top: 15px;
+        margin-bottom: 10px;
+        max-height: 110px;
+        max-width: 200px;
+    }
+    img.consortium-logo {
+        margin: -3px 0 12px;
+    }
+    @media screen and (max-width: $screen-xs-max) {
+        img.consortium-logo {
+            max-height: 70px;
+        }
+    }
+}
+.media-left .recordProvidedBy .record-organisation {
+    .record-organisation-info .organisation-name {
+        margin-bottom: 5px;
+        display: inline-block;
+    }
+    @media screen and (min-width: $screen-sm-min) and (max-width: $screen-md-max) {
+        img.consortium-logo {
+            max-height: 95px;
+        }
+    }
+}
+.imagepopup-container .recordProvidedBy .record-organisation {
+    .record-organisation-info .organisation-name {
+        margin-bottom: 5px;
+        display: inline-block;
+    }
+}

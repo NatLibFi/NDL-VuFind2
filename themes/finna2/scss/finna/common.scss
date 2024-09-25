@@ -1,0 +1,507 @@
+/* #SCSS> */
+@use 'sass:color';
+/* <#SCSS */
+
+.page-content {
+  width: 100%;
+  @media (min-width: $screen-lg) {
+    width: 75%;
+  }
+}
+
+.badge {
+  padding: 0 0 0 2px;
+  font-size: $badge-font-size;
+  line-height: inherit;
+  vertical-align: inherit;
+  margin-top: 1px;
+}
+
+.close {
+  text-shadow: none;
+  @include opacity(.8);
+
+  &:hover,
+  &:focus {
+    @include opacity(1);
+  }
+}
+
+.input-group {
+  .form-control {
+    width: auto;
+  }
+}
+
+.media,
+.media-body {
+  overflow: visible;
+}
+
+.popover {
+  min-width: min(200px, $popover-max-width);
+}
+
+@media print {
+  // Don't show certain links and buttons
+  a.title, .dateyeartype a,.image-popup-trigger, .image-popup-navi, .record-details a, .record-authors a, .record-core-metadata a,.recordTabs a, .pagination-simple a {
+    &[href]:after {
+      content: none !important;
+    }
+  }
+  button, a.btn {
+    display: none !important;
+  }
+}
+
+@mixin date-and-year(){
+  font-size: $font-size-base;
+  line-height: 1.35em;
+  letter-spacing: 0.5px;
+  font-weight: 400;
+  margin-bottom: 6px;
+}
+
+.resultHierarchyLinks {
+  margin-bottom: 6px;
+}
+
+.hierarchyTreeLink {
+  margin-top: 6px;
+}
+
+.archive-label {
+  font-size: $font-size-base;
+  font-weight: 400;
+  letter-spacing: 0px;
+  color: $gray-light;
+}
+
+.dedupInformation .dedup-select {
+  font-weight: bold;
+  margin-bottom: 4px;
+  height: 30px;
+}
+
+.radio input[type="radio"],
+.radio-inline input[type="radio"],
+.checkbox input[type="checkbox"],
+.checkbox-inline input[type="checkbox"] {
+  position: relative;
+  margin-left: 0px;
+}
+
+.datepicker {
+  & .datepicker-switch {
+    color: $link-color;
+    font-size: 1.1em;
+  }
+  & .prev,& .next {
+    font-size: 1.1em;
+  }
+  &.dropdown-menu {
+    padding: 10px;
+  }
+}
+
+.checkbox label{
+  display: inline;
+  padding-left: 0;
+}
+
+.add-to-favorite-col {
+  .qrcode {
+    min-width: 120px;
+  }
+  @media (min-width: $screen-sm) {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    text-align: right;
+    i {
+      font-size: 16px;
+      text-align: right;
+      margin-bottom: 5px;
+    }
+  }
+}
+.add-to-favorite-col, .location-link-text {
+  .qrcodeLink {
+    background-color: $body-bg;
+  }
+}
+.location-link-text {
+  .qrcode {
+    width: 120px;
+    height: 120px;
+    max-width: inherit;
+  }
+  .location-service-qrcode {
+    display: inline-block;
+  }
+}
+.branchInfo .location-link-text, .copy-info .location-link-text {
+  margin-left: 8px;
+}
+.copy-info .location-link-text {
+  float: right;
+}
+
+//== SYSTEM MESSAGES
+.system-messages {
+  background-color: $state-warning-bg;
+  padding-top: 0.6em;
+  padding-bottom: 0.6em;
+  text-align: center;
+  z-index: 1;
+  @media (max-width: $grid-float-breakpoint) {
+    position: relative;
+    top: $navbar-height;
+  }
+}
+
+/* Cookie Consent and pre-production warning message */
+.cookie-consent, .pre-production-warning {
+  background-color: $cookie-consent-background-color;
+  color: $cookie-consent-color;
+  display: flex;
+  align-items: center;
+  z-index: 1;
+  .cookie-consent-text {
+    flex: 1;
+    margin-right: 19px;
+    padding-top: 0.6em;
+    padding-bottom: 0.6em;
+    a {
+      color: $cookie-consent-link-color;
+      text-decoration: underline;
+    }
+  }
+  .cookie-consent-button {
+    position: relative;
+    right: 15px;
+    a {
+      border: $cookie-consent-button-border;
+    }
+  }
+  @media (max-width: $grid-float-breakpoint) {
+    position: relative;
+    top: $navbar-height;
+    .cookie-consent-button {
+      right: 0;
+    }
+  }
+}
+.pre-production-warning {
+  border: 2px dotted red;
+}
+
+/* Bazaar Browse Bar */
+.finna-bazaar-browse-bar {
+  @media (max-width: $grid-float-breakpoint) {
+    position: relative;
+    top: $navbar-height;
+  }
+}
+
+/* TABLES */
+table.content-table {
+  font-size: $content-font-size-base;
+  margin-top: 0;
+  margin-bottom: 2.9em;
+  line-height: 1.4em;
+}
+
+.content-table th, .content-table td {
+  padding: 0.4em 1.5em 0.4em 0;
+  font-weight: normal;
+  border-bottom: 1px solid $gray-lighter;
+}
+.table.table-finna-record {
+  > thead,
+  > tbody,
+  > tfoot {
+    > tr {
+      > th,
+      > td {
+        padding: $table-finna-record-cell-padding;
+        word-wrap: break-word;
+      }
+    }
+  }
+  ul {
+    margin-bottom: 0;
+  }
+  @media (min-width: $screen-sm-min) {
+    table-layout: fixed;
+  }
+}
+
+.table.record-field-groups {
+  > tbody > tr > th {
+    text-transform: uppercase;
+    @media (min-width: $screen-sm-min) {
+      text-transform: none;
+    }
+  }
+  > tbody > tr > td {
+    @media (min-width: $screen-sm-min) {
+      padding-left: 80px;
+    }
+    > table {
+      > thead,
+      > tbody,
+      > tfoot {
+        > tr {
+          > th,
+          > td {
+            padding: $table-finna-record-cell-padding;
+            word-wrap: break-word;
+          }
+        }
+      }
+    }
+  }
+  .subheading {
+    margin: 0;
+    padding: 6px 0;
+    font-weight: bold;
+    text-transform: none;
+  }
+}
+
+table#componentparts {
+  th {
+    background-color: $list-group-bg;
+    border-right: 2px solid $body-bg;
+    &.sorting_asc, &.sorting_desc, &.sorting {
+      padding-left: 8px;
+    }
+    &.sorting_asc {
+      @extend .fa-arrow-up;
+    }
+    &.sorting_desc {
+      @extend .fa-arrow-down;
+    }
+    &.sorting {
+      @extend .datatables-sort-both;
+      &:before {
+        opacity: 0.5;
+      }
+    }
+    // Hide defaults from dataTables.bootstrap.min.css
+    &.sorting_asc:after, &.sorting_desc:after, &.sorting:after {
+      content: "";
+    }
+  }
+  .even td {
+/* #SCSS> */
+    background: color.adjust($nav-tabs-border-color, $alpha: 0.8);
+/* <#SCSS */
+
+  }
+  td a {
+    font-weight: bold;
+  }
+}
+
+.list-group {
+  border-radius: 0px;
+}
+
+// Unordered and Ordered lists
+ul,
+ol {
+  padding: 0;
+  & li {
+    list-style-type: none;
+  }
+}
+
+// Content pages list options
+// --------------------------------------------------
+
+//Unstyled list
+.list-plain {
+  padding-left: 0;
+  padding-bottom: 0.9em;
+
+  > li {
+    list-style-type: none;
+  }
+}
+
+// Bulleted list
+.list-bullets {
+  padding-left: 1.2em;
+  padding-bottom: 0.9em;
+
+  > li {
+    list-style-type: disc;
+  }
+}
+
+// Numbered list
+.list-numbers {
+  padding-left: 1.5em;
+  padding-bottom: 0.9em;
+
+  > li {
+    list-style-type: decimal;
+  }
+}
+
+.btn-unstyled {
+  border: none;
+  background-color: transparent;
+}
+
+// A general-purpose flexbox layout mixin for switching between a horizontal
+// and a vertical layout at a given, container-based breakpoint.
+//
+// $switcher-breakpoint - A vertical layout will be used if the width of the
+//                        container is less than this. A horizontal layout
+//                        will be used otherwise.
+@mixin switcher-layout($switcher-breakpoint){
+  // Flex container.
+  & > * {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  // Flex items.
+  // By default all flex items are the same size but it it is possible to set a
+  // different flex-grow for specific items.
+  & > * > * {
+    flex-grow: 1;
+    flex-basis: calc((#{$switcher-breakpoint} - 100%) * 999);
+  }
+  // These rules provide additional robustness for horizontal layouts containing
+  // many (five or more) elements.
+  & > * > :nth-last-child(n+5),
+  & > * > :nth-last-child(n+5) ~ * {
+    flex-basis: 100%;
+  }
+}
+
+// A switcher layout helper mixin adding spacing useful for lines.
+@mixin switcher-line-layout($switcher-breakpoint){
+  @include switcher-layout($switcher-breakpoint);
+  & > * > * + * {
+    padding-left: 1.5em;
+  }
+}
+
+// Utility classes for setting switcher layouts.
+.switcher-line-xxs {
+  @include switcher-line-layout($screen-xxs);
+}
+.switcher-line-xxxs {
+  @include switcher-line-layout(280px);
+}
+
+// Cookie Consent Dialog
+.show--preferences #cc-main .cc--anim .pm-overlay {
+  opacity: $modal-backdrop-opacity;
+}
+
+#cc-main {
+  -webkit-font-smoothing: inherit;
+  -moz-osx-font-smoothing: inherit;
+  text-rendering: inherit;
+
+  .cm {
+    z-index: 1;
+  }
+  .pm {
+    z-index: 2;
+  }
+  a {
+    &:hover {
+      color: $link-hover-color;
+      text-decoration: $link-hover-decoration;
+      background-size: 0%;
+    }
+  }
+  .cm-wrapper {
+    z-index: 1;
+    position: relative;
+  }
+  .cc--anim .cm__close,
+  .cc--anim .cm__btn,
+  .pm__btn {
+    transition: none;
+  }
+  .cm--bar .cm__btn, .pm__btn {
+    font-size: 14px;
+    padding: $padding-base-vertical $padding-base-horizontal;
+
+    &:hover {
+      color: $btn-primary-color;
+      background: darken($btn-primary-bg, 5%);
+    }
+  }
+  .cm--bar .cm__btn {
+    flex: none;
+  }
+  @media screen and (max-width: 640px){
+    .pm--box {
+      top: $navbar-height + 1px;
+    }
+  }
+  .pm__section--expandable .pm__section-arrow {
+    background: none;
+  }
+
+  .pm__section--toggle {
+    background: transparent;
+  }
+  .pm__header {
+    color: $modal-header-color;
+    background: $modal-header-background;
+    font-size: $content-headings-font-size-h4;
+    padding: 8px 1em;
+  }
+  .pm__body, .pm__footer {
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+  .pm__close-btn {
+    background: transparent;
+    border: none;
+    svg {
+      stroke: $modal-header-color;
+      stroke-width: 5;
+      stroke-opacity: 0.8;
+      transform: scale(.7);
+    }
+    &:hover {
+      background: transparent;
+      border: none;
+      svg {
+        stroke-opacity: 1;
+      }
+    }
+  }
+}
+
+// OIDC Login Prompt
+.oauth2-prompt {
+  ul {
+    margin-top: 1rem;
+    padding: revert;
+    li {
+      list-style-type: inherit;
+    }
+  }
+  .oauth2-ils-selection {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+
+    form {
+      margin-top: 1rem;
+    }
+  }
+  .select-card-wrapper {
+    display: block;
+  }
+}

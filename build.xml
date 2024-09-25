@@ -288,14 +288,14 @@
   <!-- Run Sass build, error if it fails -->
   <target name="checkSassBuild">
     <exec executable="npm" checkreturn="true" passthru="true">
-      <arg line="run check:scss" />
+      <arg line="run finna:check:scss" />
     </exec>
   </target>
 
   <!-- Run LessToSass, error if there are uncommitted changes (used by continuous integration) -->
   <target name="checkLessToSass">
     <exec executable="npm" checkreturn="true" passthru="true">
-      <arg line="run lessToSass" />
+      <arg line="run finna:lessToSass" />
     </exec>
     <exec executable="git" checkreturn="true" passthru="true">
       <arg line="diff --exit-code *.scss" />

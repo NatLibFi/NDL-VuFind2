@@ -168,7 +168,7 @@
         display: block;
     }
     .holdings-url-title {
-        .h4;
+        &:extend(.h4);
         font-weight: 500;
         margin-top: 15px;
         margin-bottom: 15px;
@@ -264,6 +264,8 @@
         .holdings-details {
             padding-right: 5px;
             text-align: left;
+            float: left;
+
             @media (max-width: @screen-xs-max) {
                 text-align: initial;
             }
@@ -277,7 +279,6 @@
                     padding-left: 13px;
                 }
             }
-            float: left;
             .small {
                 font-weight: normal;
                 color: @gray;
@@ -341,8 +342,9 @@
         }
     }
     .copy-details {
-        .clearfix();
         padding: 8px 15px 8px 31px;
+        .clearfix();
+
         &:nth-child(odd):not(.group-heading) {
             background-color: @gray-ultralight;
         }
@@ -361,21 +363,23 @@
             text-transform: initial;
         }
         .details-title {
+            width: 50%;
+            float: left;
+
             @media (min-width: @screen-sm-min) {
                 width: 25%;
             }
-            width: 50%;
-            float: left;
         }
         .details-info {
+            width: 50%;
+            float: left;
+
             @media (min-width: @screen-sm-min) {
                 width: 75%;
             }
             @media (max-width: @screen-xs-max) {
                 line-height: 1.3;
             }
-            width: 50%;
-            float: left;
         }
         .recordPublished {
             font-weight: 700;
@@ -425,7 +429,7 @@
         margin: 3px 0px 7px;
     }
     .holdings-title {
-        .h4;
+        &:extend(.h4);
         font-weight: 500;
         margin-top: 15px;
         margin-bottom: 15px;
@@ -498,11 +502,12 @@
             background-color: @gray-ultralight;
         }
         .branchInfo {
+            color: @gray-light;
+            display: block;
+
             @media (min-width: @screen-sm-min) {
                 text-align: right;
             }
-            color: @gray-light;
-            display: block;
             @media (max-width: @screen-xs-max) {
                 margin-left: 20px;
             }

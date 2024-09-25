@@ -1,0 +1,176 @@
+/* ------ GRID VIEW ------ */
+.search-grid {
+  overflow: hidden;
+  padding-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  &::after {
+    display: table;
+    clear: both;
+    content: '';
+  }
+}
+
+.grid.result {
+  display: flex;
+  float: left;
+  width: 33%;
+  border-bottom: none;
+  @media (max-width: $screen-md) {
+    width: 50%;
+  }
+  @media (max-width: $screen-xs) {
+    width: 100%;
+  }
+  .grid-checkbox {
+    min-width: 0;
+  }
+  .title { font-weight: bold; }
+  .label,
+  .format {
+    display: inline-block;
+    white-space: normal;
+  }
+  .grid-result {
+    width:100%;
+  }
+  &#result0, :first-child {
+    border-top: none;
+  }
+}
+.grid-large-break,
+.grid-small-break { clear: both; }
+@media (min-width: 992px) {
+  .grid.result{ width: 33%; }
+  .grid-small-break { display: none; }
+}
+
+.result-view-grid {
+  .grid:not(.recordcovers) {
+    padding: 0px 5px 10px;
+    margin-bottom: 0px;
+    &:focus {
+      outline: none;
+    }
+    .grid-body {
+      display: flex;
+      height: 100%;
+      flex-direction: column;
+    }
+    .grid-title {
+      padding-top: 5px;
+      overflow: hidden;
+      background: transparent;
+    }
+    .status {
+      display: inline;
+      .label {
+        text-indent: -9999em;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        padding: 0;
+      }
+    }
+    .dateyeartype {
+      display: inline;
+      p {
+        margin-top: 0;
+        margin-bottom: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+    .grid-image {
+      overflow: hidden;
+      flex-basis: 250px;
+      position: relative;
+      display: flex;
+      background-color: $gray-ultralight;
+      flex-flow: column;
+    }
+    h2.title {
+      font-size: 1.15em;
+      line-height: 1.5;
+      text-overflow: ellipsis;
+      // Position: relative makes ellipsis work with absolute elements in Chrome
+      position: relative;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .save-record-container {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      display: none;
+    }
+    .save-record {
+      float: none;
+      font-size: inherit;
+    }
+    img {
+      box-shadow: none;
+    }
+
+    @media (max-width: $screen-xs-max) {
+      .recordcover {
+        width: 100%;
+      }
+      .iconlabel:before {
+        display: block;
+      }
+    }
+    &.no-image {
+      .grid-body {
+        position: relative;
+      }
+      .recordcover-holder:before {
+        color: $gray-light;
+        content: attr(data-format);
+        position: absolute;
+        top: 60%;
+        font-size: .9em;
+        left:0;
+        width: 100%;
+      }
+      .recordcover-holder:after {
+        color:  $gray-mid-light;
+        content: attr(data-noimage);
+        position: absolute;
+        top: 5px;
+        font-size: .65em;
+        right: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .iconlabel:before {
+        color: $gray-mid-light;
+        top: 50%;
+      }
+    }
+  }
+
+  .record-image-container {
+    margin-bottom: 0;
+    height: 60%;
+    display: flex;
+    align-items: center;
+    position: initial;
+    justify-content: center;
+    flex: 1 1;
+    .recordcover-holder {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      .recordcover-container {
+        display: flex;
+        height: 100%;
+      }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .grid:not(.recordcovers) { min-height: 250px; }
+}

@@ -1,0 +1,85 @@
+.pagination-background {
+  background: $pagination-background;
+  & .container {
+    padding-left: 0;
+  }
+}
+.pagination-simple {
+  margin: 0;
+  font-size: 0.9em;
+  li {
+    display: inline-block;
+    list-style-type: none;
+    vertical-align: middle;
+    a {
+      .icon {
+        color: $action-link-color;
+        font-size: 1.5em;
+      }
+    }
+  }
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 1.1em;
+
+  // paginate_button is used in DataTables
+  > li.page-first > a,
+  > li.page-prev > a,
+  > li.page-next > a,
+  > li.page-last > a,
+  > li.paginate_button.next > a,
+  > li.paginate_button.previous > a {
+    padding: 0;
+    &:hover {
+      background-color: transparent;
+    }
+    .icon {
+      color: $action-link-color;
+      font-size: 1.5em;
+      margin-right: 0.1em;
+      margin-left: 0.1em;
+      transition: background 0.2s ease;
+      &:hover {
+        color: darken($action-link-color, 5%);
+      }
+    }
+  }
+  > li {
+    display: inline; // Remove list-style and block-level defaults
+    a {
+      color: $action-link-color;
+    }
+    > a {
+      border-radius: $border-radius-base;
+      @media(max-width:$screen-xs-max) {
+        font-size: 1em;
+        padding: calc(#{$padding-base-horizontal}/1.5);
+      }
+    }
+
+    &:first-child {
+      > a,
+      > span {
+        margin-left: 0;
+      }
+    }
+  }
+
+  > li > a {
+    &:hover,
+    &:focus {
+      color: $pagination-hover-color;
+      background-color: $pagination-hover-bg;
+      border-color: transparent;
+    }
+  }
+
+  // paginate_button is used in DataTables
+  & > li.paginate_button.disabled > a {
+    display: none;
+  }
+}

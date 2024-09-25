@@ -1,3 +1,7 @@
+/* #SCSS>
+@use 'sass:color';
+<#SCSS */
+
 .page-content {
   width: 100%;
   @media (min-width: @screen-lg) {
@@ -50,7 +54,7 @@
   }
 }
 
-.date-and-year {
+.date-and-year() {
   font-size: @font-size-base;
   line-height: 1.35em;
   letter-spacing: 0.5px;
@@ -291,7 +295,12 @@ table#componentparts {
     }
   }
   .even td {
+/* #SCSS>
+    background: color.adjust(@nav-tabs-border-color, $alpha: 0.8);
+<#SCSS */
+/* #LESS> */
     background: fade(@nav-tabs-border-color, 5%);
+/* <#LESS */
   }
   td a {
     font-weight: bold;
@@ -426,11 +435,12 @@ ol {
   }
   .cm--bar .cm__btn, .pm__btn {
     font-size: 14px;
+    padding: @padding-base-vertical @padding-base-horizontal;
+
     &:hover {
       color: @btn-primary-color;
       background: darken(@btn-primary-bg, 5%);
     }
-    padding: @padding-base-vertical @padding-base-horizontal;
   }
   .cm--bar .cm__btn {
     flex: none;

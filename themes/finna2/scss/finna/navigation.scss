@@ -1,0 +1,305 @@
+.swipe-arrow-navigation {
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  background: $link-color;
+  top: 50%;
+  color: $body-bg;
+  border-radius: 50%;
+  &.arrow-navigation-left {
+    left: 0px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+  }
+  &.arrow-navigation-right {
+    right: 0px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px
+  }
+  .fa-arrow-right, .fa-arrow-left {
+    color: $body-bg;
+    top: 10px;
+    left: 8px;
+    position: absolute;
+    font-size: 30px;
+  }
+}
+
+@media (max-width: $screen-md-max) {
+  .finna-navbar .nav >li>a {
+    padding: 0 6px;
+  }
+}
+
+// fix navbar for logoutoptions
+.finna-navbar .navbar-nav .logoutOptions {
+  @media(max-width: $screen-sm) {
+    margin: 0;
+  }
+  .dropdown-menu {
+    left: auto;
+    > li {
+      > a {
+        color: $text-color;
+        width: 250px;
+        .icon {
+          padding-top: 3px;
+        }
+      }
+    }
+    @media (max-width: $screen-xxs) {
+      right: -30px;
+    }
+  }
+  .username {
+    display: inline-block;
+    max-width: 150px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: top;
+    @media (max-width: $screen-sm) {
+      max-width: 80px;
+    }
+    @media (max-width: $screen-xxs) {
+      @include sr-only();
+    }
+  }
+  .description {
+    font-size: 0.9em;
+    line-height: 1.2em;
+  }
+}
+
+@media(max-width: $grid-float-breakpoint) {
+  #loginOptions button {
+    background-color: $body-bg;
+    a {
+      color: $action-link-color;
+    }
+  }
+}
+
+// content-navigation-menu
+.main.template-dir-content.template-name-content .content-navigation-menu {
+  margin: 20px 0px;
+}
+
+.dropdown-toggle:focus {
+  outline: 1px dotted #212121;
+  outline: 5px auto -webkit-focus-ring-color;
+}
+
+.finna-navbar {
+  .navbar-nav > li > a,
+  .navbar-collapse.in .dropdown-menu a {
+    color: $header-text-color;
+    padding: 0 10px;
+  }
+  // remove exclamation mark from fines row
+  .fines-status .badge.overdue {
+    &:before {
+      content:"";
+    }
+  }
+}
+
+/* Finna breadcrumbs */
+
+.breadcrumbs {
+  background-color: $breadcrumb-bg;
+  display: none;
+}
+.template-name-cites, .template-name-citedby {
+  .breadcrumbs {
+    display: block;
+    font-weight: 600;
+    .breadcrumb {
+      padding-left: 0;
+    }
+  }
+}
+/* #SCSS> */
+.breadcrumbs {
+  display: if ($breadcrumbs == true) block;
+}
+.record.record-row {
+  margin-top: if ($breadcrumbs == true) 0;
+}
+/* <#SCSS */
+
+.breadcrumb {
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+/* End of Finna breadcrumbs */
+
+#my-info-dropdown-menu {
+  width: 280px;
+  background-color: $body-bg;
+  margin-top: 0;
+  @include box-shadow(0 6px 12px rgba(0, 0, 0, .275));
+
+  .card-selection {
+    @media (max-width: $screen-sm-max) {
+      overflow-y: auto;
+      overflow-x: hidden;
+      height: 100%;
+      max-height: 200px;
+    }
+    p {
+      padding-left: 15px;
+      margin-bottom: 0px;
+    }
+    #select-card-label-dropdown {
+      display: none;
+    }
+    > a {
+      justify-content: left;
+    }
+    > a:not(.card-header) {
+      padding-left: 32px;
+    }
+    .icon {
+      margin-left: -1.25em;
+      color: $brand-primary;
+    }
+  }
+  > li {
+    border-bottom: 1px solid $gray-lighter;
+    line-height: 30px;
+    cursor: pointer;
+
+    > ul {
+      line-height: 20px;
+      > li > a {
+        text-indent: 5%;
+        li {
+          height: 25px;
+        }
+      }
+    }
+    a {
+      width: 100%;
+      &:hover {
+        text-decoration: none;
+        color: $dropdown-link-hover-color;
+        background-color: $dropdown-link-hover-bg;
+      }
+      .sign-out-icon {
+        font-size: 1.2em;
+        line-height: 1em;
+      }
+    }
+  }
+
+  > li:last-child > a, li:last-child {
+    border-bottom: none;
+    @include border-bottom-radius(8px);
+  }
+  > li:first-child > a, li:first-child {
+    @include border-top-radius(8px);
+  }
+}
+
+// Default styling of Finna Jump menus
+.jumpMenuForm {
+  height: 38px;
+  label {
+    font-weight: normal;
+    margin-left: 10px;
+  }
+}
+.jump-menu-style {
+  padding: 0;
+  position: relative;
+  width: auto;
+  z-index: 1;
+  display: inline-block;
+  min-width: 60px;
+  select {
+    background-color: transparent;
+    border: 0 none;
+    box-shadow: none;
+    display: block;
+    font-size: 100%;
+    font-weight: 600;
+    line-height: 1em;
+    margin: 0;
+    width: 100%;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+  }
+  option {
+    background: $body-bg;
+    color: $gray;
+    padding: 5px;
+    &:hover {
+      background-color: $gray-light;
+    }
+  }
+
+  &:before {
+    display: block;
+    font-size: 1em;
+    height: 100%;
+    padding: 0 20px 0px 2px;
+    position: absolute;
+    top: 0;
+    right: 0px;
+    text-align: center;
+    width: 1em;
+    z-index: -1;
+  }
+  &.controls {
+    border-radius: $finna-button-radius;
+    background-color: $brand-primary;
+    padding-top: 0px;
+    transition: background-color .1s linear;
+    option:checked {
+      background: $btn-primary-bg;
+      color: $body-bg;
+    }
+  }
+  &.controls:before {
+    transition: background-color .1s linear;
+    background: $btn-primary-bg;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    color: $body-bg;
+    line-height: 40px;
+  }
+  &.disabled {
+    @include opacity(0.5);
+  }
+}
+.jump-menu-style select::-ms-expand {
+  display: none; /* to ie 10 */
+}
+:-moz-any(.prefilter-select,.jump-menu-style.controls):before {
+  background-color:  $body-bg; /* this is necessary for overcome the caret default browser */
+  pointer-events: none; /* https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events  */
+  z-index: 1; /* this is necessary for overcome the pseudo element */
+}
+
+@media(min-width: $grid-float-breakpoint) {
+  .finna-navbar {
+    display: flex;
+    .navbar-collapse {
+      flex: 1 1 100%;
+      display: flex !important; // Needed to override bootstrap defaults
+    }
+  }
+}
+
+header {
+  box-shadow : 0 1px 0 1px rgba(0,0,0,0.1);
+  z-index: $zindex-header;
+  position: relative;
+}

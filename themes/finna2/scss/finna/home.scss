@@ -1,0 +1,154 @@
+.home-1 {
+  background: $home-1-background;
+}
+.home-2 {
+  background: $home-2-background;
+}
+.home-3 {
+  background: $home-3-background;
+}
+.home-4 {
+  background: $home-4-background;
+}
+
+@media(min-width: $screen-sm) {
+  .home-column {
+    width: 50%;
+    float: left;
+    padding-right: 15px;
+  }
+}
+
+.introduction h1, h2.introductionText, .introduction h3 {
+  padding: 0 5px 1px 7px;
+  color: $introduction-text-color;
+  line-height: 1.4em;
+  font-weight: bold;
+  & .brand-third {
+    color: $brand-third;
+  }
+}
+.introduction h3 {
+    color: $introduction-text-small-color;
+}
+.introduction h1 {
+  font-size: $introduction-header;
+  line-height: calc(#{$introduction-header}/2.1);
+  @media(max-width:$screen-xs-max) {
+      font-size: calc(#{$introduction-header}/1.5);
+  }
+}
+.introduction {
+  position: relative;
+}
+h1.introductionText, h2.introductionText, h3.introductionText {
+  margin: 0px 50px 5px 0px;
+  em {
+      font-style: normal;
+  }
+}
+h1.introductionText > em {
+  color: $brand-secondary;
+}
+h2.introductionText > em, h3.introductionText > em {
+  color: $link-color;
+}
+h2.introductionText {
+  color: $introduction-text-small-color;
+  font-size: $font-size-h3;
+}
+
+.left-column-content {
+  background: $home-left-column-background;
+  @media (min-width: $screen-sm){
+    width: 60%;
+    float: left;
+    padding-right: 15px;
+  }
+}
+.right-column-content {
+  background: $home-right-column-background;
+  @media (min-width: $screen-sm) {
+    width: 40%;
+    float: left;
+    padding-left: 15px;
+  }
+}
+
+// Popular searches
+.popular-searches {
+  & ul {
+    margin-bottom: 0;
+  }
+  & li {
+    margin-bottom: 10px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  & .position {
+    color: $btn-primary-color;
+    background: $btn-primary-bg;
+    border-radius: 50%;
+    display: inline-block;
+    height: 30px;
+    line-height: 30px;
+    margin-right: 6px;
+    padding: 0;
+    text-align: center;
+    width: 30px;
+  }
+  & a {
+    text-decoration: none;
+  }
+}
+.popular-search-col {
+  width: 100%;
+  @media (min-width: $screen-sm) {
+    width: 50%;
+    float: left
+  }
+}
+
+@media(min-width: $screen-md) {
+  .info-col {
+    width: 33.333%;
+    float: left;
+    padding: 0 15px;
+    &:first-child {
+      padding-left: 0;
+    }
+    &:last-child {
+      padding-right: 0;
+    }
+  }
+}
+
+.infobox {
+  margin: 20px 0px;
+  box-shadow: $infobox-box-shadow;
+  padding: 10px 20px;
+  color: $infobox-text-color;
+  background: $infobox-background;
+  border: $infobox-border;
+  & h2 {
+    font-size: 1.777em;
+    line-height: 1.2em;
+  }
+  & li {
+    list-style-position: inside;
+  }
+  & p,li {
+    font-size: 1.2em;
+  }
+  & i,a {
+    color: $link-color;
+    text-shadow: none;
+  }
+  & a.btn-primary {
+    color: #fff;
+    i {
+      color: #fff;
+    }
+  }
+}

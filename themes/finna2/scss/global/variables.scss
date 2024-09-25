@@ -1,0 +1,343 @@
+//
+// Finna Variables
+// --------------------------------------------------
+
+
+//== Colors
+//
+
+// Brand Colors
+
+$logo-color: #fff !default;
+$aoe-brand-primary: #ccf5e7 !default;
+$action-link-color: $brand-primary !default;
+
+// Extra extra small screen / phone (e.g. iPhone 5)
+$screen-xxs: 400px !default;
+$screen-xxs-min: $screen-xxs !default;
+$screen-xxs-max: ($screen-xs-min - 1) !default;
+
+$screen-xlg: 1400px !default;
+$screen-xlg-min: $screen-xlg !default;
+
+//== Custom Finna styling
+$background-image-url: url('../images/logo_background.jpg') !default;
+$background-image-attachment: scroll;  // set to fixed or scroll (fixed doesnt scoll along with page) !default;
+$background-start-color: transparent !default; // gradient color for background image
+$background-end-color:  transparent !default; // gradient color for background image
+$background-start-percent: 10% !default;
+$background-end-percent: 100% !default;
+$header-height: 43px !default;
+$navbar-logo-height: 40px !default;
+$logo-height: 66px !default;
+$logo-separator-color: #fff !default; // Color of hr line under main logo
+$header-background-color: $body-bg !default; // Color of navigation bar top
+$header-text-color: $navbar-default-link-color !default;
+$footer-background: $gray-ultralight !default;
+$footer-text-color: $gray !default;
+$finna-search-background: mix($body-bg, contrast($body-bg), 95%) !default; // Background color of finna searchbox section
+$finna-search-link-color: $text-color !default;
+$finna-main-header-background: $body-bg !default; // Color of page header background and search results tabs
+$finna-searchbox-link-color: $body-bg !default; // style searchbox link text color contrast with background
+$finna-searchbox-link-background: rgba(1,1,1,0.6) !default; // style searchbox links (advanced search etc.) background contrast with background
+$finna-record-header-background: $gray-ultralight !default;
+$finna-feedback-color: #fff !default;
+$finna-feedback-background: $brand-primary !default;
+$field-margin-vertical: 20px !default;
+$field-margin-horizontal: 15px !default;
+$finna-text-shadow: 1px 1px 1px black !default;
+$finna-search-input-width: 0.655 !default; //== THIS is percentage Change this if no prefilter-select change to 0.88
+$finna-button-radius: 4px !default; // Defines all button radiuses
+$finna-header-font-size: 1.6em !default;
+$record-title-font-size: 1.65em !default;
+$record-holdings-title-background: $brand-primary !default;
+$record-holdings-title-color: mix($record-holdings-title-background, contrast($record-holdings-title-background), 5%) !default;
+$record-holdings-border-color: $gray-lighter !default;
+
+$finna-searchtools-background: $gray-lighter !default;
+$finna-searchtools-color: $gray !default;
+
+//== Finna home page
+$introduction-text-color: #fff !default;
+$introduction-text-small-color: #fff !default;
+$introduction-header: 3em !default;
+$home-content-background: $body-bg !default; // Add custom background color for home main section
+$home-1-background: $body-bg !default;
+$home-2-background: $body-bg !default;
+$home-3-background: $body-bg !default; // change the color of right column
+$home-4-background: $body-bg !default;
+$home-left-column-background: none !default;
+$home-right-column-background: $body-bg !default;
+$infobox-background: #f5f5f5 !default;
+$infobox-border: none !default;
+$infobox-text-color: $gray !default;
+$infobox-box-shadow: none !default;
+
+//== Finna facets
+$sidebar-background: $brand-primary !default;
+$sidebar-header-text-color: mix($sidebar-background, contrast($sidebar-background), 5%) !default;
+$sidebar-header-icon-color: #fff !default;
+$sidebar-border-color: mix($body-bg, contrast($body-bg), 80%) !default;
+$sidebar-border: 1px solid $sidebar-border-color !default;
+$facet-header-background: $gray-ultralight !default;
+$facet-text-color: mix($facet-header-background, contrast($facet-header-background), 5%) !default;
+$facet-border-color: mix($facet-header-background, contrast($facet-header-background), 80%) !default;
+
+$display-checkbox-facet-amount: inline-block !default;    // set to none or inline-block
+// Applied filters
+$filters-background-color: $action-link-color !default;
+$filters-text-color: $body-bg !default;
+$filters-icon-color: $body-bg !default;
+$filterContent-background: $body-bg !default;
+$filterContent-border-color: mix($filterContent-background, contrast($filterContent-background), 80%) !default;
+$filterContent-text-color: $text-color !default;
+//Search tools
+$finna-searchtools-background: $brand-primary !default;
+$finna-searchtools-color: $body-bg !default;
+
+
+//== Browsebar
+$finna-browsebar-background: $brand-primary !default;
+$finna-browsebar-highlight-background: darken($finna-browsebar-background, 10%) !default;
+$finna-browsebar-link-color: $body-bg !default;
+
+//== Generated horizontal carousel styles
+//== Carousel images background-color
+$carousel-slider-background: $gray !default;
+//== Carousel iconlabel color
+$carousel-slider-iconlabel-color: #fff !default;
+//== Styling the header of carousel
+$carousel-header-background: transparent !default;
+$carousel-header-color: $gray !default;
+$carousel-header-padding: 0 !default;
+//== Styling the horizontal header of each slide
+$carousel-slide-header-background: rgba(1, 1, 1, 0.6) !default;
+$carousel-slide-header-color: #fff !default;
+$carousel-slide-header-text-shadow: 1px 1px 1px black !default;
+//== Vertical slider background
+$carousel-verticalslide-header-background: none !default;
+//== Styling the text color and background of each slide
+$carousel-text-background-color: rgba(1,1,1,0.75) !default;
+$carousel-slide-text-color: rgb(255, 255, 255) !default;
+$carousel-slide-link-color: rgb(255, 255, 255) !default;
+
+//== Similar items carousel styles
+$similar-carousel-no-image-background: #f2f2f2 !default;
+$similar-carousel-no-image-color: $gray-light !default;
+$similar-carousel-border: none !default;
+$similar-carousel-border-radius: 8px !default;
+$similar-carousel-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.25) !default;
+$similar-carousel-text-color: $text-color !default;
+$similar-carousel-item-background: #fff !default;
+$similar-carousel-format-text-color: $text-color !default;
+$similar-carousel-format-background: #f2f2f2 !default;
+
+//== Breakpoint for slider layout
+$slider-stacked-breakpoint: $screen-sm !default;
+
+//== List feed styles
+$list-feed-background: $body-bg !default;
+$list-feed-padding: 10px !default;
+
+//== List feed header style
+$list-feed-header-background: none !default;
+$list-feed-header-padding: none !default;
+$list-feed-header-color: $gray !default;
+
+//== Myreresearch custom styles
+$myresearch-header-background:  $body-bg !default;
+$myresearch-tabs-color: $gray !default;
+$myresearch-menu-header-font-color: #fff !default;
+
+// Finna info box
+$finna-infobox-bg: lighten($brand-primary, 70%) !default;
+$finna-infobox-border: 4px solid $brand-primary !default;
+$finna-infobox-color: $brand-primary !default;
+
+
+//== Typography
+//
+
+$font-size-icon-small: 14px !default;
+$font-size-icon-large: 1.5em !default;
+
+
+//## Font size, line-height for content pages
+$content-font-size-base: 16px !default;
+$content-line-height-base: 1.5 !default;
+$content-headings-font-size-h1: floor(($content-font-size-base * 1.777)) !default;
+$content-headings-font-size-h2: floor(($content-font-size-base * 1.5)) !default;
+$content-headings-font-size-h3: floor(($content-font-size-base * 1.333)) !default;
+$content-headings-font-size-h4: floor(($content-font-size-base * 1.15)) !default;
+$content-headings-font-size-h5: $content-font-size-base !default;
+$content-headings-font-size-h6: floor(($content-font-size-base * 0.875)) !default;
+$content-headings-line-height: $headings-line-height !default;
+$content-headings-color: $gray-dark !default;
+$content-heading-background: $brand-secondary !default;
+$content-nav-bg: $gray-ultralight !default;
+
+
+//-- Iconography
+//
+
+$full-text-icon-color: #037c90 !default;
+$open-access-icon-color: #e88636 !default;
+$peer-reviewed-icon-color: #179003 !default;
+
+
+//== Tables
+//** Finna tables
+$table-finna-record-cell-padding:  3px 0px !default;
+
+
+//== Forms
+//
+//##
+
+$search-input-bg: #fff !default;
+
+
+//-- Finna Z-index list
+//
+// These are designed to work with Bootstrap Z-index master list (see bootstrap-variable-overrides).
+// Warning: Avoid customizing these values. They're designed to all work together.
+//
+
+$zindex-cookie-consent:    1034 !default;
+$zindex-header:            1035 !default;
+$zindex-sidebar:           1036 !default;
+$zindex-skip-link:         1037 !default;
+$zindex-datepicker:        1038 !default;
+$zindex-spinner-overlay:   1100 !default;
+
+
+//== Navbar
+//
+//##
+
+// Basics of a navbar
+$navbar-right:                     64px !default;
+
+// Navbar links
+$navbar-font-size:                         1.1em !default; // Font-size of navbar links
+$navbar-font-weight:                       500 !default; // Font weight for navbar texts
+// Navbar toggle
+$navbar-toggle-color:                      $navbar-default-link-color !default;
+
+
+//== Navs
+//
+//##
+
+//=== Shared nav styles
+//== Tabs
+$nav-tabs-active-color:                     $action-link-color !default;
+$nav-tabs-background-color:                 $body-bg !default;
+$nav-tabs-text-color:                       $text-color !default;
+$nav-tabs-link-hover-color:                 $nav-tabs-active-link-hover-color !default;
+$tabs-border-radius:                        4px !default;
+
+//== Feed nav pills styles
+$feed-nav-pills-border-radius:              $border-radius-base !default;
+$feed-nav-pills-padding:                    0 15px !default;
+
+$feed-nav-pills-color:                      $action-link-color !default;
+$feed-nav-pills-bg:                         $body-bg !default;
+$feed-nav-pills-border:                     1px solid $action-link-color !default;
+
+$feed-nav-pills-active-color:               $component-active-color !default;
+$feed-nav-pills-active-bg:                  $component-active-bg !default;
+$feed-nav-pills-active-border:              $feed-nav-pills-border !default;
+
+$feed-nav-pills-active-hover-bg:            $component-active-bg !default;
+$feed-nav-pills-active-hover-color:         $component-active-color !default;
+$feed-nav-pills-active-hover-border:        $feed-nav-pills-border !default;
+
+// Main nav
+$main-tabs-active-color: $nav-tabs-active-color !default;
+$main-tabs-background-color: $nav-tabs-background-color !default;
+$main-tabs-text-color: $nav-tabs-text-color !default;
+$main-tabs-border-color: $nav-tabs-border-color !default;
+
+//== Pagination
+//
+//##
+$pagination-background:                $body-bg !default;
+
+
+//== Tooltips
+//
+//##
+//** Tooltips for Finna, set to inline or none;
+$tooltip-tabs-pci:            inline !default;
+$tooltip-tabs-local:          inline !default;
+$tooltip-facet:               inline !default;
+$tooltip-search-local:        inline !default;
+$tooltip-search-pci:          inline !default;
+$tooltip-myaccount:           inline !default;
+$tooltip-local-advanced:      inline !default;
+$tooltip-pci-advanced:        inline !default;
+$tooltip-eds-advanced:        inline !default;
+$tooltip-summon-advanced:     inline !default;
+$tooltip-button-color:        $action-link-color !default;
+
+$tooltip-min-width:           250px !default;
+
+
+//== Modals
+//
+//##
+$modal-header-background: $brand-primary !default;
+$modal-header-color: mix($modal-header-background, contrast($modal-header-background), 5%) !default;
+
+
+//== Badges
+//
+//##
+
+$badge-font-size:             0.9em !default;
+
+
+//== Breadcrumbs
+//
+//##
+//** $breadcrumbs: false/true
+$breadcrumbs: false !default;
+//** Textual separator for between breadcrumb elements (obsolete)
+$breadcrumb-separator:          "|" !default;
+
+
+//== Cookie Consent
+//
+//##
+$cookie-consent-background-color: $gray-light !default;
+$cookie-consent-color: #fff !default;
+$cookie-consent-link-color: #fff !default;
+$cookie-consent-button-border: 2px solid #fff !default;
+
+//== Cookie Consent Component
+:root {
+    --cc-cookie-category-block-bg: #{lighten($gray-base, 93.5%)};
+    --cc-btn-border-radius: #{$finna-button-radius};
+}
+
+//== Bazaar Browse Bar
+$bazaar-browse-bar-background-color: $gray-light !default;
+$bazaar-browse-bar-color: #fff !default;
+
+//== Miscellaneous
+//
+//##
+
+
+$accordion-details-display:   none !default;
+$search-tab-tip-bg: #CCF5E7 !default;
+
+// Airplay icon
+$icon-airplay--default:             url('../../finna2/images/videojs/ic_airplay_white_24px.svg') !default;
+$icon-airplay--hover:               url('../../finna2/images/videojs/ic_airplay_white_24px.svg') !default;
+$icon-airplay-size:                 22px !default;
+
+// Skip link
+$skip-link-color: #fff !default;
+$skip-link-background-color: $action-link-color !default;

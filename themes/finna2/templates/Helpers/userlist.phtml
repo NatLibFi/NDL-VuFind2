@@ -6,7 +6,7 @@
       <?php if ($this->listTags): ?>
         <div class="public-list-tags">
           <?php foreach ($this->listTags as $tag): ?>
-            <div class="tag"><?= $this->escapeHtml($tag->getTag()) ?></div>
+            <div class="tag"><?= $this->escapeHtml($tag['tag']) ?></div>
           <?php endforeach ?>
         </div>
       <?php endif ?>

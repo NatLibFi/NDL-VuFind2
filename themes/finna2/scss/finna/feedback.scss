@@ -1,0 +1,93 @@
+.floating-feedback-btn {
+  margin-top: 15px;
+  margin-right: 15px;
+  background: $finna-feedback-background;
+  color: $finna-feedback-color;
+  position: absolute;
+  right: 0;
+  top: auto;
+  z-index: 1001;
+  &.fixed {
+    position: fixed;
+    top: 0;
+  }
+  &:hover {
+    background: darken($finna-feedback-background,10%);
+    color: $finna-feedback-color;
+  }
+}
+
+.dynamic-form {
+  .form-control {
+    &[disabled],
+    &[readonly],
+    fieldset[disabled] {
+      cursor: default;
+      box-shadow: none;
+      border: none;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+    label {
+      clear: both;
+      display: block;
+    }
+    textarea, input {
+      max-width: 100%;
+    }
+  }
+  .feedback-info p,
+  .captcha {
+    padding-top: 10px;
+    border-top: 1px solid $gray-lighter;
+  }
+  .form-info.pre div {
+    margin-bottom: 1em;
+  }
+}
+
+form[name=ArchiveRequest] {
+  label[for=form_ArchiveRequest_desiredDateForOrder] {
+    font-weight: normal;
+  }
+  label[for=form_ArchiveRequest_name] {
+    margin-bottom: 0;
+  }
+  #form_ArchiveRequest_name {
+    height: auto;
+  }
+  .alert-info {
+    margin-bottom: 0;
+  }
+}
+form[name=FeedbackRecord] .form-info {
+  border: none;
+  .datasource-info {
+    font-weight: initial;
+    padding-top: 1em;
+    display: block;
+  }
+}
+.form-horizontal[name=emailRecord] {
+  & input[type=email] {
+    min-width: 200px;
+    max-width: 100%;
+  }
+}
+
+div:not(.modal-body) > .feedback-content {
+  @media(min-width: $screen-sm) {
+    width: 50%;
+  }
+}
+.template-dir-feedback .feedback-content h1 {
+    font-size: $finna-header-font-size;
+}
+
+.recommendation-feedback {
+  .btn-primary {
+    margin-top: 20px;
+  }
+}

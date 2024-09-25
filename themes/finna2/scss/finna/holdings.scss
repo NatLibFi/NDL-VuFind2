@@ -1,0 +1,588 @@
+/* --  Holdings styling  -- */
+
+// Common settings
+.holding-details {
+    margin-top: 10px;
+    @media (max-width: $screen-xxs-max) {
+        width: 100%;
+    }
+}
+.status-available-icon {
+    color: $brand-success;
+}
+.status-unavailable-icon {
+    color: $brand-danger;
+}
+.dedup-select {
+    max-width: 100%;
+}
+.groupLocation {
+    letter-spacing: 0.2px;
+    padding: 0;
+    padding-bottom: 2px;
+    span:not(.icon) {
+        &.text-error, &.text-success, &.text-warning {
+            color: inherit;
+            vertical-align: middle;
+            margin-right: 10px;
+            font-weight: normal;
+        }
+    }
+    .text-error {
+        color: $brand-danger;
+    }
+}
+.no-branches .groupLocation {
+    display: inline-block;
+    line-height: 1.6em;
+}
+.groupCallnumber {
+    color: $gray-light;
+    display: inline;
+    margin-left: 15px;
+}
+.branchInfo {
+    padding-bottom: 2px;
+}
+.status-availability-coverage {
+    font-size: 0.9em;
+    color: $gray-light;
+    // Spacing to match .openurls .coverage
+    letter-spacing: .2px;
+}
+
+.ils-purchase-history {
+    padding: 8px 15px;
+    display: flex;
+    .title {
+        width: 33.333%;
+    }
+    .history {
+        width: 66.666%;
+    }
+}
+
+.external-interface-link {
+    display: flex;
+    clear: both;
+    padding-top: 8px;
+    a {
+        margin-left: auto;
+    }
+    @media (max-width: $screen-xs-max) {
+        a {
+            margin-left: inherit;
+        }
+    }
+
+    .external-link-desc {
+        align-self: center;
+        margin-left: 0.5em;
+    }
+}
+
+// Result list
+.record-container .holding-details {
+    clear: both;
+    .available-total {
+        float: left;
+        margin-left: 0px;
+    }
+    .dedupInformation {
+        float: left;
+        margin-right: 10px;
+        max-width: 100%;
+    }
+    .holdings, .holdings-container, .no-holdings, .availability-load-indicator {
+        clear: both;
+    }
+    .holdings-container {
+        .header {
+            .icon.collapse {
+                display: none;
+            }
+            &.open {
+                .icon.expand {
+                    display: none;
+                }
+                .icon.collapse {
+                    display: initial;
+                }
+            }
+        }
+    }
+    .available-total {
+        margin-top: 0.5em;
+    }
+    .form-control {
+        width: 100%;
+    }
+}
+
+
+// Record view holdings styles
+.holdings-tab {
+    .library_card, .placehold.btn, .placeStorageRetrievalRequest.btn, .placeILLRequest.btn, .repository-library-request-order {
+        margin-bottom: 5px;
+        margin-left: 5px;
+    }
+    .placehold.btn, .placeStorageRetrievalRequest.btn, .placeILLRequest.btn, .repository-library-request-order  {
+        white-space: normal;
+        margin-top: 2px;
+    }
+    .place-hold-wrapper {
+        p {
+            margin-top: 5px;
+        }
+        a {
+            height: 40px;
+        }
+        .select-card-wrapper {
+            margin-top: 7px;
+        }
+    }
+    .borrowing-block-container {
+        margin-top: 20px;
+    }
+}
+.record-holdings-url-table {
+    margin: 20px 0px;
+    border: 1px solid $record-holdings-border-color;
+    border-top: none;
+    @media print {
+        display: none;
+    }
+    .headers {
+        display: flex;
+        width: 100%;
+        padding: 0 15px;
+        background: $record-holdings-title-background;
+        color: $record-holdings-title-color;
+        vertical-align: middle;
+    }
+    .holdings-urls {
+        display: block;
+        padding: 10px 15px;
+    }
+    .holdings-url-link {
+        display: block;
+    }
+    .holdings-url-title {
+        @extend .h4;
+        font-weight: 500;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        margin-right: 15px;
+        display: inline-block;
+    }
+}
+
+.record-holdings-table {
+    margin: 20px 0px;
+    border: 1px solid $record-holdings-border-color;
+    border-top: none;
+    @media print {
+        border-top: 1px solid $record-holdings-border-color;
+    }
+    h5 {
+        padding-left: 15px;
+    }
+    .holdings-group:not(.headers+.holdings-group) {
+        border-top: 2px solid $record-holdings-border-color;
+    }
+    span.icon.text-success {
+        color: $brand-success;
+    }
+    // Fix horizontal alignment of uncertain status icon:
+    span.icon.fa-circle-o {
+        padding-left: 2px;
+        font-size: 90%;
+    }
+    .holdings-container-heading {
+        display: flex;
+        min-height: 36px;
+        flex-flow: row;
+        .icon.collapse {
+            display: none;
+        }
+        &.open {
+            .icon.expand {
+                display: none;
+            }
+            .icon.collapse {
+                display: initial;
+            }
+        }
+        @media (max-width: $screen-xs-max) {
+            flex-flow: column;
+        }
+        &:hover {
+            cursor: pointer;
+        }
+        .location {
+            flex: 1 0 40%;
+            border-top: none;
+            @media (max-width: $screen-sm-max) {
+                width: 70%;
+            }
+            @media (max-width: $screen-xs-max) {
+                width: 100%;
+            }
+
+            &:not(.electronic) {
+                text-transform: uppercase;
+                font-weight: bold;
+                font-size: .92em;
+                padding-left: 15px;
+            }
+            &.electronic {
+                padding: 10px 15px;
+            }
+            @media (max-width: $screen-xs-max) {
+                font-size: .87em;
+            }
+        }
+        .location, .holdings-details, .location-link {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .holdings-details, .location, .location-link {
+            @media (max-width: $screen-xs-max) {
+                padding-top: 4px;
+                padding-bottom: 4px;
+            }
+        }
+        .holdings-details, .location-link {
+            vertical-align: middle;
+            flex: 1 1 100%;
+            @media (min-width: $screen-sm-min) {
+                border-top: none;
+            }
+        }
+
+        .holdings-details {
+            padding-right: 5px;
+            text-align: left;
+            float: left;
+
+            @media (max-width: $screen-xs-max) {
+                text-align: initial;
+            }
+            &:not(.electronic) {
+                font-weight: bold;
+                padding-left: 15px;
+                @media print {
+                    font-weight: 400;
+                }
+                @media (min-width: $screen-sm-min) and (max-width: $screen-md-max) {
+                    padding-left: 13px;
+                }
+            }
+            .small {
+                font-weight: normal;
+                color: $gray;
+            }
+        }
+
+        .location-link {
+            font-weight: bold;
+            padding-right: 15px;
+            @media (max-width: $screen-xs-max) {
+                text-align: right;
+                border-top: none;
+                line-height: 1.3;
+            }
+            @media print {
+                font-weight: 400;
+            }
+            &.text-right {
+                @media (max-width: $screen-sm-max) {
+                    text-align: left;
+                    padding-left: 15px;
+                }
+            }
+        }
+        .holdings-extra-text {
+            padding: 4px;
+        }
+    }
+    .row:nth-child(2) {
+        .location, .holdings-details, .location-link {
+            border-top: none;
+        }
+    }
+
+    .copy-title {
+        @media (min-width: $screen-sm-min) {
+            width: 40%;
+            float: left;
+        }
+    }
+    .copy-info {
+        .item-notes {
+            ul {
+                margin: 0 0 0 15px;
+            }
+        }
+        @media (min-width: $screen-sm-min) {
+            width: 60%;
+            float: left;
+        }
+        @media (max-width: $screen-xs-max) {
+            line-height: 1.3;
+        }
+        @media (min-width: $screen-sm-min) {
+            padding-left: 3px;
+        }
+    }
+    .copy-available {
+        @media (min-width: $screen-sm-min) {
+            float: right;
+        }
+    }
+    .copy-details {
+        padding: 8px 15px 8px 31px;
+        @include clearfix();
+
+        &:nth-child(odd):not(.group-heading) {
+            background-color: $gray-ultralight;
+        }
+        &:not(:first-child) {
+            @media print {
+                border-top: 1px dashed $record-holdings-border-color;
+            }
+            @media (max-width: $screen-xs-max) {
+                padding: 4px 15px 4px 31px;
+            }
+        }
+        &.group-heading {
+            font-weight: initial;
+            padding-top: 2px;
+            padding-bottom: 0;
+            text-transform: initial;
+        }
+        .details-title {
+            width: 50%;
+            float: left;
+
+            @media (min-width: $screen-sm-min) {
+                width: 25%;
+            }
+        }
+        .details-info {
+            width: 50%;
+            float: left;
+
+            @media (min-width: $screen-sm-min) {
+                width: 75%;
+            }
+            @media (max-width: $screen-xs-max) {
+                line-height: 1.3;
+            }
+        }
+        .recordPublished {
+            font-weight: 700;
+        }
+    }
+    .headers {
+        display: flex;
+        width: 100%;
+        padding: 0 15px;
+        background: $record-holdings-title-background;
+        color: $record-holdings-title-color;
+        vertical-align: middle;
+        .dedup-information {
+            flex: 1;
+            @media (max-width: $screen-xs-max) {
+                flex-basis: 70%;
+            }
+        }
+        .totals-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0 2rem;
+            align-self: center;
+            margin-left: 1rem;
+            @media print {
+                flex: 0 52%;
+            }
+            @media (max-width: $screen-xs-max) {
+                flex-basis: 30%;
+                text-align: right;
+            }
+        }
+        .shelf-location {
+            align-self: center;
+            @media (max-width: $screen-xs-max) {
+                display: none;
+            }
+        }
+        .shelf-location {
+            margin-left: 3rem;
+        }
+    }
+    .dedup-select {
+        max-width: 130px;
+        display: inline-block;
+        word-wrap: initial;
+        margin: 3px 0px 7px;
+    }
+    .holdings-title {
+        @extend .h4;
+        font-weight: 500;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        margin-right: 15px;
+        display: inline-block;
+    }
+    .btn-primary {
+        padding: 2px 6px;
+        margin-bottom: 2px;
+        @media (max-width: $screen-xs-max) {
+            margin-top: 2px;
+        }
+    }
+    .collapsed {
+        display: none;
+    }
+}
+.callnumAndLocation {
+    clear: both;
+    .collapsed {
+        display: none;
+    }
+    .holdings-container:not(.root) {
+        border-bottom: 1px solid $gray-lighter;
+        padding: 2px 0;
+        @media (max-width: $screen-xs-max) {
+            padding: 6px 0 17px;
+        }
+    }
+    .holdings-container.root > .header {
+        margin-bottom: 3px;
+        .info {
+            @media (max-width: $screen-xs-max) {
+                float: none;
+            }
+        }
+    }
+    .holdings-container.collapsible > .holdings:not(.root) {
+        padding-left: 10px;
+    }
+    .holdings-container.collapsible > .header {
+        cursor: pointer;
+        padding: 1px 0px;
+        @media (max-width: $screen-sm-max) {
+            padding: 3px 0px;
+        }
+    }
+    .holdings-container .right {
+        display: inline;
+    }
+    .header {
+        margin-bottom: 6px;
+        span.icon {
+            vertical-align: baseline;
+        }
+        .info {
+            color: lighten($text-color, 18%);
+            float: right;
+            max-width: 60%;
+            display: flex;
+            margin-top: .5em;
+            margin-left: 2rem;
+            gap: 0 2rem;
+            justify-content: right;
+            flex-wrap: wrap;
+        }
+    }
+    .holdings {
+        .odd {
+            background-color: $gray-ultralight;
+        }
+        .branchInfo {
+            color: $gray-light;
+            display: block;
+
+            @media (min-width: $screen-sm-min) {
+                text-align: right;
+            }
+            @media (max-width: $screen-xs-max) {
+                margin-left: 20px;
+            }
+        }
+        .groupCallnumber {
+            float: right;
+        }
+        @media (min-width: $screen-sm-min) {
+            .group-location-col {
+                width: 65%;
+                float: left;
+            }
+            .group-branches {
+                width: 35%;
+                float: left;
+            }
+        }
+    }
+    .holdings-container {
+        .holdings {
+            .branch {
+                font-weight: 500;
+            }
+            .groupLocation i {
+                margin-top: -2px
+            }
+        }
+    }
+    .header {
+        font-weight: 600;
+        span {
+            font-weight: 400;
+        }
+    }
+    .actions {
+        float: right;
+        .title-hold {
+            float: right;
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+        .request {
+            float: right;
+            margin-top: 10px;
+        }
+        .all-holdings {
+            text-align: right;
+            clear: both;
+            padding-top: 5px;
+        }
+        @media (max-width: $screen-xs-max) {
+            float: none;
+            .all-holdings {
+                text-align: left;
+            }
+            .title-hold {
+                float: left;
+                a.btn {
+                    white-space: pre-wrap;
+                }
+            }
+        }
+    }
+    .fa.arrow {
+        color: $gray-light;
+    }
+    span.icon {
+        vertical-align: middle;
+        &.text-success {
+            color: $brand-success;
+        }
+        // Fix horizontal alignment of uncertain status icon:
+        &.fa-circle-o {
+            padding-left: 2px;
+            font-size: 90%;
+        }
+    }
+}
