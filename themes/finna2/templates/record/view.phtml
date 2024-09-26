@@ -207,7 +207,7 @@
             </div>
           </div>
         <?php endforeach; ?>
-        <div class="tab-content">
+        <div class="tab-content" tabindex="0">
           <?php if (!$this->loadInitialTabWithAjax || !isset($activeTabObj) || !$activeTabObj->supportsAjax()): ?>
             <div class="tab-pane active <?=$this->escapeHtmlAttr($this->activeTab) ?>-tab" aria-labelledby="record-tab-<?=$this->escapeHtmlAttr($activeTabName ?? '')?>">
               <?=isset($activeTabObj) ? $this->record($this->driver)->getTab($activeTabObj) : '' ?>
