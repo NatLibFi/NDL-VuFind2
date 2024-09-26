@@ -10,6 +10,9 @@
         }
     }
 }
+.feed-container .list-feed .feed-header {
+    color: $list-feed-header-color;
+}
 .feed-header {
     display: inline-block;
     color: $list-feed-header-color;
