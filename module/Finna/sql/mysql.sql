@@ -353,16 +353,11 @@ CREATE TABLE `finna_resource_list` (
   `user_id` int(11) NOT NULL,
   `title` varchar(200) NOT NULL,
   `description` text DEFAULT NULL,
-  `datasource` varchar(200) NOT NULL,
   `created` datetime NOT NULL DEFAULT '2000-01-01 00:00:00',
-  `ordered` datetime DEFAULT NULL,
-  `building` varchar(200) NOT NULL,
-  `pickup_date` datetime DEFAULT NULL,
-  `handler` varchar(40) NOT NULL DEFAULT 'finna',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `resource_list_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -382,7 +377,7 @@ CREATE TABLE `finna_resource_list_details` (
   KEY `user_id` (`user_id`),
   CONSTRAINT `resource_list_details_ibfk_1` FOREIGN KEY (`list_id`) REFERENCES `finna_resource_list` (`id`) ON DELETE CASCADE,
   CONSTRAINT `resource_list_details_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
