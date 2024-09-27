@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Finna resource list resource service.
+ * Finna resource list details service interface
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use VuFind\Db\Table\DbTableAwareInterface;
 use VuFind\Db\Table\DbTableAwareTrait;
 
 /**
- * Finna resource list resource service.
+ * Finna resource list details service interface
  *
  * @category VuFind
  * @package  FinnaResourceList
@@ -72,20 +72,6 @@ class FinnaResourceListDetailsService extends AbstractDbService implements
     public function deleteFinnaResourceListSetting(FinnaResourceListEntityInterface|int $listOrId): void
     {
         $this->getDbTable(\Finna\Db\Table\FinnaResourceListDetails::class)->delete($listOrId);
-    }
-
-    /**
-     * Retrieve settings with settings ID.
-     *
-     * @param int $id ID to retrieve
-     *
-     * @return ?FinnaResourceListDetailsEntityInterface
-     */
-    public function getFinnaResourceListDetailsById(
-        int $id
-    ): ?FinnaResourceListDetailsEntityInterface {
-
-        return $this->getDbTable(\Finna\Db\Table\FinnaResourceListDetails::class)->select(['id' => $id])->current();
     }
 
     /**
@@ -154,7 +140,7 @@ class FinnaResourceListDetailsService extends AbstractDbService implements
      *
      * @return FinnaResourceListDetailsEntityInterface|null
      */
-    public function getSettingsForFinnaResourceList(
+    public function getFinnaResourceListDetailsById(
         FinnaResourceListEntityInterface|int $listOrId
     ): ?FinnaResourceListDetailsEntityInterface {
         $id = $listOrId instanceof FinnaResourceListEntityInterface ? $listOrId->getId() : $listOrId;

@@ -34,7 +34,6 @@ use Finna\Db\Table\Resource;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Entity\UserListEntityInterface;
-use VuFind\Db\Entity\UserResourceEntityInterface;
 use VuFind\Db\Service\AbstractDbService;
 use VuFind\Db\Service\DbServiceAwareInterface;
 use VuFind\Db\Service\DbServiceAwareTrait;
@@ -61,31 +60,6 @@ class FinnaResourceListResourceService extends AbstractDbService implements
 {
     use DbServiceAwareTrait;
     use DbTableAwareTrait;
-
-    /**
-     * Get information saved in a user's favorites for a particular record.
-     *
-     * @param string                           $recordId ID of record being checked.
-     * @param string                           $source   Source of record to look up
-     * @param UserListEntityInterface|int|null $listOrId Optional list entity or ID
-     * (to limit results to a particular list).
-     * @param UserEntityInterface|int|null     $userOrId Optional user entity or ID
-     * (to limit results to a particular user).
-     *
-     * @return UserResourceEntityInterface[]
-     */
-    public function getFavoritesForRecord(
-        string $recordId,
-        string $source = DEFAULT_SEARCH_BACKEND,
-        FinnaResourceListEntityInterface|int|null $listOrId = null,
-        UserEntityInterface|int|null $userOrId = null
-    ): array {
-        $listId = is_int($listOrId) ? $listOrId : $listOrId?->getId();
-        $userId = is_int($userOrId) ? $userOrId : $userOrId?->getId();
-        return iterator_to_array(
-            $this->getDbTable(FinnaResourceListResource::class)->getSavedData($recordId, $source, $listId, $userId)
-        );
-    }
 
     /**
      * Create user/resource/list link if one does not exist; update notes if one does.

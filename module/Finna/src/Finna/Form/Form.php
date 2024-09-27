@@ -35,6 +35,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\RecordDriver\DefaultRecord;
 
 use function in_array;
+use function is_array;
 
 /**
  * Configurable form.
@@ -219,11 +220,8 @@ class Form extends \VuFind\Form\Form
             $driver = $this->recordLoader->load($recId, $source);
             $this->setRecord($driver);
         }
-        if (!empty($data['reservation_records'])) {
-            $this->setRecordsDisplayText($data['reservation_records']);
-        }
-        // Either textarea string or request, handle properly
-        if (!empty($data['record_ids'])) {
+        // Either already formed string for records or an array of records to convert into a string
+        if (!empty($data['record_ids']) && is_array($data['record_ids'])) {
             if (!$this->recordLoader) {
                 throw new \Exception('Record loader not set');
             }
@@ -242,13 +240,11 @@ class Form extends \VuFind\Form\Form
                     ...$this->recordLoader->loadBatchForSource($ids, $source),
                 ];
             }
-
             $recordsDisplay = '';
             foreach ($drivers as $record) {
                 $recordsDisplay .= $record->getUniqueID() . '||' . $record->getTitle() . PHP_EOL;
             }
-            $this->setRecordsDisplayText($recordsDisplay);
-            $data['reservation_records'] = $recordsDisplay;
+            $data['record_ids'] = $recordsDisplay;
         }
         return parent::setData($data);
     }
@@ -313,29 +309,6 @@ class Form extends \VuFind\Form\Form
     protected function setRecord(DefaultRecord $record): void
     {
         $this->record = $record;
-    }
-
-    /**
-     * Get array containing records
-     *
-     * @return string
-     */
-    public function getRecordsDisplayText(): string
-    {
-        return $this->records;
-    }
-
-    /**
-     * Set records
-     *
-     * @param string $records Records to set for form
-     *
-     * @return self
-     */
-    protected function setRecordsDisplayText(string $records): self
-    {
-        $this->records = $records;
-        return $this;
     }
 
     /**
@@ -731,14 +704,6 @@ class Form extends \VuFind\Form\Form
                 $params[] = $field;
             }
         }
-        if ($this->getRecordsDisplayText()) {
-            $params[] = [
-                'type' => 'textarea',
-                'name' => 'record_ids',
-                'label' => 'ReservationList::Resources',
-                'value' => $this->getRecordsDisplayText(),
-            ];
-        }
         if (!$this->isRecordRequestFormWithBarcode()) {
             // Append user logged status and permissions
             $loginMethod = $this->user ?
@@ -824,22 +789,6 @@ class Form extends \VuFind\Form\Form
             $elements['rl_institution'] = ['type' => 'hidden', 'name' => 'rl_institution', 'value' => null];
             $elements['rl_list_identifier'] = ['type' => 'hidden', 'name' => 'rl_list_identifier', 'value' => null];
             $elements['rl_list_id'] = ['type' => 'hidden', 'name' => 'rl_list_id', 'value' => null];
-            $elements = array_merge(
-                [
-                    'reservation_records' => [
-                        'type' => 'textarea',
-                        'name' => 'reservation_records',
-                        'class' => 'form-control area-wide',
-                        'settings' => [
-                            ['rows' => 4],
-                            ['readonly' => true],
-                        ],
-                        'label' => 'ReservationList::Resources',
-                        'value' => '',
-                    ],
-                ],
-                $elements
-            );
         }
         return $elements;
     }

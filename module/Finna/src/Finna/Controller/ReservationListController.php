@@ -292,8 +292,8 @@ class ReservationListController extends AbstractBase
             $listID,
             $this->url()->fromRoute('reservationlist-delete'),
             $this->url()->fromRoute('reservationlist-home'),
-            'ReservationList::confirm_delete_list',
-            [],
+            'confirm_delete_list_brief',
+            'confirm_delete_list_text',
             ['id' => $listID]
         );
     }
@@ -335,7 +335,7 @@ class ReservationListController extends AbstractBase
             $listID,
             $this->url()->fromRoute('reservationlist-deletebulk'),
             $this->url()->fromRoute('reservationlist-home'),
-            'ReservationList::confirm_delete_bulk',
+            'confirm_delete_bulk',
             [],
             [
                 'listID' => $listID,

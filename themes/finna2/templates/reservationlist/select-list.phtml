@@ -11,28 +11,35 @@
 ?>
 
 <h2><?= $this->transEsc($pageTitle); ?></h2>
+<strong><?= $this->transEsc(['ReservationList', $listTranslations['title']]) ?> </strong>
 <p><?= $this->transEsc(['ReservationList', $listTranslations['description']]) ?> </p>
 <div>
   <?php if (!empty($this->lists)): ?>
-  <form method="post" name="FinnaResourceListAdd" data-lightbox-onclose="VuFind.refreshPage">
-    <input type="hidden" name="state" value="saveItem">
-    <label class="control-label" for="save_list"><?=$this->transEsc('ReservationList::Choose a List') ?></label>
-    <div class="form-group">
-      <select class="form-control" id="save_list" name="list">
-        <?php foreach ($this->lists as $list): ?>
-          <?php $listEntity = $list['list_entity']; ?>
-          <option value="<?=$this->escapeHtmlAttr($listEntity->getId())?>"><?=$this->escapeHtml($listEntity->getTitle())?></option>
-        <?php endforeach; ?>
-      </select>
-    </div>
-    <div class="form-group">
-      <label class="control-label" for="add_notes"><?=$this->transEsc('ReservationList::Description') ?></label>
-      <textarea class="form-control" id="add_notes" name="desc" rows="3"></textarea>
-    </div>
-    <div class="form-group">
-      <input class="btn btn-primary" type="submit" name="submit" value="<?=$this->transEscAttr('ReservationList::Add To Reservation List') ?>">
-    </div>
-  </form>
+    <form method="post" name="FinnaResourceListAdd" data-lightbox-onclose="VuFind.refreshPage">
+      <input type="hidden" name="state" value="saveItem">
+      <label class="control-label" for="save_list"><?=$this->transEsc('ReservationList::Choose a List') ?></label>
+      <div class="form-group">
+        <select class="form-control" id="save_list" name="list">
+          <?php foreach ($this->lists as $list): ?>
+            <?php
+              $listEntity = $list['list_entity'];
+              $detailsEntity = $list['details_entity'];
+              if ($detailsEntity->getOrdered()) {
+                continue;
+              }
+            ?>
+            <option value="<?=$this->escapeHtmlAttr($listEntity->getId())?>"><?=$this->escapeHtml($listEntity->getTitle())?></option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="add_notes"><?=$this->transEsc('ReservationList::Description') ?></label>
+        <textarea class="form-control" id="add_notes" name="desc" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <input class="btn btn-primary" type="submit" name="submit" value="<?=$this->transEscAttr('ReservationList::Add To Reservation List') ?>">
+      </div>
+    </form>
   <?php else: ?>
     <?= $this->transEsc('ReservationList::No Lists Found') ?>
   <?php endif; ?>

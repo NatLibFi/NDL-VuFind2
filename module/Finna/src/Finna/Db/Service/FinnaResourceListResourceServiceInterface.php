@@ -30,8 +30,6 @@ use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\Db\Entity\FinnaResourceListResourceEntityInterface;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\Db\Entity\UserListEntityInterface;
-use VuFind\Db\Entity\UserResourceEntityInterface;
 use VuFind\Db\Service\DbServiceInterface;
 
 /**
@@ -45,25 +43,6 @@ use VuFind\Db\Service\DbServiceInterface;
  */
 interface FinnaResourceListResourceServiceInterface extends DbServiceInterface
 {
-    /**
-     * Get information saved in a user's favorites for a particular record.
-     *
-     * @param string                           $recordId ID of record being checked.
-     * @param string                           $source   Source of record to look up
-     * @param UserListEntityInterface|int|null $listOrId Optional list entity or ID
-     * (to limit results to a particular list).
-     * @param UserEntityInterface|int|null     $userOrId Optional user entity or ID
-     * (to limit results to a particular user).
-     *
-     * @return UserResourceEntityInterface[]
-     */
-    public function getFavoritesForRecord(
-        string $recordId,
-        string $source = DEFAULT_SEARCH_BACKEND,
-        FinnaResourceListEntityInterface|int|null $listOrId = null,
-        UserEntityInterface|int|null $userOrId = null
-    ): array;
-
     /**
      * Create user/resource/list link if one does not exist; update notes if one does.
      *

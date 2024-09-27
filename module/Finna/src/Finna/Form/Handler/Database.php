@@ -111,6 +111,14 @@ class Database implements HandlerInterface, LoggerAwareInterface
             return false;
         }
 
+        if ($form->getFormId() === \Finna\Form\Form::RESERVATION_LIST_REQUEST) {
+            $reservationListHelper = $this->viewRenderer->plugin('reservationList');
+            ($reservationListHelper)($user)->setListOrdered(
+                (int)$params->fromPost('rl_list_id'),
+                $params->fromPost('pickup_date')
+            );
+        }
+
         return true;
     }
 }

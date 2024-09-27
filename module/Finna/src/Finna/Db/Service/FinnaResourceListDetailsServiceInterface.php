@@ -1,7 +1,7 @@
 <?php
 
 /**
- * FinnaResourceListService interface
+ * Finna resource list details service interface
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\DbServiceInterface;
 
 /**
- * FinnaResourceListService interface
+ * Finna resource list details service interface
  *
  * @category VuFind
  * @package  Db_Service
@@ -62,22 +62,13 @@ interface FinnaResourceListDetailsServiceInterface extends DbServiceInterface
     public function deleteFinnaResourceListSetting(FinnaResourceListEntityInterface|int $listOrId): void;
 
     /**
-     * Retrieve settings for a list.
-     *
-     * @param int $id ID of the list to retrieve settings for
-     *
-     * @return ?FinnaResourceListDetailsEntityInterface
-     */
-    public function getFinnaResourceListDetailsById(int $id): ?FinnaResourceListDetailsEntityInterface;
-
-    /**
      * Retrieve settings by list or ID.
      *
      * @param FinnaResourceListEntityInterface|int $listOrId List entity object or ID to retrieve settings for
      *
      * @return ?FinnaResourceListDetailsEntityInterface
      */
-    public function getSettingsForFinnaResourceList(
+    public function getFinnaResourceListDetailsById(
         FinnaResourceListEntityInterface|int $listOrId
     ): ?FinnaResourceListDetailsEntityInterface;
 
