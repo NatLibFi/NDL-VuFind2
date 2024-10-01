@@ -156,13 +156,6 @@ class Form extends \VuFind\Form\Form
     protected $record = null;
 
     /**
-     * An array containing records
-     *
-     * @var string
-     */
-    protected string $records = '';
-
-    /**
      * Record loader
      *
      * @var \VuFind\Record\Loader
