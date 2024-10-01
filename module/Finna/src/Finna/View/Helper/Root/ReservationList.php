@@ -186,7 +186,6 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
         return [
             'title' => "list_title_{$building}_{$identifier}",
             'description' => "list_description_{$building}_{$identifier}",
-            'location' => "list_location_{$building}_{$identifier}",
         ];
     }
 

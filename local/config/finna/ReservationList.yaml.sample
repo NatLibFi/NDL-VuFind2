@@ -1,4 +1,23 @@
-
+# Settings for reservationlists
+# Root key is the identifier of Organisation controlling the lists
+# Under that is general Information about organisation and Lists
+# Each list entry has to contain Identifier which should be unique for each list under organisation
+# Recipient contains email address(es) where the reservation is to be sent
+# Datasources contains record datasources which can be added to the list
+# List can contain same information as under Organisation information to be more specific
+# about where the order is being delivered
+# LibraryCardSources is used to check for active connection to ILS to be able to use lists
+# Connection holds information about type of lists, currently only value supported is type: Database
+# and is the default value, if omitted
+#
+# Each list declared uses their own translation keys under translation domain ReservationList::
+#
+# "list_title_{$organisation}_{$identifier}"
+# Generic title of the list i.e Order resources to Library Tests Research Room etc.
+#
+# "list_description_{$organisation}_{$identifier}" 
+# Generic description about the list i.e These reservations will be delivered to nnn etc.
+#
 Example Organisation:
   Information:
     name: Example Organisation Name
@@ -7,9 +26,20 @@ Example Organisation:
     city: Example Organisation city
     email: Example Organisation email
   Lists:
-    - Identifier: ResearchRoom
+    - Identifier: unique_identifier_for_this_list
+      Recipient:
+        - name: name_of_the_recipient_1
+          email: email_of_the_recipient_1
+        - name: name_of_the_recipient_2
+          email: email_of_the_recipient_2
       Datasources:
-        - fonte
-        - fikka
+        - datasource_1
+        - datasource_2
+      Information:
+        Address: teststreet 10
+        Postal: 000001
+        City: Test city
+      LibraryCardSources:
+        - connection_established_to_use_lists
       Connection:
-        - type: Database
+        type: Database
