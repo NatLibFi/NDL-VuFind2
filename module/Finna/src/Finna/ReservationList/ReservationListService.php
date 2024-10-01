@@ -149,7 +149,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         // Remove user_resource and resource_tags rows for favorites tags:
         $listUser = $list->getUser();
         $this->resourceListResourceService->unlinkResources(null, $listUser, $list);
-        $this->resourceListService->deleteFinnaResourceList($list);
+        $this->resourceListService->deleteResourceList($list);
     }
 
     /**
@@ -360,7 +360,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
             if (!$this->userCanEditList($user, $list)) {
                 throw new ListPermissionException('list_access_denied');
             }
-            $details = $this->resourceListDetailsService->getFinnaResourceListDetailsById($list);
+            $details = $this->resourceListDetailsService->getResourceListDetailsByListId($list);
             $details->setPickupDate(DateTime::createFromFormat('Y-m-d H:i:s', $pickupDate))->setOrdered();
             $this->resourceListDetailsService->persistEntity($details);
             return true;
@@ -540,7 +540,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         int $listId,
         UserEntityInterface|int|null $userOrId = null
     ): array {
-        $list = $this->resourceListService->getFinnaResourceListById($listId);
+        $list = $this->resourceListService->getResourceListById($listId);
         $user = $userOrId instanceof UserEntityInterface
             ? $userOrId
             : $this->userService->getUserById($userOrId);
@@ -548,7 +548,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         if (!$this->userCanEditList($user, $list)) {
             throw new \VuFind\Exception\ListPermission('Access denied.');
         }
-        $details = $this->resourceListDetailsService->getFinnaResourceListDetailsById(
+        $details = $this->resourceListDetailsService->getResourceListDetailsByListId(
             $list->getId(),
             self::RESOURCE_LIST_TYPE
         );
@@ -571,7 +571,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         string $institution = '',
         string $listIdentifier = ''
     ): array {
-        $settings = $this->resourceListDetailsService->getFinnaResourceListDetailsByUser(
+        $settings = $this->resourceListDetailsService->getResourceListDetailsByUser(
             $userOrId,
             $listIdentifier,
             $institution,
@@ -600,7 +600,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         $id = $listOrId instanceof FinnaResourceListEntityInterface
             ? $listOrId->getId()
             : $listOrId;
-        return $this->resourceListDetailsService->getFinnaResourceListDetailsById($id, self::RESOURCE_LIST_TYPE);
+        return $this->resourceListDetailsService->getResourceListDetailsByListId($id, self::RESOURCE_LIST_TYPE);
     }
 
     /**
@@ -624,7 +624,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         $recordId = $recordOrId instanceof RecordDriver
             ? $recordOrId->getUniqueID()
             : $recordOrId;
-        $details = $this->resourceListDetailsService->getFinnaResourceListDetailsByUser(
+        $details = $this->resourceListDetailsService->getResourceListDetailsByUser(
             $userOrId,
             $listIdentifier,
             $institution,
@@ -639,7 +639,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
             if (in_array($detail->getListId(), $listIds)) {
                 continue;
             }
-            $list = $this->resourceListService->getFinnaResourceListById($detail->getListId());
+            $list = $this->resourceListService->getResourceListById($detail->getListId());
             $result[] = [
                 'list_entity' => $list,
                 'details_entity' => $detail,

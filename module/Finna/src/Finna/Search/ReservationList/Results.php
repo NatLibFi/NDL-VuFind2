@@ -234,7 +234,7 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
             $filters = $this->getParams()->getRawFilters();
             $listId = $filters['lists'][0] ?? null;
             $this->list = (null === $listId)
-                ? null : $this->listService->getFinnaResourceListById($listId);
+                ? null : $this->listService->getResourceListById($listId);
         }
         return $this->list;
     }

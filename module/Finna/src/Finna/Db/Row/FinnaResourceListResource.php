@@ -94,12 +94,12 @@ class FinnaResourceListResource extends \VuFind\Db\Row\RowGateway implements Fin
      */
     public function setUser(UserEntityInterface $user): FinnaResourceListResourceEntityInterface
     {
-        $this->user_id = $user?->getId();
+        $this->user_id = $user->getId();
         return $this;
     }
 
     /**
-     * Resource ID getter
+     * Get resource id
      *
      * @return int
      */
@@ -109,7 +109,7 @@ class FinnaResourceListResource extends \VuFind\Db\Row\RowGateway implements Fin
     }
 
     /**
-     * Resource ID setter
+     * Set resource id from a resource entity
      *
      * @param ResourceEntityInterface $resource Resource entity
      *
@@ -168,7 +168,7 @@ class FinnaResourceListResource extends \VuFind\Db\Row\RowGateway implements Fin
     }
 
     /**
-     * Data setter
+     * Set notes
      *
      * @param string $note Note
      *
@@ -181,7 +181,7 @@ class FinnaResourceListResource extends \VuFind\Db\Row\RowGateway implements Fin
     }
 
     /**
-     * Data getter
+     * Get notes
      *
      * @return string
      */

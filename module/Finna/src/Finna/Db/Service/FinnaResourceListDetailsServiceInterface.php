@@ -53,37 +53,15 @@ interface FinnaResourceListDetailsServiceInterface extends DbServiceInterface
     public function createEntity(): FinnaResourceListDetailsEntityInterface;
 
     /**
-     * Delete setting for a list.
-     *
-     * @param FinnaResourceListEntityInterface|int $listOrId List entity object or ID to delete
-     *
-     * @return void
-     */
-    public function deleteFinnaResourceListSetting(FinnaResourceListEntityInterface|int $listOrId): void;
-
-    /**
      * Retrieve settings by list or ID.
      *
      * @param FinnaResourceListEntityInterface|int $listOrId List entity object or ID to retrieve settings for
      *
      * @return ?FinnaResourceListDetailsEntityInterface
      */
-    public function getFinnaResourceListDetailsById(
+    public function getResourceListDetailsByListId(
         FinnaResourceListEntityInterface|int $listOrId
     ): ?FinnaResourceListDetailsEntityInterface;
-
-    /**
-     * Retrieve settings by an array of list IDs and list type.
-     *
-     * @param int[]  $listIds  List IDs to retrieve settings for
-     * @param string $listType List type to retrieve settings for
-     *
-     * @return FinnaResourceListDetailsEntityInterface[]
-     */
-    public function getFinnaResourceListDetailsByListIds(
-        array $listIds,
-        string $listType
-    ): array;
 
     /**
      * Get finna resource list settings for user.
@@ -95,7 +73,7 @@ interface FinnaResourceListDetailsServiceInterface extends DbServiceInterface
      *
      * @return FinnaResourceListDetailsEntityInterface[]
      */
-    public function getFinnaResourceListDetailsByUser(
+    public function getResourceListDetailsByUser(
         UserEntityInterface|int $userOrId,
         string $listIdentifier = '',
         string $institution = '',

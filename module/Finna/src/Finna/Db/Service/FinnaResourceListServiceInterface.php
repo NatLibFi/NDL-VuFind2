@@ -83,17 +83,7 @@ interface FinnaResourceListServiceInterface extends DbServiceInterface
      *
      * @return void
      */
-    public function deleteFinnaResourceList(FinnaResourceListEntityInterface|int $listOrId): void;
-
-    /**
-     * Retrieve a list object.
-     *
-     * @param int $id Numeric ID for existing list.
-     *
-     * @return FinnaResourceListEntityInterface
-     * @throws RecordMissingException
-     */
-    public function getFinnaResourceListById(int $id): FinnaResourceListEntityInterface;
+    public function deleteResourceList(FinnaResourceListEntityInterface|int $listOrId): void;
 
     /**
      * Get lists containing a specific record.
@@ -120,14 +110,4 @@ interface FinnaResourceListServiceInterface extends DbServiceInterface
      * @throws RecordMissingException
      */
     public function getResourceListById(int $id): FinnaResourceListEntityInterface;
-
-    /**
-     * Retrieve list objects with ids.
-     *
-     * @param array $ids Array containing ids of lists.
-     *
-     * @return FinnaResourceListEntityInterface[]
-     * @throws RecordMissingException
-     */
-    public function getResourceListsByIds(array $ids): array;
 }

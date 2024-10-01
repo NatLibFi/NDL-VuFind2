@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  FinnaResourceList
+ * @package  Db_Service
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
@@ -44,7 +44,7 @@ use function is_int;
  * Reservation List Service
  *
  * @category VuFind
- * @package  FinnaResourceList
+ * @package  Db_Service
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
@@ -106,27 +106,10 @@ class FinnaResourceListService extends AbstractDbService implements
      *
      * @return void
      */
-    public function deleteFinnaResourceList(FinnaResourceListEntityInterface|int $listOrId): void
+    public function deleteResourceList(FinnaResourceListEntityInterface|int $listOrId): void
     {
         $listId = $listOrId instanceof FinnaResourceListEntityInterface ? $listOrId->getId() : $listOrId;
         $this->getDbTable(\Finna\Db\Table\FinnaResourceList::class)->delete(['id' => $listId]);
-    }
-
-    /**
-     * Retrieve a list object.
-     *
-     * @param int $id Numeric ID for existing list.
-     *
-     * @return FinnaResourceListEntityInterface
-     * @throws RecordMissingException
-     */
-    public function getFinnaResourceListById(int $id): FinnaResourceListEntityInterface
-    {
-        $result = $this->getDbTable(\Finna\Db\Table\FinnaResourceList::class)->select(['id' => $id])->current();
-        if (empty($result)) {
-            throw new RecordMissingException('Cannot load reservation list ' . $id);
-        }
-        return $result;
     }
 
     /**
@@ -166,26 +149,8 @@ class FinnaResourceListService extends AbstractDbService implements
     {
         $result = $this->getDbTable(\Finna\Db\Table\FinnaResourceList::class)->select(['id' => $id])->current();
         if (empty($result)) {
-            throw new RecordMissingException('Cannot load list ' . $id);
+            throw new RecordMissingException('Cannot load reservation list ' . $id);
         }
         return $result;
-    }
-
-    /**
-     * Retrieve list objects with ids.
-     *
-     * @param array $ids Array containing ids of lists.
-     *
-     * @return FinnaResourceListEntityInterface[]
-     * @throws RecordMissingException
-     */
-    public function getResourceListsByIds(array $ids): array
-    {
-        $callback = function ($select) use ($ids) {
-            $select->where->in('id', $ids);
-        };
-        return iterator_to_array(
-            $this->getDbTable(\Finna\Db\Table\FinnaResourceList::class)->select($callback)
-        );
     }
 }
