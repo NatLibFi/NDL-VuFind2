@@ -54,7 +54,6 @@ use VuFind\RecordDriver\AbstractBase as RecordDriver;
 use VuFind\RecordDriver\DefaultRecord;
 
 use function in_array;
-use function intval;
 
 /**
  * Favorites service
@@ -192,19 +191,6 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Given an array of parameters, extract a list ID if possible. Return null
-     * if no valid ID is found or if a "NEW" record is requested.
-     *
-     * @param array $params Parameters to process
-     *
-     * @return ?int
-     */
-    public function getListIdFromParams(array $params): ?int
-    {
-        return intval($params['list'] ?? 'NEW') ?: null;
-    }
-
-    /**
      * Persist a resource to the record cache (if applicable).
      *
      * @param RecordDriver            $driver   Record driver to persist
@@ -317,19 +303,20 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     /**
      * Save this record to a resource list.
      *
-     * @param array               $params Array with some or all of these keys:
-     *  <ul>
-     *    <li>mytags - Tag array to associate with record (optional)</li>
-     *    <li>notes - Notes to associate with record (optional)</li>
-     *    <li>list - ID of list to save record into (omit to create new list)</li>
-     *  </ul>
+     * @param Parameters          $params Array with some or all of these keys:
+     *                                    <ul> <li>mytags - Tag array to
+     *                                    associate with record (optional)</li>
+     *                                    <li>notes - Notes to associate with
+     *                                    record (optional)</li> <li>list - ID
+     *                                    of list to save record into (omit to
+     *                                    create new list)</li> </ul>
      * @param UserEntityInterface $user   The user saving the record
      * @param RecordDriver        $driver Record driver for record being saved
      *
      * @return array list information
      */
     public function saveRecordToResourceList(
-        array $params,
+        Parameters $params,
         UserEntityInterface $user,
         RecordDriver $driver
     ): array {
@@ -339,7 +326,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         }
 
         // Get or create a list object as needed:
-        $list = $this->getAndRememberListObject($this->getListIdFromParams($params), $user);
+        $list = $this->getAndRememberListObject($params->get('list', 'NEW'), $user);
 
         // Get or create a resource object as needed:
         $resource = $this->resourcePopulator->getOrCreateResourceForDriver($driver);
@@ -352,7 +339,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
             $user,
             $resource,
             $list,
-            $params['desc'] ?? ''
+            $params->get('desc', '')
         );
         return ['listId' => $list->getId()];
     }

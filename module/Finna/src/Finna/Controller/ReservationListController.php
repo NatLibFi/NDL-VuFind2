@@ -138,9 +138,8 @@ class ReservationListController extends AbstractBase
         if ($this->formWasSubmitted('submit')) {
             $state = $this->getParam('state');
             $title = $this->getParam('title');
-            $params = $this->params()->fromPost();
-            $params['datasource'] = $driver->getDataSource();
-            $params['building'] = $driver->getBuildings()[0] ?? '';
+            $request = $this->getRequest();
+            $request->getPost()->set('datasource', $driver->getDatasource())->set('institution', $institution);
             if ('saveList' === $state) {
                 if (!$title) {
                     $this->flashMessenger()->addErrorMessage('inventory_list_missing_title');
@@ -156,11 +155,11 @@ class ReservationListController extends AbstractBase
                     $list['list_entity'],
                     $list['details_entity'],
                     $user,
-                    new Parameters($params)
+                    $request->getPost()
                 );
             } elseif ('saveItem' === $state) {
                 $this->reservationListService->saveRecordToResourceList(
-                    $params,
+                    $request->getPost(),
                     $this->getUser(),
                     $driver,
                 );
