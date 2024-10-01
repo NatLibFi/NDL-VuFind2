@@ -49,7 +49,6 @@ use VuFind\Db\Row\RowGateway;
  * @property int    $id
  * @property int    $user_id
  * @property string $title
- * @property string $datasource
  * @property string $description
  * @property string $created
  */
@@ -95,9 +94,9 @@ class FinnaResourceList extends RowGateway implements
     /**
      * Get user
      *
-     * @return UserEntityInterface
+     * @return ?UserEntityInterface
      */
-    public function getUser(): UserEntityInterface
+    public function getUser(): ?UserEntityInterface
     {
         return $this->getDbService(\VuFind\Db\Service\UserServiceInterface::class)->getUserById($this->user_id);
     }

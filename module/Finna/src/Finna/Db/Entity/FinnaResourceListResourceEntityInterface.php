@@ -3,22 +3,25 @@
 /**
  * Finna resource list resource entity interface.
  *
- * PHP version 8
+ * PHP version 8.1
  *
  * Copyright (C) The National Library of Finland 2024.
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
  * as published by the Free Software Foundation.
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Finna_Db
+ * @package  Db_Interface
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
@@ -35,10 +38,17 @@ use VuFind\Db\Entity\UserEntityInterface;
  * Finna resource list resource entity interface.
  *
  * @category VuFind
- * @package  Finna_Db
+ * @package  Db_Interface
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
+ *
+ * @property int $id
+ * @property int $resource_id
+ * @property int $list_id
+ * @property int $user_id
+ * @property string $notes
+ * @property string $saved
  */
 interface FinnaResourceListResourceEntityInterface extends EntityInterface
 {
@@ -50,7 +60,7 @@ interface FinnaResourceListResourceEntityInterface extends EntityInterface
     public function getId(): ?int;
 
     /**
-     * Resource ID setter
+     * Set resource id
      *
      * @param ResourceEntityInterface $resource Resource entity
      *
@@ -59,7 +69,7 @@ interface FinnaResourceListResourceEntityInterface extends EntityInterface
     public function setResource(ResourceEntityInterface $resource): FinnaResourceListResourceEntityInterface;
 
     /**
-     * Resource ID getter
+     * Get resource id
      *
      * @return int
      */
@@ -82,7 +92,7 @@ interface FinnaResourceListResourceEntityInterface extends EntityInterface
     public function setList(FinnaResourceListEntityInterface $list): FinnaResourceListResourceEntityInterface;
 
     /**
-     * Created setter
+     * Set saved
      *
      * @param DateTime $dateTime Created date
      *
@@ -91,14 +101,14 @@ interface FinnaResourceListResourceEntityInterface extends EntityInterface
     public function setSaved(DateTime $dateTime): FinnaResourceListResourceEntityInterface;
 
     /**
-     * Created getter
+     * Get saved
      *
      * @return DateTime
      */
     public function getSaved(): Datetime;
 
     /**
-     * Data setter
+     * Set notes
      *
      * @param string $note Note
      *
@@ -107,7 +117,7 @@ interface FinnaResourceListResourceEntityInterface extends EntityInterface
     public function setNotes(string $note): FinnaResourceListResourceEntityInterface;
 
     /**
-     * Data getter
+     * Get notes
      *
      * @return string
      */
@@ -121,7 +131,7 @@ interface FinnaResourceListResourceEntityInterface extends EntityInterface
     public function getUserId(): int;
 
     /**
-     * Set user
+     * Set user id from user entity
      *
      * @param UserEntityInterface $user User entity
      *

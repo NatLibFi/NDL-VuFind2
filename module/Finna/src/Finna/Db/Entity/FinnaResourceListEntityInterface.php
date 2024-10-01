@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Row Definition for finna_resource_list
+ * Finna resource list entity interface
  *
  * PHP version 8.1
  *
@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Db_Row
+ * @package  Db_Interface
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
@@ -35,10 +35,10 @@ use VuFind\Db\Entity\EntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
- * Row Definition for finna_resource_list
+ * Finna resource list entity interface
  *
  * @category VuFind
- * @package  Db_Row
+ * @package  Db_Interface
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
@@ -47,7 +47,6 @@ use VuFind\Db\Entity\UserEntityInterface;
  * @property int    $id
  * @property int    $user_id
  * @property string $title
- * @property string $datasource
  * @property string $description
  * @property string $created
  */
@@ -70,9 +69,9 @@ interface FinnaResourceListEntityInterface extends EntityInterface
     /**
      * Get user entity
      *
-     * @return UserEntityInterface
+     * @return ?UserEntityInterface
      */
-    public function getUser(): UserEntityInterface;
+    public function getUser(): ?UserEntityInterface;
 
     /**
      * Set user

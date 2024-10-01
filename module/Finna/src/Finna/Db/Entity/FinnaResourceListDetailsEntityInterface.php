@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Row Definition for finna_resource_list
+ * Resource list details entity interface
  *
  * PHP version 8.1
  *
@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Db_Row
+ * @package  Db_Interface
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
@@ -35,10 +35,10 @@ use VuFind\Db\Entity\EntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
- * Row Definition for finna_resource_list_details
+ * Resource list details entity interface
  *
  * @category VuFind
- * @package  Db_Row
+ * @package  Db_Interface
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
@@ -151,11 +151,11 @@ interface FinnaResourceListDetailsEntityInterface extends EntityInterface
     /**
      * Set the pickup date
      *
-     * @param string $pickupDate Pickup date
+     * @param DateTime $pickupDate Pickup date
      *
      * @return self
      */
-    public function setPickupDate(string $pickupDate): self;
+    public function setPickupDate(DateTime $pickupDate): self;
 
     /**
      * Get the connection

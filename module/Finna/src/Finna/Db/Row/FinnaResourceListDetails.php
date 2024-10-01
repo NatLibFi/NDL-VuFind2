@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Row Definition for finna_resource_list
+ * Row Definition for finna_resource_list_details
  *
  * PHP version 8.1
  *
@@ -122,13 +122,13 @@ class FinnaResourceListDetails extends RowGateway implements
     /**
      * Set list pickup date.
      *
-     * @param string $pickup_date Pickup date
+     * @param DateTime $pickup_date Pickup date
      *
      * @return FinnaResourceListDetailsEntityInterface
      */
-    public function setPickupDate(string $pickup_date): FinnaResourceListDetailsEntityInterface
+    public function setPickupDate(DateTime $pickup_date): FinnaResourceListDetailsEntityInterface
     {
-        $this->pickup_date = $pickup_date;
+        $this->pickup_date = $pickup_date->format('Y-m-d H:i:s');
         return $this;
     }
 
