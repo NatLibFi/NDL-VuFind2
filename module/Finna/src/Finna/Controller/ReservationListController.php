@@ -142,7 +142,6 @@ class ReservationListController extends AbstractBase
             $request->getPost()->set('datasource', $driver->getDatasource())->set('institution', $institution);
             if ('saveList' === $state) {
                 if (!$title) {
-                    $this->flashMessenger()->addErrorMessage('inventory_list_missing_title');
                     $view->setTemplate('reservationlist/add-list');
                     $view->source = $source;
                     $view->recordId = $recordId;
