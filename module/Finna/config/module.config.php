@@ -187,16 +187,6 @@ $config = [
                     ],
                 ],
             ],
-            'reservationlist-list' => [
-                'type'    => 'Laminas\Router\Http\Segment',
-                'options' => [
-                    'route'    => '/ReservationList/List[/:id]',
-                    'defaults' => [
-                        'controller' => 'ReservationList',
-                        'action'     => 'List',
-                    ],
-                ],
-            ],
             'organisation-info-image' => [
                 'type'    => 'Laminas\Router\Http\Literal',
                 'options' => [
@@ -1086,7 +1076,7 @@ $recordRoutes = [
 
 // Define non tab record actions
 $nonTabRecordActions = [
-    'Feedback', 'RepositoryLibraryRequest', 'ArchiveRequest', 'addToFinnaResourceList',
+    'Feedback', 'RepositoryLibraryRequest', 'ArchiveRequest',
 ];
 
 // Define dynamic routes -- controller => [route name => action]
@@ -1119,9 +1109,9 @@ $staticRoutes = [
     'L1/Advanced', 'L1/FacetList', 'L1/Home', 'L1/Results',
     'Record/DownloadModel',
     'Record/DownloadFile',
-    'Bazaar/Home', 'Bazaar/Cancel',
+    'Bazaar/Home',
+    'Bazaar/Cancel',
     'ReservationList/AddList',
-    'ReservationList/Home',
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
