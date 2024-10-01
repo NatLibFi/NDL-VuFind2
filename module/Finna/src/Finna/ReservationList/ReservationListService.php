@@ -536,7 +536,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      *
      * @return array [list_entity, details_entity]
      */
-    public function getListAndSettingsByListId(
+    public function getListAndDetailsByListId(
         int $listId,
         UserEntityInterface|int|null $userOrId = null
     ): array {

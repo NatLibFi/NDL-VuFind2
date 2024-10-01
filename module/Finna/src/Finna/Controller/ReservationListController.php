@@ -191,13 +191,15 @@ class ReservationListController extends AbstractBase
         if (!$user) {
             return $this->forceLogin();
         }
-        $request = $this->getRequestAsArray();
         try {
-            $list = $this->reservationListService->getListAndSettingsByListId($request['id'], $user);
+            $list = $this->reservationListService->getListAndDetailsByListId(
+                $this->getParam('id'),
+                $user
+            );
         } catch (RecordMissingException $e) {
             return $this->redirect()->toRoute('reservationlist-home');
         }
-        $results = $this->getListAsResults($request);
+        $results = $this->getListAsResults();
         $viewParams = [
             'list' => $list['list_entity'],
             'details' => $list['details_entity'],
@@ -229,7 +231,7 @@ class ReservationListController extends AbstractBase
         }
         $listId = $this->getParam('id');
         // Check that list is not ordered or deleted
-        $list = $this->reservationListService->getListAndSettingsByListId($listId, $user);
+        $list = $this->reservationListService->getListAndDetailsByListId($listId, $user);
         $details = $list['details_entity'];
         if ($details->getOrdered()) {
             throw new \VuFind\Exception\Forbidden('List not found or ordered');
@@ -411,12 +413,11 @@ class ReservationListController extends AbstractBase
     /**
      * Retrieves list of reservations as results.
      *
-     * @param mixed $request The request object.
-     *
      * @return \VuFind\Search\Base\Results
      */
-    protected function getListAsResults($request)
+    protected function getListAsResults()
     {
+        $request = $this->getRequestAsArray();
         $runner = $this->serviceLocator->get(\VuFind\Search\SearchRunner::class);
         // Set up listener for recommendations:
         $rManager = $this->serviceLocator
