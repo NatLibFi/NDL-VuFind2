@@ -361,7 +361,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
                 throw new ListPermissionException('list_access_denied');
             }
             $details = $this->resourceListDetailsService->getResourceListDetailsByListId($list);
-            $details->setPickupDate(DateTime::createFromFormat('Y-m-d H:i:s', $pickupDate))->setOrdered();
+            $details->setPickupDate(DateTime::createFromFormat('Y-m-d', $pickupDate))->setOrdered();
             $this->resourceListDetailsService->persistEntity($details);
             return true;
         } catch (\Exception $e) {

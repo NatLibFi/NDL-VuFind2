@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Reservation List Service
+ * Resource list service
  *
  * PHP version 8.1
  *
@@ -41,7 +41,7 @@ use VuFind\RecordDriver\DefaultRecord;
 use function is_int;
 
 /**
- * Reservation List Service
+ * Resource list service
  *
  * @category VuFind
  * @package  Db_Service

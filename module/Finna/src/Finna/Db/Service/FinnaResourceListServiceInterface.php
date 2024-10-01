@@ -1,7 +1,7 @@
 <?php
 
 /**
- * FinnaResourceListService interface
+ * Resource list service interface
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use VuFind\Db\Service\DbServiceInterface;
 use VuFind\RecordDriver\DefaultRecord;
 
 /**
- * FinnaResourceListService interface
+ * Resource list service interface
  *
  * @category VuFind
  * @package  Db_Service
