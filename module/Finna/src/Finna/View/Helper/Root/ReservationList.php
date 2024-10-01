@@ -176,26 +176,18 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      * Get list translations keys for list
      *
      * @param string       $building         Building to use in translation keys
-     * @param array|string $listOrIdentifier List configuration
+     * @param array|string $listOrIdentifier List configuration or list id from configuration
      *
      * @return array
      */
     public function getListTranslationKeys(string $building, array|string $listOrIdentifier): array
     {
-        $formed = '_' . $building . '_' . (
-            is_array($listOrIdentifier)
-            ? $listOrIdentifier['Identifier']
-            : $listOrIdentifier
-        );
-        $keysAndValues = [
-            'title' => 'list_title',
-            'description' => 'list_description',
-            'location' => 'list_location',
+        $identifier = is_array($listOrIdentifier) ? $listOrIdentifier['Identifier'] : $listOrIdentifier;
+        return [
+            'title' => "list_title_{$building}_{$identifier}",
+            'description' => "list_description_{$building}_{$identifier}",
+            'location' => "list_location_{$building}_{$identifier}",
         ];
-        return array_map(
-            fn ($value) => $value . $formed,
-            $keysAndValues
-        );
     }
 
     /**

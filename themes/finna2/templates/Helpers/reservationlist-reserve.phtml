@@ -6,7 +6,7 @@ return;
 <?php
   $user = $this->auth()->getManager()->getUserObject();
 ?>
-<div class="record-holdings-table table">
+<div class="record-holdings-table table archive-request-table">
   <div class="headers">
     <span class="holdings-title"><?=$this->transEsc('ReservationList::Add To Reservation List')?></span>
   </div>
@@ -15,9 +15,11 @@ return;
       <?php $translationKeys = $this->reservationList()->getListTranslationKeys($institution, $list); ?>
       <div class="holdings-group">
         <div class="holdings-container-heading">
-          <div class="location"><?= $this->transEsc(['ReservationList', $translationKeys['title']]); ?></div>
+          <div class="location">
+            <?= $this->transEsc(['ReservationList', $translationKeys['title']]); ?>
+          </div>
           <div class="location-link text-right">
-          <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-additem', [], ['query' => ['recordId' => $this->driver->getUniqueID(), 'source' => $this->driver->getSourceIdentifier(), 'institution' => $institution, 'listIdentifier' => $list['Identifier']]]))?>" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?= $this->icon('save') . ' ' . $this->transEsc(['ReservationList', 'Add To Reservation List'])?></a>
+            <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-additem', [], ['query' => ['recordId' => $this->driver->getUniqueID(), 'source' => $this->driver->getSourceIdentifier(), 'institution' => $institution, 'listIdentifier' => $list['Identifier']]]))?>" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?= $this->icon('save') . ' ' . $this->transEsc(['ReservationList', 'Add To Reservation List'])?></a>
           </div>
         </div>
       </div>
