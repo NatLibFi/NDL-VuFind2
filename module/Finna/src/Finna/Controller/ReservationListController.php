@@ -389,7 +389,7 @@ class ReservationListController extends AbstractBase
             $listID,
             $this->url()->fromRoute('reservationlist-deletebulk'),
             $this->url()->fromRoute('reservationlist-home'),
-            'confirm_delete_bulk',
+            'confirm_delete_brief',
             [],
             [
                 'listID' => $listID,
