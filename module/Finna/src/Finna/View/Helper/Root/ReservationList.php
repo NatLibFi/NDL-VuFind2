@@ -29,7 +29,6 @@
 
 namespace Finna\View\Helper\Root;
 
-use Finna\Db\Entity\FinnaResourceListDetailsEntityInterface;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\ReservationList\ReservationListService;
 use VuFind\Auth\ILSAuthenticator;
@@ -98,25 +97,13 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Get an array of configurations where record meets criteria
-     *
-     * @param DefaultRecord $driver Record driver to find lists for
-     *
-     * @return array
-     */
-    protected function getListsAvailableForRecord(DefaultRecord $driver): array
-    {
-        return $this->getListConfigurations($driver);
-    }
-
-    /**
      * Get associative array of [organisation => configurated lists] where driver matches
      *
-     * @param DefaultRecord $driver Record driver or datasource
+     * @param DefaultRecord $driver Record driver
      *
      * @return array
      */
-    protected function getListConfigurations(DefaultRecord|null $driver): array
+    protected function getListConfigurations(DefaultRecord $driver): array
     {
         $datasource = $driver->tryMethod('getDatasource', [], '');
         if (!$datasource) {
@@ -220,7 +207,7 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     public function renderReserveTemplate(DefaultRecord $driver): string
     {
         // Collect lists where we could potentially save this:
-        $lists = $this->getListsAvailableForRecord($driver);
+        $lists = $this->getListConfigurations($driver);
 
         // Set up the needed context in the view:
         $view = $this->getView();
@@ -228,9 +215,7 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Get available reservation lists for user
-     *
-     * @param UserEntityInterface|int $userOrId User entity or user id
+     * Get available reservation lists for user, user must be invoked
      *
      * @return array An array containing arrays:
      *               [
@@ -238,9 +223,9 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      *                  'details_entity' => FinnaResourceListDetailsEntityInterface
      *               ]
      */
-    public function getReservationListsForUser(UserEntityInterface|int $userOrId): array
+    public function getReservationListsForUser(): array
     {
-        return $this->reservationListService->getReservationListsForUser($userOrId);
+        return $this->reservationListService->getReservationListsForUser($this->user);
     }
 
     /**

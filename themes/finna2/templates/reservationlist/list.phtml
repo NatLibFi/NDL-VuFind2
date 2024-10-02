@@ -77,7 +77,7 @@
             <form class="form<?= $multiPageSelection ?>" id="form-reservation-<?= $this->list?->getId() ?? ''?>" method="post" name="bulkActionForm" action="<?=$this->url('reservationlist-deletebulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
               <input class="hidden all-ids-global" type="text" name="all_ids_global" value="<?= $this->escapeHtmlAttr(json_encode($this->results->getAllIds())) ?>">
               <div class="toolbar-sticky">
-                <?=$this->context($this)->renderInContext('reservationlist/bulk-action-buttons.phtml', ['idPrefix' => 'reservationlist_', 'list' => $list ?? null, 'account' => $this->account, 'lists' => $this->reservationList()->getReservationListsForUser($user)])?>
+                <?=$this->context($this)->renderInContext('reservationlist/bulk-action-buttons.phtml', ['idPrefix' => 'reservationlist_', 'list' => $list ?? null, 'account' => $this->account, 'lists' => $this->reservationList($user)->getReservationListsForUser()])?>
               </div>
               <?php foreach ($this->results->getResults() as $i => $current): ?>
                 <?php

@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Favorites aspect of the Search Multi-class (Params)
+ * ReservationList aspect of the Search Multi-class (Params)
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2016.
+ * Copyright (C) The National Library of Finland 2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,8 +21,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Search_Favorites
+ * @package  Search_ReservationList
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -30,11 +31,12 @@
 namespace Finna\Search\ReservationList;
 
 /**
- * Search Favorites Parameters
+ * Search ReservationList Parameters
  *
  * @category VuFind
- * @package  Search_Favorites
+ * @package  Search_ReservationList
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */

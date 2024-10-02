@@ -72,7 +72,7 @@ class ReservationListFactory implements FactoryInterface
             $container->get(\Finna\ReservationList\ReservationListService::class),
             $container->get(\VuFind\Auth\ILSAuthenticator::class),
             $container->get(\VuFind\ILS\Connection::class),
-            $container->get(\VuFind\Config\YamlReader::class)->get('ReservationList.yaml', true, false)
+            $container->get(\VuFind\Config\YamlReader::class)->get('ReservationList.yaml')
         );
     }
 }
