@@ -40,7 +40,6 @@ use Laminas\Session\Container;
 use Laminas\Stdlib\Parameters;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\Db\Entity\UserListEntityInterface;
 use VuFind\Db\Service\DbServiceAwareInterface;
 use VuFind\Db\Service\DbServiceAwareTrait;
 use VuFind\Db\Service\ResourceServiceInterface;
@@ -348,19 +347,19 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     /**
      * Set list ordered
      *
-     * @param UserEntityInterface         $user     User to check for rights to list
-     * @param UserListEntityInterface|int $listOrId List entity or id of the list
-     * @param Parameters                  $request  Parameters to get values from
+     * @param UserEntityInterface                  $user     User to check for rights to list
+     * @param FinnaResourceListEntityInterface|int $listOrId List entity or id of the list
+     * @param Parameters                           $request  Parameters to get values from
      *
      * @return bool
      */
     public function setListOrdered(
         UserEntityInterface $user,
-        UserListEntityInterface|int $listOrId,
+        FinnaResourceListEntityInterface|int $listOrId,
         Parameters $request
     ): bool {
         try {
-            $list = $listOrId instanceof UserListEntityInterface
+            $list = $listOrId instanceof FinnaResourceListEntityInterface
                 ? $listOrId
                 : $this->resourceListService->getResourceListById($listOrId);
             if (!$this->userCanEditList($user, $list)) {

@@ -218,8 +218,7 @@ class ReservationListController extends AbstractBase
     }
 
     /**
-     * Handles rendering and submit of dynamic forms.
-     * Form configurations are specified in FeedbackForms.yaml.
+     * Handles ordering of reservation lists
      *
      * @return mixed
      */
@@ -229,7 +228,15 @@ class ReservationListController extends AbstractBase
         if (!$user) {
             return $this->forceLogin();
         }
-        $listId = $this->getParam('id');
+        $request = $this->getRequest();
+        $listId = $this->params()->fromPost(
+            'rl_list_id',
+            $this->params()->fromQuery(
+                'id',
+                $this->params()->fromRoute('id')
+            )
+        );
+
         // Check that list is not ordered or deleted
         $list = $this->reservationListService->getListAndDetailsByListId($listId, $user);
         $details = $list['details_entity'];
@@ -248,16 +255,17 @@ class ReservationListController extends AbstractBase
         );
         $formId = Form::RESERVATION_LIST_REQUEST;
 
-        $request = $this->getRequest();
         $resourcesText = '';
         foreach ($this->reservationListService->getResourcesForList($list['list_entity'], $user) as $resource) {
             $resourcesText .= $resource->getRecordId() . '||' . $resource->getTitle() . PHP_EOL;
         }
+        // Set reservationlist specific form values
         $request->getPost()
             ->set('rl_list_id', $listId)
             ->set('rl_institution', $details->getInstitution())
             ->set('rl_list_identifier', $details->getListConfigIdentifier())
             ->set('record_ids', $resourcesText);
+
         $form = $this->getService(\Finna\Form\Form::class);
         $params = [];
         if ($refererHeader = $this->getRequest()->getHeader('Referer')) {
@@ -292,12 +300,14 @@ class ReservationListController extends AbstractBase
             return $view;
         }
 
+        // Override recipients to match lists configured recipients:
+        $request->getPost()->set('recipient', $configuration['Recipient']);
         $primaryHandler = $form->getPrimaryHandler();
         $success = $primaryHandler->handle($form, $params, $user);
         if ($success) {
-            $view->setVariable('successMessage', $form->getSubmitResponse());
-            $view->setTemplate('feedback/response');
+            $this->flashMessenger()->addSuccessMessage($form->getSubmitResponse());
             $this->reservationListService->setListOrdered($user, $list['list_entity'], $request->getPost());
+            return $this->getRefreshResponse();
         } else {
             $this->flashMessenger()->addErrorMessage(
                 $this->translate('could_not_process_feedback')

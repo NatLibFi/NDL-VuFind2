@@ -343,6 +343,10 @@ class Form extends \VuFind\Form\Form
      */
     public function getRecipient($postParams = null)
     {
+        // Always get recipients from postparams
+        if ($this->getFormId() === self::RESERVATION_LIST_REQUEST) {
+            return $postParams['recipient'];
+        }
         // Get recipient email address for feedback form from data source
         // configuration:
         if ($this->getFormId() === 'FeedbackRecord') {
@@ -363,22 +367,6 @@ class Form extends \VuFind\Form\Form
                     'email' => $recipientEmail,
                 ],
             ];
-        }
-
-        if ($this->getFormId() === self::RESERVATION_LIST_REQUEST) {
-            try {
-                $reservationListHelper = $this->viewHelperManager->get('reservationList');
-                $listConfiguration = $reservationListHelper->getListConfiguration(
-                    $postParams['rl_institution'],
-                    $postParams['rl_list_identifier']
-                );
-                if (!$reservationListHelper->checkUserRightsForList($listConfiguration)) {
-                    throw new \VuFind\Exception\ListPermission('list_access_denied');
-                }
-                return $listConfiguration['Recipient'];
-            } catch (Exception $e) {
-                throw new Exception('Invalid form configuration in ReservationList.yaml');
-            }
         }
 
         if ($recipient = $this->getRecipientFromFormData($postParams)) {
@@ -751,6 +739,7 @@ class Form extends \VuFind\Form\Form
                 $elements[$key] = ['type' => 'hidden', 'name' => $key, 'value' => null];
             }
         }
+        // Add hidden fields for reservation list order form
         if (self::RESERVATION_LIST_REQUEST === $this->getFormId()) {
             $elements['rl_institution'] = ['type' => 'hidden', 'name' => 'rl_institution', 'value' => null];
             $elements['rl_list_identifier'] = ['type' => 'hidden', 'name' => 'rl_list_identifier', 'value' => null];
