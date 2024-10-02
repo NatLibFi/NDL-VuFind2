@@ -65,16 +65,6 @@ class Email extends \VuFind\Form\Handler\Email
             );
             return false;
         }
-
-        $result = parent::handle($form, $params, $user);
-
-        if ($form->getFormId() === \Finna\Form\Form::RESERVATION_LIST_REQUEST && $result) {
-            $reservationListHelper = $this->viewRenderer->plugin('reservationList');
-            ($reservationListHelper)($user)->setListOrdered(
-                (int)$params->fromPost('rl_list_id'),
-                $params->fromPost('pickup_date')
-            );
-        }
-        return $result;
+        return parent::handle($form, $params, $user);
     }
 }

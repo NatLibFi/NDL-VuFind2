@@ -35,7 +35,6 @@ use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\RecordDriver\DefaultRecord;
 
 use function in_array;
-use function is_array;
 
 /**
  * Configurable form.
@@ -212,32 +211,6 @@ class Form extends \VuFind\Form\Form
             [$source, $recId] = explode('|', $data['record_id'], 2);
             $driver = $this->recordLoader->load($recId, $source);
             $this->setRecord($driver);
-        }
-        // Either already formed string for records or an array of records to convert into a string
-        if (!empty($data['record_ids']) && is_array($data['record_ids'])) {
-            if (!$this->recordLoader) {
-                throw new \Exception('Record loader not set');
-            }
-            $sourceAndRecords = [];
-            foreach ($data['record_ids'] as $id) {
-                [$source, $recId] = explode('|', $id, 2);
-                if (!isset($sourceAndRecords[$source])) {
-                    $sourceAndRecords[$source] = [];
-                }
-                $sourceAndRecords[$source][] = $recId;
-            }
-            $drivers = [];
-            foreach ($sourceAndRecords as $source => $ids) {
-                $drivers = [
-                    ...$drivers,
-                    ...$this->recordLoader->loadBatchForSource($ids, $source),
-                ];
-            }
-            $recordsDisplay = '';
-            foreach ($drivers as $record) {
-                $recordsDisplay .= $record->getUniqueID() . '||' . $record->getTitle() . PHP_EOL;
-            }
-            $data['record_ids'] = $recordsDisplay;
         }
         return parent::setData($data);
     }

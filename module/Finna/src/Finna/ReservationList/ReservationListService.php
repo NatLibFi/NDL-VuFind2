@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Favorites service
+ * Reservation list service
  *
  * PHP version 8
  *
@@ -21,8 +21,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Favorites
+ * @package  ReservationList
  * @author   Demian Katz <demian.katz@villanova.edu>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
@@ -39,6 +40,7 @@ use Laminas\Session\Container;
 use Laminas\Stdlib\Parameters;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\Db\Entity\UserListEntityInterface;
 use VuFind\Db\Service\DbServiceAwareInterface;
 use VuFind\Db\Service\DbServiceAwareTrait;
 use VuFind\Db\Service\ResourceServiceInterface;
@@ -56,11 +58,12 @@ use VuFind\RecordDriver\DefaultRecord;
 use function in_array;
 
 /**
- * Favorites service
+ * Reservation list service
  *
  * @category VuFind
- * @package  Favorites
+ * @package  ReservationList
  * @author   Demian Katz <demian.katz@villanova.edu>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
@@ -145,8 +148,6 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         if (!$force && !$this->userCanEditList($user, $list)) {
             throw new ListPermissionException('list_access_denied');
         }
-
-        // Remove user_resource and resource_tags rows for favorites tags:
         $listUser = $list->getUser();
         $this->resourceListResourceService->unlinkResources(null, $listUser, $list);
         $this->resourceListService->deleteResourceList($list);
@@ -272,7 +273,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     /**
      * Add/update a resource in the user's account.
      *
-     * @param UserEntityInterface|int              $userOrId     The user entity or ID saving the favorites
+     * @param UserEntityInterface|int              $userOrId     The user entity or ID saving the reservations
      * @param ResourceEntityInterface|int          $resourceOrId The resource entity or ID to add/update
      * @param FinnaResourceListEntityInterface|int $listOrId     The list entity or ID to store the resource in.
      * @param string                               $notes        User notes about the resource.
@@ -315,7 +316,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      *
      * @return array list information
      */
-    public function saveRecordToResourceList(
+    public function saveRecordToReservationList(
         Parameters $params,
         UserEntityInterface $user,
         RecordDriver $driver
@@ -347,21 +348,26 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     /**
      * Set list ordered
      *
-     * @param UserEntityInterface $user       User to check for rights to list
-     * @param int                 $listId     Id of the list to set ordered
-     * @param string              $pickupDate Date for the order to be picked up
+     * @param UserEntityInterface         $user     User to check for rights to list
+     * @param UserListEntityInterface|int $listOrId List entity or id of the list
+     * @param Parameters                  $request  Parameters to get values from
      *
      * @return bool
      */
-    public function setListOrdered(UserEntityInterface $user, int $listId, string $pickupDate): bool
-    {
+    public function setListOrdered(
+        UserEntityInterface $user,
+        UserListEntityInterface|int $listOrId,
+        Parameters $request
+    ): bool {
         try {
-            $list = $this->resourceListService->getResourceListById($listId);
+            $list = $listOrId instanceof UserListEntityInterface
+                ? $listOrId
+                : $this->resourceListService->getResourceListById($listOrId);
             if (!$this->userCanEditList($user, $list)) {
                 throw new ListPermissionException('list_access_denied');
             }
             $details = $this->resourceListDetailsService->getResourceListDetailsByListId($list);
-            $details->setPickupDate(DateTime::createFromFormat('Y-m-d', $pickupDate))->setOrdered();
+            $details->setPickupDate(DateTime::createFromFormat('Y-m-d', $request->get('pickup_date')))->setOrdered();
             $this->resourceListDetailsService->persistEntity($details);
             return true;
         } catch (\Exception $e) {
@@ -469,40 +475,15 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Support method for saveBulk() -- save a batch of records to the cache.
-     *
-     * @param array $cacheRecordIds Array of IDs in source|id format
-     *
-     * @return void
-     */
-    protected function cacheBatch(array $cacheRecordIds)
-    {
-        if ($cacheRecordIds && $this->recordCache) {
-            // Disable the cache so that we fetch latest versions, not cached ones:
-            $this->recordLoader->setCacheContext(RecordCache::CONTEXT_DISABLED);
-            $records = $this->recordLoader->loadBatch($cacheRecordIds);
-            // Re-enable the cache so that we actually save the records:
-            $this->recordLoader->setCacheContext(RecordCache::CONTEXT_FAVORITE);
-            foreach ($records as $record) {
-                $this->recordCache->createOrUpdate(
-                    $record->getUniqueID(),
-                    $record->getSourceIdentifier(),
-                    $record->getRawData()
-                );
-            }
-        }
-    }
-
-    /**
      * Delete a group of resources.
      *
      * @param string[]            $ids    Array of IDs in source|id format.
-     * @param ?int                $listID ID of list to delete from (null for all lists)
+     * @param int                 $listID ID of list to delete from
      * @param UserEntityInterface $user   Logged in user
      *
      * @return void
      */
-    public function deleteResourcesFromList(array $ids, ?int $listID, UserEntityInterface $user): void
+    public function deleteResourcesFromList(array $ids, int $listID, UserEntityInterface $user): void
     {
         // Sort $ids into useful array:
         $sorted = [];
@@ -513,18 +494,9 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
             }
             $sorted[$source][] = $id;
         }
-
-        // Delete favorites one source at a time, using a different object depending
-        // on whether we are working with a list or user favorites.
-        if (empty($listID)) {
-            foreach ($sorted as $source => $ids) {
-                $this->removeUserResourcesById($user, $ids, $source);
-            }
-        } else {
-            $list = $this->resourceListService->getResourceListById($listID);
-            foreach ($sorted as $source => $ids) {
-                $this->removeListResourcesById($list, $user, $ids, $source);
-            }
+        $list = $this->resourceListService->getResourceListById($listID);
+        foreach ($sorted as $source => $ids) {
+            $this->removeListResourcesById($list, $user, $ids, $source);
         }
     }
 
@@ -585,22 +557,6 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
             ];
         }
         return $result;
-    }
-
-    /**
-     * Get list details
-     *
-     * @param FinnaResourceListEntityInterface|int $listOrId List id
-     *
-     * @return FinnaResourceListDetailsEntityInterface
-     */
-    public function getListDetails(
-        FinnaResourceListEntityInterface|int $listOrId
-    ): FinnaResourceListDetailsEntityInterface {
-        $id = $listOrId instanceof FinnaResourceListEntityInterface
-            ? $listOrId->getId()
-            : $listOrId;
-        return $this->resourceListDetailsService->getResourceListDetailsByListId($id, self::RESOURCE_LIST_TYPE);
     }
 
     /**

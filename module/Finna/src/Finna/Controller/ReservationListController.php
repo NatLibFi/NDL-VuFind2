@@ -157,7 +157,7 @@ class ReservationListController extends AbstractBase
                     $request->getPost()
                 );
             } elseif ('saveItem' === $state) {
-                $this->reservationListService->saveRecordToResourceList(
+                $this->reservationListService->saveRecordToReservationList(
                     $request->getPost(),
                     $this->getUser(),
                     $driver,
@@ -246,20 +246,64 @@ class ReservationListController extends AbstractBase
             $details->getInstitution(),
             $details->getListConfigIdentifier()
         );
-        $formId = $configuration['FormIdentifier'] ?? Form::RESERVATION_LIST_REQUEST;
+        $formId = Form::RESERVATION_LIST_REQUEST;
 
-        // Call form handler here instead of feedback-formaction
-        return $this->redirect()->toRoute(
-            'feedback-form',
-            ['id' => $formId],
-            ['query' => [
-                'layout' => $this->getRequest()->getQuery('layout', false),
-                'record_ids' => $sourceRecordIds,
-                'rl_list_id' => $listId,
-                'rl_institution' => $details->getInstitution(),
-                'rl_list_identifier' => $details->getListConfigIdentifier(),
-            ]]
-        );
+        $request = $this->getRequest();
+        $resourcesText = '';
+        foreach ($this->reservationListService->getResourcesForList($list['list_entity'], $user) as $resource) {
+            $resourcesText .= $resource->getRecordId() . '||' . $resource->getTitle() . PHP_EOL;
+        }
+        $request->getPost()
+            ->set('rl_list_id', $listId)
+            ->set('rl_institution', $details->getInstitution())
+            ->set('rl_list_identifier', $details->getListConfigIdentifier())
+            ->set('record_ids', $resourcesText);
+        $form = $this->getService(\Finna\Form\Form::class);
+        $params = [];
+        if ($refererHeader = $this->getRequest()->getHeader('Referer')) {
+            $params['referrer'] = $refererHeader->getFieldValue();
+        }
+        if ($userAgentHeader = $this->getRequest()->getHeader('User-Agent')) {
+            $params['userAgent'] = $userAgentHeader->getFieldValue();
+        }
+        $form->setFormId($formId, $params, $request->getPost()->toArray());
+
+        if (!$form->isEnabled()) {
+            throw new \VuFind\Exception\Forbidden("Form '$formId' is disabled");
+        }
+
+        $view = $this->createViewModel(compact('form', 'formId', 'user'));
+        $view->setTemplate('feedback/form');
+        $view->useCaptcha = false;
+
+        $params = $this->params();
+        $form->setData($request->getPost()->toArray());
+        if (!$this->formWasSubmitted(useCaptcha: false)) {
+            $form->setData(
+                [
+                 'name' => $user->getFirstname() . ' ' . $user->getLastname(),
+                 'email' => $user->getEmail(),
+                ]
+            );
+            return $view;
+        }
+
+        if (!$form->isValid()) {
+            return $view;
+        }
+
+        $primaryHandler = $form->getPrimaryHandler();
+        $success = $primaryHandler->handle($form, $params, $user);
+        if ($success) {
+            $view->setVariable('successMessage', $form->getSubmitResponse());
+            $view->setTemplate('feedback/response');
+            $this->reservationListService->setListOrdered($user, $list['list_entity'], $request->getPost());
+        } else {
+            $this->flashMessenger()->addErrorMessage(
+                $this->translate('could_not_process_feedback')
+            );
+        }
+        return $view;
     }
 
     /**

@@ -262,30 +262,4 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
             $this->user
         );
     }
-
-    /**
-     * Get list details
-     *
-     * @param FinnaResourceListEntityInterface|int $listOrId List id
-     *
-     * @return FinnaResourceListDetailsEntityInterface
-     */
-    public function getListDetails(
-        FinnaResourceListEntityInterface|int $listOrId
-    ): FinnaResourceListDetailsEntityInterface {
-        return $this->reservationListService->getListDetails($listOrId);
-    }
-
-    /**
-     * Set list ordered
-     *
-     * @param int    $listId     Id of the list to set ordered
-     * @param string $pickupDate Pickupdate in string format
-     *
-     * @return bool
-     */
-    public function setListOrdered(int $listId, string $pickupDate): bool
-    {
-        return $this->reservationListService->setListOrdered($this->user, $listId, $pickupDate);
-    }
 }

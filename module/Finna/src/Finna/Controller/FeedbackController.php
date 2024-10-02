@@ -78,22 +78,6 @@ class FeedbackController extends \VuFind\Controller\FeedbackController implement
                 $request->getPost()->set('record', $driver->getBreadcrumb());
             }
         }
-        $this->setReservationListValuesToPost();
         return parent::formAction();
-    }
-
-    /**
-     * Helper function to set ReservationList specific post values
-     *
-     * @return void
-     */
-    protected function setReservationListValuesToPost(): void
-    {
-        $request = $this->getRequest();
-        foreach (['rl_list_identifier', 'rl_institution', 'rl_list_id', 'record_ids'] as $key) {
-            if (null === $request->getPost($key) && $queryValue = $request->getQuery($key)) {
-                $request->getPost()->set($key, $queryValue);
-            }
-        }
     }
 }
