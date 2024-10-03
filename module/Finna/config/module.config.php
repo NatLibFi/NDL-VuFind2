@@ -730,10 +730,12 @@ $config = [
             'form_handler' => [
                 'factories' => [
                     'Finna\Form\Handler\Api' => 'Finna\Form\Handler\ApiFactory',
+                    'Finna\Form\Handler\Database' => 'Finna\Form\Handler\DatabaseFactory',
                     'Finna\Form\Handler\Email' => 'VuFind\Form\Handler\EmailFactory',
                 ],
                 'aliases' => [
                     'api' => 'Finna\Form\Handler\Api',
+
                     'VuFind\Form\Handler\Database' => 'Finna\Form\Handler\Database',
                     'VuFind\Form\Handler\Email' => 'Finna\Form\Handler\Email',
                 ],
