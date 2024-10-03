@@ -18,7 +18,7 @@
       <?=$this->icon('chevron-right')?>
     </button>
   </div>
-  <div class="splide__track carousel">
+  <div class="splide__track carousel-inner">
     <ul class="splide__list carousel-feed">
       <?php $items = isset($this->visualItems) ? array_slice($this->items, 0, $this->visualItems) : $this->items; ?>
       <?php foreach ($items as $item): ?>
