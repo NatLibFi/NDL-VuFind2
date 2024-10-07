@@ -76,16 +76,6 @@ class FinnaResourceListResource extends \VuFind\Db\Row\RowGateway implements Fin
     }
 
     /**
-     * Get user id
-     *
-     * @return int
-     */
-    public function getUserId(): int
-    {
-        return $this->user_id;
-    }
-
-    /**
      * Set user
      *
      * @param UserEntityInterface $user User entity

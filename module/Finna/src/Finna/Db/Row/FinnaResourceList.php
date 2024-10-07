@@ -88,16 +88,6 @@ class FinnaResourceList extends RowGateway implements
     }
 
     /**
-     * Get user id
-     *
-     * @return int
-     */
-    public function getUserId(): int
-    {
-        return $this->user_id;
-    }
-
-    /**
      * Get user
      *
      * @return ?UserEntityInterface

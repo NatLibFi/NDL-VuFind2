@@ -124,13 +124,6 @@ interface FinnaResourceListResourceEntityInterface extends EntityInterface
     public function getNotes(): string;
 
     /**
-     * Get user id
-     *
-     * @return int
-     */
-    public function getUserId(): int;
-
-    /**
      * Set user id from user entity
      *
      * @param UserEntityInterface $user User entity
