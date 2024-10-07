@@ -178,7 +178,7 @@ class FinnaResourceListService extends AbstractDbService implements
         $listsContaining = iterator_to_array(
             $this->getDbTable(FinnaResourceListResource::class)->select(
                 ['resource_id' => $resource->getId(), 'user_id' => $user->getId()]
-            );
+            )
         );
         $listIds = [];
         if ($listsContaining) {

@@ -51,6 +51,12 @@ use VuFind\Db\Row\RowGateway;
  * @property string $title
  * @property string $description
  * @property string $created
+ * @property string $institution
+ * @property string $list_config_identifier
+ * @property string $list_type
+ * @property string $ordered
+ * @property string $pickup_date
+ * @property string $connection
  */
 class FinnaResourceList extends RowGateway implements
     \VuFind\Db\Service\DbServiceAwareInterface,
@@ -297,16 +303,6 @@ class FinnaResourceList extends RowGateway implements
     }
 
     /**
-     * Get the list ID.
-     *
-     * @return int
-     */
-    public function getListId(): int
-    {
-        return $this->list_id;
-    }
-
-    /**
      * Get the list configuration identifier.
      *
      * @return string
@@ -314,19 +310,6 @@ class FinnaResourceList extends RowGateway implements
     public function getListConfigIdentifier(): string
     {
         return $this->list_config_identifier;
-    }
-
-    /**
-     * Set the list ID.
-     *
-     * @param int $listId List ID
-     *
-     * @return FinnaResourceListEntityInterface
-     */
-    public function setListId(int $listId): FinnaResourceListEntityInterface
-    {
-        $this->list_id = $listId;
-        return $this;
     }
 
     /**

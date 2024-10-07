@@ -121,9 +121,6 @@ class ReservationListController extends AbstractBase
             false
         );
         $configuration = ($this->reservationListHelper)($user)->getListConfiguration($institution, $listIdentifier);
-        /**
-         * Check if the driver is really compatible with given list
-         */
         if (!$configuration) {
             throw new \VuFind\Exception\Forbidden('Record is not allowed in the list');
         }
@@ -140,9 +137,7 @@ class ReservationListController extends AbstractBase
                     $view->recordId = $recordId;
                     return $view;
                 }
-                $list = $this->reservationListService->createListForUser(
-                    $this->getUser()
-                );
+                $list = $this->reservationListService->createListForUser($user);
                 $this->reservationListService->updateListFromRequest(
                     $list,
                     $user,
@@ -151,12 +146,12 @@ class ReservationListController extends AbstractBase
             } elseif ('saveItem' === $state) {
                 $this->reservationListService->saveRecordToReservationList(
                     $request->getPost(),
-                    $this->getUser(),
+                    $user,
                     $driver,
                 );
                 return $this->inLightbox()  // different behavior for lightbox context
                   ? $this->getRefreshResponse()
-                  : $this->redirect()->toRoute('home');
+                  : $this->redirect()->toRoute('reservationlist-home');
             }
         }
         $view->lists = $this->reservationListService->getListsNotContainingRecord(
@@ -219,25 +214,12 @@ class ReservationListController extends AbstractBase
             return $this->forceLogin();
         }
         $request = $this->getRequest();
-        $listId = $this->params()->fromPost(
-            'rl_list_id',
-            $this->params()->fromQuery(
-                'id',
-                $this->params()->fromRoute('id')
-            )
-        );
-
+        $listId = $request->getPost('rl_list_id') ?? $this->getParam('id');
         // Check that list is not ordered or deleted
         $list = $this->reservationListService->getListById($listId, $user);
         if ($list->getOrdered()) {
             throw new \VuFind\Exception\Forbidden('List not found or ordered');
         }
-        // Get all resources in the list as recordsIds
-        $sourceRecordIds = array_map(
-            fn ($resource) => $resource->getSource() . '|' . $resource->getRecordId(),
-            $this->reservationListService->getResourcesForList($list, $user)
-        );
-
         $configuration = $this->reservationListHelper->getListConfiguration(
             $list->getInstitution(),
             $list->getListConfigIdentifier()

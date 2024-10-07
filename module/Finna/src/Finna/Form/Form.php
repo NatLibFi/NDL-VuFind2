@@ -181,7 +181,7 @@ class Form extends \VuFind\Form\Form
                 $this->userCatUsername = $barcode;
             }
         }
-        if ($this->reportPatronId() && $catId = $this->user?->getCatId() ?? '') {
+        if ($this->reportPatronId() && $catId = $this->user?->getCatId()) {
             [, $id] = explode('.', $catId);
             $this->userCatId = $id;
         }

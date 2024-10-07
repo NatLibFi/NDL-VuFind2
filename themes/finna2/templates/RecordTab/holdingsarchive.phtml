@@ -3,7 +3,7 @@
 <?php if ($this->driver->tryMethod('archiveRequestAllowed')): ?>
   <?php $user = $this->auth()->getManager()->getUserObject(); ?>
   <!-- Display lists where it has been saved: -->
-  <div class="archive-request-table table record-holdings-url-table">
+  <div class="reservation-request-table table record-holdings-url-table">
     <div class="headers">
       <span class="holdings-url-title"><?=$this->transEsc('ReservationList::Reserve to Research Room')?></span>
     </div>

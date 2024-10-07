@@ -84,7 +84,7 @@
                   /** @var \Finna\View\Helper\Root\Record */
                   $recordHelper = $this->record($current);
                 ?>
-                <?= $recordHelper->renderTemplate('reservation-list-entry.phtml', ['driver' => $current, 'user' => $this->user]) ?>
+                <?= $recordHelper->renderTemplate('list-entry.phtml', ['driver' => $current, 'user' => $this->user]) ?>
               <?php endforeach; ?>
             </form>
           </div>
