@@ -83,6 +83,7 @@ class FeedbackController extends \VuFind\Controller\FeedbackController implement
                 $request->getPost()->set('record', $driver->getBreadcrumb());
             }
         }
+
         return parent::formAction();
     }
 }
