@@ -62,7 +62,6 @@ class ReservationListServiceFactory implements FactoryInterface
             $serviceManager->get(\Finna\Db\Service\FinnaResourceListResourceServiceInterface::class),
             $serviceManager->get(\VuFind\Db\Service\ResourceServiceInterface::class),
             $serviceManager->get(\VuFind\Db\Service\UserServiceInterface::class),
-            $serviceManager->get(\Finna\Db\Service\FinnaResourceListDetailsServiceInterface::class),
             $container->get(\VuFind\Record\ResourcePopulator::class),
             $container->get(\Finna\Record\Loader::class),
             $container->get(\VuFind\Record\Cache::class),

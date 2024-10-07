@@ -16,26 +16,24 @@
   <h2><?=$title ?></h2>
   <?= $this->flashmessages() ?>
   <ul class="reservations-list-home-ul">
-    <?php foreach ($this->lists ?? [] as $wrapper): ?>
+    <?php foreach ($this->lists ?? [] as $list): ?>
       <?php
-        $list = $wrapper['list_entity'];
-        $details = $wrapper['details_entity'];
-        $listTranslations = $this->reservationList()->getListTranslationKeys($details->getInstitution(), ['Identifier' => $details->getListConfigIdentifier()]);
+        $listTranslations = $this->reservationList()->getListTranslationKeys($list->getInstitution(), ['Identifier' => $list->getListConfigIdentifier()]);
       ?>
       <li class="reservations-list-home-li">
         <div class="reservation-list-header">
           <div>
-            <a href="<?= $this->url('reservationlist-list', ['id' => $list['id']])?>"><?= $this->escapeHtml($list['title']) ?></a>
+            <a href="<?= $this->url('reservationlist-list', ['id' => $list->getId()])?>"><?= $this->escapeHtml($list->getTitle()) ?></a>
           </div>
           <div class="pull-right">
-            <a href="<?= $this->url('reservationlist-delete', ['id' => $list['id']])?>" data-lightbox=""><?= $this->transEsc('ReservationList::Delete List') ?></a>
+            <a href="<?= $this->url('reservationlist-delete', ['id' => $list->getId()])?>" data-lightbox=""><?= $this->transEsc('ReservationList::Delete List') ?></a>
           </div>
         </div>
         <div class="reservation-list-info">
           <div><?= $this->transEsc(['ReservationList', $listTranslations['title']]); ?></div>
-          <?php if ($details->getOrdered()): ?>
+          <?php if ($list->getOrdered()): ?>
             <div class="list-ordered list-info">
-              <?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $details->getOrdered()->format('d.m.Y')])?>
+              <?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $list->getOrdered()->format('d.m.Y')])?>
             </div>
           <?php endif; ?>
         </div>

@@ -49,6 +49,12 @@ use VuFind\Db\Entity\UserEntityInterface;
  * @property string $title
  * @property string $description
  * @property string $created
+ * @property string $institution
+ * @property string $list_config_identifier
+ * @property string $list_type
+ * @property string $ordered
+ * @property string $pickup_date
+ * @property string $connection
  */
 interface FinnaResourceListEntityInterface extends EntityInterface
 {
@@ -129,4 +135,98 @@ interface FinnaResourceListEntityInterface extends EntityInterface
      * @return DateTime
      */
     public function getCreated(): DateTime;
+
+    /**
+     * Get the institution
+     *
+     * @return string
+     */
+    public function getInstitution(): string;
+
+    /**
+     * Set the institution
+     *
+     * @param string $institution Institution
+     *
+     * @return FinnaResourceListEntityInterface
+     */
+    public function setInstitution(string $institution): FinnaResourceListEntityInterface;
+
+    /**
+     * Get the list configuration identifier
+     *
+     * @return string
+     */
+    public function getListConfigIdentifier(): string;
+
+    /**
+     * Set the list configuration identifier
+     *
+     * @param string $listConfigIdentifier List configuration identifier
+     *
+     * @return FinnaResourceListEntityInterface
+     */
+    public function setListConfigIdentifier(string $listConfigIdentifier): FinnaResourceListEntityInterface;
+
+    /**
+     * Get the list type
+     *
+     * @return string
+     */
+    public function getListType(): string;
+
+    /**
+     * Set the list type
+     *
+     * @param string $listType List type
+     *
+     * @return FinnaResourceListEntityInterface
+     */
+    public function setListType(string $listType): FinnaResourceListEntityInterface;
+
+    /**
+     * Get the ordered flag
+     *
+     * @return ?DateTime
+     */
+    public function getOrdered(): ?DateTime;
+
+    /**
+     * Set the ordered flag
+     *
+     * @return FinnaResourceListEntityInterface
+     */
+    public function setOrdered(): FinnaResourceListEntityInterface;
+
+    /**
+     * Get the pickup date
+     *
+     * @return ?DateTime
+     */
+    public function getPickupDate(): ?DateTime;
+
+    /**
+     * Set the pickup date
+     *
+     * @param DateTime $pickupDate Pickup date
+     *
+     * @return FinnaResourceListEntityInterface
+     */
+    public function setPickupDate(DateTime $pickupDate): FinnaResourceListEntityInterface;
+
+    /**
+     * Get the connection
+     *
+     * @return string
+     */
+    public function getConnection(): string;
+
+    /**
+     * Set the connection
+     *
+     * @param string $connection Connection
+     *
+     * @return FinnaResourceListEntityInterface
+     */
+    public function setConnection(string $connection): FinnaResourceListEntityInterface;
 }

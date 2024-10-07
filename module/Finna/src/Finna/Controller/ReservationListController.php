@@ -85,16 +85,9 @@ class ReservationListController extends AbstractBase
      */
     protected function getParam(string $param, mixed $default = null): mixed
     {
-        return $this->params()->fromRoute(
-            $param,
-            $this->params()->fromPost(
-                $param,
-                $this->params()->fromQuery(
-                    $param,
-                    $default
-                )
-            )
-        );
+        return $this->params()->fromRoute($param)
+            ?? $this->params()->fromPost($param)
+            ?? $this->params()->fromQuery($param, $default);
     }
 
     /**
@@ -151,8 +144,7 @@ class ReservationListController extends AbstractBase
                     $this->getUser()
                 );
                 $this->reservationListService->updateListFromRequest(
-                    $list['list_entity'],
-                    $list['details_entity'],
+                    $list,
                     $user,
                     $request->getPost()
                 );
@@ -169,8 +161,7 @@ class ReservationListController extends AbstractBase
         }
         $view->lists = $this->reservationListService->getListsNotContainingRecord(
             $this->getUser(),
-            $driver->getUniqueID(),
-            $source,
+            $driver,
             $listIdentifier,
             $institution
         );
@@ -192,7 +183,7 @@ class ReservationListController extends AbstractBase
             return $this->forceLogin();
         }
         try {
-            $list = $this->reservationListService->getListAndDetailsByListId(
+            $list = $this->reservationListService->getListById(
                 $this->getParam('id'),
                 $user
             );
@@ -201,8 +192,7 @@ class ReservationListController extends AbstractBase
         }
         $results = $this->getListAsResults();
         $viewParams = [
-            'list' => $list['list_entity'],
-            'details' => $list['details_entity'],
+            'list' => $list,
             'results' => $results,
             'params' => $results->getParams(),
             'enabled' => true,
@@ -238,32 +228,31 @@ class ReservationListController extends AbstractBase
         );
 
         // Check that list is not ordered or deleted
-        $list = $this->reservationListService->getListAndDetailsByListId($listId, $user);
-        $details = $list['details_entity'];
-        if ($details->getOrdered()) {
+        $list = $this->reservationListService->getListById($listId, $user);
+        if ($list->getOrdered()) {
             throw new \VuFind\Exception\Forbidden('List not found or ordered');
         }
         // Get all resources in the list as recordsIds
         $sourceRecordIds = array_map(
             fn ($resource) => $resource->getSource() . '|' . $resource->getRecordId(),
-            $this->reservationListService->getResourcesForList($list['list_entity'], $user)
+            $this->reservationListService->getResourcesForList($list, $user)
         );
 
         $configuration = $this->reservationListHelper->getListConfiguration(
-            $details->getInstitution(),
-            $details->getListConfigIdentifier()
+            $list->getInstitution(),
+            $list->getListConfigIdentifier()
         );
         $formId = Form::RESERVATION_LIST_REQUEST;
 
         $resourcesText = '';
-        foreach ($this->reservationListService->getResourcesForList($list['list_entity'], $user) as $resource) {
+        foreach ($this->reservationListService->getResourcesForList($list, $user) as $resource) {
             $resourcesText .= $resource->getRecordId() . '||' . $resource->getTitle() . PHP_EOL;
         }
         // Set reservationlist specific form values
         $request->getPost()
             ->set('rl_list_id', $listId)
-            ->set('rl_institution', $details->getInstitution())
-            ->set('rl_list_identifier', $details->getListConfigIdentifier())
+            ->set('rl_institution', $list->getInstitution())
+            ->set('rl_list_identifier', $list->getListConfigIdentifier())
             ->set('record_ids', $resourcesText);
 
         $form = $this->getService(\Finna\Form\Form::class);
@@ -305,8 +294,8 @@ class ReservationListController extends AbstractBase
         $primaryHandler = $form->getPrimaryHandler();
         $success = $primaryHandler->handle($form, $params, $user);
         if ($success) {
+            $this->reservationListService->setListOrdered($user, $list, $request->getPost());
             $this->flashMessenger()->addSuccessMessage($form->getSubmitResponse());
-            $this->reservationListService->setListOrdered($user, $list['list_entity'], $request->getPost());
             return $this->getRefreshResponse();
         } else {
             $this->flashMessenger()->addErrorMessage(

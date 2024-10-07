@@ -182,4 +182,163 @@ class FinnaResourceList extends RowGateway implements
         $this->description = $description;
         return $this;
     }
+
+    /**
+     * Get the institution.
+     *
+     * @return string
+     */
+    public function getInstitution(): string
+    {
+        return $this->institution;
+    }
+
+    /**
+     * Set the institution.
+     *
+     * @param string $institution Institution
+     *
+     * @return FinnaResourceListEntityInterface
+     */
+    public function setInstitution(string $institution): FinnaResourceListEntityInterface
+    {
+        $this->institution = $institution;
+        return $this;
+    }
+
+    /**
+     * Set list ordered date.
+     *
+     * @return mixed
+     */
+    public function setOrdered(): FinnaResourceListEntityInterface
+    {
+        $this->ordered = (new DateTime())->format('Y-m-d H:i:s');
+        return $this;
+    }
+
+    /**
+     * Set list pickup date.
+     *
+     * @param DateTime $pickup_date Pickup date
+     *
+     * @return FinnaResourceListEntityInterface
+     */
+    public function setPickupDate(DateTime $pickup_date): FinnaResourceListEntityInterface
+    {
+        $this->pickup_date = $pickup_date->format('Y-m-d H:i:s');
+        return $this;
+    }
+
+    /**
+     * Set list connection.
+     *
+     * @param string $connection Connection
+     *
+     * @return FinnaResourceListEntityInterface
+     */
+    public function setConnection(string $connection): FinnaResourceListEntityInterface
+    {
+        $this->connection = $connection;
+        return $this;
+    }
+
+    /**
+     * Get list connection.
+     *
+     * @return string
+     */
+    public function getConnection(): string
+    {
+        return $this->connection;
+    }
+
+    /**
+     * Get list type.
+     *
+     * @return string
+     */
+    public function getListType(): string
+    {
+        return $this->list_type;
+    }
+
+    /**
+     * Set list type.
+     *
+     * @param string $listType List type
+     *
+     * @return FinnaResourceListEntityInterface
+     */
+    public function setListType(string $listType): FinnaResourceListEntityInterface
+    {
+        $this->list_type = $listType;
+        return $this;
+    }
+
+    /**
+     * Get list ordered date.
+     *
+     * @return ?DateTime
+     */
+    public function getOrdered(): ?DateTime
+    {
+        return $this->ordered ? DateTime::createFromFormat('Y-m-d H:i:s', $this->ordered) : null;
+    }
+
+    /**
+     * Get list pickup date.
+     *
+     * @return ?DateTime
+     */
+    public function getPickupDate(): ?DateTime
+    {
+        return $this->pickup_date ? DateTime::createFromFormat('Y-m-d H:i:s', $this->pickup_date) : null;
+    }
+
+    /**
+     * Get the list ID.
+     *
+     * @return int
+     */
+    public function getListId(): int
+    {
+        return $this->list_id;
+    }
+
+    /**
+     * Get the list configuration identifier.
+     *
+     * @return string
+     */
+    public function getListConfigIdentifier(): string
+    {
+        return $this->list_config_identifier;
+    }
+
+    /**
+     * Set the list ID.
+     *
+     * @param int $listId List ID
+     *
+     * @return FinnaResourceListEntityInterface
+     */
+    public function setListId(int $listId): FinnaResourceListEntityInterface
+    {
+        $this->list_id = $listId;
+        return $this;
+    }
+
+    /**
+     * Set the list configuration identifier.
+     *
+     * @param string $listConfigIdentifier List configuration identifier
+     *
+     * @return FinnaResourceListEntityInterface
+     */
+    public function setListConfigIdentifier(string $listConfigIdentifier): FinnaResourceListEntityInterface
+    {
+        $this->list_config_identifier = $listConfigIdentifier;
+        return $this;
+    }
 }

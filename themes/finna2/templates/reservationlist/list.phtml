@@ -8,9 +8,9 @@
 
   $user = $this->auth()->isLoggedIn();
   $recordTotal = $this->results->getResultTotal();
-  $listConfiguration = $this->reservationList($user)->getListConfiguration($this->details->getInstitution(), $this->details->getListConfigIdentifier());
-  $listTranslations = $this->reservationList($user)->getListTranslationKeys($this->details->getInstitution(), $this->details->getListConfigIdentifier());
-  $institutionInformation = $this->reservationList()->getInstitutionInformation($this->details->getInstitution());
+  $listConfiguration = $this->reservationList($user)->getListConfiguration($this->list->getInstitution(), $this->list->getListConfigIdentifier());
+  $listTranslations = $this->reservationList($user)->getListTranslationKeys($this->list->getInstitution(), $this->list->getListConfigIdentifier());
+  $institutionInformation = $this->reservationList()->getInstitutionInformation($this->list->getInstitution());
 ?>
 
 <!-- Leftside navigationbar -->
@@ -40,19 +40,19 @@
         <p><?= $this->transEsc('ReservationList::list_created', ['%%date%%' => $this->list->getCreated()->format('d.m.Y')]) ?></p>
       </div>
     <?php endif; ?>
-    <?php if ($this->details?->getOrdered() ?? false): ?>
+    <?php if ($this->list?->getOrdered() ?? false): ?>
       <div class="list-info">
-        <p><?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $this->details->getOrdered()->format('d.m.Y')]) ?></p>
+        <p><?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $this->list->getOrdered()->format('d.m.Y')]) ?></p>
       </div>
     <?php endif; ?>
-    <?php if ($this->details?->getPickupDate() ?? false): ?>
+    <?php if ($this->list?->getPickupDate() ?? false): ?>
       <div class="list-info">
-        <p><?= $this->transEsc('ReservationList::list_pickup_date', ['%%date%%' => $this->details->getPickupDate()->format('d.m.Y')]) ?></p>
+        <p><?= $this->transEsc('ReservationList::list_pickup_date', ['%%date%%' => $this->list->getPickupDate()->format('d.m.Y')]) ?></p>
       </div>
     <?php endif; ?>
     <?php if ($this->enabled): ?>
       <div class="list-controls">
-        <?php if (!$this->details?->getOrdered() && $this->results?->getResults() ?? []): ?>
+        <?php if (!$this->list?->getOrdered() && $this->results?->getResults() ?? []): ?>
           <!-- Add order buttons if the list has not been ordered yet. -->
           <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-order', ['id' => $this->list?->getId()]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('ReservationList::Order List')?></a>
         <?php endif; ?>

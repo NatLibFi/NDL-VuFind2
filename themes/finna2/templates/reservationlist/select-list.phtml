@@ -22,13 +22,11 @@
         <select class="form-control" id="save_list" name="list">
           <?php foreach ($this->lists as $list): ?>
             <?php
-              $listEntity = $list['list_entity'];
-              $detailsEntity = $list['details_entity'];
-              if ($detailsEntity->getOrdered()) {
+              if ($list->getOrdered()) {
                 continue;
               }
             ?>
-            <option value="<?=$this->escapeHtmlAttr($listEntity->getId())?>"><?=$this->escapeHtml($listEntity->getTitle())?></option>
+            <option value="<?=$this->escapeHtmlAttr($list->getId())?>"><?=$this->escapeHtml($list->getTitle())?></option>
           <?php endforeach; ?>
         </select>
       </div>

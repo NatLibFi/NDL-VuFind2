@@ -217,11 +217,7 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     /**
      * Get available reservation lists for user, user must be invoked
      *
-     * @return array An array containing arrays:
-     *               [
-     *                  'list_entity' => FinnaResourceListEntityInterface,
-     *                  'details_entity' => FinnaResourceListDetailsEntityInterface
-     *               ]
+     * @return FinnaResourceListEntityInterface[]
      */
     public function getReservationListsForUser(): array
     {

@@ -30,6 +30,7 @@
 namespace Finna\Db\Service;
 
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
+use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\DbServiceInterface;
 use VuFind\RecordDriver\DefaultRecord;
@@ -45,30 +46,6 @@ use VuFind\RecordDriver\DefaultRecord;
  */
 interface FinnaResourceListServiceInterface extends DbServiceInterface
 {
-    /**
-     * Begin a database transaction.
-     *
-     * @return void
-     * @throws Exception
-     */
-    public function beginTransaction(): void;
-
-    /**
-     * Commit a database transaction.
-     *
-     * @return void
-     * @throws Exception
-     */
-    public function commitTransaction(): void;
-
-    /**
-     * Roll back a database transaction.
-     *
-     * @return void
-     * @throws Exception
-     */
-    public function rollBackTransaction(): void;
-
     /**
      * Create a FinnaResourceList entity object.
      *
@@ -110,4 +87,40 @@ interface FinnaResourceListServiceInterface extends DbServiceInterface
      * @throws RecordMissingException
      */
     public function getResourceListById(int $id): FinnaResourceListEntityInterface;
+
+    /**
+     * Get resource lists for user
+     *
+     * @param UserEntityInterface $user           User entity object
+     * @param string              $listIdentifier Identifier of the list used by institution
+     * @param string              $institution    Institution name saved in details
+     * @param ?string             $listType       List type to retrieve settings for or omit for all
+     *
+     * @return array
+     */
+    public function getResourceListsForUser(
+        UserEntityInterface $user,
+        string $listIdentifier = '',
+        string $institution = '',
+        string $listType = null
+    ): array;
+
+    /**
+     * Get lists which does not contain given resource
+     *
+     * @param UserEntityInterface     $user           User entity object
+     * @param ResourceEntityInterface $resource       Resource entity to look for
+     * @param string                  $listIdentifier Identifier of the list used by institution
+     * @param string                  $institution    Institution name
+     * @param ?string                 $listType       List type to retrieve settings for or omit for all
+     *
+     * @return array
+     */
+    public function getListsNotContainingResource(
+        UserEntityInterface $user,
+        ResourceEntityInterface $resource,
+        string $listIdentifier = '',
+        string $institution = '',
+        string $listType = null
+    ): array;
 }

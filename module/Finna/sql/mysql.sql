@@ -354,29 +354,15 @@ CREATE TABLE `finna_resource_list` (
   `title` varchar(200) NOT NULL,
   `description` text DEFAULT NULL,
   `created` datetime NOT NULL DEFAULT '2000-01-01 00:00:00',
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `resource_list_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `finna_resource_list_details` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
   `institution` varchar(200) NOT NULL,
-  `list_id` int(11) NOT NULL,
   `list_config_identifier` varchar(200) NOT NULL,
   `list_type` varchar(200) NOT NULL DEFAULT 'resourcelist',
   `ordered` datetime DEFAULT NULL,
   `pickup_date` datetime DEFAULT NULL,
   `connection` varchar(40) NOT NULL DEFAULT 'database',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `list_id` (`list_id`),
   KEY `user_id` (`user_id`),
-  CONSTRAINT `resource_list_details_ibfk_1` FOREIGN KEY (`list_id`) REFERENCES `finna_resource_list` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `resource_list_details_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+  CONSTRAINT `resource_list_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
