@@ -215,7 +215,8 @@ class Loader extends \VuFind\Record\Loader
         $records = parent::loadBatchForSource(
             $ids,
             $source,
-            $tolerateBackendExceptions
+            $tolerateBackendExceptions,
+            $params
         );
 
         // Check the results for missing records and try to load them with their old IDs:

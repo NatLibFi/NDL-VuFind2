@@ -192,10 +192,20 @@ class SolrExtensionsListener
      */
     protected function addDataSourceFilter(EventInterface $event)
     {
+        $command = $event->getParam('command');
+        $params = $command->getSearchParameters();
         if ($recordSources = $this->getActiveSources($event)) {
-            $params = $event->getParam('command')->getSearchParameters();
-            $params->add('fq', static::TERMS_FILTER_PREFIX_SOURCE . implode("\u{001f}", $recordSources));
+            // Don't add the filter if we're retrieving a batch of records and requested so (e.g. AIPA encapsulated
+            // records):
+            $context = $command->getContext();
+            if (
+                'retrieve' !== $context
+                && ('retrieveBatch' !== $context || !$params->get('finna.ignore_source_filter'))
+            ) {
+                $params->add('fq', static::TERMS_FILTER_PREFIX_SOURCE . implode("\u{001f}", $recordSources));
+            }
         }
+        $params->remove('finna.ignore_source_filter');
     }
 
     /**
