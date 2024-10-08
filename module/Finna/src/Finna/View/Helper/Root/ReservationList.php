@@ -243,4 +243,17 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
             $this->user
         );
     }
+
+    /**
+     * Check if user is authorized to edit given list, use user from args to be compatible with userlist helper
+     *
+     * @param UserEntityInterface              $user User to check
+     * @param FinnaResourceListEntityInterface $list List to check for user access
+     *
+     * @return bool
+     */
+    public function userCanEditList(UserEntityInterface $user, FinnaResourceListEntityInterface $list): bool
+    {
+        return $this->reservationListService->userCanEditList($user, $list);
+    }
 }

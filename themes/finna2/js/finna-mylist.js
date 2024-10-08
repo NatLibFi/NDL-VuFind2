@@ -488,8 +488,8 @@ finna.myList = (function finnaMyList() {
     };
     const inputSelector = `.template-name-mylist .selection-controls-bar input,
       .template-name-mylist input.checkbox-select-item,
-      .template-dir-reservationlist.template-name-list input.checkbox-select-item,
-      .template-dir-reservationlist.template-name-list .selection-controls-bar input
+      .template-dir-reservationlist.template-name-displaylist input.checkbox-select-item,
+      .template-dir-reservationlist.template-name-displaylist .selection-controls-bar input
     `;
     document.querySelectorAll(inputSelector).forEach(el => el.addEventListener('change', updateFunctionButtons));
     const clearButton = document.querySelector('.template-name-mylist .clear-selection');

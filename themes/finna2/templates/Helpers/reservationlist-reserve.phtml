@@ -1,4 +1,4 @@
-<!-- START of: helpers/reservationlist-reserve.phtml -->
+<!-- START of: finna - Helpers/reservationlist-reserve.phtml -->
 <?php if (empty($this->lists)) {
 return;
 } ?>
@@ -19,7 +19,7 @@ return;
             <?= $this->transEsc(['ReservationList', $translationKeys['title']]); ?>
           </div>
           <div class="location-link text-right">
-            <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-additem', [], ['query' => ['recordId' => $this->driver->getUniqueID(), 'source' => $this->driver->getSourceIdentifier(), 'institution' => $institution, 'listIdentifier' => $list['Identifier']]]))?>" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?= $this->icon('save') . ' ' . $this->transEsc(['ReservationList', 'Add To Reservation List'])?></a>
+            <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-additemtolist', [], ['query' => ['recordId' => $this->driver->getUniqueID(), 'source' => $this->driver->getSourceIdentifier(), 'institution' => $institution, 'listIdentifier' => $list['Identifier']]]))?>" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?= $this->icon('save') . ' ' . $this->transEsc(['ReservationList', 'Add To Reservation List'])?></a>
           </div>
         </div>
       </div>
@@ -31,11 +31,11 @@ return;
       <ul>
         <?php foreach ($listsContainingRecord as $list): ?>
           <li>
-            <a href="<?= $this->url('reservationlist-list', ['id' => $list->getId()]) ?>"><?= $this->escapeHtml($list->getTitle()); ?></a><br/>
+            <a href="<?= $this->url('reservationlist-displaylist', ['id' => $list->getId()]) ?>"><?= $this->escapeHtml($list->getTitle()); ?></a><br/>
           </li>
         <?php endforeach; ?>
       </ul>
     </div>
   <?php endif; ?>
 </div>
-<!-- END of: helpers/reservationlist-reserve.phtml -->
+<!-- END of: finna - Helpers/reservationlist-reserve.phtml -->

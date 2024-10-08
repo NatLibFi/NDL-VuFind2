@@ -1,11 +1,11 @@
-<!-- START of: finna - reservationlist/home.phtml -->
+<!-- START of: finna - reservationlist/displaylists.phtml -->
 <?php
   $title = $this->transEsc('ReservationList::All Lists');
   // Set up page title:
   $this->headTitle($title);
 
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('reservationlist-home') . '">' . $title . '</a></li> <li class="active">' . $this->transEsc('ReservationList::Reservation List') . '</li>';
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('reservationlist-displaylists') . '">' . $title . '</a></li> <li class="active">' . $this->transEsc('ReservationList::Reservation List') . '</li>';
 ?>
 
 <!-- Leftside navigationbar -->
@@ -23,10 +23,10 @@
       <li class="reservations-list-home-li">
         <div class="reservation-list-header">
           <div>
-            <a href="<?= $this->url('reservationlist-list', ['id' => $list->getId()])?>"><?= $this->escapeHtml($list->getTitle()) ?></a>
+            <a href="<?= $this->url('reservationlist-displaylist', ['id' => $list->getId()])?>"><?= $this->escapeHtml($list->getTitle()) ?></a>
           </div>
           <div class="pull-right">
-            <a href="<?= $this->url('reservationlist-delete', ['id' => $list->getId()])?>" data-lightbox=""><?= $this->transEsc('ReservationList::Delete List') ?></a>
+            <a href="<?= $this->url('reservationlist-deletelist', ['id' => $list->getId()])?>" data-lightbox=""><?= $this->transEsc('ReservationList::Delete List') ?></a>
           </div>
         </div>
         <div class="reservation-list-info">
@@ -46,4 +46,4 @@
     <li class="sidebar-navigation"><?=$this->icon('sidebar-expand') ?> <?=$this->transEsc('Your Lists')?></li>
   </ul>
 </div>
-<!-- END of: finna - reservationlist/home.phtml -->
+<!-- END of: finna - reservationlist/displaylists.phtml -->

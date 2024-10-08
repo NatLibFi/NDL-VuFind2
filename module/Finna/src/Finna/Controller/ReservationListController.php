@@ -38,7 +38,6 @@ use Finna\Form\Form;
 use Finna\ReservationList\ReservationListService;
 use Finna\View\Helper\Root\ReservationList;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use Laminas\Stdlib\Parameters;
 use VuFind\Controller\AbstractBase;
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\LoginRequired as LoginRequiredException;
@@ -96,7 +95,7 @@ class ReservationListController extends AbstractBase
      * @return \Laminas\View\Model\ViewModel
      * @throws \Exception
      */
-    public function addItemAction()
+    public function addItemToListAction()
     {
         $user = $this->getUser();
         if (!$user) {
@@ -151,7 +150,7 @@ class ReservationListController extends AbstractBase
                 );
                 return $this->inLightbox()  // different behavior for lightbox context
                   ? $this->getRefreshResponse()
-                  : $this->redirect()->toRoute('reservationlist-home');
+                  : $this->redirect()->toRoute('reservationlist-displaylists');
             }
         }
         $view->lists = $this->reservationListService->getListsNotContainingRecord(
@@ -171,7 +170,7 @@ class ReservationListController extends AbstractBase
      *
      * @return \Laminas\View\Model\ViewModel|\Laminas\Http\Response
      */
-    public function listAction(): \Laminas\View\Model\ViewModel|\Laminas\Http\Response
+    public function displayListAction(): \Laminas\View\Model\ViewModel|\Laminas\Http\Response
     {
         $user = $this->getUser();
         if (!$user) {
@@ -183,7 +182,7 @@ class ReservationListController extends AbstractBase
                 $user
             );
         } catch (RecordMissingException $e) {
-            return $this->redirect()->toRoute('reservationlist-home');
+            return $this->redirect()->toRoute('reservationlist-displaylists');
         }
         $results = $this->getListAsResults();
         $viewParams = [
@@ -207,7 +206,7 @@ class ReservationListController extends AbstractBase
      *
      * @return mixed
      */
-    public function orderAction()
+    public function placeOrderAction()
     {
         $user = $this->getUser();
         if (!$user) {
@@ -215,10 +214,9 @@ class ReservationListController extends AbstractBase
         }
         $request = $this->getRequest();
         $listId = $request->getPost('rl_list_id') ?? $this->getParam('id');
-        // Check that list is not ordered or deleted
         $list = $this->reservationListService->getListById($listId, $user);
         if ($list->getOrdered()) {
-            throw new \VuFind\Exception\Forbidden('List not found or ordered');
+            throw new \VuFind\Exception\Forbidden('List already ordered');
         }
         $configuration = $this->reservationListHelper->getListConfiguration(
             $list->getInstitution(),
@@ -260,7 +258,7 @@ class ReservationListController extends AbstractBase
         if (!$this->formWasSubmitted(useCaptcha: false)) {
             $form->setData(
                 [
-                 'name' => $user->getFirstname() . ' ' . $user->getLastname(),
+                 'name' => trim($user->getFirstname() . ' ' . $user->getLastname()),
                  'email' => $user->getEmail(),
                 ]
             );
@@ -271,7 +269,7 @@ class ReservationListController extends AbstractBase
             return $view;
         }
 
-        // Override recipients to match lists configured recipients:
+        // Override recipients to match list's configured recipients:
         $request->getPost()->set('recipient', $configuration['Recipient']);
         $primaryHandler = $form->getPrimaryHandler();
         $success = $primaryHandler->handle($form, $params, $user);
@@ -292,7 +290,7 @@ class ReservationListController extends AbstractBase
      *
      * @return Response The response object.
      */
-    public function deleteAction()
+    public function deleteListAction()
     {
         $listID = $this->getParam('id');
         if ($this->getParam('confirm')) {
@@ -311,13 +309,12 @@ class ReservationListController extends AbstractBase
             // Redirect to MyResearch home
             return $this->inLightbox()  // different behavior for lightbox context
                 ? $this->getRefreshResponse()
-                : $this->redirect()->toRoute('reservationlist-home');
+                : $this->redirect()->toRoute('reservationlist-displaylists');
         }
-        return $this->confirmDelete(
-            $listID,
-            $this->url()->fromRoute('reservationlist-delete'),
-            $this->url()->fromRoute('reservationlist-home'),
+        return $this->confirm(
             'confirm_delete_list_brief',
+            $this->url()->fromRoute('reservationlist-deletelist'),
+            $this->url()->fromRoute('reservationlist-displaylists'),
             'confirm_delete_list_text',
             ['id' => $listID]
         );
@@ -354,14 +351,13 @@ class ReservationListController extends AbstractBase
             // Redirect to MyResearch home
             return $this->inLightbox()  // different behavior for lightbox context
                 ? $this->getRefreshResponse()
-                : $this->redirect()->toRoute('reservationlist-list', ['id' => $listID]);
+                : $this->redirect()->toRoute('reservationlist-displaylist', ['id' => $listID]);
         }
-        return $this->confirmDelete(
-            $listID,
+        return $this->confirm(
+            'ReservationList::confirm_delete',
             $this->url()->fromRoute('reservationlist-deletebulk'),
-            $this->url()->fromRoute('reservationlist-home'),
+            $this->url()->fromRoute('reservationlist-displaylists'),
             'confirm_delete_brief',
-            [],
             [
                 'listID' => $listID,
                 'ids' => $ids,
@@ -370,43 +366,11 @@ class ReservationListController extends AbstractBase
     }
 
     /**
-     * Confirm a request to delete a reservation item.
-     *
-     * @param string       $id          ID of object to delete
-     * @param string       $url         URL to return to if deletion is confirmed
-     * @param string       $fallbackUrl URL to return to if deletion is not confirmed
-     * @param string       $title       Title of the confirmation dialog
-     * @param string|array $messages    Message key for the confirmation dialog
-     * @param array        $extras      Additional parameters to pass to the confirmation dialog
-     *
-     * @return mixed
-     */
-    protected function confirmDelete(
-        $id,
-        $url,
-        $fallbackUrl,
-        $title = 'ReservationList::confirm_delete',
-        $messages = 'confirm_delete',
-        $extras = []
-    ) {
-        if (empty($id)) {
-            $url = $fallbackUrl;
-        }
-        return $this->confirm(
-            $title,
-            $url,
-            $url,
-            $messages,
-            $extras
-        );
-    }
-
-    /**
-     * Home action for the ReservationListController.
+     * Action to display all users reservation lists
      *
      * @return \Laminas\View\Model\ViewModel
      */
-    public function homeAction()
+    public function displayListsAction()
     {
         $user = $this->getUser();
         if (!$user) {

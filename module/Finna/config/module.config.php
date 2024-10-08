@@ -1082,12 +1082,12 @@ $dynamicRoutes = [
     'LibraryCards' => ['newLibraryCardPassword' => 'newPassword/[:id]'],
     'MyResearch' => ['sortList' => 'SortList/[:id]'],
     'ReservationList' => [
-        'reservationlist-home' => 'Home',
-        'reservationlist-list' => 'List/[:id]',
-        'reservationlist-order' => 'Order/[:id]',
-        'reservationlist-delete' => 'Delete/[:id]',
+        'reservationlist-displaylists' => 'DisplayLists',
+        'reservationlist-displaylist' => 'DisplayList/[:id]',
+        'reservationlist-placeorder' => 'PlaceOrder/[:id]',
+        'reservationlist-deletelist' => 'DeleteList/[:id]',
         'reservationlist-deletebulk' => 'DeleteBulk/[:id]',
-        'reservationlist-additem' => 'AddItem',
+        'reservationlist-additemtolist' => 'AddItemToList',
     ],
 ];
 

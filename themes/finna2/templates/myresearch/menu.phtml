@@ -91,7 +91,7 @@
         'show' => $this->userlist()->getMode() !== 'disabled',
       ],
       'reservationlist' => [
-        'url' => 'reservationlist-home',
+        'url' => 'reservationlist-displaylists',
         'translation' => 'Reservation List',
         'show' => $this->userlist()->getMode() !== 'disabled' && $reservationLists,
       ],
@@ -128,7 +128,7 @@
       ],
       'reservationlist' => [
         'active' => $reservationListOpen,
-        'url' => 'reservationlist-home',
+        'url' => 'reservationlist-displaylists',
         'translation' => 'ReservationList::Reservation Lists',
         'show' => $this->userlist()->getMode() !== 'disabled' && ($reservationLists ?? false),
         'partial' => [
