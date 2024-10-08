@@ -76,48 +76,4 @@ class FinnaResourceList extends Gateway implements DbServiceAwareInterface
         Gateway::__construct($adapter, $tm, $cfg, $rowObj, $table);
         $this->session = $session;
     }
-
-    /**
-     * Get lists containing a specific user_resource
-     *
-     * @param string $resourceId ID of record being checked.
-     * @param string $source     Source of record to look up
-     * @param int    $userId     Optional user ID (to limit results to a particular
-     * user).
-     *
-     * @return array
-     */
-    public function getListsContainingResource(
-        $resourceId,
-        $source = DEFAULT_SEARCH_BACKEND,
-        $userId = null
-    ) {
-        // Set up base query:
-        $callback = function ($select) use ($resourceId, $source, $userId) {
-            $select->columns(
-                [
-                    new Expression(
-                        'DISTINCT(?)',
-                        ['finna_resource_list.id'],
-                        [Expression::TYPE_IDENTIFIER]
-                    ), Select::SQL_STAR,
-                ]
-            );
-            $select->join(
-                ['ur' => 'finna_resource_list_resource'],
-                'ur.list_id = finna_resource_list.id',
-                []
-            );
-            $select->join(
-                ['r' => 'resource'],
-                'r.id = ur.resource_id',
-                []
-            );
-            $select->where->equalTo('r.source', $source)
-                ->equalTo('r.record_id', $resourceId);
-            $select->order(['title']);
-            $select->where->equalTo('ur.user_id', $userId);
-        };
-        return $this->select($callback);
-    }
 }
