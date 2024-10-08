@@ -90,9 +90,9 @@ class FinnaResourceList extends RowGateway implements
     /**
      * Get user
      *
-     * @return ?UserEntityInterface
+     * @return UserEntityInterface
      */
-    public function getUser(): ?UserEntityInterface
+    public function getUser(): UserEntityInterface
     {
         return $this->getDbService(\VuFind\Db\Service\UserServiceInterface::class)->getUserById($this->user_id);
     }
@@ -102,9 +102,9 @@ class FinnaResourceList extends RowGateway implements
      *
      * @param UserEntityInterface $user User entity
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setUser(UserEntityInterface $user): FinnaResourceListEntityInterface
+    public function setUser(UserEntityInterface $user): static
     {
         $this->user_id = $user->getId();
         return $this;
@@ -125,9 +125,9 @@ class FinnaResourceList extends RowGateway implements
      *
      * @param string $title Title
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setTitle(string $title): FinnaResourceListEntityInterface
+    public function setTitle(string $title): static
     {
         $this->title = $title;
         return $this;
@@ -138,9 +138,9 @@ class FinnaResourceList extends RowGateway implements
      *
      * @param DateTime $dateTime Created date
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setCreated(Datetime $dateTime): FinnaResourceListEntityInterface
+    public function setCreated(Datetime $dateTime): static
     {
         $this->created = $dateTime->format('Y-m-d H:i:s');
         return $this;
@@ -171,9 +171,9 @@ class FinnaResourceList extends RowGateway implements
      *
      * @param string $description Description
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setDescription(string $description = ''): FinnaResourceListEntityInterface
+    public function setDescription(string $description = ''): static
     {
         $this->description = $description;
         return $this;
@@ -194,9 +194,9 @@ class FinnaResourceList extends RowGateway implements
      *
      * @param string $institution Institution
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setInstitution(string $institution): FinnaResourceListEntityInterface
+    public function setInstitution(string $institution): static
     {
         $this->institution = $institution;
         return $this;
@@ -205,9 +205,9 @@ class FinnaResourceList extends RowGateway implements
     /**
      * Set list ordered date.
      *
-     * @return mixed
+     * @return static
      */
-    public function setOrdered(): FinnaResourceListEntityInterface
+    public function setOrdered(): static
     {
         $this->ordered = (new DateTime())->format('Y-m-d H:i:s');
         return $this;
@@ -218,9 +218,9 @@ class FinnaResourceList extends RowGateway implements
      *
      * @param DateTime $pickup_date Pickup date
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setPickupDate(DateTime $pickup_date): FinnaResourceListEntityInterface
+    public function setPickupDate(DateTime $pickup_date): static
     {
         $this->pickup_date = $pickup_date->format('Y-m-d H:i:s');
         return $this;
@@ -231,9 +231,9 @@ class FinnaResourceList extends RowGateway implements
      *
      * @param string $connection Connection
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setConnection(string $connection): FinnaResourceListEntityInterface
+    public function setConnection(string $connection): static
     {
         $this->connection = $connection;
         return $this;
@@ -264,9 +264,9 @@ class FinnaResourceList extends RowGateway implements
      *
      * @param string $listType List type
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setListType(string $listType): FinnaResourceListEntityInterface
+    public function setListType(string $listType): static
     {
         $this->list_type = $listType;
         return $this;
@@ -307,9 +307,9 @@ class FinnaResourceList extends RowGateway implements
      *
      * @param string $listConfigIdentifier List configuration identifier
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setListConfigIdentifier(string $listConfigIdentifier): FinnaResourceListEntityInterface
+    public function setListConfigIdentifier(string $listConfigIdentifier): static
     {
         $this->list_config_identifier = $listConfigIdentifier;
         return $this;

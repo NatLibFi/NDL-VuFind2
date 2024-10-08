@@ -64,9 +64,9 @@ interface FinnaResourceListResourceEntityInterface extends EntityInterface
      *
      * @param ResourceEntityInterface $resource Resource entity
      *
-     * @return FinnaResourceListResourceEntityInterface
+     * @return static
      */
-    public function setResource(ResourceEntityInterface $resource): FinnaResourceListResourceEntityInterface;
+    public function setResource(ResourceEntityInterface $resource): static;
 
     /**
      * Get resource id
@@ -87,18 +87,18 @@ interface FinnaResourceListResourceEntityInterface extends EntityInterface
      *
      * @param FinnaResourceListEntityInterface $list List entity
      *
-     * @return FinnaResourceListResourceEntityInterface
+     * @return static
      */
-    public function setList(FinnaResourceListEntityInterface $list): FinnaResourceListResourceEntityInterface;
+    public function setList(FinnaResourceListEntityInterface $list): static;
 
     /**
      * Set saved
      *
      * @param DateTime $dateTime Created date
      *
-     * @return FinnaResourceListResourceEntityInterface
+     * @return static
      */
-    public function setSaved(DateTime $dateTime): FinnaResourceListResourceEntityInterface;
+    public function setSaved(DateTime $dateTime): static;
 
     /**
      * Get saved
@@ -112,9 +112,9 @@ interface FinnaResourceListResourceEntityInterface extends EntityInterface
      *
      * @param string $note Note
      *
-     * @return FinnaResourceListResourceEntityInterface
+     * @return static
      */
-    public function setNotes(string $note): FinnaResourceListResourceEntityInterface;
+    public function setNotes(string $note): static;
 
     /**
      * Get notes
@@ -128,7 +128,7 @@ interface FinnaResourceListResourceEntityInterface extends EntityInterface
      *
      * @param UserEntityInterface $user User entity
      *
-     * @return FinnaResourceListResourceEntityInterface
+     * @return static
      */
-    public function setUser(UserEntityInterface $user): FinnaResourceListResourceEntityInterface;
+    public function setUser(UserEntityInterface $user): static;
 }

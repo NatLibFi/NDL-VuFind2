@@ -68,27 +68,27 @@ interface FinnaResourceListEntityInterface extends EntityInterface
     /**
      * Get user entity
      *
-     * @return ?UserEntityInterface
+     * @return UserEntityInterface
      */
-    public function getUser(): ?UserEntityInterface;
+    public function getUser(): UserEntityInterface;
 
     /**
      * Set user
      *
      * @param UserEntityInterface $user User entity
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setUser(UserEntityInterface $user): FinnaResourceListEntityInterface;
+    public function setUser(UserEntityInterface $user): static;
 
     /**
      * Set title.
      *
      * @param string $title Title
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setTitle(string $title): FinnaResourceListEntityInterface;
+    public function setTitle(string $title): static;
 
     /**
      * Get title.
@@ -109,18 +109,18 @@ interface FinnaResourceListEntityInterface extends EntityInterface
      *
      * @param string $description Description
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setDescription(string $description = ''): FinnaResourceListEntityInterface;
+    public function setDescription(string $description = ''): static;
 
     /**
      * Created setter
      *
      * @param DateTime $dateTime Created date
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setCreated(Datetime $dateTime): FinnaResourceListEntityInterface;
+    public function setCreated(Datetime $dateTime): static;
 
     /**
      * Created getter
@@ -141,9 +141,9 @@ interface FinnaResourceListEntityInterface extends EntityInterface
      *
      * @param string $institution Institution
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setInstitution(string $institution): FinnaResourceListEntityInterface;
+    public function setInstitution(string $institution): static;
 
     /**
      * Get the list configuration identifier
@@ -157,9 +157,9 @@ interface FinnaResourceListEntityInterface extends EntityInterface
      *
      * @param string $listConfigIdentifier List configuration identifier
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setListConfigIdentifier(string $listConfigIdentifier): FinnaResourceListEntityInterface;
+    public function setListConfigIdentifier(string $listConfigIdentifier): static;
 
     /**
      * Get the list type
@@ -173,9 +173,9 @@ interface FinnaResourceListEntityInterface extends EntityInterface
      *
      * @param string $listType List type
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setListType(string $listType): FinnaResourceListEntityInterface;
+    public function setListType(string $listType): static;
 
     /**
      * Get the ordered flag
@@ -187,9 +187,9 @@ interface FinnaResourceListEntityInterface extends EntityInterface
     /**
      * Set the ordered flag
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setOrdered(): FinnaResourceListEntityInterface;
+    public function setOrdered(): static;
 
     /**
      * Get the pickup date
@@ -203,9 +203,9 @@ interface FinnaResourceListEntityInterface extends EntityInterface
      *
      * @param DateTime $pickupDate Pickup date
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setPickupDate(DateTime $pickupDate): FinnaResourceListEntityInterface;
+    public function setPickupDate(DateTime $pickupDate): static;
 
     /**
      * Get the connection
@@ -219,7 +219,7 @@ interface FinnaResourceListEntityInterface extends EntityInterface
      *
      * @param string $connection Connection
      *
-     * @return FinnaResourceListEntityInterface
+     * @return static
      */
-    public function setConnection(string $connection): FinnaResourceListEntityInterface;
+    public function setConnection(string $connection): static;
 }

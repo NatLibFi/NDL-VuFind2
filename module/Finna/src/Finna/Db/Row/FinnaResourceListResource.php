@@ -80,9 +80,9 @@ class FinnaResourceListResource extends \VuFind\Db\Row\RowGateway implements Fin
      *
      * @param UserEntityInterface $user User entity
      *
-     * @return FinnaResourceListResourceEntityInterface
+     * @return static
      */
-    public function setUser(UserEntityInterface $user): FinnaResourceListResourceEntityInterface
+    public function setUser(UserEntityInterface $user): static
     {
         $this->user_id = $user->getId();
         return $this;
@@ -103,9 +103,9 @@ class FinnaResourceListResource extends \VuFind\Db\Row\RowGateway implements Fin
      *
      * @param ResourceEntityInterface $resource Resource entity
      *
-     * @return FinnaResourceListResourceEntityInterface
+     * @return static
      */
-    public function setResource(ResourceEntityInterface $resource): FinnaResourceListResourceEntityInterface
+    public function setResource(ResourceEntityInterface $resource): static
     {
         $this->resource_id = $resource->getId();
         return $this;
@@ -126,9 +126,9 @@ class FinnaResourceListResource extends \VuFind\Db\Row\RowGateway implements Fin
      *
      * @param FinnaResourceListEntityInterface $list List entity
      *
-     * @return FinnaResourceListResourceEntityInterface
+     * @return static
      */
-    public function setList(FinnaResourceListEntityInterface $list): FinnaResourceListResourceEntityInterface
+    public function setList(FinnaResourceListEntityInterface $list): static
     {
         $this->list_id = $list->getId();
         return $this;
@@ -139,9 +139,9 @@ class FinnaResourceListResource extends \VuFind\Db\Row\RowGateway implements Fin
      *
      * @param DateTime $dateTime Created date
      *
-     * @return FinnaResourceListResourceEntityInterface
+     * @return static
      */
-    public function setSaved(DateTime $dateTime): FinnaResourceListResourceEntityInterface
+    public function setSaved(DateTime $dateTime): static
     {
         $this->saved = $dateTime->format('Y-m-d H:i:s');
         return $this;
@@ -162,9 +162,9 @@ class FinnaResourceListResource extends \VuFind\Db\Row\RowGateway implements Fin
      *
      * @param string $note Note
      *
-     * @return FinnaResourceListResourceEntityInterface
+     * @return static
      */
-    public function setNotes(string $note): FinnaResourceListResourceEntityInterface
+    public function setNotes(string $note): static
     {
         $this->notes = $note;
         return $this;
