@@ -18,7 +18,11 @@
   <ul class="reservations-list-home-ul">
     <?php foreach ($this->lists ?? [] as $list): ?>
       <?php
-        $listTranslations = $this->reservationList()->getListTranslationKeys($list->getInstitution(), ['Identifier' => $list->getListConfigIdentifier()]);
+        [
+          'properties' => $listProperties,
+          'institution_information' => $institutionInformation,
+          'translation_keys' => $listTranslations,
+        ] = $this->reservationList($this->auth()->getUserObject())->getListProperties($list->getInstitution(), $list->getListConfigIdentifier());
       ?>
       <li class="reservations-list-home-li">
         <div class="reservation-list-header">

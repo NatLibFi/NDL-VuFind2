@@ -38,7 +38,6 @@ use VuFind\ILS\Connection;
 use VuFind\RecordDriver\DefaultRecord;
 
 use function in_array;
-use function is_array;
 
 /**
  * Reservation list view helper
@@ -97,13 +96,13 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Get associative array of [organisation => configurated lists] where driver matches
+     * Get associative array of [institution => configured lists] where driver matches
      *
      * @param DefaultRecord $driver Record driver
      *
      * @return array
      */
-    protected function getListConfigurations(DefaultRecord $driver): array
+    protected function getAvailableListsForRecord(DefaultRecord $driver): array
     {
         $datasource = $driver->tryMethod('getDatasource', [], '');
         if (!$datasource) {
@@ -128,56 +127,54 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Get list configuration defined by organisation and list identifier in ReservationList.yaml
+     * Get list properties defined by institution and list identifier in ReservationList.yaml,
+     * institution specified information and
+     * formed translation_keys for the list.
      *
-     * @param string $organisation   Lists controlling organisation
+     * Institution information contains keys and values:
+     *     - name => Example institution name
+     *     - address => Example institution address
+     *     - postal => Example institution postal
+     *     - city => Example institution city
+     *     - email => Example institution email
+     *
+     * Translation keys formed:
+     *     - title => list_title_{$institution}_{$listIdentifier},
+     *     - description => list_description_{$institution}_{$listIdentifier},
+     *
+     * @param string $institution    Lists controlling institution
      * @param string $listIdentifier List identifier
      *
      * @return array
      */
-    public function getListConfiguration(
-        string $organisation,
+    public function getListProperties(
+        string $institution,
         string $listIdentifier
     ): array {
-        foreach ($this->config[$organisation]['Lists'] ?? [] as $list) {
+        foreach ($this->config[$institution]['Lists'] ?? [] as $list) {
             if (($list['Identifier'] ?? false) === $listIdentifier) {
-                return $list;
+                return [
+                    'properties' => $list,
+                    'institution_information' => $this->config[$institution]['Information'] ?? [],
+                    'translation_keys' => [
+                        'title' => "list_title_{$institution}_{$listIdentifier}",
+                        'description' => "list_description_{$institution}_{$listIdentifier}",
+                    ],
+                ];
             }
         }
-        return [];
-    }
-
-    /**
-     * Get organisation information from ReservationList.yaml information section
-     *
-     * @param string $institution Institution to look for
-     *
-     * @return array
-     */
-    public function getInstitutionInformation(string $institution): array
-    {
-        return $this->config[$institution]['Information'] ?? [];
-    }
-
-    /**
-     * Get list translations keys for list
-     *
-     * @param string       $building         Building to use in translation keys
-     * @param array|string $listOrIdentifier List configuration or list id from configuration
-     *
-     * @return array
-     */
-    public function getListTranslationKeys(string $building, array|string $listOrIdentifier): array
-    {
-        $identifier = is_array($listOrIdentifier) ? $listOrIdentifier['Identifier'] : $listOrIdentifier;
         return [
-            'title' => "list_title_{$building}_{$identifier}",
-            'description' => "list_description_{$building}_{$identifier}",
+            'properties' => [],
+            'institution_information' => [],
+            'translation_keys' => [],
         ];
     }
 
     /**
-     * Check if the user has proper requirements to order records
+     * Check if the user has proper requirements to order records.
+     * Function checks if there is required LibraryCardSources
+     * which are used to check if user has an active connection to ils
+     * defined in the list.
      *
      * @param array $list List as configuration
      *
@@ -207,7 +204,7 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     public function renderReserveTemplate(DefaultRecord $driver): string
     {
         // Collect lists where we could potentially save this:
-        $lists = $this->getListConfigurations($driver);
+        $lists = $this->getAvailableListsForRecord($driver);
 
         // Set up the needed context in the view:
         $view = $this->getView();
@@ -242,18 +239,5 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
             $record->getSourceIdentifier(),
             $this->user
         );
-    }
-
-    /**
-     * Check if user is authorized to edit given list, use user from args to be compatible with userlist helper
-     *
-     * @param UserEntityInterface              $user User to check
-     * @param FinnaResourceListEntityInterface $list List to check for user access
-     *
-     * @return bool
-     */
-    public function userCanEditList(UserEntityInterface $user, FinnaResourceListEntityInterface $list): bool
-    {
-        return $this->reservationListService->userCanEditList($user, $list);
     }
 }

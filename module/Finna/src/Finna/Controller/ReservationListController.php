@@ -119,8 +119,12 @@ class ReservationListController extends AbstractBase
             $source ?: DEFAULT_SEARCH_BACKEND,
             false
         );
-        $configuration = ($this->reservationListHelper)($user)->getListConfiguration($institution, $listIdentifier);
-        if (!$configuration) {
+        [
+            'properties' => $listProperties,
+            'institution_information' => $institutionInformation,
+            'translation_keys' => $listTranslations,
+        ] = ($this->reservationListHelper)($user)->getListProperties($institution, $listIdentifier);
+        if (!$listProperties) {
             throw new \VuFind\Exception\Forbidden('Record is not allowed in the list');
         }
         $view->driver = $driver;
@@ -153,11 +157,17 @@ class ReservationListController extends AbstractBase
                   : $this->redirect()->toRoute('reservationlist-displaylists');
             }
         }
-        $view->lists = $this->reservationListService->getListsNotContainingRecord(
+        $lists = $this->reservationListService->getListsNotContainingRecord(
             $this->getUser(),
             $driver,
             $listIdentifier,
             $institution
+        );
+
+        // Filter out already ordered lists
+        $view->lists = array_filter(
+            $lists,
+            fn ($list) => !$list->getOrdered()
         );
 
         $view->setTemplate('reservationlist/select-list');
@@ -218,10 +228,14 @@ class ReservationListController extends AbstractBase
         if ($list->getOrdered()) {
             throw new \VuFind\Exception\Forbidden('List already ordered');
         }
-        $configuration = $this->reservationListHelper->getListConfiguration(
-            $list->getInstitution(),
-            $list->getListConfigIdentifier()
-        );
+        [
+            'properties' => $listProperties,
+            'institution_information' => $institutionInformation,
+            'translation_keys' => $listTranslations,
+        ] = $this->reservationListHelper->getListProperties($list->getInstitution(), $list->getListConfigIdentifier());
+        if (!$listProperties) {
+            throw new \VuFind\Exception\Forbidden('No list properties found.');
+        }
         $formId = Form::RESERVATION_LIST_REQUEST;
 
         $resourcesText = '';
@@ -270,7 +284,7 @@ class ReservationListController extends AbstractBase
         }
 
         // Override recipients to match list's configured recipients:
-        $request->getPost()->set('recipient', $configuration['Recipient']);
+        $request->getPost()->set('recipient', $listProperties['Recipient']);
         $primaryHandler = $form->getPrimaryHandler();
         $success = $primaryHandler->handle($form, $params, $user);
         if ($success) {

@@ -8,9 +8,11 @@
 
   $user = $this->auth()->isLoggedIn();
   $recordTotal = $this->results->getResultTotal();
-  $listConfiguration = $this->reservationList($user)->getListConfiguration($this->list->getInstitution(), $this->list->getListConfigIdentifier());
-  $listTranslations = $this->reservationList($user)->getListTranslationKeys($this->list->getInstitution(), $this->list->getListConfigIdentifier());
-  $institutionInformation = $this->reservationList()->getInstitutionInformation($this->list->getInstitution());
+  [
+    'properties' => $listProperties,
+    'institution_information' => $institutionInformation,
+    'translation_keys' => $listTranslations,
+  ] = $this->reservationList($user)->getListProperties($this->list->getInstitution(), $this->list->getListConfigIdentifier());
 ?>
 
 <!-- Leftside navigationbar -->
@@ -26,7 +28,7 @@
       <p><?= $this->transEsc(['ReservationList', $listTranslations['title']]);?></p>
     </div>
     <div class="description-wrapper">
-      <?php foreach ($listConfiguration['Information'] ?? $institutionInformation as $value): ?>
+      <?php foreach ($listProperties['Information'] ?? $institutionInformation as $value): ?>
         <p><?=$this->escapeHtml($value);?></p>
       <?php endforeach; ?>
     </div>
