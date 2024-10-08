@@ -1,4 +1,4 @@
-<!-- START of: finna - reservationlist/list.phtml -->
+<!-- START of: finna - reservationlist/displaylist.phtml -->
 <?php
   // Set up page title:
   $this->headTitle($this->translate('ReservationList::Reservation List'));
@@ -15,7 +15,6 @@
   ] = $this->reservationList($user)->getListProperties($this->list->getInstitution(), $this->list->getListConfigIdentifier());
 ?>
 
-<!-- Leftside navigationbar -->
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'reservationlist']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?> reservation-list-body">
@@ -78,6 +77,7 @@
             <?php $multiPageSelection = ($this->config()->get('config')['Social']['multi_page_favorites_selection'] ?? true) ? ' multi-page-selection' : ''; ?>
             <form class="form<?= $multiPageSelection ?>" id="form-reservation-<?= $this->list?->getId() ?? ''?>" method="post" name="bulkActionForm" action="<?=$this->url('reservationlist-deletebulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
               <input class="hidden all-ids-global" type="text" name="all_ids_global" value="<?= $this->escapeHtmlAttr(json_encode($this->results->getAllIds())) ?>">
+              <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
               <div class="toolbar-sticky">
                 <?=$this->context($this)->renderInContext('reservationlist/bulk-action-buttons.phtml', ['idPrefix' => 'reservationlist_', 'list' => $list ?? null, 'account' => $this->account, 'lists' => $this->reservationList($user)->getReservationListsForUser()])?>
               </div>

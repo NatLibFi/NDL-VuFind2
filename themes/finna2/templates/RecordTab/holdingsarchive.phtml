@@ -7,7 +7,7 @@
     <div class="headers">
       <span class="holdings-url-title"><?=$this->transEsc('ReservationList::Reserve to Research Room')?></span>
     </div>
-    <div class="archive-request-buttons">
+    <div class="reservation-request-buttons">
       <?php if ($user): ?>
         <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($driver, 'ArchiveRequest'))?>" class="btn btn-default" data-lightbox="" data-toggle="modal" data-target="order_archive_material_form" data-lightbox><?=$this->transEsc('archive_request_reserve_action')?></a>
       <?php else: ?>

@@ -39,6 +39,7 @@ use Finna\ReservationList\ReservationListService;
 use Finna\View\Helper\Root\ReservationList;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use VuFind\Controller\AbstractBase;
+use VuFind\Controller\Feature\ListItemSelectionTrait;
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\LoginRequired as LoginRequiredException;
 use VuFind\Exception\RecordMissing as RecordMissingException;
@@ -59,6 +60,8 @@ use VuFind\Exception\RecordMissing as RecordMissingException;
  */
 class ReservationListController extends AbstractBase
 {
+    use ListItemSelectionTrait;
+
     /**
      * Constructor
      *
@@ -87,6 +90,18 @@ class ReservationListController extends AbstractBase
         return $this->params()->fromRoute($param)
             ?? $this->params()->fromPost($param)
             ?? $this->params()->fromQuery($param, $default);
+    }
+
+    /**
+     * Validate CSRF from post request
+     *
+     * @return bool
+     */
+    protected function validateCsrf(): bool
+    {
+        $csrf = $this->serviceLocator->get(\VuFind\Validator\CsrfInterface::class);
+        $valueFromPost = $this->getRequest()->getPost()->get('csrf');
+        return $valueFromPost && $csrf->isValid($valueFromPost);
     }
 
     /**
@@ -128,7 +143,25 @@ class ReservationListController extends AbstractBase
             throw new \VuFind\Exception\Forbidden('Record is not allowed in the list');
         }
         $view->driver = $driver;
+        $lists = $this->reservationListService->getListsNotContainingRecord(
+            $user,
+            $driver,
+            $listIdentifier,
+            $institution
+        );
+
+        // Filter out already ordered lists
+        $view->lists = array_filter(
+            $lists,
+            fn ($list) => !$list->getOrdered()
+        );
+        $view->setTemplate('reservationlist/select-list');
+
         if ($this->formWasSubmitted('submit')) {
+            if (!$this->validateCsrf()) {
+                $this->flashMessenger()->addErrorMessage('csrf_validation_failed');
+                return $view;
+            }
             $state = $this->getParam('state');
             $title = $this->getParam('title');
             $request = $this->getRequest();
@@ -157,21 +190,6 @@ class ReservationListController extends AbstractBase
                   : $this->redirect()->toRoute('reservationlist-displaylists');
             }
         }
-        $lists = $this->reservationListService->getListsNotContainingRecord(
-            $this->getUser(),
-            $driver,
-            $listIdentifier,
-            $institution
-        );
-
-        // Filter out already ordered lists
-        $view->lists = array_filter(
-            $lists,
-            fn ($list) => !$list->getOrdered()
-        );
-
-        $view->setTemplate('reservationlist/select-list');
-
         return $view;
     }
 
@@ -347,36 +365,33 @@ class ReservationListController extends AbstractBase
         }
 
         $listID = $this->getParam('listID', false);
-        $ids = $this->getParam('ids');
         if (false === $listID) {
             throw new \Exception('List ID not defined in deleteBulkAction');
         }
-        if ($this->getParam('confirm')) {
-            try {
-                $this->reservationListService->deleteResourcesFromList($ids, $listID, $user);
-            } catch (LoginRequiredException | ListPermissionException $e) {
-                $user = $this->getUser();
-                if ($user == false) {
-                    return $this->forceLogin();
-                }
-                // Logged in? Then we have to rethrow the exception!
-                throw $e;
+        $ids = $this->getSelectedIds();
+        $list = $this->reservationListService->getListById($listID, $user);
+        $viewParams = [
+            'resource_ids' => $ids,
+            'resources' => $this->getRecordLoader()->loadBatch($ids),
+            'list' => $list,
+        ];
+        if ($this->formWasSubmitted()) {
+            if (!$this->validateCsrf()) {
+                $this->flashMessenger()->addErrorMessage('csrf_validation_failed');
+                return $this->createViewModel($viewParams);
             }
+            $this->reservationListService->deleteResourcesFromList(
+                $this->getSelectedIds(),
+                $list,
+                $user
+            );
             // Redirect to MyResearch home
             return $this->inLightbox()  // different behavior for lightbox context
                 ? $this->getRefreshResponse()
                 : $this->redirect()->toRoute('reservationlist-displaylist', ['id' => $listID]);
         }
-        return $this->confirm(
-            'ReservationList::confirm_delete',
-            $this->url()->fromRoute('reservationlist-deletebulk'),
-            $this->url()->fromRoute('reservationlist-displaylists'),
-            'confirm_delete_brief',
-            [
-                'listID' => $listID,
-                'ids' => $ids,
-            ]
-        );
+
+        return $this->createViewModel($viewParams);
     }
 
     /**

@@ -18,6 +18,7 @@
   <input type="hidden" name="institution" value="<?=$this->escapeHtmlAttr($this->institution)?>">
   <input type="hidden" name="listIdentifier" value="<?=$this->escapeHtmlAttr($this->listIdentifier)?>">
   <input type="hidden" name="state" value="saveList">
+  <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
   <div class="form-group">
     <label class="control-label" for="list_title"><?=$this->transEsc('ReservationList::Reservation List Name'); ?>*:</label>
     <input id="list_title" class="form-control" type="text" name="title" value="" required>

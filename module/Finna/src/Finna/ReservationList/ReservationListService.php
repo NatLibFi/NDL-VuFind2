@@ -386,14 +386,17 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     /**
      * Delete a group of resources.
      *
-     * @param string[]            $ids    Array of IDs in source|id format.
-     * @param int                 $listID ID of list to delete from
-     * @param UserEntityInterface $user   Logged in user
+     * @param string[]                         $ids  Array of IDs in source|id format.
+     * @param FinnaResourceListEntityInterface $list List to delete from
+     * @param UserEntityInterface              $user Logged in user
      *
      * @return void
      */
-    public function deleteResourcesFromList(array $ids, int $listID, UserEntityInterface $user): void
-    {
+    public function deleteResourcesFromList(
+        array $ids,
+        FinnaResourceListEntityInterface $list,
+        UserEntityInterface $user
+    ): void {
         // Sort $ids into useful array:
         $sorted = [];
         foreach ($ids as $current) {
@@ -403,7 +406,6 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
             }
             $sorted[$source][] = $id;
         }
-        $list = $this->resourceListService->getResourceListById($listID);
         foreach ($sorted as $source => $ids) {
             $this->removeListResourcesById($list, $user, $ids, $source);
         }

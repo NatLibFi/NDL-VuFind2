@@ -2,7 +2,7 @@
   $pageTitle = 'ReservationList::Add To Reservation List';
   // Set up page title:
   $this->headTitle($this->translate($pageTitle));
-
+  $user = $this->auth()->getUserObject();
   // Set up breadcrumbs:
   $this->layout()->breadcrumbs = '<li><a href="' . $this->url('reservationlist-additemtolist') . '">' . $this->transEsc('ReservationList::Add To Reservation List') . '</a></li>'
     . '<li>' . $this->transEsc($pageTitle) . '</li>';
@@ -10,7 +10,7 @@
     'properties' => $listProperties,
     'institution_information' => $institutionInformation,
     'translation_keys' => $listTranslations,
-  ] = $this->reservationList($this->auth()->getUserObject())->getListProperties($this->institution, $this->listIdentifier);
+  ] = $this->reservationList($user)->getListProperties($this->institution, $this->listIdentifier);
 ?>
 
 <h2><?= $this->transEsc($pageTitle); ?></h2>
@@ -20,15 +20,11 @@
   <?php if (!empty($this->lists)): ?>
     <form method="post" name="FinnaResourceListAdd" data-lightbox-onclose="VuFind.refreshPage">
       <input type="hidden" name="state" value="saveItem">
+      <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
       <label class="control-label" for="save_list"><?=$this->transEsc('ReservationList::Choose a List') ?></label>
       <div class="form-group">
         <select class="form-control" id="save_list" name="list">
           <?php foreach ($this->lists as $list): ?>
-            <?php
-              if ($list->getOrdered()) {
-                continue;
-              }
-            ?>
             <option value="<?=$this->escapeHtmlAttr($list->getId())?>"><?=$this->escapeHtml($list->getTitle())?></option>
           <?php endforeach; ?>
         </select>
