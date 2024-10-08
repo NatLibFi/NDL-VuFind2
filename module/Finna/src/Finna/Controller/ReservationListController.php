@@ -34,6 +34,7 @@
 
 namespace Finna\Controller;
 
+use Exception;
 use Finna\Form\Form;
 use Finna\ReservationList\ReservationListService;
 use Finna\View\Helper\Root\ReservationList;
@@ -116,79 +117,95 @@ class ReservationListController extends AbstractBase
         if (!$user) {
             return $this->forceLogin();
         }
-        $view = $this->createViewModel();
-        $view->institution = $institution = $this->getParam('institution');
-        $view->listIdentifier = $listIdentifier = $this->getParam('listIdentifier');
-
-        $recordId = $this->getParam('recordId');
-        $source = $this->getParam('source');
-        $newList = $this->getParam('newList');
-        if ($newList && !$this->formWasSubmitted('submit')) {
-            $view->setTemplate('reservationlist/add-list');
-            $view->source = $source;
-            $view->recordId = $recordId;
-            return $view;
-        }
+        $view = $this->createViewModel(
+            [
+                'institution' => $this->getParam('institution'),
+                'listIdentifier' => $this->getParam('listIdentifier'),
+                'recordId' => $this->getParam('recordId'),
+                'source' => $this->getParam('source'),
+            ]
+        );
         $driver = $this->getRecordLoader()->load(
-            $recordId,
-            $source ?: DEFAULT_SEARCH_BACKEND,
+            $view->recordId,
+            $view->source ?: DEFAULT_SEARCH_BACKEND,
             false
         );
         [
             'properties' => $listProperties,
             'institution_information' => $institutionInformation,
             'translation_keys' => $listTranslations,
-        ] = ($this->reservationListHelper)($user)->getListProperties($institution, $listIdentifier);
+        ] = ($this->reservationListHelper)($user)->getListProperties($view->institution, $view->listIdentifier);
         if (!$listProperties) {
             throw new \VuFind\Exception\Forbidden('Record is not allowed in the list');
         }
-        $view->driver = $driver;
         $lists = $this->reservationListService->getListsNotContainingRecord(
             $user,
             $driver,
-            $listIdentifier,
-            $institution
+            $view->listIdentifier,
+            $view->institution
         );
-
         // Filter out already ordered lists
         $view->lists = array_filter(
             $lists,
             fn ($list) => !$list->getOrdered()
         );
-        $view->setTemplate('reservationlist/select-list');
 
-        if ($this->formWasSubmitted('submit')) {
+        if ($this->formWasSubmitted('list_selected')) {
             if (!$this->validateCsrf()) {
                 $this->flashMessenger()->addErrorMessage('csrf_validation_failed');
                 return $view;
             }
-            $state = $this->getParam('state');
-            $title = $this->getParam('title');
-            $request = $this->getRequest();
-            $request->getPost()->set('datasource', $driver->getDatasource())->set('institution', $institution);
-            if ('saveList' === $state) {
-                if (!$title) {
-                    $view->setTemplate('reservationlist/add-list');
-                    $view->source = $source;
-                    $view->recordId = $recordId;
-                    return $view;
-                }
-                $list = $this->reservationListService->createListForUser($user);
-                $this->reservationListService->updateListFromRequest(
-                    $list,
-                    $user,
-                    $request->getPost()
-                );
-            } elseif ('saveItem' === $state) {
-                $this->reservationListService->saveRecordToReservationList(
-                    $request->getPost(),
-                    $user,
-                    $driver,
-                );
-                return $this->inLightbox()  // different behavior for lightbox context
-                  ? $this->getRefreshResponse()
-                  : $this->redirect()->toRoute('reservationlist-displaylists');
+            $this->reservationListService->saveRecordToReservationList(
+                $this->getRequest()
+                    ->getPost()
+                    ->set('institution', $view->institution),
+                $user,
+                $driver,
+            );
+            return $this->inLightbox()  // different behavior for lightbox context
+                ? $this->getRefreshResponse()
+                : $this->redirect()->toRoute('reservationlist-displaylists');
+        }
+        return $view;
+    }
+
+    /**
+     * Add a new list action
+     *
+     * @return \Laminas\View\Model\ViewModel
+     */
+    public function createListAction(): \Laminas\View\Model\ViewModel
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->forceLogin();
+        }
+
+        $view = $this->createViewModel(
+            [
+                'source' => $this->getParam('source'),
+                'recordId' => $this->getParam('recordId'),
+                'institution' => $this->getParam('institution'),
+                'listIdentifier' => $this->getParam('listIdentifier'),
+            ]
+        );
+        if ($this->formWasSubmitted('list_created')) {
+            if (!$this->validateCsrf()) {
+                $this->flashMessenger()->addErrorMessage('csrf_validation_failed');
+                return $view;
             }
+            $title = $this->getParam('title');
+            if (!$title) {
+                return $view;
+            }
+            $list = $this->reservationListService->createListForUser($user);
+            $this->reservationListService->updateListFromRequest(
+                $list,
+                $user,
+                $this->getRequest()->getPost()
+            );
+
+            return $this->forwardTo(\Finna\Controller\ReservationListController::class, 'AddItemToList');
         }
         return $view;
     }
@@ -328,7 +345,7 @@ class ReservationListController extends AbstractBase
         if ($this->getParam('confirm')) {
             try {
                 $user = $this->getUser();
-                $list = $this->reservationListService->getAndRememberListObject($listID, $user);
+                $list = $this->reservationListService->getListById((int)$listID, $user);
                 $this->reservationListService->destroyList($list, $user);
                 $this->flashMessenger()->addSuccessMessage('ReservationList::List Deleted');
             } catch (LoginRequiredException | ListPermissionException $e) {

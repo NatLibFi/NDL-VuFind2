@@ -258,9 +258,9 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         if (!$user) {
             throw new LoginRequiredException('You must be logged in first');
         }
-
         // Get or create a list object as needed:
-        $list = $this->getAndRememberListObject($params->get('list', 'NEW'), $user);
+        $listId = (int)$params->get('list');
+        $list = $this->getListById($listId, $user);
 
         // Get or create a resource object as needed:
         $resource = $this->resourcePopulator->getOrCreateResourceForDriver($driver);
@@ -322,7 +322,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      * sharing form processing between multiple actions.
      *
      * @param FinnaResourceListEntityInterface $list    List to update
-     * @param ?UserEntityInterface             $user    Logged-in user (false if none)
+     * @param UserEntityInterface              $user    Logged-in user
      * @param Parameters                       $request Request to process
      *
      * @return int ID of newly created row
@@ -331,7 +331,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      */
     public function updateListFromRequest(
         FinnaResourceListEntityInterface $list,
-        ?UserEntityInterface $user,
+        UserEntityInterface $user,
         Parameters $request
     ): int {
         $list->setTitle($request->get('title'))

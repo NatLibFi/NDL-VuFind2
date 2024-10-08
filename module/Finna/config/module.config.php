@@ -1088,6 +1088,7 @@ $dynamicRoutes = [
         'reservationlist-deletelist' => 'DeleteList/[:id]',
         'reservationlist-deletebulk' => 'DeleteBulk/[:id]',
         'reservationlist-additemtolist' => 'AddItemToList',
+        'reservationlist-createlist' => 'CreateList',
     ],
 ];
 
@@ -1108,7 +1109,7 @@ $staticRoutes = [
     'Record/DownloadFile',
     'Bazaar/Home',
     'Bazaar/Cancel',
-    'ReservationList/AddList',
+    'ReservationList/CreateList',
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
