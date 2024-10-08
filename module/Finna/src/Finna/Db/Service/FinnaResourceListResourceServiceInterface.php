@@ -104,21 +104,21 @@ interface FinnaResourceListResourceServiceInterface extends DbServiceInterface
     public function deduplicate(): void;
 
     /**
-     * Get resources for a reservation list
+     * Get resources for a resource list
      *
      * @param UserEntityInterface              $user   User entity
      * @param FinnaResourceListEntityInterface $list   List entity
      * @param string|null                      $sort   Sort order
      * @param int                              $offset Offset
-     * @param int|null                         $limit  Limit
+     * @param int                              $limit  Limit
      *
      * @return array
      */
     public function getResourcesForList(
         UserEntityInterface $user,
-        ?FinnaResourceListEntityInterface $list = null,
+        FinnaResourceListEntityInterface $list,
         ?string $sort = null,
         int $offset = 0,
-        int $limit = null
+        int $limit = -1
     ): array;
 }

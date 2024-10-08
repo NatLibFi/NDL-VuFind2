@@ -30,6 +30,7 @@
 
 namespace Finna\Search\ReservationList;
 
+use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\Db\Service\FinnaResourceListResourceServiceInterface;
 use Finna\Db\Service\FinnaResourceListServiceInterface;
 use LmcRbacMvc\Service\AuthorizationServiceAwareInterface;
@@ -40,6 +41,7 @@ use VuFind\Record\Loader;
 use VuFind\Search\Base\Results as BaseResults;
 use VuFindSearch\Service as SearchService;
 
+use function array_slice;
 use function count;
 
 /**
@@ -197,13 +199,7 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
         // Apply offset and limit if necessary!
         $limit = $this->getParams()->getLimit();
         if ($this->resultTotal > $limit) {
-            $rawResults = $this->resourceListResourceService->getResourcesForList(
-                $this->user,
-                $list,
-                null,
-                0,
-                $limit
-            );
+            $rawResults = array_slice($rawResults, $this->getStartRecord() - 1, $limit);
         }
 
         // Retrieve record drivers for the selected items.

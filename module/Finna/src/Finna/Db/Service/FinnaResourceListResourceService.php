@@ -33,6 +33,8 @@ use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\Db\Entity\FinnaResourceListResourceEntityInterface;
 use Finna\Db\Table\FinnaResourceListResource;
 use Finna\Db\Table\Resource;
+use Laminas\Db\Sql\Expression;
+use Laminas\Db\Sql\Select;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\AbstractDbService;
@@ -144,31 +146,60 @@ class FinnaResourceListResourceService extends AbstractDbService implements
     }
 
     /**
-     * Get resources for a reservation list
+     * Get resources for a resource list
      *
-     * @param UserEntityInterface                   $user   User entity
-     * @param FinnaResourceListEntityInterface|null $list   List entity
-     * @param string|null                           $sort   Sort order
-     * @param int                                   $offset Offset
-     * @param int|null                              $limit  Limit
+     * @param UserEntityInterface              $user   User entity
+     * @param FinnaResourceListEntityInterface $list   List entity
+     * @param string|null                      $sort   Sort order
+     * @param int                              $offset Offset
+     * @param int                              $limit  Limit
      *
      * @return array
      */
     public function getResourcesForList(
         UserEntityInterface $user,
-        ?FinnaResourceListEntityInterface $list = null,
+        FinnaResourceListEntityInterface $list,
         ?string $sort = null,
         int $offset = 0,
-        int $limit = null
+        int $limit = -1
     ): array {
-        return iterator_to_array(
-            $this->getDbTable(Resource::class)->getReservationResources(
-                $user?->getId() ?? null,
-                $list?->getId() ?? null,
-                $sort,
-                $offset,
-                $limit
+        $relations = iterator_to_array(
+            $this->getDbTable(FinnaResourceListResource::class)->select(
+                [
+                    'list_id' => $list->getId(),
+                    'user_id' => $user->getId(),
+                ]
             )
+        );
+        $resourceIds = array_map(
+            fn ($relation) => $relation->getResourceId(),
+            $relations
+        );
+        if (!$resourceIds) {
+            return [];
+        }
+        $callback = function ($select) use ($sort, $offset, $limit, $resourceIds) {
+            $select->where->in('id', $resourceIds);
+            $columns = [
+                new Expression(
+                    'DISTINCT(?)',
+                    ['resource.id'],
+                    [Expression::TYPE_IDENTIFIER]
+                ), Select::SQL_STAR,
+            ];
+            $select->columns($columns);
+            if ($sort) {
+                Resource::applySort($select, $sort, 'resource', $columns);
+            }
+            if ($offset > 0) {
+                $select->offset($offset);
+            }
+            if ($limit > 0) {
+                $select->limit($limit);
+            }
+        };
+        return iterator_to_array(
+            $this->getDbTable(Resource::class)->select($callback)
         );
     }
 
