@@ -158,18 +158,16 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Get a list object for the specified ID (or null to create a new list).
-     * Ensure that the object is persisted to the database if it does not
-     * already exist, and remember it as the user's last-accessed list.
+     * Get a list object for the specified ID.
      *
-     * @param ?int                $listId List ID (or null to create a new list)
+     * @param int                 $listId List ID
      * @param UserEntityInterface $user   The user saving the record
      *
      * @return FinnaResourceListEntityInterface
      *
      * @throws \VuFind\Exception\ListPermission
      */
-    public function getAndRememberListObject(?int $listId, UserEntityInterface $user): FinnaResourceListEntityInterface
+    public function getAndRememberListObject(int $listId, UserEntityInterface $user): FinnaResourceListEntityInterface
     {
         $list = $this->resourceListService->getResourceListById($listId);
         // Validate incoming list ID:
@@ -206,7 +204,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      * Given an array of item ids, remove them from the specified list.
      *
      * @param FinnaResourceListEntityInterface $list   List being updated
-     * @param ?UserEntityInterface             $user   Logged-in user (null if none)
+     * @param ?UserEntityInterface             $user   Logged-in user
      * @param string[]                         $ids    IDs to remove from the list
      * @param string                           $source Type of resource identified by IDs
      *
@@ -214,7 +212,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      */
     public function removeListResourcesById(
         FinnaResourceListEntityInterface $list,
-        ?UserEntityInterface $user,
+        UserEntityInterface $user,
         array $ids,
         string $source = DEFAULT_SEARCH_BACKEND
     ): void {
@@ -233,30 +231,6 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         // Remove Resource and related tags:
         $listUser = $list->getUser();
         $this->resourceListResourceService->unlinkResources($resourceIDs, $listUser, $list);
-    }
-
-    /**
-     * Given an array of item ids, remove them from all of the specified user's lists
-     *
-     * @param UserEntityInterface $user   User owning lists
-     * @param string[]            $ids    IDs to remove from the list
-     * @param string              $source Type of resource identified by IDs
-     *
-     * @return void
-     */
-    public function removeUserResourcesById(
-        UserEntityInterface $user,
-        array $ids,
-        $source = DEFAULT_SEARCH_BACKEND
-    ): void {
-        // Retrieve a list of resource IDs:
-        $resources = $this->resourceService->getResourcesByRecordIds($ids, $source);
-
-        $resourceIDs = [];
-        foreach ($resources as $current) {
-            $resourceIDs[] = $current->getId();
-        }
-        $this->resourceListResourceService->unlinkResources($resourceIDs, $user->getId(), null);
     }
 
     /**
@@ -322,7 +296,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      * throws an exception otherwise.
      *
      * @param FinnaResourceListEntityInterface $list List to save
-     * @param ?UserEntityInterface             $user Logged-in user (null if none)
+     * @param UserEntityInterface              $user Logged-in user (null if none)
      *
      * @return void
      * @throws ListPermissionException
@@ -330,7 +304,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      */
     public function saveListForUser(
         FinnaResourceListEntityInterface $list,
-        ?UserEntityInterface $user
+        UserEntityInterface $user
     ): void {
         if (!$this->userCanEditList($user, $list)) {
             throw new ListPermissionException('list_access_denied');
@@ -419,10 +393,8 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      *
      * @return FinnaResourceListEntityInterface
      */
-    public function getListById(
-        int $listId,
-        UserEntityInterface $user = null
-    ): FinnaResourceListEntityInterface {
+    public function getListById(int $listId, UserEntityInterface $user = null): FinnaResourceListEntityInterface
+    {
         $list = $this->resourceListService->getResourceListById($listId);
         // Validate incoming list ID:
         if (!$this->userCanEditList($user, $list)) {
@@ -500,18 +472,26 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     /**
      * Get lists containing a specific record.
      *
-     * @param DefaultRecord|string         $recordOrId Record or ID of record being checked.
-     * @param string                       $source     Source of record to look up
-     * @param UserEntityInterface|int|null $userOrId   Optional user ID or entity object (to limit results
-     *                                                 to a particular user).
+     * @param UserEntityInterface $user           User entity object or ID
+     * @param DefaultRecord       $record         Resource entity to look for
+     * @param string              $listIdentifier Identifier of the list used by institution
+     * @param string              $institution    Institution name
      *
      * @return FinnaResourceListEntityInterface[]
      */
     public function getListsContainingRecord(
-        DefaultRecord|string $recordOrId,
-        string $source = DEFAULT_SEARCH_BACKEND,
-        UserEntityInterface|int|null $userOrId = null
+        UserEntityInterface $user = null,
+        DefaultRecord $record,
+        string $listIdentifier = '',
+        string $institution = ''
     ): array {
-        return $this->resourceListService->getListsContainingRecord($recordOrId, $source, $userOrId);
+        $resource = $this->resourcePopulator->getOrCreateResourceForDriver($record);
+        return $this->resourceListService->getListsContainingResource(
+            $user,
+            $resource,
+            $listIdentifier,
+            $institution,
+            self::RESOURCE_LIST_TYPE
+        );
     }
 }

@@ -38,9 +38,6 @@ use VuFind\Db\Service\DbServiceAwareTrait;
 use VuFind\Db\Table\DbTableAwareInterface;
 use VuFind\Db\Table\DbTableAwareTrait;
 use VuFind\Exception\RecordMissing as RecordMissingException;
-use VuFind\RecordDriver\DefaultRecord;
-
-use function is_int;
 
 /**
  * Resource list service
@@ -69,40 +66,65 @@ class FinnaResourceListService extends AbstractDbService implements
     }
 
     /**
-     * Delete a user list entity.
+     * Delete a resource list entity.
      *
-     * @param FinnaResourceListEntityInterface|int $listOrId List entity object or ID to delete
+     * @param FinnaResourceListEntityInterface $list List entity
      *
      * @return void
      */
-    public function deleteResourceList(FinnaResourceListEntityInterface|int $listOrId): void
+    public function deleteResourceList(FinnaResourceListEntityInterface $list): void
     {
-        $listId = $listOrId instanceof FinnaResourceListEntityInterface ? $listOrId->getId() : $listOrId;
-        $this->getDbTable(\Finna\Db\Table\FinnaResourceList::class)->delete(['id' => $listId]);
+        $this->getDbTable(\Finna\Db\Table\FinnaResourceList::class)->delete(['id' => $list]);
     }
 
     /**
-     * Get lists containing a specific record.
+     * Get lists which does contain given resource
      *
-     * @param string                       $recordOrId Record or ID of record being checked.
-     * @param string                       $source     Source of record to look up
-     * @param UserEntityInterface|int|null $userOrId   Optional user ID or entity object (to limit results
-     *                                                 to a particular user).
+     * @param UserEntityInterface     $user           User entity object or ID
+     * @param ResourceEntityInterface $resource       Resource entity to look for
+     * @param string                  $listIdentifier Identifier of the list used by institution
+     * @param string                  $institution    Institution name
+     * @param ?string                 $listType       List type to retrieve settings for or omit for all
      *
-     * @return FinnaResourceListEntityInterface[]
+     * @return array
      */
-    public function getListsContainingRecord(
-        DefaultRecord|string $recordOrId,
-        string $source = DEFAULT_SEARCH_BACKEND,
-        UserEntityInterface|int|null $userOrId = null
+    public function getListsContainingResource(
+        UserEntityInterface $user,
+        ResourceEntityInterface $resource,
+        string $listIdentifier = '',
+        string $institution = '',
+        string $listType = null
     ): array {
-        $recordId = $recordOrId instanceof DefaultRecord ? $recordOrId->getUniqueID() : $recordOrId;
-        return iterator_to_array(
-            $this->getDbTable(\Finna\Db\Table\FinnaResourceList::class)->getListsContainingResource(
-                $recordId,
-                $source,
-                is_int($userOrId) ? $userOrId : $userOrId->getId()
+        $listsContaining = iterator_to_array(
+            $this->getDbTable(FinnaResourceListResource::class)->select(
+                ['resource_id' => $resource->getId(), 'user_id' => $user->getId()]
             )
+        );
+        if (!$listsContaining) {
+            return [];
+        }
+        $listIds = [];
+        if ($listsContaining) {
+            $listIds = array_map(
+                fn ($relation) => $relation->getListId(),
+                $listsContaining
+            );
+        }
+        $callback = function ($select) use ($listIdentifier, $user, $institution, $listType, $listIds) {
+            $select->where->equalTo('user_id', $user->getId());
+            if ($institution) {
+                $select->where->equalTo('institution', $institution);
+            }
+            if ($listIdentifier) {
+                $select->where->equalTo('list_config_identifier', $listIdentifier);
+            }
+            if ($listType) {
+                $select->where->equalTo('list_type', $listType);
+            }
+            $select->where->in('id', $listIds);
+        };
+        return iterator_to_array(
+            $this->getDbTable(\Finna\Db\Table\FinnaResourceList::class)->select($callback)
         );
     }
 

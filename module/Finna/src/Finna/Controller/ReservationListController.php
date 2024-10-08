@@ -348,7 +348,7 @@ class ReservationListController extends AbstractBase
             $this->url()->fromRoute('reservationlist-deletelist'),
             $this->url()->fromRoute('reservationlist-displaylists'),
             'confirm_delete_list_text',
-            ['id' => $listID]
+            ['listId' => $listID]
         );
     }
 

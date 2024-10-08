@@ -49,35 +49,34 @@ interface FinnaResourceListResourceServiceInterface extends DbServiceInterface
     /**
      * Create user/resource/list link if one does not exist; update notes if one does.
      *
-     * @param ResourceEntityInterface|int          $resourceOrId Entity or ID of resource to link up
-     * @param UserEntityInterface|int              $userOrId     Entity or ID of user creating link
-     * @param FinnaResourceListEntityInterface|int $listOrId     Entity or ID of list to link up
-     * @param string                               $notes        Notes to associate with link
+     * @param ResourceEntityInterface          $resource Entity
+     * @param UserEntityInterface              $user     Entity
+     * @param FinnaResourceListEntityInterface $list     Entity
+     * @param string                           $notes    Notes to associate with link
      *
-     * @return UserResource|false
+     * @return FinnaResourceListResourceEntityInterface
      */
     public function createOrUpdateLink(
-        ResourceEntityInterface|int $resourceOrId,
-        UserEntityInterface|int $userOrId,
-        FinnaResourceListEntityInterface|int $listOrId,
+        ResourceEntityInterface $resource,
+        UserEntityInterface $user,
+        FinnaResourceListEntityInterface $list,
         string $notes = ''
     ): FinnaResourceListResourceEntityInterface;
 
     /**
      * Unlink rows for the specified resource.
      *
-     * @param int|int[]|null                       $resourceId ID (or array of IDs) of resource(s) to unlink
-     *                                                         (null for ALL matching resources)
-     * @param UserEntityInterface|int              $userOrId   ID or entity representing user removing links
-     * @param FinnaResourceListEntityInterface|int $listOrId   ID or entity representing list to unlink
-     *                                                         (null for ALL matching lists)
+     * @param int|int[]|null                   $resourceId ID (or array of IDs) of resource(s) to unlink (null for ALL
+     *                                                     matching resources)
+     * @param UserEntityInterface              $user       User entity
+     * @param FinnaResourceListEntityInterface $list       List entity
      *
      * @return void
      */
     public function unlinkResources(
         int|array|null $resourceId,
-        UserEntityInterface|int $userOrId,
-        FinnaResourceListEntityInterface|int|null $listOrId = null
+        UserEntityInterface $user,
+        FinnaResourceListEntityInterface $list
     ): void;
 
     /**

@@ -228,16 +228,11 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      *
      * @return FinnaResourceListEntityInterface[]
      */
-    public function getListsContainingRecord(
-        DefaultRecord $record,
-    ): array {
+    public function getListsContainingRecord(DefaultRecord $record): array
+    {
         if (!$this->user) {
             return [];
         }
-        return $this->reservationListService->getListsContainingRecord(
-            $record,
-            $record->getSourceIdentifier(),
-            $this->user
-        );
+        return $this->reservationListService->getListsContainingRecord($this->user, $record);
     }
 }

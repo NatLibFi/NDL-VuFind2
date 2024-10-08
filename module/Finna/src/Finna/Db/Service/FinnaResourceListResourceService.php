@@ -29,23 +29,17 @@
 
 namespace Finna\Db\Service;
 
-use Exception;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\Db\Entity\FinnaResourceListResourceEntityInterface;
 use Finna\Db\Table\FinnaResourceListResource;
 use Finna\Db\Table\Resource;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\Db\Entity\UserListEntityInterface;
 use VuFind\Db\Service\AbstractDbService;
 use VuFind\Db\Service\DbServiceAwareInterface;
 use VuFind\Db\Service\DbServiceAwareTrait;
-use VuFind\Db\Service\ResourceServiceInterface;
-use VuFind\Db\Service\UserServiceInterface;
 use VuFind\Db\Table\DbTableAwareInterface;
 use VuFind\Db\Table\DbTableAwareTrait;
-
-use function is_int;
 
 /**
  * Finna resource list resource service.
@@ -67,38 +61,23 @@ class FinnaResourceListResourceService extends AbstractDbService implements
     /**
      * Create user/resource/list link if one does not exist; update notes if one does.
      *
-     * @param ResourceEntityInterface|int $resourceOrId Entity or ID of resource to link up
-     * @param UserEntityInterface|int     $userOrId     Entity or ID of user creating link
-     * @param UserListEntityInterface|int $listOrId     Entity or ID of list to link up
-     * @param string                      $notes        Notes to associate with link
+     * @param ResourceEntityInterface          $resource Entity
+     * @param UserEntityInterface              $user     Entity
+     * @param FinnaResourceListEntityInterface $list     Entity
+     * @param string                           $notes    Notes to associate with link
      *
-     * @return UserResource|false
+     * @return FinnaResourceListResourceEntityInterface
      */
     public function createOrUpdateLink(
-        ResourceEntityInterface|int $resourceOrId,
-        UserEntityInterface|int $userOrId,
-        FinnaResourceListEntityInterface|int $listOrId,
+        ResourceEntityInterface $resource,
+        UserEntityInterface $user,
+        FinnaResourceListEntityInterface $list,
         string $notes = ''
     ): FinnaResourceListResourceEntityInterface {
-        $resource = $resourceOrId instanceof ResourceEntityInterface
-            ? $resourceOrId : $this->getDbService(ResourceServiceInterface::class)->getResourceById($resourceOrId);
-        if (!$resource) {
-            throw new Exception("Cannot retrieve resource $resourceOrId");
-        }
-        $list = $listOrId instanceof FinnaResourceListEntityInterface
-            ? $listOrId
-            : $this->getDbService(FinnaResourceListServiceInterface::class)->getResourceListById($listOrId);
-        if (!$list) {
-            throw new Exception("Cannot retrieve list $listOrId");
-        }
-        $user = $userOrId instanceof UserEntityInterface
-            ? $userOrId : $this->getDbService(UserServiceInterface::class)->getUserById($userOrId);
-        if (!$user) {
-            throw new Exception("Cannot retrieve user $userOrId");
-        }
         $params = [
             'resource_id' => $resource->getId(),
             'list_id' => $list->getId(),
+            'user_id' => $user->getId(),
         ];
         if (!($result = $this->getDbTable(FinnaResourceListResource::class)->select($params)->current())) {
             $result = $this->createEntity()
@@ -116,30 +95,25 @@ class FinnaResourceListResourceService extends AbstractDbService implements
     /**
      * Unlink rows for the specified resource.
      *
-     * @param int|int[]|null              $resourceId ID (or array of IDs) of resource(s) to unlink (null for ALL
-     * matching resources)
-     * @param UserEntityInterface|int     $userOrId   ID or entity representing user removing links
-     * @param UserListEntityInterface|int $listOrId   ID or entity representing list to unlink (null for ALL
-     * matching lists)
+     * @param int|int[]|null                   $resourceId ID (or array of IDs) of resource(s) to unlink (null for ALL
+     *                                                     matching resources)
+     * @param UserEntityInterface              $user       User entity
+     * @param FinnaResourceListEntityInterface $list       List entity
      *
      * @return void
      */
     public function unlinkResources(
         int|array|null $resourceId,
-        UserEntityInterface|int $userOrId,
-        FinnaResourceListEntityInterface|int|null $listOrId = null
+        UserEntityInterface $user,
+        FinnaResourceListEntityInterface $list
     ): void {
         // Build the where clause to figure out which rows to remove:
-        $listId = is_int($listOrId) ? $listOrId : $listOrId?->getId();
-        $userId = is_int($userOrId) ? $userOrId : $userOrId->getId();
-        $callback = function ($select) use ($resourceId, $userId, $listId) {
-            $select->where->equalTo('user_id', $userId);
+        $callback = function ($select) use ($resourceId, $user, $list) {
+            $select->where->equalTo('user_id', $user->getId());
             if (null !== $resourceId) {
                 $select->where->in('resource_id', (array)$resourceId);
             }
-            if (null !== $listId) {
-                $select->where->equalTo('list_id', $listId);
-            }
+            $select->where->equalTo('list_id', $list->getId());
         };
 
         // Delete the rows:

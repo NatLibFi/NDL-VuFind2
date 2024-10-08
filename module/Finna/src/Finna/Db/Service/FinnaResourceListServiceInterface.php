@@ -33,7 +33,6 @@ use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\DbServiceInterface;
-use VuFind\RecordDriver\DefaultRecord;
 
 /**
  * Resource list service interface
@@ -54,28 +53,31 @@ interface FinnaResourceListServiceInterface extends DbServiceInterface
     public function createEntity(): FinnaResourceListEntityInterface;
 
     /**
-     * Delete a user list entity.
+     * Delete a resource list entity.
      *
-     * @param FinnaResourceListEntityInterface|int $listOrId List entity object or ID to delete
+     * @param FinnaResourceListEntityInterface $list List entity
      *
      * @return void
      */
-    public function deleteResourceList(FinnaResourceListEntityInterface|int $listOrId): void;
+    public function deleteResourceList(FinnaResourceListEntityInterface $list): void;
 
     /**
-     * Get lists containing a specific record.
+     * Get lists which does contain given resource
      *
-     * @param DefaultRecord|string         $recordOrId ID of record being checked.
-     * @param string                       $source     Source of record to look up
-     * @param UserEntityInterface|int|null $userOrId   Optional user ID or entity object (to limit results
-     *                                                 to a particular user).
+     * @param UserEntityInterface     $user           User entity object or ID
+     * @param ResourceEntityInterface $resource       Resource entity to look for
+     * @param string                  $listIdentifier Identifier of the list used by institution
+     * @param string                  $institution    Institution name
+     * @param ?string                 $listType       List type to retrieve settings for or omit for all
      *
-     * @return FinnaResourceListEntityInterface[]
+     * @return array
      */
-    public function getListsContainingRecord(
-        DefaultRecord|string $recordOrId,
-        string $source = DEFAULT_SEARCH_BACKEND,
-        UserEntityInterface|int|null $userOrId = null
+    public function getListsContainingResource(
+        UserEntityInterface $user,
+        ResourceEntityInterface $resource,
+        string $listIdentifier = '',
+        string $institution = '',
+        string $listType = null
     ): array;
 
     /**
