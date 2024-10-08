@@ -31,8 +31,6 @@
 namespace Finna\Db\Table;
 
 use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\Select;
 use Laminas\Session\Container;
 use VuFind\Db\Row\RowGateway;
 use VuFind\Db\Service\DbServiceAwareInterface;
