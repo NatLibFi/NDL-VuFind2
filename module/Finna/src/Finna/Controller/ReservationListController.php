@@ -330,6 +330,7 @@ class ReservationListController extends AbstractBase
                 $user = $this->getUser();
                 $list = $this->reservationListService->getAndRememberListObject($listID, $user);
                 $this->reservationListService->destroyList($list, $user);
+                $this->flashMessenger()->addSuccessMessage('ReservationList::List Deleted');
             } catch (LoginRequiredException | ListPermissionException $e) {
                 $user = $this->getUser();
                 if ($user == false) {
@@ -348,7 +349,7 @@ class ReservationListController extends AbstractBase
             $this->url()->fromRoute('reservationlist-deletelist'),
             $this->url()->fromRoute('reservationlist-displaylists'),
             'confirm_delete_list_text',
-            ['listId' => $listID]
+            ['id' => $listID]
         );
     }
 

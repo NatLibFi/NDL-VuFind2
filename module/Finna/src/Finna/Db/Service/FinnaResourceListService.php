@@ -74,7 +74,7 @@ class FinnaResourceListService extends AbstractDbService implements
      */
     public function deleteResourceList(FinnaResourceListEntityInterface $list): void
     {
-        $this->getDbTable(\Finna\Db\Table\FinnaResourceList::class)->delete(['id' => $list]);
+        $this->getDbTable(\Finna\Db\Table\FinnaResourceList::class)->delete(['id' => $list->getId()]);
     }
 
     /**
