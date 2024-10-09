@@ -340,12 +340,12 @@ function removeCheckRouteParam() {
 
 function recordDocReady() {
   removeCheckRouteParam();
-  $('.record-tabs .nav-tabs a').attr('aria-selected', 'false');
-  $('.record-tabs .nav-tabs .initiallyActive a').attr('aria-selected', 'true');
+  $('.record-tabs .nav-tabs li').attr('aria-selected', 'false');
+  $('.record-tabs .nav-tabs .initiallyActive').attr('aria-selected', 'true');
   // update aria-selected attributes after a tab has been shown
   $('.record-tabs .nav-tabs a').on('shown.bs.tab', function shownTab(e) {
-    $('.record-tabs .nav-tabs a').attr('aria-selected', 'false');
-    $(e.target).attr('aria-selected', 'true');
+    $('.record-tabs .nav-tabs li').attr('aria-selected', 'false');
+    $(e.target).parent().attr('aria-selected', 'true');
   });
   $('.record-tabs .nav-tabs a').on('click', function recordTabsClick() {
     var $li = $(this).parent();

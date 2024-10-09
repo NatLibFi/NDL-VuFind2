@@ -174,7 +174,7 @@
                 $tabClasses[] = 'hidden-xs tab-right';
               }
             ?>
-            <li class="<?=implode(' ', $tabClasses)?>" data-tab="<?=$tabName?>">
+            <li role="presentation" id="record-tab-<?=$this->escapeHtmlAttr($tabName)?>" class="<?=implode(' ', $tabClasses)?>" data-tab="<?=$tabName?>">
             <a role="tab" class="<?=$this->escapeHtmlAttr(strtolower($tab)) ?>" aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>"
               href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $tab))?>#tabnav" data-lightbox-ignore<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?>
               data-background<?php endif ?>>
