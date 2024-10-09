@@ -767,6 +767,8 @@ class Quria extends AxiellWebServices
                 'title' => $title,
                 'duedate' => $loan->loanDueDate,
                 'dueStatus' => $dueStatus,
+                'checkoutDate' => $this->formatDate($loan->loanDate),
+                'borrowingLocation' => $loan->branch ?? '',
                 'renewable' => (string)($loan->loanStatus->isRenewable ?? '') === 'yes',
                 'message' => $message,
                 'renew' => $renew,

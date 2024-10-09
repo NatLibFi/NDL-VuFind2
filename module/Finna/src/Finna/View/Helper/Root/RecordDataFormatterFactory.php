@@ -308,6 +308,17 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             ]
         );
         $setTemplateLine(
+            'Presenters Marc',
+            'getSecondaryPresenters',
+            'data-presenters.phtml',
+            [
+                'context' => [
+                    'class' => 'recordPresenters',
+                    'title' => 'Presenters',
+                ],
+            ]
+        );
+        $setTemplateLine(
             'Other Titles',
             'getAlternativeTitles',
             'data-escapeHtml.phtml',

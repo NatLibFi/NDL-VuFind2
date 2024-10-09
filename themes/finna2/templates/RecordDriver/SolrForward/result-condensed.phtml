@@ -1,4 +1,4 @@
-<!-- START of: finna - RecordDriver/DefaultRecord/result-condensed.phtml -->
+<!-- START of: finna - RecordDriver/SolrForward/result-condensed.phtml -->
 <?php
   $recordLinker = $this->recordLinker($this->results);
   $formats = $this->driver->tryMethod('getFormats');
@@ -57,7 +57,7 @@
           <?php if ($this->driver->isCollection()): ?>
             <?=implode('<br>', $this->driver->getSummary()); ?>
           <?php else: ?>
-            <?php $authors = $this->driver->tryMethod('getPrimaryAuthorsExtended');
+            <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles');
             if (!empty($authors)): ?>
               <?php $author = $authors[0]; ?>
                 <?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?>
@@ -192,4 +192,4 @@
     <div class="clearfix visible-xs"></div>
   </div>
 </div>
-<!-- END of: finna - RecordDriver/DefaultRecord/result-condensed.phtml -->
+<!-- END of: finna - RecordDriver/SolrForward/result-condensed.phtml -->

@@ -128,7 +128,7 @@ trait ILSFinna
 
         // Set home library if not already set
         if (!empty($info['home_library']) && empty($user->getHomeLibrary())) {
-            $user->setHomeLibrary($info['home_library']);
+            $this->authenticator->updateUserHomeLibrary($user, $info['home_library']);
         }
 
         return $user;

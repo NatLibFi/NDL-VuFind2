@@ -60,9 +60,13 @@ if (is_array($series)) {
     }
 }
 
-$authors = $this->driver->tryMethod('getNonPresenterAuthors')
-    ?? $this->driver->tryMethod('getPrimaryAuthors')
-    ?? [];
+if ($marc) {
+    $authors = $this->driver->tryMethod('getPrimaryAuthors', [], []);
+} else {
+    $authors = $this->driver->tryMethod('getNonPresenterAuthors')
+        ?? $this->driver->tryMethod('getPrimaryAuthors')
+        ?? [];
+}
 
 foreach ($authors as $author) {
     $name = $author['name'] ?? $author;
