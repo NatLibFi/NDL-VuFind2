@@ -189,7 +189,7 @@
         <?php endif; ?>
     <?php endif; ?>
 
-    <div class="tab-content collectionDetails<?=$tree ? 'Tree' : ''?>">
+    <div class="tab-content collectionDetails<?=$tree ? 'Tree' : ''?>" tabindex="0">
       <?php if (!$this->loadInitialTabWithAjax || !isset($activeTabObj) || !$activeTabObj->supportsAjax()): ?>
         <div class="tab-pane active <?=$this->escapeHtmlAttr($this->activeTab) ?>-tab">
           <?=isset($activeTabObj) ? $this->record($this->driver)->getTab($activeTabObj) : '' ?>
