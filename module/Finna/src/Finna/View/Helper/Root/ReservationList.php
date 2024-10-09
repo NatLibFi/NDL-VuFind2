@@ -33,8 +33,6 @@ use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\ReservationList\ReservationListService;
 use VuFind\Auth\ILSAuthenticator;
 use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\Db\Service\DbServiceAwareTrait;
-use VuFind\ILS\Connection;
 use VuFind\RecordDriver\DefaultRecord;
 
 use function in_array;
@@ -50,15 +48,6 @@ use function in_array;
  */
 class ReservationList extends \Laminas\View\Helper\AbstractHelper
 {
-    use DbServiceAwareTrait;
-
-    /**
-     * Record driver
-     *
-     * @var DefaultRecord|null
-     */
-    protected ?DefaultRecord $driver = null;
-
     /**
      * User logged in or null
      *
@@ -71,13 +60,11 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      *
      * @param ReservationListService $reservationListService Reservation list service
      * @param ILSAuthenticator       $ilsAuthenticator       Authenticator to ILS
-     * @param Connection             $catalog                Current connection catalog
      * @param array                  $config                 Reservation list yaml as an array
      */
     public function __construct(
         protected ReservationListService $reservationListService,
         protected ILSAuthenticator $ilsAuthenticator,
-        protected Connection $catalog,
         protected array $config = []
     ) {
     }

@@ -73,7 +73,6 @@ class ReservationListFactory implements FactoryInterface
         return new $requestedName(
             $container->get(\Finna\ReservationList\ReservationListService::class),
             $container->get(\VuFind\Auth\ILSAuthenticator::class),
-            $container->get(\VuFind\ILS\Connection::class),
             $reservationListYaml ?: []
         );
     }
