@@ -68,11 +68,13 @@ class ReservationListFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
+        $reservationListYaml = $container->get(\Finna\Config\YamlReader::class)
+            ->getFinna('ReservationList.yaml', 'config/finna');
         return new $requestedName(
             $container->get(\Finna\ReservationList\ReservationListService::class),
             $container->get(\VuFind\Auth\ILSAuthenticator::class),
             $container->get(\VuFind\ILS\Connection::class),
-            $container->get(\VuFind\Config\YamlReader::class)->get('ReservationList.yaml')
+            $reservationListYaml ?: []
         );
     }
 }
