@@ -194,18 +194,15 @@ class SolrExtensionsListener
     {
         $command = $event->getParam('command');
         $params = $command->getSearchParameters();
-        if ($recordSources = $this->getActiveSources($event)) {
-            // Don't add the filter if we're retrieving a batch of records and requested so (e.g. AIPA encapsulated
-            // records):
-            $context = $command->getContext();
-            if (
-                'retrieve' !== $context
-                && ('retrieveBatch' !== $context || !$params->get('finna.ignore_source_filter'))
-            ) {
-                $params->add('fq', static::TERMS_FILTER_PREFIX_SOURCE . implode("\u{001f}", $recordSources));
-            }
+        // Don't add the filter if requested so (e.g. AIPA encapsulated records) or we're fetching a single record (to
+        // be able to link to encapsulated records):
+        if ($params->get('finna.ignore_source_filter') || $command->getContext() === 'retrieve') {
+            $params->remove('finna.ignore_source_filter');
+            return;
         }
-        $params->remove('finna.ignore_source_filter');
+        if ($recordSources = $this->getActiveSources($event)) {
+            $params->add('fq', static::TERMS_FILTER_PREFIX_SOURCE . implode("\u{001f}", $recordSources));
+        }
     }
 
     /**

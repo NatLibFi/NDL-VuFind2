@@ -347,7 +347,6 @@ trait ContainerFormatTrait
     {
         $neededMap = [];
         $ids = [];
-        $params = [];
         foreach ($records as $i => $record) {
             if (
                 $record instanceof EncapsulatedRecordInterface
@@ -356,13 +355,10 @@ trait ContainerFormatTrait
                 $source = $needed['source'];
                 $neededMap[$source][$needed['id']] = $i;
                 $ids[] = $needed;
-                if (!isset($params[$source])) {
-                    $params[$source] = new ParamBag(['finna.ignore_source_filter' => 1]);
-                }
             }
         }
         if (!empty($ids)) {
-            $loadedRecords = $this->recordLoader->loadBatch($ids, params: $params);
+            $loadedRecords = $this->recordLoader->loadBatchIgnoringSourceFilter($ids);
             foreach ($loadedRecords as $loadedRecord) {
                 $loadedSource = $loadedRecord->getSourceIdentifier();
                 $loadedId = $loadedRecord->getUniqueID();
