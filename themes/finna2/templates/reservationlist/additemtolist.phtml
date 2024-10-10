@@ -46,7 +46,7 @@
       </div>
     </form>
   <?php else: ?>
-    <?= $this->transEsc('ReservationList::No Lists Found') ?>
+    <?= $this->transEsc('ReservationList::No Lists Found') ?><br/>
   <?php endif; ?>
   <a class="btn btn-link" id="make-list" href="<?=$this->url('reservationlist-createlist', [], ['query' => ['institution' => $this->institution, 'listIdentifier' => $this->listIdentifier, 'newList' => '1', 'recordId' => urlencode($this->recordId), 'source' => urlencode($this->source)]])?>"><?=$this->transEsc('ReservationList::Create New Reservation List')?></a>
 </div>
