@@ -10,8 +10,17 @@
 ?>
 
 <h2><?= $this->transEsc($pageTitle); ?></h2>
-<strong><?= $this->transEsc(['ReservationList', $listTranslations['title']]) ?> </strong>
-<p><?= $this->transEsc(['ReservationList', $listTranslations['description']]) ?> </p>
+<?php // TODO: create a component which handles the defaulting into prettier form ?>
+<?php if (!$this->translationEmpty($listTranslations['title'])): ?>
+  <strong><?= $this->transEsc($listTranslations['title']); ?></strong>
+<?php else: ?>
+  <strong><?= $this->transEscWithPrefix('source_', $this->institution) . ': ' . $this->escapeHtml($this->listIdentifier); ?></strong>
+<?php endif; ?>
+
+<?php if (!$this->translationEmpty($listTranslations['description'])): ?>
+  <p><?= $this->transEsc($listTranslations['description']); ?></p>
+<?php endif; ?>
+
 <div>
   <?php if (!empty($this->lists)): ?>
     <form method="post" name="AddItemToReservationList" data-lightbox-onclose="VuFind.refreshPage" action="<?=$this->url('reservationlist-additemtolist'); ?>">

@@ -30,7 +30,14 @@
           </div>
         </div>
         <div class="reservation-list-info">
-          <div><?= $this->transEsc(['ReservationList', $listTranslations['title']]); ?></div>
+          <?php // TODO: create a component which handles the defaulting into prettier form ?>
+          <div class="location">
+            <?php if (!$this->translationEmpty($listTranslations['title'])): ?>
+              <?= $this->transEsc($listTranslations['title']); ?>
+            <?php else: ?>
+              <?= $this->transEscWithPrefix('source_', $list->getInstitution()) . ': ' . $this->escapeHtml($list->getListConfigIdentifier()); ?>
+            <?php endif; ?>
+          </div>
           <?php if ($list->getOrdered()): ?>
             <div class="list-ordered list-info">
               <?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $list->getOrdered()->format('d.m.Y')])?>

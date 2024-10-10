@@ -19,9 +19,19 @@
       <h2><?=$this->transEsc('ReservationList::Reservation List') . ': ' . $this->transEsc($list->getTitle()) ?></h2>
     </div>
     <?= $this->flashmessages() ?>
+    <?php // TODO: create a component which handles the defaulting into prettier form ?>
     <div class="description-wrapper">
-      <p><?= $this->transEsc(['ReservationList', $listProperties['translation_keys']['title']]);?></p>
+      <?php if (!$this->translationEmpty($listProperties['translation_keys']['title'])): ?>
+        </p><?= $this->transEsc($listProperties['translation_keys']['title']); ?></p>
+      <?php else: ?>
+        <p><?= $this->transEscWithPrefix('source_', $this->list->getInstitution()) . ': ' . $this->escapeHtml($this->list->getListConfigIdentifier()); ?></p>
+      <?php endif; ?>
     </div>
+    <?php if (!$this->translationEmpty($listProperties['translation_keys']['description'])): ?>
+      <div class="description-wrapper">
+        <p><?= $this->transEsc($listProperties['translation_keys']['description']); ?></p>
+      </div>
+    <?php endif; ?>
     <div class="description-wrapper">
       <?php foreach ($listProperties['properties']['Information'] ?: $listProperties['institution_information'] as $value): ?>
         <p><?=$this->escapeHtml($value);?></p>

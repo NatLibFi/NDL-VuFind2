@@ -179,8 +179,8 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
                     'properties' => $list,
                     'institution_information' => $this->yamlConfig['Institutions'][$institution]['Information'] ?? [],
                     'translation_keys' => [
-                        'title' => "list_title_{$institution}_{$listIdentifier}",
-                        'description' => "list_description_{$institution}_{$listIdentifier}",
+                        'title' => "ReservationList::list_title_{$institution}_{$listIdentifier}",
+                        'description' => "ReservationList::list_description_{$institution}_{$listIdentifier}",
                     ],
                 ];
             }

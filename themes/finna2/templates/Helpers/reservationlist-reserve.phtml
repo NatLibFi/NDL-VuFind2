@@ -15,8 +15,13 @@ return;
       <?php $listTranslations = $this->reservationList()->getListProperties($institution, $list['Identifier'])['translation_keys']; ?>
       <div class="holdings-group">
         <div class="holdings-container-heading">
+          <?php // TODO: create a component which handles the defaulting into prettier form ?>
           <div class="location">
-            <?= $this->transEsc(['ReservationList', $listTranslations['title']]); ?>
+            <?php if (!$this->translationEmpty($listTranslations['title'])): ?>
+              <?= $this->transEsc($listTranslations['title']); ?>
+            <?php else: ?>
+              <?= $this->transEscWithPrefix('source_', $institution) . ': ' . $this->escapeHtml($list['Identifier']); ?>
+            <?php endif; ?>
           </div>
           <div class="location-link text-right">
             <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-additemtolist', [], ['query' => ['recordId' => $this->driver->getUniqueID(), 'source' => $this->driver->getSourceIdentifier(), 'institution' => $institution, 'listIdentifier' => $list['Identifier']]]))?>" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?= $this->icon('save') . ' ' . $this->transEsc(['ReservationList', 'Add To Reservation List'])?></a>
