@@ -2250,9 +2250,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      */
     public function getLocalNotes()
     {
-      return $this->stripTrailingPunctuation(
-          $this->getFieldArray('594', ['a'])
-      );
+        return $this->stripTrailingPunctuation(
+            $this->getFieldArray('594', ['a'])
+        );
     }
 
     /**
