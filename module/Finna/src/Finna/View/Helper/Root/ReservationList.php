@@ -61,12 +61,14 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      *
      * @param ReservationListService $reservationListService Reservation list service
      * @param ILSAuthenticator       $ilsAuthenticator       Authenticator to ILS
-     * @param array                  $config                 Reservation list yaml as an array
+     * @param array                  $yamlConfig             ReservationList.yaml as an array
+     * @param array                  $configSection          Reservation list section from config.ini
      */
     public function __construct(
         protected ReservationListService $reservationListService,
         protected ILSAuthenticator $ilsAuthenticator,
-        protected array $config = []
+        protected array $yamlConfig = [],
+        protected array $configSection = []
     ) {
     }
 
@@ -125,7 +127,7 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
             return [];
         }
         $result = [];
-        foreach ($this->config['Institutions'] ?? [] as $institution => $settings) {
+        foreach ($this->yamlConfig['Institutions'] ?? [] as $institution => $settings) {
             $current = [$institution => []];
             foreach ($settings['Lists'] ?? [] as $list) {
                 $list = $this->ensureListKeys($list);
@@ -170,12 +172,12 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
         string $institution,
         string $listIdentifier
     ): array {
-        foreach ($this->config['Institutions'][$institution]['Lists'] ?? [] as $list) {
+        foreach ($this->yamlConfig['Institutions'][$institution]['Lists'] ?? [] as $list) {
             $list = $this->ensureListKeys($list);
             if ($list['Identifier'] === $listIdentifier) {
                 return [
                     'properties' => $list,
-                    'institution_information' => $this->config['Institutions'][$institution]['Information'] ?? [],
+                    'institution_information' => $this->yamlConfig['Institutions'][$institution]['Information'] ?? [],
                     'translation_keys' => [
                         'title' => "list_title_{$institution}_{$listIdentifier}",
                         'description' => "list_description_{$institution}_{$listIdentifier}",
@@ -240,6 +242,9 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      */
     public function getReservationListsForUser(): array
     {
+        if (!$this->isFunctionalityEnabled()) {
+            return [];
+        }
         return $this->reservationListService->getReservationListsForUser($this->user);
     }
 
@@ -265,6 +270,6 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      */
     public function isFunctionalityEnabled(): bool
     {
-        return (bool)($this->config['Enabled'] ?? false);
+        return !empty($this->configSection['enabled']) && !empty($this->yamlConfig['Enabled']);
     }
 }

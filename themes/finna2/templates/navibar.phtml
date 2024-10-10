@@ -183,7 +183,7 @@
                 </a>
               </li>
             <?php endif; ?>
-            <?php if ($this->reservationList($user)->getReservationListsForUser()): ?>
+            <?php if ($this->reservationList()->isFunctionalityEnabled()): ?>
               <li>
                 <a <?=$this->url('myresearch-favorites') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role ="menuitem" href="<?=$this->url('reservationlist-displaylists')?>">
                   <?=$this->transEsc('ReservationList::Reservation Lists')?>

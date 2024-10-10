@@ -41,6 +41,7 @@ use Finna\View\Helper\Root\ReservationList;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use VuFind\Controller\AbstractBase;
 use VuFind\Controller\Feature\ListItemSelectionTrait;
+use VuFind\Exception\Forbidden as ForbiddenException;
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\LoginRequired as LoginRequiredException;
 use VuFind\Exception\RecordMissing as RecordMissingException;
@@ -62,6 +63,13 @@ use VuFind\Exception\RecordMissing as RecordMissingException;
 class ReservationListController extends AbstractBase
 {
     use ListItemSelectionTrait;
+
+    /**
+     * Error warning to display when reservation lists are disabled
+     *
+     * @var string
+     */
+    protected const RESERVATION_LISTS_DISABLED = 'Reservation lists disabled';
 
     /**
      * Constructor
@@ -113,6 +121,9 @@ class ReservationListController extends AbstractBase
      */
     public function addItemToListAction()
     {
+        if (!$this->reservationListHelper->isFunctionalityEnabled()) {
+            throw new ForbiddenException(self::RESERVATION_LISTS_DISABLED);
+        }
         $user = $this->getUser();
         if (!$user) {
             return $this->forceLogin();
@@ -175,6 +186,9 @@ class ReservationListController extends AbstractBase
      */
     public function createListAction(): \Laminas\View\Model\ViewModel
     {
+        if (!$this->reservationListHelper->isFunctionalityEnabled()) {
+            throw new ForbiddenException(self::RESERVATION_LISTS_DISABLED);
+        }
         $user = $this->getUser();
         if (!$user) {
             return $this->forceLogin();
@@ -223,6 +237,9 @@ class ReservationListController extends AbstractBase
      */
     public function displayListAction(): \Laminas\View\Model\ViewModel|\Laminas\Http\Response
     {
+        if (!$this->reservationListHelper->isFunctionalityEnabled()) {
+            throw new ForbiddenException(self::RESERVATION_LISTS_DISABLED);
+        }
         $user = $this->getUser();
         if (!$user) {
             return $this->forceLogin();
@@ -259,6 +276,9 @@ class ReservationListController extends AbstractBase
      */
     public function placeOrderAction()
     {
+        if (!$this->reservationListHelper->isFunctionalityEnabled()) {
+            throw new ForbiddenException(self::RESERVATION_LISTS_DISABLED);
+        }
         $user = $this->getUser();
         if (!$user) {
             return $this->forceLogin();
@@ -344,15 +364,20 @@ class ReservationListController extends AbstractBase
      */
     public function deleteListAction()
     {
+        if (!$this->reservationListHelper->isFunctionalityEnabled()) {
+            throw new ForbiddenException(self::RESERVATION_LISTS_DISABLED);
+        }
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->forceLogin();
+        }
         $listID = $this->getParam('id');
         if ($this->getParam('confirm')) {
             try {
-                $user = $this->getUser();
                 $list = $this->reservationListService->getListById((int)$listID, $user);
                 $this->reservationListService->destroyList($list, $user);
                 $this->flashMessenger()->addSuccessMessage('ReservationList::List Deleted');
             } catch (LoginRequiredException | ListPermissionException $e) {
-                $user = $this->getUser();
                 if ($user == false) {
                     return $this->forceLogin();
                 }
@@ -380,6 +405,10 @@ class ReservationListController extends AbstractBase
      */
     public function deleteBulkAction()
     {
+        if (!$this->reservationListHelper->isFunctionalityEnabled()) {
+            throw new ForbiddenException(self::RESERVATION_LISTS_DISABLED);
+        }
+
         $user = $this->getUser();
         if (!$user) {
             return $this->forceLogin();
@@ -422,6 +451,9 @@ class ReservationListController extends AbstractBase
      */
     public function displayListsAction()
     {
+        if (!$this->reservationListHelper->isFunctionalityEnabled()) {
+            throw new ForbiddenException(self::RESERVATION_LISTS_DISABLED);
+        }
         $user = $this->getUser();
         if (!$user) {
             return $this->forceLogin();
