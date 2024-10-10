@@ -23,7 +23,7 @@
 #
 Enabled: false
 Institutions:
-  Example Institutions:
+  Example Institution:
     Information:
       name: Example Institution Name
       address: Example Institution address
