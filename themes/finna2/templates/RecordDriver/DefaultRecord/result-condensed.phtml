@@ -57,7 +57,7 @@
           <?php if ($this->driver->isCollection()): ?>
             <?=implode('<br>', $this->driver->getSummary()); ?>
           <?php else: ?>
-            <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles');
+            <?php $authors = $this->driver->tryMethod('getPrimaryAuthorsExtended');
             if (!empty($authors)): ?>
               <?php $author = $authors[0]; ?>
                 <?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?>

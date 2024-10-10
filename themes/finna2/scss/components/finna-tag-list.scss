@@ -1,0 +1,18 @@
+.finna-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  & dt {
+    font-weight: bold;
+    padding: 5px 10px 5px 0;
+    &:not(:only-child):after {
+      content: ':';
+    }
+  }
+  & li,
+  & dd {
+    border-radius: .5em;
+    background-color: #f4f4f4;
+    padding: 5px 10px;
+  }
+}

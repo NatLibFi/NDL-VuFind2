@@ -383,8 +383,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
             $this->reservations_wsdl
                 = $this->getWsdlPath($this->config['Catalog']['reservations_wsdl']);
         } else {
-            throw new
-                ILSException('reservations_wsdl configuration needs to be set.');
+            throw new ILSException('reservations_wsdl configuration needs to be set.');
         }
 
         if (isset($this->config['Catalog']['patronaurora_wsdl'])) {

@@ -45,6 +45,7 @@ use VuFind\Db\Service\UserCardServiceInterface;
 use VuFind\Db\Service\UserServiceInterface;
 
 use function intval;
+use function sprintf;
 
 /**
  * Console service for processing unregistered online payments.

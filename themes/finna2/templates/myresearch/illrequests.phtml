@@ -62,9 +62,11 @@
                     <div class="btn-group">
                       <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEscAttr('ill_request_cancel_selected') ?>" class="btn btn-primary btn-finna-toolbar dropdown-toggle" data-toggle="dropdown">
                       <ul class="dropdown-menu useraccount-confirm">
-                        <li class="disabled"><span class="prompt-text"><?=$this->transEsc('confirm_ill_request_cancel_selected_text') ?></span></li>
-                        <li><a href="#" id="confirm_cancel_selected_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
-                        <li><a href="#" class="confirm_cancel_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+                        <li><span class="dropdown-header"><?=$this->transEsc('confirm_ill_request_cancel_selected_text') ?></span></li>
+                        <li>
+                          <a href="#" id="confirm_cancel_selected_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a>
+                          <a href="#" class="confirm_cancel_no"><?=$this->transEsc('confirm_dialog_no')?></a>
+                        </li>
                       </ul>
                     </div>
                   </div>
@@ -183,9 +185,11 @@
               <div class="dropdown button-bottom">
                 <input id="cancelAll" name="cancelAll" type="submit" value="<?=$this->transEscAttr('ill_request_cancel_all') ?>" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
                 <ul class="dropdown-menu useraccount-confirm">
-                  <li class="disabled"><span class="prompt-text"><?=$this->transEsc('confirm_ill_request_cancel_all_text') ?></span></li>
-                  <li><a href="#" id="confirm_cancel_all_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
-                  <li><a href="#" class="confirm_cancel_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+                  <li><span class="dropdown-header"><?=$this->transEsc('confirm_ill_request_cancel_all_text') ?></span></li>
+                  <li>
+                    <a href="#" id="confirm_cancel_all_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a>
+                    <a href="#" class="confirm_cancel_no"><?=$this->transEsc('confirm_dialog_no')?></a>
+                  </li>
                 </ul>
               </div>
             </form>

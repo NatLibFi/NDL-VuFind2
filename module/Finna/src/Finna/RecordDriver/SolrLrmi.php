@@ -33,6 +33,8 @@
 
 namespace Finna\RecordDriver;
 
+use Finna\RecordDriver\Feature\LrmiDriverTrait;
+
 use function in_array;
 
 /**
@@ -50,6 +52,8 @@ use function in_array;
  */
 class SolrLrmi extends SolrQdc
 {
+    use LrmiDriverTrait;
+
     /**
      * File formats that are downloadable
      *
@@ -210,22 +214,6 @@ class SolrLrmi extends SolrQdc
     public function getEducationalLevels()
     {
         return $this->fields['educational_level_str_mv'] ?? [];
-    }
-
-    /**
-     * Return root educational levels
-     *
-     * @return array
-     */
-    public function getRootEducationalLevels()
-    {
-        $rootLevels = [];
-        foreach ($this->fields['educational_level_str_mv'] ?? [] as $level) {
-            if (substr($level, 0, 1) === '0') {
-                $rootLevels[] = trim((string)$level);
-            }
-        }
-        return $rootLevels;
     }
 
     /**

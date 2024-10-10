@@ -1,6 +1,11 @@
 .main.template-dir-search.template-name-home,
 .sidebar {
     & .list-group-item:not(.title).daterange.expand {
+        transition: box .3s linear;
+
+        .timeline_within {
+            margin-left: 10px;
+        }
         @media (min-width: @screen-sm-min) {
             box-shadow: -4px 0px 13px -5px #000;
             padding: 10px;
@@ -17,10 +22,6 @@
         @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
             width: 720px;
             margin-left: -562px;
-        }
-        transition: box .3s linear;
-        .timeline_within {
-            margin-left: 10px;
         }
     }
     & .daterange-facet {
@@ -75,6 +76,7 @@
                 clear: both;
                 position: relative;
                 height: 114px;
+                border-radius: 5px 5px 5px 5px;
 
                 & .date-vis {
                     width: 100%;
@@ -82,7 +84,6 @@
                     cursor: crosshair;
                     background: @body-bg;
                 }
-                border-radius: 5px 5px 5px 5px;
                 & .icon--spin {
                     display: none;
                     left: 45%;

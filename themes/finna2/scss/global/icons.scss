@@ -1,0 +1,668 @@
+/* This file is for Finna's icon style changes. Do not overwrite icons in this file unless in exceptional cases. The icon configurations and overrides should be made in the theme.config.php file. */
+
+/* Icon cursor */
+a .icon:hover, a .icon:hover {
+    cursor: pointer;
+}
+.disabled > a [class^="icon"]:hover, .disabled a [class*=" fa-"]:hover {
+    cursor: not-allowed;
+}
+
+/* Iconlabel */
+.iconlabel:before {
+    font-family: finnaicons;
+    font-size: inherit;
+    font-weight: normal;
+    font-style: normal;
+
+    /* For safety - reset parent styles, that can break glyph codes*/
+    font-variant: normal;
+    text-transform: none;
+
+    /* Better Font Rendering =========== */
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.iconlabel {
+    color: $text-color;
+    background: none;
+    padding: 0px;
+    font-weight: 400;
+    margin-right: 10px;
+    font-size: 1.0em;
+    &:before {
+        padding-right: 3px;
+        font-size: 1.3em;
+        vertical-align: text-bottom;
+    }
+}
+table .iconlabel {
+    line-height: 1.3em;
+}
+.template-name-results .iconlabel {
+    letter-spacing: 0px;
+    font-size: 1em;
+}
+.iconlabel[class*="unknownname"]:before,
+.iconlabel[class*="personalname"]:before {
+    content: "\e922";
+}
+.iconlabel[class*="corporatename-alt"]:before {
+    content: "\e921";
+}
+.iconlabel[class*="corporatename"]:before {
+    content: "\e923";
+}
+.iconlabel[class*="familyname"]:before {
+    content: "\e8ba";
+}
+.iconlabel[class*="format-1other"]:before,
+.iconlabel[class*="format-feed-other"]:before {
+    content: "\e00d";
+}
+.iconlabel[class*="format-1othermicrofilm"]:before,
+.iconlabel[class*="format-feed-othermicrofilm"]:before {
+    font-family: FontAwesome;
+    content: $fa-var-film;
+}
+.iconlabel[class*="format-1otherinterview"]:before,
+.iconlabel[class*="format-feed-otherinterview"]:before {
+    font-family: FontAwesome;
+    content: $fa-var-microphone;
+}
+.iconlabel.format-book:before,
+.iconlabel[class*="format-1book"]:before,
+.iconlabel[class*="format-feed-book"]:before {
+    content: "\e616";
+}
+.iconlabel[class*="format-1bookebook"]:before,
+.iconlabel[class*="format-1bookebooksection"]:before,
+.iconlabel.format-1bookotherelectronic:before,
+.iconlabel[class*="format-feed-bookebook"]:before,
+.iconlabel[class*="format-feed-bookbooksection"]:before,
+.iconlabel.format-feed-bookotherelectronic:before {
+    content: "\e617";
+}
+.iconlabel[class*="format-1bookaudiobook"]:before,
+.iconlabel[class*="format-2bookaudiobook"]:before,
+.iconlabel[class*="format-feed-bookaudiobook"]:before {
+    content: "\e8c4";
+}
+.iconlabel.format-bookaudiobookdaisy:before,
+.iconlabel.format-feed-bookaudiobookdaisy:before {
+    content: "\e807";
+}
+.iconlabel.format-newspaper:before,
+.iconlabel.format-journal:before,
+.iconlabel[class*="format-1journal"]:before,
+.iconlabel[class*="format-feed-journal"]:before,
+.iconlabel.format-1othertextephemera:before {
+    content: "\e001";
+}
+.iconlabel[class*="format-1journaleserial"]:before,
+.iconlabel[class*="format-1journalearticle"]:before,
+.iconlabel[class*="format-1journalejournal"]:before,
+.iconlabel[class*="format-1journalenewspaper"]:before,
+.iconlabel[class*="format-feed-journaleserial"]:before,
+.iconlabel[class*="format-feed-journalearticle"]:before,
+.iconlabel[class*="format-feed-journalejournal"]:before,
+.iconlabel[class*="format-feed-journalenewspaper"]:before {
+    content: "\e60d";
+}
+.iconlabel[class*="format-1place"]:before,
+.iconlabel[class*="format-feed-place"]:before {
+    content: "\e901";
+}
+.iconlabel.format-manuscript:before,
+.iconlabel[class*="format-1othertextmanuscript"]:before,
+.iconlabel[class*="format-1otherresearchdata"]:before,
+.iconlabel[class*="format-1thesis"]:before,
+.iconlabel[class*="format-feed-othertextmanuscript"]:before,
+.iconlabel[class*="format-feed-otherresearchdata"]:before,
+.iconlabel[class*="format-feed-thesis"]:before {
+    content: "\e00c";
+}
+.iconlabel.format-0workofart:before,
+.iconlabel[class*="format-1workofart"]:before,
+.iconlabel[class*="format-feed-workofart"]:before {
+    content: "\e00b";
+}
+.iconlabel.format-video:before,
+.iconlabel[class*="format-1video"]:before,
+.iconlabel[class*="format-feed-video"]:before {
+    content: "\e00a";
+}
+.iconlabel[class*="format-1sound"]:before,
+.iconlabel[class*="format-feed-sound"]:before {
+    content: "\e009";
+}
+ .iconlabel.format-1soundcd:before,
+ .iconlabel.format-1soundsounddisc:before,
+ .iconlabel.format-1soundnonmusicalcd:before,
+ .iconlabel.format-1soundnonmusicaldisc:before,
+ .iconlabel.format-feed-soundcd:before,
+ .iconlabel.format-feed-sounddisc:before,
+ .iconlabel.format-feed-soundnonmusicalcd:before,
+ .iconlabel.format-feed-soundnonmusicaldisc:before {
+    content: "\e802";
+}
+.iconlabel.format-1soundsoundcassette:before,
+.iconlabel.format-1soundnonmusicalcassette:before,
+.iconlabel.format-1othertapecassette:before,
+.iconlabel.format-1otherdisccartridge:before,
+.iconlabel.format-feed-soundsoundcassette:before,
+.iconlabel.format-feed-soundnonmusicalcassette:before,
+.iconlabel.format-feed-othertapecassette:before,
+.iconlabel.format-feed-otherdisccartridge:before {
+    content: "\e8ad";
+}
+.iconlabel.format-photo:before,
+.iconlabel[class*="format-1image"]:before,
+.iconlabel[class*="format-feed-image"]:before {
+    content: "\e008";
+}
+.iconlabel[class*="format-1document"]:before,
+.iconlabel[class*="format-1othertext"]:before,
+.iconlabel.format-0manuscript:before,
+.iconlabel[class*="format-feed-document"]:before,
+.iconlabel[class*="format-feed-othertext"]:before,
+.iconlabel.format-feed-manuscript:before {
+    content: "\e006";
+}
+.iconlabel[class*="format-1documentarchive"]:before,
+.iconlabel[class*="format-1documentdigitizedarchive"]:before,
+.iconlabel[class*="format-1documentseries"]:before,
+.iconlabel.format-1documentothercollection:before,
+.iconlabel.format-1documentcollection:before,
+.iconlabel[class*="format-feed-documentarchive"]:before,
+.iconlabel[class*="format-feed-documentdigitizedarchive"]:before,
+.iconlabel[class*="format-feed-documentseries"]:before,
+.iconlabel.format-feed-documentothercollection:before,
+.iconlabel.format-feed-documentcollection:before
+{
+    content: "\e8cb";
+}
+.iconlabel.format-0note:before,
+.iconlabel.format-0musicalscore:before,
+.iconlabel[class*="format-1musicalscore"]:before,
+.iconlabel.format-feed-note:before,
+.iconlabel.format-feed-musicalscore:before {
+    content: "\e005";
+}
+.iconlabel.format-0database:before,
+.iconlabel.format-feed-database:before {
+    content: "\e004";
+}
+.iconlabel[class*="format-0physicalobject"]:before,
+.iconlabel[class*="format-1physicalobject"]:before,
+.iconlabel[class*="format-feed-physicalobject"]:before {
+    content: "\e003";
+}
+.iconlabel[class*="format-1map"]:before,
+.iconlabel[class*="format-feed-map"]:before
+{
+    content: "\e002";
+}
+.iconlabel.format-0aipa:before,
+.iconlabel.format-feed-aipa:before {
+    content: "\e8cc";
+}
+.iconlabel.format-0learningmaterial:before,
+.iconlabel.format-feed-learningmaterial:before {
+    content: "\e971";
+}
+.iconlabel[class*="format-1gameboardgame"]:before,
+.iconlabel[class*="format-feed-gameboardgame"]:before
+{
+	content: "\e8c2";
+}
+.iconlabel[class*="format-1gamevideogame"]:before,
+.iconlabel[class*="format-2gamevideogame"]:before,
+.iconlabel[class*="format-feed-gamevideogame"]:before {
+	font-family: FontAwesome;
+	content: $fa-var-gamepad;
+}
+.iconlabel.full-text-available:before {
+    content: "\e96e";
+}
+.iconlabel.peer-reviewed:before {
+    content: "\e8b6";
+}
+.iconlabel.open-access:before {
+    content: "\e91f";
+}
+.iconlabel.cc-license:before {
+    content: "\e905";
+}
+.iconlabel.finna-street:before {
+    content: "\e60e";
+}
+.iconlabel.download:before {
+    content: "\e910";
+}
+.iconlabel.finna-logo:before {
+    content: "\e913";
+}
+.iconlabel.other-records:before {
+    content: "\e00d";
+}
+
+/* Navbar */
+// Set navbar logo display only the logo
+.navbar-header .fa-finnalogo {
+    width: 30px;
+    height: 40px;
+    background: url('../images/finna-logo.png'); // fallback if no svg support
+    background: url('../images/finna-logo.svg');
+    overflow: hidden;
+    vertical-align: middle;
+    background-repeat: no-repeat;
+    background-position: 0px 2px;
+    background-size: 340%;
+}
+.navbar-brand {
+    & div.navbar-lang-logo {
+        width: 30px;
+        height: 40px;
+        & div.logo-wrapper  {
+            position: absolute;
+            overflow: hidden;
+            width: 30px;
+            height: 40px;
+            & img {
+                position: relative;
+                top: -2px;
+                vertical-align: middle;
+                max-width: 340%;
+            }
+        }
+    }
+}
+.logo .finnalogo {
+    display: inline-block;
+    width: 250px;
+    height: 63px;
+    background: url('../../finna/images/finnafi-logo.png'); // fallback if no svg support
+    background: url('../../finna/images/finnafi-logo.svg');
+    background-repeat: no-repeat;
+    background-size: 100%;
+    @media (max-width: $screen-xs-max) {
+           width: (250px*0.8);
+           height: (63px*0.8);
+    }
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+/* Browsebar */
+.browsebar [class*=" fa-"], .browsebar .icon {
+    text-align: initial;
+}
+
+/* Spinner */
+#description_text .fa-spinner {
+    position: absolute;
+    right: 15px;
+    top: 0;
+}
+
+/* Serachbox */
+.searchbox .btn-link {
+    .search-advanced-icon {
+        margin-right: 5px;
+        font-size: 20px;
+        line-height: 20px;
+    }
+    .search-icon {
+        margin-right: 5px;
+        font-size: 16px;
+    }
+}
+
+/* Hierarchical facets */
+.sidebar .list-group-item i.fa.fa-square-o {
+    display: none;
+}
+.list-group-item.active i.fa.fa-check-square-o, .sidebar .list-group-item .main.applied i.fa.fa-check-square-o, .sidebar .facet .active i.fa.fa-check {
+    font-size: 12px;
+    margin-top: 4px;
+    margin-right: 0px;
+    float: right;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+.facet-tree > li a.active:hover {
+    text-decoration:line-through;
+}
+.list-group-item.active i.fa.fa-check-square-o:before, .sidebar .list-group-item .main.applied i.fa.fa-check-square-o:before, .sidebar .list-group.facet a.list-group-item.active i.fa.fa-check:before {
+    content: "\f00c";
+    color: $link-color;
+}
+
+/* Rotate 360 degrees */
+.icon--spin {
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Tooltip */
+[class^="tooltip-"] {
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+/* Account */
+#account-icon {
+    position: relative;
+    left: 2px;
+}
+
+/* Status styles */
+// Badges
+.status {
+    .badge {
+        font-weight: 600;
+        float: right;
+        margin-left: 4px;
+        &.ok {
+            color: $brand-success;
+            &:before {
+                font-family: finnaicons;
+                content:"\e805";
+                color: $brand-success;
+                margin-right: 4px;
+            }
+        }
+        &.warn {
+            color: $brand-warning;
+            &:before {
+                font-family: finnaicons;
+                content:"\e8b2";
+                color: $brand-warning;
+                margin-right: 4px;
+            }
+        }
+        &.overdue {
+            color: $brand-danger;
+            &:before {
+                font-family: finnaicons;
+                content:"\e8b3";
+                color: $brand-danger;
+                margin-right: 4px;
+            }
+        }
+    }
+}
+// Status none
+#account-icon .account-status-none {
+    width: auto;
+    &:before {
+        content:"";
+    }
+}
+// Status success
+.status .fa-bell.text-success:before {
+    font-family: finnaicons;
+    color: $brand-success;
+    content:"\e8b2";
+}
+#account-icon .account-status-good.text-success {
+    width: auto;
+    &:before {
+        content:"";
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        top: 65%;
+        left: 9px;
+        background: $brand-success;
+        border: 2px solid $header-background-color;
+        border-radius: 50%;
+    }
+}
+// Status warning
+.status .fa-bell.text-warning:before {
+    font-family: finnaicons;
+    color: $brand-warning;
+    content:"\e8b2";
+}
+#account-icon .account-status-warning.text-warning {
+    width: auto;
+    &:before {
+        content:"";
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        top: 65%;
+        left: 9px;
+        background: $brand-warning;
+        border: 2px solid $header-background-color;
+        border-radius: 50%;
+    }
+}
+// Status danger
+.status .fa-exclamation-triangle:before {
+    font-family: finnaicons;
+    color: $brand-danger;
+    content:"\e8b0";
+}
+.profile-status.status .fa-exclamation-triangle:before {
+    color: $brand-warning;
+}
+#account-icon .account-status-danger.text-danger {
+    width: auto;
+    &:before {
+        content:"";
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        top: 65%;
+        left: 9px;
+        background: $brand-danger;
+        border: 2px solid $header-background-color;
+        border-radius: 50%;
+    }
+}
+
+/* CC icons */
+.cc-cc:before {
+    content: "\e905";
+}
+.cc-by:before {
+    content: "\e862";
+}
+.cc-sa:before {
+    content: "\e800";
+}
+.cc-nd:before {
+    content: "\e864";
+}
+.cc-nd-eu:before {
+    content: "\e865";
+}
+
+/* Rights statement icons */
+.rs-inc:before {
+    font-family: finnaicons;
+    content: "\e8bc";
+}
+.rs-noc:before {
+    font-family: finnaicons;
+    content: "\e8bd";
+}
+.rs-other:before {
+    font-family: finnaicons;
+    content: "\e8be";
+}
+
+/* Access rights */
+.imagepopup-holder .image-information-holder .access-rights .image-rights .icon {
+  padding-right: 0;
+}
+.access-rights .iconlabel {
+  font-size: $content-font-size-base;
+  line-height: $content-font-size-base;
+  margin-right: 0;
+  padding: 0;
+  &:before {
+    padding-right: 0;
+  }
+}
+
+
+/* Datatables icons */
+.datatables-sort-both:before {
+    font-family: finnaicons;
+    content: "\e8bf";
+}
+
+.feed-icon-wrapper {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    font-size: 30px;
+    background-color: #FFFFFF;
+    border-bottom-right-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    &.smaller {
+        width: 30px;
+        height: 30px;
+        font-size: 25px;
+    }
+    .feed-icon {
+        color: #121212;
+    }
+}
+
+/* Collapse / expand */
+.show--closed,
+.collapsed .show--open {
+    display: none;
+}
+.collapsed .show--closed {
+    display: inline;
+}
+
+/* Icon links */
+.icon-link {
+  display: inline-flex;
+  gap: 0.25rem;
+  vertical-align: middle;
+}
+.icon-link__icon {
+  flex: none;
+  padding: 0;
+  line-height: inherit;
+  color: inherit;
+}
+
+/* Unicode Icons */
+.icon--unicode:before {
+    content: attr(data-icon);
+}
+
+/* MD Editable */
+.fa-pen:before {
+    font-family: finnaicons;
+    content: "\e016";
+}
+.fa-plus-small:before {
+    font-family: finnaicons;
+    content: "\e013";
+}
+.fa-pagebreak:before {
+    font-family: finnaicons;
+    content: "\e8ab";
+}
+.details-icon:before {
+    font-family: finnaicons;
+    content: "\e8b5";
+}
+
+/* Arrows */
+.fa-arrow-down:before {
+    font-family: finnaicons;
+    content: "\e027";
+  }
+  .fa-arrow-left:before {
+    font-family: finnaicons;
+    content: "\e029";
+  }
+  .fa-arrow-right:before {
+    font-family: finnaicons;
+    content: "\e025";
+  }
+  .fa-arrow-up:before {
+    font-family: finnaicons;
+    content: "\e023";
+  }
+
+/* Spinner */
+.fa-spinner {
+    &:before {
+        color: gray;
+    }
+}
+
+/* 3D */
+.model-3d-icon:before {
+    font-family: finnaicons;
+    content: "\e8c0";
+}
+.model-viewer-fullscreen:before {
+    font-family: finnaicons;
+    content: "\e801";
+}
+.model-viewer-statistics:before {
+    font-family: finnaicons;
+    content: "\e918";
+}
+
+/* Share buttons */
+.fa-facebook-button:before {
+    font-family: finnaicons;
+    content: "\e036";
+}
+.share-buttons .icon, .whatsapp .icon {
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    &.facebook-icon {
+        background: #3a5795;
+        border: 2px solid #3a5795;
+        color: #fff;
+    }
+    &.pinterest-icon {
+        background: #cb2027;
+        border: 2px solid #cb2027;
+        color: #fff;
+    }
+    &.twitter-icon {
+        background: #00aced;
+        border: 2px solid #00aced;
+        color: #fff;
+    }
+    &.whatsapp-icon {
+        background: #64d448;
+        border: 2px solid #64d448;
+        color: #fff;
+    }
+}
+

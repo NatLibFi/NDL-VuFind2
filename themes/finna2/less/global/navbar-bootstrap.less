@@ -47,11 +47,11 @@
   padding: 0;
   line-height: @navbar-height;
   max-width: 150px;
+  display: flex;
+  align-items: center;
   @media (min-width: @grid-float-breakpoint) {
     max-width: 200px;
   }
-  display: flex;
-  align-items: center;
   .navbar-logo {
     font-size: @navbar-logo-height;
     color: @logo-color;
@@ -99,14 +99,14 @@
 }
 
 .navbar-nav {
-  margin: (@navbar-padding-vertical / 2) -@navbar-padding-horizontal;
+  margin: calc((@navbar-padding-vertical / 2) - @navbar-padding-horizontal);
 
   > li > a {
     padding-top: @navbar-padding-vertical;
     padding-bottom: @navbar-padding-vertical;
-    line-height: (@navbar-height / 2);
-    margin-top: (@navbar-height / 4);
-    margin-bottom: (@navbar-height / 4);
+    line-height: calc(@navbar-height / 2);
+    margin-top: calc(@navbar-height / 4);
+    margin-bottom: calc(@navbar-height / 4);
     font-size: @navbar-font-size;
     font-weight: @navbar-font-weight;
     @media (min-width:@screen-md-min) {
@@ -116,11 +116,12 @@
   &.language:not(.lang-1):before {
     color: @navbar-default-link-color;
     content: '';
+    height: ((@navbar-height) - 24);
+    margin-top: calc((@navbar-height - (@navbar-height - 24)) / 2);
+
     @media (min-width: @grid-float-breakpoint) {
       border-left: solid 1px @navbar-default-link-color;
     }
-    height: ((@navbar-height) - 24);
-    margin-top: ((@navbar-height - (@navbar-height - 24)) / 2);
   }
   &.lang-1 {
     margin-left: 10px;
@@ -201,7 +202,7 @@
     margin: 0;
 
     &.navbar-main {
-      margin-bottom: (@navbar-height / 4);
+      margin-bottom: calc(@navbar-height / 4);
     }
   }
   .btn {
@@ -322,7 +323,12 @@
   }
   .navbar-collapse.in {
     box-shadow: 0 3px 5px @gray;
+/* #SCSS>
+    max-height: calc(100vh - #{$navbar-height});
+<#SCSS */
+/* #LESS> */
     max-height: ~"calc(100vh - "@navbar-height~")";
+/* <#LESS */
   }
   .navbar-header {
     padding-left: 10px;

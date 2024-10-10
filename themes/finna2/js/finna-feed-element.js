@@ -134,10 +134,14 @@ class FinnaFeedElement extends HTMLElement {
       var settings = Object.assign({}, jsonResponse.data.settings);
       settings.height = settings.height || 300;
       const type = settings.type;
+      const titleElement = this.parentElement.querySelector('.carousel-header');
       const carousel = ['carousel', 'carousel-vertical', 'slider'].includes(type);
       const hasContent = this.querySelector('.list-feed > ul > li, .carousel-feed > li, .feed-grid > div');
       if (!hasContent) {
         this.classList.add('hidden');
+        if (titleElement) {
+          titleElement.classList.add('hidden');
+        }
         this.innerHTML = `<!-- No content received -->`;
         return;
       }
@@ -360,6 +364,10 @@ class FinnaFeedElement extends HTMLElement {
           // The catch will catch all the js errors in buildFeedDom, so display a warning
           // if something happens
           console.error(responseJSON);
+          const titleElement = holder.parentElement.querySelector('.carousel-header');
+          if (titleElement) {
+            titleElement.classList.add('hidden');
+          }
           holder.innerHTML
             = `<!-- Feed could not be loaded: ${responseJSON.data || ''} -->`;
         });

@@ -129,10 +129,9 @@
     <?=$this->driver->supportsCoinsOpenURL() ? '<span class="Z3988" aria-hidden="true" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenURL()) . '"></span>' : ''?>
 
     <div class="clearfix hidden-lg hidden-md"></div>
-    <h2 class="sr-only"><?=$this->transEsc('Additional Information')?></h2>
     <div class="record-tabs record-accordions">
       <?php if (count($this->tabs) > 0): ?>
-        <a id="tabnav"></a>
+        <a id="tabnav"><h2 class="sr-only"><?=$this->transEsc('Additional Information')?></h2></a>
           <?php if (count($this->tabs) > 3): ?>
             <div class="tabs-responsive">
           <?php endif; ?>
@@ -160,8 +159,8 @@
                   $tabClasses[] = 'hidden-xs tab-right';
                 }
               ?>
-              <li id="record-tab-<?=$this->escapeHtmlAttr($tabName)?>" class="<?=implode(' ', $tabClasses)?>" role="tab" data-tab="<?=$this->escapeHtmlAttr($tabName)?>"<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?> data-background<?php endif ?>>
-                <a class="<?=$this->escapeHtmlAttr(strtolower($tab)) ?>" aria-label="<?=$this->transEscAttr($desc)?>"
+              <li role="presentation" id="record-tab-<?=$this->escapeHtmlAttr($tabName)?>" class="<?=implode(' ', $tabClasses)?>" data-tab="<?=$this->escapeHtmlAttr($tabName)?>"<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?> data-background<?php endif ?>>
+                <a role="tab" class="<?=$this->escapeHtmlAttr(strtolower($tab)) ?>" aria-label="<?=$this->transEscAttr($desc)?>"
                   href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $tab))?>#tabnav" data-lightbox-ignore>
                   <?php if (strtolower($tab) == 'details'): ?><?=$this->icon('staff-view', 'staff-view-icon')?><?php endif; ?>
                   <span class="tab-name"><?=$this->transEsc($desc)?></span>
@@ -208,7 +207,7 @@
             </div>
           </div>
         <?php endforeach; ?>
-        <div class="tab-content">
+        <div class="tab-content" tabindex="0">
           <?php if (!$this->loadInitialTabWithAjax || !isset($activeTabObj) || !$activeTabObj->supportsAjax()): ?>
             <div class="tab-pane active <?=$this->escapeHtmlAttr($this->activeTab) ?>-tab" aria-labelledby="record-tab-<?=$this->escapeHtmlAttr($activeTabName ?? '')?>">
               <?=isset($activeTabObj) ? $this->record($this->driver)->getTab($activeTabObj) : '' ?>

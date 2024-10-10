@@ -1,0 +1,93 @@
+.modal-content {
+  & .comment-inappropriate-form {
+    & label {
+      font-weight: inherit;
+    }
+    .form-control {
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    .textarea {
+      .form-control {
+        width: 100%;
+        margin-bottom: 12px;
+      }
+    }
+  }
+}
+
+.modal-content .close {
+  color: $modal-header-color;
+  padding: 0px 7px 6px 7px;
+  font-weight: 500;
+  min-height: 30px;
+  min-width: 30px;
+  font-size: 1.5em;
+  line-height: 1em;
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  z-index: 2;
+  opacity: 0.8;
+  &:after {
+    font-family: finnaicons;
+    content: '\e02e';
+  }
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.modal-body {
+  overflow: hidden;
+
+  & > h1, & > h2 {
+    background: $modal-header-background;
+    color: $modal-header-color;
+    font-size: $content-headings-font-size-h4;
+    line-height: $modal-title-line-height;
+    border-top-left-radius: $border-radius-large - 1;
+    border-top-right-radius: $border-radius-large - 1;
+    border-bottom: 1px solid $modal-header-border-color;
+    margin: -$modal-inner-padding;
+    margin-bottom: $modal-title-padding;
+    padding: $modal-title-padding;
+    // Account for close button
+    padding-right: 45px;
+    min-height: ($modal-title-padding + $modal-title-line-height);
+  }
+  & .alert-success {
+    margin-top: $modal-title-padding;
+  }
+}
+
+#modal .cart-controls .btn { margin-bottom: 4px; }
+#modal .cart-controls .checkbox { padding-bottom: 1rem; }
+#modal .form-inline .checkbox fieldset { display: inline-block; }
+#modal .cart-controls ~ hr { margin-top: 0; margin-bottom: 0; }
+.lightbox-scroll { overflow-y: auto; }
+
+// Loading spinner
+.modal-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  font-size: 150%;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0,0,0,0.2);
+
+  .loading-spinner {
+    padding: 2rem;
+    background-color: rgba(0,0,0,0.6);
+    border-radius: $border-radius-large;
+    color: $gray-lighter;
+  }
+}
+
+// Utility classes
+.lightbox-only { display: none; }
+#modal .lightbox-only { display: initial; }

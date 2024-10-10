@@ -61,8 +61,9 @@ if (!empty($containerTitle)) {
     }
 }
 
+$recordFormat = $this->driver->getRecordFormat();
 if ($this->driver->getHierarchyType()) {
-    if ($this->driver->getRecordFormat() === 'ead3') {
+    if ($recordFormat === 'ead3') {
         if ($archiveAuthors = $this->driver->tryMethod('getAuthorsWithoutRoleHeadings')) {
             foreach ($archiveAuthors as $archiveAuthor) {
                 if ($archiveAuthor['name']) {
@@ -77,6 +78,10 @@ if ($this->driver->getHierarchyType()) {
             $archiveLocation[] = $this->translate($location);
         }
         echo 'A1 ' . implode(', ', $archiveLocation) . "\n";
+    }
+} elseif ($recordFormat === 'marc') {
+    foreach ($this->driver->tryMethod('getPrimaryAuthors', [], []) as $author) {
+        echo "A1 {$author}\n";
     }
 } else {
     foreach ($this->driver->tryMethod('getNonPresenterAuthors', [], []) as $author) {

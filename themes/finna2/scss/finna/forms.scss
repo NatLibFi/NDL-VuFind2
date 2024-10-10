@@ -1,0 +1,243 @@
+input, input.form-control {
+  font-size: 16px; // avoid the automatic zoom-in on input fields
+}
+
+.form-control {
+  width: initial;
+  padding: 0px 5px;
+  max-width: 100%; // make sure dropdowns don't overflow elementss
+  vertical-align: middle !important;
+
+  &::placeholder {
+    color: #666;
+  }
+  &[disabled],
+  &[readonly],
+  fieldset[disabled] {
+    background-color: transparent;
+  }
+
+  &:invalid {
+    box-shadow: 0 0 2px 1px rgba(255, 0, 0, 0.9);
+  }
+  // This is for IE. Keep separate from :invalid so that IE does not drop it
+  &.invalid {
+    box-shadow: 0 0 2px 1px rgba(255, 0, 0, 0.9);
+  }
+}
+
+
+.form-inline {
+  display: inline-block;
+  @media (min-width: $screen-sm-min) {
+    .form-control {
+      width: auto;
+    }
+    .radio,
+    .checkbox {
+      padding-left: 0px;
+    }
+  }
+  .btn {
+    margin-left: 1px;
+  }
+}
+
+// Alternate buttons
+// --------------------------------------------------
+.navbar-form .btn[type="submit"],
+.searchForm .btn[type="submit"] {
+  color: $btn-primary-color;
+  padding: 6px 0px;
+  border-radius: 0px;
+  margin: 0;
+  transition: background .1s ease-in-out;
+  height: 48px;
+  width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: $btn-primary-bg;
+  box-shadow: 0px 0px 5px rgba(100, 100, 100, 0.3);
+
+  &:hover {
+    background: darken($btn-primary-bg, 5%);
+  }
+  .icon {
+    font-size: 28px;
+    color: $btn-primary-color;
+    vertical-align: inherit;
+    cursor: pointer;
+  }
+}
+.searchHomeContent .btn-link {
+  font-size: 1.2em;
+  margin-top: 5px;
+}
+
+.navbar-form,
+.searchForm {
+  width: 100%;
+  display:flex;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0px;
+  background-color: $search-input-bg;
+  border-radius: 0;
+  border-top: 0px;
+  border-bottom: 0px;
+  margin: 0px;
+  box-shadow: 0px 0px 3px rgba(100,100,100,0.5);
+  .form-control.search-query {
+    flex: 1 1 auto;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    display: inline-block !important;
+    color: $gray;
+    padding-left: 10px;
+    height: 48px;
+
+    @media (max-width: $screen-xs-max) {
+      width: percentage(($finna-search-input-width - 0.06));
+      font-size: 1.1em;
+    }
+  }
+  /* --- Autocomplete and form adjust accordingly --- */
+  &.input-field-only .form-control.search-query {
+    width: 85%;
+    @media (max-width: $screen-xs-max) {
+      width: 80%;
+    }
+  }
+
+  #searchForm-reset {
+    border: none;
+    margin-left: 0px;
+    font-size: 1.5em;
+    background: transparent;
+    color: $gray-light;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-right: 5px;
+    margin-left: 5px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  .btn {
+    border-radius: 0;
+  }
+}
+
+.navbar-form .form-control.search-query {
+  font-size: $font-size-large;
+}
+
+
+.dropdown.form-control.type-dropdown {
+  border: none;
+  display: inline-block;
+  background: transparent;
+  box-shadow: none;
+  color: $gray;
+  margin: auto;
+  a {
+    color: black;
+  }
+  .dropdown-toggle {
+    min-width: 110px;
+    display: inline-block;
+    text-align: right;
+    height: inherit;
+    padding: 8px 0px;
+  }
+  li {
+    text-align: left;
+    color: $text-color;
+    min-width: 110px;
+  }
+}
+
+.multiselect-container {
+  @extend .dropdown-menu;
+  z-index: 1030;
+}
+
+button.multiselect {
+  height: auto;
+  min-height: 33px;
+  text-align: left;
+}
+
+.radio,
+.checkbox {
+  padding-left: 10px;
+  position: inherit;
+}
+
+.template-dir-feedback .template-name-form form,
+.modal-dialog .feedback-content form,
+.modal-dialog form.dynamic-form {
+    input[name='url'] {
+        margin-bottom: 30px;
+    }
+    .form-info.post {
+        margin-bottom: 20px;
+    }
+    .form-info {
+        margin: 20px 0;
+        font-weight: initial;
+    }
+
+    .form-group label.required::before,
+    .form-group .radio-label.required::before,
+    .form-group .radio-label.require-one::before
+    {
+        content: '* ';
+    }
+
+    input[type=radio] {
+        height: 1em;
+        position: absolute;
+        margin-left: -20px;
+    }
+
+    .form-group.checkbox,
+    .form-group.radio {
+        padding-left: 0;
+        margin-bottom: 15px;
+        label.control-label {
+            padding-left: 0;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        label {
+            display: table;
+            margin: 7px 0;
+            input {
+                width: auto;
+                margin-right: 10px;
+                margin-top: 3px;
+            }
+        }
+        .radio-label {
+            font-weight: 700;
+        }
+    }
+
+    .form-group.checkbox label input {
+        height: 1em;
+        margin-top: -1px;
+        display: inline-block;
+    }
+}
+
+.form-cart-email {
+  button.btn.show-records {
+    color: $link-color;
+    padding-top: 8px;
+    background-color: white;
+  }
+}

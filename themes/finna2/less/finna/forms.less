@@ -59,7 +59,7 @@ input, input.form-control {
   justify-content: center;
   border: none;
   background: @btn-primary-bg;
-  box-shadow: 0px 0px 5px rgba(100,100,100,0.3) !important;
+  box-shadow: 0px 0px 5px rgba(100, 100, 100, 0.3);
 
   &:hover {
     background: darken(@btn-primary-bg, 5%);
@@ -88,13 +88,9 @@ input, input.form-control {
   border-top: 0px;
   border-bottom: 0px;
   margin: 0px;
-  box-shadow: 0px 0px 3px rgba(100,100,100,0.5) !important;
+  box-shadow: 0px 0px 3px rgba(100,100,100,0.5);
   .form-control.search-query {
     flex: 1 1 auto;
-    @media (max-width: @screen-xs-max) {
-      width: percentage((@finna-search-input-width - 0.06));
-      font-size: 1.1em;
-    }
     border: none;
     box-shadow: none;
     background: transparent;
@@ -102,6 +98,11 @@ input, input.form-control {
     color: @gray;
     padding-left: 10px;
     height: 48px;
+
+    @media (max-width: @screen-xs-max) {
+      width: percentage((@finna-search-input-width - 0.06));
+      font-size: 1.1em;
+    }
   }
   /* --- Autocomplete and form adjust accordingly --- */
   &.input-field-only .form-control.search-query {
@@ -160,7 +161,7 @@ input, input.form-control {
 }
 
 .multiselect-container {
-  .dropdown-menu();
+  &:extend(.dropdown-menu);
   z-index: 1030;
 }
 

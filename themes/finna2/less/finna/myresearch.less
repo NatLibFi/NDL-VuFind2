@@ -2,8 +2,8 @@
   padding: 10px;
   margin: 0;
   word-wrap: break-word;
-  @media(max-width:@screen-xs-max) {
-    .row();
+  @media(max-width: @screen-xs-max) {
+    .make-row();
   }
   &:nth-child(odd) {
     background: @table-bg-accent;
@@ -50,13 +50,14 @@
 
 .checkboxFilter.mylist-select-all {
   padding-left: 0;
+  white-space: nowrap;
+
   .checkbox {
     padding-left: 0;
     label {
       margin-left: 0;
     }
   }
-  white-space: nowrap;
 }
 
 .changeHolds {
@@ -232,7 +233,7 @@
       .dropdown-menu > li > a {
         max-width: 270px;
       }
-      .dropdown-toggle span:not('.icon'), .dropdown-menu > li > a {
+      .dropdown-toggle span:not(.icon), .dropdown-menu > li > a {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -469,13 +470,14 @@
 .online-payment-form > .payment-row {
   .online-payment-area {
     display: inline-block;
+    margin-bottom: 15px;
+
     .online-payment-form {
       display: inline-block;
       input {
         font-weight: bold;
       }
     }
-    margin-bottom: 15px;
   }
   @media (min-width: @screen-sm) {
     > img {
@@ -548,8 +550,8 @@
 .toolbar-sticky-container {
   margin: 0;
   @media (max-width: @screen-md) {
-    .row();
     padding: 0px 15px;
+    .make-row();
   }
   .toolbar-sticky {
     position: sticky;
@@ -640,12 +642,13 @@ form#renewals, form#update_holds, form#purge_history {
 
 .useraccount-table {
   border: 1px solid @gray-lighter;
-  &:not(.fines-table) {
-    border-top: none;
-  }
   box-shadow: 0 15px 30px -35px @gray;
   border-collapse: separate;
   margin-top: 10px;
+
+  &:not(.fines-table) {
+    border-top: none;
+  }
   &.online-payment {
     margin-bottom: 15px;
     td {
@@ -751,7 +754,10 @@ form#renewals, form#update_holds, form#purge_history {
   border: solid 1px @gray-lighter;
   border-top: none;
   box-shadow: 2px 2px 3px 0 @gray-lighter;
-  display: table;
+  display: block;
+  z-index: 2;
+  margin-top: 15px;
+
   .status {
     padding-left: 5px;
   }
@@ -783,10 +789,6 @@ form#renewals, form#update_holds, form#purge_history {
       top: 30px;
     }
   }
-
-  display: block;
-  z-index: 2;
-  margin-top: 15px;
   .subtabs.mylist-nav {
     border-top-width: 0px;
     li.hidden-xs.hidden-sm, li.mylist-menu-favorites {
@@ -940,20 +942,28 @@ form#renewals, form#update_holds, form#purge_history {
 }
 
 .useraccount-confirm {
-  min-width: 205px;
+  min-width: 210px;
 }
 .useraccount-confirm > li {
   border-bottom: none;
-  &:not(.disabled) {
-    float: left;
-    width: 100px;
+  &:not(.disabled), &:not(.dropdown-header) {
+    width: 100%;
     padding: 10px;
-    text-align: center;
     a {
+      width: 80px;
+      text-align: center;
       border-radius: @border-radius-base;
       background: @link-color;
       color: @body-bg;
+      display: inline-block;
+      margin-right: 10px;
     }
+  }
+  .dropdown-header {
+    max-width: 300px;
+    font-size: 1em;
+    padding: 0;
+    white-space: initial;
   }
 }
 .main.template-dir-myresearch.template-name-unsubscribe {
@@ -1004,6 +1014,8 @@ form#renewals, form#update_holds, form#purge_history {
     }
   }
   .left-control {
+    margin-bottom: 10px;
+
     @media (min-width: @screen-sm) {
       flex-grow: 1;
       text-align:left;
@@ -1012,7 +1024,6 @@ form#renewals, form#update_holds, form#purge_history {
       text-align: left;
       width: 35%;
     }
-    margin-bottom: 10px;
   }
   .pagination-container {
     @media (min-width: @screen-sm) {

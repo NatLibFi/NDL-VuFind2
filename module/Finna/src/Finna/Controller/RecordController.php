@@ -495,7 +495,7 @@ class RecordController extends \VuFind\Controller\RecordController
 
         $config = $this->getConfig();
         $homeLibrary = ($config->Account->set_home_library ?? true)
-            ? $this->getUser()->home_library : '';
+            ? $this->getUser()->getHomeLibrary() : '';
         $helpText = $checkHolds['helpText'] ?? null;
         // acceptTermsText kept for backward-compatibility:
         $acceptTermsText = $acceptTermsTextHtml
@@ -666,7 +666,7 @@ class RecordController extends \VuFind\Controller\RecordController
                 'gatheredDetails' => $gatheredDetails,
                 'pickup' => $pickup,
                 'defaultPickup' => $defaultPickup,
-                'homeLibrary' => $this->getUser()->home_library,
+                'homeLibrary' => $this->getUser()->getHomeLibrary(),
                 'extraFields' => $extraFields,
                 'defaultRequiredDate' => $defaultRequired,
                 'helpText' => $checkRequests['helpText'] ?? null,
@@ -805,7 +805,7 @@ class RecordController extends \VuFind\Controller\RecordController
                 'gatheredDetails' => $gatheredDetails,
                 'pickupLibraries' => $pickupLibraries,
                 'pickupLocations' => $pickupLocations,
-                'homeLibrary' => $this->getUser()->home_library,
+                'homeLibrary' => $this->getUser()->getHomeLibrary(),
                 'extraFields' => $extraFields,
                 'defaultRequiredDate' => $defaultRequired,
                 'helpText' => $checkRequests['helpText'] ?? null,

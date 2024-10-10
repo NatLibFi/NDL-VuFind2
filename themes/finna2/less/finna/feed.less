@@ -10,6 +10,15 @@
         }
     }
 }
+.feed-container .list-feed .feed-header {
+    color: @list-feed-header-color;
+}
+.feed-header {
+    display: inline-block;
+    color: @list-feed-header-color;
+    padding: @list-feed-header-padding;
+    background: @list-feed-header-background;
+}
 .feed-container .list-feed {
     background: @list-feed-background;
     padding: @list-feed-padding;
@@ -22,12 +31,6 @@
     }
     .title {
         font-weight: normal;
-    }
-    .feed-header {
-        display: inline-block;
-        color: @list-feed-header-color;
-        padding: @list-feed-header-padding;
-        background: @list-feed-header-background;
     }
     .more-link {
         margin-top: 15px;
@@ -96,7 +99,7 @@
 }
 
 // mixin for image prosessing on fulltext rss feeds
-.rss-content-image {
+.rss-content-image() {
     height: auto;
     max-width: 100%;
     margin-top: 15px;
@@ -178,12 +181,13 @@
             }
             .article-image {
                 flex-shrink: 0;
+                margin-right: 10px;
+
                 img {
                     object-fit: cover;
-                    aspect-ratio: (3 / 2);
+                    aspect-ratio: calc(3 / 2);
                     width: 150px;
                 }
-                margin-right: 10px;
             }
         }
     }
@@ -570,6 +574,12 @@
     }
 }
 
+.carousel-header {
+    background: @carousel-header-background;
+    display: inline-block;
+    padding: @carousel-header-padding;
+    color: @carousel-header-color;
+}
 finna-feed {
     display: block;
     .feed-content-container {
@@ -577,12 +587,6 @@ finna-feed {
         flex-direction: row;
         align-items: center;
         position: relative;
-    }
-    .carousel-header {
-        background: @carousel-header-background;
-        display: inline-block;
-        padding: @carousel-header-padding;
-        color: @carousel-header-color;
     }
     .carousel-hover-title {
         font-size: 14px;
@@ -842,19 +846,6 @@ finna-feed.carousel.splide--ltr {
                 position: relative;
             }
             p {
-                .carousel-header-title {
-                    display: block;
-                }
-                &.title-bottom {
-                    position: initial;
-                    height: 100%;
-                    width: 100%;
-                    padding-bottom: 10px;
-                    .carousel-header-title {
-                        display: inline-block;
-                        width: 100%;
-                    }
-                }
                 position: relative;
                 bottom: 0;
                 width: 100%;
@@ -869,6 +860,20 @@ finna-feed.carousel.splide--ltr {
                 margin-bottom: 0;
                 letter-spacing: 0.2px;
                 text-shadow: @carousel-slide-header-text-shadow;
+
+                .carousel-header-title {
+                    display: block;
+                }
+                &.title-bottom {
+                    position: initial;
+                    height: 100%;
+                    width: 100%;
+                    padding-bottom: 10px;
+                    .carousel-header-title {
+                        display: inline-block;
+                        width: 100%;
+                    }
+                }
             }
             .carousel-slide-more {
                 top: 0;
@@ -890,6 +895,8 @@ finna-feed.carousel.splide--ltr {
 
 finna-feed.carousel-slider.splide--ltr {
     container-type: inline-size;
+    --background-color: transparent;
+
     .splide__arrows {
         width: 100%;
         left: 0;
@@ -904,7 +911,6 @@ finna-feed.carousel-slider.splide--ltr {
             }
         }
     }
-    --background-color: transparent;
     &.slider-with-background {
         &::before {
             content: '';
@@ -916,9 +922,6 @@ finna-feed.carousel-slider.splide--ltr {
         .carousel-pagination-wrapper {
             position: relative;
         }
-    }
-    .carousel-header {
-        display: none;
     }
     .slider-image, .slider-text-part {
         height: 100%;
