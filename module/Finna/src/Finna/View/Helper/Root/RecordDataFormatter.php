@@ -99,6 +99,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Language',
             'Language Notes',
             'Language of Abstract',
+            'Local Note',
             'Manufacturer',
             'Methodology',
             'Music Compositions Extended',
