@@ -12,11 +12,7 @@ return;
   </div>
   <?php foreach ($this->lists as $institution => $lists): ?>
     <?php foreach ($lists as $list): ?>
-      <?php [
-            'properties' => $listProperties,
-            'institution_information' => $institutionInformation,
-            'translation_keys' => $listTranslations,
-        ] = $this->reservationList()->getListProperties($institution, $list['Identifier']); ?>
+      <?php $listTranslations = $this->reservationList()->getListProperties($institution, $list['Identifier'])['translation_keys']; ?>
       <div class="holdings-group">
         <div class="holdings-container-heading">
           <div class="location">

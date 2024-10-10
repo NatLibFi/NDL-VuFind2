@@ -8,11 +8,7 @@
 
   $user = $this->auth()->isLoggedIn();
   $recordTotal = $this->results->getResultTotal();
-  [
-    'properties' => $listProperties,
-    'institution_information' => $institutionInformation,
-    'translation_keys' => $listTranslations,
-  ] = $this->reservationList($user)->getListProperties($this->list->getInstitution(), $this->list->getListConfigIdentifier());
+  $listProperties = $this->reservationList($user)->getListProperties($this->list->getInstitution(), $this->list->getListConfigIdentifier());
 ?>
 
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'reservationlist']); ?>
@@ -24,10 +20,10 @@
     </div>
     <?= $this->flashmessages() ?>
     <div class="description-wrapper">
-      <p><?= $this->transEsc(['ReservationList', $listTranslations['title']]);?></p>
+      <p><?= $this->transEsc(['ReservationList', $listProperties['translation_keys']['title']]);?></p>
     </div>
     <div class="description-wrapper">
-      <?php foreach ($listProperties['Information'] ?? $institutionInformation as $value): ?>
+      <?php foreach ($listProperties['properties']['Information'] ?? $$listProperties['institution_information'] as $value): ?>
         <p><?=$this->escapeHtml($value);?></p>
       <?php endforeach; ?>
     </div>

@@ -130,11 +130,10 @@ class ReservationListController extends AbstractBase
             $view->source ?: DEFAULT_SEARCH_BACKEND,
             false
         );
-        [
-            'properties' => $listProperties,
-            'institution_information' => $institutionInformation,
-            'translation_keys' => $listTranslations,
-        ] = ($this->reservationListHelper)($user)->getListProperties($view->institution, $view->listIdentifier);
+        $listProperties = ($this->reservationListHelper)($user)->getListProperties(
+            $view->institution,
+            $view->listIdentifier
+        )['properties'];
         if (!$listProperties) {
             throw new \VuFind\Exception\Forbidden('Record is not allowed in the list');
         }
@@ -263,11 +262,10 @@ class ReservationListController extends AbstractBase
         if ($list->getOrdered()) {
             throw new \VuFind\Exception\Forbidden('List already ordered');
         }
-        [
-            'properties' => $listProperties,
-            'institution_information' => $institutionInformation,
-            'translation_keys' => $listTranslations,
-        ] = $this->reservationListHelper->getListProperties($list->getInstitution(), $list->getListConfigIdentifier());
+        $listProperties = $this->reservationListHelper->getListProperties(
+            $list->getInstitution(),
+            $list->getListConfigIdentifier()
+        )['properties'];
         if (!$listProperties) {
             throw new \VuFind\Exception\Forbidden('No list properties found.');
         }
