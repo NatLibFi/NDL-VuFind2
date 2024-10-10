@@ -1,8 +1,9 @@
 <?php
 echo $this->record($this->driver)->getExportFormat('endnote');
 
+$format = $this->driver->getRecordFormat();
 if ($this->driver->getHierarchyType()) {
-    if ($this->driver->getRecordFormat() === 'ead3') {
+    if ($format === 'ead3') {
         if ($archiveAuthors = $this->driver->tryMethod('getAuthorsWithoutRoleHeadings')) {
             foreach ($archiveAuthors as $archiveAuthor) {
                 if ($archiveAuthor['name']) {
@@ -17,6 +18,10 @@ if ($this->driver->getHierarchyType()) {
             $archiveLocation[] = $this->translate($location);
         }
         echo '%A ' . implode(', ', $archiveLocation) . "\n";
+    }
+} elseif ($format === 'marc') {
+    foreach ($this->driver->tryMethod('getPrimaryAuthors', [], []) as $author) {
+        echo "%A {$author}\n";
     }
 } else {
     foreach ($this->driver->tryMethod('getNonPresenterAuthors', [], []) as $author) {

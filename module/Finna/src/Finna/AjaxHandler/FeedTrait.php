@@ -102,12 +102,13 @@ trait FeedTrait
             'modal' => $modal,
         ];
 
-        if (isset($config->title)) {
-            if ($config->title == 'rss') {
-                $feed['title'] = $channel->getTitle();
-            } else {
-                $feed['translateTitle'] = $config->title;
-            }
+        $title = $config->title ?? 'rss';
+        if ('rss' === $title) {
+            $feed['title'] = $channel->getTitle();
+            $feed['translateTitle'] = false;
+        } else {
+            $feed['title'] = $title;
+            $feed['translateTitle'] = true;
         }
 
         if (isset($config->description)) {

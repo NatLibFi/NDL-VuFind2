@@ -167,35 +167,53 @@ finna.record = (function finnaRecord() {
     });
   }
 
-  function wayfinderPlacementLinkLookup(element) {
-    const url = VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
-      method: 'wayfinderPlacementLinkLookup',
-      placement: element.dataset.location
+  function fetchWayfinderMarkers(markers) {
+    const locationMap = {};
+    markers.forEach((element) => {
+      if (element.dataset.initialized) {
+        return;
+      }
+      element.dataset.initialized = true;
+      const location = element.dataset.location;
+      if (!(location in locationMap)) {
+        locationMap[location] = [element];
+      } else {
+        locationMap[location].push(element);
+      }
+      const spinner = document.createElement('span');
+      spinner.innerHTML = VuFind.icon('spinner');
+      element.append(spinner);
     });
+    if (Object.entries(locationMap).length === 0) {
+      return;
+    }
 
-    fetch(url)
+    fetch(VuFind.path + '/AJAX/JSON?method=wayfinderPlacementLinkLookup', { method: 'POST', body: JSON.stringify(Object.keys(locationMap)) })
       .then(response => response.json())
       .then(responseJSON => {
-        if (!responseJSON.data.marker_url) {
-          element.remove();
-          return;
-        }
-
-        let link_template = element.querySelector('.js-wayfinder-link');
-        if (!link_template) {
-          element.remove();
-          return;
-        }
-        let link_container = link_template.cloneNode(true);
-        let link = link_container.content.querySelector('a');
-        if (!link) {
-          element.remove();
-          return;
-        }
-        link.setAttribute('href', responseJSON.data.marker_url);
-        element.innerHTML = link_container.innerHTML;
-      }).catch(() => {
-        element.remove();
+        Object.entries(locationMap).forEach(([location, elements]) => {
+          if (typeof responseJSON.data.locations[location] === 'undefined') {
+            Object.entries(elements).forEach(([, element]) => {
+              element.remove();
+            });
+          } else {
+            Object.entries(elements).forEach(([, element]) => {
+              const linkTemplate = element.querySelector('.js-wayfinder-link');
+              if (!linkTemplate) {
+                element.remove();
+                return;
+              }
+              let linkContainer = linkTemplate.cloneNode(true);
+              let link = linkContainer.content.querySelector('a');
+              if (!link) {
+                element.remove();
+                return;
+              }
+              link.setAttribute('href', responseJSON.data.locations[location].markerUrl);
+              element.innerHTML = linkContainer.innerHTML;
+            });
+          }
+        });
       });
   }
 
@@ -204,10 +222,7 @@ finna.record = (function finnaRecord() {
     checkRequestsAreValid($('.expandedCheckStorageRetrievalRequest').removeClass('expandedCheckStorageRetrievalRequest'), 'StorageRetrievalRequest');
     checkRequestsAreValid($('.expandedCheckILLRequest').removeClass('expandedCheckILLRequest'), 'ILLRequest');
     fetchHoldingsDetails($('.expandedGetDetails').removeClass('expandedGetDetails'));
-
-    document.querySelectorAll('.js-wayfinder-placeholder').forEach((element) => {
-      wayfinderPlacementLinkLookup(element);
-    });
+    fetchWayfinderMarkers(document.querySelectorAll('.copy-details:not(.collapsed) .js-wayfinder-placeholder'));
   }
 
   function initHoldingsControls() {
@@ -233,6 +248,7 @@ finna.record = (function finnaRecord() {
         checkRequestsAreValid(rows.find('.collapsedCheckStorageRetrievalRequest').removeClass('collapsedCheckStorageRetrievalRequest'), 'StorageRetrievalRequest', 'StorageRetrievalRequestBlocked');
         checkRequestsAreValid(rows.find('.collapsedCheckILLRequest').removeClass('collapsedCheckILLRequest'), 'ILLRequest', 'ILLRequestBlocked');
         fetchHoldingsDetails(rows.filter('.collapsedGetDetails').removeClass('collapsedGetDetails'));
+        fetchWayfinderMarkers(document.querySelectorAll('.copy-details:not(.collapsed) .js-wayfinder-placeholder'));
       }
     });
   }

@@ -112,7 +112,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Physical Description',
             'Place of Origin',
             'Playing Time',
-            'Presenters',
+            'Presenters Marc',
             'Previous Title',
             'Production',
             'Production Credits',

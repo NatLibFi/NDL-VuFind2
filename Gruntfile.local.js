@@ -1,5 +1,6 @@
 module.exports = function(grunt) {
   const fs = require("fs");
+  const path = require("path");
   const os = require("node:os");
 
   grunt.registerTask("finna:scss", function finnaScssFunc() {
@@ -20,24 +21,46 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask("finna:lessToSass", function finnaLessToSassFunc() {
+    const exclude = grunt.option('exclude');
+    const excludedFiles = exclude ? exclude.split(',') : [];
+
+    const sharedFileOpts = {
+        expand: true,
+        src: ['*.less', '**/*.less'],
+        filter: function(filepath) {
+          return !excludedFiles.includes(filepath);
+        },
+        ext: '.scss'
+    };
+
+    let themeDir = grunt.option('theme-dir');
+    if (themeDir) {
+      themeDir = path.resolve(themeDir);
+    }
+    const files = themeDir
+      ? [
+        {
+          ...sharedFileOpts,
+          cwd: themeDir + '/less',
+          dest: themeDir + '/scss'
+        }
+      ]
+      : [
+        {
+          ...sharedFileOpts,
+          cwd: 'themes/finna2/less',
+          dest: 'themes/finna2/scss'
+        },
+        {
+          ...sharedFileOpts,
+          cwd: 'themes/custom/less',
+          dest: 'themes/custom/scss'
+        },
+      ];
+    console.log(themeDir ? "Converting theme " + themeDir : "Converting Finna default themes");
     grunt.config.set('lessToSass', {
      convert: {
-        files: [
-          {
-            expand: true,
-            cwd: 'themes/finna2/less',
-            src: ['*.less', 'components/**/*.less', 'finna/**/*.less', 'global/**/*.less'],
-            ext: '.scss',
-            dest: 'themes/finna2/scss'
-          },
-          {
-            expand: true,
-            cwd: 'themes/custom/less',
-            src: ['*.less', 'components/**/*.less', 'finna/**/*.less', 'global/**/*.less'],
-            ext: '.scss',
-            dest: 'themes/custom/scss'
-          },
-        ],
+        files: files,
         options: {
           replacements: [
             // Activate SCSS
