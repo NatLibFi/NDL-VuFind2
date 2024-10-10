@@ -57,6 +57,23 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     protected ?UserEntityInterface $user;
 
     /**
+     * Default values for list config
+     *
+     * @var array
+     */
+    protected array $requiredFieldsAndDefaultValues = [
+        'Enabled' => false,
+        'Recipient' => [],
+        'Datasources' => [],
+        'Information' => [],
+        'LibraryCardSources' => [],
+        'Connection' =>  [
+            'type' => 'Database',
+        ],
+        'Identifier' => false,
+    ];
+
+    /**
      * Constructor
      *
      * @param ReservationListService $reservationListService Reservation list service
@@ -95,18 +112,7 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      */
     protected function ensureListKeys(array $list): array
     {
-        $requiredFieldsAndDefaultValues = [
-            'Enabled' => false,
-            'Recipient' => [],
-            'Datasources' => [],
-            'Information' => [],
-            'LibraryCardSources' => [],
-            'Connection' =>  [
-                'type' => 'Database',
-            ],
-            'Identifier' => false,
-        ];
-        $merged = array_merge($requiredFieldsAndDefaultValues, $list);
+        $merged = array_merge($this->requiredFieldsAndDefaultValues, $list);
         if (!is_string($merged['Identifier'])) {
             $merged['Enabled'] = false;
         }
@@ -186,7 +192,7 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
             }
         }
         return [
-            'properties' => [],
+            'properties' => $this->requiredFieldsAndDefaultValues,
             'institution_information' => [],
             'translation_keys' => [
                 'title' => '',
