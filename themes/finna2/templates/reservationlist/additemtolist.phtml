@@ -10,6 +10,15 @@
 ?>
 
 <h2><?= $this->transEsc($pageTitle); ?></h2>
+
+<?php if (!empty($this->listsContaining)): ?>
+  <p><?=$this->transEsc('This item is already part of the following list/lists') ?>:
+  <?php foreach ($this->listsContaining as $i => $list): ?>
+    <a href="<?=$this->url('reservationlist-displaylist', ['id' => $list->getId()]) ?>" data-lightbox-ignore><?=$this->escapeHtml($list->getTitle())?></a><?php if ($i < count($this->listsContaining) - 1): ?>, <?php endif; ?>
+  <?php endforeach; ?>
+  </p><hr>
+<?php endif; ?>
+
 <?php // TODO: create a component which handles the defaulting into prettier form ?>
 <?php if (!$this->translationEmpty($listTranslations['title'])): ?>
   <strong><?= $this->transEsc($listTranslations['title']); ?></strong>

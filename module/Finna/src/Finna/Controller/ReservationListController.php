@@ -154,6 +154,12 @@ class ReservationListController extends AbstractBase
             $view->listIdentifier,
             $view->institution
         );
+        $view->listsContaining = $this->reservationListService->getListsContainingRecord(
+            $user,
+            $driver,
+            $view->listIdentifier,
+            $view->institution
+        );
         // Filter out already ordered lists
         $view->lists = array_filter(
             $lists,
