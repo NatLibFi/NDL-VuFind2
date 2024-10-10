@@ -325,9 +325,7 @@ class ReservationListController extends AbstractBase
             $this->flashMessenger()->addSuccessMessage($form->getSubmitResponse());
             return $this->getRefreshResponse();
         } else {
-            $this->flashMessenger()->addErrorMessage(
-                $this->translate('could_not_process_feedback')
-            );
+            $this->flashMessenger()->addErrorMessage('could_not_process_feedback');
         }
         return $view;
     }
