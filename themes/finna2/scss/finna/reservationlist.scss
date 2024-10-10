@@ -27,6 +27,7 @@
         flex-flow: row;
         align-items: center;
         justify-content: space-between;
+
       }
     }
     > li:nth-child(odd) {
@@ -34,6 +35,21 @@
     }
   }
 }
+.reservation-list-delete-wrapper {
+  .dropdown-menu {
+    top: 100%;
+    left: -50%;
+  }
+  &.left .dropdown-menu {
+    left: initial;
+    right: 0;
+  }
+  .dropdown-header {
+    color: inherit;
+    font-size: 14px;
+  }
+}
+
 #ReservationListRequest.dynamic-form {
   textarea {
     width: 100%;

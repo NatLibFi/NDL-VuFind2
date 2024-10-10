@@ -37,32 +37,45 @@
         <p><?=$this->escapeHtml($value);?></p>
       <?php endforeach; ?>
     </div>
-    <?php if ($this->list?->getDescription() ?? false): ?>
+    <?php if ($this->list->getDescription() ?? false): ?>
       <div class="description-wrapper">
         <p><?=$this->escapeHtml($this->list->getDescription()); ?></p>
       </div>
     <?php endif; ?>
-    <?php if ($this->list?->getCreated() ?? false): ?>
+    <?php if ($this->list->getCreated() ?? false): ?>
       <div class="list-info">
         <p><?= $this->transEsc('ReservationList::list_created', ['%%date%%' => $this->list->getCreated()->format('d.m.Y')]) ?></p>
       </div>
     <?php endif; ?>
-    <?php if ($this->list?->getOrdered() ?? false): ?>
+    <?php if ($this->list->getOrdered() ?? false): ?>
       <div class="list-info">
         <p><?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $this->list->getOrdered()->format('d.m.Y')]) ?></p>
       </div>
     <?php endif; ?>
-    <?php if ($this->list?->getPickupDate() ?? false): ?>
+    <?php if ($this->list->getPickupDate() ?? false): ?>
       <div class="list-info">
         <p><?= $this->transEsc('ReservationList::list_pickup_date', ['%%date%%' => $this->list->getPickupDate()->format('d.m.Y')]) ?></p>
       </div>
     <?php endif; ?>
     <div class="list-controls">
-      <?php if (!$this->list?->getOrdered() && $this->results?->getResults() && $listProperties['properties']['Enabled']): ?>
+      <?php if (!$this->list->getOrdered() && $this->results->getResults() && $listProperties['properties']['Enabled']): ?>
         <!-- Add order buttons if the list has not been ordered yet. -->
-        <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-placeorder', ['id' => $this->list?->getId()]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('ReservationList::Order List')?></a>
+        <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-placeorder', ['id' => $this->list->getId()]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('ReservationList::Order List')?></a>
       <?php endif; ?>
-      <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-deletelist', ['id' => $this->list?->getId()]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('ReservationList::Delete List')?></a>
+      <span class="reservation-list-delete-wrapper">
+        <?=
+          $this->component(
+              'confirm-button',
+              [
+                'buttonLink' => $this->url('reservationlist-deletelist', [], ['query' => ['listID' => $list->getId()]]),
+                'buttonLabel' => 'delete_list',
+                'buttonClass' => 'btn btn-primary',
+                'confirmLink' => $this->url('reservationlist-deletelist', [], ['query' => ['listID' => $list->getId(), 'confirm' => 1]]),
+                'header' => 'confirm_delete_list_text',
+            ]
+          )
+        ?>
+      </span>
     </div>
     <div class="mylist-header">
     <?php if ($recordTotal > 0): ?>
@@ -79,7 +92,7 @@
         <div class="myaccount-sticky-header"></div>
           <div class="toolbar-sticky-container">
             <?php $multiPageSelection = ($this->config()->get('config')['Social']['multi_page_favorites_selection'] ?? true) ? ' multi-page-selection' : ''; ?>
-            <form class="form<?= $multiPageSelection ?>" id="form-reservation-<?= $this->list?->getId() ?? ''?>" method="post" name="bulkActionForm" action="<?=$this->url('reservationlist-deletebulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
+            <form class="form<?= $multiPageSelection ?>" id="form-reservation-<?= $this->list->getId() ?? ''?>" method="post" name="bulkActionForm" action="<?=$this->url('reservationlist-deletebulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
               <input class="hidden all-ids-global" type="text" name="all_ids_global" value="<?= $this->escapeHtmlAttr(json_encode($this->results->getAllIds())) ?>">
               <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
               <div class="toolbar-sticky">

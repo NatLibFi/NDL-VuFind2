@@ -188,7 +188,10 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
         return [
             'properties' => [],
             'institution_information' => [],
-            'translation_keys' => [],
+            'translation_keys' => [
+                'title' => '',
+                'description' => '',
+            ],
         ];
     }
 

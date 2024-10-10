@@ -26,7 +26,19 @@
             <a href="<?= $this->url('reservationlist-displaylist', ['id' => $list->getId()])?>"><?= $this->escapeHtml($list->getTitle()) ?></a>
           </div>
           <div class="pull-right">
-            <a href="<?= $this->url('reservationlist-deletelist', ['id' => $list->getId()])?>" data-lightbox=""><?= $this->transEsc('ReservationList::Delete List') ?></a>
+            <span class="reservation-list-delete-wrapper left">
+              <?=
+              $this->component(
+                  'confirm-button',
+                  [
+                      'buttonLink' => $this->url('reservationlist-deletelist', [], ['query' => ['listID' => $list->getId()]]),
+                      'buttonLabel' => 'delete_list',
+                      'confirmLink' => $this->url('reservationlist-deletelist', [], ['query' => ['listID' => $list->getId(), 'confirm' => 1]]),
+                      'header' => 'confirm_delete_list_text',
+                  ]
+              )
+              ?>
+            </span>
           </div>
         </div>
         <div class="reservation-list-info">

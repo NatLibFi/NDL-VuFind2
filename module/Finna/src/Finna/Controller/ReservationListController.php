@@ -371,7 +371,7 @@ class ReservationListController extends AbstractBase
         if (!$user) {
             return $this->forceLogin();
         }
-        $listID = $this->getParam('id');
+        $listID = $this->getParam('listID');
         if ($this->getParam('confirm')) {
             try {
                 $list = $this->reservationListService->getListById((int)$listID, $user);
@@ -385,9 +385,7 @@ class ReservationListController extends AbstractBase
                 throw $e;
             }
             // Redirect to MyResearch home
-            return $this->inLightbox()  // different behavior for lightbox context
-                ? $this->getRefreshResponse()
-                : $this->redirect()->toRoute('reservationlist-displaylists');
+            return $this->redirect()->toRoute('reservationlist-displaylists');
         }
         return $this->confirm(
             'confirm_delete_list_brief',
