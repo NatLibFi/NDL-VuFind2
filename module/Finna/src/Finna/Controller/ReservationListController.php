@@ -134,7 +134,7 @@ class ReservationListController extends AbstractBase
             $view->institution,
             $view->listIdentifier
         )['properties'];
-        if (!$listProperties) {
+        if (!$listProperties || !$listProperties['Enabled']) {
             throw new \VuFind\Exception\Forbidden('Record is not allowed in the list');
         }
         $lists = $this->reservationListService->getListsNotContainingRecord(
@@ -188,6 +188,13 @@ class ReservationListController extends AbstractBase
                 'listIdentifier' => $this->getParam('listIdentifier'),
             ]
         );
+        $listProperties = ($this->reservationListHelper)($user)->getListProperties(
+            $view->institution,
+            $view->listIdentifier
+        )['properties'];
+        if (!$listProperties || !$listProperties['Enabled']) {
+            throw new \VuFind\Exception\Forbidden('List is not enabled');
+        }
         if ($this->formWasSubmitted('list_created')) {
             if (!$this->validateCsrf()) {
                 $this->flashMessenger()->addErrorMessage('csrf_validation_failed');
@@ -266,7 +273,7 @@ class ReservationListController extends AbstractBase
             $list->getInstitution(),
             $list->getListConfigIdentifier()
         )['properties'];
-        if (!$listProperties) {
+        if (!$listProperties || !$listProperties['Enabled']) {
             throw new \VuFind\Exception\Forbidden('No list properties found.');
         }
         $formId = Form::RESERVATION_LIST_REQUEST;

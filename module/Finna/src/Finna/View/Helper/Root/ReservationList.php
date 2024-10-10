@@ -36,6 +36,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\RecordDriver\DefaultRecord;
 
 use function in_array;
+use function is_string;
 
 /**
  * Reservation list view helper
@@ -83,6 +84,34 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
+     * Ensure that lists have all the required keys defined needed in other places.
+     * Sets the list disabled if list identifier is not set or is not a string.
+     *
+     * @param array $list Properties of the list to ensure
+     *
+     * @return array
+     */
+    protected function ensureListKeys(array $list): array
+    {
+        $requiredFieldsAndDefaultValues = [
+            'Enabled' => false,
+            'Recipient' => [],
+            'Datasources' => [],
+            'Information' => [],
+            'LibraryCardSources' => [],
+            'Connection' =>  [
+                'type' => 'Database',
+            ],
+            'Identifier' => false,
+        ];
+        $merged = array_merge($requiredFieldsAndDefaultValues, $list);
+        if (!is_string($merged['Identifier'])) {
+            $merged['Enabled'] = false;
+        }
+        return $merged;
+    }
+
+    /**
      * Get associative array of [institution => configured lists] where driver matches
      *
      * @param DefaultRecord $driver Record driver
@@ -91,19 +120,22 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      */
     protected function getAvailableListsForRecord(DefaultRecord $driver): array
     {
-        $datasource = $driver->tryMethod('getDatasource', [], '');
+        $datasource = $driver->tryMethod('getDatasource');
         if (!$datasource) {
             return [];
         }
         $result = [];
-        foreach ($this->config as $institution => $settings) {
+        foreach ($this->config['Institutions'] ?? [] as $institution => $settings) {
             $current = [$institution => []];
-            if ($lists = $settings['Lists'] ?? []) {
-                foreach ($lists as $list) {
-                    if (in_array($datasource, $list['Datasources'] ?? []) && $this->checkUserRightsForList($list)) {
-                        $current[$institution][] = $list;
-                        continue;
-                    }
+            foreach ($settings['Lists'] ?? [] as $list) {
+                $list = $this->ensureListKeys($list);
+                if (
+                    $list['Enabled']
+                    && in_array($datasource, $list['Datasources'])
+                    && $this->checkUserRightsForList($list)
+                ) {
+                    $current[$institution][] = $list;
+                    continue;
                 }
             }
             if ($current[$institution]) {
@@ -138,11 +170,12 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
         string $institution,
         string $listIdentifier
     ): array {
-        foreach ($this->config[$institution]['Lists'] ?? [] as $list) {
-            if (($list['Identifier'] ?? false) === $listIdentifier) {
+        foreach ($this->config['Institutions'][$institution]['Lists'] ?? [] as $list) {
+            $list = $this->ensureListKeys($list);
+            if ($list['Identifier'] === $listIdentifier) {
                 return [
                     'properties' => $list,
-                    'institution_information' => $this->config[$institution]['Information'] ?? [],
+                    'institution_information' => $this->config['Institutions'][$institution]['Information'] ?? [],
                     'translation_keys' => [
                         'title' => "list_title_{$institution}_{$listIdentifier}",
                         'description' => "list_description_{$institution}_{$listIdentifier}",
@@ -169,15 +202,14 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      */
     public function checkUserRightsForList(array $list): bool
     {
-        $sources = $list['LibraryCardSources'] ?? false;
-        if (!$sources) {
+        if (!$list['LibraryCardSources']) {
             return true;
         }
         $patron = $this->ilsAuthenticator->storedCatalogLogin();
         if (!$patron) {
             return false;
         }
-        return in_array($patron['source'], $sources);
+        return in_array($patron['source'], $list['LibraryCardSources']);
     }
 
     /**
@@ -190,6 +222,9 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      */
     public function renderReserveTemplate(DefaultRecord $driver): string
     {
+        if (!$this->isFunctionalityEnabled()) {
+            return '';
+        }
         // Collect lists where we could potentially save this:
         $lists = $this->getAvailableListsForRecord($driver);
 
@@ -217,9 +252,19 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      */
     public function getListsContainingRecord(DefaultRecord $record): array
     {
-        if (!$this->user) {
+        if (!$this->isFunctionalityEnabled() || !$this->user) {
             return [];
         }
         return $this->reservationListService->getListsContainingRecord($this->user, $record);
+    }
+
+    /**
+     * Check if reservation lists are enabled
+     *
+     * @return bool
+     */
+    public function isFunctionalityEnabled(): bool
+    {
+        return (bool)($this->config['Enabled'] ?? false);
     }
 }
