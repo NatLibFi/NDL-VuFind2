@@ -270,6 +270,6 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      */
     public function isFunctionalityEnabled(): bool
     {
-        return !empty($this->configSection['enabled']) && !empty($this->yamlConfig['Enabled']);
+        return !empty($this->configSection['enabled']);
     }
 }

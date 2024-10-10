@@ -1,10 +1,9 @@
 # Settings for reservation lists
+# To enable lists in your site, see section ReservationList in config.ini.sample
 # Enabled key in the root defines if the list functionality is enabled
 # Root key is the identifier of institutions controlling the lists
 # Under that is general Information about institution and Lists
 # Each list entry has to contain Identifier which should be unique for each list under institution.
-# Enabled functionality affects if user can create new lists, add items to the list or order the list.
-# Already created lists will be shown normally in the menu
 # Recipient contains email address(es) where the reservation is to be sent
 # Datasources contains record datasources which can be added to the list
 # List can contain same information as under institution information to be more specific
@@ -21,7 +20,6 @@
 # "list_description_{$institution}_{$identifier}" 
 # Generic description about the list i.e These reservations will be delivered to nnn etc.
 #
-Enabled: false
 Institutions:
   Example Institution:
     Information:
