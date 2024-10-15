@@ -43,6 +43,8 @@ namespace Finna\RecordDriver;
 class SolrDefault extends \VuFind\RecordDriver\SolrDefault
 {
     use Feature\SolrFinnaTrait;
+    use Feature\ContainerFormatTrait;
+    use Feature\FinnaXmlReaderTrait;
 
     /**
      * Constructor
@@ -74,5 +76,17 @@ class SolrDefault extends \VuFind\RecordDriver\SolrDefault
             return $this->getHierarchyTopID()[0] ?? $this->getUniqueID();
         }
         return $this->getUniqueID();
+    }
+
+    /**
+     * Get record driver
+     *
+     * @param string $id Record id
+     *
+     * @return \VuFind\RecordDriver\AbstractBase
+     */
+    public function getRecord($id): \VuFind\RecordDriver\AbstractBase
+    {
+        return $this->recordLoader->load($id, 'Solr');
     }
 }

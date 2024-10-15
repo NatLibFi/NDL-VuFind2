@@ -1,0 +1,21 @@
+<?php
+    if ($this->driver->isCollection()) {
+        $term = $this->driver->isArchive() ? 'Archive' : 'Collection';
+    } else {
+        $term = 'Record';
+    }
+?>
+<h2><?=$this->escapeHtml($this->driver->getShortTitle() . ' ' . $this->driver->getSubtitle() . ' ' . $this->driver->getTitleSection())?></h2>
+<a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver))?>">
+    <?=$this->transEsc('View Full ' . $term)?>
+</a>
+
+<?=
+  $this->record($this->driver)->renderTemplate(
+      'core-fields.phtml',
+      [
+        'driver' => $this->driver,
+        'defaults' => 'collection-record',
+      ]
+  );
+?>

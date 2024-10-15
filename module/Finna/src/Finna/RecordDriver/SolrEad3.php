@@ -173,6 +173,31 @@ class SolrEad3 extends SolrEad
     ];
 
     /**
+     * Check if record is or is part of an archive
+     *
+     * @return bool
+     */
+    public function isArchive(): bool
+    {
+        if ($topId = $this->getHierarchyTopID()[0]) {
+            if ($topId !== $this->getUniqueID()) {
+                $driver = $this->getRecord($topId);
+                return $driver->isArchive();
+            }
+        }
+        $record = $this->getXmlRecord();
+        foreach ($record->controlaccess->genreform->part ?? [] as $part) {
+            if (trim($part) === 'Arkisto') {
+                return true;
+            }
+            if (trim($part) === 'Kokoelma') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Get the institutions holding the record.
      *
      * @return array

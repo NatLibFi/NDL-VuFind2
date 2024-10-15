@@ -1,11 +1,11 @@
 <?php
 
 /**
- * CollectionHierarchyTree tab
+ * Collection list tab
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) Villanova University 2010.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,7 +22,7 @@
  *
  * @category VuFind
  * @package  RecordTabs
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
  */
@@ -30,15 +30,15 @@
 namespace Finna\RecordTab;
 
 /**
- * CollectionHierarchyTree tab
+ * Collection list tab
  *
  * @category VuFind
  * @package  RecordTabs
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
  */
-class CollectionHierarchyTree extends \VuFind\RecordTab\CollectionHierarchyTree
+class CollectionList extends \VuFind\RecordTab\CollectionList
 {
     /**
      * Get the on-screen description for this tab.
@@ -48,8 +48,8 @@ class CollectionHierarchyTree extends \VuFind\RecordTab\CollectionHierarchyTree
     public function getDescription()
     {
         if ($this->driver->tryMethod('isArchive')) {
-            return 'hierarchy_tree_archive';
+            return 'Arkiston sisältö';
         }
-        return 'hierarchy_tree_collection';
+        return 'Collection Items';
     }
 }
