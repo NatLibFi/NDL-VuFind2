@@ -36,14 +36,25 @@
             <?=$this->icon('public') ?>
           <?php endif; ?>
           <div class="pull-right">(<?=$current['count']?>)</div>
-          <?php if ($active): ?>
-            <button class="pull-right remove-favorite-list remove"><?=$this->icon('list-remove') ?></button>
-          <?php endif; ?>
         </div>
       </a>
       <?php if ($active): ?>
         <?php $url = $this->url('list-page', ['lid' => $list->getId()], ['force_canonical' => true]) ?>
         <?= $this->partial('myresearch/list-visibility.phtml', ['listUrl' => $url, 'public' => $list->isPublic()]); ?>
+        <span class="delete-list-btn-wrapper">
+          <?=
+            $this->component(
+                'confirm-button',
+                [
+                  'buttonLink' => $this->url('myresearch-deletelist', [], ['query' => ['listID' => $list->getId()]]),
+                  'buttonLabel' => 'delete_list',
+                  'buttonClass' => 'btn btn-link',
+                  'confirmLink' => $this->url('myresearch-deletelist', [], ['query' => ['listID' => $list->getId(), 'confirm' => 1]]),
+                  'header' => 'confirm_delete_list_text',
+              ]
+            )
+          ?>
+        </span>
       <?php endif; ?>
     </li>
   <?php endforeach; ?>
