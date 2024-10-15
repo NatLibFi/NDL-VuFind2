@@ -114,7 +114,7 @@
     left: 10px;
     width: 40px;
     z-index: 1000;
-    background: fadeout($gray, 40%);
+    background: fade-out($gray, 0.4);
     color: white;
     border-radius: 5px;
     @media (min-width: $screen-sm-min) {
