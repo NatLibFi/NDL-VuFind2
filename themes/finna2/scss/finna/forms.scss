@@ -241,3 +241,11 @@ button.multiselect {
     background-color: white;
   }
 }
+
+.form-group {
+  #username_desc, #password_desc {
+    margin-top: 4px;
+    color: $gray-light;
+    font-size: 12px;
+  }
+}
