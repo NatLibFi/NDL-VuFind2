@@ -1501,6 +1501,27 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 }
             }
         }
+        // Update extra emails
+        if (isset($values->profile_extra_email) && isset($values->profile_extra_email_id)) {
+            foreach ($values->profile_extra_email as $i => $extraEmail) {
+                $validator = new \Laminas\Validator\EmailAddress();
+                if (
+                    $validator->isValid($extraEmail)
+                    && $catalog->checkFunction('updateEmail', compact('patron'))
+                    && isset($values->profile_extra_email_id[$i])
+                ) {
+                    $result = $catalog->updateEmail(
+                        $patron,
+                        $extraEmail,
+                        $values->profile_extra_email_id[$i]
+                    );
+                    if (!$result['success']) {
+                        $this->flashMessenger()->addErrorMessage($result['status']);
+                        $success = false;
+                    }
+                }
+            }
+        }
         // Update phone
         if (
             isset($values->profile_tel)
@@ -1510,6 +1531,22 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             if (!$result['success']) {
                 $this->flashMessenger()->addErrorMessage($result['status']);
                 $success = false;
+            }
+        }
+        // Update extra phones
+        if (isset($values->profile_extra_tel) && isset($values->profile_extra_tel_id)) {
+            foreach ($values->profile_extra_tel as $i => $extraPhone) {
+                if (isset($values->profile_extra_tel_id[$i])) {
+                    $result = $catalog->updatePhone(
+                        $patron,
+                        $extraPhone->phone,
+                        $values->profile_extra_tel_id[$i]
+                    );
+                    if (!$result['success']) {
+                        $this->flashMessenger()->addErrorMessage($result['status']);
+                        $success = false;
+                    }
+                }
             }
         }
         // Update SMS Number

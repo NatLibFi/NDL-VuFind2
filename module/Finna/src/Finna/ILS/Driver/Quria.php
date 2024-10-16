@@ -600,11 +600,19 @@ class Quria extends AxiellWebServices
         if (!empty($info->emailAddresses->emailAddress)) {
             $emailAddresses
                 =  $this->objectToArray($info->emailAddresses->emailAddress);
+            $activeEmailFound = false;
             foreach ($emailAddresses as $emailAddress) {
-                if ($emailAddress->isActive == 'yes' || empty($userCached['email'])) {
+                $emailActive = $emailAddress->isActive == 'yes';
+                if (empty($userCached['email']) || !$activeEmailFound) {
                     $userCached['email'] = $emailAddress->address ?? '';
                     $userCached['emailId'] = $emailAddress->id ?? '';
-                    break;
+                    $activeEmailFound = $emailActive;
+                } elseif ($emailActive) {
+                    $userCached['extraEmails'][]
+                        = [
+                            'email' => $emailAddress->address ?? '',
+                            'emailId' => $emailAddress->id ?? '',
+                        ];
                 }
             }
         }
@@ -623,18 +631,25 @@ class Quria extends AxiellWebServices
         }
         if (isset($info->phoneNumbers->phoneNumber)) {
             $phoneNumbers = $this->objectToArray($info->phoneNumbers->phoneNumber);
-            foreach ($phoneNumbers as $phoneNumber) {
+            foreach ($phoneNumbers as $i => $phoneNumber) {
                 if ($phoneNumber->sms->useForSms == 'yes') {
-                    $userCached['phone'] = $phoneNumber->areaCode ?? '';
-                    $userCached['phoneAreaCode'] = $userCached['phone'];
-                    if (isset($phoneNumber->localCode)) {
-                        $userCached['phone'] .= $phoneNumber->localCode;
-                        $userCached['phoneLocalCode'] = $phoneNumber->localCode;
+                    if ($i === 0) {
+                        $userCached['phone'] = $phoneNumber->areaCode ?? '';
+                        $userCached['phoneAreaCode'] = $userCached['phone'];
+                        if (isset($phoneNumber->localCode)) {
+                            $userCached['phone'] .= $phoneNumber->localCode;
+                            $userCached['phoneLocalCode'] = $phoneNumber->localCode;
+                        }
+                        if (isset($phoneNumber->id)) {
+                            $userCached['phoneId'] = $phoneNumber->id;
+                        }
+                    } else {
+                        $userCached['extraPhones'][]
+                            = [
+                                'phone' => ($phoneNumber->areaCode ?? '') . $phoneNumber->localCode ?? '',
+                                'phoneId' => $phoneNumber->id ?? '',
+                            ];
                     }
-                    if (isset($phoneNumber->id)) {
-                        $userCached['phoneId'] = $phoneNumber->id;
-                    }
-                    break;
                 }
             }
         }
@@ -1529,19 +1544,30 @@ class Quria extends AxiellWebServices
     /**
      * Update patron's email address
      *
-     * @param array  $patron Patron array
-     * @param String $email  Email address
+     * @param array  $patron  Patron array
+     * @param String $email   Email address
+     * @param String $emailId Email ID
      *
      * @throws ILSException
      *
      * @return array Associative array of the results
      */
-    public function updateEmail($patron, $email)
+    public function updateEmail($patron, $email, $emailId = null)
     {
         $username = $patron['cat_username'];
         $password = $patron['cat_password'];
 
         $user = $this->getMyProfile($patron);
+
+        if ($updateExtraEmail = isset($emailId) && !empty($user['extraEmails'][$emailId]['email'])) {
+            if ($user['extraEmails'][$emailId]['email'] === $email) {
+                return [
+                    'success' => true,
+                    'status' => 'No data to update',
+                    'sys_message' => '',
+                ];
+            }
+        }
 
         $function = '';
         $functionResult = '';
@@ -1563,7 +1589,7 @@ class Quria extends AxiellWebServices
         ];
 
         if (!empty($user['email'])) {
-            $conf['id'] = $user['emailId'];
+            $conf['id'] = $updateExtraEmail ? $user['extraEmails'][$emailId]['emailId'] : $user['emailId'];
             $function = 'changeEmail';
             $functionResult = 'changeEmailAddressResult';
             $functionParam = 'changeEmailAddressParam';
@@ -1607,19 +1633,29 @@ class Quria extends AxiellWebServices
     /**
      * Update patron's phone number
      *
-     * @param array  $patron Patron array
-     * @param string $phone  Phone number
+     * @param array  $patron  Patron array
+     * @param string $phone   Phone number
+     * @param string $phoneId Phone ID
      *
      * @throws ILSException
      *
      * @return array Associative array of the results
      */
-    public function updatePhone($patron, $phone)
+    public function updatePhone($patron, $phone, $phoneId = null)
     {
         $username = $patron['cat_username'];
         $password = $patron['cat_password'];
         $user = $this->getMyProfile($patron);
 
+        if ($updateExtraPhone = isset($phoneId) && !empty($user['extraPhones'][$phoneId]['phone'])) {
+            if ($user['extraPhones'][$phoneId]['phone'] === $phone) {
+                return [
+                    'success' => true,
+                    'status' => 'No data to update',
+                    'sys_message' => '',
+                ];
+            }
+        }
         $function = '';
         $functionResult = '';
         $functionParam = '';
@@ -1637,7 +1673,7 @@ class Quria extends AxiellWebServices
         ];
 
         if (!empty($user['phone'])) {
-            $conf['id'] = $user['phoneId'];
+            $conf['id'] = $updateExtraPhone ? $user['extraPhones'][$phoneId]['phoneId'] : $user['phoneId'];
             $function = 'changePhone';
             $functionResult = 'changePhoneNumberResult';
             $functionParam = 'changePhoneNumberParam';
