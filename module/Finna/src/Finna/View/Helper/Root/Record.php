@@ -1554,7 +1554,6 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         // TODO: handle notes for different list types more properly
         if ($this->getView()->layout()->templateDir === 'reservationlist') {
-            var_dump('yep');
             return [];
         }
         return parent::getListNotes($list_id, $user_id);
