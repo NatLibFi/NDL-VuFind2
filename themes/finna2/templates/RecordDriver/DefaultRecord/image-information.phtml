@@ -23,7 +23,7 @@
     <span class="hide-image-information"><?=$this->icon('image-information-hide') ?> <?=$this->transEsc($this->hideButtonText ?? 'Hide Image Information')?></span>
   </button>
   <div id="image_details_<?=$this->index?>" class="collapse">
-    <table class="table-condensed">
+    <table class="table-condensed" role="presentation">
       <?php if (!empty($this->image['identifier'])): ?>
         <tr>
           <th><?=$this->transEsc('image_identifier')?></th>
