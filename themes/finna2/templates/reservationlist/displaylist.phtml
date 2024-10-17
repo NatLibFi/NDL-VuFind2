@@ -62,7 +62,7 @@
         <!-- Add order buttons if the list has not been ordered yet. -->
         <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-placeorder', ['id' => $this->list->getId()]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('ReservationList::Order List')?></a>
       <?php endif; ?>
-      <span class="reservation-list-delete-wrapper">
+      <span class="delete-list-btn-wrapper">
         <?=
           $this->component(
               'confirm-button',

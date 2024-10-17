@@ -298,45 +298,6 @@ finna.myList = (function finnaMyList() {
       $(".list-visibility input[type='radio']").off('change').on("change", function onChangeVisibility() {
         updateList({}, refreshLists, 'visibility');
       });
-
-      // delete list
-      var active = $('.mylist-bar').find('a.active');
-      active.find('.remove').off('click').on('click', function onClickRemove(e) {
-        var target = $(this);
-        var form = $('.delete-list');
-        var prompt = form.find('.dropdown-menu');
-
-        function repositionPrompt(ev, data) {
-          var pos = target.offset();
-          var left = data.w / 2 - prompt.width() / 2;
-
-          prompt.css({
-            'left': left,
-            'top': pos.top + 30
-          });
-        }
-
-        function initRepositionListener() {
-          $(window).on('throttled-resize.finna', repositionPrompt);
-        }
-
-        prompt.find('.confirm').off('click').on('click', function onClickConfirm(ev) {
-          form.submit();
-          ev.preventDefault();
-        });
-        prompt.find('.cancel').off('click').on('click', function onClickCancel(ev) {
-          $(window).off('throttled-resize.finna', repositionPrompt);
-          prompt.hide();
-          $('.remove-favorite-list').trigger("focus");
-          ev.preventDefault();
-        });
-
-        repositionPrompt({}, {w: $(window).width(), h: $(window).height()});
-        initRepositionListener();
-        prompt.show();
-        prompt.find('.confirm a').focus();
-        e.preventDefault();
-      });
     }
 
     $('.add-new-list .icon').on('click', function createNewList() {
