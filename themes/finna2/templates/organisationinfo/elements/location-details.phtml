@@ -35,13 +35,11 @@
         <?php endif; ?>
 
         <?php if ($orgInfo['description']): ?>
-          <?php ob_start(); ?>
-            <p class="location-description description-long info-element">
-              <?=$this->cleanHtml($orgInfo['description'])?>
-            </p>
-          <?php $content = ob_get_clean(); ?>
           <?= $this->component('finna-truncate', [
-            'content' => $content,
+            'attributes' => [
+              'class' => ['location-description', 'description-long', 'info-element'],
+            ],
+            'content' => $this->cleanHtml($orgInfo['description']),
             'rows' => 5,
           ]); ?>
         <?php endif; ?>
