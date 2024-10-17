@@ -103,7 +103,7 @@
                   /** @var \Finna\View\Helper\Root\Record */
                   $recordHelper = $this->record($current);
                 ?>
-                <?= $recordHelper->renderTemplate('list-entry.phtml', ['driver' => $current, 'user' => $this->user]) ?>
+                <?= $recordHelper->renderTemplate('list-entry.phtml', ['driver' => $current, 'user' => $this->user, 'list' => null]) ?>
               <?php endforeach; ?>
             </form>
           </div>
