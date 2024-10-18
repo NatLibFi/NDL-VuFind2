@@ -14,13 +14,13 @@
   <?php
     foreach ($comments as $comment):
       $reported = $inappropriateComments && in_array($comment->getId(), $inappropriateComments);
-      $own = $user && $comment->getUser()->getId() === $user->getId();
+      $own = $user && $comment->getUser()?->getId() === $user->getId();
   ?>
   <div class="comment-wrapper comment" data-id="<?=$comment->getId()?>">
     <div class="name text-right">
       <?php if ($ratingAllowed): ?>
         <div class="comment-rating">
-          <?php $ratingData = $this->ratings()->getRatingData($this->driver, $comment->getUser()->getId()); ?>
+          <?php $ratingData = $this->ratings()->getRatingData($this->driver, $comment->getUser()?->getId()); ?>
           <?php if ($ratingData['count']): ?>
             <?=$this->render('Helpers/star-rating.phtml', ['readonly' => true, 'ratingData' => $ratingData]);?>
           <?php endif; ?>
