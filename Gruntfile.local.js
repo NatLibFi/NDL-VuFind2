@@ -2,6 +2,7 @@ module.exports = function(grunt) {
   const fs = require("fs");
   const path = require("path");
   const os = require("node:os");
+  const fsPromises = require("node:fs/promises");
 
   grunt.registerTask("finna:scss", function finnaScssFunc() {
     const config = getFinnaSassConfig({
@@ -48,19 +49,38 @@ module.exports = function(grunt) {
         ext: '.scss'
     };
 
-    let themeDir = grunt.option('theme-dir');
-    if (themeDir) {
-      themeDir = path.resolve(themeDir);
-    }
-    const files = themeDir
-      ? [
+    let files = [];
+    let viewsDir = grunt.option('views-dir');
+    let themeDirs = grunt.option('theme-dirs');
+    if (viewsDir) {
+      const isViewDir = function (dir) {
+        const stat = fs.lstatSync(dir);
+        return stat.isDirectory() && fs.existsSync(dir + '/themes/custom');
+      };
+      const entries = grunt.file.expand(
         {
+          filter: isViewDir,
+        },
+        viewsDir + '/*/*'
+      );
+      for (const viewDir of entries) {
+        files.push({
+          ...sharedFileOpts,
+          cwd: viewDir + '/themes/custom/less',
+          dest: viewDir + '/themes/custom/scss'
+        });
+      }
+    } else if (themeDirs) {
+      Object.entries(themeDirs.split(',')).forEach(([, themeDir]) => {
+        themeDir = path.resolve(themeDir);
+        files.push({
           ...sharedFileOpts,
           cwd: themeDir + '/less',
           dest: themeDir + '/scss'
-        }
-      ]
-      : [
+        });
+      });
+    } else {
+      files = [
         {
           ...sharedFileOpts,
           cwd: 'themes/finna2/less',
@@ -72,6 +92,7 @@ module.exports = function(grunt) {
           dest: 'themes/custom/scss'
         },
       ];
+    }
 
     const replacements = [
       // Activate SCSS
@@ -188,49 +209,13 @@ module.exports = function(grunt) {
         }
       );
     }
-    if (grunt.option('replace-vars')) {
-      const vars = {
-        'action-link-color': '#007c90',
-        'gray-lighter': '#d1d1d1',
-        'gray-ultralight': '#f7f7f7',
-        'gray-light': '#595959',
-        'gray-darker': '#000',
-        'gray-dark': '#121212',
-        'gray': '#2b2b2b',
-        'body-bg': '#fff',
-        'screen-xs': '480px',
-        'screen-xs-min': '480px',
-        'screen-xs-max': '767px',
-        'screen-sm': '768px',
-        'screen-sm-min': '768px',
-        'screen-md': '992px',
-        'screen-md-min': '992px',
-        'navbar-default-link-color': '#fff',
-        'content-font-size-base': '16px',
-        'content-headings-font-size-h1': '28px',
-        'content-headings-font-size-h2': '24px',
-        'content-headings-font-size-h3': '21px',
-        'content-headings-font-size-h4': '18px',
-      };
-      let order = 20;
-      // Change variables where used (but not where declared!):
-      Object.entries(vars).forEach(([src, dst]) => {
-        replacements.push(
-          {
-            pattern: new RegExp("(.+)\\$(" + src + ")\\b", "g"),
-            replacement: '$1' + dst + ' /* $2 */',
-            order: order
-          }
-        );
-        ++order;
-      });
-    }
 
-    console.log(themeDir ? "Converting theme " + themeDir : "Converting Finna default themes");
+    console.log(themeDirs || viewsDir ? "Converting specified themes" : "Converting Finna default themes");
     grunt.config.set('lessToSass', {
      convert: {
         files: files,
         options: {
+          excludes: ['important'],
           replacements: replacements
         }
       }
