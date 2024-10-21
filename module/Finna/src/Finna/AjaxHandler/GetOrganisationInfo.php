@@ -138,6 +138,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
         $sectors = array_filter((array)$params->fromQuery('sectors', []));
         $buildings = array_filter(explode(',', $params->fromQuery('buildings', '')));
         $id = $params->fromQuery('id');
+        $locationId = urldecode($params->fromQuery('locationId', ''));
         if (!$id && 'organisation-page-link' !== $element) {
             return $this->handleError('getOrganisationInfo: missing id');
         }
@@ -155,7 +156,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
             case 'info-location-selection':
                 $result = $this->getInfoAndLocationSelection(
                     $id,
-                    $params->fromQuery('locationId'),
+                    $locationId,
                     $sectors,
                     $buildings,
                     (bool)$params->fromQuery('consortiumInfo', false)
@@ -179,13 +180,13 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 );
                 break;
             case 'location-details':
-                if (!($locationId = $params->fromQuery('locationId'))) {
+                if (!$locationId) {
                     return $this->handleError('getOrganisationInfo: missing location id');
                 }
                 $result = $this->getLocationDetails($id, $locationId, $sectors);
                 break;
             case 'schedule':
-                if (!($locationId = $params->fromQuery('locationId'))) {
+                if (!$locationId) {
                     return $this->handleError('getOrganisationInfo: missing location id');
                 }
                 if (!($startDate = $params->fromQuery('date'))) {
@@ -196,14 +197,14 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
             case 'widget':
                 $result = $this->getWidget(
                     $id,
-                    $params->fromQuery('locationId'),
+                    $locationId,
                     $buildings,
                     $sectors,
                     (bool)$params->fromQuery('details', true),
                 );
                 break;
             case 'widget-location':
-                if (!($locationId = $params->fromQuery('locationId') ?: null)) {
+                if (!$locationId) {
                     return $this->handleError('getOrganisationInfo: missing location id');
                 }
 

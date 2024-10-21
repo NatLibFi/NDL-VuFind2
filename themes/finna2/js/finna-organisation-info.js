@@ -19,7 +19,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    * @param {String} hash
    */
   function updateURLHash(hash) {
-    if (('#' + hash) === window.location.hash) {
+    if (('#' + hash) === decodeURI(window.location.hash)) {
       // Set hash first to empty value, so that the change event is triggered when
       // the same menu item is re-selected.
       window.location.hash = '';
