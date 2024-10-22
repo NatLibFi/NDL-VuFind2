@@ -57,7 +57,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    * @param {String} locationId Location ID
    */
   function storeCurrentLocation(id, locationId) {
-    localStorage.setItem('location-info-' + id, locationId);
+    localStorage.setItem('location-info-' + id, decodeURI(locationId));
   }
 
   // Forward declaration
