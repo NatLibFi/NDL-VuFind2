@@ -259,25 +259,25 @@ class ReservationListHelperTest extends \PHPUnit\Framework\TestCase
     public static function brokenListConfigurationProvider(): Generator
     {
         $baseConfig = [
-        'Institutions' => [
-        'test_institution' => [
-          'Lists' => [
-                [
-                    'Enabled' => true,
-                    'Recipient' => [
-                        [
-                            'name' => 'test_receiving_name_1',
-                            'email' => 'test_receiving_email_1@test.org',
-                        ],
+            'Institutions' => [
+                'test_institution' => [
+                    'Lists' => [
+                            [
+                                'Enabled' => true,
+                                'Recipient' => [
+                                    [
+                                        'name' => 'test_receiving_name_1',
+                                        'email' => 'test_receiving_email_1@test.org',
+                                    ],
+                                ],
+                                'Datasources' => [
+                                    'test_datasource_1',
+                                ],
+                                'LibraryCardSources' => [],
+                            ],
                     ],
-                    'Datasources' => [
-                        'test_datasource_1',
-                    ],
-                    'LibraryCardSources' => [],
                 ],
-          ],
-        ],
-        ],
+            ],
         ];
         yield 'one_institution_and_list_with_no_identifier' => [$baseConfig, []];
 
