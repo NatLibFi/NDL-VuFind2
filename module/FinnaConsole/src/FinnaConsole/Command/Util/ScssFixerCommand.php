@@ -195,15 +195,13 @@ class ScssFixerCommand extends Command
             $change ? OutputInterface::VERBOSITY_VERBOSE : OutputInterface::VERBOSITY_DEBUG
         );
         $lines = file($filename, FILE_IGNORE_NEW_LINES);
-        $this->updateFileCollection($filename, compact('lines'));
+        $this->updateFileCollection($filename, compact('lines', 'vars'));
 
         // Process string substitutions
         if ($change) {
             $this->processSubstitutions($filename, $lines);
             $this->updateFileCollection($filename, compact('lines'));
         }
-
-        $this->updateFileCollection($filename, compact('lines'));
 
         $inMixin = 0;
         $requiredVars = [];
@@ -248,12 +246,7 @@ class ScssFixerCommand extends Command
         }
 
         if (!$discover && $change && $requiredVars || $this->allFiles[$filename]['lines'] !== $lines) {
-            $this->allFiles[$filename]['modified'] = true;
-            $this->allFiles[$filename]['lines'] = $lines;
-            $this->allFiles[$filename]['requiredVars'] = array_merge(
-                $this->allFiles[$filename]['requiredVars'],
-                $requiredVars
-            );
+            $this->updateFileCollection($filename, compact('lines', 'requiredVars') + ['modified' => true]);
         }
 
         return true;
@@ -278,11 +271,11 @@ class ScssFixerCommand extends Command
         $value = preg_replace('/\s*!default\s*;?\s*$/', '', $value);
         if (array_key_exists($var, $vars)) {
             $this->debug(
-                "$lineId: $var: '$value' overrides existing value '" . $vars[$var] . "'",
+                "$lineId: '$var: $value' overrides existing value '" . $vars[$var] . "'",
                 OutputInterface::VERBOSITY_DEBUG
             );
         } else {
-            $this->debug("$lineId: found '$var': '$value'", OutputInterface::VERBOSITY_DEBUG);
+            $this->debug("$lineId: found '$var: $value'", OutputInterface::VERBOSITY_DEBUG);
         }
         $vars[$var] = $value;
     }
@@ -423,6 +416,39 @@ class ScssFixerCommand extends Command
     }
 
     /**
+     * Update a file in the all files collection
+     *
+     * @param string $filename File name
+     * @param array  $values   Values to set
+     *
+     * @return void;
+     */
+    protected function updateFileCollection(string $filename, array $values): void
+    {
+        if (null === ($oldValues = $this->allFiles[$filename] ?? null)) {
+            $oldValues = [
+                'modified' => false,
+                'requiredVars' => [],
+            ];
+            $values['index'] = count($this->allFiles);
+        }
+        if (!isset($oldValues['lines']) && !isset($values['lines'])) {
+            // Read in any existing file:
+            if (file_exists($filename)) {
+                if (!$this->isReadableFile($filename)) {
+                    throw new \Exception("$filename is not readable");
+                }
+                $values['lines'] = file($filename, FILE_IGNORE_NEW_LINES);
+            }
+        }
+        // Set modified flag if needed:
+        if (isset($oldValues['lines']) && isset($values['lines']) && $oldValues['lines'] !== $values['lines']) {
+            $values['modified'] = true;
+        }
+        $this->allFiles[$filename] = array_merge($oldValues, $values);
+    }
+
+    /**
      * Update any modified files
      *
      * @return bool
@@ -463,9 +489,10 @@ class ScssFixerCommand extends Command
 
             // Prepend required variables:
             if ($fileSpec['requiredVars']) {
+                $requiredVars = $this->resolveVariableDependencies($fileSpec['requiredVars'], $fileSpec['vars']);
                 $linesToAdd = ['// The following variables were automatically added in SCSS conversion'];
                 $addedVars = [];
-                foreach (array_reverse($fileSpec['requiredVars']) as $current) {
+                foreach (array_reverse($requiredVars) as $current) {
                     $var = $current['var'];
                     if (!in_array($var, $addedVars)) {
                         $value = $current['value'];
@@ -477,7 +504,7 @@ class ScssFixerCommand extends Command
                 array_unshift($lines, ...$linesToAdd);
             }
             // Write the updated file:
-            if (false === file_put_contents($filename, implode(PHP_EOL, $lines))) {
+            if (false === file_put_contents($filename, implode(PHP_EOL, $lines)) . PHP_EOL) {
                 $this->error("Could not write file $filename");
             }
             $this->debug("$filename updated");
@@ -487,36 +514,49 @@ class ScssFixerCommand extends Command
     }
 
     /**
-     * Update a file in the all files collection
+     * Resolve requirements for variables that depend on other variables
      *
-     * @param string $filename File name
-     * @param array  $values   Values to set
+     * @param array $vars      Variables to resolve
+     * @param array $knownVars Vars that are already available
      *
-     * @return void;
+     * @return array
      */
-    protected function updateFileCollection(string $filename, array $values): void
+    protected function resolveVariableDependencies(array $vars, array $knownVars): array
     {
-        if (null === ($oldValues = $this->allFiles[$filename] ?? null)) {
-            $oldValues = [
-                'modified' => false,
-                'requiredVars' => [],
-            ];
-            $values['index'] = count($this->allFiles);
-        }
-        if (!isset($oldValues['lines']) && !isset($values['lines'])) {
-            // Read in any existing file:
-            if (file_exists($filename)) {
-                if (!$this->isReadableFile($filename)) {
-                    throw new \Exception("$filename is not readable");
+        $result = $vars;
+        foreach ($vars as $current) {
+            $var = $current['var'];
+            $varDefinition = $current['value'];
+            $loop = 0;
+            while (preg_match('/\$(' . static::VARIABLE_CHARS . '+)/', $varDefinition, $matches)) {
+                $requiredVar = $matches[1];
+                if (in_array($requiredVar, $knownVars)) {
+                    $this->debug(
+                        "Existing definition found for '$requiredVar' required by '$var: $varDefinition'",
+                        OutputInterface::VERBOSITY_DEBUG
+                    );
+                    continue;
                 }
-                $values['lines'] = file($filename, FILE_IGNORE_NEW_LINES);
+                if ($requiredVarValue = $this->allVars[$requiredVar] ?? null) {
+                    $this->debug("'$var: $varDefinition' requires '$requiredVar: $requiredVarValue'");
+                    $result[] = [
+                        'var' => $requiredVar,
+                        'value' => $requiredVarValue,
+                    ];
+                    $varDefinition = $requiredVarValue;
+                } else {
+                    $this->warning(
+                        "Could not resolve dependency for variable '$var'; definition missing for '$requiredVar'"
+                    );
+                    break;
+                }
+                if (++$loop >= 10) {
+                    $this->warning("Value definition loop detected ($var -> $requiredVar)");
+                    break;
+                }
             }
         }
-        // Set modified flag if needed:
-        if (isset($oldValues['lines']) && isset($values['lines']) && $oldValues['lines'] !== $values['lines']) {
-            $values['modified'] = true;
-        }
-        $this->allFiles[$filename] = array_merge($oldValues, $values);
+        return $result;
     }
 
     /**
@@ -626,7 +666,7 @@ class ScssFixerCommand extends Command
             ],
             [ // fix missing semicolon from background-image rule:
                 'pattern' => '/(\$background-image:([^;]+?))\n/',
-                'replacement' => '$1;\n',
+                'replacement' => "\$1;\n",
             ],
             [ // remove broken (and useless) rule:
                 'pattern' => '/\.feed-container \.list-feed \@include feed-header\(\);/',
@@ -638,7 +678,7 @@ class ScssFixerCommand extends Command
             ],
             [ // missing semicolon:
                 'pattern' => '/(.+:.*auto)\n/',
-                'replacement' => "$1;\n",
+                'replacement' => "\$1;\n",
             ],
             [ // lost space in mixin declarations:
                 'pattern' => '/(\@mixin.+){/',
@@ -696,6 +736,110 @@ class ScssFixerCommand extends Command
                 'pattern' => '$link-hover-color: $tut-a-hover,',
                 'replacement' => '$link-hover-color: $tut-a-hover;',
             ],
+            [ // typo
+                'pattern' => 'rgba(43,65,98,0,9)',
+                'replacement' => 'rgba(43,65,98,0.9)',
+            ],
+            [ // typo $input-bg: ##ff8d0f;
+                'pattern' => '/:\s*##+/',
+                'replacement' => ': #',
+            ],
+            [ // typo
+                'pattern' => '!importanti',
+                'replacement' => '!important',
+            ],
+            [ // typo
+                'pattern' => '$brand-secondary: #;',
+                'replacement' => '',
+            ],
+            [ // typo
+                'pattern' => '$brand-secondary: ###;',
+                'replacement' => '',
+            ],
+            [ // typo
+                'pattern' => '#00000;',
+                'replacement' => '#000000;',
+            ],
+            [ // typo
+                'pattern' => 'background-color: ;',
+                'replacement' => '',
+            ],
+            [ // typo
+                'pattern' => '$header-background-color #fff;',
+                'replacement' => '$header-background-color: #fff;',
+            ],
+            [ // typo
+                'pattern' => '$action-link-color #FFF;',
+                'replacement' => '$action-link-color: #FFF;',
+            ],
+            [ // typo
+                'pattern' => '$finna-browsebar-background (selaa palkin taustaväri)',
+                'replacement' => '//$finna-browsebar-background (selaa palkin taustaväri)',
+            ],
+            [ // typo
+                'pattern' => '$finna-browsebar-link-color(selaa palkin linkin)',
+                'replacement' => '//$finna-browsebar-link-color(selaa palkin linkin)',
+            ],
+            [ // typo
+                'pattern' => '$finna-browsebar-highlight-background (selaa palkin korotuksen taustaväri)',
+                'replacement' => '//$finna-browsebar-highlight-background (selaa palkin korotuksen taustaväri)',
+            ],
+            [ // typo
+                'pattern' => '$home-2_fi  {',
+                'replacement' => '.home-2_fi  {',
+            ],
+            [ // disable unsupported extend
+                'pattern' => '@extend .finna-panel-default .panel-heading;',
+                'replacement' => '// Not supported in SCSS: @extend .finna-panel-default .panel-heading;',
+            ],
+
+
+            [ // gradient mixin call
+                'pattern' => '#gradient.vertical($background-start-color; $background-end-color; $background-start-percent; $background-end-percent);',
+                'replacement' => 'gradient-vertical($background-start-color, $background-end-color, $background-start-percent, $background-end-percent);',
+            ],
+            [ // common typo in home column styles
+                'pattern' => '/(\.home-1, \.home-3 \{[^}]+)}(\s*\n\s*\& \.left-column-content.*?\& .right-column-content \{.*?\}.*?\})/s',
+                'replacement' => "\$1\$2\n}",
+            ],
+            [ // another typo in home column styles
+                'pattern' => '/(\n\s+\.left-column-content.*?\n\s+)& (.right-column-content)/s',
+                'replacement' => "\$1\$2",
+            ],
+            [ // missing semicolon: display: none
+                'pattern' => '/display: none\n/',
+                'replacement' => 'display: none;',
+            ],
+            [ // missing semicolon in variable definitions
+                'pattern' => '/(\n\s*\$' . static::VARIABLE_CHARS . '+\s*:\s*?[^;\s]+)((\n|\s*\/\/))/',
+                'replacement' => "\$1;\$2",
+            ],
+            [ // missing semicolon: $header-text-color: #000000
+                'pattern' => '/$header-text-color: #000000\n/',
+                'replacement' => '$header-text-color: #000000;',
+            ],
+            [ // missing semicolon: clip: rect(0px,1200px,1000px,0px)
+                'pattern' => '/clip: rect\(0px,1200px,1000px,0px\)\n/',
+                'replacement' => "clip: rect(0px,1200px,1000px,0px);\n",
+            ],
+            [ // missing semicolon: $finna-feedback-background: darken(#d80073, 10%) //
+                'pattern' => '/\$finna-feedback-background: darken\(#d80073, 10%\)\s*?(\n|\s*\/\/)/',
+                'replacement' => "\$finna-feedback-background: darken(#d80073, 10%);\$1",
+            ],
+            [ // invalid (and obsolete) rule
+                'pattern' => '/(\@supports\s*\(-ms-ime-align:\s*auto\)\s*\{\s*\n\s*clip-path.*?\})/s',
+                'replacement' => "// Invalid rule commented out by SCSS conversion\n/*\n\$1\n*/",
+            ],
+
+            [ // literal fix
+                'pattern' => "~ ')'",
+                'replacement' => ')',
+            ],
+            [ // literal fix
+                'pattern' => 'calc(100vh - "#{$navbar-height}~")',
+                'replacement' => 'calc(100vh - #{$navbar-height})',
+            ],
+
             [ // math without calc
                 'pattern' => '/(.*\s)(\S+ \/ (\$|\d)[^\s;]*)/',
                 'replacement' => function ($matches) {
