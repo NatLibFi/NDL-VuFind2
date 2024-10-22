@@ -33,7 +33,7 @@ use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\ReservationList\ReservationListService;
 use VuFind\Auth\ILSAuthenticator;
 use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\RecordDriver\DefaultRecord;
+use VuFind\RecordDriver\AbstractBase;
 
 use function in_array;
 use function is_string;
@@ -122,11 +122,11 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     /**
      * Get associative array of [institution => configured lists] where driver matches
      *
-     * @param DefaultRecord $driver Record driver
+     * @param AbstractBase $driver Record driver
      *
      * @return array
      */
-    protected function getAvailableListsForRecord(DefaultRecord $driver): array
+    protected function getAvailableListsForRecord(AbstractBase $driver): array
     {
         $datasource = $driver->tryMethod('getDatasource');
         if (!$datasource) {
@@ -227,11 +227,11 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      * Display buttons which routes the request to proper list procedures
      * Checks if the list should be displayed for logged-in only users.
      *
-     * @param DefaultRecord $driver Driver to use for checking available lists
+     * @param AbstractBase $driver Driver to use for checking available lists
      *
      * @return string
      */
-    public function renderReserveTemplate(DefaultRecord $driver): string
+    public function renderReserveTemplate(AbstractBase $driver): string
     {
         if (!$this->isFunctionalityEnabled()) {
             return '';
@@ -260,11 +260,11 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     /**
      * Get lists containing record
      *
-     * @param DefaultRecord $record Record
+     * @param AbstractBase $record Record
      *
      * @return FinnaResourceListEntityInterface[]
      */
-    public function getListsContainingRecord(DefaultRecord $record): array
+    public function getListsContainingRecord(AbstractBase $record): array
     {
         if (!$this->isFunctionalityEnabled() || !$this->user) {
             return [];
