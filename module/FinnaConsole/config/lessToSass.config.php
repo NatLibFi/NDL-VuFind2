@@ -3,7 +3,7 @@
 // The first few rules up to 'literal' are based on the rules in the grunt-less-to-sass library
 return [
     [ // functions
-        'pattern' => '/(?!@debug|@import|@media|@keyframes|@font-face|@include|@extend|@mixin|@supports|@container|@if|@use|@page|@-\w)@/i',
+        'pattern' => '/(?!@debug|@import|@media|@keyframes|@font-face|@include|@extend|@mixin|@supports|@container |@if |@use |@page |@-\w)@/i',
         'replacement' => '$',
     ],
     [ // when => if
@@ -41,7 +41,7 @@ return [
         'replacement' => function ($matches) {
             [, $method, $color2, $weight] = $matches;
             $color1 = $method === 'shade' ? '#000000' : '#ffffff';
-            return "mix($color1, $color2, $weight);";
+            return "mix($color1, $color2, $weight)";
         },
     ],
     [ // fade

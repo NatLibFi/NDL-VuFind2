@@ -149,24 +149,10 @@ class LessToSassCommand extends Command
                 'Files not to be touched in the target directory (in addition to the ones outside of the starting'
                 . ' directory)'
             )
-            ->addOption(
-                'less_file',
-                null,
-                InputOption::VALUE_REQUIRED,
-                'Name of main LESS file to use as an entry point (relative to source_dir).',
-                'compiled.less'
-            )
-            ->addOption(
-                'scss_file',
-                null,
-                InputOption::VALUE_REQUIRED,
-                'Name of existing main SCSS file to use as an entry point (relative to target_dir).',
-                'compiled.less'
-            )
             ->addArgument(
-                'theme_dir',
+                'main_file',
                 InputArgument::REQUIRED,
-                'Theme directory'
+                'Main LESS file to use as entry point'
             );
     }
 
@@ -182,8 +168,9 @@ class LessToSassCommand extends Command
     {
         $this->output = $output;
         $this->includePaths = $input->getOption('include_path');
-        $this->sourceDir = $input->getArgument('theme_dir') . '/less';
-        $this->targetDir = $input->getArgument('theme_dir') . '/scss';
+        $mainFile = $input->getArgument('main_file');
+        $this->sourceDir = dirname($mainFile);
+        $this->targetDir = preg_replace('/\/less\b/', '/scss', $this->sourceDir);
         if ($this->excludedFiles = $input->getOption('exclude')) {
             $this->excludedFiles = array_map(
                 function ($s) {
@@ -193,15 +180,11 @@ class LessToSassCommand extends Command
             );
         }
         if ($variablesFile = $input->getOption('variables_file')) {
-            $this->variablesFile = $this->targetDir . '/' . $variablesFile;
+            $this->variablesFile = $this->sourceDir . '/' . preg_replace('/\.scss$/', '', $variablesFile);
         }
-        $mainFile = $this->sourceDir . '/' . $input->getOption('less_file');
         // First read all vars:
         if (!$this->discoverLess($mainFile, $this->allLessVars)) {
             return Command::FAILURE;
-        }
-        if ($scssFile = $input->getOption('scss_file')) {
-            $mainFile = $this->targetDir . '/' . $scssFile;
         }
         // Now do changes:
         $currentVars = [];
@@ -298,7 +281,7 @@ class LessToSassCommand extends Command
 
         // Process string substitutions
         if (!str_ends_with($filename, '.scss')) {
-            $this->processSubstitutions($filename, $lines);
+            $lines = explode(PHP_EOL, $this->processSubstitutions($filename, implode(PHP_EOL, $lines)));
             $this->updateFileCollection($filename, compact('lines', 'vars'));
         }
 
@@ -331,7 +314,7 @@ class LessToSassCommand extends Command
             }
 
             // Collect variables that need to be defined:
-            if (str_starts_with($fileDir, $this->targetDir) && !str_contains($fileDir, '..')) {
+            if (!str_contains($fileDir, '..') && !str_starts_with($fileDir, '/')) {
                 if ($newVars = $this->checkVariables($lineId, $line, $vars)) {
                     $requiredVars = [
                         ...$requiredVars,
@@ -371,9 +354,8 @@ class LessToSassCommand extends Command
         } else {
             $this->debug("$lineId: found '$var: $value'", OutputInterface::VERBOSITY_DEBUG);
         }
-        $tmp = [$value];
-        $this->processSubstitutions('', $tmp);
-        $vars[$var] = $tmp[0];
+
+        $vars[$var] = $value;
     }
 
     /**
@@ -397,7 +379,7 @@ class LessToSassCommand extends Command
         if ($existing) {
             if ($existing['default'] && !$default) {
                 $this->debug(
-                    "$lineId: '$var: $value' overrides default value '" . $vars[$var] . "'",
+                    "$lineId: '$var: $value' overrides default value '" . $vars[$var]['value'] . "'",
                     OutputInterface::VERBOSITY_DEBUG
                 );
             } else {
@@ -460,6 +442,43 @@ class LessToSassCommand extends Command
     }
 
     /**
+     * Find import file
+     *
+     * @param string $filename Relative file name
+     * @param string $baseDir  Base directory
+     *
+     * @return ?array
+     */
+    protected function resolveImportFileName(string $filename, string $baseDir): ?array
+    {
+        $allDirs = [
+            $baseDir,
+            ...$this->includePaths
+        ];
+        foreach (['less', 'scss'] as $extension) {
+            foreach ($allDirs as $dir) {
+                // full path
+                if (str_ends_with($filename, '.scss') || str_ends_with($filename, '.less')) {
+                    $fullPath = "$dir/$filename";
+                } else {
+                    $fullPath = "$dir/$filename.$extension";
+                }
+                if (!$this->isReadableFile($fullPath)) {
+                    // reference import
+                    $fullPath = dirname($fullPath) . '/_' . basename($fullPath);
+                }
+                if ($this->isReadableFile($fullPath)) {
+                    return [
+                        'fullPath' => $fullPath,
+                        'inBaseDir' => str_starts_with(realpath($fullPath), $this->sourceDir . '/'),
+                    ];
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Replace variables that are defined later with their last values
      *
      * @param string $lineId Line identifier for logging
@@ -484,6 +503,7 @@ class LessToSassCommand extends Command
                 continue;
             }
             // Use last defined value:
+
             $this->debug("$lineId: Need $lessVal for $var");
             $required[] = [
                 'var' => $var,
@@ -560,40 +580,6 @@ class LessToSassCommand extends Command
     }
 
     /**
-     * Find import file
-     *
-     * @param string $filename Relative file name
-     * @param string $baseDir  Base directory
-     *
-     * @return ?array
-     */
-    protected function resolveImportFileName(string $filename, string $baseDir): ?array
-    {
-        $allDirs = [
-            $baseDir,
-            ...$this->includePaths
-        ];
-        $filename = preg_replace('/\.(less|scss)$/', '', $filename);
-        foreach (['less', 'scss'] as $extension) {
-            foreach ($allDirs as $dir) {
-                // full path
-                $fullPath = "$dir/$filename.$extension";
-                if (!$this->isReadableFile($fullPath)) {
-                    // reference import
-                    $fullPath = dirname($fullPath) . '/_' . basename($fullPath);
-                }
-                if ($this->isReadableFile($fullPath)) {
-                    return [
-                        'fullPath' => $fullPath,
-                        'inBaseDir' => str_starts_with(realpath($fullPath), $this->sourceDir . '/'),
-                    ];
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Update a file in the all files collection
      *
      * @param string $filename File name
@@ -644,6 +630,7 @@ class LessToSassCommand extends Command
                 $fileSpec['requiredVars'] = [];
             }
             unset($fileSpec);
+
             $this->updateFileCollection(
                 $this->variablesFile,
                 [
@@ -674,8 +661,7 @@ class LessToSassCommand extends Command
                 foreach (array_reverse($requiredVars) as $current) {
                     $var = $current['var'];
                     if (!in_array($var, $addedVars)) {
-                        $value = $current['value'];
-                        $linesToAdd[] = "\$$var: $value;";
+                        $linesToAdd[] = $this->processSubstitutions('', "@$var: $current[value];");
                         $addedVars[] = $var;
                     }
                 }
@@ -696,14 +682,15 @@ class LessToSassCommand extends Command
      * Process string substitutions
      *
      * @param string $filename File name
-     * @param array  $lines    File contents
+     * @param string $contents File contents
+     *
+     * @return string
      */
-    protected function processSubstitutions(string $filename, array &$lines): void
+    protected function processSubstitutions(string $filename, string $contents): string
     {
         if ($filename) {
             $this->debug("$filename: start processing substitutions", OutputInterface::VERBOSITY_DEBUG);
         }
-        $contents = implode(PHP_EOL, $lines);
         foreach ($this->getSubstitutions() as $i => $substitution) {
             if ($filename) {
                 $this->debug("$filename: processing substitution $i", OutputInterface::VERBOSITY_DEBUG);
@@ -731,10 +718,11 @@ class LessToSassCommand extends Command
             }
         }
 
-        $lines = explode(PHP_EOL, $contents);
         if ($filename) {
             $this->debug("$filename: done processing substitutions", OutputInterface::VERBOSITY_DEBUG);
         }
+
+        return $contents;
     }
 
     /**
