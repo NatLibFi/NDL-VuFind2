@@ -29,7 +29,6 @@
 
 namespace FinnaConsole\Command\Util;
 
-use Finna\Db\Service\FinnaRecordServiceInterface;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;

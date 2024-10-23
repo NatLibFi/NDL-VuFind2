@@ -38,6 +38,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function array_key_exists;
+use function count;
+use function dirname;
+use function in_array;
+use function is_string;
+
 /**
  * Console command: fix SCSS variable declarations.
  *
@@ -53,7 +59,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class ScssFixerCommand extends Command
 {
-    const VARIABLE_CHARS = '[a-zA-Z_-]';
+    public const VARIABLE_CHARS = '[a-zA-Z_-]';
 
     /**
      * Include paths
@@ -169,11 +175,10 @@ class ScssFixerCommand extends Command
     /**
      * Process a file
      *
-     * @param string          $filename  File name
-     * @param array           $vars      Currently defined variables
-     * @param OutputInterface $output    Output object
-     * @param bool            $discover  Whether to just discover files and their content
-     * @param bool            $change    Whether to do changes to the file
+     * @param string $filename File name
+     * @param array  $vars     Currently defined variables
+     * @param bool   $discover Whether to just discover files and their content
+     * @param bool   $change   Whether to do changes to the file
      *
      * @return bool
      */
@@ -239,7 +244,7 @@ class ScssFixerCommand extends Command
             if ($newVars = $this->checkVariables($lineId, $line, $vars)) {
                 $requiredVars = [
                     ...$requiredVars,
-                    ...$newVars
+                    ...$newVars,
                 ];
             }
             $lines[$idx] = $line . ($comments ? "//$comments" : '');
@@ -251,7 +256,6 @@ class ScssFixerCommand extends Command
 
         return true;
     }
-
 
     /**
      * Find variables
@@ -335,7 +339,7 @@ class ScssFixerCommand extends Command
             $lastLine = $line;
             $line = preg_replace_callback(
                 '/\$(' . static::VARIABLE_CHARS . '+)(?!.*:)\\b/',
-                function ($matches) use ($vars, $lineId, &$ok, &$required) {
+                function ($matches) use ($vars, $lineId, &$required) {
                     $var = $matches[1];
                     $lastVal = $this->allVars[$var] ?? null;
                     if (isset($vars[$var]) && $vars[$var] === $lastVal) {
@@ -396,7 +400,7 @@ class ScssFixerCommand extends Command
         }
         $allDirs = [
             $baseDir,
-            ...$this->includePaths
+            ...$this->includePaths,
         ];
         foreach ($allDirs as $dir) {
             // full import
@@ -564,6 +568,8 @@ class ScssFixerCommand extends Command
      *
      * @param string $filename File name
      * @param array  $lines    File contents
+     *
+     * @return void
      */
     protected function processSubstitutions(string $filename, array &$lines): void
     {
@@ -624,7 +630,7 @@ class ScssFixerCommand extends Command
             ],
             [ // Revert @page => $page change:
                 'pattern' => '$page ',
-                'replacement' => "@page ",
+                'replacement' => '@page ',
             ],
             [ // Fix comparison:
                 'pattern' => '/ ==< /i',
@@ -793,18 +799,20 @@ class ScssFixerCommand extends Command
                 'replacement' => '// Not supported in SCSS: @extend .finna-panel-default .panel-heading;',
             ],
 
-
             [ // gradient mixin call
-                'pattern' => '#gradient.vertical($background-start-color; $background-end-color; $background-start-percent; $background-end-percent);',
-                'replacement' => 'gradient-vertical($background-start-color, $background-end-color, $background-start-percent, $background-end-percent);',
+                'pattern' => '#gradient.vertical($background-start-color; $background-end-color;'
+                    . ' $background-start-percent; $background-end-percent);',
+                'replacement' => 'gradient-vertical($background-start-color, $background-end-color'
+                    . ', $background-start-percent, $background-end-percent);',
             ],
             [ // common typo in home column styles
-                'pattern' => '/(\.home-1, \.home-3 \{[^}]+)}(\s*\n\s*\& \.left-column-content.*?\& .right-column-content \{.*?\}.*?\})/s',
+                'pattern' => '/(\.home-1, \.home-3 \{[^}]+)}(\s*\n\s*\& \.left-column-content.*?'
+                    . '\& .right-column-content \{.*?\}.*?\})/s',
                 'replacement' => "\$1\$2\n}",
             ],
             [ // another typo in home column styles
                 'pattern' => '/(\n\s+\.left-column-content.*?\n\s+)& (.right-column-content)/s',
-                'replacement' => "\$1\$2",
+                'replacement' => '$1$2',
             ],
             [ // missing semicolon: display: none
                 'pattern' => '/display: none\n/',
@@ -812,7 +820,7 @@ class ScssFixerCommand extends Command
             ],
             [ // missing semicolon in variable definitions
                 'pattern' => '/(\n\s*\$' . static::VARIABLE_CHARS . '+\s*:\s*?[^;\s]+)((\n|\s*\/\/))/',
-                'replacement' => "\$1;\$2",
+                'replacement' => '$1;$2',
             ],
             [ // missing semicolon: $header-text-color: #000000
                 'pattern' => '/$header-text-color: #000000\n/',
@@ -824,7 +832,7 @@ class ScssFixerCommand extends Command
             ],
             [ // missing semicolon: $finna-feedback-background: darken(#d80073, 10%) //
                 'pattern' => '/\$finna-feedback-background: darken\(#d80073, 10%\)\s*?(\n|\s*\/\/)/',
-                'replacement' => "\$finna-feedback-background: darken(#d80073, 10%);\$1",
+                'replacement' => '$finna-feedback-background: darken(#d80073, 10%);$1',
             ],
             [ // invalid (and obsolete) rule
                 'pattern' => '/(\@supports\s*\(-ms-ime-align:\s*auto\)\s*\{\s*\n\s*clip-path.*?\})/s',

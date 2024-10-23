@@ -38,6 +38,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use VuFind\Config\PathResolver;
 
+use function array_key_exists;
+use function count;
+use function dirname;
+use function in_array;
+use function is_string;
+
 /**
  * Console command: convert style files from LESS to SCSS (Sass).
  *
@@ -53,7 +59,7 @@ use VuFind\Config\PathResolver;
 )]
 class LessToScssCommand extends Command
 {
-    const VARIABLE_CHARS = '[a-zA-Z_-]';
+    public const VARIABLE_CHARS = '[a-zA-Z_-]';
 
     /**
      * Include paths
@@ -336,7 +342,7 @@ class LessToScssCommand extends Command
                 if ($newVars = $this->checkVariables($lineId, $line, $vars)) {
                     $requiredVars = [
                         ...$requiredVars,
-                        ...$newVars
+                        ...$newVars,
                     ];
                 }
             }
@@ -457,25 +463,22 @@ class LessToScssCommand extends Command
             $this->debug("$lineId: skipping .css import");
             return true;
         }
-        if (!($pathInfo = $this->resolveImportFileName($import, $fileDir))) {
+        if (!($fullPath = $this->resolveImportFileName($import, $fileDir))) {
             $targetFileDir = str_replace($this->sourceDir, $this->targetDir, $fileDir);
             $targetFileDir = str_replace('/less', '/scss', $targetFileDir);
             $targetImport = str_replace('/less/', '/scss/', $import);
-            if (!($pathInfo = $this->resolveImportFileName($targetImport, $targetFileDir))) {
+            if (!($fullPath = $this->resolveImportFileName($targetImport, $targetFileDir))) {
                 $this->error("$lineId: import file $import not found");
                 return false;
             }
         } else {
-            $this->debug(
-                "$lineId: import $pathInfo[fullPath] as $import" . ($pathInfo['inBaseDir'] ? ' (IN BASE)' : ''),
-                OutputInterface::VERBOSITY_DEBUG
-            );
+            $this->debug("$lineId: import $fullPath as $import", OutputInterface::VERBOSITY_DEBUG);
             if ($discover) {
-                if (!$this->discoverLess($pathInfo['fullPath'], $vars)) {
+                if (!$this->discoverLess($fullPath, $vars)) {
                     return false;
                 }
             } else {
-                if (!$this->processFile($pathInfo['fullPath'], $vars, $discover, $pathInfo['inBaseDir'])) {
+                if (!$this->processFile($fullPath, $vars)) {
                     return false;
                 }
             }
@@ -489,13 +492,13 @@ class LessToScssCommand extends Command
      * @param string $filename Relative file name
      * @param string $baseDir  Base directory
      *
-     * @return ?array
+     * @return ?string
      */
-    protected function resolveImportFileName(string $filename, string $baseDir): ?array
+    protected function resolveImportFileName(string $filename, string $baseDir): ?string
     {
         $allDirs = [
             $baseDir,
-            ...$this->includePaths
+            ...$this->includePaths,
         ];
         $filename = preg_replace('/\.(less|scss)$/', '', $filename);
         foreach (['less', 'scss'] as $extension) {
@@ -507,10 +510,7 @@ class LessToScssCommand extends Command
                     $fullPath = dirname($fullPath) . '/_' . basename($fullPath);
                 }
                 if ($this->isReadableFile($fullPath)) {
-                    return [
-                        'fullPath' => $fullPath,
-                        'inBaseDir' => str_starts_with(realpath($fullPath), $this->sourceDir . '/'),
-                    ];
+                    return $fullPath;
                 }
             }
         }

@@ -277,15 +277,15 @@ return [
     ],
     [ // another typo in home column styles
         'pattern' => '/(\n\s+\.left-column-content.*?\n\s+)& (.right-column-content)/s',
-        'replacement' => "\$1\$2",
+        'replacement' => '$1$2',
     ],
     [ // missing semicolon: display: none
         'pattern' => '/display: none\n/',
         'replacement' => 'display: none;',
     ],
     [ // missing semicolon in variable definitions
-        'pattern' => '/(\n\s*\$' . static::VARIABLE_CHARS . '+\s*:\s*?[^;\s]+)((\n|\s*\/\/))/',
-        'replacement' => "\$1;\$2",
+        'pattern' => '/(\n\s*\$[a-zA-Z_-]+\s*:\s*?[^;\s]+)((\n|\s*\/\/))/',
+        'replacement' => '$1;$2',
     ],
     [ // missing semicolon: $header-text-color: #000000
         'pattern' => '/$header-text-color: #000000\n/',
@@ -297,7 +297,7 @@ return [
     ],
     [ // missing semicolon: $finna-feedback-background: darken(#d80073, 10%) //
         'pattern' => '/\$finna-feedback-background: darken\(#d80073, 10%\)\s*?(\n|\s*\/\/)/',
-        'replacement' => "\$finna-feedback-background: darken(#d80073, 10%);\$1",
+        'replacement' => '$finna-feedback-background: darken(#d80073, 10%);$1',
     ],
     [ // invalid (and obsolete) rule
         'pattern' => '/(\@supports\s*\(-ms-ime-align:\s*auto\)\s*\{\s*\n\s*clip-path.*?\})/s',
