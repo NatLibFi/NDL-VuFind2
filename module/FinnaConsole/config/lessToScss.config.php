@@ -269,7 +269,7 @@ return [
             outline: 1px solid \$gray-lighter;
             box-shadow: 1px 1px 1px 1px \$gray-lighter;
             background-color: \$gray-ultralight;
-        EOT,
+            EOT,
     ],
     [ // Convert unsupported nested extend
         'pattern' => '@extend .finna-panel-default .finna-panel-heading-inner;',
@@ -278,7 +278,7 @@ return [
             display: inline-block;
             width: 100%;
             padding: 10px;
-        EOT,
+            EOT,
     ],
 
 

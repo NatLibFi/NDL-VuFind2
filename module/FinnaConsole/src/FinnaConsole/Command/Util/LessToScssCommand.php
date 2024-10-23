@@ -724,7 +724,7 @@ class LessToScssCommand extends Command
             if (false === file_put_contents($fullPath, implode(PHP_EOL, $lines)) . PHP_EOL) {
                 $this->error("Could not write file $fullPath");
             }
-            $this->debug("$fullPath updated");
+            $this->debug("Created $fullPath");
         }
 
         return true;
