@@ -281,10 +281,9 @@ return [
             EOT,
     ],
 
-
     [ // gradient mixin call
         'pattern' => '#gradient.vertical($background-start-color; $background-end-color; $background-start-percent; $background-end-percent);',
-        'replacement' => 'gradient-vertical($background-start-color, $background-end-color, $background-start-percent, $background-end-percent);',
+        'replacement' => 'background-image: linear-gradient(to bottom, $background-start-color $background-start-percent, $background-end-color $background-end-percent);',
     ],
     [ // common typo in home column styles
         'pattern' => '/(\.home-1, \.home-3 \{[^}]+)}(\s*\n\s*\& \.left-column-content.*?\& .right-column-content \{.*?\}.*?\})/s',
