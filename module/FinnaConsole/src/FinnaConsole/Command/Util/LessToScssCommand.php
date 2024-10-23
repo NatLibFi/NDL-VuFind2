@@ -532,7 +532,11 @@ class LessToScssCommand extends Command
         preg_match_all('/\$(' . static::VARIABLE_CHARS . '+)(?!.*:)\\b/', $line, $allMatches);
         foreach ($allMatches[1] ?? [] as $var) {
             $lessVal = $this->allLessVars[$var] ?? null;
-            if (isset($vars[$var]) && $vars[$var]['value'] === $this->processSubstitutions('', $lessVal)) {
+            if (
+                isset($vars[$var])
+                && null !== $lessVal
+                && $vars[$var]['value'] === $this->processSubstitutions('', $lessVal)
+            ) {
                 // Previous definition contains the correct value:
                 $this->debug("$lineId: $var ok", OutputInterface::VERBOSITY_VERY_VERBOSE);
                 continue;
