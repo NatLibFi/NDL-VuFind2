@@ -52,6 +52,53 @@ return [
         'pattern' => '/~"(.*)"/i',
         'replacement' => 'unquote("$1")',
     ],
+    // end of basic less-to-sass rules ---------------
+
+    [ // Activate SCSS
+        'pattern' => '/\/\* #SCSS>/i',
+        'replacement' => '/* #SCSS> */',
+    ],
+    [
+        'pattern' => '/<#SCSS \*\//i',
+        'replacement' => '/* <#SCSS */',
+    ],
+    [
+        'pattern' => '/\/\* #LESS> \*\//i',
+        'replacement' => '/* #LESS>',
+    ],
+    [
+        'pattern' => '/\/\* <#LESS \*\//i',
+        'replacement' => '<#LESS */',
+    ],
+    [ // Fix include parameter separator
+        'pattern' => '/@include ([^\(]+)\(([^\)]+)\);/i',
+        'replacement' => function ($matches) {
+            [, $m1, $m2] = $matches;
+            return '@include ' . $m1 . '(' . str_replace(';', ',', $m2) . ');';
+        },
+    ],
+    [ // Fix tilde literals
+        'pattern' => "/~'(.*?)'/i",
+        'replacement' => '$1',
+    ],
+    [ // Convert inline &:extends
+        'pattern' => '/&:extend\(([^\)]+?)( all)?\)/i',
+        'replacement' => '@extend $1',
+    ],
+    [ // Wrap variables in calcs with #{}
+        'pattern' => '/calc\([^;]+/i',
+        'replacement' => function ($matches) {
+            return preg_replace('/(\$[\w\-]+)/i', '#{$1}', $matches[0]);
+        },
+    ],
+    [ // Wrap variables set to css variables with #{}
+        'pattern' => '/(--[\w:-]+:\s*)((\$|darken\(|lighten\()[^;]+)/i',
+        'replacement' => '$1#{$2}',
+    ],
+    [ // Remove !default from extends (icons.scss)
+        'pattern' => '/@extend ([^;}]+) !default;/i',
+        'replacement' => '@extend $1;',
+    ],
 
     [ // Fix comparison:
         'pattern' => '/ ==< /i',

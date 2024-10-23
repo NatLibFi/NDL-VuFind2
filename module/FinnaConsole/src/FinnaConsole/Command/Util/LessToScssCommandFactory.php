@@ -44,7 +44,7 @@ use Psr\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class LessToSassCommandFactory implements FactoryInterface
+class LessToScssCommandFactory implements FactoryInterface
 {
     /**
      * Create an object
