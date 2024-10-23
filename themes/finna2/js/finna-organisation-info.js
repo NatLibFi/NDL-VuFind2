@@ -19,7 +19,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    * @param {String} hash
    */
   function updateURLHash(hash) {
-    if (('#' + hash) === window.location.hash) {
+    if (('#' + hash) === decodeURIComponent(window.location.hash)) {
       // Set hash first to empty value, so that the change event is triggered when
       // the same menu item is re-selected.
       window.location.hash = '';
@@ -57,7 +57,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    * @param {String} locationId Location ID
    */
   function storeCurrentLocation(id, locationId) {
-    localStorage.setItem('location-info-' + id, locationId);
+    localStorage.setItem('location-info-' + id, decodeURIComponent(locationId));
   }
 
   // Forward declaration
