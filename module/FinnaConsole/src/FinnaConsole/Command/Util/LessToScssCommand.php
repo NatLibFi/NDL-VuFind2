@@ -648,6 +648,11 @@ class LessToScssCommand extends Command
                 $values['lines'] = file($filename, FILE_IGNORE_NEW_LINES);
             }
         }
+        // Merge requiredVars in case the file is imported multiple times
+        $values['requiredVars'] = array_merge(
+            $oldValues['requiredVars'] ?? [],
+            $values['requiredVars'] ?? []
+        );
         $this->allFiles[$barename] = array_merge($oldValues, $values);
     }
 
