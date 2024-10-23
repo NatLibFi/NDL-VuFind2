@@ -262,10 +262,25 @@ return [
         'pattern' => '$home-2_fi  {',
         'replacement' => '.home-2_fi  {',
     ],
-    [ // disable unsupported extend
+    [ // Convert unsupported nested extend
         'pattern' => '@extend .finna-panel-default .panel-heading;',
-        'replacement' => '// Not supported in SCSS: @extend .finna-panel-default .panel-heading;',
+        'replacement' => <<<EOT
+            // Not supported in SCSS: @extend .finna-panel-default .panel-heading;
+            outline: 1px solid \$gray-lighter;
+            box-shadow: 1px 1px 1px 1px \$gray-lighter;
+            background-color: \$gray-ultralight;
+        EOT,
     ],
+    [ // Convert unsupported nested extend
+        'pattern' => '@extend .finna-panel-default .finna-panel-heading-inner;',
+        'replacement' => <<<EOT
+            // Not supported in SCSS: @extend .finna-panel-default .finna-panel-heading-inner;
+            display: inline-block;
+            width: 100%;
+            padding: 10px;
+        EOT,
+    ],
+
 
     [ // gradient mixin call
         'pattern' => '#gradient.vertical($background-start-color; $background-end-color; $background-start-percent; $background-end-percent);',
@@ -312,7 +327,6 @@ return [
         'pattern' => 'calc(100vh - "#{$navbar-height}~")',
         'replacement' => 'calc(100vh - #{$navbar-height})',
     ],
-
     [ // math without calc
         'pattern' => '/(.*\s)(\S+ \/ (\$|\d)[^\s;]*)/',
         'replacement' => function ($matches) {
