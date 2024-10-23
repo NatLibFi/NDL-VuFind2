@@ -151,7 +151,7 @@ return [
         'replacement' => '@media #{$1}',
     ],
     [ // missing semicolon:
-        'pattern' => '/(.+:.*auto)\n/',
+        'pattern' => '/(:.*auto)\n/',
         'replacement' => "\$1;\n",
     ],
     [ // lost space in mixin declarations:
