@@ -164,7 +164,7 @@
                 </a>
               </li>
             <?php endif; ?>
-            <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'loginMenu' => 'true', 'label' => 'Library Cards','limit' => 0]);?>
+            <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'loginMenu' => 'true', 'label' => 'Library Cards', 'limit' => 0, 'patron' => $patron]);?>
             <li>
               <a <?=$this->url('myresearch-profile') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-profile')?>">
                 <?=$this->transEsc('Profile')?>
