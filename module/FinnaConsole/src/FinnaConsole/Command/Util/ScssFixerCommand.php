@@ -59,7 +59,7 @@ use function is_string;
 )]
 class ScssFixerCommand extends Command
 {
-    public const VARIABLE_CHARS = '[a-zA-Z_-]';
+    public const VARIABLE_CHARS = '[a-zA-Z0-9_-]';
 
     /**
      * Include paths
@@ -663,7 +663,7 @@ class ScssFixerCommand extends Command
                 },
             ],
             [ // remove invalid &:
-                'pattern' => '/([a-zA-Z])&:/',
+                'pattern' => '/([a-zA-Z0-9])&:/',
                 'replacement' => '$1:',
             ],
             [ // remove (reference) from import):

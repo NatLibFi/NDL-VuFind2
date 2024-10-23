@@ -11,7 +11,7 @@ return [
         'replacement' => '@if $3==$4 {$5@mixin $1($2){$5$6}}',
     ],
     [ // .class => @extend .class
-        'pattern' => '/\.([[a-zA-Z-_]*)\s*;/i',
+        'pattern' => '/\.([[a-zA-Z0-9-_]*)\s*;/i',
         'replacement' => '@extend .$1;',
     ],
     [ // Remove .less extension from imports
@@ -131,7 +131,7 @@ return [
         },
     ],
     [ // remove invalid &:
-        'pattern' => '/([a-zA-Z])&:/',
+        'pattern' => '/([a-zA-Z0-9])&:/',
         'replacement' => '$1:',
     ],
     [ // remove (reference) from import):
@@ -298,7 +298,7 @@ return [
         'replacement' => 'display: none;',
     ],
     [ // missing semicolon in variable definitions
-        'pattern' => '/(\n\s*\$[a-zA-Z_-]+\s*:\s*?[^;\s]+)((\n|\s*\/\/))/',
+        'pattern' => '/(\n\s*\$[a-zA-Z0-9_-]+\s*:\s*?[^;\s]+)((\n|\s*\/\/))/',
         'replacement' => '$1;$2',
     ],
     [ // missing semicolon: $header-text-color: #000000

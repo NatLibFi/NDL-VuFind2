@@ -59,7 +59,7 @@ use function is_string;
 )]
 class LessToScssCommand extends Command
 {
-    public const VARIABLE_CHARS = '[a-zA-Z_-]';
+    public const VARIABLE_CHARS = '[a-zA-Z0-9_-]';
 
     /**
      * Include paths
@@ -542,7 +542,7 @@ class LessToScssCommand extends Command
                 continue;
             }
             if (null === $lessVal) {
-                $this->warning("$lineId: Value for variable '$var' not found");
+                $this->warning("$lineId: Value for variable '$var' not found (line: $line)");
                 continue;
             }
             // Use last defined value:
