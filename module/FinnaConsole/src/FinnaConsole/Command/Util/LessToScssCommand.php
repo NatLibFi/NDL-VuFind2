@@ -32,7 +32,6 @@ namespace FinnaConsole\Command\Util;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatter;
-use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -133,6 +132,13 @@ class LessToScssCommand extends Command
     protected $enableScss = false;
 
     /**
+     * Patterns for files that must not use the !default flag for variables
+     *
+     * @var array
+     */
+    protected $noDefaultFiles = [];
+
+    /**
      * Constructor
      *
      * @param PathResolver $pathResolver Config path resolver
@@ -170,6 +176,13 @@ class LessToScssCommand extends Command
                 'Files to skip as main LESS files (fnmatch patterns)'
             )
             ->addOption(
+                'no_default',
+                null,
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'Files where variable definitions must not include the !default flag (fnmatch patterns relative to'
+                . ' the target directory)'
+            )
+            ->addOption(
                 'enable_scss',
                 null,
                 InputOption::VALUE_NONE,
@@ -196,6 +209,7 @@ class LessToScssCommand extends Command
         $this->substitutions = $this->getSubstitutions();
         $this->includePaths = $input->getOption('include_path');
         $this->excludedFiles = $input->getOption('exclude');
+        $this->noDefaultFiles = $input->getOption('no_default');
         $this->enableScss = $input->getOption('enable_scss');
         $variablesFile = $input->getOption('variables_file');
         $patterns = $input->getArgument('main_file');
@@ -422,14 +436,14 @@ class LessToScssCommand extends Command
             return;
         }
         [, $var, $value] = $matches;
-        $value = preg_replace('/\s*!default\s*;?\s*$/', '', $value);
+        $value = trim(preg_replace('/\s*!default\s*;?\s*$/', '', $value));
         if (array_key_exists($var, $vars)) {
             $this->debug(
-                "$lineId: '$var: $value' overrides existing value '" . $vars[$var] . "'",
+                "$lineId: `$var: $value` overrides existing value `" . $vars[$var] . '`',
                 OutputInterface::VERBOSITY_DEBUG
             );
         } else {
-            $this->debug("$lineId: found '$var: $value'", OutputInterface::VERBOSITY_DEBUG);
+            $this->debug("$lineId: found `$var: $value`", OutputInterface::VERBOSITY_DEBUG);
         }
 
         $vars[$var] = $value;
@@ -450,20 +464,20 @@ class LessToScssCommand extends Command
             return;
         }
         [, $var, $value] = $matches;
-        $value = preg_replace('/\s*!default\s*;?\s*$/', '', $value, -1, $count);
+        $value = trim(preg_replace('/\s*!default\s*;?\s*$/', '', $value, -1, $count));
         $default = $count > 0;
         $existing = $vars[$var] ?? null;
         if ($existing) {
             if ($existing['default'] && !$default) {
                 $this->debug(
-                    "$lineId: '$var: $value' overrides default value '" . $vars[$var]['value'] . "'",
+                    "$lineId: `$var: $value` overrides default value `" . $vars[$var]['value'] . '`',
                     OutputInterface::VERBOSITY_DEBUG
                 );
             } else {
                 return;
             }
         } else {
-            $this->debug("$lineId: found '$var: $value'", OutputInterface::VERBOSITY_DEBUG);
+            $this->debug("$lineId: found `$var: $value`", OutputInterface::VERBOSITY_DEBUG);
         }
         $vars[$var] = compact('value', 'default');
     }
@@ -571,12 +585,12 @@ class LessToScssCommand extends Command
                 continue;
             }
             if (null === $lessVal) {
-                $this->warning("$lineId: Value for variable '$var' not found (line: $line)");
+                $this->warning("$lineId: Value for variable `$var` not found (line: $line)");
                 continue;
             }
             // Use last defined value:
 
-            $this->debug("$lineId: Need $lessVal for $var");
+            $this->debug("$lineId: Need `$lessVal` for $var (have `" . ($vars[$var]['value'] ?? '[nothing]') . '`)');
             $required[] = [
                 'var' => $var,
                 'value' => $lessVal,
@@ -600,17 +614,17 @@ class LessToScssCommand extends Command
             $var = $current['var'];
             $varDefinition = $current['value'];
             $loop = 0;
-            while (preg_match('/[@\$](' . static::VARIABLE_CHARS . '+)/', $varDefinition, $matches)) {
+            while (preg_match('/[@\$]\{?(' . static::VARIABLE_CHARS . '+)/', $varDefinition, $matches)) {
                 $requiredVar = $matches[1];
                 if (in_array($requiredVar, $knownVars)) {
                     $this->debug(
-                        "Existing definition found for '$requiredVar' required by '$var: $varDefinition'",
+                        "Existing definition found for '$requiredVar' required by `$var: $varDefinition`",
                         OutputInterface::VERBOSITY_DEBUG
                     );
                     continue;
                 }
                 if ($requiredVarValue = $this->allLessVars[$requiredVar] ?? null) {
-                    $this->debug("'$var: $varDefinition' requires '$requiredVar: $requiredVarValue'");
+                    $this->debug("`$var: $varDefinition` requires `$requiredVar: $requiredVarValue`");
                     $result[] = [
                         'var' => $requiredVar,
                         'value' => $requiredVarValue,
@@ -618,7 +632,7 @@ class LessToScssCommand extends Command
                     $varDefinition = $requiredVarValue;
                 } else {
                     $this->warning(
-                        "Could not resolve dependency for variable '$var'; definition missing for '$requiredVar'"
+                        "Could not resolve dependency for variable `$var`; definition missing for `$requiredVar`"
                     );
                     break;
                 }
@@ -678,6 +692,7 @@ class LessToScssCommand extends Command
             }
         }
         // Merge requiredVars in case the file is imported multiple times
+        // (we may end up with duplicates, but it's difficult to dedup without affecting order, so keep it that way):
         $values['requiredVars'] = array_merge(
             $oldValues['requiredVars'] ?? [],
             $values['requiredVars'] ?? []
@@ -730,6 +745,20 @@ class LessToScssCommand extends Command
             }
             $lines = $fileSpec['lines'] ?? [];
 
+            // Add !default to existing variables (unless excluded):
+            $addDefault = true;
+            foreach ($this->noDefaultFiles as $noDefaultPattern) {
+                if (fnmatch($noDefaultPattern, $fullPath)) {
+                    $addDefault = false;
+                }
+            }
+            if ($addDefault) {
+                foreach ($lines as &$line) {
+                    $line = preg_replace('/(\$.+):(.+);/', '$1:$2 !default;', $line);
+                }
+                unset($line);
+            }
+
             // Prepend required variables:
             if ($fileSpec['requiredVars']) {
                 $requiredVars = $this->resolveVariableDependencies($fileSpec['requiredVars'], $fileSpec['vars'] ?? []);
@@ -741,18 +770,6 @@ class LessToScssCommand extends Command
                         $linesToAdd[] = $this->processSubstitutions('', "@$var: $current[value];");
                         $addedVars[] = $var;
                     }
-                }
-
-                // Remove later definitions for the required variables:
-                foreach ($lines as &$line) {
-                    foreach ($addedVars as $var) {
-                        $line = preg_replace(
-                            '/^(\s*\$' . preg_quote($var) . ':.*)$/',
-                            '/* $1 // Commented out in SCSS conversion */',
-                            $line
-                        );
-                    }
-                    unset($line);
                 }
 
                 // Prepend new definitions:
