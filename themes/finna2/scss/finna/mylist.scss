@@ -82,21 +82,6 @@
     > a:not(.add-new-list) {
       color: $text-color;
     }
-    .remove-favorite-list {
-      border: 0;
-      background-color: transparent;
-      padding: 1px;
-      &:focus {
-        border: 1px solid $action-link-color;
-        border-style: dotted;
-      }
-
-      .icon {
-        margin-right: 3px;
-        color: $action-link-color;
-        font-size: 1em;
-      }
-    }
     .favorite-list-holder {
       height: 25px;
 
@@ -554,5 +539,26 @@ span.caret {
     display: flex;
     justify-content: flex-end;
     margin-top: 10px;
+  }
+}
+
+.delete-list-btn-wrapper {
+  &.left .dropdown-menu {
+    left: initial;
+    right: 0;
+  }
+  .dropdown-header {
+    color: inherit;
+    font-size: 14px;
+  }
+}
+
+.dropdown-menu .delete-list-btn-wrapper {
+  padding: 0 0 4px 4px;
+  .dropdown-menu {
+    border: 1px solid $gray-lighter;
+    border-radius: 4px;
+    top: 100%;
+    position: absolute;
   }
 }
