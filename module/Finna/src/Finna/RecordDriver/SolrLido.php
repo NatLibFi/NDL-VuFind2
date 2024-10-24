@@ -648,6 +648,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 if (in_array($type, $audioTypeKeys)) {
                     if ($audio = $this->getAudio($url, $format, $description)) {
                         $audioUrls = array_merge($audioUrls, $audio);
+                        if ($extraDetails = $this->getExtraDetails($resourceSet, $language)) {
+                            $audioUrls = array_merge($audioUrls, $extraDetails);
+                        }
                     }
                     continue;
                 }
@@ -655,6 +658,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 if (in_array($type, $videoTypeKeys)) {
                     if ($video = $this->getVideo($url, $format, $description)) {
                         $videoUrls = array_merge($videoUrls, $video);
+                        if ($extraDetails = $this->getExtraDetails($resourceSet, $language)) {
+                            $videoUrls = array_merge($videoUrls, $extraDetails);
+                        }
                     }
                     continue;
                 }

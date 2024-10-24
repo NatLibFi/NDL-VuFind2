@@ -201,6 +201,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'codec' => 'mp3',
                         'type' => 'audio',
                         'embed' => 'audio',
+                        'resourceName' => 'AudioTesti.mp3',
                     ],
                     [
                         'desc' => 'VideoTesti.mp4',
@@ -211,6 +212,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             'src' => 'https://linkkivideoon.fi',
                             'type' => 'video/mp4',
                         ],
+                        'resourceName' => 'VideoTesti.mp4',
                     ],
                 ],
             ],

@@ -3,7 +3,10 @@
   $this->partial('Helpers/videojs-translations.phtml');
 ?>
 <div class="audio-accordion">
-<?php foreach ($audioUrls as $ind => $url): ?>
+<?php foreach ($audioUrls as $ind => $url):
+    $format = $this->driver->tryMethod('getRecordFormat', [], '');
+    $showDetails = $format === 'lido' ? true : false;
+  ?>
   <div class="audio-item-wrapper">
     <div class="audio-title-wrapper">
       <div class="audio-title">
@@ -23,8 +26,13 @@
           <source data-src="<?=$url['url']?>" type="audio/<?= $url['codec'] ?>">
         </audio>
       </div>
-      <div class="open-link"><a target="_blank" href="<?=$url['url'] ?>"><?=$this->icon('download') ?> <?=$this->transEsc('Download recording') ?></a></div>
-    </div>
+      <?php if (!$showDetails): ?>
+        <div class="open-link"><a target="_blank" href="<?=$url['url'] ?>"><?=$this->icon('download') ?> <?=$this->transEsc('Download recording') ?></a></div>
+      </div>
+      <?php else: ?>
+        </div>
+        <?=$this->record($this->driver)->renderTemplate('audio-information.phtml', ['ind' => $ind, 'url' => $url]);?>
+      <?php endif; ?>
   </div>
 <?php endforeach; ?>
 </div>

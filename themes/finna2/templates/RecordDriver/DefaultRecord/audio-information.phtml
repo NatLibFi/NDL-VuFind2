@@ -1,0 +1,25 @@
+<!-- START of: finna - RecordDriver/DefaultRecord/audio-information.phtml -->
+<div class="open-link download-audio">
+    <a href="<?=$url['url'] ?>" target="_blank" rel="nofollow" download>
+        <?=$this->icon('download') ?> <?=$this->transEsc('Download recording') ?>
+    </a>
+</div>
+<?php if (!empty($url['identifier'])): ?>
+    <div class="audio-details-container text-left" data-img-index="<?=$ind?>">
+        <div class="audio-details">
+            <button class="toggle-audio-information collapsed" data-toggle="collapse" data-target="#audio_details_<?=$ind?>" aria-expanded="false" aria-controls="audio_details_<?=$ind?>">
+                <span class="show-audio-information"><?=$this->icon('image-information-show') ?> <?=$this->transEsc($this->showButtonText ?? 'Show information')?></span>
+                <span class="hide-audio-information"><?=$this->icon('image-information-hide') ?> <?=$this->transEsc($this->hideButtonText ?? 'Hide information')?></span>
+            </button>
+            <div id="audio_details_<?=$ind?>" class="collapse">
+                <table class="table-condensed" role="presentation">
+                    <tr>
+                    <th><?=$this->transEsc('image_identifier')?></th>
+                    <td><?=$this->transEsc($url['identifier'])?></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+<!-- END of: finna - RecordDriver/DefaultRecord/audio-information.phtml -->

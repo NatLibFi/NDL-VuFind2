@@ -9,7 +9,10 @@
     outline:none;
   }
   .open-link {
-    font-size: $font-size-small
+    font-size: $font-size-small;
+    &.download-audio  {
+      font-size: 1em;
+    }
   }
 }
 
@@ -22,6 +25,9 @@
 .audio-title-wrapper,
 .audio-accordion-item {
   padding: 5px;
+  &.details-uncontained {
+    margin-bottom: 15px;
+  }
 }
 
 .audio-title-wrapper {
