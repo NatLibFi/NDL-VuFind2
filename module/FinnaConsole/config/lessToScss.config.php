@@ -158,10 +158,6 @@ return [
         'pattern' => '/(\@mixin.+){/',
         'replacement' => '$1 {',
     ],
-    [ // special cases: media query variables
-        'pattern' => '/(\$(mobile-portrait|mobile|tablet|desktop):\s*)(.*?);/s',
-        'replacement' => '$1"$2";',
-    ],
     [ // special cases: mobile mixin
         'pattern' => '/\.mobile\(\{(.*?)\}\);/s',
         'replacement' => '@media #{$mobile} { & { $1 } }',
@@ -335,5 +331,9 @@ return [
             }
             return $pre . "calc($math)";
         },
+    ],
+    [ // variable interpolation
+        'pattern' => '/\$\{([A-Za-z0-9_-]+)\}/',
+        'replacement' => '#{\$$1}',
     ],
 ];

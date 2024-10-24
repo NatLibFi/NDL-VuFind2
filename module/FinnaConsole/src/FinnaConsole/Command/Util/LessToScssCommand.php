@@ -118,6 +118,13 @@ class LessToScssCommand extends Command
     protected $excludedFiles = [];
 
     /**
+     * Substitutions (regexp and string replace)
+     *
+     * @var array
+     */
+    protected $substitutions = [];
+
+    /**
      * Constructor
      *
      * @param PathResolver $pathResolver Config path resolver
@@ -173,6 +180,7 @@ class LessToScssCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->output = $output;
+        $this->substitutions = $this->getSubstitutions();
         $this->includePaths = $input->getOption('include_path');
         $mainFile = $input->getArgument('main_file');
         $this->sourceDir = dirname($mainFile);
@@ -674,7 +682,6 @@ class LessToScssCommand extends Command
                 if ($fileSpec['index'] < $variablesFileIndex) {
                     continue;
                 }
-
                 array_push($allRequiredVars, ...$fileSpec['requiredVars']);
                 $fileSpec['requiredVars'] = [];
             }
@@ -710,8 +717,8 @@ class LessToScssCommand extends Command
                 }
 
                 // Remove later definitions for the required variables:
-                foreach ($addedVars as $var) {
-                    foreach ($lines as &$line) {
+                foreach ($lines as &$line) {
+                   foreach ($addedVars as $var) {
                         $line = preg_replace(
                             '/^(\s*\$' . preg_quote($var) . ':.*)$/',
                             '/* $1 // Commented out in SCSS conversion */',
@@ -754,7 +761,7 @@ class LessToScssCommand extends Command
     /**
      * Process string substitutions
      *
-     * @param string $filename File name
+     * @param string $filename File name (or empty string when converting variables)
      * @param string $contents File contents
      *
      * @return string
@@ -763,10 +770,14 @@ class LessToScssCommand extends Command
     {
         if ($filename) {
             $this->debug("$filename: start processing substitutions", OutputInterface::VERBOSITY_DEBUG);
+        } else {
+            $this->debug("Start processing substitutions for '$contents'", OutputInterface::VERBOSITY_DEBUG);
         }
-        foreach ($this->getSubstitutions() as $i => $substitution) {
+        foreach ($this->substitutions as $i => $substitution) {
             if ($filename) {
                 $this->debug("$filename: processing substitution $i", OutputInterface::VERBOSITY_DEBUG);
+            } else {
+                $this->debug("Processing substitution $i for '$contents'", OutputInterface::VERBOSITY_DEBUG);
             }
             if (str_starts_with($substitution['pattern'], '/')) {
                 // Regexp
@@ -793,6 +804,8 @@ class LessToScssCommand extends Command
 
         if ($filename) {
             $this->debug("$filename: done processing substitutions", OutputInterface::VERBOSITY_DEBUG);
+        } else {
+            $this->debug("Done processing substitutions for '$contents'", OutputInterface::VERBOSITY_DEBUG);
         }
 
         return $contents;
