@@ -192,6 +192,7 @@ class LessToScssCommand extends Command
                     continue;
                 }
                 $this->output->writeln("<info>Processing $mainFile");
+                $this->allFiles = [];
                 $this->allLessVars = [];
 
                 $this->sourceDir = dirname($mainFile);
@@ -214,7 +215,6 @@ class LessToScssCommand extends Command
                 if (!$this->writeTargetFiles()) {
                     return Command::FAILURE;
                 }
-                $this->output->writeln("<info>Done processing $mainFile");
             }
         }
         return Command::SUCCESS;
