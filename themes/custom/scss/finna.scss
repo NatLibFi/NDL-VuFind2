@@ -1,11 +1,11 @@
 /* #SCSS> */
 @import "../../finna2/scss/scss-functions";
 
-// Variable overrides
-@import "variables";
-
 // Custom theme variable overrides
 @import "variables-custom";
+
+// Variable overrides
+@import "variables";
 
 // Finna Bootstrap variable overrides
 @import "../../finna2/scss/global/bootstrap-variable-overrides";
