@@ -126,6 +126,13 @@ class LessToScssCommand extends Command
     protected $substitutions = [];
 
     /**
+     * Whether to enable SCSS in target theme(s)
+     *
+     * @var bool
+     */
+    protected $enableScss = false;
+
+    /**
      * Constructor
      *
      * @param PathResolver $pathResolver Config path resolver
@@ -162,6 +169,12 @@ class LessToScssCommand extends Command
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 'Files to skip as main LESS files (fnmatch patterns)'
             )
+            ->addOption(
+                'enable_scss',
+                null,
+                InputOption::VALUE_NONE,
+                'If specified, enables SCSS in the target theme(s)',
+            )
             ->addArgument(
                 'main_file',
                 InputArgument::REQUIRED | InputArgument::IS_ARRAY,
@@ -183,6 +196,7 @@ class LessToScssCommand extends Command
         $this->substitutions = $this->getSubstitutions();
         $this->includePaths = $input->getOption('include_path');
         $this->excludedFiles = $input->getOption('exclude');
+        $this->enableScss = $input->getOption('enable_scss');
         $variablesFile = $input->getOption('variables_file');
         $patterns = $input->getArgument('main_file');
 
@@ -679,7 +693,7 @@ class LessToScssCommand extends Command
     protected function writeTargetFiles(): bool
     {
         if (!file_exists($this->targetDir)) {
-            if (!mkdir($this->targetDir, 0777, true)) {
+            if (!mkdir($this->targetDir, 0o777, true)) {
                 $this->error("Could not create target directory $this->targetDir");
                 return false;
             }
@@ -750,6 +764,18 @@ class LessToScssCommand extends Command
                 $this->error("Could not write file $fullPath");
             }
             $this->debug("Created $fullPath");
+        }
+
+        if ($this->enableScss) {
+            $styleIni = <<<EOT
+                [General]
+                mode = scss
+
+                EOT;
+            $iniFile = $this->targetDir . '/style.ini';
+            if (false === file_put_contents($iniFile, $styleIni)) {
+                $this->error("Could not write file $iniFile");
+            }
         }
 
         return true;
