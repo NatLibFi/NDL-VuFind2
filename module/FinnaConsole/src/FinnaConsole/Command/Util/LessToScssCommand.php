@@ -729,7 +729,7 @@ class LessToScssCommand extends Command
 
                 // Remove later definitions for the required variables:
                 foreach ($lines as &$line) {
-                   foreach ($addedVars as $var) {
+                    foreach ($addedVars as $var) {
                         $line = preg_replace(
                             '/^(\s*\$' . preg_quote($var) . ':.*)$/',
                             '/* $1 // Commented out in SCSS conversion */',
