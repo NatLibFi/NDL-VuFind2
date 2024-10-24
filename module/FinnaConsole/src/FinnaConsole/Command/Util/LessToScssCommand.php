@@ -882,7 +882,7 @@ class LessToScssCommand extends Command
             $this->debug("Using shared config file $configFile", OutputInterface::VERBOSITY_DEBUG);
             $config = include $configFile;
         }
-        return $config;
+        return $config['substitutions'];
     }
 
     /**
