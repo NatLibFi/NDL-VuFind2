@@ -160,7 +160,7 @@ class LessToScssCommand extends Command
                 'exclude',
                 null,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                'Files to skip as main LESS files'
+                'Files to skip as main LESS files (fnmatch patterns)'
             )
             ->addArgument(
                 'main_file',
@@ -188,8 +188,10 @@ class LessToScssCommand extends Command
 
         foreach ($patterns as $pattern) {
             foreach (glob($pattern) as $mainFile) {
-                if (in_array($mainFile, $this->excludedFiles)) {
-                    continue;
+                foreach ($this->excludedFiles as $exclude) {
+                    if (fnmatch($exclude, $mainFile)) {
+                        continue 2;
+                    }
                 }
                 $this->output->writeln("<info>Processing $mainFile");
                 $this->allFiles = [];
