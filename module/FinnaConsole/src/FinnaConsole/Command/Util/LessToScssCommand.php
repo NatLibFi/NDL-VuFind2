@@ -32,6 +32,7 @@ namespace FinnaConsole\Command\Util;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatter;
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -111,7 +112,7 @@ class LessToScssCommand extends Command
     protected $variablesFile = null;
 
     /**
-     * Files excluded from output
+     * Files excluded from processing
      *
      * @var array
      */
@@ -147,7 +148,7 @@ class LessToScssCommand extends Command
                 'variables_file',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'File to use for added SCSS variables (may be relative to '
+                'File to use for added SCSS variables (may be relative to the target directory)'
             )
             ->addOption(
                 'include_path',
@@ -159,13 +160,12 @@ class LessToScssCommand extends Command
                 'exclude',
                 null,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                'Files not to be touched in the target directory (in addition to the ones outside of the starting'
-                . ' directory)'
+                'Files to skip as main LESS files'
             )
             ->addArgument(
                 'main_file',
-                InputArgument::REQUIRED,
-                'Main LESS file to use as entry point'
+                InputArgument::REQUIRED | InputArgument::IS_ARRAY,
+                'Main LESS file to use as entry point. Can also be a glob pattern.'
             );
     }
 
@@ -182,36 +182,41 @@ class LessToScssCommand extends Command
         $this->output = $output;
         $this->substitutions = $this->getSubstitutions();
         $this->includePaths = $input->getOption('include_path');
-        $mainFile = $input->getArgument('main_file');
-        $this->sourceDir = dirname($mainFile);
-        $this->targetDir = preg_replace('/\/less\b/', '/scss', $this->sourceDir);
-        if ($this->excludedFiles = $input->getOption('exclude')) {
-            $this->excludedFiles = array_map(
-                function ($s) {
-                    return $this->targetDir . '/' . $s;
-                },
-                $this->excludedFiles
-            );
-        }
-        if ($variablesFile = $input->getOption('variables_file')) {
-            $this->variablesFile = $this->sourceDir . '/' . preg_replace('/\.scss$/', '', $variablesFile);
-        }
-        // First read all vars:
-        if (!$this->discoverLess($mainFile, $this->allLessVars)) {
-            return Command::FAILURE;
-        }
-        // Now do changes:
-        $currentVars = [];
-        if (!$this->processFile($mainFile, $currentVars)) {
-            $this->error('Stop on failure');
-            return Command::FAILURE;
-        }
+        $this->excludedFiles = $input->getOption('exclude');
+        $variablesFile = $input->getOption('variables_file');
+        $patterns = $input->getArgument('main_file');
 
-        // Write out the target files:
-        if (!$this->writeTargetFiles()) {
-            return Command::FAILURE;
-        }
+        foreach ($patterns as $pattern) {
+            foreach (glob($pattern) as $mainFile) {
+                if (in_array($mainFile, $this->excludedFiles)) {
+                    continue;
+                }
+                $this->output->writeln("<info>Processing $mainFile");
+                $this->allLessVars = [];
 
+                $this->sourceDir = dirname($mainFile);
+                $this->targetDir = preg_replace('/\/less\b/', '/scss', $this->sourceDir);
+                $this->variablesFile = $variablesFile
+                    ? $this->sourceDir . '/' . preg_replace('/\.scss$/', '', $variablesFile)
+                    : null;
+                // First read all vars:
+                if (!$this->discoverLess($mainFile, $this->allLessVars)) {
+                    return Command::FAILURE;
+                }
+                // Now do changes:
+                $currentVars = [];
+                if (!$this->processFile($mainFile, $currentVars)) {
+                    $this->error('Stop on failure');
+                    return Command::FAILURE;
+                }
+
+                // Write out the target files:
+                if (!$this->writeTargetFiles()) {
+                    return Command::FAILURE;
+                }
+                $this->output->writeln("<info>Done processing $mainFile");
+            }
+        }
         return Command::SUCCESS;
     }
 
@@ -671,6 +676,12 @@ class LessToScssCommand extends Command
      */
     protected function writeTargetFiles(): bool
     {
+        if (!file_exists($this->targetDir)) {
+            if (!mkdir($this->targetDir, 0777, true)) {
+                $this->error("Could not create target directory $this->targetDir");
+                return false;
+            }
+        }
         // If we have a variables file, collect all variables needed by later files and add them:
         if ($this->variablesFile) {
             $variablesFileIndex = $this->allFiles[$this->variablesFile]['index'] ?? PHP_INT_MAX;
