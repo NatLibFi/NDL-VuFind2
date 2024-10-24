@@ -302,6 +302,8 @@ class Quria extends AxiellWebServices
                     $journalInfo = [
                         'year' => $year,
                         'edition' => $edition,
+                        'holdable' => ($holdingsEdition->reservationButtonStatus ?? '') == 'reservationOk',
+                        'reservableId' => $holdingsEdition->reservable ?? '',
                     ];
 
                     $result = array_merge(
@@ -347,8 +349,13 @@ class Quria extends AxiellWebServices
             foreach ($holdingsBranch as $branch) {
                 $branchName = $branch->value ?? '';
                 $branchId = $branch->id ?? '';
-                $reservableId = $branch->reservable ?? '';
-                $holdable = $branch->reservationButtonStatus ?? '' == 'reservationOk';
+                if ($journalInfo) {
+                    $reservableId = $journalInfo['reservableId'];
+                    $holdable = $journalInfo['holdable'];
+                } else {
+                    $reservableId = $branch->reservable ?? '';
+                    $holdable = ($branch->reservationButtonStatus ?? '') == 'reservationOk';
+                }
                 $departments = $this->objectToArray($branch->holdings->holding ?? []);
                 $organisationId = $branch->id ?? '';
                 foreach ($departments as $department) {
@@ -422,7 +429,6 @@ class Quria extends AxiellWebServices
                             " for '$this->arenaMember'.'$id'"
                         );
                     }
-                    $holdable = ($branch->reservationButtonStatus ?? '') === 'reservationOk';
                     $requests = 0;
                     if (
                         !$this->singleReservationQueue
