@@ -1,6 +1,6 @@
 <?php
 
-// The first few rules up to 'literal' are based on the rules in the grunt-less-to-sass library
+// The first few rules are based on the rules in the grunt-less-to-sass library
 return [
     [ // functions
         'pattern' => '/(?!@debug|@import|@media|@keyframes|@font-face|@include|@extend|@mixin|@supports|@container |@if |@use |@page |@-\w)@/i',
@@ -50,7 +50,14 @@ return [
     ],
     [ // literal
         'pattern' => '/~"(.*)"/i',
-        'replacement' => 'unquote("$1")',
+        'replacement' => function ($matches) {
+            [, $match] = $matches;
+            // Keep media queries quoted
+            if (str_starts_with($match, 'screen and')) {
+                return '"' . $match . '"';
+            }
+            return 'unquote("' . $match . '")';
+        },
     ],
     // end of basic less-to-sass rules ---------------
 
