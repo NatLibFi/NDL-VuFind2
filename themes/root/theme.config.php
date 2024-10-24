@@ -98,7 +98,12 @@ return [
             'VuFind\View\Helper\Root\Url' => 'VuFind\View\Helper\Root\UrlFactory',
             'VuFind\View\Helper\Root\UserList' => 'VuFind\View\Helper\Root\UserListFactory',
             'VuFind\View\Helper\Root\UserTags' => 'VuFind\View\Helper\Root\UserTagsFactory',
+
+            'Laminas\View\Helper\EscapeHtmlAttr' => 'VuFind\View\Helper\Root\EscapeHtmlAttrFactory',
             'Laminas\View\Helper\ServerUrl' => 'VuFind\View\Helper\Root\ServerUrlFactory',
+        ],
+        'initializers' => [
+            \VuFind\View\Helper\Root\HelperInitializer::class,
         ],
         'aliases' => [
             'accountCapabilities' => 'VuFind\View\Helper\Root\AccountCapabilities',
@@ -194,6 +199,7 @@ return [
             'truncate' => 'VuFind\View\Helper\Root\Truncate',
             'userlist' => 'VuFind\View\Helper\Root\UserList',
             'usertags' => 'VuFind\View\Helper\Root\UserTags',
+
             'Laminas\View\Helper\Url' => 'VuFind\View\Helper\Root\Url',
         ],
     ],

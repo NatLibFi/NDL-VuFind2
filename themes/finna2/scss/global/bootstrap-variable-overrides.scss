@@ -9,13 +9,13 @@
 
 $gray: #2b2b2b !default;
 
-$gray-darker:            darken($gray, 40%) !default;
-$gray-dark:              darken($gray, 10%) !default;
-$gray-light:             lighten($gray, 18%) !default; // mix($body-bg, contrast($body-bg), 40%)
-$gray-slightly-lighter:  lighten($gray, 29%) !default;
-$gray-mid-light:         lighten($gray, 40%) !default; // dark background: mix($body-bg, contrast($body-bg), 65%)
-$gray-lighter:           lighten($gray, 65%) !default; // dark background: mix($body-bg, contrast($body-bg), 80%)
-$gray-ultralight:        lighten($gray, 80%) !default; // dark background: mix($body-bg, contrast($body-bg), 95%)
+$gray-darker:            #000 !default;
+$gray-dark:              #121212 !default;
+$gray-light:             #595959 !default;
+$gray-slightly-lighter:  #757575 !default;
+$gray-mid-light:         #919191 !default;
+$gray-lighter:           #d1d1d1 !default;
+$gray-ultralight:        #f7f7f7 !default;
 
 // Brand Colors
 $brand-primary: #007c90 !default;

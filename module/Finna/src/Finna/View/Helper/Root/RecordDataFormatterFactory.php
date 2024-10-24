@@ -493,6 +493,14 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             ]
         );
         $setTemplateLine(
+            'Local Note',
+            'getLocalNotes',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'record-local-note'],
+            ]
+        );
+        $setTemplateLine(
             'Organisation',
             'getInstitutions',
             'data-organisation.phtml',

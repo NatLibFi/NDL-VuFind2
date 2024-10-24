@@ -444,6 +444,7 @@ $config = [
             'VuFind\Db\Table\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'VuFind\DigitalContent\OverdriveConnector' => 'VuFind\DigitalContent\OverdriveConnectorFactory',
             'VuFind\DoiLinker\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
+            'VuFind\Escaper\Escaper' => 'VuFind\Escaper\EscaperFactory',
             'VuFind\Export' => 'VuFind\ExportFactory',
             'VuFind\Favorites\FavoritesService' => 'VuFind\Favorites\FavoritesServiceFactory',
             'VuFind\Form\Form' => 'VuFind\Form\FormFactory',
@@ -541,8 +542,6 @@ $config = [
             'VuFind\ServiceManager\ServiceInitializer',
         ],
         'aliases' => [
-            'League\CommonMark\MarkdownConverterInterface' => 'League\CommonMark\ConverterInterface',
-            'Request' => 'VuFind\Http\PhpEnvironment\Request',
             'VuFind\AccountCapabilities' => 'VuFind\Config\AccountCapabilities',
             'VuFind\AuthManager' => 'VuFind\Auth\Manager',
             'VuFind\AuthPluginManager' => 'VuFind\Auth\PluginManager',
@@ -601,9 +600,14 @@ $config = [
             'VuFind\Tags' => 'VuFind\Tags\TagsService',
             'VuFind\Translator' => 'Laminas\Mvc\I18n\Translator',
             'VuFind\YamlReader' => 'VuFind\Config\YamlReader',
-            'Laminas\Validator\Csrf' => 'VuFind\Validator\SessionCsrf',
             'VuFind\Validator\Csrf' => 'VuFind\Validator\SessionCsrf',
             'VuFind\Validator\CsrfInterface' => 'VuFind\Validator\SessionCsrf',
+
+            // Overrides:
+            'Laminas\Escaper\Escaper' => 'VuFind\Escaper\Escaper',
+            'Laminas\Validator\Csrf' => 'VuFind\Validator\SessionCsrf',
+            'League\CommonMark\MarkdownConverterInterface' => 'League\CommonMark\ConverterInterface',
+            'Request' => 'VuFind\Http\PhpEnvironment\Request',
         ],
         'shared' => [
             'VuFind\Form\Form' => false,

@@ -982,7 +982,7 @@ finna-feed.carousel-slider.splide--ltr {
 @container (max-width: $slider-stacked-breakpoint) {
     finna-feed.carousel-slider.splide--ltr {
         .feed-item-holder[style] {
-            height: var(--height !important);
+            height: var(--height) !important;
         }
         .feed-link {
             flex-direction: column;

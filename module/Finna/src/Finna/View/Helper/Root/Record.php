@@ -1541,4 +1541,21 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
         return '';
     }
+
+    /**
+     * Get notes associated with this record in user lists.
+     *
+     * @param int $list_id ID of list to load tags from (null for all lists)
+     * @param int $user_id ID of user to load tags from (null for all users)
+     *
+     * @return string[]
+     */
+    public function getListNotes($list_id = null, $user_id = null)
+    {
+        // TODO: handle notes for different list types more properly
+        if ($this->getView()->layout()->templateDir === 'reservationlist') {
+            return [];
+        }
+        return parent::getListNotes($list_id, $user_id);
+    }
 }

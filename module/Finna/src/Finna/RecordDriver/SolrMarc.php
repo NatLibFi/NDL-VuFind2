@@ -2244,6 +2244,18 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
+     * Get local notes from field 594, subfield a.
+     *
+     * @return array
+     */
+    public function getLocalNotes()
+    {
+        return $this->stripTrailingPunctuation(
+            $this->getFieldArray('594', ['a'])
+        );
+    }
+
+    /**
      * Get associated place of the record from field 370.
      *
      * @return string

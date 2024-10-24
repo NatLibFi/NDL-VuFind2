@@ -1,7 +1,7 @@
 <?php
   $searchBackendId = $this->driver->getSearchBackendIdentifier();
   $options = $this->searchOptions($searchBackendId);
-  $searchRoute = $options->getSearchAction();
+  $searchRoute = $this->searchAction ?: $options->getSearchAction();
   $query = ['lookfor' => '"' . $this->lookfor . '"', 'type' => 'ISN'];
   if (($limit = $this->searchMemory()->getLastLimit($searchBackendId))
     && $limit !== $options->getDefaultLimit()

@@ -302,6 +302,8 @@ class Quria extends AxiellWebServices
                     $journalInfo = [
                         'year' => $year,
                         'edition' => $edition,
+                        'holdable' => ($holdingsEdition->reservationButtonStatus ?? '') == 'reservationOk',
+                        'reservableId' => $holdingsEdition->reservable ?? '',
                     ];
 
                     $result = array_merge(
@@ -347,8 +349,13 @@ class Quria extends AxiellWebServices
             foreach ($holdingsBranch as $branch) {
                 $branchName = $branch->value ?? '';
                 $branchId = $branch->id ?? '';
-                $reservableId = $branch->reservable ?? '';
-                $holdable = $branch->reservationButtonStatus ?? '' == 'reservationOk';
+                if ($journalInfo) {
+                    $reservableId = $journalInfo['reservableId'];
+                    $holdable = $journalInfo['holdable'];
+                } else {
+                    $reservableId = $branch->reservable ?? '';
+                    $holdable = ($branch->reservationButtonStatus ?? '') == 'reservationOk';
+                }
                 $departments = $this->objectToArray($branch->holdings->holding ?? []);
                 $organisationId = $branch->id ?? '';
                 foreach ($departments as $department) {
@@ -422,7 +429,6 @@ class Quria extends AxiellWebServices
                             " for '$this->arenaMember'.'$id'"
                         );
                     }
-                    $holdable = ($branch->reservationButtonStatus ?? '') === 'reservationOk';
                     $requests = 0;
                     if (
                         !$this->singleReservationQueue
@@ -984,7 +990,8 @@ class Quria extends AxiellWebServices
 
             $detailsStr = $reservation->id . '|' . $reservation->validFromDate
                 . '|' . $reservation->validToDate . '|'
-                . $reservation->pickUpBranchId;
+                . $reservation->pickUpBranchId; // $reservation->pickUpBranchId actually
+            // contains the branch name instead of the ID
             $updateDetails = '';
             $cancelDetails = '';
             // TODO: Regional holds are not yet implemented
@@ -1412,6 +1419,15 @@ class Quria extends AxiellWebServices
             if (isset($fields['pickUpLocation'])) {
                 [, $branch] = explode('.', $fields['pickUpLocation'], 2);
                 $updateRequest['pickUpBranchId'] = $branch;
+            } else {
+                // Map the branch name to an actual branch ID
+                $locations = $this->getPickUpLocations($patron, ['item_id' => $requestId]);
+                foreach ($locations as $loc) {
+                    if ($loc['locationDisplay'] === $pickupLocation) {
+                        [, $branch] = explode('.', $loc['locationID'], 2);
+                        $updateRequest['pickUpBranchId'] = $branch;
+                    }
+                }
             }
             $result = $this->doSOAPRequest(
                 $this->reservations_wsdl,
