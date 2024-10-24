@@ -123,6 +123,7 @@
   section.template-name-search .sidebar,
   section.template-name-blended .sidebar,
   section.template-name-mylist .sidebar,
+  section.template-dir-record.template-name-view .sidebar.search-facets,
   section.template-dir-collection.template-name-view .sidebar {
     position: fixed;
     background: $body-bg;
@@ -182,8 +183,8 @@
   .finna-search-filter-toggle {
     position: sticky;
     top: $navbar-height;
-    margin-left: -calc(#{$grid-gutter-width} / 2);
-    margin-right: -calc(#{$grid-gutter-width} / 2);
+    margin-left: calc((#{$grid-gutter-width} / 2) * -1);
+    margin-right: calc((#{$grid-gutter-width} / 2) * -1);
     padding-left: calc(#{$grid-gutter-width} / 2);
     padding-right: calc(#{$grid-gutter-width} / 2);
     padding-top: 12px;
