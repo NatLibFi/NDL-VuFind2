@@ -14,7 +14,7 @@
     <?php if ($image['pdf']): ?>
       <a href="<?=$this->escapeHtmlAttr($image['url'])?>"><?=$this->escapeHtml($image['id']);?></a>
     <?php else: ?>
-      <img src="<?=$this->escapeHtmlAttr($image['url'])?>"><?=$this->escapeHtml($image['id']);?></img>
+      <img src="<?=$this->escapeHtmlAttr($image['url'])?>">
     <?php endif;?>
   <?php
     endforeach;

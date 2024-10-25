@@ -501,11 +501,10 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
                 $results[] = [
                     'url' => $image['urls'][$size],
                     'pdf' => !empty($image['pdf']),
-                    'id' => $i,
+                    'id' => $i++,
                 ];
                 break;
             }
-            $i++;
         } while ($i < 4 && $image = array_shift($images));
         return $results;
     }
