@@ -33,6 +33,8 @@ use Laminas\Cache\Storage\StorageInterface as Cache;
 use VuFind\Cache\CacheTrait;
 use VuFind\Db\Service\UserCardServiceInterface;
 
+use function count;
+
 /**
  * LibraryCards view helper
  *
@@ -45,6 +47,7 @@ use VuFind\Db\Service\UserCardServiceInterface;
 class LibraryCards extends \VuFind\View\Helper\Root\LibraryCards
 {
     use CacheTrait;
+    use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
      * Constructor
@@ -60,26 +63,52 @@ class LibraryCards extends \VuFind\View\Helper\Root\LibraryCards
     }
 
     /**
-     * Get barcode from profile
+     * Get user cards as arrays
      *
-     * @param string                $cardName Card's name
-     * @param array                 $patron   Patron
-     * @param VuFind\ILS\Connection $ils      ILS connection
+     * @param \VuFind\Db\Entity\UserEntityInterface $user  User
+     * @param int                                   $limit Card amount limit (optional)
      *
-     * @return string
+     * @return array
      */
-    public function getProfileBarcode($cardName, $patron, $ils): string
+    public function getCardsForUserAsArrays($user, $limit = 1): array
     {
-        if ($barcode = $this->getCachedData($cardName)) {
-            return $barcode;
-        }
-        $profile = $ils->getMyProfile($patron);
-        $barcode = '';
-        if (!empty($profile['barcode'])) {
-            if ($barcode = $profile['barcode']) {
-                $this->putCachedData($cardName, $barcode);
+        $cardsArray = [];
+        $cards = parent::getCardsForUser($user);
+        $ils = $this->getView()->plugin('ils')();
+        if (count($cards) > $limit) {
+            $targetCount = $ils->checkCapability('getLoginDrivers') ? count($ils->getLoginDrivers()) : 1;
+            foreach ($cards as $card) {
+                $card = $card->toArray();
+                $target = '';
+                $username = $displayUsername = $card['cat_username'];
+                if (strstr($displayUsername, '.')) {
+                    [$target, $displayUsername] = explode('.', $displayUsername, 2);
+                }
+                $display = $card['card_name'] ?: $displayUsername;
+                if ($display == "$target.$displayUsername") {
+                    $display = $displayUsername;
+                }
+                if ($target && $targetCount > 1) {
+                    $display .= ' (' . $this->translate("source_$target", null, $target) . ')';
+                }
+                $card['display'] = $display;
+                $patron = $this->getView()->plugin('auth')->getILSPatron();
+                if ($patron && $patron['cat_username'] === $username) {
+                    if ($barcode = $this->getCachedData($card['card_name'])) {
+                        $card['barcode'] = $barcode;
+                    } else {
+                        $profile = $ils->getMyProfile($patron);
+                        if (!empty($profile['barcode'])) {
+                            if ($barcode = $profile['barcode']) {
+                                $this->putCachedData($card['card_name'], $barcode);
+                            }
+                        }
+                    }
+                }
+                $card['selected_card'] = strcasecmp($username, $user->getCatUsername() ?? '') === 0;
+                $cardsArray[] = $card;
             }
         }
-        return $barcode;
+        return $cardsArray;
     }
 }
