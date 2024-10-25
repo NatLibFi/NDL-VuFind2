@@ -38,6 +38,7 @@ use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\ILS\Logic\AvailabilityStatus;
 
+use function count;
 use function in_array;
 use function is_callable;
 use function is_object;
@@ -322,8 +323,7 @@ class Quria extends AxiellWebServices
 
         if (!empty($result)) {
             usort($result, [$this, 'holdingsSortFunction']);
-
-            $summary = $this->getHoldingsSummary($result, $id);
+            $summary = $this->getHoldingsSummary($result, $id, $response->$functionResult->catalogueRecordDetail);
             $result[] = $summary;
         }
 
@@ -494,6 +494,67 @@ class Quria extends AxiellWebServices
         } else {
             return strnatcasecmp($yearB, $yearA);
         }
+    }
+
+    /**
+     * Return summary of holdings items.
+     *
+     * @param array  $holdings      Parsed holdings items
+     * @param string $id            Record id
+     * @param object $recordDetails Record details
+     *
+     * @return array summary
+     */
+    protected function getHoldingsSummary($holdings, $id, $recordDetails = null)
+    {
+        $holdable = false;
+        $journal = isset($holdings[0]['journalInfo']);
+        $availableTotal = $itemsTotal = $orderedTotal = 0;
+        $reservationsTotal = $recordDetails->nofReservations ?? 0;
+        $locations = [];
+        foreach ($holdings as $item) {
+            if ($item['availability']->isAvailable()) {
+                $availableTotal++;
+            }
+            if (isset($item['availabilityInfo']['total'])) {
+                $itemsTotal += $item['availabilityInfo']['total'];
+            } else {
+                $itemsTotal++;
+            }
+            if (isset($item['availabilityInfo']['ordered'])) {
+                $orderedTotal += $item['availabilityInfo']['ordered'];
+            }
+            if (
+                $this->singleReservationQueue
+                && isset($item['availabilityInfo']['reservations'])
+            ) {
+                $reservationsTotal
+                    = max(
+                        $reservationsTotal,
+                        $item['availabilityInfo']['reservations']
+                    );
+            }
+            $locations[$item['location']] = true;
+            if (!$journal && $item['is_holdable']) {
+                $holdable = true;
+            }
+        }
+
+        // Since summary data is appended to the holdings array as a fake item,
+        // we need to add a few dummy-fields that VuFind expects to be
+        // defined for all elements.
+        return [
+            'id' => $id,
+            'available' => $availableTotal,
+            'ordered' => $orderedTotal,
+            'total' => $itemsTotal - $orderedTotal,
+            'reservations' => $reservationsTotal,
+            'locations' => count($locations),
+            'holdable' => $holdable,
+            'availability' => null,
+            'callnumber' => '',
+            'location' => '__HOLDINGSSUMMARYLOCATION__',
+        ];
     }
 
     /**
