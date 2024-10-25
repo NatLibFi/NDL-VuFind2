@@ -11,11 +11,14 @@
 ?>
 <?php if ($isBot): ?>
   <?php foreach ($this->recordImage($this->record($this->driver))->getImagesForBotUser($images) as $image): ?>
-    <?php if ($image['pdf']): ?>
-      <a href="<?=$this->escapeHtmlAttr($image['url'])?>"><?=$this->escapeHtml($image['id']);?></a>
-    <?php else: ?>
-      <img src="<?=$this->escapeHtmlAttr($image['url'])?>">
-    <?php endif;?>
+    <div>
+      <?php if ($image['pdf']): ?>
+        <a href="<?=$this->escapeHtmlAttr($image['url'])?>"><?=$this->escapeHtml($image['id']);?></a>
+      <?php else: ?>
+        <img src="<?=$this->escapeHtmlAttr($image['url'])?>">
+      <?php endif;?>
+    </div>
+    <br>
   <?php
     endforeach;
     // Notice this return statement for bots.
