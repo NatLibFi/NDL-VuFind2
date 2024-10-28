@@ -189,6 +189,13 @@ class LessToScssCommand extends Command
                 InputOption::VALUE_NONE,
                 'If specified, enables SCSS in the target theme(s)',
             )
+            ->addOption(
+                'check_config',
+                null,
+                InputOption::VALUE_NONE,
+                'When enabled, checks style.ini in target directories and skips conversion if mode is already scss or'
+                . ' skip_conversion option is set.'
+            )
             ->addArgument(
                 'main_file',
                 InputArgument::REQUIRED | InputArgument::IS_ARRAY,
@@ -214,6 +221,7 @@ class LessToScssCommand extends Command
         $this->enableScss = $input->getOption('enable_scss');
         $variablesFile = $input->getOption('variables_file');
         $patterns = $input->getArgument('main_file');
+        $checkConfig = $input->getOption('check_config');
 
         foreach ($patterns as $pattern) {
             foreach (glob($pattern) as $mainFile) {
@@ -222,7 +230,7 @@ class LessToScssCommand extends Command
                         continue 2;
                     }
                 }
-                $this->output->writeln("<info>Processing $mainFile");
+
                 $this->allFiles = [];
                 $this->allLessVars = [];
 
@@ -231,6 +239,23 @@ class LessToScssCommand extends Command
                 $this->variablesFile = $variablesFile
                     ? $this->sourceDir . '/' . preg_replace('/\.scss$/', '', $variablesFile)
                     : null;
+
+                if ($checkConfig) {
+                    // Check style.ini in target directory and skip conversion if appropriate:
+                    $styleIni = $this->targetDir . '/style.ini';
+                    if (file_exists($styleIni)) {
+                        $styleConfig = parse_ini_file($styleIni, true);
+                        if (
+                            (($styleConfig['General']['mode'] ?? null) === 'scss')
+                            || ($styleConfig['General']['skip_conversion'] ?? false)
+                        ) {
+                            $this->output->writeln("<info>Skipping $mainFile due to configuration in style.ini");
+                            continue;
+                        }
+                    }
+                }
+
+                $this->output->writeln("<info>Processing $mainFile");
                 // First read all vars:
                 if (!$this->discoverLess($mainFile, $this->allLessVars)) {
                     return Command::FAILURE;
