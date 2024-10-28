@@ -64,6 +64,9 @@ class LibraryCards extends \VuFind\View\Helper\Root\LibraryCards
 
     /**
      * Get user cards as arrays
+     * Adds new keys associated to card:
+     * display - the displayed card name
+     * selected_card - currently active card
      *
      * @param \VuFind\Db\Entity\UserEntityInterface $user  User
      * @param int                                   $limit Card amount limit (optional)
@@ -101,6 +104,7 @@ class LibraryCards extends \VuFind\View\Helper\Root\LibraryCards
                         if (!empty($profile['barcode'])) {
                             if ($barcode = $profile['barcode']) {
                                 $this->putCachedData($card['card_name'], $barcode);
+                                $card['barcode'] = $barcode;
                             }
                         }
                     }
