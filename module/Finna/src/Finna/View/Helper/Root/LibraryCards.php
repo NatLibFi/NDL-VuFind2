@@ -102,10 +102,8 @@ class LibraryCards extends \VuFind\View\Helper\Root\LibraryCards
                     } else {
                         $profile = $ils->getMyProfile($patron);
                         if (!empty($profile['barcode'])) {
-                            if ($barcode = $profile['barcode']) {
-                                $this->putCachedData($card['card_name'], $barcode);
-                                $card['barcode'] = $barcode;
-                            }
+                            $this->putCachedData($card['card_name'], $profile['barcode']);
+                            $card['barcode'] = $profile['barcode'];
                         }
                     }
                 }
