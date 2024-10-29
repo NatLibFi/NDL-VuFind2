@@ -18,6 +18,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
    * Add zeros in front number
    * @param {number} _number Number to add zeros for
    * @param {number} _length How many numbers should be shown minimum
+   * @returns {string} Number with padded zeros
    */
   function padZeros(_number, _length) {
     var number = _number;
@@ -52,7 +53,8 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
   /**
    * Get graphic options
    * @param {number} start Start in x axis
-   * @param {number} end   End in x axis  
+   * @param {number} end   End in x axis
+   * @returns {object} Settings for visual date range picker
    */
   function getGraphOptions(start, end) {
     var options = {
@@ -348,7 +350,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
 
   /**
    * Initialize the form for fetching visualized data for facet field
-   * @param {JQuery} form Form element initialize
+   * @param {jQuery} form Form element initialize
    * @param {string} backend Backend identifier
    * @param {string} _facetField Name of the facet field used in query
    */
@@ -453,7 +455,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
   /**
    * Initialize timeline navigation
    * @param {string} backend Backend identifier
-   * @param {JQuery} _holder Holder for the timeline
+   * @param {jQuery} _holder Holder for the timeline
    */
   function initTimelineNavigation(backend, _holder) {
     _holder.find('.navigation div:not(.expand-modal)').on(
@@ -479,7 +481,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
    * @param {string} facet Facet field identifier
    * @param {string} params Parameters as query string
    * @param {string} baseParams Base parameters as query string
-   * @param {JQuery} h Container
+   * @param {jQuery} h Container
    * @param {number} start Start date
    * @param {number} end End date
    * @param {boolean} plotImmediately Should timeline be plotted immediately

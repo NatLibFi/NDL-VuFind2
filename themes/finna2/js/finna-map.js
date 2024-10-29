@@ -45,6 +45,7 @@ finna.map = (function finnaMap() {
    * @param {jQuery} $mapContainer Container which acts as a canvas for the map
    * @param {boolean} editable Is the map editable
    * @param {object} _options Settings for the map
+   * @returns {object|void} Object if map canvas found and void if not
    */
   function initMap($mapContainer, editable, _options) {
     var mapCanvas = $mapContainer;

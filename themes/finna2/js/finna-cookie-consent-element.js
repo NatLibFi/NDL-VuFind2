@@ -3,7 +3,7 @@ class FinnaCookieConsentElement extends HTMLElement {
 
   /**
    * Get consent categories
-   * @returns {string}
+   * @returns {string} Consent categories
    */
   get consentCategories() {
     return this.getAttribute('consent-categories') || '';
@@ -19,7 +19,7 @@ class FinnaCookieConsentElement extends HTMLElement {
 
   /**
    * Get service base url
-   * @returns {string}
+   * @returns {string} Service base url
    */
   get serviceBaseUrl() {
     const url = this.getAttribute('service-url');
@@ -35,7 +35,7 @@ class FinnaCookieConsentElement extends HTMLElement {
 
   /**
    * Get service url
-   * @returns {string}
+   * @returns {string} Service url
    */
   get serviceUrl() {
     return this.getAttribute('service-url') || '';

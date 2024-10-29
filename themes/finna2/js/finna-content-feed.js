@@ -2,7 +2,7 @@
 finna.contentFeed = (function finnaContentFeed() {
   /**
    * Load content feed
-   * @param {JQuery}  container Container holding the data
+   * @param {jQuery}  container Container holding the data
    * @param {boolean} modal     Is the context in a modal
    */
   function loadFeed(container, modal) {

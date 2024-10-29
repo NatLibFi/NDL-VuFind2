@@ -56,7 +56,7 @@ finna.feedTabs = (function finnaFeedTab() {
 
   /**
    * Display the proper feedtab and accordion tab
-   * @param {HTMLElement} element
+   * @param {HTMLElement} element Element to display
    */
   FeedTab.prototype.displayTab = function displayTab(element) {
     var _ = this;
@@ -114,7 +114,7 @@ finna.feedTabs = (function finnaFeedTab() {
 
   /**
    * Init feedtabs
-   * @param {string} id 
+   * @param {string} id Unique identifier
    */
   function init(id) {
     VuFind.observerManager.createIntersectionObserver(

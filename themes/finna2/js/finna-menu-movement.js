@@ -2,7 +2,7 @@
 
 /**
  * Creates an arrow key movement to given menu element, typically an ul.
- * @param {HTMLUListElement} element 
+ * @param {HTMLUListElement} element Root element
  */
 function FinnaMovement(element) {
   this.menuRootElement = element;
@@ -99,7 +99,7 @@ FinnaMovement.prototype.checkKey = function checkKey(e) {
 
 /**
  * Move the cursor in the level 1 menu elements, adjusted by direction
- * @param {int} dir
+ * @param {number} dir -1 or 1 for direction in the menu items
  */
 FinnaMovement.prototype.moveMainmenu = function moveMainMenu(dir) {
   var element = this.getMenuItem(dir);
@@ -112,7 +112,8 @@ FinnaMovement.prototype.moveMainmenu = function moveMainMenu(dir) {
 
 /**
  * Function to fetch wanted element from menuElement with dir.
- * @param {int} direction
+ * @param {number} direction -1 or 1 to get menu item from
+ * @returns {HTMLElement} Found next element from direction
  */
 FinnaMovement.prototype.getMenuItem = function getMenuItem(direction) {
   var newIndex = +document.activeElement.dataset.index + direction;

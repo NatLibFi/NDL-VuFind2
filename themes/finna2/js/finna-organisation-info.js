@@ -15,7 +15,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Update URL hash ensuring that the change event is triggered
-   * @param {string} hash
+   * @param {string} hash New hash
    */
   function updateURLHash(hash) {
     if (('#' + hash) === decodeURIComponent(window.location.hash)) {
@@ -28,7 +28,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Get location from URL hash
-   * @returns string
+   * @returns {string} Current hash
    */
   function getLocationFromURLHash() {
     if (window.location.hash !== '') {
@@ -40,7 +40,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
   /**
    * Get current location from local storage
    * @param {string} id Organisation ID
-   * @returns string
+   * @returns {string} Location id
    */
   function getStoredLocation(id) {
     return localStorage.getItem('location-info-' + id) || '';
@@ -60,8 +60,8 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Update selected location
-   * @param {string | null} locationId
-   * @param {boolean} clearSearch
+   * @param {string | null} locationId Location ID
+   * @param {boolean} clearSearch Should search be cleared
    */
   function updateSelectedLocation(locationId, clearSearch) {
     showLocationDetails(locationId);
@@ -372,7 +372,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Initialize opening times week navigation
-   * @param {DOMElement} _container Container
+   * @param {HTMLElement} _container Container
    * @param {object} _params Organisation info params
    * @param {string} locationId Location ID
    */
@@ -470,7 +470,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Initialize location details container
-   * @param {string} locationId
+   * @param {string} locationId Location ID
    */
   function initLocationDetails(locationId) {
     const detailsEl = container.querySelector('.js-location-details-container');
@@ -491,7 +491,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Show location details
-   * @param {string} locationId
+   * @param {string} locationId Location ID
    */
   showLocationDetails = function showLocationDetailsImpl(locationId) {
     const detailsEl = container.querySelector('.js-location-details-container');
@@ -631,7 +631,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Load location into the widget
-   * @param {DOMElement} _container Widget container
+   * @param {HTMLElement} _container Widget container
    * @param {object} _params Widget parameters
    * @param {string} locationId Location id
    */

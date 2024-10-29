@@ -75,7 +75,7 @@ finna.comments = (function finnaComments() {
 
   /**
    * Initialize comment to be editable
-   * @param allowCommenting
+   * @param {boolean} allowCommenting Should commenting be allowed
    */
   function initEditComment(allowCommenting) {
     $('.comment-list .edit').off('click').on('click', function onCommentEditClick() {

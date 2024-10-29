@@ -4,6 +4,7 @@ finna.onlinePayment = (function finnaOnlinePayment() {
   /**
    * Register a payment
    * @param {object} params Object containing params for register online payment method
+   * @returns {boolean} False
    */
   function registerPayment(params) {
     var url = VuFind.path + '/AJAX/JSON?method=registerOnlinePayment';

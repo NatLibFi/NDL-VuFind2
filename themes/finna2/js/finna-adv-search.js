@@ -56,7 +56,7 @@ finna.advSearch = (function advSearch() {
 
   /**
    * Initialize advanced search map
-   * @param _options Array of options:
+   * @param {object} _options Array of options:
    *   tileLayer     L.tileLayer Tile layer
    *   center        L.LatLng    Map center point
    *   zoom          int         Initial zoom level

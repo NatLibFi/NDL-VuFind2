@@ -8,6 +8,7 @@ finna.myList = (function finnaMyList() {
 
   /**
    * Get current active list id
+   * @returns {string} Active list id
    */
   function getActiveListId() {
     return $('input[name="listID"]').val();
@@ -28,7 +29,7 @@ finna.myList = (function finnaMyList() {
 
   /**
    * Toggle spinner
-   * @param {jQuery | FinnaMdEditable} target JQuery element or FinnaMdEditable
+   * @param {jQuery | HTMLElement} target jQuery element or FinnaMdEditable
    * @param {boolean} mode Should the spinner be displayed
    */
   function toggleSpinner(target, mode) {

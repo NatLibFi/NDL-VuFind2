@@ -4,8 +4,8 @@ finna.itemStatus = (function finnaItemStatus() {
   /**
    * Finds the closest record-container and sets element ids to match
    * desired record id.
-   * @param {HTMLSelectElement} element 
-   * @returns void
+   * @param {HTMLSelectElement} element Select element to update
+   * @returns {void}
    */
   function updateElement(element) {
     var id = document.createTextNode($(element).val()).nodeValue;
@@ -65,7 +65,7 @@ finna.itemStatus = (function finnaItemStatus() {
   /**
    * Assigns a change eventlistener to all elements with class dedup-select
    * @param {HTMLElement|null} _holder Holder to initialize deduplication selections in
-   * @returns void
+   * @returns {void}
    */
   function initDedupRecordSelection(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
@@ -109,7 +109,7 @@ finna.itemStatus = (function finnaItemStatus() {
 
   /**
    * Creates an observer for updating links for deduplicated records.
-   * @returns void
+   * @returns {void}
    */
   function createLinkObserver() {
     VuFind.observerManager.createIntersectionObserver(

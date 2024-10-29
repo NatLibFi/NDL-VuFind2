@@ -76,6 +76,7 @@ function trapFocus(element) {
   /**
    * Keydown event handler
    * @param {object} event Event data
+   * @returns {void}
    */
   function handleKeyDown(event) {
     if (event.key === 'Tab') {

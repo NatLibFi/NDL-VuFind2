@@ -6,7 +6,7 @@
  * ~ @crhallberg (original version)
  * ~ @samuli (modifications)
  * ~ @emaijala (modifications)
- * @param {any} $ JQuery base
+ * @param {any} $ jQuery base
  */
 (function autocompleteLib( $ ) {
   var xhr = false;
@@ -95,6 +95,7 @@
     /**
      * Get if filters should be preserved
      * @param {HTMLElement} input Input to use to find applied df filters
+     * @returns {boolean} Should filters be preserved?
      */
     function getPreserveFiltersMode(input) {
       return $(input).closest('form').find('.applied-filter[name=dfApplied]').is(':checked');
@@ -306,6 +307,7 @@
     /**
      * Get search handler
      * @param {jQuery} input Input to get applied filter named type with
+     * @returns {string} Current applied search handler
      */
     function getSearchHandler(input) {
       var form = $(input).closest('form');
@@ -393,6 +395,7 @@
      * Set up autocomplete
      * @param {jQuery} input Element to use the autocomplete feature
      * @param {jQuery} _element Container holding autocomplete results
+     * @returns {jQuery} Autocomplete element container
      */
     function setup(input, _element) {
       var element;

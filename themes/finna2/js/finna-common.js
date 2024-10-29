@@ -9,6 +9,7 @@ finna.common = (function finnaCommon() {
   /**
    * Decodes html
    * @param {string} str Text to decode
+   * @returns {string} Html decoded text
    */
   function decodeHtml(str) {
     return $("<textarea/>").html(str).text();
@@ -18,7 +19,7 @@ finna.common = (function finnaCommon() {
    * Get field from the object.
    * @param {object} obj   Object to search for the field
    * @param {string} field Field to look for
-   * @returns The field found or null if undefined.
+   * @returns {?string} The field found or null if undefined.
    */
   function getField(obj, field) {
     if (field in obj && typeof obj[field] != 'undefined') {
@@ -29,7 +30,7 @@ finna.common = (function finnaCommon() {
 
   /**
    * Initialize Qr code link
-   * @param {JQuery} _holder Holder for the qr code link
+   * @param {jQuery} _holder Holder for the qr code link
    */
   function initQrCodeLink(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
@@ -50,7 +51,7 @@ finna.common = (function finnaCommon() {
 
   /**
    * Initialize result page scripts.
-   * @param {string|JQuery} container     Container or selector holding results
+   * @param {string|jQuery} container     Container or selector holding results
    * @param {boolean}       includeVuFind Include VuFind initResultScripts
    */
   function initResultScripts(container, includeVuFind) {
@@ -122,6 +123,7 @@ finna.common = (function finnaCommon() {
 
   /**
    * Get cookie settings
+   * @returns {object} Current cookie settings
    */
   function _getCookieSettings() {
     return cookieSettings;
@@ -138,6 +140,7 @@ finna.common = (function finnaCommon() {
   /**
    * Get a cookie from browser
    * @param {string} cookie Cookie name to get
+   * @returns {object} Cookie found
    */
   function getCookie(cookie) {
     return window.Cookies.get(cookie);
@@ -164,7 +167,7 @@ finna.common = (function finnaCommon() {
    * Track content impressions within a node with Matomo
    *
    * Needed for dynamically updated content. Static content gets tracked automatically.
-   * @param {HTMLElement} node
+   * @param {HTMLElement} node Node to track for impressions
    */
   function trackContentImpressions(node) {
     if (window._paq) {

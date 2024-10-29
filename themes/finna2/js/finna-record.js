@@ -94,8 +94,9 @@ finna.record = (function finnaRecord() {
 
   /**
    * Get requested link data
-   * @param {HTMLAnchorElement} element Anchor element to params from
+   * @param {HTMLAnchorElement} element Anchor element to parse params from
    * @param {string} recordId Record id to add into returned data
+   * @returns {object} Object containing anchor elements query data as key value pairs
    */
   function getRequestLinkData(element, recordId) {
     var vars = {}, hash;
@@ -389,6 +390,7 @@ finna.record = (function finnaRecord() {
    * The accordion has a delicate relationship with the tabs. Handle with care!
    * @param {jQuery} accordion Accordion container
    * @param {boolean} _initialLoad Should this accordion be initially loaded
+   * @returns {boolean} Keep looking for next tab
    */
   function _toggleAccordion(accordion, _initialLoad) {
     var initialLoad = typeof _initialLoad === 'undefined' ? false : _initialLoad;
@@ -470,6 +472,7 @@ finna.record = (function finnaRecord() {
   /**
    * Toggle accordion at the start so the accordions work properly
    * @param {jQuery} accordion Accordion to toggle
+   * @returns {boolean|void} True if not found or none
    */
   function initialToggle(accordion) {
     var $recordTabs = $('.record-tabs');

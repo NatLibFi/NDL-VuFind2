@@ -21,6 +21,7 @@ finna.layout = (function finnaLayout() {
 
   /**
    * Is touch screen supported
+   * @returns {boolean} Touch screen supported
    */
   function isTouchDevice() {
     return (('ontouchstart' in window)

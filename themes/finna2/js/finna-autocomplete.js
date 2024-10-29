@@ -2,6 +2,7 @@
 finna.autocomplete = (function finnaAutocomplete() {
   /**
    * Get if filters should be preserved
+   * @returns {boolean} Should filters be preserved
    */
   function getPreserveFiltersMode() {
     return $(".searchFormKeepFilters").is(":checked");

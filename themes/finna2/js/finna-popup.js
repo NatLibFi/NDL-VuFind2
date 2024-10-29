@@ -1,4 +1,4 @@
-/*global VuFind, unwrapJQuery, getFocusableNodes */
+/*global VuFind, unwrapjQuery, getFocusableNodes */
 /**
  * Constructor for finna popup element
  * @param {jQuery} trigger Element to act as a trigger
@@ -54,7 +54,8 @@ function FinnaPopup(trigger, params, id) {
 
 /**
  * Adjusts a given src to match an embed link in popular services
- * @param {string} src
+ * @param {string} src Url to change into
+ * @returns {string} Embed src
  */
 FinnaPopup.prototype.adjustEmbedLink = function adjustEmbedLink(src) {
   var _ = this;
@@ -72,7 +73,7 @@ FinnaPopup.prototype.adjustEmbedLink = function adjustEmbedLink(src) {
 
 /**
  * Adds a trigger element to popups internal array, so it can be properly found
- * @param {jQuery} trigger
+ * @param {jQuery} trigger Trigger to display a popup
  */
 FinnaPopup.prototype.addTrigger = function addTrigger(trigger) {
   var _ = this;
@@ -114,6 +115,7 @@ FinnaPopup.prototype.reIndex = function reIndex() {
 
 /**
  * Returns the current open trigger
+ * @returns {jQuery} Current open trigger
  */
 FinnaPopup.prototype.currentTrigger = function currentTrigger() {
   var _ = this;
@@ -122,7 +124,7 @@ FinnaPopup.prototype.currentTrigger = function currentTrigger() {
 
 /**
  * Close a trigger and open the next one found from the internal array
- * @param {int} direction
+ * @param {number} direction -1 or 1 to look for a trigger
  */
 FinnaPopup.prototype.getTrigger = function getTrigger(direction) {
   var _ = this;
@@ -233,6 +235,7 @@ FinnaPopup.prototype.show = function show() {
 /**
  * Get translation for internal key
  * @param {string} key Translation key to get
+ * @returns {string} Translation or the key if no translation found
  */
 FinnaPopup.prototype.getTranslation = function getTranslation(key) {
   var _ = this;
@@ -295,7 +298,7 @@ FinnaPopup.prototype.onPopupOpen = function onPopupOpen(open, close) {
 
 /**
  * Toggles the document body scroll state
- * @param {boolean} value
+ * @param {boolean} value Should the scrolling be enabled
  */
 FinnaPopup.prototype.toggleScroll = function toggleScroll(value) {
   $(document.body).css('overflow', value ? 'auto' : 'hidden');
@@ -338,11 +341,11 @@ FinnaPopup.prototype.onPopupClose = function onPopupClose() {
 
 /**
  * Way to keep users tab inside modal elements
- * @param {object} e
+ * @param {object} e Event handler object
  */
 FinnaPopup.prototype.focusTrap = function focusTrap(e) {
   var _ = this;
-  const element = unwrapJQuery(_.content);
+  const element = unwrapjQuery(_.content);
   if (!$.contains(element, e.target)) {
     const nodes = getFocusableNodes(element);
     if (nodes.length) {

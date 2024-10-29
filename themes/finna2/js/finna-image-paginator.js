@@ -83,7 +83,7 @@ FinnaPaginator.prototype.clearTracks = function clearTracks() {
 
 /**
  * Add an element to an active track
- * @param {HTMLElement} elem
+ * @param {HTMLElement} elem Element to append into a track
  */
 FinnaPaginator.prototype.appendTracks = function appendTracks(elem) {
   var _ = this;
@@ -98,8 +98,8 @@ FinnaPaginator.prototype.appendTracks = function appendTracks(elem) {
 
 /**
  * Helper function to show a button and hide another
- * @param {HTMLElement} show
- * @param {HTMLElement} hide
+ * @param {HTMLElement} show Button to show
+ * @param {HTMLElement} hide Button to hide
  */
 function toggleButtons(show, hide) {
   show.show();
@@ -133,8 +133,6 @@ FinnaPaginator.prototype.init = function init() {
 
 /**
  * Function to set references when state of paginator changes or is created
- * @param {HTMLElement} covers
- * @param {boolean} isPopup
  */
 FinnaPaginator.prototype.setReferences = function setReferences() {
   var _ = this;
@@ -250,7 +248,7 @@ FinnaPaginator.prototype.readQuery = function readQuery() {
 
 /**
  * Function to toggle proper canvas element to show video, image in popup
- * @param {string} type
+ * @param {string} type Type of the canvas to set
  */
 FinnaPaginator.prototype.setCanvasElement = function setCanvasElement(type) {
   var _ = this;
@@ -264,7 +262,7 @@ FinnaPaginator.prototype.setCanvasElement = function setCanvasElement(type) {
 
 /**
  * Function which is executed after nonzoomable image has been opened to a popup
- * @param {object} image
+ * @param {object} image Object containing image data
  */
 FinnaPaginator.prototype.onNonZoomableClick = function onNonZoomableClick(image) {
   var _ = this;
@@ -302,7 +300,7 @@ FinnaPaginator.prototype.onNonZoomableClick = function onNonZoomableClick(image)
 
 /**
  * Function to consume image objects data and load a zoomable version to leaflet
- * @param {HTMLElement} image
+ * @param {HTMLElement} image Image element
  */
 FinnaPaginator.prototype.onLeafletImageClick = function onLeafletImageClick(image) {
   var _ = this;
@@ -361,6 +359,7 @@ FinnaPaginator.prototype.onLeafletImageClick = function onLeafletImageClick(imag
      * @param {number} imageWidth Image width inside the area
      * @param {number} boundHeight Height of the area around the image
      * @param {number} imageHeight Image height inside the area
+     * @returns {object} Object containing height and width
      */
     function calculateBounds(boundWidth, imageWidth, boundHeight, imageHeight) {
       var heightPercentage = 0;
@@ -435,7 +434,7 @@ FinnaPaginator.prototype.onBrowseButton = function onBrowseButton(direction) {
 
 /**
  * Function to decide which image will be loaded on list type paginator, determined by direction
- * @param {int} direction
+ * @param {number} direction -1 or 1 for next or previous image
  */
 FinnaPaginator.prototype.onListButton = function onListButton(direction) {
   var _ = this;
@@ -531,7 +530,7 @@ FinnaPaginator.prototype.setRecordIndex = function setRecordIndex() {
 /**
  * Function to consume imagepopup elements data to create image trigger
  * When the image does not exist, we remove the trigger event and let the user navigate directly to record
- * @param {HTMLElement} imagePopup
+ * @param {HTMLElement} imagePopup Small image element to get data from to open trigger image
  */
 FinnaPaginator.prototype.changeTriggerImage = function changeTriggerImage(imagePopup) {
   var _ = this;
@@ -608,9 +607,9 @@ FinnaPaginator.prototype.showImageDetails = function showImageDetails(imagePopup
 /**
  * Function to clear track of images and load new amount of images with direction.
  * If openimageindex is set, loads images from that image. If imagesperpage is set updates the amount of images to show in total
- * @param {int} direction
- * @param {int} openImageIndex
- * @param {int} imagesPerPage
+ * @param {number} direction -1 or 1 for loading new images into paginator track
+ * @param {number} openImageIndex Current open image index
+ * @param {number} imagesPerPage How many images for the current page
  */
 FinnaPaginator.prototype.loadPage = function loadPage(direction, openImageIndex, imagesPerPage) {
   var _ = this;
@@ -667,7 +666,8 @@ FinnaPaginator.prototype.loadPage = function loadPage(direction, openImageIndex,
 
 /**
  * Function to find a single image from array with direction
- * @param {int} direction
+ * @param {number} direction -1 or 1 for next or previous image
+ * @returns {object} Found image object from the images
  */
 FinnaPaginator.prototype.getImageFromArray = function getImageFromArray(direction) {
   var _ = this;
@@ -766,8 +766,9 @@ FinnaPaginator.prototype.loadBookDescription = function loadBookDescription() {
 
 /**
  * Function to create small images for popup track consuming the data from image object
- * @param {object} image
- * @param {number} index
+ * @param {object} image Object containing image data
+ * @param {number} index Index of the image
+ * @returns {jQuery} Image element
  */
 FinnaPaginator.prototype.createImagePopup = function createImagePopup(image, index) {
   var _ = this;
@@ -822,7 +823,6 @@ FinnaPaginator.prototype.setCurrentVisuals = function setCurrentVisuals() {
 
 /**
  * Sets the max amount of images to show in the track. Popup has different amounts determined.
- * @param {int} amount
  */
 FinnaPaginator.prototype.setMaxImages = function setMaxImages() {
   var _ = this;
@@ -863,8 +863,8 @@ FinnaPaginator.prototype.setDimensions = function setDimensions() {
 };
 
 /**
- * Lets create a popup object to handle images properly
- * @param {jQuery} popup
+ * Create a popup object to handle images properly
+ * @param {jQuery} popup Popup modal container
  */
 FinnaPaginator.prototype.createPopupObject = function createPopupObject(popup) {
   var _ = this;
@@ -1054,7 +1054,8 @@ FinnaPaginator.prototype.setListTrigger = function setListTrigger(image) {
 
 /**
  * Function to find an image element from imageHolder track
- * @param index int index of wanted image element
+ * @param {number} index int index of wanted image element
+ * @returns {jQuery} Found image from paginator track
  */
 FinnaPaginator.prototype.findSmallImage = function findSmallImage(index) {
   var _ = this;
@@ -1066,7 +1067,7 @@ FinnaPaginator.prototype.findSmallImage = function findSmallImage(index) {
 /**
  * Function to add callbacks after document is fully loaded or immediately, if the document is already
  * loaded
- * @param callback function to add
+ * @param {Function} callback function to add
  */
 FinnaPaginator.prototype.addDocumentLoadCallback = function addDocumentLoadCallback(callback) {
   var _ = this;

@@ -160,6 +160,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
   /**
    * Event handler for key press
    * @param {object} e Event object
+   * @returns {boolean} Allow event
    */
   function keyHandler(e/*, cb*/) {
     if (e.which === 13 || e.which === 32) {
@@ -174,6 +175,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
    * Toggle linked events accordion
    * @param {jQuery} container Container containing the linked events elements
    * @param {jQuery} accordion Accordion in the linked events elements 
+   * @returns {boolean} Should content be loaded
    */
   function toggleAccordion(container, accordion) {
     var tabContent = container.find('.tab-content').detach();
