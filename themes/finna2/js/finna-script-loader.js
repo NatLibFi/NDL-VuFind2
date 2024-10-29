@@ -3,21 +3,19 @@
 /**
  * Module for a script loader.
  * Exposes functions:
- *  - load
- *  - loadInOrder
- *
- * @return {object} Exposed functions
+ * - load
+ * - loadInOrder
+ * @returns {object} Exposed functions
  */
 finna.scriptLoader = (() => {
 
   /**
    * Load given scripts asynchronously.
-   *
    * @param {object}   scripts        Object of scripts to load
    *                                  Key is an unique identifier used to check if
    *                                  script has already been loaded
    *                                  Value is the js file name to load
-   * @param {?function} scriptsLoaded Callback when the scripts are loaded
+   * @param {?Function} scriptsLoaded Callback when the scripts are loaded
    */
   function load(scripts, scriptsLoaded) {
     let keyCount = Object.keys(scripts).length;
@@ -54,7 +52,6 @@ finna.scriptLoader = (() => {
   /**
    * Load given scripts asynchronously. First are the scripts to be loaded before
    * the last scripts can be loaded.
-   *
    * @param {object}   first          First scripts to load.
    *                                  Key is an unique identifier used to check if
    *                                  script has already been loaded
@@ -63,7 +60,7 @@ finna.scriptLoader = (() => {
    *                                  Key is an unique identifier used to check if
    *                                  script has already been loaded
    *                                  Value is the js file name to load
-   * @param {?function} scriptsLoaded Callback when the scripts are loaded
+   * @param {?Function} scriptsLoaded Callback when the scripts are loaded
    */
   function loadInOrder(first, last, scriptsLoaded) {
     load(first, () => {

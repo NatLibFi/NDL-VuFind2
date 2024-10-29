@@ -2,6 +2,9 @@
 finna.finnaSurvey = (function finnaSurvey() {
   var _cookieName = 'finnaSurvey';
 
+  /**
+   * Initialize finna survey events
+   */
   function init() {
     var cookie = finna.common.getCookie(_cookieName);
     if (typeof cookie !== 'undefined' && cookie === '1') {

@@ -1,8 +1,7 @@
 /* global THREE, ObjectEditor, VuFind */
-
+/** TODO: This file will be removed in future. No changes required. */
 /**
  * Get tangent
- *
  * @param {Integer} deg
  */
 function getTanDeg(deg) {

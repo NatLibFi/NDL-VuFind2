@@ -1,5 +1,9 @@
 /*global VuFind, finna */
 finna.authority = (function finnaAuthority() {
+  /**
+   * Toggles authority info collapse element
+   * @param {boolean} mode Should the authorityBox be hidden
+   */
   function toggleAuthorityInfoCollapse(mode)
   {
     var authorityRecommend = $('.authority-recommend');
@@ -23,6 +27,9 @@ finna.authority = (function finnaAuthority() {
     finna.common.setCookie('collapseAuthorityInfo', collapsed);
   }
 
+  /**
+   * Initialize authority recommendation tabs
+   */
   function initAuthorityRecommendTabs()
   {
     $('div.authority-recommend .nav-tabs li').not('.toggle').on('click', function onTabClick() {
@@ -69,6 +76,10 @@ finna.authority = (function finnaAuthority() {
     });
   }
 
+  /**
+   * Initialize authority result information
+   * @param {jQuery} _holder Holder of the authority result
+   */
   function initAuthorityResultInfo(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
     VuFind.observerManager.createIntersectionObserver(

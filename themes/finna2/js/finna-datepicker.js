@@ -1,5 +1,8 @@
 /* global finna, VuFind, trapFocus, Popper */
 finna.finnaDatepicker = (function finnaDatepicker() {
+  /**
+   * Initialize datepicker elements
+   */
   function initDatepicker() {
     document.querySelectorAll('.finna-datepicker').forEach(datepicker => {
       const input = datepicker.querySelector('input');

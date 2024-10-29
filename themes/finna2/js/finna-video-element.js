@@ -4,8 +4,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get the type of the video, iFrame | video
-   *
-   * @return {string}
+   * @returns {string}
    */
   get type() {
     return (this.getAttribute('type') || '').toLowerCase();
@@ -13,7 +12,6 @@ class VideoElement extends HTMLElement {
 
   /**
    * Set the type of the video, iFrame | video
-   *
    * @param {string} value iFrame | video
    */
   set type(value) {
@@ -22,8 +20,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get the parent element to which the video player is being embedded into.
-   *
-   * @return {string|undefined}
+   * @returns {string|undefined}
    */
   get embedParent() {
     return this.getAttribute('embed-parent') || undefined;
@@ -32,7 +29,6 @@ class VideoElement extends HTMLElement {
   /**
    * Set the parent element to which the video player is being embedded into.
    * Omit to display in a new popup.
-   *
    * @param {string|undefined} value Parent element id or undefined.
    */
   set embedParent(value) {
@@ -41,8 +37,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get the source of the video.
-   *
-   * @return {string}
+   * @returns {string}
    */
   get source() {
     return this.getAttribute('source') || '';
@@ -50,7 +45,6 @@ class VideoElement extends HTMLElement {
 
   /**
    * Set the source of the video.
-   *
    * @param {string} value The video source
    */
   set source(value) {
@@ -59,8 +53,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get the video sources as an object.
-   *
-   * @return {object}
+   * @returns {object}
    */
   get videoSources() {
     return this.getAttribute('video-sources') ? JSON.parse(this.getAttribute('video-sources')) : {};
@@ -68,7 +61,6 @@ class VideoElement extends HTMLElement {
 
   /**
    * Set the video sources as an object.
-   *
    * @param {object} value
    */
   set videoSources(value) {
@@ -77,8 +69,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get the poster url to display in viewer.
-   *
-   * @return {string}
+   * @returns {string}
    */
   get posterUrl() {
     return this.getAttribute('poster-url') || '';
@@ -86,7 +77,6 @@ class VideoElement extends HTMLElement {
 
   /**
    * Set the poster url to display in viewer.
-   *
    * @param {string} value
    */
   set posterUrl(value) {
@@ -95,8 +85,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get the identity for the popup group.
-   *
-   * @return {string}
+   * @returns {string}
    */
   get popupId() {
     return this.getAttribute('popup-id') || '';
@@ -104,7 +93,6 @@ class VideoElement extends HTMLElement {
 
   /**
    * Set the identity for the popup group.
-   *
    * @param {string} value
    */
   set popupId(value) {
@@ -113,8 +101,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get consent service required for the video.
-   *
-   * @return {string}
+   * @returns {string}
    */
   get consentService() {
     return this.getAttribute('consent-service') || '';
@@ -122,8 +109,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get consent service required for the video.
-   *
-   * @return {string}
+   * @returns {string}
    */
   set consentService(value) {
     this.setAttribute('consent-service', value);
@@ -131,8 +117,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get consent categories required for the video.
-   *
-   * @return {string}
+   * @returns {string}
    */
   get consentCategories() {
     return this.getAttribute('consent-categories') || '';
@@ -140,7 +125,6 @@ class VideoElement extends HTMLElement {
 
   /**
    * Set consent categories required for the video.
-   *
    * @param {string} value
    */
   set consentCategories(value) {
@@ -149,8 +133,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get index.
-   *
-   * @return {string}
+   * @returns {string}
    */
   get index() {
     return this.getAttribute('index') || '';
@@ -158,7 +141,6 @@ class VideoElement extends HTMLElement {
 
   /**
    * Set index.
-   *
    * @param {number} value Value
    */
   set index(value) {
@@ -168,8 +150,7 @@ class VideoElement extends HTMLElement {
   /**
    * Get if the video should be activated on load.
    * return true if the value is 'true' as a string.
-   *
-   * @return {boolean}
+   * @returns {boolean}
    */
   get active() {
     return this.getAttribute('active') === 'true';

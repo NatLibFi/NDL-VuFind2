@@ -1,9 +1,15 @@
 /* global VuFind, finna, extractClassParams */
 finna.autocomplete = (function finnaAutocomplete() {
+  /**
+   * Get if filters should be preserved
+   */
   function getPreserveFiltersMode() {
     return $(".searchFormKeepFilters").is(":checked");
   }
 
+  /**
+   * Setup the autocomplete element
+   */
   function setupAutocomplete() {
     $('.searchForm').on('submit', function onSubmitSearchForm() {
       if ($('.autocomplete-finna').autocompleteFinna.element !== false) {

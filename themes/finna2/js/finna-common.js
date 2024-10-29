@@ -6,13 +6,16 @@ finna.common = (function finnaCommon() {
     SameSite: 'Lax'
   };
 
+  /**
+   * Decodes html
+   * @param {string} str Text to decode
+   */
   function decodeHtml(str) {
     return $("<textarea/>").html(str).text();
   }
 
   /**
    * Get field from the object.
-   *
    * @param {object} obj   Object to search for the field
    * @param {string} field Field to look for
    * @returns The field found or null if undefined.
@@ -24,6 +27,10 @@ finna.common = (function finnaCommon() {
     return null;
   }
 
+  /**
+   * Initialize Qr code link
+   * @param {JQuery} _holder Holder for the qr code link
+   */
   function initQrCodeLink(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
@@ -43,8 +50,8 @@ finna.common = (function finnaCommon() {
 
   /**
    * Initialize result page scripts.
-   *
-   * @param {string|JQuery} container
+   * @param {string|JQuery} container     Container or selector holding results
+   * @param {boolean}       includeVuFind Include VuFind initResultScripts
    */
   function initResultScripts(container, includeVuFind) {
     finna.layout.initCondensedList($(container));
@@ -113,21 +120,42 @@ finna.common = (function finnaCommon() {
     });
   }
 
+  /**
+   * Get cookie settings
+   */
   function _getCookieSettings() {
     return cookieSettings;
   }
 
+  /**
+   * Set cookie settings
+   * @param {object} settings Cookie settings
+   */
   function setCookieSettings(settings) {
     cookieSettings = settings;
   }
 
+  /**
+   * Get a cookie from browser
+   * @param {string} cookie Cookie name to get
+   */
   function getCookie(cookie) {
     return window.Cookies.get(cookie);
   }
 
+  /**
+   * Set a cookie
+   * @param {string} cookie   Cookie name
+   * @param {string} value    Cookie value
+   * @param {object} settings Cookie settings
+   */
   function setCookie(cookie, value, settings) {
     window.Cookies.set(cookie, value, $.extend({}, _getCookieSettings(), settings));
   }
+  /**
+   * Remove a cookie
+   * @param {string} cookie Name of the cookie to remove
+   */
   function removeCookie(cookie) {
     window.Cookies.remove(cookie, _getCookieSettings());
   }
@@ -136,7 +164,6 @@ finna.common = (function finnaCommon() {
    * Track content impressions within a node with Matomo
    *
    * Needed for dynamically updated content. Static content gets tracked automatically.
-   *
    * @param {HTMLElement} node
    */
   function trackContentImpressions(node) {

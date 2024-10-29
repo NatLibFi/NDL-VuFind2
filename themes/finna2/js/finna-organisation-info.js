@@ -15,8 +15,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Update URL hash ensuring that the change event is triggered
-   *
-   * @param {String} hash
+   * @param {string} hash
    */
   function updateURLHash(hash) {
     if (('#' + hash) === decodeURIComponent(window.location.hash)) {
@@ -29,7 +28,6 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Get location from URL hash
-   *
    * @returns string
    */
   function getLocationFromURLHash() {
@@ -41,9 +39,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Get current location from local storage
-   *
-   * @param {String} id Organisation ID
-   *
+   * @param {string} id Organisation ID
    * @returns string
    */
   function getStoredLocation(id) {
@@ -52,9 +48,8 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Remember current location in local storage
-   *
-   * @param {String} id Organisation ID
-   * @param {String} locationId Location ID
+   * @param {string} id Organisation ID
+   * @param {string} locationId Location ID
    */
   function storeCurrentLocation(id, locationId) {
     localStorage.setItem('location-info-' + id, decodeURIComponent(locationId));
@@ -65,8 +60,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Update selected location
-   *
-   * @param {String|null} locationId
+   * @param {string | null} locationId
    * @param {boolean} clearSearch
    */
   function updateSelectedLocation(locationId, clearSearch) {
@@ -250,8 +244,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Initialize map
-   *
-   * @param {Object} data Organisation info response for info-location-selection request
+   * @param {object} data Organisation info response for info-location-selection request
    */
   function initMap(data) {
     let mapData = Object.fromEntries(Object.entries(data.locationData).filter((loc) => null !== loc[1].lat && null !== loc[1].lon));
@@ -277,6 +270,9 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     map = finna.organisationMap;
     map.init(mapWidget, mapTileUrl, mapAttributionTemplate.innerHTML);
 
+    /**
+     * Hide map marker from mapTooltip
+     */
     function hideMapMarker() {
       mapTooltip.classList.add('hidden');
     }
@@ -356,8 +352,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Initialize location selection
-   *
-   * @param {Object} data Organisation info response for info-location-selection request
+   * @param {object} data Organisation info response for info-location-selection request
    */
   function initLocationSelection(data) {
     // Setup location selection
@@ -377,10 +372,9 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Initialize opening times week navigation
-   *
-   * @param {DOMElement} container Container
-   * @param {Object} _params Organisation info params
-   * @param {String} locationId Location ID
+   * @param {DOMElement} _container Container
+   * @param {object} _params Organisation info params
+   * @param {string} locationId Location ID
    */
   function initWeekNavi(_container, _params, locationId) {
     _container.querySelectorAll('.js-week-navi-btn').forEach((btn) => {
@@ -476,8 +470,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Initialize location details container
-   *
-   * @param {String} locationId
+   * @param {string} locationId
    */
   function initLocationDetails(locationId) {
     const detailsEl = container.querySelector('.js-location-details-container');
@@ -498,8 +491,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Show location details
-   *
-   * @param {String} locationId
+   * @param {string} locationId
    */
   showLocationDetails = function showLocationDetailsImpl(locationId) {
     const detailsEl = container.querySelector('.js-location-details-container');
@@ -581,8 +573,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Initialize organisation info page
-   *
-   * @param {Object} _params Organisation info page params
+   * @param {object} _params Organisation info page params
    */
   function init(_params) {
     params = _params;
@@ -640,10 +631,9 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Load location into the widget
-   *
    * @param {DOMElement} _container Widget container
-   * @param {Object} _params Widget parameters
-   * @param {String} locationId Location id
+   * @param {object} _params Widget parameters
+   * @param {string} locationId Location id
    */
   function loadWidgetLocation(_container, _params, locationId) {
     let openStatusEl = _container.querySelector('.js-open-status');
@@ -699,8 +689,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
   /**
    * Initialize organisation info widget
-   *
-   * @param {Object} _params Widget parameters
+   * @param {object} _params Widget parameters
    */
   function initWidget(_params) {
     const _container = document.querySelector(_params.container);
