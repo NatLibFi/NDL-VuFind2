@@ -766,6 +766,7 @@ finna-feed.carousel.splide--ltr {
     .feed-item-holder {
         &.clicked {
             .carousel-text:not(.no-text) {
+                z-index: 1;
                 opacity: 1;
             }
             .carousel-slide-header p:not(.title-bottom) {
