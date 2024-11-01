@@ -1,5 +1,5 @@
-@media (max-width: $screen-xs-max) {
-  .mobile-toolbar {
+.mobile-toolbar {
+  @media (max-width: $screen-xs-max) {
     border-top: 1px solid $body-bg;
     position: fixed;
     height: 44px;
@@ -119,12 +119,15 @@
       }
     }
   }
-  section.template-name-results .sidebar,
-  section.template-name-search .sidebar,
-  section.template-name-blended .sidebar,
-  section.template-name-mylist .sidebar,
-  section.template-dir-record.template-name-view .sidebar.search-facets,
-  section.template-dir-collection.template-name-view .sidebar {
+}
+
+section.template-name-results .sidebar,
+section.template-name-search .sidebar,
+section.template-name-blended .sidebar,
+section.template-name-mylist .sidebar,
+section.template-dir-record.template-name-view .sidebar.search-facets,
+section.template-dir-collection.template-name-view .sidebar {
+  @media (max-width: $screen-xs-max) {
     position: fixed;
     background: $body-bg;
     z-index: $zindex-sidebar;
@@ -155,8 +158,10 @@
       }
     }
   }
-  .mobile-navigation {
-    @extend .mobile-toolbar;
+}
+.mobile-navigation {
+  @extend .mobile-toolbar;
+  @media (max-width: $screen-xs-max) {
     left: 0;
     z-index: 60;
     i {
@@ -180,7 +185,9 @@
       max-width: 55%;
     }
   }
-  .finna-search-filter-toggle {
+}
+.finna-search-filter-toggle {
+  @media (max-width: $screen-xs-max) {
     position: sticky;
     top: $navbar-height;
     margin-left: calc((#{$grid-gutter-width} / 2) * -1);

@@ -159,7 +159,7 @@
   <?php if ($user && $list): ?>
     <form class="pull-left delete-list" action="<?=$this->url('myresearch-deletelist') ?>?listID=<?=urlencode($list->getId())?>&confirm=1" method="post">
       <ul class="dropdown-menu useraccount-confirm">
-        <li class="disabled"><a><?=$this->transEsc('confirm_delete_list_text')?></a></li>
+        <li class="disabled"><?=$this->transEsc('confirm_delete_list_text')?></li>
         <li>
           <a class="confirm" href="#"><?=$this->transEsc('confirm_dialog_yes') ?></a>
           <a class="cancel" href="#"><?=$this->transEsc('confirm_dialog_no')?></a>

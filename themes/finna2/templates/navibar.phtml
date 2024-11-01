@@ -183,6 +183,13 @@
                 </a>
               </li>
             <?php endif; ?>
+            <?php if ($this->reservationList()->isFunctionalityEnabled()): ?>
+              <li>
+                <a <?=$this->url('myresearch-favorites') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role ="menuitem" href="<?=$this->url('reservationlist-displaylists')?>">
+                  <?=$this->transEsc('ReservationList::Reservation Lists')?>
+                </a>
+              </li>
+            <?php endif; ?>
             <li>
               <a <?=$this->url('myresearch-logout') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-logout')?>" title="<?=$this->transEsc('Log Out')?>"><?=$this->transEsc('Log Out')?><?=$this->icon('sign-out', 'sign-out-icon pull-right') ?></a>
             </li>

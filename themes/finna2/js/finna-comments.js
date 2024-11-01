@@ -1,5 +1,8 @@
 /*global VuFind, finna, registerAjaxCommentRecord:true, refreshCommentList, refreshRecordRating */
 finna.comments = (function finnaComments() {
+  /**
+   * Refresh comments and ratings
+   */
   function requestRefreshCommentsAndRating() {
     let recordId = $('input.hiddenId').val();
     let recordSource = $('input.hiddenSource').val();
@@ -8,6 +11,10 @@ finna.comments = (function finnaComments() {
     refreshRecordRating(recordId, recordSource);
   }
 
+  /**
+   * Initialize form for the comments
+   * @param {Function} parentMethod Parent method to call first
+   */
   function initCommentForm(parentMethod) {
     $('.comment-list .delete').off('click');
     parentMethod();
@@ -66,6 +73,10 @@ finna.comments = (function finnaComments() {
     });
   }
 
+  /**
+   * Initialize comment to be editable
+   * @param {boolean} allowCommenting Should commenting be allowed
+   */
   function initEditComment(allowCommenting) {
     $('.comment-list .edit').off('click').on('click', function onCommentEditClick() {
       var comment = $(this).closest('.comment');
@@ -95,6 +106,12 @@ finna.comments = (function finnaComments() {
     });
   }
 
+  /**
+   * Initialize comment list
+   * @param {boolean} allowCommenting Should commenting be allowed
+   * @param {boolean} allowRating     Should rating be allowed
+   * @param {number}  commentCount    Comment count
+   */
   function initCommentList(allowCommenting, allowRating, commentCount) {
     $('.recordTabs #usercomments .count').text(commentCount);
 

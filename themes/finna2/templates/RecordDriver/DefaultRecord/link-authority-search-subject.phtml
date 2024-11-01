@@ -1,7 +1,7 @@
 <?php
   $searchBackendId = $this->driver->getSearchBackendIdentifier();
   $options = $this->searchOptions($searchBackendId);
-  $searchRoute = $options->getSearchAction();
+  $searchRoute = $this->searchAction ?: $options->getSearchAction();
   $query = ['lookfor' => sprintf('topic:%s OR %s:("%s")^100000', $this->lookfor, \Finna\Search\Solr\AuthorityHelper::TOPIC_ID_FACET, $this->id)];
   if (($limit = $this->searchMemory()->getLastLimit($searchBackendId))
     && $limit !== $options->getDefaultLimit()

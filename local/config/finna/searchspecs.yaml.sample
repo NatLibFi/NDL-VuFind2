@@ -342,6 +342,7 @@ AllFields:
     - description^10
     - isbn
     - issn
+    - other_issn_isn_mv
     - ismn_isn_mv
     - collection_txt_mv
     - classification_txt_mv

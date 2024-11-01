@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) The National Library of Finland 2022-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,6 +23,7 @@
  * @category Wayfinder
  * @package  Wayfinder
  * @author   Inlead <support@inlead.dk>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://inlead.dk
  */
@@ -41,6 +42,7 @@ use VuFindHttp\HttpServiceInterface;
  * @category Wayfinder
  * @package  Wayfinder
  * @author   Inlead <support@inlead.dk>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://inlead.dk
  */
@@ -122,15 +124,15 @@ class WayfinderService
                 . ' from url [' . $url . ']'
                 . ' with args [' . var_export($placement, true) . '].'
                 . ' Status code [' . $response->getStatusCode() . '].'
-                . ' Response message [' . $response->getContent() . '].'
+                . ' Response message [' . $response->getBody() . '].'
             );
             return '';
         }
 
         try {
-            $decoded = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
+            $decoded = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $exception) {
-            $this->logError((string)$exception);
+            $this->logError('Failed to parse Wayfinder response: ' . (string)$exception);
             return '';
         }
 
@@ -138,7 +140,7 @@ class WayfinderService
             $this->logError(
                 'Failed to get marker link from response'
                 . ' using [' . $url . '].'
-                . ' Response [' . $response->getContent() . ']'
+                . ' Response [' . $response->getBody() . ']'
             );
             return '';
         }

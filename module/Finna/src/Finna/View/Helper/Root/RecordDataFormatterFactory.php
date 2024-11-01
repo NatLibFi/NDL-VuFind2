@@ -308,6 +308,17 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             ]
         );
         $setTemplateLine(
+            'Presenters Marc',
+            'getSecondaryPresenters',
+            'data-presenters.phtml',
+            [
+                'context' => [
+                    'class' => 'recordPresenters',
+                    'title' => 'Presenters',
+                ],
+            ]
+        );
+        $setTemplateLine(
             'Other Titles',
             'getAlternativeTitles',
             'data-escapeHtml.phtml',
@@ -479,6 +490,14 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordDescription'],
+            ]
+        );
+        $setTemplateLine(
+            'Local Note',
+            'getLocalNotes',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'record-local-note'],
             ]
         );
         $setTemplateLine(
@@ -1743,6 +1762,9 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
     {
         $spec = new SpecBuilder();
         $spec->setLine('Summary', 'getSummary');
+        $spec->setLine('Abstract', 'getAbstractNotes');
+        $spec->setLine('Review', 'getReviewNotes');
+        $spec->setLine('Content Advice', 'getContentAdviceNotes');
         $spec->setLine('Published', 'getDateSpan');
         $spec->setLine('Item Description', 'getGeneralNotes');
         $spec->setLine('Physical Description', 'getPhysicalDescriptions');

@@ -4,8 +4,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get the type of the video, iFrame | video
-   *
-   * @return {string}
+   * @returns {string} Video type
    */
   get type() {
     return (this.getAttribute('type') || '').toLowerCase();
@@ -13,7 +12,6 @@ class VideoElement extends HTMLElement {
 
   /**
    * Set the type of the video, iFrame | video
-   *
    * @param {string} value iFrame | video
    */
   set type(value) {
@@ -22,8 +20,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get the parent element to which the video player is being embedded into.
-   *
-   * @return {string|undefined}
+   * @returns {string|undefined} Parent element id or undefined
    */
   get embedParent() {
     return this.getAttribute('embed-parent') || undefined;
@@ -32,7 +29,6 @@ class VideoElement extends HTMLElement {
   /**
    * Set the parent element to which the video player is being embedded into.
    * Omit to display in a new popup.
-   *
    * @param {string|undefined} value Parent element id or undefined.
    */
   set embedParent(value) {
@@ -41,8 +37,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get the source of the video.
-   *
-   * @return {string}
+   * @returns {string} Source of the video
    */
   get source() {
     return this.getAttribute('source') || '';
@@ -50,7 +45,6 @@ class VideoElement extends HTMLElement {
 
   /**
    * Set the source of the video.
-   *
    * @param {string} value The video source
    */
   set source(value) {
@@ -59,8 +53,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get the video sources as an object.
-   *
-   * @return {object}
+   * @returns {object} Object containing video sources
    */
   get videoSources() {
     return this.getAttribute('video-sources') ? JSON.parse(this.getAttribute('video-sources')) : {};
@@ -68,8 +61,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Set the video sources as an object.
-   *
-   * @param {object} value
+   * @param {object} value Video sources object
    */
   set videoSources(value) {
     this.setAttribute('video-sources', JSON.stringify(value || {}));
@@ -77,8 +69,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get the poster url to display in viewer.
-   *
-   * @return {string}
+   * @returns {string} Poster url
    */
   get posterUrl() {
     return this.getAttribute('poster-url') || '';
@@ -86,8 +77,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Set the poster url to display in viewer.
-   *
-   * @param {string} value
+   * @param {string} value Poster url
    */
   set posterUrl(value) {
     this.setAttribute('poster-url', value);
@@ -95,8 +85,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get the identity for the popup group.
-   *
-   * @return {string}
+   * @returns {string} Id of the popup group
    */
   get popupId() {
     return this.getAttribute('popup-id') || '';
@@ -104,8 +93,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Set the identity for the popup group.
-   *
-   * @param {string} value
+   * @param {string} value Id of the popup group
    */
   set popupId(value) {
     this.setAttribute('popup-id', value);
@@ -113,8 +101,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get consent service required for the video.
-   *
-   * @return {string}
+   * @returns {string} Consent service accepted to display this video
    */
   get consentService() {
     return this.getAttribute('consent-service') || '';
@@ -122,8 +109,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get consent service required for the video.
-   *
-   * @return {string}
+   * @param {string} value Consent service accepted to display this video
    */
   set consentService(value) {
     this.setAttribute('consent-service', value);
@@ -131,8 +117,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get consent categories required for the video.
-   *
-   * @return {string}
+   * @returns {string} Consent categories
    */
   get consentCategories() {
     return this.getAttribute('consent-categories') || '';
@@ -140,8 +125,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Set consent categories required for the video.
-   *
-   * @param {string} value
+   * @param {string} value Consent categories
    */
   set consentCategories(value) {
     this.setAttribute('consent-categories', value);
@@ -149,8 +133,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Get index.
-   *
-   * @return {string}
+   * @returns {string} Index of this video element
    */
   get index() {
     return this.getAttribute('index') || '';
@@ -158,7 +141,6 @@ class VideoElement extends HTMLElement {
 
   /**
    * Set index.
-   *
    * @param {number} value Value
    */
   set index(value) {
@@ -168,8 +150,7 @@ class VideoElement extends HTMLElement {
   /**
    * Get if the video should be activated on load.
    * return true if the value is 'true' as a string.
-   *
-   * @return {boolean}
+   * @returns {boolean} Is active?
    */
   get active() {
     return this.getAttribute('active') === 'true';
@@ -177,6 +158,7 @@ class VideoElement extends HTMLElement {
 
   /**
    * Set if the video should be activated on load.
+   * @param {boolean} value Is active?
    */
   set active(value) {
     this.setAttribute('active', value);

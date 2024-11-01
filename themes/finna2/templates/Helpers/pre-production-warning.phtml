@@ -25,7 +25,7 @@
 
   $script = <<<JS
       $('.preproduction-warning-dismiss').on('click', function dismissWarning() {
-        finna.common.setCookie('hidePreProductionWarning', 1, { expires: 1/24 });
+        VuFind.cookie.set('hidePreProductionWarning', 1, { expires: 1/24 });
         $('.pre-production-warning').addClass('hidden');
       });
       JS;

@@ -207,7 +207,7 @@
         </div>
       <?php endif; ?>
 
-      <?php $results = $this->driver->getNonPresenterAuthors();?>
+      <?php $results = $this->driver->getPrimaryAuthorsExtended();?>
       <?php if ($results): ?>
         <div class="recordAuthors">
           <div class="truncate-field">

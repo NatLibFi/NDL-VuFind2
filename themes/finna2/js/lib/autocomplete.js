@@ -6,6 +6,7 @@
  * ~ @crhallberg (original version)
  * ~ @samuli (modifications)
  * ~ @emaijala (modifications)
+ * @param {any} $ jQuery base
  */
 (function autocompleteLib( $ ) {
   var xhr = false;
@@ -26,6 +27,11 @@
     // displayed (IE Mobile does something quite weird here).
     var autocompleteTop = 0;
 
+    /**
+     * Align the element properly with the input
+     * @param {jQuery} input Input to align to
+     * @param {jQuery} element Autocomplete container element to align
+     */
     function align(input, element) {
       var position = input.offset();
       var iemobile = navigator.userAgent.match(/iemobile/i);
@@ -39,15 +45,27 @@
       });
     }
 
+    /**
+     * Show autocomplete
+     */
     function show() {
       $.fn.autocompleteFinna.element.removeClass(options.hidingClass);
     }
+    /**
+     * Hide autocomplete
+     */
     function hide() {
       var element = $.fn.autocompleteFinna.element;
       element.find('.item').removeClass('selected');
       element.addClass(options.hidingClass);
     }
 
+    /**
+     * Populate items
+     * @param {jQuery} item Item element
+     * @param {jQuery} input Input of autocomplete
+     * @param {string} eventType Type of the event to call in autocomplete select
+     */
     function populate(item, input, eventType) {
       var type = item.data('type');
       var value = item.text();
@@ -74,10 +92,19 @@
       input.trigger('autocomplete:select', {item: item, value: value, eventType: eventType});
     }
 
+    /**
+     * Get state of "preserve filters" toggle
+     * @param {HTMLElement} input Input to use to find applied df filters
+     * @returns {boolean} Should filters be preserved?
+     */
     function getPreserveFiltersMode(input) {
       return $(input).closest('form').find('.applied-filter[name=dfApplied]').is(':checked');
     }
 
+    /**
+     * Cover callback handler
+     * @param {object} response Object containing response data
+     */
     function coverCallback(response) {
       if (response.data !== undefined) {
         var img = $('#ac-recordcover');
@@ -91,6 +118,11 @@
       }
     }
 
+    /**
+     * Create autocomplete list
+     * @param {Array} data Array containing data for filters and suggestions
+     * @param {jQuery} input Element to form autocomplete to
+     */
     function createList(data, input) {
       var shell = $('<div/>');
       var length = data.length;
@@ -272,6 +304,11 @@
       return datums;
     };
 
+    /**
+     * Get search handler
+     * @param {jQuery} input Input to get applied filter named type with
+     * @returns {string} Current applied search handler
+     */
     function getSearchHandler(input) {
       var form = $(input).closest('form');
       var handler = form.find('input[name=type]').not('.applied-filter');
@@ -281,6 +318,11 @@
       return form.find('.applied-filter[name=type]').val();
     }
 
+    /**
+     * Perform a search with debounce
+     * @param {jQuery} input Element to listen for writing
+     * @param {jQuery} element Autocomplete element container
+     */
     function search(input, element) {
       if (searchTimer) { clearInterval(searchTimer); }
       if (input.val().length >= options.minLength) {
@@ -341,10 +383,20 @@
       }
     }
 
+    /**
+     * Update autocomplete top for absolute positioning
+     * @param {jQuery} input Input to use as anchor
+     */
     function updateAutocompleteTop(input) {
       autocompleteTop = input.offset().top + input.outerHeight();
     }
 
+    /**
+     * Set up autocomplete
+     * @param {jQuery} input Element to use the autocomplete feature
+     * @param {jQuery} _element Container holding autocomplete results
+     * @returns {jQuery} Autocomplete element container
+     */
     function setup(input, _element) {
       var element;
       if (typeof _element !== 'undefined') {

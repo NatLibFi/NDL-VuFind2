@@ -5,7 +5,7 @@
     $coreFields = $formatter->getData($formatter->getDefaults());
   ?>
   <?php if (!empty($coreFields)): ?>
-    <table class="table table-finna-record record-details" role="presentation">
+    <table class="table table-finna-record record-details" role="presentation" tabindex="-1">
       <?php foreach ($coreFields as $key => $current): ?>
         <?php $header = $this->transEsc($current['context']['title'] ?? $current['label']); ?>
         <?php if ($header): ?>
