@@ -25,10 +25,12 @@ node_modules
 package-lock.json
 
 # OS Created Files
-
-.DS_Store*
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
 ehthumbs.db
-Icon?
 Thumbs.db
 
 # IDE Files
