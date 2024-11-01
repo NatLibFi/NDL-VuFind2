@@ -74,25 +74,25 @@
           ?>
           <a href="#" class="dropdown-toggle" aria-describedby="select-card-label-maincontent" aria-expanded="false" aria-haspopup="true" data-toggle="dropdown"><span><?=$display ?></span> <?=$this->icon('dropdown-open') ?></a>
           <ul class="dropdown-menu library_card" role="menu">
-          <?php foreach ($cards as $card): ?>
-            <?php
-              $target = '';
-              $username = $card->getCatUsername();
-              if (strstr($username, '.')) {
-                [$target, $username] = explode('.', $username, 2);
-              }
-              $display = $this->transEsc($card->getCardName() ?: $username);
-              if ($display == "$target.$username") {
-                $display = $username;
-              }
-              if ($target && $targetCount > 1) {
-                $display .= ' (' . $this->transEsc("source_$target", null, $target) . ')';
-              }
-            ?>
-            <li>
-              <a aria-describedby="select-card-label-maincontent" role="menuitem" href="<?=$this->url('librarycards-selectcard')?>?cardID=<?=$this->escapeHtmlAttr($card->getId());?>" data-clear-account-cache><?=$display ?></a>
-            </li>
-          <?php endforeach; ?>
+            <?php foreach ($cards as $card): ?>
+              <?php
+                $target = '';
+                $username = $card->getCatUsername();
+                if (strstr($username, '.')) {
+                  [$target, $username] = explode('.', $username, 2);
+                }
+                $display = $this->transEsc($card->getCardName() ?: $username);
+                if ($display == "$target.$username") {
+                  $display = $username;
+                }
+                if ($target && $targetCount > 1) {
+                  $display .= ' (' . $this->transEsc("source_$target", null, $target) . ')';
+                }
+              ?>
+              <li>
+                <a aria-describedby="select-card-label-maincontent" role="menuitem" href="<?=$this->url('librarycards-selectcard')?>?cardID=<?=$this->escapeHtmlAttr($card->getId());?>" data-clear-account-cache><?=$display ?></a>
+              </li>
+            <?php endforeach; ?>
           </ul>
         </div>
       </div>
