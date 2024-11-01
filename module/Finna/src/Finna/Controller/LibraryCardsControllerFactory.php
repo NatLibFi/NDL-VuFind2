@@ -1,7 +1,7 @@
 <?php
 
 /**
- * LibraryCards helper factory.
+ * LibraryCardsController factory.
  *
  * PHP version 8
  *
@@ -27,7 +27,7 @@
  * @link     https://vufind.org/wiki/development Wiki
  */
 
-namespace Finna\View\Helper\Root;
+namespace Finna\Controller;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
@@ -43,7 +43,7 @@ use Psr\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class LibraryCardsFactory extends \VuFind\View\Helper\Root\LibraryCardsFactory
+class LibraryCardsControllerFactory extends \VuFind\Controller\AbstractBaseFactory
 {
     /**
      * Create an object
@@ -64,13 +64,12 @@ class LibraryCardsFactory extends \VuFind\View\Helper\Root\LibraryCardsFactory
         $requestedName,
         array $options = null
     ) {
-        if (!empty($options)) {
-            throw new \Exception('Unexpected options sent to factory.');
-        }
-        $serviceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
-        return new $requestedName(
-            $serviceManager->get(\VuFind\Db\Service\UserCardServiceInterface::class),
-            $container->get(\VuFind\Cache\Manager::class)->getCache('object'),
+        return parent::__invoke(
+            $container,
+            $requestedName,
+            [
+                $container->get(\VuFind\Cache\Manager::class)->getCache('object'),
+            ]
         );
     }
 }

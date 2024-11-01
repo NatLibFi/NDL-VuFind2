@@ -255,7 +255,7 @@ $config = [
             'Finna\Controller\FeedbackController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\FeedContentController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\HoldsController' => 'VuFind\Controller\HoldsControllerFactory',
-            'Finna\Controller\LibraryCardsController' => 'VuFind\Controller\AbstractBaseFactory',
+            'Finna\Controller\LibraryCardsController' => 'Finna\Controller\LibraryCardsControllerFactory',
             'Finna\Controller\L1Controller' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\L1recordController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\ListController' => 'Finna\Controller\ListControllerFactory',
@@ -1061,7 +1061,10 @@ $nonTabRecordActions = [
 // Define dynamic routes -- controller => [route name => action]
 $dynamicRoutes = [
     'Comments' => ['inappropriate' => 'inappropriate/[:id]'],
-    'LibraryCards' => ['newLibraryCardPassword' => 'newPassword/[:id]'],
+    'LibraryCards' => [
+        'newLibraryCardPassword' => 'newPassword/[:id]',
+        'displayBarcode' => 'displayBarcode/[:id]',
+    ],
     'MyResearch' => ['sortList' => 'SortList/[:id]'],
 ];
 

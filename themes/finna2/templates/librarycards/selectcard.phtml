@@ -1,62 +1,102 @@
 <!-- START of: finna - librarycards/selectcard.phtml -->
 <?php if ($this->user): ?>
-  <?php $cards = $this->libraryCards()->getCardsForUserAsArrays($user, $this->limit); ?>
-  <?php if (isset($loginMenu) && $loginMenu): ?>
-    <li class="logoutOptions card-selection" role="none">
-      <a class="card-header" role="menuitem" href="<?=$this->url('librarycards-home')?>">
-        <?=$this->transEsc($this->label ?? 'Kirjastokortti') ?>
-      </a>
-      <label id="select-card-label-dropdown"><?= $this->transEsc('Library Card') ?></label>
-      <?php if (count($cards) > 1 || empty($this->user->getCatUsername())) : ?>
-        <?php foreach ($cards as $card): ?>
-          <?php $selectedCard = (!isset($this->displaySelected) || $this->displaySelected) && $card['selected_card']; ?>
-          <div class="library-card">
-            <?=$selectedCard ? $this->icon('library-card-selected', 'selected-icon') : '<span class="selected-icon"></span>'?>
-            <a class="card-name" aria-describedby="select-card-label-dropdown" role="menuitem" href="<?=$this->url('librarycards-selectcard')?>?cardID=<?=$this->escapeHtmlAttr($card['id'])?>" data-clear-account-cache>
-              <?=$selectedCard ? '<span class="sr-only">(' . $this->transEsc('selected') . ')</span> ' : '' ?><span><?=$card['display']?></span>
-            </a>
-            <?php if (isset($card['barcode'])): ?>
-              <div class="barcode-container">
-                <a href="<?=$this->url('barcode-show') ?>?code=<?=$this->escapeHtmlAttr(urlencode($card['barcode'])) ?>" aria-label="<?=$this->transEscAttr('show_barcode_title')?>: <?=$card['display']?>">
-                  <?=$this->icon('library-card-barcode', 'barcode-icon')?>
+  <?php $cards = $this->libraryCards()->getCardsForUser($user);
+  if (count($cards) > ($this->limit ?? 1)): ?>
+    <?php $targetCount = $this->ils()->checkCapability('getLoginDrivers') ? count($this->ils()->getLoginDrivers()) : 1; ?>
+      <?php if (isset($loginMenu) && $loginMenu): ?>
+        <li class="logoutOptions card-selection" role="none">
+          <a class="card-header" role="menuitem" href="<?=$this->url('librarycards-home')?>">
+            <?=$this->transEsc($this->label ?? 'Kirjastokortti') ?>
+          </a>
+          <label id="select-card-label-dropdown"><?= $this->transEsc('Library Card') ?></label>
+          <?php if (count($cards) > 1 || empty($this->user->getCatUsername())) : ?>
+            <?php foreach ($cards as $card): ?>
+              <?php
+                $target = '';
+                $username = $card->getCatUsername();
+                if (strstr($username, '.')) {
+                  [$target, $username] = explode('.', $username, 2);
+                }
+                $display = $this->escapeHtml($card->getCardName() ?: $username);
+                if ($display == "$target.$username") {
+                  $display = $username;
+                }
+                if ($target && $targetCount > 1) {
+                  $display .= ' (' . $this->transEsc("source_$target", null, $target) . ')';
+                }
+              ?>
+              <?php $selectedCard = (!isset($this->displaySelected) || $this->displaySelected) && (strcasecmp($card->getCatUsername(), $this->user->getCatUsername() ?? '') === 0); ?>
+              <div class="library-card">
+                <?=$selectedCard ? $this->icon('library-card-selected', 'selected-icon') : '<span class="selected-icon"></span>'?>
+                <a class="card-name" aria-describedby="select-card-label-dropdown" role="menuitem" href="<?=$this->url('librarycards-selectcard')?>?cardID=<?=$this->escapeHtmlAttr($card->getId())?>" data-clear-account-cache>
+                  <?=$selectedCard ? '<span class="sr-only">(' . $this->transEsc('selected') . ')</span> ' : '' ?><span><?=$display?></span>
                 </a>
+                <div class="barcode-container">
+                  <a href="<?=$this->url('displayBarcode')?>?id=<?=$this->escapeHtmlAttr($card->getId()) ?>">
+                    <?=$this->icon('library-card-barcode', 'barcode-icon')?>
+                  </a>
+                </div>
               </div>
-            <?php endif; ?>
-          </div>
-        <?php endforeach; ?>
-      <?php endif; ?>
-    </li>
-  <?php else: ?>
-    <div class="select-card-wrapper">
-      <?php if (isset($this->label)): ?>
-        <span class="select-card-label"><?=$this->transEsc($this->label)?>:</span>
-      <?php endif; ?>
-      <label id="select-card-label-maincontent"><?= $this->transEsc('Library Card') ?></label>
-      <div class="dropdown select-card">
-        <?php
-          $display = null;
-          if (!isset($this->displaySelected) || $this->displaySelected) {
-            foreach ($cards as $card) {
-              if (!$card['selected_card']) {
-                continue;
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </li>
+      <?php else: ?>
+        <div class="select-card-wrapper">
+          <?php if (isset($this->label)): ?>
+            <span class="select-card-label"><?=$this->transEsc($this->label)?>:</span>
+          <?php endif; ?>
+          <label id="select-card-label-maincontent"><?= $this->transEsc('Library Card') ?></label>
+          <div class="dropdown select-card">
+          <?php
+            $display = null;
+            if (!isset($this->displaySelected) || $this->displaySelected) {
+              foreach ($cards as $card) {
+                if (strcasecmp($card->getCatUsername(), $this->user->getCatUsername()) !== 0) {
+                  continue;
+                }
+                $target = '';
+                $username = $card->getCatUsername();
+                if (strstr($username, '.')) {
+                  [$target, $username] = explode('.', $username, 2);
+                }
+                $display = $this->escapeHtml($card->getCardName() ?: $username);
+                if ($display == "$target.$username") {
+                  $display = $username;
+                }
+                if ($target && $targetCount > 1) {
+                  $display .= ' (' . $this->transEsc("source_$target", null, $target) . ')';
+                }
               }
-              $display = $card['display'];
             }
-          }
-          if (null === $display) {
-            $display = $this->transEsc('Select');
-          }
-        ?>
-        <a href="#" class="dropdown-toggle" aria-describedby="select-card-label-maincontent" aria-expanded="false" aria-haspopup="true" data-toggle="dropdown"><span><?=$display ?></span> <?=$this->icon('dropdown-open') ?></a>
-        <ul class="dropdown-menu library_card" role="menu">
-          <?php foreach ($cards as $card): ?>
-            <li>
-              <a aria-describedby="select-card-label-maincontent" role="menuitem" href="<?=$this->url('librarycards-selectcard')?>?cardID=<?=$this->escapeHtmlAttr($card['id']);?>" data-clear-account-cache><?=$card['display'] ?></a>
-            </li>
-          <?php endforeach; ?>
-        </ul>
+            if (null === $display) {
+              $display = $this->transEsc('Select');
+            }
+          ?>
+          <a href="#" class="dropdown-toggle" aria-describedby="select-card-label-maincontent" aria-expanded="false" aria-haspopup="true" data-toggle="dropdown"><span><?=$display ?></span> <?=$this->icon('dropdown-open') ?></a>
+          <ul class="dropdown-menu library_card" role="menu">
+            <?php foreach ($cards as $card): ?>
+              <?php
+                $target = '';
+                $username = $card->getCatUsername();
+                if (strstr($username, '.')) {
+                  [$target, $username] = explode('.', $username, 2);
+                }
+                $display = $this->transEsc($card->getCardName() ?: $username);
+                if ($display == "$target.$username") {
+                  $display = $username;
+                }
+                if ($target && $targetCount > 1) {
+                  $display .= ' (' . $this->transEsc("source_$target", null, $target) . ')';
+                }
+              ?>
+              <li>
+                <a aria-describedby="select-card-label-maincontent" role="menuitem" href="<?=$this->url('librarycards-selectcard')?>?cardID=<?=$this->escapeHtmlAttr($card->getId());?>" data-clear-account-cache><?=$display ?></a>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        </div>
       </div>
-    </div>
+    <?php endif; ?>
   <?php endif; ?>
 <?php endif; ?>
 <!-- END of: finna - librarycards/selectcard.phtml -->

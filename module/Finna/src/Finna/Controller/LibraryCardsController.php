@@ -32,6 +32,9 @@
 namespace Finna\Controller;
 
 use Finna\Db\Service\FinnaCacheServiceInterface;
+use Laminas\Cache\Storage\StorageInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use VuFind\Cache\CacheTrait;
 use VuFind\Db\Entity\UserCardEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\UserCardServiceInterface;
@@ -53,6 +56,22 @@ use function intval;
  */
 class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
 {
+    use CacheTrait;
+
+    /**
+     * Constructor
+     *
+     * @param ServiceLocatorInterface $sm    Service locator
+     * @param StorageInterface        $cache Object cache
+     */
+    public function __construct(
+        ServiceLocatorInterface $sm,
+        StorageInterface $cache
+    ) {
+        parent::__construct($sm);
+        $this->setCacheStorage($cache);
+    }
+
     /**
      * Send user's library cards to the view
      *
@@ -886,6 +905,47 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             );
         } catch (\VuFind\Exception\Mail $e) {
             $this->flashMessenger()->addMessage($e->getDisplayMessage(), 'error');
+        }
+    }
+
+    /**
+     * Fetch requested librarycard's barcode.
+     *
+     * @return \Laminas\Http\Response
+     */
+    public function displayBarcodeAction()
+    {
+        try {
+            if (!($id = $this->params()->fromRoute('id', $this->params()->fromQuery('id')))) {
+                return $this->redirect()->toRoute('myresearch-home');
+            }
+            if (!($user = $this->getUser())) {
+                return $this->forceLogin();
+            }
+            $userCardService = $this->getDbService(UserCardServiceInterface::class);
+            $card = $userCardService->getOrCreateLibraryCard($user, $id);
+            $username = $card['cat_username'];
+            if (strstr($username, '.')) {
+                [$target, $username] = explode('.', $username, 2);
+            }
+            $barcode = $card['barcode'] ?? $username;
+            $catalog = $this->getILS();
+            $patron = $catalog->patronLogin($card->getCatUsername(), $card['cat_password']);
+            if ($patron && $patron['cat_username'] === $card['cat_username']) {
+                if ($cacheBarcode = $this->getCachedData($card->getCardName())) {
+                    $barcode = $cacheBarcode;
+                } else {
+                    $profile = $catalog->getMyProfile($patron);
+                    if (!empty($profile['barcode'])) {
+                        $this->putCachedData($card->getCardName(), $profile['barcode']);
+                        $barcode = $profile['barcode'];
+                    }
+                }
+            }
+            return $this->redirect()->toRoute('barcode-show', [], ['query' => ['code' => $barcode]]);
+        } catch (\VuFind\Exception\LibraryCard $e) {
+            $this->flashMessenger()->addMessage($e->getMessage(), 'error');
+            return false;
         }
     }
 
