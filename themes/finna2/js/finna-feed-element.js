@@ -4,6 +4,7 @@ class FinnaFeedElement extends HTMLElement {
 
   /**
    * Observed attributes
+   * @returns {Array} Attributes which triggers change event when changed
    */
   static get observedAttributes() {
     return ['feed-id'];
@@ -11,8 +12,7 @@ class FinnaFeedElement extends HTMLElement {
 
   /**
    * Get feed id
-   *
-   * @return {string}
+   * @returns {string} Feed id currently set
    */
   get feedId() {
     return this.getAttribute('feed-id') || '';
@@ -20,7 +20,6 @@ class FinnaFeedElement extends HTMLElement {
 
   /**
    * Set feed id
-   *
    * @param {string} newValue Value to set
    */
   set feedId(newValue) {
@@ -40,11 +39,9 @@ class FinnaFeedElement extends HTMLElement {
 
   /**
    * Calculate feed scroll speed for splide.
-   *
    * @param {number} scrollCnt   Amount of slides to scroll
    * @param {number} scrollSpeed Default scroll speed to multiply
-   *
-   * @return {number}
+   * @returns {number} Calculated scroll speed
    */
   calculateScrollSpeed(scrollCnt, scrollSpeed) {
     return scrollSpeed * Math.max(1, (scrollCnt / 5));
@@ -53,8 +50,7 @@ class FinnaFeedElement extends HTMLElement {
   /**
    * Adjust titles. Useful when the screen size changes so the elements
    * look as they should.
-   *
-   * @param settings Carousel settings
+   * @param {object} settings Carousel settings
    */
   setTitleBottom(settings) {
     // Move title field below image
@@ -107,7 +103,6 @@ class FinnaFeedElement extends HTMLElement {
 
   /**
    * Add proper classes for arrow buttons.
-   *
    * @param {boolean} vertical Is the carousel vertical?
    */
   adjustArrowButtons(vertical) {
@@ -124,7 +119,6 @@ class FinnaFeedElement extends HTMLElement {
   /**
    * When the feed is loaded or found from the internal cache.
    * Constructs the feed into the dom.
-   *
    * @param {object} jsonResponse The response obtained from the backend.
    */
   buildFeedDom(jsonResponse) {
@@ -377,7 +371,6 @@ class FinnaFeedElement extends HTMLElement {
 
   /**
    * Observed attribute value changed
-   *
    * @param {string} name     Name of the attribute
    */
   attributeChangedCallback(name) {

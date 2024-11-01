@@ -39,6 +39,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use VuFind\Config\PathResolver;
 
 use function array_key_exists;
+use function array_slice;
 use function count;
 use function dirname;
 use function in_array;
@@ -188,6 +189,13 @@ class LessToScssCommand extends Command
                 InputOption::VALUE_NONE,
                 'If specified, enables SCSS in the target theme(s)',
             )
+            ->addOption(
+                'check_config',
+                null,
+                InputOption::VALUE_NONE,
+                'When enabled, checks style.ini in target directories and skips conversion if mode is already scss or'
+                . ' skip_conversion option is set.'
+            )
             ->addArgument(
                 'main_file',
                 InputArgument::REQUIRED | InputArgument::IS_ARRAY,
@@ -213,6 +221,7 @@ class LessToScssCommand extends Command
         $this->enableScss = $input->getOption('enable_scss');
         $variablesFile = $input->getOption('variables_file');
         $patterns = $input->getArgument('main_file');
+        $checkConfig = $input->getOption('check_config');
 
         foreach ($patterns as $pattern) {
             foreach (glob($pattern) as $mainFile) {
@@ -221,7 +230,7 @@ class LessToScssCommand extends Command
                         continue 2;
                     }
                 }
-                $this->output->writeln("<info>Processing $mainFile");
+
                 $this->allFiles = [];
                 $this->allLessVars = [];
 
@@ -230,6 +239,23 @@ class LessToScssCommand extends Command
                 $this->variablesFile = $variablesFile
                     ? $this->sourceDir . '/' . preg_replace('/\.scss$/', '', $variablesFile)
                     : null;
+
+                if ($checkConfig) {
+                    // Check style.ini in target directory and skip conversion if appropriate:
+                    $styleIni = $this->targetDir . '/style.ini';
+                    if (file_exists($styleIni)) {
+                        $styleConfig = parse_ini_file($styleIni, true);
+                        if (
+                            (($styleConfig['General']['mode'] ?? null) === 'scss')
+                            || ($styleConfig['General']['skip_conversion'] ?? false)
+                        ) {
+                            $this->output->writeln("<info>Skipping $mainFile due to configuration in style.ini");
+                            continue;
+                        }
+                    }
+                }
+
+                $this->output->writeln("<info>Processing $mainFile");
                 // First read all vars:
                 if (!$this->discoverLess($mainFile, $this->allLessVars)) {
                     return Command::FAILURE;
@@ -277,8 +303,7 @@ class LessToScssCommand extends Command
                 continue;
             }
             $lineId = "$filename:$lineNo";
-            $parts = explode('//', $line, 2);
-            $line = $parts[0];
+            [$line] = $this->extractComment($line);
 
             $cStart = strpos($line, '/*');
             $cEnd = strrpos($line, '*/');
@@ -287,7 +312,7 @@ class LessToScssCommand extends Command
             } elseif (false !== $cEnd) {
                 $inComment = false;
             }
-            if ($inComment) {
+            if ($inComment || preg_match('/^\s*\/\*.*\*\/\s*$/', $line)) {
                 continue;
             }
 
@@ -347,9 +372,8 @@ class LessToScssCommand extends Command
                 continue;
             }
             $lineId = "$filename:$lineNo";
-            $parts = explode('//', $line, 2);
-            $line = $parts[0];
-            $comments = $parts[1] ?? null;
+
+            [$line, $comments] = $this->extractComment($line);
 
             if (str_starts_with(trim($line), '@mixin ')) {
                 $inMixin = $this->getBlockLevelChange($line);
@@ -369,7 +393,7 @@ class LessToScssCommand extends Command
             } elseif (false !== $cEnd) {
                 $inComment = false;
             }
-            if ($inComment) {
+            if ($inComment || preg_match('/^\s*\/\*.*\*\/\s*$/', $line)) {
                 continue;
             }
 
@@ -389,12 +413,55 @@ class LessToScssCommand extends Command
                     ];
                 }
             }
-            $lines[$idx] = $line . ($comments ? "//$comments" : '');
+            $lines[$idx] = $line . (null !== $comments ? "//$comments" : '');
         }
 
         $this->updateFileCollection($filename, compact('lines', 'requiredVars'));
 
         return true;
+    }
+
+    /**
+     * Extract a single-line comment from a line
+     *
+     * @param string $line Line
+     *
+     * @return array remaining line and the comment (or null)
+     */
+    protected function extractComment(string $line): array
+    {
+        $result = '';
+        $comment = null;
+        $inSingle = false;
+        $inDouble = false;
+        $escape = false;
+        for ($i = 0; $i < mb_strlen($line, 'UTF-8'); $i++) {
+            $ch = mb_substr($line, $i, 1, 'UTF-8');
+            switch ($ch) {
+                case '"':
+                    if (!$inSingle) {
+                        $inDouble = !$inDouble;
+                    }
+                    break;
+                case "'":
+                    if (!$inDouble) {
+                        $inSingle = !$inSingle;
+                    }
+                    break;
+                case '\\':
+                    $escape = !$escape;
+                    break;
+                case '/':
+                    // Check for a comment:
+                    if (!$inSingle && !$inDouble && !$escape && mb_substr($line, $i + 1, 1, 'UTF-8') === '/') {
+                        $comment = mb_substr($line, $i + 2, null, 'UTF-8');
+                        break 2;
+                    }
+                    break;
+            }
+            $result .= $ch;
+        }
+        return [$result, $comment];
     }
 
     /**
@@ -707,12 +774,6 @@ class LessToScssCommand extends Command
      */
     protected function writeTargetFiles(): bool
     {
-        if (!file_exists($this->targetDir)) {
-            if (!mkdir($this->targetDir, 0o777, true)) {
-                $this->error("Could not create target directory $this->targetDir");
-                return false;
-            }
-        }
         // If we have a variables file, collect all variables needed by later files and add them:
         if ($this->variablesFile) {
             $variablesFileIndex = $this->allFiles[$this->variablesFile]['index'] ?? PHP_INT_MAX;
@@ -743,6 +804,10 @@ class LessToScssCommand extends Command
             if (!$this->isInTargetDir($fullPath)) {
                 continue;
             }
+            if (!$this->ensureTargetDirectory($fullPath)) {
+                return false;
+            }
+
             $lines = $fileSpec['lines'] ?? [];
 
             // Add !default to existing variables (unless excluded):
@@ -812,6 +877,33 @@ class LessToScssCommand extends Command
             $fullPath .= '.scss';
         }
         return $fullPath;
+    }
+
+    /**
+     * Ensure that the directory for the given file exists
+     *
+     * @param string $filename File name
+     *
+     * @return bool
+     */
+    protected function ensureTargetDirectory(string $filename): bool
+    {
+        $dirParts = explode(DIRECTORY_SEPARATOR, dirname($filename));
+        // Create the directory recursively for the parts that don't exist:
+        for ($i = 1; $i <= count($dirParts); $i++) {
+            $path = implode(DIRECTORY_SEPARATOR, array_slice($dirParts, 0, $i));
+            // An absolute path has an empty element at the beginning:
+            if ('' === $path) {
+                continue;
+            }
+            if (!is_dir($path)) {
+                if (!mkdir($path)) {
+                    $this->error("Could not create directory $path");
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

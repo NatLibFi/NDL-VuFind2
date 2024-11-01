@@ -94,6 +94,7 @@ class RecordFactory implements FactoryInterface
                 $container->get(\VuFind\Cover\Router::class)
             );
         }
+        $helper->setSearchMemory($container->get(\VuFind\Search\Memory::class));
         return $helper;
     }
 }

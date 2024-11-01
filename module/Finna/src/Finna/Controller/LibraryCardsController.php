@@ -880,7 +880,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             );
             $this->serviceLocator->get(\VuFind\Mailer\Mailer::class)->send(
                 $email,
-                $config->Site->email,
+                $this->getEmailSenderAddress($config),
                 $subject,
                 $message
             );

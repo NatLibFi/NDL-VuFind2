@@ -2,6 +2,9 @@
 finna.record = (function finnaRecord() {
   var accordionTitleHeight = 64;
 
+  /**
+   * Initialize description for record
+   */
   function initDescription() {
     var description = $('#description_text');
     if (description.length) {
@@ -45,6 +48,9 @@ finna.record = (function finnaRecord() {
       $(this).parents('.fulltextField').find('.show-hide-button').trigger("focus");
     });
   }
+  /**
+   * Show details handler for record
+   */
   function showDetails() {
     $('.record-information .record-details-more').removeClass('hidden');
     $('.show-details-button').addClass('hidden');
@@ -52,6 +58,9 @@ finna.record = (function finnaRecord() {
     $('.record .description .more-link.wide').trigger("click");
     sessionStorage.setItem('finna_record_details', '1');
   }
+  /**
+   * Hide details handler for record
+   */
   function hideDetails() {
     $('.record-information .record-details-more').addClass('hidden');
     $('.hide-details-button').addClass('hidden');
@@ -59,6 +68,9 @@ finna.record = (function finnaRecord() {
     $('.record .description .less-link.wide').trigger("click");
     sessionStorage.removeItem('finna_record_details');
   }
+  /**
+   * Initialize details handlers for record buttons
+   */
   function initHideDetails() {
     $('.show-details-button').on('click', function onClickShowDetailsButton() {
       showDetails();
@@ -80,6 +92,12 @@ finna.record = (function finnaRecord() {
     }
   }
 
+  /**
+   * Get requested link data
+   * @param {HTMLAnchorElement} element Anchor element to parse params from
+   * @param {string} recordId Record id to add into returned data
+   * @returns {object} Object containing anchor elements query data as key value pairs
+   */
   function getRequestLinkData(element, recordId) {
     var vars = {}, hash;
     var hashes = element.href.slice(element.href.indexOf('?') + 1).split('&');
@@ -94,6 +112,11 @@ finna.record = (function finnaRecord() {
     return vars;
   }
 
+  /**
+   * Check if record request is valid
+   * @param {Array} elements Array containing anchor links
+   * @param {string} requestType Type of the request
+   */
   function checkRequestsAreValid(elements, requestType) {
     if (!elements[0]) {
       return;
@@ -127,6 +150,10 @@ finna.record = (function finnaRecord() {
       });
   }
 
+  /**
+   * Fetch holdings details for record
+   * @param {Array} elements Array containing holdings containers
+   */
   function fetchHoldingsDetails(elements) {
     if (!elements[0]) {
       return;
@@ -167,6 +194,10 @@ finna.record = (function finnaRecord() {
     });
   }
 
+  /**
+   * Fetch wayfinder markers
+   * @param {Array} markers Array containing containers to fetch markers into
+   */
   function fetchWayfinderMarkers(markers) {
     const locationMap = {};
     markers.forEach((element) => {
@@ -217,6 +248,9 @@ finna.record = (function finnaRecord() {
       });
   }
 
+  /**
+   * Initial setup for checking requests on tab load
+   */
   function setUpCheckRequest() {
     checkRequestsAreValid($('.expandedCheckRequest').removeClass('expandedCheckRequest'), 'Hold');
     checkRequestsAreValid($('.expandedCheckStorageRetrievalRequest').removeClass('expandedCheckStorageRetrievalRequest'), 'StorageRetrievalRequest');
@@ -225,6 +259,9 @@ finna.record = (function finnaRecord() {
     fetchWayfinderMarkers(document.querySelectorAll('.copy-details:not(.collapsed) .js-wayfinder-placeholder'));
   }
 
+  /**
+   * Initialize controls for holdings
+   */
   function initHoldingsControls() {
     $('.record-holdings-table:not(.electronic-holdings) .holdings-container-heading').on('keydown', function onClickHeading(e) {
       if (e.keyCode === 13 || e.keyCode === 32) {
@@ -253,6 +290,9 @@ finna.record = (function finnaRecord() {
     });
   }
 
+  /**
+   * Augment online links from holdings into record urls
+   */
   function augmentOnlineLinksFromHoldings() {
     $('.electronic-holdings a').each(function handleLink() {
       var $a = $(this);
@@ -282,6 +322,9 @@ finna.record = (function finnaRecord() {
 
   }
 
+  /**
+   * Set up holdings tab
+   */
   function setupHoldingsTab() {
     initHoldingsControls();
     setUpCheckRequest();
@@ -292,6 +335,9 @@ finna.record = (function finnaRecord() {
     finna.common.initQrCodeLink($('.holdings-tab'));
   }
 
+  /**
+   * Set up locations tab for ead3
+   */
   function setupLocationsEad3Tab() {
     $('.holdings-container-heading').on('click', function onClickHeading() {
       $(this).nextUntil('.holdings-container-heading').toggleClass('collapsed');
@@ -306,12 +352,18 @@ finna.record = (function finnaRecord() {
     });
   }
 
+  /**
+   * Set up holdings archive tab
+   */
   function setupHoldingsArchiveTab() {
     $('.external-data-heading').on('click', function onClickHeading() {
       $(this).toggleClass('collapsed');
     });
   }
 
+  /**
+   * Initialize record navigation hash update event listener when window hash changes
+   */
   function initRecordNaviHashUpdate() {
     $(window).on('hashchange', function onHashChange() {
       $('.pager a').each(function updateHash(i, a) {
@@ -321,6 +373,9 @@ finna.record = (function finnaRecord() {
     $(window).trigger('hashchange');
   }
 
+  /**
+   * Initialize audio accordions
+   */
   function initAudioAccordion() {
     $('.audio-accordion .audio-item-wrapper').first().addClass('active');
     $('.audio-accordion .audio-title-wrapper').on('click', function audioAccordionClicker() {
@@ -329,7 +384,14 @@ finna.record = (function finnaRecord() {
     });
   }
 
-  // The accordion has a delicate relationship with the tabs. Handle with care!
+
+  /**
+   * Toggle an accordion
+   * The accordion has a delicate relationship with the tabs. Handle with care!
+   * @param {jQuery} accordion Accordion container
+   * @param {boolean} _initialLoad Should this accordion be initially loaded
+   * @returns {boolean} Keep looking for next tab
+   */
   function _toggleAccordion(accordion, _initialLoad) {
     var initialLoad = typeof _initialLoad === 'undefined' ? false : _initialLoad;
     var tabid = accordion.find('.accordion-toggle a').data('tab');
@@ -365,6 +427,9 @@ finna.record = (function finnaRecord() {
     return false;
   }
 
+  /**
+   * Initialize a record accordion
+   */
   function initRecordAccordion() {
     $('.record-accordions .accordion-toggle').on('click', function accordionClicked(e) {
       return _toggleAccordion($(e.target).closest('.accordion'));
@@ -379,6 +444,10 @@ finna.record = (function finnaRecord() {
     }
   }
 
+  /**
+   * Apply record accordion hash
+   * @param {Function} callback Callback to call for accordion if set
+   */
   function applyRecordAccordionHash(callback) {
     var newTab = typeof window.location.hash !== 'undefined'
       ? window.location.hash.toLowerCase() : '';
@@ -400,7 +469,11 @@ finna.record = (function finnaRecord() {
     }
   }
 
-  //Toggle accordion at the start so the accordions work properly
+  /**
+   * Toggle accordion at the start so the accordions work properly
+   * @param {jQuery} accordion Accordion to toggle
+   * @returns {boolean|void} True if not found or none
+   */
   function initialToggle(accordion) {
     var $recordTabs = $('.record-tabs');
     var $tabContent = $recordTabs.find('.tab-content');
@@ -421,6 +494,11 @@ finna.record = (function finnaRecord() {
     }
   }
 
+  /**
+   * Load recommended records
+   * @param {jQuery} container Container to load records to
+   * @param {string} method Method for ajax call
+   */
   function loadRecommendedRecords(container, method)
   {
     if (container.length === 0) {
@@ -447,20 +525,35 @@ finna.record = (function finnaRecord() {
       });
   }
 
+  /**
+   * Load similar records support function
+   */
   function loadSimilarRecords()
   {
     loadRecommendedRecords($('.sidebar .similar-records'), 'getSimilarRecords');
   }
 
+  /**
+   * Load record related records support function
+   */
   function loadRecordDriverRelatedRecords()
   {
     loadRecommendedRecords($('.sidebar .record-driver-related-records'), 'getRecordDriverRelatedRecords');
   }
 
+  /**
+   * Initialize record versions support function
+   * @param {jQuery} _holder Container to init
+   */
   function initRecordVersions(_holder) {
     VuFind.recordVersions.init(_holder);
   }
 
+  /**
+   * Handle redirect history
+   * @param {string} oldId Old id to check
+   * @param {string} newId New id to apply
+   */
   function handleRedirect(oldId, newId) {
     if (window.history.replaceState) {
       var pathParts = window.location.pathname.split('/');
@@ -473,6 +566,9 @@ finna.record = (function finnaRecord() {
     }
   }
 
+  /**
+   * Initialize popovers for record
+   */
   function initPopovers() {
     var closeField = function (field, setFocus = false) {
       field.classList.remove('open');
@@ -581,6 +677,9 @@ finna.record = (function finnaRecord() {
     });
   }
 
+  /**
+   * Initialize similar carousels
+   */
   function initSimilarCarousel()
   {
     var container = document.querySelector('.similar-carousel .splide');
@@ -610,6 +709,9 @@ finna.record = (function finnaRecord() {
     });
   }
 
+  /**
+   * Initialize finna record module
+   */
   function init() {
     initHideDetails();
     initDescription();

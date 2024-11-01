@@ -1,5 +1,12 @@
 /*global VuFind, finna, L */
 finna.linkedEvents = (function finnaLinkedEvents() {
+  /**
+   * Get events from providers
+   * @param {object} params Object containing params for ajax
+   * @param {Function} callback Callback for successful event fetch
+   * @param {boolean} append Should data be appended after previous results?
+   * @param {jQuery} container Container where the data is handled
+   */
   function getEvents(params, callback, append, container) {
     var limit = {'page_size': container.data('limit')};
     params.query = $.extend(params.query, limit);
@@ -42,6 +49,10 @@ finna.linkedEvents = (function finnaLinkedEvents() {
       });
   }
 
+  /**
+   * Initialize the linked events map
+   * @param {object} coordinates Contains latitude and longitude
+   */
   function initEventMap(coordinates) {
     var mapCanvas = $('.linked-events-map');
     var map = finna.map.initMap(mapCanvas, false, {center: coordinates, zoom: 15});
@@ -135,6 +146,10 @@ finna.linkedEvents = (function finnaLinkedEvents() {
     }
   };
 
+  /**
+   * Get event content
+   * @param {string} id Event id
+   */
   function getEventContent(id) {
     var params = {};
     params.query = {'id': id};
@@ -142,6 +157,11 @@ finna.linkedEvents = (function finnaLinkedEvents() {
     getEvents(params, handleSingleEvent, false, container, false);
   }
 
+  /**
+   * Event handler for key press
+   * @param {object} e Event object
+   * @returns {boolean} Allow event
+   */
   function keyHandler(e/*, cb*/) {
     if (e.which === 13 || e.which === 32) {
       $(e.target).trigger("click");
@@ -151,6 +171,12 @@ finna.linkedEvents = (function finnaLinkedEvents() {
     return true;
   }
 
+  /**
+   * Toggle linked events accordion
+   * @param {jQuery} container Container containing the linked events elements
+   * @param {jQuery} accordion Accordion in the linked events elements 
+   * @returns {boolean} Should content be loaded
+   */
   function toggleAccordion(container, accordion) {
     var tabContent = container.find('.tab-content').detach();
     var searchTools = container.find('.events-searchtools-container').detach();
@@ -185,6 +211,10 @@ finna.linkedEvents = (function finnaLinkedEvents() {
     return loadContent;
   }
 
+  /**
+   * Initialize accordions in linked events
+   * @param {jQuery} container Container to find accordion from
+   */
   function initAccordions(container) {
     container.find($('.event-accordions .accordion')).on('click', function accordionClicked(/*e*/) {
       var accordion = $(this);
@@ -207,6 +237,10 @@ finna.linkedEvents = (function finnaLinkedEvents() {
 
   }
 
+  /**
+   * Initialize event tabs
+   * @param {string} id Id of the event tabs
+   */
   function initEventsTabs(id) {
     var container = $('.linked-events-tabs[id="' + id + '"]');
     var initial = container.find($('li.nav-item.event-tab.active'));

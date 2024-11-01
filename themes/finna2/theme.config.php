@@ -196,7 +196,6 @@ return [
         'checkouts.js',
         'collection_record.js',
         'combined-search.js',
-        'cookie.js',
         'covers.js',
         'doi.js',
         'embedded_record.js',

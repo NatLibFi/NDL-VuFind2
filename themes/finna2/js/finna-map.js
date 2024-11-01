@@ -1,6 +1,11 @@
 /*global VuFind, finna, L */
 finna.map = (function finnaMap() {
 
+  /**
+   * Add a remove button for leaflet popup
+   * @param {object} layer Leaflet layer to bind to
+   * @param {object} featureGroup Feature group to reference in remove button click
+   */
   function addRemoveButton(layer, featureGroup) {
     var button = $('<a/>')
       .html(VuFind.icon('map-remove'))
@@ -12,6 +17,10 @@ finna.map = (function finnaMap() {
     layer.bindPopup(button.get(0), {closeButton: false});
   }
 
+  /**
+   * Initialize map zooming
+   * @param {object} map Leaflet map layer
+   */
   function initMapZooming(map) {
     // Add zoom control with translated tooltips
     L.control.zoom({
@@ -31,6 +40,13 @@ finna.map = (function finnaMap() {
     map.scrollWheelZoom.disable();
   }
 
+  /**
+   * Initialize a map
+   * @param {jQuery} $mapContainer Container which acts as a canvas for the map
+   * @param {boolean} editable Is the map editable
+   * @param {object} _options Settings for the map
+   * @returns {object|void} Object if map canvas found and void if not
+   */
   function initMap($mapContainer, editable, _options) {
     var mapCanvas = $mapContainer;
     if (mapCanvas.length === 0) {
