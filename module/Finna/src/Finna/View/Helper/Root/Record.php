@@ -41,6 +41,7 @@ use Finna\Search\Solr\AuthorityHelper;
 use Finna\Service\UserPreferenceService;
 use Laminas\Config\Config;
 use VuFind\Record\Loader;
+use VuFind\Search\UrlQueryHelper;
 use VuFind\Tags\TagsService;
 use VuFind\View\Helper\Root\Url;
 
@@ -370,7 +371,8 @@ class Record extends \VuFind\View\Helper\Root\Record
             $lookfor = $lookfor['name'];
         }
         $searchAction = !empty($this->getView()->browse)
-            ? 'browse-' . $this->getView()->browse : $params['searchAction'] ?? '';
+            ? 'browse-' . $this->getView()->browse
+            : ($params['searchAction'] ?? null);
         $params ??= [];
 
         $linkType = $params['linkType'] ?? $this->getAuthorityLinkType($type);
@@ -404,21 +406,42 @@ class Record extends \VuFind\View\Helper\Root\Record
                 'searchAction' => $searchAction,
             ]
         );
-        $result = $this->renderTemplate(
+        $link = $this->renderTemplate(
             'link-' . $type . '.phtml',
             $params
         );
 
-        if ($result && $searchTabsFilters) {
-            $prepend = (!str_contains($result, '?')) ? '?' : '&amp;';
-            $result .= $this->getView()->plugin('searchTabs')->getCurrentHiddenFilterParams(
-                $this->driver->getSourceIdentifier(),
-                false,
-                $prepend
-            );
+        if ($link && $searchTabsFilters) {
+            $prepend = (!str_contains($link, '?')) ? '?' : '&amp;';
+
+            $hiddenFilters = null;
+            // Try to get hidden filters for the current search:
+            if ($this->searchMemory) {
+                $searchId = $this->driver->getExtraDetail('searchId')
+                    ?? $this->getView()->plugin('searchMemory')->getLastSearchId();
+                if ($searchId && ($search = $this->searchMemory->getSearchById($searchId))) {
+                    $filters = UrlQueryHelper::buildQueryString(
+                        [
+                            'hiddenFilters' => $search->getParams()->getHiddenFiltersAsQueryParams(),
+                        ]
+                    );
+                    $hiddenFilters = $filters ? $prepend . $filters : '';
+                }
+            }
+            // If we couldn't get hidden filters for the current search, use last filters:
+            if (null === $hiddenFilters) {
+                $hiddenFilters = $this->getView()->plugin('searchTabs')
+                    ->getCurrentHiddenFilterParams(
+                        $this->driver->getSearchBackendIdentifier(),
+                        false,
+                        $prepend
+                    );
+            }
+
+            $link .= $hiddenFilters;
         }
 
-        return $withInfo ? [$result, $type] : $result;
+        return $withInfo ? [$link, $type] : $link;
     }
 
     /**

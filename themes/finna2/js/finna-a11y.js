@@ -1,5 +1,8 @@
 /*global finna */
 finna.a11y = (function a11y() {
+  /**
+   * Initialize event listeners for bootstrap accessibility
+   */
   function initA11y() {
 
     // On dropdown open

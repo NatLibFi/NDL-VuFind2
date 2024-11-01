@@ -235,11 +235,8 @@ class ListController extends \VuFind\Controller\AbstractBase
      */
     protected function createNoAccessView()
     {
-        $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class)
-            ->get('config');
         $view = $this->createViewModel();
         $view->setTemplate('list/no_access');
-        $view->email = $config->Site->email;
         return $view;
     }
 }

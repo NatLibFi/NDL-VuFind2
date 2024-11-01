@@ -1,6 +1,12 @@
 /*global VuFind, finna, videojs */
 finna.videoPopup = (function finnaVideoPopup() {
 
+  /**
+   * Initialize video js component
+   * @param {HTMLElement} _container Container which contains video element
+   * @param {object} videoSources Object containing video sources
+   * @param {string} posterUrl Poster url
+   */
   function initVideoJs(_container, videoSources, posterUrl) {
     var $container = $(_container);
     var $videoElem = $(_container).find('video');

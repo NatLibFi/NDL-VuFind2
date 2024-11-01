@@ -6,11 +6,18 @@ finna.myList = (function finnaMyList() {
   var save = false;
   var refreshLists = null;
 
-  // This is duplicated in image-popup.js to avoid dependency
+  /**
+   * Get current active list id
+   * @returns {string} Active list id
+   */
   function getActiveListId() {
     return $('input[name="listID"]').val();
   }
 
+  /**
+   * Toggle an error message
+   * @param {boolean} mode Should the message be shown
+   */
   function toggleErrorMessage(mode) {
     var $msg = $('.mylist-error');
     $msg.addClass('alert alert-danger');
@@ -20,6 +27,11 @@ finna.myList = (function finnaMyList() {
     }
   }
 
+  /**
+   * Toggle spinner
+   * @param {jQuery | HTMLElement} target jQuery element or FinnaMdEditable
+   * @param {boolean} mode Should the spinner be displayed
+   */
   function toggleSpinner(target, mode) {
     if (target === mdEditable) {
       mdEditable.setBusy(!mdEditable.isBusy());
@@ -37,6 +49,12 @@ finna.myList = (function finnaMyList() {
     target.toggleClass('fa-spinner fa-spin list-save', mode);
   }
 
+  /**
+   * Update a list entity
+   * @param {object} params List params as object
+   * @param {Function} callback Function to call after edit list is successful
+   * @param {string} type Type of the update list update method
+   */
   function updateList(params, callback, type) {
     save = true;
     var spinner = null;
@@ -123,6 +141,11 @@ finna.myList = (function finnaMyList() {
       });
   }
 
+  /**
+   * Add resources to a list
+   * @param {string} listId Id of the list
+   * @param {string} currentListId Current list id
+   */
   function addResourcesToList(listId, currentListId = '') {
     toggleErrorMessage(false);
 
@@ -158,6 +181,10 @@ finna.myList = (function finnaMyList() {
       });
   }
 
+  /**
+   * Toggle title to be editable
+   * @param {boolean} mode Should the title be editable
+   */
   function toggleTitleEditable(mode) {
     var target = $('.list-title span');
     var currentTitle;
@@ -190,6 +217,10 @@ finna.myList = (function finnaMyList() {
     $('.list-title').toggleClass('disable', !mode);
   }
 
+  /**
+   * List description changed handler
+   * @param {object} data Object containing descHtml, desc
+   */
   function listDescriptionChanged(data) {
     var description = $('.list-description [data-markdown]');
     if (data.desc === '') {
@@ -207,6 +238,10 @@ finna.myList = (function finnaMyList() {
   // fixes jshint error from using initListTagComponent before it's defined.
   var initListTagComponent;
 
+  /**
+   * List tags changed handler
+   * @param {object} data Object containing tags-edit, tags
+   */
   function listTagsChanged(data) {
     $('.list-tags .edit-tags .tags').html(data['tags-edit']);
     $('.list-tags .view-tags').html(data.tags);
@@ -231,6 +266,10 @@ finna.myList = (function finnaMyList() {
     });
   };
 
+  /**
+   * New list added handler
+   * @param {object} data Object containing title, id
+   */
   function newListAdded(data) {
     var title = data.title;
     var newTitle = title.length > 20 ? title.substring(0, 20) + '...' : title;
@@ -245,6 +284,11 @@ finna.myList = (function finnaMyList() {
   }
 
 
+  /**
+   * Update list resource
+   * @param {object} params Params for ajax edit list resource
+   * @param {jQuery} input Input element to find notes from
+   */
   function updateListResource(params, input /*, row*/) {
     save = true;
     toggleErrorMessage(false);
@@ -282,6 +326,9 @@ finna.myList = (function finnaMyList() {
       });
   }
 
+  /**
+   * Initialize edit components for list
+   */
   function initEditComponents() {
     var isDefaultList = typeof getActiveListId() == 'undefined';
 
@@ -306,6 +353,11 @@ finna.myList = (function finnaMyList() {
         var form = $('.delete-list');
         var prompt = form.find('.dropdown-menu');
 
+        /**
+         * Reposition prompt handler
+         * @param {object} ev Event object
+         * @param {object} data Object containing dimension data
+         */
         function repositionPrompt(ev, data) {
           var pos = target.offset();
           var left = data.w / 2 - prompt.width() / 2;
@@ -316,6 +368,9 @@ finna.myList = (function finnaMyList() {
           });
         }
 
+        /**
+         * Initialize reposition listener for prompt
+         */
         function initRepositionListener() {
           $(window).on('throttled-resize.finna', repositionPrompt);
         }
@@ -405,6 +460,9 @@ finna.myList = (function finnaMyList() {
       });
   };
 
+  /**
+   * Initialize favorite ordering functionality
+   */
   function initFavoriteOrderingFunctionality() {
     var el = document.getElementById('sortable');
     var sortable = Sortable.create(el);
@@ -421,6 +479,9 @@ finna.myList = (function finnaMyList() {
     });
   }
 
+  /**
+   * Initialize listeners when editable opens
+   */
   function initListeners() {
     $(document).on('finna:openEditable', function onOpenEditable(event) {
       if (event.editable.element.hasClass('list-description')
@@ -469,6 +530,9 @@ finna.myList = (function finnaMyList() {
     });
   }
 
+  /**
+   * Initialize multi page selection events
+   */
   function initMultiPageSelection() {
     const favoriteForm = document.querySelector('form[name=bulkActionForm]');
     if (!favoriteForm) {
