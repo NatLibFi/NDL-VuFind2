@@ -911,16 +911,16 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
     /**
      * Fetch requested librarycard's barcode.
      *
-     * @return \Laminas\Http\Response
+     * @return mixed
      */
-    public function displayBarcodeAction()
+    public function displayBarcodeAction(): mixed
     {
         try {
-            if (!($id = $this->params()->fromRoute('id', $this->params()->fromQuery('id')))) {
-                return $this->redirect()->toRoute('myresearch-home');
-            }
             if (!($user = $this->getUser())) {
                 return $this->forceLogin();
+            }
+            if (!($id = $this->params()->fromRoute('id', $this->params()->fromQuery('id')))) {
+                return $this->redirect()->toRoute('myresearch-home');
             }
             $userCardService = $this->getDbService(UserCardServiceInterface::class);
             $card = $userCardService->getOrCreateLibraryCard($user, $id);
