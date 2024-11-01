@@ -924,14 +924,14 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             }
             $userCardService = $this->getDbService(UserCardServiceInterface::class);
             $card = $userCardService->getOrCreateLibraryCard($user, $id);
-            $username = $card['cat_username'];
+            $username = $card->getCatUsername();
             if (strstr($username, '.')) {
                 [$target, $username] = explode('.', $username, 2);
             }
-            $barcode = $card['barcode'] ?? $username;
+            $barcode = $card->barcode ?? $username;
             $catalog = $this->getILS();
-            $patron = $catalog->patronLogin($card->getCatUsername(), $card['cat_password']);
-            if ($patron && $patron['cat_username'] === $card['cat_username']) {
+            $patron = $catalog->patronLogin($card->getCatUsername(), $card->getRawCatPassword());
+            if ($patron && $patron['cat_username'] === $card->getCatUsername()) {
                 if ($cacheBarcode = $this->getCachedData($card->getCardName())) {
                     $barcode = $cacheBarcode;
                 } else {
