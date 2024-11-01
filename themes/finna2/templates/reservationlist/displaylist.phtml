@@ -1,0 +1,124 @@
+<!-- START of: finna - reservationlist/displaylist.phtml -->
+<?php
+  // Set up page title:
+  $this->headTitle($this->translate('ReservationList::Reservation List'));
+
+  // Set up breadcrumbs:
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('reservationlist-displaylist', ['id' => $this->id]) . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('ReservationList::Reservation List') . '</li>';
+
+  $user = $this->auth()->isLoggedIn();
+  $recordTotal = $this->results->getResultTotal();
+  $listProperties = $this->reservationList($user)->getListProperties($this->list->getInstitution(), $this->list->getListConfigIdentifier());
+?>
+
+<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'reservationlist']); ?>
+
+<div class="<?=$this->layoutClass('mainbody-myresearch')?> reservation-list-body">
+  <div class="my-research-content">
+    <div class="title-wrapper">
+      <h2><?=$this->transEsc('ReservationList::Reservation List') . ': ' . $this->transEsc($list->getTitle()) ?></h2>
+    </div>
+    <?= $this->flashmessages() ?>
+    <?php // TODO: create a component which handles the defaulting into prettier form ?>
+    <div class="description-wrapper">
+      <?php if (!$this->translationEmpty($listProperties['translation_keys']['title'])): ?>
+        </p><?= $this->transEsc($listProperties['translation_keys']['title']); ?></p>
+      <?php else: ?>
+        <p><?= $this->transEscWithPrefix('source_', $this->list->getInstitution()) . ': ' . $this->escapeHtml($this->list->getListConfigIdentifier()); ?></p>
+      <?php endif; ?>
+    </div>
+    <?php if (!$this->translationEmpty($listProperties['translation_keys']['description'])): ?>
+      <div class="description-wrapper">
+        <p><?= $this->transEsc($listProperties['translation_keys']['description']); ?></p>
+      </div>
+    <?php endif; ?>
+    <div class="description-wrapper">
+      <?php foreach ($listProperties['properties']['Information'] ?: $listProperties['institution_information'] as $value): ?>
+        <p><?=$this->escapeHtml($value);?></p>
+      <?php endforeach; ?>
+    </div>
+    <?php if ($this->list->getDescription() ?? false): ?>
+      <div class="description-wrapper">
+        <p><?=$this->escapeHtml($this->list->getDescription()); ?></p>
+      </div>
+    <?php endif; ?>
+    <?php if ($this->list->getCreated() ?? false): ?>
+      <div class="list-info">
+        <p><?= $this->transEsc('ReservationList::list_created', ['%%date%%' => $this->list->getCreated()->format('d.m.Y')]) ?></p>
+      </div>
+    <?php endif; ?>
+    <?php if ($this->list->getOrdered() ?? false): ?>
+      <div class="list-info">
+        <p><?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $this->list->getOrdered()->format('d.m.Y')]) ?></p>
+      </div>
+    <?php endif; ?>
+    <?php if ($this->list->getPickupDate() ?? false): ?>
+      <div class="list-info">
+        <p><?= $this->transEsc('ReservationList::list_pickup_date', ['%%date%%' => $this->list->getPickupDate()->format('d.m.Y')]) ?></p>
+      </div>
+    <?php endif; ?>
+    <div class="list-controls">
+      <?php if (!$this->list->getOrdered() && $this->results->getResults() && $listProperties['properties']['Enabled']): ?>
+        <!-- Add order buttons if the list has not been ordered yet. -->
+        <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-placeorder', ['id' => $this->list->getId()]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('ReservationList::Order List')?></a>
+      <?php endif; ?>
+      <span class="reservation-list-delete-wrapper">
+        <?=
+          $this->component(
+              'confirm-button',
+              [
+                'buttonLink' => $this->url('reservationlist-deletelist', [], ['query' => ['listID' => $list->getId()]]),
+                'buttonLabel' => 'delete_list',
+                'buttonClass' => 'btn btn-primary',
+                'confirmLink' => $this->url('reservationlist-deletelist', [], ['query' => ['listID' => $list->getId(), 'confirm' => 1]]),
+                'header' => 'confirm_delete_list_text',
+            ]
+          )
+        ?>
+      </span>
+    </div>
+    <div class="mylist-header">
+    <?php if ($recordTotal > 0): ?>
+      <div class="mylist-controls search-controls">
+        <div class="pagination-container">
+          <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results])?>
+        </div>
+        <div class="control-container hidden-print">
+          <?=$this->render('search/controls/sort.phtml')?>
+          <?=$this->render('search/controls/limit.phtml')?>
+        </div>
+      </div>
+      <div>
+        <div class="myaccount-sticky-header"></div>
+          <div class="toolbar-sticky-container">
+            <?php $multiPageSelection = ($this->config()->get('config')['Social']['multi_page_favorites_selection'] ?? true) ? ' multi-page-selection' : ''; ?>
+            <form class="form<?= $multiPageSelection ?>" id="form-reservation-<?= $this->list->getId() ?? ''?>" method="post" name="bulkActionForm" action="<?=$this->url('reservationlist-deletebulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
+              <input class="hidden all-ids-global" type="text" name="all_ids_global" value="<?= $this->escapeHtmlAttr(json_encode($this->results->getAllIds())) ?>">
+              <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
+              <div class="toolbar-sticky">
+                <?=$this->context($this)->renderInContext('reservationlist/bulk-action-buttons.phtml', ['idPrefix' => 'reservationlist_', 'list' => $list ?? null, 'account' => $this->account, 'lists' => $this->reservationList($user)->getReservationListsForUser()])?>
+              </div>
+              <?php foreach ($this->results->getResults() as $i => $current): ?>
+                <?php
+                  /** @var \Finna\View\Helper\Root\Record */
+                  $recordHelper = $this->record($current);
+                ?>
+                <?= $recordHelper->renderTemplate('list-entry.phtml', ['driver' => $current, 'user' => $this->user, 'list' => null]) ?>
+              <?php endforeach; ?>
+            </form>
+          </div>
+        </div>
+      <?php else: ?>
+        <div class="useraccount-header">
+          <h3><?=$this->transEsc('You do not have any saved resources')?></h3>
+        </div>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
+<div class="mylist-mobile mobile-navigation visible-xs visible-sm hidden-print">
+  <ul>
+    <li class="sidebar-navigation"><?=$this->icon('sidebar-expand') ?> <?=$this->transEsc('Your Lists')?></li>
+  </ul>
+</div>
+<!-- END of: finna - reservationlist/displaylist.phtml -->

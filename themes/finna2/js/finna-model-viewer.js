@@ -1,9 +1,9 @@
 /* global THREE, ObjectEditor, VuFind */
-
+/** TODO: This file will be removed in future. */
 /**
  * Get tangent
- *
- * @param {Integer} deg
+ * @param {number} deg Degree
+ * @returns {number} Calculated point
  */
 function getTanDeg(deg) {
   var rad = deg * Math.PI / 180;

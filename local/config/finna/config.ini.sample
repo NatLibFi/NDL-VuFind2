@@ -1897,3 +1897,8 @@ Search2 = tabs_local
 Solr = tabs_local
 SolrAuthority = tabs_authority
 Summon = tabs_summon
+
+; View specific options for reservation lists
+[ReservationList]
+; Enable functionality in view by uncommenting the next line
+;enabled = true

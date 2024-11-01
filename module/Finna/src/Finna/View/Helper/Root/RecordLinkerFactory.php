@@ -68,10 +68,12 @@ class RecordLinkerFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        return new $requestedName(
+        $helper = new $requestedName(
             $container->get(\VuFind\Record\Router::class),
             $container->get(\VuFind\Config\PluginManager::class)->get('datasources')
                 ->toArray()
         );
+        $helper->setSearchMemory($container->get(\VuFind\Search\Memory::class));
+        return $helper;
     }
 }

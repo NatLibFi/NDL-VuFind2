@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) The National Library of Finland 2022-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,6 +23,7 @@
  * @category Wayfinder
  * @package  AJAX
  * @author   Inlead <support@inlead.dk>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://inlead.dk
  */
@@ -41,6 +42,7 @@ use VuFind\AjaxHandler\AbstractBase;
  * @category Wayfinder
  * @package  AJAX
  * @author   Inlead <support@inlead.dk>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://inlead.dk
  */
@@ -72,22 +74,25 @@ class WayfinderPlacementLinkLookup extends AbstractBase
      */
     public function handleRequest(Params $params)
     {
-        $markerUrl = $this->wayfinderService->getMarker(
-            json_decode(
-                $params->fromQuery('placement', '[]'),
-                true,
-                512,
-                JSON_THROW_ON_ERROR
-            )
-        );
-
-        if (empty($markerUrl)) {
-            return $this->formatResponse('wayfinder_error', self::STATUS_HTTP_UNAVAILABLE);
+        if (!($locations = json_decode(file_get_contents('php://input'), true))) {
+            return $this->formatResponse([]);
         }
 
-        return $this->formatResponse([
-            'marker_url' => $markerUrl,
-            'status' => true,
-        ]);
+        $result = [];
+        foreach ($locations as $location) {
+            $markerUrl = $this->wayfinderService->getMarker(
+                json_decode(
+                    $location,
+                    true,
+                    512,
+                    JSON_THROW_ON_ERROR
+                )
+            );
+            if (!empty($markerUrl)) {
+                $result[$location] = $markerUrl;
+            }
+        }
+
+        return $this->formatResponse(['locations' => $result]);
     }
 }

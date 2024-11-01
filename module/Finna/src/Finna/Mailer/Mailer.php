@@ -31,8 +31,8 @@
 
 namespace Finna\Mailer;
 
-use Laminas\Mail\Address;
-use Laminas\View\Renderer\PhpRenderer as ViewRenderer;
+use Laminas\View\Renderer\PhpRenderer;
+use Symfony\Component\Mime\Address;
 use VuFind\Exception\Mail as MailException;
 use VuFind\RecordDriver\AbstractBase as AbstractRecord;
 
@@ -49,27 +49,29 @@ use VuFind\RecordDriver\AbstractBase as AbstractRecord;
 class Mailer extends \VuFind\Mailer\Mailer
 {
     /**
-     * Send an email message representing a record.
+     * Send an email message representing a list of records.
      *
-     * @param string           $to      Recipient email address
-     * @param string|Address   $from    Sender name and email address
-     * @param string           $msg     User notes to include in message
-     * @param AbstractRecord[] $records Records being emailed
-     * @param ViewRenderer     $view    View object (used to render email templates)
-     * @param string           $subject Subject for email  (optional)
-     * @param string           $cc      CC recipient (null for none)
+     * @param string|Address|Address[]      $to      Recipient email address(es) (or delimited list)
+     * @param string|Address                $from    Sender name and email address
+     * @param string                        $msg     User notes to include in message
+     * @param AbstractRecord[]              $records Records being emailed
+     * @param PhpRenderer                   $view    View object (used to render email templates)
+     * @param ?string                       $subject Subject for email (optional)
+     * @param string|Address|Address[]|null $cc      CC recipient(s) (null for none)
+     * @param string|Address|Address[]|null $replyTo Reply-To address(es) (or delimited list, null for none)
      *
      * @throws MailException
      * @return void
      */
     public function sendRecords(
-        $to,
-        $from,
-        $msg,
-        $records,
-        $view,
-        $subject = null,
-        $cc = null
+        string|Address|array $to,
+        string|Address $from,
+        string $msg,
+        array $records,
+        PhpRenderer $view,
+        ?string $subject = null,
+        string|Address|array|null $cc = null,
+        string|Address|array|null $replyTo = null
     ) {
         if (null === $subject) {
             $subject = $this->getDefaultRecordSubject($records);
@@ -81,6 +83,6 @@ class Mailer extends \VuFind\Mailer\Mailer
                 'message' => $msg,
             ]
         );
-        $this->send($to, $from, $subject, $body, $cc);
+        $this->send($to, $from, $subject, $body, $cc, $replyTo);
     }
 }

@@ -25,10 +25,12 @@ node_modules
 package-lock.json
 
 # OS Created Files
-
-.DS_Store*
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
 ehthumbs.db
-Icon?
 Thumbs.db
 
 # IDE Files
@@ -68,4 +70,5 @@ themes/bootstrap5/scss/vendor/bootstrap
 local/DirLocations.ini
 local/config/vufind/*.ini
 local/config/vufind/*.json
+local/config/vufind/*.key
 local/config/vufind/*.yaml

@@ -6,6 +6,12 @@ finna.StreetSearch = (function finnaStreetSearch() {
   var geolocationAccuracyThreshold = 20; // If accuracy >= threshold then give a warning for the user
   var searchRadius = 0.1; // Radius of the search area in KM
 
+  /**
+   * Display info
+   * @param {string} message Message to display
+   * @param {boolean} stopped Is the progress stopped?
+   * @param {boolean} allowStopping Should stopping be allowed manually
+   */
   function info(message, stopped, allowStopping) {
     if (typeof stopped !== 'undefined' && stopped) {
       terminateButton.addClass('hidden');
@@ -18,6 +24,10 @@ finna.StreetSearch = (function finnaStreetSearch() {
     progressContainer.find('.info').empty().append(div);
   }
 
+  /**
+   * Handle geo location error
+   * @param {object} error Object containing error data
+   */
   function geoLocationError(error) {
     var errorString = 'geolocation_other_error';
     var additionalInfo = '';
@@ -45,6 +55,10 @@ finna.StreetSearch = (function finnaStreetSearch() {
     $('.street-search-action-links').removeClass('hidden');
   }
 
+  /**
+   * Do a location search
+   * @param {object} position Object containing position coords
+   */
   function locationSearch(position) {
     if (terminate) {
       return;
@@ -72,6 +86,9 @@ finna.StreetSearch = (function finnaStreetSearch() {
     window.location.href = url;
   }
 
+  /**
+   * Do a street search
+   */
   function doStreetSearch() {
     progressContainer.removeClass('hidden');
     progressContainer.find('.fa-spinner').removeClass('hidden');
@@ -87,12 +104,18 @@ finna.StreetSearch = (function finnaStreetSearch() {
     }
   }
 
+  /**
+   * Terminate a street search
+   */
   function terminateStreetSearch() {
     terminate = true;
     progressContainer.addClass('hidden');
     $('.street-search-action-links').removeClass('hidden');
   }
 
+  /**
+   * Initialize page elements
+   */
   function initPageElements() {
     terminateButton = $('.street-search-terminate');
     progressContainer = $('.street-search-progress');
@@ -105,6 +128,9 @@ finna.StreetSearch = (function finnaStreetSearch() {
     }
   }
 
+  /**
+   * Initialize update location button
+   */
   function initStreetHeader(){
     progressContainer = $('.street-search-progress');
     $('.update-location').on('click', function updateStreetSearchLocation(e){
@@ -113,6 +139,9 @@ finna.StreetSearch = (function finnaStreetSearch() {
     });
   }
 
+  /**
+   * Initialize street search module
+   */
   function init() {
     initPageElements();
   }

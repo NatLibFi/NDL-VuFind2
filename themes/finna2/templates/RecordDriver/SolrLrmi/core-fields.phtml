@@ -15,7 +15,7 @@
   ], $filteredFields));
 ?>
 <?php if ($this->rights || !empty($coreFields)): ?>
-  <table class="table table-finna-record record-details record-field-groups" role="presentation">
+  <table class="table table-finna-record record-details record-field-groups" role="presentation" tabindex="-1">
     <?php if ($this->rights): ?>
       <?=
         $this->record($this->driver)->renderTemplate(

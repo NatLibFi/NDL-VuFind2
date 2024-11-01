@@ -1,5 +1,10 @@
 /*global VuFind, finna */
 finna.contentFeed = (function finnaContentFeed() {
+  /**
+   * Load content feed
+   * @param {jQuery}  container Container holding the data
+   * @param {boolean} modal     Is the context in a modal
+   */
   function loadFeed(container, modal) {
     var id = container.data('feed');
     var element = container.data('element');

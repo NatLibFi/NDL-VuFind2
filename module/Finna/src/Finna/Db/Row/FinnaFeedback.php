@@ -89,9 +89,9 @@ class FinnaFeedback extends \VuFind\Db\Row\RowGateway implements
      *
      * @param string $message Message
      *
-     * @return FinnaFeedbackEntityInterface
+     * @return static
      */
-    public function setMessage(string $message): FinnaFeedbackEntityInterface
+    public function setMessage(string $message): static
     {
         $this->message = $message;
         return $this;
@@ -112,9 +112,9 @@ class FinnaFeedback extends \VuFind\Db\Row\RowGateway implements
      *
      * @param array $data Form data
      *
-     * @return FinnaFeedbackEntityInterface
+     * @return static
      */
-    public function setFormData(array $data): FinnaFeedbackEntityInterface
+    public function setFormData(array $data): static
     {
         $this->message_json = json_encode($data);
         return $this;
@@ -135,9 +135,9 @@ class FinnaFeedback extends \VuFind\Db\Row\RowGateway implements
      *
      * @param string $name Form name
      *
-     * @return FinnaFeedbackEntityInterface
+     * @return static
      */
-    public function setFormName(string $name): FinnaFeedbackEntityInterface
+    public function setFormName(string $name): static
     {
         $this->form = $name;
         return $this;
@@ -158,9 +158,9 @@ class FinnaFeedback extends \VuFind\Db\Row\RowGateway implements
      *
      * @param DateTime $dateTime Created date
      *
-     * @return FinnaFeedbackEntityInterface
+     * @return static
      */
-    public function setCreated(DateTime $dateTime): FinnaFeedbackEntityInterface
+    public function setCreated(DateTime $dateTime): static
     {
         $this->created = $dateTime->format('Y-m-d H:i:s');
         return $this;
@@ -181,9 +181,9 @@ class FinnaFeedback extends \VuFind\Db\Row\RowGateway implements
      *
      * @param DateTime $dateTime Last update date
      *
-     * @return FinnaFeedbackEntityInterface
+     * @return static
      */
-    public function setUpdated(DateTime $dateTime): FinnaFeedbackEntityInterface
+    public function setUpdated(DateTime $dateTime): static
     {
         $this->modification_date = $dateTime->format('Y-m-d H:i:s');
         return $this;
@@ -204,9 +204,9 @@ class FinnaFeedback extends \VuFind\Db\Row\RowGateway implements
      *
      * @param string $status Status
      *
-     * @return FinnaFeedbackEntityInterface
+     * @return static
      */
-    public function setStatus(string $status): FinnaFeedbackEntityInterface
+    public function setStatus(string $status): static
     {
         $this->status = $status;
         return $this;
@@ -227,9 +227,9 @@ class FinnaFeedback extends \VuFind\Db\Row\RowGateway implements
      *
      * @param string $url Site URL
      *
-     * @return FinnaFeedbackEntityInterface
+     * @return static
      */
-    public function setSiteUrl(string $url): FinnaFeedbackEntityInterface
+    public function setSiteUrl(string $url): static
     {
         $this->ui_url = $url;
         return $this;
@@ -250,9 +250,9 @@ class FinnaFeedback extends \VuFind\Db\Row\RowGateway implements
      *
      * @param ?UserEntityInterface $user User that created request
      *
-     * @return FinnaFeedbackEntityInterface
+     * @return static
      */
-    public function setUser(?UserEntityInterface $user): FinnaFeedbackEntityInterface
+    public function setUser(?UserEntityInterface $user): static
     {
         $this->user_id = $user?->getId();
         return $this;
@@ -275,9 +275,9 @@ class FinnaFeedback extends \VuFind\Db\Row\RowGateway implements
      *
      * @param ?UserEntityInterface $user User that updated request
      *
-     * @return FinnaFeedbackEntityInterface
+     * @return static
      */
-    public function setUpdatedBy(?UserEntityInterface $user): FinnaFeedbackEntityInterface
+    public function setUpdatedBy(?UserEntityInterface $user): static
     {
         $this->modifier_id = $user ? $user->getId() : null;
         return $this;

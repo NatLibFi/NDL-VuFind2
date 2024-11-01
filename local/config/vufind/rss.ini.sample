@@ -23,7 +23,7 @@
 ; up to <items> items are displayed. In grid visualItems determines the amount of items
 ; displayed before a "more" button. "More" button displays up to <items> items in the grid.
 ; title = "[rss|<translation-key>]" Feed title:
-;    'rss' = Use <title> element from feed
+;    'rss' = Use <title> element from feed [DEPRECATED -- leave title empty to use title from feed, or use a <translation-key>]
 ;    '<translation-key>' = Use local translation
 ; description = "Feed description|<translation-key>"
 ;    A free-form description text that may include HTML, or a translation key. Also

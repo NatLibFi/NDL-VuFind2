@@ -1,10 +1,9 @@
 /* global VuFind, finna, EasyMDE */
 
 /**
- * Finna Markdown editable.
- *
- * @param {jQuery} element
- * @constructor
+ * Finna Markdown editable constructor.
+ * @param {jQuery} element Root element for md editable
+ * @returns {void}
  */
 function FinnaMdEditable(element) {
   this.element = element;
@@ -33,8 +32,7 @@ FinnaMdEditable.prototype.openClass = 'finna-editable-open';
 
 /**
  * Returns the open state of the editable.
- *
- * @returns {boolean}
+ * @returns {boolean} Is the editable open
  */
 FinnaMdEditable.prototype.isOpen = function isOpen() {
   return this.element.hasClass(this.openClass);
@@ -42,8 +40,7 @@ FinnaMdEditable.prototype.isOpen = function isOpen() {
 
 /**
  * Returns the busy state of the editable.
- *
- * @returns {boolean}
+ * @returns {boolean} Is the editable busy
  */
 FinnaMdEditable.prototype.isBusy = function isBusy() {
   return this.element.hasClass(this.busyClass);
@@ -53,10 +50,8 @@ FinnaMdEditable.prototype.isBusy = function isBusy() {
  * Conditionally sets the busy state of the editable.
  *
  * An opened editable can not be set busy.
- *
  * @param {boolean} busy Busy state to set.
- *
- * @returns {FinnaMdEditable}
+ * @returns {FinnaMdEditable} Returns self
  */
 FinnaMdEditable.prototype.setBusy = function setBusy(busy) {
   if (this.isOpen()) {
@@ -77,8 +72,7 @@ FinnaMdEditable.prototype.setBusy = function setBusy(busy) {
  * Conditionally opens the editable.
  *
  * A busy editable can not be opened.
- *
- * @returns {FinnaMdEditable}
+ * @returns {FinnaMdEditable} Returns self
  */
 FinnaMdEditable.prototype.openEditable = function openEditable() {
   if (this.isOpen() || this.isBusy()) {
@@ -231,8 +225,7 @@ FinnaMdEditable.prototype.openEditable = function openEditable() {
  * Closes the editable.
  *
  * A busy editable can not be opened.
- *
- * @returns {FinnaMdEditable}
+ * @returns {FinnaMdEditable} Returns self
  */
 FinnaMdEditable.prototype.closeEditable = function closeEditable() {
   if (null !== this.editor) {
