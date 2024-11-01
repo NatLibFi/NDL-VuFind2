@@ -1409,7 +1409,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         if (empty($matches)) {
             $matches = $this->getSeriesFromMARC($secondaryFields);
         } else {
-            $matches = array_merge($matches,$this->getSeriesFromMARC($secondaryFields));
+            $matches = array_merge($matches, $this->getSeriesFromMARC($secondaryFields));
         }
 
         // Still no results found?  Resort to the Solr-based method just in case!
