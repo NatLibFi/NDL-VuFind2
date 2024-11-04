@@ -930,7 +930,20 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             }
             $barcode = $card->barcode ?? $username;
             $catalog = $this->getILS();
-            $patron = $catalog->patronLogin($card->getCatUsername(), $card->getRawCatPassword());
+            $auth = $this->getILSAuthenticator();
+            if ($card->getCatUsername() === $user->getCatUsername()) {
+                $patron = $auth->storedCatalogLogin();
+            } else {
+                $loginUser = clone $user;
+                $loginUser->setCatUsername($card->getCatUsername());
+                $loginUser->setRawCatPassword($card->getRawCatPassword());
+                $loginUser->setCatPassEnc($card->getCatPassEnc());
+
+                $patron = $catalog->patronLogin(
+                    $loginUser->getCatUsername(),
+                    $auth->getCatPasswordForUser($loginUser)
+                );
+            }
             if ($patron && $patron['cat_username'] === $card->getCatUsername()) {
                 if ($cacheBarcode = $this->getCachedData($card->getCardName())) {
                     $barcode = $cacheBarcode;
