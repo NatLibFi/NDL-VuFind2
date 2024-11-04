@@ -909,7 +909,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
     }
 
     /**
-     * Fetch requested librarycard's barcode.
+     * Fetch requested library card's barcode.
      *
      * @return mixed
      */
@@ -945,8 +945,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 );
             }
             if ($patron && $patron['cat_username'] === $card->getCatUsername()) {
-                if ($cacheBarcode = $this->getCachedData($card->getCardName())) {
-                    $barcode = $cacheBarcode;
+                if ($cachedBarcode = $this->getCachedData($card->getCardName())) {
+                    $barcode = $cachedBarcode;
                 } else {
                     $profile = $catalog->getMyProfile($patron);
                     if (!empty($profile['barcode'])) {
