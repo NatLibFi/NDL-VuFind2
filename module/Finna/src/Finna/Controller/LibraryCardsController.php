@@ -32,9 +32,8 @@
 namespace Finna\Controller;
 
 use Finna\Db\Service\FinnaCacheServiceInterface;
-use Laminas\Cache\Storage\StorageInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use VuFind\Cache\CacheTrait;
+use Laminas\Session\Container as SessionContainer;
 use VuFind\Db\Entity\UserCardEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\UserCardServiceInterface;
@@ -56,20 +55,25 @@ use function intval;
  */
 class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
 {
-    use CacheTrait;
+    /**
+     * Session container
+     *
+     * @var SessionContainer
+     */
+    protected $session;
 
     /**
      * Constructor
      *
-     * @param ServiceLocatorInterface $sm    Service locator
-     * @param StorageInterface        $cache Object cache
+     * @param ServiceLocatorInterface $sm               Service locator
+     * @param SessionContainer        $sessionContainer Session container for library cards
      */
     public function __construct(
         ServiceLocatorInterface $sm,
-        StorageInterface $cache
+        protected \Laminas\Session\Container $sessionContainer,
     ) {
         parent::__construct($sm);
-        $this->setCacheStorage($cache);
+        $this->session = $sessionContainer;
     }
 
     /**
@@ -924,6 +928,11 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             }
             $userCardService = $this->getDbService(UserCardServiceInterface::class);
             $card = $userCardService->getOrCreateLibraryCard($user, $id);
+            $cardName = $card->getCardName();
+            if (isset($this->session->LibraryCards[$cardName])) {
+                $cachedBarcode = $this->session->LibraryCards[$cardName];
+                return $this->redirect()->toRoute('barcode-show', [], ['query' => ['code' => $cachedBarcode]]);
+            }
             $username = $card->getCatUsername();
             if (strstr($username, '.')) {
                 [$target, $username] = explode('.', $username, 2);
@@ -938,23 +947,18 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 $loginUser->setCatUsername($card->getCatUsername());
                 $loginUser->setRawCatPassword($card->getRawCatPassword());
                 $loginUser->setCatPassEnc($card->getCatPassEnc());
-
                 $patron = $catalog->patronLogin(
                     $loginUser->getCatUsername(),
                     $auth->getCatPasswordForUser($loginUser)
                 );
             }
             if ($patron && $patron['cat_username'] === $card->getCatUsername()) {
-                if ($cachedBarcode = $this->getCachedData($card->getCardName())) {
-                    $barcode = $cachedBarcode;
-                } else {
-                    $profile = $catalog->getMyProfile($patron);
-                    if (!empty($profile['barcode'])) {
-                        $this->putCachedData($card->getCardName(), $profile['barcode']);
-                        $barcode = $profile['barcode'];
-                    }
+                $profile = $catalog->getMyProfile($patron);
+                if (!empty($profile['barcode'])) {
+                    $barcode = $profile['barcode'];
                 }
             }
+            $this->session->LibraryCards[$cardName] = $barcode;
             return $this->redirect()->toRoute('barcode-show', [], ['query' => ['code' => $barcode]]);
         } catch (\VuFind\Exception\LibraryCard $e) {
             $this->flashMessenger()->addMessage($e->getMessage(), 'error');

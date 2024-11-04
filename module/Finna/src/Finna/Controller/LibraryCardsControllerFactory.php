@@ -5,7 +5,8 @@
  *
  * PHP version 8
  *
- * Copyright (C) Villanova University 2024.
+ * Copyright (C) Villanova University 2018.
+ * Copyright (C) The National Library of Finland 2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,7 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  View_Helpers
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
@@ -35,10 +36,10 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * LibraryCards helper factory.
+ * LibraryCardsController factory.
  *
  * @category VuFind
- * @package  View_Helpers
+ * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
@@ -64,12 +65,10 @@ class LibraryCardsControllerFactory extends \VuFind\Controller\AbstractBaseFacto
         $requestedName,
         array $options = null
     ) {
-        return parent::__invoke(
-            $container,
-            $requestedName,
-            [
-                $container->get(\VuFind\Cache\Manager::class)->getCache('object'),
-            ]
+        $session = new \Laminas\Session\Container(
+            'LibraryCards',
+            $container->get(\Laminas\Session\SessionManager::class)
         );
+        return parent::__invoke($container, $requestedName, [$session]);
     }
 }
