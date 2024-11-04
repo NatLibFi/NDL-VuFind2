@@ -70,7 +70,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
      */
     public function __construct(
         ServiceLocatorInterface $sm,
-        protected \Laminas\Session\Container $sessionContainer,
+        SessionContainer $sessionContainer,
     ) {
         parent::__construct($sm);
         $this->session = $sessionContainer;
