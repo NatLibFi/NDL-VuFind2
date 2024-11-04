@@ -1356,8 +1356,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             throw new \Exception('Invalid parameters.');
         }
 
+        $page = (int)$this->params()->fromQuery('page', 1);
+        $sort = $this->params()->fromQuery('sort', '');
         $recordLoader = $this->serviceLocator->get(\VuFind\Record\Loader::class);
-        $page = 1;
+        $config = $this->getConfig();
         try {
             $tmp = fopen('php://temp/maxmemory:' . (5 * 1024 * 1024), 'r+');
             $header = [
@@ -1377,55 +1379,50 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             if ('xlsx' === $fileFormat) {
                 Cell::setValueBinder(new AdvancedValueBinder());
             }
-            do {
-                // Try to use large page size, but take ILS limits into account
-                $pageOptions = $this->getPaginationHelper()
-                    ->getOptions($page, null, 1000, $functionConfig);
-                $result = $catalog
-                    ->getMyTransactionHistory($patron, $pageOptions['ilsParams']);
+            $pageOptions = $this->getPaginationHelper()->getOptions(
+                $page,
+                $sort,
+                $config->Catalog->historic_loan_page_size ?? 50,
+                $functionConfig
+            );
+            $result = $catalog->getMyTransactionHistory($patron, $pageOptions['ilsParams']);
 
-                if (isset($result['success']) && !$result['success']) {
-                    $this->flashMessenger()->addErrorMessage($result['status']);
-                    return $this->redirect()->toRoute('checkouts-history');
-                }
+            if (isset($result['success']) && !$result['success']) {
+                $this->flashMessenger()->addErrorMessage($result['status']);
+                return $this->redirect()->toRoute('checkouts-history');
+            }
 
-                $ids = [];
-                foreach ($result['transactions'] as $current) {
-                    $id = $current['id'] ?? '';
-                    $source = $current['source'] ?? DEFAULT_SEARCH_BACKEND;
-                    $ids[] = compact('id', 'source');
-                }
-                $records = $recordLoader->loadBatch($ids, true);
-                foreach ($result['transactions'] as $i => $current) {
-                    $driver = $records[$i];
-                    $format = $driver->getFormats();
-                    $format = end($format);
-                    $author = $driver->tryMethod('getNonPresenterAuthors');
+            $ids = [];
+            foreach ($result['transactions'] as $current) {
+                $id = $current['id'] ?? '';
+                $source = $current['source'] ?? DEFAULT_SEARCH_BACKEND;
+                $ids[] = compact('id', 'source');
+            }
+            $records = $recordLoader->loadBatch($ids, true);
+            foreach ($result['transactions'] as $i => $current) {
+                $driver = $records[$i];
+                $format = $driver->getFormats();
+                $format = end($format);
+                $author = $driver->tryMethod('getNonPresenterAuthors');
 
-                    $loan = [];
-                    $loan[] = $current['title'] ?? $driver->getTitle() ?? '';
-                    $loan[] = $this->translate($format);
-                    $loan[] = $author[0]['name'] ?? '';
-                    $loan[] = $current['publication_year'] ?? '';
-                    $loan[] = empty($current['institution_name'])
-                        ? ''
-                        : $this->translateWithPrefix('location_', $current['institution_name']);
-                    $loan[] = empty($current['borrowingLocation'])
-                        ? ''
-                        : $this->translateWithPrefix('location_', $current['borrowingLocation']);
-                    $loan[] = $current['checkoutDate'] ?? '';
-                    $loan[] = $current['returnDate'] ?? '';
-                    $loan[] = $current['dueDate'] ?? '';
+                $loan = [];
+                $loan[] = $current['title'] ?? $driver->getTitle() ?? '';
+                $loan[] = $this->translate($format);
+                $loan[] = $author[0]['name'] ?? '';
+                $loan[] = $current['publication_year'] ?? '';
+                $loan[] = empty($current['institution_name'])
+                    ? ''
+                    : $this->translateWithPrefix('location_', $current['institution_name']);
+                $loan[] = empty($current['borrowingLocation'])
+                    ? ''
+                    : $this->translateWithPrefix('location_', $current['borrowingLocation']);
+                $loan[] = $current['checkoutDate'] ?? '';
+                $loan[] = $current['returnDate'] ?? '';
+                $loan[] = $current['dueDate'] ?? '';
 
-                    $nextRow = $worksheet->getHighestRow() + 1;
-                    $worksheet->fromArray($loan, null, 'A' . (string)$nextRow);
-                }
-
-                $pageEnd = $pageOptions['ilsPaging']
-                    ? ceil($result['count'] / $pageOptions['limit'])
-                    : 1;
-                $page++;
-            } while ($page <= $pageEnd);
+                $nextRow = $worksheet->getHighestRow() + 1;
+                $worksheet->fromArray($loan, null, 'A' . (string)$nextRow);
+            }
             if ('xlsx' === $fileFormat) {
                 $worksheet->getStyle('G2:I' . $worksheet->getHighestRow())
                     ->getNumberFormat()
@@ -1442,11 +1439,12 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 );
             $writer = new $this->exportFormats[$fileFormat]['writer']($spreadsheet);
             $writer->save($tmp);
-
+            $fileName = implode('-', ['finna-loan-history-page', $page, $sort,]);
+            $fileName = str_replace(' ', '-', $fileName) . '.' . $fileFormat;
             $response->getHeaders()
                 ->addHeaderLine(
                     'Content-Disposition',
-                    'attachment; filename="finna-loan-history.' . $fileFormat . '"'
+                    'attachment; filename="' . $fileName . '"'
                 );
 
             rewind($tmp);
