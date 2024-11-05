@@ -92,31 +92,7 @@
                             <a data-lightbox class="btn btn-primary btn-finna-toolbar" role="button" href="<?=$this->url('myresearch-savehistoricloans') ?>"><?=$this->transEsc('loan_history_save')?></a>
                           </div>
                           <div class="btn-group">
-                            <div class="dropdown loan-history-download">
-                              <button class="btn btn-primary btn-finna-toolbar dropdown-toggle download" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <?=$this->transEsc('loan_history_download')?> <span class="caret"></span>
-                              </button>
-                              <ul class="dropdown-menu dropdown-menu-<?php if ($purgeSelectedAllowed): ?>right<?php else: ?>left<?php endif;?> download">
-                                <?php
-                                  $queryParams = [];
-                                  foreach ($this->sortList as $sortType => $sortData) {
-                                    if ($sortData['selected']) {
-                                      $queryParams['sort'] = $sortType;
-                                      break;
-                                    }
-                                  }
-                                  if ($this->paginator) {
-                                    $queryParams['page'] = $this->paginator->getCurrentPageNumber();
-                                  }
-                                ?>
-                                <?php foreach (['csv', 'ods', 'xlsx'] as $format): ?>
-                                <?php $queryParams['format'] = $format; ?>
-                                  <li>
-                                    <a href="<?=$this->url('myresearch-downloadloanhistory', [], ['query' => $queryParams])?>"><?=$this->transEsc('loan_history_download_' . $format)?></a>
-                                  </li>
-                                <?php endforeach; ?>
-                              </ul>
-                            </div>
+                            <a data-lightbox class="btn btn-primary btn-finna-toolbar" role="button" href="<?=$this->url('myresearch-downloadloanhistory')?>"><?=$this->transEsc('loan_history_download')?></a>
                           </div>
                         <?php endif; ?>
                       </div>

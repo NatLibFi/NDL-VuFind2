@@ -1,5 +1,6 @@
+<h2><?=$this->transEsc('loan_history_download')?></h2>
 <form name="download-loan-history-form" action="<?=$this->url('myresearch-downloadloanhistory')?>" method="POST" enctype="multipart/form-data">
-  <h2><?=$this->transEsc('loan_history_download')?></h2>
+  <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
   <div class="alert alert-info">
     <span><?=$this->transEsc('loan_history_info')?></span>
   </div>

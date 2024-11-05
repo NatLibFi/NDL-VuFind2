@@ -1378,12 +1378,18 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         $request = $this->getRequest();
         if (!$request->isPost()) {
-            throw new \Exception('Invalid parameters.');
+            throw new \Exception('Invalid method.');
         }
+
         $requestCombined = array_merge_recursive(
             $request->getPost()->toArray(),
             $request->getFiles()->toArray()
         );
+        // Do CSRF check
+        $csrf = $this->serviceLocator->get(\VuFind\Validator\CsrfInterface::class);
+        if (!$csrf->isValid($requestCombined['csrf'])) {
+            throw new \VuFind\Exception\BadRequest('error_inconsistent_parameters');
+        }
         $fileFormat = $requestCombined['history_file_format'] ?? '';
         if (!in_array($fileFormat, $allowedFileFormats)) {
             throw new \Exception('Should be not here.');
