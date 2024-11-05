@@ -1352,6 +1352,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $this->flashMessenger()->addErrorMessage('ils_action_unavailable');
             return $this->redirect()->toRoute('checkouts-history');
         }
+        $config = $this->getConfig();
         $allowedFileFormats = ['csv', 'ods', 'xlsx'];
         if (!$this->formWasSubmitted('submitLoanHistoryRequest')) {
             $pageOptions = $this->getPaginationHelper()->getOptions(
@@ -1360,7 +1361,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 $config->Catalog->historic_loan_page_size ?? 50,
                 $functionConfig
             );
-                    // Get checked out item details:
+            // Get checked out item details:
             $result = $catalog->getMyTransactionHistory($patron, $pageOptions['ilsParams']);
             $paginator = $this->getPaginationHelper()->getPaginator(
                 $pageOptions,
@@ -1394,7 +1395,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         if (!in_array($fileFormat, $allowedFileFormats)) {
             throw new \Exception('Should be not here.');
         }
-        
+
         $startPage = (int)$requestCombined['startIndex'];
         $lastPage = (int)($requestCombined['lastIndex'] ?? $startPage);
         $alternativeLimit = $startPage + 9;
@@ -1403,7 +1404,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
 
         $recordLoader = $this->serviceLocator->get(\VuFind\Record\Loader::class);
-        $config = $this->getConfig();
 
         $tmp = fopen('php://temp/maxmemory:' . (5 * 1024 * 1024), 'r+');
         $header = [
@@ -1417,7 +1417,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $this->translate('Return Date'),
             $this->translate('Due Date'),
         ];
-        
+
         if ($file = $requestCombined['append_file']['tmp_name'] ?? null) {
             $fileFormatLimit = [
                 \PhpOffice\PhpSpreadsheet\IOFactory::READER_CSV,
