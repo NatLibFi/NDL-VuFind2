@@ -102,7 +102,8 @@ class Callnumber extends \Laminas\View\Helper\AbstractHelper
             'location',
             'title',
             'page',
-            'source'
+            'source',
+            'fields'
         );
 
         $config = $useLocationService ? $this->locationService->getConfig(
@@ -116,7 +117,6 @@ class Callnumber extends \Laminas\View\Helper\AbstractHelper
         ) : null;
 
         if ($config) {
-            $params['fields'] = $fields;
             $params['locationServiceUrl'] = $config['url'];
             $params['locationServiceModal'] = $config['modal'];
             // Extract the page from something like 'results' or 'results-online':
@@ -124,18 +124,11 @@ class Callnumber extends \Laminas\View\Helper\AbstractHelper
             $section = $basePage === 'results' ? 'qrCodeResults' : 'qrCodeRecord';
             $params['qrCode'] = $config[$section];
         }
+        if ($useLocationService && $this->wayfinderService->isEnabledForSource($source)) {
+            $params['wayfinderLocation'] = $this->wayfinderService->getLocationData($fields);
+        }
 
         return $this->getView()->render('Helpers/holding-callnumber.phtml', $params);
-    }
-
-    /**
-     * Whether wayfinder service is enabled.
-     *
-     * @return bool
-     */
-    public function useWayfinderService(): bool
-    {
-        return $this->wayfinderService->isConfigured();
     }
 
     /**

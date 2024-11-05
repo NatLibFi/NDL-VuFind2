@@ -144,7 +144,7 @@ return [
         ],
         [ // remove (reference) from import):
             'pattern' => '/@import\s+\(reference\)\s*/',
-            'replacement' => '@import /*(reference)*/ ',
+            'replacement' => '@import / ',
         ],
         [ // fix missing semicolon from background-image rule:
             'pattern' => '/(\$background-image:([^;]+?))\n/',

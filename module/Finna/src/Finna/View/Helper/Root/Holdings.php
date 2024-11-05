@@ -161,6 +161,7 @@ class Holdings extends \VuFind\View\Helper\Root\Holdings
                 'collection' => null,
                 'branch' => null,
                 'department' => null,
+                'id' => null, // for Wayfinder
             ];
             foreach ($items as $item) {
                 if ($item['callnumber'] === $callNo) {

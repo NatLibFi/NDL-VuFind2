@@ -36,6 +36,8 @@ use Psr\Container\ContainerInterface;
 use VuFind\Log\LoggerAwareTrait;
 use VuFindHttp\HttpServiceInterface;
 
+use function in_array;
+
 /**
  * Wayfinder service.
  *
@@ -58,18 +60,33 @@ class WayfinderService
     protected bool $isConfigured;
 
     /**
+     * Locale mappings
+     *
+     * @var array
+     */
+    protected array $localeMap = [
+        'fi' => 'FI',
+        'en-gb' => 'EN',
+        // SE seems to be mapped to Swedish instead of Northern Sámi:
+        'sv' => 'SE',
+        'se' => 'EN',
+    ];
+
+    /**
      * Constructor.
      *
      * @param ContainerInterface   $container   Service container.
      * @param array                $config      Configuration.
      * @param HttpServiceInterface $httpService HTTP service.
      * @param LoggerInterface      $logger      Logger service.
+     * @param string               $locale      User locale
      */
     public function __construct(
         protected ContainerInterface $container,
         protected array $config,
         protected HttpServiceInterface $httpService,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        protected string $locale
     ) {
         $this->isConfigured = $this->isValidConfig();
         $this->logger = $logger;
@@ -95,6 +112,30 @@ class WayfinderService
     public function isConfigured(): bool
     {
         return $this->isConfigured;
+    }
+
+    /**
+     * Whether service is enabled for the given record.
+     *
+     * @param string $source Data source
+     *
+     * @return bool
+     */
+    public function isEnabledForSource(string $source): bool
+    {
+        return $this->isConfigured() && in_array($source, $this->config['General']['sources'] ?? []);
+    }
+
+    /**
+     * Get relevant location-related fields from all call number fields
+     *
+     * @param array $fields Fields
+     *
+     * @return array
+     */
+    public function getLocationData(array $fields): array
+    {
+        return array_intersect_key($fields, array_flip(['id', 'branch', 'department', 'location', 'callnumber']));
     }
 
     /**
@@ -145,7 +186,15 @@ class WayfinderService
             return '';
         }
 
-        return $decoded['link'];
+        // splice language code into the link:
+        $parts = explode('#', $decoded['link'], 2);
+        $link = $parts[0] . (str_contains($parts[0], '?') ? '&' : '?') . 'lang='
+            . ($this->localeMap[$this->locale] ?? $this->locale);
+        if (null !== ($hash = $parts[1] ?? null)) {
+            $link .= "#$hash";
+        }
+
+        return $link;
     }
 
     /**
