@@ -543,22 +543,18 @@ span.caret {
 }
 
 .delete-list-btn-wrapper {
-  &.left .dropdown-menu {
-    left: initial;
-    right: 0;
-  }
-  .dropdown-header {
-    color: inherit;
-    font-size: 14px;
-  }
-}
-
-.dropdown-menu .delete-list-btn-wrapper {
+  position: relative;
   padding: 0 0 4px 4px;
-  .dropdown-menu {
-    border: 1px solid @gray-lighter;
-    border-radius: 4px;
-    top: 100%;
-    position: absolute;
+  .btn-group.open {
+    .dropdown-menu {
+      position: absolute;
+      border-radius: 4px;
+      border: 1px solid @gray-lighter;
+      top: 100%;
+    }
+    .dropdown-header {
+      color: inherit;
+      font-size: 14px;
+    }
   }
 }
