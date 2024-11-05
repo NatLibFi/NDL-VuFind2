@@ -14,8 +14,9 @@
   <?php if ($viewOptionsIcons ?? false): ?>
     <div class="view-options">
       <?php foreach ($viewList as $viewType => $viewData): ?>
-        <div class="view-button <?= $viewData['selected'] ? 'selected' : '' ?>">
-          <a href="<?=$this->results->getUrlQuery()->setViewParam($viewType)?>" title="<?=$this->transEsc('Show As ' . $viewData['desc'])?>" aria-label="<?=$this->transEsc('Show As ' . $viewData['desc'])?>"><?= $this->icon('view-' . $viewType, 'icon-' . $viewType) ?></a>
+        <?php $selected = $viewData['selected'] ? 'selected' : '';?>
+        <div class="view-button <?=$selected?>">
+          <a href="<?=$this->results->getUrlQuery()->setViewParam($viewType)?>" role="button" title="<?=$this->transEsc('Show As ' . $viewData['desc'])?>" aria-label="<?=$this->transEsc('show_as') . ': ' . $this->transEsc('Show As ' . $viewData['desc']) . ' ' . $this->transEsc($selected)?>"><?= $this->icon('view-' . $viewType, 'icon-' . $viewType) ?></a>
         </div>
       <?php endforeach; ?>
     </div>
@@ -24,7 +25,7 @@
       <div class="dropdown">
         <?php foreach ($viewList as $viewType => $viewData): ?>
           <?php if ($viewData['selected']): ?>
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-label="<?=$this->transEsc('show_as') . ': ' . $this->transEsc('Show As ' . $viewData['desc'])?>"><?=$this->icon('view-' . $viewType, 'icon-' . $viewType) ?> <span class="<?=($isCollection ?? false) ? 'hidden-xs hidden-sm' : '' ?>"><?=$this->transEsc('Show As ' . $viewData['desc'])?></span> <?=$this->icon('dropdown-open') ?></a>
+            <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown" aria-label="<?=$this->transEsc('show_as')?>" aria-description="<?=$this->transEsc('Show As ' . $viewData['desc']) . ' ' . $this->transEsc('selected')?>"><?=$this->icon('view-' . $viewType, 'icon-' . $viewType) ?> <span class="<?=($isCollection ?? false) ? 'hidden-xs hidden-sm' : '' ?>"><?=$this->transEsc('Show As ' . $viewData['desc'])?></span> <?=$this->icon('dropdown-open') ?></a>
           <?php endif; ?>
         <?php endforeach; ?>
 
@@ -41,7 +42,7 @@
               }
             ?>
             <li>
-              <a href="<?=$viewUrl?>" title="<?=$this->transEsc($viewData['desc'])?>" role="menuitem" aria-label="<?=$this->transEsc('show_as') . ': ' . $this->transEsc('Show As ' . $viewData['desc'])?>" >
+              <a href="<?=$viewUrl?>" title="<?=$this->transEsc($viewData['desc'])?>" role="menuitem" aria-live="polite" aria-label="<?=$this->transEsc('show_as') . ': ' . $this->transEsc('Show As ' . $viewData['desc'])?>" <?php if ($viewData['selected']):?>aria-description="<?=$this->transEsc('selected')?>"<?php endif; ?>>
                 <?=$this->icon('view-' . $viewType, 'icon-' . $viewType) ?> <?=$this->transEsc('Show As ' . $viewData['desc'])?>
               </a>
             </li>

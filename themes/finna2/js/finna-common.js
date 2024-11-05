@@ -93,13 +93,26 @@ finna.common = (function finnaCommon() {
         event.preventDefault();
         // Update button text:
         const dropdownEl = link.closest('.dropdown');
+        const dropdownLabel = type === 'sort' ? 'Sort' : 'Results per page';
         if (dropdownEl) {
           const toggleEl = dropdownEl.querySelector('.dropdown-toggle');
           if (toggleEl) {
+            toggleEl.ariaLabel = VuFind.translate(dropdownLabel) + ': ' + VuFind.translate(link.innerText);
             const spanEl = toggleEl.querySelector('span');
             if (spanEl) {
               spanEl.innerText = link.innerText;
             }
+          }
+          const menuEl = dropdownEl.querySelector('.dropdown-menu');
+          if (menuEl) {
+            menuEl.querySelectorAll("li > a").forEach(element => {
+              if (element.ariaDescription) {
+                element.removeAttribute("aria-description");
+              }
+              if (element.getAttribute('aria-label') === toggleEl.ariaLabel) {
+                element.ariaDescription = VuFind.translate('selected');
+              }
+            });
           }
         }
         // Get relevant data from the link and change the hidden field accordingly:
