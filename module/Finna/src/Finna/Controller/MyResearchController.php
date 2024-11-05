@@ -1347,114 +1347,170 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             'getMyTransactionHistory',
             $patron
         );
+
         if (false === $functionConfig) {
             $this->flashMessenger()->addErrorMessage('ils_action_unavailable');
             return $this->redirect()->toRoute('checkouts-history');
         }
-        $fileFormat = $this->params()->fromQuery('format', '');
-        if (!in_array($fileFormat, ['ods', 'csv', 'xlsx'])) {
-            throw new \Exception('Invalid parameters.');
+        $allowedFileFormats = ['csv', 'ods', 'xlsx'];
+        if (!$this->formWasSubmitted('submitLoanHistoryRequest')) {
+            $pageOptions = $this->getPaginationHelper()->getOptions(
+                1,
+                null,
+                $config->Catalog->historic_loan_page_size ?? 50,
+                $functionConfig
+            );
+                    // Get checked out item details:
+            $result = $catalog->getMyTransactionHistory($patron, $pageOptions['ilsParams']);
+            $paginator = $this->getPaginationHelper()->getPaginator(
+                $pageOptions,
+                $result['count'],
+                $result['transactions']
+            );
+            $view = $this->createViewModel([
+                'paginator' => $paginator,
+                'fileFormats' => $allowedFileFormats,
+                'params' => $pageOptions['ilsParams'],
+            ]);
+            $view->setTemplate('checkouts/downloadhistory.phtml');
+            return $view;
         }
 
-        $page = (int)$this->params()->fromQuery('page', 1);
-        $sort = $this->params()->fromQuery('sort', '');
+        $request = $this->getRequest();
+        if (!$request->isPost()) {
+            throw new \Exception('Invalid parameters.');
+        }
+        $requestCombined = array_merge_recursive(
+            $request->getPost()->toArray(),
+            $request->getFiles()->toArray()
+        );
+        $fileFormat = $requestCombined['history_file_format'] ?? '';
+        if (!in_array($fileFormat, $allowedFileFormats)) {
+            throw new \Exception('Should be not here.');
+        }
+        
+        $startPage = (int)$requestCombined['startIndex'];
+        $lastPage = (int)($requestCombined['lastIndex'] ?? $startPage);
+        $alternativeLimit = $startPage + 9;
+        if ($lastPage > $startPage + 9) {
+            $lastPage = $alternativeLimit;
+        }
+
         $recordLoader = $this->serviceLocator->get(\VuFind\Record\Loader::class);
         $config = $this->getConfig();
-        try {
-            $tmp = fopen('php://temp/maxmemory:' . (5 * 1024 * 1024), 'r+');
-            $header = [
-                $this->translate('Title'),
-                $this->translate('Format'),
-                $this->translate('Author'),
-                $this->translate('Publication Year'),
-                $this->translate('Institution'),
-                $this->translate('Borrowing Location'),
-                $this->translate('Checkout Date'),
-                $this->translate('Return Date'),
-                $this->translate('Due Date'),
+
+        $tmp = fopen('php://temp/maxmemory:' . (5 * 1024 * 1024), 'r+');
+        $header = [
+            $this->translate('Title'),
+            $this->translate('Format'),
+            $this->translate('Author'),
+            $this->translate('Publication Year'),
+            $this->translate('Institution'),
+            $this->translate('Borrowing Location'),
+            $this->translate('Checkout Date'),
+            $this->translate('Return Date'),
+            $this->translate('Due Date'),
+        ];
+        
+        if ($file = $requestCombined['append_file']['tmp_name'] ?? null) {
+            $fileFormatLimit = [
+                \PhpOffice\PhpSpreadsheet\IOFactory::READER_CSV,
+                \PhpOffice\PhpSpreadsheet\IOFactory::READER_ODS,
+                \PhpOffice\PhpSpreadsheet\IOFactory::READER_XLSX,
             ];
+            try {
+                $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file, 0, $fileFormatLimit);
+            } catch (\Exception $e) {
+                throw new \Exception('Invalid format');
+            }
+            $worksheet = $spreadsheet->getActiveSheet();
+        } else {
             $spreadsheet = new Spreadsheet();
             $worksheet = $spreadsheet->getActiveSheet();
             $worksheet->fromArray($header);
-            if ('xlsx' === $fileFormat) {
-                Cell::setValueBinder(new AdvancedValueBinder());
-            }
+        }
+
+        if ('xlsx' === $fileFormat) {
+            Cell::setValueBinder(new AdvancedValueBinder());
+        }
+        $transactions = [];
+        for ($i = $startPage; $i <= $lastPage; $i++) {
             $pageOptions = $this->getPaginationHelper()->getOptions(
-                $page,
-                $sort,
+                $i,
+                null,
                 $config->Catalog->historic_loan_page_size ?? 50,
                 $functionConfig
             );
             $result = $catalog->getMyTransactionHistory($patron, $pageOptions['ilsParams']);
-
             if (isset($result['success']) && !$result['success']) {
                 $this->flashMessenger()->addErrorMessage($result['status']);
                 return $this->redirect()->toRoute('checkouts-history');
             }
-
-            $ids = [];
-            foreach ($result['transactions'] as $current) {
-                $id = $current['id'] ?? '';
-                $source = $current['source'] ?? DEFAULT_SEARCH_BACKEND;
-                $ids[] = compact('id', 'source');
-            }
-            $records = $recordLoader->loadBatch($ids, true);
-            foreach ($result['transactions'] as $i => $current) {
-                $driver = $records[$i];
-                $format = $driver->getFormats();
-                $format = end($format);
-                $author = $driver->tryMethod('getNonPresenterAuthors');
-
-                $loan = [];
-                $loan[] = $current['title'] ?? $driver->getTitle() ?? '';
-                $loan[] = $this->translate($format);
-                $loan[] = $author[0]['name'] ?? '';
-                $loan[] = $current['publication_year'] ?? '';
-                $loan[] = empty($current['institution_name'])
-                    ? ''
-                    : $this->translateWithPrefix('location_', $current['institution_name']);
-                $loan[] = empty($current['borrowingLocation'])
-                    ? ''
-                    : $this->translateWithPrefix('location_', $current['borrowingLocation']);
-                $loan[] = $current['checkoutDate'] ?? '';
-                $loan[] = $current['returnDate'] ?? '';
-                $loan[] = $current['dueDate'] ?? '';
-
-                $nextRow = $worksheet->getHighestRow() + 1;
-                $worksheet->fromArray($loan, null, 'A' . (string)$nextRow);
-            }
-            if ('xlsx' === $fileFormat) {
-                $worksheet->getStyle('G2:I' . $worksheet->getHighestRow())
-                    ->getNumberFormat()
-                    ->setFormatCode('dd.mm.yyyy');
-                foreach (['G', 'H', 'I'] as $col) {
-                    $worksheet->getColumnDimension($col)->setAutoSize(true);
-                }
-            }
-            $response = $this->getResponse();
-            $response->getHeaders()
-                ->addHeaderLine(
-                    'Content-Type',
-                    $this->exportFormats[$fileFormat]['mediaType']
-                );
-            $writer = new $this->exportFormats[$fileFormat]['writer']($spreadsheet);
-            $writer->save($tmp);
-            $fileName = implode('-', ['finna-loan-history-page', $page, $sort,]);
-            $fileName = str_replace(' ', '-', $fileName) . '.' . $fileFormat;
-            $response->getHeaders()
-                ->addHeaderLine(
-                    'Content-Disposition',
-                    'attachment; filename="' . $fileName . '"'
-                );
-
-            rewind($tmp);
-
-            $response->setContent(stream_get_contents($tmp));
-        } catch (\Exception $e) {
-            $this->flashMessenger()->addErrorMessage('An error has occurred');
-            return $this->redirect()->toRoute('checkouts-history');
+            $tempPaginator = $this->getPaginationHelper()->getPaginator(
+                $pageOptions,
+                $result['count'],
+                $result['transactions']
+            );
+            $transactions = array_merge($transactions, $result['transactions']);
         }
+        $ids = [];
+        foreach ($transactions as $current) {
+            $id = $current['id'] ?? '';
+            $source = $current['source'] ?? DEFAULT_SEARCH_BACKEND;
+            $ids[] = compact('id', 'source');
+        }
+        $records = $recordLoader->loadBatch($ids, true);
+        foreach ($transactions as $i => $current) {
+            $driver = $records[$i];
+            $format = $driver->getFormats();
+            $format = end($format);
+            $author = $driver->tryMethod('getNonPresenterAuthors');
 
+            $loan = [];
+            $loan[] = $current['title'] ?? $driver->getTitle() ?? '';
+            $loan[] = $this->translate($format);
+            $loan[] = $author[0]['name'] ?? '';
+            $loan[] = $current['publication_year'] ?? '';
+            $loan[] = empty($current['institution_name'])
+                ? ''
+                : $this->translateWithPrefix('location_', $current['institution_name']);
+            $loan[] = empty($current['borrowingLocation'])
+                ? ''
+                : $this->translateWithPrefix('location_', $current['borrowingLocation']);
+            $loan[] = $current['checkoutDate'] ?? '';
+            $loan[] = $current['returnDate'] ?? '';
+            $loan[] = $current['dueDate'] ?? '';
+
+            $nextRow = $worksheet->getHighestRow() + 1;
+            $worksheet->fromArray($loan, null, 'A' . (string)$nextRow);
+        }
+        if ('xlsx' === $fileFormat) {
+            $worksheet->getStyle('G2:I' . $worksheet->getHighestRow())
+                ->getNumberFormat()
+                ->setFormatCode('dd.mm.yyyy');
+            foreach (['G', 'H', 'I'] as $col) {
+                $worksheet->getColumnDimension($col)->setAutoSize(true);
+            }
+        }
+        $response = $this->getResponse();
+        $response->getHeaders()
+            ->addHeaderLine(
+                'Content-Type',
+                $this->exportFormats[$fileFormat]['mediaType']
+            );
+        $writer = new $this->exportFormats[$fileFormat]['writer']($spreadsheet);
+        $writer->save($tmp);
+        $fileName = implode('-', ['finna-loan-history-pages', $startPage, $lastPage]);
+        $fileName .= ".$fileFormat";
+        $response->getHeaders()
+            ->addHeaderLine(
+                'Content-Disposition',
+                'attachment; filename="' . $fileName . '"'
+            );
+
+        rewind($tmp);
+
+        $response->setContent(stream_get_contents($tmp));
         return $response;
     }
 
