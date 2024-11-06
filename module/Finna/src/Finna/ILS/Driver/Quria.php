@@ -1081,8 +1081,8 @@ class Quria extends AxiellWebServices
     /**
      * Update patron contact information
      *
-     * @param array  $patron  Patron array
-     * @param String $details Associative array of patron contact information
+     * @param array $patron  Patron array
+     * @param array $details Associative array of patron contact information
      *
      * @throws ILSException
      *
@@ -1096,10 +1096,13 @@ class Quria extends AxiellWebServices
                 return $result;
             }
         }
-        if (isset($details['extraEmails'])) {
+        if (!empty($details['extraEmails'])) {
             foreach ($details['extraEmails'] as $i => $extraEmail) {
-                $active = $details['active_extraEmails'] ?? false;
+                $active = (int)($details['active_extraEmails'] ?? -1) === $i;
                 $result = $this->updateEmail($patron, $extraEmail, $i, $active);
+                if (!$result['success']) {
+                    return $result;
+                }
             }
         }
         if (!empty($details['add_extraEmails'])) {
@@ -1113,6 +1116,9 @@ class Quria extends AxiellWebServices
             foreach ($details['extraPhones'] as $i => $extraPhone) {
                 $active = (int)($details['active_extraPhones'] ?? -1) === $i;
                 $result = $this->updatePhone($patron, $extraPhone, $i, $active);
+                if (!$result['success']) {
+                    return $result;
+                }
             }
         }
 
@@ -1623,7 +1629,8 @@ class Quria extends AxiellWebServices
             $functionResult = 'addEmailAddressResult';
             $functionParam = 'addEmailAddressParam';
         } else {
-            $function = 'removeEmailAddress';
+            $conf['id'] = $emailId ? $user['extraEmails'][$emailId]['emailId'] : $user['emailId'];
+            $function = 'removeEmail';
             $functionResult = 'removeEmailAddressResult';
             $functionParam = 'removeEmailAddressParam';
         }
@@ -1725,7 +1732,7 @@ class Quria extends AxiellWebServices
         ];
 
         if (!empty($user['extraPhones']) && !$addNew && !empty($phone)) {
-            $conf['id'] = $updateExtraPhone ? $user['extraPhones'][$phoneId]['phoneId'] : $user['phoneId'];
+            $conf['id'] = $phoneId !== null ? $user['extraPhones'][$phoneId]['phoneId'] : $user['phoneId'];
             $function = 'changePhone';
             $functionResult = 'changePhoneNumberResult';
             $functionParam = 'changePhoneNumberParam';
@@ -1734,9 +1741,10 @@ class Quria extends AxiellWebServices
             $functionResult = 'addPhoneNumberResult';
             $functionParam = 'addPhoneNumberParam';
         } else {
+            $conf['id'] = $phoneId !== null ? $user['extraPhones'][$phoneId]['phoneId'] : $user['phoneId'];
             $function = 'removePhone';
             $functionResult = 'removePhoneNumberResult';
-            $functionParam = 'removePhoneNumerParam';
+            $functionParam = 'removePhoneNumberParam';
         }
 
         $result = $this->doSOAPRequest(
