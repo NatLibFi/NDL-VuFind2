@@ -1504,6 +1504,16 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             }
         }
         // Update extra emails
+        if (isset($values->profile_activate_email)) {
+            $result = $catalog->activateEmail(
+                $patron,
+                $values->profile_activate_email
+            );
+            if (!$result) {
+                $this->flashMessenger()->addErrorMessage($result['status']);
+                $success = false;
+            }
+        }
         if (isset($values->profile_extra_email) && isset($values->profile_extra_email_id)) {
             foreach ($values->profile_extra_email as $i => $extraEmail) {
                 $validator = new \Laminas\Validator\EmailAddress();
@@ -1525,17 +1535,27 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             }
         }
         // Update phone
-        if (
-            isset($values->profile_tel)
-            && $catalog->checkFunction('updatePhone', compact('patron'))
-        ) {
-            $result = $catalog->updatePhone($patron, $values->profile_tel);
-            if (!$result['success']) {
+        // if (
+        //     isset($values->profile_tel)
+        //     && $catalog->checkFunction('updatePhone', compact('patron'))
+        // ) {
+        //     $result = $catalog->updatePhone($patron, $values->profile_tel);
+        //     if (!$result['success']) {
+        //         $this->flashMessenger()->addErrorMessage($result['status']);
+        //         $success = false;
+        //     }
+        // }
+        // Update extra phones
+        if (isset($values->profile_activate_phone)) {
+            $result = $catalog->activatePhone(
+                $patron,
+                $values->profile_activate_phone
+            );
+            if (!$result) {
                 $this->flashMessenger()->addErrorMessage($result['status']);
                 $success = false;
             }
         }
-        // Update extra phones
         if (isset($values->profile_extra_tel) && isset($values->profile_extra_tel_id)) {
             foreach ($values->profile_extra_tel as $i => $extraPhone) {
                 if (isset($values->profile_extra_tel_id[$i])) {
@@ -1544,7 +1564,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                         $extraPhone->phone,
                         $values->profile_extra_tel_id[$i]
                     );
-                    if (!$result['success']) {
+                    if (!$result) {
                         $this->flashMessenger()->addErrorMessage($result['status']);
                         $success = false;
                     }

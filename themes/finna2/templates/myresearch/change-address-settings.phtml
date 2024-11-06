@@ -95,23 +95,62 @@
           <input id="<?=$this->escapeHtmlAttr($field)?>" name="<?=$this->escapeHtmlAttr($field)?>" type="password" data-minlength="4" data-minlength-error="<?=$this->transEscAttr('password_minimum_length', ['%%minlength%%' => 4])?>" maxlength="4" pattern="\d+" value="" class="form-control"<?=$data['required'] ? ' required' : ''?>>
           <div class="help-block"><?=$this->transEsc('password_only_numeric') ?></div>
         <?php else: ?>
-          <label class="control-label" for="<?=$this->escapeHtmlAttr($field)?>"><?=$this->transEsc($data['label']) ?>:</label>
-          <?php
-              $attrs = [
-                'id' => $field,
-                'name' => $field,
-                'type' => $data['type'],
-                'value' => $value,
-                'class' => 'form-control',
-              ];
+          <?php if (in_array($field, ['extraEmails', 'extraPhones']) && is_array($value)): ?>
+            <?php
+              $isEmail = $field === 'extraEmails' ? true : false;
+              $extraValues = [];
+              foreach ($value ?? [] as $i => $extraInfo) {
+                $attrs = [
+                  'id' => $field,
+                  'name' => $field . '[' . $i . ']',
+                  'type' => $data['type'],
+                  'value' => $isEmail ? $extraInfo['email'] : $extraInfo['phone'],
+                  'class' => 'form-control',
+                ];
+                $extraValues[] = [
+                  'attrs' => $attrs,
+                  'active' => $extraInfo['active'],
+                  // Save the position in the original extraEmails/extraPhones array
+                  'pos' => $i,
+                ];
+              }
               if ($data['required']) {
                 $attrs['required'] = true;
               }
               if ($data['pattern']) {
                 $attrs['pattern'] = $data['pattern'];
               }
-              echo $this->makeTag('input', '', $attrs);
-          ?>
+              usort($extraValues, function ($a, $b) {
+                return $b['active'] <=> $a['active'];
+              });
+            ?>
+            <?php foreach ($extraValues as $extraValue):?>
+                <?php $label = $extraValue['active'] ? $data['label'] . '_primary' : $data['label'];?>
+                <label class="control-label" for="<?=$this->escapeHtmlAttr($field)?>"><?=$this->transEsc($label) ?>:</label>
+                <?php if ($extraValue['active']):?>
+                  <input type="hidden" name="active_<?=$field?>" value="<?=$extraValue['pos']?>">
+                <?php endif; ?>
+                <?php echo $this->makeTag('input', '', $extraValue['attrs']); ?>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <label class="control-label" for="<?=$this->escapeHtmlAttr($field)?>"><?=$this->transEsc($data['label']) ?>:</label>
+            <?php
+                $attrs = [
+                  'id' => $field,
+                  'name' => $field,
+                  'type' => $data['type'],
+                  'value' => $value,
+                  'class' => 'form-control',
+                ];
+                if ($data['required']) {
+                  $attrs['required'] = true;
+                }
+                if ($data['pattern']) {
+                  $attrs['pattern'] = $data['pattern'];
+                }
+                echo $this->makeTag('input', '', $attrs);
+            ?>
+          <?php endif; ?>
           <?php if ($data['hint']): ?>
             <div class="help-block"><?=$this->transEsc($data['hint'])?></div>
           <?php else: ?>
