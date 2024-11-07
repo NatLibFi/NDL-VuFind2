@@ -993,7 +993,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
         );
 
         $setTemplateLine(
-            'Author',
+            'Miscellaneous Information',
             'getMiscInformation',
             'data-escapeHtml.phtml',
             [
