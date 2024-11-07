@@ -913,7 +913,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
     }
 
     /**
-     * Fetch requested library card's barcode.
+     * Fetch and display requested library card's barcode.
      *
      * @return mixed
      */
@@ -928,40 +928,49 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             }
             $userCardService = $this->getDbService(UserCardServiceInterface::class);
             $card = $userCardService->getOrCreateLibraryCard($user, $id);
-            $cardName = $card->getCardName();
-            if (isset($this->session->LibraryCards[$cardName])) {
-                $cachedBarcode = $this->session->LibraryCards[$cardName];
-                return $this->redirect()->toRoute('barcode-show', [], ['query' => ['code' => $cachedBarcode]]);
+            if (isset($this->session->LibraryCards[$id])) {
+                $barcode = $this->session->LibraryCards[$id];
+                return $this->createViewModel(['code' => $barcode]);
             }
             $username = $card->getCatUsername();
             if (strstr($username, '.')) {
                 [$target, $username] = explode('.', $username, 2);
             }
             $barcode = $card->barcode ?? $username;
-            $catalog = $this->getILS();
-            $auth = $this->getILSAuthenticator();
-            if ($card->getCatUsername() === $user->getCatUsername()) {
-                $patron = $auth->storedCatalogLogin();
-            } else {
-                $loginUser = clone $user;
-                $loginUser->setCatUsername($card->getCatUsername());
-                $loginUser->setRawCatPassword($card->getRawCatPassword());
-                $loginUser->setCatPassEnc($card->getCatPassEnc());
-                $patron = $catalog->patronLogin(
-                    $loginUser->getCatUsername(),
-                    $auth->getCatPasswordForUser($loginUser)
-                );
+            try {
+                $catalog = $this->getILS();
+                $auth = $this->getILSAuthenticator();
+                if ($card->getCatUsername() === $user->getCatUsername()) {
+                    $patron = $auth->storedCatalogLogin();
+                } else {
+                    $loginUser = clone $user;
+                    $loginUser->setCatUsername($card->getCatUsername());
+                    $loginUser->setRawCatPassword($card->getRawCatPassword());
+                    $loginUser->setCatPassEnc($card->getCatPassEnc());
+                    $patron = $catalog->patronLogin(
+                        $loginUser->getCatUsername(),
+                        $auth->getCatPasswordForUser($loginUser)
+                    );
+                }
+                if (!$patron) {
+                    $this->flashMessenger()->addErrorMessage('authentication_error_invalid', 'error');
+                    return false;
+                }
+            } catch (\VuFind\Exception\ILS $e) {
+                $this->flashMessenger()->addErrorMessage('ils_connection_failed');
+                return false;
             }
-            if ($patron && $patron['cat_username'] === $card->getCatUsername()) {
+            if ($patron['cat_username'] === $card->getCatUsername()) {
                 $profile = $catalog->getMyProfile($patron);
                 if (!empty($profile['barcode'])) {
                     $barcode = $profile['barcode'];
                 }
             }
-            $this->session->LibraryCards[$cardName] = $barcode;
-            return $this->redirect()->toRoute('barcode-show', [], ['query' => ['code' => $barcode]]);
+            $this->session->LibraryCards[$id] = $barcode;
+            $this->disableSessionWrites();  // avoid session write timing bug
+            return $this->createViewModel(['code' => $barcode]);
         } catch (\VuFind\Exception\LibraryCard $e) {
-            $this->flashMessenger()->addMessage($e->getMessage(), 'error');
+            $this->flashMessenger()->addErrorMessage($e->getMessage(), 'error');
             return false;
         }
     }

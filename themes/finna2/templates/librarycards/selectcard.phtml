@@ -32,7 +32,7 @@
                 <?=$selectedCard ? '<span class="sr-only">(' . $this->transEsc('selected') . ')</span> ' : '' ?><span><?=$display?></span>
               </a>
               <div class="barcode-container">
-                <a href="<?=$this->url('displayBarcode')?>?id=<?=$this->escapeHtmlAttr($card->getId()) ?>">
+                <a href="<?=$this->url('displayBarcode', ['id' => $card->getId()])?>">
                   <?=$this->icon('library-card-barcode', 'barcode-icon')?>
                 </a>
               </div>
