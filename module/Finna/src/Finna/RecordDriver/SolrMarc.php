@@ -2646,4 +2646,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         }
         return array_unique(array_filter($result));
     }
+
+    /**
+     * Get misc information from field 730, subfield g.
+     *
+     * @return array
+     */
+    public function getMiscInformation()
+    {
+        return array_unique($this->stripTrailingPunctuation($this->getFieldArray('730', ['g'])));
+    }
 }

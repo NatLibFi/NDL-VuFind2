@@ -73,6 +73,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Age Limit',
             'Audience',
             'Audience Characteristics',
+            'Author',
             'Author Notes',
             'Awards',
             'Bibliography',
