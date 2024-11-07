@@ -93,11 +93,12 @@ finna.common = (function finnaCommon() {
         event.preventDefault();
         // Update button text:
         const dropdownEl = link.closest('.dropdown');
+        const dropdownLabel = type === 'sort' ? 'Sort' : 'Results per page';
         if (dropdownEl) {
           const toggleEl = dropdownEl.querySelector('.dropdown-toggle');
           if (toggleEl) {
+            toggleEl.ariaLabel = VuFind.translate(dropdownLabel) + ': ' + VuFind.translate(link.innerText) + ' ' + VuFind.translate('selected');
             const spanEl = toggleEl.querySelector('span');
-            toggleEl.ariaDescription = VuFind.translate(link.innerText) + ' ' + VuFind.translate('selected');
             if (spanEl) {
               spanEl.innerText = link.innerText;
             }
