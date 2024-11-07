@@ -119,7 +119,7 @@
     }
     &.selected {
       border: 2px solid $action-link-color;
-      border-radius: $border-radius-small;
+      border-radius: $border-radius-base;
       & .icon{
         color: $action-link-color;
       }
