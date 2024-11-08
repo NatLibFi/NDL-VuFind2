@@ -937,9 +937,9 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 [$target, $username] = explode('.', $username, 2);
             }
             $barcode = $card->barcode ?? $username;
+            $catalog = $this->getILS();
+            $auth = $this->getILSAuthenticator();
             try {
-                $catalog = $this->getILS();
-                $auth = $this->getILSAuthenticator();
                 if ($card->getCatUsername() === $user->getCatUsername()) {
                     $patron = $auth->storedCatalogLogin();
                 } else {
@@ -952,15 +952,11 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                         $auth->getCatPasswordForUser($loginUser)
                     );
                 }
-                if (!$patron) {
-                    $this->flashMessenger()->addErrorMessage('authentication_error_invalid', 'error');
-                    return false;
-                }
             } catch (\VuFind\Exception\ILS $e) {
                 $this->flashMessenger()->addErrorMessage('ils_connection_failed');
                 return false;
             }
-            if ($patron['cat_username'] === $card->getCatUsername()) {
+            if ($patron && $patron['cat_username'] === $card->getCatUsername()) {
                 $profile = $catalog->getMyProfile($patron);
                 if (!empty($profile['barcode'])) {
                     $barcode = $profile['barcode'];
