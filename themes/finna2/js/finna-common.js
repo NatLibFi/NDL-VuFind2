@@ -59,23 +59,42 @@ finna.common = (function finnaCommon() {
     }
   }
 
+  function handleMenuFocus() {
+    setTimeout(() => {
+      var storagedEl = window.sessionStorage.getItem('clickedMenu');
+      if (storagedEl) {
+        window.sessionStorage.removeItem('clickedMenu');
+        var focusedEl = document.querySelector(storagedEl);
+        if (focusedEl) {
+          focusedEl.focus();
+        }
+      }
+    },
+    200
+    );
+  }
+
+  window.onload = function handleFocus() {
+    if (window.sessionStorage.getItem('clickedMenu')) {
+      handleMenuFocus();
+    }
+  };
+
   /**
    * Add event handlers for managing JS-loaded search results
    */
   function initResultsEventHandler() {
     VuFind.listen('results-load', () => {
-      setTimeout(
-        function focusHeading() {
-          const heading = document.getElementById("results-heading");
-          if (heading) {
-            heading.focus();
-          }
-        },
-        200
-      );
+      handleMenuFocus();
     });
     VuFind.listen('results-loaded', () => {
       initResultScripts(document.querySelector('.js-result-list'), false);
+    });
+
+    document.querySelectorAll('.view-dropdown .dropdown-menu a').forEach((button) => {
+      button.addEventListener('keydown', function saveUsedBtn() {
+        window.sessionStorage.setItem('clickedMenu', '.view-dropdown a.dropdown-toggle');
+      });
     });
 
     // Set up Finna's dropdown-based sort and limit controls:
@@ -91,6 +110,7 @@ finna.common = (function finnaCommon() {
       };
       link.addEventListener('click', function handleClick(event) {
         event.preventDefault();
+        window.sessionStorage.setItem('clickedMenu', `${type}-dropdown a.dropdown-toggle`);
         // Update button text:
         const dropdownEl = link.closest('.dropdown');
         const dropdownLabel = type === 'sort' ? 'Sort' : 'Results per page';
