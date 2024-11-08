@@ -59,6 +59,9 @@ finna.common = (function finnaCommon() {
     }
   }
 
+  /**
+   * Focus on used menu after an option is chosen
+   */
   function handleMenuFocus() {
     setTimeout(() => {
       var storagedEl = window.sessionStorage.getItem('clickedMenu');
