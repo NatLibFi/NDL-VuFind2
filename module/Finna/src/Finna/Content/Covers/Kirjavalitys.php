@@ -108,7 +108,7 @@ class Kirjavalitys extends \VuFind\Content\AbstractCover
                     'format' => 'image',
                     'size' => $sizeCodes[$size] ?? 'max400',
                 ];
-                return 'https://media.kirjavalitys.fi/library/cover/' . $key . '/' . rawurlencode($pid)
+                return 'https://media.kirjavalitys.fi/library/cover/' . rawurlencode($key) . '/' . rawurlencode($pid)
                     . '?' . http_build_query($params);
             }
             return false;
