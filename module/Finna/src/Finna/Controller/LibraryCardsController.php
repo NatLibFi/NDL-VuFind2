@@ -960,8 +960,9 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             $this->session->LibraryCards[$id] = $barcode;
             $this->disableSessionWrites();  // avoid session write timing bug
             return $this->createViewModel(['code' => $barcode]);
-        } catch (\Exception $e) {
-            return false;
+        } catch (\Exception) {
+            $this->flashMessenger()->addErrorMessage('An error has occurred');
+            return $this->redirect()->toRoute('librarycards-home');
         }
     }
 
