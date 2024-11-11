@@ -939,22 +939,17 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             $barcode = $card->barcode ?? $username;
             $catalog = $this->getILS();
             $auth = $this->getILSAuthenticator();
-            try {
-                if ($card->getCatUsername() === $user->getCatUsername()) {
-                    $patron = $auth->storedCatalogLogin();
-                } else {
-                    $loginUser = clone $user;
-                    $loginUser->setCatUsername($card->getCatUsername());
-                    $loginUser->setRawCatPassword($card->getRawCatPassword());
-                    $loginUser->setCatPassEnc($card->getCatPassEnc());
-                    $patron = $catalog->patronLogin(
-                        $loginUser->getCatUsername(),
-                        $auth->getCatPasswordForUser($loginUser)
-                    );
-                }
-            } catch (\VuFind\Exception\ILS $e) {
-                $this->flashMessenger()->addErrorMessage('ils_connection_failed');
-                return false;
+            if ($card->getCatUsername() === $user->getCatUsername()) {
+                $patron = $auth->storedCatalogLogin();
+            } else {
+                $loginUser = clone $user;
+                $loginUser->setCatUsername($card->getCatUsername());
+                $loginUser->setRawCatPassword($card->getRawCatPassword());
+                $loginUser->setCatPassEnc($card->getCatPassEnc());
+                $patron = $catalog->patronLogin(
+                    $loginUser->getCatUsername(),
+                    $auth->getCatPasswordForUser($loginUser)
+                );
             }
             if ($patron && $patron['cat_username'] === $card->getCatUsername()) {
                 $profile = $catalog->getMyProfile($patron);
@@ -965,8 +960,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             $this->session->LibraryCards[$id] = $barcode;
             $this->disableSessionWrites();  // avoid session write timing bug
             return $this->createViewModel(['code' => $barcode]);
-        } catch (\VuFind\Exception\LibraryCard $e) {
-            $this->flashMessenger()->addErrorMessage($e->getMessage(), 'error');
+        } catch (\Exception $e) {
             return false;
         }
     }
