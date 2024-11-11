@@ -26,10 +26,9 @@
             <a href="<?= $this->url('reservationlist-displaylist', ['id' => $list->getId()])?>"><?= $this->escapeHtml($list->getTitle()) ?></a>
           </div>
           <div class="pull-right">
-            <span class="delete-list-btn-wrapper">
-              <?=
+            <?=
               $this->component(
-                  'confirm-button',
+                  'finna-confirm-button',
                   [
                       'buttonLink' => $this->url('reservationlist-deletelist', [], ['query' => ['listID' => $list->getId()]]),
                       'buttonLabel' => 'delete_list',
@@ -38,8 +37,7 @@
                       'align' => 'right',
                   ]
               )
-              ?>
-            </span>
+            ?>
           </div>
         </div>
         <div class="reservation-list-info">
