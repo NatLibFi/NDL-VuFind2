@@ -83,7 +83,7 @@
                   <?php endif; ?>
                   <?=
                     $this->component(
-                        'finna-confirm-button',
+                        'confirm-button',
                         [
                         'buttonLink' => $this->url('librarycards-deletecard', [], ['query' => ['cardID' => $record['id']]]),
                         'buttonLabelHtml' => $this->icon('library-card-disconnect') . ' ' . $this->translate('Disconnect Library Card'),

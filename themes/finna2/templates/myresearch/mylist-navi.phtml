@@ -43,7 +43,7 @@
         <?= $this->partial('myresearch/list-visibility.phtml', ['listUrl' => $url, 'public' => $list->isPublic()]); ?>
         <?=
           $this->component(
-              'finna-confirm-button',
+              'confirm-button',
               [
                 'buttonLink' => $this->url('myresearch-deletelist', [], ['query' => ['listID' => $list->getId()]]),
                 'buttonLabel' => 'delete_list',
