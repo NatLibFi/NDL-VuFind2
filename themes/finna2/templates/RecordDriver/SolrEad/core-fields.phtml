@@ -27,7 +27,7 @@
   ], $coreFields));
 ?>
 <?php if (!empty($coreFieldGroups)): ?>
-  <table class="table table-finna-record record-details record-field-groups" role="presentation">
+  <table class="table table-finna-record record-details record-field-groups" role="presentation" tabindex="-1">
     <?=$this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $coreFieldGroups]);?>
   </table>
 <?php endif; ?>

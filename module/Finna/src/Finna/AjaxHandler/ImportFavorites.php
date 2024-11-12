@@ -234,7 +234,8 @@ class ImportFavorites extends \VuFind\AjaxHandler\AbstractBase implements Transl
                 $listCount++;
             }
 
-            foreach ($list['records'] as $record) {
+            // Reverse the list because saving an item always puts it first in the list:
+            foreach (array_reverse($list['records']) as $record) {
                 $driver = $this->recordLoader->load(
                     $record['id'],
                     $record['source'],

@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) The National Library of Finland 2022-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,6 +23,7 @@
  * @category Wayfinder
  * @package  Wayfinder
  * @author   Inlead <support@inlead.dk>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://inlead.dk
  */
@@ -35,12 +36,15 @@ use Psr\Container\ContainerInterface;
 use VuFind\Log\LoggerAwareTrait;
 use VuFindHttp\HttpServiceInterface;
 
+use function in_array;
+
 /**
  * Wayfinder service.
  *
  * @category Wayfinder
  * @package  Wayfinder
  * @author   Inlead <support@inlead.dk>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://inlead.dk
  */
@@ -56,18 +60,33 @@ class WayfinderService
     protected bool $isConfigured;
 
     /**
+     * Locale mappings
+     *
+     * @var array
+     */
+    protected array $localeMap = [
+        'fi' => 'FI',
+        'en-gb' => 'EN',
+        // SE seems to be mapped to Swedish instead of Northern Sámi:
+        'sv' => 'SE',
+        'se' => 'EN',
+    ];
+
+    /**
      * Constructor.
      *
      * @param ContainerInterface   $container   Service container.
      * @param array                $config      Configuration.
      * @param HttpServiceInterface $httpService HTTP service.
      * @param LoggerInterface      $logger      Logger service.
+     * @param string               $locale      User locale
      */
     public function __construct(
         protected ContainerInterface $container,
         protected array $config,
         protected HttpServiceInterface $httpService,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        protected string $locale
     ) {
         $this->isConfigured = $this->isValidConfig();
         $this->logger = $logger;
@@ -93,6 +112,30 @@ class WayfinderService
     public function isConfigured(): bool
     {
         return $this->isConfigured;
+    }
+
+    /**
+     * Whether service is enabled for the given record.
+     *
+     * @param string $source Data source
+     *
+     * @return bool
+     */
+    public function isEnabledForSource(string $source): bool
+    {
+        return $this->isConfigured() && in_array($source, $this->config['General']['sources'] ?? []);
+    }
+
+    /**
+     * Get relevant location-related fields from all call number fields
+     *
+     * @param array $fields Fields
+     *
+     * @return array
+     */
+    public function getLocationData(array $fields): array
+    {
+        return array_intersect_key($fields, array_flip(['id', 'branch', 'department', 'location', 'callnumber']));
     }
 
     /**
@@ -122,15 +165,15 @@ class WayfinderService
                 . ' from url [' . $url . ']'
                 . ' with args [' . var_export($placement, true) . '].'
                 . ' Status code [' . $response->getStatusCode() . '].'
-                . ' Response message [' . $response->getContent() . '].'
+                . ' Response message [' . $response->getBody() . '].'
             );
             return '';
         }
 
         try {
-            $decoded = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
+            $decoded = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $exception) {
-            $this->logError((string)$exception);
+            $this->logError('Failed to parse Wayfinder response: ' . (string)$exception);
             return '';
         }
 
@@ -138,12 +181,20 @@ class WayfinderService
             $this->logError(
                 'Failed to get marker link from response'
                 . ' using [' . $url . '].'
-                . ' Response [' . $response->getContent() . ']'
+                . ' Response [' . $response->getBody() . ']'
             );
             return '';
         }
 
-        return $decoded['link'];
+        // splice language code into the link:
+        $parts = explode('#', $decoded['link'], 2);
+        $link = $parts[0] . (str_contains($parts[0], '?') ? '&' : '?') . 'lang='
+            . ($this->localeMap[$this->locale] ?? $this->locale);
+        if (null !== ($hash = $parts[1] ?? null)) {
+            $link .= "#$hash";
+        }
+
+        return $link;
     }
 
     /**

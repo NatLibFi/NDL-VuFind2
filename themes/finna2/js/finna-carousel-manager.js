@@ -9,9 +9,8 @@ finna.carouselManager = (() => {
 
   /**
    * Calculate the gap value from amount of items per page
-   * 
-   * @param {int} perPage The value to calculate gap value from
-   * @returns {int} Gap value 
+   * @param {number} perPage The value to calculate gap value from
+   * @returns {number} Gap value
    */
   function calculateGapValue(perPage) {
     if (perPage % 2 === 0 || perPage === 1) {
@@ -123,11 +122,9 @@ finna.carouselManager = (() => {
 
   /**
    * Merge sub objects into target from source
-   *
-   * @param {Object} target To merge key/values to
-   * @param {Object} source To merge key/values from
-   *
-   * @returns {Object} Merged object
+   * @param {object} target To merge key/values to
+   * @param {object} source To merge key/values from
+   * @returns {object} Merged object
    */
   function deepMerge(target, source) {
     if (typeof target === 'object' && typeof source === 'object') {
@@ -147,8 +144,8 @@ finna.carouselManager = (() => {
 
   /**
    * Converts settings into compatible Splide settings
-   *
-   * @param {Object} settings
+   * @param {object} settings Old settings to convert into splide settings
+   * @returns {object} Settings for splide
    */
   function toSplideSettings(settings) {
     let splidied = {
@@ -173,11 +170,9 @@ finna.carouselManager = (() => {
 
   /**
    * Turn given element into a carousel
-   *
    * @param {HTMLElement} element  Element to turn into a carousel
-   * @param {Object}      settings Old Finna settings for carousels
-   *
-   * @return {Splide}
+   * @param {object} settings Old Finna settings for carousels
+   * @returns {Splide} An instance of a splide carousel
    */
   function createCarousel(element, settings) {
     if (typeof settings.i18n === 'undefined') {

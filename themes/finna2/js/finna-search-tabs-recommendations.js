@@ -1,5 +1,8 @@
 /*global VuFind, finna */
 finna.searchTabsRecommendations = (() => {
+  /**
+   * Initialize search tabs recommendations
+   */
   function initSearchTabsRecommendations() {
     const holder = document.getElementById('search-tabs-recommendations-holder');
     if (!holder || !holder.dataset.searchId) {

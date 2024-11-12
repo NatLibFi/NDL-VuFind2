@@ -31,6 +31,7 @@ namespace Finna\RecordDriver;
 
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use Finna\RecordDriver\Feature\ContainerFormatTrait;
+use Finna\RecordDriver\Feature\LrmiDriverTrait;
 
 use function in_array;
 
@@ -46,6 +47,7 @@ use function in_array;
 class SolrAipa extends SolrQdc implements ContainerFormatInterface
 {
     use ContainerFormatTrait;
+    use LrmiDriverTrait;
 
     /**
      * Encapsulated content type records.
@@ -187,6 +189,28 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     public function getGeneralNotes()
     {
         return [];
+    }
+
+    /**
+     * Return record type.
+     *
+     * @return string
+     */
+    public function getType(): string
+    {
+        return (string)($this->getXmlRecord()->type ?? '');
+    }
+
+    /**
+     * Get topics
+     *
+     * @param string $type defaults to /onto/yso/
+     *
+     * @return array
+     */
+    public function getTopics(string $type = '/onto/yso/'): array
+    {
+        return $this->getAllSubjectHeadings();
     }
 
     /**

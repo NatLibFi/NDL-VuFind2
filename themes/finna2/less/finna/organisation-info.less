@@ -538,9 +538,12 @@
             }
             .location-description {
                 font-weight: normal;
-                margin-bottom: 1em;
-                margin-top: 1.1em;
+                margin-top: 1em;
                 overflow: hidden;
+                min-height: 5px;
+                > * {
+                    display: inline-flex;
+                }
             }
             .building-year, .building-name {
                 font-size: 0.9em;

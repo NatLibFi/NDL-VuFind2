@@ -82,9 +82,9 @@ class RecordFactory implements FactoryInterface
             $container->get(\VuFind\Form\Form::class),
             $container->get(\Finna\Service\UserPreferenceService::class),
             function ($options) use ($container) {
-                $result = clone $container
+                $result = $container
                     ->get(\VuFind\Search\Results\PluginManager::class)
-                    ->get('EncapsulatedRecords');
+                    ->get(\Finna\Search\EncapsulatedRecords\Results::class);
                 $result->getParams()->initFromRequest(new Parameters($options));
                 return $result;
             }
@@ -94,6 +94,7 @@ class RecordFactory implements FactoryInterface
                 $container->get(\VuFind\Cover\Router::class)
             );
         }
+        $helper->setSearchMemory($container->get(\VuFind\Search\Memory::class));
         return $helper;
     }
 }

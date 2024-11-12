@@ -52,26 +52,6 @@ use VuFind\Exception\ILS as ILSException;
 class Connection extends \VuFind\ILS\Connection
 {
     /**
-     * Change Password
-     *
-     * Attempts to change patron password (PIN code)
-     *
-     * @param array $details An array of patron id and old and new password
-     *
-     * @return mixed An array of data on the request including
-     * whether or not it was successful and a system message (if available)
-     */
-    public function changePassword($details)
-    {
-        if (!$this->checkCapability('changePassword', compact('details'))) {
-            throw new ILSException(
-                'Cannot call method: ' . $this->getDriverClass() . '::changePassword'
-            );
-        }
-        return $this->getDriver()->changePassword($details);
-    }
-
-    /**
      * Check driver capability -- return true if the driver supports the specified
      * method; false otherwise.
      *

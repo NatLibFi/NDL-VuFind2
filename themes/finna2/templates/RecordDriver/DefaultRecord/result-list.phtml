@@ -72,7 +72,7 @@
           <?php if ($this->driver->isCollection()): ?>
             <?=implode('<br>', $this->driver->getSummary()); ?>
           <?php else: ?>
-            <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles');
+            <?php $authors = $this->driver->tryMethod('getPrimaryAuthorsExtended');
             if (!empty($authors)): ?>
               <div class="truncate-field" data-rows="1" tabindex="-1">
                 <?php foreach($authors as $index => $author): ?>

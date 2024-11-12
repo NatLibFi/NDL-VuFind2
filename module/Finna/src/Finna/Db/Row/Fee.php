@@ -134,7 +134,7 @@ class Fee extends \VuFind\Db\Row\RowGateway implements
      */
     public function setTitle(string $title): FinnaFeeEntityInterface
     {
-        $this->title = $title;
+        $this->title = mb_substr($title, 0, 255, 'UTF-8');
         return $this;
     }
 
@@ -157,7 +157,7 @@ class Fee extends \VuFind\Db\Row\RowGateway implements
      */
     public function setType(string $type): FinnaFeeEntityInterface
     {
-        $this->type = $type;
+        $this->type = mb_substr($type, 0, 255, 'UTF-8');
         return $this;
     }
 
@@ -180,7 +180,7 @@ class Fee extends \VuFind\Db\Row\RowGateway implements
      */
     public function setDescription(string $description): FinnaFeeEntityInterface
     {
-        $this->description = $description;
+        $this->description = mb_substr($description, 0, 255, 'UTF-8');
         return $this;
     }
 
@@ -272,7 +272,7 @@ class Fee extends \VuFind\Db\Row\RowGateway implements
      */
     public function setOrganization(string $organization): FinnaFeeEntityInterface
     {
-        $this->organization = $organization;
+        $this->organization = mb_substr($organization, 0, 255, 'UTF-8');
         return $this;
     }
 

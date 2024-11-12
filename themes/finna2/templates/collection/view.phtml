@@ -147,11 +147,11 @@
   <?php // N.B. The element/class structure here is important for the ajax tabs to work properly ?>
   <div class="record-tabs record-accordions">
     <?php if (count($this->tabs) > 0): ?>
-      <a id="tabnav"></a>
+      <a id="tabnav"><h2 class="sr-only"><?=$this->transEsc('Additional Information')?></h2></a>
         <?php if (count($this->tabs) > 3): ?>
         <div class="tabs-responsive">
         <?php endif; ?>
-        <ul class="recordTabs nav nav-tabs visible-md visible-lg">
+        <ul class="recordTabs nav nav-tabs visible-md visible-lg" role="tablist">
           <?php foreach ($this->tabs as $tab => $obj): ?>
             <?php
               $desc = $obj->getDescription();
@@ -174,8 +174,8 @@
                 $tabClasses[] = 'hidden-xs tab-right';
               }
             ?>
-            <li class="<?=implode(' ', $tabClasses)?>" data-tab="<?=$tabName?>">
-            <a class="<?=$this->escapeHtmlAttr(strtolower($tab)) ?>" aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>"
+            <li role="presentation" id="record-tab-<?=$this->escapeHtmlAttr($tabName)?>" class="<?=implode(' ', $tabClasses)?>" data-tab="<?=$tabName?>">
+            <a role="tab" class="<?=$this->escapeHtmlAttr(strtolower($tab)) ?>" aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>"
               href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $tab))?>#tabnav" data-lightbox-ignore<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?>
               data-background<?php endif ?>>
               <?php if (strtolower($tab) == 'details'): ?><?=$this->icon('staff-view', 'staff-view-icon') ?><?php endif; ?>
@@ -189,7 +189,7 @@
         <?php endif; ?>
     <?php endif; ?>
 
-    <div class="tab-content collectionDetails<?=$tree ? 'Tree' : ''?>">
+    <div class="tab-content collectionDetails<?=$tree ? 'Tree' : ''?>" tabindex="0">
       <?php if (!$this->loadInitialTabWithAjax || !isset($activeTabObj) || !$activeTabObj->supportsAjax()): ?>
         <div class="tab-pane active <?=$this->escapeHtmlAttr($this->activeTab) ?>-tab">
           <?=isset($activeTabObj) ? $this->record($this->driver)->getTab($activeTabObj) : '' ?>

@@ -1,0 +1,26 @@
+<h2><?=$this->transEsc('ReservationList::Delete Selected Resources From The List')?></h2>
+ <form action="<?=$this->url('reservationlist-deletebulk')?>" method="post" name="deleteBulk" data-lightbox-onclose="VuFind.refreshPage">
+  <div id="popupMessages"><?=$this->flashmessages()?></div>
+  <div id="popupDetails">
+    <?php if (!$this->list): ?>
+      <div class="alert alert-info"><?=$this->transEsc('confirm_delete_brief') ?></div>
+    <?php else: ?>
+      <h3><?=$this->transEsc('List') ?>: <?=$this->escapeHtml($this->list->title) ?></h3>
+    <?php endif; ?>
+    <ul class="record-list">
+      <?php foreach ($this->resources as $resource): ?>
+        <li>
+          <strong><?=$this->transEsc('Title') ?>:</strong>
+          <?=$this->escapeHtml($resource->getBreadcrumb())?>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+    <br>
+    <input class="btn btn-primary" type="submit" name="submit" value="<?=$this->transEscAttr('Delete')?>">
+    <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
+    <?php foreach ($this->resource_ids as $deleteID): ?>
+      <input type="hidden" name="ids[]" value="<?=$this->escapeHtmlAttr($deleteID)?>">
+    <?php endforeach; ?>
+      <input type="hidden" name="listID" value="<?=$this->list ? $this->escapeHtmlAttr($this->list->id) : ''?>">
+  </div>
+</form>

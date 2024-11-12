@@ -8,10 +8,8 @@ finna.fines = (function finnaFines() {
 
   /**
    * Get the whole part from currency in cents
-   *
-   * @param {int} currency
-   *
-   * @return {int}
+   * @param {number} currency Number to divide by 100
+   * @returns {number} Currency without digits
    */
   function getWhole(currency)
   {
@@ -20,11 +18,8 @@ finna.fines = (function finnaFines() {
 
   /**
    * Get the fraction part from currency in cents padded to two characters
-   *
-   * @param {int} currency
-   * @param {string} template
-   *
-   * @return {string}
+   * @param {number} currency Currency the get fraction from
+   * @returns {string} Fraction of the currency
    */
   function getFraction(currency)
   {
@@ -37,11 +32,9 @@ finna.fines = (function finnaFines() {
 
   /**
    * Format currency according to a template where 11 is whole and 22 is fraction
-   *
-   * @param {int} currency
-   * @param {string} template
-   *
-   * @return {string}
+   * @param {number} currency Currency to use in template
+   * @param {string} template Template string to insert into
+   * @returns {string} Formatted amount
    */
   function formatAmount(currency, template)
   {
@@ -54,11 +47,9 @@ finna.fines = (function finnaFines() {
 
   /**
    * Set the aria-live attribute for an element
-   *
-   * @param {Element} element
-   * @param {string} politeness
-   *
-   * @return {void}
+   * @param {Element} element Element to set aria live into
+   * @param {string} politeness Aria live value
+   * @returns {void}
    */
   function ariaLive(element, politeness)
   {
@@ -71,8 +62,7 @@ finna.fines = (function finnaFines() {
 
   /**
    * Initialize payment
-   *
-   * @return {void}
+   * @returns {void}
    */
   function init()
   {

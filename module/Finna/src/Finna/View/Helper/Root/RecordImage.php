@@ -480,6 +480,36 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
+     * Function to return images for a bot.
+     * 4 images maximum and prefers [large, medium, small] sizes.
+     *
+     * @param array $images Images to render
+     *
+     * @return array
+     */
+    public function getImagesForBotUser(array $images = []): array
+    {
+        $results = [];
+
+        $i = 0;
+        $image = [];
+        do {
+            foreach (['large', 'medium', 'small'] as $size) {
+                if (empty($image['urls'][$size])) {
+                    continue;
+                }
+                $results[] = [
+                    'url' => $image['urls'][$size],
+                    'pdf' => !empty($image['pdf']),
+                    'id' => $i++,
+                ];
+                break;
+            }
+        } while ($i < 4 && $image = array_shift($images));
+        return $results;
+    }
+
+    /**
      * Returns image params to be used when creating cover links.
      *
      * @param array $params Extra parameters for image. Width, height.
