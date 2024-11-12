@@ -179,20 +179,9 @@ class SolrEad3 extends SolrEad
      */
     public function isArchive(): bool
     {
-        if ($topId = $this->getHierarchyTopID()[0]) {
-            if ($topId !== $this->getUniqueID()) {
-                $driver = $this->getRecord($topId);
-                return $driver->isArchive();
-            }
-        }
-        $record = $this->getXmlRecord();
-        foreach ($record->controlaccess->genreform->part ?? [] as $part) {
-            if (trim($part) === 'Arkisto') {
-                return true;
-            }
-            if (trim($part) === 'Kokoelma') {
-                return false;
-            }
+        $xml = $this->getXmlRecord();
+        if ($xml->{'add-data'}->archive->attributes()->type === 'collection') {
+            return false;
         }
         return true;
     }
