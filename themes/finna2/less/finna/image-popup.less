@@ -582,16 +582,23 @@
     }
 }
 
+.recordcover-container .image-popup-trigger.compact {
+    height: 200px;
+}
+
+.recordcover-container .image-popup-trigger {
+    height: 500px;
+    @media (max-width:@screen-xs-max) {
+        height: 250px;
+    }
+}
+
 .recordcover-container {
     min-width: 60px;
     .image-popup-trigger {
         display: flex;
         width: 100%;
         aspect-ratio: 1/1;
-        height: 500px;
-        @media (max-width:@screen-xs-max) {
-            height: 250px;
-        }
         .paginator-info {
             position: absolute;
             right: 10px;
