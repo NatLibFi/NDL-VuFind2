@@ -587,7 +587,6 @@
     .image-popup-trigger {
         display: flex;
         width: 100%;
-        justify-content: center;
         aspect-ratio: 1/1;
         max-height: 500px;
         @media (max-width:@screen-xs-max) {
@@ -610,10 +609,10 @@
             justify-content: center;
             align-items: center;
         }
-        > img {
-            max-width: inherit;
-            object-fit: contain;
+        img.recordcover {
             padding: 5px;
+            object-fit: contain;
+            margin: auto;
         }
         &.no-image {
             ::before {
