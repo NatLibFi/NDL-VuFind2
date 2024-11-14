@@ -582,178 +582,186 @@
     }
 }
 
-.recordcover-container .image-popup-trigger.compact {
-    height: 200px;
+.recordcover-container .paginator-info {
+    position: absolute;
+    right: 10px;
+    top: 0px;
+    color: black;
+    z-index: 6;
+    .image-index {
+        background-color: #efefefcc;
+        padding: 2px;
+    }
 }
-
-.recordcover-container .image-popup-trigger {
-    height: 500px;
-    @media (max-width:$screen-xs-max) {
-        height: 250px;
+.recordcover-container .image-popup-trigger .iconlabel {
+    display: none;
+}
+.recordcover-container .image-popup-trigger.no-image {
+    .iconlabel {
+        font-size: 39px;
+        color: $gray-lighter;
+        padding: 0;
+        @media (max-width:$screen-sm-max) {
+            font-size: 26px;
+        }
+        display: flex;
+        margin-right: 0;
+        box-shadow: 0px 0px 0px 2px $gray-lighter inset;
+    }
+    img {
+        display: none;
+    }
+    &.disable {
+        cursor: default;
+    }
+    .model-3d {
+        display: none;
     }
 }
 
 .recordcover-container {
     min-width: 60px;
-    .image-popup-trigger {
-        display: flex;
-        width: 100%;
-        aspect-ratio: 1/1;
-        .paginator-info {
-            position: absolute;
-            right: 10px;
-            top: 0px;
-            color: black;
-            z-index: 6;
-            .image-index {
-                background-color: #efefefcc;
-                padding: 2px;
-            }
-        }
-        .iconlabel {
-            display: none;
-            width: 100%;
-            justify-content: center;
-            align-items: center;
-        }
-        img.recordcover {
-            padding: 5px;
-            object-fit: contain;
-            margin: auto;
-            height: inherit;
-        }
-        &.no-image {
-            ::before {
-                font-size: 39px;
-                color: $gray-lighter;
-                padding: 0;
-                @media (max-width:$screen-sm-max) {
-                    font-size: 26px;
-                }
-            }
-            img {
-                display: none;
-            }
-            .iconlabel {
-                display: flex;
-                margin-right: 0;
-                box-shadow: 0px 0px 0px 2px $gray-lighter inset;
-            }
-            &.disable {
-                cursor: default;
-            }
-            .model-3d {
-                display: none;
-            }
-        }
-    }
 }
-.result .image-popup-trigger .paginator-info {
-    right: initial;
-    left: 35px;
+.recordcover-container .image-popup-trigger {
+    display: flex;
+    width: 100%;
+    aspect-ratio: 1/1;
+    justify-content: center;
 }
-.result .recordcover-holder .next-image {
+
+
+.recordcover-container .image-popup-trigger img.recordcover {
+    height: 100%;
+    object-fit: contain;
+}
+
+.recordcover-container.gallery .next-image,
+.recordcover-container.compact .next-image{
     display: none;
 }
+.recordcover-container.compact .image-popup-trigger {
+    height: $image-compact-size;
+    .paginator-info {
+        right: initial;
+        left: 35px;
+    }
+}
+.recordcover-container.gallery .image-popup-trigger {
+    height: $image-gallery-size;
+}
+.recordcover-container.gallery .image-popup-trigger.no-image .iconlabel {
+    box-shadow: initial;
+}
+.recordcover-container.default .image-popup-trigger {
+    height: $image-default-size;
+}
+.recordcover-container.large .image-popup-trigger {
+    height: $image-large-size;
+    @media (max-width:$screen-xs-max) {
+        height: $image-large-size-mobile;
+    }
+}
+
 .recordcover-holder {
     position: relative;
 }
-.grid-image .image-popup-trigger.no-image .iconlabel {
-    box-shadow: initial;
-}
+
 .recordcovers {
     z-index: 3;
     align-items: center;
     position: relative;
-    &.paginated {
-        display: flex;
-        > button {
-                appearance: none;
-                height: 44px;
-                border: none;
-                background-color: transparent;
-                padding: 0 2px;
-                flex: 0 0 0;
-            i {
-                cursor: pointer;
-                font-size: 24px;
-            }
-            .finna-popup &:not(:disabled){
-                color: white;
-            }
-            &:disabled {
-                background-color: #d6d6d600;
-                color: transparent;
-                i {
-                    cursor: not-allowed;
-                }
-            }
-        }
-        .track-holder {
-            display: inline-block;
-            flex: 1 1 auto;
-            .finna-element-track {
-                max-height: 100%;
-                touch-action: none;
-                display: flex;
-                flex-flow: column;
-                align-items: center;
-                width: 100%;
-                min-width: 100%;
-                div {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    width: 100%;
-                    a {
-                        background-color: #efefefcc;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        height: 64px;
-                        overflow: hidden;
-                        margin: 2px 4px;
-                        padding: 2px;
-                        flex: 0 1 64px;
-                        span.model-3d-icon {
-                            color: #121212;
-                            font-size: 24px;
-                            font-style: initial;
-                        }
-                        &.current {
-                            border: 0.2em solid $brand-primary;
-                        }
-                        &.truncate-change {
-                            opacity: 0;
-                        }
-                    }
-                }
-            }
-        }
-        &.mini-paginator {
-            position: absolute;
-            left: 0;
-            padding: 0;
-            top: 0;
-            justify-content: start;
-            button {
-                background-color: #efefefcc;
-                margin: 0 1px;
-                padding: 0 4px;
-                height: 24px;
-                .icon {
-                    font-size: 10px;
-                }
-                &:disabled {
-                    color: lighten($gray-light, 30%);
-                }
-            }
-            .track-holder {
-                display: none;
-            }
-        }
+    display: flex;
+}
+
+.recordcovers > button {
+    appearance: none;
+    height: 44px;
+    border: none;
+    background-color: transparent;
+    padding: 0 2px;
+    flex: 0 0 0;
+}
+
+.recordcovers > button:disabled {
+    background-color: #d6d6d600;
+    color: transparent;
+    i {
+        cursor: not-allowed;
     }
 }
+
+.recordcovers > button i {
+    cursor: pointer;
+    font-size: 24px;
+}
+
+.recordcovers .track-holder {
+    display: inline-block;
+    flex: 1 1 auto;
+}
+
+.recordcovers .track-holder .finna-element-track {
+    max-height: 100%;
+    touch-action: none;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    width: 100%;
+    min-width: 100%;
+}
+
+.recordcovers .track-holder .finna-element-track div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+.recordcovers .track-holder .finna-element-track div a {
+    background-color: #efefefcc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 64px;
+    overflow: hidden;
+    margin: 2px 4px;
+    padding: 2px;
+    flex: 0 1 64px;
+    span.model-3d-icon {
+        color: #121212;
+        font-size: 24px;
+        font-style: initial;
+    }
+    &.current {
+        border: 0.2em solid $brand-primary;
+    }
+    &.truncate-change {
+        opacity: 0;
+    }
+}
+.recordcovers.mini-paginator {
+    position: absolute;
+    left: 0;
+    padding: 0;
+    top: 0;
+    justify-content: start;
+}
+
+.recordcovers.mini-paginator button {
+    background-color: #efefefcc;
+    margin: 0 1px;
+    padding: 0 4px;
+    height: 24px;
+    .icon {
+        font-size: 10px;
+    }
+    &:disabled {
+        color: lighten($gray-light, 30%);
+    }
+}
+.recordcovers.mini-paginator .track-holder {
+    display: none;
+}
+
 .recordcovers-more {
     display: flex;
     align-items: center;

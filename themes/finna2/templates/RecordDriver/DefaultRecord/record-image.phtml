@@ -15,6 +15,11 @@
               'numOfImages' => $numOfImages ?? null,
               'displayIcon' => $displayIcon ?? false,
               'models' => $models ?? [],
+              'sizeClass' => match ($this->type) {
+                'list' => 'compact',
+                'list grid' => 'gallery',
+                default => $this->record($this->driver)->hasLargeImageLayout() ? 'large' : 'default',
+              },
           ]
       )
     ?>
