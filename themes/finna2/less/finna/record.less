@@ -753,11 +753,16 @@ a.authority {
 
 finna-model-viewer {
   display: flex;
-  min-height: 400px;
+  height: @image-extra-large-size;
   position: relative;
   .wrapper {
     flex: 1 1 100%;
     background-color: #efefefcc;
+    display: flex;
+    justify-content: center;
+    img {
+      object-fit: contain;
+    }
     &.filedrop {
       box-shadow: 0px 0px 2px 2px @brand-primary;
     }
@@ -766,6 +771,7 @@ finna-model-viewer {
     position: absolute;
     color: black;
     width: 200px;
+    left: 0;
     .statistics-area {
       .model-stats, .model-help {
         background-color: white;

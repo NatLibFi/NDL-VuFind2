@@ -2,10 +2,16 @@
 <?php
   $isList = $type == 'list' || $type === 'list grid';
   $formats = $this->driver->tryMethod('getFormats');
+  $recordSizeFunction = function () {
+    if ($this->driver->tryMethod('getModels', [], [])) {
+      return 'extra-large';
+    }
+    return $this->record($this->driver)->hasLargeImageLayout() ? 'large' : 'default';
+  };
   $sizeClass = match ($this->type) {
     'list' => 'compact',
     'list grid' => 'gallery',
-    default => $this->record($this->driver)->hasLargeImageLayout() ? 'large' : 'default',
+    default => $recordSizeFunction(),
   };
 ?>
 <div class="record-image-container <?= empty($images[0]['urls']['large']) && empty($images[0]['urls']['medium']) ? 'hide-image' : ''?> <?=$sizeClass?>">

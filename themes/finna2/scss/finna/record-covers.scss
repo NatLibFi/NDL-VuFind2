@@ -59,8 +59,9 @@
 }
 
 .recordcover-container .image-popup-trigger img.recordcover {
-  height: 100%;
+  margin: auto;
   object-fit: contain;
+  max-height: 100%;
 }
 // Gallery styles
 .record-image-container.gallery {
@@ -95,6 +96,9 @@
   @media (max-width:$screen-xs-max) {
       height: $image-large-size-mobile;
   }
+}
+.recordcover-container.extra-large .image-popup-trigger {
+  height: $image-extra-large-size;
 }
 
 // Small image track styles
