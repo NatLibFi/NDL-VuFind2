@@ -24,9 +24,6 @@ $thumbnail-width-large:  200px !default;
       display: none;
     }
   }
-  .record-image-container {
-    position: relative;
-  }
 }
 @media (max-width: $screen-sm-max) {
   .template-dir-myresearch .container.main-content > .mainbody,
