@@ -588,9 +588,9 @@
         display: flex;
         width: 100%;
         aspect-ratio: 1/1;
-        max-height: 500px;
+        height: 500px;
         @media (max-width:$screen-xs-max) {
-            max-height: 250px;
+            height: 250px;
         }
         .paginator-info {
             position: absolute;
