@@ -1,4 +1,4 @@
-/*global VuFind, unwrapjQuery, getFocusableNodes */
+/*global VuFind, unwrapJQuery, getFocusableNodes */
 /**
  * Constructor for finna popup element
  * @param {jQuery} trigger Element to act as a trigger
@@ -345,7 +345,7 @@ FinnaPopup.prototype.onPopupClose = function onPopupClose() {
  */
 FinnaPopup.prototype.focusTrap = function focusTrap(e) {
   var _ = this;
-  const element = unwrapjQuery(_.content);
+  const element = unwrapJQuery(_.content);
   if (!$.contains(element, e.target)) {
     const nodes = getFocusableNodes(element);
     if (nodes.length) {
