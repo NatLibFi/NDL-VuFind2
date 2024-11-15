@@ -769,12 +769,6 @@ form#renewals, form#update_holds, form#purge_history {
     > li {
       border: none;
     }
-    > li:last-child > a, li:last-child {
-      @include border-bottom-radius(0);
-    }
-    > li:first-child > a, li:first-child {
-      @include border-top-radius(0);
-    }
     .active a {
       font-weight: 600;
       text-decoration: none;

@@ -52,14 +52,12 @@
 .view-options, .view-dropdown, .sort-button, .results-per-page-button, .update-location-button {
   color: @body-bg;
   font-weight: 600;
-  & .dropdown {
-    border-radius: 10px;
-  }
-  & .dropdown > a {
+
+  .dropdown > a {
     background: transparent;
     border: 2px solid @action-link-color;
     color: @action-link-color;
-    border-radius: @border-radius-small;
+    border-radius: @border-radius-base;
     font-size: 1em;
     padding: 5px;
     display: inline-block;
@@ -69,38 +67,43 @@
       background: @action-link-color;
       color: @body-bg;
       transition: background 0.2s linear;
-      & i {
+      i {
         color: @body-bg;
       }
     }
   }
-  & i {
+  i {
     font-size: 1.3em;
     color: @action-link-color;
     margin-right: 0;
     border-radius: @finna-button-radius;
   }
-  & i.fa-arrow-down {
+  i.fa-arrow-down {
     font-size: 1em;
     margin-left: -18px;
   }
-  & .dropdown-menu > li > a {
-    text-align: left;
-    color: @gray;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    & i {
+  .dropdown-menu {
+    border-radius: @border-radius-base;
+    padding: 0;
+
+    & > li > a {
+      text-align: left;
       color: @gray;
-    }
-    & i.fa-available {
-      font-size: 1em;
-      float: right;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      i {
+        color: @gray;
+      }
+      i.fa-available {
+        font-size: 1em;
+        float: right;
+      }
     }
   }
   @media(min-width: @screen-lg-min){
     display: inline-block;
   }
-  & .dropdown-menu &:not(.sort-button) {
+  .dropdown-menu &:not(.sort-button) {
     @media(max-width:@screen-sm-max) {
       font-size: 1.1em;
     }
@@ -116,7 +119,7 @@
     }
     &.selected {
       border: 2px solid @action-link-color;
-      border-radius: @border-radius-small;
+      border-radius: @border-radius-base;
       & .icon{
         color: @action-link-color;
       }

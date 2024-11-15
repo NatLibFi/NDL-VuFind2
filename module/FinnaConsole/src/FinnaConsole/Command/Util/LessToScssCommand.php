@@ -29,6 +29,8 @@
 
 namespace FinnaConsole\Command\Util;
 
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatter;
@@ -44,6 +46,7 @@ use function count;
 use function dirname;
 use function in_array;
 use function is_string;
+use function strlen;
 
 /**
  * Console command: convert style files from LESS to SCSS (Sass).
@@ -190,6 +193,13 @@ class LessToScssCommand extends Command
                 'If specified, enables SCSS in the target theme(s)',
             )
             ->addOption(
+                'check_file_timestamps',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'If specified, enables file timestamp check that skips conversion if the files in the target directory'
+                . ' have changed since last conversion.'
+            )
+            ->addOption(
                 'check_config',
                 null,
                 InputOption::VALUE_NONE,
@@ -222,6 +232,7 @@ class LessToScssCommand extends Command
         $variablesFile = $input->getOption('variables_file');
         $patterns = $input->getArgument('main_file');
         $checkConfig = $input->getOption('check_config');
+        $timestampFile = $input->getOption('check_file_timestamps');
 
         foreach ($patterns as $pattern) {
             foreach (glob($pattern) as $mainFile) {
@@ -254,6 +265,15 @@ class LessToScssCommand extends Command
                         }
                     }
                 }
+                if (
+                    $timestampFile
+                    && $this->filesNewerThanTimestampFile($timestampFile, $mainFile)
+                ) {
+                    $this->output->writeln(
+                        "<info>Skipping $mainFile - Files in target directory modified since last conversion"
+                    );
+                    continue;
+                }
 
                 $this->output->writeln("<info>Processing $mainFile");
                 // First read all vars:
@@ -270,6 +290,15 @@ class LessToScssCommand extends Command
                 // Write out the target files:
                 if (!$this->writeTargetFiles()) {
                     return Command::FAILURE;
+                }
+
+                // Update timestamp file if specified:
+                if ($timestampFile) {
+                    $timestampFilePath = $this->targetDir . "/$timestampFile";
+                    if (!touch($timestampFilePath)) {
+                        $this->error("Could not write timestamp file $timestampFilePath");
+                        return Command::FAILURE;
+                    }
                 }
             }
         }
@@ -435,8 +464,12 @@ class LessToScssCommand extends Command
         $inSingle = false;
         $inDouble = false;
         $escape = false;
-        for ($i = 0; $i < mb_strlen($line, 'UTF-8'); $i++) {
-            $ch = mb_substr($line, $i, 1, 'UTF-8');
+        if (!str_contains($line, '/')) {
+            return [$line, null];
+        }
+        $len = strlen($line);
+        for ($i = 0; $i < $len; $i++) {
+            $ch = $line[$i];
             switch ($ch) {
                 case '"':
                     if (!$inSingle) {
@@ -453,8 +486,8 @@ class LessToScssCommand extends Command
                     break;
                 case '/':
                     // Check for a comment:
-                    if (!$inSingle && !$inDouble && !$escape && mb_substr($line, $i + 1, 1, 'UTF-8') === '/') {
-                        $comment = mb_substr($line, $i + 2, null, 'UTF-8');
+                    if (!$inSingle && !$inDouble && !$escape && ($line[$i + 1] ?? null) === '/') {
+                        $comment = substr($line, $i + 2);
                         break 2;
                     }
                     break;
@@ -841,8 +874,12 @@ class LessToScssCommand extends Command
                 $linesToAdd[] = '';
                 array_unshift($lines, ...$linesToAdd);
             }
+            // Unlink target first just in case it's a symlink:
+            if (file_exists($fullPath)) {
+                unlink($fullPath);
+            }
             // Write the updated file:
-            if (false === file_put_contents($fullPath, implode(PHP_EOL, $lines)) . PHP_EOL) {
+            if (false === file_put_contents($fullPath, implode(PHP_EOL, $lines) . PHP_EOL)) {
                 $this->error("Could not write file $fullPath");
             }
             $this->debug("Created $fullPath");
@@ -1028,5 +1065,33 @@ class LessToScssCommand extends Command
     protected function isReadableFile(string $filename): bool
     {
         return file_exists($filename) && (is_file($filename) || is_link($filename));
+    }
+
+    /**
+     * Check for files newer than the timestamp file in the target directory
+     *
+     * @param string $timestampFile Timestamp file path
+     * @param string $mainFile      Main file being processed
+     *
+     * @return bool
+     */
+    protected function filesNewerThanTimestampFile(string $timestampFile, string $mainFile): bool
+    {
+        $targetTimestampFile = $this->targetDir . "/$timestampFile";
+        if (!file_exists($targetTimestampFile) || !($timestamp = filemtime($targetTimestampFile))) {
+            return false;
+        }
+        $targetMainFile = $this->targetDir . '/' . preg_replace('/\.less$/', '', basename($mainFile)) . '.scss';
+        $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->targetDir));
+        foreach ($it as $file => $info) {
+            if ($file === $targetMainFile || !str_ends_with($file, '.scss')) {
+                // Don't care about target main file, it's centrally managed:
+                continue;
+            }
+            if ($info->getMTime() > $timestamp) {
+                return true;
+            }
+        }
+        return false;
     }
 }

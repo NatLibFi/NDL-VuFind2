@@ -72,7 +72,8 @@ class WayfinderServiceFactory implements FactoryInterface
                 ->get('WayfinderService')
                 ->toArray(),
             $container->get(\VuFindHttp\HttpService::class),
-            $container->get(\VuFind\Log\Logger::class)
+            $container->get(\VuFind\Log\Logger::class),
+            $container->get(\VuFind\I18n\Locale\LocaleSettings::class)->getUserLocale()
         );
     }
 }
