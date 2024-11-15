@@ -1352,60 +1352,71 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $this->flashMessenger()->addErrorMessage('ils_action_unavailable');
             return $this->redirect()->toRoute('checkouts-history');
         }
-        $config = $this->getConfig();
+
         $allowedFileFormats = ['csv', 'ods', 'xlsx'];
+        $historyResult = $this->forwardTo('checkouts', 'history');
+        if (!isset($historyResult->transactions)) {
+            return $historyResult;
+        }
+        $batchLimit = $this->getConfig()->Catalog->loan_history_download_batch_limit ?? 1000;
+        $pagesTotal = $historyResult->paginator ? $historyResult->paginator->count() : 1;
+        $pagesDownloadCounter = 1;
+        // Calculate how many times required to fetch from ILS to achieve the $batchLimit
+        if ($pagesTotal > 1) {
+            $pagesDownloadCounter = ceil($batchLimit / $historyResult->paginator->getItemCountPerPage());
+        }
         if (!$this->formWasSubmitted('submitLoanHistoryRequest')) {
-            $pageOptions = $this->getPaginationHelper()->getOptions(
-                1,
-                null,
-                $config->Catalog->historic_loan_page_size ?? 50,
-                $functionConfig
-            );
-            // Get checked out item details:
-            $result = $catalog->getMyTransactionHistory($patron, $pageOptions['ilsParams']);
-            $paginator = $this->getPaginationHelper()->getPaginator(
-                $pageOptions,
-                $result['count'],
-                $result['transactions']
-            );
             $view = $this->createViewModel([
-                'paginator' => $paginator,
                 'fileFormats' => $allowedFileFormats,
-                'params' => $pageOptions['ilsParams'],
+                'params' => $historyResult->params,
+                'pagesTotal' => $pagesTotal,
+                'pagesDownloadCounter' => $pagesDownloadCounter,
             ]);
             $view->setTemplate('checkouts/downloadhistory.phtml');
             return $view;
         }
-
         $request = $this->getRequest();
         if (!$request->isPost()) {
             throw new \Exception('Invalid method.');
         }
 
-        $requestCombined = array_merge_recursive(
-            $request->getPost()->toArray(),
-            $request->getFiles()->toArray()
-        );
         // Do CSRF check
         $csrf = $this->serviceLocator->get(\VuFind\Validator\CsrfInterface::class);
-        if (!$csrf->isValid($requestCombined['csrf'])) {
+        if (!$csrf->isValid($request->getPost('csrf'))) {
             throw new \VuFind\Exception\BadRequest('error_inconsistent_parameters');
         }
-        $fileFormat = $requestCombined['history_file_format'] ?? '';
+        $fileFormat = $request->getPost('history_file_format', '');
         if (!in_array($fileFormat, $allowedFileFormats)) {
-            throw new \Exception('Should be not here.');
+            throw new \Exception('Invalid format.');
         }
 
-        $startPage = (int)$requestCombined['startIndex'];
-        $lastPage = (int)($requestCombined['lastIndex'] ?? $startPage);
-        $alternativeLimit = $startPage + 9;
-        if ($lastPage > $startPage + 9) {
-            $lastPage = $alternativeLimit;
-        }
+        $startPage = (int)$request->getPost('startPage', 1);
+        $lastPage = min($startPage + $pagesDownloadCounter, $pagesTotal);
 
         $recordLoader = $this->serviceLocator->get(\VuFind\Record\Loader::class);
-
         $tmp = fopen('php://temp/maxmemory:' . (5 * 1024 * 1024), 'r+');
+
+        $transactions = [];
+        for ($i = $startPage; $i <= $lastPage; $i++) {
+            $result = $catalog->getMyTransactionHistory($patron, $historyResult->params);
+            if (isset($result['success']) && !$result['success']) {
+                $this->flashMessenger()->addErrorMessage($result['status']);
+                return $this->redirect()->toRoute('checkouts-history');
+            }
+            // Break if no transactions found
+            if (empty($result['transactions'])) {
+                break;
+            }
+            $transactions = array_merge($transactions, $result['transactions']);
+        }
+        $ids = [];
+        foreach ($transactions as $current) {
+            $id = $current['id'] ?? '';
+            $source = $current['source'] ?? DEFAULT_SEARCH_BACKEND;
+            $ids[] = compact('id', 'source');
+        }
+        $records = $recordLoader->loadBatch($ids, true);
+
         $header = [
             $this->translate('Title'),
             $this->translate('Format'),
@@ -1418,54 +1429,14 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $this->translate('Due Date'),
         ];
 
-        if ($file = $requestCombined['append_file']['tmp_name'] ?? null) {
-            $fileFormatLimit = [
-                \PhpOffice\PhpSpreadsheet\IOFactory::READER_CSV,
-                \PhpOffice\PhpSpreadsheet\IOFactory::READER_ODS,
-                \PhpOffice\PhpSpreadsheet\IOFactory::READER_XLSX,
-            ];
-            try {
-                $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file, 0, $fileFormatLimit);
-            } catch (\Exception $e) {
-                throw new \Exception('Invalid format');
-            }
-            $worksheet = $spreadsheet->getActiveSheet();
-        } else {
-            $spreadsheet = new Spreadsheet();
-            $worksheet = $spreadsheet->getActiveSheet();
-            $worksheet->fromArray($header);
-        }
+        $spreadsheet = new Spreadsheet();
+        $worksheet = $spreadsheet->getActiveSheet();
+        $worksheet->fromArray($header);
 
         if ('xlsx' === $fileFormat) {
             Cell::setValueBinder(new AdvancedValueBinder());
         }
-        $transactions = [];
-        for ($i = $startPage; $i <= $lastPage; $i++) {
-            $pageOptions = $this->getPaginationHelper()->getOptions(
-                $i,
-                null,
-                $config->Catalog->historic_loan_page_size ?? 50,
-                $functionConfig
-            );
-            $result = $catalog->getMyTransactionHistory($patron, $pageOptions['ilsParams']);
-            if (isset($result['success']) && !$result['success']) {
-                $this->flashMessenger()->addErrorMessage($result['status']);
-                return $this->redirect()->toRoute('checkouts-history');
-            }
-            $tempPaginator = $this->getPaginationHelper()->getPaginator(
-                $pageOptions,
-                $result['count'],
-                $result['transactions']
-            );
-            $transactions = array_merge($transactions, $result['transactions']);
-        }
-        $ids = [];
-        foreach ($transactions as $current) {
-            $id = $current['id'] ?? '';
-            $source = $current['source'] ?? DEFAULT_SEARCH_BACKEND;
-            $ids[] = compact('id', 'source');
-        }
-        $records = $recordLoader->loadBatch($ids, true);
+
         foreach ($transactions as $i => $current) {
             $driver = $records[$i];
             $format = $driver->getFormats();

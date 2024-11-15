@@ -1,26 +1,33 @@
-<h2><?=$this->transEsc('loan_history_download')?></h2>
-<form name="download-loan-history-form" action="<?=$this->url('myresearch-downloadloanhistory')?>" method="POST" enctype="multipart/form-data">
-  <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
-  <div class="alert alert-info">
-    <span><?=$this->transEsc('loan_history_info')?></span>
-  </div>
-  <span><?=$this->transEsc('loan_history_pages', ['%%total%%' => $this->paginator->count()])?></span>
-  <div class="form-group">
-    <label class="control-label" for="history_start_index"><?=$this->transEsc('Start Page');?>:</label>
-    <input class="form-control" id="history_start_index" name="startIndex" type="number" value="1" min="1" max="<?=$this->escapeHtmlAttr($this->paginator->count())?>">
-  </div>
-  <div class="form-group">
-    <label class="control-label" for="history_file_input"><?=$this->transEsc('loan_history_append_file')?>:</label>
-    <input class="form-control" id="history_file_input" name="append_file" type="file" value="<?=$this->transEscAttr('File to append')?>">
-  </div>
-  <div class="form-group">
-    <label class="control-label" for="history_file_new"><?=$this->transEsc('loan_history_create_new_file')?>:</label>
-    <select class="form-control" name="history_file_format" id="history_file_new">
-      <?php foreach ($this->fileFormats as $format): ?>
-        <option value="<?=$this->escapeHtmlAttr($format)?>"><?=$this->transEscWithPrefix('loan_history_download_', $format);?></option>
-      <?php endforeach; ?>
-    </select>
-  </div>
-  <input type="hidden" name="lastIndex" type="number" value="<?=$this->escapeHtmlAttr($this->paginator->count())?>">
-  <button data-lightbox-ignore class="btn btn-primary" type="submit" name="submitLoanHistoryRequest" value="<?=$this->transEscAttr('Submit')?>"><?=$this->transEsc('submit');?></button>
-</form>
+<!-- Leftside navigationbar -->
+<?php
+  // Set up page title:
+  $this->headTitle($this->translate('loan_history_download'));
+
+  // Set up breadcrumbs:
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Loan History') . '</li>';
+?>
+<?=$this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'historicLoans']); ?>
+
+<div class="<?=$this->layoutClass('mainbody-myresearch')?>">
+  <h2><?=$this->transEsc('loan_history_download')?></h2>
+  <form name="download-loan-history-form" action="<?=$this->url('myresearch-downloadloanhistory')?>" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
+    <div class="alert alert-info">
+      <span><?=$this->transEsc('loan_history_info', ['%%total%%' => $this->pagesDownloadCounter])?></span>
+    </div>
+    <span><?=$this->transEsc('loan_history_pages', ['%%total%%' => $this->pagesTotal])?></span>
+    <div class="form-group">
+      <label class="control-label" for="history_start_index"><?=$this->transEsc('Start Page');?>:</label>
+      <input class="form-control" id="history_start_index" name="startPage" type="number" value="1" min="1" max="<?=$this->escapeHtmlAttr($this->pagesTotal)?>">
+    </div>
+    <div class="form-group">
+      <label class="control-label" for="history_file_new"><?=$this->transEsc('loan_history_choose_file_format')?>:</label>
+      <select class="form-control" name="history_file_format" id="history_file_new">
+        <?php foreach ($this->fileFormats as $format): ?>
+          <option value="<?=$this->escapeHtmlAttr($format)?>"><?=$this->transEscWithPrefix('loan_history_download_', $format);?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <button data-lightbox-ignore class="btn btn-primary" type="submit" name="submitLoanHistoryRequest" value="<?=$this->transEscAttr('Submit')?>"><?=$this->transEsc('Submit');?></button>
+  </form>
+</div>
