@@ -56,24 +56,16 @@ use function intval;
 class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
 {
     /**
-     * Session container
-     *
-     * @var SessionContainer
-     */
-    protected $session;
-
-    /**
      * Constructor
      *
-     * @param ServiceLocatorInterface $sm               Service locator
-     * @param SessionContainer        $sessionContainer Session container for library cards
+     * @param ServiceLocatorInterface $sm      Service locator
+     * @param SessionContainer        $session Session container for library cards
      */
     public function __construct(
         ServiceLocatorInterface $sm,
-        SessionContainer $sessionContainer,
+        protected SessionContainer $session,
     ) {
         parent::__construct($sm);
-        $this->session = $sessionContainer;
     }
 
     /**
@@ -933,10 +925,10 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 return $this->createViewModel(['code' => $barcode]);
             }
             $username = $card->getCatUsername();
-            if (strstr($username, '.')) {
+            if (str_contains($username, '.')) {
                 [$target, $username] = explode('.', $username, 2);
             }
-            $barcode = $card->barcode ?? $username;
+            $barcode = $username;
             $catalog = $this->getILS();
             $auth = $this->getILSAuthenticator();
             if ($card->getCatUsername() === $user->getCatUsername()) {
@@ -951,14 +943,13 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                     $auth->getCatPasswordForUser($loginUser)
                 );
             }
-            if ($patron && $patron['cat_username'] === $card->getCatUsername()) {
+            if ($patron['cat_username'] === $card->getCatUsername()) {
                 $profile = $catalog->getMyProfile($patron);
                 if (!empty($profile['barcode'])) {
                     $barcode = $profile['barcode'];
                 }
             }
             $this->session->LibraryCards[$id] = $barcode;
-            $this->disableSessionWrites();  // avoid session write timing bug
             return $this->createViewModel(['code' => $barcode]);
         } catch (\Exception) {
             $this->flashMessenger()->addErrorMessage('An error has occurred');

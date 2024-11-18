@@ -1080,7 +1080,7 @@ $dynamicRoutes = [
     'Comments' => ['inappropriate' => 'inappropriate/[:id]'],
     'LibraryCards' => [
         'newLibraryCardPassword' => 'newPassword/[:id]',
-        'displayBarcode' => 'displayBarcode/[:id]',
+        'librarycards-displaybarcode' => 'displayBarcode/[:id]',
     ],
     'MyResearch' => ['sortList' => 'SortList/[:id]'],
     'ReservationList' => [
