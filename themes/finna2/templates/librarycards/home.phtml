@@ -85,14 +85,14 @@
                     $this->component(
                         'confirm-button',
                         [
-                        'buttonLink' => $this->url('librarycards-deletecard', [], ['query' => ['cardID' => $record['id']]]),
-                        'buttonLabelHtml' => $this->icon('library-card-disconnect') . ' ' . $this->translate('Disconnect Library Card'),
-                        'buttonClass' => 'btn-link',
-                        'confirmLink' => $this->url('librarycards-deletecard', [], ['query' => ['cardID' => $record['id'], 'confirm' => 1]]),
-                        'header' => 'confirm_delete_library_card_brief',
-                        'clearAccountCache' => true,
-                        'align' => 'right',
-                      ]
+                          'buttonLink' => $this->url('librarycards-deletecard', [], ['query' => ['cardID' => $record['id']]]),
+                          'buttonLabelHtml' => $this->icon('library-card-disconnect') . ' ' . $this->translate('Disconnect Library Card'),
+                          'buttonClass' => 'btn-link',
+                          'confirmLink' => $this->url('librarycards-deletecard', [], ['query' => ['cardID' => $record['id'], 'confirm' => 1]]),
+                          'header' => 'confirm_delete_library_card_brief',
+                          'clearAccountCache' => true,
+                          'align' => 'right',
+                        ]
                     );
                   ?>
                 </div>
