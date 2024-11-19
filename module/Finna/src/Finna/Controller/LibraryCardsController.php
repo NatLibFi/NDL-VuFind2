@@ -928,7 +928,6 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             if (str_contains($username, '.')) {
                 [$target, $username] = explode('.', $username, 2);
             }
-            $barcode = $username;
             $catalog = $this->getILS();
             $auth = $this->getILSAuthenticator();
             if ($card->getCatUsername() === $user->getCatUsername()) {
@@ -949,6 +948,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                     $barcode = $profile['barcode'];
                 }
             }
+            $barcode ??= $username;
             $this->session->LibraryCards[$id] = $barcode;
             return $this->createViewModel(['code' => $barcode]);
         } catch (\Exception) {
