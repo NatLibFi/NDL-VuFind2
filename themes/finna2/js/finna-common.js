@@ -77,12 +77,6 @@ finna.common = (function finnaCommon() {
     );
   }
 
-  window.onload = function handleFocus() {
-    if (window.sessionStorage.getItem('clickedMenu')) {
-      handleMenuFocus();
-    }
-  };
-
   /**
    * Add event handlers for managing JS-loaded search results
    */
@@ -92,12 +86,6 @@ finna.common = (function finnaCommon() {
     });
     VuFind.listen('results-loaded', () => {
       initResultScripts(document.querySelector('.js-result-list'), false);
-    });
-
-    document.querySelectorAll('.view-dropdown .dropdown-menu a').forEach((button) => {
-      button.addEventListener('keydown', function saveUsedBtn() {
-        window.sessionStorage.setItem('clickedMenu', '.view-dropdown a.dropdown-toggle');
-      });
     });
 
     // Set up Finna's dropdown-based sort and limit controls:
