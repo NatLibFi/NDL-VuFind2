@@ -60,29 +60,22 @@ finna.common = (function finnaCommon() {
   }
 
   /**
-   * Focus on used menu after an option is chosen
-   */
-  function handleMenuFocus() {
-    setTimeout(() => {
-      var storagedEl = window.sessionStorage.getItem('clickedMenu');
-      if (storagedEl) {
-        window.sessionStorage.removeItem('clickedMenu');
-        var focusedEl = document.querySelector(storagedEl);
-        if (focusedEl) {
-          focusedEl.focus();
-        }
-      }
-    },
-    200
-    );
-  }
-
-  /**
    * Add event handlers for managing JS-loaded search results
    */
   function initResultsEventHandler() {
     VuFind.listen('results-load', () => {
-      handleMenuFocus();
+      setTimeout(() => {
+        var storagedEl = window.sessionStorage.getItem('clickedMenu');
+        if (storagedEl) {
+          window.sessionStorage.removeItem('clickedMenu');
+          var focusedEl = document.querySelector(storagedEl);
+          if (focusedEl) {
+            focusedEl.focus();
+          }
+        }
+      },
+      200
+      );
     });
     VuFind.listen('results-loaded', () => {
       initResultScripts(document.querySelector('.js-result-list'), false);
