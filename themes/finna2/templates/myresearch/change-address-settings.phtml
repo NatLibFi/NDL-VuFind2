@@ -109,9 +109,7 @@
                 ];
                 $extraValues[] = [
                   'attrs' => $attrs,
-                  'active' => $extraInfo['active'],
-                  // Save the position in the original extraEmails/extraPhones array
-                  'pos' => $i,
+                  'active' => $extraInfo['active'] ?? false,
                 ];
               }
               if ($data['required']) {
@@ -120,17 +118,14 @@
               if ($data['pattern']) {
                 $attrs['pattern'] = $data['pattern'];
               }
-              usort($extraValues, function ($a, $b) {
-                return $b['active'] <=> $a['active'];
-              });
             ?>
-            <?php foreach ($extraValues as $extraValue):?>
-                <?php $label = $extraValue['active'] ? $data['label'] . '_primary' : $data['label'];?>
-                <label class="control-label" for="<?=$this->escapeHtmlAttr($field)?>"><?=$this->transEsc($label) ?>:</label>
-                <?php if ($extraValue['active']):?>
-                  <input type="hidden" name="active_<?=$field?>" value="<?=$extraValue['pos']?>">
-                <?php endif; ?>
+            <?php foreach ($extraValues as $extraValue): ?>
+                <label class="control-label" for="<?=$this->escapeHtmlAttr($field)?>"><?=$this->transEsc($data['label']) ?>:</label>
                 <?php echo $this->makeTag('input', '', $extraValue['attrs']); ?>
+                <div>
+                  <input type="checkbox" name="<?=$this->escapeHtmlAttr('active_' . $extraValue['attrs']['name'])?>" value="1"<?=$extraValue['active'] ? ' checked' : ''?>>
+                  <?=$this->transEsc('contact_info_active') ?>
+                </div>
             <?php endforeach; ?>
           <?php else: ?>
             <label class="control-label" for="<?=$this->escapeHtmlAttr($field)?>"><?=$this->transEsc($data['label']) ?>:</label>

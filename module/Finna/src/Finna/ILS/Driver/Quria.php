@@ -641,27 +641,8 @@ class Quria extends AxiellWebServices
                     = [
                         'phone' => ($phoneNumber->areaCode ?? '') . $phoneNumber->localCode ?? '',
                         'phoneId' => $phoneNumber->id ?? '',
-                        'active' => ($phoneNumber->sms->userForSms ?? '') == 'yes'
+                        'active' => ($phoneNumber->sms->useForSms ?? '') == 'yes'
                     ];
-                if ($phoneNumber->sms->useForSms == 'yes') {
-                    if ($i === 0) {
-                        $userCached['phone'] = $phoneNumber->areaCode ?? '';
-                        $userCached['phoneAreaCode'] = $userCached['phone'];
-                        if (isset($phoneNumber->localCode)) {
-                            $userCached['phone'] .= $phoneNumber->localCode;
-                            $userCached['phoneLocalCode'] = $phoneNumber->localCode;
-                        }
-                        if (isset($phoneNumber->id)) {
-                            $userCached['phoneId'] = $phoneNumber->id;
-                        }
-                    } else {
-                        $userCached['extraPhones'][]
-                            = [
-                                'phone' => ($phoneNumber->areaCode ?? '') . $phoneNumber->localCode ?? '',
-                                'phoneId' => $phoneNumber->id ?? '',
-                            ];
-                    }
-                }
             }
         }
 
@@ -1098,23 +1079,17 @@ class Quria extends AxiellWebServices
         }
         if (!empty($details['extraEmails'])) {
             foreach ($details['extraEmails'] as $i => $extraEmail) {
-                $active = (int)($details['active_extraEmails'] ?? -1) === $i;
+                $active = isset($details['active_extraEmails'][$i]);
                 $result = $this->updateEmail($patron, $extraEmail, $i, $active);
                 if (!$result['success']) {
                     return $result;
                 }
             }
         }
-        if (!empty($details['add_extraEmails'])) {
-            $result = $this->updateEmail($patron, $details['add_extraEmails'], null, false, true);
-            if (!$result['success']) {
-                return $result;
-            }
-        }
 
         if (!empty($details['extraPhones'])) {
             foreach ($details['extraPhones'] as $i => $extraPhone) {
-                $active = (int)($details['active_extraPhones'] ?? -1) === $i;
+                $active = isset($details['active_extraPhones'][$i]) ? true : false;
                 $result = $this->updatePhone($patron, $extraPhone, $i, $active);
                 if (!$result['success']) {
                     return $result;
@@ -1122,13 +1097,6 @@ class Quria extends AxiellWebServices
             }
         }
 
-        if (!empty($details['add_extraPhones'])) {
-            $result = $this->updatePhone($patron, $details['add_extraPhones'], null, false, true);
-            if (!$result['success']) {
-                return $result;
-            }
-        }
-        
         if (isset($details['phone'])) {
             $result = $this->updatePhone($patron, $details['phone']);
             if (!$result['success']) {
@@ -1585,17 +1553,24 @@ class Quria extends AxiellWebServices
     /**
      * Update patron's email address
      *
-     * @param array  $patron  Patron array
-     * @param String $email   Email address
-     * @param String $emailId Email ID
-     * @param bool   $active  Whether to set the email active
+     * @param array    $patron   Patron array
+     * @param String   $email    Email address
+     * @param int|null $emailId  Email ID
+     * @param bool     $active   Whether to set the email active
      *
      * @throws ILSException
      *
      * @return array Associative array of the results
      */
-    public function updateEmail($patron, $email, $emailId = null, $active = true, $addNew = false)
+    public function updateEmail($patron, $email, $emailId = null, $active = false)
     {
+        if (empty($email)) {
+            return [
+                'success' => true,
+                'status' => 'No data to update',
+                'sys_message' => '',
+            ];
+        }
         $username = $patron['cat_username'];
         $password = $patron['cat_password'];
 
@@ -1619,12 +1594,12 @@ class Quria extends AxiellWebServices
             'address'      => $email,
             'isActive'     => $active ? 'yes' : 'no',
         ];
-        if (!empty($user['extraEmails']) && !$addNew && !empty($email)) {
-            $conf['id'] = $emailId ? $user['extraEmails'][$emailId]['emailId'] : $user['emailId'];
+        if (!empty($user['extraEmails'])) {
+            $conf['id'] = $emailId !== null ? $user['extraEmails'][$emailId]['emailId'] : $user['emailId'];
             $function = 'changeEmail';
             $functionResult = 'changeEmailAddressResult';
             $functionParam = 'changeEmailAddressParam';
-        } elseif ((empty($user['extraEmails']) || $addNew) && !empty($email)) {
+        } elseif ((empty($user['extraEmails']))) {
             $function = 'addEmail';
             $functionResult = 'addEmailAddressResult';
             $functionParam = 'addEmailAddressParam';
@@ -1667,29 +1642,6 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Set email address to active and deactivate
-     * other email addresses
-     *
-     * @param array $patron Patron array
-     * @param int   $ind    Index of the email in patrons extraEmails array
-     *
-     * @return bool
-     */
-    public function activateEmail($patron, $ind)
-    {
-        $user = $this->getMyProfile($patron);
-        $success = true;
-        foreach ($user['extraEmails'] as $i => $extraEmail) {
-            $activate = $i === (int)$ind;
-            $result = $this->updateEmail($patron, $extraEmail['email'], $i, $activate);
-            if (!$result['success']) {
-                $success = false;
-            }
-        }
-        return $success;
-    }
-
-    /**
      * Update patron's phone number
      *
      * @param array  $patron  Patron array
@@ -1700,21 +1652,12 @@ class Quria extends AxiellWebServices
      *
      * @return array Associative array of the results
      */
-    public function updatePhone($patron, $phone, $phoneId = null, $active = false, $addNew = false)
+    public function updatePhone($patron, $phone, $phoneId = null, $active = false)
     {
         $username = $patron['cat_username'];
         $password = $patron['cat_password'];
         $user = $this->getMyProfile($patron);
 
-        // if ($updateExtraPhone = isset($phoneId) && !empty($user['extraPhones'][$phoneId]['phone'])) {
-        //     if ($user['extraPhones'][$phoneId]['phone'] === $phone) {
-        //         return [
-        //             'success' => true,
-        //             'status' => 'No data to update',
-        //             'sys_message' => '',
-        //         ];
-        //     }
-        // }
         $function = '';
         $functionResult = '';
         $functionParam = '';
@@ -1731,12 +1674,12 @@ class Quria extends AxiellWebServices
             'useForSms'    => $active ? 'yes' : 'no',
         ];
 
-        if (!empty($user['extraPhones']) && !$addNew && !empty($phone)) {
+        if (!empty($user['extraPhones']) && !empty($phone)) {
             $conf['id'] = $phoneId !== null ? $user['extraPhones'][$phoneId]['phoneId'] : $user['phoneId'];
             $function = 'changePhone';
             $functionResult = 'changePhoneNumberResult';
             $functionParam = 'changePhoneNumberParam';
-        } elseif ((empty($user['extraPhones']) || $addNew) && !empty($phone)) {
+        } elseif ((empty($user['extraPhones'])) && !empty($phone)) {
             $function = 'addPhone';
             $functionResult = 'addPhoneNumberResult';
             $functionParam = 'addPhoneNumberParam';
@@ -1778,29 +1721,6 @@ class Quria extends AxiellWebServices
                 'status' => 'Phone number changed',
                 'sys_message' => '',
             ];
-    }
-
-    /**
-     * Set phone number to active (use for sms) and deactivate
-     * other email addresses
-     *
-     * @param array $patron Patron array
-     * @param int   $ind    Index of the email in patrons extraEmails array
-     *
-     * @return bool
-     */
-    public function activatePhone($patron, $ind)
-    {
-        $user = $this->getMyProfile($patron);
-        $success = true;
-        foreach ($user['extraPhones'] as $i => $extraPhone) {
-            $activate = $i === (int)$ind;
-            $result = $this->updatePhone($patron, $extraPhone['phone'], $i, $activate);
-            if (!$result['success']) {
-                $success = false;
-            }
-        }
-        return $success;
     }
 
     /**

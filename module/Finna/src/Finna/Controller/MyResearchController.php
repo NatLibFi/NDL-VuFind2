@@ -905,7 +905,12 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 // Extract field name from single or array style key (e.g. addresses[0][types])
                 $fieldNames[strtok($field, '[')] = true;
             }
-
+            if (isset($fieldNames['extraEmails'])) {
+                $fieldNames['active_extraEmails'] = true;
+            }
+            if (isset($fieldNames['extraPhones'])) {
+                $fieldNames['active_extraPhones'] = true;
+            }
             // Filter any undefined fields and bad values from the request:
             $data = array_intersect_key(
                 filter_input_array(INPUT_POST),
@@ -1503,72 +1508,15 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 }
             }
         }
-        // Update extra emails
-        if (isset($values->profile_activate_email)) {
-            $result = $catalog->activateEmail(
-                $patron,
-                $values->profile_activate_email
-            );
-            if (!$result) {
-                $this->flashMessenger()->addErrorMessage($result['status']);
-                $success = false;
-            }
-        }
-        if (isset($values->profile_extra_email) && isset($values->profile_extra_email_id)) {
-            foreach ($values->profile_extra_email as $i => $extraEmail) {
-                $validator = new \Laminas\Validator\EmailAddress();
-                if (
-                    $validator->isValid($extraEmail)
-                    && $catalog->checkFunction('updateEmail', compact('patron'))
-                    && isset($values->profile_extra_email_id[$i])
-                ) {
-                    $result = $catalog->updateEmail(
-                        $patron,
-                        $extraEmail,
-                        $values->profile_extra_email_id[$i]
-                    );
-                    if (!$result['success']) {
-                        $this->flashMessenger()->addErrorMessage($result['status']);
-                        $success = false;
-                    }
-                }
-            }
-        }
         // Update phone
-        // if (
-        //     isset($values->profile_tel)
-        //     && $catalog->checkFunction('updatePhone', compact('patron'))
-        // ) {
-        //     $result = $catalog->updatePhone($patron, $values->profile_tel);
-        //     if (!$result['success']) {
-        //         $this->flashMessenger()->addErrorMessage($result['status']);
-        //         $success = false;
-        //     }
-        // }
-        // Update extra phones
-        if (isset($values->profile_activate_phone)) {
-            $result = $catalog->activatePhone(
-                $patron,
-                $values->profile_activate_phone
-            );
-            if (!$result) {
+        if (
+            isset($values->profile_tel)
+            && $catalog->checkFunction('updatePhone', compact('patron'))
+        ) {
+            $result = $catalog->updatePhone($patron, $values->profile_tel);
+            if (!$result['success']) {
                 $this->flashMessenger()->addErrorMessage($result['status']);
                 $success = false;
-            }
-        }
-        if (isset($values->profile_extra_tel) && isset($values->profile_extra_tel_id)) {
-            foreach ($values->profile_extra_tel as $i => $extraPhone) {
-                if (isset($values->profile_extra_tel_id[$i])) {
-                    $result = $catalog->updatePhone(
-                        $patron,
-                        $extraPhone->phone,
-                        $values->profile_extra_tel_id[$i]
-                    );
-                    if (!$result) {
-                        $this->flashMessenger()->addErrorMessage($result['status']);
-                        $success = false;
-                    }
-                }
             }
         }
         // Update SMS Number
