@@ -201,7 +201,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                             if ('title' === $tmp['link']['type']) {
                                 $tmp['link']['value'] = $tmp['value'];
                             }
-                            $tmp['other'] = $this->getSubfield($field, 'g');
+                            $tmp['misc'] = $this->getSubfield($field, 'g');
                         }
                     }
                 } elseif ($value == '775' || $value == '776') {
