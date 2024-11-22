@@ -102,7 +102,6 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Local Note',
             'Manufacturer',
             'Methodology',
-            'Miscellaneous Information',
             'Music Compositions Extended',
             'New Title',
             'Notated Music Format',

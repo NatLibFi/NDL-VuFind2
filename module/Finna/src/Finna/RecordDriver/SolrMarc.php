@@ -201,6 +201,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                             if ('title' === $tmp['link']['type']) {
                                 $tmp['link']['value'] = $tmp['value'];
                             }
+                            $tmp['other'] = $this->getSubfield($field, 'g');
                         }
                     }
                 } elseif ($value == '775' || $value == '776') {
@@ -2645,15 +2646,5 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             $result[] = $lang;
         }
         return array_unique(array_filter($result));
-    }
-
-    /**
-     * Get misc information from field 730, subfield g.
-     *
-     * @return array
-     */
-    public function getMiscInformation()
-    {
-        return array_unique($this->stripTrailingPunctuation($this->getFieldArray('730', ['g'])));
     }
 }
