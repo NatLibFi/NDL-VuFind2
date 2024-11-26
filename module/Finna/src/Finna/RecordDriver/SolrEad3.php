@@ -241,7 +241,6 @@ class SolrEad3 extends SolrEad
             }
             $linkType = 'external-link';
             if ($isVideo = str_starts_with($role, 'video') || str_starts_with($role, 'audio')) {
-                $this->supportedVideoAndAudioFormats[$role] ?? '';
                 if ((string)$attr->actuate === 'onrequest' && (string)$attr->show === 'none') {
                     $linkType = 'download';
                 } elseif ($isVideo && in_array($role, $this->supportedVideoFormats)) {
