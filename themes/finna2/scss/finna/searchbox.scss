@@ -1,0 +1,223 @@
+.searcbox, .searchbox-columns {
+  @extend .clearfix;
+}
+.searchbox, .searchbox-flex {
+  margin-bottom: 12px;
+  margin-top: 12px;
+  .search-help-icon {
+    font-size: 26px;
+  }
+  .searchbox-home {
+    .tooltip-button.tooltip-search-local {
+      .search-help-icon {
+        color: #fff;
+      }
+    }
+  }
+  .searchbox-home,
+  .searchbox-authority-home,
+  .searchbox-authority-search {
+    .btn.btn-link {
+      background: $background-color;
+      border-radius: $border-radius-small;
+      color:  mix($background-color, contrast($background-color), 5%);
+      font-size: 1em;
+      font-weight: normal;
+      line-height: 25px;
+      margin-top: 1em;
+      padding: 0px 5px;
+      overflow: hidden;
+      text-transform: none;
+      .icon {
+        font-size: 1.5em;
+      }
+      .adv-search {
+        .icon {
+          color:  mix($body-bg, contrast($body-bg), 95%);
+        }
+      }
+    }
+  }
+  .search-tooltip:empty + .pager {
+    margin-left: 12px;
+  }
+  .pager {
+    @media (max-width: $screen-lg) {
+      margin-left: 6px;
+    }
+    li.pager-text {
+      font-size: 1em;
+      margin: 0px 3px;
+      color:  mix($finna-search-background, contrast($finna-search-background), 5%);
+    }
+    li {
+      > a {
+        padding: 0 5px;
+        color: $pager-bg;
+        background: transparent;
+        border: none;
+        border-radius: none;
+        .icon {
+          font-size: 2em;
+        }
+      }
+    }
+  }
+  @media (max-width: $screen-sm) {
+    .dropdown.form-control.type-dropdown {
+      display: none;
+    }
+  }
+}
+
+.finna-filters, .checkboxFilter {
+  .filters {
+    display: inline-block;
+  }
+  input[type=checkbox] {
+    height: 16px;
+    width: 16px;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid $gray-light;
+    border-radius: 4px;
+    margin: 0px;
+    top: 3px;
+    position: relative;
+
+    &:checked{
+      background-color: black;
+      &:after{
+        font-family: 'Fontawesome';
+        content: "\f00c";
+        color: white;
+        position: absolute;
+        font-size: 14px;
+        line-height: 14px;
+        font-weight: normal;
+      }
+    }
+  }
+}
+
+// hidden navigation bar
+.searchbox .fixedbar.attached {
+  background: rgba(0, 0, 0, 0.9);
+  position: fixed;
+  z-index: 1000;
+  height: 50px;
+  top: 0px;
+  width: 100%;
+  left: 0px;
+}
+.searchbox .navbar-form {
+  &.attached {
+    z-index: 1000;
+    margin: 0px;
+    position: fixed;
+    top: 5px;
+    transition: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    .btn-link {
+      display: none;
+    }
+  }
+}
+
+.searchbox-home {
+  flex-wrap: wrap;
+  .search-links {
+    flex-basis: 100%;
+    .btn-link:first-child {
+      margin-left: 0;
+    }
+  }
+}
+
+.searchbox-flex {
+  display: flex;
+  align-items: center;
+  .search-col, .record-back, .adv-search, .pager {
+    margin: auto 0;
+  }
+  .search {
+    flex: 1;
+    @media (min-width: $screen-md) {
+      max-width: 70%;
+    }
+  }
+  .pager {
+    display: flex;
+    align-items: center;
+    @media (max-width: $screen-lg) {
+      margin-left: 6px;
+    }
+    .disabled {
+      > a,
+      > a:hover,
+      > a:focus {
+        color: $gray-light;
+        background-color: transparent;
+      }
+    }
+  }
+  .btn-advanced {
+    margin-left: 10px;
+  }
+  .btn-link {
+    font-size: 1em;
+    font-weight: 600;
+    color: $finna-search-link-color;
+  }
+  .search-tooltip {
+    button {
+      background-color: transparent;
+      border: none;
+      margin-left: 30px;
+      color: $tooltip-button-color;
+      .icon {
+        cursor: pointer;
+      }
+    }
+  }
+  .back-to-search {
+    a {
+      display: flex;
+      align-items: center;
+      font-size: 1em;
+      font-weight: 600;
+      color: $finna-search-link-color;
+      .icon {
+        font-size: 1.5em;
+        margin-right: 5px;
+      }
+      .back-to-search-text {
+        margin-right: 10px;
+      }
+    }
+  }
+  @media(max-width: $screen-md) {
+    .pager {
+      li.pager-text {
+        margin: 0 5px;
+      }
+    }
+  }
+  @media(max-width: $screen-sm-max) {
+    .pager {
+      min-width: 70px;
+      margin-left: 10px;
+      li:first-child {
+        margin-right: 4px;
+      }
+      .pager-text {
+        display:none;
+      }
+    }
+    .record-back {
+      margin-right: 10px;
+    }
+  }
+}

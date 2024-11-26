@@ -33,9 +33,9 @@
 }
 .introduction h1 {
   font-size: @introduction-header;
-  line-height: (@introduction-header/2.1);
+  line-height: calc(@introduction-header/2.1);
   @media(max-width:@screen-xs-max) {
-      font-size: (@introduction-header/1.5);
+      font-size: calc(@introduction-header/1.5);
   }
 }
 .introduction {
@@ -148,7 +148,7 @@ h2.introductionText {
   & a.btn-primary {
     color: #fff;
     i {
-      color: #fff;  
+      color: #fff;
     }
   }
 }

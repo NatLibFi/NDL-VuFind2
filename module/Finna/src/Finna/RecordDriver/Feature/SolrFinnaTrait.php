@@ -40,6 +40,7 @@ use function intval;
 use function is_array;
 use function is_callable;
 use function is_string;
+use function sprintf;
 use function strlen;
 
 /**
@@ -1298,6 +1299,33 @@ trait SolrFinnaTrait
     public function getRecordLabels()
     {
         return null;
+    }
+
+    /**
+     * Get the number of child records belonging to this record
+     *
+     * @return int Number of records
+     */
+    public function getChildRecordCount()
+    {
+        // Shortcut: if this record is not part of a hierarchy, let's not find out the count.
+        if (
+            !$this->containerLinking
+            || (empty($this->fields['is_hierarchy_id']) && empty($this->fields['hierarchy_parent_id']))
+            || null === $this->searchService
+        ) {
+            return 0;
+        }
+
+        $safeId = addcslashes($this->fields['id'], '"');
+        $query = new \VuFindSearch\Query\Query(
+            'hierarchy_parent_id:"' . $safeId . '"'
+        );
+        // Disable highlighting for efficiency; not needed here:
+        $params = new \VuFindSearch\ParamBag(['hl' => ['false']]);
+        $command = new SearchCommand($this->sourceIdentifier, $query, 0, 0, $params);
+        return $this->searchService
+            ->invoke($command)->getResult()->getTotal();
     }
 
     /**

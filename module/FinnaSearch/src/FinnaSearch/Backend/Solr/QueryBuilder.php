@@ -39,6 +39,7 @@ use VuFindSearch\Query\Query;
 use VuFindSearch\Query\QueryGroup;
 
 use function count;
+use function sprintf;
 
 /**
  * SOLR QueryBuilder.

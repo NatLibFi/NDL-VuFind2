@@ -4,10 +4,8 @@ finna.itemStatus = (function finnaItemStatus() {
   /**
    * Finds the closest record-container and sets element ids to match
    * desired record id.
-   *
-   * @param {HTMLSelectElement} element 
-   *
-   * @return void
+   * @param {HTMLSelectElement} element Select element to update
+   * @returns {void}
    */
   function updateElement(element) {
     var id = document.createTextNode($(element).val()).nodeValue;
@@ -66,10 +64,8 @@ finna.itemStatus = (function finnaItemStatus() {
 
   /**
    * Assigns a change eventlistener to all elements with class dedup-select
-   *
-   * @param {HTMLElement|null} _holder
-   *
-   * @return void
+   * @param {HTMLElement|null} _holder Holder to initialize deduplication selections in
+   * @returns {void}
    */
   function initDedupRecordSelection(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
@@ -82,7 +78,7 @@ finna.itemStatus = (function finnaItemStatus() {
       const self = $(this);
       var source = self.find('option:selected').data('source');
       // prefer 3 latest sources
-      var cookie = finna.common.getCookie('preferredRecordSource');
+      var cookie = VuFind.cookie.get('preferredRecordSource');
       try {
         cookie = JSON.parse(cookie);
       } catch (error) {
@@ -96,7 +92,7 @@ finna.itemStatus = (function finnaItemStatus() {
         return index < 2 && src !== source;
       });
       cookie.unshift(source);
-      finna.common.setCookie('preferredRecordSource', JSON.stringify(cookie));
+      VuFind.cookie.set('preferredRecordSource', JSON.stringify(cookie));
       selects.each(function setValues() {
         if (self[0] === $(this)[0]) {
           return;
@@ -113,8 +109,7 @@ finna.itemStatus = (function finnaItemStatus() {
 
   /**
    * Creates an observer for updating links for deduplicated records.
-   *
-   * @return void
+   * @returns {void}
    */
   function createLinkObserver() {
     VuFind.observerManager.createIntersectionObserver(

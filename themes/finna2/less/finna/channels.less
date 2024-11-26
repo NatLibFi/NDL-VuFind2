@@ -19,7 +19,10 @@
   text-overflow: ellipsis;
   overflow: hidden;
 }
-.channel .channel-record.is-selected { &:extend(a:hover); }
+.channel .channel-record.is-selected {
+  color: @link-hover-color;
+  text-decoration: @link-hover-decoration;
+}
 .channel .channel-record .thumb {
   height: 200px;
   background-position: center center;

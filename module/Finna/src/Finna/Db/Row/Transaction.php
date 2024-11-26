@@ -365,7 +365,7 @@ class Transaction extends \VuFind\Db\Row\RowGateway implements
      */
     public function setStatusMessage(string $description): FinnaTransactionEntityInterface
     {
-        $this->status = $description;
+        $this->status = mb_substr($description, 0, 255, 'UTF-8');
         return $this;
     }
 

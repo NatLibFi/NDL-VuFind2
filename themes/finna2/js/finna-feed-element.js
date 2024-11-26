@@ -4,6 +4,7 @@ class FinnaFeedElement extends HTMLElement {
 
   /**
    * Observed attributes
+   * @returns {Array} Attributes which triggers change event when changed
    */
   static get observedAttributes() {
     return ['feed-id'];
@@ -11,8 +12,7 @@ class FinnaFeedElement extends HTMLElement {
 
   /**
    * Get feed id
-   *
-   * @return {string}
+   * @returns {string} Feed id currently set
    */
   get feedId() {
     return this.getAttribute('feed-id') || '';
@@ -20,7 +20,6 @@ class FinnaFeedElement extends HTMLElement {
 
   /**
    * Set feed id
-   *
    * @param {string} newValue Value to set
    */
   set feedId(newValue) {
@@ -40,11 +39,9 @@ class FinnaFeedElement extends HTMLElement {
 
   /**
    * Calculate feed scroll speed for splide.
-   *
    * @param {number} scrollCnt   Amount of slides to scroll
    * @param {number} scrollSpeed Default scroll speed to multiply
-   *
-   * @return {number}
+   * @returns {number} Calculated scroll speed
    */
   calculateScrollSpeed(scrollCnt, scrollSpeed) {
     return scrollSpeed * Math.max(1, (scrollCnt / 5));
@@ -53,8 +50,7 @@ class FinnaFeedElement extends HTMLElement {
   /**
    * Adjust titles. Useful when the screen size changes so the elements
    * look as they should.
-   *
-   * @param settings Carousel settings
+   * @param {object} settings Carousel settings
    */
   setTitleBottom(settings) {
     // Move title field below image
@@ -62,7 +58,6 @@ class FinnaFeedElement extends HTMLElement {
     this.querySelectorAll('.carousel-slide-header p').forEach(el => {
       el.classList.add('title-bottom');
       maxH = Math.max(maxH, el.getBoundingClientRect().height);
-
     });
     this.querySelectorAll('.carousel-slide-header p').forEach(el => {
       el.style.minHeight = el.style.height = `${maxH}px`;
@@ -108,7 +103,6 @@ class FinnaFeedElement extends HTMLElement {
 
   /**
    * Add proper classes for arrow buttons.
-   *
    * @param {boolean} vertical Is the carousel vertical?
    */
   adjustArrowButtons(vertical) {
@@ -125,7 +119,6 @@ class FinnaFeedElement extends HTMLElement {
   /**
    * When the feed is loaded or found from the internal cache.
    * Constructs the feed into the dom.
-   *
    * @param {object} jsonResponse The response obtained from the backend.
    */
   buildFeedDom(jsonResponse) {
@@ -135,10 +128,14 @@ class FinnaFeedElement extends HTMLElement {
       var settings = Object.assign({}, jsonResponse.data.settings);
       settings.height = settings.height || 300;
       const type = settings.type;
+      const titleElement = this.parentElement.querySelector('.carousel-header');
       const carousel = ['carousel', 'carousel-vertical', 'slider'].includes(type);
       const hasContent = this.querySelector('.list-feed > ul > li, .carousel-feed > li, .feed-grid > div');
       if (!hasContent) {
         this.classList.add('hidden');
+        if (titleElement) {
+          titleElement.classList.add('hidden');
+        }
         this.innerHTML = `<!-- No content received -->`;
         return;
       }
@@ -342,6 +339,7 @@ class FinnaFeedElement extends HTMLElement {
       // Prepend spinner
       const spinner = document.createElement('span');
       spinner.innerHTML = VuFind.icon('spinner', 'spinner');
+      holder.insertAdjacentElement('afterbegin', spinner);
 
       const url = VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
         method: 'getFeed',
@@ -361,6 +359,10 @@ class FinnaFeedElement extends HTMLElement {
           // The catch will catch all the js errors in buildFeedDom, so display a warning
           // if something happens
           console.error(responseJSON);
+          const titleElement = holder.parentElement.querySelector('.carousel-header');
+          if (titleElement) {
+            titleElement.classList.add('hidden');
+          }
           holder.innerHTML
             = `<!-- Feed could not be loaded: ${responseJSON.data || ''} -->`;
         });
@@ -370,7 +372,6 @@ class FinnaFeedElement extends HTMLElement {
 
   /**
    * Observed attribute value changed
-   *
    * @param {string} name     Name of the attribute
    */
   attributeChangedCallback(name) {

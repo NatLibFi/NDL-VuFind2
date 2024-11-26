@@ -1,0 +1,54 @@
+#finna-survey {
+    display: none;
+    position: fixed;
+    width: 300px;
+    height: 300px;
+    bottom: -3000px;
+    left: 0px;
+    z-index: 20000;
+    padding: 15px;
+    border-top-right-radius: 10px;
+    transition: all 1.0s ease-in-out;
+    box-shadow: -10px -10px 75px 10px rgba(1,1,1,0.7);
+    background: url('../../finna2/images/finna-survey-museokortti.png?_=1') no-repeat 173px 112px;
+    background-color: $infobox-background;
+    background-size: 110px;
+
+    & h2 {
+        width: 100%;
+        font-size: 19px;
+        margin-bottom: 40px;
+    }
+    & h3 {
+        width: 135px;
+        font-size: 16px;
+        font-weight: normal;
+        margin-bottom: 50px;
+    }
+    & p {
+        float: right;
+        margin: 10px 15px 10px 10px;
+    }
+    & .btn-primary {
+        margin-bottom: 10px;
+    }
+    & .icon {
+        color: $brand-primary;
+        font-size: 40px;
+    }
+    & .icon-background {
+        right: -15px;
+        top: -10px;
+        position: absolute;
+        background-color: $body-bg;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    @media print {
+        display: none;
+    }
+}

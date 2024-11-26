@@ -40,6 +40,7 @@ use VuFind\Account\UserAccountService;
 use VuFind\Db\Entity\UserEntityInterface;
 
 use function floatval;
+use function sprintf;
 
 /**
  * Console service for anonymizing expired user accounts.

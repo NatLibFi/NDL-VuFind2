@@ -18,12 +18,19 @@ finna.favorites = (function finnaFavorites() {
     submitBtn.attr('disabled', false);
   });
 
+  /**
+   * Show information of Finna favorites
+   * @param {object} response Response from ajax call
+   */
   function showInfo(response) {
     dialog.siblings('h1').remove();
     form.remove();
     dialog.append(VuFind.updateCspNonce(response.data.html));
   }
 
+  /**
+   * Import favorites by uploading a form
+   */
   function upload() {
     var spinner = VuFind.icon('spinner', {}, true);
     submitBtn.attr('disabled', true);

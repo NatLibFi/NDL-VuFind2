@@ -138,20 +138,20 @@ Scopes:
 #                      with encyptionKey before hashing.
 #
 ClaimMappings:
-  id: id
+  id: getId
   name: full_name # special field created from firstname + ' ' + lastname
-  given_name: firstname
-  family_name: lastname
-  email: email
+  given_name: getFirstname
+  family_name: getLastname
+  email: getEmail
   age: age
   birthdate: birthdate
-  locale: last_language
+  locale: getLastLanguage
   phone: phone
   address: address_json # special field including all address fields
   block_status: block_status # special field indicating whether the patron has blocks
-  library_card: cat_username
+  library_card: getCatUsername
   library_user_id: library_user_id_hash # special field with a hash of cat_username
-  auth_method: auth_method
+  auth_method: getAuthMethod
 
 # Grants configuration. Life times are indicated as ISO 8601 periods. See
 # https://en.wikipedia.org/wiki/ISO_8601#Durations for more information.

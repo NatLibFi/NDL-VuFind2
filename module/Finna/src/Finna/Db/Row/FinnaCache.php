@@ -147,7 +147,8 @@ class FinnaCache extends \VuFind\Db\Row\RowGateway implements FinnaCacheEntityIn
      */
     public function setData(string $data): FinnaCacheEntityInterface
     {
-        $this->data = $data;
+        // Avoid messing with $this->data that RowGateway uses for storing the values:
+        $this->offsetSet('data', $data);
         return $this;
     }
 
@@ -158,6 +159,7 @@ class FinnaCache extends \VuFind\Db\Row\RowGateway implements FinnaCacheEntityIn
      */
     public function getData(): string
     {
-        return $this->data;
+        // Avoid messing with $this->data that RowGateway uses for storing the values:
+        return $this->offsetGet('data');
     }
 }

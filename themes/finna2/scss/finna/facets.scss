@@ -1,0 +1,521 @@
+// Finna Facet styling
+
+// No inverse active items
+.facet-group .active
+{
+  background: $list-group-bg;
+  color: $action-link-color;
+}
+
+div.facet > a {
+  min-width: 0;
+  > span.text, > span.facet-value {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    display: inline-block;
+  }
+}
+
+.facet-group .active {
+  font-weight: bold;
+  color: $link-color;
+}
+
+.list-group.filters {
+  background: $list-group-bg;
+  padding: 10px 0px;
+  .list-group-item.title, .list-group-item.active {
+    padding: 5px 10px;
+    background: transparent;
+    color: $gray;
+    transition: background 0.2s ease-in-out;
+    &:hover {
+      background: $gray-lighter;
+      text-decoration: line-through;
+    }
+  }
+  h5 {
+    margin-top: 0px;
+  }
+}
+
+.list-group.facet, .list-group.facets {
+  // style Finna facet headers
+  .list-group-item.title {
+    cursor:pointer;
+    font-size: 1em;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: $facet-text-color;
+    background: $facet-header-background;
+    text-align: left;
+    border: 1px solid  $facet-border-color;
+    padding: 10px;
+    margin-bottom: 1px;
+
+    .icon {
+      cursor: pointer;
+      color: $action-link-color;
+    }
+  }
+  .collapse, .collapsing {
+    a {
+      background-color: $body-bg;
+    }
+    .list-group-item {
+      background: transparent;
+      border-top-left-radius: 0px;
+      border-top-right-radius: 0px;
+    }
+  }
+
+  .usage-right-group {
+    padding: 3px 0 3px 8px;
+    @media(max-width:$screen-xs-max) {
+      padding: 6px 10px 3px 14px;
+    }
+  }
+  .usage-right-group.usage-rights-excludable {
+    padding-right: 0;
+  }
+  .usage-right-group .list-group-item {
+    padding-right: 0;
+  }
+
+  a {
+    color: $link-color;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .more-less-btn-wrapper {
+    border-bottom: none;
+  }
+
+  .more-less-btn-wrapper .btn, a.more-narrow-toggle {
+    display: flex;
+    align-items: baseline;
+    padding: 4px 0 0 8px;
+    border-radius: 0px;
+    color: $gray;
+    background: transparent;
+    font-weight: bold;
+    font-size: 0.8em;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: none;
+  }
+
+  .list-group-item i.fa.fa-check-square-o {
+    color: $link-color;
+  }
+
+  // tablet mobile facet adjustments
+  @media (max-width: $screen-xs-max) {
+    .facet:not(.facet-group), .usage-right-group {
+      font-size: 1.15em;
+      line-height: 1.15em;
+    }
+    .narrow-toggle .text, .more-less-btn-wrapper {
+      font-size: 0.8em;
+    }
+  }
+  @media (max-width: $screen-sm-max) {
+    .datepicker.datepicker-dropdown {
+        font-size: 1.4em;
+    }
+  }
+
+  // Allow wrapping for facet_usage_rights_ext_str_mv
+  #facet_usage_rights_ext_str_mv li span.main {
+    white-space: inherit;
+  }
+}
+
+h4 + .list-group.facet {
+  margin-top: 5px;
+}
+
+#side-collapse-publishDate .list-group-item {
+    padding: 10px 15px;
+    border-bottom-left-radius:$border-radius-base;
+    border-bottom-right-radius:$border-radius-base;
+}
+
+.building-filter {
+    padding: 5px 0px 5px 6px;
+    @media (max-width:$screen-xs-max) {
+        padding-left: 30px;
+    }
+    input {
+        width: 190px;
+        @media (min-width: $screen-sm-min) and (max-width:$screen-sm-max) {
+            width: 135px;
+        }
+    }
+}
+
+// Checkbox facet badges
+.sidebar .checkboxFilter span.badge.cb-facet {
+    display: $display-checkbox-facet-amount;
+}
+span.badge.cb-facet {
+    float: right;
+    margin-right: 10px;
+}
+
+.facet-group {
+  margin-bottom: 1rem;
+
+  .facet {
+    padding: 3px 0 2px 8px;
+    display: flex;
+    .text {
+      flex-grow: 1;
+      overflow: hidden;
+
+      .facet-value {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+  .title {
+    display: flex;
+    line-height: 1.5;
+    padding: 4px 8px 4px 10px;
+    font-weight: bold;
+  }
+  // Hide checkbox from facets
+  .icon-link .icon {
+    display: none;
+  }
+
+  [data-toggle="collapse"] {
+    cursor: pointer;
+  }
+
+  .collapse, .collapsing {
+    position: relative;
+  }
+
+  .badge {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+  }
+  .text, .hierarchical-facet-anchor {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    flex-grow: 1;
+  }
+  .exclude {
+    margin-left: 5px;
+    flex-shrink: 0;
+    text-align: center;
+    i  {
+      font-size: 0.8em;
+    }
+  }
+
+  body.rtl {
+    padding-left: 0;
+    padding-right: 15px;
+  }
+}
+.facet-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0,0,0,0.4);
+  z-index: 2;
+}
+.facet-loading-overlay-label {
+  padding: 1px .5rem;
+  color: #fff;
+  background-color: #000;
+}
+.facet-group .facet-title {
+  flex: 1 1 0%;
+  align-self: center;
+}
+.facet-group .facet-title-icon {
+  flex: none;
+}
+
+// Full facet list
+.full-facet-sort-options.form-group {
+  margin-bottom: 5px;
+  .btn-group {
+    a {
+      border-radius: 15px;
+      padding: 5px 10px;
+      border: 1px solid $action-link-color;
+      color: $action-link-color;
+      background-color: $body-bg;
+      &.active {
+        color: $body-bg;
+        background-color: $action-link-color;
+      }
+    }
+  }
+}
+.lightbox-scroll.full-facets {
+  border: 1px solid $gray-lighter;
+  margin-bottom: 5px;
+}
+.full-facet-list {
+  margin-bottom: 0;
+  .active .fa {
+    float: right;
+    margin-top: .25rem;
+    margin-left: 0.5rem;
+  }
+  .facet {
+    display: flex;
+    flex-direction: row;
+    .badge {
+      padding-right: 4px;
+    }
+    .fa-square-o {
+      display: none;
+    }
+  }
+}
+.form-inline .facet-lightbox-filter.form-group {
+  display: block;
+  margin: 0.5rem 0;
+
+  .btn {
+    padding-top: 6px;
+    padding-bottom: 6px;
+    height: $input-height-base;
+  }
+}
+
+.sidebar {
+  .facet-info-header {
+    font-size: 0.9em;
+    font-weight: 600;
+    padding: 10px 0 10px 8px;
+  }
+  .facet-info {
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 10px;
+    padding: 5px;
+    font-size: 0.9em;
+    .icon {
+      font-size: 1.2em;
+      vertical-align: baseline;
+      display: table-cell;
+      color: $brand-primary;
+    }
+    .info {
+      padding-left: 5px;
+      display: table-cell;
+      width: 100%;
+    }
+    .more-info {
+      text-align: right;
+      display: block;
+      margin-top: 3px;
+    }
+  }
+  .list-group.facet .collapse .list-group-item.facet-info-highlight {
+    @extend .alert;
+    @extend .alert-info;
+    padding: 8px;
+  }
+}
+
+.geographic-facet {
+  margin-bottom: 10px;
+  padding: 0 8px;
+  .map-controls {
+    a.map-control, a.user-location-filter {
+      border: 1px solid $gray-lighter;
+      background: $body-bg;
+      color: $text-color;
+      border-radius: 0;
+      width: 50%;
+      float: left;
+      padding: 10px 5px;
+      font-size: 0.9em;
+      i {
+        color: #fff;
+      }
+      &:last-child {
+        border-left: 0;
+      }
+      @media(max-width: $screen-md-max){
+        white-space: normal;
+      }
+    }
+  }
+  .info-message {
+    margin: 10px 0;
+  }
+}
+.list-group.facet .geofacet-header {
+  margin: 8px;
+  h5, a {
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+  }
+  a {
+    font-size: 0.9em;
+    color: $gray-mid-light;
+    float: right;
+  }
+}
+.list-group.facet .geographic-facet a:hover {
+  text-decoration: none;
+}
+
+.location-search-info .close-info {
+  float: right;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.map-container {
+  position: relative;
+  .location-search-info {
+    bottom: 0;
+    height: auto;
+    width: 100%;
+    z-index: 1050;
+    position: absolute;
+    background: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    padding: 10px;
+  }
+}
+
+/* ------ TOP FACETS ------ */
+.top-title {
+  display: inline-block;
+  padding-top: .5rem;
+  padding-left: .5rem;
+  font-weight: bold;
+  color: #000;
+}
+.top-title .fa {
+  width: 1rem;
+  text-align: center;
+}
+@media (min-width: 768px) {
+  .top-title { padding-top: 0; }
+  .top-title .fa { display: none; }
+  .top-facets .collapse {
+    display: block;
+    height: auto !important;
+  }
+}
+
+.top-facets .facet,
+.top-facets .narrow-toggle,
+.top-facets > strong {
+  display: inline-block;
+  width: auto;
+  padding: .25rem .5rem;
+  border: 0;
+  white-space: nowrap;
+}
+
+/* ------ Hierarchical Facets ------ */
+.facet-tree {
+  padding-left: 0;
+
+  ul {
+    padding: 0;
+    width: 100%;
+  }
+
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    // Ensure that there is enough room for a button focus outline:
+    padding-left: .2rem;
+    border-bottom: none;
+
+    .facet-tree__toggle-expanded {
+      flex: 1 1;
+      border: 0;
+      background: none;
+      max-width: 1.5em;
+      padding: 0;
+
+      &:hover {
+        background-color: $list-group-hover-bg;
+      }
+
+      &[aria-expanded=false] {
+        .facet-tree__collapse {
+          display: none;
+        }
+        & ~ ul {
+          display: none;
+        }
+      }
+      &[aria-expanded=true] .facet-tree__expand {
+        display: none;
+      }
+    }
+
+    .facet-tree__item-container {
+      // Leave space for the open/close icon (see above):
+      width: calc(100% - 1.5em);
+
+      .text {
+        // Leave space for the badge:
+        width: calc(100% - 1.5em);
+      }
+
+      &--exclude .text {
+        // Leave space for the badge and exclude link:
+        width: calc(100% - 3.0em);
+      }
+
+      .facet-value {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display: inline;
+      }
+    }
+
+    // Child items:
+    ul {
+      padding-left: 1rem;
+      flex: 1;
+      .facet {
+        // Smaller padding to make the list a bit more condensed:
+        padding-top: 0.3rem;
+        padding-bottom: 0.3rem;
+      }
+    }
+  }
+
+  .facet {
+    border: 0;
+    padding-left: .1rem;
+  }
+
+  // Make the first child level start a bit higher to counter the padding of top
+  // level items:
+  & > li > ul {
+    margin-top: -0.2rem;
+  }
+}

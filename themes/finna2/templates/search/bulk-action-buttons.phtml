@@ -21,7 +21,7 @@
         <?php endif; ?>
         <input id="<?=$this->idPrefix?>ribbon-print" class="btn btn-primary" type="submit" name="print" title="<?=$this->transEscAttr('bulk_print')?>" value="<?=$this->transEscAttr('Print')?>"<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>>
         <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-          <input id="<?=$this->idPrefix?>ribbon-save" class="btn btn-primary" type="submit" name="saveCart" title="<?=$this->transEscAttr('bulk_save')?>" value="<?=$this->transEscAttr('Save')?>"<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>>
+          <input id="<?=$this->idPrefix?>ribbon-save" class="btn btn-primary" type="submit" name="saveCart" title="<?=$this->transEscAttr('bulk_save')?>" value="<?=$this->transEscAttr('bulk_save_button')?>"<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>>
         <?php endif; ?>
       <?php endif; ?>
       <?php if ($searchSettings->cartControlsEnabled()): ?>

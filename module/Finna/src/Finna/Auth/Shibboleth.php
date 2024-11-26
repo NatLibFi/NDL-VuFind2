@@ -98,8 +98,7 @@ class Shibboleth extends \VuFind\Auth\Shibboleth
                 $catUsername = "$driver.$catUsername";
                 try {
                     if ($this->ils->patronLogin($catUsername, null)) {
-                        $this->ilsAuthenticator->setUserCatalogCredentials($user, $catUsername, null);
-                        $this->getUserService()->persistEntity($user);
+                        $this->ilsAuthenticator->saveUserCatalogCredentials($user, $catUsername, null);
                         $this->debug(
                             "ILS account '$catUsername' linked to user '{$user->getUsername()}'"
                         );

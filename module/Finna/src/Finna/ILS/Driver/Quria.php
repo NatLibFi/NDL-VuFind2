@@ -36,7 +36,9 @@ namespace Finna\ILS\Driver;
 
 use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
+use VuFind\ILS\Logic\AvailabilityStatus;
 
+use function count;
 use function in_array;
 use function is_callable;
 use function is_object;
@@ -301,6 +303,8 @@ class Quria extends AxiellWebServices
                     $journalInfo = [
                         'year' => $year,
                         'edition' => $edition,
+                        'holdable' => ($holdingsEdition->reservationButtonStatus ?? '') == 'reservationOk',
+                        'reservableId' => $holdingsEdition->reservable ?? '',
                     ];
 
                     $result = array_merge(
@@ -319,8 +323,7 @@ class Quria extends AxiellWebServices
 
         if (!empty($result)) {
             usort($result, [$this, 'holdingsSortFunction']);
-
-            $summary = $this->getHoldingsSummary($result, $id);
+            $summary = $this->getHoldingsSummary($result, $id, $response->$functionResult->catalogueRecordDetail);
             $result[] = $summary;
         }
 
@@ -346,8 +349,13 @@ class Quria extends AxiellWebServices
             foreach ($holdingsBranch as $branch) {
                 $branchName = $branch->value ?? '';
                 $branchId = $branch->id ?? '';
-                $reservableId = $branch->reservable ?? '';
-                $holdable = $branch->reservationButtonStatus ?? '' == 'reservationOk';
+                if ($journalInfo) {
+                    $reservableId = $journalInfo['reservableId'];
+                    $holdable = $journalInfo['holdable'];
+                } else {
+                    $reservableId = $branch->reservable ?? '';
+                    $holdable = ($branch->reservationButtonStatus ?? '') == 'reservationOk';
+                }
                 $departments = $this->objectToArray($branch->holdings->holding ?? []);
                 $organisationId = $branch->id ?? '';
                 foreach ($departments as $department) {
@@ -421,7 +429,6 @@ class Quria extends AxiellWebServices
                             " for '$this->arenaMember'.'$id'"
                         );
                     }
-                    $holdable = ($branch->reservationButtonStatus ?? '') === 'reservationOk';
                     $requests = 0;
                     if (
                         !$this->singleReservationQueue
@@ -443,7 +450,7 @@ class Quria extends AxiellWebServices
                         'barcode' => $id,
                         'item_id' => $reservableId,
                         'holdings_id' => $group ?? '',
-                        'availability' => $this->availabilityStatusManager->createAvailabilityStatus($available),
+                        'availability' => new AvailabilityStatus($available, $status),
                         'availabilityInfo' => $availabilityInfo,
                         'status' => $status,
                         'location' => $group ?? $branchName,
@@ -487,6 +494,67 @@ class Quria extends AxiellWebServices
         } else {
             return strnatcasecmp($yearB, $yearA);
         }
+    }
+
+    /**
+     * Return summary of holdings items.
+     *
+     * @param array  $holdings      Parsed holdings items
+     * @param string $id            Record id
+     * @param object $recordDetails Record details
+     *
+     * @return array summary
+     */
+    protected function getHoldingsSummary($holdings, $id, $recordDetails = null)
+    {
+        $holdable = false;
+        $journal = isset($holdings[0]['journalInfo']);
+        $availableTotal = $itemsTotal = $orderedTotal = 0;
+        $reservationsTotal = $recordDetails->nofReservations ?? 0;
+        $locations = [];
+        foreach ($holdings as $item) {
+            if ($item['availability']->isAvailable()) {
+                $availableTotal++;
+            }
+            if (isset($item['availabilityInfo']['total'])) {
+                $itemsTotal += $item['availabilityInfo']['total'];
+            } else {
+                $itemsTotal++;
+            }
+            if (isset($item['availabilityInfo']['ordered'])) {
+                $orderedTotal += $item['availabilityInfo']['ordered'];
+            }
+            if (
+                $this->singleReservationQueue
+                && isset($item['availabilityInfo']['reservations'])
+            ) {
+                $reservationsTotal
+                    = max(
+                        $reservationsTotal,
+                        $item['availabilityInfo']['reservations']
+                    );
+            }
+            $locations[$item['location']] = true;
+            if (!$journal && $item['is_holdable']) {
+                $holdable = true;
+            }
+        }
+
+        // Since summary data is appended to the holdings array as a fake item,
+        // we need to add a few dummy-fields that VuFind expects to be
+        // defined for all elements.
+        return [
+            'id' => $id,
+            'available' => $availableTotal,
+            'ordered' => $orderedTotal,
+            'total' => $itemsTotal - $orderedTotal,
+            'reservations' => $reservationsTotal,
+            'locations' => count($locations),
+            'holdable' => $holdable,
+            'availability' => null,
+            'callnumber' => '',
+            'location' => '__HOLDINGSSUMMARYLOCATION__',
+        ];
     }
 
     /**
@@ -774,6 +842,8 @@ class Quria extends AxiellWebServices
                 'title' => $title,
                 'duedate' => $loan->loanDueDate,
                 'dueStatus' => $dueStatus,
+                'checkoutDate' => $this->formatDate($loan->loanDate),
+                'borrowingLocation' => $loan->branch ?? '',
                 'renewable' => (string)($loan->loanStatus->isRenewable ?? '') === 'yes',
                 'message' => $message,
                 'renew' => $renew,
@@ -989,7 +1059,8 @@ class Quria extends AxiellWebServices
 
             $detailsStr = $reservation->id . '|' . $reservation->validFromDate
                 . '|' . $reservation->validToDate . '|'
-                . $reservation->pickUpBranchId;
+                . $reservation->pickUpBranchId; // $reservation->pickUpBranchId actually
+            // contains the branch name instead of the ID
             $updateDetails = '';
             $cancelDetails = '';
             // TODO: Regional holds are not yet implemented
@@ -1436,6 +1507,15 @@ class Quria extends AxiellWebServices
             if (isset($fields['pickUpLocation'])) {
                 [, $branch] = explode('.', $fields['pickUpLocation'], 2);
                 $updateRequest['pickUpBranchId'] = $branch;
+            } else {
+                // Map the branch name to an actual branch ID
+                $locations = $this->getPickUpLocations($patron, ['item_id' => $requestId]);
+                foreach ($locations as $loc) {
+                    if ($loc['locationDisplay'] === $pickupLocation) {
+                        [, $branch] = explode('.', $loc['locationID'], 2);
+                        $updateRequest['pickUpBranchId'] = $branch;
+                    }
+                }
             }
             $result = $this->doSOAPRequest(
                 $this->reservations_wsdl,

@@ -1,0 +1,285 @@
+$iconFontSize: 1.3em !default;
+
+.record.sourceSolrAuth {
+  // .media and .media-body code added to fix IE11 display: table-cell issues
+  .media {
+    display: block;
+  }
+  .format {
+      font-weight: bold;
+  }
+}
+
+.result.condensed-list-view .condensed-collapse-toggle .condensed-body.authority {
+  width: 100%;
+}
+.result {
+  .authority-record-info .authority-record-summary-container {
+    display: flex;
+    align-items: baseline;
+    .author {
+      margin-right: 20px;
+    }
+  }
+}
+.result.condensed-list-view {
+  .title-container {
+    display: flex;
+    flex-wrap: wrap;
+    .title {
+      margin-right: 10px;
+    }
+  }
+}
+a.authority-link {
+  display: inline-block;
+  &::after {
+    margin-left: 5px;
+  }
+  i {
+    margin-right: 0.1em;
+    font-size: $iconFontSize;
+  }
+}
+.record-information .record-core-metadata .recordAuthors .authority {
+    display: inline-block;
+}
+.record-main {
+  .authority-records-summary {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    > div {
+      .info-row {
+        display: flex;
+        align-items: baseline;
+      }
+      .text {
+        font-weight: 700;
+        width: 30%;
+      }
+      .count {
+        font-size: 1.4em;
+      }
+    }
+  }
+  .table-finna-record.record-details {
+    .info {
+      color: $gray;
+      font-size: 0.9em;
+    }
+    .record-origination {
+      .author-description {
+        display: inline-block;
+      }
+    }
+  }
+}
+.authority {
+  + br {
+    display: none;
+  }
+  .authority-info {
+    display: none;
+    margin: 10px 0;
+    table.record-details {
+      th {
+        min-width: 40%;
+      }
+      td {
+        max-width: 60%;
+      }
+    }
+  }
+  .authority-info {
+    table {
+      margin: 10px 0;
+    }
+  }
+   &.open {
+    .authority-info {
+      display: block;
+    }
+   }
+  .no-info {
+    display: inline-block;
+  }
+  .show-info {
+    display: inline-block;
+    .link-text {
+      font-size: 0.9em;
+    }
+    i {
+      margin-right: 0.1em;
+      font-size: $iconFontSize;
+    }
+  }
+  .hide-info .link-text {
+    font-size: 0.9em;
+  }
+  .role {
+    color: $gray;
+  }
+}
+.main-content .authority-recommend {
+  .authoritybox {
+    border: 1px solid $gray-lighter;
+    background-color: $gray-ultralight;
+    margin-bottom: 20px;
+    padding: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+
+    @media (min-width: $screen-md) {
+      .media-left {
+        width: initial;
+      }
+    }
+    .media-left {
+      flex-direction: column;
+      width: initial;
+      flex: 1 1 100%;
+    }
+    .media-right {
+      flex-direction: column;
+      flex: 1 1 100%;
+      font-size: 12px;
+      .access-rights {
+        .cc-rights {
+          padding: 0;
+          margin: 0;
+        }
+      }
+    }
+    @media (min-width: $screen-sm) {
+      .media-left {
+        flex-basis: 60%;
+      }
+      .media-right {
+        flex-basis: 40%;
+      }
+    }
+    &.filtered {
+      border-top: none;
+    }
+    .roles {
+      margin-top: 1em;
+      margin-bottom: 1em;
+    }
+    .record-details th {
+      width: 20%;
+    }
+    .resultItemFormat {
+      margin-bottom: 0.3em;
+      i {
+        vertical-align: middle;
+        font-size: $iconFontSize;
+      }
+    }
+    h3 {
+      margin-top: 0.3em;
+      margin-bottom: 0.3em;
+    }
+    div:first-child {
+      margin-right: 0.3em;
+    }
+  }
+  .tabs-table {
+    ul.nav-tabs {
+      margin-top: 0;
+      margin-bottom: 0;
+      border-bottom: none;
+      position: relative;
+      display: flex;
+      border-bottom: 1px solid $gray-lighter;
+      @media(max-width: $screen-xs-max) {
+        padding-top: 10px;
+      }
+      @media(max-width: 390px) {
+        &.many-tabs > li {
+          max-width: 64px;
+          a {
+            min-height: 70px;
+            padding: 4px 4px;
+            font-size: .8em;
+          }
+        }
+      }
+      > li {
+        color: $body-bg;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        //margin-bottom: 4px;
+        border: none;
+        @media (max-width: $screen-sm) {
+          &:not(.many-tabs) {
+            flex-basis: 50%;
+          }
+        }
+        &.active {
+          border-bottom: 4px solid $main-tabs-active-color;
+          border-top: none;
+          border-left: none;
+          border-right: none;
+          margin-top: 4px;
+          a:hover {
+            border: none;
+          }
+        }
+        &.spinner {
+          margin-left: 0;
+          position: absolute;
+          right: 40px;
+          bottom: 12px;
+        }
+        &.toggle {
+          font-family: finnaicons;
+          font-size: 24px;
+          float: right;
+          position: absolute;
+          right: 8px;
+          bottom: 5px;
+          color: #007c90;
+          &:before {
+            content: "\e916";
+          }
+          &.collapsed {
+            &:before {
+              content: "\e91a";
+            }
+          }
+        }
+        > a {
+          background-color: $main-tabs-background-color;
+          padding: 5px 10px;
+          //margin-bottom: 0;
+          border: 0;
+          font-size: 1em;
+          font-weight: 600;
+          color: $main-tabs-text-color;
+          transition: none;
+          @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+            word-break: break-word;
+          }
+          .icon {
+            color: $link-color;
+            font-size: 1.8em;
+            vertical-align: middle;
+          }
+        }
+      }
+    }
+  }
+}
+.record-accordions .authority-records {
+    .pagination-container {
+        margin-bottom: 20px;
+    }
+    .search-btn-container {
+        margin-top: 25px;
+        text-align: center;
+    }
+}

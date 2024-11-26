@@ -144,7 +144,7 @@ trait OnlinePaymentHandlerTrait
                     $t->setRegistrationFailed('Failed to mark fees paid: ' . ($res ?: 'no error information'));
                     $this->transactionService->persistEntity($t);
                     $this->addTransactionEvent(
-                        $t->getId(),
+                        $t,
                         'Registration with the ILS failed: ' . ($res ?: 'no error information')
                     );
                 }

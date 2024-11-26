@@ -9,6 +9,9 @@ finna.organisationMap = (function finnaOrganisationMap() {
   var markers = [];
   var selectedMarker = null;
 
+  /**
+   * Reset the map leaflet
+   */
   function reset() {
     var group = new L.featureGroup(markers);
     var bounds = group.getBounds().pad(0.2);
@@ -18,6 +21,10 @@ finna.organisationMap = (function finnaOrganisationMap() {
     selectedMarker = null;
   }
 
+  /**
+   * Draw map object and markers
+   * @param {object} organisationList Object containing organisation and map data
+   */
   function draw(organisationList) {
     var me = $(this);
     var organisations = organisationList;
@@ -113,16 +120,26 @@ finna.organisationMap = (function finnaOrganisationMap() {
     reset();
   }
 
+  /**
+   * Resize handler for map
+   */
   function resize() {
     map.invalidateSize(true);
   }
 
+  /**
+   * Hide marker
+   */
   function hideMarker() {
     if (selectedMarker) {
       selectedMarker.closePopup();
     }
   }
 
+  /**
+   * Select a marker handler
+   * @param {string} id Marker id to select
+   */
   function selectMarker(id) {
     var marker = null;
     if (id in mapMarkers) {
@@ -143,6 +160,12 @@ finna.organisationMap = (function finnaOrganisationMap() {
     selectedMarker = marker;
   }
 
+  /**
+   * Init organisation map
+   * @param {jQuery} _holder Container of the map elements
+   * @param {string} _mapTileUrl Url to fetch map tiles from
+   * @param {string} _attribution Map data attribution prefix
+   */
   function init(_holder, _mapTileUrl, _attribution) {
     holder = _holder;
     mapTileUrl = _mapTileUrl;

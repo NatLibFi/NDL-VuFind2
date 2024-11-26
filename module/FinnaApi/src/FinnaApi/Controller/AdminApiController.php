@@ -32,6 +32,8 @@ namespace FinnaApi\Controller;
 
 use VuFind\Service\Feature\RetryTrait;
 
+use function ini_get;
+
 /**
  * Provides web api for different admin tasks.
  *
@@ -58,6 +60,11 @@ class AdminApiController extends \VuFindApi\Controller\AdminApiController
 
         if ($result = $this->isAccessDenied($this->cacheAccessPermission)) {
             return $result;
+        }
+
+        // Check time limit; increase if necessary:
+        if (ini_get('max_execution_time') < 3600) {
+            ini_set('max_execution_time', '3600');
         }
 
         try {

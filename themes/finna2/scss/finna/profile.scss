@@ -1,0 +1,251 @@
+.template-name-profile {
+  .my-research-content {
+    @media (min-width: $screen-md) {
+      width: 100%;
+    }
+    .logged-in-as {
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      > div {
+        display: flex;
+        flex-direction: row;
+        @media (max-width: $screen-md) {
+          &:not(.display-name) {
+            flex-direction: column;
+          }
+        }
+        &.display-name {
+          font-size: $font-size-large;
+          margin: 0 10px 10px 0;
+          .profile-icon {
+            color: $brand-primary;
+            padding-right: 5px;
+          }
+        }
+      }
+      > div div {
+        padding-right: 20px;
+        @media (max-width: $screen-md) {
+          padding: 0 0 5px 0;
+        }
+      }
+      .profile-title {
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.myresearch-profile-list {
+  padding: 0px 6px 20px;
+  &.library-card-holder {
+    padding: 0 0 20px;
+    .select-card-label {
+      font-weight: bold;
+    }
+  }
+  label, .profile-title {
+    padding-top: 7px;
+  }
+  .profile-title {
+    clear: left;
+  }
+  .clearfix {
+    padding: 3px 0px;
+  }
+  #email, #finna_nickname {
+    width: 100%;
+    margin-bottom: 5px;
+    @media (max-width: $screen-xs-max) {
+      max-width: 320px;
+    }
+  }
+}
+
+.myresearch-profile-header {
+  background: $gray;
+  background: $action-link-color;
+
+  h3 {
+    color: $body-bg;
+    padding: 7px 10px;
+    font-size: $font-size-h3;
+    margin: 0;
+    font-weight: 400;
+  }
+}
+
+.library-profile {
+  margin-bottom: 40px;
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  border: 1px solid $gray-lighter;
+  box-shadow: 10px 15px 30px -25px $gray;
+  display: inline-block;
+  width: 100%;
+  &.export-holder {
+    padding: 10px 10px 0px 10px;
+  }
+  #profile_library_form {
+    & input {
+      min-width: 210px;
+    }
+  }
+  div {
+    padding: 8px;
+    &.separator {
+      float:left;
+      width: 100%;
+      margin: 15px 0 10px;
+      padding: 0px;
+      border-top: 1px solid $btn-default-border;
+    }
+    &.my-profile-row {
+      display: inline-block;
+      width: 100%;
+      padding: 8px;
+      @media(max-width: $screen-xs-max) {
+        padding: 10px 8px 8px;
+      }
+      >.my-profile-col {
+        padding: 0 8px 0 0;
+      }
+    }
+    &.profile-title {
+      line-height: 1.5;
+      font-weight: bold;
+      @media (max-width: $screen-xs-max) {
+        padding-bottom: 0;
+      }
+    }
+    &.profile-text-value {
+      line-height: 1.5;
+      padding-left: 0px;
+      @media (max-width: $screen-xs-max) {
+        padding: 0px 8px 8px;
+      }
+    }
+    &.profile-xs {
+      padding: 0;
+    }
+    &.profile-long {
+      padding-bottom: 0;
+    }
+    &.profile-after-long {
+      padding-top: 16px;
+    }
+    &.library-profile-after-long {
+      padding-top: 0;
+    }
+    &.profile-info {
+      padding-top: 3px;
+    }
+    &.messaging-last {
+      margin-bottom: 20px;
+    }
+    &.profile-group {
+      padding-top: 0;
+      padding-left: 16px;
+    }
+  }
+}
+
+.my-research-content .my-profile {
+  background: $gray-ultralight;
+  border-radius: $border-radius-small;
+  margin-bottom: 2em;
+  padding: 5px 10px;
+}
+
+.my-profile-btn {
+  margin: 0px 5px 10px 0px;
+  display: inline-block;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  @media(min-width: $screen-sm-min) {
+    max-width: 250px;
+  }
+  @media(max-width: $screen-xs-max) {
+    width: 100%;
+    float: left;
+    display: block;
+    &.btn-danger {
+      margin-top: 15px;
+    }
+  }
+}
+
+@media (min-width: $screen-sm ) {
+  .my-profile-col {
+    width: 33.33%;
+    float: left;
+    padding-right: 15px;
+  }
+  .password-col {
+    width: 66.6%;
+    float: left;
+  }
+}
+
+.myresearch-profile-middle-header {
+  font-size: $font-size-h4;
+  font-weight: bold;
+  display: block;
+  line-height: 1.1em;
+  margin: 0;
+}
+
+#favorites-import-dialog {
+  #filename {
+    margin-right: 5px;
+  }
+  .alert {
+    margin-top: $modal-title-padding;
+  }
+  .form-control {
+    max-width: 200px;
+    float: left;
+  }
+}
+
+.myresearch-notification {
+  padding-left: 0;
+  @media (max-width: $screen-xs-max) {
+    margin-top: 0;
+  }
+}
+
+.address-change-description, .messaging-settings-change-description {
+    background-color: $state-info-bg;
+    padding: 2em;
+    padding-left: 2.5em;
+    margin-bottom: 1em;
+}
+
+fieldset.profile-group {
+  margin-bottom: 20px;
+  .form-group {
+    margin-left: 16px;
+  }
+}
+
+.profile-form {
+  legend.form-field {
+    font-size: ($font-size-base * 1.1);
+  }
+  legend.control-label {
+    font-size: 100%;
+    font-weight: 700;
+    border: 0;
+    margin-bottom: 5px;
+  }
+  .form-control[type="radio"] {
+    display: inline-block;
+    margin: 0 .5em 0 0;
+    padding: 0;
+    height: 1.5em;
+  }
+}

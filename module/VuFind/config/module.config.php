@@ -226,6 +226,8 @@ $config = [
             'VuFind\Controller\WebController' => 'VuFind\Controller\AbstractBaseFactory',
             'VuFind\Controller\WorldcatController' => 'VuFind\Controller\AbstractBaseFactory',
             'VuFind\Controller\WorldcatrecordController' => 'VuFind\Controller\AbstractBaseFactory',
+            'VuFind\Controller\Worldcat2Controller' => 'VuFind\Controller\AbstractBaseFactory',
+            'VuFind\Controller\Worldcat2recordController' => 'VuFind\Controller\AbstractBaseFactory',
         ],
         'initializers' => [
             'VuFind\ServiceManager\ServiceInitializer',
@@ -353,6 +355,10 @@ $config = [
             'worldcat' => 'VuFind\Controller\WorldcatController',
             'WorldcatRecord' => 'VuFind\Controller\WorldcatrecordController',
             'worldcatrecord' => 'VuFind\Controller\WorldcatrecordController',
+            'Worldcat2' => 'VuFind\Controller\Worldcat2Controller',
+            'worldcat2' => 'VuFind\Controller\Worldcat2Controller',
+            'Worldcat2Record' => 'VuFind\Controller\Worldcat2recordController',
+            'worldcat2record' => 'VuFind\Controller\Worldcat2recordController',
         ],
     ],
     'controller_plugins' => [
@@ -436,6 +442,7 @@ $config = [
             'VuFind\Cover\Loader' => 'VuFind\Cover\LoaderFactory',
             'VuFind\Cover\Router' => 'VuFind\Cover\RouterFactory',
             'VuFind\Crypt\HMAC' => 'VuFind\Crypt\HMACFactory',
+            'VuFind\Crypt\PasswordHasher' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'VuFind\Crypt\SecretCalculator' => 'VuFind\Crypt\SecretCalculatorFactory',
             'VuFind\Date\Converter' => 'VuFind\Service\DateConverterFactory',
             'VuFind\Db\AdapterFactory' => 'VuFind\Service\ServiceWithConfigIniFactory',
@@ -444,6 +451,7 @@ $config = [
             'VuFind\Db\Table\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'VuFind\DigitalContent\OverdriveConnector' => 'VuFind\DigitalContent\OverdriveConnectorFactory',
             'VuFind\DoiLinker\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
+            'VuFind\Escaper\Escaper' => 'VuFind\Escaper\EscaperFactory',
             'VuFind\Export' => 'VuFind\ExportFactory',
             'VuFind\Favorites\FavoritesService' => 'VuFind\Favorites\FavoritesServiceFactory',
             'VuFind\Form\Form' => 'VuFind\Form\FormFactory',
@@ -494,8 +502,9 @@ $config = [
             'VuFind\RecordTab\TabManager' => 'VuFind\RecordTab\TabManagerFactory',
             'VuFind\Related\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'VuFind\Resolver\Driver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
-            'VuFind\Role\PermissionManager' => 'VuFind\Role\PermissionManagerFactory',
             'VuFind\Role\PermissionDeniedManager' => 'VuFind\Role\PermissionDeniedManagerFactory',
+            'VuFind\Role\PermissionManager' => 'VuFind\Role\PermissionManagerFactory',
+            'VuFind\Role\PermissionProvider\PluginManager' => 'VuFind\Role\PermissionProvider\PluginManagerFactory',
             'VuFind\Search\BackendManager' => 'VuFind\Search\BackendManagerFactory',
             'VuFind\Search\Explanation\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'VuFind\Search\FacetCache\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
@@ -525,7 +534,6 @@ $config = [
             'VuFindHttp\HttpService' => 'VuFind\Service\HttpServiceFactory',
             'VuFindSearch\Service' => 'VuFind\Service\SearchServiceFactory',
             'Laminas\Db\Adapter\Adapter' => 'VuFind\Db\AdapterFactory',
-            'Laminas\Http\PhpEnvironment\RemoteAddress' => 'VuFind\Http\PhpEnvironment\RemoteAddressFactory',
             'Laminas\Session\SessionManager' => 'VuFind\Session\ManagerFactory',
         ],
         'delegators' => [
@@ -540,8 +548,6 @@ $config = [
             'VuFind\ServiceManager\ServiceInitializer',
         ],
         'aliases' => [
-            'League\CommonMark\MarkdownConverterInterface' => 'League\CommonMark\ConverterInterface',
-            'Request' => 'VuFind\Http\PhpEnvironment\Request',
             'VuFind\AccountCapabilities' => 'VuFind\Config\AccountCapabilities',
             'VuFind\AuthManager' => 'VuFind\Auth\Manager',
             'VuFind\AuthPluginManager' => 'VuFind\Auth\PluginManager',
@@ -600,9 +606,14 @@ $config = [
             'VuFind\Tags' => 'VuFind\Tags\TagsService',
             'VuFind\Translator' => 'Laminas\Mvc\I18n\Translator',
             'VuFind\YamlReader' => 'VuFind\Config\YamlReader',
-            'Laminas\Validator\Csrf' => 'VuFind\Validator\SessionCsrf',
             'VuFind\Validator\Csrf' => 'VuFind\Validator\SessionCsrf',
             'VuFind\Validator\CsrfInterface' => 'VuFind\Validator\SessionCsrf',
+
+            // Overrides:
+            'Laminas\Escaper\Escaper' => 'VuFind\Escaper\Escaper',
+            'Laminas\Validator\Csrf' => 'VuFind\Validator\SessionCsrf',
+            'League\CommonMark\MarkdownConverterInterface' => 'League\CommonMark\ConverterInterface',
+            'Request' => 'VuFind\Http\PhpEnvironment\Request',
         ],
         'shared' => [
             'VuFind\Form\Form' => false,
@@ -737,6 +748,7 @@ $recordRoutes = [
     'solrauthrecord' => 'AuthorityRecord',
     'summonrecord' => 'SummonRecord',
     'worldcatrecord' => 'WorldcatRecord',
+    'worldcat2record' => 'Worldcat2Record',
     'search2record' => 'Search2Record',
     'search2collection' => 'Search2Collection',
     'search2collectionrecord' => 'Search2Record',
@@ -823,6 +835,7 @@ $staticRoutes = [
     'Upgrade/CriticalFixInsecureDatabase',
     'Web/Home', 'Web/FacetList', 'Web/Results',
     'Worldcat/Advanced', 'Worldcat/Home', 'Worldcat/Search',
+    'Worldcat2/Advanced', 'Worldcat2/Home', 'Worldcat2/Search',
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();

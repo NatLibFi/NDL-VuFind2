@@ -64,6 +64,9 @@ class UserFactory extends \VuFind\Db\Row\UserFactory
         $result = parent::__invoke($container, $requestedName, $options);
         $ils = $container->get(\VuFind\ILS\Connection::class);
         $result->setILS($ils);
+        // TODO: Use deprecated function set config for bc.
+        $config = $container->get(\VuFind\Config\PluginManager::class)->get('config');
+        $result->setConfig($config);
         return $result;
     }
 }

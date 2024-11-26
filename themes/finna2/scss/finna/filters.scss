@@ -1,0 +1,206 @@
+.search-filters {
+  background: $filterContent-background;
+  border-top: 1px solid $filterContent-border-color;
+  border-bottom: 1px solid $filterContent-border-color;
+  position: relative;
+}
+
+.finna-filters, .results .noresults {
+  color: $filterContent-text-color;
+  padding: 5px 0 5px 0;
+  // < ie 10
+  display: inline-block;
+  display: inline-flex;
+  flex-wrap: wrap;
+  width: 100%;
+  .filter-options {
+    display: flex;
+    @media (min-width: $screen-md-min) {
+      padding-right: 10px;
+      align-items: flex-start;
+    }
+    @media (max-width: $screen-md-min) {
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .filters-toggle {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      text-transform: uppercase;
+      color: $filterContent-text-color;
+      font-weight: bold;
+      height: 40px;
+      padding: 0;
+      .icon.collapse {
+        display: none;
+      }
+      &.open {
+        .icon.expand {
+          display: none;
+        }
+        .icon.collapse {
+          display: initial;
+        }
+      }
+      @media (max-width: $screen-md-min) {
+        font-size: 80%;
+        display: flex !important
+      }
+    }
+    .checkbox {
+      display: flex;
+      align-items: center;
+      padding-left: 0;
+      padding-right: 0;
+      margin: 0;
+      height: 40px;
+      label {
+        display: inline-block;
+        padding: 10px 0px;
+
+        @media (max-width: $screen-xxs) {
+          font-size: 80%;
+        }
+      }
+    }
+  }
+  .filters {
+    width: 100%;
+    max-width: 100%;
+    flex: 1;
+    // < ie 10
+    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .filters-term {
+    margin-left: 5px;
+  }
+
+  .filter-title-group {
+    // < ie 10
+    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+  .filter-value {
+    padding: 5px 10px;
+    margin: 5px 0 5px 5px;
+    font-weight: 600;
+    background: $filters-background-color;
+    color: $filters-text-color;
+    border-radius: $border-radius-small;
+    display: flex;
+    align-items: center;
+    max-height: 30px;
+    white-space: nowrap;
+    .filter-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+    }
+    a {
+      color: $filters-icon-color;
+      margin: 4px;
+    }
+  }
+  .title-value-pair {
+    margin-left: 10px;
+  }
+  .active-filter-count {
+    margin-left: 5px;
+  }
+}
+.results .noresults {
+  flex-direction: column;
+  padding: 10px;
+
+  p {
+    flex: 1;
+  }
+}
+
+.finna-filters .title-value-pair {
+  display: inline-block;
+}
+
+.template-name-view .filters-container .finna-filters {
+  .filter-value {
+    background: $gray-ultralight;
+    color: $text-color;
+  }
+}
+
+.filters {
+  &.filters-bar {
+    max-width: 100%;
+  }
+}
+
+.search-filter-remove {
+  margin: 4px 1px 4px 4px;
+  font-weight: normal;
+  color: #fff;
+}
+.search-filter-dropdown {
+  display: inline-block;
+  margin-left: 5px;
+  .btn {
+    color: #fff;
+    background: $list-group-active-bg;
+    vertical-align: baseline;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+  .btn::after {
+    content: "\f107";
+    font-family: "FontAwesome";
+  }
+
+  .dropdown-menu {
+    &>li {
+      border: 0;
+    }
+    .filters-term {
+      display: block;
+      text-align: center;
+    }
+    .filter-value {
+      display: flex;
+      margin-right: 5px;
+
+      .filter-text {
+        flex-grow: 1;
+        margin-right: 0.5em;
+      }
+      a {
+        flex-shrink: 0;
+        margin: 0;
+      }
+    }
+  }
+}
+
+@media (max-width: $screen-sm) {
+  .filters {
+    width: 100%;
+    font-size: 80%;
+
+    // Reset specific font sizes
+    .btn, .dropdown-menu {
+      font-size: 100%;
+    }
+  }
+  .finna-filters .retain-filters .checkbox label:before {
+    font-size: 15px;
+  }
+  .filter-value {
+    max-width: 95%;
+  }
+}

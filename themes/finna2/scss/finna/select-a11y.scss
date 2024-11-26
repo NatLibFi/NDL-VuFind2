@@ -1,0 +1,195 @@
+/* select-a11y
+------------------------------------------------------ */
+.select-a11y {
+  position: relative;
+}
+.select-a11y.is-open .select-a11y__overlay {
+  display: block;
+}
+.select-a11y input::-webkit-contacts-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+}
+.select-a11y-button {
+  position: relative;
+  width: 100%;
+  text-align: left;
+  background: #fff;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  padding: 2px 8px;
+  &:hover, &:active, &:focus {
+    background-color: #e6e6e6;
+    border-color: #adadad;
+  }
+  &:focus {
+    outline-offset: -2px;
+  }
+}
+
+.select-a11y-button[aria-expanded=true] {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.select-a11y-button[aria-expanded=false] .select-a11y-button__icon > .select-collapse {
+  display:none;
+}
+.select-a11y-button[aria-expanded=true] .select-a11y-button__icon > .select-expand {
+  display:none;
+}
+.select-a11y-button__clear {
+  position: absolute;
+  top: 0;
+  right: 2rem;
+  bottom: 0;
+  appearance: none;
+  padding: 0;
+  margin: 0;
+  line-height: 0;
+  border: none;
+  background: none;
+}
+.select-a11y-button__clear::before {
+  content: "✕";
+}
+.select-a11y-button.select-a11y-button--no-selected-option + .select-a11y-button__clear {
+  display: none;
+}
+.select-a11y-button__text {
+  padding-right: 1.75rem;
+}
+.select-a11y-button__icon {
+  position: absolute;
+  top: 50%;
+  right: 0.5em;
+  line-height: 0;
+}
+.select-a11y__selected-item {
+  border: 1px solid #c3c4cc;
+  padding: 0.2em 0.1em 0.2em 0.5em;
+}
+.select-a11y-delete__icon:before {
+  content: "✕";
+  color: red;
+  line-height: 1;
+}
+.select-a11y-delete {
+  background-color: transparent;
+  border: 1px solid transparent;
+}
+.select-a11y-delete:focus {
+  outline: 1px solid red;
+  color: red;
+}
+.select-a11y-delete:hover {
+  color: red;
+  border-color: red;
+}
+.select-a11y__hidden {
+  display: none;
+}
+.select-a11y__overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: 0.5em;
+  z-index: 10;
+  // Styling alike .dropdown-menu:
+  border: 1px solid $dropdown-border;
+  @include box-shadow(0 6px 12px rgba(0, 0, 0, .275));
+  background: $gray-ultralight;
+  font-size: 16px; // Avoid automatic zoom-in on mobile.
+  @media only screen and (min-width : 480px) {
+    font-size: 1em;
+  }
+}
+.select-a11y__input {
+  width: 100%;
+  padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+  // Styling alike .form-control:
+  border: 1px solid #666;
+  background: #fff;
+  color: #666;
+}
+.select-a11y-suggestions {
+  max-height: 10em;
+  overflow-y: auto;
+  margin-top: 0.5em;
+  // Styling alike .form-control:
+  border: 1px solid #666;
+  background: #fff;
+}
+.select-a11y-suggestion {
+  padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+.select-a11y-suggestion:focus, .select-a11y-suggestion:hover {
+  background-color: #666;
+  color: #fff;
+}
+.select-a11y-suggestion:focus {
+  outline: 1px  #666 !important;
+  outline-offset: -1px;
+  color: #fff;
+  background-color: #666;
+}
+.select-a11y-suggestion[aria-selected=true] {
+  color: #fff;
+  background-color: #666;
+  position: relative;
+}
+
+.select-a11y-suggestion__label {
+  word-break: break-word;
+}
+.select-a11y-column {
+  flex: 1;
+  min-width: 0;
+}
+.select-a11y-suggestion__image {
+  width: 3rem;
+  height: 3rem;
+  object-fit: cover;
+  object-position: center;
+  margin-right: 0.5rem;
+}
+.select-a11y-suggestion__image ~ .column .select-a11y-suggestion__label {
+  text-align: right;
+}
+.select-a11y-suggestion__description {
+  margin-top: 0.5rem;
+  font-size: 14px;
+}
+.select-a11y-suggestion__helper {
+  background-color: #f6f6f6;
+  color: #666;
+  padding: 0.25rem;
+}
+.select-a11y__no-suggestion {
+  padding: 0 0.5em;
+  color: #666;
+  text-align: left;
+  margin: 0;
+}
+.select-a11y__selected-list {
+  padding: 0.5em 0;
+  margin: 0;
+}
+.select-a11y__selected-list li {
+  margin: 0 0.3em 0.3em 0;
+}
+.select-a11y__selected-list li:before {
+  content: "";
+}
+.select-a11y__selected-list li span {
+  display: inline-block;
+}
+.column--right {
+  text-align: right;
+}

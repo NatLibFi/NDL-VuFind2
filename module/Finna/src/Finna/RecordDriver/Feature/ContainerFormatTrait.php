@@ -32,6 +32,7 @@ namespace Finna\RecordDriver\Feature;
 use Finna\Record\Loader;
 use Finna\RecordDriver\PluginManager;
 use VuFind\RecordDriver\AbstractBase;
+use VuFindSearch\ParamBag;
 use VuFindSearch\Response\RecordInterface;
 
 use function count;
@@ -142,9 +143,13 @@ trait ContainerFormatTrait
                     $driver instanceof EncapsulatedRecordInterface
                     && $needed = $driver->needsRecordLoaded()
                 ) {
-                    $driver->setLoadedRecord(
-                        $this->recordLoader->load($needed['id'], $needed['source'], true)
+                    $loadedRecord = $this->recordLoader->load(
+                        $needed['id'],
+                        $needed['source'],
+                        true,
+                        new ParamBag(['finna.ignore_source_filter' => 1])
                     );
+                    $driver->setLoadedRecord($loadedRecord);
                 }
                 return $driver;
             }
@@ -347,12 +352,13 @@ trait ContainerFormatTrait
                 $record instanceof EncapsulatedRecordInterface
                 && $needed = $record->needsRecordLoaded()
             ) {
-                $neededMap[$needed['source']][$needed['id']] = $i;
+                $source = $needed['source'];
+                $neededMap[$source][$needed['id']] = $i;
                 $ids[] = $needed;
             }
         }
         if (!empty($ids)) {
-            $loadedRecords = $this->recordLoader->loadBatch($ids);
+            $loadedRecords = $this->recordLoader->loadBatchIgnoringSourceFilter($ids);
             foreach ($loadedRecords as $loadedRecord) {
                 $loadedSource = $loadedRecord->getSourceIdentifier();
                 $loadedId = $loadedRecord->getUniqueID();

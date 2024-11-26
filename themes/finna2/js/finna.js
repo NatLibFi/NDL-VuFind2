@@ -4,13 +4,13 @@ var finna = (function finnaModule() {
 
   /**
    * Object which holds resolves, key is the name for the promise to resolve.
+   * @member {object}
    */
   let resolves = {};
 
   /**
    * Object which holds promises, key is the name for the promise to wait for.
-   *
-   * @var {Object}
+   * @member {object}
    */
   let promises = {
     lazyImages: new Promise((resolve) => { resolves.lazyImages = resolve; })
@@ -42,7 +42,8 @@ var finna = (function finnaModule() {
         'multiSelect',
         'finnaMovement',
         'mdEditable',
-        'a11y'
+        'a11y',
+        'finnaDatepicker',
       ];
 
       $.each(modules, function initModule(ind, module) {

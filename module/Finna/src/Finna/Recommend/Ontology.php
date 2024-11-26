@@ -41,6 +41,7 @@ use VuFind\View\Helper\Root\Url;
 use function count;
 use function in_array;
 use function is_object;
+use function sprintf;
 
 /**
  * Ontology Recommendations Module.

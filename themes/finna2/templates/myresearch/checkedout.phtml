@@ -67,7 +67,8 @@
                     <div class="checkboxFilter mylist-select-all">
                       <div class="checkbox">
                         <label>
-                          <input type="checkbox" name="selectAll" class="checkbox-select-all" aria-label="<?=$this->transEscAttr('Select All');?>">
+                          <input type="checkbox" name="selectAll" class="checkbox-select-all" aria-label="<?=$this->transEsc($this->ilsPaging ? 'select_all_on_page' : 'Select All');?>">
+                          <?=$this->transEsc($this->ilsPaging ? 'select_all_on_page' : 'Select All');?>
                           <span class="selected"></span> <span class="loans-renewal-available"></span>
                         </label>
                       </div>
@@ -78,18 +79,22 @@
                       <div class="btn-group">
                         <input type="submit" class="btn btn-primary btn-finna-toolbar dropdown-toggle" id="renewSelected" name="renewSelected" value="<?=$this->transEscAttr('renew_selected')?>" disabled="disabled" data-toggle="dropdown" data-lightbox-ignore>
                         <ul class="dropdown-menu useraccount-confirm" role="presentation">
-                          <li class="disabled"><span class="prompt-text"><?=$this->transEsc('confirm_renew_selected_text')?></span></li>
-                          <li><a href="#" id="confirm_renew_selected_yes"><?=$this->transEsc('confirm_dialog_yes')?></a></li>
-                          <li><a href="#" class="confirm_renew_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+                          <li><span class="dropdown-header"><?=$this->transEsc('confirm_renew_selected_text')?></span></li>
+                          <li>
+                            <a href="#" id="confirm_renew_selected_yes"><?=$this->transEsc('confirm_dialog_yes')?></a>
+                            <a href="#" class="confirm_renew_no"><?=$this->transEsc('confirm_dialog_no')?></a>
+                          </li>
                         </ul>
                       </div>
                       <?php if ($renewAll): ?>
                         <div class="btn-group">
                           <input type="submit" class="btn btn-primary btn-finna-toolbar dropdown-toggle" id="renewAll" name="renewAll" value="<?=$this->transEscAttr('renew_all')?>" data-toggle="dropdown" data-lightbox-ignore>
                           <ul class="dropdown-menu useraccount-confirm" role="presentation">
-                            <li class="disabled"><span class="prompt-text"><?=$this->transEsc('confirm_renew_all_text')?></span></li>
-                            <li><a href="#" id="confirm_renew_all_yes"><?=$this->transEsc('confirm_dialog_yes')?></a></li>
-                            <li><a href="#" class="confirm_renew_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+                            <li><span class="dropdown-header"><?=$this->transEsc('confirm_renew_all_text')?></span></li>
+                            <li>
+                              <a href="#" id="confirm_renew_all_yes"><?=$this->transEsc('confirm_dialog_yes')?></a>
+                              <a href="#" class="confirm_renew_no"><?=$this->transEsc('confirm_dialog_no')?></a>
+                            </li>
                           </ul>
                         </div>
                       <?php endif; ?>
@@ -107,12 +112,10 @@
           <div class="myresearch-table" aria-label="<?=$this->transEscAttr('Your Checked Out Items')?>">
             <div class="toolbar no-list-functions">
               <div class="myresearch-notification"><?=$this->transEsc('cannot renew any checked out items')?></div>
-              <div class="text-right">
-                <div class="sort-col">
-                  <?php if ($sortList): ?>
-                    <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList]); ?>
-                  <?php endif; ?>
-                </div>
+              <div class="sort-col">
+                <?php if ($sortList): ?>
+                  <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList]); ?>
+                <?php endif; ?>
               </div>
             </div>
           </div>

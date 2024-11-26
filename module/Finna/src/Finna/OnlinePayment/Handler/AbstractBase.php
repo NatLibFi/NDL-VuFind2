@@ -190,8 +190,11 @@ abstract class AbstractBase implements
             $fee = $this->feeService->createEntity()
                 ->setUser($user)
                 ->setTransaction($t)
+                ->setAmount($fine['balance'])
                 ->setType(iconv('UTF-8', 'UTF-8//IGNORE', $fine['fine'] ?? ''))
                 ->setDescription(iconv('UTF-8', 'UTF-8//IGNORE', $fine['description'] ?? ''))
+                ->setFineId($fine['fine_id'])
+                ->setOrganization($fine['organization'] ?? '')
                 ->setTitle(iconv('UTF-8', 'UTF-8//IGNORE', $fine['title'] ?? ''));
             $this->feeService->persistEntity($fee);
         }

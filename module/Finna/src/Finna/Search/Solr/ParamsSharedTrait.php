@@ -31,6 +31,7 @@ namespace Finna\Search\Solr;
 
 use function array_slice;
 use function in_array;
+use function sprintf;
 
 /**
  * Additional functionality for Solr parameters shared with Blender.

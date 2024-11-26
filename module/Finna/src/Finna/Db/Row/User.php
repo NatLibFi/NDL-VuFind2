@@ -34,7 +34,6 @@ namespace Finna\Db\Row;
 use Finna\Db\Entity\FinnaUserEntityInterface;
 use Laminas\Db\ResultSet\ResultSetInterface;
 use Laminas\Db\Sql\Expression;
-use VuFind\Db\Entity\UserEntityInterface;
 
 use function count;
 
@@ -114,9 +113,9 @@ class User extends \VuFind\Db\Row\User implements FinnaUserEntityInterface
      *
      * @param ?string $catId Catalog id
      *
-     * @return UserEntityInterface
+     * @return static
      */
-    public function setCatId(?string $catId): UserEntityInterface
+    public function setCatId(?string $catId): static
     {
         if ($catId && null !== ($institution = $this->config->Site->institution ?? null)) {
             $catId = "$institution:$catId";
@@ -244,5 +243,18 @@ class User extends \VuFind\Db\Row\User implements FinnaUserEntityInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    /**
+     * Get login token.
+     *
+     * @param string $userId User ID
+     *
+     * @return array
+     */
+    public function getLoginTokens(string $userId): array
+    {
+        $tokenTable = $this->getDbTable('LoginToken');
+        return $tokenTable->getByUserId($userId);
     }
 }

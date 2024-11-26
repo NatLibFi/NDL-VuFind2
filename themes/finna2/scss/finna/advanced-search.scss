@@ -1,0 +1,596 @@
+/* --- Advanced Search --- */
+
+// Mixin for generating hierarchical elements
+/* #SCSS> */
+@mixin generate-hierarchy($n, $i: 1){
+  @if ($i <= $n) {
+    &.child-width-#{$i} {
+      width: ($i * 13px);
+    }
+    @include generate-hierarchy($n, ($i + 1));
+  }
+}
+/* <#SCSS */
+
+
+.template-name-advanced {
+  h1.content-header {
+    padding-left: 75px;
+    font-weight: 500;
+    color: $text-color;
+    &::before {
+      font-family: finnaicons;
+      content: "\e91e";
+      position: absolute;
+      top: -15px;
+      bottom: -15px;
+      left: 15px;
+      width: 60px;
+      background: $brand-primary;
+      color: white;
+      line-height: 64px;
+      text-align: center;
+      font-size: 32px;
+      @media (max-width: $screen-xs-max) {
+        top: -7px;
+        bottom: -7px;
+        width: 48px;
+        font-size: $font-size-base * 1.5;
+        line-height: 48px;
+      }
+    }
+  }
+  .header-container {
+    border-bottom: 1px solid $gray-mid-light;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 18px;
+    h2 {
+      position: relative;
+      display: inline;
+    }
+    button {
+      float: right;
+      border: none;
+      background: transparent;
+      padding: 6px;
+      i {
+        cursor: pointer;
+      }
+
+      @media (max-width: $screen-xxs) {
+        i {
+          font-size: 24px;
+        }
+        span {
+          display: none;
+        }
+      }
+    }
+  }
+  #advSearchForm {
+    margin-top: 20px;
+  }
+  .adv-search-bar {
+    padding-bottom: 20px;
+    padding-top: 10px;
+    margin-top: -10px;
+    background-color: $body-bg;
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
+    z-index: 1001;
+    &.primo-search-bar {
+      text-align: right;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+    @include clearfix();
+  }
+  .responsive-field {
+    min-width: 45%;
+  }
+  .applied-adv-search-filters {
+    margin-top: 15px;
+  }
+  .adv-group {
+    position: relative;
+    margin-top: 5px;
+    margin-bottom: .5em;
+    h3 {
+      font-size: 16px;
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+    .add_search_link {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 6px;
+      @media (max-width: $screen-xxs) {
+        width: 100%;
+      }
+    }
+    .responsive-field {
+      max-width: 49%;
+    }
+    .match {
+      @media (max-width: $screen-xs-max) {
+        margin-bottom: 10px;
+      }
+    }
+    .adv-group-close {
+      border: none;
+      background: transparent;
+      margin-top: 10px;
+      padding: 6px;
+      color: $link-color;
+      float: right;
+      @media (max-width: $screen-xs-max) {
+        font-size: $font-size-small;
+      }
+    }
+    .adv-search, .primo-advanced-search-fields {
+      margin-bottom: 0px;
+      padding-top: 3px;
+      select, input {
+        margin-bottom: 3px;
+      }
+      .close {opacity: .8;}
+      @media (max-width: $screen-xs-max) {
+        select:first-child {
+          display: block;
+        }
+      }
+    }
+    .primo-advanced-search-fields {
+      .responsive-field {
+        min-width: inherit;
+      }
+    }
+    .primo-add-search {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 6px;
+    }
+    [class^=col-] {padding-left: 15px;}
+  }
+  #groupPlaceHolder {
+    padding:6px;
+    margin-left: 15px;
+
+    .btn {
+      padding: 6px;
+    }
+  }
+  #groupJoin {
+    padding: 0px 0px 20px;
+    border: 2px solid $brand-primary;
+    border-top: none;
+    margin-top: -10px;
+    margin-bottom: 30px;
+    #groupJoinOptions {
+      margin-bottom: -56px;
+    }
+  }
+  .slider.slider-horizontal {
+    margin-top: 6px;
+    width: 95%;
+    margin-left: 10px;
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    .slider-tick-container {
+      position: relative;
+      .slider-tick {
+        margin-left: 0px;
+      }
+    }
+  }
+  .slider {
+    .slider-selection {
+      top: 0;
+      bottom: 0;
+      position: absolute;
+    }
+    .slider-track {
+      height: 10px;
+      width: 100%;
+      margin-top: -5px;
+      top: 10px;
+      left: 0;
+      position: absolute;
+      cursor: pointer;
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+    }
+    .slider-handle {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      margin-left: -10px;
+      margin-top: 0px;
+      z-index: 2;
+    }
+    .slider-tick-label-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .slider-tick {
+      background: $gray-mid-light;
+      height: 8px;
+      margin-left: 0;
+      margin-top: -4px;
+      width: 1px;
+      position: absolute;
+    }
+    .tooltip.top {
+      margin-top: -36px;
+    }
+  }
+  .primo-advanced-search-fields {
+    margin-bottom: 10px;
+    label {
+      @media(max-width: $screen-xs-max) {
+        margin-top: 10px;
+        margin-bottom: 20px;
+      }
+    }
+  }
+  .limit-to {
+    .ranges-container, .limit-container {
+      overflow: hidden;
+      margin-top: 10px;
+      label {
+        padding-top: 5px;
+      }
+      .slider-container {
+        padding: 0 10px;
+      }
+    }
+    .year-input-container {
+      margin: 5px 0 10px 0;
+      display: inline-block;
+      padding-right: 10px;
+      text-align: left;
+    }
+    label {
+      display: block;
+    }
+    .language-container, .format-container {
+      @media(max-width: $screen-xs-max) {
+        .btn-group {
+          width: 100%;
+          text-align: left;
+        }
+      }
+      &:not(:last-child) {
+        margin-bottom: 15px;
+      }
+    }
+  }
+  .adv-search-group {
+    @media (min-width: $screen-xs) {
+      .search-text {
+        min-width: initial;
+        max-width: initial;
+        width: 64%;
+      }
+      .search-select {
+        min-width: initial;
+        width: 34%;
+      }
+    }
+  }
+  .adv-group-match {
+    @media (min-width: $screen-sm){
+      width: 40%;
+      position: relative;
+      padding-bottom: 15px;
+    }
+  }
+  .adv-group-terms {
+    @media (min-width: $screen-sm){
+      position: relative;
+      padding-right: 15px;
+    }
+  }
+  .group-join-container {
+    position: relative;
+    width: 100%;
+    float: left;
+    margin-top: 30px;
+  }
+  .well.map {
+    background: $body-bg;
+    .information {
+      margin-top: 10px;
+    }
+    .information-text {
+      margin: 0;
+    }
+  }
+  .search_bool {
+    margin-right: 10px;
+  }
+  .information {
+    display: inline-block;
+    position: relative;
+    .information-text {
+      display: inline-block;
+      padding-left: 2.25em;
+      margin: 0;
+    }
+    &::before {
+      padding-left: 5px;
+      font-size: 1.5em;
+      color: $brand-primary;
+      display: block;
+      font-family: finnaicons;
+      content: "\e00f";
+      line-height: 1em;
+      position: absolute;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    &.information-multiselect {
+      padding-top: 20px;
+    }
+  }
+  .additional-info {
+    padding: 8px;
+    &.alert-info {
+      margin-top: 10px;
+    }
+    .information-text {
+      padding-bottom: 5px;
+      padding-left: 2.4em;
+      font-size: .9em;
+    }
+  }
+  .information-geo {
+    padding: 5px;
+  }
+  .finna-main-header {
+    background-color: $well-bg;
+    color: $gray;
+    @media (max-width: $screen-xs-max) {
+      padding: 7px 0;
+    }
+    .container {
+      position: relative;
+    }
+  }
+  .content-header {
+    display: inline-block;
+  }
+  .ranges-container .year-input-container {
+    width: 100%;
+    vertical-align: top;
+    @media (min-width: $screen-sm-min) {
+      width: 30%;
+    }
+  }
+  .ranges-container,
+  .solr-adv-filter {
+    .information {
+      width: 100%;
+      margin: 10px 0;
+      @media (min-width: $screen-sm-min) {
+        width: 69%;
+        margin: 0;
+      }
+    }
+  }
+  .finna-main-tabs {
+    padding-top: 15px;
+  }
+  @media (max-width: $screen-xs-max) {
+    .well, .adv-group__blender {
+      padding: 10px;
+    }
+  }
+  .checkboxFilter {
+    .checkbox {
+      padding-left: 0;
+    }
+  }
+  .slider-container {
+    @media (max-width: $screen-xs-max) {
+      padding: 5px;
+    }
+  }
+  .tooltip-pci-advanced {
+    line-height: 22px;
+  }
+
+  #groupJoin {
+    label {
+      font-weight: normal;
+      margin-bottom: -16px;
+      display: block;
+      padding: 0 10px;
+    }
+  }
+  .label-block,
+  .label-style {
+    @extend label;
+  }
+  .label-block {
+    display: block;
+  }
+  .facet-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: start;
+  }
+  .facet {
+    margin-bottom: 30px;
+    @media (min-width: $screen-xs-min) {
+      width: 45%;
+    }
+    @media (max-width: $screen-xxs-max) {
+      width: 100%;
+    }
+    label {
+      margin-bottom: 10px;
+    }
+    .finna-multiselect.search {
+      width: 100%;
+      border-radius: 4px 4px 0 0;
+    }
+    .finna-multiselect.clear {
+      padding: 2px 0;
+    }
+    .finna-multiselect.done {
+      height: 200px;
+      background-color: white;
+      overflow-y: scroll;
+      border: 1px solid lightgray;
+      border-radius: 0 0 4px 4px;
+      margin: 0;
+      border-top: none;
+      position: relative;
+
+      .option {
+        padding: 2px 0;
+        position: relative;
+        user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        &.option-parent {
+          background-color: white;
+          z-index: 1;
+        }
+        .value:before {
+            content: '\f096';
+            font-family: 'FontAwesome';
+            margin: 0px 4px;
+            font-weight: initial;
+            display: inline-block;
+            width: 12px;
+            font-size: 16px;
+        }
+        &[aria-selected="true"] .value:before {
+          content: '\f046';
+        }
+        &.active {
+          background-color: lightgray;
+        }
+
+        .hierarchy-line {
+          display: inline-block;
+          position: absolute;
+          z-index: 0;
+          border-bottom: 2px solid lightgray;
+          border-left: 2px solid lightgray;
+          height: 100%;
+          left: 4px;
+          top: -50%;
+
+          @include generate-hierarchy(6);
+          &.option-child:not(.child-width-1) {
+            border-bottom: none;
+          }
+        }
+      }
+    }
+    .info {
+      padding-bottom: 5px;
+      font-size: .9em;
+      font-weight: 600;
+    }
+  }
+  .option-container {
+    position: relative;
+    > .information {
+      position: absolute;
+      top: 4px;
+      right: 0;
+      &::before {
+        top: -1px;
+      }
+      @media (max-width: $screen-xs-max) {
+        .information-text {
+          padding-left: 26px;
+        }
+      }
+      @media (max-width: $screen-xxs-max) {
+        max-width: 50%;
+      }
+    }
+  }
+  .facets {
+    @media (max-width: $screen-xxs-max) {
+      margin-top: 30px;
+    }
+  }
+}
+
+/* --- EDS --- */
+.adv-term-input,
+.adv-term-op { margin-bottom: .25rem; }
+.adv-search:first-of-type .adv-term-op { display: none; }
+@media (min-width: $screen-sm-min) {
+  .eds-adv .adv-term-op {
+    float: left;
+    width: 16%;
+    margin-right: 1%;
+  }
+  .eds-adv .adv-search:first-of-type .adv-term-input { margin-left: 17%; }
+  .eds-adv .adv-term-input {
+    float: left;
+    width: 39%;
+    margin-right: 0;
+  }
+  .eds-adv .help-block {
+    float: left;
+    width: 8%;
+    text-align: center;
+  }
+}
+
+.advanced-search,
+.advanced-search .input-group {
+  width: 100%;
+  @media(min-width: $screen-md){
+    width: 75%;
+  }
+}
+
+.adv-term-input.form-control, .adv-term-type.form-control {
+  display: initial;
+}
+.template-dir-eds .template-name-advanced {
+  ranges-container{
+    overflow: auto;
+  }
+  .checkbox-label {
+    padding-left: 0px;
+    font-weight: normal;
+  }
+
+  .year-input-container {
+    margin: 5px 0px;
+  }
+  input.input-year{
+    width: 5em;
+  }
+}
+
+.solr-adv-filter {
+  .btn-group {
+    padding-right: 10px;
+  }
+}
+
+.template-dir-primo .template-name-advanced .adv-group {
+  margin-bottom: 20px;
+}
+
+.adv-group.adv-group__blender {
+  @extend .well;
+}

@@ -1,6 +1,8 @@
 <!-- START of: finna - ajax/feed-list.phtml -->
 <div class="list-feed<?= $this->images ? ' with-image' : ''; ?>">
-<?php if ($this->title || $this->translateTitle): ?><h2 class="feed-header"><?= $this->translateTitle ? $this->transEsc($this->translateTitle) : $this->escapeHtml($this->title) ?></h2><?php endif; ?>
+<?php if (!$this->translateTitle): // Translated title is displayed in the container, so ignore it here ?>
+  <h2 class="feed-header"><?= $this->escapeHtml($this->title) ?></h2>
+<?php endif; ?>
 <?php if (isset($this->description)): ?><p class="additional-description"><?= $this->translate($this->description) // HTML, intentionally left unescaped ?></p><?php endif; ?>
   <ul>
     <?php $items = isset($this->visualItems) ? array_slice($this->items, 0, $this->visualItems) : $this->items; ?>

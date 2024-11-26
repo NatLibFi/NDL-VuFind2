@@ -91,15 +91,6 @@
         if ($cart->isActive()) {
           $this->headScript()->appendFile('vendor/js.cookie.js');
           $this->headScript()->appendFile('cart.js');
-          if ($domain = $cart->getCookieDomain()) {
-            $appendScripts[] = 'VuFind.cart.setDomain("' . $domain . '");';
-          }
-          if ($cookiePath = $cart->getCookiePath()) {
-            $appendScripts[] = 'VuFind.cart.setCookiePath("' . $cookiePath . '");';
-          }
-          if ($cookieSameSite = $cart->getCookieSameSite()) {
-            $appendScripts[] = 'VuFind.cart.setCookieSameSite("' . $cookieSameSite . '");';
-          }
         }
       }
 
@@ -108,15 +99,6 @@
           $appendScripts[] = 'var keepAliveInterval = ' . $this->keepAlive() . ';';
           $this->headScript()->appendFile('keep_alive.js');
       }
-
-      // Finna common
-      $cookie = $this->cookie();
-      $cookieSettings = [
-        'path' => $cookie->getCookiePath(),
-        'domain' => $cookie->getCookieDomain(),
-        'SameSite' => $cookie->getCookieSameSite(),
-      ];
-      $appendScripts[] = 'finna.common.setCookieSettings(' . json_encode($cookieSettings) . ');';
 
       // If account ajax is active, load script and add language strings
       $account = $this->auth()->getManager();
@@ -145,6 +127,16 @@
           VuFind.setCspNonce('{$cspNonce}');
           VuFind.setCurrentSearchId($searchId);
           JS;
+
+      if ($domain = $this->cookieManager()->getDomain()) {
+        $appendScripts[] = 'VuFind.cookie.setDomain(' . json_encode($domain) . ');';
+      }
+      if ($cookiePath = $this->cookieManager()->getPath()) {
+        $appendScripts[] = 'VuFind.cookie.setCookiePath(' . json_encode($cookiePath) . ');';
+      }
+      if ($cookieSameSite = $this->cookieManager()->getSameSite()) {
+        $appendScripts[] = 'VuFind.cookie.setCookieSameSite(' . json_encode($cookieSameSite) . ');';
+      }
 
       if (!empty($lightboxParent)) {
         $lightboxParent = json_encode((string)$lightboxParent);

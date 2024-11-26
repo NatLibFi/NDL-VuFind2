@@ -1,4 +1,1 @@
-<?php
-$searchRoute = $this->searchAction ?: $this->searchOptions($this->driver->getSearchBackendIdentifier())->getSearchAction();
-// Use echo to ensure we don't return a line feed
-echo $this->url($searchRoute) . '?lookfor=%22' . urlencode($this->lookfor) . '%22&amp;type=Author';
+<?=$this->render('RecordDriver/DefaultRecord/link-generic.phtml', compact('driver', 'lookfor') + ['type' => 'Author', 'searchRoute' => $this->searchAction]);

@@ -2,8 +2,8 @@
   padding: 10px;
   margin: 0;
   word-wrap: break-word;
-  @media(max-width:@screen-xs-max) {
-    .row();
+  @media(max-width: @screen-xs-max) {
+    .make-row();
   }
   &:nth-child(odd) {
     background: @table-bg-accent;
@@ -50,13 +50,14 @@
 
 .checkboxFilter.mylist-select-all {
   padding-left: 0;
+  white-space: nowrap;
+
   .checkbox {
     padding-left: 0;
     label {
       margin-left: 0;
     }
   }
-  white-space: nowrap;
 }
 
 .changeHolds {
@@ -78,7 +79,7 @@
   }
 }
 
-.loan-history-purge-all {
+.loan-history-purge-all, .button-bottom {
   margin-top: 10px;
 }
 .loan-history-buttons-bottom {
@@ -98,16 +99,21 @@
   .toolbar {
     display: flex;
     flex-direction: row;
-    align-items: baseline;
+    align-items: center;
     &.no-list-functions {
+      justify-content: space-between;
+      align-items: baseline;
+      @media(max-width: @screen-xs-max) {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+      }
       .myresearch-notification {
         height: fit-content;
-        align-self: center;
       }
     }
     .btn-finna-toolbar {
       margin: 3px 0px;
-      @media (max-width: @screen-md) {
+      @media (max-width: @screen-sm-max) {
         font-size: 0.9em;
       }
     }
@@ -122,6 +128,9 @@
       &:last-child {
         margin-right: 0;
       }
+      @media(max-width: @screen-xs-max) {
+        margin-right: 10px;
+      }
     }
     .checkbox-col {
       display: flex;
@@ -134,6 +143,9 @@
       flex-basis: 100%;
       align-items: baseline;
       justify-content: space-between;
+    }
+    @media(max-width: @screen-xs-max) {
+      align-items: baseline;
     }
   }
   .sort-button ul.dropdown-menu li a {
@@ -203,14 +215,34 @@
       margin-right: 5px;
     }
   }
-  .sort-col a.dropdown-toggle {
-    margin-bottom: 0;
-    height: 30px;
-    font-size: 0.9em;
-    @media (max-width: @screen-md) {
-      margin-top: 6px;
+  .sort-col  {
+    a.dropdown-toggle {
+      margin-bottom: 0;
+      height: 30px;
+      font-size: 0.9em;
+      @media (max-width: @screen-md) {
+        margin-top: 6px;
+      }
+      @media (max-width: @screen-sm) {
+        span {
+          max-width: 200px;
+        }
+      }
+    }
+    @media (max-width: @screen-sm) {
+      .dropdown-menu > li > a {
+        max-width: 270px;
+      }
+      .dropdown-toggle span:not(.icon), .dropdown-menu > li > a {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        vertical-align: bottom;
+      }
     }
   }
+
 }
 .list-description,
 .public-list-desc,
@@ -289,8 +321,13 @@
     width: 100%;
     border-radius: @border-radius-base;
     @media (max-width: @screen-sm) {
-      .select-card-wrapper .select-card .library_card li > a {
-        white-space: normal;
+      .select-card-wrapper .select-card .library_card {
+        right: auto;
+        left: 0;
+        max-width: 250px;
+        & li > a {
+          white-space: normal;
+        }
       }
     }
   }
@@ -425,7 +462,7 @@
 }
 
 .toolbar .list-functions .sort-col {
-    @media(max-width: @screen-sm) {
+    @media(max-width: @screen-xs-max) {
       display: none;
     }
   }
@@ -433,13 +470,14 @@
 .online-payment-form > .payment-row {
   .online-payment-area {
     display: inline-block;
+    margin-bottom: 15px;
+
     .online-payment-form {
       display: inline-block;
       input {
         font-weight: bold;
       }
     }
-    margin-bottom: 15px;
   }
   @media (min-width: @screen-sm) {
     > img {
@@ -512,8 +550,8 @@
 .toolbar-sticky-container {
   margin: 0;
   @media (max-width: @screen-md) {
-    .row();
     padding: 0px 15px;
+    .make-row();
   }
   .toolbar-sticky {
     position: sticky;
@@ -550,7 +588,7 @@
   margin-top: 5px;
   border-bottom: 1px solid @gray-lighter;
   padding: 3px 0;
-  @media(max-width: @screen-md) {
+  @media(max-width: @screen-sm-max) {
     margin-top: 0;
   }
   .status-text {
@@ -569,6 +607,14 @@
       &:nth-child(2) {
         width: 100%;
       }
+    }
+  }
+}
+
+form#renewals, form#update_holds, form#purge_history {
+  .toolbar {
+    @media (max-width: @screen-xs) {
+      flex-direction: column-reverse;
     }
   }
 }
@@ -596,12 +642,13 @@
 
 .useraccount-table {
   border: 1px solid @gray-lighter;
-  &:not(.fines-table) {
-    border-top: none;
-  }
   box-shadow: 0 15px 30px -35px @gray;
   border-collapse: separate;
   margin-top: 10px;
+
+  &:not(.fines-table) {
+    border-top: none;
+  }
   &.online-payment {
     margin-bottom: 15px;
     td {
@@ -707,7 +754,10 @@
   border: solid 1px @gray-lighter;
   border-top: none;
   box-shadow: 2px 2px 3px 0 @gray-lighter;
-  display: table;
+  display: block;
+  z-index: 2;
+  margin-top: 15px;
+
   .status {
     padding-left: 5px;
   }
@@ -718,12 +768,6 @@
     padding: 0;
     > li {
       border: none;
-    }
-    > li:last-child > a, li:last-child {
-      .border-bottom-radius(0);
-    }
-    > li:first-child > a, li:first-child {
-      .border-top-radius(0);
     }
     .active a {
       font-weight: 600;
@@ -739,10 +783,6 @@
       top: 30px;
     }
   }
-
-  display: block;
-  z-index: 2;
-  margin-top: 15px;
   .subtabs.mylist-nav {
     border-top-width: 0px;
     li.hidden-xs.hidden-sm, li.mylist-menu-favorites {
@@ -896,20 +936,28 @@
 }
 
 .useraccount-confirm {
-  min-width: 205px;
+  min-width: 210px;
 }
 .useraccount-confirm > li {
   border-bottom: none;
-  &:not(.disabled) {
-    float: left;
-    width: 100px;
+  &:not(.disabled), &:not(.dropdown-header) {
+    width: 100%;
     padding: 10px;
-    text-align: center;
     a {
+      width: 80px;
+      text-align: center;
       border-radius: @border-radius-base;
       background: @link-color;
       color: @body-bg;
+      display: inline-block;
+      margin-right: 10px;
     }
+  }
+  .dropdown-header {
+    max-width: 300px;
+    font-size: 1em;
+    padding: 0;
+    white-space: initial;
   }
 }
 .main.template-dir-myresearch.template-name-unsubscribe {
@@ -960,6 +1008,8 @@
     }
   }
   .left-control {
+    margin-bottom: 10px;
+
     @media (min-width: @screen-sm) {
       flex-grow: 1;
       text-align:left;
@@ -968,7 +1018,6 @@
       text-align: left;
       width: 35%;
     }
-    margin-bottom: 10px;
   }
   .pagination-container {
     @media (min-width: @screen-sm) {

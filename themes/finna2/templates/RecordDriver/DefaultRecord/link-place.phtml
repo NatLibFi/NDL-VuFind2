@@ -1,13 +1,1 @@
-<?php
-// Use echo to ensure we don't return a line feed
-$searchRoute = $this->searchAction ?: $this->searchOptions($this->driver->getSearchBackendIdentifier())->getSearchAction();
-echo $this->url(
-    $searchRoute,
-    [],
-    [
-        'query' => [
-            'lookfor' => '"' . $this->lookfor . '"',
-            'type' => 'geographic',
-        ],
-    ]
-);
+<?=$this->render('RecordDriver/DefaultRecord/link-generic.phtml', compact('driver', 'lookfor') + ['type' => 'geographic', 'searchRoute' => $this->searchAction]);

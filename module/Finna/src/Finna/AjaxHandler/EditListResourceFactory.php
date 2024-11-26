@@ -74,9 +74,8 @@ class EditListResourceFactory implements \Laminas\ServiceManager\Factory\Factory
         return new $requestedName(
             $container->get(\VuFind\Auth\Manager::class)->getUserObject(),
             $container->get(\VuFind\Db\Service\PluginManager::class)->get(UserResourceServiceInterface::class),
-            $container->get(\VuFind\Favorites\FavoritesService::class),
+            $container->get('ViewRenderer')->plugin('markdown'),
             $capabilities->getListSetting() !== 'disabled',
-            $container->get('ViewRenderer')->plugin('markdown')
         );
     }
 }

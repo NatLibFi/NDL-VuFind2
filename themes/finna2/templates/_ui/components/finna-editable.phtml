@@ -2,8 +2,10 @@
   <?= $this->component('finna-btn', [
       'ariaLabel' => $editLabel ?? $this->transEsc('Edit'),
       'attributes' => ['class' => 'finna-editable-btn'],
+      'icon' => 'ui-edit',
       'iconClass' => 'finna-editable-btn-icon',
     ]); ?>
+  <?=$this->icon('spinner', 'finna-editable-spinner')?>
   <div<?= $this->htmlAttributes($containerAttributes ?? [])->add('class', 'finna-editable-container') ?>>
     <?= $editable ?? '' ?>
   </div>

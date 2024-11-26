@@ -8,12 +8,23 @@
     $ilsOffline = 'ils-none' === $this->ils()->getOfflineMode();
     $listOpen = $this->active == 'favorites' || substr($this->active, 0, 4) == 'list';
     $activeToLower = strtolower($this->active ?? '');
+
     //Get the data for vertical menu to show lists on correct site
     if ($listOpen) {
-      $list = $this->results->getListObject();
+      $list = $this->results?->getListObject();
       $listParams = [
         'activeId' => $list?->getId(),
         'lists' => $user ? $this->userlist()->getUserListsAndCountsByUser($user) : null,
+        'results' => $this->results,
+        'user' => $user,
+      ];
+    }
+    $reservationLists = $this->reservationList($user)->getReservationListsForUser();
+    if ($reservationLists && $this->active === 'reservationlist') {
+      $list = $this->results?->getListObject() ?? [];
+      $listParams = [
+        'activeId' => $list['id'] ?? false,
+        'lists' => $reservationLists,
         'results' => $this->results,
         'user' => $user,
       ];
@@ -80,6 +91,11 @@
         'translation' => 'saved_items',
         'show' => $this->userlist()->getMode() !== 'disabled',
       ],
+      'reservationlist' => [
+        'url' => 'reservationlist-displaylists',
+        'translation' => 'Reservation List',
+        'show' => $reservationLists,
+      ],
       'logout' => [
         'url' => 'myresearch-logout',
         'translation' => 'Log Out',
@@ -108,6 +124,17 @@
         'partial' => [
           'url' => 'myresearch/mylist-navi.phtml',
           'wrapperClass' => 'mylist-bar',
+          'params' => $listParams ?? [],
+        ],
+      ],
+      'reservationlist' => [
+        'active' => $this->active === 'reservationlist',
+        'url' => 'reservationlist-displaylists',
+        'translation' => 'ReservationList::Reservation Lists',
+        'show' => $reservationLists,
+        'partial' => [
+          'url' => 'reservationlist/reservationlist-navi.phtml',
+          'wrapperClass' => 'reservationlist-bar',
           'params' => $listParams ?? [],
         ],
       ],

@@ -168,7 +168,7 @@ class ListApiController extends \VuFind\Controller\AbstractBase implements ApiIn
                 if (count($tags) > 0) {
                     $response['tags'] = [];
                     foreach ($tags as $tag) {
-                        $response['tags'][] = $tag->getTag();
+                        $response['tags'][] = $tag['tag'];
                     }
                 }
             }

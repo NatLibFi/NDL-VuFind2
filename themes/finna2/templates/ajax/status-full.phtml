@@ -85,7 +85,7 @@ if ($groupBranches) {
       // Check if availability is better while taking into account non-boolean
       // statuses as well (anything is better than unavailable, available better than
       // uncertain):
-      if ($item['availability']->compareTo($statusItemsFiltered[$location]['availability']) == 1) {
+      if ($item['availability']->compareTo($statusItemsFiltered[$location]['availability']) == -1) {
         // Copy keys one by one so as to not overwrite callnumbers or any other existing field
         foreach (array_keys($item) as $key) {
           $statusItemsFiltered[$location][$key] = $item[$key];
@@ -204,7 +204,8 @@ foreach ($this->statusItems as $item):
               (<?= str_replace('%%date%%', $closestDueDateInLocation[$item['location']], $this->transEsc('closest_due_date')); ?>)
             <?php else: ?>
               <?php $statusDesc = $item['availability']->getStatusDescription(); ?>
-              (<?=$this->transEscWithPrefix('status_', $statusDesc, null, $this->translate($statusDesc))?>)
+              <?php $statusDescriptionTokens = $item['availability']->getStatusDescriptionTokens(); ?>
+              (<?=$this->transEscWithPrefix('status_', $statusDesc, $statusDescriptionTokens, $this->translate($statusDesc, $statusDescriptionTokens))?>)
             <?php endif; ?>
           </span>
         <?php endif; ?>

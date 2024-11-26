@@ -42,6 +42,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use function assert;
 use function count;
+use function sprintf;
 
 /**
  * Console command: notify users of scheduled searches.

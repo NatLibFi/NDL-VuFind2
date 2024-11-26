@@ -26,24 +26,8 @@
       text-align: right;
     }
   }
-  .delete-list {
-    .dropdown-menu {
-      z-index: 1500;
-    }
-    li {
-      border-bottom: none;
-      &:not(.disabled) {
-        float: left;
-        width: 45%;
-        padding: 10px;
-        text-align: center;
-        a {
-          border-radius: @border-radius-base;
-          background: @link-color;
-          color: @body-bg;
-        }
-      }
-    }
+  .delete-list .dropdown-menu {
+    z-index: 1500;
   }
 }
 
@@ -52,7 +36,7 @@
   padding-bottom: 0px;
 }
 
-.mylist-bar {
+.mylist-bar, .reservationlist-bar {
   h4.visible-xs.visible-sm {
     text-transform: none;
   }
@@ -97,21 +81,6 @@
     }
     > a:not(.add-new-list) {
       color: @text-color;
-    }
-    .remove-favorite-list {
-      border: 0;
-      background-color: transparent;
-      padding: 1px;
-      &:focus {
-        border: 1px solid @action-link-color;
-        border-style: dotted;
-      }
-
-      .icon {
-        margin-right: 3px;
-        color: @action-link-color;
-        font-size: 1em;
-      }
     }
     .favorite-list-holder {
       height: 25px;
@@ -168,7 +137,7 @@
   margin: 0;
   border-bottom: 1px solid @gray-lighter;
   @media (max-width: @screen-xs-max) {
-    .row();
+    .make-row();
   }
 }
 
@@ -206,7 +175,7 @@
 .list-title {
   margin-bottom: 0;
   margin-top: 0px;
-  i.fa-pen {
+  i.list-title-edit {
     margin-bottom: -22px;
   }
   &.no-edit {
@@ -265,6 +234,17 @@
     cursor: initial;
   }
 }
+
+.list-tag() {
+  font-size: 0.9em;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  padding: 2px 5px;
+  border: 1px solid @gray-lighter;
+  background: @gray-ultralight;
+  border-radius: 5px;
+}
+
 .list-tags {
   margin-bottom: 10px;
   &.editable .view-tags {
@@ -533,15 +513,6 @@ span.caret {
     }
   }
 }
-.list-tag() {
-  font-size: 0.9em;
-  margin-right: 5px;
-  margin-bottom: 5px;
-  padding: 2px 5px;
-  border: 1px solid @gray-lighter;
-  background: @gray-ultralight;
-  border-radius: 5px;
-}
 .template-name-list,
 .public-list-embed {
   .public-list-tags {
@@ -568,5 +539,22 @@ span.caret {
     display: flex;
     justify-content: flex-end;
     margin-top: 10px;
+  }
+}
+
+.delete-list-btn-wrapper {
+  position: relative;
+  padding: 0 0 4px 4px;
+  .btn-group.open {
+    .dropdown-menu {
+      position: absolute;
+      border-radius: 4px;
+      border: 1px solid @gray-lighter;
+      top: 100%;
+    }
+    .dropdown-header {
+      color: inherit;
+      font-size: 14px;
+    }
   }
 }

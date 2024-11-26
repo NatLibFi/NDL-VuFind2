@@ -3,7 +3,7 @@
   width: 100%;
   border: 1px solid transparent;
   padding: 5px;
-  .finna-editable-btn {
+  .finna-editable-btn, .finna-editable-spinner {
     position: absolute;
     top: 0;
     right: 0;
@@ -14,8 +14,10 @@
     cursor: default;
   }
   .finna-editable-btn-icon {
-    &:extend(.fa);
     cursor: default;
+  }
+  .finna-editable-spinner {
+    display: none;
   }
   .finna-editable-container {
     min-height: 1em;
@@ -33,13 +35,6 @@
       }
     }
   }
-  &:not(.finna-editable-busy) {
-    .finna-editable-btn-icon {
-      &:before {
-        &:extend(.fa-pen:before);
-      }
-    }
-  }
 }
 
 .finna-editable-open {
@@ -49,10 +44,10 @@
 }
 
 .finna-editable-busy {
-  .finna-editable-btn-icon {
-    &:extend(.fa-spin, .fa-spinner);
-    &:before {
-      &:extend(.fa-spinner:before);
-    }
+  .finna-editable-btn {
+    display: none;
+  }
+  .finna-editable-spinner {
+    display: initial;
   }
 }

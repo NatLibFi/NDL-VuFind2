@@ -31,11 +31,13 @@ namespace Finna\View\Helper\Root;
 
 use Finna\RecordDriver\AipaLrmi;
 use Finna\RecordDriver\SolrAipa;
+use Finna\RecordDriver\SolrQdc;
 use Laminas\View\Helper\AbstractHelper;
 use NatLibFi\FinnaCodeSets\FinnaCodeSets;
 use NatLibFi\FinnaCodeSets\Model\EducationalLevel\EducationalLevelInterface;
 use NatLibFi\FinnaCodeSets\Model\HierarchicalProxyDataObjectInterface as HPDOInterface;
 use NatLibFi\FinnaCodeSets\Utility\EducationalData;
+use VuFind\View\Helper\Root\ClassBasedTemplateRendererTrait;
 
 use function count;
 
@@ -50,6 +52,8 @@ use function count;
  */
 class Aipa extends AbstractHelper
 {
+    use ClassBasedTemplateRendererTrait;
+
     // Sort order for educational levels.
     protected const EDUCATIONAL_LEVEL_SORT_ORDER = [
         EducationalData::PRIMARY_SCHOOL,
@@ -101,6 +105,36 @@ class Aipa extends AbstractHelper
     {
         $this->driver = $driver;
         return $this;
+    }
+
+    /**
+     * Render an AIPA template.
+     *
+     * @param string $name    Template name to render
+     * @param ?array $context Variables needed for rendering template; these will
+     * be temporarily added to the global view context, then reverted after the
+     * template is rendered (default = record driver only).
+     * @param bool   $throw   If true (default), an exception is thrown if the
+     * template is not found. Otherwise an empty string is returned.
+     *
+     * @return string
+     */
+    public function renderTemplate(
+        string $name,
+        ?array $context = null,
+        bool $throw = true
+    ) {
+        $template = 'RecordDriver/%s/' . $name;
+        $className = match ($this->driver->getType()) {
+            'aipa:education' => AipaLrmi::class,
+            default => SolrQdc::class,
+        };
+        return $this->renderClassTemplate(
+            $template,
+            $className,
+            $context ?? ['driver' => $this->driver],
+            $throw
+        );
     }
 
     /**

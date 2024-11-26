@@ -36,6 +36,8 @@ use VuFindSearch\Query\AbstractQuery;
 use VuFindSearch\Query\WorkKeysQuery;
 use VuFindSearch\Response\RecordCollectionInterface;
 
+use function sprintf;
+
 /**
  * SOLR backend.
  *

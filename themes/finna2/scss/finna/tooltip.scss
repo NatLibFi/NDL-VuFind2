@@ -1,0 +1,123 @@
+.list-group-item , .logoutOptions , .status, .grid-image {
+  .tooltip-inner {
+    min-width: auto;
+    padding: 4px 8px;
+    text-align: left;
+    font-size: 0.9em;
+    font-weight: normal;
+    box-shadow: none !important;
+    color: #fff;
+    background: $gray;
+    border-radius: 4px;
+  }
+  .tooltip.top .tooltip-arrow, .tooltip.top-left .tooltip-arrow, .tooltip.top-right .tooltip-arrow  {
+    border-top-color: $gray;
+  }
+  .tooltip.right .tooltip-arrow {
+    border-right-color: $gray;
+  }
+  .tooltip.left .tooltip-arrow {
+    border-left-color: $gray;
+  }
+  .tooltip.bottom .tooltip-arrow, .tooltip.bottom-left .tooltip-arrow, .tooltip.bottom-right .tooltip-arrow {
+    border-bottom-color: $gray;
+  }
+}
+.tooltip-tabs_local {
+  display: $tooltip-tabs-local;
+}
+.tooltip-tabs_pci {
+  display: $tooltip-tabs-pci;
+}
+.tooltip-facet {
+  display: $tooltip-facet;
+  display: block;
+  top: 14px;
+  right: 23px;
+}
+.tooltip-search-pci {
+  display: $tooltip-search-pci;
+}
+.tooltip-search-local {
+  display: $tooltip-search-local;
+}
+.tooltip-myaccount {
+  display: $tooltip-myaccount;
+}
+.tooltip-local-advanced {
+  display: $tooltip-local-advanced;
+}
+.tooltip-pci-advanced {
+  display: $tooltip-pci-advanced;
+}
+.tooltip-eds-advanced {
+  display: $tooltip-eds-advanced;
+}
+.tooltip-summon-advanced {
+  display: $tooltip-summon-advanced;
+}
+.tooltip-tabs_local, .tooltip-tabs_pci, .tooltip-facet, .tooltip-search-pci, .tooltip-search-local, .tooltip-search-eds, .tooltip-myaccount {
+  color: $tooltip-button-color;
+}
+.tooltip-local-advanced, .tooltip-pci-advanced, .tooltip-eds-advanced, .tooltip-summon-advanced {
+  color: $link-color;
+  font-size: .8em;
+  @media(max-width: $screen-xs-max) {
+    font-weight: 500;
+  }
+}
+.tooltip-image {
+  .tooltip {
+    overflow: hidden;
+  }
+  .tooltip-arrow {
+    display: none;
+  }
+  i {
+    margin-left: 0;
+    position: relative;
+    text-align: center;
+    cursor: pointer;
+    font-style: normal;
+    padding: 3px;
+    color: $action-link-color;
+    font-size: 24px;
+    &:before {
+      color: mix($background-color, contrast($background-color), 5%);
+      opacity: 0.8;
+    }
+  }
+  @media (max-width: $screen-sm) {
+    display: none;
+   }
+}
+.finna-main-tabs ul.nav-tabs>li.active>a {
+  .tooltip-tabs_local, .tooltip-tabs_pci {
+    color: $gray;
+  }
+}
+.tooltip-myaccount {
+  margin-left: 10px;
+  color: $gray;
+  >.icon {
+    vertical-align: 0px !important;
+  }
+}
+.slider {
+  .tooltip.top .tooltip-inner {
+    min-width: initial;
+    padding: 4px 8px;
+    box-shadow: none;
+    background: $gray-lighter;
+  }
+  .tooltip.top .tooltip-arrow {
+    border-top-color: $gray-lighter;
+  }
+}
+
+// Disable status tooltip on touch device
+#account-icon.icon {
+  @media (pointer:coarse) {
+      pointer-events: none;
+  }
+}

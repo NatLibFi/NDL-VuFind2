@@ -30,7 +30,9 @@
 
 namespace Finna\Form;
 
+use Exception;
 use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\RecordDriver\DefaultRecord;
 
 use function in_array;
 
@@ -66,6 +68,13 @@ class Form extends \VuFind\Form\Form
      * @var string
      */
     public const ARCHIVE_MATERIAL_REQUEST = 'ArchiveRequest';
+
+    /**
+     * Reservation request form id.
+     *
+     * @var string
+     */
+    public const RESERVATION_LIST_REQUEST = 'ReservationListRequest';
 
     /**
      * Handlers that are considered safe for transmitting information about the user
@@ -141,7 +150,7 @@ class Form extends \VuFind\Form\Form
     /**
      * Record driver
      *
-     * @var \VuFind\RecordDriver\DefaultRecord
+     * @var DefaultRecord
      */
     protected $record = null;
 
@@ -172,7 +181,10 @@ class Form extends \VuFind\Form\Form
                 $this->userCatUsername = $barcode;
             }
         }
-
+        if ($this->reportPatronId() && $catId = $this->user?->getCatId()) {
+            [, $id] = explode('.', $catId);
+            $this->userCatId = $id;
+        }
         $this->setName($formId);
     }
 
@@ -246,9 +258,9 @@ class Form extends \VuFind\Form\Form
     /**
      * Get record driver
      *
-     * @return ?\VuFind\RecordDriver\DefaultRecord
+     * @return ?DefaultRecord
      */
-    public function getRecord(): ?\VuFind\RecordDriver\DefaultRecord
+    public function getRecord(): ?DefaultRecord
     {
         return $this->record;
     }
@@ -256,11 +268,11 @@ class Form extends \VuFind\Form\Form
     /**
      * Set record driver
      *
-     * @param \VuFind\RecordDriver\DefaultRecord $record Record
+     * @param DefaultRecord $record Record
      *
      * @return void
      */
-    protected function setRecord(\VuFind\RecordDriver\DefaultRecord $record): void
+    protected function setRecord(DefaultRecord $record): void
     {
         $this->record = $record;
     }
@@ -313,6 +325,16 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
+     * Check if the form should report patron's id
+     *
+     * @return bool
+     */
+    public function reportPatronId(): bool
+    {
+        return (bool)($this->formConfig['includePatronId'] ?? false);
+    }
+
+    /**
      * Return form recipient.
      *
      * @param array $postParams Posted form data
@@ -321,6 +343,10 @@ class Form extends \VuFind\Form\Form
      */
     public function getRecipient($postParams = null)
     {
+        // Always get recipients from postparams
+        if ($this->getFormId() === self::RESERVATION_LIST_REQUEST) {
+            return $postParams['recipient'];
+        }
         // Get recipient email address for feedback form from data source
         // configuration:
         if ($this->getFormId() === 'FeedbackRecord') {
@@ -632,7 +658,6 @@ class Form extends \VuFind\Form\Form
                 $params[] = $field;
             }
         }
-
         if (!$this->isRecordRequestFormWithBarcode()) {
             // Append user logged status and permissions
             $loginMethod = $this->user ?
@@ -660,7 +685,6 @@ class Form extends \VuFind\Form\Form
                 ];
             }
         }
-
         return $params;
     }
 
@@ -715,7 +739,12 @@ class Form extends \VuFind\Form\Form
                 $elements[$key] = ['type' => 'hidden', 'name' => $key, 'value' => null];
             }
         }
-
+        // Add hidden fields for reservation list order form
+        if (self::RESERVATION_LIST_REQUEST === $this->getFormId()) {
+            $elements['rl_institution'] = ['type' => 'hidden', 'name' => 'rl_institution', 'value' => null];
+            $elements['rl_list_identifier'] = ['type' => 'hidden', 'name' => 'rl_list_identifier', 'value' => null];
+            $elements['rl_list_id'] = ['type' => 'hidden', 'name' => 'rl_list_id', 'value' => null];
+        }
         return $elements;
     }
 
@@ -805,6 +834,8 @@ class Form extends \VuFind\Form\Form
                 'hideSenderInfo',
                 'includeBarcode',
                 'includePatronId',
+                'readonly',
+                'rows',
                 'senderInfoHelp',
                 'sendMethod',
             ]

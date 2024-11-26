@@ -39,6 +39,7 @@ use function count;
 use function floatval;
 use function in_array;
 use function is_array;
+use function sprintf;
 
 /**
  * Alma ILS Driver

@@ -35,7 +35,7 @@
   <?php if (count($this->driver->getCitationFormats()) > 0): ?>
     <li role="none"><a class="cite-record" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Cite')) ?>" title="<?=$this->transEsc('Cite this')?>" rel="nofollow"><?=$this->icon('cite') ?><span class="hidden-xs"> <?=$this->transEsc('Cite this')?></span></a></li>
   <?php endif; ?>
-  <li role="none" class="hidden-xs hidden-sm"><span><a href="#" data-trigger-print><?=$this->icon('print') ?> <?=$this->transEsc('Print')?></a></span></li>
+  <li role="none" class="hidden-xs hidden-sm"><span><a class="print-record" href="#" data-trigger-print><?=$this->icon('print') ?> <?=$this->transEsc('Print')?></a></span></li>
   <?php $QRCode = $this->record($this->driver)->getQRCode('core'); ?>
   <?php if($QRCode): ?>
   <li role="none" class="dropdown">

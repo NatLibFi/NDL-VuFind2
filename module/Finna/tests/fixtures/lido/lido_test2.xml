@@ -169,6 +169,28 @@
                   <placeID></placeID>
                 </place>
               </subjectPlace>
+              <subjectPlace>
+                <place>
+                  <namePlaceSet>
+                    <appellationValue>Kauppakatu 5</appellationValue>
+                  </namePlaceSet>
+                  <partOfPlace>
+                    <namePlaceSet>
+                      <appellationValue>Lohja</appellationValue>
+                    </namePlaceSet>
+                    <partOfPlace>
+                      <namePlaceSet>
+                        <appellationValue>Uusimaa</appellationValue>
+                      </namePlaceSet>
+                      <partOfPlace>
+                        <namePlaceSet>
+                          <appellationValue>Suomi</appellationValue>
+                        </namePlaceSet>
+                      </partOfPlace>
+                    </partOfPlace>
+                  </partOfPlace>
+                </place>
+              </subjectPlace>
             </subject>
           </subjectSet>
           <subjectSet>

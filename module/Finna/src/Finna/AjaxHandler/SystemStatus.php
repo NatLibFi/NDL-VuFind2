@@ -83,7 +83,7 @@ class SystemStatus extends \VuFind\AjaxHandler\SystemStatus implements \Laminas\
             try {
                 $results = $this->resultsManager->get('Solr');
                 $paramsObj = $results->getParams();
-                $paramsObj->setQueryIDs(['healthcheck']);
+                $paramsObj->setQueryIDs(['healthcheck' . date('His')]);
                 $results->performAndProcessSearch();
             } catch (\Exception $e) {
                 error_log(

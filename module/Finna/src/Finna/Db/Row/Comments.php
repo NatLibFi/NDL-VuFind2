@@ -110,7 +110,7 @@ class Comments extends \VuFind\Db\Row\Comments implements FinnaCommentsEntityInt
      */
     public function getFinnaUpdated(): ?Datetime
     {
-        return $this->finna_updated !== static::NO_DATE
+        return $this->finna_updated && ($this->finna_updated !== static::NO_DATE)
             ? DateTime::createFromFormat('Y-m-d H:i:s', $this->finna_updated) : null;
     }
 }

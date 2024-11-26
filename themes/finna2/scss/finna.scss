@@ -1,0 +1,23 @@
+/* #SCSS> */
+@import "scss-functions";
+
+@import "global/bootstrap-variable-overrides";
+
+@import "font-awesome/font-awesome";
+
+// Bootstrap v3.4.1
+@import "bootstrap/bootstrap";
+
+// Finna variables
+@import "global/variables";
+
+// Bootstrap3 theme components
+@import "../../bootstrap3/scss/components/cookie-consent/index";
+@import "../../bootstrap3/scss/components/keyboard";
+@import "../../bootstrap3/scss/components/trees";
+/* <#SCSS */
+
+
+@import 'global';
+@import 'finna-other';
+@import 'components';

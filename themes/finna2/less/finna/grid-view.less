@@ -85,6 +85,7 @@
     .grid-image {
       overflow: hidden;
       flex-basis: 250px;
+      height: 250px;
       position: relative;
       display: flex;
       background-color: @gray-ultralight;
@@ -153,7 +154,6 @@
 
   .record-image-container {
     margin-bottom: 0;
-    height: 60%;
     display: flex;
     align-items: center;
     position: initial;
@@ -166,6 +166,15 @@
       .recordcover-container {
         display: flex;
         height: 100%;
+        .image-popup-trigger {
+          height: 250px;
+          width: 250px;
+          img.recordcover {
+            height: 100%;
+            width: 100%;
+            margin: auto;
+          }
+        }
       }
     }
   }

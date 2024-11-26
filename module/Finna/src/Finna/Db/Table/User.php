@@ -72,22 +72,6 @@ class User extends \VuFind\Db\Table\User
     }
 
     /**
-     * Get user from database by id.
-     *
-     * @param type $id user id
-     *
-     * @return boolean
-     */
-    public function getById($id)
-    {
-        if (!is_numeric($id)) {
-            return false;
-        }
-        $row = $this->select(['id' => $id])->current();
-        return (empty($row)) ? false : $row;
-    }
-
-    /**
      * Get users with due date reminders.
      *
      * @return array

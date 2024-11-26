@@ -2,7 +2,6 @@
   // Render the new cookie consent initialization script if necessary:
  if (!empty($this->consentDialogConfig)) {
   $this->headScript()->appendFile('vendor/cookieconsent.umd.js');
-  $this->headScript()->appendFile('cookie.js');
 
   // Quick fix for null domain:
   $consentDialogConfig = $this->consentDialogConfig;

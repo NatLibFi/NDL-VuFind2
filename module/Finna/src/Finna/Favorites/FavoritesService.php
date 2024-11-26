@@ -31,6 +31,7 @@
 
 namespace Finna\Favorites;
 
+use Finna\Db\Entity\FinnaUserResourceEntityInterface;
 use Finna\Db\Service\UserListService;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Record\Cache as RecordCache;
@@ -73,14 +74,13 @@ class FavoritesService extends \VuFind\Favorites\FavoritesService
 
         assert($this->userListService instanceof UserListService);
 
-        // Add custom order keys for new items if the list has custom order
+        // Add custom order keys for new items if the list has custom order:
         $index = $this->userListService->getNextAvailableCustomOrderIndex($list->getId());
 
-        // If target list is not in custom order then reverse
+        // If target list is not in custom order then reverse the records to get original order:
         if (!$this->userListService->isCustomOrderAvailable($list->getId())) {
-            $params['ids'] = array_reverse($params['ids']);
+            $records = array_reverse($records);
         }
-
         $tags = isset($params['mytags']) ? $this->tagsService->parse($params['mytags']) : [];
 
         foreach ($records as $record) {
@@ -88,11 +88,12 @@ class FavoritesService extends \VuFind\Favorites\FavoritesService
             $resource = $this->resourcePopulator->getOrCreateResourceForDriver($record);
 
             // Create the resource link if it doesn't exist:
-            $resource = $this->userResourceService->createOrUpdateLink($resource, $user, $list);
+            $userResource = $this->userResourceService->createOrUpdateLink($resource, $user, $list);
             // Update custom order index:
             if ($index) {
-                $resource->finna_custom_order_index = $index;
-                $resource->save();
+                assert($userResource instanceof FinnaUserResourceEntityInterface);
+                $userResource->setFinnaCustomOrderIndex($index);
+                $this->userResourceService->persistEntity($resource);
                 ++$index;
             }
 

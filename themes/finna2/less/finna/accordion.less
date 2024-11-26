@@ -106,9 +106,6 @@
     outline: 1px solid @gray-lighter;
     box-shadow: 1px 1px 1px 1px @gray-lighter;
     background-color: @gray-ultralight;
-    @media(min-width: @screen-md) {
-      display: none;
-    }
     color: @text-color;
     display: flex;
     align-items: center;
@@ -116,6 +113,9 @@
     text-overflow: ellipsis;
     line-height: @content-headings-line-height;
     width: 100%;
+    @media(min-width: @screen-md) {
+      display: none;
+    }
     .feed-accordion-anchor {
       display: inline-flex;
       align-items: center;

@@ -158,18 +158,15 @@ class Solr extends \VuFind\Autocomplete\Solr implements \VuFind\I18n\Translator\
         $this->facetConfig = $facetConfig;
         $this->searchConfig = $searchConfig;
         $this->facetSettings = $settings;
-        $this->facetTranslations = $facetConfig->Results->toArray();
-        foreach ($facetConfig->CheckboxFacets->toArray() as $field => $val) {
+        $this->facetTranslations = $facetConfig?->Results?->toArray() ?? [];
+        foreach ($facetConfig?->CheckboxFacets?->toArray() ?? [] as $field => $val) {
             [$field, ] = explode(':', $field);
             $this->facetTranslations[$field] = $val;
         }
 
         $this->orFacets = [];
-        if (isset($this->facetConfig->Results_Settings->orFacets)) {
-            $this->orFacets = array_map(
-                'trim',
-                explode(',', $this->facetConfig->Results_Settings->orFacets)
-            );
+        if (null !== ($orFacets = $this->facetConfig->Results_Settings->orFacets ?? null)) {
+            $this->orFacets = array_map('trim', explode(',', $orFacets));
         }
         parent::__construct($results);
     }
@@ -474,11 +471,12 @@ class Solr extends \VuFind\Autocomplete\Solr implements \VuFind\I18n\Translator\
     /**
      * Process the user query to make it suitable for a Solr query.
      *
-     * @param string $query Incoming user query
+     * @param string $query   Incoming user query
+     * @param array  $options Array of extra parameters
      *
-     * @return string       Processed query
+     * @return string        Processed query
      */
-    protected function mungeQuery($query)
+    protected function mungeQuery(string $query, array $options = []): string
     {
         return $query;
     }
