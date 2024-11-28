@@ -240,6 +240,7 @@ class SolrEad3 extends SolrEad
                 return;
             }
             $linkType = 'external-link';
+            $embed = false;
             if ($isVideo = str_starts_with($role, 'video') || str_starts_with($role, 'audio')) {
                 if ((string)$attr->actuate === 'onrequest' && (string)$attr->show === 'none') {
                     $linkType = 'download';
@@ -261,7 +262,7 @@ class SolrEad3 extends SolrEad
                     'url' => $url,
                     'desc' => (string)$desc,
                     'linkType' => $linkType,
-                    'embed' => $embed ?? false,
+                    'embed' => $embed,
                 ];
                 if ($preferredLang) {
                     $urls['localeurls'][] = $urlData;
