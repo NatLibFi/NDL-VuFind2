@@ -341,6 +341,7 @@ CREATE TABLE `finna_resource_list` (
   `ordered` datetime DEFAULT NULL,
   `pickup_date` datetime DEFAULT NULL,
   `connection` varchar(40) NOT NULL DEFAULT 'database',
+  `external_id` varchar(40) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `resource_list_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE

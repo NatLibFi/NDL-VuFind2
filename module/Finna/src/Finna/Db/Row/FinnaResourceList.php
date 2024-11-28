@@ -314,4 +314,27 @@ class FinnaResourceList extends RowGateway implements
         $this->list_config_identifier = $listConfigIdentifier;
         return $this;
     }
+
+    /**
+     * Get the external id
+     *
+     * @return ?string
+     */
+    public function getExternalId(): ?string
+    {
+        return $this->external_id;
+    }
+
+    /**
+     * Set the external id
+     *
+     * @param string $id External id
+     *
+     * @return static
+     */
+    public function setExternalId(string $id): static
+    {
+        $this->external_id = $id;
+        return $this;
+    }
 }

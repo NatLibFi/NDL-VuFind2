@@ -381,6 +381,7 @@ $config = [
             'Finna\Statistics\Driver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Statistics\EventHandler' => 'Finna\Statistics\EventHandlerFactory',
             \Finna\ReservationList\ReservationListService::class => \Finna\ReservationList\ReservationListServiceFactory::class,
+            \Finna\ReservationList\PluginManager::class => \VuFind\ServiceManager\AbstractPluginManagerFactory::class,
             'Finna\Favorites\FavoritesService' => 'Finna\Favorites\FavoritesServiceFactory',
             'Finna\View\CustomElement\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Video\Handler\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
@@ -493,6 +494,8 @@ $config = [
                         'Finna\AjaxHandler\GetUserListFactory',
                     'Finna\AjaxHandler\GetUserLists' =>
                         'Finna\AjaxHandler\GetUserListsFactory',
+                    'Finna\AjaxHandler\ReservationList' =>
+                        'Finna\AjaxHandler\ReservationListFactory',
                     'Finna\AjaxHandler\ImportFavorites' =>
                         'Finna\AjaxHandler\ImportFavoritesFactory',
                     'Finna\AjaxHandler\OnlinePaymentNotify' =>
@@ -533,6 +536,7 @@ $config = [
                     'getSearchTabsRecommendations' => 'Finna\AjaxHandler\GetSearchTabsRecommendations',
                     'getSimilarRecords' => 'Finna\AjaxHandler\GetSimilarRecords',
                     'getUserList' => 'Finna\AjaxHandler\GetUserList',
+                    'reservationList' => 'Finna\AjaxHandler\ReservationList',
                     'importFavorites' => 'Finna\AjaxHandler\ImportFavorites',
                     'onlinePaymentNotify' => 'Finna\AjaxHandler\OnlinePaymentNotify',
                     'registerOnlinePayment' => 'Finna\AjaxHandler\RegisterOnlinePayment',
@@ -766,6 +770,7 @@ $config = [
             ],
             'onlinepayment_handler' => [ /* see Finna\OnlinePayment\Handler\PluginManager for defaults */ ],
             'video_handler' => [ /* see Finna\Video\Handler\PluginManager for defaults */ ],
+            'reservationlist' => [ /* see Finna\ReservationList\PluginManager for defaults */ ],
             'recommend' => [
                 'factories' => [
                     'VuFind\Recommend\CollectionSideFacets' => 'Finna\Recommend\Factory::getCollectionSideFacets',

@@ -35,6 +35,7 @@ use DateTime;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\Db\Service\FinnaResourceListResourceServiceInterface;
 use Finna\Db\Service\FinnaResourceListServiceInterface;
+use Laminas\Config\Config;
 use Laminas\Session\Container;
 use Laminas\Stdlib\Parameters;
 use VuFind\Db\Entity\ResourceEntityInterface;
@@ -52,6 +53,8 @@ use VuFind\Record\Loader as RecordLoader;
 use VuFind\Record\ResourcePopulator;
 use VuFind\RecordDriver\AbstractBase as RecordDriver;
 use VuFind\RecordDriver\DefaultRecord;
+
+use function is_string;
 
 /**
  * Reservation list service
@@ -76,6 +79,24 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     public const RESOURCE_LIST_TYPE = 'reservationlist';
 
     /**
+     * Default values for list config
+     *
+     * @var array
+     */
+    protected const RESERVATION_LIST_DEFAULT_VALUES  = [
+        'Enabled' => false,
+        'Recipient' => [],
+        'Datasources' => [],
+        'Information' => [],
+        'LibraryCardSources' => [],
+        'CheckResourceStatus' => false,
+        'Connection' =>  [
+            'type' => 'Database',
+        ],
+        'Identifier' => false,
+    ];
+
+    /**
      * Constructor
      *
      * @param FinnaResourceListServiceInterface         $resourceListService         Resource list database service
@@ -88,6 +109,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      * @param ?RecordCache                              $recordCache                 Record cache (optional)
      * @param ?Container                                $session                     Session container for remembering
      *                                                                               state (optional)
+     * @param ?array                                    $yamlConfig                  Reservation list yaml config
      */
     public function __construct(
         protected FinnaResourceListServiceInterface $resourceListService,
@@ -97,7 +119,8 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         protected ResourcePopulator $resourcePopulator,
         protected RecordLoader $recordLoader,
         protected ?RecordCache $recordCache = null,
-        protected ?Container $session = null
+        protected ?Container $session = null,
+        protected ?array $yamlConfig = []
     ) {
     }
 
@@ -289,6 +312,12 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
             throw new ListPermissionException('list_access_denied');
         }
         $list->setPickupDate(DateTime::createFromFormat('Y-m-d', $request->get('pickup_date')))->setOrdered();
+        if ($externalId = $request->get('external_id')) {
+            $list->setExternalId($externalId);
+        }
+        if ($connection = $request->get('connection')) {
+            $list->setConnection($connection);
+        }
         $this->resourceListService->persistEntity($list);
     }
 
@@ -494,5 +523,70 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
             $institution,
             self::RESOURCE_LIST_TYPE
         );
+    }
+
+    /**
+     * Get list properties defined by institution and list identifier in ReservationList.yaml,
+     * institution specified information and
+     * formed translation_keys for the list.
+     *
+     * Institution information contains keys and values:
+     *     - name => Example institution name
+     *     - address => Example institution address
+     *     - postal => Example institution postal
+     *     - city => Example institution city
+     *     - email => Example institution email
+     *
+     * Translation keys formed:
+     *     - title => list_title_{$institution}_{$listIdentifier},
+     *     - description => list_description_{$institution}_{$listIdentifier},
+     *
+     * @param string $institution    Lists controlling institution
+     * @param string $listIdentifier List identifier
+     *
+     * @return array
+     */
+    public function getListProperties(
+        string $institution,
+        string $listIdentifier
+    ): array {
+        foreach ($this->yamlConfig['Institutions'][$institution]['Lists'] ?? [] as $list) {
+            $list = $this->ensureListKeys($list);
+            if ($list['Identifier'] === $listIdentifier) {
+                return [
+                    'properties' => $list,
+                    'institution_information' => $this->yamlConfig['Institutions'][$institution]['Information'] ?? [],
+                    'translation_keys' => [
+                        'title' => "ReservationList::list_title_{$institution}_{$listIdentifier}",
+                        'description' => "ReservationList::list_description_{$institution}_{$listIdentifier}",
+                    ],
+                ];
+            }
+        }
+        return [
+            'properties' => self::RESERVATION_LIST_DEFAULT_VALUES,
+            'institution_information' => [],
+            'translation_keys' => [
+                'title' => '',
+                'description' => '',
+            ],
+        ];
+    }
+
+    /**
+     * Ensure that lists have all the required keys defined needed in other places.
+     * Sets the list disabled if list identifier is not set or is not a string.
+     *
+     * @param array $list Properties of the list to ensure
+     *
+     * @return array
+     */
+    public function ensureListKeys(array $list): array
+    {
+        $merged = array_merge(self::RESERVATION_LIST_DEFAULT_VALUES, $list);
+        if (!is_string($merged['Identifier'])) {
+            $merged['Enabled'] = false;
+        }
+        return $merged;
     }
 }
