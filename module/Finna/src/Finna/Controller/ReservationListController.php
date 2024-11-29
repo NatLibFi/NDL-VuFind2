@@ -333,9 +333,9 @@ class ReservationListController extends AbstractBase
         if (!$this->formWasSubmitted(useCaptcha: false)) {
             $form->setData(
                 [
-                 'firstName' => $user->getFirstname(),
-                 'lastName' => $user->getLastname(),
-                 'email' => $user->getEmail(),
+                    'firstName' => $user->getFirstname(),
+                    'lastName' => $user->getLastname(),
+                    'email' => $user->getEmail(),
                 ]
             );
             return $view;

@@ -102,7 +102,7 @@ class ReservationList extends \VuFind\AjaxHandler\AbstractBase implements Transl
                 $handler = $this->connectionHandler->get($connectionType);
                 $handler->init($listProperties['properties']);
                 $result = $handler->getListStatus($list, $this->user);
-                $result = $this->translate(['ReservationList', 'status_' . $result]);
+                $result = $this->translate($result);
                 break;
             default:
                 break;

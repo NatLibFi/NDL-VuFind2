@@ -60,6 +60,13 @@ class Disec extends AbstractBase
     protected $apiKey;
 
     /**
+     * Use catalog id to send user data instead of users first and last name
+     *
+     * @param bool
+     */
+    protected bool $useCatId = false;
+
+    /**
      * Places an order
      *
      * @param Params              $params Parameters containing data from posting place order form
@@ -77,9 +84,9 @@ class Disec extends AbstractBase
         $client = $this->getService(\VuFindHttp\HttpService::class)->createClient($this->ordersUrl);
         $client->setHeaders(
             [
-            'Content-Type: application/json',
-            'accept: */*',
-            'X-API-Key: ' . $this->apiKey,
+                'Content-Type: application/json',
+                'accept: */*',
+                'X-API-Key: ' . $this->apiKey,
             ]
         );
         $client->setMethod(\Laminas\Http\Request::METHOD_POST);
@@ -92,17 +99,21 @@ class Disec extends AbstractBase
             }
         }
         $data = [
-        'resourceIds' => $resources,
-        'customer' => [
-        'firstName' => $params->fromPost('firstName') ?? $user->getFirstname(),
-        'lastName' => $params->fromPost('lastName') ?? $user->getLastname(),
-        'email' => $params->fromPost('email') ?? $user->getEmail(),
-        ],
-        'contentInfo' => $params->fromPost('message', '') . PHP_EOL,
+            'resourceIds' => $resources,
+            'customer' => [
+                'firstName' => $params->fromPost('firstName') ?? $user->getFirstname(),
+                'lastName' => $params->fromPost('lastName') ?? $user->getLastname(),
+                'email' => $params->fromPost('email') ?? $user->getEmail(),
+            ],
+            'contentInfo' => $params->fromPost('message', '') . PHP_EOL,
         ];
         $data['contentInfo'] .= $params->fromPost('pickup_date', '') . PHP_EOL;
         if ($catId = $user->getCatId()) {
             [, $id] = explode('.', $catId);
+            if ($this->useCatId) {
+                $data['kohaId'] = (int)$id;
+                unset($data['customer']);
+            }
             $data['contentInfo'] .= 'cat_id: ' . $id;
         }
         $client->setRawBody(json_encode($data));
@@ -111,13 +122,14 @@ class Disec extends AbstractBase
         if ($response->isSuccess()) {
             $body = json_decode($response->getBody(), true);
             return [
-            'success' => true,
-            'external_id' => $body['id'],
+                'success' => true,
+                'external_id' => $body['id'],
             ];
         }
+        $this->debug('Disec: failed to place order: ' . $response->getBody());
         return [
-        'success' => false,
-        'external_id' => null,
+            'success' => false,
+            'external_id' => null,
         ];
     }
 
@@ -136,19 +148,21 @@ class Disec extends AbstractBase
         $client = $this->getService(\VuFindHttp\HttpService::class)->createClient($formedUrl);
         $client->setHeaders(
             [
-            'Content-Type: application/json',
-            'accept: */*',
-            'X-API-Key: ' . $this->apiKey,
+                'Content-Type: application/json',
+                'accept: */*',
+                'X-API-Key: ' . $this->apiKey,
             ]
         );
         $client->setMethod(\Laminas\Http\Request::METHOD_GET);
         $response = $client->send();
-
+        $status = ReservationListStatus::UNKNOWN;
         if ($response->isSuccess()) {
             $body = json_decode($response->getBody(), true);
-            return $body['status'] ?? self::STATUS_UNKNOWN;
+            $status = ReservationListStatus::tryFrom(mb_strtolower($body['status'])) ?? ReservationListStatus::UNKNOWN;
+        } else {
+            $this->debug('Disec: failed to fetch status for list: ' . $response->getBody());
         }
-        return self::STATUS_UNKNOWN;
+        return $status->getTranslationKey();
     }
 
     /**
@@ -168,6 +182,7 @@ class Disec extends AbstractBase
             }
             $this->ordersUrl = $baseUrl . 'orders';
             $this->apiKey = $config['Connection']['secret'];
+            $this->useCatId = $config['Connection']['use_cat_id'] ?? false;
         } catch (\Exception $e) {
             throw new \Exception('Disec: Invalid configuration');
         }

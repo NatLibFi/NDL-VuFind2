@@ -45,16 +45,10 @@ use VuFind\Service\GetServiceTrait;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class AbstractBase implements ConnectionInterface
+class AbstractBase implements ConnectionInterface, \Laminas\Log\LoggerAwareInterface
 {
+    use \VuFind\Log\LoggerAwareTrait;
     use GetServiceTrait;
-
-    /**
-     * Default unknown status
-     *
-     * @var string
-     */
-    public const STATUS_UNKNOWN = 'UNKNOWN';
 
     /**
      * Recipients for email handler defined in ReservationList.yaml
@@ -95,8 +89,8 @@ class AbstractBase implements ConnectionInterface
         $formPluginManager = $this->getService(\VuFind\Form\Handler\PluginManager::class);
         $result = $formPluginManager->get($this->configuredHandler)->handle($form, $params, $user);
         return [
-        'success' => $result,
-        'external_id' => null,
+            'success' => $result,
+            'external_id' => null,
         ];
     }
 
@@ -110,7 +104,8 @@ class AbstractBase implements ConnectionInterface
      */
     public function getListStatus(FinnaResourceListEntityInterface $list, UserEntityInterface $user): string
     {
-        return self::STATUS_UNKNOWN;
+        $status = ReservationListStatus::UNKNOWN;
+        return $status->getTranslationKey();
     }
 
     /**
