@@ -926,7 +926,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             }
             $username = $card->getCatUsername();
             if (str_contains($username, '.')) {
-                [$target, $username] = explode('.', $username, 2);
+                [, $username] = explode('.', $username, 2);
             }
             $catalog = $this->getILS();
             $auth = $this->getILSAuthenticator();
