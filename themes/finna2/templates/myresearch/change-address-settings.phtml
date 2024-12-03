@@ -124,7 +124,7 @@
                 <?php echo $this->makeTag('input', '', $extraValue['attrs']); ?>
                 <div>
                   <input type="checkbox" name="<?=$this->escapeHtmlAttr('active_' . $extraValue['attrs']['name'])?>" value="1"<?=$extraValue['active'] ? ' checked' : ''?>>
-                  <?=$this->transEsc('contact_info_active') ?>
+                  <?=$this->transEsc($field . '_active') ?>
                 </div>
             <?php endforeach; ?>
           <?php else: ?>
