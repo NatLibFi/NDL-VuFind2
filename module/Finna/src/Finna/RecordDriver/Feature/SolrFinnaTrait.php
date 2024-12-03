@@ -774,7 +774,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get array containing media types.
+     * Get array containing ctrlnum.
      *
      * @return array
      */
