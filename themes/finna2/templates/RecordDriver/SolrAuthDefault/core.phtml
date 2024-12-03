@@ -43,6 +43,7 @@
       </div>
 
       <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
+      <?=$this->record($this->driver)->getLabelList() ?>
 
       <?php if ($occupations = $this->driver->getOccupations()): ?>
         <div class="occupation"><?=implode(', ', $occupations)?></div>

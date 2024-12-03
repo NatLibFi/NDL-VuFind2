@@ -46,6 +46,7 @@ use function count;
 use function dirname;
 use function in_array;
 use function is_string;
+use function strlen;
 
 /**
  * Console command: convert style files from LESS to SCSS (Sass).
@@ -463,8 +464,12 @@ class LessToScssCommand extends Command
         $inSingle = false;
         $inDouble = false;
         $escape = false;
-        for ($i = 0; $i < mb_strlen($line, 'UTF-8'); $i++) {
-            $ch = mb_substr($line, $i, 1, 'UTF-8');
+        if (!str_contains($line, '/')) {
+            return [$line, null];
+        }
+        $len = strlen($line);
+        for ($i = 0; $i < $len; $i++) {
+            $ch = $line[$i];
             switch ($ch) {
                 case '"':
                     if (!$inSingle) {
@@ -481,8 +486,8 @@ class LessToScssCommand extends Command
                     break;
                 case '/':
                     // Check for a comment:
-                    if (!$inSingle && !$inDouble && !$escape && mb_substr($line, $i + 1, 1, 'UTF-8') === '/') {
-                        $comment = mb_substr($line, $i + 2, null, 'UTF-8');
+                    if (!$inSingle && !$inDouble && !$escape && ($line[$i + 1] ?? null) === '/') {
+                        $comment = substr($line, $i + 2);
                         break 2;
                     }
                     break;
@@ -869,8 +874,12 @@ class LessToScssCommand extends Command
                 $linesToAdd[] = '';
                 array_unshift($lines, ...$linesToAdd);
             }
+            // Unlink target first just in case it's a symlink:
+            if (file_exists($fullPath)) {
+                unlink($fullPath);
+            }
             // Write the updated file:
-            if (false === file_put_contents($fullPath, implode(PHP_EOL, $lines)) . PHP_EOL) {
+            if (false === file_put_contents($fullPath, implode(PHP_EOL, $lines) . PHP_EOL)) {
                 $this->error("Could not write file $fullPath");
             }
             $this->debug("Created $fullPath");
@@ -1075,7 +1084,7 @@ class LessToScssCommand extends Command
         $targetMainFile = $this->targetDir . '/' . preg_replace('/\.less$/', '', basename($mainFile)) . '.scss';
         $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->targetDir));
         foreach ($it as $file => $info) {
-            if ($file === $targetMainFile) {
+            if ($file === $targetMainFile || !str_ends_with($file, '.scss')) {
                 // Don't care about target main file, it's centrally managed:
                 continue;
             }

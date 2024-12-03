@@ -1,7 +1,10 @@
 //== Styling Finna sidebar checkbox filters
-#sidebar .checkboxFilter {
+#sidebar .checkbox-filters {
   padding: 0px;
   margin: 10px 0 15px;
+
+  &:extend(.checkbox-container);
+
   .checkbox {
     margin: 8px 0px;
     &.disabled label > span {
@@ -29,27 +32,6 @@
       margin-right: 6px;
     }
   }
-}
-
-.checkboxFilter label {
-  font-size: 14px;
-  font-weight: normal;
-}
-.checkboxFilter label.checkbox input {
-  border: none;
-  background: transparent;
-  margin-right: 10px;
-  margin-top: 4px;
-}
-.checkboxFilter label.checkbox input:before {
-  content: "\f096";
-  font-family: 'FontAwesome';
-  margin-right: -1px;
-  font-size: 21px;
-  background: @body-bg;
-  margin: -4px;
-  position: absolute;
-  margin-left: -1px;
 }
 
 .sidebar {

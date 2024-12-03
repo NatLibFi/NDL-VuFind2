@@ -253,7 +253,7 @@
       <?=$this->context($this)->renderInContext('search/bulk-action-buttons.phtml', ['idPrefix' => 'bottom_', 'formAttr' => 'search-cart-form'])?>
     </div>
     <?php endif; ?>
-    <?php $pagination = $this->paginationControl($this->results->getPaginator()->setPageRange(5), 'Sliding', 'search/pagination.phtml', ['results' => $this->results]);
+    <?php $pagination = $this->paginationControl($this->results->getPaginator()->setPageRange(5), 'Sliding', 'Helpers/pagination.phtml', ['params' => ['results' => $this->results]]);
       if (trim($pagination)): ?>
       <div class="pagination">
         <div class="<?=$this->layoutClass('mainbody', (bool)$recommendations)?> text-center">

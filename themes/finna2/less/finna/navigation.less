@@ -120,11 +120,13 @@
   }
 }
 /* #SCSS>
-.breadcrumbs {
-  display: if ($breadcrumbs == true) block;
-}
-.record.record-row {
-  margin-top: if ($breadcrumbs == true) 0;
+@if ($breadcrumbs == true) {
+  .breadcrumbs {
+    display: block;
+  }
+  .record.record-row {
+    margin-top: 0;
+  }
 }
 <#SCSS */
 /* #LESS> */
