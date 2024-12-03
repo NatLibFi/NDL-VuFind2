@@ -507,6 +507,13 @@ h2 {
   }
 }
 
+.record-list:not(.search-results-l1) {
+  .material-rights,
+  .targeted-information {
+    display: none;
+  }
+}
+
 .versions-tab {
   .search-header {
     .search-controls {
