@@ -1104,7 +1104,8 @@ $staticRoutes = [
     'MyResearch/SaveCustomOrder', 'MyResearch/SaveHistoricLoans',
     'OrganisationInfo/Home',
     'PCI/Home', 'PCI/Search', 'PCI/Record',
-    'Search/StreetSearch', 'Search/MapFacet',
+    'Search/StreetSearch',
+    'Barcode/Show', 'Search/MapFacet',
     'L1/Advanced', 'L1/FacetList', 'L1/Home', 'L1/Results',
     'Record/DownloadModel',
     'Record/DownloadFile',
@@ -1159,6 +1160,20 @@ $config['router']['routes']['solrauthrecord-feedback'] = [
         'defaults' => [
             'controller' => 'AuthorityRecord',
             'action'     => 'Feedback',
+        ],
+    ],
+];
+$config['router']['routes']['barcode-show'] = [
+    'type'    => 'Laminas\Router\Http\Segment',
+    'options' => [
+        'route'    => '/LibraryCards/displayBarcode/[:id]',
+        'constraints' => [
+            'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+            'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+        ],
+        'defaults' => [
+            'controller' => 'LibraryCards',
+            'action'     => 'displayBarcode',
         ],
     ],
 ];
