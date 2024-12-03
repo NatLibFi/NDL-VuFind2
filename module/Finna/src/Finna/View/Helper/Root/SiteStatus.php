@@ -45,9 +45,9 @@ class SiteStatus extends \Laminas\View\Helper\AbstractHelper
     /**
      * Constructor.
      *
-     * @param array $systemConfig System configuration
+     * @param array $config Configuration
      */
-    public function __construct(protected array $systemConfig)
+    public function __construct(protected array $config)
     {
     }
 
@@ -58,7 +58,7 @@ class SiteStatus extends \Laminas\View\Helper\AbstractHelper
      */
     public function __invoke(): SiteStatusEnum
     {
-        return SiteStatusEnum::tryFrom($this->systemConfig['Site']['status'] ?? '')
+        return SiteStatusEnum::tryFrom($this->config['Finna']['site_status'] ?? '')
             ?? SiteStatusEnum::PRODUCTION;
     }
 }

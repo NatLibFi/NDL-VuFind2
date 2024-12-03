@@ -7,8 +7,3 @@
 ; Use the format YYYY-MM-DD HH:MM.
 ;systemMessagesScheduleStart = 2023-01-17 09:00
 ;systemMessagesScheduleEnd = 2023-01-17 17:00
-
-; Site status. Displayed in a status bar unless value is 'production'.
-; Possible values are: 'production', 'beta', 'test' and 'disabled'.
-; Default value is 'production'.
-status = production

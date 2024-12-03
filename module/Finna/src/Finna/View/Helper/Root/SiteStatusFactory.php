@@ -68,8 +68,8 @@ class SiteStatusFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        $systemConfig = $container->get(\VuFind\Config\PluginManager::class)
-            ->get('system')->toArray();
-        return new $requestedName($systemConfig);
+        $config = $container->get(\VuFind\Config\PluginManager::class)
+            ->get('config')->toArray();
+        return new $requestedName($config);
     }
 }
