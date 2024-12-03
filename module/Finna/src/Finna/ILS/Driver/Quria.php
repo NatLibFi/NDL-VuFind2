@@ -674,6 +674,7 @@ class Quria extends AxiellWebServices
                         'emailId' => $emailAddress->id ?? '',
                         'active' => $emailAddress->isActive == 'yes',
                     ];
+            }
         }
         if (isset($info->addresses->address)) {
             $addresses = $this->objectToArray($info->addresses->address);
