@@ -216,7 +216,7 @@
           ]
         );?>
         <div class="pagination-container">
-          <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results, 'label' => $resultsStr])?>
+          <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'Helpers/pagination-simple.phtml', ['params' => ['results' => $this->results], 'options' => $this->paginationOptions ?? []])?>
         </div>
         <div class="control-container text-right hidden-print">
           <?php if (!$browse): ?>
@@ -253,7 +253,7 @@
       <?=$this->context($this)->renderInContext('search/bulk-action-buttons.phtml', ['idPrefix' => 'bottom_', 'formAttr' => 'search-cart-form'])?>
     </div>
     <?php endif; ?>
-    <?php $pagination = $this->paginationControl($this->results->getPaginator()->setPageRange(5), 'Sliding', 'Helpers/pagination.phtml', ['params' => ['results' => $this->results]]);
+    <?php $pagination = $this->paginationControl($this->results->getPaginator()->setPageRange(5), 'Sliding', 'Helpers/pagination.phtml', ['params' => ['results' => $this->results], 'options' => $this->paginationOptions ?? []]);
       if (trim($pagination)): ?>
       <div class="pagination">
         <div class="<?=$this->layoutClass('mainbody', (bool)$recommendations)?> text-center">
