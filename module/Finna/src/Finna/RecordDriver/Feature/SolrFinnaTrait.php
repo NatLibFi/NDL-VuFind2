@@ -764,6 +764,46 @@ trait SolrFinnaTrait
     }
 
     /**
+     * Get array containing media types.
+     *
+     * @return array
+     */
+    public function getMediaTypes(): array
+    {
+        return $this->fields['media_type_str_mv'] ?? [];
+    }
+
+    /**
+     * Get array containing media types.
+     *
+     * @return array
+     */
+    public function getCtrlNum(): array
+    {
+        return $this->fields['ctrlnum'] ?? [];
+    }
+
+    /**
+     * Get array containing major genres
+     *
+     * @return array
+     */
+    public function getMajorGenres(): array
+    {
+        return $this->fields['major_genre_str_mv'] ?? [];
+    }
+
+    /**
+     * Get array containing Usage rights extended
+     *
+     * @return array
+     */
+    public function getUsageRightsExt(): array
+    {
+        return $this->fields['usage_rights_ext_str_mv'] ?? [];
+    }
+
+    /**
      * Is rating allowed.
      *
      * @return bool

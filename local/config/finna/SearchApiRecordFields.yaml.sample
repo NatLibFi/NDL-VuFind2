@@ -130,6 +130,12 @@ corporateAuthors:
   type: array
   items:
     type: string
+ctrlnum:
+  vufind.method: getCtrlNum
+  description: Ctrl num
+  type: array
+  items:
+    type: string
 dedupIds:
   vufind.method: "Formatter::getDedupIds"
   description: IDs of all records deduplicated with the current record
@@ -337,6 +343,12 @@ lccn:
   type: array
   items:
     type: string
+majorGenres:
+  vufind.method: getMajorGenres
+  description: Major genres as array
+  type: array
+  items:
+    type: string
 manufacturer:
   vufind.method: getManufacturer
   description: manufacturer
@@ -344,6 +356,12 @@ manufacturer:
 measurements:
   vufind.method: getMeasurements
   description: Physical measurements
+  type: array
+  items:
+    type: string
+mediaTypes:
+  vufind.method: getMediaTypes
+  description: Media types
   type: array
   items:
     type: string
@@ -475,6 +493,10 @@ rating:
 rawData:
   vufind.method: "Formatter::getRawData"
   description: All data in the index fields
+  type: string
+recordFormat:
+  vufind.method: getRecordFormat
+  description: Record format
   type: string
 recordLinks:
   vufind.method: "Formatter::getRecordLinks"
@@ -618,6 +640,18 @@ urls:
   type: array
   items:
     $ref: '#/components/schemas/Url'
+usageRights:
+  vufind.method: getUsageRights
+  description: Usage rights
+  type: array
+  items:
+    type: string
+usageRightsExtended:
+  vufind.method: getUsageRightsExt
+  description: Usage rights extended
+  type: array
+  items:
+    type: string
 year:
   vufind.method: getYear
   description: >

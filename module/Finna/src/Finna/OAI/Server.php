@@ -29,6 +29,8 @@
 
 namespace Finna\OAI;
 
+use VuFind\SimpleXML;
+
 /**
  * OAI Server class
  *
@@ -42,6 +44,24 @@ namespace Finna\OAI;
  */
 class Server extends \VuFind\OAI\Server
 {
+    /**
+     * Finna specific api fields from [OAI] section
+     *
+     * @var array
+     */
+    protected array $finnaApiFields = [];
+
+    /**
+     * Does the current configuration support the Finna metadata format (using
+     * the API's record formatter.
+     *
+     * @return bool
+     */
+    protected function supportsFinnaMetadata()
+    {
+        return !empty($this->finnaApiFields) && null !== $this->recordFormatter;
+    }
+
     /**
      * Initialize data about metadata formats. (This is called on demand and is
      * defined as a separate method to allow easy override by child classes).
@@ -69,5 +89,196 @@ class Server extends \VuFind\OAI\Server
         $this->metadataFormats['oai_qdc'] = [
             'schema' => $qdc,
             'namespace' => 'urn:dc:qdc:container'];
+        if ($this->supportsFinnaMetadata()) {
+            $this->metadataFormats['oai_finna_json'] = [
+                'schema' => 'https://vufind.org/xsd/oai_vufind_json-1.0.xsd',
+                'namespace' => 'http://vufind.org/oai_vufind_json-1.0',
+            ];
+        }
+    }
+
+    /**
+     * Attach a non-deleted record to an XML document.
+     *
+     * @param SimpleXMLElement $container  XML container for new record
+     * @param object           $record     A record driver object
+     * @param string           $format     Metadata format to obtain (false for none)
+     * @param bool             $headerOnly Only attach the header?
+     * @param string           $set        Currently active set
+     *
+     * @return bool
+     */
+    protected function attachNonDeleted(
+        $container,
+        $record,
+        $format,
+        $headerOnly = false,
+        $set = ''
+    ) {
+        if ('oai_finna_json' !== $format || !$this->supportsFinnaMetadata()) {
+            return parent::attachNonDeleted($container, $record, $format, $headerOnly, $set);
+        }
+        $xml = $this->getFinnaMetadata($record);
+        // Headers should be returned only if the metadata format matching
+        // the supplied metadataPrefix is available.
+        // If RecordDriver returns nothing, skip this record.
+        if (empty($xml)) {
+            return true;
+        }
+
+        // Check for sets:
+        $fields = $record->getRawData();
+        if (null !== $this->setField && !empty($fields[$this->setField])) {
+            $sets = (array)$fields[$this->setField];
+        } else {
+            $sets = [];
+        }
+        if (!empty($set)) {
+            $sets = array_unique(array_merge($sets, [$set]));
+        }
+
+        // Get modification date:
+        $date = $record->getLastIndexed();
+        if (empty($date)) {
+            $date = $this->getUTCDateTime('now');
+        }
+
+        // Set up header (inside or outside a <record> container depending on
+        // preferences):
+        $recXml = $headerOnly ? $container : $container->addChild('record');
+        $this->attachRecordHeader(
+            $recXml,
+            $this->prefixID($record->getUniqueID()),
+            $date,
+            $sets
+        );
+
+        // Inject metadata if necessary:
+        if (!$headerOnly) {
+            $metadata = $recXml->addChild('metadata');
+            SimpleXML::appendElement($metadata, $xml);
+        }
+
+        return true;
+    }
+
+    /**
+     * Respond to a ListMetadataFormats request.
+     *
+     * @return string
+     */
+    protected function listMetadataFormats()
+    {
+        // If a specific ID was provided, try to load the related record; otherwise,
+        // set $record to false so we know it is a generic request.
+        if (isset($this->params['identifier'])) {
+            if (!($record = $this->loadRecord($this->params['identifier']))) {
+                return $this->showError('idDoesNotExist', 'Unknown Record');
+            }
+        } else {
+            $record = false;
+        }
+
+        // Loop through all available metadata formats and see if they apply in
+        // the current context (all apply if $record is false, since that
+        // means that no specific record ID was requested; otherwise, they only
+        // apply if the current record driver supports them):
+        $response = $this->createResponse();
+        $xml = $response->addChild('ListMetadataFormats');
+        foreach ($this->getMetadataFormats() as $prefix => $details) {
+            if (
+                $record === false
+                || $record->getXML($prefix) !== false
+                || ('oai_vufind_json' === $prefix && $this->supportsVuFindMetadata())
+                || ('oai_finna_json' === $prefix && $this->supportsFinnaMetadata())
+            ) {
+                $node = $xml->addChild('metadataFormat');
+                $node->metadataPrefix = $prefix;
+                if (isset($details['schema'])) {
+                    $node->schema = $details['schema'];
+                }
+                if (isset($details['namespace'])) {
+                    $node->metadataNamespace = $details['namespace'];
+                }
+            }
+        }
+
+        // Display the response:
+        return $response->asXML();
+    }
+
+    /**
+     * Load data from the OAI section of config.ini. (This is called by the
+     * constructor and is only a separate method to allow easy override by child
+     * classes).
+     *
+     * @param \Laminas\Config\Config $config VuFind configuration
+     *
+     * @return void
+     */
+    protected function initializeSettings(\Laminas\Config\Config $config)
+    {
+        parent::initializeSettings($config);
+        // Initialize Finna API format fields:
+        $this->finnaApiFields = array_filter(
+            explode(
+                ',',
+                $config->OAI->finna_api_format_fields ?? ''
+            )
+        );
+    }
+
+    /**
+     * Support method for attachNonDeleted() to build the Finna metadata for
+     * a record driver.
+     *
+     * @param object $record A record driver object
+     *
+     * @return string
+     */
+    protected function getFinnaMetadata($record)
+    {
+        // Root node
+        $recordDoc = new \DOMDocument();
+        $vufindFormat = $this->getMetadataFormats()['oai_finna_json'];
+        $rootNode = $recordDoc->createElementNS(
+            $vufindFormat['namespace'],
+            'oai_finna_json:record'
+        );
+        $rootNode->setAttribute(
+            'xmlns:xsi',
+            'http://www.w3.org/2001/XMLSchema-instance'
+        );
+        $rootNode->setAttribute(
+            'xsi:schemaLocation',
+            $vufindFormat['namespace'] . ' ' . $vufindFormat['schema']
+        );
+        $recordDoc->appendChild($rootNode);
+
+        // Add oai_dc part
+        $oaiDc = new \DOMDocument();
+        $oaiDc->loadXML(
+            $record->getXML('oai_dc', $this->baseHostURL, $this->recordLinkerHelper)
+        );
+        $rootNode->appendChild(
+            $recordDoc->importNode($oaiDc->documentElement, true)
+        );
+
+        // Add VuFind metadata
+        $records = $this->recordFormatter->format(
+            [$record],
+            $this->finnaApiFields
+        );
+        $metadataNode = $recordDoc->createElementNS(
+            $vufindFormat['namespace'],
+            'oai_finna_json:metadata'
+        );
+        $metadataNode->setAttribute('type', 'application/json');
+        $metadataNode->appendChild(
+            $recordDoc->createCDATASection(json_encode($records[0]))
+        );
+        $rootNode->appendChild($metadataNode);
+
+        return $recordDoc->saveXML();
     }
 }
