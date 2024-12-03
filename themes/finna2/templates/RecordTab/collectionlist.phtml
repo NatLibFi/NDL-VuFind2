@@ -83,7 +83,7 @@
       <?=$this->render('search/list-' . $results->getParams()->getView() . '.phtml', $searchDetails)?>
     </div>
     <div class="text-center">
-      <?=$this->paginationControl($results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $results])?>
+      <?=$this->paginationControl($results->getPaginator(), 'Sliding', 'Helpers/pagination.phtml', ['params' => ['results' => $this->results]])?>
     </div>
   <?php else: ?>
     <h4><?=$this->transEsc($params->getDisplayQuery() || $filterCount > 0 ? 'nohit_heading' : 'collection_empty')?></h4><br><br>

@@ -29,7 +29,7 @@
       text-align: right;
     }
   }
-  .checkboxFilter {
+  .checkbox-container {
     padding-left: 0;
     .checkbox {
       padding-left: 0;
@@ -44,11 +44,11 @@
   }
 }
 
-.useraccount-table.online-payment .checkboxFilter {
+.useraccount-table.online-payment .checkbox-container {
   margin-top: 2px;
 }
 
-.checkboxFilter.mylist-select-all {
+.checkbox-container.mylist-select-all {
   padding-left: 0;
   white-space: nowrap;
 
@@ -375,7 +375,7 @@
     margin-left: -5px;
   }
 
-  .checkboxFilter label.checkbox {
+  .checkbox-container label.checkbox {
     padding-left: 5px;
     color: $gray-light;
   }
@@ -578,7 +578,7 @@
   align-items: center;
   margin-bottom: 1rem;
 
-  .checkboxFilter.mylist-select-all {
+  .checkbox-container.mylist-select-all {
     margin-right: 1rem;
   }
 }

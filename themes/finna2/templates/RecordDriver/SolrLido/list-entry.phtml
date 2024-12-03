@@ -24,7 +24,7 @@
 <?php endif; ?>
 <!-- start list-entry -->
 <div class="result record-container<?php if($this->driver->supportsAjaxStatus()): ?> ajaxItem<?php endif ?> myresearch-row">
-    <div class="checkboxFilter">
+    <div class="checkbox-container">
       <div class="checkbox">
         <?php // Request a checkbox with a label (can't add the label here as checkbox template contains more than one field): ?>
         <?=$this->record($this->driver)->getCheckbox('', false, true) ?>

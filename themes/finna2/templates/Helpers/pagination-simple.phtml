@@ -1,3 +1,9 @@
+<?php
+  if ($this->params['results'] ?? null) {
+    echo $this->render('Helpers/pagination-simple-search.phtml');
+    return;
+  }
+?>
 <!-- START of: finna - Helpers/pagination-simple.phtml -->
 <?php if ($this->pageCount): ?>
   <ul class="pagination-simple">

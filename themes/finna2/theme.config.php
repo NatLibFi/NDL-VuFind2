@@ -196,7 +196,6 @@ return [
         'checkouts.js',
         'collection_record.js',
         'combined-search.js',
-        'covers.js',
         'doi.js',
         'embedded_record.js',
         'facets.js',
@@ -270,9 +269,6 @@ return [
         'components/finna-md-editable.js',
         'components/finna-tabs-nav.js',
         'components/finna-truncate.js',
-    ],
-    'less' => [
-        'active' => false,
     ],
     'favicon' => 'favicon.ico',
     'icons' => [
