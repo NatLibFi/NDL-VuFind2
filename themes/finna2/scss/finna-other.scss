@@ -453,11 +453,34 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
         justify-content: center;
     }
 }
-.hierarchy-tree__item-container .icon {
-    display: none;
+.hierarchy-tree__item-container {
+    padding: 2px;
+    .icon {
+        display: none;
+    }
 }
-.hierarchy-tree-container div.alert {
-    margin-top: 10px;
+.hierarchy-tree-container {
+    .hierarchy-tree {
+        .hierarchy-tree__children, li:not(.hierarchy-tree__collection)  {
+            @media(min-width: $screen-md-min) {
+                padding-left: 1rem;
+            }
+        }
+        li:not(.hierarchy-tree__collection) {
+            border-left: 1px solid $gray-mid-light;
+        }
+        button {
+            font-size: 18px;
+            color: $brand-primary;
+            &:hover {
+                background-color: $gray-lighter;
+                border-radius: 4px;
+            }
+        }
+    }
+    div.alert {
+        margin-top: 10px;
+    }
 }
 .hierarchy-tree .hierarchy-tree__search-match > .hierarchy-tree__item-container > a {
     color: $link-color;
