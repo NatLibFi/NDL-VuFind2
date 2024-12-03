@@ -270,9 +270,6 @@ return [
         'components/finna-tabs-nav.js',
         'components/finna-truncate.js',
     ],
-    'less' => [
-        'active' => false,
-    ],
     'favicon' => 'favicon.ico',
     'icons' => [
         'sets' => [
