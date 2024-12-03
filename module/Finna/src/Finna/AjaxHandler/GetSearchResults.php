@@ -57,7 +57,7 @@ class GetSearchResults extends \VuFind\AjaxHandler\GetSearchResults
     protected function renderPagination(
         Params $params,
         Results $results,
-        string $template = 'search/pagination.phtml',
+        string $template = 'Helpers/pagination.phtml',
         string $ulClass = '',
         string $navClass = ''
     ): ?string {
@@ -73,7 +73,7 @@ class GetSearchResults extends \VuFind\AjaxHandler\GetSearchResults
             $results->getPaginator()->setPageRange(5),
             'Sliding',
             $template,
-            ['results' => $results, 'options' => $paginationOptions]
+            ['params' => ['results' => $results], 'options' => $paginationOptions]
         );
     }
 }

@@ -1,8 +1,9 @@
 .reservation-list-body {
+  padding: 0;
+
   @media (max-width: $screen-sm-max) {
     width: 100%;
   }
-  padding: 0;
   .list-info {
     background: #f4f4f4;
     display: inline-block;

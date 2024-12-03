@@ -173,6 +173,16 @@ class SolrEad3 extends SolrEad
     ];
 
     /**
+     * Supported video formats
+     *
+     * @var array
+     */
+    protected $supportedVideoFormats = [
+        'video/mp4',
+        'video/quicktime',
+    ];
+
+    /**
      * Get the institutions holding the record.
      *
      * @return array
@@ -230,9 +240,12 @@ class SolrEad3 extends SolrEad
                 return;
             }
             $linkType = 'external-link';
-            if (str_starts_with($role, 'audio') || str_starts_with($role, 'video')) {
+            $embed = false;
+            if ($isVideo = str_starts_with($role, 'video') || str_starts_with($role, 'audio')) {
                 if ((string)$attr->actuate === 'onrequest' && (string)$attr->show === 'none') {
                     $linkType = 'download';
+                } elseif ($isVideo && in_array($role, $this->supportedVideoFormats)) {
+                    $embed = 'video';
                 }
             }
             if ($role === 'image/tiff') {
@@ -249,6 +262,7 @@ class SolrEad3 extends SolrEad
                     'url' => $url,
                     'desc' => (string)$desc,
                     'linkType' => $linkType,
+                    'embed' => $embed,
                 ];
                 if ($preferredLang) {
                     $urls['localeurls'][] = $urlData;
