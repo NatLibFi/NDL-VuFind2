@@ -62,7 +62,7 @@
                   <div class="toolbar">
                     <?php if ($purgeSelectedAllowed): ?>
                       <div class="checkbox-col">
-                        <div class="checkboxFilter mylist-select-all">
+                        <div class="checkbox-container mylist-select-all">
                           <div class="checkbox">
                             <label>
                               <input type="checkbox" name="selectAll" class="checkbox-select-all" aria-label="<?=$this->transEsc($this->ilsPaging ? 'select_all_on_page' : 'Select All')?>">
@@ -129,7 +129,7 @@
                   <?php $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
                   <tr class="myresearch-row result">
                     <td class="checkbox-col" headers="label-select-column" aria-labelledby="label-select-column">
-                      <div class="checkboxFilter">
+                      <div class="checkbox-container">
                         <div class="checkbox">
                         <?php if (isset($ilsDetails['row_id'])): ?>
                           <?php $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $ilsDetails['row_id']); ?>

@@ -22,7 +22,7 @@
           <?php if (count($val['items']) > 1): ?>
             <li class="dropdown" id="<?= $val['label'] ?>">
               <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><?= $this->icon($val['label']) ?><?= $this->transEsc($val['label']) ?> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
-              <ul role="menu" class="dropdown-menu">
+              <ul class="dropdown-menu">
                 <?php foreach ($val['items'] as $itemKey => $itemVal): ?>
                 <?php
                   if (!($itemUrl = $this->navibar()->getMenuItemUrl($itemVal))) {
@@ -71,7 +71,7 @@
         <?php if (isset($this->layout()->themeOptions) && count($this->layout()->themeOptions) > 1): ?>
           <li class="theme dropdown">
             <a role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"><?=$this->transEsc('Theme')?> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
-            <ul role="menu" class="dropdown-menu">
+            <ul class="dropdown-menu">
               <?php foreach ($this->layout()->themeOptions as $current): ?>
                 <li <?=$current['selected'] ? ' class="active"' : '' ?>>
                   <a role="button" href="<?=$this->escapeHtmlAttr($this->url()->addQueryParameters(['ui' => $current['name']])) ?>" rel="nofollow">
@@ -97,7 +97,7 @@
         <span class="hidden-xs"><?=$this->displayLanguageOption($selectedLang)?></span>
         <?=$this->icon('collapse-open', 'collapse-open-icon') ?>
       </a>
-      <ul class="dropdown-menu dropdown-menu-right" role="menu">
+      <ul class="dropdown-menu dropdown-menu-right">
           <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
             <?php if ($this->layout()->userLang == $langCode): ?>
               <li>
@@ -120,7 +120,7 @@
       <?php if ($user): ?>
         <li class="logoutOptions">
           <a href="#" class="btn" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="account-icon"></span><?=$this->icon('my-account', 'my-account-icon') ?> <span class="username login-text"><?=$this->transEsc('Your Account')?></span> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
-          <ul role="menu" id="my-info-dropdown-menu" class="dropdown-menu dropdown-menu-right">
+          <ul id="my-info-dropdown-menu" class="dropdown-menu dropdown-menu-right">
             <?php if ($this->libraryCards()->getCardsForUser($user)): ?>
               <li>
                 <a <?=$this->url('myresearch-checkedout') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="menuitem" href="<?=$this->url('myresearch-checkedout')?>">

@@ -861,14 +861,6 @@ pw               = "xxxxxx"
 ;apiId        = myAccessId
 ;apiKey       = mySecretKey
 
-; WorldCat is Optional.  Worldcat offers extra features such as "Other Editions"
-; and the WorldCat searching.
-;[WorldCat]
-;id              = myAccount
-;apiKey          = YBaFHvqtTHbx7zzgtgAQDr4Rij9OSXBMmfsO1VRXxarmH1JU6neu2w3Lu6Y8OAjN2z5Pkz0M7GQwkwAF
-;OCLCCode        = MYCODE
-;LimitCodes      = Comma separated list of OCLC Codes
-
 ; These settings affect OpenURL generation and presentation; OpenURLs are used to
 ; help users find resources through your link resolver and to manage citations in
 ; Zotero.
@@ -1252,9 +1244,7 @@ hide_holdings[] = "World Wide Web"
 ;    RecordDriverRelated - Related records based on RecordDriver metadata
 ;    Similar - Similarity based on Solr lookup
 ;    SimilarDeferred - Like Similar but asynchronous
-;    WorldCatEditions - Alternate editions (in the WorldCat index) based on WorldCat
-;        lookup
-;    WorldCatSimilar - Similarity based on WorldCat lookup
+;    WorldCat2Similar - Similarity based on WorldCat v2 lookup
 ;    WorkExpressions - Other expressions or versions of the record
 related[] = "SimilarDeferred"
 
@@ -1701,7 +1691,7 @@ count = 2
 [SearchHistoryLabels]
 ;Solr = Catalog
 ;Summon = Summon
-;WorldCat = WorldCat
+;WorldCat2 = WorldCat
 ;SolrWeb = "Library Website"
 
 ; Use Matomo for visitor tracking

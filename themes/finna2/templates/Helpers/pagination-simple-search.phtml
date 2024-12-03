@@ -1,0 +1,32 @@
+<!-- START of: finna - Helpers/pagination-simple-search.phtml -->
+<?php if ($this->pageCount): ?>
+  <?php
+    $results = $this->params['results'];
+    $ulAttrs = $this->htmlAttributes(['class' => 'pagination-simple']);
+    if ($results->getOptions()->loadResultsWithJsEnabled()) {
+      $ulAttrs->add('class', 'js-pagination-simple');
+    }
+  ?>
+  <ul role="presentation" <?=$ulAttrs?>>
+    <?php if (isset($this->previous)): ?>
+      <li><a href="<?=$results->getUrlQuery()->setPage($this->previous)?>"><span class="sr-only"><?=$this->transEsc('page_prev')?></span><?=$this->icon('page-prev') ?></a></li>
+    <?php endif; ?>
+    <?php // Note: search-stats class is the scroll target for loading results with JS: ?>
+    <li class="pagination-text search-stats js-search-stats" data-key="showing_results_of_html">
+      <?=
+        $this->label ?: $this->translate(
+            'showing_results_of_html',
+            [
+                '%%start%%' => $results->getStartRecord(),
+                '%%end%%' => $results->getEndRecord(),
+                '%%total%%' => $this->localizedNumber($results->getResultTotal()),
+            ]
+        )
+      ?>
+    </li>
+    <?php if (isset($this->next)): ?>
+      <li><a href="<?=$results->getUrlQuery()->setPage($this->next)?>"><span class="sr-only"><?=$this->transEsc('page_next')?></span><?=$this->icon('page-next') ?></a></li>
+    <?php endif; ?>
+  </ul>
+<?php endif; ?>
+<!-- END of: finna - Helpers/pagination-simple-search.phtml -->

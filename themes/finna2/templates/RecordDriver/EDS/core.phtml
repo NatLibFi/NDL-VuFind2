@@ -28,6 +28,7 @@
     <h1 class="record-title"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
 
     <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
+    <?=$this->record($this->driver)->getLabelList() ?>
 
     <?php
       $openUrl = $this->openUrl($this->driver, 'record');

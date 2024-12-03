@@ -395,7 +395,7 @@ class Quria extends AxiellWebServices
 
                     // Special status: On reference desk
                     if (
-                        $status == 'nonAvailableForLoan'
+                        $status == 'referenceOnly'
                         && isset($department->nofReference)
                         && $department->nofReference != 0
                     ) {

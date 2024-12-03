@@ -33,6 +33,7 @@
     <h1 class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
 
     <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
+    <?=$this->record($this->driver)->getLabelList() ?>
 
     <?php if (!empty($formats)): ?>
       <span class="recordFormat"><?=$this->record($this->driver)->getFormatList()?></span>
