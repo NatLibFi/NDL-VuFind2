@@ -508,9 +508,12 @@ h2 {
 }
 
 .record-list:not(.search-results-l1) {
-  .material-rights,
-  .targeted-information {
-    display: none;
+  .record-type-lrmi,
+  .record-type-aipa {
+    .material-rights,
+    .targeted-information {
+      display: none;
+    }
   }
 }
 
