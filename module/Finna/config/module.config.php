@@ -1160,6 +1160,7 @@ $config['router']['routes']['solrauthrecord-feedback'] = [
         ],
     ],
 ];
+// @deprecated, use librarycards-displaybarcode
 $config['router']['routes']['barcode-show'] = [
     'type'    => 'Laminas\Router\Http\Segment',
     'options' => [

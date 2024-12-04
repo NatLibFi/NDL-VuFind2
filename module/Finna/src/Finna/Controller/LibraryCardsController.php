@@ -66,6 +66,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         protected SessionContainer $session,
     ) {
         parent::__construct($sm);
+        $this->session->LibraryCards ??= [];
     }
 
     /**
@@ -920,13 +921,13 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             }
             $userCardService = $this->getDbService(UserCardServiceInterface::class);
             $card = $userCardService->getOrCreateLibraryCard($user, $id);
-            if (isset($this->session->LibraryCards[$id])) {
-                $barcode = $this->session->LibraryCards[$id];
-                return $this->createViewModel(['code' => $barcode]);
-            }
             $username = $card->getCatUsername();
             if (str_contains($username, '.')) {
                 [, $username] = explode('.', $username, 2);
+            }
+            if (isset($this->session->LibraryCards[$username . '|' . $id])) {
+                $barcode = $this->session->LibraryCards[$username . '|' . $id];
+                return $this->createViewModel(['code' => $barcode]);
             }
             $catalog = $this->getILS();
             $auth = $this->getILSAuthenticator();
@@ -949,7 +950,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 }
             }
             $barcode ??= $username;
-            $this->session->LibraryCards[$id] = $barcode;
+            $this->session->LibraryCards[$username . '|' . $id] = $barcode;
             return $this->createViewModel(['code' => $barcode]);
         } catch (\Exception) {
             $this->flashMessenger()->addErrorMessage('An error has occurred');
