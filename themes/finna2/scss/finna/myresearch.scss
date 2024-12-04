@@ -757,47 +757,14 @@ form#renewals, form#update_holds, form#purge_history {
   display: block;
   z-index: 2;
   margin-top: 15px;
-
   .status {
     padding-left: 5px;
-  }
-  .dropdown-menu {
-    border-left: none;
-    border-right: none;
-    @include box-shadow(none);
-    padding: 0;
-    > li {
-      border: none;
-    }
-    .active a {
-      font-weight: 600;
-      text-decoration: none;
-      color: $dropdown-link-color;;
-      background-color: $gray-ultralight;
-    }
   }
   @media (min-width: $screen-md) {
     &.move-list {
       position: -webkit-sticky;
       position: sticky;
       top: 30px;
-    }
-  }
-  .subtabs.mylist-nav {
-    border-top-width: 0px;
-    li.hidden-xs.hidden-sm, li.mylist-menu-favorites {
-      max-width: none;
-      h4 {
-        text-transform: none;
-        @media (max-width: $screen-sm-max) {
-          text-align: center;
-        }
-      }
-    }
-    li:first-child {
-      a {
-        padding-top: 9px;
-      }
     }
   }
 
