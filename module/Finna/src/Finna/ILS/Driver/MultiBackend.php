@@ -88,6 +88,7 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend implements Translator
     public function getLoginDrivers()
     {
         $drivers = parent::getLoginDrivers();
+        $drivers = array_intersect($drivers, array_keys($this->drivers));
         if ($this->config['General']['sort_login_drivers'] ?? true) {
             usort(
                 $drivers,

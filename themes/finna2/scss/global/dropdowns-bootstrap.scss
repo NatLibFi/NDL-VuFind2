@@ -25,10 +25,6 @@
   }
   > li:last-child > a, li:last-child {
     border-bottom: none;
-    @include border-bottom-radius(8px);
-  }
-  > li:first-child > a, li:first-child {
-    @include border-top-radius(8px);
   }
 
   > li > a {

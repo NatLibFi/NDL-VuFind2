@@ -13,7 +13,7 @@
 ?>
 <!-- start list-entry -->
 <div class="result record-container myresearch-row <?=$this->record($this->driver)->getContainerJsClasses()?>">
-  <div class="checkboxFilter">
+  <div class="checkbox-container">
     <div class="checkbox">
       <?php // Request a checkbox with a label (can't add the label here as checkbox template contains more than one field): ?>
       <?=$this->record($this->driver)->getCheckbox('', false, true) ?>
