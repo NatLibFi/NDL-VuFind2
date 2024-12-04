@@ -74,6 +74,7 @@
       <?php endif; ?>
 
       <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
+      <?=$this->record($this->driver)->getLabelList() ?>
 
       <div class="record-core-metadata">
         <?php if ($results = $this->driver->getNonPresenterAuthors()): ?>

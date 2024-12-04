@@ -212,6 +212,9 @@ table.content-table {
   line-height: 1.4em;
 }
 
+.content-table caption {
+  font-color: $gray-dark;
+}
 .content-table th, .content-table td {
   padding: 0.4em 1.5em 0.4em 0;
   font-weight: normal;
@@ -460,6 +463,10 @@ ol {
     background: $modal-header-background;
     font-size: $content-headings-font-size-h4;
     padding: 8px 1em;
+
+    h2 {
+      margin: 0.5rem 0;
+    }
   }
   .pm__body, .pm__footer {
     padding-left: 1em;
@@ -503,5 +510,34 @@ ol {
   }
   .select-card-wrapper {
     display: block;
+  }
+}
+
+// Styled checkboxes
+.checkbox-container {
+  input[type=checkbox] {
+    height: 16px;
+    width: 16px;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid $gray-light;
+    border-radius: 4px;
+    margin: 0px;
+    top: 3px;
+    position: relative;
+
+    &:checked{
+      background-color: black;
+      &:after{
+        font-family: 'Fontawesome';
+        content: "\f00c";
+        color: white;
+        position: absolute;
+        font-size: 14px;
+        line-height: 14px;
+        font-weight: normal;
+      }
+    }
   }
 }

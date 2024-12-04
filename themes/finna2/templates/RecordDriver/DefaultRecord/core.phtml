@@ -116,6 +116,7 @@
     <?php endif; ?>
 
     <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
+    <?=$this->record($this->driver)->getLabelList() ?>
 
     <?php
       $formats = $this->driver->getFormats();
