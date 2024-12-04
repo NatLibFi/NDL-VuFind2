@@ -925,8 +925,9 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             if (str_contains($username, '.')) {
                 [, $username] = explode('.', $username, 2);
             }
-            if (isset($this->session->LibraryCards[$username . '|' . $id])) {
-                $barcode = $this->session->LibraryCards[$username . '|' . $id];
+            $cacheKey = $username . '|' . $id;
+            if (isset($this->session->LibraryCards[$cacheKey])) {
+                $barcode = $this->session->LibraryCards[$cacheKey];
                 return $this->createViewModel(['code' => $barcode]);
             }
             $catalog = $this->getILS();
@@ -950,7 +951,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 }
             }
             $barcode ??= $username;
-            $this->session->LibraryCards[$username . '|' . $id] = $barcode;
+            $this->session->LibraryCards[$cacheKey] = $barcode;
             return $this->createViewModel(['code' => $barcode]);
         } catch (\Exception) {
             $this->flashMessenger()->addErrorMessage('An error has occurred');
