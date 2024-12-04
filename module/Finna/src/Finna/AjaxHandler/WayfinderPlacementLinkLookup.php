@@ -89,7 +89,7 @@ class WayfinderPlacementLinkLookup extends AbstractBase
                 )
             );
             if (!empty($markerUrl)) {
-                $result[$location] = $markerUrl;
+                $result[$location] = compact('markerUrl');
             }
         }
 

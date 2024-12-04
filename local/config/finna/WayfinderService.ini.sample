@@ -3,3 +3,6 @@
 [General]
 enabled = false
 url = "https://wayfinder-rewriter.stg.easyscreen.io/wayfinder-link"
+; Data sources that are enabled:
+sources[] = "vanamo"
+;sources[] = "another"

@@ -1,6 +1,13 @@
 <?php
   $this->treeContext = 'Collection';
   $this->treePreviewElement = '#tree-preview';
+
+  $previewAttrs = [
+    'id' => 'tree-preview',
+  ];
+  if ($this->tab->hidePreviewInNarrowDisplays()) {
+    $previewAttrs['class'] = 'hidden-xs';
+  }
 ?>
 
 <?php if ($this->inLightbox): ?>
@@ -12,7 +19,7 @@
   <div class="tree-panel">
     <?=$this->render('RecordTab/hierarchytree.phtml')?>
   </div>
-  <div id="tree-preview">
+  <div <?=$this->htmlAttributes($previewAttrs)?>>
     <?php if (($collectionRecord = $this->tab->getActiveRecord()) !== false): ?>
       <?php if ($collectionRecord === null): ?>
         <?=$this->render('collection/collection-record-error.phtml')?>

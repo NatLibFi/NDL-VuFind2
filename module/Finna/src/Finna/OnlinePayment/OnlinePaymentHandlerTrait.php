@@ -65,7 +65,7 @@ trait OnlinePaymentHandlerTrait
         if ($t->isRegistrationInProgress()) {
             $this->logPaymentInfo(
                 '    Transaction ' . $t->getTransactionIdentifier() . ' already being registered since '
-                . $t->getRegistrationStartDate()->format('Y-m-d H:i:s')
+                . ($t->getRegistrationStartDate()?->format('Y-m-d H:i:s') ?? '[date missing]')
             );
             $this->addTransactionEvent($t, 'Transaction already being registered');
             return false;

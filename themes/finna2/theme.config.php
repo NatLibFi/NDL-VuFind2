@@ -196,7 +196,6 @@ return [
         'checkouts.js',
         'collection_record.js',
         'combined-search.js',
-        'covers.js',
         'doi.js',
         'embedded_record.js',
         'facets.js',
@@ -271,9 +270,6 @@ return [
         'components/finna-tabs-nav.js',
         'components/finna-truncate.js',
     ],
-    'less' => [
-        'active' => false,
-    ],
     'favicon' => 'favicon.ico',
     'icons' => [
         'sets' => [
@@ -336,7 +332,7 @@ return [
             'favorite' => 'FinnaIcons:pin',
             'feed-calendar' => 'FontAwesome:calendar-o',
             'feed-xcal-date' => 'FontAwesome:calendar',
-            'feed-xcal-location' => 'FontAwesome:map-marker',
+            'feed-xcal-location' => 'Alias:map-marker',
             'feed-xcal-time' => 'FontAwesome:clock-o',
             'feed-pause' => 'FontAwesome:pause-circle',
             'feed-play' => 'FontAwesome:play-circle',
@@ -379,7 +375,7 @@ return [
             'linked-event-date' => 'FontAwesome:calendar',
             'linked-event-email' => 'FontAwesome:envelope',
             'linked-event-home' => 'FontAwesome:home',
-            'linked-event-location' => 'FontAwesome:map-marker',
+            'linked-event-location' => 'Alias:map-marker',
             'linked-event-phone' => 'FontAwesome:phone-square',
             'linked-event-time' => 'FontAwesome:clock-o',
             'list-add' => 'FinnaIcons:plus-small',
@@ -390,6 +386,7 @@ return [
             'list-save' => 'FontAwesome:files-o',
             'list-tag-edit' => 'FontAwesome:tag',
             'list-tag-delete' => 'FontAwesome:times',
+            'location-service' => 'Alias:map-marker',
             'login' => 'Alias:user',
             'map' => 'FontAwesome:map-o',
             'map-collapse' => 'FontAwesome:compress',

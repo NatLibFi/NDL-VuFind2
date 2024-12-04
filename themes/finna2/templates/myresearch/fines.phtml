@@ -50,7 +50,7 @@
         if ($record['payableOnline']) {
           ob_start();
           ?>
-            <div class="checkboxFilter">
+            <div class="checkbox-container">
                 <label>
                   <span class="sr-only">
                     <?=$this->transEsc('Select')?>
@@ -215,7 +215,7 @@
           <div class="myresearch-table online-payment" aria-label="<?=$this->transEscAttr('Actions');?>">
             <div class="toolbar">
               <div class="checkbox-col">
-                <div class="checkboxFilter mylist-select-all">
+                <div class="checkbox-container mylist-select-all">
                   <div class="checkbox">
                     <label>
                       <input type="checkbox" name="selectAll" class="checkbox-select-all">

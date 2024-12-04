@@ -160,6 +160,10 @@ top_rows = 2
 orFacets = *
 ; Do we want any facets to be collapsed by default?
 collapsedFacets = sector_str_mv,building,author_facet,language,original_lng_str_mv,subtitle_lng_str_mv,main_date_str,search_daterange_mv,genre_facet,era_facet,geographic_facet,topic_facet,hierarchy_parent_title,first_indexed,category_str_mv,usage_rights_str_mv,major_genre_str_mv
+; Should we display result counts for checkbox facets (default is false)?
+; Note that this does not currently support [CustomFilters], and with Blender
+; all active backends need to support counts for correct results.
+checkboxFacetCounts = true
 
 ; This can be used to sort specific facet fields alphabetically by index value
 ; (which normally results in alphabetical order).

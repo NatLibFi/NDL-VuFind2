@@ -256,7 +256,7 @@ finna.record = (function finnaRecord() {
     checkRequestsAreValid($('.expandedCheckStorageRetrievalRequest').removeClass('expandedCheckStorageRetrievalRequest'), 'StorageRetrievalRequest');
     checkRequestsAreValid($('.expandedCheckILLRequest').removeClass('expandedCheckILLRequest'), 'ILLRequest');
     fetchHoldingsDetails($('.expandedGetDetails').removeClass('expandedGetDetails'));
-    fetchWayfinderMarkers(document.querySelectorAll('.copy-details:not(.collapsed) .js-wayfinder-placeholder'));
+    fetchWayfinderMarkers(document.querySelectorAll('.holdings-container-heading > .location-link .js-wayfinder-placeholder, .copy-details:not(.collapsed) .js-wayfinder-placeholder'));
   }
 
   /**
@@ -265,19 +265,23 @@ finna.record = (function finnaRecord() {
   function initHoldingsControls() {
     $('.record-holdings-table:not(.electronic-holdings) .holdings-container-heading').on('keydown', function onClickHeading(e) {
       if (e.keyCode === 13 || e.keyCode === 32) {
+        if ($(e.target).hasClass('location-service') || $(e.target).parents().hasClass('location-service')
+          || $(e.target).parents().hasClass('location-service-qrcode')
+        ) {
+          return;
+        }
         e.preventDefault();
         $('.record-holdings-table:not(.electronic-holdings) .holdings-container-heading').trigger("click");
       }
     });
     $('.record-holdings-table:not(.electronic-holdings) .holdings-container-heading').on('click', function onClickHeading(e) {
       $(this).attr('aria-expanded', function changeAria(i, attr) { return attr === 'false' ? 'true' : 'false'; });
-      $(this).toggleClass('open');
       if ($(e.target).hasClass('location-service') || $(e.target).parents().hasClass('location-service')
         || $(e.target).parents().hasClass('location-service-qrcode')
       ) {
-        e.preventDefault();
         return;
       }
+      $(this).toggleClass('open');
       $(this).nextUntil('.holdings-container-heading').toggleClass('collapsed');
       if ($(this).hasClass('open')) {
         var rows = $(this).nextUntil('.holdings-container-heading');

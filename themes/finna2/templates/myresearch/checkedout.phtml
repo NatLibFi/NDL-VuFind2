@@ -64,7 +64,7 @@
               <div class="myresearch-table">
                 <div class="toolbar">
                   <div class="checkbox-col">
-                    <div class="checkboxFilter mylist-select-all">
+                    <div class="checkbox-container mylist-select-all">
                       <div class="checkbox">
                         <label>
                           <input type="checkbox" name="selectAll" class="checkbox-select-all" aria-label="<?=$this->transEsc($this->ilsPaging ? 'select_all_on_page' : 'Select All');?>">
@@ -148,7 +148,7 @@
                   <?php if ($this->renewForm): ?>
                     <?php if (isset($ilsDetails['renewable']) && $ilsDetails['renewable'] && isset($ilsDetails['renew_details'])): ?>
                     <?php $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $ilsDetails['renew_details']); ?>
-                    <div class="checkboxFilter">
+                    <div class="checkbox-container">
                       <div class="checkbox">
                         <label>
                           <span class="sr-only"><?=$this->transEsc('Select');?></span>
