@@ -46,6 +46,20 @@ use VuFind\Form\Form;
 class FeedbackForm extends AbstractBase
 {
     /**
+     * Recipients for email handler defined in ReservationList.yaml
+     *
+     * @var array
+     */
+    protected array $recipients;
+
+    /**
+     * Configured handler to handle form post, defaults to email handler
+     *
+     * @var string
+     */
+    protected string $configuredHandler = 'email';
+
+    /**
      * Places an order
      *
      * @param array|Params        $postValues Key value pairs of post parameters to send or params plugin

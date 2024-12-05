@@ -51,20 +51,6 @@ class AbstractBase implements ConnectionInterface, \Laminas\Log\LoggerAwareInter
     use GetServiceTrait;
 
     /**
-     * Recipients for email handler defined in ReservationList.yaml
-     *
-     * @var array
-     */
-    protected array $recipients;
-
-    /**
-     * Configured handler to handle form post, defaults to email handler
-     *
-     * @var string
-     */
-    protected string $configuredHandler = 'email';
-
-    /**
      * Constructor
      *
      * @param ContainerInterface $serviceLocator Service locator used with GetServiceTrait
