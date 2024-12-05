@@ -31,6 +31,9 @@
 
 namespace Finna\View\Helper\Root;
 
+use Finna\Search\UrlQueryHelper;
+use VuFind\Search\Memory;
+
 /**
  * RecordLinker view helper
  *
@@ -52,6 +55,13 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
     protected $datasourceConfig;
 
     /**
+     * Search memory
+     *
+     * @var Memory
+     */
+    protected $searchMemory = null;
+
+    /**
      * Constructor
      *
      * @param \VuFind\Record\Router $router   Record router
@@ -61,6 +71,18 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
     {
         parent::__construct($router);
         $this->datasourceConfig = $dsConfig;
+    }
+
+    /**
+     * Inject the search memory
+     *
+     * @param Memory $memory Search memory
+     *
+     * @return void
+     */
+    public function setSearchMemory(Memory $memory): void
+    {
+        $this->searchMemory = $memory;
     }
 
     /**
@@ -137,12 +159,32 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
         }
 
         $driver = $this->getView()->plugin('record')->getDriver();
-        $result .= $this->getView()->plugin('searchTabs')
-            ->getCurrentHiddenFilterParams(
-                $driver->getSourceIdentifier(),
-                false,
-                '&'
-            );
+
+        $prepend = (!str_contains($result, '?')) ? '?' : '&amp;';
+        $hiddenFilters = null;
+        // Try to get hidden filters for the current search:
+        if ($this->searchMemory) {
+            $searchId = $driver->getExtraDetail('searchId')
+                ?? $this->getView()->plugin('searchMemory')->getLastSearchId();
+            if ($searchId && ($search = $this->searchMemory->getSearchById($searchId))) {
+                $filters = UrlQueryHelper::buildQueryString(
+                    [
+                        'hiddenFilters' => $search->getParams()->getHiddenFiltersAsQueryParams(),
+                    ]
+                );
+                $hiddenFilters = $filters ? $prepend . $filters : '';
+            }
+        }
+        // If we couldn't get hidden filters for the current search, use last filters:
+        if (null === $hiddenFilters) {
+            $hiddenFilters = $this->getView()->plugin('searchTabs')
+                ->getCurrentHiddenFilterParams(
+                    $driver->getSearchBackendIdentifier(),
+                    false,
+                    $prepend
+                );
+        }
+        $result .= $hiddenFilters;
 
         if ($filters = ($link['filter'] ?? [])) {
             $result .= '&' . implode(

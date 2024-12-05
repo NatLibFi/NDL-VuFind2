@@ -2,10 +2,9 @@
 <?php
   $hasLinkText = isset($this->linkText);
   $linkTextEsc = $this->transEsc($this->linkText ? $this->linkText : 'To the record');
-  $feedTitleEsc = !empty($this->translateTitle) ? $this->transEsc($this->translateTitle) : $this->escapeHtml($this->title ?? '');
-  if ($feedTitleEsc):
+  if (!$this->translateTitle): // Translated title is displayed in the container, so ignore it here
 ?>
-  <h2 class="carousel-header"><?=$feedTitleEsc?></h2>
+  <h2 class="carousel-header <?php if ($this->type === 'slider'):?> sr-only<?php endif;?>"><?=$this->escapeHtml($this->title)?></h2>
 <?php endif; ?>
 <?php if (isset($this->description)): ?>
   <p class="additional-description"><?=$this->translate($this->description) // HTML, intentionally left unescaped ?></p>
@@ -19,7 +18,7 @@
       <?=$this->icon('chevron-right')?>
     </button>
   </div>
-  <div class="splide__track carousel">
+  <div class="splide__track carousel-inner">
     <ul class="splide__list carousel-feed">
       <?php $items = isset($this->visualItems) ? array_slice($this->items, 0, $this->visualItems) : $this->items; ?>
       <?php foreach ($items as $item): ?>
@@ -49,7 +48,7 @@
               }
             ?>
             <a class="feed-link" <?=$this->htmlElement()->getAttributes($linkElement)?>>
-              <?=$this->partial("ajax/feed-$this->type-item.phtml", compact('item', 'linkTextEsc', 'hasLinkText', 'feedTitleEsc'))?>
+              <?=$this->context($this)->renderInContext("ajax/feed-$this->type-item.phtml", compact('item', 'linkTextEsc', 'hasLinkText'))?>
             </a>
           <?php else: ?>
             <?=$this->partial("ajax/feed-$this->type-item.phtml", compact('item', 'linkTextEsc', 'hasLinkText'))?>

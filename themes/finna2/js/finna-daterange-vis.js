@@ -14,6 +14,12 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
   var facetField = null;
   var openTimelineCallback = null;
 
+  /**
+   * Pad number with leading zeros
+   * @param {number} _number Number to add zeros for
+   * @param {number} _length Minimum length to pad to
+   * @returns {string} Number with padded zeros
+   */
   function padZeros(_number, _length) {
     var number = _number;
     var length = typeof length === 'undefined' ? 4 : _length;
@@ -30,7 +36,11 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     return (negative ? '-' : '') + str;
   }
 
-  // Move dates: params either + or -
+  /**
+   * Move dates
+   * @param {string} start + to move
+   * @param {string} end   - to move
+   */
   function moveVis(start, end) {
     var ops = {
       '+': function movePlus(a) { return a + visMove; },
@@ -40,6 +50,12 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     visDateEnd = ops[end](visDateEnd);
   }
 
+  /**
+   * Get graphic options
+   * @param {number} start Start in x axis
+   * @param {number} end   End in x axis
+   * @returns {object} Settings for visual date range picker
+   */
   function getGraphOptions(start, end) {
     var options = {
       series: {
@@ -76,6 +92,10 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     return options;
   }
 
+  /**
+   * Create a graphical plot
+   * @param {number} delay Delays the draw by n milliseconds
+   */
   function plotData(delay) {
     if (!visData) {
       return;
@@ -148,6 +168,11 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     plotted = true;
   }
 
+  /**
+   * Draw a timeline
+   * @param {string} backend Backend identifier
+   * @param {string} action  Action for moving the visualized timeline
+   */
   function timelineAction(backend, action) {
     if (loading) {
       return;
@@ -188,6 +213,9 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     }
   }
 
+  /**
+   * Show a visualized timeline
+   */
   function showVis() {
     // Display timeline when facet animation is complete
     if (openTimelineCallback) {
@@ -199,6 +227,12 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     }
   }
 
+  /**
+   * Load a visualized timeline
+   * @param {string} backend Backend identifier
+   * @param {string} action  Action for moving the visualized timeline
+   * @param {string} params  Params as query string
+   */
   function loadVis(backend, action, params) {
     // Load and display timeline (called at initial open and after timeline navigation)
 
@@ -295,6 +329,10 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
       });
   }
 
+  /**
+   * Update field limits
+   * @param {object} evt Event object
+   */
   function updateFieldLimits(evt) {
     var params = evt.data;
     params.from.attr('max', params.to.val());
@@ -310,6 +348,12 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     }
   }
 
+  /**
+   * Initialize the form for fetching visualized data for facet field
+   * @param {jQuery} form Form element initialize
+   * @param {string} backend Backend identifier
+   * @param {string} _facetField Name of the facet field used in query
+   */
   function initForm(form, backend, _facetField) {
     facetField = _facetField;
     form.find('a.submit').on('click',
@@ -408,6 +452,11 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     });
   }
 
+  /**
+   * Initialize timeline navigation
+   * @param {string} backend Backend identifier
+   * @param {jQuery} _holder Container for the timeline
+   */
   function initTimelineNavigation(backend, _holder) {
     _holder.find('.navigation div:not(.expand-modal)').on(
       'click',
@@ -426,6 +475,17 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     );
   }
 
+  /**
+   * Initialize visualized timeline
+   * @param {string} backend Backend identifier
+   * @param {string} facet Facet field identifier
+   * @param {string} params Parameters as query string
+   * @param {string} baseParams Base parameters as query string
+   * @param {jQuery} h Container
+   * @param {number} start Start date
+   * @param {number} end End date
+   * @param {boolean} plotImmediately Should timeline be plotted immediately
+   */
   function initVis(backend, facet, params, baseParams, h, start, end, plotImmediately) {
     facetField = facet;
     holder = h;
@@ -468,6 +528,9 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     }
   }
 
+  /**
+   * Initialize facet bar event for bs collapse
+   */
   function initFacetBar() {
     $('.daterange-facet.facet-group').on('shown.bs.collapse', function onShownCollapse(/*e*/) {
       if (!plotted) {
@@ -476,12 +539,18 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     });
   }
 
+  /**
+   * Add throttled resize event to keep visualized timeline in proper dimensions
+   */
   function initResizeListener() {
     $(window).on('throttled-resize.finna', function onResizeScreen() {
       plotData();
     });
   }
 
+  /**
+   * Initialize the daterange vis
+   */
   function init() {
     initResizeListener();
     initFacetBar();

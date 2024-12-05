@@ -46,7 +46,10 @@ function isFocusable(element) {
 function getFocusableElements(root = document) {
   const focusableElements = [];
 
-  // Recursively search for focusable elements
+  /**
+   * Search for focusable elements in subtrees
+   * @param {HTMLElement} node Element to look for focusable nodes
+   */
   function findFocusable(node) {
     if (isFocusable(node)) {
       focusableElements.push(node);
@@ -70,6 +73,11 @@ function trapFocus(element) {
   const focusableElements = getFocusableElements(element);
   const firstFocusableElement = focusableElements[0];
   const lastFocusableElement = focusableElements[focusableElements.length - 1];
+  /**
+   * Keydown event handler
+   * @param {object} event Event data
+   * @returns {void}
+   */
   function handleKeyDown(event) {
     if (event.key === 'Tab') {
       if (!firstFocusableElement) return event.preventDefault();

@@ -1,9 +1,12 @@
-/*global finna */
+/*global finna,VuFind */
 finna.finnaSurvey = (function finnaSurvey() {
   var _cookieName = 'finnaSurvey';
 
+  /**
+   * Initialize finna survey events
+   */
   function init() {
-    var cookie = finna.common.getCookie(_cookieName);
+    var cookie = VuFind.cookie.get(_cookieName);
     if (typeof cookie !== 'undefined' && cookie === '1') {
       return;
     }
@@ -11,7 +14,7 @@ finna.finnaSurvey = (function finnaSurvey() {
     var holder = $('#finna-survey');
     holder.find('a').on('click', function onClickHolder(/*e*/) {
       holder.fadeOut(100);
-      finna.common.setCookie(_cookieName, '1');
+      VuFind.cookie.set(_cookieName, '1');
 
       if ($(this).hasClass('close-survey')) {
         return false;

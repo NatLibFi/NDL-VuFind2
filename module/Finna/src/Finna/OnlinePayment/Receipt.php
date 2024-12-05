@@ -32,12 +32,10 @@ namespace Finna\OnlinePayment;
 use Finna\Db\Entity\FinnaFeeEntityInterface;
 use Finna\Db\Entity\FinnaTransactionEntityInterface;
 use Finna\Db\Service\FinnaTransactionServiceInterface;
-use Laminas\Mail\Address;
-use Laminas\Mime\Message as MimeMessage;
-use Laminas\Mime\Mime;
-use Laminas\Mime\Part as MimePart;
 use Laminas\Router\RouteInterface;
-use Laminas\View\Renderer\RendererInterface;
+use Laminas\View\Renderer\PhpRenderer;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Part\DataPart;
 use TCPDF;
 use VuFind\Date\Converter as DateConverter;
 use VuFind\Db\Entity\UserEntityInterface;
@@ -89,7 +87,7 @@ class Receipt implements TranslatorAwareInterface
      * @param CurrencyFormatter                $currencyFormatter  Currency formatter
      * @param RouteInterface                   $router             Router
      * @param Mailer                           $mailer             Mailer
-     * @param RendererInterface                $renderer           View renderer
+     * @param PhpRenderer                      $renderer           View renderer
      * @param FinnaTransactionServiceInterface $transactionService Transaction database service
      */
     public function __construct(
@@ -99,7 +97,7 @@ class Receipt implements TranslatorAwareInterface
         protected CurrencyFormatter $currencyFormatter,
         protected RouteInterface $router,
         protected Mailer $mailer,
-        protected RendererInterface $renderer,
+        protected PhpRenderer $renderer,
         protected FinnaTransactionServiceInterface $transactionService
     ) {
     }
@@ -264,7 +262,7 @@ class Receipt implements TranslatorAwareInterface
         $data = $this->createReceiptPDF($transaction);
 
         $this->mailer->setMaxRecipients(2);
-        $from = $this->config['Site']['email'];
+        $from = $this->config['Mail']['default_from'] ?? $this->config['Site']['email'];
         $fromOverride = $this->mailer->getFromAddressOverride();
 
         $replyTo = null;
@@ -274,48 +272,30 @@ class Receipt implements TranslatorAwareInterface
             $from = new Address($from);
             $name = $from->getName();
             if (!$name) {
-                [$fromPre] = explode('@', $from->getEmail());
+                [$fromPre] = explode('@', $from->getAddress());
                 $name = $fromPre ? $fromPre : null;
             }
             $from = new Address($fromOverride, $name);
         }
 
-        $message = $this->mailer->getNewMessage()
-            ->addFrom($from)
-            ->addTo($recipients)
-            ->setSubject(
-                $this->translate('Payment::breakdown_title') . ' - ' . $this->getSourceName($transaction)
-            );
-        if ($replyTo) {
-            $message->addReplyTo($replyTo);
-        }
-
-        $pdf = new MimePart($data['pdf']);
-        $pdf->type = 'application/pdf';
-        $pdf->charset = 'utf-8';
-        $pdf->encoding = Mime::ENCODING_BASE64;
-        $pdf->disposition = 'inline; filename="' .
-            addcslashes($data['filename'], '"') . '"';
-
         $source = $this->getSource($transaction);
         $sourceName = $this->getSourceName($transaction);
         $contactInfo = $this->getContactInfo($source);
-
         $messageContent = $this->renderer->partial(
             'Email/receipt.phtml',
             compact('user', 'patronProfile', 'transaction', 'source', 'sourceName', 'contactInfo')
         );
-        $text = new MimePart($messageContent);
-        $text->type = Mime::TYPE_TEXT;
-        $text->charset  = 'utf-8';
-        $text->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
+        $pdf = (new DataPart($data['pdf'], $data['filename'], 'application/pdf'))->asInline();
 
-        $body = new MimeMessage();
-        $body->setParts([$text, $pdf]);
-
-        $message->setBody($body);
-        $contentTypeHeader = $message->getHeaders()->get('Content-Type');
-        $contentTypeHeader->setType('multipart/mixed');
+        $message = $this->mailer->getNewMessage()
+            ->addFrom($from)
+            ->addTo(...$recipients)
+            ->subject($this->translate('Payment::breakdown_title') . ' - ' . $this->getSourceName($transaction))
+            ->text($messageContent)
+            ->addPart($pdf);
+        if ($replyTo) {
+            $message->addReplyTo($replyTo);
+        }
 
         $this->mailer->getTransport()->send($message);
         return true;

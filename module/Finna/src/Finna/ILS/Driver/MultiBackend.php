@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2021.
+ * Copyright (C) The National Library of Finland 2015-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -50,7 +50,6 @@ use function is_array;
 class MultiBackend extends \VuFind\ILS\Driver\MultiBackend implements TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
-    use \VuFind\Cache\CacheTrait;
 
     /**
      * Initialize the driver.
@@ -82,26 +81,6 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend implements Translator
     }
 
     /**
-     * Change Password
-     *
-     * Attempts to change patron password (PIN code)
-     *
-     * @param array $details An array of patron id and old and new password
-     *
-     * @return mixed An array of data on the request including
-     * whether or not it was successful and a system message (if available)
-     */
-    public function changePassword($details)
-    {
-        // Remove old credentials from the cache regardless of whether the change
-        // was successful
-        $cacheKey = 'patron|' . $details['patron']['cat_username'];
-        $this->putCachedData($cacheKey, null);
-
-        return $this->callMethodIfSupported(null, 'changePassword', func_get_args());
-    }
-
-    /**
      * Get available login targets (drivers enabled for login)
      *
      * @return string[] Source ID's
@@ -109,6 +88,7 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend implements Translator
     public function getLoginDrivers()
     {
         $drivers = parent::getLoginDrivers();
+        $drivers = array_intersect($drivers, array_keys($this->drivers));
         if ($this->config['General']['sort_login_drivers'] ?? true) {
             usort(
                 $drivers,
@@ -135,17 +115,10 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend implements Translator
      */
     public function patronLogin($username, $password)
     {
-        $cacheKey = "patron|$username|$password";
-        $item = $this->getCachedData($cacheKey);
-        if ($item !== null) {
-            return $item;
-        }
-
         $patron = $this->callMethodIfSupported(null, 'patronLogin', func_get_args());
         if (is_array($patron)) {
             $patron['source'] = $this->getSource($username);
         }
-        $this->putCachedData($cacheKey, $patron);
         return $patron;
     }
 
@@ -223,18 +196,5 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend implements Translator
             // Fall through
         }
         return parent::getDriverConfig($source);
-    }
-
-    /**
-     * Method to ensure uniform cache keys for cached VuFind objects.
-     *
-     * @param string|null $suffix Optional suffix that will get appended to the
-     * object class name calling getCacheKey()
-     *
-     * @return string
-     */
-    protected function getCacheKey($suffix = null)
-    {
-        return 'MultiBackend-' . md5($suffix);
     }
 }

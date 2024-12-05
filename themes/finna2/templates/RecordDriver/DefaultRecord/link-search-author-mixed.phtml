@@ -1,7 +1,7 @@
 <?php
   $searchBackendId = $this->driver->getSearchBackendIdentifier();
   $options = $this->searchOptions($searchBackendId);
-  $searchRoute = $options->getSearchAction();
+  $searchRoute = $this->searchAction ?: $options->getSearchAction();
   if (!($id = $this->id ?: $this->localId)) {
     $query = ['lookfor' => '"' . $this->lookfor . '"', 'type' => 'Author'];
   } else {

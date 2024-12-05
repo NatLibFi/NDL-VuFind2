@@ -1302,6 +1302,33 @@ trait SolrFinnaTrait
     }
 
     /**
+     * Get the number of child records belonging to this record
+     *
+     * @return int Number of records
+     */
+    public function getChildRecordCount()
+    {
+        // Shortcut: if this record is not part of a hierarchy, let's not find out the count.
+        if (
+            !$this->containerLinking
+            || (empty($this->fields['is_hierarchy_id']) && empty($this->fields['hierarchy_parent_id']))
+            || null === $this->searchService
+        ) {
+            return 0;
+        }
+
+        $safeId = addcslashes($this->fields['id'], '"');
+        $query = new \VuFindSearch\Query\Query(
+            'hierarchy_parent_id:"' . $safeId . '"'
+        );
+        // Disable highlighting for efficiency; not needed here:
+        $params = new \VuFindSearch\ParamBag(['hl' => ['false']]);
+        $command = new SearchCommand($this->sourceIdentifier, $query, 0, 0, $params);
+        return $this->searchService
+            ->invoke($command)->getResult()->getTotal();
+    }
+
+    /**
      * Add versions search filters to params
      *
      * @param \VuFindSearch\ParamBag $paramBag Params

@@ -2,4 +2,7 @@
 
 [General]
 enabled = false
-url = "http://wf-pro.stg.easyscreen.io/"
+url = "https://wayfinder-rewriter.stg.easyscreen.io/wayfinder-link"
+; Data sources that are enabled:
+sources[] = "vanamo"
+;sources[] = "another"

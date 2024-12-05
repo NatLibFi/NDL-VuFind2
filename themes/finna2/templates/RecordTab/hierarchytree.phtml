@@ -39,7 +39,7 @@
           <option value="AllFields"><?=$this->transEsc('All Fields')?></option>
         </select>
         <button class="btn btn-primary js-submit" type="submit" name="submit">
-          <span class="hidden-xs"><?=$this->icon('search') ?></span>
+          <?=$this->icon('search') ?>
           <span><?=$this->transEsc('Find')?></span>
         </button>
         <span class="hidden js-load-indicator"><?=$this->icon('spinner') ?></span>

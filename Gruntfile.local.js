@@ -2,132 +2,23 @@ module.exports = function(grunt) {
   const fs = require("fs");
   const os = require("node:os");
 
+  const style = grunt.option('style') ?? 'expanded';
+
   grunt.registerTask("finna:scss", function finnaScssFunc() {
     const config = getFinnaSassConfig({
-        outputStyle: 'compressed',
-        quietDeps: true
-      }, false);
+      outputStyle: style,
+      quietDeps: true
+    }, false);
     grunt.config.set('dart-sass', config);
     grunt.task.run('dart-sass');
   });
 
   grunt.registerTask('finna:check:scss', function sassCheck() {
     const config = getFinnaSassConfig({
-        quietDeps: true
-      }, true);
+      quietDeps: true
+    }, true);
     grunt.config.set('dart-sass', config);
     grunt.task.run('dart-sass');
-  });
-
-  grunt.registerTask("finna:lessToSass", function finnaLessToSassFunc() {
-    grunt.config.set('lessToSass', {
-     convert: {
-        files: [
-          {
-            expand: true,
-            cwd: 'themes/finna2/less',
-            src: ['*.less', 'components/**/*.less', 'finna/**/*.less', 'global/**/*.less'],
-            ext: '.scss',
-            dest: 'themes/finna2/scss'
-          },
-          {
-            expand: true,
-            cwd: 'themes/custom/less',
-            src: ['*.less', 'components/**/*.less', 'finna/**/*.less', 'global/**/*.less'],
-            ext: '.scss',
-            dest: 'themes/custom/scss'
-          },
-        ],
-        options: {
-          replacements: [
-            // Activate SCSS
-            {
-              pattern: /\/\* #SCSS>/gi,
-              replacement: "/* #SCSS> */",
-              order: -1 // Do before anything else
-            },
-            {
-              pattern: /<#SCSS \*\//gi,
-              replacement: "/* <#SCSS */",
-              order: -1
-            },
-            // Deactivate LESS
-            {
-              pattern: /\/\* #LESS> \*\/.*?\/\* <#LESS \*\//gis,
-              replacement: "",
-              order: -1
-            },
-            { // Change separator in @include statements
-              pattern: /@include ([^\(]+)\(([^\)]+)\);/gi,
-              replacement: function mixinCommas(match, $1, $2) {
-                return '@include ' + $1 + '(' + $2.replace(/;/g, ',') + ');';
-              },
-              order: 4 // after defaults included in less-to-sass
-            },
-            { // Remove unquote
-              pattern: /unquote\("([^"]+)"\)/gi,
-              replacement: function ununquote(match, $1) {
-                return $1;
-              },
-              order: 4
-            },
-            { // Fix tilde literals
-              pattern: /~'(.*?)'/gi,
-              replacement: '$1',
-              order: 4
-            },
-            { // Inline &:extends converted
-              pattern: /&:extend\(([^\)]+?)( all)?\)/gi,
-              replacement: '@extend $1',
-              order: 4
-            },
-            { // Wrap variables in calcs with #{}
-              pattern: /calc\([^;]+/gi,
-              replacement: function calcVariables(match) {
-                return match.replace(/(\$[\w\-]+)/gi, '#{$1}');
-              },
-              order: 4
-            },
-            { // Wrap variables set to css variables with #{}
-              pattern: /(--[\w-:]+:\s*)((\$|darken\(|lighten\()[^;]+)/gi,
-              replacement: '$1#{$2}',
-              order: 5
-            },
-            { // Remove !default from extends (icons.scss)
-              pattern: /@extend ([^;}]+) !default;/gi,
-              replacement: '@extend $1;',
-              order: 6
-            },
-            { // Revert invalid @ => $ changes for css rules:
-              pattern: /\$(supports|container) \(/gi,
-              replacement: '@$1 (',
-              order: 7
-            },
-            { // Revert @if => $if change:
-              pattern: /\$if \(/gi,
-              replacement: '@if (',
-              order: 7
-            },
-            { // Revert @use => $use change:
-              pattern: /\$use '/gi,
-              replacement: "@use '",
-              order: 7
-            },
-            { // Fix comparison:
-              pattern: / ==< /gi,
-              replacement: ' <= ',
-              order: 7
-            },
-            { // Add !default (but avoid messing with function params):
-              pattern: /(?<!\(.*)(\$.+):(.+);/g,
-              replacement: '$1:$2 !default;',
-              order: 8
-            }
-          ]
-        }
-      }
-    });
-    grunt.task.run('lessToSass');
   });
 
   function getLoadPaths(file) {

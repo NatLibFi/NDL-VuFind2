@@ -83,6 +83,7 @@
       <?php endif; ?>
 
       <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
+      <?=$this->record($this->driver)->getLabelList() ?>
 
       <?php if (!empty($urls) || $openUrlActive || $doiActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
         <?php if ($hasOnlineURLs || $openUrlActive || $doiActive): ?>

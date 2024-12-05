@@ -56,10 +56,11 @@ class UserCardService extends \VuFind\Db\Service\UserCardService
      * @param Closure             $getLoginTargetPrefixes Callback for getting a list of active login target prefixes
      */
     public function __construct(
-        protected ILSAuthenticator $ilsAuthenticator,
-        protected AccountCapabilities $capabilities,
+        ILSAuthenticator $ilsAuthenticator,
+        AccountCapabilities $capabilities,
         protected Closure $getLoginTargetPrefixes
     ) {
+        parent::__construct($ilsAuthenticator, $capabilities);
     }
 
     /**

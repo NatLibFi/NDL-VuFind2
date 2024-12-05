@@ -201,6 +201,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                             if ('title' === $tmp['link']['type']) {
                                 $tmp['link']['value'] = $tmp['value'];
                             }
+                            // get also subfield g for related misc info
+                            $tmp['misc'] = $this->getSubfield($field, 'g');
                         }
                     }
                 } elseif ($value == '775' || $value == '776') {
@@ -1110,14 +1112,45 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
+     * Get all authors and primary presenters
+     *
+     * @return array
+     */
+    public function getPrimaryAuthors(): array
+    {
+        return array_column($this->getPrimaryAuthorsExtended(), 'name');
+    }
+
+    /**
+     * Return extended author information
+     *
+     * @return array
+     */
+    public function getPrimaryAuthorsExtended(): array
+    {
+        return $this->getAuthorFields(true);
+    }
+
+    /**
      * Get all authors apart from presenters
      *
      * @return array
      */
     public function getNonPresenterAuthors()
     {
-        $result = [];
+        return $this->getAuthorFields();
+    }
 
+    /**
+     * Gets all author fields
+     *
+     * @param bool $getPrimaryPresenters Whether the function returns primary presenters alongside authors (optional)
+     *
+     * @return array
+     */
+    private function getAuthorFields(bool $getPrimaryPresenters = false): array
+    {
+        $result = [];
         foreach (['100', '110', '700', '710'] as $fieldCode) {
             $fields = $this->getMarcReader()->getFields($fieldCode);
             if (is_array($fields)) {
@@ -1127,6 +1160,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                     if ($fieldCode == '700' && $this->getSubfield($field, 't')) {
                         continue;
                     }
+                    $checkPresenterRole =
+                        ($getPrimaryPresenters && in_array($fieldCode, ['100', '110'])) ? false : true;
 
                     $roles = $this->getSubfields($field, '4');
                     if (empty($roles)) {
@@ -1136,7 +1171,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                     $role = implode(', ', $roles);
                     $role = mb_strtolower($role, 'UTF-8');
                     if (
-                        $role
+                        $checkPresenterRole
+                        && $role
                         && isset($this->mainConfig->Record->presenter_roles)
                         && in_array(
                             trim($role, ' .'),
@@ -1207,9 +1243,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     /**
      * Get presenters
      *
+     * @param bool $getSecondaryPresentersOnly Whether returns only secondary presenters
+     *
      * @return array
      */
-    public function getPresenters()
+    public function getPresenters($getSecondaryPresentersOnly = false): array
     {
         $result = ['presenters' => [], 'details' => []];
 
@@ -1217,6 +1255,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             $fields = $this->getMarcReader()->getFields($fieldCode);
             if (is_array($fields)) {
                 foreach ($fields as $field) {
+                    if ($getSecondaryPresentersOnly && in_array($fieldCode, ['100', '110'])) {
+                        continue;
+                    }
                     // Leave out 700 fields containing subfield 't' (these go to the
                     // contents list)
                     if ($fieldCode == '700' && $this->getSubfield($field, 't')) {
@@ -1239,18 +1280,19 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                     ) {
                         continue;
                     }
-                    $id = $this->getSubfield($field, '0');
                     $subfields = $this->getSubfieldArray($field, ['a', 'b', 'c']);
-                    $dates = $this->getSubfieldArray($field, ['d']);
-                    if (!empty($subfields)) {
-                        $result['presenters'][] = [
-                            'name' => $this->stripTrailingPunctuation($subfields[0]),
-                            'date' => $dates
-                                ? $this->stripTrailingPunctuation($dates[0]) : '',
-                            'role' => $role,
-                            'id' => $id ?: null,
-                        ];
+                    if (empty($subfields)) {
+                        continue;
                     }
+                    $dates = $this->getSubfieldArray($field, ['d']);
+                    $id = $this->getSubfield($field, '0');
+                    $result['presenters'][] = [
+                        'name' => $this->stripTrailingPunctuation($subfields[0]),
+                        'date' => $dates
+                            ? $this->stripTrailingPunctuation($dates[0]) : '',
+                        'role' => $role,
+                        'id' => $id ?: null,
+                    ];
                 }
             }
         }
@@ -1258,6 +1300,16 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             $this->getFieldArray('511', ['a'])
         );
         return $result;
+    }
+
+    /**
+     * Get secondary presenters
+     *
+     * @return array
+     */
+    public function getSecondaryPresenters(): array
+    {
+        return $this->getPresenters(true);
     }
 
     /**
@@ -1354,10 +1406,12 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         ];
         $matches = $this->getSeriesFromMARC($primaryFields);
 
+        // Now check also 490:
+        $secondaryFields = ['490' => ['a', 'v']];
         if (empty($matches)) {
-            // Now check 490 and display it only if 440/800/830 were empty:
-            $secondaryFields = ['490' => ['a', 'v']];
             $matches = $this->getSeriesFromMARC($secondaryFields);
+        } else {
+            $matches = array_merge($matches, $this->getSeriesFromMARC($secondaryFields));
         }
 
         // Still no results found?  Resort to the Solr-based method just in case!
@@ -2191,6 +2245,18 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             }
         }
         return $results;
+    }
+
+    /**
+     * Get local notes from field 594, subfield a.
+     *
+     * @return array
+     */
+    public function getLocalNotes()
+    {
+        return $this->stripTrailingPunctuation(
+            $this->getFieldArray('594', ['a'])
+        );
     }
 
     /**

@@ -2,6 +2,9 @@
 finna.layout = (function finnaLayout() {
   var currentOpenTooltips = [];
 
+  /**
+   * Initialize a throttled resize listener
+   */
   function initResizeListener() {
     var intervalId = false;
     $(window).on('resize', function onResizeWindow(/*e*/) {
@@ -16,15 +19,22 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  /**
+   * Is touch screen supported
+   * @returns {boolean} Touch screen supported
+   */
   function isTouchDevice() {
     return (('ontouchstart' in window)
       || (navigator.maxTouchPoints > 0)
       || (navigator.msMaxTouchPoints > 0)); // IE10, IE11, Edge
   }
 
-  // Append current anchor (location.hash) to selected links
-  // in order to preserve the anchor when the link is clicked.
-  // This is used in top header language links.
+
+  /**
+   * Append current anchor (location.hash) to selected links
+   * in order to preserve the anchor when the link is clicked.
+   * This is used in top header language links.
+   */
   function initAnchorNavigationLinks() {
     $('a.preserve-anchor').each(function addAnchors() {
       var hash = location.hash;
@@ -35,6 +45,10 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  /**
+   * Initialize location service
+   * @param {jQuery} _holder Holder to find location-service-modal elements
+   */
   function initLocationService(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
@@ -54,6 +68,10 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  /**
+   * Initialize truncating of fields
+   * @param {jQuery} _holder Holder to find truncate-field elements to truncate
+   */
   function initTruncate(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
@@ -129,6 +147,9 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  /**
+   * Initialize content navigation menu
+   */
   function initContentNavigation() {
     if ($('.content-navigation-menu')[0]) {
       $('.content-section').each(function initContentSection(index) {
@@ -144,6 +165,9 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  /**
+   * Initialize mobile narrow search
+   */
   function initMobileNarrowSearch() {
     $('.mobile-navigation .sidebar-navigation, .finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn, .sidebar .mylist-bar h1').off('click').on('click', function onClickMobileNav() {
       $('.sidebar').toggleClass('open');
@@ -167,6 +191,9 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  /**
+   * Set my account header as sticky
+   */
   function setStickyMyaccountHeader() {
     const toolbar = document.querySelector('.toolbar-sticky');
     const finnaNavbar = document.querySelector('.finna-navbar');
@@ -184,6 +211,9 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  /**
+   * Initialize mobile cart indicator buttons
+   */
   function initMobileCartIndicator() {
     $('.btn-bookbag-toggle a').on('click', function onClickMobileCart() {
       if ($(this).hasClass('cart-add')){
@@ -195,6 +225,9 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  /**
+   * Set scroll links
+   */
   function initScrollLinks() {
     $('.library-link').on('click', function onClickLibraryLink() {
       $('html, body').animate({
@@ -216,6 +249,9 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  /**
+   * Initialize search box functions
+   */
   function initSearchboxFunctions() {
     var searchForm = document.querySelector('.searchForm.navbar-form');
     if (searchForm) {
@@ -266,6 +302,10 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  /**
+   * Initialize tooltips
+   * @param {jQuery} _holder Holder to look for tooltip elements from
+   */
   function initToolTips(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
     // other tooltips
@@ -309,6 +349,9 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  /**
+   * Initialize modal tooltips
+   */
   function initModalToolTips() {
     $('#modal').on('show.bs.modal', function onShowModal() {
       initToolTips($(this));
@@ -318,7 +361,6 @@ finna.layout = (function finnaLayout() {
   /**
    * Initializes additional functionality for condensed styled lists.
    * I.e search condensed, authority records record tab.
-   *
    * @param {jQuery|undefined} _holder Element as jQuery to initialize.
    *                                   If uninitialized, defaults to document.
    */
@@ -339,12 +381,18 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  /**
+   * Initialize touch device galler
+   */
   function initTouchDeviceGallery() {
     if ($('.result-view-grid')[0] != null && isTouchDevice()) {
       $('.result-view-grid').addClass('touch-device');
     }
   }
 
+  /**
+   * Initialize building filter event on key up
+   */
   function initBuildingFilter() {
     $('#building_filter').on('keyup', function onKeyUpFilter() {
       var valThis = this.value.toLowerCase();
@@ -359,16 +407,28 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  /**
+   * Initialize jump menus
+   * @param {jQuery} _holder Holder to look for jump menus to initialize
+   */
   function initJumpMenus(_holder) {
     var holder = typeof _holder === 'undefined' ? $('body') : _holder;
     holder.find('select.jumpMenu').off('change').on('change', function onChangeJumpMenu() { $(this).closest('form').trigger("submit"); });
     holder.find('select.jumpMenuUrl').off('change').on('change', function onChangeJumpMenuUrl(e) { window.location.href = $(e.target).val(); });
   }
 
+  /**
+   * Initialize secondary login fields, BC only
+   */
   function initSecondaryLoginField() {
     // This function exists for back-compatibility only
   }
 
+  /**
+   * Initialize ILS password recovery link
+   * @param {object} links Object containing identifier and url for link href
+   * @param {string} idPrefix Prepend selector with idPrefix
+   */
   function initILSPasswordRecoveryLink(links, idPrefix) {
     var searchPrefix = idPrefix ? '#' + idPrefix : '#';
     $(searchPrefix + 'target').on('change', function onChangeLoginTargetLink() {
@@ -381,6 +441,11 @@ finna.layout = (function finnaLayout() {
     }).trigger("change");
   }
 
+  /**
+   * Initialize ILS self registration links
+   * @param {object} links Object containing identifier and url for link href
+   * @param {string} idPrefix Prepend selector with idPrefix
+   */
   function initILSSelfRegistrationLink(links, idPrefix) {
     var searchPrefix = idPrefix ? '#' + idPrefix : '#';
     $(searchPrefix + 'target').on('change', function onChangeLoginTargetLink() {
@@ -393,6 +458,9 @@ finna.layout = (function finnaLayout() {
     }).trigger("change");
   }
 
+  /**
+   * Initialize side facets
+   */
   function initSideFacets() {
     if (!document.addEventListener) {
       return;
@@ -405,6 +473,9 @@ finna.layout = (function finnaLayout() {
     }, {once: true});
   }
 
+  /**
+   * Init Matomo(Piwik) popular searches container
+   */
   function initPiwikPopularSearches() {
     var $container = $('.piwik-popular-searches');
     if ($container.length === 0) {
@@ -421,6 +492,9 @@ finna.layout = (function finnaLayout() {
       });
   }
 
+  /**
+   * Initialize auto scroll touch
+   */
   function initAutoScrollTouch() {
     if (!navigator.userAgent.match(/iemobile/i) && isTouchDevice() && $(window).width() < 1025) {
       $('.search-query').on('click', function onClickSearchQuery() {
@@ -431,6 +505,9 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  /**
+   * Initialize ipad check
+   */
   function initIpadCheck() {
     if (navigator.userAgent.match(/iPad/i)) {
       if (navigator.userAgent.match(/OS 6_\d(_\d) like Mac OS X/i)) {
@@ -439,6 +516,9 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  /**
+   * Initialize record scrolling
+   */
   function initScrollRecord() {
     if (!$('section.main').is('.template-name-search, .template-name-results')) {
       return;
@@ -463,6 +543,9 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  /**
+   * Initialize lightbox login events
+   */
   function initLightboxLogin() {
     if (!document.addEventListener) {
       return;
@@ -484,18 +567,21 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  /**
+   * Display content after login from a lightbox
+   * @param {string} url Ajax url
+   */
   function showPostLoginLightbox(url) {
     VuFind.lightbox.ajax({url: url});
   }
 
   /**
    * Get organisation info page link for a single organisation, or links for a list of organisations
-   *
    * @param {object}       organisation     Single organisation or a list of organisations
    *                                        with keys 'id' and optional 'sector'
-   * @param {String|false} organisationName Organisation name, if any (single organisation only)
-   * @param {Boolean}      renderLinks      Whether to return rendered links in the response
-   * @param {function}     callback         Callback to call when done
+   * @param {string | false} organisationName Organisation name, if any (single organisation only)
+   * @param {boolean}      renderLinks      Whether to return rendered links in the response
+   * @param {Function}     callback         Callback to call when done
    *
    * Note that the return format varies depending on whether a single organsation or multiple organisations
    * were requested. For the single one, the result is just the content for it, but for multiple one it's
@@ -530,6 +616,9 @@ finna.layout = (function finnaLayout() {
       });
   }
 
+  /**
+   * Initialize organisation page links
+   */
   function initOrganisationPageLinks() {
     VuFind.observerManager.createIntersectionObserver(
       'OrganisationPageLinks',
@@ -550,6 +639,9 @@ finna.layout = (function finnaLayout() {
     );
   }
 
+  /**
+   * Initialize organisation info widgets
+   */
   function initOrganisationInfoWidgets() {
     $('.organisation-info[data-init="1"]').each(function setupOrganisationInfo() {
       var widget = finna.organisationInfoWidget;
@@ -558,6 +650,9 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  /**
+   * Initialize audio buttons
+   */
   function initAudioButtons() {
     var scripts = {
       'videojs': 'vendor/video.min.js',
@@ -592,6 +687,9 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  /**
+   * Initialize priority navigation
+   */
   function initPriorityNav() {
     priorityNav.init({
       mainNavWrapper: ".nav-wrapper",
@@ -604,6 +702,9 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  /**
+   * Initialize filters toggle button events
+   */
   function initFiltersToggle () {
     var win = $(window);
 
@@ -625,6 +726,11 @@ finna.layout = (function finnaLayout() {
       var filters = button.closest('.finna-filters').find('.filters');
       button.toggleClass('open');
 
+      /**
+       * Set state of given text
+       * @param {boolean} setHidden Set text
+       * @param {string} text Set button text
+       */
       function setState(setHidden, text) {
         filters.toggleClass('hidden', setHidden);
         button.find('.toggle-text').html(VuFind.translate(text));
@@ -638,6 +744,9 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  /**
+   * Initialize cookie consent events
+   */
   function initCookieConsent() {
     var state = finna.common.getCookie('cookieConsent');
     if ('undefined' === typeof state || !state) {
@@ -651,7 +760,11 @@ finna.layout = (function finnaLayout() {
     VuFind.listen('cookie-consent-changed', VuFind.refreshPage);
   }
 
-  // The accordion has a delicate relationship with the tabs. Handle with care!
+  /**
+   * Toggle login accordion.
+   * The accordion has a delicate relationship with the tabs. Handle with care!
+   * @param {string} tabId Current tab id
+   */
   function _toggleLoginAccordion(tabId) {
     var $accordionHeading = $('.login-accordion .accordion-heading a[data-tab="' + tabId + '"]').closest('.accordion-heading');
     var $loginTabs = $('.login-tabs');
@@ -674,6 +787,10 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  /**
+   * Activate a login tab
+   * @param {string} tabId Id of the tab to activate
+   */
   function _activateLoginTab(tabId) {
     var $top = $('.login-tabs');
     $top.find('.tab-pane.active').removeClass('active');
@@ -682,6 +799,9 @@ finna.layout = (function finnaLayout() {
     _toggleLoginAccordion(tabId);
   }
 
+  /**
+   * Init login tabs
+   */
   function initLoginTabs() {
     // Tabs
     $('.login-tabs .nav-tabs a').on('click', function recordTabsClick() {
@@ -699,6 +819,9 @@ finna.layout = (function finnaLayout() {
     _activateLoginTab($('.login-tabs .accordion-heading.initiallyActive a').data('tab'));
   }
 
+  /**
+   * Set image paginator translations
+   */
   function setImagePaginatorTranslations() {
     $.fn.setPaginatorTranslations({
       image: VuFind.translate('Image'),
@@ -709,13 +832,18 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  /**
+   * Initialize image paginators
+   */
   function initImagePaginators() {
     $('.image-popup-trigger.init').each(function initImages() {
       $(this).finnaPaginator($(this).data('settings'), $(this).data('images'));
     });
   }
 
-  // Used in custom themes
+  /**
+   * Initialize help tabs in custom themes
+   */
   function initHelpTabs() {
     if ($('.help-tabs')[0]) {
       $('.help-tab').each(function initHelpTab() {
@@ -735,6 +863,9 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  /**
+   * Initialize triggers to activate print procedure
+   */
   function initPrintTriggers() {
     $('[data-trigger-print]').off('click').on(
       'click',
@@ -747,7 +878,6 @@ finna.layout = (function finnaLayout() {
 
   /**
    * Set select checkboxes in correct myresearch pages.
-   *
    * @param {HTMLInputElement} element Checkbox element for which the change event occurs
    */
   function toggleButtonsForSelected(element) {
@@ -766,6 +896,9 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  /**
+   * Initialize buttons to select all checkboxes
+   */
   function initSelectAllButtonListeners() {
     document.querySelectorAll('form[name="renewals"] .checkbox').forEach(element => {
       element.addEventListener('change', function disableButtons() {

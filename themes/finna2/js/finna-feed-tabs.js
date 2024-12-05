@@ -3,13 +3,16 @@ finna.feedTabs = (function finnaFeedTab() {
 
   /**
    * Return the location hash without hashtag
-   * 
-   * @return {String} hash without hashtag
+   * @returns {string} hash without hashtag
    */
   function getTabFromLocationHash() {
     var hash = window.location.hash;
     return hash ? hash.substring(1) : '';
   }
+  /**
+   * FeedTab prototype constructor
+   * @param {HTMLElement} container Root container
+   */
   function FeedTab(container) {
     var _ = this;
     container.classList.add('init-done');
@@ -53,8 +56,7 @@ finna.feedTabs = (function finnaFeedTab() {
 
   /**
    * Display the proper feedtab and accordion tab
-   * 
-   * @param {HTMLElement} element
+   * @param {HTMLElement} element Element to display
    */
   FeedTab.prototype.displayTab = function displayTab(element) {
     var _ = this;
@@ -112,8 +114,7 @@ finna.feedTabs = (function finnaFeedTab() {
 
   /**
    * Init feedtabs
-   * 
-   * @param {String} id 
+   * @param {string} id Unique identifier
    */
   function init(id) {
     VuFind.observerManager.createIntersectionObserver(

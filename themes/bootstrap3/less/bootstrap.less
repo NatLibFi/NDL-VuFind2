@@ -180,12 +180,6 @@ h3 { font-size: 16px; }
   left: 0;
 }
 
-.sticky {
-  .sticky-hidden {
-    display: none !important;
-  }
-}
-
 footer {
   &:extend(.container);
   padding: 1rem;
@@ -471,6 +465,9 @@ ul.list-group {
     vertical-align: middle;
   }
 }
+.fines-total {
+  font-weight: bold;
+}
 
 /* --- PubDateVis --- */
 .list-edit-container { .clearfix(); }
@@ -696,4 +693,9 @@ div.holding-notes {
   flex: 1 1 100%;
   flex-wrap: wrap;
   justify-content: center;
+}
+
+/* --- Confirm --- */
+.confirmDialog form {
+  margin-right: 0.5rem;
 }

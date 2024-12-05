@@ -48,7 +48,7 @@
                 var orig = $(this).parents('#ontology-recommendations').data('lookfor');
                 var recType = $(this).parents('.result-type').data('result-type');
                 var value = finna.recommendationMemory.getDataString('Ontology', rec, orig, recType);
-                finna.common.setCookie(key, value);
+                VuFind.cookie.set(key, value);
                 $(this).attr(
                   'href',
                   $(this).attr('href') + '&' + finna.recommendationMemory.PARAMETER_NAME + '=' + key

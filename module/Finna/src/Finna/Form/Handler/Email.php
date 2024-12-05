@@ -65,7 +65,6 @@ class Email extends \VuFind\Form\Handler\Email
             );
             return false;
         }
-
         return parent::handle($form, $params, $user);
     }
 }

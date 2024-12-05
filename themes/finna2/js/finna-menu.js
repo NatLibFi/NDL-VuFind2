@@ -1,5 +1,8 @@
 /*global VuFind, finna*/
 finna.menu = (function finnaMenu() {
+  /**
+   * Initialize account check events for current user
+   */
   function initAccountChecks() {
     VuFind.account.register("profile", {
       selector: ".profile-status",
@@ -15,6 +18,10 @@ finna.menu = (function finnaMenu() {
     });
   }
 
+  /**
+   * Toggle a sub menu
+   * @param {jQuery} a Container to check for toggle
+   */
   function toggleSubmenu(a) {
     a.trigger('beforetoggle');
     a.toggleClass('collapsed');
@@ -29,6 +36,9 @@ finna.menu = (function finnaMenu() {
     }
   }
 
+  /**
+   * Initialize menu lists
+   */
   function initMenuLists() {
     $('.menu-parent').on('togglesubmenu.finna', function onToggleSubmenu() {
       toggleSubmenu($(this));
@@ -59,6 +69,9 @@ finna.menu = (function finnaMenu() {
     }
   }
 
+  /**
+   * Initialize finna.menu
+   */
   function init() {
     initMenuLists();
     initAccountChecks();

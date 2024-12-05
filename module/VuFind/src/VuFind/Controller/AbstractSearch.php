@@ -355,6 +355,8 @@ class AbstractSearch extends AbstractBase
     protected function getSearchResultsView($setupCallback = null)
     {
         $view = $this->createViewModel();
+        $config = $this->getConfig($this->getOptionsForClass()->getFacetsIni());
+        $view->multiFacetsSelection = (bool)($config->Results_Settings->multiFacetsSelection ?? false);
 
         // Handle saved search requests:
         $savedId = $this->params()->fromQuery('saved', false);
@@ -925,6 +927,7 @@ class AbstractSearch extends AbstractBase
             'key' => $sort,
             'urlBase' => $urlBase,
             'searchAction' => $searchAction,
+            'multiFacetsSelection' => (bool)($config->Results_Settings->multiFacetsSelection ?? false),
         ];
         $viewParams['delegateParams'] = $viewParams;
         $view = $this->createViewModel($viewParams);

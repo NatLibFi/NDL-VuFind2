@@ -1,4 +1,3 @@
-/* #SCSS> */
 @import "../../finna2/scss/scss-functions";
 
 // Custom theme variable overrides
@@ -9,9 +8,6 @@
 
 // Finna Bootstrap variable overrides
 @import "../../finna2/scss/global/bootstrap-variable-overrides";
-
-// Custom scss
-@import "custom.scss";
 
 // Font Awesome (loaded via include path to silence warnings from dependencies)
 @import "font-awesome/font-awesome";
@@ -31,5 +27,5 @@
 @import "../../finna2/scss/finna-other";
 @import "../../finna2/scss/components";
 
-/* <#SCSS */
-
+// Custom scss
+@import "custom.scss";

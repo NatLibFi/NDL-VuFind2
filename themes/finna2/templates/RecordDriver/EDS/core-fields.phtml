@@ -4,7 +4,7 @@
   $authorDisplay = strtolower($edsConfig->AuthorDisplay->DetailPageFormat ?? 'Long');
 ?>
 <div class="record-details">
-  <table class="table table-condensed table-finna-record" summary="<?=$this->transEsc('Bibliographic Details')?>" role="presentation">
+  <table class="table table-condensed table-finna-record" summary="<?=$this->transEsc('Bibliographic Details')?>" role="presentation" tabindex="-1">
     <?php foreach ($this->driver->getItems($this->defaults) as $key => $item): ?>
       <?php if (!empty($item['Data']) && !in_array($item['Label'], $this->ignoreDetailsFields ?? [])): ?>
         <?php if ('Au' == $item['Group'] && $authorDisplay == 'short'): ?>
