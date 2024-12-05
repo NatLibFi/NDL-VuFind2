@@ -14,8 +14,10 @@ finna.reservationList = (function finnaReservationList() {
         return response.json();
       })
       .then(responseJSON => {
-        element.innerText = responseJSON.data;
-        element.classList.remove('pending');
+        if (responseJSON.data && responseJSON.data.status) {
+          element.innerText = responseJSON.data.status;
+          element.classList.remove('pending');
+        }
       });
   }
 

@@ -34,6 +34,8 @@ use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Form\Form;
 
+use function is_array;
+
 /**
  * Disec connection handler
  *
@@ -67,33 +69,37 @@ class Disec extends AbstractBase
     protected bool $useCatId = false;
 
     /**
+     * Common headers in requests
+     *
+     * @var array
+     */
+    protected array $requestHeaders = [
+        'Content-Type: application/json',
+        'accept: */*',
+    ];
+
+    /**
      * Places an order
      *
-     * @param Params              $params Parameters containing data from posting place order form
-     * @param UserEntityInterface $user   User entity
-     * @param Form                $form   Form posted when submitting the order
+     * @param array|Params        $postValues Key value pairs of post parameters to send or params plugin
+     * @param UserEntityInterface $user       User entity
+     * @param Form                $form       Form posted when submitting the order
      *
      * @return array [external_id: Id in external service or null, success: true or false]
      */
-    public function placeOrder(Params $params, UserEntityInterface $user, Form $form = null): array
+    public function placeOrder(array|Params $postValues, UserEntityInterface $user, Form $form = null): array
     {
-        if (!$this->ordersUrl) {
-            throw new \Exception('Invalid configuration.');
+        if (!is_array($postValues)) {
+            throw new \Exception('ReservationList Disec: Illegal parameter type.');
         }
         $data = [];
         $client = $this->getService(\VuFindHttp\HttpService::class)->createClient($this->ordersUrl);
-        $client->setHeaders(
-            [
-                'Content-Type: application/json',
-                'accept: */*',
-                'X-API-Key: ' . $this->apiKey,
-            ]
-        );
+        $client->setHeaders($this->requestHeaders);
         $client->setMethod(\Laminas\Http\Request::METHOD_POST);
 
         $resources = [];
         $recordLoader = $this->getService(\VuFind\Record\Loader::class);
-        foreach ($recordLoader->loadBatch($params->fromPost('resourceIDs', [])) as $record) {
+        foreach ($recordLoader->loadBatch($postValues['resourceIDs']) as $record) {
             if ($identifiers = $record->tryMethod('getIdentifier', [])) {
                 $resources[] = array_shift($identifiers);
             }
@@ -101,13 +107,13 @@ class Disec extends AbstractBase
         $data = [
             'resourceIds' => $resources,
             'customer' => [
-                'firstName' => $params->fromPost('firstName') ?? $user->getFirstname(),
-                'lastName' => $params->fromPost('lastName') ?? $user->getLastname(),
-                'email' => $params->fromPost('email') ?? $user->getEmail(),
+                'firstName' => $postValues['firstName'],
+                'lastName' => $postValues['lastName'],
+                'email' => $postValues['email'],
             ],
-            'contentInfo' => $params->fromPost('message', '') . PHP_EOL,
+            'contentInfo' => $postValues['message'] . PHP_EOL,
         ];
-        $data['contentInfo'] .= $params->fromPost('pickup_date', '') . PHP_EOL;
+        $data['contentInfo'] .= $postValues['pickup_date'] . PHP_EOL;
         if ($catId = $user->getCatId()) {
             [, $id] = explode('.', $catId);
             if ($this->useCatId) {
@@ -146,19 +152,13 @@ class Disec extends AbstractBase
         $externalId = $list->getExternalId();
         $formedUrl = implode('/', [$this->ordersUrl, $externalId]);
         $client = $this->getService(\VuFindHttp\HttpService::class)->createClient($formedUrl);
-        $client->setHeaders(
-            [
-                'Content-Type: application/json',
-                'accept: */*',
-                'X-API-Key: ' . $this->apiKey,
-            ]
-        );
+        $client->setHeaders($this->requestHeaders);
         $client->setMethod(\Laminas\Http\Request::METHOD_GET);
         $response = $client->send();
         $status = ReservationListStatus::UNKNOWN;
         if ($response->isSuccess()) {
             $body = json_decode($response->getBody(), true);
-            $status = ReservationListStatus::tryFrom(mb_strtolower($body['status'])) ?? ReservationListStatus::UNKNOWN;
+            $status = ReservationListStatus::mapEnumFromString($body['status'] ?? '');
         } else {
             $this->debug('Disec: failed to fetch status for list: ' . $response->getBody());
         }
@@ -181,7 +181,7 @@ class Disec extends AbstractBase
                 $baseUrl .= '/';
             }
             $this->ordersUrl = $baseUrl . 'orders';
-            $this->apiKey = $config['Connection']['secret'];
+            $this->requestHeaders[] = 'X-API-Key: ' . $config['Connection']['secret'];
             $this->useCatId = $config['Connection']['use_cat_id'] ?? false;
         } catch (\Exception $e) {
             throw new \Exception('Disec: Invalid configuration');

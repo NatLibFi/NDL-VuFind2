@@ -48,8 +48,8 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
     protected $aliases = [
         'Disec' => Disec::class,
         'disec' => Disec::class,
-        'Database' => Database::class,
-        'database' => Database::class,
+        'FeedbackForm' => FeedbackForm::class,
+        'feedbackform' => FeedbackForm::class,
     ];
 
     /**
@@ -59,7 +59,7 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
      */
     protected $factories = [
         Disec::class => ConnectionFactory::class,
-        Database::class => ConnectionFactory::class,
+        FeedbackForm::class => ConnectionFactory::class,
     ];
 
     /**

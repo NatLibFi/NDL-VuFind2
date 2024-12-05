@@ -10,7 +10,7 @@
 # about where the order is being delivered
 # LibraryCardSources is used to check for active connection to ILS to be able to use lists
 # Connection holds information about type of lists:
-# Database: Default connection, orders handled with sending forms
+# FeedbackForm: Default connection, orders handled with sending forms
 #   handler: email [Optional] Default handler email, other values found in FeedbackForms.yaml primary handlers
 # Disec:
 #   base_url: Api base url
@@ -51,4 +51,4 @@ Institutions:
         LibraryCardSources:
           - connection_established_to_use_lists
         Connection:
-          type: Database
+          type: FeedbackForm

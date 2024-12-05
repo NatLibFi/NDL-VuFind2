@@ -310,8 +310,9 @@ class ReservationListController extends AbstractBase
             $resourcesText .= $resource->getRecordId() . '||' . $resource->getTitle() . PHP_EOL;
             $resourceIds[] = $resource->getSource() . '|' . $resource->getRecordId();
         }
+        $postRequest = $request->getPost();
         // Set reservationlist specific form values
-        $request->getPost()
+        $postRequest
             ->set('rl_list_id', $listId)
             ->set('rl_institution', $list->getInstitution())
             ->set('rl_list_identifier', $list->getListConfigIdentifier())
@@ -319,7 +320,7 @@ class ReservationListController extends AbstractBase
             ->set('resourceIDs', $resourceIds);
 
         $form = $this->getService(\Finna\Form\Form::class);
-        $form->setFormId(formId: $formId, prefill: $request->getPost()->toArray());
+        $form->setFormId(formId: $formId, prefill: $postRequest->toArray());
 
         if (!$form->isEnabled()) {
             throw new \VuFind\Exception\Forbidden("Form '$formId' is disabled");
@@ -347,10 +348,25 @@ class ReservationListController extends AbstractBase
         $connectionType = $listProperties['Connection']['type'];
         $handler = $this->getService(\Finna\ReservationList\PluginManager::class)->get($connectionType);
         $handler->init($listProperties);
-        $result = $handler->placeOrder($this->params(), $user, $form);
+        $gatheredPostValues = [
+            'firstName' => $postRequest->get('firstName'),
+            'lastName' => $postRequest->get('lastName'),
+            'email' => $postRequest->get('email'),
+            'record_ids' => $postRequest->get('record_ids'),
+            'phone' => $postRequest->get('phone'),
+            'message' => $postRequest->get('message'),
+            'pickup_date' => $postRequest->get('pickup_date'),
+            'resourceIDs' => $postRequest->get('resourceIDs'),
+        ];
+        if ($handler instanceof \Finna\ReservationList\FeedbackForm) {
+            $result = $handler->placeOrder($this->params(), $user, $form);
+        } else {
+            $result = $handler->placeOrder($gatheredPostValues, $user, $form);
+        }
         if ($result['success']) {
-            $request->getPost()->set('external_id', $result['external_id'])->set('connection', $connectionType);
-            $this->reservationListService->setListOrdered($user, $list, $request->getPost());
+            $gatheredPostValues['external_id'] = $result['external_id'];
+            $gatheredPostValues['connection'] = $connectionType;
+            $this->reservationListService->setListOrdered($user, $list, $gatheredPostValues);
             $this->flashMessenger()->addSuccessMessage($form->getSubmitResponse());
             return $this->getRefreshResponse();
         } else {

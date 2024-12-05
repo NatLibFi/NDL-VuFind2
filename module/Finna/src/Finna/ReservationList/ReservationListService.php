@@ -297,25 +297,25 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     /**
      * Set list ordered
      *
-     * @param UserEntityInterface              $user    User to check for rights to list
-     * @param FinnaResourceListEntityInterface $list    List entity or id of the list
-     * @param Parameters                       $request Parameters to get values from
+     * @param UserEntityInterface              $user      User to check for rights to list
+     * @param FinnaResourceListEntityInterface $list      List entity or id of the list
+     * @param array                            $newValues New values to update as key value pairs
      *
      * @return void
      */
     public function setListOrdered(
         UserEntityInterface $user,
         FinnaResourceListEntityInterface $list,
-        Parameters $request
+        array $newValues
     ): void {
         if (!$this->userCanEditList($user, $list)) {
             throw new ListPermissionException('list_access_denied');
         }
-        $list->setPickupDate(DateTime::createFromFormat('Y-m-d', $request->get('pickup_date')))->setOrdered();
-        if ($externalId = $request->get('external_id')) {
+        $list->setPickupDate(DateTime::createFromFormat('Y-m-d', $newValues['pickup_date']))->setOrdered();
+        if ($externalId = $newValues['external_id'] ?? null) {
             $list->setExternalId($externalId);
         }
-        if ($connection = $request->get('connection')) {
+        if ($connection = $newValues['connection'] ?? null) {
             $list->setConnection($connection);
         }
         $this->resourceListService->persistEntity($list);

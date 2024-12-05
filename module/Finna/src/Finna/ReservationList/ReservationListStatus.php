@@ -42,14 +42,15 @@ enum ReservationListStatus: string
 {
     case UNKNOWN = 'unknown';
     case IN_PROCESS = 'in_process';
-    case HANDLED = 'handled';
+    case PROCESSED = 'processed';
     case DELIVERED = 'delivered';
     case CANCELLED = 'cancelled';
     case REPLIED = 'replied';
     case REMOVED_ITEM = 'removed_item';
-    case LOANED = 'loaned';
+    case ON_LOAN = 'on_loan';
     case RETURNED = 'returned';
     case RENEWED = 'renewed';
+    case PENDING = 'pending';
 
     /**
      * Return a translation key representing the status.
@@ -59,5 +60,23 @@ enum ReservationListStatus: string
     public function getTranslationKey(): string
     {
         return 'ReservationList::status_' . $this->value;
+    }
+
+    /**
+     * Return instance of ENUM by mapping a status key into a proper enum status
+     *
+     * @param string $text Value to map
+     *
+     * @return string Found mapped value or unknown if not found
+     */
+    public static function mapEnumFromString(string $text): static
+    {
+        $statusKeyMappings = [
+            'handled' => 'processed',
+            'loaned' => 'on_loan',
+        ];
+        $text = mb_strtolower($text);
+        $text = $statusKeyMappings[$text] ?? $text;
+        return ReservationListStatus::tryFrom($text) ?? ReservationListStatus::UNKNOWN;
     }
 }

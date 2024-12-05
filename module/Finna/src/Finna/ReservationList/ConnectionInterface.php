@@ -48,13 +48,13 @@ interface ConnectionInterface
     /**
      * Places an order
      *
-     * @param Params              $params Parameters containing data from posting place order form
-     * @param UserEntityInterface $user   User entity
-     * @param Form                $form   Form posted when submitting the order
+     * @param array|Params        $postValues Key value pairs of post parameters to send or params plugin
+     * @param UserEntityInterface $user       User entity
+     * @param Form                $form       Form posted when submitting the order
      *
      * @return array [external_id: Id in external service or null, success: true or false]
      */
-    public function placeOrder(Params $params, UserEntityInterface $user, Form $form = null): array;
+    public function placeOrder(array|Params $postValues, UserEntityInterface $user, Form $form = null): array;
 
     /**
      * Check list status. Used for external services.
