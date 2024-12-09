@@ -23,6 +23,7 @@
   ob_start();
 ?>
   <div class="media-<?=$thumbnailAlignment ?><?=!empty($audioUrls) ? ' audio' : ''?>">
+
     <?php if (!empty($videoUrls) && $this->config()->inlineVideoEnabled()): ?>
       <?php $i = 0; ?>
         <?php foreach ($videoUrls as $url): ?>
