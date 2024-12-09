@@ -1895,3 +1895,9 @@ Summon = tabs_summon
 [ReservationList]
 ; Enable functionality in view by uncommenting the next line
 ;enabled = true
+
+[Finna]
+; Site status. Displayed in a status bar unless value is 'production'.
+; Possible values are: 'production', 'beta', 'test' and 'disabled'.
+; Default value is 'production'.
+site_status = production

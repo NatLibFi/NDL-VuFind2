@@ -1951,6 +1951,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         }
         $linkage = $marc->parseLinkageField($link);
         foreach ($marc->getFields($linkage['field']) as $linkedField) {
+            if (!is_array($linkedField)) {
+                $this->logError(
+                    'Invalid linked field: ' . var_export($linkedField, true) . ', record id '
+                    . ($this->fields['id'] ?? '??')
+                );
+                continue;
+            }
             $sub6 = $marc->getSubfield($linkedField, '6');
             $targetLinkage = $marc->parseLinkageField($sub6);
             if (

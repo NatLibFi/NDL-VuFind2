@@ -150,7 +150,7 @@ class Quria extends AxiellWebServices
             'arenaMember' => $this->arenaMember,
             'user' => $username,
             'password' => $password,
-            'language' => $this->getLanguage(),
+            'language' => 'fi',
             'country' => 'FI',
             'reservationEntities' => $id,
             'reservationType' => $holdType,
@@ -1013,7 +1013,7 @@ class Quria extends AxiellWebServices
             'arenaMember' => $this->arenaMember,
             'user' => $username,
             'password' => $password,
-            'language' => $this->getLanguage(),
+            'language' => 'fi',
             'patronId' => $user['patronId'],
         ];
 

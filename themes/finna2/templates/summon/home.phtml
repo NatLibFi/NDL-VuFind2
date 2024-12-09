@@ -21,21 +21,6 @@
 ?>
 <!--  Begin home.phtml and close page container for extra styling  -->
 </div>
-<div class="container-fluid">
-  <div class="container">
-    <div>
-      <?php if ($this->ils()->getOfflineMode() == 'ils-offline'): ?>
-      <div class="alert alert-warning">
-        <h2><?=$this->transEsc('ils_offline_title')?></h2>
-        <p><strong><?=$this->transEsc('ils_offline_status')?></strong></p>
-        <p><?=$this->transEsc('ils_offline_home_message')?></p>
-        <?php $supportEmail = $this->escapeHtmlAttr($this->systemEmail()); ?>
-        <p><a href="mailto:<?=$supportEmail?>"><?=$supportEmail?></a></p>
-      </div>
-      <?php endif; ?>
-    </div>
-  </div>
-</div>
 <div class="container-fluid summon-home">
   <div class="container">
      <div>
