@@ -60,8 +60,10 @@ local/httpd-vufind.conf
 local/import/import.properties
 local/import/import_auth.properties
 local/languages/finna/*-datasources.ini
-themes/finna2/css/finna.css
 themes/custom/css/finna.css
+themes/custom/css/finna.css.map
+themes/finna2/css/finna.css
+themes/finna2/css/finna.css.map
 *.diff
 vufind.bat
 public/swagger-ui
