@@ -670,8 +670,8 @@ class Quria extends AxiellWebServices
             foreach ($emailAddresses as $emailAddress) {
                 $userCached['extraEmails'][]
                     = [
-                        'email' => $emailAddress->address ?? '',
-                        'emailId' => $emailAddress->id ?? '',
+                        'email' => $emailAddress->address ?? null,
+                        'emailId' => $emailAddress->id ?? null,
                         'active' => $emailAddress->isActive == 'yes',
                     ];
             }
@@ -694,8 +694,8 @@ class Quria extends AxiellWebServices
             foreach ($phoneNumbers as $phoneNumber) {
                 $userCached['extraPhones'][]
                     = [
-                        'phone' => ($phoneNumber->areaCode ?? '') . $phoneNumber->localCode ?? '',
-                        'phoneId' => $phoneNumber->id ?? '',
+                        'phone' => ($phoneNumber->areaCode ?? '') . $phoneNumber->localCode ?? null,
+                        'phoneId' => $phoneNumber->id ?? null,
                         'active' => ($phoneNumber->sms->useForSms ?? '') == 'yes',
                     ];
             }
