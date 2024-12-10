@@ -1141,7 +1141,10 @@ class Quria extends AxiellWebServices
             foreach ($details['extraEmails'] as $i => $extraEmail) {
                 if (!empty($extraEmail)) {
                     $active = isset($details['active_extraEmails'][$i]);
-                    if (($user['extraEmails'][$i]['email'] !== $extraEmail) || ($active !== $user['extraEmails'][$i]['active'])) {
+                    if (
+                        ($user['extraEmails'][$i]['email'] !== $extraEmail)
+                        || ($active !== $user['extraEmails'][$i]['active'])
+                    ) {
                         $result = $this->updateEmail($patron, $extraEmail, $i, $active);
                         if (!$result['success']) {
                             return $result;
@@ -1155,7 +1158,10 @@ class Quria extends AxiellWebServices
             foreach ($details['extraPhones'] as $i => $extraPhone) {
                 if (!empty($extraPhone)) {
                     $active = isset($details['active_extraPhones'][$i]);
-                    if (($user['extraPhones'][$i]['phone'] !== $extraPhone) || ($active !== $user['extraPhones'][$i]['active'])) {
+                    if (
+                        ($user['extraPhones'][$i]['phone'] !== $extraPhone)
+                        || ($active !== $user['extraPhones'][$i]['active'])
+                    ) {
                         $result = $this->updatePhone($patron, $extraPhone, $i, $active);
                         if (!$result['success']) {
                             return $result;
@@ -1628,10 +1634,10 @@ class Quria extends AxiellWebServices
     /**
      * Update patron's email address
      *
-     * @param array    $patron   Patron array
-     * @param String   $email    Email address
-     * @param int|null $emailId  Email ID
-     * @param bool     $active   Whether to set the email active
+     * @param array    $patron  Patron array
+     * @param String   $email   Email address
+     * @param int|null $emailId Email ID
+     * @param bool     $active  Whether to set the email active
      *
      * @throws ILSException
      *
