@@ -1,7 +1,7 @@
 <?php
 
 /**
- * FeedbackForm connection handler
+ * Connection abstract base
  *
  * PHP version 8.1
  *
@@ -27,15 +27,17 @@
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
 
-namespace Finna\ReservationList;
+namespace Finna\ReservationList\Connection;
 
-use Exception;
+use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Laminas\Mvc\Controller\Plugin\Params;
+use Psr\Container\ContainerInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Form\Form;
+use VuFind\Service\GetServiceTrait;
 
 /**
- * FeedbackForm connection handler
+ * Connection abstract base
  *
  * @category VuFind
  * @package  ReservationList
@@ -43,21 +45,20 @@ use VuFind\Form\Form;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class FeedbackForm extends AbstractBase
+abstract class AbstractBase implements ConnectionInterface, \Laminas\Log\LoggerAwareInterface
 {
-    /**
-     * Recipients for email handler defined in ReservationList.yaml
-     *
-     * @var array
-     */
-    protected array $recipients;
+    use \VuFind\Log\LoggerAwareTrait;
+    use GetServiceTrait;
 
     /**
-     * Configured handler to handle form post, defaults to email handler
+     * Constructor
      *
-     * @var string
+     * @param ContainerInterface $serviceLocator Service locator used with GetServiceTrait
      */
-    protected string $configuredHandler = 'email';
+    public function __construct(ContainerInterface $serviceLocator)
+    {
+        $this->serviceLocator = $serviceLocator;
+    }
 
     /**
      * Places an order
@@ -68,19 +69,17 @@ class FeedbackForm extends AbstractBase
      *
      * @return array [external_id: Id in external service or null, success: true or false]
      */
-    public function placeOrder(array|Params $postValues, UserEntityInterface $user, Form $form = null): array
-    {
-        if (!($postValues instanceof Params)) {
-            throw new Exception('ReservationList FeedbackForm: Illegal parameter type.');
-        }
-        $postValues->getController()->getRequest()->getPost()->set('recipient', $this->recipients);
-        $result = $this->getService(\VuFind\Form\Handler\PluginManager::class)
-            ->get($this->configuredHandler)->handle($form, $postValues, $user);
-        return [
-            'success' => $result,
-            'external_id' => null,
-        ];
-    }
+    public abstract function placeOrder(array|Params $postValues, UserEntityInterface $user, Form $form = null): array;
+
+    /**
+     * Check list status. Used for external services.
+     *
+     * @param FinnaResourceListEntityInterface $list List to check for status
+     * @param UserEntityInterface              $user Current logged in user
+     *
+     * @return string
+     */
+    public abstract function getListStatus(FinnaResourceListEntityInterface $list, UserEntityInterface $user): string;
 
     /**
      * Initialize connection handler
@@ -88,16 +87,6 @@ class FeedbackForm extends AbstractBase
      * @param array $config List specific configuration from ReservationList.yaml
      *
      * @return static
-     * @throws \Exception If Database connection is not configured properly
      */
-    public function init(array $config): self
-    {
-        try {
-            $this->recipients = $config['Recipient'];
-            $this->configuredHandler = $config['Connection']['handler'] ?? 'email';
-        } catch (\Exception $e) {
-            throw new \Exception('Database: Invalid configuration');
-        }
-        return $this;
-    }
+    public abstract function init(array $config): static;
 }

@@ -27,7 +27,7 @@
  * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
  */
 
-namespace Finna\ReservationList;
+namespace Finna\ReservationList\Connection;
 
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;

@@ -27,7 +27,7 @@
  * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
  */
 
-namespace Finna\ReservationList;
+namespace Finna\ReservationList\Connection;
 
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Laminas\Mvc\Controller\Plugin\Params;
@@ -74,5 +74,5 @@ interface ConnectionInterface
      * @return static
      * @throws \Exception If connection is not configured properly
      */
-    public function init(array $config): self;
+    public function init(array $config): static;
 }

@@ -346,7 +346,7 @@ class ReservationListController extends AbstractBase
             return $view;
         }
         $connectionType = $listProperties['Connection']['type'];
-        $handler = $this->getService(\Finna\ReservationList\PluginManager::class)->get($connectionType);
+        $handler = $this->getService(\Finna\ReservationList\Connection\PluginManager::class)->get($connectionType);
         $handler->init($listProperties);
         $gatheredPostValues = [
             'firstName' => $postRequest->get('firstName'),
@@ -358,7 +358,7 @@ class ReservationListController extends AbstractBase
             'pickup_date' => $postRequest->get('pickup_date'),
             'resourceIDs' => $postRequest->get('resourceIDs'),
         ];
-        if ($handler instanceof \Finna\ReservationList\FeedbackForm) {
+        if ($handler instanceof \Finna\ReservationList\Connection\FeedbackForm) {
             $result = $handler->placeOrder($this->params(), $user, $form);
         } else {
             $result = $handler->placeOrder($gatheredPostValues, $user, $form);

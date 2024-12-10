@@ -9,10 +9,10 @@
 # List can contain same information as under institution information to be more specific
 # about where the order is being delivered
 # LibraryCardSources is used to check for active connection to ILS to be able to use lists
-# Connection holds information about type of lists:
-# feedbackform: Default connection, orders handled with sending forms
-#   handler: email [Optional] Default handler email, other values found in FeedbackForms.yaml primary handlers
-# disec:
+# Connection defines how the orders are handled with institutions:
+# Type:
+# feedbackform: Uses feedback forms for sending orders, see FeedbackForms.yaml.sample : ReservationListRequest
+# disec: Uses Disec api for sending orders
 #   base_url: Api base url
 #   secret:   Api specific secret
 #   use_cat_id: [Optional] Use catalog id for user instead of firstName, lastName, email. Default false.

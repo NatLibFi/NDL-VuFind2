@@ -3,7 +3,7 @@
 /**
  * Disec connection handler
  *
- * PHP version 8.1
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2024.
  *
@@ -27,7 +27,7 @@
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
 
-namespace Finna\ReservationList;
+namespace Finna\ReservationList\Connection;
 
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Laminas\Mvc\Controller\Plugin\Params;
@@ -173,7 +173,7 @@ class Disec extends AbstractBase
      * @return static
      * @throws \Exception If Disec connection is not configured properly
      */
-    public function init(array $config): self
+    public function init(array $config): static
     {
         try {
             $baseUrl = $config['Connection']['base_url'];
