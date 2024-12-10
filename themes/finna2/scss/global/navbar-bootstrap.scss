@@ -27,7 +27,7 @@
 }
 
 .navbar {
-  .dropdown .dropdown-menu > li > a > div:not(.description), .dropdown .dropdown-menu > li > a > span:not(.description) {
+  .dropdown .dropdown-menu > li > a > div:not(.description) {
     font-weight: bold;
     display: inline-block;
   }
