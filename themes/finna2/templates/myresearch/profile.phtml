@@ -175,18 +175,16 @@
             <?php if (!empty($this->profile['phone']) || $updatePhone): ?>
               <?php if ($updatePhone): ?>
                 <div class="my-profile-col profile-title"><label for="profile_tel"><?=$this->transEsc('Phone') ?>:</label></div>
-              <?php endif; ?>
-            <?php else: ?>
-              <?php if (!empty($this->profile['extraPhones'])): ?>
-                <div class="my-profile-col profile-title"><?=$this->transEsc('Phone') ?>:</div>
-                <?php foreach ($this->profile['extraPhones'] as $i => $extraPhone): ?>
-                  <div class="my-profile-col profile-title"></div>
-                  <div class="profile-text-value"><?=$this->escapeHtml($extraPhone['phone']) ?></div>
-                <?php endforeach; ?>
               <?php else: ?>
                 <div class="my-profile-col profile-title"><?=$this->transEsc('Phone') ?>:</div>
                 <div class="profile-text-value"><?=$this->escapeHtml($this->profile['phone']) ?></div>
               <?php endif; ?>
+            <?php endif; ?>
+            <?php if (!empty($this->profile['extraPhones'])): ?>
+              <?php foreach ($this->profile['extraPhones'] as $i => $extraPhone): ?>
+                <div class="my-profile-col profile-title"><?=$i === 0 ? $this->transEsc('Phone') : ''?></div>
+                <div class="profile-text-value"><?=$this->escapeHtml($extraPhone['phone']) ?></div>
+              <?php endforeach; ?>
             <?php endif; ?>
             <?php if (!empty($this->profile['smsnumber']) || $updateSmsNumber): ?>
               <?php if ($updateSmsNumber): ?>
@@ -206,15 +204,13 @@
                   <input class="form-control" type="email" name="profile_email" value="<?=empty($this->profile['email']) ? '' : $this->escapeHtmlAttr($this->profile['email']) ?>" title="<?=$this->transEscAttr('Email') ?>">
                 </div>
               <?php else: ?>
-                <?php if (!empty($this->profile['extraEmails'])): ?>
-                  <?php foreach ($this->profile['extraEmails'] as $i => $extraEmail): ?>
-                    <div class="my-profile-col profile-title"></div>
-                    <div class="profile-text-value"><?=$this->escapeHtml($extraEmail['email']) ?></div>
-                  <?php endforeach; ?>
-                <?php else: ?>
                   <div class="profile-text-value"><?=$this->escapeHtml($this->profile['email']) ?></div>
-                <?php endif; ?>
               <?php endif; ?>
+            <?php elseif (!empty($this->profile['extraEmails'])): ?>
+              <?php foreach ($this->profile['extraEmails'] as $i => $extraEmail): ?>
+                <div class="my-profile-col profile-title"><?=$i === 0 ? $this->transEsc('Email') : ''?></div>
+                <div class="profile-text-value"><?=$this->escapeHtml($extraEmail['email']) ?></div>
+              <?php endforeach; ?>
             <?php endif; ?>
             <?php if (!empty($this->profile['hold_identifier'])): ?>
               <div class="my-profile-col profile-title"><?=$this->transEsc('Hold Identifier') ?>:</div>

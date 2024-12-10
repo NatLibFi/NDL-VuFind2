@@ -120,12 +120,16 @@
               }
             ?>
             <?php foreach ($extraValues as $extraValue): ?>
+              <div class="form-group">
                 <label class="control-label" for="<?=$this->escapeHtmlAttr($field)?>"><?=$this->transEsc($data['label']) ?>:</label>
                 <?php echo $this->makeTag('input', '', $extraValue['attrs']); ?>
-                <div>
-                  <input type="checkbox" name="<?=$this->escapeHtmlAttr('active_' . $extraValue['attrs']['name'])?>" value="1"<?=$extraValue['active'] ? ' checked' : ''?>>
-                  <?=$this->transEsc($field . '_active') ?>
-                </div>
+                <?php if (in_array($field, $this->config['contactInfoActivation'] ?? [])): ?>
+                  <div>
+                    <input type="checkbox" name="<?=$this->escapeHtmlAttr('active_' . $extraValue['attrs']['name'])?>" value="1"<?=$extraValue['active'] ? ' checked' : ''?>>
+                    <?=$this->transEsc($field . '_active') ?>
+                  </div>
+                <?php endif; ?>
+              </div>
             <?php endforeach; ?>
           <?php else: ?>
             <label class="control-label" for="<?=$this->escapeHtmlAttr($field)?>"><?=$this->transEsc($data['label']) ?>:</label>

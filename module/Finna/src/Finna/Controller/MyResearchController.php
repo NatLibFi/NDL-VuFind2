@@ -903,11 +903,12 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 // Extract field name from single or array style key (e.g. addresses[0][types])
                 $fieldNames[strtok($field, '[')] = true;
             }
-            if (isset($fieldNames['extraEmails'])) {
-                $fieldNames['active_extraEmails'] = true;
-            }
-            if (isset($fieldNames['extraPhones'])) {
-                $fieldNames['active_extraPhones'] = true;
+
+            // Add contact info activation fields to accepted field names
+            if (!empty($updateConfig['contactInfoActivation'])) {
+                foreach ($updateConfig['contactInfoActivation'] as $contactField) {
+                    $fieldNames['active_' . $contactField] = true;
+                }
             }
             // Filter any undefined fields and bad values from the request:
             $data = array_intersect_key(

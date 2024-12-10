@@ -696,7 +696,7 @@ class Quria extends AxiellWebServices
                     = [
                         'phone' => ($phoneNumber->areaCode ?? '') . $phoneNumber->localCode ?? '',
                         'phoneId' => $phoneNumber->id ?? '',
-                        'active' => ($phoneNumber->sms->useForSms ?? '') == 'yes'
+                        'active' => ($phoneNumber->sms->useForSms ?? '') == 'yes',
                     ];
             }
         }
