@@ -1,8 +1,9 @@
 .reservation-list-body {
+  padding: 0;
+
   @media (max-width: $screen-sm-max) {
     width: 100%;
   }
-  padding: 0;
   .list-info {
     background: #f4f4f4;
     display: inline-block;
@@ -33,20 +34,6 @@
     > li:nth-child(odd) {
       background-color: #f4f4f4;
     }
-  }
-}
-.reservation-list-delete-wrapper {
-  .dropdown-menu {
-    top: 100%;
-    left: -50%;
-  }
-  &.left .dropdown-menu {
-    left: initial;
-    right: 0;
-  }
-  .dropdown-header {
-    color: inherit;
-    font-size: 14px;
   }
 }
 

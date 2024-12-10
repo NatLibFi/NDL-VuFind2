@@ -485,8 +485,6 @@ $config = [
                     'Finna\AjaxHandler\GetSearchResults' => 'VuFind\AjaxHandler\GetSearchResultsFactory',
                     'Finna\AjaxHandler\GetSearchTabsRecommendations' =>
                         'Finna\AjaxHandler\GetSearchTabsRecommendationsFactory',
-                    'Finna\AjaxHandler\GetSideFacets' =>
-                        'VuFind\AjaxHandler\GetSideFacetsFactory',
                     'Finna\AjaxHandler\GetSimilarRecords' =>
                         'Finna\AjaxHandler\GetSimilarRecordsFactory',
                     'Finna\AjaxHandler\GetUserList' =>
@@ -544,7 +542,6 @@ $config = [
                     'VuFind\AjaxHandler\GetItemStatuses' => 'Finna\AjaxHandler\GetItemStatuses',
                     'VuFind\AjaxHandler\GetRequestGroupPickupLocations' => 'Finna\AjaxHandler\GetRequestGroupPickupLocations',
                     'VuFind\AjaxHandler\GetSearchResults' => 'Finna\AjaxHandler\GetSearchResults',
-                    'VuFind\AjaxHandler\GetSideFacets' => 'Finna\AjaxHandler\GetSideFacets',
                     'VuFind\AjaxHandler\SystemStatus' => 'Finna\AjaxHandler\SystemStatus',
                 ],
             ],

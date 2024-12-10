@@ -11,13 +11,7 @@
     <p><?=$this->transEsc('An error has occurred')?></p>
     <p><?=$this->transEsc($this->message)?></p>
   <?php endif; ?>
-  <p>
-    <?=$this->transEsc('Please contact the Library Reference Department for assistance')?>
-    <br>
-    <?php $supportEmail = $this->escapeHtmlAttr($this->systemEmail()); ?>
-    <a href="mailto:<?=$supportEmail?>"><?=$supportEmail?></a>
-  </p>
-  <br>
+  <?=$this->render('error/contact.phtml')?>
   <?php if (preg_match('/Record (\w+):.* does not exist/', $this->exception->getMessage(), $matches) && $this->authorizationNote($matches[1])): ?>
     <p><?=$this->translate('record_not_found_unauthorized')?></p>
   <?php endif; ?>

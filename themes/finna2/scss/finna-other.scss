@@ -65,6 +65,10 @@
 @import 'finna/select-a11y';
 @import 'finna/reservationlist';
 
+html {
+    font-size: $font-size-base;
+}
+
 ::-ms-clear {
     display: none;
 }

@@ -1,10 +1,8 @@
 <!-- START of: finna - RecordDriver/AipaLrmi/result-list.phtml -->
 <?php
-  $combinedView = !$this->layout()->templateDir || $this->layout()->templateDir === 'combined';
   $img = $this->recordImage($this->record($this->driver));
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
-  $inL1Results = $this->layout()->templateDir === 'l1';
   $recordLinker = $this->recordLinker($this->results);
   $coverDetails = $this->record($this->driver)->getCoverDetails('result-list', 'medium', $recordLinker->getUrl($this->driver));
   if ($img) {
@@ -109,25 +107,23 @@
                 <?php endforeach; ?>
               </div>
             <?php endif; ?>
-            <?php if ($inL1Results): ?>
-              <div class="targeted-information truncate-field outer" data-rows="2">
-                <?php if ($levels = $this->driver->getRootEducationalLevels()): ?>
-                  <?php foreach($levels as $level): ?>
-                    <span class="lrmi-topic"><?=$this->transEsc($level)?></span>
-                  <?php endforeach; ?>
-                <?php endif; ?>
-                <?php if ($topics = $this->driver->getTopics()): ?>
-                  <?php foreach($topics as $topic): ?>
-                    <span class="lrmi-topic"><?=$this->transEsc($topic)?></span>
-                  <?php endforeach; ?>
-                <?php endif; ?>
-              </div>
-              <?php if ($rights = $this->driver->getAccessRestrictionsType($this->layout()->userLang)): ?>
-                <div class="material-rights">
-                  <span class="rights-header"><?=$this->transEsc('usage_rights_ext')?>:</span>
-                  <?= $this->partial('Helpers/copyright-field-value.phtml', ['data' => $rights]) ?>
-                </div>
+            <div class="targeted-information truncate-field outer" data-rows="2">
+              <?php if ($levels = $this->driver->getRootEducationalLevels()): ?>
+                <?php foreach($levels as $level): ?>
+                  <span class="lrmi-topic"><?=$this->transEsc($level)?></span>
+                <?php endforeach; ?>
               <?php endif; ?>
+              <?php if ($topics = $this->driver->getTopics()): ?>
+                <?php foreach($topics as $topic): ?>
+                  <span class="lrmi-topic"><?=$this->transEsc($topic)?></span>
+                <?php endforeach; ?>
+              <?php endif; ?>
+            </div>
+            <?php if ($rights = $this->driver->getAccessRestrictionsType($this->layout()->userLang)): ?>
+              <div class="material-rights">
+                <span class="rights-header"><?=$this->transEsc('usage_rights_ext')?>:</span>
+                <?= $this->partial('Helpers/copyright-field-value.phtml', ['data' => $rights]) ?>
+              </div>
             <?php endif; ?>
           <?php endif; ?>
         </div>

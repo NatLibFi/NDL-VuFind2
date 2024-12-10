@@ -60,6 +60,7 @@
       <?php endif; ?>
 
       <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
+      <?=$this->record($this->driver)->getLabelList() ?>
 
       <?php if ($serviceURLs = $this->driver->getServiceURLs()): ?>
         <div class="recordURLs">

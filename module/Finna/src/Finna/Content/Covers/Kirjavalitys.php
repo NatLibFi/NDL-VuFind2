@@ -77,6 +77,9 @@ class Kirjavalitys extends \VuFind\Content\AbstractCover
      */
     public function getUrl($key, $size, $ids)
     {
+        if (!$key) {
+            return false;
+        }
         $sizeCodes = [
             'medium' => 'max400',
             'small' => 'max200',
@@ -105,7 +108,7 @@ class Kirjavalitys extends \VuFind\Content\AbstractCover
                     'format' => 'image',
                     'size' => $sizeCodes[$size] ?? 'max400',
                 ];
-                return 'https://media.kirjavalitys.fi/library/cover/helmet/' . rawurlencode($pid)
+                return 'https://media.kirjavalitys.fi/library/cover/' . rawurlencode($key) . '/' . rawurlencode($pid)
                     . '?' . http_build_query($params);
             }
             return false;

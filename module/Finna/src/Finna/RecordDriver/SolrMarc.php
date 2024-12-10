@@ -201,6 +201,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                             if ('title' === $tmp['link']['type']) {
                                 $tmp['link']['value'] = $tmp['value'];
                             }
+                            // get also subfield g for related misc info
+                            $tmp['misc'] = $this->getSubfield($field, 'g');
                         }
                     }
                 } elseif ($value == '775' || $value == '776') {
@@ -1404,10 +1406,12 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         ];
         $matches = $this->getSeriesFromMARC($primaryFields);
 
+        // Now check also 490:
+        $secondaryFields = ['490' => ['a', 'v']];
         if (empty($matches)) {
-            // Now check 490 and display it only if 440/800/830 were empty:
-            $secondaryFields = ['490' => ['a', 'v']];
             $matches = $this->getSeriesFromMARC($secondaryFields);
+        } else {
+            $matches = array_merge($matches, $this->getSeriesFromMARC($secondaryFields));
         }
 
         // Still no results found?  Resort to the Solr-based method just in case!
@@ -1947,6 +1951,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         }
         $linkage = $marc->parseLinkageField($link);
         foreach ($marc->getFields($linkage['field']) as $linkedField) {
+            if (!is_array($linkedField)) {
+                $this->logError(
+                    'Invalid linked field: ' . var_export($linkedField, true) . ', record id '
+                    . ($this->fields['id'] ?? '??')
+                );
+                continue;
+            }
             $sub6 = $marc->getSubfield($linkedField, '6');
             $targetLinkage = $marc->parseLinkageField($sub6);
             if (
