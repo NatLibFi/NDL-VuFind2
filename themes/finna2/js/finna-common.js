@@ -64,7 +64,6 @@ finna.common = (function finnaCommon() {
    */
   function initResultsEventHandler() {
     VuFind.listen('results-load', () => {
-      // PREVIOUS DOESNT SEEM TO WORK, NEXT DOES???
       setTimeout(() => {
         var focusedEl = document.getElementById("results-heading");
         var storagedEl = window.sessionStorage.getItem('clickedMenu');
