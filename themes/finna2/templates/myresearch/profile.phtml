@@ -17,7 +17,6 @@
     $needsApproval = $updateAddress['needsApproval'] ?? true;
     $updateLoanHistory = $this->ils()->checkFunction('updateTransactionHistoryState', $capabilityParams);
     $updateAddressLink = '';
-    $updateAddress['method'] = 'driver';
     if ($updateAddress) {
       $linkText = $this->translate(($updatePhone || $updateEmail || $updateSmsNumber) ? 'request_address_change' : 'request_contact_information_change');
       ob_start();
@@ -175,6 +174,9 @@
             <?php if (!empty($this->profile['phone']) || $updatePhone): ?>
               <?php if ($updatePhone): ?>
                 <div class="my-profile-col profile-title"><label for="profile_tel"><?=$this->transEsc('Phone') ?>:</label></div>
+                <div>
+                  <input class="form-control" type="tel" name="profile_tel" value="<?=empty($this->profile['phone']) ? '' : $this->escapeHtmlAttr($this->profile['phone']) ?>" title="<?=$this->transEscAttr('Phone') ?>">
+                </div>
               <?php else: ?>
                 <div class="my-profile-col profile-title"><?=$this->transEsc('Phone') ?>:</div>
                 <div class="profile-text-value"><?=$this->escapeHtml($this->profile['phone']) ?></div>
@@ -204,7 +206,7 @@
                   <input class="form-control" type="email" name="profile_email" value="<?=empty($this->profile['email']) ? '' : $this->escapeHtmlAttr($this->profile['email']) ?>" title="<?=$this->transEscAttr('Email') ?>">
                 </div>
               <?php else: ?>
-                  <div class="profile-text-value"><?=$this->escapeHtml($this->profile['email']) ?></div>
+                <div class="profile-text-value"><?=$this->escapeHtml($this->profile['email']) ?></div>
               <?php endif; ?>
             <?php elseif (!empty($this->profile['extraEmails'])): ?>
               <?php foreach ($this->profile['extraEmails'] as $i => $extraEmail): ?>

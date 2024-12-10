@@ -1639,7 +1639,7 @@ class Quria extends AxiellWebServices
      */
     public function updateEmail($patron, $email, $emailId = null, $active = false)
     {
-        if (empty($email)) {
+        if (empty($email) || empty($emailId)) {
             return [
                 'success' => true,
                 'status' => 'No data to update',
@@ -1670,7 +1670,7 @@ class Quria extends AxiellWebServices
             'isActive'     => $active ? 'yes' : 'no',
         ];
         if (!empty($user['extraEmails'])) {
-            $conf['id'] = $emailId !== null ? $user['extraEmails'][$emailId]['emailId'] : $user['emailId'];
+            $conf['id'] = $user['extraEmails'][$emailId]['emailId'];
             $function = 'changeEmail';
             $functionResult = 'changeEmailAddressResult';
             $functionParam = 'changeEmailAddressParam';
@@ -1717,6 +1717,7 @@ class Quria extends AxiellWebServices
      * @param array  $patron  Patron array
      * @param string $phone   Phone number
      * @param string $phoneId Phone ID
+     * @param bool   $active  Whether to set the phone active
      *
      * @throws ILSException
      *
@@ -1724,6 +1725,13 @@ class Quria extends AxiellWebServices
      */
     public function updatePhone($patron, $phone, $phoneId = null, $active = false)
     {
+        if (empty($phone) || empty($phoneId)) {
+            return [
+                'success' => true,
+                'status' => 'No data to update',
+                'sys_message' => '',
+            ];
+        }
         $username = $patron['cat_username'];
         $password = $patron['cat_password'];
         $user = $this->getMyProfile($patron);
@@ -1745,7 +1753,7 @@ class Quria extends AxiellWebServices
         ];
 
         if (!empty($user['extraPhones'])) {
-            $conf['id'] = $phoneId !== null ? $user['extraPhones'][$phoneId]['phoneId'] : $user['phoneId'];
+            $conf['id'] = $user['extraPhones'][$phoneId]['phoneId'];
             $function = 'changePhone';
             $functionResult = 'changePhoneNumberResult';
             $functionParam = 'changePhoneNumberParam';
