@@ -30,9 +30,9 @@
 namespace Finna\ReservationList\Connection;
 
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
+use Finna\ReservationList\Form\Form;
 use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\Form\Form;
 
 /**
  * Reservation list connection plugin interface

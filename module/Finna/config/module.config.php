@@ -380,6 +380,7 @@ $config = [
             'Finna\Service\UserPreferenceService' => 'Finna\Service\UserPreferenceServiceFactory',
             'Finna\Statistics\Driver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Statistics\EventHandler' => 'Finna\Statistics\EventHandlerFactory',
+            \Finna\ReservationList\Form\Form::class => \Finna\Form\FormFactory::class,
             \Finna\ReservationList\ReservationListService::class => \Finna\ReservationList\ReservationListServiceFactory::class,
             \Finna\ReservationList\Connection\PluginManager::class => \VuFind\ServiceManager\AbstractPluginManagerFactory::class,
             'Finna\Favorites\FavoritesService' => 'Finna\Favorites\FavoritesServiceFactory',

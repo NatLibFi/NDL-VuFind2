@@ -35,7 +35,7 @@
 namespace Finna\Controller;
 
 use Exception;
-use Finna\Form\Form;
+use Finna\ReservationList\Form\Form as ReservationListForm;
 use Finna\ReservationList\ReservationListService;
 use Finna\View\Helper\Root\ReservationList;
 use Laminas\ServiceManager\ServiceLocatorInterface;
@@ -302,7 +302,7 @@ class ReservationListController extends AbstractBase
         if (!$listProperties || !$listProperties['Enabled']) {
             throw new \VuFind\Exception\Forbidden('No list properties found.');
         }
-        $formId = Form::RESERVATION_LIST_REQUEST;
+        $formId = ReservationListForm::RESERVATION_LIST_REQUEST;
 
         $resourcesText = '';
         $resourceIds = [];
@@ -319,7 +319,7 @@ class ReservationListController extends AbstractBase
             ->set('record_ids', $resourcesText)
             ->set('resourceIDs', $resourceIds);
 
-        $form = $this->getService(\Finna\Form\Form::class);
+        $form = $this->getService(\Finna\ReservationList\Form\Form::class);
         $form->setFormId(formId: $formId, prefill: $postRequest->toArray());
         if (!$form->isEnabled()) {
             throw new \VuFind\Exception\Forbidden("Form '$formId' is disabled");

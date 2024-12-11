@@ -30,10 +30,10 @@
 namespace Finna\ReservationList\Connection;
 
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
+use Finna\ReservationList\Form\Form;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Psr\Container\ContainerInterface;
 use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\Form\Form;
 use VuFind\Service\GetServiceTrait;
 
 /**
