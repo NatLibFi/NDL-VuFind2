@@ -47,7 +47,10 @@ class CollectionList extends \VuFind\RecordTab\CollectionList
      */
     public function getDescription()
     {
-        if ($this->driver instanceof \Finna\RecordDriver\SolrLido || $this->driver->tryMethod('getArchiveType') === 'collection') {
+        if (
+            $this->driver instanceof \Finna\RecordDriver\SolrLido
+            || $this->driver->tryMethod('getArchiveType') === 'collection'
+        ) {
             return 'Collection Items';
         }
         return 'Archive Content';
