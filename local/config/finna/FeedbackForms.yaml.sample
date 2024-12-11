@@ -342,10 +342,9 @@ forms:
           settings:
             - [rows, 3]
   ReservationListRequest:
-    allowLocalOverride: true
+    allowLocalOverride: false
     title: ReservationList::form_title
     enabled: true
-    sendMethod: "email"
     onlyForLoggedUsers: true
     emailSubject: ReservationList::form_email_subject
     response: ReservationList::form_response

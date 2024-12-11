@@ -54,23 +54,22 @@ class Form extends \Finna\Form\Form
      *
      * @var array
      */
-    protected array $reservationListRecipients = [];
+    protected array $recipients = [];
 
     /**
-     * Set recipients used in reservation lists as lists can have same configuration base
-     * but contain different recipients for each list
+     * Set recipients
      *
      * @param array $recipients Array containing recipients [name, email]
      *
      * @return void
      */
-    public function setReservationListRecipients(array $recipients): void
+    public function setRecipients(array $recipients): void
     {
-        $this->reservationListRecipients = $recipients;
+        $this->recipients = $recipients;
     }
 
     /**
-     * Return form recipient.
+     * Return form recipient. Name is in singular to override inherited methods
      *
      * @param array $postParams Posted form data
      *
@@ -78,7 +77,7 @@ class Form extends \Finna\Form\Form
      */
     public function getRecipient($postParams = null)
     {
-        return $this->reservationListRecipients;
+        return $this->recipients;
     }
 
     /**
@@ -92,11 +91,9 @@ class Form extends \Finna\Form\Form
     {
         $elements = parent::getFormElements($config);
         // Add hidden fields for reservation list order form
-        if (self::RESERVATION_LIST_REQUEST === $this->getFormId()) {
-            $elements['rl_institution'] = ['type' => 'hidden', 'name' => 'rl_institution', 'value' => null];
-            $elements['rl_list_identifier'] = ['type' => 'hidden', 'name' => 'rl_list_identifier', 'value' => null];
-            $elements['rl_list_id'] = ['type' => 'hidden', 'name' => 'rl_list_id', 'value' => null];
-        }
+        $elements['rl_institution'] = ['type' => 'hidden', 'name' => 'rl_institution', 'value' => null];
+        $elements['rl_list_identifier'] = ['type' => 'hidden', 'name' => 'rl_list_identifier', 'value' => null];
+        $elements['rl_list_id'] = ['type' => 'hidden', 'name' => 'rl_list_id', 'value' => null];
         return $elements;
     }
 }

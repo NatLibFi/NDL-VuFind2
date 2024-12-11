@@ -155,13 +155,6 @@ class Form extends \VuFind\Form\Form
     protected $recordLoader = null;
 
     /**
-     * Recipients for reservation lists
-     *
-     * @var array
-     */
-    protected array $reservationListRecipients = [];
-
-    /**
      * Set form id
      *
      * @param string $formId  Form id
@@ -332,19 +325,6 @@ class Form extends \VuFind\Form\Form
     public function reportPatronId(): bool
     {
         return (bool)($this->formConfig['includePatronId'] ?? false);
-    }
-
-    /**
-     * Set recipients used in reservation lists as lists can have same configuration base
-     * but contain different recipients for each list
-     *
-     * @param array $recipients Array containing recipients [name, email]
-     *
-     * @return void
-     */
-    public function setReservationListRecipients(array $recipients): void
-    {
-        $this->reservationListRecipients = $recipients;
     }
 
     /**
