@@ -65,7 +65,8 @@ $text-color: $gray-dark !default;
 $body-color: $text-color !default;
 $link-color:  #007c90 !default; // defines all link color, also for linked icons
 $link-hover-color: $link-color !default;
-$link-hover-decoration: #fff !default;
+$link-decoration: none !default;
+$link-hover-decoration: underline !default;
 $padding-base-vertical: 6px !default;
 $padding-base-horizontal: 12px !default;
 $padding-large-vertical: 10px !default;
@@ -85,11 +86,18 @@ $component-active-bg: $brand-primary !default;
 $navbar-height:                    64px !default;
 $navbar-margin-bottom:             0px !default;
 $navbar-padding-vertical:          0px !default;
+$navbar-padding-x:                 0px !default;
+$navbar-padding-y:                 $navbar-padding-vertical !default;
 $navbar-collapse-max-height:       auto !default;
 $navbar-default-bg:                #fff !default;
+//$navbar-light-color:               $brand-primary !default;
+//$navbar-light-active-color:        $brand-primary !default;
+//$navbar-light-brand-color:         $brand-primary !default;
+//$navbar-light-brand-hover-color:   $brand-primary !default;
 
 // Navbar links
-$navbar-default-link-color:                $text-color !default;  // Color of link texts in navbar
+$navbar-default-link-color:        $text-color !default;  // Color of link texts in navbar
+$navbar-nav-link-padding-x:        1rem !default;
 
 
 //== Navs
@@ -97,7 +105,8 @@ $navbar-default-link-color:                $text-color !default;  // Color of li
 //##
 
 //=== Shared nav styles
-$nav-link-padding:                          0px 15px !default;
+//$nav-link-padding:                          0px 15px !default;
+//$nav-link-padding-y:                        1rem !default;
 $nav-link-hover-bg:                         rgba(255,255,255,0.2) !default;
 $nav-tabs-border-color:                     $gray-mid-light !default;
 $nav-tabs-link-hover-border-color:          $gray-mid-light !default;
@@ -305,6 +314,7 @@ $badge-color:                 color.adjust($text-color, $lightness: 18% /*, $spa
 $badge-link-hover-color:      #fff !default;
 $badge-bg:                    none !default;
 $badge-font-weight:           400 !default;
+$badge-font-size:             0.9rem !default;
 
 
 //== Breadcrumbs
@@ -340,3 +350,34 @@ $cursor-disabled: pointer !default;
 $progress-border-radius: none !default;
 $panel-heading-padding: 0 !default;
 $panel-footer-padding: 0 !default;
+
+// Disable !important utilities by default:
+$enable-important-utilities:        false !default;
+
+// Disable several default icons:
+$accordion-button-active-icon:      none !default;
+$accordion-button-active-icon-dark: none !default;
+$accordion-button-icon:             none !default;
+$accordion-button-icon-dark:        none !default;
+$form-select-indicator:             none !default;
+$form-select-indicator-dark:        none !default;
+$form-switch-bg-image:              none !default;
+$form-switch-bg-image-dark:         none !default;
+$navbar-dark-toggler-icon-bg:       none !default;
+$navbar-light-toggler-icon-bg:      none !default;
+
+$pagination-active-bg:              $primary !default;
+$pagination-active-border:          $primary !default;
+
+$link-hover-decoration:             underline !default;
+$icon-link-underline-offset:        inherit !default;
+
+// Disable dark mode for now:
+$enable-dark-mode:                  false !default;
+
+// Disable smooth scroll for now (doesn't interact well with Mink tests):
+$enable-smooth-scroll:              false !default;
+
+// Disable validation icons that take a lot of room e.g. in select fields:
+$enable-validation-icons:           false !default;
+$form-select-indicator-padding:     .75rem !default;

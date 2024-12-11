@@ -25,11 +25,11 @@
   }
 }
 
-@media (max-width: $screen-md-max) {
+/*@media (max-width: $screen-md-max) {
   .finna-navbar .nav >li>a {
     padding: 0 6px;
   }
-}
+}*/
 
 // fix navbar for logoutoptions
 .finna-navbar .navbar-nav .logoutOptions {
@@ -89,7 +89,7 @@
   outline: 5px auto -webkit-focus-ring-color;
 }
 
-.finna-navbar {
+/*.finna-navbar {
   .navbar-nav > li > a,
   .navbar-collapse.in .dropdown-menu a {
     color: $header-text-color;
@@ -101,7 +101,7 @@
       content:"";
     }
   }
-}
+}*/
 
 /* Finna breadcrumbs */
 
@@ -325,7 +325,7 @@
   z-index: 1; /* this is necessary for overcome the pseudo element */
 }
 
-@media(min-width: $grid-float-breakpoint) {
+/*@media(min-width: $grid-float-breakpoint) {
   .finna-navbar {
     display: flex;
     .navbar-collapse {
@@ -333,7 +333,7 @@
       display: flex !important; // Needed to override bootstrap defaults
     }
   }
-}
+}*/
 
 header {
   box-shadow : 0 1px 0 1px rgba(0,0,0,0.1);

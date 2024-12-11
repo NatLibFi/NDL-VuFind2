@@ -16,3 +16,21 @@
 
 $alert-info-bg:               $state-info-bg !default;
 $alert-info-text:             $state-info-text !default;
+
+.badge {
+  background-color: inherit; // $badge-bg is not yet defined here
+}
+
+.dropdown-toggle.qrcodeLink::after {
+  display: none;
+}
+
+// Navibar
+.finna-navbar {
+  @extend .container-fluid;
+}
+@media (min-width: $screen-md-min) {
+  .navbar-nav.header-navbar-right {
+    flex-shrink: 0;
+  }
+}
