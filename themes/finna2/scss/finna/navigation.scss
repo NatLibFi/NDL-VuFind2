@@ -25,11 +25,16 @@
   }
 }
 
-/*@media (max-width: $screen-md-max) {
-  .finna-navbar .nav >li>a {
-    padding: 0 6px;
+@media (max-width: $screen-sm-max) {
+  .finna-navbar {
+    min-height: 64px;
+
+    .nav > li > a {
+      padding-left: 6px;
+      padding-right: 6px;
+    }
   }
-}*/
+}
 
 // fix navbar for logoutoptions
 .finna-navbar .navbar-nav .logoutOptions {
@@ -139,7 +144,6 @@
 #my-info-dropdown-menu {
   width: 280px;
   background-color: $body-bg;
-  margin-top: 0;
   @include box-shadow(0 6px 12px rgba(0, 0, 0, .275));
 
   .card-selection {
@@ -225,8 +229,6 @@
       width: 100%;
       &:hover {
         text-decoration: none;
-        color: $dropdown-link-hover-color;
-        background-color: $dropdown-link-hover-bg;
       }
       .sign-out-icon {
         font-size: 1.2em;

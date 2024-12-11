@@ -28,9 +28,23 @@ $alert-info-text:             $state-info-text !default;
 // Navibar
 .finna-navbar {
   @extend .container-fluid;
+
+  @media (max-width: $screen-sm-max) {
+    padding: 0;
+  }
 }
 @media (min-width: $screen-md-min) {
   .navbar-nav.header-navbar-right {
     flex-shrink: 0;
   }
+}
+
+// Dropdown icons
+// Show our own:
+.dropdown-toggle .icon:last-child {
+  display: inline-block;
+}
+// Hide Bootstrap's:
+.dropdown-toggle::after {
+  display: none;
 }

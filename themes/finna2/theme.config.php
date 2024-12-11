@@ -271,6 +271,7 @@ return [
         'components/finna-md-editable.js',
         'components/finna-tabs-nav.js',
         'components/finna-truncate.js',
+        'finna-bs3-compat.js',
     ],
     'favicon' => 'favicon.ico',
     'icons' => [

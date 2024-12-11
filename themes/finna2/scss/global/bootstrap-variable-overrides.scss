@@ -90,6 +90,7 @@ $navbar-padding-x:                 0px !default;
 $navbar-padding-y:                 $navbar-padding-vertical !default;
 $navbar-collapse-max-height:       auto !default;
 $navbar-default-bg:                #fff !default;
+$navbar-toggler-focus-width:       0;
 //$navbar-light-color:               $brand-primary !default;
 //$navbar-light-active-color:        $brand-primary !default;
 //$navbar-light-brand-color:         $brand-primary !default;
@@ -122,14 +123,14 @@ $font-family-serif: PT Serif !default;
 $font-family-monospace: Monaco !default;
 $font-family-base: $font-family-sans-serif !default;
 $font-size-base: 1rem !default;
-$font-size-large: math.ceil(($font-size-base * 1.3)) !default;
-$font-size-small: math.ceil(($font-size-base * 0.85)) !default;
-$font-size-h1: math.floor(($font-size-base * 2.6)) !default;
-$font-size-h2: math.floor(($font-size-base * 1.76)) !default;
-$font-size-h3: math.floor(($font-size-base * 1.6)) !default;
-$font-size-h4: math.floor(($font-size-base * 1.3)) !default;
+$font-size-large: 1.3rem !default;
+$font-size-small: 0.85rem !default;
+$font-size-h1: 2.6rem !default;
+$font-size-h2: 1.76rem !default;
+$font-size-h3: 1.6rem !default;
+$font-size-h4: 1.3rem !default;
 $font-size-h5: $font-size-base !default;
-$font-size-h6: math.floor(($font-size-base * 0.85)) !default;
+$font-size-h6: 0.85rem !default;
 $line-height-base: 1.5 !default;
 $line-height-computed: math.floor(($font-size-base * $line-height-base)) !default;
 $headings-font-family: $font-family-base !default;
@@ -216,6 +217,8 @@ $dropdown-link-disabled-color: $gray-light !default;
 $dropdown-header-color: $gray-light !default;
 $dropdown-caret-color: #000 !default;
 $dropdown-fallback-border: none !default;
+$dropdown-item-padding-x: 0rem !default;
+$dropdown-item-padding-y: 0rem !default;
 
 
 //== Pagination

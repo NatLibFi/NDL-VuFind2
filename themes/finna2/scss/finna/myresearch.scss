@@ -120,7 +120,7 @@
     .btn-group {
       margin-right: 20px;
       .btn {
-        margin-right: 1px;
+        margin-right: calc(var(--#{$prefix}border-width) + 1px);
         &:last-child {
           margin-right: 0;
         }
@@ -845,7 +845,7 @@ form#renewals, form#update_holds, form#purge_history {
   }
 }
 
-// Status badges
+// Menu style
 .myresearch-menu, #my-info-dropdown-menu {
   a {
     display: flex;
@@ -855,6 +855,7 @@ form#renewals, form#update_holds, form#purge_history {
     }
     &:hover {
       background-color: $gray-lighter;
+      text-decoration: none;
     }
     &:focus {
       background-color: $nav-link-hover-bg;
@@ -867,15 +868,20 @@ form#renewals, form#update_holds, form#purge_history {
       color: #fff;
     }
   }
+}
 
+// Status badges
+.myresearch-menu, #my-info-dropdown-menu {
   .status {
     float: right;
     .badge {
       border-radius: 2px;
       margin: 0 2px;
-      border: 1px solid; /* color inherited from bootstrap */
       height: 22px;
       padding: 0 7px;
+      color: var(--#{$prefix}body-color);
+      background-color: var(--#{$prefix}body-bg);
+      border: 1px solid $gray-lighter;
 
       &.account-info {
         color: $state-success-text;

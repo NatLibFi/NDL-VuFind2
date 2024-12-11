@@ -1,9 +1,10 @@
 .navbar {
   max-width: map-get($container-max-widths, "xl"); // dont fully scale the navigation bar text
+  min-height: $navbar-height;
+
   .collapse-open-icon {
-    font-size: 10px;
+    font-size: $font-size-icon-tiny;
     vertical-align: middle;
-    margin-top: -2px;
   }
   .logoutOptions, #loginOptions {
     .my-account-icon {
@@ -45,15 +46,22 @@
   }
 }
 
-/*.navbar-brand {
+.navbar-brand {
   padding: 0;
-  line-height: $navbar-height;
+//  line-height: $navbar-height;
   max-width: 150px;
   display: flex;
   align-items: center;
+
   @media (min-width: $grid-float-breakpoint) {
     max-width: 200px;
   }
+
+  @media (max-width: $screen-sm-max) {
+    min-height: 64px;
+
+  }
+
   .navbar-logo {
     font-size: $navbar-logo-height;
     color: $logo-color;
@@ -63,7 +71,7 @@
     height: $navbar-logo-height;
     width: auto;
   }
-}*/
+}
 
 .navbar-toggle {
   position: absolute;
@@ -222,7 +230,6 @@
 
 // Menu position and menu carets
 .navbar-nav > li > .dropdown-menu {
-  margin-top: 0;
   @include border-top-radius($border-radius-base);
 }
 
@@ -262,6 +269,13 @@
   display: flex;
   flex-direction: row;
   align-items: baseline;
+  // This is required for proper positioning of dropdown menus:
+  position: relative;
+
+  // Counter the responsive menu behavior for non-expandable items:
+  .dropdown-menu {
+    position: absolute;
+  }
 
   div.logoutOptions a:active {
     box-shadow: none;
@@ -274,16 +288,21 @@
 
   @media (max-width: $screen-sm-max) {
     position: absolute;
-    margin: 0;
-    line-height: $navbar-height;
     top: 0;
+    display: flex;
+    align-items: center;
+    height: $navbar-height;
     right: $navbar-right;
-    flex: 0 0;
+
     div.logoutOptions, #loginOptions {
       margin-top: 0;
     }
-    .dropdown-menu > li > a {
-      white-space: normal;
+    .dropdown-menu {
+      margin-top: 1rem;
+
+      > li > a {
+        white-space: normal;
+      }
     }
   }
 }
@@ -299,6 +318,7 @@
     border-width: 0 0 1px;
     background-color: $header-background-color;
     box-shadow: 0 0 3px 3px rgba(0,0,0,0.1);
+
     .navbar-collapse > ul > li {
       border-bottom: 1px solid $gray-lighter;
     }
