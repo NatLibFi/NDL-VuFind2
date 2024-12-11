@@ -183,17 +183,17 @@ class SolrEad3 extends SolrEad
     ];
 
     /**
-     * Check if record is or is part of an archive
+     * Get archive type
      *
-     * @return bool
+     * @return string
      */
-    public function isArchive(): bool
+    public function getArchiveType(): string
     {
         $xml = $this->getXmlRecord();
         if ($xml->{'add-data'}->archive->attributes()->type === 'collection') {
-            return false;
+            return 'collection';
         }
-        return true;
+        return 'archive';
     }
 
     /**
