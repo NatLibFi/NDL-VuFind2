@@ -35,7 +35,6 @@ use DateTime;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\Db\Service\FinnaResourceListResourceServiceInterface;
 use Finna\Db\Service\FinnaResourceListServiceInterface;
-use Laminas\Config\Config;
 use Laminas\Session\Container;
 use Laminas\Stdlib\Parameters;
 use VuFind\Db\Entity\ResourceEntityInterface;
@@ -91,7 +90,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         'LibraryCardSources' => [],
         'CheckResourceStatus' => false,
         'Connection' =>  [
-            'type' => 'Database',
+            'type' => 'feedbackform',
         ],
         'Identifier' => false,
     ];

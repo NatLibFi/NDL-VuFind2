@@ -11,7 +11,7 @@
 # LibraryCardSources is used to check for active connection to ILS to be able to use lists
 # Connection defines how the orders are handled with institutions:
 # Type:
-# feedbackform: Uses feedback forms for sending orders, see FeedbackForms.yaml.sample : ReservationListRequest
+# feedbackform: Uses feedback forms for sending orders, see FeedbackForms.yaml.sample : ReservationListRequest for examples
 # disec: Uses Disec api for sending orders
 #   base_url: Api base url
 #   secret:   Api specific secret

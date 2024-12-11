@@ -3,7 +3,7 @@
 /**
  * Reservation list connection plugin interface
  *
- * PHP version 8.1
+ * PHP Version 8
  *
  * Copyright (C) The National Library of Finland 2024.
  *
@@ -48,13 +48,13 @@ interface ConnectionInterface
     /**
      * Places an order
      *
-     * @param array|Params        $postValues Key value pairs of post parameters to send or params plugin
-     * @param UserEntityInterface $user       User entity
-     * @param Form                $form       Form posted when submitting the order
+     * @param Params              $params Params plugin
+     * @param UserEntityInterface $user   User entity
+     * @param Form                $form   Form posted when submitting the order
      *
      * @return array [external_id: Id in external service or null, success: true or false]
      */
-    public function placeOrder(array|Params $postValues, UserEntityInterface $user, Form $form = null): array;
+    public function placeOrder(Params $params, UserEntityInterface $user, Form $form = null): array;
 
     /**
      * Check list status. Used for external services.

@@ -3,7 +3,7 @@
 /**
  * Connection abstract base
  *
- * PHP version 8.1
+ * PHP Version 8
  *
  * Copyright (C) The National Library of Finland 2024.
  *
@@ -63,13 +63,13 @@ abstract class AbstractBase implements ConnectionInterface, \Laminas\Log\LoggerA
     /**
      * Places an order
      *
-     * @param array|Params        $postValues Key value pairs of post parameters to send or params plugin
-     * @param UserEntityInterface $user       User entity
-     * @param Form                $form       Form posted when submitting the order
+     * @param Params              $params Params plugin
+     * @param UserEntityInterface $user   User entity
+     * @param Form                $form   Form posted when submitting the order
      *
      * @return array [external_id: Id in external service or null, success: true or false]
      */
-    public abstract function placeOrder(array|Params $postValues, UserEntityInterface $user, Form $form = null): array;
+    abstract public function placeOrder(Params $params, UserEntityInterface $user, Form $form = null): array;
 
     /**
      * Check list status. Used for external services.
@@ -79,7 +79,7 @@ abstract class AbstractBase implements ConnectionInterface, \Laminas\Log\LoggerA
      *
      * @return string
      */
-    public abstract function getListStatus(FinnaResourceListEntityInterface $list, UserEntityInterface $user): string;
+    abstract public function getListStatus(FinnaResourceListEntityInterface $list, UserEntityInterface $user): string;
 
     /**
      * Initialize connection handler
@@ -88,5 +88,5 @@ abstract class AbstractBase implements ConnectionInterface, \Laminas\Log\LoggerA
      *
      * @return static
      */
-    public abstract function init(array $config): static;
+    abstract public function init(array $config): static;
 }

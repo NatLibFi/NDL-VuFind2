@@ -162,6 +162,13 @@ class Form extends \VuFind\Form\Form
     protected $recordLoader = null;
 
     /**
+     * Recipients for reservation lists
+     *
+     * @var array
+     */
+    protected array $reservationListRecipients = [];
+
+    /**
      * Set form id
      *
      * @param string $formId  Form id
@@ -335,6 +342,19 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
+     * Set recipients used in reservation lists as lists can have same configuration base
+     * but contain different recipients for each list
+     *
+     * @param array $recipients Array containing recipients [name, email]
+     *
+     * @return void
+     */
+    public function setReservationListRecipients(array $recipients): void
+    {
+        $this->reservationListRecipients = $recipients;
+    }
+
+    /**
      * Return form recipient.
      *
      * @param array $postParams Posted form data
@@ -345,7 +365,7 @@ class Form extends \VuFind\Form\Form
     {
         // Always get recipients from postparams
         if ($this->getFormId() === self::RESERVATION_LIST_REQUEST) {
-            return $postParams['recipient'];
+            return $this->reservationListRecipients;
         }
         // Get recipient email address for feedback form from data source
         // configuration:

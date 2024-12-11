@@ -3,7 +3,7 @@
 /**
  * Reservation list connection plugin manager
  *
- * PHP version 8.1
+ * PHP Version 8
  *
  * Copyright (C) The National Library of Finland 2024.
  *

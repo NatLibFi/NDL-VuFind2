@@ -3,7 +3,7 @@
 /**
  * Reservation list status enum.
  *
- * PHP version 8.1
+ * PHP Version 8
  *
  * Copyright (C) The National Library of Finland 2024.
  *
@@ -41,12 +41,8 @@ namespace Finna\ReservationList\Connection;
 enum ReservationListStatus: string
 {
     case UNKNOWN = 'unknown';
-    case IN_PROCESS = 'in_process';
-    case PROCESSED = 'processed';
     case DELIVERED = 'delivered';
     case CANCELLED = 'cancelled';
-    case REPLIED = 'replied';
-    case REMOVED_ITEM = 'removed_item';
     case ON_LOAN = 'on_loan';
     case RETURNED = 'returned';
     case RENEWED = 'renewed';
@@ -72,7 +68,6 @@ enum ReservationListStatus: string
     public static function mapEnumFromString(string $text): static
     {
         $statusKeyMappings = [
-            'handled' => 'processed',
             'loaned' => 'on_loan',
         ];
         $text = mb_strtolower($text);

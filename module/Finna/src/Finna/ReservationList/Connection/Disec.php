@@ -34,8 +34,6 @@ use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Form\Form;
 
-use function is_array;
-
 /**
  * Disec connection handler
  *
@@ -81,17 +79,14 @@ class Disec extends AbstractBase
     /**
      * Places an order
      *
-     * @param array|Params        $postValues Key value pairs of post parameters to send or params plugin
-     * @param UserEntityInterface $user       User entity
-     * @param Form                $form       Form posted when submitting the order
+     * @param Params              $params Params plugin
+     * @param UserEntityInterface $user   User entity
+     * @param Form                $form   Form posted when submitting the order
      *
      * @return array [external_id: Id in external service or null, success: true or false]
      */
-    public function placeOrder(array|Params $postValues, UserEntityInterface $user, Form $form = null): array
+    public function placeOrder(Params $params, UserEntityInterface $user, Form $form = null): array
     {
-        if (!is_array($postValues)) {
-            throw new \Exception('ReservationList Disec: Illegal parameter type.');
-        }
         $data = [];
         $client = $this->getService(\VuFindHttp\HttpService::class)->createClient($this->ordersUrl);
         $client->setHeaders($this->requestHeaders);
@@ -99,28 +94,29 @@ class Disec extends AbstractBase
 
         $resources = [];
         $recordLoader = $this->getService(\VuFind\Record\Loader::class);
-        foreach ($recordLoader->loadBatch($postValues['resourceIDs']) as $record) {
+        foreach ($recordLoader->loadBatch($params->fromPost('resourceIDs', [])) as $record) {
             if ($identifiers = $record->tryMethod('getIdentifier', [])) {
                 $resources[] = array_shift($identifiers);
             }
         }
         $data = [
             'resourceIds' => $resources,
-            'customer' => [
-                'firstName' => $postValues['firstName'],
-                'lastName' => $postValues['lastName'],
-                'email' => $postValues['email'],
-            ],
-            'contentInfo' => $postValues['message'] . PHP_EOL,
+            'contentInfo' => $params->fromPost('message', '') . PHP_EOL,
         ];
-        $data['contentInfo'] .= $postValues['pickup_date'] . PHP_EOL;
+        $data['contentInfo'] .= $params->fromPost('pickup_date') . PHP_EOL;
         if ($catId = $user->getCatId()) {
             [, $id] = explode('.', $catId);
             if ($this->useCatId) {
                 $data['kohaId'] = (int)$id;
-                unset($data['customer']);
             }
             $data['contentInfo'] .= 'cat_id: ' . $id;
+        }
+        if (empty($data['kohaId'])) {
+            $data['customer'] = [
+                'firstName' => $params->fromPost('firstName') ?? $user->getFirstname(),
+                'lastName' => $params->fromPost('lastName') ?? $user->getLastname(),
+                'email' => $params->fromPost('email') ?? $user->getEmail(),
+            ];
         }
         $client->setRawBody(json_encode($data));
         $response = $client->send();
@@ -130,12 +126,14 @@ class Disec extends AbstractBase
             return [
                 'success' => true,
                 'external_id' => $body['id'],
+                'pickup_date' => $params->fromPost('pickup_date', ''),
             ];
         }
         $this->debug('Disec: failed to place order: ' . $response->getBody());
         return [
             'success' => false,
             'external_id' => null,
+            'pickup_date' => null,
         ];
     }
 

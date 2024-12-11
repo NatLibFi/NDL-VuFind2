@@ -29,7 +29,6 @@
 
 namespace Finna\ReservationList\Connection;
 
-use Exception;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Db\Entity\UserEntityInterface;
@@ -54,32 +53,23 @@ class FeedbackForm extends AbstractBase
     protected array $recipients;
 
     /**
-     * Configured handler to handle form post, defaults to email handler
-     *
-     * @var string
-     */
-    protected string $configuredHandler = 'email';
-
-    /**
      * Places an order
      *
-     * @param array|Params        $postValues Key value pairs of post parameters to send or params plugin
-     * @param UserEntityInterface $user       User entity
-     * @param Form                $form       Form posted when submitting the order
+     * @param Params              $params Params plugin
+     * @param UserEntityInterface $user   User entity
+     * @param Form                $form   Form posted when submitting the order
      *
      * @return array [external_id: Id in external service or null, success: true or false]
      */
-    public function placeOrder(array|Params $postValues, UserEntityInterface $user, Form $form = null): array
+    public function placeOrder(Params $params, UserEntityInterface $user, Form $form = null): array
     {
-        if (!($postValues instanceof Params)) {
-            throw new Exception('ReservationList FeedbackForm: Illegal parameter type.');
-        }
-        $postValues->getController()->getRequest()->getPost()->set('recipient', $this->recipients);
-        $result = $this->getService(\VuFind\Form\Handler\PluginManager::class)
-            ->get($this->configuredHandler)->handle($form, $postValues, $user);
+        // Assign external recipients as lists can contain different recipients even if form base is the same
+        $form->setReservationListRecipients($this->recipients);
+        $result = $form->getPrimaryHandler()->handle($form, $params, $user);
         return [
             'success' => $result,
             'external_id' => null,
+            'pickup_date' => $params->fromPost('pickup_date', ''),
         ];
     }
 
