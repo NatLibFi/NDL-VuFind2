@@ -322,7 +322,7 @@ class NotifyCommand extends \VuFindConsole\Command\ScheduledSearch\NotifyCommand
     protected function getUserForSearch($s)
     {
         $user = parent::getUserForSearch($s);
-        if (trim($user->getEmail()) === '') {
+        if ($user && trim($user->getEmail()) === '') {
             $this->warn(
                 'User ' . $user->getUsername() . ' does not have a valid email address, bypassing alert ' . $s->getId()
             );
