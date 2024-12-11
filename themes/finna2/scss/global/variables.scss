@@ -2,6 +2,9 @@
 // Finna Variables
 // --------------------------------------------------
 
+@use "sass:color";
+@use "sass:math";
+
 
 //== Colors
 //
@@ -35,7 +38,7 @@ $header-background-color: $body-bg !default; // Color of navigation bar top
 $header-text-color: $navbar-default-link-color !default;
 $footer-background: $gray-ultralight !default;
 $footer-text-color: $gray !default;
-$finna-search-background: mix($body-bg, contrast($body-bg), 95%) !default; // Background color of finna searchbox section
+$finna-search-background: color.mix($body-bg, contrast($body-bg), 95%) !default; // Background color of finna searchbox section
 $finna-search-link-color: $text-color !default;
 $finna-main-header-background: $body-bg !default; // Color of page header background and search results tabs
 $finna-searchbox-link-color: $body-bg !default; // style searchbox link text color contrast with background
@@ -51,7 +54,7 @@ $finna-button-radius: $border-radius-base !default; // Defines all button radius
 $finna-header-font-size: 1.6em !default;
 $record-title-font-size: 1.65em !default;
 $record-holdings-title-background: $brand-primary !default;
-$record-holdings-title-color: mix($record-holdings-title-background, contrast($record-holdings-title-background), 5%) !default;
+$record-holdings-title-color: color.mix($record-holdings-title-background, contrast($record-holdings-title-background), 5%) !default;
 $record-holdings-border-color: $gray-lighter !default;
 
 //== Finna home page
@@ -72,13 +75,13 @@ $infobox-box-shadow: none !default;
 
 //== Finna facets
 $sidebar-background: $brand-primary !default;
-$sidebar-header-text-color: mix($sidebar-background, contrast($sidebar-background), 5%) !default;
+$sidebar-header-text-color: color.mix($sidebar-background, contrast($sidebar-background), 5%) !default;
 $sidebar-header-icon-color: #fff !default;
-$sidebar-border-color: mix($body-bg, contrast($body-bg), 80%) !default;
+$sidebar-border-color: color.mix($body-bg, contrast($body-bg), 80%) !default;
 $sidebar-border: 1px solid $sidebar-border-color !default;
 $facet-header-background: $gray-ultralight !default;
-$facet-text-color: mix($facet-header-background, contrast($facet-header-background), 5%) !default;
-$facet-border-color: mix($facet-header-background, contrast($facet-header-background), 80%) !default;
+$facet-text-color: color.mix($facet-header-background, contrast($facet-header-background), 5%) !default;
+$facet-border-color: color.mix($facet-header-background, contrast($facet-header-background), 80%) !default;
 
 $display-checkbox-facet-amount: inline-block !default;    // set to none or inline-block
 // Applied filters
@@ -86,7 +89,7 @@ $filters-background-color: $action-link-color !default;
 $filters-text-color: $body-bg !default;
 $filters-icon-color: $body-bg !default;
 $filterContent-background: $body-bg !default;
-$filterContent-border-color: mix($filterContent-background, contrast($filterContent-background), 80%) !default;
+$filterContent-border-color: color.mix($filterContent-background, contrast($filterContent-background), 80%) !default;
 $filterContent-text-color: $text-color !default;
 //Search tools
 $finna-searchtools-background: $brand-primary !default;
@@ -95,7 +98,7 @@ $finna-searchtools-color: $body-bg !default;
 
 //== Browsebar
 $finna-browsebar-background: $brand-primary !default;
-$finna-browsebar-highlight-background: darken($finna-browsebar-background, 10%) !default;
+$finna-browsebar-highlight-background: color.adjust($finna-browsebar-background, $lightness: -10% /*, $space: hsl*/) !default;
 $finna-browsebar-link-color: $body-bg !default;
 
 //== Generated horizontal carousel styles
@@ -147,7 +150,7 @@ $myresearch-tabs-color: $gray !default;
 $myresearch-menu-header-font-color: #fff !default;
 
 // Finna info box
-$finna-infobox-bg: lighten($brand-primary, 70%) !default;
+$finna-infobox-bg: color.adjust($brand-primary, $lightness: 70% /*, $space: hsl*/) !default;
 $finna-infobox-border: 4px solid $brand-primary !default;
 $finna-infobox-color: $brand-primary !default;
 
@@ -155,6 +158,7 @@ $finna-infobox-color: $brand-primary !default;
 //== Typography
 //
 
+$font-size-root: 14px !default;
 $font-size-icon-small: 14px !default;
 $font-size-icon-large: 1.5em !default;
 
@@ -162,12 +166,12 @@ $font-size-icon-large: 1.5em !default;
 //## Font size, line-height for content pages
 $content-font-size-base: 16px !default;
 $content-line-height-base: 1.5 !default;
-$content-headings-font-size-h1: floor(($content-font-size-base * 1.777)) !default;
-$content-headings-font-size-h2: floor(($content-font-size-base * 1.5)) !default;
-$content-headings-font-size-h3: floor(($content-font-size-base * 1.333)) !default;
-$content-headings-font-size-h4: floor(($content-font-size-base * 1.15)) !default;
+$content-headings-font-size-h1: math.floor(($content-font-size-base * 1.777)) !default;
+$content-headings-font-size-h2: math.floor(($content-font-size-base * 1.5)) !default;
+$content-headings-font-size-h3: math.floor(($content-font-size-base * 1.333)) !default;
+$content-headings-font-size-h4: math.floor(($content-font-size-base * 1.15)) !default;
 $content-headings-font-size-h5: $content-font-size-base !default;
-$content-headings-font-size-h6: floor(($content-font-size-base * 0.875)) !default;
+$content-headings-font-size-h6: math.floor(($content-font-size-base * 0.875)) !default;
 $content-headings-line-height: $headings-line-height !default;
 $content-headings-color: $gray-dark !default;
 $content-heading-background: $brand-secondary !default;
@@ -285,7 +289,7 @@ $tooltip-min-width:           250px !default;
 //
 //##
 $modal-header-background: $brand-primary !default;
-$modal-header-color: mix($modal-header-background, contrast($modal-header-background), 5%) !default;
+$modal-header-color: color.mix($modal-header-background, contrast($modal-header-background), 5%) !default;
 
 
 //== Badges
@@ -314,7 +318,7 @@ $cookie-consent-button-border: 2px solid #fff !default;
 
 //== Cookie Consent Component
 :root {
-    --cc-cookie-category-block-bg: #{lighten($gray-base, 93.5%)};
+    --cc-cookie-category-block-bg: #{color.adjust($gray-base, $lightness: 93.5% /*, $space: hsl*/)};
     --cc-btn-border-radius: #{$finna-button-radius};
 }
 

@@ -13,6 +13,15 @@
 .status-unavailable-icon {
     color: $brand-danger;
 }
+.status-available .icon {
+    color: $brand-success;
+}
+.status-unavailable .icon {
+    color: $brand-danger;
+}
+.status-uncertain .icon, .status-unknown .icon {
+    color: $brand-warning;
+}
 .dedup-select {
     max-width: 100%;
 }
@@ -20,16 +29,8 @@
     letter-spacing: 0.2px;
     padding: 0;
     padding-bottom: 2px;
-    span:not(.icon) {
-        &.text-error, &.text-success, &.text-warning {
-            color: inherit;
-            vertical-align: middle;
-            margin-right: 10px;
-            font-weight: normal;
-        }
-    }
-    .text-error {
-        color: $brand-danger;
+    .location-name {
+        vertical-align: middle;
     }
 }
 .no-branches .groupLocation {
@@ -187,11 +188,22 @@
     h5 {
         padding-left: 15px;
     }
+    .holdings-group {
+        .status-available {
+            color: $state-success-text;
+            .icon {
+                color: $brand-success;
+            }
+        }
+        .status-unavailable {
+            color: $brand-danger;
+        }
+        .status-uncertain, .status-unknown {
+            color: $brand-warning;
+        }
+    }
     .holdings-group:not(.headers+.holdings-group) {
         border-top: 2px solid $record-holdings-border-color;
-    }
-    span.icon.text-success {
-        color: $brand-success;
     }
     // Fix horizontal alignment of uncertain status icon:
     span.icon.fa-circle-o {
@@ -576,9 +588,6 @@
     }
     span.icon {
         vertical-align: middle;
-        &.text-success {
-            color: $brand-success;
-        }
         // Fix horizontal alignment of uncertain status icon:
         &.fa-circle-o {
             padding-left: 2px;

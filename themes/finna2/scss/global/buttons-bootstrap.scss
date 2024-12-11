@@ -1,10 +1,10 @@
 .btn {
   border-radius: $finna-button-radius;
-  @include transition(background .1s ease-in-out);
   border: 0;
   padding-top: 10px;
   padding-bottom: 10px;
   font-weight: 500;
+  @include transition(background .1s ease-in-out);
   &.disabled,
   &[disabled],
   fieldset[disabled] & {

@@ -141,14 +141,14 @@ $organisation-info-max-w: 400px !default;
     padding-bottom: 25px;
 
     h2 {
-        font-size: $font-size-large + 3px;
+        font-size: 1.55rem;
     }
 
     .consortium-info {
         margin-bottom: 20px;
 
         h3 {
-            font-size: $font-size-large + 17px;
+            font-size: 2.5rem;
             margin-top: 0;
         }
 
@@ -326,8 +326,8 @@ $organisation-info-max-w: 400px !default;
                 }
 
                 .map-bubble {
-                    .js-name {
-                        font-size: $font-size-small + 2px;
+                    h3 {
+                        font-size: $font-size-base;
                         margin-top: 10.5px;
                         margin-bottom: 10.5px;
                         min-width: 120px;

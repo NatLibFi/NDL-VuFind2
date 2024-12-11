@@ -68,11 +68,6 @@
             <div class="format-info"><?=$this->transEsc('holdings_archive_tab_microfilm_copy_type')?>: <?=$this->escapeHtml($item['microfilmCopyType'])?></div>
           <?php endif;?>
         </div>
-        <?php if (!empty($item['service'])): ?>
-          <div role="cell" class="tbl-cell tbl-right"> <?=$this->icon('service-available')?> <span><?=$this->transEsc('holdings_archive_tab_physical_service')?></span></div>
-        <?php else: ?>
-          <div role="cell" class="tbl-cell tbl-right"> <?=$this->icon('service-unavailable')?> <span><?=$this->transEsc('holdings_archive_tab_no_service')?></span></div>
-        <?php endif; ?>
       </div>
       <?php if (!empty($item['location'])): ?>
         <div role="row" class="tbl-row">

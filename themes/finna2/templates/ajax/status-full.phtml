@@ -109,8 +109,8 @@ if ($groupBranches) {
 
 <?php if ($groupBranches): ?>
   <div class="holdings-container root <?=$collapseLocations ? ' collapsible' : ''?>">
-    <div class="header<?=!empty($availableTotal) ? ' available' : ''?> clearfix">
-      <?=!empty($availableTotal) ? $this->icon('status-available', 'text-success') : $this->icon('status-unavailable', 'text-danger')?>
+    <div class="header<?=!empty($availableTotal) ? ' available status-available' : 'status-unavailable'?> clearfix">
+      <?=!empty($availableTotal) ? $this->icon('status-available') : $this->icon('status-unavailable')?>
       <span>
         <?php if (!empty($availableTotal)): ?>
           <?=sprintf('%s %d %s', $this->transEsc('axiell_available'), $availableTotal, $this->transEsc($journal ? 'axiell_issues' : 'axiell_branches'));?>
@@ -139,8 +139,8 @@ if ($groupBranches) {
   <div class="header holdings<?=!empty($availableTotal) ? ' available' : ''?> clearfix">
     <div>
     <?php if (!empty($availableTotal)): ?>
-      <span class="available-total">
-        <?=$this->icon('status-available', 'text-success')?> <span><?=$this->translate('status_items_available_html', ['%%count%%' => $availableTotal])?></span>
+      <span class="available-total status-available">
+        <?=$this->icon('status-available')?> <span><?=$this->translate('status_items_available_html', ['%%count%%' => $availableTotal])?></span>
       </span>
     <?php endif; ?>
     <span class="info">
@@ -217,16 +217,16 @@ foreach ($this->statusItems as $item):
     $classes = null;
     if ($item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_AVAILABLE)) {
       $icon = 'status-available';
-      $classEsc = 'text-success';
+      $classEsc = 'status-available';
     } elseif ($item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNCERTAIN)) {
       $icon = 'status-unknown';
-      $classEsc = 'text-warning';
+      $classEsc = 'status-uncertain';
     } elseif ($item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNKNOWN)) {
       $icon = $onlyUnknownStatuses ? '' : 'status-unknown';
-      $classEsc = 'text-warning';
+      $classEsc = 'status-unknown';
     } else {
       $icon = 'status-unavailable';
-      $classEsc = 'text-error';
+      $classEsc = 'status-unavailable';
     }
     $locationText = $this->transEscWithPrefix('location_', $item['location']);
     if ($item['locationhref'] ?? false) {
@@ -243,8 +243,8 @@ foreach ($this->statusItems as $item):
   ?>
     <div class="<?=$currentRow % 2 == 0 ? 'even' : 'odd'?> clearfix">
       <div class="<?=$groupBranches ? 'group-location-col' : 'no-branches'?>">
-        <div class="groupLocation <?= $prevOrganisation && $newOrganisation ? ' new-organisation' : ''; ?>">
-          <?=$icon ? $this->icon($icon, $classEsc) : ''?> <span class="<?=$classEsc?>"><?=$locationHtml?></span>
+        <div class="groupLocation <?=$classEsc?><?= $prevOrganisation && $newOrganisation ? ' new-organisation' : ''; ?>">
+          <?=$icon ? $this->icon($icon) : ''?> <span class="location-name"><?=$locationHtml?></span>
         </div>
       <?php if ($groupBranches): ?>
       </div>

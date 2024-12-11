@@ -37,6 +37,54 @@
 }
 
 .mylist-bar, .reservationlist-bar {
+  > .dropdown-menu {
+    float: none;
+    position: relative;
+    top: initial;
+    left: initial;
+    border-left: none;
+    border-right: none;
+    @include box-shadow(none);
+    padding: 0;
+    .active a {
+      font-weight: 600;
+      text-decoration: none;
+      color: $dropdown-link-color;;
+      background-color: $gray-ultralight;
+    }
+    > li {
+      max-width: none;
+      border: none;
+      
+      > a {
+        padding: 3px 20px;
+        &.active {
+          font-weight: bold;
+          background-color: $gray-ultralight;
+        }
+      }
+      > a:not(.add-new-list) {
+        color: $text-color;
+      }
+      .favorite-list-holder {
+        height: 25px;
+        .favorite-list-title {
+          max-width: 60%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          margin-right: 5px;
+        }
+  
+        .public-favorite-list {
+          padding: 2px;
+          &:before {
+            line-height: 19px;
+          }
+        }
+      }
+    }
+  }
   h4.visible-xs.visible-sm {
     text-transform: none;
   }
@@ -62,43 +110,9 @@
     a {
       padding: 2px;
     }
-
     .list-visibility-hidden {
       margin-left: 10px;
       margin-bottom: 5px;
-    }
-  }
-
-  li {
-    max-width: none;
-
-    > a {
-      padding: 3px 20px;
-      &.active {
-        font-weight: bold;
-        background-color: $gray-ultralight;
-      }
-    }
-    > a:not(.add-new-list) {
-      color: $text-color;
-    }
-    .favorite-list-holder {
-      height: 25px;
-
-      .favorite-list-title {
-        max-width: 60%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        margin-right: 5px;
-      }
-
-      .public-favorite-list {
-        padding: 2px;
-        &:before {
-          line-height: 19px;
-        }
-      }
     }
   }
 
@@ -539,22 +553,5 @@ span.caret {
     display: flex;
     justify-content: flex-end;
     margin-top: 10px;
-  }
-}
-
-.delete-list-btn-wrapper {
-  position: relative;
-  padding: 0 0 4px 4px;
-  .btn-group.open {
-    .dropdown-menu {
-      position: absolute;
-      border-radius: 4px;
-      border: 1px solid $gray-lighter;
-      top: 100%;
-    }
-    .dropdown-header {
-      color: inherit;
-      font-size: 14px;
-    }
   }
 }

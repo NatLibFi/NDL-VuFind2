@@ -147,6 +147,29 @@
   float: right;
 }
 
+/* Site status bar */
+.site-status-bar {
+  color: #fff;
+  background-color: $brand-info;
+  padding-top: 0.6em;
+  padding-bottom: 0.6em;
+  text-align: center;
+  z-index: 1;
+  &.site-status-beta {
+    background-color: $brand-warning;
+  }
+  &.site-status-disabled {
+    background-color: $brand-danger;
+  }
+  &.site-status-production {
+    display: none;
+  }
+  @media (max-width: $grid-float-breakpoint) {
+    position: relative;
+    top: $navbar-height;
+  }
+}
+
 //== SYSTEM MESSAGES
 .system-messages {
   background-color: $state-warning-bg;

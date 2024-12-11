@@ -64,14 +64,18 @@ finna.common = (function finnaCommon() {
    */
   function initResultsEventHandler() {
     VuFind.listen('results-load', () => {
-      setTimeout(
-        function focusHeading() {
-          const heading = document.getElementById("results-heading");
-          if (heading) {
-            heading.focus();
-          }
-        },
-        200
+      setTimeout(() => {
+        var focusedEl = document.getElementById("results-heading");
+        var storagedEl = window.sessionStorage.getItem('clickedMenu');
+        if (storagedEl) {
+          window.sessionStorage.removeItem('clickedMenu');
+          focusedEl = document.querySelector(storagedEl);
+        }
+        if (focusedEl) {
+          focusedEl.focus();
+        }
+      },
+      200
       );
     });
     VuFind.listen('results-loaded', () => {
@@ -91,15 +95,29 @@ finna.common = (function finnaCommon() {
       };
       link.addEventListener('click', function handleClick(event) {
         event.preventDefault();
+        window.sessionStorage.setItem('clickedMenu', `${type}-dropdown a.dropdown-toggle`);
         // Update button text:
         const dropdownEl = link.closest('.dropdown');
+        const dropdownLabel = type === 'sort' ? 'Sort' : 'Results per page';
         if (dropdownEl) {
           const toggleEl = dropdownEl.querySelector('.dropdown-toggle');
           if (toggleEl) {
+            toggleEl.ariaLabel = VuFind.translate(dropdownLabel) + ': ' + VuFind.translate(link.innerText) + ' ' + VuFind.translate('selected');
             const spanEl = toggleEl.querySelector('span');
             if (spanEl) {
               spanEl.innerText = link.innerText;
             }
+          }
+          const menuEl = dropdownEl.querySelector('.dropdown-menu');
+          if (menuEl) {
+            menuEl.querySelectorAll("li > a").forEach(element => {
+              if (element.ariaDescription) {
+                element.removeAttribute("aria-description");
+              }
+              if (element.innerText.trim() === toggleEl.innerText.trim()) {
+                element.ariaDescription = VuFind.translate('selected');
+              }
+            });
           }
         }
         // Get relevant data from the link and change the hidden field accordingly:

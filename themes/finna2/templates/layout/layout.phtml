@@ -173,6 +173,11 @@
       ?>
       <a class="skip-link" href="#<?=$contentElementId?>"><?=$this->transEsc('Skip to content') // skip to content ?></a>
     <header class="hidden-print">
+      <?php if (($siteStatus = $this->siteStatus()) !== \Finna\Site\SiteStatus::PRODUCTION): ?>
+        <div class="container-fluid site-status-bar <?= $siteStatus->getCssClass() ?>">
+          <?= $this->transEsc($siteStatus->getTranslationKey()) ?>
+        </div>
+      <?php endif; ?>
       <?php if ($this->bazaarSession()->isActive()): ?>
         <?=$this->partial('Helpers/bazaar-browse-bar.phtml');?>
       <?php endif; ?>
