@@ -328,11 +328,11 @@ class FinnaResourceList extends RowGateway implements
     /**
      * Set the external id
      *
-     * @param string $id External id
+     * @param ?string $id External id
      *
      * @return static
      */
-    public function setExternalId(string $id): static
+    public function setExternalId(?string $id): static
     {
         $this->external_id = $id;
         return $this;

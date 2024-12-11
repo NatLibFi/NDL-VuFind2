@@ -78,6 +78,13 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     public const RESOURCE_LIST_TYPE = 'reservationlist';
 
     /**
+     * Default connection handler used for list connections
+     *
+     * @var string
+     */
+    public const DEFAULT_CONNECTION_HANDLER = 'feedbackform';
+
+    /**
      * Default values for list config
      *
      * @var array
@@ -90,7 +97,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         'LibraryCardSources' => [],
         'CheckResourceStatus' => false,
         'Connection' =>  [
-            'type' => 'feedbackform',
+            'type' => self::DEFAULT_CONNECTION_HANDLER,
         ],
         'Identifier' => false,
     ];
@@ -311,12 +318,8 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
             throw new ListPermissionException('list_access_denied');
         }
         $list->setPickupDate(DateTime::createFromFormat('Y-m-d', $newValues['pickup_date']))->setOrdered();
-        if ($externalId = $newValues['external_id'] ?? null) {
-            $list->setExternalId($externalId);
-        }
-        if ($connection = $newValues['connection'] ?? null) {
-            $list->setConnection($connection);
-        }
+        $list->setExternalId($newValues['external_id'] ?? null);
+        $list->setConnection($newValues['connection'] ?? self::DEFAULT_CONNECTION_HANDLER);
         $this->resourceListService->persistEntity($list);
     }
 

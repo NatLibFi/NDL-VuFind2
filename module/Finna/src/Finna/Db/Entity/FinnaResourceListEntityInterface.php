@@ -234,9 +234,9 @@ interface FinnaResourceListEntityInterface extends EntityInterface
     /**
      * Set external id
      *
-     * @param string $id External id
+     * @param ?string $id External id
      *
      * @return static
      */
-    public function setExternalId(string $id): static;
+    public function setExternalId(?string $id): static;
 }
