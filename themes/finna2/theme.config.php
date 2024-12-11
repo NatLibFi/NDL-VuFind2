@@ -1,6 +1,6 @@
 <?php
 return [
-    'extends' => 'bootstrap3',
+    'extends' => 'bootstrap5',
     'helpers' => [
         'factories' => [
             'Finna\View\Helper\Root\AdjustHeadingLevel' => 'Laminas\ServiceManager\Factory\InvokableFactory',
@@ -257,7 +257,6 @@ return [
         'vendor/L.Control.Locate.min.js',
         'vendor/js.cookie.js',
         'vendor/select-a11y.iife.js',
-        'vendor/popper.min.js',
         'vendor/cally.iife.js',
         'finna-multiselect.js',
         'finna-model-viewer.js',
