@@ -85,7 +85,7 @@ $component-active-bg: $brand-primary !default;
 // Basics of a navbar
 $navbar-height:                    64px !default;
 $navbar-margin-bottom:             0px !default;
-$navbar-padding-vertical:          0px !default;
+$navbar-padding-vertical:          5px !default;
 $navbar-padding-x:                 0px !default;
 $navbar-padding-y:                 $navbar-padding-vertical !default;
 $navbar-collapse-max-height:       auto !default;
@@ -106,7 +106,8 @@ $navbar-nav-link-padding-x:        1rem !default;
 
 //=== Shared nav styles
 //$nav-link-padding:                          0px 15px !default;
-//$nav-link-padding-y:                        1rem !default;
+$nav-link-padding-y:                        1rem !default;
+$nav-link-font-weight:                      500;
 $nav-link-hover-bg:                         rgba(255,255,255,0.2) !default;
 $nav-tabs-border-color:                     $gray-mid-light !default;
 $nav-tabs-link-hover-border-color:          $gray-mid-light !default;

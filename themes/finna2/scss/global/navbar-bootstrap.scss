@@ -1,5 +1,5 @@
 .navbar {
-  max-width: 1300px; // dont fully scale the navigation bar text
+  max-width: map-get($container-max-widths, "xl"); // dont fully scale the navigation bar text
   .collapse-open-icon {
     font-size: 10px;
     vertical-align: middle;
@@ -196,20 +196,6 @@
         }
       }
     }
-  }
-  // Uncollapse the nav
-  @media (min-width: $grid-float-breakpoint) {
-    flex-grow: 1;
-    flex-shrink: 1;
-    float: initial;
-    margin: 0;
-
-    &.navbar-main {
-      margin-bottom: calc(#{$navbar-height} / 4);
-    }
-  }
-  .btn {
-    vertical-align: baseline;
   }
 }
 
