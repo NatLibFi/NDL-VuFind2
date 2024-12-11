@@ -42,6 +42,7 @@ enum ReservationListStatus: string
 {
     case UNKNOWN = 'unknown';
     case DELIVERED = 'delivered';
+    case IN_PROCESS = 'in_process';
     case CANCELLED = 'cancelled';
     case ON_LOAN = 'on_loan';
     case RETURNED = 'returned';

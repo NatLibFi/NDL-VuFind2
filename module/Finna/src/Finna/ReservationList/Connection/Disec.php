@@ -83,7 +83,11 @@ class Disec extends AbstractBase
      * @param UserEntityInterface $user   User entity
      * @param Form                $form   Form posted when submitting the order
      *
-     * @return array [external_id: Id in external service or null, success: true or false]
+     * @return array [
+     *  external_id: Id in external service or null,
+     *  success: true or false,
+     *  pickup_date: date for preferred pickup
+     * ]
      */
     public function placeOrder(Params $params, UserEntityInterface $user, Form $form = null): array
     {

@@ -59,12 +59,16 @@ class FeedbackForm extends AbstractBase
      * @param UserEntityInterface $user   User entity
      * @param Form                $form   Form posted when submitting the order
      *
-     * @return array [external_id: Id in external service or null, success: true or false]
+     * @return array [
+     *  external_id: Id in external service or null,
+     *  success: true or false,
+     *  pickup_date: date for preferred pickup
+     * ]
      */
     public function placeOrder(Params $params, UserEntityInterface $user, Form $form = null): array
     {
-        // Assign external recipients as lists can contain different recipients even if form base is the same
-        $form->setReservationListRecipients($this->recipients);
+        // Lists use list specific recipients for orders
+        $form->setRecipients($this->recipients);
         $result = $form->getPrimaryHandler()->handle($form, $params, $user);
         return [
             'success' => $result,
