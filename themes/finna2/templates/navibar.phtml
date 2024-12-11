@@ -35,9 +35,9 @@
                 ?>
                   <li>
                     <a <?=$url === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> <?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?=$this->escapeHtmlAttr($url)?>">
-                      <div><?= $this->transEsc($label) ?></div>
+                      <span><?= $this->transEsc($label) ?></span>
                       <?php if ($desc): ?>
-                        <div class="description"><?= $this->transEsc($desc) ?></div>
+                        <span class="description"><?= $this->transEsc($desc) ?></span>
                       <?php endif; ?>
                     </a>
                   </li>
