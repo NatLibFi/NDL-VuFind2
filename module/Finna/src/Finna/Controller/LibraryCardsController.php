@@ -917,7 +917,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 return $this->forceLogin();
             }
             if (!($id = $this->params()->fromRoute('id', $this->params()->fromQuery('id')))) {
-                return $this->redirect()->toRoute('myresearch-home');
+                return $this->redirect()->toRoute('librarycards-home');
             }
             $userCardService = $this->getDbService(UserCardServiceInterface::class);
             $card = $userCardService->getOrCreateLibraryCard($user, $id);

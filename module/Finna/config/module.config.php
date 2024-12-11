@@ -239,6 +239,7 @@ $config = [
             'Finna\Controller\AjaxController' => 'VuFind\Controller\AjaxControllerFactory',
             'Finna\Controller\AuthorityController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\AuthorityRecordController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
+            'Finna\Controller\BarcodeController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\BazaarController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\BrowseSearchController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\CartController' => 'VuFind\Controller\CartControllerFactory',
@@ -274,6 +275,8 @@ $config = [
         ],
         'aliases' => [
             'AuthorityRecord' => 'Finna\Controller\AuthorityRecordController',
+            'Barcode' => 'Finna\Controller\BarcodeController',
+            'barcode' => 'Finna\Controller\BarcodeController',
             'Bazaar' => 'Finna\Controller\BazaarController',
             'bazaar' => 'Finna\Controller\BazaarController',
             'BrowseSearch' => 'Finna\Controller\BrowseSearchController',
@@ -1157,21 +1160,6 @@ $config['router']['routes']['solrauthrecord-feedback'] = [
         'defaults' => [
             'controller' => 'AuthorityRecord',
             'action'     => 'Feedback',
-        ],
-    ],
-];
-// @deprecated, use librarycards-displaybarcode
-$config['router']['routes']['barcode-show'] = [
-    'type'    => 'Laminas\Router\Http\Segment',
-    'options' => [
-        'route'    => '/LibraryCards/displayBarcode/[:id]',
-        'constraints' => [
-            'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-            'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-        ],
-        'defaults' => [
-            'controller' => 'LibraryCards',
-            'action'     => 'displayBarcode',
         ],
     ],
 ];
