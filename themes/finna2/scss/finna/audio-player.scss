@@ -8,11 +8,8 @@
   :focus {
     outline:none;
   }
-  .open-link {
+  .open-link:not(.download-audio) {
     font-size: $font-size-small;
-    &.download-audio  {
-      font-size: 1em;
-    }
   }
 }
 
