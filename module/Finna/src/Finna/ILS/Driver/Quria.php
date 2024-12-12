@@ -1930,7 +1930,7 @@ class Quria extends AxiellWebServices
      */
     public function getConfig($function, $params = null)
     {
-        $config = parent::getConfig($function, $params);
+        $config = parent::getConfig($function);
         if ('updateAddress' === $function && isset($config['fields'])) {
             if (isset($params['patron'])) {
                 $profile = $this->getMyProfile($params['patron']);
@@ -1967,7 +1967,7 @@ class Quria extends AxiellWebServices
                 }
                 $config['fields'] = array_merge($config['fields'], $extraFields);
             }
-            return $config;
         }
+        return $config;
     }
 }
