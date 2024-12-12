@@ -118,8 +118,8 @@ fields[] = Address:address1
 fields[] = Zip:zip
 fields[] = City:city
 fields[] = Country:country
-fields[] = Email:email
 fields[] = Phone:phone
+fields[] = Email:email
 ;fields[] = Additional info:info
 
 ; Array of fields that can be set active/inactive
