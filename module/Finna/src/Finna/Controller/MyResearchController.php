@@ -904,12 +904,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 $fieldNames[strtok($field, '[')] = true;
             }
 
-            // Add contact info activation fields to accepted field names
-            if (!empty($updateConfig['contactInfoActivation'])) {
-                foreach ($updateConfig['contactInfoActivation'] as $contactField) {
-                    $fieldNames['active_' . $contactField] = true;
-                }
-            }
             // Filter any undefined fields and bad values from the request:
             $data = array_intersect_key(
                 filter_input_array(INPUT_POST),
