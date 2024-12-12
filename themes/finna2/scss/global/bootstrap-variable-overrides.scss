@@ -112,7 +112,7 @@ $nav-link-font-weight:                      500;
 $nav-link-hover-bg:                         rgba(255,255,255,0.2) !default;
 $nav-tabs-border-color:                     $gray-mid-light !default;
 $nav-tabs-link-hover-border-color:          $gray-mid-light !default;
-
+$nav-tabs-link-active-border-color:         $brand-primary !default;
 
 //== Typography
 //
@@ -277,7 +277,9 @@ $tooltip-header-color:        color.mix($tooltip-arrow-color, contrast($tooltip-
 //
 //##
 
-$modal-content-bg: $body-bg !default;
+$modal-content-bg:            $body-bg !default;
+$modal-md:                    768px !default;
+$modal-lg:                    900px !default;
 
 
 //== Alerts

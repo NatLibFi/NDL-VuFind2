@@ -1,4 +1,4 @@
-/*global VuFind, videojs, finna, priorityNav */
+/*global VuFind, videojs, finna, priorityNav, bootstrap */
 finna.layout = (function finnaLayout() {
   var currentOpenTooltips = [];
 
@@ -557,14 +557,23 @@ finna.layout = (function finnaLayout() {
         cancelRefresh();
       }
     });
-    $('#modal').on('show.bs.modal', function onShowModal() {
-      if ($('#modal').find('#authcontainer').length > 0) {
-        $('#modal .modal-dialog').addClass('modal-lg modal-lg-dynamic');
-      }
-    });
-    $('#modal').on('hidden.bs.modal', function onHiddenModal() {
-      $('#modal .modal-dialog.modal-lg-dynamic').removeClass('modal-lg');
-    });
+    const modalEl = document.getElementById('modal');
+    if (modalEl) {
+      modalEl.addEventListener('shown.bs.modal', () => {
+        if (modalEl.querySelector('#authcontainer')) {
+          const modalDialogEl = modalEl.querySelector('.modal-dialog');
+          if (modalDialogEl) {
+            modalDialogEl.classList.add('modal-lg', 'modal-lg-dynamic');
+          }
+        }
+      });
+      modalEl.addEventListener('hidden.bs.modal', () => {
+        const modalDialogEl = modalEl.querySelector('.modal-dialog');
+        if (modalDialogEl) {
+          modalDialogEl.classList.remove('modal-lg', 'modal-lg-dynamic');
+        }
+      });
+    }
   }
 
   /**
@@ -774,7 +783,7 @@ finna.layout = (function finnaLayout() {
       // Hide tab from accordion
       $loginTabs.find('.tab-pane.active').removeClass('active');
       // Deactivate any tab since it can't follow the state of a collapsed accordion
-      $loginTabs.find('.nav-tabs li.active').removeClass('active');
+      $loginTabs.find('.nav-tabs > li > a.active').removeClass('active');
       // Move tab content out from accordions
       $tabContent.insertAfter($('.login-accordion .accordion-heading').last());
     } else {
@@ -792,24 +801,35 @@ finna.layout = (function finnaLayout() {
    * @param {string} tabId Id of the tab to activate
    */
   function _activateLoginTab(tabId) {
-    var $top = $('.login-tabs');
-    $top.find('.tab-pane.active').removeClass('active');
-    $top.find('li.' + tabId).tab('show');
-    $top.find('.' + tabId + '-tab').addClass('active');
+    const tabsEl = document.querySelector('.login-tabs');
+    if (tabsEl) {
+      const newTabEl = tabsEl.querySelector('li.' + tabId);
+      if (newTabEl) {
+        const triggerEl = newTabEl.querySelector('a');
+        bootstrap.Tab.getOrCreateInstance(triggerEl).show();
+      }
+    }
     _toggleLoginAccordion(tabId);
+  }
+
+  /**
+   * Handle a login tab click
+   *
+   * @param {HTMLElement} Tab link
+   */
+  function handleLoginTabClick(linkEl)
+  {
+    const tabEl = linkEl.closest('li');
+    if (tabEl && tabEl.dataset.bsTab) {
+      _activateLoginTab(tabEl.dataset.bsTab);
+    }
   }
 
   /**
    * Init login tabs
    */
   function initLoginTabs() {
-    // Tabs
-    $('.login-tabs .nav-tabs a').on('click', function recordTabsClick() {
-      if (!$(this).closest('li').hasClass('active')) {
-        _activateLoginTab(this.className);
-      }
-      return false;
-    });
+    document.querySelectorAll('.login-tabs .nav-tabs a').forEach(linkEl => linkEl.addEventListener('click', () => handleLoginTabClick(linkEl)));
 
     // Accordion
     $('.login-accordion .accordion-toggle').on('click', function accordionClicked() {
