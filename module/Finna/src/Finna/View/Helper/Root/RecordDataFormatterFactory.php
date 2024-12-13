@@ -1673,8 +1673,6 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 
         // Add arcrole-relations as multiple fields with role as field header
         $getRelations = function ($data, $options) {
-            var_dump($data);
-            //var_dump($options);
             // Group relations by role
             $relationsByRole = [];
             foreach ($data as $relation) {
