@@ -642,13 +642,15 @@ urls:
     $ref: '#/components/schemas/Url'
 usageRights:
   vufind.method: getUsageRights
-  description: Usage rights
+  description: Usage rights 
+    (see [usage_rights_str_mv at https://www.kiwi.fi/display/Finna/Kenttien+mappaukset+eri+formaateista+Finnan+indeksiin]
+    (https://github.com/NatLibFi/RecordManager-Finna/blob/dev/mappings/usage_rights.map.sample))
   type: array
   items:
     type: string
 usageRightsExtended:
   vufind.method: getUsageRightsExt
-  description: Usage rights extended
+  description: Extended usage rights (see https://github.com/NatLibFi/RecordManager-Finna/blob/dev/mappings/usage_rights_ext.map.sample)
   type: array
   items:
     type: string

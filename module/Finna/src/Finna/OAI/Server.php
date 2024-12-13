@@ -29,7 +29,7 @@
 
 namespace Finna\OAI;
 
-use VuFind\SimpleXML;
+use VuFind\RecordDriver\AbstractBase as AbstractRecordDriver;
 
 /**
  * OAI Server class
@@ -98,68 +98,19 @@ class Server extends \VuFind\OAI\Server
     }
 
     /**
-     * Attach a non-deleted record to an XML document.
+     * Get record as a metadata presentation
      *
-     * @param SimpleXMLElement $container  XML container for new record
-     * @param object           $record     A record driver object
-     * @param string           $format     Metadata format to obtain (false for none)
-     * @param bool             $headerOnly Only attach the header?
-     * @param string           $set        Currently active set
+     * @param AbstractRecordDriver $record A record driver object
+     * @param string               $format Metadata format to obtain
      *
-     * @return bool
+     * @return string|bool String on success or false if error occurs
      */
-    protected function attachNonDeleted(
-        $container,
-        $record,
-        $format,
-        $headerOnly = false,
-        $set = ''
-    ) {
-        if ('oai_finna_json' !== $format || !$this->supportsFinnaMetadata()) {
-            return parent::attachNonDeleted($container, $record, $format, $headerOnly, $set);
+    protected function getRecordAsXML(AbstractRecordDriver $record, string $format): string|false
+    {
+        if ('oai_json_finna' === 'format' && $this->supportsFinnaMetadata()) {
+            return $this->getFinnaMetadata($record);
         }
-        $xml = $this->getFinnaMetadata($record);
-        // Headers should be returned only if the metadata format matching
-        // the supplied metadataPrefix is available.
-        // If RecordDriver returns nothing, skip this record.
-        if (empty($xml)) {
-            return true;
-        }
-
-        // Check for sets:
-        $fields = $record->getRawData();
-        if (null !== $this->setField && !empty($fields[$this->setField])) {
-            $sets = (array)$fields[$this->setField];
-        } else {
-            $sets = [];
-        }
-        if (!empty($set)) {
-            $sets = array_unique(array_merge($sets, [$set]));
-        }
-
-        // Get modification date:
-        $date = $record->getLastIndexed();
-        if (empty($date)) {
-            $date = $this->getUTCDateTime('now');
-        }
-
-        // Set up header (inside or outside a <record> container depending on
-        // preferences):
-        $recXml = $headerOnly ? $container : $container->addChild('record');
-        $this->attachRecordHeader(
-            $recXml,
-            $this->prefixID($record->getUniqueID()),
-            $date,
-            $sets
-        );
-
-        // Inject metadata if necessary:
-        if (!$headerOnly) {
-            $metadata = $recXml->addChild('metadata');
-            SimpleXML::appendElement($metadata, $xml);
-        }
-
-        return true;
+        return parent::getRecordAsXml($record, $format);
     }
 
     /**
