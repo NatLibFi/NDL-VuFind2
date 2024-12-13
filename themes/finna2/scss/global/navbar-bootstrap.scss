@@ -27,11 +27,13 @@
 }
 
 .navbar {
-  .dropdown .dropdown-menu > li > a > div:not(.description) {
+  .dropdown .dropdown-menu > li > a > *:not(.description) {
     font-weight: bold;
   }
-  .dropdown .dropdown-menu > li > a > div.description {
+  .dropdown .dropdown-menu > li > a > .description {
     font-size: .9em;
+    display: inline-block;
+    width: 100%;
   }
 }
 

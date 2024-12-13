@@ -1,0 +1,24 @@
+.vc-confirm-button.btn-group {
+  position: relative;
+  display: inline-block;
+  padding: 0 0 4px 4px;
+  &.open {
+    > .dropdown-menu {
+      position: absolute;
+      border-radius: $finna-button-radius;
+      border: 1px solid $gray-lighter;
+      top: 100%;
+      > li {
+        border: none;
+        border-bottom: 1px solid $gray-lighter;
+        > a {
+          margin: initial;
+        }
+        > .dropdown-header {
+          color: inherit;
+          font-size: $content-font-size-base;
+        }
+      }
+    }
+  }
+}

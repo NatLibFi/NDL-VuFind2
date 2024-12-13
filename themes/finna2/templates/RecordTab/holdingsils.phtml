@@ -265,17 +265,17 @@
       }
     }
     if ($available) {
-      $holdingSummary = '<span class="text-success">' . $this->icon('status-available', 'text-success') . ' ' . $this->translate('status_items_available_html', ['%%count%%' => $available]) . '</span>';
+      $holdingSummary = '<span class="status-available">' . $this->icon('status-available') . ' ' . $this->translate('status_items_available_html', ['%%count%%' => $available]) . '</span>';
     } elseif ($firstDueStr) {
-      $holdingSummary = '<span class="text-danger">' . $this->icon('status-unavailable', 'text-danger') . ' ' . $this->transEsc('closest_due_date', ['%%date%%' => $firstDueStr]) . '</span>';
+      $holdingSummary = '<span class="status-unavailable">' . $this->icon('status-unavailable') . ' ' . $this->transEsc('closest_due_date', ['%%date%%' => $firstDueStr]) . '</span>';
     } elseif ($statuses) {
       if ($uncertain) {
-        $holdingSummary = '<span class="text-warning">' . $this->icon('status-unknown', 'text-warning') . ' ' . $this->escapeHtml(implode(' ', array_flip($statuses))) . '</span>';
+        $holdingSummary = '<span class="status-uncertain">' . $this->icon('status-unknown') . ' ' . $this->escapeHtml(implode(' ', array_flip($statuses))) . '</span>';
       } else {
-        $holdingSummary = '<span class="text-danger"> ' . $this->escapeHtml(implode(' ', array_flip($statuses))) . '</span>';
+        $holdingSummary = '<span class="status-unavailable"> ' . $this->escapeHtml(implode(' ', array_flip($statuses))) . '</span>';
       }
     } else {
-      $holdingSummary = '<span class="text-success">' . $this->icon('status-available', 'text-success') . ' ' . $this->transEsc('Available') . '</span>';
+      $holdingSummary = '<span class="status-available">' . $this->icon('status-available') . ' ' . $this->transEsc('Available') . '</span>';
     }
 
     $additionalSummary = [];

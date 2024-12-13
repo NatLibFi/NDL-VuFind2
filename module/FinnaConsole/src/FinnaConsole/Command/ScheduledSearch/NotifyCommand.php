@@ -310,4 +310,24 @@ class NotifyCommand extends \VuFindConsole\Command\ScheduledSearch\NotifyCommand
         }
         $this->msg('Done processing searches');
     }
+
+    /**
+     * Load and validate a user object associated with the search; return null
+     * if there is a problem.
+     *
+     * @param SearchEntityInterface $s Current search row.
+     *
+     * @return ?UserEntityInterface
+     */
+    protected function getUserForSearch($s)
+    {
+        $user = parent::getUserForSearch($s);
+        if ($user && trim($user->getEmail()) === '') {
+            $this->warn(
+                'User ' . $user->getUsername() . ' does not have a valid email address, bypassing alert ' . $s->getId()
+            );
+            return null;
+        }
+        return $user;
+    }
 }

@@ -5,7 +5,7 @@
     <?php $targetCount = $this->ils()->checkCapability('getLoginDrivers') ? count($this->ils()->getLoginDrivers()) : 1; ?>
     <?php if (isset($loginMenu) && $loginMenu): ?>
       <li class="logoutOptions card-selection" role="none">
-        <a class="card-header" role="menuitem" href="<?=$this->url('librarycards-home')?>">
+        <a class="card-header" href="<?=$this->url('librarycards-home')?>">
           <?=$this->transEsc($this->label ?? 'Kirjastokortti') ?>
         </a>
         <label id="select-card-label-dropdown"><?= $this->transEsc('Library Card') ?></label>
@@ -26,7 +26,7 @@
               }
             ?>
             <?php $selectedCard = (!isset($this->displaySelected) || $this->displaySelected) && (strcasecmp($card->getCatUsername(), $this->user->getCatUsername() ?? '') === 0); ?>
-            <a aria-describedby="select-card-label-dropdown" role="menuitem" href="<?=$this->url('librarycards-selectcard')?>?cardID=<?=$this->escapeHtmlAttr($card->getId())?>" data-clear-account-cache><?=$selectedCard ? $this->icon('library-card-selected') . '<span class="sr-only">(' . $this->transEsc('selected') . ')</span> ' : '' ?><?=$display ?></a>
+            <a aria-describedby="select-card-label-dropdown" href="<?=$this->url('librarycards-selectcard')?>?cardID=<?=$this->escapeHtmlAttr($card->getId())?>" data-clear-account-cache><?=$selectedCard ? $this->icon('library-card-selected') . '<span class="sr-only">(' . $this->transEsc('selected') . ')</span> ' : '' ?><?=$display ?></a>
           <?php endforeach; ?>
         <?php endif; ?>
       </li>
@@ -80,7 +80,7 @@
               }
             ?>
             <li>
-              <a aria-describedby="select-card-label-maincontent" role="menuitem" href="<?=$this->url('librarycards-selectcard')?>?cardID=<?=$this->escapeHtmlAttr($card->getId());?>" data-clear-account-cache><?=$display ?></a>
+              <a aria-describedby="select-card-label-maincontent" href="<?=$this->url('librarycards-selectcard')?>?cardID=<?=$this->escapeHtmlAttr($card->getId());?>" data-clear-account-cache><?=$display ?></a>
             </li>
         <?php endforeach; ?>
         </ul>

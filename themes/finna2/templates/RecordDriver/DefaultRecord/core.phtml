@@ -6,7 +6,7 @@
   $doiActive = $doi->isActive();
   // Account for replace_other_urls setting
   $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
-  $onlineURLs = $this->driver->getOnlineURLs();
+  $onlineURLs = $this->driver->tryMethod('getOnlineURLs');
   $mergedData = $this->driver->tryMethod('getMergedRecordData');
   $renderedURLs = [];
   $videoUrls = [];
@@ -208,7 +208,7 @@
         </div>
       <?php endif; ?>
 
-      <?php $results = $this->driver->tryMethod('getPrimaryAuthorsExtended') ?? $this->driver->getNonPresenterAuthors();?>
+      <?php $results = $this->driver->tryMethod('getPrimaryAuthorsExtended') ?? $this->driver->tryMethod('getNonPresenterAuthors') ?? null;?>
       <?php if ($results): ?>
         <div class="recordAuthors">
           <div class="truncate-field">

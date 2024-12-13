@@ -382,10 +382,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             // 'id' element.
             $params['localId'] = $params['id'];
             // Add namespace to id
-            $authId = $params['id'] = $this->driver->getAuthorityId(
-                $params['id'],
-                $type
-            );
+            $authId = $params['id'] = $this->driver->tryMethod('getAuthorityId', [$params['id'], $type], $params['id']);
         }
 
         // Attempt to switch Author search link to Authority link.
