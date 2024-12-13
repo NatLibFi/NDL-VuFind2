@@ -370,7 +370,7 @@ class SolrEad3 extends SolrEad
                     $value = (string)$name;
                     $localType = (string)$attr->localtype;
                     $data = [
-                        'id' => $id, 'name' => $value, 'detail' => $localType,
+                        'id' => $id, 'name' => $value, 'detail' => $localType, 'type' => $this->getArchiveType(),
                     ];
                     if ($localType !== self::RELATOR_TIME_INTERVAL) {
                         if ($nextEl = $names[$i + 1] ?? null) {
@@ -1899,6 +1899,21 @@ class SolrEad3 extends SolrEad
     public function getParentSeries(): array
     {
         return $this->getHierarchyParents();
+    }
+
+    /**
+     * Get parent archives with type
+     *
+     * @return array
+     */
+    public function getParentArchivesExtended(): array
+    {
+        $results = [];
+        $archives = parent::getParentArchives();
+        foreach ($archives as $archive) {
+            $results[] = array_merge($archive, ['type' => $this->getArchiveType()]);
+        }
+        return $results;
     }
 
     /**

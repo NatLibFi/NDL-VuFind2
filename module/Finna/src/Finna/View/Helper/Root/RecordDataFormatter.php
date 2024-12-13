@@ -386,7 +386,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Access Restrictions Extended',
             'Additional Information Extended',
             'Appraisal',
-            'Archive',
+            'Archive Extended',
             'archive_authors',
             'Archive File',
             'Archive Origination',

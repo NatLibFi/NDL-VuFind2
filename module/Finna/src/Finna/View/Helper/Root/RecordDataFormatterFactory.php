@@ -404,7 +404,14 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             'getOriginationExtended',
             'data-origination.phtml',
             [
-                'context' => ['class' => 'record-origination'],
+                'context' => ['class' => 'record-origination',],
+                'labelFunction' => function ($data) {
+                    $label = isset($data[0]['type'])
+                                && $data[0]['type'] === 'collection'
+                                ? 'CreatorRoles::rda:collector'
+                                : 'Archive Origination';
+                    return $label;
+                },
             ]
         );
         $setTemplateLine(
@@ -413,6 +420,21 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             'data-hierarchyLinks.phtml',
             [
                 'context' => ['class' => 'recordHierarchyLinks'],
+            ]
+        );
+        $setTemplateLine(
+            'Archive Extended',
+            'getParentArchivesExtended',
+            'data-hierarchyLinks.phtml',
+            [
+                'context' => ['class' => 'recordHierarchyLinks'],
+                'labelFunction' => function ($data) {
+                    $label = isset($data[0]['type'])
+                                && $data[0]['type'] === 'collection'
+                                ? 'Parent Collection'
+                                : 'Archive';
+                    return $label;
+                },
             ]
         );
         $setTemplateLine(
@@ -1651,6 +1673,8 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 
         // Add arcrole-relations as multiple fields with role as field header
         $getRelations = function ($data, $options) {
+            var_dump($data);
+            //var_dump($options);
             // Group relations by role
             $relationsByRole = [];
             foreach ($data as $relation) {
