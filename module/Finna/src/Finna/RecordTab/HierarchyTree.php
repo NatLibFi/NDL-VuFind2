@@ -47,10 +47,7 @@ class HierarchyTree extends \VuFind\RecordTab\HierarchyTree
      */
     public function getDescription()
     {
-        if (
-            $this->driver instanceof \Finna\RecordDriver\SolrLido
-            || $this->driver->tryMethod('getArchiveType') === 'collection'
-        ) {
+        if ($this->driver->tryMethod('getArchiveType') === 'collection') {
             return 'hierarchy_tree_collection';
         }
         return 'hierarchy_tree_archive';

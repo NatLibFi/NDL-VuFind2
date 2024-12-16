@@ -190,8 +190,10 @@ class SolrEad3 extends SolrEad
     public function getArchiveType(): string
     {
         $xml = $this->getXmlRecord();
-        if ($xml->{'add-data'}->archive->attributes()->type === 'collection') {
-            return 'collection';
+        if ($type = $xml->{'add-data'}->archive->attributes()->type) {
+            if ($type === 'collection') {
+                return 'collection';
+            }
         }
         return 'archive';
     }
@@ -370,7 +372,7 @@ class SolrEad3 extends SolrEad
                     $value = (string)$name;
                     $localType = (string)$attr->localtype;
                     $data = [
-                        'id' => $id, 'name' => $value, 'detail' => $localType, 'type' => $this->getArchiveType(),
+                        'id' => $id, 'name' => $value, 'detail' => $localType,
                     ];
                     if ($localType !== self::RELATOR_TIME_INTERVAL) {
                         if ($nextEl = $names[$i + 1] ?? null) {
@@ -1899,21 +1901,6 @@ class SolrEad3 extends SolrEad
     public function getParentSeries(): array
     {
         return $this->getHierarchyParents();
-    }
-
-    /**
-     * Get parent archives with type
-     *
-     * @return array
-     */
-    public function getParentArchivesExtended(): array
-    {
-        $results = [];
-        $archives = parent::getParentArchives();
-        foreach ($archives as $archive) {
-            $results[] = array_merge($archive, ['type' => $this->getArchiveType()]);
-        }
-        return $results;
     }
 
     /**

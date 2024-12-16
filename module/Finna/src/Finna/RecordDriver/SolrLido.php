@@ -1222,6 +1222,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     }
 
     /**
+     * Get archive type
+     *
+     * @return string
+     */
+    public function getArchiveType(): string
+    {
+        return 'collection';
+    }
+
+    /**
      * Get an array of events for the record.
      *
      * @return array

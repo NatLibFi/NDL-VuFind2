@@ -1,10 +1,6 @@
 <?php
     if ($this->driver->isCollection()) {
-        if ($this->driver instanceof \Finna\RecordDriver\SolrLido || $this->driver->tryMethod('getArchiveType') === 'collection') {
-            $term = 'Collection';
-        } else {
-            $term = 'Archive';
-        }
+        $term = $this->driver->tryMethod('getArchiveType') === 'collection' ? 'Collection' : 'Archive';
     } else {
         $term = 'Record';
     }

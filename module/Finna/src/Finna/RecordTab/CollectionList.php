@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) Villanova University 2010.
+ * Copyright (C) The National Library of Finland 2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -47,10 +47,7 @@ class CollectionList extends \VuFind\RecordTab\CollectionList
      */
     public function getDescription()
     {
-        if (
-            $this->driver instanceof \Finna\RecordDriver\SolrLido
-            || $this->driver->tryMethod('getArchiveType') === 'collection'
-        ) {
+        if ($this->driver->tryMethod('getArchiveType') === 'collection') {
             return 'Collection Items';
         }
         return 'Archive Content';

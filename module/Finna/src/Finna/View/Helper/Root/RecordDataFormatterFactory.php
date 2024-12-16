@@ -405,12 +405,11 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             'data-origination.phtml',
             [
                 'context' => ['class' => 'record-origination',],
-                'labelFunction' => function ($data) {
-                    $label = isset($data[0]['type'])
-                                && $data[0]['type'] === 'collection'
-                                ? 'CreatorRoles::rda:collector'
-                                : 'Archive Origination';
-                    return $label;
+                'labelFunction' => function ($data, $driver) {
+                    return match ($driver->tryMethod('getArchiveType')) {
+                        'collection' => 'CreatorRoles::rda:collector',
+                        default => 'Archive Origination',
+                    };
                 },
             ]
         );
@@ -420,20 +419,11 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             'data-hierarchyLinks.phtml',
             [
                 'context' => ['class' => 'recordHierarchyLinks'],
-            ]
-        );
-        $setTemplateLine(
-            'Archive Extended',
-            'getParentArchivesExtended',
-            'data-hierarchyLinks.phtml',
-            [
-                'context' => ['class' => 'recordHierarchyLinks'],
-                'labelFunction' => function ($data) {
-                    $label = isset($data[0]['type'])
-                                && $data[0]['type'] === 'collection'
-                                ? 'Parent Collection'
-                                : 'Archive';
-                    return $label;
+                'labelFunction' => function ($data, $driver) {
+                    return match ($driver->tryMethod('getArchiveType')) {
+                        'collection' => 'Parent Collection',
+                        default => 'Parent Archive',
+                    };
                 },
             ]
         );
