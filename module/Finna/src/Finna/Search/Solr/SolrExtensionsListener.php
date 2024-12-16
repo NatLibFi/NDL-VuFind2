@@ -355,6 +355,10 @@ class SolrExtensionsListener
     {
         $hideHiddenComponentsPart = null;
         $command = $event->getParam('command');
+        $params = $command->getSearchParameters();
+        if (!$params) {
+            return;
+        }
 
         // Check that search is not for a known record id
         $query = method_exists($command, 'getQuery') ? $command->getQuery() : null;
@@ -362,21 +366,17 @@ class SolrExtensionsListener
             return;
         }
 
-        $params = $command->getSearchParameters();
-        if ($params) {
+        if ($fq = $params->get('fq')) {
             // Check for a filter parameter:
-            $fq = $params->get('fq');
-            if ($fq) {
-                $optionMappings = [
-                    'finna.include_hidden_parts:"1"' => false,
-                    'finna.include_hidden_parts:"0"' => true,
-                ];
-                foreach ($optionMappings as $filter => $value) {
-                    if (false !== ($key = array_search($filter, $fq))) {
-                        $hideHiddenComponentsPart = $value;
-                        unset($fq[$key]);
-                        $params->set('fq', $fq);
-                    }
+            $optionMappings = [
+                'finna.include_hidden_parts:"1"' => false,
+                'finna.include_hidden_parts:"0"' => true,
+            ];
+            foreach ($optionMappings as $filter => $value) {
+                if (false !== ($key = array_search($filter, $fq))) {
+                    $hideHiddenComponentsPart = $value;
+                    unset($fq[$key]);
+                    $params->set('fq', $fq);
                 }
             }
         }
