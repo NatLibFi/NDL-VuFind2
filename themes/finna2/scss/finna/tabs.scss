@@ -2,6 +2,35 @@
 .authority-recommend
 {
   background-color: transparent;
+
+  ul.nav-tabs > li {
+    background-color: #EDEDED;
+    padding-bottom: 0;
+    display: flex;
+    align-items: center;
+    line-height: 2.5rem;
+
+    > a {
+      padding: .2em .5em;
+
+      > button {
+        opacity: 1;
+        padding-left: 0;
+        color: $main-tabs-active-color;
+        position: inherit;
+        z-index: 200;
+        background-color: transparent;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        .icon {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+/*
   padding-bottom: 15px;
   @media(max-width: $screen-sm-max) {
     margin: 0px;
@@ -76,7 +105,7 @@
         }
       }
     }
-  }
+  }*/
 }
 
 .search-tabs-recommendations {

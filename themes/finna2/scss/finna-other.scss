@@ -292,6 +292,11 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
   padding-top:600px;
 }
 
+// Truncate
+.truncate-done {
+  overflow: clip;
+}
+
 //Finna mixins
 .truncate-field {
     overflow: hidden;

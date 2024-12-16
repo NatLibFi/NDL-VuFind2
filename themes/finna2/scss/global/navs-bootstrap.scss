@@ -2,7 +2,7 @@
   margin-bottom: 12px;
   margin-top: 12px;
   > li {
-    display: block;
+//    display: block;
     > a {
       transition: background .2s ease-in-out;
     }
@@ -10,7 +10,7 @@
 }
 @media (min-width:$screen-md-min) {
   .nav > li {
-    display: inline-block;
+//    display: inline-block;
   }
 }
 

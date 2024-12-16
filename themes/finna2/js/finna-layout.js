@@ -1,4 +1,4 @@
-/*global VuFind, videojs, finna, priorityNav, bootstrap */
+/*global VuFind, videojs, finna, priorityNav, bootstrap, unwrapJQuery */
 finna.layout = (function finnaLayout() {
   var currentOpenTooltips = [];
 
@@ -303,50 +303,65 @@ finna.layout = (function finnaLayout() {
   }
 
   /**
+   * Hide all tooltips when Esc is pressed
+   *
+   * @param {Event} e Event
+   */
+  function tooltipKeyDownHandler(e) {
+    if (e.which === 27) {
+      document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => bootstrap.Tooltip.getOrCreateInstance(el).hide());
+    }
+  }
+
+  /**
    * Initialize tooltips
    * @param {jQuery} _holder Holder to look for tooltip elements from
    */
   function initToolTips(_holder) {
-    var holder = typeof _holder === 'undefined' ? $(document) : _holder;
-    // other tooltips
-    holder.find('[data-toggle="tooltip"]')
-      .on('show.bs.tooltip', function onShowTooltip() {
-        var self = $(this);
-        $(this).attr('aria-expanded', 'true');
-        $(currentOpenTooltips).each(function hideOtherTooltips() {
-          if ($(this)[0] !== self[0]) {
-            $(this).tooltip('hide');
+    const holder = typeof _holder === 'undefined' ? document : unwrapJQuery(_holder);
+    // Supports also the old data-toggle attribute
+    holder.querySelectorAll('[data-bs-toggle="tooltip"],[data-toggle="tooltip"],[data-toggle="tooltip-hover"]').forEach(el => {
+      if (null === el.dataset.bsToggle) {
+        el.dataset.bsToggle = 'tooltip';
+      }
+      if (el.dataset.originalTitle) {
+        el.dataset.bsTitle = el.dataset.originalTitle;
+        if (el.dataset.html) {
+          el.dataset.bsHtml = el.dataset.html;
+        }
+        if (!el.dataset.bsTrigger) {
+          el.dataset.bsTrigger = 'click';
+        }
+        if (el.dataset.position) {
+          el.dataset.bsPosition = el.dataset.position;
+        }
+      }
+      if (el.dataset.toggle === 'tooltip-hover') {
+        el.dataset.bsDelay = '{"show": 500, "hide": 200}';
+        el.dataset.bsToggle = 'tooltip';
+        el.dataset.bsTrigger = 'hover';
+      }
+
+      bootstrap.Tooltip.getOrCreateInstance(el);
+
+      // Prevent link from opening if tooltip is placed inside link element:
+      el.querySelectorAll(':scope > i').forEach((i) => {
+        i.addEventListener((event) => event.preventDefault());
+      });
+
+      // Hide other tooltips when one is opened:
+      el.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(otherEl => {
+          if (otherEl !== el) {
+            bootstrap.Tooltip.getOrCreateInstance(otherEl).hide();
           }
         });
-        currentOpenTooltips = [self];
       })
-      .on('hidden.bs.tooltip', function onHideTooltip(e) {
-        $(e.target).attr('aria-expanded', 'false');
-        $(e.target).data('bs.tooltip').inState.click = false;
-      })
-      .tooltip({trigger: 'click', viewport: '.container'})
-      .attr('aria-expanded', 'false');
+    });
 
-    holder.find('[data-toggle="tooltip-hover"]')
-      .tooltip({trigger: 'hover', delay: {show: 500, hide: 200}});
-    // prevent link opening if tooltip is placed inside link element
-    holder.find('[data-toggle="tooltip"] > i').on('click', function onClickTooltip(event) {
-      event.preventDefault();
-    });
-    // close tooltip if user clicks anything else than tooltip button
-    $('html').on('click', function onClickHtml(e) {
-      if (typeof $(e.target).parent().data('original-title') == 'undefined' && typeof $(e.target).data('original-title') == 'undefined') {
-        $('[data-toggle="tooltip"]').tooltip('hide');
-        currentOpenTooltips = [];
-      }
-    });
-    // close tooltip if esc-key pressed
-    $('html').on('keydown', function onClickHtml(e) {
-      if (e.which === 27) {
-        $('[data-toggle="tooltip"]').tooltip('hide');
-        currentOpenTooltips = [];
-      }
-    });
+    document.addEventListener('keydown', tooltipKeyDownHandler);
   }
 
   /**
