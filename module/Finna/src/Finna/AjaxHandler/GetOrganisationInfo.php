@@ -329,7 +329,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
             }
         }
 
-        $cityList = array_unique($cityList);
+        $cityList = array_unique($cityList, SORT_REGULAR);
         $this->sorter->sort($cityList);
         $serviceList = array_unique($serviceList);
         $this->sorter->sort($serviceList);

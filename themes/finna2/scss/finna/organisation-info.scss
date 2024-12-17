@@ -27,6 +27,7 @@ $organisation-info-max-w: 400px !default;
             margin: 0;
             border: 0;
             padding: 0;
+            vertical-align: initial;
         }
         .js-week-text {
             display: inline-block;
@@ -756,9 +757,6 @@ $organisation-info-max-w: 400px !default;
         width: 35px;
         &:hover {
             background: darken($link-color, 10%);
-        }
-        i[class^='fa-'],[class*='fa-'] {
-            font-family: 'FontAwesome';
         }
         &.btn-round {
             border-radius: 50px;
