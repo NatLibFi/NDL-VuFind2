@@ -6,7 +6,7 @@ return;
 <?php
   $user = $this->auth()->getManager()->getUserObject();
 ?>
-<div class="record-holdings-table table reservation-request-table">
+<div class="record-holdings-table reservation-request-table">
   <div class="headers">
     <span class="holdings-title"><?=$this->transEsc('ReservationList::Add To Reservation List')?></span>
   </div>
@@ -31,15 +31,17 @@ return;
     <?php endforeach; ?>
   <?php endforeach; ?>
   <?php if ($listsContainingRecord = $this->reservationList($user)->getListsContainingRecord($this->driver)): ?>
-    <div class="saved-reservation-lists alert-info savedLists loaded">
-      <strong><?=$this->transEsc('Saved in')?>:</strong><br/>
-      <ul>
-        <?php foreach ($listsContainingRecord as $list): ?>
-          <li>
-            <a href="<?= $this->url('reservationlist-displaylist', ['id' => $list->getId()]) ?>"><?= $this->escapeHtml($list->getTitle()); ?></a><br/>
-          </li>
-        <?php endforeach; ?>
-      </ul>
+    <div class="holdings-group saved-reservation-lists">
+      <div class="alert-info savedLists loaded">
+        <strong><?=$this->transEsc('Saved in')?>:</strong><br/>
+        <ul>
+          <?php foreach ($listsContainingRecord as $list): ?>
+            <li>
+              <a href="<?= $this->url('reservationlist-displaylist', ['id' => $list->getId()]) ?>"><?= $this->escapeHtml($list->getTitle()); ?></a><br/>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
     </div>
   <?php endif; ?>
 </div>
