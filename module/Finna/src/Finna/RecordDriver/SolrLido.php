@@ -2027,12 +2027,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 ? mb_strtolower((string)$node->event->eventType->term, 'UTF-8') : '';
             if (!in_array($type, $this->nonPlaceEvents)) {
                 $displayDate = $node->event->eventDate->displayDate ?? null;
-                if (!empty((string)$displayDate)) {
-                    $date = (string)($this->getLanguageSpecificItem(
-                        $displayDate,
-                        $language
-                    ));
-                    $headings[] = ['data' => $date];
+                if (!empty($displayDate)) {
+                    $date = trim((string)$this->getLanguageSpecificItem($displayDate, $language));
+                    if (!empty($date)) {
+                        $headings[] = ['data' => $date];
+                    }
                 }
             }
         }
