@@ -114,7 +114,7 @@
 <?php if ($recordTotal > 0): ?>
   <div class="finna-search-filter-toggle-trigger visible-xs hidden-print"></div>
   <div class="finna-search-filter-toggle visible-xs hidden-print">
-    <div class="btn btn-primary btn-search-filter">
+    <div role="button" class="btn btn-primary btn-search-filter" tabindex="0">
       <?=$this->transEsc('Narrow Search')?>
       <?php if ($filterCount > 0): ?>
         <span class="active-filter-count">(<?=$filterCount?>)</span>

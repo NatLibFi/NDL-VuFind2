@@ -166,13 +166,49 @@ finna.layout = (function finnaLayout() {
   }
 
   /**
+   * Click function for mobile search filter
+   */
+  function onSidebarBtnClick() {
+    $('.sidebar').toggleClass('open');
+    $('.mobile-navigation .sidebar-navigation i').toggleClass('fa-arrow-down');
+    $('body').toggleClass('prevent-scroll');
+  }
+
+  /**
+   * Check and keep focus within the search facet list
+   *
+   * @param {object} e Event object
+   */
+  function onFocusOut(e) {
+    const container = document.querySelector('.side-facets-container-ajax');
+    if (!container.contains(e.relatedTarget)) {
+      container.focus();
+    }
+  }
+
+  /**
    * Initialize mobile narrow search
    */
   function initMobileNarrowSearch() {
     $('.mobile-navigation .sidebar-navigation, .finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn, .sidebar .mylist-bar h1').off('click').on('click', function onClickMobileNav() {
-      $('.sidebar').toggleClass('open');
-      $('.mobile-navigation .sidebar-navigation i').toggleClass('fa-arrow-down');
-      $('body').toggleClass('prevent-scroll');
+      onSidebarBtnClick();
+    });
+    const container = document.querySelector(".side-facets-container-ajax");
+    container.tabIndex = '0';
+    container.ariaModal = true;
+    container.querySelector('h1').tabIndex = '0';
+    $('.finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn').off('keydown').on('keydown', function onClickMobileNav(e) {
+      if (e.which === 27 || e.which === 13) {
+        e.preventDefault();
+        onSidebarBtnClick();
+        if (document.querySelector('.sidebar').classList.contains('open')) {
+          container.addEventListener('focusout', onFocusOut);
+          container.querySelector('h1').focus();
+        } else {
+          document.querySelector('.finna-search-filter-toggle .btn-search-filter').focus();
+          container.removeEventListener('focusout', onFocusOut);
+        }
+      }
     });
     $('.mobile-navigation .sidebar-navigation .active-filters').off('click').on('click', function onClickMobileActiveFilters() {
       $('.sidebar').scrollTop(0);
