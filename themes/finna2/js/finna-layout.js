@@ -176,7 +176,6 @@ finna.layout = (function finnaLayout() {
 
   /**
    * Check and keep focus within the search facet list
-   *
    * @param {object} e Event object
    */
   function onFocusOut(e) {
