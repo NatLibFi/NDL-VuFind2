@@ -13,13 +13,13 @@
 .status-unavailable-icon {
     color: $brand-danger;
 }
-.status-available .icon {
+.status-available .status-icon {
     color: $brand-success;
 }
-.status-unavailable .icon {
+.status-unavailable .status-icon {
     color: $brand-danger;
 }
-.status-uncertain .icon, .status-unknown .icon {
+.status-uncertain .status-icon, .status-unknown .status-icon {
     color: $brand-warning;
 }
 .dedup-select {
@@ -111,9 +111,6 @@
                 }
             }
         }
-    }
-    .available-total {
-        margin-top: 0.5em;
     }
     .form-control {
         width: 100%;
@@ -502,7 +499,6 @@
             float: right;
             max-width: 60%;
             display: flex;
-            margin-top: .5em;
             margin-left: 2rem;
             gap: 0 2rem;
             justify-content: right;
