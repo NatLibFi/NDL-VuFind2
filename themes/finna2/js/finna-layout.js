@@ -166,7 +166,7 @@ finna.layout = (function finnaLayout() {
   }
 
   /**
-   * Click function for mobile search filter
+   * Sidebar click on mobile
    */
   function onSidebarBtnClick() {
     $('.sidebar').toggleClass('open');
