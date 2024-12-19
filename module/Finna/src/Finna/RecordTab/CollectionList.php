@@ -42,7 +42,7 @@ class CollectionList extends \VuFind\RecordTab\CollectionList
 {
     /**
      * Is this tab active?
-     * Override to allow this tab to be displayed for records, which are part of a collection.
+     * Override to allow this tab to be displayed for records which are part of a collection.
      *
      * @return bool
      */
