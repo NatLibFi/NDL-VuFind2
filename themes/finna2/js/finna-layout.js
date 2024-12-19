@@ -189,8 +189,18 @@ finna.layout = (function finnaLayout() {
    * Initialize mobile narrow search
    */
   function initMobileNarrowSearch() {
-    $('.mobile-navigation .sidebar-navigation, .finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn, .sidebar .mylist-bar h1').off('click').on('click', function onClickMobileNav() {
+    $('.mobile-navigation .sidebar-navigation, .sidebar .mylist-bar h1').off('click').on('click', function onClickMobileNav() {
       onSidebarBtnClick();
+    });
+    $('.finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn').off('click').on('click', function onClickMobileNav() {
+      onSidebarBtnClick();
+      if (document.querySelector('.sidebar').classList.contains('open')) {
+        document.activeElement.blur();
+        container.querySelector('h1').focus();
+      } else {
+        document.activeElement.blur();
+        document.querySelector('.finna-search-filter-toggle .btn-search-filter').focus();
+      }
     });
     const container = document.querySelector(".side-facets-container-ajax");
     container.tabIndex = '0';
@@ -202,8 +212,10 @@ finna.layout = (function finnaLayout() {
         onSidebarBtnClick();
         if (document.querySelector('.sidebar').classList.contains('open')) {
           container.addEventListener('focusout', onFocusOut);
+          document.activeElement.blur();
           container.querySelector('h1').focus();
         } else {
+          document.activeElement.blur();
           document.querySelector('.finna-search-filter-toggle .btn-search-filter').focus();
           container.removeEventListener('focusout', onFocusOut);
         }
