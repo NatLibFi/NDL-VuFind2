@@ -68,9 +68,9 @@ class BarcodeController extends \VuFind\Controller\AbstractBase
                     return $this->redirect()->toRoute('librarycards-displaybarcode', ['id' => $card->getId()]);
                 }
             }
+            $catalog = $this->getILS();
+            $auth = $this->getILSAuthenticator();
             foreach ($cards as $card) {
-                $catalog = $this->getILS();
-                $auth = $this->getILSAuthenticator();
                 if ($card->getCatUsername() === $user->getCatUsername()) {
                     $patron = $auth->storedCatalogLogin();
                 } else {
@@ -83,11 +83,9 @@ class BarcodeController extends \VuFind\Controller\AbstractBase
                         $auth->getCatPasswordForUser($loginUser)
                     );
                 }
-                if ($patron['cat_username'] === $card->getCatUsername()) {
-                    $profile = $catalog->getMyProfile($patron);
-                    if (!empty($profile['barcode']) && $code === $profile['barcode']) {
-                        return $this->redirect()->toRoute('librarycards-displaybarcode', ['id' => $card->getId()]);
-                    }
+                $profile = $catalog->getMyProfile($patron);
+                if (!empty($profile['barcode']) && $code === $profile['barcode']) {
+                    return $this->redirect()->toRoute('librarycards-displaybarcode', ['id' => $card->getId()]);
                 }
             }
             throw new \Exception();
