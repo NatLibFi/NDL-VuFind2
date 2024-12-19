@@ -191,7 +191,7 @@ class SolrEad3 extends SolrEad
     {
         $xml = $this->getXmlRecord();
         if ($type = $xml->{'add-data'}->archive->attributes()->type) {
-            if ($type === 'collection') {
+            if (trim((string)$type) === 'collection') {
                 return 'collection';
             }
         }
