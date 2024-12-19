@@ -197,7 +197,7 @@ finna.layout = (function finnaLayout() {
     container.ariaModal = true;
     container.querySelector('h1').tabIndex = '0';
     $('.finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn').off('keydown').on('keydown', function onClickMobileNav(e) {
-      if (e.which === 27 || e.which === 13) {
+      if (e.which === 32 || e.which === 13) {
         e.preventDefault();
         onSidebarBtnClick();
         if (document.querySelector('.sidebar').classList.contains('open')) {
