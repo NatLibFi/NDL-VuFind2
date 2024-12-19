@@ -158,10 +158,6 @@
     padding-top: 5px;
     padding-bottom: 5px;
   }
-  .btn::after {
-    content: "\f107";
-    font-family: "FontAwesome";
-  }
 
   .dropdown-menu {
     &>li {

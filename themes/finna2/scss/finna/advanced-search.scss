@@ -469,11 +469,8 @@
           z-index: 1;
         }
         .value:before {
-            content: '\f096';
-            font-family: 'FontAwesome';
+          @extend .fa, .fa-square-o;
             margin: 0px 4px;
-            font-weight: initial;
-            display: inline-block;
             width: 12px;
             font-size: 16px;
         }

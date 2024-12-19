@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2016-2023.
+ * Copyright (C) The National Library of Finland 2016-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -61,6 +61,27 @@ abstract class AbstractProvider implements
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFindHttp\HttpServiceAwareTrait;
     use \VuFind\Log\LoggerAwareTrait;
+
+    /**
+     * Template with all the default details fields
+     *
+     * @var array
+     */
+    protected $detailsTemplate = [
+        'name' => '-',
+        'description' => '',
+        'address' => [],
+        'email' => '',
+        'emails' => [],
+        'phones' => [],
+        'allServices' => [],
+        'personnel' => [],
+        'rss' => [],
+        'homepage' => '',
+        'slogan' => '',
+        'routeUrl' => '',
+        'links' => [],
+    ];
 
     /**
      * Organisation info configuration
@@ -402,15 +423,17 @@ abstract class AbstractProvider implements
         $result['isAlwaysClosed'] = $isAlwaysClosed;
         $result['hasSelfServiceTimes'] = $hasSelfServiceTimes;
 
-        $address = $result['address'];
-        $displayAddress = $address['street'];
-        if ($zip = $address['zipcode']) {
-            $displayAddress .= ", $zip";
+        if (!empty($result['address'])) {
+            $address = $result['address'];
+            $displayAddress = $address['street'] ?? '';
+            if ($zip = $address['zipcode'] ?? null) {
+                $displayAddress .= ", $zip";
+            }
+            if ($city = $address['city'] ?? null) {
+                $displayAddress .= " $city";
+            }
+            $result['address']['displayAddress'] = $displayAddress;
         }
-        if ($city = $address['city']) {
-            $displayAddress .= " $city";
-        }
-        $result['address']['displayAddress'] = $displayAddress;
 
         if (isset($result['pictures'])) {
             foreach ($result['pictures'] as &$picture) {
@@ -419,6 +442,9 @@ abstract class AbstractProvider implements
             // Unset reference:
             unset($picture);
         }
+
+        // Make sure we have all default elements:
+        $result = array_merge($this->detailsTemplate, $result);
 
         return $result;
     }

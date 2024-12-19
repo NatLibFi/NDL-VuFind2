@@ -19,7 +19,6 @@ div.selection-map-canvas {
 }
 
 .leaflet-marker-icon.leaflet-div-icon {
-  font-family: FontAwesome;
   font-size: 15px;
   text-rendering: auto;
   border: none;
@@ -32,7 +31,7 @@ div.selection-map-canvas {
   &.leaflet-edit-move {
     padding: 2px;
     &:before {
-      content: "\f047";
+      @extend .fa, .fa-arrows;
       font-size: 25px;
       position: relative;
       padding: 5px;
@@ -43,7 +42,7 @@ div.selection-map-canvas {
   &.leaflet-edit-resize {
     padding: 5px;
     &:before {
-      content: "\f065";
+      @extend .fa, .fa-expand;
       font-size: 20px;
       padding: 5px;
       border-radius: 50%;
