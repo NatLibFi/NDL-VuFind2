@@ -255,7 +255,7 @@ $config = [
             'Finna\Controller\FeedbackController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\FeedContentController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\HoldsController' => 'VuFind\Controller\HoldsControllerFactory',
-            'Finna\Controller\LibraryCardsController' => 'VuFind\Controller\AbstractBaseFactory',
+            'Finna\Controller\LibraryCardsController' => 'Finna\Controller\LibraryCardsControllerFactory',
             'Finna\Controller\L1Controller' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\L1recordController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\ListController' => 'Finna\Controller\ListControllerFactory',
@@ -995,6 +995,7 @@ $config = [
                     'Finna\RecordTab\AuthorityRecordsAuthor' => 'Finna\RecordTab\AuthorityRecordsFactory',
                     'Finna\RecordTab\AuthorityRecordsTopic' => 'Finna\RecordTab\AuthorityRecordsFactory',
                     'Finna\RecordTab\CollectionHierarchyTree' => 'VuFind\RecordTab\CollectionHierarchyTreeFactory',
+                    'Finna\RecordTab\CollectionList' => 'VuFind\RecordTab\CollectionListFactory',
                     'Finna\RecordTab\HoldingsArchive' => 'Finna\RecordTab\Factory::getHoldingsArchive',
                     'Finna\RecordTab\HierarchyTree' => 'VuFind\RecordTab\HierarchyTreeFactory',
                     'Finna\RecordTab\Map' => 'Finna\RecordTab\Factory::getMap',
@@ -1011,6 +1012,7 @@ $config = [
 
                     // Overrides:
                     'VuFind\RecordTab\CollectionHierarchyTree' => 'Finna\RecordTab\CollectionHierarchyTree',
+                    'VuFind\RecordTab\CollectionList' => 'Finna\RecordTab\CollectionList',
                     'VuFind\RecordTab\HierarchyTree' => 'Finna\RecordTab\HierarchyTree',
                     'VuFind\RecordTab\Map' => 'Finna\RecordTab\Map',
                     'VuFind\RecordTab\UserComments' => 'Finna\RecordTab\UserComments',
@@ -1078,7 +1080,10 @@ $nonTabRecordActions = [
 // Define dynamic routes -- controller => [route name => action]
 $dynamicRoutes = [
     'Comments' => ['inappropriate' => 'inappropriate/[:id]'],
-    'LibraryCards' => ['newLibraryCardPassword' => 'newPassword/[:id]'],
+    'LibraryCards' => [
+        'newLibraryCardPassword' => 'newPassword/[:id]',
+        'librarycards-displaybarcode' => 'displayBarcode/[:id]',
+    ],
     'MyResearch' => ['sortList' => 'SortList/[:id]'],
     'ReservationList' => [
         'reservationlist-displaylists' => 'DisplayLists',

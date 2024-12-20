@@ -65,10 +65,10 @@
             <?php /* Begin Available Items (Holds) */ ?>
             <?php
               if ($row['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNCERTAIN)) {
-                $statusClassEsc = 'text-warning';
-                $icon = 'status-unknown';
+                $statusClassEsc = 'status-uncertain';
+                $icon = 'status-uncertain';
               } else {
-                $statusClassEsc = 'text-success';
+                $statusClassEsc = 'status-available';
                 $icon = 'status-available';
               }
             ?>
@@ -95,7 +95,7 @@
             </div>
           <?php else: ?>
             <?php /* Begin Unavailable Items (Recalls) */ ?>
-            <span class="text-danger"><?=$status == 'Ordered' ? '' : $this->icon('status-unavailable');?> <?=$this->transEsc('status_' . $status, $statusDescriptionTokens, $this->translate($status, $statusDescriptionTokens))?> </span>
+            <span class="status-unavailable"><?=$status == 'Ordered' ? '' : $this->icon('status-unavailable');?> <?=$this->transEsc('status_' . $status, $statusDescriptionTokens, $this->translate($status, $statusDescriptionTokens))?> </span>
             <?php if (isset($row['returnDate']) && $row['returnDate']): ?>&ndash; <span class="small"><?=$this->escapeHtml($row['returnDate'])?></span><?php endif; ?>
             <?php if (isset($row['duedate']) && $row['duedate']): ?>
               &ndash;&nbsp;<span class="small"><?=$this->transEsc('Due')?>:&nbsp;<?=$this->escapeHtml($row['duedate'])?></span>

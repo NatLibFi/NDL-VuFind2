@@ -5,7 +5,7 @@
     <?php $targetCount = $this->ils()->checkCapability('getLoginDrivers') ? count($this->ils()->getLoginDrivers()) : 1; ?>
     <?php if (isset($loginMenu) && $loginMenu): ?>
       <li class="logoutOptions card-selection" role="none">
-        <a class="card-header" role="menuitem" href="<?=$this->url('librarycards-home')?>">
+        <a class="card-header" href="<?=$this->url('librarycards-home')?>">
           <?=$this->transEsc($this->label ?? 'Kirjastokortti') ?>
         </a>
         <label id="select-card-label-dropdown"><?= $this->transEsc('Library Card') ?></label>
@@ -26,7 +26,17 @@
               }
             ?>
             <?php $selectedCard = (!isset($this->displaySelected) || $this->displaySelected) && (strcasecmp($card->getCatUsername(), $this->user->getCatUsername() ?? '') === 0); ?>
-            <a aria-describedby="select-card-label-dropdown" role="menuitem" href="<?=$this->url('librarycards-selectcard')?>?cardID=<?=$this->escapeHtmlAttr($card->getId())?>" data-clear-account-cache><?=$selectedCard ? $this->icon('library-card-selected') . '<span class="sr-only">(' . $this->transEsc('selected') . ')</span> ' : '' ?><?=$display ?></a>
+            <div class="library-card">
+              <?=$selectedCard ? $this->icon('library-card-selected', 'selected-icon') : '<span class="selected-icon"></span>'?>
+              <a class="card-name" aria-describedby="select-card-label-dropdown" href="<?=$this->url('librarycards-selectcard')?>?cardID=<?=$this->escapeHtmlAttr($card->getId())?>" data-clear-account-cache>
+                <?=$selectedCard ? '<span class="sr-only">(' . $this->transEsc('selected') . ')</span> ' : '' ?><span><?=$display?></span>
+              </a>
+              <div class="barcode-container">
+                <a href="<?=$this->url('librarycards-displaybarcode', ['id' => $card->getId()])?>">
+                  <?=$this->icon('library-card-barcode', 'barcode-icon')?>
+                </a>
+              </div>
+            </div>
           <?php endforeach; ?>
         <?php endif; ?>
       </li>
@@ -42,7 +52,7 @@
             if (!isset($this->displaySelected) || $this->displaySelected) {
               foreach ($cards as $card) {
                 if (strcasecmp($card->getCatUsername(), $this->user->getCatUsername()) !== 0) {
-                    continue;
+                  continue;
                 }
                 $target = '';
                 $username = $card->getCatUsername();

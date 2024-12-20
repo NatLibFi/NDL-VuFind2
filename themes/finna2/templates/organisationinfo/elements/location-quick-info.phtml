@@ -10,7 +10,7 @@
   </h3>
   <div>
     <p>
-      <span class="location-links address info-element"><?=$this->escapeHtml($orgInfo['address']['displayAddress'])?></span>
+      <span class="location-links address info-element"><?=$this->escapeHtml($orgInfo['address']['displayAddress'] ?? '')?></span>
       <?php if ($orgInfo['routeUrl']): ?>
         <a href="<?=$this->escapeHtmlAttr($orgInfo['routeUrl'])?>" target="_blank" class="location-links route info-element"><?=$this->icon('route') ?> <?=$this->transEsc('organisation_info_route')?></a>
       <?php endif; ?>

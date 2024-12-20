@@ -507,6 +507,16 @@ h2 {
   }
 }
 
+.record-list:not(.search-results-l1) {
+  .record-type-lrmi,
+  .record-type-aipa {
+    .material-rights,
+    .targeted-information {
+      display: none;
+    }
+  }
+}
+
 .versions-tab {
   .search-header {
     .search-controls {

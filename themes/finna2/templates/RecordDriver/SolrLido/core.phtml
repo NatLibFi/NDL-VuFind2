@@ -24,6 +24,17 @@
 ?>
   <div class="media-<?=$thumbnailAlignment ?><?=!empty($audioUrls) ? ' audio' : ''?>">
 
+    <?php if (!empty($videoUrls) && $this->config()->inlineVideoEnabled()): ?>
+      <?php $i = 0; ?>
+        <?php foreach ($videoUrls as $url): ?>
+          <div class="resource-details">
+            <div class="open-link"><a href="<?=$url['url'] ?>" target="_blank" rel="nofollow" download><?=$this->icon('download')?> <?=$this->transEsc('Download video') ?></a></div>
+            <?=$this->record($this->driver)->renderTemplate('video-information.phtml', ['i' => $i, 'url' => $url]);?>
+          </div>
+        <?php $i++; ?>
+      <?php endforeach; ?>
+    <?php endif; ?>
+
     <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'sizes' => ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]]);?>
 
     <?php if (!empty($videoUrls)): ?>

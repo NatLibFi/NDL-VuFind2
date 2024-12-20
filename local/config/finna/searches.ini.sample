@@ -82,7 +82,8 @@ snippets = true
 ; controls its default state: on (true) or off (false).
 retain_filters_by_default = false
 
-; Whether to hide merged component parts
+; Whether to hide merged component parts. See also finna.include_hidden_parts
+; in CheckboxFacets section of facets.ini for user-selectable options.
 hide_component_parts = true
 
 ; Maximum result to display

@@ -32,14 +32,6 @@
         }
         &.loading {
             font-style: normal;
-            &:before {
-                  font-family:'Fontawesome';
-                  content: "\f110";
-                  color: $gray-light;
-                  font-size: 1.2em;
-                  margin-right: 5px;
-                  @extend .fa-spin;
-            }
         }
     }
     & .group {
