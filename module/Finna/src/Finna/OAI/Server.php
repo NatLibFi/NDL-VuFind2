@@ -52,6 +52,13 @@ class Server extends \VuFind\OAI\Server
     protected array $finnaApiFields = [];
 
     /**
+     * Finna metadata prefix
+     *
+     * @var string
+     */
+    protected const OAI_FINNA_JSON = 'oai_finna_json';
+
+    /**
      * Does the current configuration support the Finna metadata format (using
      * the API's record formatter.
      *
@@ -90,7 +97,7 @@ class Server extends \VuFind\OAI\Server
             'schema' => $qdc,
             'namespace' => 'urn:dc:qdc:container'];
         if ($this->supportsFinnaMetadata()) {
-            $this->metadataFormats['oai_finna_json'] = [
+            $this->metadataFormats[self::OAI_FINNA_JSON] = [
                 'schema' => 'https://vufind.org/xsd/oai_vufind_json-1.0.xsd',
                 'namespace' => 'http://vufind.org/oai_vufind_json-1.0',
             ];
@@ -107,7 +114,7 @@ class Server extends \VuFind\OAI\Server
      */
     protected function getRecordAsXML(AbstractRecordDriver $record, string $format): string|false
     {
-        if ('oai_json_finna' === 'format' && $this->supportsFinnaMetadata()) {
+        if (self::OAI_FINNA_JSON === $format && $this->supportsFinnaMetadata()) {
             return $this->getFinnaMetadata($record);
         }
         return parent::getRecordAsXml($record, $format);
@@ -116,7 +123,7 @@ class Server extends \VuFind\OAI\Server
     /**
      * Respond to a ListMetadataFormats request.
      *
-     * @return string
+     * @return string|false
      */
     protected function listMetadataFormats()
     {
@@ -141,7 +148,7 @@ class Server extends \VuFind\OAI\Server
                 $record === false
                 || $record->getXML($prefix) !== false
                 || ('oai_vufind_json' === $prefix && $this->supportsVuFindMetadata())
-                || ('oai_finna_json' === $prefix && $this->supportsFinnaMetadata())
+                || (self::OAI_FINNA_JSON === $prefix && $this->supportsFinnaMetadata())
             ) {
                 $node = $xml->addChild('metadataFormat');
                 $node->metadataPrefix = $prefix;
@@ -191,43 +198,22 @@ class Server extends \VuFind\OAI\Server
     {
         // Root node
         $recordDoc = new \DOMDocument();
-        $vufindFormat = $this->getMetadataFormats()['oai_finna_json'];
-        $rootNode = $recordDoc->createElementNS(
-            $vufindFormat['namespace'],
-            'oai_finna_json:record'
-        );
-        $rootNode->setAttribute(
-            'xmlns:xsi',
-            'http://www.w3.org/2001/XMLSchema-instance'
-        );
-        $rootNode->setAttribute(
-            'xsi:schemaLocation',
-            $vufindFormat['namespace'] . ' ' . $vufindFormat['schema']
-        );
+        $finnaFormat = $this->getMetadataFormats()[self::OAI_FINNA_JSON];
+        $rootNode = $recordDoc->createElementNS($finnaFormat['namespace'], self::OAI_FINNA_JSON . ':record');
+        $rootNode->setAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+        $rootNode->setAttribute('xsi:schemaLocation', $finnaFormat['namespace'] . ' ' . $finnaFormat['schema']);
         $recordDoc->appendChild($rootNode);
 
         // Add oai_dc part
         $oaiDc = new \DOMDocument();
-        $oaiDc->loadXML(
-            $record->getXML('oai_dc', $this->baseHostURL, $this->recordLinkerHelper)
-        );
-        $rootNode->appendChild(
-            $recordDoc->importNode($oaiDc->documentElement, true)
-        );
+        $oaiDc->loadXML($record->getXML('oai_dc', $this->baseHostURL, $this->recordLinkerHelper));
+        $rootNode->appendChild($recordDoc->importNode($oaiDc->documentElement, true));
 
-        // Add VuFind metadata
-        $records = $this->recordFormatter->format(
-            [$record],
-            $this->finnaApiFields
-        );
-        $metadataNode = $recordDoc->createElementNS(
-            $vufindFormat['namespace'],
-            'oai_finna_json:metadata'
-        );
+        // Add Finna specific metadata
+        $records = $this->recordFormatter->format([$record], $this->finnaApiFields);
+        $metadataNode = $recordDoc->createElementNS($finnaFormat['namespace'], self::OAI_FINNA_JSON . ':metadata');
         $metadataNode->setAttribute('type', 'application/json');
-        $metadataNode->appendChild(
-            $recordDoc->createCDATASection(json_encode($records[0]))
-        );
+        $metadataNode->appendChild($recordDoc->createCDATASection(json_encode($records[0])));
         $rootNode->appendChild($metadataNode);
 
         return $recordDoc->saveXML();
