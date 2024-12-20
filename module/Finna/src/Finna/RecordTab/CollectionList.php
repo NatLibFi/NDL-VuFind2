@@ -59,9 +59,6 @@ class CollectionList extends \VuFind\RecordTab\CollectionList
      */
     public function getDescription()
     {
-        if ($this->driver->tryMethod('getArchiveType') === 'collection') {
-            return 'Collection Items';
-        }
-        return 'Archive Content';
+        return $this->driver->tryMethod('getArchiveType') === 'collection' ? 'Collection Items' : 'Archive Content';
     }
 }

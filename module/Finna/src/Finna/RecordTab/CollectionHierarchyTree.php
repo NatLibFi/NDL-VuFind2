@@ -47,9 +47,6 @@ class CollectionHierarchyTree extends \VuFind\RecordTab\CollectionHierarchyTree
      */
     public function getDescription()
     {
-        if ($this->driver->tryMethod('getArchiveType') === 'collection') {
-            return 'hierarchy_tree_collection';
-        }
-        return 'hierarchy_tree_archive';
+        return $this->driver->tryMethod('getArchiveType') === 'collection' ? 'hierarchy_tree_collection' : 'hierarchy_tree_archive';
     }
 }
