@@ -39,7 +39,7 @@ namespace Finna\RecordTab;
  * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
  */
 class CollectionList extends \VuFind\RecordTab\CollectionList
-{  
+{
     /**
      * Is this tab active?
      * Override to allow this tab to be displayed for records which are part of a collection.
