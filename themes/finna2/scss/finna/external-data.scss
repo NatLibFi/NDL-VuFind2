@@ -2,22 +2,23 @@
     width: 100%;
     border: 1px $gray-lighter solid;
 
-    .fa-chevron-up, .fa-chevron-down {
-        font-size: .80em;
-        vertical-align: middle;
-    }
     &.collapsible {
+        .toggle-collapse {
+            display: flex;
+            align-self: center;
+        }
         .toggle-expand {
             display: none;
         }
         &.collapsed {
-          .toggle-collapse {
-              display: none;
-          }
-          .toggle-expand {
-              display: initial;
-          }
-       }
+            .toggle-collapse {
+                display: none;
+            }
+            .toggle-expand {
+                display: flex;
+                align-self: center;
+            }
+        }
     }
 
     thead {
@@ -38,6 +39,10 @@
         }
         &.external-data-headers {
             padding-left: 5px;
+            .icon-link__icon {
+                font-size: 0.8rem;
+
+            }
         }
         &:nth-child(even):not(.info) {
             background-color: $gray-ultralight;
@@ -49,7 +54,6 @@
             &.tbl-left {
                 float: left;
                 width: 40%;
-                font-size: 1.5m;
                 font-weight: 600;
             }
             &.tbl-right {

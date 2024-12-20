@@ -26,7 +26,17 @@
               }
             ?>
             <?php $selectedCard = (!isset($this->displaySelected) || $this->displaySelected) && (strcasecmp($card->getCatUsername(), $this->user->getCatUsername() ?? '') === 0); ?>
-            <a aria-describedby="select-card-label-dropdown" href="<?=$this->url('librarycards-selectcard')?>?cardID=<?=$this->escapeHtmlAttr($card->getId())?>" data-clear-account-cache><?=$selectedCard ? $this->icon('library-card-selected') . '<span class="sr-only">(' . $this->transEsc('selected') . ')</span> ' : '' ?><?=$display ?></a>
+            <div class="library-card">
+              <?=$selectedCard ? $this->icon('library-card-selected', 'selected-icon') : '<span class="selected-icon"></span>'?>
+              <a class="card-name" aria-describedby="select-card-label-dropdown" href="<?=$this->url('librarycards-selectcard')?>?cardID=<?=$this->escapeHtmlAttr($card->getId())?>" data-clear-account-cache>
+                <?=$selectedCard ? '<span class="sr-only">(' . $this->transEsc('selected') . ')</span> ' : '' ?><span><?=$display?></span>
+              </a>
+              <div class="barcode-container">
+                <a href="<?=$this->url('librarycards-displaybarcode', ['id' => $card->getId()])?>">
+                  <?=$this->icon('library-card-barcode', 'barcode-icon')?>
+                </a>
+              </div>
+            </div>
           <?php endforeach; ?>
         <?php endif; ?>
       </li>
@@ -42,7 +52,7 @@
             if (!isset($this->displaySelected) || $this->displaySelected) {
               foreach ($cards as $card) {
                 if (strcasecmp($card->getCatUsername(), $this->user->getCatUsername()) !== 0) {
-                    continue;
+                  continue;
                 }
                 $target = '';
                 $username = $card->getCatUsername();
@@ -80,7 +90,7 @@
               }
             ?>
             <li>
-              <a aria-describedby="select-card-label-maincontent" href="<?=$this->url('librarycards-selectcard')?>?cardID=<?=$this->escapeHtmlAttr($card->getId());?>" data-clear-account-cache><?=$display ?></a>
+              <a aria-describedby="select-card-label-maincontent" role="menuitem" href="<?=$this->url('librarycards-selectcard')?>?cardID=<?=$this->escapeHtmlAttr($card->getId());?>" data-clear-account-cache><?=$display ?></a>
             </li>
         <?php endforeach; ?>
         </ul>

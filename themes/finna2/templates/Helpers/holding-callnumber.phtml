@@ -1,41 +1,48 @@
+<?php ob_start(); ?>
+<?php if ($this->wayfinderLocation): ?>
+  <span class="js-wayfinder-placeholder" data-location="<?=$this->htmlSafeJsonEncode($wayfinderLocation)?>">
+    <template class="js-wayfinder-link">
+      <a class="location-service icon-link__label" target="_blank" href="#">
+        <?=$this->icon('location-service', 'location-service-icon');?>
+        <span class="sr-only"><?=$this->transEsc('Location Service')?></span>
+      </a>
+    </template>
+  </span>
+<?php endif; ?>
+
+<?php if (isset($this->locationServiceUrl)): ?>
+  <a class="location-service <?=$this->locationServiceModal ? ' location-service-modal' : ''?>" href="<?=$this->locationServiceUrl?>"<?=$this->locationServiceModal ? ' data-lightbox-href="' . $this->url('locationservice-modal') . '?callnumber=' . urlencode(($this->callnumber instanceof \VuFind\I18n\TranslatableString) ? $this->callnumber->getDisplayString() : $this->callnumber) . '&amp;collection=' . urlencode($this->collection ?? '') . '&amp;location=' . urlencode($this->location ?? '') . '&amp;title=' . urlencode($this->title) . '&amp;source=' . urlencode($this->source) : '' ?>" target="location-service"><?=$this->icon('location-service', 'location-service-icon') ?> <?=$this->transEsc($this->callnumber)?></a>
+<?php elseif ($this->callnumber): ?>
+  <?php if ($this->page === 'results'): ?>
+    <span class="callnumber-text">
+      <span><?=$this->transEsc('shelf_location'); ?>: </span><?=$this->transEsc($this->callnumber)?>
+    </span>
+  <?php else: ?>
+    <?=$this->transEsc($this->callnumber)?>
+  <?php endif; ?>
+<?php endif; ?>
+
+<?php if ($this->qrCode): ?>
+  <div class="dropdown location-service-qrcode">
+    <a href="#" class="dropdown-toggle qrcodeLink" data-toggle="dropdown" title="<?=$this->transEsc('QR Code')?>" rel="nofollow">
+      <?=$this->icon('qrcode', 'location-service-qrcode-icon')?><span class="sr-only"><?=$this->transEsc('QR Code')?></span>
+    </a>
+    <ul class="dropdown-menu qrcode" role="menu">
+      <li>
+        <script type="text/template" class="qrCodeImgTag">
+          <img alt="" src="<?=$this->url('qrcode-show', [], ['query' => ['text' => $this->locationServiceUrl]])?>" rel="nofollow">
+        </script>
+      </li>
+    </ul>
+  </div>
+<?php endif; ?>
+<?php
+$contentHtml = ob_get_clean();
+if (trim($contentHtml)):
+?>
 <!-- START of: finna - Helpers/holding-callnumber.phtml -->
 <div class="location-link-text">
-  <?php if ($this->wayfinderLocation): ?>
-    <span class="js-wayfinder-placeholder" data-location="<?=$this->htmlSafeJsonEncode($wayfinderLocation)?>">
-      <template class="js-wayfinder-link">
-        <a class="location-service icon-link__label" target="_blank" href="#">
-          <?=$this->icon('location-service', 'location-service-icon');?>
-          <span class="sr-only"><?=$this->transEsc('Location Service')?></span>
-        </a>
-      </template>
-    </span>
-  <?php endif; ?>
-
-  <?php if (isset($this->locationServiceUrl)): ?>
-    <a class="location-service <?=$this->locationServiceModal ? ' location-service-modal' : ''?>" href="<?=$this->locationServiceUrl?>"<?=$this->locationServiceModal ? ' data-lightbox-href="' . $this->url('locationservice-modal') . '?callnumber=' . urlencode(($this->callnumber instanceof \VuFind\I18n\TranslatableString) ? $this->callnumber->getDisplayString() : $this->callnumber) . '&amp;collection=' . urlencode($this->collection ?? '') . '&amp;location=' . urlencode($this->location ?? '') . '&amp;title=' . urlencode($this->title) . '&amp;source=' . urlencode($this->source) : '' ?>" target="location-service"><?=$this->icon('location-service', 'location-service-icon') ?> <?=$this->transEsc($this->callnumber)?></a>
-  <?php elseif ($this->callnumber): ?>
-    <?php if ($this->page === 'results'): ?>
-      <span class="callnumber-text">
-        <span><?=$this->transEsc('shelf_location'); ?>: </span><?=$this->transEsc($this->callnumber)?>
-      </span>
-    <?php else: ?>
-      <?=$this->transEsc($this->callnumber)?>
-    <?php endif; ?>
-  <?php endif; ?>
-
-  <?php if ($this->qrCode): ?>
-    <div class="dropdown location-service-qrcode">
-      <a href="#" class="dropdown-toggle qrcodeLink" data-toggle="dropdown" title="<?=$this->transEsc('QR Code')?>" rel="nofollow">
-        <?=$this->icon('qrcode', 'location-service-qrcode-icon')?><span class="sr-only"><?=$this->transEsc('QR Code')?></span>
-      </a>
-      <ul class="dropdown-menu qrcode" role="menu">
-        <li>
-          <script type="text/template" class="qrCodeImgTag">
-            <img alt="" src="<?=$this->url('qrcode-show', [], ['query' => ['text' => $this->locationServiceUrl]])?>" rel="nofollow">
-          </script>
-        </li>
-      </ul>
-    </div>
-  <?php endif; ?>
+  <?=$contentHtml?>
 </div>
 <!-- END of: finna - Helpers/holding-callnumber.phtml -->
+<?php endif;

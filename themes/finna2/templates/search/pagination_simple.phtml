@@ -1,1 +1,1 @@
-<?=$this->render('Helpers/pagination-simple-search.phtml', ['params' => ['results' => $this->results]]);
+<?=$this->render('Helpers/pagination-simple-search.phtml', $this->vars()->getArrayCopy() + ['params' => ['results' => $this->results]]);

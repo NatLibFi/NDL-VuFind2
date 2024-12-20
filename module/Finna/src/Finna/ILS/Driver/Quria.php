@@ -374,6 +374,7 @@ class Quria extends AxiellWebServices
                     $nofOrdered = $department->nofOrdered ?? 0;
 
                     // Group journals by issue number
+                    $group = null;
                     if ($journalInfo) {
                         $year = $journalInfo['year'] ?? '';
                         $edition = $journalInfo['edition'] ?? '';

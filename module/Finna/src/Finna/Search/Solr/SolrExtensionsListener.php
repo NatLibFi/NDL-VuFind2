@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2013-2023.
+ * Copyright (C) The National Library of Finland 2013-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -33,7 +33,6 @@ use Laminas\EventManager\EventInterface;
 use Laminas\EventManager\SharedEventManagerInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use VuFindSearch\Query\Query;
-use VuFindSearch\Query\QueryGroup;
 
 use function count;
 use function in_array;
@@ -354,27 +353,44 @@ class SolrExtensionsListener
      */
     protected function addHiddenComponentPartFilter(EventInterface $event)
     {
-        $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class);
-        $searchConfig = $config->get($this->searchConfig);
-        if (
-            isset($searchConfig->General->hide_component_parts)
-            && $searchConfig->General->hide_component_parts
-        ) {
-            $command = $event->getParam('command');
-            $params = $command->getSearchParameters();
-            if ($params) {
-                // Check that search is not for a known record id
-                $query = method_exists($command, 'getQuery')
-                    ? $command->getQuery()
-                    : null;
-                if (
-                    !$query
-                    || $query instanceof QueryGroup
-                    || ($query instanceof Query && $query->getHandler() !== 'id')
-                ) {
-                    $params->add('fq', '-hidden_component_boolean:true');
+        $hideHiddenComponentsPart = null;
+        $command = $event->getParam('command');
+        $params = $command->getSearchParameters();
+        if (!$params) {
+            return;
+        }
+
+        // Check that search is not for a known record id
+        $query = method_exists($command, 'getQuery') ? $command->getQuery() : null;
+        if ($query instanceof Query && $query->getHandler() === 'id') {
+            return;
+        }
+
+        if ($fq = $params->get('fq')) {
+            // Check for a filter parameter:
+            $optionMappings = [
+                'finna.include_hidden_parts:"1"' => false,
+                'finna.include_hidden_parts:"0"' => true,
+            ];
+            foreach ($optionMappings as $filter => $value) {
+                if (false !== ($key = array_search($filter, $fq))) {
+                    $hideHiddenComponentsPart = $value;
+                    unset($fq[$key]);
+                    $params->set('fq', $fq);
                 }
             }
+        }
+
+        if (null === $hideHiddenComponentsPart) {
+            // Check for config:
+            $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class);
+            $searchConfig = $config->get($this->searchConfig);
+            $hideHiddenComponentsPart = $searchConfig->General->hide_component_parts ?? false;
+        }
+
+        // Add the parameter if needed:
+        if ($hideHiddenComponentsPart) {
+            $params->add('fq', '-hidden_component_boolean:true');
         }
     }
 

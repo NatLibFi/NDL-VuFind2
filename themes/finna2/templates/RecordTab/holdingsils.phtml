@@ -183,7 +183,7 @@
   ?>
 <?php endif; ?>
 
-<div class="table record-holdings-table">
+<div class="record-holdings-table">
   <div class="headers">
     <?php $mergedData = $this->driver->tryMethod('getMergedRecordData'); ?>
     <?php $recordSourceId = $this->driver->getSourceIdentifier(); ?>
@@ -390,7 +390,7 @@
 
 <?php $history = $this->driver->getRealTimeHistory(); ?>
 <?php if (is_array($history) && !empty($history)): ?>
-<table class="table record-holdings-table">
+<table class="record-holdings-table">
   <tr>
     <th class="headers"><span class="holdings-title"><?=$this->transEsc('Most Recent Received Issues')?></span></th>
   </tr>

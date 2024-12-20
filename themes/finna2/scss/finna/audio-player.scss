@@ -8,8 +8,8 @@
   :focus {
     outline:none;
   }
-  .open-link {
-    font-size: $font-size-small
+  .open-link:not(.download-audio) {
+    font-size: $font-size-small;
   }
 }
 
@@ -22,6 +22,9 @@
 .audio-title-wrapper,
 .audio-accordion-item {
   padding: 5px;
+  &.details-uncontained {
+    margin-bottom: 15px;
+  }
 }
 
 .audio-title-wrapper {

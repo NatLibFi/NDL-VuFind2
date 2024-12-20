@@ -32,6 +32,8 @@
 namespace Finna\Controller;
 
 use Finna\Db\Service\FinnaCacheServiceInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\Session\Container as SessionContainer;
 use VuFind\Db\Entity\UserCardEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\UserCardServiceInterface;
@@ -53,6 +55,20 @@ use function intval;
  */
 class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
 {
+    /**
+     * Constructor
+     *
+     * @param ServiceLocatorInterface $sm      Service locator
+     * @param SessionContainer        $session Session container for library cards
+     */
+    public function __construct(
+        ServiceLocatorInterface $sm,
+        protected SessionContainer $session,
+    ) {
+        parent::__construct($sm);
+        $this->session->LibraryCards ??= [];
+    }
+
     /**
      * Send user's library cards to the view
      *
@@ -886,6 +902,60 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             );
         } catch (\VuFind\Exception\Mail $e) {
             $this->flashMessenger()->addMessage($e->getDisplayMessage(), 'error');
+        }
+    }
+
+    /**
+     * Fetch and display requested library card's barcode.
+     *
+     * @return mixed
+     */
+    public function displayBarcodeAction(): mixed
+    {
+        try {
+            if (!($user = $this->getUser())) {
+                return $this->forceLogin();
+            }
+            if (!($id = $this->params()->fromRoute('id', $this->params()->fromQuery('id')))) {
+                return $this->redirect()->toRoute('librarycards-home');
+            }
+            $userCardService = $this->getDbService(UserCardServiceInterface::class);
+            $card = $userCardService->getOrCreateLibraryCard($user, $id);
+            $username = $card->getCatUsername();
+            if (str_contains($username, '.')) {
+                [, $username] = explode('.', $username, 2);
+            }
+            $cacheKey = $username . '|' . $id;
+            if (isset($this->session->LibraryCards[$cacheKey])) {
+                $barcode = $this->session->LibraryCards[$cacheKey];
+                return $this->createViewModel(['code' => $barcode]);
+            }
+            $catalog = $this->getILS();
+            $auth = $this->getILSAuthenticator();
+            if ($card->getCatUsername() === $user->getCatUsername()) {
+                $patron = $auth->storedCatalogLogin();
+            } else {
+                $loginUser = clone $user;
+                $loginUser->setCatUsername($card->getCatUsername());
+                $loginUser->setRawCatPassword($card->getRawCatPassword());
+                $loginUser->setCatPassEnc($card->getCatPassEnc());
+                $patron = $catalog->patronLogin(
+                    $loginUser->getCatUsername(),
+                    $auth->getCatPasswordForUser($loginUser)
+                );
+            }
+            if ($patron['cat_username'] === $card->getCatUsername()) {
+                $profile = $catalog->getMyProfile($patron);
+                if (!empty($profile['barcode'])) {
+                    $barcode = $profile['barcode'];
+                }
+            }
+            $barcode ??= $username;
+            $this->session->LibraryCards[$cacheKey] = $barcode;
+            return $this->createViewModel(['code' => $barcode]);
+        } catch (\Exception) {
+            $this->flashMessenger()->addErrorMessage('An error has occurred');
+            return $this->redirect()->toRoute('librarycards-home');
         }
     }
 

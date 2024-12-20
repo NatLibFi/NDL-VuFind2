@@ -22,7 +22,7 @@
  *
  * @category VuFind
  * @package  RecordTabs
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
  */
@@ -34,12 +34,24 @@ namespace Finna\RecordTab;
  *
  * @category VuFind
  * @package  RecordTabs
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
  */
 class CollectionList extends \VuFind\RecordTab\CollectionList
-{
+{  
+    /**
+     * Is this tab active?
+     * Override to allow this tab to be displayed for records which are part of a collection.
+     *
+     * @return bool
+     */
+    public function isActive()
+    {
+        $driver = $this->getRecordDriver();
+        return $driver->tryMethod('isCollection') || $driver->tryMethod('getContainingCollections');
+    }
+
     /**
      * Get the on-screen description for this tab.
      *

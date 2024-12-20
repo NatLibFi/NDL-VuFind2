@@ -3,7 +3,7 @@
 <?php if ($this->driver->tryMethod('archiveRequestAllowed')): ?>
   <?php $user = $this->auth()->getManager()->getUserObject(); ?>
   <!-- Display lists where it has been saved: -->
-  <div class="reservation-request-table table record-holdings-url-table">
+  <div class="reservation-request-table record-holdings-url-table">
     <div class="headers">
       <span class="holdings-url-title"><?=$this->transEsc('ReservationList::Reserve to Research Room')?></span>
     </div>
@@ -17,7 +17,7 @@
   </div>
 <?php endif;?>
 <br>
-<?= $this->reservationList($this->auth()->getUserObject())->renderReserveTemplate($driver); ?>  
+<?= $this->reservationList($this->auth()->getUserObject())->renderReserveTemplate($driver); ?>
 
 <?= $this->render('RecordTab/holdings-record-urls'); ?>
 
@@ -57,10 +57,10 @@
 
     <div class="external-data-heading external-data physical-items collapsible <?=$collapsed?>" role="table">
       <div role="row" class="tbl-row external-data-headers">
-        <div role="cell" class="tbl-cell tbl-left">
-          <?=$this->icon('collapse-open', ['class' => 'toggle-expand'])?>
-          <?=$this->icon('collapse-close', ['class' => 'toggle-collapse'])?>
-          <span role="columnheader"><?=$this->escapeHtml($format)?></span>
+        <div role="cell" class="tbl-cell tbl-left icon-link">
+          <?=$this->icon('collapse-open', 'toggle-expand icon-link__icon')?>
+          <?=$this->icon('collapse-close', 'toggle-collapse  icon-link__icon')?>
+          <span role="columnheader" class="icon-link__label"><?=$this->escapeHtml($format)?></span>
           <?php if (!empty($item['imageType'])): ?>
             <div class="format-info"><?=$this->transEsc('holdings_archive_tab_image_type')?>: <?=$this->escapeHtml($item['imageType'])?></div>
           <?php endif;?>

@@ -109,8 +109,8 @@ if ($groupBranches) {
 
 <?php if ($groupBranches): ?>
   <div class="holdings-container root <?=$collapseLocations ? ' collapsible' : ''?>">
-    <div class="header<?=!empty($availableTotal) ? ' available status-available' : 'status-unavailable'?> clearfix">
-      <?=!empty($availableTotal) ? $this->icon('status-available') : $this->icon('status-unavailable')?>
+    <div class="header<?=!empty($availableTotal) ? ' available status-available' : ' status-unavailable'?> clearfix">
+      <?=$this->icon(!empty($availableTotal) ? 'status-available' : 'status-unavailable', 'status-icon')?>
       <span>
         <?php if (!empty($availableTotal)): ?>
           <?=sprintf('%s %d %s', $this->transEsc('axiell_available'), $availableTotal, $this->transEsc($journal ? 'axiell_issues' : 'axiell_branches'));?>
@@ -140,7 +140,7 @@ if ($groupBranches) {
     <div>
     <?php if (!empty($availableTotal)): ?>
       <span class="available-total status-available">
-        <?=$this->icon('status-available')?> <span><?=$this->translate('status_items_available_html', ['%%count%%' => $availableTotal])?></span>
+        <?=$this->icon('status-available', 'status-icon')?> <span><?=$this->translate('status_items_available_html', ['%%count%%' => $availableTotal])?></span>
       </span>
     <?php endif; ?>
     <span class="info">
@@ -244,7 +244,7 @@ foreach ($this->statusItems as $item):
     <div class="<?=$currentRow % 2 == 0 ? 'even' : 'odd'?> clearfix">
       <div class="<?=$groupBranches ? 'group-location-col' : 'no-branches'?>">
         <div class="groupLocation <?=$classEsc?><?= $prevOrganisation && $newOrganisation ? ' new-organisation' : ''; ?>">
-          <?=$icon ? $this->icon($icon) : ''?> <span class="location-name"><?=$locationHtml?></span>
+          <?=$icon ? $this->icon($icon, 'status-icon') : ''?> <span class="location-name"><?=$locationHtml?></span>
         </div>
       <?php if ($groupBranches): ?>
       </div>

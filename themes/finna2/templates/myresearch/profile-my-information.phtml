@@ -46,7 +46,7 @@
             <option value="3" <?= $user->getFinnaDueDateReminder() == 3 ? 'selected="selected"' : '' ?>><?=$this->transEsc('due_date_reminder_three_days') ?></option>
           </select>
           <?php if ($user->getFinnaDueDateReminder() && empty($user->getEmail())): ?>
-            <span class="alert-danger"><?=$this->transEsc('no_email_address')?></span>
+            <span class="alert alert-danger"><?=$this->transEsc('no_email_address')?></span>
           <?php endif; ?>
         </div>
       </div>

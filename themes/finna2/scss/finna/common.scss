@@ -322,7 +322,7 @@ table#componentparts {
   }
   .even td {
 /* #SCSS> */
-    background: color.adjust($nav-tabs-border-color, $alpha: 0.8);
+    background: $gray-ultralight;
 /* <#SCSS */
 
   }
@@ -380,6 +380,9 @@ ol {
 .btn-unstyled {
   border: none;
   background-color: transparent;
+  &:hover, .btn-group.open & {
+    box-shadow: none;
+  }
 }
 
 // A general-purpose flexbox layout mixin for switching between a horizontal
@@ -550,16 +553,13 @@ ol {
     top: 3px;
     position: relative;
 
-    &:checked{
-      background-color: black;
-      &:after{
-        font-family: 'Fontawesome';
-        content: "\f00c";
-        color: white;
+    &:checked {
+      color: $body-bg;
+      background-color: $body-color;
+
+      &:before {
+        @extend .fa, .fa-check;
         position: absolute;
-        font-size: 14px;
-        line-height: 14px;
-        font-weight: normal;
       }
     }
   }
