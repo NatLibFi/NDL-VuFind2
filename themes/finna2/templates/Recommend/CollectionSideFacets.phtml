@@ -1,7 +1,7 @@
 <!-- START of: finna - Recommend/CollectionSideFacets.phtml -->
 <?php
-    $term = $this->driver->tryMethod('getArchiveType') === 'collection' ? 'Filter Collection' : 'Filter Archive';
-    $this->slot('side-facet-caption')->set($term);
+    $title = $this->driver->tryMethod('getArchiveType') === 'collection' ? 'Filter Collection' : 'Filter Archive';
+    $this->slot('side-facet-caption')->set($title);
 ?>
 <?php $this->baseUriExtra = $this->recommend->getResults()->getParams()->getCollectionId(); ?>
 <?=$this->render('Recommend/SideFacets.phtml')?>
