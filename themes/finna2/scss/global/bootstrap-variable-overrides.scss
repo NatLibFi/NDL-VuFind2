@@ -21,21 +21,23 @@ $gray-lighter:          #d1d1d1 !default;
 $gray-ultralight:       #f7f7f7 !default;
 
 // Brand Colors
-$primary:               #007c90 !default;
-$secondary:             #007c90 !default;
-$success:               #33843B !default;
-$warning:               #9E943D !default;
-$danger:                #a94442 !default;
-$info:                  #007c90 !default;
-
-$brand-primary:         $primary !default;
-$brand-secondary:       $secondary !default;
+$brand-primary:         #007c90 !default;
+$brand-secondary:       #007c90 !default;
 $brand-third:           #007c90 !default;
 $brand-fourth:          #007c90 !default;
-$brand-success:         $success !default;
-$brand-warning:         $warning !default;
-$brand-danger:          $danger !default;
-$brand-info:            $info !default;
+$brand-success:         #33843B !default;
+$brand-warning:         #9E943D !default;
+$brand-danger:          #a94442 !default;
+$brand-info:            #007c90 !default;
+
+$primary:               $brand-primary !default;
+$secondary:             $brand-secondary !default;
+$success:               $brand-success !default;
+$warning:               $brand-warning !default;
+$danger:                $brand-danger !default;
+$info:                  $brand-info !default;
+$info-bg-subtle:        #d9edf7 !default;
+
 
 //== Custom Finna styling
 $background-color:      $gray-light !default;
