@@ -98,3 +98,15 @@ $alert-info-text:             $state-info-text !default;
   display: inline-block;
   margin-bottom: 5px;
 }
+
+// ***** The following are required for local customizations
+.panel-default {
+  @extend .card;
+}
+.nav > li > a {
+  &:hover,
+  &:focus {
+    text-decoration: none;
+    background-color: $nav-link-hover-bg;
+  }
+}
