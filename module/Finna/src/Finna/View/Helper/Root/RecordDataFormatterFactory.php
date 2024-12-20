@@ -406,10 +406,8 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             [
                 'context' => ['class' => 'record-origination',],
                 'labelFunction' => function ($data, $driver) {
-                    return match ($driver->tryMethod('getArchiveType')) {
-                        'collection' => 'CreatorRoles::rda:collector',
-                        default => 'Archive Origination',
-                    };
+                    return $driver->tryMethod('getArchiveType') === 'collection'
+                        ? 'CreatorRoles::rda:collector' : 'Archive Origination';
                 },
             ]
         );
@@ -420,10 +418,8 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             [
                 'context' => ['class' => 'recordHierarchyLinks'],
                 'labelFunction' => function ($data, $driver) {
-                    return match ($driver->tryMethod('getArchiveType')) {
-                        'collection' => 'Parent Collection',
-                        default => 'Parent Archive',
-                    };
+                    return $driver->tryMethod('getArchiveType') === 'collection'
+                        ? 'Parent Collection' : 'Parent Archive';
                 },
             ]
         );

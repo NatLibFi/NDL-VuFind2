@@ -1,13 +1,13 @@
 <?php
     if ($this->driver->isCollection()) {
-        $term = $this->driver->tryMethod('getArchiveType') === 'collection' ? 'Collection' : 'Archive';
+        $linkText = $this->driver->tryMethod('getArchiveType') === 'collection' ? 'View Full Collection' : 'View Full Archive';
     } else {
-        $term = 'Record';
+        $linkText = 'View Full Record';
     }
 ?>
 <h2><?=$this->escapeHtml($this->driver->getShortTitle() . ' ' . $this->driver->getSubtitle() . ' ' . $this->driver->getTitleSection())?></h2>
 <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver))?>">
-    <?=$this->transEsc('View Full ' . $term)?>
+    <?=$this->transEsc($linkText)?>
 </a>
 
 <?=
