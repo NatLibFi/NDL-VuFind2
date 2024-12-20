@@ -764,13 +764,16 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get array containing media types.
+     * Get an array containing media types as strings.
      *
      * @return array
      */
-    public function getMediaTypes(): array
+    public function getMediaTypesAsStrings(): array
     {
-        return $this->fields['media_type_str_mv'] ?? [];
+        return array_map(
+            fn ($entry) => $entry instanceof \VuFind\I18n\TranslatableString ? $entry->__toString() : $entry,
+            $this->fields['media_type_str_mv'] ?? []
+        );
     }
 
     /**

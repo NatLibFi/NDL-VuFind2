@@ -360,8 +360,8 @@ measurements:
   items:
     type: string
 mediaTypes:
-  vufind.method: getMediaTypes
-  description: Media types
+  vufind.method: getMediaTypesAsStrings
+  description: Media types collected from links
   type: array
   items:
     type: string
@@ -653,7 +653,7 @@ usageRightsExtended:
   description: Extended usage rights (see https://github.com/NatLibFi/RecordManager-Finna/blob/dev/mappings/usage_rights_ext.map.sample)
   type: array
   items:
-    type: string
+    $ref: '#/components/schemas/TranslatedField'
 year:
   vufind.method: getYear
   description: >
