@@ -132,7 +132,7 @@ corporateAuthors:
     type: string
 ctrlnum:
   vufind.method: getCtrlNum
-  description: Ctrl num
+  description: Record control numbers
   type: array
   items:
     type: string
@@ -345,7 +345,7 @@ lccn:
     type: string
 majorGenres:
   vufind.method: getMajorGenres
-  description: Major genres as array
+  description: Major genres
   type: array
   items:
     type: string

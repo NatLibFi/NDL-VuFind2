@@ -771,7 +771,7 @@ trait SolrFinnaTrait
     public function getMediaTypesAsStrings(): array
     {
         return array_map(
-            fn ($entry) => $entry instanceof \VuFind\I18n\TranslatableString ? $entry->__toString() : $entry,
+            fn ($entry) => (string)$entry,
             $this->fields['media_type_str_mv'] ?? []
         );
     }
