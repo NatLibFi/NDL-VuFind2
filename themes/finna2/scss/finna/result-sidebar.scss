@@ -59,7 +59,7 @@
   }
 }
 
-.sidebar :not(.recordProvidedBy) h1,
+.sidebar :not(.recordProvidedBy) .header-container,
 .sidebar > h1,
 .sidebar > h2 {
   margin-bottom: 5px;
@@ -74,6 +74,22 @@
     .tooltip-facet {
       margin-right: auto;
       padding-left: 10px;
+    }
+  }
+}
+@media (max-width: $screen-xs-max) {
+  .sidebar .header-container {
+    button.sidebar-close-btn {
+      color: $sidebar-header-text-color;
+      background-color: $brand-primary;
+      border: none;
+      padding: 10px 15px;
+      font-size: 1.2rem;
+    }
+    h1 {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
     }
   }
 }
