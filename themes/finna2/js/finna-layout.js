@@ -650,6 +650,26 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  function onPlay(self, scripts, subScripts, source, play) {
+    finna.scriptLoader.loadInOrder(
+      scripts,
+      subScripts,
+      function onVideoJsLoaded() {
+        self.find('.audio-player-wrapper').removeClass('hide');
+        var audio = self.find('audio');
+        audio.removeClass('hide').addClass('video-js');
+        source.attr('src', source.data('src'));
+        videojs(
+          audio.attr('id'),
+          { controlBar: { volumePanel: false, muteToggle: false } },
+          function onVideoJsInited() {}
+        );
+        play.remove();
+        self.find('.vjs-play-control').focus();
+      }
+    );
+  }
+
   /**
    * Initialize audio buttons
    */
@@ -666,24 +686,21 @@ finna.layout = (function finnaLayout() {
       var self = $(this);
       var play = self.find('.play');
       var source = self.find('source');
-      play.one('click', function onPlay() {
-        finna.scriptLoader.loadInOrder(
-          scripts,
-          subScripts,
-          function onVideoJsLoaded() {
-            self.find('.audio-player-wrapper').removeClass('hide');
-            var audio = self.find('audio');
-            audio.removeClass('hide').addClass('video-js');
-            source.attr('src', source.data('src'));
-            videojs(
-              audio.attr('id'),
-              { controlBar: { volumePanel: false, muteToggle: false } },
-              function onVideoJsInited() {}
-            );
-            play.remove();
-          }
-        );
+      play.on('click', function onClick() {
+        onPlay(self, scripts, subScripts, source, play);
       });
+      play.on('keydown', function onKeyDown(e) {
+        if (e.which === 13 || e.which === 32) {
+          e.preventDefault();
+          onPlay(self, scripts, subScripts, source, play);
+        }
+      });
+    });
+    $('finna-video').on('keydown', function onKeyDown(e) {
+      if (e.which === 13 || e.which === 32) {
+        e.preventDefault();
+        $(this).trigger('click');
+      }
     });
   }
 

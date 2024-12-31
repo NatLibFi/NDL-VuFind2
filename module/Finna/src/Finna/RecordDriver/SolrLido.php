@@ -384,7 +384,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      *
      * @return array
      */
-    protected function formatImageMeasurements(
+    protected function formatResourceMeasurements(
         \SimpleXmlElement $measurements
     ): array {
         $results = [];
@@ -646,7 +646,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 }
                 // Representation is an audio
                 if (in_array($type, $audioTypeKeys)) {
-                    if ($audio = $this->getAudio($url, $format, $description)) {
+                    if (
+                        $audio = $this->getAudio(
+                            $url,
+                            $format,
+                            $description,
+                            $representation->resourceMeasurementsSet
+                        )
+                    ) {
                         $audioUrls = array_merge($audioUrls, $audio);
                         if ($extraDetails = $this->getExtraDetails($resourceSet, $language)) {
                             $audioUrls = array_merge($audioUrls, $extraDetails);
@@ -656,7 +663,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 }
                 // Representation is a video
                 if (in_array($type, $videoTypeKeys)) {
-                    if ($video = $this->getVideo($url, $format, $description)) {
+                    if (
+                        $video = $this->getVideo(
+                            $url,
+                            $format,
+                            $description,
+                            $representation->resourceMeasurementsSet
+                        )
+                    ) {
                         $videoUrls = array_merge($videoUrls, $video);
                         if ($extraDetails = $this->getExtraDetails($resourceSet, $language)) {
                             $videoUrls = array_merge($videoUrls, $extraDetails);
@@ -882,7 +896,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         $highResolution = [];
         if (in_array($size, ['master', 'original'])) {
             $currentHiRes = [
-                'data' => $this->formatImageMeasurements(
+                'data' => $this->formatResourceMeasurements(
                     $measurements
                 ),
                 'url' => $url,
@@ -905,16 +919,18 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      * - type   Type what type is the audio file
      * - embed  Type of embed is audio
      *
-     * @param string $url         Url of the audio
-     * @param string $format      Format of the audio
-     * @param string $description Description of the audio
+     * @param string            $url          Url of the audio
+     * @param string            $format       Format of the audio
+     * @param string            $description  Description of the audio
+     * @param \SimpleXmlElement $measurements Measurements SimpleXmlElement
      *
      * @return array
      */
     protected function getAudio(
         string $url,
         string $format,
-        string $description
+        string $description,
+        \SimpleXmlElement $measurements = null
     ): array {
         if ($codec = $this->supportedAudioFormats[$format] ?? false) {
             return [
@@ -923,6 +939,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 'codec' => $format,
                 'type' => 'audio',
                 'embed' => 'audio',
+                'data' => $this->formatResourceMeasurements(
+                    $measurements
+                ),
             ];
         }
         return [];
@@ -937,16 +956,18 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      *  - src           Different sources for the video
      *  - type          Codec type
      *
-     * @param string $url         Url of the video
-     * @param string $format      Format of the video
-     * @param string $description Description of the video
+     * @param string            $url          Url of the video
+     * @param string            $format       Format of the video
+     * @param string            $description  Description of the video
+     * @param \SimpleXmlElement $measurements Measurements SimpleXmlElement
      *
      * @return array
      */
     protected function getVideo(
         string $url,
         string $format,
-        string $description
+        string $description,
+        \SimpleXmlElement $measurements = null
     ): array {
         $mediaType = $this->supportedVideoFormats[$format] ?? false;
         return match ($mediaType) {
@@ -955,6 +976,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 'url' => $url,
                 'embed' => 'iframe',
                 'format' => $format,
+                'data' => $this->formatResourceMeasurements(
+                    $measurements
+                ),
             ],
             false => [],
             default => [
@@ -966,6 +990,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                     'src' => $url,
                     'type' => $mediaType,
                 ],
+                'data' => $this->formatResourceMeasurements(
+                    $measurements
+                ),
             ],
         };
     }
