@@ -43,7 +43,7 @@ enum ReservationListStatus: string
     case UNKNOWN = 'unknown';
     case DELIVERED = 'delivered';
     case IN_PROCESS = 'in_process';
-    case CANCELLED = 'cancelled';
+    case CANCELED = 'canceled';
     case ON_LOAN = 'on_loan';
     case RETURNED = 'returned';
     case RENEWED = 'renewed';
@@ -70,6 +70,7 @@ enum ReservationListStatus: string
     {
         $statusKeyMappings = [
             'loaned' => 'on_loan',
+            'cancelled' => 'canceled',
         ];
         $text = mb_strtolower($text);
         $text = $statusKeyMappings[$text] ?? $text;

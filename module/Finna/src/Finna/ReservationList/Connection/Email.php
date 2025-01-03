@@ -141,8 +141,7 @@ class Email extends AbstractBase
      */
     public function getListStatus(FinnaResourceListEntityInterface $list, UserEntityInterface $user): string
     {
-        $status = ReservationListStatus::UNKNOWN;
-        return $status->getTranslationKey();
+        return '';
     }
 
     /**
@@ -151,7 +150,7 @@ class Email extends AbstractBase
      * @param array $config List specific configuration from ReservationList.yaml
      *
      * @return static
-     * @throws \Exception If FeedbackForm connection is not configured properly
+     * @throws \Exception If Email settings are not configured properly
      */
     public function init(array $config): static
     {
@@ -162,7 +161,7 @@ class Email extends AbstractBase
             $this->senderEmail = $config['Connection']['Sender']['email'];
             $this->emailSubject = $config['Connection']['subject'];
         } catch (\Exception $e) {
-            throw new \Exception('FeedbackForm: Invalid configuration');
+            throw new \Exception(__CLASS__ . ': Invalid configuration.');
         }
         return $this;
     }
@@ -182,14 +181,14 @@ class Email extends AbstractBase
      * @return bool
      */
     protected function sendEmail(
-        $recipientName,
-        $recipientEmail,
-        $senderName,
-        $senderEmail,
-        $replyToName,
-        $replyToEmail,
-        $emailSubject,
-        $emailMessage
+        ?string $recipientName,
+        string $recipientEmail,
+        string $senderName,
+        string $senderEmail,
+        string $replyToName,
+        string $replyToEmail,
+        string $emailSubject,
+        string $emailMessage
     ): bool {
         $mailer = $this->getService(\VuFind\Mailer\Mailer::class);
         try {
