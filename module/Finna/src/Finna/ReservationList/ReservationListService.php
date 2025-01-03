@@ -95,7 +95,6 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         'Datasources' => [],
         'Information' => [],
         'LibraryCardSources' => [],
-        'CheckResourceStatus' => false,
         'Forms' => [
             'PlaceOrder' => 'default',
         ],
