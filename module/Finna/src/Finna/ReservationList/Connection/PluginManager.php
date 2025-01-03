@@ -48,8 +48,8 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
     protected $aliases = [
         'Disec' => Disec::class,
         'disec' => Disec::class,
-        'FeedbackForm' => FeedbackForm::class,
-        'feedbackform' => FeedbackForm::class,
+        'Email' => Email::class,
+        'email' => Email::class,
     ];
 
     /**
@@ -59,7 +59,7 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
      */
     protected $factories = [
         Disec::class => ConnectionFactory::class,
-        FeedbackForm::class => ConnectionFactory::class,
+        Email::class => ConnectionFactory::class,
     ];
 
     /**
@@ -91,5 +91,19 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
     protected function getExpectedInterface()
     {
         return ConnectionInterface::class;
+    }
+
+    /**
+     * Get connection handler with list configuration.
+     *
+     * @param array $listProperties List properties
+     *
+     * @return ConnectionInterface
+     */
+    public function getWithConfig(array $listProperties): ConnectionInterface
+    {
+        $connection = parent::get($listProperties['Connection']['type']);
+        $connection->init($listProperties);
+        return $connection;
     }
 }

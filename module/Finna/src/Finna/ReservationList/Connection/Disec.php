@@ -31,7 +31,6 @@ namespace Finna\ReservationList\Connection;
 
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\ReservationList\Form\Form;
-use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
@@ -79,17 +78,17 @@ class Disec extends AbstractBase
     /**
      * Places an order
      *
-     * @param Params              $params Params plugin
-     * @param UserEntityInterface $user   User entity
-     * @param Form                $form   Form posted when submitting the order
+     * @param array               $formValues Values gathered from submitted form
+     * @param UserEntityInterface $user       User entity
      *
      * @return array [
      *  external_id: Id in external service or null,
      *  success: true or false,
-     *  pickup_date: date for preferred pickup
+     *  pickup_date: date for preferred pickup,
+     *  connection Type of the connection
      * ]
      */
-    public function placeOrder(Params $params, UserEntityInterface $user, Form $form = null): array
+    public function placeOrder(array $formValues, UserEntityInterface $user): array
     {
         $data = [];
         $client = $this->getService(\VuFindHttp\HttpService::class)->createClient($this->ordersUrl);
@@ -98,16 +97,16 @@ class Disec extends AbstractBase
 
         $resources = [];
         $recordLoader = $this->getService(\VuFind\Record\Loader::class);
-        foreach ($recordLoader->loadBatch($params->fromPost('resourceIDs', [])) as $record) {
+        foreach ($recordLoader->loadBatch($formValues['resourceIDs']) as $record) {
             if ($identifiers = $record->tryMethod('getIdentifier', [])) {
                 $resources[] = array_shift($identifiers);
             }
         }
         $data = [
             'resourceIds' => $resources,
-            'contentInfo' => $params->fromPost('message', '') . PHP_EOL,
+            'contentInfo' => $formValues['message'] . PHP_EOL,
         ];
-        $data['contentInfo'] .= $params->fromPost('pickup_date') . PHP_EOL;
+        $data['contentInfo'] .= $formValues['pickup_date'] . PHP_EOL;
         if ($catId = $user->getCatId()) {
             [, $id] = explode('.', $catId);
             if ($this->useCatId) {
@@ -117,9 +116,9 @@ class Disec extends AbstractBase
         }
         if (empty($data['kohaId'])) {
             $data['customer'] = [
-                'firstName' => $params->fromPost('firstName') ?? $user->getFirstname(),
-                'lastName' => $params->fromPost('lastName') ?? $user->getLastname(),
-                'email' => $params->fromPost('email') ?? $user->getEmail(),
+                'firstName' => $formValues['firstName'] ?? $user->getFirstname(),
+                'lastName' => $formValues['lastName'] ?? $user->getLastname(),
+                'email' => $formValues['email'] ?? $user->getEmail(),
             ];
         }
         $client->setRawBody(json_encode($data));
@@ -130,14 +129,16 @@ class Disec extends AbstractBase
             return [
                 'success' => true,
                 'external_id' => $body['id'],
-                'pickup_date' => $params->fromPost('pickup_date', ''),
+                'pickup_date' => $formValues['pickup_date'],
+                'connection' => strtolower(__CLASS__),
             ];
         }
-        $this->debug('Disec: failed to place order: ' . $response->getBody());
+        $this->debug('Connection::Disec: Failed to place order: ' . $response->getBody());
         return [
             'success' => false,
             'external_id' => null,
             'pickup_date' => null,
+            'connection' => strtolower(__CLASS__),
         ];
     }
 
@@ -177,6 +178,7 @@ class Disec extends AbstractBase
      */
     public function init(array $config): static
     {
+        parent::init($config);
         try {
             $baseUrl = $config['Connection']['base_url'];
             if (!str_ends_with($baseUrl, '/')) {

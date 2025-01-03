@@ -31,7 +31,6 @@ namespace Finna\ReservationList\Connection;
 
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\ReservationList\Form\Form;
-use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
@@ -48,13 +47,17 @@ interface ConnectionInterface
     /**
      * Places an order
      *
-     * @param Params              $params Params plugin
-     * @param UserEntityInterface $user   User entity
-     * @param Form                $form   Form posted when submitting the order
+     * @param array               $formValues Values gathered from submitted form
+     * @param UserEntityInterface $user       User entity
      *
-     * @return array [external_id: Id in external service or null, success: true or false]
+     * @return array [
+     *  external_id: Id in external service or null,
+     *  success: true or false,
+     *  pickup_date: date for preferred pickup,
+     *  connection Type of the connection
+     * ]
      */
-    public function placeOrder(Params $params, UserEntityInterface $user, Form $form = null): array;
+    public function placeOrder(array $formValues, UserEntityInterface $user): array;
 
     /**
      * Check list status. Used for external services.
@@ -65,6 +68,15 @@ interface ConnectionInterface
      * @return string
      */
     public function getListStatus(FinnaResourceListEntityInterface $list, UserEntityInterface $user): string;
+
+    /**
+     * Get form used for placing orders.
+     *
+     * @param array $prefill Prefill form with these values.
+     *
+     * @return Form
+     */
+    public function getPlaceOrderForm(array $prefill = []): Form;
 
     /**
      * Initialize connection handler

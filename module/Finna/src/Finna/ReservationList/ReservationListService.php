@@ -82,7 +82,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      *
      * @var string
      */
-    public const DEFAULT_CONNECTION_HANDLER = 'feedbackform';
+    public const DEFAULT_CONNECTION_HANDLER = 'email';
 
     /**
      * Default values for list config
@@ -96,6 +96,9 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         'Information' => [],
         'LibraryCardSources' => [],
         'CheckResourceStatus' => false,
+        'Forms' => [
+            'PlaceOrder' => 'default',
+        ],
         'Connection' =>  [
             'type' => self::DEFAULT_CONNECTION_HANDLER,
         ],
@@ -371,7 +374,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
             ->setListConfigIdentifier($request->get('listIdentifier'))
             ->setUser($user)
             ->setListType(self::RESOURCE_LIST_TYPE)
-            ->setConnection($request->get('connection', 'database'));
+            ->setConnection($request->get('connection', self::DEFAULT_CONNECTION_HANDLER));
         $this->saveListForUser($list, $user);
         return $list->getId();
     }

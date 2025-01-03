@@ -11,7 +11,11 @@
 # LibraryCardSources is used to check for active connection to ILS to be able to use lists
 # Connection defines how the orders are handled with institutions:
 # Type:
-# feedbackform: Uses feedback forms for sending orders, see FeedbackForms.yaml.sample : ReservationListRequest for examples
+# email: Uses email to place orders
+#   Sender:
+#     name: Name to be shown as the sender of the email
+#     email: Email address to be shown as where the email was sent
+#   subject: Subject to be shown in the email
 # disec: Uses Disec api for sending orders
 #   base_url: Api base url
 #   secret:   Api specific secret
@@ -48,7 +52,61 @@ Institutions:
           Address: teststreet 10
           Postal: 000001
           City: Test city
+        Forms:
+          - PlaceOrder: default
         LibraryCardSources:
           - connection_established_to_use_lists
         Connection:
-          type: feedbackform
+          type: email
+          Sender:
+            name: Service sender
+            email: test@noreply.fi
+          subject: Reservation List
+PlaceOrder:
+  default:
+    allowLocalOverride: false
+    title: ReservationList::form_title
+    enabled: true
+    onlyForLoggedUsers: true
+    emailSubject: ReservationList::form_email_subject
+    response: ReservationList::form_response
+    hideSenderInfo: true
+    hideRecipientInfo: true
+    senderNameRequired: true
+    includePatronId: true
+    help:
+      pre: ReservationList::request_pre_info_html
+      post: ReservationList::request_post_info_html
+
+    fields:
+      - name: record_ids
+        type: textarea
+        label: ReservationList::Reservation Resources
+        settings:
+          - [rows, 3]
+          - [readonly, true]
+      - name: firstName
+        type: text
+        label: First Name
+        required: true
+      - name: lastName
+        type: text
+        label: Last Name
+        required: true
+      - name: email
+        type: email
+        label: Email
+      - name: phone
+        type: text
+        label: Phone
+      - name: pickup_date
+        type: date
+        label: ReservationList::Delivery Time Request
+        minValue: now + 2 days
+        maxValue: now + 1 year
+        required: true
+      - name: message
+        type: textarea
+        label: ReservationList::Message
+        settings:
+          - [rows, 3]

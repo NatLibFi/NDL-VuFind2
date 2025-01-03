@@ -29,9 +29,9 @@
 
 namespace Finna\ReservationList\Connection;
 
+use Exception;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\ReservationList\Form\Form;
-use Laminas\Mvc\Controller\Plugin\Params;
 use Psr\Container\ContainerInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Service\GetServiceTrait;
@@ -51,6 +51,27 @@ abstract class AbstractBase implements ConnectionInterface, \Laminas\Log\LoggerA
     use GetServiceTrait;
 
     /**
+     * Place order action form key
+     *
+     * @var string
+     */
+    public const PLACE_ORDER_FORM = 'PlaceOrder';
+
+    /**
+     * Unique identifier to identify forms used for reservation lists.
+     *
+     * @var string
+     */
+    public const FORM_ID = 'ReservationListRequest';
+
+    /**
+     * Order form configuration defined.
+     *
+     * @var array
+     */
+    protected array $orderFormConfig = [];
+
+    /**
      * Constructor
      *
      * @param ContainerInterface $serviceLocator Service locator used with GetServiceTrait
@@ -61,19 +82,35 @@ abstract class AbstractBase implements ConnectionInterface, \Laminas\Log\LoggerA
     }
 
     /**
+     * Build form with configuration obtained from ReservationList.yaml <Action>Forms section.
+     *
+     * @param array $prefill Prefill form with these values.
+     *
+     * @return Form
+     */
+    public function getPlaceOrderForm(array $prefill = []): Form
+    {
+        $form = $this->getService(\Finna\ReservationList\Form\Form::class);
+        $form->buildFromConfig($this->orderFormConfig, self::FORM_ID, $prefill);
+        $form->setData($prefill);
+        $form->setName(self::FORM_ID);
+        return $form;
+    }
+
+    /**
      * Places an order
      *
-     * @param Params              $params Params plugin
-     * @param UserEntityInterface $user   User entity
-     * @param Form                $form   Form posted when submitting the order
+     * @param array               $formValues Values gathered from submitted form
+     * @param UserEntityInterface $user       User entity
      *
      * @return array [
      *  external_id: Id in external service or null,
      *  success: true or false,
-     *  pickup_date: date for preferred pickup
+     *  pickup_date: date for preferred pickup,
+     *  connection Type of the connection
      * ]
      */
-    abstract public function placeOrder(Params $params, UserEntityInterface $user, Form $form = null): array;
+    abstract public function placeOrder(array $formValues, UserEntityInterface $user): array;
 
     /**
      * Check list status. Used for external services.
@@ -92,5 +129,15 @@ abstract class AbstractBase implements ConnectionInterface, \Laminas\Log\LoggerA
      *
      * @return static
      */
-    abstract public function init(array $config): static;
+    public function init(array $config): static
+    {
+        $orderFormKey = $config['Forms']['PlaceOrder'] ?? 'default';
+        $definedForms = $this->getService(\Finna\Config\YamlReader::class)
+            ->getFinna('ReservationList.yaml', 'config/finna', true)['Forms'] ?? [];
+        if (!$definedForms) {
+            throw new Exception('ReservationList: No forms defined.');
+        }
+        $this->orderFormConfig = $definedForms[self::PLACE_ORDER_FORM][$orderFormKey];
+        return $this;
+    }
 }

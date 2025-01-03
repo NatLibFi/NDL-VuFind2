@@ -340,7 +340,7 @@ CREATE TABLE `finna_resource_list` (
   `list_type` varchar(200) NOT NULL DEFAULT 'resourcelist',
   `ordered` datetime DEFAULT NULL,
   `pickup_date` datetime DEFAULT NULL,
-  `connection` varchar(40) NOT NULL DEFAULT 'feedbackform',
+  `connection` varchar(40) NOT NULL DEFAULT 'email',
   `external_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),

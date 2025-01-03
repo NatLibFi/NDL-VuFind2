@@ -35,7 +35,7 @@
 namespace Finna\Controller;
 
 use Exception;
-use Finna\ReservationList\Form\Form as ReservationListForm;
+use Finna\ReservationList\Connection\AbstractBase as ConnectionAbstractBase;
 use Finna\ReservationList\ReservationListService;
 use Finna\View\Helper\Root\ReservationList;
 use Laminas\ServiceManager\ServiceLocatorInterface;
@@ -299,37 +299,33 @@ class ReservationListController extends AbstractBase
             $list->getInstitution(),
             $list->getListConfigIdentifier()
         )['properties'];
-        if (!$listProperties || !$listProperties['Enabled']) {
-            throw new \VuFind\Exception\Forbidden('No list properties found.');
+        if (!($listProperties['Enabled'] ?? true)) {
+            throw new \VuFind\Exception\Forbidden('ReservationList: No list properties found.');
         }
-        $formId = ReservationListForm::RESERVATION_LIST_REQUEST;
 
-        $resourcesText = '';
-        $resourceIds = [];
+        $postValues = $request->getPost()->toArray();
+        $listSpecificValues = [
+            'rl_list_id' => $listId,
+            'rl_institution' => $list->getInstitution(),
+            'rl_list_identifier' => $list->getListConfigIdentifier(),
+            'record_ids' => '',
+            'resourceIDs' => [],
+        ];
         foreach ($this->reservationListService->getResourcesForList($list, $user) as $resource) {
-            $resourcesText .= $resource->getRecordId() . '||' . $resource->getTitle() . PHP_EOL;
-            $resourceIds[] = $resource->getSource() . '|' . $resource->getRecordId();
+            $listSpecificValues['record_ids'] .= $resource->getRecordId() . '||' . $resource->getTitle() . PHP_EOL;
+            $listSpecificValues['resourceIDs'][] = $resource->getSource() . '|' . $resource->getRecordId();
         }
-        $postRequest = $request->getPost();
-        // Set reservation list specific form values
-        $postRequest
-            ->set('rl_list_id', $listId)
-            ->set('rl_institution', $list->getInstitution())
-            ->set('rl_list_identifier', $list->getListConfigIdentifier())
-            ->set('record_ids', $resourcesText)
-            ->set('resourceIDs', $resourceIds);
+        $gatheredValues = array_merge($postValues, $listSpecificValues);
 
-        $form = $this->getService(\Finna\ReservationList\Form\Form::class);
-        $form->setFormId(formId: $formId, prefill: $postRequest->toArray());
-        if (!$form->isEnabled()) {
-            throw new \VuFind\Exception\Forbidden("Form '$formId' is disabled");
-        }
+        $handler = $this->getService(\Finna\ReservationList\Connection\PluginManager::class)
+            ->getWithConfig($listProperties);
+        $form = $handler->getPlaceOrderForm($gatheredValues);
 
+        $formId = ConnectionAbstractBase::FORM_ID;
         $view = $this->createViewModel(compact('form', 'formId', 'user'));
-        $view->setTemplate('feedback/form');
+        $view->setTemplate('reservationlist/form');
         $view->useCaptcha = false;
 
-        $form->setData($request->getPost()->toArray());
         if (!$this->formWasSubmitted(useCaptcha: false)) {
             $form->setData(
                 [
@@ -344,18 +340,13 @@ class ReservationListController extends AbstractBase
         if (!$form->isValid()) {
             return $view;
         }
-        $connectionType = $listProperties['Connection']['type'];
-        $handler = $this->getService(\Finna\ReservationList\Connection\PluginManager::class)->get($connectionType);
-        $handler->init($listProperties);
-        $result = $handler->placeOrder($this->params(), $user, $form);
+        $result = $handler->placeOrder($gatheredValues, $user);
         if ($result['success']) {
-            $result['connection'] = $connectionType;
             $this->reservationListService->setListOrdered($user, $list, $result);
             $this->flashMessenger()->addSuccessMessage($form->getSubmitResponse());
             return $this->getRefreshResponse();
-        } else {
-            $this->flashMessenger()->addErrorMessage('could_not_process_feedback');
         }
+        $this->flashMessenger()->addErrorMessage('could_not_process_feedback');
         return $view;
     }
 

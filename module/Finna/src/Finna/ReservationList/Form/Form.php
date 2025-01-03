@@ -96,4 +96,23 @@ class Form extends \Finna\Form\Form
         $elements['rl_list_id'] = ['type' => 'hidden', 'name' => 'rl_list_id', 'value' => null];
         return $elements;
     }
+
+    /**
+     * Build form with configuration obtained from ReservationList.yaml <Action>Forms section.
+     *
+     * @param array  $formConfig Configuration for a list found under ReservationList.yaml Forms section.
+     * @param string $formID     [Optional] Form ID for internal use.
+     * @param array  $prefill    [Optional] Prefill form with these values.
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function buildFromConfig(
+        array $formConfig,
+        string $formID = 'default',
+        array $prefill = []
+    ) {
+        $this->formElementConfig = $this->parseConfig($formID, $formConfig, [], $prefill);
+        $this->buildForm();
+    }
 }
