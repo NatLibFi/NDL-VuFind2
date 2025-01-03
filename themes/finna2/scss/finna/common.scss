@@ -147,6 +147,29 @@
   float: right;
 }
 
+/* Site status bar */
+.site-status-bar {
+  color: #fff;
+  background-color: $brand-info;
+  padding-top: 0.6em;
+  padding-bottom: 0.6em;
+  text-align: center;
+  z-index: 1;
+  &.site-status-beta {
+    background-color: $brand-warning;
+  }
+  &.site-status-disabled {
+    background-color: $brand-danger;
+  }
+  &.site-status-production {
+    display: none;
+  }
+  @media (max-width: $grid-float-breakpoint) {
+    position: relative;
+    top: $navbar-height;
+  }
+}
+
 //== SYSTEM MESSAGES
 .system-messages {
   background-color: $state-warning-bg;
@@ -212,6 +235,9 @@ table.content-table {
   line-height: 1.4em;
 }
 
+.content-table caption {
+  font-color: $gray-dark;
+}
 .content-table th, .content-table td {
   padding: 0.4em 1.5em 0.4em 0;
   font-weight: normal;
@@ -296,7 +322,7 @@ table#componentparts {
   }
   .even td {
 /* #SCSS> */
-    background: color.adjust($nav-tabs-border-color, $alpha: 0.8);
+    background: $gray-ultralight;
 /* <#SCSS */
 
   }
@@ -354,6 +380,9 @@ ol {
 .btn-unstyled {
   border: none;
   background-color: transparent;
+  &:hover, .btn-group.open & {
+    box-shadow: none;
+  }
 }
 
 // A general-purpose flexbox layout mixin for switching between a horizontal
@@ -460,6 +489,10 @@ ol {
     background: $modal-header-background;
     font-size: $content-headings-font-size-h4;
     padding: 8px 1em;
+
+    h2 {
+      margin: 0.5rem 0;
+    }
   }
   .pm__body, .pm__footer {
     padding-left: 1em;
@@ -503,5 +536,31 @@ ol {
   }
   .select-card-wrapper {
     display: block;
+  }
+}
+
+// Styled checkboxes
+.checkbox-container {
+  input[type=checkbox] {
+    height: 16px;
+    width: 16px;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid $gray-light;
+    border-radius: 4px;
+    margin: 0px;
+    top: 3px;
+    position: relative;
+
+    &:checked {
+      color: $body-bg;
+      background-color: $body-color;
+
+      &:before {
+        @extend .fa, .fa-check;
+        position: absolute;
+      }
+    }
   }
 }

@@ -42,7 +42,7 @@
               <div class="myresearch-table storage-retrievals-table">
                 <div class="toolbar">
                   <div class="checkbox-col">
-                    <div class="checkboxFilter mylist-select-all">
+                    <div class="checkbox-container mylist-select-all">
                       <div class="checkbox">
                         <label>
                           <input type="checkbox" name="selectAll" class="checkbox-select-all" aria-label="<?=$this->transEscAttr('Select All');?>">
@@ -94,7 +94,7 @@
             <?php if ($this->cancelForm && isset($ilsDetails['cancel_details'])): ?>
               <?php $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $resource->getUniqueId()); ?>
               <input type="hidden" name="cancelAllIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>">
-              <div class="checkboxFilter">
+              <div class="checkbox-container">
                 <div class="checkbox">
                   <label>
                     <span class="sr-only"><?=$this->transEsc('Select');?></span>

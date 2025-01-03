@@ -72,6 +72,7 @@
               <?php $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $field); ?>
               <button id="dropdown-toggle-<?=$safeId?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                 <?=$this->transEsc('filter_toggle_entries', ['%%count%%' => count($data)])?>
+                <?=$this->icon('dropdown-open')?>
               </button>
               <ul class="dropdown-menu" role="menu" aria-labelledby="dropdown-toggle-<?=$safeId?>">
           <?php else: ?>

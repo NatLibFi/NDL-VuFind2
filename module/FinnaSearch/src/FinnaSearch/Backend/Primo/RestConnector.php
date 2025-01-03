@@ -80,7 +80,7 @@ class RestConnector extends \VuFindSearch\Backend\Primo\RestConnector
             if ($filter == 'pcAvailability') {
                 // Toggle the setting unless we are told to ignore the hidden filter:
                 if (empty($args['ignorePcAvailabilityHiddenFilter'])) {
-                    $args['pcAvailability'] = (bool)$value;
+                    $args['pcAvailability'] = $value ? 'true' : 'false';
                 }
             } else {
                 $args['filterList'][] = [

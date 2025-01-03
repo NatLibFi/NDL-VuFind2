@@ -404,7 +404,11 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             'getOriginationExtended',
             'data-origination.phtml',
             [
-                'context' => ['class' => 'record-origination'],
+                'context' => ['class' => 'record-origination',],
+                'labelFunction' => function ($data, $driver) {
+                    return $driver->tryMethod('getArchiveType') === 'collection'
+                        ? 'CreatorRoles::rda:collector' : 'Archive Origination';
+                },
             ]
         );
         $setTemplateLine(
@@ -413,6 +417,10 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
             'data-hierarchyLinks.phtml',
             [
                 'context' => ['class' => 'recordHierarchyLinks'],
+                'labelFunction' => function ($data, $driver) {
+                    return $driver->tryMethod('getArchiveType') === 'collection'
+                        ? 'Parent Collection' : 'Parent Archive';
+                },
             ]
         );
         $setTemplateLine(

@@ -30,6 +30,8 @@
 
 namespace Finna\Controller;
 
+use VuFind\Db\Service\UserCardServiceInterface;
+
 /**
  * Generates barcodes
  *
@@ -46,12 +48,50 @@ class BarcodeController extends \VuFind\Controller\AbstractBase
      * Display a barcode
      *
      * @return \Laminas\Http\Response
+     *
+     * @deprecated Use displayBarcodeAction instead
      */
     public function showAction()
     {
-        $this->disableSessionWrites();  // avoid session write timing bug
-
-        $code = $this->getRequest()->getQuery('code', '');
-        return $this->createViewModel(compact('code'));
+        try {
+            if (!($user = $this->getUser())) {
+                return $this->forceLogin();
+            }
+            $code = $this->getRequest()->getQuery('code', '');
+            $cards = $this->getDbService(UserCardServiceInterface::class)->getLibraryCards($user, null);
+            foreach ($cards as $card) {
+                $username = $card->getCatUsername();
+                if (str_contains($username, '.')) {
+                    [, $username] = explode('.', $username, 2);
+                }
+                if ($username === $code) {
+                    return $this->redirect()->toRoute('librarycards-displaybarcode', ['id' => $card->getId()]);
+                }
+            }
+            $catalog = $this->getILS();
+            $auth = $this->getILSAuthenticator();
+            foreach ($cards as $card) {
+                if ($card->getCatUsername() === $user->getCatUsername()) {
+                    $patron = $auth->storedCatalogLogin();
+                } else {
+                    $loginUser = clone $user;
+                    $loginUser->setCatUsername($card->getCatUsername());
+                    $loginUser->setRawCatPassword($card->getRawCatPassword());
+                    $loginUser->setCatPassEnc($card->getCatPassEnc());
+                    $patron = $catalog->patronLogin(
+                        $loginUser->getCatUsername(),
+                        $auth->getCatPasswordForUser($loginUser)
+                    );
+                }
+                $profile = $catalog->getMyProfile($patron);
+                if (!empty($profile['barcode']) && $code === $profile['barcode']) {
+                    return $this->redirect()->toRoute('librarycards-displaybarcode', ['id' => $card->getId()]);
+                }
+            }
+            throw new \Exception();
+        } catch (\Exception) {
+            $this->flashMessenger()->addErrorMessage('An error has occurred');
+            return $this->redirect()->toRoute('librarycards-home');
+        }
     }
 }

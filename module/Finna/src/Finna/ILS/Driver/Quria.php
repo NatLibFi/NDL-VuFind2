@@ -150,7 +150,7 @@ class Quria extends AxiellWebServices
             'arenaMember' => $this->arenaMember,
             'user' => $username,
             'password' => $password,
-            'language' => $this->getLanguage(),
+            'language' => 'fi',
             'country' => 'FI',
             'reservationEntities' => $id,
             'reservationType' => $holdType,
@@ -374,6 +374,7 @@ class Quria extends AxiellWebServices
                     $nofOrdered = $department->nofOrdered ?? 0;
 
                     // Group journals by issue number
+                    $group = null;
                     if ($journalInfo) {
                         $year = $journalInfo['year'] ?? '';
                         $edition = $journalInfo['edition'] ?? '';
@@ -395,7 +396,7 @@ class Quria extends AxiellWebServices
 
                     // Special status: On reference desk
                     if (
-                        $status == 'nonAvailableForLoan'
+                        $status == 'referenceOnly'
                         && isset($department->nofReference)
                         && $department->nofReference != 0
                     ) {
@@ -1013,7 +1014,7 @@ class Quria extends AxiellWebServices
             'arenaMember' => $this->arenaMember,
             'user' => $username,
             'password' => $password,
-            'language' => $this->getLanguage(),
+            'language' => 'fi',
             'patronId' => $user['patronId'],
         ];
 

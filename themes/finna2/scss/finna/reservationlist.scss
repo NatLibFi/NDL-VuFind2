@@ -1,8 +1,9 @@
 .reservation-list-body {
+  padding: 0;
+
   @media (max-width: $screen-sm-max) {
     width: 100%;
   }
-  padding: 0;
   .list-info {
     background: #f4f4f4;
     display: inline-block;
@@ -35,20 +36,6 @@
     }
   }
 }
-.reservation-list-delete-wrapper {
-  .dropdown-menu {
-    top: 100%;
-    left: -50%;
-  }
-  &.left .dropdown-menu {
-    left: initial;
-    right: 0;
-  }
-  .dropdown-header {
-    color: inherit;
-    font-size: 14px;
-  }
-}
 
 #ReservationListRequest.dynamic-form {
   textarea {
@@ -61,6 +48,7 @@
 }
 .reservation-request-table {
   .reservation-request-buttons {
+    padding: 10px 15px;
     display: flex;
     align-items: center;
     justify-content: start;
@@ -80,8 +68,7 @@
     }
   }
   .saved-reservation-lists {
-    padding: 4px;
-    margin: 2px;
+    padding: 10px 15px;
   }
 }
 

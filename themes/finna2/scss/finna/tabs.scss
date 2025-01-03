@@ -183,7 +183,7 @@
 .useraccount-nav.nav-tabs {
   border-bottom: none;
   // style 5 tabs to make sure they stay as tabs
-  li:first-child:nth-last-child(5), li:first-child:nth-last-child(5) ~ li {
+  > li:first-child:nth-last-child(5), li:first-child:nth-last-child(5) ~ li {
     @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
       max-width: 100%;
     }
@@ -236,13 +236,6 @@
   -webkit-transition-delay: -1s;
   transition-delay: -1s;
   visibility: hidden;
-}
-
-.useraccount-nav.nav-tabs .dropdown-menu {
-  float: none;
-  position: relative;
-  top: initial;
-  left: initial;
 }
 
 .recordTabs.nav {

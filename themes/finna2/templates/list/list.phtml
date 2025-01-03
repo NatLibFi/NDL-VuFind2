@@ -58,7 +58,7 @@ $this->headScript()->prependScript("var listId = {$list->getId()}; var publicLis
 <div class="container-fluid pagination-background">
   <div class="container">
     <div class="text-center">
-      <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $this->results])?>
+      <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'Helpers/pagination.phtml', ['params' => ['results' => $this->results]])?>
     </div>
   </div>
 </div>

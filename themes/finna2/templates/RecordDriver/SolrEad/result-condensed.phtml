@@ -4,6 +4,7 @@
   $img = $this->recordImage($this->record($this->driver));
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
+  $typeIsArchive = $this->driver->tryMethod('getArchiveType') !== 'collection';
   if ($img):
     ob_start(); ?>
     <?=$img->render('list', ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 250, 'h' => 250]]) ?>
@@ -55,9 +56,10 @@
           <div class="hierarchyTreeLink">
             <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId">
             <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId">
+            <?php $treeLinkText = $typeIsArchive ? 'hierarchy_view_context' : 'hierarchy_view_collection_structure'; ?>
             <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID]))?>#tabnav" data-lightbox-href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID]))?>" data-lightbox-post="tab=hierarchytree">
               <?=$this->icon('hierarchy-tree', 'text-muted') ?>
-              <?=$this->transEsc('hierarchy_view_context')?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?>
+              <?=$this->transEsc($treeLinkText)?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?>
             </a>
           </div>
         <?php endforeach; ?>
@@ -79,7 +81,7 @@
     <div class="media-body">
       <div class="result-body">
         <?php if ($originations = $this->driver->tryMethod('getOriginations', [], $this->driver->getOrigination())): $originations = (array)$originations; ?>
-            <span class="archive-label"><?=$this->transEsc('Archive Origination')?>:</span>
+            <span class="archive-label"><?=$this->transEsc($typeIsArchive ? 'Archive Origination' : 'CreatorRoles::rda:collector')?>:</span>
             <?php foreach ($originations as $i => $origination): ?>
               <?=$i > 0 ? ' ; ' : ''?><a href="<?=$this->escapeHtmlAttr($this->url('search-results', [], ['query' => ['lookfor' => $origination, 'type' => 'Author']]))?>"><?=$this->escapeHtml($origination)?></a>
             <?php endforeach; ?>
@@ -95,7 +97,7 @@
               $topTitles = $this->driver->getHierarchyParentTitle(); ?>
             <?php endif; ?>
             <?php if (count($topIds) > 0) : ?>
-            <span class="archive-label"><?=$this->transEsc('Archive')?>:</span>
+            <span class="archive-label"><?=$this->transEsc($typeIsArchive ? 'Archive' : 'Parent Collection')?>:</span>
             <?php foreach ($topIds as $index => $parentId): ?>
               <a href="<?=$this->escapeHtmlAttr($recordLinker->getUrl("$parentSource|$parentId"))?>"><?=isset($topTitles[$index]) ? $this->truncate($topTitles[$index], 180) : ''?></a>
             <?php endforeach; ?>

@@ -65,6 +65,7 @@ return [
             'Finna\View\Helper\Root\SearchMemory' => 'VuFind\View\Helper\Root\SearchMemoryFactory',
             'Finna\View\Helper\Root\SearchTabs' => 'Finna\View\Helper\Root\SearchTabsFactory',
             'Finna\View\Helper\Root\SearchTabsRecommendations' => 'Finna\View\Helper\Root\SearchTabsRecommendationsFactory',
+            \Finna\View\Helper\Root\SiteStatus::class => \Finna\View\Helper\Root\SiteStatusFactory::class,
             'Finna\View\Helper\Root\StreetSearch' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\StripTags' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\Summon' => 'Finna\View\Helper\Root\SummonFactory',
@@ -133,6 +134,7 @@ return [
             'searchbox' => 'Finna\View\Helper\Root\SearchBox',
             'searchMemory' => 'Finna\View\Helper\Root\SearchMemory',
             'searchTabsRecommendations' => 'Finna\View\Helper\Root\SearchTabsRecommendations',
+            'siteStatus' => \Finna\View\Helper\Root\SiteStatus::class,
             'streetSearch' => 'Finna\View\Helper\Root\StreetSearch',
             'systemMessages' => 'Finna\View\Helper\Root\SystemMessages',
             'tags' => 'Finna\View\Helper\Root\Tags',
@@ -196,7 +198,6 @@ return [
         'checkouts.js',
         'collection_record.js',
         'combined-search.js',
-        'covers.js',
         'doi.js',
         'embedded_record.js',
         'facets.js',
@@ -270,9 +271,6 @@ return [
         'components/finna-md-editable.js',
         'components/finna-tabs-nav.js',
         'components/finna-truncate.js',
-    ],
-    'less' => [
-        'active' => false,
     ],
     'favicon' => 'favicon.ico',
     'icons' => [

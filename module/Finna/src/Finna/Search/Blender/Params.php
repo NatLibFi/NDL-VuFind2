@@ -34,7 +34,6 @@ use VuFind\Search\Solr\HierarchicalFacetHelper;
 use VuFindSearch\ParamBag;
 
 use function in_array;
-use function is_callable;
 
 /**
  * Blender Search Parameters
@@ -55,13 +54,6 @@ class Params extends \VuFind\Search\Blender\Params
      * @var AuthorityHelper
      */
     protected $authorityHelper = null;
-
-    /**
-     * Whether to request checkbox facet counts
-     *
-     * @var bool
-     */
-    protected $checkboxFacetCounts = false;
 
     /**
      * Constructor
@@ -93,33 +85,6 @@ class Params extends \VuFind\Search\Blender\Params
         );
 
         $this->authorityHelper = $authHelper;
-    }
-
-    /**
-     * Whether to request checkbox facet counts
-     *
-     * @return bool
-     */
-    public function getCheckboxFacetCounts()
-    {
-        return $this->checkboxFacetCounts;
-    }
-
-    /**
-     * Whether to request checkbox facet counts
-     *
-     * @param bool $value Enable or disable
-     *
-     * @return void
-     */
-    public function setCheckboxFacetCounts($value)
-    {
-        $this->checkboxFacetCounts = $value;
-        foreach ($this->searchParams as $params) {
-            if (is_callable([$params, 'setCheckboxFacetCounts'])) {
-                $params->setCheckboxFacetCounts($value);
-            }
-        }
     }
 
     /**

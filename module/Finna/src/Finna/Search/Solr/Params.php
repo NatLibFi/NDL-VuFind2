@@ -80,13 +80,6 @@ class Params extends \VuFind\Search\Solr\Params
      */
     protected $debugQuery = false;
 
-    /**
-     * Whether to request checkbox facet counts
-     *
-     * @var bool
-     */
-    protected $checkboxFacetCounts = false;
-
     // Date range index field (VuFind1)
     public const SPATIAL_DATERANGE_FIELD_VF1 = 'search_sdaterange_mv';
     public const SPATIAL_DATERANGE_FIELD_TYPE_VF1 = 'search_sdaterange_mvtype';
@@ -302,27 +295,6 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Return current facet configurations.
-     * Add checkbox facets to list.
-     *
-     * @return array $facetSet
-     */
-    public function getFacetSettings()
-    {
-        $facetSet = parent::getFacetSettings();
-
-        // For checkbox counts
-        if ($this->checkboxFacetCounts && !empty($this->checkboxFacets)) {
-            foreach (array_keys($this->checkboxFacets) as $facetField) {
-                $facetField = '{!ex=' . $facetField . '_filter}' . $facetField;
-                $facetSet['field'][] = $facetField;
-            }
-        }
-
-        return $facetSet;
-    }
-
-    /**
      * Pull the search parameters
      *
      * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
@@ -487,28 +459,6 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Whether to request checkbox facet counts
-     *
-     * @return bool
-     */
-    public function getCheckboxFacetCounts()
-    {
-        return $this->checkboxFacetCounts;
-    }
-
-    /**
-     * Whether to request checkbox facet counts
-     *
-     * @param bool $value Enable or disable
-     *
-     * @return void
-     */
-    public function setCheckboxFacetCounts($value)
-    {
-        $this->checkboxFacetCounts = $value;
-    }
-
-    /**
      * Remove all hidden filters
      *
      * @return void
@@ -669,15 +619,14 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Get a user-friendly string to describe the provided facet field.
      *
-     * @param string $field   Facet field name.
-     * @param string $value   Facet value.
-     * @param string $default Default field name (null for default behavior).
+     * @param string $field               Facet field name.
+     * @param string $value               Facet value.
+     * @param string $default             Default field name (null for default behavior).
+     * @param bool   $allowCheckboxFacets Should checkbox facet labels be allowed too?
      *
-     * @return string         Human-readable description of field.
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @return string Human-readable description of field.
      */
-    public function getFacetLabel($field, $value = null, $default = null)
+    public function getFacetLabel($field, $value = null, $default = null, $allowCheckboxFacets = true)
     {
         if ($field === AuthorityHelper::AUTHOR2_ID_FACET) {
             return 'authority_id_label';
@@ -685,7 +634,7 @@ class Params extends \VuFind\Search\Solr\Params
         if (str_starts_with($field, '{!geofilt ')) {
             return 'Geographical Area';
         }
-        return parent::getFacetLabel($field, $value, $default);
+        return parent::getFacetLabel($field, $value, $default, $allowCheckboxFacets);
     }
 
     /**
