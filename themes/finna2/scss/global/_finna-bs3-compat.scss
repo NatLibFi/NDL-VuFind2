@@ -1,5 +1,6 @@
 @use "sass:color";
 
+// Mixins
 @mixin gradient-vertical($start-color: #555, $end-color: #333, $start-percent: 0%, $end-percent: 100%) {
   background-image: linear-gradient(to bottom, $start-color $start-percent, $end-color $end-percent); // Standard, IE10, Firefox 16+, Opera 12.10+, Safari 7+, Chrome 26+
   background-repeat: repeat-x;
@@ -16,9 +17,13 @@
   border: 0;
 }
 
+
+// Variables
 $alert-info-bg:               $state-info-bg !default;
 $alert-info-text:             $state-info-text !default;
+$input-border:                $input-border-color;
 
+// Miscellaneous
 .bg-info {
   background-color: $info-bg-subtle;
 }
