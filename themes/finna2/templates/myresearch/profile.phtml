@@ -180,16 +180,12 @@
               <?php else: ?>
                 <div class="my-profile-col profile-title"><?=$this->transEsc('Phone') ?>:</div>
                 <div class="profile-text-value"><?=$this->escapeHtml($this->profile['phone']) ?></div>
+                <?php foreach ($this->profile as $key => $value): ?>
+                  <?php if (preg_match('/^phone_\d+$/', $key) && $value !== $this->profile['phone']): ?>
+                    <div class="my-profile-col profile-title"></div><div class="profile-text-value"><?=$this->escapeHtml($value) ?></div>
+                  <?php endif; ?>
+                <?php endforeach; ?>
               <?php endif; ?>
-            <?php elseif (!empty($this->profile['phone_0'])): ?>
-              <?php $i = 0; ?>
-              <?php foreach ($this->profile as $key => $value): ?>
-                <?php if (preg_match('/^phone_\d+$/', $key)): ?>
-                  <div class="my-profile-col profile-title"><?=$i === 0 ? $this->transEsc('Phone') : ''?></div>
-                  <div class="profile-text-value"><?=$this->escapeHtml($value) ?></div>
-                  <?php $i++; ?>
-                <?php endif; ?>
-              <?php endforeach; ?>
             <?php endif; ?>
             <?php if (!empty($this->profile['smsnumber']) || $updateSmsNumber): ?>
               <?php if ($updateSmsNumber): ?>
@@ -210,16 +206,12 @@
                 </div>
               <?php else: ?>
                 <div class="profile-text-value"><?=$this->escapeHtml($this->profile['email']) ?></div>
+                <?php foreach ($this->profile as $key => $value): ?>
+                  <?php if (preg_match('/^email_\d+$/', $key) && $value !== $this->profile['email']): ?>
+                    <div class="my-profile-col profile-title"></div><div class="profile-text-value"><?=$this->escapeHtml($value) ?></div>
+                  <?php endif; ?>
+                <?php endforeach; ?>
               <?php endif; ?>
-            <?php elseif (!empty($this->profile['email_0'])): ?>
-              <?php $i = 0; ?>
-              <?php foreach ($this->profile as $key => $value): ?>
-                <?php if (preg_match('/^email_\d+$/', $key)): ?>
-                  <div class="my-profile-col profile-title"><?=$i === 0 ? $this->transEsc('Email') : ''?></div>
-                  <div class="profile-text-value"><?=$this->escapeHtml($value) ?></div>
-                  <?php $i++; ?>
-                <?php endif; ?>
-              <?php endforeach; ?>
             <?php endif; ?>
             <?php if (!empty($this->profile['hold_identifier'])): ?>
               <div class="my-profile-col profile-title"><?=$this->transEsc('Hold Identifier') ?>:</div>

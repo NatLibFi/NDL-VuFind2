@@ -667,7 +667,12 @@ class Quria extends AxiellWebServices
         if (!empty($info->emailAddresses->emailAddress)) {
             $emailAddresses
                 =  $this->objectToArray($info->emailAddresses->emailAddress);
+            $activeFound = false;
             foreach ($emailAddresses as $i => $emailAddress) {
+                if (empty($userCached['email']) || !$activeFound) {
+                    $userCached['email'] = $emailAddress->address;
+                    $activeFound = $emailAddress->isActive == 'yes';
+                }
                 $userCached['email_' . $i] = $emailAddress->address ?? null;
                 $userCached['email_' . $i . '_id'] = $emailAddress->id ?? null;
                 $userCached['email_' . $i . '_active'] = $emailAddress->isActive == 'yes';
@@ -689,6 +694,11 @@ class Quria extends AxiellWebServices
         if (isset($info->phoneNumbers->phoneNumber)) {
             $phoneNumbers = $this->objectToArray($info->phoneNumbers->phoneNumber);
             foreach ($phoneNumbers as $i => $phoneNumber) {
+                $activeFound = false;
+                if (empty($userCached['phone']) || !$activeFound) {
+                    $userCached['phone'] = ($phoneNumber->areaCode ?? '') . $phoneNumber->localCode ?? null;
+                    $activeFound = $phoneNumber->sms->useForSms == 'yes';
+                }
                 $userCached['phone_' . $i] = ($phoneNumber->areaCode ?? '') . $phoneNumber->localCode ?? null;
                 $userCached['phone_' . $i . '_id'] = $phoneNumber->id ?? null;
                 $userCached['phone_' . $i . '_active'] = ($phoneNumber->sms->useForSms ?? '') == 'yes';
@@ -1138,8 +1148,8 @@ class Quria extends AxiellWebServices
                     || $user[$field . '_active'] !== $active
                 ) {
                     $result = $fieldName === 'email'
-                        ? $this->updateEmail($patron, $detail, $ind, $active)
-                        : $this->updatePhone($patron, $detail, $ind, $active);
+                        ? $this->updateEmailAddress($patron, $detail, $ind, $active)
+                        : $this->updatePhoneNumber($patron, $detail, $ind, $active);
                     if (!$result['success']) {
                         return $result;
                     }
@@ -1612,7 +1622,7 @@ class Quria extends AxiellWebServices
      *
      * @return array Associative array of the results
      */
-    public function updateEmail($patron, $email, $emailId = null, $active = false)
+    protected function updateEmailAddress($patron, $email, $emailId = null, $active = false)
     {
         if (empty($email) || $emailId === null) {
             return [
@@ -1707,7 +1717,7 @@ class Quria extends AxiellWebServices
      *
      * @return array Associative array of the results
      */
-    public function updatePhone($patron, $phone, $phoneId = null, $active = false)
+    protected function updatePhoneNumber($patron, $phone, $phoneId = null, $active = false)
     {
         if (empty($phone) || $phoneId === null) {
             return [
@@ -1955,7 +1965,9 @@ class Quria extends AxiellWebServices
                                 if ($activation) {
                                     $extraActiveField = [
                                         'field' => $profileField . '_active',
-                                        'label' => $fieldId . '_active',
+                                        'label' => $fieldId === 'email'
+                                            ? $fieldId . '_active'
+                                            : $fieldId . '_use_for_sms',
                                         'type' => 'boolean',
                                     ];
                                     $extraFields[] = $extraActiveField;
