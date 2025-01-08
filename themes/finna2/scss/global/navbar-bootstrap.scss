@@ -235,7 +235,7 @@
 
 // Fix dropdowns in navbar for wide screen
 @media (min-width: $screen-md-min) {
-  .navbar .dropdown-menu > li > a {
+  .navbar li:not(#language_menu) .dropdown-menu > li > a {
     width: 280px;
     white-space: normal;
     transition: none;
