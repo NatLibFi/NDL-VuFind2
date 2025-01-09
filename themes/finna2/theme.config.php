@@ -189,6 +189,7 @@ return [
     ],
     'js' => [
         ['file' => 'vendor/bootstrap-accessibility.min.js', 'disabled' => true],
+        ['file' => 'bs3-compat.js', 'disabled' => true],
         'finna-object-editor.js',
         'account_ajax.js',
         'advanced_search.js',
