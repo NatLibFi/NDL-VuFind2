@@ -2,6 +2,9 @@
 VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3CompatibilityLayer() {
   const data_attribute_selector = '[data-dismiss],[data-target],[data-toggle],[data-ride],[data-slide],[data-slide-to]';
 
+  /**
+   * Initialize navbar support
+   */
   function initNavbar() {
     document.querySelectorAll('.navbar').forEach((el) => {
       el.classList.add('navbar-expand-md');
@@ -11,6 +14,9 @@ VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3Com
     });
   }
 
+  /**
+   * Initialize nav support
+   */
   function initNav() {
     document.querySelectorAll('.nav').forEach((navEl) => {
       if (navEl.classList.contains('nav-tabs')) {
@@ -71,24 +77,36 @@ VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3Com
     );
   }
 
+  /**
+   * Initialize breadcrumb support
+   */
   function initBreadcrumbs() {
     document.querySelectorAll('.breadcrumb li').forEach((el) => {
       el.classList.add('breadcrumb-item');
     });
   }
 
+  /**
+   * Initialize form element support
+   */
   function initFormElements() {
     document.querySelectorAll('select.form-control').forEach((el) => {
       el.classList.add('form-select');
     });
   }
 
+  /**
+   * Initialize collapse support
+   */
   function initCollapse() {
     document.querySelectorAll('.collapse.in').forEach((el) => {
       el.classList.add('show');
     });
   }
 
+  /**
+   * Initialize pagination support
+   */
   function initPagination() {
     document.querySelectorAll('.pagination li').forEach((el) => {
       el.classList.add('page-item');
@@ -101,6 +119,10 @@ VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3Com
     });
   }
 
+  /**
+   * Support function for converting data attributes
+   * @param {HTMLElement} el Element
+   */
   function convertDataAttributes(el) {
     if (typeof el.getAttribute === 'undefined') {
       return;
@@ -114,6 +136,9 @@ VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3Com
     });
   }
 
+  /**
+   * Initialize data attribute mapping support
+   */
   function initDataAttributeMappings() {
     document.querySelectorAll(data_attribute_selector).forEach((el) => convertDataAttributes(el));
     const observer = new MutationObserver((mutations) => {
@@ -129,6 +154,9 @@ VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3Com
     observer.observe(document, { subtree: true, childList: true });
   }
 
+  /**
+   * Initialize dropdown support
+   */
   function initDropdownStyles() {
     document.querySelectorAll('ul.dropdown-menu > li').forEach((el) => {
       el.classList.add('dropdown-item');
@@ -138,7 +166,9 @@ VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3Com
     });
   }
 
-
+  /**
+   * Initialize all back-compatibility support functions
+   */
   function init() {
     initNavbar();
     initNav();

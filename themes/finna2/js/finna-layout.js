@@ -1,7 +1,5 @@
 /*global VuFind, videojs, finna, priorityNav, bootstrap, unwrapJQuery */
 finna.layout = (function finnaLayout() {
-  var currentOpenTooltips = [];
-
   /**
    * Initialize a throttled resize listener
    */
@@ -304,7 +302,6 @@ finna.layout = (function finnaLayout() {
 
   /**
    * Hide all tooltips when Esc is pressed
-   *
    * @param {Event} e Event
    */
   function tooltipKeyDownHandler(e) {
@@ -358,7 +355,7 @@ finna.layout = (function finnaLayout() {
             bootstrap.Tooltip.getOrCreateInstance(otherEl).hide();
           }
         });
-      })
+      });
     });
 
     document.addEventListener('keydown', tooltipKeyDownHandler);
@@ -829,8 +826,7 @@ finna.layout = (function finnaLayout() {
 
   /**
    * Handle a login tab click
-   *
-   * @param {HTMLElement} Tab link
+   * @param {HTMLElement} linkEl Tab link
    */
   function handleLoginTabClick(linkEl)
   {
