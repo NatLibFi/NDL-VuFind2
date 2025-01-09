@@ -36,6 +36,8 @@ $logo-height: 66px !default;
 $logo-separator-color: #fff !default; // Color of hr line under main logo
 $header-background-color: $body-bg !default; // Color of navigation bar top
 $header-text-color: $navbar-default-link-color !default;
+$header-text-active-color: $header-text-color !default;
+$header-text-hover-color: $header-text-color !default;
 $footer-background: $gray-ultralight !default;
 $footer-text-color: $gray !default;
 $finna-search-background: color.mix($body-bg, contrast($body-bg), 95%) !default; // Background color of finna searchbox section

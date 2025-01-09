@@ -94,19 +94,18 @@
   outline: 5px auto -webkit-focus-ring-color;
 }
 
-/*.finna-navbar {
-  .navbar-nav > li > a,
-  .navbar-collapse.in .dropdown-menu a {
-    color: $header-text-color;
-    padding: 0 10px;
+.finna-navbar {
+  // #loginOptions.btn-uppercase included for back-compatibility
+  .login-button, #loginOptions .btn-uppercase {
+    display: block;
+    text-transform: uppercase;
   }
-  // remove exclamation mark from fines row
-  .fines-status .badge.overdue {
-    &:before {
-      content:"";
-    }
+  .nav-item > .nav-link {
+    --bs-nav-link-color: #{$header-text-color};
+    --bs-nav-link-hover-color: #{$header-text-hover-color};
+    --bs-navbar-active-color: #{$header-text-active-color};
   }
-}*/
+}
 
 /* Finna breadcrumbs */
 

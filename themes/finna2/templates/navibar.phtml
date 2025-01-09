@@ -242,12 +242,12 @@
         <?php else: ?>
           <?php if ($this->templateDir === 'myresearch' && $this->templateName === 'login'): ?>
             <div>
-              <a role="button" class="btn btn-primary btn-uppercase"><?=$this->icon('login', 'login-icon') ?> <span class="login-text"><?=$this->transEsc('Login')?></span></a>
+              <a role="button" class="btn btn-primary login-button"><?=$this->icon('login', 'login-icon') ?> <span class="login-text"><?=$this->transEsc('Login')?></span></a>
             </div>
           <?php else: ?>
             <div>
               <?php
-                $linkAttrs->add('class', 'btn btn-primary btn-uppercase');
+                $linkAttrs->add('class', 'btn btn-primary login-button');
                 $linkAttrs->add('data-lightbox', '');
                 $linkAttrs->add('data-lightbox-onclose', 'window.location.href="' . $this->url('myresearch-home') . '"');
               ?>
