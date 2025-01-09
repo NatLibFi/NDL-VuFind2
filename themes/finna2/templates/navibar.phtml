@@ -51,11 +51,11 @@
             }
             $label = $itemVal['label'];
             $linkAttrs = $this->htmlAttributes(
-              [
-                'href' => $itemUrl['url'],
-                'class' => ['nav-link'],
-                'role' => 'button',
-              ]
+                [
+                    'href' => $itemUrl['url'],
+                    'class' => ['nav-link'],
+                    'role' => 'button',
+                ]
             );
             if ($itemUrl['url'] === $_SERVER['REQUEST_URI']) {
               $linkAttrs->add('class', 'active');
@@ -78,12 +78,12 @@
           <?php
             $url = $this->url('feedback-home');
             $linkAttrs = $this->htmlAttributes(
-              [
-                'href' => $url,
-                'class' => ['nav-link'],
-                'role' => 'button',
-                'id' => 'feedback-link',
-              ]
+                [
+                    'href' => $url,
+                    'class' => ['nav-link'],
+                    'role' => 'button',
+                    'id' => 'feedback-link',
+                ]
             );
             if ($url === $_SERVER['REQUEST_URI']) {
               $linkAttrs->add('class', 'active');
@@ -227,10 +227,10 @@
         <?php
           $url = $this->url('myresearch-userlogin');
           $linkAttrs = $this->htmlAttributes(
-            [
-              'href' => $url,
-              'role' => 'button',
-            ]
+              [
+                  'href' => $url,
+                  'role' => 'button',
+              ]
           );
           if ($url === $_SERVER['REQUEST_URI']) {
             $linkAttrs->add('class', 'active');
