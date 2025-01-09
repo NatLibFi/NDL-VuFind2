@@ -44,7 +44,7 @@ VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3Com
           }
         } else if (aEl) {
           const oldStateA = VuFind.disableTransitions(aEl);
-          if (!aEl.classList.contains('btn')) {
+          if (!aEl.classList.contains('btn') && !aEl.closest('.browsebar')) {
             aEl.classList.add('nav-link');
           }
           if (liEl.classList.contains('active')) {
