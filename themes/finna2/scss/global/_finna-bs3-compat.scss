@@ -124,3 +124,8 @@ $input-border:                $input-border-color;
     align-content: center;
   }
 }
+
+// E.g. similar items
+.list-group-item {
+  margin-bottom: -1px;
+}
