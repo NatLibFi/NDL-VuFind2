@@ -2,15 +2,9 @@
   margin-bottom: 12px;
   margin-top: 12px;
   > li {
-//    display: block;
     > a {
       transition: background .2s ease-in-out;
     }
-  }
-}
-@media (min-width:$screen-md-min) {
-  .nav > li {
-//    display: inline-block;
   }
 }
 
@@ -19,6 +13,7 @@
 
   .nav-link {
     margin-bottom: 0;
+    border-top: 4px solid transparent;
   }
   // style 5 tabs to make sure they stay as tabs
   > li {

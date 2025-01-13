@@ -129,3 +129,16 @@ $input-border:                $input-border-color;
 .list-group-item {
   margin-bottom: -1px;
 }
+
+// Spacing between instances of .media
+.media {
+  margin-top: 15px;
+}
+
+.visible-print.inline-block {
+  display: none !important;
+
+  @media print {
+    display: inline-block !important;
+  }
+}
