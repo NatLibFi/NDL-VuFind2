@@ -1087,10 +1087,7 @@ $dynamicRoutes = [
         'newLibraryCardPassword' => 'newPassword/[:id]',
         'librarycards-displaybarcode' => 'displayBarcode/[:id]',
     ],
-    'MyResearch' => [
-        'sortList' => 'SortList/[:id]',
-        'downloadLoanHistory' => 'DownloadLoanHistory/[:part]/[:format]',
-    ],
+    'MyResearch' => ['sortList' => 'SortList/[:id]'],
     'ReservationList' => [
         'reservationlist-displaylists' => 'DisplayLists',
         'reservationlist-displaylist' => 'DisplayList/[:id]',
