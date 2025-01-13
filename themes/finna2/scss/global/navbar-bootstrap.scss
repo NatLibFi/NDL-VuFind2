@@ -112,18 +112,9 @@
 .navbar-nav {
   margin: calc((#{$navbar-padding-vertical} / 2) - #{$navbar-padding-horizontal});
 
-/*  > li > a {
-    padding-top: $navbar-padding-vertical;
-    padding-bottom: $navbar-padding-vertical;
-    line-height: calc(#{$navbar-height} / 2);
-    //margin-top: calc(#{$navbar-height} / 4);
-    //margin-bottom: calc(#{$navbar-height} / 4);
+  > li > a {
     font-size: $navbar-font-size;
-    font-weight: $navbar-font-weight;
-    @media (min-width:$screen-md-min) {
-      margin-bottom: 0;
-    }
-  }*/
+  }
   &.language:not(.lang-1):before {
     color: $navbar-default-link-color;
     content: '';
