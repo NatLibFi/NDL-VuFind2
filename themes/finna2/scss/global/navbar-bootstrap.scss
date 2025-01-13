@@ -233,8 +233,13 @@
   }
 }
 #language_menu {
-  #language_menu_dropdown_button:active {
-    box-shadow: none;
+  #language_menu_dropdown_button {
+    padding-top: #{$btn-padding-y};
+    padding-bottom: #{$btn-padding-y};
+
+    &:active {
+      box-shadow: none;
+    }
   }
   .dropdown-menu {
     margin: 0;

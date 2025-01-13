@@ -119,7 +119,7 @@
   <ul role="presentation" class="nav navbar-nav header-navbar-right">
   <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
     <li id="language_menu" class="nav-item dropdown">
-      <a href="#" id="language_menu_dropdown_button" class="btn nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-label="<?=$this->transEscAttr('Language')?>" aria-description="<?=$this->displayLanguageOption($selectedLang)?> <?=$this->transEscAttr('selected')?>" aria-expanded="false">
+      <a href="#" id="language_menu_dropdown_button" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-label="<?=$this->transEscAttr('Language')?>" aria-description="<?=$this->displayLanguageOption($selectedLang)?> <?=$this->transEscAttr('selected')?>" aria-expanded="false">
         <?=$this->icon('language', 'lang-icon') ?>
         <span class="hidden-xs"><?=$this->displayLanguageOption($selectedLang)?></span>
         <?=$this->icon('collapse-open', 'collapse-open-icon') ?>
