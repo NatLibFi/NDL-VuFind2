@@ -31,7 +31,6 @@
 
 namespace Finna\AjaxHandler;
 
-use Exception;
 use Laminas\Mvc\Controller\Plugin\Params;
 use PhpOffice\PhpSpreadsheet\Cell\AdvancedValueBinder;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
