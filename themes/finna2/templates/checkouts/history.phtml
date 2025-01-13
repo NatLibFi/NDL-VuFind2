@@ -89,10 +89,21 @@
                         </div>
                         <?php if (!empty($this->transactions)): ?>
                           <div class="btn-group">
-                            <a data-lightbox class="btn btn-primary btn-finna-toolbar" role="button" href="<?=$this->url('myresearch-savehistoricloans') ?>"><?=$this->transEsc('loan_history_save')?></a>
-                          </div>
-                          <div class="btn-group">
-                            <a class="btn btn-primary btn-finna-toolbar" role="button" href="<?=$this->url('myresearch-downloadloanhistory')?>"><?=$this->transEsc('loan_history_download')?></a>
+                            <div class="dropdown loan-history-download js-download-loan-history" data-href="<?=$this->url('downloadLoanHistory', ['part' => '_part_', 'format' => '_format_'])?>">
+                              <button class="btn btn-primary btn-finna-toolbar dropdown-toggle download js-history-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <?=$this->transEsc('loan_history_download')?> <?=$this->icon('caret-down')?>
+                              </button>
+                              <ul class="dropdown-menu dropdown-menu-<?php if ($purgeSelectedAllowed): ?>right<?php else: ?>left<?php endif;?> download">
+                                <li>
+                                  <a data-lightbox href="<?=$this->url('myresearch-savehistoricloans') ?>"><?=$this->transEsc('loan_history_save')?></a>
+                                </li>
+                                <?php foreach (['csv', 'ods', 'xlsx'] as $formatEsc): ?>
+                                  <li>
+                                    <button class="btn btn-link js-history-file-format" type="button" data-format="<?=$formatEsc?>"><?=$this->transEsc('loan_history_download_' . $formatEsc)?></button>
+                                  </li>
+                                <?php endforeach; ?>
+                              </ul>
+                            </div>
                           </div>
                         <?php endif; ?>
                       </div>

@@ -1384,7 +1384,7 @@ class Demo extends AbstractBase implements \VuFind\I18n\HasSorterInterface
         $trans = rand() % 10 - 1 > 0 ? rand() % 15 : 0;
 
         $transList = [];
-        for ($i = 0; $i < $trans; $i++) {
+        for ($i = 0; $i < 10000; $i++) {
             // Checkout date
             $relative = rand() % 300;
             $checkoutDate = strtotime("now -$relative days");

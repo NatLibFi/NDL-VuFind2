@@ -54,4 +54,57 @@ class AjaxController extends \VuFind\Controller\AjaxController
         // Use text/html to avoid any output
         return $this->callAjaxMethod('onlinePaymentNotify', 'text/html');
     }
+
+    /**
+     * Format the content of the AJAX response based on the response type.
+     *
+     * @param string $type     Content-type of output
+     * @param mixed  $data     The response data
+     * @param int    $httpCode A custom HTTP Status Code
+     *
+     * @return string
+     * @throws \Exception
+     */
+    protected function formatContent($type, $data, $httpCode)
+    {
+        if ($type !== 'file_type_content') {
+            return parent::formatContent($type, $data, $httpCode);
+        }
+        if ($httpCode === 200) {
+            return $this->getFileResponse($data);
+        } else {
+            return parent::formatContent('text/plain', $data, $httpCode);
+        }
+    }
+
+    /**
+     * Get a file download
+     *
+     * @return \Laminas\Http\Response
+     */
+    public function fileAction()
+    {
+        $method = $this->params()->fromQuery('method');
+        if (!$method) {
+            return $this->getAjaxResponse('text/plain', ['error' => 'Parameter "method" missing'], 400);
+        }
+        return $this->callAjaxMethod($method, 'file_type_content');
+    }
+
+    /**
+     * Send output data and exit.
+     *
+     * @param mixed $data The response data
+     *
+     * @return \Laminas\Http\Response
+     * @throws \Exception
+     */
+    protected function getFileResponse($data)
+    {
+        $response = $this->getResponse();
+        $headers = $response->getHeaders();
+        $headers->addHeaderLine('Content-type', $data['mediaType']);
+        $headers->addHeaderLine('Content-Disposition', 'attachment; filename="' . $data['fileName'] . '"');
+        return stream_get_contents($data['filePointer']);
+    }
 }

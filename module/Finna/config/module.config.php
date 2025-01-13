@@ -491,6 +491,8 @@ $config = [
                         'Finna\AjaxHandler\GetUserListFactory',
                     'Finna\AjaxHandler\GetUserLists' =>
                         'Finna\AjaxHandler\GetUserListsFactory',
+                    'Finna\AjaxHandler\GetTransactionHistory' =>
+                        'Finna\AjaxHandler\AbstractIlsAndUserActionFactory',
                     'Finna\AjaxHandler\ImportFavorites' =>
                         'Finna\AjaxHandler\ImportFavoritesFactory',
                     'Finna\AjaxHandler\OnlinePaymentNotify' =>
@@ -528,6 +530,7 @@ $config = [
                     'getRecordData' => 'Finna\AjaxHandler\GetRecordData',
                     'getRecordDriverRelatedRecords' => 'Finna\AjaxHandler\GetRecordDriverRelatedRecords',
                     'getRecordInfoByAuthority' => 'Finna\AjaxHandler\GetRecordInfoByAuthority',
+                    'getTransactionHistory' => 'Finna\AjaxHandler\GetTransactionHistory',
                     'getSearchTabsRecommendations' => 'Finna\AjaxHandler\GetSearchTabsRecommendations',
                     'getSimilarRecords' => 'Finna\AjaxHandler\GetSimilarRecords',
                     'getUserList' => 'Finna\AjaxHandler\GetUserList',
@@ -1084,7 +1087,10 @@ $dynamicRoutes = [
         'newLibraryCardPassword' => 'newPassword/[:id]',
         'librarycards-displaybarcode' => 'displayBarcode/[:id]',
     ],
-    'MyResearch' => ['sortList' => 'SortList/[:id]'],
+    'MyResearch' => [
+        'sortList' => 'SortList/[:id]',
+        'downloadLoanHistory' => 'DownloadLoanHistory/[:part]/[:format]',
+    ],
     'ReservationList' => [
         'reservationlist-displaylists' => 'DisplayLists',
         'reservationlist-displaylist' => 'DisplayList/[:id]',
@@ -1102,7 +1108,6 @@ $staticRoutes = [
     'LibraryCards/ResetPassword',
     'LocationService/Modal',
     'MetaLib/Home', 'MetaLib/Search', 'MetaLib/Advanced',
-    'MyResearch/DownloadLoanHistory',
     'MyResearch/SaveCustomOrder', 'MyResearch/SaveHistoricLoans',
     'OrganisationInfo/Home',
     'PCI/Home', 'PCI/Search', 'PCI/Record',
