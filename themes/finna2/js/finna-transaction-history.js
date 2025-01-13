@@ -30,7 +30,7 @@ finna.transactionHistory = (function transactionHistory() {
   function syncButtonText(element) {
     const toggleButton = element.querySelector(toggleButtonSelector);
     const textContent = VuFind.translate('loan_history_download_part');
-    toggleButton.textContent = `${textContent.replace('%%part%%', element.dataset.currentPart)} `;
+    toggleButton.textContent = `${textContent.replace('%%part%%', element.dataset.currentPart).replace('%%lastPart%%', element.dataset.lastPart)} `;
     toggleButton.append(VuFind.icon('show-more', {}, true));
   }
 
