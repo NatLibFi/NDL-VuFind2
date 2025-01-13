@@ -195,12 +195,12 @@ class GetTransactionHistory extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
         if ($pagesCount > 1) {
             $pagesToFetch = ceil($this->batchLimit / $limit);
             $firstPageToFetch += ($pagesToFetch * ($part - 1));
-            $lastPageToFetch += min(($pagesToFetch * $part), $pagesCount);
+            $lastPageToFetch += min(($pagesToFetch * $part) - 1, $pagesCount);
         }
         $tmp = fopen('php://temp/maxmemory:' . (5 * 1024 * 1024), 'r+');
 
         $transactions = [];
-        for ($i = $firstPageToFetch; $i < $lastPageToFetch; $i++) {
+        for ($i = $firstPageToFetch; $i <= $lastPageToFetch; $i++) {
             $result = $this->ils->getMyTransactionHistory($patron, ['page' => $i, 'limit' => $limit]);
             // Break if no transactions found
             if (empty($result['transactions'])) {
@@ -270,7 +270,7 @@ class GetTransactionHistory extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
         }
         $writer = new $this->exportFormats[$fileFormat]['writer']($spreadsheet);
         $writer->save($tmp);
-        $fileName = implode('-', ['finna-loan-history-pages', $firstPageToFetch, $lastPageToFetch - 1]);
+        $fileName = implode('-', ['finna-loan-history-pages', $firstPageToFetch, $lastPageToFetch]);
         $fileName .= ".$fileFormat";
 
         rewind($tmp);
