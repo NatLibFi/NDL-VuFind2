@@ -214,7 +214,12 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             'type' => 'video/mp4',
                         ],
                         'resourceName' => 'VideoTesti.mp4',
-                        'data' => [],
+                        'data' => [
+                            'size' => [
+                                'unit' => 'byte',
+                                'value' => '74576596',
+                            ],
+                        ],
                     ],
                 ],
             ],
