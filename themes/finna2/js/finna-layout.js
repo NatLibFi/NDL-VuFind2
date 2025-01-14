@@ -666,7 +666,7 @@ finna.layout = (function finnaLayout() {
       var self = $(this);
       var play = self.find('.play');
       var source = self.find('source');
-      play.on('click', function onClick() {
+      play.one('click', function onPlay() {
         finna.scriptLoader.loadInOrder(
           scripts,
           subScripts,
