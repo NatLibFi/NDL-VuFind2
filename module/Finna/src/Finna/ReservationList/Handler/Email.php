@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Email connection handler for reservation lists
+ * Email handler
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Exception\Mail as MailException;
 
 /**
- * Email connection handler for reservation lists
+ * Email handler
  *
  * @category VuFind
  * @package  ReservationList

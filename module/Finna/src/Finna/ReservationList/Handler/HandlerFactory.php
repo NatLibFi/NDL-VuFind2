@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Connection factory
+ * Reservation list handler factory
  *
  * PHP Version 8
  *
@@ -33,7 +33,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 
 /**
- * Connection factory
+ * Reservation list handler factory
  *
  * @category VuFind
  * @package  ReservationList

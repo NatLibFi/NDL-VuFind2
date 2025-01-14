@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Connection abstract base
+ * Abstract handler
  *
  * PHP Version 8
  *
@@ -37,7 +37,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Service\GetServiceTrait;
 
 /**
- * Connection abstract base
+ * Abstract handler
  *
  * @category VuFind
  * @package  ReservationList

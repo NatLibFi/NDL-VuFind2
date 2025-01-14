@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Disec connection handler
+ * Disec handler
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
- * Disec connection handler
+ * Disec handler
  *
  * @category VuFind
  * @package  ReservationList

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Reservation list connection plugin interface
+ * Handler interface
  *
  * PHP Version 8
  *
@@ -34,7 +34,7 @@ use Finna\ReservationList\Form\Form;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
- * Reservation list connection plugin interface
+ * Handler interface
  *
  * @category VuFind
  * @package  ReservationList
