@@ -249,7 +249,7 @@ $dropdown-item-padding-y: 0rem !default;
 
 $pagination-color:                     $link-color !default;
 $pagination-bg:                        $body-bg !default;
-$pagination-border:                    transparent !default;
+$pagination-border-color:              transparent !default;
 
 $pagination-hover-color:               $brand-primary !default;
 $pagination-hover-bg:                  #f5f5f5 !default;
@@ -259,6 +259,7 @@ $pagination-active-color:              #fff !default;
 $pagination-active-bg:                 $brand-primary !default;
 $pagination-active-border:             transparent !default;
 
+$pagination-font-size:                 1.1em;
 
 //== Pager
 //
