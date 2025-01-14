@@ -1,7 +1,7 @@
 <!-- START of: finna - search/controls/sort.phtml -->
 <?php
   $list = $this->sortList ? $this->sortList : $this->params->getSortList();
-  $context = $this->context ?: '';
+  $context = $this->context ?: 'Results';
   if (!empty($list)):
 ?>
   <div class="sort-option-container">
