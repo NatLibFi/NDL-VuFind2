@@ -27,7 +27,7 @@
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 
-namespace Finna\ReservationList\Connection;
+namespace Finna\ReservationList\Handler;
 
 /**
  * Reservation list status enum.

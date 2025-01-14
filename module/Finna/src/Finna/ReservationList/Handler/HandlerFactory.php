@@ -27,7 +27,7 @@
  * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
  */
 
-namespace Finna\ReservationList\Connection;
+namespace Finna\ReservationList\Handler;
 
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
@@ -41,7 +41,7 @@ use Psr\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
  */
-class ConnectionFactory implements FactoryInterface
+class HandlerFactory implements FactoryInterface
 {
     /**
      * Create an object

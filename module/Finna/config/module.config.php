@@ -382,7 +382,7 @@ $config = [
             'Finna\Statistics\EventHandler' => 'Finna\Statistics\EventHandlerFactory',
             \Finna\ReservationList\Form\Form::class => \Finna\Form\FormFactory::class,
             \Finna\ReservationList\ReservationListService::class => \Finna\ReservationList\ReservationListServiceFactory::class,
-            \Finna\ReservationList\Connection\PluginManager::class => \VuFind\ServiceManager\AbstractPluginManagerFactory::class,
+            \Finna\ReservationList\Handler\PluginManager::class => \VuFind\ServiceManager\AbstractPluginManagerFactory::class,
             'Finna\Favorites\FavoritesService' => 'Finna\Favorites\FavoritesServiceFactory',
             'Finna\View\CustomElement\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Video\Handler\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
@@ -768,7 +768,7 @@ $config = [
             ],
             'onlinepayment_handler' => [ /* see Finna\OnlinePayment\Handler\PluginManager for defaults */ ],
             'video_handler' => [ /* see Finna\Video\Handler\PluginManager for defaults */ ],
-            'reservationlist_connection' => [ /* see Finna\ReservationList\Connection\PluginManager for defaults */ ],
+            'reservationlist_handler' => [ /* see Finna\ReservationList\Handler\PluginManager for defaults */ ],
             'recommend' => [
                 'factories' => [
                     'VuFind\Recommend\CollectionSideFacets' => 'Finna\Recommend\Factory::getCollectionSideFacets',

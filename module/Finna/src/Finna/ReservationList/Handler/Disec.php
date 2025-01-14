@@ -27,10 +27,9 @@
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
 
-namespace Finna\ReservationList\Connection;
+namespace Finna\ReservationList\Handler;
 
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
-use Finna\ReservationList\Form\Form;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
@@ -133,7 +132,7 @@ class Disec extends AbstractBase
                 'connection' => strtolower(__CLASS__),
             ];
         }
-        $this->debug('Connection::Disec: Failed to place order: ' . $response->getBody());
+        $this->debug(__CLASS__ . ': Failed to place order: ' . $response->getBody());
         return [
             'success' => false,
             'external_id' => null,
@@ -146,11 +145,10 @@ class Disec extends AbstractBase
      * Check list status. Used for external services.
      *
      * @param FinnaResourceListEntityInterface $list List to check for status
-     * @param UserEntityInterface              $user Current logged in user
      *
      * @return string
      */
-    public function getListStatus(FinnaResourceListEntityInterface $list, UserEntityInterface $user): string
+    public function getListStatus(FinnaResourceListEntityInterface $list): string
     {
         $externalId = $list->getExternalId();
         $formedUrl = implode('/', [$this->ordersUrl, $externalId]);
@@ -163,7 +161,7 @@ class Disec extends AbstractBase
             $body = json_decode($response->getBody(), true);
             $status = ReservationListStatus::mapEnumFromString($body['status'] ?? '');
         } else {
-            $this->debug('Disec: failed to fetch status for list: ' . $response->getBody());
+            $this->debug(__CLASS__ . ': failed to fetch status for list: ' . $response->getBody());
         }
         return $status->getTranslationKey();
     }
@@ -188,7 +186,7 @@ class Disec extends AbstractBase
             $this->requestHeaders[] = 'X-API-Key: ' . $config['Connection']['secret'];
             $this->useCatId = $config['Connection']['use_cat_id'] ?? false;
         } catch (\Exception $e) {
-            throw new \Exception('Disec: Invalid configuration');
+            throw new \Exception(__CLASS__ . ': Invalid configuration');
         }
         return $this;
     }

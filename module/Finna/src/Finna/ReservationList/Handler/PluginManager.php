@@ -27,7 +27,7 @@
  * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
  */
 
-namespace Finna\ReservationList\Connection;
+namespace Finna\ReservationList\Handler;
 
 /**
  * Reservation list plugin manager
@@ -58,8 +58,8 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
      * @var array
      */
     protected $factories = [
-        Disec::class => ConnectionFactory::class,
-        Email::class => ConnectionFactory::class,
+        Disec::class => HandlerFactory::class,
+        Email::class => HandlerFactory::class,
     ];
 
     /**
@@ -90,7 +90,7 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
      */
     protected function getExpectedInterface()
     {
-        return ConnectionInterface::class;
+        return HandlerInterface::class;
     }
 
     /**
@@ -98,9 +98,9 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
      *
      * @param array $listProperties List properties
      *
-     * @return ConnectionInterface
+     * @return HandlerInterface
      */
-    public function getWithConfig(array $listProperties): ConnectionInterface
+    public function getWithConfig(array $listProperties): HandlerInterface
     {
         $connection = parent::get($listProperties['Connection']['type']);
         $connection->init($listProperties);

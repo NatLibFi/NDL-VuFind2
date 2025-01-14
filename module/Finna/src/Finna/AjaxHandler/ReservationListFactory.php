@@ -32,7 +32,7 @@ namespace Finna\AjaxHandler;
 use Psr\Container\ContainerInterface;
 
 /**
- * Reservation list ajax handler
+ * Reservation list ajax handler factory
  *
  * @category VuFind
  * @package  AjaxHandler
@@ -69,7 +69,7 @@ class ReservationListFactory implements \Laminas\ServiceManager\Factory\FactoryI
         return new $requestedName(
             $container->get(\VuFind\Auth\Manager::class)->getUserObject(),
             $container->get(\Finna\ReservationList\ReservationListService::class),
-            $container->get(\Finna\ReservationList\Connection\PluginManager::class),
+            $container->get(\Finna\ReservationList\Handler\PluginManager::class),
         );
     }
 }

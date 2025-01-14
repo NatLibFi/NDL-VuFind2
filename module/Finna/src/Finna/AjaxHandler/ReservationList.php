@@ -29,7 +29,7 @@
 
 namespace Finna\AjaxHandler;
 
-use Finna\ReservationList\Connection\PluginManager;
+use Finna\ReservationList\Handler\PluginManager;
 use Finna\ReservationList\ReservationListService;
 use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Db\Entity\UserEntityInterface;

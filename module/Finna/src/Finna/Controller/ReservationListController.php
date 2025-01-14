@@ -35,7 +35,7 @@
 namespace Finna\Controller;
 
 use Exception;
-use Finna\ReservationList\Connection\AbstractBase as ConnectionAbstractBase;
+use Finna\ReservationList\Handler\AbstractBase as ConnectionAbstractBase;
 use Finna\ReservationList\ReservationListService;
 use Finna\View\Helper\Root\ReservationList;
 use Laminas\ServiceManager\ServiceLocatorInterface;
@@ -317,7 +317,7 @@ class ReservationListController extends AbstractBase
         }
         $gatheredValues = array_merge($postValues, $listSpecificValues);
 
-        $handler = $this->getService(\Finna\ReservationList\Connection\PluginManager::class)
+        $handler = $this->getService(\Finna\ReservationList\Handler\PluginManager::class)
             ->getWithConfig($listProperties);
         $form = $handler->getPlaceOrderForm($gatheredValues);
 

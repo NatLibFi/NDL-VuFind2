@@ -27,7 +27,7 @@
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
 
-namespace Finna\ReservationList\Connection;
+namespace Finna\ReservationList\Handler;
 
 use Exception;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
@@ -45,7 +45,7 @@ use VuFind\Service\GetServiceTrait;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-abstract class AbstractBase implements ConnectionInterface, \Laminas\Log\LoggerAwareInterface
+abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
 {
     use \VuFind\Log\LoggerAwareTrait;
     use GetServiceTrait;
@@ -116,11 +116,10 @@ abstract class AbstractBase implements ConnectionInterface, \Laminas\Log\LoggerA
      * Check list status. Used for external services.
      *
      * @param FinnaResourceListEntityInterface $list List to check for status
-     * @param UserEntityInterface              $user Current logged in user
      *
      * @return string
      */
-    abstract public function getListStatus(FinnaResourceListEntityInterface $list, UserEntityInterface $user): string;
+    abstract public function getListStatus(FinnaResourceListEntityInterface $list): string;
 
     /**
      * Initialize connection handler

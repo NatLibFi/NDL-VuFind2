@@ -27,10 +27,9 @@
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
 
-namespace Finna\ReservationList\Connection;
+namespace Finna\ReservationList\Handler;
 
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
-use Finna\ReservationList\Form\Form;
 use Symfony\Component\Mime\Address;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Exception\Mail as MailException;
@@ -135,11 +134,10 @@ class Email extends AbstractBase
      * Check list status. Used for external services.
      *
      * @param FinnaResourceListEntityInterface $list List to check for status
-     * @param UserEntityInterface              $user Current logged in user
      *
      * @return string
      */
-    public function getListStatus(FinnaResourceListEntityInterface $list, UserEntityInterface $user): string
+    public function getListStatus(FinnaResourceListEntityInterface $list): string
     {
         return '';
     }
@@ -159,7 +157,7 @@ class Email extends AbstractBase
             $this->recipients = $config['Recipient'];
             $this->senderName = $config['Connection']['Sender']['name'];
             $this->senderEmail = $config['Connection']['Sender']['email'];
-            $this->emailSubject = $config['Connection']['subject'];
+            $this->emailSubject = $config['Connection']['Subject'];
         } catch (\Exception $e) {
             throw new \Exception(__CLASS__ . ': Invalid configuration.');
         }

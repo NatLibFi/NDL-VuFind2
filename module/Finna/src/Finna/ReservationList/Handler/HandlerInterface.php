@@ -27,7 +27,7 @@
  * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
  */
 
-namespace Finna\ReservationList\Connection;
+namespace Finna\ReservationList\Handler;
 
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\ReservationList\Form\Form;
@@ -42,7 +42,7 @@ use VuFind\Db\Entity\UserEntityInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
  */
-interface ConnectionInterface
+interface HandlerInterface
 {
     /**
      * Places an order
@@ -63,11 +63,10 @@ interface ConnectionInterface
      * Check list status. Used for external services.
      *
      * @param FinnaResourceListEntityInterface $list List to check for status
-     * @param UserEntityInterface              $user Current logged in user
      *
      * @return string
      */
-    public function getListStatus(FinnaResourceListEntityInterface $list, UserEntityInterface $user): string;
+    public function getListStatus(FinnaResourceListEntityInterface $list): string;
 
     /**
      * Get form used for placing orders.
