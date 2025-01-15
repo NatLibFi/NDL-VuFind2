@@ -39,7 +39,7 @@ VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3Com
         });
         observer.observe(navEl, { attributes: true, attributeFilter: ['class'], subtree: true });
       }
-      navEl.querySelectorAll('li').forEach((liEl) => {
+      navEl.querySelectorAll(':scope > li').forEach((liEl) => {
         const aEl = liEl.querySelector(':scope > a');
         if (liEl.classList.contains('dropdown__item')) {
           if (aEl && !aEl.classList.contains('btn')) {

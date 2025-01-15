@@ -61,7 +61,7 @@
       > li > a {
         color: $text-color;
       }
-      > li.active > a {
+      > li > a.active {
         font-weight: bold;
       }
     }

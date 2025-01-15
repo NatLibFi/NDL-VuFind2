@@ -3,8 +3,8 @@
   @media(max-width: $grid-float-breakpoint-max) {
     .navbar-header {
       display: flex;
-      flex-direction: row-reverse;
       align-items: center;
+      flex: 1;
     }
     .navbar-toggle {
       position: static;
@@ -17,15 +17,35 @@
       height: auto;
       max-width: none;
       line-height: normal;
+      text-decoration: none;
     }
-    .navbar-collapse > ul > li {
-      border-bottom: 1px solid $gray-lighter;
+    .navbar-collapse {
+      .dropdown-toggle {
+        width: 100%;
+      }
+      & > ul > li {
+        border-bottom: 1px solid $gray-lighter;
+      }
+      .dropdown-menu {
+        border: 0;
+        box-shadow: none;
+        margin-top: 0;
+
+        .dropdown-item {
+          border: 0;
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+      }
     }
-    .navbar-nav > li > a {
-      margin-top: 0;
-      margin-bottom: 0;
-      padding-top: 16px;
-      padding-bottom: 16px;
+    .navbar-nav {
+      margin: 0;
+
+      & > li > a {
+        margin-top: 0;
+        margin-bottom: 0;
+        padding: 16px;
+      }
     }
   }
 }
@@ -94,7 +114,7 @@ $finna-navbar-content-toggle-border-color:       $finna-navbar-content-border !d
         background-color: $finna-navbar-content-link-hover-bg;
       }
     }
-    > .active > a {
+    > .active > a, a.active {
       &,
       &:hover,
       &:focus {
@@ -102,7 +122,7 @@ $finna-navbar-content-toggle-border-color:       $finna-navbar-content-border !d
         background-color: $finna-navbar-content-link-active-bg;
       }
     }
-    > .disabled > a {
+    > .disabled > a, a.disabled {
       &,
       &:hover,
       &:focus {
@@ -113,7 +133,7 @@ $finna-navbar-content-toggle-border-color:       $finna-navbar-content-border !d
 
     // Dropdown menu items
     // Remove background color from open dropdown
-    > .open > a {
+    > .open > a, a.open {
       &,
       &:hover,
       &:focus {
@@ -156,7 +176,7 @@ $finna-navbar-content-toggle-border-color:       $finna-navbar-content-border !d
             background-color: $dropdown-link-hover-bg;
           }
         }
-        > .active > a {
+        > .active > a, a.active {
           &,
           &:hover,
           &:focus {
@@ -164,7 +184,7 @@ $finna-navbar-content-toggle-border-color:       $finna-navbar-content-border !d
             background-color: $dropdown-link-hover-bg;
           }
         }
-        > .disabled > a {
+        > .disabled > a, a.disabled {
           &,
           &:hover,
           &:focus {

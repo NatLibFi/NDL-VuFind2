@@ -147,3 +147,29 @@ $input-border:                $input-border-color;
 .text-right {
   @extend .text-end;
 }
+
+// Responsive utilities (that avoid `display: *` that would override any existing value)
+.hidden-xs-block {
+  @extend .hidden-xs;
+}
+.hidden-sm-block {
+  @extend .hidden-sm;
+}
+.hidden-md-block {
+  @extend .hidden-md;
+}
+.hidden-lg-block {
+  @extend .hidden-lg;
+}
+.visible-xs-block {
+  @extend .visible-xs;
+}
+.visible-sm-block {
+  @extend .visible-sm;
+}
+.visible-md-block {
+  @extend .visible-md;
+}
+.visible-lg-block {
+  @extend .visible-lg;
+}

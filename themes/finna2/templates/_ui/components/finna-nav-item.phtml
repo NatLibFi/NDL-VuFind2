@@ -18,7 +18,6 @@
       $__childAttributes = $this->htmlAttributes($__child['attributes'] ?? []);
       if (!empty($__child['active'])) {
         $__attributes->add('class', 'active-trail');
-        $__childAttributes->add('class', 'active');
         if (isset($ariaCurrent)) {
           $__childAttributes['aria-current'] = $ariaCurrent;
         }
@@ -26,9 +25,17 @@
       if (isset($__child['description'])) {
         $__childAttributes->add('class', 'nav-item-has-description');
       }
-      $__child['attributes'] = $__childAttributes;
       $__childLinkAttributes = $this->htmlAttributes($__child['linkAttributes'] ?? []);
       $__childLinkAttributes['href'] = $__child['link'] ?? '';
+      if (!empty($__child['active'])) {
+        $__childLinkAttributes->add('class', 'active');
+      }
+
+      if ('simple' !== $__renderChildren) {
+        $__childAttributes->add('class', 'dropdown-item');
+        $__childLinkAttributes->add('class', 'nav-link');
+      }
+      $__child['attributes'] = $__childAttributes;
       $__child['linkAttributes'] = $__childLinkAttributes;
       $__children[$__i] = $__child;
     }
