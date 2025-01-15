@@ -135,6 +135,7 @@ $input-border:                $input-border-color;
   margin-top: 15px;
 }
 
+// Print
 .visible-print.inline-block {
   display: none !important;
 
@@ -176,4 +177,10 @@ $input-border:                $input-border-color;
 }
 .visible-lg-block {
   @extend .visible-lg;
+}
+
+// blockquote padding
+blockquote {
+  padding: ($line-height-computed / 2) $line-height-computed;
+  font-size: $blockquote-font-size;
 }
