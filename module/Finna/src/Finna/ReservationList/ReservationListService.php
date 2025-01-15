@@ -117,7 +117,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      * @param ?RecordCache                              $recordCache                 Record cache (optional)
      * @param ?Container                                $session                     Session container for remembering
      *                                                                               state (optional)
-     * @param ?array                                    $yamlConfig                  Reservation list yaml config
+     * @param ?array                                    $reservationListConfig       ReservationList.yaml as array
      */
     public function __construct(
         protected FinnaResourceListServiceInterface $resourceListService,
@@ -128,7 +128,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         protected RecordLoader $recordLoader,
         protected ?RecordCache $recordCache = null,
         protected ?Container $session = null,
-        protected ?array $yamlConfig = []
+        protected ?array $reservationListConfig = []
     ) {
     }
 
@@ -554,12 +554,12 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         string $institution,
         string $listIdentifier
     ): array {
-        foreach ($this->yamlConfig['Institutions'][$institution]['Lists'] ?? [] as $list) {
+        foreach ($this->reservationListConfig['Institutions'][$institution]['Lists'] ?? [] as $list) {
             $list = $this->ensureListKeys($list);
             if ($list['Identifier'] === $listIdentifier) {
                 return [
                     'properties' => $list,
-                    'institution_information' => $this->yamlConfig['Institutions'][$institution]['Information'] ?? [],
+                    'institution_information' => $this->reservationListConfig['Institutions'][$institution]['Information'] ?? [],
                     'translation_keys' => [
                         'title' => "ReservationList::list_title_{$institution}_{$listIdentifier}",
                         'description' => "ReservationList::list_description_{$institution}_{$listIdentifier}",
