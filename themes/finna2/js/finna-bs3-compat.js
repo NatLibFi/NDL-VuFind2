@@ -158,7 +158,7 @@ VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3Com
    * Initialize dropdown support
    */
   function initDropdownStyles() {
-    document.querySelectorAll('ul.dropdown-menu > li').forEach((el) => {
+    document.querySelectorAll('ul.dropdown-menu > li > a').forEach((el) => {
       el.classList.add('dropdown-item');
     });
     document.querySelectorAll('.dropdown-menu-right').forEach((el) => {
