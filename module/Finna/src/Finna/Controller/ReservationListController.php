@@ -141,7 +141,7 @@ class ReservationListController extends AbstractBase
             $view->source ?: DEFAULT_SEARCH_BACKEND,
             false
         );
-        $listProperties = ($this->reservationListHelper)($user)->getListProperties(
+        $listProperties = $this->reservationListService->getListProperties(
             $view->institution,
             $view->listIdentifier
         )['properties'];
@@ -208,7 +208,7 @@ class ReservationListController extends AbstractBase
                 'listIdentifier' => $this->getParam('listIdentifier'),
             ]
         );
-        $listProperties = ($this->reservationListHelper)($user)->getListProperties(
+        $listProperties = $this->reservationListService->getListProperties(
             $view->institution,
             $view->listIdentifier
         )['properties'];
@@ -295,7 +295,7 @@ class ReservationListController extends AbstractBase
         if ($list->getOrdered()) {
             throw new \VuFind\Exception\Forbidden('List already ordered');
         }
-        $listProperties = $this->reservationListHelper->getListProperties(
+        $listProperties = $this->reservationListService->getListProperties(
             $list->getInstitution(),
             $list->getListConfigIdentifier()
         )['properties'];
