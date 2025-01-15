@@ -92,20 +92,19 @@ class ReservationList extends \VuFind\AjaxHandler\AbstractBase implements Transl
             );
         }
         $result = [];
-        switch ($params->fromQuery('type')) {
-            case 'status':
-                $listProperties = $this->reservationListService->getListProperties(
-                    $list->getInstitution(),
-                    $list->getListConfigIdentifier()
-                );
-                $connectionType = $list->getConnection();
-                $handler = $this->connectionHandler->get($connectionType);
-                $handler->init($listProperties['properties']);
-                $response = $handler->getListStatus($list, $this->user);
-                $result['status'] = $this->translate($response);
-                break;
-            default:
-                break;
+        $type = $params->fromQuery('type');
+        if ('status' === $type) {
+            $listProperties = $this->reservationListService->getListProperties(
+                $list->getInstitution(),
+                $list->getListConfigIdentifier()
+            );
+            $connectionType = $list->getConnection();
+            $handler = $this->connectionHandler->get($connectionType);
+            $handler->init($listProperties['properties']);
+            $response = $handler->getListStatus($list, $this->user);
+            $result['status'] = $this->translate($response);
+        } else {
+            return $this->formatResponse('Bad request', self::STATUS_HTTP_BAD_REQUEST);
         }
         return $this->formatResponse($result);
     }
