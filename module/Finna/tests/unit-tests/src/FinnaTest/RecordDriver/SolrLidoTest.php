@@ -63,11 +63,18 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 'url' => 'https://gltfmalli.gltf',
                                 'format' => 'gltf',
                                 'type' => 'preview',
+                                'data' => [
+                                    'size' => [
+                                        'unit' => 'byte',
+                                        'value' => '60840000',
+                                    ],
+                                ],
                             ],
                             [
                                 'url' => 'https://glbmalli.glb',
                                 'format' => 'glb',
                                 'type' => 'preview',
+                                'data' => [],
                             ],
                         ],
                         'rights' => [

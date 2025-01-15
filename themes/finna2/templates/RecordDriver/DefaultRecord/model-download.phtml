@@ -22,10 +22,13 @@
                                         ],
                                     ]
                                 ) : $this->escapeHtmlAttr($model['url']);
+                            if ($fileSize = $model['data']['size'] ?? '') {
+                                $fileSize = !empty($fileSize['value']) && $fileSize['unit'] === 'byte' ? '(' . $this->fileSize(preg_replace('/[^0-9]/', '', $fileSize['value'])) . ')' : '';
+                            }
                         ?>
                         <a download href="<?=$url?>" rel="nofollow">
                             <?=$this->transEscWithPrefix('model_type_', $model['type'])?>
-                            <span><?=$this->transEscWithPrefix('model_format_', $model['format'])?></span>
+                            <span><?=$this->transEscWithPrefix('model_format_', $model['format'])?></span> <span class="file-size"><?=$fileSize?></span>
                         </a>
                     </li>
                 <?php endforeach; ?>
@@ -48,11 +51,14 @@
                             ],
                         ]
                     ) : $this->escapeHtmlAttr($model['url']);
+                    if ($fileSize = $model['data']['size'] ?? '') {
+                        $fileSize = !empty($fileSize['value']) && $fileSize['unit'] === 'byte' ? '(' . $this->fileSize(preg_replace('/[^0-9]/', '', $fileSize['value'])) . ')' : '';
+                    }
             ?>
             <a download href="<?=$url?>" rel="nofollow">
                 <?=$this->icon('download') ?>
                 <span><?=$this->transEsc('Download the file')?></span>
-            </a>
+            </a> <span class="file-size"><?=$fileSize?></span>
         </div>
     <?php endif; ?>
 </div>

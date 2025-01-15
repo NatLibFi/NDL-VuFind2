@@ -213,6 +213,9 @@ a.authority {
     font-weight: 600;
     text-transform: uppercase;
   }
+  .dropdown-menu li .file-size {
+    font-size: $font-size-small;
+  }
 }
 
 .image-link {
@@ -498,7 +501,7 @@ a.authority {
   }
 }
 
-.open-link, .save-record-link, .record-link {
+.open-link, .save-record-link, .record-link, .model-link .download-link {
   text-align: left;
   margin-top: 5px;
   color: $action-link-color;

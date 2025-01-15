@@ -639,7 +639,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
 
                 // Representation is a 3d model
                 if (in_array($type, $modelTypeKeys)) {
-                    if ($model = $this->getModel($url, $format, $type)) {
+                    if (
+                        $model = $this->getModel(
+                            $url,
+                            $format,
+                            $type,
+                            $representation->resourceMeasurementsSet
+                        )
+                    ) {
                         $modelUrls[] = $model;
                     }
                     continue;
@@ -829,9 +836,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      *   - type Model type preview_3d or provided_3d as key
      *          url to model as value
      *
-     * @param string $url    Model url
-     * @param string $format Model format
-     * @param string $type   Model type
+     * @param string            $url          Model url
+     * @param string            $format       Model format
+     * @param string            $type         Model type
+     * @param \SimpleXmlElement $measurements Measurements SimpleXmlElement
      *
      * @return array
      */
@@ -839,6 +847,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $url,
         string $format,
         string $type,
+        \SimpleXmlElement $measurements = null,
     ): array {
         $type = $this->modelTypes[$type];
         $format = strtolower($format);
@@ -849,6 +858,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             'url' => $url,
             'format' => $format,
             'type' => $type,
+            'data' => $this->formatResourceMeasurements(
+                $measurements
+            ),
         ];
     }
 
