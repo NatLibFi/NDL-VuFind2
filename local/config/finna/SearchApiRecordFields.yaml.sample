@@ -130,7 +130,7 @@ corporateAuthors:
   type: array
   items:
     type: string
-ctrlnum:
+controlNumbers:
   vufind.method: getCtrlNum
   description: Record control numbers
   type: array
