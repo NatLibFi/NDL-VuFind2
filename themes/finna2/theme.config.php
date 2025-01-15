@@ -268,6 +268,7 @@ return [
         'finna-a11y.js',
         'finna-datepicker.js',
         'finna-transaction-history.js',
+        'finna-reservation-list.js',
         'components/finna-bazaar-browse-bar.js',
         'components/finna-md-editable.js',
         'components/finna-tabs-nav.js',
