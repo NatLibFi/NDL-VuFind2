@@ -128,7 +128,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         protected RecordLoader $recordLoader,
         protected ?RecordCache $recordCache = null,
         protected ?Container $session = null,
-        protected ?array $reservationListConfig = []
+        protected array $reservationListConfig = []
     ) {
     }
 
