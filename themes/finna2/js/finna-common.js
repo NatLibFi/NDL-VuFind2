@@ -89,7 +89,7 @@ finna.common = (function finnaCommon() {
      * - hiddenSelectSelector targets the hidden select which is required to do a search after
      *   selecting new value from the dropdown
      * - ariaLabelTemplate updates the toggle buttons aria label after selecting new value
-     * - sessionSaveSelector Save the last clicked menu item into session storage to remain
+     * - sessionSaveSelector Save the last clicked menu item into session storage to retain
      *   focus after loading new results
      */
     const dropdownMappings = [
