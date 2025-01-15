@@ -11,6 +11,7 @@
   $lists = $this->lists ?? [];
   $email = $this->email ?? true;
   $export = $this->export ?? true;
+  $displayBulkCheckboxes = $canDelete || $cartEnabled || $lists || $email || $export;
 ?>
 <div class="bulk-action-buttons-row hidden-print">
   <?php
@@ -53,7 +54,7 @@
     <?php endif; ?>
   </div>
   <ul class="selection-controls-bar checkbox-container">
-    <?php if ($canDelete || $cartEnabled): ?>
+    <?php if ($displayBulkCheckboxes): ?>
       <?php if (in_array($checkboxSelectAllType, ['on_page', 'both'])): ?>
         <li class="bulk-checkbox">
           <input type="checkbox" name="selectAll" class="checkbox-select-all" id="myresearchCheckAll">
