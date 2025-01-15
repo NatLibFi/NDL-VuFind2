@@ -72,25 +72,6 @@
     > li {
       word-wrap: break-word;
     }
-    > li > a {
-      padding: 0 10px 10px;
-      background-color: transparent;
-      border: none;
-      border-bottom: 5px solid transparent;
-      margin:0;
-      i {
-        display: block;
-        min-height: 14px;
-      }
-    }
-    > li > a.active {
-      &,
-      &:hover,
-      &:focus {
-        border: none;
-        border-bottom: 5px solid $link-color;
-      }
-    }
   }
 }
 
