@@ -65,6 +65,20 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     public const FORM_ID = 'ReservationListRequest';
 
     /**
+     * Keys to look for in an array to be returned when searching for requested params.
+     *
+     * @var array
+     */
+    public const PLACE_ORDER_REQUEST_KEYS = [
+        'firstName' => '',
+        'lastName' => '',
+        'phone' => '',
+        'email' => '',
+        'pickup_date' => '',
+        'message' => '',
+    ];
+
+    /**
      * Order form configuration defined.
      *
      * @var array
@@ -79,6 +93,38 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     public function __construct(ContainerInterface $serviceLocator)
     {
         $this->serviceLocator = $serviceLocator;
+    }
+
+    /**
+     * Get values required for placing the order.
+     *
+     * @param FinnaResourceListEntityInterface $list          List being ordered
+     * @param UserEntityInterface              $user          User who owns the list
+     * @param array                            $requestValues Values obtained i.e from post request as array
+     *
+     * @return array
+     */
+    public function getValuesForPlaceOrderForm(
+        FinnaResourceListEntityInterface $list,
+        UserEntityInterface $user,
+        array $requestValues
+    ): array {
+        $result = [
+            'rl_list_id' => $list->getId(),
+            'rl_institution' => $list->getInstitution(),
+            'rl_list_identifier' => $list->getListConfigIdentifier(),
+            'record_ids_text' => '',
+            'record_source_and_ids' => [],
+        ];
+        $reservationListService = $this->getService(\Finna\ReservationList\ReservationListService::class);
+        foreach ($reservationListService->getResourcesForList($list, $user) as $resource) {
+            $result['record_ids_text'] .= $resource->getRecordId() . '||' . $resource->getTitle() . PHP_EOL;
+            $result['record_source_and_ids'][] = $resource->getSource() . '|' . $resource->getRecordId();
+        }
+        foreach (array_intersect_key($requestValues, self::PLACE_ORDER_REQUEST_KEYS) as $foundKey => $value) {
+            $result[$foundKey] = $requestValues[$foundKey];
+        }
+        return $result;
     }
 
     /**

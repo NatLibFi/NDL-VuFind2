@@ -96,7 +96,7 @@ class Disec extends AbstractBase
 
         $resources = [];
         $recordLoader = $this->getService(\VuFind\Record\Loader::class);
-        foreach ($recordLoader->loadBatch($formValues['resourceIDs']) as $record) {
+        foreach ($recordLoader->loadBatch($formValues['record_source_and_ids']) as $record) {
             if ($identifiers = $record->tryMethod('getIdentifier', [])) {
                 $resources[] = array_shift($identifiers);
             }

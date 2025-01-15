@@ -79,7 +79,7 @@ PlaceOrder:
       post: ReservationList::request_post_info_html
 
     fields:
-      - name: record_ids
+      - name: record_ids_text
         type: textarea
         label: ReservationList::Reservation Resources
         settings:

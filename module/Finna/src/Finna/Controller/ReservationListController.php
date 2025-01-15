@@ -303,23 +303,10 @@ class ReservationListController extends AbstractBase
             throw new \VuFind\Exception\Forbidden('ReservationList: No list properties found.');
         }
 
-        $postValues = $request->getPost()->toArray();
-        $listSpecificValues = [
-            'rl_list_id' => $listId,
-            'rl_institution' => $list->getInstitution(),
-            'rl_list_identifier' => $list->getListConfigIdentifier(),
-            'record_ids' => '',
-            'resourceIDs' => [],
-        ];
-        foreach ($this->reservationListService->getResourcesForList($list, $user) as $resource) {
-            $listSpecificValues['record_ids'] .= $resource->getRecordId() . '||' . $resource->getTitle() . PHP_EOL;
-            $listSpecificValues['resourceIDs'][] = $resource->getSource() . '|' . $resource->getRecordId();
-        }
-        $gatheredValues = array_merge($postValues, $listSpecificValues);
-
         $handler = $this->getService(\Finna\ReservationList\Handler\PluginManager::class)
             ->getWithConfig($listProperties);
-        $form = $handler->getPlaceOrderForm($gatheredValues);
+        $orderSpecificValues = $handler->getValuesForPlaceOrderForm($list, $user, $request->getPost()->toArray());
+        $form = $handler->getPlaceOrderForm($orderSpecificValues);
 
         $formId = ConnectionAbstractBase::FORM_ID;
         $view = $this->createViewModel(compact('form', 'formId', 'user'));
@@ -340,7 +327,7 @@ class ReservationListController extends AbstractBase
         if (!$form->isValid()) {
             return $view;
         }
-        $result = $handler->placeOrder($gatheredValues, $user);
+        $result = $handler->placeOrder($orderSpecificValues, $user);
         if ($result['success']) {
             $this->reservationListService->setListOrdered($user, $list, $result);
             $this->flashMessenger()->addSuccessMessage($form->getSubmitResponse());

@@ -69,6 +69,21 @@ interface HandlerInterface
     public function getListStatus(FinnaResourceListEntityInterface $list): string;
 
     /**
+     * Get values required for placing the order.
+     *
+     * @param FinnaResourceListEntityInterface $list          List being ordered
+     * @param UserEntityInterface              $user          User who owns the list
+     * @param array                            $requestValues Values obtained i.e from post request as array
+     *
+     * @return array
+     */
+    public function getValuesForPlaceOrderForm(
+        FinnaResourceListEntityInterface $list,
+        UserEntityInterface $user,
+        array $requestValues
+    ): array;
+
+    /**
      * Get form used for placing orders.
      *
      * @param array $prefill Prefill form with these values.
