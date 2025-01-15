@@ -646,7 +646,7 @@ form#renewals, form#update_holds, form#purge_history {
   border-collapse: separate;
   margin-top: 10px;
 
-  &:not(.fines-table) {
+  &:not(.fines-table):not(.library-cards) {
     border-top: none;
   }
   &.online-payment {
@@ -668,7 +668,6 @@ form#renewals, form#update_holds, form#purge_history {
   }
   .headers th {
     background: none;
-    border-top: 1px solid #d1d1d1;
     &:last-child {
       border-right: none;
     }

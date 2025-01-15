@@ -203,6 +203,10 @@ blockquote {
 table {
   caption-side: top;
   border-spacing: 0;
+
+  > tbody > * > * {
+    border-bottom: 0;
+  }
 }
 
 // textarea

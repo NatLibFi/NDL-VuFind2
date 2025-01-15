@@ -433,6 +433,8 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
 
 // Inverse of .table-striped
 .finna-table-striped {
+  --#{$prefix}table-bg: transparent;
+
   > tbody > tr:nth-of-type(even) {
     background-color: $table-bg-accent;
   }
