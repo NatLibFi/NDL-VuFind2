@@ -143,6 +143,10 @@ $input-border:                $input-border-color;
   }
 }
 
+// left => start
+.text-left {
+  @extend .text-start;
+}
 // right => end
 .text-right {
   @extend .text-end;
