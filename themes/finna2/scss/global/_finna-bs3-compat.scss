@@ -184,3 +184,17 @@ blockquote {
   padding: ($line-height-computed / 2) $line-height-computed;
   font-size: $blockquote-font-size;
 }
+
+// panels
+.panel {
+  margin-bottom: $line-height-computed;
+}
+.panel-group .panel {
+  margin-bottom: 0;
+}
+.panel-group .panel + .panel {
+  margin-top: 5px;
+}
+.panel-heading {
+  padding: $panel-heading-padding;
+}
