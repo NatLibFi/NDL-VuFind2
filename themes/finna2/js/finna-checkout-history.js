@@ -7,7 +7,7 @@ finna.checkoutHistory = (function checkoutHistory() {
 
   /**
    * Calculates the current page for the button limited by the last possible page to be downloaded.
-   * @param {HTMLButtonElement} element Button element to be clicked to download history
+   * @param {HTMLButtonElement} element Element containing toggleButton
    * @returns {void}
    */
   function setNextPage(element) {
@@ -18,7 +18,7 @@ finna.checkoutHistory = (function checkoutHistory() {
   
   /**
    * Sets the buttons text content to match for the next page to be downloaded if clicked.
-   * @param {HTMLButtonElement} element Button element to be clicked to download history
+   * @param {HTMLButtonElement} element Element containing toggleButton
    * @returns {void}
    */
   function syncButtonText(element) {
@@ -27,7 +27,6 @@ finna.checkoutHistory = (function checkoutHistory() {
     toggleButton.textContent = `${textContent.replace('%%part%%', element.dataset.currentPart).replace('%%lastPart%%', element.dataset.lastPart)} `;
     toggleButton.append(VuFind.icon('show-more', {}, true));
   }
-
 
   /**
    * Display a spinner inside toggle button
@@ -79,7 +78,7 @@ finna.checkoutHistory = (function checkoutHistory() {
 
   /**
    * Initializes an element containing format buttons to allow for loading checkout history in batches.
-   * @param {HTMLButtonElement} element Button element to be clicked to download history
+   * @param {HTMLButtonElement} element Element to be initialized
    * @returns {void}
    */
   function init(element) {
