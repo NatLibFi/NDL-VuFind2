@@ -781,7 +781,7 @@ trait SolrFinnaTrait
      *
      * @return array
      */
-    public function getCtrlNum(): array
+    public function getControlNumbers(): array
     {
         return $this->fields['ctrlnum'] ?? [];
     }
