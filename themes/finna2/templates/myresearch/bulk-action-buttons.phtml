@@ -10,7 +10,7 @@
   $cartEnabled = $this->cartEnabled ?? $this->cart()->isActive();
   $lists = $this->lists ?? [];
   $email = $this->email ?? true;
-  $export = $this->export ?? true;
+  $export = $this->export ?? (count($this->export()->getActiveFormats('bulk')) > 0);
   $displayBulkCheckboxes = $canDelete || $cartEnabled || $lists || $email || $export;
 ?>
 <div class="bulk-action-buttons-row hidden-print">
@@ -25,8 +25,7 @@
       <?php if ($email): ?>
         <button id="button_email" class="btn btn-primary" type="submit" name="email" value="<?=$this->transEscAttr('Email')?>" title="<?=$this->transEscAttr('bulk_email')?>" disabled<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>><?=$this->transEsc('Email')?></button>
       <?php endif; ?>
-      <?php $exportOptions = $this->export()->getActiveFormats('bulk');
-      if ($export && count($exportOptions) > 0): ?>
+      <?php if ($export): ?>
         <button class="btn btn-primary" type="submit" name="export" value="<?=$this->transEscAttr('Export')?>" title="<?=$this->transEscAttr('bulk_export')?>" disabled<?php if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>><?=$this->transEsc('Export')?></button>
       <?php endif; ?>
       <?php if ($canDelete): ?>
