@@ -39,7 +39,8 @@
       }
     }
     & .nav-pills.mobile-sharing .whatsapp a, .share-buttons-toolbox a, .nav-pills.mobile-sharing .mail-record a {
-      display: inline-block;
+      display: inline-flex;
+      justify-content: center;
       padding: 8px;
       margin: 0px;
       &:hover {
@@ -50,6 +51,7 @@
       color: $btn-primary-color;
       background: $btn-primary-bg;
       border-radius: 0;
+      align-items: initial;
     }
     .dropdown-menu {
       position: absolute;

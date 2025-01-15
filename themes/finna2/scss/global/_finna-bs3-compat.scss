@@ -219,3 +219,11 @@ textarea {
     height: auto;
   }
 }
+
+// dropup
+.dropup .dropdown-toggle::after {
+  content: "";
+  width: 0.3em;
+  height: 0.3em;
+  display: none;
+}
