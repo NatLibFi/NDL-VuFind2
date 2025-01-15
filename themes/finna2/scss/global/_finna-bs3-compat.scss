@@ -198,3 +198,8 @@ blockquote {
 .panel-heading {
   padding: $panel-heading-padding;
 }
+
+// tables
+table {
+  caption-side: top;
+}
