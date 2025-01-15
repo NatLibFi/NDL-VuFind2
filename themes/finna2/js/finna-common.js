@@ -81,55 +81,68 @@ finna.common = (function finnaCommon() {
     VuFind.listen('results-loaded', () => {
       initResultScripts(document.querySelector('.js-result-list'), false);
     });
-    const dropdownMappings = {
-      sort: {
-        selector: '.search-controls form.search-sort select',
-        label: 'Sort',
-        sessionSelector: 'sort-dropdown a.dropdown-toggle',
+    /**
+     * Set up Finna's dropdown-based sort and limit controls:
+     * Objects contain following data:
+     * - dropdownWrapperSelector targets root element for the dropdowns
+     * - type declares the dropdowns type
+     * - hiddenSelectSelector targets the hidden select which is required to do a search after
+     *   selecting new value from the dropdown
+     * - ariaLabelTemplate updates the toggle buttons aria label after selecting new value
+     * - sessionSaveSelector 
+     */
+    const dropdownMappings = [
+      {
+        dropdownWrapperSelector: '.search-controls .sort-option-container .dropdown',
+        type: 'sort',
+        hiddenSelectSelector: '.search-controls form.search-sort select',
+        ariaLabelTemplate: `${VuFind.translate('Sort')}: %%linkText%% ${VuFind.translate('selected')}`,
+        sessionSaveSelector: 'sort-dropdown a.dropdown-toggle',
       },
-      limit: {
-        selector: '.search-controls form.search-result-limit select',
-        label: 'Results per page',
-        sessionSelector: 'limit-dropdown a.dropdown-toggle',
+      {
+        dropdownWrapperSelector: '.search-controls .limit-option-container .dropdown',
+        type: 'limit',
+        hiddenSelectSelector: '.search-controls form.search-result-limit select',
+        ariaLabelTemplate: `${VuFind.translate('Results per page')}: %%linkText%% ${VuFind.translate('selected')}`,
+        sessionSaveSelector: 'limit-dropdown a.dropdown-toggle',
       }
-    };
-    // Set up Finna's dropdown-based sort and limit controls:
-    document.querySelectorAll('.search-controls .sort-option-container .dropdown, .search-controls .limit-option-container .dropdown').forEach(dropdown => {
-      const dropdownMenu = dropdown.querySelector('.dropdown-menu');
-      if (!dropdownMenu) {
-        return;
-      }
-      const toggleDropdown = dropdown.querySelector('.dropdown-toggle');
-      const toggleSpan = toggleDropdown ? toggleDropdown.querySelector(':scope > span') : undefined;
-      const dropdownType = dropdown.closest('.sort-option-container') ? 'sort' : 'limit';
-      const currentDropdownMapping = dropdownMappings[dropdownType];
-      const ariaLabelTemplate = `${VuFind.translate(currentDropdownMapping.label)}: %%linkText%% ${VuFind.translate('selected')}`;
-      const hiddenSelectElement = document.querySelector(currentDropdownMapping.selector);
-      dropdownMenu.querySelectorAll('a').forEach((link) => {
-        if (link.dataset.ajaxPagination) {
+    ];
+    dropdownMappings.forEach(mapping => {
+      document.querySelectorAll(mapping.dropdownWrapperSelector).forEach(dropdown => {
+        const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+        if (!dropdownMenu) {
           return;
         }
-        link.dataset.ajaxPagination = true;
-        link.addEventListener('click', function handleClick(event) {
-          event.preventDefault();
-          window.sessionStorage.setItem('clickedMenu', currentDropdownMapping.sessionSelector);
-          // Update button text:
-          if (toggleDropdown) {
-            toggleDropdown.ariaLabel = ariaLabelTemplate.slice(1).replace('%%linkText%%', VuFind.translate(link.innerText));
+        const toggleDropdown = dropdown.querySelector('.dropdown-toggle');
+        const toggleSpan = toggleDropdown ? toggleDropdown.querySelector(':scope > span') : undefined;
+        const hiddenSelectElement = document.querySelector(mapping.hiddenSelectSelector);
+        dropdownMenu.querySelectorAll('a').forEach((link) => {
+          if (link.dataset.ajaxPagination) {
+            return;
           }
-          if (toggleSpan) {
-            toggleSpan.innerText = link.innerText;
-          }
-          dropdownMenu.querySelectorAll('li > a').forEach(el => el.removeAttribute('aria-description'));
-          link.setAttribute('aria-description', 'selected');
-          // Get relevant data from the link and change the hidden field accordingly:
-          const urlParts = link.getAttribute('href').split('?', 2);
-          const query = new URLSearchParams(urlParts.length > 1 ? urlParts[1] : '');
-          const newValue = query.get(dropdownType);
-          if (hiddenSelectElement) {
-            hiddenSelectElement.value = newValue;
-            hiddenSelectElement.dispatchEvent(new Event('change'));
-          }
+          link.dataset.ajaxPagination = true;
+          link.addEventListener('click', function handleClick(event) {
+            event.preventDefault();
+            window.sessionStorage.setItem('clickedMenu', mapping.sessionSaveSelector);
+            // Update button text:
+            if (toggleDropdown) {
+              toggleDropdown.ariaLabel
+                = mapping.ariaLabelTemplate.slice(0).replace('%%linkText%%', VuFind.translate(link.innerText));
+            }
+            if (toggleSpan) {
+              toggleSpan.innerText = link.innerText;
+            }
+            dropdownMenu.querySelectorAll('li > a').forEach(el => el.removeAttribute('aria-description'));
+            link.setAttribute('aria-description', 'selected');
+            // Get relevant data from the link and change the hidden field accordingly:
+            const urlParts = link.getAttribute('href').split('?', 2);
+            const query = new URLSearchParams(urlParts.length > 1 ? urlParts[1] : '');
+            const newValue = query.get(mapping.type);
+            if (hiddenSelectElement) {
+              hiddenSelectElement.value = newValue;
+              hiddenSelectElement.dispatchEvent(new Event('change'));
+            }
+          });
         });
       });
     });
