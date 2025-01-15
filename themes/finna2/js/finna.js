@@ -44,7 +44,6 @@ var finna = (function finnaModule() {
         'mdEditable',
         'a11y',
         'finnaDatepicker',
-        'transactionHistory',
         'reservationList',
       ];
 

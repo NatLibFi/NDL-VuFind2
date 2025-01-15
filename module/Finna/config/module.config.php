@@ -495,8 +495,10 @@ $config = [
                         'Finna\AjaxHandler\GetUserListFactory',
                     'Finna\AjaxHandler\GetUserLists' =>
                         'Finna\AjaxHandler\GetUserListsFactory',
-                    'Finna\AjaxHandler\GetTransactionHistory' =>
-                        'Finna\AjaxHandler\AbstractIlsAndUserActionFactory',
+                    'Finna\AjaxHandler\GetCheckoutHistory' =>
+                        'Finna\AjaxHandler\GetCheckoutHistoryFactory',
+                    'Finna\AjaxHandler\GetCheckoutHistoryFile' =>
+                        'Finna\AjaxHandler\GetCheckoutHistoryFactory',
                     'Finna\AjaxHandler\ReservationList' =>
                         'Finna\AjaxHandler\ReservationListFactory',
                     'Finna\AjaxHandler\ImportFavorites' =>
@@ -519,6 +521,8 @@ $config = [
                     'getAccountNotifications' => 'Finna\AjaxHandler\GetAccountNotifications',
                     'getAuthorityInfo' => 'Finna\AjaxHandler\GetAuthorityInfo',
                     'getAuthorityFullInfo' => 'Finna\AjaxHandler\GetAuthorityFullInfo',
+                    'getCheckoutHistory' => 'Finna\AjaxHandler\GetCheckoutHistory',
+                    'getCheckoutHistoryFile' => 'Finna\AjaxHandler\GetCheckoutHistoryFile',
                     'getContentFeed' => 'Finna\AjaxHandler\GetContentFeed',
                     'getDescription' => 'Finna\AjaxHandler\GetDescription',
                     'getModel' => 'Finna\AjaxHandler\GetModel',
@@ -536,7 +540,6 @@ $config = [
                     'getRecordData' => 'Finna\AjaxHandler\GetRecordData',
                     'getRecordDriverRelatedRecords' => 'Finna\AjaxHandler\GetRecordDriverRelatedRecords',
                     'getRecordInfoByAuthority' => 'Finna\AjaxHandler\GetRecordInfoByAuthority',
-                    'getTransactionHistory' => 'Finna\AjaxHandler\GetTransactionHistory',
                     'getSearchTabsRecommendations' => 'Finna\AjaxHandler\GetSearchTabsRecommendations',
                     'getSimilarRecords' => 'Finna\AjaxHandler\GetSimilarRecords',
                     'getUserList' => 'Finna\AjaxHandler\GetUserList',

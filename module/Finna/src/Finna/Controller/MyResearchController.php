@@ -1313,7 +1313,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
      * Download historic loans
      *
      * @return     mixed
-     * @deprecated Use AjaxHandler/GetTransactionHistory
+     * @deprecated Use AjaxHandler/GetCheckoutHistory
      */
     public function downloadLoanHistoryAction()
     {

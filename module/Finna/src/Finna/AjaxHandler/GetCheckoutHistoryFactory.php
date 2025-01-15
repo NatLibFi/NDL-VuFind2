@@ -1,11 +1,10 @@
 <?php
 
 /**
- * Factory for AbstractIlsAndUserAction AJAX handlers.
+ * Factory for GetCheckoutHistory Ajax handler
  *
  * PHP version 8
  *
- * Copyright (C) Villanova University 2018.
  * Copyright (C) The National Library of Finland 2024.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +22,6 @@
  *
  * @category VuFind
  * @package  AJAX
- * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
@@ -35,18 +33,18 @@ use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\AjaxHandler\AbstractIlsAndUserActionFactory;
 
 /**
- * Factory for AbstractIlsAndUserAction AJAX handlers.
+ * Factory for GetCheckoutHistory Ajax handler
  *
  * @category VuFind
  * @package  AJAX
- * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class AbstractIlsAndUserActionFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
+class GetCheckoutHistoryFactory extends AbstractIlsAndUserActionFactory
 {
     /**
      * Create an object
@@ -70,15 +68,11 @@ class AbstractIlsAndUserActionFactory implements \Laminas\ServiceManager\Factory
         array $options = null
     ) {
         $config = $container->get(\VuFind\Config\PluginManager::class)->get('config');
-        return new $requestedName(
-            $container->get(\VuFind\Session\Settings::class),
-            $container->get(\VuFind\ILS\Connection::class),
-            $container->get(\VuFind\Auth\ILSAuthenticator::class),
-            $container->get(\VuFind\Auth\Manager::class)->getUserObject(),
+        $options = [
             $container->get(\VuFind\Record\Loader::class),
             $config->Catalog->loan_history_download_batch_limit ?? 1000,
             $config->Catalog->historic_loan_page_size ?? 50,
-            ...($options ?: [])
-        );
+        ];
+        return parent::__invoke($container, $requestedName, $options);
     }
 }

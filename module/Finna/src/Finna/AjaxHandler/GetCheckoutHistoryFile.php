@@ -1,11 +1,11 @@
 <?php
 
 /**
- * GetFeed AJAX handler
+ * GetCheckoutHistoryFile AJAX handler
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2023.
+ * Copyright (C) The National Library of Finland 2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,15 +22,14 @@
  *
  * @category VuFind
  * @package  AJAX
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
- * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\AjaxHandler;
 
+use Exception;
 use Laminas\Mvc\Controller\Plugin\Params;
 use PhpOffice\PhpSpreadsheet\Cell\AdvancedValueBinder;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
@@ -38,25 +37,24 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Ods;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use VuFind\Auth\ILSAuthenticator;
-use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\ILS\Connection;
 use VuFind\ILS\PaginationHelper;
-use VuFind\Session\Settings as SessionSettings;
 
 /**
- * GetFeed AJAX handler
+ * GetCheckoutHistoryFile AJAX handler
  *
  * @category VuFind
  * @package  AJAX
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
- * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class GetTransactionHistory extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
+class GetCheckoutHistoryFile extends GetCheckoutHistory
 {
+    /**
+     * Options for the file format to be requested.
+     *
+     * @var array
+     */
     protected $exportFormats = [
         'xlsx' => [
             'mediaType' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -73,27 +71,11 @@ class GetTransactionHistory extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
     ];
 
     /**
-     * Constructor
+     * Helper boolean for checking if this returns stream as a response
      *
-     * @param SessionSettings       $ss               Session settings
-     * @param Connection            $ils              ILS connection
-     * @param ILSAuthenticator      $ilsAuthenticator ILS authenticator
-     * @param ?UserEntityInterface  $user             Logged in user (or null)
-     * @param \VuFind\Record\Loader $recordLoader     Record loader
-     * @param int                   $batchLimit       Config specified default batch limit
-     * @param int                   $defaultPageSize  Default page size set in config.ini
+     * @var bool
      */
-    public function __construct(
-        SessionSettings $ss,
-        Connection $ils,
-        ILSAuthenticator $ilsAuthenticator,
-        ?UserEntityInterface $user,
-        protected \VuFind\Record\Loader $recordLoader,
-        protected int $batchLimit = 1000,
-        protected int $defaultPageSize = 50
-    ) {
-        parent::__construct($ss, $ils, $ilsAuthenticator, $user);
-    }
+    public bool $supportsStream = true;
 
     /**
      * Handle a request.
@@ -105,74 +87,34 @@ class GetTransactionHistory extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
     public function handleRequest(Params $params)
     {
         $this->disableSessionWrites();  // avoid session write timing bug
-
-        $patron = $this->ilsAuthenticator->storedCatalogLogin();
-        if (!$patron || !$this->user) {
-            return $this->formatResponse(
-                $this->translate('You must be logged in first'),
-                self::STATUS_HTTP_NEED_AUTH
-            );
+        $result = $this->getCheckoutHistoryResult();
+        if ($result['success'] === false) {
+            return $this->formatResponse($result['message'], $result['status']);
         }
-
-        $requestType = $params->fromQuery('type', 'status');
-        // Check function config
-        $functionConfig = $this->ils->checkFunction(
-            'getMyTransactionHistory',
-            $patron
-        );
-        if (false === $functionConfig) {
-            return $this->formatResponse(
-                $this->translate('ils_action_unavailable'),
-                self::STATUS_HTTP_UNAVAILABLE
+        try {
+            $paginationHelper = new PaginationHelper();
+            $paginator = $paginationHelper->getPaginator(
+                $result['pageOptions'],
+                $result['function_result']['count'],
+                $result['function_result']['transactions']
             );
-        }
-        $paginationHelper = new PaginationHelper();
-        $pageOptions = $paginationHelper->getOptions(
-            1,
-            null,
-            $this->defaultPageSize,
-            $functionConfig
-        );
-
-        // Get checked out item details:
-        $result = $this->ils->getMyTransactionHistory($patron, $pageOptions['ilsParams']);
-        if (!($result['success'] ?? true)) {
+            // Get requested history part as a file to be downloaded
+            $part = $params->fromQuery('part', 1);
+            $fileFormat = $params->fromQuery('format', 'csv');
+            $pageLimit = $paginator ? $paginator->getItemCountPerPage() : $this->defaultPageSize;
+            $pagesCount = $paginator ? $paginator->count() : 1;
+            return $this->getHistoryAsFile($part, $pageLimit, $pagesCount, $fileFormat);
+        } catch (Exception $e) {
             return $this->formatResponse(
                 $this->translate('An error has occurred'),
                 self::STATUS_HTTP_ERROR
             );
         }
-        if ('status' === $requestType) {
-            // Get amount of items in a single page
-            return $this->formatResponse(
-                [
-                    'parts' => ceil(($result['count'] ?? 1) / 1000),
-                ]
-            );
-        }
-        if ('file' === $requestType) {
-            $paginator = $paginationHelper->getPaginator(
-                $pageOptions,
-                $result['count'],
-                $result['transactions']
-            );
-            // Get requested history part as a file to be downloaded
-            $part = $params->fromQuery('part', 1);
-            $fileFormat = $params->fromQuery('format', 'csv');
-            $pageLimit = $paginator ? $paginator->getItemCountPerPage() : 50;
-            $pagesCount = $paginator ? $paginator->count() : 1;
-            return $this->getHistoryAsFile($patron, $part, $pageLimit, $pagesCount, $fileFormat);
-        }
-        return $this->formatResponse(
-            $this->translate('An error has occurred'),
-            self::STATUS_HTTP_ERROR
-        );
     }
 
     /**
      * Create a file for transaction history
      *
-     * @param array  $patron     Currently logged in users patron
      * @param int    $part       Part of the transaction history to download
      * @param int    $limit      Limit for how many transactions one fetch from ils fetches
      * @param int    $pagesCount Total amount of pages the user has in history
@@ -181,7 +123,6 @@ class GetTransactionHistory extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
      * @return array [fileName => name of the file, mediaType => media type, filePointer => pointer for the resource]
      */
     private function getHistoryAsFile(
-        array $patron,
         int $part = 1,
         int $limit = 50,
         int $pagesCount = 1,
@@ -196,16 +137,21 @@ class GetTransactionHistory extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
             $firstPageToFetch += ($pagesToFetch * ($part - 1));
             $lastPageToFetch += min(($pagesToFetch * $part) - 1, $pagesCount);
         }
-        $tmp = fopen('php://temp/maxmemory:' . (5 * 1024 * 1024), 'r+');
+        $tmpPath = 'php://temp/maxmemory:' . (5 * 1024 * 1024);
+        $tmp = fopen($tmpPath, 'r+');
 
         $transactions = [];
         for ($i = $firstPageToFetch; $i <= $lastPageToFetch; $i++) {
-            $result = $this->ils->getMyTransactionHistory($patron, ['page' => $i, 'limit' => $limit]);
+            $result = $this->getCheckoutHistoryResult($i, $limit);
+            if ($result['success'] === false) {
+                fclose($tmp);
+                return $this->formatResponse($result['message'], $result['status']);
+            }
             // Break if no transactions found
-            if (empty($result['transactions'])) {
+            if (empty($result['function_result']['transactions'])) {
                 break;
             }
-            $transactions = [...$transactions, ...$result['transactions']];
+            $transactions = [...$transactions, ...$result['function_result']['transactions']];
         }
         $ids = [];
         foreach ($transactions as $current) {
@@ -214,7 +160,6 @@ class GetTransactionHistory extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
             $ids[] = compact('id', 'source');
         }
         $records = $this->recordLoader->loadBatch($ids, true);
-
         $header = [
             $this->translate('Title'),
             $this->translate('Format'),
@@ -226,7 +171,6 @@ class GetTransactionHistory extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
             $this->translate('Return Date'),
             $this->translate('Due Date'),
         ];
-
         $spreadsheet = new Spreadsheet();
         $worksheet = $spreadsheet->getActiveSheet();
         $worksheet->fromArray($header);

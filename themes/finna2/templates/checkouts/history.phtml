@@ -212,4 +212,14 @@
       <?php endif; ?>
   </div>
 </div>
+<?php
+// Initialize checkout history download element
+$js = <<<JS
+      document.addEventListener('DOMContentLoaded', () => {
+        finna.checkoutHistory.init(document.querySelector('div.js-download-loan-history'));
+      });
+    JS;
+
+echo $this->inlineScript()->appendScript($js);
+?>
 <!-- END of: finna - myresearch/historicloans.phtml -->

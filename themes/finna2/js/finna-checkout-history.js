@@ -1,7 +1,5 @@
 /*global finna, VuFind */
-finna.transactionHistory = (function transactionHistory() {
-
-  const historyButtonSelector = 'div.js-download-loan-history';
+finna.checkoutHistory = (function checkoutHistory() {
 
   const toggleButtonSelector = 'button.js-history-toggle';
 
@@ -15,12 +13,8 @@ finna.transactionHistory = (function transactionHistory() {
   function setNextPage(element) {
     let currentPart = +element.dataset.currentPart;
     let lastPart = +element.dataset.lastPart;
-    if (currentPart < lastPart) {
-      currentPart++;
-    }
-    element.dataset.currentPart = currentPart;
+    element.dataset.currentPart = Math.min(++currentPart, lastPart);
   }
-  
   
   /**
    * Sets the buttons text content to match for the next page to be downloaded if clicked.
@@ -34,48 +28,62 @@ finna.transactionHistory = (function transactionHistory() {
     toggleButton.append(VuFind.icon('show-more', {}, true));
   }
 
-  /**
-   * Request part of a transaction history to download
-   * @param {HTMLElement} element Parent element for transaction history downloading
-   * @param {string} formatButton Clicked button containing format specific data
-   */
-  function getTransactionHistoryPart(element, formatButton)
-  {
-    const part = element.dataset.currentPart;
-    const format = formatButton.dataset.format;
-    const searchParams = new URLSearchParams({method: "getTransactionHistory", part, format, type: "file"});
-    let filename;
-    fetch (`${VuFind.path}/AJAX/FILE?${searchParams}`).then(response => {
-      if (!response.ok) {
-        throw new Error('');
-      }
-      const header = response.headers.get('Content-Disposition');
-      const parts = header.split(';');
-      filename = parts[1].split('=')[1].replaceAll("\"", "");
 
-      return response.blob();
-    }).then((blob) => {
-      var url = window.URL.createObjectURL(blob);
-      var a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
-      a.click();
-      a.remove();
-      setNextPage(element);
-      syncButtonText(element);
-    }).catch((reason) => {
-      console.warn(reason);
-    });
+  /**
+   * Display a spinner inside toggle button
+   * @param {HTMLElement} element Element containing toggleButton
+   */
+  function displaySpinner(element)
+  {
+    const toggleButton = element.querySelector(toggleButtonSelector);
+    const spinnerElement = VuFind.icon('spinner', {}, true);
+    toggleButton.replaceChildren(spinnerElement, ` ${VuFind.translate('loading_ellipsis')}`);
   }
 
   /**
-   * Initializes a button to allow for loading loan history in chunks.
+   * Request part of a checkout history to download
+   * @param {HTMLElement} element Parent element for checkout history downloading
+   * @param {string} formatButton Clicked button containing format specific data
+   */
+  function getCheckoutHistoryPart(element, formatButton)
+  {
+    displaySpinner(element);
+    const part = element.dataset.currentPart;
+    const format = formatButton.dataset.format;
+    const searchParams = new URLSearchParams({method: "getCheckoutHistoryFile", part, format});
+    let filename;
+    fetch (`${VuFind.path}/AJAX/FILE?${searchParams}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('');
+        }
+        const header = response.headers.get('Content-Disposition');
+        const parts = header.split(';');
+        filename = parts[1].split('=')[1].replaceAll("\"", "");
+        return response.blob();
+      }).then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+        a.click();
+        a.remove();
+        setNextPage(element);
+        syncButtonText(element);
+      }).catch((reason) => {
+        console.warn(reason);
+        syncButtonText(element);
+      });
+  }
+
+  /**
+   * Initializes an element containing format buttons to allow for loading checkout history in batches.
    * @param {HTMLButtonElement} element Button element to be clicked to download history
    * @returns {void}
    */
-  function initButton(element) {
-    fetch (`${VuFind.path}/AJAX/JSON?method=getTransactionHistory&type=status`)
+  function init(element) {
+    fetch (`${VuFind.path}/AJAX/JSON?method=getCheckoutHistory&type=status`)
       .then(response => {
         if (!response.ok) {
           throw new Error('');
@@ -94,7 +102,7 @@ finna.transactionHistory = (function transactionHistory() {
           formatButtons.forEach(formatButton => {
             formatButton.addEventListener('click', (e) => {
               e.preventDefault();
-              getTransactionHistoryPart(element, formatButton);
+              getCheckoutHistoryPart(element, formatButton);
             });
           });
         }
@@ -104,12 +112,6 @@ finna.transactionHistory = (function transactionHistory() {
       });
   }
 
-  /**
-   * Initialize buttons to handle downloading transaction history
-   */
-  function init() {
-    document.querySelectorAll(historyButtonSelector).forEach(el => { initButton(el); });
-  }
   return {
     init: init
   };

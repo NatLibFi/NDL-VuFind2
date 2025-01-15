@@ -56,29 +56,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
     }
 
     /**
-     * Format the content of the AJAX response based on the response type.
-     *
-     * @param string $type     Content-type of output
-     * @param mixed  $data     The response data
-     * @param int    $httpCode A custom HTTP Status Code
-     *
-     * @return string
-     * @throws \Exception
-     */
-    protected function formatContent($type, $data, $httpCode)
-    {
-        if ($type !== 'file_type_content') {
-            return parent::formatContent($type, $data, $httpCode);
-        }
-        if ($httpCode === 200) {
-            return $this->getFileResponse($data);
-        } else {
-            return parent::formatContent('text/plain', $data, $httpCode);
-        }
-    }
-
-    /**
-     * Get a file download
+     * Handle a file download with AJAX call
      *
      * @return \Laminas\Http\Response
      */
@@ -88,7 +66,30 @@ class AjaxController extends \VuFind\Controller\AjaxController
         if (!$method) {
             return $this->getAjaxResponse('text/plain', ['error' => 'Parameter "method" missing'], 400);
         }
-        return $this->callAjaxMethod($method, 'file_type_content');
+        // Check the AJAX handler plugin manager for the method.
+        if (!$this->ajaxManager) {
+            throw new \Exception('AJAX Handler Plugin Manager missing.');
+        }
+        if ($this->ajaxManager->has($method)) {
+            try {
+                $handler = $this->ajaxManager->get($method);
+                if ($handler->supportsStream ?? false) {
+                    [$data, $status] = $handler->handleRequest($this->params());
+                    if ($status === 200) {
+                        return $this->getFileResponse($data);
+                    }
+                }
+            } catch (\Exception $e) {
+                return $this->getExceptionResponse('text/plain', $e);
+            }
+        }
+
+        // If we got this far, we can't handle the requested method:
+        return $this->getAjaxResponse(
+            'text/plain',
+            $this->translate('Invalid Method'),
+            \VuFind\AjaxHandler\AjaxHandlerInterface::STATUS_HTTP_BAD_REQUEST
+        );
     }
 
     /**
@@ -105,6 +106,8 @@ class AjaxController extends \VuFind\Controller\AjaxController
         $headers = $response->getHeaders();
         $headers->addHeaderLine('Content-type', $data['mediaType']);
         $headers->addHeaderLine('Content-Disposition', 'attachment; filename="' . $data['fileName'] . '"');
-        return stream_get_contents($data['filePointer']);
+        $headers->addHeaderLine('Cache-Control', 'no-cache, must-revalidate');
+        $headers->addHeaderLine('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
+        return $response->setContent(stream_get_contents($data['filePointer']));
     }
 }
