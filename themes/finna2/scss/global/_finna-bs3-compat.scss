@@ -203,3 +203,14 @@ blockquote {
 table {
   caption-side: top;
 }
+
+// textarea
+textarea {
+  resize: both;
+  height: auto;
+
+  // Make sure to override the rule in bs3-compat:
+  &.form-control:not([multiple]):not([size]) {
+    height: auto;
+  }
+}
