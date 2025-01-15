@@ -117,7 +117,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      * @param ?RecordCache                              $recordCache                 Record cache (optional)
      * @param ?Container                                $session                     Session container for remembering
      *                                                                               state (optional)
-     * @param ?array                                    $reservationListConfig       ReservationList.yaml as array
+     * @param array                                     $reservationListConfig       Reservation list configuration
      */
     public function __construct(
         protected FinnaResourceListServiceInterface $resourceListService,
