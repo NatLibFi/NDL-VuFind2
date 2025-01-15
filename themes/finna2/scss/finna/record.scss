@@ -212,13 +212,13 @@ a.authority {
     font-size: 1em;
     font-weight: 600;
     text-transform: uppercase;
-  }
-  .dropdown-menu li .file-size {
-    font-size: $font-size-small;
+    .file-size {
+      color: $gray-mid-light;
+    }
   }
 }
 
-.image-link {
+.image-link, .model-link {
   display: flex;
   align-items: center;
   font-size: 1em;
@@ -233,7 +233,7 @@ a.authority {
   .dropdown {
     position: initial;
   }
-  .image-dimensions, .image-size {
+  .image-dimensions, .image-size, .dropdown-menu .file-size {
     font-size: 0.8em;
     text-transform: initial;
   }
@@ -518,9 +518,6 @@ a.authority {
   .image-dimensions {
     color: $gray-mid-light;
     font-size: .8em;
-  }
-  > span.file-size {
-    color: $gray-mid-light;
   }
 }
 
