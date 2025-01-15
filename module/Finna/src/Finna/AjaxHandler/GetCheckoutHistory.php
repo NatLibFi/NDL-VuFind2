@@ -47,8 +47,18 @@ use VuFind\Session\Settings as SessionSettings;
  */
 class GetCheckoutHistory extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
 {
+    /**
+     * Cache for patron
+     *
+     * @var array
+     */
     protected array $cachedPatron = [];
 
+    /**
+     * Cache for function config.
+     *
+     * @var array
+     */
     protected array $cachedFunctionConfig = [];
 
     /**
