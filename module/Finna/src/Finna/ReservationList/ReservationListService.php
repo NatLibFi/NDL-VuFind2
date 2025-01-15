@@ -559,7 +559,8 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
             if ($list['Identifier'] === $listIdentifier) {
                 return [
                     'properties' => $list,
-                    'institution_information' => $this->reservationListConfig['Institutions'][$institution]['Information'] ?? [],
+                    'institution_information'
+                        => $this->reservationListConfig['Institutions'][$institution]['Information'] ?? [],
                     'translation_keys' => [
                         'title' => "ReservationList::list_title_{$institution}_{$listIdentifier}",
                         'description' => "ReservationList::list_description_{$institution}_{$listIdentifier}",
