@@ -646,7 +646,7 @@ form#renewals, form#update_holds, form#purge_history {
   border-collapse: separate;
   margin-top: 10px;
 
-  &:not(.fines-table):not(.library-cards) {
+  &:not(.fines-table):not(.library-cards):not(.ssearch-history-table) {
     border-top: none;
   }
   &.online-payment {
