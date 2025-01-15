@@ -83,7 +83,7 @@ finna.checkoutHistory = (function checkoutHistory() {
    * @returns {void}
    */
   function init(element) {
-    fetch (`${VuFind.path}/AJAX/JSON?method=getCheckoutHistory&type=status`)
+    fetch (`${VuFind.path}/AJAX/JSON?method=getCheckoutHistory`)
       .then(response => {
         if (!response.ok) {
           throw new Error('');
