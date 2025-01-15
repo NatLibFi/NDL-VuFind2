@@ -178,7 +178,7 @@ finna.layout = (function finnaLayout() {
    * Check and keep focus within the search facet list
    * @param {object} e Event object
    */
-  function onFocusOut(e) {
+  function onFocusOutOfFacetContainer(e) {
     const container = document.querySelector('.side-facets-container-ajax');
     if (!container.contains(e.relatedTarget)) {
       container.focus();
@@ -211,13 +211,13 @@ finna.layout = (function finnaLayout() {
         e.preventDefault();
         onSidebarBtnClick();
         if (document.querySelector('.sidebar').classList.contains('open')) {
-          container.addEventListener('focusout', onFocusOut);
+          container.addEventListener('focusout', onFocusOutOfFacetContainer);
           document.activeElement.blur();
           container.querySelector('h1').focus();
         } else {
           document.activeElement.blur();
           document.querySelector('.finna-search-filter-toggle .btn-search-filter').focus();
-          container.removeEventListener('focusout', onFocusOut);
+          container.removeEventListener('focusout', onFocusOutOfFacetContainer);
         }
       }
     });
