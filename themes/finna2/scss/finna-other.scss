@@ -155,12 +155,12 @@ i.fa.fa-search.backgrounding:before {
 }
 /* Input styles */
 input[type=number].input-year {
-    -moz-appearance:textfield;
+    -moz-appearance:textfield !important;
     width: 5em;
 }
 input[type=number].input-year::-webkit-inner-spin-button,
 input[type=number].input-year::-webkit-outer-spin-button {
-    -webkit-appearance: none;
+    -webkit-appearance: none !important;
     margin: 0;
 }
 
