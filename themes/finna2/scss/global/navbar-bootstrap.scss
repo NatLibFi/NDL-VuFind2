@@ -119,7 +119,7 @@
     color: $navbar-default-link-color;
     content: '';
     height: (($navbar-height) - 24);
-    margin-top: calc((#{$navbar-height} - (#{$navbar-height} - 24)) / 2);
+    margin-top: calc((#{$navbar-height} - (#{$navbar-height} - 24px)) / 2);
 
     @media (min-width: $grid-float-breakpoint) {
       border-left: solid 1px $navbar-default-link-color;
