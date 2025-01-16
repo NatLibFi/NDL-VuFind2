@@ -348,13 +348,3 @@
   height: $navbar-logo-height;
   margin-right: 10px;
 }
-
-//Focus outline for dropdowns in Firefox
-@supports (-moz-appearance:none) {
-  a.dropdown-toggle:focus {
-    outline: none;
-  }
-  a.dropdown-toggle:focus-visible {
-    outline: revert;
-  }
-}
