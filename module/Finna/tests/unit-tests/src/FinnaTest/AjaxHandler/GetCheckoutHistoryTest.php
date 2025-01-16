@@ -27,7 +27,7 @@
  * @link     https://vufind.org Main Page
  */
 
-namespace VuFindTest\AjaxHandler;
+namespace FinnaTest\AjaxHandler;
 
 use Finna\AjaxHandler\GetCheckoutHistory;
 use Finna\AjaxHandler\GetCheckoutHistoryFactory;
@@ -36,6 +36,7 @@ use VuFind\Auth\ILSAuthenticator;
 use VuFind\Auth\Manager;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\ILS\Connection;
+use VuFind\ILS\PaginationHelper;
 
 /**
  * GetCheckoutHistory test class.
@@ -78,56 +79,86 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
     public static function getSuccessfulData(): array
     {
         return [
-        'batch limit is higher' => [
-          50,
-          1000,
-          [
-            'success' => true,
-            'transactions' => [[]],
-            'count' => 10000,
-          ],
-          ['parts' => 10],
-        ],
-        'batch limit is same' => [
-          50,
-          50,
-          [
-            'success' => true,
-            'transactions' => [[]],
-            'count' => 10000,
-          ],
-          ['parts' => 200],
-        ],
-        'batch limit is lower' => [
-          50,
-          10,
-          [
-            'success' => true,
-            'transactions' => [[]],
-            'count' => 10000,
-          ],
-          ['parts' => 200],
-        ],
-        'results lower than batch limit' => [
-          50,
-          1000,
-          [
-            'success' => true,
-            'transactions' => [[]],
-            'count' => 21,
-          ],
-          ['parts' => 1],
-        ],
-        'no history' => [
-          50,
-          10,
-          [
-            'success' => true,
-            'transactions' => [],
-            'count' => 0,
-          ],
-          ['parts' => 0],
-        ],
+            'batch limit is higher' => [
+                50,
+                1000,
+                [
+                    'success' => true,
+                    'transactions' => [[]],
+                    'count' => 10000,
+                ],
+                ['parts' => 10],
+            ],
+            'batch limit is same' => [
+                50,
+                50,
+                [
+                    'success' => true,
+                    'transactions' => [[]],
+                    'count' => 10000,
+                ],
+                ['parts' => 200],
+            ],
+            'batch limit is lower' => [
+                50,
+                10,
+                [
+                    'success' => true,
+                    'transactions' => [[]],
+                    'count' => 10000,
+                ],
+                ['parts' => 200],
+            ],
+            'results lower than batch limit' => [
+                50,
+                1000,
+                [
+                    'success' => true,
+                    'transactions' => [[]],
+                    'count' => 21,
+                ],
+                ['parts' => 1],
+            ],
+            'no history' => [
+                50,
+                10,
+                [
+                    'success' => true,
+                    'transactions' => [],
+                    'count' => 0,
+                ],
+                ['parts' => 0],
+            ],
+            'different default than usual' => [
+                15,
+                1000,
+                [
+                    'success' => true,
+                    'transactions' => [],
+                    'count' => 10000,
+                ],
+                ['parts' => 10],
+            ],
+            'test with very small limits' => [
+                3,
+                2,
+                [
+                    'success' => true,
+                    'transactions' => [],
+                    'count' => 7,
+                ],
+                ['parts' => 3],
+            ],
+            'test with nothing set as limits' => [
+                0,
+                1000,
+                [
+                    'success' => true,
+                    'transactions' => [],
+                    'count' => 10000,
+                ],
+                ['parts' => 10],
+            ],
         ];
     }
 
@@ -139,16 +170,16 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
     public static function getFailuresData(): array
     {
         return [
-          'failure from getMyTransactions' => [
-            50,
-            1000,
-            [
-              'success' => false,
-              'transactions' => [[]],
-              'count' => 10000,
+            'failure from getMyTransactions' => [
+                50,
+                1000,
+                [
+                    'success' => false,
+                    'transactions' => [[]],
+                    'count' => 10000,
+                ],
+                ['An error has occurred',  500],
             ],
-            ['An error has occurred',  500],
-          ],
         ];
     }
 
