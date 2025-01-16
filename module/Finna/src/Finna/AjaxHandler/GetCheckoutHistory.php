@@ -142,7 +142,6 @@ class GetCheckoutHistory extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
         }
         return [
             'success' => true,
-            'status' => 'wat',
             'function_result' => $result,
             'pageOptions' => $pageOptions,
         ];
