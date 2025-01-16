@@ -148,10 +148,11 @@ class GetCheckoutHistory extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
             return compact('success', 'message', 'status');
         };
         if (!$this->cachedPatron) {
-            $this->cachedPatron = $this->ilsAuthenticator->storedCatalogLogin();
-            if (!$this->user || !$this->cachedPatron) {
+            $patron = $this->ilsAuthenticator->storedCatalogLogin();
+            if (!$this->user || !$patron) {
                 return $getErrorMessage('You must be logged in first', self::STATUS_HTTP_NEED_AUTH);
             }
+            $this->cachedPatron = $patron;
         }
         // Check function config
         if (!$this->cachedFunctionConfig) {
