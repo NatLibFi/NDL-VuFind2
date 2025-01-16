@@ -193,7 +193,7 @@ span.badge.cb-facet {
     display: none;
   }
 
-  [data-toggle="collapse"] {
+  [data-toggle="collapse"], [data-bs-toggle="collapse"] {
     cursor: pointer;
   }
 
@@ -256,7 +256,6 @@ span.badge.cb-facet {
   margin-bottom: 5px;
   .btn-group {
     a {
-      border-radius: 15px;
       padding: 5px 10px;
       border: 1px solid $action-link-color;
       color: $action-link-color;
