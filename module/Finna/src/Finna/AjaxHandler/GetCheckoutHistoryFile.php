@@ -37,7 +37,6 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Ods;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use VuFind\ILS\PaginationHelper;
 
 /**
  * GetCheckoutHistoryFile AJAX handler
@@ -92,18 +91,16 @@ class GetCheckoutHistoryFile extends GetCheckoutHistory
             return $this->formatResponse($result['message'], $result['status']);
         }
         try {
-            $paginationHelper = new PaginationHelper();
-            $paginator = $paginationHelper->getPaginator(
-                $result['pageOptions'],
-                $result['function_result']['count'],
-                $result['function_result']['transactions']
-            );
             // Get requested history part as a file to be downloaded
             $part = $params->fromQuery('part', 1);
             $fileFormat = $params->fromQuery('format', 'csv');
-            $pageLimit = $paginator ? $paginator->getItemCountPerPage() : $this->defaultPageSize;
-            $pagesCount = $paginator ? $paginator->count() : 1;
-            return $this->getHistoryAsFile($part, $pageLimit, $pagesCount, $fileFormat);
+            $calculatedResults = $this->calculateLimitsFromResult($result);
+            return $this->getHistoryAsFile(
+                $part,
+                $calculatedResults['pageLimit'],
+                $calculatedResults['pageCount'],
+                $fileFormat
+            );
         } catch (Exception $e) {
             return $this->formatResponse(
                 $this->translate('An error has occurred'),
@@ -213,7 +210,10 @@ class GetCheckoutHistoryFile extends GetCheckoutHistory
         }
         $writer = new $this->exportFormats[$fileFormat]['writer']($spreadsheet);
         $writer->save($tmp);
-        $fileName = implode('-', ['finna-loan-history-pages', $firstPageToFetch, $lastPageToFetch]);
+        $fileName = 'finna-loan-history-parts-' . $firstPageToFetch;
+        if ($firstPageToFetch !== $lastPageToFetch) {
+            $fileName .= '-' . $lastPageToFetch;
+        }
         $fileName .= ".$fileFormat";
 
         rewind($tmp);

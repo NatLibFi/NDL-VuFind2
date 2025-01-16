@@ -81,6 +81,9 @@ class GetCheckoutHistory extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
         protected int $batchLimit = 1000,
         protected int $defaultPageSize = 50
     ) {
+        if ($this->batchLimit < $defaultPageSize) {
+            $this->batchLimit = $defaultPageSize;
+        }
         parent::__construct($ss, $ils, $ilsAuthenticator, $user);
     }
 
@@ -98,7 +101,35 @@ class GetCheckoutHistory extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
         if ($result['success'] === false) {
             return $this->formatResponse($result['message'], $result['status']);
         }
-        return $this->formatResponse(['parts' => ceil(($result['function_result']['count'] ?? 1) / $this->batchLimit)]);
+        $calculatedResults = $this->calculateLimitsFromResult($result);
+        return $this->formatResponse(['parts' => $calculatedResults['parts']]);
+    }
+
+    /**
+     * Calculate limits used to fetch data from the results obtained from getCheckoutHistoryResult.
+     *
+     * @param array $result Checkout history result
+     *
+     * @return array
+     */
+    public function calculateLimitsFromResult(array $result): array
+    {
+        $resultCount = $result['function_result']['count'] ?? 1;
+        $paginationHelper = new PaginationHelper();
+        $paginator = $paginationHelper->getPaginator(
+            $result['pageOptions'],
+            $result['function_result']['count'],
+            $result['function_result']['transactions']
+        );
+        $pageLimit = $paginator ? $paginator->getItemCountPerPage() : $this->defaultPageSize;
+        $parts = $pageLimit > $this->batchLimit
+            ? floor($resultCount / $this->batchLimit)
+            : ceil($resultCount / $this->batchLimit);
+        return [
+            'pageLimit' => $paginator ? $paginator->getItemCountPerPage() : $this->defaultPageSize,
+            'pageCount' => $paginator ? $paginator->count() : 1,
+            'parts' => $parts,
+        ];
     }
 
     /**
