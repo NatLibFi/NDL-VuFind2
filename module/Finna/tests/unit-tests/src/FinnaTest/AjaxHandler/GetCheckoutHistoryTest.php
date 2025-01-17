@@ -36,7 +36,6 @@ use VuFind\Auth\ILSAuthenticator;
 use VuFind\Auth\Manager;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\ILS\Connection;
-use VuFind\ILS\PaginationHelper;
 
 /**
  * GetCheckoutHistory test class.
