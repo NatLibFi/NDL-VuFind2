@@ -447,6 +447,9 @@ a.authority {
   color: $gray-light;
   margin-top: 5px;
   padding-top: 5px;
+  .more-link, .less-link {
+    color: $gray-light;
+  }
 }
 .dataTables_wrapper {
   width: 100%;
