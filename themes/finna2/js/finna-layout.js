@@ -311,6 +311,14 @@ finna.layout = (function finnaLayout() {
   }
 
   /**
+   * Hide all tooltips with a click outside of a tooltip trigger
+   * @param {Event} e Event
+   */
+  function tooltipClickHandler(e) {
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => bootstrap.Tooltip.getOrCreateInstance(el).hide());
+  }
+
+  /**
    * Initialize tooltips
    * @param {jQuery} _holder Holder to look for tooltip elements from
    */
@@ -342,23 +350,13 @@ finna.layout = (function finnaLayout() {
       bootstrap.Tooltip.getOrCreateInstance(el);
 
       // Prevent link from opening if tooltip is placed inside link element:
-      el.querySelectorAll(':scope > i').forEach((i) => {
+      el.querySelectorAll(':scope > i, :scope > span').forEach((i) => {
         i.addEventListener('click', (event) => event.preventDefault());
-      });
-
-      // Hide other tooltips when one is opened:
-      el.addEventListener('click', (event) => {
-        event.preventDefault();
-
-        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(otherEl => {
-          if (otherEl !== el) {
-            bootstrap.Tooltip.getOrCreateInstance(otherEl).hide();
-          }
-        });
       });
     });
 
     document.addEventListener('keydown', tooltipKeyDownHandler);
+    document.querySelector('html').addEventListener('click', tooltipClickHandler);
   }
 
   /**
