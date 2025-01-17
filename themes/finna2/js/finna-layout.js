@@ -343,7 +343,7 @@ finna.layout = (function finnaLayout() {
 
       // Prevent link from opening if tooltip is placed inside link element:
       el.querySelectorAll(':scope > i').forEach((i) => {
-        i.addEventListener((event) => event.preventDefault());
+        i.addEventListener('click', (event) => event.preventDefault());
       });
 
       // Hide other tooltips when one is opened:
