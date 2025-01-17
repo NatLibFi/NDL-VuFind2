@@ -190,6 +190,7 @@ return [
     'js' => [
         ['file' => 'vendor/bootstrap-accessibility.min.js', 'disabled' => true],
         ['file' => 'bs3-compat.js', 'disabled' => true],
+        'finna-bs3-compat.js',
         'finna-object-editor.js',
         'account_ajax.js',
         'advanced_search.js',
@@ -272,7 +273,6 @@ return [
         'components/finna-md-editable.js',
         'components/finna-tabs-nav.js',
         'components/finna-truncate.js',
-        'finna-bs3-compat.js',
     ],
     'favicon' => 'favicon.ico',
     'icons' => [
