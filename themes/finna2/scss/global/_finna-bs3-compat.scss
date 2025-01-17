@@ -245,3 +245,8 @@ textarea {
     }
   }
 }
+
+// hide
+.hide {
+  @extend .hidden;
+}
