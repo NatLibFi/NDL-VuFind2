@@ -314,7 +314,7 @@ finna.layout = (function finnaLayout() {
    * Hide all tooltips with a click outside of a tooltip trigger
    * @param {Event} e Event
    */
-  function tooltipClickHandler(e) {
+  function tooltipClickHandler() {
     document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => bootstrap.Tooltip.getOrCreateInstance(el).hide());
   }
 
