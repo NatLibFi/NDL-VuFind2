@@ -476,6 +476,11 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
 }
 .hierarchy-tree-container {
     .hierarchy-tree {
+        outline: 0;
+        &:focus-visible {
+            box-shadow: $focus-ring-box-shadow;
+        }
+
         .hierarchy-tree__children, li:not(.hierarchy-tree__collection)  {
             padding-left: 0.7rem;
         }

@@ -77,6 +77,11 @@
 
 .tab-content {
   margin-bottom: 20px;
+  outline: 0;
+  &:focus-visible {
+    box-shadow: $focus-ring-box-shadow;
+  }
+
   div.dataTables_info {
     white-space: normal;
   }
