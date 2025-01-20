@@ -106,6 +106,10 @@ h1.content-header {
         @media(max-width: $screen-sm){
             width: 50%;
         }
+        a {
+            // Fixes :focus-visible
+            display: block;
+        }
     }
     .organisation-list-group {
         &::after {
