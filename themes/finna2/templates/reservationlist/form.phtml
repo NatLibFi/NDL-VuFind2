@@ -6,7 +6,7 @@
   $title = !empty($title)
     ? $this->translate($title) : null;
 
-  $formUrl = $this->url('reservationlist-placeorder', ['id' => $this->formId]);
+  $formUrl = $this->url($this->formActionRoute ?? 'reservationlist-placeorder', ['id' => $this->formId]);
   $form->setAttribute('action', $formUrl);
   $form->setAttribute('class', 'dynamic-form');
   $form->setAttribute('method', 'post');

@@ -50,6 +50,41 @@ class Form extends \Finna\Form\Form
     public const RESERVATION_LIST_REQUEST = 'ReservationListRequest';
 
     /**
+     * Reservation list institution key in requests
+     *
+     * @var string
+     */
+    public const INSTITUTION_KEY = 'rl_institution';
+
+    /**
+     * Reservation list configuration identifier key in requests
+     *
+     * @var string
+     */
+    public const LIST_IDENTIFIER_KEY = 'rl_list_identifier';
+
+    /**
+     * Reservation list id key identifying the list itself
+     *
+     * @var string
+     */
+    public const SINGLE_LIST_ID_KEY = 'rl_list_id';
+
+    /**
+     * Reservation list record id key containing data for the record(s) to be ordered.
+     *
+     * @var string
+     */
+    public const LIST_RECORD_KEY = 'rl_record_id';
+
+    /**
+     * Source for the record.
+     *
+     * @var string
+     */
+    public const SOURCE_KEY = 'source';
+
+    /**
      * Recipients for reservation lists
      *
      * @var array
@@ -94,6 +129,7 @@ class Form extends \Finna\Form\Form
         $elements['rl_institution'] = ['type' => 'hidden', 'name' => 'rl_institution', 'value' => null];
         $elements['rl_list_identifier'] = ['type' => 'hidden', 'name' => 'rl_list_identifier', 'value' => null];
         $elements['rl_list_id'] = ['type' => 'hidden', 'name' => 'rl_list_id', 'value' => null];
+        $elements['rl_record_id'] = ['type' => 'hidden', 'name' => 'rl_record_id', 'value' => null];
         return $elements;
     }
 

@@ -86,6 +86,7 @@ class RecordController extends \VuFind\Controller\RecordController
      *
      * @return \Laminas\View\Model\ViewModel
      * @throws \Exception
+     * @deprecated Use ReservationList::placeSingleOrderAction
      */
     public function archiveRequestAction()
     {

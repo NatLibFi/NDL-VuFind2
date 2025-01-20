@@ -84,6 +84,34 @@ interface HandlerInterface
     ): array;
 
     /**
+     * Get values required for placing single record order.
+     *
+     * @param FinnaResourceListEntityInterface $list          List being ordered
+     * @param UserEntityInterface              $user          User who owns the list
+     * @param array                            $requestValues Values obtained i.e from post request as array
+     *
+     * @return array
+     */
+    public function getValuesForPlaceSingleOrderForm(
+        FinnaResourceListEntityInterface $list,
+        UserEntityInterface $user,
+        array $requestValues
+    ): array;
+
+    /**
+     * Get default values commonly used in forms.
+     *
+     * @param FinnaResourceListEntityInterface $list List being ordered
+     * @param UserEntityInterface              $user User who owns the list
+     *
+     * @return array
+     */
+    public function getDefaultParamsForOrderForm(
+        FinnaResourceListEntityInterface $list,
+        UserEntityInterface $user
+    ): array;
+
+    /**
      * Get form used for placing orders.
      *
      * @param array $prefill Prefill form with these values.

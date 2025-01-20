@@ -25,7 +25,7 @@
 <?php if (!empty($this->listsContaining)): ?>
   <p><?=$this->transEsc('This item is already part of the following list/lists') ?>:
   <?php foreach ($this->listsContaining as $i => $list): ?>
-    <a href="<?=$this->url('reservationlist-displaylist', ['id' => $list->getId()]) ?>" data-lightbox-ignore><?=$this->escapeHtml($list->getTitle())?></a><?php if ($i < count($this->listsContaining) - 1): ?>, <?php endif; ?>
+    <a href="<?=$this->url('reservationlist-displaylist', [\Finna\ReservationList\Form\Form::SINGLE_LIST_ID_KEY => $list->getId()]) ?>" data-lightbox-ignore><?=$this->escapeHtml($list->getTitle())?></a><?php if ($i < count($this->listsContaining) - 1): ?>, <?php endif; ?>
   <?php endforeach; ?>
   </p><hr>
 <?php endif; ?>
@@ -34,10 +34,10 @@
   <?php if (!empty($this->lists)): ?>
     <form method="post" name="AddItemToReservationList" data-lightbox-onclose="VuFind.refreshPage" action="<?=$this->url('reservationlist-additemtolist'); ?>">
       <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
-      <input type="hidden" name="recordId" value="<?=$this->escapeHtmlAttr($this->recordId)?>">
+      <input type="hidden" name="rl_record_id" value="<?=$this->escapeHtmlAttr($this->recordId)?>">
       <input type="hidden" name="source" value="<?=$this->escapeHtmlAttr($this->source)?>">
-      <input type="hidden" name="institution" value="<?=$this->escapeHtmlAttr($this->institution)?>">
-      <input type="hidden" name="listIdentifier" value="<?=$this->escapeHtmlAttr($this->listIdentifier)?>">
+      <input type="hidden" name="rl_institution" value="<?=$this->escapeHtmlAttr($this->institution)?>">
+      <input type="hidden" name="rl_list_identifier" value="<?=$this->escapeHtmlAttr($this->listIdentifier)?>">
       <label class="control-label" for="save_list"><?=$this->transEsc('ReservationList::Choose a List') ?></label>
       <div class="form-group">
         <select class="form-control" id="save_list" name="list">
@@ -55,5 +55,5 @@
       </div>
     </form>
   <?php endif; ?>
-  <a class="btn btn-link" id="make-list" href="<?=$this->url('reservationlist-createlist', [], ['query' => ['institution' => $this->institution, 'listIdentifier' => $this->listIdentifier, 'newList' => '1', 'recordId' => urlencode($this->recordId), 'source' => urlencode($this->source)]])?>"><?=$this->transEsc('ReservationList::Create New Reservation List')?></a>
+  <a class="btn btn-link" id="make-list" href="<?=$this->url('reservationlist-createlist', [], ['query' => ['rl_institution' => $this->institution, 'rl_list_identifier' => $this->listIdentifier, 'newList' => '1', 'rl_record_id' => urlencode($this->recordId), 'source' => urlencode($this->source)]])?>"><?=$this->transEsc('ReservationList::Create New Reservation List')?></a>
 </div>

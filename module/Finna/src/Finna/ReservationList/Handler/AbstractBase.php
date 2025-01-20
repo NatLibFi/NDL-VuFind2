@@ -109,13 +109,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         UserEntityInterface $user,
         array $requestValues
     ): array {
-        $result = [
-            'rl_list_id' => $list->getId(),
-            'rl_institution' => $list->getInstitution(),
-            'rl_list_identifier' => $list->getListConfigIdentifier(),
-            'record_ids_text' => '',
-            'record_source_and_ids' => [],
-        ];
+        $result = $this->getDefaultParamsForOrderForm($list, $user);
         $reservationListService = $this->getService(\Finna\ReservationList\ReservationListService::class);
         foreach ($reservationListService->getResourcesForList($list, $user) as $resource) {
             $result['record_ids_text'] .= $resource->getRecordId() . '||' . $resource->getTitle() . PHP_EOL;
@@ -125,6 +119,61 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
             $result[$foundKey] = $requestValues[$foundKey];
         }
         return $result;
+    }
+
+    /**
+     * Get values for placing single order form
+     *
+     * @param FinnaResourceListEntityInterface $list          List being ordered
+     * @param UserEntityInterface              $user          User who owns the list
+     * @param array                            $requestValues Values obtained i.e from post request as array
+     *
+     * @return array
+     */
+    public function getValuesForPlaceSingleOrderForm(
+        FinnaResourceListEntityInterface $list,
+        UserEntityInterface $user,
+        array $requestValues
+    ): array {
+        $result = $this->getDefaultParamsForOrderForm($list, $user);
+        $recordLoader = $this->getService(\VuFind\Record\Loader::class);
+        $recordID = $requestValues[Form::LIST_RECORD_KEY];
+        $source = $requestValues[Form::SOURCE_KEY] ?? DEFAULT_SEARCH_BACKEND;
+        $record = $recordLoader->load($recordID, $source);
+        $result = array_merge($result, [
+            'rl_record_id' => $record->getUniqueID(),
+            'record_ids_text' => $record->getUniqueID() . '||' . $record->getTitle() . PHP_EOL,
+            'record_source_and_ids' => $record->getSourceIdentifier() . '|' . $record->getUniqueID(),
+            'source' => $record->getSourceIdentifier(),
+        ]);
+        foreach (array_intersect_key($requestValues, self::PLACE_ORDER_REQUEST_KEYS) as $foundKey => $value) {
+            $result[$foundKey] = $requestValues[$foundKey];
+        }
+        return $result;
+    }
+
+    /**
+     * Get default values commonly used in forms
+     *
+     * @param FinnaResourceListEntityInterface $list List being ordered
+     * @param UserEntityInterface              $user User who owns the list
+     *
+     * @return array
+     */
+    public function getDefaultParamsForOrderForm(
+        FinnaResourceListEntityInterface $list,
+        UserEntityInterface $user
+    ): array {
+        return [
+            'rl_list_id' => $list->getId(),
+            'rl_institution' => $list->getInstitution(),
+            'rl_list_identifier' => $list->getListConfigIdentifier(),
+            'firstName' => $user->getFirstname(),
+            'lastName' => $user->getLastname(),
+            'email' => $user->getEmail(),
+            'record_ids_text' => '',
+            'record_source_and_ids' => [],
+        ];
     }
 
     /**

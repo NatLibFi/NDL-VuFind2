@@ -135,20 +135,23 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     /**
      * Create a new list object for the specified user
      *
-     * @param ?UserEntityInterface $user Logged in user (null if logged out)
+     * @param ?UserEntityInterface $user    Logged in user (null if logged out)
+     * @param array                $prefill Prefill the list with these values.
      *
      * @return FinnaResourceListEntityInterface
      * @throws LoginRequiredException
      */
-    public function createListForUser(?UserEntityInterface $user): FinnaResourceListEntityInterface
+    public function createListForUser(?UserEntityInterface $user, array $prefill = []): FinnaResourceListEntityInterface
     {
         if (!$user) {
             throw new LoginRequiredException('Log in to create lists.');
         }
 
-        return $this->resourceListService->createEntity()
-            ->setUser($user)
-            ->setCreated(new DateTime());
+        $list = $this->resourceListService->createEntity()->setUser($user)->setCreated(new DateTime());
+        if ($prefill) {
+            $list = $this->populateListValues($list, $user, $prefill);
+        }
+        return $list;
     }
 
     /**
@@ -354,9 +357,10 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      * Update and save the list object using a request object -- useful for
      * sharing form processing between multiple actions.
      *
-     * @param FinnaResourceListEntityInterface $list    List to update
-     * @param UserEntityInterface              $user    Logged-in user
-     * @param Parameters                       $request Request to process
+     * @param FinnaResourceListEntityInterface $list       List to update
+     * @param UserEntityInterface              $user       Logged-in user
+     * @param array                            $listValues List values as key value pairs
+     *                                                     See getListSpecificValuesFromRequest
      *
      * @return int ID of newly created row
      * @throws ListPermissionException
@@ -365,17 +369,67 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     public function updateListFromRequest(
         FinnaResourceListEntityInterface $list,
         UserEntityInterface $user,
-        Parameters $request
+        array $listValues
     ): int {
-        $list->setTitle($request->get('title'))
-            ->setDescription($request->get('desc'))
-            ->setInstitution($request->get('institution'))
-            ->setListConfigIdentifier($request->get('listIdentifier'))
-            ->setUser($user)
-            ->setListType(self::RESOURCE_LIST_TYPE)
-            ->setConnection($request->get('connection', self::DEFAULT_CONNECTION_HANDLER));
+        $list = $this->populateListValues($list, $user, $listValues);
         $this->saveListForUser($list, $user);
         return $list->getId();
+    }
+
+    /**
+     * Populate list with values, useful for cases where the list is not saved instantly.
+     *
+     * @param FinnaResourceListEntityInterface $list       List to update
+     * @param UserEntityInterface              $user       Logged-in user
+     * @param array                            $listValues List values as key value pairs
+     *                                                     See getListSpecificValuesFromRequest
+     *
+     * @return FinnaResourceListEntityInterface List populated
+     * @throws ListPermissionException
+     * @throws MissingFieldException
+     */
+    public function populateListValues(
+        FinnaResourceListEntityInterface $list,
+        UserEntityInterface $user,
+        array $listValues
+    ): FinnaResourceListEntityInterface {
+        $list->setTitle($listValues['title'])
+            ->setDescription($listValues['desc'])
+            ->setInstitution($listValues['institution'])
+            ->setListConfigIdentifier($listValues['listIdentifier'])
+            ->setUser($user)
+            ->setListType(self::RESOURCE_LIST_TYPE)
+            ->setConnection($listValues['connection']);
+        return $list;
+    }
+
+    /**
+     * Helper function to get list specific values from a request. Keys and default values:
+     * - 'title' => '',
+     * - 'desc' => '',
+     * - 'institution' => null,
+     * - 'listIdentifier' => null
+     * - 'connection' => 'email'
+     *
+     * @param Parameters $request Request to get values from
+     *
+     * @return array Key value pairs of values for a list. If a value is not found
+     *               from a request, use the default value set.
+     */
+    public function getListSpecificValuesFromRequest(Parameters $request): array
+    {
+        $listSpecificColumns = [
+            'title' => '',
+            'desc' => '',
+            'institution' => '',
+            'listIdentifier' => '',
+            'connection' => self::DEFAULT_CONNECTION_HANDLER,
+        ];
+        $result = [];
+        foreach ($listSpecificColumns as $column => $defaultValue) {
+            $result[$column] = $request->get($column, $defaultValue);
+        }
+        return $result;
     }
 
     /**
