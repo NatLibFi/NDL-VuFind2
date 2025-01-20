@@ -92,12 +92,14 @@ div.facet > a {
 
   .more-less-btn-wrapper {
     border-bottom: none;
+    padding: 1px;
   }
 
   .more-less-btn-wrapper .btn, a.more-narrow-toggle {
     display: flex;
     align-items: baseline;
-    padding: 4px 0 0 8px;
+    padding: 0 0 0 4px;
+    margin: 4px;
     border-radius: 0px;
     color: $gray;
     background: transparent;
@@ -106,6 +108,9 @@ div.facet > a {
     text-transform: uppercase;
     text-decoration: none;
     box-shadow: none;
+    &:focus-visible {
+      box-shadow: $focus-ring-box-shadow;
+    }
   }
 
   .list-group-item i.fa.fa-check-square-o {
@@ -170,7 +175,7 @@ span.badge.cb-facet {
   margin-bottom: 1rem;
 
   .facet {
-    padding: 3px 0 2px 8px;
+    padding: 3px 3px 2px 8px;
     display: flex;
     .text {
       flex-grow: 1;
