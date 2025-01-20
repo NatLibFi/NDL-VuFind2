@@ -250,3 +250,8 @@ textarea {
 .hide {
   @extend .hidden;
 }
+
+// label
+.label {
+  margin-bottom: initial;
+}
