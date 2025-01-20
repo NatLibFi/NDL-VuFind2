@@ -165,9 +165,9 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         UserEntityInterface $user
     ): array {
         return [
-            'rl_list_id' => $list->getId(),
-            'rl_institution' => $list->getInstitution(),
-            'rl_list_identifier' => $list->getListConfigIdentifier(),
+            Form::SINGLE_LIST_ID_KEY => $list->getId(),
+            Form::INSTITUTION_KEY => $list->getInstitution(),
+            Form::LIST_IDENTIFIER_KEY => $list->getListConfigIdentifier(),
             'firstName' => $user->getFirstname(),
             'lastName' => $user->getLastname(),
             'email' => $user->getEmail(),

@@ -65,7 +65,7 @@ class Form extends \VuFind\Form\Form
     /**
      *  Archive request form id.
      *
-     * @var string
+     * @var        string
      * @deprecated Logic moved to ReservationList::placeSingleOrder
      */
     public const ARCHIVE_MATERIAL_REQUEST = 'ArchiveRequest';
@@ -838,7 +838,6 @@ class Form extends \VuFind\Form\Form
     {
         $fields = parent::getFormElementSettingFields();
         $fields[] = 'recipient';
-        $fields[] = 'rl_record_id[]';
 
         return $fields;
     }

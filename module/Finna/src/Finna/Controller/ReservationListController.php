@@ -74,13 +74,6 @@ class ReservationListController extends AbstractBase
     protected const RESERVATION_LISTS_DISABLED = 'Reservation lists disabled';
 
     /**
-     * Single item order identifier
-     *
-     * @var string
-     */
-    protected const SINGLE_ORDER_ID = 'single_item_order';
-
-    /**
      * Constructor
      *
      * @param ServiceLocatorInterface $sm                           Service locator

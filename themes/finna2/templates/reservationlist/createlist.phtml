@@ -13,11 +13,15 @@
 <h2><?=$this->transEsc($pageTitle); ?></h2>
 
 <form class="form-edit-list" method="post" name="CreateReservationList" action="<?=$this->url('reservationlist-createlist'); ?>">
-  <input type="hidden" name="rl_record_id" value="<?=$this->escapeHtmlAttr($this->recordId)?>">
-  <input type="hidden" name="source" value="<?=$this->escapeHtmlAttr($this->source)?>">
-  <input type="hidden" name="rl_institution" value="<?=$this->escapeHtmlAttr($this->institution)?>">
-  <input type="hidden" name="rl_list_identifier" value="<?=$this->escapeHtmlAttr($this->listIdentifier)?>">
-  <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
+  <?= $this->component('finna-hidden-form-fields.phtml', [
+      'fields' => [
+        \Finna\ReservationList\Form\Form::LIST_RECORD_KEY => $this->recordId,
+        \Finna\ReservationList\Form\Form::SOURCE_KEY => $this->source,
+        \Finna\ReservationList\Form\Form::LIST_IDENTIFIER_KEY => $this->listIdentifier,
+        \Finna\ReservationList\Form\Form::INSTITUTION_KEY => $this->institution,
+        'csrf' => $this->auth()->getManager()->getCsrfHash(),
+      ],
+    ]); ?>
   <div class="form-group">
     <label class="control-label" for="list_title"><?=$this->transEsc('ReservationList::Reservation List Name'); ?>*:</label>
     <input id="list_title" class="form-control" type="text" name="title" value="" required>

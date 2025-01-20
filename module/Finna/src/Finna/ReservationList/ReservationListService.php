@@ -360,7 +360,6 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      * @param FinnaResourceListEntityInterface $list       List to update
      * @param UserEntityInterface              $user       Logged-in user
      * @param array                            $listValues List values as key value pairs
-     *                                                     See getListSpecificValuesFromRequest
      *
      * @return int ID of newly created row
      * @throws ListPermissionException
@@ -382,7 +381,6 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      * @param FinnaResourceListEntityInterface $list       List to update
      * @param UserEntityInterface              $user       Logged-in user
      * @param array                            $listValues List values as key value pairs
-     *                                                     See getListSpecificValuesFromRequest
      *
      * @return FinnaResourceListEntityInterface List populated
      * @throws ListPermissionException
@@ -401,35 +399,6 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
             ->setListType(self::RESOURCE_LIST_TYPE)
             ->setConnection($listValues['connection']);
         return $list;
-    }
-
-    /**
-     * Helper function to get list specific values from a request. Keys and default values:
-     * - 'title' => '',
-     * - 'desc' => '',
-     * - 'institution' => null,
-     * - 'listIdentifier' => null
-     * - 'connection' => 'email'
-     *
-     * @param Parameters $request Request to get values from
-     *
-     * @return array Key value pairs of values for a list. If a value is not found
-     *               from a request, use the default value set.
-     */
-    public function getListSpecificValuesFromRequest(Parameters $request): array
-    {
-        $listSpecificColumns = [
-            'title' => '',
-            'desc' => '',
-            'institution' => '',
-            'listIdentifier' => '',
-            'connection' => self::DEFAULT_CONNECTION_HANDLER,
-        ];
-        $result = [];
-        foreach ($listSpecificColumns as $column => $defaultValue) {
-            $result[$column] = $request->get($column, $defaultValue);
-        }
-        return $result;
     }
 
     /**

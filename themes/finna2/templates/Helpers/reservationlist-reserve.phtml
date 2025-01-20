@@ -24,7 +24,7 @@ return;
             <?php endif; ?>
           </div>
           <div class="location-link text-right">
-            <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-placeorderoptions', [], ['query' => ['rl_record_id' => $this->driver->getUniqueID(), 'source' => $this->driver->getSourceIdentifier(), 'rl_institution' => $institution, 'rl_list_identifier' => $list['Identifier']]]))?>" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?= $this->icon('save') . ' ' . $this->transEsc(['ReservationList', 'Reserve Resource'])?></a>
+            <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-placeorderoptions', [], ['query' => [\Finna\ReservationList\Form\Form::LIST_RECORD_KEY => $this->driver->getUniqueID(), \Finna\ReservationList\Form\Form::SOURCE_KEY => $this->driver->getSourceIdentifier(), \Finna\ReservationList\Form\Form::INSTITUTION_KEY => $institution, \Finna\ReservationList\Form\Form::LIST_IDENTIFIER_KEY => $list['Identifier']]]))?>" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?= $this->icon('save') . ' ' . $this->transEsc(['ReservationList', 'Reserve Resource'])?></a>
           </div>
         </div>
       </div>
