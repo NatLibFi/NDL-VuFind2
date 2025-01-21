@@ -144,15 +144,18 @@
         &:last-child {
             border-bottom: none;
         }
-        i {
-            cursor: pointer;
-        }
         &.inactive {
             color: $gray-lighter;
             cursor: not-allowed;
             i {
                 cursor: not-allowed;
             }
+        }
+        &:focus-visible {
+            box-shadow: $focus-ring-light-box-shadow;
+        }
+        i {
+            cursor: pointer;
         }
     }
 }
@@ -320,6 +323,10 @@
         padding: 10px;
         overflow-y: auto;
         width: 100%;
+        &:focus-visible {
+            outline: 0;
+            box-shadow: $focus-ring-box-shadow;
+        }
 
         @media (min-width: $screen-sm-min) {
             max-width: 400px;

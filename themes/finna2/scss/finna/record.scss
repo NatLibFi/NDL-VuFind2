@@ -735,6 +735,9 @@ a.authority {
     }
     li.organisation-page-link {
       padding-top: 5px;
+      a {
+        display: block;
+      }
     }
     li.material-questions-feedback {
       font-weight: bold;

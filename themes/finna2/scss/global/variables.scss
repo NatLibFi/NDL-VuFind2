@@ -58,6 +58,9 @@ $record-title-font-size: 1.65em !default;
 $record-holdings-title-background: $brand-primary !default;
 $record-holdings-title-color: color.mix($record-holdings-title-background, contrast($record-holdings-title-background), 5%) !default;
 $record-holdings-border-color: $gray-lighter !default;
+$focus-ring-light-opacity: 0.5 !default;
+$focus-ring-light-color: rgba(#fff, $focus-ring-light-opacity) !default;
+$focus-ring-light-box-shadow: 0 0 $focus-ring-blur $focus-ring-width $focus-ring-light-color !default;
 
 //== Finna home page
 $introduction-text-color: #fff !default;
