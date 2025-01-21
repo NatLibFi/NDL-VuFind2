@@ -11,7 +11,7 @@
   <div role="navigation" aria-label="<?=$this->transEscAttr('Search Tabs')?>">
     <?php
       $tooltipElement = $this->htmlElement()->addAttributeTemplate('tooltip-element', [
-        'class' => 'tooltip',
+        'class' => 'tooltip-btn',
         'data-bs-toggle' => 'tooltip',
         'data-bs-trigger' => 'click',
         'data-bs-html' => 'true',
@@ -23,25 +23,28 @@
         <?php if ($tab['selected']) {
           $this->layout()->currentTabId = $tab['id'];
           $hasSelectedTab = true;
-        } ?>
-        <li class="<?=$tab['selected'] ? 'active' : 'hidden-print'?>">
+        }
+        $tooltipKeyHtml = 'tooltip_' . $tab['label'] . '_html';
+        if ($this->layout()->templateName !== 'advanced' && !$this->translationEmpty($tooltipKeyHtml)) {
+          $tooltip = [
+            'aria-label' => $this->translate('Help') . ' - ' . $this->translate($tab['label']),
+            'data-bs-title' => $this->translate($tooltipKeyHtml),
+            'class' => 'tooltip-' . $tab['label'],
+            'data-bs-custom-class' => 'tooltip-' . $tab['label'],
+          ];
+        } else {
+          $tooltip = '';
+        }
+        ?>
+        <li class="<?=$tab['selected'] ? 'active' : 'hidden-print'?><?=$tooltip ? ' with-tooltip' : ''?>">
           <a <?=$tab['selected'] ? 'aria-current="true"' : 'href="' . $this->escapeHtmlAttr($tab['url']) . '"' ?>>
             <?=$this->transEsc($tab['label']); ?>
-            <?php $tooltipKeyHtml = 'tooltip_' . $tab['label'] . '_html'; ?>
-            <?php if ($this->layout()->templateName !== 'advanced' && !$this->translationEmpty($tooltipKeyHtml)): ?>
-              <?php
-                $tooltip = [
-                  'aria-label' => $this->translate('Help') . ' - ' . $this->translate($tab['label']),
-                  'data-bs-title' => $this->translate($tooltipKeyHtml),
-                  'class' => 'tooltip-' . $tab['label'],
-                  'data-bs-custom-class' => 'tooltip-' . $tab['label'],
-                ];
-              ?>
-              <button <?= $this->htmlElement()->getAttributes($tooltip, 'tooltip-element'); ?>>
-                <?=$this->icon('help') ?>
-              </button>
-            <?php endif; ?>
           </a>
+          <?php if ($tooltip): ?>
+            <button <?= $this->htmlElement()->getAttributes($tooltip, 'tooltip-element'); ?>>
+              <?=$this->icon('help') ?>
+            </button>
+          <?php endif; ?>
         </li>
       <?php endforeach; ?>
       <?php if (!$hasSelectedTab && !$this->translationEmpty('temporary_search_tab_title')): ?>
