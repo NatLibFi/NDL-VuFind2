@@ -59,6 +59,10 @@
         font-size: 24px;
         text-shadow: 2px 2px 2px black;
 
+        &:focus-visible {
+            box-shadow: $focus-ring-light-box-shadow;
+        }
+
         @media (min-width: $screen-sm-min) {
             right: -30px;
         }
