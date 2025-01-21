@@ -573,6 +573,10 @@
                         height: 96px;
                         max-width: 96px;
                     }
+                    &:focus-visible {
+                        outline: 0;
+                        box-shadow: $focus-ring-light-box-shadow;
+                    }
                 }
             }
             .paginator-info {
