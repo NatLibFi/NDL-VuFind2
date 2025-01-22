@@ -181,6 +181,11 @@
 
     .paginator-canvas & {
         background-color: rgba(138, 138, 138, 0.9);
+
+        &:focus-visible {
+            outline: 0;
+            box-shadow: $focus-ring-light-box-shadow;
+        }
     }
     .icon {
         text-shadow: 1px 1px 2px #555;
@@ -685,6 +690,11 @@
             }
             .finna-popup &:not(:disabled){
                 color: white;
+
+                &:focus-visible {
+                    outline: 0;
+                    box-shadow: $focus-ring-light-box-shadow;
+                }
             }
             &:disabled {
                 background-color: #d6d6d600;
