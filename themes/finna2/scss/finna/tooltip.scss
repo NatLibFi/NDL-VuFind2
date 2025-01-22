@@ -94,7 +94,6 @@
     }
   }
   ul.nav-tabs > li.with-tooltip {
-    padding-right: 3rem;
     a {
       padding-right: 2.5rem;
 
@@ -104,11 +103,6 @@
     }
   }
   .tooltip-btn {
-    font-size: 1.3rem;
-    color: $action-link-color;
-    border: none;
-    background: transparent;
-    margin: -2.5rem;
     display: $tooltip-tabs-default;
     &.tooltip-tabs_local {
       display: $tooltip-tabs-local;
