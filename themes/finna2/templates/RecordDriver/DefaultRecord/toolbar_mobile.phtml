@@ -30,7 +30,7 @@
           <?php endif; ?>
 
           <li class="dropdown dropup nav-pills mobile-sharing">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#" rel="nofollow"><?=$this->icon('share') ?><span class="hidden-xs"> <?=$this->transEsc('Share') ?></span></a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" rel="nofollow" aria-expanded="false"><?=$this->icon('share') ?><span class="hidden-xs"> <?=$this->transEsc('Share') ?></span></a>
             <ul class="dropdown-menu" role="menu">
               <?php if (!empty($shareUrl)): ?>
                 <?=$this->partial('record/share-buttons.phtml', ['shareUrl' => $shareUrl, 'title' => $this->driver->tryMethod('getTitle', [], '')]);?>
@@ -54,7 +54,7 @@
 
           <?php if(count($exportFormats) > 0): ?>
             <li role="none" class="dropdown dropup">
-              <a class="export-toggle toolbar-btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Export', [], '', ['excludeSearchId' => true]))?>" rel="nofollow" aria-expanded="false" aria-controls="export-options">
+              <a class="export-toggle toolbar-btn dropdown-toggle" data-toggle="dropdown" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Export', [], '', ['excludeSearchId' => true]))?>" rel="nofollow" aria-expanded="false" aria-controls="export-options">
                 <?=$this->icon('export') ?>
                 <span class="sr-only"><?=$this->transEsc('Export Record') ?></span>
               </a>

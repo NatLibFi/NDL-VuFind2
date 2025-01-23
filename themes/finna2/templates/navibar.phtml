@@ -97,7 +97,7 @@
 
         <?php if (isset($this->layout()->themeOptions) && count($this->layout()->themeOptions) > 1): ?>
           <li class="nav-item theme dropdown">
-            <a role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"><?=$this->transEsc('Theme')?> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
+            <a role="button" href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><?=$this->transEsc('Theme')?> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
             <ul class="dropdown-menu">
               <?php foreach ($this->layout()->themeOptions as $current): ?>
                 <li <?=$current['selected'] ? ' class="active"' : '' ?>>
@@ -119,7 +119,7 @@
   <ul role="presentation" class="nav navbar-nav header-navbar-right">
   <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
     <li id="language_menu" class="nav-item dropdown">
-      <a href="#" id="language_menu_dropdown_button" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-label="<?=$this->transEscAttr('Language')?>" aria-description="<?=$this->displayLanguageOption($selectedLang)?> <?=$this->transEscAttr('selected')?>" aria-expanded="false">
+      <a href="#" id="language_menu_dropdown_button" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false" aria-label="<?=$this->transEscAttr('Language')?>" aria-description="<?=$this->displayLanguageOption($selectedLang)?> <?=$this->transEscAttr('selected')?>">
         <?=$this->icon('language', 'lang-icon') ?>
         <span class="hidden-xs"><?=$this->displayLanguageOption($selectedLang)?></span>
         <?=$this->icon('collapse-open', 'collapse-open-icon') ?>
@@ -146,7 +146,7 @@
     <?php if (is_object($account) && $account->loginEnabled()): ?>
       <?php if ($user): ?>
         <li class="nav-item logoutOptions">
-          <a href="#" class="btn nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="account-icon"></span><?=$this->icon('my-account', 'my-account-icon') ?> <span class="username login-text"><?=$this->transEsc('Your Account')?></span> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
+          <a href="#" class="btn nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false"><span id="account-icon"></span><?=$this->icon('my-account', 'my-account-icon') ?> <span class="username login-text"><?=$this->transEsc('Your Account')?></span> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
           <ul id="my-info-dropdown-menu" class="dropdown-menu dropdown-menu-right">
             <?php if ($this->libraryCards()->getCardsForUser($user)): ?>
               <li>
