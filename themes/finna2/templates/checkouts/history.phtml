@@ -154,7 +154,7 @@
                     <td headers="label-title-column" aria-labelledby="label-title-column">
                       <?=$this->record($resource)->renderTemplate('account-entry.phtml')?>
                     </td>
-                    <td class="checkedout-status-information" headers="label-status-column" aria-labelledby="label-status-column">
+                    <td class="checkedout-status-information" headers="label-status-column" aria-labelledby="label-status-column" tabindex="0">
                     <?php if (!empty($ilsDetails['institution_name']) && (empty($ilsDetails['borrowingLocation']) || $ilsDetails['institution_name'] != $ilsDetails['borrowingLocation'])): ?>
                       <strong><?=$this->transEscWithPrefix('location_', $ilsDetails['institution_name'])?></strong>
                       <br>
@@ -195,6 +195,8 @@
                       </li>
                     </ul>
                   </div>
+                <?php else: ?>
+                  <div class="sr-only" tabindex="0"><?=$this->transEsc('Loan History')?> <?=$this->transEsc('päättyy')?></div>
                 <?php endif; ?>
               </div>
             </form>
