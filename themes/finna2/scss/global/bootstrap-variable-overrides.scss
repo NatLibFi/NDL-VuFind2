@@ -45,6 +45,20 @@ $warning-bg-subtle:     tint-color($warning, 95%) !default;
 $enable-shadows:        true !default;
 $btn-box-shadow:        none !default;
 $btn-focus-box-shadow:  none !default;
+$focus-ring-width:      .25rem !default;
+$focus-ring-color:      $primary !default;
+$focus-ring-opacity:    0.5 !default;
+$focus-ring-blur:       0 !default;
+
+// These are not in Bootstrap 5, but we need them for our custom box shadow:
+$focus-ring-inner-opacity:      1 !default;
+$focus-ring-inner-blur:         $focus-ring-blur !default;
+$focus-ring-inner-width:        1px;
+$focus-ring-inner-color:        rgba(#fff, $focus-ring-inner-opacity) !default;
+
+// Dual box shadow intended to provide sufficient contrast in all situations:
+$focus-ring-box-shadow: 0 0 $focus-ring-inner-blur $focus-ring-inner-width $focus-ring-inner-color, 0 0 $focus-ring-blur $focus-ring-width $focus-ring-color !default;
+$focus-ring-light-box-shadow: $focus-ring-box-shadow;
 
 //-- Z-index master list
 //

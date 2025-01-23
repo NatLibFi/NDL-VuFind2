@@ -101,6 +101,7 @@ input, input.form-control {
     padding-left: 10px;
     height: 48px;
     &:focus-visible {
+      outline: 0;
       box-shadow: $focus-ring-box-shadow;
     }
 
