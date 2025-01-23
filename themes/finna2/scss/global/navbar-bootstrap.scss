@@ -321,12 +321,9 @@
       display: inherit;
     }
   }
-  .navbar-collapse.in {
+  .navbar-collapse.show {
     box-shadow: 0 3px 5px $gray;
-/* #SCSS> */
     max-height: calc(100vh - #{#{$navbar-height}});
-/* <#SCSS */
-
   }
   .navbar-header {
     padding-left: 10px;
