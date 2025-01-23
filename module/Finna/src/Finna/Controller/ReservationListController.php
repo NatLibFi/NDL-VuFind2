@@ -328,22 +328,16 @@ class ReservationListController extends AbstractBase
         $orderSpecificValues = $handler->getValuesForPlaceOrderForm(
             $list,
             $user,
-            $request->getPost()->toArray()
+            $request->isGet() ? $request->getQuery()->toArray() : $request->getPost()->toArray()
         );
         $form = $handler->getPlaceOrderForm($orderSpecificValues);
-
+        $form->setData($orderSpecificValues);
         $formId = ConnectionAbstractBase::FORM_ID;
         $view = $this->createViewModel(compact('form', 'formId', 'user'));
         $view->setTemplate('reservationlist/form');
         $view->useCaptcha = false;
 
         if (!$this->formWasSubmitted(useCaptcha: false)) {
-            $queryValues = $handler->getValuesForPlaceOrderForm(
-                $list,
-                $user,
-                $request->getQuery()->toArray()
-            );
-            $form->setData($queryValues);
             return $view;
         }
 
