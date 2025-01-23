@@ -77,7 +77,7 @@
                       <div class="toolbar-button-col">
                         <div class="btn-group">
                           <?php if ($purgeSelectedAllowed): ?>
-                            <input type="submit" id="purgeSelected" name="purgeSelected" value="<?=$this->transEscAttr('loan_history_purge_selected')?>" class="btn btn-primary btn-finna-toolbar dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore disabled="disabled" aria-expanded="false">
+                            <input type="submit" id="purgeSelected" name="purgeSelected" value="<?=$this->transEscAttr('loan_history_purge_selected')?>" class="btn btn-primary btn-finna-toolbar dropdown-toggle" data-bs-toggle="dropdown" data-lightbox-ignore disabled="disabled" aria-expanded="false">
                             <ul class="dropdown-menu useraccount-confirm" role="presentation">
                               <li><span class="dropdown-header"><?=$this->transEsc('loan_history_confirm_purge_selected')?></span></li>
                               <li>
@@ -90,7 +90,7 @@
                         <?php if (!empty($this->transactions)): ?>
                           <div class="btn-group">
                             <div class="dropdown loan-history-download">
-                              <button class="btn btn-primary btn-finna-toolbar dropdown-toggle download" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <button class="btn btn-primary btn-finna-toolbar dropdown-toggle download" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <?=$this->transEsc('loan_history_download')?> <span class="caret"></span>
                               </button>
                               <ul class="dropdown-menu dropdown-menu-<?php if ($purgeSelectedAllowed): ?>right<?php else: ?>left<?php endif;?> download">
@@ -186,7 +186,7 @@
               <div class="loan-history-buttons-bottom">
                 <?php if ($purgeAllAllowed): ?>
                   <div class="dropdown loan-history-purge-all">
-                    <input type="submit" id="purgeAll" name="purgeAll" value="<?=$this->transEscAttr('loan_history_purge')?>" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore aria-expanded="false">
+                    <input type="submit" id="purgeAll" name="purgeAll" value="<?=$this->transEscAttr('loan_history_purge')?>" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" data-lightbox-ignore aria-expanded="false">
                     <ul class="dropdown-menu useraccount-confirm">
                       <li><span class="dropdown-header"><?=$this->transEsc('loan_history_confirm_purge_all')?></span></li>
                       <li>

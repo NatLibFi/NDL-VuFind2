@@ -4,7 +4,7 @@
     $__attributes['aria-label'] = $ariaLabel;
   }
 ?>
-<nav<?= $__attributes->add('class', ['finna-navbar-component', 'navbar']) ?>>
+<nav<?= $__attributes->add('class', ['finna-navbar-component', 'navbar', 'navbar-expand-md']) ?>>
   <div class="container-fluid">
     <div class="navbar-header">
       <?php if (isset($brandContent)): ?>
@@ -15,7 +15,7 @@
           <?php if (isset($brandLink)): ?></a><?php endif; ?>
         </span>
       <?php endif; ?>
-      <button type="button" class="navbar-toggle collapsed navbar-toggler" data-toggle="collapse" data-target="#<?= $collapseId ?? '' ?>" aria-expanded="false">
+      <button type="button" class="navbar-toggler navbar-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?? '' ?>" aria-expanded="false">
         <?php if (isset($toggleBtnSrOnly)): ?><span class="sr-only"><?= $toggleBtnSrOnly ?></span><?php endif; ?>
         <?php if (isset($toggleBtnLabel)): ?><?= $toggleBtnLabel ?><?php endif; ?>
         <?php if (isset($toggleBtnIconClass)): ?><i class="<?= $toggleBtnIconClass ?>"></i><?php endif; ?>

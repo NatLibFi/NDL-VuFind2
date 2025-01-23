@@ -325,7 +325,7 @@ finna.layout = (function finnaLayout() {
   function initToolTips(_holder) {
     const holder = typeof _holder === 'undefined' ? document : unwrapJQuery(_holder);
     // Supports also the old data-toggle attribute
-    holder.querySelectorAll('[data-bs-toggle="tooltip"],[data-toggle="tooltip"],[data-toggle="tooltip-hover"]').forEach(el => {
+    holder.querySelectorAll('[data-bs-toggle="tooltip"],[data-bs-toggle="tooltip"],[data-toggle="tooltip-hover"]').forEach(el => {
       if (null === el.dataset.bsToggle) {
         el.dataset.bsToggle = 'tooltip';
       }

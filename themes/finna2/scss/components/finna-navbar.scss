@@ -6,7 +6,7 @@
       align-items: center;
       flex: 1;
     }
-    .navbar-toggle {
+    .navbar-toggler {
       position: static;
       display: flex;
       justify-content: center;
@@ -56,7 +56,7 @@
   &::after {
     content: '\e612';
   }
-  .finna-navbar-component .navbar-toggle.collapsed &::after {
+  .finna-navbar-component .navbar-toggler.collapsed &::after {
     content: '\e613';
   }
 }
@@ -143,7 +143,7 @@ $finna-navbar-content-toggle-border-color:       $finna-navbar-content-border !d
     }
   }
 
-  .navbar-toggle {
+  .navbar-toggler {
     border-color: $finna-navbar-content-toggle-border-color;
     &:hover,
     &:focus {

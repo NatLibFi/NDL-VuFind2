@@ -17,7 +17,7 @@
   <?php $exportFormats = $this->export()->getFormatsForRecord($this->driver); ?>
   <?php if(count($exportFormats) > 0): ?>
     <li role="none" class="dropdown">
-      <a class="export-toggle toolbar-btn dropdown-toggle" data-toggle="dropdown" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Export', [], '', ['excludeSearchId' => true]))?>" rel="nofollow" aria-expanded="false" aria-controls="export-options">
+      <a class="export-toggle toolbar-btn dropdown-toggle" data-bs-toggle="dropdown" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Export', [], '', ['excludeSearchId' => true]))?>" rel="nofollow" aria-expanded="false" aria-controls="export-options">
         <?=$this->icon('export') ?>
         <?=$this->transEsc('Export Record') ?>
       </a>
@@ -39,7 +39,7 @@
   <?php $QRCode = $this->record($this->driver)->getQRCode('core'); ?>
   <?php if($QRCode): ?>
   <li role="none" class="dropdown">
-    <a class="dropdown-toggle qrcodeLink" data-toggle="dropdown" href="<?=$this->escapeHtmlAttr($QRCode);?>" rel="nofollow" aria-expanded="false"><?=$this->icon('qrcode') ?><span class="hidden-xs"> <?=$this->transEsc('QR Code') ?></span></a>
+    <a class="dropdown-toggle qrcodeLink" data-bs-toggle="dropdown" href="<?=$this->escapeHtmlAttr($QRCode);?>" rel="nofollow" aria-expanded="false"><?=$this->icon('qrcode') ?><span class="hidden-xs"> <?=$this->transEsc('QR Code') ?></span></a>
     <ul class="dropdown-menu qrcode" role="menu">
       <li class="text-center">
         <script type="text/template" class="qrCodeImgTag">
