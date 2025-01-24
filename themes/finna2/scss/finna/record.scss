@@ -608,7 +608,9 @@ a.authority {
 
 // Share buttons
 .nav-pills > li.share-buttons {
-  float: right;
+  display: flex;
+  flex-grow: 1;
+  justify-content: end;
   padding-top: 5px;
   .share-buttons-toolbox {
       a {
