@@ -33,8 +33,9 @@
   }
   .dropdown .dropdown-menu > li > a > .description {
     font-size: .9em;
-    display: inline-block;
+    display: block;
     width: 100%;
+    white-space: normal;
   }
 }
 
@@ -323,6 +324,7 @@
   .navbar-collapse.show {
     box-shadow: 0 3px 5px $gray;
     max-height: calc(100vh - #{#{$navbar-height}});
+    overflow: scroll;
   }
   .navbar-header {
     padding-left: 10px;
