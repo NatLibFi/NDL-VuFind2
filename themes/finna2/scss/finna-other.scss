@@ -295,11 +295,13 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
 // Truncate
 .truncate-done {
   overflow-y: clip;
+  // Add a bit of padding for focus rings:
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 
 //Finna mixins
 .truncate-field {
-    overflow: hidden;
     display: none;
     &.truncate-done {
         display: block;

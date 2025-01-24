@@ -228,6 +228,10 @@
         &:hover {
             cursor: pointer;
         }
+        &:focus-visible {
+            outline: 0;
+            box-shadow: $focus-ring-box-shadow;
+        }
         .location {
             flex: 1 0 40%;
             border-top: none;
@@ -352,6 +356,7 @@
     }
     .copy-details {
         padding: 8px 15px 8px 31px;
+        margin-top: 4px;
         @include clearfix();
 
         &:nth-child(odd):not(.group-heading) {
