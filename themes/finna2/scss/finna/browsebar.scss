@@ -1,8 +1,10 @@
 .browsebar {
   width: 100%;
   background-color: $finna-browsebar-background;
-  bottom:0;
+  bottom: 0;
   color: $finna-browsebar-link-color;
+  // Fix focus rings:
+  margin-bottom: 2px;
 }
 .browsebar .nav>li .iconlabel:before,
 .browsebar .nav-dropdown-label.iconlabel:before,
