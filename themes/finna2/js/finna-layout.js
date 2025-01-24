@@ -307,6 +307,7 @@ finna.layout = (function finnaLayout() {
   function tooltipKeyDownHandler(e) {
     if (e.which === 27) {
       document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => bootstrap.Tooltip.getOrCreateInstance(el).hide());
+      document.querySelectorAll('[data-bs-toggle="popover"]').forEach(el => bootstrap.Popover.getOrCreateInstance(el).hide());
     }
   }
 
@@ -316,10 +317,11 @@ finna.layout = (function finnaLayout() {
    */
   function tooltipClickHandler() {
     document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => bootstrap.Tooltip.getOrCreateInstance(el).hide());
+    document.querySelectorAll('[data-bs-toggle="popover"]').forEach(el => bootstrap.Popover.getOrCreateInstance(el).hide());
   }
 
   /**
-   * Initialize tooltips
+   * Initialize tooltips and popovers
    * @param {jQuery} _holder Holder to look for tooltip elements from
    */
   function initToolTips(_holder) {
@@ -353,6 +355,10 @@ finna.layout = (function finnaLayout() {
       el.querySelectorAll(':scope > i, :scope > span').forEach((i) => {
         i.addEventListener('click', (event) => event.preventDefault());
       });
+    });
+
+    holder.querySelectorAll('[data-bs-toggle="popover"]').forEach(el => {
+      bootstrap.Popover.getOrCreateInstance(el);
     });
 
     document.addEventListener('keydown', tooltipKeyDownHandler);

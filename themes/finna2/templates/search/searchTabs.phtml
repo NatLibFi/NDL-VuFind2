@@ -10,9 +10,9 @@
 <?php if (!empty($searchTabs)): ?>
   <div role="navigation" aria-label="<?=$this->transEscAttr('Search Tabs')?>">
     <?php
-      $tooltipElement = $this->htmlElement()->addAttributeTemplate('tooltip-element', [
-        'class' => 'tooltip-btn',
-        'data-bs-toggle' => 'tooltip',
+      $popoverElement = $this->htmlElement()->addAttributeTemplate('popover-element', [
+        'class' => 'popover-btn',
+        'data-bs-toggle' => 'popover',
         'data-bs-trigger' => 'click',
         'data-bs-html' => 'true',
         'data-bs-placement' => 'bottom',
@@ -24,24 +24,25 @@
           $this->layout()->currentTabId = $tab['id'];
           $hasSelectedTab = true;
         }
-        $tooltipKeyHtml = 'tooltip_' . $tab['label'] . '_html';
-        if ($this->layout()->templateName !== 'advanced' && !$this->translationEmpty($tooltipKeyHtml)) {
-          $tooltip = [
+        $popoverKeyHtml = 'tooltip_' . $tab['label'] . '_html';
+        if ($this->layout()->templateName !== 'advanced' && !$this->translationEmpty($popoverKeyHtml)) {
+          // Note: tooltip- class is kept for back-compatibility
+          $popover = [
             'aria-label' => $this->translate('Help') . ' - ' . $this->translate($tab['label']),
-            'data-bs-title' => $this->translate($tooltipKeyHtml),
+            'data-bs-content' => $this->translate($popoverKeyHtml),
             'class' => 'tooltip-' . $tab['label'],
             'data-bs-custom-class' => 'tooltip-' . $tab['label'],
           ];
         } else {
-          $tooltip = '';
+          $popover = '';
         }
         ?>
-        <li class="nav-item <?=$tab['selected'] ? 'active' : 'hidden-print'?><?=$tooltip ? ' with-tooltip' : ''?>">
+        <li class="nav-item <?=$tab['selected'] ? 'active' : 'hidden-print'?><?=$popover ? ' with-popover' : ''?>">
           <a class="nav-link<?=$tab['selected'] ? ' active' : ''?>" <?=$tab['selected'] ? 'aria-current="true"' : 'href="' . $this->escapeHtmlAttr($tab['url']) . '"' ?>>
             <?=$this->transEsc($tab['label']); ?>
           </a>
-          <?php if ($tooltip): ?>
-            <button <?= $this->htmlElement()->getAttributes($tooltip, 'tooltip-element'); ?>>
+          <?php if ($popover): ?>
+            <button <?= $this->htmlElement()->getAttributes($popover, 'popover-element'); ?>>
               <?=$this->icon('help') ?>
             </button>
           <?php endif; ?>

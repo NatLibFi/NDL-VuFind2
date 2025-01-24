@@ -93,7 +93,7 @@
       color: $gray;
     }
   }
-  ul.nav-tabs > li.with-tooltip {
+  ul.nav-tabs > li.with-popover {
     a {
       padding-right: 2.5rem;
 
@@ -102,7 +102,7 @@
       }
     }
   }
-  .tooltip-btn {
+  .finna-popover-btn {
     display: $tooltip-tabs-default;
     &.tooltip-tabs_local {
       display: $tooltip-tabs-local;
