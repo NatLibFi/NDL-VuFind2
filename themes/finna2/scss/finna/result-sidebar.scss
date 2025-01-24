@@ -59,7 +59,7 @@
   }
 }
 
-.sidebar :not(.recordProvidedBy) .header-container,
+.sidebar :not(.recordProvidedBy) .side-facets-header-container,
 .sidebar > h1,
 .sidebar > h2 {
   margin-bottom: 5px;
@@ -78,7 +78,7 @@
   }
 }
 @media (max-width: $screen-xs-max) {
-  .sidebar .header-container {
+  .sidebar .side-facets-header-container {
     button.sidebar-close-btn {
       color: $sidebar-header-text-color;
       background-color: $brand-primary;
