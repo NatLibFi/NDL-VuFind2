@@ -34,7 +34,7 @@
                   $desc = !empty($itemVal['desc']) ? $itemVal['desc'] : null;
                 ?>
                   <li>
-                    <a <?=$url === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> <?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?=$this->escapeHtmlAttr($url)?>">
+                    <a class="dropdown-item"<?=$this->navibar()->isCurrentPage($url) ? ' aria-current="page"' : ''?> <?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?=$this->escapeHtmlAttr($url)?>">
                       <span><?= $this->transEsc($label) ?></span>
                       <?php if ($desc): ?>
                         <span class="description"><?= $this->transEsc($desc) ?></span>
@@ -57,7 +57,7 @@
                     'role' => 'button',
                 ]
             );
-            if ($itemUrl['url'] === $_SERVER['REQUEST_URI']) {
+            if ($this->navibar()->isCurrentPage($itemUrl['url'])) {
               $linkAttrs->add('class', 'active');
               $linkAttrs->add('aria-current', 'page');
             }
@@ -85,7 +85,7 @@
                     'id' => 'feedback-link',
                 ]
             );
-            if ($url === $_SERVER['REQUEST_URI']) {
+            if ($this->navibar()->isCurrentPage($url)) {
               $linkAttrs->add('class', 'active');
               $linkAttrs->add('aria-current', 'page');
             }
