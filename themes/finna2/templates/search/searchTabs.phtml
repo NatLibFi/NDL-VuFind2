@@ -19,7 +19,7 @@
         if ($this->layout()->templateName !== 'advanced' && !$this->translationEmpty($toggletipKeyHtml)) {
           $toggletip = [
             'icon' => 'help',
-            'aria-label' => $this->translate('Help') . ' - ' . $this->translate($tab['label']),
+            'ariaLabel' => $this->translate('Help') . ' - ' . $this->translate($tab['label']),
             'content' => $this->translate($toggletipKeyHtml),
             'class' => 'tooltip-' . $tab['label'], // for back-compatibility
           ];
