@@ -2,6 +2,7 @@
 <?php
     // Set up page title:
     $this->headTitle($this->translate('Loan History'));
+    $this->layout()->finnaUseraccountHeader = 'useraccount-content-header';
 
     // Set up breadcrumbs:
     $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Loan History') . '</li>';
@@ -25,7 +26,7 @@
     <div class="useraccount-row">
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
-    <div class="useraccount-header">
+    <div id="useraccount-content-header" class="useraccount-header" tabindex="0">
       <h2><?=$this->transEsc('Loan History')?> (<?=$recordCount;?>)</h2>
     </div>
     <?php if (isset($this->noSupport)): ?>
@@ -183,6 +184,7 @@
                   </tr>
                 <?php endforeach; ?>
               </table>
+              <h3 class="sr-only"><?=$this->transEsc('End of List')?></h3>
               <div class="loan-history-buttons-bottom">
                 <?php if ($purgeAllAllowed): ?>
                   <div class="dropdown loan-history-purge-all">
@@ -195,8 +197,6 @@
                       </li>
                     </ul>
                   </div>
-                <?php else: ?>
-                  <div class="sr-only" tabindex="0"><?=$this->transEsc('Loan History')?> <?=$this->transEsc('päättyy')?></div>
                 <?php endif; ?>
               </div>
             </form>
