@@ -87,31 +87,6 @@
    }
 }
 
-.finna-main-tabs {
-  ul.nav-tabs > li.active > a {
-    .tooltip-tabs_local, .tooltip-tabs_pci {
-      color: $gray;
-    }
-  }
-  ul.nav-tabs > li.with-popover {
-    a {
-      padding-right: 2.5rem;
-
-      &:hover {
-        isolation: auto;
-      }
-    }
-  }
-  .finna-popover-btn {
-    display: $tooltip-tabs-default;
-    &.tooltip-tabs_local {
-      display: $tooltip-tabs-local;
-    }
-    &.tooltip-tabs_pci {
-      display: $tooltip-tabs-pci;
-    }
-  }
-}
 .tooltip-myaccount {
   margin-left: 10px;
   color: $gray;

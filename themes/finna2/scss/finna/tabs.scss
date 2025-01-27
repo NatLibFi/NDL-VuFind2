@@ -9,32 +9,54 @@
     padding-bottom: 0;
     display: flex;
 
-    &.with-popover {
-      padding-right: 0.8rem;
+    &.with-tooltip {
+      display: flex;
+      align-items: center;
+      > a {
+        padding-right: 2.5rem;
+      }
     }
     > a  {
+      flex: 1;
       padding: 10px 5px;
       font-size: 1em;
       font-weight: 600;
+
+      // Disable isolation that would cover the tooltip button:
+      &:hover {
+        isolation: auto;
+      }
     }
-    > button {
-      padding: .2em .5em;
+    &.active {
+     .tooltip-tabs_local, .tooltip-tabs_pci {
+        color: $gray;
+      }
     }
 
-    > button {
-      margin-left: -2.3rem;
-      opacity: 1;
-      padding: 0;
-      margin-top: 0.25rem;
-      color: $main-tabs-active-color;
-      display: inline-block;
-      z-index: 200;
-      background-color: transparent;
-      border: none;
-      font-size: 1.3rem;
-      cursor: pointer;
-      .icon {
+    > .finna-toggletip {
+      display: $tooltip-tabs-default;
+      &.tooltip-tabs_local {
+        display: $tooltip-tabs-local;
+      }
+      &.tooltip-tabs_pci {
+        display: $tooltip-tabs-pci;
+      }
+
+      > button {
+        margin-left: -2.5rem;
+        opacity: 1;
+        padding: .2em;
+        margin-top: 0.25rem;
+        color: $main-tabs-active-color;
+        display: inline-block;
+        z-index: 200;
+        background-color: transparent;
+        border: none;
+        font-size: 1.3rem;
         cursor: pointer;
+        .icon {
+          cursor: pointer;
+        }
       }
     }
   }

@@ -1,4 +1,4 @@
-/*global VuFind, videojs, finna, priorityNav, bootstrap, unwrapJQuery */
+/*global VuFind, videojs, finna, priorityNav, bootstrap, unwrapJQuery, Popper */
 finna.layout = (function finnaLayout() {
   /**
    * Initialize a throttled resize listener
@@ -300,6 +300,80 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  function initToggleTips(holder) {
+    holder.querySelectorAll('[data-toggle="finna-toggletip"]').forEach(toggletip => {
+      if (toggletip.dataset.initialized) {
+        return;
+      }
+      toggletip.dataset.initialized = true;
+      // Get the message from the data-content element
+      const message = toggletip.dataset.toggletipContent || '';
+      const tipEl = toggletip.parentNode.querySelector('.js-status');
+      if (!tipEl) {
+        return;
+      }
+      const tipInnerEl = tipEl.querySelector('.js-status-inner');
+      if (!tipInnerEl) {
+        return;
+      }
+
+      const placement = toggletip.dataset.toggletipPlacement || 'bottom';
+      const popperInst = Popper.createPopper(
+        toggletip,
+        tipEl,
+        {
+          placement: placement,
+          modifiers: [
+            {
+              name: 'flip',
+              options: {
+                fallbackPlacements: ['top', 'bottom', 'left', 'right'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {}
+            }
+          ],
+        }
+      );
+      toggletip.addEventListener('click', () => {
+        if (tipEl.classList.contains('show')) {
+          tipEl.classList.remove('show');
+          tipInnerEl.innerHTML = '';
+        } else {
+          window.setTimeout(() => {
+            tipInnerEl.innerHTML = message;
+            tipEl.classList.add('show');
+            popperInst.update();
+          }, 100);
+        }
+      });
+
+      // Close on outside click
+      document.addEventListener('click', (e) => {
+        if (toggletip !== e.target) {
+          tipEl.classList.remove('show');
+          tipInnerEl.innerHTML = '';
+        }
+      });
+
+      // Remove toggletip on Esc
+      toggletip.addEventListener('keydown', (e) => {
+        if ((e.keyCode || e.which) === 27) {
+          tipEl.classList.remove('show');
+          tipInnerEl.innerHTML = '';
+        }
+      });
+
+      // Remove on blur
+      toggletip.addEventListener('blur', () => {
+        tipEl.classList.remove('show');
+        tipInnerEl.innerHTML = '';
+      });
+    });
+  }
+
   /**
    * Hide all tooltips when Esc is pressed
    * @param {Event} e Event
@@ -307,7 +381,6 @@ finna.layout = (function finnaLayout() {
   function tooltipKeyDownHandler(e) {
     if (e.which === 27) {
       document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => bootstrap.Tooltip.getOrCreateInstance(el).hide());
-      document.querySelectorAll('[data-bs-toggle="popover"]').forEach(el => bootstrap.Popover.getOrCreateInstance(el).hide());
     }
   }
 
@@ -317,7 +390,6 @@ finna.layout = (function finnaLayout() {
    */
   function tooltipClickHandler() {
     document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => bootstrap.Tooltip.getOrCreateInstance(el).hide());
-    document.querySelectorAll('[data-bs-toggle="popover"]').forEach(el => bootstrap.Popover.getOrCreateInstance(el).hide());
   }
 
   /**
@@ -357,12 +429,10 @@ finna.layout = (function finnaLayout() {
       });
     });
 
-    holder.querySelectorAll('[data-bs-toggle="popover"]').forEach(el => {
-      bootstrap.Popover.getOrCreateInstance(el);
-    });
-
     document.addEventListener('keydown', tooltipKeyDownHandler);
     document.querySelector('html').addEventListener('click', tooltipClickHandler);
+
+    initToggleTips(holder);
   }
 
   /**

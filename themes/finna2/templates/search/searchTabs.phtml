@@ -9,42 +9,30 @@
 <?php endif; ?>
 <?php if (!empty($searchTabs)): ?>
   <div role="navigation" aria-label="<?=$this->transEscAttr('Search Tabs')?>">
-    <?php
-      $popoverElement = $this->htmlElement()->addAttributeTemplate('popover-element', [
-        'class' => 'popover-btn',
-        'data-bs-toggle' => 'popover',
-        'data-bs-trigger' => 'click',
-        'data-bs-html' => 'true',
-        'data-bs-placement' => 'bottom',
-      ]);
-    ?>
     <ul class="nav nav-tabs <?=$isManyTabs ? ' many-tabs hidden-xs' : '';?>">
       <?php foreach ($searchTabs as $tab): ?>
         <?php if ($tab['selected']) {
           $this->layout()->currentTabId = $tab['id'];
           $hasSelectedTab = true;
         }
-        $popoverKeyHtml = 'tooltip_' . $tab['label'] . '_html';
-        if ($this->layout()->templateName !== 'advanced' && !$this->translationEmpty($popoverKeyHtml)) {
-          // Note: tooltip- class is kept for back-compatibility
-          $popover = [
+        $toggletipKeyHtml = 'tooltip_' . $tab['label'] . '_html';
+        if ($this->layout()->templateName !== 'advanced' && !$this->translationEmpty($toggletipKeyHtml)) {
+          $toggletip = [
+            'icon' => 'help',
             'aria-label' => $this->translate('Help') . ' - ' . $this->translate($tab['label']),
-            'data-bs-content' => $this->translate($popoverKeyHtml),
-            'class' => 'tooltip-' . $tab['label'],
-            'data-bs-custom-class' => 'tooltip-' . $tab['label'],
+            'content' => $this->translate($toggletipKeyHtml),
+            'class' => 'tooltip-' . $tab['label'], // for back-compatibility
           ];
         } else {
-          $popover = '';
+          $toggletip = '';
         }
         ?>
-        <li class="nav-item <?=$tab['selected'] ? 'active' : 'hidden-print'?><?=$popover ? ' with-popover' : ''?>">
+        <li class="nav-item <?=$tab['selected'] ? 'active' : 'hidden-print'?><?=$toggletip ? ' with-tooltip' : ''?>">
           <a class="nav-link<?=$tab['selected'] ? ' active' : ''?>" <?=$tab['selected'] ? 'aria-current="true"' : 'href="' . $this->escapeHtmlAttr($tab['url']) . '"' ?>>
             <?=$this->transEsc($tab['label']); ?>
           </a>
-          <?php if ($popover): ?>
-            <button <?= $this->htmlElement()->getAttributes($popover, 'popover-element'); ?>>
-              <?=$this->icon('help') ?>
-            </button>
+          <?php if ($toggletip): ?>
+            <?=$this->component('finna-toggletip', $toggletip)?>
           <?php endif; ?>
         </li>
       <?php endforeach; ?>
