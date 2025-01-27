@@ -90,7 +90,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
                   [
                     'name' => 'name_of_the_recipient_2',
                     'email' => 'email_of_the_recipient_2',
-                  ]
+                  ],
                 ],
                 'Datasources' => [
                     'datasource_1',
@@ -317,7 +317,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
                       [
                         'name' => 'name_of_the_recipient_2',
                         'email' => 'email_of_the_recipient_2',
-                      ]
+                      ],
                     ],
                     'Datasources' => [
                     'datasource_1',
