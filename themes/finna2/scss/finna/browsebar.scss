@@ -17,6 +17,10 @@
   border: none;
   max-width: none;
   background-color: transparent;
+
+  .nav-wrapper:not(.priority-nav) .nav-ul {
+    flex-direction: initial;
+  }
 }
 .browsebar .nav>li {
   line-height: normal;

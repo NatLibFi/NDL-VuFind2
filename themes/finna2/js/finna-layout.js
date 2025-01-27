@@ -786,6 +786,10 @@ finna.layout = (function finnaLayout() {
    * Initialize priority navigation
    */
   function initPriorityNav() {
+    const navWrapperEl = document.querySelector('.nav-wrapper');
+    if (!navWrapperEl || typeof navWrapperEl.dataset.disablePriorityNav !== 'undefined') {
+      return;
+    }
     priorityNav.init({
       mainNavWrapper: ".nav-wrapper",
       mainNav: ".nav-ul",
