@@ -82,6 +82,29 @@
       color: $action-link-color;
     }
   }
+
+  .finna-navbar .navbar-collapse {
+    .dropdown-toggle {
+      width: 100%;
+    }
+    & > ul > li {
+      border-bottom: 1px solid $gray-lighter;
+    }
+    .dropdown-menu {
+      border: 0;
+      box-shadow: none;
+      margin-top: 0;
+
+      & > li {
+        border-bottom: none;
+      }
+      .dropdown-item {
+        border: 0;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+    }
+  }
 }
 
 // content-navigation-menu
@@ -96,6 +119,8 @@
     text-transform: uppercase;
   }
   .nav-item > .nav-link {
+    display: flex;
+    gap: 0.25rem;
     --bs-nav-link-color: #{$header-text-color};
     --bs-nav-link-hover-color: #{$header-text-hover-color};
     --bs-navbar-active-color: #{$header-text-active-color};
