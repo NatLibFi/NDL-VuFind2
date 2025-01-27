@@ -32,11 +32,13 @@
 namespace Finna\ReservationList;
 
 use DateTime;
+use Exception;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\Db\Service\FinnaResourceListResourceServiceInterface;
 use Finna\Db\Service\FinnaResourceListServiceInterface;
 use Laminas\Session\Container;
 use Laminas\Stdlib\Parameters;
+use TypeError;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\DbServiceAwareInterface;
@@ -322,6 +324,9 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         if (!$this->userCanEditList($user, $list)) {
             throw new ListPermissionException('list_access_denied');
         }
+        if (!isset($newValues['pickup_date'])) {
+            throw new Exception('Missing pickup date');
+        }
         $list->setPickupDate(DateTime::createFromFormat('Y-m-d', $newValues['pickup_date']))->setOrdered();
         $list->setExternalId($newValues['external_id'] ?? null);
         $list->setConnection($newValues['connection'] ?? self::DEFAULT_CONNECTION_HANDLER);
@@ -391,13 +396,17 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         UserEntityInterface $user,
         array $listValues
     ): FinnaResourceListEntityInterface {
-        $list->setTitle($listValues['title'])
-            ->setDescription($listValues['desc'])
-            ->setInstitution($listValues['institution'])
-            ->setListConfigIdentifier($listValues['listIdentifier'])
-            ->setUser($user)
-            ->setListType(self::RESOURCE_LIST_TYPE)
-            ->setConnection($listValues['connection']);
+        try {
+            $list->setTitle($listValues['title'])
+                ->setDescription($listValues['desc'])
+                ->setInstitution($listValues['institution'])
+                ->setListConfigIdentifier($listValues['listIdentifier'])
+                ->setUser($user)
+                ->setListType(self::RESOURCE_LIST_TYPE)
+                ->setConnection($listValues['connection']);
+        } catch (TypeError $e) {
+            throw new Exception('Missing values to populate list');
+        }
         return $list;
     }
 
