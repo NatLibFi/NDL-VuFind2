@@ -470,7 +470,7 @@ class ReservationListController extends AbstractBase
             return $this->forceLogin();
         }
 
-        $listID = $this->getParam(Form::SINGLE_LIST_ID_KEY, false);
+        $listID = $this->getParam('listID', false);
         if (false === $listID) {
             throw new \Exception('List ID not defined in deleteBulkAction');
         }
