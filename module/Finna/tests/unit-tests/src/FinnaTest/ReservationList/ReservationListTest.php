@@ -83,10 +83,14 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
                 'Identifier' => 'list_with_email',
                 'Enabled' => true,
                 'Recipient' => [
-                  'name' => 'name_of_the_recipient_1',
-                  'email' => 'email_of_the_recipient_1',
-                  'name' => 'name_of_the_recipient_2',
-                  'email' => 'email_of_the_recipient_2',
+                  [
+                    'name' => 'name_of_the_recipient_1',
+                    'email' => 'email_of_the_recipient_1',
+                  ],
+                  [
+                    'name' => 'name_of_the_recipient_2',
+                    'email' => 'email_of_the_recipient_2',
+                  ]
                 ],
                 'Datasources' => [
                     'datasource_1',
@@ -138,61 +142,68 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         $configCopy['Institutions']['Example Institution']['Lists'][0]['Identifier'] = 'list_with_email';
         $configCopy['Institutions']['Example Institution']['Lists'][0]['Connection']['type'] = 'email';
         $configCopy['Institutions']['Example Institution']['Lists'][0]['Connection']['Sender']['name']
-        = 'sender_test';
+          = 'sender_test';
         $configCopy['Institutions']['Example Institution']['Lists'][0]['Connection']['Sender']['email']
-        = 'sender_email@email.fi';
+          = 'sender_email@email.fi';
         yield 'list with email connection' => [
-        ['Example Institution', 'list_with_email'],
-        $configCopy,
-        [
-          'properties' => [
-            'Enabled' => true,
-            'Recipient' => [
-              'name' => 'name_of_the_recipient_2',
-              'email' => 'email_of_the_recipient_2',
-            ],
-            'Datasources' => [
-              'datasource_1',
-              'datasource_2',
-            ],
-            'Information' => [
-              'Address' => 'teststreet 10',
-              'Postal' => '000001',
-              'City' => 'Test city',
-            ],
-            'LibraryCardSources' => [
-              'connection_established_to_use_lists',
-            ],
-            'Forms' => [
-                'PlaceOrder' => 'default',
-            ],
-            'Connection' =>  [
-                'type' => 'email',
-                'Sender' => [
-                  'name' => 'sender_test',
-                  'email' => 'sender_email@email.fi',
+          ['Example Institution', 'list_with_email'],
+          $configCopy,
+          [
+            'properties' => [
+              'Enabled' => true,
+              'Recipient' => [
+                [
+                  'name' => 'name_of_the_recipient_1',
+                  'email' => 'email_of_the_recipient_1',
                 ],
-                'subject' => 'Reservation List',
+                [
+                  'name' => 'name_of_the_recipient_2',
+                  'email' => 'email_of_the_recipient_2',
+                ],
+              ],
+              'Datasources' => [
+                'datasource_1',
+                'datasource_2',
+              ],
+              'Information' => [
+                'Address' => 'teststreet 10',
+                'Postal' => '000001',
+                'City' => 'Test city',
+              ],
+              'LibraryCardSources' => [
+                'connection_established_to_use_lists',
+              ],
+              'Forms' => [
+                  'PlaceOrder' => 'default',
+              ],
+              'Connection' =>  [
+                  'type' => 'email',
+                  'Sender' => [
+                    'name' => 'sender_test',
+                    'email' => 'sender_email@email.fi',
+                  ],
+                  'subject' => 'Reservation List',
+              ],
+              'Identifier' => 'list_with_email',
             ],
-            'Identifier' => 'list_with_email',
+            'institution_information' => [
+              'name' => 'Example Institution Name',
+              'address' => 'Example Institution address',
+              'postal' => ' Example Institution postal',
+              'city' => 'Example Institution city',
+              'email' => 'Example Institution email',
+            ],
+            'translation_keys' => [
+              'title' => 'ReservationList::list_title_Example Institution_list_with_email',
+              'description' => 'ReservationList::list_description_Example Institution_list_with_email',
+            ],
           ],
-          'institution_information' => [
-            'name' => 'Example Institution Name',
-            'address' => 'Example Institution address',
-            'postal' => ' Example Institution postal',
-            'city' => 'Example Institution city',
-            'email' => 'Example Institution email',
-          ],
-          'translation_keys' => [
-            'title' => 'ReservationList::list_title_Example Institution_list_with_email',
-            'description' => 'ReservationList::list_description_Example Institution_list_with_email',
-          ],
-        ],
         ];
 
         $configCopy = self::DEFAULT_CONFIG;
         unset($configCopy['Institutions']['Example Institution']['Lists'][0]['Connection']['Sender']);
         unset($configCopy['Institutions']['Example Institution']['Lists'][0]['Connection']['subject']);
+        unset($configCopy['Institutions']['Example Institution']['Lists'][0]['Recipient']);
         $configCopy['Institutions']['Example Institution']['Lists'][0]['Identifier'] = 'list_with_disec';
         $configCopy['Institutions']['Example Institution']['Lists'][0]['Connection']['type'] = 'disec';
         $configCopy['Institutions']['Example Institution']['Lists'][0]['Connection']['base_url']
@@ -205,10 +216,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
           [
             'properties' => [
               'Enabled' => true,
-              'Recipient' => [
-                'name' => 'name_of_the_recipient_2',
-                'email' => 'email_of_the_recipient_2',
-              ],
+              'Recipient' => [],
               'Datasources' => [
                 'datasource_1',
                 'datasource_2',
@@ -253,10 +261,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         [
           'properties' => [
             'Enabled' => false,
-            'Recipient' => [
-              'name' => 'name_of_the_recipient_2',
-              'email' => 'email_of_the_recipient_2',
-            ],
+            'Recipient' => [],
             'Datasources' => [
               'datasource_1',
               'datasource_2',
@@ -305,8 +310,14 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
                 'properties' => [
                     'Enabled' => false,
                     'Recipient' => [
-                    'name' => 'name_of_the_recipient_2',
-                    'email' => 'email_of_the_recipient_2',
+                      [
+                        'name' => 'name_of_the_recipient_1',
+                        'email' => 'email_of_the_recipient_1',
+                      ],
+                      [
+                        'name' => 'name_of_the_recipient_2',
+                        'email' => 'email_of_the_recipient_2',
+                      ]
                     ],
                     'Datasources' => [
                     'datasource_1',
