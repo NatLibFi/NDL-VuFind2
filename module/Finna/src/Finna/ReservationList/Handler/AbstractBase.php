@@ -143,7 +143,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         $result = array_merge($result, [
             'rl_record_id' => $record->getUniqueID(),
             'record_ids_text' => $record->getUniqueID() . '||' . $record->getTitle() . PHP_EOL,
-            'record_source_and_ids' => $record->getSourceIdentifier() . '|' . $record->getUniqueID(),
+            'record_source_and_ids' => [$record->getSourceIdentifier() . '|' . $record->getUniqueID()],
             'source' => $record->getSourceIdentifier(),
         ]);
         foreach (array_intersect_key($requestValues, self::PLACE_ORDER_REQUEST_KEYS) as $foundKey => $value) {

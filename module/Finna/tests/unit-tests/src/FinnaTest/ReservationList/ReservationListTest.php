@@ -35,12 +35,14 @@ use Finna\Db\Row\FinnaResourceList;
 use Finna\Db\Service\FinnaResourceListResourceService;
 use Finna\Db\Service\FinnaResourceListService;
 use Finna\ReservationList\Form\Form;
+use Finna\ReservationList\Handler\Disec;
+use Finna\ReservationList\Handler\Email;
+use Finna\ReservationList\Handler\HandlerFactory;
 use Finna\ReservationList\Handler\PluginManager as HandlerPluginManager;
 use Finna\ReservationList\ReservationListService;
 use Finna\ReservationList\ReservationListServiceFactory;
 use Generator;
 use Laminas\Db\Adapter\Adapter;
-use SplPriorityQueue;
 use VuFind\Db\Row\RowGatewayFactory;
 use VuFind\Db\Row\User;
 use VuFind\Db\Service\PluginManager;
@@ -80,6 +82,70 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     public function setup(): void
     {
         $this->container = new MockContainer($this);
+    }
+
+    /**
+     * Set classes to container required for testing
+     *
+     * @return void
+     */
+    public function setContainer(): void
+    {
+        $this->container->set(
+            'Config',
+            [
+            'vufind' =>
+            [
+              'plugin_managers' => [
+                'reservationlist_handler' => [],
+              ],
+            ],
+            ],
+        );
+        $mockResourceListResourceService = $this->container->createMock(
+            FinnaResourceListResourceService::class,
+            ['unlinkResources']
+        );
+        $mockResourceService = $this->container->createMock(\VuFind\Db\Service\ResourceService::class);
+
+        $this->container->set(\VuFind\Db\Service\PluginManager::class, $this->container);
+
+        $this->container->set(ResourceServiceInterface::class, $mockResourceService);
+        $this->container->set(
+            \Finna\Db\Service\FinnaResourceListResourceServiceInterface::class,
+            $mockResourceListResourceService
+        );
+
+        // Create three mocked records for testing sending disec data.
+        $mockRecord = $this->container->createMock(\Finna\RecordDriver\SolrEad3::class, ['getIdentifier']);
+        $loadedBatch = [];
+        for ($i = 0; $i < 3; $i++) {
+            $cloneRecord = clone $mockRecord;
+            $cloneRecord->expects($this->any())->method('getIdentifier')->willReturn(["identifier_record_$i"]);
+            $loadedBatch[] = $cloneRecord;
+        }
+        $mockRecordLoader = $this->container->createMock(Loader::class, ['loadBatch']);
+        $mockRecordLoader->expects($this->any())->method('loadBatch')->willReturn($loadedBatch);
+        $this->container->set(Loader::class, $mockRecordLoader);
+
+        $mockMailer = $this->container->createMock(\VuFind\Mailer\Mailer::class);
+        $this->container->set(\VuFind\Mailer\Mailer::class, $mockMailer);
+        $mockResourcePopulator = $this->container->createMock(ResourcePopulator::class);
+        $this->container->set(ResourcePopulator::class, $mockResourcePopulator);
+
+        $mockLogger = $this->container->createMock(Logger::class, ['__destruct']);
+        $mockLogger->setWriters(new \Laminas\Stdlib\SplPriorityQueue());
+        $this->container->set(Logger::class, $mockLogger);
+
+        $resourceList = $this->getResourceList();
+        $mockResourceListService = $this->container->createMock(
+            FinnaResourceListService::class,
+            ['createEntity', 'deleteResourceList', 'persistEntity']
+        );
+        $mockResourceListService->expects($this->any())->method('createEntity')->willReturn($resourceList);
+        $mockResourceListService->expects($this->any())->method('deleteResourceList')
+        ->will($this->throwException(new \Exception('List deleted')));
+        $this->container->set(\Finna\Db\Service\FinnaResourceListServiceInterface::class, $mockResourceListService);
     }
 
     /**
@@ -323,24 +389,6 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Set mock resource list service
-     *
-     * @return void
-     */
-    public function setMockResourceListService(): void
-    {
-        $resourceList = $this->getResourceList();
-        $mockResourceListService = $this->container->createMock(
-            FinnaResourceListService::class,
-            ['createEntity', 'deleteResourceList', 'persistEntity']
-        );
-        $mockResourceListService->expects($this->any())->method('createEntity')->willReturn($resourceList);
-        $mockResourceListService->expects($this->any())->method('deleteResourceList')
-          ->will($this->throwException(new \Exception('List deleted')));
-        $this->container->set(\Finna\Db\Service\FinnaResourceListServiceInterface::class, $mockResourceListService);
-    }
-
-    /**
      * Get a FinnaResourceList used for testing
      *
      * @return FinnaResourceList
@@ -374,28 +422,6 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
           ->with('ReservationList.yaml', 'config/finna')->willReturn($config);
         $this->container->set(\Finna\Config\YamlReader::class, $mockYamlReader);
 
-        $mockResourceListResourceService = $this->container->createMock(
-            FinnaResourceListResourceService::class,
-            ['unlinkResources']
-        );
-        $mockResourceService = $this->container->createMock(\VuFind\Db\Service\ResourceService::class);
-
-        $this->container->set(\VuFind\Db\Service\PluginManager::class, $this->container);
-
-        $this->setMockResourceListService();
-
-        $this->container->set(ResourceServiceInterface::class, $mockResourceService);
-        $this->container->set(
-            \Finna\Db\Service\FinnaResourceListResourceServiceInterface::class,
-            $mockResourceListResourceService
-        );
-
-        $mockResourcePopulator = $this->container->createMock(ResourcePopulator::class);
-        $this->container->set(ResourcePopulator::class, $mockResourcePopulator);
-
-        $mockRecordLoader = $this->container->createMock(Loader::class);
-        $this->container->set(Loader::class, $mockRecordLoader);
-
         $factory = new ReservationListServiceFactory();
         return  $factory($this->container, ReservationListService::class);
     }
@@ -414,11 +440,13 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
           'getFirstname',
           'getLastname',
           'getEmail',
+          'getCatId',
         ]);
         $user->method('getId')->willReturn($userID);
         $user->method('getFirstname')->willReturn('Testaaja');
         $user->method('getLastname')->willReturn('von Testaaja');
         $user->method('getEmail')->willReturn('testaaja@testeri.fi');
+        $user->method('getCatId')->willReturn('');
         return $user;
     }
 
@@ -485,6 +513,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     public function testListCreation(int $id, array $prefill): void
     {
         $this->setMockUserService($id);
+        $this->setContainer();
         $service = $this->getReservationListService('reservationlist/ReservationList.yaml');
         $user = $this->getMockUser($id);
         $newList = $service->createListForUser($user, $prefill);
@@ -502,9 +531,10 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
      */
     public function testFailingListCreation(int $id, array $prefill): void
     {
+        $this->setMockUserService($id);
+        $this->setContainer();
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Missing values to populate list');
-        $this->setMockUserService($id);
         $service = $this->getReservationListService('reservationlist/ReservationList.yaml');
         $user = $this->getMockUser($id);
         @$service->createListForUser($user, $prefill);
@@ -560,6 +590,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     public function testUserAccessSuccess(int $ownerId, int $currentId): void
     {
         $this->setMockUserService($ownerId);
+        $this->setContainer();
         $service = $this->getReservationListService('reservationlist/ReservationList.yaml');
         $user = $this->getMockUser($ownerId);
         $newList = $service->createListForUser($user);
@@ -579,6 +610,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     public function testUserAccessFailure(int $ownerId, ?int $currentId = null): void
     {
         $this->setMockUserService($ownerId);
+        $this->setContainer();
         $service = $this->getReservationListService('reservationlist/ReservationList.yaml');
         $user = $this->getMockUser($ownerId);
         $newList = $service->createListForUser($user);
@@ -625,9 +657,10 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
      */
     public function testDeletingList(int $ownerId, ?int $currentId, string $expected): void
     {
+        $this->setMockUserService($ownerId);
+        $this->setContainer();
         $this->expectException(Exception::class);
         $this->expectExceptionMessage($expected);
-        $this->setMockUserService($ownerId);
         $service = $this->getReservationListService('reservationlist/ReservationList.yaml');
         $user = $this->getMockUser($ownerId);
         $newList = $service->createListForUser($user);
@@ -708,6 +741,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     public function testSettingListOrdered(int $ownerId, array $data, array $expected): void
     {
         $this->setMockUserService($ownerId);
+        $this->setContainer();
         if (!isset($data['pickup_date'])) {
             $this->expectException(Exception::class);
             $this->expectExceptionMessage('Missing pickup date');
@@ -739,6 +773,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
      */
     public function testListProperties(array $params, string $fixture, array $expected): void
     {
+        $this->setContainer();
         $service = $this->getReservationListService($fixture);
         $listProperties = $service->getListProperties(...$params);
         $this->assertEquals(
@@ -763,7 +798,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
               'lastName' => 'von Testaaja',
               'email' => 'testaaja@testeri.fi',
               'pickup_date' => '2025-01-01',
-              'message' => 'Test message'
+              'message' => 'Test message',
             ],
             [
               Form::SINGLE_LIST_ID_KEY => -1,
@@ -832,20 +867,6 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
      */
     public function getPluginManager(): HandlerPluginManager
     {
-        $this->container->set(
-            'Config',
-            [
-              'vufind' =>
-                [
-                  'plugin_managers' => [
-                    'reservationlist_handler' => [],
-                  ],
-                ],
-            ],
-        );
-        $mockLogger = $this->container->createMock(Logger::class, ['__destruct']);
-        $mockLogger->setWriters(new \Laminas\Stdlib\SplPriorityQueue());
-        $this->container->set(Logger::class, $mockLogger);
         $factory = new \VuFind\ServiceManager\AbstractPluginManagerFactory();
         return $factory($this->container, HandlerPluginManager::class);
     }
@@ -868,6 +889,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         array $expected
     ): void {
         $this->setMockUserService(1);
+        $this->setContainer();
         $service = $this->getReservationListService('reservationlist/ReservationList.yaml');
         $pluginManager = $this->getPluginManager();
         $listProperties = $service->getListProperties($institution, $listIdentifier)['properties'];
@@ -882,5 +904,135 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         ]);
         $returned = $handler->getValuesForPlaceOrderForm($list, $user, $requestValues);
         $this->assertEquals($expected, $returned);
+    }
+
+    /**
+     * Get a disec handler with modified container
+     *
+     * @return Disec
+     */
+    public function getDisecHandler(): Disec
+    {
+        $mockLaminasResponse = $this->container->createMock(
+            \Laminas\Http\Response::class,
+            [
+            'isSuccess',
+            'getBody',
+            ]
+        );
+        $mockLaminasResponse->expects($this->any())->method('isSuccess', 'getBody')->willReturn(true);
+        $mockLaminasResponse->expects($this->any())->method('getBody')->willReturn('{"id":123123}');
+        $mockLaminasClient = $this->container->createMock(
+            \Laminas\Http\Client::class,
+            [
+            'setHeaders',
+            'setMethod',
+            'setRawBody',
+            'send',
+            ]
+        );
+        $mockLaminasClient->expects($this->any())->method('send')->willReturn($mockLaminasResponse);
+        $mockHttpService = $this->container->createMock(\VuFindHttp\HttpService::class, ['createClient']);
+        $mockHttpService->expects($this->any())->method('createClient')->willReturn($mockLaminasClient);
+        $this->container->set(\VuFindHttp\HttpService::class, $mockHttpService);
+        $factory = new HandlerFactory();
+        return $factory($this->container, Disec::class);
+    }
+
+    /**
+     * Get an email handler with modified container
+     *
+     * @return Email
+     */
+    public function getEmailHandler(): Email
+    {
+        $mockViewRenderer = $this->container->createMock(\Laminas\View\Renderer\PhpRenderer::class, ['render']);
+        $mockViewRenderer->expects($this->any())->method('render')->willReturn('test email message');
+        $this->container->set('ViewRenderer', $mockViewRenderer);
+        $factory = new HandlerFactory();
+        return $factory($this->container, Email::class);
+    }
+
+    /**
+     * Test disec data sending
+     *
+     * @return void
+     */
+    public function testDisecPlaceOrder(): void
+    {
+        $this->setMockUserService(1);
+        $this->setContainer();
+        $this->getPluginManager();
+        $user = $this->getMockUser(1);
+        $service = $this->getReservationListService('reservationlist/ReservationList.yaml');
+        $handler = $this->getDisecHandler();
+        $testValues = [
+        Form::SINGLE_LIST_ID_KEY => -1,
+        Form::INSTITUTION_KEY => 'Example Institution',
+        Form::LIST_IDENTIFIER_KEY => 'list_with_email',
+        'firstName' => 'Pouta',
+        'lastName' => 'Pakkanen',
+        'email' => 'testaaja@testeri.fi',
+        'record_ids_text' => '',
+        'record_source_and_ids' => [],
+        'pickup_date' => '2025-01-01',
+        'message' => 'Test message',
+        ];
+        $result = $handler->placeOrder($testValues, $user);
+        $this->assertEquals([
+        'external_id' => '123123',
+        'connection' => 'disec',
+        'pickup_date' => '2025-01-01',
+        'success' => true,
+        ], $result);
+    }
+
+    /**
+     * Test email data sending
+     *
+     * @return void
+     */
+    public function testEmailPlaceOrder(): void
+    {
+        $this->setMockUserService(1);
+        $this->setContainer();
+        $this->getPluginManager();
+        $user = $this->getMockUser(1);
+        $service = $this->getReservationListService('reservationlist/ReservationList.yaml');
+        $handler = $this->getEmailHandler();
+        $testValues = [
+        Form::SINGLE_LIST_ID_KEY => -1,
+        Form::INSTITUTION_KEY => 'Example Institution',
+        Form::LIST_IDENTIFIER_KEY => 'list_with_email',
+        'firstName' => 'Pouta',
+        'lastName' => 'Pakkanen',
+        'email' => 'testaaja@testeri.fi',
+        'record_ids_text' => '',
+        'record_source_and_ids' => [],
+        'pickup_date' => '2025-01-01',
+        'message' => 'Test message',
+        ];
+        $handler->init([
+        'Recipient' => [
+          [
+            'name' => 'test',
+            'email' => 'test@email.fi',
+          ],
+        ],
+        'Connection' => [
+          'Sender' => [
+            'name' => 'testisender',
+            'email' => 'testisender@email.fi',
+          ],
+          'Subject' => 'test subject',
+        ],
+        ]);
+        $result = $handler->placeOrder($testValues, $user);
+        $this->assertEquals([
+        'external_id' => null,
+        'connection' => 'email',
+        'pickup_date' => '2025-01-01',
+        'success' => true,
+        ], $result);
     }
 }
