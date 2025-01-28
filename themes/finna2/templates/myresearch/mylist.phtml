@@ -5,6 +5,7 @@
 
   // Set up page title:
   $this->headTitle($list ? $list->getTitle() : $this->translate('saved_items'));
+  $this->layout()->finnaUseraccountHeader = 'useraccount-content-header';
 
   // Set up breadcrumbs:
   $currPage = $list ? 'List' : 'saved_items';
@@ -49,7 +50,7 @@
     </div>
     <div>
       <?php if ($list): ?>
-        <div class="useraccount-header">
+        <div id="useraccount-content-header" class="useraccount-header" tabindex="0">
           <h2><?=$this->transEsc('saved_items')?></h2>
         </div>
         <div class="useraccount-header">
