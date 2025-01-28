@@ -135,7 +135,7 @@
                 <div class="half-table-column text-left">
                   <?=$this->record($resource)->renderTemplate('account-entry.phtml')?>
                 </div>
-                <div class="half-table-column holds-status-information" tabindex="0">
+                <div class="half-table-column holds-status-information">
                   <?php if (!empty($ilsDetails['requestGroup'])): ?>
                     <strong><?=$this->transEsc('hold_requested_group') ?>:</strong> <?=$this->transEsc('request_group_' . $ilsDetails['requestGroup'], [], $this->transEscWithPrefix('location_', $ilsDetails['requestGroup']))?>
                     <br>

@@ -177,7 +177,7 @@
                 <div class="title-column text-left">
                   <?=$this->record($resource)->renderTemplate('account-entry.phtml', ['driver' => $resource, 'displayItemBarcode' => $this->displayItemBarcode])?>
                 </div>
-                <div class="status-column" tabindex="0">
+                <div class="status-column">
                   <?php if (!empty($ilsDetails['onsite'])): ?>
                     <div class="alert alert-info"><?=$this->transEsc('onsite_checkout') ?></div>
                   <?php endif; ?>
