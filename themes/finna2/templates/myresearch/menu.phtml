@@ -167,7 +167,7 @@
   ?>
     <?php if ($hasPartial): ?>
       <li role="none" class="dropdown <?= $listItem['active'] ? ' active' : ''?>">
-        <a role="menuitem" href="<?=$this->escapeHtmlAttr($this->url($listItem['url']) . ($listItem['query'] ?? ''))?>" id="<?=$id?>" class="menu-parent sticky-menu hidden-xs hidden-sm list-group-item <?= !$listItem['active'] ? 'collapsed' : '' ?>" aria-haspopup="true" aria-expanded="<?=$listItem['active'] ? 'true' : 'false'?>">
+        <a href="<?=$this->escapeHtmlAttr($this->url($listItem['url']) . ($listItem['query'] ?? ''))?>" id="<?=$id?>" class="menu-parent sticky-menu hidden-xs hidden-sm list-group-item <?= !$listItem['active'] ? 'collapsed' : '' ?>" aria-haspopup="true" aria-expanded="<?=$listItem['active'] ? 'true' : 'false'?>">
           <?=$this->transEsc($listItem['translation'])?>
           <?php if ($showSpinner) : ?>
             <?=$this->icon('spinner', ['class' => 'hidden']) ?><span class="ajax-error hidden"><small> <?=$this->translate('An error has occurred'); ?></small></span>
@@ -182,7 +182,7 @@
       </li>
     <?php else: ?>
       <li role="none" class="hidden-xs hidden-sm <?="menu-$name"?> <?=$activeToLower === $name ? ' active' : ''?>">
-        <a role="menuitem" href="<?=$this->escapeHtmlAttr($this->url($listItem['url']) . ($listItem['query'] ?? ''))?>" class="list-group-item" <?=$activeToLower === $name ? 'aria-current="page"' : ''?>>
+        <a href="<?=$this->escapeHtmlAttr($this->url($listItem['url']) . ($listItem['query'] ?? ''))?>" class="list-group-item" <?=$activeToLower === $name ? 'aria-current="page"' : ''?>>
           <?=$this->transEsc($listItem['translation'])?>
           <?php if (isset($listItem['iconClass'])): ?>
             <?=$listItem['iconClass']?>
