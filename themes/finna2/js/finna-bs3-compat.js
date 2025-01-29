@@ -9,9 +9,6 @@ VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3Com
     document.querySelectorAll('.navbar').forEach((el) => {
       el.classList.add('navbar-expand-md');
     });
-    document.querySelectorAll('.navbar-toggle').forEach((el) => {
-      el.classList.add('navbar-toggler');
-    });
   }
 
   /**
@@ -20,9 +17,6 @@ VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3Com
   function initNav() {
     document.querySelectorAll('.nav').forEach((navEl) => {
       if (navEl.classList.contains('nav-tabs')) {
-        // tablist role for tabs:
-        navEl.setAttribute('role', 'tablist');
-
         // Apply active class to tab li for back-compatibility:
         const observer = new MutationObserver((mutations) => {
           mutations.forEach((mutation) => {
@@ -96,15 +90,6 @@ VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3Com
   }
 
   /**
-   * Initialize collapse support
-   */
-  function initCollapse() {
-    document.querySelectorAll('.collapse.in').forEach((el) => {
-      el.classList.add('show');
-    });
-  }
-
-  /**
    * Initialize pagination support
    */
   function initPagination() {
@@ -117,41 +102,6 @@ VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3Com
         el.innerHTML = '<a href="#" class="page-link">' + el.innerHTML + '</a>';
       }
     });
-  }
-
-  /**
-   * Support function for converting data attributes
-   * @param {HTMLElement} el Element
-   */
-  function convertDataAttributes(el) {
-    if (typeof el.getAttribute === 'undefined') {
-      return;
-    }
-    const attrs = ['dismiss', 'target', 'toggle'];
-    attrs.forEach((attr) => {
-      const val = el.getAttribute('data-' + attr);
-      if (null !== val) {
-        el.setAttribute('data-bs-' + attr, val);
-      }
-    });
-  }
-
-  /**
-   * Initialize data attribute mapping support
-   */
-  function initDataAttributeMappings() {
-    document.querySelectorAll(data_attribute_selector).forEach((el) => convertDataAttributes(el));
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        mutation.addedNodes.forEach((el) => {
-          convertDataAttributes(el);
-          if (typeof el.querySelectorAll !== 'undefined') {
-            el.querySelectorAll(data_attribute_selector).forEach((subEl) => convertDataAttributes(subEl));
-          }
-        });
-      });
-    });
-    observer.observe(document, { subtree: true, childList: true });
   }
 
   /**
@@ -174,9 +124,7 @@ VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3Com
     initNav();
     initFormElements();
     initBreadcrumbs();
-    initCollapse();
     initPagination();
-    initDataAttributeMappings();
 
     initDropdownStyles();
   }
