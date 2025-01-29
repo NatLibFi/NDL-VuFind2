@@ -71,7 +71,13 @@
         <?php $cart = $this->cart();
         if ($cart->isActive()): ?>
           <li class="nav-item" role="none" id="cartSummary" aria-live="polite" aria-atomic="true">
-            <a <?=$this->url('cart-home') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="button" id="cartItems" data-lightbox title="<?=$this->transEsc('View Book Bag')?>" href="<?=$this->url('cart-home')?>"><?=$this->icon('cart') ?> <strong><?=count($cart->getItems())?></strong> <span class="sr-only"><?=$this->transEsc('items')?></span></a>
+            <a class="nav-link icon-link" <?=$this->url('cart-home') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="button" id="cartItems" data-lightbox title="<?=$this->transEsc('View Book Bag')?>" href="<?=$this->url('cart-home')?>">
+              <?=$this->icon('cart', 'icon-link__icon') ?>
+              <span class="icon-link__label">
+                <strong><?=count($cart->getItems())?></strong>
+              </span>
+              <span class="sr-only"><?=$this->transEsc('items')?></span>
+            </a>
           </li>
         <?php endif; ?>
         <?php if ($this->feedback()->tabEnabled()): ?>

@@ -125,6 +125,10 @@
     --bs-nav-link-hover-color: #{$header-text-hover-color};
     --bs-navbar-active-color: #{$header-text-active-color};
   }
+  .dropdown-menu > li > .dropdown-item.active:not(:hover) {
+    --bs-dropdown-link-active-color: #{$header-text-color};
+    background-color: transparent;
+  }
 }
 
 /* Finna breadcrumbs */
