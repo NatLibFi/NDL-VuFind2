@@ -1,7 +1,5 @@
 /*global VuFind*/
 VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3CompatibilityLayer() {
-  const data_attribute_selector = '[data-dismiss],[data-target],[data-toggle],[data-ride],[data-slide],[data-slide-to]';
-
   /**
    * Initialize navbar support
    */
