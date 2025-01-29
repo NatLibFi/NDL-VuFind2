@@ -300,6 +300,10 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  /**
+   * Initialize tooltips and popovers
+   * @param {HTMLElement} holder Holder to look for toggletip elements from
+   */
   function initToggleTips(holder) {
     holder.querySelectorAll('[data-toggle="finna-toggletip"]').forEach(toggletip => {
       if (toggletip.dataset.initialized) {
@@ -386,7 +390,6 @@ finna.layout = (function finnaLayout() {
 
   /**
    * Hide all tooltips with a click outside of a tooltip trigger
-   * @param {Event} e Event
    */
   function tooltipClickHandler() {
     document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => bootstrap.Tooltip.getOrCreateInstance(el).hide());
