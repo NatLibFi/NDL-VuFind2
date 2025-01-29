@@ -357,10 +357,15 @@ finna.myList = (function finnaMyList() {
         updateList({'id': 'NEW', 'title': newListName, 'desc': null, 'public': 0}, newListAdded, 'add-list');
       }
     });
+    $('#add-new-list-item-btn').on('keyup', function invokeCreateNewList(e) {
+      if (e.keyCode === 32) {
+        $('#add-new-list-item-btn').trigger("click");
+      }
+    });
 
-    //Add new list, listen for keyup enter or space
+    //Add new list, listen for keyup enter
     $('.new-list-input').on('keyup', function invokeCreateNewList(e) {
-      if (e.which === 13 || e.which === 32) {
+      if (e.keyCode === 13) {
         $('#add-new-list-item-btn').trigger("click");
       }
     });
