@@ -694,13 +694,13 @@ $input-border:                $input-border-color;
 .panel-default {
   @extend .card;
 }
-.nav > li > a {
+/*.nav > li > a {
   &:hover,
   &:focus {
     text-decoration: none;
     background-color: $nav-link-hover-bg;
   }
-}
+}*/
 
 .finna-navbar {
   .dropdown-toggle {
